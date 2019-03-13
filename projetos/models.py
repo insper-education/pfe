@@ -24,3 +24,4 @@ class Opcao(models.Model):
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE)
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
     razao = models.CharField(max_length=200)
+    prioridade = models.PositiveSmallIntegerField(default=0)
