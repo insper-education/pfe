@@ -1,0 +1,14 @@
+<h1>Empresa</h1>
+Login: {{ empresa.login }} <br>
+Nome: {{ empresa.nome_empresa }} <br>
+Sigla : {{ empresa.sigla }} <br>
+
+<form action="{% url 'projeto' %}" method="post">
+    {% csrf_token %}
+    {% for projeto in empresa.projeto_set.all %}
+        <input type="radio" name="projeto" id="projeto{{ forloop.counter }}" value="{{ projeto.id }}">
+        <label for="projeto{{ forloop.counter }}">{{ projeto.abreviacao }}</label><br>
+    {% endfor %}
+    <button type="submit" name="acao" value="editar">Editar</button><br>
+    <button type="submit" name="acao" value="novo">Novo</button>
+</form>

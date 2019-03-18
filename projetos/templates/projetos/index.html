@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'projetos/style.css' %}">
+</head>
+
+<body>
+
+<h2>Pagina inicial para o Projeto Final de Engenharia</h2>
+
+<form action="{% url 'login' %}"  action="/login" method="post">
+    {% csrf_token %}
+
+    <label for="uname"><b>Usuario</b></label>
+    <input type="text" placeholder="usuario" name="uname" required>
+    <br>
+
+    <label for="psw"><b>Senha</b></label>
+    <input type="password" placeholder="senha" name="psw" required>
+    <br>
+
+    <label for="fnc"><b>Funcao</b></label>
+    <select name="funcao">
+        <option value="estudante">Estudante</option>
+        <option value="empresa">Empresa</option>
+        <option value="professor">Professor</option>
+    </select>
+
+    <br><br>
+
+    <button type="submit">Login</button>
+
+</form>
+
+</body>
+</html>

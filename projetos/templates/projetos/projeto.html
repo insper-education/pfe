@@ -1,0 +1,8 @@
+{% if projeto %}
+    <h1>{{ projeto.titulo }}</h1>
+    Abreviacao : {{ projeto.abreviacao }} <BR>
+    Descricao : {{ projeto.descricao }} <BR>
+    Empresa : {{ projeto.empresa }} <BR>    
+{% else %}
+    <p>Projeto novo.</p>
+{% endif %}
