@@ -5,9 +5,12 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'), #pagina inicial
     path('login/', views.login, name='login'), #pagina que trata informações para logar
-    path('<str:aluno_id>/aluno/', views.aluno, name='aluno'), # edita informacoes do aluno
-    path('<str:empresa_id>/empresa/', views.empresa, name='empresa'), # edita informacoes da empresa
-    path('<str:professor_id>/professor/', views.professor, name='professor'), # edita informacoes do professor
+
+    path('alunos/', views.alunos, name='alunos'), #pagina que lista alunos
+
+    path('aluno/<str:aluno_id>/', views.aluno, name='aluno'), # edita informacoes do aluno
+    path('empresa/<str:empresa_id>/', views.empresa, name='empresa'), # edita informacoes da empresa
+    path('professor/<str:professor_id>/', views.professor, name='professor'), # edita informacoes do professor
     path('projeto/', views.projeto, name='projeto'), # edita informacoes do projeto
 
     # abaixo ainda muito lixo
