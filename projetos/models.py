@@ -1,6 +1,8 @@
 from django.db import models
 from django.urls import reverse  # To generate URLS by reversing URL patterns
-import uuid # Required for unique book instances
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import User
+#import uuid # Required for unique id instances
 
 class Empresa(models.Model):
     login = models.CharField(primary_key=True, max_length=20)
@@ -18,12 +20,24 @@ class Projeto(models.Model):
     descricao = models.TextField(max_length=1000, help_text='Descricao do projeto')
     imagem = models.ImageField(null=True, blank=True)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
+    ano = models.PositiveIntegerField(validators=[MinValueValidator(2018),MaxValueValidator(3018)], help_text='Ano que o projeto comeca')
+    semestre = models.PositiveIntegerField(validators=[MinValueValidator(1),MaxValueValidator(2)], help_text='Semestre que o projeto comeca')
+    disponivel = models.BooleanField(default=False)
+
+    usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
     class Meta:
         ordering = ['abreviacao']
+
     # Methods
+    @property
+    def procura_de_alunos(self):
+        return 4
+
     def get_absolute_url(self):
         """Returns the url to access a particular instance of MyModelName."""
         return reverse('model-detail-view', args=[str(self.id)])
+
     def __str__(self):
         return self.abreviacao
 

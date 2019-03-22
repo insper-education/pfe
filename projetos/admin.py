@@ -2,6 +2,8 @@ from django.contrib import admin
 
 from .models import Aluno, Projeto, Opcao, Empresa, Professor, Funcionario
 
+
+
 class OpcaoInline(admin.TabularInline):
     model = Opcao
     extra = 5
@@ -19,13 +21,13 @@ class ProjetoAdmin(admin.ModelAdmin):
     list_display = ('abreviacao', 'titulo')
     fieldsets = (
         (None, {
-            'fields': ('titulo', 'abreviacao', 'descricao', 'imagem')
+            'fields': ('titulo', 'abreviacao', 'descricao', 'imagem', 'ano', 'semestre', 'disponivel', 'usuario')
         }),
         ('Origem', {
             'fields': ('empresa',)
         }),
     )
-    
+
 admin.site.register(Opcao)
 
 @admin.register(Empresa)

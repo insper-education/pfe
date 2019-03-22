@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Borrowed books</h1>
+
+    {% if projeto_list %}
+    <ul>
+
+      {% for proj in projeto_list %} 
+      <li class="{% if proj.disponivel %}text-danger{% endif %}">
+        <a href="{% url 'projeto' projeto.empresa.pk %}">{{projeto.empresa.nome_empresa}}</a> ({{ projeto.empresa.nome_empresa }})        
+      </li>
+      {% endfor %}
+    </ul>
+
+    {% else %}
+      <p>There are no books borrowed.</p>
+    {% endif %}
+  
+
+{% endblock %}

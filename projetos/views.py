@@ -4,14 +4,31 @@ from django.template import loader
 from django.http import Http404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.views import generic
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 from .models import Aluno, Projeto, Opcao, Empresa, Professor, Funcionario
 
 # Tela de login (precisa ser refeita com sessões)
+@login_required
 def index(request):
-    return render(request, 'index.html')
+    num_projetos = Projeto.objects.count()  # The 'all()' is implied by default.
+    
+    # Number of visits to this view, as counted in the session variable.
+    num_visits = request.session.get('num_visits', 0)
+    request.session['num_visits'] = num_visits + 1
+
+    context = {
+        'num_projetos': num_projetos,
+        'num_visits': num_visits,
+    }
+    return render(request, 'index.html', context=context)
 
 # Checa informação passada com credenciais do usuário
+@login_required
 def login(request):
     if request.POST['funcao']=="estudante":
         return HttpResponseRedirect(reverse('aluno', args={request.POST['uname']}))
@@ -22,7 +39,7 @@ def login(request):
     else:
         return HttpResponse("Algum erro")
 
-
+@login_required
 def alunos(request):
     # Conta alunos
     num_alunos = Aluno.objects.all().count()
@@ -37,8 +54,24 @@ def alunos(request):
 
     return render(request, 'alunos.html', context=context)
 
+class AlunoListView(LoginRequiredMixin, generic.ListView):
+    model = Aluno
+    paginate_by = 2     # http://127.0.0.1:8000/projetos/alunos/?page=2
+    #context_object_name = 'my_book_list'   # your own name for the list as a template variable
+    #queryset = Book.objects.filter(title__icontains='war')[:5] # Get 5 books containing the title war
+    #template_name = 'books/my_arbitrary_template_name_list.html'  # Specify your own template name/location
+    #def get_context_data(self, **kwargs):
+        # Call the base implementation first to get the context
+        #context = super(BookListView, self).get_context_data(**kwargs)
+        # Create any data and add it to the context
+        #context['some_data'] = 'This is just some data'
+        #return context
+
+class AlunoDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Aluno
 
 # Visualiza informaçõs do aluno e permite editar
+@login_required
 def aluno(request, aluno_id):
     try:
         aluno = Aluno.objects.get(login=aluno_id)
@@ -47,6 +80,7 @@ def aluno(request, aluno_id):
     return render(request, 'aluno.html', {'aluno': aluno})
 
 # Visualiza informaçõs da empresa e permite editar
+@login_required
 def empresa(request, empresa_id):
     try:
         empresa = Empresa.objects.get(login=empresa_id)
@@ -55,6 +89,7 @@ def empresa(request, empresa_id):
     return render(request, 'empresa.html', {'empresa': empresa})
 
 # Visualiza informaçõs do professor e permite editar
+@login_required
 def professor(request, professor_id):
     try:
         professor = Professor.objects.get(login=professor_id)
@@ -63,6 +98,7 @@ def professor(request, professor_id):
     return render(request, 'professor.html', {'professor': professor})
 
 # Visualiza informaçõs do projeto e permite editar
+@login_required
 def projeto(request):
     if request.POST['acao']=="editar":
         projeto_id = request.POST['projeto']
@@ -74,18 +110,34 @@ def projeto(request):
     else:
         return render(request, 'projeto.html')
 
+class ProjetoDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Projeto
+
+
+
+class ProjetosByUserListView(LoginRequiredMixin,generic.ListView):
+    """Generic class-based view listing books on loan to current user."""
+    model = Projeto
+    template_name ='projetos/projeto_list_user.html'
+    paginate_by = 10
+    
+    def get_queryset(self):
+        return Projeto.objects.filter(usuario=self.request.user).filter(disponivel__exact=True).order_by('titulo')
 
 
 # por enquanto o que está abaixo ainda é lixo
+@login_required
 def detalhes_aluno(request, aluno_id):
     return HttpResponse("dados do aluno %s." % aluno_id)
 
+@login_required
 def projetos_aluno(request, aluno_id):
     response = "Projetos do aluno %s.<BR>" % aluno_id
     projetos = Projeto.objects.all()
     output = ', '.join([p.abreviacao for p in projetos])
     return HttpResponse(response+output)
 
+@login_required
 def detalhes(request):
     alunos_list = Aluno.objects.all()
     projetos_list = Projeto.objects.all()
@@ -95,4 +147,13 @@ def detalhes(request):
     }
     return render(request, 'index.html', context)
 
+@login_required
+def cria_usuarios(request):
+    # Create user and save to the database
+    user = User.objects.create_user('myusername', 'myemail@crazymail.com', 'mypassword')
 
+    # Update fields and then save again
+    user.first_name = 'John'
+    user.last_name = 'Citizen'
+    user.save()
+    
