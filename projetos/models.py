@@ -28,7 +28,7 @@ class Projeto(models.Model):
     semestre = models.PositiveIntegerField(validators=[MinValueValidator(1),MaxValueValidator(2)], help_text='Semestre que o projeto comeca')
     disponivel = models.BooleanField(default=False)
 
-    usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    #usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
         ordering = ['abreviacao']
