@@ -1,16 +1,18 @@
-from django.http import HttpResponse
-from django.shortcuts import render
+import datetime
+from django.http import Http404, HttpResponseRedirect, HttpResponse
+from django.shortcuts import render, get_object_or_404
 from django.template import loader
-from django.http import Http404
-from django.http import HttpResponseRedirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import generic
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
+from .forms import AlunoForm, AlunoForm2
 
 from .models import Aluno, Projeto, Opcao, Empresa, Professor, Funcionario
+
 
 # Tela de login (precisa ser refeita com sessões)
 @login_required
@@ -115,9 +117,10 @@ class ProjetoDetailView(LoginRequiredMixin, generic.DetailView):
 
 
 
-class ProjetosByUserListView(LoginRequiredMixin,generic.ListView):
+class ProjetosByUserListView(PermissionRequiredMixin, LoginRequiredMixin,generic.ListView):
     """Generic class-based view listing books on loan to current user."""
     model = Projeto
+    permission_required = ('projetos.altera_empresa', 'projetos.altera_professor')
     template_name ='projetos/projeto_list_user.html'
     paginate_by = 10
     
@@ -131,6 +134,8 @@ def detalhes_aluno(request, aluno_id):
     return HttpResponse("dados do aluno %s." % aluno_id)
 
 @login_required
+@permission_required('projetos.altera_empresa')
+@permission_required('projetos.altera_professor')
 def projetos_aluno(request, aluno_id):
     response = "Projetos do aluno %s.<BR>" % aluno_id
     projetos = Projeto.objects.all()
@@ -156,4 +161,52 @@ def cria_usuarios(request):
     user.first_name = 'John'
     user.last_name = 'Citizen'
     user.save()
-    
+
+
+def nascimento(request, pk):
+    aluno_instance = get_object_or_404(Aluno, login=pk)
+
+    # If this is a POST request then process the Form data
+    if request.method == 'POST':
+
+        # Create a form instance and populate it with data from the request (binding):
+        form = AlunoForm(request.POST)
+
+        # Check if the form is valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required (here we just write it to the model due_back field)
+            aluno_instance.nascimento = form.cleaned_data['nascimento']
+            aluno_instance.save()
+
+            # redirect to a new URL:
+            return HttpResponseRedirect(reverse('my-proj') )
+
+    # If this is a GET (or any other method) create the default form.
+    else:
+        #proposed_nascimento_date = datetime.date.today() - datetime.timedelta(weeks=3)
+        proposed_nascimento_date = aluno_instance.nascimento
+        #form = AlunoForm(initial={'nascimento': proposed_nascimento_date})
+        form = AlunoForm2(initial={'nascimento': proposed_nascimento_date})
+        
+
+    context = {
+        'form': form,
+        'aluno_instance': aluno_instance,
+    }
+
+    return render(request, 'projetos/alunos_nascimento.html', context)
+
+
+class ProjetoCreate(CreateView):
+    model = Projeto
+    fields = '__all__'
+    initial = {'ano': 2019}
+
+class ProjetoUpdate(UpdateView):
+    model = Projeto
+    fields = ['titulo', 'abreviacao', 'descricao', 'ano']
+
+class ProjetoDelete(DeleteView):
+    model = Projeto
+    success_url = reverse_lazy('my-proj')
+

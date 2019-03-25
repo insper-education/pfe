@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Renew: {{ aluno_instance.login }}</h1>
+  <p>Borrower: {{ aluno_instance.nome_completo }}</p>
+    
+  <form action="" method="post">
+    {% csrf_token %}
+    <table>
+    {{ form.as_ul }}
+    </table>
+    <input type="submit" value="Submit">
+  </form>
+{% endblock %}

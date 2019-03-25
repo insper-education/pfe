@@ -13,7 +13,7 @@ class OpcaoInline(admin.TabularInline):
 class AlunoAdmin(admin.ModelAdmin):
     list_display = ('nome_completo', 'curso', 'email', 'opcao1', 'opcao2', 'opcao3', 'opcao4', 'opcao5')
     list_filter = ('nome_completo', 'curso')
-    fields = ['login', 'nome_completo', 'curso', ('email', 'email_pessoal')]
+    fields = ['login', 'nome_completo', 'nascimento', 'curso', ('email', 'email_pessoal')]
     inlines = [OpcaoInline]
 
 @admin.register(Projeto)

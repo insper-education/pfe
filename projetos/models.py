@@ -4,12 +4,16 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import User
 #import uuid # Required for unique id instances
 
+
+# prevent unauthorized users from accessing the pages! We leave that as an exercise for you (hint: you could use the PermissionRequiredMixin and either create a new permission or reuse our can_mark_returned permission).
+
 class Empresa(models.Model):
     login = models.CharField(primary_key=True, max_length=20)
     nome_empresa = models.CharField(max_length=80)
     sigla = models.CharField(max_length=20)
     class Meta:
         ordering = ['sigla']
+        permissions = (("altera_empresa", "Empresa altera valores"), ("altera_professor", "Professor altera valores"), )
     def __str__(self):
         return self.nome_empresa
 
@@ -28,6 +32,7 @@ class Projeto(models.Model):
 
     class Meta:
         ordering = ['abreviacao']
+        permissions = (("altera_empresa", "Empresa altera valores"), ("altera_professor", "Professor altera valores"), )
 
     # Methods
     @property
@@ -36,7 +41,7 @@ class Projeto(models.Model):
 
     def get_absolute_url(self):
         """Returns the url to access a particular instance of MyModelName."""
-        return reverse('model-detail-view', args=[str(self.id)])
+        return reverse('projeto-detail', args=[str(self.id)])
 
     def __str__(self):
         return self.abreviacao
@@ -51,10 +56,12 @@ class Aluno(models.Model):
     nome_completo = models.CharField(max_length=80,help_text='Nome completo do aluno')
     curso = models.CharField(max_length=1, choices=TIPOS_CURSO, help_text='Curso Matriculado',)
     opcoes = models.ManyToManyField(Projeto, through='Opcao', help_text='Opcoes de projeto escolhidos')
+    nascimento = models.DateField()
     email = models.EmailField(null=True, blank=True)
     email_pessoal = models.EmailField(null=True, blank=True)
     class Meta:
-        ordering = ['nome_completo']  
+        ordering = ['nome_completo']
+        permissions = (("altera_professor", "Professor altera valores"), )
     def __str__(self):
         return self.nome_completo
     def opcao(self,i):
@@ -85,6 +92,9 @@ class Opcao(models.Model):
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
     razao = models.CharField(max_length=200)
     prioridade = models.PositiveSmallIntegerField(default=0)
+    class Meta:
+        ordering = ['prioridade']
+        permissions = (("altera_professor", "Professor altera valores"), )
     def __str__(self):
         return self.projeto.abreviacao+" >>> "+self.aluno.nome_completo
 
@@ -94,6 +104,7 @@ class Professor(models.Model):
     email = models.EmailField(null=True, blank=True)
     class Meta:
         ordering = ['nome']  
+        permissions = (("altera_professor", "Professor altera valores"), )
     def __str__(self):
         return self.nome
 
@@ -106,6 +117,8 @@ class Funcionario(models.Model):  # da empresa (não do Insper)
     #mentor_tecnico = models.EmailField()
     #recursos_humanos = models.EmailField()
     class Meta:
-        ordering = ['nome']  
+        ordering = ['nome']
+        permissions = (("altera_empresa", "Empresa altera valores"), ("altera_professor", "Professor altera valores"), )
+
     def __str__(self):
         return self.nome
