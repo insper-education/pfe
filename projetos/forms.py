@@ -6,8 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from django.forms import ModelForm
 
-from .models import Aluno
-
+from users.models import Aluno, Professor, Funcionario
 
 class AlunoForm(forms.Form):
     nascimento = forms.DateField(help_text="Digite sua data de nascimento.")
@@ -46,6 +45,7 @@ class AlunoForm2(ModelForm):
 
     class Meta:
         model = Aluno
-        fields = ['nascimento', 'nome_completo', 'email' ]
+        #fields = ['nascimento', 'username', 'email' ]
+        fields = '__all__'
         #labels = {'nascimento': _('Renewal date')}
         #help_texts = {'nascimento': _('Enter a date between now and 4 weeks (default 3).')}

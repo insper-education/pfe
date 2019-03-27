@@ -11,8 +11,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 
 from .forms import AlunoForm, AlunoForm2
 
-from .models import Aluno, Projeto, Opcao, Empresa, Professor, Funcionario
-
+from .models import Projeto, Opcao, Empresa
+from users.models import Aluno, Professor, Funcionario
 
 # Tela de login (precisa ser refeita com sessões)
 @login_required
