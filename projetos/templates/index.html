@@ -1,55 +1,7 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-        {% load static %}
-        <link rel="stylesheet" type="text/css" href="{% static 'projetos/style.css' %}">
-</head>
+{% block content %}
 
-<body>
+<h2>Pagina inicial para o Projeto Final de Engenharia</h2>
 
-<h2>Pagina inicial para o Projeto Final de Engenharia!</h2>
-
-{% if user.is_authenticated %}
-  Hi {{ user.username }}!
-{% else %}
-  <p>You are not logged in</p>
-  <a href="{% url 'login' %}">login</a>
-{% endif %}
-
-<form action="{% url 'login' %}"  action="/login" method="post">
-    {% csrf_token %}
-
-    <label for="uname"><b>Usuario</b></label>
-    <input type="text" placeholder="usuario" name="uname" required>
-    <br>
-
-    <label for="psw"><b>Senha</b></label>
-    <input type="password" placeholder="senha" name="psw" required>
-    <br>
-
-    <label for="fnc"><b>Funcao</b></label>
-    <select name="funcao">
-        <option value="estudante">Estudante</option>
-        <option value="empresa">Empresa</option>
-        <option value="professor">Professor</option>
-    </select>
-
-    <br><br>
-
-    <button type="submit">Login</button>
-
-</form>
-
-<h2>Dynamic content</h2>
-
-<p>PFE tem os seguintes registros:</p>
-<ul>
-  <li><strong>Projetos:</strong> {{ num_projetos }}</li>
-</ul>
-
-<p>You have visited this page {{ num_visits }}{% if num_visits == 1 %} time{% else %} times{% endif %}.</p>
-
-
-</body>
-</html>
+{% endblock %}

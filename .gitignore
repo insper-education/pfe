@@ -1,4 +1,4 @@
 *.sqlite3
 *.pyc
-users/migrations/0*
-projetos/migrations/0*
+users/migrations/????_*.py
+projetos/migrations/????_*.py

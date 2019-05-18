@@ -1,15 +1,15 @@
 from django.db import models
 from django.urls import reverse  # To generate URLS by reversing URL patterns
 from django.core.validators import MinValueValidator, MaxValueValidator
-from users.models import Aluno, Professor, Funcionario
-#from django.contrib.auth.models import User
-
-# prevent unauthorized users from accessing the pages! We leave that as an exercise for you (hint: you could use the PermissionRequiredMixin and either create a new permission or reuse our can_mark_returned permission).
+#from users.models import Professor, Funcionario
 
 class Empresa(models.Model):
     login = models.CharField(primary_key=True, max_length=20)
     nome_empresa = models.CharField(max_length=80)
     sigla = models.CharField(max_length=20)
+    endereco = models.TextField(max_length=200, help_text='Endereço da Empresa')
+    website = models.URLField(max_length=250)
+    # contatoEmpresa = models.CharField(max_length=80)
     class Meta:
         ordering = ['sigla']
         permissions = (("altera_empresa", "Empresa altera valores"), ("altera_professor", "Professor altera valores"), )
@@ -17,18 +17,21 @@ class Empresa(models.Model):
         return self.nome_empresa
 
 class Projeto(models.Model):
-    #id = models.UUIDField(primary_key=True, default=uuid.uuid4, help_text='Unique ID para projeto')
     titulo = models.CharField(max_length=100, help_text='Titulo do projeto')
-    abreviacao = models.CharField(max_length=10, help_text='Abreviacao usada para o projeto')
-    descricao = models.TextField(max_length=1000, help_text='Descricao do projeto')
+    descricao = models.TextField(max_length=2000, help_text='Descricao do projeto')
+    expectativas = models.TextField(max_length=2000, help_text='Expectativas em relação ao projeto')
+    areas = models.TextField(max_length=1000, help_text='Áreas da engenharia envolvidas no projeto')
+    recursos = models.TextField(max_length=1000, help_text='Recursos a serem disponibilizados aos Alunos')
     imagem = models.ImageField(null=True, blank=True)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
     ano = models.PositiveIntegerField(validators=[MinValueValidator(2018),MaxValueValidator(3018)], help_text='Ano que o projeto comeca')
     semestre = models.PositiveIntegerField(validators=[MinValueValidator(1),MaxValueValidator(2)], help_text='Semestre que o projeto comeca')
     disponivel = models.BooleanField(default=False)
-
+    # contato1 = models.CharField(max_length=80)
+    # contato2 = models.CharField(max_length=80)
+    # contato3 = models.CharField(max_length=80)
     class Meta:
-        ordering = ['abreviacao']
+        ordering = ['titulo']
         permissions = (("altera_empresa", "Empresa altera valores"), ("altera_professor", "Professor altera valores"), )
 
     # Methods
@@ -41,18 +44,4 @@ class Projeto(models.Model):
         return reverse('projeto-detail', args=[str(self.id)])
 
     def __str__(self):
-        return self.abreviacao
-
-class Opcao(models.Model):
-    #id = models.UUIDField(primary_key=True, default=uuid.uuid4, help_text='Unique ID para opcao de projeto')
-    projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE)
-    #aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
-    razao = models.CharField(max_length=200)
-    prioridade = models.PositiveSmallIntegerField(default=0)
-    class Meta:
-        ordering = ['prioridade']
-        permissions = (("altera_professor", "Professor altera valores"), )
-    def __str__(self):
-        #return self.projeto.abreviacao+" >>> "+self.aluno.nome_completo
-        return "OPCAO"
-
+        return self.titulo

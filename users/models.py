@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from projetos.models import Projeto
+
 class PFEUser(AbstractUser):
     #username
     #first_name
@@ -43,7 +45,7 @@ class Aluno(models.Model):
     #login = models.CharField(primary_key=True, max_length=20)
     #nome_completo = models.CharField(max_length=80,help_text='Nome completo do aluno')
     curso = models.CharField(max_length=1, choices=TIPOS_CURSO, help_text='Curso Matriculado',)
-    #opcoes = models.ManyToManyField(Projeto, through='Opcao', help_text='Opcoes de projeto escolhidos')
+    opcoes = models.ManyToManyField(Projeto, through='Opcao', help_text='Opcoes de projeto escolhidos')
     nascimento = models.DateField(null=True, blank=True)
     local_de_origem = models.CharField(max_length=30, blank=True)
     #email = models.EmailField(null=True, blank=True)
@@ -75,6 +77,17 @@ class Aluno(models.Model):
     # opcao3.short_description = 'Opcao 3'
     # opcao4.short_description = 'Opcao 4'
     # opcao5.short_description = 'Opcao 5'
+
+class Opcao(models.Model):
+    projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE)
+    aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
+    #razao = models.CharField(max_length=200)
+    #prioridade = models.PositiveSmallIntegerField(default=0)
+    class Meta:
+        #ordering = ['prioridade']
+        permissions = (("altera_professor", "Professor altera valores"), )
+    def __str__(self):
+        return self.aluno.user.username+" >>> "+self.projeto.titulo
 
 class Funcionario(models.Model):  # da empresa (não do Insper)
     user = models.OneToOneField(PFEUser, on_delete=models.CASCADE)

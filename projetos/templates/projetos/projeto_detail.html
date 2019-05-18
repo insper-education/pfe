@@ -1,21 +1,21 @@
 {% extends "base.html" %}
 
-
-<!-- imagem = models.ImageField(null=True, blank=True) -->
-
-
 {% block content %}
-  <h1>Title: {{ projeto.title }}</h1>
+  <h1>Título: {{ projeto.titulo }}</h1>
+  <strong>Descrição:</strong> {{ projeto.descricao|linebreaks }}
+  <strong>Expectativas de resultados/entregas :</strong> {{ projeto.expectativas|linebreaks }}
+  <strong>Áreas da engenharia envolvidas no projeto :</strong> {{ projeto.areas|linebreaks }}
+  <strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ projeto.recursos|linebreaks }}
+  <p>&nbsp;</p>
+  <h3>Empresa: {{ projeto.empresa }}</h3>
+  <strong>endereço:</strong> {{ projeto.empresa.endereco|linebreaks }}
+  <strong>website:</strong> <a href="{{ projeto.empresa.website }}"> {{ projeto.empresa.website }} </a>
+  </div>
+{% endblock %}
 
-  <p><strong>abreviacao:</strong> <a href="">{{ projeto.abreviacao }}</a></p> <!-- author detail link not yet defined -->
-  <p><strong>descricao:</strong> {{ projeto.descricao }}</p>
-  <p><strong>empresa:</strong> {{ projeto.empresa }}</p> 
-  <p><strong>ano:</strong> {{ projeto.ano }}</p>  
-  <p><strong>semestre:</strong> {{ projeto.semestre }}</p>  
-
+  <!--
   <div style="margin-left:20px;margin-top:20px">
     <h4>Alunos</h4>
-
     {% for opcao in projeto.opcao_set.all %}
       <hr>
       <p><strong>Nome:</strong> {{opcao.aluno.nome_completo}}</p>
@@ -23,6 +23,4 @@
       <p class="{% if opcao.aluno.curso == 'C' %}text-success{% elif opcao.aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">CURSO: {{ opcao.aluno.get_curso_display }}</p>
       <p class="text-muted"><strong>Id:</strong> {{opcao.id}}</p>
     {% endfor %}
-
-  </div>
-{% endblock %}
+  -->
