@@ -2,3 +2,4 @@
 *.pyc
 users/migrations/????_*.py
 projetos/migrations/????_*.py
+pfe/settings.py
