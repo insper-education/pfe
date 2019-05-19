@@ -21,9 +21,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'u3l+px+$jje$+m1+e!6a&02v+oe-6%nr3js)9@2&9m4#jf&1_2'
+# python manage.py shell -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -134,3 +135,6 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'pfeinsper@gmail.com'
 EMAIL_HOST_PASSWORD = 'XXXXXXXX'
+
+from local_settings import *
+#remover em produção
