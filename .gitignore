@@ -2,4 +2,3 @@
 *.pyc
 users/migrations/????_*.py
 projetos/migrations/????_*.py
-settings.py
