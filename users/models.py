@@ -1,3 +1,7 @@
+# Desenvolvido para o Projeto Final de Engenharia
+# Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+# Data: 15 de Maio de 2019
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save

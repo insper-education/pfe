@@ -1,3 +1,7 @@
+# Desenvolvido para o Projeto Final de Engenharia
+# Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+# Data: 15 de Maio de 2019
+
 import datetime
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, get_object_or_404
@@ -15,14 +19,24 @@ from django.conf import settings
 from .models import Projeto, Empresa
 from users.models import Aluno, Professor, Funcionario, Opcao
 
-def email(aluno):
+from .resources import ProjetoResource
+
+def email(aluno, message):
     subject = 'PFE : '+aluno.user.username
-    message = ' '
-    for o in Opcao.objects.filter(aluno=aluno):
-        message += o.projeto.titulo+"\n"
     email_from = settings.EMAIL_HOST_USER
-    recipient_list = ['pfeinsper@gmail.com',]
-    send_mail( subject, message, email_from, recipient_list )
+    recipient_list = ['pfeinsper@gmail.com',aluno.user.email,]
+    send_mail( subject, message, email_from, recipient_list, html_message=message )
+
+def create_message(aluno):
+        message = 'Caro aluno: <b>'+aluno.user.first_name+" "+aluno.user.last_name+" ("+aluno.user.username+')</b>\n\n'
+        message += '<br><br>\n\n'
+        message += 'Suas opções de projeto foram:<br>\n'
+        message += '<ul>'
+        for o in Opcao.objects.filter(aluno=aluno):
+            message += ("&nbsp;"*4)+"<li>"+o.projeto.titulo+"</li>\n"
+        message += '</ul>'
+        message += '<br>\n'+("&nbsp;"*12)+"atenciosamente, comitê PFE"
+        return message
 
 @login_required
 def index(request):
@@ -42,17 +56,18 @@ class ProjetoDetailView(LoginRequiredMixin, generic.DetailView):
 def selecao(request):
     if request.method == 'POST':
         check_values = request.POST.getlist('selection')
-        #if(len(check_values)<=5): return HttpResponse("Selecione ao menos 5 projetos")
-        a = Aluno.objects.get(pk=request.user.pk)
+        if(len(check_values)<5): return HttpResponse("Selecione ao menos 5 projetos")
+        aluno = Aluno.objects.get(pk=request.user.pk)
         for p in Projeto.objects.all():
             if str(p.pk) in check_values:
-                if len(a.opcoes.filter(pk=p.pk))==0:
-                    Opcao.objects.create(aluno=a, projeto=p)
+                if len(aluno.opcoes.filter(pk=p.pk))==0:
+                    Opcao.objects.create(aluno=aluno, projeto=p)
             else:
-                if len(a.opcoes.filter(pk=p.pk))!=0:
-                    Opcao.objects.filter(aluno=a, projeto=p).delete()
-        email(a)
-        return HttpResponse("Dados submetidos")
+                if len(aluno.opcoes.filter(pk=p.pk))!=0:
+                    Opcao.objects.filter(aluno=aluno, projeto=p).delete()
+        message = create_message(aluno)
+        email(aluno,message)
+        return HttpResponse("Dados submetidos<br><br><br>"+message)
     else:
         return HttpResponse("Chamada irregular")
 
@@ -65,3 +80,21 @@ def projetos(request):
         opcoes_list.append(i.projeto.pk)    
     context= {'projeto_list': projeto_list, 'opcoes_list': opcoes_list, }    
     return render(request, 'projetos/projetos.html', context)
+
+# Exporta dados direto para o navegador no formato CSV
+@login_required
+def export(request):
+    projeto_resource = ProjetoResource()
+    dataset = projeto_resource.export()
+    response = HttpResponse(dataset.csv, content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="projetos.csv"'
+    return response
+
+# Exporta dados direto para o navegador no formato XLS
+@login_required
+def exportXLS(request):
+    projeto_resource = ProjetoResource()
+    dataset = projeto_resource.export()
+    response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="projetos.xls"'
+    return response

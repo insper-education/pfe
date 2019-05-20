@@ -1,3 +1,7 @@
+# Desenvolvido para o Projeto Final de Engenharia
+# Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+# Data: 15 de Maio de 2019
+
 from django.shortcuts import render
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.urls import reverse_lazy

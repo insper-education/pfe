@@ -1,4 +1,6 @@
-#https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Tutorial_local_library_website
+# Desenvolvido para o Projeto Final de Engenharia
+# Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+# Data: 15 de Maio de 2019
 
 from django.urls import path
 
@@ -9,4 +11,6 @@ urlpatterns = [
     path('projetos/', views.projetos, name='projetos'),
     path('projeto/<int:pk>', views.ProjetoDetailView.as_view(), name='projeto'),
     path('selecao/', views.selecao, name='selecao'),
+    path('export/', views.export, name='export'),
+    path('exportxls/', views.exportXLS, name='exportxls'),
 ]

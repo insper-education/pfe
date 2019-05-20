@@ -1,3 +1,7 @@
+# Desenvolvido para o Projeto Final de Engenharia
+# Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+# Data: 15 de Maio de 2019
+
 from django.db import models
 from django.urls import reverse  # To generate URLS by reversing URL patterns
 from django.core.validators import MinValueValidator, MaxValueValidator
