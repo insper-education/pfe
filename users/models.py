@@ -9,6 +9,49 @@ from django.dispatch import receiver
 
 from projetos.models import Projeto
 
+class Areas(models.Model):
+    ciencia_dos_dados = models.BooleanField(default=False)
+    modelagem_3D = models.BooleanField(default=False)
+    manufatura = models.BooleanField(default=False)
+    resistencia_dos_materiais = models.BooleanField(default=False)
+    modelagem_de_sistemas = models.BooleanField(default=False)
+    controle_e_automacao = models.BooleanField(default=False)
+    termodinamica = models.BooleanField(default=False)
+    fluidodinamica = models.BooleanField(default=False)
+    eletronica_digital = models.BooleanField(default=False)
+    programacao = models.BooleanField(default=False)
+    inteligencia_artificial = models.BooleanField(default=False)
+    banco_de_dados = models.BooleanField(default=False)
+    computacao_em_nuvem = models.BooleanField(default=False)
+    visao_computacional = models.BooleanField(default=False)
+    computacao_de_alto_desempenho = models.BooleanField(default=False)
+    robotica = models.BooleanField(default=False)
+    realidade_virtual_aumentada = models.BooleanField(default=False)
+    protocolos_de_comunicacao = models.BooleanField(default=False)
+    eficiencia_energetica = models.BooleanField(default=False)
+    administracao_economia_financas = models.BooleanField(default=False)
+
+    def __str__(self):
+        return   ("V" if self.ciencia_dos_dados else "F") + " "\
+               + ("V" if self.modelagem_3D else "F") + " "\
+               + ("V" if self.manufatura else "F") + " "\
+               + ("V" if self.resistencia_dos_materiais else "F") + " "\
+               + ("V" if self.modelagem_de_sistemas else "F") + " "\
+               + ("V" if self.controle_e_automacao else "F") + " "\
+               + ("V" if self.termodinamica else "F") + " "\
+               + ("V" if self.fluidodinamica else "F") + " "\
+               + ("V" if self.eletronica_digital else "F") + " "\
+               + ("V" if self.programacao else "F") + " "\
+               + ("V" if self.inteligencia_artificial else "F") + " "\
+               + ("V" if self.computacao_em_nuvem else "F") + " "\
+               + ("V" if self.visao_computacional else "F") + " "\
+               + ("V" if self.computacao_de_alto_desempenho else "F") + " "\
+               + ("V" if self.robotica else "F") + " "\
+               + ("V" if self.realidade_virtual_aumentada else "F") + " "\
+               + ("V" if self.protocolos_de_comunicacao else "F") + " "\
+               + ("V" if self.eficiencia_energetica else "F") + " "\
+               + ("V" if self.administracao_economia_financas else "F")
+
 class PFEUser(AbstractUser):
     #username
     #first_name
@@ -54,6 +97,8 @@ class Aluno(models.Model):
     local_de_origem = models.CharField(max_length=30, blank=True)
     #email = models.EmailField(null=True, blank=True)
     email_pessoal = models.EmailField(null=True, blank=True)
+    areas = models.OneToOneField(Areas, on_delete=models.CASCADE)
+
     class Meta:
         ordering = ['user']
         permissions = (("altera_professor", "Professor altera valores"), )

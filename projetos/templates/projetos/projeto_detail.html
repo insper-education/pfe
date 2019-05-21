@@ -6,10 +6,10 @@
 {% endcomment %}
 
 {% block content %}
-  <h1>Título: {{ projeto.titulo }}</h1>
+  <h2>Título: {{ projeto.titulo }}</h2>
   <strong>Descrição:</strong> {{ projeto.descricao|linebreaks }}
   <strong>Expectativas de resultados/entregas :</strong> {{ projeto.expectativas|linebreaks }}
-  <strong>Áreas da engenharia envolvidas no projeto :</strong> {{ projeto.areas|linebreaks }}
+  <strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ projeto.areas|linebreaks }}
   <strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ projeto.recursos|linebreaks }}
   <p>&nbsp;</p>
   <h3>Empresa: {{ projeto.empresa }}</h3>

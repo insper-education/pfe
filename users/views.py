@@ -17,6 +17,9 @@ from .models import PFEUser, Aluno, Professor, Funcionario
 
 from tablib import Dataset
 
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+
 #from django.http import HttpResponse
 from .resources import AlunoResource
 
@@ -33,6 +36,49 @@ def exportXLS(request):
     response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
     response['Content-Disposition'] = 'attachment; filename="alunos.xls"'
     return response
+
+@login_required
+@transaction.atomic
+def update_profile(request):
+    if request.method == 'POST':
+        pfeuser_form = PFEUserForm(request.POST, instance=request.user)
+        aluno_form = AlunoForm(request.POST, instance=request.user.aluno)
+        check_values = request.POST.getlist('selection')
+        areas = Aluno.objects.get(pk=request.user.pk).areas
+
+        areas.ciencia_dos_dados = (True if "ciencia_dos_dados" in check_values else False)
+        areas.modelagem_3D = (True if "modelagem_3D" in check_values else False)
+        areas.manufatura = (True if "manufatura" in check_values else False)
+        areas.resistencia_dos_materiais = (True if "resistencia_dos_materiais" in check_values else False)
+        areas.modelagem_de_sistemas = (True if "modelagem_de_sistemas" in check_values else False)
+        areas.controle_e_automacao = (True if "controle_e_automacao" in check_values else False)
+        areas.termodinamica = (True if "termodinamica" in check_values else False)
+        areas.fluidodinamica = (True if "fluidodinamica" in check_values else False)
+        areas.eletronica_digital = (True if "eletronica_digital" in check_values else False)
+        areas.programacao = (True if "programacao" in check_values else False)
+        areas.inteligencia_artificial = (True if "inteligencia_artificial" in check_values else False)
+        areas.banco_de_dados = (True if "banco_de_dados" in check_values else False)
+        areas.computacao_em_nuvem = (True if "computacao_em_nuvem" in check_values else False)
+        areas.visao_computacional = (True if "visao_computacional" in check_values else False)
+        areas.computacao_de_alto_desempenho = (True if "computacao_de_alto_desempenho" in check_values else False)
+        areas.robotica = (True if "robotica" in check_values else False)
+        areas.realidade_virtual_aumentada = (True if "realidade_virtual_aumentada" in check_values else False)
+        areas.protocolos_de_comunicacao = (True if "protocolos_de_comunicacao" in check_values else False)
+        areas.eficiencia_energetica = (True if "eficiencia_energetica" in check_values else False)
+        areas.administracao_economia_financas = (True if "administracao_economia_financas" in check_values else False)
+        areas.save()
+        return HttpResponse("Dados atualizados<br><br><br>")
+    else:
+        pfeuser_form = PFEUserForm(instance=request.user)
+        aluno_form = AlunoForm(instance=request.user)
+    return render(request, 'users/profile.html', {
+        'pfeuser_form': pfeuser_form,
+        'aluno_form': aluno_form
+    })
+
+
+
+
 
 ### CODIGO NAO PRONTO ABAIXO ###
 def simple_upload(request):
@@ -64,26 +110,6 @@ def show_profile(request, pk):
     user.save()
     return HttpResponse("Tudo certo!")
 
-@login_required
-@transaction.atomic
-def update_profile(request):
-    if request.method == 'POST':
-        pfeuser_form = PFEUserForm(request.POST, instance=request.user)
-        aluno_form = AlunoForm(request.POST, instance=request.user.profile)
-        if pfeuser_form.is_valid() and aluno_form.is_valid():
-            pfeuser_form.save()
-            aluno_form.save()
-            messages.success(request, _('Your profile was successfully updated!'))
-            return redirect('signup')
-        else:
-            messages.error(request, _('Please correct the error below.'))
-    else:
-        pfeuser_form = PFEUserForm(instance=request.user)
-        aluno_form = AlunoForm(instance=request.user.profile)
-    return render(request, 'users/profile.html', {
-        'pfeuser_form': pfeuser_form,
-        'aluno_form': aluno_form
-    })
 
 # # Checa informação passada com credenciais do usuário
 # @login_required
