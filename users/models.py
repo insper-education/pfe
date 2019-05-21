@@ -52,6 +52,10 @@ class Areas(models.Model):
                + ("V" if self.eficiencia_energetica else "F") + " "\
                + ("V" if self.administracao_economia_financas else "F")
 
+    @classmethod
+    def get_new(cls):
+        return cls.objects.create().id
+
 class PFEUser(AbstractUser):
     #username
     #first_name
@@ -97,13 +101,14 @@ class Aluno(models.Model):
     local_de_origem = models.CharField(max_length=30, blank=True)
     #email = models.EmailField(null=True, blank=True)
     email_pessoal = models.EmailField(null=True, blank=True)
-    areas = models.OneToOneField(Areas, on_delete=models.CASCADE)
+    areas = models.OneToOneField(Areas, on_delete=models.CASCADE, default=Areas.get_new)
 
     class Meta:
         ordering = ['user']
         permissions = (("altera_professor", "Professor altera valores"), )
     def __str__(self):
         return self.user.username
+
 
     # def opcao(self,i):
     #     try:
