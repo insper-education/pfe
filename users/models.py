@@ -56,6 +56,7 @@ class Aluno(models.Model):
     email_pessoal = models.EmailField(null=True, blank=True)
 
     #areas de interesse
+    inovacao_social = models.BooleanField(default=False)
     ciencia_dos_dados = models.BooleanField(default=False)
     modelagem_3D = models.BooleanField(default=False)
     manufatura = models.BooleanField(default=False)
@@ -78,7 +79,8 @@ class Aluno(models.Model):
     administracao_economia_financas = models.BooleanField(default=False)
 
     # def __str__(self):
-    #     return   ("V" if self.ciencia_dos_dados else "F") + " "\
+    #     return   ("V" if self.inovacao_social else "F") + " "\
+    #            + ("V" if self.ciencia_dos_dados else "F") + " "\
     #            + ("V" if self.modelagem_3D else "F") + " "\
     #            + ("V" if self.manufatura else "F") + " "\
     #            + ("V" if self.resistencia_dos_materiais else "F") + " "\

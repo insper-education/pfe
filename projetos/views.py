@@ -25,17 +25,20 @@ def email(aluno, message):
     subject = 'PFE : '+aluno.user.username
     email_from = settings.EMAIL_HOST_USER
     recipient_list = ['pfeinsper@gmail.com',aluno.user.email,]
-    send_mail( subject, message, email_from, recipient_list, html_message=message )
+    return send_mail( subject, message, email_from, recipient_list, html_message=message, fail_silently=True, )
 
 def create_message(aluno):
-        message = 'Caro aluno: <b>'+aluno.user.first_name+" "+aluno.user.last_name+" ("+aluno.user.username+')</b>\n\n'
+        message = '<br>\n'
+        message += '&nbsp;&nbsp;Caro aluno: <b>'+aluno.user.first_name+" "+aluno.user.last_name+" ("+aluno.user.username+')</b>\n\n'
         message += '<br><br>\n\n'
-        message += 'Suas opções de projeto foram:<br>\n'
+        message += '&nbsp;&nbsp;Suas opções de projeto foram:<br>\n'
         message += '<ul>'
         for o in Opcao.objects.filter(aluno=aluno):
-            message += ("&nbsp;"*4)+"<li>"+o.projeto.titulo+"</li>\n"
+            message += ("&nbsp;"*4)+"<li>"+o.projeto.titulo+" ("+o.projeto.empresa.nome_empresa+")</li>\n"
         message += '</ul>'
         message += '<br>\n'+("&nbsp;"*12)+"atenciosamente, comitê PFE"
+        message += '&nbsp;<br>\n'
+        message += '&nbsp;<br>\n'
         return message
 
 @login_required
@@ -66,8 +69,11 @@ def selecao(request):
                 if len(aluno.opcoes.filter(pk=p.pk))!=0:
                     Opcao.objects.filter(aluno=aluno, projeto=p).delete()
         message = create_message(aluno)
-        email(aluno,message)
-        return HttpResponse("Dados submetidos<br><br><br>"+message)
+        x = email(aluno,message)
+        if(x!=1): message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+        context= {'message': message,}    
+        return render(request, 'projetos/submissao.html', context)
+        #return HttpResponse("Dados submetidos<br><br><br>"+message)
     else:
         return HttpResponse("Chamada irregular")
 

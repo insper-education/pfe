@@ -7,9 +7,11 @@
 
 {% block content %}
 
-<h3>Projeto Final de Engenharia</h3>
-&nbsp;<br>
-<a href="{% url 'projetos' %}"><h5>Selecionar Projetos</h5></a>
-<a href="{% url 'updatep' %}"><h5>Selecionar Áreas de Interesse</h5></a>
+  <u>Dados submetidos</u><br><br>
 
+  <div class="boxed">
+  {% autoescape off %}
+    {{ message }}
+  {% endautoescape %}    
+  </div>
 {% endblock %}

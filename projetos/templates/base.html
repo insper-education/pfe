@@ -15,7 +15,7 @@
 </head>
 <body>
   <a href="{% url 'index' %}">
-    <img src="{% static 'images/logoInsper.png' %}" alt="Insper" style="width:125px;height:49px;margin-left:30px;">
+    <img src="{% static 'images/logoInsper.png' %}" alt="Insper" style="width:125px;height:49px;margin-left:25px;margin-top:8px;">
   </a>
   <div class="container-fluid">
     <div class="row">
@@ -23,6 +23,7 @@
         {% block sidebar %}
             {% if user.is_authenticated %}
               <li>Usuário: {{ user.get_username }}</li>
+              <li><a href="{% url 'index'%}">Home</a></li>
               <li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>   
             {% else %}
               <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>   

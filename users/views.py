@@ -46,6 +46,7 @@ def update_profile(request):
         check_values = request.POST.getlist('selection')
         aluno = Aluno.objects.get(pk=request.user.pk)
 
+        aluno.inovacao_social = (True if "inovacao_social" in check_values else False)
         aluno.ciencia_dos_dados = (True if "ciencia_dos_dados" in check_values else False)
         aluno.modelagem_3D = (True if "modelagem_3D" in check_values else False)
         aluno.manufatura = (True if "manufatura" in check_values else False)
@@ -67,7 +68,8 @@ def update_profile(request):
         aluno.eficiencia_energetica = (True if "eficiencia_energetica" in check_values else False)
         aluno.administracao_economia_financas = (True if "administracao_economia_financas" in check_values else False)
         aluno.save()
-        return HttpResponse("Dados atualizados<br><br><br>")
+        return render(request, 'users/atualizado.html',)
+        #return HttpResponse("Dados atualizados<br><br><br>")
     else:
         pfeuser_form = PFEUserForm(instance=request.user)
         aluno_form = AlunoForm(instance=request.user)
