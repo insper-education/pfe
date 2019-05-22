@@ -28,6 +28,7 @@
             {% else %}
               <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>   
             {% endif %} 
+            &nbsp;<br>
             <!-- Nome: {{ user.nome_completo }} <br>
             Curso : {{ user.curso }} <br> -->
         {% endblock %}
