@@ -87,6 +87,7 @@ def projetos(request):
     context= {'projeto_list': projeto_list, 'opcoes_list': opcoes_list, }    
     return render(request, 'projetos/projetos.html', context)
 
+
 # Exporta dados direto para o navegador no formato CSV
 @login_required
 def export(request):
@@ -128,3 +129,18 @@ def administracao(request):
         'num_projetos': num_projetos,
     }
     return render(request, 'index_admin.html', context=context)
+
+@login_required
+@permission_required('user.can_view_professor', login_url='/projetos/')
+def completo(request, pk):
+    projeto = Projeto.objects.filter(pk=pk).first()
+    opcoes = Opcao.objects.filter(projeto=projeto) 
+    #opcoes_list = []
+    #for i in opcoes:
+    #    opcoes_list.append(i.projeto.pk)  
+    #alunos = 
+    context = {
+        'projeto': projeto,
+        'opcoes': opcoes,
+    }
+    return render(request, 'projetos/projeto_completo.html', context=context)

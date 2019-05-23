@@ -10,6 +10,7 @@ urlpatterns = [
     path('', views.index, name='index'), #pagina inicial
     path('projetos/', views.projetos, name='projetos'),
     path('projeto/<int:pk>', views.ProjetoDetailView.as_view(), name='projeto'),
+    path('completo/<int:pk>', views.completo, name='completo'),
     path('selecao/', views.selecao, name='selecao'),
     path('export/', views.export, name='export'),
     path('exportxls/', views.exportXLS, name='exportxls'),

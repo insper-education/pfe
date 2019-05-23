@@ -12,8 +12,17 @@
   <strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ projeto.areas|linebreaks }}
   <strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ projeto.recursos|linebreaks }}
   <hr>
+
   <h3>Empresa: {{ projeto.empresa }}</h3>
   <strong>endereço:</strong> {{ projeto.empresa.endereco|linebreaks }}
   <strong>website:</strong> <a href="{{ projeto.empresa.website }}"> {{ projeto.empresa.website }} </a>
-  <p>&nbsp;</p>
+  <hr>
+
+  <h3>Alunos</h3>
+  {% for opcao in projeto.opcao_set.all %}
+    <p><strong>Nome:</strong> {{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}] </p>
+    <!-- <p class="{% if opcao.aluno.curso == 'C' %}text-success{% elif opcao.aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">{{ opcao.aluno.get_curso_display }}</p> -->
+    <!-- <p class="text-muted"><strong>Id:</strong> {{opcao.id}}</p -->
+  {% endfor %}
+
 {% endblock %}

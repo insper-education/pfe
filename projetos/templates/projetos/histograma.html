@@ -32,7 +32,7 @@
       {% for projeto,opcoes in mylist %} 
         {% if projeto.disponivel %}
         
-        <a href="{% url 'projeto' projeto.id %}"> 
+        <a href="{% url 'completo' projeto.id %}"> 
         <li class="title" title="{{projeto.titulo}} ({{ projeto.empresa.nome_empresa }})"></li>
         </a>
         <li class="past" title="">
