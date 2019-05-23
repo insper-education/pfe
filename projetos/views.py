@@ -104,3 +104,17 @@ def exportXLS(request):
     response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
     response['Content-Disposition'] = 'attachment; filename="projetos.xls"'
     return response
+
+@login_required
+@permission_required('user.can_view_professor', login_url='/projetos/')
+def histograma(request):
+    projeto_list = Projeto.objects.all()
+    opcoes_list = []
+    for p in projeto_list:
+        opcoes = Opcao.objects.filter(projeto=p)
+        opcoes_list.append(len(opcoes))
+    mylist = zip(projeto_list, opcoes_list)
+    mylist = sorted(mylist, key=lambda x: x[1],reverse=True)
+
+    context= {'mylist': mylist }    
+    return render(request, 'projetos/histograma.html', context)

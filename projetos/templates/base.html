@@ -13,6 +13,7 @@
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
+  {% block head %}{% endblock %}
 </head>
 <body>
   <a href="{% url 'index' %}">

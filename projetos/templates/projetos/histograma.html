@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 15 de Maio de 2019
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  <link href="{% static 'css/horizBarChart.css' %}" media="all" rel="stylesheet" type="text/css" />
+  <script src="{% static 'js/jquery.min.js' %}"></script>
+  <script src="{% static 'js/jquery.horizBarChart.min.js' %}"></script>
+  <script>
+    $(document).ready(function(){
+      $('.chart').horizBarChart({
+        selector: '.bar',
+        speed: 800
+      });
+    });
+  </script>
+{% endblock %}
+
+{% block content %}
+
+    {% if mylist %}
+    <div>
+        <ul class="chart">
+        <h3><li class="title" title="Projetos Disponíveis"></li></h3>
+        <li></li>
+        <li></li>
+
+      {% for projeto,opcoes in mylist %} 
+        {% if projeto.disponivel %}
+        
+        <a href="{% url 'projeto' projeto.id %}"> 
+        <li class="title" title="{{projeto.titulo}} ({{ projeto.empresa.nome_empresa }})"></li>
+        </a>
+        <li class="past" title="">
+            <span class="bar" data-number="{{opcoes}}"></span>
+            <span class="number">{{opcoes}}</span>
+        </li>
+        <li></li>
+
+        {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+
+  {% else %}
+      <p>Não existem projetos disponíveis.</p>
+    {% endif %}
+
+{% endblock %}
