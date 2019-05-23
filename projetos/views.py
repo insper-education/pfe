@@ -105,6 +105,7 @@ def exportXLS(request):
     response['Content-Disposition'] = 'attachment; filename="projetos.xls"'
     return response
 
+# 
 @login_required
 @permission_required('user.can_view_professor', login_url='/projetos/')
 def histograma(request):
@@ -118,3 +119,12 @@ def histograma(request):
 
     context= {'mylist': mylist }    
     return render(request, 'projetos/histograma.html', context)
+
+@login_required
+@permission_required('user.can_view_professor', login_url='/projetos/')
+def administracao(request):
+    num_projetos = Projeto.objects.count()  # The 'all()' is implied by default.
+    context = {
+        'num_projetos': num_projetos,
+    }
+    return render(request, 'index_admin.html', context=context)

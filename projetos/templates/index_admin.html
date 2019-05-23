@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 15 de Maio de 2019
+{% endcomment %}
+
+{% block content %}
+
+<h3>Projeto Final de Engenharia</h3>
+&nbsp;<br>
+<a href="{% url 'projetos' %}"><h5>Selecionar Projetos</h5></a>
+<a href="{% url 'updatep' %}"><h5>Selecionar Áreas de Interesse</h5></a>
+
+<a href="{% url 'histograma' %}"><h5>Histograma de Projetos</h5></a>
+
+{% endblock %}
