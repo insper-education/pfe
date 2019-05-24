@@ -10,6 +10,6 @@ urlpatterns = [
     #path('usuario/<str:pk>/', views.Usuario.as_view(), name='usuario'),
     #path('show/<str:pk>/', views.show_profile, name='show'),
     path('update/', views.update_profile, name='updatep'),
-    #path('export/', views.export, name='export'),
-    #path('exportxls/', views.exportXLS, name='exportxls'),
+    path('alunos/', views.alunos, name='alunos'),
+    path('aluno/<int:pk>', views.aluno, name='aluno'),
 ]

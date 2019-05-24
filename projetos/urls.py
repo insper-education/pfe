@@ -15,5 +15,6 @@ urlpatterns = [
     path('export/', views.export, name='export'),
     path('exportxls/', views.exportXLS, name='exportxls'),
     path('histograma/', views.histograma, name='histograma'),
+    path('areas/', views.areas, name='areas'),
     path('administracao/', views.administracao, name='administracao'),
 ]

@@ -12,7 +12,7 @@
   <strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ projeto.areas|linebreaks }}
   <strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ projeto.recursos|linebreaks }}
   <hr>
-  <h3>Empresa: {{ projeto.empresa }}</h3>
+  <h3>Empresa: {{ projeto.empresa.nome_empresa }}</h3>
   <strong>endereço:</strong> {{ projeto.empresa.endereco|linebreaks }}
   <strong>website:</strong> <a href="{{ projeto.empresa.website }}"> {{ projeto.empresa.website }} </a>
   <p>&nbsp;</p>

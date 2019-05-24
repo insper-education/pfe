@@ -40,9 +40,9 @@ class Professor(models.Model):
 
 class Aluno(models.Model):
     TIPOS_CURSO = (
-        ('C', 'Computacao'),
-        ('M', 'Mecanica'),
-        ('X', 'Mecatronica'),
+        ('C', 'Computação'),
+        ('M', 'Mecânica'),
+        ('X', 'Mecatrônica'),
     )
     user = models.OneToOneField(PFEUser, on_delete=models.CASCADE)
     #bio = models.TextField(max_length=500, blank=True)    

@@ -133,14 +133,61 @@ def administracao(request):
 @login_required
 @permission_required('user.can_view_professor', login_url='/projetos/')
 def completo(request, pk):
-    projeto = Projeto.objects.filter(pk=pk).first()
+    projeto = Projeto.objects.filter(pk=pk).first()  # acho que tem de ser get
     opcoes = Opcao.objects.filter(projeto=projeto) 
-    #opcoes_list = []
-    #for i in opcoes:
-    #    opcoes_list.append(i.projeto.pk)  
-    #alunos = 
     context = {
         'projeto': projeto,
         'opcoes': opcoes,
     }
     return render(request, 'projetos/projeto_completo.html', context=context)
+
+@login_required
+@permission_required('user.can_view_professor', login_url='/projetos/')
+def areas(request):
+
+    inovacao_social = Aluno.objects.filter(inovacao_social=True).count()
+    ciencia_dos_dados = Aluno.objects.filter(ciencia_dos_dados=True).count()
+    modelagem_3D = Aluno.objects.filter(modelagem_3D=True).count()
+    manufatura = Aluno.objects.filter(manufatura=True).count()
+    resistencia_dos_materiais = Aluno.objects.filter(resistencia_dos_materiais=True).count()
+    modelagem_de_sistemas = Aluno.objects.filter(modelagem_de_sistemas=True).count()
+    controle_e_automacao = Aluno.objects.filter(controle_e_automacao=True).count()
+    termodinamica = Aluno.objects.filter(termodinamica=True).count()
+    fluidodinamica = Aluno.objects.filter(fluidodinamica=True).count()
+    eletronica_digital = Aluno.objects.filter(eletronica_digital=True).count()
+    programacao = Aluno.objects.filter(programacao=True).count()
+    inteligencia_artificial = Aluno.objects.filter(inteligencia_artificial=True).count()
+    banco_de_dados = Aluno.objects.filter(banco_de_dados=True).count()
+    computacao_em_nuvem = Aluno.objects.filter(computacao_em_nuvem=True).count()
+    visao_computacional = Aluno.objects.filter(visao_computacional=True).count()
+    computacao_de_alto_desempenho = Aluno.objects.filter(computacao_de_alto_desempenho=True).count()
+    robotica = Aluno.objects.filter(robotica=True).count()
+    realidade_virtual_aumentada = Aluno.objects.filter(realidade_virtual_aumentada=True).count()
+    protocolos_de_comunicacao = Aluno.objects.filter(protocolos_de_comunicacao=True).count()
+    eficiencia_energetica = Aluno.objects.filter(eficiencia_energetica=True).count()
+    administracao_economia_financas =Aluno.objects.filter(administracao_economia_financas=True).count()
+
+    context= {
+        'inovacao_social':inovacao_social,
+        'ciencia_dos_dados':ciencia_dos_dados,
+        'modelagem_3D':modelagem_3D,
+        'manufatura':manufatura,
+        'resistencia_dos_materiais':resistencia_dos_materiais,
+        'modelagem_de_sistemas':modelagem_de_sistemas,
+        'controle_e_automacao':controle_e_automacao,
+        'termodinamica':termodinamica,
+        'fluidodinamica': fluidodinamica,
+        'eletronica_digital':eletronica_digital,
+        'programacao':programacao,
+        'inteligencia_artificial':inteligencia_artificial,
+        'banco_de_dados':banco_de_dados,
+        'computacao_em_nuvem':computacao_em_nuvem,
+        'visao_computacional': visao_computacional,
+        'computacao_de_alto_desempenho':computacao_de_alto_desempenho,
+        'robotica':robotica,
+        'realidade_virtual_aumentada':realidade_virtual_aumentada,
+        'protocolos_de_comunicacao':protocolos_de_comunicacao,
+        'eficiencia_energetica':eficiencia_energetica,
+        'administracao_economia_financas':administracao_economia_financas,
+    }
+    return render(request, 'projetos/areas.html', context)

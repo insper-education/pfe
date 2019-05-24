@@ -9,7 +9,7 @@ from django.views import generic
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.utils.translation import ugettext as _
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 
 from .forms import PFEUserCreationForm, PFEUserForm, AlunoForm
@@ -42,7 +42,7 @@ def exportXLS(request):
 def update_profile(request):
     if request.method == 'POST':
         pfeuser_form = PFEUserForm(request.POST, instance=request.user)
-        aluno_form = AlunoForm(request.POST, instance=request.user.aluno)
+        aluno_form = AlunoForm(request.POST, instance=request.aluno)
         check_values = request.POST.getlist('selection')
         aluno = Aluno.objects.get(pk=request.user.pk)
 
@@ -112,32 +112,32 @@ def show_profile(request, pk):
     user.save()
     return HttpResponse("Tudo certo!")
 
+@login_required
+@permission_required('user.can_view_professor', login_url='/projetos/')
+def alunos(request):
+    alunos_list = Aluno.objects.all() # Conta alunos
+    num_alunos = Aluno.objects.all().count() # Conta alunos
+    num_alunos_comp = Aluno.objects.filter(curso__exact='C').count() # Conta alunos computacao
+    num_alunos_mxt = Aluno.objects.filter(curso__exact='X').count() # Conta alunos mecatrônica
+    num_alunos_mec = Aluno.objects.filter(curso__exact='M').count() # Conta alunos mecânica
+    context = {
+        'alunos_list' : alunos_list,
+        'num_alunos': num_alunos,
+        'num_alunos_comp': num_alunos_comp,
+        'num_alunos_mxt': num_alunos_mxt,
+        'num_alunos_mec': num_alunos_mec,
+    }
+    return render(request, 'users/alunos.html', context=context)
 
-# # Checa informação passada com credenciais do usuário
-# @login_required
-# def login(request):
-#     if request.POST['funcao']=="estudante":
-#         return HttpResponseRedirect(reverse('aluno', args={request.POST['uname']}))
-#     elif request.POST['funcao']=="empresa": 
-#         return HttpResponseRedirect(reverse('empresa', args={request.POST['uname']}))
-#     elif request.POST['funcao']=="professor": 
-#         return HttpResponseRedirect(reverse('professor', args={request.POST['uname']}))
-#     else:
-#         return HttpResponse("Algum erro")
+@login_required
+@permission_required('user.can_view_professor', login_url='/projetos/')
+def aluno(request, pk):
+    aluno = Aluno.objects.filter(pk=pk).first()
+    context = {
+        'aluno': aluno,
+    }
+    return render(request, 'users/aluno_detail.html', context=context)
 
-
-# @login_required
-# def alunos(request):
-#     num_alunos = Aluno.objects.all().count() # Conta alunos
-#     num_alunos_comp = Aluno.objects.filter(curso__exact='C').count() # Conta alunos computacao
-#     context = {
-#         'num_alunos': num_alunos,
-#         'num_alunos_comp': num_alunos_comp,
-#     }
-#     # Nao existe mais
-#     return render(request, 'alunos.html', context=context)
-#     #<li><strong>Alunos:</strong> {{ num_alunos }}</li>
-#     #<li><strong>Alunos de Computacao:</strong> {{ num_alunos_comp }}</li>
 
 # class AlunoListView(LoginRequiredMixin, generic.ListView):
 #     model = Aluno

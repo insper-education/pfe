@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 23 de Maio de 2019
+{% endcomment %}
+
+{% block content %}
+    <h3>Alunos</h3>
+
+    <strong>Número Total de Alunos:</strong> {{ num_alunos }}
+
+    {% if alunos_list %}
+        <table>
+        {% for aluno in alunos_list %} 
+        <tr>
+          <td class="{% if aluno.opcao_set.all.count >= 5 %}text-success{% else %}text-danger{% endif %}">&#9673; </td>
+          <td><a href="{% url 'aluno' aluno.id %}">
+            {{aluno.user.first_name}}&nbsp;{{aluno.user.last_name}}
+          </a></td>
+          <td class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">
+            {{ aluno.get_curso_display }}
+          </td>
+        </tr>
+        {% endfor %}
+        </table>
+        <p>&nbsp;</p>
+    {% else %}
+      <p>Não existem alunos disponíveis.</p>
+    {% endif %}
+
+    <strong>Quantidad de Alunos de Computação:</strong> {{ num_alunos_comp }} <br>
+    <strong>Quantidad de Alunos de Mecatrônica:</strong> {{ num_alunos_mxt }} <br>
+    <strong>Quantidad de Alunos de Mecânica:</strong> {{ num_alunos_mec }} <br>
+
+{% endblock %}
