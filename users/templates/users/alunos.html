@@ -5,6 +5,37 @@
     Data: 23 de Maio de 2019
 {% endcomment %}
 
+{% block head %}
+  {% load static %}
+  <script src="{% static 'js/jquery.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/jquery.sortElements.js' %}"></script>
+  <script type="text/javascript">
+  $(window).load(function(){
+    var table = $('table');
+    $('#nome_header, #curso_header')
+        .wrapInner('<span title="ordenar coluna"/>')
+        .each(function(){
+            var th = $(this),
+                thIndex = th.index(),
+                inverse = false;
+            th.click(function(){
+                table.find('td').filter(function(){
+                    return $(this).index() === thIndex;
+                }).sortElements(function(a, b){
+                    return $.text([a]) > $.text([b]) ?
+                        inverse ? -1 : 1
+                        : inverse ? 1 : -1;
+                }, function(){
+                    // parentNode is the element we want to move
+                    return this.parentNode; 
+                });
+                inverse = !inverse; 
+            });
+        });
+      });
+  </script>
+{% endblock %}
+
 {% block content %}
     <h3>Alunos</h3>
 
@@ -12,25 +43,36 @@
 
     {% if alunos_list %}
         <table>
-        {% for aluno in alunos_list %} 
-        <tr>
-          <td class="{% if aluno.opcao_set.all.count >= 5 %}text-success{% else %}text-danger{% endif %}">&#9673; </td>
-          <td><a href="{% url 'aluno' aluno.id %}">
-            {{aluno.user.first_name}}&nbsp;{{aluno.user.last_name}}
-          </a></td>
-          <td class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">
-            {{ aluno.get_curso_display }}
-          </td>
-        </tr>
-        {% endfor %}
+          <tr>
+              <th>C</th>
+              <th id="nome_header">Nome do Aluno</th>
+              <th id="curso_header">Curso</th>
+          </tr>
+          {% for aluno in alunos_list %} 
+          <tr>
+            <td class="{% if aluno.opcao_set.all.count >= 5 %}text-success{% else %}text-danger{% endif %}">&#9673; </td>
+            <td><a href="{% url 'aluno' aluno.id %}">
+              {{aluno.user.first_name}}&nbsp;{{aluno.user.last_name}}
+            </a></td>
+            <td class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">
+              {{ aluno.get_curso_display }}
+            </td>
+          </tr>
+          {% endfor %}
         </table>
-        <p>&nbsp;</p>
+        <br>
     {% else %}
       <p>Não existem alunos disponíveis.</p>
     {% endif %}
 
+    <text class="text-success">&#9673;</text>Aluno já selecionou projetos<br>
+    <text class="text-danger">&#9673;</text>Aluno ainda precisa selecionar projetos<br>
+    <br>
     <strong>Quantidad de Alunos de Computação:</strong> {{ num_alunos_comp }} <br>
     <strong>Quantidad de Alunos de Mecatrônica:</strong> {{ num_alunos_mxt }} <br>
     <strong>Quantidad de Alunos de Mecânica:</strong> {{ num_alunos_mec }} <br>
+
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
 
 {% endblock %}
