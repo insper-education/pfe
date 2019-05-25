@@ -24,7 +24,8 @@
 <body>
     <div class="topnav">
       <a href="{% url 'index' %}" class="active">
-        <b id="pfe">PFE</b> <img src="{% static 'images/logoInsper.png' %}" alt="Insper" style="width:59px;height:23px;">
+        <img src="{% static 'images/logoInsper.png' %}" alt="Insper" style="width:59px;height:23px;">
+        <b id="pfelogo">PFE</b> 
         {% if user.is_authenticated %}
         &nbsp;<u id="username">[{{user.first_name}}&nbsp;{{user.last_name}}]</u>
         {% endif %}

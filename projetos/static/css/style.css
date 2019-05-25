@@ -66,15 +66,16 @@ body {
   color: white;
 }
 
-#pfe { 
+#pfelogo { 
   color: rgb(50, 50, 50);
-  font-size: 17px;
+  font-size: 15px;
+  vertical-align: bottom;
 }
 
 #username { 
   color: rgb(250, 250, 250);
   font-size: 12px;
-  vertical-align: sub;
+  vertical-align: middle;
   display: inline-block;
   width: 57%;
   overflow: hidden;
