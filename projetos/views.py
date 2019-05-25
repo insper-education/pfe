@@ -50,7 +50,7 @@ def index(request):
         'num_projetos': num_projetos,
         'num_visits': num_visits,
     }
-    return render(request, 'index.html', context=context)
+    return render(request, 'index_aluno.html', context=context)
 
 class ProjetoDetailView(LoginRequiredMixin, generic.DetailView):
     model = Projeto
@@ -90,6 +90,7 @@ def projetos(request):
 
 # Exporta dados direto para o navegador no formato CSV
 @login_required
+@permission_required('user.can_view_professor', login_url='/projetos/')
 def export(request):
     projeto_resource = ProjetoResource()
     dataset = projeto_resource.export()
@@ -99,6 +100,7 @@ def export(request):
 
 # Exporta dados direto para o navegador no formato XLS
 @login_required
+@permission_required('user.can_view_professor', login_url='/projetos/')
 def exportXLS(request):
     projeto_resource = ProjetoResource()
     dataset = projeto_resource.export()
@@ -124,11 +126,13 @@ def histograma(request):
 @login_required
 @permission_required('user.can_view_professor', login_url='/projetos/')
 def administracao(request):
-    num_projetos = Projeto.objects.count()  # The 'all()' is implied by default.
-    context = {
-        'num_projetos': num_projetos,
-    }
-    return render(request, 'index_admin.html', context=context)
+    return render(request, 'index_admin.html')
+
+@login_required
+@permission_required('user.can_view_professor', login_url='/projetos/')
+def professor(request):
+    return render(request, 'index_professor.html')
+
 
 @login_required
 @permission_required('user.can_view_professor', login_url='/projetos/')

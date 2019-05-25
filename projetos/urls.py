@@ -19,4 +19,5 @@ urlpatterns = [
     path('administracao/', views.administracao, name='administracao'),
     path('organizacoes/', views.organizacoes, name='organizacoes'),
     path('organizacao/<str:login>', views.organizacao, name='organizacao'),
+    path('professor/', views.professor, name='professor'),
 ]

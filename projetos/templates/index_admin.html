@@ -6,9 +6,6 @@
 {% endcomment %}
 
 {% block content %}
-&nbsp;<br>
-<a href="{% url 'alunos' %}"><h5>Listagem de alunos</h5></a>
-<a href="{% url 'histograma' %}"><h5>Histograma de Interesse de Projetos</h5></a>
-<a href="{% url 'areas' %}"><h5>Tendência de Áreas de Interesse</h5></a>
-<a href="{% url 'organizacoes' %}"><h5>Listagem de Organicações Parceiras</h5></a>
+<a href="{% url 'export' %}"><h5>Exportar Projetos em CSV</h5></a>
+<a href="{% url 'exportxls' %}"><h5>Exportar Projetos em XML</h5></a>
 {% endblock %}

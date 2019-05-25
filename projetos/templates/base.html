@@ -36,7 +36,7 @@
           <a href="{% url 'index'%}">Aluno</a>
 
           {% if perms.user.can_view_professor %}
-          <a href="{% url 'administracao'%}">Professor</a>
+          <a href="{% url 'professor'%}">Professor</a>
           {% endif %}
 
           {% if perms.user.can_view_professor %}
