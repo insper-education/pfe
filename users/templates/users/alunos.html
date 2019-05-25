@@ -40,13 +40,13 @@
     <h3>Alunos</h3>
 
     <strong>Número Total de Alunos:</strong> {{ num_alunos }}
-
+    
     {% if alunos_list %}
         <table>
           <tr>
-              <th>C</th>
-              <th id="nome_header">Nome do Aluno</th>
-              <th id="curso_header">Curso</th>
+              <th class="text-center">C</th>
+              <th id="nome_header" class="text-center">Nome do Aluno</th>
+              <th id="curso_header" class="text-center">Curso</th>
           </tr>
           {% for aluno in alunos_list %} 
           <tr>
@@ -64,15 +64,12 @@
     {% else %}
       <p>Não existem alunos disponíveis.</p>
     {% endif %}
-
+    
     <text class="text-success">&#9673;</text>Aluno já selecionou projetos<br>
     <text class="text-danger">&#9673;</text>Aluno ainda precisa selecionar projetos<br>
     <br>
     <strong>Quantidad de Alunos de Computação:</strong> {{ num_alunos_comp }} <br>
     <strong>Quantidad de Alunos de Mecatrônica:</strong> {{ num_alunos_mxt }} <br>
     <strong>Quantidad de Alunos de Mecânica:</strong> {{ num_alunos_mec }} <br>
-
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
 
 {% endblock %}
