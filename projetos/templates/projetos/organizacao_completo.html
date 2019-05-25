@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 15 de Maio de 2019
+{% endcomment %}
+
+{% block content %}
+  <h3>Empresa: {{ organization.nome_empresa }}</h3>
+  <strong>endereço:</strong> {{ organization.endereco|linebreaks }}
+  <strong>website:</strong> <a href="{{ organization.website }}"> {{ organization.website }} </a>
+  <hr>
+
+  <h3>Projetos</h3>
+  {% for projeto in organization.projeto_set.all %}
+    <a href="{% url 'completo' projeto.id %}"> 
+      <li>{{projeto.titulo}}</li>
+    </a>
+  {% endfor %}
+
+{% endblock %}

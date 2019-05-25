@@ -2,97 +2,22 @@
   Desenvolvido para o Projeto Final de Engenharia
   Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
   Data: 15 de Maio de 2019
---><!DOCTYPE html>
+-->
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
+
   {% block title %}<title>Projeto Final de Engenharia</title>{% endblock %}
+
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-  <!-- Add additional CSS in static file -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> <!-- botão superior direito -->
+
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <script type="text/javascript" src="{% static 'js/pfe.js' %}"></script>
   <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
-  
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.mobile-container {
-  max-width: 480px;
-  margin: auto;
-  background-color: #555;
-  height: 500px;
-  color: white;
-  border-radius: 10px;
-}
-
-.topnav {
-  overflow: hidden;
-  background-color: #333;
-  position: relative;
-}
-
-.topnav #myLinks {
-  display: none;
-}
-
-.topnav a {
-  color: white;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-  display: block;
-}
-
-.topnav a.icon {
-  background: black;
-  display: block;
-  position: absolute;
-  right: 0;
-  top: 0;
-}
-
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-.active {
-  background-color: rgb(255, 0, 0);
-  color: white;
-}
-
-#pfe { 
-  color: rgb(50, 50, 50);
-  font-size: 17px;
-}
-
-#username { 
-  color: rgb(250, 250, 250);
-  font-size: 12px;
-  vertical-align: sub;
-  display: inline-block;
-  width: 57%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-</style>
-
-<script>
-    function myFunction() {
-      var x = document.getElementById("myLinks");
-      if (x.style.display === "block") {
-        x.style.display = "none";
-      } else {
-        x.style.display = "block";
-      }
-    }
-    </script>
 
   {% block head %}{% endblock %}
 </head>
@@ -124,38 +49,16 @@ body {
           <a href="{% url 'login'%}?next={{request.path}}">Login</a>
         {% endif %} 
       </div>
-      <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+      <a href="javascript:void(0);" class="icon" onclick="bars()">
         <i class="fa fa-bars"></i>
       </a>
     </div>
   
   <div class="container-fluid">
-    <div class="row">
-      <div class="col-sm-10 ">
-        
-        <br>
-        {% block content %}{% endblock %}
-        <br>
-
-        {% block pagination %}
-        {% if is_paginated %}
-            <div class="pagination">
-                <span class="page-links">
-                    {% if page_obj.has_previous %}
-                        <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
-                    {% endif %}
-                    <span class="page-current">
-                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-                    </span>
-                    {% if page_obj.has_next %}
-                        <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
-                    {% endif %}
-                </span>
-            </div>
-        {% endif %}
-        {% endblock %} 
-      </div>
-    </div>
+    <br>
+    {% block content %}{% endblock %}
+    <br>
   </div>
+
 </body>
 </html>

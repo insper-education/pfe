@@ -9,6 +9,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Empresa(models.Model):
     login = models.CharField(primary_key=True, max_length=20)
+    #login = models.CharField(max_length=20)     # em algum momento concertar isso
     nome_empresa = models.CharField(max_length=80)
     sigla = models.CharField(max_length=20)
     endereco = models.TextField(max_length=200, help_text='Endereço da Empresa')

@@ -17,4 +17,6 @@ urlpatterns = [
     path('histograma/', views.histograma, name='histograma'),
     path('areas/', views.areas, name='areas'),
     path('administracao/', views.administracao, name='administracao'),
+    path('organizacoes/', views.organizacoes, name='organizacoes'),
+    path('organizacao/<str:login>', views.organizacao, name='organizacao'),
 ]

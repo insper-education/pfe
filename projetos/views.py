@@ -191,3 +191,19 @@ def areas(request):
         'administracao_economia_financas':administracao_economia_financas,
     }
     return render(request, 'projetos/areas.html', context)
+
+@login_required
+@permission_required('user.can_view_professor', login_url='/projetos/')
+def organizacoes(request):
+    organizacoes_list = Empresa.objects.all()
+    context= {'organizacoes_list': organizacoes_list,}
+    return render(request, 'projetos/organizacoes.html', context)
+
+@login_required
+@permission_required('user.can_view_professor', login_url='/projetos/')
+def organizacao(request, login): #acertar isso para pk
+    organization = Empresa.objects.filter(login=login).first()  # acho que tem de ser get
+    context = {
+        'organization': organization,
+    }
+    return render(request, 'projetos/organizacao_completo.html', context=context)
