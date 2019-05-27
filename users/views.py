@@ -23,20 +23,6 @@ from django.template import RequestContext
 #from django.http import HttpResponse
 from .resources import AlunoResource
 
-def export(request):
-    aluno_resource = AlunoResource()
-    dataset = aluno_resource.export()
-    response = HttpResponse(dataset.csv, content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="alunos.csv"'
-    return response
-
-def exportXLS(request):
-    aluno_resource = AlunoResource()
-    dataset = aluno_resource.export()
-    response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="alunos.xls"'
-    return response
-
 @login_required
 @transaction.atomic
 def update_profile(request):
@@ -69,15 +55,9 @@ def update_profile(request):
         aluno.administracao_economia_financas = (True if "administracao_economia_financas" in check_values else False)
         aluno.save()
         return render(request, 'users/atualizado.html',)
-        #return HttpResponse("Dados atualizados<br><br><br>")
     else:
-        return render(request, 'users/profile.html',)
-        #pfeuser_form = PFEUserForm(instance=request.user)
-        #aluno_form = AlunoForm(instance=request.user)
-        #return render(request, 'users/profile.html', {
-        #    'pfeuser_form': pfeuser_form,
-        #    'aluno_form': aluno_form
-        #})
+        return render(request, 'users/profile.html',) #MUDAR PARA ARQUIVO AREAS DE INTERESSE
+
 
 ### CODIGO NAO PRONTO ABAIXO ###
 def simple_upload(request):

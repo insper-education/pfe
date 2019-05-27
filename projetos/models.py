@@ -7,6 +7,7 @@ from django.urls import reverse  # To generate URLS by reversing URL patterns
 from django.core.validators import MinValueValidator, MaxValueValidator
 #from users.models import Professor, Funcionario
 
+# RENOMEAR PARA ORGANIZACAO
 class Empresa(models.Model):
     login = models.CharField(primary_key=True, max_length=20)
     #login = models.CharField(max_length=20)     # em algum momento concertar isso

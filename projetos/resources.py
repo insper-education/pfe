@@ -15,9 +15,8 @@ class OrganizacoesResource(resources.ModelResource):
     class Meta:
         model = Empresa
 
-class OpcoesResource(resources.ModelResource):
-    class Meta:
-        model = Opcao
+
+## MOVER PARA RESOURCES DE USERS (ACCOUNTS)
 
 class UsuariosResource(resources.ModelResource):
     class Meta:
@@ -30,3 +29,7 @@ class AlunosResource(resources.ModelResource):
 class ProfessoresResource(resources.ModelResource):
     class Meta:
         model = Professor
+
+class OpcoesResource(resources.ModelResource):
+    class Meta:
+        model = Opcao
