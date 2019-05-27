@@ -41,8 +41,8 @@ def exportXLS(request):
 @transaction.atomic
 def update_profile(request):
     if request.method == 'POST':
-        pfeuser_form = PFEUserForm(request.POST, instance=request.user)
-        aluno_form = AlunoForm(request.POST, instance=request.aluno)
+        #pfeuser_form = PFEUserForm(request.POST, instance=request.user)
+        #aluno_form = AlunoForm(request.POST, instance=request.aluno)
         check_values = request.POST.getlist('selection')
         aluno = Aluno.objects.get(pk=request.user.pk)
 
@@ -71,14 +71,13 @@ def update_profile(request):
         return render(request, 'users/atualizado.html',)
         #return HttpResponse("Dados atualizados<br><br><br>")
     else:
-        pfeuser_form = PFEUserForm(instance=request.user)
-        aluno_form = AlunoForm(instance=request.user)
-    return render(request, 'users/profile.html', {
-        'pfeuser_form': pfeuser_form,
-        'aluno_form': aluno_form
-    })
-
-
+        return render(request, 'users/profile.html',)
+        #pfeuser_form = PFEUserForm(instance=request.user)
+        #aluno_form = AlunoForm(instance=request.user)
+        #return render(request, 'users/profile.html', {
+        #    'pfeuser_form': pfeuser_form,
+        #    'aluno_form': aluno_form
+        #})
 
 ### CODIGO NAO PRONTO ABAIXO ###
 def simple_upload(request):
