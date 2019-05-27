@@ -19,7 +19,7 @@ from django.conf import settings
 from .models import Projeto, Empresa
 from users.models import Aluno, Professor, Funcionario, Opcao
 
-from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, AlunosResource, ProfessoresResource
+from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource, AlunosResource, ProfessoresResource
 
 def email(aluno, message):
     subject = 'PFE : '+aluno.user.username
@@ -205,6 +205,8 @@ def export(request, modelo):
         resource = OrganizacoesResource()
     elif(modelo=="opcoes"):
         resource = OpcoesResource()
+    elif(modelo=="usuarios"):
+        resource = UsuariosResource()
     elif(modelo=="alunos"):
         resource = AlunosResource()
     elif(modelo=="professores"):
@@ -220,9 +222,21 @@ def export(request, modelo):
 @login_required
 @permission_required('user.can_view_professor', login_url='/projetos/')
 def exportXLS(request, modelo):
-    projeto_resource = ProjetoResource()
-    dataset = projeto_resource.export()
+    if(modelo=="projetos"):
+        resource = ProjetosResource()
+    elif(modelo=="organizacoes"):
+        resource = OrganizacoesResource()
+    elif(modelo=="opcoes"):
+        resource = OpcoesResource()
+    elif(modelo=="usuarios"):
+        resource = UsuariosResource()
+    elif(modelo=="alunos"):
+        resource = AlunosResource()
+    elif(modelo=="professores"):
+        resource = ProfessoresResource()
+    else:
+        return HttpResponse("Chamada irregular")
+    dataset = resource.export()
     response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
     response['Content-Disposition'] = 'attachment; filename="'+modelo+'.xls"'
-    return response
     return response
