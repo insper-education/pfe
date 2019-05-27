@@ -20,6 +20,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+ADMINS = [('Luciano Pereira Soares', 'lucianops@insper.edu.br'), ('Luciano Soares', 'lpsoares@gmail.com')]
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -118,3 +120,26 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'pfeinsper@gmail.com'
 EMAIL_HOST_PASSWORD = 'XXXXXXXXX'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join('pfe.log')
+        },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file','console'],
+            'level': 'DEBUG',
+            'propagate': True
+        },
+    },
+}
