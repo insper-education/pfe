@@ -14,7 +14,8 @@
         {% for projeto in projeto_list %} 
         {% if projeto.disponivel %}
         <tr>
-          <td>&nbsp;<input type="checkbox" value="{{projeto.id}}" 
+          <!-- onclick="return false;"  para não permitir trocar -->
+          <td>&nbsp;<input type="checkbox" name="selection" value="{{projeto.id}}" 
             {% if projeto.pk in opcoes_list %}checked{% endif %}>&nbsp;</td>
           <td>
             <a href="{% url 'projeto' projeto.id %}">
