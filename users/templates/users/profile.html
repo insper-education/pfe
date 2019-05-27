@@ -9,6 +9,8 @@
 <form method="post">
     {% csrf_token %}
 
+    <strong>Curso:</strong> {{user.aluno.get_curso_display}} <br><br>
+
     <h3>Áreas de Interesse</h3>
 
     <table>

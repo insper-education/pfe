@@ -21,6 +21,8 @@ from users.models import Aluno, Professor, Funcionario, Opcao
 
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource, AlunosResource, ProfessoresResource
 
+from tablib import Dataset, Databook
+
 def email(aluno, message):
     subject = 'PFE : '+aluno.user.username
     email_from = settings.EMAIL_HOST_USER
@@ -219,7 +221,7 @@ def organizacao(request, login): #acertar isso para pk
     }
     return render(request, 'projetos/organizacao_completo.html', context=context)
 
-# Exporta dados direto para o navegador no formato CSV
+# Exporta dados direto para o navegador nos formatos CSV, XLS e JSON
 @login_required
 @permission_required('user.can_view_professor', login_url='/projetos/')
 def export(request, modelo, formato):
@@ -236,15 +238,57 @@ def export(request, modelo, formato):
     elif(modelo=="professores"):
         resource = ProfessoresResource()
     else:
-        return HttpResponse("Chamada irregular")
+        return HttpResponse("Chamada irregular : Base de dados desconhecida = "+modelo)
     dataset = resource.export()
-    if(formato=="xls"):
-        response = HttpResponse(dataset.xls, content_type='text/csv')
+    if(formato=="xls" or formato=="xlsx"):
+        response = HttpResponse(dataset.xlsx, content_type='application/ms-excel')
+        formato="xlsx"
     elif(formato=="json"):
-        response = HttpResponse(dataset.json, content_type='text/csv')
+        response = HttpResponse(dataset.json, content_type='application/json')
     elif(formato=="csv"):
         response = HttpResponse(dataset.csv, content_type='text/csv')
     else:
         return HttpResponse("Chamada irregular : Formato desconhecido = "+formato)
     response['Content-Disposition'] = 'attachment; filename="'+modelo+'.'+formato+'"'
+    return response
+
+@login_required
+@permission_required('user.can_view_professor', login_url='/projetos/')
+def backup(request, formato):
+    databook = Databook()
+
+    data_projetos = ProjetosResource().export()
+    data_projetos.title = "Projetos"
+    databook.add_sheet(data_projetos)
+
+    data_organizacoes = OrganizacoesResource().export()
+    data_organizacoes.title = "Organizacoes"
+    databook.add_sheet(data_organizacoes)
+
+    data_opcoes = OpcoesResource().export()
+    data_opcoes.title = "Opcoes"
+    databook.add_sheet(data_opcoes)
+
+    data_usuarios = UsuariosResource().export()
+    data_usuarios.title = "Usuarios"
+    databook.add_sheet(data_usuarios)
+
+    data_alunos = AlunosResource().export()
+    data_alunos.title = "Alunos"
+    databook.add_sheet(data_alunos)
+
+    data_professores = ProfessoresResource().export()
+    data_professores.title = "Professores"
+    databook.add_sheet(data_professores)
+
+    if(formato=="xls" or formato=="xlsx"):
+        response = HttpResponse(databook.xlsx, content_type='application/ms-excel')
+        formato="xlsx"
+    elif(formato=="json"):
+        response = HttpResponse(databook.json, content_type='application/json')
+    elif(formato=="csv"):
+        response = HttpResponse(databook.csv, content_type='text/csv')
+    else:
+        return HttpResponse("Chamada irregular : Formato desconhecido = "+formato)
+    response['Content-Disposition'] = 'attachment; filename="backup.'+formato+'"'
     return response

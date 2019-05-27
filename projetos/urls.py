@@ -19,4 +19,5 @@ urlpatterns = [
     path('organizacao/<str:login>', views.organizacao, name='organizacao'),
     path('professor/', views.professor, name='professor'),
     path('export/<str:modelo>/<str:formato>', views.export, name='export'),
+    path('backup/<str:formato>', views.backup, name='backup'),
 ]

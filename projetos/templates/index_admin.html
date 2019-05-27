@@ -9,6 +9,12 @@
 <h3>Exportar dados</h3>
 <table>
     <tr>
+        <td>Tudo</td>
+        <td><b><a href="{% url 'backup' 'csv'%}">CSV</a></b></td>
+        <td><b><a href="{% url 'backup' 'xls'%}">XLS</a></b></td>
+        <td><b><a href="{% url 'backup' 'json'%}">JSON</a></b></td>
+    </tr>
+    <tr>
         <td>Projetos</td>
         <td><a href="{% url 'export' 'projetos' 'csv'%}">CSV</a></td>
         <td><a href="{% url 'export' 'projetos' 'xls'%}">XLS</a></td>
