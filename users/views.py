@@ -80,8 +80,6 @@ def update_profile(request):
 
 
 
-
-
 ### CODIGO NAO PRONTO ABAIXO ###
 def simple_upload(request):
     if request.method == 'POST':

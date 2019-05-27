@@ -5,11 +5,24 @@
 from import_export import resources
 
 from .models import Projeto, Empresa
+from users.models import Aluno, Professor, Funcionario, Opcao
 
-class ProjetoResource(resources.ModelResource):
+class ProjetosResource(resources.ModelResource):
     class Meta:
         model = Projeto
 
-class EmpresaResource(resources.ModelResource):
+class OrganizacoesResource(resources.ModelResource):
     class Meta:
         model = Empresa
+
+class OpcoesResource(resources.ModelResource):
+    class Meta:
+        model = Opcao
+
+class AlunosResource(resources.ModelResource):
+    class Meta:
+        model = Aluno
+
+class ProfessoresResource(resources.ModelResource):
+    class Meta:
+        model = Professor

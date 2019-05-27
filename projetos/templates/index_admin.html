@@ -6,6 +6,32 @@
 {% endcomment %}
 
 {% block content %}
-<a href="{% url 'export' %}"><h5>Exportar Projetos em CSV</h5></a>
-<a href="{% url 'exportxls' %}"><h5>Exportar Projetos em XML</h5></a>
+<h3>Exportar dados</h3>
+<table>
+    <tr>
+        <td>Projetos</td>
+        <td><a href="{% url 'export' 'projetos'%}">CSV</a></td>
+        <td><a href="{% url 'exportxls' 'projetos'%}">XML</a></td>
+    </tr>
+    <tr>
+        <td>Organizacoes</td>
+        <td><a href="{% url 'export' 'organizacoes'%}">CSV</a></td>
+        <td><a href="{% url 'exportxls' 'organizacoes'%}">XML</a></td>
+    </tr>
+    <tr>
+        <td>Opcoes</td>
+        <td><a href="{% url 'export' 'opcoes'%}">CSV</a></td>
+        <td><a href="{% url 'exportxls' 'opcoes'%}">XML</a></td>
+    </tr>
+    <tr>
+        <td>Alunos</td>
+        <td><a href="{% url 'export' 'alunos'%}">CSV</a></td>
+        <td><a href="{% url 'exportxls' 'alunos'%}">XML</a></td>
+    </tr>
+    <tr>
+        <td>Professores</td>
+        <td><a href="{% url 'export' 'professores'%}">CSV</a></td>
+        <td><a href="{% url 'exportxls' 'professores'%}">XML</a></td>
+    </tr>
+</table>
 {% endblock %}

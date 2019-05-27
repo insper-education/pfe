@@ -19,7 +19,7 @@ from django.conf import settings
 from .models import Projeto, Empresa
 from users.models import Aluno, Professor, Funcionario, Opcao
 
-from .resources import ProjetoResource
+from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, AlunosResource, ProfessoresResource
 
 def email(aluno, message):
     subject = 'PFE : '+aluno.user.username
@@ -86,27 +86,6 @@ def projetos(request):
         opcoes_list.append(i.projeto.pk)    
     context= {'projeto_list': projeto_list, 'opcoes_list': opcoes_list, }    
     return render(request, 'projetos/projetos.html', context)
-
-
-# Exporta dados direto para o navegador no formato CSV
-@login_required
-@permission_required('user.can_view_professor', login_url='/projetos/')
-def export(request):
-    projeto_resource = ProjetoResource()
-    dataset = projeto_resource.export()
-    response = HttpResponse(dataset.csv, content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="projetos.csv"'
-    return response
-
-# Exporta dados direto para o navegador no formato XLS
-@login_required
-@permission_required('user.can_view_professor', login_url='/projetos/')
-def exportXLS(request):
-    projeto_resource = ProjetoResource()
-    dataset = projeto_resource.export()
-    response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="projetos.xls"'
-    return response
 
 # 
 @login_required
@@ -211,3 +190,39 @@ def organizacao(request, login): #acertar isso para pk
         'organization': organization,
     }
     return render(request, 'projetos/organizacao_completo.html', context=context)
+
+
+
+
+
+# Exporta dados direto para o navegador no formato CSV
+@login_required
+@permission_required('user.can_view_professor', login_url='/projetos/')
+def export(request, modelo):
+    if(modelo=="projetos"):
+        resource = ProjetosResource()
+    elif(modelo=="organizacoes"):
+        resource = OrganizacoesResource()
+    elif(modelo=="opcoes"):
+        resource = OpcoesResource()
+    elif(modelo=="alunos"):
+        resource = AlunosResource()
+    elif(modelo=="professores"):
+        resource = ProfessoresResource()
+    else:
+        return HttpResponse("Chamada irregular")
+    dataset = resource.export()
+    response = HttpResponse(dataset.csv, content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="'+modelo+'.csv"'
+    return response
+
+# Exporta dados direto para o navegador no formato XLS
+@login_required
+@permission_required('user.can_view_professor', login_url='/projetos/')
+def exportXLS(request, modelo):
+    projeto_resource = ProjetoResource()
+    dataset = projeto_resource.export()
+    response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="'+modelo+'.xls"'
+    return response
+    return response
