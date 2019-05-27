@@ -108,7 +108,7 @@ STATIC_URL = '/static/'
 
 # Redirect to home URL after login (Default redirects to /accounts/profile/)
 LOGIN_REDIRECT_URL = 'index'
-LOGOUT_REDIRECT_URL = 'index'
+#LOGOUT_REDIRECT_URL = 'logout'   #desligar, senão fica recursivo
 
 AUTH_USER_MODEL = 'users.PFEUser'
 

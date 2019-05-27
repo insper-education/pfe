@@ -191,10 +191,6 @@ def organizacao(request, login): #acertar isso para pk
     }
     return render(request, 'projetos/organizacao_completo.html', context=context)
 
-
-
-
-
 # Exporta dados direto para o navegador no formato CSV
 @login_required
 @permission_required('user.can_view_professor', login_url='/projetos/')

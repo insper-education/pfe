@@ -11,17 +11,13 @@ from django.conf.urls.static import static
 from django.views.generic.base import TemplateView # new
 
 urlpatterns = [
-    path('projetos/', include('projetos.urls')),
     path('', RedirectView.as_view(url='/projetos/', permanent=True)),
+    path('projetos/', include('projetos.urls')),
+    path('users/', include('users.urls')), #Transferir tudo para accounts (NO FUTURO)
+    path('users/', include('django.contrib.auth.urls')), #Transferir tudo para accounts (NO FUTURO)
+    path('accounts/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
-#Add Django site authentication urls (for login, logout, password management)
-urlpatterns += [
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('users/', include('users.urls')),
-    path('users/', include('django.contrib.auth.urls')),
-]
 
 #The URLs provided by auth are:
 # accounts/login/ [name='login']
