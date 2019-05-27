@@ -222,7 +222,7 @@ def organizacao(request, login): #acertar isso para pk
 # Exporta dados direto para o navegador no formato CSV
 @login_required
 @permission_required('user.can_view_professor', login_url='/projetos/')
-def export(request, modelo):
+def export(request, modelo, formato):
     if(modelo=="projetos"):
         resource = ProjetosResource()
     elif(modelo=="organizacoes"):
@@ -238,29 +238,13 @@ def export(request, modelo):
     else:
         return HttpResponse("Chamada irregular")
     dataset = resource.export()
-    response = HttpResponse(dataset.csv, content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="'+modelo+'.csv"'
-    return response
-
-# Exporta dados direto para o navegador no formato XLS
-@login_required
-@permission_required('user.can_view_professor', login_url='/projetos/')
-def exportXLS(request, modelo):
-    if(modelo=="projetos"):
-        resource = ProjetosResource()
-    elif(modelo=="organizacoes"):
-        resource = OrganizacoesResource()
-    elif(modelo=="opcoes"):
-        resource = OpcoesResource()
-    elif(modelo=="usuarios"):
-        resource = UsuariosResource()
-    elif(modelo=="alunos"):
-        resource = AlunosResource()
-    elif(modelo=="professores"):
-        resource = ProfessoresResource()
+    if(formato=="xls"):
+        response = HttpResponse(dataset.xls, content_type='text/csv')
+    elif(formato=="json"):
+        response = HttpResponse(dataset.json, content_type='text/csv')
+    elif(formato=="csv"):
+        response = HttpResponse(dataset.csv, content_type='text/csv')
     else:
-        return HttpResponse("Chamada irregular")
-    dataset = resource.export()
-    response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="'+modelo+'.xls"'
+        return HttpResponse("Chamada irregular : Formato desconhecido = "+formato)
+    response['Content-Disposition'] = 'attachment; filename="'+modelo+'.'+formato+'"'
     return response

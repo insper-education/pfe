@@ -18,6 +18,5 @@ urlpatterns = [
     path('organizacoes/', views.organizacoes, name='organizacoes'),
     path('organizacao/<str:login>', views.organizacao, name='organizacao'),
     path('professor/', views.professor, name='professor'),
-    path('export/<str:modelo>', views.export, name='export'),
-    path('exportxls/<str:modelo>', views.exportXLS, name='exportxls'),
+    path('export/<str:modelo>/<str:formato>', views.export, name='export'),
 ]
