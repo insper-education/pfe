@@ -20,4 +20,5 @@ urlpatterns = [
     path('professor/', views.professor, name='professor'),
     path('export/<str:modelo>/<str:formato>', views.export, name='export'),
     path('backup/<str:formato>', views.backup, name='backup'),
+    path('email_backup/', views.email_backup, name='email_backup'),
 ]

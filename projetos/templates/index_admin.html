@@ -10,7 +10,7 @@
 <table>
     <tr>
         <td>Tudo</td>
-        <td><b><a href="{% url 'backup' 'csv'%}">CSV</a></b></td>
+        <td></td>
         <td><b><a href="{% url 'backup' 'xls'%}">XLS</a></b></td>
         <td><b><a href="{% url 'backup' 'json'%}">JSON</a></b></td>
     </tr>
@@ -52,4 +52,6 @@
         <td><a href="{% url 'export' 'professores' 'json'%}">JSON</a></td>
     </tr>
 </table>
+<a href="{% url 'email_backup'%}">Envia e-mail com todos os backups</a>
+<br>
 {% endblock %}

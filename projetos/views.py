@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
 
 from .models import Projeto, Empresa
@@ -252,9 +252,7 @@ def export(request, modelo, formato):
     response['Content-Disposition'] = 'attachment; filename="'+modelo+'.'+formato+'"'
     return response
 
-@login_required
-@permission_required('user.can_view_professor', login_url='/projetos/')
-def backup(request, formato):
+def create_backup():
     databook = Databook()
 
     data_projetos = ProjetosResource().export()
@@ -281,14 +279,32 @@ def backup(request, formato):
     data_professores.title = "Professores"
     databook.add_sheet(data_professores)
 
+    return databook
+
+@login_required
+@permission_required('user.can_view_professor', login_url='/projetos/')
+def backup(request, formato):
+    databook = create_backup()
     if(formato=="xls" or formato=="xlsx"):
         response = HttpResponse(databook.xlsx, content_type='application/ms-excel')
         formato="xlsx"
     elif(formato=="json"):
         response = HttpResponse(databook.json, content_type='application/json')
-    elif(formato=="csv"):
-        response = HttpResponse(databook.csv, content_type='text/csv')
     else:
         return HttpResponse("Chamada irregular : Formato desconhecido = "+formato)
     response['Content-Disposition'] = 'attachment; filename="backup.'+formato+'"'
     return response
+
+@login_required
+@permission_required('user.can_view_professor', login_url='/projetos/')
+def email_backup(request):
+    subject = 'BACKUP PFE'
+    message = "Backup PFE"
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = ['pfeinsper@gmail.com','lpsoares@gmail.com',]
+    mail = EmailMessage(subject, message, email_from, recipient_list)
+    databook = create_backup()
+    mail.attach("backup.xlsx", databook.xlsx, 'application/ms-excel')
+    mail.attach("backup.json", databook.json, 'application/json')
+    mail.send()
+    return HttpResponse("E-mail enviado.")
