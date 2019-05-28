@@ -6,7 +6,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('update/', views.update_profile, name='updatep'),
+    path('areas_interesse/', views.areas_interesse, name='areas_interesse'),
     path('alunos/', views.alunos, name='alunos'),
     path('aluno/<int:pk>', views.aluno, name='aluno'),
+    path('perfil/', views.perfil, name='perfil'),
 ]

@@ -27,7 +27,7 @@
         <img onclick="location.href='{% url 'index'%}'" src="{% static 'images/logoInsper.png' %}" alt="Insper" style="width:59px;height:23px;">
         <b onclick="location.href='{% url 'index'%}'" id="pfelogo">PFE</b> 
         {% if user.is_authenticated %}
-        &nbsp;<u onclick="location.href='{% url 'password_change'%}'" id="username">[{{user.first_name}}&nbsp;{{user.last_name}}]</u>
+        &nbsp;<u onclick="location.href='{% url 'perfil'%}'" id="username">[{{user.first_name}}&nbsp;{{user.last_name}}]</u>
         {% endif %}
       </a>
       

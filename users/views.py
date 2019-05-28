@@ -23,12 +23,17 @@ from django.template import RequestContext
 #from django.http import HttpResponse
 from .resources import AlunoResource
 
+
+def perfil(request):
+    aluno = Aluno.objects.get(pk=request.user.pk)
+    context = {'aluno' : aluno,}
+    return render(request, 'users/profile_detail.html', context=context)
+
+
 @login_required
 @transaction.atomic
-def update_profile(request):
+def areas_interesse(request):
     if request.method == 'POST':
-        #pfeuser_form = PFEUserForm(request.POST, instance=request.user)
-        #aluno_form = AlunoForm(request.POST, instance=request.aluno)
         check_values = request.POST.getlist('selection')
         aluno = Aluno.objects.get(pk=request.user.pk)
 
@@ -56,7 +61,7 @@ def update_profile(request):
         aluno.save()
         return render(request, 'users/atualizado.html',)
     else:
-        return render(request, 'users/profile.html',) #MUDAR PARA ARQUIVO AREAS DE INTERESSE
+        return render(request, 'users/areas_interesse.html',)
 
 
 ### CODIGO NAO PRONTO ABAIXO ###
@@ -82,12 +87,6 @@ class SignUp(generic.CreateView):
 class Usuario(generic.DetailView):
     model = Aluno
 
-def show_profile(request, pk):
-    user = PFEUser.objects.get(pk=pk)
-    user.profile.bio = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit...'
-    user.profile.location = 'Sao Paulo'
-    user.save()
-    return HttpResponse("Tudo certo!")
 
 @login_required
 @permission_required('user.can_view_professor', login_url='/projetos/')

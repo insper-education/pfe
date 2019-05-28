@@ -1,6 +1,24 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 28 de Maio de 2019
+{% endcomment %}
+
+{% block content %}
+
 <h2>{{ user.get_full_name }}</h2>
 <ul>
-  <li>Username: {{ user.username }}</li>
-  <li>Location: {{ user.profile.location }}</li>
-  <li>Birth Date: {{ user.profile.birth_date }}</li>
+  <strong>Usuário:</strong> {{ user.username }}<br>
+  <strong>Curso:</strong> {{user.aluno.get_curso_display}}<br>
+  <!-- <strong>Semestre que cursará o PFE:</strong> {{user.aluno.semestrePFE}}{{user.aluno.anoPFE}}<br> -->
+
+  <br><br>
+  <form action="{% url 'password_change' %}">
+    <input type="submit" value="Atualizar Senha" />
+</form>
+
+  <!-- <li>Location: {{ user.profile.location }}</li> -->
+  <!-- <li>Birth Date: {{ user.profile.birth_date }}</li> -->
 </ul>
+{% endblock %}
