@@ -14,6 +14,7 @@ from django.db import transaction
 
 from .forms import PFEUserCreationForm, PFEUserForm, AlunoForm
 from .models import PFEUser, Aluno, Professor, Funcionario
+from projetos.models import Configuracao
 
 from tablib import Dataset
 
@@ -96,12 +97,14 @@ def alunos(request):
     num_alunos_comp = Aluno.objects.filter(curso__exact='C').count() # Conta alunos computacao
     num_alunos_mxt = Aluno.objects.filter(curso__exact='X').count() # Conta alunos mecatrônica
     num_alunos_mec = Aluno.objects.filter(curso__exact='M').count() # Conta alunos mecânica
+    configuracao = Configuracao.objects.all().first
     context = {
         'alunos_list' : alunos_list,
         'num_alunos': num_alunos,
         'num_alunos_comp': num_alunos_comp,
         'num_alunos_mxt': num_alunos_mxt,
         'num_alunos_mec': num_alunos_mec,
+        'configuracao': configuracao,
     }
     return render(request, 'users/alunos.html', context=context)
 

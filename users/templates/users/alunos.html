@@ -12,7 +12,7 @@
   <script type="text/javascript">
   $(window).load(function(){
     var table = $('table');
-    $('#nome_header, #curso_header')
+    $('#nome_header, #curso_header, #periodo_header',)
         .wrapInner('<span title="ordenar coluna"/>')
         .each(function(){
             var th = $(this),
@@ -47,6 +47,7 @@
               <th class="text-center">C</th>
               <th id="nome_header" class="text-center">Nome do Aluno</th>
               <th id="curso_header" class="text-center">Curso</th>
+              <th id="periodo_header" class="text-center">Periodo</th>
           </tr>
           {% for aluno in alunos_list %} 
           <tr>
@@ -54,8 +55,12 @@
             <td><a href="{% url 'aluno' aluno.id %}">
               {{aluno.user.first_name}}&nbsp;{{aluno.user.last_name}}
             </a></td>
-            <td class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">
+            <!-- class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}" -->
+            <td>
               {{ aluno.get_curso_display }}
+            </td>
+            <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
+              {{aluno.anoPFE}}.{{aluno.semestrePFE}}
             </td>
           </tr>
           {% endfor %}
