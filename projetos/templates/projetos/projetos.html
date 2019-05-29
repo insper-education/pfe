@@ -6,6 +6,11 @@
 {% endcomment %}
 
 {% block content %}
+    {% if configuracao.ano != user.aluno.anoPFE or configuracao.semestre != user.aluno.semestrePFE %}
+       <h2 class="red-bold">Você não está registrado para o PFE em {{configuracao.ano}}.{{configuracao.semestre}}</h2>
+       <h3 class="red-bold">Caso acredite que existe algum erro na informação, por favor contactar a coordenação do PFE</h3>
+       <br>
+    {% endif %}
     <h3>Projetos Disponíveis</h3>
 
     {% if projeto_list %}

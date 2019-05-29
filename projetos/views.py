@@ -16,7 +16,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
 
-from .models import Projeto, Empresa
+from .models import Projeto, Empresa, Configuracao
 from users.models import Aluno, Professor, Funcionario, Opcao
 
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource, AlunosResource, ProfessoresResource
@@ -113,8 +113,13 @@ def projetos(request):
     opcoes = Opcao.objects.filter(aluno=Aluno.objects.get(pk=request.user.pk)) 
     opcoes_list = []
     for i in opcoes:
-        opcoes_list.append(i.projeto.pk)    
-    context= {'projeto_list': projeto_list, 'opcoes_list': opcoes_list, }    
+        opcoes_list.append(i.projeto.pk)
+    configuracao = Configuracao.objects.all().first
+    context= {
+        'projeto_list': projeto_list, 
+        'opcoes_list': opcoes_list,
+        'configuracao': configuracao,
+    }
     return render(request, 'projetos/projetos.html', context)
 
 # 

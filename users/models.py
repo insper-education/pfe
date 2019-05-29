@@ -6,6 +6,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 from projetos.models import Projeto
 
@@ -46,14 +47,13 @@ class Aluno(models.Model):
     )
     user = models.OneToOneField(PFEUser, on_delete=models.CASCADE)
     #bio = models.TextField(max_length=500, blank=True)    
-    #login = models.CharField(primary_key=True, max_length=20)
-    #nome_completo = models.CharField(max_length=80,help_text='Nome completo do aluno')
     curso = models.CharField(max_length=1, choices=TIPOS_CURSO, help_text='Curso Matriculado',)
     opcoes = models.ManyToManyField(Projeto, through='Opcao', help_text='Opcoes de projeto escolhidos')
-    nascimento = models.DateField(null=True, blank=True)
-    local_de_origem = models.CharField(max_length=30, blank=True)
-    #email = models.EmailField(null=True, blank=True)
-    email_pessoal = models.EmailField(null=True, blank=True)
+    nascimento = models.DateField(null=True, blank=True, help_text='Data de nascimento')
+    local_de_origem = models.CharField(max_length=30, blank=True, help_text='Local de nascimento')
+    email_pessoal = models.EmailField(null=True, blank=True, help_text='e-mail pessoal')
+    anoPFE = models.PositiveIntegerField(validators=[MinValueValidator(2018),MaxValueValidator(3018)], help_text='Ano que cursará o PFE')
+    semestrePFE = models.PositiveIntegerField(validators=[MinValueValidator(1),MaxValueValidator(2)], help_text='Semestre que cursará o PFE')
 
     #areas de interesse
     inovacao_social = models.BooleanField(default=False)

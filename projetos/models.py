@@ -5,6 +5,7 @@
 from django.db import models
 from django.urls import reverse  # To generate URLS by reversing URL patterns
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib import admin
 #from users.models import Professor, Funcionario
 
 # RENOMEAR PARA ORGANIZACAO
@@ -43,7 +44,7 @@ class Projeto(models.Model):
     # Methods
     @property
     def procura_de_alunos(self):
-        return 4
+        return 4  # REFAZER (OU ABANDONAR DE VEZ)
 
     def get_absolute_url(self):
         """Returns the url to access a particular instance of MyModelName."""
@@ -51,3 +52,15 @@ class Projeto(models.Model):
 
     def __str__(self):
         return self.titulo
+
+class Configuracao(models.Model):
+    ano = models.PositiveIntegerField(validators=[MinValueValidator(2018),MaxValueValidator(3018)], help_text='Ano que o projeto comeca')
+    semestre = models.PositiveIntegerField(validators=[MinValueValidator(1),MaxValueValidator(2)], help_text='Semestre que o projeto comeca')
+
+class ConfiguracaoAdmin(admin.ModelAdmin):
+  def has_add_permission(self, request):
+    # if there's already an entry, do not allow adding
+    count = Configuracao.objects.all().count()
+    if count == 0:
+      return True
+    return False

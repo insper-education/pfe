@@ -82,3 +82,8 @@ body {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
+.red-bold {
+  color: red;
+  font-weight: bold;
+}

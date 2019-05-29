@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Projeto, Empresa
+from .models import Projeto, Empresa, Configuracao
 
 @admin.register(Projeto)
 class ProjetoAdmin(admin.ModelAdmin):
@@ -17,3 +17,7 @@ class ProjetoAdmin(admin.ModelAdmin):
 @admin.register(Empresa)
 class EmpresaAdmin(admin.ModelAdmin):
     list_display = ('sigla', 'nome_empresa')
+
+@admin.register(Configuracao)
+class ConfiguracaoAdmin(admin.ModelAdmin):
+    list_display = ('ano', 'semestre')

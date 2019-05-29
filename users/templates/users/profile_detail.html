@@ -7,18 +7,14 @@
 
 {% block content %}
 
-<h2>{{ user.get_full_name }}</h2>
-<ul>
-  <strong>Usuário:</strong> {{ user.username }}<br>
-  <strong>Curso:</strong> {{user.aluno.get_curso_display}}<br>
-  <!-- <strong>Semestre que cursará o PFE:</strong> {{user.aluno.semestrePFE}}{{user.aluno.anoPFE}}<br> -->
-
-  <br><br>
-  <form action="{% url 'password_change' %}">
-    <input type="submit" value="Atualizar Senha" />
+<h3>{{ user.get_full_name }}</h3>
+<strong>Usuário:</strong> {{ user.username }}<br>
+<strong>Curso:</strong> {{user.aluno.get_curso_display}}<br>
+<strong>Ano e Semestre de PFE:</strong> {{user.aluno.anoPFE}}.{{user.aluno.semestrePFE}} <small>(ou posterior)</small><br>
+<br><br>
+<form action="{% url 'password_change' %}">
+  <input type="submit" value="Atualizar Senha" />
 </form>
-
-  <!-- <li>Location: {{ user.profile.location }}</li> -->
-  <!-- <li>Birth Date: {{ user.profile.birth_date }}</li> -->
-</ul>
+<!-- <li>Location: {{ user.profile.location }}</li> -->
+<!-- <li>Birth Date: {{ user.profile.birth_date }}</li> -->
 {% endblock %}
