@@ -51,7 +51,15 @@
         <td><a href="{% url 'export' 'professores' 'xls'%}">XLS</a></td>
         <td><a href="{% url 'export' 'professores' 'json'%}">JSON</a></td>
     </tr>
+    <tr>
+        <td>Configuração</td>
+        <td><a href="{% url 'export' 'configuracao' 'csv'%}">CSV</a></td>
+        <td><a href="{% url 'export' 'configuracao' 'xls'%}">XLS</a></td>
+        <td><a href="{% url 'export' 'configuracao' 'json'%}">JSON</a></td>
+    </tr>
 </table>
 <a href="{% url 'email_backup'%}">Envia e-mail com todos os backups</a>
 <br>
+<br>
+<a href=""><h5>Enviar para lista de e-mails</h5></a>
 {% endblock %}

@@ -4,7 +4,7 @@
 
 from import_export import resources
 
-from .models import Projeto, Empresa
+from .models import Projeto, Empresa, Configuracao
 from users.models import PFEUser, Aluno, Professor, Funcionario, Opcao
 
 class ProjetosResource(resources.ModelResource):
@@ -14,6 +14,11 @@ class ProjetosResource(resources.ModelResource):
 class OrganizacoesResource(resources.ModelResource):
     class Meta:
         model = Empresa
+
+class ConfiguracaoResource(resources.ModelResource):
+    class Meta:
+        model = Configuracao
+
 
 
 ## MOVER PARA RESOURCES DE USERS (ACCOUNTS)

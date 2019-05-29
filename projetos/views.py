@@ -19,7 +19,7 @@ from django.conf import settings
 from .models import Projeto, Empresa, Configuracao
 from users.models import Aluno, Professor, Funcionario, Opcao
 
-from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource, AlunosResource, ProfessoresResource
+from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource, AlunosResource, ProfessoresResource, ConfiguracaoResource
 
 from tablib import Dataset, Databook
 
@@ -242,6 +242,8 @@ def export(request, modelo, formato):
         resource = AlunosResource()
     elif(modelo=="professores"):
         resource = ProfessoresResource()
+    elif(modelo=="configuracao"):
+        resource = ConfiguracaoResource()
     else:
         return HttpResponse("Chamada irregular : Base de dados desconhecida = "+modelo)
     dataset = resource.export()
@@ -283,6 +285,10 @@ def create_backup():
     data_professores = ProfessoresResource().export()
     data_professores.title = "Professores"
     databook.add_sheet(data_professores)
+
+    data_configuracao = ConfiguracaoResource().export()
+    data_configuracao.title = "Configuracao"
+    databook.add_sheet(data_configuracao)
 
     return databook
 
