@@ -11,7 +11,6 @@ urlpatterns = [
     path('projetos/', views.projetos, name='projetos'),
     path('projeto/<int:pk>', views.ProjetoDetailView.as_view(), name='projeto'),
     path('completo/<int:pk>', views.completo, name='completo'),
-    path('selecao/', views.selecao, name='selecao'),
     path('histograma/', views.histograma, name='histograma'),
     path('areas/', views.areas, name='areas'),
     path('administracao/', views.administracao, name='administracao'),
@@ -21,4 +20,5 @@ urlpatterns = [
     path('export/<str:modelo>/<str:formato>', views.export, name='export'),
     path('backup/<str:formato>', views.backup, name='backup'),
     path('email_backup/', views.email_backup, name='email_backup'),
+    path('servico/', views.servico, name='servico'),
 ]

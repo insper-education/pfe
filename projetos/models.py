@@ -56,6 +56,7 @@ class Projeto(models.Model):
 class Configuracao(models.Model):
     ano = models.PositiveIntegerField(validators=[MinValueValidator(2018),MaxValueValidator(3018)], help_text='Ano que o projeto comeca')
     semestre = models.PositiveIntegerField(validators=[MinValueValidator(1),MaxValueValidator(2)], help_text='Semestre que o projeto comeca')
+    manutencao = models.BooleanField(default=False)
 
 class ConfiguracaoAdmin(admin.ModelAdmin):
   def has_add_permission(self, request):

@@ -134,8 +134,9 @@ class Opcao(models.Model):
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
     #razao = models.CharField(max_length=200)
     #prioridade = models.PositiveSmallIntegerField(default=0)
+    prioridade = models.PositiveSmallIntegerField()
     class Meta:
-        #ordering = ['prioridade']
+        ordering = ['prioridade']
         permissions = (("altera_professor", "Professor altera valores"), )
     def __str__(self):
         return self.aluno.user.username+" >>> "+self.projeto.titulo

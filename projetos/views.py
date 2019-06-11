@@ -13,6 +13,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
+from django.shortcuts import redirect
+
 from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
 
@@ -22,6 +24,11 @@ from users.models import Aluno, Professor, Funcionario, Opcao
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource, AlunosResource, ProfessoresResource, ConfiguracaoResource
 
 from tablib import Dataset, Databook
+
+from django import template
+register = template.Library()  # para o template
+
+
 
 def email(aluno, message):
     subject = 'PFE : '+aluno.user.username
@@ -36,7 +43,7 @@ def create_message(aluno):
         message += '&nbsp;&nbsp;Suas opções de projeto foram:<br>\n'
         message += '<ul>'
         for o in Opcao.objects.filter(aluno=aluno):
-            message += ("&nbsp;"*4)+"<li>"+o.projeto.titulo+" ("+o.projeto.empresa.nome_empresa+")</li>\n"
+            message += ("&nbsp;"*4)+"<p>"+str(o.prioridade)+" - "+o.projeto.titulo+" ("+o.projeto.empresa.nome_empresa+")</p>\n"
         message += '</ul>'
         message += '<br><br>\n\n'
         message += '&nbsp;&nbsp;Suas áreas de interesse são:<br>\n'
@@ -73,6 +80,8 @@ def create_message(aluno):
 
 @login_required
 def index(request):
+    if Configuracao.objects.all().first().manutencao:
+        return render(request, 'projetos/manutencao.html')
     num_projetos = Projeto.objects.count()  # The 'all()' is implied by default.
     num_visits = request.session.get('num_visits', 0)     # Number of visits to this view, as counted in the session variable.
     request.session['num_visits'] = num_visits + 1
@@ -81,46 +90,61 @@ def index(request):
         'num_visits': num_visits,
     }
     return render(request, 'index_aluno.html', context=context)
+    
 
 class ProjetoDetailView(LoginRequiredMixin, generic.DetailView):
     model = Projeto
 
 @login_required
-def selecao(request):
-    if request.method == 'POST':
-        check_values = request.POST.getlist('selection')
-        if(len(check_values)<5): return HttpResponse("Selecione ao menos 5 projetos")
-        aluno = Aluno.objects.get(pk=request.user.pk)
-        for p in Projeto.objects.all():
-            if str(p.pk) in check_values:
-                if len(aluno.opcoes.filter(pk=p.pk))==0:
-                    Opcao.objects.create(aluno=aluno, projeto=p)
-            else:
-                if len(aluno.opcoes.filter(pk=p.pk))!=0:
-                    Opcao.objects.filter(aluno=aluno, projeto=p).delete()
-        message = create_message(aluno)
-        x = email(aluno,message)
-        if(x!=1): message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
-        context= {'message': message,}    
-        return render(request, 'projetos/submissao.html', context)
-        #return HttpResponse("Dados submetidos<br><br><br>"+message)
-    else:
-        return HttpResponse("Chamada irregular")
-
-@login_required
 def projetos(request):
+    warnings=""
     projeto_list = Projeto.objects.all()
-    opcoes = Opcao.objects.filter(aluno=Aluno.objects.get(pk=request.user.pk)) 
-    opcoes_list = []
-    for i in opcoes:
-        opcoes_list.append(i.projeto.pk)
-    configuracao = Configuracao.objects.all().first
-    context= {
-        'projeto_list': projeto_list, 
-        'opcoes_list': opcoes_list,
-        'configuracao': configuracao,
-    }
-    return render(request, 'projetos/projetos.html', context)
+    if request.method == 'POST':
+        prioridade = {}
+        for p in projeto_list:
+            check_values = request.POST.get('selection'+str(p.pk),0)
+            prioridade[p.pk] = check_values
+        for i in range(1,len(Projeto.objects.all())+1):
+            if i<6 and list(prioridade.values()).count(str(i))==0:
+                warnings += "Nenhum projeto com prioridade "+str(i)+"\n"
+            if list(prioridade.values()).count(str(i))>1:
+                warnings += "Mais de um projeto com prioridade "+str(i)+"\n"
+        if warnings=="":
+            aluno = Aluno.objects.get(pk=request.user.pk)
+            for p in projeto_list:
+                if prioridade[p.pk]!="0":
+                    if len(aluno.opcoes.filter(pk=p.pk))==0:
+                        Opcao.objects.create(aluno=aluno, projeto=p, prioridade=int(prioridade[p.pk]))
+                    elif Opcao.objects.get(aluno=aluno, projeto=p).prioridade != int(prioridade[p.pk]):
+                        opc = Opcao.objects.get(aluno=aluno, projeto=p)
+                        opc.prioridade = int(prioridade[p.pk])
+                        opc.save()
+                else:
+                    if len(aluno.opcoes.filter(pk=p.pk))!=0:
+                        Opcao.objects.filter(aluno=aluno, projeto=p).delete()
+            message = create_message(aluno)
+            x = email(aluno,message)
+            if(x!=1): message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+            context= {'message': message,}    
+            return render(request, 'projetos/submissao.html', context)
+        else:
+            context= {'warnings': warnings,}    
+            return render(request, 'projetos/projetosincompleto.html', context)
+    else:
+        opcoes_list = Opcao.objects.filter(aluno=Aluno.objects.get(pk=request.user.pk)) 
+        # opcoes = Opcao.objects.filter(aluno=Aluno.objects.get(pk=request.user.pk)) 
+        # opcoes_list = []
+        # for i in opcoes:
+        #     opcoes_list.append(i.projeto.pk)
+        configuracao = Configuracao.objects.all().first
+        context= {
+            'projeto_list': projeto_list,
+            'opcoes_list': opcoes_list,
+            # 'opcoes_list': opcoes_list,
+            'configuracao': configuracao,
+            'warnings': warnings,
+        }
+        return render(request, 'projetos/projetos.html', context)
 
 # 
 @login_required
@@ -146,7 +170,6 @@ def administracao(request):
 @permission_required('user.can_view_professor', login_url='/projetos/')
 def professor(request):
     return render(request, 'index_professor.html')
-
 
 @login_required
 @permission_required('user.can_view_professor', login_url='/projetos/')
@@ -319,3 +342,21 @@ def email_backup(request):
     mail.attach("backup.json", databook.json, 'application/json')
     mail.send()
     return HttpResponse("E-mail enviado.")
+
+@login_required
+@permission_required('user.can_view_professor', login_url='/projetos/')
+def servico(request):
+    configuracao = Configuracao.objects.all().first()
+    if request.method == 'POST':
+        check_values = request.POST.getlist('selection')
+        if 'manutencao' in check_values:
+            print("true")
+            configuracao.manutencao = True;
+        else:
+            print("false")
+            configuracao.manutencao = False;
+        configuracao.save()
+        return redirect('/projetos/administracao/')
+    else:
+        context= {'manutencao': configuracao.manutencao,}    
+        return render(request, 'projetos/servico.html', context)

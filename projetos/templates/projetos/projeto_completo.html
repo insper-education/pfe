@@ -18,9 +18,77 @@
   <strong>website:</strong> <a href="{{ projeto.empresa.website }}"> {{ projeto.empresa.website }} </a>
   <hr>
 
-  <h3>Alunos</h3>
+  <h3>Peril de Alunos Desejados para Projeto</h3>
+  <table>
+    <tr>
+        <th>
+            Aluno
+        </th>
+        <th>
+            Computação
+        </th>
+        <th>
+            Mecânica
+        </th>
+        <th>
+            Mecatrônica
+        </th>
+    </tr>
+      <tr>
+        <td>Aluno 1</td>
+        <td><input type="checkbox" name="comp1"></td>
+        <td><input type="checkbox" name="mec1"></td>
+        <td><input type="checkbox" name="mxt1"></td>
+        <!-- <td>&nbsp;<input type="checkbox" name="selection" value="{{projeto.id}}" 
+          {% if projeto.pk in opcoes_list %}checked{% endif %}>&nbsp;</td> -->
+      </tr>
+      <tr>
+      <td>Aluno 2</td>
+      <td><input type="checkbox" name="comp2"></td>
+      <td><input type="checkbox" name="mec2"></td>
+      <td><input type="checkbox" name="mxt2"></td>
+      </tr>
+      <tr>
+          <td>Aluno 3</td>
+          <td><input type="checkbox" name="comp3"></td>
+          <td><input type="checkbox" name="mec3"></td>
+          <td><input type="checkbox" name="mxt3"></td>
+        </tr>
+        <tr>
+          <td>Aluno 4</td>
+          <td><input type="checkbox" name="comp4"></td>
+          <td><input type="checkbox" name="mec4"></td>
+          <td><input type="checkbox" name="mxt4"></td>
+        </tr>
+      </table>
+      <br><hr>
+
+  <h3>Disciplina Relacionadas</h3>
+  <table>
+      <tr>
+          <th>
+              Disciplina
+          </th>
+          <th>
+              Semestre
+          </th>
+      </tr>
+        <tr>
+          <td>Machine Learning</td>
+          <td>eletiva</td>
+        </tr>
+        <tr>
+            <td>Robótica e Automação Industrial</td>
+            <td>eletiva</td>
+          </tr>
+        </table>
+        <br><hr>
+
+  <h3>Alunos Aplicando para o Projeto</h3>
   {% for opcao in projeto.opcao_set.all %}
     <p><strong>Nome:</strong> {{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}] </p>
   {% endfor %}
+
+
 
 {% endblock %}

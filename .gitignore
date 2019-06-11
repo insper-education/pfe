@@ -5,3 +5,4 @@ projetos/migrations/????_*.py
 pfe/settings.py
 .vscode/
 *.log
+.DS_Store
