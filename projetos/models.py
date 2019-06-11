@@ -7,6 +7,7 @@ from django.urls import reverse  # To generate URLS by reversing URL patterns
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib import admin
 #from users.models import Professor, Funcionario
+from datetime import datetime    
 
 # RENOMEAR PARA ORGANIZACAO
 class Empresa(models.Model):
@@ -56,7 +57,8 @@ class Projeto(models.Model):
 class Configuracao(models.Model):
     ano = models.PositiveIntegerField(validators=[MinValueValidator(2018),MaxValueValidator(3018)], help_text='Ano que o projeto comeca')
     semestre = models.PositiveIntegerField(validators=[MinValueValidator(1),MaxValueValidator(2)], help_text='Semestre que o projeto comeca')
-    manutencao = models.BooleanField(default=False)
+    manutencao = models.BooleanField(default=False, help_text='Mostra mensagem de site em manutencao na entrada')
+    prazo = models.DateTimeField(default=datetime.now, blank=True, help_text='Prazo para os alunos se inscreverem nos projetos')
 
 class ConfiguracaoAdmin(admin.ModelAdmin):
   def has_add_permission(self, request):

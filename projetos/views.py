@@ -25,11 +25,6 @@ from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, U
 
 from tablib import Dataset, Databook
 
-from django import template
-register = template.Library()  # para o template
-
-
-
 def email(aluno, message):
     subject = 'PFE : '+aluno.user.username
     email_from = settings.EMAIL_HOST_USER
@@ -85,9 +80,12 @@ def index(request):
     num_projetos = Projeto.objects.count()  # The 'all()' is implied by default.
     num_visits = request.session.get('num_visits', 0)     # Number of visits to this view, as counted in the session variable.
     request.session['num_visits'] = num_visits + 1
+
+    configuracao = Configuracao.objects.all().first
     context = {
         'num_projetos': num_projetos,
         'num_visits': num_visits,
+        'configuracao': configuracao,
     }
     return render(request, 'index_aluno.html', context=context)
     
