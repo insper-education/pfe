@@ -123,8 +123,8 @@
   <hr>
   <h3>Projetos Selecionados</h3>
   {% for opcao in aluno.opcao_set.all %}
-    <a href="{% url 'projeto' opcao.projeto.id %}">
-      <li>{{opcao.projeto.titulo}} ({{opcao.projeto.empresa.nome_empresa}})</li>
+    <a href="{% url 'completo' opcao.projeto.id %}">
+      <p><b>{{opcao.prioridade}}</b> - {{opcao.projeto.titulo}} ({{opcao.projeto.empresa.nome_empresa}})</p>
     </a>
   {% endfor %}
   <p>&nbsp;</p>

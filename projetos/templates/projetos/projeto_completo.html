@@ -87,12 +87,12 @@
   <h3>Alunos Aplicando para o Projeto</h3>
   {% for opcao in projeto.opcao_set.all %}
     {% if configuracao.ano == opcao.aluno.anoPFE and configuracao.semestre == opcao.aluno.semestrePFE %}
-      <p>{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}&nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} } </p>
+    <a href="{% url 'aluno' opcao.aluno.id %}"><p class="green-bold">{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}&nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} } </p></a>
     {% endif %}
   {% endfor %}
   {% for opcao in projeto.opcao_set.all %}
     {% if configuracao.ano != opcao.aluno.anoPFE or configuracao.semestre != opcao.aluno.semestrePFE %}
-      <p class="red-bold">{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}&nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} } </p>
+    <a href="{% url 'aluno' opcao.aluno.id %}"><p class="red-bold">{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}&nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} } </p></a>
     {% endif %}
   {% endfor %}
 
