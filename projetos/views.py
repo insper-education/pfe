@@ -174,9 +174,11 @@ def professor(request):
 def completo(request, pk):
     projeto = Projeto.objects.filter(pk=pk).first()  # acho que tem de ser get
     opcoes = Opcao.objects.filter(projeto=projeto) 
+    configuracao = Configuracao.objects.all().first
     context = {
         'projeto': projeto,
         'opcoes': opcoes,
+        'configuracao': configuracao,
     }
     return render(request, 'projetos/projeto_completo.html', context=context)
 

@@ -86,9 +86,15 @@
 
   <h3>Alunos Aplicando para o Projeto</h3>
   {% for opcao in projeto.opcao_set.all %}
-    <p><strong>Nome:</strong> {{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}] </p>
+    {% if configuracao.ano == opcao.aluno.anoPFE and configuracao.semestre == opcao.aluno.semestrePFE %}
+      <p>{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}&nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} } </p>
+    {% endif %}
   {% endfor %}
-
+  {% for opcao in projeto.opcao_set.all %}
+    {% if configuracao.ano != opcao.aluno.anoPFE or configuracao.semestre != opcao.aluno.semestrePFE %}
+      <p class="red-bold">{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}&nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} } </p>
+    {% endif %}
+  {% endfor %}
 
 
 {% endblock %}
