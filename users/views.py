@@ -91,12 +91,12 @@ class Usuario(generic.DetailView):
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def alunos(request):
-    alunos_list = Aluno.objects.all() # Conta alunos
-    num_alunos = Aluno.objects.all().count() # Conta alunos
-    num_alunos_comp = Aluno.objects.filter(curso__exact='C').count() # Conta alunos computacao
-    num_alunos_mxt = Aluno.objects.filter(curso__exact='X').count() # Conta alunos mecatrônica
-    num_alunos_mec = Aluno.objects.filter(curso__exact='M').count() # Conta alunos mecânica
     configuracao = Configuracao.objects.all().first
+    alunos_list = Aluno.objects.filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0]) # Conta soh alunos
+    num_alunos = alunos_list.count()
+    num_alunos_comp = alunos_list.filter(curso__exact='C').count() # Conta alunos computacao
+    num_alunos_mxt = alunos_list.filter(curso__exact='X').count() # Conta alunos mecatrônica
+    num_alunos_mec = alunos_list.filter(curso__exact='M').count() # Conta alunos mecânica
     context = {
         'alunos_list' : alunos_list,
         'num_alunos': num_alunos,
@@ -106,6 +106,38 @@ def alunos(request):
         'configuracao': configuracao,
     }
     return render(request, 'users/alunos.html', context=context)
+
+@login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
+def alunos_inscrevendo(request):
+    configuracao = Configuracao.objects.all().first()
+    alunos_inscrevendo = Aluno.objects.filter(anoPFE=configuracao.ano).filter(semestrePFE=configuracao.semestre)
+    alunos_list = alunos_inscrevendo.filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0]) # Conta soh alunos
+    num_alunos = alunos_list.count()
+    num_alunos_comp = alunos_list.filter(curso__exact='C').count() # Conta alunos computacao
+    num_alunos_mxt = alunos_list.filter(curso__exact='X').count() # Conta alunos mecatrônica
+    num_alunos_mec = alunos_list.filter(curso__exact='M').count() # Conta alunos mecânica
+
+    inscritos = 0
+    ninscritos = 0
+    for a in alunos_list:
+        if a.opcoes.all().count() >= 5:
+            inscritos+=1
+        else:
+            ninscritos+=1
+
+    context = {
+        'alunos_list' : alunos_list,
+        'num_alunos': num_alunos,
+        'num_alunos_comp': num_alunos_comp,
+        'num_alunos_mxt': num_alunos_mxt,
+        'num_alunos_mec': num_alunos_mec,
+        'configuracao': configuracao,
+        'inscritos': inscritos,
+        'ninscritos': ninscritos,
+    }
+    return render(request, 'users/alunos_inscrevendo.html', context=context)
+
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
