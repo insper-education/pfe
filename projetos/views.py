@@ -146,7 +146,7 @@ def projetos(request):
 
 # 
 @login_required
-@permission_required('user.can_view_professor', login_url='/projetos/')
+@permission_required('users.altera_professor', login_url='/projetos/')
 def histograma(request):
     projeto_list = Projeto.objects.all()
     opcoes_list = []
@@ -160,17 +160,17 @@ def histograma(request):
     return render(request, 'projetos/histograma.html', context)
 
 @login_required
-@permission_required('user.can_view_professor', login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/projetos/')
 def administracao(request):
     return render(request, 'index_admin.html')
 
 @login_required
-@permission_required('user.can_view_professor', login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/projetos/')
 def professor(request):
     return render(request, 'index_professor.html')
 
 @login_required
-@permission_required('user.can_view_professor', login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/projetos/')
 def completo(request, pk):
     projeto = Projeto.objects.filter(pk=pk).first()  # acho que tem de ser get
     opcoes = Opcao.objects.filter(projeto=projeto) 
@@ -183,7 +183,7 @@ def completo(request, pk):
     return render(request, 'projetos/projeto_completo.html', context=context)
 
 @login_required
-@permission_required('user.can_view_professor', login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/projetos/')
 def areas(request):
 
     inovacao_social = Aluno.objects.filter(inovacao_social=True).count()
@@ -234,14 +234,14 @@ def areas(request):
     return render(request, 'projetos/areas.html', context)
 
 @login_required
-@permission_required('user.can_view_professor', login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/projetos/')
 def organizacoes(request):
     organizacoes_list = Empresa.objects.all()
     context= {'organizacoes_list': organizacoes_list,}
     return render(request, 'projetos/organizacoes.html', context)
 
 @login_required
-@permission_required('user.can_view_professor', login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/projetos/')
 def organizacao(request, login): #acertar isso para pk
     organization = Empresa.objects.filter(login=login).first()  # acho que tem de ser get
     context = {
@@ -251,7 +251,7 @@ def organizacao(request, login): #acertar isso para pk
 
 # Exporta dados direto para o navegador nos formatos CSV, XLS e JSON
 @login_required
-@permission_required('user.can_view_professor', login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/projetos/')
 def export(request, modelo, formato):
     if(modelo=="projetos"):
         resource = ProjetosResource()
@@ -316,7 +316,7 @@ def create_backup():
     return databook
 
 @login_required
-@permission_required('user.can_view_professor', login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/projetos/')
 def backup(request, formato):
     databook = create_backup()
     if(formato=="xls" or formato=="xlsx"):
@@ -330,7 +330,7 @@ def backup(request, formato):
     return response
 
 @login_required
-@permission_required('user.can_view_professor', login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/projetos/')
 def email_backup(request):
     subject = 'BACKUP PFE'
     message = "Backup PFE"
@@ -344,7 +344,7 @@ def email_backup(request):
     return HttpResponse("E-mail enviado.")
 
 @login_required
-@permission_required('user.can_view_professor', login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/projetos/')
 def servico(request):
     configuracao = Configuracao.objects.all().first()
     if request.method == 'POST':

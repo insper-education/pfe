@@ -88,9 +88,8 @@ class SignUp(generic.CreateView):
 class Usuario(generic.DetailView):
     model = Aluno
 
-
 @login_required
-@permission_required('user.can_view_professor', login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/projetos/')
 def alunos(request):
     alunos_list = Aluno.objects.all() # Conta alunos
     num_alunos = Aluno.objects.all().count() # Conta alunos
@@ -109,7 +108,7 @@ def alunos(request):
     return render(request, 'users/alunos.html', context=context)
 
 @login_required
-@permission_required('user.can_view_professor', login_url='/projetos/')
+@permission_required('users.altera_professor', login_url='/projetos/')
 def aluno(request, pk):
     aluno = Aluno.objects.filter(pk=pk).first()
     context = {

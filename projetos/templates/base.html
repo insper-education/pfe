@@ -36,11 +36,11 @@
 
           <a href="{% url 'index'%}">Aluno</a>
 
-          {% if perms.user.can_view_professor %}
+          {% if perms.users.altera_professor %}
           <a href="{% url 'professor'%}">Professor</a>
           {% endif %}
 
-          {% if perms.user.can_view_professor %}
+          {% if perms.users.altera_professor %}
           <a href="{% url 'administracao'%}">Administração</a>
           {% endif %}
 
