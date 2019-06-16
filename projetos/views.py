@@ -148,16 +148,54 @@ def projetos(request):
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def histograma(request):
-    projeto_list = Projeto.objects.all()
+    configuracao = Configuracao.objects.all().first()
     opcoes_list = []
+    projeto_list = Projeto.objects.all()
     for p in projeto_list:
         opcoes = Opcao.objects.filter(projeto=p)
-        opcoes_list.append(len(opcoes))
+        opcoes_validas = opcoes.filter(aluno__anoPFE=configuracao.ano).filter(aluno__semestrePFE=configuracao.semestre)
+        count = 0
+        for o in opcoes_validas:
+            if o.prioridade <= 5:
+                count += 1
+        opcoes_list.append(count)
     mylist = zip(projeto_list, opcoes_list)
     mylist = sorted(mylist, key=lambda x: x[1],reverse=True)
-
     context= {'mylist': mylist }    
     return render(request, 'projetos/histograma.html', context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def propor(request):
+    configuracao = Configuracao.objects.all().first()
+    projeto_list = []
+    opcoes_list = []
+    projetos = Projeto.objects.all()
+    if request.method == 'POST':
+        min_group = request.POST.get('min',0)
+        max_group = request.POST.get('max',5)
+        # PRIMEIRO TIRAR ALUNOS ACIMA DO MAX EM UM PROJETO
+        # SEGUNDO TIRAR ALUNOS ABAIXO DO MIN EM UM PROJETO
+        for p in projetos:
+            opcoes = Opcao.objects.filter(projeto=p)
+            opcoes_validas = opcoes.filter(aluno__anoPFE=configuracao.ano).filter(aluno__semestrePFE=configuracao.semestre)
+            opcoes1 = opcoes_validas.filter(prioridade=1)
+            if len(opcoes1) > 0 :
+                projeto_list.append(p)
+                opcoes_list.append(opcoes1)
+        mylist = zip(projeto_list, opcoes_list)
+        context= {'mylist': mylist }
+    else:
+        for p in projetos:
+            opcoes = Opcao.objects.filter(projeto=p)
+            opcoes_validas = opcoes.filter(aluno__anoPFE=configuracao.ano).filter(aluno__semestrePFE=configuracao.semestre)
+            opcoes1 = opcoes_validas.filter(prioridade=1)
+            if len(opcoes1) > 0 :
+                projeto_list.append(p)
+                opcoes_list.append(opcoes1)
+        mylist = zip(projeto_list, opcoes_list)
+        context= {'mylist': mylist }
+    return render(request, 'projetos/propor.html', context)
 
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')

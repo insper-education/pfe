@@ -21,4 +21,5 @@ urlpatterns = [
     path('backup/<str:formato>', views.backup, name='backup'),
     path('email_backup/', views.email_backup, name='email_backup'),
     path('servico/', views.servico, name='servico'),
+    path('propor/', views.propor, name='propor'),
 ]

@@ -93,6 +93,11 @@ body {
   font-weight: bold;
 }
 
+.dark-blue-bold {
+  color: darkblue;
+  font-weight: bold;
+}
+
 p {
   display: block;
   margin-top: 2px;

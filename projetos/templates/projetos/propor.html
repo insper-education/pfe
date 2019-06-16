@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 15 de Junho de 2019
+{% endcomment %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+  <h3>Projetos</li></h3>
+  <br>
+
+  {% if mylist %}
+    <div>      
+      {% for projeto,opcoes in mylist %} 
+        {% if projeto.disponivel %}
+          <a href="{% url 'completo' projeto.id %}" class="dark-blue-bold"> 
+            {{projeto.titulo}} ({{ projeto.empresa.nome_empresa }})
+          </a>
+          {% for opcao in opcoes %} 
+            <li><a href="{% url 'aluno' opcao.aluno.id %}">{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}</a></li>
+          {% endfor %}
+          <br><br>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <hr>
+    <form action="" method="post"> {% csrf_token %}  
+
+      Quantidade mínima no grupo:
+      <input type="number" name="min" value="3"><br>
+    
+      Quantidade máxima no grupo:
+      <input type="number" name="max" value="4"><br>
+
+      <input type="submit" value="Reorganizar Grupos" ><br>
+    
+    </form>
+
+  {% else %}
+      <p>Não existem projetos disponíveis.</p>
+    {% endif %}
+
+{% endblock %}
