@@ -54,6 +54,7 @@ class Aluno(models.Model):
     email_pessoal = models.EmailField(null=True, blank=True, help_text='e-mail pessoal')
     anoPFE = models.PositiveIntegerField(null=True, blank=True, validators=[MinValueValidator(2018),MaxValueValidator(3018)], help_text='Ano que cursará o PFE')
     semestrePFE = models.PositiveIntegerField(null=True, blank=True, validators=[MinValueValidator(1),MaxValueValidator(2)], help_text='Semestre que cursará o PFE')
+    cr = models.FloatField(default=0,help_text='Coeficiente de Rendimento')
 
     #areas de interesse
     inovacao_social = models.BooleanField(default=False)
@@ -165,6 +166,8 @@ class Administrador(models.Model):
     def __str__(self):
         return self.user.username
 
+#class Entidades(models.Model):
+#    pass
 
 @receiver(post_save, sender=PFEUser)
 def create_user_aluno(sender, instance, created, **kwargs):
