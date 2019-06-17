@@ -2,6 +2,8 @@
 # Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 # Data: 15 de Maio de 2019
 
+from django.utils import timezone
+
 from django.shortcuts import render
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.urls import reverse_lazy
@@ -35,6 +37,11 @@ def perfil(request):
 @transaction.atomic
 def areas_interesse(request):
     if request.method == 'POST':
+
+        configuracao = Configuracao.objects.all().first()
+        if timezone.now() > configuracao.prazo:
+           return HttpResponse("Prazo para seleção de áreas vencido!") #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
+
         check_values = request.POST.getlist('selection')
         aluno = Aluno.objects.get(pk=request.user.pk)
 
