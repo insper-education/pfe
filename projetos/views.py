@@ -134,15 +134,10 @@ def projetos(request):
             return render(request, 'projetos/projetosincompleto.html', context)
     else:
         opcoes_list = Opcao.objects.filter(aluno=Aluno.objects.get(pk=request.user.pk)) 
-        # opcoes = Opcao.objects.filter(aluno=Aluno.objects.get(pk=request.user.pk)) 
-        # opcoes_list = []
-        # for i in opcoes:
-        #     opcoes_list.append(i.projeto.pk)
         configuracao = Configuracao.objects.all().first
         context= {
             'projeto_list': projeto_list,
             'opcoes_list': opcoes_list,
-            # 'opcoes_list': opcoes_list,
             'configuracao': configuracao,
             'warnings': warnings,
         }
@@ -157,7 +152,8 @@ def histograma(request):
     projeto_list = Projeto.objects.all()
     for p in projeto_list:
         opcoes = Opcao.objects.filter(projeto=p)
-        opcoes_validas = opcoes.filter(aluno__anoPFE=configuracao.ano).filter(aluno__semestrePFE=configuracao.semestre)
+        opcoes_alunos = opcoes.filter(aluno__user__tipo_de_usuario=1)
+        opcoes_validas = opcoes_alunos.filter(aluno__anoPFE=configuracao.ano).filter(aluno__semestrePFE=configuracao.semestre)
         count = 0
         for o in opcoes_validas:
             if o.prioridade <= 5:
@@ -168,37 +164,163 @@ def histograma(request):
     context= {'mylist': mylist }    
     return render(request, 'projetos/histograma.html', context)
 
+#Busca proxima opcao do aluno
+def getNextOpcao(n,opcoes):
+    n+=1
+    lopcoes = opcoes.filter(prioridade=n)
+    num_total_projetos = Projeto.objects.all().count() # Depois filtrar melhor
+    while (len(lopcoes)==0) and (n<=num_total_projetos):
+        n+=1
+        lopcoes = opcoes.filter(prioridade=n)
+    if len(lopcoes)>0:
+        return n
+    else:
+        return 0
+
+#Pega a opcao de preferencia do aluno se possivel
+def getOpcao(n,opcoes, min_group, max_group, projetos_ajustados):
+    configuracao = Configuracao.objects.all().first()
+    opcao = opcoes.get(prioridade=n)
+    while True:
+        opcoesp = Opcao.objects.filter(projeto=opcao.projeto)
+        opcoesp_alunos = opcoesp.filter(aluno__user__tipo_de_usuario=1)
+        opcoesp_validas = opcoesp_alunos.filter(aluno__anoPFE=configuracao.ano).filter(aluno__semestrePFE=configuracao.semestre)
+        if len(opcoesp_validas) >= min_group: #Verifica se o projeto tem numero minimo de alunos aplicando
+            # checa se alunos no projeto ja tem CR maior dos que ja estao no momento no projeto
+            crh = 0  
+            for ov in projetos_ajustados[opcao.projeto]:
+                if ov.aluno.cr > opcao.aluno.cr:
+                    crh += 1 #conta cada aluno com cr maior que o aluno sendo alocado
+            if crh < max_group:
+                break #se tudo certo retorna esse projeto mesmo
+        # Nao achou tentando outra opcao
+        nx = getNextOpcao(n,opcoes)
+        if(nx!=0):
+            print("outra opcao")
+            opcao = opcoes.get(prioridade=nx)
+            break
+        else:  # caso nao encontre mais nenhuma opcao valida
+            return None
+    return opcao
+
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def propor(request):
+    ############################################
+    ## COLOCAR ESSE VALOR ACESSIVEL NO SISTEMA #
+    ############################################
+    pref_pri_cr = 0.0  # Ficar longe da prioridade tem um custo de 5% na selecao do projeto
+
     configuracao = Configuracao.objects.all().first()
     projeto_list = []
     opcoes_list = []
     projetos = Projeto.objects.all()
     if request.method == 'POST':
-        min_group = request.POST.get('min',0)
-        max_group = request.POST.get('max',5)
-        # PRIMEIRO TIRAR ALUNOS ACIMA DO MAX EM UM PROJETO
-        # SEGUNDO TIRAR ALUNOS ABAIXO DO MIN EM UM PROJETO
+        min_group = int(request.POST.get('min',0))
+        max_group = int(request.POST.get('max',5))
+        projetos_ajustados = {}
+        alunos = Aluno.objects.filter(user__tipo_de_usuario=1).filter(anoPFE=configuracao.ano).filter(semestrePFE=configuracao.semestre)
+        
+        #Checa se o CR de todos os alunos esta coreto
+        for aluno in alunos:
+            if(aluno.cr < 5.0):
+                return HttpResponse("Aluno: "+aluno.user.first_name+" "+aluno.user.last_name+" ("+aluno.user.username+') com CR = '+str(aluno.cr))
+
+        #Cria Lista para todos os projetos
         for p in projetos:
-            opcoes = Opcao.objects.filter(projeto=p)
-            opcoes_validas = opcoes.filter(aluno__anoPFE=configuracao.ano).filter(aluno__semestrePFE=configuracao.semestre)
-            opcoes1 = opcoes_validas.filter(prioridade=1)
-            if len(opcoes1) > 0 :
-                projeto_list.append(p)
-                opcoes_list.append(opcoes1)
+            projetos_ajustados[p]=[]
+
+        #Posiciona os alunos nas suas primeiras opcoes (supondo projeto permitir)
+        for aluno in alunos:
+            opcoes = Opcao.objects.filter(aluno=aluno)
+            if len(opcoes) >= 5: # checa se aluno preencheu formulario
+                opcoes1 = getOpcao(1,opcoes,min_group,max_group,projetos_ajustados) #busca nas opcoes do aluno
+                projetos_ajustados[opcoes1.projeto].append(opcoes1)
+        
+        #Posiciona os alunos nas suas melhores opcoes sem estourar o tamanho do grupo
+        balanceado = False
+        count = 200
+        menor_grupo=1 # usado para elimnar primeiro grupos de 1, depois de 2, etc
+        while (not(balanceado)) and (count>0):
+            balanceado = True
+            
+            balanceado_max = False
+            # Removendo alunos de grupos superlotados
+            while (not(balanceado_max)) and (count>0):
+                count -= 1 # para nao correr o risco de um loop infinito
+                balanceado_max = True
+                for pr, ops in projetos_ajustados.items():
+                    if len(ops) > max_group: # Checa se projeto esta superlotado
+                        remove_opcao = None
+                        for o in range(len(ops)):
+                            if(ops[o].prioridade < 5): #Nao move aluno para prioridade menor que 5 (REVER)
+                                if(remove_opcao is None):
+                                    remove_opcao = ops[o]
+                                elif( (ops[o].aluno.cr * (1-((ops[o].prioridade-1)*pref_pri_cr)))  <  (remove_opcao.aluno.cr * (1-((remove_opcao.prioridade-1)*pref_pri_cr) ) ) ):
+                                    remove_opcao = ops[o]
+                        if remove_opcao is not None:
+                            opcoes = Opcao.objects.filter(aluno=remove_opcao.aluno)
+                            no = getNextOpcao(remove_opcao.prioridade,opcoes)
+                            if no != 0:
+                                op2 = getOpcao(no,opcoes,min_group,max_group,projetos_ajustados) #busca nas opcoes do aluno
+                                if op2 != None:
+                                    balanceado_max = False
+                                    balanceado = False
+                                    menor_grupo=1
+                                    projetos_ajustados[pr].remove(remove_opcao)
+                                    projetos_ajustados[op2.projeto].append(op2)
+                                    #print("Movendo(a) "+remove_opcao.aluno.user.first_name.lower()+" (DE): "+pr.titulo+" (PARA):"+op2.projeto.titulo)
+            
+            # Realocando alunos de grupos muito pequenos (um aluno por vez)
+            for pr, ops in projetos_ajustados.items():
+                remove_opcao = None
+                remove_projeto = None
+                if (len(ops) > 0) and (len(ops) <= menor_grupo ):
+                    for o in range(len(ops)):
+                        if(remove_opcao is None):
+                            if(ops[o].prioridade < 5):  # So para não tirar aluno com prioridade maior que 5
+                                remove_opcao = ops[o]
+                                remove_projeto = pr
+                        elif(ops[o].aluno.cr < remove_opcao.aluno.cr) and (ops[o].prioridade < 5):
+                            remove_opcao = ops[o]
+                            remove_projeto = pr
+                if remove_opcao is not None:
+                    opcoes = Opcao.objects.filter(aluno=remove_opcao.aluno)
+                    no = getNextOpcao(remove_opcao.prioridade,opcoes)
+                    if no != 0:
+                        op2 = getOpcao(no,opcoes,min_group,max_group,projetos_ajustados) #busca nas opcoes do aluno
+                        if op2 != None:
+                            balanceado = False
+                            menor_grupo=1
+                            projetos_ajustados[remove_projeto].remove(remove_opcao)
+                            projetos_ajustados[op2.projeto].append(op2)
+                            #print("Movendo(b) "+remove_opcao.aluno.user.first_name.lower()+" (DE): "+remove_projeto.titulo+" (PARA):"+op2.projeto.titulo)
+
+            if (menor_grupo<min_group) and balanceado:  # caso todos os grupos com menor_grupo ja foram
+                menor_grupo += 1
+                balanceado = False
+
+
+        #Cria lista para enviar para o template html
+        for pr, ops in projetos_ajustados.items():
+            if len(ops) > 0 :
+                projeto_list.append(pr)
+                opcoes_list.append(ops)
         mylist = zip(projeto_list, opcoes_list)
-        context= {'mylist': mylist }
     else:
         for p in projetos:
             opcoes = Opcao.objects.filter(projeto=p)
-            opcoes_validas = opcoes.filter(aluno__anoPFE=configuracao.ano).filter(aluno__semestrePFE=configuracao.semestre)
+            opcoes_alunos = opcoes.filter(aluno__user__tipo_de_usuario=1)
+            opcoes_validas = opcoes_alunos.filter(aluno__anoPFE=configuracao.ano).filter(aluno__semestrePFE=configuracao.semestre)
             opcoes1 = opcoes_validas.filter(prioridade=1)
             if len(opcoes1) > 0 :
                 projeto_list.append(p)
                 opcoes_list.append(opcoes1)
         mylist = zip(projeto_list, opcoes_list)
-        context= {'mylist': mylist }
+    context= {
+        'mylist': mylist,
+        'length': len(projeto_list),
+    }
     return render(request, 'projetos/propor.html', context)
 
 @login_required
