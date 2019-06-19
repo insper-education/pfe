@@ -524,3 +524,33 @@ def servico(request):
     else:
         context= {'manutencao': configuracao.manutencao,}    
         return render(request, 'projetos/servico.html', context)
+
+# Gera relatorios
+@login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
+def relatorio(request, modelo, formato):
+    configuracao = Configuracao.objects.all().first()
+    if(formato=="html" or formato=="HTML"):
+        pass
+    elif(formato=="pdf" or formato=="PDF"):
+        pass
+    
+    if(modelo=="projetos"):
+        context = {
+            'projetos': Projeto.objects.all(),
+            #'opcoes': Opcao.objects.all(),
+            'configuracao': configuracao,
+        }
+        return render(request, 'projetos/relatorio_projetos.html', context)
+    elif(modelo=="alunos"):
+        context = {
+            'alunos': Aluno.objects.all().filter(user__tipo_de_usuario=1).filter(anoPFE=configuracao.ano).filter(semestrePFE=configuracao.semestre),
+            #'opcoes': Opcao.objects.all(),
+            'configuracao': configuracao,
+        }
+        return render(request, 'projetos/relatorio_alunos.html', context)
+    else:
+        return HttpResponse("Chamada irregular : Base de dados desconhecida = "+modelo)
+
+
+    return HttpResponse("Chamada irregular : Formato desconhecido = "+formato)

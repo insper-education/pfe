@@ -61,6 +61,21 @@
 <a href="{% url 'email_backup'%}">Envia e-mail com todos os backups</a>
 <br>
 <br>
+<h3>Relatórios</h3>
+<table>
+    <tr>
+        <td>Projetos</td>
+        <td><a href="{% url 'relatorio' 'projetos' 'HTML'%}">HTML</a></td>
+        <td><a href="{% url 'relatorio' 'projetos' 'PDF'%}">PDF</a></td>
+    </tr>
+    <tr>
+        <td>Alunos</td>
+        <td><a href="{% url 'relatorio' 'alunos' 'HTML'%}">HTML</a></td>
+        <td><a href="{% url 'relatorio' 'alunos' 'PDF'%}">PDF</a></td>
+    </tr>
+</table>
+<br>
+<br>
 <a href=""><h5>Enviar para lista de e-mails</h5></a>
 <a href="{% url 'alunos' %}"><h5>Listagem completa de alunos</h5></a>
 <a href="{% url 'servico' %}"><h5>Habilitar aviso se manutenção</h5></a>
