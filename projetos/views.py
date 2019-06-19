@@ -209,7 +209,7 @@ def propor(request):
     ############################################
     ## COLOCAR ESSE VALOR ACESSIVEL NO SISTEMA #
     ############################################
-    pref_pri_cr = 0.0  # Ficar longe da prioridade tem um custo de 5% na selecao do projeto
+    pref_pri_cr = 0.1  # Ficar longe da prioridade tem um custo de 5% na selecao do projeto
 
     configuracao = Configuracao.objects.all().first()
     projeto_list = []
