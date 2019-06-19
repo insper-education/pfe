@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 18 de Junho de 2019
+{% endcomment %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+    
+    <h3>Projetos Disponíveis - PFE {{configuracao.ano}}.{{configuracao.semestre}}</h3>
+    <br>
+
+    {% if projetos %}
+
+        {% for projeto in projetos %} 
+        {% if projeto.disponivel %}
+
+
+          <h4>Título: {{ projeto.titulo }}</h4>
+          <strong>Descrição:</strong> {{ projeto.descricao|linebreaks }}
+          <strong>Expectativas de resultados/entregas :</strong> {{ projeto.expectativas|linebreaks }}
+          <strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ projeto.areas|linebreaks }}
+          <strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ projeto.recursos|linebreaks }}
+          <hr>
+          <h5>Empresa: {{ projeto.empresa.nome_empresa }}</h5>
+          <strong>endereço:</strong> {{ projeto.empresa.endereco|linebreaks }}
+          <strong>website:</strong> <a href="{{ projeto.empresa.website }}"> {{ projeto.empresa.website }} </a>
+          <p>&nbsp;</p>
+        
+          <hr class="striped-border">
+
+        {% endif %}
+        {% endfor %}
+  
+        {% else %}
+      <p>Não existem projetos disponíveis.</p>
+    {% endif %}
+
+{% endblock %}
