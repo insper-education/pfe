@@ -6,6 +6,12 @@
 {% endcomment %}
 
 {% block head %}
+<style>
+    @page {
+        size: a4 portrait; /*landscape*/
+        margin: 1.5cm  1.5cm  1.5cm  1.5cm; /* top  right bottom left */
+    }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -132,8 +138,7 @@
         
             </table>
       
-          <hr>
-          <h3>Projetos Selecionados</h3>
+          <strong>Projetos Selecionados</strong>
           {% for opcao in aluno.opcao_set.all %}
             <a href="{% url 'completo' opcao.projeto.id %}">
               <p style="margin-top: 0px; margin-bottom: 0px;"><b>{{opcao.prioridade}}</b> - {{opcao.projeto.titulo}} ({{opcao.projeto.empresa.nome_empresa}})</p>
