@@ -539,7 +539,8 @@ def render_to_pdf(template_src, context_dict={}):
     result = BytesIO()
     pdf = pisa.pisaDocument(BytesIO(html.encode("utf-8")), result)
     if not pdf.err:
-        return HttpResponse(result.getvalue(), content_type='application/pdf')
+        return result
+        #return HttpResponse(result.getvalue(), content_type='application/pdf')
     return None
 
 # Gera relatorios
@@ -557,7 +558,7 @@ def relatorio(request, modelo, formato):
             return render(request, 'projetos/relatorio_projetos.html', context)
         elif(formato=="pdf" or formato=="PDF"):
             pdf = render_to_pdf('projetos/relatorio_projetos.html', context)
-            return HttpResponse(pdf, content_type='application/pdf')
+            return HttpResponse(pdf.getvalue(), content_type='application/pdf')
 
     elif(modelo=="alunos"):
         context = {
@@ -568,13 +569,32 @@ def relatorio(request, modelo, formato):
             return render(request, 'projetos/relatorio_alunos.html', context)
         elif(formato=="pdf" or formato=="PDF"):
             pdf = render_to_pdf('projetos/relatorio_alunos.html', context)
-            return HttpResponse(pdf, content_type='application/pdf')
+            return HttpResponse(pdf.getvalue(), content_type='application/pdf')
     else:
         return HttpResponse("Chamada irregular : Base de dados desconhecida = "+modelo)
-
 
     return HttpResponse("Chamada irregular : Formato desconhecido = "+formato)
 
 
 
+@login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
+def relatorio_backup(request):
+    subject = 'RELATÓRIOS PFE'
+    message = "Relatórios PFE"
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = ['pfeinsper@gmail.com','lpsoares@gmail.com',]
+    mail = EmailMessage(subject, message, email_from, recipient_list)
+    configuracao = Configuracao.objects.all().first()
+    context = {
+        'projetos': Projeto.objects.all(),
+        'alunos': Aluno.objects.all().filter(user__tipo_de_usuario=1).filter(anoPFE=configuracao.ano).filter(semestrePFE=configuracao.semestre),
+        'configuracao': configuracao,
+    }
+    pdf_proj = render_to_pdf('projetos/relatorio_projetos.html', context)
+    pdf_alun = render_to_pdf('projetos/relatorio_alunos.html', context)
+    mail.attach("projetos.pdf", pdf_proj.getvalue(), 'application/pdf')
+    mail.attach("alunos.pdf", pdf_alun.getvalue(), 'application/pdf')
+    mail.send()
+    return HttpResponse("E-mail enviado.")
 

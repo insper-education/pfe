@@ -23,5 +23,5 @@ urlpatterns = [
     path('servico/', views.servico, name='servico'),
     path('propor/', views.propor, name='propor'),
     path('relatorio/<str:modelo>/<str:formato>', views.relatorio, name='relatorio'),
-
+    path('relatorio_backup/', views.relatorio_backup, name='relatorio_backup'),
 ]
