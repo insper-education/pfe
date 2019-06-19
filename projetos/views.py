@@ -26,6 +26,13 @@ from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, U
 
 from tablib import Dataset, Databook
 
+# Para gerar o PDF
+from io import BytesIO
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+
+
 def email(aluno, message):
     subject = 'PFE : '+aluno.user.username
     email_from = settings.EMAIL_HOST_USER
@@ -525,32 +532,49 @@ def servico(request):
         context= {'manutencao': configuracao.manutencao,}    
         return render(request, 'projetos/servico.html', context)
 
+
+def render_to_pdf(template_src, context_dict={}):
+    template = get_template(template_src)
+    html  = template.render(context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("utf-8")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
+
 # Gera relatorios
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def relatorio(request, modelo, formato):
     configuracao = Configuracao.objects.all().first()
-    if(formato=="html" or formato=="HTML"):
-        pass
-    elif(formato=="pdf" or formato=="PDF"):
-        pass
     
     if(modelo=="projetos"):
         context = {
             'projetos': Projeto.objects.all(),
-            #'opcoes': Opcao.objects.all(),
             'configuracao': configuracao,
         }
-        return render(request, 'projetos/relatorio_projetos.html', context)
+        if(formato=="html" or formato=="HTML"):
+            return render(request, 'projetos/relatorio_projetos.html', context)
+        elif(formato=="pdf" or formato=="PDF"):
+            pdf = render_to_pdf('projetos/relatorio_projetos.html', context)
+            return HttpResponse(pdf, content_type='application/pdf')
+
     elif(modelo=="alunos"):
         context = {
             'alunos': Aluno.objects.all().filter(user__tipo_de_usuario=1).filter(anoPFE=configuracao.ano).filter(semestrePFE=configuracao.semestre),
-            #'opcoes': Opcao.objects.all(),
             'configuracao': configuracao,
         }
-        return render(request, 'projetos/relatorio_alunos.html', context)
+        if(formato=="html" or formato=="HTML"):
+            return render(request, 'projetos/relatorio_alunos.html', context)
+        elif(formato=="pdf" or formato=="PDF"):
+            pdf = render_to_pdf('projetos/relatorio_alunos.html', context)
+            return HttpResponse(pdf, content_type='application/pdf')
     else:
         return HttpResponse("Chamada irregular : Base de dados desconhecida = "+modelo)
 
 
     return HttpResponse("Chamada irregular : Formato desconhecido = "+formato)
+
+
+
+

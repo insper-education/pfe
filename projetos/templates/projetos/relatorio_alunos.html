@@ -16,131 +16,129 @@
     {% if alunos %}
 
         {% for aluno in alunos %} 
+        <div><pdf:nextpage /></div>
 
         <h3>Aluno: {{aluno.user.first_name}}&nbsp;{{aluno.user.last_name}}</h3>
         <strong>Curso:</strong> {{aluno.get_curso_display}} <br>
-        <strong>CR:</strong> {{aluno.cr}} <br>
+        <strong>CR:</strong> {{aluno.cr}} <br><br>
         <strong>Áreas de interesse selecionadas:</strong>
       
         <table>
-      
-            <tr><td>&nbsp;<input type="checkbox"  onclick="return false;"
-                    {% if aluno.inovacao_social %}checked{% endif %}>&nbsp;
+            <tr><td style="width:12px">
+                    {% if aluno.inovacao_social %}&#10003;{% endif %}
                 </td>
                 <td>Inovação Social</td>
             </tr>
-            <tr><td>&nbsp;<input type="checkbox"  onclick="return false;" 
-                    {% if aluno.ciencia_dos_dados %}checked{% endif %}>&nbsp;
+            <tr><td>
+                    {% if aluno.ciencia_dos_dados %}&#10003;{% endif %}
                 </td>
                 <td>Ciência dos Dados</td>
             </tr>
-            <tr><td>&nbsp;<input type="checkbox"  onclick="return false;"
-                    {% if aluno.modelagem_3D %}checked{% endif %}>&nbsp;
+            <tr><td>
+                    {% if aluno.modelagem_3D %}&#10003;{% endif %}
                 </td>
                 <td>Modelagem 3D</td>
             </tr>      
-            <tr><td>&nbsp;<input type="checkbox"  onclick="return false;"
-                    {% if aluno.manufatura %}checked{% endif %}>&nbsp;
+            <tr><td>
+                    {% if aluno.manufatura %}&#10003;{% endif %}
                 </td>
                 <td>Manufatura</td>
             </tr>
-            <tr><td>&nbsp;<input type="checkbox"  onclick="return false;"
-                    {% if aluno.resistencia_dos_materiais %}checked{% endif %}>&nbsp;
+            <tr><td>
+                    {% if aluno.resistencia_dos_materiais %}&#10003;{% endif %}
                 </td>
                 <td>Resistência dos Materiais</td>
             </tr>
-            <tr><td>&nbsp;<input type="checkbox"  onclick="return false;"
-                    {% if aluno.modelagem_de_sistemas %}checked{% endif %}>&nbsp;
+            <tr><td>
+                    {% if aluno.modelagem_de_sistemas %}&#10003;{% endif %}
                 </td>
                 <td>Modelagem de Sistemas</td>
             </tr>
-            <tr><td>&nbsp;<input type="checkbox"  onclick="return false;"
-                    {% if aluno.controle_e_automacao %}checked{% endif %}>&nbsp;
+            <tr><td>
+                    {% if aluno.controle_e_automacao %}&#10003;{% endif %}
                 </td>
                 <td>Controle e Automação</td>
             </tr>      
-            <tr><td>&nbsp;<input type="checkbox"  onclick="return false;"
-                    {% if aluno.termodinamica %}checked{% endif %}>&nbsp;
+            <tr><td>
+                    {% if aluno.termodinamica %}&#10003;{% endif %}
                 </td>
                 <td>Termodinâmica</td>
             </tr>
-            <tr><td>&nbsp;<input type="checkbox"  onclick="return false;"
-                    {% if aluno.fluidodinamica %}checked{% endif %}>&nbsp;
+            <tr><td>
+                    {% if aluno.fluidodinamica %}&#10003;{% endif %}
                 </td>
                 <td>Fluidodinâmica</td>
             </tr>
-            <tr><td>&nbsp;<input type="checkbox"  onclick="return false;"
-                    {% if aluno.eletronica_digital %}checked{% endif %}>&nbsp;
+            <tr><td>
+                    {% if aluno.eletronica_digital %}&#10003;{% endif %}
                 </td>
                 <td>Eletrônica Digital</td>
             </tr>
-            <tr><td>&nbsp;<input type="checkbox"  onclick="return false;"
-                    {% if aluno.programacao %}checked{% endif %}>&nbsp;
+            <tr><td>
+                    {% if aluno.programacao %}&#10003;{% endif %}
                 </td>
                 <td>Programação</td>
             </tr>      
-            <tr><td>&nbsp;<input type="checkbox"  onclick="return false;"
-                    {% if aluno.inteligencia_artificial %}checked{% endif %}>&nbsp;
+            <tr><td>
+                    {% if aluno.inteligencia_artificial %}&#10003;{% endif %}
                 </td>
                 <td>Inteligência Artificial</td>
             </tr>
-            <tr><td>&nbsp;<input type="checkbox"  onclick="return false;"
-                    {% if aluno.computacao_em_nuvem %}checked{% endif %}>&nbsp;
+            <tr><td>
+                    {% if aluno.computacao_em_nuvem %}&#10003;{% endif %}
                 </td>
                 <td>Computação em Nuvem</td>
             </tr>
-            <tr><td>&nbsp;<input type="checkbox"  onclick="return false;"
-                    {% if aluno.banco_de_dados %}checked{% endif %}>&nbsp;
+            <tr><td>
+                    {% if aluno.banco_de_dados %}&#10003;{% endif %}
                 </td>
                 <td>Banco de Dados</td>
             </tr>
-            <tr><td>&nbsp;<input type="checkbox"  onclick="return false;"
-                    {% if aluno.visao_computacional %}checked{% endif %}>&nbsp;
+            <tr><td>
+                    {% if aluno.visao_computacional %}&#10003;{% endif %}
                 </td>
                 <td>Visão Computacional</td>
             </tr>      
-            <tr><td>&nbsp;<input type="checkbox"  onclick="return false;"
-                    {% if aluno.computacao_de_alto_desempenho %}checked{% endif %}>&nbsp;
+            <tr><td>
+                    {% if aluno.computacao_de_alto_desempenho %}&#10003;{% endif %}
                 </td>
                 <td>Computação de Alto Desempenho</td>
             </tr>
-            <tr><td>&nbsp;<input type="checkbox"  onclick="return false;"
-                    {% if aluno.robotica %}checked{% endif %}>&nbsp;
+            <tr><td>
+                    {% if aluno.robotica %}&#10003;{% endif %}
                 </td>
                 <td>Robótica</td>
             </tr>
-            <tr><td>&nbsp;<input type="checkbox"  onclick="return false;"
-                    {% if aluno.realidade_virtual_aumentada %}checked{% endif %}>&nbsp;
+            <tr><td>
+                    {% if aluno.realidade_virtual_aumentada %}&#10003;{% endif %}
                 </td>
                 <td>Realidade Virtual/Aumentada</td>
             </tr>
-            <tr><td>&nbsp;<input type="checkbox"  onclick="return false;"
-                    {% if aluno.protocolos_de_comunicacao %}checked{% endif %}>&nbsp;
+            <tr><td>
+                    {% if aluno.protocolos_de_comunicacao %}&#10003;{% endif %}
                 </td>
                 <td>Protocolos de Comunicação</td>
             </tr>      
-            <tr><td>&nbsp;<input type="checkbox"  onclick="return false;"
-                    {% if aluno.eficiencia_energetica %}checked{% endif %}>&nbsp;
+            <tr><td>
+                    {% if aluno.eficiencia_energetica %}&#10003;{% endif %}
                 </td>
                 <td>Eficiência Energética</td>
             </tr>
-            <tr><td>&nbsp;<input type="checkbox"  onclick="return false;"
-                    {% if aluno.administracao_economia_financas %}checked{% endif %}>&nbsp;
+            <tr><td>
+                    {% if aluno.administracao_economia_financas %}&#10003;{% endif %}
                 </td>
                 <td>Administração, Economia e Finanças</td>
             </tr>
         
             </table>
       
-        <hr>
-        <h3>Projetos Selecionados</h3>
-        {% for opcao in aluno.opcao_set.all %}
-          <a href="{% url 'completo' opcao.projeto.id %}">
-            <p><b>{{opcao.prioridade}}</b> - {{opcao.projeto.titulo}} ({{opcao.projeto.empresa.nome_empresa}})</p>
-          </a>
-        {% endfor %}
-        <p>&nbsp;</p>
-        
+          <hr>
+          <h3>Projetos Selecionados</h3>
+          {% for opcao in aluno.opcao_set.all %}
+            <a href="{% url 'completo' opcao.projeto.id %}">
+              <p style="margin-top: 0px; margin-bottom: 0px;"><b>{{opcao.prioridade}}</b> - {{opcao.projeto.titulo}} ({{opcao.projeto.empresa.nome_empresa}})</p>
+            </a>
+          {% endfor %}
           <hr class="striped-border">
 
         {% endfor %}
