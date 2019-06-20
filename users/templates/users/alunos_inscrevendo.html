@@ -74,7 +74,15 @@
             <td class="{% if aluno.opcao_set.all.count >= 5 %}text-success{% else %}text-danger{% endif %}">&#9673; </td>
             <td><a href="{% url 'aluno' aluno.id %}" data-toggle="tooltip" data-html="true" animation="true" title="
               {% for opcao in aluno.opcao_set.all %}
-                <b>#{{opcao.prioridade}}:</b> <u>{{opcao.projeto.titulo}} ({{opcao.projeto.empresa.nome_empresa}})</u><br>              
+                <b>#{{opcao.prioridade}}:</b>
+                  {% if aluno.alocado == opcao.projeto %}
+                    <u>
+                  {% endif %}
+                {{opcao.projeto.titulo}} ({{opcao.projeto.empresa.nome_empresa}})
+                  {% if aluno.alocado == opcao.projeto %}
+                    </u>
+                  {% endif %}
+                <br>
               {% endfor %}
             ">
               {{aluno.user.first_name}}&nbsp;{{aluno.user.last_name}}

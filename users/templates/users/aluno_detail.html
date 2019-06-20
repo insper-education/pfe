@@ -119,15 +119,31 @@
           <td>Administração, Economia e Finanças</td>
       </tr>
   
-      </table>
+    </table>
 
+    {% if aluno.alocado %}
+        <hr>
+        <h3>Projeto Alocado</h3>
+        <a href="{% url 'completo' aluno.alocado.id %}">
+        {{ aluno.alocado.titulo }} ({{aluno.alocado.empresa.nome_empresa}})
+        </a>
+    {% endif %}
+
+    {% if aluno.opcao_set.all %}
   <hr>
   <h3>Projetos Selecionados</h3>
   {% for opcao in aluno.opcao_set.all %}
     <a href="{% url 'completo' opcao.projeto.id %}">
+      {% if aluno.alocado == opcao.projeto %}
+        <u>
+      {% endif %}
       <p><b>{{opcao.prioridade}}</b> - {{opcao.projeto.titulo}} ({{opcao.projeto.empresa.nome_empresa}})</p>
+      {% if aluno.alocado == opcao.projeto %}
+        </u>
+      {% endif %}
     </a>
   {% endfor %}
+  {% endif %}
   <p>&nbsp;</p>
   <p>&nbsp;</p>
 
