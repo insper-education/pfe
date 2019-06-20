@@ -18,7 +18,7 @@
   <strong>website:</strong> <a href="{{ projeto.empresa.website }}"> {{ projeto.empresa.website }} </a>
   <hr>
 
-  <h3>Peril de Alunos Desejados para Projeto</h3>
+  <h3>Perfil de Alunos Desejados para Projeto</h3>
   <table>
     <tr>
         <th>
@@ -87,7 +87,7 @@
   <h3>Alunos Aplicando para o Projeto</h3>
   {% for opcao in projeto.opcao_set.all %}
     {% if configuracao.ano == opcao.aluno.anoPFE and configuracao.semestre == opcao.aluno.semestrePFE %}
-    <a href="{% url 'aluno' opcao.aluno.id %}"><p class="green-bold">{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}&nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} } </p></a>
+    <a href="{% url 'aluno' opcao.aluno.id %}"><p class="{% if opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}">{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}&nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} } </p></a>
     {% endif %}
   {% endfor %}
   {% for opcao in projeto.opcao_set.all %}

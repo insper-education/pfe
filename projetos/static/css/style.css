@@ -94,6 +94,11 @@ body {
   font-weight: bold;
 }
 
+.yellow-bold {
+  color: olive;
+  font-weight: bold;
+}
+
 .dark-blue-bold {
   color: darkblue;
   font-weight: bold;
@@ -114,3 +119,4 @@ p {
   margin-top: 2%;
   margin-bottom: 2%;
 }
+

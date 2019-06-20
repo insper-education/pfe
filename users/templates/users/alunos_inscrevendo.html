@@ -34,13 +34,34 @@
         });
       });
   </script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+  <script>
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();   
+    });
+  </script>
+
+<style>
+.tooltip-inner {
+  max-width: 100% !important;
+  text-align: left;
+}
+    
+</style>
+
 {% endblock %}
 
 {% block content %}
     <h3>Alunos se Inscrevendo</h3>
 
     <strong>Número Total de Alunos se Inscrevendo:</strong> {{ num_alunos }}
-    
+
     {% if alunos_list %}
         <table>
           <tr>
@@ -51,7 +72,11 @@
           {% for aluno in alunos_list %} 
           <tr>
             <td class="{% if aluno.opcao_set.all.count >= 5 %}text-success{% else %}text-danger{% endif %}">&#9673; </td>
-            <td><a href="{% url 'aluno' aluno.id %}">
+            <td><a href="{% url 'aluno' aluno.id %}" data-toggle="tooltip" data-html="true" animation="true" title="
+              {% for opcao in aluno.opcao_set.all %}
+                <b>#{{opcao.prioridade}}:</b> <u>{{opcao.projeto.titulo}} ({{opcao.projeto.empresa.nome_empresa}})</u><br>              
+              {% endfor %}
+            ">
               {{aluno.user.first_name}}&nbsp;{{aluno.user.last_name}}
             </a></td>
             <!-- class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}" -->
@@ -69,8 +94,8 @@
     <text class="text-success">&#9673;</text>Aluno já selecionou projetos [{{inscritos}}]<br>
     <text class="text-danger">&#9673;</text>Aluno ainda precisa selecionar projetos [{{ninscritos}}]<br>
     <br>
-    <strong>Quantidad Total de Alunos de Computação:</strong> {{ num_alunos_comp }} <br>
-    <strong>Quantidad Total de Alunos de Mecatrônica:</strong> {{ num_alunos_mxt }} <br>
-    <strong>Quantidad Total de Alunos de Mecânica:</strong> {{ num_alunos_mec }} <br>
+    <strong>Quantidade Total de Alunos de Computação:</strong> {{ num_alunos_comp }} <br>
+    <strong>Quantidade Total de Alunos de Mecatrônica:</strong> {{ num_alunos_mxt }} <br>
+    <strong>Quantidade Total de Alunos de Mecânica:</strong> {{ num_alunos_mec }} <br>
 
 {% endblock %}
