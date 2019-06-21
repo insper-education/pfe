@@ -6,34 +6,18 @@
 {% endcomment %}
 
 {% block head %}
-  {% load static %}
-  <script src="{% static 'js/jquery.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/jquery.sortElements.js' %}"></script>
-  <script type="text/javascript">
-  $(window).load(function(){
-    var table = $('table');
-    $('#nome_header, #curso_header, #periodo_header',)
-        .wrapInner('<span title="ordenar coluna"/>')
-        .each(function(){
-            var th = $(this),
-                thIndex = th.index(),
-                inverse = false;
-            th.click(function(){
-                table.find('td').filter(function(){
-                    return $(this).index() === thIndex;
-                }).sortElements(function(a, b){
-                    return $.text([a]) > $.text([b]) ?
-                        inverse ? -1 : 1
-                        : inverse ? 1 : -1;
-                }, function(){
-                    // parentNode is the element we want to move
-                    return this.parentNode; 
-                });
-                inverse = !inverse; 
-            });
-        });
-      });
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://www.w3schools.com/lib/w3.js"></script>
+  <script src="https://www.chartjs.org/samples/latest/utils.js"></script>
+
+  <script>
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
   </script>
+
+  {% load static %}
+  <script src="{% static 'js/Chart.min.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -42,21 +26,32 @@
     <strong>Número Total de Alunos:</strong> {{ num_alunos }}
   
     {% if alunos_list %}
-        <table>
+      <table id="AlunosTable">
           <tr>
-              <th id="nome_header" class="text-center">Nome do Aluno</th>
-              <th id="curso_header" class="text-center">Curso</th>
-              <th id="periodo_header" class="text-center">Periodo</th>
+              <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome do Aluno</th>
+              <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Curso</th>
+              <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Período</th>
           </tr>
           {% for aluno in alunos_list %} 
-          <tr>
-            <td><a href="{% url 'aluno' aluno.id %}">
-              {{aluno.user.first_name}}&nbsp;{{aluno.user.last_name}}
-            </a></td>
-            <!-- class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}" -->
-            <td>
-              {{ aluno.get_curso_display }}
-            </td>
+          <tr class="item">
+              <td><a href="{% url 'aluno' aluno.id %}" data-toggle="tooltip" data-html="true" animation="true" title="
+                {% for opcao in aluno.opcao_set.all %}
+                  <b>#{{opcao.prioridade}}:</b>
+                    {% if aluno.alocado == opcao.projeto %}
+                      <u>
+                    {% endif %}
+                  {{opcao.projeto.titulo}} ({{opcao.projeto.empresa.nome_empresa}})
+                    {% if aluno.alocado == opcao.projeto %}
+                      </u>
+                    {% endif %}
+                  <br>
+                {% endfor %}
+              ">
+                {{aluno.user.first_name}}&nbsp;{{aluno.user.last_name}}
+              </a></td>
+              <td class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">
+                  {{ aluno.get_curso_display }}
+                </td>
             <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
               {{aluno.anoPFE}}.{{aluno.semestrePFE}}
             </td>
@@ -67,10 +62,49 @@
     {% else %}
       <p>Não existem alunos disponíveis.</p>
     {% endif %}
+
+    <div id="canvas-holder" style="width:450px;height:250px">
+        <canvas id="chart-area"></canvas>
+      </div>
+      <script>
+
+        var config = {
+          type: 'pie',
+          data: {
+            datasets: [{
+              data: [
+                {{ num_alunos_comp }},
+                {{ num_alunos_mec }},
+                {{ num_alunos_mxt }},
+              ],
+              backgroundColor: [
+                window.chartColors.green,
+                window.chartColors.red,
+                window.chartColors.yellow,
+              ],
+              label: 'Proporção entre alunos'
+            }],
+            labels: [
+              'Computação',
+              'Mecânica',
+              'Mecatrônica',
+            ]
+          },
+          options: {
+            responsive: true,
+            title: {
+                  display: true,
+                  text: 'Proporção entre alunos',
+                  position: 'top'
+              },
+          }
+        };
     
-    <br>
-    <strong>Quantidad Total de Alunos de Computação:</strong> {{ num_alunos_comp }} <br>
-    <strong>Quantidad Total de Alunos de Mecatrônica:</strong> {{ num_alunos_mxt }} <br>
-    <strong>Quantidad Total de Alunos de Mecânica:</strong> {{ num_alunos_mec }} <br>
+        window.onload = function() {
+          var ctx = document.getElementById('chart-area').getContext('2d');
+          window.myPie = new Chart(ctx, config);
+        };
+      
+      </script>
 
 {% endblock %}

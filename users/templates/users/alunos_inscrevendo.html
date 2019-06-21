@@ -6,71 +6,34 @@
 {% endcomment %}
 
 {% block head %}
-  {% load static %}
-  <script src="{% static 'js/jquery.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/jquery.sortElements.js' %}"></script>
-  <script type="text/javascript">
-  $(window).load(function(){
-    var table = $('table');
-    $('#nome_header, #curso_header',)
-        .wrapInner('<span title="ordenar coluna"/>')
-        .each(function(){
-            var th = $(this),
-                thIndex = th.index(),
-                inverse = false;
-            th.click(function(){
-                table.find('td').filter(function(){
-                    return $(this).index() === thIndex;
-                }).sortElements(function(a, b){
-                    return $.text([a]) > $.text([b]) ?
-                        inverse ? -1 : 1
-                        : inverse ? 1 : -1;
-                }, function(){
-                    // parentNode is the element we want to move
-                    return this.parentNode; 
-                });
-                inverse = !inverse; 
-            });
-        });
-      });
-  </script>
-
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://www.w3schools.com/lib/w3.js"></script>
+  <script src="https://www.chartjs.org/samples/latest/utils.js"></script>
 
   <script>
     $(document).ready(function(){
-        $('[data-toggle="tooltip"]').tooltip();   
+        $('[data-toggle="tooltip"]').tooltip();
     });
   </script>
 
-<style>
-.tooltip-inner {
-  max-width: 100% !important;
-  text-align: left;
-}
-    
-</style>
-
+  {% load static %}
+  <script src="{% static 'js/Chart.min.js' %}"></script>
+  
 {% endblock %}
 
 {% block content %}
     <h3>Alunos se Inscrevendo</h3>
-
     <strong>Número Total de Alunos se Inscrevendo:</strong> {{ num_alunos }}
 
     {% if alunos_list %}
-        <table>
+        <table id="AlunosTable">
           <tr>
               <th class="text-center">C</th>
-              <th id="nome_header" class="text-center">Nome do Aluno</th>
-              <th id="curso_header" class="text-center">Curso</th>
+              <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Nome do Aluno</th>
+              <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Curso</th>
           </tr>
           {% for aluno in alunos_list %} 
-          <tr>
+          <tr class="item">
             <td class="{% if aluno.opcao_set.all.count >= 5 %}text-success{% else %}text-danger{% endif %}">&#9673; </td>
             <td><a href="{% url 'aluno' aluno.id %}" data-toggle="tooltip" data-html="true" animation="true" title="
               {% for opcao in aluno.opcao_set.all %}
@@ -87,8 +50,7 @@
             ">
               {{aluno.user.first_name}}&nbsp;{{aluno.user.last_name}}
             </a></td>
-            <!-- class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}" -->
-            <td>
+            <td class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">
               {{ aluno.get_curso_display }}
             </td>
           </tr>
@@ -102,8 +64,50 @@
     <text class="text-success">&#9673;</text>Aluno já selecionou projetos [{{inscritos}}]<br>
     <text class="text-danger">&#9673;</text>Aluno ainda precisa selecionar projetos [{{ninscritos}}]<br>
     <br>
-    <strong>Quantidade Total de Alunos de Computação:</strong> {{ num_alunos_comp }} <br>
-    <strong>Quantidade Total de Alunos de Mecatrônica:</strong> {{ num_alunos_mxt }} <br>
-    <strong>Quantidade Total de Alunos de Mecânica:</strong> {{ num_alunos_mec }} <br>
+
+
+    <div id="canvas-holder" style="width:450px;height:250px">
+        <canvas id="chart-area"></canvas>
+      </div>
+      <script>
+
+        var config = {
+          type: 'pie',
+          data: {
+            datasets: [{
+              data: [
+                {{ num_alunos_comp }},
+                {{ num_alunos_mec }},
+                {{ num_alunos_mxt }},
+              ],
+              backgroundColor: [
+                window.chartColors.green,
+                window.chartColors.red,
+                window.chartColors.yellow,
+              ],
+              label: 'Proporção entre alunos'
+            }],
+            labels: [
+              'Computação',
+              'Mecânica',
+              'Mecatrônica',
+            ]
+          },
+          options: {
+            responsive: true,
+            title: {
+                  display: true,
+                  text: 'Proporção entre alunos',
+                  position: 'top'
+              },
+          }
+        };
+    
+        window.onload = function() {
+          var ctx = document.getElementById('chart-area').getContext('2d');
+          window.myPie = new Chart(ctx, config);
+        };
+      
+      </script>
 
 {% endblock %}

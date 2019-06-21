@@ -6,48 +6,21 @@
 {% endcomment %}
 
 {% block head %}
-  {% load static %}
-  <script src="{% static 'js/jquery.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/jquery.sortElements.js' %}"></script>
-  <script type="text/javascript">
-  $(window).load(function(){
-    var table = $('table');
-    $('#sigla_header, #organizacao_header')
-        .wrapInner('<span title="ordenar coluna"/>')
-        .each(function(){
-            var th = $(this),
-                thIndex = th.index(),
-                inverse = false;
-            th.click(function(){
-                table.find('td').filter(function(){
-                    return $(this).index() === thIndex;
-                }).sortElements(function(a, b){
-                    return $.text([a]) > $.text([b]) ?
-                        inverse ? -1 : 1
-                        : inverse ? 1 : -1;
-                }, function(){
-                    // parentNode is the element we want to move
-                    return this.parentNode; 
-                });
-                inverse = !inverse; 
-            });
-        });
-      });
-  </script>
+<script src="https://www.w3schools.com/lib/w3.js"></script>
 {% endblock %}
 
 {% block content %}
     <h3>Organizações Parceiras</h3>
 
     {% if organizacoes_list %}
-        <table>
-            <tr>
-                <th id="sigla_header" class="text-center">Sigla</th>
-                <th id="organizacao_header" class="text-center">Organização</th>
+    <table id="OrganizacoesTable">
+        <tr>
+                <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Sigla</th>
+                <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Organização</th>
             </tr>
         {% for organizacao in organizacoes_list %} 
-        <tr>
-          <td>
+        <tr class="item">
+            <td>
             <a href="{% url 'organizacao' organizacao.login %}"> <!-- UM DIA ACERTAR ISSO -->
               {{organizacao.sigla}}
             </a>
