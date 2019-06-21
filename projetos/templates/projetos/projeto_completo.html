@@ -18,6 +18,27 @@
   <strong>website:</strong> <a href="{{ projeto.empresa.website }}"> {{ projeto.empresa.website }} </a>
   <hr>
 
+  {% if projeto.orientador %}
+  <h3>Orientadores</h3>
+  <ul>
+      <li>{{ projeto.orientador.user.first_name }} {{ projeto.orientador.user.last_name }}</li>
+  </ul>
+  <br><hr>
+  {% endif %}
+
+  <h3>Alunos Aplicando para o Projeto</h3>
+  {% for opcao in projeto.opcao_set.all %}
+    {% if configuracao.ano == opcao.aluno.anoPFE and configuracao.semestre == opcao.aluno.semestrePFE %}
+    <a href="{% url 'aluno' opcao.aluno.id %}"><p class="{% if opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}">{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}&nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} } </p></a>
+    {% endif %}
+  {% endfor %}
+  {% for opcao in projeto.opcao_set.all %}
+    {% if configuracao.ano != opcao.aluno.anoPFE or configuracao.semestre != opcao.aluno.semestrePFE %}
+    <a href="{% url 'aluno' opcao.aluno.id %}"><p class="red-bold">{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}&nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} } </p></a>
+    {% endif %}
+  {% endfor %}
+  <br><hr>
+
   <h3>Perfil de Alunos Desejados para Projeto</h3>
   <table>
     <tr>
@@ -83,18 +104,5 @@
           </tr>
         </table>
         <br><hr>
-
-  <h3>Alunos Aplicando para o Projeto</h3>
-  {% for opcao in projeto.opcao_set.all %}
-    {% if configuracao.ano == opcao.aluno.anoPFE and configuracao.semestre == opcao.aluno.semestrePFE %}
-    <a href="{% url 'aluno' opcao.aluno.id %}"><p class="{% if opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}">{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}&nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} } </p></a>
-    {% endif %}
-  {% endfor %}
-  {% for opcao in projeto.opcao_set.all %}
-    {% if configuracao.ano != opcao.aluno.anoPFE or configuracao.semestre != opcao.aluno.semestrePFE %}
-    <a href="{% url 'aluno' opcao.aluno.id %}"><p class="red-bold">{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}&nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} } </p></a>
-    {% endif %}
-  {% endfor %}
-
 
 {% endblock %}

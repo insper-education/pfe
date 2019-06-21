@@ -7,7 +7,7 @@ class ProjetoAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'empresa', 'ano', 'semestre')
     fieldsets = (
         (None, {
-            'fields': ('titulo', 'descricao', 'expectativas', 'areas', 'recursos', 'imagem', 'ano', 'semestre', 'disponivel')
+            'fields': ('titulo', 'descricao', 'expectativas', 'areas', 'recursos', 'imagem', 'ano', 'semestre', 'disponivel', 'orientador')
         }),
         ('Origem', {
             'fields': ('empresa',)

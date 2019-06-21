@@ -8,7 +8,6 @@
 {% block head %}
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://www.w3schools.com/lib/w3.js"></script>
-  <script src="https://www.chartjs.org/samples/latest/utils.js"></script>
 
   <script>
     $(document).ready(function(){
@@ -66,7 +65,7 @@
     <br>
 
 
-    <div id="canvas-holder" style="width:450px;height:250px">
+    <div id="canvas-holder">
         <canvas id="chart-area"></canvas>
       </div>
       <script>
@@ -81,9 +80,9 @@
                 {{ num_alunos_mxt }},
               ],
               backgroundColor: [
-                window.chartColors.green,
-                window.chartColors.red,
-                window.chartColors.yellow,
+                'rgb(75, 192, 192)',
+                'rgb(255, 99, 132)',
+                'rgb(255, 205, 86)',
               ],
               label: 'Proporção entre alunos'
             }],

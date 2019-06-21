@@ -6,8 +6,10 @@ from django.db import models
 from django.urls import reverse  # To generate URLS by reversing URL patterns
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib import admin
-#from users.models import Professor, Funcionario
 from datetime import datetime    
+
+#from users.models import Professor  (da um erro de referencia circular)
+import users.models
 
 # RENOMEAR PARA ORGANIZACAO
 class Empresa(models.Model):
@@ -35,6 +37,7 @@ class Projeto(models.Model):
     ano = models.PositiveIntegerField(validators=[MinValueValidator(2018),MaxValueValidator(3018)], help_text='Ano que o projeto comeca')
     semestre = models.PositiveIntegerField(validators=[MinValueValidator(1),MaxValueValidator(2)], help_text='Semestre que o projeto comeca')
     disponivel = models.BooleanField(default=False)
+    orientador = models.ForeignKey('users.Professor', null=True, blank=True, on_delete=models.SET_NULL, related_name='professor_orientador', help_text='professor orientador do projeto')
     # contato1 = models.CharField(max_length=80)
     # contato2 = models.CharField(max_length=80)
     # contato3 = models.CharField(max_length=80)

@@ -29,15 +29,12 @@ class PFEUser(AbstractUser):
         return self.username
 
 class Professor(models.Model):
-    #login = models.CharField(primary_key=True, max_length=20)
     user = models.OneToOneField(PFEUser, on_delete=models.CASCADE)
-    #nome = models.CharField(max_length=80)
-    #email = models.EmailField(null=True, blank=True)
     class Meta:
         ordering = ['user']
         permissions = (("altera_professor", "Professor altera valores"), )
     def __str__(self):
-        return self.user.username
+        return self.user.first_name+" "+self.user.last_name
 
 class Aluno(models.Model):
     TIPOS_CURSO = (
@@ -135,7 +132,6 @@ class Opcao(models.Model):
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE)
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
     #razao = models.CharField(max_length=200)
-    #prioridade = models.PositiveSmallIntegerField(default=0)
     prioridade = models.PositiveSmallIntegerField()
     class Meta:
         ordering = ['prioridade']
@@ -145,10 +141,7 @@ class Opcao(models.Model):
 
 class Funcionario(models.Model):  # da empresa (não do Insper)
     user = models.OneToOneField(PFEUser, on_delete=models.CASCADE)
-    #login = models.CharField(primary_key=True, max_length=20)
-    #nome = models.CharField(max_length=80)
     #empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
-    #email = models.EmailField(null=True, blank=True)
     #gestor_responsavel = models.EmailField()
     #mentor_tecnico = models.EmailField()
     #recursos_humanos = models.EmailField()

@@ -7,16 +7,7 @@
   outline-offset: 5px;
 }
 
-table {
-  border-collapse: collapse;
-}
 
-table, th, td {
-  border: 1px solid black;
-  padding-left: 5px;
-  padding-right: 5px;
-  text-align: left;
-}
 
 body {
   font-family: Arial, Helvetica, sans-serif;
@@ -123,4 +114,26 @@ p {
 .tooltip-inner {
   max-width: 100% !important;
   text-align: left;
+}
+
+table, th, td {
+  border-collapse: collapse;
+  border: 1px solid black;
+  padding-left: 5px;
+  padding-right: 5px;
+  text-align: left;
+  font-size: 16px;
+}
+
+#canvas-holder {
+  width:450px;
+}
+
+@media only screen and (max-width: 480px) {
+  table, th, td {
+    font-size: 12px;
+  }
+  #canvas-holder {
+    width:100%;
+  }
 }
