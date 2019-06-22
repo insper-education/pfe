@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 21 de Junho de 2019
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  <script src="{% static 'js/Chart.min.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+  <h3>Projetos Fechados</li></h3>
+  <br>
+
+    {% if mylist %}
+    <div>      
+      {% for projeto,opcoes in mylist %} 
+        {% if projeto.disponivel %}
+          <a href="{% url 'completo' projeto.id %}" class="dark-blue-bold"> 
+            {{projeto.titulo}} ({{ projeto.empresa.nome_empresa }})
+          </a>
+          {% for opcao in opcoes %} 
+            <li><a href="{% url 'aluno' opcao.aluno.id %}">{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}</a></li>
+          {% endfor %}
+          <br><br>
+        {% endif %}
+      {% endfor %}
+    </div>
+    
+    <hr>
+
+    Total de projetos = {{ length }} <br>
+    Total de alunos = {{ nalunos }} <br>
+    
+    <br><br>
+
+    <div id="canvas-holder">
+        <canvas id="chart-area"></canvas>
+      </div>
+      <script>
+
+        var config = {
+          type: 'pie',
+          data: {
+            datasets: [{
+              data: [
+                {{ prioridades.0 }},
+                {{ prioridades.1 }},
+                {{ prioridades.2 }},
+                {{ prioridades.3 }},
+                {{ prioridades.4 }},
+                {{ prioridades.5 }},
+              ],
+              backgroundColor: [
+                "#2ecc71",
+                "#3498db",
+                "#95a5a6",
+                "#9b59b6",
+                "#f1c40f",
+                "#e74c3c",
+                "#34495e"
+              ],
+            }],
+            labels: [
+              '#1 [{% widthratio prioridades.0 nalunos 100 %}%]',
+              '#2 [{% widthratio prioridades.1 nalunos 100 %}%]',
+              '#3 [{% widthratio prioridades.2 nalunos 100 %}%]',
+              '#4 [{% widthratio prioridades.3 nalunos 100 %}%]',
+              '#5 [{% widthratio prioridades.4 nalunos 100 %}%]',
+              '>= #6 [{% widthratio prioridades.5 nalunos 100 %}%]',
+            ]
+          },
+          options: {
+            responsive: true,
+            title: {
+                  display: true,
+                  text: 'Proporção entre prioridade alocada dos alunos',
+                  position: "top",
+            },
+            legend: {
+              display: true,
+              position: "bottom",
+              labels: {
+                fontColor: "#333",
+                fontSize: 12
+              }
+            }
+          }
+        };
+    
+        window.onload = function() {
+          var ctx = document.getElementById('chart-area').getContext('2d');
+          window.myPie = new Chart(ctx, config);
+        };
+      
+      </script>
+
+    {% else %}
+      <p>Não existem projetos disponíveis.</p>
+    {% endif %}
+
+    <br>
+    <br>
+
+{% endblock %}

@@ -598,3 +598,32 @@ def relatorio_backup(request):
     mail.send()
     return HttpResponse("E-mail enviado.")
 
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def fechados(request):
+    configuracao = Configuracao.objects.all().first()
+    projeto_list = []
+    opcoes_list = []
+    projetos = Projeto.objects.all()
+    nalunos = 0
+    prioridades = [0,0,0,0,0,0]
+    for p in projetos:
+        opcoes = Opcao.objects.filter(projeto=p)
+        opcoes_alunos = opcoes.filter(aluno__user__tipo_de_usuario=1)
+        opcoes_validas = opcoes_alunos.filter(aluno__anoPFE=configuracao.ano).filter(aluno__semestrePFE=configuracao.semestre)
+        opcoes1 = opcoes_validas.filter(aluno__alocado=p)
+        if len(opcoes1) > 0 :
+            projeto_list.append(p)
+            opcoes_list.append(opcoes1)
+        nalunos += len(opcoes1)
+        for o in opcoes1:
+            prioridades[o.prioridade-1] += 1
+    mylist = zip(projeto_list, opcoes_list)
+    context= {
+        'mylist': mylist,
+        'length': len(projeto_list),
+        'nalunos': nalunos,
+        'prioridades': prioridades,
+    }
+    return render(request, 'projetos/fechados.html', context)
