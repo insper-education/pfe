@@ -22,9 +22,11 @@
           <a href="{% url 'completo' projeto.id %}" class="dark-blue-bold"> 
             {{projeto.titulo}} ({{ projeto.empresa.nome_empresa }})
           </a>
+          <ol>
           {% for opcao in opcoes %} 
             <li><a href="{% url 'aluno' opcao.aluno.id %}">{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}</a></li>
           {% endfor %}
+          </ol>
           <br><br>
         {% endif %}
       {% endfor %}
