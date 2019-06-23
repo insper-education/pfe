@@ -16,16 +16,16 @@
   <h3>Empresa: {{ projeto.empresa.nome_empresa }}</h3>
   <strong>endereço:</strong> {{ projeto.empresa.endereco|linebreaks }}
   <strong>website:</strong> <a href="{{ projeto.empresa.website }}"> {{ projeto.empresa.website }} </a>
-  <hr>
 
   {% if projeto.orientador %}
+  <hr>
   <h3>Orientadores</h3>
   <ul>
       <li>{{ projeto.orientador.user.first_name }} {{ projeto.orientador.user.last_name }}</li>
   </ul>
-  <hr>
   {% endif %}
 
+  <hr>
   <h3>Alunos Aplicando para o Projeto</h3>
   {% for opcao in projeto.opcao_set.all %}
     {% if configuracao.ano == opcao.aluno.anoPFE and configuracao.semestre == opcao.aluno.semestrePFE %}
@@ -37,8 +37,8 @@
     <a href="{% url 'aluno' opcao.aluno.id %}"><p class="red-bold">{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}&nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} } </p></a>
     {% endif %}
   {% endfor %}
-  <br><hr>
 
+  <br><hr>
   <h3>Perfil de Alunos Desejados para Projeto</h3>
   <table>
     <tr>
@@ -92,27 +92,24 @@
         {% if projeto.perfil_aluno4_mecatronica %}checked{% endif %}>&nbsp;</td>
     </tr>
   </table>
-  <br><hr>
 
-  <h3>Disciplina Relacionadas</h3>
+  {% if projeto.recomendada_set.all %}
+  <br><hr>
+  <h3>Disciplina(s) Recomendada(s)</h3>
   <table>
     <tr>
       <th>
         Disciplina
       </th>
-      <th>
-        Semestre
-      </th>
     </tr>
-    <tr>
-      <td>Machine Learning</td>
-      <td>eletiva</td>
-    </tr>
-    <tr>
-      <td>Robótica e Automação Industrial</td>
-      <td>eletiva</td>
-    </tr>
+    {% for rec in projeto.recomendada_set.all %}
+    <tr><td>
+        {{rec.disciplina.nome}}
+    </td></tr>
+    {% endfor %}
   </table>
+  {% endif %}
+
   <br><hr>
 
 {% endblock %}

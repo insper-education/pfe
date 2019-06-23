@@ -88,3 +88,18 @@ class Disciplina(models.Model):
     nome = models.CharField(max_length=100, help_text='nome')
     def __str__(self):
         return self.nome
+
+class Cursada(models.Model):
+    disciplina = models.ForeignKey(Disciplina, on_delete=models.CASCADE, help_text='disciplina cursada pelo aluno')
+    aluno = models.ForeignKey('users.Aluno', on_delete=models.CASCADE, help_text='aluno que cursou a disciplina')
+    nota = models.PositiveSmallIntegerField()
+    class Meta:
+        ordering = ['nota']
+    def __str__(self):
+        return self.aluno.user.username+" >>> "+self.disciplina.nome
+
+class Recomendada(models.Model):
+    disciplina = models.ForeignKey(Disciplina, on_delete=models.CASCADE, help_text='disciplina recomendada para o projeto')
+    projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, help_text='projeto que recomenda a disciplina')
+    def __str__(self):
+        return self.projeto.titulo+" >>> "+self.disciplina.nome

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Projeto, Empresa, Configuracao, Disciplina
+from .models import Projeto, Empresa, Configuracao, Disciplina, Cursada, Recomendada
 
 @admin.register(Projeto)
 class ProjetoAdmin(admin.ModelAdmin):
@@ -32,3 +32,6 @@ class ConfiguracaoAdmin(admin.ModelAdmin):
 @admin.register(Disciplina)
 class DisciplinaAdmin(admin.ModelAdmin):
     list_display = ('nome',)
+
+admin.site.register(Cursada)
+admin.site.register(Recomendada)
