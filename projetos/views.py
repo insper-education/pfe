@@ -19,19 +19,23 @@ from django.shortcuts import redirect
 from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
 
-from .models import Projeto, Empresa, Configuracao
+from .models import Projeto, Empresa, Configuracao, Disciplina
 from users.models import Aluno, Professor, Funcionario, Opcao
 
-from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource, AlunosResource, ProfessoresResource, ConfiguracaoResource
+from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource, AlunosResource, ProfessoresResource, ConfiguracaoResource, DisciplinasResource
 
+import re #regular expression (para o import)
 from tablib import Dataset, Databook
+import os
+import tablib
+from import_export import resources
+
 
 # Para gerar o PDF
 from io import BytesIO
 from django.http import HttpResponse
 from django.template.loader import get_template
 from xhtml2pdf import pisa
-
 
 def email(aluno, message):
     subject = 'PFE : '+aluno.user.username
@@ -627,3 +631,29 @@ def fechados(request):
         'prioridades': prioridades,
     }
     return render(request, 'projetos/fechados.html', context)
+
+# https://simpleisbetterthancomplex.com/packages/2016/08/11/django-import-export.html
+def carrega_disciplinas(request):
+    if request.method == 'POST':
+        
+        dataset = tablib.Dataset()
+        #disciplina_resource = DisciplinasResource()
+        disciplina_resource = resources.modelresource_factory(model=Disciplina)()
+
+        new_disciplinas = request.FILES['arquivo'].readlines()
+        entradas = ""
+        for i in new_disciplinas:
+            string = i.decode("utf-8")
+            entradas += re.sub('[^A-Za-z0-9À-ÿ, \r\n]+','', string ) # Limpa caracteres especiais
+
+        imported_data = dataset.load(entradas,format='csv')
+        dataset.insert_col(0, col=lambda row: None, header="id")
+        
+        result = disciplina_resource.import_data(dataset, dry_run=True, raise_errors=True)
+        
+        if not result.has_errors():
+            disciplina_resource.import_data(dataset, dry_run=False)  # Actually import now
+        else:
+            return HttpResponse("Erro ao carregar arquivo."+str(result))
+
+    return render(request, 'projetos/import.html')

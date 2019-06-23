@@ -83,3 +83,8 @@ class ConfiguracaoAdmin(admin.ModelAdmin):
     if count == 0:
       return True
     return False
+
+class Disciplina(models.Model):
+    nome = models.CharField(max_length=100, help_text='nome')
+    def __str__(self):
+        return self.nome
