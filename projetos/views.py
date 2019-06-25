@@ -633,6 +633,7 @@ def fechados(request):
     return render(request, 'projetos/fechados.html', context)
 
 # https://simpleisbetterthancomplex.com/packages/2016/08/11/django-import-export.html
+@permission_required('users.altera_professor', login_url='/projetos/')
 def carrega_disciplinas(request):
     if request.method == 'POST':
         
@@ -657,3 +658,6 @@ def carrega_disciplinas(request):
             return HttpResponse("Erro ao carregar arquivo."+str(result))
 
     return render(request, 'projetos/import.html')
+
+def calendario(request):
+    return render(request, 'projetos/calendario.html')

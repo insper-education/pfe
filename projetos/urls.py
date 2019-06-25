@@ -26,4 +26,5 @@ urlpatterns = [
     path('relatorio_backup/', views.relatorio_backup, name='relatorio_backup'),
     path('fechados/', views.fechados, name='fechados'),
     path('carrega_disciplinas/', views.carrega_disciplinas, name='carrega_disciplinas'),
+    path('calendario/', views.calendario, name='calendario'),
 ]
