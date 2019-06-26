@@ -7,11 +7,18 @@
 
 {% block head %}
   {% load static %}
-  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}"/>
+  <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  
   <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-datepicker.min.css' %}"/>
-  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-theme.min.css' %}"/>
+
+  <!-- <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-theme.min.css' %}"/> -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
   <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-year-calendar.min.css' %}"/>
 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  
   <style>
     table, th, td {
       border: 0px solid white;
@@ -24,7 +31,10 @@
 
 <script src="{% static 'js/respond.min.js' %}"></script>
 <script src="{% static 'js/jquery-1.10.2.min.js' %}"></script>
-<script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+<!-- <script src="{% static 'js/bootstrap.min.js' %}"></script> -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
 <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script> 
 <script src="{% static 'js/bootstrap-year-calendar.min.js' %}"></script>
 <script src="{% static 'js/bootstrap-popover.js' %}"></script>
@@ -161,72 +171,24 @@ $(function() {
             new Date(2019,10,15),
         ],
         dataSource: [
+          {% for evento in eventos %} 
             {
-                id: 0,
-                name: 'Inicio das Aulas',
-                location: '',
-                startDate: new Date(2019, 7, 5),
-                endDate: new Date(2019, 7, 5),
-                color: 'red'
+                id: {{evento.id}},
+                name: "{{evento.name}}",
+                location: "{{evento.location}}",
+                startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
+                endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
+                color: "{{evento.color}}",
             },
-            {
-                id: 1,
-                name: 'Apólice Seguro Acidentes Pessoais',
-                location: 'Carreiras',
-                startDate: new Date(2019, 7, 6),
-                endDate: new Date(2019, 7, 8),
-                color: 'lightblue'
-            },
-            {
-                id: 2,
-                name: 'Evento de Abertura PFE',
-                location: 'Auditório',
-                startDate: new Date(2019, 7, 9),
-                endDate: new Date(2019, 7, 9),
-                color: 'orange'
-            },
-            {
-                id: 3,
-                name: 'Aula PFE',
-                location: '204',
-                startDate: new Date(2019, 7, 15),
-                endDate: new Date(2019, 7, 15),
-                color: 'lightgreen'
-            },
-            {
-                id: 4,
-                name: 'Aula PFE',
-                location: '204',
-                startDate: new Date(2019, 7, 22),
-                endDate: new Date(2019, 7, 22),
-                color: 'lightgreen'
-            },
-            {
-                id: 5,
-                name: 'Entrega de Planejamento',
-                location: 'Blackboard',
-                startDate: new Date(2019, 7, 23),
-                endDate: new Date(2019, 7, 23),
-                color: 'black'
-            },
-            {
-                id: 6,
-                name: 'Aula PFE',
-                location: '204',
-                startDate: new Date(2019, 7, 29),
-                endDate: new Date(2019, 7, 29),
-                color: 'lightgreen'
-            },
+            {% endfor %}
         ],
         customDayRenderer: function(element, date) {
             if (date.getDay() === 6 || date.getDay() === 0) {
               $(element).css('background-color', '#e4edec');
-              $(element).css('border-radius', '15px');
             } 
             else if(date.getTime() == greenDateTime) {
-                $(element).css('font-weight', 'bold');
-                $(element).css('font-size', '15px');
-                $(element).css('color', 'green');
+              $(element).css('font-weight', 'bold');
+              $(element).css('color', 'yellow');
             }
             else if(date.getTime() == circleDateTime) {
                 $(element).css('background-color', 'red');
@@ -234,7 +196,7 @@ $(function() {
                 $(element).css('border-radius', '15px');
             }
             else if(date.getTime() == borderDateTime) {
-                $(element).css('border', '2px solid blue');
+                $(element).css('outline', '2px solid blue');
             }
         }
     });

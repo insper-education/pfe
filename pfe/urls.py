@@ -11,6 +11,7 @@ from django.conf.urls.static import static
 from django.views.generic.base import TemplateView # new
 
 urlpatterns = [
+    path('favicon.ico',RedirectView.as_view(url='/static/favicon.ico')),
     path('', RedirectView.as_view(url='/projetos/', permanent=True)),
     path('projetos/', include('projetos.urls')),
     path('users/', include('users.urls')), #Transferir tudo para accounts (NO FUTURO)

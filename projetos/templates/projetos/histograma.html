@@ -20,30 +20,28 @@
 {% endblock %}
 
 {% block content %}
-
-    {% if mylist %}
-    <div>
-        <ul class="chart">
-        <h3><li class="title" title="Projetos Disponíveis"></li></h3>
-        <li></li>
-        <li></li>
+  {% if mylist %}
+    <ul style="padding:0;" class="chart">
+      <h3><li class="title" title="Projetos Disponíveis"></li></h3>
+      <li></li>
+      <li></li>
 
       {% for projeto,opcoes in mylist %} 
         {% if projeto.disponivel %}
-        
-        <a href="{% url 'completo' projeto.id %}"> 
-        <li class="title" title="{{projeto.titulo}} ({{ projeto.empresa.nome_empresa }})"></li>
-        </a>
-        <li class="past" title="">
+      
+          <a href="{% url 'completo' projeto.id %}"> 
+            <li class="title" title="{{projeto.titulo}} ({{ projeto.empresa.nome_empresa }})"></li>
+          </a>
+          <li class="past" title="">
             <span class="bar" data-number="{{opcoes}}"></span>
             <span class="number">{{opcoes}}</span>
-        </li>
-        <li></li>
+          </li>
+          <li></li>
 
         {% endif %}
-        {% endfor %}
-      </ul>
-    </div>
+      {% endfor %}
+    </ul>
+  
 
   {% else %}
       <p>Não existem projetos disponíveis.</p>

@@ -19,7 +19,7 @@ from django.shortcuts import redirect
 from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
 
-from .models import Projeto, Empresa, Configuracao, Disciplina
+from .models import Projeto, Empresa, Configuracao, Disciplina, Evento
 from users.models import Aluno, Professor, Funcionario, Opcao
 
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource, AlunosResource, ProfessoresResource, ConfiguracaoResource, DisciplinasResource
@@ -660,4 +660,8 @@ def carrega_disciplinas(request):
     return render(request, 'projetos/import.html')
 
 def calendario(request):
-    return render(request, 'projetos/calendario.html')
+    eventos = Evento.objects.all()
+    context= {
+        'eventos': eventos,
+    }
+    return render(request, 'projetos/calendario.html', context)

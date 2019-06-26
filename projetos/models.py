@@ -6,7 +6,8 @@ from django.db import models
 from django.urls import reverse  # To generate URLS by reversing URL patterns
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib import admin
-from datetime import datetime    
+#from datetime import datetime
+import datetime 
 
 #from users.models import Professor  (da um erro de referencia circular)
 import users.models
@@ -74,7 +75,7 @@ class Configuracao(models.Model):
     ano = models.PositiveIntegerField(validators=[MinValueValidator(2018),MaxValueValidator(3018)], help_text='Ano que o projeto comeca')
     semestre = models.PositiveIntegerField(validators=[MinValueValidator(1),MaxValueValidator(2)], help_text='Semestre que o projeto comeca')
     manutencao = models.BooleanField(default=False, help_text='Mostra mensagem de site em manutencao na entrada')
-    prazo = models.DateTimeField(default=datetime.now, blank=True, help_text='Prazo para os alunos se inscreverem nos projetos')
+    prazo = models.DateTimeField(default=datetime.datetime.now, blank=True, help_text='Prazo para os alunos se inscreverem nos projetos')
 
 class ConfiguracaoAdmin(admin.ModelAdmin):
   def has_add_permission(self, request):
@@ -103,3 +104,12 @@ class Recomendada(models.Model):
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, help_text='projeto que recomenda a disciplina')
     def __str__(self):
         return self.projeto.titulo+" >>> "+self.disciplina.nome
+
+class Evento(models.Model):
+    name = models.CharField(max_length=40)
+    location = models.CharField(blank=True, max_length=40)
+    startDate = models.DateField(default=datetime.date.today, blank=True, help_text='Inicio do Evento')
+    endDate = models.DateField(default=datetime.date.today, blank=True, help_text='Fim do Evento')
+    color = models.CharField(max_length=20)
+    def __str__(self):
+        return self.name
