@@ -32,7 +32,7 @@
           </tr>
           {% for aluno in alunos_list %} 
           <tr class="item">
-            <td class="{% if aluno.opcao_set.all.count >= 5 %}text-success{% else %}text-danger{% endif %}">&#9673; </td>
+            <td class="{% if aluno.opcao_set.all.count >= 5 %}text-success{% else %}text-danger{% endif %}"> &#x2B24; </td>
             <td><a href="{% url 'aluno' aluno.id %}" data-toggle="tooltip" data-html="true" animation="true" title="
               {% for opcao in aluno.opcao_set.all %}
                 <b>#{{opcao.prioridade}}:</b>
@@ -59,8 +59,8 @@
       <p>Não existem alunos disponíveis.</p>
     {% endif %}
     
-    <text class="text-success">&#9673;</text>Aluno já selecionou projetos [{{inscritos}}]<br>
-    <text class="text-danger">&#9673;</text>Aluno ainda precisa selecionar projetos [{{ninscritos}}]<br>
+    <text class="text-success">&#x2B24;</text>Aluno já selecionou projetos [{{inscritos}}]<br>
+    <text class="text-danger">&#x2B24;</text>Aluno ainda precisa selecionar projetos [{{ninscritos}}]<br>
     <br>
 
 

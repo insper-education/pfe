@@ -108,9 +108,10 @@ $(function() {
 
   var currentYear = new Date().getFullYear();
 
-  var greenDateTime = new Date(2019, 7, 5).getTime();
-  var circleDateTime = new Date(2019, 7, 23).getTime();
-  var borderDateTime = new Date(2019, 7, 9).getTime();
+  var currentYear = new Date().getFullYear();
+  var currentMonth = new Date().getMonth(); 
+  var currentDate = new Date().getDate();
+  var hoje = new Date(currentYear, currentMonth, currentDate).getTime();
 
     $('#calendar').calendar({ 
         enableContextMenu: true,
@@ -185,17 +186,8 @@ $(function() {
         customDayRenderer: function(element, date) {
             if (date.getDay() === 6 || date.getDay() === 0) {
               $(element).css('background-color', '#e4edec');
-            } 
-            else if(date.getTime() == greenDateTime) {
-              $(element).css('font-weight', 'bold');
-              $(element).css('color', 'yellow');
             }
-            else if(date.getTime() == circleDateTime) {
-                $(element).css('background-color', 'red');
-                $(element).css('color', 'white');
-                $(element).css('border-radius', '15px');
-            }
-            else if(date.getTime() == borderDateTime) {
+            else if(date.getTime() == hoje) {
                 $(element).css('outline', '2px solid blue');
             }
         }
@@ -211,6 +203,9 @@ $(function() {
   <br>
   <div id='calendar'></div>
   <br>
+  {% for evento in eventos %} 
+  <p><font style="color:{{evento.color}}">&#9608;</font> {{evento.name}}: {{evento.endDate.day}}/{{evento.endDate.month|add:-1}}</p>
+  {% endfor %}
   <br>
 
 {% endblock %}
