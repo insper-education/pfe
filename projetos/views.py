@@ -139,7 +139,7 @@ def projetos(request):
             x = email(aluno,message)
             if(x!=1): message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
             context= {'message': message,}    
-            return render(request, 'projetos/submissao.html', context)
+            return render(request, 'projetos/confirmacao.html', context)
         else:
             context= {'warnings': warnings,}    
             return render(request, 'projetos/projetosincompleto.html', context)
@@ -667,3 +667,9 @@ def calendario(request):
         'aulas': aulas,
     }
     return render(request, 'projetos/calendario.html', context)
+
+
+def submissao(request):
+    context= {
+    }
+    return render(request, 'projetos/submissao.html', context)

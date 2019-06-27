@@ -1,3 +1,9 @@
+.disabled {
+  cursor: default;
+  text-decoration: none;
+  color: grey;
+  opacity: 0.6;
+}
 
 .boxed {
   border: 1px solid green ;
@@ -6,8 +12,6 @@
   outline: 5px dashed blue;
   outline-offset: 5px;
 }
-
-
 
 body {
   font-family: Arial, Helvetica, sans-serif;

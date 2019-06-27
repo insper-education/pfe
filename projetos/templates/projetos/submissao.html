@@ -7,11 +7,29 @@
 
 {% block content %}
 
-  <u>Dados submetidos</u><br><br>
+  <h5>Submissão de Formulário</h5><br>
 
-  <div class="boxed">
-  {% autoescape off %}
-    {{ message }}
-  {% endautoescape %}    
-  </div>
+  Você já trabalhou e/ou estagio em alguma empresa de engenharia?
+  <input type="checkbox" name="selection" value="trabalho"><br>
+  Se sim qual/quais?<br>
+  <textarea rows="4" cols="50"></textarea>
+  <br><br>
+
+  Você já participou de atividade sociais?
+  <input type="checkbox" name="selection" value="social"><br>
+  Se sim qual/quais?<br>
+  <textarea rows="4" cols="50"></textarea>
+  <br><br>
+
+  Você já participou de alguma entidade estudantil do Insper?
+  <select id="selection" name="entidade" ></select>
+  <!-- Pegar Script de Projetos para preencher entidades -->
+  <br><br>
+
+  Você possui familiares em algum empresa que está aplicando? Ou empresa concorrente?
+  <input type="checkbox" name="selection" value="social"><br>
+  Se sim qual/quais? E seu grau de relacionamento.<br>
+  <textarea rows="4" cols="50"></textarea>
+  <br><br>
+
 {% endblock %}
