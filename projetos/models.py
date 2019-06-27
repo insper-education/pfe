@@ -106,8 +106,8 @@ class Recomendada(models.Model):
         return self.projeto.titulo+" >>> "+self.disciplina.nome
 
 class Evento(models.Model):
-    name = models.CharField(max_length=40)
-    location = models.CharField(blank=True, max_length=40)
+    name = models.CharField(max_length=50)
+    location = models.CharField(blank=True, max_length=50)
     startDate = models.DateField(default=datetime.date.today, blank=True, help_text='Inicio do Evento')
     endDate = models.DateField(default=datetime.date.today, blank=True, help_text='Fim do Evento')
     color = models.CharField(max_length=20)
