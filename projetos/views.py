@@ -660,8 +660,10 @@ def carrega_disciplinas(request):
     return render(request, 'projetos/import.html')
 
 def calendario(request):
-    eventos = Evento.objects.all()
+    eventos = Evento.objects.exclude(name="Aula PFE")
+    aulas = Evento.objects.filter(name="Aula PFE")
     context= {
         'eventos': eventos,
+        'aulas': aulas,
     }
     return render(request, 'projetos/calendario.html', context)

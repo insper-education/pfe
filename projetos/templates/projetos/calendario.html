@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 
   <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-year-calendar.min.css' %}"/>
+  
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   
@@ -37,6 +38,7 @@
 
 <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script> 
 <script src="{% static 'js/bootstrap-year-calendar.min.js' %}"></script>
+<script src="{% static 'js/bootstrap-year-calendar.pt.js' %}"></script>
 <script src="{% static 'js/bootstrap-popover.js' %}"></script>
 <script src="{% static 'js/scripts.js' %}"></script>
 
@@ -105,18 +107,16 @@ function saveEvent() {
 }
 
 $(function() {
-
-  var currentYear = new Date().getFullYear();
-
   var currentYear = new Date().getFullYear();
   var currentMonth = new Date().getMonth(); 
   var currentDate = new Date().getDate();
   var hoje = new Date(currentYear, currentMonth, currentDate).getTime();
-
+   
     $('#calendar').calendar({ 
         enableContextMenu: true,
         enableRangeSelection: true,
         style:'background',
+        language:'pt',
         contextMenuItems:[
             {
                 text: 'Update',
@@ -160,8 +160,6 @@ $(function() {
             $(e.element).popover('hide');
         },
         disabledDays: [
-            new Date(2019,10,15),
-            new Date(2019,10,20),
             new Date(2019,11,23),
             new Date(2019,11,24),
             new Date(2019,11,25),
@@ -169,7 +167,6 @@ $(function() {
             new Date(2019,11,27),
             new Date(2019,11,30),
             new Date(2019,11,31),
-            new Date(2019,10,15),
         ],
         dataSource: [
           {% for evento in eventos %} 
@@ -182,14 +179,24 @@ $(function() {
                 color: "{{evento.color}}",
             },
             {% endfor %}
+            {% for evento in aulas %} 
+            {
+                id: {{evento.id}},
+                name: "{{evento.name}}",
+                location: "{{evento.location}}",
+                startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
+                endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
+                color: "{{evento.color}}",
+            },
+            {% endfor %}
         ],
         customDayRenderer: function(element, date) {
-            if (date.getDay() === 6 || date.getDay() === 0) {
-              $(element).css('background-color', '#e4edec');
-            }
-            else if(date.getTime() == hoje) {
-                $(element).css('outline', '2px solid blue');
-            }
+          if(date.getTime() == hoje) {
+            $(element).css('outline', '2px solid blue');
+          }
+          else if (date.getDay() === 6 || date.getDay() === 0) {
+            $(element).css('background-color', 'lightgrey');
+          }
         }
     });
     
@@ -203,9 +210,23 @@ $(function() {
   <br>
   <div id='calendar'></div>
   <br>
-  {% for evento in eventos %} 
-  <p><font style="color:{{evento.color}}">&#9608;</font> {{evento.name}}: {{evento.endDate.day}}/{{evento.endDate.month|add:-1}}</p>
+  {% for evento in eventos|dictsort:"endDate" %}
+    {% if evento.name != "Feriado" %}
+      {% ifchanged evento.name %} 
+        <br><font style="color:{{evento.color}}">&#9608;</font> {{evento.name}}: {{evento.endDate.day}}/{{evento.endDate.month|add:-1}}
+      {% else %}
+        ; {{evento.endDate.day}}/{{evento.endDate.month|add:-1}}
+      {% endifchanged %}
+    {% endif %}
   {% endfor %}
+  {% for aula in aulas|dictsort:"endDate" %}
+    {% ifchanged aula.name %} 
+      <br><font style="color:{{aula.color}}">&#9608;</font> {{aula.name}}: {{aula.endDate.day}}/{{aula.endDate.month|add:-1}}
+    {% else %}
+      ; {{aula.endDate.day}}/{{aula.endDate.month|add:-1}}
+    {% endifchanged %}
+  {% endfor %}
+  <br>
   <br>
 
 {% endblock %}
