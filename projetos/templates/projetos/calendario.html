@@ -216,7 +216,12 @@ $(function() {
   {% for evento in eventos|dictsort:"endDate" %}
     {% if evento.name != "Feriado" %}
       {% ifchanged evento.name %} 
-        <br><font style="color:{{evento.color}}">&#9608;</font> {{evento.name}}: {{evento.endDate.day}}/{{evento.endDate.month|add:-1}}
+        <br><font style="color:{{evento.color}}">&#9608;</font> {{evento.name}}: 
+        {% if evento.startDate == evento.endDate %} 
+          {{evento.endDate.day}}/{{evento.endDate.month|add:-1}}
+        {% else %}
+          {{evento.startDate.day}}/{{evento.startDate.month|add:-1}} à {{evento.endDate.day}}/{{evento.endDate.month|add:-1}} 
+        {% endif %}     
       {% else %}
         ; {{evento.endDate.day}}/{{evento.endDate.month|add:-1}}
       {% endifchanged %}
@@ -224,7 +229,8 @@ $(function() {
   {% endfor %}
   {% for aula in aulas|dictsort:"endDate" %}
     {% ifchanged aula.name %} 
-      <br><font style="color:{{aula.color}}">&#9608;</font> {{aula.name}}: {{aula.endDate.day}}/{{aula.endDate.month|add:-1}}
+      <br><font style="color:{{aula.color}}">&#9608;</font> {{aula.name}}: 
+       {{aula.endDate.day}}/{{aula.endDate.month|add:-1}}
     {% else %}
       ; {{aula.endDate.day}}/{{aula.endDate.month|add:-1}}
     {% endifchanged %}
