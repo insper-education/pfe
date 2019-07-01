@@ -6,3 +6,4 @@ pfe/settings.py
 .vscode/
 *.log
 .DS_Store
+arquivos/*

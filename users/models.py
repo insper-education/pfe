@@ -30,6 +30,7 @@ class PFEUser(AbstractUser):
 
 class Professor(models.Model):
     user = models.OneToOneField(PFEUser, on_delete=models.CASCADE)
+    areas = models.TextField(max_length=500, blank=True)
     class Meta:
         ordering = ['user']
         permissions = (("altera_professor", "Professor altera valores"), )

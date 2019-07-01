@@ -37,6 +37,8 @@ from django.http import HttpResponse
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 
+from django.core.exceptions import PermissionDenied
+
 def email(aluno, message):
     subject = 'PFE : '+aluno.user.username
     email_from = settings.EMAIL_HOST_USER
@@ -633,6 +635,7 @@ def fechados(request):
     return render(request, 'projetos/fechados.html', context)
 
 # https://simpleisbetterthancomplex.com/packages/2016/08/11/django-import-export.html
+@login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def carrega_disciplinas(request):
     if request.method == 'POST':
@@ -659,6 +662,7 @@ def carrega_disciplinas(request):
 
     return render(request, 'projetos/import.html')
 
+@login_required
 def calendario(request):
     eventos = Evento.objects.exclude(name="Aula PFE")
     aulas = Evento.objects.filter(name="Aula PFE")
@@ -668,8 +672,24 @@ def calendario(request):
     }
     return render(request, 'projetos/calendario.html', context)
 
-
+@login_required
 def submissao(request):
     context= {
     }
     return render(request, 'projetos/submissao.html', context)
+
+@login_required
+def documentos(request):
+    return render(request, 'index_documentos.html')
+
+@login_required
+def download(request, path):
+    file_path = os.path.abspath(os.path.join(settings.ARQUIVOS, os.path.split(path)[1]) )
+    if ".." in file_path: raise PermissionDenied
+    if "\\" in file_path: raise PermissionDenied
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as fh:
+            response = HttpResponse(fh.read(), content_type="application/pdf")
+            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+            return response
+    raise Http404

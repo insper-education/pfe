@@ -28,4 +28,6 @@ urlpatterns = [
     path('carrega_disciplinas/', views.carrega_disciplinas, name='carrega_disciplinas'),
     path('calendario/', views.calendario, name='calendario'),
     path('submissao/', views.submissao, name='submissao'),
+    path('documentos/', views.documentos, name='documentos'),
+    path('download/<str:path>', views.download, name='download'),   
 ]
