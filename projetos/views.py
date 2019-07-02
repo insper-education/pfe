@@ -693,3 +693,12 @@ def download(request, path):
             response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
             return response
     raise Http404
+
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def projetos_lista(request):
+    configuracao = Configuracao.objects.all().first()
+    projetos = Projeto.objects.all()
+    context= {'projetos': projetos }    
+    return render(request, 'projetos/projetos_lista.html', context)

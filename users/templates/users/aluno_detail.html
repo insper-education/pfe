@@ -6,9 +6,10 @@
 {% endcomment %}
 
 {% block content %}
-  <h3>Aluno: {{aluno.user.first_name}}&nbsp;{{aluno.user.last_name}}</h3>
+  <h3>{{aluno.user.first_name}}&nbsp;{{aluno.user.last_name}}</h3>
+  <strong>e-mail:</strong> {{aluno.user.email}} <br>
   <strong>Curso:</strong> {{aluno.get_curso_display}} <br>
-  <strong>CR:</strong> {{aluno.cr}} <br>
+  <strong>CR:</strong> {{aluno.cr}} <br><br>
   <strong>Áreas de interesse selecionadas:</strong>
 
   <table>

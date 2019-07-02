@@ -29,5 +29,6 @@ urlpatterns = [
     path('calendario/', views.calendario, name='calendario'),
     path('submissao/', views.submissao, name='submissao'),
     path('documentos/', views.documentos, name='documentos'),
-    path('download/<str:path>', views.download, name='download'),   
+    path('download/<str:path>', views.download, name='download'),
+    path('projetos_lista/', views.projetos_lista, name='projetos_lista'),
 ]

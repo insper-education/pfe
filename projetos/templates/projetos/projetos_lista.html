@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 15 de Maio de 2019
+{% endcomment %}
+
+{% block head %}
+<script src="https://www.w3schools.com/lib/w3.js"></script>
+{% endblock %}
+
+{% block content %}
+  <h3>Projetos</h3>
+  {% if projetos %}
+    <table id="ProjetosTable">
+      <tr>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Projeto</th>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Organização</th>
+      </tr>      
+      {% for projeto in projetos %} 
+      <tr class="item">
+        <td>
+          <a href="{% url 'completo' projeto.id %}">
+            {{projeto.titulo}}
+          </a>
+        </td>
+        <td>
+          <a href="{% url 'organizacao' projeto.empresa.login %}">
+            {{ projeto.empresa.nome_empresa }}
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    <p>&nbsp;</p>
+    <strong>Número Total de Projetos:</strong> {{ projetos.count }}
+  {% else %}
+    <p>Não existem projetos disponíveis.</p>
+  {% endif %}
+  <p>&nbsp;</p>
+
+{% endblock %}

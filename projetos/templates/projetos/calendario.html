@@ -218,21 +218,21 @@ $(function() {
       {% ifchanged evento.name %} 
         <br><font style="color:{{evento.color}}">&#9608;</font> {{evento.name}}: 
         {% if evento.startDate == evento.endDate %} 
-          {{evento.endDate.day}}/{{evento.endDate.month|add:-1}}
+          {{evento.endDate.day}}/{{evento.endDate.month}}
         {% else %}
-          {{evento.startDate.day}}/{{evento.startDate.month|add:-1}} à {{evento.endDate.day}}/{{evento.endDate.month|add:-1}} 
+          {{evento.startDate.day}}/{{evento.startDate.month}} à {{evento.endDate.day}}/{{evento.endDate.month}} 
         {% endif %}     
       {% else %}
-        ; {{evento.endDate.day}}/{{evento.endDate.month|add:-1}}
+        ; {{evento.endDate.day}}/{{evento.endDate.month}}
       {% endifchanged %}
     {% endif %}
   {% endfor %}
   {% for aula in aulas|dictsort:"endDate" %}
     {% ifchanged aula.name %} 
       <br><font style="color:{{aula.color}}">&#9608;</font> {{aula.name}}: 
-       {{aula.endDate.day}}/{{aula.endDate.month|add:-1}}
+       {{aula.endDate.day}}/{{aula.endDate.month}}
     {% else %}
-      ; {{aula.endDate.day}}/{{aula.endDate.month|add:-1}}
+      ; {{aula.endDate.day}}/{{aula.endDate.month}}
     {% endifchanged %}
   {% endfor %}
   <br>
