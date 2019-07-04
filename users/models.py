@@ -44,6 +44,7 @@ class Aluno(models.Model):
         ('X', 'Mecatrônica'),
     )
     user = models.OneToOneField(PFEUser, on_delete=models.CASCADE)
+    matricula = models.CharField(max_length=8, null=True, blank=True, help_text='Número de matrícula')
     #bio = models.TextField(max_length=500, blank=True)    
     curso = models.CharField(max_length=1, choices=TIPOS_CURSO, help_text='Curso Matriculado',)
     opcoes = models.ManyToManyField(Projeto, through='Opcao', help_text='Opcoes de projeto escolhidos')

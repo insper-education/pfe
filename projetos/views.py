@@ -209,7 +209,6 @@ def getOpcao(n,opcoes, min_group, max_group, projetos_ajustados):
         # Nao achou tentando outra opcao
         nx = getNextOpcao(n,opcoes)
         if(nx!=0):
-            print("outra opcao")
             opcao = opcoes.get(prioridade=nx)
             break
         else:  # caso nao encontre mais nenhuma opcao valida
@@ -634,29 +633,39 @@ def fechados(request):
     }
     return render(request, 'projetos/fechados.html', context)
 
+
 # https://simpleisbetterthancomplex.com/packages/2016/08/11/django-import-export.html
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
-def carrega_disciplinas(request):
+def carrega(request, dado):
     if request.method == 'POST':
         
         dataset = tablib.Dataset()
-        #disciplina_resource = DisciplinasResource()
-        disciplina_resource = resources.modelresource_factory(model=Disciplina)()
 
-        new_disciplinas = request.FILES['arquivo'].readlines()
+        if dado=="disciplinas":
+            resource = DisciplinasResource()
+        if dado=="alunos":
+            resource = AlunosResource()
+        else:
+            raise Http404
+
+        new_data = request.FILES['arquivo'].readlines()
         entradas = ""
-        for i in new_disciplinas:
+        for i in new_data:
             string = i.decode("utf-8")
-            entradas += re.sub('[^A-Za-z0-9À-ÿ, \r\n]+','', string ) # Limpa caracteres especiais
+            entradas += re.sub('[^A-Za-z0-9À-ÿ, \r\n@._]+','', string) # Limpa caracteres especiais
 
         imported_data = dataset.load(entradas,format='csv')
         dataset.insert_col(0, col=lambda row: None, header="id")
-        
-        result = disciplina_resource.import_data(dataset, dry_run=True, raise_errors=True)
-        
+
+        result = resource.import_data(dataset, dry_run=True, raise_errors=True)
+
         if not result.has_errors():
-            disciplina_resource.import_data(dataset, dry_run=False)  # Actually import now
+            resource.import_data(dataset, dry_run=False)  # Actually import now
+            string_html = "Importado: <br>"
+            for row_values in dataset:
+                string_html += str(row_values) + "<br>"
+            return HttpResponse(string_html)
         else:
             return HttpResponse("Erro ao carregar arquivo."+str(result))
 

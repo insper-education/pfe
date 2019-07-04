@@ -80,5 +80,9 @@
 <a href=""><h5>Enviar para lista de e-mails</h5></a>
 <a href="{% url 'alunos' %}"><h5>Listagem completa de alunos</h5></a>
 <a href="{% url 'servico' %}"><h5>Habilitar aviso se manutenção</h5></a>
-<a href="{% url 'carrega_disciplinas' %}"><h5>Carrega dados (disciplinas atualmente)</h5></a>
+
+<hr>
+<h5>Carrega dados</h5>
+<a href="{% url 'carrega' 'disciplinas' %}"><h5>disciplinas</h5></a>
+<a href="{% url 'carrega' 'alunos' %}"><h5>alunos</h5></a>
 {% endblock %}

@@ -90,6 +90,7 @@ class Disciplina(models.Model):
     def __str__(self):
         return self.nome
 
+
 class Cursada(models.Model):
     disciplina = models.ForeignKey(Disciplina, on_delete=models.CASCADE, help_text='disciplina cursada pelo aluno')
     aluno = models.ForeignKey('users.Aluno', on_delete=models.CASCADE, help_text='aluno que cursou a disciplina')
