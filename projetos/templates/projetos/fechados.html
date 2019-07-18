@@ -16,15 +16,22 @@
   <br>
 
     {% if mylist %}
+    
     <div>      
-      {% for projeto,opcoes in mylist %} 
+      {% for projeto,prioridades in mylist %} 
         {% if projeto.disponivel %}
           <a href="{% url 'completo' projeto.id %}" class="dark-blue-bold"> 
             {{projeto.titulo}} ({{ projeto.empresa.nome_empresa }})
           </a>
           <ol>
-          {% for opcao in opcoes %} 
-            <li><a href="{% url 'aluno' opcao.aluno.id %}">{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}</a></li>
+          {% for aluno,prioridade in prioridades %} 
+            <li><a href="{% url 'aluno' aluno.id %}">{{aluno.user.first_name}} [{{ aluno.get_curso_display }}]&nbsp;=>&nbsp;
+              {% if prioridade == 0 %}
+                prioridade não definida
+              {% else %}
+                prioridade # {{prioridade}}
+              {% endif %}
+            </a></li>
           {% endfor %}
           </ol>
           <br><br>
@@ -48,12 +55,12 @@
           data: {
             datasets: [{
               data: [
-                {{ prioridades.0 }},
-                {{ prioridades.1 }},
-                {{ prioridades.2 }},
-                {{ prioridades.3 }},
-                {{ prioridades.4 }},
-                {{ prioridades.5 }},
+                {{ qtd_prioridades.0 }},
+                {{ qtd_prioridades.1 }},
+                {{ qtd_prioridades.2 }},
+                {{ qtd_prioridades.3 }},
+                {{ qtd_prioridades.4 }},
+                {{ qtd_prioridades.5 }},
               ],
               backgroundColor: [
                 "#2ecc71",
