@@ -28,7 +28,7 @@ class Empresa(models.Model):
         return self.nome_empresa
 
 class Projeto(models.Model):
-    titulo = models.CharField(max_length=100, help_text='Titulo do projeto')
+    titulo = models.CharField(max_length=127, help_text='Titulo do projeto')
     descricao = models.TextField(max_length=2000, help_text='Descricao do projeto')
     expectativas = models.TextField(max_length=2000, help_text='Expectativas em relação ao projeto')
     areas = models.TextField(max_length=1000, help_text='Áreas da engenharia envolvidas no projeto')
