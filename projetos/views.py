@@ -603,7 +603,6 @@ def relatorio_backup(request):
     mail.send()
     return HttpResponse("E-mail enviado.")
 
-
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def fechados(request):
@@ -643,6 +642,47 @@ def fechados(request):
         'qtd_prioridades': qtd_prioridades,
     }
     return render(request, 'projetos/fechados.html', context)
+
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def todos(request):
+    configuracao = Configuracao.objects.all().first()
+    projetos = []
+    alunos_list = []
+    prioridade_list = []
+    nalunos = 0
+    qtd_prioridades = [0,0,0,0,0,0]   # para grafico de pizza no final
+
+    for p in Projeto.objects.all():
+        alunosPFE = Aluno.objects.filter(alocado=p)
+        if len(alunosPFE) > 0 :
+            projetos.append(p)
+            alunos_list.append(alunosPFE)
+            nalunos += len(alunosPFE)
+            alunos = []
+            prioridades = []
+            for aluno in alunosPFE:
+                opcoes = Opcao.objects.filter(projeto=p)
+                opcoes_alunos = opcoes.filter(aluno__user__tipo_de_usuario=1)
+                opcoes_validas = opcoes_alunos.filter(aluno__anoPFE=configuracao.ano).filter(aluno__semestrePFE=configuracao.semestre)
+                opcoes1 = opcoes_validas.filter(aluno__alocado=p)
+                opcoes2 = opcoes1.filter(aluno=aluno)
+                if len(opcoes2)==1:
+                    prioridade = opcoes2.first().prioridade
+                    prioridades.append(prioridade)
+                    qtd_prioridades[prioridade-1] += 1
+                else:
+                    prioridades.append(0)
+            prioridade_list.append( zip(alunosPFE,prioridades) )
+    mylist = zip(projetos, prioridade_list)
+    context= {
+        'mylist': mylist,
+        'length': len(projetos),
+        'nalunos': nalunos,
+        'qtd_prioridades': qtd_prioridades,
+    }
+    return render(request, 'projetos/todos.html', context)
 
 
 # https://simpleisbetterthancomplex.com/packages/2016/08/11/django-import-export.html
