@@ -27,7 +27,7 @@
           <p style="margin-left:1em;">Semestre: {{projeto.ano}}.{{projeto.semestre}}</p>
           <ol>
           {% for aluno,prioridade in prioridades %} 
-            <li><a href="{% url 'aluno' aluno.id %}">{{aluno.user.first_name}} [{{ aluno.get_curso_display }}]&nbsp;=>&nbsp;
+            <li><a href="{% url 'aluno' aluno.id %}">{{aluno.user.first_name}} {{aluno.user.last_name}} [{{ aluno.get_curso_display }}]&nbsp;=>&nbsp;
               {% if prioridade == 0 %}
                 prioridade não definida
               {% else %}

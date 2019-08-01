@@ -26,7 +26,7 @@
           <p style="margin-left:1em;">Orientador: {{projeto.orientador.user.first_name}} {{projeto.orientador.user.last_name}}</p>
           <ol>
           {% for aluno,prioridade in prioridades %} 
-            <li><a href="{% url 'aluno' aluno.id %}">{{aluno.user.first_name}} [{{ aluno.get_curso_display }}]&nbsp;=>&nbsp;
+            <li><a href="{% url 'aluno' aluno.id %}">{{aluno.user.first_name}} {{aluno.user.last_name}} [{{ aluno.get_curso_display }}]&nbsp;=>&nbsp;
               {% if prioridade == 0 %}
                 prioridade não definida
               {% else %}
