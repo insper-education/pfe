@@ -28,6 +28,9 @@ from .resources import AlunoResource
 
 
 def perfil(request):
+    user = PFEUser.objects.get(pk=request.user.pk)
+    if user.tipo_de_usuario != 1:
+       return HttpResponse("Você não está cadastrado como aluno, logo não possui perfil de aluno!") 
     aluno = Aluno.objects.get(pk=request.user.pk)
     context = {'aluno' : aluno,}
     return render(request, 'users/profile_detail.html', context=context)
