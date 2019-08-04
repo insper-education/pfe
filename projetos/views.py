@@ -762,3 +762,18 @@ def projetos_lista(request):
     projetos = Projeto.objects.all()
     context= {'projetos': projetos }    
     return render(request, 'projetos/projetos_lista.html', context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def exportar(request):
+    return render(request, 'projetos/exportar.html')
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def relatorios(request):
+    return render(request, 'projetos/relatorios.html')
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def carregar(request):
+    return render(request, 'projetos/carregar.html')

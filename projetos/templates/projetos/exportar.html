@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 4 de Agosto de 2019
+{% endcomment %}
+
+{% block content %}
+<h3>Exportar dados</h3>
+<table>
+    <tr>
+        <td>Tudo</td>
+        <td></td>
+        <td><b><a href="{% url 'backup' 'xls'%}">XLS</a></b></td>
+        <td><b><a href="{% url 'backup' 'json'%}">JSON</a></b></td>
+    </tr>
+    <tr>
+        <td>Projetos</td>
+        <td><a href="{% url 'export' 'projetos' 'csv'%}">CSV</a></td>
+        <td><a href="{% url 'export' 'projetos' 'xls'%}">XLS</a></td>
+        <td><a href="{% url 'export' 'projetos' 'json'%}">JSON</a></td>
+    </tr>
+    <tr>
+        <td>Organizacoes</td>
+        <td><a href="{% url 'export' 'organizacoes' 'csv'%}">CSV</a></td>
+        <td><a href="{% url 'export' 'organizacoes' 'xls'%}">XLS</a></td>
+        <td><a href="{% url 'export' 'organizacoes' 'json'%}">JSON</a></td>
+        
+    </tr>
+    <tr>
+        <td>Opcoes</td>
+        <td><a href="{% url 'export' 'opcoes' 'csv'%}">CSV</a></td>
+        <td><a href="{% url 'export' 'opcoes' 'xls'%}">XLS</a></td>
+        <td><a href="{% url 'export' 'opcoes' 'json'%}">JSON</a></td>
+    </tr>
+    <tr>
+        <td>Usuários</td>
+        <td><a href="{% url 'export' 'usuarios' 'csv'%}">CSV</a></td>
+        <td><a href="{% url 'export' 'usuarios' 'xls'%}">XLS</a></td>
+        <td><a href="{% url 'export' 'usuarios' 'json'%}">JSON</a></td>
+    </tr>
+    <tr>
+        <td>Alunos</td>
+        <td><a href="{% url 'export' 'alunos' 'csv'%}">CSV</a></td>
+        <td><a href="{% url 'export' 'alunos' 'xls'%}">XLS</a></td>
+        <td><a href="{% url 'export' 'alunos' 'json'%}">JSON</a></td>
+    </tr>
+    <tr>
+        <td>Professores</td>
+        <td><a href="{% url 'export' 'professores' 'csv'%}">CSV</a></td>
+        <td><a href="{% url 'export' 'professores' 'xls'%}">XLS</a></td>
+        <td><a href="{% url 'export' 'professores' 'json'%}">JSON</a></td>
+    </tr>
+    <tr>
+        <td>Configuração</td>
+        <td><a href="{% url 'export' 'configuracao' 'csv'%}">CSV</a></td>
+        <td><a href="{% url 'export' 'configuracao' 'xls'%}">XLS</a></td>
+        <td><a href="{% url 'export' 'configuracao' 'json'%}">JSON</a></td>
+    </tr>
+</table>
+<a href="{% url 'email_backup'%}">Envia e-mail com todos os backups</a>
+<br>
+<br>
+{% endblock %}

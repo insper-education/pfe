@@ -32,4 +32,7 @@ urlpatterns = [
     path('documentos/', views.documentos, name='documentos'),
     path('download/<str:path>', views.download, name='download'),
     path('projetos_lista/', views.projetos_lista, name='projetos_lista'),
+    path('exportar/', views.exportar, name='exportar'),
+    path('relatorios/', views.relatorios, name='relatorios'),
+    path('carregar/', views.carregar, name='carregar'),
 ]

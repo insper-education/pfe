@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 4 de Agosto de 2019
+{% endcomment %}
+
+{% block content %}
+<h5>Carregar dados</h5>
+<a href="{% url 'carrega' 'disciplinas' %}"><h5>disciplinas</h5></a>
+<a href="{% url 'carrega' 'alunos' %}"><h5>alunos</h5></a>
+<br>
+<br>
+{% endblock %}
