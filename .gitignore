@@ -7,3 +7,4 @@ pfe/settings.py
 *.log
 .DS_Store
 arquivos/*
+*.code-workspace
