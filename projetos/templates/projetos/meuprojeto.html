@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 5 de Agosto de 2019
+{% endcomment %}
+
+{% block content %}
+  <h3>Título: {{ projeto.titulo }}</h3>
+  <strong>Descrição:</strong> {{ projeto.descricao|linebreaks }}
+  <strong>Expectativas de resultados/entregas :</strong> {{ projeto.expectativas|linebreaks }}
+  <strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ projeto.areas|linebreaks }}
+  <strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ projeto.recursos|linebreaks }}
+  <hr>
+
+  <h3>Empresa: {{ projeto.empresa.nome_empresa }}</h3>
+  <strong>endereço:</strong> {{ projeto.empresa.endereco|linebreaks }}
+  <strong>website:</strong> <a href="{{ projeto.empresa.website }}"> {{ projeto.empresa.website }} </a>
+
+  {% if projeto.orientador %}
+  <hr>
+  <h3>Orientador</h3>
+  <ul>
+      <li><a href="mailto:{{projeto.orientador.user.email}}">{{ projeto.orientador.user.first_name }} {{ projeto.orientador.user.last_name }} &lt;{{projeto.orientador.user.email}}&gt; </a></li>
+  </ul>
+  {% endif %}
+
+  <hr>
+  <h3>Grupo</h3>
+  <ul>
+  {% for aluno in alunos %} 
+  <li><a href="mailto:{{aluno.user.email}}">{{aluno.user.first_name}} {{aluno.user.last_name}} &lt;{{aluno.user.email}}&gt; [{{ aluno.get_curso_display }}]
+  </a></li>
+  {% endfor %}
+  </ul>
+  <br>
+  <br>
+
+{% endblock %}

@@ -67,6 +67,9 @@
     <a {% if True %} class="disabled" onclick="myFunction()" {% else %} href="{% url 'submissao' %}" {% endif %} >
         <h5>Submissão de Formulário</h5></a>
 
+    <hr>
+    <a href="{% url 'meuprojeto' %}"><h5>Meu Projeto</h5></a>
+
     &nbsp;<br>
     <font color="red">Prazo para a seleção dos projetos : <b>{{ configuracao.prazo }}</b></font>
 

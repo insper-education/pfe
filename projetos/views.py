@@ -20,7 +20,7 @@ from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
 
 from .models import Projeto, Empresa, Configuracao, Disciplina, Evento
-from users.models import Aluno, Professor, Funcionario, Opcao
+from users.models import PFEUser, Aluno, Professor, Funcionario, Opcao
 
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource, AlunosResource, ProfessoresResource, ConfiguracaoResource, DisciplinasResource
 
@@ -777,3 +777,19 @@ def relatorios(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def carregar(request):
     return render(request, 'projetos/carregar.html')
+
+@login_required
+def meuprojeto(request):
+    user = PFEUser.objects.get(pk=request.user.pk)
+    if user.tipo_de_usuario != 1 and user.tipo_de_usuario != 2:
+       return HttpResponse("Você não está cadastrado como aluno ou professor") 
+    aluno = Aluno.objects.get(pk=request.user.pk) # com professor ainda esta errado
+    projeto = aluno.alocado
+    if not projeto:
+        return HttpResponse("Você não está alocado em nenhum projeto.")
+    alunos = Aluno.objects.filter(alocado=projeto)
+    context = {
+        'projeto': projeto,
+        'alunos': alunos,
+    }
+    return render(request, 'projetos/meuprojeto.html', context=context)

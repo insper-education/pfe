@@ -35,4 +35,5 @@ urlpatterns = [
     path('exportar/', views.exportar, name='exportar'),
     path('relatorios/', views.relatorios, name='relatorios'),
     path('carregar/', views.carregar, name='carregar'),
+    path('meuprojeto/', views.meuprojeto, name='meuprojeto'),
 ]
