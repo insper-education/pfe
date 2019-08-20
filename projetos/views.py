@@ -754,6 +754,18 @@ def download(request, path):
             return response
     raise Http404
 
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def contrato(request, organizacao, path):
+    file_path = os.path.abspath(os.path.join(settings.ARQUIVOS, "{0}/{1}".format(organizacao, path) ) )
+    if ".." in file_path: raise PermissionDenied
+    if "\\" in file_path: raise PermissionDenied
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as fh:
+            response = HttpResponse(fh.read(), content_type="application/pdf")
+            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+            return response
+    raise Http404
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')

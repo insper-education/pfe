@@ -8,9 +8,16 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib import admin
 #from datetime import datetime
 import datetime 
+import os
+
+from django.conf import settings
 
 #from users.models import Professor  (da um erro de referencia circular)
 import users.models
+
+def get_upload_path(instance, filename):
+    file_path = os.path.abspath(os.path.join(settings.ARQUIVOS, instance.sigla) )
+    return "{0}/{1}".format(file_path, filename)
 
 # RENOMEAR PARA ORGANIZACAO
 class Empresa(models.Model):
@@ -21,11 +28,15 @@ class Empresa(models.Model):
     endereco = models.TextField(max_length=200, help_text='Endereço da Empresa')
     website = models.URLField(max_length=250)
     # contatoEmpresa = models.CharField(max_length=80)
+    contrato = models.FileField(null=True, blank=True, upload_to=get_upload_path, help_text='Documento PDF contendo o contrato com a Empresa')
+
     class Meta:
         ordering = ['sigla']
         permissions = (("altera_empresa", "Empresa altera valores"), ("altera_professor", "Professor altera valores"), )
     def __str__(self):
         return self.nome_empresa
+    def documento(self):
+        return os.path.split(self.contrato.name)[1]
 
 class Projeto(models.Model):
     titulo = models.CharField(max_length=127, help_text='Titulo do projeto')

@@ -31,6 +31,7 @@ urlpatterns = [
     path('submissao/', views.submissao, name='submissao'),
     path('documentos/', views.documentos, name='documentos'),
     path('download/<str:path>', views.download, name='download'),
+    path('contrato/<str:organizacao>/<str:path>', views.contrato, name='contrato'),
     path('projetos_lista/', views.projetos_lista, name='projetos_lista'),
     path('exportar/', views.exportar, name='exportar'),
     path('relatorios/', views.relatorios, name='relatorios'),

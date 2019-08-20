@@ -9,6 +9,10 @@
   <h3>Empresa: {{ organization.nome_empresa }}</h3>
   <strong>endereço:</strong> {{ organization.endereco|linebreaks }}
   <strong>website:</strong> <a href="{{ organization.website }}"> {{ organization.website }} </a>
+  <br>
+  {% if organization.contrato %}
+    <strong>contrato:</strong> <a href="{% url 'contrato' organization.sigla organization.documento %}"> {{ organization.documento }} </a>
+  {% endif %}
   <hr>
 
   <h3>Projetos</h3>
