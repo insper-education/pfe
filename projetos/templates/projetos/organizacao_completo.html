@@ -10,8 +10,11 @@
   <strong>website:</strong> <a href="{{ organization.website }}"> {{ organization.website }} </a><br>
   <br><strong>contato(s):</strong><br>
   {% for parceiro in organization.parceiro_set.all %}
-      <li>{{parceiro.user.first_name}} {{parceiro.user.last_name}} 
-          <a href="mailto:{{parceiro.user.email}}"> &lt;{{parceiro.user.email}}&gt;</a>
+      <li>
+          {{parceiro.user.first_name}} {{parceiro.user.last_name}} &nbsp;
+          <a href="mailto:{{parceiro.user.email}}"> &lt;{{parceiro.user.email}}&gt;</a> &nbsp;
+          {% if parceiro.telefone %} &#x260F; {{parceiro.telefone}} &nbsp;{% endif %}
+          {% if parceiro.celular %} &#x1F4F1; {{parceiro.celular}} &nbsp;{% endif %}
           {% if parceiro.gestor_responsavel %}
             [gestor responsavel]
           {% endif %}
