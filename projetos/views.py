@@ -20,7 +20,7 @@ from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
 
 from .models import Projeto, Empresa, Configuracao, Disciplina, Evento
-from users.models import PFEUser, Aluno, Professor, Funcionario, Opcao
+from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao
 
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource, AlunosResource, ProfessoresResource, ConfiguracaoResource, DisciplinasResource
 

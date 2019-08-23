@@ -15,7 +15,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 
 from .forms import PFEUserCreationForm, PFEUserForm, AlunoForm
-from .models import PFEUser, Aluno, Professor, Funcionario
+from .models import PFEUser, Aluno, Professor, Parceiro
 from projetos.models import Configuracao
 
 from tablib import Dataset

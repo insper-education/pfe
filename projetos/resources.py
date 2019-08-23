@@ -5,7 +5,7 @@
 from import_export import resources, fields
 
 from .models import Projeto, Empresa, Configuracao, Disciplina
-from users.models import PFEUser, Aluno, Professor, Funcionario, Opcao
+from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao
 
 class ProjetosResource(resources.ModelResource):
     class Meta:

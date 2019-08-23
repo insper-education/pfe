@@ -141,7 +141,7 @@ class Opcao(models.Model):
     def __str__(self):
         return self.aluno.user.username+" >>> "+self.projeto.titulo
 
-class Funcionario(models.Model):  # da empresa (não do Insper)
+class Parceiro(models.Model):  # da empresa (não do Insper)
     user = models.OneToOneField(PFEUser, on_delete=models.CASCADE)
     #empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
     #gestor_responsavel = models.EmailField()

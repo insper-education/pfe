@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import PFEUserCreationForm, PFEUserChangeForm
-from .models import PFEUser, Aluno, Professor, Funcionario, Administrador, Opcao
+from .models import PFEUser, Aluno, Professor, Parceiro, Administrador, Opcao
 
 @admin.register(PFEUser)
 class PFEUserAdmin(admin.ModelAdmin):
@@ -17,7 +17,7 @@ class PFEUserAdmin(admin.ModelAdmin):
 
 admin.site.register(Aluno)
 admin.site.register(Professor)
-admin.site.register(Funcionario)
+admin.site.register(Parceiro)
 admin.site.register(Administrador)
 
 class OpcaoInline(admin.TabularInline):
