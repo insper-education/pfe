@@ -8,7 +8,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from projetos.models import Projeto
+from projetos.models import Projeto, Empresa
 
 class PFEUser(AbstractUser):
     #username
@@ -20,7 +20,7 @@ class PFEUser(AbstractUser):
     TIPO_DE_USUARIO_CHOICES = (
       (1, 'aluno'),
       (2, 'professor'),
-      (3, 'funcionario'),
+      (3, 'parceiro'),
       (4, 'administrador'),
     )
     tipo_de_usuario = models.PositiveSmallIntegerField(choices=TIPO_DE_USUARIO_CHOICES, default=4)
@@ -103,7 +103,7 @@ class Aluno(models.Model):
 
     class Meta:
         ordering = ['user']
-        permissions = (("altera_professor", "Professor altera valores"), )
+        permissions = ()
     def __str__(self):
         return self.user.username
 
@@ -143,13 +143,15 @@ class Opcao(models.Model):
 
 class Parceiro(models.Model):  # da empresa (não do Insper)
     user = models.OneToOneField(PFEUser, on_delete=models.CASCADE)
-    #empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
-    #gestor_responsavel = models.EmailField()
-    #mentor_tecnico = models.EmailField()
-    #recursos_humanos = models.EmailField()
+    organizacao = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.CASCADE)
+    cargo = models.CharField(max_length=40, blank=True, help_text='Cargo Funcional')
+    telefone = models.CharField(max_length=20, blank=True, help_text='Telefone') 
+    gestor_responsavel = models.BooleanField(default=False)
+    mentor_tecnico = models.BooleanField(default=False)
+    recursos_humanos = models.BooleanField(default=False)
     class Meta:
         ordering = ['user']
-        permissions = (("altera_empresa", "Empresa altera valores"), ("altera_professor", "Professor altera valores"), )
+        permissions = (("altera_parceiro", "Parceiro altera valores"),)
 
     def __str__(self):
         return self.user.username
@@ -171,8 +173,8 @@ def create_user_aluno(sender, instance, created, **kwargs):
         Aluno.objects.get_or_create(user=instance)
     elif instance.tipo_de_usuario == 2 : #professor
         Professor.objects.get_or_create(user=instance)
-    elif instance.tipo_de_usuario == 3 : #funcionario
-        Funcionario.objects.get_or_create(user=instance)
+    elif instance.tipo_de_usuario == 3 : #Parceiro
+        Parceiro.objects.get_or_create(user=instance)
     elif instance.tipo_de_usuario == 4 : #administrador
         Administrador.objects.get_or_create(user=instance)
 
@@ -183,7 +185,7 @@ def save_user_aluno(sender, instance, **kwargs):
         instance.aluno.save()
     elif instance.tipo_de_usuario == 2 : #professor
         instance.professor.save()
-    elif instance.tipo_de_usuario == 3 : #funcionario
-        instance.funcionario.save()
+    elif instance.tipo_de_usuario == 3 : #Parceiro
+        instance.parceiro.save()
     elif instance.tipo_de_usuario == 4 : #administrador
         instance.administrador.save()

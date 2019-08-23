@@ -7,11 +7,27 @@
 
 {% block content %}
   <h3>Empresa: {{ organization.nome_empresa }}</h3>
-  <strong>endereço:</strong> {{ organization.endereco|linebreaks }}
-  <strong>website:</strong> <a href="{{ organization.website }}"> {{ organization.website }} </a>
+  <strong>website:</strong> <a href="{{ organization.website }}"> {{ organization.website }} </a><br>
+  <br><strong>contato(s):</strong><br>
+  {% for parceiro in organization.parceiro_set.all %}
+      <li>{{parceiro.user.first_name}} {{parceiro.user.last_name}} 
+          <a href="mailto:{{parceiro.user.email}}"> &lt;{{parceiro.user.email}}&gt;</a>
+          {% if parceiro.gestor_responsavel %}
+            [gestor responsavel]
+          {% endif %}
+          {% if parceiro.mentor_tecnico %}
+            [mentor técnico]
+          {% endif %}
+          {% if parceiro.recursos_humanos %}
+            [recursos humanos]
+          {% endif %}
+        </li>
+  {% endfor %}
+  <br><strong>endereço(s):</strong> {{ organization.endereco|linebreaks }}
   <br>
+  <hr>
   {% if organization.contrato %}
-    <strong>contrato:</strong> <a href="{% url 'contrato' organization.sigla organization.documento %}"> {{ organization.documento }} </a>
+    <strong>contratos:</strong> <a href="{% url 'contrato' organization.sigla organization.documento %}"> {{ organization.documento }} </a>
   {% endif %}
   <hr>
 
