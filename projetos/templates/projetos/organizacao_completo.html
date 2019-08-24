@@ -6,6 +6,7 @@
 {% endcomment %}
 
 {% block content %}
+  {% load static %}  
   <h3>Empresa: {{ organization.nome_empresa }}</h3>
   <strong>website:</strong> <a href="{{ organization.website }}"> {{ organization.website }} </a><br>
   <br><strong>contato(s):</strong><br>
@@ -13,8 +14,7 @@
       <li>
           {{parceiro.user.first_name}} {{parceiro.user.last_name}} &nbsp;
           <a href="mailto:{{parceiro.user.email}}"> &lt;{{parceiro.user.email}}&gt;</a> &nbsp;
-          {% if parceiro.telefone %} &#x260F; {{parceiro.telefone}} &nbsp;{% endif %}
-          {% if parceiro.celular %} &#x1F4F1; {{parceiro.celular}} &nbsp;{% endif %}
+          <br>&nbsp;&nbsp;&nbsp;
           {% if parceiro.gestor_responsavel %}
             [gestor responsavel]
           {% endif %}
@@ -24,6 +24,11 @@
           {% if parceiro.recursos_humanos %}
             [recursos humanos]
           {% endif %}
+          {% if parceiro.telefone %} <br>&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; {{parceiro.telefone}} &nbsp;{% endif %}
+          {% if parceiro.celular %} <br>&nbsp;&nbsp;&nbsp;&nbsp;&#x1F4F1; {{parceiro.celular}} &nbsp;{% endif %}
+          {% if parceiro.skype %} <br>&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="skype" style="width:16px;height:16px;">
+          <a href="skype:{{parceiro.skype}}">{{parceiro.skype}}</a>&nbsp; {% endif %}
+          <br>
         </li>
   {% endfor %}
   <br><strong>endereço(s):</strong> {{ organization.endereco|linebreaks }}
