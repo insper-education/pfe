@@ -11,6 +11,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from projetos.models import Projeto, Empresa
 
 class PFEUser(AbstractUser):
+    # Atualizar para AbstractBaseUser que permite colocar mais caracteres nos campos
     #username
     #first_name
     #last_name
@@ -26,7 +27,7 @@ class PFEUser(AbstractUser):
     tipo_de_usuario = models.PositiveSmallIntegerField(choices=TIPO_DE_USUARIO_CHOICES, default=4)
 
     def __str__(self):
-        return self.username
+        return self.username #ver se atualizar isso para first_name não quebra o projeto
 
 class Professor(models.Model):
     user = models.OneToOneField(PFEUser, on_delete=models.CASCADE)

@@ -12,7 +12,6 @@ import os
 
 from django.conf import settings
 
-#from users.models import Professor  (da um erro de referencia circular)
 import users.models
 
 def get_upload_path(instance, filename):
@@ -111,12 +110,15 @@ class Cursada(models.Model):
     def __str__(self):
         return self.aluno.user.username+" >>> "+self.disciplina.nome
 
+# Para listas as disciplinas recomendadas que um aluno ja tenha cursado para fazer o projeto
 class Recomendada(models.Model):
     disciplina = models.ForeignKey(Disciplina, on_delete=models.CASCADE, help_text='disciplina recomendada para o projeto')
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, help_text='projeto que recomenda a disciplina')
     def __str__(self):
         return self.projeto.titulo+" >>> "+self.disciplina.nome
 
+
+# Eventos para a agenda do PFE
 class Evento(models.Model):
     name = models.CharField(max_length=50)
     location = models.CharField(blank=True, max_length=50)
@@ -125,3 +127,12 @@ class Evento(models.Model):
     color = models.CharField(max_length=20)
     def __str__(self):
         return self.name
+
+# Anotacoes de comunicações com as organizações pareceiras
+class Anotacao(models.Model):
+    data = models.DateField(default=datetime.date.today, blank=True, help_text='Data da comunicação')
+    organizacao = models.ForeignKey(Empresa, on_delete=models.CASCADE, help_text='Organização parceira')
+    autor = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL, related_name='professor_orientador', help_text='quem fez a anotação')
+    texto = models.TextField(max_length=2000, help_text='Anotação')
+    def __str__(self):
+        return str(self.data)

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Projeto, Empresa, Configuracao, Disciplina, Cursada, Recomendada, Evento
+from .models import Projeto, Empresa, Configuracao, Disciplina, Cursada, Recomendada, Evento, Anotacao
 
 @admin.register(Projeto)
 class ProjetoAdmin(admin.ModelAdmin):
@@ -23,15 +23,19 @@ class ProjetoAdmin(admin.ModelAdmin):
 
 @admin.register(Empresa)
 class EmpresaAdmin(admin.ModelAdmin):
-    list_display = ('sigla', 'nome_empresa')
+    list_display = ('sigla', 'nome_empresa',)
 
 @admin.register(Configuracao)
 class ConfiguracaoAdmin(admin.ModelAdmin):
-    list_display = ('ano', 'semestre')
+    list_display = ('ano', 'semestre',)
 
 @admin.register(Disciplina)
 class DisciplinaAdmin(admin.ModelAdmin):
     list_display = ('nome',)
+
+@admin.register(Anotacao)
+class AnotacaoAdmin(admin.ModelAdmin):
+    list_display = ('data', 'organizacao', 'autor',)
 
 admin.site.register(Cursada)
 admin.site.register(Recomendada)
