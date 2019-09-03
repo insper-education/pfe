@@ -614,7 +614,8 @@ def fechados(request):
     qtd_prioridades = [0,0,0,0,0,0]   # para grafico de pizza no final
 
     for p in Projeto.objects.all():
-        alunosPFE = Aluno.objects.filter(anoPFE=configuracao.ano).filter(semestrePFE=configuracao.semestre).filter(alocado=p)
+        #alunosPFE = Aluno.objects.filter(anoPFE=configuracao.ano).filter(semestrePFE=configuracao.semestre).filter(alocado=p)
+        alunosPFE = Aluno.objects.filter(alocado=p)
         if len(alunosPFE) > 0 :
             projetos.append(p)
             alunos_list.append(alunosPFE)
@@ -624,8 +625,9 @@ def fechados(request):
             for aluno in alunosPFE:
                 opcoes = Opcao.objects.filter(projeto=p)
                 opcoes_alunos = opcoes.filter(aluno__user__tipo_de_usuario=1)
-                opcoes_validas = opcoes_alunos.filter(aluno__anoPFE=configuracao.ano).filter(aluno__semestrePFE=configuracao.semestre)
-                opcoes1 = opcoes_validas.filter(aluno__alocado=p)
+                #opcoes_validas = opcoes_alunos.filter(aluno__anoPFE=configuracao.ano).filter(aluno__semestrePFE=configuracao.semestre)
+                #opcoes1 = opcoes_validas.filter(aluno__alocado=p)
+                opcoes1 = opcoes_alunos.filter(aluno__alocado=p)
                 opcoes2 = opcoes1.filter(aluno=aluno)
                 if len(opcoes2)==1:
                     prioridade = opcoes2.first().prioridade

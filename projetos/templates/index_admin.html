@@ -8,12 +8,18 @@
 {% block content %}
 <br>
 <a href=""><h5>Enviar para lista de e-mails (NOT WORKING)</h5></a>
-<a href="{% url 'alunos' %}"><h5>Listagem completa de alunos</h5></a>
-<a href="{% url 'todos' %}"><h5>Listagem completa de projetos</h5></a>
 <a href="{% url 'servico' %}"><h5>Habilitar aviso se manutenção</h5></a>
+
+<hr>
+<h5>Listagem completa</h5>
+<ul>
+    <a href="{% url 'alunos' %}"><li>Alunos</li></a>
+    <a href="{% url 'todos' %}"><li>Projetos</li></a>
+    <a href="{% url 'organizacoes' %}"><li>Organizações Parceiras</li></a>
+</ul>
 
 <hr>
 <a href="{% url 'exportar' %}"><h5>Exportar dados</h5></a>
 <a href="{% url 'relatorios' %}"><h5>Relatórios</h5></a>
-<a href="{% url 'carregar' %}"><h5>Carregar dados (CUIDADO PODO COMPROMETER BASE DE DADOS)</h5></a>
+<a href="{% url 'carregar' %}"><h5>Carregar dados (CUIDADO PODE COMPROMETER BASE DE DADOS)</h5></a>
 {% endblock %}

@@ -6,13 +6,14 @@
 {% endcomment %}
 
 {% block content %}
+    <a href="{% url 'fechados' %}">          <h5>Resumo de Projetos Fechados</h5>         </a>
+    <hr>
     <a href="{% url 'alunos_inscrevendo' %}"><h5>Listagem de Alunos se Inscrevendo</h5>   </a>
-    <a href="{% url 'organizacoes' %}">      <h5>Listagem de Organizações Parceiras</h5>  </a>
     <a href="{% url 'projetos_lista' %}">    <h5>Listagem de Projetos Disponíveis</h5>    </a>
     <hr>
     <a href="{% url 'histograma' %}">        <h5>Histograma de Interesse de Projetos</h5> </a>
     <a href="{% url 'areas' %}">             <h5>Tendência de Áreas de Interesse</h5>     </a>
     <hr>
     <a href="{% url 'propor' %}">            <h5>Propor Grupos para Projetos</h5>         </a>
-    <a href="{% url 'fechados' %}">          <h5>Resumo de Projetos Fechados</h5>         </a>
+
 {% endblock %}

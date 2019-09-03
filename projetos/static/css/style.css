@@ -129,6 +129,15 @@ table, th, td {
   font-size: 16px;
 }
 
+#projetos, #pth, #ptd {
+  border-collapse: collapse;
+  border: 0px solid black;
+  padding-left: 5px;
+  padding-right: 5px;
+  text-align: left;
+  font-size: 16px;
+}
+
 #canvas-holder {
   width:450px;
 }
