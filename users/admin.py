@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import PFEUserCreationForm, PFEUserChangeForm
-from .models import PFEUser, Aluno, Professor, Parceiro, Administrador, Opcao
+from .models import PFEUser, Aluno, Professor, Parceiro, Administrador, Opcao, Alocacao
 
 @admin.register(PFEUser)
 class PFEUserAdmin(admin.ModelAdmin):
@@ -26,3 +26,4 @@ class OpcaoInline(admin.TabularInline):
     max_num = 5
 
 admin.site.register(Opcao)
+admin.site.register(Alocacao)

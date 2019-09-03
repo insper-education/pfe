@@ -131,6 +131,7 @@ class Aluno(models.Model):
     # opcao4.short_description = 'Opcao 4'
     # opcao5.short_description = 'Opcao 5'
 
+# Opções de Projetos pelos alunos com suas prioridades
 class Opcao(models.Model):
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE)
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
@@ -138,6 +139,15 @@ class Opcao(models.Model):
     prioridade = models.PositiveSmallIntegerField()
     class Meta:
         ordering = ['prioridade']
+        permissions = (("altera_professor", "Professor altera valores"), )
+    def __str__(self):
+        return self.aluno.user.username+" >>> "+self.projeto.titulo
+
+# Projeto em que o aluno está alocado
+class Alocacao(models.Model):
+    projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE)
+    aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
+    class Meta:
         permissions = (("altera_professor", "Professor altera valores"), )
     def __str__(self):
         return self.aluno.user.username+" >>> "+self.projeto.titulo
