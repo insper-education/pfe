@@ -21,17 +21,21 @@
       {% for projeto,prioridades in mylist %} 
         {% if projeto.disponivel %}
           <a href="{% url 'completo' projeto.id %}" class="dark-blue-bold"> 
-            {{projeto.titulo}} ({{ projeto.empresa.nome_empresa }})<br>
+            {{projeto.titulo}}<br>
           </a>
+          <p style="margin-left:1em;">Empresa: <a href="{% url 'organizacao' projeto.empresa.login %}">
+              {{ projeto.empresa.nome_empresa }}
+            </a></p>
+          <p style="margin-left:1em;">Edição: {{projeto.ano}}.{{projeto.semestre}}</p>
           <p style="margin-left:1em;">Orientador: {{projeto.orientador.user.first_name}} {{projeto.orientador.user.last_name}} &lt;{{projeto.orientador.user.email}}&gt; </p>
-          <p style="margin-left:1em;">Semestre: {{projeto.ano}}.{{projeto.semestre}}</p>
+          <p style="margin-left:1em;">Alunos:</p>
           <ol>
           {% for aluno,prioridade in prioridades %} 
-            <li><a href="{% url 'aluno' aluno.id %}">{{aluno.user.first_name}} {{aluno.user.last_name}} &lt;{{aluno.user.email}}&gt; [{{ aluno.get_curso_display }}]&nbsp;=>&nbsp;
+            <li><a href="{% url 'aluno' aluno.id %}">{{aluno.user.first_name}} {{aluno.user.last_name}} &lt;{{aluno.user.email}}&gt; [{{ aluno.get_curso_display }}]&nbsp;
               {% if prioridade == 0 %}
-                prioridade não definida
+                (prioridade não definida)
               {% else %}
-                prioridade # {{prioridade}}
+                (prioridade # {{prioridade}})
               {% endif %}
             </a></li>
           {% endfor %}

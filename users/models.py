@@ -55,7 +55,7 @@ class Aluno(models.Model):
     anoPFE = models.PositiveIntegerField(null=True, blank=True, validators=[MinValueValidator(2018),MaxValueValidator(3018)], help_text='Ano que cursará o PFE')
     semestrePFE = models.PositiveIntegerField(null=True, blank=True, validators=[MinValueValidator(1),MaxValueValidator(2)], help_text='Semestre que cursará o PFE')
     cr = models.FloatField(default=0,help_text='Coeficiente de Rendimento')
-    alocado = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL, related_name='aluno_alocado', help_text='projeto selecionado')
+    #alocado = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL, related_name='aluno_alocado', help_text='projeto selecionado')
 
     #areas de interesse
     inovacao_social = models.BooleanField(default=False)
@@ -147,6 +147,18 @@ class Opcao(models.Model):
 class Alocacao(models.Model):
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE)
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
+    CONCEITOS = (
+      (127, 'NA'),
+      (10, 'A+'),
+      (9, 'A'),
+      (8, 'B+'),
+      (7, 'B'),
+      (6, 'C+'),
+      (5, 'C'),
+      (4, 'D'),
+      (0, 'I'),
+    )
+    conceito = models.PositiveSmallIntegerField(choices=CONCEITOS, default=127)
     class Meta:
         permissions = (("altera_professor", "Professor altera valores"), )
     def __str__(self):
