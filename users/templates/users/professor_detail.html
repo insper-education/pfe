@@ -10,12 +10,17 @@
   <strong>e-mail:</strong> {{professor.user.email}} <br>
 
   {% if projetos %}
-  <hr>
-  <h3>Projetos Orientando</h3>
-  {% for projeto in projetos %}
-    <a href="{% url 'completo' projeto.id %}">
-    {{projeto.titulo}} ({{projeto.empresa.nome_empresa}})</p>
-  {% endfor %}
+    <hr>
+    <h3>Projetos Orientando</h3>
+    {% for projeto in projetos %}
+      {% if projeto.alocacao_set.all.count > 0 %}
+        <a href="{% url 'completo' projeto.id %}">
+        {{projeto.titulo}} [{{projeto.ano}}.{{projeto.semestre}}] ({{projeto.empresa.nome_empresa}})
+        { {{ projeto.alocacao_set.all.count }} aluno(s) }
+        <br>
+        </a>
+      {% endif %}
+    {% endfor %}
   {% endif %}
   <p>&nbsp;</p>
   <p>&nbsp;</p>

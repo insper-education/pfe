@@ -21,9 +21,17 @@
   <hr>
   <h3>Orientadores</h3>
   <ul>
+    <a href="{% url 'professor_detail' projeto.orientador.id %}">
       <li>{{ projeto.orientador.user.first_name }} {{ projeto.orientador.user.last_name }}</li>
+    </a>
   </ul>
   {% endif %}
+
+  <hr>
+  <h3>Alunos Alocados no Projeto</h3>
+  {% for alocacao in projeto.alocacao_set.all %}
+    <a href="{% url 'aluno' alocacao.aluno.id %}">{{alocacao.aluno.user.first_name}} {{alocacao.aluno.user.last_name}} [{{ alocacao.aluno.get_curso_display }}]</p></a>
+  {% endfor %}
 
   <hr>
   <h3>Alunos Aplicando para o Projeto</h3>
