@@ -10,13 +10,14 @@
 {% endblock %}
 
 {% block content %}
-
   <h3>Tabela de Alocação de Professores</h3>
   <br>
+  {% for professores,periodo in anos %} 
+  {{periodo}}
   <table id="professores">
     <tr>
       <th>Nome</th>
-      <th>Alocações</th>
+      <th>Grupos</th>
     </tr>
     {% for professor,grupos in professores %} 
       <tr>
@@ -29,6 +30,8 @@
       </tr>
     {% endfor %}
   </table>
+  <br>
+  {% endfor %}
   
   <br>
   <br>

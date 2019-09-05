@@ -813,16 +813,39 @@ def meuprojeto(request):
 def professores(request):
     configuracao = Configuracao.objects.all().first()
 
-    professores = []
-    grupos = []
+    professoresPFE = []
+    periodo = []
 
-    for p in Professor.objects.all():
-        gruposPFE = Projeto.objects.filter(orientador=p).filter(ano=configuracao.ano).filter(semestre=configuracao.semestre)
-        if len(gruposPFE) > 0 :
-            professores.append(p)
-            grupos.append(len(gruposPFE))
-    professoresPFE = zip(professores, grupos)
+    ano = 2018
+    semestre = 2
+    while( True ):
+        professores = []
+        grupos = []
+        for p in Professor.objects.all():
+            count_grupos = 0
+            gruposPFE = Projeto.objects.filter(orientador=p).filter(ano=ano).filter(semestre=semestre)
+            if len(gruposPFE) > 0 :
+                for x in gruposPFE: # garante que tem alunos no projeto
+                    alunosPFE = Aluno.objects.filter(alocacao__projeto=x)
+                    if len(alunosPFE) > 0:
+                        count_grupos += 1
+                if count_grupos > 0:
+                    professores.append(p)
+                    grupos.append(count_grupos)
+        professoresPFE.append(zip(professores, grupos))
+        periodo.append(str(ano)+"."+str(semestre))
+
+        if ((ano==configuracao.ano) and (semestre==configuracao.semestre)):
+            break
+
+        if(semestre==2):
+            semestre=1
+            ano+=1
+        else:
+            semestre=2
+    
+    anos = zip(professoresPFE,periodo)
     context= {
-        'professores': professoresPFE,
+        'anos': anos,
     }
     return render(request, 'projetos/professores.html', context)
