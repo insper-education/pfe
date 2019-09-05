@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 4 de Setembro de 2019
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+{% endblock %}
+
+{% block content %}
+
+  <h3>Tabela de Alocação de Professores</h3>
+  <br>
+  <table id="professores">
+    <tr>
+      <th>Nome</th>
+      <th>Alocações</th>
+    </tr>
+    {% for professor,grupos in professores %} 
+      <tr>
+        <td>
+          {{professor.user.first_name}} {{professor.user.last_name}}
+        </td>
+        <td>
+          {{grupos}}
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+  
+  <br>
+  <br>
+
+{% endblock %}

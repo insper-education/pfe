@@ -656,7 +656,6 @@ def todos(request):
     qtd_prioridades = [0,0,0,0,0,0]   # para grafico de pizza no final
 
     for p in Projeto.objects.all():
-        #alunosPFE = Aluno.objects.filter(alocado=p)
         alunosPFE = Aluno.objects.filter(alocacao__projeto=p)
         if len(alunosPFE) > 0 :
             projetos.append(p)
@@ -808,3 +807,22 @@ def meuprojeto(request):
         'alunos': alunos,
     }
     return render(request, 'projetos/meuprojeto.html', context=context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def professores(request):
+    configuracao = Configuracao.objects.all().first()
+
+    professores = []
+    grupos = []
+
+    for p in Professor.objects.all():
+        gruposPFE = Projeto.objects.filter(orientador=p).filter(ano=configuracao.ano).filter(semestre=configuracao.semestre)
+        if len(gruposPFE) > 0 :
+            professores.append(p)
+            grupos.append(len(gruposPFE))
+    professoresPFE = zip(professores, grupos)
+    context= {
+        'professores': professoresPFE,
+    }
+    return render(request, 'projetos/professores.html', context)

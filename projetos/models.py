@@ -26,7 +26,6 @@ class Empresa(models.Model):
     sigla = models.CharField(max_length=20)
     endereco = models.TextField(max_length=200, help_text='Endereço da Empresa')
     website = models.URLField(max_length=250)
-    # contatoEmpresa = models.CharField(max_length=80)
     contrato = models.FileField(null=True, blank=True, upload_to=get_upload_path, help_text='Documento PDF contendo o contrato com a Empresa')
 
     class Meta:
@@ -62,9 +61,6 @@ class Projeto(models.Model):
     perfil_aluno4_computacao = models.BooleanField(default=False, help_text='Perfil desejado para o quarto aluno se for de computação')
     perfil_aluno4_mecatronica = models.BooleanField(default=False, help_text='Perfil desejado para o quarto aluno se for de mecatrônica')
     perfil_aluno4_mecanica = models.BooleanField(default=False, help_text='Perfil desejado para o quarto aluno se for de mecânica')
-    # contato1 = models.CharField(max_length=80)
-    # contato2 = models.CharField(max_length=80)
-    # contato3 = models.CharField(max_length=80)
     
     class Meta:
         ordering = ['titulo']
@@ -80,7 +76,7 @@ class Projeto(models.Model):
         return reverse('projeto-detail', args=[str(self.id)])
 
     def __str__(self):
-        return self.titulo
+        return self.titulo+" ("+str(self.ano)+"."+str(self.semestre)+")"
 
 class Configuracao(models.Model):
     ano = models.PositiveIntegerField(validators=[MinValueValidator(2018),MaxValueValidator(3018)], help_text='Ano que o projeto comeca')
