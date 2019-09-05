@@ -35,6 +35,9 @@
           <p style="margin-left:1em;">Empresa: <a href="{% url 'organizacao' projeto.empresa.login %}">
               {{ projeto.empresa.nome_empresa }}
             </a></p>
+          {% if projeto.avancado %}
+            <p style="margin-left:1em;">Tipo: <font color="red">PFE Avançado</font></p>
+          {% endif %}
           <p style="margin-left:1em;">Edição: {{projeto.ano}}.{{projeto.semestre}}</p>
           <p style="margin-left:1em;">Orientador: {{projeto.orientador.user.first_name}} {{projeto.orientador.user.last_name}} &lt;{{projeto.orientador.user.email}}&gt; </p>
           <p style="margin-left:1em;">Alunos:</p>

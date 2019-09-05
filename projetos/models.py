@@ -45,6 +45,7 @@ class Projeto(models.Model):
     recursos = models.TextField(max_length=1000, help_text='Recursos a serem disponibilizados aos Alunos')
     imagem = models.ImageField(null=True, blank=True, help_text='Imagem que representa projeto (se houver)')
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, help_text='Empresa que propôs projeto')
+    avancado = models.BooleanField(default=False, help_text='Se for um projeto de PFE Avançado')
     ano = models.PositiveIntegerField(validators=[MinValueValidator(2018),MaxValueValidator(3018)], help_text='Ano que o projeto comeca')
     semestre = models.PositiveIntegerField(validators=[MinValueValidator(1),MaxValueValidator(2)], help_text='Semestre que o projeto comeca')
     disponivel = models.BooleanField(default=False, help_text='Se o projeto está atualmente disponível para os alunos')
