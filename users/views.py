@@ -158,6 +158,15 @@ def aluno(request, pk):
     }
     return render(request, 'users/aluno_detail.html', context=context)
 
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def professor_detail(request, pk):
+    professor = Professor.objects.filter(pk=pk).first()
+    context = {
+        'professor': professor,
+    }
+    return render(request, 'users/professor_detail.html', context=context)
+
 
 # class AlunoListView(LoginRequiredMixin, generic.ListView):
 #     model = Aluno
