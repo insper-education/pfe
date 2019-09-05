@@ -16,7 +16,7 @@ from django.db import transaction
 
 from .forms import PFEUserCreationForm, PFEUserForm, AlunoForm
 from .models import PFEUser, Aluno, Professor, Parceiro
-from projetos.models import Configuracao
+from projetos.models import Configuracao, Projeto
 
 from tablib import Dataset
 
@@ -162,8 +162,10 @@ def aluno(request, pk):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def professor_detail(request, pk):
     professor = Professor.objects.filter(pk=pk).first()
+    projetos = Projeto.objects.filter(orientador=professor).all()
     context = {
         'professor': professor,
+        'projetos': projetos,
     }
     return render(request, 'users/professor_detail.html', context=context)
 

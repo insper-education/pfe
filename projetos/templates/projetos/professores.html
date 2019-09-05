@@ -22,7 +22,9 @@
     {% for professor,grupos in professores %} 
       <tr>
         <td>
-          {{professor.user.first_name}} {{professor.user.last_name}}
+          <a href="{% url 'professor_detail' professor.id %}">
+            {{professor.user.first_name}} {{professor.user.last_name}}
+          </a>
         </td>
         <td>
           {{grupos}}

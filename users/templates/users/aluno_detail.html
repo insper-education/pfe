@@ -119,15 +119,14 @@
           </td>
           <td>Administração, Economia e Finanças</td>
       </tr>
-  
     </table>
 
-    {% if aluno.alocado %}
+    {% if aluno.alocacao_set.all.count > 0 %}
         <hr>
         <h3>Projeto Alocado</h3>
-        <a href="{% url 'completo' aluno.alocado.id %}">
-        {{ aluno.alocado.titulo }} ({{aluno.alocado.empresa.nome_empresa}})
-        </a>
+        {% for alocado in aluno.alocacao_set.all %}
+            {{ alocado.projeto.titulo }} ({{alocado.projeto.empresa.nome_empresa}})
+        {% endfor %}
     {% endif %}
 
     {% if aluno.opcao_set.all %}

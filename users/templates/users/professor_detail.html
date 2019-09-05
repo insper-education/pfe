@@ -9,10 +9,10 @@
   <h3>{{professor.user.first_name}}&nbsp;{{professor.user.last_name}}</h3>
   <strong>e-mail:</strong> {{professor.user.email}} <br>
 
-  {% if professor.projeto_set.all %}
+  {% if projetos %}
   <hr>
-  <h3>Projetos Alocados</h3>
-  {% for projeto in professor.projeto_set.all %}
+  <h3>Projetos Orientando</h3>
+  {% for projeto in projetos %}
     <a href="{% url 'completo' projeto.id %}">
     {{projeto.titulo}} ({{projeto.empresa.nome_empresa}})</p>
   {% endfor %}
