@@ -25,7 +25,7 @@ class Empresa(models.Model):
     nome_empresa = models.CharField(max_length=80)
     sigla = models.CharField(max_length=20)
     endereco = models.TextField(max_length=200, help_text='Endereço da Empresa')
-    website = models.URLField(max_length=250)
+    website = models.URLField(max_length=250, null=True, blank=True)
     contrato = models.FileField(null=True, blank=True, upload_to=get_upload_path, help_text='Documento PDF contendo o contrato com a Empresa')
 
     class Meta:
