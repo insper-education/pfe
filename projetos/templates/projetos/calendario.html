@@ -7,25 +7,16 @@
 
 {% block head %}
   {% load static %}
-  <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-  
   <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-datepicker.min.css' %}"/>
-
-  <!-- <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-theme.min.css' %}"/> -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
-
   <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-year-calendar.min.css' %}"/>
-  
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">  
   <style>
     table, th, td {
       border: 0px solid white;
     }
   </style>
-
 {% endblock %}
 
 {% block content %}
@@ -35,8 +26,6 @@
 
 <script src="{% static 'js/respond.min.js' %}"></script>
 <script src="{% static 'js/jquery-1.10.2.min.js' %}"></script>
-
-<!-- <script src="{% static 'js/bootstrap.min.js' %}"></script> -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
 <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script> 
@@ -47,16 +36,16 @@
 
 <script>
 
-function editEvent(event) {
+  function editEvent(event) {
     $('#event-modal input[name="event-index"]').val(event ? event.id : '');
     $('#event-modal input[name="event-name"]').val(event ? event.name : '');
     $('#event-modal input[name="event-location"]').val(event ? event.location : '');
     $('#event-modal input[name="event-start-date"]').datepicker('update', event ? event.startDate : '');
     $('#event-modal input[name="event-end-date"]').datepicker('update', event ? event.endDate : '');
     $('#event-modal').modal();
-}
+  }
 
-function deleteEvent(event) {
+  function deleteEvent(event) {
     var dataSource = $('#calendar').data('calendar').getDataSource();
 
     for(var i in dataSource) {
@@ -67,9 +56,9 @@ function deleteEvent(event) {
     }
     
     $('#calendar').data('calendar').setDataSource(dataSource);
-}
+  }
 
-function saveEvent() {
+  function saveEvent() {
     var event = {
         id: $('#event-modal input[name="event-index"]').val(),
         name: $('#event-modal input[name="event-name"]').val(),
@@ -107,7 +96,7 @@ function saveEvent() {
     
     $('#calendar').data('calendar').setDataSource(dataSource);
     $('#event-modal').modal('hide');
-}
+  }
 
 $(function() {
   var currentYear = new Date().getFullYear();
@@ -181,8 +170,8 @@ $(function() {
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
                 color: "{{evento.color}}",
             },
-            {% endfor %}
-            {% for evento in aulas %} 
+          {% endfor %}
+          {% for evento in aulas %} 
             {
                 id: {{evento.id}},
                 name: "{{evento.name}}",
@@ -191,7 +180,7 @@ $(function() {
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
                 color: "{{evento.color}}",
             },
-            {% endfor %}
+          {% endfor %}
         ],
         customDayRenderer: function(element, date) {
           if(date.getTime() == hoje) {
@@ -200,6 +189,11 @@ $(function() {
           else if (date.getDay() === 6 || date.getDay() === 0) {
             $(element).css('background-color', 'lightgrey');
           }
+          {% for lab in laboratorios %} 
+            else if(date.getTime() == new Date({{lab.startDate.year}}, {{lab.startDate.month|add:-1}},{{lab.startDate.day}}).getTime()) {
+              $(element).css('text-decoration', 'underline solid {{lab.color}}');
+            }
+          {% endfor %}
         }
     });
     
@@ -235,6 +229,9 @@ $(function() {
       ; {{aula.endDate.day}}/{{aula.endDate.month}}
     {% endifchanged %}
   {% endfor %}
+  <br><font style="text-decoration: underline solid orange">
+  Dias sublinhados possuem disponibilidade de trabalho no laboratório 3 (L3)
+  </font>
   <br>
   <br>
 

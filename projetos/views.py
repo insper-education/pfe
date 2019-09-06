@@ -726,11 +726,13 @@ def carrega(request, dado):
 
 @login_required
 def calendario(request):
-    eventos = Evento.objects.exclude(name="Aula PFE")
+    eventos = Evento.objects.exclude(name="Aula PFE").exclude(name="Laboratório")
     aulas = Evento.objects.filter(name="Aula PFE")
+    laboratorios = Evento.objects.filter(name="Laboratório")
     context= {
         'eventos': eventos,
         'aulas': aulas,
+        'laboratorios': laboratorios,
     }
     return render(request, 'projetos/calendario.html', context)
 
