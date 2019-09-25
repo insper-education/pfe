@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 5 de Agosto de 2019
+{% endcomment %}
+
+{% block content %}
+
+  {% if aluno.alocacao_set.all.count > 0 %}
+    <hr>
+    <h3>Projeto Alocado</h3>
+    <br><br>
+    {% for alocado in aluno.alocacao_set.all %}
+      <h2>{{alocado.projeto.ano}}.{{alocado.projeto.semestre}}</h2>
+      <h3>Título: {{ alocado.projeto.titulo }}</h3>
+      <strong>Descrição:</strong> {{ alocado.projeto.descricao|linebreaks }}
+      <strong>Expectativas de resultados/entregas :</strong> {{ alocado.projeto.expectativas|linebreaks }}
+      <strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ alocado.projeto.areas|linebreaks }}
+      <strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ alocado.projeto.recursos|linebreaks }}
+      <hr>
+
+      <h3>Empresa: {{ alocado.projeto.empresa.nome_empresa }}</h3>
+      <strong>endereço:</strong> {{ alocado.projeto.empresa.endereco|linebreaks }}
+      <strong>website:</strong> <a href="{{ projeto.empresa.website }}"> {{ alocado.projeto.empresa.website }} </a>
+
+      {% if alocado.projeto.orientador %}
+      <hr>
+      <h3>Orientador</h3>
+      <ul>
+          <li><a href="mailto:{{projeto.orientador.user.email}}">{{ alocado.projeto.orientador.user.first_name }} {{ projeto.orientador.user.last_name }} &lt;{{projeto.orientador.user.email}}&gt; </a></li>
+      </ul>
+      {% endif %}
+
+      <hr>
+      <h3>Grupo</h3>
+      <ul>
+      {% for membro in alocado.projeto.alocacao_set.all %} 
+      <li><a href="mailto:{{membro.aluno.user.email}}">{{membro.aluno.user.first_name}} {{membro.aluno.user.last_name}} &lt;{{membro.aluno.user.email}}&gt; [{{ membro.aluno.get_curso_display }}]
+      </a></li>
+      {% endfor %}
+      </ul>
+      <br>
+      <br>
+      
+  {% endfor %}
+  {% else %}
+     Você não está alocado em nenhum projeto.
+  {% endif %}
+
+{% endblock %}

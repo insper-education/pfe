@@ -797,18 +797,17 @@ def carregar(request):
 @login_required
 def meuprojeto(request):
     user = PFEUser.objects.get(pk=request.user.pk)
+    print(user.tipo_de_usuario)
     if user.tipo_de_usuario != 1 and user.tipo_de_usuario != 2:
-       return HttpResponse("Você não está cadastrado como aluno ou professor") 
-    aluno = Aluno.objects.get(pk=request.user.pk) # com professor ainda esta errado
-    projeto = aluno.alocado
-    if not projeto:
-        return HttpResponse("Você não está alocado em nenhum projeto.")
-    alunos = Aluno.objects.filter(alocado=projeto)
+        return HttpResponse("Você não está cadastrado como aluno ou professor") 
+    elif user.tipo_de_usuario == 2:
+        return redirect('professor_detail', pk=request.user.pk)
+    # vvvv Caso seja um aluno  vvv
+    aluno = Aluno.objects.get(pk=request.user.pk)
     context = {
-        'projeto': projeto,
-        'alunos': alunos,
+        'aluno': aluno,
     }
-    return render(request, 'projetos/meuprojeto.html', context=context)
+    return render(request, 'projetos/meuprojeto_aluno.html', context=context)
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
