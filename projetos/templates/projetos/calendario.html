@@ -24,6 +24,8 @@
 <!-- DESCOBRI TARDIAMENTE QUE ESSA BIBLIOTECA ESTA VELHA E TEM UMA MELHOR -->
 <!-- VER EM: https://github.com/year-calendar/js-year-calendar -->
 
+<!-- Também acertar a base de dados com um ENUM para as cores -->
+
 <script src="{% static 'js/respond.min.js' %}"></script>
 <script src="{% static 'js/jquery-1.10.2.min.js' %}"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
@@ -230,7 +232,10 @@ $(function() {
     {% endifchanged %}
   {% endfor %}
   <br><font style="text-decoration: underline solid orange">
-  Dias sublinhados possuem disponibilidade de trabalho no laboratório 3 (L3)
+  Dias sublinhados possuem disponibilidade de trabalho no laboratório 3 (L3) [as sextas-feiras]
+  </font>
+  <br><font style="color: purple">
+    Semana de provas entre: 2/10 à 9/10 e 27/11 à 3/12
   </font>
   <br>
   <br>
