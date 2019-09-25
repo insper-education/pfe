@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models import Projeto, Empresa, Configuracao, Disciplina, Cursada, Recomendada, Evento, Anotacao
+from .models import Projeto, Empresa, Configuracao
+from .models import Disciplina, Cursada, Recomendada, Evento, Anotacao, Banca
 
 @admin.register(Projeto)
 class ProjetoAdmin(admin.ModelAdmin):
@@ -41,3 +42,4 @@ class AnotacaoAdmin(admin.ModelAdmin):
 admin.site.register(Cursada)
 admin.site.register(Recomendada)
 admin.site.register(Evento)
+admin.site.register(Banca)

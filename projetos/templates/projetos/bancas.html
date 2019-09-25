@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 24 de Setembro de 2019
+{% endcomment %}
+
+{% block head %}
+
+<!-- BASEADO EM: https://github.com/fullcalendar/fullcalendar -->
+
+{% load static %}
+<link href='https://unpkg.com/@fullcalendar/core@4.3.1/main.min.css' rel='stylesheet' />
+<link href='https://unpkg.com/@fullcalendar/daygrid@4.3.0/main.min.css' rel='stylesheet' />
+<link href='https://unpkg.com/@fullcalendar/timegrid@4.3.0/main.min.css' rel='stylesheet' />
+<link href='https://unpkg.com/@fullcalendar/list@4.3.0/main.min.css' rel='stylesheet' />
+
+<script src='https://unpkg.com/@fullcalendar/core@4.3.1/main.min.js'></script>
+<script src='https://unpkg.com/@fullcalendar/interaction@4.3.0/main.min.js'></script>
+<script src='https://unpkg.com/@fullcalendar/daygrid@4.3.0/main.min.js'></script>
+<script src='https://unpkg.com/@fullcalendar/timegrid@4.3.0/main.min.js'></script>
+<script src='https://unpkg.com/@fullcalendar/list@4.3.0/main.min.js'></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'list' ],
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+      },
+      navLinks: true, // can click day/week names to navigate views
+      businessHours: true, // display business hours
+      editable: true,
+      events: [
+        {% for banca in bancas %} 
+          {
+              title: '{{banca.projeto.titulo}}',
+              start: '{{banca.startDate.year}}-{{banca.startDate.month|stringformat:"02d"}}-{{banca.startDate.day|stringformat:"02d"}}T{{banca.startDate.hour|stringformat:"02d"}}:{{banca.startDate.minute|stringformat:"02d"}}:00',
+              end: '{{banca.endDate.year}}-{{banca.endDate.month|stringformat:"02d"}}-{{banca.endDate.day|stringformat:"02d"}}T{{banca.endDate.hour|stringformat:"02d"}}:{{banca.endDate.minute|stringformat:"02d"}}:00',
+              constraint: 'bancasIntermediarias20192',
+              color: '#257e4a'
+          },
+        {% endfor %}
+        // area onde as bancas podem ser alocadas
+        {
+          groupId: 'bancasIntermediarias20192',
+          start: '2019-10-07T08:00:00',
+          end: '2019-10-07T18:00:00',
+          rendering: 'background'
+        },
+        {
+          groupId: 'bancasIntermediarias20192',
+          start: '2019-10-08T08:00:00',
+          end: '2019-10-08T18:00:00',
+          rendering: 'background'
+        },
+
+        // red areas where no events can be dropped
+        {
+          start: '2019-08-24',
+          end: '2019-08-28',
+          overlap: false,
+          rendering: 'background',
+          color: '#ff9f89'
+        },
+        {
+          start: '2019-08-06',
+          end: '2019-08-08',
+          overlap: false,
+          rendering: 'background',
+          color: '#ff9f89'
+        }
+      ]
+    });
+
+    calendar.render();
+  });
+
+</script>
+<style>
+  #calendar {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+  <h3>Bancas</h3>
+  <br>
+  <div id='calendar'></div>
+
+{% endblock %}

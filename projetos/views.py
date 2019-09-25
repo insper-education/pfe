@@ -19,7 +19,7 @@ from django.shortcuts import redirect
 from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
 
-from .models import Projeto, Empresa, Configuracao, Disciplina, Evento
+from .models import Projeto, Empresa, Configuracao, Disciplina, Evento, Banca
 from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao
 
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource, AlunosResource, ProfessoresResource, ConfiguracaoResource, DisciplinasResource
@@ -851,3 +851,12 @@ def professores(request):
         'anos': anos,
     }
     return render(request, 'projetos/professores.html', context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def bancas(request):
+    bancas = Banca.objects.all()
+    context= {
+        'bancas': bancas,
+    }
+    return render(request, 'projetos/bancas.html', context)

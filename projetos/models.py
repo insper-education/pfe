@@ -125,6 +125,19 @@ class Evento(models.Model):
     def __str__(self):
         return self.name
 
+# Bancas do PFE
+class Banca(models.Model):
+    projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, help_text='projeto')
+    location = models.CharField(blank=True, max_length=50, help_text='sala em que vai ocorrer banca')
+    startDate = models.DateTimeField(default=datetime.datetime.now, blank=True, help_text='Inicio da Banca')
+    endDate = models.DateTimeField(default=datetime.datetime.now, blank=True, help_text='Fim da Banca')
+    color = models.CharField(max_length=20,blank=True)
+    membro1 = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL, related_name='membro1', help_text='membro da banca')
+    membro2 = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL, related_name='membro2', help_text='membro da banca')
+    membro3 = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL, related_name='membro3', help_text='membro da banca')
+    def __str__(self):
+        return self.projeto.titulo
+
 # Anotacoes de comunicações com as organizações pareceiras
 class Anotacao(models.Model):
     data = models.DateField(default=datetime.date.today, blank=True, help_text='Data da comunicação')
