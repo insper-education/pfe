@@ -422,6 +422,7 @@ def organizacao(request, login): #acertar isso para pk
     organization = Empresa.objects.filter(login=login).first()  # acho que tem de ser get
     context = {
         'organization': organization,
+        'MEDIA_URL' : settings.MEDIA_URL,
     }
     return render(request, 'projetos/organizacao_completo.html', context=context)
 
@@ -748,7 +749,7 @@ def documentos(request):
 
 @login_required
 def download(request, path):
-    file_path = os.path.abspath(os.path.join(settings.ARQUIVOS, os.path.split(path)[1]) )
+    file_path = os.path.abspath(os.path.join(settings.MEDIA_ROOT, os.path.split(path)[1]) )
     if ".." in file_path: raise PermissionDenied
     if "\\" in file_path: raise PermissionDenied
     if os.path.exists(file_path):
@@ -760,8 +761,21 @@ def download(request, path):
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
-def contrato(request, organizacao, path):
-    file_path = os.path.abspath(os.path.join(settings.ARQUIVOS, "{0}/{1}".format(organizacao, path) ) )
+def arquivos(request, documentos, path):
+    file_path = os.path.abspath(os.path.join(settings.MEDIA_ROOT, "{0}/{1}".format(documentos, path) ) )
+    if ".." in file_path: raise PermissionDenied
+    if "\\" in file_path: raise PermissionDenied
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as fh:
+            response = HttpResponse(fh.read(), content_type="application/pdf")
+            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+            return response
+    raise Http404
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def arquivos2(request, organizacao, usuario, path):
+    file_path = os.path.abspath(os.path.join(settings.MEDIA_ROOT, "{0}/{1}/{2}".format(organizacao, usuario, path) ) )
     if ".." in file_path: raise PermissionDenied
     if "\\" in file_path: raise PermissionDenied
     if os.path.exists(file_path):

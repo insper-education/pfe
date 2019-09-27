@@ -14,9 +14,7 @@ from django.conf import settings
 
 import users.models
 
-def get_upload_path(instance, filename):
-    file_path = os.path.abspath(os.path.join(settings.ARQUIVOS, instance.sigla) )
-    return "{0}/{1}".format(file_path, filename)
+
 
 # RENOMEAR PARA ORGANIZACAO
 class Empresa(models.Model):
@@ -26,7 +24,6 @@ class Empresa(models.Model):
     sigla = models.CharField(max_length=20)
     endereco = models.TextField(max_length=200, help_text='Endereço da Empresa')
     website = models.URLField(max_length=250, null=True, blank=True)
-    contrato = models.FileField(null=True, blank=True, upload_to=get_upload_path, help_text='Documento PDF contendo o contrato com a Empresa')
 
     class Meta:
         ordering = ['sigla']
@@ -43,7 +40,7 @@ class Projeto(models.Model):
     areas = models.TextField(max_length=1000, help_text='Áreas da engenharia envolvidas no projeto')
     recursos = models.TextField(max_length=1000, help_text='Recursos a serem disponibilizados aos Alunos')
     imagem = models.ImageField(null=True, blank=True, help_text='Imagem que representa projeto (se houver)')
-    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, help_text='Empresa que propôs projeto')
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, help_text='Organização parceira que propôs projeto')
     avancado = models.BooleanField(default=False, help_text='Se for um projeto de PFE Avançado')
     ano = models.PositiveIntegerField(validators=[MinValueValidator(2018),MaxValueValidator(3018)], help_text='Ano que o projeto comeca')
     semestre = models.PositiveIntegerField(validators=[MinValueValidator(1),MaxValueValidator(2)], help_text='Semestre que o projeto comeca')
@@ -114,7 +111,6 @@ class Recomendada(models.Model):
     def __str__(self):
         return self.projeto.titulo+" >>> "+self.disciplina.nome
 
-
 # Eventos para a agenda do PFE
 class Evento(models.Model):
     name = models.CharField(max_length=50)
@@ -146,3 +142,38 @@ class Anotacao(models.Model):
     texto = models.TextField(max_length=2000, help_text='Anotação')
     def __str__(self):
         return str(self.data)
+
+# Anotacoes de comunicações com as organizações pareceiras
+
+def get_upload_path(instance, filename):
+    caminho = ""
+    if instance.organizacao:
+        caminho += instance.organizacao.sigla + "/"
+    if instance.usuario:
+        caminho += instance.usuario.username + "/"
+    if caminho == "":
+        caminho = "documentos/"
+    #file_path = os.path.abspath(os.path.join(settings.ARQUIVOS, caminho) )
+    file_path = caminho
+    return "{0}/{1}".format(file_path, filename)
+
+class Documento(models.Model):
+    organizacao = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL, help_text='Empresa que propôs projeto')
+    usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL, help_text='usuário do documento')
+    documento = models.FileField(upload_to=get_upload_path, help_text='Documento PDF')
+    TIPO_DE_DOCUMENTO = ( # não mudar a ordem dos números
+      (0, 'contrato com empresa'),
+      (1, 'contrato entre empresa e aluno'),
+      (2, 'contrado de confidencialidade'),
+      (3, 'relatório final'),
+      (4, 'autorização de publicação'),
+      (5, 'regulamento PFE'),
+      (6, 'plano de aprendizado'),
+      (7, 'manual do aluno'),
+      (8, 'manual do orientador'),
+      (9, 'manual da organização parceira'),
+      (10, 'manual do carreiras'),
+    )
+    tipo_de_documento = models.PositiveSmallIntegerField(choices=TIPO_DE_DOCUMENTO, default=1)
+    def __str__(self):
+        return str(self.TIPO_DE_DOCUMENTO[self.tipo_de_documento][1])

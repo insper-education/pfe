@@ -31,27 +31,39 @@
           <br>
         </li>
   {% endfor %}
-  <br><strong>endereço(s):</strong> {{ organization.endereco|linebreaks }}
-  <br>
-  
-  {% if organization.contrato %}
-  <hr>
-    <strong>contratos:</strong> <a href="{% url 'contrato' organization.sigla organization.documento %}"> {{ organization.documento }} </a>
+  <br><strong>endereço(s):</strong> 
+  <a href="http://maps.google.com/maps?q={{organization.endereco}}">
+    {{ organization.endereco|linebreaks }}
+  </a>
+
+  {% if organization.documento_set.all %}
+    <hr>
+    <h3>Contratos</h3>
+    {% for contrato in organization.documento_set.all %}
+        <li><a href="../..{{MEDIA_URL}}{{ contrato.documento }}"> {{ contrato }} 
+        {% if contrato.usuario %}
+          - {{ contrato.usuario.first_name }} {{ contrato.usuario.last_name }} 
+        {% endif %}
+        </a></li>
+    {% endfor %}
   {% endif %}
   
-  <hr>
-  <h3>Projetos</h3>
-  {% for projeto in organization.projeto_set.all %}
-    <a href="{% url 'completo' projeto.id %}"> 
-      <li>{{projeto.titulo}}</li>
-    </a>
-  {% endfor %}
+  {% if organization.projeto_set.all %}
+    <hr>
+    <h3>Projetos</h3>
+    {% for projeto in organization.projeto_set.all %}
+      <a href="{% url 'completo' projeto.id %}"> 
+        <li>{{projeto.titulo}}</li>
+      </a>
+    {% endfor %}
+  {% endif %}
 
-  <hr>
-  <h3>Anotações</h3>
-  {% for anotacao in organization.anotacao_set.all %}
-    {{anotacao.autor.first_name}} {{anotacao.autor.last_name}} [{{anotacao.data}}] : {{anotacao.texto}}<br>
-  {% endfor %}
-
+  {% if organization.anotacao_set.all %}
+    <hr>
+    <h3>Anotações</h3>
+    {% for anotacao in organization.anotacao_set.all %}
+      {{anotacao.autor.first_name}} {{anotacao.autor.last_name}} [{{anotacao.data}}] : {{anotacao.texto}}<br>
+    {% endfor %}
+  {% endif %}
 
 {% endblock %}

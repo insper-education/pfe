@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import Projeto, Empresa, Configuracao
-from .models import Disciplina, Cursada, Recomendada, Evento, Anotacao, Banca
+from .models import Disciplina, Cursada, Recomendada, Evento, Anotacao, Banca, Documento
 
 @admin.register(Projeto)
 class ProjetoAdmin(admin.ModelAdmin):
@@ -39,7 +39,11 @@ class DisciplinaAdmin(admin.ModelAdmin):
 class AnotacaoAdmin(admin.ModelAdmin):
     list_display = ('data', 'organizacao', 'autor',)
 
+@admin.register(Documento)
+class DocumentoAdmin(admin.ModelAdmin):
+    list_display = ('organizacao', 'usuario', 'tipo_de_documento')
+
 admin.site.register(Cursada)
-admin.site.register(Recomendada)
-admin.site.register(Evento)
-admin.site.register(Banca)
+admin.site.register(Recomendada) 
+admin.site.register(Evento) # Todos os eventos do PFE com suas datas
+admin.site.register(Banca) # Informações das Bancas, como datas e membros
