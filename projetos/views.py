@@ -615,7 +615,6 @@ def fechados(request):
     qtd_prioridades = [0,0,0,0,0,0]   # para grafico de pizza no final
 
     for p in Projeto.objects.all():
-        #alunosPFE = Aluno.objects.filter(alocado=p)
         alunosPFE = Aluno.objects.filter(alocacao__projeto=p)
         if len(alunosPFE) > 0 :
             projetos.append(p)
@@ -626,7 +625,6 @@ def fechados(request):
             for aluno in alunosPFE:
                 opcoes = Opcao.objects.filter(projeto=p)
                 opcoes_alunos = opcoes.filter(aluno__user__tipo_de_usuario=1)
-                #opcoes1 = opcoes_alunos.filter(aluno__alocado=p)
                 opcoes1 = opcoes_alunos.filter(aluno__alocacao__projeto=p)
                 opcoes2 = opcoes1.filter(aluno=aluno)
                 if len(opcoes2)==1:
@@ -787,10 +785,25 @@ def arquivos2(request, organizacao, usuario, path):
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
-def projetos_lista(request):
+def projetos_lista(request, periodo):
     configuracao = Configuracao.objects.all().first()
     projetos = Projeto.objects.all()
-    context= {'projetos': projetos }    
+    if periodo=="antigos":
+        if configuracao.semestre == 1:
+            projetos = projetos.filter(ano__lte=configuracao.ano).exclude(ano=configuracao.ano,semestre=2)
+        else:
+            projetos = projetos.filter(ano__lte=configuracao.ano)
+    elif periodo=="disponiveis":
+        if configuracao.semestre == 1:
+            projetos = projetos.filter(ano__gte=configuracao.ano).exclude(ano=configuracao.ano,semestre=1)
+        else:
+            projetos = projetos.filter(ano__gt=configuracao.ano)
+
+    context= {
+        'projetos': projetos,
+        'periodo' : periodo,
+        'configuracao' : configuracao,
+    }
     return render(request, 'projetos/projetos_lista.html', context)
 
 @login_required
