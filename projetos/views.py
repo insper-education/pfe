@@ -19,7 +19,7 @@ from django.shortcuts import redirect
 from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
 
-from .models import Projeto, Empresa, Configuracao, Disciplina, Evento, Banca
+from .models import Projeto, Empresa, Configuracao, Disciplina, Evento, Banca, Documento
 from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao
 
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource, AlunosResource, ProfessoresResource, ConfiguracaoResource, DisciplinasResource
@@ -642,6 +642,71 @@ def fechados(request):
         'qtd_prioridades': qtd_prioridades,
     }
     return render(request, 'projetos/fechados.html', context)
+
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def tabela_documentos(request):
+    configuracao = Configuracao.objects.all().first()
+    projetos = Projeto.objects.filter(alocacao__isnull=False).distinct().order_by("ano","semestre")
+    documentos = []
+    for p in projetos:
+
+        contrato = {}
+
+        # Contrato   -   (0, 'contrato com empresa')
+        documento = Documento.objects.filter(organizacao=p.empresa).filter(tipo_de_documento=0).last()
+        if documento:
+            contrato["contrato"] = documento.documento
+        else:
+            contrato["contrato"] = ""
+
+        # Contrato alunos  -  (1, 'contrato entre empresa e aluno')
+        contratos_alunos = []
+        alunos = Aluno.objects.filter(alocacao__projeto=p)
+        for a in alunos:
+            documento = Documento.objects.filter(usuario=a.user).filter(tipo_de_documento=1).last()
+            if documento:
+                contratos_alunos.append( ( documento.documento,a.user.first_name+" "+a.user.last_name) )
+            else:
+                contratos_alunos.append( ( "",a.user.first_name+" "+a.user.last_name) )
+        contrato["contratos_alunos"] = contratos_alunos
+
+        # relatorio_final   -   (3, 'relatório final')
+        documento = Documento.objects.filter(projeto=p).filter(tipo_de_documento=3).last()
+        if documento:
+            contrato["relatorio_final"] = documento.documento
+        else:
+            contrato["relatorio_final"] = ""
+
+        # Autorização de Publicação da Empresa  -   (4, 'autorização de publicação empresa')
+        documento = Documento.objects.filter(projeto=p).filter(tipo_de_documento=4).last()
+        if documento:
+            contrato["autorizacao_publicacao_empresa"] = documento.documento
+        else:
+            contrato["autorizacao_publicacao_empresa"] = ""
+
+        documentos.append(contrato)
+
+        # Autorização de Publicação do Aluno  -   (5, 'autorização de publicação aluno')
+        autorizacao_publicacao_aluno = []
+        alunos = Aluno.objects.filter(alocacao__projeto=p)
+        for a in alunos:
+            documento = Documento.objects.filter(usuario=a.user).filter(tipo_de_documento=5).last()
+            if documento:
+                autorizacao_publicacao_aluno.append( ( documento.documento,a.user.first_name+" "+a.user.last_name) )
+            else:
+                autorizacao_publicacao_aluno.append( ( "",a.user.first_name+" "+a.user.last_name) )
+        contrato["autorizacao_publicacao_aluno"] = autorizacao_publicacao_aluno
+
+    mylist = zip(projetos, documentos)
+    context= {
+        'configuracao': configuracao,
+        'mylist': mylist,
+        'MEDIA_URL' : settings.MEDIA_URL,
+    }
+    return render(request, 'projetos/tabela_documentos.html', context)
+
 
 
 @login_required

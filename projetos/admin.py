@@ -41,7 +41,7 @@ class AnotacaoAdmin(admin.ModelAdmin):
 
 @admin.register(Documento)
 class DocumentoAdmin(admin.ModelAdmin):
-    list_display = ('organizacao', 'usuario', 'tipo_de_documento')
+    list_display = ('tipo_de_documento', 'organizacao', 'usuario', 'projeto')
 
 admin.site.register(Cursada)
 admin.site.register(Recomendada) 

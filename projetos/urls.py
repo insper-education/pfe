@@ -14,7 +14,6 @@ urlpatterns = [
     path('calendario/', views.calendario, name='calendario'),
     path('carrega/<str:dado>', views.carrega, name='carrega'),
     path('carregar/', views.carregar, name='carregar'),
-    #path('contrato/<str:organizacao>/<str:path>', views.contrato, name='contrato'),
     path('completo/<int:pk>', views.completo, name='completo'),
     path('documentos/', views.documentos, name='documentos'),
     path('download/<str:path>', views.download, name='download'),
@@ -37,6 +36,7 @@ urlpatterns = [
     path('relatorios/', views.relatorios, name='relatorios'),
     path('servico/', views.servico, name='servico'),
     path('submissao/', views.submissao, name='submissao'),
+    path('tabela_documentos/', views.tabela_documentos, name='tabela_documentos'),
     path('todos/', views.todos, name='todos'),
     path('bancas/', views.bancas, name='bancas'),
 ]

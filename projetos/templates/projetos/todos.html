@@ -53,69 +53,7 @@
     <b>Total de alunos = {{ nalunos }}</b> <br>
     
     <br><br>
-
-    <!-- 
-      <div id="canvas-holder">
-        <canvas id="chart-area"></canvas>
-      </div>
-      <script>
-
-        var config = {
-          type: 'pie',
-          data: {
-            datasets: [{
-              data: [
-                {{ qtd_prioridades.0 }},
-                {{ qtd_prioridades.1 }},
-                {{ qtd_prioridades.2 }},
-                {{ qtd_prioridades.3 }},
-                {{ qtd_prioridades.4 }},
-                {{ qtd_prioridades.5 }},
-              ],
-              backgroundColor: [
-                "#2ecc71",
-                "#3498db",
-                "#95a5a6",
-                "#9b59b6",
-                "#f1c40f",
-                "#e74c3c",
-                "#34495e"
-              ],
-            }],
-            labels: [
-              '#1 [{% widthratio prioridades.0 nalunos 100 %}%]',
-              '#2 [{% widthratio prioridades.1 nalunos 100 %}%]',
-              '#3 [{% widthratio prioridades.2 nalunos 100 %}%]',
-              '#4 [{% widthratio prioridades.3 nalunos 100 %}%]',
-              '#5 [{% widthratio prioridades.4 nalunos 100 %}%]',
-              '>= #6 [{% widthratio prioridades.5 nalunos 100 %}%]',
-            ]
-          },
-          options: {
-            responsive: true,
-            title: {
-                  display: true,
-                  text: 'Proporção entre prioridade alocada dos alunos',
-                  position: "top",
-            },
-            legend: {
-              display: true,
-              position: "bottom",
-              labels: {
-                fontColor: "#333",
-                fontSize: 14
-              }
-            }
-          }
-        };
     
-        window.onload = function() {
-          var ctx = document.getElementById('chart-area').getContext('2d');
-          window.myPie = new Chart(ctx, config);
-        };
-      
-      </script>
-      -->
     {% else %}
       <p>Não existem projetos disponíveis.</p>
     {% endif %}

@@ -158,22 +158,24 @@ def get_upload_path(instance, filename):
     return "{0}/{1}".format(file_path, filename)
 
 class Documento(models.Model):
-    organizacao = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL, help_text='Empresa que propôs projeto')
-    usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL, help_text='usuário do documento')
+    organizacao = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL, help_text='Empresa que propôs projeto') # Algumas empresas podem ter contrato e não ter projeto
+    usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL, help_text='Usuário do documento')
+    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL, help_text='Documento do Projeto')
     documento = models.FileField(upload_to=get_upload_path, help_text='Documento PDF')
     TIPO_DE_DOCUMENTO = ( # não mudar a ordem dos números
       (0, 'contrato com empresa'),
       (1, 'contrato entre empresa e aluno'),
       (2, 'contrado de confidencialidade'),
       (3, 'relatório final'),
-      (4, 'autorização de publicação'),
-      (5, 'regulamento PFE'),
-      (6, 'plano de aprendizado'),
-      (7, 'manual do aluno'),
-      (8, 'manual do orientador'),
-      (9, 'manual da organização parceira'),
-      (10, 'manual do carreiras'),
+      (4, 'autorização de publicação empresa'),
+      (5, 'autorização de publicação aluno'),
+      (6, 'regulamento PFE'),
+      (7, 'plano de aprendizado'),
+      (8, 'manual do aluno'),
+      (9, 'manual do orientador'),
+      (10, 'manual da organização parceira'),
+      (11, 'manual do carreiras'),
     )
-    tipo_de_documento = models.PositiveSmallIntegerField(choices=TIPO_DE_DOCUMENTO, default=1)
+    tipo_de_documento = models.PositiveSmallIntegerField(choices=TIPO_DE_DOCUMENTO, default=0)
     def __str__(self):
         return str(self.TIPO_DE_DOCUMENTO[self.tipo_de_documento][1])

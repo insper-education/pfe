@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 28 de Setembro de 2019
+{% endcomment %}
+
+{% block head %}
+  <script src="https://www.w3schools.com/lib/w3.js"></script>
+
+  <script>
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
+
+{% endblock %}
+
+{% block content %}
+
+  <h3>Documentação dos Projetos Fechados</h3>
+  <br>
+
+    {% if mylist %}
+      <table id="ProjetosTable">
+        <tr>
+          <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Projeto</th>
+          <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Período</th>
+          <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Organização</th>
+          <th class="text-center">Contr. Empresa</th>
+          <th class="text-center">Contr. Aluno</th>
+          <th class="text-center">Rel. Final</th>
+          <th class="text-center">Aut. Pub. Empresa</th>
+          <th class="text-center">Aut. Pub. Aluno</th>
+        </tr>      
+      {% for projeto,documento in mylist %} 
+        {% if projeto.disponivel %}
+        <tr class="item">
+          <td>
+            <a href="{% url 'completo' projeto.id %}">
+              {{projeto.titulo}}
+            </a>
+          </td>
+          <td style="text-align:center">
+              {{projeto.ano}}.{{projeto.semestre}}
+          </td>
+          <td>
+            <a href="{% url 'organizacao' projeto.empresa.login %}">
+              {{ projeto.empresa.nome_empresa }}
+            </a>
+          </td>
+          
+          <td  style="text-align:center"> <!-- (0, 'contrato com empresa'), -->
+            {% if documento.contrato %}
+              <a class="text-success" href="../..{{MEDIA_URL}}{{documento.contrato}}">
+            {% else %}
+              {% if projeto.semestre > configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre <= configuracao.semestre and projeto.ano > configuracao.ano %}
+                <a class="text-warning">
+              {% else %}
+                <a class="text-danger">
+              {% endif %}
+            {% endif %}
+            &#x2B24;</a>
+          </td>
+
+          <td  style="text-align:center"> <!-- (1, 'contrato entre empresa e aluno'), -->
+            {% for documento in documento.contratos_alunos %}
+              <a 
+              {% if documento.0 %}
+                class="text-success" href="../..{{MEDIA_URL}}{{documento.0}}" 
+              {% else %}
+                {% if projeto.semestre > configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre <= configuracao.semestre and projeto.ano > configuracao.ano %}
+                  class="text-warning" 
+                {% else %}
+                  class="text-danger" 
+                {% endif %}
+              {% endif %}
+              data-toggle="tooltip" data-html="true" animation="true" 
+              title="{{documento.1}}">
+              &#x2B24;</a>
+            {% endfor %}
+          </td>
+
+          <td  style="text-align:center"> <!-- (3, 'relatório final'), -->
+            {% if documento.relatorio_final %}
+              <a class="text-success" href="../..{{MEDIA_URL}}{{documento.relatorio_final}}">&#x2B24;</a>
+            {% else %}
+              {% if projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
+                <a class="text-warning">&#x2B24;</a>
+              {% else %}
+                <a class="text-danger">&#x2B24;</a>
+              {% endif %}
+            {% endif %}
+          </td>
+
+          <td  style="text-align:center"> <!-- (4, 'autorização de publicação empresa'), -->
+            {% if documento.autorizacao_publicacao_empresa %}
+              <a class="text-success" href="../..{{MEDIA_URL}}{{documento.autorizacao_publicacao_empresa}}">&#x2B24;</a>
+            {% else %}
+              {% if projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
+                <a class="text-warning">&#x2B24;</a>
+              {% else %}
+                <a class="text-danger">&#x2B24;</a>
+              {% endif %}
+            {% endif %}
+          </td>
+
+          <td  style="text-align:center"> <!-- (5, 'autorização de publicação  aluno'), -->
+            {% for documento in documento.autorizacao_publicacao_aluno %}
+              <a 
+              {% if documento.0 %}
+                class="text-success" href="../..{{MEDIA_URL}}{{documento.0}}" 
+              {% else %}
+                {% if projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
+                  class="text-warning" 
+                {% else %}
+                  class="text-danger" 
+                {% endif %}
+              {% endif %}
+              data-toggle="tooltip" data-html="true" animation="true" 
+              title="{{documento.1}}">
+              &#x2B24;</a>
+            {% endfor %}
+          </td>
+
+        </tr>
+        {% endif %}
+      {% endfor %}
+      </table>
+      <script>
+        w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')
+      </script>
+    {% else %}
+      <p>Não existem projetos disponíveis.</p>
+    {% endif %}
+
+    <br>
+    <br>
+
+{% endblock %}
