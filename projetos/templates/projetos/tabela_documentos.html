@@ -51,23 +51,33 @@
           </td>
           
           <td  style="text-align:center"> <!-- (0, 'contrato com empresa'), -->
-            {% if documento.contrato %}
-              <a class="text-success" href="../..{{MEDIA_URL}}{{documento.contrato}}">
+            {% if documento.contratos %}
+              {% for doc in documento.contratos %}
+                <a class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
+                data-toggle="tooltip" data-html="true" animation="true" 
+                {% if doc.1 or doc.2%}
+                    title="
+                      {% if doc.1 %}anotação: {{doc.1}} {% endif %}
+                      {% if doc.2 %}data: {{doc.2}} {% endif %}
+                    "
+                  {% endif %}
+                >
+                &#x2B24;</a>
+              {% endfor %}
             {% else %}
               {% if projeto.semestre > configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre <= configuracao.semestre and projeto.ano > configuracao.ano %}
-                <a class="text-warning">
+                <a class="text-warning">&#x2B24;</a>
               {% else %}
-                <a class="text-danger">
+                <a class="text-danger">&#x2B24;</a>
               {% endif %}
             {% endif %}
-            &#x2B24;</a>
           </td>
 
           <td  style="text-align:center"> <!-- (1, 'contrato entre empresa e aluno'), -->
-            {% for documento in documento.contratos_alunos %}
+            {% for doc in documento.contratos_alunos %}
               <a 
-              {% if documento.0 %}
-                class="text-success" href="../..{{MEDIA_URL}}{{documento.0}}" 
+              {% if doc.0 %}
+                class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
               {% else %}
                 {% if projeto.semestre > configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre <= configuracao.semestre and projeto.ano > configuracao.ano %}
                   class="text-warning" 
@@ -76,7 +86,7 @@
                 {% endif %}
               {% endif %}
               data-toggle="tooltip" data-html="true" animation="true" 
-              title="{{documento.1}}">
+              title="{{doc.1}}">
               &#x2B24;</a>
             {% endfor %}
           </td>
@@ -106,10 +116,10 @@
           </td>
 
           <td  style="text-align:center"> <!-- (5, 'autorização de publicação  aluno'), -->
-            {% for documento in documento.autorizacao_publicacao_aluno %}
+            {% for doc in documento.autorizacao_publicacao_aluno %}
               <a 
-              {% if documento.0 %}
-                class="text-success" href="../..{{MEDIA_URL}}{{documento.0}}" 
+              {% if doc.0 %}
+                class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
               {% else %}
                 {% if projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
                   class="text-warning" 
@@ -118,7 +128,7 @@
                 {% endif %}
               {% endif %}
               data-toggle="tooltip" data-html="true" animation="true" 
-              title="{{documento.1}}">
+              title="{{doc.1}}">
               &#x2B24;</a>
             {% endfor %}
           </td>

@@ -654,12 +654,11 @@ def tabela_documentos(request):
 
         contrato = {}
 
-        # Contrato   -   (0, 'contrato com empresa')
-        documento = Documento.objects.filter(organizacao=p.empresa).filter(tipo_de_documento=0).last()
-        if documento:
-            contrato["contrato"] = documento.documento
-        else:
-            contrato["contrato"] = ""
+        # Contratos   -   (0, 'contrato com empresa')
+        contratos = []
+        for d in Documento.objects.filter(organizacao=p.empresa).filter(tipo_de_documento=0):
+            contratos.append( ( d.documento,d.anotacao,d.data) )
+        contrato["contratos"] = contratos
 
         # Contrato alunos  -  (1, 'contrato entre empresa e aluno')
         contratos_alunos = []

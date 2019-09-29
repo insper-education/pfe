@@ -162,6 +162,8 @@ class Documento(models.Model):
     usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL, help_text='Usuário do documento')
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL, help_text='Documento do Projeto')
     documento = models.FileField(upload_to=get_upload_path, help_text='Documento PDF')
+    anotacao = models.CharField(null=True, blank=True, max_length=50, help_text='qualquer anotação sobre o documento em questão')
+    data = models.DateField(null=True, blank=True, help_text='Data do documento')
     TIPO_DE_DOCUMENTO = ( # não mudar a ordem dos números
       (0, 'contrato com empresa'),
       (1, 'contrato entre empresa e aluno'),
