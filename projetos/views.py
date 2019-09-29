@@ -812,13 +812,15 @@ def documentos(request):
     plano_de_aprendizagem = Documento.objects.filter(tipo_de_documento=7).last() # Plano de Aprendizagem
     manual_aluno = Documento.objects.filter(tipo_de_documento=8).last() # manual do aluno
     # = Documento.objects.filter(tipo_de_documento=9).last() # manual do orientador
-    #plano_de_aprendizagem = Documento.objects.filter(tipo_de_documento=10).last() # manual da organização parceira
+    # = Documento.objects.filter(tipo_de_documento=10).last() # manual da organização parceira
+    manual_planejamento = Documento.objects.filter(tipo_de_documento=13).last() # manual de planejamentos
     manual_relatorio = Documento.objects.filter(tipo_de_documento=12).last() # manual de relatórios
     context= {
         'MEDIA_URL' : settings.MEDIA_URL,
         'regulamento': regulamento,
         'plano_de_aprendizagem': plano_de_aprendizagem,
         'manual_aluno': manual_aluno,
+        'manual_planejamento' : manual_planejamento,
         'manual_relatorio': manual_relatorio,
     }
     return render(request, 'index_documentos.html', context)
