@@ -808,7 +808,20 @@ def submissao(request):
 
 @login_required
 def documentos(request):
-    return render(request, 'index_documentos.html')
+    regulamento = Documento.objects.filter(tipo_de_documento=6).last() # Regulamento PFE
+    plano_de_aprendizagem = Documento.objects.filter(tipo_de_documento=7).last() # Plano de Aprendizagem
+    manual_aluno = Documento.objects.filter(tipo_de_documento=8).last() # manual do aluno
+    # = Documento.objects.filter(tipo_de_documento=9).last() # manual do orientador
+    #plano_de_aprendizagem = Documento.objects.filter(tipo_de_documento=10).last() # manual da organização parceira
+    manual_relatorio = Documento.objects.filter(tipo_de_documento=12).last() # manual de relatórios
+    context= {
+        'MEDIA_URL' : settings.MEDIA_URL,
+        'regulamento': regulamento,
+        'plano_de_aprendizagem': plano_de_aprendizagem,
+        'manual_aluno': manual_aluno,
+        'manual_relatorio': manual_relatorio,
+    }
+    return render(request, 'index_documentos.html', context)
 
 @login_required
 def download(request, path):
@@ -852,7 +865,7 @@ def arquivos2(request, organizacao, usuario, path):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def projetos_lista(request, periodo):
     configuracao = Configuracao.objects.all().first()
-    projetos = Projeto.objects.all()
+    projetos = Projeto.objects.all().order_by("ano","semestre")
     if periodo=="antigos":
         if configuracao.semestre == 1:
             projetos = projetos.filter(ano__lte=configuracao.ano).exclude(ano=configuracao.ano,semestre=2)

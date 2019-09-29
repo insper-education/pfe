@@ -175,6 +175,7 @@ class Documento(models.Model):
       (9, 'manual do orientador'),
       (10, 'manual da organização parceira'),
       (11, 'manual do carreiras'),
+      (12, 'manual de relatórios'),
     )
     tipo_de_documento = models.PositiveSmallIntegerField(choices=TIPO_DE_DOCUMENTO, default=0)
     def __str__(self):
