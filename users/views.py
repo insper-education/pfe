@@ -29,11 +29,19 @@ from .resources import AlunoResource
 
 def perfil(request):
     user = PFEUser.objects.get(pk=request.user.pk)
-    if user.tipo_de_usuario != 1:
-       return HttpResponse("Você não está cadastrado como aluno, logo não possui perfil de aluno!") 
-    aluno = Aluno.objects.get(pk=request.user.pk)
-    context = {'aluno' : aluno,}
-    return render(request, 'users/profile_detail.html', context=context)
+    if user.tipo_de_usuario == 1: #aluno
+        aluno = Aluno.objects.get(pk=request.user.pk)
+        context = {'aluno' : aluno,}
+        return render(request, 'users/profile_detail.html', context=context)
+    elif user.tipo_de_usuario == 2: #professor
+        professor = Professor.objects.get(pk=request.user.pk)
+        context = {'professor' : professor,}
+        return render(request, 'users/profile_detail.html', context=context)
+    elif user.tipo_de_usuario == 3: #parceiro
+        parceiro = Parceiro.objects.get(pk=request.user.pk)
+        context = {'parceiro' : parceiro,}
+        return render(request, 'users/profile_detail.html', context=context)
+    return HttpResponse("Seu perfil não foi encontrado!") 
 
 
 @login_required
@@ -121,7 +129,7 @@ def alunos(request):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def alunos_inscrevendo(request):
     configuracao = Configuracao.objects.all().first()
-    alunos_inscrevendo = Aluno.objects.filter(anoPFE=configuracao.ano).filter(semestrePFE=configuracao.semestre)
+    alunos_inscrevendo = Aluno.objects.filter(anoPFE=configuracao.ano).filter(semestrePFE=configuracao.semestre).order_by("user__first_name")
     alunos_list = alunos_inscrevendo.filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0]) # Conta soh alunos
     num_alunos = alunos_list.count()
     num_alunos_comp = alunos_list.filter(curso__exact='C').count() # Conta alunos computacao

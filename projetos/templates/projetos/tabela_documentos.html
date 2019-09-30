@@ -65,10 +65,12 @@
                 &#x2B24;</a>
               {% endfor %}
             {% else %}
-              {% if projeto.semestre > configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre <= configuracao.semestre and projeto.ano > configuracao.ano %}
-                <a class="text-warning">&#x2B24;</a>
+              {% if projeto.empresa.sigla == "INOVACAO" %}
+                <a class="text-info" data-toggle="tooltip" data-html="true" animation="true" title="isento">&#x2B24;</a>
+              {% elif projeto.semestre > configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre <= configuracao.semestre and projeto.ano > configuracao.ano %}
+                <a class="text-warning" data-toggle="tooltip" data-html="true" animation="true" title="aguardando">&#x2B24;</a>
               {% else %}
-                <a class="text-danger">&#x2B24;</a>
+                <a class="text-danger" data-toggle="tooltip" data-html="true" animation="true" title="pendente">&#x2B24;</a>
               {% endif %}
             {% endif %}
           </td>
@@ -96,9 +98,9 @@
               <a class="text-success" href="../..{{MEDIA_URL}}{{documento.relatorio_final}}">&#x2B24;</a>
             {% else %}
               {% if projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
-                <a class="text-warning">&#x2B24;</a>
+                <a class="text-warning" data-toggle="tooltip" data-html="true" animation="true" title="aguardando">&#x2B24;</a>
               {% else %}
-                <a class="text-danger">&#x2B24;</a>
+                <a class="text-danger" data-toggle="tooltip" data-html="true" animation="true" title="pendente">&#x2B24;</a>
               {% endif %}
             {% endif %}
           </td>
@@ -107,10 +109,12 @@
             {% if documento.autorizacao_publicacao_empresa %}
               <a class="text-success" href="../..{{MEDIA_URL}}{{documento.autorizacao_publicacao_empresa}}">&#x2B24;</a>
             {% else %}
-              {% if projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
-                <a class="text-warning">&#x2B24;</a>
+              {% if projeto.empresa.sigla == "INOVACAO" %}
+                <a class="text-info" data-toggle="tooltip" data-html="true" animation="true" title="isento">&#x2B24;</a>
+              {% elif projeto.semestre > configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre <= configuracao.semestre and projeto.ano > configuracao.ano %}
+                <a class="text-warning" data-toggle="tooltip" data-html="true" animation="true" title="aguardando">&#x2B24;</a>
               {% else %}
-                <a class="text-danger">&#x2B24;</a>
+                <a class="text-danger" data-toggle="tooltip" data-html="true" animation="true" title="pendente">&#x2B24;</a>
               {% endif %}
             {% endif %}
           </td>

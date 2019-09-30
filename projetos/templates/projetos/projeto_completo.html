@@ -13,8 +13,8 @@
   <strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ projeto.recursos|linebreaks }}
   <hr>
 
-  <h3>Empresa: {{ projeto.empresa.nome_empresa }}</h3>
-  <strong>endereço:</strong> {{ projeto.empresa.endereco|linebreaks }}
+  <h3>Empresa: <a href="{% url 'organizacao' projeto.empresa.login %}">{{ projeto.empresa.nome_empresa }}</h3></a>
+  <strong>endereço:</strong> <a href="http://maps.google.com/maps?q={{organization.endereco}}">{{ projeto.empresa.endereco|linebreaks }}</a>
   <strong>website:</strong> <a href="{{ projeto.empresa.website }}"> {{ projeto.empresa.website }} </a>
 
   {% if projeto.orientador %}
