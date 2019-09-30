@@ -41,6 +41,9 @@
     <h3>Contratos</h3>
     {% for contrato in organization.documento_set.all %}
         <li><a href="../..{{MEDIA_URL}}{{ contrato.documento }}"> {{ contrato }} 
+        {% if contrato.projeto %}
+          - {{ contrato.projeto.titulo }} 
+        {% endif %}
         {% if contrato.usuario %}
           - {{ contrato.usuario.first_name }} {{ contrato.usuario.last_name }} 
         {% endif %}
