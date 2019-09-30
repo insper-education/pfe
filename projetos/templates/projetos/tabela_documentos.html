@@ -112,7 +112,7 @@
             {% else %}
               {% if projeto.empresa.sigla == "INOVACAO" %}
                 <a class="text-info" data-toggle="tooltip" data-html="true" animation="true" title="isento">&#x2B24;</a>
-              {% elif projeto.semestre > configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre <= configuracao.semestre and projeto.ano > configuracao.ano %}
+              {% elif projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
                 <a class="text-warning" data-toggle="tooltip" data-html="true" animation="true" title="aguardando">&#x2B24;</a>
               {% else %}
                 <a class="text-danger" data-toggle="tooltip" data-html="true" animation="true" title="pendente">&#x2B24;</a>
