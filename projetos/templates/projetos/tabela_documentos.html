@@ -32,6 +32,7 @@
           <th class="text-center">Rel. Final</th>
           <th class="text-center">Aut. Pub. Empresa</th>
           <th class="text-center">Aut. Pub. Aluno</th>
+          <th class="text-center">Outros</th>
         </tr>      
       {% for projeto,documento in mylist %} 
         {% if projeto.disponivel %}
@@ -50,7 +51,7 @@
             </a>
           </td>
           
-          <td  style="text-align:center"> <!-- (0, 'contrato com empresa'), -->
+          <td  style="text-align:center"> <!-- (0, 'contrato com empresa') -->
             {% if documento.contratos %}
               {% for doc in documento.contratos %}
                 <a class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
@@ -75,7 +76,7 @@
             {% endif %}
           </td>
 
-          <td  style="text-align:center"> <!-- (1, 'contrato entre empresa e aluno'), -->
+          <td  style="text-align:center"> <!-- (1, 'contrato entre empresa e aluno') -->
             {% for doc in documento.contratos_alunos %}
               <a 
               {% if doc.0 %}
@@ -93,7 +94,7 @@
             {% endfor %}
           </td>
 
-          <td  style="text-align:center"> <!-- (3, 'relatório final'), -->
+          <td  style="text-align:center"> <!-- (3, 'relatório final') -->
             {% if documento.relatorio_final %}
               <a class="text-success" href="../..{{MEDIA_URL}}{{documento.relatorio_final}}">&#x2B24;</a>
             {% else %}
@@ -105,7 +106,7 @@
             {% endif %}
           </td>
 
-          <td  style="text-align:center"> <!-- (4, 'autorização de publicação empresa'), -->
+          <td  style="text-align:center"> <!-- (4, 'autorização de publicação empresa') -->
             {% if documento.autorizacao_publicacao_empresa %}
               <a class="text-success" href="../..{{MEDIA_URL}}{{documento.autorizacao_publicacao_empresa}}">&#x2B24;</a>
             {% else %}
@@ -119,7 +120,7 @@
             {% endif %}
           </td>
 
-          <td  style="text-align:center"> <!-- (5, 'autorização de publicação  aluno'), -->
+          <td  style="text-align:center"> <!-- (5, 'autorização de publicação  aluno') -->
             {% for doc in documento.autorizacao_publicacao_aluno %}
               <a 
               {% if doc.0 %}
@@ -135,6 +136,23 @@
               title="{{doc.1}}">
               &#x2B24;</a>
             {% endfor %}
+          </td>
+
+          <td  style="text-align:center"> <!-- (14, 'outros') -->
+            {% if documento.outros %}
+              {% for doc in documento.outros %}
+                <a class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
+                data-toggle="tooltip" data-html="true" animation="true" 
+                {% if doc.1 or doc.2%}
+                    title="
+                      {% if doc.1 %}anotação: {{doc.1}} <br>{% endif %}
+                      {% if doc.2 %}data: {{doc.2}} {% endif %}
+                    "
+                  {% endif %}
+                >
+                &#x2B24;</a>
+              {% endfor %}
+            {% endif %}
           </td>
 
         </tr>

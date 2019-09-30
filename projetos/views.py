@@ -698,6 +698,13 @@ def tabela_documentos(request):
                 autorizacao_publicacao_aluno.append( ( "",a.user.first_name+" "+a.user.last_name) )
         contrato["autorizacao_publicacao_aluno"] = autorizacao_publicacao_aluno
 
+        # Outros   -   (14, 'outros')
+        outros = []
+        for d in Documento.objects.filter(organizacao=p.empresa).filter(tipo_de_documento=14):
+            outros.append( ( d.documento,d.anotacao,d.data) )
+        contrato["outros"] = outros
+
+
     mylist = zip(projetos, documentos)
     context= {
         'configuracao': configuracao,
