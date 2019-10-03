@@ -17,6 +17,7 @@ urlpatterns = [
     path('completo/<int:pk>', views.completo, name='completo'),
     path('documentos/', views.documentos, name='documentos'),
     path('download/<str:path>', views.download, name='download'),
+    path('encontros/', views.encontros, name='encontros'),
     path('email_backup/', views.email_backup, name='email_backup'),
     path('export/<str:modelo>/<str:formato>', views.export, name='export'),
     path('exportar/', views.exportar, name='exportar'),

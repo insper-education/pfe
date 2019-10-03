@@ -134,6 +134,16 @@ class Banca(models.Model):
     def __str__(self):
         return self.projeto.titulo
 
+# Encontros (para dinâmicas de grupos)
+class Encontro(models.Model):
+    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.CASCADE, help_text='projeto')
+    location = models.CharField(blank=True, max_length=50, help_text='sala em que vai ocorrer a dinâmica')
+    startDate = models.DateTimeField(default=datetime.datetime.now, help_text='Inicio da Dinâmica')
+    endDate = models.DateTimeField(default=datetime.datetime.now, help_text='Fim da Dinâmica')
+    facilitador = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL, related_name='facilitador', help_text='facilitador da dinâmica')
+    def __str__(self):
+        return str(self.startDate)
+
 # Anotacoes de comunicações com as organizações pareceiras
 class Anotacao(models.Model):
     data = models.DateField(default=datetime.date.today, blank=True, help_text='Data da comunicação')

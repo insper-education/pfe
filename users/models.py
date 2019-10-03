@@ -27,7 +27,8 @@ class PFEUser(AbstractUser):
     tipo_de_usuario = models.PositiveSmallIntegerField(choices=TIPO_DE_USUARIO_CHOICES, default=4)
 
     def __str__(self):
-        return self.username #ver se atualizar isso para first_name não quebra o projeto
+        return self.first_name + " " + self.last_name + " (" + self.TIPO_DE_USUARIO_CHOICES[self.tipo_de_usuario-1][1] + ")"
+        #return self.username #ver se atualizar isso para first_name não quebra o projeto
 
 class Professor(models.Model):
     user = models.OneToOneField(PFEUser, on_delete=models.CASCADE)

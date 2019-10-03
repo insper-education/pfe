@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 2 de Outubro de 2019
+{% endcomment %}
+
+{% block head %}
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+{% endblock %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+
+    <h3>Datas para encontros</h3>
+    <br>
+    <h4>Seu projeto: {{projeto.titulo}}</h4>
+    <br>
+    <div class="control"></div>
+        {% for e in encontros %}
+            <label class="radio" {% if e.projeto and e.projeto != projeto %}data-toggle="tooltip" data-placement="bottom" title="Horário já selecionado por outro grupo!"{% endif %}>
+                <input type="radio" name="selection" value="{{e.id}}" 
+                {% if e.projeto == projeto %}checked{% endif %}
+                {% if e.projeto and e.projeto != projeto %}disabled{% endif %}
+                >
+                {{e.startDate|date:"d \d\e E \d\e Y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}
+            </label>
+            <br>
+        {% endfor %}
+    </div>
+    <p>&nbsp;</p>
+
+    <button type="submit">Agendar</button>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+</form>
+{% endblock %}

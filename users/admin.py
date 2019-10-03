@@ -7,15 +7,20 @@ from .models import PFEUser, Aluno, Professor, Parceiro, Administrador, Opcao, A
 
 @admin.register(PFEUser)
 class PFEUserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'tipo_de_usuario',) #na tabela com todos
+    list_display = ('first_name','last_name', 'username', 'email', 'tipo_de_usuario',) #na tabela com todos
     list_filter = ('tipo_de_usuario',)
     fieldsets = (
        (None, {'fields': ('username', 'first_name', 'last_name', 'email', 'tipo_de_usuario',)}),
         ('Personal info', {'fields': ('groups','user_permissions')}),
        ('Permissions', {'fields': ('is_active', 'is_staff','is_superuser',)}),
     )
+    ordering = ('first_name','last_name')
 
-admin.site.register(Aluno)
+@admin.register(Aluno)
+class AlunoAdmin(admin.ModelAdmin):
+    list_display = ('user','curso','anoPFE','semestrePFE')
+    ordering = ('user__first_name','user__last_name',)
+
 admin.site.register(Professor)
 admin.site.register(Parceiro)
 admin.site.register(Administrador)

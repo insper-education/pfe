@@ -19,7 +19,7 @@ from django.shortcuts import redirect
 from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
 
-from .models import Projeto, Empresa, Configuracao, Disciplina, Evento, Banca, Documento
+from .models import Projeto, Empresa, Configuracao, Disciplina, Evento, Banca, Documento, Encontro
 from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao
 
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource, AlunosResource, ProfessoresResource, ConfiguracaoResource, DisciplinasResource
@@ -972,3 +972,34 @@ def bancas(request):
         'bancas': bancas,
     }
     return render(request, 'projetos/bancas.html', context)
+
+@login_required
+def encontros(request):
+    configuracao = Configuracao.objects.all().first()
+    encontros = Encontro.objects.all()
+    aluno = Aluno.objects.filter(pk=request.user.pk).first()
+    projeto = Projeto.objects.filter(alocacao__aluno=aluno).distinct().filter(ano=configuracao.ano).filter(semestre=configuracao.semestre).last()
+
+    if request.method == 'POST':
+        check_values = request.POST.getlist('selection')
+        agendado = None
+        for e in encontros:
+            if str(e.id) == check_values[0]:
+                if e.projeto != projeto: 
+                    e.projeto = projeto
+                    e.save()
+                agendado = str(e.startDate)
+            else:
+                if e.projeto == projeto:
+                    e.projeto = None
+                    e.save()
+        if agendado:
+            return HttpResponse("Agendado: "+agendado)
+        else:
+            return HttpResponse("Problema!")
+    else:
+        context= {
+            'encontros': encontros,
+            'projeto': projeto,
+        }
+        return render(request, 'projetos/encontros.html', context)

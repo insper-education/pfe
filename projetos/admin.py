@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import Projeto, Empresa, Configuracao
-from .models import Disciplina, Cursada, Recomendada, Evento, Anotacao, Banca, Documento
+from .models import Disciplina, Cursada, Recomendada, Evento, Anotacao, Banca, Documento, Encontro
 
 @admin.register(Projeto)
 class ProjetoAdmin(admin.ModelAdmin):
@@ -47,3 +47,4 @@ admin.site.register(Cursada)
 admin.site.register(Recomendada) 
 admin.site.register(Evento) # Todos os eventos do PFE com suas datas
 admin.site.register(Banca) # Informações das Bancas, como datas e membros
+admin.site.register(Encontro) # Informações das Encontros (com os facilitadores)
