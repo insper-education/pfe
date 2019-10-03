@@ -1,7 +1,24 @@
 from django.contrib import admin
+import django.contrib.admin.options as admin_opt
 
 from .models import Projeto, Empresa, Configuracao
 from .models import Disciplina, Cursada, Recomendada, Evento, Anotacao, Banca, Documento, Encontro
+
+def dup_event(modeladmin:admin_opt.ModelAdmin, request, queryset):
+    for object in queryset:
+        from_id = object.id
+        object.id = None
+        if Configuracao.objects.all().first().semestre == 1:
+            object.semestre = 2
+            object.ano = Configuracao.objects.all().first().ano
+        else:
+            object.semestre = 1
+            object.ano = Configuracao.objects.all().first().ano + 1
+        object.save()
+        message="duplicando de {} para {}".format(from_id, object.id)
+        modeladmin.log_addition(request=request,object=object,message=message)
+
+dup_event.short_description = "Duplicar Projeto(s)"
 
 @admin.register(Projeto)
 class ProjetoAdmin(admin.ModelAdmin):
@@ -22,6 +39,8 @@ class ProjetoAdmin(admin.ModelAdmin):
             'fields': ('empresa',)
         }),
     )
+    actions = [dup_event]
+
 
 @admin.register(Empresa)
 class EmpresaAdmin(admin.ModelAdmin):
