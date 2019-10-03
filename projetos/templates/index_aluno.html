@@ -7,7 +7,8 @@
 
 {% block head %}
     <style>
-        #snackbar {
+
+        #projeto {
             visibility: hidden;
             min-width: 250px;
             margin-left: -125px;
@@ -23,7 +24,29 @@
             font-size: 17px;
         }
         
-        #snackbar.show {
+        #projeto.show {
+            visibility: visible;
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        #vencido {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 2px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+            font-size: 17px;
+        }
+        
+        #vencido.show {
             visibility: visible;
             -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
             animation: fadein 0.5s, fadeout 0.5s 2.5s;
@@ -53,29 +76,39 @@
 
 {% block content %}
 
-    <a href="{% url 'calendario' %}"><h5>Calendário</h5></a>
-
+    <a {% if not projeto %} class="disabled" onclick="myFunction('projeto')" {% else %} href="{% url 'meuprojeto' %}" {% endif %} >
+        <h5>Meu Projeto</h5>
+    </a>
     <hr>
 
-    <a {% if True %} class="disabled" onclick="myFunction()" {% else %} href="{% url 'areas_interesse' %}" {% endif %} >
-        <h5>Selecionar Áreas de Interesse</h5></a>
+    <a {% if True %} class="disabled" onclick="myFunction('vencido')" {% else %} href="{% url 'areas_interesse' %}" {% endif %} >
+        <h5>Selecionar Áreas de Interesse</h5>
+    </a>
+    <hr>
 
-    <a {% if True %} class="disabled" onclick="myFunction()" {% else %} href="{% url 'projetos' %}" {% endif %} >
+    <a {% if True %} class="disabled" onclick="myFunction('vencido')" {% else %} href="{% url 'projetos' %}" {% endif %} >
         <h5>Selecionar Projetos</h5></a>
 
-    <a {% if True %} class="disabled" onclick="myFunction()" {% else %} href="{% url 'submissao' %}" {% endif %} >
+    <a {% if True %} class="disabled" onclick="myFunction('vencido')" {% else %} href="{% url 'submissao' %}" {% endif %} >
         <h5>Submissão de Formulário</h5></a>
-
-    <hr>
-    <a href="{% url 'meuprojeto' %}"><h5>Meu Projeto</h5></a>
-
-    &nbsp;<br>
+    
     <font color="red">Prazo para a seleção dos projetos : <b>{{ configuracao.prazo }}</b></font>
+    <hr>
 
-    <div id="snackbar">Prazo para a seleção dos projetos vencido.</div>
+    <a href="{% url 'calendario' %}"><h5>Calendário Geral</h5></a>
+    <a {% if True %} class="disabled" onclick="myFunction('projeto')" {% else %} href="{% url 'meuprojeto' %}" {% endif %} >
+        <h5>Horário das bancas</h5>
+    </a>
+    <a {% if not projeto %} class="disabled" onclick="myFunction('projeto')" {% else %} href="{% url 'encontros' %}" {% endif %} >
+        <h5>Agendar horário das dinâmicas</h5>
+    </a>
+
+    <div id="projeto">Você não está alocado em um projeto.</div>
+    <div id="vencido">Prazo para a seleção dos projetos vencido.</div>
+    
     <script>
-        function myFunction() {
-            var x = document.getElementById("snackbar");
+        function myFunction(mensagem) {
+            var x = document.getElementById(mensagem);
             x.className = "show";
             setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
         }

@@ -91,13 +91,16 @@ def create_message(aluno):
 def index(request):
     if Configuracao.objects.all().first().manutencao:
         return render(request, 'projetos/manutencao.html')
-    num_projetos = Projeto.objects.count()  # The 'all()' is implied by default.
     num_visits = request.session.get('num_visits', 0)     # Number of visits to this view, as counted in the session variable.
+    
+    aluno = Aluno.objects.get(pk=request.user.pk)
+    projeto = Projeto.objects.filter(alocacao__aluno=aluno).last()
+
     request.session['num_visits'] = num_visits + 1
 
     configuracao = Configuracao.objects.all().first
     context = {
-        'num_projetos': num_projetos,
+        'projeto': projeto,
         'num_visits': num_visits,
         'configuracao': configuracao,
     }
@@ -1003,3 +1006,15 @@ def encontros(request):
             'projeto': projeto,
         }
         return render(request, 'projetos/encontros.html', context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def dinamicas(request):
+    configuracao = Configuracao.objects.all().first()
+    encontros = Encontro.objects.all()
+
+    context= {
+        'encontros': encontros,
+        'configuracao' : configuracao,
+    }
+    return render(request, 'projetos/dinamicas.html', context)

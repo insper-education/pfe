@@ -15,6 +15,7 @@ urlpatterns = [
     path('carrega/<str:dado>', views.carrega, name='carrega'),
     path('carregar/', views.carregar, name='carregar'),
     path('completo/<int:pk>', views.completo, name='completo'),
+    path('dinamicas/', views.dinamicas, name='dinamicas'),
     path('documentos/', views.documentos, name='documentos'),
     path('download/<str:path>', views.download, name='download'),
     path('encontros/', views.encontros, name='encontros'),

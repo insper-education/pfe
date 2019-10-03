@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 3 de Outubro de 2019
+{% endcomment %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+  <h3>Encontros</h3><br>
+  {% if encontros %}
+    <table>
+      {% for e in encontros %} 
+        <tr>
+          <td>
+            <big><b>{{e.startDate}}</b></big><br>
+            {% if e.projeto %}
+              <b>Projeto:</b> <a href="{% url 'completo' e.projeto.id %}">{{e.projeto.titulo}}</a><br>
+              <b>Organização:</b> <a href="{% url 'organizacao' e.projeto.empresa.login %}">{{ e.projeto.empresa.nome_empresa }}</a><br>
+              <b>Alunos:</b>
+              <ol>
+                {% for alocacao in e.projeto.alocacao_set.all %} 
+                  <li><a href="{% url 'aluno' alocacao.aluno.id %}">{{alocacao.aluno.user.first_name}} {{alocacao.aluno.user.last_name}} [{{ alocacao.aluno.get_curso_display }}] &nbsp;
+                  </a></li>
+                {% endfor %}
+              </ol>
+            {% else %}
+              Horário Livre<br><br>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+    <p>&nbsp;</p>
+  {% else %}
+    <p>Não existem encontros.</p>
+  {% endif %}
+  <p>&nbsp;</p>
+
+{% endblock %}
