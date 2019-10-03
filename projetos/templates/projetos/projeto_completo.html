@@ -30,7 +30,7 @@
   <hr>
   <h3>Alunos Alocados no Projeto</h3>
   {% for alocacao in projeto.alocacao_set.all %}
-    <a href="{% url 'aluno' alocacao.aluno.id %}">{{alocacao.aluno.user.first_name}} {{alocacao.aluno.user.last_name}} [{{ alocacao.aluno.get_curso_display }}]</p></a>
+    <a href="{% url 'aluno' alocacao.aluno.id %}">{{alocacao.aluno.user.first_name}} {{alocacao.aluno.user.last_name}} &lt;{{alocacao.aluno.user.email}}&gt; [{{ alocacao.aluno.get_curso_display }}]</p></a>
   {% endfor %}
 
   <hr>
