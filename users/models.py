@@ -58,6 +58,7 @@ class Aluno(models.Model):
     email_pessoal = models.EmailField(null=True, blank=True, help_text='e-mail pessoal')
     anoPFE = models.PositiveIntegerField(null=True, blank=True, validators=[MinValueValidator(2018),MaxValueValidator(3018)], help_text='Ano que cursará o PFE')
     semestrePFE = models.PositiveIntegerField(null=True, blank=True, validators=[MinValueValidator(1),MaxValueValidator(2)], help_text='Semestre que cursará o PFE')
+    trancado = models.BooleanField(default=False,help_text='Caso o aluno tenha trancado ou abandonado o curso')
     cr = models.FloatField(default=0,help_text='Coeficiente de Rendimento')
     #alocado = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL, related_name='aluno_alocado', help_text='projeto selecionado')
 

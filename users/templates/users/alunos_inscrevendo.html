@@ -20,8 +20,11 @@
 {% endblock %}
 
 {% block content %}
-    <h3>Alunos se Inscrevendo</h3>
-    <strong>Número Total de Alunos se Inscrevendo:</strong> {{ num_alunos }}
+    <h3>Alunos se Inscrevendo PFE {{ano}}.{{semestre}}</h3>
+    <strong>Total de Alunos Aplicando:</strong> {{ num_alunos }}
+    <small>(comp={{ num_alunos_comp }},
+    mec={{ num_alunos_mec }},
+    mxt={{ num_alunos_mxt }})</small>
 
     {% if alunos_list %}
         <table id="AlunosTable">
@@ -30,22 +33,27 @@
               <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Nome do Aluno</th>
               <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Curso</th>
           </tr>
-          {% for aluno in alunos_list %} 
+          {% for aluno,opcoes in alunos_list %} 
           <tr class="item">
-            <td class="{% if aluno.opcao_set.all.count >= 5 %}text-success{% else %}text-danger{% endif %}"> &#x2B24; </td>
-            <td><a href="{% url 'aluno' aluno.id %}" data-toggle="tooltip" data-html="true" animation="true" title="
-              {% for opcao in aluno.opcao_set.all %}
-                <b>#{{opcao.prioridade}}:</b>
-                  {% if aluno.alocado == opcao.projeto %}
+            <td class="{% if opcoes.count >= 5 %}text-success{% else %}text-danger{% endif %}"> &#x2B24; </td>
+            <td>
+              <a href="{% url 'aluno' aluno.id %}"
+              {% if opcoes %}
+                data-toggle="tooltip" data-html="true" animation="true" title="
+                {% for opcao in opcoes %}
+                  <b>#{{ opcao.prioridade }} :</b>
+                  {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
                     <u>
                   {% endif %}
-                {{opcao.projeto.titulo}} ({{opcao.projeto.empresa.nome_empresa}})
-                  {% if aluno.alocado == opcao.projeto %}
+                  {{opcao.projeto.titulo}} ({{opcao.projeto.empresa.nome_empresa}})
+                  {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
                     </u>
                   {% endif %}
-                <br>
-              {% endfor %}
-            ">
+                  <br>
+                {% endfor %}
+                "
+              {% endif %}
+              >
               {{aluno.user.first_name}}&nbsp;{{aluno.user.last_name}}
             </a></td>
             <td class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">
@@ -62,7 +70,6 @@
     <text class="text-success">&#x2B24;</text> Aluno já selecionou projetos [{{inscritos}}]<br>
     <text class="text-danger">&#x2B24;</text> Aluno ainda precisa selecionar projetos [{{ninscritos}}]<br>
     <br>
-
 
     <div id="canvas-holder">
         <canvas id="chart-area"></canvas>
@@ -86,9 +93,9 @@
               label: 'Proporção entre alunos'
             }],
             labels: [
-              'Computação',
-              'Mecânica',
-              'Mecatrônica',
+              'Computação [{% widthratio num_alunos_comp num_alunos 100 %}%]',
+              'Mecânica [{% widthratio num_alunos_mec num_alunos 100 %}%]',
+              'Mecatrônica [{% widthratio num_alunos_mxt num_alunos 100 %}%]',
             ]
           },
           options: {
@@ -98,6 +105,14 @@
                   text: 'Proporção entre alunos',
                   position: 'top'
               },
+            legend: {
+              display: true,
+              position: "bottom",
+              labels: {
+                fontColor: "#333",
+                fontSize: 14
+              }
+            }
           }
         };
     

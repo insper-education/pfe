@@ -15,7 +15,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 
 from .forms import PFEUserCreationForm, PFEUserForm, AlunoForm
-from .models import PFEUser, Aluno, Professor, Parceiro
+from .models import PFEUser, Aluno, Professor, Parceiro, Opcao
 from projetos.models import Configuracao, Projeto
 
 from tablib import Dataset
@@ -129,20 +129,30 @@ def alunos(request):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def alunos_inscrevendo(request):
     configuracao = Configuracao.objects.all().first()
-    alunos_inscrevendo = Aluno.objects.filter(anoPFE=configuracao.ano).filter(semestrePFE=configuracao.semestre).order_by("user__first_name")
-    alunos_list = alunos_inscrevendo.filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0]) # Conta soh alunos
-    num_alunos = alunos_list.count()
-    num_alunos_comp = alunos_list.filter(curso__exact='C').count() # Conta alunos computacao
-    num_alunos_mxt = alunos_list.filter(curso__exact='X').count() # Conta alunos mecatrônica
-    num_alunos_mec = alunos_list.filter(curso__exact='M').count() # Conta alunos mecânica
+    if configuracao.semestre==1:
+        ano = configuracao.ano
+        semestre = 2
+    else:
+        ano = configuracao.ano+1
+        semestre = 1
+    alunos_inscrevendo = Aluno.objects.filter(trancado=False).filter(anoPFE=ano).filter(semestrePFE=semestre).order_by("user__first_name")
+    alunos = alunos_inscrevendo.filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0]) # Conta soh alunos
+    num_alunos = alunos.count()
+    num_alunos_comp = alunos.filter(curso__exact='C').count() # Conta alunos computacao
+    num_alunos_mxt = alunos.filter(curso__exact='X').count() # Conta alunos mecatrônica
+    num_alunos_mec = alunos.filter(curso__exact='M').count() # Conta alunos mecânica
 
     inscritos = 0
     ninscritos = 0
-    for a in alunos_list:
-        if a.opcoes.all().count() >= 5:
+    opcoes = []
+    for a in alunos:
+        opcao = Opcao.objects.filter(aluno=a).filter(projeto__ano=ano).filter(projeto__semestre=semestre)
+        opcoes.append(opcao)
+        if opcao.count() >= 5:
             inscritos+=1
         else:
             ninscritos+=1
+    alunos_list = zip(alunos,opcoes)
 
     context = {
         'alunos_list' : alunos_list,
@@ -153,6 +163,8 @@ def alunos_inscrevendo(request):
         'configuracao': configuracao,
         'inscritos': inscritos,
         'ninscritos': ninscritos,
+        'ano': ano,
+        'semestre': semestre,
     }
     return render(request, 'users/alunos_inscrevendo.html', context=context)
 
