@@ -938,7 +938,7 @@ def professores(request):
     while( True ):
         professores = []
         grupos = []
-        for p in Professor.objects.all():
+        for p in Professor.objects.all().order_by("user__first_name","user__last_name"):
             count_grupos = 0
             gruposPFE = Projeto.objects.filter(orientador=p).filter(ano=ano).filter(semestre=semestre)
             if len(gruposPFE) > 0 :
