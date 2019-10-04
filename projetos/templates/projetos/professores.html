@@ -13,11 +13,11 @@
   <h3>Tabela de Alocação de Professores</h3>
   <br>
   {% for professores,periodo in anos %} 
-  {{periodo}}
+  <big>{{periodo}}</big>
   <table id="professores">
     <tr>
-      <th>Nome</th>
-      <th>Grupos</th>
+      <th style="text-align: center;">Nome</th>
+      <th style="text-align: center;">Grupos</th>
     </tr>
     {% for professor,grupos in professores %} 
       <tr>
@@ -26,7 +26,7 @@
             {{professor.user.first_name}} {{professor.user.last_name}}
           </a>
         </td>
-        <td>
+        <td style="text-align: center;">
           {{grupos}}
         </td>
       </tr>
