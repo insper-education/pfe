@@ -56,7 +56,15 @@
     <h3>Projetos</h3>
     {% for projeto in organization.projeto_set.all %}
       <a href="{% url 'completo' projeto.id %}"> 
-        <li>{{projeto.titulo}}</li>
+        <li>
+          {% if projeto.alocacao_set.count %}
+            <u>
+          {% endif %}
+          {{projeto.titulo}} ({{projeto.ano}}.{{projeto.semestre}})
+          {% if projeto.alocacao_set.count %}
+            <u>
+          {% endif %}
+        </li>
       </a>
     {% endfor %}
   {% endif %}
