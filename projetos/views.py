@@ -415,8 +415,20 @@ def areas(request):
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def organizacoes(request):
-    organizacoes_list = Empresa.objects.all()
-    context= {'organizacoes_list': organizacoes_list,}
+    organizacoes = Empresa.objects.all()
+    fechados = []
+    for o in organizacoes:
+        fechados.append(Projeto.objects.filter(empresa=o).filter(alocacao__isnull=False).distinct().count())
+    organizacoes_list = zip(organizacoes, fechados)
+    total_organizacoes = Empresa.objects.all().count()
+    total_submetidos = Projeto.objects.all().count()
+    total_fechados = Projeto.objects.filter(alocacao__isnull=False).distinct().count()
+    context= {
+        'organizacoes_list': organizacoes_list,
+        'total_organizacoes': total_organizacoes,
+        'total_submetidos': total_submetidos,
+        'total_fechados': total_fechados,
+        }
     return render(request, 'projetos/organizacoes.html', context)
 
 @login_required
