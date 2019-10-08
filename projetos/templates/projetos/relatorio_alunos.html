@@ -137,11 +137,13 @@
             </tr>
         
             </table>
-      
+          <br>
           <strong>Projetos Selecionados</strong>
           {% for opcao in aluno.opcao_set.all %}
             <a href="{% url 'completo' opcao.projeto.id %}">
-              <p style="margin-top: 0px; margin-bottom: 0px;"><b>{{opcao.prioridade}}</b> - {{opcao.projeto.titulo}} ({{opcao.projeto.empresa.nome_empresa}})</p>
+              <p style="margin-top: 0px; margin-bottom: 0px;"><b>{{opcao.prioridade}}</b> - 
+                {% if opcao.projeto.titulo_final %}{{opcao.projeto.titulo_final}}{% else %}{{opcao.projeto.titulo}}{% endif %}
+                ({{opcao.projeto.empresa.nome_empresa}})</p>
             </a>
           {% endfor %}
           <hr class="striped-border">

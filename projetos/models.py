@@ -34,7 +34,8 @@ class Empresa(models.Model):
         return os.path.split(self.contrato.name)[1]
 
 class Projeto(models.Model):
-    titulo = models.CharField(max_length=127, help_text='Titulo do projeto')
+    titulo = models.CharField(max_length=127, help_text='Título Provisório do projeto')
+    titulo_final = models.CharField(max_length=127, null=True, blank=True, help_text='Título Final do projeto')
     descricao = models.TextField(max_length=2000, help_text='Descricao do projeto')
     expectativas = models.TextField(max_length=2000, help_text='Expectativas em relação ao projeto')
     areas = models.TextField(max_length=1000, help_text='Áreas da engenharia envolvidas no projeto')

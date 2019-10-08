@@ -42,7 +42,7 @@
     {% for contrato in organization.documento_set.all %}
         <li><a href="../..{{MEDIA_URL}}{{ contrato.documento }}"> {{ contrato }} 
         {% if contrato.projeto %}
-          - {{ contrato.projeto.titulo }} 
+          - {% if contrato.projeto.titulo_final %}{{contrato.projeto.titulo_final}}{% else %}{{contrato.projeto.titulo}}{% endif %}
         {% endif %}
         {% if contrato.usuario %}
           - {{ contrato.usuario.first_name }} {{ contrato.usuario.last_name }} 
@@ -60,7 +60,7 @@
           {% if projeto.alocacao_set.count %}
             <u>
           {% endif %}
-          {{projeto.titulo}} ({{projeto.ano}}.{{projeto.semestre}})
+          {% if projeto.titulo_final %}{{projeto.titulo_final}}{% else %}{{projeto.titulo}}{% endif %} ({{projeto.ano}}.{{projeto.semestre}})
           {% if projeto.alocacao_set.count %}
             </u>
           {% endif %}

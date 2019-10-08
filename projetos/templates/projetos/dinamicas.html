@@ -17,7 +17,12 @@
           <td>
             <big><b>{{e.startDate}}</b></big><br>
             {% if e.projeto %}
-              <b>Projeto:</b> <a href="{% url 'completo' e.projeto.id %}">{{e.projeto.titulo}}</a><br>
+              <b>Projeto:</b> <a href="{% url 'completo' e.projeto.id %}">
+                {% if e.projeto.titulo_final %}
+                  {{e.projeto.titulo_final}}
+                {% else %}
+                  {{e.projeto.titulo}}
+                {% endif %}</a><br>
               <b>Organização:</b> <a href="{% url 'organizacao' e.projeto.empresa.login %}">{{ e.projeto.empresa.nome_empresa }}</a><br>
               <b>Alunos:</b>
               <ol>

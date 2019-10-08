@@ -26,7 +26,16 @@
         {% if projeto.disponivel %}
         <div><pdf:nextpage /></div>
 
-          <h4>Título: {{ projeto.titulo }}</h4>
+          {% if projeto.titulo_final %}
+            <style>
+                h4 {display: inline;}
+            </style>
+            <h4>Título: {{projeto.titulo_final}}</h4>
+            <small> <br>&nbsp;&nbsp;&nbsp;&nbsp;Título Provisório: {{projeto.titulo}}</small><br>
+          {% else %}
+            <h4>Título: {{projeto.titulo}}</h4><br>
+          {% endif %}
+
           <strong>Descrição:</strong> {{ projeto.descricao|linebreaks }}
           <strong>Expectativas de resultados/entregas :</strong> {{ projeto.expectativas|linebreaks }}
           <strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ projeto.areas|linebreaks }}

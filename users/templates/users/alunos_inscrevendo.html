@@ -45,7 +45,12 @@
                   {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
                     <u>
                   {% endif %}
-                  {{opcao.projeto.titulo}} ({{opcao.projeto.empresa.nome_empresa}})
+                    {% if opcao.projeto.titulo_final %}
+                      {{opcao.projeto.titulo_final}}
+                    {% else %}
+                      {{opcao.projeto.titulo}}
+                    {% endif %}
+                    ({{opcao.projeto.empresa.nome_empresa}})
                   {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
                     </u>
                   {% endif %}

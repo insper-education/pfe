@@ -18,7 +18,8 @@
       {% for projeto,opcoes in mylist %} 
         {% if projeto.disponivel %}
           <a href="{% url 'completo' projeto.id %}" class="dark-blue-bold"> 
-            {{projeto.titulo}} ({{ projeto.empresa.nome_empresa }})
+              {% if projeto.titulo_final %}{{projeto.titulo_final}}{% else %}{{projeto.titulo}}{% endif %}
+            ({{ projeto.empresa.nome_empresa }})
           </a>
           {% for opcao in opcoes %} 
             <li><a href="{% url 'aluno' opcao.aluno.id %}">{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}</a></li>

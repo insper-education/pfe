@@ -45,7 +45,12 @@
             </td>
           <td>
             <a href="{% url 'projeto' projeto.pk %}">
-              {{projeto.titulo}}
+              {% if projeto.titulo_final %}
+                {{projeto.titulo_final}}<br>
+                <small>Título Provisório: {{projeto.titulo}}</small>
+              {% else %}
+                {{projeto.titulo}}
+              {% endif %}
               <font color="darkblue">({{ projeto.empresa.nome_empresa }})</font>
             </a>
           </td>

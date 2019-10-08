@@ -125,7 +125,12 @@
         <hr>
         <h3>Projeto Alocado</h3>
         {% for alocado in aluno.alocacao_set.all %}
-            {{ alocado.projeto.titulo }} ({{alocado.projeto.empresa.nome_empresa}})
+            {% if alocado.projeto.titulo_final %}
+                {{alocado.projeto.titulo_final}}
+            {% else %}
+                {{alocado.projeto.titulo}}
+            {% endif %}
+            ({{alocado.projeto.empresa.nome_empresa}})
         {% endfor %}
     {% endif %}
 
@@ -134,7 +139,13 @@
   <h3>Projetos Selecionados</h3>
   {% for opcao in aluno.opcao_set.all %}
     <a href="{% url 'completo' opcao.projeto.id %}">
-      <p><b>{{opcao.prioridade}}</b> - {{opcao.projeto.titulo}} ({{opcao.projeto.empresa.nome_empresa}})</p>
+      <p><b>{{opcao.prioridade}}</b> - 
+        {% if opcao.projeto.titulo_final %}
+            {{opcao.projeto.titulo_final}}
+        {% else %}
+            {{opcao.projeto.titulo}}
+        {% endif %}
+        ({{opcao.projeto.empresa.nome_empresa}})</p>
     </a>
   {% endfor %}
   {% endif %}

@@ -38,7 +38,7 @@
       events: [
         {% for banca in bancas %} 
           {
-              title: '{{banca.projeto.titulo}} [{{banca.projeto.empresa}}]\nLocal: {% if banca.location %}{{banca.location}}{% else %}N/D{% endif %}\nBanca: {{banca.projeto.orientador.user.first_name}} {{banca.projeto.orientador.user.last_name}}(O){% if banca.membro1 %}; {{banca.membro1.first_name}} {{banca.membro1.last_name}}{% endif %}{% if banca.membro2 %}; {{banca.membro2.first_name}} {{banca.membro2.last_name}}{% endif %}{% if banca.membro3 %}; {{banca.membro3.first_name}} {{banca.membro3.last_name}}{% endif %}',
+              title: '{% if banca.projeto.titulo_final %}{{banca.projeto.titulo_final}}{% else %}{{banca.projeto.titulo}}{% endif %} [{{banca.projeto.empresa}}]\nLocal: {% if banca.location %}{{banca.location}}{% else %}N/D{% endif %}\nBanca: {{banca.projeto.orientador.user.first_name}} {{banca.projeto.orientador.user.last_name}}(O){% if banca.membro1 %}; {{banca.membro1.first_name}} {{banca.membro1.last_name}}{% endif %}{% if banca.membro2 %}; {{banca.membro2.first_name}} {{banca.membro2.last_name}}{% endif %}{% if banca.membro3 %}; {{banca.membro3.first_name}} {{banca.membro3.last_name}}{% endif %}',
               start: '{{banca.startDate.year}}-{{banca.startDate.month|stringformat:"02d"}}-{{banca.startDate.day|stringformat:"02d"}}T{{banca.startDate.hour|stringformat:"02d"}}:{{banca.startDate.minute|stringformat:"02d"}}:00',
               end: '{{banca.endDate.year}}-{{banca.endDate.month|stringformat:"02d"}}-{{banca.endDate.day|stringformat:"02d"}}T{{banca.endDate.hour|stringformat:"02d"}}:{{banca.endDate.minute|stringformat:"02d"}}:00',
               constraint: 'bancasIntermediarias20192',

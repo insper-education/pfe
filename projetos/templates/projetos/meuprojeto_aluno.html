@@ -13,7 +13,17 @@
     <br><br>
     {% for alocado in aluno.alocacao_set.all %}
       <h2>{{alocado.projeto.ano}}.{{alocado.projeto.semestre}}</h2>
-      <h3>Título: {{ alocado.projeto.titulo }}</h3>
+      {% if alocado.projeto.titulo_final %}
+        <style>
+            h3 {
+                display: inline;
+            }
+        </style>
+        <h3>Título: {{alocado.projeto.titulo_final}}</h3>
+        <small> <br>&nbsp;&nbsp;&nbsp;&nbsp;Título Provisório: {{alocado.projeto.titulo}}</small><br>
+      {% else %}
+          <h3>Título: {{alocado.projeto.titulo}}</h3>
+      {% endif %}
       <strong>Descrição:</strong> {{ alocado.projeto.descricao|linebreaks }}
       <strong>Expectativas de resultados/entregas :</strong> {{ alocado.projeto.expectativas|linebreaks }}
       <strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ alocado.projeto.areas|linebreaks }}

@@ -30,7 +30,13 @@
         {% if projeto.disponivel %}
       
           <a href="{% url 'completo' projeto.id %}"> 
-            <li class="title" title="{{ forloop.counter }}&ordm; : {{projeto.titulo}} ({{ projeto.empresa.nome_empresa }})"></li>
+            <li class="title" title="{{ forloop.counter }}&ordm; : 
+            {% if projeto.titulo_final %}
+              {{projeto.titulo_final}}
+            {% else %}
+              {{projeto.titulo}}
+            {% endif %}
+             ({{ projeto.empresa.nome_empresa }})"></li>
           </a>
           <li class="past" title="">
             <span class="bar" data-number="{{opcoes}}"></span>
