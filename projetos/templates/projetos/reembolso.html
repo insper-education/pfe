@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 8 de Outubro de 2019
+{% endcomment %}
+
+{% block head %}
+<script>
+function mascara(i){
+   var v = i.value;
+   if(isNaN(v[v.length-1])){ // impede entrar outro caractere que não seja número
+      i.value = v.substring(0, v.length-1);
+      return;
+   }
+   i.setAttribute("maxlength", "14");
+   if (v.length == 3 || v.length == 7) i.value += ".";
+   if (v.length == 11) i.value += "-";
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<form method="post" id="reembolsoform">
+    {% csrf_token %}
+
+    <h3>Formulário de Reembolso</h3>
+
+    Por: {{aluno.user.first_name}} {{aluno.user.last_name}}<br>
+    Projeto: {% if projeto.titulo_final %}{{projeto.titulo_final}}{% else %}{{projeto.titulo}}{% endif %}  <br>
+    <br>
+    Descrição da compra:<br>
+    <textarea name="descricao" id="descricao" class="text" cols="60" rows ="4" form="reembolsoform"
+    placeholder="Descreva o que esta sendo pedido de reembolso"></textarea>
+
+    <br><br>
+    CPF
+    <input name="cpf" id="cpf" oninput="mascara(this)" type="text" placeholder="000.000.000-00"><br>
+    <br>
+
+    Banco
+    <select name="banco" id="banco" title="Selecione o banco"/>
+        {% for b in bancos %}
+        <option value="{{b.codigo}}">{{b.nome}} ({{b.codigo}})</option>  
+        {% endfor %}
+    </select>
+    <br>
+
+    Agência   
+    <input name="agencia" type="text" id="agencia" size="8"/>  
+    <br>
+
+    Conta   
+    <input name="conta" type="text" id="conta" size="10"/>  
+    <br>
+
+    <br>
+    Valor
+    <input type="number" min="0.01" step="0.01" max="1500" name="valor" id="valor" />
+
+
+    <!-- Permitir fazer o Upload do Cupom -->
+    <!-- Centro de Custo (PFE) -->
+    <br><br>
+    <button type="submit">Enviar</button>
+
+    <br><br>
+    Obs: Este formulário só serve para controle interno, você deve imprimir todos os documentos e levar para o departamento
+    de carreiras para de fato iniciar o processo de reembolso.
+    
+    <p>&nbsp;</p>
+</form>
+{% endblock %}

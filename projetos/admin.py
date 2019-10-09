@@ -2,7 +2,7 @@ from django.contrib import admin
 import django.contrib.admin.options as admin_opt
 
 from .models import Projeto, Empresa, Configuracao
-from .models import Disciplina, Cursada, Recomendada, Evento, Anotacao, Banca, Documento, Encontro
+from .models import Disciplina, Cursada, Recomendada, Evento, Anotacao, Banca, Documento, Encontro, Banco, Reembolso
 
 def dup_event(modeladmin:admin_opt.ModelAdmin, request, queryset):
     for object in queryset:
@@ -62,8 +62,15 @@ class AnotacaoAdmin(admin.ModelAdmin):
 class DocumentoAdmin(admin.ModelAdmin):
     list_display = ('tipo_de_documento', 'organizacao', 'usuario', 'projeto')
 
+# Lista de Bancos Brasileiros
+@admin.register(Banco)
+class DocumentoAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'codigo')
+
+
 admin.site.register(Cursada)
 admin.site.register(Recomendada) 
 admin.site.register(Evento) # Todos os eventos do PFE com suas datas
 admin.site.register(Banca) # Informações das Bancas, como datas e membros
 admin.site.register(Encontro) # Informações das Encontros (com os facilitadores)
+admin.site.register(Reembolso) # Pedidos de reembolso

@@ -24,8 +24,8 @@ class PFEUser(AbstractUser):
       (3, 'parceiro'),
       (4, 'administrador'),
     )
-    tipo_de_usuario = models.PositiveSmallIntegerField(choices=TIPO_DE_USUARIO_CHOICES, default=4)
-
+    tipo_de_usuario = models.PositiveSmallIntegerField(choices=TIPO_DE_USUARIO_CHOICES, default=1)
+    cpf = models.CharField(max_length=11, null=True, blank=True, help_text='CPF do usuário')
     def __str__(self):
         return self.first_name + " " + self.last_name + " (" + self.TIPO_DE_USUARIO_CHOICES[self.tipo_de_usuario-1][1] + ")"
         #return self.username #ver se atualizar isso para first_name não quebra o projeto

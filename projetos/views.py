@@ -13,13 +13,14 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.db import transaction
 
 from django.shortcuts import redirect
 
 from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
 
-from .models import Projeto, Empresa, Configuracao, Disciplina, Evento, Banca, Documento, Encontro
+from .models import Projeto, Empresa, Configuracao, Disciplina, Evento, Banca, Documento, Encontro, Banco, Reembolso
 from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao
 
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource, AlunosResource, ProfessoresResource, ConfiguracaoResource, DisciplinasResource
@@ -28,6 +29,8 @@ import re #regular expression (para o import)
 from tablib import Dataset, Databook
 import os
 import tablib
+import csv
+
 from import_export import resources
 
 
@@ -1030,3 +1033,53 @@ def dinamicas(request):
         'configuracao' : configuracao,
     }
     return render(request, 'projetos/dinamicas.html', context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def carrega_bancos(request):
+    with open('projetos/bancos.csv') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        line_count = 0
+        for row in csv_reader:
+            if line_count == 0:
+                #print("Colunas {} e {}".format(row[0],row[1]))
+                pass
+            else:
+                print('Nome: {}; Código {}'.format(row[0],row[1]))
+                banco = Banco.create(nome=row[0],codigo=row[1])
+                banco.save()
+            line_count += 1
+    return HttpResponse("Bancos carregados")
+
+@login_required
+@transaction.atomic
+def reembolso(request):
+    configuracao = Configuracao.objects.all().first()
+    if request.method == 'POST':
+
+        print("Descricao = "+request.POST['descricao'])
+        print("CPF = "+request.POST['cpf'])
+        print("Conta = "+request.POST['conta'])
+        print("Ag = "+request.POST['agencia'])
+        print("banco = "+request.POST['banco'])
+        print("valor = "+request.POST['valor'])
+
+        #timezone.now()
+    
+        #check_values = request.POST.getlist('selection')
+        #aluno = Aluno.objects.get(pk=request.user.pk)
+
+        #aluno.inovacao_social = (True if "inovacao_social" in check_values else False)
+        #aluno.save()
+        return HttpResponse("Reembolso encaminhado.")
+    else:
+        aluno = Aluno.objects.get(pk=request.user.pk)
+        projeto = Projeto.objects.filter(alocacao__aluno=aluno).last()
+        bancos = Banco.objects.all().order_by("nome","codigo")
+        context = {
+            'aluno': aluno,
+            'projeto': projeto,
+            'bancos': bancos,
+            'configuracao' : configuracao,
+        }
+        return render(request, 'projetos/reembolso.html', context)

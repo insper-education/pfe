@@ -195,3 +195,27 @@ class Documento(models.Model):
     tipo_de_documento = models.PositiveSmallIntegerField(choices=TIPO_DE_DOCUMENTO, default=0)
     def __str__(self):
         return str(self.TIPO_DE_DOCUMENTO[self.tipo_de_documento][1])
+
+# Lista dos Bancos Existentes no Brasil
+class Banco(models.Model):
+    nome = models.CharField(max_length=50, help_text='nome do banco')
+    codigo = models.PositiveSmallIntegerField(help_text='código do banco')
+
+    @classmethod
+    def create(cls, nome, codigo):
+        banco = cls(nome=nome,codigo=codigo)
+        return banco
+
+    def __str__(self):
+        return str(self.nome)
+
+
+class Reembolso(models.Model):
+    usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL, help_text='usuário pedindo reembolso')
+    banco = models.ForeignKey(Banco, null=True, on_delete=models.SET_NULL, help_text='banco a se fazer o reembolso')
+    agencia = models.CharField(max_length=6, null=True, blank=True, help_text='agência no banco')
+    conta = models.CharField(max_length=16, null=True, blank=True, help_text='conta no banco')
+    descricao = models.TextField(max_length=2000, help_text='desrição do pedido de reembolso')
+    valor = models.DecimalField(max_digits=5, decimal_places=2, help_text='valor a ser reembolsado')
+    def __str__(self):
+        return str(self.usuario)
