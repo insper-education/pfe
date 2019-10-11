@@ -26,20 +26,22 @@ function mascara(i){
 
     <h3>Formulário de Reembolso</h3>
 
-    Por: {{aluno.user.first_name}} {{aluno.user.last_name}}<br>
+    Por: {{usuario.first_name}} {{usuario.last_name}}<br>
     Projeto: {% if projeto.titulo_final %}{{projeto.titulo_final}}{% else %}{{projeto.titulo}}{% endif %}  <br>
     <br>
     Descrição da compra:<br>
     <textarea name="descricao" id="descricao" class="text" cols="60" rows ="4" form="reembolsoform"
-    placeholder="Descreva o que esta sendo pedido de reembolso"></textarea>
+    placeholder="Descreva o que esta sendo pedido de reembolso" required></textarea>
 
     <br><br>
     CPF
-    <input name="cpf" id="cpf" oninput="mascara(this)" type="text" placeholder="000.000.000-00"><br>
+    <input name="cpf" id="cpf" oninput="mascara(this)" type="text" placeholder="000.000.000-00" 
+    value="{{usuario.cpf|slice:":3"}}.{{usuario.cpf|slice:"3:6"}}.{{usuario.cpf|slice:"6:9"}}-{{usuario.cpf|slice:"9:11"}}" required><br>
     <br>
 
     Banco
-    <select name="banco" id="banco" title="Selecione o banco"/>
+    <select name="banco" id="banco" title="Selecione o banco" required>
+        <option disabled selected value> -- selecione um banco -- </option>
         {% for b in bancos %}
         <option value="{{b.codigo}}">{{b.nome}} ({{b.codigo}})</option>  
         {% endfor %}
@@ -47,17 +49,16 @@ function mascara(i){
     <br>
 
     Agência   
-    <input name="agencia" type="text" id="agencia" size="8"/>  
+    <input name="agencia" type="text" id="agencia" size="8" required/>  
     <br>
 
     Conta   
-    <input name="conta" type="text" id="conta" size="10"/>  
+    <input name="conta" type="text" id="conta" size="10" required/>  
     <br>
 
     <br>
     Valor
-    <input type="number" min="0.01" step="0.01" max="1500" name="valor" id="valor" />
-
+    <input type="number" min="0.01" step="0.01" max="1500" name="valor" id="valor" placeholder="0,00" required/>
 
     <!-- Permitir fazer o Upload do Cupom -->
     <!-- Centro de Custo (PFE) -->

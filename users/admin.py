@@ -11,7 +11,7 @@ class PFEUserAdmin(admin.ModelAdmin):
     list_filter = ('tipo_de_usuario',)
     fieldsets = (
        (None, {'fields': ('username', 'first_name', 'last_name', 'email', 'tipo_de_usuario',)}),
-        ('Personal info', {'fields': ('groups','user_permissions')}),
+        ('Personal info', {'fields': ('groups','user_permissions','cpf')}),
        ('Permissions', {'fields': ('is_active', 'is_staff','is_superuser',)}),
     )
     ordering = ('first_name','last_name')

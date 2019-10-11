@@ -6,7 +6,8 @@ from django.db import models
 from django.urls import reverse  # To generate URLS by reversing URL patterns
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib import admin
-#from datetime import datetime
+from datetime import datetime
+
 import datetime 
 import os
 
@@ -217,5 +218,12 @@ class Reembolso(models.Model):
     conta = models.CharField(max_length=16, null=True, blank=True, help_text='conta no banco')
     descricao = models.TextField(max_length=2000, help_text='desrição do pedido de reembolso')
     valor = models.DecimalField(max_digits=5, decimal_places=2, help_text='valor a ser reembolsado')
+    data = models.DateTimeField(default=datetime.datetime.now, help_text='data e hora da criação do pedido de reembolso')
+    
+    @classmethod
+    def create(cls, usuario):
+        reembolso = cls(usuario=usuario)
+        return reembolso
+
     def __str__(self):
-        return str(self.usuario)
+        return str(str(self.usuario)+str(self.data))

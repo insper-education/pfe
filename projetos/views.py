@@ -42,11 +42,18 @@ from xhtml2pdf import pisa
 
 from django.core.exceptions import PermissionDenied
 
-def email(aluno, message):
-    subject = 'PFE : '+aluno.user.username
+# def email(aluno, message):
+#     subject = 'PFE : '+aluno.user.username
+#     email_from = settings.EMAIL_HOST_USER
+#     recipient_list = ['pfeinsper@gmail.com',aluno.user.email,]
+#     return send_mail( subject, message, email_from, recipient_list, html_message=message, fail_silently=True, )
+
+def email(subject, recipient_list, message):
+    #subject = 'PFE : '+aluno.user.username
     email_from = settings.EMAIL_HOST_USER
-    recipient_list = ['pfeinsper@gmail.com',aluno.user.email,]
+    #recipient_list = ['pfeinsper@gmail.com',aluno.user.email,]
     return send_mail( subject, message, email_from, recipient_list, html_message=message, fail_silently=True, )
+
 
 def create_message(aluno):
         message = '<br>\n'
@@ -144,8 +151,12 @@ def projetos(request):
                     if len(aluno.opcoes.filter(pk=p.pk))!=0:
                         Opcao.objects.filter(aluno=aluno, projeto=p).delete()
             message = create_message(aluno)
-            x = email(aluno,message)
+            
+            subject = 'PFE : '+aluno.user.username
+            recipient_list = ['pfeinsper@gmail.com',aluno.user.email,]
+            x = email(subject,recipient_list,message)
             if(x!=1): message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+
             context= {'message': message,}    
             return render(request, 'projetos/confirmacao.html', context)
         else:
@@ -1051,33 +1062,64 @@ def carrega_bancos(request):
             line_count += 1
     return HttpResponse("Bancos carregados")
 
+def message_reembolso(usuario, projeto, reembolso):
+        message = '<br>\n'
+        message += '&nbsp;&nbsp;Caro <b>Dept. de Carreiras</b>\n\n'
+        message += '<br><br>\n\n'
+        message += '&nbsp;&nbsp;Por favor, encaminhem o pedido de reembolso de: '+usuario.first_name+" "+usuario.last_name+" ("+usuario.username+')<br>\n'
+        cpf = str(usuario.cpf)
+        message += '&nbsp;&nbsp;CPF: '+cpf[:3]+'.'+cpf[3:6]+'.'+cpf[6:9]+'-'+cpf[9:11]+'<br>\n'
+        if projeto:
+            message += '&nbsp;&nbsp;Participante do projeto:'+projeto.titulo+'<br>\n'
+        message += '<br>\n'
+        message += '&nbsp;&nbsp;Descrição: '+reembolso.descricao+'<br>\n'
+        message += '<br>\n'
+        message += '&nbsp;&nbsp;Banco: '+reembolso.banco.nome+' ('+str(reembolso.banco.codigo)+')'+'<br>\n'
+        message += '&nbsp;&nbsp;Conta: '+reembolso.conta+'<br>\n'
+        message += '&nbsp;&nbsp;Agência: '+reembolso.agencia+'<br>\n'
+        message += '<br>\n'
+        message += '&nbsp;&nbsp;Valor: '+reembolso.valor+'<br>\n'
+        message += '<br>\n'
+        message += '<br>\n'+("&nbsp;"*12)+"atenciosamente, coordenação do PFE"
+        message += '&nbsp;<br>\n'
+        message += '&nbsp;<br>\n'
+        return message
+
 @login_required
 @transaction.atomic
 def reembolso(request):
     configuracao = Configuracao.objects.all().first()
-    if request.method == 'POST':
-
-        print("Descricao = "+request.POST['descricao'])
-        print("CPF = "+request.POST['cpf'])
-        print("Conta = "+request.POST['conta'])
-        print("Ag = "+request.POST['agencia'])
-        print("banco = "+request.POST['banco'])
-        print("valor = "+request.POST['valor'])
-
-        #timezone.now()
-    
-        #check_values = request.POST.getlist('selection')
-        #aluno = Aluno.objects.get(pk=request.user.pk)
-
-        #aluno.inovacao_social = (True if "inovacao_social" in check_values else False)
-        #aluno.save()
-        return HttpResponse("Reembolso encaminhado.")
-    else:
+    usuario = PFEUser.objects.get(pk=request.user.pk)
+    if usuario.tipo_de_usuario == 1:
         aluno = Aluno.objects.get(pk=request.user.pk)
         projeto = Projeto.objects.filter(alocacao__aluno=aluno).last()
+    else:
+        projeto = None
+    if request.method == 'POST':
+        reembolso = Reembolso.create(usuario)
+        reembolso.descricao = request.POST['descricao']
+
+        print("CPF = "+request.POST['cpf'])
+        usuario.cpf = int(''.join(i for i in request.POST['cpf'] if i.isdigit()))
+        usuario.save()
+
+        reembolso.conta = request.POST['conta']
+        reembolso.agencia = request.POST['agencia']
+        reembolso.banco = Banco.objects.get(codigo=request.POST['banco'])
+        reembolso.valor = request.POST['valor']
+        reembolso.save()
+        
+        subject = 'Reembolso PFE : '+usuario.username
+        #recipient_list = ['pfeinsper@gmail.com',usuario.email,]
+        recipient_list = ['pfeinsper@gmail.com','lpsoares@insper.edu.br',]
+        message = message_reembolso(usuario, projeto, reembolso)
+        x = email(subject,recipient_list,message)
+        if(x!=1): message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+        return HttpResponse(message)
+    else:
         bancos = Banco.objects.all().order_by("nome","codigo")
         context = {
-            'aluno': aluno,
+            'usuario': usuario,
             'projeto': projeto,
             'bancos': bancos,
             'configuracao' : configuracao,

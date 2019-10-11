@@ -67,10 +67,14 @@ class DocumentoAdmin(admin.ModelAdmin):
 class DocumentoAdmin(admin.ModelAdmin):
     list_display = ('nome', 'codigo')
 
+# Pedidos de reembolso
+@admin.register(Reembolso)
+class DocumentoAdmin(admin.ModelAdmin):
+    list_display = ('usuario', 'data', 'valor')
+
 
 admin.site.register(Cursada)
 admin.site.register(Recomendada) 
 admin.site.register(Evento) # Todos os eventos do PFE com suas datas
 admin.site.register(Banca) # Informações das Bancas, como datas e membros
 admin.site.register(Encontro) # Informações das Encontros (com os facilitadores)
-admin.site.register(Reembolso) # Pedidos de reembolso
