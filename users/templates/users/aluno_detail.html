@@ -8,6 +8,9 @@
 {% block content %}
   <h3>{{aluno.user.first_name}}&nbsp;{{aluno.user.last_name}}</h3>
   <strong>e-mail:</strong> <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
+  {% if aluno.matricula %}
+    <strong>Matrícula:</strong> {{aluno.matricula}} <br>
+  {% endif %}
   <strong>Curso:</strong> {{aluno.get_curso_display}} <br>
   <strong>CR:</strong> {{aluno.cr}} <br><br>
   <strong>Áreas de interesse selecionadas:</strong>
