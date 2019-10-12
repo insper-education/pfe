@@ -42,6 +42,13 @@ from xhtml2pdf import pisa
 
 from django.core.exceptions import PermissionDenied
 
+#from .tasks import adiciona
+def teste(request):
+    x = 0
+    print("Foi!"+str(x)+":::")
+    return HttpResponse("Foi!"+str(x)+":::") 
+
+
 # def email(aluno, message):
 #     subject = 'PFE : '+aluno.user.username
 #     email_from = settings.EMAIL_HOST_USER

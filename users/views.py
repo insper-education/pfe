@@ -26,7 +26,7 @@ from django.template import RequestContext
 #from django.http import HttpResponse
 from .resources import AlunoResource
 
-
+@login_required
 def perfil(request):
     user = PFEUser.objects.get(pk=request.user.pk)
     if user.tipo_de_usuario == 1: #aluno
@@ -84,6 +84,8 @@ def areas_interesse(request):
 
 
 ### CODIGO NAO PRONTO ABAIXO ###
+@login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
 def simple_upload(request):
     if request.method == 'POST':
         aluno_resource = AlunoResource()

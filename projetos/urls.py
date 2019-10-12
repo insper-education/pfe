@@ -41,6 +41,7 @@ urlpatterns = [
     path('servico/', views.servico, name='servico'),
     path('submissao/', views.submissao, name='submissao'),
     path('tabela_documentos/', views.tabela_documentos, name='tabela_documentos'),
+    path('teste/', views.teste, name='teste'),
     path('todos/', views.todos, name='todos'),
     path('bancas/', views.bancas, name='bancas'),
 ]

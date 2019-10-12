@@ -8,3 +8,5 @@ pfe/settings.py
 .DS_Store
 arquivos/*
 *.code-workspace
+celerybeat-schedule
+dump.rdb
