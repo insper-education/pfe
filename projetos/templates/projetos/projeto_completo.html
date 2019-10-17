@@ -22,8 +22,8 @@
   <hr>
 
   <h3>Empresa: <a href="{% url 'organizacao' projeto.empresa.login %}">{{ projeto.empresa.nome_empresa }}</a></h3>
-  <strong>endereço:</strong> <a href="http://maps.google.com/maps?q={{organization.endereco}}">{{ projeto.empresa.endereco|linebreaks }}</a>
-  <strong>website:</strong> <a href="{{ projeto.empresa.website }}"> {{ projeto.empresa.website }} </a>
+  <p><strong>endereço:</strong> <a class="tabulado" href="http://maps.google.com/maps?q={{organization.endereco}}">{{ projeto.empresa.endereco|linebreaks }}</a></p>
+  <p><strong>website:</strong>  <a class="tabulado" href="{{ projeto.empresa.website }}"> {{ projeto.empresa.website }} </a></p>
 
   {% if projeto.orientador %}
   <hr>
@@ -38,14 +38,14 @@
   <hr>
   <h3>Alunos Alocados no Projeto</h3>
   {% for alocacao in projeto.alocacao_set.all %}
-    <a href="{% url 'aluno' alocacao.aluno.id %}">{{alocacao.aluno.user.first_name}} {{alocacao.aluno.user.last_name}} &lt;{{alocacao.aluno.user.email}}&gt; [{{ alocacao.aluno.get_curso_display }}]</p></a>
+    <a href="{% url 'aluno' alocacao.aluno.id %}"><p>{{alocacao.aluno.user.first_name}} {{alocacao.aluno.user.last_name}} &lt;{{alocacao.aluno.user.email}}&gt; [{{ alocacao.aluno.get_curso_display }}]</p></a>
   {% endfor %}
 
   <hr>
   <h3>Alunos Aplicando para o Projeto</h3>
   {% for opcao in projeto.opcao_set.all %}
     {% if configuracao.ano == opcao.aluno.anoPFE and configuracao.semestre == opcao.aluno.semestrePFE %}
-    <a href="{% url 'aluno' opcao.aluno.id %}"><p class="{% if opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}">{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}&nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} } </p></a>
+    <a href="{% url 'aluno' opcao.aluno.id %}"><p class="{% if opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}">{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}&nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} }</p></a>
     {% endif %}
   {% endfor %}
   {% for opcao in projeto.opcao_set.all %}

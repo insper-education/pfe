@@ -138,6 +138,10 @@ table, th, td {
   font-size: 16px;
 }
 
+.tabulado {
+  padding-left: 15px;
+}
+
 #canvas-holder {
   width:450px;
 }
