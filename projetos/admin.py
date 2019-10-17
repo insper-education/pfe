@@ -25,8 +25,8 @@ class ProjetoAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'empresa', 'ano', 'semestre')
     fieldsets = (
         (None, {
-            'fields': ('titulo', 'titulo_final', 'descricao', 'expectativas', 
-            'areas', 'recursos', 'imagem',
+            'fields': ('titulo', 'titulo_final', 'descricao', 'expectativas', 'areas', 'recursos', 
+            'anexo','imagem',
             'avancado', 'ano', 'semestre', 'disponivel', 
             'orientador',
             'perfil_aluno1_computacao', 'perfil_aluno1_mecanica', 'perfil_aluno1_mecatronica',

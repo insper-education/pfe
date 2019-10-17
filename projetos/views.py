@@ -124,8 +124,17 @@ def index(request):
     return render(request, 'index_aluno.html', context=context)
     
 
-class ProjetoDetailView(LoginRequiredMixin, generic.DetailView):
-    model = Projeto
+#class ProjetoDetailView(LoginRequiredMixin, generic.DetailView):
+#    model = Projeto
+@login_required
+def projeto(request, pk):
+    projeto = Projeto.objects.get(pk=pk)
+    context = {
+        'projeto': projeto,
+        'MEDIA_URL' : settings.MEDIA_URL,
+    }
+    return render(request, 'projetos/projeto_detail.html', context=context)
+
 
 @login_required
 def projetos(request):
@@ -379,6 +388,7 @@ def completo(request, pk):
         'projeto': projeto,
         'opcoes': opcoes,
         'configuracao': configuracao,
+        'MEDIA_URL' : settings.MEDIA_URL,
     }
     return render(request, 'projetos/projeto_completo.html', context=context)
 

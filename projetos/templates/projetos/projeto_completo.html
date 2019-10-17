@@ -19,6 +19,10 @@
   <strong>Expectativas de resultados/entregas :</strong> {{ projeto.expectativas|linebreaks }}
   <strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ projeto.areas|linebreaks }}
   <strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ projeto.recursos|linebreaks }}
+  {% if projeto.anexo %}
+    <strong>Anexo :</strong>
+    <a class="text-success" href="../..{{MEDIA_URL}}{{projeto.anexo}}">{{projeto.anexo}}</a>
+  {% endif %}
   <hr>
 
   <h3>Empresa: <a href="{% url 'organizacao' projeto.empresa.login %}">{{ projeto.empresa.nome_empresa }}</a></h3>

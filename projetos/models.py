@@ -15,7 +15,21 @@ from django.conf import settings
 
 import users.models
 
-
+# Caminhos para armazenar os arquivos
+def get_upload_path(instance, filename):
+    caminho = ""
+    if isinstance(instance, Documento):
+        if instance.organizacao:
+            caminho += instance.organizacao.sigla + "/"
+        if instance.usuario:
+            caminho += instance.usuario.username + "/"
+        if caminho == "":
+            caminho = "documentos/"
+    elif isinstance(instance, Projeto):
+        caminho += instance.empresa.sigla + "/"
+        caminho += "projeto" + str(instance.pk) + "/"
+    file_path = caminho
+    return "{0}/{1}".format(file_path, filename)
 
 # RENOMEAR PARA ORGANIZACAO
 class Empresa(models.Model):
@@ -41,6 +55,7 @@ class Projeto(models.Model):
     expectativas = models.TextField(max_length=2000, help_text='Expectativas em relação ao projeto')
     areas = models.TextField(max_length=1000, help_text='Áreas da engenharia envolvidas no projeto')
     recursos = models.TextField(max_length=1000, help_text='Recursos a serem disponibilizados aos Alunos')
+    anexo = models.FileField(upload_to=get_upload_path, null=True, blank=True, help_text='Documento PDF')
     imagem = models.ImageField(null=True, blank=True, help_text='Imagem que representa projeto (se houver)')
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, help_text='Organização parceira que propôs projeto')
     avancado = models.BooleanField(default=False, help_text='Se for um projeto de PFE Avançado')
@@ -95,7 +110,6 @@ class Disciplina(models.Model):
     nome = models.CharField(max_length=100, help_text='nome')
     def __str__(self):
         return self.nome
-
 
 class Cursada(models.Model):
     disciplina = models.ForeignKey(Disciplina, on_delete=models.CASCADE, help_text='disciplina cursada pelo aluno')
@@ -154,20 +168,6 @@ class Anotacao(models.Model):
     texto = models.TextField(max_length=2000, help_text='Anotação')
     def __str__(self):
         return str(self.data)
-
-# Anotacoes de comunicações com as organizações pareceiras
-
-def get_upload_path(instance, filename):
-    caminho = ""
-    if instance.organizacao:
-        caminho += instance.organizacao.sigla + "/"
-    if instance.usuario:
-        caminho += instance.usuario.username + "/"
-    if caminho == "":
-        caminho = "documentos/"
-    #file_path = os.path.abspath(os.path.join(settings.ARQUIVOS, caminho) )
-    file_path = caminho
-    return "{0}/{1}".format(file_path, filename)
 
 class Documento(models.Model):
     organizacao = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL, help_text='Empresa que propôs projeto') # Algumas empresas podem ter contrato e não ter projeto
