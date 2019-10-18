@@ -4,6 +4,7 @@ import django.contrib.admin.options as admin_opt
 from .models import Projeto, Empresa, Configuracao
 from .models import Disciplina, Cursada, Recomendada, Evento, Anotacao, Banca, Documento, Encontro, Banco, Reembolso
 
+# Função abaixo permite duplicar entradas no banco de dados
 def dup_event(modeladmin:admin_opt.ModelAdmin, request, queryset):
     for object in queryset:
         from_id = object.id
@@ -17,7 +18,6 @@ def dup_event(modeladmin:admin_opt.ModelAdmin, request, queryset):
         object.save()
         message="duplicando de {} para {}".format(from_id, object.id)
         modeladmin.log_addition(request=request,object=object,message=message)
-
 dup_event.short_description = "Duplicar Projeto(s)"
 
 @admin.register(Projeto)
@@ -64,17 +64,28 @@ class DocumentoAdmin(admin.ModelAdmin):
 
 # Lista de Bancos Brasileiros
 @admin.register(Banco)
-class DocumentoAdmin(admin.ModelAdmin):
+class BancoAdmin(admin.ModelAdmin):
     list_display = ('nome', 'codigo')
 
 # Pedidos de reembolso
 @admin.register(Reembolso)
-class DocumentoAdmin(admin.ModelAdmin):
+class ReembolsoAdmin(admin.ModelAdmin):
     list_display = ('usuario', 'data', 'valor')
 
+# Informações das Bancas, como datas e membros
+@admin.register(Banca)
+class BancaAdmin(admin.ModelAdmin):
+    list_display = ('projeto', 'get_orientador', 'get_organizacao', 'startDate')
+    def get_orientador(self, obj):
+        return obj.projeto.orientador
+    get_orientador.short_description = 'Orientador'
+    get_orientador.admin_order_field = 'projeto__orientador'
+    def get_organizacao(self, obj):
+        return obj.projeto.empresa
+    get_organizacao.short_description = 'Organização'
+    get_organizacao.admin_order_field = 'projeto__empresa'
 
 admin.site.register(Cursada)
 admin.site.register(Recomendada) 
 admin.site.register(Evento) # Todos os eventos do PFE com suas datas
-admin.site.register(Banca) # Informações das Bancas, como datas e membros
 admin.site.register(Encontro) # Informações das Encontros (com os facilitadores)
