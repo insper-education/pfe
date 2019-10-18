@@ -30,10 +30,10 @@
       {% for projeto in projetos %} 
       <tr class="item">
         {% if projeto.alocacao_set.all.count > 0  %}
-          <td class="text-success">
+          <td class="text-success"  style="text-align:center">
             <script>fechados += 1</script>
         {% else %}
-          <td class="text-danger">
+          <td class="text-danger"  style="text-align:center">
         {% endif %}
           &#x2B24;
         </td>
