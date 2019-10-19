@@ -3,6 +3,7 @@
 # Data: 26 de Maio de 2019
 
 import os
+from celery.schedules import crontab   
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -141,5 +142,18 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True
         },
+    },
+}
+
+MEDIA_URL = '/<local_dos_arquivos>/'
+MEDIA_ROOT = os.path.join(BASE_DIR, '<local_dos_arquivos>')
+
+# CELERY
+# CELERY_TIMEZONE = 'America/Sao_Paulo'
+CELERY_BROKER_URL = 'amqp://<colocarusuario>:<colocarsenha>@localhost//'
+CELERY_BEAT_SCHEDULE = {
+ 'send-email-daily': {
+       'task': 'envia_aviso',
+       'schedule': crontab(hour=6),
     },
 }

@@ -26,7 +26,7 @@
         </tr>
   
       {% for a in avisos %} 
-        <tr>
+        <tr class="{% if a.delta < dias_passados %}text-success{% else %}text-info{% endif %}" >
           <td>
             {{a.delta}}
           </td>

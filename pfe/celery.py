@@ -18,14 +18,14 @@ app = Celery('pfe')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
 # Load task modules from all registered Django app configs.
-app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
+app.autodiscover_tasks()
 
-@app.task(bind=True)
-def debug_task(self):
-    print('Request: {0!r}'.format(self.request))
+#@app.task(bind=True)
+#def debug_task(self):
+#    print('Request: {0!r}'.format(self.request))
 
-@app.on_after_configure.connect
-def setup_periodic_tasks(sender, **kwargs):
+#@app.on_after_configure.connect
+#def setup_periodic_tasks(sender, **kwargs):
     # Calls test('hello') every 10 seconds.
     #sender.add_periodic_task(10.0, test.s('hello'), name='add every 10')
 
@@ -38,11 +38,18 @@ def setup_periodic_tasks(sender, **kwargs):
     #     test.s('Happy Mondays!'),
     # )
 
-    sender.add_periodic_task( 
-        crontab(hour=1, minute=0),
-        test.s('0Happy Mondays!'),
-    )
+    #sender.add_periodic_task( 
+    #    crontab(hour=1, minute=0),
+    #    envia_aviso.s('Aviso'),
+    #)
 
-@app.task
-def test(arg):
-    print(arg)
+#@app.task
+#def envia_aviso(arg1):
+#    delta=(datetime.date.today() - configuracao.t0).days
+#    avisos = Aviso.objects.filter(delta=delta)
+#    for a in avisos:
+#        print(a.titulo)
+
+# @app.task
+# def test(arg):
+#    print(arg)
