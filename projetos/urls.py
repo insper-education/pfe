@@ -10,6 +10,7 @@ urlpatterns = [
     path('', views.index, name='index'), #pagina inicial
     path('administracao/', views.administracao, name='administracao'),
     path('areas/', views.areas, name='areas'),
+    path('avisos/', views.avisos, name='avisos'),
     path('backup/<str:formato>', views.backup, name='backup'),
     path('calendario/', views.calendario, name='calendario'),
     path('carrega/<str:dado>', views.carrega, name='carrega'),

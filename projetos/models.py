@@ -97,6 +97,8 @@ class Configuracao(models.Model):
     semestre = models.PositiveIntegerField(validators=[MinValueValidator(1),MaxValueValidator(2)], help_text='Semestre que o projeto comeca')
     manutencao = models.BooleanField(default=False, help_text='Mostra mensagem de site em manutencao na entrada')
     prazo = models.DateTimeField(default=datetime.datetime.now, blank=True, help_text='Prazo para os alunos se inscreverem nos projetos')
+    t0 = models.DateField(default=datetime.date.today, blank=True, help_text='Inicio do Semestre Letivo')
+
 
 class ConfiguracaoAdmin(admin.ModelAdmin):
   def has_add_permission(self, request):
@@ -227,3 +229,11 @@ class Reembolso(models.Model):
 
     def __str__(self):
         return str(str(self.usuario)+str(self.data))
+
+# Avisos para a Coordenação do PFE
+class Aviso(models.Model):
+    titulo = models.CharField(max_length=120, null=True, blank=True, help_text='Título do Aviso')
+    delta = models.SmallIntegerField(default=0, help_text='dias passados do início do semestre')
+    #mensagem = models.TextField(max_length=2000, help_text='Anotação')
+    def __str__(self):
+        return str(self.titulo)

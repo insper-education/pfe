@@ -20,7 +20,7 @@ from django.shortcuts import redirect
 from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
 
-from .models import Projeto, Empresa, Configuracao, Disciplina, Evento, Banca, Documento, Encontro, Banco, Reembolso
+from .models import Projeto, Empresa, Configuracao, Disciplina, Evento, Banca, Documento, Encontro, Banco, Reembolso, Aviso
 from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao
 
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource, AlunosResource, ProfessoresResource, ConfiguracaoResource, DisciplinasResource
@@ -1142,3 +1142,15 @@ def reembolso(request):
             'configuracao' : configuracao,
         }
         return render(request, 'projetos/reembolso.html', context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def avisos(request):
+    configuracao = Configuracao.objects.all().first()
+    avisos = Aviso.objects.all()
+
+    context= {
+        'avisos': avisos,
+        'configuracao' : configuracao,
+    }
+    return render(request, 'projetos/avisos.html', context)

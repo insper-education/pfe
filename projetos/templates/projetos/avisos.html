@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 18 de Outubro de 2019
+{% endcomment %}
+
+{% block head %}
+  {% load date_extras %}
+{% endblock %}
+
+{% block content %}
+  <h3>Avisos</h3><br>
+  {% if avisos %}
+    <table>
+        <tr>
+          <th>
+            Dias
+          </th>
+          <th>
+            Data
+          </th>
+          <th>
+            Título
+          </th>
+        </tr>
+  
+      {% for a in avisos %} 
+        <tr>
+          <td>
+            {{a.delta}}
+          </td>
+          <td>
+            {{ configuracao.t0|plus_days:a.delta  }}
+          </td>
+          <td>
+            {{a.titulo}}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+    <p>&nbsp;</p>
+  {% else %}
+    <p>Não existem avisos.</p>
+  {% endif %}
+  <p>&nbsp;</p>
+
+{% endblock %}

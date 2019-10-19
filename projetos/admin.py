@@ -1,8 +1,14 @@
 from django.contrib import admin
 import django.contrib.admin.options as admin_opt
 
-from .models import Projeto, Empresa, Configuracao
-from .models import Disciplina, Cursada, Recomendada, Evento, Anotacao, Banca, Documento, Encontro, Banco, Reembolso
+# Dos projetos
+from .models import Projeto, Empresa, Banca, Disciplina, Cursada, Recomendada
+
+# Das dinâmicas
+from .models import Encontro, Evento
+
+# Da coordenação
+from .models import Configuracao, Aviso, Documento, Anotacao, Reembolso, Banco
 
 # Função abaixo permite duplicar entradas no banco de dados
 def dup_event(modeladmin:admin_opt.ModelAdmin, request, queryset):
@@ -84,6 +90,11 @@ class BancaAdmin(admin.ModelAdmin):
         return obj.projeto.empresa
     get_organizacao.short_description = 'Organização'
     get_organizacao.admin_order_field = 'projeto__empresa'
+
+# Avisos para a coordenação do PFE
+@admin.register(Aviso)
+class AvisoAdmin(admin.ModelAdmin):
+    list_display = ('titulo', 'delta',)
 
 admin.site.register(Cursada)
 admin.site.register(Recomendada) 
