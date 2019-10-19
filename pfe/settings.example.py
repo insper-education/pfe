@@ -154,6 +154,6 @@ CELERY_BROKER_URL = 'amqp://<colocarusuario>:<colocarsenha>@localhost//'
 CELERY_BEAT_SCHEDULE = {
  'send-email-daily': {
        'task': 'envia_aviso',
-       'schedule': crontab(hour=6),
+       'schedule': crontab(hour=6,minute=0),
     },
 }
