@@ -2,49 +2,38 @@
 # Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 # Data: 15 de Maio de 2019
 
-from django.utils import timezone
+import os
+import datetime
+import re #regular expression (para o import)
+import tablib
+import csv
 
-from django.http import Http404, HttpResponseRedirect, HttpResponse
-from django.shortcuts import render, get_object_or_404
-from django.template import loader
-from django.urls import reverse, reverse_lazy
-from django.views import generic
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from tablib import Dataset, Databook
+from import_export import resources
+from io import BytesIO # Para gerar o PDF
+from xhtml2pdf import pisa # Para gerar o PDF
+
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.db import transaction
-
-from django.shortcuts import redirect
-
+from django.core.exceptions import PermissionDenied
+from django.core.files.storage import FileSystemStorage
 from django.core.mail import send_mail, EmailMessage
-from django.conf import settings
+from django.db import transaction
+from django.http import Http404, HttpResponseRedirect, HttpResponse
+from django.shortcuts import render, get_object_or_404, redirect
+from django.template import loader
+from django.template.loader import get_template
+from django.urls import reverse, reverse_lazy
+from django.utils import timezone
+from django.views import generic
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from .models import Projeto, Empresa, Configuracao, Disciplina, Evento, Banca, Documento, Encontro, Banco, Reembolso, Aviso
 from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao
-
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource, AlunosResource, ProfessoresResource, ConfiguracaoResource, DisciplinasResource
-
-import re #regular expression (para o import)
-from tablib import Dataset, Databook
-import os
-import tablib
-import csv
-import datetime
-
-
-from import_export import resources
-
-
-# Para gerar o PDF
-from io import BytesIO
-from django.http import HttpResponse
-from django.template.loader import get_template
-from xhtml2pdf import pisa
-
-from django.core.exceptions import PermissionDenied
-
-import email
+from .messages import email, create_message
 
 @login_required
 def index(request):
@@ -64,10 +53,8 @@ def index(request):
         'configuracao': configuracao,
     }
     return render(request, 'index_aluno.html', context=context)
-    
 
-#class ProjetoDetailView(LoginRequiredMixin, generic.DetailView):
-#    model = Projeto
+# Exibe um projeto com seus detalhes
 @login_required
 def projeto(request, pk):
     projeto = Projeto.objects.get(pk=pk)
@@ -77,7 +64,7 @@ def projeto(request, pk):
     }
     return render(request, 'projetos/projeto_detail.html', context=context)
 
-
+# Exibe todos os projetos
 @login_required
 def projetos(request):
     warnings=""
@@ -131,7 +118,7 @@ def projetos(request):
         }
         return render(request, 'projetos/projetos.html', context)
 
-# 
+# Exibe um histograma com a procura dos projetos pelos alunos
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def histograma(request):
@@ -337,7 +324,6 @@ def completo(request, pk):
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def areas(request):
-
     inovacao_social = Aluno.objects.filter(inovacao_social=True).count()
     ciencia_dos_dados = Aluno.objects.filter(ciencia_dos_dados=True).count()
     modelagem_3D = Aluno.objects.filter(modelagem_3D=True).count()
@@ -385,6 +371,7 @@ def areas(request):
     }
     return render(request, 'projetos/areas.html', context)
 
+# Exibe todas as organizações que já submeteram projetos
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def organizacoes(request):
@@ -494,6 +481,7 @@ def backup(request, formato):
     response['Content-Disposition'] = 'attachment; filename="backup.'+formato+'"'
     return response
 
+####  NO FUTURO COLOCAR EM MESSAGES.PY  #####
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def email_backup(request):
@@ -631,7 +619,7 @@ def fechados(request):
     }
     return render(request, 'projetos/fechados.html', context)
 
-
+# Exibe tabela com todos os documentos armazenados
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def tabela_documentos(request):
@@ -745,43 +733,6 @@ def todos(request):
     return render(request, 'projetos/todos.html', context)
 
 
-# https://simpleisbetterthancomplex.com/packages/2016/08/11/django-import-export.html
-@login_required
-@permission_required('users.altera_professor', login_url='/projetos/')
-def carrega(request, dado):
-    if request.method == 'POST':
-        
-        dataset = tablib.Dataset()
-
-        if dado=="disciplinas":
-            resource = DisciplinasResource()
-        if dado=="alunos":
-            resource = AlunosResource()
-        else:
-            raise Http404
-
-        new_data = request.FILES['arquivo'].readlines()
-        entradas = ""
-        for i in new_data:
-            string = i.decode("utf-8")
-            entradas += re.sub('[^A-Za-z0-9À-ÿ, \r\n@._]+','', string) # Limpa caracteres especiais
-
-        imported_data = dataset.load(entradas,format='csv')
-        dataset.insert_col(0, col=lambda row: None, header="id")
-
-        result = resource.import_data(dataset, dry_run=True, raise_errors=True)
-
-        if not result.has_errors():
-            resource.import_data(dataset, dry_run=False)  # Actually import now
-            string_html = "Importado: <br>"
-            for row_values in dataset:
-                string_html += str(row_values) + "<br>"
-            return HttpResponse(string_html)
-        else:
-            return HttpResponse("Erro ao carregar arquivo."+str(result))
-
-    return render(request, 'projetos/import.html')
-
 @login_required
 def calendario(request):
     eventos = Evento.objects.exclude(name="Aula PFE").exclude(name="Laboratório")
@@ -818,6 +769,54 @@ def documentos(request):
         'manual_relatorio': manual_relatorio,
     }
     return render(request, 'index_documentos.html', context)
+
+
+####### PARTE DE I/O  #########
+
+# Faz o upload de arquivos
+def simple_upload(myfile,path="",prefix=""):
+        fs = FileSystemStorage()
+        filename = fs.save(path+prefix+myfile.name, myfile)
+        uploaded_file_url = fs.url(filename)
+        return uploaded_file_url
+
+# https://simpleisbetterthancomplex.com/packages/2016/08/11/django-import-export.html
+# Faz o upload de arquivos CSV para o servidor
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def carrega(request, dado):
+    if request.method == 'POST':
+        
+        dataset = tablib.Dataset()
+
+        if dado=="disciplinas":
+            resource = DisciplinasResource()
+        if dado=="alunos":
+            resource = AlunosResource()
+        else:
+            raise Http404
+
+        new_data = request.FILES['arquivo'].readlines()
+        entradas = ""
+        for i in new_data:
+            string = i.decode("utf-8")
+            entradas += re.sub('[^A-Za-z0-9À-ÿ, \r\n@._]+','', string) # Limpa caracteres especiais
+
+        imported_data = dataset.load(entradas,format='csv')
+        dataset.insert_col(0, col=lambda row: None, header="id")
+
+        result = resource.import_data(dataset, dry_run=True, raise_errors=True)
+
+        if not result.has_errors():
+            resource.import_data(dataset, dry_run=False)  # Actually import now
+            string_html = "Importado: <br>"
+            for row_values in dataset:
+                string_html += str(row_values) + "<br>"
+            return HttpResponse(string_html)
+        else:
+            return HttpResponse("Erro ao carregar arquivo."+str(result))
+
+    return render(request, 'projetos/import.html')
 
 @login_required
 def download(request, path):
@@ -856,6 +855,11 @@ def arquivos2(request, organizacao, usuario, path):
             response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
             return response
     raise Http404
+
+
+####### FIM DA PARTE DE I/O  #########
+
+
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
@@ -1028,20 +1032,33 @@ def message_reembolso(usuario, projeto, reembolso):
         message += '&nbsp;&nbsp;Por favor, encaminhem o pedido de reembolso de: '+usuario.first_name+" "+usuario.last_name+" ("+usuario.username+')<br>\n'
         cpf = str(usuario.cpf)
         message += '&nbsp;&nbsp;CPF: '+cpf[:3]+'.'+cpf[3:6]+'.'+cpf[6:9]+'-'+cpf[9:11]+'<br>\n'
+        if usuario.aluno.curso == "C":
+            curso = "Computação"
+        elif usuario.aluno.curso == "M":
+            curso = "Mecânica"
+        else:
+            curso = "Mecatrônica"
+        message += '&nbsp;&nbsp;Curso: '+curso+'<br>\n'
         if projeto:
-            message += '&nbsp;&nbsp;Participante do projeto:'+projeto.titulo+'<br>\n'
+            message += '<br>\n'
+            message += '&nbsp;&nbsp;Participante do projeto: '+projeto.titulo+'<br>\n'
         message += '<br>\n'
         message += '&nbsp;&nbsp;Descrição: '+reembolso.descricao+'<br>\n'
         message += '<br>\n'
-        message += '&nbsp;&nbsp;Banco: '+reembolso.banco.nome+' ('+str(reembolso.banco.codigo)+')'+'<br>\n'
-        message += '&nbsp;&nbsp;Conta: '+reembolso.conta+'<br>\n'
-        message += '&nbsp;&nbsp;Agência: '+reembolso.agencia+'<br>\n'
+        message += '&nbsp;&nbsp;Banco: '   + reembolso.banco.nome+' ('+str(reembolso.banco.codigo)+')'+'<br>\n'
+        message += '&nbsp;&nbsp;Conta: '   + reembolso.conta+'<br>\n'
+        message += '&nbsp;&nbsp;Agência: ' + reembolso.agencia+'<br>\n'
         message += '<br>\n'
-        message += '&nbsp;&nbsp;Valor: '+reembolso.valor+'<br>\n'
+        message += '&nbsp;&nbsp;Valor do reembolso: ' + reembolso.valor+'<br>\n'
         message += '<br>\n'
+        message += '<br>\n'
+        message += '&nbsp;&nbsp;Para isso use o Centro de Custo: 200048 - PROJETO FINAL DE ENGENHARIA<br>\n'
+        message += '&nbsp;&nbsp;Com a conta contábil: 400339 - INSUMOS PARA EQUIPAMENTOS DOS LABORATÓRIOS<br>\n'
         message += '<br>\n'+("&nbsp;"*12)+"atenciosamente, coordenação do PFE"
         message += '&nbsp;<br>\n'
         message += '&nbsp;<br>\n'
+        message += '&nbsp;&nbsp;&nbsp;Obs: O aluno deverá entregar todos as notas fiscais originais, ou senão imprimir, diretamente no departamento de carreiras, sem isso o processo não deverá avançar.<br>\n'
+
         return message
 
 @login_required
@@ -1058,7 +1075,6 @@ def reembolso(request):
         reembolso = Reembolso.create(usuario)
         reembolso.descricao = request.POST['descricao']
 
-        print("CPF = "+request.POST['cpf'])
         usuario.cpf = int(''.join(i for i in request.POST['cpf'] if i.isdigit()))
         usuario.save()
 
@@ -1066,11 +1082,21 @@ def reembolso(request):
         reembolso.agencia = request.POST['agencia']
         reembolso.banco = Banco.objects.get(codigo=request.POST['banco'])
         reembolso.valor = request.POST['valor']
+
+        reembolso.save() # Preciso salvar para pegar o PK
+        nota_fiscal = simple_upload(request.FILES['arquivo'],path="reembolsos/",prefix=str(reembolso.pk)+"_")
+        reembolso.nota = nota_fiscal[len(settings.MEDIA_URL):]
+
         reembolso.save()
         
         subject = 'Reembolso PFE : '+usuario.username
-        #recipient_list = ['pfeinsper@gmail.com',usuario.email,]
-        recipient_list = ['pfeinsper@gmail.com','lpsoares@insper.edu.br',]
+        recipient_list = configuracao.recipient_reembolso.split(";")
+        recipient_list.append('pfeinsper@gmail.com') #sempre mandar para a conta do gmail
+        recipient_list.append(usuario.email) #mandar para o usuário que pediu o reembolso
+        if projeto:
+            if projeto.orientador:
+                recipient_list.append(projeto.orientador.user.email) #mandar para o orientador se houver
+        print(recipient_list)
         message = message_reembolso(usuario, projeto, reembolso)
         x = email(subject,recipient_list,message)
         if(x!=1): message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"

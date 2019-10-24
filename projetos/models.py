@@ -29,6 +29,7 @@ def get_upload_path(instance, filename):
         caminho += instance.empresa.sigla + "/"
         caminho += "projeto" + str(instance.pk) + "/"
     file_path = caminho
+    # ISSO DO FILE_PATH NAO FAZ SENTIDO, REMOVER
     return "{0}/{1}".format(file_path, filename)
 
 # RENOMEAR PARA ORGANIZACAO
@@ -98,7 +99,7 @@ class Configuracao(models.Model):
     manutencao = models.BooleanField(default=False, help_text='Mostra mensagem de site em manutencao na entrada')
     prazo = models.DateTimeField(default=datetime.datetime.now, blank=True, help_text='Prazo para os alunos se inscreverem nos projetos')
     t0 = models.DateField(default=datetime.date.today, blank=True, help_text='Inicio do Semestre Letivo')
-
+    recipient_reembolso = models.CharField(max_length=127, blank=True, help_text='Separar lista por ponto e virgula')
 
 class ConfiguracaoAdmin(admin.ModelAdmin):
   def has_add_permission(self, request):
@@ -221,7 +222,8 @@ class Reembolso(models.Model):
     descricao = models.TextField(max_length=2000, help_text='desrição do pedido de reembolso')
     valor = models.DecimalField(max_digits=5, decimal_places=2, help_text='valor a ser reembolsado')
     data = models.DateTimeField(default=datetime.datetime.now, help_text='data e hora da criação do pedido de reembolso')
-    
+    nota = models.FileField(upload_to=get_upload_path, null=True, blank=True, help_text='Nota(s) Fiscal(is)')
+
     @classmethod
     def create(cls, usuario):
         reembolso = cls(usuario=usuario)

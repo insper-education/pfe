@@ -82,24 +82,6 @@ def areas_interesse(request):
     else:
         return render(request, 'users/areas_interesse.html',)
 
-
-### CODIGO NAO PRONTO ABAIXO ###
-@login_required
-@permission_required("users.altera_professor", login_url='/projetos/')
-def simple_upload(request):
-    if request.method == 'POST':
-        aluno_resource = AlunoResource()
-        dataset = Dataset()
-        new_alunos = request.FILES['myfile']
-
-        imported_data = dataset.load(new_alunos.read())
-        result = aluno_resource.import_data(dataset, dry_run=True)  # Test the data import
-
-        if not result.has_errors():
-            aluno_resource.import_data(dataset, dry_run=False)  # Actually import now
-
-    return render(request, 'users/import.html')
-
 class SignUp(generic.CreateView):
     form_class = PFEUserCreationForm
     success_url = reverse_lazy('login')

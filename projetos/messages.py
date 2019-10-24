@@ -12,7 +12,6 @@ def email(subject, recipient_list, message):
     #recipient_list = ['pfeinsper@gmail.com',aluno.user.email,]
     return send_mail( subject, message, email_from, recipient_list, html_message=message, fail_silently=True, )
 
-
 def create_message(aluno):
         message = '<br>\n'
         message += '&nbsp;&nbsp;Caro aluno: <b>'+aluno.user.first_name+" "+aluno.user.last_name+" ("+aluno.user.username+')</b>\n\n'

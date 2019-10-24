@@ -21,7 +21,7 @@ function mascara(i){
 {% endblock %}
 
 {% block content %}
-<form method="post" id="reembolsoform">
+<form method="post" id="reembolsoform" enctype="multipart/form-data">
     {% csrf_token %}
 
     <h3>Formulário de Reembolso</h3>
@@ -55,13 +55,16 @@ function mascara(i){
     Conta   
     <input name="conta" type="text" id="conta" size="10" required/>  
     <br>
+    <br>
 
+    Arquivo com cópias das notas fiscais<br>
+    <input type="file" name="arquivo" required>
+
+    <br>
     <br>
     Valor
     <input type="number" min="0.01" step="0.01" max="1500" name="valor" id="valor" placeholder="0,00" required/>
 
-    <!-- Permitir fazer o Upload do Cupom -->
-    <!-- Centro de Custo (PFE) -->
     <br><br>
     <button type="submit">Enviar</button>
 
