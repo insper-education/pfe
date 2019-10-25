@@ -1096,7 +1096,6 @@ def reembolso(request):
         if projeto:
             if projeto.orientador:
                 recipient_list.append(projeto.orientador.user.email) #mandar para o orientador se houver
-        print(recipient_list)
         message = message_reembolso(usuario, projeto, reembolso)
         x = email(subject,recipient_list,message)
         if(x!=1): message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
