@@ -8,7 +8,12 @@
 {% block content %}
   {% load static %}
   <h3>Empresa: {{ organization.nome_empresa }}</h3>
-  <strong>website:</strong> <a href="{{ organization.website }}"> {{ organization.website }} </a><br>
+  {% if organization.website %}
+    <strong>website:</strong> <a href="{{ organization.website }}"> {{ organization.website }} </a><br>  
+  {% endif %}  
+  {% if organization.informacoes %}
+    <strong>Informações sobre a empresa :</strong> {{ organization.informacoes|linebreaks }}
+  {% endif %}
   <br><strong>contato(s):</strong><br>
   {% for parceiro in organization.parceiro_set.all %}
       <li>

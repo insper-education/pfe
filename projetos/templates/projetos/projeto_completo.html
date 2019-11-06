@@ -16,9 +16,15 @@
     <h3>Título: {{projeto.titulo}}</h3>
   {% endif %}
   <strong>Descrição:</strong> {{ projeto.descricao|linebreaks }}
-  <strong>Expectativas de resultados/entregas :</strong> {{ projeto.expectativas|linebreaks }}
-  <strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ projeto.areas|linebreaks }}
-  <strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ projeto.recursos|linebreaks }}
+  {% if projeto.expectativas %}
+    <strong>Expectativas de resultados/entregas :</strong> {{ projeto.expectativas|linebreaks }}
+  {% endif %}  
+  {% if projeto.areas %}
+    <strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ projeto.areas|linebreaks }}
+  {% endif %}
+  {% if projeto.recursos %}
+    <strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ projeto.recursos|linebreaks }}
+  {% endif %}
   {% if projeto.anexo %}
     <strong>Anexo :</strong>
     <a class="text-success" href="../..{{MEDIA_URL}}{{projeto.anexo}}">{{projeto.anexo}}</a>
@@ -27,7 +33,15 @@
 
   <h3>Empresa: <a href="{% url 'organizacao' projeto.empresa.login %}">{{ projeto.empresa.nome_empresa }}</a></h3>
   <p><strong>endereço:</strong> <a class="tabulado" href="http://maps.google.com/maps?q={{projeto.empresa.endereco}}">{{ projeto.empresa.endereco|linebreaks }}</a></p>
-  <p><strong>website:</strong>  <a class="tabulado" href="{{ projeto.empresa.website }}"> {{ projeto.empresa.website }} </a></p>
+  {% if projeto.empresa.website %}
+    <p><strong>website:</strong>  <a class="tabulado" href="{{ projeto.empresa.website }}"> {{ projeto.empresa.website }} </a></p>
+  {% endif %}  
+  {% if projeto.empresa.informacoes %}
+    <strong>Informações sobre a empresa :</strong> {{ projeto.empresa.informacoes|linebreaks }}
+  {% endif %}
+  {% if projeto.departamento %}
+    <strong>Informações sobre o departamento na empresa :</strong> {{ projeto.departamento|linebreaks }}
+  {% endif %}
 
   {% if projeto.orientador %}
   <hr>
