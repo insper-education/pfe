@@ -40,6 +40,7 @@ class Empresa(models.Model):
     sigla = models.CharField(max_length=20)
     endereco = models.TextField(max_length=200, help_text='Endereço da Empresa')
     website = models.URLField(max_length=250, null=True, blank=True)
+    informacoes = models.TextField(max_length=1000, null=True, blank=True, help_text='Informações sobre a empresa')
 
     class Meta:
         ordering = ['sigla']
@@ -59,6 +60,7 @@ class Projeto(models.Model):
     anexo = models.FileField(upload_to=get_upload_path, null=True, blank=True, help_text='Documento PDF')
     imagem = models.ImageField(null=True, blank=True, help_text='Imagem que representa projeto (se houver)')
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, help_text='Organização parceira que propôs projeto')
+    departamento = models.TextField(max_length=1000, null=True, blank=True, help_text='Descrição do departamento que propôs o projeto')
     avancado = models.BooleanField(default=False, help_text='Se for um projeto de PFE Avançado')
     ano = models.PositiveIntegerField(validators=[MinValueValidator(2018),MaxValueValidator(3018)], help_text='Ano que o projeto comeca')
     semestre = models.PositiveIntegerField(validators=[MinValueValidator(1),MaxValueValidator(2)], help_text='Semestre que o projeto comeca')

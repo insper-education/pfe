@@ -32,6 +32,7 @@ class ProjetoAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': ('titulo', 'titulo_final', 'descricao', 'expectativas', 'areas', 'recursos', 
+            'departamento',
             'anexo','imagem',
             'avancado', 'ano', 'semestre', 'disponivel', 
             'orientador',
