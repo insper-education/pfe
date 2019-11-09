@@ -93,12 +93,38 @@ class Usuario(generic.DetailView):
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def alunos(request):
-    configuracao = Configuracao.objects.all().first
+    configuracao = Configuracao.objects.all().first()
     alunos_list = Aluno.objects.filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0]) # Conta soh alunos
     num_alunos = alunos_list.count()
     num_alunos_comp = alunos_list.filter(curso__exact='C').count() # Conta alunos computacao
     num_alunos_mxt = alunos_list.filter(curso__exact='X').count() # Conta alunos mecatrônica
     num_alunos_mec = alunos_list.filter(curso__exact='M').count() # Conta alunos mecânica
+
+    tabela_alunos = {}
+    ano = 2018
+    semestre = 2
+    while True:
+        #print(str(ano)+" "+str(semestre))
+        alunos_semestre = alunos_list.filter(anoPFE=ano).filter(semestrePFE=semestre)
+        if ano not in tabela_alunos:
+            tabela_alunos[ano] = {}
+        if semestre not in tabela_alunos[ano]:
+            tabela_alunos[ano][semestre] = {}
+        tabela_alunos[ano][semestre]["computação"] = alunos_semestre.filter(curso__exact='C').count()
+        tabela_alunos[ano][semestre]["mecânica"] = alunos_semestre.filter(curso__exact='M').count()
+        tabela_alunos[ano][semestre]["mecatrônica"] = alunos_semestre.filter(curso__exact='X').count()
+        tabela_alunos[ano][semestre]["total"] = alunos_semestre.count()
+        
+        if ((ano == configuracao.ano) and (semestre == configuracao.semestre)):
+            break
+
+        if semestre == 1:
+            semestre = 2
+        else:
+            ano += 1
+            semestre = 1
+        
+
     context = {
         'alunos_list' : alunos_list,
         'num_alunos': num_alunos,
@@ -106,6 +132,7 @@ def alunos(request):
         'num_alunos_mxt': num_alunos_mxt,
         'num_alunos_mec': num_alunos_mec,
         'configuracao': configuracao,
+        'tabela_alunos': tabela_alunos,
     }
     return render(request, 'users/alunos.html', context=context)
 

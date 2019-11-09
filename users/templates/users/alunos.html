@@ -110,5 +110,31 @@
         };
       
       </script>
-
+  
+  <br>
+  <br>
+  Total de alunos por semestre:
+  <table id="AlunosTable">
+    <tr>
+        <th class="text-center">Ano</th>
+        <th class="text-center">Semestre</th>
+        <th class="text-center">Computação</th>
+        <th class="text-center">Mecânica</th>
+        <th class="text-center">Mecatrônica</th>
+        <th class="text-center">TOTAL</th>
+    </tr>
+    {% for ano,tabela_ano in tabela_alunos.items %}
+      {% for semestre,tabela_semetre in tabela_ano.items %}
+        <tr>
+            <td class="text-center"> {{ano}} </td>
+            <td class="text-center"> {{semestre}} </td>
+            <td class="text-center"> {{tabela_semetre.computação}} </td>
+            <td class="text-center"> {{tabela_semetre.mecânica}} </td>
+            <td class="text-center"> {{tabela_semetre.mecatrônica}} </td>
+            <td class="text-center"><b> {{tabela_semetre.total}} </b></td>
+        </tr>
+      {% endfor %}
+    {% endfor %}
+  </table>
+  <br>
 {% endblock %}
