@@ -10,6 +10,53 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 from projetos.models import Projeto, Empresa
 
+####   PARA PORTAR AS AREAS DE INTERESSE DE ALUNOS PARA CÁ, E USAR NO PROEJETO  #####
+#areas de interesse
+class Areas(models.Model):
+    inovacao_social = models.BooleanField(default=False)
+    ciencia_dos_dados = models.BooleanField(default=False)
+    modelagem_3D = models.BooleanField(default=False)
+    manufatura = models.BooleanField(default=False)
+    resistencia_dos_materiais = models.BooleanField(default=False)
+    modelagem_de_sistemas = models.BooleanField(default=False)
+    controle_e_automacao = models.BooleanField(default=False)
+    termodinamica = models.BooleanField(default=False)
+    fluidodinamica = models.BooleanField(default=False)
+    eletronica_digital = models.BooleanField(default=False)
+    programacao = models.BooleanField(default=False)
+    inteligencia_artificial = models.BooleanField(default=False)
+    banco_de_dados = models.BooleanField(default=False)
+    computacao_em_nuvem = models.BooleanField(default=False)
+    visao_computacional = models.BooleanField(default=False)
+    computacao_de_alto_desempenho = models.BooleanField(default=False)
+    robotica = models.BooleanField(default=False)
+    realidade_virtual_aumentada = models.BooleanField(default=False)
+    protocolos_de_comunicacao = models.BooleanField(default=False)
+    eficiencia_energetica = models.BooleanField(default=False)
+    administracao_economia_financas = models.BooleanField(default=False)
+
+    def __str__(self):
+        return   ("V" if self.inovacao_social else "F") + " "\
+               + ("V" if self.ciencia_dos_dados else "F") + " "\
+               + ("V" if self.modelagem_3D else "F") + " "\
+               + ("V" if self.manufatura else "F") + " "\
+               + ("V" if self.resistencia_dos_materiais else "F") + " "\
+               + ("V" if self.modelagem_de_sistemas else "F") + " "\
+               + ("V" if self.controle_e_automacao else "F") + " "\
+               + ("V" if self.termodinamica else "F") + " "\
+               + ("V" if self.fluidodinamica else "F") + " "\
+               + ("V" if self.eletronica_digital else "F") + " "\
+               + ("V" if self.programacao else "F") + " "\
+               + ("V" if self.inteligencia_artificial else "F") + " "\
+               + ("V" if self.computacao_em_nuvem else "F") + " "\
+               + ("V" if self.visao_computacional else "F") + " "\
+               + ("V" if self.computacao_de_alto_desempenho else "F") + " "\
+               + ("V" if self.robotica else "F") + " "\
+               + ("V" if self.realidade_virtual_aumentada else "F") + " "\
+               + ("V" if self.protocolos_de_comunicacao else "F") + " "\
+               + ("V" if self.eficiencia_energetica else "F") + " "\
+               + ("V" if self.administracao_economia_financas else "F")
+
 class PFEUser(AbstractUser):
     # Atualizar para AbstractBaseUser que permite colocar mais caracteres nos campos
     #username
@@ -85,34 +132,16 @@ class Aluno(models.Model):
     eficiencia_energetica = models.BooleanField(default=False)
     administracao_economia_financas = models.BooleanField(default=False)
 
-    # def __str__(self):
-    #     return   ("V" if self.inovacao_social else "F") + " "\
-    #            + ("V" if self.ciencia_dos_dados else "F") + " "\
-    #            + ("V" if self.modelagem_3D else "F") + " "\
-    #            + ("V" if self.manufatura else "F") + " "\
-    #            + ("V" if self.resistencia_dos_materiais else "F") + " "\
-    #            + ("V" if self.modelagem_de_sistemas else "F") + " "\
-    #            + ("V" if self.controle_e_automacao else "F") + " "\
-    #            + ("V" if self.termodinamica else "F") + " "\
-    #            + ("V" if self.fluidodinamica else "F") + " "\
-    #            + ("V" if self.eletronica_digital else "F") + " "\
-    #            + ("V" if self.programacao else "F") + " "\
-    #            + ("V" if self.inteligencia_artificial else "F") + " "\
-    #            + ("V" if self.computacao_em_nuvem else "F") + " "\
-    #            + ("V" if self.visao_computacional else "F") + " "\
-    #            + ("V" if self.computacao_de_alto_desempenho else "F") + " "\
-    #            + ("V" if self.robotica else "F") + " "\
-    #            + ("V" if self.realidade_virtual_aumentada else "F") + " "\
-    #            + ("V" if self.protocolos_de_comunicacao else "F") + " "\
-    #            + ("V" if self.eficiencia_energetica else "F") + " "\
-    #            + ("V" if self.administracao_economia_financas else "F")
+    #### REMOVER AS AREAS DO CORPO DO ALUNO  ######
+    #areas = models.ForeignKey(Areas, on_delete=models.CASCADE)
+    #areas = models.OneToOneField(Areas, on_delete=models.CASCADE)
+    #areas = models.OneToOneField(Areas, null=True, blank=True, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['user']
         permissions = ()
     def __str__(self):
         return self.user.username
-
 
     # def opcao(self,i):
     #     try:
