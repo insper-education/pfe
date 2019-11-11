@@ -41,8 +41,12 @@ def index(request):
         return render(request, 'projetos/manutencao.html')
     num_visits = request.session.get('num_visits', 0)     # Number of visits to this view, as counted in the session variable.
     
-    aluno = Aluno.objects.get(pk=request.user.pk)
-    projeto = Projeto.objects.filter(alocacao__aluno=aluno).last()
+    usuario = PFEUser.objects.get(pk=request.user.pk)
+    if user.tipo_de_usuario == 1:
+        aluno = Aluno.objects.get(pk=request.user.pk)
+        projeto = Projeto.objects.filter(alocacao__aluno=aluno).last()
+    else:
+        projeto = None
 
     request.session['num_visits'] = num_visits + 1
 
