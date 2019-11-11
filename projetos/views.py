@@ -125,7 +125,8 @@ def projetos(request):
 def histograma(request):
     configuracao = Configuracao.objects.all().first()
     opcoes_list = []
-    projeto_list = Projeto.objects.all()
+    #projeto_list = Projeto.objects.all()
+    projeto_list = Projeto.objects.filter(ano=configuracao.ano).filter(semestre=configuracao.semestre)
     for p in projeto_list:
         opcoes = Opcao.objects.filter(projeto=p)
         opcoes_alunos = opcoes.filter(aluno__user__tipo_de_usuario=1)
