@@ -46,11 +46,14 @@ def index(request):
 
     request.session['num_visits'] = num_visits + 1
 
-    configuracao = Configuracao.objects.all().first
+    configuracao = Configuracao.objects.all().first()
+    dias_para = configuracao.prazo - datetime.datetime.today()
+    vencido = (dias_para.total_seconds() < 0)
     context = {
         'projeto': projeto,
         'num_visits': num_visits,
         'configuracao': configuracao,
+        'vencido': vencido,
     }
     return render(request, 'index_aluno.html', context=context)
 
@@ -109,7 +112,7 @@ def projetos(request):
             return render(request, 'projetos/projetosincompleto.html', context)
     else:
         opcoes_list = Opcao.objects.filter(aluno=Aluno.objects.get(pk=request.user.pk)) 
-        configuracao = Configuracao.objects.all().first
+        configuracao = Configuracao.objects.all().first()
         context= {
             'projeto_list': projeto_list,
             'opcoes_list': opcoes_list,
@@ -312,7 +315,7 @@ def professor(request):
 def completo(request, pk):
     projeto = Projeto.objects.filter(pk=pk).first()  # acho que tem de ser get
     opcoes = Opcao.objects.filter(projeto=projeto) 
-    configuracao = Configuracao.objects.all().first
+    configuracao = Configuracao.objects.all().first()
     context = {
         'projeto': projeto,
         'opcoes': opcoes,

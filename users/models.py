@@ -57,6 +57,7 @@ class Areas(models.Model):
                + ("V" if self.eficiencia_energetica else "F") + " "\
                + ("V" if self.administracao_economia_financas else "F")
 
+# Classe base para todos os usuários do PFE (Alunos, Professores, Parceiros)
 class PFEUser(AbstractUser):
     # Atualizar para AbstractBaseUser que permite colocar mais caracteres nos campos
     #username
@@ -77,6 +78,7 @@ class PFEUser(AbstractUser):
         return self.first_name + " " + self.last_name + " (" + self.TIPO_DE_USUARIO_CHOICES[self.tipo_de_usuario-1][1] + ")"
         #return self.username #ver se atualizar isso para first_name não quebra o projeto
 
+# Classe de usuários com estatus de Professor
 class Professor(models.Model):
     user = models.OneToOneField(PFEUser, on_delete=models.CASCADE)
     areas = models.TextField(max_length=500, blank=True)
@@ -89,6 +91,7 @@ class Professor(models.Model):
     def __str__(self):
         return self.user.first_name+" "+self.user.last_name
 
+# Classe de usuários com estatus de Aluno
 class Aluno(models.Model):
     TIPOS_CURSO = (
         ('C', 'Computação'),
@@ -165,7 +168,7 @@ class Aluno(models.Model):
     # opcao4.short_description = 'Opcao 4'
     # opcao5.short_description = 'Opcao 5'
 
-# Opções de Projetos pelos alunos com suas prioridades
+# Opções de Projetos pelos Alunos com suas prioridades
 class Opcao(models.Model):
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE)
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
@@ -198,6 +201,7 @@ class Alocacao(models.Model):
     def __str__(self):
         return self.aluno.user.username+" >>> "+self.projeto.titulo
 
+# Classe de usuários com estatus de Parceiro (pessoal das organizações parceiras)
 class Parceiro(models.Model):  # da empresa (não do Insper)
     user = models.OneToOneField(PFEUser, on_delete=models.CASCADE)
     organizacao = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.CASCADE)
@@ -215,6 +219,7 @@ class Parceiro(models.Model):  # da empresa (não do Insper)
     def __str__(self):
         return self.user.username
 
+# Classe de usuários com estatus de Administrador
 class Administrador(models.Model):
     user = models.OneToOneField(PFEUser, on_delete=models.CASCADE)
     class Meta:
@@ -226,8 +231,10 @@ class Administrador(models.Model):
 #class Entidades(models.Model):
 #    pass
 
+# Quando um usuário do PFE é criado/salvo, seu corespondente específico também é criado
 @receiver(post_save, sender=PFEUser)
-def create_user_aluno(sender, instance, created, **kwargs):
+def create_user_dependency(sender, instance, created, **kwargs):
+    print("FOI")
     if instance.tipo_de_usuario == 1 : #aluno
         Aluno.objects.get_or_create(user=instance)
     elif instance.tipo_de_usuario == 2 : #professor
@@ -237,9 +244,9 @@ def create_user_aluno(sender, instance, created, **kwargs):
     elif instance.tipo_de_usuario == 4 : #administrador
         Administrador.objects.get_or_create(user=instance)
 
-      
+# Quando um usuário do PFE é criado/salvo, seu corespondente específico também é criado
 @receiver(post_save, sender=PFEUser)
-def save_user_aluno(sender, instance, **kwargs):
+def save_user_dependency(sender, instance, **kwargs):
     if instance.tipo_de_usuario == 1 : #aluno
         instance.aluno.save()
     elif instance.tipo_de_usuario == 2 : #professor

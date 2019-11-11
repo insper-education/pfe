@@ -81,22 +81,22 @@
     </a>
     <hr>
 
-    <a {% if True %} class="disabled" onclick="myFunction('vencido')" {% else %} href="{% url 'areas_interesse' %}" {% endif %} >
+    <a {% if vencido %} class="disabled" onclick="myFunction('vencido')" {% else %} href="{% url 'areas_interesse' %}" {% endif %} >
         <h5>Selecionar Áreas de Interesse</h5>
     </a>
     <hr>
 
-    <a {% if True %} class="disabled" onclick="myFunction('vencido')" {% else %} href="{% url 'projetos' %}" {% endif %} >
+    <a {% if vencido %} class="disabled" onclick="myFunction('vencido')" {% else %} href="{% url 'projetos' %}" {% endif %} >
         <h5>Selecionar Projetos</h5></a>
 
-    <a {% if True %} class="disabled" onclick="myFunction('vencido')" {% else %} href="{% url 'submissao' %}" {% endif %} >
+    <a {% if vencido %} class="disabled" onclick="myFunction('vencido')" {% else %} href="{% url 'submissao' %}" {% endif %} >
         <h5>Submissão de Formulário</h5></a>
     
     <font color="red">Prazo para a seleção dos projetos : <b>{{ configuracao.prazo }}</b></font>
     <hr>
 
     <a href="{% url 'calendario' %}"><h5>Calendário Geral</h5></a>
-    <a {% if True %} class="disabled" onclick="myFunction('projeto')" {% else %} href="{% url 'meuprojeto' %}" {% endif %} >
+    <a {% if not projeto %} class="disabled" onclick="myFunction('projeto')" {% else %} href="{% url 'meuprojeto' %}" {% endif %} >
         <h5>Horário das bancas</h5>
     </a>
     <a {% if not projeto %} class="disabled" onclick="myFunction('projeto')" {% else %} href="{% url 'encontros' %}" {% endif %} >
