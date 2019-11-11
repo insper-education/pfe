@@ -46,9 +46,8 @@ def index(request):
 
     request.session['num_visits'] = num_visits + 1
 
-    configuracao = Configuracao.objects.all().first()
-    dias_para = configuracao.prazo - datetime.datetime.today()
-    vencido = (dias_para.total_seconds() < 0)
+    configuracao = Configuracao.objects.first()
+    vencido = timezone.now() > configuracao.prazo
     context = {
         'projeto': projeto,
         'num_visits': num_visits,
@@ -71,9 +70,9 @@ def projeto(request, pk):
 @login_required
 def projetos(request):
     warnings=""
-    projeto_list = Projeto.objects.all()
+    configuracao = Configuracao.objects.first()
+    projeto_list = Projeto.objects.filter(ano=configuracao.ano).filter(semestre=configuracao.semestre)
     if request.method == 'POST':
-        configuracao = Configuracao.objects.all().first()
         if timezone.now() > configuracao.prazo:
            return HttpResponse("Prazo para seleção de projetos vencido!") #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
         prioridade = {}
@@ -112,7 +111,6 @@ def projetos(request):
             return render(request, 'projetos/projetosincompleto.html', context)
     else:
         opcoes_list = Opcao.objects.filter(aluno=Aluno.objects.get(pk=request.user.pk)) 
-        configuracao = Configuracao.objects.all().first()
         context= {
             'projeto_list': projeto_list,
             'opcoes_list': opcoes_list,
@@ -506,10 +504,10 @@ def servico(request):
     if request.method == 'POST':
         check_values = request.POST.getlist('selection')
         if 'manutencao' in check_values:
-            print("true")
+            #print("true")
             configuracao.manutencao = True;
         else:
-            print("false")
+            #print("false")
             configuracao.manutencao = False;
         configuracao.save()
         return redirect('/projetos/administracao/')
@@ -750,10 +748,31 @@ def calendario(request):
 
 @login_required
 def submissao(request):
-    context= {
-    }
-    return render(request, 'projetos/submissao.html', context)
+    user = PFEUser.objects.get(pk=request.user.pk)
+    if user.tipo_de_usuario != 1:
+        return HttpResponse("Você não está cadastrado como aluno")
+    configuracao = Configuracao.objects.first()
+    aluno = Aluno.objects.get(pk=request.user.pk)
+    if request.method == 'POST':
+        if timezone.now() > configuracao.prazo:
+           return HttpResponse("Prazo para o preenchimento do formulário vencido!") #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
+    
+        aluno.trabalhou = request.POST.get("trabalhou","")
+        aluno.social = request.POST.get("social","")
+        aluno.entidade = request.POST.get("entidade","")
+        aluno.familia = request.POST.get("familia","")
 
+        aluno.save()
+        return render(request, 'users/atualizado.html',)
+    else:
+        context= {
+            'trabalhou' : aluno.trabalhou,
+            'social' : aluno.social,
+            'entidade' : aluno.entidade,
+            'familia' : aluno.familia,
+        }
+        return render(request, 'projetos/submissao.html', context)
+        
 @login_required
 def documentos(request):
     regulamento = Documento.objects.filter(tipo_de_documento=6).last() # Regulamento PFE
@@ -905,7 +924,6 @@ def carregar(request):
 @login_required
 def meuprojeto(request):
     user = PFEUser.objects.get(pk=request.user.pk)
-    print(user.tipo_de_usuario)
     if user.tipo_de_usuario != 1 and user.tipo_de_usuario != 2:
         return HttpResponse("Você não está cadastrado como aluno ou professor") 
     elif user.tipo_de_usuario == 2:
@@ -1022,7 +1040,7 @@ def carrega_bancos(request):
                 #print("Colunas {} e {}".format(row[0],row[1]))
                 pass
             else:
-                print('Nome: {}; Código {}'.format(row[0],row[1]))
+                #print('Nome: {}; Código {}'.format(row[0],row[1]))
                 banco = Banco.create(nome=row[0],codigo=row[1])
                 banco.save()
             line_count += 1

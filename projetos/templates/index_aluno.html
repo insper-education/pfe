@@ -84,14 +84,15 @@
     <a {% if vencido %} class="disabled" onclick="myFunction('vencido')" {% else %} href="{% url 'areas_interesse' %}" {% endif %} >
         <h5>Selecionar Áreas de Interesse</h5>
     </a>
-    <hr>
+    
+    <a {% if vencido %} class="disabled" onclick="myFunction('vencido')" {% else %} href="{% url 'submissao' %}" {% endif %} >
+        <h5>Formulário de Informações Adicionais</h5>
+    </a>
 
     <a {% if vencido %} class="disabled" onclick="myFunction('vencido')" {% else %} href="{% url 'projetos' %}" {% endif %} >
-        <h5>Selecionar Projetos</h5></a>
+        <h5>Selecionar Projetos</h5>
+    </a>
 
-    <a {% if vencido %} class="disabled" onclick="myFunction('vencido')" {% else %} href="{% url 'submissao' %}" {% endif %} >
-        <h5>Submissão de Formulário</h5></a>
-    
     <font color="red">Prazo para a seleção dos projetos : <b>{{ configuracao.prazo }}</b></font>
     <hr>
 

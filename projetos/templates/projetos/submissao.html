@@ -5,31 +5,44 @@
     Data: 15 de Maio de 2019
 {% endcomment %}
 
+{% block head %}
+<style>
+textarea {
+  max-width:100%;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 
-  <h5>Submissão de Formulário</h5><br>
+  <h5>Formulário de Informações Adicionais</h5><br>
 
-  Você já trabalhou e/ou estagio em alguma empresa de engenharia?
-  <input type="checkbox" name="selection" value="trabalho"><br>
+  <form action="" method="post"> {% csrf_token %}  
+
+  Você já trabalhou e/ou estagio em alguma empresa de engenharia?<br>
   Se sim qual/quais?<br>
-  <textarea rows="4" cols="50"></textarea>
+  <textarea name="trabalhou" rows="4" cols="80" maxlength="1000">{{trabalhou}}</textarea>
   <br><br>
 
-  Você já participou de atividade sociais?
-  <input type="checkbox" name="selection" value="social"><br>
+  Você já participou de atividade sociais?<br>
   Se sim qual/quais?<br>
-  <textarea rows="4" cols="50"></textarea>
+  <textarea name="social" rows="4" cols="80" maxlength="1000">{{social}}</textarea>
   <br><br>
 
-  Você já participou de alguma entidade estudantil do Insper?
-  <select id="selection" name="entidade" ></select>
+  Você já participou de alguma entidade estudantil do Insper?<br>
   <!-- Pegar Script de Projetos para preencher entidades -->
+  <textarea name="entidade" rows="4" cols="80" maxlength="1000">{{entidade}}</textarea>
   <br><br>
 
-  Você possui familiares em algum empresa que está aplicando? Ou empresa concorrente?
-  <input type="checkbox" name="selection" value="social"><br>
+  Você possui familiares em algum empresa que está aplicando? Ou empresa concorrente?<br>
   Se sim qual/quais? E seu grau de relacionamento.<br>
-  <textarea rows="4" cols="50"></textarea>
+  <textarea name="familia" rows="4" cols="80" maxlength="1000">{{familia}}</textarea>
   <br><br>
+
+  <input type="submit" value="Enviar">
+  </form>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
 
 {% endblock %}

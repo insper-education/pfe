@@ -140,6 +140,11 @@ class Aluno(models.Model):
     #areas = models.OneToOneField(Areas, on_delete=models.CASCADE)
     #areas = models.OneToOneField(Areas, null=True, blank=True, on_delete=models.CASCADE)
 
+    trabalhou = models.TextField(max_length=1000, null=True, blank=True, help_text='Você já trabalhou e/ou estagio em alguma empresa de engenharia?')
+    social = models.TextField(max_length=1000, null=True, blank=True, help_text='Você já participou de atividade sociais?')
+    entidade = models.TextField(max_length=1000, null=True, blank=True, help_text='Você já participou de alguma entidade estudantil do Insper?')
+    familia = models.TextField(max_length=1000, null=True, blank=True, help_text='Você possui familiares em algum empresa que está aplicando? Ou empresa concorrente?')
+
     class Meta:
         ordering = ['user']
         permissions = ()
@@ -234,7 +239,6 @@ class Administrador(models.Model):
 # Quando um usuário do PFE é criado/salvo, seu corespondente específico também é criado
 @receiver(post_save, sender=PFEUser)
 def create_user_dependency(sender, instance, created, **kwargs):
-    print("FOI")
     if instance.tipo_de_usuario == 1 : #aluno
         Aluno.objects.get_or_create(user=instance)
     elif instance.tipo_de_usuario == 2 : #professor

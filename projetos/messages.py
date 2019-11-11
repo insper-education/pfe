@@ -16,7 +16,7 @@ def create_message(aluno):
         message = '<br>\n'
         message += '&nbsp;&nbsp;Caro aluno: <b>'+aluno.user.first_name+" "+aluno.user.last_name+" ("+aluno.user.username+')</b>\n\n'
         message += '<br><br>\n\n'
-        message += '&nbsp;&nbsp;Suas opções de projeto foram:<br>\n'
+        message += '&nbsp;&nbsp;Suas opções de projetos foram:<br>\n'
         message += '<ul>'
         for o in Opcao.objects.filter(aluno=aluno):
             message += ("&nbsp;"*4)+"<p>"+str(o.prioridade)+" - "+o.projeto.titulo+" ("+o.projeto.empresa.nome_empresa+")</p>\n"
@@ -48,7 +48,21 @@ def create_message(aluno):
         if aluno.administracao_economia_financas: message += (("&nbsp;"*4)+"<li>Administração, Economia e Finanças</li>\n")
 
         message += '</ul>'
+        message += '<br><br>\n\n'
+        message += '&nbsp;&nbsp;Suas informações adicionais são:<br>\n'
         message += '<br>\n'
+        message += ("&nbsp;"*4)+'Você já trabalhou e/ou estagio em alguma empresa de engenharia?<br>\n'
+        message += ("&nbsp;"*4)+aluno.trabalhou
+        message += '<br><br>\n\n'
+        message += ("&nbsp;"*4)+'Você já participou de atividade sociais?<br>\n'
+        message += ("&nbsp;"*4)+aluno.social
+        message += '<br><br>\n\n'
+        message += ("&nbsp;"*4)+'Você já participou de alguma entidade estudantil do Insper?<br>\n'
+        message += ("&nbsp;"*4)+aluno.entidade
+        message += '<br><br>\n\n'
+        message += ("&nbsp;"*4)+'Você possui familiares em algum empresa que está aplicando? Ou empresa concorrente?<br>\n'
+        message += ("&nbsp;"*4)+aluno.familia
+        message += '<br><br>\n\n'
         message += '<br>\n'+("&nbsp;"*12)+"atenciosamente, comitê PFE"
         message += '&nbsp;<br>\n'
         message += '&nbsp;<br>\n'

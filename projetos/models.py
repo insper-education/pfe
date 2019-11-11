@@ -241,3 +241,9 @@ class Aviso(models.Model):
     #mensagem = models.TextField(max_length=2000, help_text='Anotação')
     def __str__(self):
         return str(self.titulo)
+
+# Para ser preenchido com as entidades estudantis
+class Entidade(models.Model):
+    nome = models.CharField(max_length=100, help_text='nome da entidade estudantil')
+    def __str__(self):
+        return self.nome
