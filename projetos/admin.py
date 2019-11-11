@@ -10,6 +10,10 @@ from .models import Encontro, Evento
 # Da coordenação
 from .models import Configuracao, Aviso, Documento, Anotacao, Reembolso, Banco
 
+# Do Insper
+from .models import Entidade
+
+
 # Função abaixo permite duplicar entradas no banco de dados
 def dup_event(modeladmin:admin_opt.ModelAdmin, request, queryset):
     for object in queryset:
@@ -101,3 +105,4 @@ admin.site.register(Cursada)
 admin.site.register(Recomendada) 
 admin.site.register(Evento) # Todos os eventos do PFE com suas datas
 admin.site.register(Encontro) # Informações das Encontros (com os facilitadores)
+admin.site.register(Entidade) # Para ser preenchido com as entidades estudantis
