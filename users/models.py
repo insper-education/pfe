@@ -233,9 +233,6 @@ class Administrador(models.Model):
     def __str__(self):
         return self.user.username
 
-#class Entidades(models.Model):
-#    pass
-
 # Quando um usuário do PFE é criado/salvo, seu corespondente específico também é criado
 @receiver(post_save, sender=PFEUser)
 def create_user_dependency(sender, instance, created, **kwargs):
