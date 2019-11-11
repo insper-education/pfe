@@ -42,7 +42,7 @@ def index(request):
     num_visits = request.session.get('num_visits', 0)     # Number of visits to this view, as counted in the session variable.
     
     usuario = PFEUser.objects.get(pk=request.user.pk)
-    if user.tipo_de_usuario == 1:
+    if usuario.tipo_de_usuario == 1:
         aluno = Aluno.objects.get(pk=request.user.pk)
         projeto = Projeto.objects.filter(alocacao__aluno=aluno).last()
     else:
