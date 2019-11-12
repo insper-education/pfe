@@ -56,6 +56,7 @@
           &#x2B24;
         </td>
         <td>
+          {% if not projeto.disponivel %}<del>{% endif %}
           <a href="{% url 'completo' projeto.id %}">
             {% if projeto.titulo_final %}
               {{projeto.titulo_final}}<br>
@@ -64,56 +65,77 @@
               {{projeto.titulo}}
             {% endif %}
           </a>
+          {% if not projeto.disponivel %}</del>{% endif %}
         </td>
         <td class="text-center">
+          {% if not projeto.disponivel %}<del>{% endif %}
             {{projeto.ano}}.{{projeto.semestre}}
+          {% if not projeto.disponivel %}</del>{% endif %}
         </td>
         <td>
-          <a href="{% url 'organizacao' projeto.empresa.login %}">
-            {{ projeto.empresa.nome_empresa }}
-          </a>
+          {% if not projeto.disponivel %}<del>{% endif %}
+            <a href="{% url 'organizacao' projeto.empresa.login %}">
+              {{ projeto.empresa.nome_empresa }}
+            </a>
+          {% if not projeto.disponivel %}</del>{% endif %}
         </td>
         <td>
-          {% if projeto.perfil_aluno1_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
-          {% if projeto.perfil_aluno1_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
-          {% if projeto.perfil_aluno1_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
-          <!-- Se não defido conta para os 3 cursos -->
-          {% if not projeto.perfil_aluno1_computacao and not projeto.perfil_aluno1_mecatronica and not projeto.perfil_aluno1_mecanica %}
-            <script>tmp_computacao += 1</script>
-            <script>tmp_mecatronica += 1</script>
-            <script>tmp_mecanica += 1</script>
+          {% if not projeto.disponivel %}
+            <del>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</del>
+          {% else %}
+            {% if projeto.perfil_aluno1_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
+            {% if projeto.perfil_aluno1_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
+            {% if projeto.perfil_aluno1_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
+            <!-- Se não defido conta para os 3 cursos -->
+            {% if not projeto.perfil_aluno1_computacao and not projeto.perfil_aluno1_mecatronica and not projeto.perfil_aluno1_mecanica %}
+              <script>tmp_computacao += 1</script>
+              <script>tmp_mecatronica += 1</script>
+              <script>tmp_mecanica += 1</script>
+            {% endif %}
           {% endif %}
         </td>
         <td>
-          {% if projeto.perfil_aluno2_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
-          {% if projeto.perfil_aluno2_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
-          {% if projeto.perfil_aluno2_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
-          <!-- Se não defido conta para os 3 cursos -->
-          {% if not projeto.perfil_aluno2_computacao and not projeto.perfil_aluno2_mecatronica and not projeto.perfil_aluno2_mecanica %}
-            <script>tmp_computacao += 1</script>
-            <script>tmp_mecatronica += 1</script>
-            <script>tmp_mecanica += 1</script>
+          {% if not projeto.disponivel %}
+            <del>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</del>
+          {% else %}
+            {% if projeto.perfil_aluno2_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
+            {% if projeto.perfil_aluno2_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
+            {% if projeto.perfil_aluno2_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
+            <!-- Se não defido conta para os 3 cursos -->
+            {% if not projeto.perfil_aluno2_computacao and not projeto.perfil_aluno2_mecatronica and not projeto.perfil_aluno2_mecanica %}
+              <script>tmp_computacao += 1</script>
+              <script>tmp_mecatronica += 1</script>
+              <script>tmp_mecanica += 1</script>
+            {% endif %}
           {% endif %}
         </td>
         <td>
-          {% if projeto.perfil_aluno3_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
-          {% if projeto.perfil_aluno3_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
-          {% if projeto.perfil_aluno3_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
-          <!-- Se não defido conta para os 3 cursos -->
-          {% if not projeto.perfil_aluno3_computacao and not projeto.perfil_aluno3_mecatronica and not projeto.perfil_aluno3_mecanica %}
-            <script>tmp_computacao += 1</script>
-            <script>tmp_mecatronica += 1</script>
-            <script>tmp_mecanica += 1</script>
+          {% if not projeto.disponivel %}
+            <del>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</del>
+          {% else %}
+            {% if projeto.perfil_aluno3_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
+            {% if projeto.perfil_aluno3_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
+            {% if projeto.perfil_aluno3_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
+            <!-- Se não defido conta para os 3 cursos -->
+            {% if not projeto.perfil_aluno3_computacao and not projeto.perfil_aluno3_mecatronica and not projeto.perfil_aluno3_mecanica %}
+              <script>tmp_computacao += 1</script>
+              <script>tmp_mecatronica += 1</script>
+              <script>tmp_mecanica += 1</script>
+            {% endif %}
           {% endif %}
         </td>
         <td>
-          {% if projeto.perfil_aluno4_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
-          {% if projeto.perfil_aluno4_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
-          {% if projeto.perfil_aluno4_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
-          {% if not projeto.perfil_aluno4_computacao and not projeto.perfil_aluno4_mecatronica and not projeto.perfil_aluno4_mecanica %}
-            <script>tmp_computacao += 1</script>
-            <script>tmp_mecatronica += 1</script>
-            <script>tmp_mecanica += 1</script>
+          {% if not projeto.disponivel %}
+            <del>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</del>
+          {% else %}
+            {% if projeto.perfil_aluno4_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
+            {% if projeto.perfil_aluno4_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
+            {% if projeto.perfil_aluno4_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
+            {% if not projeto.perfil_aluno4_computacao and not projeto.perfil_aluno4_mecatronica and not projeto.perfil_aluno4_mecanica %}
+              <script>tmp_computacao += 1</script>
+              <script>tmp_mecatronica += 1</script>
+              <script>tmp_mecanica += 1</script>
+            {% endif %}
           {% endif %}
         </td>
       </tr>
@@ -143,14 +165,14 @@
     <strong>Número Total de Projetos Publicados:</strong> {{ projetos.count }}<br>
     <strong>Número Total de Projetos Fechados:</strong> <script>document.write(fechados);</script><br>
     <p>&nbsp;</p>
-    <strong>Vagas para alunos de computação:</strong> <script>document.write(alunos_computacao);</script><br>
-    <strong>Vagas para alunos de mecatrônica:</strong> <script>document.write(alunos_mecatronica);</script><br>
-    <strong>Vagas para alunos de mecânica:</strong> <script>document.write(alunos_mecanica);</script><br>
-    <p>&nbsp;</p>
     <strong>Projetos nativamente de computação:</strong> <script>document.write(projeto_computacao);</script><br>
     <strong>Projetos nativamente de mecatrônica:</strong> <script>document.write(projeto_mecatronica);</script><br>
     <strong>Projetos nativamente de mecânica:</strong> <script>document.write(projeto_mecanica);</script><br>
     <strong>Projetos nativamente multidisciplinar:</strong> <script>document.write(projeto_multidisciplinar);</script><br>
+    <p>&nbsp;</p>
+    <strong>Vagas para alunos de computação:</strong> <script>document.write(alunos_computacao);</script><br>
+    <strong>Vagas para alunos de mecatrônica:</strong> <script>document.write(alunos_mecatronica);</script><br>
+    <strong>Vagas para alunos de mecânica:</strong> <script>document.write(alunos_mecanica);</script><br>
   {% else %}
     <p>Não existem projetos disponíveis.</p>
   {% endif %}
