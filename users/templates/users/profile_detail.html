@@ -17,6 +17,9 @@
 {% elif parceiro %}
   <strong>Perfil:</strong> parceiro<br>
 {% endif %}
+{% if user.email %}
+  <strong>e-mail:</strong> <a href="mailto:{{user.email}}">{{user.email}}</a><br>
+{% endif %}
 <br><br>
 <form action="{% url 'password_change' %}">
   <input type="submit" value="Atualizar Senha" />
