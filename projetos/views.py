@@ -865,12 +865,17 @@ def download(request, path):
     raise Http404
 
 @login_required
-@permission_required('users.altera_professor', login_url='/projetos/')
+#@permission_required('users.altera_professor', login_url='/projetos/')
 def arquivos(request, documentos, path):
-    file_path = os.path.abspath(os.path.join(settings.MEDIA_ROOT, "{0}/{1}".format(documentos, path) ) )
+    local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}".format(documentos, path) )
+    file_path = os.path.abspath( local_path )
     if ".." in file_path: raise PermissionDenied
     if "\\" in file_path: raise PermissionDenied
     if os.path.exists(file_path):
+        doc = Documento.objects.filter(documento=local_path[len(settings.BASE_DIR)+len(settings.MEDIA_URL):]).last()
+        if(doc):
+            if (doc.tipo_de_documento < 6) and (PFEUser.objects.get(pk=request.user.pk).tipo_de_usuario != 2):
+                return HttpResponse("Documento Confidencial")
         with open(file_path, 'rb') as fh:
             response = HttpResponse(fh.read(), content_type="application/pdf")
             response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
@@ -878,12 +883,17 @@ def arquivos(request, documentos, path):
     raise Http404
 
 @login_required
-@permission_required('users.altera_professor', login_url='/projetos/')
+#@permission_required('users.altera_professor', login_url='/projetos/')
 def arquivos2(request, organizacao, usuario, path):
-    file_path = os.path.abspath(os.path.join(settings.MEDIA_ROOT, "{0}/{1}/{2}".format(organizacao, usuario, path) ) )
+    local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}/{2}".format(organizacao, usuario, path) )
+    file_path = os.path.abspath( local_path )
     if ".." in file_path: raise PermissionDenied
     if "\\" in file_path: raise PermissionDenied
     if os.path.exists(file_path):
+        doc = Documento.objects.filter(documento=local_path[len(settings.BASE_DIR)+len(settings.MEDIA_URL):]).last()
+        if(doc):
+            if (doc.tipo_de_documento < 6) and (PFEUser.objects.get(pk=request.user.pk).tipo_de_usuario != 2):
+                return HttpResponse("Documento Confidencial")
         with open(file_path, 'rb') as fh:
             response = HttpResponse(fh.read(), content_type="application/pdf")
             response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
