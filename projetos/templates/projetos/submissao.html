@@ -11,6 +11,15 @@ textarea {
   max-width:100%;
 }
 </style>
+<script>
+  //var popUpList = $('<div><input type="radio">A<br><input type="radio">B<br><input type="radio">C</div>');
+  $(document).ready(function(){
+    $("small").click(function(){
+      alert("{% for e in entidades %}• {{e.nome}}\n{% endfor %}");
+      //popUpList.dialog();
+    });
+  });
+</script>
 {% endblock %}
 
 {% block content %}
@@ -32,6 +41,8 @@ textarea {
   Você já participou de alguma entidade estudantil do Insper?<br>
   <!-- Pegar Script de Projetos para preencher entidades -->
   <textarea name="entidade" rows="4" cols="80" maxlength="1000">{{entidade}}</textarea>
+  <br>
+  <small><u>Lista de Entidades.</u></small>
   <br><br>
 
   Você possui familiares em algum empresa que está aplicando? Ou empresa concorrente?<br>

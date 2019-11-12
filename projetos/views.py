@@ -30,7 +30,7 @@ from django.utils import timezone
 from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
-from .models import Projeto, Empresa, Configuracao, Disciplina, Evento, Banca, Documento, Encontro, Banco, Reembolso, Aviso
+from .models import Projeto, Empresa, Configuracao, Disciplina, Evento, Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade
 from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource, AlunosResource, ProfessoresResource, ConfiguracaoResource, DisciplinasResource
 from .messages import email, create_message
@@ -781,6 +781,7 @@ def submissao(request):
             'social' : aluno.social,
             'entidade' : aluno.entidade,
             'familia' : aluno.familia,
+            'entidades' : Entidade.objects.all(),
         }
         return render(request, 'projetos/submissao.html', context)
         
