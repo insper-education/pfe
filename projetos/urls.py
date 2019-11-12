@@ -21,6 +21,7 @@ urlpatterns = [
     path('documentos/', views.documentos, name='documentos'),
     #path('download/<str:path>', views.download, name='download'),
     path('encontros/', views.encontros, name='encontros'),
+    path('emails/', views.emails, name='emails'),
     path('email_backup/', views.email_backup, name='email_backup'),
     path('export/<str:modelo>/<str:formato>', views.export, name='export'),
     path('exportar/', views.exportar, name='exportar'),
