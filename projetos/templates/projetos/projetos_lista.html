@@ -8,6 +8,7 @@
 {% block head %}
 <script src="https://www.w3schools.com/lib/w3.js"></script>
 <script>
+  var publicados = 0
   var fechados = 0
   var tmp_computacao = 0
   var tmp_mecatronica = 0
@@ -47,6 +48,7 @@
       </tr>      
       {% for projeto in projetos %} 
       <tr class="item">
+        {% if projeto.disponivel %}<script>publicados += 1</script>{% endif %}
         {% if projeto.alocacao_set.all.count > 0  %}
           <td class="text-success"  style="text-align:center">
             <script>fechados += 1</script>
@@ -162,7 +164,7 @@
     </table>
     <small>C: Computação | X: Mecatrônica | M: Mecânica</small><br>
     <p>&nbsp;</p>
-    <strong>Número Total de Projetos Publicados:</strong> {{ projetos.count }}<br>
+    <strong>Número Total de Projetos Publicados:</strong> <script>document.write(publicados);</script> ({{ projetos.count }})<br>
     <strong>Número Total de Projetos Fechados:</strong> <script>document.write(fechados);</script><br>
     <p>&nbsp;</p>
     <strong>Projetos nativamente de computação:</strong> <script>document.write(projeto_computacao);</script><br>
