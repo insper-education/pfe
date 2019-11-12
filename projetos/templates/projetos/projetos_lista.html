@@ -25,9 +25,11 @@
 {% block content %}
   <h3>Projetos
     {% if periodo == "antigos" %}
-      publicados até 
+      publicados antes de 
+    {% elif periodo == "atuais" %}
+      disponíveis em
     {% elif periodo == "disponiveis" %}
-      disponíveis após
+      após
     {% endif %}
     {{configuracao.ano}}.{{configuracao.semestre}}
   </h3>
@@ -75,21 +77,44 @@
           {% if projeto.perfil_aluno1_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
           {% if projeto.perfil_aluno1_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
           {% if projeto.perfil_aluno1_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
+          <!-- Se não defido conta para os 3 cursos -->
+          {% if not projeto.perfil_aluno1_computacao and not projeto.perfil_aluno1_mecatronica and not projeto.perfil_aluno1_mecanica %}
+            <script>tmp_computacao += 1</script>
+            <script>tmp_mecatronica += 1</script>
+            <script>tmp_mecanica += 1</script>
+          {% endif %}
         </td>
         <td>
           {% if projeto.perfil_aluno2_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
           {% if projeto.perfil_aluno2_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
           {% if projeto.perfil_aluno2_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
+          <!-- Se não defido conta para os 3 cursos -->
+          {% if not projeto.perfil_aluno2_computacao and not projeto.perfil_aluno2_mecatronica and not projeto.perfil_aluno2_mecanica %}
+            <script>tmp_computacao += 1</script>
+            <script>tmp_mecatronica += 1</script>
+            <script>tmp_mecanica += 1</script>
+          {% endif %}
         </td>
         <td>
           {% if projeto.perfil_aluno3_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
           {% if projeto.perfil_aluno3_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
           {% if projeto.perfil_aluno3_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
+          <!-- Se não defido conta para os 3 cursos -->
+          {% if not projeto.perfil_aluno3_computacao and not projeto.perfil_aluno3_mecatronica and not projeto.perfil_aluno3_mecanica %}
+            <script>tmp_computacao += 1</script>
+            <script>tmp_mecatronica += 1</script>
+            <script>tmp_mecanica += 1</script>
+          {% endif %}
         </td>
         <td>
           {% if projeto.perfil_aluno4_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
           {% if projeto.perfil_aluno4_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
           {% if projeto.perfil_aluno4_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
+          {% if not projeto.perfil_aluno4_computacao and not projeto.perfil_aluno4_mecatronica and not projeto.perfil_aluno4_mecanica %}
+            <script>tmp_computacao += 1</script>
+            <script>tmp_mecatronica += 1</script>
+            <script>tmp_mecanica += 1</script>
+          {% endif %}
         </td>
       </tr>
       <script>

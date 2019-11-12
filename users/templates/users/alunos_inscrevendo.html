@@ -21,10 +21,6 @@
 
 {% block content %}
     <h3>Alunos se Inscrevendo PFE {{ano}}.{{semestre}}</h3>
-    <strong>Total de Alunos Aplicando:</strong> {{ num_alunos }}
-    <small>(comp={{ num_alunos_comp }},
-    mec={{ num_alunos_mec }},
-    mxt={{ num_alunos_mxt }})</small>
 
     {% if alunos_list %}
         <table id="AlunosTable">
@@ -74,6 +70,12 @@
     
     <text class="text-success">&#x2B24;</text> Aluno já selecionou projetos [{{inscritos}}]<br>
     <text class="text-danger">&#x2B24;</text> Aluno ainda precisa selecionar projetos [{{ninscritos}}]<br>
+    <br>
+
+    <strong>Total de Alunos Aplicando:</strong> {{ num_alunos }}
+    <small>(comp={{ num_alunos_comp }},
+    mec={{ num_alunos_mec }},
+    mxt={{ num_alunos_mxt }})</small>
     <br>
 
     <div id="canvas-holder">

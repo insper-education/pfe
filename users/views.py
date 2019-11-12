@@ -140,12 +140,19 @@ def alunos(request):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def alunos_inscrevendo(request):
     configuracao = Configuracao.objects.all().first()
-    if configuracao.semestre==1:
-        ano = configuracao.ano
-        semestre = 2
-    else:
-        ano = configuracao.ano+1
-        semestre = 1
+
+    # PARA O FUTURO IMPLEMENTAR
+    # if configuracao.semestre==1:
+    #     ano = configuracao.ano
+    #     semestre = 2
+    # else:
+    #     ano = configuracao.ano+1
+    #     semestre = 1
+    
+    # Alunos se inscrevendo atualmente
+    ano = configuracao.ano
+    semestre = configuracao.semestre
+
     alunos_inscrevendo = Aluno.objects.filter(trancado=False).filter(anoPFE=ano).filter(semestrePFE=semestre).order_by("user__first_name")
     alunos = alunos_inscrevendo.filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0]) # Conta soh alunos
     num_alunos = alunos.count()

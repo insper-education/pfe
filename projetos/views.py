@@ -50,6 +50,8 @@ def index(request):
 
     request.session['num_visits'] = num_visits + 1
 
+
+    ## REALMENTE EH NECESSARIO ENVIAR PROJETO AQUI? ##
     configuracao = Configuracao.objects.first()
     vencido = timezone.now() > configuracao.prazo
     context = {
@@ -330,27 +332,31 @@ def completo(request, pk):
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def areas(request):
-    inovacao_social = Aluno.objects.filter(inovacao_social=True).count()
-    ciencia_dos_dados = Aluno.objects.filter(ciencia_dos_dados=True).count()
-    modelagem_3D = Aluno.objects.filter(modelagem_3D=True).count()
-    manufatura = Aluno.objects.filter(manufatura=True).count()
-    resistencia_dos_materiais = Aluno.objects.filter(resistencia_dos_materiais=True).count()
-    modelagem_de_sistemas = Aluno.objects.filter(modelagem_de_sistemas=True).count()
-    controle_e_automacao = Aluno.objects.filter(controle_e_automacao=True).count()
-    termodinamica = Aluno.objects.filter(termodinamica=True).count()
-    fluidodinamica = Aluno.objects.filter(fluidodinamica=True).count()
-    eletronica_digital = Aluno.objects.filter(eletronica_digital=True).count()
-    programacao = Aluno.objects.filter(programacao=True).count()
-    inteligencia_artificial = Aluno.objects.filter(inteligencia_artificial=True).count()
-    banco_de_dados = Aluno.objects.filter(banco_de_dados=True).count()
-    computacao_em_nuvem = Aluno.objects.filter(computacao_em_nuvem=True).count()
-    visao_computacional = Aluno.objects.filter(visao_computacional=True).count()
-    computacao_de_alto_desempenho = Aluno.objects.filter(computacao_de_alto_desempenho=True).count()
-    robotica = Aluno.objects.filter(robotica=True).count()
-    realidade_virtual_aumentada = Aluno.objects.filter(realidade_virtual_aumentada=True).count()
-    protocolos_de_comunicacao = Aluno.objects.filter(protocolos_de_comunicacao=True).count()
-    eficiencia_energetica = Aluno.objects.filter(eficiencia_energetica=True).count()
-    administracao_economia_financas =Aluno.objects.filter(administracao_economia_financas=True).count()
+
+    configuracao = Configuracao.objects.all().first()
+    alunos = Aluno.objects.filter(user__tipo_de_usuario=1).filter(anoPFE=configuracao.ano).filter(semestrePFE=configuracao.semestre)
+
+    inovacao_social = alunos.filter(inovacao_social=True).count()
+    ciencia_dos_dados = alunos.filter(ciencia_dos_dados=True).count()
+    modelagem_3D = alunos.filter(modelagem_3D=True).count()
+    manufatura = alunos.filter(manufatura=True).count()
+    resistencia_dos_materiais = alunos.filter(resistencia_dos_materiais=True).count()
+    modelagem_de_sistemas = alunos.filter(modelagem_de_sistemas=True).count()
+    controle_e_automacao = alunos.filter(controle_e_automacao=True).count()
+    termodinamica = alunos.filter(termodinamica=True).count()
+    fluidodinamica = alunos.filter(fluidodinamica=True).count()
+    eletronica_digital = alunos.filter(eletronica_digital=True).count()
+    programacao = alunos.filter(programacao=True).count()
+    inteligencia_artificial = alunos.filter(inteligencia_artificial=True).count()
+    banco_de_dados = alunos.filter(banco_de_dados=True).count()
+    computacao_em_nuvem = alunos.filter(computacao_em_nuvem=True).count()
+    visao_computacional = alunos.filter(visao_computacional=True).count()
+    computacao_de_alto_desempenho = alunos.filter(computacao_de_alto_desempenho=True).count()
+    robotica = alunos.filter(robotica=True).count()
+    realidade_virtual_aumentada = alunos.filter(realidade_virtual_aumentada=True).count()
+    protocolos_de_comunicacao = alunos.filter(protocolos_de_comunicacao=True).count()
+    eficiencia_energetica = alunos.filter(eficiencia_energetica=True).count()
+    administracao_economia_financas = alunos.filter(administracao_economia_financas=True).count()
 
     context= {
         'inovacao_social':inovacao_social,
@@ -895,9 +901,11 @@ def projetos_lista(request, periodo):
     projetos = Projeto.objects.all().order_by("ano","semestre")
     if periodo=="antigos":
         if configuracao.semestre == 1:
-            projetos = projetos.filter(ano__lte=configuracao.ano).exclude(ano=configuracao.ano,semestre=2)
+            projetos = projetos.filter(ano__lt=configuracao.ano)
         else:
-            projetos = projetos.filter(ano__lte=configuracao.ano)
+            projetos = projetos.filter(ano__lte=configuracao.ano).exclude(ano=configuracao.ano,semestre=2)
+    elif periodo=="atuais":
+        projetos = projetos.filter(ano=configuracao.ano,semestre=configuracao.semestre)
     elif periodo=="disponiveis":
         if configuracao.semestre == 1:
             projetos = projetos.filter(ano__gte=configuracao.ano).exclude(ano=configuracao.ano,semestre=1)

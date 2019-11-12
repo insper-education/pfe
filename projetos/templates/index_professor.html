@@ -6,24 +6,35 @@
 {% endcomment %}
 
 {% block content %}
-    <a href="{% url 'fechados' %}">          <h5>Listagem Detalhada de Projetos Fechados</h5>    </a>
+
     <a href="{% url 'bancas' %}">            <h5>Calendário das Bancas</h5>                      </a>
+
     <a href="{% url 'dinamicas' %}">         <h5>Calendário das Dinâmicas</h5>                   </a>
 
     <hr>
 
-    <h5>Listagem de Projetos Publicados</h5>(não necessariamente fechados)
+
+    <a href="{% url 'fechados' %}">          <h5>Listagem Detalhada de Projetos Fechados</h5>    </a>
+
+    <h5>Listagem de Projetos Publicados</h5>
     <ul>
-        <a href="{% url 'projetos_lista' 'antigos' %}"><li>Antigos (incluindo semestre atual)</li></a>
-        <a href="{% url 'projetos_lista' 'disponiveis' %}"><li>Disponíveis (p/ próximo semestre)</li></a>
+        <a href="{% url 'projetos_lista' 'antigos' %}"><li>Antigos (até o semestre passado)</li></a>
+        <a href="{% url 'projetos_lista' 'atuais' %}"><li>Atuais (para esse semestre)</li></a>
+        <a href="{% url 'projetos_lista' 'disponiveis' %}"><li>Disponíveis (p/ os próximos semestres)</li></a>
     </ul>
+    
+    <a href="{% url 'histograma' %}">        <h5>Histograma de Interesse de Projetos</h5> </a>
+    
     <hr>
 
+
     <a href="{% url 'alunos_inscrevendo' %}"><h5>Listagem de Alunos se Inscrevendo</h5>   </a>
-    <a href="{% url 'histograma' %}">        <h5>Histograma de Interesse de Projetos</h5> </a>
+    
     <a href="{% url 'areas' %}">             <h5>Tendência de Áreas de Interesse</h5>     </a>
     
     <hr>
+
+
     <a href="{% url 'propor' %}">            <h5>Propor Grupos para Projetos</h5>         </a>
 
 {% endblock %}
