@@ -62,7 +62,7 @@ def index(request):
     }
     return render(request, 'index_aluno.html', context=context)
 
-# Exibe um projeto com seus detalhes
+# Exibe um projeto para o aluno aplicar nele, com seus detalhes
 @login_required
 def projeto(request, pk):
     projeto = Projeto.objects.get(pk=pk)
@@ -72,7 +72,7 @@ def projeto(request, pk):
     }
     return render(request, 'projetos/projeto_detail.html', context=context)
 
-# Exibe todos os projetos
+# Exibe todos os projetos para o alunos aplicar
 @login_required
 def projetos(request):
     warnings=""
@@ -702,7 +702,6 @@ def tabela_documentos(request):
     return render(request, 'projetos/tabela_documentos.html', context)
 
 
-
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def todos(request):
@@ -852,17 +851,17 @@ def carrega(request, dado):
 
     return render(request, 'projetos/import.html')
 
-@login_required
-def download(request, path):
-    file_path = os.path.abspath(os.path.join(settings.MEDIA_ROOT, os.path.split(path)[1]) )
-    if ".." in file_path: raise PermissionDenied
-    if "\\" in file_path: raise PermissionDenied
-    if os.path.exists(file_path):
-        with open(file_path, 'rb') as fh:
-            response = HttpResponse(fh.read(), content_type="application/pdf")
-            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
-            return response
-    raise Http404
+# @login_required
+# def download(request, path):
+#     file_path = os.path.abspath(os.path.join(settings.MEDIA_ROOT, os.path.split(path)[1]) )
+#     if ".." in file_path: raise PermissionDenied
+#     if "\\" in file_path: raise PermissionDenied
+#     if os.path.exists(file_path):
+#         with open(file_path, 'rb') as fh:
+#             response = HttpResponse(fh.read(), content_type="application/pdf")
+#             response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+#             return response
+#     raise Http404
 
 @login_required
 #@permission_required('users.altera_professor', login_url='/projetos/')
