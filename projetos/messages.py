@@ -53,19 +53,31 @@ def create_message(aluno, ano, semestre):
         message += '<br>\n'
         message += ("&nbsp;"*4)+'Você já trabalhou e/ou estagiou em alguma empresa de engenharia?<br>\n'
         message += ("&nbsp;"*4)+'Se sim, qual/quais?<br>\n'
-        message += ("&nbsp;"*4)+'<i>'+aluno.trabalhou+'</i>'
+        if aluno.trabalhou:
+            message += ("&nbsp;"*4)+'<i>'+aluno.trabalhou+'</i>'
+        else:
+            message += ("&nbsp;"*4)+'<i>'+'CAMPO NÃO DEFINIDO'+'</i>'
         message += '<br><br>\n\n'
         message += ("&nbsp;"*4)+'Você já participou de atividades sociais?<br>\n'
         message += ("&nbsp;"*4)+'Se sim, qual/quais?<br>\n'
-        message += ("&nbsp;"*4)+'<i>'+aluno.social+'</i>'
+        if aluno.social:
+            message += ("&nbsp;"*4)+'<i>'+aluno.social+'</i>'
+        else:
+            message += ("&nbsp;"*4)+'<i>'+'CAMPO NÃO DEFINIDO'+'</i>'
         message += '<br><br>\n\n'
         message += ("&nbsp;"*4)+'Você já participou de alguma entidade estudantil do Insper?<br>\n'
         message += ("&nbsp;"*4)+'Liste as que você já participou?<br>\n'
-        message += ("&nbsp;"*4)+'<i>'+aluno.entidade+'</i>'
+        if aluno.entidade:
+            message += ("&nbsp;"*4)+'<i>'+aluno.entidade+'</i>'
+        else:
+            message += ("&nbsp;"*4)+'<i>'+'CAMPO NÃO DEFINIDO'+'</i>'
         message += '<br><br>\n\n'
         message += ("&nbsp;"*4)+'Você possui familiares em algum empresa que está aplicando? Ou empresa concorrente direta?<br>\n'
         message += ("&nbsp;"*4)+'Se sim, qual/quais? Qual seu grau de relacionamento.<br>\n'
-        message += ("&nbsp;"*4)+'<i>'+aluno.familia+'</i>'
+        if aluno.familia:
+            message += ("&nbsp;"*4)+'<i>'+aluno.familia+'</i>'
+        else:
+            message += ("&nbsp;"*4)+'<i>'+'CAMPO NÃO DEFINIDO'+'</i>'
         message += '<br><br>\n\n'
         message += '<br>\n'+("&nbsp;"*12)+"atenciosamente, comitê PFE"
         message += '&nbsp;<br>\n'
