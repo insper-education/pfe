@@ -11,22 +11,19 @@
 {% block content %}
     <h3>Lista de e-mails</h3>
 
-    <a href="">Turma 2018.2</a><br>
-    <a href="">Turma 2019.1</a><br>
-    <a href="">Turma 2019.2</a><br>
-    {% if alunos %}
-      <a href="
-      mailto:
-      {% for aluno in alunos %}{{aluno.user.first_name}} {{aluno.user.last_name}} - {{ aluno.get_curso_display }} &lt;{{ aluno.user.email }}&gt;,
-      {% endfor %}
-      ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
-      &amp;subject=PFE%20{{ano}}.{{semestre}}
-      &amp;body=Caros%20alunos,%0D%0A%0D%0A
-      atenciosamente,%20coordenação%20PFE
-      ">Turma {{ano}}.{{semestre}}</a><br>
-    {% else %}
-      <p>Não existem alunos disponíveis.</p>
-    {% endif %}
+    {% for semestre,alunos in mylist %}
+      {% if alunos %}
+        <a href="
+        mailto:
+        {% for aluno in alunos %}{{aluno.user.first_name}} {{aluno.user.last_name}} - {{ aluno.get_curso_display }} &lt;{{ aluno.user.email }}&gt;,
+        {% endfor %}
+        ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
+        &amp;subject=PFE%20{{semestre}}}}
+        &amp;body=Caros%20alunos,%0D%0A%0D%0A
+        atenciosamente,%20coordenação%20PFE
+        ">Turma {{semestre}}</a><br>
+      {% endif %}
+    {% endfor %}
     
     
 {% endblock %}

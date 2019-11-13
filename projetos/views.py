@@ -1170,25 +1170,23 @@ def avisos(request):
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def emails(request):
+    # Deve ter recurso para pegar aluno pelos projetos, opções, pois um aluno que reprova pode aparecer em duas listas.
     configuracao = Configuracao.objects.all().first()
-    # PARA O FUTURO IMPLEMENTAR
-    # if configuracao.semestre==1:
-    #     ano = configuracao.ano
-    #     semestre = 2
-    # else:
-    #     ano = configuracao.ano+1
-    #     semestre = 1
-    
-    # Alunos se inscrevendo atualmente
-    ano = configuracao.ano
-    semestre = configuracao.semestre
-
-    alunos_inscrevendo = Aluno.objects.filter(trancado=False).filter(anoPFE=ano).filter(semestrePFE=semestre).order_by("user__first_name")
-    alunos = alunos_inscrevendo.filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0]) # Conta soh alunos
-    
-    context = {
-        'alunos' : alunos,
-        'ano': ano,
-        'semestre': semestre,
-    }
+    ano = 2018
+    semestre = 2
+    semestres = []
+    alunos = []
+    while True:
+        semestres.append(str(ano)+"."+str(semestre))
+        alunos_inscrevendo = Aluno.objects.filter(trancado=False).filter(anoPFE=ano).filter(semestrePFE=semestre).order_by("user__first_name")
+        alunos.append(alunos_inscrevendo.filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])) # Conta soh alunos
+        if ano == configuracao.ano and semestre == configuracao.semestre:
+            break
+        if semestre==1:
+            semestre = 2
+        else:
+            ano += 1
+            semestre = 1
+    mylist = zip(semestres, alunos)
+    context= {'mylist': mylist }    
     return render(request, 'projetos/emails.html', context=context)
