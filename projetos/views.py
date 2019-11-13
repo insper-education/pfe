@@ -72,29 +72,29 @@ def projeto(request, pk):
     }
     return render(request, 'projetos/projeto_detail.html', context=context)
 
-# Exibe todos os projetos para o alunos aplicar
+# Exibe todos os projetos para os alunos aplicarem
 @login_required
 def projetos(request):
     warnings=""
     configuracao = Configuracao.objects.first()
-    projeto_list = Projeto.objects.filter(ano=configuracao.ano).filter(semestre=configuracao.semestre)
+    projeto_list = Projeto.objects.filter(ano=configuracao.ano).filter(semestre=configuracao.semestre).filter(disponivel=True)
     if request.method == 'POST':
         if timezone.now() > configuracao.prazo:
            return HttpResponse("Prazo para seleção de projetos vencido!") #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
         prioridade = {}
         for p in projeto_list:
-            check_values = request.POST.get('selection'+str(p.pk),0)
+            check_values = request.POST.get('selection'+str(p.pk), "0")
             prioridade[p.pk] = check_values
-        for i in range(1,len(Projeto.objects.all())+1):
-            if i<6 and list(prioridade.values()).count(str(i))==0:
+        for i in range(1,len(projeto_list)+1):
+            if i<6 and list(prioridade.values()).count(str(i)) == 0:
                 warnings += "Nenhum projeto com prioridade "+str(i)+"\n"
-            if list(prioridade.values()).count(str(i))>1:
+            if list(prioridade.values()).count(str(i)) > 1:
                 warnings += "Mais de um projeto com prioridade "+str(i)+"\n"
         if warnings=="":
             aluno = Aluno.objects.get(pk=request.user.pk)
             for p in projeto_list:
-                if prioridade[p.pk]!="0":
-                    if len(aluno.opcoes.filter(pk=p.pk))==0:
+                if prioridade[p.pk] != "0":
+                    if len(aluno.opcoes.filter(pk=p.pk)) == 0:
                         Opcao.objects.create(aluno=aluno, projeto=p, prioridade=int(prioridade[p.pk]))
                     elif Opcao.objects.get(aluno=aluno, projeto=p).prioridade != int(prioridade[p.pk]):
                         opc = Opcao.objects.get(aluno=aluno, projeto=p)
