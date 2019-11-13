@@ -33,7 +33,7 @@
   {% endif %}
   <hr>
   <h3>Empresa: {{ projeto.empresa.nome_empresa }}</h3>
-  <p><strong>endereço:</strong> <a class="tabulado" href="http://maps.google.com/maps?q={{organization.endereco}}">{{ projeto.empresa.endereco|linebreaks }}</a></p>
+  <p><strong>endereço:</strong> <a class="tabulado" href="http://maps.google.com/maps?q={{projeto.empresa.endereco}}">{{ projeto.empresa.endereco|linebreaks }}</a></p>
   {% if projeto.empresa.website %}
     <p><strong>website:</strong>  <a class="tabulado" href="{{ projeto.empresa.website }}"> {{ projeto.empresa.website }} </a></p>
   {% endif %}  
