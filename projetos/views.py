@@ -103,7 +103,7 @@ def projetos(request):
                 else:
                     if len(aluno.opcoes.filter(pk=p.pk))!=0:
                         Opcao.objects.filter(aluno=aluno, projeto=p).delete()
-            message = create_message(aluno)
+            message = create_message(aluno, configuracao.ano, configuracao.semestre)
             
             subject = 'PFE : '+aluno.user.username
             recipient_list = ['pfeinsper@gmail.com',aluno.user.email,]

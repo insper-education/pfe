@@ -7,19 +7,19 @@ from django.core.mail import send_mail
 from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao
 
 def email(subject, recipient_list, message):
-    #subject = 'PFE : '+aluno.user.username
     email_from = settings.EMAIL_HOST_USER
-    #recipient_list = ['pfeinsper@gmail.com',aluno.user.email,]
     return send_mail( subject, message, email_from, recipient_list, html_message=message, fail_silently=True, )
 
-def create_message(aluno):
+# Cria mensagem quando o aluno termina de preencher o formulário de seleção de projetos
+def create_message(aluno, ano, semestre):
         message = '<br>\n'
         message += '&nbsp;&nbsp;Caro aluno: <b>'+aluno.user.first_name+" "+aluno.user.last_name+" ("+aluno.user.username+')</b>\n\n'
         message += '<br><br>\n\n'
         message += '&nbsp;&nbsp;Suas opções de projetos foram:<br>\n'
         message += '<ul>'
         for o in Opcao.objects.filter(aluno=aluno):
-            message += ("&nbsp;"*4)+"<p>"+str(o.prioridade)+" - "+o.projeto.titulo+" ("+o.projeto.empresa.nome_empresa+")</p>\n"
+            if o.projeto.ano == ano and o.projeto.semestre == semestre and o.projeto.disponivel == True:
+                message += ("&nbsp;"*4)+"<p>"+str(o.prioridade)+" - "+o.projeto.titulo+" ("+o.projeto.empresa.nome_empresa+")</p>\n"
         message += '</ul>'
         message += '<br><br>\n\n'
         message += '&nbsp;&nbsp;Suas áreas de interesse são:<br>\n'
