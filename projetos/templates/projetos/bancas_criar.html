@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 14 de Novembro de 2019
+{% endcomment %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+  {% if projetos %}
+    <form method="post" id="criarbancasform" enctype="multipart/form-data">
+      {% csrf_token %}
+      Projeto:
+      <select name="projeto" id="projeto" title="Selecione o projeto" required>
+          <option disabled selected value> -- selecione um projeto -- </option>
+          {% for projeto in projetos %}
+            <option value="{{projeto.id}}">
+              {{projeto.titulo}}
+              ({{projeto.empresa}})
+              [{{projeto.orientador}}]
+            </option>  
+          {% endfor %}
+      </select>
+      <br><br>
+      <div >
+        Inicio: <input id="inicio" type = "datetime-local" name="inicio">
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        Fim: <input id="fim" type = "datetime-local" name="fim">
+      </div><br>
+
+      Local: <input name="local" type="text" size="50"/><br>
+      <br>
+
+      Membro 1 da Banca:
+      <select name="membro1" id="membro1" title="Selecione membro da banca" required>
+          <option disabled selected value> -- selecione um membro da banca -- </option>
+          {% for professor in professores %}
+            <option value="{{professor.id}}">
+              {{professor}}
+            </option>  
+          {% endfor %}
+      </select><br>
+
+      Membro 2 da Banca:
+      <select name="membro2" id="membro2" title="Selecione membro da banca" required>
+          <option disabled selected value> -- selecione um membro da banca -- </option>
+          {% for professor in professores %}
+            <option value="{{professor.id}}">
+              {{professor}}
+            </option>  
+          {% endfor %}
+      </select><br>
+
+      Membro 3 da Banca:
+      <select name="membro3" id="membro3" title="Selecione membro da banca" required>
+          <option disabled selected value> -- selecione um membro da banca -- </option>
+          {% for professor in professores %}
+            <option value="{{professor.id}}">
+              {{professor}}
+            </option>  
+          {% endfor %}
+      </select><br>
+
+      <br><br>
+      <button type="submit">Agendar</button>
+      <p>&nbsp;</p>
+    </form>
+  {% else %}
+    <p>Não existem projetos disponíveis para marcar uma banca.</p>
+  {% endif %}
+  <p>&nbsp;</p>
+
+{% endblock %}

@@ -1205,3 +1205,61 @@ def bancas_lista(request,periodo):
         'bancas' : bancas,
     }
     return render(request, 'projetos/bancas_lista.html', context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def bancas_criar(request):
+    configuracao = Configuracao.objects.all().first()
+    if request.method == 'POST':
+        return HttpResponse("Banca criada.")
+    else:
+        if configuracao.semestre==1:
+            ano = configuracao.ano-1
+            semestre = 2
+        else:
+            ano = configuracao.ano
+            semestre = 1
+        projetos = Projeto.objects.filter(ano=ano).filter(semestre=semestre).filter(disponivel=True).exclude(orientador=None)
+        professores = Professor.objects.all().order_by("user__first_name","user__last_name")
+
+        context= {
+            'projetos' : projetos,
+            'professores' : professores,
+        }
+        return render(request, 'projetos/bancas_criar.html', context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def bancas_buscar(request):
+    configuracao = Configuracao.objects.all().first()
+    if request.method == 'POST':
+        return HttpResponse("Acesso Inadequado.")
+    else:
+        bancas = Banca.objects.all().order_by("startDate")
+        context= {
+            'bancas' : bancas,
+        }
+        return render(request, 'projetos/bancas_buscar.html', context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def bancas_editar(request,pk):
+    configuracao = Configuracao.objects.all().first()
+    if request.method == 'POST':
+        return HttpResponse("Banca editada.")
+    else:
+        if configuracao.semestre==1:
+            ano = configuracao.ano-1
+            semestre = 2
+        else:
+            ano = configuracao.ano
+            semestre = 1
+        projetos = Projeto.objects.filter(ano=ano).filter(semestre=semestre).filter(disponivel=True).exclude(orientador=None)
+        professores = Professor.objects.all().order_by("user__first_name","user__last_name")
+        banca = Banca.objects.get(pk=pk)
+        context= {
+            'projetos' : projetos,
+            'professores' : professores,
+            'banca' : banca,
+        }
+        return render(request, 'projetos/bancas_editar.html', context)

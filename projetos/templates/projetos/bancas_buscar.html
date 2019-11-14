@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 14 de Novembro de 2019
+{% endcomment %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+  <form method="get" id="editarbancasform">
+    {% csrf_token %}
+    <h3>Bancas</h3>
+    {% if bancas %}
+      <table id="BancasTable">
+        {% for banca in bancas %} 
+        <tr class="item">
+          <td>
+            {% if banca.startDate %}
+              <b>Horário:</b> {{banca.startDate.date}} ({{banca.startDate|date:"l"}}) das {{banca.startDate.time}}
+            {% endif %}
+            {% if banca.endDate %}
+              às {{banca.endDate.time}}
+            {% endif %}
+            <br>
+            {% if banca.projeto %}
+              <b>Título do Projeto:</b> 
+              <a href="{% url 'completo' banca.projeto.id %}">
+                {% if banca.projeto.titulo_final %}
+                  {{banca.projeto.titulo_final}}</a><br>
+                  <small>Antigo Título Provisório: 
+                    <a href="{% url 'completo' banca.projeto.id %}">{{banca.projeto.titulo}}</a>
+                  </small>
+                {% else %}
+                  {{banca.projeto.titulo}}</a>
+                {% endif %}
+            {% endif %}
+            <br>        
+            {% if banca.projeto.orientador %}
+              <b>Orientador:</b> 
+                {{banca.projeto.orientador.user.first_name}} 
+                {{banca.projeto.orientador.user.last_name}} 
+                <a href="mailto:{{banca.projeto.orientador.user.email}}">&lt;{{banca.projeto.orientador.user.email}}&gt;</a>
+              <br>
+            {% endif %}
+            <button type="submit" formaction="bancas_editar/{{banca.pk}}">Continue</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+    {% else %}
+      <p>Não existem bancas.</p>
+    {% endif %}
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+  </form>
+{% endblock %}
