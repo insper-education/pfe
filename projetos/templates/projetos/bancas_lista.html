@@ -16,7 +16,7 @@
       <tr class="item">
         <td>
           {% if banca.startDate %}
-            <b>Horário:</b> {{banca.startDate.date}} das {{banca.startDate.time}}
+            <b>Horário:</b> {{banca.startDate.date}} ({{banca.startDate|date:"l"}}) das {{banca.startDate.time}}
           {% endif %}
           {% if banca.endDate %}
             às {{banca.endDate.time}}
