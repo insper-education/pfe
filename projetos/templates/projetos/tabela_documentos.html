@@ -59,7 +59,8 @@
           <td  style="text-align:center"> <!-- (0, 'contrato com empresa') -->
             {% if documento.contratos %}
               {% for doc in documento.contratos %}
-                <a class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
+                <a class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}"
+                target="_blank" rel="noopener noreferrer" 
                 data-toggle="tooltip" data-html="true" animation="true" 
                 {% if doc.1 or doc.2%}
                     title="
@@ -93,6 +94,7 @@
                   class="text-danger" 
                 {% endif %}
               {% endif %}
+              target="_blank" rel="noopener noreferrer"
               data-toggle="tooltip" data-html="true" animation="true" 
               title="{{doc.1}}">
               &#x2B24;</a>
@@ -101,7 +103,7 @@
 
           <td  style="text-align:center"> <!-- (3, 'relatório final') -->
             {% if documento.relatorio_final %}
-              <a class="text-success" href="../..{{MEDIA_URL}}{{documento.relatorio_final}}">&#x2B24;</a>
+              <a class="text-success" href="../..{{MEDIA_URL}}{{documento.relatorio_final}}" target="_blank" rel="noopener noreferrer">&#x2B24;</a>
             {% else %}
               {% if projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
                 <a class="text-warning" data-toggle="tooltip" data-html="true" animation="true" title="aguardando">&#x2B24;</a>
@@ -113,7 +115,7 @@
 
           <td  style="text-align:center"> <!-- (4, 'autorização de publicação empresa') -->
             {% if documento.autorizacao_publicacao_empresa %}
-              <a class="text-success" href="../..{{MEDIA_URL}}{{documento.autorizacao_publicacao_empresa}}">&#x2B24;</a>
+              <a class="text-success" href="../..{{MEDIA_URL}}{{documento.autorizacao_publicacao_empresa}}" target="_blank" rel="noopener noreferrer">&#x2B24;</a>
             {% else %}
               {% if projeto.empresa.sigla == "INOVACAO" %}
                 <a class="text-info" data-toggle="tooltip" data-html="true" animation="true" title="isento">&#x2B24;</a>
@@ -137,6 +139,7 @@
                   class="text-danger" 
                 {% endif %}
               {% endif %}
+              target="_blank" rel="noopener noreferrer"
               data-toggle="tooltip" data-html="true" animation="true" 
               title="{{doc.1}}">
               &#x2B24;</a>
@@ -147,6 +150,7 @@
             {% if documento.outros %}
               {% for doc in documento.outros %}
                 <a class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
+                target="_blank" rel="noopener noreferrer"
                 data-toggle="tooltip" data-html="true" animation="true" 
                 {% if doc.1 or doc.2%}
                     title="
