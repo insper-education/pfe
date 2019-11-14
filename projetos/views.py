@@ -1190,3 +1190,18 @@ def emails(request):
     mylist = zip(semestres, alunos)
     context= {'mylist': mylist }    
     return render(request, 'projetos/emails.html', context=context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def bancas_lista(request,periodo):
+    configuracao = Configuracao.objects.all().first()
+    hoje = datetime.date.today()
+    todas_bancas = Banca.objects.all().order_by("startDate")
+    bancas = todas_bancas.filter(startDate__gt=hoje)
+    
+    context= {
+        'configuracao': configuracao,
+        'bancas' : bancas,
+        'hoje' : hoje,
+    }
+    return render(request, 'projetos/bancas_lista.html', context)

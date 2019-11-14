@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 13 de Novembro de 2019
+{% endcomment %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+  <h3>Listagem de Bancas</h3>
+  {% if bancas %}
+    <table id="BancasTable">
+      {% for banca in bancas %} 
+      <tr class="item">
+        <td>
+          {% if banca.startDate %}
+            <b>Horário:</b> {{banca.startDate.date}} das {{banca.startDate.time}}
+          {% endif %}
+          {% if banca.endDate %}
+            às {{banca.endDate.time}}
+          {% endif %}
+          <br>
+          {% if banca.projeto %}
+            <b>Título do Projeto:</b> 
+            <a href="{% url 'completo' banca.projeto.id %}">
+              {% if banca.projeto.titulo_final %}
+                {{banca.projeto.titulo_final}}</a><br>
+                <small>Antigo Título Provisório: 
+                  <a href="{% url 'completo' banca.projeto.id %}">{{banca.projeto.titulo}}</a>
+                </small>
+              {% else %}
+                {{banca.projeto.titulo}}</a>
+              {% endif %}
+          {% endif %}
+          <br>
+          {% if banca.projeto.empresa.nome_empresa %}
+            <b>Organização Parceira:</b> 
+            <a href="{% url 'organizacao' banca.projeto.empresa.login %}">
+              {{ banca.projeto.empresa.nome_empresa }}
+            </a>
+          {% endif %}
+          <br>
+          {% if banca.location %}
+            <b>Local:</b> {{banca.location}}
+          {% endif %}
+          <br>
+        
+          {% if banca.projeto.orientador %}
+            <b>Orientador:</b> 
+              {{banca.projeto.orientador.user.first_name}} 
+              {{banca.projeto.orientador.user.last_name}} 
+              <a href="mailto:{{banca.projeto.orientador.user.email}}">&lt;{{banca.projeto.orientador.user.email}}&gt;</a>
+            <br>
+          {% endif %}
+
+          <b>Banca</b>
+          <ol>
+            {% if banca.membro1 %}
+            <li>
+              {{banca.membro1.first_name}} {{banca.membro1.last_name}}
+              <a href="mailto:{{banca.membro1.email}}">&lt;{{banca.membro1.email}}&gt;</a>
+            </li>
+            {% endif %}
+            {% if banca.membro2 %}
+            <li>
+              {{banca.membro2.first_name}} {{banca.membro2.last_name}}
+              <a href="mailto:{{banca.membro2.email}}">&lt;{{banca.membro2.email}}&gt;</a>
+            </li>
+            {% endif %}
+            {% if banca.membro3 %}
+            <li>
+              {{banca.membro3.first_name}} {{banca.membro3.last_name}}
+              <a href="mailto:{{banca.membro3.email}}">&lt;{{banca.membro3.email}}&gt;</a>
+            </li>
+            {% endif %}
+          </ol>
+          <b>Alunos</b>
+          <ul>
+            {% for alocacao in banca.projeto.alocacao_set.all %}
+              <li>
+                <a href="{% url 'aluno' alocacao.aluno.id %}">
+                  {{alocacao.aluno.user.first_name}} {{alocacao.aluno.user.last_name}}
+                </a>
+                <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
+                [{{ alocacao.aluno.get_curso_display }}]
+              </li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>Não existem bancas futuras agendadas.</p>
+  {% endif %}
+  <p>&nbsp;</p>
+
+{% endblock %}
