@@ -1195,13 +1195,13 @@ def emails(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def bancas_lista(request,periodo):
     configuracao = Configuracao.objects.all().first()
-    hoje = datetime.date.today()
     todas_bancas = Banca.objects.all().order_by("startDate")
-    bancas = todas_bancas.filter(startDate__gt=hoje)
-    
+    if periodo == "futuras":
+        hoje = datetime.date.today()
+        bancas = todas_bancas.filter(startDate__gt=hoje)
+    else:
+        bancas = todas_bancas
     context= {
-        'configuracao': configuracao,
         'bancas' : bancas,
-        'hoje' : hoje,
     }
     return render(request, 'projetos/bancas_lista.html', context)
