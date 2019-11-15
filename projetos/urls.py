@@ -1,6 +1,10 @@
-# Desenvolvido para o Projeto Final de Engenharia
-# Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-# Data: 15 de Maio de 2019
+#!/usr/bin/env python
+# pylint: disable=C0103
+"""
+Desenvolvido para o Projeto Final de Engenharia
+Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+Data: 15 de Maio de 2019
+"""
 
 from django.urls import path
 
@@ -24,7 +28,6 @@ urlpatterns = [
     path('completo/<int:pk>', views.completo, name='completo'),
     path('dinamicas/', views.dinamicas, name='dinamicas'),
     path('documentos/', views.documentos, name='documentos'),
-    #path('download/<str:path>', views.download, name='download'),
     path('encontros/', views.encontros, name='encontros'),
     path('emails/', views.emails, name='emails'),
     path('email_backup/', views.email_backup, name='email_backup'),
@@ -43,11 +46,10 @@ urlpatterns = [
     path('propor/', views.propor, name='propor'),
     path('reembolso/', views.reembolso, name='reembolso'),
     path('relatorio/<str:modelo>/<str:formato>', views.relatorio, name='relatorio'),
-    path('relatorio_backup/', views.relatorio_backup, name='relatorio_backup'),    
+    path('relatorio_backup/', views.relatorio_backup, name='relatorio_backup'),
     path('relatorios/', views.relatorios, name='relatorios'),
     path('servico/', views.servico, name='servico'),
     path('submissao/', views.submissao, name='submissao'),
     path('tabela_documentos/', views.tabela_documentos, name='tabela_documentos'),
     path('todos/', views.todos, name='todos'),
-
 ]

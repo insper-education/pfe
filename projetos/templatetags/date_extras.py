@@ -1,8 +1,11 @@
-# Desenvolvido para o Projeto Final de Engenharia
-# Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-# Data: 18 de Outubro de 2019
-
-#Baseado em https://stackoverflow.com/questions/19598213/generating-a-date-relative-to-another-date-in-django-template
+#!/usr/bin/env python
+"""
+Desenvolvido para o Projeto Final de Engenharia
+Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+Data: 18 de Outubro de 2019
+Baseado em:
+ https://stackoverflow.com/questions/19598213/generating-a-date-relative-to-another-date-in-django-template
+"""
 
 import datetime
 
@@ -11,4 +14,5 @@ register = template.Library()
 
 @register.filter
 def plus_days(value, days):
+    """Permite adicionar uma quantidade de dias em uma data nos arquivos de template."""
     return value + datetime.timedelta(days=days)

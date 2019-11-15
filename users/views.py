@@ -1,33 +1,40 @@
-# Desenvolvido para o Projeto Final de Engenharia
-# Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-# Data: 15 de Maio de 2019
+#!/usr/bin/env python
+"""
+Desenvolvido para o Projeto Final de Engenharia
+Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+Data: 15 de Maio de 2019
+"""
 
 from django.utils import timezone
 
 from django.shortcuts import render
-from django.http import Http404, HttpResponseRedirect, HttpResponse
+#from django.http import Http404, HttpResponseRedirect,
+from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views import generic
-from django.contrib import messages
-from django.shortcuts import redirect
-from django.utils.translation import ugettext as _
+#from django.contrib import messages
+#from django.shortcuts import redirect
+#from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 
-from .forms import PFEUserCreationForm, PFEUserForm, AlunoForm
-from .models import PFEUser, Aluno, Professor, Parceiro, Opcao
 from projetos.models import Configuracao, Projeto
+from .forms import PFEUserCreationForm
+#from .forms import PFEUserForm,
+#from .forms import AlunoForm
+from .models import PFEUser, Aluno, Professor, Parceiro, Opcao
 
-from tablib import Dataset
+#from tablib import Dataset
 
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+#from django.shortcuts import render_to_response
+#from django.template import RequestContext
 
 #from django.http import HttpResponse
-from .resources import AlunoResource
+#from .resources import AlunoResource
 
 @login_required
 def perfil(request):
+    """Retorna a página conforme o perfil do usuário."""
     user = PFEUser.objects.get(pk=request.user.pk)
     if user.tipo_de_usuario == 1: #aluno
         aluno = Aluno.objects.get(pk=request.user.pk)
@@ -41,8 +48,7 @@ def perfil(request):
         parceiro = Parceiro.objects.get(pk=request.user.pk)
         context = {'parceiro' : parceiro,}
         return render(request, 'users/profile_detail.html', context=context)
-    return HttpResponse("Seu perfil não foi encontrado!") 
-
+    return HttpResponse("Seu perfil não foi encontrado!")
 
 @login_required
 @transaction.atomic
@@ -51,7 +57,7 @@ def areas_interesse(request):
 
         configuracao = Configuracao.objects.all().first()
         if timezone.now() > configuracao.prazo:
-           return HttpResponse("Prazo para seleção de áreas vencido!") #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
+            return HttpResponse("Prazo para seleção de áreas vencido!") #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
 
         check_values = request.POST.getlist('selection')
         aluno = Aluno.objects.get(pk=request.user.pk)
@@ -114,7 +120,7 @@ def alunos(request):
         tabela_alunos[ano][semestre]["mecânica"] = alunos_semestre.filter(curso__exact='M').count()
         tabela_alunos[ano][semestre]["mecatrônica"] = alunos_semestre.filter(curso__exact='X').count()
         tabela_alunos[ano][semestre]["total"] = alunos_semestre.count()
-        
+
         if ((ano == configuracao.ano) and (semestre == configuracao.semestre)):
             break
 
@@ -123,7 +129,6 @@ def alunos(request):
         else:
             ano += 1
             semestre = 1
-        
 
     context = {
         'alunos_list' : alunos_list,
@@ -148,13 +153,13 @@ def alunos_inscrevendo(request):
     # else:
     #     ano = configuracao.ano+1
     #     semestre = 1
-    
+
     # Alunos se inscrevendo atualmente
     ano = configuracao.ano
     semestre = configuracao.semestre
 
-    alunos_inscrevendo = Aluno.objects.filter(trancado=False).filter(anoPFE=ano).filter(semestrePFE=semestre).order_by("user__first_name")
-    alunos = alunos_inscrevendo.filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0]) # Conta soh alunos
+    alunos_se_inscrevendo = Aluno.objects.filter(trancado=False).filter(anoPFE=ano).filter(semestrePFE=semestre).order_by("user__first_name")
+    alunos = alunos_se_inscrevendo.filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0]) # Conta soh alunos
     num_alunos = alunos.count()
     num_alunos_comp = alunos.filter(curso__exact='C').count() # Conta alunos computacao
     num_alunos_mxt = alunos.filter(curso__exact='X').count() # Conta alunos mecatrônica
@@ -163,14 +168,14 @@ def alunos_inscrevendo(request):
     inscritos = 0
     ninscritos = 0
     opcoes = []
-    for a in alunos:
-        opcao = Opcao.objects.filter(aluno=a).filter(projeto__ano=ano).filter(projeto__semestre=semestre)
+    for aluno in alunos:
+        opcao = Opcao.objects.filter(aluno=aluno).filter(projeto__ano=ano).filter(projeto__semestre=semestre)
         opcoes.append(opcao)
         if opcao.count() >= 5:
-            inscritos+=1
+            inscritos += 1
         else:
-            ninscritos+=1
-    alunos_list = zip(alunos,opcoes)
+            ninscritos += 1
+    alunos_list = zip(alunos, opcoes)
 
     context = {
         'alunos_list' : alunos_list,
@@ -186,7 +191,7 @@ def alunos_inscrevendo(request):
     }
     return render(request, 'users/alunos_inscrevendo.html', context=context)
 
-
+# TROCAR O NOME DESSA FUNÇAO
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def aluno(request, pk):
@@ -206,7 +211,6 @@ def professor_detail(request, pk):
         'projetos': projetos,
     }
     return render(request, 'users/professor_detail.html', context=context)
-
 
 # class AlunoListView(LoginRequiredMixin, generic.ListView):
 #     model = Aluno

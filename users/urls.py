@@ -1,6 +1,10 @@
-# Desenvolvido para o Projeto Final de Engenharia
-# Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-# Data: 15 de Maio de 2019
+#!/usr/bin/env python
+# pylint: disable=C0103
+"""
+Desenvolvido para o Projeto Final de Engenharia
+Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+Data: 15 de Maio de 2019
+"""
 
 from django.urls import path
 from . import views
@@ -12,5 +16,4 @@ urlpatterns = [
     path('areas_interesse/', views.areas_interesse, name='areas_interesse'),
     path('perfil/', views.perfil, name='perfil'),
     path('professor_detail/<int:pk>', views.professor_detail, name='professor_detail'),
-
 ]

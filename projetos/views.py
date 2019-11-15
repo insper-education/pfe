@@ -1,10 +1,13 @@
-# Desenvolvido para o Projeto Final de Engenharia
-# Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-# Data: 15 de Maio de 2019
+#!/usr/bin/env python
+"""
+Desenvolvido para o Projeto Final de Engenharia
+Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+Data: 15 de Maio de 2019
+"""
 
 import os
 import datetime
-import re #regular expression (para o import)
+import re           #regular expression (para o import)
 import tablib
 import csv
 
@@ -30,17 +33,21 @@ from django.utils import timezone
 from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
-from .models import Projeto, Empresa, Configuracao, Disciplina, Evento, Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade
+from .models import Projeto, Empresa, Configuracao, Disciplina, Evento
+from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade
 from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao
-from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource, AlunosResource, ProfessoresResource, ConfiguracaoResource, DisciplinasResource
+from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource
+from .resources import AlunosResource, ProfessoresResource
+from .resources import ConfiguracaoResource, DisciplinasResource
 from .messages import email, create_message
 
 @login_required
 def index(request):
+    """Página principal do sistema do Projeto Final de Engenharia."""
     if Configuracao.objects.all().first().manutencao:
         return render(request, 'projetos/manutencao.html')
-    num_visits = request.session.get('num_visits', 0)     # Number of visits to this view, as counted in the session variable.
-    
+    num_visits = request.session.get('num_visits', 0) # Number of visits to this view, as counted in the session variable.
+
     usuario = PFEUser.objects.get(pk=request.user.pk)
     if usuario.tipo_de_usuario == 1:
         aluno = Aluno.objects.get(pk=request.user.pk)
@@ -49,7 +56,6 @@ def index(request):
         projeto = None
 
     request.session['num_visits'] = num_visits + 1
-
 
     ## REALMENTE EH NECESSARIO ENVIAR PROJETO AQUI? ##
     configuracao = Configuracao.objects.first()
@@ -75,49 +81,50 @@ def projeto(request, pk):
 # Exibe todos os projetos para os alunos aplicarem
 @login_required
 def projetos(request):
-    warnings=""
+    warnings = ""
     configuracao = Configuracao.objects.first()
     projeto_list = Projeto.objects.filter(ano=configuracao.ano).filter(semestre=configuracao.semestre).filter(disponivel=True)
     if request.method == 'POST':
         if timezone.now() > configuracao.prazo:
-           return HttpResponse("Prazo para seleção de projetos vencido!") #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
+            return HttpResponse("Prazo para seleção de projetos vencido!") #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
         prioridade = {}
-        for p in projeto_list:
-            check_values = request.POST.get('selection'+str(p.pk), "0")
-            prioridade[p.pk] = check_values
-        for i in range(1,len(projeto_list)+1):
-            if i<6 and list(prioridade.values()).count(str(i)) == 0:
+        for projeto in projeto_list:
+            check_values = request.POST.get('selection'+str(projeto.pk), "0")
+            prioridade[projeto.pk] = check_values
+        for i in range(1, len(projeto_list)+1):
+            if i < 6 and list(prioridade.values()).count(str(i)) == 0:
                 warnings += "Nenhum projeto com prioridade "+str(i)+"\n"
             if list(prioridade.values()).count(str(i)) > 1:
                 warnings += "Mais de um projeto com prioridade "+str(i)+"\n"
-        if warnings=="":
+        if warnings == "":
             aluno = Aluno.objects.get(pk=request.user.pk)
-            for p in projeto_list:
-                if prioridade[p.pk] != "0":
-                    if len(aluno.opcoes.filter(pk=p.pk)) == 0:
-                        Opcao.objects.create(aluno=aluno, projeto=p, prioridade=int(prioridade[p.pk]))
-                    elif Opcao.objects.get(aluno=aluno, projeto=p).prioridade != int(prioridade[p.pk]):
-                        opc = Opcao.objects.get(aluno=aluno, projeto=p)
-                        opc.prioridade = int(prioridade[p.pk])
+            for projeto in projeto_list:
+                if prioridade[projeto.pk] != "0":
+                    if not aluno.opcoes.filter(pk=projeto.pk): # Se lista for vazia
+                        Opcao.objects.create(aluno=aluno, projeto=projeto, prioridade=int(prioridade[projeto.pk]))
+                    elif Opcao.objects.get(aluno=aluno, projeto=projeto).prioridade != int(prioridade[projeto.pk]):
+                        opc = Opcao.objects.get(aluno=aluno, projeto=projeto)
+                        opc.prioridade = int(prioridade[projeto.pk])
                         opc.save()
                 else:
-                    if len(aluno.opcoes.filter(pk=p.pk))!=0:
-                        Opcao.objects.filter(aluno=aluno, projeto=p).delete()
+                    if aluno.opcoes.filter(pk=projeto.pk): # Se lista não for vazia
+                        Opcao.objects.filter(aluno=aluno, projeto=projeto).delete()
             message = create_message(aluno, configuracao.ano, configuracao.semestre)
-            
-            subject = 'PFE : '+aluno.user.username
-            recipient_list = ['pfeinsper@gmail.com',aluno.user.email,]
-            x = email(subject,recipient_list,message)
-            if(x!=1): message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
 
-            context= {'message': message,}    
+            subject = 'PFE : '+aluno.user.username
+            recipient_list = ['pfeinsper@gmail.com', aluno.user.email,]
+            check = email(subject, recipient_list, message)
+            if check != 1:
+                message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+
+            context = {'message': message,}
             return render(request, 'projetos/confirmacao.html', context)
         else:
-            context= {'warnings': warnings,}    
+            context = {'warnings': warnings,}
             return render(request, 'projetos/projetosincompleto.html', context)
     else:
-        opcoes_list = Opcao.objects.filter(aluno=Aluno.objects.get(pk=request.user.pk)) 
-        context= {
+        opcoes_list = Opcao.objects.filter(aluno=Aluno.objects.get(pk=request.user.pk))
+        context = {
             'projeto_list': projeto_list,
             'opcoes_list': opcoes_list,
             'configuracao': configuracao,
@@ -125,43 +132,44 @@ def projetos(request):
         }
         return render(request, 'projetos/projetos.html', context)
 
-# Exibe um histograma com a procura dos projetos pelos alunos
+
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def histograma(request):
+    """Exibe um histograma com a procura dos projetos pelos alunos."""
     configuracao = Configuracao.objects.all().first()
     opcoes_list = []
     #projeto_list = Projeto.objects.all()
     projeto_list = Projeto.objects.filter(ano=configuracao.ano).filter(semestre=configuracao.semestre)
-    for p in projeto_list:
-        opcoes = Opcao.objects.filter(projeto=p)
+    for projeto in projeto_list:
+        opcoes = Opcao.objects.filter(projeto=projeto)
         opcoes_alunos = opcoes.filter(aluno__user__tipo_de_usuario=1)
         opcoes_validas = opcoes_alunos.filter(aluno__anoPFE=configuracao.ano).filter(aluno__semestrePFE=configuracao.semestre)
         count = 0
-        for o in opcoes_validas:
-            if o.prioridade <= 5:
+        for opcao in opcoes_validas:
+            if opcao.prioridade <= 5:
                 count += 1
         opcoes_list.append(count)
     mylist = zip(projeto_list, opcoes_list)
-    mylist = sorted(mylist, key=lambda x: x[1],reverse=True)
-    context= {'mylist': mylist }    
+    mylist = sorted(mylist, key=lambda x: x[1], reverse=True)
+    context = {'mylist': mylist}
     return render(request, 'projetos/histograma.html', context)
 
 #Busca proxima opcao do aluno
-def getNextOpcao(n,opcoes):
-    n+=1
+def getNextOpcao(n, opcoes):
+    n += 1
     lopcoes = opcoes.filter(prioridade=n)
     num_total_projetos = Projeto.objects.all().count() # Depois filtrar melhor
-    while (len(lopcoes)==0) and (n<=num_total_projetos):
-        n+=1
+    while (not lopcoes) and (n <= num_total_projetos):
+        n += 1
         lopcoes = opcoes.filter(prioridade=n)
-    if len(lopcoes)>0:
+    if lopcoes: # Se a lista tem algum elemento
         return n
     else:
         return 0
 
 #Pega a opcao de preferencia do aluno se possivel
-def getOpcao(n,opcoes, min_group, max_group, projetos_ajustados):
+def getOpcao(n, opcoes, min_group, max_group, projetos_ajustados):
     configuracao = Configuracao.objects.all().first()
     opcao = opcoes.get(prioridade=n)
     while True:
@@ -170,15 +178,15 @@ def getOpcao(n,opcoes, min_group, max_group, projetos_ajustados):
         opcoesp_validas = opcoesp_alunos.filter(aluno__anoPFE=configuracao.ano).filter(aluno__semestrePFE=configuracao.semestre)
         if len(opcoesp_validas) >= min_group: #Verifica se o projeto tem numero minimo de alunos aplicando
             # checa se alunos no projeto ja tem CR maior dos que ja estao no momento no projeto
-            crh = 0  
+            crh = 0
             for ov in projetos_ajustados[opcao.projeto]:
                 if ov.aluno.cr > opcao.aluno.cr:
                     crh += 1 #conta cada aluno com cr maior que o aluno sendo alocado
             if crh < max_group:
                 break #se tudo certo retorna esse projeto mesmo
         # Nao achou tentando outra opcao
-        nx = getNextOpcao(n,opcoes)
-        if(nx!=0):
+        nx = getNextOpcao(n, opcoes)
+        if nx != 0:
             opcao = opcoes.get(prioridade=nx)
             break
         else:  # caso nao encontre mais nenhuma opcao valida
@@ -198,69 +206,68 @@ def propor(request):
     opcoes_list = []
     projetos = Projeto.objects.all()
     if request.method == 'POST':
-        min_group = int(request.POST.get('min',0))
-        max_group = int(request.POST.get('max',5))
+        min_group = int(request.POST.get('min', 0))
+        max_group = int(request.POST.get('max', 5))
         projetos_ajustados = {}
         alunos = Aluno.objects.filter(user__tipo_de_usuario=1).filter(anoPFE=configuracao.ano).filter(semestrePFE=configuracao.semestre)
-        
+
         #Checa se o CR de todos os alunos esta coreto
         for aluno in alunos:
-            if(aluno.cr < 5.0):
+            if aluno.cr < 5.0:
                 return HttpResponse("Aluno: "+aluno.user.first_name+" "+aluno.user.last_name+" ("+aluno.user.username+') com CR = '+str(aluno.cr))
 
         #Cria Lista para todos os projetos
         for p in projetos:
-            projetos_ajustados[p]=[]
+            projetos_ajustados[p] = []
 
         #Posiciona os alunos nas suas primeiras opcoes (supondo projeto permitir)
         for aluno in alunos:
             opcoes = Opcao.objects.filter(aluno=aluno)
             if len(opcoes) >= 5: # checa se aluno preencheu formulario
-                opcoes1 = getOpcao(1,opcoes,min_group,max_group,projetos_ajustados) #busca nas opcoes do aluno
+                opcoes1 = getOpcao(1, opcoes, min_group, max_group, projetos_ajustados) #busca nas opcoes do aluno
                 projetos_ajustados[opcoes1.projeto].append(opcoes1)
-        
+
         #Posiciona os alunos nas suas melhores opcoes sem estourar o tamanho do grupo
         balanceado = False
         count = 200
-        menor_grupo=1 # usado para elimnar primeiro grupos de 1, depois de 2, etc
-        while (not(balanceado)) and (count>0):
+        menor_grupo = 1 # usado para elimnar primeiro grupos de 1, depois de 2, etc
+        while (not balanceado) and (count > 0):
             balanceado = True
-            
             balanceado_max = False
             # Removendo alunos de grupos superlotados
-            while (not(balanceado_max)) and (count>0):
+            while (not balanceado_max) and (count > 0):
                 count -= 1 # para nao correr o risco de um loop infinito
                 balanceado_max = True
                 for pr, ops in projetos_ajustados.items():
                     if len(ops) > max_group: # Checa se projeto esta superlotado
                         remove_opcao = None
                         for o in range(len(ops)):
-                            if(ops[o].prioridade < 5): #Nao move aluno para prioridade menor que 5 (REVER)
-                                if(remove_opcao is None):
+                            if ops[o].prioridade < 5: #Nao move aluno para prioridade menor que 5 (REVER)
+                                if remove_opcao is None:
                                     remove_opcao = ops[o]
-                                elif( (ops[o].aluno.cr * (1-((ops[o].prioridade-1)*pref_pri_cr)))  <  (remove_opcao.aluno.cr * (1-((remove_opcao.prioridade-1)*pref_pri_cr) ) ) ):
+                                elif (ops[o].aluno.cr * (1-((ops[o].prioridade-1)*pref_pri_cr))) < (remove_opcao.aluno.cr * (1-((remove_opcao.prioridade-1)*pref_pri_cr))):
                                     remove_opcao = ops[o]
                         if remove_opcao is not None:
                             opcoes = Opcao.objects.filter(aluno=remove_opcao.aluno)
-                            no = getNextOpcao(remove_opcao.prioridade,opcoes)
+                            no = getNextOpcao(remove_opcao.prioridade, opcoes)
                             if no != 0:
-                                op2 = getOpcao(no,opcoes,min_group,max_group,projetos_ajustados) #busca nas opcoes do aluno
+                                op2 = getOpcao(no, opcoes, min_group, max_group, projetos_ajustados) #busca nas opcoes do aluno
                                 if op2 != None:
                                     balanceado_max = False
                                     balanceado = False
-                                    menor_grupo=1
+                                    menor_grupo = 1
                                     projetos_ajustados[pr].remove(remove_opcao)
                                     projetos_ajustados[op2.projeto].append(op2)
                                     #print("Movendo(a) "+remove_opcao.aluno.user.first_name.lower()+" (DE): "+pr.titulo+" (PARA):"+op2.projeto.titulo)
-            
+
             # Realocando alunos de grupos muito pequenos (um aluno por vez)
             for pr, ops in projetos_ajustados.items():
                 remove_opcao = None
                 remove_projeto = None
-                if (len(ops) > 0) and (len(ops) <= menor_grupo ):
+                if (len(ops) > 0) and (len(ops) <= menor_grupo):
                     for o in range(len(ops)):
-                        if(remove_opcao is None):
-                            if(ops[o].prioridade < 5):  # So para não tirar aluno com prioridade maior que 5
+                        if remove_opcao is None:
+                            if ops[o].prioridade < 5:  # So para não tirar aluno com prioridade maior que 5
                                 remove_opcao = ops[o]
                                 remove_projeto = pr
                         elif(ops[o].aluno.cr < remove_opcao.aluno.cr) and (ops[o].prioridade < 5):
@@ -268,24 +275,24 @@ def propor(request):
                             remove_projeto = pr
                 if remove_opcao is not None:
                     opcoes = Opcao.objects.filter(aluno=remove_opcao.aluno)
-                    no = getNextOpcao(remove_opcao.prioridade,opcoes)
+                    no = getNextOpcao(remove_opcao.prioridade, opcoes)
                     if no != 0:
-                        op2 = getOpcao(no,opcoes,min_group,max_group,projetos_ajustados) #busca nas opcoes do aluno
+                        op2 = getOpcao(no, opcoes, min_group, max_group, projetos_ajustados) #busca nas opcoes do aluno
                         if op2 != None:
                             balanceado = False
-                            menor_grupo=1
+                            menor_grupo = 1
                             projetos_ajustados[remove_projeto].remove(remove_opcao)
                             projetos_ajustados[op2.projeto].append(op2)
                             #print("Movendo(b) "+remove_opcao.aluno.user.first_name.lower()+" (DE): "+remove_projeto.titulo+" (PARA):"+op2.projeto.titulo)
 
-            if (menor_grupo<min_group) and balanceado:  # caso todos os grupos com menor_grupo ja foram
+            if (menor_grupo < min_group) and balanceado:  # caso todos os grupos com menor_grupo ja foram
                 menor_grupo += 1
                 balanceado = False
 
 
         #Cria lista para enviar para o template html
         for pr, ops in projetos_ajustados.items():
-            if len(ops) > 0 :
+            if len(ops) > 0:
                 projeto_list.append(pr)
                 opcoes_list.append(ops)
         mylist = zip(projeto_list, opcoes_list)
@@ -295,11 +302,11 @@ def propor(request):
             opcoes_alunos = opcoes.filter(aluno__user__tipo_de_usuario=1)
             opcoes_validas = opcoes_alunos.filter(aluno__anoPFE=configuracao.ano).filter(aluno__semestrePFE=configuracao.semestre)
             opcoes1 = opcoes_validas.filter(prioridade=1)
-            if len(opcoes1) > 0 :
+            if len(opcoes1) > 0:
                 projeto_list.append(p)
                 opcoes_list.append(opcoes1)
         mylist = zip(projeto_list, opcoes_list)
-    context= {
+    context = {
         'mylist': mylist,
         'length': len(projeto_list),
     }
@@ -319,7 +326,7 @@ def professor(request):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def completo(request, pk):
     projeto = Projeto.objects.filter(pk=pk).first()  # acho que tem de ser get
-    opcoes = Opcao.objects.filter(projeto=projeto) 
+    opcoes = Opcao.objects.filter(projeto=projeto)
     configuracao = Configuracao.objects.all().first()
     context = {
         'projeto': projeto,
@@ -358,7 +365,7 @@ def areas(request):
     eficiencia_energetica = alunos.filter(eficiencia_energetica=True).count()
     administracao_economia_financas = alunos.filter(administracao_economia_financas=True).count()
 
-    context= {
+    context = {
         'inovacao_social':inovacao_social,
         'ciencia_dos_dados':ciencia_dos_dados,
         'modelagem_3D':modelagem_3D,
@@ -395,7 +402,7 @@ def organizacoes(request):
     total_organizacoes = Empresa.objects.all().count()
     total_submetidos = Projeto.objects.all().count()
     total_fechados = Projeto.objects.filter(alocacao__isnull=False).distinct().count()
-    context= {
+    context = {
         'organizacoes_list': organizacoes_list,
         'total_organizacoes': total_organizacoes,
         'total_submetidos': total_submetidos,
@@ -417,29 +424,29 @@ def organizacao(request, login): #acertar isso para pk
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def export(request, modelo, formato):
-    if(modelo=="projetos"):
+    if modelo == "projetos":
         resource = ProjetosResource()
-    elif(modelo=="organizacoes"):
+    elif modelo == "organizacoes":
         resource = OrganizacoesResource()
-    elif(modelo=="opcoes"):
+    elif modelo == "opcoes":
         resource = OpcoesResource()
-    elif(modelo=="usuarios"):
+    elif modelo == "usuarios":
         resource = UsuariosResource()
-    elif(modelo=="alunos"):
+    elif modelo == "alunos":
         resource = AlunosResource()
-    elif(modelo=="professores"):
+    elif modelo == "professores":
         resource = ProfessoresResource()
-    elif(modelo=="configuracao"):
+    elif modelo == "configuracao":
         resource = ConfiguracaoResource()
     else:
         return HttpResponse("Chamada irregular : Base de dados desconhecida = "+modelo)
     dataset = resource.export()
-    if(formato=="xls" or formato=="xlsx"):
+    if(formato == "xls" or formato == "xlsx"):
         response = HttpResponse(dataset.xlsx, content_type='application/ms-excel')
-        formato="xlsx"
-    elif(formato=="json"):
+        formato = "xlsx"
+    elif formato == "json":
         response = HttpResponse(dataset.json, content_type='application/json')
-    elif(formato=="csv"):
+    elif formato == "csv":
         response = HttpResponse(dataset.csv, content_type='text/csv')
     else:
         return HttpResponse("Chamada irregular : Formato desconhecido = "+formato)
@@ -483,10 +490,10 @@ def create_backup():
 @permission_required("users.altera_professor", login_url='/projetos/')
 def backup(request, formato):
     databook = create_backup()
-    if(formato=="xls" or formato=="xlsx"):
+    if formato == "xls" or formato == "xlsx":
         response = HttpResponse(databook.xlsx, content_type='application/ms-excel')
-        formato="xlsx"
-    elif(formato=="json"):
+        formato = "xlsx"
+    elif formato == "json":
         response = HttpResponse(databook.json, content_type='application/json')
     else:
         return HttpResponse("Chamada irregular : Formato desconhecido = "+formato)
@@ -500,7 +507,7 @@ def email_backup(request):
     subject = 'BACKUP PFE'
     message = "Backup PFE"
     email_from = settings.EMAIL_HOST_USER
-    recipient_list = ['pfeinsper@gmail.com','lpsoares@gmail.com',]
+    recipient_list = ['pfeinsper@gmail.com', 'lpsoares@gmail.com',]
     mail = EmailMessage(subject, message, email_from, recipient_list)
     databook = create_backup()
     mail.attach("backup.xlsx", databook.xlsx, 'application/ms-excel')
@@ -516,20 +523,20 @@ def servico(request):
         check_values = request.POST.getlist('selection')
         if 'manutencao' in check_values:
             #print("true")
-            configuracao.manutencao = True;
+            configuracao.manutencao = True
         else:
             #print("false")
-            configuracao.manutencao = False;
+            configuracao.manutencao = False
         configuracao.save()
         return redirect('/projetos/administracao/')
     else:
-        context= {'manutencao': configuracao.manutencao,}    
+        context = {'manutencao': configuracao.manutencao,}
         return render(request, 'projetos/servico.html', context)
 
 
 def render_to_pdf(template_src, context_dict={}):
     template = get_template(template_src)
-    html  = template.render(context_dict)
+    html = template.render(context_dict)
     result = BytesIO()
     pdf = pisa.pisaDocument(BytesIO(html.encode("utf-8")), result)
     if not pdf.err:
@@ -542,26 +549,26 @@ def render_to_pdf(template_src, context_dict={}):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def relatorio(request, modelo, formato):
     configuracao = Configuracao.objects.all().first()
-    
-    if(modelo=="projetos"):
+
+    if modelo == "projetos":
         context = {
             'projetos': Projeto.objects.all(),
             'configuracao': configuracao,
         }
-        if(formato=="html" or formato=="HTML"):
+        if(formato == "html" or formato == "HTML"):
             return render(request, 'projetos/relatorio_projetos.html', context)
-        elif(formato=="pdf" or formato=="PDF"):
+        elif(formato == "pdf" or formato == "PDF"):
             pdf = render_to_pdf('projetos/relatorio_projetos.html', context)
             return HttpResponse(pdf.getvalue(), content_type='application/pdf')
 
-    elif(modelo=="alunos"):
+    elif modelo == "alunos":
         context = {
             'alunos': Aluno.objects.all().filter(user__tipo_de_usuario=1).filter(anoPFE=configuracao.ano).filter(semestrePFE=configuracao.semestre),
             'configuracao': configuracao,
         }
-        if(formato=="html" or formato=="HTML"):
+        if(formato == "html" or formato == "HTML"):
             return render(request, 'projetos/relatorio_alunos.html', context)
-        elif(formato=="pdf" or formato=="PDF"):
+        elif(formato == "pdf" or formato == "PDF"):
             pdf = render_to_pdf('projetos/relatorio_alunos.html', context)
             return HttpResponse(pdf.getvalue(), content_type='application/pdf')
     else:
@@ -577,7 +584,7 @@ def relatorio_backup(request):
     subject = 'RELATÓRIOS PFE'
     message = "Relatórios PFE"
     email_from = settings.EMAIL_HOST_USER
-    recipient_list = ['pfeinsper@gmail.com','lpsoares@gmail.com',]
+    recipient_list = ['pfeinsper@gmail.com', 'lpsoares@gmail.com',]
     mail = EmailMessage(subject, message, email_from, recipient_list)
     configuracao = Configuracao.objects.all().first()
     context = {
@@ -600,11 +607,11 @@ def fechados(request):
     alunos_list = []
     prioridade_list = []
     nalunos = 0
-    qtd_prioridades = [0,0,0,0,0,0]   # para grafico de pizza no final
+    qtd_prioridades = [0, 0, 0, 0, 0, 0]   # para grafico de pizza no final
 
     for p in Projeto.objects.all():
         alunosPFE = Aluno.objects.filter(alocacao__projeto=p)
-        if len(alunosPFE) > 0 :
+        if len(alunosPFE) > 0:
             projetos.append(p)
             alunos_list.append(alunosPFE)
             nalunos += len(alunosPFE)
@@ -615,15 +622,15 @@ def fechados(request):
                 opcoes_alunos = opcoes.filter(aluno__user__tipo_de_usuario=1)
                 opcoes1 = opcoes_alunos.filter(aluno__alocacao__projeto=p)
                 opcoes2 = opcoes1.filter(aluno=aluno)
-                if len(opcoes2)==1:
+                if len(opcoes2) == 1:
                     prioridade = opcoes2.first().prioridade
                     prioridades.append(prioridade)
                     qtd_prioridades[prioridade-1] += 1
                 else:
                     prioridades.append(0)
-            prioridade_list.append( zip(alunosPFE,prioridades) )
+            prioridade_list.append(zip(alunosPFE, prioridades))
     mylist = zip(projetos, prioridade_list)
-    context= {
+    context = {
         'mylist': mylist,
         'length': len(projetos),
         'nalunos': nalunos,
@@ -636,7 +643,7 @@ def fechados(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def tabela_documentos(request):
     configuracao = Configuracao.objects.all().first()
-    projetos = Projeto.objects.filter(alocacao__isnull=False).distinct().order_by("ano","semestre")
+    projetos = Projeto.objects.filter(alocacao__isnull=False).distinct().order_by("ano", "semestre")
     documentos = []
     for p in projetos:
 
@@ -645,7 +652,7 @@ def tabela_documentos(request):
         # Contratos   -   (0, 'contrato com empresa')
         contratos = []
         for d in Documento.objects.filter(organizacao=p.empresa).filter(tipo_de_documento=0):
-            contratos.append( ( d.documento,d.anotacao,d.data) )
+            contratos.append((d.documento, d.anotacao, d.data))
         contrato["contratos"] = contratos
 
         # Contrato alunos  -  (1, 'contrato entre empresa e aluno')
@@ -654,9 +661,9 @@ def tabela_documentos(request):
         for a in alunos:
             documento = Documento.objects.filter(usuario=a.user).filter(tipo_de_documento=1).last()
             if documento:
-                contratos_alunos.append( ( documento.documento,a.user.first_name+" "+a.user.last_name) )
+                contratos_alunos.append((documento.documento, a.user.first_name+" "+a.user.last_name))
             else:
-                contratos_alunos.append( ( "",a.user.first_name+" "+a.user.last_name) )
+                contratos_alunos.append(("", a.user.first_name+" "+a.user.last_name))
         contrato["contratos_alunos"] = contratos_alunos
 
         # relatorio_final   -   (3, 'relatório final')
@@ -681,20 +688,20 @@ def tabela_documentos(request):
         for a in alunos:
             documento = Documento.objects.filter(usuario=a.user).filter(tipo_de_documento=5).last()
             if documento:
-                autorizacao_publicacao_aluno.append( ( documento.documento,a.user.first_name+" "+a.user.last_name) )
+                autorizacao_publicacao_aluno.append((documento.documento, a.user.first_name+" "+a.user.last_name))
             else:
-                autorizacao_publicacao_aluno.append( ( "",a.user.first_name+" "+a.user.last_name) )
+                autorizacao_publicacao_aluno.append(("", a.user.first_name+" "+a.user.last_name))
         contrato["autorizacao_publicacao_aluno"] = autorizacao_publicacao_aluno
 
         # Outros   -   (14, 'outros')
         outros = []
         for d in Documento.objects.filter(organizacao=p.empresa).filter(tipo_de_documento=14):
-            outros.append( ( d.documento,d.anotacao,d.data) )
+            outros.append((d.documento, d.anotacao, d.data))
         contrato["outros"] = outros
 
 
     mylist = zip(projetos, documentos)
-    context= {
+    context = {
         'configuracao': configuracao,
         'mylist': mylist,
         'MEDIA_URL' : settings.MEDIA_URL,
@@ -710,11 +717,11 @@ def todos(request):
     alunos_list = []
     prioridade_list = []
     nalunos = 0
-    qtd_prioridades = [0,0,0,0,0,0]   # para grafico de pizza no final
+    qtd_prioridades = [0, 0, 0, 0, 0, 0]   # para grafico de pizza no final
 
     for p in Projeto.objects.all():
         alunosPFE = Aluno.objects.filter(alocacao__projeto=p)
-        if len(alunosPFE) > 0 :
+        if len(alunosPFE) > 0:
             projetos.append(p)
             alunos_list.append(alunosPFE)
             nalunos += len(alunosPFE)
@@ -727,15 +734,15 @@ def todos(request):
                 #opcoes1 = opcoes_alunos.filter(aluno__alocado=p)
                 opcoes1 = opcoes_alunos.filter(aluno__alocacao__projeto=p)
                 opcoes2 = opcoes1.filter(aluno=aluno)
-                if len(opcoes2)==1:
+                if len(opcoes2) == 1:
                     prioridade = opcoes2.first().prioridade
                     prioridades.append(prioridade)
                     qtd_prioridades[prioridade-1] += 1
                 else:
                     prioridades.append(0)
-            prioridade_list.append( zip(alunosPFE,prioridades) )
+            prioridade_list.append(zip(alunosPFE, prioridades))
     mylist = zip(projetos, prioridade_list)
-    context= {
+    context = {
         'mylist': mylist,
         'length': len(projetos),
         'nalunos': nalunos,
@@ -743,13 +750,12 @@ def todos(request):
     }
     return render(request, 'projetos/todos.html', context)
 
-
 @login_required
 def calendario(request):
     eventos = Evento.objects.exclude(name="Aula PFE").exclude(name="Laboratório")
     aulas = Evento.objects.filter(name="Aula PFE")
     laboratorios = Evento.objects.filter(name="Laboratório")
-    context= {
+    context = {
         'eventos': eventos,
         'aulas': aulas,
         'laboratorios': laboratorios,
@@ -765,17 +771,17 @@ def submissao(request):
     aluno = Aluno.objects.get(pk=request.user.pk)
     if request.method == 'POST':
         if timezone.now() > configuracao.prazo:
-           return HttpResponse("Prazo para o preenchimento do formulário vencido!") #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
-    
-        aluno.trabalhou = request.POST.get("trabalhou","")
-        aluno.social = request.POST.get("social","")
-        aluno.entidade = request.POST.get("entidade","")
-        aluno.familia = request.POST.get("familia","")
+            return HttpResponse("Prazo para o preenchimento do formulário vencido!") #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
+
+        aluno.trabalhou = request.POST.get("trabalhou", "")
+        aluno.social = request.POST.get("social", "")
+        aluno.entidade = request.POST.get("entidade", "")
+        aluno.familia = request.POST.get("familia", "")
 
         aluno.save()
         return render(request, 'users/atualizado.html',)
     else:
-        context= {
+        context = {
             'trabalhou' : aluno.trabalhou,
             'social' : aluno.social,
             'entidade' : aluno.entidade,
@@ -783,7 +789,7 @@ def submissao(request):
             'entidades' : Entidade.objects.all(),
         }
         return render(request, 'projetos/submissao.html', context)
-        
+
 @login_required
 def documentos(request):
     regulamento = Documento.objects.filter(tipo_de_documento=6).last() # Regulamento PFE
@@ -793,7 +799,7 @@ def documentos(request):
     # = Documento.objects.filter(tipo_de_documento=10).last() # manual da organização parceira
     manual_planejamento = Documento.objects.filter(tipo_de_documento=13).last() # manual de planejamentos
     manual_relatorio = Documento.objects.filter(tipo_de_documento=12).last() # manual de relatórios
-    context= {
+    context = {
         'MEDIA_URL' : settings.MEDIA_URL,
         'regulamento': regulamento,
         'plano_de_aprendizagem': plano_de_aprendizagem,
@@ -807,11 +813,11 @@ def documentos(request):
 ####### PARTE DE I/O  #########
 
 # Faz o upload de arquivos
-def simple_upload(myfile,path="",prefix=""):
-        fs = FileSystemStorage()
-        filename = fs.save(path+prefix+myfile.name, myfile)
-        uploaded_file_url = fs.url(filename)
-        return uploaded_file_url
+def simple_upload(myfile, path="", prefix=""):
+    fs = FileSystemStorage()
+    filename = fs.save(path+prefix+myfile.name, myfile)
+    uploaded_file_url = fs.url(filename)
+    return uploaded_file_url
 
 # https://simpleisbetterthancomplex.com/packages/2016/08/11/django-import-export.html
 # Faz o upload de arquivos CSV para o servidor
@@ -819,12 +825,12 @@ def simple_upload(myfile,path="",prefix=""):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def carrega(request, dado):
     if request.method == 'POST':
-        
+
         dataset = tablib.Dataset()
 
-        if dado=="disciplinas":
+        if dado == "disciplinas":
             resource = DisciplinasResource()
-        if dado=="alunos":
+        if dado == "alunos":
             resource = AlunosResource()
         else:
             raise Http404
@@ -833,9 +839,9 @@ def carrega(request, dado):
         entradas = ""
         for i in new_data:
             string = i.decode("utf-8")
-            entradas += re.sub('[^A-Za-z0-9À-ÿ, \r\n@._]+','', string) # Limpa caracteres especiais
+            entradas += re.sub('[^A-Za-z0-9À-ÿ, \r\n@._]+', '', string) # Limpa caracteres especiais
 
-        imported_data = dataset.load(entradas,format='csv')
+        imported_data = dataset.load(entradas, format='csv')
         dataset.insert_col(0, col=lambda row: None, header="id")
 
         result = resource.import_data(dataset, dry_run=True, raise_errors=True)
@@ -866,13 +872,13 @@ def carrega(request, dado):
 @login_required
 #@permission_required('users.altera_professor', login_url='/projetos/')
 def arquivos(request, documentos, path):
-    local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}".format(documentos, path) )
-    file_path = os.path.abspath( local_path )
+    local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}".format(documentos, path))
+    file_path = os.path.abspath(local_path)
     if ".." in file_path: raise PermissionDenied
     if "\\" in file_path: raise PermissionDenied
     if os.path.exists(file_path):
         doc = Documento.objects.filter(documento=local_path[len(settings.BASE_DIR)+len(settings.MEDIA_URL):]).last()
-        if(doc):
+        if doc:
             if (doc.tipo_de_documento < 6) and (PFEUser.objects.get(pk=request.user.pk).tipo_de_usuario != 2):
                 return HttpResponse("Documento Confidencial")
         with open(file_path, 'rb') as fh:
@@ -884,13 +890,13 @@ def arquivos(request, documentos, path):
 @login_required
 #@permission_required('users.altera_professor', login_url='/projetos/')
 def arquivos2(request, organizacao, usuario, path):
-    local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}/{2}".format(organizacao, usuario, path) )
-    file_path = os.path.abspath( local_path )
+    local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}/{2}".format(organizacao, usuario, path))
+    file_path = os.path.abspath(local_path)
     if ".." in file_path: raise PermissionDenied
     if "\\" in file_path: raise PermissionDenied
     if os.path.exists(file_path):
         doc = Documento.objects.filter(documento=local_path[len(settings.BASE_DIR)+len(settings.MEDIA_URL):]).last()
-        if(doc):
+        if doc:
             if (doc.tipo_de_documento < 6) and (PFEUser.objects.get(pk=request.user.pk).tipo_de_usuario != 2):
                 return HttpResponse("Documento Confidencial")
         with open(file_path, 'rb') as fh:
@@ -908,21 +914,21 @@ def arquivos2(request, organizacao, usuario, path):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def projetos_lista(request, periodo):
     configuracao = Configuracao.objects.all().first()
-    projetos = Projeto.objects.all().order_by("ano","semestre")
-    if periodo=="antigos":
+    projetos = Projeto.objects.all().order_by("ano", "semestre")
+    if periodo == "antigos":
         if configuracao.semestre == 1:
             projetos = projetos.filter(ano__lt=configuracao.ano)
         else:
-            projetos = projetos.filter(ano__lte=configuracao.ano).exclude(ano=configuracao.ano,semestre=2)
-    elif periodo=="atuais":
-        projetos = projetos.filter(ano=configuracao.ano,semestre=configuracao.semestre)
-    elif periodo=="disponiveis":
+            projetos = projetos.filter(ano__lte=configuracao.ano).exclude(ano=configuracao.ano, semestre=2)
+    elif periodo == "atuais":
+        projetos = projetos.filter(ano=configuracao.ano, semestre=configuracao.semestre)
+    elif periodo == "disponiveis":
         if configuracao.semestre == 1:
-            projetos = projetos.filter(ano__gte=configuracao.ano).exclude(ano=configuracao.ano,semestre=1)
+            projetos = projetos.filter(ano__gte=configuracao.ano).exclude(ano=configuracao.ano, semestre=1)
         else:
             projetos = projetos.filter(ano__gt=configuracao.ano)
 
-    context= {
+    context = {
         'projetos': projetos,
         'periodo' : periodo,
         'configuracao' : configuracao,
@@ -948,7 +954,7 @@ def carregar(request):
 def meuprojeto(request):
     user = PFEUser.objects.get(pk=request.user.pk)
     if user.tipo_de_usuario != 1 and user.tipo_de_usuario != 2:
-        return HttpResponse("Você não está cadastrado como aluno ou professor") 
+        return HttpResponse("Você não está cadastrado como aluno ou professor")
     elif user.tipo_de_usuario == 2:
         return redirect('professor_detail', pk=request.user.pk)
     # vvvv Caso seja um aluno  vvv
@@ -968,13 +974,13 @@ def professores(request):
 
     ano = 2018
     semestre = 2
-    while( True ):
+    while True:
         professores = []
         grupos = []
-        for p in Professor.objects.all().order_by("user__first_name","user__last_name"):
+        for p in Professor.objects.all().order_by("user__first_name", "user__last_name"):
             count_grupos = 0
             gruposPFE = Projeto.objects.filter(orientador=p).filter(ano=ano).filter(semestre=semestre)
-            if len(gruposPFE) > 0 :
+            if len(gruposPFE) > 0:
                 for x in gruposPFE: # garante que tem alunos no projeto
                     alunosPFE = Aluno.objects.filter(alocacao__projeto=x)
                     if len(alunosPFE) > 0:
@@ -985,17 +991,17 @@ def professores(request):
         professoresPFE.append(zip(professores, grupos))
         periodo.append(str(ano)+"."+str(semestre))
 
-        if ((ano==configuracao.ano) and (semestre==configuracao.semestre)):
+        if ((ano == configuracao.ano) and (semestre == configuracao.semestre)):
             break
 
-        if(semestre==2):
-            semestre=1
-            ano+=1
+        if semestre == 2:
+            semestre = 1
+            ano += 1
         else:
-            semestre=2
-    
-    anos = zip(professoresPFE,periodo)
-    context= {
+            semestre = 2
+
+    anos = zip(professoresPFE, periodo)
+    context = {
         'anos': anos,
     }
     return render(request, 'projetos/professores.html', context)
@@ -1004,7 +1010,7 @@ def professores(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def bancas(request):
     bancas = Banca.objects.all()
-    context= {
+    context = {
         'bancas': bancas,
     }
     return render(request, 'projetos/bancas.html', context)
@@ -1021,7 +1027,7 @@ def encontros(request):
         agendado = None
         for e in encontros:
             if str(e.id) == check_values[0]:
-                if e.projeto != projeto: 
+                if e.projeto != projeto:
                     e.projeto = projeto
                     e.save()
                 agendado = str(e.startDate)
@@ -1034,7 +1040,7 @@ def encontros(request):
         else:
             return HttpResponse("Problema!")
     else:
-        context= {
+        context = {
             'encontros': encontros,
             'projeto': projeto,
         }
@@ -1046,7 +1052,7 @@ def dinamicas(request):
     configuracao = Configuracao.objects.all().first()
     encontros = Encontro.objects.all()
 
-    context= {
+    context = {
         'encontros': encontros,
         'configuracao' : configuracao,
     }
@@ -1064,7 +1070,7 @@ def carrega_bancos(request):
                 pass
             else:
                 #print('Nome: {}; Código {}'.format(row[0],row[1]))
-                banco = Banco.create(nome=row[0],codigo=row[1])
+                banco = Banco.create(nome=row[0], codigo=row[1])
                 banco.save()
             line_count += 1
     return HttpResponse("Bancos carregados")
@@ -1128,11 +1134,11 @@ def reembolso(request):
         reembolso.valor = request.POST['valor']
 
         reembolso.save() # Preciso salvar para pegar o PK
-        nota_fiscal = simple_upload(request.FILES['arquivo'],path="reembolsos/",prefix=str(reembolso.pk)+"_")
+        nota_fiscal = simple_upload(request.FILES['arquivo'], path="reembolsos/", prefix=str(reembolso.pk)+"_")
         reembolso.nota = nota_fiscal[len(settings.MEDIA_URL):]
 
         reembolso.save()
-        
+
         subject = 'Reembolso PFE : '+usuario.username
         recipient_list = configuracao.recipient_reembolso.split(";")
         recipient_list.append('pfeinsper@gmail.com') #sempre mandar para a conta do gmail
@@ -1141,11 +1147,11 @@ def reembolso(request):
             if projeto.orientador:
                 recipient_list.append(projeto.orientador.user.email) #mandar para o orientador se houver
         message = message_reembolso(usuario, projeto, reembolso)
-        x = email(subject,recipient_list,message)
-        if(x!=1): message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+        check = email(subject, recipient_list, message)
+        if check != 1: message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
         return HttpResponse(message)
     else:
-        bancos = Banco.objects.all().order_by("nome","codigo")
+        bancos = Banco.objects.all().order_by("nome", "codigo")
         context = {
             'usuario': usuario,
             'projeto': projeto,
@@ -1160,7 +1166,7 @@ def avisos(request):
     configuracao = Configuracao.objects.all().first()
     avisos = Aviso.objects.all().order_by("delta")
     dias_passados = (datetime.date.today() - configuracao.t0).days
-    context= {
+    context = {
         'avisos': avisos,
         'configuracao' : configuracao,
         'dias_passados' : dias_passados,
@@ -1182,18 +1188,18 @@ def emails(request):
         alunos.append(alunos_inscrevendo.filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])) # Conta soh alunos
         if ano == configuracao.ano and semestre == configuracao.semestre:
             break
-        if semestre==1:
+        if semestre == 1:
             semestre = 2
         else:
             ano += 1
             semestre = 1
     mylist = zip(semestres, alunos)
-    context= {'mylist': mylist }    
+    context = {'mylist': mylist}
     return render(request, 'projetos/emails.html', context=context)
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
-def bancas_lista(request,periodo):
+def bancas_lista(request, periodo):
     configuracao = Configuracao.objects.all().first()
     todas_bancas = Banca.objects.all().order_by("startDate")
     if periodo == "futuras":
@@ -1201,7 +1207,7 @@ def bancas_lista(request,periodo):
         bancas = todas_bancas.filter(startDate__gt=hoje)
     else:
         bancas = todas_bancas
-    context= {
+    context = {
         'bancas' : bancas,
     }
     return render(request, 'projetos/bancas_lista.html', context)
@@ -1213,16 +1219,16 @@ def bancas_criar(request):
     if request.method == 'POST':
         return HttpResponse("Banca criada.")
     else:
-        if configuracao.semestre==1:
+        if configuracao.semestre == 1:
             ano = configuracao.ano-1
             semestre = 2
         else:
             ano = configuracao.ano
             semestre = 1
         projetos = Projeto.objects.filter(ano=ano).filter(semestre=semestre).filter(disponivel=True).exclude(orientador=None)
-        professores = Professor.objects.all().order_by("user__first_name","user__last_name")
+        professores = Professor.objects.all().order_by("user__first_name", "user__last_name")
 
-        context= {
+        context = {
             'projetos' : projetos,
             'professores' : professores,
         }
@@ -1236,28 +1242,28 @@ def bancas_buscar(request):
         return HttpResponse("Acesso Inadequado.")
     else:
         bancas = Banca.objects.all().order_by("startDate")
-        context= {
+        context = {
             'bancas' : bancas,
         }
         return render(request, 'projetos/bancas_buscar.html', context)
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
-def bancas_editar(request,pk):
+def bancas_editar(request, pk):
     configuracao = Configuracao.objects.all().first()
     if request.method == 'POST':
         return HttpResponse("Banca editada.")
     else:
-        if configuracao.semestre==1:
+        if configuracao.semestre == 1:
             ano = configuracao.ano-1
             semestre = 2
         else:
             ano = configuracao.ano
             semestre = 1
         projetos = Projeto.objects.filter(ano=ano).filter(semestre=semestre).filter(disponivel=True).exclude(orientador=None)
-        professores = Professor.objects.all().order_by("user__first_name","user__last_name")
+        professores = Professor.objects.all().order_by("user__first_name", "user__last_name")
         banca = Banca.objects.get(pk=pk)
-        context= {
+        context = {
             'projetos' : projetos,
             'professores' : professores,
             'banca' : banca,

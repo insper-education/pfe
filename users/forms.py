@@ -1,7 +1,15 @@
+#!/usr/bin/env python
+"""
+Desenvolvido para o Projeto Final de Engenharia
+Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+Data: 15 de Maio de 2019
+"""
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
-from .models import PFEUser, Aluno, Professor, Parceiro
+from .models import PFEUser, Aluno
+#from .models import Professor, Parceiro
 
 class PFEUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm):
