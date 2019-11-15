@@ -93,16 +93,14 @@
 }
 
 .one {
-  width: 30%;
-  border: 1px solid green;
+  width: 20%;
 }
 
 .two {
-  width: 70%;
-  border: 1px solid blue;
+  width: 80%;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 900px) {
   .wrap {
     flex-direction: column-reverse;
   }
@@ -120,10 +118,11 @@
   <br>
   <div class="wrap">
       <div class="one">
-          <a href="{% url 'bancas_criar'%}"><h5>Criar agendamento de Banca</h5></a>
-          <a href="{% url 'bancas_buscar'%}"><h5>Editar agendamento de Banca</h5></a>
-          <a href="{% url 'bancas_lista' 'todas' %}"><h5>Listar Todas as Bancas</h5></a>
-          <a href="{% url 'bancas_lista' 'futuras' %}"><h5>Listar Futuras Bancas</h5></a>
+        <br><br>
+        <a href="{% url 'bancas_criar'%}"><h5>Criar agendamento de Banca</h5></a>
+        <a href="{% url 'bancas_buscar'%}"><h5>Editar agendamento de Banca</h5></a>
+        <a href="{% url 'bancas_lista' 'todas' %}"><h5>Listar Todas as Bancas</h5></a>
+        <a href="{% url 'bancas_lista' 'futuras' %}"><h5>Listar Futuras Bancas</h5></a>
       </div>
       <div class="two" id='calendar'></div>
   </div>

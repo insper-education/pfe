@@ -10,6 +10,7 @@ import datetime
 import re           #regular expression (para o import)
 import tablib
 import csv
+import dateutil.parser
 
 from tablib import Dataset, Databook
 from import_export import resources
@@ -1212,11 +1213,37 @@ def bancas_lista(request, periodo):
     }
     return render(request, 'projetos/bancas_lista.html', context)
 
+def editar_banca(banca,request):
+    """Edita os valores de uma banca por um request Http."""
+    if 'inicio' in request.POST:
+        banca.startDate = dateutil.parser.parse(request.POST['inicio'])
+    if 'fim' in request.POST:
+        banca.endDate = dateutil.parser.parse(request.POST['fim'])
+    if 'local' in request.POST:
+        banca.location = request.POST['local']
+    if 'membro1' in request.POST:
+        banca.membro1 = PFEUser.objects.get(id=int(request.POST['membro1']))
+    else:
+        banca.membro1 = None
+    if 'membro2' in request.POST:
+        banca.membro2 = PFEUser.objects.get(id=int(request.POST['membro2']))
+    else:
+        banca.membro2 = None
+    if 'membro3' in request.POST:
+        banca.membro3 = PFEUser.objects.get(id=int(request.POST['membro3']))
+    else:
+        banca.membro3 = None
+    banca.save()
+
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def bancas_criar(request):
+    """Cria uma banca de avaliação para o projeto."""
     configuracao = Configuracao.objects.all().first()
     if request.method == 'POST':
+        projeto = Projeto.objects.get(id=int(request.POST['projeto']))
+        banca = Banca.create(projeto)
+        editar_banca(banca, request)
         return HttpResponse("Banca criada.")
     else:
         if configuracao.semestre == 1:
@@ -1226,17 +1253,18 @@ def bancas_criar(request):
             ano = configuracao.ano
             semestre = 1
         projetos = Projeto.objects.filter(ano=ano).filter(semestre=semestre).filter(disponivel=True).exclude(orientador=None)
-        professores = Professor.objects.all().order_by("user__first_name", "user__last_name")
+        pessoas = PFEUser.objects.all().filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0]).order_by("first_name", "last_name") # Conta soh professor
 
         context = {
             'projetos' : projetos,
-            'professores' : professores,
+            'pessoas' : pessoas,
         }
         return render(request, 'projetos/bancas_criar.html', context)
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def bancas_buscar(request):
+    """Busca uma banca de avaliação para posteriormente ser editador."""
     configuracao = Configuracao.objects.all().first()
     if request.method == 'POST':
         return HttpResponse("Acesso Inadequado.")
@@ -1250,8 +1278,11 @@ def bancas_buscar(request):
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def bancas_editar(request, pk):
+    """Edita uma banca de avaliação para o projeto."""
     configuracao = Configuracao.objects.all().first()
+    banca = Banca.objects.get(pk=pk)
     if request.method == 'POST':
+        editar_banca(banca, request)
         return HttpResponse("Banca editada.")
     else:
         if configuracao.semestre == 1:
@@ -1261,11 +1292,10 @@ def bancas_editar(request, pk):
             ano = configuracao.ano
             semestre = 1
         projetos = Projeto.objects.filter(ano=ano).filter(semestre=semestre).filter(disponivel=True).exclude(orientador=None)
-        professores = Professor.objects.all().order_by("user__first_name", "user__last_name")
-        banca = Banca.objects.get(pk=pk)
+        pessoas = PFEUser.objects.all().filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0]).order_by("first_name", "last_name") # Conta soh professor
         context = {
             'projetos' : projetos,
-            'professores' : professores,
+            'pessoas' : pessoas,
             'banca' : banca,
         }
         return render(request, 'projetos/bancas_editar.html', context)

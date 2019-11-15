@@ -161,6 +161,12 @@ class Banca(models.Model):
     membro3 = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL, related_name='membro3', help_text='membro da banca')
     def __str__(self):
         return self.projeto.titulo
+    
+    @classmethod
+    def create(cls, projeto):
+        """Cria um objeto (entrada) na Banca."""
+        banca = cls(projeto=projeto)
+        return banca
 
 class Encontro(models.Model):
     """Encontros (para dinâmicas de grupos)."""

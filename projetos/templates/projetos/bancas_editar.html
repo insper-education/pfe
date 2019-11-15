@@ -6,6 +6,18 @@
 {% endcomment %}
 
 {% block head %}
+<script>
+  $(document).ready(function () {     
+    $('#projeto').change(function(){
+      var titulo = $(this).children(':selected').data('titulo');
+      var organizacao = $(this).children(':selected').data('organizacao');
+      var orientador = $(this).children(':selected').data('orientador');
+      $('#titulo').text(titulo);
+      $('#organizacao').text(organizacao);
+      $('#orientador').text(orientador);
+    })
+  });
+</script>
 {% endblock %}
 
 {% block content %}
@@ -13,19 +25,28 @@
     <form method="post" id="criarbancasform" enctype="multipart/form-data">
       {% csrf_token %}
       Projeto:
-      <select name="projeto" id="projeto" title="Selecione o projeto" required>
-          <option disabled selected value> -- selecione um projeto -- </option>
+      <select name="projeto" id="projeto" title="Selecione o projeto"
+      style="width:700px;" required>
           {% for projeto in projetos %}
             <option value="{{projeto.id}}"
+            data-titulo="{{projeto.titulo}}"
+            data-organizacao="{{projeto.empresa}}"
+            data-orientador="{{projeto.orientador}}"
             {% if projeto.id == banca.projeto.id %} selected {% endif %}
             >
+              {{projeto.id}} -
               {{projeto.titulo}}
               ({{projeto.empresa}})
               [{{projeto.orientador}}]
             </option>  
           {% endfor %}
-      </select>
-      <br><br>
+      </select><br><br>
+
+      Título: <label id="titulo" name="titulo">{{banca.projeto.titulo}}</label><br>
+      Organização: <label id="organizacao" name="organizacao">{{banca.projeto.empresa}}</label><br>
+      Orientador: <label id="orientador" name="orientador">{{banca.projeto.orientador}}</label><br>
+
+      <br>
       <div >
         Inicio: <input id="inicio" type="datetime-local" name="inicio">
         &nbsp;&nbsp;&nbsp;&nbsp;
@@ -36,9 +57,9 @@
       <br>
 
       Membro 1 da Banca:
-      <select name="membro1" id="membro1" title="Selecione membro da banca" required>
+      <select name="membro1" id="membro1" title="Selecione membro da banca">
           <option disabled selected value> -- selecione um membro da banca -- </option>
-          {% for professor in professores %}
+          {% for professor in pessoas %}
             <option value="{{professor.id}}">
               {{professor}}
             </option>  
@@ -46,9 +67,9 @@
       </select><br>
 
       Membro 2 da Banca:
-      <select name="membro2" id="membro2" title="Selecione membro da banca" required>
+      <select name="membro2" id="membro2" title="Selecione membro da banca">
           <option disabled selected value> -- selecione um membro da banca -- </option>
-          {% for professor in professores %}
+          {% for professor in pessoas %}
             <option value="{{professor.id}}">
               {{professor}}
             </option>  
@@ -56,9 +77,9 @@
       </select><br>
 
       Membro 3 da Banca:
-      <select name="membro3" id="membro3" title="Selecione membro da banca" required>
+      <select name="membro3" id="membro3" title="Selecione membro da banca">
           <option disabled selected value> -- selecione um membro da banca -- </option>
-          {% for professor in professores %}
+          {% for professor in pessoas %}
             <option value="{{professor.id}}">
               {{professor}}
             </option>  
