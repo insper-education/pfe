@@ -41,11 +41,13 @@ class Empresa(models.Model):
     sigla = models.CharField(max_length=20)
     endereco = models.TextField(max_length=200, help_text='Endereço da Empresa')
     website = models.URLField(max_length=250, null=True, blank=True)
-    informacoes = models.TextField(max_length=1000, null=True, blank=True, help_text='Informações sobre a empresa')
+    informacoes = models.TextField(max_length=1000, null=True, blank=True,
+                                   help_text='Informações sobre a empresa')
 
     class Meta:
         ordering = ['sigla']
-        permissions = (("altera_empresa", "Empresa altera valores"), ("altera_professor", "Professor altera valores"), )
+        permissions = (("altera_empresa", "Empresa altera valores"),
+                       ("altera_professor", "Professor altera valores"), )
     def __str__(self):
         return self.nome_empresa
     #def documento(self):
@@ -53,37 +55,66 @@ class Empresa(models.Model):
 
 class Projeto(models.Model):
     """Dados dos projetos para o PFE."""
-    titulo = models.CharField(max_length=127, help_text='Título Provisório do projeto')
-    titulo_final = models.CharField(max_length=127, null=True, blank=True, help_text='Título Final do projeto')
-    descricao = models.TextField(max_length=2000, help_text='Descricao do projeto')
-    expectativas = models.TextField(max_length=2000, help_text='Expectativas em relação ao projeto')
-    areas = models.TextField(max_length=1000, help_text='Áreas da engenharia envolvidas no projeto')
-    recursos = models.TextField(max_length=1000, help_text='Recursos a serem disponibilizados aos Alunos')
-    anexo = models.FileField(upload_to=get_upload_path, null=True, blank=True, help_text='Documento PDF')
-    imagem = models.ImageField(null=True, blank=True, help_text='Imagem que representa projeto (se houver)')
-    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, help_text='Organização parceira que propôs projeto')
-    departamento = models.TextField(max_length=1000, null=True, blank=True, help_text='Descrição do departamento que propôs o projeto')
-    avancado = models.BooleanField(default=False, help_text='Se for um projeto de PFE Avançado')
-    ano = models.PositiveIntegerField(validators=[MinValueValidator(2018), MaxValueValidator(3018)], help_text='Ano que o projeto comeca')
-    semestre = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(2)], help_text='Semestre que o projeto comeca')
-    disponivel = models.BooleanField(default=False, help_text='Se o projeto está atualmente disponível para os alunos')
-    orientador = models.ForeignKey('users.Professor', null=True, blank=True, on_delete=models.SET_NULL, related_name='professor_orientador', help_text='professor orientador do projeto')
-    perfil_aluno1_computacao = models.BooleanField(default=False, help_text='Perfil desejado para o primeiro aluno se for de computação')
-    perfil_aluno1_mecatronica = models.BooleanField(default=False, help_text='Perfil desejado para o primeiro aluno se for de mecatrônica')
-    perfil_aluno1_mecanica = models.BooleanField(default=False, help_text='Perfil desejado para o primeiro aluno se for de mecânica')
-    perfil_aluno2_computacao = models.BooleanField(default=False, help_text='Perfil desejado para o segundo aluno se for de computação')
-    perfil_aluno2_mecatronica = models.BooleanField(default=False, help_text='Perfil desejado para o segundo aluno se for de mecatrônica')
-    perfil_aluno2_mecanica = models.BooleanField(default=False, help_text='Perfil desejado para o segundo aluno se for de mecânica')
-    perfil_aluno3_computacao = models.BooleanField(default=False, help_text='Perfil desejado para o terceiro aluno se for de computação')
-    perfil_aluno3_mecatronica = models.BooleanField(default=False, help_text='Perfil desejado para o terceiro aluno se for de mecatrônica')
-    perfil_aluno3_mecanica = models.BooleanField(default=False, help_text='Perfil desejado para o terceiro aluno se for de mecânica')
-    perfil_aluno4_computacao = models.BooleanField(default=False, help_text='Perfil desejado para o quarto aluno se for de computação')
-    perfil_aluno4_mecatronica = models.BooleanField(default=False, help_text='Perfil desejado para o quarto aluno se for de mecatrônica')
-    perfil_aluno4_mecanica = models.BooleanField(default=False, help_text='Perfil desejado para o quarto aluno se for de mecânica')
+    titulo = models.CharField(max_length=127,
+                              help_text='Título Provisório do projeto')
+    titulo_final = models.CharField(max_length=127, null=True,
+                                    blank=True, help_text='Título Final do projeto')
+    descricao = models.TextField(max_length=2000,
+                                 help_text='Descricao do projeto')
+    expectativas = models.TextField(max_length=2000,
+                                    help_text='Expectativas em relação ao projeto')
+    areas = models.TextField(max_length=1000,
+                             help_text='Áreas da engenharia envolvidas no projeto')
+    recursos = models.TextField(max_length=1000,
+                                help_text='Recursos a serem disponibilizados aos Alunos')
+    anexo = models.FileField(upload_to=get_upload_path, null=True, blank=True,
+                             help_text='Documento PDF')
+    imagem = models.ImageField(null=True, blank=True,
+                               help_text='Imagem que representa projeto (se houver)')
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE,
+                                help_text='Organização parceira que propôs projeto')
+    departamento = models.TextField(max_length=1000, null=True, blank=True,
+                                    help_text='Descrição do departamento que propôs o projeto')
+    avancado = models.BooleanField(default=False,
+                                   help_text='Se for um projeto de PFE Avançado')
+    ano = models.PositiveIntegerField(validators=[MinValueValidator(2018), MaxValueValidator(3018)],
+                                      help_text='Ano que o projeto comeca')
+    semestre = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(2)],
+                                           help_text='Semestre que o projeto comeca')
+    disponivel = models.BooleanField(default=False,
+                                     help_text='Se projeto está atualmente disponível para alunos')
+    orientador = models.ForeignKey('users.Professor', null=True, blank=True,
+                                   on_delete=models.SET_NULL, related_name='professor_orientador',
+                                   help_text='professor orientador do projeto')
+    perfil_aluno1_computacao = \
+        models.BooleanField(default=False, help_text='Perfil desejado de computação para aluno 1')
+    perfil_aluno1_mecatronica = \
+        models.BooleanField(default=False, help_text='Perfil desejado de mecatrônica para aluno 1')
+    perfil_aluno1_mecanica = \
+        models.BooleanField(default=False, help_text='Perfil desejado de mecânica para aluno 1')
+    perfil_aluno2_computacao = \
+        models.BooleanField(default=False, help_text='Perfil desejado de computação para aluno 2')
+    perfil_aluno2_mecatronica = \
+        models.BooleanField(default=False, help_text='Perfil desejado de mecatrônica para aluno 2')
+    perfil_aluno2_mecanica = \
+        models.BooleanField(default=False, help_text='Perfil desejado de mecânica para aluno 2')
+    perfil_aluno3_computacao = \
+        models.BooleanField(default=False, help_text='Perfil desejado de computação para aluno 3')
+    perfil_aluno3_mecatronica = \
+        models.BooleanField(default=False, help_text='Perfil desejado de mecatrônica para aluno 3')
+    perfil_aluno3_mecanica = \
+        models.BooleanField(default=False, help_text='Perfil desejado de mecânica para aluno 3')
+    perfil_aluno4_computacao = \
+        models.BooleanField(default=False, help_text='Perfil desejado de computação para aluno 4')
+    perfil_aluno4_mecatronica = \
+        models.BooleanField(default=False, help_text='Perfil desejado de mecatrônica para aluno 4')
+    perfil_aluno4_mecanica = \
+        models.BooleanField(default=False, help_text='Perfil desejado de mecânica para aluno 4')
 
     class Meta:
         ordering = ['titulo']
-        permissions = (("altera_empresa", "Empresa altera valores"), ("altera_professor", "Professor altera valores"), )
+        permissions = (("altera_empresa", "Empresa altera valores"),
+                       ("altera_professor", "Professor altera valores"), )
 
     # Methods
     @property
@@ -100,12 +131,18 @@ class Projeto(models.Model):
 
 class Configuracao(models.Model):
     """Armazena os dados básicos de funcionamento do sistema."""
-    ano = models.PositiveIntegerField(validators=[MinValueValidator(2018), MaxValueValidator(3018)], help_text='Ano que o projeto comeca')
-    semestre = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(2)], help_text='Semestre que o projeto comeca')
-    manutencao = models.BooleanField(default=False, help_text='Mostra mensagem de site em manutencao na entrada')
-    prazo = models.DateTimeField(default=datetime.datetime.now, blank=True, help_text='Prazo para os alunos se inscreverem nos projetos')
-    t0 = models.DateField(default=datetime.date.today, blank=True, help_text='Inicio do Semestre Letivo')
-    recipient_reembolso = models.CharField(max_length=127, blank=True, help_text='Separar lista por ponto e virgula')
+    ano = models.PositiveIntegerField(validators=[MinValueValidator(2018), MaxValueValidator(3018)],
+                                      help_text='Ano que o projeto comeca')
+    semestre = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(2)],
+                                           help_text='Semestre que o projeto comeca')
+    manutencao = models.BooleanField(default=False,
+                                     help_text='Mostra mensagem de site em manutencao na entrada')
+    prazo = models.DateTimeField(default=datetime.datetime.now, blank=True,
+                                 help_text='Prazo para os alunos se inscreverem nos projetos')
+    t0 = models.DateField(default=datetime.date.today, blank=True,
+                          help_text='Inicio do Semestre Letivo')
+    recipient_reembolso = models.CharField(max_length=127, blank=True,
+                                           help_text='Separar lista por ponto e virgula')
 
 class ConfiguracaoAdmin(admin.ModelAdmin):
     """Usado para configurar a classe Configuracao."""
@@ -124,18 +161,23 @@ class Disciplina(models.Model):
 
 class Cursada(models.Model):
     """Relacionamento entre um aluno e uma disciplina cursada por ele."""
-    disciplina = models.ForeignKey(Disciplina, on_delete=models.CASCADE, help_text='disciplina cursada pelo aluno')
-    aluno = models.ForeignKey('users.Aluno', on_delete=models.CASCADE, help_text='aluno que cursou a disciplina')
-    nota = models.PositiveSmallIntegerField()
+    disciplina = models.ForeignKey(Disciplina, on_delete=models.CASCADE,
+                                   help_text='disciplina cursada pelo aluno')
+    aluno = models.ForeignKey('users.Aluno', on_delete=models.CASCADE,
+                              help_text='aluno que cursou a disciplina')
+    nota = models.PositiveSmallIntegerField(validators=[MaxValueValidator(10)],
+                                            help_text='nota obtida pelo aluno na disciplina')
     class Meta:
         ordering = ['nota']
     def __str__(self):
         return self.aluno.user.username+" >>> "+self.disciplina.nome
 
 class Recomendada(models.Model):
-    """Para listas as disciplinas recomendadas que um aluno ja tenha cursado para fazer o projeto."""
-    disciplina = models.ForeignKey(Disciplina, on_delete=models.CASCADE, help_text='disciplina recomendada para o projeto')
-    projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, help_text='projeto que recomenda a disciplina')
+    """Disciplinas recomendadas que um aluno ja tenha cursado para fazer o projeto."""
+    disciplina = models.ForeignKey(Disciplina, on_delete=models.CASCADE,
+                                   help_text='disciplina recomendada para o projeto')
+    projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE,
+                                help_text='projeto que recomenda a disciplina')
     def __str__(self):
         return self.projeto.titulo+" >>> "+self.disciplina.nome
 
@@ -143,25 +185,35 @@ class Evento(models.Model):
     """Eventos para a agenda do PFE."""
     name = models.CharField(max_length=50)
     location = models.CharField(blank=True, max_length=50)
-    startDate = models.DateField(default=datetime.date.today, blank=True, help_text='Inicio do Evento')
-    endDate = models.DateField(default=datetime.date.today, blank=True, help_text='Fim do Evento')
+    startDate = models.DateField(default=datetime.date.today, blank=True,
+                                 help_text='Inicio do Evento')
+    endDate = models.DateField(default=datetime.date.today, blank=True,
+                               help_text='Fim do Evento')
     color = models.CharField(max_length=20)
     def __str__(self):
         return self.name
 
 class Banca(models.Model):
     """Bancas do PFE."""
-    projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, help_text='projeto')
-    location = models.CharField(blank=True, max_length=50, help_text='sala em que vai ocorrer banca')
-    startDate = models.DateTimeField(default=datetime.datetime.now, blank=True, help_text='Inicio da Banca')
-    endDate = models.DateTimeField(default=datetime.datetime.now, blank=True, help_text='Fim da Banca')
-    color = models.CharField(max_length=20, blank=True)
-    membro1 = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL, related_name='membro1', help_text='membro da banca')
-    membro2 = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL, related_name='membro2', help_text='membro da banca')
-    membro3 = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL, related_name='membro3', help_text='membro da banca')
+    projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE,
+                                help_text='projeto')
+    location = models.CharField(blank=True, max_length=50,
+                                help_text='sala em que vai ocorrer banca')
+    startDate = models.DateTimeField(default=datetime.datetime.now, blank=True,
+                                     help_text='Inicio da Banca')
+    endDate = models.DateTimeField(default=datetime.datetime.now, blank=True,
+                                   help_text='Fim da Banca')
+    color = models.CharField(max_length=20, blank=True,
+                             help_text='Cor a usada na apresentação da banca na interface gráfica')
+    membro1 = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
+                                related_name='membro1', help_text='membro da banca')
+    membro2 = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
+                                related_name='membro2', help_text='membro da banca')
+    membro3 = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
+                                related_name='membro3', help_text='membro da banca')
     def __str__(self):
         return self.projeto.titulo
-    
+
     @classmethod
     def create(cls, projeto):
         """Cria um objeto (entrada) na Banca."""
@@ -170,19 +222,28 @@ class Banca(models.Model):
 
 class Encontro(models.Model):
     """Encontros (para dinâmicas de grupos)."""
-    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.CASCADE, help_text='projeto')
-    location = models.CharField(blank=True, max_length=50, help_text='sala em que vai ocorrer a dinâmica')
-    startDate = models.DateTimeField(default=datetime.datetime.now, help_text='Inicio da Dinâmica')
-    endDate = models.DateTimeField(default=datetime.datetime.now, help_text='Fim da Dinâmica')
-    facilitador = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL, related_name='facilitador', help_text='facilitador da dinâmica')
+    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.CASCADE,
+                                help_text='projeto')
+    location = models.CharField(blank=True, max_length=50,
+                                help_text='sala em que vai ocorrer a dinâmica')
+    startDate = models.DateTimeField(default=datetime.datetime.now,
+                                     help_text='Inicio da Dinâmica')
+    endDate = models.DateTimeField(default=datetime.datetime.now,
+                                   help_text='Fim da Dinâmica')
+    facilitador = models.ForeignKey('users.PFEUser', null=True, blank=True,
+                                    on_delete=models.SET_NULL, related_name='facilitador',
+                                    help_text='facilitador da dinâmica')
     def __str__(self):
         return str(self.startDate)
 
 class Anotacao(models.Model):
     """Anotacoes de comunicações com as organizações pareceiras."""
-    data = models.DateField(default=datetime.date.today, blank=True, help_text='Data da comunicação')
-    organizacao = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.CASCADE, help_text='Organização parceira')
-    autor = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL, related_name='professor_orientador', help_text='quem fez a anotação')
+    data = models.DateField(default=datetime.date.today, blank=True,
+                            help_text='Data da comunicação')
+    organizacao = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.CASCADE,
+                                    help_text='Organização parceira')
+    autor = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
+                              related_name='professor_orientador', help_text='quem fez a anotação')
     texto = models.TextField(max_length=2000, help_text='Anotação')
     def __str__(self):
         return str(self.data)
@@ -194,12 +255,18 @@ class Anotacao(models.Model):
 
 class Documento(models.Model):
     """Documentos, em geral PDFs, e seus relacionamentos com o PFE."""
-    organizacao = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL, help_text='Empresa que propôs projeto') # Algumas empresas podem ter contrato e não ter projeto
-    usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL, help_text='Usuário do documento')
-    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL, help_text='Documento do Projeto')
-    documento = models.FileField(upload_to=get_upload_path, help_text='Documento PDF')
-    anotacao = models.CharField(null=True, blank=True, max_length=50, help_text='qualquer anotação sobre o documento em questão')
-    data = models.DateField(null=True, blank=True, help_text='Data do documento')
+    organizacao = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL,
+                                    help_text='Empresa que propôs projeto')
+    usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text='Usuário do documento')
+    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text='Documento do Projeto')
+    documento = models.FileField(upload_to=get_upload_path,
+                                 help_text='Documento PDF')
+    anotacao = models.CharField(null=True, blank=True, max_length=50,
+                                help_text='qualquer anotação sobre o documento em questão')
+    data = models.DateField(null=True, blank=True,
+                            help_text='Data do documento')
     TIPO_DE_DOCUMENTO = ( # não mudar a ordem dos números
         (0, 'contrato com empresa'),
         (1, 'contrato entre empresa e aluno'),
@@ -223,8 +290,10 @@ class Documento(models.Model):
 
 class Banco(models.Model):
     """Lista dos Bancos Existentes no Brasil."""
-    nome = models.CharField(max_length=50, help_text='nome do banco')
-    codigo = models.PositiveSmallIntegerField(help_text='código do banco')
+    nome = models.CharField(max_length=50,
+                            help_text='nome do banco')
+    codigo = models.PositiveSmallIntegerField(validators=[MaxValueValidator(999)],
+                                              help_text='código do banco')
 
     @classmethod
     def create(cls, nome, codigo):
@@ -237,14 +306,22 @@ class Banco(models.Model):
 
 class Reembolso(models.Model):
     """Armazena os reembolsos pedidos pelos alunos do PFE."""
-    usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL, help_text='usuário pedindo reembolso')
-    banco = models.ForeignKey(Banco, null=True, on_delete=models.SET_NULL, help_text='banco a se fazer o reembolso')
-    agencia = models.CharField(max_length=6, null=True, blank=True, help_text='agência no banco')
-    conta = models.CharField(max_length=16, null=True, blank=True, help_text='conta no banco')
-    descricao = models.TextField(max_length=2000, help_text='desrição do pedido de reembolso')
-    valor = models.DecimalField(max_digits=5, decimal_places=2, help_text='valor a ser reembolsado')
-    data = models.DateTimeField(default=datetime.datetime.now, help_text='data e hora da criação do pedido de reembolso')
-    nota = models.FileField(upload_to=get_upload_path, null=True, blank=True, help_text='Nota(s) Fiscal(is)')
+    usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text='usuário pedindo reembolso')
+    banco = models.ForeignKey(Banco, null=True, on_delete=models.SET_NULL,
+                              help_text='banco a se fazer o reembolso')
+    agencia = models.CharField(max_length=6, null=True, blank=True,
+                               help_text='agência no banco')
+    conta = models.CharField(max_length=16, null=True, blank=True,
+                             help_text='conta no banco')
+    descricao = models.TextField(max_length=2000,
+                                 help_text='desrição do pedido de reembolso')
+    valor = models.DecimalField(max_digits=5, decimal_places=2,
+                                help_text='valor a ser reembolsado')
+    data = models.DateTimeField(default=datetime.datetime.now,
+                                help_text='data e hora da criação do pedido de reembolso')
+    nota = models.FileField(upload_to=get_upload_path, null=True, blank=True,
+                            help_text='Nota(s) Fiscal(is)')
 
     @classmethod
     def create(cls, usuario):
@@ -258,14 +335,17 @@ class Reembolso(models.Model):
 
 class Aviso(models.Model):
     """Avisos para a Coordenação do PFE."""
-    titulo = models.CharField(max_length=120, null=True, blank=True, help_text='Título do Aviso')
-    delta = models.SmallIntegerField(default=0, help_text='dias passados do início do semestre')
+    titulo = models.CharField(max_length=120, null=True, blank=True,
+                              help_text='Título do Aviso')
+    delta = models.SmallIntegerField(default=0,
+                                     help_text='dias passados do início do semestre')
     #mensagem = models.TextField(max_length=2000, help_text='Anotação')
     def __str__(self):
         return str(self.titulo)
 
 class Entidade(models.Model):
     """Todas as entidades estudantis do Insper"""
-    nome = models.CharField(max_length=100, help_text='nome da entidade estudantil')
+    nome = models.CharField(max_length=100,
+                            help_text='nome da entidade estudantil')
     def __str__(self):
         return self.nome

@@ -47,7 +47,7 @@ def index(request):
     """Página principal do sistema do Projeto Final de Engenharia."""
     if Configuracao.objects.all().first().manutencao:
         return render(request, 'projetos/manutencao.html')
-    num_visits = request.session.get('num_visits', 0) # Number of visits to this view, as counted in the session variable.
+    #num_visits = request.session.get('num_visits', 0) # Numero de visitas a página.
 
     usuario = PFEUser.objects.get(pk=request.user.pk)
     if usuario.tipo_de_usuario == 1:
@@ -56,22 +56,22 @@ def index(request):
     else:
         projeto = None
 
-    request.session['num_visits'] = num_visits + 1
+    #request.session['num_visits'] = num_visits + 1
 
-    ## REALMENTE EH NECESSARIO ENVIAR PROJETO AQUI? ##
     configuracao = Configuracao.objects.first()
     vencido = timezone.now() > configuracao.prazo
     context = {
         'projeto': projeto,
-        'num_visits': num_visits,
         'configuracao': configuracao,
         'vencido': vencido,
     }
+    #'num_visits': num_visits,
+
     return render(request, 'index_aluno.html', context=context)
 
-# Exibe um projeto para o aluno aplicar nele, com seus detalhes
 @login_required
 def projeto(request, pk):
+    """Exibe um projeto para o aluno aplicar nele, com seus detalhes."""
     projeto = Projeto.objects.get(pk=pk)
     context = {
         'projeto': projeto,
@@ -79,15 +79,16 @@ def projeto(request, pk):
     }
     return render(request, 'projetos/projeto_detail.html', context=context)
 
-# Exibe todos os projetos para os alunos aplicarem
 @login_required
 def projetos(request):
+    """Exibe todos os projetos para os alunos aplicarem."""
     warnings = ""
     configuracao = Configuracao.objects.first()
     projeto_list = Projeto.objects.filter(ano=configuracao.ano).filter(semestre=configuracao.semestre).filter(disponivel=True)
     if request.method == 'POST':
         if timezone.now() > configuracao.prazo:
-            return HttpResponse("Prazo para seleção de projetos vencido!") #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
+            return HttpResponse("Prazo para seleção de projetos vencido!")
+            #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
         prioridade = {}
         for projeto in projeto_list:
             check_values = request.POST.get('selection'+str(projeto.pk), "0")
@@ -427,7 +428,7 @@ def organizacao(request, login): #acertar isso para pk
 def cria_anotacao(request, login): #acertar isso para pk
     """Cria um anotação para uma organização parceira."""
     organization = Empresa.objects.get(login=login)  # acho que tem de ser get
-    if request.method == 'POST':        
+    if request.method == 'POST':
         if 'anotacao' in request.POST:
             anotacao = Anotacao.create(organization)
             anotacao.autor = PFEUser.objects.get(pk=request.user.pk)
@@ -1101,40 +1102,40 @@ def carrega_bancos(request):
     return HttpResponse("Bancos carregados")
 
 def message_reembolso(usuario, projeto, reembolso):
-        message = '<br>\n'
-        message += '&nbsp;&nbsp;Caro <b>Dept. de Carreiras</b>\n\n'
-        message += '<br><br>\n\n'
-        message += '&nbsp;&nbsp;Por favor, encaminhem o pedido de reembolso de: '+usuario.first_name+" "+usuario.last_name+" ("+usuario.username+')<br>\n'
-        cpf = str(usuario.cpf)
-        message += '&nbsp;&nbsp;CPF: '+cpf[:3]+'.'+cpf[3:6]+'.'+cpf[6:9]+'-'+cpf[9:11]+'<br>\n'
-        if usuario.aluno.curso == "C":
-            curso = "Computação"
-        elif usuario.aluno.curso == "M":
-            curso = "Mecânica"
-        else:
-            curso = "Mecatrônica"
-        message += '&nbsp;&nbsp;Curso: '+curso+'<br>\n'
-        if projeto:
-            message += '<br>\n'
-            message += '&nbsp;&nbsp;Participante do projeto: '+projeto.titulo+'<br>\n'
+    message = '<br>\n'
+    message += '&nbsp;&nbsp;Caro <b>Dept. de Carreiras</b>\n\n'
+    message += '<br><br>\n\n'
+    message += '&nbsp;&nbsp;Por favor, encaminhem o pedido de reembolso de: '+usuario.first_name+" "+usuario.last_name+" ("+usuario.username+')<br>\n'
+    cpf = str(usuario.cpf)
+    message += '&nbsp;&nbsp;CPF: '+cpf[:3]+'.'+cpf[3:6]+'.'+cpf[6:9]+'-'+cpf[9:11]+'<br>\n'
+    if usuario.aluno.curso == "C":
+        curso = "Computação"
+    elif usuario.aluno.curso == "M":
+        curso = "Mecânica"
+    else:
+        curso = "Mecatrônica"
+    message += '&nbsp;&nbsp;Curso: '+curso+'<br>\n'
+    if projeto:
         message += '<br>\n'
-        message += '&nbsp;&nbsp;Descrição: '+reembolso.descricao+'<br>\n'
-        message += '<br>\n'
-        message += '&nbsp;&nbsp;Banco: '   + reembolso.banco.nome+' ('+str(reembolso.banco.codigo)+')'+'<br>\n'
-        message += '&nbsp;&nbsp;Conta: '   + reembolso.conta+'<br>\n'
-        message += '&nbsp;&nbsp;Agência: ' + reembolso.agencia+'<br>\n'
-        message += '<br>\n'
-        message += '&nbsp;&nbsp;Valor do reembolso: ' + reembolso.valor+'<br>\n'
-        message += '<br>\n'
-        message += '<br>\n'
-        message += '&nbsp;&nbsp;Para isso use o Centro de Custo: 200048 - PROJETO FINAL DE ENGENHARIA<br>\n'
-        message += '&nbsp;&nbsp;Com a conta contábil: 400339 - INSUMOS PARA EQUIPAMENTOS DOS LABORATÓRIOS<br>\n'
-        message += '<br>\n'+("&nbsp;"*12)+"atenciosamente, coordenação do PFE"
-        message += '&nbsp;<br>\n'
-        message += '&nbsp;<br>\n'
-        message += '&nbsp;&nbsp;&nbsp;Obs: O aluno deverá entregar todos as notas fiscais originais, ou senão imprimir, diretamente no departamento de carreiras, sem isso o processo não deverá avançar.<br>\n'
+        message += '&nbsp;&nbsp;Participante do projeto: '+projeto.titulo+'<br>\n'
+    message += '<br>\n'
+    message += '&nbsp;&nbsp;Descrição: '+reembolso.descricao+'<br>\n'
+    message += '<br>\n'
+    message += '&nbsp;&nbsp;Banco: '   + reembolso.banco.nome+' ('+str(reembolso.banco.codigo)+')'+'<br>\n'
+    message += '&nbsp;&nbsp;Conta: '   + reembolso.conta+'<br>\n'
+    message += '&nbsp;&nbsp;Agência: ' + reembolso.agencia+'<br>\n'
+    message += '<br>\n'
+    message += '&nbsp;&nbsp;Valor do reembolso: ' + reembolso.valor+'<br>\n'
+    message += '<br>\n'
+    message += '<br>\n'
+    message += '&nbsp;&nbsp;Para isso use o Centro de Custo: 200048 - PROJETO FINAL DE ENGENHARIA<br>\n'
+    message += '&nbsp;&nbsp;Com a conta contábil: 400339 - INSUMOS PARA EQUIPAMENTOS DOS LABORATÓRIOS<br>\n'
+    message += '<br>\n'+("&nbsp;"*12)+"atenciosamente, coordenação do PFE"
+    message += '&nbsp;<br>\n'
+    message += '&nbsp;<br>\n'
+    message += '&nbsp;&nbsp;&nbsp;Obs: O aluno deverá entregar todos as notas fiscais originais, ou senão imprimir, diretamente no departamento de carreiras, sem isso o processo não deverá avançar.<br>\n'
 
-        return message
+    return message
 
 @login_required
 @transaction.atomic
