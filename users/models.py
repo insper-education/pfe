@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+#pylint: disable=unused-argument
 """
 Desenvolvido para o Projeto Final de Engenharia
 Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
@@ -16,6 +17,7 @@ from projetos.models import Projeto, Empresa
 ####   PARA PORTAR AS AREAS DE INTERESSE DE ALUNOS PARA CÁ, E USAR NO PROEJETO  #####
 #areas de interesse
 class Areas(models.Model):
+    """Áreas de interesse dos projetos de engenharia."""
     inovacao_social = models.BooleanField(default=False)
     ciencia_dos_dados = models.BooleanField(default=False)
     modelagem_3D = models.BooleanField(default=False)
@@ -60,8 +62,8 @@ class Areas(models.Model):
                + ("V" if self.eficiencia_energetica else "F") + " "\
                + ("V" if self.administracao_economia_financas else "F")
 
-# Classe base para todos os usuários do PFE (Alunos, Professores, Parceiros)
 class PFEUser(AbstractUser):
+    """Classe base para todos os usuários do PFE (Alunos, Professores, Parceiros)."""
     # Atualizar para AbstractBaseUser que permite colocar mais caracteres nos campos
     #username
     #first_name
@@ -78,11 +80,12 @@ class PFEUser(AbstractUser):
     tipo_de_usuario = models.PositiveSmallIntegerField(choices=TIPO_DE_USUARIO_CHOICES, default=1)
     cpf = models.CharField(max_length=11, null=True, blank=True, help_text='CPF do usuário')
     def __str__(self):
-        return self.first_name + " " + self.last_name + " (" + self.TIPO_DE_USUARIO_CHOICES[self.tipo_de_usuario-1][1] + ")"
+        return self.first_name + " " + self.last_name + \
+            " (" + self.TIPO_DE_USUARIO_CHOICES[self.tipo_de_usuario-1][1] + ")"
         #return self.username #ver se atualizar isso para first_name não quebra o projeto
 
-# Classe de usuários com estatus de Professor
 class Professor(models.Model):
+    """Classe de usuários com estatus de Professor."""
     user = models.OneToOneField(PFEUser, on_delete=models.CASCADE)
     areas = models.TextField(max_length=500, blank=True)
     website = models.URLField(max_length=250, null=True, blank=True)
@@ -94,26 +97,41 @@ class Professor(models.Model):
     def __str__(self):
         return self.user.first_name+" "+self.user.last_name
 
-# Classe de usuários com estatus de Aluno
 class Aluno(models.Model):
+    """Classe de usuários com estatus de Aluno."""
     TIPOS_CURSO = (
         ('C', 'Computação'),
         ('M', 'Mecânica'),
         ('X', 'Mecatrônica'),
     )
     user = models.OneToOneField(PFEUser, on_delete=models.CASCADE)
-    matricula = models.CharField(max_length=8, null=True, blank=True, help_text='Número de matrícula')
+    matricula = models.CharField(max_length=8, null=True, blank=True,
+                                 help_text='Número de matrícula')
     #bio = models.TextField(max_length=500, blank=True)
-    curso = models.CharField(max_length=1, choices=TIPOS_CURSO, help_text='Curso Matriculado',)
-    opcoes = models.ManyToManyField(Projeto, through='Opcao', help_text='Opcoes de projeto escolhidos')
-    nascimento = models.DateField(null=True, blank=True, help_text='Data de nascimento')
-    local_de_origem = models.CharField(max_length=30, blank=True, help_text='Local de nascimento')
-    email_pessoal = models.EmailField(null=True, blank=True, help_text='e-mail pessoal')
-    anoPFE = models.PositiveIntegerField(null=True, blank=True, validators=[MinValueValidator(2018), MaxValueValidator(3018)], help_text='Ano que cursará o PFE')
-    semestrePFE = models.PositiveIntegerField(null=True, blank=True, validators=[MinValueValidator(1), MaxValueValidator(2)], help_text='Semestre que cursará o PFE')
-    trancado = models.BooleanField(default=False, help_text='Caso o aluno tenha trancado ou abandonado o curso')
-    cr = models.FloatField(default=0, help_text='Coeficiente de Rendimento')
-    #alocado = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL, related_name='aluno_alocado', help_text='projeto selecionado')
+    curso = models.CharField(max_length=1, choices=TIPOS_CURSO,
+                             help_text='Curso Matriculado',)
+    opcoes = models.ManyToManyField(Projeto, through='Opcao',
+                                    help_text='Opcoes de projeto escolhidos')
+    nascimento = models.DateField(null=True, blank=True,
+                                  help_text='Data de nascimento')
+    local_de_origem = models.CharField(max_length=30, blank=True,
+                                       help_text='Local de nascimento')
+    email_pessoal = models.EmailField(null=True, blank=True,
+                                      help_text='e-mail pessoal')
+    anoPFE = models.PositiveIntegerField(null=True, blank=True,
+                                         validators=[MinValueValidator(2018),
+                                                     MaxValueValidator(3018)],
+                                         help_text='Ano que cursará o PFE')
+    semestrePFE = models.PositiveIntegerField(null=True, blank=True,
+                                              validators=[MinValueValidator(1),
+                                                          MaxValueValidator(2)],
+                                              help_text='Semestre que cursará o PFE')
+    trancado = models.BooleanField(default=False,
+                                   help_text='Caso o aluno tenha trancado ou abandonado o curso')
+    cr = models.FloatField(default=0,
+                           help_text='Coeficiente de Rendimento')
+    #alocado = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
+    #                            related_name='aluno_alocado', help_text='projeto selecionado')
 
     #areas de interesse
     inovacao_social = models.BooleanField(default=False)
@@ -143,10 +161,14 @@ class Aluno(models.Model):
     #areas = models.OneToOneField(Areas, on_delete=models.CASCADE)
     #areas = models.OneToOneField(Areas, null=True, blank=True, on_delete=models.CASCADE)
 
-    trabalhou = models.TextField(max_length=1000, null=True, blank=True, help_text='Você já trabalhou e/ou estagio em alguma empresa de engenharia?')
-    social = models.TextField(max_length=1000, null=True, blank=True, help_text='Você já participou de atividade sociais?')
-    entidade = models.TextField(max_length=1000, null=True, blank=True, help_text='Você já participou de alguma entidade estudantil do Insper?')
-    familia = models.TextField(max_length=1000, null=True, blank=True, help_text='Você possui familiares em algum empresa que está aplicando? Ou empresa concorrente?')
+    trabalhou = models.TextField(max_length=1000, null=True, blank=True,
+                                 help_text='Trabalhou ou estagio em alguma empresa de engenharia?')
+    social = models.TextField(max_length=1000, null=True, blank=True,
+                              help_text='Já participou de atividade sociais?')
+    entidade = models.TextField(max_length=1000, null=True, blank=True,
+                                help_text='Já participou de alguma entidade estudantil do Insper?')
+    familia = models.TextField(max_length=1000, null=True, blank=True,\
+              help_text='Possui familiares em empresa que está aplicando? Ou empresa concorrente?')
 
     class Meta:
         ordering = ['user']
@@ -176,8 +198,8 @@ class Aluno(models.Model):
     # opcao4.short_description = 'Opcao 4'
     # opcao5.short_description = 'Opcao 5'
 
-# Opções de Projetos pelos Alunos com suas prioridades
 class Opcao(models.Model):
+    """Opções de Projetos pelos Alunos com suas prioridades."""
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE)
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
     #razao = models.CharField(max_length=200)
@@ -188,8 +210,8 @@ class Opcao(models.Model):
     def __str__(self):
         return self.aluno.user.username+" >>> "+self.projeto.titulo
 
-# Projeto em que o aluno está alocado
 class Alocacao(models.Model):
+    """Projeto em que o aluno está alocado."""
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE)
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
     CONCEITOS = (
@@ -209,8 +231,8 @@ class Alocacao(models.Model):
     def __str__(self):
         return self.aluno.user.username+" >>> "+self.projeto.titulo
 
-# Classe de usuários com estatus de Parceiro (pessoal das organizações parceiras)
 class Parceiro(models.Model):  # da empresa (não do Insper)
+    """Classe de usuários com estatus de Parceiro (pessoal das organizações parceiras)."""
     user = models.OneToOneField(PFEUser, on_delete=models.CASCADE)
     organizacao = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.CASCADE)
     cargo = models.CharField(max_length=50, blank=True, help_text='Cargo Funcional')
@@ -227,18 +249,19 @@ class Parceiro(models.Model):  # da empresa (não do Insper)
     def __str__(self):
         return self.user.username
 
-# Classe de usuários com estatus de Administrador
 class Administrador(models.Model):
+    """Classe de usuários com estatus de Administrador."""
     user = models.OneToOneField(PFEUser, on_delete=models.CASCADE)
     class Meta:
         ordering = ['user']
-        permissions = (("altera_empresa", "Empresa altera valores"), ("altera_professor", "Professor altera valores"), )
+        permissions = (("altera_empresa", "Empresa altera valores"),
+                       ("altera_professor", "Professor altera valores"), )
     def __str__(self):
         return self.user.username
 
-# Quando um usuário do PFE é criado/salvo, seu corespondente específico também é criado
 @receiver(post_save, sender=PFEUser)
 def create_user_dependency(sender, instance, created, **kwargs):
+    """Quando um usuário do PFE é criado/salvo, seu corespondente específico também é criado."""
     if instance.tipo_de_usuario == 1: #aluno
         Aluno.objects.get_or_create(user=instance)
     elif instance.tipo_de_usuario == 2: #professor
@@ -248,9 +271,9 @@ def create_user_dependency(sender, instance, created, **kwargs):
     elif instance.tipo_de_usuario == 4: #administrador
         Administrador.objects.get_or_create(user=instance)
 
-# Quando um usuário do PFE é criado/salvo, seu corespondente específico também é criado
 @receiver(post_save, sender=PFEUser)
 def save_user_dependency(sender, instance, **kwargs):
+    """Quando um usuário do PFE é criado/salvo, seu corespondente específico também é criado."""
     if instance.tipo_de_usuario == 1: #aluno
         instance.aluno.save()
     elif instance.tipo_de_usuario == 2: #professor
