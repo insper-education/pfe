@@ -186,6 +186,11 @@ class Anotacao(models.Model):
     texto = models.TextField(max_length=2000, help_text='Anotação')
     def __str__(self):
         return str(self.data)
+    @classmethod
+    def create(cls, organizacao):
+        """Cria um objeto (entrada) em Anotação."""
+        anotacao = cls(organizacao=organizacao)
+        return anotacao
 
 class Documento(models.Model):
     """Documentos, em geral PDFs, e seus relacionamentos com o PFE."""

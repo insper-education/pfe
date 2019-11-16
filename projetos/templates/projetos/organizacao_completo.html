@@ -7,7 +7,7 @@
 
 {% block content %}
   {% load static %}
-  <h3>Empresa: {{ organization.nome_empresa }}</h3>
+  <h3>Organização: {{ organization.nome_empresa }}</h3>
   {% if organization.website %}
     <strong>website:</strong> <a href="{{ organization.website }}"> {{ organization.website }} </a><br>  
   {% endif %}  
@@ -76,8 +76,8 @@
 
   {% if organization.anotacao_set.all %}
     <hr>
-    <h3>Anotações</h3>
-    {% for anotacao in organization.anotacao_set.all %}
+    <h3>Anotações <a href="{% url 'cria_anotacao' organization.login %}">&#10133;</a></h3>
+    {% for anotacao in organization.anotacao_set.all|dictsortreversed:"data" %}
       {{anotacao.autor.first_name}} {{anotacao.autor.last_name}} [{{anotacao.data}}] : {{anotacao.texto}}<br>
     {% endfor %}
   {% endif %}

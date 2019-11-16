@@ -34,7 +34,7 @@ from django.utils import timezone
 from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
-from .models import Projeto, Empresa, Configuracao, Disciplina, Evento
+from .models import Projeto, Empresa, Configuracao, Disciplina, Evento, Anotacao
 from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade
 from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource
@@ -414,12 +414,36 @@ def organizacoes(request):
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def organizacao(request, login): #acertar isso para pk
-    organization = Empresa.objects.filter(login=login).first()  # acho que tem de ser get
+    """Exibe detalhes das organizações parceiras."""
+    organization = Empresa.objects.get(login=login)  # acho que tem de ser get
     context = {
         'organization': organization,
         'MEDIA_URL' : settings.MEDIA_URL,
     }
     return render(request, 'projetos/organizacao_completo.html', context=context)
+
+@login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
+def cria_anotacao(request, login): #acertar isso para pk
+    """Cria um anotação para uma organização parceira."""
+    organization = Empresa.objects.get(login=login)  # acho que tem de ser get
+    if request.method == 'POST':        
+        if 'anotacao' in request.POST:
+            anotacao = Anotacao.create(organization)
+            anotacao.autor = PFEUser.objects.get(pk=request.user.pk)
+            anotacao.texto = request.POST['anotacao']
+            #anotacao.data = (CRIADA AUTOMATICAMENTE)
+            anotacao.save()
+            return HttpResponse("Anotação criada.<br><a href='../organizacao/"+login+"'>Volta para organização</a>")
+        return HttpResponse("Anotação não criada.")
+    else:
+        context = {
+            'organization': organization,
+        }
+        return render(request, 'projetos/cria_anotacao.html', context=context)
+
+
+
 
 # Exporta dados direto para o navegador nos formatos CSV, XLS e JSON
 @login_required
