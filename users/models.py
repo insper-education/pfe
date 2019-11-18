@@ -232,6 +232,7 @@ class Alocacao(models.Model):
     conceito = models.PositiveSmallIntegerField(choices=CONCEITOS, default=127)
     class Meta:
         permissions = (("altera_professor", "Professor altera valores"), )
+        ordering = ['projeto__ano','projeto__semestre',]
     def __str__(self):
         return self.aluno.user.username+" >>> "+self.projeto.titulo
 

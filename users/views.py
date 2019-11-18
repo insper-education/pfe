@@ -17,12 +17,14 @@ from django.views import generic
 #from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
+from django import template
+
 
 from projetos.models import Configuracao, Projeto
 from .forms import PFEUserCreationForm
 #from .forms import PFEUserForm,
 #from .forms import AlunoForm
-from .models import PFEUser, Aluno, Professor, Parceiro, Opcao
+from .models import PFEUser, Aluno, Professor, Parceiro, Opcao, Alocacao
 
 #from tablib import Dataset
 
