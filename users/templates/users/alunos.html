@@ -30,6 +30,7 @@
               <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome do Aluno</th>
               <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Curso</th>
               <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Período</th>
+              <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">e-mail</th>
           </tr>
           {% for aluno in alunos_list %} 
           <tr class="item">
@@ -58,6 +59,9 @@
                 </td>
             <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
               {{aluno.anoPFE}}.{{aluno.semestrePFE}}
+            </td>
+            <td>
+              <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
             </td>
           </tr>
           {% endfor %}
