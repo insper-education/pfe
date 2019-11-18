@@ -1,7 +1,10 @@
-"""pfe URL Configuration"""
-# Desenvolvido para o Projeto Final de Engenharia
-# Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-# Data: 15 de Maio de 2019
+#!/usr/bin/env python
+"""
+pfe URL Configuration
+Desenvolvido para o Projeto Final de Engenharia
+Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+Data: 15 de Maio de 2019
+"""
 
 from django.contrib import admin
 from django.urls import path, include
@@ -13,7 +16,7 @@ from django.views.generic.base import TemplateView # new
 from projetos import views
 
 urlpatterns = [
-    path('favicon.ico',RedirectView.as_view(url='/static/favicon.ico')),
+    path('favicon.ico', RedirectView.as_view(url='/static/favicon.ico')),
     path('', RedirectView.as_view(url='/projetos/', permanent=True)),
     path('projetos/', include('projetos.urls')),
     path('users/', include('users.urls')), #Transferir tudo para accounts (NO FUTURO)
