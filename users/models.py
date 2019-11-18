@@ -77,8 +77,12 @@ class PFEUser(AbstractUser):
         (3, 'parceiro'),
         (4, 'administrador'),
     )
-    tipo_de_usuario = models.PositiveSmallIntegerField(choices=TIPO_DE_USUARIO_CHOICES, default=1)
-    cpf = models.CharField(max_length=11, null=True, blank=True, help_text='CPF do usuário')
+    tipo_de_usuario = models.PositiveSmallIntegerField(choices=TIPO_DE_USUARIO_CHOICES, default=1,
+                                                       help_text='cada usuário tem um perfil único')
+    cpf = models.CharField(max_length=11, null=True, blank=True,
+                           help_text='CPF do usuário')
+    membro_comite = \
+        models.BooleanField(default=False, help_text='caso membro do comitê do PFE')
     def __str__(self):
         return self.first_name + " " + self.last_name + \
             " (" + self.TIPO_DE_USUARIO_CHOICES[self.tipo_de_usuario-1][1] + ")"

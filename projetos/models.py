@@ -339,7 +339,21 @@ class Aviso(models.Model):
                               help_text='Título do Aviso')
     delta = models.SmallIntegerField(default=0,
                                      help_text='dias passados do início do semestre')
-    #mensagem = models.TextField(max_length=2000, help_text='Anotação')
+    mensagem = models.TextField(max_length=4096, null=True, blank=True,
+                                help_text='mensagem a ser enviar no texto')
+    comite_pfe = \
+        models.BooleanField(default=False, help_text='Lista todos os membros do comitê do PFE')
+    todos_alunos = \
+        models.BooleanField(default=False, help_text='Lista todos os alunos do semestre')
+    aluno_p_projeto = \
+        models.BooleanField(default=False, help_text='Lista alunos por projetos do semestre')
+    todos_orientadores = \
+        models.BooleanField(default=False, help_text='Lista todos os alunos do semestre')
+    orientadores_p_projeto = \
+        models.BooleanField(default=False, help_text='Lista orientadores por projetos do semestre')
+    contatos_nas_organizacoes = \
+        models.BooleanField(default=False, help_text='Lista contatos nas organizações parceiras')
+
     def __str__(self):
         return str(self.titulo)
 
