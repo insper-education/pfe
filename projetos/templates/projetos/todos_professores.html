@@ -16,14 +16,20 @@
       <tr>
         <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Sigla</th>
         <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Organização</th>
+        <th class="text-center">Lattes</th>
       </tr>
       {% for professor in professores %} 
       <tr class="item">
-          <td class="text-center">
+          <td>
             {{professor.user.first_name}} {{professor.user.last_name}} 
           </td>
           <td class="text-center">
             <a href="mailto:{{professor.user.email}}"> &lt;{{professor.user.email}}&gt;</a><br>
+          </td>
+          <td >
+            {% if professor.lattes %}
+              <a rel="noopener noreferrer" target="_blank" href="{{professor.lattes}}"> {{professor.lattes}} </a>
+            {% endif %}
           </td>
         </tr>
       {% endfor %}
