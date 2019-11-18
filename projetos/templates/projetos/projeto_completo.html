@@ -18,6 +18,12 @@
   {% else %}
     <h3>Título: {{projeto.titulo}}</h3>
   {% endif %}
+  <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
+  {% if projeto.avancado %}
+    <strong style="color:red"><u>PFE Avançado</u></strong><br>
+  {% endif %}
+  <br>
+
   <strong>Descrição:</strong> {{ projeto.descricao|linebreaks }}
   {% if projeto.expectativas %}
     <strong>Expectativas de resultados/entregas :</strong> {{ projeto.expectativas|linebreaks }}

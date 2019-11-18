@@ -65,7 +65,9 @@
               {% if aluno.alocacao_set.all %}
                 {% for alocacao in aluno.alocacao_set.all %}
                   <a href="{% url 'completo' alocacao.projeto.id %}">
+                    {% if alocacao.projeto.avancado %}<u>{% endif %}
                     {{alocacao.projeto.ano}}.{{alocacao.projeto.semestre}}
+                    {% if alocacao.projeto.avancado %}</u>{% endif %}
                   </a>
                 {% endfor %}
               {% else %}
@@ -82,10 +84,13 @@
           </tr>
           {% endfor %}
         </table>
+        <small>Projetos <u>sublinhados</u> são de PFE Avançado</small>
         <br>
     {% else %}
       <p>Não existem alunos disponíveis.</p>
     {% endif %}
+
+    <br>
 
     <div id="canvas-holder">
         <canvas id="chart-area"></canvas>
@@ -133,25 +138,25 @@
   
   <br>
   <br>
-  Total de alunos por semestre:
+  Total de alunos (novos) por semestre:
   <table id="AlunosTable">
     <tr>
         <th class="text-center">Ano</th>
-        <th class="text-center">Semestre</th>
+        <th class="text-center" style="border-right: solid 3px;">Semestre</th>
         <th class="text-center">Computação</th>
         <th class="text-center">Mecânica</th>
         <th class="text-center">Mecatrônica</th>
-        <th class="text-center">TOTAL</th>
+        <th class="text-center" style="border-left: solid 3px;">TOTAL</th>
     </tr>
     {% for ano,tabela_ano in tabela_alunos.items %}
       {% for semestre,tabela_semetre in tabela_ano.items %}
         <tr>
             <td class="text-center"> {{ano}} </td>
-            <td class="text-center"> {{semestre}} </td>
+            <td class="text-center" style="border-right: solid 3px;"> {{semestre}} </td>
             <td class="text-center"> {{tabela_semetre.computação}} </td>
             <td class="text-center"> {{tabela_semetre.mecânica}} </td>
             <td class="text-center"> {{tabela_semetre.mecatrônica}} </td>
-            <td class="text-center"><b> {{tabela_semetre.total}} </b></td>
+            <td class="text-center" style="border-left: solid 3px;"><b> {{tabela_semetre.total}} </b></td>
         </tr>
       {% endfor %}
     {% endfor %}

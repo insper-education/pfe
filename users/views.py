@@ -102,7 +102,8 @@ class Usuario(generic.DetailView):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def alunos(request):
     configuracao = Configuracao.objects.all().first()
-    alunos_list = Aluno.objects.filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0]) # Conta soh alunos
+    alunos_list = Aluno.objects.filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])\
+        .order_by("user__first_name", "user__last_name", ) # Conta soh alunos
     num_alunos = alunos_list.count()
     num_alunos_comp = alunos_list.filter(curso__exact='C').count() # Conta alunos computacao
     num_alunos_mxt = alunos_list.filter(curso__exact='X').count() # Conta alunos mecatrônica
