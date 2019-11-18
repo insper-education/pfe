@@ -5,18 +5,21 @@
     Data: 23 de Maio de 2019
 {% endcomment %}
 
+{% block head %}
+{% endblock %}
+
 {% block content %}
   <h3>{{aluno.user.first_name}}&nbsp;{{aluno.user.last_name}}</h3>
   <strong>e-mail:</strong> <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
   {% if aluno.matricula %}
-    <strong>Matrícula:</strong> {{aluno.matricula}} <br>
+    <strong>Matrícula:</strong> {{aluno.matricula}}<br>
   {% endif %}
-  <strong>Curso:</strong> {{aluno.get_curso_display}} <br>
+  <strong>Curso:</strong> {{aluno.get_curso_display}}<br>
+  <strong>Periodo PFE:</strong> {{aluno.anoPFE}}.{{aluno.semestrePFE}}<br>
   <strong>CR:</strong> {{aluno.cr}} <br><br>
   <strong>Áreas de interesse selecionadas:</strong>
 
   <table>
-
       <tr><td>&nbsp;<input type="checkbox"  onclick="return false;"
               {% if aluno.inovacao_social %}checked{% endif %}>&nbsp;
           </td>
@@ -138,21 +141,41 @@
     {% endif %}
 
     {% if aluno.opcao_set.all %}
-  <hr>
-  <h3>Projetos Selecionados</h3>
-  {% for opcao in aluno.opcao_set.all %}
-    <a href="{% url 'completo' opcao.projeto.id %}">
-      <p><b>{{opcao.prioridade}}</b> - 
-        {% if opcao.projeto.titulo_final %}
-            {{opcao.projeto.titulo_final}}
-        {% else %}
-            {{opcao.projeto.titulo}}
-        {% endif %}
-        ({{opcao.projeto.empresa.nome_empresa}})</p>
-    </a>
-  {% endfor %}
-  {% endif %}
-  <p>&nbsp;</p>
-  <p>&nbsp;</p>
+        <hr>
+        <h3>Projetos Selecionados</h3>
+        {% for opcao in aluno.opcao_set.all %}
+            {% if opcao.projeto.ano == opcao.aluno.anoPFE and opcao.projeto.semestre == opcao.aluno.semestrePFE %}
+                <a href="{% url 'completo' opcao.projeto.id %}">
+                <p><b>{{opcao.prioridade}}</b> - 
+                    {% if opcao.projeto.titulo_final %}
+                        {{opcao.projeto.titulo_final}}
+                    {% else %}
+                        {{opcao.projeto.titulo}}
+                    {% endif %}
+                    ({{opcao.projeto.empresa.nome_empresa}})
+                    { {{opcao.projeto.ano}}.{{opcao.projeto.semestre}} }</p>
+                </a>
+            {% endif %}
+        {% endfor %}
+        <p style="line-height:2px">
+            ------------------------------------------------------------------------------------------
+        </p>
+        {% for opcao in aluno.opcao_set.all %}
+            {% if opcao.projeto.ano != opcao.aluno.anoPFE or opcao.projeto.semestre != opcao.aluno.semestrePFE %}
+                <a href="{% url 'completo' opcao.projeto.id %}">
+                <p><b>{{opcao.prioridade}}</b> - 
+                    {% if opcao.projeto.titulo_final %}
+                        {{opcao.projeto.titulo_final}}
+                    {% else %}
+                        {{opcao.projeto.titulo}}
+                    {% endif %}
+                    ({{opcao.projeto.empresa.nome_empresa}})
+                    { {{opcao.projeto.ano}}.{{opcao.projeto.semestre}} }</p>
+                </a>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>      
 
 {% endblock %}

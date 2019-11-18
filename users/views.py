@@ -183,7 +183,6 @@ def alunos_inscrevendo(request):
         'num_alunos_comp': num_alunos_comp,
         'num_alunos_mxt': num_alunos_mxt,
         'num_alunos_mec': num_alunos_mec,
-        'configuracao': configuracao,
         'inscritos': inscritos,
         'ninscritos': ninscritos,
         'ano': ano,
@@ -196,7 +195,9 @@ def alunos_inscrevendo(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def aluno(request, pk):
     aluno = Aluno.objects.filter(pk=pk).first()
+    configuracao = Configuracao.objects.all().first()
     context = {
+        'configuracao': configuracao,
         'aluno': aluno,
     }
     return render(request, 'users/aluno_detail.html', context=context)

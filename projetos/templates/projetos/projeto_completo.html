@@ -5,6 +5,9 @@
     Data: 15 de Maio de 2019
 {% endcomment %}
 
+{% block head %}
+{% endblock %}
+
 {% block content %}
   {% if projeto.titulo_final %}
     <style>
@@ -62,12 +65,15 @@
   <hr>
   <h3>Alunos Aplicando para o Projeto</h3>
   {% for opcao in projeto.opcao_set.all %}
-    {% if configuracao.ano == opcao.aluno.anoPFE and configuracao.semestre == opcao.aluno.semestrePFE %}
+    {% if projeto.ano == opcao.aluno.anoPFE and projeto.semestre == opcao.aluno.semestrePFE %}
     <a href="{% url 'aluno' opcao.aluno.id %}"><p class="{% if opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}">{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}&nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} }</p></a>
     {% endif %}
   {% endfor %}
+  <p style="line-height:2px">
+    ------------------------------------------------------------------------------------------
+  </p>
   {% for opcao in projeto.opcao_set.all %}
-    {% if configuracao.ano != opcao.aluno.anoPFE or configuracao.semestre != opcao.aluno.semestrePFE %}
+    {% if projeto.ano != opcao.aluno.anoPFE or projeto.semestre != opcao.aluno.semestrePFE %}
     <a href="{% url 'aluno' opcao.aluno.id %}"><p class="red-bold">{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}&nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} } </p></a>
     {% endif %}
   {% endfor %}
