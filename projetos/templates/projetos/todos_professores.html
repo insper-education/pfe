@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 18 de Novembro de 2019
+{% endcomment %}
+
+{% block head %}
+<script src="https://www.w3schools.com/lib/w3.js"></script>
+{% endblock %}
+
+{% block content %}
+  <h3>Professores</h3>
+  {% if professores %}
+    <table id="OrganizacoesTable">
+      <tr>
+        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Sigla</th>
+        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Organização</th>
+      </tr>
+      {% for professor in professores %} 
+      <tr class="item">
+          <td class="text-center">
+            {{professor.user.first_name}} {{professor.user.last_name}} 
+          </td>
+          <td class="text-center">
+            <a href="mailto:{{professor.user.email}}"> &lt;{{professor.user.email}}&gt;</a><br>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>Não existem professores cadastradas.</p>
+  {% endif %}
+  <p>&nbsp;</p>
+{% endblock %}

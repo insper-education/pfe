@@ -53,4 +53,6 @@ urlpatterns = [
     path('submissao/', views.submissao, name='submissao'),
     path('tabela_documentos/', views.tabela_documentos, name='tabela_documentos'),
     path('todos/', views.todos, name='todos'),
+    path('todos_parceiros/', views.todos_parceiros, name='todos_parceiros'),
+    path('todos_professores/', views.todos_professores, name='todos_professores'),
 ]

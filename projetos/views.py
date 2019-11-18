@@ -392,10 +392,10 @@ def areas(request):
     }
     return render(request, 'projetos/areas.html', context)
 
-# Exibe todas as organizações que já submeteram projetos
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def organizacoes(request):
+    """Exibe todas as organizações que já submeteram projetos."""
     organizacoes = Empresa.objects.all()
     fechados = []
     for o in organizacoes:
@@ -1324,3 +1324,24 @@ def bancas_editar(request, pk):
             'banca' : banca,
         }
         return render(request, 'projetos/bancas_editar.html', context)
+
+@login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
+def todos_parceiros(request):
+    """Exibe todas os parceiros (pessoas) de organizações que já submeteram projetos."""
+    pareceiros = Parceiro.objects.all()
+    context = {
+        'pareceiros': pareceiros,
+        }
+    return render(request, 'projetos/todos_parceiros.html', context)
+
+@login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
+def todos_professores(request):
+    """Exibe todas os professores que estão cadastrados no PFE."""
+    professores = Professor.objects.all()
+    context = {
+        'professores': professores,
+        }
+    return render(request, 'projetos/todos_professores.html', context)
+

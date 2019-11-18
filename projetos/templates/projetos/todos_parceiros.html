@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 18 de Novembro de 2019
+{% endcomment %}
+
+{% block head %}
+<script src="https://www.w3schools.com/lib/w3.js"></script>
+{% endblock %}
+
+{% block content %}
+  <h3>Parceiros Profissionais</h3>
+  {% if pareceiros %}
+    <table id="ParceirosTable">
+      <tr>
+        <th onclick="w3.sortHTML('#ParceirosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome</th>
+        <th onclick="w3.sortHTML('#ParceirosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Organização</th>
+        <th onclick="w3.sortHTML('#ParceirosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">e-mail</th>
+      </tr>
+      {% for parceiro in pareceiros %} 
+        <tr class="item">
+          <td class="text-center">
+            {{parceiro.user.first_name}} {{parceiro.user.last_name}} 
+          </td>
+          <td>
+            <a href="{% url 'organizacao' parceiro.organizacao.login %}"> <!-- UM DIA ACERTAR ISSO -->
+              {{parceiro.organizacao.sigla}}
+            </a>
+          </td>
+          <td class="text-center">
+            <a href="mailto:{{parceiro.user.email}}"> &lt;{{parceiro.user.email}}&gt;</a><br>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>Não existem parceiros cadastradas.</p>
+  {% endif %}
+  <p>&nbsp;</p>
+{% endblock %}
