@@ -14,5 +14,7 @@ sudo apt-get install rabbitmq-server
 sudo systemctl enable rabbitmq-server
 sudo systemctl start rabbitmq-server
 
+pip install python-dateutil
+
 para checar: systemctl status rabbitmq-server
 
