@@ -26,6 +26,7 @@ urlpatterns = [
     path('carrega_bancos/', views.carrega_bancos, name='carrega_bancos'),
     path('carregar/', views.carregar, name='carregar'),
     path('completo/<int:pk>', views.completo, name='completo'),
+    path('comite/>', views.comite, name='comite'),
     path('cria_anotacao/<str:login>', views.cria_anotacao, name='cria_anotacao'),
     path('dinamicas/', views.dinamicas, name='dinamicas'),
     path('documentos/', views.documentos, name='documentos'),

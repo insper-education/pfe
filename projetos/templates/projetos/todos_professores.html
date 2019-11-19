@@ -21,7 +21,9 @@
       {% for professor in professores %} 
       <tr class="item">
           <td>
-            {{professor.user.first_name}} {{professor.user.last_name}} 
+            {% if professor.user.membro_comite %} <u> {% endif %}
+            {{professor.user.first_name}} {{professor.user.last_name}}
+            {% if professor.user.membro_comite %} <u> {% endif %}
           </td>
           <td class="text-center">
             <a href="mailto:{{professor.user.email}}"> &lt;{{professor.user.email}}&gt;</a><br>
@@ -34,6 +36,7 @@
         </tr>
       {% endfor %}
     </table>
+    <small>usuários <u>sublinhados</u> são membros do comitê do PFE.</small> 
   {% else %}
     <p>Não existem professores cadastradas.</p>
   {% endif %}

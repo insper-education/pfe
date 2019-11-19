@@ -1345,3 +1345,12 @@ def todos_professores(request):
         }
     return render(request, 'projetos/todos_professores.html', context)
 
+@login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
+def comite(request):
+    """Exibe os professores que estão no comitê do PFE."""
+    professores = Professor.objects.all().filter(user__membro_comite=True)
+    context = {
+        'professores': professores,
+        }
+    return render(request, 'projetos/todos_professores.html', context)
