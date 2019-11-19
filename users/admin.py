@@ -15,17 +15,19 @@ from .models import PFEUser, Aluno, Professor, Parceiro, Administrador, Opcao, A
 
 @admin.register(PFEUser)
 class PFEUserAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'username', 'email', 'tipo_de_usuario',) #na tabela com todos
+    """Usuário geral para todos do PFE."""
+    list_display = ('first_name', 'last_name', 'username', 'email', 'tipo_de_usuario',)
     list_filter = ('tipo_de_usuario',)
     fieldsets = (
         (None, {'fields': ('username', 'first_name', 'last_name', 'email', 'tipo_de_usuario',)}),
-        ('Personal info', {'fields': ('groups', 'user_permissions', 'cpf')}),
+        ('Personal info', {'fields': ('groups', 'user_permissions', 'cpf', 'membro_comite')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
     )
     ordering = ('first_name', 'last_name')
 
 @admin.register(Aluno)
 class AlunoAdmin(admin.ModelAdmin):
+    """Definição de aluno do PFE."""
     list_display = ('user', 'curso', 'anoPFE', 'semestrePFE')
     ordering = ('user__first_name', 'user__last_name',)
 
@@ -34,6 +36,7 @@ admin.site.register(Parceiro)
 admin.site.register(Administrador)
 
 class OpcaoInline(admin.TabularInline):
+    """.Não me lembro onde uso isso, provavel código morto."""
     model = Opcao
     extra = 5
     max_num = 5
