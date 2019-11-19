@@ -22,12 +22,12 @@
       {% for organizacao,fechados in organizacoes_list %} 
         <tr class="item">
           <td>
-            <a href="{% url 'organizacao' organizacao.login %}"> <!-- UM DIA ACERTAR ISSO -->
+            <a href="{% url 'organizacao_completo' organizacao.login %}"> <!-- UM DIA ACERTAR ISSO -->
               {{organizacao.sigla}}
             </a>
           </td>
           <td>
-            <a href="{% url 'organizacao' organizacao.login %}"> <!-- UM DIA ACERTAR ISSO -->
+            <a href="{% url 'organizacao_completo' organizacao.login %}"> <!-- UM DIA ACERTAR ISSO -->
               {{organizacao.nome_empresa}}
             </a>
           </td>

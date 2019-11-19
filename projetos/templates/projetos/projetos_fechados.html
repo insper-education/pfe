@@ -37,7 +37,7 @@
               {{projeto.titulo}}<br>
             {% endif %}
           </a>
-          <p style="margin-left:1em;">Empresa: <a href="{% url 'organizacao' projeto.empresa.login %}">
+          <p style="margin-left:1em;">Empresa: <a href="{% url 'organizacao_completo' projeto.empresa.login %}">
               {{ projeto.empresa.nome_empresa }}
             </a></p>
           {% if projeto.avancado %}

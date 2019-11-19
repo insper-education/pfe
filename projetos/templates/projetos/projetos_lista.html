@@ -76,7 +76,7 @@
         </td>
         <td>
           {% if not projeto.disponivel %}<del>{% endif %}
-            <a href="{% url 'organizacao' projeto.empresa.login %}">
+            <a href="{% url 'organizacao_completo' projeto.empresa.login %}">
               {{ projeto.empresa.nome_empresa }}
             </a>
           {% if not projeto.disponivel %}</del>{% endif %}

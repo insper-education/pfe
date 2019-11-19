@@ -89,7 +89,7 @@
         <h5>Formulário de Informações Adicionais</h5>
     </a>
 
-    <a {% if vencido %} class="disabled" onclick="myFunction('vencido')" {% else %} href="{% url 'projetos' %}" {% endif %} >
+    <a {% if vencido %} class="disabled" onclick="myFunction('vencido')" {% else %} href="{% url 'selecao_projetos' %}" {% endif %} >
         <h5>Selecionar Projetos</h5>
     </a>
 
@@ -100,7 +100,7 @@
     <a {% if not projeto %} class="disabled" onclick="myFunction('projeto')" {% else %} href="{% url 'meuprojeto' %}" {% endif %} >
         <h5>Horário das bancas</h5>
     </a>
-    <a {% if not projeto %} class="disabled" onclick="myFunction('projeto')" {% else %} href="{% url 'encontros' %}" {% endif %} >
+    <a {% if not projeto %} class="disabled" onclick="myFunction('projeto')" {% else %} href="{% url 'encontros_marcar' %}" {% endif %} >
         <h5>Agendar horário das dinâmicas</h5>
     </a>
 

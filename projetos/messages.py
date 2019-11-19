@@ -56,15 +56,15 @@ def create_message(aluno, ano, semestre):
     message += '<br><br>\n\n'
     message += '&nbsp;&nbsp;Suas informações adicionais são:<br>\n'
     message += '<br>\n'
-    message += ("&nbsp;"*4)+'Você já trabalhou e/ou estagiou em alguma empresa de engenharia?<br>\n'
-    message += ("&nbsp;"*4)+'Se sim, qual/quais?<br>\n'
+    message += ("&nbsp;" * 4) + 'Você já trabalhou e/ou estagiou em alguma empresa de engenharia?<br>\n'
+    message += ("&nbsp;" * 4) + 'Se sim, qual/quais?<br>\n'
     if aluno.trabalhou:
-        message += ("&nbsp;"*4)+'<i>'+aluno.trabalhou+'</i>'
+        message += ("&nbsp;" * 4) + '<i>'+aluno.trabalhou+'</i>'
     else:
-        message += ("&nbsp;"*4)+'<i>'+'CAMPO NÃO DEFINIDO'+'</i>'
+        message += ("&nbsp;" * 4) + '<i>'+'CAMPO NÃO DEFINIDO'+'</i>'
     message += '<br><br>\n\n'
-    message += ("&nbsp;"*4)+'Você já participou de atividades sociais?<br>\n'
-    message += ("&nbsp;"*4)+'Se sim, qual/quais?<br>\n'
+    message += ("&nbsp;" * 4) + 'Você já participou de atividades sociais?<br>\n'
+    message += ("&nbsp;" * 4) + 'Se sim, qual/quais?<br>\n'
     if aluno.social:
         message += ("&nbsp;"*4)+'<i>'+aluno.social+'</i>'
     else:
@@ -77,7 +77,8 @@ def create_message(aluno, ano, semestre):
     else:
         message += ("&nbsp;"*4)+'<i>'+'CAMPO NÃO DEFINIDO'+'</i>'
     message += '<br><br>\n\n'
-    message += ("&nbsp;"*4)+'Você possui familiares em algum empresa que está aplicando? Ou empresa concorrente direta?<br>\n'
+    message += ("&nbsp;"*4)+'Você possui familiares em algum empresa que está aplicando?'
+    message += 'Ou empresa concorrente direta?<br>\n'
     message += ("&nbsp;"*4)+'Se sim, qual/quais? Qual seu grau de relacionamento.<br>\n'
     if aluno.familia:
         message += ("&nbsp;"*4)+'<i>'+aluno.familia+'</i>'
@@ -87,4 +88,46 @@ def create_message(aluno, ano, semestre):
     message += '<br>\n'+("&nbsp;"*12)+"atenciosamente, comitê PFE"
     message += '&nbsp;<br>\n'
     message += '&nbsp;<br>\n'
+    return message
+
+def message_reembolso(usuario, projeto, reembolso):
+    message = '<br>\n'
+    message += '&nbsp;&nbsp;Caro <b>Dept. de Carreiras</b>\n\n'
+    message += '<br><br>\n\n'
+    message += '&nbsp;&nbsp;Por favor, encaminhem o pedido de reembolso de: '
+    message += usuario.first_name+" "+usuario.last_name+" ("+usuario.username+')<br>\n'
+    cpf = str(usuario.cpf)
+    message += '&nbsp;&nbsp;CPF: '+cpf[:3]+'.'+cpf[3:6]+'.'+cpf[6:9]+'-'+cpf[9:11]+'<br>\n'
+    if usuario.aluno.curso == "C":
+        curso = "Computação"
+    elif usuario.aluno.curso == "M":
+        curso = "Mecânica"
+    else:
+        curso = "Mecatrônica"
+    message += '&nbsp;&nbsp;Curso: '+curso+'<br>\n'
+    if projeto:
+        message += '<br>\n'
+        message += '&nbsp;&nbsp;Participante do projeto: '+projeto.titulo+'<br>\n'
+    message += '<br>\n'
+    message += '&nbsp;&nbsp;Descrição: '+reembolso.descricao+'<br>\n'
+    message += '<br>\n'
+    message += '&nbsp;&nbsp;Banco: '
+    message += reembolso.banco.nome+' ('+str(reembolso.banco.codigo)+')'+'<br>\n'
+    message += '&nbsp;&nbsp;Conta: ' + reembolso.conta+'<br>\n'
+    message += '&nbsp;&nbsp;Agência: ' + reembolso.agencia+'<br>\n'
+    message += '<br>\n'
+    message += '&nbsp;&nbsp;Valor do reembolso: ' + reembolso.valor+'<br>\n'
+    message += '<br>\n'
+    message += '<br>\n'
+    message += '&nbsp;&nbsp;Para isso use o Centro de Custo: '
+    message += '200048 - PROJETO FINAL DE ENGENHARIA<br>\n'
+    message += '&nbsp;&nbsp;Com a conta contábil: '
+    message += '400339 - INSUMOS PARA EQUIPAMENTOS DOS LABORATÓRIOS<br>\n'
+    message += '<br>\n'+("&nbsp;"*12)+"atenciosamente, coordenação do PFE"
+    message += '&nbsp;<br>\n'
+    message += '&nbsp;<br>\n'
+    message += '&nbsp;&nbsp;&nbsp;Obs: O aluno deverá entregar todos as notas fiscais originais, '
+    message += 'ou senão imprimir, diretamente no departamento de carreiras,'
+    message += 'sem isso o processo não deverá avançar.<br>\n'
+
     return message

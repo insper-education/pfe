@@ -37,7 +37,7 @@
           <br>
           {% if banca.projeto.empresa.nome_empresa %}
             <b>Organização Parceira:</b> 
-            <a href="{% url 'organizacao' banca.projeto.empresa.login %}">
+            <a href="{% url 'organizacao_completo' banca.projeto.empresa.login %}">
               {{ banca.projeto.empresa.nome_empresa }}
             </a>
           {% endif %}

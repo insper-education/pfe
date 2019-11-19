@@ -15,7 +15,7 @@
 <ul>
     <a href="{% url 'alunos' %}"><li>Alunos</li></a>
     <a href="{% url 'todos' %}"><li>Projetos</li></a>
-    <a href="{% url 'organizacoes' %}"><li>Organizações Parceiras</li></a>
+    <a href="{% url 'organizacoes_lista' %}"><li>Organizações Parceiras</li></a>
     <a href="{% url 'todos_parceiros' %}"><li>Parceiros Profissionais</li></a>
     <a href="{% url 'todos_professores' %}"><li>Professores do PFE</li></a>
     <!-- <a href="{% url 'comite' %}"><li>Comtê do PFE</li></a> -->
@@ -24,14 +24,14 @@
 <hr>
 <h5>Tabelas de alocação</h5>
 <ul>
-    <a href="{% url 'professores' %}"><li>Professores</li></a>
+    <a href="{% url 'professores_tabela' %}"><li>Professores</li></a>
 </ul>
 
 <hr>
 <a href="{% url 'tabela_documentos' %}"><h5>Tabelas de Documentação dos Projetos Fechados</h5></a>
 
 <hr>
-<a href="{% url 'avisos' %}"><h5>Agenda da Coordenação do PFE</h5></a>
+<a href="{% url 'avisos_listar' %}"><h5>Agenda da Coordenação do PFE</h5></a>
     
 
 

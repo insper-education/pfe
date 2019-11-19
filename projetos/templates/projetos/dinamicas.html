@@ -23,7 +23,7 @@
                 {% else %}
                   {{e.projeto.titulo}}
                 {% endif %}</a><br>
-              <b>Organização:</b> <a href="{% url 'organizacao' e.projeto.empresa.login %}">{{ e.projeto.empresa.nome_empresa }}</a><br>
+              <b>Organização:</b> <a href="{% url 'organizacao_completo' e.projeto.empresa.login %}">{{ e.projeto.empresa.nome_empresa }}</a><br>
               <b>Alunos:</b>
               <ol>
                 {% for alocacao in e.projeto.alocacao_set.all %} 
