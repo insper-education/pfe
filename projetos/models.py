@@ -28,6 +28,8 @@ def get_upload_path(instance, filename):
     elif isinstance(instance, Projeto):
         caminho += instance.empresa.sigla + "/"
         caminho += "projeto" + str(instance.pk) + "/"
+    elif isinstance(instance, Empresa):
+        caminho += instance.sigla + "/logotipo/"
     file_path = caminho
     # ISSO DO FILE_PATH NAO FAZ SENTIDO, REMOVER
     return "{0}/{1}".format(file_path, filename)
@@ -37,12 +39,18 @@ class Empresa(models.Model):
     #RENOMEAR PARA ORGANIZACAO
     login = models.CharField(primary_key=True, max_length=20)
     #login = models.CharField(max_length=20)     # em algum momento concertar isso
-    nome_empresa = models.CharField(max_length=80)
-    sigla = models.CharField(max_length=20)
-    endereco = models.TextField(max_length=200, help_text='Endereço da Empresa')
-    website = models.URLField(max_length=250, null=True, blank=True)
+    nome_empresa = models.CharField(max_length=80,
+                                    help_text='Nome da organização parceira')
+    sigla = models.CharField(max_length=20,
+                             help_text='Sigla usada pela organização parceira')
+    endereco = models.TextField(max_length=200, null=True, blank=True,
+                                help_text='Endereço da organização parceira')
+    website = models.URLField(max_length=250, null=True, blank=True,
+                              help_text='website da organização parceira')
     informacoes = models.TextField(max_length=1000, null=True, blank=True,
-                                   help_text='Informações sobre a empresa')
+                                   help_text='Informações sobre a organização parceira')
+    logotipo = models.ImageField(upload_to=get_upload_path, null=True, blank=True,
+                                 help_text='Logotipo da organização parceira')
 
     class Meta:
         ordering = ['sigla']
@@ -69,8 +77,8 @@ class Projeto(models.Model):
                                 help_text='Recursos a serem disponibilizados aos Alunos')
     anexo = models.FileField(upload_to=get_upload_path, null=True, blank=True,
                              help_text='Documento PDF')
-    imagem = models.ImageField(null=True, blank=True,
-                               help_text='Imagem que representa projeto (se houver)')
+    #imagem = models.ImageField(null=True, blank=True,
+    #                           help_text='Imagem que representa projeto (se houver)')
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE,
                                 help_text='Organização parceira que propôs projeto')
     departamento = models.TextField(max_length=1000, null=True, blank=True,
@@ -192,6 +200,8 @@ class Evento(models.Model):
     color = models.CharField(max_length=20)
     def __str__(self):
         return self.name
+    class Meta:
+        ordering = ['startDate']
 
 class Banca(models.Model):
     """Bancas do PFE."""
@@ -219,6 +229,9 @@ class Banca(models.Model):
         """Cria um objeto (entrada) na Banca."""
         banca = cls(projeto=projeto)
         return banca
+
+    class Meta:
+        ordering = ['startDate']
 
 class Encontro(models.Model):
     """Encontros (para dinâmicas de grupos)."""

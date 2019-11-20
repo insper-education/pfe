@@ -5,12 +5,28 @@
     Data: 15 de Maio de 2019
 {% endcomment %}
 
-{% block content %}
+{% block head %}
   {% load static %}
+  <style>
+    #logotipo {
+      max-height:128px;
+      max-width:128px;
+      height:auto;
+      width:auto;
+      float: right;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  {% if organization.logotipo %}
+    <img id="logotipo" src="{{ organization.logotipo.url }}" alt="{{ organization.sigla }}">
+  {% endif %}
   <h3>Organização: {{ organization.nome_empresa }}</h3>
+
   {% if organization.website %}
     <strong>website:</strong> <a href="{{ organization.website }}"> {{ organization.website }} </a><br>  
-  {% endif %}  
+  {% endif %}
   {% if organization.informacoes %}
     <strong>Informações sobre a empresa :</strong> {{ organization.informacoes|linebreaks }}
   {% endif %}
