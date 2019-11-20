@@ -21,158 +21,191 @@
   <h3>Documentação dos Projetos Fechados</h3>
   <br>
 
-    {% if mylist %}
-      <table id="ProjetosTable">
-        <tr>
-          <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Projeto</th>
-          <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Período</th>
-          <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Organização</th>
-          <th class="text-center">Contr. Empresa</th>
-          <th class="text-center">Contr. Aluno</th>
-          <th class="text-center">Rel. Final</th>
-          <th class="text-center">Aut. Pub. Empresa</th>
-          <th class="text-center">Aut. Pub. Aluno</th>
-          <th class="text-center">Outros</th>
-        </tr>      
+  {% if mylist %}
+    <table id="ProjetosTable">
+      <tr>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Projeto</th>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Período</th>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Organização</th>
+        <th class="text-center">Contr. Empresa</th>
+        <th class="text-center">Contr. Aluno</th>
+        <th class="text-center">Rel. Final</th>
+        <th class="text-center">Aut. Pub. Empresa</th>
+        <th class="text-center">Aut. Pub. Aluno</th>
+        <th class="text-center">Outros</th>
+      </tr>      
       {% for projeto,documento in mylist %} 
         {% if projeto.disponivel %}
-        <tr class="item">
-          <td>
-            <a href="{% url 'completo' projeto.id %}">
-              {% if projeto.titulo_final %}
-                {{projeto.titulo_final}}<br>
-                <small>Título Provisório: {{projeto.titulo}}</small>
+          <tr class="item">
+            <td>
+              <a href="{% url 'completo' projeto.id %}">
+                {% if projeto.titulo_final %}
+                  {{projeto.titulo_final}}<br>
+                  <small>Título Provisório: {{projeto.titulo}}</small>
+                {% else %}
+                  {{projeto.titulo}}
+                {% endif %}
+              </a>
+            </td>
+            <td style="text-align:center">
+                {{projeto.ano}}.{{projeto.semestre}}
+            </td>
+            <td>
+              <a href="{% url 'organizacao_completo' projeto.empresa.login %}">
+                {{ projeto.empresa.nome_empresa }}
+              </a>
+            </td>
+            
+            <td  style="text-align:center"> <!-- (0, 'contrato com empresa') -->
+              {% if documento.contratos %}
+                {% for doc in documento.contratos %}
+                  <a class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}"
+                  target="_blank" rel="noopener noreferrer" 
+                  data-toggle="tooltip" data-html="true" animation="true" 
+                  {% if doc.1 or doc.2%}
+                      title="
+                        {% if doc.1 %}anotação: {{doc.1}} <br>{% endif %}
+                        {% if doc.2 %}data: {{doc.2}} {% endif %}
+                      "
+                    {% endif %}
+                  >
+                  &#x2B24;</a>
+                {% endfor %}
               {% else %}
-                {{projeto.titulo}}
+                {% if projeto.empresa.sigla == "INOVACAO" %}
+                  <a class="text-info" data-toggle="tooltip" data-html="true" animation="true" title="isento">&#x2B24;</a>
+                {% elif projeto.semestre > configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre <= configuracao.semestre and projeto.ano > configuracao.ano %}
+                  <a class="text-warning" data-toggle="tooltip" data-html="true" animation="true" title="aguardando">&#x2B24;</a>
+                {% else %}
+                  <a class="text-danger" data-toggle="tooltip" data-html="true" animation="true" title="pendente">&#x2B24;</a>
+                {% endif %}
               {% endif %}
-            </a>
-          </td>
-          <td style="text-align:center">
-              {{projeto.ano}}.{{projeto.semestre}}
-          </td>
-          <td>
-            <a href="{% url 'organizacao_completo' projeto.empresa.login %}">
-              {{ projeto.empresa.nome_empresa }}
-            </a>
-          </td>
-          
-          <td  style="text-align:center"> <!-- (0, 'contrato com empresa') -->
-            {% if documento.contratos %}
-              {% for doc in documento.contratos %}
-                <a class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}"
-                target="_blank" rel="noopener noreferrer" 
-                data-toggle="tooltip" data-html="true" animation="true" 
-                {% if doc.1 or doc.2%}
-                    title="
-                      {% if doc.1 %}anotação: {{doc.1}} <br>{% endif %}
-                      {% if doc.2 %}data: {{doc.2}} {% endif %}
-                    "
+            </td>
+
+            <td  style="text-align:center"> <!-- (1, 'contrato entre empresa e aluno') -->
+              {% for doc in documento.contratos_alunos %}
+                <a 
+                {% if doc.0 %}
+                  class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
+                {% else %}
+                  {% if projeto.semestre > configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre <= configuracao.semestre and projeto.ano > configuracao.ano %}
+                    class="text-warning" 
+                  {% else %}
+                    class="text-danger" 
                   {% endif %}
-                >
-                &#x2B24;</a>
-              {% endfor %}
-            {% else %}
-              {% if projeto.empresa.sigla == "INOVACAO" %}
-                <a class="text-info" data-toggle="tooltip" data-html="true" animation="true" title="isento">&#x2B24;</a>
-              {% elif projeto.semestre > configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre <= configuracao.semestre and projeto.ano > configuracao.ano %}
-                <a class="text-warning" data-toggle="tooltip" data-html="true" animation="true" title="aguardando">&#x2B24;</a>
-              {% else %}
-                <a class="text-danger" data-toggle="tooltip" data-html="true" animation="true" title="pendente">&#x2B24;</a>
-              {% endif %}
-            {% endif %}
-          </td>
-
-          <td  style="text-align:center"> <!-- (1, 'contrato entre empresa e aluno') -->
-            {% for doc in documento.contratos_alunos %}
-              <a 
-              {% if doc.0 %}
-                class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
-              {% else %}
-                {% if projeto.semestre > configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre <= configuracao.semestre and projeto.ano > configuracao.ano %}
-                  class="text-warning" 
-                {% else %}
-                  class="text-danger" 
                 {% endif %}
-              {% endif %}
-              target="_blank" rel="noopener noreferrer"
-              data-toggle="tooltip" data-html="true" animation="true" 
-              title="{{doc.1}}">
-              &#x2B24;</a>
-            {% endfor %}
-          </td>
-
-          <td  style="text-align:center"> <!-- (3, 'relatório final') -->
-            {% if documento.relatorio_final %}
-              <a class="text-success" href="../..{{MEDIA_URL}}{{documento.relatorio_final}}" target="_blank" rel="noopener noreferrer">&#x2B24;</a>
-            {% else %}
-              {% if projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
-                <a class="text-warning" data-toggle="tooltip" data-html="true" animation="true" title="aguardando">&#x2B24;</a>
-              {% else %}
-                <a class="text-danger" data-toggle="tooltip" data-html="true" animation="true" title="pendente">&#x2B24;</a>
-              {% endif %}
-            {% endif %}
-          </td>
-
-          <td  style="text-align:center"> <!-- (4, 'autorização de publicação empresa') -->
-            {% if documento.autorizacao_publicacao_empresa %}
-              <a class="text-success" href="../..{{MEDIA_URL}}{{documento.autorizacao_publicacao_empresa}}" target="_blank" rel="noopener noreferrer">&#x2B24;</a>
-            {% else %}
-              {% if projeto.empresa.sigla == "INOVACAO" %}
-                <a class="text-info" data-toggle="tooltip" data-html="true" animation="true" title="isento">&#x2B24;</a>
-              {% elif projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
-                <a class="text-warning" data-toggle="tooltip" data-html="true" animation="true" title="aguardando">&#x2B24;</a>
-              {% else %}
-                <a class="text-danger" data-toggle="tooltip" data-html="true" animation="true" title="pendente">&#x2B24;</a>
-              {% endif %}
-            {% endif %}
-          </td>
-
-          <td  style="text-align:center"> <!-- (5, 'autorização de publicação  aluno') -->
-            {% for doc in documento.autorizacao_publicacao_aluno %}
-              <a 
-              {% if doc.0 %}
-                class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
-              {% else %}
-                {% if projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
-                  class="text-warning" 
-                {% else %}
-                  class="text-danger" 
-                {% endif %}
-              {% endif %}
-              target="_blank" rel="noopener noreferrer"
-              data-toggle="tooltip" data-html="true" animation="true" 
-              title="{{doc.1}}">
-              &#x2B24;</a>
-            {% endfor %}
-          </td>
-
-          <td  style="text-align:center"> <!-- (14, 'outros') -->
-            {% if documento.outros %}
-              {% for doc in documento.outros %}
-                <a class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
                 target="_blank" rel="noopener noreferrer"
                 data-toggle="tooltip" data-html="true" animation="true" 
-                {% if doc.1 or doc.2%}
-                    title="
-                      {% if doc.1 %}anotação: {{doc.1}} <br>{% endif %}
-                      {% if doc.2 %}data: {{doc.2}} {% endif %}
-                    "
-                  {% endif %}
-                >
+                title="{{doc.1}}">
                 &#x2B24;</a>
               {% endfor %}
-            {% endif %}
-          </td>
+            </td>
 
-        </tr>
+            <td  style="text-align:center"> <!-- (3, 'relatório final') -->
+              {% if documento.relatorio_final %}
+                <a class="text-success" href="../..{{MEDIA_URL}}{{documento.relatorio_final}}" target="_blank" rel="noopener noreferrer">&#x2B24;</a>
+              {% else %}
+                {% if projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
+                  <a class="text-warning" data-toggle="tooltip" data-html="true" animation="true" title="aguardando">&#x2B24;</a>
+                {% else %}
+                  <a class="text-danger" data-toggle="tooltip" data-html="true" animation="true" title="pendente">&#x2B24;</a>
+                {% endif %}
+              {% endif %}
+            </td>
+
+            <td  style="text-align:center"> <!-- (4, 'autorização de publicação empresa') -->
+              {% if documento.autorizacao_publicacao_empresa %}
+                <a class="text-success" href="../..{{MEDIA_URL}}{{documento.autorizacao_publicacao_empresa}}" target="_blank" rel="noopener noreferrer">&#x2B24;</a>
+              {% else %}
+                {% if projeto.empresa.sigla == "INOVACAO" %}
+                  <a class="text-info" data-toggle="tooltip" data-html="true" animation="true" title="isento">&#x2B24;</a>
+                {% elif projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
+                  <a class="text-warning" data-toggle="tooltip" data-html="true" animation="true" title="aguardando">&#x2B24;</a>
+                {% else %}
+                  <a class="text-danger" data-toggle="tooltip" data-html="true" animation="true" title="pendente">&#x2B24;</a>
+                {% endif %}
+              {% endif %}
+            </td>
+
+            <td  style="text-align:center"> <!-- (5, 'autorização de publicação  aluno') -->
+              {% for doc in documento.autorizacao_publicacao_aluno %}
+                <a 
+                {% if doc.0 %}
+                  class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
+                {% else %}
+                  {% if projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
+                    class="text-warning" 
+                  {% else %}
+                    class="text-danger" 
+                  {% endif %}
+                {% endif %}
+                target="_blank" rel="noopener noreferrer"
+                data-toggle="tooltip" data-html="true" animation="true" 
+                title="{{doc.1}}">
+                &#x2B24;</a>
+              {% endfor %}
+            </td>
+
+            <td style="text-align:center"> <!-- (14, 'outros') -->
+              {% if documento.outros %}
+                {% for doc in documento.outros %}
+                  <a class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
+                  target="_blank" rel="noopener noreferrer"
+                  data-toggle="tooltip" data-html="true" animation="true" 
+                  {% if doc.1 or doc.2%}
+                      title="
+                        {% if doc.1 %}anotação: {{doc.1}} <br>{% endif %}
+                        {% if doc.2 %}data: {{doc.2}} {% endif %}
+                      "
+                    {% endif %}
+                  >
+                  &#x2B24;</a>
+                {% endfor %}
+              {% endif %}
+            </td>
+          </tr>
         {% endif %}
       {% endfor %}
-      </table>
-    {% else %}
-      <p>Não existem projetos disponíveis.</p>
-    {% endif %}
+    </table>
+  {% else %}
+    <p>Não existem projetos disponíveis.</p>
+  {% endif %}
 
-    <br>
-    <br>
+  <br>
+  <br>
+
+  <h3>Documentação dos Seguros</h3>
+  <br>
+
+  {% if seguros %}
+    <table id="SegurosTable">
+      <tr>
+        <th onclick="w3.sortHTML('#SegurosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Data</th>
+        <th class="text-center">Documento</th>
+      </tr>      
+    {% for seguro in seguros %} 
+      <tr class="item">
+        <td style="text-align:center">
+            {{seguro.data}}
+        </td>
+        <td style="text-align:center">
+          <a class="text-success" href="../..{{MEDIA_URL}}{{seguro.documento}}" 
+          target="_blank" rel="noopener noreferrer"
+          data-toggle="tooltip" data-html="true" animation="true" 
+          {% if seguro.anotacao %}
+            title="anotação: {{seguro.anotacao}}"
+          {% endif %}
+          >
+            &#x2B24;
+          </a>
+        </td>
+      </tr>
+    {% endfor %}
+    </table>
+  {% else %}
+    <p>Não existem documentos de seguros disponíveis.</p>
+  {% endif %}
+  <br>
+  <br>
 
 {% endblock %}

@@ -787,12 +787,15 @@ def tabela_documentos(request):
                                      filter(tipo_de_documento=14):
             outros.append((doc.documento, doc.anotacao, doc.data))
         contrato["outros"] = outros
-
-
     mylist = zip(projetos, documentos)
+
+    # Outros documentos
+    seguros = Documento.objects.filter(tipo_de_documento=15)
+
     context = {
         'configuracao': configuracao,
         'mylist': mylist,
+        'seguros': seguros,
         'MEDIA_URL' : settings.MEDIA_URL,
     }
     return render(request, 'projetos/tabela_documentos.html', context)
@@ -894,6 +897,7 @@ def index_documentos(request):
     # = Documento.objects.filter(tipo_de_documento=10).last() # manual da organização parceira
     manual_planejamento = Documento.objects.filter(tipo_de_documento=13).last() # manual de planej
     manual_relatorio = Documento.objects.filter(tipo_de_documento=12).last() # manual de relatórios
+    termo_parceria = Documento.objects.filter(tipo_de_documento=14).last() # termo de parceria
     context = {
         'MEDIA_URL' : settings.MEDIA_URL,
         'regulamento': regulamento,
@@ -901,6 +905,7 @@ def index_documentos(request):
         'manual_aluno': manual_aluno,
         'manual_planejamento' : manual_planejamento,
         'manual_relatorio': manual_relatorio,
+        'termo_parceria': termo_parceria,
     }
     return render(request, 'index_documentos.html', context)
 

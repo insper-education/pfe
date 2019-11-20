@@ -25,28 +25,33 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
-  {% block head %}{% endblock %}
+  {% block head %}
+  {% endblock %}
   
 </head>
 <body>
 
+    {% url 'index_professor' as url_index_professor %}
+    {% url 'index' as url_index %}
+    {% url 'perfil' as url_perfil %}
+  
     <div class="topnav">
       <a class="active">
 
         <img 
         {% if user.is_authenticated %}
-          onclick="location.href='{% if user.tipo_de_usuario == 1 %}{% url 'index' %}{% else %}{% url 'professor' %}{% endif %}'"
+          onclick="location.href='{% if user.tipo_de_usuario == 1 %}{{ url_index }}{% else %}{{ url_index_professor }}{% endif %}'"
         {% endif %}
         src="{% static 'images/logoInsper.png' %}" alt="Insper" style="width:59px;height:23px;">
 
         <b 
         {% if user.is_authenticated %}
-          onclick="location.href='{% if user.tipo_de_usuario == 1 %}{% url 'index' %}{% else %}{% url 'professor' %}{% endif %}'"
+          onclick="location.href='{% if user.tipo_de_usuario == 1 %}{{ url_index }}{% else %}{{ url_index_professor }}{% endif %}'"
         {% endif %}
         id="pfelogo">PFE</b> 
 
         {% if user.is_authenticated %}
-        &nbsp;<u onclick="location.href='{% url 'perfil'%}'" id="username">[{{user.first_name}}&nbsp;{{user.last_name}}]</u>
+        &nbsp;<u onclick="location.href='{{ url_perfil }}'" id="username">[{{user.first_name}}&nbsp;{{user.last_name}}]</u>
         {% endif %}
       </a>
       
