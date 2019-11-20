@@ -970,7 +970,7 @@ def carrega(request, dado):
 #             return response
 #     raise Http404
 
-def get_response(file,path):
+def get_response(file, path):
     if path[-3:].lower() == "jpg" or path[-4:].lower() == "jpeg":
         return HttpResponse(file.read(), content_type="image/jpeg")
     elif path[-3:].lower() == "png":
@@ -1001,7 +1001,6 @@ def arquivos(request, documentos, path):
                                                                 tipo_de_usuario != 2):
                 return HttpResponse("Documento Confidencial")
         with open(file_path, 'rb') as file:
-            #response = HttpResponse(file.read(), content_type="application/pdf")
             response = get_response(file,path)
             if not response:
                 return HttpResponse("Erro ao carregar arquivo (formato não suportado).") 
@@ -1027,7 +1026,7 @@ def arquivos2(request, organizacao, usuario, path):
                (PFEUser.objects.get(pk=request.user.pk).tipo_de_usuario != 2):
                 return HttpResponse("Documento Confidencial")
         with open(file_path, 'rb') as file:
-            response = get_response(file,path)
+            response = get_response(file, path)
             if not response:
                 return HttpResponse("Erro ao carregar arquivo (formato não suportado).") 
             response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)

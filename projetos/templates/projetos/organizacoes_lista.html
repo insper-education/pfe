@@ -32,10 +32,10 @@
             </a>
           </td>
           <td class="text-center">
-            {{organizacao.projeto_set.count}}
+            {{organizacao.projeto_set.count|stringformat:"03d"}}
           </td>
           <td class="text-center">
-            {{fechados}}
+            {{fechados|stringformat:"03d"}}
           </td>
         </tr>
       {% endfor %}
