@@ -970,6 +970,19 @@ def carrega(request, dado):
 #             return response
 #     raise Http404
 
+def get_response(file,path):
+    if path[-3:].lower() == "jpg" or path[-4:].lower() == "jpeg":
+        return HttpResponse(file.read(), content_type="image/jpeg")
+    elif path[-3:].lower() == "png":
+        return HttpResponse(file.read(), content_type="image/png")
+    elif path[-3:].lower() == "doc" or path[-4:].lower() == "docx":
+        return HttpResponse(file.read(), content_type=\
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    elif path[-3:].lower() == "pdf":
+        return HttpResponse(file.read(), content_type="application/pdf")
+    else:
+        return None
+
 @login_required
 #@permission_required('users.altera_professor', login_url='/projetos/')
 def arquivos(request, documentos, path):
@@ -988,7 +1001,10 @@ def arquivos(request, documentos, path):
                                                                 tipo_de_usuario != 2):
                 return HttpResponse("Documento Confidencial")
         with open(file_path, 'rb') as file:
-            response = HttpResponse(file.read(), content_type="application/pdf")
+            #response = HttpResponse(file.read(), content_type="application/pdf")
+            response = get_response(file,path)
+            if not response:
+                return HttpResponse("Erro ao carregar arquivo (formato não suportado).") 
             response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
             return response
     raise Http404
@@ -1011,14 +1027,8 @@ def arquivos2(request, organizacao, usuario, path):
                (PFEUser.objects.get(pk=request.user.pk).tipo_de_usuario != 2):
                 return HttpResponse("Documento Confidencial")
         with open(file_path, 'rb') as file:
-            if path[-3:].lower() == "jpg" or path[-4:].lower() == "jpeg":
-                response = HttpResponse(file.read(), content_type="image/jpeg")
-            elif path[-3:].lower() == "doc" or path[-4:].lower() == "docx":
-                response = HttpResponse(file.read(), content_type=\
-                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-            elif path[-3:].lower() == "pdf":
-                response = HttpResponse(file.read(), content_type="application/pdf")
-            else:
+            response = get_response(file,path)
+            if not response:
                 return HttpResponse("Erro ao carregar arquivo (formato não suportado).") 
             response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
             return response
