@@ -6,17 +6,14 @@
 {% endcomment %}
 
 {% block head %}
+  {% load static %}
   <script src="https://www.w3schools.com/lib/w3.js"></script>
-
+  <script src="{% static 'js/Chart.min.js' %}"></script>
   <script>
     $(document).ready(function(){
-        $('[data-toggle="tooltip"]').tooltip();
+      $('[data-toggle="tooltip"]').tooltip();
     });
   </script>
-
-  {% load static %}
-  <script src="{% static 'js/Chart.min.js' %}"></script>
-  
 {% endblock %}
 
 {% block content %}
@@ -34,29 +31,30 @@
             <td class="{% if opcoes.count >= 5 %}text-success{% else %}text-danger{% endif %}"> &#x2B24; </td>
             <td>
               <a href="{% url 'aluno_detail' aluno.id %}"
-              {% if opcoes %}
-                data-toggle="tooltip" data-html="true" animation="true" title="
-                {% for opcao in opcoes %}
-                  <b>#{{ opcao.prioridade }} :</b>
-                  {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
-                    <u>
-                  {% endif %}
-                    {% if opcao.projeto.titulo_final %}
-                      {{opcao.projeto.titulo_final}}
-                    {% else %}
-                      {{opcao.projeto.titulo}}
+                {% if opcoes %}
+                  data-toggle="tooltip" data-html="true" animation="true" title="
+                  {% for opcao in opcoes %}
+                    <b>#{{ opcao.prioridade }} :</b>
+                    {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
+                      <u>
                     {% endif %}
-                    ({{opcao.projeto.empresa.nome_empresa}})
-                  {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
-                    </u>
-                  {% endif %}
-                  <br>
-                {% endfor %}
-                "
-              {% endif %}
+                      {% if opcao.projeto.titulo_final %}
+                        {{opcao.projeto.titulo_final}}
+                      {% else %}
+                        {{opcao.projeto.titulo}}
+                      {% endif %}
+                      ({{opcao.projeto.empresa.nome_empresa}})
+                    {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
+                      </u>
+                    {% endif %}
+                    <br>
+                  {% endfor %}
+                  "
+                {% endif %}
               >
-              {{aluno.user.first_name}}&nbsp;{{aluno.user.last_name}}
-            </a></td>
+                {{aluno.user.first_name}}&nbsp;{{aluno.user.last_name}}
+              </a>
+            </td>
             <td class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">
               {{ aluno.get_curso_display }}
             </td>
