@@ -14,52 +14,27 @@ from io import BytesIO # Para gerar o PDF
 import dateutil.parser
 
 import tablib
-#from tablib import Dataset
 from tablib import Databook
-#from import_export import resources
 
 from xhtml2pdf import pisa # Para gerar o PDF
 
 from django.conf import settings
-#from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, permission_required
-#from django.contrib.auth.mixins import LoginRequiredMixin
-#from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.core.files.storage import FileSystemStorage
-#from django.core.mail import send_mail
 from django.core.mail import EmailMessage
 from django.db import transaction
 from django.http import Http404
-#from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.shortcuts import render
-#from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
-#from django.template import loader
 from django.template.loader import get_template
-#from django.urls import reverse
-#from django.urls import reverse_lazy
 from django.utils import timezone
-#from django.views import generic
-#from django.views.generic.edit import CreateView
-#from django.views.generic.edit import UpdateView
-#from django.views.generic.edit import DeleteView
 
-from users.models import PFEUser
-from users.models import Aluno
-from users.models import Professor
-from users.models import Parceiro
-from users.models import Opcao
+from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao
 from .models import Projeto, Empresa, Configuracao, Evento, Anotacao
+from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade
 #from .models import Disciplina
-from .models import Banca
-from .models import Documento
-from .models import Encontro
-from .models import Banco
-from .models import Reembolso
-from .models import Aviso
-from .models import Entidade
 
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource
 from .resources import AlunosResource, ProfessoresResource
@@ -480,7 +455,6 @@ def cria_anotacao(request, login): #acertar isso para pk
             anotacao = Anotacao.create(organization)
             anotacao.autor = PFEUser.objects.get(pk=request.user.pk)
             anotacao.texto = request.POST['anotacao']
-            #anotacao.data = (CRIADA AUTOMATICAMENTE)
             anotacao.save()
             return HttpResponse(""""
                 Anotação criada.<br><a href='../organizacao/"+login+"'>Volta para organização</a>
@@ -574,7 +548,6 @@ def backup(request, formato):
     response['Content-Disposition'] = 'attachment; filename="backup.'+formato+'"'
     return response
 
-####  NO FUTURO COLOCAR EM MESSAGES.PY  #####
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def email_backup(request):
@@ -598,10 +571,8 @@ def servico(request):
     if request.method == 'POST':
         check_values = request.POST.getlist('selection')
         if 'manutencao' in check_values:
-            #print("true")
             configuracao.manutencao = True
         else:
-            #print("false")
             configuracao.manutencao = False
         configuracao.save()
         return redirect('/projetos/administracao/')
@@ -646,15 +617,13 @@ def relatorio(request, modelo, formato):
         }
         if(formato == "html" or formato == "HTML"):
             return render(request, 'projetos/relatorio_alunos.html', context)
-        elif(formato == "pdf" or formato == "PDF"):
+        if(formato == "pdf" or formato == "PDF"):
             pdf = render_to_pdf('projetos/relatorio_alunos.html', context)
             return HttpResponse(pdf.getvalue(), content_type='application/pdf')
     else:
         return HttpResponse("Chamada irregular : Base de dados desconhecida = "+modelo)
 
     return HttpResponse("Chamada irregular : Formato desconhecido = "+formato)
-
-
 
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
@@ -958,19 +927,9 @@ def carrega(request, dado):
 
     return render(request, 'projetos/import.html')
 
-# @login_required
-# def download(request, path):
-#     file_path = os.path.abspath(os.path.join(settings.MEDIA_ROOT, os.path.split(path)[1]) )
-#     if ".." in file_path: raise PermissionDenied
-#     if "\\" in file_path: raise PermissionDenied
-#     if os.path.exists(file_path):
-#         with open(file_path, 'rb') as fh:
-#             response = HttpResponse(fh.read(), content_type="application/pdf")
-#             response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
-#             return response
-#     raise Http404
-
 def get_response(file, path):
+    """Verifica a extensão do arquivo e retorna o HttpRensponse corespondente."""
+    #image/gif, image/tiff, application/zip, audio/mpeg, audio/ogg, text/csv, text/plain
     if path[-3:].lower() == "jpg" or path[-4:].lower() == "jpeg":
         return HttpResponse(file.read(), content_type="image/jpeg")
     elif path[-3:].lower() == "png":
@@ -1001,9 +960,9 @@ def arquivos(request, documentos, path):
                                                                 tipo_de_usuario != 2):
                 return HttpResponse("Documento Confidencial")
         with open(file_path, 'rb') as file:
-            response = get_response(file,path)
+            response = get_response(file, path)
             if not response:
-                return HttpResponse("Erro ao carregar arquivo (formato não suportado).") 
+                return HttpResponse("Erro ao carregar arquivo (formato não suportado).")
             response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
             return response
     raise Http404
@@ -1028,7 +987,7 @@ def arquivos2(request, organizacao, usuario, path):
         with open(file_path, 'rb') as file:
             response = get_response(file, path)
             if not response:
-                return HttpResponse("Erro ao carregar arquivo (formato não suportado).") 
+                return HttpResponse("Erro ao carregar arquivo (formato não suportado).")
             response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
             return response
     raise Http404

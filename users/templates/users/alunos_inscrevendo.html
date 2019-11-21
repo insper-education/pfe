@@ -33,7 +33,7 @@
           <tr class="item">
             <td class="{% if opcoes.count >= 5 %}text-success{% else %}text-danger{% endif %}"> &#x2B24; </td>
             <td>
-              <a href="{% url 'aluno' aluno.id %}"
+              <a href="{% url 'aluno_detail' aluno.id %}"
               {% if opcoes %}
                 data-toggle="tooltip" data-html="true" animation="true" title="
                 {% for opcao in opcoes %}

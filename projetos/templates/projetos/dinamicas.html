@@ -27,7 +27,7 @@
               <b>Alunos:</b>
               <ol>
                 {% for alocacao in e.projeto.alocacao_set.all %} 
-                  <li><a href="{% url 'aluno' alocacao.aluno.id %}">{{alocacao.aluno.user.first_name}} {{alocacao.aluno.user.last_name}} [{{ alocacao.aluno.get_curso_display }}] &nbsp;
+                  <li><a href="{% url 'aluno_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.first_name}} {{alocacao.aluno.user.last_name}} [{{ alocacao.aluno.get_curso_display }}] &nbsp;
                   </a></li>
                 {% endfor %}
               </ol>

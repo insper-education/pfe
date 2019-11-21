@@ -80,7 +80,7 @@
           <ul>
             {% for alocacao in banca.projeto.alocacao_set.all %}
               <li>
-                <a href="{% url 'aluno' alocacao.aluno.id %}">
+                <a href="{% url 'aluno_detail' alocacao.aluno.id %}">
                   {{alocacao.aluno.user.first_name}} {{alocacao.aluno.user.last_name}}
                 </a>
                 <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>

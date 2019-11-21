@@ -22,7 +22,7 @@
             ({{ projeto.empresa.nome_empresa }})
           </a>
           {% for opcao in opcoes %} 
-            <li><a href="{% url 'aluno' opcao.aluno.id %}">{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}</a></li>
+            <li><a href="{% url 'aluno_detail' opcao.aluno.id %}">{{opcao.aluno.user.first_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;prioridade #{{opcao.prioridade}}</a></li>
           {% endfor %}
           <br><br>
         {% endif %}

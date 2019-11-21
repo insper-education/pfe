@@ -17,14 +17,15 @@ from django.views import generic
 #from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
-from django import template
+#from django import template
 
 
 from projetos.models import Configuracao, Projeto
 from .forms import PFEUserCreationForm
 #from .forms import PFEUserForm,
 #from .forms import AlunoForm
-from .models import PFEUser, Aluno, Professor, Parceiro, Opcao, Alocacao
+from .models import PFEUser, Aluno, Professor, Parceiro, Opcao
+#from .models import Alocacao
 
 #from tablib import Dataset
 
@@ -55,52 +56,56 @@ def perfil(request):
 @login_required
 @transaction.atomic
 def areas_interesse(request):
+    """Para aluno definir suas áreas de interesse."""
     if request.method == 'POST':
 
         configuracao = Configuracao.objects.all().first()
         if timezone.now() > configuracao.prazo:
-            return HttpResponse("Prazo para seleção de áreas vencido!") #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
+            #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
+            return HttpResponse("Prazo para seleção de áreas vencido!")
 
         check_values = request.POST.getlist('selection')
         aluno = Aluno.objects.get(pk=request.user.pk)
 
-        aluno.inovacao_social = (True if "inovacao_social" in check_values else False)
-        aluno.ciencia_dos_dados = (True if "ciencia_dos_dados" in check_values else False)
-        aluno.modelagem_3D = (True if "modelagem_3D" in check_values else False)
-        aluno.manufatura = (True if "manufatura" in check_values else False)
-        aluno.resistencia_dos_materiais = (True if "resistencia_dos_materiais" in check_values else False)
-        aluno.modelagem_de_sistemas = (True if "modelagem_de_sistemas" in check_values else False)
-        aluno.controle_e_automacao = (True if "controle_e_automacao" in check_values else False)
-        aluno.termodinamica = (True if "termodinamica" in check_values else False)
-        aluno.fluidodinamica = (True if "fluidodinamica" in check_values else False)
-        aluno.eletronica_digital = (True if "eletronica_digital" in check_values else False)
-        aluno.programacao = (True if "programacao" in check_values else False)
-        aluno.inteligencia_artificial = (True if "inteligencia_artificial" in check_values else False)
-        aluno.banco_de_dados = (True if "banco_de_dados" in check_values else False)
-        aluno.computacao_em_nuvem = (True if "computacao_em_nuvem" in check_values else False)
-        aluno.visao_computacional = (True if "visao_computacional" in check_values else False)
-        aluno.computacao_de_alto_desempenho = (True if "computacao_de_alto_desempenho" in check_values else False)
-        aluno.robotica = (True if "robotica" in check_values else False)
-        aluno.realidade_virtual_aumentada = (True if "realidade_virtual_aumentada" in check_values else False)
-        aluno.protocolos_de_comunicacao = (True if "protocolos_de_comunicacao" in check_values else False)
-        aluno.eficiencia_energetica = (True if "eficiencia_energetica" in check_values else False)
-        aluno.administracao_economia_financas = (True if "administracao_economia_financas" in check_values else False)
+        aluno.inovacao_social = "inovacao_social" in check_values
+        aluno.ciencia_dos_dados = "ciencia_dos_dados" in check_values
+        aluno.modelagem_3D = "modelagem_3D" in check_values
+        aluno.manufatura = "manufatura" in check_values
+        aluno.resistencia_dos_materiais = "resistencia_dos_materiais" in check_values
+        aluno.modelagem_de_sistemas = "modelagem_de_sistemas" in check_values
+        aluno.controle_e_automacao = "controle_e_automacao" in check_values
+        aluno.termodinamica = "termodinamica" in check_values
+        aluno.fluidodinamica = "fluidodinamica" in check_values
+        aluno.eletronica_digital = "eletronica_digital" in check_values
+        aluno.programacao = "programacao" in check_values
+        aluno.inteligencia_artificial = "inteligencia_artificial" in check_values
+        aluno.banco_de_dados = "banco_de_dados" in check_values
+        aluno.computacao_em_nuvem = "computacao_em_nuvem" in check_values
+        aluno.visao_computacional = "visao_computacional" in check_values
+        aluno.computacao_de_alto_desempenho = "computacao_de_alto_desempenho" in check_values
+        aluno.robotica = "robotica" in check_values
+        aluno.realidade_virtual_aumentada = "realidade_virtual_aumentada" in check_values
+        aluno.protocolos_de_comunicacao = "protocolos_de_comunicacao" in check_values
+        aluno.eficiencia_energetica = "eficiencia_energetica" in check_values
+        aluno.administracao_economia_financas = "administracao_economia_financas" in check_values
         aluno.save()
         return render(request, 'users/atualizado.html',)
-    else:
-        return render(request, 'users/areas_interesse.html',)
+    return render(request, 'users/areas_interesse.html',)
 
 class SignUp(generic.CreateView):
+    """Rotina para fazer o login."""
     form_class = PFEUserCreationForm
     success_url = reverse_lazy('login')
     template_name = 'signup.html'
 
 class Usuario(generic.DetailView):
+    """Usuário."""
     model = Aluno
 
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
-def alunos(request):
+def alunos_lista(request):
+    """Gera lista com todos os alunos já registrados."""
     configuracao = Configuracao.objects.all().first()
     alunos_list = Aluno.objects.filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])\
         .order_by("user__first_name", "user__last_name", ) # Conta soh alunos
@@ -119,10 +124,16 @@ def alunos(request):
             tabela_alunos[ano] = {}
         if semestre not in tabela_alunos[ano]:
             tabela_alunos[ano][semestre] = {}
-        tabela_alunos[ano][semestre]["computação"] = alunos_semestre.filter(curso__exact='C').count()
-        tabela_alunos[ano][semestre]["mecânica"] = alunos_semestre.filter(curso__exact='M').count()
-        tabela_alunos[ano][semestre]["mecatrônica"] = alunos_semestre.filter(curso__exact='X').count()
-        tabela_alunos[ano][semestre]["total"] = alunos_semestre.count()
+
+        tabela_alunos[ano][semestre]["computação"] =\
+            alunos_semestre.filter(curso__exact='C').count()
+        tabela_alunos[ano][semestre]["mecânica"] =\
+            alunos_semestre.filter(curso__exact='M').count()
+        tabela_alunos[ano][semestre]["mecatrônica"] =\
+            alunos_semestre.filter(curso__exact='X').count()
+
+        tabela_alunos[ano][semestre]["total"] =\
+            alunos_semestre.count()
 
         if ((ano == configuracao.ano) and (semestre == configuracao.semestre)):
             break
@@ -142,11 +153,12 @@ def alunos(request):
         'configuracao': configuracao,
         'tabela_alunos': tabela_alunos,
     }
-    return render(request, 'users/alunos.html', context=context)
+    return render(request, 'users/alunos_lista.html', context=context)
 
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def alunos_inscrevendo(request):
+    """Mostra todos os alunos que estão se inscrevendo em projetos."""
     configuracao = Configuracao.objects.all().first()
 
     # PARA O FUTURO IMPLEMENTAR
@@ -161,8 +173,15 @@ def alunos_inscrevendo(request):
     ano = configuracao.ano
     semestre = configuracao.semestre
 
-    alunos_se_inscrevendo = Aluno.objects.filter(trancado=False).filter(anoPFE=ano).filter(semestrePFE=semestre).order_by("user__first_name")
-    alunos = alunos_se_inscrevendo.filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0]) # Conta soh alunos
+    alunos_se_inscrevendo = Aluno.objects.filter(trancado=False).\
+                                          filter(anoPFE=ano).\
+                                          filter(semestrePFE=semestre).\
+                                          order_by("user__first_name")
+
+    # Conta soh alunos
+    alunos = alunos_se_inscrevendo.filter(user__tipo_de_usuario=\
+                                          PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
+
     num_alunos = alunos.count()
     num_alunos_comp = alunos.filter(curso__exact='C').count() # Conta alunos computacao
     num_alunos_mxt = alunos.filter(curso__exact='X').count() # Conta alunos mecatrônica
@@ -172,7 +191,9 @@ def alunos_inscrevendo(request):
     ninscritos = 0
     opcoes = []
     for aluno in alunos:
-        opcao = Opcao.objects.filter(aluno=aluno).filter(projeto__ano=ano).filter(projeto__semestre=semestre)
+        opcao = Opcao.objects.filter(aluno=aluno).\
+                              filter(projeto__ano=ano).\
+                              filter(projeto__semestre=semestre)
         opcoes.append(opcao)
         if opcao.count() >= 5:
             inscritos += 1
@@ -193,11 +214,11 @@ def alunos_inscrevendo(request):
     }
     return render(request, 'users/alunos_inscrevendo.html', context=context)
 
-# TROCAR O NOME DESSA FUNÇAO
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
-def aluno(request, pk):
-    aluno = Aluno.objects.filter(pk=pk).first()
+def aluno_detail(request, primarykey):
+    """Mostra detalhes sobre o aluno."""
+    aluno = Aluno.objects.filter(pk=primarykey).first()
     configuracao = Configuracao.objects.all().first()
     context = {
         'configuracao': configuracao,
@@ -207,8 +228,9 @@ def aluno(request, pk):
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
-def professor_detail(request, pk):
-    professor = Professor.objects.filter(pk=pk).first()
+def professor_detail(request, primarykey):
+    """Mostra detalhes sobre o professor."""
+    professor = Professor.objects.filter(pk=primarykey).first()
     projetos = Projeto.objects.filter(orientador=professor).all()
     context = {
         'professor': professor,

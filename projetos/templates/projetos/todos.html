@@ -39,7 +39,7 @@
           <p style="margin-left:1em;">Alunos:</p>
           <ol>
           {% for aluno,prioridade in prioridades %} 
-            <li><a href="{% url 'aluno' aluno.id %}">{{aluno.user.first_name}} {{aluno.user.last_name}} &lt;{{aluno.user.email}}&gt; [{{ aluno.get_curso_display }}]&nbsp;
+            <li><a href="{% url 'aluno_detail' aluno.id %}">{{aluno.user.first_name}} {{aluno.user.last_name}} &lt;{{aluno.user.email}}&gt; [{{ aluno.get_curso_display }}]&nbsp;
               {% if prioridade == 0 %}
                 (prioridade não definida)
               {% else %}
