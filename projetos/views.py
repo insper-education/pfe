@@ -1247,23 +1247,48 @@ def avisos_listar(request):
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def emails(request):
-    """emails."""
+    """Gera uma série de lista de emails, com alunos, professores, parceiros, etc."""
     # Deve ter recurso para pegar aluno pelos projetos, opções,
     # pois um aluno que reprova pode aparecer em duas listas.
     configuracao = Configuracao.objects.all().first()
     ano = 2018
     semestre = 2
     semestres = []
-    alunos = []
+    alunos_p_semestre = []
+    orientadores_p_semestre = []
+    parceiros_p_semestre = []
     while True:
         semestres.append(str(ano)+"."+str(semestre))
-        alunos_inscrevendo = Aluno.objects.filter(trancado=False).\
-                                           filter(anoPFE=ano).\
-                                           filter(semestrePFE=semestre).\
-                                           order_by("user__first_name")
-        # Conta soh alunos
-        alunos.append(alunos_inscrevendo.\
-                      filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0]))
+
+        # Codigo abaixo é impreciso pois so pega pela ultima definição do ano,semestre do aluno
+        alunos = Aluno.objects.filter(trancado=False).\
+                               filter(anoPFE=ano).\
+                               filter(semestrePFE=semestre).\
+                               filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0]).\
+                               order_by("user__first_name")
+
+        projetos = []
+        for projeto in Projeto.objects.filter(ano=ano).filter(semestre=semestre):
+            if Aluno.objects.filter(alocacao__projeto=projeto): #checa se tem alunos
+                projetos.append(projeto)
+
+        organizacoes = []
+        for projeto in projetos:
+            if projeto.empresa not in organizacoes:
+                organizacoes.append(projeto.empresa)
+
+        orientadores = []
+        for projeto in projetos:
+            if projeto.orientador not in orientadores:
+                orientadores.append(projeto.orientador)
+
+        #parceiros = []
+        parceiros = Parceiro.objects.filter(organizacao__in=organizacoes)
+
+        alunos_p_semestre.append(alunos)
+        orientadores_p_semestre.append(orientadores)
+        parceiros_p_semestre.append(parceiros)
+
         if ano == configuracao.ano and semestre == configuracao.semestre:
             break
         if semestre == 1:
@@ -1271,8 +1296,23 @@ def emails(request):
         else:
             ano += 1
             semestre = 1
-    mylist = zip(semestres, alunos)
-    context = {'mylist': mylist}
+    mylist = zip(semestres, alunos_p_semestre, orientadores_p_semestre, parceiros_p_semestre)
+
+    membros_comite = PFEUser.objects.all().filter(membro_comite=True)
+
+    todos_alunos = Aluno.objects.filter(trancado=False).\
+                                 filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
+
+    todos_professores = Professor.objects.all()
+    todos_parceiros = Parceiro.objects.all()
+
+    context = {
+        'mylist' : mylist,
+        'membros_comite' : membros_comite,
+        'todos_alunos' : todos_alunos,
+        'todos_professores' : todos_professores,
+        'todos_parceiros' : todos_parceiros,
+    }
     return render(request, 'projetos/emails.html', context=context)
 
 @login_required

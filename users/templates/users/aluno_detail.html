@@ -131,12 +131,16 @@
         <hr>
         <h3>Projeto Alocado</h3>
         {% for alocado in aluno.alocacao_set.all %}
+            <a href="{% url 'completo' alocado.projeto.id %}">
             {% if alocado.projeto.titulo_final %}
                 {{alocado.projeto.titulo_final}}
             {% else %}
                 {{alocado.projeto.titulo}}
             {% endif %}
             ({{alocado.projeto.empresa.nome_empresa}})
+            { {{alocado.projeto.ano}}.{{alocado.projeto.semestre}} }
+            <br>
+            </a>
         {% endfor %}
     {% endif %}
 
@@ -158,7 +162,7 @@
             {% endif %}
         {% endfor %}
         <p style="line-height:2px">
-            ------------------------------------------------------------------------------------------
+            --------------------------------------------------------------------------------------
         </p>
         {% for opcao in aluno.opcao_set.all %}
             {% if opcao.projeto.ano != opcao.aluno.anoPFE or opcao.projeto.semestre != opcao.aluno.semestrePFE %}
