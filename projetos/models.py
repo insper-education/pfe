@@ -119,6 +119,10 @@ class Projeto(models.Model):
     perfil_aluno4_mecanica = \
         models.BooleanField(default=False, help_text='Perfil desejado de mecânica para aluno 4')
 
+    areas_de_interesse = models.ForeignKey('users.Areas', on_delete=models.CASCADE, null=True, blank=True,
+                                           help_text='Areas de interesse que o projeto espera dos alunos')
+
+
     class Meta:
         ordering = ['titulo']
         permissions = (("altera_empresa", "Empresa altera valores"),

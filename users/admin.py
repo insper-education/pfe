@@ -11,7 +11,9 @@ from django.contrib import admin
 
 #from .forms import PFEUserCreationForm
 #from .forms import PFEUserChangeForm
-from .models import PFEUser, Aluno, Professor, Parceiro, Administrador, Opcao, Alocacao
+from .models import PFEUser, Aluno, Professor, Parceiro, Administrador
+
+from .models import Opcao, Alocacao, Areas   # Mover para outra área
 
 @admin.register(PFEUser)
 class PFEUserAdmin(admin.ModelAdmin):
@@ -43,3 +45,4 @@ class OpcaoInline(admin.TabularInline):
 
 admin.site.register(Opcao)
 admin.site.register(Alocacao)
+admin.site.register(Areas)

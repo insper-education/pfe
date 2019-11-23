@@ -52,6 +52,7 @@ class ProjetoAdmin(admin.ModelAdmin):
             'perfil_aluno2_computacao', 'perfil_aluno2_mecanica', 'perfil_aluno2_mecatronica',
             'perfil_aluno3_computacao', 'perfil_aluno3_mecanica', 'perfil_aluno3_mecatronica',
             'perfil_aluno4_computacao', 'perfil_aluno4_mecanica', 'perfil_aluno4_mecatronica',
+            'areas_de_interesse',
              )
         }),
         ('Origem', {
