@@ -16,10 +16,11 @@
       <tr>
         <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Sigla</th>
         <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Organização</th>
-        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Projetos <br>Submetidos</th>
-        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Projetos <br>Fechados</th>
+        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Desde</th>
+        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Projetos <br>Submetidos</th>
+        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">Projetos <br>Fechados</th>
       </tr>
-      {% for organizacao,fechados in organizacoes_list %} 
+      {% for organizacao,fechados,desde in organizacoes_list %} 
         <tr class="item">
           <td>
             <a href="{% url 'organizacao_completo' organizacao.login %}"> <!-- UM DIA ACERTAR ISSO -->
@@ -30,6 +31,9 @@
             <a href="{% url 'organizacao_completo' organizacao.login %}"> <!-- UM DIA ACERTAR ISSO -->
               {{organizacao.nome_empresa}}
             </a>
+          </td>
+          <td>
+            {{desde}}
           </td>
           <td class="text-center">
             {{organizacao.projeto_set.count|stringformat:"03d"}}

@@ -419,10 +419,15 @@ def organizacoes_lista(request):
     """Exibe todas as organizações que já submeteram projetos."""
     organizacoes = Empresa.objects.all()
     fechados = []
+    desde = []
     for organizacao in organizacoes:
-        fechados.append(Projeto.objects.filter(empresa=organizacao).\
-                 filter(alocacao__isnull=False).distinct().count())
-    organizacoes_list = zip(organizacoes, fechados)
+        projetos = Projeto.objects.filter(empresa=organizacao).order_by("ano", "semestre")
+        if projetos.first():
+            desde.append(str(projetos.first().ano)+"."+str(projetos.first().semestre))
+        else:
+            desde.append("---------")
+        fechados.append(projetos.filter(alocacao__isnull=False).distinct().count())
+    organizacoes_list = zip(organizacoes, fechados, desde)
     total_organizacoes = Empresa.objects.all().count()
     total_submetidos = Projeto.objects.all().count()
     total_fechados = Projeto.objects.filter(alocacao__isnull=False).distinct().count()
@@ -1462,10 +1467,8 @@ def minhas_bancas(request):
     aluno = Aluno.objects.get(pk=request.user.pk)
     projetos = Projeto.objects.filter(alocacao__aluno=aluno)
     bancas = Banca.objects.filter(projeto__in=projetos).order_by("-startDate")
-    
+
     context = {
         'bancas' : bancas,
     }
     return render(request, 'projetos/minhas_bancas.html', context)
-    
-    
