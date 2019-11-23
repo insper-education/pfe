@@ -97,7 +97,7 @@
     <hr>
 
     <a href="{% url 'calendario' %}"><h5>Calendário Geral</h5></a>
-    <a {% if not projeto %} class="disabled" onclick="myFunction('projeto')" {% else %} href="{% url 'meuprojeto' %}" {% endif %} >
+    <a {% if not projeto %} class="disabled" onclick="myFunction('projeto')" {% else %} href="{% url 'minhas_bancas' %}" {% endif %} >
         <h5>Horário das bancas</h5>
     </a>
     <a {% if not projeto %} class="disabled" onclick="myFunction('projeto')" {% else %} href="{% url 'encontros_marcar' %}" {% endif %} >

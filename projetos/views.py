@@ -1450,8 +1450,22 @@ def todos_professores(request):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def comite(request):
     """Exibe os professores que estão no comitê do PFE."""
-    professores = Professor.objects.all().filter(user__membro_comite=True)
+    professores = Professor.objects.filter(user__membro_comite=True)
     context = {
         'professores': professores,
         }
     return render(request, 'projetos/todos_professores.html', context)
+
+@login_required
+def minhas_bancas(request):
+    """Lista as bancas agendadas para um aluno."""
+    aluno = Aluno.objects.get(pk=request.user.pk)
+    projetos = Projeto.objects.filter(alocacao__aluno=aluno)
+    bancas = Banca.objects.filter(projeto__in=projetos).order_by("-startDate")
+    
+    context = {
+        'bancas' : bancas,
+    }
+    return render(request, 'projetos/minhas_bancas.html', context)
+    
+    

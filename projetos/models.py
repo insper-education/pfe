@@ -77,8 +77,8 @@ class Projeto(models.Model):
                                 help_text='Recursos a serem disponibilizados aos Alunos')
     anexo = models.FileField(upload_to=get_upload_path, null=True, blank=True,
                              help_text='Documento PDF')
-    #imagem = models.ImageField(null=True, blank=True,
-    #                           help_text='Imagem que representa projeto (se houver)')
+    imagem = models.ImageField(null=True, blank=True,
+                               help_text='Imagem que representa projeto (se houver)')
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE,
                                 help_text='Organização parceira que propôs projeto')
     departamento = models.TextField(max_length=1000, null=True, blank=True,
@@ -221,6 +221,11 @@ class Banca(models.Model):
                                 related_name='membro2', help_text='membro da banca')
     membro3 = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
                                 related_name='membro3', help_text='membro da banca')
+    TIPO_DE_BANCA = ( # não mudar a ordem dos números
+        (0, 'final'),
+        (1, 'intermediaria'),
+    )
+    tipo_de_banca = models.PositiveSmallIntegerField(choices=TIPO_DE_BANCA, default=0)
     def __str__(self):
         return self.projeto.titulo
 

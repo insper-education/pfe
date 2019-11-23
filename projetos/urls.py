@@ -38,6 +38,7 @@ urlpatterns = [
     path('projetos_fechados/', views.projetos_fechados, name='projetos_fechados'),
     path('histograma/', views.histograma, name='histograma'),
     path('meuprojeto/', views.meuprojeto, name='meuprojeto'),
+    path('minhas_bancas/', views.minhas_bancas, name='minhas_bancas'),
     path('organizacoes_lista/', views.organizacoes_lista, name='organizacoes_lista'),
     path('organizacao_completo/<str:org>', views.organizacao_completo, name='organizacao_completo'),
     path('index_professor/', views.index_professor, name='index_professor'),

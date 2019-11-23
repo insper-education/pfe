@@ -25,16 +25,17 @@ def dup_event(modeladmin: admin_opt.ModelAdmin, request, queryset):
     for obj in queryset:
         from_id = obj.id
         obj.id = None
-        if Configuracao.objects.all().first().semestre == 1:
-            obj.semestre = 2
-            obj.ano = Configuracao.objects.all().first().ano
-        else:
-            obj.semestre = 1
-            obj.ano = Configuracao.objects.all().first().ano + 1
+        if isinstance(obj, Projeto):
+            if Configuracao.objects.all().first().semestre == 1:
+                obj.semestre = 2
+                obj.ano = Configuracao.objects.all().first().ano
+            else:
+                obj.semestre = 1
+                obj.ano = Configuracao.objects.all().first().ano + 1
         obj.save()
         message = "duplicando de {} para {}".format(from_id, obj.id)
         modeladmin.log_addition(request=request, object=obj, message=message)
-dup_event.short_description = "Duplicar Projeto(s)"
+dup_event.short_description = "Duplicar Entrada(s)"
 
 @admin.register(Projeto)
 class ProjetoAdmin(admin.ModelAdmin):
@@ -109,14 +110,18 @@ class BancaAdmin(admin.ModelAdmin):
     get_organizacao.short_description = 'Organização'
     get_organizacao.admin_order_field = 'projeto__empresa'
 
-
 @admin.register(Aviso)
 class AvisoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
     list_display = ('titulo', 'delta',)
 
+@admin.register(Evento)
+class EventoAdmin(admin.ModelAdmin):
+    """Todos os eventos do PFE com suas datas."""
+    list_display = ('name', 'startDate', 'endDate', 'location', )
+    actions = [dup_event]
+
 admin.site.register(Cursada)
 admin.site.register(Recomendada)
-admin.site.register(Evento)         # Todos os eventos do PFE com suas datas
 admin.site.register(Encontro)       # Informações das Encontros (com os facilitadores)
 admin.site.register(Entidade)       # Para ser preenchido com as entidades estudantis
