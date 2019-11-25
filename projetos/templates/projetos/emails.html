@@ -6,6 +6,12 @@
 {% endcomment %}
 
 {% block head %}
+  {% load static %}
+  <script>
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
 {% endblock %}
 
 {% block content %}
@@ -23,8 +29,9 @@
     <br>
   {% endif %}
 
+  Todos do semestre
   <table>
-    {% for semestre,alunos,orientadores,parceiros in mylist %}
+    {% for semestre,alunos,orientadores,parceiros in email_todos %}
       <tr>
         <td>Turma {{semestre}}</td>
         <td>
@@ -67,6 +74,37 @@
     {% endfor %}
   </table>
   <br>
+
+  Todos divididos por projeto
+  <table>
+    {% for semestre,projetos in email_p_semestre %}
+      <tr>
+        <td>Turma {{semestre}}</td>
+        {% for projeto, pessoas in projetos.items %}
+          <td>
+            {% if pessoas %}
+              <a href="
+                mailto:
+                {% for pessoa in pessoas %}{{pessoa.user.first_name}} {{pessoa.user.last_name}} &lt;{{ pessoa.user.email }}&gt;,
+                {% endfor %}
+                ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
+                &amp;subject=PFE%20-%20Projeto:%20{{projeto}}&amp;body=Caros,%0D%0A%0D%0A
+                atenciosamente,%20coordenação%20PFE
+              "
+              data-toggle="tooltip" data-html="true" animation="true" title="
+                {{projeto}}
+              "
+              >p{{projeto.pk}}</a><br>
+            {% endif %}
+          </td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+  </table>
+  <br>
+
+
+
   {% if todos_alunos %}
     <a href="
       mailto:

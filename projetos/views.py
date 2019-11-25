@@ -1262,38 +1262,52 @@ def emails(request):
     alunos_p_semestre = []
     orientadores_p_semestre = []
     parceiros_p_semestre = []
+    projetos_p_semestre = []
     while True:
         semestres.append(str(ano)+"."+str(semestre))
 
-        # Codigo abaixo é impreciso pois so pega pela ultima definição do ano,semestre do aluno
-        alunos = Aluno.objects.filter(trancado=False).\
-                               filter(anoPFE=ano).\
-                               filter(semestrePFE=semestre).\
-                               filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0]).\
-                               order_by("user__first_name")
+        projetos_pessoas = {} # Dicionario com as pessoas do projeto 
 
-        projetos = []
+        alunos_semestre = [] # Alunos do semestre
+        organizacoes = [] # Controla as organizações participantes por semestre
+        orientadores = [] # Orientadores por semestre
+        parceiros = [] # Pessoas que trabalham nas organizações parceiras
+
         for projeto in Projeto.objects.filter(ano=ano).filter(semestre=semestre):
             if Aluno.objects.filter(alocacao__projeto=projeto): #checa se tem alunos
-                projetos.append(projeto)
+                alunos_tmp = Aluno.objects.filter(trancado=False).\
+                              filter(alocacao__projeto=projeto).\
+                              filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
+                alunos_semestre += list(alunos_tmp)
+                orientador = projeto.orientador
+                parceiros = Parceiro.objects.filter(organizacao=projeto.empresa).\
+                              filter(user__is_active=True)
 
-        organizacoes = []
-        for projeto in projetos:
-            if projeto.empresa not in organizacoes:
-                organizacoes.append(projeto.empresa)
+                if projeto.orientador not in orientadores:
+                    orientadores.append(orientador) # Junta orientadores do semestre
 
-        orientadores = []
-        for projeto in projetos:
-            if projeto.orientador not in orientadores:
-                orientadores.append(projeto.orientador)
+                if projeto.empresa not in organizacoes:
+                    organizacoes.append(projeto.empresa) # Junta organizações do semestre
 
-        #parceiros = []
-        parceiros = Parceiro.objects.filter(organizacao__in=organizacoes)
+                projetos_pessoas[projeto] = list(alunos_tmp) # Pessoas por projeto
+                projetos_pessoas[projeto] += list([orientador]) # Pessoas por projeto
+                projetos_pessoas[projeto] += list(parceiros) # Pessoas por projeto
 
-        alunos_p_semestre.append(alunos)
+                # projetos_pessoas["p"+str(projeto.pk)] = list(alunos_tmp) # Pessoas por projeto
+                # projetos_pessoas["p"+str(projeto.pk)] += list([orientador]) # Pessoas por projeto
+                # projetos_pessoas["p"+str(projeto.pk)] += list(parceiros) # Pessoas por projeto
+
+        # Parceiros de todas as organizações parceiras
+        parceiros_semestre = Parceiro.objects.filter(organizacao__in=organizacoes)
+
+        # Cria listas para enviar para templeate html
+        alunos_p_semestre.append(alunos_semestre)
         orientadores_p_semestre.append(orientadores)
-        parceiros_p_semestre.append(parceiros)
+        parceiros_p_semestre.append(parceiros_semestre)
 
+        projetos_p_semestre.append(projetos_pessoas)
+
+        # Vai para próximo semestre
         if ano == configuracao.ano and semestre == configuracao.semestre:
             break
         if semestre == 1:
@@ -1301,7 +1315,11 @@ def emails(request):
         else:
             ano += 1
             semestre = 1
-    mylist = zip(semestres, alunos_p_semestre, orientadores_p_semestre, parceiros_p_semestre)
+
+    email_todos = zip(semestres, alunos_p_semestre, orientadores_p_semestre, parceiros_p_semestre)
+
+    email_p_semestre = zip(semestres, projetos_p_semestre)
+
 
     membros_comite = PFEUser.objects.all().filter(membro_comite=True)
 
@@ -1312,7 +1330,8 @@ def emails(request):
     todos_parceiros = Parceiro.objects.all()
 
     context = {
-        'mylist' : mylist,
+        'email_todos' : email_todos,
+        'email_p_semestre' : email_p_semestre,
         'membros_comite' : membros_comite,
         'todos_alunos' : todos_alunos,
         'todos_professores' : todos_professores,
