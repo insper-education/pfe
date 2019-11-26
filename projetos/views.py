@@ -1494,7 +1494,8 @@ def minhas_bancas(request):
     }
     return render(request, 'projetos/minhas_bancas.html', context)
 
-
+@login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
 def export(request, event_id):
     """Gera evento de calendário."""
     banca = Banca.objects.all().get(pk=event_id)
