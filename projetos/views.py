@@ -1503,7 +1503,7 @@ def export(request, event_id):
     cal = Calendar()
     site = Site.objects.get_current()
 
-    cal.add('prodid', '-//%s Events Calendar//%s//' % (site.name, site.domain))
+    cal.add('prodid', '-//PFE//Insper//')
     cal.add('version', '2.0')
 
     site_token = site.domain.split('.')
