@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 26 de Novembro de 2019
+{% endcomment %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+  <h3>Listagem de Bancas</h3>
+  {% if bancas %}
+    <table id="BancasTable">
+      {% for banca in bancas %} 
+      <tr class="item">
+        <td>
+        <a href="
+          mailto:
+          {% if banca.membro1 %}
+            {{banca.membro1.first_name}}%20{{banca.membro1.last_name}}%20&lt;{{banca.membro1.email}}&gt;,
+          {% endif %}
+          {% if banca.membro2 %}
+            {{banca.membro2.first_name}}%20{{banca.membro2.last_name}}%20&lt;{{banca.membro2.email}}&gt;,
+          {% endif %}
+          {% if banca.membro3 %}
+            {{banca.membro3.first_name}}%20{{banca.membro3.last_name}}%20&lt;{{banca.membro3.email}}&gt;,
+          {% endif %}
+          {% for alocacao in banca.projeto.alocacao_set.all %}
+            {{alocacao.aluno.user.first_name}}%20{{alocacao.aluno.user.last_name}}%20&lt;{{alocacao.aluno.user.email}}&gt;,
+          {% endfor %}
+          {{banca.projeto.orientador.user.first_name}}%20{{banca.projeto.orientador.user.last_name}}%20&lt;{{banca.projeto.orientador.user.email}}&gt;
+          ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,Comite%20PFE&lt;comitepfe@insper.edu.br&gt;
+          &amp;subject=Banca%20PFE%20-%20Projeto:%20{{banca.projeto}}&amp;body=Caros,%0D%0A%0D%0A
+          Agendamento%20para%20banca%20do%20PFE.%0D%0A%0D%0A
+          Horário:{{banca.startDate.date}} ({{banca.startDate|date:'l'}}) das {{banca.startDate.time}}
+          às {{banca.endDate.time}}%0D%0A
+          {% if banca.tipo_de_banca == 0 %}
+            Tipo: Final%0D%0A
+          {% elif banca.tipo_de_banca == 1 %}
+            Tipo: Intermediária%0D%0A
+          {% endif %}
+          {% if banca.projeto %}
+            Título do Projeto:
+              {% if banca.projeto.titulo_final %}
+                {{banca.projeto.titulo_final}}
+              {% else %}
+                {{banca.projeto.titulo}}
+              {% endif %}
+          {% endif %}
+          %0D%0A
+          {% if banca.projeto.empresa.nome_empresa %}
+            Organização Parceira:
+            {{ banca.projeto.empresa.nome_empresa }}%0D%0A
+          {% endif %}
+          {% if banca.location %}
+            Local: {{banca.location}}%0D%0A
+          {% endif %}
+          {% if banca.projeto.orientador %}
+            %0D%0AOrientador:%0D%0A
+              - {{banca.projeto.orientador.user.first_name}} 
+              {{banca.projeto.orientador.user.last_name}} 
+              %0D%0A%0D%0A
+          {% endif %}
+          Banca:%0D%0A
+            {% if banca.membro1 %}
+              - {{banca.membro1.first_name}} {{banca.membro1.last_name}}
+            %0D%0A
+            {% endif %}
+            {% if banca.membro2 %}
+              - {{banca.membro2.first_name}} {{banca.membro2.last_name}}
+            %0D%0A
+            {% endif %}
+            {% if banca.membro3 %}
+              - {{banca.membro3.first_name}} {{banca.membro3.last_name}}
+            %0D%0A
+            {% endif %}
+          %0D%0A
+          Alunos
+          %0D%0A
+            {% for alocacao in banca.projeto.alocacao_set.all %}
+                - {{alocacao.aluno.user.first_name}} {{alocacao.aluno.user.last_name}}
+                [{{ alocacao.aluno.get_curso_display }}]
+              %0D%0A
+            {% endfor %}
+          %0D%0A%0D%0A
+          atenciosamente,%20coordenação%20PFE
+        ">
+          <!--&amp;attach='events/{{banca.pk}}'-->
+          {% if banca.startDate %}
+            <b>Horário:</b> 
+            {{banca.startDate.date}} ({{banca.startDate|date:"l"}}) das {{banca.startDate.time}}
+          {% endif %}
+          {% if banca.endDate %}
+            às {{banca.endDate.time}}
+          {% endif %}
+          </a>
+          <br>
+          <a href="{% url 'event_ics_export' banca.id %}">
+            <b>Agendamento</b>: banca{{banca.id}}
+          </a>
+          <br>
+          {% if banca.tipo_de_banca == 0 %}
+            <b>Tipo:</b> Final<br>
+          {% elif banca.tipo_de_banca == 1 %}
+            <b>Tipo:</b> Intermediária<br>
+          {% endif %}
+          {% if banca.projeto %}
+            <b>Título do Projeto:</b> 
+              {% if banca.projeto.titulo_final %}
+                {{banca.projeto.titulo_final}}<br>
+              {% else %}
+                {{banca.projeto.titulo}}</a>
+              {% endif %}
+          {% endif %}
+          <br>
+          {% if banca.projeto.empresa.nome_empresa %}
+            <b>Organização Parceira:</b> 
+              {{ banca.projeto.empresa.nome_empresa }}
+          {% endif %}
+          <br>
+          {% if banca.location %}
+            <b>Local:</b> {{banca.location}}
+          {% endif %}
+          <br>
+        
+          <b>Convidados:</b><br>
+          {% if banca.projeto.orientador %}
+              - {{banca.projeto.orientador.user.first_name}} {{banca.projeto.orientador.user.last_name}}<br>
+          {% endif %}
+          {% if banca.membro1 %}
+            - {{banca.membro1.first_name}} {{banca.membro1.last_name}}<br>
+          {% endif %}
+          {% if banca.membro2 %}
+            - {{banca.membro2.first_name}} {{banca.membro2.last_name}}<br>
+          {% endif %}
+          {% if banca.membro3 %}
+            - {{banca.membro3.first_name}} {{banca.membro3.last_name}}<br>
+          {% endif %}
+          {% for alocacao in banca.projeto.alocacao_set.all %}
+              - {{alocacao.aluno.user.first_name}} {{alocacao.aluno.user.last_name}}<br>
+          {% endfor %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>Não existem bancas futuras agendadas.</p>
+  {% endif %}
+  <p>&nbsp;</p>
+
+{% endblock %}

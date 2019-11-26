@@ -16,6 +16,7 @@ urlpatterns = [
     path('areas/', views.areas, name='areas'),
     path('avisos_listar/', views.avisos_listar, name='avisos_listar'),
     path('backup/<str:formato>', views.backup, name='backup'),
+    path('bancas_agendamento/', views.bancas_agendamento, name='bancas_agendamento'),
     path('bancas_index/', views.bancas_index, name='bancas_index'),
     path('bancas_buscar', views.bancas_buscar, name='bancas_buscar'),
     path('bancas_criar', views.bancas_criar, name='bancas_criar'),
