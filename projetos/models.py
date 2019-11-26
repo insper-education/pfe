@@ -139,7 +139,10 @@ class Projeto(models.Model):
         return reverse('projeto-detail', args=[str(self.id)])
 
     def __str__(self):
-        return self.titulo+" ("+str(self.ano)+"."+str(self.semestre)+")"
+        if self.titulo_final:
+            return self.titulo_final+" ("+str(self.ano)+"."+str(self.semestre)+")"
+        else:
+            return self.titulo+" ("+str(self.ano)+"."+str(self.semestre)+")"
 
 class Configuracao(models.Model):
     """Armazena os dados básicos de funcionamento do sistema."""

@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'import_export',
     'users.apps.UsersConfig',
     'projetos.apps.ProjetosConfig',
+    'django.contrib.sites',
 ]
 
 MIDDLEWARE = [
@@ -157,3 +158,5 @@ CELERY_BEAT_SCHEDULE = {
        'schedule': crontab(hour=6,minute=0),
     },
 }
+
+SITE_ID = 1

@@ -57,4 +57,10 @@ urlpatterns = [
     path('todos/', views.todos, name='todos'),
     path('todos_parceiros/', views.todos_parceiros, name='todos_parceiros'),
     path('todos_professores/', views.todos_professores, name='todos_professores'),
+    path('events/<int:event_id>', views.export, name="event_ics_export"),
 ]
+
+#urlpatterns += patterns('',
+    #url(r'^events/(?P&lt;event_id&gt;\d+)/export/', 'app_events.ics_views.export', name="event_ics_export"),
+    #url(r'^events/(?P&lt;event_id&gt;\d+)/export/', 'views.ics_views.export', name="event_ics_export"),
+#)

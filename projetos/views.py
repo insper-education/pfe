@@ -15,11 +15,13 @@ import dateutil.parser
 
 import tablib
 from tablib import Databook
+from icalendar import Calendar, Event, vCalAddress
 
 from xhtml2pdf import pisa # Para gerar o PDF
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.sites.models import Site
 from django.core.exceptions import PermissionDenied
 from django.core.files.storage import FileSystemStorage
 from django.core.mail import EmailMessage
@@ -1491,3 +1493,84 @@ def minhas_bancas(request):
         'bancas' : bancas,
     }
     return render(request, 'projetos/minhas_bancas.html', context)
+
+
+def export(request, event_id):
+    """Gera evento de calendário."""
+    banca = Banca.objects.all().get(pk=event_id)
+
+    cal = Calendar()
+    site = Site.objects.get_current()
+
+    cal.add('prodid', '-//%s Events Calendar//%s//' % (site.name, site.domain))
+    cal.add('version', '2.0')
+
+    site_token = site.domain.split('.')
+    site_token.reverse()
+    site_token = '.'.join(site_token)
+
+    ical_event = Event()
+    
+    ical_event['uid'] = "Banca{0}{1}{2}".format(banca.startDate.strftime("%Y%m%d%H%M%S"),banca.projeto.pk,banca.tipo_de_banca)
+    ical_event.add('summary', "Banca {0}".format(banca.projeto))
+    ical_event.add('dtstart', banca.startDate)
+    ical_event.add('dtend', banca.endDate)
+    ical_event.add('dtstamp', datetime.datetime.now().date())
+    ical_event.add('tzid', "America/Sao_Paulo")
+    ical_event.add('location', banca.location)
+
+    ical_event.add('geo', (-25.598749,-46.676368))
+
+    cal_address = vCalAddress('MAILTO:lpsoares@insper.edu.br')
+    cal_address.params["CN"] = "Luciano Pereira Soares"
+    ical_event.add('organizer', cal_address)
+    
+    #REMOVER OS xx DOS EMAILS
+    if banca.membro1:
+        atnd = vCalAddress("MAILTO:{}".format(banca.membro1.email))
+        atnd.params["CN"] = "{0} {1}".format(banca.membro1.first_name, banca.membro1.last_name)
+        atnd.params["ROLE"] = "REQ-PARTICIPANT"
+        ical_event.add("attendee", atnd, encode=0)
+
+    if banca.membro2:
+        atnd = vCalAddress("MAILTO:{}".format(banca.membro2.email))
+        atnd.params["CN"] = "{0} {1}".format(banca.membro2.first_name, banca.membro2.last_name)
+        atnd.params["ROLE"] = "REQ-PARTICIPANT"
+        ical_event.add("attendee", atnd, encode=0)
+
+    if banca.membro3:
+        atnd = vCalAddress("MAILTO:{}".format(banca.membro3.email))
+        atnd.params["CN"] = "{0} {1}".format(banca.membro3.first_name, banca.membro3.last_name)
+        atnd.params["ROLE"] = "REQ-PARTICIPANT"
+        ical_event.add("attendee", atnd, encode=0)
+
+    alunos = Aluno.objects.filter(alocacao__projeto=banca.projeto).filter(trancado=False)
+    for aluno in alunos:
+        atnd = vCalAddress("MAILTO:{}".format(aluno.user.email))
+        atnd.params["CN"] = "{0} {1}".format(aluno.user.first_name, aluno.user.last_name)
+        atnd.params["ROLE"] = "REQ-PARTICIPANT"
+        ical_event.add("attendee", atnd, encode=0)
+
+    description = "Banca do Projeto {0}".format(banca.projeto)
+    description += "\n\nOrientador:\n- {0}".format(banca.projeto.orientador)
+    if banca.membro1 or banca.membro2 or banca.membro3:
+        description += "\n\nMembros da Banca:"
+        if banca.membro1:
+            description += "\n- {0} {1}".format(banca.membro1.first_name, banca.membro1.last_name)
+        if banca.membro2:
+            description += "\n- {0} {1}".format(banca.membro2.first_name, banca.membro2.last_name)
+        if banca.membro3:
+            description += "\n- {0} {1}".format(banca.membro3.first_name, banca.membro3.last_name)
+    description += "\n\nAlunos:"
+    for aluno in alunos:
+        description += "\n- {0} {1}".format(aluno.user.first_name, aluno.user.last_name)
+
+    ical_event.add('description', description)
+    
+    cal.add_component(ical_event)
+
+    response = HttpResponse(cal.to_ical())
+    response['Content-Type'] = 'text/calendar'
+    response['Content-Disposition'] = 'attachment; filename=Banca{0}.ics'.format(banca.pk)
+
+    return response

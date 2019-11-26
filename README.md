@@ -8,13 +8,20 @@ Celery = 4.3.0
 
 
 Fazer:
-pip install Celery
+
 sudo apt-get install -y erlang
 sudo apt-get install rabbitmq-server
 sudo systemctl enable rabbitmq-server
 sudo systemctl start rabbitmq-server
 
-pip install python-dateutil
+pip3 install Celery
+pip3 install icalendar
+pip3 install python-dateutil
+
+
+
+
+
 
 para checar: systemctl status rabbitmq-server
 
