@@ -6,6 +6,7 @@
 {% endcomment %}
 
 {% block head %}
+  {% load escape_emails %}
 {% endblock %}
 
 {% block content %}
@@ -18,20 +19,21 @@
         <a href="
           mailto:
           {% if banca.membro1 %}
-            {{banca.membro1.first_name}}%20{{banca.membro1.last_name}}%20&lt;{{banca.membro1.email}}&gt;,
+            {{banca.membro1.first_name}}%20{{banca.membro1.last_name|parse_quote}}%20&lt;{{banca.membro1.email|parse_quote}}&gt;,
           {% endif %}
           {% if banca.membro2 %}
-            {{banca.membro2.first_name}}%20{{banca.membro2.last_name}}%20&lt;{{banca.membro2.email}}&gt;,
+            {{banca.membro2.first_name}}%20{{banca.membro2.last_name|parse_quote}}%20&lt;{{banca.membro2.email|parse_quote}}&gt;,
           {% endif %}
           {% if banca.membro3 %}
-            {{banca.membro3.first_name}}%20{{banca.membro3.last_name}}%20&lt;{{banca.membro3.email}}&gt;,
+            {{banca.membro3.first_name}}%20{{banca.membro3.last_name|parse_quote}}%20&lt;{{banca.membro3.email|parse_quote}}&gt;,
           {% endif %}
           {% for alocacao in banca.projeto.alocacao_set.all %}
-            {{alocacao.aluno.user.first_name}}%20{{alocacao.aluno.user.last_name}}%20&lt;{{alocacao.aluno.user.email}}&gt;,
+            {{alocacao.aluno.user.first_name|parse_quote}}%20{{alocacao.aluno.user.last_name|parse_quote}}%20&lt;{{alocacao.aluno.user.email|parse_quote}}&gt;,
           {% endfor %}
-          {{banca.projeto.orientador.user.first_name}}%20{{banca.projeto.orientador.user.last_name}}%20&lt;{{banca.projeto.orientador.user.email}}&gt;
+          {{banca.projeto.orientador.user.first_name|parse_quote}}%20{{banca.projeto.orientador.user.last_name|parse_quote}}%20&lt;{{banca.projeto.orientador.user.email|parse_quote}}&gt;
           ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,Comite%20PFE&lt;comitepfe@insper.edu.br&gt;
-          &amp;subject=Banca%20PFE%20-%20Projeto:%20{{banca.projeto}}&amp;body=Caros,%0D%0A%0D%0A
+          &amp;subject=Banca%20PFE%20-%20Projeto:%20{% if banca.projeto.titulo_final %}{{banca.projeto.titulo_final|parse_quote}}{% else %}{{banca.projeto.titulo|parse_quote}}{% endif %}
+          &amp;body=Caros,%0D%0A%0D%0A
           Agendamento%20para%20banca%20do%20PFE.%0D%0A%0D%0A
           Horário: {{banca.startDate.date}} ({{banca.startDate|date:'l'}}) das {{banca.startDate.time}}
           às {{banca.endDate.time}}%0D%0A
@@ -43,44 +45,44 @@
           {% if banca.projeto %}
             Título do Projeto:
               {% if banca.projeto.titulo_final %}
-                {{banca.projeto.titulo_final}}
+                {{banca.projeto.titulo_final|parse_quote}}
               {% else %}
-                {{banca.projeto.titulo}}
+                {{banca.projeto.titulo|parse_quote}}
               {% endif %}
           {% endif %}
           %0D%0A
           {% if banca.projeto.empresa.nome_empresa %}
             Organização Parceira:
-            {{ banca.projeto.empresa.nome_empresa }}%0D%0A
+            {{ banca.projeto.empresa.nome_empresa|parse_quote }}%0D%0A
           {% endif %}
           {% if banca.location %}
-            Local: {{banca.location}}%0D%0A
+            Local: {{banca.location|parse_quote}}%0D%0A
           {% endif %}
           {% if banca.projeto.orientador %}
             %0D%0AOrientador:%0D%0A
-              - {{banca.projeto.orientador.user.first_name}} 
-              {{banca.projeto.orientador.user.last_name}} 
+              - {{banca.projeto.orientador.user.first_name|parse_quote}} 
+              {{banca.projeto.orientador.user.last_name|parse_quote}} 
               %0D%0A%0D%0A
           {% endif %}
           Banca:%0D%0A
             {% if banca.membro1 %}
-              - {{banca.membro1.first_name}} {{banca.membro1.last_name}}
+              - {{banca.membro1.first_name|parse_quote}} {{banca.membro1.last_name|parse_quote}}
             %0D%0A
             {% endif %}
             {% if banca.membro2 %}
-              - {{banca.membro2.first_name}} {{banca.membro2.last_name}}
+              - {{banca.membro2.first_name|parse_quote}} {{banca.membro2.last_name|parse_quote}}
             %0D%0A
             {% endif %}
             {% if banca.membro3 %}
-              - {{banca.membro3.first_name}} {{banca.membro3.last_name}}
+              - {{banca.membro3.first_name|parse_quote}} {{banca.membro3.last_name|parse_quote}}
             %0D%0A
             {% endif %}
           %0D%0A
           Alunos
           %0D%0A
             {% for alocacao in banca.projeto.alocacao_set.all %}
-                - {{alocacao.aluno.user.first_name}} {{alocacao.aluno.user.last_name}}
-                [{{ alocacao.aluno.get_curso_display }}]
+                - {{alocacao.aluno.user.first_name|parse_quote}} {{alocacao.aluno.user.last_name|parse_quote}}
+                [{{ alocacao.aluno.get_curso_display|parse_quote }}]
               %0D%0A
             {% endfor %}
           %0D%0A%0D%0A
