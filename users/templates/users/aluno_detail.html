@@ -147,6 +147,7 @@
     {% if aluno.opcao_set.all %}
         <hr>
         <h3>Projetos Selecionados</h3>
+        <p id="regular"> 
         {% for opcao in aluno.opcao_set.all %}
             {% if opcao.projeto.ano == opcao.aluno.anoPFE and opcao.projeto.semestre == opcao.aluno.semestrePFE %}
                 <a href="{% url 'completo' opcao.projeto.id %}">
@@ -159,10 +160,14 @@
                     ({{opcao.projeto.empresa.nome_empresa}})
                     { {{opcao.projeto.ano}}.{{opcao.projeto.semestre}} }</p>
                 </a>
-            {% else %}
-                <p class="text-warning">Nenhum projeto selecionado para o semestre atual.<p>
             {% endif %}
         {% endfor %}
+        </p>
+        <script>
+            if($.trim($("#regular").html())=='') {
+                $("#regular").text("Nenhum projeto selecionado para o semestre regular.");
+            }
+        </script>
         <p style="line-height:2px">
             --------------------------------------------------------------------------------------
         </p>
