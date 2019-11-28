@@ -33,9 +33,17 @@ class AlunoAdmin(admin.ModelAdmin):
     list_display = ('user', 'curso', 'anoPFE', 'semestrePFE')
     ordering = ('user__first_name', 'user__last_name',)
 
+@admin.register(Alocacao)
+class AlocacaoAdmin(admin.ModelAdmin):
+    """Definição de Alocacao do PFE."""
+    list_display = ('aluno', 'projeto',)
+    ordering = ('-projeto__ano','-projeto__semestre',)
+
 admin.site.register(Professor)
 admin.site.register(Parceiro)
 admin.site.register(Administrador)
+admin.site.register(Opcao)
+admin.site.register(Areas)
 
 class OpcaoInline(admin.TabularInline):
     """.Não me lembro onde uso isso, provavel código morto."""
@@ -43,6 +51,3 @@ class OpcaoInline(admin.TabularInline):
     extra = 5
     max_num = 5
 
-admin.site.register(Opcao)
-admin.site.register(Alocacao)
-admin.site.register(Areas)
