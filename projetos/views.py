@@ -212,9 +212,12 @@ def propor(request):
     configuracao = Configuracao.objects.all().first()
     projeto_list = []
     opcoes_list = []
-    projetos = Projeto.objects.all()
+    projetos = Projeto.objects.filter(disponivel=True).\
+                               filter(ano=configuracao.ano).\
+                               filter(semestre=configuracao.semestre)
+                               
     if request.method == 'POST':
-        min_group = int(request.POST.get('min', 0))
+        min_group = int(request.POST.get('min', 1))
         max_group = int(request.POST.get('max', 5))
         projetos_ajustados = {}
         alunos = Aluno.objects.filter(user__tipo_de_usuario=1).\
