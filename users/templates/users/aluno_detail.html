@@ -6,6 +6,7 @@
 {% endcomment %}
 
 {% block head %}
+  {% load aderencia_aluno %}
 {% endblock %}
 
 {% block content %}
@@ -175,7 +176,9 @@
                         {{opcao.projeto.titulo}}
                     {% endif %}
                     ({{opcao.projeto.empresa.nome_empresa}})
-                    { {{opcao.projeto.ano}}.{{opcao.projeto.semestre}} }</p>
+                    {{ '{' }}{{opcao.projeto.ano}}.{{opcao.projeto.semestre}}{{ '}' }}
+                    [{% mede_aderencia aluno opcao.projeto %}%]
+                </p>
                 </a>
             {% endif %}
         {% endfor %}

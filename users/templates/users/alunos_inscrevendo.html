@@ -7,6 +7,7 @@
 
 {% block head %}
   {% load static %}
+  {% load aderencia_aluno %}
   <script src="https://www.w3schools.com/lib/w3.js"></script>
   <script src="{% static 'js/Chart.min.js' %}"></script>
   <script>
@@ -47,6 +48,7 @@
                     {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
                       </u>
                     {% endif %}
+                    [{% mede_aderencia aluno opcao.projeto %}%]
                     <br>
                   {% endfor %}
                   "
