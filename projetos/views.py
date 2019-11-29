@@ -236,7 +236,10 @@ def propor(request):
 
         #Posiciona os alunos nas suas primeiras opcoes (supondo projeto permitir)
         for aluno in alunos:
-            opcoes = Opcao.objects.filter(aluno=aluno)
+            print("AQUI")
+            opcoes = Opcao.objects.filter(aluno=aluno).\
+                                   filter(projeto__ano==configuracao.ano).\
+                                   filter(projeto__semestre==configuracao.semestre)
             if len(opcoes) >= 5: # checa se aluno preencheu formulario
                 #busca nas opcoes do aluno
                 opcoes1 = get_opcao(1, opcoes, min_group, max_group, projetos_ajustados)
