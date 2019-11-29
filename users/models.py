@@ -6,11 +6,12 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Maio de 2019
 """
 
-from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils.functional import curry
 
 from projetos.models import Projeto, Empresa
 
@@ -173,6 +174,28 @@ class Aluno(models.Model):
                                 help_text='Já participou de alguma entidade estudantil do Insper?')
     familia = models.TextField(max_length=1000, null=True, blank=True,\
               help_text='Possui familiares em empresa que está aplicando? Ou empresa concorrente?')
+
+    #https://bradmontgomery.net/blog/django-hack-help-text-modal-instance/
+    def _get_help_text(self, field_name):
+        """Given a field name, return it's help text."""
+        for field in self._meta.fields:
+            if field.name == field_name:
+                return field.help_text
+
+    def __init__(self, *args, **kwargs):
+        # Call the superclass first; it'll create all of the field objects.
+        super(Aluno, self).__init__(*args, **kwargs)
+
+        # Again, iterate over all of our field objects.
+        for field in self._meta.fields:
+            # Create a string, get_FIELDNAME_help text
+            method_name = "get_{0}_help_text".format(field.name)
+
+            # We can use curry to create the method with a pre-defined argument
+            curried_method = curry(self._get_help_text, field_name=field.name)
+
+            # And we add this method to the instance of the class.
+            setattr(self, method_name, curried_method)
 
     class Meta:
         ordering = ['user']

@@ -16,9 +16,26 @@
   {% endif %}
   <strong>Curso:</strong> {{aluno.get_curso_display}}<br>
   <strong>Periodo PFE:</strong> {{aluno.anoPFE}}.{{aluno.semestrePFE}}<br>
-  <strong>CR:</strong> {{aluno.cr}} <br><br>
-  <strong>Áreas de interesse selecionadas:</strong>
+  <strong>CR:</strong> {{aluno.cr}} <br>
 
+  {% if aluno.trabalhou %}
+    <br><strong>{{aluno.get_trabalhou_help_text }}</strong> {{ aluno.trabalhou|linebreaks }}
+  {% endif %}  
+
+  {% if aluno.social %}
+    <br><strong>{{aluno.get_social_help_text }}</strong> {{ aluno.social|linebreaks }}
+  {% endif %}  
+
+  {% if aluno.entidade %}
+    <br><strong>{{aluno.get_entidade_help_text }}</strong> {{ aluno.entidade|linebreaks }}
+  {% endif %}  
+
+  {% if aluno.familia %}
+    <br><strong>{{aluno.get_familia_help_text }}</strong> {{ aluno.familia|linebreaks }}
+  {% endif %}  
+
+  <br>
+  <strong>Áreas de interesse selecionadas:</strong>
   <table>
       <tr><td>&nbsp;<input type="checkbox"  onclick="return false;"
               {% if aluno.inovacao_social %}checked{% endif %}>&nbsp;
