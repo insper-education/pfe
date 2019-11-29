@@ -12,3 +12,4 @@ celerybeat-schedule
 celerybeat.pid
 dump.rdb
 documentos/
+old/
