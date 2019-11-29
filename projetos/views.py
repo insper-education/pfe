@@ -236,10 +236,9 @@ def propor(request):
 
         #Posiciona os alunos nas suas primeiras opcoes (supondo projeto permitir)
         for aluno in alunos:
-            print("AQUI")
             opcoes = Opcao.objects.filter(aluno=aluno).\
-                                   filter(projeto__ano==configuracao.ano).\
-                                   filter(projeto__semestre==configuracao.semestre)
+                                   filter(projeto__ano=configuracao.ano).\
+                                   filter(projeto__semestre=configuracao.semestre)
             if len(opcoes) >= 5: # checa se aluno preencheu formulario
                 #busca nas opcoes do aluno
                 opcoes1 = get_opcao(1, opcoes, min_group, max_group, projetos_ajustados)
@@ -268,7 +267,9 @@ def propor(request):
                         < (remove_opcao.aluno.cr * (1-((remove_opcao.prioridade-1) * pref_pri_cr))):
                                     remove_opcao = option
                         if remove_opcao is not None:
-                            opcoes = Opcao.objects.filter(aluno=remove_opcao.aluno)
+                            opcoes = Opcao.objects.filter(aluno=remove_opcao.aluno).\
+                                                   filter(projeto__ano=configuracao.ano).\
+                                                   filter(projeto__semestre=configuracao.semestre)
                             next_op = get_next_opcao(remove_opcao.prioridade, opcoes)
                             if next_op != 0:
                                 #busca nas opcoes do aluno
@@ -298,7 +299,9 @@ def propor(request):
                             remove_opcao = option
                             remove_projeto = projeto
                 if remove_opcao is not None:
-                    opcoes = Opcao.objects.filter(aluno=remove_opcao.aluno)
+                    opcoes = Opcao.objects.filter(aluno=remove_opcao.aluno).\
+                                           filter(projeto__ano=configuracao.ano).\
+                                           filter(projeto__semestre=configuracao.semestre)
                     next_op = get_next_opcao(remove_opcao.prioridade, opcoes)
                     if next_op != 0:
                         #busca nas opcoes do aluno
