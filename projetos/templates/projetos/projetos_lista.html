@@ -6,21 +6,28 @@
 {% endcomment %}
 
 {% block head %}
-<script src="https://www.w3schools.com/lib/w3.js"></script>
-<script>
-  var publicados = 0
-  var fechados = 0
-  var tmp_computacao = 0
-  var tmp_mecatronica = 0
-  var tmp_mecanica = 0
-  var alunos_computacao = 0
-  var alunos_mecatronica = 0
-  var alunos_mecanica = 0
-  var projeto_computacao = 0
-  var projeto_mecatronica = 0
-  var projeto_mecanica = 0
-  var projeto_multidisciplinar = 0
-</script>
+  {% load static %}
+  {% load aderencia_aluno %}
+  <script src="https://www.w3schools.com/lib/w3.js"></script>
+  <script>
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
+  <script>
+    var publicados = 0
+    var fechados = 0
+    var tmp_computacao = 0
+    var tmp_mecatronica = 0
+    var tmp_mecanica = 0
+    var alunos_computacao = 0
+    var alunos_mecatronica = 0
+    var alunos_mecanica = 0
+    var projeto_computacao = 0
+    var projeto_mecatronica = 0
+    var projeto_mecanica = 0
+    var projeto_multidisciplinar = 0
+  </script>
 {% endblock %}
 
 {% block content %}
@@ -49,7 +56,7 @@
       {% for projeto in projetos %} 
       <tr class="item">
         {% if projeto.disponivel %}<script>publicados += 1</script>{% endif %}
-        {% if projeto.alocacao_set.all.count > 0  %}
+        {% if projeto.alocacao_set.all  %}
           <td class="text-success"  style="text-align:center">
             <script>fechados += 1</script>
         {% else %}
@@ -59,7 +66,26 @@
         </td>
         <td>
           {% if not projeto.disponivel %}<del>{% endif %}
-          <a href="{% url 'completo' projeto.id %}">
+          <a href="{% url 'completo' projeto.id %}"
+            {% if projeto.opcao_set.all  %}
+              data-toggle="tooltip" data-html="true" animation="true" title="
+              {% for opcaop in projeto.opcao_set.all %}
+                {% if opcaop.projeto == aluno.alocacao_set.last.projeto %}
+                  <u>
+                {% endif %}
+                  {% if opcaop.aluno %}
+                    {{opcaop.aluno.user.first_name}} {{opcaop.aluno.user.last_name}} [{{opcaop.aluno.get_curso_display}}]
+                  {% endif %}
+                  #{{ opcaop.prioridade }}
+                {% if opcaop.projeto == aluno.alocacao_set.last.projeto %}
+                  </u>
+                {% endif %}
+                |{% mede_aderencia opcaop.aluno projeto %}%|
+                <br>
+              {% endfor %}
+              "
+            {% endif %}
+          >
             {% if projeto.titulo_final %}
               {{projeto.titulo_final}}<br>
               <small>Título Provisório: {{projeto.titulo}}</small>

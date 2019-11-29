@@ -177,7 +177,7 @@
                     {% endif %}
                     ({{opcao.projeto.empresa.nome_empresa}})
                     {{ '{' }}{{opcao.projeto.ano}}.{{opcao.projeto.semestre}}{{ '}' }}
-                    [{% mede_aderencia aluno opcao.projeto %}%]
+                    |{% mede_aderencia aluno opcao.projeto %}%|
                 </p>
                 </a>
             {% endif %}
@@ -201,7 +201,9 @@
                         {{opcao.projeto.titulo}}
                     {% endif %}
                     ({{opcao.projeto.empresa.nome_empresa}})
-                    { {{opcao.projeto.ano}}.{{opcao.projeto.semestre}} }</p>
+                    {{ '{' }}{{opcao.projeto.ano}}.{{opcao.projeto.semestre}}{{ '}' }}
+                    |{% mede_aderencia aluno opcao.projeto %}%|
+                </p>
                 </a>
             {% endif %}
         {% endfor %}
