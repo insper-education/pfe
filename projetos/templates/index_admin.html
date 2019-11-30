@@ -6,7 +6,9 @@
 {% endcomment %}
 
 {% block content %}
-<br>
+
+Data: {% now "j F Y H:i" %}
+<hr>
 <a href="{% url 'emails' %}"><h5>Enviar para lista de e-mails</h5></a>
 <a href="{% url 'servico' %}"><h5>Habilitar aviso se manutenção</h5></a>
 
