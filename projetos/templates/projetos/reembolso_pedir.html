@@ -26,7 +26,7 @@ function mascara(i){
 
     <h3>Formulário de Reembolso</h3>
 
-    Por: {{usuario.first_name}} {{usuario.last_name}}<br>
+    Por: {{usuario.get_full_name}}<br>
     Projeto: {% if projeto.titulo_final %}{{projeto.titulo_final}}{% else %}{{projeto.titulo}}{% endif %}  <br>
     <br>
     Descrição da compra:<br>

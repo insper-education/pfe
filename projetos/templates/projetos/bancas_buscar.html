@@ -39,8 +39,7 @@
             <br>        
             {% if banca.projeto.orientador %}
               <b>Orientador:</b> 
-                {{banca.projeto.orientador.user.first_name}} 
-                {{banca.projeto.orientador.user.last_name}} 
+                {{banca.projeto.orientador.user.get_full_name}} 
                 <a href="mailto:{{banca.projeto.orientador.user.email}}">&lt;{{banca.projeto.orientador.user.email}}&gt;</a>
               <br>
             {% endif %}

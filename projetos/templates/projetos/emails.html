@@ -21,7 +21,7 @@
   {% if membros_comite %}
     <a href="
       mailto:
-      {% for membro in membros_comite %}{{membro.first_name|parse_quote}} {{membro.last_name|parse_quote}} &lt;{{ membro.email|parse_quote }}&gt;,
+      {% for membro in membros_comite %}{{membro.first_name|parse_quote}}%20{{membro.last_name|parse_quote}}%20&lt;{{membro.email|parse_quote}}&gt;,
       {% endfor %}
       ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
       &amp;subject=PFE%20{{semestre}}&amp;body=Caros%20membros%20do%20comitê%20do%20PFE,%0D%0A%0D%0A
@@ -39,7 +39,7 @@
           {% if alunos %}
             <a href="
               mailto:
-              {% for aluno in alunos %}{{aluno.user.first_name|parse_quote}} {{aluno.user.last_name|parse_quote}} &lt;{{ aluno.user.email|parse_quote }}&gt;,
+              {% for aluno in alunos %}{{aluno.user.first_name|parse_quote}}%20{{aluno.user.last_name|parse_quote}}%20&lt;{{aluno.user.email|parse_quote}}&gt;,
               {% endfor %}
               ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
               &amp;subject=PFE%20{{semestre}}&amp;body=Caros%20alunos,%0D%0A%0D%0A
@@ -51,7 +51,7 @@
           {% if orientadores %}
             <a href="
               mailto:
-              {% for orientador in orientadores %}{{orientador.user.first_name|parse_quote}} {{orientador.user.last_name|parse_quote}} &lt;{{ orientador.user.email|parse_quote }}&gt;,
+              {% for orientador in orientadores %}{{orientador.user.first_name|parse_quote}}%20{{orientador.user.last_name|parse_quote}}%20&lt;{{ orientador.user.email|parse_quote }}&gt;,
               {% endfor %}
               ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
               &amp;subject=PFE%20{{semestre}}&amp;body=Caros%20orientadores,%0D%0A%0D%0A
@@ -63,7 +63,7 @@
           {% if parceiros %}
             <a href="
               mailto:
-              {% for parceiro in parceiros %}{{parceiro.user.first_name|parse_quote}} {{parceiro.user.last_name|parse_quote}} &lt;{{ parceiro.user.email|parse_quote }}&gt;,
+              {% for parceiro in parceiros %}{{parceiro.user.first_name|parse_quote}}%20{{parceiro.user.last_name|parse_quote}}%20&lt;{{ parceiro.user.email|parse_quote }}&gt;,
               {% endfor %}
               ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
               &amp;subject=PFE%20{{semestre}}&amp;body=Caros%20parceiro%20do%20PFE,%0D%0A%0D%0A
@@ -86,7 +86,7 @@
             {% if pessoas %}
               <a href="
                 mailto:
-                {% for pessoa in pessoas %}{{pessoa.user.first_name|parse_quote}} {{pessoa.user.last_name|parse_quote}} &lt;{{ pessoa.user.email|parse_quote }}&gt;,
+                {% for pessoa in pessoas %}{{pessoa.user.first_name|parse_quote}}%20{{pessoa.user.last_name|parse_quote}}%20&lt;{{ pessoa.user.email|parse_quote }}&gt;,
                 {% endfor %}
                 ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
                 &amp;subject=PFE%20-%20Projeto:%20{{projeto}}&amp;body=Caros,%0D%0A%0D%0A
@@ -109,7 +109,7 @@
   {% if todos_alunos %}
     <a href="
       mailto:
-      {% for aluno in todos_alunos %}{{aluno.user.first_name|parse_quote}} {{aluno.user.last_name|parse_quote}} &lt;{{ aluno.user.email|parse_quote }}&gt;,
+      {% for aluno in todos_alunos %}{{aluno.user.first_name|parse_quote}}%20{{aluno.user.last_name|parse_quote}}%20&lt;{{ aluno.user.email|parse_quote }}&gt;,
       {% endfor %}
       ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
       &amp;subject=PFE%20{{semestre}}&amp;body=Caros%20alunos,%0D%0A%0D%0A
@@ -120,7 +120,7 @@
   {% if todos_professores %}
     <a href="
       mailto:
-      {% for professor in todos_professores %}{{professor.user.first_name|parse_quote}} {{professor.user.last_name|parse_quote}} &lt;{{ professor.user.email|parse_quote }}&gt;,
+      {% for professor in todos_professores %}{{professor.user.first_name|parse_quote}}%20{{professor.user.last_name|parse_quote}}%20&lt;{{ professor.user.email|parse_quote }}&gt;,
       {% endfor %}
       ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
       &amp;subject=PFE%20{{semestre}}&amp;body=Caros%20professores%20do%PFE,%0D%0A%0D%0A
@@ -131,7 +131,7 @@
   {% if todos_parceiros %}
     <a href="
       mailto:
-      {% for parceiro in todos_parceiros %}{{parceiro.user.first_name|parse_quote}} {{parceiro.user.last_name|parse_quote}} &lt;{{ parceiro.user.email|parse_quote }}&gt;,
+      {% for parceiro in todos_parceiros %}{{parceiro.user.first_name|parse_quote}}%20{{parceiro.user.last_name|parse_quote}}%20&lt;{{ parceiro.user.email|parse_quote }}&gt;,
       {% endfor %}
       ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
       &amp;subject=PFE%20{{semestre}}&amp;body=Caros%20parceiro%20do%PFE,%0D%0A%0D%0A

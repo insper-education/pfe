@@ -24,7 +24,7 @@
       {% for parceiro in pareceiros %} 
         <tr class="item" {% if not parceiro.user.is_active %} style="color: lightgrey;" {% endif %}>
           <td>
-            {{parceiro.user.first_name}} {{parceiro.user.last_name}} 
+            {{parceiro.user.get_full_name}} 
           </td>
           <td>
             {{parceiro.cargo}} 

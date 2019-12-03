@@ -51,7 +51,7 @@
         id="pfelogo">PFE</b> 
 
         {% if user.is_authenticated %}
-        &nbsp;<u onclick="location.href='{{ url_perfil }}'" id="username">[{{user.first_name}}&nbsp;{{user.last_name}}]</u>
+        &nbsp;<u onclick="location.href='{{ url_perfil }}'" id="username">[{{user.get_full_name}}]</u>
         {% endif %}
       </a>
       

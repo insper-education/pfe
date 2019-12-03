@@ -74,7 +74,7 @@
                   <u>
                 {% endif %}
                   {% if opcaop.aluno %}
-                    {{opcaop.aluno.user.first_name}} {{opcaop.aluno.user.last_name}} [{{opcaop.aluno.get_curso_display}}]
+                    {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.get_curso_display}}]
                   {% endif %}
                   #{{ opcaop.prioridade }}
                 {% if opcaop.projeto == aluno.alocacao_set.last.projeto %}

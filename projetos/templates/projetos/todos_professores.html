@@ -22,7 +22,7 @@
       <tr class="item">
           <td>
             {% if professor.user.membro_comite %} <u> {% endif %}
-            {{professor.user.first_name}} {{professor.user.last_name}}
+            {{professor.user.get_full_name}}
             {% if professor.user.membro_comite %} <u> {% endif %}
           </td>
           <td class="text-center">

@@ -23,7 +23,7 @@
       <tr>
         <td>
           <a href="{% url 'professor_detail' professor.id %}">
-            {{professor.user.first_name}} {{professor.user.last_name}}
+            {{professor.user.get_full_name}}
           </a>
         </td>
         <td style="text-align: center;">

@@ -44,11 +44,11 @@
             <p style="margin-left:1em;">Tipo: <font color="red">PFE Avançado</font></p>
           {% endif %}
           <p style="margin-left:1em;">Edição: {{projeto.ano}}.{{projeto.semestre}}</p>
-          <p style="margin-left:1em;">Orientador: {{projeto.orientador.user.first_name}} {{projeto.orientador.user.last_name}} &lt;{{projeto.orientador.user.email}}&gt; </p>
+          <p style="margin-left:1em;">Orientador: {{projeto.orientador.user.get_full_name}} &lt;{{projeto.orientador.user.email}}&gt; </p>
           <p style="margin-left:1em;">Alunos:</p>
           <ol>
           {% for aluno,prioridade in prioridades %} 
-            <li><a href="{% url 'aluno_detail' aluno.id %}">{{aluno.user.first_name}} {{aluno.user.last_name}} &lt;{{aluno.user.email}}&gt; [{{ aluno.get_curso_display }}] &nbsp;
+            <li><a href="{% url 'aluno_detail' aluno.id %}">{{aluno.user.get_full_name}} &lt;{{aluno.user.email}}&gt; [{{ aluno.get_curso_display }}] &nbsp;
               {% if prioridade == 0 %}
                 (prioridade não definida)
               {% else %}

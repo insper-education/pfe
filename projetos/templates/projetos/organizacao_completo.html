@@ -33,7 +33,7 @@
   <br><strong>contato(s):</strong><br>
   {% for parceiro in organization.parceiro_set.all %}
     <li {% if not parceiro.user.is_active %} style="color: lightgrey;" {% endif %}>
-      {{parceiro.user.first_name}} {{parceiro.user.last_name}} &nbsp;
+      {{parceiro.user.get_full_name}} &nbsp;
       <a href="mailto:{{parceiro.user.email}}"
        {% if not parceiro.user.is_active %} style="color: lightgrey;" {% endif %}>
         &lt;{{parceiro.user.email}}&gt;
@@ -70,7 +70,7 @@
           - {% if contrato.projeto.titulo_final %}{{contrato.projeto.titulo_final}}{% else %}{{contrato.projeto.titulo}}{% endif %}
         {% endif %}
         {% if contrato.usuario %}
-          - {{ contrato.usuario.first_name }} {{ contrato.usuario.last_name }} 
+          - {{ contrato.usuario.get_full_name }} 
         {% endif %}
         </a></li>
     {% endfor %}
@@ -98,7 +98,7 @@
     <hr>
     <h3>Anotações <a href="{% url 'cria_anotacao' organization.login %}">&#10133;</a></h3>
     {% for anotacao in organization.anotacao_set.all|dictsortreversed:"data" %}
-      {{anotacao.autor.first_name}} {{anotacao.autor.last_name}} [{{anotacao.data}}] : {{anotacao.texto}}<br>
+      {{anotacao.autor.get_full_name}} [{{anotacao.data}}] : {{anotacao.texto}}<br>
     {% endfor %}
   {% endif %}
 

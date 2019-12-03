@@ -128,19 +128,19 @@
         
           <b>Convidados:</b><br>
           {% if banca.projeto.orientador %}
-              - {{banca.projeto.orientador.user.first_name}} {{banca.projeto.orientador.user.last_name}}<br>
+              - {{banca.projeto.orientador.get_full_name}}<br>
           {% endif %}
           {% if banca.membro1 %}
-            - {{banca.membro1.first_name}} {{banca.membro1.last_name}}<br>
+            - {{banca.membro1.get_full_name}}<br>
           {% endif %}
           {% if banca.membro2 %}
-            - {{banca.membro2.first_name}} {{banca.membro2.last_name}}<br>
+            - {{banca.membro2.get_full_name}}<br>
           {% endif %}
           {% if banca.membro3 %}
-            - {{banca.membro3.first_name}} {{banca.membro3.last_name}}<br>
+            - {{banca.membro3.get_full_name}}<br>
           {% endif %}
           {% for alocacao in banca.projeto.alocacao_set.all %}
-              - {{alocacao.aluno.user.first_name}} {{alocacao.aluno.user.last_name}}<br>
+              - {{alocacao.aluno.user.get_full_name}}<br>
           {% endfor %}
         </td>
       </tr>

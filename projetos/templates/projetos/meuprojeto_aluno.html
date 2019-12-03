@@ -38,7 +38,7 @@
       <hr>
       <h3>Orientador</h3>
       <ul>
-          <li><a href="mailto:{{projeto.orientador.user.email}}">{{ alocado.projeto.orientador.user.first_name }} {{ projeto.orientador.user.last_name }} &lt;{{projeto.orientador.user.email}}&gt; </a></li>
+          <li><a href="mailto:{{projeto.orientador.user.email}}">{{ alocado.projeto.orientador.user.get_full_name}} &lt;{{projeto.orientador.user.email}}&gt; </a></li>
       </ul>
       {% endif %}
 
@@ -46,7 +46,7 @@
       <h3>Grupo</h3>
       <ul>
       {% for membro in alocado.projeto.alocacao_set.all %} 
-      <li><a href="mailto:{{membro.aluno.user.email}}">{{membro.aluno.user.first_name}} {{membro.aluno.user.last_name}} &lt;{{membro.aluno.user.email}}&gt; [{{ membro.aluno.get_curso_display }}]
+      <li><a href="mailto:{{membro.aluno.user.email}}">{{membro.aluno.user.get_full_name}} &lt;{{membro.aluno.user.email}}&gt; [{{ membro.aluno.get_curso_display }}]
       </a></li>
       {% endfor %}
       </ul>

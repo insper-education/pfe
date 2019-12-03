@@ -52,8 +52,7 @@
         
           {% if banca.projeto.orientador %}
             <b>Orientador:</b> 
-              {{banca.projeto.orientador.user.first_name}} 
-              {{banca.projeto.orientador.user.last_name}} 
+              {{banca.projeto.orientador.user.get_full_name}} 
             <br>
           {% endif %}
 
@@ -61,17 +60,17 @@
           <ol>
             {% if banca.membro1 %}
             <li>
-              {{banca.membro1.first_name}} {{banca.membro1.last_name}}
+              {{banca.membro1.get_full_name}}
             </li>
             {% endif %}
             {% if banca.membro2 %}
             <li>
-              {{banca.membro2.first_name}} {{banca.membro2.last_name}}
+              {{banca.membro2.get_full_name}}
             </li>
             {% endif %}
             {% if banca.membro3 %}
             <li>
-              {{banca.membro3.first_name}} {{banca.membro3.last_name}}
+              {{banca.membro3.get_full_name}}
             </li>
             {% endif %}
           </ol>

@@ -54,7 +54,7 @@
                   "
                 {% endif %}
               >
-                {{aluno.user.first_name}}&nbsp;{{aluno.user.last_name}}
+                {{aluno.user.get_full_name}}
               </a>
             </td>
             {% if aluno.curso %}
