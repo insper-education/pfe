@@ -49,6 +49,17 @@ def index(request):
     if Configuracao.objects.all().first().manutencao:
         return render(request, 'projetos/manutencao.html')
     #num_visits = request.session.get('num_visits', 0) # Numero de visitas a página.
+    #request.session['num_visits'] = num_visits + 1
+    configuracao = Configuracao.objects.first()
+    context = {
+        'configuracao': configuracao,
+    }
+    #'num_visits': num_visits,
+    return render(request, 'index.html', context=context)
+
+@login_required
+def index_aluno(request):
+    """Mostra página principal do usuário aluno."""
 
     usuario = PFEUser.objects.get(pk=request.user.pk)
     if usuario.tipo_de_usuario == 1:
@@ -57,8 +68,6 @@ def index(request):
     else:
         projeto = None
 
-    #request.session['num_visits'] = num_visits + 1
-
     configuracao = Configuracao.objects.first()
     vencido = timezone.now() > configuracao.prazo
     context = {
@@ -66,8 +75,6 @@ def index(request):
         'configuracao': configuracao,
         'vencido': vencido,
     }
-    #'num_visits': num_visits,
-
     return render(request, 'index_aluno.html', context=context)
 
 @login_required
