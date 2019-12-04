@@ -138,11 +138,15 @@ class Projeto(models.Model):
         """Returns the url to access a particular instance of MyModelName."""
         return reverse('projeto-detail', args=[str(self.id)])
 
-    def __str__(self):
+    def get_titulo(self):
+        """Caso tenha titulo atualizado, retorna esse, senão retorna o original e único."""
         if self.titulo_final:
-            return self.titulo_final+" ("+str(self.ano)+"."+str(self.semestre)+")"
+            return self.titulo_final
         else:
-            return self.titulo+" ("+str(self.ano)+"."+str(self.semestre)+")"
+            return self.titulo
+
+    def __str__(self):
+        return self.get_titulo+" ("+str(self.ano)+"."+str(self.semestre)+")"
 
 class Configuracao(models.Model):
     """Armazena os dados básicos de funcionamento do sistema."""
