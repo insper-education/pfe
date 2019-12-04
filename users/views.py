@@ -5,35 +5,18 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Maio de 2019
 """
 
-from django.utils import timezone
 
-from django.shortcuts import render
-#from django.http import Http404, HttpResponseRedirect,
-from django.http import HttpResponse
-from django.urls import reverse_lazy
-from django.views import generic
-#from django.contrib import messages
-#from django.shortcuts import redirect
-#from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
-#from django import template
-
+from django.http import HttpResponse
+from django.shortcuts import render
+from django.urls import reverse_lazy
+from django.utils import timezone
+from django.views import generic
 
 from projetos.models import Configuracao, Projeto
 from .forms import PFEUserCreationForm
-#from .forms import PFEUserForm,
-#from .forms import AlunoForm
 from .models import PFEUser, Aluno, Professor, Parceiro, Opcao
-#from .models import Alocacao
-
-#from tablib import Dataset
-
-#from django.shortcuts import render_to_response
-#from django.template import RequestContext
-
-#from django.http import HttpResponse
-#from .resources import AlunoResource
 
 @login_required
 def perfil(request):
@@ -43,11 +26,11 @@ def perfil(request):
         aluno = Aluno.objects.get(pk=request.user.pk)
         context = {'aluno' : aluno,}
         return render(request, 'users/profile_detail.html', context=context)
-    elif user.tipo_de_usuario == 2: #professor
+    if user.tipo_de_usuario == 2: #professor
         professor = Professor.objects.get(pk=request.user.pk)
         context = {'professor' : professor,}
         return render(request, 'users/profile_detail.html', context=context)
-    elif user.tipo_de_usuario == 3: #parceiro
+    if user.tipo_de_usuario == 3: #parceiro
         parceiro = Parceiro.objects.get(pk=request.user.pk)
         context = {'parceiro' : parceiro,}
         return render(request, 'users/profile_detail.html', context=context)
@@ -118,8 +101,8 @@ def alunos_lista(request):
     ano = 2018
     semestre = 2
     while True:
-        #print(str(ano)+" "+str(semestre))
-        alunos_semestre = alunos_list.filter(anoPFE=ano).filter(semestrePFE=semestre)
+        alunos_semestre = alunos_list.\
+            filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre).distinct()
         if ano not in tabela_alunos:
             tabela_alunos[ano] = {}
         if semestre not in tabela_alunos[ano]:
@@ -128,10 +111,9 @@ def alunos_lista(request):
         tabela_alunos[ano][semestre]["computação"] =\
             alunos_semestre.filter(curso__exact='C').count()
         tabela_alunos[ano][semestre]["mecânica"] =\
-            alunos_semestre.filter(curso__exact='M').count()
+            alunos_semestre.filter(curso__exact='M').count()        
         tabela_alunos[ano][semestre]["mecatrônica"] =\
             alunos_semestre.filter(curso__exact='X').count()
-
         tabela_alunos[ano][semestre]["total"] =\
             alunos_semestre.count()
 
@@ -174,8 +156,7 @@ def alunos_inscrevendo(request):
     semestre = configuracao.semestre
 
     alunos_se_inscrevendo = Aluno.objects.filter(trancado=False).\
-                                          filter(anoPFE=ano).\
-                                          filter(semestrePFE=semestre).\
+                                          filter(anoPFE=ano, semestrePFE=semestre).\
                                           order_by("user__first_name")
 
     # Conta soh alunos
@@ -192,8 +173,7 @@ def alunos_inscrevendo(request):
     opcoes = []
     for aluno in alunos:
         opcao = Opcao.objects.filter(aluno=aluno).\
-                              filter(projeto__ano=ano).\
-                              filter(projeto__semestre=semestre)
+                              filter(projeto__ano=ano, projeto__semestre=semestre)
         opcoes.append(opcao)
         if opcao.count() >= 5:
             inscritos += 1

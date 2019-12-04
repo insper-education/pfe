@@ -114,19 +114,19 @@
                 'rgb(255, 99, 132)',
                 'rgb(255, 205, 86)',
               ],
-              label: 'Proporção entre alunos'
+              label: 'Proporção de áreas entre alunos'
             }],
             labels: [
-              'Computação',
-              'Mecânica',
-              'Mecatrônica',
+              'Computação [{% widthratio num_alunos_comp num_alunos 100 %}%]',
+              'Mecânica [{% widthratio num_alunos_mec num_alunos 100 %}%]',
+              'Mecatrônica [{% widthratio num_alunos_mxt num_alunos 100 %}%]',
             ]
           },
           options: {
             responsive: true,
             title: {
                   display: true,
-                  text: 'Proporção entre alunos',
+                  text: 'Proporção de áreas entre alunos',
                   position: 'top'
               },
           }
@@ -141,11 +141,10 @@
   
   <br>
   <br>
-  Total de alunos (novos) por semestre:
+  Quantidade de alunos alocados em projetos por semestre:
   <table id="AlunosTable">
     <tr>
-        <th class="text-center">Ano</th>
-        <th class="text-center" style="border-right: solid 3px;">Semestre</th>
+        <th class="text-center" style="border-right: solid 3px;">Periodo</th>
         <th class="text-center">Computação</th>
         <th class="text-center">Mecânica</th>
         <th class="text-center">Mecatrônica</th>
@@ -154,8 +153,7 @@
     {% for ano,tabela_ano in tabela_alunos.items %}
       {% for semestre,tabela_semetre in tabela_ano.items %}
         <tr>
-            <td class="text-center"> {{ano}} </td>
-            <td class="text-center" style="border-right: solid 3px;"> {{semestre}} </td>
+            <td class="text-center" style="border-right: solid 3px;"> {{ano}}.{{semestre}} </td>
             <td class="text-center"> {{tabela_semetre.computação}} </td>
             <td class="text-center"> {{tabela_semetre.mecânica}} </td>
             <td class="text-center"> {{tabela_semetre.mecatrônica}} </td>
