@@ -32,9 +32,9 @@
 
   Todos do semestre
   <table>
-    {% for semestre,alunos,orientadores,parceiros in email_todos %}
+    {% for semestre,alunos,orientadores,parceiros,bancas in email_todos %}
       <tr>
-        <td>Turma {{semestre}}</td>
+        <td>{{semestre}}</td>
         <td>
           {% if alunos %}
             <a href="
@@ -71,6 +71,18 @@
             ">Parceiros</a><br>
           {% endif %}
         </td>
+        <td>
+          {% if bancas %}
+            <a href="
+              mailto:
+              {% for banca in bancas %}{{banca.first_name|parse_quote}}%20{{banca.last_name|parse_quote}}%20&lt;{{ banca.email|parse_quote }}&gt;,
+              {% endfor %}
+              ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
+              &amp;subject=PFE%20{{semestre}}&amp;body=Caros%20membros%20de%20bancas%20do%20PFE,%0D%0A%0D%0A
+              atenciosamente,%20coordenação%20PFE
+            ">Bancas</a><br>
+          {% endif %}
+        </td>
       </tr>
     {% endfor %}
   </table>
@@ -80,7 +92,7 @@
   <table>
     {% for semestre,projetos in email_p_semestre %}
       <tr>
-        <td>Turma {{semestre}}</td>
+        <td>{{semestre}}</td>
         {% for projeto, pessoas in projetos.items %}
           <td>
             {% if pessoas %}

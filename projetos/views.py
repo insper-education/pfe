@@ -1281,6 +1281,7 @@ def emails(request):
     orientadores_p_semestre = []
     parceiros_p_semestre = []
     projetos_p_semestre = []
+    bancas_p_semestre = []
     while True:
         semestres.append(str(ano)+"."+str(semestre))
 
@@ -1290,6 +1291,7 @@ def emails(request):
         organizacoes = [] # Controla as organizações participantes por semestre
         orientadores = [] # Orientadores por semestre
         parceiros = [] # Pessoas que trabalham nas organizações parceiras
+        membros_bancas = [] # Membros das bancas
 
         for projeto in Projeto.objects.filter(ano=ano).filter(semestre=semestre):
             if Aluno.objects.filter(alocacao__projeto=projeto): #checa se tem alunos
@@ -1307,13 +1309,18 @@ def emails(request):
                 if projeto.empresa not in organizacoes:
                     organizacoes.append(projeto.empresa) # Junta organizações do semestre
 
+                bancas = Banca.objects.filter(projeto=projeto)
+                for banca in bancas:
+                    if banca.membro1:
+                        membros_bancas.append(banca.membro1)
+                    if banca.membro2:
+                        membros_bancas.append(banca.membro2)
+                    if banca.membro3:
+                        membros_bancas.append(banca.membro3)
+
                 projetos_pessoas[projeto] = list(alunos_tmp) # Pessoas por projeto
                 projetos_pessoas[projeto] += list([orientador]) # Pessoas por projeto
                 projetos_pessoas[projeto] += list(parceiros) # Pessoas por projeto
-
-                # projetos_pessoas["p"+str(projeto.pk)] = list(alunos_tmp) # Pessoas por projeto
-                # projetos_pessoas["p"+str(projeto.pk)] += list([orientador]) # Pessoas por projeto
-                # projetos_pessoas["p"+str(projeto.pk)] += list(parceiros) # Pessoas por projeto
 
         # Parceiros de todas as organizações parceiras
         parceiros_semestre = Parceiro.objects.filter(organizacao__in=organizacoes)
@@ -1322,6 +1329,7 @@ def emails(request):
         alunos_p_semestre.append(alunos_semestre)
         orientadores_p_semestre.append(orientadores)
         parceiros_p_semestre.append(parceiros_semestre)
+        bancas_p_semestre.append(membros_bancas)
 
         projetos_p_semestre.append(projetos_pessoas)
 
@@ -1334,7 +1342,7 @@ def emails(request):
             ano += 1
             semestre = 1
 
-    email_todos = zip(semestres, alunos_p_semestre, orientadores_p_semestre, parceiros_p_semestre)
+    email_todos = zip(semestres, alunos_p_semestre, orientadores_p_semestre, parceiros_p_semestre, bancas_p_semestre)
 
     email_p_semestre = zip(semestres, projetos_p_semestre)
 

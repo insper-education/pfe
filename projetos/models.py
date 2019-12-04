@@ -146,7 +146,7 @@ class Projeto(models.Model):
             return self.titulo
 
     def __str__(self):
-        return self.get_titulo+" ("+str(self.ano)+"."+str(self.semestre)+")"
+        return self.get_titulo()+" ("+str(self.ano)+"."+str(self.semestre)+")"
 
 class Configuracao(models.Model):
     """Armazena os dados básicos de funcionamento do sistema."""
