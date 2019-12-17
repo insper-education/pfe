@@ -22,7 +22,7 @@
     {% if alunos %}
 
         {% for aluno in alunos %} 
-        <div><pdf:nextpage /></div>
+        <p style="page-break-before: always">
 
         <h3>Aluno: {{aluno.user.get_full_name}}</h3>
         <strong>Curso:</strong> {{aluno.get_curso_display}} <br>
@@ -140,14 +140,16 @@
           <br>
           <strong>Projetos Selecionados</strong>
           {% for opcao in aluno.opcao_set.all %}
-            <a href="{% url 'completo' opcao.projeto.id %}">
-              <p style="margin-top: 0px; margin-bottom: 0px;"><b>{{opcao.prioridade}}</b> - 
-                {% if opcao.projeto.titulo_final %}{{opcao.projeto.titulo_final}}{% else %}{{opcao.projeto.titulo}}{% endif %}
-                ({{opcao.projeto.empresa.nome_empresa}})</p>
-            </a>
+            {% if opcao.projeto.ano == opcao.aluno.anoPFE and opcao.projeto.semestre == opcao.aluno.semestrePFE %}
+                <a href="{% url 'completo' opcao.projeto.id %}">
+                    <p style="margin-top: 0px; margin-bottom: 0px;"><b>{{opcao.prioridade}}</b> - 
+                        {% if opcao.projeto.titulo_final %}{{opcao.projeto.titulo_final}}{% else %}{{opcao.projeto.titulo}}{% endif %}
+                        ({{opcao.projeto.empresa.nome_empresa}})
+                    </p>
+                </a>
+            {% endif %}            
           {% endfor %}
           <hr class="striped-border">
-          <p style="page-break-before: always">
 
         {% endfor %}
   
