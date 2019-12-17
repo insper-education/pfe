@@ -147,13 +147,12 @@ def selecao_projetos(request):
         }
         return render(request, 'projetos/selecao_projetos.html', context)
 
-@login_required
-@permission_required('users.altera_professor', login_url='/projetos/')
-def histograma(request):
-    """Exibe um histograma com a procura dos projetos pelos alunos."""
+def ordena_projetos():
     configuracao = Configuracao.objects.all().first()
     opcoes_list = []
-    projetos = Projeto.objects.filter(ano=configuracao.ano).filter(semestre=configuracao.semestre)
+    projetos = Projeto.objects.filter(ano=configuracao.ano).\
+                               filter(semestre=configuracao.semestre).\
+                               filter(disponivel=True)
     for projeto in projetos:
         opcoes = Opcao.objects.filter(projeto=projeto)
         opcoes_alunos = opcoes.filter(aluno__user__tipo_de_usuario=1)
@@ -166,6 +165,13 @@ def histograma(request):
         opcoes_list.append(count)
     mylist = zip(projetos, opcoes_list)
     mylist = sorted(mylist, key=lambda x: x[1], reverse=True)
+    return mylist
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def histograma(request):
+    """Exibe um histograma com a procura dos projetos pelos alunos."""
+    mylist = ordena_projetos()
     context = {'mylist': mylist}
     return render(request, 'projetos/histograma.html', context)
 
@@ -1676,6 +1682,35 @@ def bancas_agendamento(request):
         'bancas' : bancas,
     }
     return render(request, 'projetos/bancas_agendamento.html', context)
+
+@login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
+def mapeamento(request):
+    """Mapeamento entre estudantes e projetos."""
+    configuracao = Configuracao.objects.first()
+    projetos = list(zip(*ordena_projetos()))[0]
+    alunos = Aluno.objects.filter(user__tipo_de_usuario=1).\
+                               filter(anoPFE=configuracao.ano).\
+                               filter(semestrePFE=configuracao.semestre)
+    opcoes = []
+    for aluno in alunos:
+        opcoes_aluno = []
+        for projeto in projetos:
+            opcao = Opcao.objects.filter(aluno=aluno, projeto=projeto).last()
+            if opcao:
+                opcoes_aluno.append(opcao)
+            else:
+                opcoes_aluno.append(None)
+
+        opcoes.append(opcoes_aluno)
+
+    estudantes = zip(alunos, opcoes)
+    context = {
+        'estudantes': estudantes,
+        'projetos': projetos,
+        'configuracao': configuracao,
+    }
+    return render(request, 'projetos/mapeamento_estudante_projeto.html', context)
 
 def projeto_feedback(request):
     """Para Feedback das Organizações Parceiras."""
