@@ -47,6 +47,7 @@ urlpatterns = [
     path('professores_tabela/', views.professores_tabela, name='professores_tabela'),
     path('selecao_projetos/', views.selecao_projetos, name='selecao_projetos'),
     path('projeto_detalhe/<int:primarykey>', views.projeto_detalhe, name='projeto_detalhe'),
+    path('projeto_feedback', views.projeto_feedback, name='projeto_feedback'),
     path('projetos_lista/<str:periodo>', views.projetos_lista, name='projetos_lista'),
     path('propor/', views.propor, name='propor'),
     path('reembolso_pedir/', views.reembolso_pedir, name='reembolso_pedir'),

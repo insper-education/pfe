@@ -1676,3 +1676,17 @@ def bancas_agendamento(request):
         'bancas' : bancas,
     }
     return render(request, 'projetos/bancas_agendamento.html', context)
+
+def projeto_feedback(request):
+    """Para Feedback das Organizações Parceiras."""
+    if request.method == 'POST':
+        #aluno.trabalhou = request.POST.get("trabalhou", "")
+        #aluno.social = request.POST.get("social", "")
+        #aluno.entidade = request.POST.get("entidade", "")
+        #aluno.familia = request.POST.get("familia", "")
+        #aluno.save()
+        return HttpResponse("Feedback recebido, obrigado!")
+    else:
+        context = {
+        }
+        return render(request, 'projetos/projeto_feedback.html', context)
