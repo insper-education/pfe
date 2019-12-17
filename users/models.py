@@ -201,7 +201,8 @@ class Aluno(models.Model):
         ordering = ['user']
         permissions = ()
     def __str__(self):
-        return self.user.username
+        #return self.user.username
+        return self.user.get_full_name()
 
     # def opcao(self,i):
     #     try:

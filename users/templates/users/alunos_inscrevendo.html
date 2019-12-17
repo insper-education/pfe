@@ -26,6 +26,7 @@
               <th class="text-center">C</th>
               <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Nome do Aluno</th>
               <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Curso</th>
+              <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">CR</th>
           </tr>
           {% for aluno,opcoes in alunos_list %} 
           <tr class="item">
@@ -59,6 +60,9 @@
             </td>
             <td class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">
               {{ aluno.get_curso_display }}
+            </td>
+            <td>
+              {{ aluno.cr|floatformat:4 }}
             </td>
           </tr>
           {% endfor %}
