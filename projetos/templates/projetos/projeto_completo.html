@@ -83,7 +83,15 @@
   <h3>Aluno(s) Aplicando para o Projeto</h3>
   {% for opcao in projeto.opcao_set.all %}
     {% if projeto.ano == opcao.aluno.anoPFE and projeto.semestre == opcao.aluno.semestrePFE %}
-    <a href="{% url 'aluno_detail' opcao.aluno.id %}"><p class="{% if opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}">{{opcao.aluno.user.get_full_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;opção #{{opcao.prioridade}}&nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} }</p></a>
+    <a href="{% url 'aluno_detail' opcao.aluno.id %}">
+      <p class="{% if opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}">
+        {{opcao.aluno.user.get_full_name}}
+        [{{ opcao.aluno.get_curso_display }}]
+        &nbsp;=>&nbsp;opção #{{opcao.prioridade}}
+        &nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} }
+        &nbsp;CR={{opcao.aluno.cr}}
+      </p>
+    </a>
     {% endif %}
   {% endfor %}
   <p style="line-height:2px">
@@ -91,7 +99,15 @@
   </p>
   {% for opcao in projeto.opcao_set.all %}
     {% if projeto.ano != opcao.aluno.anoPFE or projeto.semestre != opcao.aluno.semestrePFE %}
-    <a href="{% url 'aluno_detail' opcao.aluno.id %}"><p class="red-bold">{{opcao.aluno.user.get_full_name}} [{{ opcao.aluno.get_curso_display }}]&nbsp;=>&nbsp;opção #{{opcao.prioridade}}&nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} } </p></a>
+    <a href="{% url 'aluno_detail' opcao.aluno.id %}">
+      <p class="red-bold">
+        {{opcao.aluno.user.get_full_name}}
+        [{{ opcao.aluno.get_curso_display }}]
+        &nbsp;=>&nbsp;opção #{{opcao.prioridade}}
+        &nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} }
+        &nbsp;CR={{opcao.aluno.cr}}
+      </p>
+    </a>
     {% endif %}
   {% endfor %}
 
