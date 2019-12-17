@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 17 de Dezembro de 2019
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load aderencia_aluno %}
+  <script src="https://www.w3schools.com/lib/w3.js"></script>
+  <script>
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
+  
+  <style>
+
+
+    th.bottom {
+      vertical-align:bottom;
+    }
+
+    th.rotate {
+      height: 140px;
+      white-space: nowrap;
+    }
+
+    th.rotate > div {
+      transform: 
+        /* Magic Numbers */
+        translate(13px, 55px)
+        /* 45 is really 360 - 45 */
+        rotate(300deg);
+      width: 26px;
+    }
+
+    th.rotate > div > span {
+      border-bottom: 1px  solid black;
+      padding: 1px 0px;
+    }
+
+  table, th {
+    border-collapse: collapse;
+    border: 0px solid black;
+    padding-left: 2px;
+    padding-right: 2px;
+    text-align: center;
+    font-size: 16px;
+  }
+
+  </style>
+
+{% endblock %}
+
+{% block content %}
+  <h3>Projetos {{configuracao.ano}}.{{configuracao.semestre}}</h3>
+  {% if projetos %}
+    <table id="MapeamentoTable">
+      <tr>
+        <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="bottom">Estudante</th>
+        <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="bottom">Eng</th>
+        <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="bottom">CR</th>
+        {% for projeto in projetos %}   
+          <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child({{ forloop.counter|add:"3" }})')" style="cursor:pointer" class="rotate"><div><span>{{projeto.empresa.sigla}}</span></div></th>
+        {% endfor %}
+      </tr>      
+      {% for estudante,opcoes in estudantes %} 
+        <tr class="item">
+          <td style="text-align:right">
+            {{estudante.user.get_full_name}}
+          </td>
+          <td style="text-align:center">
+            {{estudante.curso}}
+          </td>
+          <td style="text-align:left;border-right: 2px solid black;">
+            {{estudante.cr|floatformat:4}}
+          </td>
+          {% for opcao in opcoes %}
+            {% if opcao %}
+              <td style="text-align:center;
+                  {% if opcao.projeto == estudante.alocacao_set.last.projeto %}background-color:pink;{% endif %}" 
+                  class="{% if opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}">
+                {{opcao.prioridade}}
+              </td>
+            {% else %}
+              <td></td>
+            {% endif %}
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>Não existem projetos disponíveis.</p>
+  {% endif %}
+  <p>&nbsp;</p>
+
+{% endblock %}

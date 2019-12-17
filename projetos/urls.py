@@ -40,6 +40,7 @@ urlpatterns = [
     path('exportar/', views.exportar, name='exportar'),
     path('projetos_fechados/', views.projetos_fechados, name='projetos_fechados'),
     path('histograma/', views.histograma, name='histograma'),
+    path('mapeamento/', views.mapeamento, name='mapeamento'),
     path('meuprojeto/', views.meuprojeto, name='meuprojeto'),
     path('minhas_bancas/', views.minhas_bancas, name='minhas_bancas'),
     path('organizacoes_lista/', views.organizacoes_lista, name='organizacoes_lista'),
