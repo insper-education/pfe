@@ -17,7 +17,6 @@
   
   <style>
 
-
     th.bottom {
       vertical-align:bottom;
     }
@@ -41,14 +40,18 @@
       padding: 1px 0px;
     }
 
-  table, th {
-    border-collapse: collapse;
-    border: 0px solid black;
-    padding-left: 2px;
-    padding-right: 2px;
-    text-align: center;
-    font-size: 16px;
-  }
+    table, th {
+      border-collapse: collapse;
+      border: 0px solid black;
+      padding-left: 2px;
+      padding-right: 2px;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    a.prioridade {
+      color: inherit;
+    }
 
   </style>
 
@@ -63,26 +66,44 @@
         <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="bottom">Eng</th>
         <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="bottom">CR</th>
         {% for projeto in projetos %}   
-          <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child({{ forloop.counter|add:"3" }})')" style="cursor:pointer" class="rotate"><div><span>{{projeto.empresa.sigla}}</span></div></th>
+          <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child({{ forloop.counter|add:"3" }})')" style="cursor:pointer" class="rotate">
+            <div>
+              <span>
+                {{projeto.empresa.sigla}}
+              </span>
+            </div>
+          </th>
         {% endfor %}
       </tr>      
       {% for estudante,opcoes in estudantes %} 
         <tr class="item">
           <td style="text-align:right">
-            {{estudante.user.get_full_name}}
+            <a href="{% url 'aluno_detail' estudante.id %}">
+              {{estudante.user.get_full_name}}
+            </a>
           </td>
           <td style="text-align:center">
-            {{estudante.curso}}
+            <a href="{% url 'aluno_detail' estudante.id %}">
+              {{estudante.curso}}
+            </a>
           </td>
           <td style="text-align:left;border-right: 2px solid black;">
-            {{estudante.cr|floatformat:4}}
+            <a href="{% url 'aluno_detail' estudante.id %}">
+              {{estudante.cr|floatformat:4}}
+            </a>
           </td>
           {% for opcao in opcoes %}
             {% if opcao %}
               <td style="text-align:center;
                   {% if opcao.projeto == estudante.alocacao_set.last.projeto %}background-color:pink;{% endif %}" 
                   class="{% if opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}">
-                {{opcao.prioridade}}
+                <a class="prioridade" href="{% url 'completo' opcao.projeto.id %}"
+                  data-toggle="tooltip" data-html="true" animation="true" title="
+                  {{ opcao.projeto.get_titulo }}
+                  "
+                >
+                  {{opcao.prioridade}}
+                </a>
               </td>
             {% else %}
               <td></td>
