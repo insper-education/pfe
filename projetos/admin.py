@@ -20,6 +20,9 @@ from .models import Configuracao, Aviso, Documento, Anotacao, Reembolso, Banco
 # Do Insper
 from .models import Entidade
 
+# Das Organizações
+from .models import Feedback
+
 def dup_event(modeladmin: admin_opt.ModelAdmin, request, queryset):
     """Função abaixo permite duplicar entradas no banco de dados"""
     for obj in queryset:
@@ -121,6 +124,11 @@ class EventoAdmin(admin.ModelAdmin):
     """Todos os eventos do PFE com suas datas."""
     list_display = ('name', 'startDate', 'endDate', 'location', )
     actions = [dup_event]
+
+@admin.register(Feedback)
+class EventoAdmin(admin.ModelAdmin):
+    """Para ser preenchido com feedbacks das empresas."""
+    list_display = ('data', 'nome', 'email', 'empresa', )
 
 admin.site.register(Cursada)
 admin.site.register(Recomendada)

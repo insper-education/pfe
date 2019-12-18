@@ -35,7 +35,7 @@ from django.template.loader import get_template
 from django.utils import timezone
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao
-from .models import Projeto, Empresa, Configuracao, Evento, Anotacao
+from .models import Projeto, Empresa, Configuracao, Evento, Anotacao, Feedback
 from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade
 #from .models import Disciplina
 
@@ -1715,11 +1715,15 @@ def mapeamento(request):
 def projeto_feedback(request):
     """Para Feedback das Organizações Parceiras."""
     if request.method == 'POST':
-        #aluno.trabalhou = request.POST.get("trabalhou", "")
-        #aluno.social = request.POST.get("social", "")
-        #aluno.entidade = request.POST.get("entidade", "")
-        #aluno.familia = request.POST.get("familia", "")
-        #aluno.save()
+        feedback = Feedback.create()
+        feedback.nome = request.POST.get("nome", "")
+        feedback.email = request.POST.get("email", "")
+        feedback.empresa = request.POST.get("empresa", "")
+        feedback.tecnico = request.POST.get("tecnico", "")
+        feedback.comunicacao = request.POST.get("comunicacao", "")
+        feedback.organizacao = request.POST.get("organizacao", "")
+        feedback.outros = request.POST.get("outros", "")
+        feedback.save()
         return HttpResponse("Feedback recebido, obrigado!")
     else:
         context = {

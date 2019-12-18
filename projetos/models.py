@@ -394,3 +394,30 @@ class Entidade(models.Model):
                             help_text='nome da entidade estudantil')
     def __str__(self):
         return self.nome
+
+class Feedback(models.Model):
+    """Feedback das organizacoes parceiras."""
+    data = models.DateField(default=datetime.date.today, blank=True,
+                            help_text='Data do Feedback')
+    #organizacao_parceira = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.CASCADE,
+    #                                help_text='Organização parceira')
+    #autor = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
+    #                          related_name='professor_orientador', help_text='quem fez a anotação')
+    nome = models.CharField(max_length=120, null=True, blank=True,
+                            help_text='Nome de quem está dando o Feedback')
+    email = models.EmailField(max_length=80, null=True, blank=True,
+                            help_text='e-mail de quem está dando o Feedback')
+    empresa = models.CharField(max_length=120, null=True, blank=True,
+                            help_text='Empresa de quem está dando o Feedback')
+    tecnico = models.TextField(max_length=1000, help_text='Feedback Técnico')
+    comunicacao = models.TextField(max_length=1000, help_text='Feedback Comunicação')
+    organizacao = models.TextField(max_length=1000, help_text='Feedback Organização')
+    outros = models.TextField(max_length=1000, help_text='Feedback Outros')
+
+    def __str__(self):
+        return str(self.data)
+    @classmethod
+    def create(cls):
+        """Cria um objeto (entrada) em Feedback."""
+        feedback = cls()
+        return feedback
