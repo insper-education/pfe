@@ -550,9 +550,10 @@ def cria_anotacao(request, login): #acertar isso para pk
             anotacao.autor = PFEUser.objects.get(pk=request.user.pk)
             anotacao.texto = request.POST['anotacao']
             anotacao.save()
-            return HttpResponse(""""
-                Anotação criada.<br><a href='../organizacao/"+login+"'>Volta para organização</a>
-            """)
+            return HttpResponse(
+                "Anotação criada.<br>"+\
+                "<a href='../organizacao_completo/"+login+\
+                "'>Volta para organização</a>")
         return HttpResponse("Anotação não criada.")
     else:
         context = {
