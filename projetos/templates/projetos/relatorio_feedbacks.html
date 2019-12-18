@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 17 de Dezembro de 2019
+{% endcomment %}
+
+{% block head %}
+<style>
+    @page {
+        size: a4 portrait; /*landscape*/
+        margin: 1.5cm  1.5cm  1.5cm  1.5cm; /* top  right bottom left */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+  <h3>Feedbacks</h3>
+  <br>  
+  {% if feedbacks %}
+    {% for feedback in feedbacks %} 
+      <p style="page-break-before: always"></p>
+      <strong>Data:</strong> {{ feedback.data }}<br>
+      <strong>Nome:</strong> {{ feedback.nome }}<br>
+      <strong>e-mail:</strong> {{ feedback.email }}<br>
+      <strong>Organização:</strong> {{ feedback.empresa }}<br>
+      
+      <p><strong>O projeto avançou conforme o esperado? Se SIM, você sabe qual foi a fórmula do sucesso?
+        Se NÃO, consegue identificar os motivos? Por exemplo: demora em fechar o escopo, alunos
+        pouco engajados, alunos com dúvidas básicas em determinado assunto, equipe não entrosada, ...</strong></p>
+      {{ feedback.tecnico|linebreaks }}
+
+      <p><strong>Parte do esperado com essa atividade era que os alunos entendessem melhor qual era o desafio
+      proposto e discutissem com vocês como prototipar e implementar o acordado. Os alunos foram
+      ativos em se comunicar, entendendo o desejo de vocês (e de seus usuários finais se for o
+      caso) e discutir possíveis soluções? Você pode comentar brevemente como foram essas interações?
+      </strong></p>
+      {{ feedback.comunicacao|linebreaks }}
+
+      <p><strong>A equipe de alunos alocada para o seu projeto estava devidamente organizada? Por exemplo:
+      os alunos foram pontuais nos encontros, se portaram de forma adequada, todos se dedicaram
+      de acordo, apresentaram uma proposta de condução do projeto adequada?
+      </strong></p>
+      {{ feedback.organizacao|linebreaks }}
+
+      <p><strong>Tem outras observações que gostaria de compartilhar conosco? Por exemplo o processo de
+      interação com o Insper, ou algo que o Insper devia ter previsto nesta proposta de parceria?
+      </strong></p>
+      {{ feedback.outros|linebreaks }}
+
+      <hr class="striped-border">
+    {% endfor %}
+  {% else %}
+    <p>Não existem feedbacks disponíveis.</p>
+  {% endif %}
+{% endblock %}

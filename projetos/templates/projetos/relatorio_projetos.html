@@ -24,7 +24,7 @@
 
         {% for projeto in projetos %} 
         {% if projeto.disponivel %}
-        <div><pdf:nextpage /></div>
+          <p style="page-break-before: always"></p>
 
           {% if projeto.titulo_final %}
             <style>
@@ -45,7 +45,6 @@
           <strong>endereço:</strong> {{ projeto.empresa.endereco|linebreaks }}
           <strong>website:</strong> <a href="{{ projeto.empresa.website }}"> {{ projeto.empresa.website }} </a>        
           <hr class="striped-border">
-
         {% endif %}
         {% endfor %}
   

@@ -22,7 +22,7 @@
     {% if alunos %}
 
         {% for aluno in alunos %} 
-        <p style="page-break-before: always">
+        <p style="page-break-before: always"></p>
 
         <h3>Aluno: {{aluno.user.get_full_name}}</h3>
         <strong>Curso:</strong> {{aluno.get_curso_display}} <br>

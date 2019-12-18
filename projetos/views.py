@@ -714,6 +714,18 @@ def relatorio(request, modelo, formato):
         if(formato == "pdf" or formato == "PDF"):
             pdf = render_to_pdf('projetos/relatorio_alunos.html', context)
             return HttpResponse(pdf.getvalue(), content_type='application/pdf')
+    
+    elif modelo == "feedbacks":
+        context = {
+            'feedbacks': Feedback.objects.all(),
+            'configuracao': configuracao,
+        }
+        if(formato == "html" or formato == "HTML"):
+            return render(request, 'projetos/relatorio_feedbacks.html', context)
+        if(formato == "pdf" or formato == "PDF"):
+            pdf = render_to_pdf('projetos/relatorio_feedbacks.html', context)
+            return HttpResponse(pdf.getvalue(), content_type='application/pdf')
+
     else:
         return HttpResponse("Chamada irregular : Base de dados desconhecida = "+modelo)
 
