@@ -5,6 +5,8 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 14 de Novembro de 2019
 """
 
+from datetime import timedelta  
+
 from django.contrib import admin
 import django.contrib.admin.options as admin_opt
 
@@ -23,22 +25,45 @@ from .models import Entidade
 # Das Organizações
 from .models import Feedback
 
+def dup_projeto(modeladmin: admin_opt.ModelAdmin, request, queryset):
+    """Função abaixo permite duplicar entradas no banco de dados"""
+    for obj in queryset:
+        from_id = obj.id
+        obj.id = None
+        #if isinstance(obj, Projeto):
+        if Configuracao.objects.all().first().semestre == 1:
+            obj.semestre = 2
+            obj.ano = Configuracao.objects.all().first().ano
+        else:
+            obj.semestre = 1
+            obj.ano = Configuracao.objects.all().first().ano + 1
+        obj.save()
+        message = "duplicando de {} para {}".format(from_id, obj.id)
+        modeladmin.log_addition(request=request, object=obj, message=message)
+dup_projeto.short_description = "Duplicar Entrada(s)"
+
 def dup_event(modeladmin: admin_opt.ModelAdmin, request, queryset):
     """Função abaixo permite duplicar entradas no banco de dados"""
     for obj in queryset:
         from_id = obj.id
         obj.id = None
-        if isinstance(obj, Projeto):
-            if Configuracao.objects.all().first().semestre == 1:
-                obj.semestre = 2
-                obj.ano = Configuracao.objects.all().first().ano
-            else:
-                obj.semestre = 1
-                obj.ano = Configuracao.objects.all().first().ano + 1
         obj.save()
         message = "duplicando de {} para {}".format(from_id, obj.id)
         modeladmin.log_addition(request=request, object=obj, message=message)
 dup_event.short_description = "Duplicar Entrada(s)"
+
+def dup_event_183(modeladmin: admin_opt.ModelAdmin, request, queryset):
+    """Função abaixo permite duplicar entradas no banco de dados"""
+    for obj in queryset:
+        from_id = obj.id
+        obj.id = None
+        obj.startDate += timedelta(days=183)
+        obj.endDate += timedelta(days=183)
+        obj.save()
+        message = "duplicando de {} para {}".format(from_id, obj.id)
+        modeladmin.log_addition(request=request, object=obj, message=message)
+dup_event_183.short_description = "Duplicar Entrada(s) adicionando 183 dias"
+
 
 @admin.register(Projeto)
 class ProjetoAdmin(admin.ModelAdmin):
@@ -62,7 +87,7 @@ class ProjetoAdmin(admin.ModelAdmin):
             'fields': ('empresa',)
         }),
     )
-    actions = [dup_event]
+    actions = [dup_projeto]
 
 @admin.register(Empresa)
 class EmpresaAdmin(admin.ModelAdmin):
@@ -123,7 +148,7 @@ class AvisoAdmin(admin.ModelAdmin):
 class EventoAdmin(admin.ModelAdmin):
     """Todos os eventos do PFE com suas datas."""
     list_display = ('name', 'startDate', 'endDate', 'location', )
-    actions = [dup_event]
+    actions = [dup_event,dup_event_183]
 
 @admin.register(Feedback)
 class EventoAdmin(admin.ModelAdmin):
