@@ -32,19 +32,31 @@
 
   Todos do semestre
   <table>
-    {% for semestre,alunos,orientadores,parceiros,bancas in email_todos %}
+    {% for semestre,aplicando,alocados,orientadores,parceiros,bancas in email_todos %}
       <tr>
         <td>{{semestre}}</td>
         <td>
-          {% if alunos %}
+          {% if aplicando %}
             <a href="
               mailto:
-              {% for aluno in alunos %}{{aluno.user.first_name|parse_quote}}%20{{aluno.user.last_name|parse_quote}}%20&lt;{{aluno.user.email|parse_quote}}&gt;,
+              {% for aluno in aplicando %}{{aluno.user.first_name|parse_quote}}%20{{aluno.user.last_name|parse_quote}}%20&lt;{{aluno.user.email|parse_quote}}&gt;,
               {% endfor %}
               ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
               &amp;subject=PFE%20{{semestre}}&amp;body=Caros%20alunos,%0D%0A%0D%0A
               atenciosamente,%20coordenação%20PFE
-            ">Alunos</a><br>
+            ">Aplicando</a><br>
+          {% endif %}
+        </td>
+        <td>
+          {% if alocados %}
+            <a href="
+              mailto:
+              {% for aluno in alocados %}{{aluno.user.first_name|parse_quote}}%20{{aluno.user.last_name|parse_quote}}%20&lt;{{aluno.user.email|parse_quote}}&gt;,
+              {% endfor %}
+              ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
+              &amp;subject=PFE%20{{semestre}}&amp;body=Caros%20alunos,%0D%0A%0D%0A
+              atenciosamente,%20coordenação%20PFE
+            ">Alocados</a><br>
           {% endif %}
         </td>
         <td>

@@ -1364,7 +1364,8 @@ def emails(request):
     ano = 2018
     semestre = 2
     semestres = []
-    alunos_p_semestre = []
+    aplicando_p_semestre = []
+    alocados_p_semestre = []
     orientadores_p_semestre = []
     parceiros_p_semestre = []
     projetos_p_semestre = []
@@ -1413,7 +1414,12 @@ def emails(request):
         parceiros_semestre = Parceiro.objects.filter(organizacao__in=organizacoes)
 
         # Cria listas para enviar para templeate html
-        alunos_p_semestre.append(alunos_semestre)
+        aplicando_p_semestre.append(Aluno.objects.filter(trancado=False).\
+                                filter(anoPFE=ano).\
+                                filter(semestrePFE=semestre).\
+                                filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0]))
+
+        alocados_p_semestre.append(alunos_semestre)
         orientadores_p_semestre.append(orientadores)
         parceiros_p_semestre.append(parceiros_semestre)
         bancas_p_semestre.append(membros_bancas)
@@ -1429,7 +1435,7 @@ def emails(request):
             ano += 1
             semestre = 1
 
-    email_todos = zip(semestres, alunos_p_semestre, orientadores_p_semestre, parceiros_p_semestre, bancas_p_semestre)
+    email_todos = zip(semestres, aplicando_p_semestre, alocados_p_semestre, orientadores_p_semestre, parceiros_p_semestre, bancas_p_semestre)
 
     email_p_semestre = zip(semestres, projetos_p_semestre)
 
