@@ -41,12 +41,8 @@
             <li class="title" title="
             {% if not projeto.disponivel%}X{% endif %}
             {{ forloop.counter }}&ordm; :
-            {% if projeto.titulo_final %}
-              {{projeto.titulo_final}}
-            {% else %}
-              {{projeto.titulo}}
-            {% endif %}
-             ({{ projeto.empresa.nome_empresa }})"></li>
+            {{projeto.get_titulo}}
+            ({{ projeto.empresa.nome_empresa }})"></li>
           </a>
           <li class="past" title="">
             <span class="bar" data-number="{{opcoes}}"></span>

@@ -19,16 +19,7 @@
 
     <h3>Datas para encontros</h3>
     <br>
-    {% if projeto.titulo_final %}
-        <style>
-            h4 {
-                display: inline;
-            }
-        </style>
-        <h4>Seu projeto: {{projeto.titulo_final}}</h4>
-        <small> <br>Título Provisório: {{projeto.titulo}}</small>
-    {% else %}
-        <h4>Seu projeto: {{projeto.titulo}}</h4>
+    <h4>Seu projeto: {{projeto.get_titulo}}</h4>
     {% endif %}
     <br><br>
     <div class="control"></div>

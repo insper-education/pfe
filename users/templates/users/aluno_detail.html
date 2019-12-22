@@ -150,11 +150,7 @@
         <h3>Projeto Alocado</h3>
         {% for alocado in aluno.alocacao_set.all %}
             <a href="{% url 'completo' alocado.projeto.id %}">
-            {% if alocado.projeto.titulo_final %}
-                {{alocado.projeto.titulo_final}}
-            {% else %}
-                {{alocado.projeto.titulo}}
-            {% endif %}
+            {{alocado.projeto.get_titulo}}
             ({{alocado.projeto.empresa.nome_empresa}})
             { {{alocado.projeto.ano}}.{{alocado.projeto.semestre}} }
             <br>
@@ -170,11 +166,7 @@
             {% if opcao.projeto.ano == opcao.aluno.anoPFE and opcao.projeto.semestre == opcao.aluno.semestrePFE %}
                 <a href="{% url 'completo' opcao.projeto.id %}">
                 <p><b>{{opcao.prioridade}}</b> - 
-                    {% if opcao.projeto.titulo_final %}
-                        {{opcao.projeto.titulo_final}}
-                    {% else %}
-                        {{opcao.projeto.titulo}}
-                    {% endif %}
+                    {{opcao.projeto.get_titulo}}
                     ({{opcao.projeto.empresa.nome_empresa}})
                     {{ '{' }}{{opcao.projeto.ano}}.{{opcao.projeto.semestre}}{{ '}' }}
                     |{% mede_aderencia aluno opcao.projeto %}%|
@@ -195,11 +187,7 @@
             {% if opcao.projeto.ano != opcao.aluno.anoPFE or opcao.projeto.semestre != opcao.aluno.semestrePFE %}
                 <a href="{% url 'completo' opcao.projeto.id %}">
                 <p><b>{{opcao.prioridade}}</b> - 
-                    {% if opcao.projeto.titulo_final %}
-                        {{opcao.projeto.titulo_final}}
-                    {% else %}
-                        {{opcao.projeto.titulo}}
-                    {% endif %}
+                    {{opcao.projeto.get_titulo}}
                     ({{opcao.projeto.empresa.nome_empresa}})
                     {{ '{' }}{{opcao.projeto.ano}}.{{opcao.projeto.semestre}}{{ '}' }}
                     |{% mede_aderencia aluno opcao.projeto %}%|

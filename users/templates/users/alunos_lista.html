@@ -37,18 +37,14 @@
                   data-toggle="tooltip" data-html="true" animation="true" title="
                   {% for opcao in aluno.opcao_set.all %}
                     <b>#{{opcao.prioridade}}:</b>
-                      {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
-                        <u>
-                      {% endif %}
-                    {% if opcao.projeto.titulo_final %}
-                      {{opcao.projeto.titulo_final}}
-                    {% else %}
-                      {{opcao.projeto.titulo}}
+                    {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
+                      <u>
                     {% endif %}
+                    {{opcao.projeto.get_titulo}}
                     ({{opcao.projeto.empresa.nome_empresa}})
-                      {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
-                        </u>
-                      {% endif %}
+                    {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
+                      </u>
+                    {% endif %}
                     <br>
                   {% endfor %}
                   "

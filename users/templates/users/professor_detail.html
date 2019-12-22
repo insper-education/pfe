@@ -21,11 +21,7 @@
     {% for projeto in projetos %}
       {% if projeto.alocacao_set.all.count > 0 %}
         <a href="{% url 'completo' projeto.id %}">
-        {% if projeto.titulo_final %}
-          {{projeto.titulo_final}}
-        {% else %}
-          {{projeto.titulo}}
-        {% endif %}
+        {{projeto.get_titulo}}
         [{{projeto.ano}}.{{projeto.semestre}}] ({{projeto.empresa.nome_empresa}})
         { {{ projeto.alocacao_set.all.count }} aluno(s) }
         <br>
