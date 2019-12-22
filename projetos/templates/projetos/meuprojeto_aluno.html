@@ -12,48 +12,58 @@
     <h3>Projeto Alocado</h3>
     <br><br>
     {% for alocado in aluno.alocacao_set.all %}
+
       <h2>{{alocado.projeto.ano}}.{{alocado.projeto.semestre}}</h2>
-      {% if alocado.projeto.titulo_final %}
-        <style>
-            h3 {
-                display: inline;
-            }
-        </style>
-        <h3>Título: {{alocado.projeto.titulo_final}}</h3>
-        <small> <br>&nbsp;&nbsp;&nbsp;&nbsp;Título Provisório: {{alocado.projeto.titulo}}</small><br>
-      {% else %}
-          <h3>Título: {{alocado.projeto.titulo}}</h3>
-      {% endif %}
-      <strong>Descrição:</strong> {{ alocado.projeto.descricao|linebreaks }}<br>
-      <strong>Expectativas de resultados/entregas :</strong> {{ alocado.projeto.expectativas|linebreaks }}<br>
-      <strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ alocado.projeto.areas|linebreaks }}<br>
-      <strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ alocado.projeto.recursos|linebreaks }}<br>
-      <hr>
-
-      <h3>Empresa: {{ alocado.projeto.empresa.nome_empresa }}</h3>
-      <strong>endereço:</strong> {{ alocado.projeto.empresa.endereco|linebreaks }}
-      <strong>website:</strong> <a href="{{ projeto.empresa.website }}"> {{ alocado.projeto.empresa.website }} </a>
-
-      {% if alocado.projeto.orientador %}
-      <hr>
-      <h3>Orientador</h3>
-      <ul>
-          <li><a href="mailto:{{projeto.orientador.user.email}}">{{ alocado.projeto.orientador.user.get_full_name}} &lt;{{projeto.orientador.user.email}}&gt; </a></li>
-      </ul>
-      {% endif %}
-
-      <hr>
-      <h3>Grupo</h3>
-      <ul>
-      {% for membro in alocado.projeto.alocacao_set.all %} 
-      <li><a href="mailto:{{membro.aluno.user.email}}">{{membro.aluno.user.get_full_name}} &lt;{{membro.aluno.user.email}}&gt; [{{ membro.aluno.get_curso_display }}]
-      </a></li>
-      {% endfor %}
-      </ul>
-      <br>
-      <br>
       
-  {% endfor %}
+      {% if alocado.projeto.ano == configuracao.ano and alocado.projeto.semestre == configuracao.semestre and not configuracao.liberados_projetos %}
+
+        Projetos {{configuracao.ano}}.{{configuracao.semestre}} em fase de alocaçãoXX<br>
+
+      {% else %}
+  
+        {% if alocado.projeto.titulo_final %}
+          <style>
+              h3 {
+                  display: inline;
+              }
+          </style>
+          <h3>Título: {{alocado.projeto.titulo_final}}</h3>
+          <small> <br>&nbsp;&nbsp;&nbsp;&nbsp;Título Provisório: {{alocado.projeto.titulo}}</small><br>
+        {% else %}
+            <h3>Título: {{alocado.projeto.titulo}}</h3>
+        {% endif %}
+        <strong>Descrição:</strong> {{ alocado.projeto.descricao|linebreaks }}<br>
+        <strong>Expectativas de resultados/entregas :</strong> {{ alocado.projeto.expectativas|linebreaks }}<br>
+        <strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ alocado.projeto.areas|linebreaks }}<br>
+        <strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ alocado.projeto.recursos|linebreaks }}<br>
+        <hr>
+
+        <h3>Empresa: {{ alocado.projeto.empresa.nome_empresa }}</h3>
+        <strong>endereço:</strong> {{ alocado.projeto.empresa.endereco|linebreaks }}
+        <strong>website:</strong> <a href="{{ projeto.empresa.website }}"> {{ alocado.projeto.empresa.website }} </a>
+
+        {% if alocado.projeto.orientador %}
+        <hr>
+        <h3>Orientador</h3>
+        <ul>
+            <li><a href="mailto:{{projeto.orientador.user.email}}">{{ alocado.projeto.orientador.user.get_full_name}} &lt;{{projeto.orientador.user.email}}&gt; </a></li>
+        </ul>
+        {% endif %}
+
+        <hr>
+        <h3>Grupo</h3>
+        <ul>
+        {% for membro in alocado.projeto.alocacao_set.all %} 
+        <li><a href="mailto:{{membro.aluno.user.email}}">{{membro.aluno.user.get_full_name}} &lt;{{membro.aluno.user.email}}&gt; [{{ membro.aluno.get_curso_display }}]
+        </a></li>
+        {% endfor %}
+        </ul>
+        <br>
+        <br>
+
+      {% endif %}
+
+    {% endfor %}
   {% else %}
      Você não está alocado em nenhum projeto.
   {% endif %}

@@ -1161,6 +1161,7 @@ def meuprojeto(request):
     aluno = Aluno.objects.get(pk=request.user.pk)
     context = {
         'aluno': aluno,
+        'configuracao' : Configuracao.objects.all().first(),
     }
     return render(request, 'projetos/meuprojeto_aluno.html', context=context)
 

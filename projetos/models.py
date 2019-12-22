@@ -162,6 +162,8 @@ class Configuracao(models.Model):
                           help_text='Inicio do Semestre Letivo')
     recipient_reembolso = models.CharField(max_length=127, blank=True,
                                            help_text='Separar lista por ponto e virgula')
+    liberados_projetos = models.BooleanField(default=False,
+                                     help_text='Só depois de liberado alunos conseguem ver projetos alocados do ano')
 
 class ConfiguracaoAdmin(admin.ModelAdmin):
     """Usado para configurar a classe Configuracao."""
