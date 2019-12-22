@@ -34,7 +34,7 @@ from django.shortcuts import redirect
 from django.template.loader import get_template
 from django.utils import timezone
 
-from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao
+from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao, Alocacao
 from .models import Projeto, Empresa, Configuracao, Evento, Anotacao, Feedback
 from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade
 #from .models import Disciplina
@@ -1710,12 +1710,21 @@ def mapeamento(request):
     opcoes = []
     for aluno in alunos:
         opcoes_aluno = []
+        alocacaos = Alocacao.objects.filter(aluno=aluno)
         for projeto in projetos:
             opcao = Opcao.objects.filter(aluno=aluno, projeto=projeto).last()
             if opcao:
                 opcoes_aluno.append(opcao)
             else:
-                opcoes_aluno.append(None)
+                if alocacaos.filter(projeto=projeto):
+                    # Cria uma opção temporaria
+                    opc = Opcao()
+                    opc.prioridade = 0
+                    opc.projeto = projeto
+                    opc.aluno = aluno
+                    opcoes_aluno.append(opc)
+                else:
+                    opcoes_aluno.append(None)
 
         opcoes.append(opcoes_aluno)
 
