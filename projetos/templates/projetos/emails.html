@@ -119,7 +119,7 @@
                 {% endfor %}
                 ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
                 &amp;bcc=Comite%20PFE&lt;comitepfe@insper.edu.br&gt;
-                &amp;subject=PFE%20-%20Projeto:%20{{projeto}}&amp;body=Caros,%0D%0A%0D%0A
+                &amp;subject=PFE%20{% if projeto.avancado %}Avançado%20{% endif %}-%20Projeto:%20{{projeto}}&amp;body=Caros,%0D%0A%0D%0A
                 atenciosamente,%20coordenação%20PFE
               "
               data-toggle="tooltip" data-html="true" animation="true" title="
