@@ -8,158 +8,198 @@
 {% block head %}
   {% load static %}
   <script src="{% static 'js/Chart.min.js' %}"></script>
+  <style>
+    .prioridade {display: inline}
+  </style>
 {% endblock %}
 
 {% block content %}
 
   <h3>Projetos Fechados</h3>
   <label for="filter">Edição:</label>
-  <select class="filter" data-tableId="projetos">
+  <select id="cxi" class="filter" data-tableId="projetos">
     <option value="todas">todas</option>
-    <option value="2018.2">2018.2</option>
-    <option value="2019.1">2019.1</option>
-    <option value="2019.2">2019.2</option>
-    <option value="2020.1">2020.1</option>
-    <option value="2020.2">2020.2</option>
+    <option value="2018.2" {% if periodo == "2018.2" %}selected="selected"{% endif %}>2018.2</option>
+    <option value="2019.1" {% if periodo == "2019.1" %}selected="selected"{% endif %}>2019.1</option>
+    <option value="2019.2" {% if periodo == "2019.2" %}selected="selected"{% endif %}>2019.2</option>
+    <option value="2020.1" {% if periodo == "2020.1" %}selected="selected"{% endif %}>2020.1</option>
+    <option value="2020.2" {% if periodo == "2020.2" %}selected="selected"{% endif %}>2020.2</option>
   </select>
   <br><br><br>
   
-    {% if mylist %}
-      <table id="projetos">
-      {% for projeto,prioridades in mylist %} 
-        {% if projeto.disponivel %}
-          <tr id="two" class="row" data-type="{{projeto.ano}}.{{projeto.semestre}}"><td id="ptd">
-          <a href="{% url 'completo' projeto.id %}" class="dark-blue-bold"> 
-            {% if projeto.titulo_final %}
-              {{projeto.titulo_final}}<br>
-              <small>Título Provisório: {{projeto.titulo}}</small><br>
-            {% else %}
-              {{projeto.titulo}}<br>
-            {% endif %}
-          </a>
-          <p style="margin-left:1em;">Empresa: <a href="{% url 'organizacao_completo' projeto.empresa.login %}">
-              {{ projeto.empresa.nome_empresa }}
-            </a></p>
-          {% if projeto.avancado %}
-            <p style="margin-left:1em;">Tipo: <font color="red">PFE Avançado</font></p>
+  {% if mylist %}
+    <table id="projetos">
+    {% for projeto,prioridades in mylist %} 
+      {% if projeto.disponivel %}
+        <tr id="two" class="row" data-type="{{projeto.ano}}.{{projeto.semestre}}"><td id="ptd">
+        <a href="{% url 'completo' projeto.id %}" class="dark-blue-bold"> 
+          {% if projeto.titulo_final %}
+            {{projeto.titulo_final}}<br>
+            <small>Título Provisório: {{projeto.titulo}}</small><br>
+          {% else %}
+            {{projeto.titulo}}<br>
           {% endif %}
-          <p style="margin-left:1em;">Edição: {{projeto.ano}}.{{projeto.semestre}}</p>
-          <p style="margin-left:1em;">Orientador: {{projeto.orientador.user.get_full_name}} &lt;{{projeto.orientador.user.email}}&gt; </p>
-          <p style="margin-left:1em;">Alunos:</p>
-          <ol>
-          {% for aluno,prioridade in prioridades %} 
-            <li><a href="{% url 'aluno_detail' aluno.id %}">{{aluno.user.get_full_name}} &lt;{{aluno.user.email}}&gt; [{{ aluno.get_curso_display }}] &nbsp;
-              {% if prioridade == 0 %}
-                (prioridade não definida)
-              {% else %}
-                (prioridade # {{prioridade}})
-              {% endif %}
-              { {{ aluno.alocacao_set.first.get_conceito_display }} }
-            </a></li>
-          {% endfor %}
-          </ol>
-          <br>
-          </td></tr>
+        </a>
+        <p style="margin-left:1em;">Empresa: <a href="{% url 'organizacao_completo' projeto.empresa.login %}">
+            {{ projeto.empresa.nome_empresa }}
+          </a></p>
+        {% if projeto.avancado %}
+          <p style="margin-left:1em;">Tipo: <font color="red">PFE Avançado</font></p>
         {% endif %}
-      {% endfor %}
-      </table>
+        <p style="margin-left:1em;">Edição: {{projeto.ano}}.{{projeto.semestre}}</p>
+        <p style="margin-left:1em;">Orientador: {{projeto.orientador.user.get_full_name}} &lt;{{projeto.orientador.user.email}}&gt; </p>
+        <p style="margin-left:1em;">Alunos:</p>
+        <ol>
+        {% for aluno,prioridade in prioridades %} 
+          <li><a href="{% url 'aluno_detail' aluno.id %}">{{aluno.user.get_full_name}} &lt;{{aluno.user.email}}&gt; [{{ aluno.get_curso_display }}] &nbsp;
+            {% if prioridade == 0 %}
+              (prioridade não definida)
+            {% else %}
+              (prioridade # <div class="prioridade">{{prioridade}}</div>)
+            {% endif %}
+            { {{ aluno.alocacao_set.first.get_conceito_display }} }
+          </a></li>
+        {% endfor %}
+        </ol>
+        <br>
+        </td></tr>
+      {% endif %}
+    {% endfor %}
+    </table>
 
-      <script type="text/javascript">
-        $(".filter").change(function() {
-          var filterValue = $(this).val();
-          var row = $('.row'); 
-          row.hide()
-          var count_projects = 0
-          var count_alunos = 0
-          row.each(function(i, el) {
-               if($(el).attr('data-type') == filterValue) {
-                   $(el).show();
-                   count_projects = count_projects + 1
-                   count_alunos = count_alunos + $(el).find("TD").find("OL").children().length;
-               }
-          });
-          if ("todas" == filterValue) {
-            count_projects = {{ length }}
-            count_alunos = {{ nalunos }}
-            row.show();
-          }
-          document.getElementById("myCountProj").innerHTML = count_projects;
-          document.getElementById("myCountAlun").innerHTML = count_alunos
-        });
-      </script>
-    
     <hr>
     <b>Total de projetos = <span id="myCountProj">{{ length }}</span> </b> <br>
     <b>Total de alunos = <span id="myCountAlun">{{ nalunos }}</span> </b> <br>    
     <br><br>
 
-    TABELA ABAIXO SÓ FUNCIONA PARA TODOS OS PROJETOS!
     <div id="canvas-holder">
-        <canvas id="chart-area"></canvas>
-      </div>
-      <script>
+      <canvas id="chart-area"></canvas>
+    </div>
 
-        var config = {
-          type: 'pie',
-          data: {
-            datasets: [{
-              data: [
-                {{ qtd_prioridades.0 }},
-                {{ qtd_prioridades.1 }},
-                {{ qtd_prioridades.2 }},
-                {{ qtd_prioridades.3 }},
-                {{ qtd_prioridades.4 }},
-                {{ qtd_prioridades.5 }},
-              ],
-              backgroundColor: [
-                "#2ecc71",
-                "#3498db",
-                "#95a5a6",
-                "#9b59b6",
-                "#f1c40f",
-                "#e74c3c",
-                "#34495e"
-              ],
-            }],
-            labels: [
-              '#1 [{% widthratio qtd_prioridades.0 nalunos 100 %}%]',
-              '#2 [{% widthratio qtd_prioridades.1 nalunos 100 %}%]',
-              '#3 [{% widthratio qtd_prioridades.2 nalunos 100 %}%]',
-              '#4 [{% widthratio qtd_prioridades.3 nalunos 100 %}%]',
-              '#5 [{% widthratio qtd_prioridades.4 nalunos 100 %}%]',
-              '>= #6 [{% widthratio qtd_prioridades.5 nalunos 100 %}%]',
-            ]
+  {% else %}
+    <p>Não existem projetos disponíveis.</p>
+  {% endif %}
+
+  <br>
+  <br>
+
+  <script type="text/javascript">
+
+    var count_projects = 0;
+    var count_alunos = 0;
+    var prioridade1 = 0;
+    var prioridade2 = 0;
+    var prioridade3 = 0;
+    var prioridade4 = 0;
+    var prioridade5 = 0;
+    var prioridade6m = 0;
+    var nao_definido = 0;
+
+    function filtra_data() {  // REFERENTE AO SELETOR DE DATAS
+      var filterValue = $('.filter').val();
+      var row = $('.row'); 
+      row.hide();
+
+      count_projects = 0;
+      count_alunos = 0;
+      prioridade1 = 0;
+      prioridade2 = 0;
+      prioridade3 = 0;
+      prioridade4 = 0;
+      prioridade5 = 0;
+      prioridade6m = 0;
+      nao_definido = 0;
+
+      row.each(function(i, el) {
+        
+        if( filterValue == "todas" || filterValue == $(el).attr('data-type') ) {
+            $(el).show();
+            count_projects = count_projects + 1;
+            var alunos = $(el).find("TD").find("OL");
+            count_alunos = count_alunos + alunos.children().length;
+
+            $.each(alunos.children('li'), function() {
+              var target = $(this)
+              data = $(target).find('div.prioridade').text();
+              if(data == 1) {prioridade1 += 1;}
+              else if(data == 2) {prioridade2 += 1;}
+              else if(data == 3) {prioridade3 += 1;}
+              else if(data == 4) {prioridade4 += 1;}
+              else if(data == 5) {prioridade5 += 1;}
+              else if(data > 5) {prioridade6m += 1;}
+              else {nao_definido +=1;}
+            });
+        }
+      });
+      document.getElementById("myCountProj").innerHTML = count_projects;
+      document.getElementById("myCountAlun").innerHTML = count_alunos;
+    }
+
+    function mostra_grafico() { // REFERENTE AO PIE CHART
+      var config = {     // REFERENTE AO PIE CHART
+        type: 'pie',
+        data: {
+          datasets: [{
+            data: [
+              prioridade1,
+              prioridade2,
+              prioridade3,
+              prioridade4,
+              prioridade5,
+              prioridade6m,
+            ],
+            backgroundColor: [
+              "#2ecc71",
+              "#3498db",
+              "#95a5a6",
+              "#9b59b6",
+              "#f1c40f",
+              "#e74c3c",
+              "#34495e"
+            ],
+          }],
+          labels: [
+            '#1 ['+prioridade1+':'+parseInt(100*prioridade1/(count_alunos-nao_definido))+'%]',
+            '#2 ['+prioridade2+':'+parseInt(100*prioridade2/(count_alunos-nao_definido))+'%]',
+            '#3 ['+prioridade3+':'+parseInt(100*prioridade3/(count_alunos-nao_definido))+'%]',
+            '#4 ['+prioridade4+':'+parseInt(100*prioridade4/(count_alunos-nao_definido))+'%]',
+            '#5 ['+prioridade5+':'+parseInt(100*prioridade5/(count_alunos-nao_definido))+'%]',
+            '#>=6 ['+prioridade6m+':'+parseInt(100*prioridade6m/(count_alunos-nao_definido))+'%]',
+          ]
+        },
+        options: {
+          responsive: true,
+          title: {
+                display: true,
+                text: 'Proporção entre prioridade alocada dos alunos',
+                position: "top",
           },
-          options: {
-            responsive: true,
-            title: {
-                  display: true,
-                  text: 'Proporção entre prioridade alocada dos alunos',
-                  position: "top",
-            },
-            legend: {
-              display: true,
-              position: "bottom",
-              labels: {
-                fontColor: "#333",
-                fontSize: 14
-              }
+          legend: {
+            display: true,
+            position: "bottom",
+            labels: {
+              fontColor: "#333",
+              fontSize: 14
             }
           }
-        };
-    
-        window.onload = function() {
-          var ctx = document.getElementById('chart-area').getContext('2d');
-          window.myPie = new Chart(ctx, config);
-        };
+        }
+      };
       
-      </script>
+      var ctx = document.getElementById('chart-area').getContext('2d'); // REFERENTE AO PIE CHART
+      window.myPie = new Chart(ctx, config); // REFERENTE AO PIE CHART
 
-    {% else %}
-      <p>Não existem projetos disponíveis.</p>
-    {% endif %}
+    }
 
-    <br>
-    <br>
+    $(".filter").change(function(){
+      filtra_data();
+      mostra_grafico();
+    });  
+
+    $(document).ready(function(){
+      filtra_data();
+      mostra_grafico();
+    });
+  
+  </script>
 
 {% endblock %}
