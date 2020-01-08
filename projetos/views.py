@@ -1122,10 +1122,57 @@ def meuprojeto(request):
     }
     return render(request, 'projetos/meuprojeto_aluno.html', context=context)
 
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def organizacoes_tabela(request):
+    """Alocação das Organizações por semestre."""
+    configuracao = Configuracao.objects.all().first()
+
+    organizacoes_pfe = []
+    periodo = []
+
+    ano = 2018
+    semestre = 2
+    while True:
+        organizacoes = []
+        grupos = []
+        #for professor in Professor.objects.all().order_by("user__first_name", "user__last_name"):
+        for empresa in Empresa.objects.all():
+            count_projetos = 0
+            grupos_pfe = Projeto.objects.filter(empresa=empresa).\
+                                        filter(ano=ano).\
+                                        filter(semestre=semestre)
+            if grupos_pfe:
+                for grupo in grupos_pfe: # garante que tem alunos no projeto
+                    alunos_pfe = Aluno.objects.filter(alocacao__projeto=grupo)
+                    if alunos_pfe: #len(alunos_pfe) > 0
+                        count_projetos += 1
+                if count_projetos > 0:
+                    organizacoes.append(empresa)
+                    grupos.append(count_projetos)
+        organizacoes_pfe.append(zip(organizacoes, grupos))
+        periodo.append(str(ano)+"."+str(semestre))
+
+        if ((ano == configuracao.ano) and (semestre == configuracao.semestre)):
+            break
+
+        if semestre == 2:
+            semestre = 1
+            ano += 1
+        else:
+            semestre = 2
+
+    anos = zip(organizacoes_pfe, periodo)
+    context = {
+        'anos': anos,
+    }
+    return render(request, 'projetos/organizacoes_tabela.html', context)
+
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def professores_tabela(request):
-    """Professores."""
+    """Alocação dos Professores por semestre."""
     configuracao = Configuracao.objects.all().first()
 
     professores_pfe = []
@@ -1141,10 +1188,10 @@ def professores_tabela(request):
             grupos_pfe = Projeto.objects.filter(orientador=professor).\
                                         filter(ano=ano).\
                                         filter(semestre=semestre)
-            if grupos_pfe: #len(grupos_pfe) > 0
+            if grupos_pfe:
                 for grupo in grupos_pfe: # garante que tem alunos no projeto
                     alunos_pfe = Aluno.objects.filter(alocacao__projeto=grupo)
-                    if alunos_pfe: #len(alunos_pfe) > 0
+                    if alunos_pfe:
                         count_grupos += 1
                 if count_grupos > 0:
                     professores.append(professor)

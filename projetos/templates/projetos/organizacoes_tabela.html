@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 8 de Janeiro de 2020
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+{% endblock %}
+
+{% block content %}
+  <h3>Tabela de Alocação de Organizações Parceiras</h3>
+  <br>
+  {% for organizacoes,periodo in anos %} 
+    <big>{{periodo}}</big>
+    <table id="organizacoes">
+      <tr>
+        <th style="text-align: center;">Organização</th>
+        <th style="text-align: center;">Projetos</th>
+      </tr>
+      {% for organizacao,projetos in organizacoes %} 
+        <tr>
+          <td>
+            <a href="{% url 'organizacao_completo' organizacao.login %}">
+              {{organizacao.nome_empresa}}
+            </a>
+          </td>
+          <td style="text-align: center;">
+            {{projetos}}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+    <br>
+  {% endfor %}
+  
+  <br>
+  <br>
+
+{% endblock %}
