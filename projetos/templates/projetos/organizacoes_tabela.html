@@ -10,14 +10,14 @@
 {% endblock %}
 
 {% block content %}
-  <h3>Tabela de Alocação de Organizações Parceiras</h3>
+  <h3>Alocação de Organizações Parceiras</h3>
   <br>
   {% for organizacoes,periodo in anos %} 
     <big>{{periodo}}</big>
     <table id="organizacoes">
       <tr>
-        <th style="text-align: center;">Organização</th>
-        <th style="text-align: center;">Projetos</th>
+        <th style="text-align: center;width:425px;">Organização</th>
+        <th style="text-align: center;width:70px;">Projetos</th>
       </tr>
       {% for organizacao,projetos in organizacoes %} 
         <tr>
