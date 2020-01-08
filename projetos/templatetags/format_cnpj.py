@@ -11,4 +11,7 @@ register = template.Library()
 @register.filter
 def cnpj(value):
     """Formata o texto do CNPJ."""
-    return "%s.%s.%s/%s-%s" % (value[0:2], value[2:5], value[5:8], value[8:12], value[12:14])
+    if value:
+        return "%s.%s.%s/%s-%s" % (value[0:2], value[2:5], value[5:8], value[8:12], value[12:14])
+    else:
+        return ""
