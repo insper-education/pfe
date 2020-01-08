@@ -57,15 +57,20 @@
       <br>
     </li>
   {% endfor %}
+
   <br><strong>CNPJ:</strong> 
+  {% if organization.cnpj %}
   <a href="http://servicos.receita.fazenda.gov.br/Servicos/cnpjreva/Cnpjreva_Solicitacao.asp?cnpj={{organization.cnpj}}">
     {{ organization.cnpj|cnpj }}
   </a>
+  {% endif %}
   &nbsp;&nbsp;&nbsp;
   <strong>Inscrição Estadual:</strong>
-  <a href="http://www.sintegra.gov.br/">
-    {{ organization.inscricao_estadual }}
-  </a>
+  {% if organization.inscricao_estadual %}
+    <a href="http://www.sintegra.gov.br/">
+      {{ organization.inscricao_estadual }}
+    </a>
+  {% endif %}
 
   {% if organization.documento_set.all %}
     <hr>
