@@ -53,7 +53,7 @@ class Empresa(models.Model):
                                  help_text='Logotipo da organização parceira')
     cnpj = models.CharField("CNPJ", max_length=14, null=True, blank=True,
                              help_text='Código de CNPJ da empresa')
-    inscricao_estadual = models.CharField("Inscrição Estadual", max_length=12, null=True, blank=True,
+    inscricao_estadual = models.CharField("Inscrição Estadual", max_length=15, null=True, blank=True,
                              help_text='Código da inscrição estadual')
     class Meta:
         ordering = ['sigla']
