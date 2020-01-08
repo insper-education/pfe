@@ -7,6 +7,7 @@
 
 {% block head %}
   {% load static %}
+  {% load format_cnpj %}
   <style>
     #logotipo {
       max-height:128px;
@@ -56,9 +57,14 @@
       <br>
     </li>
   {% endfor %}
-  <br><strong>endereço(s):</strong> 
-  <a href="http://maps.google.com/maps?q={{organization.endereco}}">
-    {{ organization.endereco|linebreaks }}
+  <br><strong>CNPJ:</strong> 
+  <a href="http://servicos.receita.fazenda.gov.br/Servicos/cnpjreva/Cnpjreva_Solicitacao.asp?cnpj={{organization.cnpj}}">
+    {{ organization.cnpj|cnpj }}
+  </a>
+  &nbsp;&nbsp;&nbsp;
+  <strong>Inscrição Estadual:</strong>
+  <a href="http://www.sintegra.gov.br/">
+    {{ organization.inscricao_estadual }}
   </a>
 
   {% if organization.documento_set.all %}

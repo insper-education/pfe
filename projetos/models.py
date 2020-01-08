@@ -39,19 +39,22 @@ class Empresa(models.Model):
     #RENOMEAR PARA ORGANIZACAO
     login = models.CharField(primary_key=True, max_length=20)
     #login = models.CharField(max_length=20)     # em algum momento concertar isso
-    nome_empresa = models.CharField(max_length=80,
+    nome_empresa = models.CharField("Nome Fantasia", max_length=80,
                                     help_text='Nome da organização parceira')
-    sigla = models.CharField(max_length=20,
+    sigla = models.CharField("Sigla", max_length=20,
                              help_text='Sigla usada pela organização parceira')
-    endereco = models.TextField(max_length=200, null=True, blank=True,
+    endereco = models.TextField("Endereço", max_length=200, null=True, blank=True,
                                 help_text='Endereço da organização parceira')
-    website = models.URLField(max_length=250, null=True, blank=True,
+    website = models.URLField("website", max_length=250, null=True, blank=True,
                               help_text='website da organização parceira')
-    informacoes = models.TextField(max_length=1000, null=True, blank=True,
+    informacoes = models.TextField("Informações", max_length=1000, null=True, blank=True,
                                    help_text='Informações sobre a organização parceira')
-    logotipo = models.ImageField(upload_to=get_upload_path, null=True, blank=True,
+    logotipo = models.ImageField("Logotipo", upload_to=get_upload_path, null=True, blank=True,
                                  help_text='Logotipo da organização parceira')
-
+    cnpj = models.CharField("CNPJ", max_length=14, null=True, blank=True,
+                             help_text='Código de CNPJ da empresa')
+    inscricao_estadual = models.CharField("Inscrição Estadual", max_length=12, null=True, blank=True,
+                             help_text='Código da inscrição estadual')
     class Meta:
         ordering = ['sigla']
         permissions = (("altera_empresa", "Empresa altera valores"),
@@ -63,33 +66,33 @@ class Empresa(models.Model):
 
 class Projeto(models.Model):
     """Dados dos projetos para o PFE."""
-    titulo = models.CharField(max_length=127,
+    titulo = models.CharField("Título", max_length=127,
                               help_text='Título Provisório do projeto')
-    titulo_final = models.CharField(max_length=127, null=True,
+    titulo_final = models.CharField("Título Final", max_length=127, null=True,
                                     blank=True, help_text='Título Final do projeto')
-    descricao = models.TextField(max_length=3000,
+    descricao = models.TextField("Descrição", max_length=3000,
                                  help_text='Descricao do projeto')
-    expectativas = models.TextField(max_length=3000,
+    expectativas = models.TextField("Expectativas", max_length=3000,
                                     help_text='Expectativas em relação ao projeto')
-    areas = models.TextField(max_length=1000,
+    areas = models.TextField("Áreas", max_length=1000,
                              help_text='Áreas da engenharia envolvidas no projeto')
-    recursos = models.TextField(max_length=1000,
+    recursos = models.TextField("Recursos", max_length=1000,
                                 help_text='Recursos a serem disponibilizados aos Alunos')
-    anexo = models.FileField(upload_to=get_upload_path, null=True, blank=True,
+    anexo = models.FileField("Anexo", upload_to=get_upload_path, null=True, blank=True,
                              help_text='Documento PDF')
     imagem = models.ImageField(null=True, blank=True,
                                help_text='Imagem que representa projeto (se houver)')
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE,
                                 help_text='Organização parceira que propôs projeto')
-    departamento = models.TextField(max_length=1000, null=True, blank=True,
+    departamento = models.TextField("Departamento", max_length=1000, null=True, blank=True,
                                     help_text='Descrição do departamento que propôs o projeto')
-    avancado = models.BooleanField(default=False,
+    avancado = models.BooleanField("Avançado", default=False,
                                    help_text='Se for um projeto de PFE Avançado')
-    ano = models.PositiveIntegerField(validators=[MinValueValidator(2018), MaxValueValidator(3018)],
+    ano = models.PositiveIntegerField("Ano", validators=[MinValueValidator(2018), MaxValueValidator(3018)],
                                       help_text='Ano que o projeto comeca')
-    semestre = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(2)],
+    semestre = models.PositiveIntegerField("Semestre", validators=[MinValueValidator(1), MaxValueValidator(2)],
                                            help_text='Semestre que o projeto comeca')
-    disponivel = models.BooleanField(default=False,
+    disponivel = models.BooleanField("Disponível", default=False,
                                      help_text='Se projeto está atualmente disponível para alunos')
     orientador = models.ForeignKey('users.Professor', null=True, blank=True,
                                    on_delete=models.SET_NULL, related_name='professor_orientador',
@@ -150,13 +153,13 @@ class Projeto(models.Model):
 
 class Configuracao(models.Model):
     """Armazena os dados básicos de funcionamento do sistema."""
-    ano = models.PositiveIntegerField(validators=[MinValueValidator(2018), MaxValueValidator(3018)],
+    ano = models.PositiveIntegerField("Ano", validators=[MinValueValidator(2018), MaxValueValidator(3018)],
                                       help_text='Ano que o projeto comeca')
-    semestre = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(2)],
+    semestre = models.PositiveIntegerField("Semestre", validators=[MinValueValidator(1), MaxValueValidator(2)],
                                            help_text='Semestre que o projeto comeca')
     manutencao = models.BooleanField(default=False,
                                      help_text='Mostra mensagem de site em manutencao na entrada')
-    prazo = models.DateTimeField(default=datetime.datetime.now, blank=True,
+    prazo = models.DateTimeField("Prazo", default=datetime.datetime.now, blank=True,
                                  help_text='Prazo para os alunos se inscreverem nos projetos')
     t0 = models.DateField(default=datetime.date.today, blank=True,
                           help_text='Inicio do Semestre Letivo')
