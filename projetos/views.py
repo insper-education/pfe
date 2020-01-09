@@ -1721,7 +1721,8 @@ def mapeamento(request):
     projetos = list(zip(*ordena_projetos(False)))[0]
     alunos = Aluno.objects.filter(user__tipo_de_usuario=1).\
                                filter(anoPFE=configuracao.ano).\
-                               filter(semestrePFE=configuracao.semestre)
+                               filter(semestrePFE=configuracao.semestre).\
+                               order_by("user__first_name", "user__last_name")
     opcoes = []
     for aluno in alunos:
         opcoes_aluno = []
