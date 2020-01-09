@@ -66,7 +66,7 @@
         <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="bottom">Eng</th>
         <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="bottom">CR</th>
         {% for projeto in projetos %}   
-          <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child({{ forloop.counter|add:"3" }})')" style="cursor:pointer" class="rotate">
+          <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child({{ forloop.counter|add:"3" }})')" style="cursor:pointer;" class="rotate">
             <div>
               <span>
                 {{projeto.empresa.sigla}}
@@ -95,7 +95,7 @@
           {% for opcao in opcoes %}
             {% if opcao %}
               <td style="text-align:center;
-                  {% if opcao.projeto == estudante.alocacao_set.last.projeto %}background-color:pink;{% endif %}" 
+                  {% if opcao.projeto == estudante.alocacao_set.last.projeto %}background-color:pink;{% endif %}"  
                   class="{% if opcao.prioridade == 0 %}red-bold{% elif opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}">
                 <a class="prioridade" href="{% url 'completo' opcao.projeto.id %}"
                   data-toggle="tooltip" data-html="true" animation="true" title="
@@ -110,7 +110,7 @@
                 </a>
               </td>
             {% else %}
-              <td></td>
+              <td>&nbsp;</td>
             {% endif %}
           {% endfor %}
         </tr>
@@ -120,5 +120,13 @@
     <p>Não existem projetos disponíveis.</p>
   {% endif %}
   <p>&nbsp;</p>
+
+  <script>
+    {% for projeto in projetos %}
+      {% if not projeto.disponivel %}  
+        $('table td:nth-child({{ forloop.counter|add:"3" }})').css('border','dotted 2px darkred');
+      {% endif %}
+    {% endfor %}
+  </script>
 
 {% endblock %}

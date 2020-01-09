@@ -147,12 +147,16 @@ def selecao_projetos(request):
         }
         return render(request, 'projetos/selecao_projetos.html', context)
 
-def ordena_projetos():
+def ordena_projetos(disponivel=True):
     configuracao = Configuracao.objects.all().first()
     opcoes_list = []
-    projetos = Projeto.objects.filter(ano=configuracao.ano).\
+    if disponivel:
+        projetos = Projeto.objects.filter(ano=configuracao.ano).\
                                filter(semestre=configuracao.semestre).\
                                filter(disponivel=True)
+    else:
+        projetos = Projeto.objects.filter(ano=configuracao.ano).\
+                               filter(semestre=configuracao.semestre)
     for projeto in projetos:
         opcoes = Opcao.objects.filter(projeto=projeto)
         opcoes_alunos = opcoes.filter(aluno__user__tipo_de_usuario=1)
@@ -1714,7 +1718,7 @@ def bancas_agendamento(request):
 def mapeamento(request):
     """Mapeamento entre estudantes e projetos."""
     configuracao = Configuracao.objects.first()
-    projetos = list(zip(*ordena_projetos()))[0]
+    projetos = list(zip(*ordena_projetos(False)))[0]
     alunos = Aluno.objects.filter(user__tipo_de_usuario=1).\
                                filter(anoPFE=configuracao.ano).\
                                filter(semestrePFE=configuracao.semestre)
