@@ -1167,7 +1167,7 @@ def organizacoes_tabela(request):
         else:
             semestre = 2
 
-    anos = zip(organizacoes_pfe, periodo)
+    anos = zip(organizacoes_pfe[::-1], periodo[::-1]) # acabei invertendo a lista deixando os mais novos primeiro
     context = {
         'anos': anos,
     }
@@ -1212,7 +1212,7 @@ def professores_tabela(request):
         else:
             semestre = 2
 
-    anos = zip(professores_pfe, periodo)
+    anos = zip(professores_pfe[::-1], periodo[::-1])  # acabei invertendo a lista deixando os mais novos primeiro
     context = {
         'anos': anos,
     }
