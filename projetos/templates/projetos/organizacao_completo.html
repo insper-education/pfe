@@ -89,6 +89,14 @@
   {% else %}
     <i style="color:red">Não disponível</i>
   {% endif %}
+  <br><strong>endereço(s):</strong>
+  {% if organization.endereco %}
+    <a style="margin-left:16px;display:block;" href="http://maps.google.com/maps?q={{organization.endereco}}">
+      {{ organization.endereco|linebreaks }}
+    </a>
+  {% else %}
+    <i style="color:red">Não disponível</i>
+  {% endif %}
 
   {% if organization.documento_set.all %}
     <hr>
