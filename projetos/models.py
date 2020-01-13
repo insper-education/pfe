@@ -57,7 +57,7 @@ class Empresa(models.Model):
                              help_text='Código da inscrição estadual')
     razao_social = models.CharField("Razão Social", max_length=100, null=True, blank=True,
                                     help_text='Razão social da organização parceira')
-    ramo_atividade = models.CharField("Ramo de Atividade", max_length=80, null=True, blank=True,
+    ramo_atividade = models.CharField("Ramo de Atividade", max_length=120, null=True, blank=True,
                                     help_text='Ramo de atividade da organização parceira')
 
     class Meta:
