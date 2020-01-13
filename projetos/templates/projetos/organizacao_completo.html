@@ -58,11 +58,27 @@
     </li>
   {% endfor %}
 
+  <br><strong>Razão Social:</strong> 
+  {% if organization.razao_social %}
+    {{ organization.razao_social }}
+  {% else %}
+    <i style="color:red">Não disponível</i>
+  {% endif %}
+  &nbsp;&nbsp;&nbsp;
+  <br><strong>Ramo de Atividade:</strong>
+  {% if organization.ramo_atividade %}
+    {{ organization.ramo_atividade }}
+  {% else %}
+    <i style="color:red">Não disponível</i>
+  {% endif %}
+  &nbsp;&nbsp;&nbsp;
   <br><strong>CNPJ:</strong> 
   {% if organization.cnpj %}
   <a href="http://servicos.receita.fazenda.gov.br/Servicos/cnpjreva/Cnpjreva_Solicitacao.asp?cnpj={{organization.cnpj}}">
     {{ organization.cnpj|cnpj }}
   </a>
+  {% else %}
+    <i style="color:red">Não disponível</i>
   {% endif %}
   &nbsp;&nbsp;&nbsp;
   <strong>Inscrição Estadual:</strong>
@@ -70,6 +86,8 @@
     <a href="http://www.sintegra.gov.br/">
       {{ organization.inscricao_estadual }}
     </a>
+  {% else %}
+    <i style="color:red">Não disponível</i>
   {% endif %}
 
   {% if organization.documento_set.all %}

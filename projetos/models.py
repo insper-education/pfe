@@ -40,7 +40,7 @@ class Empresa(models.Model):
     login = models.CharField(primary_key=True, max_length=20)
     #login = models.CharField(max_length=20)     # em algum momento concertar isso
     nome_empresa = models.CharField("Nome Fantasia", max_length=80,
-                                    help_text='Nome da organização parceira')
+                                    help_text='Nome fantasia da organização parceira')
     sigla = models.CharField("Sigla", max_length=20,
                              help_text='Sigla usada pela organização parceira')
     endereco = models.TextField("Endereço", max_length=200, null=True, blank=True,
@@ -55,6 +55,11 @@ class Empresa(models.Model):
                              help_text='Código de CNPJ da empresa')
     inscricao_estadual = models.CharField("Inscrição Estadual", max_length=15, null=True, blank=True,
                              help_text='Código da inscrição estadual')
+    razao_social = models.CharField("Razão Social", max_length=100, null=True, blank=True,
+                                    help_text='Razão social da organização parceira')
+    ramo_atividade = models.CharField("Ramo de Atividade", max_length=80, null=True, blank=True,
+                                    help_text='Ramo de atividade da organização parceira')
+
     class Meta:
         ordering = ['sigla']
         permissions = (("altera_empresa", "Empresa altera valores"),
