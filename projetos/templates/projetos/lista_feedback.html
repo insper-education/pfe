@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 13 de Janeiro de 2020
+{% endcomment %}
+
+{% block head %}
+  <script src="https://www.w3schools.com/lib/w3.js"></script>
+{% endblock %}
+
+{% block content %}
+
+  {% url 'projeto_feedback' as feedback_url%}
+
+  <h5>Listagem de Feedbacks das Organizações Parceiras</h5>
+  Link para pesquisa: <a href="{{ feedback_url }}">{{ SERVER_URL }}{{ feedback_url }}</a><br><br>
+  
+{% if feedbacks %}
+    <table id="FeedbacksTable">
+      <tr>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome</th>
+        <th style="cursor:pointer" class="text-center">e-mail</th>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Organização</th>
+      </tr>      
+      {% for feedback in feedbacks %} 
+        <tr>
+          <td> <a href="{% url 'mostra_feedback' feedback.id %}">{{feedback.nome}}</a> </td>
+          <td> {{feedback.email}} </td>
+          <td> {{feedback.empresa}} </td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>Não existem feedbacks disponíveis.</p>
+  {% endif %}
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+{% endblock %}

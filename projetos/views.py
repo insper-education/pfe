@@ -1747,3 +1747,23 @@ def projeto_feedback(request):
         context = {
         }
         return render(request, 'projetos/projeto_feedback.html', context)
+
+@login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
+def lista_feedback(request):
+    """Lista todos os feedback das Organizações Parceiras."""
+    
+    context = {
+        'feedbacks' : Feedback.objects.all(),
+        'SERVER_URL' : settings.SERVER,
+    }
+    return render(request, 'projetos/lista_feedback.html', context)
+
+@login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
+def mostra_feedback(request, feedback_id):
+    """Detalha os feedbacks das Organizações Parceiras."""
+    context = {
+        'feedback' : Feedback.objects.get(id=feedback_id),
+    }
+    return render(request, 'projetos/mostra_feedback.html', context)

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 13 de Janeiro de 2020
+{% endcomment %}
+
+{% block head %}
+  <style>
+    textarea {
+      max-width:100%;
+    }
+    p {
+      white-space: wrap;
+      max-width: 75ch;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+
+  <h5>Feedback de Organizações Parceiras</h5><br>
+
+  Nome: {{feedback.nome}}<br>
+  e-mail: {{feedback.email}}<br>
+  Empresa: {{feedback.empresa}}<br>
+
+  <br>
+  <p>O projeto avançou conforme o esperado? Se SIM, você sabe qual foi a fórmula do sucesso?
+  Se NÃO, consegue identificar os motivos? Por exemplo: demora em fechar o escopo, alunos
+  pouco engajados, alunos com dúvidas básicas em determinado assunto, equipe não entrosada, ...</p>
+  <textarea name="tecnico" rows="4" cols="80" maxlength="1000">
+  {{feedback.tecnico}}
+  </textarea>
+  <br><br>
+
+  <p>Parte do esperado com essa atividade era que os alunos entendessem melhor qual era o desafio
+  proposto e discutissem com vocês como prototipar e implementar o acordado. Os alunos foram
+  ativos em se comunicar, entendendo o desejo de vocês (e de seus usuários finais se for o
+  caso) e discutir possíveis soluções? Você pode comentar brevemente como foram essas interações?
+  </p>
+  <textarea name="comunicacao" rows="4" cols="80" maxlength="1000">
+  {{feedback.comunicacao}}
+  </textarea>
+  <br><br>
+
+  <p>A equipe de alunos alocada para o seu projeto estava devidamente organizada? Por exemplo:
+  os alunos foram pontuais nos encontros, se portaram de forma adequada, todos se dedicaram
+  de acordo, apresentaram uma proposta de condução do projeto adequada?
+  </p>
+  <textarea name="organizacao" rows="4" cols="80" maxlength="1000">
+  {{feedback.organizacao}}
+  </textarea>
+  <br><br>
+
+  <p>Tem outras observações que gostaria de compartilhar conosco? Por exemplo o processo de
+  interação com o Insper, ou algo que o Insper devia ter previsto nesta proposta de parceria?
+  </p>
+  <textarea name="outros" rows="4" cols="80" maxlength="1000">
+  {{feedback.outros}}
+  </textarea>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+{% endblock %}
