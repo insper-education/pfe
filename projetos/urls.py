@@ -33,7 +33,7 @@ urlpatterns = [
     path('encontros_marcar/', views.encontros_marcar, name='encontros_marcar'),
     path('emails/', views.emails, name='emails'),
     path('email_backup/', views.email_backup, name='email_backup'),
-    path('events/<int:event_id>', views.export, name="event_ics_export"),
+    path('events/<int:event_id>', views.export_calendar, name="event_ics_export"),
     path('export/<str:modelo>/<str:formato>', views.export, name='export'),
     path('exportar/', views.exportar, name='exportar'),
     path('histograma/', views.histograma, name='histograma'),
@@ -50,7 +50,7 @@ urlpatterns = [
     path('projeto_detalhe/<int:primarykey>', views.projeto_detalhe, name='projeto_detalhe'),
     path('projeto_feedback', views.projeto_feedback, name='projeto_feedback'),
     path('projetos_fechados/', views.projetos_fechados, name='projetos_fechados'),
-    path('projetos_fechados/<str:periodo>', views.projetos_fechados, name='projetos_fechados_periodo'),
+    path('projetos_fechados/<str:periodo>', views.projetos_fechados, name='projetos_fechados_peri'),
     path('projetos_lista/<str:periodo>', views.projetos_lista, name='projetos_lista'),
     path('propor/', views.propor, name='propor'),
     path('reembolso_pedir/', views.reembolso_pedir, name='reembolso_pedir'),
@@ -64,8 +64,3 @@ urlpatterns = [
     path('todos_parceiros/', views.todos_parceiros, name='todos_parceiros'),
     path('todos_professores/', views.todos_professores, name='todos_professores'),
 ]
-
-#urlpatterns += patterns('',
-    #url(r'^events/(?P&lt;event_id&gt;\d+)/export/', 'app_events.ics_views.export', name="event_ics_export"),
-    #url(r'^events/(?P&lt;event_id&gt;\d+)/export/', 'views.ics_views.export', name="event_ics_export"),
-#)

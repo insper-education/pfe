@@ -148,6 +148,7 @@ def selecao_projetos(request):
         return render(request, 'projetos/selecao_projetos.html', context)
 
 def ordena_projetos(disponivel=True):
+    """Gera lista com projetos ordenados pelos com maior interesse pelos alunos."""
     configuracao = Configuracao.objects.all().first()
     opcoes_list = []
     if disponivel:
@@ -201,8 +202,9 @@ def get_opcao(numb, opcoes, min_group, max_group, projetos_ajustados):
         opcoesp_alunos = opcoesp.filter(aluno__user__tipo_de_usuario=1)
         opcoesp_validas = opcoesp_alunos.filter(aluno__anoPFE=configuracao.ano).\
                                          filter(aluno__semestrePFE=configuracao.semestre)
-    
-        #if len(opcoesp_validas) >= min_group: #Checa se projeto tem numero minimo de aplicantes
+
+        if len(opcoesp_validas) >= min_group: #Checa se projeto tem numero minimo de aplicantes
+            pass
             # checa se alunos no projeto ja tem CR maior dos que ja estao no momento no projeto
         crh = 0
         for optv in projetos_ajustados[opcao.projeto]:
@@ -220,8 +222,9 @@ def get_opcao(numb, opcoes, min_group, max_group, projetos_ajustados):
     return opcao
 
 def limita_grupo(max_group, ano, semestre, projetos_ajustados):
-    """Removendo alunos de grupos superlotados."""
-    """max_group: quantidade máxima de alunos por grupo"""
+    """
+        Removendo alunos de grupos superlotados.
+        max_group: quantidade máxima de alunos por grupo    """
 
     pref_pri_cr = 0.1  #talvez remover
 
@@ -255,16 +258,16 @@ def limita_grupo(max_group, ano, semestre, projetos_ajustados):
                         if op2: #op2 != None
                             balanceado_max = False
                             balanceado = False
-                            menor_grupo = 1
+                            #menor_grupo = 1
                             projetos_ajustados[projeto].remove(remove_opcao)
                             projetos_ajustados[op2.projeto].append(op2)
-                            print("Movendo(a) "+remove_opcao.aluno.user.first_name.lower()\
-                            +" (DE): "+projeto.titulo+" (PARA):"+op2.projeto.titulo)
+                            #print("Movendo(a) "+remove_opcao.aluno.user.first_name.lower()\
+                            #+" (DE): "+projeto.titulo+" (PARA):"+op2.projeto.titulo)
     return balanceado
 
 def desmonta_grupo(min_group, ano, semestre, projetos_ajustados):
     """Realocando alunos de grupos muito pequenos (um aluno por vez)."""
-    
+
     #menor_grupo = 1 # usado para elimnar primeiro grupos de 1, depois de 2, etc
 
 
@@ -279,12 +282,12 @@ def desmonta_grupo(min_group, ano, semestre, projetos_ajustados):
             opcoes = Opcao.objects.filter(projeto=projeto)
             for opt in opcoes:
                 if opt.prioridade <= 5:
-                    menor_opcao_tmp += (6-opt.prioridade)**2 #projetos com prioridade 1 tem mais chances
+                    menor_opcao_tmp += (6-opt.prioridade)**2 # prioridade 1 tem mais chances
             if menor_opcao_tmp < menor_opcao:
                 remove_projeto = projeto
                 menor_opcao = menor_opcao_tmp
     #print(remove_projeto)
-    
+
     if remove_projeto:
         for remove_opcao in projetos_ajustados[remove_projeto]:
             opcoes = Opcao.objects.filter(aluno=remove_opcao.aluno).\
@@ -296,44 +299,12 @@ def desmonta_grupo(min_group, ano, semestre, projetos_ajustados):
                 #op2 = get_opcao(next_op, opcoes, min_group, max_group, projetos_ajustados)
                 op2 = get_opcao(next_op, opcoes, min_group, 5, projetos_ajustados)
                 if op2: #op2 != None:
-                    balanceado = False
-                    menor_grupo = 1
-                    projetos_ajustados[remove_projeto].remove(remove_opcao)
-                    projetos_ajustados[op2.projeto].append(op2)
-                    print("Movendo(b) "+remove_opcao.aluno.user.first_name.lower()+\
-                     " (DE): "+remove_projeto.titulo+" (PARA):"+op2.projeto.titulo)
- 
-    # ANTIGO
-    """
-    for projeto, ops in projetos_ajustados.items():
-        remove_opcao = None
-        remove_projeto = None
-        if ops and (len(ops) <= menor_grupo): #(len(ops) > 0)
-            for option in ops:
-                if remove_opcao is None:
-                    if option.prioridade < 5:  #Não tirar aluno com prioridade > que 5
-                        remove_opcao = option
-                        remove_projeto = projeto
-                elif(option.aluno.cr < remove_opcao.aluno.cr) and\
-                        (option.prioridade < 5):
-                    remove_opcao = option
-                    remove_projeto = projeto
-        if remove_opcao is not None:
-            opcoes = Opcao.objects.filter(aluno=remove_opcao.aluno).\
-                                    filter(projeto__ano=configuracao.ano).\
-                                    filter(projeto__semestre=configuracao.semestre)
-            next_op = get_next_opcao(remove_opcao.prioridade, opcoes)
-            if next_op != 0:
-                #busca nas opcoes do aluno
-                op2 = get_opcao(next_op, opcoes, min_group, max_group, projetos_ajustados)
-                if op2: #op2 != None:
-                    balanceado = False
-                    menor_grupo = 1
+                    #balanceado = False
+                    #menor_grupo = 1
                     projetos_ajustados[remove_projeto].remove(remove_opcao)
                     projetos_ajustados[op2.projeto].append(op2)
                     #print("Movendo(b) "+remove_opcao.aluno.user.first_name.lower()+\
                     # " (DE): "+remove_projeto.titulo+" (PARA):"+op2.projeto.titulo)
-    """
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
@@ -342,7 +313,7 @@ def propor(request):
     ############################################
     ## COLOCAR ESSE VALOR ACESSIVEL NO SISTEMA #
     ############################################
-    pref_pri_cr = 0.1  # Ficar longe da prioridade tem um custo de 5% na selecao do projeto
+    #pref_pri_cr = 0.1  # Ficar longe da prioridade tem um custo de 5% na selecao do projeto
 
     configuracao = Configuracao.objects.all().first()
     projeto_list = []
@@ -350,7 +321,7 @@ def propor(request):
     projetos = Projeto.objects.filter(disponivel=True).\
                                filter(ano=configuracao.ano).\
                                filter(semestre=configuracao.semestre)
-                               
+
     if request.method == 'POST':
         min_group = int(request.POST.get('min', 1))
         max_group = int(request.POST.get('max', 5))
@@ -385,7 +356,7 @@ def propor(request):
         while (not balanceado) and (count > 0):
             #balanceado = True
             balanceado = False
-            
+
             limita_grupo(max_group, configuracao.ano, configuracao.semestre, projetos_ajustados)
             desmonta_grupo(min_group, configuracao.ano, configuracao.semestre, projetos_ajustados)
 
@@ -394,11 +365,9 @@ def propor(request):
             count -= 1
 
 
-        """
-        if (menor_grupo < min_group) and balanceado: #caso todos grupos com menor_grupo ja foram
-            menor_grupo += 1
-            balanceado = False
-        """
+        # if (menor_grupo < min_group) and balanceado: #caso todos grupos com menor_grupo ja foram
+        #     menor_grupo += 1
+        #     balanceado = False
 
         #Cria lista para enviar para o template html
         for projeto, ops in projetos_ajustados.items():
@@ -415,7 +384,7 @@ def propor(request):
             if opcoes1: #len(opcoes1) > 0
                 projeto_list.append(projeto)
                 opcoes_list.append(opcoes1)
-    
+
     mylist = zip(projeto_list, opcoes_list)
     context = {
         'mylist': mylist,
@@ -719,7 +688,7 @@ def relatorio(request, modelo, formato):
         if(formato == "pdf" or formato == "PDF"):
             pdf = render_to_pdf('projetos/relatorio_alunos.html', context)
             return HttpResponse(pdf.getvalue(), content_type='application/pdf')
-    
+
     elif modelo == "feedbacks":
         context = {
             'feedbacks': Feedback.objects.all(),
@@ -884,7 +853,9 @@ def tabela_documentos(request):
 @login_required
 def calendario(request):
     """Para exibir um calendário de eventos."""
-    eventos = Evento.objects.exclude(name="Aula PFE").exclude(name="Laboratório").exclude(name="provas")
+    eventos = Evento.objects.exclude(name="Aula PFE").\
+                             exclude(name="Laboratório").\
+                             exclude(name="provas")
     aulas = Evento.objects.filter(name="Aula PFE")
     laboratorios = Evento.objects.filter(name="Laboratório")
     provas = Evento.objects.filter(name="provas")
@@ -1167,7 +1138,7 @@ def organizacoes_tabela(request):
         else:
             semestre = 2
 
-    anos = zip(organizacoes_pfe[::-1], periodo[::-1]) # acabei invertendo a lista deixando os mais novos primeiro
+    anos = zip(organizacoes_pfe[::-1], periodo[::-1]) #inverti lista deixando os mais novos primeiro
     context = {
         'anos': anos,
     }
@@ -1212,7 +1183,7 @@ def professores_tabela(request):
         else:
             semestre = 2
 
-    anos = zip(professores_pfe[::-1], periodo[::-1])  # acabei invertendo a lista deixando os mais novos primeiro
+    anos = zip(professores_pfe[::-1], periodo[::-1]) #inverti lista deixando os mais novos primeiro
     context = {
         'anos': anos,
     }
@@ -1381,7 +1352,7 @@ def emails(request):
     while True:
         semestres.append(str(ano)+"."+str(semestre))
 
-        projetos_pessoas = {} # Dicionario com as pessoas do projeto 
+        projetos_pessoas = {} # Dicionario com as pessoas do projeto
 
         alunos_semestre = [] # Alunos do semestre
         organizacoes = [] # Controla as organizações participantes por semestre
@@ -1443,26 +1414,31 @@ def emails(request):
             ano += 1
             semestre = 1
 
-    email_todos = zip(semestres, aplicando_p_semestre, alocados_p_semestre, orientadores_p_semestre, parceiros_p_semestre, bancas_p_semestre)
+    email_todos = zip(semestres,
+                      aplicando_p_semestre,
+                      alocados_p_semestre,
+                      orientadores_p_semestre,
+                      parceiros_p_semestre,
+                      bancas_p_semestre)
 
     email_p_semestre = zip(semestres, projetos_p_semestre)
 
 
     membros_comite = PFEUser.objects.all().filter(membro_comite=True)
 
-    todos_alunos = Aluno.objects.filter(trancado=False).\
+    lista_todos_alunos = Aluno.objects.filter(trancado=False).\
                                  filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
 
-    todos_professores = Professor.objects.all()
-    todos_parceiros = Parceiro.objects.all()
+    lista_todos_professores = Professor.objects.all()
+    lista_todos_parceiros = Parceiro.objects.all()
 
     context = {
         'email_todos' : email_todos,
         'email_p_semestre' : email_p_semestre,
         'membros_comite' : membros_comite,
-        'todos_alunos' : todos_alunos,
-        'todos_professores' : todos_professores,
-        'todos_parceiros' : todos_parceiros,
+        'todos_alunos' : lista_todos_alunos,
+        'todos_professores' : lista_todos_professores,
+        'todos_parceiros' : lista_todos_parceiros,
     }
     return render(request, 'projetos/emails.html', context=context)
 
@@ -1621,7 +1597,7 @@ def minhas_bancas(request):
 
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
-def export(request, event_id):
+def export_calendar(request, event_id):
     """Gera evento de calendário."""
     banca = Banca.objects.all().get(pk=event_id)
 
@@ -1636,8 +1612,10 @@ def export(request, event_id):
     site_token = '.'.join(site_token)
 
     ical_event = Event()
-    
-    ical_event['uid'] = "Banca{0}{1}{2}".format(banca.startDate.strftime("%Y%m%d%H%M%S"),banca.projeto.pk,banca.tipo_de_banca)
+
+    ical_event['uid'] = "Banca{0}{1}{2}".format(banca.startDate.strftime("%Y%m%d%H%M%S"),
+                                                banca.projeto.pk,
+                                                banca.tipo_de_banca)
     ical_event.add('summary', "Banca {0}".format(banca.projeto))
     ical_event.add('dtstart', banca.startDate)
     ical_event.add('dtend', banca.endDate)
@@ -1645,12 +1623,12 @@ def export(request, event_id):
     ical_event.add('tzid', "America/Sao_Paulo")
     ical_event.add('location', banca.location)
 
-    ical_event.add('geo', (-25.598749,-46.676368))
+    ical_event.add('geo', (-25.598749, -46.676368))
 
     cal_address = vCalAddress('MAILTO:lpsoares@insper.edu.br')
     cal_address.params["CN"] = "Luciano Pereira Soares"
     ical_event.add('organizer', cal_address)
-    
+
     #REMOVER OS xx DOS EMAILS
     if banca.membro1:
         atnd = vCalAddress("MAILTO:{}".format(banca.membro1.email))
@@ -1692,7 +1670,7 @@ def export(request, event_id):
         description += "\n- {0} {1}".format(aluno.user.first_name, aluno.user.last_name)
 
     ical_event.add('description', description)
-    
+
     cal.add_component(ical_event)
 
     response = HttpResponse(cal.to_ical())
