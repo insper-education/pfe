@@ -1752,7 +1752,7 @@ def projeto_feedback(request):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def lista_feedback(request):
     """Lista todos os feedback das Organizações Parceiras."""
-    
+
     context = {
         'feedbacks' : Feedback.objects.all(),
         'SERVER_URL' : settings.SERVER,

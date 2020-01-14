@@ -160,3 +160,5 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 SITE_ID = 1
+
+SERVER = "http://pfe.insper.edu.br"
