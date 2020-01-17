@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 17 de Janeiro de 2020
+{% endcomment %}
+
+{% block head %}
+    <script src="https://www.w3schools.com/lib/w3.js"></script>
+{% endblock %}
+
+{% block content %}
+  <h3>Alocações em Bancas</h3>
+  <br>
+  {% for membros,periodo in anos %} 
+    <big>{{periodo}}</big>
+    {% if membros %}
+      <table id="MembrosTable">
+        <tr>
+          <th onclick="w3.sortHTML('#MembrosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome</th>
+          <th onclick="w3.sortHTML('#MembrosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" data-sort-value="number" class="text-center">Quant.</th>
+          <th class="text-center">Projetos</th>
+        </tr>
+        {% for membro, bancas in membros.items %}
+          <tr class="item">
+            <td> 
+              <a href="{% url 'professor_detail' membro.professor.id %}">
+                {{membro.get_full_name}}
+              </a>
+            </td>
+            <td class="text-center"> 
+              {{bancas|length}}
+            </td>
+            <td>
+              <ul style="margin: 0;padding-left: 1em;">
+              {% for banca in bancas %}
+                <li>
+                  <a href="{% url 'completo' banca.projeto.id %}">
+                    {{banca.projeto.get_titulo}}
+                    ({{banca.startDate}})
+                  </a>
+                </li>
+              {% endfor %}
+              </ul>
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+      <br>
+    {% else %}
+      <p>Não existem bancas.</p>
+      <br>
+    {% endif %}
+  {% endfor %}
+  <br>
+  <p>&nbsp;</p>
+
+{% endblock %}

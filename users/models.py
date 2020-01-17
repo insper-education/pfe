@@ -63,6 +63,9 @@ class Areas(models.Model):
                + ("V" if self.eficiencia_energetica else "F") + " "\
                + ("V" if self.administracao_economia_financas else "F")
 
+from functools import total_ordering
+
+@total_ordering
 class PFEUser(AbstractUser):
     """Classe base para todos os usuários do PFE (Alunos, Professores, Parceiros)."""
     # Atualizar para AbstractBaseUser que permite colocar mais caracteres nos campos
@@ -89,9 +92,12 @@ class PFEUser(AbstractUser):
             " (" + self.TIPO_DE_USUARIO_CHOICES[self.tipo_de_usuario-1][1] + ")"
         #return self.username #ver se atualizar isso para first_name não quebra o projeto
 
+    def __lt__(self, other):
+        return self.first_name < other.first_name
+
 class Professor(models.Model):
     """Classe de usuários com estatus de Professor."""
-    user = models.OneToOneField(PFEUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(PFEUser, related_name='professor', on_delete=models.CASCADE)
     areas = models.TextField(max_length=500, blank=True)
     website = models.URLField(max_length=250, null=True, blank=True)
     lattes = models.URLField(max_length=250, null=True, blank=True)
@@ -109,7 +115,7 @@ class Aluno(models.Model):
         ('M', 'Mecânica'),
         ('X', 'Mecatrônica'),
     )
-    user = models.OneToOneField(PFEUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(PFEUser, related_name='aluno', on_delete=models.CASCADE)
     matricula = models.CharField(max_length=8, null=True, blank=True,
                                  help_text='Número de matrícula')
     #bio = models.TextField(max_length=500, blank=True)
@@ -262,7 +268,7 @@ class Alocacao(models.Model):
 
 class Parceiro(models.Model):  # da empresa (não do Insper)
     """Classe de usuários com estatus de Parceiro (pessoal das organizações parceiras)."""
-    user = models.OneToOneField(PFEUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(PFEUser, related_name='parceiro', on_delete=models.CASCADE)
     organizacao = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.CASCADE)
     cargo = models.CharField(max_length=50, blank=True, help_text='Cargo Funcional')
     telefone = models.CharField(max_length=20, blank=True, help_text='Telefone Fixo')
@@ -280,7 +286,7 @@ class Parceiro(models.Model):  # da empresa (não do Insper)
 
 class Administrador(models.Model):
     """Classe de usuários com estatus de Administrador."""
-    user = models.OneToOneField(PFEUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(PFEUser, related_name='administrador', on_delete=models.CASCADE)
     class Meta:
         ordering = ['user']
         permissions = (("altera_empresa", "Empresa altera valores"),

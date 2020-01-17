@@ -1147,7 +1147,7 @@ def organizacoes_tabela(request):
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def professores_tabela(request):
-    """Alocação dos Professores por semestre."""
+    """Alocação dos Orientadores por semestre."""
     configuracao = Configuracao.objects.all().first()
 
     professores_pfe = []
@@ -1188,6 +1188,49 @@ def professores_tabela(request):
         'anos': anos,
     }
     return render(request, 'projetos/professores_tabela.html', context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def bancas_tabela(request):
+    """Lista todas as bancas agendadas, conforme periodo pedido."""
+    configuracao = Configuracao.objects.all().first()
+
+    membros_pfe = []
+    periodo = []
+
+    ano = 2018
+    semestre = 2
+    while True:
+        membros = dict()
+        bancas = Banca.objects.all().filter(projeto__ano=ano).filter(projeto__semestre=semestre)
+        for banca in bancas:
+            if banca.projeto.orientador:
+                membros.setdefault(banca.projeto.orientador.user, []).append(banca)
+            if banca.membro1:
+                membros.setdefault(banca.membro1, []).append(banca)
+            if banca.membro2:
+                membros.setdefault(banca.membro2, []).append(banca)
+            if banca.membro3:
+                membros.setdefault(banca.membro3, []).append(banca)
+
+        membros_pfe.append(membros)
+        periodo.append(str(ano)+"."+str(semestre))
+
+        if ((ano == configuracao.ano) and (semestre == configuracao.semestre)):
+            break
+
+        if semestre == 2:
+            semestre = 1
+            ano += 1
+        else:
+            semestre = 2
+
+    anos = zip(membros_pfe[::-1], periodo[::-1]) #inverti lista deixando os mais novos primeiro
+
+    context = {
+        'anos' : anos,
+    }
+    return render(request, 'projetos/bancas_tabela.html', context)
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
