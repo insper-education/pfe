@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 17 de Janeiro de 2020
+{% endcomment %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+    <h3>{{parceiro.user.get_full_name}}</h3>
+    <strong>e-mail:</strong> <a href="mailto:{{parceiro.user.email}}"> &lt;{{parceiro.user.email}}&gt;</a><br>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+{% endblock %}

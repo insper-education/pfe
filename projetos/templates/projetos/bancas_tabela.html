@@ -23,10 +23,16 @@
         </tr>
         {% for membro, bancas in membros.items %}
           <tr class="item">
-            <td> 
-              <a href="{% url 'professor_detail' membro.professor.id %}">
-                {{membro.get_full_name}}
-              </a>
+            <td>
+              {% if membro.tipo_de_usuario == 2 %}
+                <a href="{% url 'professor_detail' membro.professor.id %}">
+                  {{membro.get_full_name}}
+                </a>
+              {% elif membro.tipo_de_usuario == 3 %}
+                <a href="{% url 'parceiro_detail' membro.parceiro.id %}">
+                  {{membro.get_full_name}}
+                </a>
+              {% endif %}  
             </td>
             <td class="text-center"> 
               {{bancas|length}}

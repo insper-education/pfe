@@ -218,6 +218,19 @@ def professor_detail(request, primarykey):
     }
     return render(request, 'users/professor_detail.html', context=context)
 
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def parceiro_detail(request, primarykey):
+    """Mostra detalhes sobre o parceiro."""
+    parceiro = Parceiro.objects.filter(pk=primarykey).first()
+    configuracao = Configuracao.objects.all().first()
+    context = {
+        'configuracao': configuracao,
+        'parceiro': parceiro,
+    }
+    return render(request, 'users/parceiro_detail.html', context=context)
+
+
 # class AlunoListView(LoginRequiredMixin, generic.ListView):
 #     model = Aluno
 #     paginate_by = 2

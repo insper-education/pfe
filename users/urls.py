@@ -14,6 +14,7 @@ urlpatterns = [
     path('alunos_inscrevendo/', views.alunos_inscrevendo, name='alunos_inscrevendo'),
     path('aluno_detail/<int:primarykey>', views.aluno_detail, name='aluno_detail'),
     path('areas_interesse/', views.areas_interesse, name='areas_interesse'),
+    path('parceiro_detail/<int:primarykey>', views.parceiro_detail, name='parceiro_detail'),
     path('perfil/', views.perfil, name='perfil'),
     path('professor_detail/<int:primarykey>', views.professor_detail, name='professor_detail'),
 ]
