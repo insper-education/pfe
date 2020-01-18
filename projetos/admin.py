@@ -23,7 +23,7 @@ from .models import Configuracao, Aviso, Documento, Anotacao, Reembolso, Banco
 from .models import Entidade
 
 # Das Organizações
-from .models import Feedback
+from .models import Feedback, Conexao
 
 def dup_projeto(modeladmin: admin_opt.ModelAdmin, request, queryset):
     """Função abaixo permite duplicar entradas no banco de dados"""
@@ -159,3 +159,4 @@ admin.site.register(Cursada)
 admin.site.register(Recomendada)
 admin.site.register(Encontro)       # Informações das Encontros (com os facilitadores)
 admin.site.register(Entidade)       # Para ser preenchido com as entidades estudantis
+admin.site.register(Conexao)        # Conexão entre parceiro e organização

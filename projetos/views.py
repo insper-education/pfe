@@ -36,7 +36,7 @@ from django.utils import timezone
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao, Alocacao
 from .models import Projeto, Empresa, Configuracao, Evento, Anotacao, Feedback
-from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade
+from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade, Conexao
 #from .models import Disciplina
 
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource
@@ -408,13 +408,15 @@ def index_professor(request):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def completo(request, primakey):
     """Mostra um projeto por completo."""
+    configuracao = Configuracao.objects.all().first()
     projeto = Projeto.objects.filter(pk=primakey).first()  # acho que tem de ser get
     opcoes = Opcao.objects.filter(projeto=projeto)
-    configuracao = Configuracao.objects.all().first()
+    conexoes = Conexao.objects.filter(projeto=projeto)
     context = {
+        'configuracao': configuracao,
         'projeto': projeto,
         'opcoes': opcoes,
-        'configuracao': configuracao,
+        'conexoes': conexoes,
         'MEDIA_URL' : settings.MEDIA_URL,
     }
     return render(request, 'projetos/projeto_completo.html', context=context)

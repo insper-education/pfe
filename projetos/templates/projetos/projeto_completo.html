@@ -44,12 +44,33 @@
   <p><strong>endereço:</strong> <a class="tabulado" href="http://maps.google.com/maps?q={{projeto.empresa.endereco}}">{{ projeto.empresa.endereco|linebreaks }}</a></p>
   {% if projeto.empresa.website %}
     <p><strong>website:</strong>  <a class="tabulado" href="{{ projeto.empresa.website }}"> {{ projeto.empresa.website }} </a></p>
-  {% endif %}  
+  {% endif %} 
   {% if projeto.empresa.informacoes %}
     <strong>Informações sobre a empresa :</strong> {{ projeto.empresa.informacoes|linebreaks }}
   {% endif %}
   {% if projeto.departamento %}
     <strong>Informações sobre o departamento na empresa :</strong> {{ projeto.departamento|linebreaks }}
+  {% endif %}
+  {% if conexoes %}
+  <strong>conexões:</strong><br>
+    {% for conexao in conexoes %}
+      <a class="tabulado" href="{% url 'parceiro_detail' conexao.usuario.parceiro.id %}">
+        {{ conexao.usuario.get_full_name }}
+      </a>
+      {% if conexao.gestor_responsavel %}
+        [gestor responsavel]
+      {% endif %}
+      {% if conexao.mentor_tecnico %}
+        [mentor técnico]
+      {% endif %}
+      {% if conexao.recursos_humanos %}
+        [recursos humanos]
+      {% endif %}
+      {% if conexao.observacao %}
+        &nbsp;&nbsp;obs: {{conexao.observacao}}
+      {% endif %}
+      <br>
+    {% endfor %}
   {% endif %}
 
   {% if projeto.orientador %}

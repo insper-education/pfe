@@ -34,23 +34,14 @@
   <br><strong>contato(s):</strong><br>
   {% for parceiro in organization.parceiro_set.all %}
     <li {% if not parceiro.user.is_active %} style="color: lightgrey;" {% endif %}>
-      {{parceiro.user.get_full_name}} &nbsp;
+      <a href="{% url 'parceiro_detail' parceiro.id %}">
+        {{parceiro.user.get_full_name}} &nbsp;
+      </a>
       <a href="mailto:{{parceiro.user.email}}"
        {% if not parceiro.user.is_active %} style="color: lightgrey;" {% endif %}>
         &lt;{{parceiro.user.email}}&gt;
       </a>
       &nbsp;
-      {% comment %}
-      <br>&nbsp;&nbsp;&nbsp;
-      {% if parceiro.gestor_responsavel %}
-        [gestor responsavel]
-      {% endif %}
-      {% if parceiro.mentor_tecnico %}
-        [mentor técnico]
-      {% endif %}
-      {% if parceiro.recursos_humanos %}
-        [recursos humanos]
-      {% endif %} {% endcomment %}
       {% if parceiro.telefone %} <br>&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; {{parceiro.telefone}} &nbsp;{% endif %}
       {% if parceiro.celular %} <br>&nbsp;&nbsp;&nbsp;&nbsp;&#x1F4F1; {{parceiro.celular}} &nbsp;{% endif %}
       {% if parceiro.skype %} <br>&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="skype" style="width:16px;height:16px;">

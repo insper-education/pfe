@@ -158,7 +158,7 @@ class Projeto(models.Model):
             return self.titulo
 
     def __str__(self):
-        return self.get_titulo()+" ("+str(self.ano)+"."+str(self.semestre)+")"
+        return self.empresa.sigla+" ("+str(self.ano)+"."+str(self.semestre)+" )"+self.get_titulo()
 
 class Configuracao(models.Model):
     """Armazena os dados básicos de funcionamento do sistema."""
@@ -444,11 +444,11 @@ class Conexao(models.Model):
                                 help_text='usuário que se conecta ao projeto')
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE,
                                 help_text='projeto que recomenda a disciplina')
-    observacao = models.TextField(max_length=256,
+    observacao = models.TextField(max_length=256, null=True, blank=True,
                                   help_text='qualquer observação relevante')
     gestor_responsavel = models.BooleanField(default=False)
     mentor_tecnico = models.BooleanField(default=False)
     recursos_humanos = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.usuario+">>>"+self.projeto
+        return self.usuario.get_full_name()+" >>> "+self.projeto.get_titulo()
