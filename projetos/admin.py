@@ -8,6 +8,7 @@ Data: 14 de Novembro de 2019
 from datetime import timedelta
 
 from django.contrib import admin
+from django.contrib.admin import SimpleListFilter
 import django.contrib.admin.options as admin_opt
 
 # Dos projetos
@@ -64,10 +65,34 @@ def dup_event_183(modeladmin: admin_opt.ModelAdmin, request, queryset):
         modeladmin.log_addition(request=request, object=obj, message=message)
 dup_event_183.short_description = "Duplicar Entrada(s) adicionando 183 dias"
 
+class FechadoFilter(SimpleListFilter):
+    """Para filtrar projetos fechados."""
+    title = 'Projetos Fechados' # a label for our filter
+    parameter_name = '' # you can put anything here
+
+    def lookups(self, request, model_admin):
+        # This is where you create filter options; we have two:
+        return [
+            ('fechados', 'Fechados'),
+            ('not_fechados', 'Não Fechados'),
+        ]
+
+    def queryset(self, request, queryset):
+        # This is where you process parameters selected by use via filter options:
+        if self.value() == 'fechados':
+            # Get websites that have at least one page.
+            #return queryset.distinct().filter(pages__isnull=False)
+            return queryset.distinct().filter(alocacao__isnull=False)
+        if self.value():
+            # Get websites that don't have any pages.
+            #return queryset.distinct().filter(pages__isnull=True)
+            return queryset.distinct().filter(alocacao__isnull=True)
+
 @admin.register(Projeto)
 class ProjetoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
-    list_display = ('empresa', 'ano', 'semestre', 'orientador', 'titulo',)
+    list_display = ('empresa', 'ano', 'semestre', 'orientador', 'get_titulo',)
+    list_filter = (FechadoFilter, 'ano', 'semestre', 'avancado', 'disponivel',)
     fieldsets = \
         ((None,
           {'fields':
