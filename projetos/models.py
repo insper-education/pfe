@@ -52,13 +52,14 @@ class Empresa(models.Model):
     logotipo = models.ImageField("Logotipo", upload_to=get_upload_path, null=True, blank=True,
                                  help_text='Logotipo da organização parceira')
     cnpj = models.CharField("CNPJ", max_length=14, null=True, blank=True,
-                             help_text='Código de CNPJ da empresa')
-    inscricao_estadual = models.CharField("Inscrição Estadual", max_length=15, null=True, blank=True,
-                             help_text='Código da inscrição estadual')
+                            help_text='Código de CNPJ da empresa')
+    inscricao_estadual = models.CharField("Inscrição Estadual", max_length=15,
+                                          null=True, blank=True,
+                                          help_text='Código da inscrição estadual')
     razao_social = models.CharField("Razão Social", max_length=100, null=True, blank=True,
                                     help_text='Razão social da organização parceira')
     ramo_atividade = models.CharField("Ramo de Atividade", max_length=120, null=True, blank=True,
-                                    help_text='Ramo de atividade da organização parceira')
+                                      help_text='Ramo de atividade da organização parceira')
 
     class Meta:
         ordering = ['sigla']
@@ -74,7 +75,8 @@ class Projeto(models.Model):
     titulo = models.CharField("Título", max_length=127,
                               help_text='Título Provisório do projeto')
     titulo_final = models.CharField("Título Final", max_length=127, null=True,
-                                    blank=True, help_text='Título Final do projeto')
+                                    blank=True,
+                                    help_text='Título Final do projeto')
     descricao = models.TextField("Descrição", max_length=3000,
                                  help_text='Descricao do projeto')
     expectativas = models.TextField("Expectativas", max_length=3000,
@@ -93,9 +95,11 @@ class Projeto(models.Model):
                                     help_text='Descrição do departamento que propôs o projeto')
     avancado = models.BooleanField("Avançado", default=False,
                                    help_text='Se for um projeto de PFE Avançado')
-    ano = models.PositiveIntegerField("Ano", validators=[MinValueValidator(2018), MaxValueValidator(3018)],
+    ano = models.PositiveIntegerField("Ano",
+                                      validators=[MinValueValidator(2018), MaxValueValidator(3018)],
                                       help_text='Ano que o projeto comeca')
-    semestre = models.PositiveIntegerField("Semestre", validators=[MinValueValidator(1), MaxValueValidator(2)],
+    semestre = models.PositiveIntegerField("Semestre",
+                                           validators=[MinValueValidator(1), MaxValueValidator(2)],
                                            help_text='Semestre que o projeto comeca')
     disponivel = models.BooleanField("Disponível", default=False,
                                      help_text='Se projeto está atualmente disponível para alunos')
@@ -127,8 +131,9 @@ class Projeto(models.Model):
     perfil_aluno4_mecanica = \
         models.BooleanField(default=False, help_text='Perfil desejado de mecânica para aluno 4')
 
-    areas_de_interesse = models.ForeignKey('users.Areas', on_delete=models.CASCADE, null=True, blank=True,
-                                           help_text='Areas de interesse que o projeto espera dos alunos')
+    areas_de_interesse = models.ForeignKey('users.Areas', on_delete=models.CASCADE,
+                                           null=True, blank=True,
+                                           help_text='Áreas de interesse esperas dos alunos')
 
     class Meta:
         ordering = ['empresa', 'ano', 'semestre']
@@ -157,9 +162,11 @@ class Projeto(models.Model):
 
 class Configuracao(models.Model):
     """Armazena os dados básicos de funcionamento do sistema."""
-    ano = models.PositiveIntegerField("Ano", validators=[MinValueValidator(2018), MaxValueValidator(3018)],
+    ano = models.PositiveIntegerField("Ano",
+                                      validators=[MinValueValidator(2018), MaxValueValidator(3018)],
                                       help_text='Ano que o projeto comeca')
-    semestre = models.PositiveIntegerField("Semestre", validators=[MinValueValidator(1), MaxValueValidator(2)],
+    semestre = models.PositiveIntegerField("Semestre",
+                                           validators=[MinValueValidator(1), MaxValueValidator(2)],
                                            help_text='Semestre que o projeto comeca')
     manutencao = models.BooleanField(default=False,
                                      help_text='Mostra mensagem de site em manutencao na entrada')
@@ -170,7 +177,7 @@ class Configuracao(models.Model):
     recipient_reembolso = models.CharField(max_length=127, blank=True,
                                            help_text='Separar lista por ponto e virgula')
     liberados_projetos = models.BooleanField(default=False,
-                                     help_text='Só depois de liberado, que alunos conseguem ver projetos alocados do semestre')
+                                             help_text='Para que alunos vejam projetos alocados')
 
 class ConfiguracaoAdmin(admin.ModelAdmin):
     """Usado para configurar a classe Configuracao."""
@@ -408,16 +415,16 @@ class Feedback(models.Model):
     """Feedback das organizacoes parceiras."""
     data = models.DateField(default=datetime.date.today, blank=True,
                             help_text='Data do Feedback')
-    #organizacao_parceira = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.CASCADE,
+    #organizacao_parceira=models.ForeignKey(Empresa,null=True,blank=True,on_delete=models.CASCADE,
     #                                help_text='Organização parceira')
     #autor = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
     #                          related_name='professor_orientador', help_text='quem fez a anotação')
     nome = models.CharField(max_length=120, null=True, blank=True,
                             help_text='Nome de quem está dando o Feedback')
     email = models.EmailField(max_length=80, null=True, blank=True,
-                            help_text='e-mail de quem está dando o Feedback')
+                              help_text='e-mail de quem está dando o Feedback')
     empresa = models.CharField(max_length=120, null=True, blank=True,
-                            help_text='Empresa de quem está dando o Feedback')
+                               help_text='Empresa de quem está dando o Feedback')
     tecnico = models.TextField(max_length=1000, help_text='Feedback Técnico')
     comunicacao = models.TextField(max_length=1000, help_text='Feedback Comunicação')
     organizacao = models.TextField(max_length=1000, help_text='Feedback Organização')
@@ -430,3 +437,18 @@ class Feedback(models.Model):
         """Cria um objeto (entrada) em Feedback."""
         feedback = cls()
         return feedback
+
+class Conexao(models.Model):
+    """Controla como um usuário se conecta a um projeto."""
+    usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text='usuário que se conecta ao projeto')
+    projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE,
+                                help_text='projeto que recomenda a disciplina')
+    observacao = models.TextField(max_length=256,
+                                  help_text='qualquer observação relevante')
+    gestor_responsavel = models.BooleanField(default=False)
+    mentor_tecnico = models.BooleanField(default=False)
+    recursos_humanos = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.usuario+">>>"+self.projeto

@@ -63,9 +63,6 @@ class Areas(models.Model):
                + ("V" if self.eficiencia_energetica else "F") + " "\
                + ("V" if self.administracao_economia_financas else "F")
 
-from functools import total_ordering
-
-@total_ordering
 class PFEUser(AbstractUser):
     """Classe base para todos os usuários do PFE (Alunos, Professores, Parceiros)."""
     # Atualizar para AbstractBaseUser que permite colocar mais caracteres nos campos
@@ -91,9 +88,6 @@ class PFEUser(AbstractUser):
         return self.first_name + " " + self.last_name + \
             " (" + self.TIPO_DE_USUARIO_CHOICES[self.tipo_de_usuario-1][1] + ")"
         #return self.username #ver se atualizar isso para first_name não quebra o projeto
-
-    def __lt__(self, other):
-        return self.first_name < other.first_name
 
 class Professor(models.Model):
     """Classe de usuários com estatus de Professor."""
@@ -262,7 +256,7 @@ class Alocacao(models.Model):
     conceito = models.PositiveSmallIntegerField(choices=CONCEITOS, default=127)
     class Meta:
         permissions = (("altera_professor", "Professor altera valores"), )
-        ordering = ['projeto__ano','projeto__semestre',]
+        ordering = ['projeto__ano', 'projeto__semestre',]
     def __str__(self):
         return self.aluno.user.username+" >>> "+self.projeto.titulo
 
@@ -274,9 +268,9 @@ class Parceiro(models.Model):  # da empresa (não do Insper)
     telefone = models.CharField(max_length=20, blank=True, help_text='Telefone Fixo')
     celular = models.CharField(max_length=20, blank=True, help_text='Telefone Celular')
     skype = models.CharField(max_length=20, blank=True, help_text='Identificação Skype')
-    gestor_responsavel = models.BooleanField(default=False)
-    mentor_tecnico = models.BooleanField(default=False)
-    recursos_humanos = models.BooleanField(default=False)
+    #gestor_responsavel = models.BooleanField(default=False)
+    #mentor_tecnico = models.BooleanField(default=False)
+    #recursos_humanos = models.BooleanField(default=False)
     class Meta:
         ordering = ['user']
         permissions = (("altera_parceiro", "Parceiro altera valores"),)
