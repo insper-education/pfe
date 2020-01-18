@@ -40,6 +40,7 @@
         &lt;{{parceiro.user.email}}&gt;
       </a>
       &nbsp;
+      {% comment %}
       <br>&nbsp;&nbsp;&nbsp;
       {% if parceiro.gestor_responsavel %}
         [gestor responsavel]
@@ -49,12 +50,12 @@
       {% endif %}
       {% if parceiro.recursos_humanos %}
         [recursos humanos]
-      {% endif %}
+      {% endif %} {% endcomment %}
       {% if parceiro.telefone %} <br>&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; {{parceiro.telefone}} &nbsp;{% endif %}
       {% if parceiro.celular %} <br>&nbsp;&nbsp;&nbsp;&nbsp;&#x1F4F1; {{parceiro.celular}} &nbsp;{% endif %}
       {% if parceiro.skype %} <br>&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="skype" style="width:16px;height:16px;">
       <a href="skype:{{parceiro.skype}}">{{parceiro.skype}}</a>&nbsp; {% endif %}
-      <br>
+      <div style="line-height:35%;"><br></div>
     </li>
   {% endfor %}
 
