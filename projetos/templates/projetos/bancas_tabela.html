@@ -6,7 +6,12 @@
 {% endcomment %}
 
 {% block head %}
-    <script src="https://www.w3schools.com/lib/w3.js"></script>
+  <script src="https://www.w3schools.com/lib/w3.js"></script>
+  <script>
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
 {% endblock %}
 
 {% block content %}
@@ -17,9 +22,8 @@
     {% if membros %}
       <table id="MembrosTable">
         <tr>
-          <th onclick="w3.sortHTML('#MembrosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome</th>
-          <th onclick="w3.sortHTML('#MembrosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" data-sort-value="number" class="text-center">Quant.</th>
-          <th class="text-center">Projetos</th>
+          <th onclick="w3.sortHTML('#MembrosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer;width:300px;" class="text-center">Nome</th>
+          <th onclick="w3.sortHTML('#MembrosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer;width:70px;" data-sort-value="number" class="text-center">Quant.</th>
         </tr>
         {% for membro, bancas in membros.items %}
           <tr class="item">
@@ -34,20 +38,15 @@
                 </a>
               {% endif %}  
             </td>
-            <td class="text-center"> 
-              {{bancas|length}}
-            </td>
-            <td>
-              <ul style="margin: 0;padding-left: 1em;">
+            <td class="text-center" data-toggle="tooltip" data-html="true" animation="true" title="
               {% for banca in bancas %}
-                <li>
-                  <a href="{% url 'completo' banca.projeto.id %}">
-                    {{banca.projeto.get_titulo}}
-                    ({{banca.startDate}})
-                  </a>
-                </li>
+                &bull;
+                {{banca.projeto.get_titulo}}
+                ({{banca.startDate}})
+                <br>
               {% endfor %}
-              </ul>
+            "> 
+              {{bancas|length}}
             </td>
           </tr>
         {% endfor %}

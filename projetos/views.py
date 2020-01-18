@@ -1114,7 +1114,8 @@ def organizacoes_tabela(request):
         grupos = []
         #for professor in Professor.objects.all().order_by("user__first_name", "user__last_name"):
         for empresa in Empresa.objects.all():
-            count_projetos = 0
+            #count_projetos = 0
+            count_projetos = []
             grupos_pfe = Projeto.objects.filter(empresa=empresa).\
                                         filter(ano=ano).\
                                         filter(semestre=semestre)
@@ -1122,8 +1123,10 @@ def organizacoes_tabela(request):
                 for grupo in grupos_pfe: # garante que tem alunos no projeto
                     alunos_pfe = Aluno.objects.filter(alocacao__projeto=grupo)
                     if alunos_pfe: #len(alunos_pfe) > 0
-                        count_projetos += 1
-                if count_projetos > 0:
+                        #count_projetos += 1
+                        count_projetos.append(grupo)
+                #if count_projetos > 0:
+                if count_projetos:
                     organizacoes.append(empresa)
                     grupos.append(count_projetos)
         organizacoes_pfe.append(zip(organizacoes, grupos))
@@ -1159,7 +1162,8 @@ def professores_tabela(request):
         professores = []
         grupos = []
         for professor in Professor.objects.all().order_by("user__first_name", "user__last_name"):
-            count_grupos = 0
+            #count_grupos = 0
+            count_grupos = []
             grupos_pfe = Projeto.objects.filter(orientador=professor).\
                                         filter(ano=ano).\
                                         filter(semestre=semestre)
@@ -1167,8 +1171,10 @@ def professores_tabela(request):
                 for grupo in grupos_pfe: # garante que tem alunos no projeto
                     alunos_pfe = Aluno.objects.filter(alocacao__projeto=grupo)
                     if alunos_pfe:
-                        count_grupos += 1
-                if count_grupos > 0:
+                        #count_grupos += 1
+                        count_grupos.append(grupo)
+                #if count_grupos > 0:
+                if count_grupos:
                     professores.append(professor)
                     grupos.append(count_grupos)
         professores_pfe.append(zip(professores, grupos))

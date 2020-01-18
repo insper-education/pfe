@@ -7,6 +7,11 @@
 
 {% block head %}
   {% load static %}
+  <script>
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
 {% endblock %}
 
 {% block content %}
@@ -26,8 +31,15 @@
               {{organizacao.nome_empresa}}
             </a>
           </td>
-          <td style="text-align: center;">
-            {{projetos}}
+          <td style="text-align: center;" data-toggle="tooltip" data-html="true" animation="true" title="
+            {% for projeto in projetos %}
+              &bull;
+              {{projeto.get_titulo}}
+              [{{projeto.orientador}}]
+              <br>
+            {% endfor %}
+          "> 
+            {{projetos|length}}
           </td>
         </tr>
       {% endfor %}

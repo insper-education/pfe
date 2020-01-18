@@ -7,6 +7,11 @@
 
 {% block head %}
   {% load static %}
+  <script>
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
 {% endblock %}
 
 {% block content %}
@@ -26,8 +31,15 @@
             {{professor.user.get_full_name}}
           </a>
         </td>
-        <td style="text-align: center;">
-          {{grupos}}
+        <td style="text-align: center;" data-toggle="tooltip" data-html="true" animation="true" title="
+          {% for grupo in grupos %}
+            &bull;
+            {{grupo.get_titulo}}
+            [{{grupo.empresa}}]
+            <br>
+          {% endfor %}
+        "> 
+          {{grupos|length}}
         </td>
       </tr>
     {% endfor %}
