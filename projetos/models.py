@@ -130,9 +130,8 @@ class Projeto(models.Model):
     areas_de_interesse = models.ForeignKey('users.Areas', on_delete=models.CASCADE, null=True, blank=True,
                                            help_text='Areas de interesse que o projeto espera dos alunos')
 
-
     class Meta:
-        ordering = ['titulo']
+        ordering = ['empresa', 'ano', 'semestre']
         permissions = (("altera_empresa", "Empresa altera valores"),
                        ("altera_professor", "Professor altera valores"), )
 

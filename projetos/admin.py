@@ -68,7 +68,7 @@ dup_event_183.short_description = "Duplicar Entrada(s) adicionando 183 dias"
 @admin.register(Projeto)
 class ProjetoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
-    list_display = ('titulo', 'empresa', 'ano', 'semestre')
+    list_display = ('empresa', 'ano', 'semestre', 'orientador', 'titulo',)
     fieldsets = (
         (None, {
             'fields': ('titulo', 'titulo_final', 'descricao', 'expectativas', 'areas', 'recursos',
