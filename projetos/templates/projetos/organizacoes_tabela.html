@@ -7,6 +7,7 @@
 
 {% block head %}
   {% load static %}
+  <script src="https://www.w3schools.com/lib/w3.js"></script>
   <script>
     $(document).ready(function(){
       $('[data-toggle="tooltip"]').tooltip();
@@ -21,11 +22,11 @@
     <big>{{periodo}}</big>
     <table id="organizacoes">
       <tr>
-        <th style="text-align: center;width:425px;">Organização</th>
-        <th style="text-align: center;width:70px;">Projetos</th>
+        <th onclick="w3.sortHTML('#organizacoes', '.item', 'td:nth-child(1)')" style="cursor:pointer; text-align: center;width:425px;">Organização</th>
+        <th onclick="w3.sortHTML('#organizacoes', '.item', 'td:nth-child(2)')" style="cursor:pointer; text-align: center;width:70px;">Projetos</th>
       </tr>
       {% for organizacao,projetos in organizacoes %} 
-        <tr>
+        <tr class="item">
           <td>
             <a href="{% url 'organizacao_completo' organizacao.login %}">
               {{organizacao.nome_empresa}}

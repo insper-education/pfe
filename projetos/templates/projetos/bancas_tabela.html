@@ -23,7 +23,7 @@
       <table id="MembrosTable">
         <tr>
           <th onclick="w3.sortHTML('#MembrosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer;width:300px;" class="text-center">Nome</th>
-          <th onclick="w3.sortHTML('#MembrosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer;width:70px;" data-sort-value="number" class="text-center">Quant.</th>
+          <th onclick="w3.sortHTML('#MembrosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer;width:70px;" class="text-center">Quant.</th>
         </tr>
         {% for membro, bancas in membros.items %}
           <tr class="item">

@@ -7,6 +7,7 @@
 
 {% block head %}
   {% load static %}
+  <script src="https://www.w3schools.com/lib/w3.js"></script>
   <script>
     $(document).ready(function(){
       $('[data-toggle="tooltip"]').tooltip();
@@ -21,11 +22,11 @@
   <big>{{periodo}}</big>
   <table id="professores">
     <tr>
-      <th style="text-align: center;width:300px;">Nome</th>
-      <th style="text-align: center;width:70px;">Grupos</th>
+      <th onclick="w3.sortHTML('#professores', '.item', 'td:nth-child(1)')" style="cursor:pointer; text-align: center;width:300px;">Nome</th>
+      <th onclick="w3.sortHTML('#professores', '.item', 'td:nth-child(2)')" style="cursor:pointer; text-align: center;width:70px;">Grupos</th>
     </tr>
     {% for professor,grupos in professores %} 
-      <tr>
+      <tr class="item">
         <td>
           <a href="{% url 'professor_detail' professor.id %}">
             {{professor.user.get_full_name}}
