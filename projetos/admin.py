@@ -5,7 +5,7 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 14 de Novembro de 2019
 """
 
-from datetime import timedelta  
+from datetime import timedelta
 
 from django.contrib import admin
 import django.contrib.admin.options as admin_opt
@@ -64,14 +64,14 @@ def dup_event_183(modeladmin: admin_opt.ModelAdmin, request, queryset):
         modeladmin.log_addition(request=request, object=obj, message=message)
 dup_event_183.short_description = "Duplicar Entrada(s) adicionando 183 dias"
 
-
 @admin.register(Projeto)
 class ProjetoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
     list_display = ('empresa', 'ano', 'semestre', 'orientador', 'titulo',)
-    fieldsets = (
-        (None, {
-            'fields': ('titulo', 'titulo_final', 'descricao', 'expectativas', 'areas', 'recursos',
+    fieldsets = \
+        ((None,
+          {'fields':
+           ('titulo', 'titulo_final', 'descricao', 'expectativas', 'areas', 'recursos',
             'departamento',
             'anexo', 'imagem',
             'avancado', 'ano', 'semestre', 'disponivel',
@@ -81,12 +81,12 @@ class ProjetoAdmin(admin.ModelAdmin):
             'perfil_aluno3_computacao', 'perfil_aluno3_mecanica', 'perfil_aluno3_mecatronica',
             'perfil_aluno4_computacao', 'perfil_aluno4_mecanica', 'perfil_aluno4_mecatronica',
             'areas_de_interesse',
-             )
-        }),
-        ('Origem', {
-            'fields': ('empresa',)
-        }),
-    )
+           )
+          }),
+         ('Origem', {
+             'fields': ('empresa',)
+         }),
+        )
     actions = [dup_projeto]
 
 @admin.register(Empresa)
@@ -148,10 +148,10 @@ class AvisoAdmin(admin.ModelAdmin):
 class EventoAdmin(admin.ModelAdmin):
     """Todos os eventos do PFE com suas datas."""
     list_display = ('name', 'startDate', 'endDate', 'location', )
-    actions = [dup_event,dup_event_183]
+    actions = [dup_event, dup_event_183]
 
 @admin.register(Feedback)
-class EventoAdmin(admin.ModelAdmin):
+class FeedbackAdmin(admin.ModelAdmin):
     """Para ser preenchido com feedbacks das empresas."""
     list_display = ('data', 'nome', 'email', 'empresa', )
 
