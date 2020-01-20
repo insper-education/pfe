@@ -37,10 +37,26 @@ class AlunoAdmin(admin.ModelAdmin):
 class AlocacaoAdmin(admin.ModelAdmin):
     """Definição de Alocacao do PFE."""
     list_display = ('aluno', 'projeto',)
-    ordering = ('-projeto__ano','-projeto__semestre',)
+    ordering = ('-projeto__ano', '-projeto__semestre',)
+
+@admin.register(Parceiro)
+class ParceiroAdmin(admin.ModelAdmin):
+    """Definição de Parceiro do PFE."""
+    list_display = ('get_full_name', 'email', 'telefone', 'celular', 'skype')
+    ordering = ()
+
+    def get_full_name(self, obj):
+        """Retorna o nome completo do usuário"""
+        return obj.user.first_name+" "+obj.user.last_name
+    get_full_name.short_description = 'Nome Completo'
+    get_full_name.admin_order_field = 'user__first_name'
+
+    def email(self, obj):
+        """Retorna o e-mail do usuário"""
+        return obj.user.email
+    get_full_name.short_description = 'e-mail'
 
 admin.site.register(Professor)
-admin.site.register(Parceiro)
 admin.site.register(Administrador)
 admin.site.register(Opcao)
 admin.site.register(Areas)
@@ -50,4 +66,3 @@ class OpcaoInline(admin.TabularInline):
     model = Opcao
     extra = 5
     max_num = 5
-

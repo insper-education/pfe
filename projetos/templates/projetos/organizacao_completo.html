@@ -34,7 +34,8 @@
   <br><strong>contato(s):</strong><br>
   {% for parceiro in organization.parceiro_set.all %}
     <li {% if not parceiro.user.is_active %} style="color: lightgrey;" {% endif %}>
-      <a href="{% url 'parceiro_detail' parceiro.id %}">
+      <a href="{% url 'parceiro_detail' parceiro.id %}"
+        {% if not parceiro.user.is_active %} style="color: lightgrey;" {% endif %}>
         {{parceiro.user.get_full_name}} &nbsp;
       </a>
       <a href="mailto:{{parceiro.user.email}}"
@@ -46,7 +47,7 @@
       {% if parceiro.celular %} <br>&nbsp;&nbsp;&nbsp;&nbsp;&#x1F4F1; {{parceiro.celular}} &nbsp;{% endif %}
       {% if parceiro.skype %} <br>&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="skype" style="width:16px;height:16px;">
       <a href="skype:{{parceiro.skype}}">{{parceiro.skype}}</a>&nbsp; {% endif %}
-      <div style="line-height:35%;"><br></div>
+      
     </li>
   {% endfor %}
 

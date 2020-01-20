@@ -80,7 +80,7 @@ class PFEUser(AbstractUser):
     )
     tipo_de_usuario = models.PositiveSmallIntegerField(choices=TIPO_DE_USUARIO_CHOICES, default=1,
                                                        help_text='cada usuário tem um perfil único')
-    cpf = models.CharField(max_length=11, null=True, blank=True,
+    cpf = models.CharField("CPF", max_length=11, null=True, blank=True,
                            help_text='CPF do usuário')
     membro_comite = \
         models.BooleanField(default=False, help_text='caso membro do comitê do PFE')
@@ -110,7 +110,7 @@ class Aluno(models.Model):
         ('X', 'Mecatrônica'),
     )
     user = models.OneToOneField(PFEUser, related_name='aluno', on_delete=models.CASCADE)
-    matricula = models.CharField(max_length=8, null=True, blank=True,
+    matricula = models.CharField("Matrícula", max_length=8, null=True, blank=True,
                                  help_text='Número de matrícula')
     #bio = models.TextField(max_length=500, blank=True)
     curso = models.CharField(max_length=1, choices=TIPOS_CURSO,
@@ -262,15 +262,22 @@ class Alocacao(models.Model):
 
 class Parceiro(models.Model):  # da empresa (não do Insper)
     """Classe de usuários com estatus de Parceiro (pessoal das organizações parceiras)."""
-    user = models.OneToOneField(PFEUser, related_name='parceiro', on_delete=models.CASCADE)
-    organizacao = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.CASCADE)
-    cargo = models.CharField(max_length=50, blank=True, help_text='Cargo Funcional')
-    telefone = models.CharField(max_length=20, blank=True, help_text='Telefone Fixo')
-    celular = models.CharField(max_length=20, blank=True, help_text='Telefone Celular')
-    skype = models.CharField(max_length=20, blank=True, help_text='Identificação Skype')
-    #gestor_responsavel = models.BooleanField(default=False)
-    #mentor_tecnico = models.BooleanField(default=False)
-    #recursos_humanos = models.BooleanField(default=False)
+    user = models.OneToOneField(PFEUser, related_name='parceiro', on_delete=models.CASCADE,
+                                help_text='Identificaçãdo do usuário')
+    organizacao = models.ForeignKey(Empresa, on_delete=models.CASCADE,
+                                    blank=True, null=True,
+                                    help_text='Organização Parceira')
+    cargo = models.CharField("Cargo", max_length=50, blank=True,
+                             help_text='Cargo Funcional')
+    telefone = models.CharField(max_length=20, blank=True,
+                                help_text='Telefone Fixo')
+    celular = models.CharField(max_length=20, blank=True,
+                               help_text='Telefone Celular')
+    skype = models.CharField(max_length=20, blank=True,
+                             help_text='Identificação Skype')
+    observacao = models.TextField("Observações", max_length=500, blank=True,
+                                  help_text='Observações')
+
     class Meta:
         ordering = ['user']
         permissions = (("altera_parceiro", "Parceiro altera valores"),)
