@@ -180,8 +180,12 @@ class FeedbackAdmin(admin.ModelAdmin):
     """Para ser preenchido com feedbacks das empresas."""
     list_display = ('data', 'nome', 'email', 'empresa', )
 
+@admin.register(Conexao)
+class FeedbackAdmin(admin.ModelAdmin):
+    """Conexão entre parceiro e organização."""
+    list_display = ('usuario', 'projeto')
+
 admin.site.register(Cursada)
 admin.site.register(Recomendada)
 admin.site.register(Encontro)       # Informações das Encontros (com os facilitadores)
 admin.site.register(Entidade)       # Para ser preenchido com as entidades estudantis
-admin.site.register(Conexao)        # Conexão entre parceiro e organização

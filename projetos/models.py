@@ -158,7 +158,7 @@ class Projeto(models.Model):
             return self.titulo
 
     def __str__(self):
-        return self.empresa.sigla+" ("+str(self.ano)+"."+str(self.semestre)+" )"+self.get_titulo()
+        return self.empresa.sigla+" ("+str(self.ano)+"."+str(self.semestre)+") "+self.get_titulo()
 
 class Configuracao(models.Model):
     """Armazena os dados básicos de funcionamento do sistema."""
@@ -451,4 +451,6 @@ class Conexao(models.Model):
     recursos_humanos = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.usuario.get_full_name()+" >>> "+self.projeto.get_titulo()
+        return self.usuario.get_full_name()+" >>> "+\
+               self.projeto.empresa.sigla+" - "+self.projeto.get_titulo()+\
+               " ("+str(self.projeto.ano)+"."+str(self.projeto.semestre)+")"
