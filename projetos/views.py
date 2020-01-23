@@ -1436,9 +1436,10 @@ def emails(request):
                     if banca.membro3:
                         membros_bancas.append(banca.membro3)
 
-                projetos_pessoas[projeto] = list(alunos_tmp) # Pessoas por projeto
-                projetos_pessoas[projeto] += list([orientador]) # Pessoas por projeto
-                projetos_pessoas[projeto] += list(parceiros) # Pessoas por projeto
+                projetos_pessoas[projeto] = dict()
+                projetos_pessoas[projeto]["estudantes"] = list(alunos_tmp) # Pessoas por projeto
+                projetos_pessoas[projeto]["orientador"] = list([orientador]) # Pessoas por projeto
+                projetos_pessoas[projeto]["parceiros"] = list(parceiros) # Pessoas por projeto
 
         # Parceiros de todas as organizações parceiras
         parceiros_semestre = Parceiro.objects.filter(organizacao__in=organizacoes)

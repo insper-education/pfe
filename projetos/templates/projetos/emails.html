@@ -13,6 +13,31 @@
       $('[data-toggle="tooltip"]').tooltip();
     });
   </script>
+  <script>
+    function manda(estudantes, orientador, parceiros, projeto, avancado) {
+      mailto = "mailto:";
+      if($('.estudantes:checked').val()) {
+        mailto += estudantes;
+      }
+      if($('.orientador:checked').val()) {
+        mailto += orientador;
+      }
+      if($('.parceiros:checked').val()) {
+        mailto += parceiros;
+      }
+      mailto += "?cc=Luciano%20Pereira%20Soares<lpsoares@insper.edu.br>,PFE<pfe@insper.edu.br>";
+      mailto += "&bcc=Comite%20PFE<comitepfe@insper.edu.br>";
+      mailto += "&subject=PFE%20"
+      if(avancado) {
+        mailto += "Avançado%20";
+      }
+      mailto += "-%20Projeto:%20"
+      mailto += projeto
+      mailto += "&body=Caros,%0D%0A%0D%0A";
+      mailto += "atenciosamente,%20coordenação%20PFE";
+      window.open(mailto);
+    }
+  </script>
 {% endblock %}
 
 {% block content %}
@@ -105,7 +130,11 @@
   </table>
   <br>
 
-  Todos divididos por projeto
+  Todos divididos por projeto (
+  Estudantes<input class="estudantes" type="checkbox" checked>&nbsp;
+  Orientador<input class="orientador" type="checkbox" checked>&nbsp;
+  Parceiros<input class="parceiros" type="checkbox" checked>&nbsp;
+  ):
   <table>
     {% for semestre,projetos in email_p_semestre %}
       <tr>
@@ -113,14 +142,13 @@
         {% for projeto, pessoas in projetos.items %}
           <td>
             {% if pessoas %}
-              <a href="
-                mailto:
-                {% for pessoa in pessoas %}{{pessoa.user.first_name|parse_quote}}%20{{pessoa.user.last_name|parse_quote}}%20&lt;{{ pessoa.user.email|parse_quote }}&gt;,
-                {% endfor %}
-                ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
-                &amp;bcc=Comite%20PFE&lt;comitepfe@insper.edu.br&gt;
-                &amp;subject=PFE%20{% if projeto.avancado %}Avançado%20{% endif %}-%20Projeto:%20{{projeto}}&amp;body=Caros,%0D%0A%0D%0A
-                atenciosamente,%20coordenação%20PFE
+              <a href="javascript:manda(
+                '{% for pessoa in pessoas.estudantes %}{%if pessoa %}{{pessoa.user.first_name|parse_quote}}%20{{pessoa.user.last_name|parse_quote}}%20&lt;{{ pessoa.user.email|parse_quote }}&gt;,{% endif %}{% endfor %}',
+                '{% for pessoa in pessoas.orientador %}{%if pessoa %}{{pessoa.user.first_name|parse_quote}}%20{{pessoa.user.last_name|parse_quote}}%20&lt;{{ pessoa.user.email|parse_quote }}&gt;,{% endif %}{% endfor %}',
+                '{% for pessoa in pessoas.parceiros %}{%if pessoa %}{{pessoa.user.first_name|parse_quote}}%20{{pessoa.user.last_name|parse_quote}}%20&lt;{{ pessoa.user.email|parse_quote }}&gt;,{% endif %}{% endfor %}',
+                '{{projeto}}',
+                {% if projeto.avancado %}true{% else %}false{% endif %}
+              );
               "
               data-toggle="tooltip" data-html="true" animation="true" title="
                 {{projeto}}
@@ -133,8 +161,6 @@
     {% endfor %}
   </table>
   <br>
-
-
 
   {% if todos_alunos %}
     <a href="
