@@ -857,15 +857,21 @@ def calendario(request):
     """Para exibir um calendário de eventos."""
     eventos = Evento.objects.exclude(name="Aula PFE").\
                              exclude(name="Laboratório").\
-                             exclude(name="provas")
+                             exclude(name="provas").\
+                             exclude(name="Relato Quinzenal")
     aulas = Evento.objects.filter(name="Aula PFE")
     laboratorios = Evento.objects.filter(name="Laboratório")
     provas = Evento.objects.filter(name="provas")
+    quinzenais = Evento.objects.filter(name="Relato Quinzenal")
+
+    # ISSO NAO ESTA BOM, FAZER ALGO MELHOR
+
     context = {
         'eventos': eventos,
         'aulas': aulas,
         'laboratorios': laboratorios,
         'provas' : provas,
+        'quinzenais' : quinzenais,
     }
     return render(request, 'projetos/calendario.html', context)
 

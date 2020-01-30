@@ -7,10 +7,8 @@
 
 {% block head %}
   <!-- REFERENCIA: https://github.com/year-calendar/js-year-calendar -->
-
   <script src="https://unpkg.com/js-year-calendar@latest/dist/js-year-calendar.min.js"></script>
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/js-year-calendar@latest/dist/js-year-calendar.min.css" />
-  <!-- <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css'> -->
   <link rel='stylesheet' href='https://unpkg.com/bootstrap-datepicker@1.8.0/dist/css/bootstrap-datepicker.standalone.min.css'>
   
   <script src="https://unpkg.com/js-year-calendar@latest/locales/js-year-calendar.pt.js"></script>
@@ -52,6 +50,17 @@
         {% endifchanged %}
       </span>
     {% endif %}
+  {% endfor %}
+  
+  {% for quinzenal in quinzenais|dictsort:"endDate" %}
+    <span class="a{{quinzenal.endDate.year}} ano">
+      {% ifchanged quinzenal.name quinzenal.endDate.year %} 
+        <br><font style="color:{{quinzenal.color}}">&#9608;</font> {{quinzenal.name}}: 
+        {{quinzenal.endDate.day}}/{{quinzenal.endDate.month}}
+      {% else %}
+        ; {{quinzenal.endDate.day}}/{{quinzenal.endDate.month}}
+      {% endifchanged %}
+    </span>
   {% endfor %}
   
   {% for aula in aulas|dictsort:"endDate" %}
@@ -167,9 +176,6 @@
   <div id="context-menu">
   </div>
 
-  <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script> -->
-  <!-- <script src='https://unpkg.com/popper.js@1.14.7/dist/umd/popper.min.js'></script> -->
-  <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js'></script> -->
   <script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js'></script> 
   
   <script id="rendered-js">
@@ -303,6 +309,16 @@
             },
           {% endfor %}
           {% for evento in aulas %} 
+            {
+                id: {{evento.id}},
+                name: "{{evento.name}}",
+                location: "{{evento.location}}",
+                startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
+                endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
+                color: "{{evento.color}}",
+            },
+          {% endfor %}
+          {% for evento in quinzenais %} 
             {
                 id: {{evento.id}},
                 name: "{{evento.name}}",
