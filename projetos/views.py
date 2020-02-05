@@ -661,10 +661,48 @@ def render_to_pdf(template_src, context_dict=None):
         #return HttpResponse(result.getvalue(), content_type='application/pdf')
     return None
 
+def get_calendario_context():
+    eventos = Evento.objects.exclude(name="Aula PFE").\
+                             exclude(name="Laboratório").\
+                             exclude(name="provas").\
+                             exclude(name="Relato Quinzenal").\
+                             exclude(name="Feedback dos Alunos sobre PFE")
+    aulas = Evento.objects.filter(name="Aula PFE")
+    laboratorios = Evento.objects.filter(name="Laboratório")
+    provas = Evento.objects.filter(name="provas")
+    quinzenais = Evento.objects.filter(name="Relato Quinzenal")
+    feedbacks = Evento.objects.filter(name="Feedback dos Alunos sobre PFE")
+
+    # ISSO NAO ESTA BOM, FAZER ALGO MELHOR
+
+    context = {
+        'eventos': eventos,
+        'aulas': aulas,
+        'laboratorios': laboratorios,
+        'provas' : provas,
+        'quinzenais' : quinzenais,
+        'feedbacks' : feedbacks,
+    }
+    return context
+
+@login_required
+def calendario(request):
+    """Para exibir um calendário de eventos."""
+    context = get_calendario_context()
+    return render(request, 'projetos/calendario.html', context)
+
+@login_required
+def calendario_limpo(request):
+    """Para exibir um calendário de eventos."""
+    context = get_calendario_context()
+    context['limpo'] = True
+    return render(request, 'projetos/calendario.html', context)
+
+
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def relatorio(request, modelo, formato):
-    """Gera relatorios."""
+    """Gera relatorios em html e PDF."""
     configuracao = Configuracao.objects.all().first()
 
     if modelo == "projetos":
@@ -672,11 +710,7 @@ def relatorio(request, modelo, formato):
             'projetos': Projeto.objects.all(),
             'configuracao': configuracao,
         }
-        if(formato == "html" or formato == "HTML"):
-            return render(request, 'projetos/relatorio_projetos.html', context)
-        elif(formato == "pdf" or formato == "PDF"):
-            pdf = render_to_pdf('projetos/relatorio_projetos.html', context)
-            return HttpResponse(pdf.getvalue(), content_type='application/pdf')
+        arquivo = "projetos/relatorio_projetos.html"
 
     elif modelo == "alunos":
         context = {
@@ -685,27 +719,28 @@ def relatorio(request, modelo, formato):
                                           filter(semestrePFE=configuracao.semestre),
             'configuracao': configuracao,
         }
-        if(formato == "html" or formato == "HTML"):
-            return render(request, 'projetos/relatorio_alunos.html', context)
-        if(formato == "pdf" or formato == "PDF"):
-            pdf = render_to_pdf('projetos/relatorio_alunos.html', context)
-            return HttpResponse(pdf.getvalue(), content_type='application/pdf')
-
+        arquivo = "projetos/relatorio_alunos.html"
+        
     elif modelo == "feedbacks":
         context = {
             'feedbacks': Feedback.objects.all(),
             'configuracao': configuracao,
         }
-        if(formato == "html" or formato == "HTML"):
-            return render(request, 'projetos/relatorio_feedbacks.html', context)
-        if(formato == "pdf" or formato == "PDF"):
-            pdf = render_to_pdf('projetos/relatorio_feedbacks.html', context)
-            return HttpResponse(pdf.getvalue(), content_type='application/pdf')
+        arquivo = "projetos/relatorio_feedbacks.html"
+
+    elif modelo == "calendario":  # Nao funcionando (processamento falha)
+        context = get_calendario_context()
+        arquivo = "projetos/calendario.html"
 
     else:
         return HttpResponse("Chamada irregular : Base de dados desconhecida = "+modelo)
 
-    return HttpResponse("Chamada irregular : Formato desconhecido = "+formato)
+    if(formato == "html" or formato == "HTML"):
+        return render(request, arquivo, context)
+    if(formato == "pdf" or formato == "PDF"):
+        pdf = render_to_pdf(arquivo, context)
+        return HttpResponse(pdf.getvalue(), content_type='application/pdf')
+
 
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
@@ -851,32 +886,6 @@ def tabela_documentos(request):
         'MEDIA_URL' : settings.MEDIA_URL,
     }
     return render(request, 'projetos/tabela_documentos.html', context)
-
-@login_required
-def calendario(request):
-    """Para exibir um calendário de eventos."""
-    eventos = Evento.objects.exclude(name="Aula PFE").\
-                             exclude(name="Laboratório").\
-                             exclude(name="provas").\
-                             exclude(name="Relato Quinzenal").\
-                             exclude(name="Feedback dos Alunos sobre PFE")
-    aulas = Evento.objects.filter(name="Aula PFE")
-    laboratorios = Evento.objects.filter(name="Laboratório")
-    provas = Evento.objects.filter(name="provas")
-    quinzenais = Evento.objects.filter(name="Relato Quinzenal")
-    feedbacks = Evento.objects.filter(name="Feedback dos Alunos sobre PFE")
-
-    # ISSO NAO ESTA BOM, FAZER ALGO MELHOR
-
-    context = {
-        'eventos': eventos,
-        'aulas': aulas,
-        'laboratorios': laboratorios,
-        'provas' : provas,
-        'quinzenais' : quinzenais,
-        'feedbacks' : feedbacks,
-    }
-    return render(request, 'projetos/calendario.html', context)
 
 @login_required
 def submissao(request):

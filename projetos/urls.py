@@ -24,6 +24,7 @@ urlpatterns = [
     path('bancas_lista/<str:periodo>', views.bancas_lista, name='bancas_lista'),
     path('bancas_tabela/', views.bancas_tabela, name='bancas_tabela'),
     path('calendario/', views.calendario, name='calendario'),
+    path('calendario_limpo/', views.calendario_limpo, name='calendario_limpo'),
     path('carrega/<str:dado>', views.carrega, name='carrega'),
     path('carrega_bancos/', views.carrega_bancos, name='carrega_bancos'),
     path('carregar/', views.carregar, name='carregar'),

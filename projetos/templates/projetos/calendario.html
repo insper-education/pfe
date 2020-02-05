@@ -1,3 +1,5 @@
+<!DOCTYPE xml> <!-- Bagunça a linha inicial mas calendario fica alinhado -->
+
 {% extends "base.html" %}
 {% comment %}
     Desenvolvido para o Projeto Final de Engenharia
@@ -354,9 +356,11 @@
       
       customDayRenderer: function(element, date) {
           $(element).css('border-radius', '0px');
-          if(date.getTime() == hoje) {
-            $(element).css('outline', '2px solid blue');
-          }
+          {% if not limpo %}
+            if(date.getTime() == hoje) {
+              $(element).css('outline', '2px solid blue');
+            }
+          {% endif %}
           if (date.getDay() === 6 || date.getDay() === 0) {
             $(element).css('background-color', 'lightgrey');  
           } else {
