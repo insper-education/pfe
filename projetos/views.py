@@ -858,11 +858,13 @@ def calendario(request):
     eventos = Evento.objects.exclude(name="Aula PFE").\
                              exclude(name="Laboratório").\
                              exclude(name="provas").\
-                             exclude(name="Relato Quinzenal")
+                             exclude(name="Relato Quinzenal").\
+                             exclude(name="Feedback dos Alunos sobre PFE")
     aulas = Evento.objects.filter(name="Aula PFE")
     laboratorios = Evento.objects.filter(name="Laboratório")
     provas = Evento.objects.filter(name="provas")
     quinzenais = Evento.objects.filter(name="Relato Quinzenal")
+    feedbacks = Evento.objects.filter(name="Feedback dos Alunos sobre PFE")
 
     # ISSO NAO ESTA BOM, FAZER ALGO MELHOR
 
@@ -872,6 +874,7 @@ def calendario(request):
         'laboratorios': laboratorios,
         'provas' : provas,
         'quinzenais' : quinzenais,
+        'feedbacks' : feedbacks,
     }
     return render(request, 'projetos/calendario.html', context)
 

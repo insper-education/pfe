@@ -36,7 +36,7 @@
   <br>
 
   {% for evento in eventos|dictsort:"endDate" %}
-    {% if evento.name != "Feriado" %}
+    {% if evento.name != "Feriado" and evento.name != "Aula Cancelada" %}
       <span class="a{{evento.endDate.year}} ano">
         {% ifchanged evento.name evento.endDate.year %}   
           <br><font style="color:{{evento.color}}">&#9608;</font> {{evento.name}}: 
@@ -51,7 +51,18 @@
       </span>
     {% endif %}
   {% endfor %}
-  
+
+  {% for feedback in feedbacks|dictsort:"endDate" %}
+    <span class="a{{feedback.endDate.year}} ano">
+      {% ifchanged feedback.name feedback.endDate.year %} 
+        <br><font style="color:{{feedback.color}}">&#9608;</font> {{feedback.name}}: 
+        {{feedback.endDate.day}}/{{feedback.endDate.month}}
+      {% else %}
+        ; {{feedback.endDate.day}}/{{feedback.endDate.month}}
+      {% endifchanged %}
+    </span>
+  {% endfor %}
+
   {% for quinzenal in quinzenais|dictsort:"endDate" %}
     <span class="a{{quinzenal.endDate.year}} ano">
       {% ifchanged quinzenal.name quinzenal.endDate.year %} 
@@ -73,6 +84,7 @@
       {% endifchanged %}
     </span>
   {% endfor %}
+
 
   {% if laboratorios %}
     <br>
@@ -319,6 +331,16 @@
             },
           {% endfor %}
           {% for evento in quinzenais %} 
+            {
+                id: {{evento.id}},
+                name: "{{evento.name}}",
+                location: "{{evento.location}}",
+                startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
+                endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
+                color: "{{evento.color}}",
+            },
+          {% endfor %}
+          {% for evento in feedbacks %} 
             {
                 id: {{evento.id}},
                 name: "{{evento.name}}",
