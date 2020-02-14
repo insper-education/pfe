@@ -84,6 +84,13 @@ class PFEUser(AbstractUser):
                            help_text='CPF do usuário')
     membro_comite = \
         models.BooleanField(default=False, help_text='caso membro do comitê do PFE')
+    GENERO_CHOICES = (
+        ('X', 'Nao Informado'),
+        ('M', 'Masculino'),
+        ('F', 'Feminino'),
+    )
+    genero = models.CharField(max_length=1, choices=GENERO_CHOICES, default='X',
+                              help_text='sexo do usuário')
     def __str__(self):
         return self.first_name + " " + self.last_name + \
             " (" + self.TIPO_DE_USUARIO_CHOICES[self.tipo_de_usuario-1][1] + ")"

@@ -22,7 +22,7 @@ class PFEUserAdmin(admin.ModelAdmin):
     list_filter = ('tipo_de_usuario',)
     fieldsets = (
         (None, {'fields': ('username', 'first_name', 'last_name', 'email', 'tipo_de_usuario',)}),
-        ('Personal info', {'fields': ('groups', 'user_permissions', 'cpf', 'membro_comite')}),
+        ('Personal info', {'fields': ('groups', 'user_permissions', 'cpf', 'membro_comite', 'genero')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
     )
     ordering = ('first_name', 'last_name')
@@ -56,9 +56,20 @@ class ParceiroAdmin(admin.ModelAdmin):
         return obj.user.email
     get_full_name.short_description = 'e-mail'
 
-admin.site.register(Professor)
+@admin.register(Professor)
+class ProfessorAdmin(admin.ModelAdmin):
+    """Definição de Professor do PFE."""
+    list_display = ('user', 'lattes')
+    ordering = ('user__first_name', 'user__last_name',)
+
 admin.site.register(Administrador)
-admin.site.register(Opcao)
+
+@admin.register(Opcao)
+class OpcaoAdmin(admin.ModelAdmin):
+    """Definição de Opções do PFE."""
+    list_display = ('aluno', 'projeto', 'prioridade' )
+    ordering = ('aluno',)
+
 admin.site.register(Areas)
 
 class OpcaoInline(admin.TabularInline):

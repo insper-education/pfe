@@ -34,7 +34,7 @@ from django.shortcuts import redirect
 from django.template.loader import get_template
 from django.utils import timezone
 
-from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao, Alocacao
+from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao, Alocacao, Areas
 from .models import Projeto, Empresa, Configuracao, Evento, Anotacao, Feedback
 from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade, Conexao
 #from .models import Disciplina
@@ -421,60 +421,68 @@ def completo(request, primakey):
     }
     return render(request, 'projetos/projeto_completo.html', context=context)
 
+
+def get_areas(alunos):
+    areaspfe = {}
+    areaspfe['Inovação Social'] = alunos.filter(inovacao_social=True).count()
+    areaspfe['Ciência dos Dados'] = alunos.filter(ciencia_dos_dados=True).count()
+    areaspfe['Modelagem 3D'] = alunos.filter(modelagem_3D=True).count()
+    areaspfe['Manufatura'] = alunos.filter(manufatura=True).count()
+    areaspfe['Resistência dos Materiais'] = alunos.filter(resistencia_dos_materiais=True).count()
+    areaspfe['Modelagem de Sistemas'] = alunos.filter(modelagem_de_sistemas=True).count()
+    areaspfe['Controle e Automação'] = alunos.filter(controle_e_automacao=True).count()
+    areaspfe['Termodinâmica'] = alunos.filter(termodinamica=True).count()
+    areaspfe['Fluidodinâmica'] = alunos.filter(fluidodinamica=True).count()
+    areaspfe['Eletrônica Digital'] = alunos.filter(eletronica_digital=True).count()
+    areaspfe['Programação'] = alunos.filter(programacao=True).count()
+    areaspfe['Inteligência Artificial'] = alunos.filter(inteligencia_artificial=True).count()
+    areaspfe['Banco de Bados'] = alunos.filter(banco_de_dados=True).count()
+    areaspfe['Computação em Nuvem'] = alunos.filter(computacao_em_nuvem=True).count()
+    areaspfe['Visão Computacional'] = alunos.filter(visao_computacional=True).count()
+    areaspfe['Computação de Alto Desempenho'] = alunos.filter(computacao_de_alto_desempenho=True).count()
+    areaspfe['Robótica'] = alunos.filter(robotica=True).count()
+    areaspfe['Realidade Virtual e Aumentada'] = alunos.filter(realidade_virtual_aumentada=True).count()
+    areaspfe['Protocolos de Comunicação'] = alunos.filter(protocolos_de_comunicacao=True).count()
+    areaspfe['Eficiencia Energética'] = alunos.filter(eficiencia_energetica=True).count()
+    areaspfe['Administração, Economia e Finanças'] = alunos.filter(administracao_economia_financas=True).count()
+    return areaspfe
+
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
-def areas(request):
-    """Mostra distribuição por área de interesse dos alunos."""
-    configuracao = Configuracao.objects.all().first()
-    alunos = Aluno.objects.filter(user__tipo_de_usuario=1).\
-                           filter(anoPFE=configuracao.ano).\
-                           filter(semestrePFE=configuracao.semestre)
+def areas(request, tipo):
+    """Mostra distribuição por área de interesse dos alunos e projetos."""
+    
+    if tipo == "alunos":
 
-    inovacao_social = alunos.filter(inovacao_social=True).count()
-    ciencia_dos_dados = alunos.filter(ciencia_dos_dados=True).count()
-    modelagem_3d = alunos.filter(modelagem_3D=True).count()
-    manufatura = alunos.filter(manufatura=True).count()
-    resistencia_dos_materiais = alunos.filter(resistencia_dos_materiais=True).count()
-    modelagem_de_sistemas = alunos.filter(modelagem_de_sistemas=True).count()
-    controle_e_automacao = alunos.filter(controle_e_automacao=True).count()
-    termodinamica = alunos.filter(termodinamica=True).count()
-    fluidodinamica = alunos.filter(fluidodinamica=True).count()
-    eletronica_digital = alunos.filter(eletronica_digital=True).count()
-    programacao = alunos.filter(programacao=True).count()
-    inteligencia_artificial = alunos.filter(inteligencia_artificial=True).count()
-    banco_de_dados = alunos.filter(banco_de_dados=True).count()
-    computacao_em_nuvem = alunos.filter(computacao_em_nuvem=True).count()
-    visao_computacional = alunos.filter(visao_computacional=True).count()
-    computacao_de_alto_desempenho = alunos.filter(computacao_de_alto_desempenho=True).count()
-    robotica = alunos.filter(robotica=True).count()
-    realidade_virtual_aumentada = alunos.filter(realidade_virtual_aumentada=True).count()
-    protocolos_de_comunicacao = alunos.filter(protocolos_de_comunicacao=True).count()
-    eficiencia_energetica = alunos.filter(eficiencia_energetica=True).count()
-    administracao_economia_financas = alunos.filter(administracao_economia_financas=True).count()
+        alunos = Aluno.objects.filter(user__tipo_de_usuario=1)
 
-    context = {
-        'inovacao_social':inovacao_social,
-        'ciencia_dos_dados':ciencia_dos_dados,
-        'modelagem_3D':modelagem_3d,
-        'manufatura':manufatura,
-        'resistencia_dos_materiais':resistencia_dos_materiais,
-        'modelagem_de_sistemas':modelagem_de_sistemas,
-        'controle_e_automacao':controle_e_automacao,
-        'termodinamica':termodinamica,
-        'fluidodinamica': fluidodinamica,
-        'eletronica_digital':eletronica_digital,
-        'programacao':programacao,
-        'inteligencia_artificial':inteligencia_artificial,
-        'banco_de_dados':banco_de_dados,
-        'computacao_em_nuvem':computacao_em_nuvem,
-        'visao_computacional': visao_computacional,
-        'computacao_de_alto_desempenho':computacao_de_alto_desempenho,
-        'robotica':robotica,
-        'realidade_virtual_aumentada':realidade_virtual_aumentada,
-        'protocolos_de_comunicacao':protocolos_de_comunicacao,
-        'eficiencia_energetica':eficiencia_energetica,
-        'administracao_economia_financas':administracao_economia_financas,
-    }
+        if request.is_ajax():
+            if 'topicId' in request.POST:
+                if request.POST['topicId'] != 'todas':
+                    periodo = request.POST['topicId'].split('.')
+                    alunos = alunos.filter(anoPFE=int(periodo[0])).\
+                                    filter(semestrePFE=int(periodo[1]))
+            else:
+                return HttpResponse("Algum erro.", status=401)
+
+        context = {
+            'areaspfe': get_areas(alunos),
+            'tipo': tipo,
+        }
+
+    elif tipo == "projetos":
+
+        projetos = Areas.objects.all()
+
+        context = {
+            'areaspfe': get_areas(projetos),
+            'tipo': tipo,
+        }
+    
+    else:
+        return HttpResponse("Algum erro.", status=401)
+
+
     return render(request, 'projetos/areas.html', context)
 
 @login_required

@@ -7,32 +7,36 @@
 
 {% block content %}
 
-    <a href="{% url 'bancas_index' %}">            <h5>Calendário das Bancas</h5>                      </a>
-
-    <a href="{% url 'dinamicas' %}">         <h5>Calendário das Dinâmicas</h5>                   </a>
-
-    <hr>
-
-    <a href="{% url 'projetos_fechados' %}">          <h5>Listagem Detalhada de Projetos Fechados</h5>    </a>
-
-    <h5>Listagem de Projetos Publicados</h5>
+    <h5>Calendários</h5>
     <ul>
+        <a href="{% url 'bancas_index' %}"><li>Bancas</li></a>
+        <a href="{% url 'dinamicas' %}"><li>Dinâmicas</li></a>
+    </ul>
+
+    <h5>Projetos</h5>
+    <ul>
+        <a href="{% url 'projetos_fechados' %}"><li>Detalhes (somente os fechados)</li></a>
+        <a href="{% url 'histograma' %}"><li>Procura (histograma de preferências)</li></a>
         <a href="{% url 'projetos_lista' 'antigos' %}"><li>Antigos (até o semestre passado)</li></a>
         <a href="{% url 'projetos_lista' 'atuais' %}"><li>Atuais (para esse semestre)</li></a>
         <a href="{% url 'projetos_lista' 'disponiveis' %}"><li>Disponíveis (p/ os próximos semestres)</li></a>
     </ul>
-    
-    <a href="{% url 'histograma' %}">        <h5>Histograma de Interesse de Projetos</h5> </a>
-    
-    <hr>
 
-    <a href="{% url 'alunos_inscrevendo' %}"><h5>Listagem de Alunos se Inscrevendo</h5>   </a>
-    <a href="{% url 'areas' %}">             <h5>Tendência de Áreas de Interesse</h5>     </a>
-    <a href="{% url 'mapeamento' %}">        <h5>Mapeamento Estudantes e Opções de Projetos</h5>     </a>
-    <a href="{% url 'lista_feedback' %}"><h5>Listagem de Feedbacks</h5>   </a>
+    <h5>Estudantes</h5>
+    <ul>
+        <a href="{% url 'alunos_inscrevendo' %}"><li>Por Semestre</li></a>
+        <a href="{% url 'mapeamento' %}"><li>Mapeamento Estudantes e Opções de Projetos</li></a>
+    </ul>
 
-    <hr>
+    <h5>Áreas de Interesse</h5>
+    <ul>
+        <a href="{% url 'areas' 'alunos' %}"><li>Tendência dos Alunos</li></a>
+        <a href="{% url 'areas' 'projetos' %}"><li>Tendência dos Projetos</li></a>
+    </ul>
 
-    <a href="{% url 'propor' %}">            <h5>Propor Grupos para Projetos</h5>         </a>
+    <h5>Feedbacks</h5>
+    <ul>
+        <a href="{% url 'lista_feedback' %}"><li>Organizações Parceiras</li></a>
+    </ul>
 
 {% endblock %}

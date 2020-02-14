@@ -11,12 +11,13 @@
   <script src="{% static 'js/jquery.min.js' %}"></script>
   <script src="{% static 'js/jquery.horizBarChart.min.js' %}"></script>
   <script>
-    $(document).ready(function(){
+    function bar(){
       $('.chart').horizBarChart({
         selector: '.bar',
         speed: 800
       });
-    });
+    }
+    $(document).ready(bar);
   </script>
 {% endblock %}
 
@@ -25,148 +26,54 @@
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <label for="filter">Edição:</label>
     <select class="filter" data-tableId="projetos">
-    <option value="2018.2">2018.2</option>
-    <option value="2019.1">2019.1</option>
-    <option value="2019.2">2019.2</option>
-    <option value="2020.1" selected="selected">2020.1</option>
-    <option value="2020.2">2020.2</option>
+        <option value="todas">todas</option>
+        <option value="2018.2" {% if periodo == "2018.2" %}selected="selected"{% endif %}>2018.2</option>
+        <option value="2019.1" {% if periodo == "2019.1" %}selected="selected"{% endif %}>2019.1</option>
+        <option value="2019.2" {% if periodo == "2019.2" %}selected="selected"{% endif %}>2019.2</option>
+        <option value="2020.1" {% if periodo == "2020.1" %}selected="selected"{% endif %}>2020.1</option>
+        <option value="2020.2" {% if periodo == "2020.2" %}selected="selected"{% endif %}>2020.2</option>
     </select>
     <br>
 
-    <div>
+    <div class="2areas2">
         <ul class="chart">
-        <h3><li class="title" title="Tendência de Áreas de Interesse"></li></h3>
+        <h3><li class="title" title="Tendência de Áreas de Interesse ({{tipo}})"></li></h3>
         <li></li>
         <li></li>
 
-        <li class="title" title="Inovação Social"></li>
-        <li class="past" title="">
-            <span class="bar" data-number="{{inovacao_social}}"></span>
-            <span class="number">{{inovacao_social}}</span>
-        </li>
-
-        <li class="title" title="Ciência dos Dados"></li>
-        <li class="past" title="">
-            <span class="bar" data-number="{{ciencia_dos_dados}}"></span>
-            <span class="number">{{ciencia_dos_dados}}</span>
-        </li>
-
-        <li class="title" title="Modelagem 3D"></li>
-        <li class="past" title="">
-            <span class="bar" data-number="{{modelagem_3D}}"></span>
-            <span class="number">{{modelagem_3D}}</span>
-        </li>
-
-        <li class="title" title="Manufatura"></li>
-        <li class="past" title="">
-            <span class="bar" data-number="{{manufatura}}"></span>
-            <span class="number">{{manufatura}}</span>
-        </li>
-
-        <li class="title" title="Resistência dos Materiais"></li>
-        <li class="past" title="">
-            <span class="bar" data-number="{{resistencia_dos_materiais}}"></span>
-            <span class="number">{{resistencia_dos_materiais}}</span>
-        </li>
-
-        <li class="title" title="Modelagem de Sistemas"></li>
-        <li class="past" title="">
-            <span class="bar" data-number="{{modelagem_de_sistemas}}"></span>
-            <span class="number">{{modelagem_de_sistemas}}</span>
-        </li>
-
-        <li class="title" title="Controle e Automação"></li>
-        <li class="past" title="">
-            <span class="bar" data-number="{{controle_e_automacao}}"></span>
-            <span class="number">{{controle_e_automacao}}</span>
-        </li>
-
-        <li class="title" title="Termodinâmica"></li>
-        <li class="past" title="">
-            <span class="bar" data-number="{{termodinamica}}"></span>
-            <span class="number">{{termodinamica}}</span>
-        </li>
-
-        <li class="title" title="Fluidodinâmica"></li>
-        <li class="past" title="">
-            <span class="bar" data-number="{{fluidodinamica}}"></span>
-            <span class="number">{{fluidodinamica}}</span>
-        </li>
-
-        <li class="title" title="Eletrônica Digital"></li>
-        <li class="past" title="">
-            <span class="bar" data-number="{{eletronica_digital}}"></span>
-            <span class="number">{{eletronica_digital}}</span>
-        </li>
-
-        <li class="title" title="Programacao"></li>
-        <li class="past" title="">
-            <span class="bar" data-number="{{programacao}}"></span>
-            <span class="number">{{programacao}}</span>
-        </li>
-
-        <li class="title" title="Inteligencia Artificial"></li>
-        <li class="past" title="">
-            <span class="bar" data-number="{{inteligencia_artificial}}"></span>
-            <span class="number">{{inteligencia_artificial}}</span>
-        </li>
-
-        <li class="title" title="Banco de Dados"></li>
-        <li class="past" title="">
-            <span class="bar" data-number="{{banco_de_dados}}"></span>
-            <span class="number">{{banco_de_dados}}</span>
-        </li>
-
-        <li class="title" title="Computacao em Nuvem"></li>
-        <li class="past" title="">
-            <span class="bar" data-number="{{computacao_em_nuvem}}"></span>
-            <span class="number">{{computacao_em_nuvem}}</span>
-        </li>
-
-        <li class="title" title="Visão Computacional"></li>
-        <li class="past" title="">
-            <span class="bar" data-number="{{visao_computacional}}"></span>
-            <span class="number">{{visao_computacional}}</span>
-        </li>
-
-        <li class="title" title="Computação de Alto Desempenho"></li>
-        <li class="past" title="">
-            <span class="bar" data-number="{{computacao_de_alto_desempenho}}"></span>
-            <span class="number">{{computacao_de_alto_desempenho}}</span>
-        </li>
-
-        <li class="title" title="Robótica"></li>
-        <li class="past" title="">
-            <span class="bar" data-number="{{robotica}}"></span>
-            <span class="number">{{robotica}}</span>
-        </li>
-
-        <li class="title" title="Realidade Virtual e Aumentada"></li>
-        <li class="past" title="">
-            <span class="bar" data-number="{{realidade_virtual_aumentada}}"></span>
-            <span class="number">{{realidade_virtual_aumentada}}</span>
-        </li>
-
-        <li class="title" title="Protocolos de Comunicação"></li>
-        <li class="past" title="">
-            <span class="bar" data-number="{{protocolos_de_comunicacao}}"></span>
-            <span class="number">{{protocolos_de_comunicacao}}</span>
-        </li>
-
-        <li class="title" title="Eficiência Energetica"></li>
-        <li class="past" title="">
-            <span class="bar" data-number="{{eficiencia_energetica}}"></span>
-            <span class="number">{{eficiencia_energetica}}</span>
-        </li>
-
-        <li class="title" title="Administração, Economia e Finâncas"></li>
-        <li class="past" title="">
-            <span class="bar" data-number="{{administracao_economia_financas}}"></span>
-            <span class="number">{{administracao_economia_financas}}</span>
-        </li>
+        {% for key, value in areaspfe.items %}
+            <li class="title" title="{{key}}"></li>
+            <li class="past" title="">
+                <span class="bar" data-number="{{value}}"></span>
+                <span class="number">{{value}}</span>
+            </li>
+        {% endfor %}
 
         <li></li>
       </ul>
     </div>
+
+    <script>
+       
+        $(".filter").change(function(){
+        var topicId = $(".filter option:selected").attr("value");
+        $.ajax({
+            type: "POST",
+            url: "{% url 'areas' tipo %}",
+            data: {
+                topicId: topicId,
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+            },
+            success: function(response){
+                $("div.2areas2").replaceWith($("div.2areas2",response));
+                bar();
+            },
+            error: function(response) {
+                alert('error');
+            }
+
+        });
+        });
+    </script>
 
 {% endblock %}
