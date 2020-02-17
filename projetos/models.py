@@ -443,7 +443,7 @@ class Conexao(models.Model):
     usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='usuário que se conecta ao projeto')
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE,
-                                help_text='projeto que recomenda a disciplina')
+                                help_text='projeto que possui vínculo da conexão')
     observacao = models.TextField(max_length=256, null=True, blank=True,
                                   help_text='qualquer observação relevante')
     gestor_responsavel = models.BooleanField(default=False)
@@ -453,4 +453,18 @@ class Conexao(models.Model):
     def __str__(self):
         return self.usuario.get_full_name()+" >>> "+\
                self.projeto.empresa.sigla+" - "+self.projeto.get_titulo()+\
+               " ("+str(self.projeto.ano)+"."+str(self.projeto.semestre)+")"
+
+class Coorientador(models.Model):
+    """Controla lista de coorientadores por projeto."""
+    usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text='coorientador de um projeto')
+    projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE,
+                                help_text='projeto que foi coorientado')
+    observacao = models.TextField(max_length=256, null=True, blank=True,
+                                  help_text='qualquer observação relevante')
+
+    def __str__(self):
+        return self.usuario.get_full_name()+" >>> "+\
+               self.projeto.get_titulo()+\
                " ("+str(self.projeto.ano)+"."+str(self.projeto.semestre)+")"

@@ -12,7 +12,7 @@ from django.contrib.admin import SimpleListFilter
 import django.contrib.admin.options as admin_opt
 
 # Dos projetos
-from .models import Projeto, Empresa, Banca, Disciplina, Cursada, Recomendada
+from .models import Projeto, Empresa, Banca, Disciplina, Cursada, Recomendada, Coorientador
 
 # Das dinâmicas
 from .models import Encontro, Evento
@@ -181,9 +181,15 @@ class FeedbackAdmin(admin.ModelAdmin):
     list_display = ('data', 'nome', 'email', 'empresa', )
 
 @admin.register(Conexao)
-class FeedbackAdmin(admin.ModelAdmin):
+class ConexaoAdmin(admin.ModelAdmin):
     """Conexão entre parceiro e organização."""
     list_display = ('usuario', 'projeto')
+
+@admin.register(Coorientador)
+class CoorientadorAdmin(admin.ModelAdmin):
+    """Conexão entre coorientador e projeto."""
+    list_display = ('usuario', 'projeto')
+
 
 admin.site.register(Cursada)
 admin.site.register(Recomendada)

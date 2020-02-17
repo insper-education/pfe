@@ -35,7 +35,7 @@ from django.template.loader import get_template
 from django.utils import timezone
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao, Alocacao, Areas
-from .models import Projeto, Empresa, Configuracao, Evento, Anotacao, Feedback
+from .models import Projeto, Empresa, Configuracao, Evento, Anotacao, Feedback, Coorientador
 from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade, Conexao
 #from .models import Disciplina
 
@@ -412,11 +412,13 @@ def completo(request, primakey):
     projeto = Projeto.objects.filter(pk=primakey).first()  # acho que tem de ser get
     opcoes = Opcao.objects.filter(projeto=projeto)
     conexoes = Conexao.objects.filter(projeto=projeto)
+    coorientadores = Coorientador.objects.filter(projeto=projeto)
     context = {
         'configuracao': configuracao,
         'projeto': projeto,
         'opcoes': opcoes,
         'conexoes': conexoes,
+        'coorientadores': coorientadores,
         'MEDIA_URL' : settings.MEDIA_URL,
     }
     return render(request, 'projetos/projeto_completo.html', context=context)
