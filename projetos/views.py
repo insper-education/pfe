@@ -1282,6 +1282,51 @@ def professores_tabela(request):
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
+def coorientadores_tabela(request):
+    """Alocação dos Coorientadores por semestre."""
+    configuracao = Configuracao.objects.all().first()
+
+    professores_pfe = []
+    periodo = []
+
+    ano = 2018
+    semestre = 2
+    while True:
+        professores = []
+        grupos = []
+        for professor in Professor.objects.all().order_by("user__first_name", "user__last_name"):
+            count_grupos = []
+            grupos_pfe = Projeto.objects.filter(coorientador__usuario__professor=professor).\
+                                        filter(ano=ano).\
+                                        filter(semestre=semestre)
+            if grupos_pfe:
+                for grupo in grupos_pfe: # garante que tem alunos no projeto
+                    alunos_pfe = Aluno.objects.filter(alocacao__projeto=grupo)
+                    if alunos_pfe:
+                        count_grupos.append(grupo)
+                if count_grupos:
+                    professores.append(professor)
+                    grupos.append(count_grupos)
+        professores_pfe.append(zip(professores, grupos))
+        periodo.append(str(ano)+"."+str(semestre))
+
+        if ((ano == configuracao.ano) and (semestre == configuracao.semestre)):
+            break
+
+        if semestre == 2:
+            semestre = 1
+            ano += 1
+        else:
+            semestre = 2
+
+    anos = zip(professores_pfe[::-1], periodo[::-1]) #inverti lista deixando os mais novos primeiro
+    context = {
+        'anos': anos,
+    }
+    return render(request, 'projetos/coorientadores_tabela.html', context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
 def bancas_tabela(request):
     """Lista todas as bancas agendadas, conforme periodo pedido."""
     configuracao = Configuracao.objects.all().first()

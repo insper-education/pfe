@@ -75,28 +75,31 @@
 
   {% if projeto.orientador %}
   <hr>
-  <h3>Orientador(a)</h3>
-  <ul>
-    <a href="{% url 'professor_detail' projeto.orientador.id %}">
-      <li>{{projeto.orientador.user.get_full_name}}</li>
-    </a>
-  </ul>
+  <h3>Orientador(a): </h3>
+  <a href="{% url 'professor_detail' projeto.orientador.id %}">
+    &nbsp;&nbsp;{{projeto.orientador.user.get_full_name}}
+  </a>
   {% endif %}
+
   {% if coorientadores %}
-    <strong>coorientador(es):</strong><br>
+    <br><br>
+    &nbsp;<strong>coorientador(es):</strong><br>
+    <ul>
     {% for coorientador in coorientadores %}
+      <li>
       <a class="tabulado" href="{% url 'professor_detail' coorientador.usuario.professor.id %}">
         {{ coorientador.usuario.get_full_name }}
       </a>
       {% if coorientador.observacao %}
         &nbsp;&nbsp;obs: {{coorientador.observacao}}
       {% endif %}
-      <br>
+      </li>
     {% endfor %}
+    </ul>
   {% endif %}
 
   <hr>
-  <h3>Aluno(s) Alocado(s) no Projeto</h3>
+  <h3>Aluno(s) Alocado(s) no Projeto:</h3>
   {% for alocacao in projeto.alocacao_set.all %}
     <a href="{% url 'aluno_detail' alocacao.aluno.id %}">
       <p>

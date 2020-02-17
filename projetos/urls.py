@@ -30,6 +30,7 @@ urlpatterns = [
     path('carregar/', views.carregar, name='carregar'),
     path('comite/>', views.comite, name='comite'),
     path('completo/<int:primakey>', views.completo, name='completo'),
+    path('coorientadores_tabela/', views.coorientadores_tabela, name='coorientadores_tabela'),
     path('cria_anotacao/<str:login>', views.cria_anotacao, name='cria_anotacao'),
     path('dinamicas/', views.dinamicas, name='dinamicas'),
     path('encontros_marcar/', views.encontros_marcar, name='encontros_marcar'),
