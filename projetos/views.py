@@ -422,36 +422,81 @@ def completo(request, primakey):
     return render(request, 'projetos/projeto_completo.html', context=context)
 
 
-def get_areas(alunos):
+def get_areas(entrada):
+    """Retorna dicionário com as áreas de interesse da lista de entrada."""
+
     areaspfe = {}
-    areaspfe['Inovação Social'] = alunos.filter(inovacao_social=True).count()
-    areaspfe['Ciência dos Dados'] = alunos.filter(ciencia_dos_dados=True).count()
-    areaspfe['Modelagem 3D'] = alunos.filter(modelagem_3D=True).count()
-    areaspfe['Manufatura'] = alunos.filter(manufatura=True).count()
-    areaspfe['Resistência dos Materiais'] = alunos.filter(resistencia_dos_materiais=True).count()
-    areaspfe['Modelagem de Sistemas'] = alunos.filter(modelagem_de_sistemas=True).count()
-    areaspfe['Controle e Automação'] = alunos.filter(controle_e_automacao=True).count()
-    areaspfe['Termodinâmica'] = alunos.filter(termodinamica=True).count()
-    areaspfe['Fluidodinâmica'] = alunos.filter(fluidodinamica=True).count()
-    areaspfe['Eletrônica Digital'] = alunos.filter(eletronica_digital=True).count()
-    areaspfe['Programação'] = alunos.filter(programacao=True).count()
-    areaspfe['Inteligência Artificial'] = alunos.filter(inteligencia_artificial=True).count()
-    areaspfe['Banco de Bados'] = alunos.filter(banco_de_dados=True).count()
-    areaspfe['Computação em Nuvem'] = alunos.filter(computacao_em_nuvem=True).count()
-    areaspfe['Visão Computacional'] = alunos.filter(visao_computacional=True).count()
-    areaspfe['Computação de Alto Desempenho'] = alunos.filter(computacao_de_alto_desempenho=True).count()
-    areaspfe['Robótica'] = alunos.filter(robotica=True).count()
-    areaspfe['Realidade Virtual e Aumentada'] = alunos.filter(realidade_virtual_aumentada=True).count()
-    areaspfe['Protocolos de Comunicação'] = alunos.filter(protocolos_de_comunicacao=True).count()
-    areaspfe['Eficiencia Energética'] = alunos.filter(eficiencia_energetica=True).count()
-    areaspfe['Administração, Economia e Finanças'] = alunos.filter(administracao_economia_financas=True).count()
+
+    areaspfe['Inovação Social'] =\
+        entrada.filter(inovacao_social=True).count()
+
+    areaspfe['Ciência dos Dados'] =\
+        entrada.filter(ciencia_dos_dados=True).count()
+
+    areaspfe['Modelagem 3D'] =\
+        entrada.filter(modelagem_3D=True).count()
+
+    areaspfe['Manufatura'] =\
+        entrada.filter(manufatura=True).count()
+
+    areaspfe['Resistência dos Materiais'] =\
+        entrada.filter(resistencia_dos_materiais=True).count()
+
+    areaspfe['Modelagem de Sistemas'] =\
+        entrada.filter(modelagem_de_sistemas=True).count()
+
+    areaspfe['Controle e Automação'] =\
+        entrada.filter(controle_e_automacao=True).count()
+
+    areaspfe['Termodinâmica'] =\
+        entrada.filter(termodinamica=True).count()
+
+    areaspfe['Fluidodinâmica'] =\
+        entrada.filter(fluidodinamica=True).count()
+
+    areaspfe['Eletrônica Digital'] =\
+        entrada.filter(eletronica_digital=True).count()
+
+    areaspfe['Programação'] =\
+        entrada.filter(programacao=True).count()
+
+    areaspfe['Inteligência Artificial'] =\
+        entrada.filter(inteligencia_artificial=True).count()
+
+    areaspfe['Banco de Bados'] =\
+        entrada.filter(banco_de_dados=True).count()
+
+    areaspfe['Computação em Nuvem'] =\
+        entrada.filter(computacao_em_nuvem=True).count()
+
+    areaspfe['Visão Computacional'] =\
+        entrada.filter(visao_computacional=True).count()
+
+    areaspfe['Computação de Alto Desempenho'] =\
+        entrada.filter(computacao_de_alto_desempenho=True).count()
+
+    areaspfe['Robótica'] =\
+        entrada.filter(robotica=True).count()
+
+    areaspfe['Realidade Virtual e Aumentada'] =\
+        entrada.filter(realidade_virtual_aumentada=True).count()
+
+    areaspfe['Protocolos de Comunicação'] =\
+        entrada.filter(protocolos_de_comunicacao=True).count()
+
+    areaspfe['Eficiencia Energética'] =\
+        entrada.filter(eficiencia_energetica=True).count()
+
+    areaspfe['Administração, Economia e Finanças'] =\
+        entrada.filter(administracao_economia_financas=True).count()
+
     return areaspfe
 
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def areas(request, tipo):
     """Mostra distribuição por área de interesse dos alunos e projetos."""
-    
+
     if tipo == "alunos":
 
         alunos = Aluno.objects.filter(user__tipo_de_usuario=1)
@@ -474,14 +519,23 @@ def areas(request, tipo):
 
         projetos = Areas.objects.all()
 
+        if request.is_ajax():
+            if 'topicId' in request.POST:
+                if request.POST['topicId'] != 'todas':
+                    periodo = request.POST['topicId'].split('.')
+
+                    projetos = Areas.objects.filter(projeto__ano=int(periodo[0])).\
+                                             filter(projeto__semestre=int(periodo[1]))
+            else:
+                return HttpResponse("Algum erro.", status=401)
+
         context = {
             'areaspfe': get_areas(projetos),
             'tipo': tipo,
         }
-    
+
     else:
         return HttpResponse("Algum erro.", status=401)
-
 
     return render(request, 'projetos/areas.html', context)
 
@@ -670,6 +724,7 @@ def render_to_pdf(template_src, context_dict=None):
     return None
 
 def get_calendario_context():
+    """Contexto para gerar calendário."""
     eventos = Evento.objects.exclude(name="Aula PFE").\
                              exclude(name="Laboratório").\
                              exclude(name="provas").\
@@ -728,7 +783,7 @@ def relatorio(request, modelo, formato):
             'configuracao': configuracao,
         }
         arquivo = "projetos/relatorio_alunos.html"
-        
+
     elif modelo == "feedbacks":
         context = {
             'feedbacks': Feedback.objects.all(),
