@@ -65,6 +65,40 @@ def dup_event_183(modeladmin: admin_opt.ModelAdmin, request, queryset):
         modeladmin.log_addition(request=request, object=obj, message=message)
 dup_event_183.short_description = "Duplicar Entrada(s) adicionando 183 dias"
 
+def dup_encontros(modeladmin: admin_opt.ModelAdmin, request, queryset):
+    """Função abaixo permite duplicar entradas no banco de dados"""
+    for obj in queryset:
+        from_id = obj.id
+        obj.id = None
+        #obj.startDate += timedelta(days=183)
+        #obj.endDate += timedelta(days=183)
+        obj.save()
+        message = "duplicando de {} para {}".format(from_id, obj.id)
+        modeladmin.log_addition(request=request, object=obj, message=message)
+dup_encontros.short_description = "Duplicar Entrada(s)"
+
+def dup_encontros_4x(modeladmin: admin_opt.ModelAdmin, request, queryset):
+    """Função abaixo permite duplicar entradas no banco de dados 4 X"""
+    for obj in queryset:
+        for index in range(4):
+            from_id = obj.id
+            obj.id = None
+            obj.save()
+            message = "duplicando de {} para {}".format(from_id, obj.id)
+            modeladmin.log_addition(request=request, object=obj, message=message)
+dup_encontros_4x.short_description = "Duplicar Entrada(s) 4 X"
+
+def dup_encontros_8x(modeladmin: admin_opt.ModelAdmin, request, queryset):
+    """Função abaixo permite duplicar entradas no banco de dados 8 X"""
+    for obj in queryset:
+        for index in range(8):
+            from_id = obj.id
+            obj.id = None
+            obj.save()
+            message = "duplicando de {} para {}".format(from_id, obj.id)
+            modeladmin.log_addition(request=request, object=obj, message=message)
+dup_encontros_8x.short_description = "Duplicar Entrada(s) 8 X"
+
 class FechadoFilter(SimpleListFilter):
     """Para filtrar projetos fechados."""
     title = 'Projetos Fechados' # a label for our filter
@@ -190,8 +224,12 @@ class CoorientadorAdmin(admin.ModelAdmin):
     """Conexão entre coorientador e projeto."""
     list_display = ('usuario', 'projeto')
 
+@admin.register(Encontro)
+class EncontroAdmin(admin.ModelAdmin):
+    """Informações das Encontros (com os facilitadores)."""
+    list_display = ('startDate', 'projeto', 'facilitador')
+    actions = [dup_encontros, dup_encontros_4x, dup_encontros_8x ]
 
 admin.site.register(Cursada)
 admin.site.register(Recomendada)
-admin.site.register(Encontro)       # Informações das Encontros (com os facilitadores)
 admin.site.register(Entidade)       # Para ser preenchido com as entidades estudantis
