@@ -1382,7 +1382,8 @@ def bancas_index(request):
 def encontros_marcar(request):
     """Encontros a serem agendados pelos alunos."""
     configuracao = Configuracao.objects.all().first()
-    encontros = Encontro.objects.all()
+    hoje = datetime.date.today()
+    encontros = Encontro.objects.filter(startDate__gt=hoje)
     aluno = Aluno.objects.filter(pk=request.user.pk).first()
     projeto = Projeto.objects.filter(alocacao__aluno=aluno).\
                               distinct().\
@@ -1405,7 +1406,7 @@ def encontros_marcar(request):
         if agendado:
             return HttpResponse("Agendado: "+agendado)
         else:
-            return HttpResponse("Problema!")
+            return HttpResponse("Problema! Por favor reportar.")
     else:
         context = {
             'encontros': encontros,
@@ -1418,7 +1419,7 @@ def encontros_marcar(request):
 def dinamicas(request):
     """Mostra os horários de dinâmicas."""
     configuracao = Configuracao.objects.all().first()
-    encontros = Encontro.objects.all()
+    encontros = Encontro.objects.all().order_by('-startDate')
 
     context = {
         'encontros': encontros,
