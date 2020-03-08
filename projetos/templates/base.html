@@ -31,6 +31,7 @@
 </head>
 <body>
 
+    {% url 'index' as url_index %}
     {% url 'index_professor' as url_index_professor %}
     {% url 'index_aluno' as url_index_aluno %}
     {% url 'perfil' as url_perfil %}
@@ -40,13 +41,13 @@
 
         <img 
         {% if user.is_authenticated %}
-          onclick="location.href='{% if user.tipo_de_usuario == 1 %}{{ url_index_aluno }}{% else %}{{ url_index_professor }}{% endif %}'"
+          onclick="location.href='{{ url_index }}'"
         {% endif %}
         src="{% static 'images/logoInsper.png' %}" alt="Insper" style="width:59px;height:23px;">
 
         <b 
         {% if user.is_authenticated %}
-          onclick="location.href='{% if user.tipo_de_usuario == 1 %}{{ url_index_aluno }}{% else %}{{ url_index_professor }}{% endif %}'"
+          onclick="location.href='{{ url_index }}'"
         {% endif %}
         id="pfelogo">PFE</b> 
 

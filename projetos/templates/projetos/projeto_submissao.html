@@ -40,6 +40,11 @@
 
   <form action="" method="post"> {% csrf_token %}  
 
+{% comment %}
+    user.is_authenticated
+    onclick="location.href='{% if user.tipo_de_usuario == 1 %}{{ url_index_aluno }}{% else %}{{ url_index_professor }}{% endif %}'"
+{% endcomment %}
+
     Nome: <input type="text" size="75" name="nome"><br>
     e-mail: <input type="email" size="75" name="email"><br>
     Empresa: <input type="text" size="72" name="empresa"><br>
