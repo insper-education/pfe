@@ -31,16 +31,31 @@
 {% endblock %}
 
 {% block content %}
-  <h3>Projetos
-    {% if periodo == "antigos" %}
-      publicados antes de 
-    {% elif periodo == "atuais" %}
-      disponíveis em
-    {% elif periodo == "disponiveis" %}
-      após
+  <h3>
+    {% if periodo == "todos" %}
+      Todos os Projetos
+    {% else %}
+      Projetos
+      {% if periodo == "antigos" %}
+        publicados antes de 
+      {% elif periodo == "atuais" %}
+        disponíveis em
+      {% elif periodo == "disponíveis" %}
+        após
+      {% endif %}
+      {{configuracao.ano}}.{{configuracao.semestre}}
     {% endif %}
-    {{configuracao.ano}}.{{configuracao.semestre}}
   </h3>
+
+  <select id="cxi" class="filter" data-tableId="projetos">
+    <option value="todos">todos</option>
+    <option value="antigos" {% if periodo == "antigos" %}selected="selected"{% endif %}>antigos</option>
+    <option value="atuais" {% if periodo == "atuais" %}selected="atuais"{% endif %}>atuais</option>
+    <option value="disponíveis" {% if periodo == "disponíveis" %}selected="disponíveis"{% endif %}>disponíveis</option>
+  </select>
+  (not working)
+  <br><br>
+
   {% if projetos %}
     <table id="ProjetosTable">
       <tr>

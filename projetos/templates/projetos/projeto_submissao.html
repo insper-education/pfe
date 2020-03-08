@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 8 de Março de 2020
+{% endcomment %}
+
+{% block head %}
+  <style>
+    textarea {
+      max-width:100%;
+    }
+  </style>
+  <script>
+    $(document).ready(function(){
+      $("small").click(function(){
+        alert("{% for e in entidades %}• {{e.nome}}\n{% endfor %}");
+      });
+    });
+  </script>
+{% endblock %}
+
+{% block content %}
+
+  <h5>Submissão de Projeto</h5><br>
+
+<strong>Usuário:</strong> {{ user.username }}<br>
+{% if aluno %}
+  <strong>Curso:</strong> {{user.aluno.get_curso_display}}<br>
+  <strong>Ano e Semestre de PFE:</strong> {{user.aluno.anoPFE}}.{{user.aluno.semestrePFE}} <small>(ou posterior)</small><br>
+{% elif professor %}
+  <strong>Perfil:</strong> professor<br>
+{% elif parceiro %}
+  <strong>Perfil:</strong> parceiro<br>
+{% endif %}
+{% if user.email %}
+  <strong>e-mail:</strong> <a href="mailto:{{user.email}}">{{user.email}}</a><br>
+{% endif %}
+
+
+  <form action="" method="post"> {% csrf_token %}  
+
+    Nome: <input type="text" size="75" name="nome"><br>
+    e-mail: <input type="email" size="75" name="email"><br>
+    Empresa: <input type="text" size="72" name="empresa"><br>
+
+    Nome da Instituição/Empresa<br>
+    <small>sigla e nome comercial/fantasia se houver, aqui não precisa ser a Razão Social</small>
+    <br>
+    <textarea name="organizacao" rows="1" cols="80" maxlength="100">{{organizacao}}</textarea>
+    <br><br>
+
+    Endereço<br>
+    <small>onde os alunos deverão ir para desenvolver o projeto</small>
+    <br>
+    <textarea name="endereco" rows="4" cols="80" maxlength="1000">{{endereco}}</textarea>
+    <br><br>
+
+    Contatos Técnicos<br>  
+    <small>e-mail/telefone, com quem os professores e alunos irão tratar do desenvolvimento do projeto</small>
+    <br>
+    <textarea name="contatos_tecnicos" rows="4" cols="80" maxlength="1000">{{contatos_tecnicos}}</textarea>
+    <br><br>
+
+    Contatos Administrativos<br>     
+    <small>e-mail/telefone, com quem devemos resolver questões de contratos e RH</small>
+    <br>
+    <textarea name="contatos_administrativos " rows="4" cols="80" maxlength="1000">{{contatos_administrativos}}</textarea>
+    <br><br>
+
+    Informações sobre a instituição/empresa<br>
+    <small>opcional, para ser apresentado aos alunos</small>
+    <br>
+    <textarea name="info_organizacao" rows="4" cols="80" maxlength="1000">{{info_organizacao}}</textarea>
+    <br><br>
+
+    Informações sobre a departamento<br>
+    <small>opcional, para ser apresentado aos alunos</small>
+    <br>
+    <textarea name="info_departamento" rows="4" cols="80" maxlength="1000">{{info_departamento}}</textarea>
+    <br><br>
+    <input type="submit" value="Enviar">
+
+    Título provisório do projeto<br>
+    <br>
+    <textarea name="info_departamento" rows="4" cols="80" maxlength="1000">{{info_departamento}}</textarea>
+    <br><br>
+    <input type="titulo" value="titulo">
+
+    Descrição do Projeto<br>
+    <small>para discussão entre professores e que será passada para os alunos no futuro</small>
+    <br>
+    <textarea name="desc_projeto" rows="4" cols="80" maxlength="1000">{{desc_projeto}}</textarea>
+    <br><br>
+
+    Expectativas de resultados/entregas<br>
+    <small>exemplo: relatórios, protótipos</small>
+    <br>
+    <textarea name="expectativas" rows="4" cols="80" maxlength="1000">{{expectativas}}</textarea>
+    <br><br>
+
+    Áreas/Habilidades envolvidas no projeto<br>
+    [[[ PUXAR TABELA ]]] <br>
+    Outros (descrever):_____________________<br>
+    <br>
+    <br>
+
+    Recursos a serem disponibilizados aos alunos<br>
+    <small>opcional, será apresentado aos alunos</small>
+    <br>
+    <textarea name="recursos" rows="4" cols="80" maxlength="1000">{{recursos}}</textarea>
+    <br><br>
+
+    Outras observações que considere relevante para os alunos
+    <small>opcional, será apresentado aos alunos</small>
+    <br>
+    <textarea name="observacoes" rows="4" cols="80" maxlength="1000">{{observacoes}}</textarea>
+    <br><br>
+
+    Obs.: Ao submeter o projeto, deve ficar claro que a intenção do Projeto Final de Engenharia é que os alunos tenham um contato próximo com as pessoas responsáveis nas instituições parceira para o desenvolvimento de uma solução em engenharia. Em geral os alunos se deslocam uma vez por semana para entender melhor o desafio, demonstrar resultados preliminares, fazerem planejamentos em conjunto, dentre de outros pontos que podem variar de projeto para projeto. Também deve ficar claro que embora não exista um custo direto para as instituições parceiras, essas terão de levar em conta que pelo menos um profissional deverá dedicar algumas horas semanalmente para acompanhar os alunos. Além disso se a proposta contemplar gastos, como por exemplo servidores, matéria prima de alguma forma, o Insper não terá condição de bancar tais gastos e isso terá de ficar a cargo da empresa, contudo os alunos terão acesso aos laboratórios do Insper para o desenvolvimento do projeto em horários agendados.
+    
+    <br><br>
+    <input type="submit" value="Enviar">
+
+  </form>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+{% endblock %}

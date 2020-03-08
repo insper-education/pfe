@@ -399,10 +399,17 @@ def administracao(request):
     return render(request, 'index_admin.html')
 
 @login_required
+@permission_required("users.altera_valores", login_url='/projetos/')
+def index_organizacao(request):
+    """Mostra página principal do usuário que é um parceiro de uma organização."""
+    return render(request, 'index_organizacao.html')
+
+@login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def index_professor(request):
     """Mostra página principal do usuário professor."""
     return render(request, 'index_professor.html')
+
 
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
@@ -983,6 +990,37 @@ def submissao(request):
         return render(request, 'projetos/submissao.html', context)
 
 @login_required
+def projeto_submeter(request):
+    """Formulário de Submissão de Projetos."""
+    user = PFEUser.objects.get(pk=request.user.pk)
+    if user.tipo_de_usuario == 1: # alunos
+        return HttpResponse("Você não está cadastrado como parceiro de uma organização")
+    #configuracao = Configuracao.objects.first()
+
+    #parceiro = Parceiro.objects.get(pk=request.user.pk)
+
+    if request.method == 'POST':
+        """
+        if timezone.now() > configuracao.prazo_parceiro:
+            #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
+            return HttpResponse("Prazo para o preenchimento do formulário vencido!")
+
+        aluno.trabalhou = request.POST.get("trabalhou", "")
+        aluno.social = request.POST.get("social", "")
+        aluno.entidade = request.POST.get("entidade", "")
+        aluno.familia = request.POST.get("familia", "")
+
+        aluno.save()
+        """
+        return render(request, 'users/atualizado.html',)
+    else:
+        context = {
+            'user' : user,
+        }
+        return render(request, 'projetos/projeto_submissao.html', context)
+
+
+@login_required
 def index_documentos(request):
     """Lista os documentos armazenados no servidor."""
     regulamento = Documento.objects.filter(tipo_de_documento=6).last() # Regulamento PFE
@@ -1126,6 +1164,8 @@ def projetos_lista(request, periodo):
     """Lista todos os projetos."""
     configuracao = Configuracao.objects.all().first()
     projetos = Projeto.objects.all().order_by("ano", "semestre")
+    if periodo == "todos":
+        pass
     if periodo == "antigos":
         if configuracao.semestre == 1:
             projetos = projetos.filter(ano__lt=configuracao.ano)
