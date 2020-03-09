@@ -34,7 +34,7 @@ from django.shortcuts import redirect
 from django.template.loader import get_template
 from django.utils import timezone
 
-from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao, Alocacao, Areas
+from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador, Opcao, Alocacao, Areas
 from .models import Projeto, Empresa, Configuracao, Evento, Anotacao, Feedback, Coorientador
 from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade, Conexao
 #from .models import Disciplina
@@ -997,7 +997,15 @@ def projeto_submeter(request):
         return HttpResponse("Você não está cadastrado como parceiro de uma organização")
     #configuracao = Configuracao.objects.first()
 
-    #parceiro = Parceiro.objects.get(pk=request.user.pk)
+    parceiro = None
+    professor = None
+    administrador = None
+    if user.tipo_de_usuario == 3: # parceiro
+        parceiro = Parceiro.objects.get(pk=request.user.pk)
+    elif user.tipo_de_usuario == 2: # professor
+        professor = Professor.objects.get(pk=request.user.pk)
+    elif user.tipo_de_usuario == 4: # admin
+        administrador = Administrador.objects.get(pk=request.user.pk)
 
     if request.method == 'POST':
         """
@@ -1016,6 +1024,9 @@ def projeto_submeter(request):
     else:
         context = {
             'user' : user,
+            'parceiro' : parceiro,
+            'professor' : professor,
+            'administrador' : administrador,
         }
         return render(request, 'projetos/projeto_submissao.html', context)
 

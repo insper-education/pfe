@@ -22,43 +22,35 @@
 
 {% block content %}
 
-  <h5>Submissão de Projeto</h5><br>
-
-<strong>Usuário:</strong> {{ user.username }}<br>
-{% if aluno %}
-  <strong>Curso:</strong> {{user.aluno.get_curso_display}}<br>
-  <strong>Ano e Semestre de PFE:</strong> {{user.aluno.anoPFE}}.{{user.aluno.semestrePFE}} <small>(ou posterior)</small><br>
-{% elif professor %}
-  <strong>Perfil:</strong> professor<br>
-{% elif parceiro %}
-  <strong>Perfil:</strong> parceiro<br>
-{% endif %}
-{% if user.email %}
-  <strong>e-mail:</strong> <a href="mailto:{{user.email}}">{{user.email}}</a><br>
-{% endif %}
-
+  <h5>Submissão de Projeto</h5>
+  {% if professor %}
+    <strong>Seu Perfil é de Professor, você está preenchendo para alguma organização</strong><br>
+  {% elif administrador %}
+    <strong>Seu Perfil é de Administrador, você está preenchendo para alguma organização</strong><br>
+  {% endif %}
+  <br>
 
   <form action="" method="post"> {% csrf_token %}  
 
 {% comment %}
-    user.is_authenticated
     onclick="location.href='{% if user.tipo_de_usuario == 1 %}{{ url_index_aluno }}{% else %}{{ url_index_professor }}{% endif %}'"
 {% endcomment %}
 
-    Nome: <input type="text" size="75" name="nome"><br>
-    e-mail: <input type="email" size="75" name="email"><br>
-    Empresa: <input type="text" size="72" name="empresa"><br>
+    Nome: <input type="text" size="75" name="nome" value="{{user.get_full_name}}"><br><br>
+    e-mail: <input type="email" size="75" name="email" value="{{user.email}}"><br><br>
 
     Nome da Instituição/Empresa<br>
     <small>sigla e nome comercial/fantasia se houver, aqui não precisa ser a Razão Social</small>
     <br>
-    <textarea name="organizacao" rows="1" cols="80" maxlength="100">{{organizacao}}</textarea>
+    <textarea name="organizacao" rows="1" cols="80" maxlength="100">
+      {% if parceiro %} {{parceiro.organizacao}} {% endif %} 
+    </textarea>
     <br><br>
 
     Endereço<br>
     <small>onde os alunos deverão ir para desenvolver o projeto</small>
     <br>
-    <textarea name="endereco" rows="4" cols="80" maxlength="1000">{{endereco}}</textarea>
+    <textarea name="endereco" rows="3" cols="80" maxlength="1000">{{endereco}}</textarea>
     <br><br>
 
     Contatos Técnicos<br>  
@@ -122,7 +114,17 @@
     <textarea name="observacoes" rows="4" cols="80" maxlength="1000">{{observacoes}}</textarea>
     <br><br>
 
-    Obs.: Ao submeter o projeto, deve ficar claro que a intenção do Projeto Final de Engenharia é que os alunos tenham um contato próximo com as pessoas responsáveis nas instituições parceira para o desenvolvimento de uma solução em engenharia. Em geral os alunos se deslocam uma vez por semana para entender melhor o desafio, demonstrar resultados preliminares, fazerem planejamentos em conjunto, dentre de outros pontos que podem variar de projeto para projeto. Também deve ficar claro que embora não exista um custo direto para as instituições parceiras, essas terão de levar em conta que pelo menos um profissional deverá dedicar algumas horas semanalmente para acompanhar os alunos. Além disso se a proposta contemplar gastos, como por exemplo servidores, matéria prima de alguma forma, o Insper não terá condição de bancar tais gastos e isso terá de ficar a cargo da empresa, contudo os alunos terão acesso aos laboratórios do Insper para o desenvolvimento do projeto em horários agendados.
+    Obs.: Ao submeter o projeto, deve ficar claro que a intenção do Projeto Final de Engenharia é 
+    que os alunos tenham um contato próximo com as pessoas responsáveis nas instituições parceira 
+    para o desenvolvimento de uma solução em engenharia. Em geral os alunos se deslocam uma vez 
+    por semana para entender melhor o desafio, demonstrar resultados preliminares, fazerem 
+    planejamentos em conjunto, dentre de outros pontos que podem variar de projeto para projeto. 
+    Também deve ficar claro que embora não exista um custo direto para as instituições parceiras, 
+    essas terão de levar em conta que pelo menos um profissional deverá dedicar algumas horas 
+    semanalmente para acompanhar os alunos. Além disso se a proposta contemplar gastos, como por 
+    exemplo servidores, matéria prima de alguma forma, o Insper não terá condição de bancar tais 
+    gastos e isso terá de ficar a cargo da empresa, contudo os alunos terão acesso aos 
+    laboratórios do Insper para o desenvolvimento do projeto em horários agendados.
     
     <br><br>
     <input type="submit" value="Enviar">
