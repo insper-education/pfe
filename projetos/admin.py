@@ -31,7 +31,6 @@ def dup_projeto(modeladmin: admin_opt.ModelAdmin, request, queryset):
     for obj in queryset:
         from_id = obj.id
         obj.id = None
-        #if isinstance(obj, Projeto):
         if Configuracao.objects.all().first().semestre == 1:
             obj.semestre = 2
             obj.ano = Configuracao.objects.all().first().ano
@@ -80,7 +79,7 @@ dup_encontros.short_description = "Duplicar Entrada(s)"
 def dup_encontros_4x(modeladmin: admin_opt.ModelAdmin, request, queryset):
     """Função abaixo permite duplicar entradas no banco de dados 4 X"""
     for obj in queryset:
-        for index in range(4):
+        for _ in range(4):
             from_id = obj.id
             obj.id = None
             obj.save()
@@ -91,7 +90,7 @@ dup_encontros_4x.short_description = "Duplicar Entrada(s) 4 X"
 def dup_encontros_8x(modeladmin: admin_opt.ModelAdmin, request, queryset):
     """Função abaixo permite duplicar entradas no banco de dados 8 X"""
     for obj in queryset:
-        for index in range(8):
+        for _ in range(8):
             from_id = obj.id
             obj.id = None
             obj.save()
@@ -151,7 +150,7 @@ class ProjetoAdmin(admin.ModelAdmin):
 @admin.register(Empresa)
 class EmpresaAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
-    list_display = ('sigla', 'nome_empresa',)
+    list_display = ('sigla', 'nome_empresa', 'website')
 
 @admin.register(Configuracao)
 class ConfiguracaoAdmin(admin.ModelAdmin):
@@ -167,6 +166,7 @@ class DisciplinaAdmin(admin.ModelAdmin):
 class AnotacaoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
     list_display = ('data', 'organizacao', 'autor',)
+    ordering = ('-data',)
 
 @admin.register(Documento)
 class DocumentoAdmin(admin.ModelAdmin):
@@ -177,6 +177,7 @@ class DocumentoAdmin(admin.ModelAdmin):
 class BancoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
     list_display = ('nome', 'codigo')
+    ordering = ('nome',)
 
 @admin.register(Reembolso)
 class ReembolsoAdmin(admin.ModelAdmin):
@@ -197,11 +198,16 @@ class BancaAdmin(admin.ModelAdmin):
         return obj.projeto.empresa
     get_organizacao.short_description = 'Organização'
     get_organizacao.admin_order_field = 'projeto__empresa'
+    ordering = ('-startDate',)
+    list_filter = ('projeto__orientador',)
 
 @admin.register(Aviso)
 class AvisoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
     list_display = ('titulo', 'delta',)
+    list_filter = ('comite_pfe', 'todos_alunos', 'aluno_p_projeto', 'todos_orientadores',
+                   'orientadores_p_projeto', 'contatos_nas_organizacoes',)
+    ordering = ('delta',)
 
 @admin.register(Evento)
 class EventoAdmin(admin.ModelAdmin):
@@ -223,12 +229,13 @@ class ConexaoAdmin(admin.ModelAdmin):
 class CoorientadorAdmin(admin.ModelAdmin):
     """Conexão entre coorientador e projeto."""
     list_display = ('usuario', 'projeto')
+    ordering = ('usuario__first_name', 'usuario__last_name',)
 
 @admin.register(Encontro)
 class EncontroAdmin(admin.ModelAdmin):
     """Informações das Encontros (com os facilitadores)."""
     list_display = ('startDate', 'projeto', 'facilitador')
-    actions = [dup_encontros, dup_encontros_4x, dup_encontros_8x ]
+    actions = [dup_encontros, dup_encontros_4x, dup_encontros_8x]
 
 admin.site.register(Cursada)
 admin.site.register(Recomendada)
