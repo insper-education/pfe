@@ -40,20 +40,19 @@
         publicados antes de 
       {% elif periodo == "atuais" %}
         disponíveis em
-      {% elif periodo == "disponíveis" %}
+      {% elif periodo == "disponiveis" %}
         após
       {% endif %}
       {{configuracao.ano}}.{{configuracao.semestre}}
     {% endif %}
   </h3>
 
-  <select id="cxi" class="filter" data-tableId="projetos">
-    <option value="todos">todos</option>
+  <select onchange="location = this.options[this.selectedIndex].value;">
+    <option value="todos" {% if periodo == "todos" %}selected="selected"{% endif %}>todos</option>
     <option value="antigos" {% if periodo == "antigos" %}selected="selected"{% endif %}>antigos</option>
     <option value="atuais" {% if periodo == "atuais" %}selected="atuais"{% endif %}>atuais</option>
-    <option value="disponíveis" {% if periodo == "disponíveis" %}selected="disponíveis"{% endif %}>disponíveis</option>
+    <option value="disponiveis" {% if periodo == "disponiveis" %}selected="disponiveis"{% endif %}>disponíveis</option>
   </select>
-  (not working)
   <br><br>
 
   {% if projetos %}
@@ -122,7 +121,7 @@
             </a>
           {% if not projeto.disponivel %}</del>{% endif %}
         </td>
-        <td>
+        <td class="text-center">
           {% if not projeto.disponivel %}
             <del>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</del>
           {% else %}
@@ -134,10 +133,11 @@
               <script>tmp_computacao += 1</script>
               <script>tmp_mecatronica += 1</script>
               <script>tmp_mecanica += 1</script>
+              ?
             {% endif %}
           {% endif %}
         </td>
-        <td>
+        <td class="text-center">
           {% if not projeto.disponivel %}
             <del>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</del>
           {% else %}
@@ -149,10 +149,11 @@
               <script>tmp_computacao += 1</script>
               <script>tmp_mecatronica += 1</script>
               <script>tmp_mecanica += 1</script>
+              ?
             {% endif %}
           {% endif %}
         </td>
-        <td>
+        <td class="text-center">
           {% if not projeto.disponivel %}
             <del>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</del>
           {% else %}
@@ -164,10 +165,11 @@
               <script>tmp_computacao += 1</script>
               <script>tmp_mecatronica += 1</script>
               <script>tmp_mecanica += 1</script>
+              ?
             {% endif %}
           {% endif %}
         </td>
-        <td>
+        <td class="text-center">
           {% if not projeto.disponivel %}
             <del>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</del>
           {% else %}
@@ -178,6 +180,7 @@
               <script>tmp_computacao += 1</script>
               <script>tmp_mecatronica += 1</script>
               <script>tmp_mecanica += 1</script>
+              ?
             {% endif %}
           {% endif %}
         </td>
@@ -203,15 +206,19 @@
       </script>
       {% endfor %}
     </table>
-    <small>C: Computação | X: Mecatrônica | M: Mecânica</small><br>
+    <p style="text-align: right;"><small>C: Computação | X: Mecatrônica | M: Mecânica</small></p>
     <p>&nbsp;</p>
-    <strong>Número Total de Projetos Publicados:</strong> <script>document.write(publicados);</script> ({{ projetos.count }})<br>
+    <strong>Número Total de Projetos Publicados:</strong> <script>document.write(publicados);</script>
+      <a data-toggle="tooltip" data-html="true" animation="true" title="Contando projetos que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
+        ({{ projetos.count }})
+      </a><br>
+    
     <strong>Número Total de Projetos Fechados:</strong> <script>document.write(fechados);</script><br>
     <p>&nbsp;</p>
+    <strong>Projetos nativamente multidisciplinar:</strong> <script>document.write(projeto_multidisciplinar);</script><br>
     <strong>Projetos nativamente de computação:</strong> <script>document.write(projeto_computacao);</script><br>
     <strong>Projetos nativamente de mecatrônica:</strong> <script>document.write(projeto_mecatronica);</script><br>
     <strong>Projetos nativamente de mecânica:</strong> <script>document.write(projeto_mecanica);</script><br>
-    <strong>Projetos nativamente multidisciplinar:</strong> <script>document.write(projeto_multidisciplinar);</script><br>
     <p>&nbsp;</p>
     <strong>Vagas para alunos de computação:</strong> <script>document.write(alunos_computacao);</script><br>
     <strong>Vagas para alunos de mecatrônica:</strong> <script>document.write(alunos_mecatronica);</script><br>

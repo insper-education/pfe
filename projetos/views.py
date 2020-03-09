@@ -1174,7 +1174,7 @@ def arquivos2(request, organizacao, usuario, path):
 def projetos_lista(request, periodo):
     """Lista todos os projetos."""
     configuracao = Configuracao.objects.all().first()
-    projetos = Projeto.objects.all().order_by("ano", "semestre")
+    projetos = Projeto.objects.all().order_by("ano", "semestre", "empresa", "titulo",)
     if periodo == "todos":
         pass
     if periodo == "antigos":
