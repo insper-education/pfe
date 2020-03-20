@@ -280,7 +280,7 @@ class Parceiro(models.Model):  # da empresa (não do Insper)
                                 help_text='Telefone Fixo')
     celular = models.CharField(max_length=20, blank=True,
                                help_text='Telefone Celular')
-    skype = models.CharField(max_length=20, blank=True,
+    skype = models.CharField(max_length=32, blank=True,
                              help_text='Identificação Skype')
     observacao = models.TextField("Observações", max_length=500, blank=True,
                                   help_text='Observações')
