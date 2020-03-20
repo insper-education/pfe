@@ -16,6 +16,8 @@
   <h5>Listagem de Feedbacks das Organizações Parceiras</h5>
   Link para pesquisa: <a href="{{ feedback_url }}">{{ SERVER_URL }}{{ feedback_url }}</a><br><br>
   
+  <!-- VER: https://stackoverflow.com/questions/53202862/trying-to-sort-tables-with-w3-js-but-its-not-sorting-numbers-properly -->
+
 {% if feedbacks %}
     <table id="FeedbacksTable">
       <tr>
@@ -54,7 +56,7 @@
             {% endif %}
           </td>
           <td>
-            {{feedback.data}}
+            {{feedback.data|date:"Y.m.d"}}
           </td>
         </tr>
       {% endfor %}
