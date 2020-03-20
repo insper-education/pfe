@@ -1575,7 +1575,7 @@ def emails(request):
     semestre = 2
     semestres = []
     aplicando_p_semestre = []
-    alocados_p_semestre = []
+    #alocados_p_semestre = []
     orientadores_p_semestre = []
     parceiros_p_semestre = []
     projetos_p_semestre = []
@@ -1630,7 +1630,7 @@ def emails(request):
                                 filter(semestrePFE=semestre).\
                                 filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0]))
 
-        alocados_p_semestre.append(alunos_semestre)
+        #alocados_p_semestre.append(alunos_semestre)
         orientadores_p_semestre.append(orientadores)
         parceiros_p_semestre.append(parceiros_semestre)
         bancas_p_semestre.append(membros_bancas)
@@ -1647,8 +1647,8 @@ def emails(request):
             semestre = 1
 
     email_todos = zip(semestres,
-                      aplicando_p_semestre,
-                      alocados_p_semestre,
+                      aplicando_p_semestre,  #na pratica chamaremos de aluno no template
+                      #alocados_p_semestre,
                       orientadores_p_semestre,
                       parceiros_p_semestre,
                       bancas_p_semestre)
