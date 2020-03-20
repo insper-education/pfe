@@ -34,7 +34,7 @@
   <br><strong>contato(s):</strong><br>
   {% for parceiro in organization.parceiro_set.all %}
     {% if parceiro.user.is_active %}
-    <li  style="color: lightgrey;">
+    <li>
       <a href="{% url 'parceiro_detail' parceiro.id %}">
         {{parceiro.user.get_full_name}} &nbsp;
       </a>
