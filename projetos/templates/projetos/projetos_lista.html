@@ -84,14 +84,14 @@
             {% if projeto.opcao_set.all  %}
               data-toggle="tooltip" data-html="true" animation="true" title="
               {% for opcaop in projeto.opcao_set.all %}
-                {% if opcaop.projeto == aluno.alocacao_set.last.projeto %}
+                {% if opcaop.projeto == opcaop.aluno.alocacao_set.last.projeto %}
                   <u>
                 {% endif %}
                   {% if opcaop.aluno %}
                     {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.get_curso_display}}]
                   {% endif %}
                   #{{ opcaop.prioridade }}
-                {% if opcaop.projeto == aluno.alocacao_set.last.projeto %}
+                {% if opcaop.projeto == opcaop.aluno.alocacao_set.last.projeto %}
                   </u>
                 {% endif %}
                 |{% mede_aderencia opcaop.aluno projeto %}%|
