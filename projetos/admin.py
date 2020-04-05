@@ -134,6 +134,7 @@ class ProjetoAdmin(admin.ModelAdmin):
             'anexo', 'imagem',
             'avancado', 'ano', 'semestre', 'disponivel',
             'orientador',
+            'autorizado',
             'perfil_aluno1_computacao', 'perfil_aluno1_mecanica', 'perfil_aluno1_mecatronica',
             'perfil_aluno2_computacao', 'perfil_aluno2_mecanica', 'perfil_aluno2_mecatronica',
             'perfil_aluno3_computacao', 'perfil_aluno3_mecanica', 'perfil_aluno3_mecatronica',

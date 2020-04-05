@@ -76,8 +76,9 @@
   {% if projeto.orientador %}
   <hr>
   <h3>Orientador(a): </h3>
+  &nbsp;
   <a href="{% url 'professor_detail' projeto.orientador.id %}">
-    &nbsp;&nbsp;{{projeto.orientador.user.get_full_name}}
+    {{projeto.orientador.user.get_full_name}}
   </a>
   {% endif %}
 
@@ -87,6 +88,7 @@
     <ul>
     {% for coorientador in coorientadores %}
       <li>
+      &nbsp;
       <a class="tabulado" href="{% url 'professor_detail' coorientador.usuario.professor.id %}">
         {{ coorientador.usuario.get_full_name }}
       </a>
@@ -97,6 +99,16 @@
     {% endfor %}
     </ul>
   {% endif %}
+  <br>
+  <strong>autorizado para publicação para os alunos por:</strong>
+  {% if projeto.autorizado %}
+    <a href="{% url 'professor_detail' projeto.autorizado.id %}">
+      {{projeto.autorizado.user.get_full_name}}
+    </a>
+  {% else %}
+    aguardando autorização
+  {% endif %}
+
 
   <hr>
   <h3>Aluno(s) Alocado(s) no Projeto:</h3>

@@ -106,6 +106,9 @@ class Projeto(models.Model):
     orientador = models.ForeignKey('users.Professor', null=True, blank=True,
                                    on_delete=models.SET_NULL, related_name='professor_orientador',
                                    help_text='professor orientador do projeto')
+    autorizado = models.ForeignKey('users.Professor', null=True, blank=True,
+                                   on_delete=models.SET_NULL,
+                                   help_text='professor que autorizou projeto a ser publicado para os alunos')
     perfil_aluno1_computacao = \
         models.BooleanField(default=False, help_text='Perfil desejado de computação para aluno 1')
     perfil_aluno1_mecatronica = \
