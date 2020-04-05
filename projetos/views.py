@@ -1986,7 +1986,7 @@ def lista_feedback(request):
     """Lista todos os feedback das Organizações Parceiras."""
 
     context = {
-        'feedbacks' : Feedback.objects.all(),
+        'feedbacks' : Feedback.objects.all().order_by("-data"),
         'SERVER_URL' : settings.SERVER,
     }
     return render(request, 'projetos/lista_feedback.html', context)
