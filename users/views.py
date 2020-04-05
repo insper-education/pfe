@@ -98,6 +98,12 @@ def alunos_lista(request):
     num_alunos_mec = alunos_list.filter(curso__exact='M').count() # Conta alunos mecânica
 
     tabela_alunos = {}
+
+    totais = {}
+    totais["computação"] = 0
+    totais["mecânica"] = 0
+    totais["mecatrônica"] = 0
+
     ano = 2018
     semestre = 2
     while True:
@@ -110,10 +116,13 @@ def alunos_lista(request):
 
         tabela_alunos[ano][semestre]["computação"] =\
             alunos_semestre.filter(curso__exact='C').count()
+        totais["computação"] += tabela_alunos[ano][semestre]["computação"]
         tabela_alunos[ano][semestre]["mecânica"] =\
-            alunos_semestre.filter(curso__exact='M').count()        
+            alunos_semestre.filter(curso__exact='M').count()
+        totais["mecânica"] += tabela_alunos[ano][semestre]["mecânica"]
         tabela_alunos[ano][semestre]["mecatrônica"] =\
             alunos_semestre.filter(curso__exact='X').count()
+        totais["mecatrônica"] += tabela_alunos[ano][semestre]["mecatrônica"]
         tabela_alunos[ano][semestre]["total"] =\
             alunos_semestre.count()
 
@@ -126,6 +135,8 @@ def alunos_lista(request):
             ano += 1
             semestre = 1
 
+    totais["total"] = totais["computação"] + totais["mecânica"] + totais["mecatrônica"] 
+
     context = {
         'alunos_list' : alunos_list,
         'num_alunos': num_alunos,
@@ -134,6 +145,7 @@ def alunos_lista(request):
         'num_alunos_mec': num_alunos_mec,
         'configuracao': configuracao,
         'tabela_alunos': tabela_alunos,
+        'totais': totais,
     }
     return render(request, 'users/alunos_lista.html', context=context)
 

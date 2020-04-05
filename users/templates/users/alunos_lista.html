@@ -138,10 +138,9 @@
         };
       
       </script>
-  
-  <br>
-  <br>
-  Quantidade de alunos alocados em projetos por semestre:
+  <small>contando alunos alocados em projetos ou não</small>
+  <br><br><br>
+  <h5>Quantidade de alunos alocados em projetos</h5>
   <table id="AlunosTable">
     <tr>
         <th class="text-center" style="border-right: solid 3px;">Periodo</th>
@@ -161,6 +160,14 @@
         </tr>
       {% endfor %}
     {% endfor %}
+    <tr>
+      <td class="text-center" style="border-right: solid 3px; border-top: double;"> Totais </td>
+      <td class="text-center" style="border-top: double;"> {{totais.computação}} </td>
+      <td class="text-center" style="border-top: double;"> {{totais.mecânica}} </td>
+      <td class="text-center" style="border-top: double;"> {{totais.mecatrônica}} </td>
+      <td class="text-center" style="border-left: solid 3px; border-top: double;"><b> {{totais.total}} </b></td>
+    </tr>
   </table>
+  <small>alunos reprovados contam mais de uma vez</small>
   <br>
 {% endblock %}
