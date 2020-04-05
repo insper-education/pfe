@@ -19,7 +19,17 @@
 
     <h3>Datas para encontros</h3>
     <br>
-    <h4>Seu projeto: {{projeto.get_titulo}}</h4>
+    {% if user.tipo_de_usuario == 1 %}
+        <h4>Seu projeto: 
+            {% if projeto %}
+                {{projeto.get_titulo}}
+            {% else %}
+                < PROJETO NÃO ENCONTRADO >
+            {% endif %}
+        </h4>
+    {% else %}
+        <h5>Somente visualização das opções de encontros (você não está registardo como aluno)</h5>
+    {% endif %}
     <br><br>
     <div class="control"></div>
         {% for e in encontros %}
@@ -35,7 +45,11 @@
     </div>
     <p>&nbsp;</p>
 
-    <button type="submit">Agendar</button>
+    <button type="submit" 
+      {% if user.tipo_de_usuario != 1 or not projeto %}disabled{% endif %}>
+        Agendar
+    </button>
+
     <p>&nbsp;</p>
     <p>&nbsp;</p>
 </form>

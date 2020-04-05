@@ -98,7 +98,8 @@
     <a {% if not projeto %} class="disabled" onclick="myFunction('projeto')" {% else %} href="{% url 'minhas_bancas' %}" {% endif %} >
         <h5>Horário das bancas</h5>
     </a>
-    <a {% if not projeto %} class="disabled" onclick="myFunction('projeto')" {% else %} href="{% url 'encontros_marcar' %}" {% endif %} >
+    
+    <a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="myFunction('projeto')" {% else %} href="{% url 'encontros_marcar' %}" {% endif %} > <!-- tipo_de_usuario == 1 é aluno -->
         <h5>Agendar horário das dinâmicas</h5>
     </a>
 
