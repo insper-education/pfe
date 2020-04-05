@@ -36,6 +36,7 @@
             <label class="radio" 
               {% if e.projeto and e.projeto != projeto %}
                  data-toggle="tooltip" data-placement="bottom" title="Horário já selecionado por outro grupo!"
+                 style="color:lightgrey" 
               {% elif e.projeto and e.projeto == projeto %}
                  style="color:red" 
                  data-toggle="tooltip" data-placement="bottom" title="Horário selecionado por seu grupo!"
