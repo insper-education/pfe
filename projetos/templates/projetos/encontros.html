@@ -33,7 +33,13 @@
     <br><br>
     <div class="control"></div>
         {% for e in encontros %}
-            <label class="radio" {% if e.projeto and e.projeto != projeto %}data-toggle="tooltip" data-placement="bottom" title="Horário já selecionado por outro grupo!"{% endif %}>
+            <label class="radio" 
+              {% if e.projeto and e.projeto != projeto %}
+                 data-toggle="tooltip" data-placement="bottom" title="Horário já selecionado por outro grupo!"
+              {% elif e.projeto and e.projeto == projeto %}
+                 style="color:red" 
+                 data-toggle="tooltip" data-placement="bottom" title="Horário selecionado por seu grupo!"
+              {% endif %}>
                 <input type="radio" name="selection" value="{{e.id}}" 
                 {% if e.projeto == projeto %}checked{% endif %}
                 {% if e.projeto and e.projeto != projeto %}disabled{% endif %}
