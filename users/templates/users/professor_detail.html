@@ -7,27 +7,37 @@
 
 {% block content %}
   <h3>{{professor.user.get_full_name}}</h3>
+  <strong>Regime de Dedicação:</strong>
+  {% if professor.dedicacao %}
+    {{professor.dedicacao}}
+  {% else %}
+    &lt;&lt;Não Definido&gt;&gt;
+  {% endif %}
+  <br>
+
   <strong>e-mail:</strong> <a href="mailto:{{professor.user.email}}"> &lt;{{professor.user.email}}&gt;</a><br>
   {% if professor.website %}
     <strong>website:</strong> <a href="{{ professor.website }}"> {{ professor.website }} </a><br>
   {% endif %}
+
   {% if professor.lattes %}
     <strong>Lattes:</strong> <a href="{{ professor.lattes }}"> {{ professor.lattes }} </a><br>
   {% endif %}
 
   {% if projetos %}
     <hr>
-    <h3>Projetos Orientando</h3>
+    <h3>Projeto(s) Orientado(s)</h3>
+    <ol>
     {% for projeto in projetos %}
       {% if projeto.alocacao_set.all.count > 0 %}
-        <a href="{% url 'completo' projeto.id %}">
+        <li><a href="{% url 'completo' projeto.id %}">
         {{projeto.get_titulo}}
         [{{projeto.ano}}.{{projeto.semestre}}] ({{projeto.empresa.nome_empresa}})
         { {{ projeto.alocacao_set.all.count }} aluno(s) }
-        <br>
-        </a>
+        </a></li>
       {% endif %}
     {% endfor %}
+    </ol>
   {% endif %}
   <p>&nbsp;</p>
   <p>&nbsp;</p>

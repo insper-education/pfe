@@ -99,6 +99,16 @@ class PFEUser(AbstractUser):
 class Professor(models.Model):
     """Classe de usuários com estatus de Professor."""
     user = models.OneToOneField(PFEUser, related_name='professor', on_delete=models.CASCADE)
+
+    TIPO_DEDICACAO = (
+        ("TI", "Tempo Integral"),
+        ("TP", 'Tempo Parcial'),
+    )
+    
+    dedicacao = models.CharField("Dedicação", max_length=2,
+                                 choices=TIPO_DEDICACAO, null=True, blank=True,
+                                 help_text='Tipo de dedicação do professor')
+
     areas = models.TextField(max_length=500, blank=True)
     website = models.URLField(max_length=250, null=True, blank=True)
     lattes = models.URLField(max_length=250, null=True, blank=True)
