@@ -1578,8 +1578,7 @@ def emails(request):
     ano = 2018
     semestre = 2
     semestres = []
-    aplicando_p_semestre = []
-    #alocados_p_semestre = []
+    alunos_p_semestre = []
     orientadores_p_semestre = []
     parceiros_p_semestre = []
     projetos_p_semestre = []
@@ -1629,7 +1628,7 @@ def emails(request):
         parceiros_semestre = Parceiro.objects.filter(organizacao__in=organizacoes)
 
         # Cria listas para enviar para templeate html
-        aplicando_p_semestre.append(Aluno.objects.filter(trancado=False).\
+        alunos_p_semestre.append(Aluno.objects.filter(trancado=False).\
                                 filter(anoPFE=ano).\
                                 filter(semestrePFE=semestre).\
                                 filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0]))
@@ -1641,9 +1640,10 @@ def emails(request):
 
         projetos_p_semestre.append(projetos_pessoas)
 
-        # Vai para próximo semestre
-        if ano == configuracao.ano and semestre == configuracao.semestre:
+        if ano > configuracao.ano or ( ano == configuracao.ano and semestre > configuracao.semestre):
             break
+
+        # Vai para próximo semestre
         if semestre == 1:
             semestre = 2
         else:
@@ -1651,14 +1651,12 @@ def emails(request):
             semestre = 1
 
     email_todos = zip(semestres,
-                      aplicando_p_semestre,  #na pratica chamaremos de aluno no template
-                      #alocados_p_semestre,
+                      alunos_p_semestre,  #na pratica chamaremos de aluno no template
                       orientadores_p_semestre,
                       parceiros_p_semestre,
                       bancas_p_semestre)
 
     email_p_semestre = zip(semestres, projetos_p_semestre)
-
 
     membros_comite = PFEUser.objects.all().filter(membro_comite=True)
 
