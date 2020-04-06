@@ -160,17 +160,16 @@ def alunos_inscrevendo(request):
     """Mostra todos os alunos que estão se inscrevendo em projetos."""
     configuracao = Configuracao.objects.all().first()
 
-    # PARA O FUTURO IMPLEMENTAR
-    # if configuracao.semestre==1:
-    #     ano = configuracao.ano
-    #     semestre = 2
-    # else:
-    #     ano = configuracao.ano+1
-    #     semestre = 1
+    if configuracao.semestre==1:
+        ano = configuracao.ano
+        semestre = 2
+    else:
+        ano = configuracao.ano+1
+        semestre = 1
 
     # Alunos se inscrevendo atualmente
-    ano = configuracao.ano
-    semestre = configuracao.semestre
+    # ano = configuracao.ano
+    # semestre = configuracao.semestre
 
     alunos_se_inscrevendo = Aluno.objects.filter(trancado=False).\
                                           filter(anoPFE=ano, semestrePFE=semestre).\

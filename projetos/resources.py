@@ -24,6 +24,9 @@ class ConfiguracaoResource(resources.ModelResource):
         model = Configuracao
 
 class DisciplinasResource(resources.ModelResource):
+    campos = [
+        'FAZER',
+    ]
     nome = fields.Field(attribute='nome', column_name='nome')
     def get_instance(self, instance_loader, row):
         # Returning False prevents us from looking in the
@@ -51,15 +54,29 @@ class UsuariosResource(resources.ModelResource):
         model = PFEUser
 
 class AlunosResource(resources.ModelResource):
+    campos = [
+        'usuário (primeira parte do e-mail, obrigatório)',
+        'nome',
+        'sobrenome',
+        'email (sem o traço separando "e" de "mail")',
+        'gênero (M|F)',
+        'curso (GRENGCOMP|GRENGMECAT|GRENGMECA)',
+        'matrícula',
+        'cr (ponto como separador decimal)',
+        'anoPFE',
+        'semestrePFE',
+    ]
     def before_import_row(self, row, **kwargs): #forma que arrumei para evitar preencher com o mesmo dado
-        username = row.get('username')
+        username = row.get('usuário')
         if username is None:
-            print("Erro ao recuperar o username")
+            print("Erro ao recuperar o usuário [username]")
         elif username != "":
+            # recupera dados do aluno se ele já estava cadastrado
             (user, _created) = PFEUser.objects.get_or_create(username=username, tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
-            user.first_name = row.get('first_name')
-            user.last_name = row.get('last_name')
+            user.first_name = row.get('nome')
+            user.last_name = row.get('sobrenome')
             user.email = row.get('email')
+            user.genero = row.get('gênero')
             user.save()
             (aluno, _created) = Aluno.objects.get_or_create(user=user)
             if row.get('curso') == "GRENGCOMP":
@@ -71,8 +88,10 @@ class AlunosResource(resources.ModelResource):
             else:
                 pass #erro
             aluno.matricula = row.get('matrícula')
-            aluno.anoPFE = 2018
-            aluno.semestrePFE = 2
+            aluno.cr = float(row.get('cr'))
+            aluno.anoPFE = int(row.get('anoPFE'))
+            aluno.semestrePFE = int(row.get('semestrePFE'))
+
             aluno.save()
             row['id'] = aluno.id
     def skip_row(self, instance, original):

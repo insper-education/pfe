@@ -9,6 +9,16 @@
 {% endblock %}
 
 {% block content %}
+  <h4>Carregamento de CSV (Comma Separated Values)</h4>
+  <strong>(realmente separado por vírgula, não funciona com ponto e vírgula)</strong>
+  <br><br>
+  <h6>Campos Permitidos:</h6>
+  <ul>
+  {% for campo in campos_permitidos %}
+    <li>{{campo}}</li>
+  {% endfor %}
+  </ul>
+  <br>
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <input type="file" name="arquivo">

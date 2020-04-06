@@ -1068,17 +1068,18 @@ def simple_upload(myfile, path="", prefix=""):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def carrega(request, dado):
     """Faz o upload de arquivos CSV para o servidor."""
+
+    if dado == "disciplinas":
+        resource = DisciplinasResource()
+    if dado == "alunos":
+        resource = AlunosResource()
+    else:
+        raise Http404
+
     # https://simpleisbetterthancomplex.com/packages/2016/08/11/django-import-export.html
     if request.method == 'POST':
 
         dataset = tablib.Dataset()
-
-        if dado == "disciplinas":
-            resource = DisciplinasResource()
-        if dado == "alunos":
-            resource = AlunosResource()
-        else:
-            raise Http404
 
         new_data = request.FILES['arquivo'].readlines()
         entradas = ""
@@ -1086,21 +1087,24 @@ def carrega(request, dado):
             string = i.decode("utf-8")
             entradas += re.sub('[^A-Za-z0-9À-ÿ, \r\n@._]+', '', string) #Limpa caracteres especiais
 
-        #imported_data = dataset.load(entradas, format='csv')
+        imported_data = dataset.load(entradas, format='csv')
         dataset.insert_col(0, col=lambda row: None, header="id")
 
         result = resource.import_data(dataset, dry_run=True, raise_errors=True)
 
         if not result.has_errors():
             resource.import_data(dataset, dry_run=False)  # Actually import now
-            string_html = "Importado: <br>"
+            string_html = "Importado ({0} registros): <br>".format(len(dataset))
             for row_values in dataset:
                 string_html += str(row_values) + "<br>"
             return HttpResponse(string_html)
         else:
             return HttpResponse("Erro ao carregar arquivo."+str(result))
 
-    return render(request, 'projetos/import.html')
+    context = {
+        'campos_permitidos': resource.campos,
+    }
+    return render(request, 'projetos/import.html', context)
 
 def get_response(file, path):
     """Verifica a extensão do arquivo e retorna o HttpRensponse corespondente."""
