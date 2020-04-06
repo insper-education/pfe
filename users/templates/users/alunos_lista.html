@@ -17,129 +17,171 @@
 {% endblock %}
 
 {% block content %}
-    <h3>Alunos</h3>
+  <h3>Alunos</h3>
 
-    <strong>Número Total de Alunos:</strong> {{ num_alunos }}
-  
-    {% if alunos_list %}
-      <table id="AlunosTable">
-          <tr>
-              <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome do Aluno</th>
-              <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Curso</th>
-              <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Período</th>
-              <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">e-mail</th>
-          </tr>
-          {% for aluno in alunos_list %} 
-          <tr class="item">
-            <td>
-              <a href="{% url 'aluno_detail' aluno.id %}" 
-                {% if aluno.opcao_set.all %}
-                  data-toggle="tooltip" data-html="true" animation="true" title="
-                  {% for opcao in aluno.opcao_set.all %}
-                    <b>#{{opcao.prioridade}}:</b>
-                    {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
-                      <u>
-                    {% endif %}
-                    {{opcao.projeto.get_titulo}}
-                    ({{opcao.projeto.empresa.nome_empresa}})
-                    {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
-                      </u>
-                    {% endif %}
-                    <br>
-                  {% endfor %}
-                  "
-                {% endif %}
-              >
-                {{aluno.user.get_full_name}}
-              </a>
-            </td>
-            {% if aluno.curso %}
-              <td class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">
-                {{ aluno.get_curso_display }}
-              </td>
-            {% else %}
-              <td>Indefinido</td>
-            {% endif %}
-            <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
-              {% if aluno.alocacao_set.all %}
-                {% for alocacao in aluno.alocacao_set.all %}
-                  <a href="{% url 'completo' alocacao.projeto.id %}">
-                    {% if alocacao.projeto.avancado %}<u>{% endif %}
-                    {{alocacao.projeto.ano}}.{{alocacao.projeto.semestre}}
-                    {% if alocacao.projeto.avancado %}</u>{% endif %}
-                  </a>
+  <strong>Número Total de Alunos:</strong> {{ num_alunos }}
+
+  {% if alunos_list %}
+    <table id="AlunosTable">
+        <tr>
+            <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome do Aluno</th>
+            <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Curso</th>
+            <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Período</th>
+            <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">e-mail</th>
+        </tr>
+        {% for aluno in alunos_list %} 
+        <tr class="item">
+          <td>
+            <a href="{% url 'aluno_detail' aluno.id %}" 
+              {% if aluno.opcao_set.all %}
+                data-toggle="tooltip" data-html="true" animation="true" title="
+                {% for opcao in aluno.opcao_set.all %}
+                  <b>#{{opcao.prioridade}}:</b>
+                  {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
+                    <u>
+                  {% endif %}
+                  {{opcao.projeto.get_titulo}}
+                  ({{opcao.projeto.empresa.nome_empresa}})
+                  {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
+                    </u>
+                  {% endif %}
+                  <br>
                 {% endfor %}
-              {% else %}
-                {% if aluno.anoPFE and aluno.semestrePFE %}
-                  {{aluno.anoPFE}}.{{aluno.semestrePFE}}
-                {% else %}
-                  Indefinido
-                {% endif %}
+                "
               {% endif %}
+            >
+              {{aluno.user.get_full_name}}
+            </a>
+          </td>
+          {% if aluno.curso %}
+            <td class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">
+              {{ aluno.get_curso_display }}
             </td>
-            <td>
-              <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
-            </td>
-          </tr>
-          {% endfor %}
-        </table>
-        <small>Projetos <u>sublinhados</u> são de PFE Avançado</small>
-        <br>
-    {% else %}
-      <p>Não existem alunos disponíveis.</p>
-    {% endif %}
+          {% else %}
+            <td>Indefinido</td>
+          {% endif %}
+          <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
+            {% if aluno.alocacao_set.all %}
+              {% for alocacao in aluno.alocacao_set.all %}
+                <a href="{% url 'completo' alocacao.projeto.id %}">
+                  {% if alocacao.projeto.avancado %}<u>{% endif %}
+                  {{alocacao.projeto.ano}}.{{alocacao.projeto.semestre}}
+                  {% if alocacao.projeto.avancado %}</u>{% endif %}
+                </a>
+              {% endfor %}
+            {% else %}
+              {% if aluno.anoPFE and aluno.semestrePFE %}
+                {{aluno.anoPFE}}.{{aluno.semestrePFE}}
+              {% else %}
+                Indefinido
+              {% endif %}
+            {% endif %}
+          </td>
+          <td>
+            <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+      <small>Projetos <u>sublinhados</u> são de PFE Avançado</small>
+      <br>
+  {% else %}
+    <p>Não existem alunos disponíveis.</p>
+  {% endif %}
 
-    <br>
+  <br>
 
-    <div id="canvas-holder">
-        <canvas id="chart-area"></canvas>
-      </div>
-      <script>
+  <div id="canvas-holder">
+    <canvas id="chart-programas"></canvas>
+    <small>contando alunos alocados em projetos ou não</small>
+    <br><br>
+    <canvas id="chart-generos"></canvas>
+  </div>
 
-        var config = {
-          type: 'pie',
-          data: {
-            datasets: [{
-              data: [
-                {{ num_alunos_comp }},
-                {{ num_alunos_mec }},
-                {{ num_alunos_mxt }},
-              ],
-              backgroundColor: [
-                'rgb(75, 192, 192)',
-                'rgb(255, 99, 132)',
-                'rgb(255, 205, 86)',
-              ],
-              label: 'Proporção de áreas entre alunos'
-            }],
-            labels: [
-              'Computação [{% widthratio num_alunos_comp num_alunos 100 %}%]',
-              'Mecânica [{% widthratio num_alunos_mec num_alunos 100 %}%]',
-              'Mecatrônica [{% widthratio num_alunos_mxt num_alunos 100 %}%]',
-            ]
-          },
-          options: {
-            responsive: true,
-            title: {
-              display: true,
-              text: 'Proporção de áreas entre alunos',
-              position: 'top'
-            },
-            legend: {
-              display: true,
-              position: "bottom",
-            }
-          }
-        };
-    
-        window.onload = function() {
-          var ctx = document.getElementById('chart-area').getContext('2d');
-          window.myPie = new Chart(ctx, config);
-        };
-      
-      </script>
-  <small>contando alunos alocados em projetos ou não</small>
-  <br><br><br>
+  <script>
+    var config_programas = {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: [
+            {{ num_alunos_comp }},
+            {{ num_alunos_mec }},
+            {{ num_alunos_mxt }},
+          ],
+          backgroundColor: [
+            'rgb(75, 192, 192)',
+            'rgb(255, 99, 132)',
+            'rgb(255, 205, 86)',
+          ],
+          label: 'Proporção de cursos entre alunos'
+        }],
+        labels: [
+          'Computação [{% widthratio num_alunos_comp num_alunos 100 %}%]',
+          'Mecânica [{% widthratio num_alunos_mec num_alunos 100 %}%]',
+          'Mecatrônica [{% widthratio num_alunos_mxt num_alunos 100 %}%]',
+        ]
+      },
+      options: {
+        responsive: true,
+        title: {
+          display: true,
+          text: 'Proporção de cursos entre alunos',
+          position: 'top'
+        },
+        legend: {
+          display: true,
+          position: "bottom",
+        }
+      }
+    };
+
+
+    var config_generos = {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: [
+            {{ num_alunos_masculino }},
+            {{ num_alunos_feminino }},
+          ],
+          backgroundColor: [
+            'rgb(93, 173, 226)',
+            'rgb(175, 122, 197)',
+          ],
+          label: 'Proporção de cursos entre alunos'
+        }],
+        labels: [
+          'Masculino [{% widthratio num_alunos_masculino num_alunos 100 %}%]',
+          'Feminino [{% widthratio num_alunos_feminino num_alunos 100 %}%]',
+        ]
+      },
+      options: {
+        responsive: true,
+        title: {
+          display: true,
+          text: 'Proporção de gêneros entre alunos',
+          position: 'top'
+        },
+        legend: {
+          display: true,
+          position: "bottom",
+        }
+      }
+    };
+
+
+    window.onload = function() {
+      // Chart da proporção de alunos por programas
+      var chart_programas = document.getElementById('chart-programas').getContext('2d');
+      window.myPie = new Chart(chart_programas, config_programas);
+
+      // Chart da proporção de alunos por gênero
+      var chart_generos = document.getElementById('chart-generos').getContext('2d');
+      window.myPie = new Chart(chart_generos, config_generos);
+    };
+  
+  </script>
+  <br><br>
   <h5>Quantidade de alunos alocados em projetos</h5>
   <table id="AlunosTable">
     <tr>

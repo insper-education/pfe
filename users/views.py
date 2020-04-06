@@ -97,6 +97,9 @@ def alunos_lista(request):
     num_alunos_mxt = alunos_list.filter(curso__exact='X').count() # Conta alunos mecatrônica
     num_alunos_mec = alunos_list.filter(curso__exact='M').count() # Conta alunos mecânica
 
+    num_alunos_masculino = alunos_list.filter(user__genero='M').count() # Estudantes masculino
+    num_alunos_feminino = alunos_list.filter(user__genero='F').count() # Estudantes feminino
+
     tabela_alunos = {}
 
     totais = {}
@@ -143,6 +146,8 @@ def alunos_lista(request):
         'num_alunos_comp': num_alunos_comp,
         'num_alunos_mxt': num_alunos_mxt,
         'num_alunos_mec': num_alunos_mec,
+        'num_alunos_masculino': num_alunos_masculino,
+        'num_alunos_feminino': num_alunos_feminino,
         'configuracao': configuracao,
         'tabela_alunos': tabela_alunos,
         'totais': totais,
