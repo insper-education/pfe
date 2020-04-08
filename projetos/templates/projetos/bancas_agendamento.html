@@ -58,6 +58,9 @@
           {% if banca.location %}
             Local: {{banca.location|parse_quote}}%0D%0A
           {% endif %}
+          {% if banca.link %}
+            Link: {{banca.link|parse_quote}}%0D%0A
+          {% endif %}
           {% if banca.projeto.orientador %}
             %0D%0AOrientador:%0D%0A
               - {{banca.projeto.orientador.user.first_name|parse_quote}} 

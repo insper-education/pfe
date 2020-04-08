@@ -256,6 +256,8 @@ class Banca(models.Model):
         (1, 'intermediaria'),
     )
     tipo_de_banca = models.PositiveSmallIntegerField(choices=TIPO_DE_BANCA, default=0)
+    link = models.CharField(max_length=512, blank=True,
+                             help_text='Link para transmissão pela internet se houver')
     def __str__(self):
         return self.projeto.titulo
 

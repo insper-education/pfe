@@ -47,10 +47,16 @@
             </a>
           {% endif %}
           <br>
+          
           {% if banca.location %}
             <b>Local:</b> {{banca.location}}
+            <br>
           {% endif %}
-          <br>
+
+          {% if banca.location %}
+            <b>Link:</b> <a href="{{banca.link}}">{{banca.link}}</a>
+            <br>
+          {% endif %}
         
           {% if banca.projeto.orientador %}
             <b>Orientador:</b> 

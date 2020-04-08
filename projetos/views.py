@@ -1700,6 +1700,8 @@ def editar_banca(banca, request):
         banca.endDate = dateutil.parser.parse(request.POST['fim'])
     if 'local' in request.POST:
         banca.location = request.POST['local']
+    if 'link' in request.POST:
+        banca.link = request.POST['link']
     if 'membro1' in request.POST:
         banca.membro1 = PFEUser.objects.get(id=int(request.POST['membro1']))
     else:
@@ -1752,7 +1754,7 @@ def bancas_buscar(request):
     if request.method == 'POST':
         return HttpResponse("Acesso Inadequado.")
     else:
-        bancas = Banca.objects.all().order_by("startDate")
+        bancas = Banca.objects.all().order_by("-startDate")
         context = {
             'bancas' : bancas,
         }
@@ -1890,6 +1892,8 @@ def export_calendar(request, event_id):
         ical_event.add("attendee", atnd, encode=0)
 
     description = "Banca do Projeto {0}".format(banca.projeto)
+    if banca.link:
+        description += "\n\nLink: {0}".format(banca.link)
     description += "\n\nOrientador:\n- {0}".format(banca.projeto.orientador)
     if banca.membro1 or banca.membro2 or banca.membro3:
         description += "\n\nMembros da Banca:"
