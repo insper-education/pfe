@@ -1727,12 +1727,8 @@ def bancas_criar(request):
         editar_banca(banca, request)
         return HttpResponse("Banca criada.")
     else:
-        if configuracao.semestre == 1:
-            ano = configuracao.ano-1
-            semestre = 2
-        else:
-            ano = configuracao.ano
-            semestre = 1
+        ano = configuracao.ano
+        semestre = configuracao.semestre
         projetos = Projeto.objects.filter(ano=ano).filter(semestre=semestre).\
                                                    filter(disponivel=True).\
                                                    exclude(orientador=None)
