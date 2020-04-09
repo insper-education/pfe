@@ -1474,7 +1474,7 @@ def encontros_marcar(request):
 def dinamicas(request):
     """Mostra os horários de dinâmicas."""
     configuracao = Configuracao.objects.all().first()
-    encontros = Encontro.objects.all().order_by('-startDate')
+    encontros = Encontro.objects.all().order_by('startDate')
 
     context = {
         'encontros': encontros,
