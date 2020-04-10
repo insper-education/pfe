@@ -102,7 +102,7 @@
           </a>
           <br>
           <a href="{% url 'event_ics_export' banca.id %}">
-            <b>Agendamento</b>: banca{{banca.id}}
+            <b>Agendamento eletrônico</b>: banca{{banca.id}}
           </a>
           <br>
           {% if banca.tipo_de_banca == 0 %}
@@ -110,6 +110,7 @@
           {% elif banca.tipo_de_banca == 1 %}
             <b>Tipo:</b> Intermediária<br>
           {% endif %}
+
           {% if banca.projeto %}
             <b>Título do Projeto:</b> 
               {% if banca.projeto.titulo_final %}
@@ -117,34 +118,51 @@
               {% else %}
                 {{banca.projeto.titulo}}</a>
               {% endif %}
+            <br>
           {% endif %}
-          <br>
+          
           {% if banca.projeto.empresa.nome_empresa %}
             <b>Organização Parceira:</b> 
-              {{ banca.projeto.empresa.nome_empresa }}
+              {{ banca.projeto.empresa.nome_empresa }}<br>
           {% endif %}
-          <br>
+          
           {% if banca.location %}
-            <b>Local:</b> {{banca.location}}
+            <b>Local:</b> {{banca.location}}<br>
           {% endif %}
-          <br>
-        
-          <b>Convidados:</b><br>
-          {% if banca.projeto.orientador %}
-              - {{banca.projeto.orientador.get_full_name}}<br>
-          {% endif %}
-          {% if banca.membro1 %}
-            - {{banca.membro1.get_full_name}}<br>
-          {% endif %}
-          {% if banca.membro2 %}
-            - {{banca.membro2.get_full_name}}<br>
-          {% endif %}
-          {% if banca.membro3 %}
-            - {{banca.membro3.get_full_name}}<br>
-          {% endif %}
-          {% for alocacao in banca.projeto.alocacao_set.all %}
-              - {{alocacao.aluno.user.get_full_name}}<br>
-          {% endfor %}
+          
+          <b>Participantes:</b><br>
+          <ul>
+            {% if banca.projeto.orientador %}
+              <li>
+                {{banca.projeto.orientador.user.get_full_name}} [orientador(a)]
+                <a href="mailto:{{banca.projeto.orientador.user.email}}"> &lt;{{banca.projeto.orientador.user.email}}&gt;</a><br>
+              </li>
+            {% endif %}
+            {% if banca.membro1 %}
+              <li>
+                {{banca.membro1.get_full_name}} [banca]
+                <a href="mailto:{{banca.membro1.email}}"> &lt;{{banca.membro1.email}}&gt;</a><br>
+              </li>
+            {% endif %}
+            {% if banca.membro2 %}
+              <li>
+                {{banca.membro2.get_full_name}} [banca]
+                <a href="mailto:{{banca.membro2.email}}"> &lt;{{banca.membro2.email}}&gt;</a><br>
+              </li>
+            {% endif %}
+            {% if banca.membro3 %}
+              <li>
+                {{banca.membro3.get_full_name}} [banca]
+                <a href="mailto:{{banca.membro3.email}}"> &lt;{{banca.membro3.email}}&gt;</a><br>
+              </li>
+            {% endif %}
+            {% for alocacao in banca.projeto.alocacao_set.all %}
+                <li>
+                  {{alocacao.aluno.user.get_full_name}} [estudante]
+                  <a href="mailto:{{alocacao.aluno.user.email}}"> &lt;{{alocacao.aluno.user.email}}&gt;</a><br>
+                </li>
+            {% endfor %}
+          <ul>
         </td>
       </tr>
       {% endfor %}
