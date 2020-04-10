@@ -19,9 +19,11 @@
           <td>
             {% if banca.startDate %}
               <b>Horário:</b> {{banca.startDate.date}} ({{banca.startDate|date:"l"}}) das {{banca.startDate.time}}
-            {% endif %}
-            {% if banca.endDate %}
-              às {{banca.endDate.time}}
+              {% if banca.endDate %}
+                às {{banca.endDate.time}}
+              {% endif %}
+            {% else %}
+              <b>Horário:</b> indefinido 
             {% endif %}
             <br>
             {% if banca.projeto %}
@@ -43,7 +45,11 @@
                 <a href="mailto:{{banca.projeto.orientador.user.email}}">&lt;{{banca.projeto.orientador.user.email}}&gt;</a>
               <br>
             {% endif %}
-            <button type="submit" formaction="../bancas_editar/{{banca.pk}}">Continue</button>
+            <b>Tipo:</b> 
+              {% if banca.tipo_de_banca == 0 %}Final{% endif %}
+              {% if banca.tipo_de_banca == 1 %}Intermediária{% endif %}
+            <br>
+            <button type="submit" formaction="../bancas_editar/{{banca.pk}}">Editar</button>
           </td>
         </tr>
         {% endfor %}
