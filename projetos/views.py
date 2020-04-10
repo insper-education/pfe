@@ -1472,14 +1472,17 @@ def encontros_marcar(request):
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
-def dinamicas(request):
+def dinamicas(request, periodo):
     """Mostra os horários de dinâmicas."""
-    configuracao = Configuracao.objects.all().first()
-    encontros = Encontro.objects.all().order_by('startDate')
-
+    todos_encontros = Encontro.objects.all().order_by('startDate')
+    if periodo == "proximas":
+        hoje = datetime.date.today()
+        encontros = todos_encontros.filter(startDate__gt=hoje)
+    else:
+        encontros = todos_encontros
     context = {
         'encontros': encontros,
-        'configuracao' : configuracao,
+        'periodo' : periodo,
     }
     return render(request, 'projetos/dinamicas.html', context)
 
@@ -1683,13 +1686,14 @@ def bancas_lista(request, periodo):
     """Lista todas as bancas agendadas, conforme periodo pedido."""
     #configuracao = Configuracao.objects.all().first()
     todas_bancas = Banca.objects.all().order_by("startDate")
-    if periodo == "futuras":
+    if periodo == "proximas":
         hoje = datetime.date.today()
         bancas = todas_bancas.filter(startDate__gt=hoje)
     else:
         bancas = todas_bancas
     context = {
         'bancas' : bancas,
+        'periodo' : periodo,
     }
     return render(request, 'projetos/bancas_lista.html', context)
 

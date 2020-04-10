@@ -9,7 +9,14 @@
 {% endblock %}
 
 {% block content %}
-  <h3>Encontros</h3><br>
+  <h3>Dinâmicas</h3>
+
+  <select onchange="location = this.options[this.selectedIndex].value;">
+    <option value="todas" {% if periodo == "todas" %}selected="todas"{% endif %}>Todas</option>
+    <option value="proximas" {% if periodo == "proximas" %}selected="proximas"{% endif %}>Próximas</option>
+  </select>
+  <br><br>
+
   {% if encontros %}
     <table>
       {% for e in encontros %} 
