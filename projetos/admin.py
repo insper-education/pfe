@@ -26,6 +26,8 @@ from .models import Entidade
 # Das Organizações
 from .models import Feedback, Conexao
 
+from .models import ObjetidosDeAprendizagem, Avaliacao
+
 def dup_projeto(modeladmin: admin_opt.ModelAdmin, request, queryset):
     """Função abaixo permite duplicar entradas no banco de dados"""
     for obj in queryset:
@@ -241,3 +243,5 @@ class EncontroAdmin(admin.ModelAdmin):
 admin.site.register(Cursada)
 admin.site.register(Recomendada)
 admin.site.register(Entidade)       # Para ser preenchido com as entidades estudantis
+admin.site.register(ObjetidosDeAprendizagem)
+admin.site.register(Avaliacao)

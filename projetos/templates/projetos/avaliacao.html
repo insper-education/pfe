@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 10 de Abril de 2020
+{% endcomment %}
+
+{% block head %}
+<script>
+  $(document).ready(function () {     
+    $('#projeto').change(function(){
+      var titulo = $(this).children(':selected').data('titulo');
+      var organizacao = $(this).children(':selected').data('organizacao');
+      var orientador = $(this).children(':selected').data('orientador');
+      $('#titulo').text(titulo);
+      $('#organizacao').text(organizacao);
+      $('#orientador').text(orientador);
+    })
+  });
+</script>
+{% endblock %}
+
+{% block content %}
+  {% if projeto %}
+    <form method="post" id="avaliacaoform" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      Título do Projeto: {{projeto.titulo}}<br>
+      Organização: {{projeto.empresa}}<br>
+      Orientador: {{projeto.orientador}}<br>
+      Data: {{banca.startDate}}<br>
+      Local: {{banca.location}}<br>
+      Link de Vídeo-conferência: {{banca.link}}<br>
+
+      <br><br>
+
+      Avaliador:
+      <select name="avaliador" id="avaliador" title="Selecione avaliador da banca">
+          <option disabled selected value> -- selecione um avaliador -- </option>
+          {% for professor in pessoas %}
+            <option value="{{professor.id}}" {% if professor.id == banca.membro1.id %}selected{% endif %}>
+              {{professor}}
+            </option>  
+          {% endfor %}
+      </select><br>
+
+      Objetido de Aprendizagem 1:
+      
+      
+      <br><br>
+      <button type="submit">Enviar</button>
+      <p>&nbsp;</p>
+    </form>
+  {% else %}
+    <p>Não existe projeto disponível para avaliar.</p>
+  {% endif %}
+  <p>&nbsp;</p>
+
+{% endblock %}

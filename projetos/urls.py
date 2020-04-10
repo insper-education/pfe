@@ -14,6 +14,7 @@ urlpatterns = [
     path('', views.index, name='index'), #pagina inicial
     path('administracao/', views.administracao, name='administracao'),
     path('areas/<str:tipo>', views.areas, name='areas'),
+    path('avaliacao/<int:primarykey>', views.avaliacao, name='avaliacao'),
     path('avisos_listar/', views.avisos_listar, name='avisos_listar'),
     path('backup/<str:formato>', views.backup, name='backup'),
     path('bancas_agendamento/', views.bancas_agendamento, name='bancas_agendamento'),

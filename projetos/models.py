@@ -237,13 +237,13 @@ class Banca(models.Model):
     """Bancas do PFE."""
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE,
                                 help_text='projeto')
-    location = models.CharField(blank=True, max_length=50,
+    location = models.CharField(null=True, blank=True, max_length=50,
                                 help_text='sala em que vai ocorrer banca')
-    startDate = models.DateTimeField(default=datetime.datetime.now, blank=True,
+    startDate = models.DateTimeField(default=datetime.datetime.now, null=True, blank=True,
                                      help_text='Inicio da Banca')
-    endDate = models.DateTimeField(default=datetime.datetime.now, blank=True,
+    endDate = models.DateTimeField(default=datetime.datetime.now, null=True, blank=True,
                                    help_text='Fim da Banca')
-    color = models.CharField(max_length=20, blank=True,
+    color = models.CharField(max_length=20, null=True, blank=True,
                              help_text='Cor a usada na apresentação da banca na interface gráfica')
     membro1 = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
                                 related_name='membro1', help_text='membro da banca')
@@ -473,3 +473,61 @@ class Coorientador(models.Model):
         return self.usuario.get_full_name()+" >>> "+\
                self.projeto.get_titulo()+\
                " ("+str(self.projeto.ano)+"."+str(self.projeto.semestre)+")"
+
+class ObjetidosDeAprendizagem(models.Model):
+    """Objetidos de Aprendizagem do curso."""
+    objetivo = models.TextField(max_length=256, null=True, blank=True,
+                                help_text='Descrição do objetivo de aprendizagem')
+
+    rubrica_I = models.TextField(max_length=1024, null=True, blank=True,
+                                 help_text='Rubrica do conceito I')
+    rubrica_D = models.TextField(max_length=1024, null=True, blank=True,
+                                 help_text='Rubrica do conceito D')
+    rubrica_C = models.TextField(max_length=1024, null=True, blank=True,
+                                 help_text='Rubrica do conceito C')
+    rubrica_B = models.TextField(max_length=1024, null=True, blank=True,
+                                 help_text='Rubrica do conceito B')
+    rubrica_A = models.TextField(max_length=1024, null=True, blank=True,
+                                 help_text='Rubrica do conceito A')
+
+    def __str__(self):
+        return self.objetivo
+
+class Avaliacao(models.Model):
+    """Avaliações realizadas durante o projeto."""
+    avaliador = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
+                                  help_text='avaliador do projeto')
+    projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE,
+                                help_text='projeto que foi avaliado')
+
+    TIPO_DE_AVALIACAO = ( # não mudar a ordem dos números
+        (0, 'final'),
+        (1, 'intermediaria'),
+    )
+    tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
+
+    CONCEITOS = ( # não mudar a ordem dos números
+        (0, 'I'),
+        (1, 'D'),
+        (2, 'C'),
+        (3, 'C+'),
+        (4, 'B'),
+        (5, 'B+'),
+        (6, 'A'),
+        (7, 'A+'),
+        (8, 'NA'),
+    )
+
+    objetivo1 = models.PositiveSmallIntegerField(choices=CONCEITOS, default=8)
+    objetivo2 = models.PositiveSmallIntegerField(choices=CONCEITOS, default=8)
+    objetivo3 = models.PositiveSmallIntegerField(choices=CONCEITOS, default=8)
+    objetivo4 = models.PositiveSmallIntegerField(choices=CONCEITOS, default=8)
+    objetivo5 = models.PositiveSmallIntegerField(choices=CONCEITOS, default=8)
+
+    observacao = models.TextField(max_length=256, null=True, blank=True,
+                                  help_text='qualquer observação relevante')
+
+    def __str__(self):
+        return self.tipo_de_avaliacao+\
+               self.avaliador.get_full_name()+" >>> "+\
+               self.projeto.get_titulo()

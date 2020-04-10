@@ -34,7 +34,7 @@
             data-orientador="{{projeto.orientador}}"
             {% if projeto.id == banca.projeto.id %} selected {% endif %}
             >
-              {{projeto.id}} -
+              {{projeto.ano}}.{{projeto.semestre}} -
               {{projeto.titulo}}
               ({{projeto.empresa}})
               [{{projeto.orientador}}]
@@ -46,8 +46,14 @@
       Organização: <label id="organizacao" name="organizacao">{{banca.projeto.empresa}}</label><br>
       Orientador: <label id="orientador" name="orientador">{{banca.projeto.orientador}}</label><br>
 
-      <br>{{banca.startDate|date:'d/m/Y H:i'}}
-      <div >
+      <br>
+      Tipo de banca:<br>
+      &nbsp;&nbsp;<input id="tipo" type="radio" name="tipo" value="0" {% if banca.tipo_de_banca == 0 %}checked{% endif %}> Final<br>
+      &nbsp;&nbsp;<input id="tipo" type="radio" name="tipo" value="1" {% if banca.tipo_de_banca == 1 %}checked{% endif %}> Intermediária<br>
+
+      <br>
+      {{banca.startDate|date:'Y-m-d\TH:i:s'}}A
+      <div > 
         Inicio: <input id="inicio" type="datetime-local" name="inicio" value="{{banca.startDate|date:'Y-m-d\TH:i:s'}}">
         &nbsp;&nbsp;&nbsp;&nbsp;
         Fim: <input id="fim" type="datetime-local" name="fim" value="{{banca.endDate|date:'Y-m-d\TH:i:s'}}">

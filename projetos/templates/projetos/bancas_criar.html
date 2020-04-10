@@ -35,7 +35,7 @@
             data-organizacao="{{projeto.empresa}}"
             data-orientador="{{projeto.orientador}}"
             >
-              {{projeto.id}} -
+              {{projeto.ano}}.{{projeto.semestre}} -
               {{projeto.titulo}}
               ({{projeto.empresa}})
               [{{projeto.orientador}}]
@@ -46,6 +46,11 @@
       Título: <label id="titulo" name="titulo"></label><br>
       Organização: <label id="organizacao" name="organizacao"></label><br>
       Orientador: <label id="orientador" name="orientador"></label><br>
+
+      <br>
+      Tipo de banca:<br>
+      &nbsp;&nbsp;<input id="tipo" type="radio" name="tipo" value="0"> Final<br>
+      &nbsp;&nbsp;<input id="tipo" type="radio" name="tipo" value="1"> Intermediária<br>
 
       <br>
       <div >

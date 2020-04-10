@@ -38,6 +38,7 @@ from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador, Opc
 from .models import Projeto, Empresa, Configuracao, Evento, Anotacao, Feedback, Coorientador
 from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade, Conexao
 #from .models import Disciplina
+from .models import ObjetidosDeAprendizagem, Avaliacao
 
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource
 from .resources import AlunosResource, ProfessoresResource
@@ -1695,9 +1696,17 @@ def bancas_lista(request, periodo):
 def editar_banca(banca, request):
     """Edita os valores de uma banca por um request Http."""
     if 'inicio' in request.POST:
-        banca.startDate = dateutil.parser.parse(request.POST['inicio'])
+        try:
+            banca.startDate = dateutil.parser.parse(request.POST['inicio'])
+        except (ValueError, OverflowError):
+            banca.startDate = None
     if 'fim' in request.POST:
-        banca.endDate = dateutil.parser.parse(request.POST['fim'])
+        try:
+            banca.endDate = dateutil.parser.parse(request.POST['fim'])
+        except (ValueError, OverflowError):
+            banca.endDate = None
+    if 'tipo' in request.POST and request.POST['tipo'] != "":
+        banca.tipo_de_banca = int(request.POST['tipo'])
     if 'local' in request.POST:
         banca.location = request.POST['local']
     if 'link' in request.POST:
@@ -1722,10 +1731,15 @@ def bancas_criar(request):
     """Cria uma banca de avaliação para o projeto."""
     configuracao = Configuracao.objects.all().first()
     if request.method == 'POST':
-        projeto = Projeto.objects.get(id=int(request.POST['projeto']))
-        banca = Banca.create(projeto)
-        editar_banca(banca, request)
-        return HttpResponse("Banca criada.")
+        if 'projeto' in request.POST:
+            projeto = Projeto.objects.get(id=int(request.POST['projeto']))
+            banca = Banca.create(projeto)
+            editar_banca(banca, request)
+            return HttpResponse( # Isso não esta bom assim, ajustar
+                "Banca criada.<br>"+\
+                "<a href='../bancas_index"+\
+                "'>Voltar</a>")
+        return HttpResponse("Banca não registrada, problema com identificação do projeto.")
     else:
         ano = configuracao.ano
         semestre = configuracao.semestre
@@ -1760,21 +1774,18 @@ def bancas_buscar(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def bancas_editar(request, primarykey):
     """Edita uma banca de avaliação para o projeto."""
-    configuracao = Configuracao.objects.all().first()
     banca = Banca.objects.get(pk=primarykey)
+    print(banca.projeto)
     if request.method == 'POST':
         editar_banca(banca, request)
-        return HttpResponse("Banca editada.")
+        return HttpResponse( # Isso não esta bom assim, ajustar
+                "Banca editada.<br>"+\
+                "<a href='../bancas_index"+\
+                "'>Voltar</a>")
     else:
-        if configuracao.semestre == 1:
-            ano = configuracao.ano-1
-            semestre = 2
-        else:
-            ano = configuracao.ano
-            semestre = 1
-        projetos = Projeto.objects.filter(ano=ano).filter(semestre=semestre).\
-                                                   filter(disponivel=True).\
-                                                   exclude(orientador=None)
+        projetos = Projeto.objects.filter(disponivel=True).exclude(orientador=None).\
+                                  order_by("-ano", "-semestre")
+
         pessoas = PFEUser.objects.all().\
                                   filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0]).\
                                   order_by("first_name", "last_name") # Conta soh professor
@@ -2001,3 +2012,32 @@ def mostra_feedback(request, feedback_id):
         'feedback' : Feedback.objects.get(id=feedback_id),
     }
     return render(request, 'projetos/mostra_feedback.html', context)
+
+#@login_required
+#@permission_required("users.altera_professor", login_url='/projetos/')
+def avaliacao(request, primarykey): #acertar isso para pk
+    """Cria um anotação para uma organização parceira."""
+    projeto = Projeto.objects.get(pk=primarykey)  # acho que tem de ser get
+    if request.method == 'POST':
+        if 'avaliacao' in request.POST:
+            # anotacao = Anotacao.create(organization)
+            # anotacao.autor = PFEUser.objects.get(pk=request.user.pk)
+            # anotacao.texto = request.POST['anotacao']
+            # anotacao.save()
+            return HttpResponse(
+                "Avaliação submetida.<br>"+\
+                "<a href='/"+\
+                "'>Voltar</a>")
+        return HttpResponse("Avaliação não submetida.")
+    else:
+        objetivos = ObjetidosDeAprendizagem.objects.all()
+        pessoas = PFEUser.objects.all().\
+                            filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0]).\
+                            order_by("first_name", "last_name") # Conta soh professor
+
+        context = {
+            'pessoas' : pessoas,
+            'objetivos': objetivos,
+            'projeto': projeto,
+        }
+        return render(request, 'projetos/avaliacao.html', context=context)
