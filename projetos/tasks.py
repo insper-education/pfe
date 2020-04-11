@@ -20,7 +20,10 @@ def envia_aviso():
     for aviso in avisos:
         subject = 'Aviso: '+aviso.titulo
         recipient_list = ['pfeinsper@gmail.com', 'lpsoares@insper.edu.br',]
-        message = "Enviando Mensagem aqui"
+        if aviso.mensagem:
+            message = aviso.mensagem
+        else:
+            message = "Mensagem não definida."
         verify = email(subject, recipient_list, message)
         if verify != 1:
             #print("Algum problema de conexão, contacte: lpsoares@insper.edu.br")

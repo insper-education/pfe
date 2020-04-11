@@ -154,7 +154,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '<local_dos_arquivos>')
 CELERY_BROKER_URL = 'amqp://<colocarusuario>:<colocarsenha>@localhost//'
 CELERY_BEAT_SCHEDULE = {
  'send-email-daily': {
-       'task': 'envia_aviso',
+       'task': 'projetos.tasks.envia_aviso',
        'schedule': crontab(hour=6,minute=0),
     },
 }
