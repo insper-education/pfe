@@ -8,7 +8,7 @@ Data: 18 de Outubro de 2019
 import datetime
 from celery import task
 
-from .messages import email
+from .messages import email, htmlizar
 from .views import get_calendario_context
 from .models import Configuracao, Aviso
 
@@ -36,11 +36,12 @@ def envia_aviso():
         for acao in context[event]:
             if acao.startDate == datetime.date.today():
                 subject = "{0} : {1}".format(event, acao.name)
-                message = "Local : {0}".format(acao.location)
-                message += "data inicial = {0}".format(acao.startDate)
-                message += "data final = {0}".format(acao.endDate)
-                message += "color = {0}".format(acao.color)
-                verify = email(subject, recipient_list, message)
+                message = "{0} : {1}".format(event, acao.name)
+                message += "\nLocal : {0}".format(acao.location)
+                message += "\ndata inicial = {0}".format(acao.startDate)
+                message += "\ndata final = {0}".format(acao.endDate)
+                message += "\ncolor = {0}".format(acao.color)
+                verify = email(subject, recipient_list, htmlizar(message))
                 if verify != 1:
                     #print("Algum problema de conexão, contacte: lpsoares@insper.edu.br")
                     pass
