@@ -11,7 +11,7 @@ from users.models import Opcao
 
 def htmlizar(text):
     """Coloca <br> nas quebras de linha."""
-    return text.replace('\\n', '<br>\\n')
+    return text.replace('\n', '<br>\n')
 
 def email(subject, recipient_list, message):
     """Envia um e-mail para o HOST_USER."""

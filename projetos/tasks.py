@@ -25,7 +25,7 @@ def envia_aviso():
             message = aviso.mensagem
         else:
             message = "Mensagem não definida."
-        verify = email(subject, recipient_list, message)
+        verify = email(subject, recipient_list, htmlizar(message))
         if verify != 1:
             #print("Algum problema de conexão, contacte: lpsoares@insper.edu.br")
             pass
@@ -37,11 +37,11 @@ def envia_aviso():
             if acao.startDate == datetime.date.today():
                 subject = "{0} : {1}".format(event, acao.name)
                 message = "{0} : {1}".format(event, acao.name)
-                message += "\nLocal : {0}".format(acao.location)
-                message += "\ndata inicial = {0}".format(acao.startDate)
-                message += "\ndata final = {0}".format(acao.endDate)
-                message += "\ncolor = {0}".format(acao.color)
-                verify = email(subject, recipient_list, htmlizar(message))
+                message += "<br>\nLocal : {0}".format(acao.location)
+                message += "<br>\ndata inicial = {0}".format(acao.startDate)
+                message += "<br>\ndata final = {0}".format(acao.endDate)
+                message += "<br>\ncolor = {0}".format(acao.color)
+                verify = email(subject, recipient_list, message)
                 if verify != 1:
                     #print("Algum problema de conexão, contacte: lpsoares@insper.edu.br")
                     pass
