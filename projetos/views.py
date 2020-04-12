@@ -748,6 +748,8 @@ def get_calendario_context():
 
     # ISSO NAO ESTA BOM, FAZER ALGO MELHOR
 
+    # TAMBÉM ESTOU USANDO NO CELERY PARA AVISAR DOS EVENTOS
+
     context = {
         'eventos': eventos,
         'aulas': aulas,
@@ -1009,18 +1011,17 @@ def projeto_submeter(request):
         administrador = Administrador.objects.get(pk=request.user.pk)
 
     if request.method == 'POST':
-        """
-        if timezone.now() > configuracao.prazo_parceiro:
-            #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
-            return HttpResponse("Prazo para o preenchimento do formulário vencido!")
+        # if timezone.now() > configuracao.prazo_parceiro:
+        #     #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
+        #     return HttpResponse("Prazo para o preenchimento do formulário vencido!")
 
-        aluno.trabalhou = request.POST.get("trabalhou", "")
-        aluno.social = request.POST.get("social", "")
-        aluno.entidade = request.POST.get("entidade", "")
-        aluno.familia = request.POST.get("familia", "")
+        # aluno.trabalhou = request.POST.get("trabalhou", "")
+        # aluno.social = request.POST.get("social", "")
+        # aluno.entidade = request.POST.get("entidade", "")
+        # aluno.familia = request.POST.get("familia", "")
 
-        aluno.save()
-        """
+        # aluno.save()
+
         return render(request, 'users/atualizado.html',)
     else:
         context = {
@@ -1088,7 +1089,8 @@ def carrega(request, dado):
             string = i.decode("utf-8")
             entradas += re.sub('[^A-Za-z0-9À-ÿ, \r\n@._]+', '', string) #Limpa caracteres especiais
 
-        imported_data = dataset.load(entradas, format='csv')
+        #imported_data = dataset.load(entradas, format='csv')
+        dataset.load(entradas, format='csv')
         dataset.insert_col(0, col=lambda row: None, header="id")
 
         result = resource.import_data(dataset, dry_run=True, raise_errors=True)
@@ -1644,7 +1646,7 @@ def emails(request):
 
         projetos_p_semestre.append(projetos_pessoas)
 
-        if ano > configuracao.ano or ( ano == configuracao.ano and semestre > configuracao.semestre):
+        if ano > configuracao.ano or (ano == configuracao.ano and semestre > configuracao.semestre):
             break
 
         # Vai para próximo semestre
@@ -1783,9 +1785,9 @@ def bancas_editar(request, primarykey):
     if request.method == 'POST':
         editar_banca(banca, request)
         return HttpResponse( # Isso não esta bom assim, ajustar
-                "Banca editada.<br>"+\
-                "<a href='../bancas_index"+\
-                "'>Voltar</a>")
+            "Banca editada.<br>"+\
+            "<a href='../bancas_index"+\
+            "'>Voltar</a>")
     else:
         projetos = Projeto.objects.filter(disponivel=True).exclude(orientador=None).\
                                   order_by("-ano", "-semestre")

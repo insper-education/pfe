@@ -108,7 +108,7 @@ class Projeto(models.Model):
                                    help_text='professor orientador do projeto')
     autorizado = models.ForeignKey('users.Professor', null=True, blank=True,
                                    on_delete=models.SET_NULL,
-                                   help_text='professor que autorizou projeto a ser publicado para os alunos')
+                                   help_text='Quem autorizou a ser publicado para os alunos')
     perfil_aluno1_computacao = \
         models.BooleanField(default=False, help_text='Perfil desejado de computação para aluno 1')
     perfil_aluno1_mecatronica = \
@@ -257,7 +257,7 @@ class Banca(models.Model):
     )
     tipo_de_banca = models.PositiveSmallIntegerField(choices=TIPO_DE_BANCA, default=0)
     link = models.CharField(max_length=512, blank=True,
-                             help_text='Link para transmissão pela internet se houver')
+                            help_text='Link para transmissão pela internet se houver')
     def __str__(self):
         return self.projeto.titulo
 
