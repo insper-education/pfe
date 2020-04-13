@@ -763,6 +763,7 @@ def get_calendario_context():
         'provas' : provas,
         'quinzenais' : quinzenais,
         'feedbacks' : feedbacks,
+        'semestre' : Configuracao.objects.all().first().semestre,
     }
     return context
 
