@@ -232,7 +232,7 @@ class AvisoAdmin(admin.ModelAdmin):
 @admin.register(Evento)
 class EventoAdmin(admin.ModelAdmin):
     """Todos os eventos do PFE com suas datas."""
-    list_display = ('name', 'startDate', 'endDate', 'location', )
+    list_display = ('get_title', 'startDate', 'endDate', 'location', )
     actions = [dup_event, dup_event_183]
     list_filter = (SemesterFilter,)
 
