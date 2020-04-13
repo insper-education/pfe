@@ -128,7 +128,7 @@
     {% for prova in provas|dictsort:"endDate" %}
       {% if prova.get_title != "Feriado" %}
         <span class="ano{{prova.endDate.year}} ano">
-          <span class="semestre" data-mes="{{evento.endDate.month}}">
+          <span class="semestre" data-mes="{{prova.endDate.month}}">
             {% ifchanged prova.get_title prova.endDate.year %}   
               <br><font style="background-image : linear-gradient(to bottom, transparent 80%, {{prova.get_color}} 80%">&nbsp;&nbsp;&nbsp;</font> {{prova.get_title}}: 
               {% if prova.startDate == prova.endDate %} 
