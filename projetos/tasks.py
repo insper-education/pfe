@@ -35,12 +35,12 @@ def envia_aviso():
     for event in context:
         for acao in context[event]:
             if acao.startDate == datetime.date.today():
-                subject = "{0} : {1}".format(event, acao.name)
-                message = "{0} : {1}".format(event, acao.name)
+                subject = "{0} : {1}".format(event, acao.get_title)
+                message = "{0} : {1}".format(event, acao.get_title)
                 message += "<br>\nLocal : {0}".format(acao.location)
                 message += "<br>\ndata inicial = {0}".format(acao.startDate)
                 message += "<br>\ndata final = {0}".format(acao.endDate)
-                message += "<br>\ncolor = {0}".format(acao.color)
+                #message += "<br>\ncolor = {0}".format(acao.color)
                 verify = email(subject, recipient_list, message)
                 if verify != 1:
                     #print("Algum problema de conexão, contacte: lpsoares@insper.edu.br")

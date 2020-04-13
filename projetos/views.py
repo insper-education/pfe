@@ -735,16 +735,22 @@ def render_to_pdf(template_src, context_dict=None):
 
 def get_calendario_context():
     """Contexto para gerar calendário."""
-    eventos = Evento.objects.exclude(name="Aula PFE").\
-                             exclude(name="Laboratório").\
-                             exclude(name="provas").\
-                             exclude(name="Relato Quinzenal").\
-                             exclude(name="Feedback dos Alunos sobre PFE")
-    aulas = Evento.objects.filter(name="Aula PFE")
-    laboratorios = Evento.objects.filter(name="Laboratório")
-    provas = Evento.objects.filter(name="provas")
-    quinzenais = Evento.objects.filter(name="Relato Quinzenal")
-    feedbacks = Evento.objects.filter(name="Feedback dos Alunos sobre PFE")
+    eventos = Evento.objects.exclude(tipo_de_evento=12).\
+                             exclude(tipo_de_evento=40).\
+                             exclude(tipo_de_evento=41).\
+                             exclude(tipo_de_evento=20).\
+                             exclude(tipo_de_evento=30).\
+                             exclude(tipo_de_evento__gte=100)
+    #aulas = Evento.objects.filter(name="Aula PFE")
+    aulas = Evento.objects.filter(tipo_de_evento=12) #(12, 'Aula PFE', 'lightgreen')
+    #laboratorios = Evento.objects.filter(name="Laboratório")
+    laboratorios = Evento.objects.filter(tipo_de_evento=40) #(40, 'Laboratório', 'orange'),
+    #provas = Evento.objects.filter(name="Semana de Provas")
+    provas = Evento.objects.filter(tipo_de_evento=41) #(41, 'Semana de Provas', 'red'),
+    #quinzenais = Evento.objects.filter(name="Relato Quinzenal")
+    quinzenais = Evento.objects.filter(tipo_de_evento=20) #(20, 'Relato Quinzenal', 'aquamarine'),
+    #feedbacks = Evento.objects.filter(name="Feedback dos Alunos sobre PFE")
+    feedbacks = Evento.objects.filter(tipo_de_evento=30) #(30, 'Feedback dos Alunos sobre PFE', 'orange'),
 
     # ISSO NAO ESTA BOM, FAZER ALGO MELHOR
 
@@ -772,7 +778,6 @@ def calendario_limpo(request):
     context = get_calendario_context()
     context['limpo'] = True
     return render(request, 'projetos/calendario.html', context)
-
 
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')

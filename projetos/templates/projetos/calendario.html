@@ -38,10 +38,10 @@
   <br>
 
   {% for evento in eventos|dictsort:"endDate" %}
-    {% if evento.name != "Feriado" and evento.name != "Aula Cancelada" %}
+    {% if evento.get_title != "Feriado" and evento.get_title != "Aula Cancelada" %}
       <span class="a{{evento.endDate.year}} ano">
-        {% ifchanged evento.name evento.endDate.year %}   
-          <br><font style="color:{{evento.color}}">&#9608;</font> {{evento.name}}: 
+        {% ifchanged evento.get_title evento.endDate.year %}   
+          <br><font style="color:{{evento.get_color}}">&#9608;</font> {{evento.get_title}} :
           {% if evento.startDate == evento.endDate %} 
             {{evento.endDate.day}}/{{evento.endDate.month}}
           {% else %}
@@ -56,8 +56,8 @@
 
   {% for feedback in feedbacks|dictsort:"endDate" %}
     <span class="a{{feedback.endDate.year}} ano">
-      {% ifchanged feedback.name feedback.endDate.year %} 
-        <br><font style="color:{{feedback.color}}">&#9608;</font> {{feedback.name}}: 
+      {% ifchanged feedback.get_title feedback.endDate.year %} 
+        <br><font style="color:{{feedback.get_color}}">&#9608;</font> {{feedback.get_title}}: 
         {{feedback.endDate.day}}/{{feedback.endDate.month}}
       {% else %}
         ; {{feedback.endDate.day}}/{{feedback.endDate.month}}
@@ -67,8 +67,8 @@
 
   {% for quinzenal in quinzenais|dictsort:"endDate" %}
     <span class="a{{quinzenal.endDate.year}} ano">
-      {% ifchanged quinzenal.name quinzenal.endDate.year %} 
-        <br><font style="color:{{quinzenal.color}}">&#9608;</font> {{quinzenal.name}}: 
+      {% ifchanged quinzenal.get_title quinzenal.endDate.year %} 
+        <br><font style="color:{{quinzenal.get_color}}">&#9608;</font> {{quinzenal.get_title}}: 
         {{quinzenal.endDate.day}}/{{quinzenal.endDate.month}}
       {% else %}
         ; {{quinzenal.endDate.day}}/{{quinzenal.endDate.month}}
@@ -78,8 +78,8 @@
   
   {% for aula in aulas|dictsort:"endDate" %}
     <span class="a{{aula.endDate.year}} ano">
-      {% ifchanged aula.name aula.endDate.year %} 
-        <br><font style="color:{{aula.color}}">&#9608;</font> {{aula.name}}: 
+      {% ifchanged aula.get_title aula.endDate.year %} 
+        <br><font style="color:{{aula.get_color}}">&#9608;</font> {{aula.get_title}}: 
         {{aula.endDate.day}}/{{aula.endDate.month}}
       {% else %}
         ; {{aula.endDate.day}}/{{aula.endDate.month}}
@@ -91,10 +91,10 @@
   {% if laboratorios %}
     <br>
     {% for laboratorio in laboratorios|dictsort:"endDate" %}
-      {% if laboratorio.name != "Feriado" %}
+      {% if laboratorio.get_title != "Feriado" %}
         <span class="a{{laboratorio.endDate.year}} ano">
-          {% ifchanged laboratorio.name laboratorio.endDate.year %}   
-            <br><font style="background-image : linear-gradient(to bottom, transparent 80%, {{laboratorio.color}} 80%">&nbsp;&nbsp;&nbsp;</font> {{laboratorio.name}}: 
+          {% ifchanged laboratorio.get_title laboratorio.endDate.year %}   
+            <br><font style="background-image : linear-gradient(to bottom, transparent 80%, {{laboratorio.get_color}} 80%">&nbsp;&nbsp;&nbsp;</font> {{laboratorio.get_title}}: 
             {% if laboratorio.startDate == laboratorio.endDate %} 
               {{laboratorio.endDate.day}}/{{laboratorio.endDate.month}}
             {% else %}
@@ -114,10 +114,10 @@
   {% if provas %}
     <br>
     {% for prova in provas|dictsort:"endDate" %}
-      {% if prova.name != "Feriado" %}
+      {% if prova.get_title != "Feriado" %}
         <span class="a{{prova.endDate.year}} ano">
-          {% ifchanged prova.name prova.endDate.year %}   
-            <br><font style="background-image : linear-gradient(to bottom, transparent 80%, {{prova.color}} 80%">&nbsp;&nbsp;&nbsp;</font> {{prova.name}}: 
+          {% ifchanged prova.get_title prova.endDate.year %}   
+            <br><font style="background-image : linear-gradient(to bottom, transparent 80%, {{prova.get_color}} 80%">&nbsp;&nbsp;&nbsp;</font> {{prova.get_title}}: 
             {% if prova.startDate == prova.endDate %} 
               {{prova.endDate.day}}/{{prova.endDate.month}}
             {% else %}
@@ -290,7 +290,6 @@
               html: true,
               content: content });
 
-
             $(e.element).popover('show');
           }
         },
@@ -315,41 +314,41 @@
         {% for evento in eventos %} 
             {
                 id: {{evento.id}},
-                name: "{{evento.name}}",
+                name: "{{evento.get_title}}",
                 location: "{{evento.location}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
-                color: "{{evento.color}}",
+                color: "{{evento.get_color}}",
             },
           {% endfor %}
           {% for evento in aulas %} 
             {
                 id: {{evento.id}},
-                name: "{{evento.name}}",
+                name: "{{evento.get_title}}",
                 location: "{{evento.location}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
-                color: "{{evento.color}}",
+                color: "{{evento.get_color}}",
             },
           {% endfor %}
           {% for evento in quinzenais %} 
             {
                 id: {{evento.id}},
-                name: "{{evento.name}}",
+                name: "{{evento.get_title}}",
                 location: "{{evento.location}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
-                color: "{{evento.color}}",
+                color: "{{evento.get_color}}",
             },
           {% endfor %}
           {% for evento in feedbacks %} 
             {
                 id: {{evento.id}},
-                name: "{{evento.name}}",
+                name: "{{evento.get_title}}",
                 location: "{{evento.location}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
-                color: "{{evento.color}}",
+                color: "{{evento.get_color}}",
             },
           {% endfor %}
       ],
@@ -370,13 +369,13 @@
                 &&
                 date.getTime() <= new Date({{prova.endDate.year}}, {{prova.endDate.month|add:-1}},{{prova.endDate.day}}).getTime()
                 ) {
-                $(element).css('border-bottom', '4px solid {{prova.color}}');
+                $(element).css('border-bottom', '4px solid {{prova.get_color}}');
                 $(element).css('line-height', '0.85');
               }
             {% endfor %}
             {% for lab in laboratorios %}
               if(date.getTime() == new Date({{lab.startDate.year}}, {{lab.startDate.month|add:-1}},{{lab.startDate.day}}).getTime()) {
-                $(element).css('background-image', 'linear-gradient(to bottom, transparent 80%, {{lab.color}} 80% )');
+                $(element).css('background-image', 'linear-gradient(to bottom, transparent 80%, {{lab.get_color}} 80% )');
               }
             {% endfor %}
           }

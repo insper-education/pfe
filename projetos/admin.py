@@ -102,26 +102,43 @@ dup_encontros_8x.short_description = "Duplicar Entrada(s) 8 X"
 
 class FechadoFilter(SimpleListFilter):
     """Para filtrar projetos fechados."""
-    title = 'Projetos Fechados' # a label for our filter
-    parameter_name = '' # you can put anything here
+    title = 'Projetos Fechados'
+    parameter_name = ''
 
     def lookups(self, request, model_admin):
-        # This is where you create filter options; we have two:
         return [
             ('fechados', 'Fechados'),
             ('not_fechados', 'Não Fechados'),
         ]
 
     def queryset(self, request, queryset):
-        # This is where you process parameters selected by use via filter options:
         if self.value() == 'fechados':
-            # Get websites that have at least one page.
-            #return queryset.distinct().filter(pages__isnull=False)
             return queryset.distinct().filter(alocacao__isnull=False)
         if self.value():
-            # Get websites that don't have any pages.
-            #return queryset.distinct().filter(pages__isnull=True)
             return queryset.distinct().filter(alocacao__isnull=True)
+
+class SemesterFilter(SimpleListFilter):
+    """Para filtrar eventos por semestre."""
+    title = 'Semestre'
+    parameter_name = ''
+
+    def lookups(self, request, model_admin):
+        opcoes = []
+        for ano in range(2018, Configuracao.objects.all().first().ano+1):
+            for semestre in range(1, 3):
+                opcoes.append(("{0}.{1}".format(ano, semestre), "{0}.{1}".format(ano, semestre)))
+        return opcoes
+
+    def queryset(self, request, queryset):
+        if self.value():
+            if self.value().split('.')[1] == '1':
+                return queryset.distinct().filter(startDate__year=int(self.value().split('.')[0]),
+                                                  startDate__month__lte=7)
+            else:
+                return queryset.distinct().filter(startDate__year=int(self.value().split('.')[0]),
+                                                  startDate__month__gt=7)
+        else:
+            return queryset.distinct().all()
 
 @admin.register(Projeto)
 class ProjetoAdmin(admin.ModelAdmin):
@@ -217,6 +234,8 @@ class EventoAdmin(admin.ModelAdmin):
     """Todos os eventos do PFE com suas datas."""
     list_display = ('name', 'startDate', 'endDate', 'location', )
     actions = [dup_event, dup_event_183]
+    list_filter = (SemesterFilter,)
+
 
 @admin.register(Feedback)
 class FeedbackAdmin(admin.ModelAdmin):

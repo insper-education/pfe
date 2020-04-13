@@ -228,6 +228,60 @@ class Evento(models.Model):
     endDate = models.DateField(default=datetime.date.today, blank=True,
                                help_text='Fim do Evento')
     color = models.CharField(max_length=20)
+
+    TIPO_EVENTO = (
+        (10, 'Início das Aulas', 'red'),
+        (11, 'Evento de Abertura PFE', 'orange'),
+        (12, 'Aula PFE', 'lightgreen'),
+        (13, 'Evento de Encerramento do PFE', 'brown'),
+        (14, 'Banca Intermediária', 'violet'),
+        (15, 'Bancas Finais', 'yellow'),
+        (16, 'Apresentação na Organização Parceira', 'beige'),
+
+        (20, 'Relato Quinzenal', 'aquamarine'),
+        (21, 'Entrega de Planejamento', 'lightblue'),
+        (22, 'Entrega do Relatório Intermediário', 'teal'),
+        (23, 'Entrega do Relatório Final', 'aqua'),
+        (24, 'Entrega do Relatório Revisado', 'deepskyblue'),
+        (25, 'Entrega dos Banners', 'chocolate'),
+        (26, 'Entrega do Vídeo', 'lavender'),
+
+        (30, 'Feedback dos Alunos sobre PFE', 'orange'),
+        (31, 'Avaliação de Pares Intermediária', 'pink'),
+        (32, 'Avaliação de Pares Final', 'pink'),
+        
+        (40, 'Laboratório', 'orange'),
+        (41, 'Semana de Provas', 'red'),
+
+        (101, 'Apólice Seguro Acidentes Pessoais', 'aquamarine'),
+
+        (110, 'Limite para submissão de Projetos pelas Organizações', 'lime'),
+        (111, 'Validação dos Projetos pelo Comitê', 'peru'),
+        (112, 'Apresentação dos Novos Projetos para os Alunos', 'darkslategray'),
+        (113, 'Seleção de Projetos pelos Aluno para o Próximo Semestre', 'pink'),
+        (114, 'Notificação dos Grupos Formados para os Alunos', 'paleturquoise'),
+        (115, 'Reunião de Orientações aos Orientadores', 'maroon'),
+
+        (254, 'Aula Cancelada', 'lightgrey'),
+        (255, 'Feriado', 'lightgrey'),
+
+    )
+
+    tipo_de_evento = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_EVENTO],
+                                                      null=True, blank=True)
+
+    def get_title(self):
+        for entry in Evento.TIPO_EVENTO:
+            if self.tipo_de_evento == entry[0]:
+                return entry[1]
+        return None
+
+    def get_color(self):
+        for entry in Evento.TIPO_EVENTO:
+            if self.tipo_de_evento == entry[0]:
+                return entry[2]
+        return None
+
     def __str__(self):
         return self.name
     class Meta:
