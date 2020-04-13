@@ -224,10 +224,20 @@ class BancaAdmin(admin.ModelAdmin):
 @admin.register(Aviso)
 class AvisoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
-    list_display = ('titulo', 'delta',)
-    list_filter = ('comite_pfe', 'todos_alunos', 'aluno_p_projeto', 'todos_orientadores',
-                   'orientadores_p_projeto', 'contatos_nas_organizacoes',)
+    list_display = ('titulo', 'delta', 'realizado',)
+    list_filter = ('realizado', 'comite_pfe', 'todos_alunos', 'aluno_p_projeto',
+                   'todos_orientadores', 'orientadores_p_projeto', 'contatos_nas_organizacoes',)
     ordering = ('delta',)
+    fieldsets = \
+        ((None,
+          {'fields':
+           ('titulo', 'delta', 'mensagem', 'realizado',)
+          }),
+         ('Interesse', {
+             'fields': ('comite_pfe', 'todos_alunos', 'aluno_p_projeto', 'todos_orientadores',
+                        'orientadores_p_projeto', 'contatos_nas_organizacoes',)
+         }),
+        )
 
 @admin.register(Evento)
 class EventoAdmin(admin.ModelAdmin):

@@ -742,15 +742,17 @@ def get_calendario_context():
                              exclude(tipo_de_evento=30).\
                              exclude(tipo_de_evento__gte=100)
     #aulas = Evento.objects.filter(name="Aula PFE")
-    aulas = Evento.objects.filter(tipo_de_evento=12) #(12, 'Aula PFE', 'lightgreen')
+    aulas = Evento.objects.filter(tipo_de_evento=12) #12, 'Aula PFE'
     #laboratorios = Evento.objects.filter(name="Laboratório")
-    laboratorios = Evento.objects.filter(tipo_de_evento=40) #(40, 'Laboratório', 'orange'),
+    laboratorios = Evento.objects.filter(tipo_de_evento=40) #40, 'Laboratório'
     #provas = Evento.objects.filter(name="Semana de Provas")
-    provas = Evento.objects.filter(tipo_de_evento=41) #(41, 'Semana de Provas', 'red'),
+    provas = Evento.objects.filter(tipo_de_evento=41) #41, 'Semana de Provas'
     #quinzenais = Evento.objects.filter(name="Relato Quinzenal")
-    quinzenais = Evento.objects.filter(tipo_de_evento=20) #(20, 'Relato Quinzenal', 'aquamarine'),
+    quinzenais = Evento.objects.filter(tipo_de_evento=20) #20, 'Relato Quinzenal'
     #feedbacks = Evento.objects.filter(name="Feedback dos Alunos sobre PFE")
-    feedbacks = Evento.objects.filter(tipo_de_evento=30) #(30, 'Feedback dos Alunos sobre PFE', 'orange'),
+    feedbacks = Evento.objects.filter(tipo_de_evento=30) #30, 'Feedback dos Alunos sobre PFE'
+
+    coordenacao = Evento.objects.filter(tipo_de_evento__gte=100) # Eventos da coordenação
 
     # ISSO NAO ESTA BOM, FAZER ALGO MELHOR
 
@@ -763,6 +765,7 @@ def get_calendario_context():
         'provas' : provas,
         'quinzenais' : quinzenais,
         'feedbacks' : feedbacks,
+        'coordenacao' : coordenacao,
         'semestre' : Configuracao.objects.all().first().semestre,
     }
     return context

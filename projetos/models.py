@@ -5,15 +5,11 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Maio de 2019
 """
 
-#import os
 import datetime
 from django.db import models
 from django.urls import reverse  # To generate URLS by reversing URL patterns
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib import admin
-#from datetime import datetime
-#from django.conf import settings
-#import users.models
 
 def get_upload_path(instance, filename):
     """Caminhos para armazenar os arquivos."""
@@ -221,18 +217,19 @@ class Recomendada(models.Model):
 
 class Evento(models.Model):
     """Eventos para a agenda do PFE."""
-    name = models.CharField(max_length=50)
-    location = models.CharField(blank=True, max_length=50)
+    name = models.CharField(max_length=50, blank=True)
+    location = models.CharField(blank=True, max_length=50,
+                                help_text='Onde Ocorrerá o Evento')
     startDate = models.DateField(default=datetime.date.today, blank=True,
                                  help_text='Inicio do Evento')
     endDate = models.DateField(default=datetime.date.today, blank=True,
                                help_text='Fim do Evento')
-    color = models.CharField(max_length=20)
+    color = models.CharField(max_length=20, blank=True)
 
     TIPO_EVENTO = (
         (0, 'Feriado', 'lightgrey'),
         (1, 'Aula Cancelada', 'lightgrey'),
-        
+
         (10, 'Início das Aulas', 'red'),
         (11, 'Evento de Abertura PFE', 'orange'),
         (12, 'Aula PFE', 'lightgreen'),
@@ -252,35 +249,48 @@ class Evento(models.Model):
         (30, 'Feedback dos Alunos sobre PFE', 'orange'),
         (31, 'Avaliação de Pares Intermediária', 'pink'),
         (32, 'Avaliação de Pares Final', 'pink'),
-        
+
         (40, 'Laboratório', 'orange'),
         (41, 'Semana de Provas', 'red'),
 
         (101, 'Apólice Seguro Acidentes Pessoais', 'aquamarine'),
 
-        (110, 'Limite para submissão de Projetos pelas Organizações', 'lime'),
-        (111, 'Validação dos Projetos pelo Comitê', 'peru'),
-        (112, 'Apresentação dos Novos Projetos para os Alunos', 'darkslategray'),
-        (113, 'Seleção de Projetos pelos Aluno para o Próximo Semestre', 'pink'),
-        (114, 'Notificação dos Grupos Formados para os Alunos', 'paleturquoise'),
-        (115, 'Reunião de Orientações aos Orientadores', 'maroon'),
+        (111, 'Bate-papo com os alunos sobre o PFE', 'lightcyan'),
+        (112, 'Alunos Demonstrarem Interesse de Adiar PFE para 9º Semestre', 'limegreen'),
+        (113, 'Apresentação dos Novos Projetos para os Alunos', 'darkslategray'),
+        (123, 'Seleção de Projetos pelos Aluno para o Próximo Semestre', 'pink'),
+        (124, 'Notificação dos Grupos Formados para os Alunos', 'paleturquoise'),
 
+        (120, 'Limite para submissão de Projetos pelas Organizações', 'lime'),
+
+        (130, 'Validação dos Projetos pelo Comitê', 'peru'),
+
+        (140, 'Reunião de Orientações aos Orientadores', 'maroon'),
     )
 
     tipo_de_evento = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_EVENTO],
-                                                      null=True, blank=True)
+                                                      null=True, blank=True,
+                                                      help_text='Define o tipo do evento a ocorrer')
 
     def get_title(self):
+        """Retorna em string o nome do evento."""
         for entry in Evento.TIPO_EVENTO:
             if self.tipo_de_evento == entry[0]:
                 return entry[1]
         return None
 
     def get_color(self):
+        """Retorna uma cor característica do evento para desenhar no calendário."""
         for entry in Evento.TIPO_EVENTO:
             if self.tipo_de_evento == entry[0]:
                 return entry[2]
         return None
+
+    def get_semester(self):
+        """Retorna o semestre do evento."""
+        if self.startDate.month <= 6:
+            return 1
+        return 2
 
     def __str__(self):
         return self.name
@@ -447,6 +457,7 @@ class Aviso(models.Model):
                                      help_text='dias passados do início do semestre')
     mensagem = models.TextField(max_length=4096, null=True, blank=True,
                                 help_text='mensagem a ser enviar no texto')
+    realizado = models.BooleanField(default=False, help_text='Se já realizado no período')
     comite_pfe = \
         models.BooleanField(default=False, help_text='Lista todos os membros do comitê do PFE')
     todos_alunos = \
