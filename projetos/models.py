@@ -230,6 +230,9 @@ class Evento(models.Model):
     color = models.CharField(max_length=20)
 
     TIPO_EVENTO = (
+        (0, 'Feriado', 'lightgrey'),
+        (1, 'Aula Cancelada', 'lightgrey'),
+        
         (10, 'Início das Aulas', 'red'),
         (11, 'Evento de Abertura PFE', 'orange'),
         (12, 'Aula PFE', 'lightgreen'),
@@ -261,9 +264,6 @@ class Evento(models.Model):
         (113, 'Seleção de Projetos pelos Aluno para o Próximo Semestre', 'pink'),
         (114, 'Notificação dos Grupos Formados para os Alunos', 'paleturquoise'),
         (115, 'Reunião de Orientações aos Orientadores', 'maroon'),
-
-        (254, 'Aula Cancelada', 'lightgrey'),
-        (255, 'Feriado', 'lightgrey'),
 
     )
 

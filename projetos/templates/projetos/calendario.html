@@ -41,7 +41,7 @@
     {% if evento.get_title != "Feriado" and evento.get_title != "Aula Cancelada" %}
       <span class="a{{evento.endDate.year}} ano">
         {% ifchanged evento.get_title evento.endDate.year %}   
-          <br><font style="color:{{evento.get_color}}">&#9608;</font> {{evento.get_title}} :
+          <br><font style="color:{{evento.get_color}}">&#9608;</font> {{evento.get_title}}:
           {% if evento.startDate == evento.endDate %} 
             {{evento.endDate.day}}/{{evento.endDate.month}}
           {% else %}
