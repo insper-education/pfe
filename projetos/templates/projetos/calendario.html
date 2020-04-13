@@ -37,7 +37,7 @@
   <div id='calendar'></div>
   <br>
 
-  &nbsp;2020.[<span id="primeiro_semestre">1</span>/<span id="segundo_semestre">2</span>]
+  &nbsp;Semestre: [<span id="primeiro_semestre">1</span>/<span id="segundo_semestre">2</span>]
 
   {% for evento in eventos|dictsort:"endDate" %}
     {% if evento.get_title != "Feriado" and evento.get_title != "Aula Cancelada" %}
@@ -60,7 +60,7 @@
 
   {% for feedback in feedbacks|dictsort:"endDate" %}
     <span class="ano{{feedback.endDate.year}} ano">
-      <span class="semestre" data-mes="{{evento.endDate.month}}">
+      <span class="semestre" data-mes="{{feedback.endDate.month}}">
         {% ifchanged feedback.get_title feedback.endDate.year %} 
           <br><font style="color:{{feedback.get_color}}">&#9608;</font> {{feedback.get_title}}: 
           {{feedback.endDate.day}}/{{feedback.endDate.month}}
@@ -73,7 +73,7 @@
 
   {% for quinzenal in quinzenais|dictsort:"endDate" %}
     <span class="ano{{quinzenal.endDate.year}} ano">
-      <span class="semestre" data-mes="{{evento.endDate.month}}">
+      <span class="semestre" data-mes="{{quinzenal.endDate.month}}">
         {% ifchanged quinzenal.get_title quinzenal.endDate.year %} 
           <br><font style="color:{{quinzenal.get_color}}">&#9608;</font> {{quinzenal.get_title}}: 
           {{quinzenal.endDate.day}}/{{quinzenal.endDate.month}}
@@ -86,7 +86,7 @@
   
   {% for aula in aulas|dictsort:"endDate" %}
     <span class="ano{{aula.endDate.year}} ano">
-      <span class="semestre" data-mes="{{evento.endDate.month}}">
+      <span class="semestre" data-mes="{{aula.endDate.month}}">
         {% ifchanged aula.get_title aula.endDate.year %} 
           <br><font style="color:{{aula.get_color}}">&#9608;</font> {{aula.get_title}}: 
           {{aula.endDate.day}}/{{aula.endDate.month}}
@@ -103,7 +103,7 @@
     {% for laboratorio in laboratorios|dictsort:"endDate" %}
       {% if laboratorio.get_title != "Feriado" %}
         <span class="ano{{laboratorio.endDate.year}} ano">
-          <span class="semestre" data-mes="{{evento.endDate.month}}">
+          <span class="semestre" data-mes="{{laboratorio.endDate.month}}">
             {% ifchanged laboratorio.get_title laboratorio.endDate.year %}   
               <br><font style="background-image : linear-gradient(to bottom, transparent 80%, {{laboratorio.get_color}} 80%">&nbsp;&nbsp;&nbsp;</font> {{laboratorio.get_title}}: 
               {% if laboratorio.startDate == laboratorio.endDate %} 
