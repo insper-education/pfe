@@ -29,6 +29,7 @@ from django.core.mail import EmailMessage
 from django.db import transaction
 from django.http import Http404
 from django.http import HttpResponse
+from django.http import HttpResponseNotFound
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.template.loader import get_template
@@ -2032,17 +2033,107 @@ def mostra_feedback(request, feedback_id):
 #@permission_required("users.altera_professor", login_url='/projetos/')
 def avaliacao(request, primarykey): #acertar isso para pk
     """Cria um anotação para uma organização parceira."""
-    projeto = Projeto.objects.get(pk=primarykey)  # acho que tem de ser get
+    try:
+        projeto = Projeto.objects.get(pk=primarykey)
+
+        try:
+            banca = Banca.objects.filter(projeto=projeto).order_by("startDate").last()
+        except Banca.DoesNotExist:
+            return HttpResponseNotFound('<h1>Banca não encontrado!</h1>')
+
+    except Projeto.DoesNotExist:
+        return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
+        #raise Http404("Poll does not exist")
+
     if request.method == 'POST':
-        if 'avaliacao' in request.POST:
-            # anotacao = Anotacao.create(organization)
-            # anotacao.autor = PFEUser.objects.get(pk=request.user.pk)
-            # anotacao.texto = request.POST['anotacao']
-            # anotacao.save()
-            return HttpResponse(
-                "Avaliação submetida.<br>"+\
-                "<a href='/"+\
-                "'>Voltar</a>")
+        if 'avaliador' in request.POST:
+            julgamento = Avaliacao.create(projeto)
+
+            #print(PFEUser.objects.get(pk=int(request.POST['avaliador'])).first_name)
+            julgamento.avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
+            # julgamento.avaliador = PFEUser.objects.get(pk=request.user.pk)
+
+            #if request.POST['tipo_banca'] == "final":
+            #    julgamento.tipo_de_avaliacao = 0
+            #else:
+            #    julgamento.tipo_de_avaliacao = 1
+            julgamento.tipo_de_avaliacao = banca.tipo_de_banca
+
+            if 'objetivo.1' in request.POST:
+                pk_objetivo1 = int(request.POST['objetivo.1'].split('.')[0])
+                julgamento.objetivo1 = ObjetidosDeAprendizagem.objects.get(pk=pk_objetivo1)
+                julgamento.objetivo1_conceito = request.POST['objetivo.1'].split('.')[1]
+
+            if 'objetivo.2' in request.POST:
+                pk_objetivo2 = int(request.POST['objetivo.2'].split('.')[0])
+                julgamento.objetivo2 = ObjetidosDeAprendizagem.objects.get(pk=pk_objetivo2)
+                julgamento.objetivo2_conceito = request.POST['objetivo.2'].split('.')[1]
+
+            if 'objetivo.3' in request.POST:
+                pk_objetivo3 = int(request.POST['objetivo.3'].split('.')[0])
+                julgamento.objetivo3 = ObjetidosDeAprendizagem.objects.get(pk=pk_objetivo3)
+                julgamento.objetivo3_conceito = request.POST['objetivo.3'].split('.')[1]
+
+            if 'objetivo.4' in request.POST:
+                pk_objetivo4 = int(request.POST['objetivo.4'].split('.')[0])
+                julgamento.objetivo4 = ObjetidosDeAprendizagem.objects.get(pk=pk_objetivo4)
+                julgamento.objetivo4_conceito = request.POST['objetivo.4'].split('.')[1]
+
+            if 'objetivo.5' in request.POST:
+                pk_objetivo5 = int(request.POST['objetivo.5'].split('.')[0])
+                julgamento.objetivo5 = ObjetidosDeAprendizagem.objects.get(pk=pk_objetivo5)
+                julgamento.objetivo5_conceito = request.POST['objetivo.5'].split('.')[1]
+
+            if 'observacoes' in request.POST:
+                julgamento.observacoes = request.POST['observacoes']
+
+            julgamento.save()
+
+            message = "Avaliação PFE<br>\n<br>\n"
+            message += "Título do Projeto: {0}<br>\n".format(projeto.get_titulo())
+            message += "Organização: {0}<br>\n".format(projeto.empresa)
+            message += "Orientador: {0}<br>\n".format(projeto.orientador)
+            message += "Data: {0}<br>\n".format(banca.startDate.strftime("%d/%m/%Y %H:%M"))
+
+            if julgamento.tipo_de_avaliacao == 0:
+                message += "Banca: final<br>\n"
+            else:
+                message += "Banca: Intermediária<br>\n"
+
+            message += "<br>\n<br>\n"
+
+            if julgamento.objetivo1:
+                message += "Objetivo: {0} - {1}<br>\n".format(julgamento.objetivo1,
+                                                              julgamento.objetivo1_conceito)
+            if julgamento.objetivo2:
+                message += "Objetivo: {0} - {1}<br>\n".format(julgamento.objetivo2,
+                                                              julgamento.objetivo2_conceito)
+            if julgamento.objetivo3:
+                message += "Objetivo: {0} - {1}<br>\n".format(julgamento.objetivo3,
+                                                              julgamento.objetivo3_conceito)
+            if julgamento.objetivo4:
+                message += "Objetivo: {0} - {1}<br>\n".format(julgamento.objetivo4,
+                                                              julgamento.objetivo4_conceito)
+            if julgamento.objetivo5:
+                message += "Objetivo: {0} - {1}<br>\n".format(julgamento.objetivo5,
+                                                              julgamento.objetivo5_conceito)
+
+            message += "<br>\n<br>\n"
+            message += "Obesrvações: <br>\n"
+            message += julgamento.observacoes.replace('\n', '<br>\n')
+
+            subject = 'Banca PFE : {0}'.format(projeto)
+            recipient_list = [projeto.orientador.user.email, julgamento.avaliador.email,]
+            check = email(subject, recipient_list, message)
+            if check != 1:
+                message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+
+            resposta = "Avaliação submetida e enviada para:<br>"
+            for recipient in recipient_list:
+                resposta += "&bull; {0}<br>".format(recipient)
+            resposta += "<br><a href='javascript:history.back(1)'>Voltar</a>"
+            return HttpResponse(resposta)
+
         return HttpResponse("Avaliação não submetida.")
     else:
         objetivos = ObjetidosDeAprendizagem.objects.all()
@@ -2050,9 +2141,17 @@ def avaliacao(request, primarykey): #acertar isso para pk
                             filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0]).\
                             order_by("first_name", "last_name") # Conta soh professor
 
+        # mes = datetime.date.today().month
+        # if mes <= 4 or (mes > 7 and mes < 11):
+        #     guess_banca = 1 # intermediaria
+        # else:
+        #     guess_banca = 0 # final
+
         context = {
             'pessoas' : pessoas,
             'objetivos': objetivos,
             'projeto': projeto,
+            'banca' : banca,
+            #'guess_banca' : guess_banca,
         }
         return render(request, 'projetos/avaliacao.html', context=context)

@@ -541,6 +541,10 @@ class Coorientador(models.Model):
 
 class ObjetidosDeAprendizagem(models.Model):
     """Objetidos de Aprendizagem do curso."""
+
+    titulo = models.TextField(max_length=128, null=True, blank=True,
+                              help_text='Título do objetivo de aprendizagem')
+
     objetivo = models.TextField(max_length=256, null=True, blank=True,
                                 help_text='Descrição do objetivo de aprendizagem')
 
@@ -556,7 +560,7 @@ class ObjetidosDeAprendizagem(models.Model):
                                  help_text='Rubrica do conceito A')
 
     def __str__(self):
-        return self.objetivo
+        return str(self.titulo)
 
 class Avaliacao(models.Model):
     """Avaliações realizadas durante o projeto."""
@@ -567,32 +571,66 @@ class Avaliacao(models.Model):
 
     TIPO_DE_AVALIACAO = ( # não mudar a ordem dos números
         (0, 'final'),
-        (1, 'intermediaria'),
+        (1, 'intermediária'),
     )
     tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
 
     CONCEITOS = ( # não mudar a ordem dos números
-        (0, 'I'),
-        (1, 'D'),
-        (2, 'C'),
-        (3, 'C+'),
-        (4, 'B'),
-        (5, 'B+'),
-        (6, 'A'),
-        (7, 'A+'),
-        (8, 'NA'),
+        ('I ', 'I'),
+        ('D ', 'D'),
+        ('C ', 'C'),
+        ('C+', 'C+'),
+        ('B ', 'B'),
+        ('B+', 'B+'),
+        ('A ', 'A'),
+        ('A+', 'A+'),
+        ('NA', 'NA'),
     )
 
-    objetivo1 = models.PositiveSmallIntegerField(choices=CONCEITOS, default=8)
-    objetivo2 = models.PositiveSmallIntegerField(choices=CONCEITOS, default=8)
-    objetivo3 = models.PositiveSmallIntegerField(choices=CONCEITOS, default=8)
-    objetivo4 = models.PositiveSmallIntegerField(choices=CONCEITOS, default=8)
-    objetivo5 = models.PositiveSmallIntegerField(choices=CONCEITOS, default=8)
+    objetivo1 = models.ForeignKey(ObjetidosDeAprendizagem, related_name='objetivo1',
+                                  on_delete=models.CASCADE, null=True, blank=True,
+                                  help_text='Objetivo de Aprendizagem 1')
+    objetivo1_conceito = models.CharField(choices=CONCEITOS, default="NA", max_length=2,
+                                          help_text='Conceito Obtido no OA 1')
 
-    observacao = models.TextField(max_length=256, null=True, blank=True,
-                                  help_text='qualquer observação relevante')
+    objetivo2 = models.ForeignKey(ObjetidosDeAprendizagem, related_name='objetivo2',
+                                  on_delete=models.CASCADE, null=True, blank=True,
+                                  help_text='Objetivo de Aprendizagem 2')
+    objetivo2_conceito = models.CharField(choices=CONCEITOS, default="NA", max_length=2,
+                                          help_text='Conceito Obtido no OA 2')
+
+    objetivo3 = models.ForeignKey(ObjetidosDeAprendizagem, related_name='objetivo3',
+                                  on_delete=models.CASCADE, null=True, blank=True,
+                                  help_text='Objetivo de Aprendizagem 3')
+    objetivo3_conceito = models.CharField(choices=CONCEITOS, default="NA", max_length=2,
+                                          help_text='Conceito Obtido no OA 3')
+
+    objetivo4 = models.ForeignKey(ObjetidosDeAprendizagem, related_name='objetivo4',
+                                  on_delete=models.CASCADE, null=True, blank=True,
+                                  help_text='Objetivo de Aprendizagem 4')
+    objetivo4_conceito = models.CharField(choices=CONCEITOS, default="NA", max_length=2,
+                                          help_text='Conceito Obtido no OA 4')
+
+    objetivo5 = models.ForeignKey(ObjetidosDeAprendizagem, related_name='objetivo5',
+                                  on_delete=models.CASCADE, null=True, blank=True,
+                                  help_text='Objetivo de Aprendizagem 5')
+    objetivo5_conceito = models.CharField(choices=CONCEITOS, default="NA", max_length=2,
+                                          help_text='Conceito Obtido no OA 5')
+
+    observacoes = models.TextField(max_length=512, null=True, blank=True,
+                                   help_text='qualquer observação relevante')
 
     def __str__(self):
-        return self.tipo_de_avaliacao+\
+        if self.tipo_de_avaliacao == 0:
+            tipo = "Avaliação Final: "
+        else:
+            tipo = "Avaliação Intermediária: "
+        return tipo+\
                self.avaliador.get_full_name()+" >>> "+\
                self.projeto.get_titulo()
+
+    @classmethod
+    def create(cls, projeto):
+        """Cria um objeto (entrada) em Avaliação."""
+        avaliacao = cls(projeto=projeto)
+        return avaliacao

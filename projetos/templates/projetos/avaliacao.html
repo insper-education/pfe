@@ -18,6 +18,12 @@
     })
   });
 </script>
+
+<style>
+  textarea {
+    max-width:100%;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -25,17 +31,29 @@
     <form method="post" id="avaliacaoform" enctype="multipart/form-data">
       {% csrf_token %}
 
-      Título do Projeto: {{projeto.titulo}}<br>
-      Organização: {{projeto.empresa}}<br>
-      Orientador: {{projeto.orientador}}<br>
-      Data: {{banca.startDate}}<br>
-      Local: {{banca.location}}<br>
-      Link de Vídeo-conferência: {{banca.link}}<br>
+      <b>Título do Projeto:</b> {{projeto.titulo}}<br>
+      <b>Organização:</b> {{projeto.empresa}}<br>
+      <b>Orientador:</b> {{projeto.orientador}}<br>
+      <b>Data:</b> {{banca.startDate}}<br>
+      {% if banca.location %}
+        <b>Local:</b> {{banca.location}}<br>
+      {% endif %}  
+      {% if banca.link %}
+        <b>Link:</b> <a href="{{banca.link}}">{{banca.link}}</a>
+        <br>
+      {% endif %}
+      <b>Banca:</b>
+      {% if banca.tipo_de_banca == 0 %}Final{% else %}Intermediária{% endif %}
+      {% comment %}
+      <select name="tipo_banca" id="tipo_banca" required>
+        <option value="final" {% if guess_banca == 0 %}selected{% endif %}>final</option>
+        <option value="intermediaria" {% if guess_banca == 1 %}selected{% endif %}>intermediária</option>
+      </select>
+      {% endcomment %}
+      <br>
 
-      <br><br>
-
-      Avaliador:
-      <select name="avaliador" id="avaliador" title="Selecione avaliador da banca">
+      <br><b>Avaliador</b>:
+      <select name="avaliador" id="avaliador" title="Selecione avaliador da banca" required>
           <option disabled selected value> -- selecione um avaliador -- </option>
           {% for professor in pessoas %}
             <option value="{{professor.id}}" {% if professor.id == banca.membro1.id %}selected{% endif %}>
@@ -44,11 +62,35 @@
           {% endfor %}
       </select><br>
 
-      Objetido de Aprendizagem 1:
+      <br><b>Objetivos de Aprendizagem</b>
+      {% for objetivo in objetivos %}
+        <br><b>{{objetivo.titulo}}</b>: {{objetivo.objetivo}}
+        <table style="width:100%">
+          <tr>
+            <th><input type="radio" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.I " required> Insatisfatório (I)</th>
+            <th><input type="radio" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.D " required> Em Desenvolvimento (D)</th>
+            <th><input type="radio" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.C " required> Essencial (C)</th>
+            <th><input type="radio" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.B " required> Proficiente (B)</th>
+            <th><input type="radio" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.A " required> Avançado (A)</th>
+            <th><input type="radio" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.NA" required> N/A</th>
+          </tr>
+          <tr>
+            <td>{{objetivo.rubrica_I}}</td>
+            <td>{{objetivo.rubrica_D}}</td>
+            <td>{{objetivo.rubrica_C}}</td>
+            <td>{{objetivo.rubrica_B}}</td>
+            <td>{{objetivo.rubrica_A}}</td>
+            <td>caso prefira não avaliar nesta rubrica.</td>
+          </tr>
+        </table>
+      {% endfor %}
       
+      <br><b>Observações:</b><br>
+      <textarea name="observacoes" rows="8" cols="80" maxlength="512"></textarea>
+
       
       <br><br>
-      <button type="submit">Enviar</button>
+      <button type="submit">Enviar Avaliação</button>
       <p>&nbsp;</p>
     </form>
   {% else %}

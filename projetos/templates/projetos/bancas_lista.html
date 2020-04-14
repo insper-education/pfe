@@ -60,11 +60,14 @@
             <br>
           {% endif %}
 
-          {% if banca.location %}
-            <b>Link:</b> <a href="{{banca.link}}">{{banca.link}}</a>
+          {% if banca.link %}
+            <b>Link vídeo-conferência:</b> <a href="{{banca.link}}">{{banca.link}}</a>
             <br>
           {% endif %}
-        
+
+          <a href="/projetos/avaliacao/{{banca.projeto.id}}"><b>Link formulário de avaliação</b></a><br>
+
+          <br>
           {% if banca.projeto.orientador %}
             <b>Orientador:</b> 
               {{banca.projeto.orientador.user.get_full_name}} 
