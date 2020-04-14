@@ -117,13 +117,16 @@ class FechadoFilter(SimpleListFilter):
         if self.value():
             return queryset.distinct().filter(alocacao__isnull=True)
 
-class SemesterFilter(SimpleListFilter):
+class EventoFilter(SimpleListFilter):
     """Para filtrar eventos por semestre."""
-    title = 'Semestre'
+    title = 'Publico/Semestre'
     parameter_name = ''
 
     def lookups(self, request, model_admin):
-        opcoes = []
+        opcoes = [
+            ('academicos', 'Acadêmicos'),
+            ('coordenacao', 'Coordenação'),
+        ]
         for ano in range(2018, Configuracao.objects.all().first().ano+1):
             for semestre in range(1, 3):
                 opcoes.append(("{0}.{1}".format(ano, semestre), "{0}.{1}".format(ano, semestre)))
@@ -131,14 +134,17 @@ class SemesterFilter(SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value():
+            if self.value() == 'academicos':
+                return queryset.distinct().filter(tipo_de_evento__lt=100)
+            if self.value() == 'coordenacao':
+                return queryset.distinct().filter(tipo_de_evento__gte=100)
             if self.value().split('.')[1] == '1':
                 return queryset.distinct().filter(startDate__year=int(self.value().split('.')[0]),
                                                   startDate__month__lte=7)
             else:
                 return queryset.distinct().filter(startDate__year=int(self.value().split('.')[0]),
                                                   startDate__month__gt=7)
-        else:
-            return queryset.distinct().all()
+        return queryset.distinct().all()
 
 @admin.register(Projeto)
 class ProjetoAdmin(admin.ModelAdmin):
@@ -244,7 +250,7 @@ class EventoAdmin(admin.ModelAdmin):
     """Todos os eventos do PFE com suas datas."""
     list_display = ('get_title', 'startDate', 'endDate', 'location', )
     actions = [dup_event, dup_event_183]
-    list_filter = (SemesterFilter,)
+    list_filter = (EventoFilter,)
 
 
 @admin.register(Feedback)

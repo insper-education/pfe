@@ -256,12 +256,12 @@ class Evento(models.Model):
         (101, 'Apólice Seguro Acidentes Pessoais', 'aquamarine'),
 
         (111, 'Bate-papo com os alunos sobre o PFE', 'lightcyan'),
-        (112, 'Alunos Demonstrarem Interesse de Adiar PFE para 9º Semestre', 'limegreen'),
+        (112, 'Alunos Demonstrarem Interesse em Adiar PFE para 9º Semestre', 'limegreen'),
         (113, 'Apresentação dos Novos Projetos para os Alunos', 'darkslategray'),
         (123, 'Seleção de Projetos pelos Aluno para o Próximo Semestre', 'pink'),
         (124, 'Notificação dos Grupos Formados para os Alunos', 'paleturquoise'),
 
-        (120, 'Limite para submissão de Projetos pelas Organizações', 'lime'),
+        (120, 'Limite para Submissão de Projetos pelas Organizações', 'lime'),
 
         (130, 'Validação dos Projetos pelo Comitê', 'peru'),
 
