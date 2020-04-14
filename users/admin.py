@@ -77,6 +77,7 @@ class ParceiroAdmin(admin.ModelAdmin):
     """Definição de Parceiro do PFE."""
     list_display = ('get_full_name', 'email', 'telefone', 'celular', 'skype')
     ordering = ()
+    list_filter = (FirstLetterFilter, )
 
     def get_full_name(self, obj):
         """Retorna o nome completo do usuário"""
@@ -94,6 +95,7 @@ class ProfessorAdmin(admin.ModelAdmin):
     """Definição de Professor do PFE."""
     list_display = ('user', 'lattes')
     ordering = ('user__first_name', 'user__last_name',)
+    list_filter = (FirstLetterFilter, )
 
 admin.site.register(Administrador)
 
