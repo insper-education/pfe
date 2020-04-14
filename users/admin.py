@@ -5,15 +5,46 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Maio de 2019
 """
 
+import string
 from django.contrib import admin
 #from django.contrib.auth import get_user_model
 #from django.contrib.auth.admin import UserAdmin
+from django.contrib.admin import SimpleListFilter
 
 #from .forms import PFEUserCreationForm
 #from .forms import PFEUserChangeForm
 from .models import PFEUser, Aluno, Professor, Parceiro, Administrador
 
 from .models import Opcao, Alocacao, Areas   # Mover para outra área
+
+class FirstLetterFilter(SimpleListFilter):
+    """Filtro para separar pela primeira letra do nome."""
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'Primeira Letra'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'letter'
+    letters = list(string.ascii_uppercase)
+
+    def lookups(self, request, model_admin):
+        qs = model_admin.get_queryset(request)
+        lookups = []
+        for letter in self.letters:
+            count = qs.filter(user__first_name__istartswith=letter).count()
+            if count:
+                lookups.append((letter, '{} ({})'.format(letter, count)))
+        return lookups
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        filter_val = self.value()
+        if filter_val in self.letters:
+            return queryset.filter(user__first_name__istartswith=self.value())
 
 @admin.register(PFEUser)
 class PFEUserAdmin(admin.ModelAdmin):
@@ -32,6 +63,8 @@ class AlunoAdmin(admin.ModelAdmin):
     """Definição de aluno do PFE."""
     list_display = ('user', 'curso', 'anoPFE', 'semestrePFE')
     ordering = ('user__first_name', 'user__last_name',)
+    list_filter = (FirstLetterFilter, )
+
 
 @admin.register(Alocacao)
 class AlocacaoAdmin(admin.ModelAdmin):
@@ -67,7 +100,7 @@ admin.site.register(Administrador)
 @admin.register(Opcao)
 class OpcaoAdmin(admin.ModelAdmin):
     """Definição de Opções do PFE."""
-    list_display = ('aluno', 'projeto', 'prioridade' )
+    list_display = ('aluno', 'projeto', 'prioridade')
     ordering = ('aluno',)
 
 admin.site.register(Areas)
