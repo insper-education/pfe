@@ -63,6 +63,10 @@ class Areas(models.Model):
                + ("V" if self.eficiencia_energetica else "F") + " "\
                + ("V" if self.administracao_economia_financas else "F")
 
+    class Meta:
+        verbose_name = 'Áreas'
+        verbose_name_plural = 'Áreas'
+
 class PFEUser(AbstractUser):
     """Classe base para todos os usuários do PFE (Alunos, Professores, Parceiros)."""
     # Atualizar para AbstractBaseUser que permite colocar mais caracteres nos campos
@@ -93,6 +97,8 @@ class PFEUser(AbstractUser):
                               help_text='sexo do usuário')
 
     class Meta:
+        verbose_name = 'Usuário'
+        verbose_name_plural = 'Usuários'
         ordering = ['first_name', 'last_name']
 
     def __str__(self):
@@ -118,6 +124,8 @@ class Professor(models.Model):
     lattes = models.URLField(max_length=250, null=True, blank=True)
 
     class Meta:
+        verbose_name = 'Professor'
+        verbose_name_plural = 'Professores'
         ordering = ['user']
         permissions = (("altera_professor", "Professor altera valores"), )
     def __str__(self):
@@ -254,6 +262,8 @@ class Opcao(models.Model):
     #razao = models.CharField(max_length=200)
     prioridade = models.PositiveSmallIntegerField()
     class Meta:
+        verbose_name = 'Opção'
+        verbose_name_plural = 'Opções'
         ordering = ['prioridade']
         permissions = (("altera_professor", "Professor altera valores"), )
     def __str__(self):
@@ -276,6 +286,8 @@ class Alocacao(models.Model):
     )
     conceito = models.PositiveSmallIntegerField(choices=CONCEITOS, default=127)
     class Meta:
+        verbose_name = 'Alocação'
+        verbose_name_plural = 'Alocações'
         permissions = (("altera_professor", "Professor altera valores"), )
         ordering = ['projeto__ano', 'projeto__semestre',]
     def __str__(self):
@@ -309,7 +321,10 @@ class Parceiro(models.Model):  # da empresa (não do Insper)
 class Administrador(models.Model):
     """Classe de usuários com estatus de Administrador."""
     user = models.OneToOneField(PFEUser, related_name='administrador', on_delete=models.CASCADE)
+
     class Meta:
+        verbose_name = 'Administrador'
+        verbose_name_plural = 'Administradores'
         ordering = ['user']
         permissions = (("altera_empresa", "Empresa altera valores"),
                        ("altera_professor", "Professor altera valores"), )

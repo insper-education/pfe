@@ -178,6 +178,10 @@ class Configuracao(models.Model):
     liberados_projetos = models.BooleanField(default=False,
                                              help_text='Para que alunos vejam projetos alocados')
 
+    class Meta:
+        verbose_name = 'Configuração'
+        verbose_name_plural = 'Configurações'
+
 class ConfiguracaoAdmin(admin.ModelAdmin):
     """Usado para configurar a classe Configuracao."""
     def has_add_permission(self, request):
@@ -366,6 +370,9 @@ class Anotacao(models.Model):
         """Cria um objeto (entrada) em Anotação."""
         anotacao = cls(organizacao=organizacao)
         return anotacao
+    class Meta:
+        verbose_name = 'Anotação'
+        verbose_name_plural = 'Anotações'
 
 class Documento(models.Model):
     """Documentos, em geral PDFs, e seus relacionamentos com o PFE."""
@@ -525,6 +532,10 @@ class Conexao(models.Model):
                self.projeto.empresa.sigla+" - "+self.projeto.get_titulo()+\
                " ("+str(self.projeto.ano)+"."+str(self.projeto.semestre)+")"
 
+    class Meta:
+        verbose_name = 'Conexão'
+        verbose_name_plural = 'Conexões'
+
 class Coorientador(models.Model):
     """Controla lista de coorientadores por projeto."""
     usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
@@ -538,6 +549,10 @@ class Coorientador(models.Model):
         return self.usuario.get_full_name()+" >>> "+\
                self.projeto.get_titulo()+\
                " ("+str(self.projeto.ano)+"."+str(self.projeto.semestre)+")"
+
+    class Meta:
+        verbose_name = 'Coorientador'
+        verbose_name_plural = 'Coorientadores'
 
 class ObjetidosDeAprendizagem(models.Model):
     """Objetidos de Aprendizagem do curso."""
@@ -570,6 +585,10 @@ class ObjetidosDeAprendizagem(models.Model):
 
     def __str__(self):
         return str(self.titulo)
+
+    class Meta:
+        verbose_name = 'ObjetidosDeAprendizagem'
+        verbose_name_plural = 'ObjetidosDeAprendizagem'
 
 class Avaliacao(models.Model):
     """Avaliações realizadas durante o projeto."""
@@ -643,3 +662,7 @@ class Avaliacao(models.Model):
         """Cria um objeto (entrada) em Avaliação."""
         avaliacao = cls(projeto=projeto)
         return avaliacao
+
+    class Meta:
+        verbose_name = 'Avaliação'
+        verbose_name_plural = 'Avaliações'
