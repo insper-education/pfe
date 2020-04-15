@@ -2094,7 +2094,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
 
             julgamento.save()
 
-            message = "<h4>Avaliação PFE</h4><br>\n<br>\n"
+            message = "<h3>Avaliação PFE</h3><br>\n"
             message += "<b>Título do Projeto:</b> {0}<br>\n".format(projeto.get_titulo())
             message += "<b>Organização:</b> {0}<br>\n".format(projeto.empresa)
             message += "<b>Orientador:</b> {0}<br>\n".format(projeto.orientador)
@@ -2106,38 +2106,43 @@ def avaliacao(request, primarykey): #acertar isso para pk
             else:
                 message += "<b>Banca:</b> Intermediária<br>\n"
 
-            message += "<br>\n<br>\n"
+            message += "<br>\n"
             message += "<b>Conceitos:</b><br>\n"
             message += "<table style='border: 1px solid black; border-collapse:collapse;'>"
             if julgamento.objetivo1:
                 message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
                     format(julgamento.objetivo1)
-                message += "<td style='text-align:center'>&nbsp;{0}&nbsp;</td>\n".\
+                message += "<td style='border: 1px solid black; text-align:center'>"
+                message += "&nbsp;{0}&nbsp;</td>\n".\
                     format(julgamento.objetivo1_conceito)
             if julgamento.objetivo2:
                 message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
                     format(julgamento.objetivo2)
-                message += "<td style='text-align:center'>&nbsp;{0}&nbsp;</td>\n".\
+                message += "<td style='border: 1px solid black; text-align:center'>"
+                message += "&nbsp;{0}&nbsp;</td>\n".\
                     format(julgamento.objetivo2_conceito)
             if julgamento.objetivo3:
                 message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
                     format(julgamento.objetivo3)
-                message += "<td style='text-align:center'>&nbsp;{0}&nbsp;</td>\n".\
+                message += "<td style='border: 1px solid black; text-align:center'>"
+                message += "&nbsp;{0}&nbsp;</td>\n".\
                     format(julgamento.objetivo3_conceito)
             if julgamento.objetivo4:
                 message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
                     format(julgamento.objetivo4)
-                message += "<td style='text-align:center'>&nbsp;{0}&nbsp;</td>\n".\
+                message += "<td style='border: 1px solid black; text-align:center'>"
+                message += "&nbsp;{0}&nbsp;</td>\n".\
                     format(julgamento.objetivo4_conceito)
             if julgamento.objetivo5:
                 message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
                     format(julgamento.objetivo5)
-                message += "<td style='text-align:center'>&nbsp;{0}&nbsp;</td>\n".\
+                message += "<td style='border: 1px solid black; text-align:center'>"
+                message += "&nbsp;{0}&nbsp;</td>\n".\
                     format(julgamento.objetivo5_conceito)
             message += "</table>"
 
             message += "<br>\n<br>\n"
-            message += "</b>Observações:</b> <br>\n"
+            message += "<b>Observações:</b>\n"
             message += "<p style='border:1px; border-style:solid; padding: 1em;'>"
             message += julgamento.observacoes.replace('\n', '<br>\n')
             message += "</p>"
@@ -2146,21 +2151,44 @@ def avaliacao(request, primarykey): #acertar isso para pk
             message += "<br><b>Objetivos de Aprendizagem</b>"
             for objetivo in objetivos:
                 message += "<br><b>{0}</b>: {1}".format(objetivo.titulo, objetivo.objetivo)
-                message += "<table style='border:1px solid black; border-collapse:collapse; width:100%;'>"
+                message += "<table "
+                message += "style='border:1px solid black; border-collapse:collapse; width:100%;'>"
                 message += "<tr>"
-                message += "<th style='border: 1px solid black; width:18%;'>Insatisfatório (I)</th>"
-                message += "<th style='border: 1px solid black; width:18%;'>Em Desenvolvimento (D)</th>"
-                message += "<th style='border: 1px solid black; width:18%;'>Essencial (C)</th>"
-                message += "<th style='border: 1px solid black; width:18%;'>Proficiente (B)</th>"
-                message += "<th style='border: 1px solid black; width:18%;'>Avançado (A)</th>"
-                message += "<th style='border: 1px solid black; width:10%;'>N/A</th>"
+                message += "<th style='border: 1px solid black; width:18%;'>"
+                message += "Insatisfatório (I)</th>"
+                message += "<th style='border: 1px solid black; width:18%;'>"
+                message += "Em Desenvolvimento (D)</th>"
+                message += "<th style='border: 1px solid black; width:18%;'>"
+                message += "Essencial (C)</th>"
+                message += "<th style='border: 1px solid black; width:18%;'>"
+                message += "Proficiente (B)</th>"
+                message += "<th style='border: 1px solid black; width:18%;'>"
+                message += "Avançado (A)</th>"
+                message += "<th style='border: 1px solid black; width:10%;'>"
+                message += "N/A</th>"
                 message += "</tr>"
                 message += "<tr>"
-                message += "<td style='border: 1px solid black;'>{0}</td>".format(objetivo.rubrica_I)
-                message += "<td style='border: 1px solid black;'>{0}</td>".format(objetivo.rubrica_D)
-                message += "<td style='border: 1px solid black;'>{0}</td>".format(objetivo.rubrica_B)
-                message += "<td style='border: 1px solid black;'>{0}</td>".format(objetivo.rubrica_C)
-                message += "<td style='border: 1px solid black;'>{0}</td>".format(objetivo.rubrica_A)
+
+                message += "<td style='border: 1px solid black;'>"
+                message += "{0}".format(objetivo.rubrica_I)
+                message += "</td>"
+
+                message += "<td style='border: 1px solid black;'>"
+                message += "{0}".format(objetivo.rubrica_D)
+                message += "</td>"
+
+                message += "<td style='border: 1px solid black;'>"
+                message += "{0}".format(objetivo.rubrica_C)
+                message += "</td>"
+
+                message += "<td style='border: 1px solid black;'>"
+                message += "{0}".format(objetivo.rubrica_B)
+                message += "</td>"
+
+                message += "<td style='border: 1px solid black;'>"
+                message += "{0}".format(objetivo.rubrica_A)
+                message += "</td>"
+
                 message += "<td style='border: 1px solid black;'>"
                 message += "caso prefira não avaliar este objetivo, selecione esta coluna.</td>"
                 message += "</tr>"
