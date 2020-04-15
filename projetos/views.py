@@ -601,8 +601,10 @@ def cria_anotacao(request, login): #acertar isso para pk
             return HttpResponse(
                 "Anotação criada.<br>"+\
                 "<a href='../organizacao_completo/"+login+\
-                "'>Volta para organização</a>")
-        return HttpResponse("Anotação não criada.")
+                "'>Volta para organização</a><br>"+\
+                "<a href='../organizacoes_lista/"+login+\
+                "'>Volta para lista de organizações</a><br>")
+        return HttpResponse("<h3 style='color:red'>Anotação não criada.<h3>")
     else:
         context = {
             'organization': organization,
