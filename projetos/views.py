@@ -2094,46 +2094,49 @@ def avaliacao(request, primarykey): #acertar isso para pk
 
             julgamento.save()
 
-            message = "Avaliação PFE<br>\n<br>\n"
-            message += "Título do Projeto: {0}<br>\n".format(projeto.get_titulo())
-            message += "Organização: {0}<br>\n".format(projeto.empresa)
-            message += "Orientador: {0}<br>\n".format(projeto.orientador)
-            message += "Avaliador: {0}<br>\n".format(julgamento.avaliador)
-            message += "Data: {0}<br>\n".format(banca.startDate.strftime("%d/%m/%Y %H:%M"))
+            message = "<h4>Avaliação PFE</h4><br>\n<br>\n"
+            message += "<b>Título do Projeto:</b> {0}<br>\n".format(projeto.get_titulo())
+            message += "<b>Organização:</b> {0}<br>\n".format(projeto.empresa)
+            message += "<b>Orientador:</b> {0}<br>\n".format(projeto.orientador)
+            message += "<b>Avaliador:</b> {0}<br>\n".format(julgamento.avaliador)
+            message += "<b>Data:</b> {0}<br>\n".format(banca.startDate.strftime("%d/%m/%Y %H:%M"))
 
             if julgamento.tipo_de_avaliacao == 0:
-                message += "Banca: final<br>\n"
+                message += "<b>Banca:</b> final<br>\n"
             else:
-                message += "Banca: Intermediária<br>\n"
+                message += "<b>Banca:</b> Intermediária<br>\n"
 
             message += "<br>\n<br>\n"
-
+            message += "<b>Conceitos:</b><br>\n"
+            message += "<table border='1'>"
             if julgamento.objetivo1:
-                message += "Objetivo: {0} - {1}<br>\n".format(julgamento.objetivo1,
+                message += "<tr><td>{0}</td><td>{1}</td>\n".format(julgamento.objetivo1,
                                                               julgamento.objetivo1_conceito)
             if julgamento.objetivo2:
-                message += "Objetivo: {0} - {1}<br>\n".format(julgamento.objetivo2,
+                message += "<tr><td>{0}</td><td>{1}</td>\n".format(julgamento.objetivo2,
                                                               julgamento.objetivo2_conceito)
             if julgamento.objetivo3:
-                message += "Objetivo: {0} - {1}<br>\n".format(julgamento.objetivo3,
+                message += "<tr><td>{0}</td><td>{1}</td>\n".format(julgamento.objetivo3,
                                                               julgamento.objetivo3_conceito)
             if julgamento.objetivo4:
-                message += "Objetivo: {0} - {1}<br>\n".format(julgamento.objetivo4,
+                message += "<tr><td>{0}</td><td>{1}</td>\n".format(julgamento.objetivo4,
                                                               julgamento.objetivo4_conceito)
             if julgamento.objetivo5:
-                message += "Objetivo: {0} - {1}<br>\n".format(julgamento.objetivo5,
+                message += "<tr><td>{0}</td><td>{1}</td>\n".format(julgamento.objetivo5,
                                                               julgamento.objetivo5_conceito)
+            message += "</table>"
 
             message += "<br>\n<br>\n"
-            message += "Obesrvações: <br>\n"
+            message += "</b>Observações:</b> <br>\n"
+            message += "<p style='border:1px; border-style:solid; border-color:#252525; padding: 1em;'>"
             message += julgamento.observacoes.replace('\n', '<br>\n')
-
+            message += "</p>"
             message += "<br>\n<br>\n"
 
             message += "<br><b>Objetivos de Aprendizagem</b>"
             for objetivo in objetivos:
                 message += "<br><b>{0}</b>: {1}".format(objetivo.titulo, objetivo.objetivo)
-                message += "<table style='width:100%'>"
+                message += "<table  border='1' style='width:100%'>"
                 message += "<tr>"
                 message += "<th style='width:18%'>Insatisfatório (I)</th>"
                 message += "<th style='width:18%'>Em Desenvolvimento (D)</th>"
