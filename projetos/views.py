@@ -1791,7 +1791,6 @@ def bancas_buscar(request):
 def bancas_editar(request, primarykey):
     """Edita uma banca de avaliação para o projeto."""
     banca = Banca.objects.get(pk=primarykey)
-    print(banca.projeto)
     if request.method == 'POST':
         editar_banca(banca, request)
         return HttpResponse( # Isso não esta bom assim, ajustar
@@ -2155,11 +2154,9 @@ def avaliacao(request, primarykey): #acertar isso para pk
 
             subject = 'Banca PFE : {0}'.format(projeto)
             recipient_list = [projeto.orientador.user.email, julgamento.avaliador.email,]
-            #check = email(subject, recipient_list, message)
-            #if check != 1:
-            #    message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
-
-            print(message)
+            check = email(subject, recipient_list, message)
+            if check != 1:
+                message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
 
             resposta = "Avaliação submetida e enviada para:<br>"
             for recipient in recipient_list:
