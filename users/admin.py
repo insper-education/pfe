@@ -7,20 +7,13 @@ Data: 15 de Maio de 2019
 
 import string
 from django.contrib import admin
-#from django.contrib.auth import get_user_model
-#from django.contrib.auth.admin import UserAdmin
 from django.contrib.admin import SimpleListFilter
-
-#from .forms import PFEUserCreationForm
-#from .forms import PFEUserChangeForm
 from .models import PFEUser, Aluno, Professor, Parceiro, Administrador
-
 from .models import Opcao, Alocacao, Areas   # Mover para outra área
 
 class FirstLetterFilter(SimpleListFilter):
     """Filtro para separar pela primeira letra do nome."""
-    # Human-readable title which will be displayed in the
-    # right admin sidebar just above the filter options.
+    # Titulo no painel de busca
     title = 'Primeira Letra'
 
     # Parameter for the filter that will be used in the URL query.
@@ -49,8 +42,7 @@ class FirstLetterFilter(SimpleListFilter):
         if filter_val in self.letters:
             if "pfeuser" in str(request): # isso não está nada bom
                 return queryset.filter(first_name__istartswith=self.value())
-            else:
-                return queryset.filter(user__first_name__istartswith=self.value())
+            return queryset.filter(user__first_name__istartswith=self.value())
 
 @admin.register(PFEUser)
 class PFEUserAdmin(admin.ModelAdmin):
