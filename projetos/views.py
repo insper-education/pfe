@@ -2108,7 +2108,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
 
             message += "<br>\n<br>\n"
             message += "<b>Conceitos:</b><br>\n"
-            message += "<table style='border:1px; border-collapse:collapse;'>"
+            message += "<table style='border: 1px solid black; border-collapse:collapse;'>"
             if julgamento.objetivo1:
                 message += "<tr><td>{0}</td><td style='text-align:center'>&nbsp;{1}&nbsp;</td>\n".\
                                         format(julgamento.objetivo1, julgamento.objetivo1_conceito)
@@ -2136,7 +2136,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
             message += "<br><b>Objetivos de Aprendizagem</b>"
             for objetivo in objetivos:
                 message += "<br><b>{0}</b>: {1}".format(objetivo.titulo, objetivo.objetivo)
-                message += "<table style='border:1px; border-collapse:collapse; width:100%;'>"
+                message += "<table style='border:1px solid black; border-collapse:collapse; width:100%;'>"
                 message += "<tr>"
                 message += "<th style='width:18%'>Insatisfatório (I)</th>"
                 message += "<th style='width:18%'>Em Desenvolvimento (D)</th>"
