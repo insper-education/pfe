@@ -2112,27 +2112,27 @@ def avaliacao(request, primarykey): #acertar isso para pk
             if julgamento.objetivo1:
                 message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
                     format(julgamento.objetivo1)
-                message += "<td style='text-align:center'>&nbsp;{1}&nbsp;</td>\n".\
+                message += "<td style='text-align:center'>&nbsp;{0}&nbsp;</td>\n".\
                     format(julgamento.objetivo1_conceito)
             if julgamento.objetivo2:
                 message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
                     format(julgamento.objetivo2)
-                message += "<td style='text-align:center'>&nbsp;{1}&nbsp;</td>\n".\
+                message += "<td style='text-align:center'>&nbsp;{0}&nbsp;</td>\n".\
                     format(julgamento.objetivo2_conceito)
             if julgamento.objetivo3:
                 message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
                     format(julgamento.objetivo3)
-                message += "<td style='text-align:center'>&nbsp;{1}&nbsp;</td>\n".\
+                message += "<td style='text-align:center'>&nbsp;{0}&nbsp;</td>\n".\
                     format(julgamento.objetivo3_conceito)
             if julgamento.objetivo4:
                 message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
                     format(julgamento.objetivo4)
-                message += "<td style='text-align:center'>&nbsp;{1}&nbsp;</td>\n".\
+                message += "<td style='text-align:center'>&nbsp;{0}&nbsp;</td>\n".\
                     format(julgamento.objetivo4_conceito)
             if julgamento.objetivo5:
                 message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
                     format(julgamento.objetivo5)
-                message += "<td style='text-align:center'>&nbsp;{1}&nbsp;</td>\n".\
+                message += "<td style='text-align:center'>&nbsp;{0}&nbsp;</td>\n".\
                     format(julgamento.objetivo5_conceito)
             message += "</table>"
 
