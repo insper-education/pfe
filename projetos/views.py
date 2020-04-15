@@ -602,7 +602,7 @@ def cria_anotacao(request, login): #acertar isso para pk
                 "Anotação criada.<br>"+\
                 "<a href='../organizacao_completo/"+login+\
                 "'>Volta para organização</a><br>"+\
-                "<a href='../organizacoes_lista/"+login+\
+                "<a href='../organizacoes_lista/"+\
                 "'>Volta para lista de organizações</a><br>")
         return HttpResponse("<h3 style='color:red'>Anotação não criada.<h3>")
     else:

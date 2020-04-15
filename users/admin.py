@@ -53,8 +53,10 @@ class PFEUserAdmin(admin.ModelAdmin):
     list_filter = ('tipo_de_usuario',)
     fieldsets = (
         (None, {'fields': ('username', 'first_name', 'last_name', 'email', 'tipo_de_usuario',)}),
-        ('Personal info', {'fields': ('groups', 'user_permissions', 'cpf', 'membro_comite', 'genero')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
+        ('Personal info',
+         {'fields': ('groups', 'user_permissions', 'cpf', 'membro_comite', 'genero')}),
+        ('Permissions',
+         {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
     )
     ordering = ('first_name', 'last_name')
 
@@ -76,7 +78,7 @@ class AlocacaoAdmin(admin.ModelAdmin):
 class ParceiroAdmin(admin.ModelAdmin):
     """Definição de Parceiro do PFE."""
     list_display = ('get_full_name', 'email', 'telefone', 'celular', 'skype')
-    ordering = ()
+    ordering = ('user__first_name', 'user__last_name',)
     list_filter = (FirstLetterFilter, )
 
     def get_full_name(self, obj):

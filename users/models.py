@@ -91,6 +91,10 @@ class PFEUser(AbstractUser):
     )
     genero = models.CharField(max_length=1, choices=GENERO_CHOICES, default='X',
                               help_text='sexo do usuário')
+
+    class Meta:
+        ordering = ['first_name', 'last_name']
+
     def __str__(self):
         return self.first_name + " " + self.last_name + \
             " (" + self.TIPO_DE_USUARIO_CHOICES[self.tipo_de_usuario-1][1] + ")"
@@ -104,7 +108,7 @@ class Professor(models.Model):
         ("TI", "Tempo Integral"),
         ("TP", 'Tempo Parcial'),
     )
-    
+
     dedicacao = models.CharField("Dedicação", max_length=2,
                                  choices=TIPO_DEDICACAO, null=True, blank=True,
                                  help_text='Tipo de dedicação do professor')
