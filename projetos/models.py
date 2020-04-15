@@ -559,6 +559,15 @@ class ObjetidosDeAprendizagem(models.Model):
     rubrica_A = models.TextField(max_length=1024, null=True, blank=True,
                                  help_text='Rubrica do conceito A')
 
+    avaliacao_aluno = models.BooleanField("Avaliação do Aluno", default=False,
+                                          help_text='Avaliação do Aluno (AA)')
+
+    avaliacao_banca = models.BooleanField("Avaliação da Banca", default=False,
+                                          help_text='Avaliação da Banca (AB)')
+
+    avaliacao_grupo = models.BooleanField("Avaliação do Grupo", default=False,
+                                          help_text='Avaliação do Grupo (AG)')
+
     def __str__(self):
         return str(self.titulo)
 

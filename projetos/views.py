@@ -2045,6 +2045,12 @@ def avaliacao(request, primarykey): #acertar isso para pk
         return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
         #raise Http404("Poll does not exist")
 
+    objetivos = ObjetidosDeAprendizagem.objects.filter(avaliacao_banca=True)
+
+    pessoas = PFEUser.objects.all().\
+                        filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0]).\
+                        order_by("first_name", "last_name") # Conta soh professor
+
     if request.method == 'POST':
         if 'avaliador' in request.POST:
             julgamento = Avaliacao.create(projeto)
@@ -2093,6 +2099,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
             message += "Título do Projeto: {0}<br>\n".format(projeto.get_titulo())
             message += "Organização: {0}<br>\n".format(projeto.empresa)
             message += "Orientador: {0}<br>\n".format(projeto.orientador)
+            message += "Avaliador: {0}<br>\n".format(julgamento.avaliador)
             message += "Data: {0}<br>\n".format(banca.startDate.strftime("%d/%m/%Y %H:%M"))
 
             if julgamento.tipo_de_avaliacao == 0:
@@ -2122,11 +2129,37 @@ def avaliacao(request, primarykey): #acertar isso para pk
             message += "Obesrvações: <br>\n"
             message += julgamento.observacoes.replace('\n', '<br>\n')
 
+            message += "<br>\n<br>\n"
+
+            message += "<br><b>Objetivos de Aprendizagem</b>"
+            for objetivo in objetivos:
+                message += "<br><b>{0}</b>: {1}".format(objetivo.titulo, objetivo.objetivo)
+                message += "<table style='width:100%'>"
+                message += "<tr>"
+                message += "<th style='width:18%'>Insatisfatório (I)</th>"
+                message += "<th style='width:18%'>Em Desenvolvimento (D)</th>"
+                message += "<th style='width:18%'>Essencial (C)</th>"
+                message += "<th style='width:18%'>Proficiente (B)</th>"
+                message += "<th style='width:18%'>Avançado (A)</th>"
+                message += "<th style='width:10%'>N/A</th>"
+                message += "</tr>"
+                message += "<tr>"
+                message += "<td>{0}</td>".format(objetivo.rubrica_I)
+                message += "<td>{0}</td>".format(objetivo.rubrica_D)
+                message += "<td>{0}</td>".format(objetivo.rubrica_B)
+                message += "<td>{0}</td>".format(objetivo.rubrica_C)
+                message += "<td>{0}</td>".format(objetivo.rubrica_A)
+                message += "<td>caso prefira não avaliar este objetivo, selecione esta coluna.</td>"
+                message += "</tr>"
+                message += "</table>"
+
             subject = 'Banca PFE : {0}'.format(projeto)
             recipient_list = [projeto.orientador.user.email, julgamento.avaliador.email,]
-            check = email(subject, recipient_list, message)
-            if check != 1:
-                message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+            #check = email(subject, recipient_list, message)
+            #if check != 1:
+            #    message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+
+            print(message)
 
             resposta = "Avaliação submetida e enviada para:<br>"
             for recipient in recipient_list:
@@ -2136,11 +2169,6 @@ def avaliacao(request, primarykey): #acertar isso para pk
 
         return HttpResponse("Avaliação não submetida.")
     else:
-        objetivos = ObjetidosDeAprendizagem.objects.all()
-        pessoas = PFEUser.objects.all().\
-                            filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0]).\
-                            order_by("first_name", "last_name") # Conta soh professor
-
         # mes = datetime.date.today().month
         # if mes <= 4 or (mes > 7 and mes < 11):
         #     guess_banca = 1 # intermediaria

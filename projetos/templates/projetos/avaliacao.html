@@ -67,12 +67,12 @@
         <br><b>{{objetivo.titulo}}</b>: {{objetivo.objetivo}}
         <table style="width:100%">
           <tr>
-            <th><input type="radio" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.I " required> Insatisfatório (I)</th>
-            <th><input type="radio" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.D " required> Em Desenvolvimento (D)</th>
-            <th><input type="radio" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.C " required> Essencial (C)</th>
-            <th><input type="radio" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.B " required> Proficiente (B)</th>
-            <th><input type="radio" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.A " required> Avançado (A)</th>
-            <th><input type="radio" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.NA" required> N/A</th>
+            <th style="width:18%"><input type="radio" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.I " required> Insatisfatório (I)</th>
+            <th style="width:18%"><input type="radio" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.D " required> Em Desenvolvimento (D)</th>
+            <th style="width:18%"><input type="radio" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.C " required> Essencial (C)</th>
+            <th style="width:18%"><input type="radio" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.B " required> Proficiente (B)</th>
+            <th style="width:18%"><input type="radio" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.A " required> Avançado (A)</th>
+            <th style="width:10%"><input type="radio" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.NA" required> N/A</th>
           </tr>
           <tr>
             <td>{{objetivo.rubrica_I}}</td>
@@ -80,7 +80,7 @@
             <td>{{objetivo.rubrica_C}}</td>
             <td>{{objetivo.rubrica_B}}</td>
             <td>{{objetivo.rubrica_A}}</td>
-            <td>caso prefira não avaliar nesta rubrica.</td>
+            <td>caso prefira não avaliar este objetivo, selecione esta coluna.</td>
           </tr>
         </table>
       {% endfor %}
