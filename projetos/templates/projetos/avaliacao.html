@@ -62,9 +62,21 @@
           {% endfor %}
       </select><br>
 
-      <br><b>Objetivos de Aprendizagem</b>
+      <br>
+      <h5>Orientações Gerais</h5>
+
+O professor(a) orientador(a) é responsável por conduzir a banca. Os alunos terão <b>40 minutos para a apresentação</b>. Os membros da banca terão depois <b>50 minutos para arguição</b> (que serão divididos pelos membros convidados), podendo tirar qualquer dúvida a respeito do projeto e fazer comentários relevantes. Caso haja muitas interferências da banca durante a apresentação dos alunos, poderá se estender o tempo de apresentação. A dinâmica de apresentação é livre, contudo, <b>todos os alunos devem estar prontos para responder qualquer tipo de pergunta</b> sobre o projeto. Um membro da banca pode fazer uma pergunta direcionada para um aluno específico do grupo se desejar.
+<br><br>
+Como ordem recomendada para a arguição da banca, se deve convidar: professores convidados, professores coorientadores, professor(a) orientador(a) do projeto e por fim demais pessoas assistindo à apresentação. A banca poderá perguntar tanto sobre a apresentação, como o relatório entregue, se espera coletar informações tanto da apresentação, como do relatório, permitindo uma clara ponderação nas rubricas dos objetivos de aprendizado do Projeto Final de Engenharia.
+<br><br>
+As bancas do Projeto Final de Engenharia servem como mais um evidência de aprendizado, assim, além da percepção dos membros da banca em relação ao nível alcançado nos objetivos de aprendizado pelos alunos, serve também como registro da evolução do projeto. Dessa forma, ao final, a banca terá mais <b>15 minutos para ponderar</b>, nesse momento se recomenda dispensar os alunos. Recomendamos 5 minutos para os membros da banca relerem os objetivos de aprendizagem e rubricas, fazerem qualquer anotação e depois 10 minutos para uma discussão final. Cada membro da banca poderá colocar seu veredito sobre grupo, usando as rubricas a seguir. O professor(a) orientador(a) irá publicar (no Blackboard), ao final, a média dos conceitos anotados.
+<br><br>
+No Projeto Final de Engenharia, a maioria dos projetos está sob sigilo. Nos contratos realizados (quando pedido ou necessário) entre a Organização Parceira e o Insper, se tem os professores automaticamente responsáveis por garantir o sigilo das informações. Assim <b>pessoas externas só podem participar das bancas com prévia autorização</b>. Isso inclui alunos que não sejam do grupo, familiares ou amigos.
+<br>
+
+      <br><h5>Objetivos de Aprendizagem</h5>
       {% for objetivo in objetivos %}
-        <br><b>{{objetivo.titulo}}</b>: {{objetivo.objetivo}}
+        <b>{{objetivo.titulo}}</b>: {{objetivo.objetivo}}
         <table style="width:100%">
           <tr>
             <th style="width:18%"><input type="radio" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.I " required> Insatisfatório (I)</th>
@@ -82,7 +94,7 @@
             <td>{{objetivo.rubrica_A}}</td>
             <td>caso prefira não avaliar este objetivo, selecione esta coluna.</td>
           </tr>
-        </table>
+        </table><br>
       {% endfor %}
       
       <br><b>Observações:</b><br>
