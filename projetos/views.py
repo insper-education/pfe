@@ -557,14 +557,23 @@ def organizacoes_lista(request):
     organizacoes = Empresa.objects.all()
     fechados = []
     desde = []
+    contato = []
     for organizacao in organizacoes:
         projetos = Projeto.objects.filter(empresa=organizacao).order_by("ano", "semestre")
         if projetos.first():
             desde.append(str(projetos.first().ano)+"."+str(projetos.first().semestre))
         else:
             desde.append("---------")
+
+        anot = Anotacao.objects.filter(organizacao=organizacao).order_by("data").last()
+        if anot:
+            contato.append(anot.data)
+        else:
+            contato.append("---------")
+
         fechados.append(projetos.filter(alocacao__isnull=False).distinct().count())
-    organizacoes_list = zip(organizacoes, fechados, desde)
+
+    organizacoes_list = zip(organizacoes, fechados, desde, contato)
     total_organizacoes = Empresa.objects.all().count()
     total_submetidos = Projeto.objects.all().count()
     total_fechados = Projeto.objects.filter(alocacao__isnull=False).distinct().count()

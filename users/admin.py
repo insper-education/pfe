@@ -77,7 +77,7 @@ class AlocacaoAdmin(admin.ModelAdmin):
 @admin.register(Parceiro)
 class ParceiroAdmin(admin.ModelAdmin):
     """Definição de Parceiro do PFE."""
-    list_display = ('get_full_name', 'email', 'telefone', 'celular', 'skype')
+    list_display = ('get_full_name', 'get_sigla', 'email', 'telefone', 'celular', 'skype')
     ordering = ('user__first_name', 'user__last_name',)
     list_filter = (FirstLetterFilter, )
 
@@ -86,6 +86,15 @@ class ParceiroAdmin(admin.ModelAdmin):
         return obj.user.first_name+" "+obj.user.last_name
     get_full_name.short_description = 'Nome Completo'
     get_full_name.admin_order_field = 'user__first_name'
+
+    def get_sigla(self, obj):
+        """Retorna a silga da organização"""
+        if obj.organizacao:
+            return obj.organizacao.sigla
+        else:
+            return "Não Definida"
+    get_sigla.short_description = 'Sigla'
+    get_sigla.admin_order_field = 'organizacao__sigla'
 
     def email(self, obj):
         """Retorna o e-mail do usuário"""
