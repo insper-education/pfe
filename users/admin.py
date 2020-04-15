@@ -31,7 +31,10 @@ class FirstLetterFilter(SimpleListFilter):
         qs = model_admin.get_queryset(request)
         lookups = []
         for letter in self.letters:
-            count = qs.filter(user__first_name__istartswith=letter).count()
+            if isinstance(model_admin, PFEUserAdmin):
+                count = qs.filter(first_name__istartswith=letter).count()
+            else:
+                count = qs.filter(user__first_name__istartswith=letter).count()
             if count:
                 lookups.append((letter, '{} ({})'.format(letter, count)))
         return lookups
@@ -44,13 +47,16 @@ class FirstLetterFilter(SimpleListFilter):
         """
         filter_val = self.value()
         if filter_val in self.letters:
-            return queryset.filter(user__first_name__istartswith=self.value())
+            if "pfeuser" in str(request): # isso não está nada bom
+                return queryset.filter(first_name__istartswith=self.value())
+            else:
+                return queryset.filter(user__first_name__istartswith=self.value())
 
 @admin.register(PFEUser)
 class PFEUserAdmin(admin.ModelAdmin):
     """Usuário geral para todos do PFE."""
     list_display = ('first_name', 'last_name', 'username', 'email', 'genero', 'tipo_de_usuario',)
-    list_filter = ('tipo_de_usuario',)
+    list_filter = ('tipo_de_usuario', FirstLetterFilter)
     fieldsets = (
         (None, {'fields': ('username', 'first_name', 'last_name', 'email', 'tipo_de_usuario',)}),
         ('Personal info',
