@@ -2108,27 +2108,27 @@ def avaliacao(request, primarykey): #acertar isso para pk
 
             message += "<br>\n<br>\n"
             message += "<b>Conceitos:</b><br>\n"
-            message += "<table style='border:1px; border-style:solid;'>"
+            message += "<table style='border:1px; border-collapse:collapse;'>"
             if julgamento.objetivo1:
-                message += "<tr><td>{0}</td><td>{1}</td>\n".format(julgamento.objetivo1,
-                                                              julgamento.objetivo1_conceito)
+                message += "<tr><td>{0}</td><td style='text-align:center'>&nbsp;{1}&nbsp;</td>\n".\
+                                        format(julgamento.objetivo1, julgamento.objetivo1_conceito)
             if julgamento.objetivo2:
-                message += "<tr><td>{0}</td><td>{1}</td>\n".format(julgamento.objetivo2,
-                                                              julgamento.objetivo2_conceito)
+                message += "<tr><td>{0}</td><td style='text-align:center'>&nbsp;{1}&nbsp;</td>\n".\
+                                        format(julgamento.objetivo2, julgamento.objetivo2_conceito)
             if julgamento.objetivo3:
-                message += "<tr><td>{0}</td><td>{1}</td>\n".format(julgamento.objetivo3,
-                                                              julgamento.objetivo3_conceito)
+                message += "<tr><td>{0}</td><td style='text-align:center'>&nbsp;{1}&nbsp;</td>\n".\
+                                        format(julgamento.objetivo3, julgamento.objetivo3_conceito)
             if julgamento.objetivo4:
-                message += "<tr><td>{0}</td><td>{1}</td>\n".format(julgamento.objetivo4,
-                                                              julgamento.objetivo4_conceito)
+                message += "<tr><td>{0}</td><td style='text-align:center'>&nbsp;{1}&nbsp;</td>\n".\
+                                        format(julgamento.objetivo4, julgamento.objetivo4_conceito)
             if julgamento.objetivo5:
-                message += "<tr><td>{0}</td><td>{1}</td>\n".format(julgamento.objetivo5,
-                                                              julgamento.objetivo5_conceito)
+                message += "<tr><td>{0}</td><td style='text-align:center'>&nbsp;{1}&nbsp;</td>\n".\
+                                        format(julgamento.objetivo5, julgamento.objetivo5_conceito)
             message += "</table>"
 
             message += "<br>\n<br>\n"
             message += "</b>Observações:</b> <br>\n"
-            message += "<p style='border:1px; border-style:solid; border-color:#080808; padding: 1em;'>"
+            message += "<p style='border:1px; border-style:solid; padding: 1em;'>"
             message += julgamento.observacoes.replace('\n', '<br>\n')
             message += "</p>"
             message += "<br>\n<br>\n"
@@ -2136,7 +2136,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
             message += "<br><b>Objetivos de Aprendizagem</b>"
             for objetivo in objetivos:
                 message += "<br><b>{0}</b>: {1}".format(objetivo.titulo, objetivo.objetivo)
-                message += "<table style='border:1px; border-style:solid; width:100%;'>"
+                message += "<table style='border:1px; border-collapse:collapse; width:100%;'>"
                 message += "<tr>"
                 message += "<th style='width:18%'>Insatisfatório (I)</th>"
                 message += "<th style='width:18%'>Em Desenvolvimento (D)</th>"
