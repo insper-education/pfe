@@ -2110,19 +2110,19 @@ def avaliacao(request, primarykey): #acertar isso para pk
             message += "<b>Conceitos:</b><br>\n"
             message += "<table style='border: 1px solid black; border-collapse:collapse;'>"
             if julgamento.objetivo1:
-                message += "<tr><td>{0}</td><td style='text-align:center'>&nbsp;{1}&nbsp;</td>\n".\
+                message += "<tr><td style='border: 1px solid black;'>{0}</td><td style='text-align:center'>&nbsp;{1}&nbsp;</td>\n".\
                                         format(julgamento.objetivo1, julgamento.objetivo1_conceito)
             if julgamento.objetivo2:
-                message += "<tr><td>{0}</td><td style='text-align:center'>&nbsp;{1}&nbsp;</td>\n".\
+                message += "<tr><td style='border: 1px solid black;'>{0}</td><td style='text-align:center'>&nbsp;{1}&nbsp;</td>\n".\
                                         format(julgamento.objetivo2, julgamento.objetivo2_conceito)
             if julgamento.objetivo3:
-                message += "<tr><td>{0}</td><td style='text-align:center'>&nbsp;{1}&nbsp;</td>\n".\
+                message += "<tr><td style='border: 1px solid black;'>{0}</td><td style='text-align:center'>&nbsp;{1}&nbsp;</td>\n".\
                                         format(julgamento.objetivo3, julgamento.objetivo3_conceito)
             if julgamento.objetivo4:
-                message += "<tr><td>{0}</td><td style='text-align:center'>&nbsp;{1}&nbsp;</td>\n".\
+                message += "<tr><td style='border: 1px solid black;'>{0}</td><td style='text-align:center'>&nbsp;{1}&nbsp;</td>\n".\
                                         format(julgamento.objetivo4, julgamento.objetivo4_conceito)
             if julgamento.objetivo5:
-                message += "<tr><td>{0}</td><td style='text-align:center'>&nbsp;{1}&nbsp;</td>\n".\
+                message += "<tr><td style='border: 1px solid black;'>{0}</td><td style='text-align:center'>&nbsp;{1}&nbsp;</td>\n".\
                                         format(julgamento.objetivo5, julgamento.objetivo5_conceito)
             message += "</table>"
 
@@ -2138,20 +2138,21 @@ def avaliacao(request, primarykey): #acertar isso para pk
                 message += "<br><b>{0}</b>: {1}".format(objetivo.titulo, objetivo.objetivo)
                 message += "<table style='border:1px solid black; border-collapse:collapse; width:100%;'>"
                 message += "<tr>"
-                message += "<th style='width:18%'>Insatisfatório (I)</th>"
-                message += "<th style='width:18%'>Em Desenvolvimento (D)</th>"
-                message += "<th style='width:18%'>Essencial (C)</th>"
-                message += "<th style='width:18%'>Proficiente (B)</th>"
-                message += "<th style='width:18%'>Avançado (A)</th>"
-                message += "<th style='width:10%'>N/A</th>"
+                message += "<th style='border: 1px solid black; width:18%;'>Insatisfatório (I)</th>"
+                message += "<th style='border: 1px solid black; width:18%;'>Em Desenvolvimento (D)</th>"
+                message += "<th style='border: 1px solid black; width:18%;'>Essencial (C)</th>"
+                message += "<th style='border: 1px solid black; width:18%;'>Proficiente (B)</th>"
+                message += "<th style='border: 1px solid black; width:18%;'>Avançado (A)</th>"
+                message += "<th style='border: 1px solid black; width:10%;'>N/A</th>"
                 message += "</tr>"
                 message += "<tr>"
-                message += "<td>{0}</td>".format(objetivo.rubrica_I)
-                message += "<td>{0}</td>".format(objetivo.rubrica_D)
-                message += "<td>{0}</td>".format(objetivo.rubrica_B)
-                message += "<td>{0}</td>".format(objetivo.rubrica_C)
-                message += "<td>{0}</td>".format(objetivo.rubrica_A)
-                message += "<td>caso prefira não avaliar este objetivo, selecione esta coluna.</td>"
+                message += "<td style='border: 1px solid black;'>{0}</td>".format(objetivo.rubrica_I)
+                message += "<td style='border: 1px solid black;'>{0}</td>".format(objetivo.rubrica_D)
+                message += "<td style='border: 1px solid black;'>{0}</td>".format(objetivo.rubrica_B)
+                message += "<td style='border: 1px solid black;'>{0}</td>".format(objetivo.rubrica_C)
+                message += "<td style='border: 1px solid black;'>{0}</td>".format(objetivo.rubrica_A)
+                message += "<td style='border: 1px solid black;'>"
+                message += "caso prefira não avaliar este objetivo, selecione esta coluna.</td>"
                 message += "</tr>"
                 message += "</table>"
 
