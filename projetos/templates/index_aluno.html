@@ -113,6 +113,13 @@
             var x = document.getElementById(mensagem);
             x.className = "show";
             setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+            {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                if(mensagem=="projeto") {
+                    window.location='{% url 'meuprojeto' %}';
+                } else {
+                    window.location='http://www.example.com';
+                }   
+            {% endif %}
         }
     </script>
 

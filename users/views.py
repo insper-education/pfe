@@ -16,7 +16,7 @@ from django.views import generic
 
 from projetos.models import Configuracao, Projeto
 from .forms import PFEUserCreationForm
-from .models import PFEUser, Aluno, Professor, Parceiro, Opcao
+from .models import PFEUser, Aluno, Professor, Parceiro, Opcao, Administrador
 
 @login_required
 def perfil(request):
@@ -33,6 +33,10 @@ def perfil(request):
     if user.tipo_de_usuario == 3: #parceiro
         parceiro = Parceiro.objects.get(pk=request.user.pk)
         context = {'parceiro' : parceiro,}
+        return render(request, 'users/profile_detail.html', context=context)
+    if user.tipo_de_usuario == 4: #administrador
+        administrador = Administrador.objects.get(pk=request.user.pk)
+        context = {'administrador' : administrador,}
         return render(request, 'users/profile_detail.html', context=context)
     return HttpResponse("Seu perfil não foi encontrado!")
 
@@ -138,7 +142,7 @@ def alunos_lista(request):
             ano += 1
             semestre = 1
 
-    totais["total"] = totais["computação"] + totais["mecânica"] + totais["mecatrônica"] 
+    totais["total"] = totais["computação"] + totais["mecânica"] + totais["mecatrônica"]
 
     context = {
         'alunos_list' : alunos_list,
@@ -160,7 +164,7 @@ def alunos_inscrevendo(request):
     """Mostra todos os alunos que estão se inscrevendo em projetos."""
     configuracao = Configuracao.objects.all().first()
 
-    if configuracao.semestre==1:
+    if configuracao.semestre == 1:
         ano = configuracao.ano
         semestre = 2
     else:

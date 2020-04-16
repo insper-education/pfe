@@ -7,6 +7,8 @@
 
 {% block content %}
 
+
+
     <h5>Agendamentos</h5>
     <ul>
         <a href="{% url 'bancas_index' %}"><li>Bancas</li></a>
@@ -15,6 +17,7 @@
 
     <h5>Projetos</h5>
     <ul>
+        <a href="{% url 'professor_detail' professor_id %}"><li>Meu(s) Projeto(s)</li></a>
         <a href="{% url 'projetos_fechados' %}"><li>Detalhes (somente os fechados)</li></a>
         <a href="{% url 'histograma' %}"><li>Procura (histograma de preferências)</li></a>
         <a href="{% url 'projetos_lista' 'disponiveis' %}"><li>Disponíveis (p/ os próximos semestres)</li></a>

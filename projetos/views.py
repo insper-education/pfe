@@ -410,8 +410,22 @@ def index_organizacao(request):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def index_professor(request):
     """Mostra página principal do usuário professor."""
-    return render(request, 'index_professor.html')
 
+    user = PFEUser.objects.get(pk=request.user.pk)
+    if user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
+        return HttpResponse("Você não está cadastrado como professor")
+
+    professor_id = 0
+    try:
+        professor_id = Professor.objects.get(user__pk=request.user.pk).id
+    except Banca.DoesNotExist:
+        pass
+        # Administrador não possui também conta de professor
+
+    context = {
+        'professor_id': professor_id,
+    }
+    return render(request, 'index_professor.html', context=context)
 
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
@@ -1249,10 +1263,11 @@ def carregar(request):
 def meuprojeto(request):
     """Mostra o projeto do próprio aluno, se for aluno."""
     user = PFEUser.objects.get(pk=request.user.pk)
-    if user.tipo_de_usuario != 1 and user.tipo_de_usuario != 2:
+    if user.tipo_de_usuario != 1 and user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
         return HttpResponse("Você não está cadastrado como aluno ou professor")
-    elif user.tipo_de_usuario == 2:
-        return redirect('professor_detail', pk=request.user.pk)
+    if user.tipo_de_usuario == 2:
+        professor = Professor.objects.get(user__pk=request.user.pk)
+        return redirect('professor_detail', primarykey=professor.pk)
     # vvvv Caso seja um aluno  vvv
     aluno = Aluno.objects.get(pk=request.user.pk)
     context = {
@@ -2119,7 +2134,8 @@ def avaliacao(request, primarykey): #acertar isso para pk
 
             message += "<br>\n"
             message += "<b>Conceitos:</b><br>\n"
-            message += "<table style='border: 1px solid black; border-collapse:collapse; padding: 0.3em;'>"
+            message += "<table style='border: 1px solid black; "
+            message += "border-collapse:collapse; padding: 0.3em;'>"
             if julgamento.objetivo1:
                 message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
                     format(julgamento.objetivo1)

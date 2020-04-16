@@ -16,6 +16,8 @@
   <strong>Perfil:</strong> professor<br>
 {% elif parceiro %}
   <strong>Perfil:</strong> parceiro<br>
+{% elif administrador %}
+  <strong>Perfil:</strong> administrador<br>
 {% endif %}
 {% if user.email %}
   <strong>e-mail:</strong> <a href="mailto:{{user.email}}">{{user.email}}</a><br>

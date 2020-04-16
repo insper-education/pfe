@@ -14,15 +14,17 @@
   {% if professores %}
     <table id="OrganizacoesTable">
       <tr>
-        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Sigla</th>
-        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Organização</th>
+        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome</th>
+        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">e-mail</th>
         <th class="text-center">Lattes</th>
       </tr>
       {% for professor in professores %} 
       <tr class="item">
           <td>
             {% if professor.user.membro_comite %} <u> {% endif %}
-            {{professor.user.get_full_name}}
+              <a href="{% url 'professor_detail' professor.id %}">
+                {{professor.user.get_full_name}}
+              </a>
             {% if professor.user.membro_comite %} <u> {% endif %}
           </td>
           <td class="text-center">

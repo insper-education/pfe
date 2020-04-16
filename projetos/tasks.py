@@ -35,7 +35,7 @@ def envia_aviso():
     for event in context:
         for acao in context[event]:
             if acao.startDate == datetime.date.today():
-                subject = "{0} : {1}".format(event, acao.get_title())
+                subject = "PFE {0} : {1}".format(event, acao.get_title())
                 message = "{0} : {1}".format(event, acao.get_title())
                 message += "<br>\nLocal : {0}".format(acao.location)
                 message += "<br>\ndata inicial = {0}".format(acao.startDate)
