@@ -28,6 +28,8 @@ textarea {
 
   <form action="" method="post"> {% csrf_token %}  
 
+    {% comment %} Perguntar do LinkedIn {% endcomment %}
+
     Você já trabalhou e/ou estagiou em alguma empresa de engenharia?<br>
     Se sim, qual/quais?<br>
     <textarea name="trabalhou" rows="4" cols="80" maxlength="1000">{{trabalhou}}</textarea>

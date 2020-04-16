@@ -152,6 +152,10 @@ class Aluno(models.Model):
                                        help_text='Local de nascimento')
     email_pessoal = models.EmailField(null=True, blank=True,
                                       help_text='e-mail pessoal')
+
+    linkedin = models.URLField(max_length=100, null=True, blank=True,
+                               help_text='link do LinkedIn (opcional)')
+
     anoPFE = models.PositiveIntegerField(null=True, blank=True,
                                          validators=[MinValueValidator(2018),
                                                      MaxValueValidator(3018)],
