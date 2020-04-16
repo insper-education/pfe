@@ -2154,7 +2154,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
 
             message += "<br>\n<br>\n"
             message += "<b>Observações:</b>\n"
-            message += "<p style='border:1px; border-style:solid; padding: 1em;'>"
+            message += "<p style='border:1px; border-style:solid;'>"
             message += julgamento.observacoes.replace('\n', '<br>\n')
             message += "</p>"
             message += "<br>\n<br>\n"
