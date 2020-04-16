@@ -2175,8 +2175,6 @@ def avaliacao(request, primarykey): #acertar isso para pk
                 message += "Proficiente (B)</th>"
                 message += "<th style='border: 1px solid black; width:18%;'>"
                 message += "Avançado (A)</th>"
-                message += "<th style='border: 1px solid black; width:10%;'>"
-                message += "N/A</th>"
                 message += "</tr>"
                 message += "<tr>"
 
@@ -2200,8 +2198,6 @@ def avaliacao(request, primarykey): #acertar isso para pk
                 message += "{0}".format(objetivo.rubrica_A)
                 message += "</td>"
 
-                message += "<td style='border: 1px solid black;'>"
-                message += "caso prefira não avaliar este objetivo, selecione esta coluna.</td>"
                 message += "</tr>"
                 message += "</table>"
 
