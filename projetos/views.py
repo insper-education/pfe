@@ -2119,7 +2119,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
 
             message += "<br>\n"
             message += "<b>Conceitos:</b><br>\n"
-            message += "<table style='border: 1px solid black; border-collapse:collapse;'>"
+            message += "<table style='border: 1px solid black; border-collapse:collapse; padding: 0.3em;'>"
             if julgamento.objetivo1:
                 message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
                     format(julgamento.objetivo1)
@@ -2154,7 +2154,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
 
             message += "<br>\n<br>\n"
             message += "<b>Observações:</b>\n"
-            message += "<p style='border:1px; border-style:solid; padding: 0.4em; margin: 0;'>"
+            message += "<p style='border:1px; border-style:solid; padding: 0.3em; margin: 0;'>"
             message += julgamento.observacoes.replace('\n', '<br>\n')
             message += "</p>"
             message += "<br>\n<br>\n"
