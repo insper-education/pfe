@@ -7,6 +7,7 @@
 
 {% block head %}
 <script>
+  {% comment %} Acho que isso veio por engano para cá {% endcomment %}
   $(document).ready(function () {     
     $('#projeto').change(function(){
       var titulo = $(this).children(':selected').data('titulo');
@@ -33,15 +34,8 @@
 
       <b>Título do Projeto:</b> {{projeto.titulo}}<br>
       <b>Organização:</b> {{projeto.empresa}}<br>
-      <b>Orientador:</b> {{projeto.orientador}}<br>
-      <b>Data:</b> {{banca.startDate}}<br>
-      {% if banca.location %}
-        <b>Local:</b> {{banca.location}}<br>
-      {% endif %}  
-      {% if banca.link %}
-        <b>Link:</b> <a href="{{banca.link}}">{{banca.link}}</a>
-        <br>
-      {% endif %}
+      <b>Orientador{% if projeto.orientador.user.genero == "F" %}a{% endif %}:</b> {{projeto.orientador}}<br>
+      <br>
       <b>Banca:</b>
       {% if banca.tipo_de_banca == 0 %}Final{% else %}Intermediária{% endif %}
       {% comment %}
@@ -51,8 +45,17 @@
       </select>
       {% endcomment %}
       <br>
+      <b>Data:</b> {{banca.startDate|date:"DATE_FORMAT"}} das {{banca.startDate|date:"H:i"}} às {{banca.endDate|date:"H:i"}}<br>
+      {% if banca.location %}
+        <b>Local:</b> {{banca.location}}<br>
+      {% endif %}  
+      {% if banca.link %}
+        <b>Link:</b> <a href="{{banca.link}}">{{banca.link}}</a>
+        <br>
+      {% endif %}
+      
 
-      <br><b>Avaliador</b>:
+      <br><b>Avaliador(a)</b>:
       <select name="avaliador" id="avaliador" title="Selecione avaliador da banca" required>
           <option disabled selected value> -- selecione um avaliador -- </option>
           {% for professor in pessoas %}
@@ -65,7 +68,7 @@
       <br>
       <h5>Orientações Gerais</h5>
 
-O professor(a) orientador(a) é responsável por conduzir a banca. Os alunos terão <b>40 minutos para a apresentação</b>. Os membros da banca terão depois <b>50 minutos para arguição</b> (que serão divididos pelos membros convidados), podendo tirar qualquer dúvida a respeito do projeto e fazer comentários relevantes. Caso haja muitas interferências da banca durante a apresentação dos alunos, poderá se estender o tempo de apresentação. A dinâmica de apresentação é livre, contudo, <b>todos os alunos devem estar prontos para responder qualquer tipo de pergunta</b> sobre o projeto. Um membro da banca pode fazer uma pergunta direcionada para um aluno específico do grupo se desejar.
+O professor(a) orientador(a) é responsável por conduzir a banca. Os alunos terão <b>40 minutos para a apresentação</b>. Os membros da banca terão depois <b>50 minutos para arguição</b> (que serão divididos pelos membros convidados), podendo tirar qualquer dúvida a respeito do projeto e fazerem seus comentários. Caso haja muitas interferências da banca durante a apresentação dos alunos, poderá se estender o tempo de apresentação. A dinâmica de apresentação é livre, contudo, <b>todos os alunos devem estar prontos para responder qualquer tipo de pergunta</b> sobre o projeto. Um membro da banca pode fazer uma pergunta direcionada para um aluno específico do grupo se desejar.
 <br><br>
 Como ordem recomendada para a arguição da banca, se deve convidar: professores convidados, professores coorientadores, professor(a) orientador(a) do projeto e por fim demais pessoas assistindo à apresentação. A banca poderá perguntar tanto sobre a apresentação, como o relatório entregue, se espera coletar informações tanto da apresentação, como do relatório, permitindo uma clara ponderação nas rubricas dos objetivos de aprendizado do Projeto Final de Engenharia.
 <br><br>
