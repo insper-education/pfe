@@ -14,8 +14,6 @@
     });
   </script>
 
-
-
 {% endblock %}
 
 {% block content %}
@@ -27,10 +25,8 @@
     <option value="Co" {% if periodo == "Co" %}selected="selected"{% endif %}>Coordenação</option>
     <option value="Cm" {% if periodo == "Cm" %}selected="selected"{% endif %}>Comitê PFE</option>
     <option value="Al" {% if periodo == "Al" %}selected="selected"{% endif %}>Todos os Alunos</option>
-    <option value="AP" {% if periodo == "AP" %}selected="selected"{% endif %}>Alunos por Projeto</option>
     <option value="Or" {% if periodo == "Or" %}selected="selected"{% endif %}>Todos os Orientadores</option>
-    <option value="OP" {% if periodo == "OP" %}selected="selected"{% endif %}>Orientadores por Projeto</option>
-    <option value="Or" {% if periodo == "Or" %}selected="selected"{% endif %}>Contatos nas Organizacoes</option>
+    <option value="Og" {% if periodo == "Og" %}selected="selected"{% endif %}>Contatos nas Organizacoes</option>
   </select>
   <br><br>
 
@@ -59,9 +55,7 @@
                 {% if a.coordenacao %}Co{% endif %}
                 {% if a.comite_pfe %}Cm{% endif %}
                 {% if a.todos_alunos %}Al{% endif %}
-                {% if a.aluno_p_projeto %}AP{% endif %}
                 {% if a.todos_orientadores %}Or{% endif %}
-                {% if a.orientadores_p_projeto %}OP{% endif %}
                 {% if a.contatos_nas_organizacoes %}Og{% endif %}
               " >
             <td>
@@ -82,14 +76,8 @@
               {% if a.todos_alunos %}
                 <span data-toggle="tooltip" data-html="true" animation="true" title="Todos os Alunos">Al</span>
               {% endif %}
-              {% if a.aluno_p_projeto %}
-                <span data-toggle="tooltip" data-html="true" animation="true" title="Alunos por Projeto">AP</span>
-              {% endif %}
               {% if a.todos_orientadores %}
                 <span data-toggle="tooltip" data-html="true" animation="true" title="Todos os Orientadores">Or</span>
-              {% endif %}
-              {% if a.orientadores_p_projeto %}
-                <span data-toggle="tooltip" data-html="true" animation="true" title="Orientadores por Projeto">OP</span>
               {% endif %}
               {% if a.contatos_nas_organizacoes %}
                 <span data-toggle="tooltip" data-html="true" animation="true" title="Contatos nas Organizacoes">Og</span>
@@ -107,9 +95,7 @@
       Co: Coordenação
       Cm: Comitê do PFE;
       Al: Todos os Alunos;
-      AP: Alunos por Projeto;
       Or: Todos os Orientadores;
-      OP: Orientadores por Projeto;
       Og: Contatos nas Organizacoes.
       </small>
       <p>&nbsp;</p>
@@ -120,7 +106,6 @@
     <p>&nbsp;</p>
 
   </form>
-  
 
   <script type="text/javascript">
 

@@ -472,12 +472,8 @@ class Aviso(models.Model):
         models.BooleanField(default=False, help_text='Para os membros do comitê do PFE')
     todos_alunos = \
         models.BooleanField(default=False, help_text='Para todos os alunos do semestre')
-    aluno_p_projeto = \
-        models.BooleanField(default=False, help_text='Para alunos por projetos do semestre')
     todos_orientadores = \
         models.BooleanField(default=False, help_text='Para todos os orientadores do semestre')
-    orientadores_p_projeto = \
-        models.BooleanField(default=False, help_text='Para orientadores por projetos do semestre')
     contatos_nas_organizacoes = \
         models.BooleanField(default=False, help_text='Para contatos nas organizações parceiras')
 

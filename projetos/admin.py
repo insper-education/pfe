@@ -231,8 +231,8 @@ class BancaAdmin(admin.ModelAdmin):
 class AvisoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
     list_display = ('titulo', 'delta', 'realizado',)
-    list_filter = ('realizado', 'comite_pfe', 'todos_alunos', 'aluno_p_projeto',
-                   'todos_orientadores', 'orientadores_p_projeto', 'contatos_nas_organizacoes',)
+    list_filter = ('realizado', 'coordenacao', 'comite_pfe', 'todos_alunos', 
+                   'todos_orientadores', 'contatos_nas_organizacoes',)
     ordering = ('delta',)
     fieldsets = \
         ((None,
@@ -240,9 +240,8 @@ class AvisoAdmin(admin.ModelAdmin):
            ('titulo', 'delta', 'mensagem', 'realizado',)
           }),
          ('Interesse', {
-             'fields': ('coordenacao', 'comite_pfe', 'todos_alunos', 'aluno_p_projeto',
-                        'todos_orientadores', 'orientadores_p_projeto',
-                        'contatos_nas_organizacoes',)
+             'fields': ('coordenacao', 'comite_pfe', 'todos_alunos',
+                        'todos_orientadores', 'contatos_nas_organizacoes',)
          }),
         )
 
