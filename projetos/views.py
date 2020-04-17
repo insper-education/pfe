@@ -585,9 +585,9 @@ def organizacoes_lista(request):
         else:
             desde.append("---------")
 
-        anot = Anotacao.objects.filter(organizacao=organizacao).order_by("data").last()
+        anot = Anotacao.objects.filter(organizacao=organizacao).order_by("momento").last()
         if anot:
-            contato.append(anot.data)
+            contato.append(anot.momento)
         else:
             contato.append("---------")
 
@@ -2012,7 +2012,7 @@ def mapeamento_estudante_projeto(request, anosemestre):
         projetos = lista_projetos[0]
     else:
         projetos = []
-    
+
     alunos = Aluno.objects.filter(user__tipo_de_usuario=1).\
                                filter(anoPFE=ano).\
                                filter(semestrePFE=semestre).\
