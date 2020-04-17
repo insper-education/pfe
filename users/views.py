@@ -171,7 +171,7 @@ def alunos_inscrevendo(request):
         ano = configuracao.ano+1
         semestre = 1
 
-    return redirect('alunos_inscritos', anosemestre="{0}.{1}".format(ano,semestre))
+    return redirect('alunos_inscritos', anosemestre="{0}.{1}".format(ano, semestre))
 
 
 @login_required

@@ -47,6 +47,7 @@ urlpatterns = [
     path('index_professor/', views.index_professor, name='index_professor'),
     path('lista_feedback', views.lista_feedback, name='lista_feedback'),
     path('mapeamento/', views.mapeamento, name='mapeamento'),
+    path('mapeamento_estudante_projeto/<str:anosemestre>', views.mapeamento_estudante_projeto, name='mapeamento_estudante_projeto'),
     path('meuprojeto/', views.meuprojeto, name='meuprojeto'),
     path('minhas_bancas/', views.minhas_bancas, name='minhas_bancas'),
     path('mostra_feedback/<int:feedback_id>', views.mostra_feedback, name='mostra_feedback'),

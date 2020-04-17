@@ -149,22 +149,28 @@ def selecao_projetos(request):
         }
         return render(request, 'projetos/selecao_projetos.html', context)
 
-def ordena_projetos(disponivel=True):
+def ordena_projetos(disponivel=True, ano=0, semestre=0):
     """Gera lista com projetos ordenados pelos com maior interesse pelos alunos."""
     configuracao = Configuracao.objects.all().first()
+
+    if ano == 0:
+        ano = configuracao.ano
+    if semestre == 0:
+        semestre = configuracao.semestre
+
     opcoes_list = []
     if disponivel:
-        projetos = Projeto.objects.filter(ano=configuracao.ano).\
-                               filter(semestre=configuracao.semestre).\
+        projetos = Projeto.objects.filter(ano=ano).\
+                               filter(semestre=semestre).\
                                filter(disponivel=True)
     else:
-        projetos = Projeto.objects.filter(ano=configuracao.ano).\
-                               filter(semestre=configuracao.semestre)
+        projetos = Projeto.objects.filter(ano=ano).\
+                               filter(semestre=semestre)
     for projeto in projetos:
         opcoes = Opcao.objects.filter(projeto=projeto)
         opcoes_alunos = opcoes.filter(aluno__user__tipo_de_usuario=1)
-        opcoes_validas = opcoes_alunos.filter(aluno__anoPFE=configuracao.ano).\
-                                       filter(aluno__semestrePFE=configuracao.semestre)
+        opcoes_validas = opcoes_alunos.filter(aluno__anoPFE=ano).\
+                                       filter(aluno__semestrePFE=semestre)
         count = 0
         for opcao in opcoes_validas:
             if opcao.prioridade <= 5:
@@ -1980,12 +1986,35 @@ def bancas_agendamento(request):
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def mapeamento(request):
+    configuracao = Configuracao.objects.all().first()
+
+    if configuracao.semestre == 1:
+        ano = configuracao.ano
+        semestre = 2
+    else:
+        ano = configuracao.ano+1
+        semestre = 1
+
+    return redirect('mapeamento_estudante_projeto', anosemestre="{0}.{1}".format(ano, semestre))
+
+@login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
+def mapeamento_estudante_projeto(request, anosemestre):
     """Mapeamento entre estudantes e projetos."""
     configuracao = Configuracao.objects.first()
-    projetos = list(zip(*ordena_projetos(False)))[0]
+
+    ano = int(anosemestre.split(".")[0])
+    semestre = int(anosemestre.split(".")[1])
+
+    lista_projetos = list(zip(*ordena_projetos(False, ano, semestre)))
+    if lista_projetos:
+        projetos = lista_projetos[0]
+    else:
+        projetos = []
+    
     alunos = Aluno.objects.filter(user__tipo_de_usuario=1).\
-                               filter(anoPFE=configuracao.ano).\
-                               filter(semestrePFE=configuracao.semestre).\
+                               filter(anoPFE=ano).\
+                               filter(semestrePFE=semestre).\
                                order_by("user__first_name", "user__last_name")
     opcoes = []
     for aluno in alunos:
@@ -2013,6 +2042,9 @@ def mapeamento(request):
         'estudantes': estudantes,
         'projetos': projetos,
         'configuracao': configuracao,
+        'ano': ano,
+        'semestre': semestre,
+        'loop_anos': range(2018, configuracao.ano+1),
     }
     return render(request, 'projetos/mapeamento_estudante_projeto.html', context)
 
