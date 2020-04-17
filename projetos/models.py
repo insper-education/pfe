@@ -358,6 +358,8 @@ class Anotacao(models.Model):
     """Anotacoes de comunicações com as organizações pareceiras."""
     data = models.DateField(default=datetime.date.today, blank=True,
                             help_text='Data da comunicação')
+    momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
+                                     help_text='Data e hora da comunicação')
     organizacao = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.CASCADE,
                                     help_text='Organização parceira')
     autor = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,

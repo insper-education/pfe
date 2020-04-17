@@ -398,6 +398,11 @@ def propor(request):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def administracao(request):
     """Mostra página principal para administração do sistema."""
+
+    for anotacao in Anotacao.objects.all():
+        anotacao.momento = datetime.datetime(anotacao.data.year, anotacao.data.month, anotacao.data.day)
+        anotacao.save()
+
     return render(request, 'index_admin.html')
 
 @login_required

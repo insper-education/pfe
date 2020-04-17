@@ -144,7 +144,7 @@
   <h3>Anotações <a href="{% url 'cria_anotacao' organization.login %}">&#10133;</a></h3>
   {% if organization.anotacao_set.all %}
     {% for anotacao in organization.anotacao_set.all|dictsortreversed:"data" %}
-      {{anotacao.autor.get_full_name}} [{{anotacao.data}}] : {{anotacao.texto}}<br>
+      {{anotacao.autor.get_full_name}} [{{anotacao.momento.date}}] : {{anotacao.texto}}<br>
     {% endfor %}
   {% else %}
     Ainda não existem anotações para essa organização.
