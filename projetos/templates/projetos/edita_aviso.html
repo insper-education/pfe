@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 17 de Abril de 2020
+{% endcomment %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+  
+    <form method="post" id="edita_aviso" enctype="multipart/form-data">
+      {% csrf_token %}
+      <b>Aviso:</b> {{ aviso.titulo }}
+      <br>
+      <textarea name="aviso" rows="8" cols="64"></textarea>
+      <br>
+      <button type="submit">Atualizar Aviso</button>
+      <p>&nbsp;</p>
+    </form>
+
+{% endblock %}

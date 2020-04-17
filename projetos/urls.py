@@ -34,6 +34,8 @@ urlpatterns = [
     path('coorientadores_tabela/', views.coorientadores_tabela, name='coorientadores_tabela'),
     path('cria_anotacao/<str:login>', views.cria_anotacao, name='cria_anotacao'),
     path('dinamicas/<str:periodo>', views.dinamicas, name='dinamicas'),
+    path('dinamicas/', views.dinamicas_root, name='dinamicas_root'),
+    path('edita_aviso/<int:primakey>', views.edita_aviso, name='edita_aviso'),
     path('encontros_marcar/', views.encontros_marcar, name='encontros_marcar'),
     path('emails/', views.emails, name='emails'),
     path('email_backup/', views.email_backup, name='email_backup'),
@@ -72,4 +74,7 @@ urlpatterns = [
     path('tabela_documentos/', views.tabela_documentos, name='tabela_documentos'),
     path('todos_parceiros/', views.todos_parceiros, name='todos_parceiros'),
     path('todos_professores/', views.todos_professores, name='todos_professores'),
+
+    path('ajax/validate_aviso/', views.validate_aviso, name='validate_aviso'),
+
 ]

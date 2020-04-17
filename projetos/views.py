@@ -1516,6 +1516,12 @@ def encontros_marcar(request):
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
+def dinamicas_root(request):
+    """Mostra os horários das próximas dinâmicas."""
+    return redirect('dinamicas', "proximas")
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
 def dinamicas(request, periodo):
     """Mostra os horários de dinâmicas."""
     todos_encontros = Encontro.objects.all().order_by('startDate')
@@ -2282,3 +2288,38 @@ def avaliacao(request, primarykey): #acertar isso para pk
             #'guess_banca' : guess_banca,
         }
         return render(request, 'projetos/avaliacao.html', context=context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def edita_aviso(request, primakey):
+    """Edita aviso."""
+    aviso = Aviso.objects.get(pk=primakey)
+    context = {
+        'aviso': aviso,
+    }
+    return render(request, 'projetos/edita_aviso.html', context)
+
+
+from django.http import JsonResponse
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def validate_aviso(request):
+    aviso_id = int(request.GET.get('aviso', None))
+    checked = request.GET.get('checked', None) == "true"
+
+    if aviso_id == 0:
+        avisos = Aviso.objects.all()
+        for aviso in avisos:
+            aviso.realizado = False
+            aviso.save()
+    else:
+        aviso = Aviso.objects.get(id=aviso_id)
+        aviso.realizado = checked
+        aviso.save()
+
+    data = {
+        'atualizado': True,
+    }
+
+    return JsonResponse(data)
