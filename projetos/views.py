@@ -1986,6 +1986,7 @@ def bancas_agendamento(request):
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def mapeamento(request):
+    """Chama o mapeamento entre estudantes e projetos do próximo semestre."""
     configuracao = Configuracao.objects.all().first()
 
     if configuracao.semestre == 1:
@@ -2104,9 +2105,13 @@ def avaliacao(request, primarykey): #acertar isso para pk
 
     objetivos = ObjetidosDeAprendizagem.objects.filter(avaliacao_banca=True)
 
-    pessoas = PFEUser.objects.all().\
-                        filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0]).\
-                        order_by("first_name", "last_name") # Conta soh professor
+    professores = PFEUser.objects.all().\
+                        filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0])
+
+    administradores = PFEUser.objects.all().\
+                        filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[3][0])
+
+    pessoas = (professores | administradores).order_by("first_name", "last_name")
 
     if request.method == 'POST':
         if 'avaliador' in request.POST:

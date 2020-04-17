@@ -358,7 +358,7 @@ class Encontro(models.Model):
 class Anotacao(models.Model):
     """Anotacoes de comunicações com as organizações pareceiras."""
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
-                                     help_text='Data e hora da comunicação') # hora ordena para dia
+                                   help_text='Data e hora da comunicação') # hora ordena para dia
     organizacao = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.CASCADE,
                                     help_text='Organização parceira')
     autor = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
@@ -598,6 +598,9 @@ class Avaliacao(models.Model):
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE,
                                 help_text='projeto que foi avaliado')
 
+    momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
+                                   help_text='Data e hora da comunicação') # hora ordena para dia
+
     TIPO_DE_AVALIACAO = ( # não mudar a ordem dos números
         (0, 'final'),
         (1, 'intermediária'),
@@ -667,3 +670,4 @@ class Avaliacao(models.Model):
     class Meta:
         verbose_name = 'Avaliação'
         verbose_name_plural = 'Avaliações'
+        ordering = ['projeto', 'tipo_de_avaliacao', 'avaliador', 'momento']

@@ -272,13 +272,14 @@ class CoorientadorAdmin(admin.ModelAdmin):
 @admin.register(Encontro)
 class EncontroAdmin(admin.ModelAdmin):
     """Informações dos Encontros (com os facilitadores)."""
-    list_display = ('startDate', 'projeto', 'facilitador')
+    list_display = ('startDate', 'projeto', 'facilitador', )
     actions = [dup_encontros, dup_encontros_4x, dup_encontros_8x]
 
 @admin.register(Avaliacao)
 class AvaliacaoAdmin(admin.ModelAdmin):
     """Informações das Avaliações."""
-    list_display = ('tipo_de_avaliacao', 'avaliador', 'projeto')
+    list_display = ('projeto', 'tipo_de_avaliacao', 'avaliador', 'momento', )
+    ordering = ('projeto', 'tipo_de_avaliacao', 'avaliador', 'momento', )
 
 admin.site.register(Cursada)
 admin.site.register(Recomendada)
