@@ -5,11 +5,11 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Maio de 2019
 """
 
-
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views import generic
@@ -161,7 +161,7 @@ def alunos_lista(request):
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def alunos_inscrevendo(request):
-    """Mostra todos os alunos que estão se inscrevendo em projetos."""
+    """Mostra todos os alunos que estão se inscrevendo em projetos no próximo semestre."""
     configuracao = Configuracao.objects.all().first()
 
     if configuracao.semestre == 1:
@@ -171,9 +171,17 @@ def alunos_inscrevendo(request):
         ano = configuracao.ano+1
         semestre = 1
 
-    # Alunos se inscrevendo atualmente
-    # ano = configuracao.ano
-    # semestre = configuracao.semestre
+    return redirect('alunos_inscritos', anosemestre="{0}.{1}".format(ano,semestre))
+
+
+@login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
+def alunos_inscritos(request, anosemestre):
+    """Mostra todos os alunos que estão se inscrevendo em projetos."""
+    configuracao = Configuracao.objects.all().first()
+
+    ano = int(anosemestre.split(".")[0])
+    semestre = int(anosemestre.split(".")[1])
 
     alunos_se_inscrevendo = Aluno.objects.filter(trancado=False).\
                                           filter(anoPFE=ano, semestrePFE=semestre).\
@@ -211,6 +219,7 @@ def alunos_inscrevendo(request):
         'ninscritos': ninscritos,
         'ano': ano,
         'semestre': semestre,
+        'loop_anos': range(2018, configuracao.ano+1),
     }
     return render(request, 'users/alunos_inscrevendo.html', context=context)
 

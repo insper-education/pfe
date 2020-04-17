@@ -18,116 +18,125 @@
 {% endblock %}
 
 {% block content %}
-    <h3>Alunos se Inscrevendo PFE {{ano}}.{{semestre}}</h3>
+  <h3>Alunos Inscritos</h3>
 
-    {% if alunos_list %}
-        <table id="AlunosTable">
-          <tr>
-              <th class="text-center">C</th>
-              <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Nome do Aluno</th>
-              <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Curso</th>
-              <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">CR</th>
-          </tr>
-          {% for aluno,opcoes in alunos_list %} 
-          <tr class="item">
-            <td class="{% if opcoes.count >= 5 %}text-success{% else %}text-danger{% endif %}"> &#x2B24; </td>
-            <td>
-              <a href="{% url 'aluno_detail' aluno.id %}"
-                {% if opcoes %}
-                  data-toggle="tooltip" data-html="true" animation="true" title="
-                  {% for opcao in opcoes %}
-                    <b>#{{ opcao.prioridade }} :</b>
-                    {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
-                      <u>
-                    {% endif %}
-                        {{opcao.projeto.get_titulo}}
-                      ({{opcao.projeto.empresa.nome_empresa}})
-                    {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
-                      </u>
-                    {% endif %}
-                    |{% mede_aderencia aluno opcao.projeto %}%|
-                    <br>
-                  {% endfor %}
-                  "
-                {% endif %}
-              >
-                {{aluno.user.get_full_name}}
-              </a>
-            </td>
-            <td class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">
-              {{ aluno.get_curso_display }}
-            </td>
-            <td>
-              {{ aluno.cr|floatformat:4 }}
-            </td>
-          </tr>
-          {% endfor %}
-        </table>
-        <br>
-    {% else %}
-      <p>Não existem alunos disponíveis.</p>
-    {% endif %}
-    
-    <text class="text-success">&#x2B24;</text> Aluno já selecionou projetos [{{inscritos}}]<br>
-    <text class="text-danger">&#x2B24;</text> Aluno ainda precisa selecionar projetos [{{ninscritos}}]<br>
-    <br>
+  <label for="filter">Edição:</label>
+  <select onchange="location = this.options[this.selectedIndex].value;">
+    {% for loop in loop_anos %}
+      <option value="{{loop}}.2" {% if ano == loop and semestre == 2 %}selected{% endif %}>{{loop}}.2</option>
+      <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
+    {% endfor %}
+  </select>
+  <br>
 
-    <strong>Total de Alunos Aplicando:</strong> {{ num_alunos }}
-    <small>(comp={{ num_alunos_comp }},
-    mec={{ num_alunos_mec }},
-    mxt={{ num_alunos_mxt }})</small>
-    <br>
+  {% if alunos_list %}
+      <table id="AlunosTable">
+        <tr>
+            <th class="text-center">C</th>
+            <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Nome do Aluno</th>
+            <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Curso</th>
+            <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">CR</th>
+        </tr>
+        {% for aluno,opcoes in alunos_list %} 
+        <tr class="item">
+          <td class="{% if opcoes.count >= 5 %}text-success{% else %}text-danger{% endif %}"> &#x2B24; </td>
+          <td>
+            <a href="{% url 'aluno_detail' aluno.id %}"
+              {% if opcoes %}
+                data-toggle="tooltip" data-html="true" animation="true" title="
+                {% for opcao in opcoes %}
+                  <b>#{{ opcao.prioridade }} :</b>
+                  {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
+                    <u>
+                  {% endif %}
+                      {{opcao.projeto.get_titulo}}
+                    ({{opcao.projeto.empresa.nome_empresa}})
+                  {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
+                    </u>
+                  {% endif %}
+                  |{% mede_aderencia aluno opcao.projeto %}%|
+                  <br>
+                {% endfor %}
+                "
+              {% endif %}
+            >
+              {{aluno.user.get_full_name}}
+            </a>
+          </td>
+          <td class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">
+            {{ aluno.get_curso_display }}
+          </td>
+          <td>
+            {{ aluno.cr|floatformat:4 }}
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+      <br>
+  {% else %}
+    <p>Não existem alunos disponíveis.</p>
+  {% endif %}
+  
+  <text class="text-success">&#x2B24;</text> Aluno já selecionou projetos [{{inscritos}}]<br>
+  <text class="text-danger">&#x2B24;</text> Aluno ainda precisa selecionar projetos [{{ninscritos}}]<br>
+  <br>
 
-    <div id="canvas-holder">
-        <canvas id="chart-area"></canvas>
-      </div>
-      <script>
+  <strong>Total de Alunos Aplicando:</strong> {{ num_alunos }}
+  <small>(comp={{ num_alunos_comp }},
+  mec={{ num_alunos_mec }},
+  mxt={{ num_alunos_mxt }})</small>
+  <br>
 
-        var config = {
-          type: 'pie',
-          data: {
-            datasets: [{
-              data: [
-                {{ num_alunos_comp }},
-                {{ num_alunos_mec }},
-                {{ num_alunos_mxt }},
-              ],
-              backgroundColor: [
-                'rgb(75, 192, 192)',
-                'rgb(255, 99, 132)',
-                'rgb(255, 205, 86)',
-              ],
-              label: 'Proporção entre alunos'
-            }],
-            labels: [
-              'Computação [{% widthratio num_alunos_comp num_alunos 100 %}%]',
-              'Mecânica [{% widthratio num_alunos_mec num_alunos 100 %}%]',
-              'Mecatrônica [{% widthratio num_alunos_mxt num_alunos 100 %}%]',
-            ]
-          },
-          options: {
-            responsive: true,
-            title: {
-                  display: true,
-                  text: 'Proporção entre alunos',
-                  position: 'top'
-              },
-            legend: {
+  <div id="canvas-holder">
+    <canvas id="chart-area"></canvas>
+  </div>
+
+  <script>
+    var config = {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: [
+            {{ num_alunos_comp }},
+            {{ num_alunos_mec }},
+            {{ num_alunos_mxt }},
+          ],
+          backgroundColor: [
+            'rgb(75, 192, 192)',
+            'rgb(255, 99, 132)',
+            'rgb(255, 205, 86)',
+          ],
+          label: 'Proporção entre alunos'
+        }],
+        labels: [
+          'Computação [{% widthratio num_alunos_comp num_alunos 100 %}%]',
+          'Mecânica [{% widthratio num_alunos_mec num_alunos 100 %}%]',
+          'Mecatrônica [{% widthratio num_alunos_mxt num_alunos 100 %}%]',
+        ]
+      },
+      options: {
+        responsive: true,
+        title: {
               display: true,
-              position: "bottom",
-              labels: {
-                fontColor: "#333",
-                fontSize: 14
-              }
-            }
+              text: 'Proporção entre alunos',
+              position: 'top'
+          },
+        legend: {
+          display: true,
+          position: "bottom",
+          labels: {
+            fontColor: "#333",
+            fontSize: 14
           }
-        };
-    
-        window.onload = function() {
-          var ctx = document.getElementById('chart-area').getContext('2d');
-          window.myPie = new Chart(ctx, config);
-        };
-      
-      </script>
+        }
+      }
+    };
+
+    window.onload = function() {
+      var ctx = document.getElementById('chart-area').getContext('2d');
+      window.myPie = new Chart(ctx, config);
+    };
+  
+  </script>
 
 {% endblock %}
