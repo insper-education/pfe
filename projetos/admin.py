@@ -240,8 +240,9 @@ class AvisoAdmin(admin.ModelAdmin):
            ('titulo', 'delta', 'mensagem', 'realizado',)
           }),
          ('Interesse', {
-             'fields': ('comite_pfe', 'todos_alunos', 'aluno_p_projeto', 'todos_orientadores',
-                        'orientadores_p_projeto', 'contatos_nas_organizacoes',)
+             'fields': ('coordenacao', 'comite_pfe', 'todos_alunos', 'aluno_p_projeto',
+                        'todos_orientadores', 'orientadores_p_projeto',
+                        'contatos_nas_organizacoes',)
          }),
         )
 

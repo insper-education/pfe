@@ -24,7 +24,8 @@
   <label for="filter">Filtro:</label>
   <select id="cxi" class="filter" data-tableId="projetos">
     <option value="todos" {% if periodo == "todos" %}selected="selected"{% endif %}>todos</option>
-    <option value="Co" {% if periodo == "Co" %}selected="selected"{% endif %}>Comitê PFE</option>
+    <option value="Co" {% if periodo == "Co" %}selected="selected"{% endif %}>Coordenação</option>
+    <option value="Cm" {% if periodo == "Cm" %}selected="selected"{% endif %}>Comitê PFE</option>
     <option value="Al" {% if periodo == "Al" %}selected="selected"{% endif %}>Todos os Alunos</option>
     <option value="AP" {% if periodo == "AP" %}selected="selected"{% endif %}>Alunos por Projeto</option>
     <option value="Or" {% if periodo == "Or" %}selected="selected"{% endif %}>Todos os Orientadores</option>
@@ -55,7 +56,8 @@
         {% for a in avisos %} 
           <tr class="linha {% if a.delta < dias_passados %}text-success{% else %}text-info{% endif %}"
               data-type="
-                {% if a.comite_pfe %}Co{% endif %}
+                {% if a.coordenacao %}Co{% endif %}
+                {% if a.comite_pfe %}Cm{% endif %}
                 {% if a.todos_alunos %}Al{% endif %}
                 {% if a.aluno_p_projeto %}AP{% endif %}
                 {% if a.todos_orientadores %}Or{% endif %}
@@ -71,8 +73,11 @@
               {{ configuracao.t0|plus_days:a.delta  }}
             </td>
             <td>
+              {% if a.coordenacao %}
+                <span data-toggle="tooltip" data-html="true" animation="true" title="Coordenação">Co</span>
+              {% endif %}
               {% if a.comite_pfe %}
-                <span data-toggle="tooltip" data-html="true" animation="true" title="Comite do PFE">Co</span>
+                <span data-toggle="tooltip" data-html="true" animation="true" title="Comite do PFE">Cm</span>
               {% endif %}
               {% if a.todos_alunos %}
                 <span data-toggle="tooltip" data-html="true" animation="true" title="Todos os Alunos">Al</span>
@@ -99,7 +104,8 @@
         {% endfor %}
       </table>
       <small>
-      Co: Comitê do PFE;
+      Co: Coordenação
+      Cm: Comitê do PFE;
       Al: Todos os Alunos;
       AP: Alunos por Projeto;
       Or: Todos os Orientadores;

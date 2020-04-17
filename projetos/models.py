@@ -466,18 +466,20 @@ class Aviso(models.Model):
     mensagem = models.TextField(max_length=4096, null=True, blank=True,
                                 help_text='mensagem a ser enviar no texto')
     realizado = models.BooleanField(default=False, help_text='Se já realizado no período')
+    coordenacao = \
+        models.BooleanField(default=False, help_text='Para organização do PFE')
     comite_pfe = \
-        models.BooleanField(default=False, help_text='Lista todos os membros do comitê do PFE')
+        models.BooleanField(default=False, help_text='Para os membros do comitê do PFE')
     todos_alunos = \
-        models.BooleanField(default=False, help_text='Lista todos os alunos do semestre')
+        models.BooleanField(default=False, help_text='Para todos os alunos do semestre')
     aluno_p_projeto = \
-        models.BooleanField(default=False, help_text='Lista alunos por projetos do semestre')
+        models.BooleanField(default=False, help_text='Para alunos por projetos do semestre')
     todos_orientadores = \
-        models.BooleanField(default=False, help_text='Lista todos os alunos do semestre')
+        models.BooleanField(default=False, help_text='Para todos os orientadores do semestre')
     orientadores_p_projeto = \
-        models.BooleanField(default=False, help_text='Lista orientadores por projetos do semestre')
+        models.BooleanField(default=False, help_text='Para orientadores por projetos do semestre')
     contatos_nas_organizacoes = \
-        models.BooleanField(default=False, help_text='Lista contatos nas organizações parceiras')
+        models.BooleanField(default=False, help_text='Para contatos nas organizações parceiras')
 
     def __str__(self):
         return str(self.titulo)

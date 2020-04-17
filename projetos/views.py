@@ -30,6 +30,7 @@ from django.db import transaction
 from django.http import Http404
 from django.http import HttpResponse
 from django.http import HttpResponseNotFound
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.template.loader import get_template
@@ -2299,12 +2300,10 @@ def edita_aviso(request, primakey):
     }
     return render(request, 'projetos/edita_aviso.html', context)
 
-
-from django.http import JsonResponse
-
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def validate_aviso(request):
+    """Ajax para validar avisos."""
     aviso_id = int(request.GET.get('aviso', None))
     checked = request.GET.get('checked', None) == "true"
 
