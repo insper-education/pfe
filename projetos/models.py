@@ -264,6 +264,7 @@ class Evento(models.Model):
         (113, 'Apresentação dos Novos Projetos para os Alunos', 'darkslategray'),
         (123, 'Seleção de Projetos pelos Aluno para o Próximo Semestre', 'pink'),
         (124, 'Notificação dos Grupos Formados para os Alunos', 'paleturquoise'),
+        (125, 'Notificação para as Organizações de Projetos Fechados', 'moccasin'),
 
         (120, 'Limite para Submissão de Projetos pelas Organizações', 'lime'),
 
@@ -357,7 +358,7 @@ class Encontro(models.Model):
 class Anotacao(models.Model):
     """Anotacoes de comunicações com as organizações pareceiras."""
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
-                                     help_text='Data e hora da comunicação')
+                                     help_text='Data e hora da comunicação') # hora ordena para dia
     organizacao = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.CASCADE,
                                     help_text='Organização parceira')
     autor = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
