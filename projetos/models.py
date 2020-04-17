@@ -364,7 +364,7 @@ class Anotacao(models.Model):
                               related_name='professor_orientador', help_text='quem fez a anotação')
     texto = models.TextField(max_length=2000, help_text='Anotação')
     def __str__(self):
-        return str(self.data)
+        return str(self.momento)
     @classmethod
     def create(cls, organizacao):
         """Cria um objeto (entrada) em Anotação."""
