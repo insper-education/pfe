@@ -6,12 +6,14 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Maio de 2019
 """
 
+from functools import partial
+
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils.functional import curry
+#from django.utils.functional import curry
 
 from projetos.models import Projeto, Empresa
 
@@ -225,7 +227,7 @@ class Aluno(models.Model):
             method_name = "get_{0}_help_text".format(field.name)
 
             # We can use curry to create the method with a pre-defined argument
-            curried_method = curry(self._get_help_text, field_name=field.name)
+            curried_method = partial(self._get_help_text, field_name=field.name)
 
             # And we add this method to the instance of the class.
             setattr(self, method_name, curried_method)
