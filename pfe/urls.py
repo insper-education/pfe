@@ -27,6 +27,12 @@ urlpatterns = [
     path('arquivos/<str:organizacao>/<str:usuario>/<str:path>', views.arquivos2, name='arquivos2'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns
+
 #The URLs provided by auth are:
 # accounts/login/ [name='login']
 # accounts/logout/ [name='logout']
