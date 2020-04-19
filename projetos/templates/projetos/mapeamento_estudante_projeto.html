@@ -106,7 +106,11 @@
           {% for opcao in opcoes %}
             {% if opcao %}
               <td style="text-align:center;
-                  {% if opcao.projeto == estudante.alocacao_set.last.projeto %}background-color:pink;{% endif %}"
+                  {% with alocacoes=estudante.alocacao_set %}
+                    {% if alocacoes.count and opcao.projeto == alocacoes.last.projeto %}
+                      background-color:pink;
+                    {% endif %}
+                  {% endwith %}"
                   class="{% if opcao.prioridade == 0 %}red-bold{% elif opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}">
                 <a class="prioridade" href="{% url 'completo' opcao.projeto.id %}"
                   data-toggle="tooltip" data-html="true" animation="true" title="

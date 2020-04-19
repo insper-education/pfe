@@ -1,9 +1,11 @@
-# Desenvolvido para o Projeto Final de Engenharia
-# Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-# Data: 26 de Maio de 2019
+""""
+ Desenvolvido para o Projeto Final de Engenharia
+ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+ Data: 26 de Maio de 2019
+"""
 
 import os
-from celery.schedules import crontab   
+from celery.schedules import crontab
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -13,7 +15,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'u3l+px+$jje$+m1+e!6a&02v+oe-6%nr3js)9@2&9m4#jf&1_2'
-# python manage.py shell -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+# python manage.py shell -c
+#  "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 #DEBUG = False
@@ -21,7 +24,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-ADMINS = [('Luciano Pereira Soares', 'lucianops@insper.edu.br'), ('Luciano Soares', 'lpsoares@gmail.com')]
+ADMINS = [('Luciano Pereira Soares', 'lucianops@insper.edu.br'),
+          ('Luciano Soares', 'lpsoares@gmail.com')]
 
 # Application definition
 
@@ -143,7 +147,7 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['file','console'],
+            'handlers': ['file', 'console'],
             'level': 'DEBUG',
             'propagate': True
         },
@@ -157,9 +161,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '<local_dos_arquivos>')
 # CELERY_TIMEZONE = 'America/Sao_Paulo'
 CELERY_BROKER_URL = 'amqp://<colocarusuario>:<colocarsenha>@localhost//'
 CELERY_BEAT_SCHEDULE = {
- 'send-email-daily': {
-       'task': 'projetos.tasks.envia_aviso',
-       'schedule': crontab(hour=6,minute=0),
+    'send-email-daily': {
+        'task': 'projetos.tasks.envia_aviso',
+        'schedule': crontab(hour=6, minute=0),
     },
 }
 
@@ -183,6 +187,7 @@ DEBUG_TOOLBAR_PANELS = [
 ]
 
 def show_toolbar(request):
+    """Controle se exibe a barra do Debbuger."""
     return not request.is_ajax() and request.user and request.user.username == "lpsoares"
     # Só funciona o debug para mim
 

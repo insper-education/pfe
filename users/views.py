@@ -22,23 +22,18 @@ from .models import PFEUser, Aluno, Professor, Parceiro, Opcao, Administrador
 def perfil(request):
     """Retorna a página conforme o perfil do usuário."""
     user = PFEUser.objects.get(pk=request.user.pk)
+    context = {'aluno' : False, 'professor' : False, 'parceiro' : False, 'administrador' : False,}
     if user.tipo_de_usuario == 1: #aluno
-        aluno = Aluno.objects.get(pk=request.user.pk)
-        context = {'aluno' : aluno,}
-        return render(request, 'users/profile_detail.html', context=context)
-    if user.tipo_de_usuario == 2: #professor
-        professor = Professor.objects.get(pk=request.user.pk)
-        context = {'professor' : professor,}
-        return render(request, 'users/profile_detail.html', context=context)
-    if user.tipo_de_usuario == 3: #parceiro
-        parceiro = Parceiro.objects.get(pk=request.user.pk)
-        context = {'parceiro' : parceiro,}
-        return render(request, 'users/profile_detail.html', context=context)
-    if user.tipo_de_usuario == 4: #administrador
-        administrador = Administrador.objects.get(pk=request.user.pk)
-        context = {'administrador' : administrador,}
-        return render(request, 'users/profile_detail.html', context=context)
-    return HttpResponse("Seu perfil não foi encontrado!")
+        context['aluno'] = Aluno.objects.get(pk=request.user.pk)
+    elif user.tipo_de_usuario == 2: #professor
+        context['professor'] = Professor.objects.get(pk=request.user.pk)
+    elif user.tipo_de_usuario == 3: #parceiro
+        context['parceiro'] = Parceiro.objects.get(pk=request.user.pk)
+    elif user.tipo_de_usuario == 4: #administrador
+        context['administrador'] = Administrador.objects.get(pk=request.user.pk)
+    else:
+        return HttpResponse("Seu perfil não foi encontrado!")
+    return render(request, 'users/profile_detail.html', context=context)
 
 @login_required
 @transaction.atomic

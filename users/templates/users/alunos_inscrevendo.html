@@ -42,23 +42,25 @@
           <td class="{% if opcoes.count >= 5 %}text-success{% else %}text-danger{% endif %}"> &#x2B24; </td>
           <td>
             <a href="{% url 'aluno_detail' aluno.id %}"
-              {% if opcoes %}
                 data-toggle="tooltip" data-html="true" animation="true" title="
                 {% for opcao in opcoes %}
                   <b>#{{ opcao.prioridade }} :</b>
-                  {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
-                    <u>
-                  {% endif %}
-                      {{opcao.projeto.get_titulo}}
-                    ({{opcao.projeto.empresa.nome_empresa}})
-                  {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
-                    </u>
-                  {% endif %}
+                  {% with alocacoes=aluno.alocacao_set %}
+                    {% if alocacoes.count and opcao.projeto == alocacoes.last.projeto %}
+                      <u>
+                    {% endif %}
+                        {{opcao.projeto.get_titulo}}
+                      ({{opcao.projeto.empresa.nome_empresa}})
+                    {% if alocacoes.count and opcao.projeto == alocacoes.last.projeto %}
+                      </u>
+                    {% endif %}
+                  {% endwith %}
                   |{% mede_aderencia aluno opcao.projeto %}%|
                   <br>
+                {% empty %}
+                  Aluno(a) não escolheu opções de projetos
                 {% endfor %}
                 "
-              {% endif %}
             >
               {{aluno.user.get_full_name}}
             </a>

@@ -117,7 +117,7 @@
                 if(mensagem=="projeto") {
                     window.location='{% url 'meuprojeto' %}';
                 } else {
-                    window.location='http://www.example.com';
+                    window.location='{% url 'professor_detail' professor_id %}';
                 }   
             {% endif %}
         }

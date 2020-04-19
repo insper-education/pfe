@@ -72,12 +72,21 @@ def index_aluno(request):
     else:
         projeto = None
 
+    professor_id = 0
+    if usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4:
+        try:
+            professor_id = Professor.objects.get(user__pk=request.user.pk).id
+        except Professor.DoesNotExist:
+            pass
+            # Administrador não possui também conta de professor
+
     configuracao = Configuracao.objects.first()
     vencido = timezone.now() > configuracao.prazo
     context = {
         'projeto': projeto,
         'configuracao': configuracao,
         'vencido': vencido,
+        'professor_id': professor_id,
     }
     return render(request, 'index_aluno.html', context=context)
 
@@ -425,7 +434,7 @@ def index_professor(request):
     professor_id = 0
     try:
         professor_id = Professor.objects.get(user__pk=request.user.pk).id
-    except Banca.DoesNotExist:
+    except Professor.DoesNotExist:
         pass
         # Administrador não possui também conta de professor
 
@@ -529,6 +538,7 @@ def get_areas(entrada):
 def areas(request, tipo):
     """Mostra distribuição por área de interesse dos alunos e projetos."""
 
+    periodo = ""
     if tipo == "alunos":
 
         alunos = Aluno.objects.filter(user__tipo_de_usuario=1)
@@ -545,6 +555,7 @@ def areas(request, tipo):
         context = {
             'areaspfe': get_areas(alunos),
             'tipo': tipo,
+            'periodo': periodo,
         }
 
     elif tipo == "projetos":
@@ -564,6 +575,7 @@ def areas(request, tipo):
         context = {
             'areaspfe': get_areas(projetos),
             'tipo': tipo,
+            'periodo': periodo,
         }
 
     else:
@@ -1620,6 +1632,7 @@ def avisos_listar(request):
         'avisos': avisos,
         'configuracao' : configuracao,
         'dias_passados' : dias_passados,
+        'filtro' : "todos",
     }
     return render(request, 'projetos/avisos_listar.html', context)
 

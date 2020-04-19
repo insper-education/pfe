@@ -53,9 +53,13 @@
             {% endif %}
           </td>
           <td>
-            {% if parceiro.gestor_responsavel %}GR{% endif %}
-            {% if parceiro.mentor_tecnico %}MT{% endif %}
-            {% if parceiro.recursos_humanos %}RH{% endif %}
+            {% with conexoes=parceiro.user.conexao_set.all %}
+              {% for conexao in conexoes %}
+                {% if conexao.gestor_responsavel %}GR{% endif %}
+                {% if conexao.mentor_tecnico %}MT{% endif %}
+                {% if conexao.recursos_humanos %}RH{% endif %}
+              {% endfor %}
+            {% endwith %}
           </td>
         </tr>
       {% endfor %}

@@ -33,22 +33,24 @@
         <tr class="item">
           <td>
             <a href="{% url 'aluno_detail' aluno.id %}" 
-              {% if aluno.opcao_set.all %}
                 data-toggle="tooltip" data-html="true" animation="true" title="
                 {% for opcao in aluno.opcao_set.all %}
-                  <b>#{{opcao.prioridade}}:</b>
-                  {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
-                    <u>
-                  {% endif %}
-                  {{opcao.projeto.get_titulo}}
-                  ({{opcao.projeto.empresa.nome_empresa}})
-                  {% if opcao.projeto == aluno.alocacao_set.last.projeto %}
-                    </u>
-                  {% endif %}
+                  <b>#{{ opcao.prioridade }} :</b>
+                  {% with alocacoes=aluno.alocacao_set %}
+                    {% if alocacoes.count and opcao.projeto == alocacoes.last.projeto %}
+                      <u>
+                    {% endif %}
+                        {{opcao.projeto.get_titulo}}
+                      ({{opcao.projeto.empresa.nome_empresa}})
+                    {% if alocacoes.count and opcao.projeto == alocacoes.last.projeto %}
+                      </u>
+                    {% endif %}
+                  {% endwith %}
                   <br>
+                {% empty %}
+                  Aluno(a) não escolheu opções de projetos
                 {% endfor %}
                 "
-              {% endif %}
             >
               {{aluno.user.get_full_name}}
             </a>
