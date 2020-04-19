@@ -24,7 +24,9 @@
       {% for parceiro in pareceiros %} 
         <tr class="item" {% if not parceiro.user.is_active %} style="color: lightgrey;" {% endif %}>
           <td>
-            {{parceiro.user.get_full_name}} 
+            <a href="{% url 'parceiro_detail' parceiro.id %}">
+              {{parceiro.user.get_full_name}} 
+            </a>
           </td>
           <td>
             {{parceiro.cargo}} 
@@ -53,11 +55,19 @@
             {% endif %}
           </td>
           <td>
-            {% with conexoes=parceiro.user.conexao_set.all %}
+            {% with conexoes=parceiro.conexao_set.all %}
               {% for conexao in conexoes %}
-                {% if conexao.gestor_responsavel %}GR{% endif %}
-                {% if conexao.mentor_tecnico %}MT{% endif %}
-                {% if conexao.recursos_humanos %}RH{% endif %}
+                <a href="{% url 'completo' conexao.projeto.id %}">
+                  {% if conexao.gestor_responsavel %}                  
+                    GR
+                  {% endif %}
+                  {% if conexao.mentor_tecnico %}
+                    MT
+                  {% endif %}
+                  {% if conexao.recursos_humanos %}
+                    RH
+                  {% endif %}
+                </a>
               {% endfor %}
             {% endwith %}
           </td>

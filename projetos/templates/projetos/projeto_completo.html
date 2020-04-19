@@ -54,8 +54,8 @@
   {% if conexoes %}
   <strong>conexões:</strong><br>
     {% for conexao in conexoes %}
-      <a class="tabulado" href="{% url 'parceiro_detail' conexao.usuario.parceiro.id %}">
-        {{ conexao.usuario.get_full_name }}
+      <a class="tabulado" href="{% url 'parceiro_detail' conexao.parceiro.id %}">
+        {{ conexao.parceiro.user.get_full_name }}
       </a>
       {% if conexao.gestor_responsavel %}
         [gestor responsavel]

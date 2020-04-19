@@ -261,7 +261,8 @@ class FeedbackAdmin(admin.ModelAdmin):
 @admin.register(Conexao)
 class ConexaoAdmin(admin.ModelAdmin):
     """Conexão entre parceiro e organização."""
-    list_display = ('usuario', 'projeto')
+    list_display = ('parceiro', 'projeto',
+                    'gestor_responsavel', 'mentor_tecnico', 'recursos_humanos')
 
 @admin.register(Coorientador)
 class CoorientadorAdmin(admin.ModelAdmin):

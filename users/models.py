@@ -322,7 +322,7 @@ class Parceiro(models.Model):  # da empresa (não do Insper)
         permissions = (("altera_parceiro", "Parceiro altera valores"),)
 
     def __str__(self):
-        return self.user.username
+        return self.user.get_full_name()+" ("+self.organizacao.sigla+")"
 
 class Administrador(models.Model):
     """Classe de usuários com estatus de Administrador."""

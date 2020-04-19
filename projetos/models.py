@@ -516,8 +516,13 @@ class Feedback(models.Model):
 
 class Conexao(models.Model):
     """Controla como um usuário se conecta a um projeto."""
-    usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='usuário que se conecta ao projeto')
+    # usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
+    #                             help_text='usuário que se conecta ao projeto')
+
+    parceiro = models.ForeignKey('users.Parceiro', null=True, blank=True,
+                                on_delete=models.SET_NULL,
+                                help_text='parceiro que se conecta ao projeto')
+
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE,
                                 help_text='projeto que possui vínculo da conexão')
     observacao = models.TextField(max_length=256, null=True, blank=True,
@@ -527,7 +532,7 @@ class Conexao(models.Model):
     recursos_humanos = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.usuario.get_full_name()+" >>> "+\
+        return self.parceiro.user.get_full_name()+" >>> "+\
                self.projeto.empresa.sigla+" - "+self.projeto.get_titulo()+\
                " ("+str(self.projeto.ano)+"."+str(self.projeto.semestre)+")"
 
