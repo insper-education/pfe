@@ -24,7 +24,8 @@
       {% for parceiro in pareceiros %} 
         <tr class="item" {% if not parceiro.user.is_active %} style="color: lightgrey;" {% endif %}>
           <td>
-            <a href="{% url 'parceiro_detail' parceiro.id %}">
+            <a href="{% url 'parceiro_detail' parceiro.id %}"
+             {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}>
               {{parceiro.user.get_full_name}} 
             </a>
           </td>
@@ -33,13 +34,13 @@
           </td>
           <td class="text-center">
             <a href="{% url 'organizacao_completo' parceiro.organizacao.login %}"
-            {% if not parceiro.user.is_active %} style="color: lightgrey;" {% endif %}> <!-- UM DIA ACERTAR ISSO -->
+             {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}> <!-- UM DIA ACERTAR ISSO -->
               {{parceiro.organizacao.sigla}}
             </a>
           </td>
           <td>
             <a href="mailto:{{parceiro.user.email}}"
-             {% if not parceiro.user.is_active %} style="color: lightgrey;" {% endif %}>
+             {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}>
               &lt;{{parceiro.user.email}}&gt;
             </a>
           </td>

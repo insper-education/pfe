@@ -54,22 +54,45 @@
   {% if conexoes %}
   <strong>conexões:</strong><br>
     {% for conexao in conexoes %}
-      <a class="tabulado" href="{% url 'parceiro_detail' conexao.parceiro.id %}">
-        {{ conexao.parceiro.user.get_full_name }}
-      </a>
-      {% if conexao.gestor_responsavel %}
-        [gestor responsavel]
+      {% if conexao.parceiro.user.is_active %}
+        <a class="tabulado" href="{% url 'parceiro_detail' conexao.parceiro.id %}">
+          {{ conexao.parceiro.user.get_full_name }}
+        </a>
+        <span>
+          {% if conexao.gestor_responsavel %}
+            [gestor responsavel]
+          {% endif %}
+          {% if conexao.mentor_tecnico %}
+            [mentor técnico]
+          {% endif %}
+          {% if conexao.recursos_humanos %}
+            [recursos humanos]
+          {% endif %}
+          {% if conexao.observacao %}
+            &nbsp;&nbsp;obs: {{conexao.observacao}}
+          {% endif %}
+        </span>
+        <br>
+      {% else %}
+        <a class="tabulado" href="{% url 'parceiro_detail' conexao.parceiro.id %}" style="color: LightBlue;">
+          {{ conexao.parceiro.user.get_full_name }}
+        </a>
+        <span style="color: lightgrey;">
+        {% if conexao.gestor_responsavel %}
+          [gestor responsavel]
+        {% endif %}
+        {% if conexao.mentor_tecnico %}
+          [mentor técnico]
+        {% endif %}
+        {% if conexao.recursos_humanos %}
+          [recursos humanos]
+        {% endif %}
+        {% if conexao.observacao %}
+          &nbsp;&nbsp;obs: {{conexao.observacao}}
+        {% endif %}
+        </span>
+        <br>
       {% endif %}
-      {% if conexao.mentor_tecnico %}
-        [mentor técnico]
-      {% endif %}
-      {% if conexao.recursos_humanos %}
-        [recursos humanos]
-      {% endif %}
-      {% if conexao.observacao %}
-        &nbsp;&nbsp;obs: {{conexao.observacao}}
-      {% endif %}
-      <br>
     {% endfor %}
   {% endif %}
 

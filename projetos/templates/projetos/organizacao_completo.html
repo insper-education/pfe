@@ -43,7 +43,7 @@
       </a>
       &nbsp;
       {% if parceiro.telefone %} <br>&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; {{parceiro.telefone}} &nbsp;{% endif %}
-      {% if parceiro.celular %} <br>&nbsp;&nbsp;&nbsp;&nbsp;&#x1F4F1; {{parceiro.celular}} &nbsp;{% endif %}
+      {% if parceiro.celular %} <br>&nbsp;&nbsp;&nbsp;&nbsp;&#x1F4F1;{{parceiro.celular}} &nbsp;{% endif %}
       {% if parceiro.skype %} <br>&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="skype" style="width:16px;height:16px;">
       <a href="skype:{{parceiro.skype}}">{{parceiro.skype}}</a>&nbsp; {% endif %}
     </li>
@@ -52,15 +52,19 @@
   {% for parceiro in organization.parceiro_set.all %}
     {% if not parceiro.user.is_active %}
     <li style="color: lightgrey;">
-      <a href="{% url 'parceiro_detail' parceiro.id %}" style="color: lightgrey;">
+      <a href="{% url 'parceiro_detail' parceiro.id %}" style="color: LightBlue;">
         {{parceiro.user.get_full_name}} &nbsp;
       </a>
-      <a href="mailto:{{parceiro.user.email}}" style="color: lightgrey;">
+      <a href="mailto:{{parceiro.user.email}}" style="color: LightBlue;">
         &lt;{{parceiro.user.email}}&gt;
       </a>
       &nbsp;
       {% if parceiro.telefone %} <br>&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; {{parceiro.telefone}} &nbsp;{% endif %}
-      {% if parceiro.celular %} <br>&nbsp;&nbsp;&nbsp;&nbsp;&#x1F4F1; {{parceiro.celular}} &nbsp;{% endif %}
+      {% if parceiro.celular %} <br>&nbsp;&nbsp;&nbsp;
+      <span style="color: transparent;  text-shadow: 0 0 0 lightgrey; ">
+        &#x1F4F1;{{parceiro.celular}}
+      </span>
+      {% endif %}
       {% if parceiro.skype %} <br>&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="skype" style="width:16px;height:16px;">
       <a href="skype:{{parceiro.skype}}">{{parceiro.skype}}</a>&nbsp; {% endif %}
     </li>
