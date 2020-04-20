@@ -19,24 +19,51 @@
 {% endblock %}
 
 {% block content %}
-    <h3>{{parceiro.user.get_full_name}}</h3>
-    {% if not parceiro.user.is_active %}
-        <p style="color: red;">
-            - NÃO ATIVO -
-        </p>
-    {% endif %}
-    {% if parceiro.cargo %}
-        <strong>cargo:</strong> {{parceiro.cargo}}<br>
-    {% endif %}
-    <strong>e-mail:</strong> <a href="mailto:{{parceiro.user.email}}"> &lt;{{parceiro.user.email}}&gt;</a><br>
-    &nbsp;
-    {% if parceiro.telefone %} <br>&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; {{parceiro.telefone}} &nbsp;{% endif %}
-    {% if parceiro.celular %} <br>&nbsp;&nbsp;&nbsp;&nbsp;&#x1F4F1; {{parceiro.celular}} &nbsp;{% endif %}
-    {% if parceiro.skype %} <br>&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="skype" style="width:16px;height:16px;">
-    <a href="skype:{{parceiro.skype}}">{{parceiro.skype}}</a>&nbsp; {% endif %}
-    <p>&nbsp;</p>
-    {% if parceiro.observacao %}
-        <strong>observações:</strong><br>
-        {{parceiro.observacao|linebreaks}}
-    {% endif %}
+  <h3>{{parceiro.user.get_full_name}}</h3>
+  {% if not parceiro.user.is_active %}
+      <p style="color: red;">
+          - NÃO ATIVO -
+      </p>
+  {% endif %}
+  {% if parceiro.organizacao %}
+    <strong>Organização:</strong> {{parceiro.organizacao}}<br>
+  {% endif %}
+  {% if parceiro.cargo %}
+      <strong>Cargo:</strong> {{parceiro.cargo}}<br>
+  {% endif %}
+  <strong>e-mail:</strong> <a href="mailto:{{parceiro.user.email}}"> &lt;{{parceiro.user.email}}&gt;</a><br>
+  &nbsp;
+  {% if parceiro.telefone %}&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; {{parceiro.telefone}} &nbsp;<br>{% endif %}
+  {% if parceiro.celular %}&nbsp;&nbsp;&nbsp;&nbsp;&#x1F4F1; {{parceiro.celular}} &nbsp;<br>{% endif %}
+  {% if parceiro.skype %}&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="skype" style="width:16px;height:16px;">
+  <a href="skype:{{parceiro.skype}}">{{parceiro.skype}}</a>&nbsp;<br>{% endif %}
+  <p>&nbsp;</p>
+  {% if parceiro.observacao %}
+      <strong>observações:</strong><br>
+      {{parceiro.observacao|linebreaks}}
+  {% endif %}
+
+  {% if conexoes %}
+    <hr>
+    <h3>Conexões com Projetos</h3>
+    <ol>
+    {% for conexao in conexoes %}
+      <li><a href="{% url 'completo' conexao.projeto.id %}">
+      {{conexao.projeto.get_titulo}}
+      [{{conexao.projeto.ano}}.{{conexao.projeto.semestre}}]
+      {% if conexao.gestor_responsavel %}                  
+        {Gestor Responsável}
+      {% endif %}
+      {% if conexao.mentor_tecnico %}
+        {Mentor Técnico}
+      {% endif %}
+      {% if conexao.recursos_humanos %}
+        {Recursos Humanos}
+      {% endif %}
+      </a></li>
+    {% endfor %}
+    </ol>
+  {% endif %}
+  <p>&nbsp;</p>
+  
 {% endblock %}

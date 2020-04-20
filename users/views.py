@@ -14,7 +14,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views import generic
 
-from projetos.models import Configuracao, Projeto
+from projetos.models import Configuracao, Projeto, Conexao
 from .forms import PFEUserCreationForm
 from .models import PFEUser, Aluno, Professor, Parceiro, Opcao, Administrador
 
@@ -234,8 +234,8 @@ def aluno_detail(request, primarykey):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def professor_detail(request, primarykey):
     """Mostra detalhes sobre o professor."""
-    professor = Professor.objects.filter(pk=primarykey).first()
-    projetos = Projeto.objects.filter(orientador=professor).all()
+    professor = Professor.objects.get(pk=primarykey)
+    projetos = Projeto.objects.filter(orientador=professor)
     context = {
         'professor': professor,
         'projetos': projetos,
@@ -246,11 +246,13 @@ def professor_detail(request, primarykey):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def parceiro_detail(request, primarykey):
     """Mostra detalhes sobre o parceiro."""
-    parceiro = Parceiro.objects.filter(pk=primarykey).first()
+    parceiro = Parceiro.objects.get(pk=primarykey)
     configuracao = Configuracao.objects.all().first()
+    conexoes = Conexao.objects.filter(parceiro=parceiro)
     context = {
         'configuracao': configuracao,
         'parceiro': parceiro,
+        'conexoes': conexoes,
     }
     return render(request, 'users/parceiro_detail.html', context=context)
 
