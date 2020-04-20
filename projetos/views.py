@@ -27,6 +27,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.files.storage import FileSystemStorage
 from django.core.mail import EmailMessage
 from django.db import transaction
+from django.db.models.functions import Lower
 from django.http import Http404
 from django.http import HttpResponse
 from django.http import HttpResponseNotFound
@@ -1359,7 +1360,8 @@ def professores_tabela(request):
     while True:
         professores = []
         grupos = []
-        for professor in Professor.objects.all().order_by("user__first_name", "user__last_name"):
+        for professor in Professor.objects.all().order_by(Lower("user__first_name"),
+                                                          Lower("user__last_name")):
             #count_grupos = 0
             count_grupos = []
             grupos_pfe = Projeto.objects.filter(orientador=professor).\
@@ -1407,7 +1409,8 @@ def coorientadores_tabela(request):
     while True:
         professores = []
         grupos = []
-        for professor in Professor.objects.all().order_by("user__first_name", "user__last_name"):
+        for professor in Professor.objects.all().order_by(Lower("user__first_name"),
+                                                          Lower("user__last_name")):
             count_grupos = []
             grupos_pfe = Projeto.objects.filter(coorientador__usuario__professor=professor).\
                                         filter(ano=ano).\
@@ -1612,7 +1615,7 @@ def reembolso_pedir(request):
             message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
         return HttpResponse(message)
     else:
-        bancos = Banco.objects.all().order_by("nome", "codigo")
+        bancos = Banco.objects.all().order_by(Lower("nome"), "codigo")
         context = {
             'usuario': usuario,
             'projeto': projeto,
@@ -1816,7 +1819,7 @@ def bancas_criar(request):
                                                    exclude(orientador=None)
         pessoas = PFEUser.objects.all().\
                                   filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0]).\
-                                  order_by("first_name", "last_name") # Conta soh professor
+                                  order_by(Lower("first_name"), Lower("last_name")) # professores
 
         context = {
             'projetos' : projetos,
@@ -1855,7 +1858,7 @@ def bancas_editar(request, primarykey):
 
         pessoas = PFEUser.objects.all().\
                                   filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0]).\
-                                  order_by("first_name", "last_name") # Conta soh professor
+                                  order_by(Lower("first_name"), Lower("last_name")) # professores
         context = {
             'projetos' : projetos,
             'pessoas' : pessoas,
@@ -2036,7 +2039,7 @@ def mapeamento_estudante_projeto(request, anosemestre):
     alunos = Aluno.objects.filter(user__tipo_de_usuario=1).\
                                filter(anoPFE=ano).\
                                filter(semestrePFE=semestre).\
-                               order_by("user__first_name", "user__last_name")
+                               order_by(Lower("user__first_name"), Lower("user__last_name"))
     opcoes = []
     for aluno in alunos:
         opcoes_aluno = []
@@ -2131,7 +2134,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
     administradores = PFEUser.objects.all().\
                         filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[3][0])
 
-    pessoas = (professores | administradores).order_by("first_name", "last_name")
+    pessoas = (professores | administradores).order_by(Lower("first_name"), Lower("last_name"))
 
     if request.method == 'POST':
         if 'avaliador' in request.POST:

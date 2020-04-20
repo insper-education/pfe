@@ -7,6 +7,7 @@ Data: 15 de Maio de 2019
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
+from django.db.models.functions import Lower
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
@@ -90,7 +91,7 @@ def alunos_lista(request):
     """Gera lista com todos os alunos já registrados."""
     configuracao = Configuracao.objects.all().first()
     alunos_list = Aluno.objects.filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])\
-        .order_by("user__first_name", "user__last_name", ) # Conta soh alunos
+        .order_by(Lower("user__first_name"), Lower("user__last_name")) # Conta soh alunos
     num_alunos = alunos_list.count()
     num_alunos_comp = alunos_list.filter(curso__exact='C').count() # Conta alunos computacao
     num_alunos_mxt = alunos_list.filter(curso__exact='X').count() # Conta alunos mecatrônica
@@ -179,8 +180,8 @@ def alunos_inscritos(request, anosemestre):
     semestre = int(anosemestre.split(".")[1])
 
     alunos_se_inscrevendo = Aluno.objects.filter(trancado=False).\
-                                          filter(anoPFE=ano, semestrePFE=semestre).\
-                                          order_by("user__first_name")
+                                      filter(anoPFE=ano, semestrePFE=semestre).\
+                                      order_by(Lower("user__first_name"), Lower("user__last_name"))
 
     # Conta soh alunos
     alunos = alunos_se_inscrevendo.filter(user__tipo_de_usuario=\
