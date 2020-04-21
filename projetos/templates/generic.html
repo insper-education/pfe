@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 21 de Abril de 2020
+{% endcomment %}
+
+{% block head %}{% endblock %}
+
+{% block content %}
+    {{mensagem}}
+    <br>
+    {% if area_aluno %}
+        <a href="{% url 'index_aluno' %}">Voltar para Área do Aluno</a><br>
+    {% endif %}
+
+    {% if bancas_index %}
+        <a href="{% url 'bancas_index' %}">Volta para índice das bancas</a><br>
+    {% endif %}
+
+    {% if organizacao_completo %}
+        <a href="{% url 'organizacao_completo' organizacao_completo %}">Volta para organização</a><br>
+    {% endif %}
+
+    {% if organizacoes_lista %}
+        <a href="{% url 'organizacoes_lista' %}">Volta para lista de organizações</a><br>
+    {% endif %}
+
+    {% if area_principal %}
+        <a href="{% url 'index' %}">Voltar para Página Principal!</a><br>
+    {% endif %}
+
+{% endblock %}

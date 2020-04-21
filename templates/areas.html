@@ -1,0 +1,118 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 21 de Abril de 2020
+{% endcomment %}
+
+<table>
+
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="inovacao_social" 
+            {% if areas %}{% if areas.inovacao_social %}checked{% endif %}{% endif %}>&nbsp;
+        </td>
+        <td>Inovação Social</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="ciencia_dos_dados" 
+            {% if areas %}{% if areas.ciencia_dos_dados %}checked{% endif %}{% endif %}>&nbsp;
+        </td>
+        <td>Ciência dos Dados</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="modelagem_3D" 
+            {% if areas %}{% if areas.modelagem_3D %}checked{% endif %}{% endif %}>&nbsp;
+        </td>
+        <td>Modelagem 3D</td>
+    </tr>      
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="manufatura" 
+            {% if areas %}{% if areas.manufatura %}checked{% endif %}{% endif %}>&nbsp;
+        </td>
+        <td>Manufatura</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="resistencia_dos_materiais" 
+            {% if areas %}{% if areas.resistencia_dos_materiais %}checked{% endif %}{% endif %}>&nbsp;
+        </td>
+        <td>Resistência dos Materiais</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="modelagem_de_sistemas" 
+            {% if areas %}{% if areas.modelagem_de_sistemas %}checked{% endif %}{% endif %}>&nbsp;
+        </td>
+        <td>Modelagem de Sistemas</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="controle_e_automacao" 
+            {% if areas %}{% if areas.controle_e_automacao %}checked{% endif %}{% endif %}>&nbsp;
+        </td>
+        <td>Controle e Automação</td>
+    </tr>      
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="termodinamica" 
+            {% if areas %}{% if areas.termodinamica %}checked{% endif %}{% endif %}>&nbsp;
+        </td>
+        <td>Termodinâmica</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="fluidodinamica" 
+            {% if areas %}{% if areas.fluidodinamica %}checked{% endif %}{% endif %}>&nbsp;
+        </td>
+        <td>Fluidodinâmica</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="eletronica_digital" 
+            {% if areas %}{% if areas.eletronica_digital %}checked{% endif %}{% endif %}>&nbsp;
+        </td>
+        <td>Eletrônica Digital</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="programacao" 
+            {% if areas %}{% if areas.programacao %}checked{% endif %}{% endif %}>&nbsp;
+        </td>
+        <td>Programação</td>
+    </tr>      
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="inteligencia_artificial" 
+            {% if areas %}{% if areas.inteligencia_artificial %}checked{% endif %}{% endif %}>&nbsp;
+        </td>
+        <td>Inteligência Artificial</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="computacao_em_nuvem" 
+            {% if areas %}{% if areas.computacao_em_nuvem %}checked{% endif %}{% endif %}>&nbsp;
+        </td>
+        <td>Computação em Nuvem</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="banco_de_dados" 
+            {% if areas %}{% if areas.banco_de_dados %}checked{% endif %}{% endif %}>&nbsp;
+        </td>
+        <td>Banco de Dados</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="visao_computacional" 
+            {% if areas %}{% if areas.visao_computacional %}checked{% endif %}{% endif %}>&nbsp;
+        </td>
+        <td>Visão Computacional</td>
+    </tr>      
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="computacao_de_alto_desempenho" 
+            {% if areas %}{% if areas.computacao_de_alto_desempenho %}checked{% endif %}{% endif %}>&nbsp;
+        </td>
+        <td>Computação de Alto Desempenho</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="robotica" 
+            {% if areas %}{% if areas.robotica %}checked{% endif %}{% endif %}>&nbsp;
+        </td>
+        <td>Robótica</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="realidade_virtual_aumentada" 
+            {% if areas %}{% if areas.realidade_virtual_aumentada %}checked{% endif %}{% endif %}>&nbsp;
+        </td>
+        <td>Realidade Virtual/Aumentada</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="protocolos_de_comunicacao" 
+            {% if areas %}{% if areas.protocolos_de_comunicacao %}checked{% endif %}{% endif %}>&nbsp;
+        </td>
+        <td>Protocolos de Comunicação</td>
+    </tr>      
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="eficiencia_energetica" 
+            {% if areas %}{% if areas.eficiencia_energetica %}checked{% endif %}{% endif %}>&nbsp;
+        </td>
+        <td>Eficiência Energética</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="administracao_economia_financas" 
+            {% if areas %}{% if areas.administracao_economia_financas %}checked{% endif %}{% endif %}>&nbsp;
+        </td>
+        <td>Administração, Economia e Finanças</td>
+    </tr>
+
+</table>
+<div style="height:8px;font-size:8px;">&nbsp;</div>
+Outras: <input type="text" size="30" name="outras" value="{% if areas %}{{areas.outras}}{% endif %}">
+

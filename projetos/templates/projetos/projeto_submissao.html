@@ -11,13 +11,6 @@
       max-width:100%;
     }
   </style>
-  <script>
-    $(document).ready(function(){
-      $("small").click(function(){
-        alert("{% for e in entidades %}• {{e.nome}}\n{% endfor %}");
-      });
-    });
-  </script>
 {% endblock %}
 
 {% block content %}
@@ -32,17 +25,13 @@
 
   <form action="" method="post"> {% csrf_token %}  
 
-{% comment %}
-    onclick="location.href='{% if user.tipo_de_usuario == 1 %}{{ url_index_aluno }}{% else %}{{ url_index_professor }}{% endif %}'"
-{% endcomment %}
-
-    Nome: <input type="text" size="75" name="nome" value="{{user.get_full_name}}"><br><br>
-    e-mail: <input type="email" size="75" name="email" value="{{user.email}}"><br><br>
+    Nome: <input type="text" size="75" name="nome" value="{{user.get_full_name}}" required><br><br>
+    e-mail: <input type="email" size="75" name="email" value="{{user.email}}" required><br><br>
 
     Nome da Instituição/Empresa<br>
-    <small>sigla e nome comercial/fantasia se houver, aqui não precisa ser a Razão Social</small>
+    <small>sigla e nome comercial/fantasia se houver (aqui não é necessário indicar a Razão Social)</small>
     <br>
-    <textarea name="organizacao" rows="1" cols="80" maxlength="100">
+    <textarea name="organizacao" rows="1" cols="80" maxlength="100" required>
       {% if parceiro %} {{parceiro.organizacao}} {% endif %} 
     </textarea>
     <br><br>
@@ -50,66 +39,77 @@
     Endereço<br>
     <small>onde os alunos deverão ir para desenvolver o projeto</small>
     <br>
-    <textarea name="endereco" rows="3" cols="80" maxlength="1000">{{endereco}}</textarea>
+    <textarea name="endereco" rows="3" cols="80" maxlength="1000" required>
+      {% if parceiro %}
+        {{parceiro.organizacao.endereco}}
+      {% endif %} 
+    </textarea>
     <br><br>
 
     Contatos Técnicos<br>  
-    <small>e-mail/telefone, com quem os professores e alunos irão tratar do desenvolvimento do projeto</small>
+    <small>nome/e-mail/telefone de quem os alunos e professores orientadores irão tratar do desenvolvimento do projeto</small>
     <br>
-    <textarea name="contatos_tecnicos" rows="4" cols="80" maxlength="1000">{{contatos_tecnicos}}</textarea>
+    <textarea name="contatos_tecnicos" rows="4" cols="80" maxlength="1000" required>
+      {{contatos_tecnicos}}
+    </textarea>
     <br><br>
 
     Contatos Administrativos<br>     
-    <small>e-mail/telefone, com quem devemos resolver questões de contratos e RH</small>
+    <small>nome/e-mail/telefone, com quem devemos resolver questões contratuais e RH</small>
     <br>
-    <textarea name="contatos_administrativos " rows="4" cols="80" maxlength="1000">{{contatos_administrativos}}</textarea>
+    <textarea name="contatos_administrativos " rows="4" cols="80" maxlength="1000" required>
+      {{contatos_administrativos}}
+    </textarea>
     <br><br>
 
     Informações sobre a instituição/empresa<br>
-    <small>opcional, para ser apresentado aos alunos</small>
+    <small>descreva a instituição/empresa para os alunos entenderem o que ela faz (opcional)</small>
     <br>
     <textarea name="info_organizacao" rows="4" cols="80" maxlength="1000">{{info_organizacao}}</textarea>
     <br><br>
 
     Informações sobre a departamento<br>
-    <small>opcional, para ser apresentado aos alunos</small>
+    <small>descreva o departamento/área para os alunos entenderem o que ele faz (opcional)</small>
     <br>
     <textarea name="info_departamento" rows="4" cols="80" maxlength="1000">{{info_departamento}}</textarea>
-    <br><br>
-    <input type="submit" value="Enviar">
+    <br>
+    <hr>
 
     Título provisório do projeto<br>
+    <small>um título para ser apresentado aos alunos</small>
     <br>
-    <textarea name="info_departamento" rows="4" cols="80" maxlength="1000">{{info_departamento}}</textarea>
+    <input type="text" size="80" name="titulo" value="{{titulo}}" required>
     <br><br>
-    <input type="titulo" value="titulo">
 
     Descrição do Projeto<br>
-    <small>para discussão entre professores e que será passada para os alunos no futuro</small>
+    <small>para discussão entre professores e que será passada para os alunos</small>
     <br>
-    <textarea name="desc_projeto" rows="4" cols="80" maxlength="1000">{{desc_projeto}}</textarea>
+    <textarea name="desc_projeto" rows="4" cols="80" maxlength="1000" required>
+      {{desc_projeto}}
+    </textarea>
     <br><br>
 
     Expectativas de resultados/entregas<br>
-    <small>exemplo: relatórios, protótipos</small>
+    <small>exemplo: estudos, validações, relatórios, protótipos, testes</small>
     <br>
-    <textarea name="expectativas" rows="4" cols="80" maxlength="1000">{{expectativas}}</textarea>
+    <textarea name="expectativas" rows="4" cols="80" maxlength="1000" required>
+      {{expectativas}}
+    </textarea>
     <br><br>
 
     Áreas/Habilidades envolvidas no projeto<br>
-    [[[ PUXAR TABELA ]]] <br>
-    Outros (descrever):_____________________<br>
+    {% include "areas.html"%}
     <br>
     <br>
 
     Recursos a serem disponibilizados aos alunos<br>
-    <small>opcional, será apresentado aos alunos</small>
+    <small>algo será fornecido para os alunos? ex: kits de desenvolvimento, matérias primas, acesso a infra de cloud. (opcional)</small>
     <br>
     <textarea name="recursos" rows="4" cols="80" maxlength="1000">{{recursos}}</textarea>
     <br><br>
 
-    Outras observações que considere relevante para os alunos
-    <small>opcional, será apresentado aos alunos</small>
+    Outras observações que considere relevante para os alunos<br>
+    <small>caso desejar apresentar alguma informação adicional aos alunos (opcional)</small>
     <br>
     <textarea name="observacoes" rows="4" cols="80" maxlength="1000">{{observacoes}}</textarea>
     <br><br>
@@ -127,7 +127,7 @@
     laboratórios do Insper para o desenvolvimento do projeto em horários agendados.
     
     <br><br>
-    <input type="submit" value="Enviar">
+    <input type="submit" value="Enviar Proposta de Projeto">
 
   </form>
 

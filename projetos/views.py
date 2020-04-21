@@ -111,8 +111,14 @@ def selecao_projetos(request):
                                    filter(disponivel=True)
     if request.method == 'POST':
         if timezone.now() > configuracao.prazo:
-            return HttpResponse("Prazo para seleção de projetos vencido!")
+            #return HttpResponse("Prazo para seleção de projetos vencido!")
             #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
+            mensagem = "Prazo para seleção de projetos vencido!"
+            context = {
+                "area_aluno": True,
+                "mensagem": mensagem,
+            }
+            return render(request, 'generic.html', context=context)
         prioridade = {}
         for projeto in projeto_list:
             check_values = request.POST.get('selection'+str(projeto.pk), "0")
@@ -351,8 +357,15 @@ def propor(request):
 
         for aluno in alunos: #Checa se o CR de todos os alunos esta coreto
             if aluno.cr < 5.0:
-                return HttpResponse("Aluno: "+aluno.user.first_name+" "+aluno.user.last_name+\
-                                    " ("+aluno.user.username+') com CR = '+str(aluno.cr))
+                #return HttpResponse("Aluno: "+aluno.user.first_name+" "+aluno.user.last_name+\
+                #                    " ("+aluno.user.username+') com CR = '+str(aluno.cr))
+                mensagem = "Detectado aluno: "+aluno.user.first_name+" "+aluno.user.last_name+\
+                                    " ("+aluno.user.username+') com CR = '+str(aluno.cr)
+                context = {
+                    "area_principal": True,
+                    "mensagem": mensagem,
+                }
+                return render(request, 'generic.html', context=context)
 
         #Cria Lista para todos os projetos
         for projeto in projetos:
@@ -430,7 +443,13 @@ def index_professor(request):
 
     user = PFEUser.objects.get(pk=request.user.pk)
     if user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
-        return HttpResponse("Você não está cadastrado como professor")
+        #return HttpResponse("Você não está cadastrado como professor")
+        mensagem = "Você não está cadastrado como professor!"
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
 
     professor_id = 0
     try:
@@ -551,7 +570,7 @@ def areas(request, tipo):
                     alunos = alunos.filter(anoPFE=int(periodo[0])).\
                                     filter(semestrePFE=int(periodo[1]))
             else:
-                return HttpResponse("Algum erro.", status=401)
+                return HttpResponse("Algum erro não identificado.", status=401)
 
         context = {
             'areaspfe': get_areas(alunos),
@@ -571,7 +590,7 @@ def areas(request, tipo):
                     projetos = Areas.objects.filter(projeto__ano=int(periodo[0])).\
                                              filter(projeto__semestre=int(periodo[1]))
             else:
-                return HttpResponse("Algum erro.", status=401)
+                return HttpResponse("Algum erro não identificado.", status=401)
 
         context = {
             'areaspfe': get_areas(projetos),
@@ -580,7 +599,7 @@ def areas(request, tipo):
         }
 
     else:
-        return HttpResponse("Algum erro.", status=401)
+        return HttpResponse("Algum erro não identificado.", status=401)
 
     return render(request, 'projetos/areas.html', context)
 
@@ -641,13 +660,22 @@ def cria_anotacao(request, login): #acertar isso para pk
             anotacao.autor = PFEUser.objects.get(pk=request.user.pk)
             anotacao.texto = request.POST['anotacao']
             anotacao.save()
-            return HttpResponse(
-                "Anotação criada.<br>"+\
-                "<a href='../organizacao_completo/"+login+\
-                "'>Volta para organização</a><br>"+\
-                "<a href='../organizacoes_lista/"+\
-                "'>Volta para lista de organizações</a><br>")
-        return HttpResponse("<h3 style='color:red'>Anotação não criada.<h3>")
+            #return HttpResponse(
+            # "Anotação criada.<br>"+\
+            # "<a href='../organizacao_completo/"+login+\
+            # "'>Volta para organização</a><br>"+\
+            # "<a href='../organizacoes_lista/"+\
+            # "'>Volta para lista de organizações</a><br>")
+            mensagem = "Anotação criada."
+        else:
+            mensagem = "<h3 style='color:red'>Anotação não criada.<h3>"
+        context = {
+            "area_principal": True,
+            "organizacao_completo": login,
+            "organizacoes_lista": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
     else:
         context = {
             'organization': organization,
@@ -673,7 +701,13 @@ def export(request, modelo, formato):
     elif modelo == "configuracao":
         resource = ConfiguracaoResource()
     else:
-        return HttpResponse("Chamada irregular : Base de dados desconhecida = "+modelo)
+        #return HttpResponse("Chamada irregular : Base de dados desconhecida = "+modelo)
+        mensagem = "Chamada irregular : Base de dados desconhecida = " + modelo
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
     dataset = resource.export()
     if(formato == "xls" or formato == "xlsx"):
         response = HttpResponse(dataset.xlsx, content_type='application/ms-excel')
@@ -683,7 +717,14 @@ def export(request, modelo, formato):
     elif formato == "csv":
         response = HttpResponse(dataset.csv, content_type='text/csv')
     else:
-        return HttpResponse("Chamada irregular : Formato desconhecido = "+formato)
+        #return HttpResponse("Chamada irregular : Formato desconhecido = "+formato)
+        mensagem = "Chamada irregular : Formato desconhecido = " + formato
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
+        
     response['Content-Disposition'] = 'attachment; filename="'+modelo+'.'+formato+'"'
     return response
 
@@ -732,7 +773,13 @@ def backup(request, formato):
     elif formato == "json":
         response = HttpResponse(databook.json, content_type='application/json')
     else:
-        return HttpResponse("Chamada irregular : Formato desconhecido = "+formato)
+        #return HttpResponse("Chamada irregular : Formato desconhecido = "+formato)
+        mensagem = "Chamada irregular : Formato desconhecido = " + formato
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
     response['Content-Disposition'] = 'attachment; filename="backup.'+formato+'"'
     return response
 
@@ -749,7 +796,13 @@ def email_backup(request):
     mail.attach("backup.xlsx", databook.xlsx, 'application/ms-excel')
     mail.attach("backup.json", databook.json, 'application/json')
     mail.send()
-    return HttpResponse("E-mail enviado.")
+    #return HttpResponse("E-mail enviado.")
+    mensagem = "E-mail enviado."
+    context = {
+        "area_principal": True,
+        "mensagem": mensagem,
+    }
+    return render(request, 'generic.html', context=context)
 
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
@@ -863,7 +916,13 @@ def relatorio(request, modelo, formato):
         arquivo = "projetos/calendario.html"
 
     else:
-        return HttpResponse("Chamada irregular : Base de dados desconhecida = "+modelo)
+        #return HttpResponse("Chamada irregular : Base de dados desconhecida = "+modelo)
+        mensagem = "Chamada irregular : Base de dados desconhecida = " + modelo
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
 
     if(formato == "html" or formato == "HTML"):
         return render(request, arquivo, context)
@@ -894,7 +953,13 @@ def relatorio_backup(request):
     mail.attach("projetos.pdf", pdf_proj.getvalue(), 'application/pdf')
     mail.attach("alunos.pdf", pdf_alun.getvalue(), 'application/pdf')
     mail.send()
-    return HttpResponse("E-mail enviado.")
+    #return HttpResponse("E-mail enviado.")
+    mensagem = "E-mail enviado."
+    context = {
+        "area_principal": True,
+        "mensagem": mensagem,
+    }
+    return render(request, 'generic.html', context=context)
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
@@ -1022,13 +1087,26 @@ def submissao(request):
     """Para perguntas descritivas ao aluno de onde trabalho, entidades, sociais e familia."""
     user = PFEUser.objects.get(pk=request.user.pk)
     if user.tipo_de_usuario != 1:
-        return HttpResponse("Você não está cadastrado como aluno")
+        #return HttpResponse("Você não está cadastrado como aluno")
+        mensagem = "Você não está cadastrado como aluno!"
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
     configuracao = Configuracao.objects.first()
     aluno = Aluno.objects.get(pk=request.user.pk)
     if request.method == 'POST':
         if timezone.now() > configuracao.prazo:
             #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
-            return HttpResponse("Prazo para o preenchimento do formulário vencido!")
+            #return HttpResponse("Prazo para o preenchimento do formulário vencido!")
+            mensagem = "Prazo para o preenchimento do formulário vencido!"
+            context = {
+                "area_principal": True,
+                "area_aluno": True,
+                "mensagem": mensagem,
+            }
+            return render(request, 'generic.html', context=context)
 
         aluno.trabalhou = request.POST.get("trabalhou", "")
         aluno.social = request.POST.get("social", "")
@@ -1052,7 +1130,13 @@ def projeto_submeter(request):
     """Formulário de Submissão de Projetos."""
     user = PFEUser.objects.get(pk=request.user.pk)
     if user.tipo_de_usuario == 1: # alunos
-        return HttpResponse("Você não está cadastrado como parceiro de uma organização")
+        #return HttpResponse("Você não está cadastrado como parceiro de uma organização")
+        mensagem = "Você não está cadastrado como parceiro de uma organização!"
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
     #configuracao = Configuracao.objects.first()
 
     parceiro = None
@@ -1084,6 +1168,16 @@ def projeto_submeter(request):
             'parceiro' : parceiro,
             'professor' : professor,
             'administrador' : administrador,
+            'contatos_tecnicos' : "",
+            'contatos_administrativos' : "",
+            'info_organizacao' : "",
+            'info_departamento' : "",
+            'titulo' : "",
+            'desc_projeto' : "",
+            'expectativas' : "",
+            'areas' : None,
+            'recursos' : "",
+            'observacoes' : "",
         }
         return render(request, 'projetos/projeto_submissao.html', context)
 
@@ -1155,9 +1249,20 @@ def carrega(request, dado):
             string_html = "Importado ({0} registros): <br>".format(len(dataset))
             for row_values in dataset:
                 string_html += str(row_values) + "<br>"
-            return HttpResponse(string_html)
+            #return HttpResponse(string_html)
+            context = {
+                "area_principal": True,
+                "mensagem": string_html,
+            }
+            return render(request, 'generic.html', context=context)
         else:
-            return HttpResponse("Erro ao carregar arquivo."+str(result))
+            #return HttpResponse("Erro ao carregar arquivo."+str(result))
+            mensagem = "Erro ao carregar arquivo." + str(result)
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, 'generic.html', context=context)
 
     context = {
         'campos_permitidos': resource.campos,
@@ -1195,11 +1300,22 @@ def arquivos(request, documentos, path):
         if doc:
             if (doc.tipo_de_documento < 6) and (PFEUser.objects.get(pk=request.user.pk).\
                                                                 tipo_de_usuario != 2):
-                return HttpResponse("Documento Confidencial")
+                #return HttpResponse("Documento Confidencial")
+                mensagem = "Documento Confidencial"
+                context = {
+                    "mensagem": mensagem,
+                }
+                return render(request, 'generic.html', context=context)
         with open(file_path, 'rb') as file:
             response = get_response(file, path)
             if not response:
-                return HttpResponse("Erro ao carregar arquivo (formato não suportado).")
+                #return HttpResponse("Erro ao carregar arquivo (formato não suportado).")
+                mensagem = "Erro ao carregar arquivo (formato não suportado)."
+                context = {
+                    "area_principal": True,
+                    "mensagem": mensagem,
+                }
+                return render(request, 'generic.html', context=context)
             response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
             return response
     raise Http404
@@ -1220,11 +1336,22 @@ def arquivos2(request, organizacao, usuario, path):
         if doc:
             if (doc.tipo_de_documento < 6) and\
                (PFEUser.objects.get(pk=request.user.pk).tipo_de_usuario != 2):
-                return HttpResponse("Documento Confidencial")
+                #return HttpResponse("Documento Confidencial")
+                mensagem = "Documento Confidencial!"
+                context = {
+                    "mensagem": mensagem,
+                }
+                return render(request, 'generic.html', context=context)
         with open(file_path, 'rb') as file:
             response = get_response(file, path)
             if not response:
-                return HttpResponse("Erro ao carregar arquivo (formato não suportado).")
+                #return HttpResponse("Erro ao carregar arquivo (formato não suportado).")
+                mensagem = "Erro ao carregar arquivo (formato não suportado)."
+                context = {
+                    "area_principal": True,
+                    "mensagem": mensagem,
+                }
+                return render(request, 'generic.html', context=context)
             response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
             return response
     raise Http404
@@ -1284,7 +1411,13 @@ def meuprojeto(request):
     """Mostra o projeto do próprio aluno, se for aluno."""
     user = PFEUser.objects.get(pk=request.user.pk)
     if user.tipo_de_usuario != 1 and user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
-        return HttpResponse("Você não está cadastrado como aluno ou professor")
+        #return HttpResponse("Você não está cadastrado como aluno ou professor")
+        mensagem = "Você não está cadastrado como aluno ou professor!"
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
     if user.tipo_de_usuario == 2:
         professor = Professor.objects.get(user__pk=request.user.pk)
         return redirect('professor_detail', primarykey=professor.pk)
@@ -1520,7 +1653,13 @@ def encontros_marcar(request):
                     encontro.projeto = None
                     encontro.save()
         if agendado:
-            return HttpResponse("Agendado: "+agendado)
+            #return HttpResponse("Agendado: "+agendado)
+            mensagem = "Agendado: " + agendado
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, 'generic.html', context=context)
         else:
             return HttpResponse("Problema! Por favor reportar.")
     else:
@@ -1568,7 +1707,14 @@ def carrega_bancos(request):
                 banco = Banco.create(nome=row[0], codigo=row[1])
                 banco.save()
             line_count += 1
-    return HttpResponse("Bancos carregados")
+    mensagem = "Bancos carregados."
+    context = {
+        "area_principal": True,
+        "mensagem": mensagem,
+    }
+    return render(request, 'generic.html', context=context)
+    #return HttpResponse("Bancos carregados")
+
 
 @login_required
 @transaction.atomic
@@ -1806,10 +1952,17 @@ def bancas_criar(request):
             projeto = Projeto.objects.get(id=int(request.POST['projeto']))
             banca = Banca.create(projeto)
             editar_banca(banca, request)
-            return HttpResponse( # Isso não esta bom assim, ajustar
-                "Banca criada.<br>"+\
-                "<a href='../bancas_index"+\
-                "'>Voltar</a>")
+            # return HttpResponse( # Isso não esta bom assim, ajustar
+            #     "Banca criada.<br>"+\
+            #     "<a href='../bancas_index"+\
+            #     "'>Voltar</a>")
+            mensagem = "Banca criada."
+            context = {
+                "area_principal": True,
+                "bancas_index": True,
+                "mensagem": mensagem,
+            }
+            return render(request, 'generic.html', context=context)
         return HttpResponse("Banca não registrada, problema com identificação do projeto.")
     else:
         ano = configuracao.ano
@@ -1848,10 +2001,17 @@ def bancas_editar(request, primarykey):
     banca = Banca.objects.get(pk=primarykey)
     if request.method == 'POST':
         editar_banca(banca, request)
-        return HttpResponse( # Isso não esta bom assim, ajustar
-            "Banca editada.<br>"+\
-            "<a href='../bancas_index"+\
-            "'>Voltar</a>")
+        # return HttpResponse(
+        #     "Banca editada.<br>"+\
+        #     "<a href='../bancas_index"+\
+        #     "'>Voltar</a>")
+        mensagem = "Banca editada."
+        context = {
+            "area_principal": True,
+            "bancas_index": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
     else:
         projetos = Projeto.objects.filter(disponivel=True).exclude(orientador=None).\
                                   order_by("-ano", "-semestre")
@@ -2084,7 +2244,12 @@ def projeto_feedback(request):
         feedback.organizacao = request.POST.get("organizacao", "")
         feedback.outros = request.POST.get("outros", "")
         feedback.save()
-        return HttpResponse("Feedback recebido, obrigado!")
+        mensagem = "Feedback recebido, obrigado!"
+        context = {
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
+        #return HttpResponse("Feedback recebido, obrigado!")
     else:
         context = {
         }
@@ -2120,7 +2285,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
         try:
             banca = Banca.objects.filter(projeto=projeto).order_by("startDate").last()
         except Banca.DoesNotExist:
-            return HttpResponseNotFound('<h1>Banca não encontrado!</h1>')
+            return HttpResponseNotFound('<h1>Banca não encontrada!</h1>')
 
     except Projeto.DoesNotExist:
         return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
@@ -2287,7 +2452,12 @@ def avaliacao(request, primarykey): #acertar isso para pk
             for recipient in recipient_list:
                 resposta += "&bull; {0}<br>".format(recipient)
             resposta += "<br><a href='javascript:history.back(1)'>Voltar</a>"
-            return HttpResponse(resposta)
+            context = {
+                "area_principal": True,
+                "mensagem": resposta,
+            }
+            return render(request, 'generic.html', context=context)
+            #return HttpResponse(resposta)
 
         return HttpResponse("Avaliação não submetida.")
     else:

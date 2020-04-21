@@ -8,7 +8,7 @@ Data: 15 de Maio de 2019
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.db.models.functions import Lower
-from django.http import HttpResponse
+#from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
@@ -33,7 +33,13 @@ def perfil(request):
     elif user.tipo_de_usuario == 4: #administrador
         context['administrador'] = Administrador.objects.get(pk=request.user.pk)
     else:
-        return HttpResponse("Seu perfil não foi encontrado!")
+        mensagem = "Seu perfil não foi encontrado!"
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
+        #return HttpResponse("Seu perfil não foi encontrado!")
     return render(request, 'users/profile_detail.html', context=context)
 
 @login_required
@@ -45,7 +51,13 @@ def areas_interesse(request):
         configuracao = Configuracao.objects.all().first()
         if timezone.now() > configuracao.prazo:
             #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
-            return HttpResponse("Prazo para seleção de áreas vencido!")
+            #return HttpResponse("Prazo para seleção de áreas vencido!")
+            mensagem = "Prazo para seleção de áreas vencido!"
+            context = {
+                "area_aluno": True,
+                "mensagem": mensagem,
+            }
+            return render(request, 'generic.html', context=context)
 
         check_values = request.POST.getlist('selection')
         aluno = Aluno.objects.get(pk=request.user.pk)
@@ -73,7 +85,13 @@ def areas_interesse(request):
         aluno.administracao_economia_financas = "administracao_economia_financas" in check_values
         aluno.save()
         return render(request, 'users/atualizado.html',)
-    return render(request, 'users/areas_interesse.html',)
+
+    user = PFEUser.objects.get(pk=request.user.pk)
+    aluno = user.aluno
+    context = {
+        'areas': aluno,
+    }
+    return render(request, 'users/areas_interesse.html', context=context)
 
 class SignUp(generic.CreateView):
     """Rotina para fazer o login."""

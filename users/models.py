@@ -17,53 +17,78 @@ from django.dispatch import receiver
 
 from projetos.models import Projeto, Empresa
 
-####   PARA PORTAR AS AREAS DE INTERESSE DE ALUNOS PARA CÁ, E USAR NO PROEJETO  #####
+####   PARA PORTAR AS AREAS DE INTERESSE DE ALUNOS PARA CÁ, E USAR NO PROJETO  #####
 #areas de interesse
 class Areas(models.Model):
     """Áreas de interesse dos projetos de engenharia."""
-    inovacao_social = models.BooleanField(default=False)
-    ciencia_dos_dados = models.BooleanField(default=False)
-    modelagem_3D = models.BooleanField(default=False)
-    manufatura = models.BooleanField(default=False)
-    resistencia_dos_materiais = models.BooleanField(default=False)
-    modelagem_de_sistemas = models.BooleanField(default=False)
-    controle_e_automacao = models.BooleanField(default=False)
-    termodinamica = models.BooleanField(default=False)
-    fluidodinamica = models.BooleanField(default=False)
-    eletronica_digital = models.BooleanField(default=False)
-    programacao = models.BooleanField(default=False)
-    inteligencia_artificial = models.BooleanField(default=False)
-    banco_de_dados = models.BooleanField(default=False)
-    computacao_em_nuvem = models.BooleanField(default=False)
-    visao_computacional = models.BooleanField(default=False)
-    computacao_de_alto_desempenho = models.BooleanField(default=False)
-    robotica = models.BooleanField(default=False)
-    realidade_virtual_aumentada = models.BooleanField(default=False)
-    protocolos_de_comunicacao = models.BooleanField(default=False)
-    eficiencia_energetica = models.BooleanField(default=False)
-    administracao_economia_financas = models.BooleanField(default=False)
+    inovacao_social = models.BooleanField("Inovacao Social",
+                                          default=False)
+    ciencia_dos_dados = models.BooleanField("Ciência dos Dados",
+                                            default=False)
+    modelagem_3D = models.BooleanField("Modelagem 3D",
+                                       default=False)
+    manufatura = models.BooleanField("Manufatura",
+                                     default=False)
+    resistencia_dos_materiais = models.BooleanField("Resistência dos Materiais",
+                                                    default=False)
+    modelagem_de_sistemas = models.BooleanField("Modelagem de Sistemas",
+                                                default=False)
+    controle_e_automacao = models.BooleanField("Controle e Automação",
+                                               default=False)
+    termodinamica = models.BooleanField("Termodinâmica",
+                                        default=False)
+    fluidodinamica = models.BooleanField("Fuidodinâmica",
+                                         default=False)
+    eletronica_digital = models.BooleanField("Eletrônica Digital",
+                                             default=False)
+    programacao = models.BooleanField("Programação",
+                                      default=False)
+    inteligencia_artificial = models.BooleanField("Inteligência Artificial",
+                                                  default=False)
+    banco_de_dados = models.BooleanField("Banco de Dados",
+                                         default=False)
+    computacao_em_nuvem = models.BooleanField("Computação em Nuvem",
+                                              default=False)
+    visao_computacional = models.BooleanField("Visão Computacional",
+                                              default=False)
+    computacao_de_alto_desempenho = models.BooleanField("Computação de Alto Desempenho",
+                                                        default=False)
+    robotica = models.BooleanField("Robótica",
+                                   default=False)
+    realidade_virtual_aumentada = models.BooleanField("Realidade Virtual e Aumentada",
+                                                      default=False)
+    protocolos_de_comunicacao = models.BooleanField("Protocolos de Comunicação",
+                                                    default=False)
+    eficiencia_energetica = models.BooleanField("Eficiência Energética",
+                                                default=False)
+    administracao_economia_financas = models.BooleanField("Administração/Economia/Finanças",
+                                                          default=False)
+
+    outras = models.CharField("Outras", max_length=32, null=True, blank=True,
+                              help_text='Outras áreas de interesse')
 
     def __str__(self):
-        return   ("V" if self.inovacao_social else "F") + " "\
-               + ("V" if self.ciencia_dos_dados else "F") + " "\
-               + ("V" if self.modelagem_3D else "F") + " "\
-               + ("V" if self.manufatura else "F") + " "\
-               + ("V" if self.resistencia_dos_materiais else "F") + " "\
-               + ("V" if self.modelagem_de_sistemas else "F") + " "\
-               + ("V" if self.controle_e_automacao else "F") + " "\
-               + ("V" if self.termodinamica else "F") + " "\
-               + ("V" if self.fluidodinamica else "F") + " "\
-               + ("V" if self.eletronica_digital else "F") + " "\
-               + ("V" if self.programacao else "F") + " "\
-               + ("V" if self.inteligencia_artificial else "F") + " "\
-               + ("V" if self.computacao_em_nuvem else "F") + " "\
-               + ("V" if self.visao_computacional else "F") + " "\
-               + ("V" if self.computacao_de_alto_desempenho else "F") + " "\
-               + ("V" if self.robotica else "F") + " "\
-               + ("V" if self.realidade_virtual_aumentada else "F") + " "\
-               + ("V" if self.protocolos_de_comunicacao else "F") + " "\
-               + ("V" if self.eficiencia_energetica else "F") + " "\
-               + ("V" if self.administracao_economia_financas else "F")
+        return   "V" if self.inovacao_social else "F" + " "\
+               + "V" if self.ciencia_dos_dados else "F" + " "\
+               + "V" if self.modelagem_3D else "F" + " "\
+               + "V" if self.manufatura else "F" + " "\
+               + "V" if self.resistencia_dos_materiais else "F" + " "\
+               + "V" if self.modelagem_de_sistemas else "F" + " "\
+               + "V" if self.controle_e_automacao else "F" + " "\
+               + "V" if self.termodinamica else "F" + " "\
+               + "V" if self.fluidodinamica else "F" + " "\
+               + "V" if self.eletronica_digital else "F" + " "\
+               + "V" if self.programacao else "F" + " "\
+               + "V" if self.inteligencia_artificial else "F" + " "\
+               + "V" if self.computacao_em_nuvem else "F" + " "\
+               + "V" if self.visao_computacional else "F" + " "\
+               + "V" if self.computacao_de_alto_desempenho else "F" + " "\
+               + "V" if self.robotica else "F" + " "\
+               + "V" if self.realidade_virtual_aumentada else "F" + " "\
+               + "V" if self.protocolos_de_comunicacao else "F" + " "\
+               + "V" if self.eficiencia_energetica else "F" + " "\
+               + "V" if self.administracao_economia_financas else "F" + " "\
+               + self.outras if self.outras else ""
 
     class Meta:
         verbose_name = 'Áreas'
