@@ -1775,12 +1775,15 @@ def reembolso_pedir(request):
 def avisos_listar(request):
     """Mostra toda a tabela de avisos da coordenação do PFE."""
     configuracao = Configuracao.objects.all().first()
-    avisos = Aviso.objects.all().order_by("delta")
-    dias_passados = (datetime.date.today() - configuracao.t0).days
+
+    qs = Aviso.objects.all()
+    avisos = sorted(qs, key=lambda t: t.get_data())
+
+    #dias_passados = (datetime.date.today() - configuracao.t0).days
     context = {
         'avisos': avisos,
         'configuracao' : configuracao,
-        'dias_passados' : dias_passados,
+        'hoje' : datetime.date.today(),
         'filtro' : "todos",
     }
     return render(request, 'projetos/avisos_listar.html', context)

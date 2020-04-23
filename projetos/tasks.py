@@ -15,9 +15,15 @@ from .models import Configuracao, Aviso
 @task
 def envia_aviso():
     """Gera um aviso por e-mail."""
-    configuracao = Configuracao.objects.all().first()
-    delta = (datetime.date.today() - configuracao.t0).days
-    avisos = Aviso.objects.filter(delta=delta)
+    # configuracao = Configuracao.objects.all().first()
+    # delta = (datetime.date.today() - configuracao.t0).days
+    # avisos = Aviso.objects.filter(delta=delta)
+
+    avisos = []
+    for aviso in Aviso.objects.all():
+        if aviso.get_data() == datetime.date.today():
+            avisos.append(aviso)
+
     recipient_list = ['pfeinsper@gmail.com', 'lpsoares@insper.edu.br',]
     for aviso in avisos:
         subject = 'Aviso: '+aviso.titulo

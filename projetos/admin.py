@@ -240,7 +240,7 @@ class AvisoAdmin(admin.ModelAdmin):
     fieldsets = \
         ((None,
           {'fields':
-           ('titulo', 'delta', 'mensagem', 'realizado',)
+           ('titulo', 'evento', 'delta', 'mensagem', 'realizado',)
           }),
          ('Interesse', {
              'fields': ('coordenacao', 'comite_pfe', 'todos_alunos',

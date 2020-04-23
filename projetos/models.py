@@ -298,7 +298,7 @@ class Evento(models.Model):
         return 2
 
     def __str__(self):
-        return self.name
+        return self.name+" ("+self.startDate.strftime("%d/%m/%Y")+")"
     class Meta:
         ordering = ['startDate']
 
@@ -461,6 +461,9 @@ class Aviso(models.Model):
     """Avisos para a Coordenação do PFE."""
     titulo = models.CharField(max_length=120, null=True, blank=True,
                               help_text='Título do Aviso')
+    evento = models.ForeignKey(Evento, null=True, blank=True,
+                               on_delete=models.CASCADE,
+                               help_text='Evento a que esse aviso depende')
     delta = models.SmallIntegerField(default=0,
                                      help_text='dias passados do início do semestre')
     mensagem = models.TextField(max_length=4096, null=True, blank=True,
@@ -477,6 +480,16 @@ class Aviso(models.Model):
     contatos_nas_organizacoes = \
         models.BooleanField(default=False, help_text='Para contatos nas organizações parceiras')
 
+    def get_data(self):
+        """Retorna a data do aviso."""
+        if self.evento:
+            delta_days = datetime.timedelta(days=self.delta)
+            return self.evento.startDate + delta_days
+        else:
+            configuracao = Configuracao.objects.all().first()
+            delta_days = datetime.timedelta(days=self.delta)
+            return configuracao.t0 + delta_days
+            
     def __str__(self):
         return str(self.titulo)
 

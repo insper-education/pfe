@@ -50,7 +50,7 @@
           </tr>
     
         {% for a in avisos %} 
-          <tr class="linha {% if a.delta < dias_passados %}text-success{% else %}text-info{% endif %}"
+          <tr class="linha {% if a.get_data < hoje %}text-success{% else %}text-info{% endif %}"
               data-type="
                 {% if a.coordenacao %}Co{% endif %}
                 {% if a.comite_pfe %}Cm{% endif %}
@@ -63,8 +63,15 @@
               {% if a.realizado %}checked{% endif %}
               >
             </td>
-            <td data-toggle="tooltip" data-html="true" animation="true" title="delta = {{a.delta}}">
-              {{ configuracao.t0|plus_days:a.delta  }}
+            <td data-toggle="tooltip" data-html="true" animation="true" title="
+                {% if a.evento %}
+                  {{a.evento.name}}{%if a.delta >= 0 %}+{%endif%}{{a.delta}}
+                {% else %}
+                  delta={{a.delta}}
+                {% endif %}
+              ">
+              {% comment %}{{ configuracao.t0|plus_days:a.delta  }}{% endcomment %}
+              {{a.get_data}}
             </td>
             <td>
               {% if a.coordenacao %}
