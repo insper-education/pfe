@@ -2278,7 +2278,7 @@ def mostra_feedback(request, feedback_id):
 #@login_required
 #@permission_required("users.altera_professor", login_url='/projetos/')
 def avaliacao(request, primarykey): #acertar isso para pk
-    """Cria um anotação para uma organização parceira."""
+    """Cria uma tela para preencher avaliações de bancas."""
     try:
         projeto = Projeto.objects.get(pk=primarykey)
 
@@ -2508,3 +2508,34 @@ def validate_aviso(request):
     }
 
     return JsonResponse(data)
+
+
+
+
+
+
+
+#@login_required
+#@permission_required("users.altera_professor", login_url='/projetos/')
+def conceitos_obtidos(request, primarykey): #acertar isso para pk
+    """Visualiza os conceitos obtidos pelos alunos no projeto."""
+    try:
+        projeto = Projeto.objects.get(pk=primarykey)
+        # try:
+        #     banca = Banca.objects.filter(projeto=projeto).order_by("startDate").last()
+        # except Banca.DoesNotExist:
+        #     return HttpResponseNotFound('<h1>Banca não encontrada!</h1>')
+
+    except Projeto.DoesNotExist:
+        return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
+
+    objetivos = ObjetidosDeAprendizagem.objects.filter(avaliacao_banca=True)
+    avaliacoes = Avaliacao.objects.filter(projeto=projeto)
+
+    context = {
+        'objetivos': objetivos,
+        'projeto': projeto,
+        'avaliacoes' : avaliacoes,
+    }
+
+    return render(request, 'projetos/conceitos_obtidos.html', context=context)

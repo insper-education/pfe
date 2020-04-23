@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 22 de Abril de 2020
+{% endcomment %}
+
+{% block head %}
+  {% load rubricas %}
+
+  <script>
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
+
+{% endblock %}
+
+{% block content %}
+  {% if projeto.titulo_final %}
+    <style>
+        h5 {display: inline;}
+    </style>
+    <h5>Título: {{projeto.titulo_final}}</h5>
+    <small> <br>&nbsp;&nbsp;&nbsp;&nbsp;Título Provisório: {{projeto.titulo}}</small><br>
+  {% else %}
+    <h5>Título: {{projeto.titulo}}</h5>
+  {% endif %}
+  <br>
+  <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
+  {% if projeto.avancado %}
+    <strong style="color:red"><u>PFE Avançado</u></strong><br>
+  {% endif %}
+  {% if projeto.orientador %}
+    <strong>Orientador{% if projeto.orientador.user.genero == "F" %}a{% endif %}: </strong>
+    &nbsp;
+    <a href="{% url 'professor_detail' projeto.orientador.id %}">
+      {{projeto.orientador.user.get_full_name}}
+    </a>
+  {% endif %}
+  <br>
+  <strong>Alunos:</strong>
+  {% for alocacao in projeto.alocacao_set.all %}
+    <a href="{% url 'aluno_detail' alocacao.aluno.id %}">
+      <p>
+        &nbsp;&nbsp;{{alocacao.aluno.user.get_full_name}} 
+        &lt;{{alocacao.aluno.user.email}}&gt; 
+        [{{ alocacao.aluno.get_curso_display }}]
+      </p>
+    </a>
+  {% endfor %}
+  <br>
+  <h5>Bancas:</h5><br>
+  {% for avaliacao in avaliacoes %}
+    <strong>Avaliador(a): </strong>
+      <a href="{% url 'professor_detail' avaliacao.avaliador.professor.id %}">
+        {{avaliacao.avaliador.get_full_name}}
+      </a>
+    <br>
+    <strong>Banca: </strong>{% if avaliacao.tipo_de_banca == 0 %}Final{% else %}Intermediária{% endif %}<br>
+    {% if avaliacao.objetivo1 %}
+      &nbsp;&nbsp;<strong>{{avaliacao.objetivo1.titulo}}</strong>: <span data-toggle="tooltip" data-html="true" animation="true" title="
+        {{objetivos|get_rubrica:avaliacao.objetivo1.id|get_texto:avaliacao.objetivo1_conceito}}">
+          {{avaliacao.objetivo1_conceito}}</span><br>
+    {% endif %}
+    {% if avaliacao.objetivo2 %}
+      &nbsp;&nbsp;<strong>{{avaliacao.objetivo2.titulo}}</strong>: <span data-toggle="tooltip" data-html="true" animation="true" title="
+        {{objetivos|get_rubrica:avaliacao.objetivo2.id|get_texto:avaliacao.objetivo2_conceito}}">
+        {{avaliacao.objetivo2_conceito}}</span><br>
+    {% endif %}
+    {% if avaliacao.objetivo3 %}
+      &nbsp;&nbsp;<strong>{{avaliacao.objetivo3.titulo}}</strong>: <span data-toggle="tooltip" data-html="true" animation="true" title="
+        {{objetivos|get_rubrica:avaliacao.objetivo3.id|get_texto:avaliacao.objetivo3_conceito}}">
+        {{avaliacao.objetivo3_conceito}}</span><br>
+    {% endif %}
+    {% if avaliacao.objetivo4 %}
+      &nbsp;&nbsp;<strong>{{avaliacao.objetivo4.titulo}}</strong>: <span data-toggle="tooltip" data-html="true" animation="true" title="
+        {{objetivos|get_rubrica:avaliacao.objetivo4.id|get_texto:avaliacao.objetivo4_conceito}}">
+        {{avaliacao.objetivo4_conceito}}</span><br>
+    {% endif %}
+    {% if avaliacao.objetivo5 %}
+      &nbsp;&nbsp;<strong>{{avaliacao.objetivo5.titulo}}</strong>: <span data-toggle="tooltip" data-html="true" animation="true" title="
+        {{objetivos|get_rubrica:avaliacao.objetivo5.id|get_texto:avaliacao.objetivo5_conceito}}">
+        {{avaliacao.objetivo5_conceito}}</span><br>
+    {% endif %}
+
+    {% if avaliacao.observacoes %}
+      &nbsp;&nbsp;<strong>Observações</strong>: {{avaliacao.observacoes}}<br>
+    {% endif %}
+
+  <br>
+  {% endfor %}
+
+
+{% endblock %}

@@ -6,6 +6,33 @@
 {% endcomment %}
 
 {% block head %}
+  <style>
+    .myButton {
+      box-shadow:inset 0px 1px 0px 0px #f9eca0;
+      background:linear-gradient(to bottom, #f0c911 5%, #f2ab1e 100%);
+      background-color:#f0c911;
+      border-radius:8px;
+      border:2px solid #e65f44;
+      display:inline-block;
+      cursor:pointer;
+      color:#c92200;
+      font-family:Arial;
+      font-size:15px;
+      font-weight:bold;
+      padding:4px 22px;
+      text-decoration:none;
+      text-shadow:0px 1px 0px #ded17c;
+    }
+    .myButton:hover {
+      background:linear-gradient(to bottom, #f2ab1e 5%, #f0c911 100%);
+      background-color:#f2ab1e;
+    }
+    .myButton:active {
+      position:relative;
+      top:1px;
+    }
+  </style>
+
 {% endblock %}
 
 {% block content %}
@@ -97,12 +124,12 @@
   {% endif %}
 
   {% if projeto.orientador %}
-  <hr>
-  <h3>Orientador{% if projeto.orientador.user.genero == "F" %}a{% endif %}: </h3>
-  &nbsp;
-  <a href="{% url 'professor_detail' projeto.orientador.id %}">
-    {{projeto.orientador.user.get_full_name}}
-  </a>
+    <hr>
+    <h3>Orientador{% if projeto.orientador.user.genero == "F" %}a{% endif %}: </h3>
+    &nbsp;
+    <a href="{% url 'professor_detail' projeto.orientador.id %}">
+      {{projeto.orientador.user.get_full_name}}
+    </a>
   {% endif %}
 
   {% if coorientadores %}
@@ -149,6 +176,9 @@
       </p>
     </a>
   {% endfor %}
+  <br>
+
+  <a class="myButton" href="{% url 'conceitos_obtidos' projeto.id %}">Avaliações</a>
 
   <hr>
   <h3>Aluno(s) Aplicando para o Projeto</h3>
