@@ -16,7 +16,6 @@ def get_rubrica(objetivos, objetivo):
 @register.filter
 def get_texto(objetivo, conceito):
     """Permite buscar o texto de uma rubrica."""
-    print("|"+conceito+"|")
     if conceito == "A " or conceito == "A+":
         return objetivo.rubrica_A
     if conceito == "B " or conceito == "B+":
