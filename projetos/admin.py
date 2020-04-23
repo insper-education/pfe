@@ -233,7 +233,7 @@ class BancaAdmin(admin.ModelAdmin):
 @admin.register(Aviso)
 class AvisoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
-    list_display = ('titulo', 'delta', 'realizado',)
+    list_display = ('titulo', 'tipo_de_evento', 'delta', 'realizado',)
     list_filter = ('realizado', 'coordenacao', 'comite_pfe', 'todos_alunos',
                    'todos_orientadores', 'contatos_nas_organizacoes',)
     ordering = ('delta',)
