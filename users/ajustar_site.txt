@@ -1,0 +1,13 @@
+Para ajustar endereço do site:
+
+> python3 manage.py shell
+
+>>> from django.contrib.sites.models import Site
+
+>>> my_site = Site.objects.get(pk=1)
+>>> my_site.domain = 'pfe.insper.edu.br'
+>>> my_site.name = 'pfe.insper.edu.br'
+>>> my_site.save()
+
+>>> mysite = Site.objects.get_current()
+>>> mysite
