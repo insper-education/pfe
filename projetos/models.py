@@ -461,9 +461,11 @@ class Aviso(models.Model):
     """Avisos para a Coordenação do PFE."""
     titulo = models.CharField(max_length=120, null=True, blank=True,
                               help_text='Título do Aviso')
-    evento = models.ForeignKey(Evento, null=True, blank=True,
-                               on_delete=models.CASCADE,
-                               help_text='Evento a que esse aviso depende')
+
+    tipo_de_evento = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in Evento.TIPO_EVENTO],
+                                                      null=True, blank=True,
+                                                      help_text='Define o tipo do evento de referência')
+
     delta = models.SmallIntegerField(default=0,
                                      help_text='dias passados do início do semestre')
     mensagem = models.TextField(max_length=4096, null=True, blank=True,
@@ -481,15 +483,29 @@ class Aviso(models.Model):
         models.BooleanField(default=False, help_text='Para contatos nas organizações parceiras')
 
     def get_data(self):
-        """Retorna a data do aviso."""
-        if self.evento:
+        """Retorna a data do aviso do semestre."""
+        configuracao = Configuracao.objects.all().first()
+        if self.tipo_de_evento:
+            eventos = Evento.objects.filter(tipo_de_evento=self.tipo_de_evento).\
+                                     filter(startDate__year=configuracao.ano)
+            if configuracao.semestre == 1:
+                evento = eventos.filter(startDate__month__lt=7).last()
+            else:
+                evento = eventos.filter(startDate__month__gt=6).last()
+
             delta_days = datetime.timedelta(days=self.delta)
-            return self.evento.startDate + delta_days
+            return evento.startDate + delta_days
         else:
-            configuracao = Configuracao.objects.all().first()
             delta_days = datetime.timedelta(days=self.delta)
             return configuracao.t0 + delta_days
-            
+    
+    def get_evento(self):
+        """Retorna em string o nome do evento."""
+        for entry in Evento.TIPO_EVENTO:
+            if self.tipo_de_evento == entry[0]:
+                return entry[1]
+        return "Sem evento"
+
     def __str__(self):
         return str(self.titulo)
 

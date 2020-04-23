@@ -64,8 +64,8 @@
               >
             </td>
             <td data-toggle="tooltip" data-html="true" animation="true" title="
-                {% if a.evento %}
-                  {{a.evento.name}}{%if a.delta >= 0 %}+{%endif%}{{a.delta}}
+                {% if a.tipo_de_evento %}
+                  {{a.get_evento}}{%if a.delta >= 0 %}+{%endif%}{{a.delta}}
                 {% else %}
                   delta={{a.delta}}
                 {% endif %}
