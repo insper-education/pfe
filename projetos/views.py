@@ -2509,14 +2509,8 @@ def validate_aviso(request):
 
     return JsonResponse(data)
 
-
-
-
-
-
-
-#@login_required
-#@permission_required("users.altera_professor", login_url='/projetos/')
+@login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
 def conceitos_obtidos(request, primarykey): #acertar isso para pk
     """Visualiza os conceitos obtidos pelos alunos no projeto."""
     try:
@@ -2530,7 +2524,10 @@ def conceitos_obtidos(request, primarykey): #acertar isso para pk
         return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
 
     objetivos = ObjetidosDeAprendizagem.objects.filter(avaliacao_banca=True)
-    avaliacoes = Avaliacao.objects.filter(projeto=projeto)
+    avaliacoes = Avaliacao.objects.filter(projeto=projeto).order_by('avaliador', '-momento')
+
+    # Quando mudar para Postgres isso vai funcionar.
+    #.order_by('momento').distinct('avaliador')
 
     context = {
         'objetivos': objetivos,
