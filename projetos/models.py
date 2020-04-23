@@ -485,6 +485,7 @@ class Aviso(models.Model):
     def get_data(self):
         """Retorna a data do aviso do semestre."""
         configuracao = Configuracao.objects.all().first()
+        delta_days = datetime.timedelta(days=self.delta)
         if self.tipo_de_evento:
             eventos = Evento.objects.filter(tipo_de_evento=self.tipo_de_evento).\
                                      filter(startDate__year=configuracao.ano)
@@ -493,11 +494,10 @@ class Aviso(models.Model):
             else:
                 evento = eventos.filter(startDate__month__gt=6).last()
 
-            delta_days = datetime.timedelta(days=self.delta)
-            return evento.startDate + delta_days
-        else:
-            delta_days = datetime.timedelta(days=self.delta)
-            return configuracao.t0 + delta_days
+            if evento:
+                return evento.startDate + delta_days
+        
+        return configuracao.t0 + delta_days
     
     def get_evento(self):
         """Retorna em string o nome do evento."""
