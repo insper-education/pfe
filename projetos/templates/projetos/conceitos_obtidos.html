@@ -80,7 +80,7 @@
       {% for avaliacao in banca_inter %}
         {% ifchanged avaliacao.avaliador %}
           <tr><td>
-            <strong>Avaliador(a): </strong>
+            <strong>Avaliador{% if avaliacao.avaliador.genero == "F" %}a{% endif %}: </strong>
               <a href="{% url 'professor_detail' avaliacao.avaliador.professor.id %}">
                 {{avaliacao.avaliador.get_full_name}}
               </a>
