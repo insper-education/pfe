@@ -53,7 +53,10 @@
     </a>
     <br>
   {% endif %}
-  <strong>Organização:</strong> {{projeto.empresa}}<br>
+  <strong>Organização: </strong>
+    <a href="{% url 'organizacao_completo' projeto.empresa.login %}">
+      {{projeto.empresa}}
+    </a><br>
   
   {% if projeto.avancado %}
     <strong style="color:red"><u>PFE Avançado</u></strong><br>
@@ -71,52 +74,108 @@
   {% endfor %}
   </ul>
   
-  <h5>Bancas:</h5>
-  <table>
-    {% for avaliacao in avaliacoes %}
-      {% ifchanged avaliacao.avaliador %}
-        <tr><td>
-          <strong>Avaliador(a): </strong>
-            <a href="{% url 'professor_detail' avaliacao.avaliador.professor.id %}">
-              {{avaliacao.avaliador.get_full_name}}
-            </a>
-          <br>
-          <strong>Banca: </strong>{% if avaliacao.tipo_de_banca == 0 %}Final{% else %}Intermediária{% endif %}<br>
-          <strong>Avaliado em: </strong>{{avaliacao.momento}}<br>
-          {% if avaliacao.objetivo1 %}
-            &nbsp;&nbsp;<strong>{{avaliacao.objetivo1.titulo}}</strong>: <span data-toggle="tooltip" data-html="true" animation="true" title="
-              {{objetivos|get_rubrica:avaliacao.objetivo1.id|get_texto:avaliacao.objetivo1_conceito}}">
-                {{avaliacao.objetivo1_conceito}}</span><br>
-          {% endif %}
-          {% if avaliacao.objetivo2 %}
-            &nbsp;&nbsp;<strong>{{avaliacao.objetivo2.titulo}}</strong>: <span data-toggle="tooltip" data-html="true" animation="true" title="
-              {{objetivos|get_rubrica:avaliacao.objetivo2.id|get_texto:avaliacao.objetivo2_conceito}}">
-              {{avaliacao.objetivo2_conceito}}</span><br>
-          {% endif %}
-          {% if avaliacao.objetivo3 %}
-            &nbsp;&nbsp;<strong>{{avaliacao.objetivo3.titulo}}</strong>: <span data-toggle="tooltip" data-html="true" animation="true" title="
-              {{objetivos|get_rubrica:avaliacao.objetivo3.id|get_texto:avaliacao.objetivo3_conceito}}">
-              {{avaliacao.objetivo3_conceito}}</span><br>
-          {% endif %}
-          {% if avaliacao.objetivo4 %}
-            &nbsp;&nbsp;<strong>{{avaliacao.objetivo4.titulo}}</strong>: <span data-toggle="tooltip" data-html="true" animation="true" title="
-              {{objetivos|get_rubrica:avaliacao.objetivo4.id|get_texto:avaliacao.objetivo4_conceito}}">
-              {{avaliacao.objetivo4_conceito}}</span><br>
-          {% endif %}
-          {% if avaliacao.objetivo5 %}
-            &nbsp;&nbsp;<strong>{{avaliacao.objetivo5.titulo}}</strong>: <span data-toggle="tooltip" data-html="true" animation="true" title="
-              {{objetivos|get_rubrica:avaliacao.objetivo5.id|get_texto:avaliacao.objetivo5_conceito}}">
-              {{avaliacao.objetivo5_conceito}}</span><br>
-          {% endif %}
+  {% if banca_inter %}
+    <h5>Banca Intermediária:</h5>
+    <table>
+      {% for avaliacao in banca_inter %}
+        {% ifchanged avaliacao.avaliador %}
+          <tr><td>
+            <strong>Avaliador(a): </strong>
+              <a href="{% url 'professor_detail' avaliacao.avaliador.professor.id %}">
+                {{avaliacao.avaliador.get_full_name}}
+              </a>
+            <br>
+            <strong>Avaliado em: </strong>{{avaliacao.momento}}<br>
+            <strong>Conceitos:</strong><br>
+            <ul>
+            {% if avaliacao.objetivo1 %}
+              <li>{{avaliacao.objetivo1.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
+                {{objetivos|get_rubrica:avaliacao.objetivo1.id|get_texto:avaliacao.objetivo1_conceito}}">
+                  {{avaliacao.objetivo1_conceito}}</span></li>
+            {% endif %}
+            {% if avaliacao.objetivo2 %}
+              <li>{{avaliacao.objetivo2.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
+                {{objetivos|get_rubrica:avaliacao.objetivo2.id|get_texto:avaliacao.objetivo2_conceito}}">
+                {{avaliacao.objetivo2_conceito}}</span></li>
+            {% endif %}
+            {% if avaliacao.objetivo3 %}
+              <li>{{avaliacao.objetivo3.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
+                {{objetivos|get_rubrica:avaliacao.objetivo3.id|get_texto:avaliacao.objetivo3_conceito}}">
+                {{avaliacao.objetivo3_conceito}}</span></li>
+            {% endif %}
+            {% if avaliacao.objetivo4 %}
+              <li>{{avaliacao.objetivo4.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
+                {{objetivos|get_rubrica:avaliacao.objetivo4.id|get_texto:avaliacao.objetivo4_conceito}}">
+                {{avaliacao.objetivo4_conceito}}</span></li>
+            {% endif %}
+            {% if avaliacao.objetivo5 %}
+              <li>{{avaliacao.objetivo5.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
+                {{objetivos|get_rubrica:avaliacao.objetivo5.id|get_texto:avaliacao.objetivo5_conceito}}">
+                {{avaliacao.objetivo5_conceito}}</span></li>
+            {% endif %}
 
-          {% if avaliacao.observacoes %}
-            &nbsp;&nbsp;<strong>Observações</strong>: {{avaliacao.observacoes}}<br>
-          {% endif %}
+            {% if avaliacao.observacoes %}
+              <li>Observações: {{avaliacao.observacoes}}</li>
+            {% endif %}
+            <ul>
+          </td></tr>
+        {% endifchanged %}
+      {% endfor %}
+    </table>
+  {% endif %}
 
-          <br>
-        </td></tr>
-      {% endifchanged %}
-    {% endfor %}
-  </table>
+  <br>
+
+  {% if banca_final %}
+    <h5>Banca Final:</h5>
+    <table>
+      {% for avaliacao in banca_final %}
+        {% ifchanged avaliacao.avaliador %}
+          <tr><td>
+            <strong>Avaliador(a): </strong>
+              <a href="{% url 'professor_detail' avaliacao.avaliador.professor.id %}">
+                {{avaliacao.avaliador.get_full_name}}
+              </a>
+            <br>
+            <strong>Avaliado em: </strong>{{avaliacao.momento}}<br>
+            {% if avaliacao.objetivo1 %}
+              &nbsp;&nbsp;<strong>{{avaliacao.objetivo1.titulo}}</strong>: <span data-toggle="tooltip" data-html="true" animation="true" title="
+                {{objetivos|get_rubrica:avaliacao.objetivo1.id|get_texto:avaliacao.objetivo1_conceito}}">
+                  {{avaliacao.objetivo1_conceito}}</span><br>
+            {% endif %}
+            {% if avaliacao.objetivo2 %}
+              &nbsp;&nbsp;<strong>{{avaliacao.objetivo2.titulo}}</strong>: <span data-toggle="tooltip" data-html="true" animation="true" title="
+                {{objetivos|get_rubrica:avaliacao.objetivo2.id|get_texto:avaliacao.objetivo2_conceito}}">
+                {{avaliacao.objetivo2_conceito}}</span><br>
+            {% endif %}
+            {% if avaliacao.objetivo3 %}
+              &nbsp;&nbsp;<strong>{{avaliacao.objetivo3.titulo}}</strong>: <span data-toggle="tooltip" data-html="true" animation="true" title="
+                {{objetivos|get_rubrica:avaliacao.objetivo3.id|get_texto:avaliacao.objetivo3_conceito}}">
+                {{avaliacao.objetivo3_conceito}}</span><br>
+            {% endif %}
+            {% if avaliacao.objetivo4 %}
+              &nbsp;&nbsp;<strong>{{avaliacao.objetivo4.titulo}}</strong>: <span data-toggle="tooltip" data-html="true" animation="true" title="
+                {{objetivos|get_rubrica:avaliacao.objetivo4.id|get_texto:avaliacao.objetivo4_conceito}}">
+                {{avaliacao.objetivo4_conceito}}</span><br>
+            {% endif %}
+            {% if avaliacao.objetivo5 %}
+              &nbsp;&nbsp;<strong>{{avaliacao.objetivo5.titulo}}</strong>: <span data-toggle="tooltip" data-html="true" animation="true" title="
+                {{objetivos|get_rubrica:avaliacao.objetivo5.id|get_texto:avaliacao.objetivo5_conceito}}">
+                {{avaliacao.objetivo5_conceito}}</span><br>
+            {% endif %}
+
+            {% if avaliacao.observacoes %}
+              &nbsp;&nbsp;<strong>Observações</strong>: {{avaliacao.observacoes}}<br>
+            {% endif %}
+
+            <br>
+          </td></tr>
+        {% endifchanged %}
+      {% endfor %}
+    </table>
+  {% endif %}
+
+
+
 
 {% endblock %}

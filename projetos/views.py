@@ -2524,7 +2524,10 @@ def conceitos_obtidos(request, primarykey): #acertar isso para pk
         return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
 
     objetivos = ObjetidosDeAprendizagem.objects.filter(avaliacao_banca=True)
-    avaliacoes = Avaliacao.objects.filter(projeto=projeto).order_by('avaliador', '-momento')
+    banca_inter = Avaliacao.objects.filter(projeto=projeto, tipo_de_avaliacao=1).\
+                                    order_by('avaliador', '-momento')
+    banca_final = Avaliacao.objects.filter(projeto=projeto, tipo_de_avaliacao=0).\
+                                    order_by('avaliador', '-momento')
 
     # Quando mudar para Postgres isso vai funcionar.
     #.order_by('momento').distinct('avaliador')
@@ -2532,7 +2535,8 @@ def conceitos_obtidos(request, primarykey): #acertar isso para pk
     context = {
         'objetivos': objetivos,
         'projeto': projeto,
-        'avaliacoes' : avaliacoes,
+        'banca_inter' : banca_inter,
+        'banca_final' : banca_final,
     }
 
     return render(request, 'projetos/conceitos_obtidos.html', context=context)
