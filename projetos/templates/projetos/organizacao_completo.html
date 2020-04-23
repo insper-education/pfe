@@ -8,6 +8,11 @@
 {% block head %}
   {% load static %}
   {% load format_cnpj %}
+  <script>
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
   <style>
     #logotipo {
       max-height:128px;
@@ -41,6 +46,11 @@
       <a href="mailto:{{parceiro.user.email}}">
         &lt;{{parceiro.user.email}}&gt;
       </a>
+      {% if parceiro.principal_contato %}
+        <span data-toggle="tooltip" data-html="true" animation="true" title="Principal Contato">
+          &#x2B50;
+        <span>
+      {% endif %}
       &nbsp;
       {% if parceiro.telefone %} <br>&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; {{parceiro.telefone}} &nbsp;{% endif %}
       {% if parceiro.celular %} <br>&nbsp;&nbsp;&nbsp;&nbsp;&#x1F4F1;{{parceiro.celular}} &nbsp;{% endif %}

@@ -57,6 +57,7 @@ class PFEUserAdmin(admin.ModelAdmin):
          {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
     )
     ordering = ('first_name', 'last_name')
+    search_fields = ['first_name', 'last_name',]
 
 @admin.register(Aluno)
 class AlunoAdmin(admin.ModelAdmin):
@@ -64,7 +65,7 @@ class AlunoAdmin(admin.ModelAdmin):
     list_display = ('user', 'curso', 'anoPFE', 'semestrePFE')
     ordering = ('user__first_name', 'user__last_name',)
     list_filter = (FirstLetterFilter, )
-
+    search_fields = ['user__first_name', 'user__last_name',]
 
 @admin.register(Alocacao)
 class AlocacaoAdmin(admin.ModelAdmin):
@@ -75,9 +76,10 @@ class AlocacaoAdmin(admin.ModelAdmin):
 @admin.register(Parceiro)
 class ParceiroAdmin(admin.ModelAdmin):
     """Definição de Parceiro do PFE."""
-    list_display = ('get_full_name', 'get_sigla', 'email', 'telefone', 'celular', 'skype')
+    list_display = ('get_full_name', 'get_sigla', 'email', 'telefone', 'celular', 'principal_contato')
     ordering = ('user__first_name', 'user__last_name',)
     list_filter = (FirstLetterFilter, )
+    search_fields = ['user__first_name', 'user__last_name',]
 
     def get_full_name(self, obj):
         """Retorna o nome completo do usuário"""
@@ -105,6 +107,7 @@ class ProfessorAdmin(admin.ModelAdmin):
     list_display = ('user', 'lattes')
     ordering = ('user__first_name', 'user__last_name',)
     list_filter = (FirstLetterFilter, )
+    search_fields = ['user__first_name', 'user__last_name',]
 
 admin.site.register(Administrador)
 

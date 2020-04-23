@@ -342,6 +342,8 @@ class Parceiro(models.Model):  # da empresa (não do Insper)
     observacao = models.TextField("Observações", max_length=500, blank=True,
                                   help_text='Observações')
 
+    principal_contato = models.BooleanField("Principal Contato", default=False)
+
     class Meta:
         ordering = ['user']
         permissions = (("altera_parceiro", "Parceiro altera valores"),)

@@ -724,7 +724,7 @@ def export(request, modelo, formato):
             "mensagem": mensagem,
         }
         return render(request, 'generic.html', context=context)
-        
+
     response['Content-Disposition'] = 'attachment; filename="'+modelo+'.'+formato+'"'
     return response
 

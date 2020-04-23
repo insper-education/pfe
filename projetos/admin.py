@@ -172,11 +172,14 @@ class ProjetoAdmin(admin.ModelAdmin):
          }),
         )
     actions = [dup_projeto]
+    search_fields = ['titulo', 'empresa__sigla',]
+
 
 @admin.register(Empresa)
 class EmpresaAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
     list_display = ('sigla', 'nome_empresa', 'website')
+    search_fields = ['nome_empresa',]
 
 @admin.register(Configuracao)
 class ConfiguracaoAdmin(admin.ModelAdmin):
