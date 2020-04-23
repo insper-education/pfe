@@ -26,17 +26,19 @@
   {% else %}
     <h5>Título: {{projeto.titulo}}</h5>
   {% endif %}
-  <br>
   <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
-  {% if projeto.avancado %}
-    <strong style="color:red"><u>PFE Avançado</u></strong><br>
-  {% endif %}
+
   {% if projeto.orientador %}
     <strong>Orientador{% if projeto.orientador.user.genero == "F" %}a{% endif %}: </strong>
-    &nbsp;
     <a href="{% url 'professor_detail' projeto.orientador.id %}">
       {{projeto.orientador.user.get_full_name}}
     </a>
+    <br>
+  {% endif %}
+  <strong>Organização:</strong> {{projeto.empresa}}<br>
+  
+  {% if projeto.avancado %}
+    <strong style="color:red"><u>PFE Avançado</u></strong><br>
   {% endif %}
   <br>
   <strong>Alunos:</strong>
