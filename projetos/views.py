@@ -1840,8 +1840,15 @@ def avisos_listar(request):
     """Mostra toda a tabela de avisos da coordenação do PFE."""
     configuracao = Configuracao.objects.all().first()
 
-    qs = Aviso.objects.all()
-    avisos = sorted(qs, key=lambda t: t.get_data())
+    qa = list(Aviso.objects.all())
+
+    eventos = Evento.objects.filter(startDate__year=configuracao.ano)
+    if configuracao.semestre == 1:
+        qe = list(eventos.filter(startDate__month__lt=7))
+    else:
+        qe = list(eventos.filter(startDate__month__gt=6))
+
+    avisos = sorted(qa+qe, key=lambda t: t.get_data())
 
     #dias_passados = (datetime.date.today() - configuracao.t0).days
     context = {

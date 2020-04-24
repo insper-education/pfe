@@ -403,6 +403,10 @@ class Evento(models.Model):
             return 1
         return 2
 
+    def get_data(self):
+        """Retorna a data do evento."""
+        return self.startDate
+
     def __str__(self):
         return self.name+" ("+self.startDate.strftime("%d/%m/%Y")+")"
     class Meta:
