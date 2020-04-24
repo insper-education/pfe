@@ -31,35 +31,25 @@
     Nome da Instituição/Empresa<br>
     <small>sigla e nome comercial/fantasia se houver (aqui não é necessário indicar a Razão Social)</small>
     <br>
-    <textarea name="organizacao" rows="1" cols="80" maxlength="100" required>
-      {% if parceiro %} {{parceiro.organizacao}} {% endif %} 
-    </textarea>
+    <textarea name="organizacao" rows="1" cols="80" maxlength="100" required>{% if parceiro %}{{parceiro.organizacao}}{% endif %}</textarea>
     <br><br>
 
     Endereço<br>
     <small>onde os alunos deverão ir para desenvolver o projeto</small>
     <br>
-    <textarea name="endereco" rows="3" cols="80" maxlength="1000" required>
-      {% if parceiro %}
-        {{parceiro.organizacao.endereco}}
-      {% endif %} 
-    </textarea>
+    <textarea name="endereco" rows="3" cols="80" maxlength="1000" required>{% if parceiro %}{{parceiro.organizacao.endereco}}{% endif %}</textarea>
     <br><br>
 
     Contatos Técnicos<br>  
     <small>nome/e-mail/telefone de quem os alunos e professores orientadores irão tratar do desenvolvimento do projeto</small>
     <br>
-    <textarea name="contatos_tecnicos" rows="4" cols="80" maxlength="1000" required>
-      {{contatos_tecnicos}}
-    </textarea>
+    <textarea name="contatos_tecnicos" rows="4" cols="80" maxlength="1000" required>{{contatos_tecnicos}}</textarea>
     <br><br>
 
     Contatos Administrativos<br>     
     <small>nome/e-mail/telefone, com quem devemos resolver questões contratuais e RH</small>
     <br>
-    <textarea name="contatos_administrativos " rows="4" cols="80" maxlength="1000" required>
-      {{contatos_administrativos}}
-    </textarea>
+    <textarea name="contatos_adm" rows="4" cols="80" maxlength="1000" required>{{contatos_adm}}</textarea>
     <br><br>
 
     Informações sobre a instituição/empresa<br>
@@ -84,17 +74,13 @@
     Descrição do Projeto<br>
     <small>para discussão entre professores e que será passada para os alunos</small>
     <br>
-    <textarea name="desc_projeto" rows="4" cols="80" maxlength="1000" required>
-      {{desc_projeto}}
-    </textarea>
+    <textarea name="desc_projeto" rows="4" cols="80" maxlength="1000" required>{{desc_projeto}}</textarea>
     <br><br>
 
     Expectativas de resultados/entregas<br>
     <small>exemplo: estudos, validações, relatórios, protótipos, testes</small>
     <br>
-    <textarea name="expectativas" rows="4" cols="80" maxlength="1000" required>
-      {{expectativas}}
-    </textarea>
+    <textarea name="expectativas" rows="4" cols="80" maxlength="1000" required>{{expectativas}}</textarea>
     <br><br>
 
     Áreas/Habilidades envolvidas no projeto<br>

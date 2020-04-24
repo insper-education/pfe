@@ -59,6 +59,8 @@ def areas_interesse(request):
             }
             return render(request, 'generic.html', context=context)
 
+        # PEGAR CRIA AREAS DO VIEW DE PROJETO
+
         check_values = request.POST.getlist('selection')
         aluno = Aluno.objects.get(pk=request.user.pk)
 

@@ -12,7 +12,10 @@ from django.contrib.admin import SimpleListFilter
 import django.contrib.admin.options as admin_opt
 
 # Dos projetos
-from .models import Projeto, Empresa, Banca, Disciplina, Cursada, Recomendada, Coorientador
+from .models import Projeto, Proposta, Empresa, Banca, Coorientador
+
+# Das disciplinas
+from .models import Disciplina, Cursada, Recomendada
 
 # Das dinâmicas
 from .models import Encontro, Evento
@@ -148,7 +151,7 @@ class EventoFilter(SimpleListFilter):
 
 @admin.register(Projeto)
 class ProjetoAdmin(admin.ModelAdmin):
-    """Definição do que aparece no sistema de administração do Django."""
+    """Exibição no sistema de administração do Django para Projeto."""
     list_display = ('empresa', 'ano', 'semestre', 'orientador', 'get_titulo',)
     list_filter = (FechadoFilter, 'ano', 'semestre', 'avancado', 'disponivel',)
     fieldsets = \
@@ -174,6 +177,34 @@ class ProjetoAdmin(admin.ModelAdmin):
     actions = [dup_projeto]
     search_fields = ['titulo', 'empresa__sigla',]
 
+@admin.register(Proposta)
+class PropostaAdmin(admin.ModelAdmin):
+    """Exibição no sistema de administração do Django para Proposta."""
+    list_display = ('titulo', 'nome', 'empresa', 'ano', 'semestre',)
+    list_filter = ('ano', 'semestre', )
+    fieldsets = \
+        ((None,
+          {'fields':
+           ('nome', 'email', 'organizacao', 'endereco',
+            'contatos_tecnicos', 'contatos_administrativos',
+            'descricao_organizacao', 'departamento',
+            'titulo', 'descricao', 'expectativas',
+            'areas_de_interesse',
+            'recursos', 'observacoes',
+            'ano', 'semestre',
+            'autorizado', 'disponivel',
+            'perfil_aluno1_computacao', 'perfil_aluno1_mecanica', 'perfil_aluno1_mecatronica',
+            'perfil_aluno2_computacao', 'perfil_aluno2_mecanica', 'perfil_aluno2_mecatronica',
+            'perfil_aluno3_computacao', 'perfil_aluno3_mecanica', 'perfil_aluno3_mecatronica',
+            'perfil_aluno4_computacao', 'perfil_aluno4_mecanica', 'perfil_aluno4_mecatronica',
+           )
+          }),
+         ('Origem', {
+             'fields': ('empresa',)
+         }),
+        )
+    actions = [dup_projeto]
+    search_fields = ['titulo', 'empresa__sigla',]
 
 @admin.register(Empresa)
 class EmpresaAdmin(admin.ModelAdmin):

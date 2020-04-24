@@ -59,7 +59,7 @@
         var topicId = $(".filter option:selected").attr("value");
         $.ajax({
             type: "POST",
-            url: "{% url 'areas' tipo %}",
+            url: "{% url 'distribuicao_areas' tipo %}",
             data: {
                 topicId: topicId,
                 'csrfmiddlewaretoken': '{{ csrf_token }}',

@@ -68,31 +68,38 @@ class Areas(models.Model):
                               help_text='Outras áreas de interesse')
 
     def __str__(self):
-        return   "V" if self.inovacao_social else "F" + " "\
-               + "V" if self.ciencia_dos_dados else "F" + " "\
-               + "V" if self.modelagem_3D else "F" + " "\
-               + "V" if self.manufatura else "F" + " "\
-               + "V" if self.resistencia_dos_materiais else "F" + " "\
-               + "V" if self.modelagem_de_sistemas else "F" + " "\
-               + "V" if self.controle_e_automacao else "F" + " "\
-               + "V" if self.termodinamica else "F" + " "\
-               + "V" if self.fluidodinamica else "F" + " "\
-               + "V" if self.eletronica_digital else "F" + " "\
-               + "V" if self.programacao else "F" + " "\
-               + "V" if self.inteligencia_artificial else "F" + " "\
-               + "V" if self.computacao_em_nuvem else "F" + " "\
-               + "V" if self.visao_computacional else "F" + " "\
-               + "V" if self.computacao_de_alto_desempenho else "F" + " "\
-               + "V" if self.robotica else "F" + " "\
-               + "V" if self.realidade_virtual_aumentada else "F" + " "\
-               + "V" if self.protocolos_de_comunicacao else "F" + " "\
-               + "V" if self.eficiencia_energetica else "F" + " "\
-               + "V" if self.administracao_economia_financas else "F" + " "\
-               + self.outras if self.outras else ""
+        return   ("V" if self.inovacao_social else "F") + " "\
+               + ("V" if self.ciencia_dos_dados else "F") + " "\
+               + ("V" if self.modelagem_3D else "F") + " "\
+               + ("V" if self.manufatura else "F") + " "\
+               + ("V" if self.resistencia_dos_materiais else "F") + " "\
+               + ("V" if self.modelagem_de_sistemas else "F") + " "\
+               + ("V" if self.controle_e_automacao else "F") + " "\
+               + ("V" if self.termodinamica else "F") + " "\
+               + ("V" if self.fluidodinamica else "F") + " "\
+               + ("V" if self.eletronica_digital else "F") + " "\
+               + ("V" if self.programacao else "F") + " "\
+               + ("V" if self.inteligencia_artificial else "F") + " "\
+               + ("V" if self.computacao_em_nuvem else "F") + " "\
+               + ("V" if self.visao_computacional else "F") + " "\
+               + ("V" if self.computacao_de_alto_desempenho else "F") + " "\
+               + ("V" if self.robotica else "F") + " "\
+               + ("V" if self.realidade_virtual_aumentada else "F") + " "\
+               + ("V" if self.protocolos_de_comunicacao else "F") + " "\
+               + ("V" if self.eficiencia_energetica else "F") + " "\
+               + ("V" if self.administracao_economia_financas else "F") + " "\
+               + (self.outras[:32] if self.outras else "")
 
     class Meta:
         verbose_name = 'Áreas'
         verbose_name_plural = 'Áreas'
+
+    @classmethod
+    def create(cls):
+        """Cria um objeto (entrada) em Areas."""
+        areas = cls()
+        return areas
+
 
 class PFEUser(AbstractUser):
     """Classe base para todos os usuários do PFE (Alunos, Professores, Parceiros)."""

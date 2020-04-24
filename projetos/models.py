@@ -159,6 +159,112 @@ class Projeto(models.Model):
     def __str__(self):
         return self.empresa.sigla+" ("+str(self.ano)+"."+str(self.semestre)+") "+self.get_titulo()
 
+class Proposta(models.Model):
+    """Dados da Proposta de Projeto para o PFE."""
+
+    nome = models.CharField("Nome", max_length=127,
+                              help_text='Nome de quem submeteu o projeto')    
+    email = models.EmailField("e-mail", max_length=80, null=True, blank=True,
+                              help_text='e-mail de quem está dando o Feedback')
+    organizacao = models.CharField("Organização", max_length=120, null=True, blank=True,
+                               help_text='Nome da Organização/Empresa')
+
+    endereco = models.TextField("Endereço", max_length=400,
+                                 help_text='Endereço da Instituiçã')
+
+    contatos_tecnicos = models.TextField("Contatos Técnicos", max_length=400,
+                                 help_text='Contatos Técnicos')
+
+    contatos_administrativos = models.TextField("Contatos Administrativos", max_length=400,
+                                 help_text='Contatos Administrativos')
+
+    descricao_organizacao = models.TextField("Descrição da Organização", max_length=1000,
+                                 help_text='Descrição da Organização')
+
+    departamento = models.TextField("Descrição do Departamento", max_length=1000, null=True, blank=True,
+                                help_text='Descrição do departamento que propôs o projeto')
+
+    titulo = models.CharField("Título", max_length=127,
+                              help_text='Título Provisório do projeto')
+
+    descricao = models.TextField("Descrição", max_length=3000,
+                                 help_text='Descricao do projeto')
+
+    expectativas = models.TextField("Expectativas", max_length=3000,
+                                    help_text='Expectativas em relação ao projeto')
+
+    areas_de_interesse = models.ForeignKey('users.Areas', on_delete=models.CASCADE,
+                                           null=True, blank=True,
+                                           help_text='Áreas de interesse esperas dos alunos')
+
+    recursos = models.TextField("Recursos", max_length=1000, null=True, blank=True,
+                                help_text='Recursos a serem disponibilizados aos Alunos')
+
+    observacoes = models.TextField("Outras Observações", max_length=1000, null=True, blank=True,
+                                help_text='Outras Observações')
+
+
+
+    # Preenchidos automaticamente
+    ano = models.PositiveIntegerField("Ano",
+                                      validators=[MinValueValidator(2018), MaxValueValidator(3018)],
+                                      help_text='Ano que o projeto comeca')
+    semestre = models.PositiveIntegerField("Semestre",
+                                           validators=[MinValueValidator(1), MaxValueValidator(2)],
+                                           help_text='Semestre que o projeto comeca')
+    
+
+    # Preenchidos depois manualmente
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, null=True, blank=True,
+                                help_text='Organização parceira que propôs projeto')
+
+    
+    disponivel = models.BooleanField("Disponível", default=False,
+                                     help_text='Se projeto está atualmente disponível para alunos')
+
+    autorizado = models.ForeignKey('users.Professor', null=True, blank=True,
+                                   on_delete=models.SET_NULL,
+                                   help_text='Quem autorizou a ser publicado para os alunos')
+
+
+    perfil_aluno1_computacao = \
+        models.BooleanField(default=False, help_text='Perfil desejado de computação para aluno 1')
+    perfil_aluno1_mecatronica = \
+        models.BooleanField(default=False, help_text='Perfil desejado de mecatrônica para aluno 1')
+    perfil_aluno1_mecanica = \
+        models.BooleanField(default=False, help_text='Perfil desejado de mecânica para aluno 1')
+    perfil_aluno2_computacao = \
+        models.BooleanField(default=False, help_text='Perfil desejado de computação para aluno 2')
+    perfil_aluno2_mecatronica = \
+        models.BooleanField(default=False, help_text='Perfil desejado de mecatrônica para aluno 2')
+    perfil_aluno2_mecanica = \
+        models.BooleanField(default=False, help_text='Perfil desejado de mecânica para aluno 2')
+    perfil_aluno3_computacao = \
+        models.BooleanField(default=False, help_text='Perfil desejado de computação para aluno 3')
+    perfil_aluno3_mecatronica = \
+        models.BooleanField(default=False, help_text='Perfil desejado de mecatrônica para aluno 3')
+    perfil_aluno3_mecanica = \
+        models.BooleanField(default=False, help_text='Perfil desejado de mecânica para aluno 3')
+    perfil_aluno4_computacao = \
+        models.BooleanField(default=False, help_text='Perfil desejado de computação para aluno 4')
+    perfil_aluno4_mecatronica = \
+        models.BooleanField(default=False, help_text='Perfil desejado de mecatrônica para aluno 4')
+    perfil_aluno4_mecanica = \
+        models.BooleanField(default=False, help_text='Perfil desejado de mecânica para aluno 4')
+
+    class Meta:
+        ordering = ['empresa', 'ano', 'semestre']
+
+    @classmethod
+    def create(cls):
+        """Cria um objeto (entrada) em Propostas."""
+        proposta = cls()
+        return proposta
+
+    def __str__(self):
+        return self.titulo+"("+str(self.ano)+"."+str(self.semestre)+")"
+
+
 class Configuracao(models.Model):
     """Armazena os dados básicos de funcionamento do sistema."""
     ano = models.PositiveIntegerField("Ano",

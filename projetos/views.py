@@ -38,7 +38,7 @@ from django.template.loader import get_template
 from django.utils import timezone
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador, Opcao, Alocacao, Areas
-from .models import Projeto, Empresa, Configuracao, Evento, Anotacao, Feedback, Coorientador
+from .models import Projeto, Proposta, Empresa, Configuracao, Evento, Anotacao, Feedback, Coorientador
 from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade, Conexao
 #from .models import Disciplina
 from .models import ObjetidosDeAprendizagem, Avaliacao
@@ -555,7 +555,7 @@ def get_areas(entrada):
 
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
-def areas(request, tipo):
+def distribuicao_areas(request, tipo):
     """Mostra distribuição por área de interesse dos alunos e projetos."""
 
     periodo = ""
@@ -601,7 +601,7 @@ def areas(request, tipo):
     else:
         return HttpResponse("Algum erro não identificado.", status=401)
 
-    return render(request, 'projetos/areas.html', context)
+    return render(request, 'projetos/distribuicao_areas.html', context)
 
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
@@ -1125,6 +1125,42 @@ def submissao(request):
         }
         return render(request, 'projetos/submissao.html', context)
 
+
+def cria_areas(request):
+    """Cria um objeto Areas e preenche ele."""
+    check_values = request.POST.getlist('selection')
+
+    areas = Areas.create()
+
+    areas.inovacao_social = "inovacao_social" in check_values
+    areas.ciencia_dos_dados = "ciencia_dos_dados" in check_values
+    areas.modelagem_3D = "modelagem_3D" in check_values
+    areas.manufatura = "manufatura" in check_values
+    areas.resistencia_dos_materiais = "resistencia_dos_materiais" in check_values
+    areas.modelagem_de_sistemas = "modelagem_de_sistemas" in check_values
+    areas.controle_e_automacao = "controle_e_automacao" in check_values
+    areas.termodinamica = "termodinamica" in check_values
+    areas.fluidodinamica = "fluidodinamica" in check_values
+    areas.eletronica_digital = "eletronica_digital" in check_values
+    areas.programacao = "programacao" in check_values
+    areas.inteligencia_artificial = "inteligencia_artificial" in check_values
+    areas.banco_de_dados = "banco_de_dados" in check_values
+    areas.computacao_em_nuvem = "computacao_em_nuvem" in check_values
+    areas.visao_computacional = "visao_computacional" in check_values
+    areas.computacao_de_alto_desempenho = "computacao_de_alto_desempenho" in check_values
+    areas.robotica = "robotica" in check_values
+    areas.realidade_virtual_aumentada = "realidade_virtual_aumentada" in check_values
+    areas.protocolos_de_comunicacao = "protocolos_de_comunicacao" in check_values
+    areas.eficiencia_energetica = "eficiencia_energetica" in check_values
+    areas.administracao_economia_financas = "administracao_economia_financas" in check_values
+
+    areas.outras = request.POST.get("outras", "")
+
+    areas.save()
+
+    return areas
+
+
 @login_required
 def projeto_submeter(request):
     """Formulário de Submissão de Projetos."""
@@ -1150,17 +1186,45 @@ def projeto_submeter(request):
         administrador = Administrador.objects.get(pk=request.user.pk)
 
     if request.method == 'POST':
-        # if timezone.now() > configuracao.prazo_parceiro:
-        #     #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
-        #     return HttpResponse("Prazo para o preenchimento do formulário vencido!")
+        #if timezone.now() > configuracao.prazo_parceiro:
+        #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
+        #return HttpResponse("Prazo para o preenchimento do formulário vencido!")
 
-        # aluno.trabalhou = request.POST.get("trabalhou", "")
-        # aluno.social = request.POST.get("social", "")
-        # aluno.entidade = request.POST.get("entidade", "")
-        # aluno.familia = request.POST.get("familia", "")
+        proposta = Proposta.create()
+        proposta.nome = request.POST.get("nome", "")
+        proposta.email = request.POST.get("email", "")
+        proposta.organizacao = request.POST.get("organizacao", "")
+        proposta.endereco = request.POST.get("endereco", "")
+        proposta.contatos_tecnicos = request.POST.get("contatos_tecnicos", "")
+        proposta.contatos_administrativos = request.POST.get("contatos_adm", "")
+        proposta.descricao_organizacao = request.POST.get("info_organizacao", "")
+        proposta.departamento = request.POST.get("info_departamento", "")
+        proposta.titulo = request.POST.get("titulo", "")
 
-        # aluno.save()
+        proposta.descricao = request.POST.get("desc_projeto", "")
+        proposta.expectativas = request.POST.get("expectativas", "")
+        proposta.recursos = request.POST.get("recursos", "")
+        proposta.observacoes = request.POST.get("observacoes", "")
 
+        proposta.areas_de_interesse = cria_areas(request)
+
+
+        configuracao = Configuracao.objects.all().first()
+        ano = configuracao.ano
+        semestre = configuracao.semestre
+
+        # Vai para próximo semestre
+        if semestre == 1:
+            semestre = 2
+        else:
+            ano += 1
+            semestre = 1
+
+        proposta.ano = ano
+        proposta.semestre = semestre
+
+
+        proposta.save()
         return render(request, 'users/atualizado.html',)
     else:
         context = {
@@ -1169,7 +1233,7 @@ def projeto_submeter(request):
             'professor' : professor,
             'administrador' : administrador,
             'contatos_tecnicos' : "",
-            'contatos_administrativos' : "",
+            'contatos_adm' : "",
             'info_organizacao' : "",
             'info_departamento' : "",
             'titulo' : "",
