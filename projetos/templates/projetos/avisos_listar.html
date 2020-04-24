@@ -61,6 +61,7 @@
             <td>
               <input class="aviso" type="checkbox" id="aviso{{a.id}}" name="aviso{{a.id}}" value="{{a.id}}" 
               {% if a.realizado %}checked{% endif %}
+              {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
               >
             </td>
             <td data-toggle="tooltip" data-html="true" animation="true" title="
@@ -109,7 +110,9 @@
     {% else %}
       <p>Não existem avisos.</p>
     {% endif %}
-    <input type='button' class="limpa" value="Limpa Tudo">
+    <input type='button' class="limpa" value="Limpa Tudo"
+      {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
+    >
     <p>&nbsp;</p>
 
   </form>
