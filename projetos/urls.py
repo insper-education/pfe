@@ -28,6 +28,7 @@ urlpatterns = [
     path('carrega/<str:dado>', views.carrega, name='carrega'),
     path('carrega_bancos/', views.carrega_bancos, name='carrega_bancos'),
     path('carregar/', views.carregar, name='carregar'),
+    path('certificados_submetidos/', views.certificados_submetidos, name='certificados_submetidos'),
     path('conceitos_obtidos/<int:primarykey>', views.conceitos_obtidos, name='conceitos_obtidos'),
     path('comite/>', views.comite, name='comite'),
     path('completo/<int:primakey>', views.completo, name='completo'),

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 25 de Abril de 2020
+{% endcomment %}
+
+{% block head %}
+<style>
+
+table, th, td {
+}
+
+table {
+  border: 0px;
+  border-collapse: separate;
+  border-spacing: 1em;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+td {
+  padding: 1rem 1.2rem;
+  border-radius: 6px;
+  border: 1px solid red;
+}
+
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+  <h3>Cerfificados</h3>
+
+  {% comment %}
+  <select onchange="location = this.options[this.selectedIndex].value;">
+    <option value="todas" {% if periodo == "todas" %}selected="todas"{% endif %}>Todas</option>
+    <option value="proximas" {% if periodo == "proximas" %}selected="proximas"{% endif %}>Próximas</option>
+  </select>
+  <br><br>
+  FAZER POR SEMESTRE OU TIPO
+  {% endcomment %}
+
+  {% if certificados %}
+    <table>
+      {% for certificado in certificados %} 
+        <tr>
+          <td>
+            <b>{{certificado.get_certificado}}</b><br>
+            {% if certificado.usuario %}
+              {% if certificado.usuario.tipo_de_usuario == 1 %}
+                <a href="{% url 'aluno_detail' certificado.usuario.aluno.id %}">{{certificado.usuario.get_full_name}}</a><br>
+              {% else %}
+                {{certificado.usuario.get_full_name}}<br>
+              {% endif %}
+            {% endif %}
+            {% if certificado.projeto %}
+             <b>Data:</b> {{certificado.data|date:"DATE_FORMAT"}}<br>
+            {% endif %}
+            {% if certificado.projeto %}
+              <b>Projeto:</b> <a href="{% url 'completo' certificado.projeto.id %}">
+                {{certificado.projeto.get_titulo}}
+              </a><br>
+              <b>Organização:</b> <a href="{% url 'organizacao_completo' certificado.projeto.empresa.login %}">{{ certificado.projeto.empresa.nome_empresa }}</a><br>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+    <p>&nbsp;</p>
+  {% else %}
+    <p>Não existem certificados.</p>
+  {% endif %}
+  <p>&nbsp;</p>
+
+{% endblock %}

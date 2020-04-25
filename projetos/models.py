@@ -85,7 +85,7 @@ class Projeto(models.Model):
                              help_text='Documento PDF')
     imagem = models.ImageField(null=True, blank=True,
                                help_text='Imagem que representa projeto (se houver)')
-    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE,
+    empresa = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='Organização parceira que propôs projeto')
     departamento = models.TextField("Departamento", max_length=1000, null=True, blank=True,
                                     help_text='Descrição do departamento que propôs o projeto')
@@ -130,7 +130,7 @@ class Projeto(models.Model):
     perfil_aluno4_mecanica = \
         models.BooleanField(default=False, help_text='Perfil desejado de mecânica para aluno 4')
 
-    areas_de_interesse = models.ForeignKey('users.Areas', on_delete=models.CASCADE,
+    areas_de_interesse = models.ForeignKey('users.Areas', on_delete=models.SET_NULL,
                                            null=True, blank=True,
                                            help_text='Áreas de interesse esperas dos alunos')
 
@@ -163,26 +163,26 @@ class Proposta(models.Model):
     """Dados da Proposta de Projeto para o PFE."""
 
     nome = models.CharField("Nome", max_length=127,
-                              help_text='Nome de quem submeteu o projeto')    
+                            help_text='Nome de quem submeteu o projeto')
     email = models.EmailField("e-mail", max_length=80, null=True, blank=True,
                               help_text='e-mail de quem está dando o Feedback')
     organizacao = models.CharField("Organização", max_length=120, null=True, blank=True,
-                               help_text='Nome da Organização/Empresa')
+                                   help_text='Nome da Organização/Empresa')
 
     endereco = models.TextField("Endereço", max_length=400,
-                                 help_text='Endereço da Instituiçã')
+                                help_text='Endereço da Instituiçã')
 
     contatos_tecnicos = models.TextField("Contatos Técnicos", max_length=400,
-                                 help_text='Contatos Técnicos')
+                                         help_text='Contatos Técnicos')
 
     contatos_administrativos = models.TextField("Contatos Administrativos", max_length=400,
-                                 help_text='Contatos Administrativos')
+                                                help_text='Contatos Administrativos')
 
     descricao_organizacao = models.TextField("Descrição da Organização", max_length=1000,
-                                 help_text='Descrição da Organização')
+                                             help_text='Descrição da Organização')
 
-    departamento = models.TextField("Descrição do Departamento", max_length=1000, null=True, blank=True,
-                                help_text='Descrição do departamento que propôs o projeto')
+    departamento = models.TextField("Descrição do Depart.", max_length=1000, null=True, blank=True,
+                                    help_text='Descrição do departamento que propôs o projeto')
 
     titulo = models.CharField("Título", max_length=127,
                               help_text='Título Provisório do projeto')
@@ -193,7 +193,7 @@ class Proposta(models.Model):
     expectativas = models.TextField("Expectativas", max_length=3000,
                                     help_text='Expectativas em relação ao projeto')
 
-    areas_de_interesse = models.ForeignKey('users.Areas', on_delete=models.CASCADE,
+    areas_de_interesse = models.ForeignKey('users.Areas', on_delete=models.SET_NULL,
                                            null=True, blank=True,
                                            help_text='Áreas de interesse esperas dos alunos')
 
@@ -201,7 +201,7 @@ class Proposta(models.Model):
                                 help_text='Recursos a serem disponibilizados aos Alunos')
 
     observacoes = models.TextField("Outras Observações", max_length=1000, null=True, blank=True,
-                                help_text='Outras Observações')
+                                   help_text='Outras Observações')
 
 
 
@@ -212,13 +212,13 @@ class Proposta(models.Model):
     semestre = models.PositiveIntegerField("Semestre",
                                            validators=[MinValueValidator(1), MaxValueValidator(2)],
                                            help_text='Semestre que o projeto comeca')
-    
+
 
     # Preenchidos depois manualmente
-    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, null=True, blank=True,
+    empresa = models.ForeignKey(Empresa, on_delete=models.SET_NULL, null=True, blank=True,
                                 help_text='Organização parceira que propôs projeto')
 
-    
+
     disponivel = models.BooleanField("Disponível", default=False,
                                      help_text='Se projeto está atualmente disponível para alunos')
 
@@ -305,9 +305,9 @@ class Disciplina(models.Model):
 
 class Cursada(models.Model):
     """Relacionamento entre um aluno e uma disciplina cursada por ele."""
-    disciplina = models.ForeignKey(Disciplina, on_delete=models.CASCADE,
+    disciplina = models.ForeignKey(Disciplina, null=True, blank=True, on_delete=models.SET_NULL,
                                    help_text='disciplina cursada pelo aluno')
-    aluno = models.ForeignKey('users.Aluno', on_delete=models.CASCADE,
+    aluno = models.ForeignKey('users.Aluno', null=True, blank=True, on_delete=models.SET_NULL,
                               help_text='aluno que cursou a disciplina')
     nota = models.PositiveSmallIntegerField(validators=[MaxValueValidator(10)],
                                             help_text='nota obtida pelo aluno na disciplina')
@@ -318,9 +318,9 @@ class Cursada(models.Model):
 
 class Recomendada(models.Model):
     """Disciplinas recomendadas que um aluno ja tenha cursado para fazer o projeto."""
-    disciplina = models.ForeignKey(Disciplina, on_delete=models.CASCADE,
+    disciplina = models.ForeignKey(Disciplina, null=True, blank=True, on_delete=models.SET_NULL,
                                    help_text='disciplina recomendada para o projeto')
-    projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE,
+    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='projeto que recomenda a disciplina')
     def __str__(self):
         return self.projeto.titulo+" >>> "+self.disciplina.nome
@@ -414,7 +414,7 @@ class Evento(models.Model):
 
 class Banca(models.Model):
     """Bancas do PFE."""
-    projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE,
+    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='projeto')
     location = models.CharField(null=True, blank=True, max_length=50,
                                 help_text='sala em que vai ocorrer banca')
@@ -451,7 +451,7 @@ class Banca(models.Model):
 
 class Encontro(models.Model):
     """Encontros (para dinâmicas de grupos)."""
-    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.CASCADE,
+    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='projeto')
     location = models.CharField(blank=True, max_length=50,
                                 help_text='sala em que vai ocorrer a dinâmica')
@@ -469,7 +469,7 @@ class Anotacao(models.Model):
     """Anotacoes de comunicações com as organizações pareceiras."""
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
                                    help_text='Data e hora da comunicação') # hora ordena para dia
-    organizacao = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.CASCADE,
+    organizacao = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text='Organização parceira')
     autor = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
                               related_name='professor_orientador', help_text='quem fez a anotação')
@@ -606,9 +606,9 @@ class Aviso(models.Model):
 
             if evento:
                 return evento.startDate + delta_days
-        
+
         return configuracao.t0 + delta_days
-    
+
     def get_evento(self):
         """Retorna em string o nome do evento."""
         for entry in Evento.TIPO_EVENTO:
@@ -630,7 +630,7 @@ class Feedback(models.Model):
     """Feedback das organizacoes parceiras."""
     data = models.DateField(default=datetime.date.today, blank=True,
                             help_text='Data do Feedback')
-    #organizacao_parceira=models.ForeignKey(Empresa,null=True,blank=True,on_delete=models.CASCADE,
+    #organizacao_parceira=models.ForeignKey(Empresa,null=True,blank=True,on_delete=models.SET_NULL,
     #                                help_text='Organização parceira')
     #autor = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
     #                          related_name='professor_orientador', help_text='quem fez a anotação')
@@ -660,7 +660,7 @@ class Conexao(models.Model):
                                  on_delete=models.SET_NULL,
                                  help_text='parceiro que se conecta ao projeto')
 
-    projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE,
+    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='projeto que possui vínculo da conexão')
     observacao = models.TextField(max_length=256, null=True, blank=True,
                                   help_text='qualquer observação relevante')
@@ -681,7 +681,7 @@ class Coorientador(models.Model):
     """Controla lista de coorientadores por projeto."""
     usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='coorientador de um projeto')
-    projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE,
+    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='projeto que foi coorientado')
     observacao = models.TextField(max_length=256, null=True, blank=True,
                                   help_text='qualquer observação relevante')
@@ -735,7 +735,7 @@ class Avaliacao(models.Model):
     """Avaliações realizadas durante o projeto."""
     avaliador = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
                                   help_text='avaliador do projeto')
-    projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE,
+    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='projeto que foi avaliado')
 
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
@@ -760,31 +760,31 @@ class Avaliacao(models.Model):
     )
 
     objetivo1 = models.ForeignKey(ObjetidosDeAprendizagem, related_name='objetivo1',
-                                  on_delete=models.CASCADE, null=True, blank=True,
+                                  on_delete=models.SET_NULL, null=True, blank=True,
                                   help_text='Objetivo de Aprendizagem 1')
     objetivo1_conceito = models.CharField(choices=CONCEITOS, default="NA", max_length=2,
                                           help_text='Conceito Obtido no OA 1')
 
     objetivo2 = models.ForeignKey(ObjetidosDeAprendizagem, related_name='objetivo2',
-                                  on_delete=models.CASCADE, null=True, blank=True,
+                                  on_delete=models.SET_NULL, null=True, blank=True,
                                   help_text='Objetivo de Aprendizagem 2')
     objetivo2_conceito = models.CharField(choices=CONCEITOS, default="NA", max_length=2,
                                           help_text='Conceito Obtido no OA 2')
 
     objetivo3 = models.ForeignKey(ObjetidosDeAprendizagem, related_name='objetivo3',
-                                  on_delete=models.CASCADE, null=True, blank=True,
+                                  on_delete=models.SET_NULL, null=True, blank=True,
                                   help_text='Objetivo de Aprendizagem 3')
     objetivo3_conceito = models.CharField(choices=CONCEITOS, default="NA", max_length=2,
                                           help_text='Conceito Obtido no OA 3')
 
     objetivo4 = models.ForeignKey(ObjetidosDeAprendizagem, related_name='objetivo4',
-                                  on_delete=models.CASCADE, null=True, blank=True,
+                                  on_delete=models.SET_NULL, null=True, blank=True,
                                   help_text='Objetivo de Aprendizagem 4')
     objetivo4_conceito = models.CharField(choices=CONCEITOS, default="NA", max_length=2,
                                           help_text='Conceito Obtido no OA 4')
 
     objetivo5 = models.ForeignKey(ObjetidosDeAprendizagem, related_name='objetivo5',
-                                  on_delete=models.CASCADE, null=True, blank=True,
+                                  on_delete=models.SET_NULL, null=True, blank=True,
                                   help_text='Objetivo de Aprendizagem 5')
     objetivo5_conceito = models.CharField(choices=CONCEITOS, default="NA", max_length=2,
                                           help_text='Conceito Obtido no OA 5')
@@ -811,3 +811,39 @@ class Avaliacao(models.Model):
         verbose_name = 'Avaliação'
         verbose_name_plural = 'Avaliações'
         ordering = ['projeto', 'tipo_de_avaliacao', 'avaliador', 'momento']
+
+
+class Certificado(models.Model):
+    """Certificados das Premiações do PFE."""
+    usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text='pessoa premiada com certificado')
+    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text='projeto relacionado ao certificado')
+    data = models.DateField(default=datetime.date.today, blank=True,
+                            help_text='data do certificado')
+
+    TIPO_DE_CERTIFICADO = ( # não mudar a ordem dos números
+        (0, 'Não definido'),
+        (1, 'Aluno destaque'),
+        (2, 'Grupo de alunos destaque'),
+    )
+    tipo_de_certificado = models.PositiveSmallIntegerField(choices=TIPO_DE_CERTIFICADO, default=0)
+
+    observacao = models.TextField(max_length=256, null=True, blank=True,
+                                  help_text='qualquer observação relevante')
+
+    def get_certificado(self):
+        """Retorna em string o nome do certificado."""
+        for entry in Certificado.TIPO_DE_CERTIFICADO:
+            if self.tipo_de_certificado == entry[0]:
+                return entry[1]
+        return None
+
+    def __str__(self):
+        return self.usuario.get_full_name()+" >>> "+\
+               self.projeto.get_titulo()+\
+               " ("+str(self.projeto.ano)+"."+str(self.projeto.semestre)+")"
+
+    class Meta:
+        verbose_name = 'Certificado'
+        verbose_name_plural = 'Certificados'

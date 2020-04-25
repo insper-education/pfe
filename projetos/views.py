@@ -39,6 +39,7 @@ from django.utils import timezone
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador, Opcao, Alocacao, Areas
 from .models import Projeto, Proposta, Empresa, Configuracao, Evento, Anotacao, Feedback, Coorientador
+from .models import Certificado
 from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade, Conexao
 #from .models import Disciplina
 from .models import ObjetidosDeAprendizagem, Avaliacao
@@ -2614,3 +2615,13 @@ def conceitos_obtidos(request, primarykey): #acertar isso para pk
     }
 
     return render(request, 'projetos/conceitos_obtidos.html', context=context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def certificados_submetidos(request):
+    """Lista os Certificados Emitidos."""
+    certificados = Certificado.objects.all()
+    context = {
+        'certificados': certificados,
+    }
+    return render(request, 'projetos/certificados_submetidos.html', context)
