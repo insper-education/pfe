@@ -636,7 +636,7 @@ def organizacoes_lista(request):
         'total_organizacoes': total_organizacoes,
         'total_submetidos': total_submetidos,
         'total_fechados': total_fechados,
-        'meses3': datetime.date.today() - datetime.timedelta(days=3),
+        'meses3': datetime.date.today() - datetime.timedelta(days=100),
         'filtro': "todas",
         }
     return render(request, 'projetos/organizacoes_lista.html', context)
