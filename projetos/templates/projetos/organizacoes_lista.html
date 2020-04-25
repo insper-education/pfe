@@ -24,7 +24,25 @@
         <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">Projetos<br>Fechados</th>
       </tr>
       {% for organizacao,fechados,desde,contato in organizacoes_list %} 
-        <tr class="item">
+        <tr class="item" style="
+        {% if contato != '---------' %}
+          {% if contato.momento|date:'Ymd' > meses3|date:'Ymd' %}
+            background-color:
+            {% if contato.tipo_de_retorno == 0 %}
+              lightblue
+            {% elif contato.tipo_de_retorno == 1 %}
+              lightgreen
+            {% elif contato.tipo_de_retorno == 2 %}
+              lemonchiffon
+            {% elif contato.tipo_de_retorno == 3 %}
+              pink
+            {% endif %}
+          {% endif %}
+        {% endif %}
+
+
+        ">
+
         {% comment %}
           <td>
             <a href="{% url 'organizacao_completo' organizacao.login %}"> <!-- UM DIA ACERTAR ISSO -->
@@ -38,7 +56,12 @@
             </a>
           </td>
           <td>
-            {{contato|date:"m/Y"}}
+            {% if contato == '---------' %}
+              ---------
+            {% else %}
+              {{contato.momento|date:"m/Y"}}
+            {% endif %}
+          
           </td>
           <td>
             {{desde}}
@@ -52,6 +75,11 @@
         </tr>
       {% endfor %}
     </table>
+    Contactadas recentemente: 
+    <span style="background-color:lightblue">&nbsp;&nbsp;&nbsp;&nbsp;</span> Contactada
+    <span style="background-color:pink">&nbsp;&nbsp;&nbsp;&nbsp;</span> Recusou
+    <span style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;&nbsp;</span> Interessada
+    <span style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;&nbsp;</span> Confirmada
     <p>&nbsp;</p>
     <strong>Total de Organizações Parceiras:</strong> {{ total_organizacoes }}<br>
     <strong>Total de Projetos Submetidos:</strong> {{ total_submetidos }}<br>
@@ -59,4 +87,8 @@
   {% else %}
     <p>Não existem organizações cadastradas.</p>
   {% endif %}
+
+
+    <p>&nbsp;</p>
+
 {% endblock %}

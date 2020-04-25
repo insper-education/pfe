@@ -621,7 +621,7 @@ def organizacoes_lista(request):
 
         anot = Anotacao.objects.filter(organizacao=organizacao).order_by("momento").last()
         if anot:
-            contato.append(anot.momento)
+            contato.append(anot)
         else:
             contato.append("---------")
 
@@ -636,6 +636,7 @@ def organizacoes_lista(request):
         'total_organizacoes': total_organizacoes,
         'total_submetidos': total_submetidos,
         'total_fechados': total_fechados,
+        'meses3': datetime.date.today() - datetime.timedelta(days=5),
         }
     return render(request, 'projetos/organizacoes_lista.html', context)
 
@@ -660,6 +661,7 @@ def cria_anotacao(request, login): #acertar isso para pk
             anotacao = Anotacao.create(organization)
             anotacao.autor = PFEUser.objects.get(pk=request.user.pk)
             anotacao.texto = request.POST['anotacao']
+            anotacao.tipo_de_retorno = int(request.POST['contato'])
             anotacao.save()
             #return HttpResponse(
             # "Anotação criada.<br>"+\

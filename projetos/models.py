@@ -474,6 +474,17 @@ class Anotacao(models.Model):
     autor = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
                               related_name='professor_orientador', help_text='quem fez a anotação')
     texto = models.TextField(max_length=2000, help_text='Anotação')
+
+    TIPO_DE_RETORNO = ( # não mudar a ordem dos números
+        (0, 'Contactada'),
+        (1, 'Confirmada'),
+        (2, 'Interessada'),
+        (3, 'Recusou'),
+    )
+
+    tipo_de_retorno = models.PositiveSmallIntegerField(choices=TIPO_DE_RETORNO, default=0)
+
+
     def __str__(self):
         return str(self.momento)
     @classmethod
