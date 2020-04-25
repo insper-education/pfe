@@ -38,8 +38,8 @@ from django.template.loader import get_template
 from django.utils import timezone
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador, Opcao, Alocacao, Areas
-from .models import Projeto, Proposta, Empresa, Configuracao, Evento, Anotacao, Feedback, Coorientador
-from .models import Certificado
+from .models import Projeto, Proposta, Empresa, Configuracao, Evento, Anotacao, Coorientador
+from .models import Feedback, Certificado
 from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade, Conexao
 #from .models import Disciplina
 from .models import ObjetidosDeAprendizagem, Avaliacao
@@ -636,7 +636,8 @@ def organizacoes_lista(request):
         'total_organizacoes': total_organizacoes,
         'total_submetidos': total_submetidos,
         'total_fechados': total_fechados,
-        'meses3': datetime.date.today() - datetime.timedelta(days=90),
+        'meses3': datetime.date.today() - datetime.timedelta(days=3),
+        'filtro': "todas",
         }
     return render(request, 'projetos/organizacoes_lista.html', context)
 
@@ -1843,15 +1844,15 @@ def avisos_listar(request):
     """Mostra toda a tabela de avisos da coordenação do PFE."""
     configuracao = Configuracao.objects.all().first()
 
-    qa = list(Aviso.objects.all())
+    qualquer_aviso = list(Aviso.objects.all())
 
     eventos = Evento.objects.filter(startDate__year=configuracao.ano)
     if configuracao.semestre == 1:
-        qe = list(eventos.filter(startDate__month__lt=7))
+        qualquer_evento = list(eventos.filter(startDate__month__lt=7))
     else:
-        qe = list(eventos.filter(startDate__month__gt=6))
+        qualquer_evento = list(eventos.filter(startDate__month__gt=6))
 
-    avisos = sorted(qa+qe, key=lambda t: t.get_data())
+    avisos = sorted(qualquer_aviso+qualquer_evento, key=lambda t: t.get_data())
 
     #dias_passados = (datetime.date.today() - configuracao.t0).days
     context = {

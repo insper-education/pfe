@@ -583,9 +583,10 @@ class Aviso(models.Model):
     titulo = models.CharField(max_length=120, null=True, blank=True,
                               help_text='Título do Aviso')
 
-    tipo_de_evento = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in Evento.TIPO_EVENTO],
-                                                      null=True, blank=True,
-                                                      help_text='Define o tipo do evento de referência')
+    tipo_de_evento = models.\
+        PositiveSmallIntegerField(choices=[subl[:2] for subl in Evento.TIPO_EVENTO],
+                                  null=True, blank=True,
+                                  help_text='Define o tipo do evento de referência')
 
     delta = models.SmallIntegerField(default=0,
                                      help_text='dias passados do início do semestre')
