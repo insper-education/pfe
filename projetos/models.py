@@ -134,6 +134,10 @@ class Projeto(models.Model):
                                            null=True, blank=True,
                                            help_text='Áreas de interesse esperas dos alunos')
 
+    proposta = models.ForeignKey('Proposta', null=True, blank=True, on_delete=models.SET_NULL,
+                                 help_text='Proposta original do projeto')
+
+
     class Meta:
         ordering = ['empresa', 'ano', 'semestre']
         permissions = (("altera_empresa", "Empresa altera valores"),
@@ -166,7 +170,10 @@ class Proposta(models.Model):
                             help_text='Nome de quem submeteu o projeto')
     email = models.EmailField("e-mail", max_length=80, null=True, blank=True,
                               help_text='e-mail de quem está dando o Feedback')
-    organizacao = models.CharField("Organização", max_length=120, null=True, blank=True,
+    website = models.URLField("website", max_length=250, null=True, blank=True,
+                              help_text='website da organização')
+
+    nome_organizacao = models.CharField("Organização", max_length=120, null=True, blank=True,
                                    help_text='Nome da Organização/Empresa')
 
     endereco = models.TextField("Endereço", max_length=400,

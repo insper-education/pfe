@@ -15,7 +15,7 @@
 
 {% block content %}
 
-  <h5>Submissão de Projeto</h5>
+  <h5>Submissão de Proposta de Projeto</h5>
   {% if professor %}
     <strong>Seu Perfil é de Professor, você está preenchendo para alguma organização</strong><br>
   {% elif administrador %}
@@ -33,6 +33,8 @@
     <br>
     <textarea name="organizacao" rows="1" cols="80" maxlength="100" required>{% if parceiro %}{{parceiro.organizacao}}{% endif %}</textarea>
     <br><br>
+
+    website: <input type="text" size="73" name="website" value="{{parceiro.organizacao.website}}" placeholder="https://www.insper.edu.br" pattern="*" required><br><br>
 
     Endereço<br>
     <small>onde os alunos deverão ir para desenvolver o projeto</small>

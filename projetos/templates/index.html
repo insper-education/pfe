@@ -27,6 +27,7 @@
     {% endif %}
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
         <a href="{% url 'index_professor' %}"><h5>Área dos Professores</h5></a>
+        <a href="{% url 'index_operacional' %}"><h5>Área Operacional</h5></a>
         <a href="{% url 'administracao' %}"><h5>Área Administrativa</h5></a>
     {% endif %}
     <hr>

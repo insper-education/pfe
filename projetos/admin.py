@@ -168,6 +168,7 @@ class ProjetoAdmin(admin.ModelAdmin):
             'perfil_aluno3_computacao', 'perfil_aluno3_mecanica', 'perfil_aluno3_mecatronica',
             'perfil_aluno4_computacao', 'perfil_aluno4_mecanica', 'perfil_aluno4_mecatronica',
             'areas_de_interesse',
+            'proposta',
            )
           }),
          ('Origem', {
@@ -185,7 +186,7 @@ class PropostaAdmin(admin.ModelAdmin):
     fieldsets = \
         ((None,
           {'fields':
-           ('nome', 'email', 'organizacao', 'endereco',
+           ('nome', 'email', 'organizacao', 'website', 'endereco',
             'contatos_tecnicos', 'contatos_administrativos',
             'descricao_organizacao', 'departamento',
             'titulo', 'descricao', 'expectativas',

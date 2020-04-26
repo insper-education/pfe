@@ -432,6 +432,12 @@ def administracao(request):
     return render(request, 'index_admin.html')
 
 @login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
+def index_operacional(request):
+    """Mostra página principal para equipe operacional."""
+    return render(request, 'index_operacional.html')
+
+@login_required
 @permission_required("users.altera_valores", login_url='/projetos/')
 def index_organizacao(request):
     """Mostra página principal do usuário que é um parceiro de uma organização."""
@@ -1197,6 +1203,7 @@ def projeto_submeter(request):
         proposta = Proposta.create()
         proposta.nome = request.POST.get("nome", "")
         proposta.email = request.POST.get("email", "")
+        proposta.website = request.POST.get("website", "")
         proposta.organizacao = request.POST.get("organizacao", "")
         proposta.endereco = request.POST.get("endereco", "")
         proposta.contatos_tecnicos = request.POST.get("contatos_tecnicos", "")
@@ -2628,3 +2635,52 @@ def certificados_submetidos(request):
         'certificados': certificados,
     }
     return render(request, 'projetos/certificados_submetidos.html', context)
+
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def migra_propostas(request):
+    """Migra projetos para propostas (temporário)."""
+    projetos = Projeto.objects.all()
+    for projeto in projetos:
+        proposta = Proposta.create()
+        #proposta.nome
+        #proposta.email
+        proposta.website = projeto.empresa.website
+        proposta.organizacao = projeto.empresa
+        proposta.endereco = projeto.empresa.endereco
+        #proposta.contatos_tecnicos
+        #proposta.contatos_administrativos
+        proposta.descricao_organizacao = projeto.empresa.informacoes
+        proposta.departamento = projeto.departamento
+        proposta.titulo = projeto.titulo
+
+        proposta.descricao = projeto.descricao
+        proposta.expectativas = projeto.expectativas
+        proposta.recursos = projeto.recursos
+        #proposta.observacoes
+
+        proposta.areas_de_interesse = areas_de_interesse
+
+        proposta.ano = projeto.ano
+        proposta.semestre = projeto.semestre
+
+        proposta.perfil_aluno1_computacao = projeto.perfil_aluno1_computacao 
+        proposta.perfil_aluno1_mecatronica = projeto.perfil_aluno1_mecatronica
+        proposta.perfil_aluno1_mecanica = projeto.perfil_aluno1_mecanica
+        proposta.perfil_aluno2_computacao = projeto.perfil_aluno2_computacao
+        proposta.perfil_aluno2_mecatronica = projeto.perfil_aluno2_mecatronica
+        proposta.perfil_aluno2_mecanica = projeto.perfil_aluno2_mecanica
+        proposta.perfil_aluno3_computacao = projeto.perfil_aluno3_computacao
+        proposta.perfil_aluno3_mecatronica = projeto.perfil_aluno3_mecatronica
+        proposta.perfil_aluno3_mecanica = projeto.perfil_aluno3_mecanica
+        proposta.perfil_aluno4_computacao = projeto.perfil_aluno4_computacao
+        proposta.perfil_aluno4_mecatronica = projeto.perfil_aluno4_mecatronica
+        proposta.perfil_aluno4_mecanica = projeto.perfil_aluno4_mecanica
+
+        proposta.save()
+
+        projeto.proposta = proposta
+        projeto.save()
+
+    return HttpResponse("Feito.")

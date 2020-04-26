@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 15 de Maio de 2019
+{% endcomment %}
+
+{% block content %}
+
+    <a href="{% url 'emails' %}"><h5>Listas de e-mails</h5></a>
+
+    <hr>
+    <h5>Listagem completa</h5>
+    <ul>
+        <a href="{% url 'alunos_lista' %}"><li>Alunos</li></a>
+        <a href="{% url 'projetos_lista' 'todos' %}"><li>Projetos</li></a>
+        <a href="{% url 'organizacoes_lista' %}"><li>Organizações Parceiras</li></a>
+        <a href="{% url 'todos_parceiros' %}"><li>Parceiros Profissionais</li></a>
+        <a href="{% url 'todos_professores' %}"><li>Professores do PFE</li></a>
+        <!-- <a href="{% url 'comite' %}"><li>Comtê do PFE</li></a> -->
+    </ul>
+
+    <hr>
+    <h5>Tabelas de alocação</h5>
+    <ul>
+        <a href="{% url 'professores_tabela' %}"><li>Orientadores</li></a>
+        <a href="{% url 'coorientadores_tabela' %}"><li>Coorientadores</li></a>
+        <a href="{% url 'organizacoes_tabela' %}"><li>Organizações</li></a>
+        <a href="{% url 'bancas_tabela' %}"><li>Bancas</li></a>
+    </ul>
+
+    <hr>
+    <a href="{% url 'certificados_submetidos' %}"><h5>Certificados Submetidos</h5></a>
+    <a href="{% url 'avisos_listar' %}"><h5>Agenda da Coordenação do PFE</h5></a>
+
+{% endblock %}

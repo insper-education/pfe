@@ -47,6 +47,7 @@ urlpatterns = [
     path('histograma/', views.histograma, name='histograma'),
     path('index_aluno/', views.index_aluno, name='index_aluno'),
     path('index_documentos/', views.index_documentos, name='index_documentos'),
+    path('index_operacional/', views.index_operacional, name='index_operacional'),
     path('index_organizacao/', views.index_organizacao, name='index_organizacao'),
     path('index_professor/', views.index_professor, name='index_professor'),
     path('lista_feedback', views.lista_feedback, name='lista_feedback'),
