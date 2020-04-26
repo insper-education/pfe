@@ -23,9 +23,9 @@
 
   <form action="" method="post"> {% csrf_token %}  
 
-    Nome: <input type="text" size="75" name="nome"><br>
-    e-mail: <input type="email" size="75" name="email"><br>
-    Empresa: <input type="text" size="72" name="empresa"><br>
+    <label for="nome">Nome:</label> <input type="text" size="75" id="nome" name="nome"><br>
+    <label for="email">e-mail:</label> <input type="email" size="75" id="email" name="email"><br>
+    <label for="empresa">Empresa:</label> <input type="text" size="72" id="empresa" name="empresa"><br>
 
     <br>
     <p>O projeto avançou conforme o esperado? Se SIM, você sabe qual foi a fórmula do sucesso?
