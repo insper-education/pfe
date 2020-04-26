@@ -222,8 +222,8 @@ class Proposta(models.Model):
 
 
     # Preenchidos depois manualmente
-    empresa = models.ForeignKey(Empresa, on_delete=models.SET_NULL, null=True, blank=True,
-                                help_text='Organização parceira que propôs projeto')
+    organizacao = models.ForeignKey(Empresa, on_delete=models.SET_NULL, null=True, blank=True,
+                                    help_text='Organização parceira que propôs projeto')
 
 
     disponivel = models.BooleanField("Disponível", default=False,
@@ -260,7 +260,7 @@ class Proposta(models.Model):
         models.BooleanField(default=False, help_text='Perfil desejado de mecânica para aluno 4')
 
     class Meta:
-        ordering = ['empresa', 'ano', 'semestre']
+        ordering = ['organizacao', 'ano', 'semestre']
 
     @classmethod
     def create(cls):

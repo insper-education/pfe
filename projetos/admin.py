@@ -181,12 +181,12 @@ class ProjetoAdmin(admin.ModelAdmin):
 @admin.register(Proposta)
 class PropostaAdmin(admin.ModelAdmin):
     """Exibição no sistema de administração do Django para Proposta."""
-    list_display = ('titulo', 'nome', 'empresa', 'ano', 'semestre',)
+    list_display = ('titulo', 'nome', 'organizacao', 'ano', 'semestre',)
     list_filter = ('ano', 'semestre', )
     fieldsets = \
         ((None,
           {'fields':
-           ('nome', 'email', 'organizacao', 'website', 'endereco',
+           ('nome', 'email', 'nome_organizacao', 'website', 'endereco',
             'contatos_tecnicos', 'contatos_administrativos',
             'descricao_organizacao', 'departamento',
             'titulo', 'descricao', 'expectativas',
@@ -201,11 +201,11 @@ class PropostaAdmin(admin.ModelAdmin):
            )
           }),
          ('Origem', {
-             'fields': ('empresa',)
+             'fields': ('organizacao',)
          }),
         )
     actions = [dup_projeto]
-    search_fields = ['titulo', 'empresa__sigla',]
+    search_fields = ['titulo', 'organizacao__sigla',]
 
 @admin.register(Empresa)
 class EmpresaAdmin(admin.ModelAdmin):
