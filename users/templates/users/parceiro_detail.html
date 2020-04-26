@@ -48,7 +48,7 @@
     <h3>Conexões com Projetos</h3>
     <ol>
     {% for conexao in conexoes %}
-      <li><a href="{% url 'completo' conexao.projeto.id %}">
+      <li><a href="{% url 'projeto_completo' conexao.projeto.id %}">
       {{conexao.projeto.get_titulo}}
       [{{conexao.projeto.ano}}.{{conexao.projeto.semestre}}]
       {% if conexao.gestor_responsavel %}                  

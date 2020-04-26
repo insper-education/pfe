@@ -112,7 +112,7 @@
                     {% endif %}
                   {% endwith %}"
                   class="{% if opcao.prioridade == 0 %}red-bold{% elif opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}">
-                <a class="prioridade" href="{% url 'completo' opcao.projeto.id %}"
+                <a class="prioridade" href="{% url 'projeto_completo' opcao.projeto.id %}"
                   data-toggle="tooltip" data-html="true" animation="true" title="
                   {{ opcao.projeto.get_titulo }}
                   "

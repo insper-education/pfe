@@ -18,15 +18,14 @@
     <h5>Projetos Fechados</h5>
     <ul>
         <a href="{% url 'professor_detail' professor_id %}"><li>Meu(s) Projeto(s)</li></a>
-        <a href="{% url 'projetos_fechados' %}"><li>Lista com Detalhes</li></a>
+        <a href="{% url 'projetos_fechados' %}"><li>Listagem Geral</li></a>
     </ul>
 
     <h5>Proposta de Projetos</h5>
     <ul>
-        <a href="{% url 'projetos_lista' 'disponiveis' %}"><li>Propostas Apresentadas (OLD)</li></a>
+        {% comment %}<a href="{% url 'projetos_lista' 'disponiveis' %}"><li>Propostas Apresentadas (OLD)</li></a>{% endcomment %}
         <a href="{% url 'propostas_lista' 'disponiveis' %}"><li>Propostas Apresentadas</li></a>
-        <a href="{% url 'histograma' %}"><li>Procura (histograma de preferências)</li></a>
-        
+        <a href="{% url 'histograma' %}"><li>Procura (histograma de preferências)</li></a>        
     </ul>
 
     <h5>Estudantes</h5>

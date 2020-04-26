@@ -140,7 +140,7 @@
     <hr>
     <h3>Projetos</h3>
     {% for projeto in organization.projeto_set.all %}
-      <a href="{% url 'completo' projeto.id %}"> 
+      <a href="{% url 'projeto_completo' projeto.id %}"> 
         <li>
           {% if projeto.alocacao_set.count %}
             <u>

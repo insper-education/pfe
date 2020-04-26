@@ -30,7 +30,7 @@
     <ol>
     {% for projeto in projetos %}
       {% if projeto.alocacao_set.all.count > 0 %}
-        <li><a href="{% url 'completo' projeto.id %}">
+        <li><a href="{% url 'projeto_completo' projeto.id %}">
         {{projeto.get_titulo}}
         [{{projeto.ano}}.{{projeto.semestre}}] ({{projeto.empresa.nome_empresa}})
         { {{ projeto.alocacao_set.all.count }} aluno(s) }

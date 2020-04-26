@@ -58,7 +58,7 @@ td {
              <b>Data:</b> {{certificado.data|date:"DATE_FORMAT"}}<br>
             {% endif %}
             {% if certificado.projeto %}
-              <b>Projeto:</b> <a href="{% url 'completo' certificado.projeto.id %}">
+              <b>Projeto:</b> <a href="{% url 'projeto_completo' certificado.projeto.id %}">
                 {{certificado.projeto.get_titulo}}
               </a><br>
               <b>Organização:</b> <a href="{% url 'organizacao_completo' certificado.projeto.empresa.login %}">{{ certificado.projeto.empresa.nome_empresa }}</a><br>

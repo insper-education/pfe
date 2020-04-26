@@ -149,7 +149,7 @@
         <hr>
         <h3>Projeto Alocado</h3>
         {% for alocado in aluno.alocacao_set.all %}
-            <a href="{% url 'completo' alocado.projeto.id %}">
+            <a href="{% url 'projeto_completo' alocado.projeto.id %}">
             {{alocado.projeto.get_titulo}}
             ({{alocado.projeto.empresa.nome_empresa}})
             { {{alocado.projeto.ano}}.{{alocado.projeto.semestre}} }
@@ -164,7 +164,7 @@
         <p id="regular"> 
         {% for opcao in aluno.opcao_set.all %}
             {% if opcao.projeto.ano == opcao.aluno.anoPFE and opcao.projeto.semestre == opcao.aluno.semestrePFE %}
-                <a href="{% url 'completo' opcao.projeto.id %}">
+                <a href="{% url 'projeto_completo' opcao.projeto.id %}">
                 <p><b>{{opcao.prioridade}}</b> - 
                     {{opcao.projeto.get_titulo}}
                     ({{opcao.projeto.empresa.nome_empresa}})
@@ -185,7 +185,7 @@
         </p>
         {% for opcao in aluno.opcao_set.all %}
             {% if opcao.projeto.ano != opcao.aluno.anoPFE or opcao.projeto.semestre != opcao.aluno.semestrePFE %}
-                <a href="{% url 'completo' opcao.projeto.id %}">
+                <a href="{% url 'projeto_completo' opcao.projeto.id %}">
                 <p><b>{{opcao.prioridade}}</b> - 
                     {{opcao.projeto.get_titulo}}
                     ({{opcao.projeto.empresa.nome_empresa}})

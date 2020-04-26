@@ -36,11 +36,11 @@
           {% endif %}
           {% if banca.projeto %}
             <b>Título do Projeto:</b> 
-            <a href="{% url 'completo' banca.projeto.id %}">
+            <a href="{% url 'projeto_completo' banca.projeto.id %}">
               {% if banca.projeto.titulo_final %}
                 {{banca.projeto.titulo_final}}</a><br>
                 <small>Antigo Título Provisório: 
-                  <a href="{% url 'completo' banca.projeto.id %}">{{banca.projeto.titulo}}</a>
+                  <a href="{% url 'projeto_completo' banca.projeto.id %}">{{banca.projeto.titulo}}</a>
                 </small>
               {% else %}
                 {{banca.projeto.titulo}}</a>

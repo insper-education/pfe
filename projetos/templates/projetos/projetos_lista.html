@@ -84,7 +84,7 @@
           <td>
           
             {% if not disponivel %}<del>{% endif %}
-            <a href="{% url 'completo' projeto.id %}"
+            <a href="{% url 'projeto_completo' projeto.id %}"
               data-toggle="tooltip" data-html="true" animation="true" title="
               {% for opcaop in projeto.opcao_set.all %}
                 {% with alocacoes=opcaop.aluno.alocacao_set %}

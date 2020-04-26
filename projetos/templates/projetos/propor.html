@@ -17,7 +17,7 @@
     <div>      
       {% for projeto,opcoes in mylist %} 
         {% if projeto.disponivel %}
-          <a href="{% url 'completo' projeto.id %}" class="dark-blue-bold">
+          <a href="{% url 'projeto_completo' projeto.id %}" class="dark-blue-bold">
             {% if projeto.titulo_final %}{{projeto.titulo_final}}{% else %}{{projeto.titulo}}{% endif %}
             ({{ projeto.empresa.nome_empresa }})
             &nbsp;&nbsp;

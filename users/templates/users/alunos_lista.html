@@ -65,7 +65,7 @@
           <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
             {% if aluno.alocacao_set.all %}
               {% for alocacao in aluno.alocacao_set.all %}
-                <a href="{% url 'completo' alocacao.projeto.id %}">
+                <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
                   {% if alocacao.projeto.avancado %}<u>{% endif %}
                   {{alocacao.projeto.ano}}.{{alocacao.projeto.semestre}}
                   {% if alocacao.projeto.avancado %}</u>{% endif %}

@@ -217,7 +217,7 @@ def alunos_inscritos(request, anosemestre):
     opcoes = []
     for aluno in alunos:
         opcao = Opcao.objects.filter(aluno=aluno).\
-                              filter(projeto__ano=ano, projeto__semestre=semestre)
+                              filter(proposta__ano=ano, proposta__semestre=semestre)
         opcoes.append(opcao)
         if opcao.count() >= 5:
             inscritos += 1
@@ -237,7 +237,7 @@ def alunos_inscritos(request, anosemestre):
         'semestre': semestre,
         'loop_anos': range(2018, configuracao.ano+1),
     }
-    return render(request, 'users/alunos_inscrevendo.html', context=context)
+    return render(request, 'users/alunos_inscritos.html', context=context)
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')

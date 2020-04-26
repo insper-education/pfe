@@ -58,7 +58,7 @@
           <td>
             {% with conexoes=parceiro.conexao_set.all %}
               {% for conexao in conexoes %}
-                <a href="{% url 'completo' conexao.projeto.id %}">
+                <a href="{% url 'projeto_completo' conexao.projeto.id %}">
                   {% if conexao.gestor_responsavel %}                  
                     GR
                   {% endif %}

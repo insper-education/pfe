@@ -32,7 +32,7 @@
     {% for projeto,prioridades in mylist %} 
       {% if projeto.disponivel %}
         <tr id="two" class="row" data-type="{{projeto.ano}}.{{projeto.semestre}}"><td id="ptd">
-        <a href="{% url 'completo' projeto.id %}" class="dark-blue-bold"> 
+        <a href="{% url 'projeto_completo' projeto.id %}" class="dark-blue-bold"> 
           {% if projeto.titulo_final %}
             {{projeto.titulo_final}}<br>
             <small>Título Provisório: {{projeto.titulo}}</small><br>
@@ -159,12 +159,12 @@
             ],
           }],
           labels: [
-            '#1 ['+prioridade1+':'+parseInt(100*prioridade1/(count_alunos-nao_definido))+'%]',
-            '#2 ['+prioridade2+':'+parseInt(100*prioridade2/(count_alunos-nao_definido))+'%]',
-            '#3 ['+prioridade3+':'+parseInt(100*prioridade3/(count_alunos-nao_definido))+'%]',
-            '#4 ['+prioridade4+':'+parseInt(100*prioridade4/(count_alunos-nao_definido))+'%]',
-            '#5 ['+prioridade5+':'+parseInt(100*prioridade5/(count_alunos-nao_definido))+'%]',
-            '#>=6 ['+prioridade6m+':'+parseInt(100*prioridade6m/(count_alunos-nao_definido))+'%]',
+            '#1 ['+parseInt(100*prioridade1/(count_alunos-nao_definido))+'%]',
+            '#2 ['+parseInt(100*prioridade2/(count_alunos-nao_definido))+'%]',
+            '#3 ['+parseInt(100*prioridade3/(count_alunos-nao_definido))+'%]',
+            '#4 ['+parseInt(100*prioridade4/(count_alunos-nao_definido))+'%]',
+            '#5 ['+parseInt(100*prioridade5/(count_alunos-nao_definido))+'%]',
+            '#>=6 ['+parseInt(100*prioridade6m/(count_alunos-nao_definido))+'%]',
           ]
         },
         options: {

@@ -36,13 +36,13 @@
       <li></li>
       <li></li>
 
-      {% for projeto,opcoes in mylist %} 
-          <a href="{% url 'completo' projeto.id %}"> 
+      {% for proposta,opcoes in mylist %} 
+          <a href="{% url 'proposta_completa' proposta.id %}"> 
             <li class="title" title="
-            {% if not projeto.disponivel%}X{% endif %}
+            {% if not proposta.disponivel%}X{% endif %}
             {{ forloop.counter }}&ordm; :
-            {{projeto.get_titulo}}
-            ({{ projeto.empresa.nome_empresa }})"></li>
+            {{proposta.titulo}}
+            ({{ proposta.organizacao.nome_empresa }})"></li>
           </a>
           <li class="past" title="">
             <span class="bar" data-number="{{opcoes}}"></span>

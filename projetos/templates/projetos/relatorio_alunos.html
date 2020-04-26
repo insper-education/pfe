@@ -141,7 +141,7 @@
           <strong>Projetos Selecionados</strong>
           {% for opcao in aluno.opcao_set.all %}
             {% if opcao.projeto.ano == opcao.aluno.anoPFE and opcao.projeto.semestre == opcao.aluno.semestrePFE %}
-                <a href="{% url 'completo' opcao.projeto.id %}">
+                <a href="{% url 'projeto_completo' opcao.projeto.id %}">
                     <p style="margin-top: 0px; margin-bottom: 0px;"><b>{{opcao.prioridade}}</b> - 
                         {% if opcao.projeto.titulo_final %}{{opcao.projeto.titulo_final}}{% else %}{{opcao.projeto.titulo}}{% endif %}
                         ({{opcao.projeto.empresa.nome_empresa}})

@@ -167,6 +167,7 @@ def selecao_projetos(request):
         }
         return render(request, 'projetos/selecao_projetos.html', context)
 
+# PROVAVELMENTE NAO MAIS USADA
 def ordena_projetos(disponivel=True, ano=0, semestre=0):
     """Gera lista com projetos ordenados pelos com maior interesse pelos alunos."""
     configuracao = Configuracao.objects.all().first()
@@ -198,11 +199,44 @@ def ordena_projetos(disponivel=True, ano=0, semestre=0):
     mylist = sorted(mylist, key=lambda x: x[1], reverse=True)
     return mylist
 
+
+def ordena_propostas(disponivel=True, ano=0, semestre=0):
+    """Gera lista com propostas ordenados pelos com maior interesse pelos alunos."""
+    configuracao = Configuracao.objects.all().first()
+
+    if ano == 0:
+        ano = configuracao.ano
+    if semestre == 0:
+        semestre = configuracao.semestre
+
+    opcoes_list = []
+    if disponivel:
+        propostas = Proposta.objects.filter(ano=ano).\
+                               filter(semestre=semestre).\
+                               filter(disponivel=True)
+    else:
+        propostas = Proposta.objects.filter(ano=ano).\
+                               filter(semestre=semestre)
+    for proposta in propostas:
+        opcoes = Opcao.objects.filter(proposta=proposta)
+        opcoes_alunos = opcoes.filter(aluno__user__tipo_de_usuario=1)
+        opcoes_validas = opcoes_alunos.filter(aluno__anoPFE=ano).\
+                                       filter(aluno__semestrePFE=semestre)
+        count = 0
+        for opcao in opcoes_validas:
+            if opcao.prioridade <= 5:
+                count += 1
+        opcoes_list.append(count)
+    mylist = zip(propostas, opcoes_list)
+    mylist = sorted(mylist, key=lambda x: x[1], reverse=True)
+    return mylist
+
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def histograma(request):
     """Exibe um histograma com a procura dos projetos pelos alunos."""
-    mylist = ordena_projetos()
+    #mylist = ordena_projetos()
+    mylist = ordena_propostas()
     context = {'mylist': mylist}
     return render(request, 'projetos/histograma.html', context)
 
@@ -472,7 +506,7 @@ def index_professor(request):
 
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
-def completo(request, primakey):
+def projeto_completo(request, primakey):
     """Mostra um projeto por completo."""
     configuracao = Configuracao.objects.all().first()
     projeto = Projeto.objects.filter(pk=primakey).first()  # acho que tem de ser get
