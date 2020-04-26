@@ -160,16 +160,16 @@
 
     {% if aluno.opcao_set.all %}
         <hr>
-        <h3>Projetos Selecionados</h3>
+        <h3>Propostas Selecionadas</h3>
         <p id="regular"> 
         {% for opcao in aluno.opcao_set.all %}
-            {% if opcao.projeto.ano == opcao.aluno.anoPFE and opcao.projeto.semestre == opcao.aluno.semestrePFE %}
-                <a href="{% url 'projeto_completo' opcao.projeto.id %}">
+            {% if opcao.proposta.ano == opcao.aluno.anoPFE and opcao.proposta.semestre == opcao.aluno.semestrePFE %}
+                <a href="{% url 'proposta_completa' opcao.proposta.id %}">
                 <p><b>{{opcao.prioridade}}</b> - 
-                    {{opcao.projeto.get_titulo}}
-                    ({{opcao.projeto.empresa.nome_empresa}})
-                    {{ '{' }}{{opcao.projeto.ano}}.{{opcao.projeto.semestre}}{{ '}' }}
-                    |{% mede_aderencia aluno opcao.projeto %}%|
+                    {{opcao.proposta.titulo}}
+                    ({{opcao.proposta.organizacao.nome_empresa}})
+                    {{ '{' }}{{opcao.proposta.ano}}.{{opcao.proposta.semestre}}{{ '}' }}
+                    |{% mede_aderencia aluno opcao.proposta %}%|
                 </p>
                 </a>
             {% endif %}
@@ -177,20 +177,20 @@
         </p>
         <script>
             if($.trim($("#regular").html())=='') {
-                $("#regular").text("Nenhum projeto selecionado para o semestre regular.");
+                $("#regular").text("Nenhuma proposta selecionada para o semestre regular.");
             }
         </script>
         <p style="line-height:2px">
             --------------------------------------------------------------------------------------
         </p>
         {% for opcao in aluno.opcao_set.all %}
-            {% if opcao.projeto.ano != opcao.aluno.anoPFE or opcao.projeto.semestre != opcao.aluno.semestrePFE %}
-                <a href="{% url 'projeto_completo' opcao.projeto.id %}">
+            {% if opcao.proposta.ano != opcao.aluno.anoPFE or opcao.proposta.semestre != opcao.aluno.semestrePFE %}
+                <a href="{% url 'proposta_completa' opcao.proposta.id %}">
                 <p><b>{{opcao.prioridade}}</b> - 
-                    {{opcao.projeto.get_titulo}}
-                    ({{opcao.projeto.empresa.nome_empresa}})
-                    {{ '{' }}{{opcao.projeto.ano}}.{{opcao.projeto.semestre}}{{ '}' }}
-                    |{% mede_aderencia aluno opcao.projeto %}%|
+                    {{opcao.proposta.titulo}}
+                    ({{opcao.proposta.organizacao.nome_empresa}})
+                    {{ '{' }}{{opcao.proposta.ano}}.{{opcao.proposta.semestre}}{{ '}' }}
+                    |{% mede_aderencia aluno opcao.proposta %}%|
                 </p>
                 </a>
             {% endif %}

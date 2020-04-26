@@ -58,7 +58,7 @@
 {% endblock %}
 
 {% block content %}
-  <h3>Mapeamento de Projetos por Alunos</h3>
+  <h3>Mapeamento de Propostas de Projetos por Estudante</h3>
 
   <label for="filter">Edição:</label>
   <select id="filter" onchange="location = this.options[this.selectedIndex].value;">
@@ -68,19 +68,19 @@
     {% endfor %}
   </select>
 
-  {% if projetos %}
+  {% if propostas %}
     <table id="MapeamentoTable">
       <tr>
         <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="bottom">Estudante</th>
         <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="bottom">Eng</th>
         <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="bottom">CR</th>
-        {% for projeto in projetos %}   
+        {% for proposta in propostas %}   
           <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child({{ forloop.counter|add:"3" }})')" style="cursor:pointer;
-          {% if not projeto.disponivel %}color:lightgray;{% endif %}"
+          {% if not proposta.disponivel %}color:lightgray;{% endif %}"
           class="rotate">
             <div>
               <span>
-                {{projeto.empresa.sigla}}
+                {{proposta.organizacao.sigla}}
               </span>
             </div>
           </th>
@@ -107,14 +107,14 @@
             {% if opcao %}
               <td style="text-align:center;
                   {% with alocacoes=estudante.alocacao_set %}
-                    {% if alocacoes.count and opcao.projeto == alocacoes.last.projeto %}
+                    {% if alocacoes.count and opcao.proposta == alocacoes.last.projeto.proposta %}
                       background-color:pink;
                     {% endif %}
                   {% endwith %}"
                   class="{% if opcao.prioridade == 0 %}red-bold{% elif opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}">
-                <a class="prioridade" href="{% url 'projeto_completo' opcao.projeto.id %}"
+                <a class="prioridade" href="{% url 'proposta_completa' opcao.proposta.id %}"
                   data-toggle="tooltip" data-html="true" animation="true" title="
-                  {{ opcao.projeto.get_titulo }}
+                  {{ opcao.proposta.titulo }}
                   "
                 >
                   {% if opcao.prioridade == 0 %}
@@ -132,13 +132,13 @@
       {% endfor %}
     </table>
   {% else %}
-    <p>Não existem projetos disponíveis.</p>
+    <p>Não existem propostas de projetos disponíveis.</p>
   {% endif %}
   <p>&nbsp;</p>
 
   <script>
-    {% for projeto in projetos %}
-      {% if not projeto.disponivel %}  
+    {% for proposta in propostas %}
+      {% if not proposta.disponivel %}  
         $('table td:nth-child({{ forloop.counter|add:"3" }})').css('border','dotted 2px gray');
       {% endif %}
     {% endfor %}

@@ -46,19 +46,19 @@
                 {% for opcao in opcoes %}
                   <b>#{{ opcao.prioridade }} :</b>
                   {% with alocacoes=aluno.alocacao_set %}
-                    {% if alocacoes.count and opcao.projeto == alocacoes.last.projeto %}
+                    {% if alocacoes.count and opcao.proposta == alocacoes.last.projeto.proposta %}
                       <u>
                     {% endif %}
-                        {{opcao.projeto.get_titulo}}
-                      ({{opcao.projeto.empresa.nome_empresa}})
-                    {% if alocacoes.count and opcao.projeto == alocacoes.last.projeto %}
+                        {{opcao.proposta.titulo}}
+                      ({{opcao.proposta.organizacao.nome_empresa}})
+                    {% if alocacoes.count and opcao.proposta == alocacoes.last.projeto.proposta %}
                       </u>
                     {% endif %}
                   {% endwith %}
-                  |{% mede_aderencia aluno opcao.projeto %}%|
+                  |{% mede_aderencia aluno opcao.proposta %}%|
                   <br>
                 {% empty %}
-                  Aluno(a) não escolheu opções de projetos
+                  Aluno(a) não escolheu opções de proposta de projetos
                 {% endfor %}
                 "
             >
@@ -79,8 +79,8 @@
     <p>Não existem alunos disponíveis.</p>
   {% endif %}
   
-  <text class="text-success">&#x2B24;</text> Aluno já selecionou projetos [{{inscritos}}]<br>
-  <text class="text-danger">&#x2B24;</text> Aluno ainda precisa selecionar projetos [{{ninscritos}}]<br>
+  <text class="text-success">&#x2B24;</text> Aluno já selecionou propostas [{{inscritos}}]<br>
+  <text class="text-danger">&#x2B24;</text> Aluno ainda precisa selecionar propostas [{{ninscritos}}]<br>
   <br>
 
   <strong>Total de Alunos Aplicando:</strong> {{ num_alunos }}

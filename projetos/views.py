@@ -616,7 +616,7 @@ def get_areas(entrada):
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def distribuicao_areas(request, tipo):
-    """Mostra distribuição por área de interesse dos alunos e projetos."""
+    """Mostra distribuição por área de interesse dos alunos, propostas e projetos."""
 
     periodo = ""
     if tipo == "alunos":
@@ -638,6 +638,26 @@ def distribuicao_areas(request, tipo):
             'periodo': periodo,
         }
 
+    elif tipo == "propostas":
+
+        propostas = Areas.objects.all()
+
+        if request.is_ajax():
+            if 'topicId' in request.POST:
+                if request.POST['topicId'] != 'todas':
+                    periodo = request.POST['topicId'].split('.')
+
+                    propostas = Areas.objects.filter(proposta__ano=int(periodo[0])).\
+                                             filter(proposta__semestre=int(periodo[1]))
+            else:
+                return HttpResponse("Algum erro não identificado.", status=401)
+
+        context = {
+            'areaspfe': get_areas(propostas),
+            'tipo': tipo,
+            'periodo': periodo,
+        }
+
     elif tipo == "projetos":
 
         projetos = Areas.objects.all()
@@ -646,7 +666,7 @@ def distribuicao_areas(request, tipo):
             if 'topicId' in request.POST:
                 if request.POST['topicId'] != 'todas':
                     periodo = request.POST['topicId'].split('.')
-
+                    print("AQUI")
                     projetos = Areas.objects.filter(projeto__ano=int(periodo[0])).\
                                              filter(projeto__semestre=int(periodo[1]))
             else:
@@ -2360,11 +2380,12 @@ def mapeamento_estudante_projeto(request, anosemestre):
     ano = int(anosemestre.split(".")[0])
     semestre = int(anosemestre.split(".")[1])
 
-    lista_projetos = list(zip(*ordena_projetos(False, ano, semestre)))
-    if lista_projetos:
-        projetos = lista_projetos[0]
+    #lista_projetos = list(zip(*ordena_projetos(False, ano, semestre)))
+    lista_propostas = list(zip(*ordena_propostas(False, ano, semestre)))
+    if lista_propostas:
+        propostas = lista_propostas[0]
     else:
-        projetos = []
+        propostas = []
 
     alunos = Aluno.objects.filter(user__tipo_de_usuario=1).\
                                filter(anoPFE=ano).\
@@ -2374,16 +2395,17 @@ def mapeamento_estudante_projeto(request, anosemestre):
     for aluno in alunos:
         opcoes_aluno = []
         alocacaos = Alocacao.objects.filter(aluno=aluno)
-        for projeto in projetos:
-            opcao = Opcao.objects.filter(aluno=aluno, projeto=projeto).last()
+        for proposta in propostas:
+            opcao = Opcao.objects.filter(aluno=aluno, proposta=proposta).last()
             if opcao:
                 opcoes_aluno.append(opcao)
             else:
-                if alocacaos.filter(projeto=projeto):
+                proj = Projeto.objects.get(proposta=proposta)
+                if alocacaos.filter(projeto=proj):
                     # Cria uma opção temporaria
                     opc = Opcao()
                     opc.prioridade = 0
-                    opc.projeto = projeto
+                    opc.proposta = proposta
                     opc.aluno = aluno
                     opcoes_aluno.append(opc)
                 else:
@@ -2394,7 +2416,7 @@ def mapeamento_estudante_projeto(request, anosemestre):
     estudantes = zip(alunos, opcoes)
     context = {
         'estudantes': estudantes,
-        'projetos': projetos,
+        'propostas': propostas,
         'configuracao': configuracao,
         'ano': ano,
         'semestre': semestre,

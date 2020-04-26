@@ -31,12 +31,13 @@
     <h5>Estudantes</h5>
     <ul>
         <a href="{% url 'alunos_inscrevendo' %}"><li>Por Semestre</li></a>
-        <a href="{% url 'mapeamento' %}"><li>Mapeamento Estudantes e Opções de Projetos</li></a>
+        <a href="{% url 'mapeamento' %}"><li>Mapeamento Estudantes e Propostas de Projetos</li></a>
     </ul>
 
     <h5>Áreas de Interesse</h5>
     <ul>
         <a href="{% url 'distribuicao_areas' 'alunos' %}"><li>Tendência dos Alunos</li></a>
+        <a href="{% url 'distribuicao_areas' 'propostas' %}"><li>Tendência das Propostas</li></a>
         <a href="{% url 'distribuicao_areas' 'projetos' %}"><li>Tendência dos Projetos</li></a>
     </ul>
 
