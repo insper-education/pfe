@@ -2692,11 +2692,11 @@ def certificados_submetidos(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def migracao(request):
     """Migra projetos para propostas (temporário)."""
-    opcoes = Opcao.objects.all()
-    for opcao in opcoes:
+    # opcoes = Opcao.objects.all()
+    # for opcao in opcoes:
 
-        opcao.proposta = opcao.projeto.proposta
-        opcao.save()
+    #     opcao.proposta = opcao.projeto.proposta
+    #     opcao.save()
 
     # recs = Recomendada.objects.all()
     # for rec in recs:
