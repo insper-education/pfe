@@ -51,19 +51,21 @@
   {% endif %}
   <br>
 
-  <strong>Descrição:</strong> {{ projeto.descricao|linebreaks }}
-  {% if projeto.expectativas %}
-    <br><strong>Expectativas de resultados/entregas :</strong> {{ projeto.expectativas|linebreaks }}
-  {% endif %}  
-  {% if projeto.areas %}
-    <br><strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ projeto.areas|linebreaks }}
+  <strong>Descrição:</strong> {{ projeto.proposta.descricao|linebreaks }}
+  {% if projeto.proposta.expectativas %}
+    <br><strong>Expectativas de resultados/entregas :</strong> {{ projeto.proposta.expectativas|linebreaks }}
   {% endif %}
-  {% if projeto.recursos %}
-    <br><strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ projeto.recursos|linebreaks }}
+  {% comment %}
+    {% if projeto.areas %}
+      <br><strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ projeto.areas|linebreaks }}
+    {% endif %}
+  {% endcomment %}
+  {% if projeto.proposta.recursos %}
+    <br><strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ projeto.proposta.recursos|linebreaks }}
   {% endif %}
-  {% if projeto.anexo %}
+  {% if projeto.proposta.anexo %}
     <br><strong>Anexo :</strong>
-    <a class="text-success" href="../..{{MEDIA_URL}}{{projeto.anexo}}">{{projeto.anexo}}</a>
+    <a class="text-success" href="../..{{MEDIA_URL}}{{projeto.anexo}}">{{projeto.proposta.anexo}}</a>
   {% endif %}
   <hr>
 
@@ -75,8 +77,8 @@
   {% if projeto.empresa.informacoes %}
     <strong>Informações sobre a empresa :</strong> {{ projeto.empresa.informacoes|linebreaks }}
   {% endif %}
-  {% if projeto.departamento %}
-    <strong>Informações sobre o departamento na empresa :</strong> {{ projeto.departamento|linebreaks }}
+  {% if projeto.proposta.departamento %}
+    <strong>Informações sobre o departamento na empresa :</strong> {{ projeto.proposta.departamento|linebreaks }}
   {% endif %}
   {% if conexoes %}
   <strong>conexões:</strong><br>
@@ -151,9 +153,9 @@
   {% endif %}
   <br>
   <strong>autorizado para publicação para os alunos por:</strong>
-  {% if projeto.autorizado %}
-    <a href="{% url 'professor_detail' projeto.autorizado.id %}">
-      {{projeto.autorizado.user.get_full_name}}
+  {% if projeto.proposta.autorizado %}
+    <a href="{% url 'professor_detail' projeto.proposta.autorizado.id %}">
+      {{projeto.proposta.autorizado.user.get_full_name}}
     </a>
   {% else %}
     &lt;&lt;aguardando autorização&gt;&gt;
@@ -232,38 +234,38 @@
     <tr> <!-- NAO EH A FORMA MAIS ELEGANTE MAS FUNCIONA POR ENQUANTO -->
       <td>Aluno 1</td>
       <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{projeto.id}}" 
-        {% if projeto.perfil_aluno1_computacao %}checked{% endif %}>&nbsp;</td>
+        {% if projeto.proposta.perfil_aluno1_computacao %}checked{% endif %}>&nbsp;</td>
       <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{projeto.id}}" 
-        {% if projeto.perfil_aluno1_mecanica %}checked{% endif %}>&nbsp;</td>
+        {% if projeto.proposta.perfil_aluno1_mecanica %}checked{% endif %}>&nbsp;</td>
       <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{projeto.id}}" 
-        {% if projeto.perfil_aluno1_mecatronica %}checked{% endif %}>&nbsp;</td>
+        {% if projeto.proposta.perfil_aluno1_mecatronica %}checked{% endif %}>&nbsp;</td>
     </tr>
     <tr>
       <td>Aluno 2</td>
       <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{projeto.id}}" 
-        {% if projeto.perfil_aluno2_computacao %}checked{% endif %}>&nbsp;</td>
+        {% if projeto.proposta.perfil_aluno2_computacao %}checked{% endif %}>&nbsp;</td>
       <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{projeto.id}}" 
-        {% if projeto.perfil_aluno2_mecanica %}checked{% endif %}>&nbsp;</td>
+        {% if projeto.proposta.perfil_aluno2_mecanica %}checked{% endif %}>&nbsp;</td>
       <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{projeto.id}}" 
-        {% if projeto.perfil_aluno2_mecatronica %}checked{% endif %}>&nbsp;</td>
+        {% if projeto.proposta.perfil_aluno2_mecatronica %}checked{% endif %}>&nbsp;</td>
     </tr>
     <tr>
       <td>Aluno 3</td>
       <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{projeto.id}}" 
-        {% if projeto.perfil_aluno3_computacao %}checked{% endif %}>&nbsp;</td>
+        {% if projeto.proposta.perfil_aluno3_computacao %}checked{% endif %}>&nbsp;</td>
       <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{projeto.id}}" 
-        {% if projeto.perfil_aluno3_mecanica %}checked{% endif %}>&nbsp;</td>
+        {% if projeto.proposta.perfil_aluno3_mecanica %}checked{% endif %}>&nbsp;</td>
       <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{projeto.id}}" 
-        {% if projeto.perfil_aluno3_mecatronica %}checked{% endif %}>&nbsp;</td>
+        {% if projeto.proposta.perfil_aluno3_mecatronica %}checked{% endif %}>&nbsp;</td>
     </tr>
     <tr>
       <td>Aluno 4</td>
       <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{projeto.id}}" 
-        {% if projeto.perfil_aluno4_computacao %}checked{% endif %}>&nbsp;</td>
+        {% if projeto.proposta.perfil_aluno4_computacao %}checked{% endif %}>&nbsp;</td>
       <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{projeto.id}}" 
-        {% if projeto.perfil_aluno4_mecanica %}checked{% endif %}>&nbsp;</td>
+        {% if projeto.proposta.perfil_aluno4_mecanica %}checked{% endif %}>&nbsp;</td>
       <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{projeto.id}}" 
-        {% if projeto.perfil_aluno4_mecatronica %}checked{% endif %}>&nbsp;</td>
+        {% if projeto.proposta.perfil_aluno4_mecatronica %}checked{% endif %}>&nbsp;</td>
     </tr>
   </table>
 
@@ -286,122 +288,121 @@
 
 
 
-  {% if projeto.areas_de_interesse %}
+  {% if projeto.proposta.areas_de_interesse %}
     <br><hr>
     <h3>Áreas de Interesse</h3>
     <table>
     <tr><td>&nbsp;<input type="checkbox" name="selection" value="inovacao_social" 
-            {% if projeto.areas_de_interesse.inovacao_social %}checked{% endif %}>&nbsp;
+            {% if projeto.proposta.areas_de_interesse.inovacao_social %}checked{% endif %}>&nbsp;
         </td>
         <td>Inovação Social</td>
     </tr>
     <tr><td>&nbsp;<input type="checkbox" name="selection" value="ciencia_dos_dados" 
-            {% if projeto.areas_de_interesse.ciencia_dos_dados %}checked{% endif %}>&nbsp;
+            {% if projeto.proposta.areas_de_interesse.ciencia_dos_dados %}checked{% endif %}>&nbsp;
         </td>
         <td>Ciência dos Dados</td>
     </tr>
     <tr><td>&nbsp;<input type="checkbox" name="selection" value="modelagem_3D" 
-            {% if projeto.areas_de_interesse.modelagem_3D %}checked{% endif %}>&nbsp;
+            {% if projeto.proposta.areas_de_interesse.modelagem_3D %}checked{% endif %}>&nbsp;
         </td>
         <td>Modelagem 3D</td>
     </tr>      
     <tr><td>&nbsp;<input type="checkbox" name="selection" value="manufatura" 
-            {% if projeto.areas_de_interesse.manufatura %}checked{% endif %}>&nbsp;
+            {% if projeto.proposta.areas_de_interesse.manufatura %}checked{% endif %}>&nbsp;
         </td>
         <td>Manufatura</td>
     </tr>
     <tr><td>&nbsp;<input type="checkbox" name="selection" value="resistencia_dos_materiais" 
-            {% if projeto.areas_de_interesse.resistencia_dos_materiais %}checked{% endif %}>&nbsp;
+            {% if projeto.proposta.areas_de_interesse.resistencia_dos_materiais %}checked{% endif %}>&nbsp;
         </td>
         <td>Resistência dos Materiais</td>
     </tr>
     <tr><td>&nbsp;<input type="checkbox" name="selection" value="modelagem_de_sistemas" 
-            {% if projeto.areas_de_interesse.modelagem_de_sistemas %}checked{% endif %}>&nbsp;
+            {% if projeto.proposta.areas_de_interesse.modelagem_de_sistemas %}checked{% endif %}>&nbsp;
         </td>
         <td>Modelagem de Sistemas</td>
     </tr>
     <tr><td>&nbsp;<input type="checkbox" name="selection" value="controle_e_automacao" 
-            {% if projeto.areas_de_interesse.controle_e_automacao %}checked{% endif %}>&nbsp;
+            {% if projeto.proposta.areas_de_interesse.controle_e_automacao %}checked{% endif %}>&nbsp;
         </td>
         <td>Controle e Automação</td>
     </tr>      
     <tr><td>&nbsp;<input type="checkbox" name="selection" value="termodinamica" 
-            {% if projeto.areas_de_interesse.termodinamica %}checked{% endif %}>&nbsp;
+            {% if projeto.proposta.areas_de_interesse.termodinamica %}checked{% endif %}>&nbsp;
         </td>
         <td>Termodinâmica</td>
     </tr>
     <tr><td>&nbsp;<input type="checkbox" name="selection" value="fluidodinamica" 
-            {% if projeto.areas_de_interesse.fluidodinamica %}checked{% endif %}>&nbsp;
+            {% if projeto.proposta.areas_de_interesse.fluidodinamica %}checked{% endif %}>&nbsp;
         </td>
         <td>Fluidodinâmica</td>
     </tr>
     <tr><td>&nbsp;<input type="checkbox" name="selection" value="eletronica_digital" 
-            {% if projeto.areas_de_interesse.eletronica_digital %}checked{% endif %}>&nbsp;
+            {% if projeto.proposta.areas_de_interesse.eletronica_digital %}checked{% endif %}>&nbsp;
         </td>
         <td>Eletrônica Digital</td>
     </tr>
     <tr><td>&nbsp;<input type="checkbox" name="selection" value="programacao" 
-            {% if projeto.areas_de_interesse.programacao %}checked{% endif %}>&nbsp;
+            {% if projeto.proposta.areas_de_interesse.programacao %}checked{% endif %}>&nbsp;
         </td>
         <td>Programação</td>
     </tr>      
     <tr><td>&nbsp;<input type="checkbox" name="selection" value="inteligencia_artificial" 
-            {% if projeto.areas_de_interesse.inteligencia_artificial %}checked{% endif %}>&nbsp;
+            {% if projeto.proposta.areas_de_interesse.inteligencia_artificial %}checked{% endif %}>&nbsp;
         </td>
         <td>Inteligência Artificial</td>
     </tr>
     <tr><td>&nbsp;<input type="checkbox" name="selection" value="computacao_em_nuvem" 
-            {% if projeto.areas_de_interesse.computacao_em_nuvem %}checked{% endif %}>&nbsp;
+            {% if projeto.proposta.areas_de_interesse.computacao_em_nuvem %}checked{% endif %}>&nbsp;
         </td>
         <td>Computação em Nuvem</td>
     </tr>
     <tr><td>&nbsp;<input type="checkbox" name="selection" value="banco_de_dados" 
-            {% if projeto.areas_de_interesse.banco_de_dados %}checked{% endif %}>&nbsp;
+            {% if projeto.proposta.areas_de_interesse.banco_de_dados %}checked{% endif %}>&nbsp;
         </td>
         <td>Banco de Dados</td>
     </tr>
     <tr><td>&nbsp;<input type="checkbox" name="selection" value="visao_computacional" 
-            {% if projeto.areas_de_interesse.visao_computacional %}checked{% endif %}>&nbsp;
+            {% if projeto.proposta.areas_de_interesse.visao_computacional %}checked{% endif %}>&nbsp;
         </td>
         <td>Visão Computacional</td>
     </tr>      
     <tr><td>&nbsp;<input type="checkbox" name="selection" value="computacao_de_alto_desempenho" 
-            {% if projeto.areas_de_interesse.computacao_de_alto_desempenho %}checked{% endif %}>&nbsp;
+            {% if projeto.proposta.areas_de_interesse.computacao_de_alto_desempenho %}checked{% endif %}>&nbsp;
         </td>
         <td>Computação de Alto Desempenho</td>
     </tr>
     <tr><td>&nbsp;<input type="checkbox" name="selection" value="robotica" 
-            {% if projeto.areas_de_interesse.robotica %}checked{% endif %}>&nbsp;
+            {% if projeto.proposta.areas_de_interesse.robotica %}checked{% endif %}>&nbsp;
         </td>
         <td>Robótica</td>
     </tr>
     <tr><td>&nbsp;<input type="checkbox" name="selection" value="realidade_virtual_aumentada" 
-            {% if projeto.areas_de_interesse.realidade_virtual_aumentada %}checked{% endif %}>&nbsp;
+            {% if projeto.proposta.areas_de_interesse.realidade_virtual_aumentada %}checked{% endif %}>&nbsp;
         </td>
         <td>Realidade Virtual/Aumentada</td>
     </tr>
     <tr><td>&nbsp;<input type="checkbox" name="selection" value="protocolos_de_comunicacao" 
-            {% if projeto.areas_de_interesse.protocolos_de_comunicacao %}checked{% endif %}>&nbsp;
+            {% if projeto.proposta.areas_de_interesse.protocolos_de_comunicacao %}checked{% endif %}>&nbsp;
         </td>
         <td>Protocolos de Comunicação</td>
     </tr>      
     <tr><td>&nbsp;<input type="checkbox" name="selection" value="eficiencia_energetica" 
-            {% if projeto.areas_de_interesse.eficiencia_energetica %}checked{% endif %}>&nbsp;
+            {% if projeto.proposta.areas_de_interesse.eficiencia_energetica %}checked{% endif %}>&nbsp;
         </td>
         <td>Eficiência Energética</td>
     </tr>
     <tr><td>&nbsp;<input type="checkbox" name="selection" value="administracao_economia_financas" 
-            {% if projeto.areas_de_interesse.administracao_economia_financas %}checked{% endif %}>&nbsp;
+            {% if projeto.proposta.areas_de_interesse.administracao_economia_financas %}checked{% endif %}>&nbsp;
         </td>
         <td>Administração, Economia e Finanças</td>
     </tr>
     </table>
+    {% if projeto.proposta.areas_de_interesse.outras %}
+      Outras: {{projeto.proposta.areas_de_interesse.outras}}
+    {% endif %}
   {% endif %}
 
   <p>&nbsp;</p>
-
-
-
-
 
 {% endblock %}

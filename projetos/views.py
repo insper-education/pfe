@@ -2639,33 +2639,35 @@ def certificados_submetidos(request):
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
-def migra_propostas(request):
+def migracao(request):
     """Migra projetos para propostas (temporário)."""
     projetos = Projeto.objects.all()
     for projeto in projetos:
         proposta = Proposta.create()
+        proposta.organizacao = projeto.empresa
         #proposta.nome
         #proposta.email
         proposta.website = projeto.empresa.website
-        proposta.organizacao = projeto.empresa
+        proposta.nome_organizacao = projeto.empresa
         proposta.endereco = projeto.empresa.endereco
         #proposta.contatos_tecnicos
         #proposta.contatos_administrativos
         proposta.descricao_organizacao = projeto.empresa.informacoes
         proposta.departamento = projeto.departamento
         proposta.titulo = projeto.titulo
+        proposta.anexo = projeto.anexo
 
         proposta.descricao = projeto.descricao
         proposta.expectativas = projeto.expectativas
         proposta.recursos = projeto.recursos
         #proposta.observacoes
 
-        proposta.areas_de_interesse = areas_de_interesse
+        proposta.areas_de_interesse = projeto.areas_de_interesse
 
         proposta.ano = projeto.ano
         proposta.semestre = projeto.semestre
 
-        proposta.perfil_aluno1_computacao = projeto.perfil_aluno1_computacao 
+        proposta.perfil_aluno1_computacao = projeto.perfil_aluno1_computacao
         proposta.perfil_aluno1_mecatronica = projeto.perfil_aluno1_mecatronica
         proposta.perfil_aluno1_mecanica = projeto.perfil_aluno1_mecanica
         proposta.perfil_aluno2_computacao = projeto.perfil_aluno2_computacao
@@ -2677,6 +2679,13 @@ def migra_propostas(request):
         proposta.perfil_aluno4_computacao = projeto.perfil_aluno4_computacao
         proposta.perfil_aluno4_mecatronica = projeto.perfil_aluno4_mecatronica
         proposta.perfil_aluno4_mecanica = projeto.perfil_aluno4_mecanica
+
+        proposta.disponivel = projeto.disponivel
+        proposta.autorizado = projeto.autorizado
+
+        alunos_pfe = Aluno.objects.filter(alocacao__projeto=projeto)
+        if alunos_pfe:
+            proposta.fechada = True
 
         proposta.save()
 

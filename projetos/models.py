@@ -137,7 +137,6 @@ class Projeto(models.Model):
     proposta = models.ForeignKey('Proposta', null=True, blank=True, on_delete=models.SET_NULL,
                                  help_text='Proposta original do projeto')
 
-
     class Meta:
         ordering = ['empresa', 'ano', 'semestre']
         permissions = (("altera_empresa", "Empresa altera valores"),
@@ -210,7 +209,8 @@ class Proposta(models.Model):
     observacoes = models.TextField("Outras Observações", max_length=1000, null=True, blank=True,
                                    help_text='Outras Observações')
 
-
+    anexo = models.FileField("Anexo", upload_to=get_upload_path, null=True, blank=True,
+                             help_text='Documento PDF')
 
     # Preenchidos automaticamente
     ano = models.PositiveIntegerField("Ano",
@@ -233,6 +233,7 @@ class Proposta(models.Model):
                                    on_delete=models.SET_NULL,
                                    help_text='Quem autorizou a ser publicado para os alunos')
 
+    fechada = models.BooleanField(default=False, help_text='Se a proposta virou um projeto')
 
     perfil_aluno1_computacao = \
         models.BooleanField(default=False, help_text='Perfil desejado de computação para aluno 1')

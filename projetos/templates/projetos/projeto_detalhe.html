@@ -16,20 +16,24 @@
     <h3>Título: {{projeto.titulo}}</h3>
   {% endif %}
 
-  <strong>Descrição:</strong> {{ projeto.descricao|linebreaks }}
+  <strong>Descrição:</strong> {{ projeto.proposta.descricao|linebreaks }}
   {% if projeto.expectativas %}
-    <br><strong>Expectativas de resultados/entregas :</strong> {{ projeto.expectativas|linebreaks }}
+    <br><strong>Expectativas de resultados/entregas :</strong> {{ projeto.proposta.expectativas|linebreaks }}
   {% endif %}  
+
+  {% comment %}
   {% if projeto.areas %}
     <br><strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ projeto.areas|linebreaks }}
   {% endif %}
+  {% endcomment %}
+
   {% if projeto.recursos %}
-    <br><strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ projeto.recursos|linebreaks }}
+    <br><strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ projeto.proposta.recursos|linebreaks }}
   {% endif %}
   
   {% if projeto.anexo %}
     <br><strong>Anexo :</strong>
-    <a class="text-success" href="../..{{MEDIA_URL}}{{projeto.anexo}}">{{projeto.anexo}}</a>
+    <a class="text-success" href="../..{{MEDIA_URL}}{{projeto.anexo}}">{{projeto.proposta.anexo}}</a>
   {% endif %}
   <hr>
   <h3>Organização Parceira: {{ projeto.empresa.nome_empresa }}</h3>

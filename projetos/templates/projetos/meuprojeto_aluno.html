@@ -32,10 +32,12 @@
         {% else %}
             <h3>Título: {{alocado.projeto.titulo}}</h3>
         {% endif %}
-        <strong>Descrição:</strong> {{ alocado.projeto.descricao|linebreaks }}<br>
-        <strong>Expectativas de resultados/entregas :</strong> {{ alocado.projeto.expectativas|linebreaks }}<br>
-        <strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ alocado.projeto.areas|linebreaks }}<br>
-        <strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ alocado.projeto.recursos|linebreaks }}<br>
+        <strong>Descrição:</strong> {{ alocado.projeto.proposta.descricao|linebreaks }}<br>
+        <strong>Expectativas de resultados/entregas :</strong> {{ alocado.projeto.proposta.expectativas|linebreaks }}<br>
+        {% comment %}
+          <strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ alocado.projeto.areas|linebreaks }}<br>
+        {% endcomment %}
+        <strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ alocado.projeto.proposta.recursos|linebreaks }}<br>
         <hr>
 
         <h3>Empresa: {{ alocado.projeto.empresa.nome_empresa }}</h3>

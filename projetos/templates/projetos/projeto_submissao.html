@@ -25,64 +25,64 @@
 
   <form action="" method="post"> {% csrf_token %}  
 
-    Nome: <input type="text" size="75" name="nome" value="{{user.get_full_name}}" required><br><br>
-    e-mail: <input type="email" size="75" name="email" value="{{user.email}}" required><br><br>
+    <label for="nome">Nome:</label><input type="text" size="75" id="nome" name="nome" value="{{user.get_full_name}}" required><br><br>
+    <label for="email">e-mail:</label><input type="email" size="75" id="email" name="email" value="{{user.email}}" required><br><br>
 
-    Nome da Instituição/Empresa<br>
+    <label for="organizacao">Nome da Instituição/Empresa<br>
     <small>sigla e nome comercial/fantasia se houver (aqui não é necessário indicar a Razão Social)</small>
-    <br>
-    <textarea name="organizacao" rows="1" cols="80" maxlength="100" required>{% if parceiro %}{{parceiro.organizacao}}{% endif %}</textarea>
+    </label><br>
+    <textarea id="organizacao" name="organizacao" rows="1" cols="80" maxlength="100" required>{% if parceiro %}{{parceiro.organizacao}}{% endif %}</textarea>
     <br><br>
 
-    website: <input type="text" size="73" name="website" value="{{parceiro.organizacao.website}}" placeholder="https://www.insper.edu.br" pattern="*" required><br><br>
+    <label for="website">website:</label><input type="text" size="73" id="website" name="website" value="{{parceiro.organizacao.website}}" placeholder="https://www.insper.edu.br" pattern="*" required><br><br>
 
-    Endereço<br>
+    <label for="endereco">Endereço<br>
     <small>onde os alunos deverão ir para desenvolver o projeto</small>
-    <br>
-    <textarea name="endereco" rows="3" cols="80" maxlength="1000" required>{% if parceiro %}{{parceiro.organizacao.endereco}}{% endif %}</textarea>
+    </label><br>
+    <textarea id="endereco" name="endereco" rows="3" cols="80" maxlength="1000" required>{% if parceiro %}{{parceiro.organizacao.endereco}}{% endif %}</textarea>
     <br><br>
 
-    Contatos Técnicos<br>  
+    <label for="contatos_tecnicos">Contatos Técnicos<br>  
     <small>nome/e-mail/telefone de quem os alunos e professores orientadores irão tratar do desenvolvimento do projeto</small>
-    <br>
-    <textarea name="contatos_tecnicos" rows="4" cols="80" maxlength="1000" required>{{contatos_tecnicos}}</textarea>
+    </label><br>
+    <textarea id="contatos_tecnicos" name="contatos_tecnicos" rows="4" cols="80" maxlength="1000" required>{{contatos_tecnicos}}</textarea>
     <br><br>
 
-    Contatos Administrativos<br>     
+    <label for="contatos_adm">Contatos Administrativos<br>     
     <small>nome/e-mail/telefone, com quem devemos resolver questões contratuais e RH</small>
-    <br>
-    <textarea name="contatos_adm" rows="4" cols="80" maxlength="1000" required>{{contatos_adm}}</textarea>
+    </label><br>
+    <textarea id="contatos_adm" name="contatos_adm" rows="4" cols="80" maxlength="1000" required>{{contatos_adm}}</textarea>
     <br><br>
 
-    Informações sobre a instituição/empresa<br>
+    <label for="info_organizacao">Informações sobre a instituição/empresa<br>
     <small>descreva a instituição/empresa para os alunos entenderem o que ela faz (opcional)</small>
-    <br>
-    <textarea name="info_organizacao" rows="4" cols="80" maxlength="1000">{{info_organizacao}}</textarea>
+    </label><br>
+    <textarea id="info_organizacao" name="info_organizacao" rows="4" cols="80" maxlength="1000">{% if parceiro.organizacao.informacoes %}{{ parceiro.organizacao.informacoes|linebreaks }}{% endif %}</textarea>
     <br><br>
 
-    Informações sobre a departamento<br>
+    <label for="info_departamento">Informações sobre a departamento<br>
     <small>descreva o departamento/área para os alunos entenderem o que ele faz (opcional)</small>
-    <br>
-    <textarea name="info_departamento" rows="4" cols="80" maxlength="1000">{{info_departamento}}</textarea>
+    </label><br>
+    <textarea id="info_departamento" name="info_departamento" rows="4" cols="80" maxlength="1000">{{info_departamento}}</textarea>
     <br>
     <hr>
 
-    Título provisório do projeto<br>
+    <label for="titulo">Título provisório do projeto<br>
     <small>um título para ser apresentado aos alunos</small>
-    <br>
-    <input type="text" size="80" name="titulo" value="{{titulo}}" required>
+    </label><br>
+    <input type="text" size="80" id="titulo" name="titulo" value="{{titulo}}" required>
     <br><br>
 
-    Descrição do Projeto<br>
+    <label for="desc_projeto">Descrição do Projeto<br>
     <small>para discussão entre professores e que será passada para os alunos</small>
-    <br>
-    <textarea name="desc_projeto" rows="4" cols="80" maxlength="1000" required>{{desc_projeto}}</textarea>
+    </label><br>
+    <textarea id="desc_projeto" name="desc_projeto" rows="4" cols="80" maxlength="1000" required>{{desc_projeto}}</textarea>
     <br><br>
 
-    Expectativas de resultados/entregas<br>
+    <label for="expectativas">Expectativas de resultados/entregas<br>
     <small>exemplo: estudos, validações, relatórios, protótipos, testes</small>
-    <br>
-    <textarea name="expectativas" rows="4" cols="80" maxlength="1000" required>{{expectativas}}</textarea>
+    </label><br>
+    <textarea id="expectativas" name="expectativas" rows="4" cols="80" maxlength="1000" required>{{expectativas}}</textarea>
     <br><br>
 
     Áreas/Habilidades envolvidas no projeto<br>
@@ -90,16 +90,16 @@
     <br>
     <br>
 
-    Recursos a serem disponibilizados aos alunos<br>
+    <label for="recursos">Recursos a serem disponibilizados aos alunos<br>
     <small>algo será fornecido para os alunos? ex: kits de desenvolvimento, matérias primas, acesso a infra de cloud. (opcional)</small>
-    <br>
-    <textarea name="recursos" rows="4" cols="80" maxlength="1000">{{recursos}}</textarea>
+    </label><br>
+    <textarea id="recursos" name="recursos" rows="4" cols="80" maxlength="1000">{{recursos}}</textarea>
     <br><br>
 
-    Outras observações que considere relevante para os alunos<br>
+    <label for="observacoes">Outras observações que considere relevante para os alunos<br>
     <small>caso desejar apresentar alguma informação adicional aos alunos (opcional)</small>
-    <br>
-    <textarea name="observacoes" rows="4" cols="80" maxlength="1000">{{observacoes}}</textarea>
+    </label><br>
+    <textarea id="observacoes" name="observacoes" rows="4" cols="80" maxlength="1000">{{observacoes}}</textarea>
     <br><br>
 
     Obs.: Ao submeter o projeto, deve ficar claro que a intenção do Projeto Final de Engenharia é 

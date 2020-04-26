@@ -54,6 +54,7 @@ urlpatterns = [
     path('mapeamento/', views.mapeamento, name='mapeamento'),
     path('mapeamento_estudante_projeto/<str:anosemestre>', views.mapeamento_estudante_projeto, name='mapeamento_estudante_projeto'),
     path('meuprojeto/', views.meuprojeto, name='meuprojeto'),
+    path('migracao/', views.migracao, name='migracao'),
     path('minhas_bancas/', views.minhas_bancas, name='minhas_bancas'),
     path('mostra_feedback/<int:feedback_id>', views.mostra_feedback, name='mostra_feedback'),
     path('organizacoes_lista/', views.organizacoes_lista, name='organizacoes_lista'),

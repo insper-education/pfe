@@ -18,7 +18,6 @@
     
     <h3>Projetos Disponíveis - PFE {{configuracao.ano}}.{{configuracao.semestre}}</h3>
     <br>
-    
 
     {% if projetos %}
 
@@ -36,10 +35,12 @@
             <h4>Título: {{projeto.titulo}}</h4><br>
           {% endif %}
 
-          <strong>Descrição:</strong> {{ projeto.descricao|linebreaks }}
-          <strong>Expectativas de resultados/entregas :</strong> {{ projeto.expectativas|linebreaks }}
-          <strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ projeto.areas|linebreaks }}
-          <strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ projeto.recursos|linebreaks }}
+          <strong>Descrição:</strong> {{ projeto.proposta.descricao|linebreaks }}
+          <strong>Expectativas de resultados/entregas :</strong> {{ projeto.proposta.expectativas|linebreaks }}
+          {% comment %}
+            <strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ projeto.areas|linebreaks }}
+          {% endcomment %}
+          <strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ projeto.proposta.recursos|linebreaks }}
           <hr>
           <h5>Empresa: {{ projeto.empresa.nome_empresa }}</h5>
           <strong>endereço:</strong> {{ projeto.empresa.endereco|linebreaks }}

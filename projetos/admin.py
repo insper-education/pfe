@@ -181,7 +181,7 @@ class ProjetoAdmin(admin.ModelAdmin):
 @admin.register(Proposta)
 class PropostaAdmin(admin.ModelAdmin):
     """Exibição no sistema de administração do Django para Proposta."""
-    list_display = ('titulo', 'nome', 'organizacao', 'ano', 'semestre',)
+    list_display = ('titulo', 'fechada', 'nome', 'organizacao', 'ano', 'semestre',)
     list_filter = ('ano', 'semestre', )
     fieldsets = \
         ((None,
@@ -198,6 +198,7 @@ class PropostaAdmin(admin.ModelAdmin):
             'perfil_aluno2_computacao', 'perfil_aluno2_mecanica', 'perfil_aluno2_mecatronica',
             'perfil_aluno3_computacao', 'perfil_aluno3_mecanica', 'perfil_aluno3_mecatronica',
             'perfil_aluno4_computacao', 'perfil_aluno4_mecanica', 'perfil_aluno4_mecatronica',
+            'anexo',
            )
           }),
          ('Origem', {
