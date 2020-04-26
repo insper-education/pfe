@@ -108,9 +108,9 @@
   <br>
 
   Todos divididos por projeto (
-  Estudantes<input class="estudantes" type="checkbox" checked>&nbsp;
-  Orientador<input class="orientador" type="checkbox" checked>&nbsp;
-  Parceiros<input class="parceiros" type="checkbox" checked>&nbsp;
+  <label for="estudantes">Estudantes</label><input id="estudantes" class="estudantes" type="checkbox" checked>&nbsp;
+  <label for="orientador">Orientador</label><input id="orientador" class="orientador" type="checkbox" checked>&nbsp;
+  <label for="parceiros">Parceiros</label><input id="parceiros" class="parceiros" type="checkbox" checked>&nbsp;
   ):
   <table>
     {% for semestre,projetos in email_p_semestre %}

@@ -75,7 +75,7 @@
                   {% endif %}
                 ">
                 {% comment %}{{ configuracao.t0|plus_days:a.delta  }}{% endcomment %}
-                {{a.get_data}}
+                <label for="aviso{{a.id}}">{{a.get_data}}</label>
               </td>
               <td>
                 {% if a.coordenacao %}

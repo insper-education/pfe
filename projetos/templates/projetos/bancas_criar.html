@@ -49,23 +49,23 @@
 
       <br>
       Tipo de banca:<br>
-      &nbsp;&nbsp;<input id="tipo" type="radio" name="tipo" value="0"> Final<br>
-      &nbsp;&nbsp;<input id="tipo" type="radio" name="tipo" value="1"> Intermediária<br>
+      &nbsp;&nbsp;<input id="tipo0" type="radio" name="tipo" value="0"> <label for="tipo0">Final</label><br>
+      &nbsp;&nbsp;<input id="tipo1" type="radio" name="tipo" value="1"> <label for="tipo1">Intermediária</label><br>
 
       <br>
       <div >
-        Inicio: <input id="inicio" type = "datetime-local" name="inicio">
+        <label for="inicio">Inicio:</label> <input id="inicio" type = "datetime-local" name="inicio">
         &nbsp;&nbsp;&nbsp;&nbsp;
-        Fim: <input id="fim" type = "datetime-local" name="fim">
+        <label for="fim">Fim:</label> <input id="fim" type = "datetime-local" name="fim">
       </div><br>
 
-      Local: <input name="local" type="text" size="48"/><br>
+      <label for="local">Local:</label> <input name="local" type="text" size="48"/><br>
       <br>
 
-      Link de Vídeo-conferência: <input name="link" type="text" size="40"/><br>
+      <label for="link">Link de Vídeo-conferência:</label> <input id="link" name="link" type="text" size="40"/><br>
       <br>
 
-      Membro 1 da Banca:
+      <label for="membro1">Membro 1 da Banca:</label>
       <select name="membro1" id="membro1" title="Selecione membro da banca">
           <option disabled selected value> -- selecione um membro da banca -- </option>
           {% for professor in pessoas %}
@@ -75,7 +75,7 @@
           {% endfor %}
       </select><br>
 
-      Membro 2 da Banca:
+      <label for="membro2">Membro 2 da Banca:</label>
       <select name="membro2" id="membro2" title="Selecione membro da banca">
           <option disabled selected value> -- selecione um membro da banca -- </option>
           {% for professor in pessoas %}
@@ -85,7 +85,7 @@
           {% endfor %}
       </select><br>
 
-      Membro 3 da Banca:
+      <label for="membro3">Membro 3 da Banca:</label>
       <select name="membro3" id="membro3" title="Selecione membro da banca">
           <option disabled selected value> -- selecione um membro da banca -- </option>
           {% for professor in pessoas %}
