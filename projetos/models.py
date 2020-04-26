@@ -330,6 +330,8 @@ class Recomendada(models.Model):
                                    help_text='disciplina recomendada para o projeto')
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='projeto que recomenda a disciplina')
+    proposta = models.ForeignKey(Proposta, null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text='proposta que recomenda a disciplina')
     def __str__(self):
         return self.projeto.titulo+" >>> "+self.disciplina.nome
 

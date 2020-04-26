@@ -19,7 +19,7 @@
 {% block content %}
   <h3>Organizações Parceiras</h3>
   <label for="filter">Filtrar:</label>
-  <select id="cxi" class="filter" data-tableId="OrganizacoesTable">
+  <select id="filter" class="filter" data-tableId="OrganizacoesTable">
     <option value="todas">todas</option>
     <option value="contactadas" {% if filtro == "todas contactadas" %}selected="selected"{% endif %}>todas contactadas</option>
     <option value="0" {% if filtro == "sem retorno" %}selected="selected"{% endif %}>sem retorno</option>

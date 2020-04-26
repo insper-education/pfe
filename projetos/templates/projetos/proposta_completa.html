@@ -1,0 +1,317 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 24 de Abril de 2020
+{% endcomment %}
+
+{% block head %}
+  <style>
+    .myButton {
+      box-shadow:inset 0px 1px 0px 0px #f9eca0;
+      background:linear-gradient(to bottom, #f0c911 5%, #f2ab1e 100%);
+      background-color:#f0c911;
+      border-radius:8px;
+      border:2px solid #e65f44;
+      display:inline-block;
+      cursor:pointer;
+      color:#c92200;
+      font-family:Arial;
+      font-size:15px;
+      font-weight:bold;
+      padding:4px 22px;
+      text-decoration:none;
+      text-shadow:0px 1px 0px #ded17c;
+    }
+    .myButton:hover {
+      background:linear-gradient(to bottom, #f2ab1e 5%, #f0c911 100%);
+      background-color:#f2ab1e;
+    }
+    .myButton:active {
+      position:relative;
+      top:1px;
+    }
+  </style>
+
+{% endblock %}
+
+{% block content %}
+  {% if proposta.titulo %}
+    <h3>Título: {{proposta.titulo}}</h3>
+  {% endif %}
+  <strong>Semestre:</strong> {{proposta.ano}}.{{proposta.semestre}}<br>
+  {% comment %}
+    {% if projeto.avancado %}
+      <strong style="color:red"><u>PFE Avançado</u></strong><br>
+    {% endif %}
+  {% endcomment %}
+
+  <br>
+
+  <strong>Descrição:</strong> {{ proposta.descricao|linebreaks }}
+  {% if proposta.expectativas %}
+    <br><strong>Expectativas de resultados/entregas :</strong> {{ proposta.expectativas|linebreaks }}
+  {% endif %}
+  {% comment %}
+    {% if projeto.areas %}
+      <br><strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ projeto.areas|linebreaks }}
+    {% endif %}
+  {% endcomment %}
+  {% if proposta.recursos %}
+    <br><strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ proposta.recursos|linebreaks }}
+  {% endif %}
+  {% if proposta.anexo %}
+    <br><strong>Anexo :</strong>
+    <a class="text-success" href="../..{{MEDIA_URL}}{{proposta.anexo}}">{{proposta.anexo}}</a>
+  {% endif %}
+  <hr>
+
+  <h3>Organização Parceira: <a href="{% url 'organizacao_completo' proposta.organizacao.login %}">{{ proposta.organizacao.nome_empresa }}</a></h3>
+  <p><strong>endereço:</strong> <a class="tabulado" href="http://maps.google.com/maps?q={{proposta.organizacao.endereco}}">{{ proposta.organizacao.endereco|linebreaks }}</a></p>
+  {% if proposta.organizacao.website %}
+    <p><strong>website:</strong>  <a class="tabulado" href="{{ proposta.organizacao.website }}"> {{ proposta.organizacao.website }} </a></p>
+  {% endif %} 
+  {% if proposta.organizacao.informacoes %}
+    <strong>Informações sobre a empresa :</strong> {{ proposta.organizacao.informacoes|linebreaks }}
+  {% endif %}
+  {% if proposta.departamento %}
+    <strong>Informações sobre o departamento na empresa :</strong> {{ proposta.departamento|linebreaks }}
+  {% endif %}
+
+  <strong>Submetido por:</strong><br>
+  {{proposta.nome}}<br>
+
+  <br>
+  <strong>autorizado para publicação para os alunos por:</strong>
+  {% if proposta.autorizado %}
+    <a href="{% url 'professor_detail' proposta.autorizado.id %}">
+      {{proposta.autorizado.user.get_full_name}}
+    </a>
+  {% else %}
+    &lt;&lt;aguardando autorização&gt;&gt;
+  {% endif %}
+
+  <hr>
+  <h3>Aluno(s) Aplicando para a Proposta</h3>
+  {% for opcao in proposta.opcao_set.all %}
+    {% if proposta.ano == opcao.aluno.anoPFE and proposta.semestre == opcao.aluno.semestrePFE %}
+    <a href="{% url 'aluno_detail' opcao.aluno.id %}">
+      <p class="{% if opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}">
+        {{opcao.aluno.user.get_full_name}}
+        [{{ opcao.aluno.get_curso_display }}]
+        &nbsp;=>&nbsp;opção #{{opcao.prioridade}}
+        &nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} }
+        &nbsp;CR={{opcao.aluno.cr}}
+      </p>
+    </a>
+    {% endif %}
+  {% endfor %}
+  <p style="line-height:2px">
+    --------------------------------------------------------------------------------------
+  </p>
+  {% for opcao in proposta.opcao_set.all %}
+    {% if proposta.ano != opcao.aluno.anoPFE or proposta.semestre != opcao.aluno.semestrePFE %}
+    <a href="{% url 'aluno_detail' opcao.aluno.id %}">
+      <p class="red-bold">
+        {{opcao.aluno.user.get_full_name}}
+        [{{ opcao.aluno.get_curso_display }}]
+        &nbsp;=>&nbsp;opção #{{opcao.prioridade}}
+        &nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} }
+        &nbsp;CR={{opcao.aluno.cr}}
+      </p>
+    </a>
+    {% endif %}
+  {% endfor %}
+
+  <br><hr>
+  <h3>Perfil de Alunos Desejados para Proposta de Projeto</h3>
+  <table>
+    <tr>
+        <th style="text-align:center" >
+            Aluno
+        </th>
+        <th style="text-align:center" >
+            Computação
+        </th>
+        <th style="text-align:center" >
+            Mecânica
+        </th>
+        <th style="text-align:center" >
+            Mecatrônica
+        </th>
+    </tr>
+    <tr> <!-- NAO EH A FORMA MAIS ELEGANTE MAS FUNCIONA POR ENQUANTO -->
+      <td>Aluno 1</td>
+      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
+        {% if proposta.perfil_aluno1_computacao %}checked{% endif %}>&nbsp;</td>
+      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
+        {% if proposta.perfil_aluno1_mecanica %}checked{% endif %}>&nbsp;</td>
+      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
+        {% if proposta.perfil_aluno1_mecatronica %}checked{% endif %}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Aluno 2</td>
+      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
+        {% if proposta.perfil_aluno2_computacao %}checked{% endif %}>&nbsp;</td>
+      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
+        {% if proposta.perfil_aluno2_mecanica %}checked{% endif %}>&nbsp;</td>
+      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
+        {% if proposta.perfil_aluno2_mecatronica %}checked{% endif %}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Aluno 3</td>
+      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
+        {% if proposta.perfil_aluno3_computacao %}checked{% endif %}>&nbsp;</td>
+      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
+        {% if proposta.perfil_aluno3_mecanica %}checked{% endif %}>&nbsp;</td>
+      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
+        {% if proposta.perfil_aluno3_mecatronica %}checked{% endif %}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Aluno 4</td>
+      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
+        {% if proposta.perfil_aluno4_computacao %}checked{% endif %}>&nbsp;</td>
+      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
+        {% if proposta.perfil_aluno4_mecanica %}checked{% endif %}>&nbsp;</td>
+      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
+        {% if proposta.perfil_aluno4_mecatronica %}checked{% endif %}>&nbsp;</td>
+    </tr>
+  </table>
+
+  {% if proposta.recomendada_set.all %}
+  <br><hr>
+  <h3>Disciplina(s) Recomendada(s)</h3>
+  <table>
+    <tr>
+      <th>
+        Disciplina
+      </th>
+    </tr>
+    {% for rec in proposta.recomendada_set.all %}
+    <tr><td>
+        {{rec.disciplina.nome}}
+    </td></tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+
+
+
+  {% if proposta.areas_de_interesse %}
+    <br><hr>
+    <h3>Áreas de Interesse</h3>
+    <table>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="inovacao_social" 
+            {% if proposta.areas_de_interesse.inovacao_social %}checked{% endif %}>&nbsp;
+        </td>
+        <td>Inovação Social</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="ciencia_dos_dados" 
+            {% if proposta.areas_de_interesse.ciencia_dos_dados %}checked{% endif %}>&nbsp;
+        </td>
+        <td>Ciência dos Dados</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="modelagem_3D" 
+            {% if proposta.areas_de_interesse.modelagem_3D %}checked{% endif %}>&nbsp;
+        </td>
+        <td>Modelagem 3D</td>
+    </tr>      
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="manufatura" 
+            {% if proposta.areas_de_interesse.manufatura %}checked{% endif %}>&nbsp;
+        </td>
+        <td>Manufatura</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="resistencia_dos_materiais" 
+            {% if proposta.areas_de_interesse.resistencia_dos_materiais %}checked{% endif %}>&nbsp;
+        </td>
+        <td>Resistência dos Materiais</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="modelagem_de_sistemas" 
+            {% if proposta.areas_de_interesse.modelagem_de_sistemas %}checked{% endif %}>&nbsp;
+        </td>
+        <td>Modelagem de Sistemas</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="controle_e_automacao" 
+            {% if proposta.areas_de_interesse.controle_e_automacao %}checked{% endif %}>&nbsp;
+        </td>
+        <td>Controle e Automação</td>
+    </tr>      
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="termodinamica" 
+            {% if proposta.areas_de_interesse.termodinamica %}checked{% endif %}>&nbsp;
+        </td>
+        <td>Termodinâmica</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="fluidodinamica" 
+            {% if proposta.areas_de_interesse.fluidodinamica %}checked{% endif %}>&nbsp;
+        </td>
+        <td>Fluidodinâmica</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="eletronica_digital" 
+            {% if proposta.areas_de_interesse.eletronica_digital %}checked{% endif %}>&nbsp;
+        </td>
+        <td>Eletrônica Digital</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="programacao" 
+            {% if proposta.areas_de_interesse.programacao %}checked{% endif %}>&nbsp;
+        </td>
+        <td>Programação</td>
+    </tr>      
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="inteligencia_artificial" 
+            {% if proposta.areas_de_interesse.inteligencia_artificial %}checked{% endif %}>&nbsp;
+        </td>
+        <td>Inteligência Artificial</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="computacao_em_nuvem" 
+            {% if proposta.areas_de_interesse.computacao_em_nuvem %}checked{% endif %}>&nbsp;
+        </td>
+        <td>Computação em Nuvem</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="banco_de_dados" 
+            {% if proposta.areas_de_interesse.banco_de_dados %}checked{% endif %}>&nbsp;
+        </td>
+        <td>Banco de Dados</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="visao_computacional" 
+            {% if proposta.areas_de_interesse.visao_computacional %}checked{% endif %}>&nbsp;
+        </td>
+        <td>Visão Computacional</td>
+    </tr>      
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="computacao_de_alto_desempenho" 
+            {% if proposta.areas_de_interesse.computacao_de_alto_desempenho %}checked{% endif %}>&nbsp;
+        </td>
+        <td>Computação de Alto Desempenho</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="robotica" 
+            {% if proposta.areas_de_interesse.robotica %}checked{% endif %}>&nbsp;
+        </td>
+        <td>Robótica</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="realidade_virtual_aumentada" 
+            {% if proposta.areas_de_interesse.realidade_virtual_aumentada %}checked{% endif %}>&nbsp;
+        </td>
+        <td>Realidade Virtual/Aumentada</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="protocolos_de_comunicacao" 
+            {% if proposta.areas_de_interesse.protocolos_de_comunicacao %}checked{% endif %}>&nbsp;
+        </td>
+        <td>Protocolos de Comunicação</td>
+    </tr>      
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="eficiencia_energetica" 
+            {% if proposta.areas_de_interesse.eficiencia_energetica %}checked{% endif %}>&nbsp;
+        </td>
+        <td>Eficiência Energética</td>
+    </tr>
+    <tr><td>&nbsp;<input type="checkbox" name="selection" value="administracao_economia_financas" 
+            {% if proposta.areas_de_interesse.administracao_economia_financas %}checked{% endif %}>&nbsp;
+        </td>
+        <td>Administração, Economia e Finanças</td>
+    </tr>
+    </table>
+    {% if proposta.areas_de_interesse.outras %}
+      Outras: {{proposta.areas_de_interesse.outras}}
+    {% endif %}
+  {% endif %}
+
+  <p>&nbsp;</p>
+
+{% endblock %}

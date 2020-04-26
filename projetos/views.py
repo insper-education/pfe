@@ -489,6 +489,25 @@ def completo(request, primakey):
     }
     return render(request, 'projetos/projeto_completo.html', context=context)
 
+@login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
+def proposta_completa(request, primakey):
+    """Mostra um projeto por completo."""
+    configuracao = Configuracao.objects.all().first()
+    proposta = Proposta.objects.get(pk=primakey)
+    opcoes = Opcao.objects.filter(proposta=proposta)
+    #conexoes = Conexao.objects.filter(projeto=proposta)
+    #coorientadores = Coorientador.objects.filter(projeto=projeto)
+    context = {
+        'configuracao': configuracao,
+        'proposta': proposta,
+        'opcoes': opcoes,
+        #'conexoes': conexoes,
+        #'coorientadores': coorientadores,
+        'MEDIA_URL' : settings.MEDIA_URL,
+    }
+    return render(request, 'projetos/proposta_completa.html', context=context)
+
 
 def get_areas(entrada):
     """Retorna dicionário com as áreas de interesse da lista de entrada."""
@@ -1462,6 +1481,38 @@ def projetos_lista(request, periodo):
         'configuracao' : configuracao,
     }
     return render(request, 'projetos/projetos_lista.html', context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def propostas_lista(request, periodo):
+    """Lista todas as propostas de projetos."""
+    configuracao = Configuracao.objects.all().first()
+    propostas = Proposta.objects.all().order_by("ano", "semestre", "organizacao", "titulo",)
+    if periodo == "todos":
+        pass
+    if periodo == "antigos":
+        if configuracao.semestre == 1:
+            propostas = propostas.filter(ano__lt=configuracao.ano)
+        else:
+            propostas = propostas.filter(ano__lte=configuracao.ano).\
+                                       exclude(ano=configuracao.ano, semestre=2)
+    elif periodo == "atuais":
+        propostas = propostas.filter(ano=configuracao.ano, semestre=configuracao.semestre)
+    elif periodo == "disponiveis":
+        if configuracao.semestre == 1:
+            propostas = propostas.filter(ano__gte=configuracao.ano).\
+                                exclude(ano=configuracao.ano, semestre=1)
+        else:
+            propostas = propostas.filter(ano__gt=configuracao.ano)
+
+    context = {
+        'propostas': propostas,
+        'periodo' : periodo,
+        'configuracao' : configuracao,
+    }
+    return render(request, 'projetos/propostas_lista.html', context)
+
+
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
@@ -2641,55 +2692,18 @@ def certificados_submetidos(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def migracao(request):
     """Migra projetos para propostas (temporário)."""
-    # projetos = Projeto.objects.all()
-    # for projeto in projetos:
-    #     proposta = Proposta.create()
-    #     proposta.organizacao = projeto.empresa
-    #     #proposta.nome
-    #     #proposta.email
-    #     proposta.website = projeto.empresa.website
-    #     proposta.nome_organizacao = projeto.empresa
-    #     proposta.endereco = projeto.empresa.endereco
-    #     #proposta.contatos_tecnicos
-    #     #proposta.contatos_administrativos
-    #     proposta.descricao_organizacao = projeto.empresa.informacoes
-    #     proposta.departamento = projeto.departamento
-    #     proposta.titulo = projeto.titulo
-    #     proposta.anexo = projeto.anexo
+    opcoes = Opcao.objects.all()
+    for opcao in opcoes:
 
-    #     proposta.descricao = projeto.descricao
-    #     proposta.expectativas = projeto.expectativas
-    #     proposta.recursos = projeto.recursos
-    #     #proposta.observacoes
+        opcao.proposta = opcao.projeto.proposta
+        opcao.save()
 
-    #     proposta.areas_de_interesse = projeto.areas_de_interesse
+    # recs = Recomendada.objects.all()
+    # for rec in recs:
 
-    #     proposta.ano = projeto.ano
-    #     proposta.semestre = projeto.semestre
+    #     rec.proposta = rec.projeto.proposta
+    #     rec.save()
 
-    #     proposta.perfil_aluno1_computacao = projeto.perfil_aluno1_computacao
-    #     proposta.perfil_aluno1_mecatronica = projeto.perfil_aluno1_mecatronica
-    #     proposta.perfil_aluno1_mecanica = projeto.perfil_aluno1_mecanica
-    #     proposta.perfil_aluno2_computacao = projeto.perfil_aluno2_computacao
-    #     proposta.perfil_aluno2_mecatronica = projeto.perfil_aluno2_mecatronica
-    #     proposta.perfil_aluno2_mecanica = projeto.perfil_aluno2_mecanica
-    #     proposta.perfil_aluno3_computacao = projeto.perfil_aluno3_computacao
-    #     proposta.perfil_aluno3_mecatronica = projeto.perfil_aluno3_mecatronica
-    #     proposta.perfil_aluno3_mecanica = projeto.perfil_aluno3_mecanica
-    #     proposta.perfil_aluno4_computacao = projeto.perfil_aluno4_computacao
-    #     proposta.perfil_aluno4_mecatronica = projeto.perfil_aluno4_mecatronica
-    #     proposta.perfil_aluno4_mecanica = projeto.perfil_aluno4_mecanica
 
-    #     proposta.disponivel = projeto.disponivel
-    #     proposta.autorizado = projeto.autorizado
 
-    #     alunos_pfe = Aluno.objects.filter(alocacao__projeto=projeto)
-    #     if alunos_pfe:
-    #         proposta.fechada = True
-
-    #     proposta.save()
-
-    #     projeto.proposta = proposta
-    #     projeto.save()
-
-    return HttpResponse("Nada Aqui.")
+    return HttpResponse("Feito.")

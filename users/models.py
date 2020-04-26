@@ -15,7 +15,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 #from django.utils.functional import curry
 
-from projetos.models import Projeto, Empresa
+from projetos.models import Projeto, Proposta, Empresa
 
 ####   PARA PORTAR AS AREAS DE INTERESSE DE ALUNOS PARA CÁ, E USAR NO PROJETO  #####
 #areas de interesse
@@ -295,8 +295,9 @@ class Aluno(models.Model):
 
 class Opcao(models.Model):
     """Opções de Projetos pelos Alunos com suas prioridades."""
-    projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE)
-    aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
+    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.CASCADE)
+    proposta = models.ForeignKey(Proposta, null=True, blank=True, on_delete=models.SET_NULL)
+    aluno = models.ForeignKey(Aluno, null=True, blank=True, on_delete=models.CASCADE)
     #razao = models.CharField(max_length=200)
     prioridade = models.PositiveSmallIntegerField()
     class Meta:

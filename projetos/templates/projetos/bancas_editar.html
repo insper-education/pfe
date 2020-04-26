@@ -24,7 +24,7 @@
   {% if projetos %}
     <form method="post" id="criarbancasform" enctype="multipart/form-data">
       {% csrf_token %}
-      Projeto:
+      <label for="projeto">Projeto:</label>
       <select name="projeto" id="projeto" title="Selecione o projeto"
       style="width:700px;" required>
           {% for projeto in projetos %}
@@ -48,24 +48,24 @@
 
       <br>
       Tipo de banca:<br>
-      &nbsp;&nbsp;<input id="tipo" type="radio" name="tipo" value="0" {% if banca.tipo_de_banca == 0 %}checked{% endif %}> Final<br>
-      &nbsp;&nbsp;<input id="tipo" type="radio" name="tipo" value="1" {% if banca.tipo_de_banca == 1 %}checked{% endif %}> Intermediária<br>
+      &nbsp;&nbsp;<input id="tipo0" type="radio" name="tipo" value="0" {% if banca.tipo_de_banca == 0 %}checked{% endif %}> <label for="tipo0">Final</label><br>
+      &nbsp;&nbsp;<input id="tipo1" type="radio" name="tipo" value="1" {% if banca.tipo_de_banca == 1 %}checked{% endif %}>  <label for="tipo1">Intermediária</label><br>
 
       <br>
       {{banca.startDate|date:'Y-m-d\TH:i:s'}}A
       <div > 
-        Inicio: <input id="inicio" type="datetime-local" name="inicio" value="{{banca.startDate|date:'Y-m-d\TH:i:s'}}">
+        <label for="inicio">Inicio:</label> <input id="inicio" type="datetime-local" name="inicio" value="{{banca.startDate|date:'Y-m-d\TH:i:s'}}">
         &nbsp;&nbsp;&nbsp;&nbsp;
-        Fim: <input id="fim" type="datetime-local" name="fim" value="{{banca.endDate|date:'Y-m-d\TH:i:s'}}">
+        <label for="inicio">Fim:</label> <input id="fim" type="datetime-local" name="fim" value="{{banca.endDate|date:'Y-m-d\TH:i:s'}}">
       </div><br>
 
-      Local: <input name="local" type="text" size="50" value="{{banca.location}}"/><br>
+      <label for="local">Local:</label> <input id="local" name="local" type="text" size="48" value="{{banca.location}}"/><br>
       <br>
 
-      Link de Vídeo-conferência: <input name="link" type="text" size="40" value="{{banca.link}}"/><br>
+      <label for="link">Link de Vídeo-conferência:</label> <input id="link" name="link" type="text" size="40" value="{{banca.link}}"/><br>
       <br>
 
-      Membro 1 da Banca:
+      <label for="membro1">Membro 1 da Banca:</label>
       <select name="membro1" id="membro1" title="Selecione membro da banca">
           <option disabled selected value> -- selecione um membro da banca -- </option>
           {% for professor in pessoas %}
@@ -75,7 +75,7 @@
           {% endfor %}
       </select><br>
 
-      Membro 2 da Banca:
+      <label for="membro2">Membro 2 da Banca:</label>
       <select name="membro2" id="membro2" title="Selecione membro da banca">
           <option disabled selected value> -- selecione um membro da banca -- </option>
           {% for professor in pessoas %}
@@ -85,7 +85,7 @@
           {% endfor %}
       </select><br>
 
-      Membro 3 da Banca:
+      <label for="membro3">Membro 3 da Banca:</label>
       <select name="membro3" id="membro3" title="Selecione membro da banca">
           <option disabled selected value> -- selecione um membro da banca -- </option>
           {% for professor in pessoas %}

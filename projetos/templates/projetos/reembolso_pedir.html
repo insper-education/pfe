@@ -39,7 +39,7 @@ function mascara(i){
     value="{{usuario.cpf|slice:":3"}}.{{usuario.cpf|slice:"3:6"}}.{{usuario.cpf|slice:"6:9"}}-{{usuario.cpf|slice:"9:11"}}" required><br>
     <br>
 
-    Banco
+    <label for="banco">Banco</label>
     <select name="banco" id="banco" title="Selecione o banco" required>
         <option disabled selected value> -- selecione um banco -- </option>
         {% for b in bancos %}

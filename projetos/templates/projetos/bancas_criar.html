@@ -25,7 +25,7 @@
   {% if projetos %}
     <form method="post" id="criarbancasform" enctype="multipart/form-data">
       {% csrf_token %}
-      Projeto:
+      <label for="projeto">Projeto:</label>
       <select name="projeto" id="projeto" title="Selecione o projeto"
       style="width:700px;" required>
           <option disabled selected value> -- selecione um projeto -- </option>
@@ -59,7 +59,7 @@
         <label for="fim">Fim:</label> <input id="fim" type = "datetime-local" name="fim">
       </div><br>
 
-      <label for="local">Local:</label> <input name="local" type="text" size="48"/><br>
+      <label for="local">Local:</label> <input id="local" name="local" type="text" size="48"/><br>
       <br>
 
       <label for="link">Link de Vídeo-conferência:</label> <input id="link" name="link" type="text" size="40"/><br>
