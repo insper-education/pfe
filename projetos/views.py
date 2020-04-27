@@ -1243,56 +1243,30 @@ def cria_areas(request):
 
     return areas
 
-
-@login_required
-def projeto_submeter(request):
-    """Formulário de Submissão de Projetos."""
-    user = PFEUser.objects.get(pk=request.user.pk)
-    if user.tipo_de_usuario == 1: # alunos
-        #return HttpResponse("Você não está cadastrado como parceiro de uma organização")
-        mensagem = "Você não está cadastrado como parceiro de uma organização!"
-        context = {
-            "area_principal": True,
-            "mensagem": mensagem,
-        }
-        return render(request, 'generic.html', context=context)
-    #configuracao = Configuracao.objects.first()
-
-    parceiro = None
-    professor = None
-    administrador = None
-    if user.tipo_de_usuario == 3: # parceiro
-        parceiro = Parceiro.objects.get(pk=request.user.pk)
-    elif user.tipo_de_usuario == 2: # professor
-        professor = Professor.objects.get(pk=request.user.pk)
-    elif user.tipo_de_usuario == 4: # admin
-        administrador = Administrador.objects.get(pk=request.user.pk)
-
-    if request.method == 'POST':
-        #if timezone.now() > configuracao.prazo_parceiro:
-        #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
-        #return HttpResponse("Prazo para o preenchimento do formulário vencido!")
-
+def preenche_proposta(request, proposta):
+    """Preenche um proposta a partir de um request."""
+    if proposta == None:
         proposta = Proposta.create()
-        proposta.nome = request.POST.get("nome", "")
-        proposta.email = request.POST.get("email", "")
-        proposta.website = request.POST.get("website", "")
-        proposta.organizacao = request.POST.get("organizacao", "")
-        proposta.endereco = request.POST.get("endereco", "")
-        proposta.contatos_tecnicos = request.POST.get("contatos_tecnicos", "")
-        proposta.contatos_administrativos = request.POST.get("contatos_adm", "")
-        proposta.descricao_organizacao = request.POST.get("info_organizacao", "")
-        proposta.departamento = request.POST.get("info_departamento", "")
-        proposta.titulo = request.POST.get("titulo", "")
+    
+    proposta.nome = request.POST.get("nome", "")
+    proposta.email = request.POST.get("email", "")
+    proposta.website = request.POST.get("website", "")
+    proposta.nome_organizacao = request.POST.get("organizacao", "")
+    proposta.endereco = request.POST.get("endereco", "")
+    proposta.contatos_tecnicos = request.POST.get("contatos_tecnicos", "")
+    proposta.contatos_administrativos = request.POST.get("contatos_adm", "")
+    proposta.descricao_organizacao = request.POST.get("info_organizacao", "")
+    proposta.departamento = request.POST.get("info_departamento", "")
+    proposta.titulo = request.POST.get("titulo", "")
 
-        proposta.descricao = request.POST.get("desc_projeto", "")
-        proposta.expectativas = request.POST.get("expectativas", "")
-        proposta.recursos = request.POST.get("recursos", "")
-        proposta.observacoes = request.POST.get("observacoes", "")
+    proposta.descricao = request.POST.get("desc_projeto", "")
+    proposta.expectativas = request.POST.get("expectativas", "")
+    proposta.recursos = request.POST.get("recursos", "")
+    proposta.observacoes = request.POST.get("observacoes", "")
 
-        proposta.areas_de_interesse = cria_areas(request)
+    proposta.areas_de_interesse = cria_areas(request)
 
-
+    if proposta == None: # proposta nova
         configuracao = Configuracao.objects.all().first()
         ano = configuracao.ano
         semestre = configuracao.semestre
@@ -1307,12 +1281,51 @@ def projeto_submeter(request):
         proposta.ano = ano
         proposta.semestre = semestre
 
+    proposta.save()
 
-        proposta.save()
+    return proposta
+
+@login_required
+def proposta_submissao(request):
+    """Formulário de Submissão de Proposta de Projetos."""
+    user = PFEUser.objects.get(pk=request.user.pk)
+    if user.tipo_de_usuario == 1: # alunos
+        mensagem = "Você não está cadastrado como parceiro de uma organização!"
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
+
+    parceiro = None
+    professor = None
+    administrador = None
+    organizacao = ""
+    website = "http://"
+    endereco = ""
+    informacoes = ""
+    if user.tipo_de_usuario == 3: # parceiro
+        parceiro = Parceiro.objects.get(pk=request.user.pk)
+        organizacao = parceiro.organizacao
+        website = parceiro.organizacao.website
+        endereco = parceiro.organizacao.endereco
+        informacoes = parceiro.organizacao.informacoes
+    elif user.tipo_de_usuario == 2: # professor
+        professor = Professor.objects.get(pk=request.user.pk)
+    elif user.tipo_de_usuario == 4: # admin
+        administrador = Administrador.objects.get(pk=request.user.pk)
+
+    if request.method == 'POST':
+        preenche_proposta(request, None)
         return render(request, 'users/atualizado.html',)
     else:
         context = {
-            'user' : user,
+            'full_name' : user.get_full_name(),
+            'email' : user.email,
+            'organizacao' : organizacao,
+            'website' : website,
+            'endereco' : endereco,
+            'informacoes' : informacoes,
             'parceiro' : parceiro,
             'professor' : professor,
             'administrador' : administrador,
@@ -1326,8 +1339,66 @@ def projeto_submeter(request):
             'areas' : None,
             'recursos' : "",
             'observacoes' : "",
+            'edicao' : False,
         }
-        return render(request, 'projetos/projeto_submissao.html', context)
+        
+        return render(request, 'projetos/proposta_submissao.html', context)
+
+
+@login_required
+def proposta_edicao(request, primarykey):
+    """Formulário de Edição de Propostas de Projeto."""
+    user = PFEUser.objects.get(pk=request.user.pk)
+    if user.tipo_de_usuario == 1: # alunos
+        mensagem = "Você não está cadastrado como parceiro de uma organização!"
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
+
+    parceiro = None
+    professor = None
+    administrador = None
+    if user.tipo_de_usuario == 3: # parceiro
+        parceiro = Parceiro.objects.get(pk=request.user.pk)
+    elif user.tipo_de_usuario == 2: # professor
+        professor = Professor.objects.get(pk=request.user.pk)
+    elif user.tipo_de_usuario == 4: # admin
+        administrador = Administrador.objects.get(pk=request.user.pk)
+
+    proposta = Proposta.objects.get(id=primarykey)
+
+    if request.method == 'POST':
+
+        preenche_proposta(request, proposta)
+        return render(request, 'users/atualizado.html',)
+    else:
+
+        context = {
+            'full_name' : proposta.nome,
+            'email' : proposta.email,
+            'organizacao' : proposta.nome_organizacao,
+            'website' : proposta.website,
+            'endereco' : proposta.endereco,
+            'informacoes' : proposta.descricao_organizacao,
+            'parceiro' : parceiro,
+            'professor' : professor,
+            'administrador' : administrador,
+            'contatos_tecnicos' : proposta.contatos_tecnicos,
+            'contatos_adm' : proposta.contatos_administrativos,
+            'info_organizacao' : proposta.descricao_organizacao, #????
+            'info_departamento' : proposta.departamento,
+            'titulo' : proposta.titulo,
+            'desc_projeto' : proposta.descricao,
+            'expectativas' : proposta.expectativas,
+            'areas' : proposta.areas_de_interesse,
+            'recursos' : proposta.recursos,
+            'observacoes' : proposta.observacoes,
+            'edicao' : True,
+
+        }
+        return render(request, 'projetos/proposta_submissao.html', context)
 
 
 @login_required
@@ -1511,7 +1582,8 @@ def arquivos2(request, organizacao, usuario, path):
 def projetos_lista(request, periodo):
     """Lista todos os projetos."""
     configuracao = Configuracao.objects.all().first()
-    projetos = Projeto.objects.all().order_by("ano", "semestre", "empresa", "titulo",)
+    projetos = Projeto.objects.filter(alocacao__isnull=False).distinct() # no futuro remover
+    projetos = projetos.order_by("ano", "semestre", "empresa", "titulo",)
     if periodo == "todos":
         pass
     if periodo == "antigos":
@@ -1522,7 +1594,7 @@ def projetos_lista(request, periodo):
                                        exclude(ano=configuracao.ano, semestre=2)
     elif periodo == "atuais":
         projetos = projetos.filter(ano=configuracao.ano, semestre=configuracao.semestre)
-    elif periodo == "disponiveis":
+    elif periodo == "próximos":
         if configuracao.semestre == 1:
             projetos = projetos.filter(ano__gte=configuracao.ano).\
                                 exclude(ano=configuracao.ano, semestre=1)
@@ -1566,7 +1638,29 @@ def propostas_lista(request, periodo):
     }
     return render(request, 'projetos/propostas_lista.html', context)
 
+@login_required
+@permission_required('users.altera_parceiro', login_url='/projetos/')
+def parceiro_propostas(request):
+    """Lista todas as propostas de projetos."""
+    #configuracao = Configuracao.objects.all().first()
 
+    user = PFEUser.objects.get(pk=request.user.pk)
+    if user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
+        #return HttpResponse("Você não está cadastrado como parceiro")
+        mensagem = "Você não está cadastrado como parceiro de uma organização!"
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
+
+    propostas = Proposta.objects.filter(organizacao=user.parceiro.organizacao).\
+                        order_by("ano", "semestre", "titulo",)
+    context = {
+        'propostas': propostas,
+        #'configuracao' : configuracao,
+    }
+    return render(request, 'projetos/parceiro_propostas.html', context)
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')

@@ -7,13 +7,14 @@
 
 {% block head %}
   {% load static %}
-  {% load aderencia_aluno %}
+  {% comment %}{% load aderencia_aluno %}{% endcomment %}
   <script src="https://www.w3schools.com/lib/w3.js"></script>
   <script>
     $(document).ready(function(){
       $('[data-toggle="tooltip"]').tooltip();
     });
   </script>
+  {% comment %}
   <script>
     var publicados = 0
     var fechados = 0
@@ -28,6 +29,8 @@
     var projeto_mecanica = 0
     var projeto_multidisciplinar = 0
   </script>
+  {% endcomment %}
+
 {% endblock %}
 
 {% block content %}
@@ -40,7 +43,7 @@
         publicados antes de 
       {% elif periodo == "atuais" %}
         disponíveis em
-      {% elif periodo == "disponiveis" %}
+      {% elif periodo == "próximos" %}
         após
       {% endif %}
       {{configuracao.ano}}.{{configuracao.semestre}}
@@ -50,28 +53,32 @@
   <select onchange="location = this.options[this.selectedIndex].value;">
     <option value="todos" {% if periodo == "todos" %}selected="selected"{% endif %}>todos</option>
     <option value="antigos" {% if periodo == "antigos" %}selected="selected"{% endif %}>antigos</option>
-    <option value="atuais" {% if periodo == "atuais" %}selected="atuais"{% endif %}>atuais</option>
-    <option value="disponiveis" {% if periodo == "disponiveis" %}selected="disponiveis"{% endif %}>disponíveis</option>
+    <option value="atuais" {% if periodo == "atuais" %}selected="selected"{% endif %}>atuais</option>
+    <option value="próximos" {% if periodo == "próximos" %}selected="selected"{% endif %}>próximos</option>
   </select>
   <br><br>
 
   {% if projetos %}
     <table id="ProjetosTable">
       <tr>
-        <th class="text-center">Fechado</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Projeto</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Período</th>
+        {% comment %}<th class="text-center">Fechado</th>{% endcomment %}
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Projeto</th>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Período</th>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Orientador</th>
         <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Organização</th>
+        {% comment %}
         <th>Aluno1</th>
         <th>Aluno2</th>
         <th>Aluno3</th>
         <th>Aluno4</th>
+        {% endcomment %}
       </tr>      
       {% for projeto in projetos %} 
       
       <tr class="item">
-        {% with disponivel=projeto.disponivel %}
+        {% comment %}{% with disponivel=projeto.disponivel %}{% endcomment %}
 
+          {% comment %}
           {% if disponivel %}<script>publicados += 1</script>{% endif %}
           {% if projeto.alocacao_set.all  %}
             <td class="text-success"  style="text-align:center">
@@ -81,37 +88,18 @@
           {% endif %}
             &#x2B24;
           </td>
+          {% endcomment %}
+
           <td>
           
-            {% if not disponivel %}<del>{% endif %}
+            {% comment %}{% if not disponivel %}<del>{% endif %}{% endcomment %}
+
             <a href="{% url 'projeto_completo' projeto.id %}"
               data-toggle="tooltip" data-html="true" animation="true" title="
-              {% for opcaop in projeto.opcao_set.all %}
-                {% with alocacoes=opcaop.aluno.alocacao_set %}
-                  {% if alocacoes.count %}
-                    {% if opcaop.projeto == alocacoes.last.projeto %}
-                      <u>
-                      {% if opcaop.aluno %}
-                        {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.get_curso_display}}]
-                      {% endif %}
-                      #{{ opcaop.prioridade }}
-                      </u>
-                    {% else %}
-                      {% if opcaop.aluno %}
-                        {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.get_curso_display}}]
-                      {% endif %}
-                      #{{ opcaop.prioridade }}
-                    {% endif %}
-                  {% else %}
-                    {% if opcaop.aluno %}
-                      {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.get_curso_display}}]
-                    {% endif %}
-                    #{{ opcaop.prioridade }}
-                  {% endif %}
-                  |{% mede_aderencia opcaop.aluno projeto %}%|<br>
-                {% endwith %}
+              {% for alocacao in projeto.alocacao_set.all %}
+                &bull; {{alocacao.aluno.user.get_full_name}} [{{alocacao.aluno.get_curso_display}}]<br>
               {% empty %}
-                Nenhum aluno escolheu esse projeto
+                Nenhum aluno alocado nesse projeto
               {% endfor %}
               "            
             >
@@ -122,21 +110,30 @@
                 {{projeto.titulo}}
               {% endif %}
             </a>
-            {% if not disponivel %}</del>{% endif %}
+            {% comment %}{% if not disponivel %}<del>{% endif %}{% endcomment %}
           </td>
 
           <td class="text-center">
-            {% if not disponivel %}<del>{% endif %}
+            {% comment %}{% if not disponivel %}<del>{% endif %}{% endcomment %}
               {{projeto.ano}}.{{projeto.semestre}}
-            {% if not disponivel %}</del>{% endif %}
+            {% comment %}{% if not disponivel %}<del>{% endif %}{% endcomment %}
           </td>
+
           <td>
-            {% if not disponivel %}<del>{% endif %}
+              <a href="{% url 'professor_detail' projeto.orientador.id %}">
+                {{ projeto.orientador }}
+              </a>
+          </td>
+
+          <td>
+            {% comment %}{% if not disponivel %}<del>{% endif %}{% endcomment %}
               <a href="{% url 'organizacao_completo' projeto.empresa.login %}">
                 {{ projeto.empresa.nome_empresa }}
               </a>
-            {% if not disponivel %}</del>{% endif %}
+            {% comment %}{% if not disponivel %}<del>{% endif %}{% endcomment %}
           </td>
+
+          {% comment %}
           <td class="text-center">
             {% if not disponivel %}
               <del>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</del>
@@ -200,8 +197,12 @@
               {% endif %}
             {% endif %}
           </td>
-        {% endwith %}
+          {% endcomment %}
+
+
+        {% comment %}{% endwith %}{% endcomment %}
       </tr>
+      {% comment %}
       <script>
         alunos_computacao += tmp_computacao;
         alunos_mecatronica += tmp_mecatronica;
@@ -221,18 +222,22 @@
         tmp_mecatronica = 0;
         tmp_mecanica = 0;
       </script>
-      
+      {% endcomment %}
       {% endfor %}
       
     </table>
+    {% comment %}
     <p style="text-align: right;"><small>C: Computação | X: Mecatrônica | M: Mecânica</small></p>
     <p>&nbsp;</p>
-    <strong>Número Total de Projetos Publicados:</strong> <script>document.write(publicados);</script>
+    {% endcomment %}
+    <strong>Número Total de Projetos:</strong> {{ projetos.count }}
+    {% comment %}
       <a data-toggle="tooltip" data-html="true" animation="true" title="Contando projetos que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
         ({{ projetos.count }})
       </a><br>
     
-    <strong>Número Total de Projetos Fechados:</strong> <script>document.write(fechados);</script><br>
+    <strong>Número Total de Projetos:</strong> <script>document.write(fechados);</script><br>
+    
     <p>&nbsp;</p>
     <strong>Projetos nativamente multidisciplinar:</strong> <script>document.write(projeto_multidisciplinar);</script><br>
     <strong>Projetos nativamente de computação:</strong> <script>document.write(projeto_computacao);</script><br>
@@ -242,6 +247,7 @@
     <strong>Vagas para alunos de computação:</strong> <script>document.write(alunos_computacao);</script><br>
     <strong>Vagas para alunos de mecatrônica:</strong> <script>document.write(alunos_mecatronica);</script><br>
     <strong>Vagas para alunos de mecânica:</strong> <script>document.write(alunos_mecanica);</script><br>
+    {% endcomment %}
   {% else %}
     <p>Não existem projetos disponíveis.</p>
   {% endif %}

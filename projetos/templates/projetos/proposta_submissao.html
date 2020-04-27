@@ -15,7 +15,14 @@
 
 {% block content %}
 
-  <h5>Submissão de Proposta de Projeto</h5>
+  <h5>
+  {% if edicao %}
+    Edição
+  {% else %}
+    Submissão
+  {% endif %}
+  de Proposta de Projeto</h5>
+
   {% if professor %}
     <strong>Seu Perfil é de Professor, você está preenchendo para alguma organização</strong><br>
   {% elif administrador %}
@@ -25,21 +32,21 @@
 
   <form action="" method="post"> {% csrf_token %}  
 
-    <label for="nome">Nome:</label><input type="text" size="75" id="nome" name="nome" value="{{user.get_full_name}}" required><br><br>
-    <label for="email">e-mail:</label><input type="email" size="75" id="email" name="email" value="{{user.email}}" required><br><br>
+    <label for="nome">Nome:</label><input type="text" size="75" id="nome" name="nome" value="{{full_name}}" required><br><br>
+    <label for="email">e-mail:</label><input type="email" size="75" id="email" name="email" value="{{email}}" required><br><br>
 
     <label for="organizacao">Nome da Instituição/Empresa<br>
     <small>sigla e nome comercial/fantasia se houver (aqui não é necessário indicar a Razão Social)</small>
     </label><br>
-    <textarea id="organizacao" name="organizacao" rows="1" cols="80" maxlength="100" required>{% if parceiro %}{{parceiro.organizacao}}{% endif %}</textarea>
+    <textarea id="organizacao" name="organizacao" rows="1" cols="80" maxlength="100" required>{{ organizacao }}</textarea>
     <br><br>
 
-    <label for="website">website:</label><input type="text" size="73" id="website" name="website" value="{{parceiro.organizacao.website}}" placeholder="https://www.insper.edu.br" pattern="*" required><br><br>
+    <label for="website">website:</label><input type="text" size="73" id="website" name="website" value="{{website}}" placeholder="https://www.insper.edu.br" required><br><br>
 
     <label for="endereco">Endereço<br>
     <small>onde os alunos deverão ir para desenvolver o projeto</small>
     </label><br>
-    <textarea id="endereco" name="endereco" rows="3" cols="80" maxlength="1000" required>{% if parceiro %}{{parceiro.organizacao.endereco}}{% endif %}</textarea>
+    <textarea id="endereco" name="endereco" rows="3" cols="80" maxlength="1000" required>{{endereco}}</textarea>
     <br><br>
 
     <label for="contatos_tecnicos">Contatos Técnicos<br>  
@@ -57,7 +64,7 @@
     <label for="info_organizacao">Informações sobre a instituição/empresa<br>
     <small>descreva a instituição/empresa para os alunos entenderem o que ela faz (opcional)</small>
     </label><br>
-    <textarea id="info_organizacao" name="info_organizacao" rows="4" cols="80" maxlength="1000">{% if parceiro.organizacao.informacoes %}{{ parceiro.organizacao.informacoes|linebreaks }}{% endif %}</textarea>
+    <textarea id="info_organizacao" name="info_organizacao" rows="4" cols="80" maxlength="1000">{{informacoes}}</textarea>
     <br><br>
 
     <label for="info_departamento">Informações sobre a departamento<br>

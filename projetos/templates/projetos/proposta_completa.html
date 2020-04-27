@@ -66,16 +66,47 @@
   {% endif %}
   <hr>
 
-  <h3>Organização Parceira: <a href="{% url 'organizacao_completo' proposta.organizacao.login %}">{{ proposta.organizacao.nome_empresa }}</a></h3>
-  <p><strong>endereço:</strong> <a class="tabulado" href="http://maps.google.com/maps?q={{proposta.organizacao.endereco}}">{{ proposta.organizacao.endereco|linebreaks }}</a></p>
-  {% if proposta.organizacao.website %}
-    <p><strong>website:</strong>  <a class="tabulado" href="{{ proposta.organizacao.website }}"> {{ proposta.organizacao.website }} </a></p>
-  {% endif %} 
-  {% if proposta.organizacao.informacoes %}
-    <strong>Informações sobre a empresa :</strong> {{ proposta.organizacao.informacoes|linebreaks }}
+  <h3>Organização Parceira:
+    {% if proposta.organizacao %}
+      <a href="{% url 'organizacao_completo' proposta.organizacao.login %}">
+        {{ proposta.organizacao.nome_empresa }}
+      </a>
+    {% elif proposta.nome_organizacao %}
+      {{ proposta.nome_organizacao }}
+    {% else %}
+      Organização não definida.
+    {% endif %}
+  </h3>
+  <p><strong>endereço:</strong>
+    {% if proposta.organizacao %}
+      <a class="tabulado" href="http://maps.google.com/maps?q={{proposta.organizacao.endereco}}">{{ proposta.organizacao.endereco|linebreaks }}</a>
+    {% elif proposta.endereco %}
+      {{ proposta.endereco }}
+    {% else %}
+      Endereço não definido.
+    {% endif %}
+  </p>
+
+  <p><strong>website:</strong>
+  {% if proposta.organizacao and proposta.organizacao.website %}
+    <a class="tabulado" href="{{ proposta.organizacao.website }}">{{ proposta.organizacao.website }}</a>
+  {% elif proposta.website %}
+    <a class="tabulado" href="{{proposta.website}}">{{ proposta.website }}</a>
+  {% else %}
+    website não definido.
   {% endif %}
+  </p>
+
+  {% if proposta.organizacao and proposta.organizacao.informacoes %}
+    <strong>Informações sobre a empresa :</strong> 
+    {{ proposta.organizacao.informacoes|linebreaks }}<br>
+  {% elif proposta.descricao_organizacao %}
+    <strong>Informações sobre a empresa :</strong> 
+    {{ proposta.descricao_organizacao|linebreaks }}<br>
+  {% endif %}
+
   {% if proposta.departamento %}
-    <strong>Informações sobre o departamento na empresa :</strong> {{ proposta.departamento|linebreaks }}
+    <strong>Informações sobre o departamento na empresa :</strong> {{ proposta.departamento|linebreaks }}<br>
   {% endif %}
 
   <strong>Submetido por:</strong><br>

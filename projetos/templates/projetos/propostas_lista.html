@@ -132,9 +132,15 @@
           </td>
           <td>
             {% if not disponivel %}<del>{% endif %}
-              <a href="{% url 'organizacao_completo' proposta.organizacao.login %}">
-                {{ proposta.organizacao.nome_empresa }}
-              </a>
+              {% if proposta.organizacao %}
+                <a href="{% url 'organizacao_completo' proposta.organizacao.login %}">
+                  {{ proposta.organizacao.nome_empresa }}
+                </a>
+              {% elif proposta.nome_organizacao %}
+                {{ proposta.nome_organizacao }}
+              {% else %}
+                Organização não definida.
+              {% endif %}
             {% if not disponivel %}</del>{% endif %}
           </td>
           <td class="text-center">
