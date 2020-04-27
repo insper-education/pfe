@@ -1405,8 +1405,8 @@ def envia_proposta(proposta):
     subject = 'Proposta PFE : ({0}.{1} - {2}'.format(proposta.ano,
                                                      proposta.semestre,
                                                      proposta.titulo)
-    #recipient_list = [proposta.email, "pfe@insper.edu.br", "lpsoares@insper.edu.br",]
-    recipient_list = [proposta.email, "lpsoares@insper.edu.br",]
+    recipient_list = [proposta.email, "pfe@insper.edu.br", "lpsoares@insper.edu.br",]
+    #recipient_list = [proposta.email, "lpsoares@insper.edu.br",]
     check = email(subject, recipient_list, message)
     if check != 1:
         message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
@@ -1414,7 +1414,7 @@ def envia_proposta(proposta):
     return message
 
 
-@login_required
+#@login_required
 def proposta_submissao(request):
     """Formulário de Submissão de Proposta de Projetos."""
     user = PFEUser.objects.get(pk=request.user.pk)
@@ -1482,7 +1482,7 @@ def proposta_submissao(request):
 
     return render(request, 'projetos/proposta_submissao.html', context)
 
-@login_required
+#@login_required
 def proposta_editar(request, slug):
     """Formulário de Edição de Propostas de Projeto por slug."""
 
