@@ -1316,7 +1316,12 @@ def proposta_submissao(request):
 
     if request.method == 'POST':
         preenche_proposta(request, None)
-        return render(request, 'users/atualizado.html',)
+        mensagem = "Submissão de proposta de projeto realizada com sucesso."
+        context = {
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
+
     else:
         context = {
             'full_name' : user.get_full_name(),
@@ -2848,11 +2853,11 @@ from django.template.defaultfilters import slugify
 @permission_required('users.altera_professor', login_url='/projetos/')
 def migracao(request):
     """Migra projetos para propostas (temporário)."""
-    propostas = Proposta.objects.all()
-    for proposta in propostas:
-        codigo = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(6))
-        proposta.slug = slugify(str(proposta.ano)+"-"+str(proposta.semestre)+"-"+proposta.titulo[:50]+"-"+codigo)
-        proposta.save()
+    # propostas = Proposta.objects.all()
+    # for proposta in propostas:
+    #     codigo = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(6))
+    #     proposta.slug = slugify(str(proposta.ano)+"-"+str(proposta.semestre)+"-"+proposta.titulo[:50]+"-"+codigo)
+    #     proposta.save()
 
     #     opcao.proposta = opcao.projeto.proposta
     #     opcao.save()
