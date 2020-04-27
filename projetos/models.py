@@ -6,10 +6,13 @@ Data: 15 de Maio de 2019
 """
 
 import datetime
+import string
+import random
 from django.db import models
 from django.urls import reverse  # To generate URLS by reversing URL patterns
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib import admin
+from django.template.defaultfilters import slugify
 
 def get_upload_path(instance, filename):
     """Caminhos para armazenar os arquivos."""
@@ -165,6 +168,9 @@ class Projeto(models.Model):
 class Proposta(models.Model):
     """Dados da Proposta de Projeto para o PFE."""
 
+    slug = models.SlugField("slug", unique=True, max_length=64, null=True, blank=True,
+                            help_text="Slug para o endereço da proposta")
+
     nome = models.CharField("Nome", max_length=127,
                             help_text='Nome de quem submeteu o projeto')
     email = models.EmailField("e-mail", max_length=80, null=True, blank=True,
@@ -173,7 +179,7 @@ class Proposta(models.Model):
                               help_text='website da organização')
 
     nome_organizacao = models.CharField("Organização", max_length=120, null=True, blank=True,
-                                   help_text='Nome da Organização/Empresa')
+                                        help_text='Nome da Organização/Empresa')
 
     endereco = models.TextField("Endereço", max_length=400,
                                 help_text='Endereço da Instituiçã')
@@ -272,6 +278,17 @@ class Proposta(models.Model):
     def __str__(self):
         return self.titulo+"("+str(self.ano)+"."+str(self.semestre)+")"
 
+    # pylint: disable=arguments-differ
+    def save(self, *args, **kwargs):
+        if not self.id:
+            codigo = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(6))
+            self.slug = slugify(str(self.ano)+"-"+str(self.semestre)+"-"+self.titulo[:50]+"-"+codigo)
+
+        super(Proposta, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        """Caminha para editar uma proposta."""
+        return reverse('proposta_editar', kwargs={'slug': self.slug})
 
 class Configuracao(models.Model):
     """Armazena os dados básicos de funcionamento do sistema."""
@@ -331,7 +348,7 @@ class Recomendada(models.Model):
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='projeto que recomenda a disciplina')
     proposta = models.ForeignKey(Proposta, null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='proposta que recomenda a disciplina')
+                                 help_text='proposta que recomenda a disciplina')
     def __str__(self):
         return self.projeto.titulo+" >>> "+self.disciplina.nome
 

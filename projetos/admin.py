@@ -178,6 +178,7 @@ class ProjetoAdmin(admin.ModelAdmin):
     actions = [dup_projeto]
     search_fields = ['titulo', 'empresa__sigla',]
 
+
 @admin.register(Proposta)
 class PropostaAdmin(admin.ModelAdmin):
     """Exibição no sistema de administração do Django para Proposta."""
@@ -199,6 +200,7 @@ class PropostaAdmin(admin.ModelAdmin):
             'perfil_aluno3_computacao', 'perfil_aluno3_mecanica', 'perfil_aluno3_mecatronica',
             'perfil_aluno4_computacao', 'perfil_aluno4_mecanica', 'perfil_aluno4_mecatronica',
             'anexo',
+            'slug',
            )
           }),
          ('Origem', {

@@ -1245,9 +1245,23 @@ def cria_areas(request):
 
 def preenche_proposta(request, proposta):
     """Preenche um proposta a partir de um request."""
-    if proposta == None:
+    if proposta is None: # proposta nova
         proposta = Proposta.create()
-    
+
+        configuracao = Configuracao.objects.all().first()
+        ano = configuracao.ano
+        semestre = configuracao.semestre
+
+        # Vai para próximo semestre
+        if semestre == 1:
+            semestre = 2
+        else:
+            ano += 1
+            semestre = 1
+
+        proposta.ano = ano
+        proposta.semestre = semestre
+
     proposta.nome = request.POST.get("nome", "")
     proposta.email = request.POST.get("email", "")
     proposta.website = request.POST.get("website", "")
@@ -1265,21 +1279,6 @@ def preenche_proposta(request, proposta):
     proposta.observacoes = request.POST.get("observacoes", "")
 
     proposta.areas_de_interesse = cria_areas(request)
-
-    if proposta == None: # proposta nova
-        configuracao = Configuracao.objects.all().first()
-        ano = configuracao.ano
-        semestre = configuracao.semestre
-
-        # Vai para próximo semestre
-        if semestre == 1:
-            semestre = 2
-        else:
-            ano += 1
-            semestre = 1
-
-        proposta.ano = ano
-        proposta.semestre = semestre
 
     proposta.save()
 
@@ -1341,13 +1340,13 @@ def proposta_submissao(request):
             'observacoes' : "",
             'edicao' : False,
         }
-        
+
         return render(request, 'projetos/proposta_submissao.html', context)
 
-
 @login_required
-def proposta_edicao(request, primarykey):
-    """Formulário de Edição de Propostas de Projeto."""
+def proposta_editar(request, slug):
+    """Formulário de Edição de Propostas de Projeto por slug."""
+
     user = PFEUser.objects.get(pk=request.user.pk)
     if user.tipo_de_usuario == 1: # alunos
         mensagem = "Você não está cadastrado como parceiro de uma organização!"
@@ -1367,7 +1366,10 @@ def proposta_edicao(request, primarykey):
     elif user.tipo_de_usuario == 4: # admin
         administrador = Administrador.objects.get(pk=request.user.pk)
 
-    proposta = Proposta.objects.get(id=primarykey)
+    try:
+        proposta = Proposta.objects.get(slug=slug)
+    except Proposta.DoesNotExist:
+        return HttpResponseNotFound('<h1>Proposta não encontrada!</h1>')
 
     if request.method == 'POST':
 
@@ -1454,8 +1456,8 @@ def carrega(request, dado):
         new_data = request.FILES['arquivo'].readlines()
         entradas = ""
         for i in new_data:
-            string = i.decode("utf-8")
-            entradas += re.sub('[^A-Za-z0-9À-ÿ, \r\n@._]+', '', string) #Limpa caracteres especiais
+            texto = i.decode("utf-8")
+            entradas += re.sub('[^A-Za-z0-9À-ÿ, \r\n@._]+', '', texto) #Limpa caracteres especiais
 
         #imported_data = dataset.load(entradas, format='csv')
         dataset.load(entradas, format='csv')
@@ -2838,12 +2840,19 @@ def certificados_submetidos(request):
     return render(request, 'projetos/certificados_submetidos.html', context)
 
 
+import string
+import random
+from django.template.defaultfilters import slugify
+
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def migracao(request):
     """Migra projetos para propostas (temporário)."""
-    # opcoes = Opcao.objects.all()
-    # for opcao in opcoes:
+    propostas = Proposta.objects.all()
+    for proposta in propostas:
+        codigo = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(6))
+        proposta.slug = slugify(str(proposta.ano)+"-"+str(proposta.semestre)+"-"+proposta.titulo[:50]+"-"+codigo)
+        proposta.save()
 
     #     opcao.proposta = opcao.projeto.proposta
     #     opcao.save()

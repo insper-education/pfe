@@ -122,11 +122,15 @@
     laboratórios do Insper para o desenvolvimento do projeto em horários agendados.
     
     <br><br>
-    <input type="submit" value="Enviar Proposta de Projeto">
-
+    
+    {% if edicao %}
+      <input type="submit" value="Atualizar Proposta de Projeto">
+    {% else %}
+      <input type="submit" value="Enviar Proposta de Projeto">
+    {% endif %}
+  
   </form>
 
-  <p>&nbsp;</p>
   <p>&nbsp;</p>
 
 {% endblock %}
