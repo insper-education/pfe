@@ -120,6 +120,9 @@ class PFEUser(AbstractUser):
                                                        help_text='cada usuário tem um perfil único')
     cpf = models.CharField("CPF", max_length=11, null=True, blank=True,
                            help_text='CPF do usuário')
+    linkedin = models.URLField("LinkedIn", max_length=250, null=True, blank=True,
+                               help_text='LinkedIn do usuário')
+
     membro_comite = \
         models.BooleanField(default=False, help_text='caso membro do comitê do PFE')
     GENERO_CHOICES = (

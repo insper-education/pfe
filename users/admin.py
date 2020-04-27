@@ -52,7 +52,7 @@ class PFEUserAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('username', 'first_name', 'last_name', 'email', 'tipo_de_usuario',)}),
         ('Personal info',
-         {'fields': ('groups', 'user_permissions', 'cpf', 'membro_comite', 'genero')}),
+         {'fields': ('groups', 'user_permissions', 'cpf', 'linkedin', 'membro_comite', 'genero')}),
         ('Permissions',
          {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
     )

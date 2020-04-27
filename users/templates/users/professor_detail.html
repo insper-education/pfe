@@ -14,15 +14,18 @@
     &lt;&lt;Não Definido&gt;&gt;
   {% endif %}
   <br>
-
+  {% if professor.lattes %}
+    <strong>Lattes:</strong> <a href="{{ professor.lattes }}"> {{ professor.lattes }} </a><br>
+  {% endif %}
+  {% if professor.user.linkedin %}
+    <strong>LinkedIn:</strong> <a href="{{professor.user.linkedin}}">{{professor.user.linkedin}}</a><br>
+  {% endif %}
   <strong>e-mail:</strong> <a href="mailto:{{professor.user.email}}"> &lt;{{professor.user.email}}&gt;</a><br>
   {% if professor.website %}
     <strong>website:</strong> <a href="{{ professor.website }}"> {{ professor.website }} </a><br>
   {% endif %}
 
-  {% if professor.lattes %}
-    <strong>Lattes:</strong> <a href="{{ professor.lattes }}"> {{ professor.lattes }} </a><br>
-  {% endif %}
+  
 
   {% if projetos %}
     <hr>

@@ -31,13 +31,22 @@
   {% if parceiro.cargo %}
       <strong>Cargo:</strong> {{parceiro.cargo}}<br>
   {% endif %}
+  {% if parceiro.user.linkedin %}
+    <strong>LinkedIn:</strong> <a href="{{parceiro.user.linkedin}}">{{parceiro.user.linkedin}}</a><br>
+  {% endif %}
   <strong>e-mail:</strong> <a href="mailto:{{parceiro.user.email}}"> &lt;{{parceiro.user.email}}&gt;</a><br>
   &nbsp;
   {% if parceiro.telefone %}&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; {{parceiro.telefone}} &nbsp;<br>{% endif %}
   {% if parceiro.celular %}&nbsp;&nbsp;&nbsp;&nbsp;&#x1F4F1; {{parceiro.celular}} &nbsp;<br>{% endif %}
+  
   {% if parceiro.skype %}&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="skype" style="width:16px;height:16px;">
-  <a href="skype:{{parceiro.skype}}">{{parceiro.skype}}</a>&nbsp;<br>{% endif %}
+    <a href="skype:{{parceiro.skype}}">{{parceiro.skype}}</a>&nbsp;<br>
+  {% endif %}
   <p>&nbsp;</p>
+  
+  
+  <p>&nbsp;</p>
+
   {% if parceiro.observacao %}
       <strong>observações:</strong><br>
       {{parceiro.observacao|linebreaks}}
