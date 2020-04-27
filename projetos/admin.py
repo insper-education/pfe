@@ -201,6 +201,7 @@ class PropostaAdmin(admin.ModelAdmin):
             'perfil_aluno4_computacao', 'perfil_aluno4_mecanica', 'perfil_aluno4_mecatronica',
             'anexo',
             'slug',
+            'data',
            )
           }),
          ('Origem', {

@@ -266,6 +266,9 @@ class Proposta(models.Model):
     perfil_aluno4_mecanica = \
         models.BooleanField(default=False, help_text='Perfil desejado de mecânica para aluno 4')
 
+    data = models.DateTimeField(default=datetime.datetime.now,
+                                help_text='data e hora da criação da proposta de projeto')
+
     class Meta:
         ordering = ['organizacao', 'ano', 'semestre']
 
@@ -281,8 +284,9 @@ class Proposta(models.Model):
     # pylint: disable=arguments-differ
     def save(self, *args, **kwargs):
         if not self.id:
-            codigo = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(6))
-            self.slug = slugify(str(self.ano)+"-"+str(self.semestre)+"-"+self.titulo[:50]+"-"+codigo)
+            senha = ''.join(random.SystemRandom().\
+                                   choice(string.ascii_uppercase + string.digits) for _ in range(6))
+            self.slug = slugify(str(self.ano)+"-"+str(self.semestre)+"-"+self.titulo[:50]+"-"+senha)
 
         super(Proposta, self).save(*args, **kwargs)
 

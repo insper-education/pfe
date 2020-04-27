@@ -666,7 +666,6 @@ def distribuicao_areas(request, tipo):
             if 'topicId' in request.POST:
                 if request.POST['topicId'] != 'todas':
                     periodo = request.POST['topicId'].split('.')
-                    print("AQUI")
                     projetos = Areas.objects.filter(projeto__ano=int(periodo[0])).\
                                              filter(projeto__semestre=int(periodo[1]))
             else:
@@ -1243,6 +1242,59 @@ def cria_areas(request):
 
     return areas
 
+def lista_areas(areas):
+    """Lista áreas de um objeto Areas."""
+
+    mensagem = ""
+
+    if areas.inovacao_social:
+        mensagem += "&bull; Inovacao Social<br>\n"
+    if areas.ciencia_dos_dados:
+        mensagem += "&bull; Ciência dos Dados<br>\n"
+    if areas.modelagem_3D:
+        mensagem += "&bull; Modelagem 3D<br>\n"
+    if areas.manufatura:
+        mensagem += "&bull; Manufatura<br>\n"
+    if areas.resistencia_dos_materiais:
+        mensagem += "&bull; Resistência dos Materiais<br>\n"
+    if areas.modelagem_de_sistemas:
+        mensagem += "&bull; Modelagem de Sistemas<br>\n"
+    if areas.controle_e_automacao:
+        mensagem += "&bull; Controle e Automação<br>\n"
+    if areas.termodinamica:
+        mensagem += "&bull; Termodinâmica<br>\n"
+    if areas.fluidodinamica:
+        mensagem += "&bull; Fluidodinâmica<br>\n"
+    if areas.eletronica_digital:
+        mensagem += "&bull; Eletrônica Digital<br>\n"
+    if areas.programacao:
+        mensagem += "&bull; Programacao<br>\n"
+    if areas.inteligencia_artificial:
+        mensagem += "&bull; Inteligência Artificial<br>\n"
+    if areas.banco_de_dados:
+        mensagem += "&bull; Banco de Dados<br>\n"
+    if areas.computacao_em_nuvem:
+        mensagem += "&bull; Computação em Nuvem<br>\n"
+    if areas.visao_computacional:
+        mensagem += "&bull; Visão Computacional<br>\n"
+    if areas.computacao_de_alto_desempenho:
+        mensagem += "&bull; Computação de Alto Desempenho<br>\n"
+    if areas.robotica:
+        mensagem += "&bull; Robótica<br>\n"
+    if areas.realidade_virtual_aumentada:
+        mensagem += "&bull; Realidade Virtual e Aumentada<br>\n"
+    if areas.protocolos_de_comunicacao:
+        mensagem += "&bull; Protocolos de Comunicação<br>\n"
+    if areas.eficiencia_energetica:
+        mensagem += "&bull; Eficiência Energética<br>\n"
+    if areas.administracao_economia_financas:
+        mensagem += "&bull; Administração, Economia e Finanças<br>\n"
+
+    if areas.outras and areas.outras != "":
+        mensagem += "Outras: " + areas.outras + "<br>\n"
+
+    return mensagem
+
 def preenche_proposta(request, proposta):
     """Preenche um proposta a partir de um request."""
     if proposta is None: # proposta nova
@@ -1269,7 +1321,7 @@ def preenche_proposta(request, proposta):
     proposta.endereco = request.POST.get("endereco", "")
     proposta.contatos_tecnicos = request.POST.get("contatos_tecnicos", "")
     proposta.contatos_administrativos = request.POST.get("contatos_adm", "")
-    proposta.descricao_organizacao = request.POST.get("info_organizacao", "")
+    proposta.descricao_organizacao = request.POST.get("descricao_organizacao", "")
     proposta.departamento = request.POST.get("info_departamento", "")
     proposta.titulo = request.POST.get("titulo", "")
 
@@ -1283,6 +1335,84 @@ def preenche_proposta(request, proposta):
     proposta.save()
 
     return proposta
+
+def envia_proposta(proposta):
+    """Envia Proposta por email."""
+
+    #Isso tinha que ser feito por template, arrumar qualquer hora.
+    message = "<h3>Proposta de Projeto para o PFE {0}.{1}</h3>\n<br>\n".\
+                   format(proposta.ano, proposta.semestre)
+
+    message += "Para editar essa proposta acesse:</b><br>\n <a href='{0}'>{0}</a><br>\n<br>\n".\
+        format(settings.SERVER+proposta.get_absolute_url())
+
+    message += "<b>Título da Proposta de Projeto:</b> {0}<br>\n<br>\n".format(proposta.titulo)
+    message += "<b>Proposta submetida por:</b> {0} &lt;{1}&gt;<br>\n".\
+                   format(proposta.nome, proposta.email)
+    message += "<b>Nome da Organização:</b> {0}<br>\n".format(proposta.nome_organizacao)
+    message += "<b>Website:</b> {0}<br>\n".format(proposta.website)
+    message += "<b>Endereco:</b> {0}<br>\n".format(proposta.endereco)
+
+    message += "<br>\n<br>\n"
+
+    message += "<b>Contatos Técnicos:</b><br>\n {0}<br>\n<br>\n".\
+                   format(proposta.contatos_tecnicos)
+
+    message += "<b>Contatos Administrativos:</b><br>\n {0}<br>\n<br>\n".\
+                   format(proposta.contatos_administrativos)
+
+    message += "<b>Informações sobre a instituição/empresa:</b><br>\n {0}<br>\n<br>\n".\
+                   format(proposta.descricao_organizacao)
+
+    message += "<b>Informações sobre a departamento:</b><br>\n {0}<br>\n<br>\n".\
+                   format(proposta.departamento)
+
+    message += "<br>\n<br>\n"
+
+    message += "<b>Descrição do Projeto:</b><br>\n {0}<br><br>\n".format(proposta.descricao)
+    message += "<b>Expectativas de resultados/entregas:</b><br>\n {0}<br>\n<br>\n".\
+                   format(proposta.expectativas)
+
+    message += "<br>\n"
+
+    message += "<b>Áreas/Habilidades envolvidas no projeto:</b><br>\n"
+    message += lista_areas(proposta.areas_de_interesse)
+
+    message += "<br>\n"
+    message += "<b>Recursos a serem disponibilizados aos alunos:</b><br>\n {0}<br><br>\n".\
+                   format(proposta.recursos)
+    message += "<b>Outras observações para os alunos:</b><br>\n {0}<br><br>\n".\
+                   format(proposta.observacoes)
+
+    message += "<br>\n<br>\n"
+    message += "<b>Data da proposta:</b> {0}<br>\n<br>\n<br>\n".\
+                   format(proposta.data.strftime("%d/%m/%Y %H:%M"))
+
+    message += "<br>\n<br>\n"
+    message += """
+    <b>Obs.:</b> Ao submeter o projeto, deve ficar claro que a intenção do Projeto Final de Engenharia é 
+    que os alunos tenham um contato próximo com as pessoas responsáveis nas instituições parceiras 
+    para o desenvolvimento de uma solução em engenharia. Em geral os alunos se deslocam uma vez 
+    por semana para entender melhor o desafio, demonstrar resultados preliminares, fazerem 
+    planejamentos em conjunto, dentre de outros pontos que podem variar de projeto para projeto. 
+    Também deve ficar claro que embora não exista um custo direto para as instituições parceiras, 
+    essas terão de levar em conta que pelo menos um profissional deverá dedicar algumas horas 
+    semanalmente para acompanhar os alunos. Além disso se a proposta contemplar gastos, como por 
+    exemplo servidores, matéria prima de alguma forma, o Insper não terá condição de bancar tais 
+    gastos e isso terá de ficar a cargo da empresa, contudo os alunos terão acesso aos 
+    laboratórios do Insper para o desenvolvimento do projeto em horários agendados.<b>\n"""
+
+    subject = 'Proposta PFE : ({0}.{1} - {2}'.format(proposta.ano,
+                                                     proposta.semestre,
+                                                     proposta.titulo)
+    #recipient_list = [proposta.email, "pfe@insper.edu.br", "lpsoares@insper.edu.br",]
+    recipient_list = [proposta.email, "lpsoares@insper.edu.br",]
+    check = email(subject, recipient_list, message)
+    if check != 1:
+        message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+
+    return message
+
 
 @login_required
 def proposta_submissao(request):
@@ -1302,51 +1432,55 @@ def proposta_submissao(request):
     organizacao = ""
     website = "http://"
     endereco = ""
-    informacoes = ""
+    descricao_organizacao = ""
     if user.tipo_de_usuario == 3: # parceiro
         parceiro = Parceiro.objects.get(pk=request.user.pk)
         organizacao = parceiro.organizacao
         website = parceiro.organizacao.website
         endereco = parceiro.organizacao.endereco
-        informacoes = parceiro.organizacao.informacoes
+        descricao_organizacao = parceiro.organizacao.informacoes
     elif user.tipo_de_usuario == 2: # professor
         professor = Professor.objects.get(pk=request.user.pk)
     elif user.tipo_de_usuario == 4: # admin
         administrador = Administrador.objects.get(pk=request.user.pk)
 
     if request.method == 'POST':
-        preenche_proposta(request, None)
-        mensagem = "Submissão de proposta de projeto realizada com sucesso."
+        proposta = preenche_proposta(request, None)
+        mensagem = envia_proposta(proposta) # Por e-mail
+
+        resposta = "Submissão de proposta de projeto realizada com sucesso.<br>"
+        resposta += "Você deve receber um e-mail de confirmação nos próximos instantes.<br>"
+        resposta += "<br><a href='javascript:history.back(1)'>Voltar</a>"
+        resposta += "<br><br><br><hr>"
+        resposta += mensagem
         context = {
-            "mensagem": mensagem,
+            "mensagem": resposta,
         }
         return render(request, 'generic.html', context=context)
 
-    else:
-        context = {
-            'full_name' : user.get_full_name(),
-            'email' : user.email,
-            'organizacao' : organizacao,
-            'website' : website,
-            'endereco' : endereco,
-            'informacoes' : informacoes,
-            'parceiro' : parceiro,
-            'professor' : professor,
-            'administrador' : administrador,
-            'contatos_tecnicos' : "",
-            'contatos_adm' : "",
-            'info_organizacao' : "",
-            'info_departamento' : "",
-            'titulo' : "",
-            'desc_projeto' : "",
-            'expectativas' : "",
-            'areas' : None,
-            'recursos' : "",
-            'observacoes' : "",
-            'edicao' : False,
-        }
+    context = {
+        'full_name' : user.get_full_name(),
+        'email' : user.email,
+        'organizacao' : organizacao,
+        'website' : website,
+        'endereco' : endereco,
+        'descricao_organizacao' : descricao_organizacao,
+        'parceiro' : parceiro,
+        'professor' : professor,
+        'administrador' : administrador,
+        'contatos_tecnicos' : "",
+        'contatos_adm' : "",
+        'info_departamento' : "",
+        'titulo' : "",
+        'desc_projeto' : "",
+        'expectativas' : "",
+        'areas' : None,
+        'recursos' : "",
+        'observacoes' : "",
+        'edicao' : False,
+    }
 
-        return render(request, 'projetos/proposta_submissao.html', context)
+    return render(request, 'projetos/proposta_submissao.html', context)
 
 @login_required
 def proposta_editar(request, slug):
@@ -1377,35 +1511,41 @@ def proposta_editar(request, slug):
         return HttpResponseNotFound('<h1>Proposta não encontrada!</h1>')
 
     if request.method == 'POST':
-
         preenche_proposta(request, proposta)
-        return render(request, 'users/atualizado.html',)
-    else:
-
+        mensagem = envia_proposta(proposta) # Por e-mail
+        resposta = "Submissão de proposta de projeto atualizada com sucesso.<br>"
+        resposta += "Você deve receber um e-mail de confirmação nos próximos instantes.<br>"
+        resposta += "<br><a href='javascript:history.back(1)'>Voltar</a>"
+        resposta += "<br><br><br><hr>"
+        resposta += mensagem
         context = {
-            'full_name' : proposta.nome,
-            'email' : proposta.email,
-            'organizacao' : proposta.nome_organizacao,
-            'website' : proposta.website,
-            'endereco' : proposta.endereco,
-            'informacoes' : proposta.descricao_organizacao,
-            'parceiro' : parceiro,
-            'professor' : professor,
-            'administrador' : administrador,
-            'contatos_tecnicos' : proposta.contatos_tecnicos,
-            'contatos_adm' : proposta.contatos_administrativos,
-            'info_organizacao' : proposta.descricao_organizacao, #????
-            'info_departamento' : proposta.departamento,
-            'titulo' : proposta.titulo,
-            'desc_projeto' : proposta.descricao,
-            'expectativas' : proposta.expectativas,
-            'areas' : proposta.areas_de_interesse,
-            'recursos' : proposta.recursos,
-            'observacoes' : proposta.observacoes,
-            'edicao' : True,
-
+            "mensagem": resposta,
         }
-        return render(request, 'projetos/proposta_submissao.html', context)
+        return render(request, 'generic.html', context=context)
+
+    context = {
+        'full_name' : proposta.nome,
+        'email' : proposta.email,
+        'organizacao' : proposta.nome_organizacao,
+        'website' : proposta.website,
+        'endereco' : proposta.endereco,
+        'descricao_organizacao' : proposta.descricao_organizacao,
+        'parceiro' : parceiro,
+        'professor' : professor,
+        'administrador' : administrador,
+        'contatos_tecnicos' : proposta.contatos_tecnicos,
+        'contatos_adm' : proposta.contatos_administrativos,
+        'info_departamento' : proposta.departamento,
+        'titulo' : proposta.titulo,
+        'desc_projeto' : proposta.descricao,
+        'expectativas' : proposta.expectativas,
+        'areas' : proposta.areas_de_interesse,
+        'recursos' : proposta.recursos,
+        'observacoes' : proposta.observacoes,
+        'edicao' : True,
+
+    }
+    return render(request, 'projetos/proposta_submissao.html', context)
 
 
 @login_required
@@ -2844,30 +2984,11 @@ def certificados_submetidos(request):
     }
     return render(request, 'projetos/certificados_submetidos.html', context)
 
-
-import string
-import random
-from django.template.defaultfilters import slugify
-
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def migracao(request):
     """Migra projetos para propostas (temporário)."""
     # propostas = Proposta.objects.all()
     # for proposta in propostas:
-    #     codigo = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(6))
-    #     proposta.slug = slugify(str(proposta.ano)+"-"+str(proposta.semestre)+"-"+proposta.titulo[:50]+"-"+codigo)
     #     proposta.save()
-
-    #     opcao.proposta = opcao.projeto.proposta
-    #     opcao.save()
-
-    # recs = Recomendada.objects.all()
-    # for rec in recs:
-
-    #     rec.proposta = rec.projeto.proposta
-    #     rec.save()
-
-
-
     return HttpResponse("Feito.")

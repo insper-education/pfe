@@ -40,7 +40,8 @@
           {% comment %}
             <strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ projeto.areas|linebreaks }}
           {% endcomment %}
-          <strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ projeto.proposta.recursos|linebreaks }}
+          <strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ projeto.proposta.recursos|linebreaks }}<br>
+          <strong>Outras observações :</strong> {{ projeto.proposta.observacoes|linebreaks }}<br>
           <hr>
           <h5>Empresa: {{ projeto.empresa.nome_empresa }}</h5>
           <strong>endereço:</strong> {{ projeto.empresa.endereco|linebreaks }}

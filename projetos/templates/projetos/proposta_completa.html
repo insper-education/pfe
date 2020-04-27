@@ -60,6 +60,9 @@
   {% if proposta.recursos %}
     <br><strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ proposta.recursos|linebreaks }}
   {% endif %}
+  {% if projeto.observacoes %}
+    <br><strong>Outras observações :</strong> {{ proposta.observacoes|linebreaks }}<br>
+  {% endif %}
   {% if proposta.anexo %}
     <br><strong>Anexo :</strong>
     <a class="text-success" href="../..{{MEDIA_URL}}{{proposta.anexo}}">{{proposta.anexo}}</a>
