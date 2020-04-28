@@ -1486,24 +1486,30 @@ def proposta_submissao(request):
 def proposta_editar(request, slug):
     """Formulário de Edição de Propostas de Projeto por slug."""
 
-    user = PFEUser.objects.get(pk=request.user.pk)
-    if user.tipo_de_usuario == 1: # alunos
-        mensagem = "Você não está cadastrado como parceiro de uma organização!"
-        context = {
-            "area_principal": True,
-            "mensagem": mensagem,
-        }
-        return render(request, 'generic.html', context=context)
+    try:
+        user = PFEUser.objects.get(pk=request.user.pk)
+    except PFEUser.DoesNotExist:
+        user = None
 
     parceiro = None
     professor = None
     administrador = None
-    if user.tipo_de_usuario == 3: # parceiro
-        parceiro = Parceiro.objects.get(pk=request.user.pk)
-    elif user.tipo_de_usuario == 2: # professor
-        professor = Professor.objects.get(pk=request.user.pk)
-    elif user.tipo_de_usuario == 4: # admin
-        administrador = Administrador.objects.get(pk=request.user.pk)
+
+    if user:
+        if user.tipo_de_usuario == 1: # alunos
+            mensagem = "Você não está cadastrado como parceiro de uma organização!"
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, 'generic.html', context=context)
+
+        if user.tipo_de_usuario == 3: # parceiro
+            parceiro = Parceiro.objects.get(pk=request.user.pk)
+        elif user.tipo_de_usuario == 2: # professor
+            professor = Professor.objects.get(pk=request.user.pk)
+        elif user.tipo_de_usuario == 4: # admin
+            administrador = Administrador.objects.get(pk=request.user.pk)
 
     try:
         proposta = Proposta.objects.get(slug=slug)
