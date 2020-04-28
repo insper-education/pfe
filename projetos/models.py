@@ -191,6 +191,7 @@ class Proposta(models.Model):
                                                 help_text='Contatos Administrativos')
 
     descricao_organizacao = models.TextField("Descrição da Organização", max_length=1000,
+                                             null=True, blank=True,
                                              help_text='Descrição da Organização')
 
     departamento = models.TextField("Descrição do Depart.", max_length=1000, null=True, blank=True,
