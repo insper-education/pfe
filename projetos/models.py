@@ -494,6 +494,12 @@ class Encontro(models.Model):
     facilitador = models.ForeignKey('users.PFEUser', null=True, blank=True,
                                     on_delete=models.SET_NULL, related_name='facilitador',
                                     help_text='facilitador da dinâmica')
+
+    def hora_fim(self):
+        """Mostra só a hora final do encontro."""
+        return self.endDate.strftime("%H:%M")
+    hora_fim.short_description = 'Hora Fim'
+
     def __str__(self):
         return str(self.startDate)
 

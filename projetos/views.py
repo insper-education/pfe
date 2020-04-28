@@ -2991,6 +2991,42 @@ def certificados_submetidos(request):
     return render(request, 'projetos/certificados_submetidos.html', context)
 
 @login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
+def cadastrar_organizacao(request):
+    """Cadastra Organização na base de dados do PFE."""
+
+    if request.method == 'POST':
+        if 'organizacao' in request.POST:
+            organizacao = Empresa.create()
+            
+            #login = models.CharField(primary_key=True, max_length=20)
+
+            #organizacao.texto = request.POST['anotacao']
+            #organizacao.tipo_de_retorno = int(request.POST['contato'])
+            organizacao.save()
+            mensagem = "Organização inserida na base de dados."
+        else:
+            mensagem = "<h3 style='color:red'>Falha na inserção na base da dados.<h3>"
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
+
+    context = {
+    }
+    return render(request, 'projetos/cadastra_organizacao.html', context)
+
+
+
+
+
+
+
+
+
+
+@login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def migracao(request):
     """Migra projetos para propostas (temporário)."""

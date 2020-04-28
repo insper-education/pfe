@@ -23,6 +23,7 @@ urlpatterns = [
     path('bancas_editar/<int:primarykey>', views.bancas_editar, name='bancas_editar'),
     path('bancas_lista/<str:periodo>', views.bancas_lista, name='bancas_lista'),
     path('bancas_tabela/', views.bancas_tabela, name='bancas_tabela'),
+    path('cadastrar_organizacao/', views.cadastrar_organizacao, name='cadastrar_organizacao'),
     path('calendario/', views.calendario, name='calendario'),
     path('calendario_limpo/', views.calendario_limpo, name='calendario_limpo'),
     path('carrega/<str:dado>', views.carrega, name='carrega'),

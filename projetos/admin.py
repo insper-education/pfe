@@ -312,7 +312,7 @@ class CoorientadorAdmin(admin.ModelAdmin):
 @admin.register(Encontro)
 class EncontroAdmin(admin.ModelAdmin):
     """Informações dos Encontros (com os facilitadores)."""
-    list_display = ('startDate', 'projeto', 'facilitador', )
+    list_display = ('startDate', 'hora_fim', 'projeto', 'facilitador', )
     actions = [dup_encontros, dup_encontros_4x, dup_encontros_8x]
 
 @admin.register(Avaliacao)
