@@ -8,14 +8,16 @@
 {% block head %}
   {% load static %}
   <link href="{% static 'css/horizBarChart.css' %}" media="all" rel="stylesheet" type="text/css" /> <!-- PARA HISTOGRAMA -->
+  <script src="{% static 'js/jquery.min.js' %}"></script>
   <script src="{% static 'js/jquery.horizBarChart.min.js' %}"></script>
   <script>
-    $(document).ready(function(){
+    function bar(){
       $('.chart').horizBarChart({
         selector: '.bar',
         speed: 800
       });
-    });
+    }
+    $(document).ready(bar);
   </script>
 {% endblock %}
 
@@ -31,26 +33,28 @@
   <br>
 
   {% if mylist %}
-    <ul style="padding:0;" class="chart">
-      <h3><li class="title" title="Procura dos Projetos"></li></h3>
-      <li></li>
-      <li></li>
+    <div class="2areas2">
+      <ul style="padding:0;" class="chart">
+        <h3><li class="title" title="Procura dos Projetos"></li></h3>
+        <li></li>
+        <li></li>
 
-      {% for proposta,opcoes in mylist %} 
-          <a href="{% url 'proposta_completa' proposta.id %}"> 
-            <li class="title" title="
-            {% if not proposta.disponivel%}X{% endif %}
-            {{ forloop.counter }}&ordm; :
-            {{proposta.titulo}}
-            ({{ proposta.organizacao.nome_empresa }})"></li>
-          </a>
-          <li class="past" title="">
-            <span class="bar" data-number="{{opcoes}}"></span>
-            <span class="number">{{opcoes}}</span>
-          </li>
-          <li></li>
-      {% endfor %}
-    </ul>
+        {% for proposta,opcoes in mylist %} 
+            <a href="{% url 'proposta_completa' proposta.id %}"> 
+              <li class="title" title="
+              {% if not proposta.disponivel%}X{% endif %}
+              {{ forloop.counter }}&ordm; :
+              {{proposta.titulo}}
+              ({{ proposta.organizacao.nome_empresa }})"></li>
+            </a>
+            <li class="past" title="">
+              <span class="bar" data-number="{{opcoes}}"></span>
+              <span class="number">{{opcoes}}</span>
+            </li>
+            <li></li>
+        {% endfor %}
+      </ul>
+    </div>
   
     {% comment %}
       <script type="text/javascript">
@@ -79,7 +83,29 @@
     {% endcomment %}
 
   {% else %}
-      <p>Não existem projetos disponíveis.</p>
-    {% endif %}
+    <p>Não existem projetos disponíveis.</p>
+  {% endif %}
+
+  <script>
+      $(".filter").change(function(){
+          var topicId = $(".filter option:selected").attr("value");
+          $.ajax({
+              type: "POST",
+              url: "{% url 'histograma' %}",
+              data: {
+                  topicId: topicId,
+                  'csrfmiddlewaretoken': '{{ csrf_token }}',
+              },
+              success: function(response){
+                  $("div.2areas2").replaceWith($("div.2areas2",response));
+                  bar();
+              },
+              error: function(response) {
+                  alert('error');
+              }
+
+          });
+      });
+  </script>
 
 {% endblock %}

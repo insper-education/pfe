@@ -235,8 +235,19 @@ def ordena_propostas(disponivel=True, ano=0, semestre=0):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def histograma(request):
     """Exibe um histograma com a procura dos projetos pelos alunos."""
-    #mylist = ordena_projetos()
-    mylist = ordena_propostas()
+
+    if request.is_ajax():
+        if 'topicId' in request.POST:
+            # if request.POST['topicId'] != 'todas':
+            periodo = request.POST['topicId'].split('.')
+            #     projetos = Areas.objects.filter(projeto__ano=int(periodo[0])).\
+            #                                 filter(projeto__semestre=int(periodo[1]))
+            mylist = ordena_propostas(ano=int(periodo[0]), semestre=int(periodo[1]))
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+    else:
+        mylist = ordena_propostas()
+
     context = {'mylist': mylist}
     return render(request, 'projetos/histograma.html', context)
 

@@ -54,25 +54,24 @@
     </div>
 
     <script>
-       
         $(".filter").change(function(){
-        var topicId = $(".filter option:selected").attr("value");
-        $.ajax({
-            type: "POST",
-            url: "{% url 'distribuicao_areas' tipo %}",
-            data: {
-                topicId: topicId,
-                'csrfmiddlewaretoken': '{{ csrf_token }}',
-            },
-            success: function(response){
-                $("div.2areas2").replaceWith($("div.2areas2",response));
-                bar();
-            },
-            error: function(response) {
-                alert('error');
-            }
+            var topicId = $(".filter option:selected").attr("value");
+            $.ajax({
+                type: "POST",
+                url: "{% url 'distribuicao_areas' tipo %}",
+                data: {
+                    topicId: topicId,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                },
+                success: function(response){
+                    $("div.2areas2").replaceWith($("div.2areas2",response));
+                    bar();
+                },
+                error: function(response) {
+                    alert('error');
+                }
 
-        });
+            });
         });
     </script>
 
