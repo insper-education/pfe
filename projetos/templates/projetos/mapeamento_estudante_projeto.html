@@ -80,7 +80,11 @@
           class="rotate">
             <div>
               <span>
-                {{proposta.organizacao.sigla}}
+                {% if proposta.organizacao %}
+                  {{proposta.organizacao.sigla}}
+                {% else %}
+                  {{proposta.nome_organizacao}}
+                {% endif %}
               </span>
             </div>
           </th>

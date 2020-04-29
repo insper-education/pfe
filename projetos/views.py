@@ -2658,17 +2658,20 @@ def mapeamento_estudante_projeto(request, anosemestre):
             if opcao:
                 opcoes_aluno.append(opcao)
             else:
-                proj = Projeto.objects.get(proposta=proposta)
-                if alocacaos.filter(projeto=proj):
-                    # Cria uma opção temporaria
-                    opc = Opcao()
-                    opc.prioridade = 0
-                    opc.proposta = proposta
-                    opc.aluno = aluno
-                    opcoes_aluno.append(opc)
-                else:
+                try:
+                    proj = Projeto.objects.get(proposta=proposta)
+                    if alocacaos.filter(projeto=proj):
+                        # Cria uma opção temporaria
+                        opc = Opcao()
+                        opc.prioridade = 0
+                        opc.proposta = proposta
+                        opc.aluno = aluno
+                        opcoes_aluno.append(opc)
+                    else:
+                        opcoes_aluno.append(None)
+                except Projeto.DoesNotExist:
                     opcoes_aluno.append(None)
-
+                
         opcoes.append(opcoes_aluno)
 
     estudantes = zip(alunos, opcoes)
