@@ -742,6 +742,16 @@ def cria_anotacao(request, login): #acertar isso para pk
             anotacao.texto = request.POST['anotacao']
             anotacao.tipo_de_retorno = int(request.POST['contato'])
             anotacao.save()
+            if 'data_hora' in request.POST:
+                try:
+                    anotacao.momento = dateutil.parser.parse(request.POST['data_hora'])
+                    print(anotacao.momento)
+                except (ValueError, OverflowError):
+                    print("NAO")
+                    anotacao.momento = datetime.datetime.now()
+                print(anotacao.momento)
+            anotacao.save()
+            print(anotacao.momento)
             #return HttpResponse(
             # "Anotação criada.<br>"+\
             # "<a href='../organizacao_completo/"+login+\
@@ -761,6 +771,7 @@ def cria_anotacao(request, login): #acertar isso para pk
     else:
         context = {
             'organization': organization,
+            'data_hora': datetime.datetime.now(),
         }
         return render(request, 'projetos/cria_anotacao.html', context=context)
 

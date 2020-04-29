@@ -15,6 +15,8 @@
       Organização: {{ organization.nome_empresa }}
       <br><br>
 
+      <label for="data_hora">Data e Hora: </label> <input id="data_hora" type="datetime-local" name="data_hora" value="{{data_hora|date:'Y-m-d\TH:i'}}"><br>
+      <br>
       Anotação:<br>
       <textarea name="anotacao" rows="5" cols="64" required></textarea>
       <br><br>
