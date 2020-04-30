@@ -3019,13 +3019,15 @@ def cadastrar_organizacao(request):
     """Cadastra Organização na base de dados do PFE."""
 
     if request.method == 'POST':
-        if 'organizacao' in request.POST:
+        if 'nome' in request.POST:
             organizacao = Organizacao.create()
-            
-            #login = models.CharField(primary_key=True, max_length=20)
+            organizacao.nome = request.POST['nome']
+            organizacao.sigla = request.POST['sigla']
 
-            #organizacao.texto = request.POST['anotacao']
-            #organizacao.tipo_de_retorno = int(request.POST['contato'])
+            organizacao.endereco = request.POST['endereco']
+            organizacao.website = request.POST['website']
+            organizacao.informacoes = request.POST['informacoes']
+
             organizacao.save()
             mensagem = "Organização inserida na base de dados."
         else:
@@ -3039,13 +3041,6 @@ def cadastrar_organizacao(request):
     context = {
     }
     return render(request, 'projetos/cadastra_organizacao.html', context)
-
-
-
-
-
-
-
 
 
 
