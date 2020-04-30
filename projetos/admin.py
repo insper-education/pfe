@@ -152,7 +152,7 @@ class EventoFilter(SimpleListFilter):
 @admin.register(Projeto)
 class ProjetoAdmin(admin.ModelAdmin):
     """Exibição no sistema de administração do Django para Projeto."""
-    list_display = ('organizacao', 'empresa', 'ano', 'semestre', 'orientador', 'get_titulo',)
+    list_display = ('organizacao', 'ano', 'semestre', 'orientador', 'get_titulo',)
     list_filter = (FechadoFilter, 'ano', 'semestre', 'avancado', 'disponivel',)
     fieldsets = \
         ((None,
@@ -172,7 +172,7 @@ class ProjetoAdmin(admin.ModelAdmin):
            )
           }),
          ('Origem', {
-             'fields': ('organizacao', 'empresa',)
+             'fields': ('organizacao',)
          }),
         )
     actions = [dup_projeto]
@@ -221,8 +221,7 @@ class OrganizacaoAdmin(admin.ModelAdmin):
 @admin.register(Empresa)
 class EmpresaAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
-    list_display = ('sigla', 'nome_empresa', 'website')
-    search_fields = ['nome_empresa',]
+    list_display = ('sigla',)
 
 @admin.register(Configuracao)
 class ConfiguracaoAdmin(admin.ModelAdmin):
@@ -267,10 +266,8 @@ class BancaAdmin(admin.ModelAdmin):
     get_orientador.admin_order_field = 'projeto__orientador'
     def get_organizacao(self, obj):
         """Retorna a organização parceira do projeto da Banca."""
-        #return obj.projeto.empresa
         return obj.projeto.organizacao
     get_organizacao.short_description = 'Organização'
-    #get_organizacao.admin_order_field = 'projeto__empresa'
     get_organizacao.admin_order_field = 'projeto__organizacao'
     ordering = ('-startDate',)
     list_filter = ('projeto__orientador',)

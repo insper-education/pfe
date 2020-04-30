@@ -25,10 +25,8 @@ def get_upload_path(instance, filename):
         if caminho == "":
             caminho = "documentos/"
     elif isinstance(instance, Projeto):
-        #caminho += instance.empresa.sigla + "/"
         caminho += instance.organizacao.sigla + "/"
         caminho += "projeto" + str(instance.pk) + "/"
-    #elif isinstance(instance, Empresa):
     elif isinstance(instance, Organizacao):
         caminho += instance.sigla + "/logotipo/"
     file_path = caminho
@@ -67,8 +65,6 @@ class Organizacao(models.Model):
         ordering = ['sigla']
         verbose_name = 'Organização'
         verbose_name_plural = 'Organizações'
-        #permissions = (("altera_empresa", "Organizacao altera valores"),
-        #               ("altera_professor", "Professor altera valores"), )
 
     @classmethod
     def create(cls):
@@ -100,7 +96,7 @@ class Empresa(models.Model):
     logotipo = models.ImageField("Logotipo", upload_to=get_upload_path, null=True, blank=True,
                                  help_text='Logotipo da organização parceira')
     cnpj = models.CharField("CNPJ", max_length=14, null=True, blank=True,
-                            help_text='Código de CNPJ da empresa')
+                            help_text='Código de CNPJ')
     inscricao_estadual = models.CharField("Inscrição Estadual", max_length=15,
                                           null=True, blank=True,
                                           help_text='Código da inscrição estadual')
@@ -113,12 +109,9 @@ class Empresa(models.Model):
 
     class Meta:
         ordering = ['sigla']
-        permissions = (("altera_empresa", "Empresa altera valores"),
-                       ("altera_professor", "Professor altera valores"), )
+
     def __str__(self):
-        return self.nome_empresa
-    #def documento(self):
-    #    return os.path.split(self.contrato.name)[1]
+        return self.sigla
 
 class Projeto(models.Model):
     """Dados dos projetos para o PFE."""
@@ -140,7 +133,7 @@ class Projeto(models.Model):
     imagem = models.ImageField(null=True, blank=True,
                                help_text='Imagem que representa projeto (se houver)')
     empresa = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='Empresa que propôs projeto')
+                                help_text='Não mais utilizado')
     organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text='Organização parceira que propôs projeto')
     departamento = models.TextField("Departamento", max_length=1000, null=True, blank=True,
@@ -194,7 +187,7 @@ class Projeto(models.Model):
                                  help_text='Proposta original do projeto')
 
     class Meta:
-        ordering = ['empresa', 'ano', 'semestre']
+        ordering = ['organizacao', 'ano', 'semestre']
         permissions = (("altera_empresa", "Empresa altera valores"),
                        ("altera_professor", "Professor altera valores"), )
 
@@ -216,7 +209,7 @@ class Projeto(models.Model):
             return self.titulo
 
     def __str__(self):
-        return self.empresa.sigla+" ("+str(self.ano)+"."+str(self.semestre)+") "+self.get_titulo()
+        return self.organizacao.sigla+" ("+str(self.ano)+"."+str(self.semestre)+") "+self.get_titulo()
 
 class Proposta(models.Model):
     """Dados da Proposta de Projeto para o PFE."""
@@ -283,7 +276,7 @@ class Proposta(models.Model):
 
     # Preenchidos depois manualmente
     organizacao_old = models.ForeignKey(Empresa, on_delete=models.SET_NULL, null=True, blank=True,
-                                    help_text='Empresa parceira que propôs projeto')
+                                    help_text='Não mais utilizado')
 
     organizacao = models.ForeignKey(Organizacao, on_delete=models.SET_NULL, null=True, blank=True,
                                     help_text='Organização parceira que propôs projeto')
@@ -563,7 +556,7 @@ class Anotacao(models.Model):
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
                                    help_text='Data e hora da comunicação') # hora ordena para dia
     organizacao_old = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL,
-                                    help_text='Empresa parceira')
+                                    help_text='Não mais utilizado')
     organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text='Organização parceira')
     autor = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
@@ -594,7 +587,7 @@ class Anotacao(models.Model):
 class Documento(models.Model):
     """Documentos, em geral PDFs, e seus relacionamentos com o PFE."""
     organizacao_old = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL,
-                                    help_text='Empresa referente o documento')
+                                    help_text='Não mais usado')
     organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
                                      help_text='Organização referente o documento')
     usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,

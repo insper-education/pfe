@@ -17,7 +17,6 @@ class ProjetosResource(resources.ModelResource):
 
 class OrganizacoesResource(resources.ModelResource):
     class Meta:
-        #model = Empresa
         model = Organizacao
 
 class ConfiguracaoResource(resources.ModelResource):

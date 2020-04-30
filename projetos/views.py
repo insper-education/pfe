@@ -42,7 +42,6 @@ from .models import Projeto, Proposta, Organizacao, Configuracao, Evento, Anotac
 from .models import Feedback, Certificado
 from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade, Conexao
 #from .models import Disciplina
-#from .models import Empresa
 from .models import ObjetidosDeAprendizagem, Avaliacao
 
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource
@@ -698,13 +697,11 @@ def distribuicao_areas(request, tipo):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def organizacoes_lista(request):
     """Exibe todas as organizações que já submeteram projetos."""
-    #organizacoes = Empresa.objects.all()
     organizacoes = Organizacao.objects.all()
     fechados = []
     desde = []
     contato = []
     for organizacao in organizacoes:
-        #projetos = Projeto.objects.filter(empresa=organizacao).order_by("ano", "semestre")
         projetos = Projeto.objects.filter(organizacao=organizacao).order_by("ano", "semestre")
         if projetos.first():
             desde.append(str(projetos.first().ano)+"."+str(projetos.first().semestre))
@@ -721,7 +718,6 @@ def organizacoes_lista(request):
         fechados.append(projetos.filter(alocacao__isnull=False).distinct().count())
 
     organizacoes_list = zip(organizacoes, fechados, desde, contato)
-    #total_organizacoes = Empresa.objects.all().count()
     total_organizacoes = Organizacao.objects.all().count()
     total_submetidos = Projeto.objects.all().count()
     total_fechados = Projeto.objects.filter(alocacao__isnull=False).distinct().count()
@@ -739,7 +735,6 @@ def organizacoes_lista(request):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def organizacao_completo(request, org): #acertar isso para pk
     """Exibe detalhes das organizações parceiras."""
-    #organization = Empresa.objects.get(login=org)
     try:
         organizacao = Organizacao.objects.get(id=org)
     except Organizacao.DoesNotExist:
@@ -754,7 +749,6 @@ def organizacao_completo(request, org): #acertar isso para pk
 @permission_required("users.altera_professor", login_url='/projetos/')
 def cria_anotacao(request, login): #acertar isso para pk
     """Cria um anotação para uma organização parceira."""
-    #organization = Empresa.objects.get(login=login)
     try:
         organizacao = Organizacao.objects.get(id=login)
     except Proposta.DoesNotExist:
@@ -1898,7 +1892,6 @@ def organizacoes_tabela(request):
         organizacoes = []
         grupos = []
         #for professor in Professor.objects.all().order_by("user__first_name", "user__last_name"):
-        #for empresa in Empresa.objects.all():
         for organizacao in Organizacao.objects.all():
             #count_projetos = 0
             count_projetos = []
@@ -3027,7 +3020,6 @@ def cadastrar_organizacao(request):
 
     if request.method == 'POST':
         if 'organizacao' in request.POST:
-            #organizacao = Empresa.create()
             organizacao = Organizacao.create()
             
             #login = models.CharField(primary_key=True, max_length=20)
@@ -3061,55 +3053,5 @@ def cadastrar_organizacao(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def migracao(request):
     """Migra projetos (temporário)."""
-
-    # empresas = Empresa.objects.all()
-    # for empresa in empresas:
-    #     organizacao = Organizacao.create()
-    #     organizacao.nome = empresa.nome_empresa
-    #     organizacao.sigla = empresa.sigla
-    #     organizacao.endereco = empresa.endereco
-    #     organizacao.website = empresa.website
-    #     organizacao.informacoes = empresa.informacoes
-    #     organizacao.logotipo = empresa.logotipo
-    #     organizacao.cnpj = empresa.cnpj
-    #     organizacao.inscricao_estadual = empresa.inscricao_estadual
-    #     organizacao.razao_social = empresa.razao_social
-    #     organizacao.ramo_atividade = empresa.ramo_atividade
-
-    #     organizacao.empresa_remover = empresa
-    #     organizacao.save()
-
-    #     empresa.organizacao_remover = organizacao
-    #     empresa.save()
-
-    # projetos = Projeto.objects.all()
-    # for projeto in projetos:
-    #     if projeto.empresa:
-    #         projeto.organizacao = projeto.empresa.organizacao_remover
-    #         projeto.save()
-
-    # anotacoes = Anotacao.objects.all()
-    # for anotacao in anotacoes:
-    #     if anotacao.organizacao:
-    #         anotacao.organizacao2 = anotacao.organizacao.organizacao_remover
-    #         anotacao.save()
-
-    # parceiros = Parceiro.objects.all()
-    # for parceiro in parceiros:
-    #     if parceiro.organizacao:
-    #         parceiro.organizacao2 = parceiro.organizacao.organizacao_remover
-    #         parceiro.save()
-
-    # documentos = Documento.objects.all()
-    # for documento in documentos:
-    #     if documento.organizacao:
-    #         documento.organizacao2 = documento.organizacao.organizacao_remover
-    #         documento.save()
-    
-    # propostas = Proposta.objects.all()
-    # for proposta in propostas:
-    #     if proposta.organizacao:
-    #         proposta.organizacao2 = proposta.organizacao.organizacao_remover
-    #         proposta.save()
 
     return HttpResponse("Feito.")
