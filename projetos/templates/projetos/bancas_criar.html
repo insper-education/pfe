@@ -32,12 +32,12 @@
           {% for projeto in projetos %}
             <option value="{{projeto.id}}"
             data-titulo="{{projeto.titulo}}"
-            data-organizacao="{{projeto.empresa}}"
+            data-organizacao="{{projeto.organizacao}}"
             data-orientador="{{projeto.orientador}}"
             >
               {{projeto.ano}}.{{projeto.semestre}} -
               {{projeto.titulo}}
-              ({{projeto.empresa}})
+              ({{projeto.organizacao}})
               [{{projeto.orientador}}]
             </option>  
           {% endfor %}

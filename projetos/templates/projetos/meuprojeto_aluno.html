@@ -42,9 +42,9 @@
 
         <hr>
 
-        <h3>Empresa: {{ alocado.projeto.empresa.nome_empresa }}</h3>
-        <strong>endereço:</strong> {{ alocado.projeto.empresa.endereco|linebreaks }}
-        <strong>website:</strong> <a href="{{ projeto.empresa.website }}"> {{ alocado.projeto.empresa.website }} </a>
+        <h3>Organizacao: {{ alocado.projeto.organizacao.nome }}</h3>
+        <strong>endereço:</strong> {{ alocado.projeto.organizacao.endereco|linebreaks }}
+        <strong>website:</strong> <a href="{{ projeto.organizacao.website }}"> {{ alocado.projeto.organizacao.website }} </a>
 
         {% if alocado.projeto.orientador %}
         <hr>

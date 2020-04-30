@@ -43,9 +43,9 @@
           <strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ projeto.proposta.recursos|linebreaks }}<br>
           <strong>Outras observações :</strong> {{ projeto.proposta.observacoes|linebreaks }}<br>
           <hr>
-          <h5>Empresa: {{ projeto.empresa.nome_empresa }}</h5>
-          <strong>endereço:</strong> {{ projeto.empresa.endereco|linebreaks }}
-          <strong>website:</strong> <a href="{{ projeto.empresa.website }}"> {{ projeto.empresa.website }} </a>        
+          <h5>Organização: {{ projeto.organizacao.nome }}</h5>
+          <strong>endereço:</strong> {{ projeto.organizacao.endereco|linebreaks }}
+          <strong>website:</strong> <a href="{{ projeto.organizacao.website }}"> {{ projeto.organizacao.website }} </a>        
           <hr class="striped-border">
         {% endif %}
         {% endfor %}

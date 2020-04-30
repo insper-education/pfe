@@ -39,13 +39,13 @@
     <a class="text-success" href="../..{{MEDIA_URL}}{{projeto.anexo}}">{{projeto.proposta.anexo}}</a>
   {% endif %}
   <hr>
-  <h3>Organização Parceira: {{ projeto.empresa.nome_empresa }}</h3>
-  <p><strong>endereço:</strong> <a class="tabulado" href="http://maps.google.com/maps?q={{projeto.empresa.endereco}}">{{ projeto.empresa.endereco|linebreaks }}</a></p>
-  {% if projeto.empresa.website %}
-    <p><strong>website:</strong>  <a class="tabulado" href="{{ projeto.empresa.website }}"> {{ projeto.empresa.website }} </a></p>
+  <h3>Organização Parceira: {{ projeto.organizacao.nome }}</h3>
+  <p><strong>endereço:</strong> <a class="tabulado" href="http://maps.google.com/maps?q={{projeto.organizacao.endereco}}">{{ projeto.organizacao.endereco|linebreaks }}</a></p>
+  {% if projeto.organizacao.website %}
+    <p><strong>website:</strong>  <a class="tabulado" href="{{ projeto.organizacao.website }}"> {{ projeto.organizacao.website }} </a></p>
   {% endif %}  
-  {% if projeto.empresa.informacoes %}
-    <strong>Informações sobre a empresa :</strong> {{ projeto.empresa.informacoes|linebreaks }}
+  {% if projeto.organizacao.informacoes %}
+    <strong>Informações sobre a empresa :</strong> {{ projeto.organizacao.informacoes|linebreaks }}
   {% endif %}
   {% if projeto.departamento %}
     <strong>Informações sobre o departamento na empresa :</strong> {{ projeto.departamento|linebreaks }}

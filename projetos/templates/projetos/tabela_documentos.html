@@ -27,10 +27,10 @@
         <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Projeto</th>
         <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Período</th>
         <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Organização</th>
-        <th class="text-center">Contr. Empresa</th>
+        <th class="text-center">Contr. Organização</th>
         <th class="text-center">Contr. Aluno</th>
         <th class="text-center">Rel. Final</th>
-        <th class="text-center">Aut. Pub. Empresa</th>
+        <th class="text-center">Aut. Pub. Organização</th>
         <th class="text-center">Aut. Pub. Aluno</th>
         <th class="text-center">Outros</th>
       </tr>      
@@ -51,8 +51,8 @@
                 {{projeto.ano}}.{{projeto.semestre}}
             </td>
             <td>
-              <a href="{% url 'organizacao_completo' projeto.empresa.login %}">
-                {{ projeto.empresa.nome_empresa }}
+              <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
+                {{ projeto.organizacao.nome }}
               </a>
             </td>
             
@@ -72,7 +72,7 @@
                   &#x2B24;</a>
                 {% endfor %}
               {% else %}
-                {% if projeto.empresa.sigla == "INOVACAO" %}
+                {% if projeto.organizacao.sigla == "INOVACAO" %}
                   <a class="text-info" data-toggle="tooltip" data-html="true" animation="true" title="isento">&#x2B24;</a>
                 {% elif projeto.semestre > configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre <= configuracao.semestre and projeto.ano > configuracao.ano %}
                   <a class="text-warning" data-toggle="tooltip" data-html="true" animation="true" title="aguardando">&#x2B24;</a>
@@ -117,7 +117,7 @@
               {% if documento.autorizacao_publicacao_empresa %}
                 <a class="text-success" href="../..{{MEDIA_URL}}{{documento.autorizacao_publicacao_empresa}}" target="_blank" rel="noopener noreferrer">&#x2B24;</a>
               {% else %}
-                {% if projeto.empresa.sigla == "INOVACAO" %}
+                {% if projeto.organizacao.sigla == "INOVACAO" %}
                   <a class="text-info" data-toggle="tooltip" data-html="true" animation="true" title="isento">&#x2B24;</a>
                 {% elif projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
                   <a class="text-warning" data-toggle="tooltip" data-html="true" animation="true" title="aguardando">&#x2B24;</a>

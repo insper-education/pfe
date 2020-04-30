@@ -154,7 +154,7 @@
         {% for alocado in aluno.alocacao_set.all %}
             <a href="{% url 'projeto_completo' alocado.projeto.id %}">
             {{alocado.projeto.get_titulo}}
-            ({{alocado.projeto.empresa.nome_empresa}})
+            ({{alocado.projeto.organizacao.nome}})
             { {{alocado.projeto.ano}}.{{alocado.projeto.semestre}} }
             <br>
             </a>
@@ -170,7 +170,7 @@
                 <a href="{% url 'proposta_completa' opcao.proposta.id %}">
                 <p><b>{{opcao.prioridade}}</b> - 
                     {{opcao.proposta.titulo}}
-                    ({{opcao.proposta.organizacao.nome_empresa}})
+                    ({{opcao.proposta.organizacao2.nome}})
                     {{ '{' }}{{opcao.proposta.ano}}.{{opcao.proposta.semestre}}{{ '}' }}
                     |{% mede_aderencia aluno opcao.proposta %}%|
                 </p>
@@ -191,7 +191,7 @@
                 <a href="{% url 'proposta_completa' opcao.proposta.id %}">
                 <p><b>{{opcao.prioridade}}</b> - 
                     {{opcao.proposta.titulo}}
-                    ({{opcao.proposta.organizacao.nome_empresa}})
+                    ({{opcao.proposta.organizacao2.nome}})
                     {{ '{' }}{{opcao.proposta.ano}}.{{opcao.proposta.semestre}}{{ '}' }}
                     |{% mede_aderencia aluno opcao.proposta %}%|
                 </p>

@@ -15,7 +15,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 #from django.utils.functional import curry
 
-from projetos.models import Projeto, Proposta, Empresa
+from projetos.models import Projeto, Proposta, Empresa, Organizacao
 
 ####   PARA PORTAR AS AREAS DE INTERESSE DE ALUNOS PARA CÁ, E USAR NO PROJETO  #####
 #areas de interesse
@@ -341,7 +341,12 @@ class Parceiro(models.Model):  # da empresa (não do Insper)
                                 help_text='Identificaçãdo do usuário')
     organizacao = models.ForeignKey(Empresa, on_delete=models.CASCADE,
                                     blank=True, null=True,
-                                    help_text='Organização Parceira')
+                                    help_text='Empresa Parceira')
+
+    organizacao2 = models.ForeignKey(Organizacao, on_delete=models.CASCADE,
+                                     blank=True, null=True,
+                                     help_text='Organização Parceira')
+
     cargo = models.CharField("Cargo", max_length=50, blank=True,
                              help_text='Cargo Funcional')
     telefone = models.CharField(max_length=20, blank=True,

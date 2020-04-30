@@ -54,8 +54,8 @@
     <br>
   {% endif %}
   <strong>Organização: </strong>
-    <a href="{% url 'organizacao_completo' projeto.empresa.login %}">
-      {{projeto.empresa}}
+    <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
+      {{projeto.organizacao}}
     </a><br>
   
   {% if projeto.avancado %}

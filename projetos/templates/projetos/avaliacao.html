@@ -33,7 +33,7 @@
       {% csrf_token %}
 
       <b>Título do Projeto:</b> {{projeto.titulo}}<br>
-      <b>Organização:</b> {{projeto.empresa}}<br>
+      <b>Organização:</b> {{projeto.organizacao}}<br>
       <b>Orientador{% if projeto.orientador.user.genero == "F" %}a{% endif %}:</b> {{projeto.orientador}}<br>
       <b>Alunos:</b>
       <ul>

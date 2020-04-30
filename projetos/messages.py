@@ -27,7 +27,7 @@ def create_message(aluno, ano, semestre):
     message += '<ul>'
     for opcao in Opcao.objects.filter(aluno=aluno):
         if opcao.projeto.ano == ano and opcao.projeto.semestre == semestre and opcao.projeto.disponivel:
-            message += ("&nbsp;"*4)+"<p>"+str(opcao.prioridade)+" - "+opcao.projeto.titulo+" ("+opcao.projeto.empresa.nome_empresa+")</p>\n"
+            message += ("&nbsp;"*4)+"<p>"+str(opcao.prioridade)+" - "+opcao.projeto.titulo+" ("+opcao.projeto.organizacao.nome+")</p>\n"
     message += '</ul>'
     message += '<br><br>\n\n'
     message += '&nbsp;&nbsp;Suas áreas de interesse são:<br>\n'

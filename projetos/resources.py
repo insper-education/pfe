@@ -8,7 +8,7 @@ Data: 15 de Maio de 2019
 from import_export import resources, fields
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao
-from .models import Projeto, Empresa, Configuracao, Disciplina
+from .models import Projeto, Organizacao, Empresa, Configuracao, Disciplina
 
 
 class ProjetosResource(resources.ModelResource):
@@ -17,7 +17,8 @@ class ProjetosResource(resources.ModelResource):
 
 class OrganizacoesResource(resources.ModelResource):
     class Meta:
-        model = Empresa
+        #model = Empresa
+        model = Organizacao
 
 class ConfiguracaoResource(resources.ModelResource):
     class Meta:
@@ -35,7 +36,8 @@ class DisciplinasResource(resources.ModelResource):
     def before_import_row(self, row, **kwargs): #forma que arrumei para evitar preencher com o mesmo dado
         nome = row.get('nome')
         if nome is None:
-            print("Erro ao recuperar o nome da disciplina")
+            pass
+            #print("Erro ao recuperar o nome da disciplina")
         elif nome != "":
             (reg, _created) = Disciplina.objects.get_or_create(nome=nome)
             row['id'] = reg.id
@@ -69,7 +71,8 @@ class AlunosResource(resources.ModelResource):
     def before_import_row(self, row, **kwargs): #forma que arrumei para evitar preencher com o mesmo dado
         username = row.get('usuário')
         if username is None:
-            print("Erro ao recuperar o usuário [username]")
+            pass
+            #print("Erro ao recuperar o usuário [username]")
         elif username != "":
             # recupera dados do aluno se ele já estava cadastrado
             (user, _created) = PFEUser.objects.get_or_create(username=username, tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])

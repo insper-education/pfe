@@ -38,10 +38,11 @@ from django.template.loader import get_template
 from django.utils import timezone
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador, Opcao, Alocacao, Areas
-from .models import Projeto, Proposta, Empresa, Configuracao, Evento, Anotacao, Coorientador
+from .models import Projeto, Proposta, Organizacao, Configuracao, Evento, Anotacao, Coorientador
 from .models import Feedback, Certificado
 from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade, Conexao
 #from .models import Disciplina
+from .models import Empresa
 from .models import ObjetidosDeAprendizagem, Avaliacao
 
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource
@@ -697,18 +698,21 @@ def distribuicao_areas(request, tipo):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def organizacoes_lista(request):
     """Exibe todas as organizações que já submeteram projetos."""
-    organizacoes = Empresa.objects.all()
+    #organizacoes = Empresa.objects.all()
+    organizacoes = Organizacao.objects.all()
     fechados = []
     desde = []
     contato = []
     for organizacao in organizacoes:
-        projetos = Projeto.objects.filter(empresa=organizacao).order_by("ano", "semestre")
+        #projetos = Projeto.objects.filter(empresa=organizacao).order_by("ano", "semestre")
+        projetos = Projeto.objects.filter(organizacao=organizacao).order_by("ano", "semestre")
         if projetos.first():
             desde.append(str(projetos.first().ano)+"."+str(projetos.first().semestre))
         else:
             desde.append("---------")
 
-        anot = Anotacao.objects.filter(organizacao=organizacao).order_by("momento").last()
+        #anot = Anotacao.objects.filter(organizacao=organizacao).order_by("momento").last()
+        anot = Anotacao.objects.filter(organizacao2=organizacao).order_by("momento").last()
         if anot:
             contato.append(anot)
         else:
@@ -717,7 +721,8 @@ def organizacoes_lista(request):
         fechados.append(projetos.filter(alocacao__isnull=False).distinct().count())
 
     organizacoes_list = zip(organizacoes, fechados, desde, contato)
-    total_organizacoes = Empresa.objects.all().count()
+    #total_organizacoes = Empresa.objects.all().count()
+    total_organizacoes = Organizacao.objects.all().count()
     total_submetidos = Projeto.objects.all().count()
     total_fechados = Projeto.objects.filter(alocacao__isnull=False).distinct().count()
     context = {
@@ -734,9 +739,13 @@ def organizacoes_lista(request):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def organizacao_completo(request, org): #acertar isso para pk
     """Exibe detalhes das organizações parceiras."""
-    organization = Empresa.objects.get(login=org)  # acho que tem de ser get
+    #organization = Empresa.objects.get(login=org)
+    try:
+        organizacao = Organizacao.objects.get(id=org)
+    except Organizacao.DoesNotExist:
+        return HttpResponseNotFound('<h1>Organização não encontrada!</h1>')
     context = {
-        'organization': organization,
+        'organizacao': organizacao,
         'MEDIA_URL' : settings.MEDIA_URL,
     }
     return render(request, 'projetos/organizacao_completo.html', context=context)
@@ -745,10 +754,15 @@ def organizacao_completo(request, org): #acertar isso para pk
 @permission_required("users.altera_professor", login_url='/projetos/')
 def cria_anotacao(request, login): #acertar isso para pk
     """Cria um anotação para uma organização parceira."""
-    organization = Empresa.objects.get(login=login)  # acho que tem de ser get
+    #organization = Empresa.objects.get(login=login)
+    try:
+        organizacao = Organizacao.objects.get(id=login)
+    except Proposta.DoesNotExist:
+        return HttpResponseNotFound('<h1>Organização não encontrada!</h1>')
+    
     if request.method == 'POST':
         if 'anotacao' in request.POST:
-            anotacao = Anotacao.create(organization)
+            anotacao = Anotacao.create(organizacao)
             anotacao.autor = PFEUser.objects.get(pk=request.user.pk)
             anotacao.texto = request.POST['anotacao']
             anotacao.tipo_de_retorno = int(request.POST['contato'])
@@ -756,19 +770,9 @@ def cria_anotacao(request, login): #acertar isso para pk
             if 'data_hora' in request.POST:
                 try:
                     anotacao.momento = dateutil.parser.parse(request.POST['data_hora'])
-                    print(anotacao.momento)
                 except (ValueError, OverflowError):
-                    print("NAO")
                     anotacao.momento = datetime.datetime.now()
-                print(anotacao.momento)
             anotacao.save()
-            print(anotacao.momento)
-            #return HttpResponse(
-            # "Anotação criada.<br>"+\
-            # "<a href='../organizacao_completo/"+login+\
-            # "'>Volta para organização</a><br>"+\
-            # "<a href='../organizacoes_lista/"+\
-            # "'>Volta para lista de organizações</a><br>")
             mensagem = "Anotação criada."
         else:
             mensagem = "<h3 style='color:red'>Anotação não criada.<h3>"
@@ -781,7 +785,7 @@ def cria_anotacao(request, login): #acertar isso para pk
         return render(request, 'generic.html', context=context)
     else:
         context = {
-            'organization': organization,
+            'organizacao': organizacao,
             'data_hora': datetime.datetime.now(),
         }
         return render(request, 'projetos/cria_anotacao.html', context=context)
@@ -1119,7 +1123,7 @@ def tabela_documentos(request):
 
         # Contratos   -   (0, 'contrato com empresa')
         contratos = []
-        for doc in Documento.objects.filter(organizacao=projeto.empresa).\
+        for doc in Documento.objects.filter(organizacao2=projeto.organizacao).\
                                      filter(tipo_de_documento=0):
             contratos.append((doc.documento, doc.anotacao, doc.data))
         contrato["contratos"] = contratos
@@ -1169,7 +1173,7 @@ def tabela_documentos(request):
 
         # Outros   -   (14, 'outros')
         outros = []
-        for doc in Documento.objects.filter(organizacao=projeto.empresa).\
+        for doc in Documento.objects.filter(organizacao2=projeto.organizacao).\
                                      filter(tipo_de_documento=14):
             outros.append((doc.documento, doc.anotacao, doc.data))
         contrato["outros"] = outros
@@ -1457,10 +1461,10 @@ def proposta_submissao(request):
     descricao_organizacao = ""
     if user.tipo_de_usuario == 3: # parceiro
         parceiro = Parceiro.objects.get(pk=request.user.pk)
-        organizacao = parceiro.organizacao
-        website = parceiro.organizacao.website
-        endereco = parceiro.organizacao.endereco
-        descricao_organizacao = parceiro.organizacao.informacoes
+        organizacao = parceiro.organizacao2
+        website = parceiro.organizacao2.website
+        endereco = parceiro.organizacao2.endereco
+        descricao_organizacao = parceiro.organizacao2.informacoes
     elif user.tipo_de_usuario == 2: # professor
         professor = Professor.objects.get(pk=request.user.pk)
     elif user.tipo_de_usuario == 4: # admin
@@ -1758,7 +1762,7 @@ def projetos_lista(request, periodo):
     """Lista todos os projetos."""
     configuracao = Configuracao.objects.all().first()
     projetos = Projeto.objects.filter(alocacao__isnull=False).distinct() # no futuro remover
-    projetos = projetos.order_by("ano", "semestre", "empresa", "titulo",)
+    projetos = projetos.order_by("ano", "semestre", "organizacao", "titulo",)
     if periodo == "todos":
         pass
     if periodo == "antigos":
@@ -1788,7 +1792,7 @@ def projetos_lista(request, periodo):
 def propostas_lista(request, periodo):
     """Lista todas as propostas de projetos."""
     configuracao = Configuracao.objects.all().first()
-    propostas = Proposta.objects.all().order_by("ano", "semestre", "organizacao", "titulo",)
+    propostas = Proposta.objects.all().order_by("ano", "semestre", "organizacao2", "titulo",)
     if periodo == "todos":
         pass
     if periodo == "antigos":
@@ -1829,7 +1833,7 @@ def parceiro_propostas(request):
         }
         return render(request, 'generic.html', context=context)
 
-    propostas = Proposta.objects.filter(organizacao=user.parceiro.organizacao).\
+    propostas = Proposta.objects.filter(organizacao2=user.parceiro.organizacao2).\
                         order_by("ano", "semestre", "titulo",)
     context = {
         'propostas': propostas,
@@ -1894,12 +1898,13 @@ def organizacoes_tabela(request):
         organizacoes = []
         grupos = []
         #for professor in Professor.objects.all().order_by("user__first_name", "user__last_name"):
-        for empresa in Empresa.objects.all():
+        #for empresa in Empresa.objects.all():
+        for organizacao in Organizacao.objects.all():
             #count_projetos = 0
             count_projetos = []
-            grupos_pfe = Projeto.objects.filter(empresa=empresa).\
-                                        filter(ano=ano).\
-                                        filter(semestre=semestre)
+            grupos_pfe = Projeto.objects.filter(organizacao=organizacao).\
+                                         filter(ano=ano).\
+                                         filter(semestre=semestre)
             if grupos_pfe:
                 for grupo in grupos_pfe: # garante que tem alunos no projeto
                     alunos_pfe = Aluno.objects.filter(alocacao__projeto=grupo)
@@ -1908,7 +1913,7 @@ def organizacoes_tabela(request):
                         count_projetos.append(grupo)
                 #if count_projetos > 0:
                 if count_projetos:
-                    organizacoes.append(empresa)
+                    organizacoes.append(organizacao)
                     grupos.append(count_projetos)
         organizacoes_pfe.append(zip(organizacoes, grupos))
         periodo.append(str(ano)+"."+str(semestre))
@@ -2277,14 +2282,14 @@ def emails(request):
                               filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
                 alunos_semestre += list(alunos_tmp)
                 orientador = projeto.orientador
-                parceiros = Parceiro.objects.filter(organizacao=projeto.empresa).\
+                parceiros = Parceiro.objects.filter(organizacao2=projeto.organizacao).\
                               filter(user__is_active=True)
 
                 if projeto.orientador not in orientadores:
                     orientadores.append(orientador) # Junta orientadores do semestre
 
-                if projeto.empresa not in organizacoes:
-                    organizacoes.append(projeto.empresa) # Junta organizações do semestre
+                if projeto.organizacao not in organizacoes:
+                    organizacoes.append(projeto.organizacao) # Junta organizações do semestre
 
                 bancas = Banca.objects.filter(projeto=projeto)
                 for banca in bancas:
@@ -2301,7 +2306,7 @@ def emails(request):
                 projetos_pessoas[projeto]["parceiros"] = list(parceiros) # Pessoas por projeto
 
         # Parceiros de todas as organizações parceiras
-        parceiros_semestre = Parceiro.objects.filter(organizacao__in=organizacoes)
+        parceiros_semestre = Parceiro.objects.filter(organizacao2__in=organizacoes)
 
         # Cria listas para enviar para templeate html
         alunos_p_semestre.append(Aluno.objects.filter(trancado=False).\
@@ -2811,7 +2816,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
 
             message = "<h3>Avaliação PFE</h3><br>\n"
             message += "<b>Título do Projeto:</b> {0}<br>\n".format(projeto.get_titulo())
-            message += "<b>Organização:</b> {0}<br>\n".format(projeto.empresa)
+            message += "<b>Organização:</b> {0}<br>\n".format(projeto.organizacao)
             message += "<b>Orientador:</b> {0}<br>\n".format(projeto.orientador)
             message += "<b>Avaliador:</b> {0}<br>\n".format(julgamento.avaliador)
             message += "<b>Data:</b> {0}<br>\n".format(banca.startDate.strftime("%d/%m/%Y %H:%M"))
@@ -3022,7 +3027,8 @@ def cadastrar_organizacao(request):
 
     if request.method == 'POST':
         if 'organizacao' in request.POST:
-            organizacao = Empresa.create()
+            #organizacao = Empresa.create()
+            organizacao = Organizacao.create()
             
             #login = models.CharField(primary_key=True, max_length=20)
 
@@ -3054,8 +3060,56 @@ def cadastrar_organizacao(request):
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def migracao(request):
-    """Migra projetos para propostas (temporário)."""
-    # propostas = Proposta.objects.all()
-    # for proposta in propostas:
-    #     proposta.save()
+    """Migra projetos (temporário)."""
+
+    empresas = Empresa.objects.all()
+    for empresa in empresas:
+        organizacao = Organizacao.create()
+        organizacao.nome = empresa.nome_empresa
+        organizacao.sigla = empresa.sigla
+        organizacao.endereco = empresa.endereco
+        organizacao.website = empresa.website
+        organizacao.informacoes = empresa.informacoes
+        organizacao.logotipo = empresa.logotipo
+        organizacao.cnpj = empresa.cnpj
+        organizacao.inscricao_estadual = empresa.inscricao_estadual
+        organizacao.razao_social = empresa.razao_social
+        organizacao.ramo_atividade = empresa.ramo_atividade
+
+        organizacao.empresa_remover = empresa
+        organizacao.save()
+
+        empresa.organizacao_remover = organizacao
+        empresa.save()
+
+    projetos = Projeto.objects.all()
+    for projeto in projetos:
+        if projeto.empresa:
+            projeto.organizacao = projeto.empresa.organizacao_remover
+            projeto.save()
+
+    anotacoes = Anotacao.objects.all()
+    for anotacao in anotacoes:
+        if anotacao.organizacao:
+            anotacao.organizacao2 = anotacao.organizacao.organizacao_remover
+            anotacao.save()
+
+    parceiros = Parceiro.objects.all()
+    for parceiro in parceiros:
+        if parceiro.organizacao:
+            parceiro.organizacao2 = parceiro.organizacao.organizacao_remover
+            parceiro.save()
+
+    documentos = Documento.objects.all()
+    for documento in documentos:
+        if documento.organizacao:
+            documento.organizacao2 = documento.organizacao.organizacao_remover
+            documento.save()
+    
+    propostas = Proposta.objects.all()
+    for proposta in propostas:
+        if proposta.organizacao:
+            proposta.organizacao2 = proposta.organizacao.organizacao_remover
+            proposta.save()
+
     return HttpResponse("Feito.")

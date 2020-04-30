@@ -30,20 +30,20 @@
           {% for projeto in projetos %}
             <option value="{{projeto.id}}"
             data-titulo="{{projeto.titulo}}"
-            data-organizacao="{{projeto.empresa}}"
+            data-organizacao="{{projeto.organizacao}}"
             data-orientador="{{projeto.orientador}}"
             {% if projeto.id == banca.projeto.id %} selected {% endif %}
             >
               {{projeto.ano}}.{{projeto.semestre}} -
               {{projeto.titulo}}
-              ({{projeto.empresa}})
+              ({{projeto.organizacao}})
               [{{projeto.orientador}}]
             </option>  
           {% endfor %}
       </select><br><br>
 
       Título: <label id="titulo" name="titulo">{{banca.projeto.titulo}}</label><br>
-      Organização: <label id="organizacao" name="organizacao">{{banca.projeto.empresa}}</label><br>
+      Organização: <label id="organizacao" name="organizacao">{{banca.projeto.organizacao}}</label><br>
       Orientador: <label id="orientador" name="orientador">{{banca.projeto.orientador}}</label><br>
 
       <br>

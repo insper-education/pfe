@@ -61,7 +61,7 @@ td {
               <b>Projeto:</b> <a href="{% url 'projeto_completo' certificado.projeto.id %}">
                 {{certificado.projeto.get_titulo}}
               </a><br>
-              <b>Organização:</b> <a href="{% url 'organizacao_completo' certificado.projeto.empresa.login %}">{{ certificado.projeto.empresa.nome_empresa }}</a><br>
+              <b>Organização:</b> <a href="{% url 'organizacao_completo' certificado.projeto.organizacao.id %}">{{ certificado.projeto.organizacao.nome }}</a><br>
             {% endif %}
           </td>
         </tr>

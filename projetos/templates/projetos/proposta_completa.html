@@ -70,9 +70,9 @@
   <hr>
 
   <h3>Organização Parceira:
-    {% if proposta.organizacao %}
-      <a href="{% url 'organizacao_completo' proposta.organizacao.login %}">
-        {{ proposta.organizacao.nome_empresa }}
+    {% if proposta.organizacao2 %}
+      <a href="{% url 'organizacao_completo' proposta.organizacao2.id %}">
+        {{ proposta.organizacao2.nome }}
       </a>
     {% elif proposta.nome_organizacao %}
       {{ proposta.nome_organizacao }}
@@ -81,8 +81,8 @@
     {% endif %}
   </h3>
   <p><strong>endereço:</strong>
-    {% if proposta.organizacao %}
-      <a class="tabulado" href="http://maps.google.com/maps?q={{proposta.organizacao.endereco}}">{{ proposta.organizacao.endereco|linebreaks }}</a>
+    {% if proposta.organizacao2 %}
+      <a class="tabulado" href="http://maps.google.com/maps?q={{proposta.organizacao2.endereco}}">{{ proposta.organizacao2.endereco|linebreaks }}</a>
     {% elif proposta.endereco %}
       {{ proposta.endereco }}
     {% else %}
@@ -91,8 +91,8 @@
   </p>
 
   <p><strong>website:</strong>
-  {% if proposta.organizacao and proposta.organizacao.website %}
-    <a class="tabulado" href="{{ proposta.organizacao.website }}">{{ proposta.organizacao.website }}</a>
+  {% if proposta.organizacao2 and proposta.organizacao2.website %}
+    <a class="tabulado" href="{{ proposta.organizacao2.website }}">{{ proposta.organizacao2.website }}</a>
   {% elif proposta.website %}
     <a class="tabulado" href="{{proposta.website}}">{{ proposta.website }}</a>
   {% else %}
@@ -100,9 +100,9 @@
   {% endif %}
   </p>
 
-  {% if proposta.organizacao and proposta.organizacao.informacoes %}
+  {% if proposta.organizacao2 and proposta.organizacao2.informacoes %}
     <strong>Informações sobre a empresa :</strong> 
-    {{ proposta.organizacao.informacoes|linebreaks }}<br>
+    {{ proposta.organizacao2.informacoes|linebreaks }}<br>
   {% elif proposta.descricao_organizacao %}
     <strong>Informações sobre a empresa :</strong> 
     {{ proposta.descricao_organizacao|linebreaks }}<br>

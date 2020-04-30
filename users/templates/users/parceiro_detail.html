@@ -25,8 +25,12 @@
           - NÃO ATIVO -
       </p>
   {% endif %}
-  {% if parceiro.organizacao %}
-    <strong>Organização:</strong> {{parceiro.organizacao}}<br>
+  {% if parceiro.organizacao2 %}
+    <strong>Organização:</strong>
+    <a href="{% url 'organizacao_completo' parceiro.organizacao2.id %}">
+      {{parceiro.organizacao2.nome}}
+    </a>
+    <br>
   {% endif %}
   {% if parceiro.cargo %}
       <strong>Cargo:</strong> {{parceiro.cargo}}<br>

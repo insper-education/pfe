@@ -25,19 +25,19 @@
 {% endblock %}
 
 {% block content %}
-  {% if organization.logotipo %}
-    <img id="logotipo" src="{{ organization.logotipo.url }}" alt="{{ organization.sigla }}">
+  {% if organizacao.logotipo %}
+    <img id="logotipo" src="{{ organizacao.logotipo.url }}" alt="{{ organizacao.sigla }}">
   {% endif %}
-  <h3>Organização: {{ organization.nome_empresa }}</h3>
+  <h3>Organização: {{ organizacao.nome }}</h3>
 
-  {% if organization.website %}
-    <strong>website:</strong> <a href="{{ organization.website }}"> {{ organization.website }} </a><br>  
+  {% if organizacao.website %}
+    <strong>website:</strong> <a href="{{ organizacao.website }}"> {{ organizacao.website }} </a><br>  
   {% endif %}
-  {% if organization.informacoes %}
-    <strong>Informações sobre a empresa :</strong> {{ organization.informacoes|linebreaks }}
+  {% if organizacao.informacoes %}
+    <strong>Informações sobre a empresa :</strong> {{ organizacao.informacoes|linebreaks }}
   {% endif %}
   <br><strong>contato(s):</strong><br>
-  {% for parceiro in organization.parceiro_set.all %}
+  {% for parceiro in organizacao.parceiro_set.all %}
     {% if parceiro.user.is_active %}
     <li>
       <a href="{% url 'parceiro_detail' parceiro.id %}">
@@ -59,7 +59,7 @@
     </li>
     {% endif %}
   {% endfor %}
-  {% for parceiro in organization.parceiro_set.all %}
+  {% for parceiro in organizacao.parceiro_set.all %}
     {% if not parceiro.user.is_active %}
     <li style="color: lightgrey;">
       <a href="{% url 'parceiro_detail' parceiro.id %}" style="color: LightBlue;">
@@ -82,49 +82,49 @@
   {% endfor %}
 
   <br><strong>Razão Social:</strong> 
-  {% if organization.razao_social %}
-    {{ organization.razao_social }}
+  {% if organizacao.razao_social %}
+    {{ organizacao.razao_social }}
   {% else %}
     <i style="color:red">Não disponível</i>
   {% endif %}
   &nbsp;&nbsp;&nbsp;
   <br><strong>Ramo de Atividade:</strong>
-  {% if organization.ramo_atividade %}
-    {{ organization.ramo_atividade }}
+  {% if organizacao.ramo_atividade %}
+    {{ organizacao.ramo_atividade }}
   {% else %}
     <i style="color:red">Não disponível</i>
   {% endif %}
   &nbsp;&nbsp;&nbsp;
   <br><strong>CNPJ:</strong> 
-  {% if organization.cnpj %}
-  <a href="http://servicos.receita.fazenda.gov.br/Servicos/cnpjreva/Cnpjreva_Solicitacao.asp?cnpj={{organization.cnpj}}">
-    {{ organization.cnpj|cnpj }}
+  {% if organizacao.cnpj %}
+  <a href="http://servicos.receita.fazenda.gov.br/Servicos/cnpjreva/Cnpjreva_Solicitacao.asp?cnpj={{organizacao.cnpj}}">
+    {{ organizacao.cnpj|cnpj }}
   </a>
   {% else %}
     <i style="color:red">Não disponível</i>
   {% endif %}
   &nbsp;&nbsp;&nbsp;
   <strong>Inscrição Estadual:</strong>
-  {% if organization.inscricao_estadual %}
+  {% if organizacao.inscricao_estadual %}
     <a href="http://www.sintegra.gov.br/">
-      {{ organization.inscricao_estadual }}
+      {{ organizacao.inscricao_estadual }}
     </a>
   {% else %}
     <i style="color:red">Não disponível</i>
   {% endif %}
   <br><strong>endereço(s):</strong>
-  {% if organization.endereco %}
-    <a style="margin-left:16px;display:block;" href="http://maps.google.com/maps?q={{organization.endereco}}">
-      {{ organization.endereco|linebreaks }}
+  {% if organizacao.endereco %}
+    <a style="margin-left:16px;display:block;" href="http://maps.google.com/maps?q={{organizacao.endereco}}">
+      {{ organizacao.endereco|linebreaks }}
     </a>
   {% else %}
     <i style="color:red">Não disponível</i>
   {% endif %}
 
-  {% if organization.documento_set.all %}
+  {% if organizacao.documento_set.all %}
     <hr>
     <h3>Contratos</h3>
-    {% for contrato in organization.documento_set.all %}
+    {% for contrato in organizacao.documento_set.all %}
         <li><a href="../..{{MEDIA_URL}}{{ contrato.documento }}"> {{ contrato }} 
         {% if contrato.projeto %}
           - {{contrato.projeto.get_titulo}}
@@ -136,10 +136,10 @@
     {% endfor %}
   {% endif %}
   
-  {% if organization.projeto_set.all %}
+  {% if organizacao.projeto_set.all %}
     <hr>
     <h3>Projetos</h3>
-    {% for projeto in organization.projeto_set.all %}
+    {% for projeto in organizacao.projeto_set.all %}
       <a href="{% url 'projeto_completo' projeto.id %}"> 
         <li>
           {% if projeto.alocacao_set.count %}
@@ -155,9 +155,9 @@
   {% endif %}
   
   <hr>
-  <h3>Anotações <a href="{% url 'cria_anotacao' organization.login %}">&#10133;</a></h3>
-  {% if organization.anotacao_set.all %}
-    {% for anotacao in organization.anotacao_set.all|dictsortreversed:"momento" %}
+  <h3>Anotações <a href="{% url 'cria_anotacao' organizacao.id %}">&#10133;</a></h3>
+  {% if organizacao.anotacao_set.all %}
+    {% for anotacao in organizacao.anotacao_set.all|dictsortreversed:"momento" %}
       {{anotacao.autor.get_full_name}} [{{anotacao.momento.date}}] : {{anotacao.texto}}<br>
     {% endfor %}
   {% else %}

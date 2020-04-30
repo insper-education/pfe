@@ -9,10 +9,10 @@
 {% endblock %}
 
 {% block content %}
-  {% if organization %}
+  {% if organizacao %}
     <form method="post" id="criaranotacaoform" enctype="multipart/form-data">
       {% csrf_token %}
-      Organização: {{ organization.nome_empresa }}
+      Organização: {{ organizacao.nome }}
       <br><br>
 
       <label for="data_hora">Data e Hora: </label> <input id="data_hora" type="datetime-local" name="data_hora" value="{{data_hora|date:'Y-m-d\TH:i'}}"><br>

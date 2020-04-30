@@ -276,32 +276,3 @@ def parceiro_detail(request, primarykey):
         'conexoes': conexoes,
     }
     return render(request, 'users/parceiro_detail.html', context=context)
-
-
-# class AlunoListView(LoginRequiredMixin, generic.ListView):
-#     model = Aluno
-#     paginate_by = 2
-#     #{% if aluno_list %}
-#     # {% for aluno in aluno_list %}
-#     #   <li>
-#     #     <a href="{{ aluno.get_absolute_url }}">{{ aluno.login }}</a> ({{aluno.nome_completo}})
-#     #   </li>
-#     # {% endfor %}
-
-# # Visualiza informaçõs da empresa e permite editar
-# @login_required
-# def empresa(request, empresa_id):
-#     try:
-#         empresa = Empresa.objects.get(login=empresa_id)
-#     except Empresa.DoesNotExist:
-#         raise Http404("Empresa nao encontrado")
-#     return render(request, 'empresa.html', {'empresa': empresa})
-
-# # Visualiza informaçõs do professor e permite editar
-# @login_required
-# def professor(request, professor_id):
-#     try:
-#         professor = Professor.objects.get(login=professor_id)
-#     except Professor.DoesNotExist:
-#         raise Http404("Professor nao encontrado")
-#     return render(request, 'professor.html', {'professor': professor})

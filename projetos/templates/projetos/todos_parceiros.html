@@ -33,9 +33,9 @@
             {{parceiro.cargo}} 
           </td>
           <td class="text-center">
-            <a href="{% url 'organizacao_completo' parceiro.organizacao.login %}"
-             {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}> <!-- UM DIA ACERTAR ISSO -->
-              {{parceiro.organizacao.sigla}}
+            <a href="{% url 'organizacao_completo' parceiro.organizacao2.id %}"
+             {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}>
+              {{parceiro.organizacao2.sigla}}
             </a>
           </td>
           <td>

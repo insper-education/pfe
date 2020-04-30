@@ -27,7 +27,7 @@
               <b>Projeto:</b> <a href="{% url 'projeto_completo' e.projeto.id %}">
                 {{e.projeto.get_titulo}}
               </a><br>
-              <b>Organização:</b> <a href="{% url 'organizacao_completo' e.projeto.empresa.login %}">{{ e.projeto.empresa.nome_empresa }}</a><br>
+              <b>Organização:</b> <a href="{% url 'organizacao_completo' e.projeto.organizacao.id %}">{{ e.projeto.organizacao.nome }}</a><br>
               <b>Alunos:</b>
               <ol>
                 {% for alocacao in e.projeto.alocacao_set.all %} 

@@ -25,13 +25,62 @@ def get_upload_path(instance, filename):
         if caminho == "":
             caminho = "documentos/"
     elif isinstance(instance, Projeto):
-        caminho += instance.empresa.sigla + "/"
+        #caminho += instance.empresa.sigla + "/"
+        caminho += instance.organizacao.sigla + "/"
         caminho += "projeto" + str(instance.pk) + "/"
-    elif isinstance(instance, Empresa):
+    #elif isinstance(instance, Empresa):
+    elif isinstance(instance, Organizacao):
         caminho += instance.sigla + "/logotipo/"
     file_path = caminho
     # ISSO DO FILE_PATH NAO FAZ SENTIDO, REMOVER
     return "{0}/{1}".format(file_path, filename)
+
+
+class Organizacao(models.Model):
+    """Dados das organizações que propõe projetos para o PFE."""
+
+    nome = models.CharField("Nome Fantasia", max_length=80,
+                            help_text='Nome fantasia da organização parceira')
+    sigla = models.CharField("Sigla", max_length=20,
+                             help_text='Sigla usada pela organização parceira')
+    endereco = models.TextField("Endereço", max_length=200, null=True, blank=True,
+                                help_text='Endereço da organização parceira')
+    website = models.URLField("website", max_length=250, null=True, blank=True,
+                              help_text='website da organização parceira')
+    informacoes = models.TextField("Informações", max_length=1000, null=True, blank=True,
+                                   help_text='Informações sobre a organização parceira')
+    logotipo = models.ImageField("Logotipo", upload_to=get_upload_path, null=True, blank=True,
+                                 help_text='Logotipo da organização parceira')
+    cnpj = models.CharField("CNPJ", max_length=14, null=True, blank=True,
+                            help_text='Código de CNPJ da empresa')
+    inscricao_estadual = models.CharField("Inscrição Estadual", max_length=15,
+                                          null=True, blank=True,
+                                          help_text='Código da inscrição estadual')
+    razao_social = models.CharField("Razão Social", max_length=100, null=True, blank=True,
+                                    help_text='Razão social da organização parceira')
+    ramo_atividade = models.CharField("Ramo de Atividade", max_length=120, null=True, blank=True,
+                                      help_text='Ramo de atividade da organização parceira')
+
+    empresa_remover = models.ForeignKey('Empresa', null=True, blank=True, on_delete=models.SET_NULL)
+
+    class Meta:
+        ordering = ['sigla']
+        verbose_name = 'Organização'
+        verbose_name_plural = 'Organizações'
+        #permissions = (("altera_empresa", "Organizacao altera valores"),
+        #               ("altera_professor", "Professor altera valores"), )
+
+    @classmethod
+    def create(cls):
+        """Cria um objeto (entrada) em Organizacao."""
+        organizacao = cls()
+        return organizacao
+
+    def __str__(self):
+        return self.nome
+    #def documento(self):
+    #    return os.path.split(self.contrato.name)[1]
+
 
 class Empresa(models.Model):
     """Dados das empresas que propõe projetos para o PFE."""
@@ -59,6 +108,8 @@ class Empresa(models.Model):
                                     help_text='Razão social da organização parceira')
     ramo_atividade = models.CharField("Ramo de Atividade", max_length=120, null=True, blank=True,
                                       help_text='Ramo de atividade da organização parceira')
+
+    organizacao_remover = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL)
 
     class Meta:
         ordering = ['sigla']
@@ -89,7 +140,9 @@ class Projeto(models.Model):
     imagem = models.ImageField(null=True, blank=True,
                                help_text='Imagem que representa projeto (se houver)')
     empresa = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='Organização parceira que propôs projeto')
+                                help_text='Empresa que propôs projeto')
+    organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
+                                    help_text='Organização parceira que propôs projeto')
     departamento = models.TextField("Departamento", max_length=1000, null=True, blank=True,
                                     help_text='Descrição do departamento que propôs o projeto')
     avancado = models.BooleanField("Avançado", default=False,
@@ -230,8 +283,10 @@ class Proposta(models.Model):
 
     # Preenchidos depois manualmente
     organizacao = models.ForeignKey(Empresa, on_delete=models.SET_NULL, null=True, blank=True,
-                                    help_text='Organização parceira que propôs projeto')
+                                    help_text='Empresa parceira que propôs projeto')
 
+    organizacao2 = models.ForeignKey(Organizacao, on_delete=models.SET_NULL, null=True, blank=True,
+                                    help_text='Organização parceira que propôs projeto')
 
     disponivel = models.BooleanField("Disponível", default=False,
                                      help_text='Se projeto está atualmente disponível para alunos')
@@ -508,6 +563,8 @@ class Anotacao(models.Model):
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
                                    help_text='Data e hora da comunicação') # hora ordena para dia
     organizacao = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL,
+                                    help_text='Empresa parceira')
+    organizacao2 = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text='Organização parceira')
     autor = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
                               related_name='professor_orientador', help_text='quem fez a anotação')
@@ -528,7 +585,7 @@ class Anotacao(models.Model):
     @classmethod
     def create(cls, organizacao):
         """Cria um objeto (entrada) em Anotação."""
-        anotacao = cls(organizacao=organizacao)
+        anotacao = cls(organizacao2=organizacao)
         return anotacao
     class Meta:
         verbose_name = 'Anotação'
@@ -537,7 +594,9 @@ class Anotacao(models.Model):
 class Documento(models.Model):
     """Documentos, em geral PDFs, e seus relacionamentos com o PFE."""
     organizacao = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL,
-                                    help_text='Empresa que propôs projeto')
+                                    help_text='Empresa referente o documento')
+    organizacao2 = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
+                                     help_text='Organização referente o documento')
     usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='Usuário do documento')
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
@@ -688,6 +747,7 @@ class Feedback(models.Model):
                             help_text='Nome de quem está dando o Feedback')
     email = models.EmailField(max_length=80, null=True, blank=True,
                               help_text='e-mail de quem está dando o Feedback')
+    #isso esta bem baguncado
     empresa = models.CharField(max_length=120, null=True, blank=True,
                                help_text='Empresa de quem está dando o Feedback')
     tecnico = models.TextField(max_length=1000, help_text='Feedback Técnico')
@@ -720,7 +780,7 @@ class Conexao(models.Model):
 
     def __str__(self):
         return self.parceiro.user.get_full_name()+" >>> "+\
-               self.projeto.empresa.sigla+" - "+self.projeto.get_titulo()+\
+               self.projeto.organizacao.sigla+" - "+self.projeto.get_titulo()+\
                " ("+str(self.projeto.ano)+"."+str(self.projeto.semestre)+")"
 
     class Meta:

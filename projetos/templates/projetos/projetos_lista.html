@@ -127,8 +127,8 @@
 
           <td>
             {% comment %}{% if not disponivel %}<del>{% endif %}{% endcomment %}
-              <a href="{% url 'organizacao_completo' projeto.empresa.login %}">
-                {{ projeto.empresa.nome_empresa }}
+              <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
+                {{ projeto.organizacao.nome }}
               </a>
             {% comment %}{% if not disponivel %}<del>{% endif %}{% endcomment %}
           </td>

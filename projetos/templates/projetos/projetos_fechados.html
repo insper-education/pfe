@@ -40,8 +40,8 @@
             {{projeto.titulo}}<br>
           {% endif %}
         </a>
-        <p style="margin-left:1em;">Empresa: <a href="{% url 'organizacao_completo' projeto.empresa.login %}">
-            {{ projeto.empresa.nome_empresa }}
+        <p style="margin-left:1em;">Organização: <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
+            {{ projeto.organizacao.nome }}
           </a></p>
         {% if projeto.avancado %}
           <p style="margin-left:1em;">Tipo: <font color="red">PFE Avançado</font></p>

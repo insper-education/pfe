@@ -74,16 +74,9 @@
           {% endif %}
         {% endif %}
 
-        {% comment %}
           <td>
-            <a href="{% url 'organizacao_completo' organizacao.login %}"> <!-- UM DIA ACERTAR ISSO -->
-              {{organizacao.sigla}}
-            </a>
-          </td>
-        {% endcomment %}
-          <td>
-            <a href="{% url 'organizacao_completo' organizacao.login %}"> <!-- UM DIA ACERTAR ISSO -->
-              {{organizacao.nome_empresa}}
+            <a href="{% url 'organizacao_completo' organizacao.id %}">
+              {{organizacao.nome}}
             </a>
           </td>
           <td>

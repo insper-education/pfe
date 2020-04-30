@@ -144,7 +144,7 @@
                 <a href="{% url 'projeto_completo' opcao.projeto.id %}">
                     <p style="margin-top: 0px; margin-bottom: 0px;"><b>{{opcao.prioridade}}</b> - 
                         {% if opcao.projeto.titulo_final %}{{opcao.projeto.titulo_final}}{% else %}{{opcao.projeto.titulo}}{% endif %}
-                        ({{opcao.projeto.empresa.nome_empresa}})
+                        ({{opcao.projeto.organizacao.nome}})
                     </p>
                 </a>
             {% endif %}            

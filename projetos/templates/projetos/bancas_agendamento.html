@@ -51,9 +51,9 @@
               {% endif %}
           {% endif %}
           %0D%0A
-          {% if banca.projeto.empresa.nome_empresa %}
+          {% if banca.projeto.organizacao.nome %}
             Organização Parceira:
-            {{ banca.projeto.empresa.nome_empresa|parse_quote }}%0D%0A
+            {{ banca.projeto.organizacao.nome|parse_quote }}%0D%0A
           {% endif %}
           {% if banca.location %}
             Local: {{banca.location|parse_quote}}%0D%0A
@@ -121,9 +121,9 @@
             <br>
           {% endif %}
           
-          {% if banca.projeto.empresa.nome_empresa %}
+          {% if banca.projeto.organizacao.nome %}
             <b>Organização Parceira:</b> 
-              {{ banca.projeto.empresa.nome_empresa }}<br>
+              {{ banca.projeto.organizacao.nome }}<br>
           {% endif %}
           
           {% if banca.location %}
