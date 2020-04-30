@@ -42,7 +42,7 @@ from .models import Projeto, Proposta, Organizacao, Configuracao, Evento, Anotac
 from .models import Feedback, Certificado
 from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade, Conexao
 #from .models import Disciplina
-from .models import Empresa
+#from .models import Empresa
 from .models import ObjetidosDeAprendizagem, Avaliacao
 
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource
@@ -3062,54 +3062,54 @@ def cadastrar_organizacao(request):
 def migracao(request):
     """Migra projetos (temporário)."""
 
-    empresas = Empresa.objects.all()
-    for empresa in empresas:
-        organizacao = Organizacao.create()
-        organizacao.nome = empresa.nome_empresa
-        organizacao.sigla = empresa.sigla
-        organizacao.endereco = empresa.endereco
-        organizacao.website = empresa.website
-        organizacao.informacoes = empresa.informacoes
-        organizacao.logotipo = empresa.logotipo
-        organizacao.cnpj = empresa.cnpj
-        organizacao.inscricao_estadual = empresa.inscricao_estadual
-        organizacao.razao_social = empresa.razao_social
-        organizacao.ramo_atividade = empresa.ramo_atividade
+    # empresas = Empresa.objects.all()
+    # for empresa in empresas:
+    #     organizacao = Organizacao.create()
+    #     organizacao.nome = empresa.nome_empresa
+    #     organizacao.sigla = empresa.sigla
+    #     organizacao.endereco = empresa.endereco
+    #     organizacao.website = empresa.website
+    #     organizacao.informacoes = empresa.informacoes
+    #     organizacao.logotipo = empresa.logotipo
+    #     organizacao.cnpj = empresa.cnpj
+    #     organizacao.inscricao_estadual = empresa.inscricao_estadual
+    #     organizacao.razao_social = empresa.razao_social
+    #     organizacao.ramo_atividade = empresa.ramo_atividade
 
-        organizacao.empresa_remover = empresa
-        organizacao.save()
+    #     organizacao.empresa_remover = empresa
+    #     organizacao.save()
 
-        empresa.organizacao_remover = organizacao
-        empresa.save()
+    #     empresa.organizacao_remover = organizacao
+    #     empresa.save()
 
-    projetos = Projeto.objects.all()
-    for projeto in projetos:
-        if projeto.empresa:
-            projeto.organizacao = projeto.empresa.organizacao_remover
-            projeto.save()
+    # projetos = Projeto.objects.all()
+    # for projeto in projetos:
+    #     if projeto.empresa:
+    #         projeto.organizacao = projeto.empresa.organizacao_remover
+    #         projeto.save()
 
-    anotacoes = Anotacao.objects.all()
-    for anotacao in anotacoes:
-        if anotacao.organizacao:
-            anotacao.organizacao2 = anotacao.organizacao.organizacao_remover
-            anotacao.save()
+    # anotacoes = Anotacao.objects.all()
+    # for anotacao in anotacoes:
+    #     if anotacao.organizacao:
+    #         anotacao.organizacao2 = anotacao.organizacao.organizacao_remover
+    #         anotacao.save()
 
-    parceiros = Parceiro.objects.all()
-    for parceiro in parceiros:
-        if parceiro.organizacao:
-            parceiro.organizacao2 = parceiro.organizacao.organizacao_remover
-            parceiro.save()
+    # parceiros = Parceiro.objects.all()
+    # for parceiro in parceiros:
+    #     if parceiro.organizacao:
+    #         parceiro.organizacao2 = parceiro.organizacao.organizacao_remover
+    #         parceiro.save()
 
-    documentos = Documento.objects.all()
-    for documento in documentos:
-        if documento.organizacao:
-            documento.organizacao2 = documento.organizacao.organizacao_remover
-            documento.save()
+    # documentos = Documento.objects.all()
+    # for documento in documentos:
+    #     if documento.organizacao:
+    #         documento.organizacao2 = documento.organizacao.organizacao_remover
+    #         documento.save()
     
-    propostas = Proposta.objects.all()
-    for proposta in propostas:
-        if proposta.organizacao:
-            proposta.organizacao2 = proposta.organizacao.organizacao_remover
-            proposta.save()
+    # propostas = Proposta.objects.all()
+    # for proposta in propostas:
+    #     if proposta.organizacao:
+    #         proposta.organizacao2 = proposta.organizacao.organizacao_remover
+    #         proposta.save()
 
     return HttpResponse("Feito.")

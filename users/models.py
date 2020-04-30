@@ -339,7 +339,7 @@ class Parceiro(models.Model):  # da empresa (não do Insper)
     """Classe de usuários com estatus de Parceiro (pessoal das organizações parceiras)."""
     user = models.OneToOneField(PFEUser, related_name='parceiro', on_delete=models.CASCADE,
                                 help_text='Identificaçãdo do usuário')
-    organizacao = models.ForeignKey(Empresa, on_delete=models.CASCADE,
+    organizacao_old = models.ForeignKey(Empresa, on_delete=models.CASCADE,
                                     blank=True, null=True,
                                     help_text='Empresa Parceira')
 

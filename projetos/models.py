@@ -18,8 +18,8 @@ def get_upload_path(instance, filename):
     """Caminhos para armazenar os arquivos."""
     caminho = ""
     if isinstance(instance, Documento):
-        if instance.organizacao:
-            caminho += instance.organizacao.sigla + "/"
+        if instance.organizacao2:
+            caminho += instance.organizacao2.sigla + "/"
         if instance.usuario:
             caminho += instance.usuario.username + "/"
         if caminho == "":
@@ -282,7 +282,7 @@ class Proposta(models.Model):
 
 
     # Preenchidos depois manualmente
-    organizacao = models.ForeignKey(Empresa, on_delete=models.SET_NULL, null=True, blank=True,
+    organizacao_old = models.ForeignKey(Empresa, on_delete=models.SET_NULL, null=True, blank=True,
                                     help_text='Empresa parceira que propôs projeto')
 
     organizacao2 = models.ForeignKey(Organizacao, on_delete=models.SET_NULL, null=True, blank=True,
@@ -326,7 +326,7 @@ class Proposta(models.Model):
                                 help_text='data e hora da criação da proposta de projeto')
 
     class Meta:
-        ordering = ['organizacao', 'ano', 'semestre']
+        ordering = ['organizacao2', 'ano', 'semestre']
 
     @classmethod
     def create(cls):
@@ -562,7 +562,7 @@ class Anotacao(models.Model):
     """Anotacoes de comunicações com as organizações pareceiras."""
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
                                    help_text='Data e hora da comunicação') # hora ordena para dia
-    organizacao = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL,
+    organizacao_old = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text='Empresa parceira')
     organizacao2 = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text='Organização parceira')
@@ -593,7 +593,7 @@ class Anotacao(models.Model):
 
 class Documento(models.Model):
     """Documentos, em geral PDFs, e seus relacionamentos com o PFE."""
-    organizacao = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL,
+    organizacao_old = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text='Empresa referente o documento')
     organizacao2 = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
                                      help_text='Organização referente o documento')
