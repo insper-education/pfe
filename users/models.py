@@ -343,7 +343,7 @@ class Parceiro(models.Model):  # da empresa (não do Insper)
                                     blank=True, null=True,
                                     help_text='Empresa Parceira')
 
-    organizacao2 = models.ForeignKey(Organizacao, on_delete=models.CASCADE,
+    organizacao = models.ForeignKey(Organizacao, on_delete=models.CASCADE,
                                      blank=True, null=True,
                                      help_text='Organização Parceira')
 

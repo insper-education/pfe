@@ -712,7 +712,7 @@ def organizacoes_lista(request):
             desde.append("---------")
 
         #anot = Anotacao.objects.filter(organizacao=organizacao).order_by("momento").last()
-        anot = Anotacao.objects.filter(organizacao2=organizacao).order_by("momento").last()
+        anot = Anotacao.objects.filter(organizacao=organizacao).order_by("momento").last()
         if anot:
             contato.append(anot)
         else:
@@ -1123,7 +1123,7 @@ def tabela_documentos(request):
 
         # Contratos   -   (0, 'contrato com empresa')
         contratos = []
-        for doc in Documento.objects.filter(organizacao2=projeto.organizacao).\
+        for doc in Documento.objects.filter(organizacao=projeto.organizacao).\
                                      filter(tipo_de_documento=0):
             contratos.append((doc.documento, doc.anotacao, doc.data))
         contrato["contratos"] = contratos
@@ -1173,7 +1173,7 @@ def tabela_documentos(request):
 
         # Outros   -   (14, 'outros')
         outros = []
-        for doc in Documento.objects.filter(organizacao2=projeto.organizacao).\
+        for doc in Documento.objects.filter(organizacao=projeto.organizacao).\
                                      filter(tipo_de_documento=14):
             outros.append((doc.documento, doc.anotacao, doc.data))
         contrato["outros"] = outros
@@ -1461,10 +1461,10 @@ def proposta_submissao(request):
     descricao_organizacao = ""
     if user.tipo_de_usuario == 3: # parceiro
         parceiro = Parceiro.objects.get(pk=request.user.pk)
-        organizacao = parceiro.organizacao2
-        website = parceiro.organizacao2.website
-        endereco = parceiro.organizacao2.endereco
-        descricao_organizacao = parceiro.organizacao2.informacoes
+        organizacao = parceiro.organizacao
+        website = parceiro.organizacao.website
+        endereco = parceiro.organizacao.endereco
+        descricao_organizacao = parceiro.organizacao.informacoes
     elif user.tipo_de_usuario == 2: # professor
         professor = Professor.objects.get(pk=request.user.pk)
     elif user.tipo_de_usuario == 4: # admin
@@ -1792,7 +1792,7 @@ def projetos_lista(request, periodo):
 def propostas_lista(request, periodo):
     """Lista todas as propostas de projetos."""
     configuracao = Configuracao.objects.all().first()
-    propostas = Proposta.objects.all().order_by("ano", "semestre", "organizacao2", "titulo",)
+    propostas = Proposta.objects.all().order_by("ano", "semestre", "organizacao", "titulo",)
     if periodo == "todos":
         pass
     if periodo == "antigos":
@@ -1833,7 +1833,7 @@ def parceiro_propostas(request):
         }
         return render(request, 'generic.html', context=context)
 
-    propostas = Proposta.objects.filter(organizacao2=user.parceiro.organizacao2).\
+    propostas = Proposta.objects.filter(organizacao=user.parceiro.organizacao).\
                         order_by("ano", "semestre", "titulo",)
     context = {
         'propostas': propostas,
@@ -2282,7 +2282,7 @@ def emails(request):
                               filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
                 alunos_semestre += list(alunos_tmp)
                 orientador = projeto.orientador
-                parceiros = Parceiro.objects.filter(organizacao2=projeto.organizacao).\
+                parceiros = Parceiro.objects.filter(organizacao=projeto.organizacao).\
                               filter(user__is_active=True)
 
                 if projeto.orientador not in orientadores:
@@ -2306,7 +2306,7 @@ def emails(request):
                 projetos_pessoas[projeto]["parceiros"] = list(parceiros) # Pessoas por projeto
 
         # Parceiros de todas as organizações parceiras
-        parceiros_semestre = Parceiro.objects.filter(organizacao2__in=organizacoes)
+        parceiros_semestre = Parceiro.objects.filter(organizacao__in=organizacoes)
 
         # Cria listas para enviar para templeate html
         alunos_p_semestre.append(Aluno.objects.filter(trancado=False).\

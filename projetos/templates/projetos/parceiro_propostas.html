@@ -38,8 +38,8 @@
             </td>
 
             <td>
-              {% if proposta.organizacao2 %}
-                {{ proposta.organizacao2.nome }}
+              {% if proposta.organizacao %}
+                {{ proposta.organizacao.nome }}
               {% elif proposta.nome_organizacao %}
                 {{ proposta.nome_organizacao }}
               {% else %}

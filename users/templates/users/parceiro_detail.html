@@ -25,10 +25,10 @@
           - NÃO ATIVO -
       </p>
   {% endif %}
-  {% if parceiro.organizacao2 %}
+  {% if parceiro.organizacao %}
     <strong>Organização:</strong>
-    <a href="{% url 'organizacao_completo' parceiro.organizacao2.id %}">
-      {{parceiro.organizacao2.nome}}
+    <a href="{% url 'organizacao_completo' parceiro.organizacao.id %}">
+      {{parceiro.organizacao.nome}}
     </a>
     <br>
   {% endif %}

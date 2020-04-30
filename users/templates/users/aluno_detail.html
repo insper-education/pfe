@@ -170,7 +170,7 @@
                 <a href="{% url 'proposta_completa' opcao.proposta.id %}">
                 <p><b>{{opcao.prioridade}}</b> - 
                     {{opcao.proposta.titulo}}
-                    ({{opcao.proposta.organizacao2.nome}})
+                    ({{opcao.proposta.organizacao.nome}})
                     {{ '{' }}{{opcao.proposta.ano}}.{{opcao.proposta.semestre}}{{ '}' }}
                     |{% mede_aderencia aluno opcao.proposta %}%|
                 </p>
@@ -191,7 +191,7 @@
                 <a href="{% url 'proposta_completa' opcao.proposta.id %}">
                 <p><b>{{opcao.prioridade}}</b> - 
                     {{opcao.proposta.titulo}}
-                    ({{opcao.proposta.organizacao2.nome}})
+                    ({{opcao.proposta.organizacao.nome}})
                     {{ '{' }}{{opcao.proposta.ano}}.{{opcao.proposta.semestre}}{{ '}' }}
                     |{% mede_aderencia aluno opcao.proposta %}%|
                 </p>

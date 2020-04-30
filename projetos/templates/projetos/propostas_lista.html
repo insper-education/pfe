@@ -132,9 +132,9 @@
           </td>
           <td>
             {% if not disponivel %}<del>{% endif %}
-              {% if proposta.organizacao2 %}
-                <a href="{% url 'organizacao_completo' proposta.organizacao2.id %}">
-                  {{ proposta.organizacao2.nome }}
+              {% if proposta.organizacao %}
+                <a href="{% url 'organizacao_completo' proposta.organizacao.id %}">
+                  {{ proposta.organizacao.nome }}
                 </a>
               {% elif proposta.nome_organizacao %}
                 {{ proposta.nome_organizacao }}

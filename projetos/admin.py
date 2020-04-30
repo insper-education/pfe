@@ -182,7 +182,7 @@ class ProjetoAdmin(admin.ModelAdmin):
 @admin.register(Proposta)
 class PropostaAdmin(admin.ModelAdmin):
     """Exibição no sistema de administração do Django para Proposta."""
-    list_display = ('titulo', 'fechada', 'nome', 'organizacao2', 'ano', 'semestre',)
+    list_display = ('titulo', 'fechada', 'nome', 'organizacao', 'ano', 'semestre',)
     list_filter = ('ano', 'semestre', )
     fieldsets = \
         ((None,
@@ -205,11 +205,11 @@ class PropostaAdmin(admin.ModelAdmin):
            )
           }),
          ('Origem', {
-             'fields': ('organizacao2',)
+             'fields': ('organizacao',)
          }),
         )
     actions = [dup_projeto]
-    search_fields = ['titulo', 'organizacao2__sigla',]
+    search_fields = ['titulo', 'organizacao__sigla',]
 
 @admin.register(Organizacao)
 class OrganizacaoAdmin(admin.ModelAdmin):
@@ -237,13 +237,13 @@ class DisciplinaAdmin(admin.ModelAdmin):
 @admin.register(Anotacao)
 class AnotacaoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
-    list_display = ('momento', 'organizacao2', 'autor',)
+    list_display = ('momento', 'organizacao', 'autor',)
     ordering = ('-momento',)
 
 @admin.register(Documento)
 class DocumentoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
-    list_display = ('tipo_de_documento', 'organizacao2', 'usuario', 'projeto')
+    list_display = ('tipo_de_documento', 'organizacao', 'usuario', 'projeto')
 
 @admin.register(Banco)
 class BancoAdmin(admin.ModelAdmin):

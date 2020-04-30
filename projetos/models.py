@@ -18,8 +18,8 @@ def get_upload_path(instance, filename):
     """Caminhos para armazenar os arquivos."""
     caminho = ""
     if isinstance(instance, Documento):
-        if instance.organizacao2:
-            caminho += instance.organizacao2.sigla + "/"
+        if instance.organizacao:
+            caminho += instance.organizacao.sigla + "/"
         if instance.usuario:
             caminho += instance.usuario.username + "/"
         if caminho == "":
@@ -285,7 +285,7 @@ class Proposta(models.Model):
     organizacao_old = models.ForeignKey(Empresa, on_delete=models.SET_NULL, null=True, blank=True,
                                     help_text='Empresa parceira que propôs projeto')
 
-    organizacao2 = models.ForeignKey(Organizacao, on_delete=models.SET_NULL, null=True, blank=True,
+    organizacao = models.ForeignKey(Organizacao, on_delete=models.SET_NULL, null=True, blank=True,
                                     help_text='Organização parceira que propôs projeto')
 
     disponivel = models.BooleanField("Disponível", default=False,
@@ -326,7 +326,7 @@ class Proposta(models.Model):
                                 help_text='data e hora da criação da proposta de projeto')
 
     class Meta:
-        ordering = ['organizacao2', 'ano', 'semestre']
+        ordering = ['organizacao', 'ano', 'semestre']
 
     @classmethod
     def create(cls):
@@ -564,7 +564,7 @@ class Anotacao(models.Model):
                                    help_text='Data e hora da comunicação') # hora ordena para dia
     organizacao_old = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text='Empresa parceira')
-    organizacao2 = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
+    organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text='Organização parceira')
     autor = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
                               related_name='professor_orientador', help_text='quem fez a anotação')
@@ -585,7 +585,7 @@ class Anotacao(models.Model):
     @classmethod
     def create(cls, organizacao):
         """Cria um objeto (entrada) em Anotação."""
-        anotacao = cls(organizacao2=organizacao)
+        anotacao = cls(organizacao=organizacao)
         return anotacao
     class Meta:
         verbose_name = 'Anotação'
@@ -595,7 +595,7 @@ class Documento(models.Model):
     """Documentos, em geral PDFs, e seus relacionamentos com o PFE."""
     organizacao_old = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text='Empresa referente o documento')
-    organizacao2 = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
+    organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
                                      help_text='Organização referente o documento')
     usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='Usuário do documento')
