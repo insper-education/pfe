@@ -138,6 +138,12 @@ class PFEUser(AbstractUser):
         verbose_name_plural = 'Usuários'
         ordering = ['first_name', 'last_name']
 
+    @classmethod
+    def create(cls):
+        """Cria um objeto (entrada) em PFEUser."""
+        user = cls()
+        return user
+
     def __str__(self):
         return self.first_name + " " + self.last_name + \
             " (" + self.TIPO_DE_USUARIO_CHOICES[self.tipo_de_usuario-1][1] + ")"
@@ -340,12 +346,12 @@ class Parceiro(models.Model):  # da empresa (não do Insper)
     user = models.OneToOneField(PFEUser, related_name='parceiro', on_delete=models.CASCADE,
                                 help_text='Identificaçãdo do usuário')
     organizacao_old = models.ForeignKey(Empresa, on_delete=models.CASCADE,
-                                    blank=True, null=True,
-                                    help_text='Não mais utilizado')
+                                        blank=True, null=True,
+                                        help_text='Não mais utilizado')
 
     organizacao = models.ForeignKey(Organizacao, on_delete=models.CASCADE,
-                                     blank=True, null=True,
-                                     help_text='Organização Parceira')
+                                    blank=True, null=True,
+                                    help_text='Organização Parceira')
 
     cargo = models.CharField("Cargo", max_length=50, blank=True,
                              help_text='Cargo Funcional')
@@ -386,6 +392,7 @@ class Administrador(models.Model):
 @receiver(post_save, sender=PFEUser)
 def create_user_dependency(sender, instance, created, **kwargs):
     """Quando um usuário do PFE é criado/salvo, seu corespondente específico também é criado."""
+    #print("Chamado -------------------")
     if instance.tipo_de_usuario == 1: #aluno
         Aluno.objects.get_or_create(user=instance)
     elif instance.tipo_de_usuario == 2: #professor

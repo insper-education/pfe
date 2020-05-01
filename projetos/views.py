@@ -37,12 +37,16 @@ from django.shortcuts import redirect
 from django.template.loader import get_template
 from django.utils import timezone
 
+from django.utils import text
+
 from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador, Opcao, Alocacao, Areas
 from .models import Projeto, Proposta, Organizacao, Configuracao, Evento, Anotacao, Coorientador
 from .models import Feedback, Certificado
 from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade, Conexao
 #from .models import Disciplina
 from .models import ObjetidosDeAprendizagem, Avaliacao
+
+from .models import get_upload_path
 
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource
 from .resources import AlunosResource, ProfessoresResource
@@ -753,7 +757,7 @@ def cria_anotacao(request, login): #acertar isso para pk
         organizacao = Organizacao.objects.get(id=login)
     except Proposta.DoesNotExist:
         return HttpResponseNotFound('<h1>Organização não encontrada!</h1>')
-    
+
     if request.method == 'POST':
         if 'anotacao' in request.POST:
             anotacao = Anotacao.create(organizacao)
@@ -1189,7 +1193,6 @@ def submissao(request):
     """Para perguntas descritivas ao aluno de onde trabalho, entidades, sociais e familia."""
     user = PFEUser.objects.get(pk=request.user.pk)
     if user.tipo_de_usuario != 1:
-        #return HttpResponse("Você não está cadastrado como aluno")
         mensagem = "Você não está cadastrado como aluno!"
         context = {
             "area_principal": True,
@@ -1200,8 +1203,6 @@ def submissao(request):
     aluno = Aluno.objects.get(pk=request.user.pk)
     if request.method == 'POST':
         if timezone.now() > configuracao.prazo:
-            #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
-            #return HttpResponse("Prazo para o preenchimento do formulário vencido!")
             mensagem = "Prazo para o preenchimento do formulário vencido!"
             context = {
                 "area_principal": True,
@@ -1470,10 +1471,9 @@ def proposta_submissao(request):
 
         resposta = "Submissão de proposta de projeto realizada com sucesso.<br>"
         resposta += "Você deve receber um e-mail de confirmação nos próximos instantes.<br>"
-        resposta += "<br><a href='javascript:history.back(1)'>Voltar</a>"
-        resposta += "<br><br><br><hr>"
         resposta += mensagem
         context = {
+            "voltar": True,
             "mensagem": resposta,
         }
         return render(request, 'generic.html', context=context)
@@ -1603,7 +1603,7 @@ def index_documentos(request):
 def simple_upload(myfile, path="", prefix=""):
     """Faz uploads para o servidor."""
     file_system_storage = FileSystemStorage()
-    filename = file_system_storage.save(path+prefix+myfile.name, myfile)
+    filename = file_system_storage.save(path+prefix+text.get_valid_filename(myfile.name), myfile)
     uploaded_file_url = file_system_storage.url(filename)
     return uploaded_file_url
 
@@ -1641,14 +1641,12 @@ def carrega(request, dado):
             string_html = "Importado ({0} registros): <br>".format(len(dataset))
             for row_values in dataset:
                 string_html += str(row_values) + "<br>"
-            #return HttpResponse(string_html)
             context = {
                 "area_principal": True,
                 "mensagem": string_html,
             }
             return render(request, 'generic.html', context=context)
         else:
-            #return HttpResponse("Erro ao carregar arquivo."+str(result))
             mensagem = "Erro ao carregar arquivo." + str(result)
             context = {
                 "area_principal": True,
@@ -2680,7 +2678,7 @@ def mapeamento_estudante_projeto(request, anosemestre):
                         opcoes_aluno.append(None)
                 except Projeto.DoesNotExist:
                     opcoes_aluno.append(None)
-                
+
         opcoes.append(opcoes_aluno)
 
     estudantes = zip(alunos, opcoes)
@@ -3019,7 +3017,7 @@ def cadastrar_organizacao(request):
     """Cadastra Organização na base de dados do PFE."""
 
     if request.method == 'POST':
-        if 'nome' in request.POST:
+        if 'nome' in request.POST and 'sigla' in request.POST:
             organizacao = Organizacao.create()
             organizacao.nome = request.POST['nome']
             organizacao.sigla = request.POST['sigla']
@@ -3028,11 +3026,141 @@ def cadastrar_organizacao(request):
             organizacao.website = request.POST['website']
             organizacao.informacoes = request.POST['informacoes']
 
+            cnpj = request.POST['cnpj']
+            if cnpj:
+                organizacao.cnpj = cnpj[:2]+cnpj[3:6]+cnpj[7:10]+cnpj[11:15]+cnpj[16:18]
+
+            organizacao.inscricao_estadual = request.POST['inscricao_estadual']
+            organizacao.razao_social = request.POST['razao_social']
+            organizacao.ramo_atividade = request.POST['ramo_atividade']
+
+            if 'logo' in request.FILES:
+                logotipo = simple_upload(request.FILES['logo'],
+                                         path=get_upload_path(organizacao, ""))
+                organizacao.logotipo = logotipo[len(settings.MEDIA_URL):]
+
             organizacao.save()
+
             mensagem = "Organização inserida na base de dados."
+            context = {
+                "voltar": True,
+                "cadastrar_organizacao": True,
+                "organizacoes_lista": True,
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+
+        else:
+            mensagem = "<h3 style='color:red'>Falha na inserção na base da dados.<h3>"
+            context = {
+                "voltar": True,
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+
+        return render(request, 'generic.html', context=context)
+
+    context = {
+    }
+    return render(request, 'projetos/cadastra_organizacao.html', context)
+
+
+
+@login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
+def cadastrar_usuario(request):
+    """Cadastra usuário na base de dados do PFE."""
+
+    if request.method == 'POST':
+        if 'email' in request.POST:
+            usuario = PFEUser.create()
+
+            #is_active
+
+            usuario.email = request.POST['email']
+
+            # (1, 'aluno'),
+            # (2, 'professor'),
+            # (3, 'parceiro'),
+            # (4, 'administrador')
+
+            if request.POST['tipo_de_usuario'] == "estudante":
+                usuario.tipo_de_usuario = 1
+            elif request.POST['tipo_de_usuario'] == "professor":
+                usuario.tipo_de_usuario = 2
+            elif request.POST['tipo_de_usuario'] == "parceiro":
+                usuario.tipo_de_usuario = 3
+            else:
+                return HttpResponse("Algum erro não identificado.", status=401)
+
+            if usuario.tipo_de_usuario == 1 or usuario.tipo_de_usuario == 2:
+                usuario.username = request.POST['email'].split("@")[0]
+            elif usuario.tipo_de_usuario == 3:
+                usuario.username = request.POST['email'].split("@")[0] + "." + request.POST['email'].split("@")[1].split(".")[0]
+            else:
+                return HttpResponse("Algum erro não identificado.", status=401)
+
+            if 'nome' in request.POST and len(request.POST['nome'].split()) > 1:
+                usuario.first_name = request.POST['nome'].split()[0]
+                usuario.last_name = " ".join(request.POST['nome'].split()[1:])
+            else:
+                return HttpResponse("Não foi inserido o nome completo.", status=401)
+
+            if 'genero' in request.POST:
+                if request.POST['genero'] == "masculino":
+                    usuario.genero = "M"
+                elif request.POST['genero'] == "feminino":
+                    usuario.genero = "F"
+            else:
+                usuario.genero = "X"
+
+            cpf = request.POST['cpf']
+            if cpf:
+                usuario.cpf = cpf[:3]+cpf[4:7]+cpf[8:11]+cpf[12:13]
+
+            if 'linkedin' in request.POST:
+                usuario.linkedin = request.POST['linkedin']
+
+            usuario.save()
+
+            if usuario.tipo_de_usuario == 1: #estudante
+
+                #estudante = Aluno.objects.get_or_create(user=usuario)
+                estudante = Aluno.objects.get(user=usuario)
+
+                if 'matricula' in request.POST:
+                    estudante.matricula = request.POST['matricula']
+
+                # ('C', 'Computação'),
+                # ('M', 'Mecânica'),
+                # ('X', 'Mecatrônica'),
+
+                if request.POST['curso'] == "computacao":
+                    estudante.curso = 'C'
+                elif request.POST['curso'] == "mecanica":
+                    estudante.curso = 'M'
+                elif request.POST['curso'] == "mecatronica":
+                    estudante.curso = 'X'
+                else:
+                    return HttpResponse("Algum erro não identificado.", status=401)
+
+                estudante.anoPFE = int(request.POST['ano'])
+                estudante.semestrePFE = int(request.POST['semestre'])
+
+                estudante.save()
+
+            elif usuario.tipo_de_usuario == 2: #professor
+                professor = Professor.objects.get(user=usuario)
+
+            elif usuario.tipo_de_usuario == 3: #Parceiro
+                parceiro = Parceiro.objects.get(user=usuario)
+
+            mensagem = "Usuário inserido na base de dados."
         else:
             mensagem = "<h3 style='color:red'>Falha na inserção na base da dados.<h3>"
         context = {
+            "voltar": True,
+            "cadastrar_usuario": True,
             "area_principal": True,
             "mensagem": mensagem,
         }
@@ -3040,7 +3168,7 @@ def cadastrar_organizacao(request):
 
     context = {
     }
-    return render(request, 'projetos/cadastra_organizacao.html', context)
+    return render(request, 'projetos/cadastra_usuario.html', context)
 
 
 

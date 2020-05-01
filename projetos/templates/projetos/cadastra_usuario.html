@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 30 de Abril de 2020
+{% endcomment %}
+
+{% block head %}
+  <style>
+    textarea {
+      max-width:100%;
+    }
+  </style>
+  <script src="https://www.geradorcnpj.com/assets/js/jquery.maskedinput-1.1.4.pack.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){	
+      $("#cpf").mask("999.999.999-99");
+    });
+  </script>
+{% endblock %}
+
+{% block content %}
+
+  <h5>
+  {% if edicao %}
+    Edição
+  {% else %}
+    Cadastro
+  {% endif %}
+  de Usuário</h5>
+
+  <form action="" method="post"> {% csrf_token %}  
+  
+    <input type="radio" class="tipo" name="tipo_de_usuario" id="estudante" value="estudante" required> <label for="estudante"> Estudante</label>&nbsp;&nbsp;&nbsp;
+    <input type="radio" class="tipo" name="tipo_de_usuario" id="professor" value="professor" required> <label for="professor"> Professor</label>&nbsp;&nbsp;&nbsp;
+    <input type="radio" class="tipo" name="tipo_de_usuario" id="parceiro" value="parceiro" required> <label for="parceiro"> Parceiro</label>
+    <br><br>
+
+    <label for="nome">Nome do Usuário<br></label><br>
+    <textarea id="nome" name="nome" rows="1" cols="80" maxlength="128" required>{{nome}}</textarea>
+    <br><br>
+
+    <label for="email">e-mail:</label> <input type="email" size="73" id="email" name="email" value="{{email}}" required><br><br>
+
+    <input type="radio" name="genero" id="masculino" value="masculino"> <label for="masculino"> Masculino</label>&nbsp;&nbsp;&nbsp;
+    <input type="radio" name="genero" id="feminino" value="feminino"> <label for="feminino"> Feminino</label>
+
+    <br><br>
+
+    <label for="cpf">CPF:</label> <input type="text" size="14" id="cpf" name="cpf" value="{{cpf}}"><br>
+    <label for="linkedin">LinkedIn:</label><input type="text" size="73" id="linkedin" name="linkedin" value="{{linkedin}}" placeholder="https://www.linkedin.com/"><br>
+
+    {% comment %}
+      membro_comite
+    {% endcomment %}
+
+    <br><br>
+
+
+    <div style="display: block; padding-left: 32px" class="row" data-type="estudante">
+
+      <label for="matricula">Matrícula: </label> <input type="text" size="8" id="matricula" name="matricula" value="{{matricula}}"><br>
+ 
+      Curso: 
+      <input type="radio" name="curso" id="computacao" value="computacao" required> <label for="computacao"> Computação</label>&nbsp;&nbsp;&nbsp;
+      <input type="radio" name="curso" id="mecanica" value="mecanica" required> <label for="mecanica"> Mecânica</label>&nbsp;&nbsp;&nbsp;
+      <input type="radio" name="curso" id="mecatronica" value="mecatronica" required> <label for="mecatronica"> Mecatrônica</label>
+      <br>
+      <label for="ano">Ano PFE: </label> 
+      <input type="number" id="ano" name="ano" min="2018" max="3018" value="{{ano}}" required>&nbsp;&nbsp;&nbsp;
+      <label for="semestre">Semestre PFE: </label> 
+      <input type="number" id="semestre" name="semestre" min="1" max="2" value="{{semestre}}" required>
+
+    </div>
+    <div style="display: block; padding-left: 32px" class="row" data-type="professor">
+
+        professor
+
+    </div>
+    <div style="display: block; padding-left: 32px" class="row" data-type="parceiro">
+
+        parceiro
+
+    </div>
+
+
+    <br><br>
+    <input type="submit" value="Cadastrar Usuário">
+    
+    {% comment %}
+        <label for="endereco">Endereço<br></label><br>
+    <textarea id="endereco" name="endereco" rows="3" cols="80" maxlength="1000">{{endereco}}</textarea>
+    <br><br>
+
+      {% if edicao %}
+        <input type="submit" value="Atualizar Dados do Usuário">
+      {% else %}
+      {% endif %}
+    {% endcomment %}
+
+  </form>
+
+
+  <script type="text/javascript">
+
+    function filtra_data() {
+      //var filterValue = $('.tipo').val();
+      var filterValue = $("input:radio[name=tipo_de_usuario]:checked").val()
+      var row = $('.row'); 
+      row.hide();
+
+      row.each(function(i, el) {
+        if( filterValue == $(el).attr('data-type') ) {
+            $(el).show();
+        }
+      });
+
+    }
+
+    $(".tipo").change(function(){
+      filtra_data();
+    });  
+
+    $(document).ready(function(){
+      filtra_data();
+    });
+  
+  </script>
+
+  <p>&nbsp;</p>
+
+{% endblock %}

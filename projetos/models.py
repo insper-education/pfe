@@ -29,10 +29,7 @@ def get_upload_path(instance, filename):
         caminho += "projeto" + str(instance.pk) + "/"
     elif isinstance(instance, Organizacao):
         caminho += instance.sigla + "/logotipo/"
-    file_path = caminho
-    # ISSO DO FILE_PATH NAO FAZ SENTIDO, REMOVER
-    return "{0}/{1}".format(file_path, filename)
-
+    return "{0}/{1}".format(caminho, filename)
 
 class Organizacao(models.Model):
     """Dados das organizações que propõe projetos para o PFE."""

@@ -11,6 +11,14 @@
       max-width:100%;
     }
   </style>
+
+  <script src="https://www.geradorcnpj.com/assets/js/jquery.maskedinput-1.1.4.pack.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){	
+      $("#cnpj").mask("99.999.999/9999-99");
+    });
+  </script>
+
 {% endblock %}
 
 {% block content %}
@@ -21,43 +29,50 @@
   {% else %}
     Cadastro
   {% endif %}
-  de Organização Parceira</h5>
+  de Organização</h5>
 
-  <form action="" method="post"> {% csrf_token %}  
+  <form method="post" id="organizacaoform" enctype="multipart/form-data">
+    {% csrf_token %}
+  
+    <label for="organizacao">Nome da Organização:<br></label><br>
+    <textarea id="nome" name="nome" rows="1" cols="80" maxlength="100" required>{{nome}}</textarea>
+    <br><br>
 
+    <label for="sigla">Sigla:</label> <input type="text" size="48" id="sigla" name="sigla" value="{{sigla}}" required><br><br>
+
+    <label for="endereco">Endereço:<br></label><br>
+    <textarea id="endereco" name="endereco" rows="3" cols="80" maxlength="1000">{{endereco}}</textarea>
+    <br><br>
+
+    <label for="website">website:</label><input type="text" size="73" id="website" name="website" value="{{website}}" placeholder="https://www.insper.edu.br"><br><br>
+
+    <label for="informacoes">Informações sobre a organização:</label><br>
+    <textarea id="informacoes" name="informacoes" rows="4" cols="80" maxlength="1000">{{informacoes}}</textarea>
+    <br><br>
+
+    <label for="logo">Logotipo da organização:</label> 
+    <input id="logo" type="file" name="logo" accept="image/*">
+
+    <br><br>
+
+    <label for="cnpj">CNPJ:</label> <input type="text" id="cnpj" name="cnpj" size="18" value="{{cnpj}}"><br>
+
+    <label for="inscricao_estadual">Inscrição Estadual:</label> <input type="text" size="48" id="inscricao_estadual" name="inscricao_estadual" value="{{inscricao_estadual}}"><br>
+    <label for="razao_social">Razão Social:</label> <input type="text" size="48" id="razao_social" name="razao_social" value="{{razao_social}}"><br>
+    
+    <label for="ramo_atividade">Ramo de Atividade:</label><br>
+    <textarea id="ramo_atividade" name="ramo_atividade" rows="4" cols="80" maxlength="256">{{ramo_atividade}}</textarea>
+    <br><br>
+
+
+    <input type="submit" value="Cadastrar Organização Parceira">
+    
     {% comment %}
       {% if edicao %}
         <input type="submit" value="Atualizar Dados da Organização">
       {% else %}
       {% endif %}
     {% endcomment %}
-  
-    <label for="organizacao">Nome da Organização<br></label><br>
-    <textarea id="nome" name="nome" rows="1" cols="80" maxlength="100" required>{{nome}}</textarea>
-    <br><br>
-
-    <label for="sigla">Sigla:</label><input type="text" size="73" id="sigla" name="sigla" value="{{sigla}}" required><br><br>
-
-    <label for="endereco">Endereço<br></label><br>
-    <textarea id="endereco" name="endereco" rows="3" cols="80" maxlength="1000" required>{{endereco}}</textarea>
-    <br><br>
-
-    <label for="website">website:</label><input type="text" size="73" id="website" name="website" value="{{website}}" placeholder="https://www.insper.edu.br" required><br><br>
-
-    <label for="informacoes">Informações sobre a instituição/empresa</label><br>
-    <textarea id="informacoes" name="informacoes" rows="4" cols="80" maxlength="1000">{{informacoes}}</textarea>
-    <br><br>
-
-    !!!  logotipo  !!!<br>
-
-    <br>
-    cnpj <br>
-    inscricao_estadual <br>
-    razao_social <br>
-    ramo_atividade <br>
-    <br>
-
-    <input type="submit" value="Cadastrar Organização Parceira">
 
   </form>
 
