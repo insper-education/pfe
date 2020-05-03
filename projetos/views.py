@@ -3125,7 +3125,6 @@ def cadastrar_usuario(request):
 
             if usuario.tipo_de_usuario == 1: #estudante
 
-                #estudante = Aluno.objects.get_or_create(user=usuario)
                 estudante = Aluno.objects.get(user=usuario)
 
                 if 'matricula' in request.POST:
@@ -3152,8 +3151,51 @@ def cadastrar_usuario(request):
             elif usuario.tipo_de_usuario == 2: #professor
                 professor = Professor.objects.get(user=usuario)
 
+                # ("TI", "Tempo Integral"),
+                # ("TP", 'Tempo Parcial'),
+
+                if request.POST['dedicacao'] == "ti":
+                    professor.curso = 'TI'
+                elif request.POST['dedicacao'] == "tp":
+                    professor.curso = 'TP'
+                else:
+                    return HttpResponse("Algum erro não identificado.", status=401)
+
+                if 'areas' in request.POST:
+                    professor.areas = request.POST['areas']
+
+                if 'website' in request.POST:
+                    professor.website = request.POST['website']
+
+                if 'lattes' in request.POST:
+                    professor.lattes = request.POST['lattes']
+
+                professor.save()
+
             elif usuario.tipo_de_usuario == 3: #Parceiro
                 parceiro = Parceiro.objects.get(user=usuario)
+
+                if 'cargo' in request.POST:
+                    parceiro.cargo = request.POST['cargo']
+
+                if 'telefone' in request.POST:
+                    parceiro.telefone = request.POST['telefone']
+
+                if 'celular' in request.POST:
+                    parceiro.celular = request.POST['celular']
+
+                if 'skype' in request.POST:
+                    parceiro.skype = request.POST['skype']
+
+                if 'observacao' in request.POST:
+                    parceiro.observacao = request.POST['observacao']
+
+                parceiro.organizacao = Organizacao.objects.get(pk=int(request.POST['organizacao']))
+
+                if 'principal_contato' in request.POST:
+                    parceiro.principal_contato = True
+
+                parceiro.save()
 
             mensagem = "Usuário inserido na base de dados."
         else:
@@ -3167,9 +3209,9 @@ def cadastrar_usuario(request):
         return render(request, 'generic.html', context=context)
 
     context = {
+        "organizacoes" : Organizacao.objects.all(),
     }
     return render(request, 'projetos/cadastra_usuario.html', context)
-
 
 
 @login_required

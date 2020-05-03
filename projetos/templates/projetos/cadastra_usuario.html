@@ -17,6 +17,7 @@
       $("#cpf").mask("999.999.999-99");
     });
   </script>
+
 {% endblock %}
 
 {% block content %}
@@ -29,7 +30,7 @@
   {% endif %}
   de Usuário</h5>
 
-  <form action="" method="post"> {% csrf_token %}  
+  <form class="myForm" action="" method="post"> {% csrf_token %}  
   
     <input type="radio" class="tipo" name="tipo_de_usuario" id="estudante" value="estudante" required> <label for="estudante"> Estudante</label>&nbsp;&nbsp;&nbsp;
     <input type="radio" class="tipo" name="tipo_de_usuario" id="professor" value="professor" required> <label for="professor"> Professor</label>&nbsp;&nbsp;&nbsp;
@@ -37,7 +38,7 @@
     <br><br>
 
     <label for="nome">Nome do Usuário<br></label><br>
-    <textarea id="nome" name="nome" rows="1" cols="80" maxlength="128" required>{{nome}}</textarea>
+    <input type="text" size="80" id="nome" name="nome" value="{{nome}}" required><br>
     <br><br>
 
     <label for="email">e-mail:</label> <input type="email" size="73" id="email" name="email" value="{{email}}" required><br><br>
@@ -51,11 +52,11 @@
     <label for="linkedin">LinkedIn:</label><input type="text" size="73" id="linkedin" name="linkedin" value="{{linkedin}}" placeholder="https://www.linkedin.com/"><br>
 
     {% comment %}
-      membro_comite
+    <input type="checkbox" id="membro_comite" name="membro_comite" value="True">
+    <label for="membro_comite"> Membro do Comitê</label><br>  
     {% endcomment %}
 
     <br><br>
-
 
     <div style="display: block; padding-left: 32px" class="row" data-type="estudante">
 
@@ -74,15 +75,42 @@
     </div>
     <div style="display: block; padding-left: 32px" class="row" data-type="professor">
 
-        professor
+      Dedicação: 
+      <input type="radio" name="dedicacao" id="ti" value="ti" required> <label for="ti"> TI</label>&nbsp;&nbsp;&nbsp;
+      <input type="radio" name="dedicacao" id="tp" value="tp" required> <label for="tp"> TP</label>
+      <br>
+
+      <label for="areas">Áreas de interesse: </label> <input type="text" size="80" id="areas" name="areas" value="{{areas}}"><br>
+ 
+      <label for="website">website:</label><input type="text" size="73" id="website" name="website" value="{{website}}" placeholder="https://www.insper.edu.br/"><br>
+      <label for="lattes">lattes:</label><input type="text" size="73" id="lattes" name="lattes" value="{{lattes}}" placeholder="https://lattes.cnpq.br/"><br>
 
     </div>
     <div style="display: block; padding-left: 32px" class="row" data-type="parceiro">
 
-        parceiro
+      <br><b><label for="organizacao">Organização</label></b>:
+      <select name="organizacao" id="organizacao" title="Selecione organização">
+          <option disabled selected value> -- selecione uma organização -- </option>
+          {% for organizacao in organizacoes %}
+            <option value="{{organizacao.id}}">
+              {{organizacao}}
+            </option>  
+          {% endfor %}
+      </select><br>
+
+      <label for="cargo">cargo:</label><input type="text" size="50" id="cargo" name="cargo" value="{{cargo}}"><br>
+      
+      <label for="telefone">telefone:</label><input type="text" size="20" id="telefone" name="telefone" value="{{telefone}}"><br>
+      <label for="celular">celular:</label><input type="text" size="20" id="celular" name="celular" value="{{celular}}"><br>
+      <label for="skype">skype:</label><input type="text" size="32" id="skype" name="skype" value="{{skype}}"><br>
+
+      <label for="observacao">Observações:</label><br>
+      <textarea id="observacao" name="observacao" rows="4" cols="80" maxlength="500">{{observacao}}</textarea><br>
+
+      <input type="checkbox" id="principal_contato" name="principal_contato" value="True">
+      <label for="principal_contato"> Principal Contato</label><br>
 
     </div>
-
 
     <br><br>
     <input type="submit" value="Cadastrar Usuário">
@@ -104,7 +132,6 @@
   <script type="text/javascript">
 
     function filtra_data() {
-      //var filterValue = $('.tipo').val();
       var filterValue = $("input:radio[name=tipo_de_usuario]:checked").val()
       var row = $('.row'); 
       row.hide();
@@ -114,6 +141,12 @@
             $(el).show();
         }
       });
+
+      // Para não validar o que está escondido
+      $("div:hidden").children('input').attr("disabled", true);
+
+      // Para validar o que está visível
+      $("div:visible").children('input').attr("disabled", false);
 
     }
 
