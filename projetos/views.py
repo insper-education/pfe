@@ -544,15 +544,14 @@ def proposta_completa(request, primakey):
     """Mostra um projeto por completo."""
     configuracao = Configuracao.objects.all().first()
     proposta = Proposta.objects.get(pk=primakey)
+
+    print(proposta.contatos_tecnicos)
+
     opcoes = Opcao.objects.filter(proposta=proposta)
-    #conexoes = Conexao.objects.filter(projeto=proposta)
-    #coorientadores = Coorientador.objects.filter(projeto=projeto)
     context = {
         'configuracao': configuracao,
         'proposta': proposta,
         'opcoes': opcoes,
-        #'conexoes': conexoes,
-        #'coorientadores': coorientadores,
         'MEDIA_URL' : settings.MEDIA_URL,
     }
     return render(request, 'projetos/proposta_completa.html', context=context)
@@ -1374,29 +1373,30 @@ def envia_proposta(proposta):
         message += "&lt;{0}&gt; ".format(each)
     message += "<br>\n<br>\n"
 
-    message += "<b>Nome da Organização:</b> {0}<br>\n".format(proposta.nome_organizacao)
+    message += "<b>Nome da Organização:</b> {0}<br>\n".\
+        format(proposta.nome_organizacao.replace('\n', '<br>\n'))
     message += "<b>Website:</b> {0}<br>\n".format(proposta.website)
-    message += "<b>Endereco:</b> {0}<br>\n".format(proposta.endereco)
+    message += "<b>Endereco:</b> {0}<br>\n".format(proposta.endereco.replace('\n', '<br>\n'))
 
     message += "<br>\n<br>\n"
 
     message += "<b>Contatos Técnicos:</b><br>\n {0}<br>\n<br>\n".\
-                   format(proposta.contatos_tecnicos)
+                   format(proposta.contatos_tecnicos.replace('\n', '<br>\n'))
 
     message += "<b>Contatos Administrativos:</b><br>\n {0}<br>\n<br>\n".\
-                   format(proposta.contatos_administrativos)
+                   format(proposta.contatos_administrativos.replace('\n', '<br>\n'))
 
     message += "<b>Informações sobre a instituição/empresa:</b><br>\n {0}<br>\n<br>\n".\
-                   format(proposta.descricao_organizacao)
+                   format(proposta.descricao_organizacao.replace('\n', '<br>\n'))
 
     message += "<b>Informações sobre a departamento:</b><br>\n {0}<br>\n<br>\n".\
-                   format(proposta.departamento)
+                   format(proposta.departamento.replace('\n', '<br>\n'))
 
     message += "<br>\n<br>\n"
 
     message += "<b>Descrição do Projeto:</b><br>\n {0}<br><br>\n".format(proposta.descricao)
     message += "<b>Expectativas de resultados/entregas:</b><br>\n {0}<br>\n<br>\n".\
-                   format(proposta.expectativas)
+                   format(proposta.expectativas.replace('\n', '<br>\n'))
 
     message += "<br>\n"
 
@@ -1405,9 +1405,9 @@ def envia_proposta(proposta):
 
     message += "<br>\n"
     message += "<b>Recursos a serem disponibilizados aos alunos:</b><br>\n {0}<br><br>\n".\
-                   format(proposta.recursos)
+                   format(proposta.recursos.replace('\n', '<br>\n'))
     message += "<b>Outras observações para os alunos:</b><br>\n {0}<br><br>\n".\
-                   format(proposta.observacoes)
+                   format(proposta.observacoes.replace('\n', '<br>\n'))
 
     message += "<br>\n<br>\n"
     message += "<b>Data da proposta:</b> {0}<br>\n<br>\n<br>\n".\

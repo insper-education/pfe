@@ -75,7 +75,7 @@
         {{ proposta.organizacao.nome }}
       </a>
     {% elif proposta.nome_organizacao %}
-      {{ proposta.nome_organizacao }}
+      {{ proposta.nome_organizacao|linebreaks }}
     {% else %}
       Organização não definida.
     {% endif %}
@@ -84,7 +84,7 @@
     {% if proposta.organizacao %}
       <a class="tabulado" href="http://maps.google.com/maps?q={{proposta.organizacao.endereco}}">{{ proposta.organizacao.endereco|linebreaks }}</a>
     {% elif proposta.endereco %}
-      {{ proposta.endereco }}
+      {{ proposta.endereco|linebreaks }}
     {% else %}
       Endereço não definido.
     {% endif %}
@@ -113,7 +113,21 @@
   {% endif %}
 
   <strong>Submetido por:</strong><br>
-  {{proposta.nome}}<br>
+  {{proposta.nome}}<br><br>
+
+  {% if proposta.contatos_tecnicos %}
+    <strong>Contatos Técnicos</strong><br>
+    {{proposta.contatos_tecnicos|linebreaks}}
+    <br><br>
+  {% endif %}
+
+  {% if proposta.contatos_administrativos %}
+    <strong>Contatos Administrativos</strong><br>
+    {{proposta.contatos_administrativos|linebreaks}}
+    <br><br>
+  {% endif %}
+
+
 
   <br>
   <strong>autorizado para publicação para os alunos por:</strong>
