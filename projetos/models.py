@@ -233,11 +233,11 @@ class Proposta(models.Model):
     contatos_administrativos = models.TextField("Contatos Administrativos", max_length=400,
                                                 help_text='Contatos Administrativos')
 
-    descricao_organizacao = models.TextField("Descrição da Organização", max_length=1000,
+    descricao_organizacao = models.TextField("Descrição da Organização", max_length=3000,
                                              null=True, blank=True,
                                              help_text='Descrição da Organização')
 
-    departamento = models.TextField("Descrição do Depart.", max_length=1000, null=True, blank=True,
+    departamento = models.TextField("Descrição do Depart.", max_length=3000, null=True, blank=True,
                                     help_text='Descrição do departamento que propôs o projeto')
 
     titulo = models.CharField("Título", max_length=127,
@@ -256,7 +256,7 @@ class Proposta(models.Model):
     recursos = models.TextField("Recursos", max_length=1000, null=True, blank=True,
                                 help_text='Recursos a serem disponibilizados aos Alunos')
 
-    observacoes = models.TextField("Outras Observações", max_length=1000, null=True, blank=True,
+    observacoes = models.TextField("Outras Observações", max_length=3000, null=True, blank=True,
                                    help_text='Outras Observações')
 
     anexo = models.FileField("Anexo", upload_to=get_upload_path, null=True, blank=True,
