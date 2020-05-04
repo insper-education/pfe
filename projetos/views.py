@@ -1368,8 +1368,12 @@ def envia_proposta(proposta):
         format(settings.SERVER+proposta.get_absolute_url())
 
     message += "<b>Título da Proposta de Projeto:</b> {0}<br>\n<br>\n".format(proposta.titulo)
-    message += "<b>Proposta submetida por:</b> {0} &lt;{1}&gt;<br>\n".\
-                   format(proposta.nome, proposta.email)
+    message += "<b>Proposta submetida por:</b> {0} <br>\n".format(proposta.nome)
+    message += "<b>e-mail:</b> "
+    for each in list(map(str.strip, re.split(",|;", proposta.email))):
+        message += "&lt;{0}&gt; ".format(each)
+    message += "<br>\n<br>\n"
+
     message += "<b>Nome da Organização:</b> {0}<br>\n".format(proposta.nome_organizacao)
     message += "<b>Website:</b> {0}<br>\n".format(proposta.website)
     message += "<b>Endereco:</b> {0}<br>\n".format(proposta.endereco)
@@ -1426,8 +1430,10 @@ def envia_proposta(proposta):
     subject = 'Proposta PFE : ({0}.{1} - {2}'.format(proposta.ano,
                                                      proposta.semestre,
                                                      proposta.titulo)
-    recipient_list = [proposta.email, "pfe@insper.edu.br", "lpsoares@insper.edu.br",]
-    #recipient_list = [proposta.email, "lpsoares@insper.edu.br",]
+
+    recipient_list = list(map(str.strip, re.split(",|;", proposta.email)))
+    #recipient_list += ["pfe@insper.edu.br", "lpsoares@insper.edu.br",]
+    recipient_list += ["lpsoares@insper.edu.br",]
     check = email(subject, recipient_list, message)
     if check != 1:
         message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
@@ -3096,7 +3102,8 @@ def cadastrar_usuario(request):
             if usuario.tipo_de_usuario == 1 or usuario.tipo_de_usuario == 2:
                 usuario.username = request.POST['email'].split("@")[0]
             elif usuario.tipo_de_usuario == 3:
-                usuario.username = request.POST['email'].split("@")[0] + "." + request.POST['email'].split("@")[1].split(".")[0]
+                usuario.username = request.POST['email'].split("@")[0] + "." + \
+                    request.POST['email'].split("@")[1].split(".")[0]
             else:
                 return HttpResponse("Algum erro não identificado.", status=401)
 
