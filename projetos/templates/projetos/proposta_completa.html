@@ -46,6 +46,14 @@
     {% endif %}
   {% endcomment %}
 
+  {% if proposta.fechada %}
+    <strong>Projeto fechado:</strong>
+    <a href="{% url 'projeto_completo' projeto.id %}">
+      {{ projeto.get_titulo }}
+    </a>
+    <br>
+  {% endif %}
+
   <br>
 
   <strong>Descrição:</strong> {{ proposta.descricao|linebreaks }}

@@ -544,15 +544,17 @@ def proposta_completa(request, primakey):
     """Mostra um projeto por completo."""
     configuracao = Configuracao.objects.all().first()
     proposta = Proposta.objects.get(pk=primakey)
-
-    print(proposta.contatos_tecnicos)
-
+    projeto = None
+    if proposta.fechada:
+        projeto = Projeto.objects.get(proposta=proposta)
+    
     opcoes = Opcao.objects.filter(proposta=proposta)
     context = {
         'configuracao': configuracao,
         'proposta': proposta,
         'opcoes': opcoes,
         'MEDIA_URL' : settings.MEDIA_URL,
+        'projeto' : projeto,
     }
     return render(request, 'projetos/proposta_completa.html', context=context)
 
