@@ -486,7 +486,7 @@ class Evento(models.Model):
         return self.startDate
 
     def __str__(self):
-        return self.name+" ("+self.startDate.strftime("%d/%m/%Y")+")"
+        return self.get_title()+" ("+self.startDate.strftime("%d/%m/%Y")+")"
     class Meta:
         ordering = ['startDate']
 
