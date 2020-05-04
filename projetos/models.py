@@ -206,7 +206,8 @@ class Projeto(models.Model):
             return self.titulo
 
     def __str__(self):
-        return self.organizacao.sigla+" ("+str(self.ano)+"."+str(self.semestre)+") "+self.get_titulo()
+        return self.organizacao.sigla+" ("+str(self.ano)+"."+str(self.semestre)+") "+\
+            self.get_titulo()
 
 class Proposta(models.Model):
     """Dados da Proposta de Projeto para o PFE."""
@@ -215,9 +216,9 @@ class Proposta(models.Model):
                             help_text="Slug para o endereço da proposta")
 
     nome = models.CharField("Nome", max_length=127,
-                            help_text='Nome de quem submeteu o projeto')
-    email = models.EmailField("e-mail", max_length=80, null=True, blank=True,
-                              help_text='e-mail de quem está dando o Feedback')
+                            help_text='Nome(s) de quem submeteu o projeto')
+    email = models.CharField("e-mail", max_length=80, null=True, blank=True,
+                             help_text='e-mail(s) de quem está dando o Feedback')
     website = models.URLField("website", max_length=250, null=True, blank=True,
                               help_text='website da organização')
 
@@ -273,7 +274,7 @@ class Proposta(models.Model):
 
     # Preenchidos depois manualmente
     organizacao_old = models.ForeignKey(Empresa, on_delete=models.SET_NULL, null=True, blank=True,
-                                    help_text='Não mais utilizado')
+                                        help_text='Não mais utilizado')
 
     organizacao = models.ForeignKey(Organizacao, on_delete=models.SET_NULL, null=True, blank=True,
                                     help_text='Organização parceira que propôs projeto')
@@ -554,7 +555,7 @@ class Anotacao(models.Model):
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
                                    help_text='Data e hora da comunicação') # hora ordena para dia
     organizacao_old = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL,
-                                    help_text='Não mais utilizado')
+                                        help_text='Não mais utilizado')
     organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text='Organização parceira')
     autor = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
@@ -585,9 +586,9 @@ class Anotacao(models.Model):
 class Documento(models.Model):
     """Documentos, em geral PDFs, e seus relacionamentos com o PFE."""
     organizacao_old = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL,
-                                    help_text='Não mais usado')
+                                        help_text='Não mais usado')
     organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
-                                     help_text='Organização referente o documento')
+                                    help_text='Organização referente o documento')
     usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='Usuário do documento')
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
