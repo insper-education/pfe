@@ -32,33 +32,33 @@
 
   <form action="" method="post"> {% csrf_token %}  
 
-    <label for="nome">Nome:</label><input type="text" size="75" id="nome" name="nome" value="{{full_name}}" required><br><br>
-    <label for="email">e-mail:</label><input type="text" size="75" id="email" name="email" value="{{email}}" pattern="^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25}([ ]*[;,][ ]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})*$" required><br><br>
+    <label for="nome">Nome:</label><input type="text" size="75" maxlength="127" id="nome" name="nome" value="{{full_name}}" required><br><br>
+    <label for="email">e-mail:</label><input type="text" size="75"  maxlength="80" id="email" name="email" value="{{email}}" pattern="^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25}([ ]*[;,][ ]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})*$" required><br><br>
     
     <label for="organizacao">Nome da Instituição/Empresa<br>
     <small>sigla e nome comercial/fantasia se houver (aqui não é necessário indicar a Razão Social)</small>
     </label><br>
-    <textarea id="organizacao" name="organizacao" rows="1" cols="80" maxlength="100" required>{{ organizacao }}</textarea>
+    <textarea id="organizacao" name="organizacao" rows="1" cols="80" maxlength="120" required>{{ organizacao }}</textarea>
     <br><br>
 
-    <label for="website">website:</label><input type="text" size="73" id="website" name="website" value="{{website}}" placeholder="https://www.insper.edu.br" required><br><br>
+    <label for="website">website:</label><input type="text" size="73"  maxlength="250" id="website" name="website" value="{{website}}" placeholder="https://www.insper.edu.br" required><br><br>
 
     <label for="endereco">Endereço<br>
     <small>onde os alunos deverão ir para desenvolver o projeto</small>
     </label><br>
-    <textarea id="endereco" name="endereco" rows="3" cols="80" maxlength="1000" required>{{endereco}}</textarea>
+    <textarea id="endereco" name="endereco" rows="3" cols="80" maxlength="400" required>{{endereco}}</textarea>
     <br><br>
 
     <label for="contatos_tecnicos">Contatos Técnicos<br>  
     <small>nome/e-mail/telefone de quem os alunos e professores orientadores irão tratar do desenvolvimento do projeto</small>
     </label><br>
-    <textarea id="contatos_tecnicos" name="contatos_tecnicos" rows="4" cols="80" maxlength="1000" required>{{contatos_tecnicos}}</textarea>
+    <textarea id="contatos_tecnicos" name="contatos_tecnicos" rows="4" cols="80" maxlength="400" required>{{contatos_tecnicos}}</textarea>
     <br><br>
 
     <label for="contatos_adm">Contatos Administrativos<br>     
     <small>nome/e-mail/telefone, com quem devemos resolver questões contratuais e RH</small>
     </label><br>
-    <textarea id="contatos_adm" name="contatos_adm" rows="4" cols="80" maxlength="1000" required>{{contatos_adm}}</textarea>
+    <textarea id="contatos_adm" name="contatos_adm" rows="4" cols="80" maxlength="400" required>{{contatos_adm}}</textarea>
     <br><br>
 
     <label for="descricao_organizacao">Informações sobre a instituição/empresa<br>
@@ -77,19 +77,19 @@
     <label for="titulo">Título provisório do projeto<br>
     <small>um título para ser apresentado aos alunos</small>
     </label><br>
-    <input type="text" size="80" id="titulo" name="titulo" value="{{titulo}}" required>
+    <input type="text" size="80" maxlength="127" id="titulo" name="titulo" value="{{titulo}}" required>
     <br><br>
 
     <label for="desc_projeto">Descrição do Projeto<br>
     <small>para discussão entre professores e que será passada para os alunos</small>
     </label><br>
-    <textarea id="desc_projeto" name="desc_projeto" rows="4" cols="80" maxlength="1000" required>{{desc_projeto}}</textarea>
+    <textarea id="desc_projeto" name="desc_projeto" rows="4" cols="80" maxlength="3000" required>{{desc_projeto}}</textarea>
     <br><br>
 
     <label for="expectativas">Expectativas de resultados/entregas<br>
     <small>exemplo: estudos, validações, relatórios, protótipos, testes</small>
     </label><br>
-    <textarea id="expectativas" name="expectativas" rows="4" cols="80" maxlength="1000" required>{{expectativas}}</textarea>
+    <textarea id="expectativas" name="expectativas" rows="4" cols="80" maxlength="3000" required>{{expectativas}}</textarea>
     <br><br>
 
     Áreas/Habilidades envolvidas no projeto<br>
