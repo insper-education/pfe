@@ -33,6 +33,7 @@ urlpatterns = [
     path('certificados_submetidos/', views.certificados_submetidos, name='certificados_submetidos'),
     path('conceitos_obtidos/<int:primarykey>', views.conceitos_obtidos, name='conceitos_obtidos'),
     path('comite/>', views.comite, name='comite'),
+    path('completo/<int:primakey>', views.projeto_completo, name='completo'), # REMOVER
     path('coorientadores_tabela/', views.coorientadores_tabela, name='coorientadores_tabela'),
     path('cria_anotacao/<str:login>', views.cria_anotacao, name='cria_anotacao'),
     path('dinamicas/<str:periodo>', views.dinamicas, name='dinamicas'),
