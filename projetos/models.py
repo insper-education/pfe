@@ -404,14 +404,14 @@ class Recomendada(models.Model):
 
 class Evento(models.Model):
     """Eventos para a agenda do PFE."""
-    name = models.CharField(max_length=50, blank=True)
+    #name = models.CharField(max_length=50, blank=True)
     location = models.CharField(blank=True, max_length=50,
                                 help_text='Onde Ocorrerá o Evento')
     startDate = models.DateField(default=datetime.date.today, blank=True,
                                  help_text='Inicio do Evento')
     endDate = models.DateField(default=datetime.date.today, blank=True,
                                help_text='Fim do Evento')
-    color = models.CharField(max_length=20, blank=True)
+    #color = models.CharField(max_length=20, blank=True)
 
     TIPO_EVENTO = (
         (0, 'Feriado', 'lightgrey'),
@@ -423,7 +423,8 @@ class Evento(models.Model):
         (13, 'Evento de Encerramento do PFE', 'brown'),
         (14, 'Banca Intermediária', 'violet'),
         (15, 'Bancas Finais', 'yellow'),
-        (16, 'Apresentação na Organização Parceira', 'beige'),
+        (16, 'Apresentação Final na Organização', 'beige'),
+        (17, 'Apresentação Intermediária na Organização', 'oldlace'),
 
         (20, 'Relato Quinzenal', 'aquamarine'),
         (21, 'Entrega de Planejamento', 'lightblue'),
