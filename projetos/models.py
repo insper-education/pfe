@@ -451,7 +451,8 @@ class Evento(models.Model):
         (124, 'Notificação dos Grupos Formados para os Alunos', 'paleturquoise'),
         (125, 'Notificação para as Organizações de Projetos Fechados', 'moccasin'),
 
-        (120, 'Limite para Submissão de Projetos pelas Organizações', 'lime'),
+        (120, 'Limite para Submissão de Propostas de Projetos pelas Organizações', 'lime'),
+        (121, 'Pré seleção de Propostas de Projetosl', 'chartreuse'),
 
         (130, 'Validação dos Projetos pelo Comitê', 'peru'),
 
