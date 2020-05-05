@@ -452,7 +452,7 @@ class Evento(models.Model):
         (125, 'Notificação para as Organizações de Projetos Fechados', 'moccasin'),
 
         (120, 'Limite para Submissão de Propostas de Projetos pelas Organizações', 'lime'),
-        (121, 'Pré seleção de Propostas de Projetosl', 'chartreuse'),
+        (121, 'Pré seleção de Propostas de Projetos', 'chartreuse'),
 
         (130, 'Validação dos Projetos pelo Comitê', 'peru'),
 

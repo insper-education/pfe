@@ -2517,7 +2517,7 @@ def comite(request):
     context = {
         'professores': professores,
         }
-    return render(request, 'projetos/todos_professores.html', context)
+    return render(request, 'projetos/comite_pfe.html', context)
 
 @login_required
 def minhas_bancas(request):
