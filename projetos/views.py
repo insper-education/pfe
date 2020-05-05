@@ -1070,9 +1070,13 @@ def relatorio_backup(request):
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
-def projetos_fechados(request, periodo="todos"):
+def projetos_fechados(request, periodo="vazio"):
     """Lista todos os projetos fechados."""
-    #configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.all().first()
+
+    if periodo == "vazio":
+        periodo = str(configuracao.ano)+"."+str(configuracao.semestre)
+
     projetos = []
     alunos_list = []
     prioridade_list = []
@@ -2372,6 +2376,21 @@ def bancas_lista(request, periodo):
         'periodo' : periodo,
     }
     return render(request, 'projetos/bancas_lista.html', context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def banca_ver(request, primarykey):
+    """Retorna banca pedida."""
+    try:
+        banca = Banca.objects.get(id=primarykey)
+    except Banca.DoesNotExist:
+        return HttpResponseNotFound('<h1>Banca não encontrada!</h1>')
+
+    context = {
+        'banca' : banca,
+    }
+    return render(request, 'projetos/banca_ver.html', context)
+
 
 def editar_banca(banca, request):
     """Edita os valores de uma banca por um request Http."""

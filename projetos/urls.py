@@ -16,6 +16,7 @@ urlpatterns = [
     path('avaliacao/<int:primarykey>', views.avaliacao, name='avaliacao'),
     path('avisos_listar/', views.avisos_listar, name='avisos_listar'),
     path('backup/<str:formato>', views.backup, name='backup'),
+    path('banca_ver/<int:primarykey>', views.banca_ver, name='banca_ver'),
     path('bancas_agendamento/', views.bancas_agendamento, name='bancas_agendamento'),
     path('bancas_index/', views.bancas_index, name='bancas_index'),
     path('bancas_buscar/', views.bancas_buscar, name='bancas_buscar'),

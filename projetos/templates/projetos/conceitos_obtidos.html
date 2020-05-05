@@ -75,7 +75,15 @@
   </ul>
   
   {% if banca_inter %}
-    <h5>Banca Intermediária:</h5>
+    {% for banca in projeto.banca_set.all %}
+      {% if banca.tipo_de_banca == 1 %}
+        <h5>
+          <a href="{% url 'banca_ver' banca.id %}">
+            Banca Intermediária
+          </a>
+        </h5>
+      {% endif %}
+    {% endfor %}
     <table>
       {% for avaliacao in banca_inter %}
         {% ifchanged avaliacao.avaliador %}
@@ -127,7 +135,15 @@
   <br>
 
   {% if banca_final %}
-    <h5>Banca Final:</h5>
+    {% for banca in projeto.banca_set.all %}
+      {% if banca.tipo_de_banca == 0 %}
+        <h5>
+          <a href="{% url 'banca_ver' banca.id %}">
+            Banca Final
+          </a>
+        </h5>
+      {% endif %}
+    {% endfor %}
     <table>
       {% for avaliacao in banca_final %}
         {% ifchanged avaliacao.avaliador %}
