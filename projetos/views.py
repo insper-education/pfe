@@ -1438,26 +1438,22 @@ def envia_proposta(proposta):
                                                      proposta.titulo)
 
     recipient_list = list(map(str.strip, re.split(",|;", proposta.email)))
-    recipient_list += ["pfe@insper.edu.br", "lpsoares@insper.edu.br",]
-    #recipient_list += ["lpsoares@insper.edu.br",]
+    #recipient_list += ["pfe@insper.edu.br", "lpsoares@insper.edu.br",]
+    recipient_list += ["lpsoares@insper.edu.br",]
     check = email(subject, recipient_list, message)
     if check != 1:
         message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
 
     return message
 
-
+  
 #@login_required
 def proposta_submissao(request):
     """Formulário de Submissão de Proposta de Projetos."""
-    user = PFEUser.objects.get(pk=request.user.pk)
-    if user.tipo_de_usuario == 1: # alunos
-        mensagem = "Você não está cadastrado como parceiro de uma organização!"
-        context = {
-            "area_principal": True,
-            "mensagem": mensagem,
-        }
-        return render(request, 'generic.html', context=context)
+    try:
+        user = PFEUser.objects.get(pk=request.user.pk)
+    except PFEUser.DoesNotExist:
+        user = None
 
     parceiro = None
     professor = None
@@ -1466,16 +1462,32 @@ def proposta_submissao(request):
     website = "http://"
     endereco = ""
     descricao_organizacao = ""
-    if user.tipo_de_usuario == 3: # parceiro
-        parceiro = Parceiro.objects.get(pk=request.user.pk)
-        organizacao = parceiro.organizacao
-        website = parceiro.organizacao.website
-        endereco = parceiro.organizacao.endereco
-        descricao_organizacao = parceiro.organizacao.informacoes
-    elif user.tipo_de_usuario == 2: # professor
-        professor = Professor.objects.get(pk=request.user.pk)
-    elif user.tipo_de_usuario == 4: # admin
-        administrador = Administrador.objects.get(pk=request.user.pk)
+    full_name = ""
+    email = ""
+
+    if user:
+
+        if user.tipo_de_usuario == 1: # alunos
+            mensagem = "Você não está cadastrado como parceiro de uma organização!"
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, 'generic.html', context=context)
+    
+        full_name = user.get_full_name()
+        email = user.email
+
+        if user.tipo_de_usuario == 3: # parceiro
+            parceiro = Parceiro.objects.get(pk=request.user.pk)
+            organizacao = parceiro.organizacao
+            website = parceiro.organizacao.website
+            endereco = parceiro.organizacao.endereco
+            descricao_organizacao = parceiro.organizacao.informacoes
+        elif user.tipo_de_usuario == 2: # professor
+            professor = Professor.objects.get(pk=request.user.pk)
+        elif user.tipo_de_usuario == 4: # admin
+            administrador = Administrador.objects.get(pk=request.user.pk)
 
     if request.method == 'POST':
         proposta = preenche_proposta(request, None)
@@ -1491,8 +1503,8 @@ def proposta_submissao(request):
         return render(request, 'generic.html', context=context)
 
     context = {
-        'full_name' : user.get_full_name(),
-        'email' : user.email,
+        'full_name' : full_name,
+        'email' : email,
         'organizacao' : organizacao,
         'website' : website,
         'endereco' : endereco,
@@ -1511,7 +1523,6 @@ def proposta_submissao(request):
         'observacoes' : "",
         'edicao' : False,
     }
-
     return render(request, 'projetos/proposta_submissao.html', context)
 
 #@login_required
@@ -1546,17 +1557,18 @@ def proposta_editar(request, slug):
     try:
         proposta = Proposta.objects.get(slug=slug)
     except Proposta.DoesNotExist:
-        return HttpResponseNotFound('<h1>Proposta não encontrada!</h1>')
+        return HttpResponseNotFound('<h1>Proposta de Projeto não encontrada!</h1>')
 
     if request.method == 'POST':
         preenche_proposta(request, proposta)
         mensagem = envia_proposta(proposta) # Por e-mail
         resposta = "Submissão de proposta de projeto atualizada com sucesso.<br>"
         resposta += "Você deve receber um e-mail de confirmação nos próximos instantes.<br>"
-        resposta += "<br><a href='javascript:history.back(1)'>Voltar</a>"
-        resposta += "<br><br><br><hr>"
+        resposta += "<br><hr>"
         resposta += mensagem
+
         context = {
+            "voltar": True,
             "mensagem": resposta,
         }
         return render(request, 'generic.html', context=context)
