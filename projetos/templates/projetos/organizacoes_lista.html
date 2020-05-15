@@ -6,104 +6,53 @@
 {% endcomment %}
 
 {% block head %}
-<script src="https://www.w3schools.com/lib/w3.js"></script>
-<script>
-    var todos_contactados = 0
-    var so_contactados = 0
-    var confirmados = 0
-    var interessados = 0
-    var recusados = 0
-</script>
+  <script src="https://www.w3schools.com/lib/w3.js"></script>
 {% endblock %}
 
 {% block content %}
   <h3>Organizações Parceiras</h3>
-  <label for="filter">Filtrar:</label>
-  <select id="filter" class="filter" data-tableId="OrganizacoesTable">
-    <option value="todas">todas</option>
-    <option value="contactadas" {% if filtro == "todas contactadas" %}selected="selected"{% endif %}>todas contactadas</option>
-    <option value="0" {% if filtro == "sem retorno" %}selected="selected"{% endif %}>sem retorno</option>
-    <option value="1" {% if filtro == "confirmadas" %}selected="selected"{% endif %}>confirmadas</option>
-    <option value="2" {% if filtro == "interessadas" %}selected="selected"{% endif %}>interessadas</option>
-    <option value="3" {% if filtro == "recusaram" %}selected="selected"{% endif %}>recusaram</option>
-  </select>
-  <br><br>
+  <br>
   {% if organizacoes_list %}
     <table id="OrganizacoesTable">
       <tr>
-      {% comment %}
-        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Sigla</th>
-      {% endcomment %}
-        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Organização</th>
-        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Último<br>Contato</th>
-        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Desde</th>
+        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Organização</th>
+        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Último<br>Contato</th>
+        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Parceira<br>Desde</th>
         <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Propostas<br>Enviadas</th>
         <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">Projetos<br>Fechados</th>
       </tr>
       {% for organizacao,fechados,desde,contato in organizacoes_list %} 
-        <tr class="item" 
-        {% if contato != '---------' %}
-          {% if contato.momento|date:'Ymd' > meses3|date:'Ymd' %}
-            style="background-color:
-            {% if contato.tipo_de_retorno == 0 %}
-              lightblue" 
-            {% elif contato.tipo_de_retorno == 1 %}
-              lightgreen"
-            {% elif contato.tipo_de_retorno == 2 %}
-              lemonchiffon"
-            {% elif contato.tipo_de_retorno == 3 %}
-              pink" 
-            {% endif %}
-            data-type="{{contato.tipo_de_retorno}}"
-          {% endif %}
-        {% endif %}
-        >
+        <tr class="item">
 
-        {% if contato != '---------' %}
-          {% if contato.momento|date:'Ymd' > meses3|date:'Ymd' %}
-            <script>todos_contactados += 1</script>
-            {% if contato.tipo_de_retorno == 0 %}
-              <script>so_contactados += 1</script>
-            {% elif contato.tipo_de_retorno == 1 %}
-              <script>confirmados += 1</script>
-            {% elif contato.tipo_de_retorno == 2 %}
-              <script>interessados += 1</script>
-            {% elif contato.tipo_de_retorno == 3 %}
-              <script>recusados += 1</script>
-            {% endif %}
-          {% endif %}
-        {% endif %}
+        <td>
+          <a href="{% url 'organizacao_completo' organizacao.id %}">
+            {{organizacao.nome}}
+          </a>
+        </td>
 
-          <td>
-            <a href="{% url 'organizacao_completo' organizacao.id %}">
-              {{organizacao.nome}}
-            </a>
+        <td>
+          {% if contato == '---------' %}
+            ---------
+          {% else %}
+            {{contato.momento|date:"m/Y"}}
+          {% endif %}
           </td>
-          <td>
-            {% if contato == '---------' %}
-              ---------
-            {% else %}
-              {{contato.momento|date:"m/Y"}}
-            {% endif %}
-          
-          </td>
+
           <td>
             {{desde}}
           </td>
+
           <td class="text-center">
-            {{organizacao.projeto_set.count|stringformat:"03d"}}
+            {{organizacao.proposta_set.count|stringformat:"03d"}}
           </td>
+
           <td class="text-center">
             {{fechados|stringformat:"03d"}}
           </td>
+
         </tr>
       {% endfor %}
     </table>
-    Contactadas recentemente (<script>document.write(todos_contactados);</script>):<br>
-    &nbsp;<span style="background-color:lightblue">&nbsp;&nbsp;&nbsp;&nbsp;</span> Sondada (<script>document.write(so_contactados);</script>)<br>
-    &nbsp;<span style="background-color:pink">&nbsp;&nbsp;&nbsp;&nbsp;</span> Declinou (<script>document.write(recusados);</script>)<br>
-    &nbsp;<span style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;&nbsp;</span> Interessada (<script>document.write(interessados);</script>)<br>
-    &nbsp;<span style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;&nbsp;</span> Confirmada (<script>document.write(confirmados);</script>)<br>
     <p>&nbsp;</p>
     <strong>Total de Organizações Parceiras:</strong> {{ total_organizacoes }}<br>
     <strong>Total de Propostas Submetidas:</strong> {{ total_submetidos }}<br>
@@ -113,34 +62,5 @@
   {% endif %}
 
   <p>&nbsp;</p>
-
-  <script type="text/javascript">
-
-    function filtra_data() {  // REFERENTE AO SELETOR DE DATAS
-      var filterValue = $('.filter').val();
-      var row = $('.item'); 
-      row.hide();
-
-      row.each(function(i, el) {
-        
-        if( filterValue == "todas" || filterValue == $(el).attr('data-type') ) {
-            $(el).show();
-        }
-        else if( filterValue == "contactadas" && $(el).attr('data-type') >= 0 ) {
-            $(el).show();
-        }
-
-      });
-    }
-
-    $(".filter").change(function(){
-      filtra_data();
-    });  
-
-    $(document).ready(function(){
-      filtra_data();
-    });
-  
-  </script>
 
 {% endblock %}

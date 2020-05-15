@@ -698,6 +698,8 @@ def distribuicao_areas(request, tipo):
 
     return render(request, 'projetos/distribuicao_areas.html', context)
 
+
+
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def organizacoes_lista(request):
@@ -735,6 +737,42 @@ def organizacoes_lista(request):
         'filtro': "todas",
         }
     return render(request, 'projetos/organizacoes_lista.html', context)
+
+@login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
+def organizacoes_prospectadas(request):
+    """Exibe as organizações prospectadas e a última comunicação."""
+    todas_organizacoes = Organizacao.objects.all()
+    configuracao = Configuracao.objects.all().first()
+
+    submetidos = []
+    contato = []
+    organizacoes = []
+    for organizacao in todas_organizacoes:
+        propostas = Proposta.objects.filter(organizacao=organizacao).order_by("ano", "semestre")
+        anot = Anotacao.objects.filter(organizacao=organizacao).order_by("momento").last()
+
+        if anot and (datetime.date.today() - anot.momento.date() < datetime.timedelta(days=100)):
+            organizacoes.append(organizacao)
+            contato.append(anot)
+
+            #elif periodo == "disponiveis":
+            if configuracao.semestre == 1:
+                submetidos.append(propostas.filter(ano__gte=configuracao.ano).\
+                                    exclude(ano=configuracao.ano, semestre=1).distinct().count())
+            else:
+                submetidos.append(propostas.filter(ano__gt=configuracao.ano).distinct().count())
+
+    organizacoes_list = zip(organizacoes, submetidos, contato)
+    total_organizacoes = len(organizacoes)
+    total_submetidas = sum(submetidos)
+    context = {
+        'organizacoes_list': organizacoes_list,
+        'total_organizacoes': total_organizacoes,
+        'total_submetidas': total_submetidas,
+        'filtro': "todas",
+        }
+    return render(request, 'projetos/organizacoes_prospectadas.html', context)
 
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')

@@ -61,6 +61,7 @@ urlpatterns = [
     path('minhas_bancas/', views.minhas_bancas, name='minhas_bancas'),
     path('mostra_feedback/<int:feedback_id>', views.mostra_feedback, name='mostra_feedback'),
     path('organizacoes_lista/', views.organizacoes_lista, name='organizacoes_lista'),
+    path('organizacoes_prospectadas/', views.organizacoes_prospectadas, name='organizacoes_prospectadas'),
     path('organizacao_completo/<str:org>', views.organizacao_completo, name='organizacao_completo'),
     path('organizacoes_tabela/', views.organizacoes_tabela, name='organizacoes_tabela'),
     path('parceiro_propostas', views.parceiro_propostas, name='parceiro_propostas'),
