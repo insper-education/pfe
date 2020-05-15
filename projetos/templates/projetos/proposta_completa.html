@@ -32,7 +32,6 @@
       top:1px;
     }
   </style>
-
 {% endblock %}
 
 {% block content %}
@@ -40,11 +39,6 @@
     <h3>Título: {{proposta.titulo}}</h3>
   {% endif %}
   <strong>Semestre:</strong> {{proposta.ano}}.{{proposta.semestre}}<br>
-  {% comment %}
-    {% if projeto.avancado %}
-      <strong style="color:red"><u>PFE Avançado</u></strong><br>
-    {% endif %}
-  {% endcomment %}
 
   {% if proposta.fechada %}
     <strong>Projeto fechado:</strong>
@@ -134,8 +128,6 @@
     {{proposta.contatos_administrativos|linebreaks}}
     <br><br>
   {% endif %}
-
-
 
   <br>
   <strong>autorizado para publicação para os alunos por:</strong>
@@ -369,5 +361,10 @@
   {% endif %}
 
   <p>&nbsp;</p>
+
+  <a class="myButton" href="{% url 'proposta_editar' proposta.slug %}">Editar Proposta</a>
+
+  <p>&nbsp;</p>
+
 
 {% endblock %}
