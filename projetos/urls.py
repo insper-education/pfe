@@ -90,5 +90,7 @@ urlpatterns = [
     path('todos_professores/', views.todos_professores, name='todos_professores'),
 
     path('ajax/validate_aviso/', views.validate_aviso, name='validate_aviso'),
+    path('ajax/validate_alunos/', views.validate_alunos, name='validate_alunos'),
+
 
 ]

@@ -3037,9 +3037,65 @@ def validate_aviso(request):
             aviso.realizado = False
             aviso.save()
     else:
-        aviso = Aviso.objects.get(id=aviso_id)
+        try:
+            aviso = Aviso.objects.get(id=aviso_id)
+        except Aviso.DoesNotExist:
+            return HttpResponseNotFound('<h1>Aviso não encontrado!</h1>')
         aviso.realizado = checked
         aviso.save()
+
+    data = {
+        'atualizado': True,
+    }
+
+    return JsonResponse(data)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def validate_alunos(request):
+    """Ajax para validar vaga de alunos em propostas."""
+    proposta_id = int(request.GET.get('proposta', None))
+    vaga = request.GET.get('vaga', "  ")
+    checked = request.GET.get('checked', None) == "true"
+
+    print(proposta_id)
+
+    try:
+        proposta = Proposta.objects.get(id=proposta_id)
+        
+        if vaga[0] == 'C':
+            if vaga[1] == '1':
+                proposta.perfil_aluno1_computacao = checked
+            elif vaga[1] == '2':
+                proposta.perfil_aluno2_computacao = checked
+            elif vaga[1] == '3':
+                proposta.perfil_aluno3_computacao = checked
+            elif vaga[1] == '4':
+                proposta.perfil_aluno4_computacao = checked
+
+        if vaga[0] == 'M':
+            if vaga[1] == '1':
+                proposta.perfil_aluno1_mecanica = checked
+            elif vaga[1] == '2':
+                proposta.perfil_aluno2_mecanica = checked
+            elif vaga[1] == '3':
+                proposta.perfil_aluno3_mecanica = checked
+            elif vaga[1] == '4':
+                proposta.perfil_aluno4_mecanica = checked
+
+        if vaga[0] == 'X':
+            if vaga[1] == '1':
+                proposta.perfil_aluno1_mecatronica = checked
+            elif vaga[1] == '2':
+                proposta.perfil_aluno2_mecatronica = checked
+            elif vaga[1] == '3':
+                proposta.perfil_aluno3_mecatronica = checked
+            elif vaga[1] == '4':
+                proposta.perfil_aluno4_mecatronica = checked
+
+        proposta.save()
+    except Aviso.DoesNotExist:
+        return HttpResponseNotFound('<h1>Aviso não encontrado!</h1>')
 
     data = {
         'atualizado': True,

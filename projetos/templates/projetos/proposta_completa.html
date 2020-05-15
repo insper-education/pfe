@@ -32,6 +32,12 @@
       top:1px;
     }
   </style>
+  <style type="text/css">
+    td label { 
+       display: block;
+       text-align: center;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
@@ -190,39 +196,39 @@
     </tr>
     <tr> <!-- NAO EH A FORMA MAIS ELEGANTE MAS FUNCIONA POR ENQUANTO -->
       <td>Aluno 1</td>
-      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
-        {% if proposta.perfil_aluno1_computacao %}checked{% endif %}>&nbsp;</td>
-      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
-        {% if proposta.perfil_aluno1_mecanica %}checked{% endif %}>&nbsp;</td>
-      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
-        {% if proposta.perfil_aluno1_mecatronica %}checked{% endif %}>&nbsp;</td>
+      <td style="text-align:center;"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosC1" name="alunosC1" value="C1" 
+        {% if proposta.perfil_aluno1_computacao %}checked{% endif %}></label></td>
+      <td style="text-align:center;"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosM1" name="alunosM1" value="M1" 
+        {% if proposta.perfil_aluno1_mecanica %}checked{% endif %}></label></td>
+      <td style="text-align:center;"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosX1" name="alunosX1" value="X1" 
+        {% if proposta.perfil_aluno1_mecatronica %}checked{% endif %}></label></td>
     </tr>
     <tr>
       <td>Aluno 2</td>
-      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
-        {% if proposta.perfil_aluno2_computacao %}checked{% endif %}>&nbsp;</td>
-      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
-        {% if proposta.perfil_aluno2_mecanica %}checked{% endif %}>&nbsp;</td>
-      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
-        {% if proposta.perfil_aluno2_mecatronica %}checked{% endif %}>&nbsp;</td>
+      <td style="text-align:center"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosC2" name="alunosC2" value="C2" 
+        {% if proposta.perfil_aluno2_computacao %}checked{% endif %}></label></td>
+      <td style="text-align:center"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosM2" name="alunosM2" value="M2" 
+        {% if proposta.perfil_aluno2_mecanica %}checked{% endif %}></label></td>
+      <td style="text-align:center"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosX2" name="alunosX2" value="X2" 
+        {% if proposta.perfil_aluno2_mecatronica %}checked{% endif %}></label></td>
     </tr>
     <tr>
       <td>Aluno 3</td>
-      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
-        {% if proposta.perfil_aluno3_computacao %}checked{% endif %}>&nbsp;</td>
-      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
-        {% if proposta.perfil_aluno3_mecanica %}checked{% endif %}>&nbsp;</td>
-      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
-        {% if proposta.perfil_aluno3_mecatronica %}checked{% endif %}>&nbsp;</td>
+      <td style="text-align:center"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosC3" name="alunosC3" value="C3"
+        {% if proposta.perfil_aluno3_computacao %}checked{% endif %}></label></td>
+      <td style="text-align:center"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosM3" name="alunosM3" value="M3"
+        {% if proposta.perfil_aluno3_mecanica %}checked{% endif %}></label></td>
+      <td style="text-align:center"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosX3" name="alunosX3" value="X3"
+        {% if proposta.perfil_aluno3_mecatronica %}checked{% endif %}></label></td>
     </tr>
     <tr>
       <td>Aluno 4</td>
-      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
-        {% if proposta.perfil_aluno4_computacao %}checked{% endif %}>&nbsp;</td>
-      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
-        {% if proposta.perfil_aluno4_mecanica %}checked{% endif %}>&nbsp;</td>
-      <td style="text-align:center">&nbsp;<input type="checkbox" name="selection" value="{{proposta.id}}" 
-        {% if proposta.perfil_aluno4_mecatronica %}checked{% endif %}>&nbsp;</td>
+      <td style="text-align:center"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosC4" name="alunosC4" value="C4"
+        {% if proposta.perfil_aluno4_computacao %}checked{% endif %}></label></td>
+      <td style="text-align:center"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosM4" name="alunosM4" value="M4" 
+        {% if proposta.perfil_aluno4_mecanica %}checked{% endif %}></label></td>
+      <td style="text-align:center"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosX4" name="alunosX4" value="X4" 
+        {% if proposta.perfil_aluno4_mecatronica %}checked{% endif %}></label></td>
     </tr>
   </table>
 
@@ -366,5 +372,27 @@
 
   <p>&nbsp;</p>
 
+
+  <script>
+    $(".alunos").change(function () {
+      var vaga = $(this).val();
+      var checked = $(this).prop('checked');
+
+      $.ajax({
+        url: '{% url "validate_alunos" %}',
+        data: {
+          'proposta': {{proposta.id}},
+          'vaga': vaga,
+          'checked': checked,
+        },
+        dataType: 'json',
+        success: function (data) {
+          if (data.atualizado) {
+            console.log("Valor atualizado.");
+          }
+        }
+      });
+    });
+  </script>
 
 {% endblock %}

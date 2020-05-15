@@ -23,10 +23,17 @@
     var alunos_computacao = 0
     var alunos_mecatronica = 0
     var alunos_mecanica = 0
+    var alunos_computacao_disponivel = 0
+    var alunos_mecatronica_disponivel = 0
+    var alunos_mecanica_disponivel = 0
     var proposta_computacao = 0
     var proposta_mecatronica = 0
     var proposta_mecanica = 0
     var proposta_multidisciplinar = 0
+    var proposta_computacao_disponivel = 0
+    var proposta_mecatronica_disponivel = 0
+    var proposta_mecanica_disponivel = 0
+    var proposta_multidisciplinar_disponivel = 0
   </script>
 {% endblock %}
 
@@ -68,9 +75,9 @@
         <th>Aluno4</th>
       </tr>      
       {% for proposta in propostas %} 
+      {% with disponivel=proposta.disponivel %}
       
-      <tr class="item">
-        {% with disponivel=proposta.disponivel %}
+        <tr class="item">
 
           {% if disponivel %}<script>publicados += 1</script>{% endif %}
           {% if proposta.fechada  %}
@@ -145,93 +152,138 @@
           </td>
           <td class="text-center">
             {% if not disponivel %}
-              <del>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</del>
-            {% else %}
-              {% if proposta.perfil_aluno1_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
-              {% if proposta.perfil_aluno1_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
-              {% if proposta.perfil_aluno1_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
-              <!-- Se não defido conta para os 3 cursos -->
-              {% if not proposta.perfil_aluno1_computacao and not proposta.perfil_aluno1_mecatronica and not proposta.perfil_aluno1_mecanica %}
-                <script>tmp_computacao += 1</script>
-                <script>tmp_mecatronica += 1</script>
-                <script>tmp_mecanica += 1</script>
+              <del>
+            {% endif %}
+            {% if proposta.perfil_aluno1_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
+            {% if proposta.perfil_aluno1_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
+            {% if proposta.perfil_aluno1_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
+            <!-- Se não defido conta para os 3 cursos -->
+            {% if not proposta.perfil_aluno1_computacao and not proposta.perfil_aluno1_mecatronica and not proposta.perfil_aluno1_mecanica %}
+              <script>tmp_computacao += 1</script>
+              <script>tmp_mecatronica += 1</script>
+              <script>tmp_mecanica += 1</script>
+              {% if not disponivel %}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              {% else %}
                 ?
               {% endif %}
+            {% endif %}
+            {% if not disponivel %}
+              </del>
             {% endif %}
           </td>
           <td class="text-center">
             {% if not disponivel %}
-              <del>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</del>
-            {% else %}
-              {% if proposta.perfil_aluno2_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
-              {% if proposta.perfil_aluno2_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
-              {% if proposta.perfil_aluno2_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
-              <!-- Se não defido conta para os 3 cursos -->
-              {% if not proposta.perfil_aluno2_computacao and not proposta.perfil_aluno2_mecatronica and not proposta.perfil_aluno2_mecanica %}
-                <script>tmp_computacao += 1</script>
-                <script>tmp_mecatronica += 1</script>
-                <script>tmp_mecanica += 1</script>
+              <del>
+            {% endif %}
+            {% if proposta.perfil_aluno2_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
+            {% if proposta.perfil_aluno2_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
+            {% if proposta.perfil_aluno2_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
+            <!-- Se não defido conta para os 3 cursos -->
+            {% if not proposta.perfil_aluno2_computacao and not proposta.perfil_aluno2_mecatronica and not proposta.perfil_aluno2_mecanica %}
+              <script>tmp_computacao += 1</script>
+              <script>tmp_mecatronica += 1</script>
+              <script>tmp_mecanica += 1</script>
+              {% if not disponivel %}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              {% else %}
                 ?
               {% endif %}
+            {% endif %}
+            {% if not disponivel %}
+              </del>
             {% endif %}
           </td>
           <td class="text-center">
             {% if not disponivel %}
-              <del>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</del>
-            {% else %}
-              {% if proposta.perfil_aluno3_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
-              {% if proposta.perfil_aluno3_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
-              {% if proposta.perfil_aluno3_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
-              <!-- Se não defido conta para os 3 cursos -->
-              {% if not proposta.perfil_aluno3_computacao and not proposta.perfil_aluno3_mecatronica and not proposta.perfil_aluno3_mecanica %}
-                <script>tmp_computacao += 1</script>
-                <script>tmp_mecatronica += 1</script>
-                <script>tmp_mecanica += 1</script>
+              <del>
+            {% endif %}
+            {% if proposta.perfil_aluno3_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
+            {% if proposta.perfil_aluno3_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
+            {% if proposta.perfil_aluno3_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
+            <!-- Se não defido conta para os 3 cursos -->
+            {% if not proposta.perfil_aluno3_computacao and not proposta.perfil_aluno3_mecatronica and not proposta.perfil_aluno3_mecanica %}
+              <script>tmp_computacao += 1</script>
+              <script>tmp_mecatronica += 1</script>
+              <script>tmp_mecanica += 1</script>
+              {% if not disponivel %}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              {% else %}
                 ?
               {% endif %}
+            {% endif %}
+            {% if not disponivel %}
+              </del>
             {% endif %}
           </td>
           <td class="text-center">
             {% if not disponivel %}
-              <del>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</del>
-            {% else %}
-              {% if proposta.perfil_aluno4_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
-              {% if proposta.perfil_aluno4_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
-              {% if proposta.perfil_aluno4_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
-              {% if not proposta.perfil_aluno4_computacao and not proposta.perfil_aluno4_mecatronica and not proposta.perfil_aluno4_mecanica %}
-                <script>tmp_computacao += 1</script>
-                <script>tmp_mecatronica += 1</script>
-                <script>tmp_mecanica += 1</script>
+              <del>
+            {% endif %}
+            {% if proposta.perfil_aluno4_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
+            {% if proposta.perfil_aluno4_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
+            {% if proposta.perfil_aluno4_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
+            {% if not proposta.perfil_aluno4_computacao and not proposta.perfil_aluno4_mecatronica and not proposta.perfil_aluno4_mecanica %}
+              <script>tmp_computacao += 1</script>
+              <script>tmp_mecatronica += 1</script>
+              <script>tmp_mecanica += 1</script>
+              {% if not disponivel %}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              {% else %}
                 ?
               {% endif %}
             {% endif %}
+            {% if not disponivel %}
+              </del>
+            {% endif %}
           </td>
-        {% endwith %}
-      </tr>
-      <script>
-        alunos_computacao += tmp_computacao;
-        alunos_mecatronica += tmp_mecatronica;
-        alunos_mecanica += tmp_mecanica;
+        </tr>
+        <script>
+          alunos_computacao += tmp_computacao;
+          alunos_mecatronica += tmp_mecatronica;
+          alunos_mecanica += tmp_mecanica;
 
-        if ( ( tmp_computacao >= 3 ) && (tmp_computacao >= tmp_mecatronica + tmp_mecanica ) ) {
-          proposta_computacao += 1;
-        } else if ( ( tmp_mecatronica >= 3 ) && (tmp_mecatronica >= tmp_computacao + tmp_mecanica ) ) {
-          proposta_mecatronica += 1; 
-        } else if ( ( tmp_mecanica >= 3 ) && (tmp_mecanica >= tmp_mecatronica + tmp_computacao ) ) {
-          proposta_mecanica += 1;
-        } else {
-          proposta_multidisciplinar += 1;
-        }
+          {% if disponivel %}
+            alunos_computacao_disponivel += tmp_computacao;
+            alunos_mecatronica_disponivel += tmp_mecatronica;
+            alunos_mecanica_disponivel += tmp_mecanica;
+          {% endif %}
 
-        tmp_computacao = 0;
-        tmp_mecatronica = 0;
-        tmp_mecanica = 0;
-      </script>
-      
+          if ( ( tmp_computacao >= 3 ) && (tmp_computacao >= tmp_mecatronica + tmp_mecanica ) ) {
+            proposta_computacao += 1;
+            {% if disponivel %}
+              proposta_computacao_disponivel += 1;
+            {% endif %}
+          } else if ( ( tmp_mecatronica >= 3 ) && (tmp_mecatronica >= tmp_computacao + tmp_mecanica ) ) {
+            proposta_mecatronica += 1;
+            {% if disponivel %}
+              proposta_mecatronica_disponivel += 1;
+            {% endif %}
+          } else if ( ( tmp_mecanica >= 3 ) && (tmp_mecanica >= tmp_mecatronica + tmp_computacao ) ) {
+            proposta_mecanica += 1;
+            {% if disponivel %}
+              proposta_mecanica_disponivel += 1;
+            {% endif %}
+          } else {
+            proposta_multidisciplinar += 1;
+            {% if disponivel %}
+              proposta_multidisciplinar_disponivel += 1;
+            {% endif %}
+          }
+
+          tmp_computacao = 0;
+          tmp_mecatronica = 0;
+          tmp_mecanica = 0;
+        </script>
+
+      {% endwith %}
       {% endfor %}
       
+      <tr><td colspan="8" style="text-align: right; border-left: hidden; border-right: hidden; border-bottom: hidden;">
+        <small style="font-size:12px"><b>C</b>: Computação | <b>X</b>: Mecatrônica | <b>M</b>: Mecânica</small>
+      </tr></td>
+      
     </table>
-    <p style="text-align: right;"><small>C: Computação | X: Mecatrônica | M: Mecânica</small></p>
     <p>&nbsp;</p>
     <strong>Número Total de Propostas Publicadas:</strong> <script>document.write(publicados);</script>
       <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
@@ -240,14 +292,42 @@
     
     <strong>Número Total de Propostas Fechadas:</strong> <script>document.write(fechados);</script><br>
     <p>&nbsp;</p>
-    <strong>Propostas nativamente multidisciplinar:</strong> <script>document.write(proposta_multidisciplinar);</script><br>
-    <strong>Propostas nativamente de computação:</strong> <script>document.write(proposta_computacao);</script><br>
-    <strong>Propostas nativamente de mecatrônica:</strong> <script>document.write(proposta_mecatronica);</script><br>
-    <strong>Propostas nativamente de mecânica:</strong> <script>document.write(proposta_mecanica);</script><br>
+    <strong>Propostas nativamente multidisciplinar:</strong> <script>document.write(proposta_multidisciplinar_disponivel);</script>
+          <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
+        (<script>document.write(proposta_multidisciplinar);</script>)
+      </a><br>
+
+    <strong>Propostas nativamente de computação:</strong> <script>document.write(proposta_computacao_disponivel);</script>
+              <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
+        (<script>document.write(proposta_computacao);</script>)
+      </a><br>
+
+    <strong>Propostas nativamente de mecatrônica:</strong> <script>document.write(proposta_mecatronica_disponivel);</script>
+              <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
+        (<script>document.write(proposta_mecatronica);</script>)
+      </a><br>
+
+    <strong>Propostas nativamente de mecânica:</strong> <script>document.write(proposta_mecanica_disponivel);</script>
+              <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
+        (<script>document.write(proposta_mecanica);</script>)
+      </a><br>
+
     <p>&nbsp;</p>
-    <strong>Vagas para alunos de computação:</strong> <script>document.write(alunos_computacao);</script><br>
-    <strong>Vagas para alunos de mecatrônica:</strong> <script>document.write(alunos_mecatronica);</script><br>
-    <strong>Vagas para alunos de mecânica:</strong> <script>document.write(alunos_mecanica);</script><br>
+    <strong>Vagas para alunos de computação:</strong> <script>document.write(alunos_computacao_disponivel);</script>
+              <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
+        (<script>document.write(alunos_computacao);</script>)
+      </a><br>
+
+    <strong>Vagas para alunos de mecatrônica:</strong> <script>document.write(alunos_mecatronica_disponivel);</script>
+                  <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
+        (<script>document.write(alunos_mecatronica);</script>)
+      </a><br>
+
+    <strong>Vagas para alunos de mecânica:</strong> <script>document.write(alunos_mecanica_disponivel);</script>
+                  <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
+        (<script>document.write(alunos_mecanica);</script>)
+      </a><br>
+
   {% else %}
     <p>Não existem propostas disponíveis.</p>
   {% endif %}
