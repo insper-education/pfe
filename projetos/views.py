@@ -817,6 +817,7 @@ def cria_anotacao(request, login): #acertar isso para pk
             "area_principal": True,
             "organizacao_completo": login,
             "organizacoes_lista": True,
+            "organizacoes_prospectadas": True,
             "mensagem": mensagem,
         }
         return render(request, 'generic.html', context=context)
