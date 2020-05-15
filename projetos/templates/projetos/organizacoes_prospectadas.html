@@ -20,8 +20,8 @@
   <h3>Organizações prospectadas nos últimos 3 mêses</h3>
   <label for="filter">Filtrar:</label>
   <select id="filter" class="filter" data-tableId="OrganizacoesTable">
-    <option value="todas">todas</option>
-    <option value="contactadas" {% if filtro == "todas contactadas" %}selected="selected"{% endif %}>todas contactadas</option>
+    <option value="todas">todas contactadas</option>
+    <option value="contactadas" {% if filtro == "todas contactadas" %}selected="selected"{% endif %}>todas em contato</option>
     <option value="0" {% if filtro == "sem retorno" %}selected="selected"{% endif %}>sem retorno</option>
     <option value="1" {% if filtro == "confirmadas" %}selected="selected"{% endif %}>confirmadas</option>
     <option value="2" {% if filtro == "interessadas" %}selected="selected"{% endif %}>interessadas</option>
@@ -118,7 +118,7 @@
         if( filterValue == "todas" || filterValue == $(el).attr('data-type') ) {
             $(el).show();
         }
-        else if( filterValue == "contactadas" && $(el).attr('data-type') >= 0 ) {
+        else if( filterValue == "contactadas" && $(el).attr('data-type') > 0 ) {
             $(el).show();
         }
 
