@@ -125,6 +125,7 @@ class PFEUser(AbstractUser):
 
     membro_comite = \
         models.BooleanField(default=False, help_text='caso membro do comitê do PFE')
+
     GENERO_CHOICES = (
         ('X', 'Nao Informado'),
         ('M', 'Masculino'),

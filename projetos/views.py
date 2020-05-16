@@ -544,6 +544,7 @@ def proposta_completa(request, primakey):
     """Mostra um projeto por completo."""
     configuracao = Configuracao.objects.all().first()
     proposta = Proposta.objects.get(pk=primakey)
+    comite = PFEUser.objects.filter(membro_comite=True)
     projeto = None
     if proposta.fechada:
         projeto = Projeto.objects.get(proposta=proposta)
@@ -555,6 +556,7 @@ def proposta_completa(request, primakey):
         'opcoes': opcoes,
         'MEDIA_URL' : settings.MEDIA_URL,
         'projeto' : projeto,
+        "comite": comite,
     }
     return render(request, 'projetos/proposta_completa.html', context=context)
 

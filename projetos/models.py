@@ -282,7 +282,7 @@ class Proposta(models.Model):
     disponivel = models.BooleanField("Disponível", default=False,
                                      help_text='Se projeto está atualmente disponível para alunos')
 
-    autorizado = models.ForeignKey('users.Professor', null=True, blank=True,
+    autorizado = models.ForeignKey('users.PFEUser', null=True, blank=True,
                                    on_delete=models.SET_NULL,
                                    help_text='Quem autorizou a ser publicado para os alunos')
 

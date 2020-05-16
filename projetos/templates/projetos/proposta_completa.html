@@ -368,6 +368,18 @@
 
   <p>&nbsp;</p>
 
+  <br><b><label for="autorizador">Autorizado por</label></b>:
+  <select name="autorizador" id="autorizador" title="Selecione quem autorizou proposta" required>
+      <option disabled selected value> -- selecione alguém -- </option>
+      {% for pessoa in comite %}
+        <option value="{{pessoa.id}}" {% if pessoa.id == proposta.membro1.id %}selected{% endif %}>
+          {{pessoa}}
+        </option>  
+      {% endfor %}
+  </select><br>
+
+  <p>&nbsp;</p>
+
   <a class="myButton" href="{% url 'proposta_editar' proposta.slug %}">Editar Proposta</a>
 
   <p>&nbsp;</p>
