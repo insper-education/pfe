@@ -542,8 +542,34 @@ def projeto_completo(request, primakey):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def proposta_completa(request, primakey):
     """Mostra um projeto por completo."""
-    configuracao = Configuracao.objects.all().first()
     proposta = Proposta.objects.get(pk=primakey)
+
+    if request.method == 'POST':
+        if 'autorizador' in request.POST:
+            try:
+                if request.POST['autorizador'] == "0":
+                    proposta.autorizado = None
+                else:
+                    proposta.autorizado = PFEUser.objects.get(pk=int(request.POST['autorizador']))
+                proposta.disponivel = request.POST['disponibilizar'] == 'sim'
+                proposta.save()
+            except PFEUser.DoesNotExist:
+                return HttpResponse("Autorizador não encontrado.", status=401)
+        else:
+            return HttpResponse("Autorizador não encontrado.", status=401)
+        if proposta.disponivel:
+            mensagem = "Proposta disponibilizada."
+        else:
+            mensagem = "Proposta indisponibilizada."
+        context = {
+            "area_principal": True,
+            "propostas_lista": "disponiveis",
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
+
+    configuracao = Configuracao.objects.all().first()
+    
     comite = PFEUser.objects.filter(membro_comite=True)
     projeto = None
     if proposta.fechada:
@@ -2484,6 +2510,7 @@ def bancas_criar(request):
     configuracao = Configuracao.objects.all().first()
     if request.method == 'POST':
         if 'projeto' in request.POST:
+
             projeto = Projeto.objects.get(id=int(request.POST['projeto']))
             banca = Banca.create(projeto)
             editar_banca(banca, request)
@@ -2503,8 +2530,8 @@ def bancas_criar(request):
         ano = configuracao.ano
         semestre = configuracao.semestre
         projetos = Projeto.objects.filter(ano=ano).filter(semestre=semestre).\
-                                                   filter(disponivel=True).\
                                                    exclude(orientador=None)
+                                                   #filter(disponivel=True)
         pessoas = PFEUser.objects.all().\
                                   filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0]).\
                                   order_by(Lower("first_name"), Lower("last_name")) # professores
@@ -2548,8 +2575,8 @@ def bancas_editar(request, primarykey):
         }
         return render(request, 'generic.html', context=context)
     else:
-        projetos = Projeto.objects.filter(disponivel=True).exclude(orientador=None).\
-                                  order_by("-ano", "-semestre")
+        #projetos = Projeto.objects.filter(disponivel=True).exclude(orientador=None).\
+        projetos = Projeto.objects.exclude(orientador=None).order_by("-ano", "-semestre")
 
         pessoas = PFEUser.objects.all().\
                                   filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0]).\
@@ -3060,8 +3087,6 @@ def validate_alunos(request):
     vaga = request.GET.get('vaga', "  ")
     checked = request.GET.get('checked', None) == "true"
 
-    print(proposta_id)
-
     try:
         proposta = Proposta.objects.get(id=proposta_id)
         
@@ -3355,12 +3380,5 @@ def cadastrar_usuario(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def migracao(request):
     """Migra projetos (temporário)."""
-
-    propostas = Proposta.objects.all()
-    luciano = PFEUser.objects.get(username='lpsoares')
-
-    for proposta in propostas:
-        proposta.autorizado = luciano
-        proposta.save()
 
     return HttpResponse("Feito.")

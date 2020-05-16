@@ -43,7 +43,9 @@
         <a href="{% url 'organizacoes_prospectadas' %}">Lista de organizações prospectadas</a><br>
     {% endif %}
 
-
+    {% if propostas_lista %}
+        <a href="{% url 'propostas_lista' propostas_lista%}">Lista de todas as propostas</a><br>
+    {% endif %}
 
     {% if area_principal %}
         <a href="{% url 'index' %}">Voltar para Página Principal!</a><br>
