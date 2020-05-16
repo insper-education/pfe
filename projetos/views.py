@@ -3356,4 +3356,11 @@ def cadastrar_usuario(request):
 def migracao(request):
     """Migra projetos (temporário)."""
 
+    propostas = Proposta.objects.all()
+    luciano = PFEUser.objects.get(username='lpsoares')
+
+    for proposta in propostas:
+        proposta.autorizado = luciano
+        proposta.save()
+
     return HttpResponse("Feito.")
