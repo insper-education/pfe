@@ -69,6 +69,9 @@ class Organizacao(models.Model):
         organizacao = cls()
         return organizacao
 
+    def __unicode__(self):
+        return self.nome
+
     def __str__(self):
         return self.nome
     #def documento(self):

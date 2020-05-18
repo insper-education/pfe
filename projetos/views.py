@@ -773,7 +773,8 @@ def organizacoes_prospectadas(request):
     todas_organizacoes = Organizacao.objects.all()
     configuracao = Configuracao.objects.all().first()
 
-    submetidos = []
+    disponiveis = []
+    submetidas = []
     contato = []
     organizacoes = []
     for organizacao in todas_organizacoes:
@@ -786,17 +787,22 @@ def organizacoes_prospectadas(request):
 
             #elif periodo == "disponiveis":
             if configuracao.semestre == 1:
-                submetidos.append(propostas.filter(ano__gte=configuracao.ano).\
-                                    exclude(ano=configuracao.ano, semestre=1).distinct().count())
+                propostas_submetidas = propostas.filter(ano__gte=configuracao.ano).\
+                                            exclude(ano=configuracao.ano, semestre=1).distinct()
             else:
-                submetidos.append(propostas.filter(ano__gt=configuracao.ano).distinct().count())
+                propostas_submetidas = propostas.filter(ano__gt=configuracao.ano).distinct()
+                
+            submetidas.append(propostas_submetidas.count())
+            disponiveis.append(propostas_submetidas.filter(disponivel=True).count())
 
-    organizacoes_list = zip(organizacoes, submetidos, contato)
+    organizacoes_list = zip(organizacoes, disponiveis, submetidas, contato)
     total_organizacoes = len(organizacoes)
-    total_submetidas = sum(submetidos)
+    total_disponiveis = sum(disponiveis)
+    total_submetidas = sum(submetidas)
     context = {
         'organizacoes_list': organizacoes_list,
         'total_organizacoes': total_organizacoes,
+        'total_disponiveis': total_disponiveis,
         'total_submetidas': total_submetidas,
         'filtro': "todas",
         }

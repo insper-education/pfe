@@ -237,6 +237,7 @@ class AnotacaoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
     list_display = ('momento', 'organizacao', 'autor',)
     ordering = ('-momento',)
+    search_fields = ['organizacao__nome',]
 
 @admin.register(Documento)
 class DocumentoAdmin(admin.ModelAdmin):
