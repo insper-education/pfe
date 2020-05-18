@@ -217,11 +217,10 @@ class OrganizacaoAdmin(admin.ModelAdmin):
     list_display = ('sigla', 'nome', 'website')
     search_fields = ['nome',]
 
-
-@admin.register(Empresa)
-class EmpresaAdmin(admin.ModelAdmin):
-    """Definição do que aparece no sistema de administração do Django."""
-    list_display = ('sigla',)
+# @admin.register(Empresa)
+# class EmpresaAdmin(admin.ModelAdmin):
+#     """Definição do que aparece no sistema de administração do Django."""
+#     list_display = ('sigla',)
 
 @admin.register(Configuracao)
 class ConfiguracaoAdmin(admin.ModelAdmin):
