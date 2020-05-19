@@ -108,17 +108,22 @@ class Usuario(generic.DetailView):
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def alunos_lista(request):
+    """Mostra todos os alunos que estão que cursam semestre atual."""
+    configuracao = Configuracao.objects.all().first()
+    ano = configuracao.ano
+    semestre = configuracao.semestre
+    return redirect('alunos_listagem', anosemestre="{0}.{1}".format(ano, semestre))
+
+@login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
+def alunos_listagem(request, anosemestre):
     """Gera lista com todos os alunos já registrados."""
     configuracao = Configuracao.objects.all().first()
     alunos_list = Aluno.objects.filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])\
         .order_by(Lower("user__first_name"), Lower("user__last_name")) # Conta soh alunos
-    num_alunos = alunos_list.count()
-    num_alunos_comp = alunos_list.filter(curso__exact='C').count() # Conta alunos computacao
-    num_alunos_mxt = alunos_list.filter(curso__exact='X').count() # Conta alunos mecatrônica
-    num_alunos_mec = alunos_list.filter(curso__exact='M').count() # Conta alunos mecânica
 
-    num_alunos_masculino = alunos_list.filter(user__genero='M').count() # Estudantes masculino
-    num_alunos_feminino = alunos_list.filter(user__genero='F').count() # Estudantes feminino
+    ano = 0
+    semestre = 0
 
     tabela_alunos = {}
 
@@ -127,36 +132,70 @@ def alunos_lista(request):
     totais["mecânica"] = 0
     totais["mecatrônica"] = 0
 
-    ano = 2018
-    semestre = 2
-    while True:
-        alunos_semestre = alunos_list.\
+    if anosemestre != "todos":
+        ano = int(anosemestre.split(".")[0])
+        semestre = int(anosemestre.split(".")[1])
+
+        alunos_list = alunos_list.\
             filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre).distinct()
-        if ano not in tabela_alunos:
-            tabela_alunos[ano] = {}
-        if semestre not in tabela_alunos[ano]:
-            tabela_alunos[ano][semestre] = {}
+    
+        tabela_alunos[ano] = {}
+        tabela_alunos[ano][semestre] = {}
 
         tabela_alunos[ano][semestre]["computação"] =\
-            alunos_semestre.filter(curso__exact='C').count()
+            alunos_list.filter(curso__exact='C').count()
         totais["computação"] += tabela_alunos[ano][semestre]["computação"]
         tabela_alunos[ano][semestre]["mecânica"] =\
-            alunos_semestre.filter(curso__exact='M').count()
+            alunos_list.filter(curso__exact='M').count()
         totais["mecânica"] += tabela_alunos[ano][semestre]["mecânica"]
         tabela_alunos[ano][semestre]["mecatrônica"] =\
-            alunos_semestre.filter(curso__exact='X').count()
+            alunos_list.filter(curso__exact='X').count()
         totais["mecatrônica"] += tabela_alunos[ano][semestre]["mecatrônica"]
         tabela_alunos[ano][semestre]["total"] =\
-            alunos_semestre.count()
+            alunos_list.count()
 
-        if ((ano == configuracao.ano) and (semestre == configuracao.semestre)):
-            break
 
-        if semestre == 1:
-            semestre = 2
-        else:
-            ano += 1
-            semestre = 1
+
+    else:
+        ano_tmp = 2018
+        semestre_tmp = 2
+        while True:
+            alunos_semestre = alunos_list.\
+                filter(alocacao__projeto__ano=ano_tmp, alocacao__projeto__semestre=semestre_tmp).distinct()
+            if ano_tmp not in tabela_alunos:
+                tabela_alunos[ano_tmp] = {}
+            if semestre_tmp not in tabela_alunos[ano_tmp]:
+                tabela_alunos[ano_tmp][semestre_tmp] = {}
+
+            tabela_alunos[ano_tmp][semestre_tmp]["computação"] =\
+                alunos_semestre.filter(curso__exact='C').count()
+            totais["computação"] += tabela_alunos[ano_tmp][semestre_tmp]["computação"]
+            tabela_alunos[ano_tmp][semestre_tmp]["mecânica"] =\
+                alunos_semestre.filter(curso__exact='M').count()
+            totais["mecânica"] += tabela_alunos[ano_tmp][semestre_tmp]["mecânica"]
+            tabela_alunos[ano_tmp][semestre_tmp]["mecatrônica"] =\
+                alunos_semestre.filter(curso__exact='X').count()
+            totais["mecatrônica"] += tabela_alunos[ano_tmp][semestre_tmp]["mecatrônica"]
+            tabela_alunos[ano_tmp][semestre_tmp]["total"] =\
+                alunos_semestre.count()
+
+            if ((ano_tmp == configuracao.ano) and (semestre_tmp == configuracao.semestre)):
+                break
+
+            if semestre_tmp == 1:
+                semestre_tmp = 2
+            else:
+                ano_tmp += 1
+                semestre_tmp = 1
+
+
+    num_alunos = alunos_list.count()
+    num_alunos_comp = alunos_list.filter(curso__exact='C').count() # Conta alunos computacao
+    num_alunos_mxt = alunos_list.filter(curso__exact='X').count() # Conta alunos mecatrônica
+    num_alunos_mec = alunos_list.filter(curso__exact='M').count() # Conta alunos mecânica
+
+    num_alunos_masculino = alunos_list.filter(user__genero='M').count() # Estudantes masculino
+    num_alunos_feminino = alunos_list.filter(user__genero='F').count() # Estudantes feminino
 
     totais["total"] = totais["computação"] + totais["mecânica"] + totais["mecatrônica"]
 
@@ -171,6 +210,9 @@ def alunos_lista(request):
         'configuracao': configuracao,
         'tabela_alunos': tabela_alunos,
         'totais': totais,
+        'ano': ano,
+        'semestre': semestre,
+        'loop_anos': range(2018, configuracao.ano+1),
     }
     return render(request, 'users/alunos_lista.html', context=context)
 

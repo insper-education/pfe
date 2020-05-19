@@ -19,15 +19,33 @@
 {% block content %}
   <h3>Alunos</h3>
 
+  <label for="filter"><b>Edição:</b></label>
+  <select onchange="location = this.options[this.selectedIndex].value;">
+    <option value="todos">todos</option>
+    {% for loop in loop_anos %}
+      <option value="{{loop}}.2" {% if ano == loop and semestre == 2 %}selected{% endif %}>{{loop}}.2</option>
+      <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
+    {% endfor %}
+  </select>
+  <br>
+
+  <b>Informações: </b>&nbsp;&nbsp;
+  <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(2)').show() : $('#AlunosTable tr > *:nth-child(2)').hide())" type="checkbox" checked />e-mail</label>&nbsp;&nbsp;&nbsp;
+  <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(3)').show() : $('#AlunosTable tr > *:nth-child(3)').hide())" type="checkbox" checked />Curso</label>&nbsp;&nbsp;&nbsp;
+  <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(4)').show() : $('#AlunosTable tr > *:nth-child(4)').hide())" type="checkbox" checked />Período</label>&nbsp;&nbsp;&nbsp;
+  <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(5)').show() : $('#AlunosTable tr > *:nth-child(5)').hide())" type="checkbox" checked />Projeto</label>&nbsp;&nbsp;&nbsp;
+  
+  <br><br>
   <strong>Número Total de Alunos:</strong> {{ num_alunos }}
 
   {% if alunos_list %}
     <table id="AlunosTable">
         <tr>
             <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome do Aluno</th>
-            <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Curso</th>
-            <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Período</th>
-            <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">e-mail</th>
+            <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">e-mail</th>
+            <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Curso</th>
+            <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Período</th>
+            <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">Projeto</th>
         </tr>
         {% for aluno in alunos_list %} 
         <tr class="item">
@@ -55,6 +73,9 @@
               {{aluno.user.get_full_name}}
             </a>
           </td>
+          <td>
+            <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
+          </td>
           {% if aluno.curso %}
             <td class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">
               {{ aluno.get_curso_display }}
@@ -67,7 +88,7 @@
               {% for alocacao in aluno.alocacao_set.all %}
                 <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
                   {% if alocacao.projeto.avancado %}<u>{% endif %}
-                  {{alocacao.projeto.ano}}.{{alocacao.projeto.semestre}}
+                  {{alocacao.projeto.ano}}.{{alocacao.projeto.semestre}}<br>
                   {% if alocacao.projeto.avancado %}</u>{% endif %}
                 </a>
               {% endfor %}
@@ -79,8 +100,21 @@
               {% endif %}
             {% endif %}
           </td>
-          <td>
-            <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
+          <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
+            {% if aluno.alocacao_set.all %}
+              {% for alocacao in aluno.alocacao_set.all %}
+                {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
+                  <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
+                    {% if alocacao.projeto.avancado %}<u>{% endif %}
+                    {{alocacao.projeto.get_titulo}}
+                  </a>
+                  <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
+                    ({{alocacao.projeto.organizacao}})<br>
+                    {% if alocacao.projeto.avancado %}</u>{% endif %}
+                  </a>
+                {% endif %}    
+              {% endfor %}
+            {% endif %}
           </td>
         </tr>
         {% endfor %}
@@ -204,14 +238,18 @@
         </tr>
       {% endfor %}
     {% endfor %}
-    <tr>
-      <td class="text-center" style="border-right: solid 3px; border-top: double;"> Totais </td>
-      <td class="text-center" style="border-top: double;"> {{totais.computação}} </td>
-      <td class="text-center" style="border-top: double;"> {{totais.mecânica}} </td>
-      <td class="text-center" style="border-top: double;"> {{totais.mecatrônica}} </td>
-      <td class="text-center" style="border-left: solid 3px; border-top: double;"><b> {{totais.total}} </b></td>
-    </tr>
+    {% if ano == 0 or semestre == 0 %}
+      <tr>
+        <td class="text-center" style="border-right: solid 3px; border-top: double;"> Totais </td>
+        <td class="text-center" style="border-top: double;"> {{totais.computação}} </td>
+        <td class="text-center" style="border-top: double;"> {{totais.mecânica}} </td>
+        <td class="text-center" style="border-top: double;"> {{totais.mecatrônica}} </td>
+        <td class="text-center" style="border-left: solid 3px; border-top: double;"><b> {{totais.total}} </b></td>
+      </tr>
+    {% endif %}
   </table>
-  <small>alunos reprovados contam mais de uma vez</small>
+  {% if ano == 0 or semestre == 0 %}
+    <small>alunos reprovados contam mais de uma vez</small>
+  {% endif %}
   <br>
 {% endblock %}

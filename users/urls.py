@@ -11,6 +11,7 @@ from . import views
 
 urlpatterns = [
     path('alunos_lista/', views.alunos_lista, name='alunos_lista'),
+    path('alunos_listagem/<str:anosemestre>', views.alunos_listagem, name='alunos_listagem'),
     path('alunos_inscrevendo/', views.alunos_inscrevendo, name='alunos_inscrevendo'),
     path('alunos_inscritos/<str:anosemestre>', views.alunos_inscritos, name='alunos_inscritos'),
     path('aluno_detail/<int:primarykey>', views.aluno_detail, name='aluno_detail'),
