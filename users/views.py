@@ -8,7 +8,6 @@ Data: 15 de Maio de 2019
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.db.models.functions import Lower
-#from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
@@ -136,25 +135,25 @@ def alunos_listagem(request, anosemestre):
         ano = int(anosemestre.split(".")[0])
         semestre = int(anosemestre.split(".")[1])
 
-        alunos_list = alunos_list.\
+        alunos_semestre = alunos_list.\
             filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre).distinct()
     
         tabela_alunos[ano] = {}
         tabela_alunos[ano][semestre] = {}
 
         tabela_alunos[ano][semestre]["computação"] =\
-            alunos_list.filter(curso__exact='C').count()
+            alunos_semestre.filter(curso__exact='C').count()
         totais["computação"] += tabela_alunos[ano][semestre]["computação"]
         tabela_alunos[ano][semestre]["mecânica"] =\
-            alunos_list.filter(curso__exact='M').count()
+            alunos_semestre.filter(curso__exact='M').count()
         totais["mecânica"] += tabela_alunos[ano][semestre]["mecânica"]
         tabela_alunos[ano][semestre]["mecatrônica"] =\
-            alunos_list.filter(curso__exact='X').count()
+            alunos_semestre.filter(curso__exact='X').count()
         totais["mecatrônica"] += tabela_alunos[ano][semestre]["mecatrônica"]
         tabela_alunos[ano][semestre]["total"] =\
-            alunos_list.count()
+            alunos_semestre.count()
 
-
+        alunos_list = alunos_semestre | alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
 
     else:
         ano_tmp = 2018
