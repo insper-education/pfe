@@ -115,9 +115,9 @@ class Empresa(models.Model):
 
 class Projeto(models.Model):
     """Dados dos projetos para o PFE."""
-    titulo = models.CharField("Título", max_length=127,
+    titulo = models.CharField("Título", max_length=160,
                               help_text='Título Provisório do projeto')
-    titulo_final = models.CharField("Título Final", max_length=127, null=True,
+    titulo_final = models.CharField("Título Final", max_length=160, null=True,
                                     blank=True,
                                     help_text='Título Final do projeto')
     descricao = models.TextField("Descrição", max_length=3000,
@@ -244,7 +244,7 @@ class Proposta(models.Model):
     departamento = models.TextField("Descrição do Depart.", max_length=3000, null=True, blank=True,
                                     help_text='Descrição do departamento que propôs o projeto')
 
-    titulo = models.CharField("Título", max_length=127,
+    titulo = models.CharField("Título", max_length=160,
                               help_text='Título Provisório do projeto')
 
     descricao = models.TextField("Descrição", max_length=3000,
