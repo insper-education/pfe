@@ -3387,4 +3387,9 @@ def cadastrar_usuario(request):
 def migracao(request):
     """Migra projetos (temporário)."""
 
+    projetos = Projeto.objects.all()
+    for projeto in projetos:
+        projeto.descricao = None
+        projeto.save()
+
     return HttpResponse("Feito.")

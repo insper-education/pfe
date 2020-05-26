@@ -120,7 +120,9 @@ class Projeto(models.Model):
     titulo_final = models.CharField("Título Final", max_length=160, null=True,
                                     blank=True,
                                     help_text='Título Final do projeto')
-    descricao = models.TextField("Descrição", max_length=3000,
+    
+    # MANTER POR É UMA DESCRIÇÃO ATUALIZADA
+    descricao = models.TextField("Descrição", max_length=3000, null=True, blank=True,
                                  help_text='Descricao do projeto')
     expectativas = models.TextField("Expectativas", max_length=3000,
                                     help_text='Expectativas em relação ao projeto')
