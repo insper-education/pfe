@@ -59,20 +59,27 @@
 
   <br>
 
-  <strong>Descrição:</strong> {{ proposta.descricao|linebreaks }}
+  <strong>Descrição:</strong>
+  {{proposta.descricao|linebreaks|urlize}}
+
   {% if proposta.expectativas %}
-    <br><strong>Expectativas de resultados/entregas :</strong> {{ proposta.expectativas|linebreaks }}
+    <br><strong>Expectativas de resultados/entregas :</strong>
+    {{proposta.expectativas|linebreaks|urlize}}
   {% endif %}
+
   {% comment %}
     {% if projeto.areas %}
       <br><strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ projeto.areas|linebreaks }}
     {% endif %}
   {% endcomment %}
+
   {% if proposta.recursos %}
-    <br><strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ proposta.recursos|linebreaks }}
+    <br><strong>Recursos a serem disponibilizados aos Alunos :</strong>
+    {{proposta.recursos|linebreaks|urlize}}
   {% endif %}
   {% if projeto.observacoes %}
-    <br><strong>Outras observações :</strong> {{ proposta.observacoes|linebreaks }}<br>
+    <br><strong>Outras observações :</strong>
+    {{proposta.observacoes|linebreaks|urlize}}<br>
   {% endif %}
   {% if proposta.anexo %}
     <br><strong>Anexo :</strong>
@@ -83,19 +90,19 @@
   <h3>Organização:
     {% if proposta.organizacao %}
       <a href="{% url 'organizacao_completo' proposta.organizacao.id %}">
-        {{ proposta.organizacao.nome }}
+        {{proposta.organizacao.nome}}
       </a>
     {% elif proposta.nome_organizacao %}
-      {{ proposta.nome_organizacao|linebreaks }}
+      {{proposta.nome_organizacao|linebreaks}}
     {% else %}
       Organização não definida.
     {% endif %}
   </h3>
   <p><strong>endereço:</strong>
     {% if proposta.organizacao %}
-      <a class="tabulado" href="http://maps.google.com/maps?q={{proposta.organizacao.endereco}}">{{ proposta.organizacao.endereco|linebreaks }}</a>
+      <a class="tabulado" href="http://maps.google.com/maps?q={{proposta.organizacao.endereco}}">{{proposta.organizacao.endereco|linebreaks}}</a>
     {% elif proposta.endereco %}
-      {{ proposta.endereco|linebreaks }}
+      {{proposta.endereco|linebreaks|urlize}}
     {% else %}
       Endereço não definido.
     {% endif %}
@@ -103,9 +110,9 @@
 
   <p><strong>website:</strong>
   {% if proposta.organizacao and proposta.organizacao.website %}
-    <a class="tabulado" href="{{ proposta.organizacao.website }}">{{ proposta.organizacao.website }}</a>
+    <a class="tabulado" href="{{ proposta.organizacao.website }}">{{proposta.organizacao.website}}</a>
   {% elif proposta.website %}
-    <a class="tabulado" href="{{proposta.website}}">{{ proposta.website }}</a>
+    <a class="tabulado" href="{{proposta.website}}">{{proposta.website}}</a>
   {% else %}
     website não definido.
   {% endif %}
@@ -113,14 +120,15 @@
 
   {% if proposta.organizacao and proposta.organizacao.informacoes %}
     <strong>Informações sobre a empresa :</strong> 
-    {{ proposta.organizacao.informacoes|linebreaks }}<br>
+    {{proposta.organizacao.informacoes|linebreaks|urlize}}<br>
   {% elif proposta.descricao_organizacao %}
     <strong>Informações sobre a empresa :</strong> 
-    {{ proposta.descricao_organizacao|linebreaks }}<br>
+    {{proposta.descricao_organizacao|linebreaks|urlize}}<br>
   {% endif %}
 
   {% if proposta.departamento %}
-    <strong>Informações sobre o departamento na empresa :</strong> {{ proposta.departamento|linebreaks }}<br>
+    <strong>Informações sobre o departamento na empresa :</strong>
+    {{proposta.departamento|linebreaks|urlize}}<br>
   {% endif %}
 
   <strong>Submetido por:</strong><br>
@@ -128,13 +136,13 @@
 
   {% if proposta.contatos_tecnicos %}
     <strong>Contatos Técnicos</strong><br>
-    {{proposta.contatos_tecnicos|linebreaks}}
+    {{proposta.contatos_tecnicos|linebreaks|urlize}}
     <br><br>
   {% endif %}
 
   {% if proposta.contatos_administrativos %}
     <strong>Contatos Administrativos</strong><br>
-    {{proposta.contatos_administrativos|linebreaks}}
+    {{proposta.contatos_administrativos|linebreaks|urlize}}
     <br><br>
   {% endif %}
 
