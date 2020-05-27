@@ -1514,8 +1514,8 @@ def envia_proposta(proposta):
                                                      proposta.titulo)
 
     recipient_list = list(map(str.strip, re.split(",|;", proposta.email)))
-    #recipient_list += ["pfe@insper.edu.br", "lpsoares@insper.edu.br",]
-    recipient_list += ["lpsoares@insper.edu.br",]
+    recipient_list += ["pfe@insper.edu.br", "lpsoares@insper.edu.br",]
+    #recipient_list += ["lpsoares@insper.edu.br",]
 
     check = email(subject, recipient_list, message)
     if check != 1:
