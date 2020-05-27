@@ -35,8 +35,8 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.template.loader import get_template
+from django.utils import html
 from django.utils import timezone
-
 from django.utils import text
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador, Opcao, Alocacao, Areas
@@ -1439,60 +1439,60 @@ def envia_proposta(proposta):
     """Envia Proposta por email."""
 
     #Isso tinha que ser feito por template, arrumar qualquer hora.
-    message = "<h3>Proposta de Projeto para o PFE {0}.{1}</h3>\n<br>\n".\
+    message = "<h3>Proposta de Projeto para o PFE {0}.{1}</h3>\n\n".\
                    format(proposta.ano, proposta.semestre)
 
-    message += "Para editar essa proposta acesse:</b><br>\n <a href='{0}'>{0}</a><br>\n<br>\n".\
+    message += "Para editar essa proposta acesse:</b>\n <a href='{0}'>{0}</a>\n\n".\
         format(settings.SERVER+proposta.get_absolute_url())
 
-    message += "<b>Título da Proposta de Projeto:</b> {0}<br>\n<br>\n".format(proposta.titulo)
-    message += "<b>Proposta submetida por:</b> {0} <br>\n".format(proposta.nome)
+    message += "<b>Título da Proposta de Projeto:</b> {0}\n\n".format(proposta.titulo)
+    message += "<b>Proposta submetida por:</b> {0} \n".format(proposta.nome)
     message += "<b>e-mail:</b> "
     for each in list(map(str.strip, re.split(",|;", proposta.email))):
         message += "&lt;{0}&gt; ".format(each)
-    message += "<br>\n<br>\n"
+    message += "\n\n"
 
-    message += "<b>Nome da Organização:</b> {0}<br>\n".\
-        format(proposta.nome_organizacao.replace('\n', '<br>\n'))
-    message += "<b>Website:</b> {0}<br>\n".format(proposta.website)
-    message += "<b>Endereco:</b> {0}<br>\n".format(proposta.endereco.replace('\n', '<br>\n'))
+    message += "<b>Nome da Organização:</b> {0}\n".\
+        format(proposta.nome_organizacao)
+    message += "<b>Website:</b> {0}\n".format(proposta.website)
+    message += "<b>Endereco:</b> {0}\n".format(proposta.endereco)
 
-    message += "<br>\n<br>\n"
+    message += "\n\n"
 
-    message += "<b>Contatos Técnicos:</b><br>\n {0}<br>\n<br>\n".\
-                   format(proposta.contatos_tecnicos.replace('\n', '<br>\n'))
+    message += "<b>Contatos Técnicos:</b>\n {0}\n\n".\
+                   format(proposta.contatos_tecnicos)
 
-    message += "<b>Contatos Administrativos:</b><br>\n {0}<br>\n<br>\n".\
-                   format(proposta.contatos_administrativos.replace('\n', '<br>\n'))
+    message += "<b>Contatos Administrativos:</b>\n {0}\n\n".\
+                   format(proposta.contatos_administrativos)
 
-    message += "<b>Informações sobre a instituição/empresa:</b><br>\n {0}<br>\n<br>\n".\
-                   format(proposta.descricao_organizacao.replace('\n', '<br>\n'))
+    message += "<b>Informações sobre a instituição/empresa:</b>\n {0}\n\n".\
+                   format(proposta.descricao_organizacao)
 
-    message += "<b>Informações sobre a departamento:</b><br>\n {0}<br>\n<br>\n".\
-                   format(proposta.departamento.replace('\n', '<br>\n'))
+    message += "<b>Informações sobre a departamento:</b>\n {0}\n\n".\
+                   format(proposta.departamento)
 
-    message += "<br>\n<br>\n"
+    message += "\n\n"
 
-    message += "<b>Descrição do Projeto:</b><br>\n {0}<br><br>\n".format(proposta.descricao)
-    message += "<b>Expectativas de resultados/entregas:</b><br>\n {0}<br>\n<br>\n".\
-                   format(proposta.expectativas.replace('\n', '<br>\n'))
+    message += "<b>Descrição do Projeto:</b>\n {0}\n\n".format(proposta.descricao)
+    message += "<b>Expectativas de resultados/entregas:</b>\n {0}\n\n".\
+                   format(proposta.expectativas)
 
-    message += "<br>\n"
+    message += "\n"
 
-    message += "<b>Áreas/Habilidades envolvidas no projeto:</b><br>\n"
+    message += "<b>Áreas/Habilidades envolvidas no projeto:</b>\n"
     message += lista_areas(proposta.areas_de_interesse)
 
-    message += "<br>\n"
-    message += "<b>Recursos a serem disponibilizados aos alunos:</b><br>\n {0}<br><br>\n".\
-                   format(proposta.recursos.replace('\n', '<br>\n'))
-    message += "<b>Outras observações para os alunos:</b><br>\n {0}<br><br>\n".\
-                   format(proposta.observacoes.replace('\n', '<br>\n'))
+    message += "\n\n"
+    message += "<b>Recursos a serem disponibilizados aos alunos:</b>\n {0}\n\n".\
+                   format(proposta.recursos)
+    message += "<b>Outras observações para os alunos:</b>\n {0}\n\n".\
+                   format(proposta.observacoes)
 
-    message += "<br>\n<br>\n"
-    message += "<b>Data da proposta:</b> {0}<br>\n<br>\n<br>\n".\
+    message += "\n\n"
+    message += "<b>Data da proposta:</b> {0}\n\n\n".\
                    format(proposta.data.strftime("%d/%m/%Y %H:%M"))
 
-    message += "<br>\n<br>\n"
+    message += "\n\n"
     message += """
     <b>Obs.:</b> Ao submeter o projeto, deve ficar claro que a intenção do Projeto Final de Engenharia é 
     que os alunos tenham um contato próximo com as pessoas responsáveis nas instituições parceiras 
@@ -1506,13 +1506,17 @@ def envia_proposta(proposta):
     gastos e isso terá de ficar a cargo da empresa, contudo os alunos terão acesso aos 
     laboratórios do Insper para o desenvolvimento do projeto em horários agendados.<b>\n"""
 
+    message = html.urlize(message)
+    message = message.replace('\n', '<br>\n')
+
     subject = 'Proposta PFE : ({0}.{1} - {2}'.format(proposta.ano,
                                                      proposta.semestre,
                                                      proposta.titulo)
 
     recipient_list = list(map(str.strip, re.split(",|;", proposta.email)))
-    recipient_list += ["pfe@insper.edu.br", "lpsoares@insper.edu.br",]
-    #recipient_list += ["lpsoares@insper.edu.br",]
+    #recipient_list += ["pfe@insper.edu.br", "lpsoares@insper.edu.br",]
+    recipient_list += ["lpsoares@insper.edu.br",]
+
     check = email(subject, recipient_list, message)
     if check != 1:
         message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
@@ -3387,9 +3391,4 @@ def cadastrar_usuario(request):
 def migracao(request):
     """Migra projetos (temporário)."""
 
-    projetos = Projeto.objects.all()
-    for projeto in projetos:
-        projeto.descricao = None
-        projeto.save()
-
-    return HttpResponse("Feito.")
+    return HttpResponse(message)
