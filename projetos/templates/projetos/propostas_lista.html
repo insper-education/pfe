@@ -525,8 +525,8 @@ svg.append("circle")
     .attr("fill", "teal");
     
   circles_aprovados.enter().append("text")
-    .attr("x", function (d) { return d[0]+5; })
-		.attr("y", function (d) { return d[1]-5; })
+    .attr("x", function (d) { return d[0]+d[2]; })
+		.attr("y", function (d) { return d[1]-d[2]; })
     .text( function (d) { return d[3]; })
     .classed('tick-text tick-p', true);
 
@@ -539,8 +539,8 @@ svg.append("circle")
     .attr("fill", "burlywood");
     
   circles_pendentes.enter().append("text")
-    .attr("x", function (d) { return d[0]+5; })
-		.attr("y", function (d) { return d[1]+10; })
+    .attr("x", function (d) { return d[0]+d[2]; })
+		.attr("y", function (d) { return d[1]+7+(d[2]/2); })
     .text( function (d) { return d[3]; })
     .classed('tick-text tick-y', true);
 
