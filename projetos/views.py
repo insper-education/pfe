@@ -1903,9 +1903,59 @@ def propostas_lista(request, periodo):
         else:
             propostas = propostas.filter(ano__gt=configuracao.ano)
 
+    ternario = []
+    for proposta in propostas:
+        comp = 0
+        comp += 1 if proposta.perfil_aluno1_computacao else 0
+        comp += 1 if proposta.perfil_aluno2_computacao else 0
+        comp += 1 if proposta.perfil_aluno3_computacao else 0
+        comp += 1 if proposta.perfil_aluno4_computacao else 0
+
+        mecat = 0
+        mecat += 1 if proposta.perfil_aluno1_mecatronica else 0
+        mecat += 1 if proposta.perfil_aluno2_mecatronica else 0
+        mecat += 1 if proposta.perfil_aluno3_mecatronica else 0
+        mecat += 1 if proposta.perfil_aluno4_mecatronica else 0
+
+        meca = 0
+        meca += 1 if proposta.perfil_aluno1_mecanica else 0
+        meca += 1 if proposta.perfil_aluno2_mecanica else 0
+        meca += 1 if proposta.perfil_aluno3_mecanica else 0
+        meca += 1 if proposta.perfil_aluno4_mecanica else 0
+
+        if proposta.organizacao:
+            sigla = proposta.organizacao.sigla
+        else:
+            sigla = ""
+
+        total = (comp + mecat + meca) * 0.01
+        if total:
+            found = False
+            for tern in ternario:
+                if int(comp/total)==tern[0] and int(mecat/total)==tern[1] and int(meca/total)==tern[2]:
+                    tern[3] += 3
+                    if sigla:
+                        tern[4] += ", " + sigla
+                    found = True
+                    break
+            if not found:
+                ternario.append([int(comp/total), int(mecat/total), int(meca/total), 5, sigla])
+        else:
+            found = False
+            for tern in ternario:
+                if 33==tern[0] and 33==tern[1] and 33==tern[2]:
+                    tern[3] += 3
+                    if sigla:
+                        tern[4] += ", " + sigla
+                    found = True
+                    break
+            if not found:
+                ternario.append([33, 33, 33, 5, sigla])
+
     context = {
         'propostas': propostas,
         'periodo' : periodo,
+        'ternario' : ternario,
         'configuracao' : configuracao,
     }
     return render(request, 'projetos/propostas_lista.html', context)
