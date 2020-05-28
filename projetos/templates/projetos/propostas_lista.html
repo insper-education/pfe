@@ -57,12 +57,12 @@
 			stroke: #008000;
 		}
 
-        line.tick-p, text.tick-p {
-			stroke: #000000;
+    line.tick-p, text.tick-p {
+			stroke: #008080;
 		}
 
-        line.tick-y, text.tick-y {
-			stroke: #FFFF00;
+    line.tick-y, text.tick-y {
+			stroke: #DEB887;
 		}
 
 		text.tick-text {
@@ -71,10 +71,12 @@
 			fill: #000000;
 		}
 
-
-		circle {
-			fill: darkcyan;
+    text.tick-text2 {
+			font-family: "sans-serif";
+			font-size: 14px;
+			fill: #000000;
 		}
+
 	</style>
 {% endblock %}
 
@@ -386,8 +388,8 @@
 <script>
 (function() {
 	var svg = d3.select('#plot').append('svg')
-						.attr("width", 400)
-                        .attr("height", 400);
+						  .attr("width", 400)
+              .attr("height", 400);
 
     var w = 300;
     var h = 260;
@@ -412,6 +414,30 @@
         .attr("transform", "rotate(60)")
         .text("Mecânica")
         .classed('tick-text tick-c', true);
+
+svg.append("circle")
+		.attr("cx", 70)
+		.attr("cy", 317)
+    .attr("r", 7)
+    .attr("fill", "teal");
+    
+  svg.append("text")
+    .attr("x", 80)
+		.attr("y", 320)
+    .text("autorizado")
+    .classed('tick-text2 tick-p', true);
+
+	svg.append("circle")
+		.attr("cx", 200)
+		.attr("cy", 317)
+    .attr("r", 7)
+    .attr("fill", "burlywood");
+    
+  svg.append("text")
+    .attr("x", 210)
+		.attr("y", 320)
+    .text("pendente")
+    .classed('tick-text2 tick-y', true);
 
 
 	var corners = [[m,h+m], [w+m,h+m], [(w/2)+m,m]]
@@ -478,23 +504,46 @@
 
 	})
 
-    dados = [
-      {% for ter in ternario %}
+    dados_aprovados = [
+      {% for ter in ternario_aprovados %}
         coord({{ter.0}}, {{ter.1}}, {{ter.2}}, {{ter.3}}, "{{ter.4}}"),
       {% endfor %} 
     ]
-	var circles = svg.selectAll("circle").data(dados);
 
-	circles.enter().append("circle")
+    dados_pendentes = [
+      {% for ter in ternario_pendentes %}
+        coord({{ter.0}}, {{ter.1}}, {{ter.2}}, {{ter.3}}, "{{ter.4}}"),
+      {% endfor %} 
+    ]
+
+	var circles_aprovados = svg.selectAll("circle").data(dados_aprovados);
+
+	circles_aprovados.enter().append("circle")
 		.attr("cx", function (d) { return d[0]; })
 		.attr("cy", function (d) { return d[1]; })
-        .attr("r", function (d) { return d[2]; });
+    .attr("r", function (d) { return d[2]; })
+    .attr("fill", "teal");
     
-    circles.enter().append("text")
-        .attr("x", function (d) { return d[0]+5; })
+  circles_aprovados.enter().append("text")
+    .attr("x", function (d) { return d[0]+5; })
 		.attr("y", function (d) { return d[1]-5; })
-        .text( function (d) { return d[3]; })
-        .classed('tick-text tick-p', true);
+    .text( function (d) { return d[3]; })
+    .classed('tick-text tick-p', true);
+
+	var circles_pendentes = svg.selectAll("circle_p").data(dados_pendentes);
+
+	circles_pendentes.enter().append("circle")
+		.attr("cx", function (d) { return d[0]; })
+		.attr("cy", function (d) { return d[1]; })
+    .attr("r", function (d) { return d[2]; })
+    .attr("fill", "burlywood");
+    
+  circles_pendentes.enter().append("text")
+    .attr("x", function (d) { return d[0]+5; })
+		.attr("y", function (d) { return d[1]+10; })
+    .text( function (d) { return d[3]; })
+    .classed('tick-text tick-y', true);
+
 
 	function coord(a, b, c, r, t){
 		var sum, pos = [0,0];

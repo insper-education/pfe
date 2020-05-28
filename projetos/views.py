@@ -1880,29 +1880,8 @@ def projetos_lista(request, periodo):
     }
     return render(request, 'projetos/projetos_lista.html', context)
 
-@login_required
-@permission_required('users.altera_professor', login_url='/projetos/')
-def propostas_lista(request, periodo):
-    """Lista todas as propostas de projetos."""
-    configuracao = Configuracao.objects.all().first()
-    propostas = Proposta.objects.all().order_by("ano", "semestre", "organizacao", "titulo",)
-    if periodo == "todos":
-        pass
-    if periodo == "antigos":
-        if configuracao.semestre == 1:
-            propostas = propostas.filter(ano__lt=configuracao.ano)
-        else:
-            propostas = propostas.filter(ano__lte=configuracao.ano).\
-                                       exclude(ano=configuracao.ano, semestre=2)
-    elif periodo == "atuais":
-        propostas = propostas.filter(ano=configuracao.ano, semestre=configuracao.semestre)
-    elif periodo == "disponiveis":
-        if configuracao.semestre == 1:
-            propostas = propostas.filter(ano__gte=configuracao.ano).\
-                                exclude(ano=configuracao.ano, semestre=1)
-        else:
-            propostas = propostas.filter(ano__gt=configuracao.ano)
 
+def retorna_ternario(propostas):
     ternario = []
     for proposta in propostas:
         comp = 0
@@ -1925,6 +1904,8 @@ def propostas_lista(request, periodo):
 
         if proposta.organizacao:
             sigla = proposta.organizacao.sigla
+        elif proposta.nome_organizacao:
+            sigla = proposta.nome_organizacao
         else:
             sigla = ""
 
@@ -1951,11 +1932,40 @@ def propostas_lista(request, periodo):
                     break
             if not found:
                 ternario.append([33, 33, 33, 5, sigla])
+    return ternario
 
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def propostas_lista(request, periodo):
+    """Lista todas as propostas de projetos."""
+    configuracao = Configuracao.objects.all().first()
+    propostas = Proposta.objects.all().order_by("ano", "semestre", "organizacao", "titulo",)
+    if periodo == "todos":
+        pass
+    if periodo == "antigos":
+        if configuracao.semestre == 1:
+            propostas = propostas.filter(ano__lt=configuracao.ano)
+        else:
+            propostas = propostas.filter(ano__lte=configuracao.ano).\
+                                       exclude(ano=configuracao.ano, semestre=2)
+    elif periodo == "atuais":
+        propostas = propostas.filter(ano=configuracao.ano, semestre=configuracao.semestre)
+    elif periodo == "disponiveis":
+        if configuracao.semestre == 1:
+            propostas = propostas.filter(ano__gte=configuracao.ano).\
+                                exclude(ano=configuracao.ano, semestre=1)
+        else:
+            propostas = propostas.filter(ano__gt=configuracao.ano)
+
+    
+    ternario_aprovados = retorna_ternario(propostas.filter(disponivel=True))
+    ternario_pendentes = retorna_ternario(propostas.filter(disponivel=False))
+    
     context = {
         'propostas': propostas,
         'periodo' : periodo,
-        'ternario' : ternario,
+        'ternario_aprovados' : ternario_aprovados,
+        'ternario_pendentes' : ternario_pendentes,
         'configuracao' : configuracao,
     }
     return render(request, 'projetos/propostas_lista.html', context)
