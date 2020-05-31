@@ -97,14 +97,14 @@ def index_aluno(request):
     return render(request, 'index_aluno.html', context=context)
 
 @login_required
-def projeto_detalhe(request, primarykey):
-    """Exibe um projeto para o aluno aplicar nele, com seus detalhes."""
-    projeto = Projeto.objects.get(pk=primarykey)
+def proposta_detalhes(request, primarykey):
+    """Exibe uma proposta de projeto com seus detalhes para o estudante aplicar."""
+    proposta = Proposta.objects.get(pk=primarykey)
     context = {
-        'projeto': projeto,
+        'proposta': proposta,
         'MEDIA_URL' : settings.MEDIA_URL,
     }
-    return render(request, 'projetos/projeto_detalhe.html', context=context)
+    return render(request, 'projetos/proposta_detalhes.html', context=context)
 
 @login_required
 def selecao_propostas(request):
@@ -170,11 +170,10 @@ def selecao_propostas(request):
             context = {'warnings': warnings,}
             return render(request, 'projetos/projetosincompleto.html', context)
     else:
-        opcoes_list = Opcao.objects.filter(aluno=Aluno.objects.get(pk=request.user.pk))
+        opcoes = Opcao.objects.filter(aluno=Aluno.objects.get(pk=request.user.pk))
         context = {
-            'projeto_list': propostas,
-            'opcoes_list': opcoes_list,
-            'configuracao': configuracao,
+            'propostas': propostas,
+            'opcoes': opcoes,
             'ano': ano,
             'semestre': semestre,
             'warnings': warnings,

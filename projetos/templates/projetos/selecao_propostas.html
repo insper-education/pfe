@@ -9,67 +9,70 @@
 {% endblock %}
 
 {% block content %}
-    {% if configuracao.ano != user.aluno.anoPFE or configuracao.semestre != user.aluno.semestrePFE %}
+
+    {% if ano != user.aluno.anoPFE or semestre != user.aluno.semestrePFE %}
        <h2 class="red-bold">Você não está registrado para o PFE em {{ano}}.{{semestre}}</h2>
        <h3 class="red-bold">Caso acredite que existe algum erro na informação, por favor contactar a coordenação do PFE</h3>
        <br>
     {% endif %}
+    
     <h3>Projetos Disponíveis</h3>
 
-    {% if projeto_list %}
+    {% if propostas %}
       <form action="" method="post"> {% csrf_token %}  
         <table>
-        {% for projeto in projeto_list %} 
-        {% if projeto.disponivel %}
-        <tr>
-          <!-- onclick="return false;"  para não permitir trocar -->
-          <!-- <td>&nbsp;<input type="checkbox" name="selection" value="{{projeto.id}}" 
-            {% if projeto.pk in opcoes_list %}checked{% endif %}>&nbsp;</td> -->
-          <td>
-              <select id="selection{{projeto.pk}}" name="selection{{projeto.pk}}" ></select>
-              <script type="text/javascript">
-                var select = document.getElementById("selection{{projeto.pk}}");
-                select.options[select.options.length] = new Option("--", 0);
-                for(var index=1; index<={{projeto_list|length}}; index++){
-                  select.options[select.options.length] = new Option(index, index);
-                }
+          {% for proposta in propostas %} 
+            {% if proposta.disponivel %}
+              <tr>
+                <td>
+                  <select id="selection{{proposta.pk}}" name="selection{{proposta.pk}}" ></select>
+                  <script type="text/javascript">
+                    var select = document.getElementById("selection{{proposta.pk}}");
+                    select.options[select.options.length] = new Option("--", 0);
+                    for(var index=1; index<={{propostas|length}}; index++){
+                      select.options[select.options.length] = new Option(index, index);
+                    }
 
-                // Para agora nao encontrei forma mais inteligente de fazer isso
-                {% for opc in opcoes_list %} 
-                  {% if opc.projeto.pk == projeto.pk %}
-                  select.selectedIndex = {{ opc.prioridade }};
-                  {% endif %}
-                {% endfor %}
+                    // Para agora nao encontrei forma mais inteligente de fazer isso
+                    {% for opc in opcoes_list %} 
+                      {% if opc.proposta.pk == proposta.pk %}
+                      select.selectedIndex = {{ opc.prioridade }};
+                      {% endif %}
+                    {% endfor %}
 
-              </script>
-            </td>
-          <td>
-            <a href="{% url 'projeto_detalhe' projeto.pk %}">
-              {% if projeto.titulo_final %}
-                {{projeto.titulo_final}}<br>
-                <small>Título Provisório: {{projeto.titulo}}</small>
-              {% else %}
-                {{projeto.titulo}}
-              {% endif %}
-              <font color="darkblue">({{ projeto.organizacao.nome }})</font>
-            </a>
-          </td>
-        </tr>
-        {% endif %}
-        {% endfor %}
+                  </script>
+                </td>
+                <td>
+                  <a href="{% url 'proposta_detalhes' proposta.pk %}">
+                    {% if proposta.titulo_final %}
+                      {{proposta.titulo_final}}<br>
+                      <small>Título Provisório: {{proposta.titulo}}</small>
+                    {% else %}
+                      {{proposta.titulo}}
+                    {% endif %}
+                    <font color="darkblue">({{ proposta.organizacao.nome }})</font>
+                  </a>
+                </td>
+              </tr>
+            {% endif %}
+          {% endfor %}
         </table>
         <p>&nbsp;</p>
 
         <font color="red">
-        {{warnings|linebreaks}}
+          {{warnings|linebreaks}}
         </font>
 
         <input type="submit" value="Enviar">
-        <small><font color="red">Selecione ao menos 5 projetos (1 ao 5)</font></small>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-      </form>
 
+        <small><font color="red">
+          Selecione ao menos 5 projetos (1 ao 5), sendo 1 o que você tem mais interesse.
+        </font></small>
+
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+
+      </form>
 
     {% else %}
       <p>Não existem projetos disponíveis.</p>
