@@ -120,8 +120,8 @@ def selecao_propostas(request):
     else:
         ano += 1
         semestre = 1
-    
-    propostas_lista = Proposta.objects.filter(ano=ano).\
+
+    propostas = Proposta.objects.filter(ano=ano).\
                                    filter(semestre=semestre).\
                                    filter(disponivel=True)
     if request.method == 'POST':
@@ -133,17 +133,17 @@ def selecao_propostas(request):
             }
             return render(request, 'generic.html', context=context)
         prioridade = {}
-        for proposta in propostas_lista:
+        for proposta in propostas:
             check_values = request.POST.get('selection'+str(proposta.pk), "0")
             prioridade[proposta.pk] = check_values
-        for i in range(1, len(propostas_lista)+1):
+        for i in range(1, len(propostas)+1):
             if i < 6 and list(prioridade.values()).count(str(i)) == 0:
                 warnings += "Nenhuma proposta com prioridade "+str(i)+"\n"
             if list(prioridade.values()).count(str(i)) > 1:
                 warnings += "Mais de uma proposta com prioridade "+str(i)+"\n"
         if warnings == "":
             aluno = Aluno.objects.get(pk=request.user.pk)
-            for proposta in propostas_lista:
+            for proposta in propostas:
                 if prioridade[proposta.pk] != "0":
                     if not aluno.opcoes.filter(pk=proposta.pk): # Se lista for vazia
                         Opcao.objects.create(aluno=aluno, proposta=proposta,
@@ -172,14 +172,14 @@ def selecao_propostas(request):
     else:
         opcoes_list = Opcao.objects.filter(aluno=Aluno.objects.get(pk=request.user.pk))
         context = {
-            'projeto_list': propostas_lista,
+            'projeto_list': propostas,
             'opcoes_list': opcoes_list,
             'configuracao': configuracao,
             'ano': ano,
             'semestre': semestre,
             'warnings': warnings,
         }
-        return render(request, 'projetos/selecao_projetos.html', context)
+        return render(request, 'projetos/selecao_propostas.html', context)
 
 # PROVAVELMENTE NAO MAIS USADA
 def ordena_projetos(disponivel=True, ano=0, semestre=0):
@@ -579,12 +579,12 @@ def proposta_completa(request, primakey):
         return render(request, 'generic.html', context=context)
 
     configuracao = Configuracao.objects.all().first()
-    
-    comite = PFEUser.objects.filter(membro_comite=True)
+
+    membros_comite = PFEUser.objects.filter(membro_comite=True)
     projeto = None
     if proposta.fechada:
         projeto = Projeto.objects.get(proposta=proposta)
-    
+
     opcoes = Opcao.objects.filter(proposta=proposta)
     context = {
         'configuracao': configuracao,
@@ -592,7 +592,7 @@ def proposta_completa(request, primakey):
         'opcoes': opcoes,
         'MEDIA_URL' : settings.MEDIA_URL,
         'projeto' : projeto,
-        "comite": comite,
+        "comite": membros_comite,
     }
     return render(request, 'projetos/proposta_completa.html', context=context)
 
@@ -801,7 +801,7 @@ def organizacoes_prospectadas(request):
                                             exclude(ano=configuracao.ano, semestre=1).distinct()
             else:
                 propostas_submetidas = propostas.filter(ano__gt=configuracao.ano).distinct()
-                
+
             submetidas.append(propostas_submetidas.count())
             disponiveis.append(propostas_submetidas.filter(disponivel=True).count())
 
@@ -1014,9 +1014,9 @@ def servico(request):
 def render_to_pdf(template_src, context_dict=None):
     """Renderiza um documento em PDF."""
     template = get_template(template_src)
-    html = template.render(context_dict)
+    html_doc = template.render(context_dict)
     result = BytesIO()
-    pdf = pisa.pisaDocument(BytesIO(html.encode("utf-8")), result)
+    pdf = pisa.pisaDocument(BytesIO(html_doc.encode("utf-8")), result)
     if not pdf.err:
         return result
         #return HttpResponse(result.getvalue(), content_type='application/pdf')
@@ -1533,7 +1533,7 @@ def envia_proposta(proposta):
 
     return message
 
-  
+
 #@login_required
 def proposta_submissao(request):
     """Formulário de Submissão de Proposta de Projetos."""
@@ -1550,7 +1550,7 @@ def proposta_submissao(request):
     endereco = ""
     descricao_organizacao = ""
     full_name = ""
-    email = ""
+    email_sub = ""
 
     if user:
 
@@ -1561,9 +1561,9 @@ def proposta_submissao(request):
                 "mensagem": mensagem,
             }
             return render(request, 'generic.html', context=context)
-    
+
         full_name = user.get_full_name()
-        email = user.email
+        email_sub = user.email
 
         if user.tipo_de_usuario == 3: # parceiro
             parceiro = Parceiro.objects.get(pk=request.user.pk)
@@ -1591,7 +1591,7 @@ def proposta_submissao(request):
 
     context = {
         'full_name' : full_name,
-        'email' : email,
+        'email' : email_sub,
         'organizacao' : organizacao,
         'website' : website,
         'endereco' : endereco,
@@ -1892,6 +1892,7 @@ def projetos_lista(request, periodo):
 
 
 def retorna_ternario(propostas):
+    """ Função retorna dados para gráfico ternário. """
     ternario = []
     for proposta in propostas:
         comp = 0
@@ -1923,7 +1924,9 @@ def retorna_ternario(propostas):
         if total:
             found = False
             for tern in ternario:
-                if int(comp/total)==tern[0] and int(mecat/total)==tern[1] and int(meca/total)==tern[2]:
+                if int(comp/total) == tern[0] and \
+                   int(mecat/total) == tern[1] and \
+                   int(meca/total) == tern[2]:
                     tern[3] += 3
                     if sigla:
                         tern[4] += ", " + sigla
@@ -1934,7 +1937,7 @@ def retorna_ternario(propostas):
         else:
             found = False
             for tern in ternario:
-                if 33==tern[0] and 33==tern[1] and 33==tern[2]:
+                if tern[0] == 33 and tern[1] == 33 and tern[2] == 33:
                     tern[3] += 3
                     if sigla:
                         tern[4] += ", " + sigla
@@ -1967,10 +1970,9 @@ def propostas_lista(request, periodo):
         else:
             propostas = propostas.filter(ano__gt=configuracao.ano)
 
-    
     ternario_aprovados = retorna_ternario(propostas.filter(disponivel=True))
     ternario_pendentes = retorna_ternario(propostas.filter(disponivel=False))
-    
+
     context = {
         'propostas': propostas,
         'periodo' : periodo,
@@ -3169,7 +3171,7 @@ def validate_alunos(request):
 
     try:
         proposta = Proposta.objects.get(id=proposta_id)
-        
+
         if vaga[0] == 'C':
             if vaga[1] == '1':
                 proposta.perfil_aluno1_computacao = checked
