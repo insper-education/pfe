@@ -16,6 +16,7 @@ urlpatterns = [
     path('alunos_inscritos/<str:anosemestre>', views.alunos_inscritos, name='alunos_inscritos'),
     path('aluno_detail/<int:primarykey>', views.aluno_detail, name='aluno_detail'),
     path('areas_interesse/', views.areas_interesse, name='areas_interesse'),
+    path('contas_senhas/<str:anosemestre>', views.contas_senhas, name='contas_senhas'),
     path('parceiro_detail/<int:primarykey>', views.parceiro_detail, name='parceiro_detail'),
     path('perfil/', views.perfil, name='perfil'),
     path('professor_detail/<int:primarykey>', views.professor_detail, name='professor_detail'),

@@ -188,7 +188,7 @@ class Aluno(models.Model):
     #bio = models.TextField(max_length=500, blank=True)
     curso = models.CharField(max_length=1, choices=TIPOS_CURSO,
                              help_text='Curso Matriculado',)
-    opcoes = models.ManyToManyField(Projeto, through='Opcao',
+    opcoes = models.ManyToManyField(Proposta, through='Opcao',
                                     help_text='Opcoes de projeto escolhidos')
     nascimento = models.DateField(null=True, blank=True,
                                   help_text='Data de nascimento')
@@ -302,7 +302,7 @@ class Aluno(models.Model):
 
 class Opcao(models.Model):
     """Opções de Projetos pelos Alunos com suas prioridades."""
-    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.CASCADE)
+    #projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.CASCADE)
     proposta = models.ForeignKey(Proposta, null=True, blank=True, on_delete=models.SET_NULL)
     aluno = models.ForeignKey(Aluno, null=True, blank=True, on_delete=models.CASCADE)
     #razao = models.CharField(max_length=200)

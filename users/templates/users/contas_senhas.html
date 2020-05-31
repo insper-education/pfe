@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 30 de Maio de 2020
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  <script src="https://www.w3schools.com/lib/w3.js"></script>
+  <script>
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
+{% endblock %}
+
+{% block content %}
+  <h3>Alunos Inscritos no Semestre</h3>
+
+  <label for="filter">Edição:</label>
+  <select onchange="location = this.options[this.selectedIndex].value;">
+    {% for loop in loop_anos %}
+      <option value="{{loop}}.2" {% if ano == loop and semestre == 2 %}selected{% endif %}>{{loop}}.2</option>
+      <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
+    {% endfor %}
+  </select>
+  <br>
+
+  {% if estudantes %}
+    <form method="post" id="enviacontassenhas" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <table id="EstudantesTable">
+        <tr>
+            <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome do Aluno</th>
+            <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">e-mail</th>
+        </tr>
+        {% for estudante in estudantes %} 
+        <tr class="item">
+          <td>
+            <a href="{% url 'aluno_detail' estudante.id %}">
+              {{estudante.user.get_full_name}}
+            </a>
+          </td>
+          <td>
+            <a href="mailto:{{estudante.user.email}}">
+              {{estudante.user.email}}
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+
+      <br><strong>Total de Estudantes:</strong> {{estudantes.count}}
+
+      <br><br>
+      <button type="submit">Enviar Contas e Senhas</button>
+      <p>&nbsp;</p>
+
+    </form>
+    
+  {% else %}
+    <p>Não existem alunos disponíveis.</p>
+  {% endif %}
+
+{% endblock %}

@@ -89,8 +89,8 @@
         <h5>Formulário de Informações Adicionais</h5>
     </a>
 
-    <a {% if vencido %} class="disabled" onclick="myFunction('vencido')" {% else %} href="{% url 'selecao_projetos' %}" {% endif %} >
-        <h5>Selecionar Projetos</h5>
+    <a {% if vencido %} class="disabled" onclick="myFunction('vencido')" {% else %} href="{% url 'selecao_propostas' %}" {% endif %} >
+        <h5>Selecionar Propostas de Projetos</h5>
     </a>
 
     <font color="red">Prazo para a seleção dos projetos : <b>{{ configuracao.prazo }}</b></font>

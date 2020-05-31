@@ -5,18 +5,36 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Maio de 2019
 """
 
+import string
+import random
+
+from django.conf import settings
+
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.hashers import make_password
+
+from django.core.mail import send_mail
+
 from django.db import transaction
 from django.db.models.functions import Lower
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
+from django.utils import html
 from django.utils import timezone
 from django.views import generic
 
 from projetos.models import Configuracao, Projeto, Conexao
 from .forms import PFEUserCreationForm
 from .models import PFEUser, Aluno, Professor, Parceiro, Opcao, Administrador
+
+
+# Essa função esta duplicada de ../projetos/messages
+def email(subject, recipient_list, message):
+    """Envia um e-mail para o HOST_USER."""
+    email_from = settings.EMAIL_HOST_USER
+    return send_mail(subject, message, email_from, recipient_list, html_message=message, fail_silently=True)
+
 
 @login_required
 def perfil(request):
@@ -49,8 +67,6 @@ def areas_interesse(request):
 
         configuracao = Configuracao.objects.all().first()
         if timezone.now() > configuracao.prazo:
-            #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
-            #return HttpResponse("Prazo para seleção de áreas vencido!")
             mensagem = "Prazo para seleção de áreas vencido!"
             context = {
                 "area_aluno": True,
@@ -230,7 +246,6 @@ def alunos_inscrevendo(request):
 
     return redirect('alunos_inscritos', anosemestre="{0}.{1}".format(ano, semestre))
 
-
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def alunos_inscritos(request, anosemestre):
@@ -317,3 +332,65 @@ def parceiro_detail(request, primarykey):
         'conexoes': conexoes,
     }
     return render(request, 'users/parceiro_detail.html', context=context)
+
+@login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
+def contas_senhas(request, anosemestre):
+    """Envia conta e senha para todos os estudantes que estão no semestre."""
+    configuracao = Configuracao.objects.all().first()
+
+    ano = int(anosemestre.split(".")[0])
+    semestre = int(anosemestre.split(".")[1])
+
+    estudantes = Aluno.objects.filter(trancado=False).\
+                               filter(anoPFE=ano, semestrePFE=semestre).\
+                               filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0]).\
+                               order_by(Lower("user__first_name"), Lower("user__last_name"))
+
+    if request.method == 'POST':
+        mensagem = "Enviado para:<br>\n<br>\n"
+        for estudante in estudantes:
+            mensagem += estudante.user.get_full_name() + " " +\
+                        "&lt;" + estudante.user.email + "&gt;<br>\n"
+
+            """ Atualizando senha do usuário. """
+            senha = ''.join(random.SystemRandom().\
+                        choice(string.ascii_lowercase + string.digits) for _ in range(6))
+            estudante.user.set_password(senha)
+            estudante.user.save()
+
+            """ Preparando mensagem para enviar para usuário. """
+            message_email = estudante.user.get_full_name() + ",\n\n\n"
+            message_email += "Você está recebendo sua conta e senha para acessar o sistema do PFE.\n\n"
+            message_email += "O endereço do servidor é: "
+            message_email += "<a href='http://pfe.insper.edu.br/'>http://pfe.insper.edu.br/</a>\n\n"
+            message_email += "Faça sua seleção de propostas de projetos conforme sua ordem de interesse.\n"
+            message_email += "O prazo para a escolha de projetos é: " + configuracao.prazo.strftime("%d/%m/%Y %H:%M") + "\n"
+            message_email += "\n"
+            message_email += "Sua conta é: <b>" + estudante.user.username + "</b>\n"
+            message_email += "Sua senha é: <b>" + senha + "</b>\n"
+            message_email += "\n\n"
+            message_email += "atenciosamente, coordenação do PFE\n"
+            message_email = message_email.replace('\n', '<br>\n')
+
+            """ Enviando e-mail com mensagem para usuário. """
+            subject = 'Conta PFE : ' + estudante.user.get_full_name()
+            recipient_list = [estudante.user.email, 'pfeinsper@gmail.com',]
+            check = email(subject, recipient_list, message_email)
+            if check != 1:
+                message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+
+        mensagem = html.urlize(mensagem)
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
+
+    context = {
+        'estudantes' : estudantes,
+        'ano': ano,
+        'semestre': semestre,
+        'loop_anos': range(2018, configuracao.ano+1),
+    }
+    return render(request, 'users/contas_senhas.html', context=context)

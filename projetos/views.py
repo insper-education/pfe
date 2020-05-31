@@ -107,47 +107,55 @@ def projeto_detalhe(request, primarykey):
     return render(request, 'projetos/projeto_detalhe.html', context=context)
 
 @login_required
-def selecao_projetos(request):
+def selecao_propostas(request):
     """Exibe todos os projetos para os alunos aplicarem."""
     warnings = ""
     configuracao = Configuracao.objects.first()
-    projeto_list = Projeto.objects.filter(ano=configuracao.ano).\
-                                   filter(semestre=configuracao.semestre).\
+    ano = configuracao.ano
+    semestre = configuracao.semestre
+
+    # Vai para próximo semestre
+    if semestre == 1:
+        semestre = 2
+    else:
+        ano += 1
+        semestre = 1
+    
+    propostas_lista = Proposta.objects.filter(ano=ano).\
+                                   filter(semestre=semestre).\
                                    filter(disponivel=True)
     if request.method == 'POST':
         if timezone.now() > configuracao.prazo:
-            #return HttpResponse("Prazo para seleção de projetos vencido!")
-            #<br>Hora atual:  "+str(timezone.now())+"<br>Hora limite:"+str(configuracao.prazo)
-            mensagem = "Prazo para seleção de projetos vencido!"
+            mensagem = "Prazo para seleção de propostas de propostas de projetos vencido!"
             context = {
                 "area_aluno": True,
                 "mensagem": mensagem,
             }
             return render(request, 'generic.html', context=context)
         prioridade = {}
-        for projeto in projeto_list:
-            check_values = request.POST.get('selection'+str(projeto.pk), "0")
-            prioridade[projeto.pk] = check_values
-        for i in range(1, len(projeto_list)+1):
+        for proposta in propostas_lista:
+            check_values = request.POST.get('selection'+str(proposta.pk), "0")
+            prioridade[proposta.pk] = check_values
+        for i in range(1, len(propostas_lista)+1):
             if i < 6 and list(prioridade.values()).count(str(i)) == 0:
-                warnings += "Nenhum projeto com prioridade "+str(i)+"\n"
+                warnings += "Nenhuma proposta com prioridade "+str(i)+"\n"
             if list(prioridade.values()).count(str(i)) > 1:
-                warnings += "Mais de um projeto com prioridade "+str(i)+"\n"
+                warnings += "Mais de uma proposta com prioridade "+str(i)+"\n"
         if warnings == "":
             aluno = Aluno.objects.get(pk=request.user.pk)
-            for projeto in projeto_list:
-                if prioridade[projeto.pk] != "0":
-                    if not aluno.opcoes.filter(pk=projeto.pk): # Se lista for vazia
-                        Opcao.objects.create(aluno=aluno, projeto=projeto,
-                                             prioridade=int(prioridade[projeto.pk]))
-                    elif Opcao.objects.get(aluno=aluno, projeto=projeto).\
-                                       prioridade != int(prioridade[projeto.pk]):
-                        opc = Opcao.objects.get(aluno=aluno, projeto=projeto)
-                        opc.prioridade = int(prioridade[projeto.pk])
+            for proposta in propostas_lista:
+                if prioridade[proposta.pk] != "0":
+                    if not aluno.opcoes.filter(pk=proposta.pk): # Se lista for vazia
+                        Opcao.objects.create(aluno=aluno, proposta=proposta,
+                                             prioridade=int(prioridade[proposta.pk]))
+                    elif Opcao.objects.get(aluno=aluno, proposta=proposta).\
+                                       prioridade != int(prioridade[proposta.pk]):
+                        opc = Opcao.objects.get(aluno=aluno, proposta=proposta)
+                        opc.prioridade = int(prioridade[proposta.pk])
                         opc.save()
                 else:
-                    if aluno.opcoes.filter(pk=projeto.pk): # Se lista não for vazia
-                        Opcao.objects.filter(aluno=aluno, projeto=projeto).delete()
+                    if aluno.opcoes.filter(pk=proposta.pk): # Se lista não for vazia
+                        Opcao.objects.filter(aluno=aluno, proposta=proposta).delete()
             message = create_message(aluno, configuracao.ano, configuracao.semestre)
 
             subject = 'PFE : '+aluno.user.username
@@ -164,9 +172,11 @@ def selecao_projetos(request):
     else:
         opcoes_list = Opcao.objects.filter(aluno=Aluno.objects.get(pk=request.user.pk))
         context = {
-            'projeto_list': projeto_list,
+            'projeto_list': propostas_lista,
             'opcoes_list': opcoes_list,
             'configuracao': configuracao,
+            'ano': ano,
+            'semestre': semestre,
             'warnings': warnings,
         }
         return render(request, 'projetos/selecao_projetos.html', context)
@@ -3445,10 +3455,38 @@ def cadastrar_usuario(request):
     }
     return render(request, 'projetos/cadastra_usuario.html', context)
 
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def definir_datas(request):
+    """ Definir datas do PFE."""
+
+    configuracao = Configuracao.objects.first()
+
+    if request.method == 'POST':
+        if 'limite_propostas' in request.POST:
+            try:
+                configuracao.prazo = dateutil.parser.parse(request.POST['limite_propostas'])
+                configuracao.save()
+                mensagem = "Datas atualizadas."
+                context = {
+                    "area_principal": True,
+                    "mensagem": mensagem,
+                }
+                return render(request, 'generic.html', context=context)
+            except (ValueError, OverflowError):
+                return HttpResponse("Algum erro não identificado.", status=401)
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+
+    context = {
+        'configuracao': configuracao,
+    }
+    return render(request, 'projetos/definir_datas.html', context)
+
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def migracao(request):
-    """Migra projetos (temporário)."""
-
+    """temporário"""
+    message = ""
     return HttpResponse(message)

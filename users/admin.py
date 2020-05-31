@@ -114,7 +114,7 @@ admin.site.register(Administrador)
 @admin.register(Opcao)
 class OpcaoAdmin(admin.ModelAdmin):
     """Definição de Opções do PFE."""
-    list_display = ('aluno', 'projeto', 'prioridade')
+    list_display = ('aluno', 'proposta', 'prioridade')
     ordering = ('aluno',)
 
 admin.site.register(Areas)

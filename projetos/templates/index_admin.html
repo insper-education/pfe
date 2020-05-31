@@ -10,10 +10,14 @@
     Data: {% now "j F Y H:i" %}
     <hr>
     <a href="{% url 'servico' %}"><h5>Habilitar aviso se manutenção</h5></a>
+    <a href="{% url 'definir_datas' %}"><h5>Definir Datas</h5></a>
 
     <hr>
     <a href="{% url 'cadastrar_organizacao' %}"><h5>Cadastrar Organização</h5></a>
     <a href="{% url 'cadastrar_usuario' %}"><h5>Cadastrar Usuário</h5></a>
+
+    <hr>
+    <a href="{% url 'contas_senhas' '2020.2' %}"><h5>Envia Contas e Senhas</h5></a>
 
     <hr>
     <a href="{% url 'exportar' %}"><h5>Exportar dados</h5></a>
