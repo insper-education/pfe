@@ -596,73 +596,144 @@ def proposta_completa(request, primakey):
     return render(request, 'projetos/proposta_completa.html', context=context)
 
 
+# def get_areas(entrada):
+#     """Retorna dicionário com as áreas de interesse da lista de entrada."""
+
+#     areaspfe = {}
+
+#     areaspfe['Inovação Social'] =\
+#         entrada.filter(inovacao_social=True).count()
+
+#     areaspfe['Ciência dos Dados'] =\
+#         entrada.filter(ciencia_dos_dados=True).count()
+
+#     areaspfe['Modelagem 3D'] =\
+#         entrada.filter(modelagem_3D=True).count()
+
+#     areaspfe['Manufatura'] =\
+#         entrada.filter(manufatura=True).count()
+
+#     areaspfe['Resistência dos Materiais'] =\
+#         entrada.filter(resistencia_dos_materiais=True).count()
+
+#     areaspfe['Modelagem de Sistemas'] =\
+#         entrada.filter(modelagem_de_sistemas=True).count()
+
+#     areaspfe['Controle e Automação'] =\
+#         entrada.filter(controle_e_automacao=True).count()
+
+#     areaspfe['Termodinâmica'] =\
+#         entrada.filter(termodinamica=True).count()
+
+#     areaspfe['Fluidodinâmica'] =\
+#         entrada.filter(fluidodinamica=True).count()
+
+#     areaspfe['Eletrônica Digital'] =\
+#         entrada.filter(eletronica_digital=True).count()
+
+#     areaspfe['Programação'] =\
+#         entrada.filter(programacao=True).count()
+
+#     areaspfe['Inteligência Artificial'] =\
+#         entrada.filter(inteligencia_artificial=True).count()
+
+#     areaspfe['Banco de Bados'] =\
+#         entrada.filter(banco_de_dados=True).count()
+
+#     areaspfe['Computação em Nuvem'] =\
+#         entrada.filter(computacao_em_nuvem=True).count()
+
+#     areaspfe['Visão Computacional'] =\
+#         entrada.filter(visao_computacional=True).count()
+
+#     areaspfe['Computação de Alto Desempenho'] =\
+#         entrada.filter(computacao_de_alto_desempenho=True).count()
+
+#     areaspfe['Robótica'] =\
+#         entrada.filter(robotica=True).count()
+
+#     areaspfe['Realidade Virtual e Aumentada'] =\
+#         entrada.filter(realidade_virtual_aumentada=True).count()
+
+#     areaspfe['Protocolos de Comunicação'] =\
+#         entrada.filter(protocolos_de_comunicacao=True).count()
+
+#     areaspfe['Eficiencia Energética'] =\
+#         entrada.filter(eficiencia_energetica=True).count()
+
+#     areaspfe['Administração, Economia e Finanças'] =\
+#         entrada.filter(administracao_economia_financas=True).count()
+
+#     return areaspfe
+
+
 def get_areas(entrada):
     """Retorna dicionário com as áreas de interesse da lista de entrada."""
 
     areaspfe = {}
 
     areaspfe['Inovação Social'] =\
-        entrada.filter(inovacao_social=True).count()
+        entrada.filter(areas_de_interesse__inovacao_social=True).count()
 
     areaspfe['Ciência dos Dados'] =\
-        entrada.filter(ciencia_dos_dados=True).count()
+        entrada.filter(areas_de_interesse__ciencia_dos_dados=True).count()
 
     areaspfe['Modelagem 3D'] =\
-        entrada.filter(modelagem_3D=True).count()
+        entrada.filter(areas_de_interesse__modelagem_3D=True).count()
 
     areaspfe['Manufatura'] =\
-        entrada.filter(manufatura=True).count()
+        entrada.filter(areas_de_interesse__manufatura=True).count()
 
     areaspfe['Resistência dos Materiais'] =\
-        entrada.filter(resistencia_dos_materiais=True).count()
+        entrada.filter(areas_de_interesse__resistencia_dos_materiais=True).count()
 
     areaspfe['Modelagem de Sistemas'] =\
-        entrada.filter(modelagem_de_sistemas=True).count()
+        entrada.filter(areas_de_interesse__modelagem_de_sistemas=True).count()
 
     areaspfe['Controle e Automação'] =\
-        entrada.filter(controle_e_automacao=True).count()
+        entrada.filter(areas_de_interesse__controle_e_automacao=True).count()
 
     areaspfe['Termodinâmica'] =\
-        entrada.filter(termodinamica=True).count()
+        entrada.filter(areas_de_interesse__termodinamica=True).count()
 
     areaspfe['Fluidodinâmica'] =\
-        entrada.filter(fluidodinamica=True).count()
+        entrada.filter(areas_de_interesse__fluidodinamica=True).count()
 
     areaspfe['Eletrônica Digital'] =\
-        entrada.filter(eletronica_digital=True).count()
+        entrada.filter(areas_de_interesse__eletronica_digital=True).count()
 
     areaspfe['Programação'] =\
-        entrada.filter(programacao=True).count()
+        entrada.filter(areas_de_interesse__programacao=True).count()
 
     areaspfe['Inteligência Artificial'] =\
-        entrada.filter(inteligencia_artificial=True).count()
+        entrada.filter(areas_de_interesse__inteligencia_artificial=True).count()
 
     areaspfe['Banco de Bados'] =\
-        entrada.filter(banco_de_dados=True).count()
+        entrada.filter(areas_de_interesse__banco_de_dados=True).count()
 
     areaspfe['Computação em Nuvem'] =\
-        entrada.filter(computacao_em_nuvem=True).count()
+        entrada.filter(areas_de_interesse__computacao_em_nuvem=True).count()
 
     areaspfe['Visão Computacional'] =\
-        entrada.filter(visao_computacional=True).count()
+        entrada.filter(areas_de_interesse__visao_computacional=True).count()
 
     areaspfe['Computação de Alto Desempenho'] =\
-        entrada.filter(computacao_de_alto_desempenho=True).count()
+        entrada.filter(areas_de_interesse__computacao_de_alto_desempenho=True).count()
 
     areaspfe['Robótica'] =\
-        entrada.filter(robotica=True).count()
+        entrada.filter(areas_de_interesse__robotica=True).count()
 
     areaspfe['Realidade Virtual e Aumentada'] =\
-        entrada.filter(realidade_virtual_aumentada=True).count()
+        entrada.filter(areas_de_interesse__realidade_virtual_aumentada=True).count()
 
     areaspfe['Protocolos de Comunicação'] =\
-        entrada.filter(protocolos_de_comunicacao=True).count()
+        entrada.filter(areas_de_interesse__protocolos_de_comunicacao=True).count()
 
     areaspfe['Eficiencia Energética'] =\
-        entrada.filter(eficiencia_energetica=True).count()
+        entrada.filter(areas_de_interesse__eficiencia_energetica=True).count()
 
     areaspfe['Administração, Economia e Finanças'] =\
-        entrada.filter(administracao_economia_financas=True).count()
+        entrada.filter(areas_de_interesse__administracao_economia_financas=True).count()
 
     return areaspfe
 
@@ -693,15 +764,15 @@ def distribuicao_areas(request, tipo):
 
     elif tipo == "propostas":
 
-        propostas = Areas.objects.all()
+        propostas = Proposta.objects.all()
 
         if request.is_ajax():
             if 'topicId' in request.POST:
                 if request.POST['topicId'] != 'todas':
                     periodo = request.POST['topicId'].split('.')
 
-                    propostas = Areas.objects.filter(proposta__ano=int(periodo[0])).\
-                                             filter(proposta__semestre=int(periodo[1]))
+                    propostas = propostas.filter(ano=int(periodo[0])).\
+                                          filter(semestre=int(periodo[1]))
             else:
                 return HttpResponse("Algum erro não identificado.", status=401)
 
@@ -713,14 +784,14 @@ def distribuicao_areas(request, tipo):
 
     elif tipo == "projetos":
 
-        projetos = Areas.objects.all()
+        projetos = Projeto.objects.all()
 
         if request.is_ajax():
             if 'topicId' in request.POST:
                 if request.POST['topicId'] != 'todas':
                     periodo = request.POST['topicId'].split('.')
-                    projetos = Areas.objects.filter(projeto__ano=int(periodo[0])).\
-                                             filter(projeto__semestre=int(periodo[1]))
+                    projetos = projetos.filter(ano=int(periodo[0])).\
+                                        filter(semestre=int(periodo[1]))
             else:
                 return HttpResponse("Algum erro não identificado.", status=401)
 
@@ -3490,42 +3561,5 @@ def definir_datas(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def migracao(request):
     """temporário"""
-
-    alunos = Aluno.objects.all()
-
-    for aluno in alunos:
-
-        if aluno.areas_de_interesse:
-            areas = aluno.areas_de_interesse
-        else:
-            areas = Areas.create()
-        
-        areas.inovacao_social = aluno.inovacao_social
-        areas.ciencia_dos_dados = aluno.ciencia_dos_dados
-        areas.modelagem_3D = aluno.modelagem_3D
-        areas.manufatura = aluno.manufatura
-        areas.resistencia_dos_materiais = aluno.resistencia_dos_materiais
-        areas.modelagem_de_sistemas = aluno.modelagem_de_sistemas
-        areas.controle_e_automacao = aluno.controle_e_automacao
-        areas.termodinamica = aluno.termodinamica
-        areas.fluidodinamica = aluno.fluidodinamica
-        areas.eletronica_digital = aluno.eletronica_digital
-        areas.programacao = aluno.programacao
-        areas.inteligencia_artificial = aluno.inteligencia_artificial
-        areas.banco_de_dados = aluno.banco_de_dados
-        areas.computacao_em_nuvem = aluno.computacao_em_nuvem
-        areas.visao_computacional = aluno.visao_computacional
-        areas.computacao_de_alto_desempenho = aluno.computacao_de_alto_desempenho
-        areas.robotica = aluno.robotica
-        areas.realidade_virtual_aumentada = aluno.realidade_virtual_aumentada
-        areas.protocolos_de_comunicacao = aluno.protocolos_de_comunicacao
-        areas.eficiencia_energetica = aluno.eficiencia_energetica
-        areas.administracao_economia_financas = aluno.administracao_economia_financas
-
-        areas.save()
-
-        aluno.areas_de_interesse = areas
-        aluno.save()
-
-    message = "Feito"
+    message = "Nada Feito"
     return HttpResponse(message)
