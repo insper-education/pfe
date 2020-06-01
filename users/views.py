@@ -8,12 +8,7 @@ Data: 15 de Maio de 2019
 import string
 import random
 
-from django.conf import settings
-
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.hashers import make_password
-
-from django.core.mail import send_mail
 
 from django.db import transaction
 from django.db.models.functions import Lower
@@ -25,15 +20,11 @@ from django.utils import timezone
 from django.views import generic
 
 from projetos.models import Configuracao, Projeto, Conexao
+from projetos.views import cria_areas
+from projetos.messages import email
+
 from .forms import PFEUserCreationForm
 from .models import PFEUser, Aluno, Professor, Parceiro, Opcao, Administrador
-
-
-# Essa função esta duplicada de ../projetos/messages
-def email(subject, recipient_list, message):
-    """Envia um e-mail para o HOST_USER."""
-    email_from = settings.EMAIL_HOST_USER
-    return send_mail(subject, message, email_from, recipient_list, html_message=message, fail_silently=True)
 
 
 @login_required
@@ -75,6 +66,8 @@ def areas_interesse(request):
             return render(request, 'generic.html', context=context)
 
         # PEGAR CRIA AREAS DO VIEW DE PROJETO
+
+        aluno.areas_de_interesse = cria_areas(request, aluno.areas_de_interesse)
 
         check_values = request.POST.getlist('selection')
         aluno = Aluno.objects.get(pk=request.user.pk)
@@ -153,7 +146,7 @@ def alunos_listagem(request, anosemestre):
 
         alunos_semestre = alunos_list.\
             filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre).distinct()
-    
+
         tabela_alunos[ano] = {}
         tabela_alunos[ano][semestre] = {}
 
@@ -169,14 +162,16 @@ def alunos_listagem(request, anosemestre):
         tabela_alunos[ano][semestre]["total"] =\
             alunos_semestre.count()
 
-        alunos_list = alunos_semestre | alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
+        alunos_list = alunos_semestre | \
+                      alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
 
     else:
         ano_tmp = 2018
         semestre_tmp = 2
         while True:
             alunos_semestre = alunos_list.\
-                filter(alocacao__projeto__ano=ano_tmp, alocacao__projeto__semestre=semestre_tmp).distinct()
+                filter(alocacao__projeto__ano=ano_tmp, alocacao__projeto__semestre=semestre_tmp).\
+                distinct()
             if ano_tmp not in tabela_alunos:
                 tabela_alunos[ano_tmp] = {}
             if semestre_tmp not in tabela_alunos[ano_tmp]:
@@ -304,6 +299,7 @@ def aluno_detail(request, primarykey):
     context = {
         'configuracao': configuracao,
         'aluno': aluno,
+        'areas': aluno.areas_de_interesse,
     }
     return render(request, 'users/aluno_detail.html', context=context)
 
@@ -353,19 +349,27 @@ def contas_senhas(request, anosemestre):
             mensagem += estudante.user.get_full_name() + " " +\
                         "&lt;" + estudante.user.email + "&gt;<br>\n"
 
-            """ Atualizando senha do usuário. """
+            # Atualizando senha do usuário.
             senha = ''.join(random.SystemRandom().\
                         choice(string.ascii_lowercase + string.digits) for _ in range(6))
             estudante.user.set_password(senha)
             estudante.user.save()
 
-            """ Preparando mensagem para enviar para usuário. """
+            # Preparando mensagem para enviar para usuário.
             message_email = estudante.user.get_full_name() + ",\n\n\n"
-            message_email += "Você está recebendo sua conta e senha para acessar o sistema do PFE.\n\n"
+            message_email += "Você está recebendo sua conta e senha para acessar o sistema do PFE."
+            message_email += "\n\n"
             message_email += "O endereço do servidor é: "
-            message_email += "<a href='http://pfe.insper.edu.br/'>http://pfe.insper.edu.br/</a>\n\n"
-            message_email += "Faça sua seleção de propostas de projetos conforme sua ordem de interesse.\n"
-            message_email += "O prazo para a escolha de projetos é: " + configuracao.prazo.strftime("%d/%m/%Y %H:%M") + "\n"
+            message_email += "<a href='http://pfe.insper.edu.br/'>http://pfe.insper.edu.br/</a>"
+            message_email += "\n\n"
+            message_email += "Preencha suas áreas de interesse, "
+            message_email += "bem como o formulário de informações adicionais.\n"
+            message_email += "Faça sua seleção de propostas de projetos "
+            message_email += "conforme sua ordem de interesse.\n"
+            message_email += "O prazo para a escolha de projetos é: " +\
+                             configuracao.prazo.strftime("%d/%m/%Y %H:%M") + "\n"
+            message_email += "Você pode alterar quantas vezes desejar suas escolhas "
+            message_email += "até a data limite."
             message_email += "\n"
             message_email += "Sua conta é: <b>" + estudante.user.username + "</b>\n"
             message_email += "Sua senha é: <b>" + senha + "</b>\n"
@@ -373,12 +377,12 @@ def contas_senhas(request, anosemestre):
             message_email += "atenciosamente, coordenação do PFE\n"
             message_email = message_email.replace('\n', '<br>\n')
 
-            """ Enviando e-mail com mensagem para usuário. """
+            # Enviando e-mail com mensagem para usuário.
             subject = 'Conta PFE : ' + estudante.user.get_full_name()
             recipient_list = [estudante.user.email, 'pfeinsper@gmail.com',]
             check = email(subject, recipient_list, message_email)
             if check != 1:
-                message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+                mensagem = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
 
         mensagem = html.urlize(mensagem)
         context = {

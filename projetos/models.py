@@ -69,9 +69,6 @@ class Organizacao(models.Model):
         organizacao = cls()
         return organizacao
 
-    def __unicode__(self):
-        return self.nome
-
     def __str__(self):
         return self.nome
     #def documento(self):
@@ -105,7 +102,8 @@ class Empresa(models.Model):
     ramo_atividade = models.CharField("Ramo de Atividade", max_length=120, null=True, blank=True,
                                       help_text='Ramo de atividade da organização parceira')
 
-    organizacao_remover = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL)
+    organizacao_remover = models.ForeignKey(Organizacao, null=True,
+                                            blank=True, on_delete=models.SET_NULL)
 
     class Meta:
         ordering = ['sigla']
@@ -120,7 +118,7 @@ class Projeto(models.Model):
     titulo_final = models.CharField("Título Final", max_length=160, null=True,
                                     blank=True,
                                     help_text='Título Final do projeto')
-    
+
     # MANTER POR É UMA DESCRIÇÃO ATUALIZADA
     descricao = models.TextField("Descrição", max_length=3000, null=True, blank=True,
                                  help_text='Descricao do projeto')
@@ -257,7 +255,7 @@ class Proposta(models.Model):
 
     areas_de_interesse = models.ForeignKey('users.Areas', on_delete=models.SET_NULL,
                                            null=True, blank=True,
-                                           help_text='Áreas de interesse esperas dos alunos')
+                                           help_text='Áreas de interesse esperadas dos alunos')
 
     recursos = models.TextField("Recursos", max_length=1000, null=True, blank=True,
                                 help_text='Recursos a serem disponibilizados aos Alunos')

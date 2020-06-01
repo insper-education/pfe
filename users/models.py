@@ -212,6 +212,10 @@ class Aluno(models.Model):
     #alocado = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
     #                            related_name='aluno_alocado', help_text='projeto selecionado')
 
+    areas_de_interesse = models.ForeignKey(Areas, on_delete=models.SET_NULL,
+                                           null=True, blank=True,
+                                           help_text='Áreas de interesse dos alunos')
+
     #areas de interesse
     inovacao_social = models.BooleanField(default=False)
     ciencia_dos_dados = models.BooleanField(default=False)
@@ -235,10 +239,6 @@ class Aluno(models.Model):
     eficiencia_energetica = models.BooleanField(default=False)
     administracao_economia_financas = models.BooleanField(default=False)
 
-    #### REMOVER AS AREAS DO CORPO DO ALUNO  ######
-    #areas = models.ForeignKey(Areas, on_delete=models.CASCADE)
-    #areas = models.OneToOneField(Areas, on_delete=models.CASCADE)
-    #areas = models.OneToOneField(Areas, null=True, blank=True, on_delete=models.CASCADE)
 
     trabalhou = models.TextField(max_length=1000, null=True, blank=True,
                                  help_text='Trabalhou ou estagio em alguma empresa de engenharia?')
@@ -275,34 +275,10 @@ class Aluno(models.Model):
         ordering = ['user']
         permissions = ()
     def __str__(self):
-        #return self.user.username
         return self.user.get_full_name()
-
-    # def opcao(self,i):
-    #     try:
-    #         valor = self.opcoes.all()[i]
-    #     except IndexError:
-    #         valor = 'vazio'
-    #     return valor
-    # def opcao1(self):
-    #     return self.opcao(0)
-    # def opcao2(self):
-    #     return self.opcao(1)
-    # def opcao3(self):
-    #     return self.opcao(2)
-    # def opcao4(self):
-    #     return self.opcao(3)
-    # def opcao5(self):
-    #     return self.opcao(4)
-    # opcao1.short_description = 'Opcao 1'
-    # opcao2.short_description = 'Opcao 2'
-    # opcao3.short_description = 'Opcao 3'
-    # opcao4.short_description = 'Opcao 4'
-    # opcao5.short_description = 'Opcao 5'
 
 class Opcao(models.Model):
     """Opções de Projetos pelos Alunos com suas prioridades."""
-    #projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.CASCADE)
     proposta = models.ForeignKey(Proposta, null=True, blank=True, on_delete=models.SET_NULL)
     aluno = models.ForeignKey(Aluno, null=True, blank=True, on_delete=models.CASCADE)
     #razao = models.CharField(max_length=200)
@@ -313,7 +289,7 @@ class Opcao(models.Model):
         ordering = ['prioridade']
         permissions = (("altera_professor", "Professor altera valores"), )
     def __str__(self):
-        return self.aluno.user.username+" >>> "+self.projeto.titulo
+        return self.aluno.user.username + " >>> " + self.proposta.titulo
 
 class Alocacao(models.Model):
     """Projeto em que o aluno está alocado."""
