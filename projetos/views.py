@@ -79,6 +79,9 @@ def index_aluno(request):
     configuracao = Configuracao.objects.first()
     vencido = timezone.now() > configuracao.prazo
 
+    ano = configuracao.ano
+    semestre = configuracao.semestre
+
     if usuario.tipo_de_usuario == 1:
         try:
             aluno = Aluno.objects.get(pk=request.user.aluno.pk)
@@ -86,20 +89,20 @@ def index_aluno(request):
             return HttpResponse("Estudante não encontrado.", status=401)
         projeto = Projeto.objects.filter(alocacao__aluno=aluno).last()
 
-        configuracao = Configuracao.objects.first()
-        ano = configuracao.ano
-        semestre = configuracao.semestre
         if semestre == 1:
             vencido = vencido or (aluno.anoPFE < ano)
             vencido = vencido or (aluno.anoPFE == ano and aluno.semestrePFE == 1)
-            semestre = 2
         else:
             vencido = vencido or (aluno.anoPFE <= ano)
-            ano += 1
-            semestre = 1
 
     else:
         projeto = None
+
+    if semestre == 1:
+        semestre = 2
+    else:
+        ano += 1
+        semestre = 1
 
     professor_id = 0
     if usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4:
