@@ -127,7 +127,6 @@ def index_aluno(request):
 def projeto_detalhes(request, primarykey):
     """Exibe uma proposta de projeto com seus detalhes para o estudante aplicar."""
     projeto = Projeto.objects.get(pk=primarykey)
-    print(projeto)
     context = {
         'projeto': projeto,
         'MEDIA_URL' : settings.MEDIA_URL,
