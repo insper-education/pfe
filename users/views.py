@@ -75,35 +75,58 @@ def perfil(request):
 @transaction.atomic
 def areas_interesse(request):
     """Para aluno definir suas áreas de interesse."""
+
     try:
-        estudante = Aluno.objects.get(pk=request.user.aluno.pk)
-    except Aluno.DoesNotExist:
-        return HttpResponse("Estudante não encontrado.", status=401)
+        user = PFEUser.objects.get(pk=request.user.pk)
+    except PFEUser.DoesNotExist:
+        return HttpResponse("Usuário não encontrado.", status=401)
 
-    configuracao = Configuracao.objects.first()
-    ano = configuracao.ano
-    semestre = configuracao.semestre
+    if user.tipo_de_usuario == 3:
+        mensagem = "Você não está cadastrado como aluno!"
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
 
-    vencido = timezone.now() > configuracao.prazo
-    if semestre == 1:
-        vencido = vencido or (estudante.anoPFE < ano)
-        vencido = vencido or (estudante.anoPFE == ano and estudante.semestrePFE == 1)
-        semestre = 2
-    else:
-        vencido = vencido or (estudante.anoPFE <= ano)
-        ano += 1
-        semestre = 1
+    if user.tipo_de_usuario == 1:
+        try:
+            estudante = Aluno.objects.get(pk=request.user.aluno.pk)
+        except Aluno.DoesNotExist:
+            return HttpResponse("Estudante não encontrado.", status=401)
 
-    if (not vencido) and request.method == 'POST':
-        areas = cria_areas(request, estudante.areas_de_interesse)
-        estudante.areas_de_interesse = areas
-        estudante.save()
-        return render(request, 'users/atualizado.html',)
+        configuracao = Configuracao.objects.first()
+        ano = configuracao.ano
+        semestre = configuracao.semestre
 
-    context = {
-        'vencido': vencido,
-        'areas': estudante.areas_de_interesse,
-    }
+        vencido = timezone.now() > configuracao.prazo
+        if semestre == 1:
+            vencido = vencido or (estudante.anoPFE < ano)
+            vencido = vencido or (estudante.anoPFE == ano and estudante.semestrePFE == 1)
+            semestre = 2
+        else:
+            vencido = vencido or (estudante.anoPFE <= ano)
+            ano += 1
+            semestre = 1
+
+        if (not vencido) and request.method == 'POST':
+            areas = cria_areas(request, estudante.areas_de_interesse)
+            estudante.areas_de_interesse = areas
+            estudante.save()
+            return render(request, 'users/atualizado.html',)
+
+        context = {
+            'vencido': vencido,
+            'areas': estudante.areas_de_interesse,
+        }
+
+    else: # supostamente professores
+        context = {
+            'mensagem': "Você não está cadastrado como aluno.",
+            'vencido': True,
+            #'areas': estudante.areas_de_interesse,
+
+        }
     return render(request, 'users/areas_interesse.html', context=context)
 
 class SignUp(generic.CreateView):
@@ -368,24 +391,32 @@ def contas_senhas(request, anosemestre):
 
             # Preparando mensagem para enviar para usuário.
             message_email = estudante.user.get_full_name() + ",\n\n\n"
-            message_email += "Você está recebendo sua conta e senha para acessar o sistema do PFE."
+            message_email += "Você está recebendo sua conta e senha para acessar o sistema do "
+            message_email += "Projeto Final de Engenharia (PFE)."
             message_email += "\n\n"
             message_email += "O endereço do servidor é: "
             message_email += "<a href='http://pfe.insper.edu.br/'>http://pfe.insper.edu.br/</a>"
             message_email += "\n\n"
-            message_email += "Preencha suas áreas de interesse, "
-            message_email += "bem como o formulário de informações adicionais.\n"
+            message_email += "Preencha os formulários de suas áreas de interesse "
+            message_email += "e de informações adicionais sobre você.\n"
             message_email += "Faça sua seleção de propostas de projetos "
             message_email += "conforme sua ordem de interesse.\n"
-            message_email += "O prazo para a escolha de projetos é: " +\
-                             configuracao.prazo.strftime("%d/%m/%Y %H:%M") + "\n"
-            message_email += "Você pode alterar quantas vezes desejar suas escolhas "
-            message_email += "até a data limite."
             message_email += "\n"
+            message_email += "O prazo para a escolha de projetos é: "
+            message_email += configuracao.prazo.strftime("%d/%m/%Y %H:%M") + "\n"
+            message_email += "Você pode alterar quantas vezes desejar suas escolhas "
+            message_email += "até a data limite.\n"
+            message_email += "\n\n"
             message_email += "Sua conta é: <b>" + estudante.user.username + "</b>\n"
             message_email += "Sua senha é: <b>" + senha + "</b>\n"
             message_email += "\n\n"
-            message_email += "atenciosamente, coordenação do PFE\n"
+            message_email += "Qualquer dúvida, envie e-mail para: "
+            message_email += "<a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>"
+            message_email += "\n\n"
+            message_email += "Nos próximos dias o departamento de carreiras entrará em contato "
+            message_email += "com datas de reuniões para maiores esclarecimentos dos projetos."
+            message_email += "\n\n"
+            message_email += "&nbsp;&nbsp;&nbsp;&nbsp;atenciosamente, coordenação do PFE\n"
             message_email = message_email.replace('\n', '<br>\n')
 
             # Enviando e-mail com mensagem para usuário.

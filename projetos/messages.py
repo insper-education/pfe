@@ -24,7 +24,7 @@ def create_message(aluno, ano, semestre):
     message = '<br>\n'
     message += '&nbsp;&nbsp;Estudante: <b>'+aluno.user.first_name+" "+aluno.user.last_name
     message += " ("+aluno.user.username+')</b>\n\n'
-    message += '<br><br>\n\n'
+    message += '&nbsp;<br><br>\n\n'
     message += '&nbsp;&nbsp;Suas opções de propostas de projetos foram:<br>\n'
     message += '<ul>'
     opcoes = Opcao.objects.filter(aluno=aluno)
@@ -35,7 +35,7 @@ def create_message(aluno, ano, semestre):
             # Mostra somente as propostas do próximo ano, não outras em caso de aluno DP
             if opcao.proposta.ano == ano and\
                opcao.proposta.semestre == semestre:
-                message += ("&nbsp;"*4)+"<p>"+str(opcao.prioridade)+" - "
+                message += "<p>"+str(opcao.prioridade)+" - "
                 message += opcao.proposta.titulo+" ("
                 if opcao.proposta.nome_organizacao:
                     message += opcao.proposta.nome_organizacao
@@ -45,52 +45,53 @@ def create_message(aluno, ano, semestre):
                     message += "ORGANIZAÇÃO INDEFINIDA"
                 message += ")</p>\n"
     message += '</ul>'
-    message += '<br><br>\n\n'
+    message += '<br>\n'
+
     message += '&nbsp;&nbsp;Suas áreas de interesse são:<br>\n'
     message += '<ul>'
 
     if aluno.areas_de_interesse.inovacao_social:
-        message += (("&nbsp;"*4)+"<li>Inovação Social</li>\n")
+        message += "<li>Inovação Social</li>\n"
     if aluno.areas_de_interesse.ciencia_dos_dados:
-        message += (("&nbsp;"*4)+"<li>Ciência de Dados</li>\n")
+        message += "<li>Ciência de Dados</li>\n"
     if aluno.areas_de_interesse.modelagem_3D:
-        message += (("&nbsp;"*4)+"<li>Modelagem 3D</li>\n")
+        message += "<li>Modelagem 3D</li>\n"
     if aluno.areas_de_interesse.manufatura:
-        message += (("&nbsp;"*4)+"<li>Manufatura</li>\n")
+        message += "<li>Manufatura</li>\n"
     if aluno.areas_de_interesse.resistencia_dos_materiais:
-        message += (("&nbsp;"*4)+"<li>Resistência dos Materiais</li>\n")
+        message += "<li>Resistência dos Materiais</li>\n"
     if aluno.areas_de_interesse.modelagem_de_sistemas:
-        message += (("&nbsp;"*4)+"<li>Modelagem de Sistemas</li>\n")
+        message += "<li>Modelagem de Sistemas</li>\n"
     if aluno.areas_de_interesse.controle_e_automacao:
-        message += (("&nbsp;"*4)+"<li>Controle e Automação</li>\n")
+        message += "<li>Controle e Automação</li>\n"
     if aluno.areas_de_interesse.termodinamica:
-        message += (("&nbsp;"*4)+"<li>Termodinâmica</li>\n")
+        message += "<li>Termodinâmica</li>\n"
     if aluno.areas_de_interesse.fluidodinamica:
-        message += (("&nbsp;"*4)+"<li>Fluidodinâmica</li>\n")
+        message += "<li>Fluidodinâmica</li>\n"
     if aluno.areas_de_interesse.eletronica_digital:
-        message += (("&nbsp;"*4)+"<li>Eletrônica Digital</li>\n")
+        message += "<li>Eletrônica Digital</li>\n"
     if aluno.areas_de_interesse.programacao:
-        message += (("&nbsp;"*4)+"<li>Programação</li>\n")
+        message += "<li>Programação</li>\n"
     if aluno.areas_de_interesse.inteligencia_artificial:
-        message += (("&nbsp;"*4)+"<li>Inteligência Artificial</li>\n")
+        message += "<li>Inteligência Artificial</li>\n"
     if aluno.areas_de_interesse.banco_de_dados:
-        message += (("&nbsp;"*4)+"<li>Banco de Dados</li>\n")
+        message += "<li>Banco de Dados</li>\n"
     if aluno.areas_de_interesse.computacao_em_nuvem:
-        message += (("&nbsp;"*4)+"<li>Computação em Nuvem</li>\n")
+        message += "<li>Computação em Nuvem</li>\n"
     if aluno.areas_de_interesse.visao_computacional:
-        message += (("&nbsp;"*4)+"<li>Visão Computacional</li>\n")
+        message += "<li>Visão Computacional</li>\n"
     if aluno.areas_de_interesse.computacao_de_alto_desempenho:
-        message += (("&nbsp;"*4)+"<li>Computação de Alto Desempenho</li>\n")
+        message += "<li>Computação de Alto Desempenho</li>\n"
     if aluno.areas_de_interesse.robotica:
-        message += (("&nbsp;"*4)+"<li>Robótica</li>\n")
+        message += "<li>Robótica</li>\n"
     if aluno.areas_de_interesse.realidade_virtual_aumentada:
-        message += (("&nbsp;"*4)+"<li>Realidade Virtual e Aumentada</li>\n")
+        message += "<li>Realidade Virtual e Aumentada</li>\n"
     if aluno.areas_de_interesse.protocolos_de_comunicacao:
-        message += (("&nbsp;"*4)+"<li>Protocolos de Comunicação</li>\n")
+        message += "<li>Protocolos de Comunicação</li>\n"
     if aluno.areas_de_interesse.eficiencia_energetica:
-        message += (("&nbsp;"*4)+"<li>Eficiência Energética</li>\n")
+        message += "<li>Eficiência Energética</li>\n"
     if aluno.areas_de_interesse.administracao_economia_financas:
-        message += (("&nbsp;"*4)+"<li>Administração, Economia e Finanças</li>\n")
+        message += "<li>Administração, Economia e Finanças</li>\n"
 
     alguma = aluno.areas_de_interesse.inovacao_social or \
              aluno.areas_de_interesse.ciencia_dos_dados or \
@@ -118,11 +119,10 @@ def create_message(aluno, ano, semestre):
         message += "<br>\nNENHUMA ÁREA DE INTERESSE SELECIONADA!<br>\n<br>\n"
 
     if aluno.areas_de_interesse.outras:
-        message += "Outras: "+aluno.areas_de_interesse.outras+"<br>\n"
-
+        message += "Outras: <u>"+aluno.areas_de_interesse.outras+"</u><br>\n"
 
     message += '</ul>'
-    message += '<br><br>\n\n'
+    message += '<br>\n'
     message += '&nbsp;&nbsp;Suas informações adicionais são:<br>\n'
     message += '<br>\n'
     message += ("&nbsp;" * 4)

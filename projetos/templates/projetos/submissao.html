@@ -24,6 +24,10 @@ textarea {
 
 {% block content %}
 
+  {% if mensagem %}
+    <h2 class="red-bold">{{mensagem}}</h2>
+  {% endif %}
+
   <h5>Formulário de Informações Adicionais</h5><br>
 
   <form action="" method="post"> {% csrf_token %}  

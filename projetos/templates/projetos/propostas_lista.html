@@ -334,7 +334,10 @@
       </a><br>
     
     <strong>Número Total de Propostas Fechadas:</strong> <script>document.write(fechados);</script><br>
+    <strong>Número Total de Organizações Participando:</strong> {{num_organizacoes}}<br>
+
     <p>&nbsp;</p>
+
     <strong>Propostas nativamente multidisciplinar:</strong> <script>document.write(proposta_multidisciplinar_disponivel);</script>
           <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
         (<script>document.write(proposta_multidisciplinar);</script>)
@@ -371,13 +374,8 @@
         (<script>document.write(alunos_mecanica);</script>)
       </a><br>
 
-
-
   <p>&nbsp;</p>
   <p>&nbsp;</p>
-
-
-
 
 <h5>Plot Ternário de Propostas entre Cursos</h5>
 <div id="plot">
@@ -567,17 +565,9 @@ svg.append("circle")
 
   </script>
 
-
-
-
-
-
-
   {% else %}
     <p>Não existem propostas disponíveis.</p>
   {% endif %}
   <p>&nbsp;</p>
-
-
 
 {% endblock %}

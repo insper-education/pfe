@@ -6,6 +6,11 @@
 {% endcomment %}
 
 {% block content %}
+
+    {% if mensagem %}
+        <h2 class="red-bold">{{mensagem}}</h2>
+    {% endif %}
+
     <h3>Áreas de Interesse</h3>
     <form method="post">
         {% csrf_token %}

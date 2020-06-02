@@ -26,10 +26,9 @@
   {% endif %}
 
   
-
+  <hr>
+  <h4>Projeto(s) Orientado(s)</h4>
   {% if projetos %}
-    <hr>
-    <h3>Projeto(s) Orientado(s)</h3>
     <ol>
     {% for projeto in projetos %}
       {% if projeto.alocacao_set.all.count > 0 %}
@@ -39,8 +38,12 @@
         { {{ projeto.alocacao_set.all.count }} aluno(s) }
         </a></li>
       {% endif %}
+    {% empty %}
+      Projetos não encontrados
     {% endfor %}
     </ol>
+  {% else %}
+    Projetos não encontrados
   {% endif %}
   <p>&nbsp;</p>
   <p>&nbsp;</p>
