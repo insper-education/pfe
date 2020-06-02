@@ -93,7 +93,7 @@
         <h5>Selecionar Propostas de Projetos</h5>
     </a>
 
-    <font color="red">Prazo para a seleção dos projetos : <b>{{ configuracao.prazo }}</b></font>
+    <font color="red">Prazo para a seleção dos projetos {{ano}}.{{semestre}}: <b>{{ configuracao.prazo }}</b></font>
     <hr>
     <a {% if not projeto %} class="disabled" onclick="myFunction('projeto')" {% else %} href="{% url 'minhas_bancas' %}" {% endif %} >
         <h5>Horário das bancas</h5>

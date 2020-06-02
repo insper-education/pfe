@@ -48,11 +48,13 @@
                 {{e.startDate|date:"d \d\e E \d\e Y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}
             </label>
             <br>
+        {% empty %}
+            Sem encontros para marcar.
         {% endfor %}
     </div>
     <p>&nbsp;</p>
 
-    <button type="submit" 
+    &nbsp;&nbsp;&nbsp;<button type="submit" 
       {% if user.tipo_de_usuario != 1 or not projeto %}disabled{% endif %}>
         Agendar
     </button>

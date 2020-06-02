@@ -76,7 +76,8 @@ class AlocacaoAdmin(admin.ModelAdmin):
 @admin.register(Parceiro)
 class ParceiroAdmin(admin.ModelAdmin):
     """Definição de Parceiro do PFE."""
-    list_display = ('get_full_name', 'get_sigla', 'email', 'telefone', 'celular', 'principal_contato')
+    list_display = ('get_full_name', 'get_sigla', 'email', 'telefone',
+                    'celular', 'principal_contato')
     ordering = ('user__first_name', 'user__last_name',)
     list_filter = (FirstLetterFilter, )
     search_fields = ['user__first_name', 'user__last_name',]
@@ -116,6 +117,7 @@ class OpcaoAdmin(admin.ModelAdmin):
     """Definição de Opções do PFE."""
     list_display = ('aluno', 'proposta', 'prioridade')
     ordering = ('aluno',)
+    search_fields = ['aluno__user__first_name', 'aluno__user__last_name',]
 
 admin.site.register(Areas)
 

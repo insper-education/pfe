@@ -71,30 +71,65 @@ def index(request):
 def index_aluno(request):
     """Mostra página principal do usuário aluno."""
 
-    usuario = PFEUser.objects.get(pk=request.user.pk)
+    try:
+        usuario = PFEUser.objects.get(pk=request.user.pk)
+    except PFEUser.DoesNotExist:
+        return HttpResponse("Usuário não encontrado.", status=401)
+
+    configuracao = Configuracao.objects.first()
+    vencido = timezone.now() > configuracao.prazo
+
     if usuario.tipo_de_usuario == 1:
-        aluno = Aluno.objects.get(pk=request.user.pk)
+        try:
+            aluno = Aluno.objects.get(pk=request.user.aluno.pk)
+        except Aluno.DoesNotExist:
+            return HttpResponse("Estudante não encontrado.", status=401)
         projeto = Projeto.objects.filter(alocacao__aluno=aluno).last()
+
+        configuracao = Configuracao.objects.first()
+        ano = configuracao.ano
+        semestre = configuracao.semestre
+        if semestre == 1:
+            vencido = vencido or (aluno.anoPFE < ano)
+            vencido = vencido or (aluno.anoPFE == ano and aluno.semestrePFE == 1)
+            semestre = 2
+        else:
+            vencido = vencido or (aluno.anoPFE <= ano)
+            ano += 1
+            semestre = 1
+
     else:
         projeto = None
 
     professor_id = 0
     if usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4:
         try:
-            professor_id = Professor.objects.get(user__pk=request.user.pk).id
+            professor_id = Professor.objects.get(pk=request.user.professor.pk).id
         except Professor.DoesNotExist:
             pass
             # Administrador não possui também conta de professor
 
-    configuracao = Configuracao.objects.first()
-    vencido = timezone.now() > configuracao.prazo
     context = {
         'projeto': projeto,
         'configuracao': configuracao,
+        'ano': ano,
+        'semestre': semestre,
         'vencido': vencido,
         'professor_id': professor_id,
     }
     return render(request, 'index_aluno.html', context=context)
+
+
+@login_required
+def projeto_detalhes(request, primarykey):
+    """Exibe uma proposta de projeto com seus detalhes para o estudante aplicar."""
+    projeto = Projeto.objects.get(pk=primarykey)
+    print(projeto)
+    context = {
+        'projeto': projeto,
+        'MEDIA_URL' : settings.MEDIA_URL,
+    }
+    return render(request, 'projetos/projeto_detalhes.html', context=context)
 
 @login_required
 def proposta_detalhes(request, primarykey):
@@ -113,25 +148,32 @@ def selecao_propostas(request):
     configuracao = Configuracao.objects.first()
     ano = configuracao.ano
     semestre = configuracao.semestre
+    vencido = timezone.now() > configuracao.prazo
+
+    aluno = Aluno.objects.get(pk=request.user.aluno.pk)
 
     # Vai para próximo semestre
     if semestre == 1:
+        vencido = vencido or (aluno.anoPFE < ano)
+        vencido = vencido or (aluno.anoPFE == ano and aluno.semestrePFE == 1)
         semestre = 2
     else:
+        vencido = vencido or (aluno.anoPFE <= ano)
         ano += 1
         semestre = 1
+
+    if vencido:
+        mensagem = "Prazo para seleção de propostas de propostas de projetos vencido!"
+        context = {
+            "area_aluno": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
 
     propostas = Proposta.objects.filter(ano=ano).\
                                    filter(semestre=semestre).\
                                    filter(disponivel=True)
     if request.method == 'POST':
-        if timezone.now() > configuracao.prazo:
-            mensagem = "Prazo para seleção de propostas de propostas de projetos vencido!"
-            context = {
-                "area_aluno": True,
-                "mensagem": mensagem,
-            }
-            return render(request, 'generic.html', context=context)
         prioridade = {}
         for proposta in propostas:
             check_values = request.POST.get('selection'+str(proposta.pk), "0")
@@ -142,7 +184,6 @@ def selecao_propostas(request):
             if list(prioridade.values()).count(str(i)) > 1:
                 warnings += "Mais de uma proposta com prioridade "+str(i)+"\n"
         if warnings == "":
-            aluno = Aluno.objects.get(pk=request.user.pk)
             for proposta in propostas:
                 if prioridade[proposta.pk] != "0":
                     if not aluno.opcoes.filter(pk=proposta.pk): # Se lista for vazia
@@ -156,7 +197,7 @@ def selecao_propostas(request):
                 else:
                     if aluno.opcoes.filter(pk=proposta.pk): # Se lista não for vazia
                         Opcao.objects.filter(aluno=aluno, proposta=proposta).delete()
-            message = create_message(aluno, configuracao.ano, configuracao.semestre)
+            message = create_message(aluno, ano, semestre)
 
             subject = 'PFE : '+aluno.user.username
             recipient_list = ['pfeinsper@gmail.com', aluno.user.email,]
@@ -170,7 +211,7 @@ def selecao_propostas(request):
             context = {'warnings': warnings,}
             return render(request, 'projetos/projetosincompleto.html', context)
     else:
-        opcoes = Opcao.objects.filter(aluno=Aluno.objects.get(pk=request.user.pk))
+        opcoes = Opcao.objects.filter(aluno=aluno)
         context = {
             'propostas': propostas,
             'opcoes': opcoes,
@@ -505,8 +546,11 @@ def index_organizacao(request):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def index_professor(request):
     """Mostra página principal do usuário professor."""
+    try:
+        user = PFEUser.objects.get(pk=request.user.pk)
+    except PFEUser.DoesNotExist:
+        return HttpResponse("Usuário não encontrado.", status=401)
 
-    user = PFEUser.objects.get(pk=request.user.pk)
     if user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
         #return HttpResponse("Você não está cadastrado como professor")
         mensagem = "Você não está cadastrado como professor!"
@@ -518,7 +562,7 @@ def index_professor(request):
 
     professor_id = 0
     try:
-        professor_id = Professor.objects.get(user__pk=request.user.pk).id
+        professor_id = Professor.objects.get(pk=request.user.professor.pk).id
     except Professor.DoesNotExist:
         pass
         # Administrador não possui também conta de professor
@@ -1358,33 +1402,46 @@ def submissao(request):
         }
         return render(request, 'generic.html', context=context)
     configuracao = Configuracao.objects.first()
-    aluno = Aluno.objects.get(pk=request.user.pk)
-    if request.method == 'POST':
-        if timezone.now() > configuracao.prazo:
-            mensagem = "Prazo para o preenchimento do formulário vencido!"
-            context = {
-                "area_principal": True,
-                "area_aluno": True,
-                "mensagem": mensagem,
-            }
-            return render(request, 'generic.html', context=context)
 
-        aluno.trabalhou = request.POST.get("trabalhou", "")
-        aluno.social = request.POST.get("social", "")
-        aluno.entidade = request.POST.get("entidade", "")
-        aluno.familia = request.POST.get("familia", "")
+    aluno = Aluno.objects.get(pk=request.user.aluno.pk)
+
+    configuracao = Configuracao.objects.first()
+    ano = configuracao.ano
+    semestre = configuracao.semestre
+
+    vencido = timezone.now() > configuracao.prazo
+    if semestre == 1:
+        vencido = vencido or (aluno.anoPFE < ano)
+        vencido = vencido or (aluno.anoPFE == ano and aluno.semestrePFE == 1)
+        semestre = 2
+    else:
+        vencido = vencido or (aluno.anoPFE <= ano)
+        ano += 1
+        semestre = 1
+
+    if (not vencido) and request.method == 'POST':
+
+        aluno.trabalhou = request.POST.get("trabalhou", None)
+        aluno.social = request.POST.get("social", None)
+        aluno.entidade = request.POST.get("entidade", None)
+        aluno.familia = request.POST.get("familia", None)
+
+        aluno.user.linkedin = request.POST.get("linkedin", None)
+        aluno.user.save()
 
         aluno.save()
         return render(request, 'users/atualizado.html',)
-    else:
-        context = {
-            'trabalhou' : aluno.trabalhou,
-            'social' : aluno.social,
-            'entidade' : aluno.entidade,
-            'familia' : aluno.familia,
-            'entidades' : Entidade.objects.all(),
-        }
-        return render(request, 'projetos/submissao.html', context)
+
+    context = {
+        'vencido': vencido,
+        'trabalhou' : aluno.trabalhou,
+        'social' : aluno.social,
+        'entidade' : aluno.entidade,
+        'familia' : aluno.familia,
+        'linkedin' : aluno.user.linkedin,
+        'entidades' : Entidade.objects.all(),
+    }
+    return render(request, 'projetos/submissao.html', context)
 
 
 def cria_areas(request, areas=None):
@@ -1416,7 +1473,9 @@ def cria_areas(request, areas=None):
     areas.eficiencia_energetica = "eficiencia_energetica" in check_values
     areas.administracao_economia_financas = "administracao_economia_financas" in check_values
 
-    areas.outras = request.POST.get("outras", "")
+    outras = request.POST.get("outras", "")
+    if outras != "":
+        areas.outras = request.POST.get("outras", "")
 
     areas.save()
 
@@ -1637,15 +1696,24 @@ def proposta_submissao(request):
         email_sub = user.email
 
         if user.tipo_de_usuario == 3: # parceiro
-            parceiro = Parceiro.objects.get(pk=request.user.pk)
+            try:
+                parceiro = Parceiro.objects.get(pk=request.user.parceiro.pk)
+            except Parceiro.DoesNotExist:
+                return HttpResponse("Parceiro não encontrado.", status=401)
             organizacao = parceiro.organizacao
             website = parceiro.organizacao.website
             endereco = parceiro.organizacao.endereco
             descricao_organizacao = parceiro.organizacao.informacoes
         elif user.tipo_de_usuario == 2: # professor
-            professor = Professor.objects.get(pk=request.user.pk)
+            try:
+                professor = Professor.objects.get(pk=request.user.professor.pk)
+            except Professor.DoesNotExist:
+                return HttpResponse("Professor não encontrado.", status=401)
         elif user.tipo_de_usuario == 4: # admin
-            administrador = Administrador.objects.get(pk=request.user.pk)
+            try:
+                administrador = Administrador.objects.get(pk=request.user.administrador.pk)
+            except Administrador.DoesNotExist:
+                return HttpResponse("Administrador não encontrado.", status=401)
 
     if request.method == 'POST':
         proposta = preenche_proposta(request, None)
@@ -1706,11 +1774,20 @@ def proposta_editar(request, slug):
             return render(request, 'generic.html', context=context)
 
         if user.tipo_de_usuario == 3: # parceiro
-            parceiro = Parceiro.objects.get(pk=request.user.pk)
+            try:
+                parceiro = Parceiro.objects.get(pk=request.user.parceiro.pk)
+            except Parceiro.DoesNotExist:
+                return HttpResponse("Parceiro não encontrado.", status=401)
         elif user.tipo_de_usuario == 2: # professor
-            professor = Professor.objects.get(pk=request.user.pk)
+            try:
+                professor = Professor.objects.get(pk=request.user.professor.pk)
+            except Professor.DoesNotExist:
+                return HttpResponse("Professor não encontrado.", status=401)
         elif user.tipo_de_usuario == 4: # admin
-            administrador = Administrador.objects.get(pk=request.user.pk)
+            try:
+                administrador = Administrador.objects.get(pk=request.user.administrador.pk)
+            except Administrador.DoesNotExist:
+                return HttpResponse("Administrador não encontrado.", status=401)
 
     try:
         proposta = Proposta.objects.get(slug=slug)
@@ -2108,10 +2185,15 @@ def meuprojeto(request):
         }
         return render(request, 'generic.html', context=context)
     if user.tipo_de_usuario == 2:
-        professor = Professor.objects.get(user__pk=request.user.pk)
+        professor = Professor.objects.get(pk=request.user.professor.pk)
         return redirect('professor_detail', primarykey=professor.pk)
+
     # vvvv Caso seja um aluno  vvv
-    aluno = Aluno.objects.get(pk=request.user.pk)
+    try:
+        aluno = Aluno.objects.get(pk=request.user.aluno.pk)
+    except Aluno.DoesNotExist:
+        return HttpResponse("Aluno não encontrado.", status=401)
+
     context = {
         'aluno': aluno,
         'configuracao' : Configuracao.objects.all().first(),
@@ -2410,9 +2492,15 @@ def carrega_bancos(request):
 def reembolso_pedir(request):
     """Página com sistema de pedido de reembolso."""
     configuracao = Configuracao.objects.all().first()
-    usuario = PFEUser.objects.get(pk=request.user.pk)
+    try:
+        usuario = PFEUser.objects.get(pk=request.user.pk)
+    except PFEUser.DoesNotExist:
+        return HttpResponse("Usuário não encontrado.", status=401)
     if usuario.tipo_de_usuario == 1:
-        aluno = Aluno.objects.get(pk=request.user.pk)
+        try:
+            aluno = Aluno.objects.get(pk=request.user.aluno.pk)
+        except Aluno.DoesNotExist:
+            return HttpResponse("Aluno não encontrado.", status=401)
         projeto = Projeto.objects.filter(alocacao__aluno=aluno).last()
     else:
         projeto = None
@@ -2774,7 +2862,11 @@ def comite(request):
 @login_required
 def minhas_bancas(request):
     """Lista as bancas agendadas para um aluno."""
-    aluno = Aluno.objects.get(pk=request.user.pk)
+    try:
+        aluno = Aluno.objects.get(pk=request.user.aluno.pk)
+    except Aluno.DoesNotExist:
+        return HttpResponse("Aluno não encontrado.", status=401)
+
     projetos = Projeto.objects.filter(alocacao__aluno=aluno)
     bancas = Banca.objects.filter(projeto__in=projetos).order_by("-startDate")
 

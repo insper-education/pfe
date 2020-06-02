@@ -16,51 +16,119 @@ def htmlizar(text):
 def email(subject, recipient_list, message):
     """Envia um e-mail para o HOST_USER."""
     email_from = settings.EMAIL_HOST_USER
-    return send_mail(subject, message, email_from, recipient_list, html_message=message, fail_silently=True)
+    return send_mail(subject, message, email_from, recipient_list,
+                     html_message=message, fail_silently=True)
 
 def create_message(aluno, ano, semestre):
-    """Cria mensagem quando o aluno termina de preencher o formulário de seleção de projetos"""
+    """Cria mensagem quando o aluno termina de preencher o formulário de seleção de propostas"""
     message = '<br>\n'
-    message += '&nbsp;&nbsp;Caro aluno: <b>'+aluno.user.first_name+" "+aluno.user.last_name+" ("+aluno.user.username+')</b>\n\n'
+    message += '&nbsp;&nbsp;Estudante: <b>'+aluno.user.first_name+" "+aluno.user.last_name
+    message += " ("+aluno.user.username+')</b>\n\n'
     message += '<br><br>\n\n'
-    message += '&nbsp;&nbsp;Suas opções de projetos foram:<br>\n'
+    message += '&nbsp;&nbsp;Suas opções de propostas de projetos foram:<br>\n'
     message += '<ul>'
-    for opcao in Opcao.objects.filter(aluno=aluno):
-        if opcao.projeto.ano == ano and opcao.projeto.semestre == semestre and opcao.projeto.disponivel:
-            message += ("&nbsp;"*4)+"<p>"+str(opcao.prioridade)+" - "+opcao.projeto.titulo+" ("+opcao.projeto.organizacao.nome+")</p>\n"
+    opcoes = Opcao.objects.filter(aluno=aluno)
+    if not opcoes:
+        message += "NÃO FORAM ENCONTRADAS OPÇÕES DE ESCOLHA DE PROPOSTAS DE PROJETOS!"
+    for opcao in opcoes:
+        if opcao.proposta.disponivel:
+            # Mostra somente as propostas do próximo ano, não outras em caso de aluno DP
+            if opcao.proposta.ano == ano and\
+               opcao.proposta.semestre == semestre:
+                message += ("&nbsp;"*4)+"<p>"+str(opcao.prioridade)+" - "
+                message += opcao.proposta.titulo+" ("
+                if opcao.proposta.nome_organizacao:
+                    message += opcao.proposta.nome_organizacao
+                elif opcao.proposta.organizacao and opcao.proposta.organizacao.nome:
+                    message += opcao.proposta.organizacao.nome
+                else:
+                    message += "ORGANIZAÇÃO INDEFINIDA"
+                message += ")</p>\n"
     message += '</ul>'
     message += '<br><br>\n\n'
     message += '&nbsp;&nbsp;Suas áreas de interesse são:<br>\n'
     message += '<ul>'
 
-    if aluno.inovacao_social: message += (("&nbsp;"*4)+"<li>Inovação Social</li>\n")
-    if aluno.ciencia_dos_dados: message += (("&nbsp;"*4)+"<li>Ciência de Dados</li>\n")
-    if aluno.modelagem_3D: message += (("&nbsp;"*4)+"<li>Modelagem 3D</li>\n")
-    if aluno.manufatura: message += (("&nbsp;"*4)+"<li>Manufatura</li>\n")
-    if aluno.resistencia_dos_materiais: message += (("&nbsp;"*4)+"<li>Resistência dos Materiais</li>\n")
-    if aluno.modelagem_de_sistemas: message += (("&nbsp;"*4)+"<li>Modelagem de Sistemas</li>\n")
-    if aluno.controle_e_automacao: message += (("&nbsp;"*4)+"<li>Controle e Automação</li>\n")
-    if aluno.termodinamica: message += (("&nbsp;"*4)+"<li>Termodinâmica</li>\n")
-    if aluno.fluidodinamica: message += (("&nbsp;"*4)+"<li>Fluidodinâmica</li>\n")
-    if aluno.eletronica_digital: message += (("&nbsp;"*4)+"<li>Eletrônica Digital</li>\n")
-    if aluno.programacao: message += (("&nbsp;"*4)+"<li>Programação</li>\n")
-    if aluno.inteligencia_artificial: message += (("&nbsp;"*4)+"<li>Inteligência Artificial</li>\n")
-    if aluno.banco_de_dados: message += (("&nbsp;"*4)+"<li>Banco de Dados</li>\n")
-    if aluno.computacao_em_nuvem: message += (("&nbsp;"*4)+"<li>Computação em Nuvem</li>\n")
-    if aluno.visao_computacional: message += (("&nbsp;"*4)+"<li>Visão Computacional</li>\n")
-    if aluno.computacao_de_alto_desempenho: message += (("&nbsp;"*4)+"<li>Computação de Alto Desempenho</li>\n")
-    if aluno.robotica: message += (("&nbsp;"*4)+"<li>Robótica</li>\n")
-    if aluno.realidade_virtual_aumentada: message += (("&nbsp;"*4)+"<li>Realidade Virtual e Aumentada</li>\n")
-    if aluno.protocolos_de_comunicacao: message += (("&nbsp;"*4)+"<li>Protocolos de Comunicação</li>\n")
-    if aluno.eficiencia_energetica: message += (("&nbsp;"*4)+"<li>Eficiência Energética</li>\n")
-    if aluno.administracao_economia_financas: message += (("&nbsp;"*4)+"<li>Administração, Economia e Finanças</li>\n")
+    if aluno.areas_de_interesse.inovacao_social:
+        message += (("&nbsp;"*4)+"<li>Inovação Social</li>\n")
+    if aluno.areas_de_interesse.ciencia_dos_dados:
+        message += (("&nbsp;"*4)+"<li>Ciência de Dados</li>\n")
+    if aluno.areas_de_interesse.modelagem_3D:
+        message += (("&nbsp;"*4)+"<li>Modelagem 3D</li>\n")
+    if aluno.areas_de_interesse.manufatura:
+        message += (("&nbsp;"*4)+"<li>Manufatura</li>\n")
+    if aluno.areas_de_interesse.resistencia_dos_materiais:
+        message += (("&nbsp;"*4)+"<li>Resistência dos Materiais</li>\n")
+    if aluno.areas_de_interesse.modelagem_de_sistemas:
+        message += (("&nbsp;"*4)+"<li>Modelagem de Sistemas</li>\n")
+    if aluno.areas_de_interesse.controle_e_automacao:
+        message += (("&nbsp;"*4)+"<li>Controle e Automação</li>\n")
+    if aluno.areas_de_interesse.termodinamica:
+        message += (("&nbsp;"*4)+"<li>Termodinâmica</li>\n")
+    if aluno.areas_de_interesse.fluidodinamica:
+        message += (("&nbsp;"*4)+"<li>Fluidodinâmica</li>\n")
+    if aluno.areas_de_interesse.eletronica_digital:
+        message += (("&nbsp;"*4)+"<li>Eletrônica Digital</li>\n")
+    if aluno.areas_de_interesse.programacao:
+        message += (("&nbsp;"*4)+"<li>Programação</li>\n")
+    if aluno.areas_de_interesse.inteligencia_artificial:
+        message += (("&nbsp;"*4)+"<li>Inteligência Artificial</li>\n")
+    if aluno.areas_de_interesse.banco_de_dados:
+        message += (("&nbsp;"*4)+"<li>Banco de Dados</li>\n")
+    if aluno.areas_de_interesse.computacao_em_nuvem:
+        message += (("&nbsp;"*4)+"<li>Computação em Nuvem</li>\n")
+    if aluno.areas_de_interesse.visao_computacional:
+        message += (("&nbsp;"*4)+"<li>Visão Computacional</li>\n")
+    if aluno.areas_de_interesse.computacao_de_alto_desempenho:
+        message += (("&nbsp;"*4)+"<li>Computação de Alto Desempenho</li>\n")
+    if aluno.areas_de_interesse.robotica:
+        message += (("&nbsp;"*4)+"<li>Robótica</li>\n")
+    if aluno.areas_de_interesse.realidade_virtual_aumentada:
+        message += (("&nbsp;"*4)+"<li>Realidade Virtual e Aumentada</li>\n")
+    if aluno.areas_de_interesse.protocolos_de_comunicacao:
+        message += (("&nbsp;"*4)+"<li>Protocolos de Comunicação</li>\n")
+    if aluno.areas_de_interesse.eficiencia_energetica:
+        message += (("&nbsp;"*4)+"<li>Eficiência Energética</li>\n")
+    if aluno.areas_de_interesse.administracao_economia_financas:
+        message += (("&nbsp;"*4)+"<li>Administração, Economia e Finanças</li>\n")
+
+    alguma = aluno.areas_de_interesse.inovacao_social or \
+             aluno.areas_de_interesse.ciencia_dos_dados or \
+             aluno.areas_de_interesse.modelagem_3D or \
+             aluno.areas_de_interesse.manufatura or \
+             aluno.areas_de_interesse.resistencia_dos_materiais or \
+             aluno.areas_de_interesse.modelagem_de_sistemas or \
+             aluno.areas_de_interesse.controle_e_automacao or \
+             aluno.areas_de_interesse.termodinamica or \
+             aluno.areas_de_interesse.fluidodinamica or \
+             aluno.areas_de_interesse.eletronica_digital or \
+             aluno.areas_de_interesse.programacao or \
+             aluno.areas_de_interesse.inteligencia_artificial or \
+             aluno.areas_de_interesse.banco_de_dados or \
+             aluno.areas_de_interesse.computacao_em_nuvem or \
+             aluno.areas_de_interesse.visao_computacional or \
+             aluno.areas_de_interesse.computacao_de_alto_desempenho or \
+             aluno.areas_de_interesse.robotica or \
+             aluno.areas_de_interesse.realidade_virtual_aumentada or \
+             aluno.areas_de_interesse.protocolos_de_comunicacao or \
+             aluno.areas_de_interesse.eficiencia_energetica or \
+             aluno.areas_de_interesse.administracao_economia_financas
+
+    if not alguma:
+        message += "<br>\nNENHUMA ÁREA DE INTERESSE SELECIONADA!<br>\n<br>\n"
+
+    if aluno.areas_de_interesse.outras:
+        message += "Outras: "+aluno.areas_de_interesse.outras+"<br>\n"
+
 
     message += '</ul>'
     message += '<br><br>\n\n'
     message += '&nbsp;&nbsp;Suas informações adicionais são:<br>\n'
     message += '<br>\n'
-    message += ("&nbsp;" * 4) + 'Você já trabalhou e/ou estagiou em alguma empresa de engenharia?<br>\n'
-    message += ("&nbsp;" * 4) + 'Se sim, qual/quais?<br>\n'
+    message += ("&nbsp;" * 4)
+    message += 'Você já trabalhou e/ou estagiou em alguma empresa de engenharia?<br>\n'
+    message += ("&nbsp;" * 4)
+    message += 'Se sim, qual/quais?<br>\n'
     if aluno.trabalhou:
         message += ("&nbsp;" * 4) + '<i>'+aluno.trabalhou+'</i>'
     else:
@@ -88,12 +156,17 @@ def create_message(aluno, ano, semestre):
     else:
         message += ("&nbsp;"*4)+'<i>'+'CAMPO NÃO DEFINIDO'+'</i>'
     message += '<br><br>\n\n'
+    if aluno.user.linkedin:
+        message += ("&nbsp;"*4)+'<i>LinkedIn:</i> <a href='+aluno.user.linkedin+'>'
+        message += aluno.user.linkedin+'</a>'
+        message += '<br><br>\n\n'
     message += '<br>\n'+("&nbsp;"*12)+"atenciosamente, comitê PFE"
     message += '&nbsp;<br>\n'
     message += '&nbsp;<br>\n'
     return message
 
 def message_reembolso(usuario, projeto, reembolso):
+    """ Emite menssagem de reembolso. """
     message = '<br>\n'
     message += '&nbsp;&nbsp;Caro <b>Dept. de Carreiras</b>\n\n'
     message += '<br><br>\n\n'

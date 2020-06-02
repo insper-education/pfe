@@ -16,7 +16,7 @@
        <br>
     {% endif %}
     
-    <h3>Projetos Disponíveis</h3>
+    <h3>Propostas de Projetos Disponíveis</h3>
 
     {% if propostas %}
       <form action="" method="post"> {% csrf_token %}  
@@ -34,9 +34,9 @@
                     }
 
                     // Para agora nao encontrei forma mais inteligente de fazer isso
-                    {% for opc in opcoes_list %} 
-                      {% if opc.proposta.pk == proposta.pk %}
-                      select.selectedIndex = {{ opc.prioridade }};
+                    {% for opcao in opcoes %} 
+                      {% if opcao.proposta.pk == proposta.pk %}
+                      select.selectedIndex = {{ opcao.prioridade }};
                       {% endif %}
                     {% endfor %}
 
@@ -44,13 +44,20 @@
                 </td>
                 <td>
                   <a href="{% url 'proposta_detalhes' proposta.pk %}">
-                    {% if proposta.titulo_final %}
-                      {{proposta.titulo_final}}<br>
-                      <small>Título Provisório: {{proposta.titulo}}</small>
-                    {% else %}
+                    {% if proposta.titulo %}
                       {{proposta.titulo}}
+                    {% else %}
+                      PROBLEMA EM RECUPERAR TÍTULO DA PROPOSTA
                     {% endif %}
-                    <font color="darkblue">({{ proposta.organizacao.nome }})</font>
+                    <font color="darkblue">
+                      {% if proposta.nome_organizacao %}
+                        ({{ proposta.nome_organizacao }})
+                      {% elif proposta.organizacao and proposta.organizacao.nome %}
+                        ({{ proposta.organizacao.nome }})
+                      {% else %}
+                        PROBLEMA EM RECUPERAR ORGANIZAÇÃO DA PROPOSTA
+                      {% endif %}
+                    </font>
                   </a>
                 </td>
               </tr>
@@ -66,7 +73,7 @@
         <input type="submit" value="Enviar">
 
         <small><font color="red">
-          Selecione ao menos 5 projetos (1 ao 5), sendo 1 o que você tem mais interesse.
+          Selecione ao menos 5 propostas de projetos (1 ao 5), sendo 1 para a que você tem mais interesse.
         </font></small>
 
         <p>&nbsp;</p>

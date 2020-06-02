@@ -28,31 +28,41 @@ textarea {
 
   <form action="" method="post"> {% csrf_token %}  
 
-    {% comment %} Perguntar do LinkedIn {% endcomment %}
-
+    <label for="trabalhou">
     Você já trabalhou e/ou estagiou em alguma empresa de engenharia?<br>
-    Se sim, qual/quais?<br>
-    <textarea name="trabalhou" rows="4" cols="80" maxlength="1000">{{trabalhou}}</textarea>
+    Se sim, qual/quais?
+    </label><br>
+    <textarea id="trabalhou" name="trabalhou" rows="4" cols="80" maxlength="1000" {% if vencido %}disabled{% endif %}>{% if trabalhou %}{{trabalhou}}{% endif %}</textarea>
     <br><br>
 
+    <label for="social">
     Você já participou de atividades sociais?<br>
-    Se sim, qual/quais?<br>
-    <textarea name="social" rows="4" cols="80" maxlength="1000">{{social}}</textarea>
+    Se sim, qual/quais?
+    </label><br>
+    <textarea id="social" name="social" rows="4" cols="80" maxlength="1000" {% if vencido %}disabled{% endif %}>{% if social %}{{social}}{% endif %}</textarea>
     <br><br>
 
+    <label for="entidade">
     Você já participou de alguma entidade estudantil do Insper?<br>
-    Liste as que você já participou?<br>
-    <!-- Pegar Script para preencher entidades automaticamente -->
-    <textarea name="entidade" rows="4" cols="80" maxlength="1000">{{entidade}}</textarea>
+    Liste as que você já participou?
+    </label><br>
+    <textarea id="entidade" name="entidade" rows="4" cols="80" maxlength="1000" {% if vencido %}disabled{% endif %}>{% if entidade %}{{entidade}}{% endif %}</textarea>
     <br>
     <small><u>Lista de Entidades.</u></small>
+    <!-- Pega Script para preencher entidades automaticamente -->
     <br><br>
 
+    <label for="familia">
     Você possui familiares em alguma empresa que está aplicando? Ou empresa concorrente direta?<br>
-    Se sim, qual/quais? Qual seu grau de relacionamento.<br>
-    <textarea name="familia" rows="4" cols="80" maxlength="1000">{{familia}}</textarea>
+    Se sim, qual/quais? Qual seu grau de relacionamento.
+    </label><br>
+    <textarea id="familia" name="familia" rows="4" cols="80" maxlength="1000" {% if vencido %}disabled{% endif %}>{% if familia %}{{familia}}{% endif %}</textarea>
     <br><br>
 
+    <label for="linkedin">Caso desejar, você pode informar seu LinkedIn: (opcional)</label><br>
+    <input type="text" size="80" id="linkedin" name="linkedin" {% if linkedin %}value="{{linkedin}}"{% endif %} placeholder="https://www.linkedin.com/" {% if vencido %}disabled{% endif %}><br>
+
+    <br><br>
     <input type="submit" value="Enviar">
 
   </form>

@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 15 de Maio de 2019
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  <script>
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
+{% endblock %}
+
+{% block content %}
+
+  {% if projeto.titulo_final %}
+    <style>
+        h5 {display: inline;}
+    </style>
+    <h5 data-toggle="tooltip" data-html="true" animation="true" title="
+     Título do projeto.
+    ">
+      Título: {{projeto.titulo_final}}</h5>
+    <small> <br>&nbsp;&nbsp;&nbsp;&nbsp;Título Provisório: {{projeto.titulo}}</small><br>
+  {% elif projeto.titulo %}
+    <h5  data-toggle="tooltip" data-html="true" animation="true" title="
+     Título do projeto.
+    ">Título: {{projeto.titulo}}<br></h5>
+  {% else %}
+    <h5>Problema na identificação do título<br></h5>
+  {% endif %}
+
+  <br>
+
+  {% if projeto.proposta.descricao %}
+    <p>
+      <strong data-toggle="tooltip" data-html="true" animation="true" title="
+      Uma breve descrição do que se trata o projeto e outras informações relevantes.
+      ">
+        Descrição:
+      </strong>
+      {{projeto.proposta.descricao|linebreaks|urlize}}<br>
+    </p>
+  {% else %}
+    <p><u>Campo de descrição ausente.<u><br></p>
+    <!-- Campo deveria ser obrigatório -->
+  {% endif %}
+
+  {% if projeto.proposta.expectativas %}
+    <p>
+      <strong data-toggle="tooltip" data-html="true" animation="true" title="
+      Exemplos de resultados ou entregas esperadas.
+      Durante o projeto isso deverá ser dicutido com a organização parceira e com os professores orientadores para um melhor alinhamento.
+      Independente do que as organizações sugerirem nesse campo, existem uma série de relatórios, apresentações, vídeos e outros materiais como obrigatórios no PFE.
+      ">
+        Expectativas de resultados/entregas:
+      </strong>
+      {{projeto.proposta.expectativas|linebreaks|urlize}}<br>
+    <p>
+  {% else %}
+    <p><u>Campo de expectativas ausente.<u><br></p>
+    <!-- Campo deveria ser obrigatório -->
+  {% endif %}
+
+  {% if projeto.proposta.recursos %}
+    <p>
+      <strong data-toggle="tooltip" data-html="true" animation="true" title="
+      Recursos que as organizações informaram que irão disponibilizar para os estudantes.
+      O PFE irá auxiliar em um acesso facilitado para os diversos laboratórios da escola conforme sua disponibiidade.
+      Não existe nenhuma garantia que o PFE irá suprir material de consumo para os alunos, em geral não há recursos para isso.
+      ">
+        Recursos a serem disponibilizados:
+      </strong>
+      {{projeto.proposta.recursos|linebreaks|urlize}}<br>
+    </p>
+  {% endif %}
+
+  {% if projeto.proposta.observacoes %}
+    <p>
+      <strong data-toggle="tooltip" data-html="true" animation="true" title="
+      Outras observações que a organização parceira considerou relevante para informar aos estudantes.
+      ">
+        Outras observações:
+      </strong>
+      {{proposta.observacoes|linebreaks|urlize}}<br>
+    </p>
+  {% endif %}
+  
+  {% if projeto.proposta.anexo %}
+    <p>
+      <strong>Anexo :</strong>
+      <a class="text-success" href="../..{{MEDIA_URL}}{{projeto.proposta.anexo}}">{{proposta.anexo}}</a>
+    </p>
+  {% endif %}
+
+  <hr>
+
+  <h4 data-toggle="tooltip" data-html="true" animation="true" title="
+     Nome da organização/empresa que está propondo o projeto.
+    ">
+    Organização:
+    {% if projeto.organizacao and projeto.organizacao.nome %}
+      {{projeto.organizacao.nome}}
+    {% elif projeto.proposta.nome_organizacao %}
+      {{projeto.proposta.nome_organizacao}}
+    {% else %}
+      <u>Organização não definida.</u>
+    {% endif %}
+    <br>
+  </h4>
+  
+  <p>
+    {% if projeto.organizacao and projeto.organizacao.endereco %}
+      <strong data-toggle="tooltip" data-html="true" animation="true" title="
+       Endereço da matriz da organização parceira.
+      ">
+       Endereço Matriz:
+      </strong>
+      <a href="http://maps.google.com/maps?q={{proposta.organizacao.endereco}}">
+        {{projeto.organizacao.endereco|linebreaks}}
+      </a>
+    {% elif projeto.proposta.endereco %}
+      <strong data-toggle="tooltip" data-html="true" animation="true" title="
+       Endereço para desenvolver o projeto.
+      ">
+       Endereço Local:
+      </strong>
+      <a href="http://maps.google.com/maps?q={{proposta.endereco}}">
+        {{projeto.proposta.endereco|linebreaks}}
+      </a>
+    {% else %}
+      <u>não definido.</u>
+    {% endif %}
+    <br>
+  </p>
+
+  <p>
+    <strong data-toggle="tooltip" data-html="true" animation="true" title="
+     Site da organização e/ou projeto.
+    ">
+    website:
+    </strong>
+    {% if projeto.organizacao and projeto.organizacao.website %}
+      <a class="tabulado" href="{{projeto.organizacao.website}}">{{projeto.organizacao.website}}</a>
+    {% elif projeto.proposta and projeto.proposta.website %}
+      <a class="tabulado" href="{{projeto.proposta.website}}">{{projeto.proposta.website}}</a>
+    {% else %}
+      <u>não definido.</u>
+    {% endif %}
+    <br><br>
+  </p>
+
+  <!-- Campo opcional -->
+  {% if projeto.organizacao and projeto.organizacao.informacoes %}
+    <p><strong>Informações sobre a empresa:</strong>
+    {{projeto.organizacao.informacoes|linebreaks|urlize}}
+    <br></p>
+  {% elif projeto.proposta and projeto.proposta.descricao_organizacao %}
+    <p><strong>Informações sobre a empresa:</strong>
+    {{projeto.proposta.descricao_organizacao|linebreaks|urlize}}
+    <br></p>
+  {% endif %}
+
+  <!-- Campo opcional -->
+  {% if projeto.proposta.departamento %}
+    <p><strong>Informações sobre o departamento na organização:</strong>
+    {{projeto.proposta.departamento|linebreaks|urlize}}<br></p>
+  {% endif %}
+
+  <p>&nbsp;</p>
+{% endblock %}

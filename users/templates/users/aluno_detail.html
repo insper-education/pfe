@@ -147,6 +147,9 @@
           <td>Administração, Economia e Finanças</td>
       </tr>
     </table>
+    {% if aluno.areas_de_interesse.outras %}
+        <b>Outras:</b> {{aluno.areas_de_interesse.outras}}<br>
+    {% endif %}
 
     {% if aluno.alocacao_set.all.count > 0 %}
         <hr>

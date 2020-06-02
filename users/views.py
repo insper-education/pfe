@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 
 from django.db import transaction
 from django.db.models.functions import Lower
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
@@ -30,16 +31,36 @@ from .models import PFEUser, Aluno, Professor, Parceiro, Opcao, Administrador
 @login_required
 def perfil(request):
     """Retorna a página conforme o perfil do usuário."""
-    user = PFEUser.objects.get(pk=request.user.pk)
+    try:
+        user = PFEUser.objects.get(pk=request.user.pk)
+    except PFEUser.DoesNotExist:
+        return HttpResponse("Usuário não encontrado.", status=401)
+
     context = {'aluno' : False, 'professor' : False, 'parceiro' : False, 'administrador' : False,}
     if user.tipo_de_usuario == 1: #aluno
-        context['aluno'] = Aluno.objects.get(pk=request.user.pk)
+        try:
+            context['aluno'] = Aluno.objects.get(pk=request.user.aluno.pk)
+        except Aluno.DoesNotExist:
+            return HttpResponse("Estudante não encontrado.", status=401)
+
     elif user.tipo_de_usuario == 2: #professor
-        context['professor'] = Professor.objects.get(pk=request.user.pk)
+        try:
+            context['professor'] = Professor.objects.get(pk=request.user.professor.pk)
+        except Professor.DoesNotExist:
+            return HttpResponse("Professor não encontrado.", status=401)
+
     elif user.tipo_de_usuario == 3: #parceiro
-        context['parceiro'] = Parceiro.objects.get(pk=request.user.pk)
+        try:
+            context['parceiro'] = Parceiro.objects.get(pk=request.user.parceiro.pk)
+        except Parceiro.DoesNotExist:
+            return HttpResponse("Parceiro não encontrado.", status=401)
+
     elif user.tipo_de_usuario == 4: #administrador
-        context['administrador'] = Administrador.objects.get(pk=request.user.pk)
+        try:
+            context['administrador'] = Administrador.objects.get(pk=request.user.administrador.pk)
+        except Administrador.DoesNotExist:
+            return HttpResponse("Administrador não encontrado.", status=401)
+
     else:
         mensagem = "Seu perfil não foi encontrado!"
         context = {
@@ -47,59 +68,41 @@ def perfil(request):
             "mensagem": mensagem,
         }
         return render(request, 'generic.html', context=context)
-        #return HttpResponse("Seu perfil não foi encontrado!")
+
     return render(request, 'users/profile_detail.html', context=context)
 
 @login_required
 @transaction.atomic
 def areas_interesse(request):
     """Para aluno definir suas áreas de interesse."""
-    if request.method == 'POST':
+    try:
+        estudante = Aluno.objects.get(pk=request.user.aluno.pk)
+    except Aluno.DoesNotExist:
+        return HttpResponse("Estudante não encontrado.", status=401)
 
-        configuracao = Configuracao.objects.all().first()
-        if timezone.now() > configuracao.prazo:
-            mensagem = "Prazo para seleção de áreas vencido!"
-            context = {
-                "area_aluno": True,
-                "mensagem": mensagem,
-            }
-            return render(request, 'generic.html', context=context)
+    configuracao = Configuracao.objects.first()
+    ano = configuracao.ano
+    semestre = configuracao.semestre
 
-        # PEGAR CRIA AREAS DO VIEW DE PROJETO
+    vencido = timezone.now() > configuracao.prazo
+    if semestre == 1:
+        vencido = vencido or (estudante.anoPFE < ano)
+        vencido = vencido or (estudante.anoPFE == ano and estudante.semestrePFE == 1)
+        semestre = 2
+    else:
+        vencido = vencido or (estudante.anoPFE <= ano)
+        ano += 1
+        semestre = 1
 
-        aluno.areas_de_interesse = cria_areas(request, aluno.areas_de_interesse)
-
-        check_values = request.POST.getlist('selection')
-        aluno = Aluno.objects.get(pk=request.user.pk)
-
-        aluno.inovacao_social = "inovacao_social" in check_values
-        aluno.ciencia_dos_dados = "ciencia_dos_dados" in check_values
-        aluno.modelagem_3D = "modelagem_3D" in check_values
-        aluno.manufatura = "manufatura" in check_values
-        aluno.resistencia_dos_materiais = "resistencia_dos_materiais" in check_values
-        aluno.modelagem_de_sistemas = "modelagem_de_sistemas" in check_values
-        aluno.controle_e_automacao = "controle_e_automacao" in check_values
-        aluno.termodinamica = "termodinamica" in check_values
-        aluno.fluidodinamica = "fluidodinamica" in check_values
-        aluno.eletronica_digital = "eletronica_digital" in check_values
-        aluno.programacao = "programacao" in check_values
-        aluno.inteligencia_artificial = "inteligencia_artificial" in check_values
-        aluno.banco_de_dados = "banco_de_dados" in check_values
-        aluno.computacao_em_nuvem = "computacao_em_nuvem" in check_values
-        aluno.visao_computacional = "visao_computacional" in check_values
-        aluno.computacao_de_alto_desempenho = "computacao_de_alto_desempenho" in check_values
-        aluno.robotica = "robotica" in check_values
-        aluno.realidade_virtual_aumentada = "realidade_virtual_aumentada" in check_values
-        aluno.protocolos_de_comunicacao = "protocolos_de_comunicacao" in check_values
-        aluno.eficiencia_energetica = "eficiencia_energetica" in check_values
-        aluno.administracao_economia_financas = "administracao_economia_financas" in check_values
-        aluno.save()
+    if (not vencido) and request.method == 'POST':
+        areas = cria_areas(request, estudante.areas_de_interesse)
+        estudante.areas_de_interesse = areas
+        estudante.save()
         return render(request, 'users/atualizado.html',)
 
-    user = PFEUser.objects.get(pk=request.user.pk)
-    aluno = user.aluno
     context = {
-        'areas': aluno,
+        'vencido': vencido,
+        'areas': estudante.areas_de_interesse,
     }
     return render(request, 'users/areas_interesse.html', context=context)
 
@@ -307,7 +310,11 @@ def aluno_detail(request, primarykey):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def professor_detail(request, primarykey):
     """Mostra detalhes sobre o professor."""
-    professor = Professor.objects.get(pk=primarykey)
+    try:
+        professor = Professor.objects.get(pk=primarykey)
+    except Professor.DoesNotExist:
+        return HttpResponse("Professor não encontrado.", status=401)
+
     projetos = Projeto.objects.filter(orientador=professor)
     context = {
         'professor': professor,
@@ -319,7 +326,11 @@ def professor_detail(request, primarykey):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def parceiro_detail(request, primarykey):
     """Mostra detalhes sobre o parceiro."""
-    parceiro = Parceiro.objects.get(pk=primarykey)
+    try:
+        parceiro = Parceiro.objects.get(pk=primarykey)
+    except Professor.DoesNotExist:
+        return HttpResponse("Professor não encontrado.", status=401)
+
     configuracao = Configuracao.objects.all().first()
     conexoes = Conexao.objects.filter(parceiro=parceiro)
     context = {

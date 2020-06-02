@@ -45,10 +45,10 @@ class Areas(models.Model):
                                       default=False)
     inteligencia_artificial = models.BooleanField("Inteligência Artificial",
                                                   default=False)
-    banco_de_dados = models.BooleanField("Banco de Dados",
-                                         default=False)
     computacao_em_nuvem = models.BooleanField("Computação em Nuvem",
                                               default=False)
+    banco_de_dados = models.BooleanField("Banco de Dados",
+                                         default=False)
     visao_computacional = models.BooleanField("Visão Computacional",
                                               default=False)
     computacao_de_alto_desempenho = models.BooleanField("Computação de Alto Desempenho",
@@ -81,6 +81,7 @@ class Areas(models.Model):
                + ("V" if self.programacao else "F") + " "\
                + ("V" if self.inteligencia_artificial else "F") + " "\
                + ("V" if self.computacao_em_nuvem else "F") + " "\
+               + ("V" if self.banco_de_dados else "F") + " "\
                + ("V" if self.visao_computacional else "F") + " "\
                + ("V" if self.computacao_de_alto_desempenho else "F") + " "\
                + ("V" if self.robotica else "F") + " "\
@@ -215,29 +216,6 @@ class Aluno(models.Model):
     areas_de_interesse = models.ForeignKey(Areas, on_delete=models.SET_NULL,
                                            null=True, blank=True,
                                            help_text='Áreas de interesse dos alunos')
-
-    #areas de interesse
-    # inovacao_social = models.BooleanField(default=False)
-    # ciencia_dos_dados = models.BooleanField(default=False)
-    # modelagem_3D = models.BooleanField(default=False)
-    # manufatura = models.BooleanField(default=False)
-    # resistencia_dos_materiais = models.BooleanField(default=False)
-    # modelagem_de_sistemas = models.BooleanField(default=False)
-    # controle_e_automacao = models.BooleanField(default=False)
-    # termodinamica = models.BooleanField(default=False)
-    # fluidodinamica = models.BooleanField(default=False)
-    # eletronica_digital = models.BooleanField(default=False)
-    # programacao = models.BooleanField(default=False)
-    # inteligencia_artificial = models.BooleanField(default=False)
-    # banco_de_dados = models.BooleanField(default=False)
-    # computacao_em_nuvem = models.BooleanField(default=False)
-    # visao_computacional = models.BooleanField(default=False)
-    # computacao_de_alto_desempenho = models.BooleanField(default=False)
-    # robotica = models.BooleanField(default=False)
-    # realidade_virtual_aumentada = models.BooleanField(default=False)
-    # protocolos_de_comunicacao = models.BooleanField(default=False)
-    # eficiencia_energetica = models.BooleanField(default=False)
-    # administracao_economia_financas = models.BooleanField(default=False)
 
     trabalhou = models.TextField(max_length=1000, null=True, blank=True,
                                  help_text='Trabalhou ou estagio em alguma empresa de engenharia?')

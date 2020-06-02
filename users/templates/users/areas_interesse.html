@@ -11,7 +11,9 @@
         {% csrf_token %}
         {% include "areas.html"%}
         <p>&nbsp;</p>
-        <button type="submit">Enviar</button>
+        {% if not vencido %}
+            <button type="submit">Enviar</button>
+        {% endif %}
         <p>&nbsp;</p>
     </form>
 {% endblock %}
