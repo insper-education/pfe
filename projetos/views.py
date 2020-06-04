@@ -156,6 +156,8 @@ def selecao_propostas(request):
     ano = configuracao.ano
     semestre = configuracao.semestre
 
+    liberadas_propostas = configuracao.liberadas_propostas
+
     # Vai para próximo semestre
     if semestre == 1:
         semestre = 2
@@ -194,7 +196,7 @@ def selecao_propostas(request):
             }
             return render(request, 'generic.html', context=context)
 
-        if request.method == 'POST':
+        if liberadas_propostas and request.method == 'POST':
             prioridade = {}
             for proposta in propostas:
                 check_values = request.POST.get('selection'+str(proposta.pk), "0")
@@ -239,8 +241,10 @@ def selecao_propostas(request):
 
     else:
         return HttpResponse("Acesso irregular.", status=401)
+    
 
     context = {
+        'liberadas_propostas': liberadas_propostas,
         'vencido': vencido,
         'propostas': propostas,
         'opcoes': opcoes,
@@ -1868,7 +1872,9 @@ def proposta_editar(request, slug):
     except Proposta.DoesNotExist:
         return HttpResponseNotFound('<h1>Proposta de Projeto não encontrada!</h1>')
 
-    if request.method == 'POST':
+    liberadas_propostas = Configuracao.objects.first().liberadas_propostas
+    
+    if liberadas_propostas and request.method == 'POST':
         preenche_proposta(request, proposta)
         mensagem = envia_proposta(proposta) # Por e-mail
         resposta = "Submissão de proposta de projeto atualizada com sucesso.<br>"
@@ -1883,6 +1889,7 @@ def proposta_editar(request, slug):
         return render(request, 'generic.html', context=context)
 
     context = {
+        'liberadas_propostas': liberadas_propostas,
         'full_name' : proposta.nome,
         'email' : proposta.email,
         'organizacao' : proposta.nome_organizacao,
@@ -2085,7 +2092,7 @@ def arquivos2(request, organizacao, usuario, path):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def projetos_lista(request, periodo):
     """Lista todos os projetos."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.first()
     projetos = Projeto.objects.filter(alocacao__isnull=False).distinct() # no futuro remover
     projetos = projetos.order_by("ano", "semestre", "organizacao", "titulo",)
     if periodo == "todos":

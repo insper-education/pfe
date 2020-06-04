@@ -362,6 +362,8 @@ class Configuracao(models.Model):
                                            help_text='Separar lista por ponto e virgula')
     liberados_projetos = models.BooleanField(default=False,
                                              help_text='Para que alunos vejam projetos alocados')
+    liberadas_propostas = models.BooleanField(default=False,
+                                             help_text='Para que alunos vejam propostas disponiveis')
 
     class Meta:
         verbose_name = 'Configuração'

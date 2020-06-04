@@ -25,53 +25,57 @@
     <h3>Propostas de Projetos Disponíveis</h3>
 
     {% if propostas %}
-      <form action="" method="post"> {% csrf_token %}  
-        <table>
-          {% for proposta in propostas %} 
-            {% if proposta.disponivel %}
-              <tr>
-                <td>
-                  <select id="selection{{proposta.pk}}" name="selection{{proposta.pk}}" 
-                  {% if vencido %}disabled{% endif %}></select>
-                  <script type="text/javascript">
-                    var select = document.getElementById("selection{{proposta.pk}}");
-                    select.options[select.options.length] = new Option("--", 0);
-                    for(var index=1; index<={{propostas|length}}; index++){
-                      select.options[select.options.length] = new Option(index, index);
-                    }
+      <form action="" method="post"> {% csrf_token %}
+        {% if liberadas_propostas %}
+          <table>
+            {% for proposta in propostas %} 
+              {% if proposta.disponivel %}
+                <tr>
+                  <td>
+                    <select id="selection{{proposta.pk}}" name="selection{{proposta.pk}}" 
+                    {% if vencido %}disabled{% endif %}></select>
+                    <script type="text/javascript">
+                      var select = document.getElementById("selection{{proposta.pk}}");
+                      select.options[select.options.length] = new Option("--", 0);
+                      for(var index=1; index<={{propostas|length}}; index++){
+                        select.options[select.options.length] = new Option(index, index);
+                      }
 
-                    // Para agora nao encontrei forma mais inteligente de fazer isso
-                    {% for opcao in opcoes %} 
-                      {% if opcao.proposta.pk == proposta.pk %}
-                      select.selectedIndex = {{ opcao.prioridade }};
-                      {% endif %}
-                    {% endfor %}
+                      // Para agora nao encontrei forma mais inteligente de fazer isso
+                      {% for opcao in opcoes %} 
+                        {% if opcao.proposta.pk == proposta.pk %}
+                        select.selectedIndex = {{ opcao.prioridade }};
+                        {% endif %}
+                      {% endfor %}
 
-                  </script>
-                </td>
-                <td>
-                  <a href="{% url 'proposta_detalhes' proposta.pk %}">
-                    {% if proposta.titulo %}
-                      {{proposta.titulo}}
-                    {% else %}
-                      PROBLEMA EM RECUPERAR TÍTULO DA PROPOSTA
-                    {% endif %}
-                    <font color="darkblue">
-                      {% if proposta.nome_organizacao %}
-                        ({{ proposta.nome_organizacao }})
-                      {% elif proposta.organizacao and proposta.organizacao.nome %}
-                        ({{ proposta.organizacao.nome }})
+                    </script>
+                  </td>
+                  <td>
+                    <a href="{% url 'proposta_detalhes' proposta.pk %}">
+                      {% if proposta.titulo %}
+                        {{proposta.titulo}}
                       {% else %}
-                        PROBLEMA EM RECUPERAR ORGANIZAÇÃO DA PROPOSTA
+                        PROBLEMA EM RECUPERAR TÍTULO DA PROPOSTA
                       {% endif %}
-                    </font>
-                  </a>
-                </td>
-              </tr>
-            {% endif %}
-          {% endfor %}
-        </table>
-        <p>&nbsp;</p>
+                      <font color="darkblue">
+                        {% if proposta.nome_organizacao %}
+                          ({{ proposta.nome_organizacao }})
+                        {% elif proposta.organizacao and proposta.organizacao.nome %}
+                          ({{ proposta.organizacao.nome }})
+                        {% else %}
+                          PROBLEMA EM RECUPERAR ORGANIZAÇÃO DA PROPOSTA
+                        {% endif %}
+                      </font>
+                    </a>
+                  </td>
+                </tr>
+              {% endif %}
+            {% endfor %}
+          </table>
+          <p>&nbsp;</p>
+        {% else %}
+          Propostas ainda não liberadas.
+        {% endif %}
 
         <font color="red">
           {{warnings|linebreaks}}
