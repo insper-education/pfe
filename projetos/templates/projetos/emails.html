@@ -114,27 +114,29 @@
   ):
   <table>
     {% for semestre,projetos in email_p_semestre %}
-      <tr>
-        <td>{{semestre}}</td>
-        {% for projeto, pessoas in projetos.items %}
-          <td>
-            {% if pessoas %}
-              <a href="javascript:manda(
-                '{% for pessoa in pessoas.estudantes %}{%if pessoa %}{{pessoa.user.first_name|parse_quote}}%20{{pessoa.user.last_name|parse_quote}}%20&lt;{{ pessoa.user.email|parse_quote }}&gt;,{% endif %}{% endfor %}',
-                '{% for pessoa in pessoas.orientador %}{%if pessoa %}{{pessoa.user.first_name|parse_quote}}%20{{pessoa.user.last_name|parse_quote}}%20&lt;{{ pessoa.user.email|parse_quote }}&gt;,{% endif %}{% endfor %}',
-                '{% for pessoa in pessoas.parceiros %}{%if pessoa %}{{pessoa.user.first_name|parse_quote}}%20{{pessoa.user.last_name|parse_quote}}%20&lt;{{ pessoa.user.email|parse_quote }}&gt;,{% endif %}{% endfor %}',
-                '{{projeto}}',
-                {% if projeto.avancado %}true{% else %}false{% endif %}
-              );
-              "
-              data-toggle="tooltip" data-html="true" animation="true" title="
-                {{projeto}}
-              "
-              >p{{projeto.pk}}</a><br>
-            {% endif %}
-          </td>
-        {% endfor %}
-      </tr>
+      {% if projetos %}
+        <tr>
+          <td>{{semestre}}</td>
+          {% for projeto, pessoas in projetos.items %}
+            <td>
+              {% if pessoas %}
+                <a href="javascript:manda(
+                  '{% for pessoa in pessoas.estudantes %}{%if pessoa %}{{pessoa.user.first_name|parse_quote}}%20{{pessoa.user.last_name|parse_quote}}%20&lt;{{ pessoa.user.email|parse_quote }}&gt;,{% endif %}{% endfor %}',
+                  '{% for pessoa in pessoas.orientador %}{%if pessoa %}{{pessoa.user.first_name|parse_quote}}%20{{pessoa.user.last_name|parse_quote}}%20&lt;{{ pessoa.user.email|parse_quote }}&gt;,{% endif %}{% endfor %}',
+                  '{% for pessoa in pessoas.parceiros %}{%if pessoa %}{{pessoa.user.first_name|parse_quote}}%20{{pessoa.user.last_name|parse_quote}}%20&lt;{{ pessoa.user.email|parse_quote }}&gt;,{% endif %}{% endfor %}',
+                  '{{projeto}}',
+                  {% if projeto.avancado %}true{% else %}false{% endif %}
+                );
+                "
+                data-toggle="tooltip" data-html="true" animation="true" title="
+                  {{projeto}}
+                "
+                >p{{projeto.pk}}</a><br>
+              {% endif %}
+            </td>
+          {% endfor %}
+        </tr>
+      {% endif %}
     {% endfor %}
   </table>
   <br>

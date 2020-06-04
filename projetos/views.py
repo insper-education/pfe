@@ -241,7 +241,7 @@ def selecao_propostas(request):
 
     else:
         return HttpResponse("Acesso irregular.", status=401)
-    
+
 
     context = {
         'liberadas_propostas': liberadas_propostas,
@@ -1873,7 +1873,7 @@ def proposta_editar(request, slug):
         return HttpResponseNotFound('<h1>Proposta de Projeto não encontrada!</h1>')
 
     liberadas_propostas = Configuracao.objects.first().liberadas_propostas
-    
+
     if liberadas_propostas and request.method == 'POST':
         preenche_proposta(request, proposta)
         mensagem = envia_proposta(proposta) # Por e-mail
@@ -2737,7 +2737,7 @@ def emails(request):
 
         projetos_p_semestre.append(projetos_pessoas)
 
-        if ano > configuracao.ano or (ano == configuracao.ano and semestre > configuracao.semestre):
+        if ano > configuracao.ano and semestre == configuracao.semestre:
             break
 
         # Vai para próximo semestre
