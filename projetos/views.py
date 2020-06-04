@@ -209,7 +209,7 @@ def selecao_propostas(request):
                     if prioridade[proposta.pk] != "0":
                         if not aluno.opcoes.filter(pk=proposta.pk): # Se lista for vazia
                             Opcao.objects.create(aluno=aluno, proposta=proposta,
-                                                prioridade=int(prioridade[proposta.pk]))
+                                                 prioridade=int(prioridade[proposta.pk]))
                         elif Opcao.objects.get(aluno=aluno, proposta=proposta).\
                                         prioridade != int(prioridade[proposta.pk]):
                             opc = Opcao.objects.get(aluno=aluno, proposta=proposta)
@@ -231,9 +231,9 @@ def selecao_propostas(request):
             else:
                 context = {'warnings': warnings,}
                 return render(request, 'projetos/projetosincompleto.html', context)
-        
+
         opcoes = Opcao.objects.filter(aluno=aluno)
-    
+
     elif user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4:
         opcoes = []
 
@@ -314,25 +314,51 @@ def ordena_propostas(disponivel=True, ano=0, semestre=0):
     mylist = sorted(mylist, key=lambda x: x[1], reverse=True)
     return mylist
 
+
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def histograma(request):
     """Exibe um histograma com a procura dos projetos pelos alunos."""
 
-    if request.is_ajax():
-        if 'topicId' in request.POST:
-            # if request.POST['topicId'] != 'todas':
-            periodo = request.POST['topicId'].split('.')
-            #     projetos = Areas.objects.filter(projeto__ano=int(periodo[0])).\
-            #                                 filter(projeto__semestre=int(periodo[1]))
-            mylist = ordena_propostas(ano=int(periodo[0]), semestre=int(periodo[1]))
-        else:
-            return HttpResponse("Algum erro não identificado.", status=401)
-    else:
-        mylist = ordena_propostas()
+    configuracao = Configuracao.objects.first()
+    ano = configuracao.ano
+    semestre = configuracao.semestre
 
-    context = {'mylist': mylist}
+    # Vai para próximo semestre
+    if semestre == 1:
+        semestre = 2
+    else:
+        ano += 1
+        semestre = 1
+
+    context = {
+        'ano': ano,
+        'semestre': semestre,
+        'loop_anos': range(2018, configuracao.ano+1),
+    }
+
     return render(request, 'projetos/histograma.html', context)
+
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def histograma_ajax(request):
+    """Exibe um histograma com a procura dos projetos pelos alunos."""
+
+    if request.is_ajax() and 'anosemestre' in request.POST:
+        anosemestre = request.POST['anosemestre']
+        ano = int(anosemestre.split(".")[0])
+        semestre = int(anosemestre.split(".")[1])
+    else:
+        return HttpResponse("Algum erro não identificado.", status=401)
+
+    mylist = ordena_propostas(ano=ano, semestre=semestre)
+
+    context = {
+        'mylist': mylist,
+    }
+
+    return render(request, 'projetos/histograma_ajax.html', context)
 
 def get_next_opcao(numb, opcoes):
     """Busca proxima opcao do aluno."""
@@ -1442,7 +1468,6 @@ def submissao(request):
 
         aluno = Aluno.objects.get(pk=request.user.aluno.pk)
 
-        configuracao = Configuracao.objects.first()
         ano = configuracao.ano
         semestre = configuracao.semestre
 
@@ -2460,7 +2485,7 @@ def encontros_marcar(request):
     configuracao = Configuracao.objects.all().first()
     hoje = datetime.date.today()
     encontros = Encontro.objects.filter(startDate__gt=hoje)
-    
+
     try:
         aluno = Aluno.objects.get(pk=request.user.aluno.pk)
     except Aluno.DoesNotExist:

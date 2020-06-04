@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 3 de Junho de 2020
+{% endcomment %}
+
+{% block content %}
+
+  {% if mylist %}
+    <div class="2areas2">
+      <ul style="padding:0;" class="chart">
+        <h3><li class="title" title="Procura dos Projetos"></li></h3>
+        <li></li>
+        <li></li>
+
+        {% for proposta,opcoes in mylist %} 
+            <a href="{% url 'proposta_completa' proposta.id %}"> 
+              <li class="title" title="
+              {% if not proposta.disponivel%}X{% endif %}
+              {{ forloop.counter }}&ordm; :
+              {{proposta.titulo}}
+              ({{ proposta.organizacao.nome }})"></li>
+            </a>
+            <li class="past" title="">
+              <span class="bar" data-number="{{opcoes}}"></span>
+              <span class="number">{{opcoes}}</span>
+            </li>
+            <li></li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% else %}
+      <div class="2areas2">
+        Não há projetos no semestre!
+      </div>
+    {% endif %}
+
+{% endblock %}
