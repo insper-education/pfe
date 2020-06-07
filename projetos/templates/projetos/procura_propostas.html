@@ -88,70 +88,94 @@
 
 		};
 
-function titulos(animation) {
-              const chartInstance = this.chart;
-              const ctx = chartInstance.ctx;
-              const dataset = this.data.datasets[0];
-              const meta = chartInstance.controller.getDatasetMeta(0);
+    var textos = []
 
-              // Label
-              counter = 1
-              Chart.helpers.each(meta.data.forEach((bar, index) => {
-                const label = this.data.labels[index];
-                const labelPositionX = 9;
-                const labelWidth = ctx.measureText(label).width + labelPositionX;
+    function titulos(animation) {
+      const chartInstance = this.chart;
+      const ctx = chartInstance.ctx;
+      const dataset = this.data.datasets[0];
+      const meta = chartInstance.controller.getDatasetMeta(0);
 
-                ctx.textBaseline = 'bottom';
-                ctx.textAlign = 'left';
-                ctx.fillStyle = '#000000';
-                ctx.font = "12px Open Sans";
-                ctx.fillText(label, labelPositionX+19, bar._model.y-8);
-                ctx.fillText(counter.toString()+"º : ", labelPositionX, bar._model.y-8);
-                counter = counter + 1
+      // Label
+      textos = []
+      counter = 1
+      Chart.helpers.each(meta.data.forEach((bar, index) => {
+        const label = this.data.labels[index]
+        const labelPositionX = 9
+        const labelPositionY = bar._model.y-8
+        const labelWidth = ctx.measureText(label).width + labelPositionX
 
-              }));
-            }
+        ctx.textBaseline = 'bottom'
+        ctx.textAlign = 'left'
+        ctx.fillStyle = '#000000'
+        ctx.font = "12px Open Sans"
+        var espaco = 19
+        if(counter>9) {
+          espaco = 25
+        }
+        label_limpo = label.replace("&amp;", "&")
+        ctx.fillText(label_limpo, labelPositionX+espaco, labelPositionY)
+        ctx.fillText(counter.toString()+"º : ", labelPositionX, labelPositionY)
+        counter = counter + 1
+
+        var campo = {
+            label: label,
+            x: labelPositionX,
+            y: labelPositionY,
+            w: ctx.measureText(label).width,
+            h: 12,
+        };
+
+        textos.push(campo)
+
+      }));
+    }
 
     function numeros(animation) {
-              const chartInstance = this.chart;
-              const ctx = chartInstance.ctx;
-              const dataset = this.data.datasets[0];
-              const meta = chartInstance.controller.getDatasetMeta(0);
+      const chartInstance = this.chart;
+      const ctx = chartInstance.ctx;
+      const dataset = this.data.datasets[0];
+      const meta = chartInstance.controller.getDatasetMeta(0);
 
-              ctx.textAlign = "center";
-              ctx.textBaseline = 'top';
-              ctx.font = "7px Open Sans";
-              ctx.fillStyle = "#000000";
+      ctx.textAlign = "center";
+      ctx.textBaseline = 'top';
+      ctx.font = "7px Open Sans";
+      ctx.fillStyle = "#000000";
 
-              // Numeros
-              Chart.helpers.each(this.data.datasets.forEach(function (dataset, i) {
-                  var meta = chartInstance.controller.getDatasetMeta(i);
-                  Chart.helpers.each(meta.data.forEach(function (bar, index) {
-                      data = dataset.data[index];
-                          if(data>0) {
-                            ctx.fillText(data, bar._model.x-7, bar._model.y-2);
-                          }
-                  }),this)
-              }),this);
+      // Numeros
+      Chart.helpers.each(this.data.datasets.forEach(function (dataset, i) {
+          var meta = chartInstance.controller.getDatasetMeta(i);
+          Chart.helpers.each(meta.data.forEach(function (bar, index) {
+              data = dataset.data[index];
+                  if(data>0) {
+                    ctx.fillText(data, bar._model.x-7, bar._model.y-2);
+                  }
+          }),this)
+      }),this);
 
-              // Label
-              counter = 1
-              Chart.helpers.each(meta.data.forEach((bar, index) => {
-                const label = this.data.labels[index];
-                const labelPositionX = 9;
-                const labelWidth = ctx.measureText(label).width + labelPositionX;
+      // Label
+      counter = 1
+      Chart.helpers.each(meta.data.forEach((bar, index) => {
+        const label = this.data.labels[index];
+        const labelPositionX = 9;
+        const labelWidth = ctx.measureText(label).width + labelPositionX;
 
-                ctx.textBaseline = 'bottom';
-                ctx.textAlign = 'left';
-                ctx.fillStyle = '#000000';
-                ctx.font = "12px Open Sans";
-                ctx.fillText(label, labelPositionX+19, bar._model.y-8);
-                ctx.fillText(counter.toString()+"º : ", labelPositionX, bar._model.y-8);
-                counter = counter + 1
+        ctx.textBaseline = 'bottom';
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#000000';
+        ctx.font = "12px Open Sans";
+        var espaco = 19
+        if(counter>9) {
+          espaco = 25
+        }
+        label_limpo = label.replace("&amp;", "&")
+        ctx.fillText(label_limpo, labelPositionX+espaco, bar._model.y-8);
+        ctx.fillText(counter.toString()+"º : ", labelPositionX, bar._model.y-8);
+        counter = counter + 1
 
-              }));
+      }));
 
-            }
+    }
 
     var config = {
       type: 'horizontalBar',
@@ -208,16 +232,33 @@ function titulos(animation) {
       {% endif %}
 
       canvasP.onclick = function(e) {
+
+        const rect = canvasP.getBoundingClientRect()
+        const x = event.clientX - rect.left
+        const y = event.clientY - rect.top
+
+        var label = ""
+
+        textos.forEach((element) => {
+          if( y >= element.y-element.h && y <= element.y ) {
+            label = element.label
+          }
+        })
+
+        if (label == "") {
           var slice = histograma.getElementAtEvent(e);
           if (!slice.length) return;
-          var label = slice[0]._model.label;
-          switch (label) {
-            {% for proposta in propostas %} 
-              case '{{proposta.titulo}} ({{proposta.organizacao}})':
-                location.href = "{% url 'proposta_completa' proposta.id %}";
-                break;
-            {% endfor %}
-          }
+          label = slice[0]._model.label;
+        }
+        
+        switch (label) {
+          {% for proposta in propostas %} 
+            case '{{proposta.titulo}} ({{proposta.organizacao}})':
+              location.href = "{% url 'proposta_completa' proposta.id %}";
+              break;
+          {% endfor %}
+        }
+        
       }
 
     };
