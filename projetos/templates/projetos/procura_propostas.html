@@ -205,10 +205,10 @@
 					scales: {
 						xAxes: [{
 							stacked: true,
+              ticks: {stepSize: 1,},
 						}],
 						yAxes: [{
               stacked: true,
-							ticks: {labelOffset: 0.0,},
               display: false
 						}]
 					},
@@ -258,7 +258,7 @@
               break;
           {% endfor %}
         }
-        
+
       }
 
     };
