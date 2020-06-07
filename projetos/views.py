@@ -297,11 +297,11 @@ def ordena_propostas(disponivel=True, ano=0, semestre=0):
         semestre = configuracao.semestre
 
     opcoes_list = []
-    if disponivel:
+    if disponivel: # somente as propostas disponibilizadas
         propostas = Proposta.objects.filter(ano=ano).\
                                filter(semestre=semestre).\
                                filter(disponivel=True)
-    else:
+    else: # todas as propostas
         propostas = Proposta.objects.filter(ano=ano).\
                                filter(semestre=semestre)
     for proposta in propostas:
@@ -319,6 +319,53 @@ def ordena_propostas(disponivel=True, ano=0, semestre=0):
     return mylist
 
 
+def ordena_propostas_novo(disponivel=True, ano=2018, semestre=2):
+    """Gera lista com propostas ordenados pelos com maior interesse pelos alunos."""
+
+    prioridades = [[], [], [], [], []]
+    if disponivel: # somente as propostas disponibilizadas
+        propostas = Proposta.objects.filter(ano=ano).\
+                               filter(semestre=semestre).\
+                               filter(disponivel=True)
+    else: # todas as propostas
+        propostas = Proposta.objects.filter(ano=ano).\
+                               filter(semestre=semestre)
+    for proposta in propostas:
+        opcoes = Opcao.objects.filter(proposta=proposta)
+        opcoes_alunos = opcoes.filter(aluno__user__tipo_de_usuario=1)
+        opcoes_validas = opcoes_alunos.filter(aluno__anoPFE=ano).\
+                                       filter(aluno__semestrePFE=semestre)
+        count = [0, 0, 0, 0, 0]
+        for opcao in opcoes_validas:
+            if opcao.prioridade == 1:
+                count[0] += 1
+            elif opcao.prioridade == 2:
+                count[1] += 1
+            elif opcao.prioridade == 3:
+                count[2] += 1
+            elif opcao.prioridade == 4:
+                count[3] += 1
+            elif opcao.prioridade == 5:
+                count[4] += 1
+
+        prioridades[0].append(count[0])
+        prioridades[1].append(count[1])
+        prioridades[2].append(count[2])
+        prioridades[3].append(count[3])
+        prioridades[4].append(count[4])
+
+    mylist = zip(propostas,
+                 prioridades[0],
+                 prioridades[1],
+                 prioridades[2],
+                 prioridades[3],
+                 prioridades[4])
+    mylist = sorted(mylist, key=lambda x: (x[1], x[2], x[3], x[4], x[5]), reverse=True)
+
+    #return propostas, prioridades
+    return mylist
+
+# NÃO ESTA MAIS SENDO USADO
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def histograma(request):
@@ -343,7 +390,7 @@ def histograma(request):
 
     return render(request, 'projetos/histograma.html', context)
 
-
+# NÃO ESTA MAIS SENDO USADO
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def histograma_ajax(request):
@@ -363,6 +410,50 @@ def histograma_ajax(request):
     }
 
     return render(request, 'projetos/histograma_ajax.html', context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def procura_propostas(request):
+    """Exibe um histograma com a procura das propostas pelos alunos."""
+
+    configuracao = Configuracao.objects.first()
+    ano = configuracao.ano
+    semestre = configuracao.semestre
+
+    # Vai para próximo semestre
+    if semestre == 1:
+        semestre = 2
+    else:
+        ano += 1
+        semestre = 1
+
+    if request.is_ajax() and 'anosemestre' in request.POST:
+        anosemestre = request.POST['anosemestre']
+        ano = int(anosemestre.split(".")[0])
+        semestre = int(anosemestre.split(".")[1])
+    #else:
+    #    return HttpResponse("Algum erro não identificado.", status=401)
+
+    mylist = ordena_propostas_novo(True, ano=ano, semestre=semestre)
+
+    propostas = []
+    prioridades = [[], [], [], [], []]
+    if len(mylist) > 0:
+        unzipped_object = zip(*mylist)
+        propostas, prioridades[0], prioridades[1], prioridades[2], prioridades[3], prioridades[4]\
+             = list(unzipped_object)
+
+    context = {
+        'tamanho': len(propostas)*5,
+        'propostas': propostas,
+        'prioridades': prioridades,
+        'ano': ano,
+        'semestre': semestre,
+        'loop_anos': range(2018, configuracao.ano+1),
+    }
+
+    return render(request, 'projetos/procura_propostas.html', context)
+
 
 def get_next_opcao(numb, opcoes):
     """Busca proxima opcao do aluno."""

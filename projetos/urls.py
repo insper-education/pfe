@@ -66,6 +66,7 @@ urlpatterns = [
     path('organizacao_completo/<str:org>', views.organizacao_completo, name='organizacao_completo'),
     path('organizacoes_tabela/', views.organizacoes_tabela, name='organizacoes_tabela'),
     path('parceiro_propostas', views.parceiro_propostas, name='parceiro_propostas'),
+    path('procura_propostas/', views.procura_propostas, name='procura_propostas'),
     path('professores_tabela/', views.professores_tabela, name='professores_tabela'),
     path('projeto_completo/<int:primakey>', views.projeto_completo, name='projeto_completo'),
     path('projeto_detalhes/<int:primarykey>', views.projeto_detalhes, name='projeto_detalhes'),

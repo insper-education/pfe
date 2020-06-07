@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 23 de Maio de 2019
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  <script src="{% static 'js/Chart.min.js' %}"></script>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/Chart.min.css' %}">
+{% endblock %}
+
+{% block content %}
+
+  <h3>Procura pela Propostas de Projetos</h3>
+
+  <label for="filter">Edição:</label>
+  <select id="filter" class="filter" data-tableId="projetos">
+    {% for loop in loop_anos %}
+      <option value="{{loop}}.2" {% if ano == loop and semestre == 2 %}selected{% endif %}>{{loop}}.2</option>
+      <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
+    {% endfor %}
+  </select>
+
+  <div class="2areas2">
+
+  <div id="chart-container" style="position: relative; height:{{tamanho}}vh; width:100%">
+    <canvas id="chart-area"></canvas>
+  </div>
+  
+  <script>
+
+    var barChartData = {
+			labels: [
+        {% for proposta in propostas %} 
+          '{{proposta.titulo}}',
+        {% endfor %}
+        ],
+      datakeys:[
+        {% for proposta in propostas %} 
+          '{{proposta.organizacao}}',
+        {% endfor %}
+        ],
+			datasets: [
+      {
+				label: 'Opção #5',
+				backgroundColor: 'rgb(180, 200, 160)',
+        barPercentage: 0.5,
+				data: [
+          {% for prioridade in prioridades.4 %} 
+					  {{prioridade}},
+          {% endfor %}
+				]
+			}, {
+				label: 'Opção #4',
+				backgroundColor: 'rgb(180, 180, 120)',
+        barPercentage: 0.5,
+				data: [
+          {% for prioridade in prioridades.3 %} 
+					  {{prioridade}},
+          {% endfor %}
+        ]
+			},
+      {
+				label: 'Opção #3',
+				backgroundColor: 'rgb(210, 190, 35)',
+        barPercentage: 0.5,
+				data: [
+          {% for prioridade in prioridades.2 %} 
+					  {{prioridade}},
+          {% endfor %}
+        ]
+			}, {
+				label: 'Opção #2',
+				backgroundColor: 'rgb(210, 230, 30)',
+        barPercentage: 0.5,
+				data: [
+          {% for prioridade in prioridades.1 %} 
+					  {{prioridade}},
+          {% endfor %}
+        ]
+			}, {
+				label: 'Opção #1',
+				backgroundColor: 'rgb(0, 250, 0)',
+        barPercentage: 0.5,
+				data: [
+          {% for prioridade in prioridades.0 %} 
+					  {{prioridade}},
+          {% endfor %}
+        ]
+			}]
+
+		};
+
+function titulos(animation) {
+              const chartInstance = this.chart;
+              const ctx = chartInstance.ctx;
+              const dataset = this.data.datasets[0];
+              const meta = chartInstance.controller.getDatasetMeta(0);
+
+              // Label
+              counter = 1
+              Chart.helpers.each(meta.data.forEach((bar, index) => {
+                const label = this.data.labels[index];
+                const labelPositionX = 9;
+                const labelWidth = ctx.measureText(label).width + labelPositionX;
+
+                ctx.textBaseline = 'bottom';
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#000000';
+                ctx.font = "12px Open Sans";
+                ctx.fillText(label, labelPositionX+19, bar._model.y-8);
+                ctx.fillText(counter.toString()+"º : ", labelPositionX, bar._model.y-8);
+                counter = counter + 1
+
+              }));
+            }
+
+    function numeros(animation) {
+              const chartInstance = this.chart;
+              const ctx = chartInstance.ctx;
+              const dataset = this.data.datasets[0];
+              const meta = chartInstance.controller.getDatasetMeta(0);
+
+              ctx.textAlign = "center";
+              ctx.textBaseline = 'top';
+              ctx.font = "7px Open Sans";
+              ctx.fillStyle = "#000000";
+
+              // Numeros
+              Chart.helpers.each(this.data.datasets.forEach(function (dataset, i) {
+                  var meta = chartInstance.controller.getDatasetMeta(i);
+                  Chart.helpers.each(meta.data.forEach(function (bar, index) {
+                      data = dataset.data[index];
+                          if(data>0) {
+                            ctx.fillText(data, bar._model.x-7, bar._model.y-2);
+                          }
+                  }),this)
+              }),this);
+
+              // Label
+              counter = 1
+              Chart.helpers.each(meta.data.forEach((bar, index) => {
+                const label = this.data.labels[index];
+                const labelPositionX = 9;
+                const labelWidth = ctx.measureText(label).width + labelPositionX;
+
+                ctx.textBaseline = 'bottom';
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#000000';
+                ctx.font = "12px Open Sans";
+                ctx.fillText(label, labelPositionX+19, bar._model.y-8);
+                ctx.fillText(counter.toString()+"º : ", labelPositionX, bar._model.y-8);
+                counter = counter + 1
+
+              }));
+
+            }
+
+    var config = {
+      type: 'horizontalBar',
+				data: barChartData,
+				options: {
+					title: {
+						display: false,
+						text: 'Procuta de Propostas de Projetos'
+					},
+          layout: {
+            padding: {
+              top: 6,
+            }
+          },
+					tooltips: {
+            enabled: true,
+            itemSort: function(a, b) {
+              return b.datasetIndex - a.datasetIndex
+            },
+						mode: 'index',
+						intersect: true
+					},
+					responsive: true,
+
+          maintainAspectRatio: false,
+          legend: {position: 'bottom'},
+					scales: {
+						xAxes: [{
+							stacked: true,
+						}],
+						yAxes: [{
+              stacked: true,
+							ticks: {labelOffset: 0.0,},
+              display: false
+						}]
+					},
+          animation: {
+            onProgress: titulos,
+            onComplete: numeros,
+          }
+  
+				}
+    };
+
+    function chart() {
+
+      var canvasP = document.getElementById('chart-area');
+      var ctx = canvasP.getContext('2d');
+      
+      {% if tamanho > 0 %}
+        var histograma = new Chart(ctx, config);
+      {% else %}
+        $("#chart-container").text("Não há projetos!");
+      {% endif %}
+
+      canvasP.onclick = function(e) {
+          var slice = histograma.getElementAtEvent(e);
+          if (!slice.length) return;
+          var label = slice[0]._model.label;
+          switch (label) {
+            {% for proposta in propostas %} 
+              case '{{proposta.titulo}}':
+                location.href = "{% url 'proposta_completa' proposta.id %}";
+                break;
+            {% endfor %}
+          }
+      }
+
+    };
+  
+  </script>
+
+  </div>
+
+  <script>
+  
+    function carrega_semestre(){
+        var anosemestre = $(".filter option:selected").attr("value");
+        $.ajax({
+            type: "POST",
+            url: "{% url 'procura_propostas' %}",
+            data: {
+                anosemestre: anosemestre,
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+            },
+            success: function(response){
+                $("div.2areas2").replaceWith($("div.2areas2",response));
+                chart()
+            },
+            error: function(response) {
+                console.log('error')
+            }
+        });
+    }
+
+    //window.onload = chart;
+    //window.addEventListener("resize", chart);
+    $(".filter").change(carrega_semestre);    
+    $(document).ready(carrega_semestre);
+
+  </script>
+
+{% endblock %}
