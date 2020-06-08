@@ -8,6 +8,11 @@
 {% block head %}
   {% load static %}
   <script src="{% static 'js/Chart.min.js' %}"></script>
+  <script>
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
   <style>
     .prioridade {display: inline}
   </style>
@@ -62,7 +67,7 @@
         {% if projeto.avancado %}
           <p style="margin-left:1em;">Tipo: <font color="red">PFE Avançado</font></p>
         {% endif %}
-        <p style="margin-left:1em;">Edição: {{projeto.ano}}.{{projeto.semestre}}</p>
+        <!-- <p style="margin-left:1em;">Edição: {{projeto.ano}}.{{projeto.semestre}}</p> -->
         <p style="margin-left:1em;">Orientador: 
           <a href="{% url 'professor_detail' projeto.orientador.id %}"> {{projeto.orientador.user.get_full_name}}</a>
           <a href="mailto:{{projeto.orientador.user.email}}"> &lt;{{projeto.orientador.user.email}}&gt;</a>
@@ -70,15 +75,19 @@
         <p style="margin-left:1em;">Alunos:</p>
         <ol>
         {% for aluno,prioridade in prioridades %}
-          <li><a href="{% url 'aluno_detail' aluno.id %}">{{aluno.user.get_full_name}}</a>
+          <li><a href="{% url 'aluno_detail' aluno.id %}"
+              data-toggle="tooltip" data-html="true" animation="true" title="
+              {% if prioridade == 0 %}
+                prioridade não definida
+              {% else %}
+                prioridade #{{prioridade}}
+              {% endif %}">
+              {{aluno.user.get_full_name}}
+              </a>
               <a href="mailto:{{aluno.user.email}}">&lt;{{aluno.user.email}}&gt;</a>
-              [{{ aluno.get_curso_display }}] &nbsp;
-            {% if prioridade == 0 %}
-              (prioridade não definida)
-            {% else %}
-              (prioridade # <div class="prioridade">{{prioridade}}</div>)
-            {% endif %}
-            { {{ aluno.alocacao_set.first.get_conceito_display }} }
+              [{{ aluno.get_curso_display }}]
+              <div class="prioridade" style="display: none;">{{prioridade}}</div> <!-- para mostrar no gráfico -->
+              <!-- &nbsp; { {{ aluno.alocacao_set.first.get_conceito_display }} } -->
           </li>
         {% endfor %}
         </ol>
