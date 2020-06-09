@@ -2963,6 +2963,17 @@ def editar_banca(banca, request):
         banca.membro3 = None
     banca.save()
 
+def possiveis_membros_bancas():
+    professores = PFEUser.objects.all().\
+                                filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0])
+
+    administradores = PFEUser.objects.all().\
+                                filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[3][0])
+
+    pessoas = (professores | administradores).order_by(Lower("first_name"), Lower("last_name"))
+
+    return pessoas
+
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def bancas_criar(request):
@@ -2992,13 +3003,8 @@ def bancas_criar(request):
         projetos = Projeto.objects.filter(ano=ano).filter(semestre=semestre).\
                                                    exclude(orientador=None)
                                                    #filter(disponivel=True)
-        professores = PFEUser.objects.all().\
-                                  filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0])
-
-        administradores = PFEUser.objects.all().\
-                                  filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[3][0])
-
-        pessoas = (professores | administradores).order_by(Lower("first_name"), Lower("last_name"))
+        
+        pessoas = possiveis_membros_bancas()
 
         context = {
             'projetos' : projetos,
@@ -3025,12 +3031,9 @@ def bancas_buscar(request):
 def bancas_editar(request, primarykey):
     """Edita uma banca de avaliação para o projeto."""
     banca = Banca.objects.get(pk=primarykey)
+
     if request.method == 'POST':
         editar_banca(banca, request)
-        # return HttpResponse(
-        #     "Banca editada.<br>"+\
-        #     "<a href='../bancas_index"+\
-        #     "'>Voltar</a>")
         mensagem = "Banca editada."
         context = {
             "area_principal": True,
@@ -3038,19 +3041,17 @@ def bancas_editar(request, primarykey):
             "mensagem": mensagem,
         }
         return render(request, 'generic.html', context=context)
-    else:
-        #projetos = Projeto.objects.filter(disponivel=True).exclude(orientador=None).\
-        projetos = Projeto.objects.exclude(orientador=None).order_by("-ano", "-semestre")
 
-        pessoas = PFEUser.objects.all().\
-                                  filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0]).\
-                                  order_by(Lower("first_name"), Lower("last_name")) # professores
-        context = {
-            'projetos' : projetos,
-            'pessoas' : pessoas,
-            'banca' : banca,
-        }
-        return render(request, 'projetos/bancas_editar.html', context)
+    projetos = Projeto.objects.exclude(orientador=None).order_by("-ano", "-semestre")
+
+    pessoas = possiveis_membros_bancas()
+
+    context = {
+        'projetos' : projetos,
+        'pessoas' : pessoas,
+        'banca' : banca,
+    }
+    return render(request, 'projetos/bancas_editar.html', context)
 
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
