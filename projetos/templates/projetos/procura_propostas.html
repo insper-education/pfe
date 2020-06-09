@@ -153,7 +153,7 @@
           var meta = chartInstance.controller.getDatasetMeta(i);
           Chart.helpers.each(meta.data.forEach(function (bar, index) {
               data = dataset.data[index];
-                  if(data>0) {
+                  if(data>0 && dataset._meta[0].hidden!=true) {
                     ctx.fillText(data, bar._model.x-7, bar._model.y-2);
                   }
           }),this)
