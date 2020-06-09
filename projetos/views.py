@@ -323,6 +323,8 @@ def ordena_propostas_novo(disponivel=True, ano=2018, semestre=2):
     """Gera lista com propostas ordenados pelos com maior interesse pelos alunos."""
 
     prioridades = [[], [], [], [], []]
+    estudantes = [[], [], [], [], []]
+
     if disponivel: # somente as propostas disponibilizadas
         propostas = Proposta.objects.filter(ano=ano).\
                                filter(semestre=semestre).\
@@ -336,17 +338,33 @@ def ordena_propostas_novo(disponivel=True, ano=2018, semestre=2):
         opcoes_validas = opcoes_alunos.filter(aluno__anoPFE=ano).\
                                        filter(aluno__semestrePFE=semestre)
         count = [0, 0, 0, 0, 0]
+        estudantes_tmp = ["", "", "", "", ""]
         for opcao in opcoes_validas:
             if opcao.prioridade == 1:
                 count[0] += 1
+                if estudantes_tmp[0] != "":
+                    estudantes_tmp[0] += ", "
+                estudantes_tmp[0] += opcao.aluno.user.get_full_name()
             elif opcao.prioridade == 2:
                 count[1] += 1
+                if estudantes_tmp[1] != "":
+                    estudantes_tmp[1] += ", "
+                estudantes_tmp[1] += opcao.aluno.user.get_full_name()
             elif opcao.prioridade == 3:
                 count[2] += 1
+                if estudantes_tmp[2] != "":
+                    estudantes_tmp[2] += ", "
+                estudantes_tmp[2] += opcao.aluno.user.get_full_name()
             elif opcao.prioridade == 4:
                 count[3] += 1
+                if estudantes_tmp[3] != "":
+                    estudantes_tmp[3] += ", "
+                estudantes_tmp[3] += opcao.aluno.user.get_full_name()
             elif opcao.prioridade == 5:
                 count[4] += 1
+                if estudantes_tmp[4] != "":
+                    estudantes_tmp[4] += ", "
+                estudantes_tmp[4] += opcao.aluno.user.get_full_name()
 
         prioridades[0].append(count[0])
         prioridades[1].append(count[1])
@@ -354,12 +372,24 @@ def ordena_propostas_novo(disponivel=True, ano=2018, semestre=2):
         prioridades[3].append(count[3])
         prioridades[4].append(count[4])
 
+        estudantes[0].append(estudantes_tmp[0])
+        estudantes[1].append(estudantes_tmp[1])
+        estudantes[2].append(estudantes_tmp[2])
+        estudantes[3].append(estudantes_tmp[3])
+        estudantes[4].append(estudantes_tmp[4])
+
     mylist = zip(propostas,
                  prioridades[0],
                  prioridades[1],
                  prioridades[2],
                  prioridades[3],
-                 prioridades[4])
+                 prioridades[4],
+                 estudantes[0],
+                 estudantes[1],
+                 estudantes[2],
+                 estudantes[3],
+                 estudantes[4])
+
     mylist = sorted(mylist, key=lambda x: (x[1], x[2], x[3], x[4], x[5]), reverse=True)
 
     #return propostas, prioridades
@@ -438,15 +468,20 @@ def procura_propostas(request):
 
     propostas = []
     prioridades = [[], [], [], [], []]
+    estudantes = [[], [], [], [], []]
+
     if len(mylist) > 0:
         unzipped_object = zip(*mylist)
-        propostas, prioridades[0], prioridades[1], prioridades[2], prioridades[3], prioridades[4]\
+        propostas,\
+        prioridades[0], prioridades[1], prioridades[2], prioridades[3], prioridades[4],\
+        estudantes[0], estudantes[1], estudantes[2], estudantes[3], estudantes[4]\
              = list(unzipped_object)
 
     context = {
         'tamanho': len(propostas)*5,
         'propostas': propostas,
         'prioridades': prioridades,
+        'estudantes': estudantes,
         'ano': ano,
         'semestre': semestre,
         'loop_anos': range(2018, configuracao.ano+1),

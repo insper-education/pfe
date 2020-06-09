@@ -46,8 +46,10 @@
           {% for prioridade in prioridades.4 %} 
 					  {{prioridade}},
           {% endfor %}
-				]
-			}, {
+        ],
+        estudantes: [{% for estudante in estudantes.4 %} '{{estudante}}',{% endfor %}]
+      },
+      {
 				label: 'Opção #4',
 				backgroundColor: 'rgb(180, 180, 120)',
         barPercentage: 0.5,
@@ -55,7 +57,8 @@
           {% for prioridade in prioridades.3 %} 
 					  {{prioridade}},
           {% endfor %}
-        ]
+        ],
+        estudantes: [{% for estudante in estudantes.3 %} '{{estudante}}',{% endfor %}]
 			},
       {
 				label: 'Opção #3',
@@ -65,8 +68,10 @@
           {% for prioridade in prioridades.2 %} 
 					  {{prioridade}},
           {% endfor %}
-        ]
-			}, {
+        ],
+        estudantes: [{% for estudante in estudantes.2 %} '{{estudante}}',{% endfor %}]
+			},
+      {
 				label: 'Opção #2',
 				backgroundColor: 'rgb(210, 230, 30)',
         barPercentage: 0.5,
@@ -74,8 +79,9 @@
           {% for prioridade in prioridades.1 %} 
 					  {{prioridade}},
           {% endfor %}
-        ]
-			}, {
+        ],
+        estudantes: [{% for estudante in estudantes.1 %} '{{estudante}}',{% endfor %}]
+      }, {
 				label: 'Opção #1',
 				backgroundColor: 'rgb(0, 250, 0)',
         barPercentage: 0.5,
@@ -83,9 +89,9 @@
           {% for prioridade in prioridades.0 %} 
 					  {{prioridade}},
           {% endfor %}
-        ]
+        ],
+        estudantes: [{% for estudante in estudantes.0 %} '{{estudante}}',{% endfor %}]
 			}]
-
 		};
 
     var textos = []
@@ -192,12 +198,74 @@
             }
           },
 					tooltips: {
-            enabled: true,
+            enabled: false,
             itemSort: function(a, b) {
               return b.datasetIndex - a.datasetIndex
             },
-						mode: 'index',
-						intersect: true
+            callbacks: {
+              label: function (tooltipItems, data) {
+                texto1 = data.datasets[tooltipItems.datasetIndex].label + ": " + tooltipItems.xLabel
+                texto2 = ""
+                if(tooltipItems.xLabel > 0) {
+                  texto2 = "  (" + data.datasets[tooltipItems.datasetIndex].estudantes[tooltipItems.index] + ")"; 
+                }
+                return texto1 + texto2
+              }
+            },
+            custom: function(tooltipModel) {
+                // Tooltip Element
+                var tooltipEl = document.getElementById('chartjs-tooltip');
+
+                // Create element on first render
+                if (!tooltipEl) {
+                    tooltipEl = document.createElement('div');
+                    tooltipEl.id = 'chartjs-tooltip';
+                    tooltipEl.innerHTML = '<table style="background-color: #050505; border-radius: 8px; border: 0px; padding: 20px; border-spacing: 40px 10px;"></table>';
+                    document.body.appendChild(tooltipEl);
+                }
+
+                // Hide if no tooltip
+                if (tooltipModel.opacity === 0) {
+                    tooltipEl.style.opacity = 0;
+                    return;
+                }
+
+                function getBody(bodyItem) {
+                    return bodyItem.lines;
+                }
+
+                // Set Text
+                if (tooltipModel.body) {
+                    var bodyLines = tooltipModel.body.map(getBody);
+
+                    var innerHtml = '<tbody>';
+                    bodyLines.forEach(function(body, i) {
+                        var colors = tooltipModel.labelColors[i];
+                        var style = 'background:' + colors.backgroundColor;
+                        style += '; border-color:' + colors.borderColor;
+                        style += '; border-width: 2px';
+                        
+                        innerHtml += '<tr><td style="padding: 3px; border: 0px; font-size: 9px; height: 8px;"><span style="color:white">' 
+                        innerHtml += '&nbsp;<span style="' + style + '">&nbsp;&nbsp;&nbsp;&nbsp;</span>';
+                        innerHtml += "&nbsp;&nbsp;" + body + '</span>&nbsp;</td></tr>';
+                    });
+                    innerHtml += '</tbody>';
+
+                    var tableRoot = tooltipEl.querySelector('table');
+                    tableRoot.innerHTML = innerHtml;
+                }
+
+                // `this` will be the overall tooltip
+                var position = this._chart.canvas.getBoundingClientRect();
+
+                // Display, position, and set styles for font
+                tooltipEl.style.opacity = 1.0;
+                tooltipEl.style.position = 'absolute';
+                tooltipEl.style.left = position.left + window.pageXOffset + 22 + 'px';
+                tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
+                tooltipEl.style.padding = tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px';
+                tooltipEl.style.pointerEvents = 'none';
+            }
 					},
 					responsive: true,
 
@@ -216,7 +284,7 @@
           animation: {
             onProgress: titulos,
             onComplete: numeros,
-          }
+          },
   
 				}
     };
