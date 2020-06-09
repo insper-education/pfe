@@ -2992,9 +2992,13 @@ def bancas_criar(request):
         projetos = Projeto.objects.filter(ano=ano).filter(semestre=semestre).\
                                                    exclude(orientador=None)
                                                    #filter(disponivel=True)
-        pessoas = PFEUser.objects.all().\
-                                  filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0]).\
-                                  order_by(Lower("first_name"), Lower("last_name")) # professores
+        professores = PFEUser.objects.all().\
+                                  filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0])
+
+        administradores = PFEUser.objects.all().\
+                                  filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[3][0])
+
+        pessoas = (professores | administradores).order_by(Lower("first_name"), Lower("last_name"))
 
         context = {
             'projetos' : projetos,
