@@ -76,14 +76,14 @@
       </table>
       <br>
   {% else %}
-    <p>Não existem alunos disponíveis.</p>
+    <p>Não existem estudantes disponíveis.</p>
   {% endif %}
   
-  <text class="text-success">&#x2B24;</text> Aluno já selecionou propostas [{{inscritos}}]<br>
-  <text class="text-danger">&#x2B24;</text> Aluno ainda precisa selecionar propostas [{{ninscritos}}]<br>
+  <text class="text-success">&#x2B24;</text> Estudante já selecionou propostas [{{inscritos}}]<br>
+  <text class="text-danger">&#x2B24;</text> Estudante ainda precisa selecionar propostas [{{ninscritos}}]<br>
   <br>
 
-  <strong>Total de Alunos Aplicando:</strong> {{ num_alunos }}
+  <strong>Total de Estudantes Aplicando:</strong> {{ num_alunos }}
   <small>(comp={{ num_alunos_comp }},
   mec={{ num_alunos_mec }},
   mxt={{ num_alunos_mxt }})</small>
@@ -108,7 +108,7 @@
             'rgb(255, 99, 132)',
             'rgb(255, 205, 86)',
           ],
-          label: 'Proporção entre alunos'
+          label: 'Proporção entre estudantes'
         }],
         labels: [
           'Computação [{% widthratio num_alunos_comp num_alunos 100 %}%]',
@@ -120,7 +120,7 @@
         responsive: true,
         title: {
               display: true,
-              text: 'Proporção entre alunos',
+              text: 'Proporção entre estudantes',
               position: 'top'
           },
         legend: {
