@@ -79,8 +79,8 @@
     <p>Não existem estudantes disponíveis.</p>
   {% endif %}
   
-  <text class="text-success">&#x2B24;</text> Estudante já selecionou propostas [{{inscritos}}]<br>
-  <text class="text-danger">&#x2B24;</text> Estudante ainda precisa selecionar propostas [{{ninscritos}}]<br>
+  <text class="text-success">&#x2B24;</text> Estudante já selecionou propostas ({{inscritos}}) [{% widthratio inscritos num_alunos 100 %}%]<br>
+  <text class="text-danger">&#x2B24;</text> Estudante ainda precisa selecionar propostas ({{ninscritos}}) [{% widthratio ninscritos num_alunos 100 %}%]<br>
   <br>
 
   <strong>Total de Estudantes Aplicando:</strong> {{ num_alunos }}
