@@ -3231,6 +3231,7 @@ def mapeamento_estudante_projeto(request, anosemestre):
     alunos = Aluno.objects.filter(user__tipo_de_usuario=1).\
                                filter(anoPFE=ano).\
                                filter(semestrePFE=semestre).\
+                               filter(trancado=False).\
                                order_by(Lower("user__first_name"), Lower("user__last_name"))
     opcoes = []
     for aluno in alunos:
