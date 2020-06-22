@@ -1,3 +1,5 @@
+touch pfe.log
+sudo chown ubuntu.ubuntu pfe.log
 sudo chmod a+w pfe.log
 celery -A pfe worker -l info &
 celery -A pfe beat -l info &
