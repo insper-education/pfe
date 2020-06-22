@@ -90,7 +90,7 @@
     {% for proposta in propostas %}   
       <div id="proposta{{proposta.id}}" class="proposta">
         <div id="titulo{{proposta.id}}" class="titulo">
-          <a class="ancora" href="{% url 'proposta_completa' proposta.id %}" style="color: #000062;">{{proposta.titulo}}</a>&nbsp;
+          <a target="_blank" rel="noopener noreferrer" class="ancora" href="{% url 'proposta_completa' proposta.id %}" style="color: #000062;">{{proposta.titulo}}</a>&nbsp;
           {% if proposta.organizacao and proposta.organizacao.nome %}
             <a class="ancora" href="{% url 'organizacao_completo' proposta.organizacao.id %}" style="color: darkblue;">
               ({{ proposta.organizacao.nome }})
@@ -116,8 +116,9 @@
     {% for estudante, opcoes in estudantes_opcoes %}
       $("#proposta{{opcoes.0.proposta.id}}").append(`
       <div id="estudante{{estudante.id}}" draggable="true" class="estudante">
-      <a class="ancora" href="{% url 'aluno_detail' estudante.id %}"
-      data-toggle="tooltip" data-html="true" animation="true"
+      <a target="_blank" rel="noopener noreferrer" 
+       class="ancora" href="{% url 'aluno_detail' estudante.id %}"
+       data-toggle="tooltip" data-html="true" animation="true"
         title="
         {% for opcao in opcoes %}
           <b>#{{ opcao.prioridade }} :</b>
@@ -146,7 +147,12 @@
         $('.proposta').on('dragenter', preventDefault);
         $('.proposta').on('dragover', preventDefault);
         $('.proposta').on('drop', dropAluno);
+        $(window).on('unload', salvar_estado );
     });
+
+    function salvar_estado() {
+      return "SALVAR ESTADO!";
+    }
 
     function colorir_proposta(target) {
         qtd_estudantes = $(target).children('div').length - 1
