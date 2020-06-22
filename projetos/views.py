@@ -710,6 +710,50 @@ def propor(request):
     return render(request, 'projetos/propor.html', context)
 
 @login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def montar_grupos(request):
+    """Montar grupos para projetos."""
+    configuracao = Configuracao.objects.all().first()
+
+    ano = configuracao.ano
+    semestre = configuracao.semestre
+
+    # Vai para próximo semestre
+    if semestre == 1:
+        semestre = 2
+    else:
+        ano += 1
+        semestre = 1
+
+    propostas = Proposta.objects.filter(ano=ano, semestre=semestre, disponivel=True)
+    
+    alunos_se_inscrevendo = Aluno.objects.filter(trancado=False).\
+                                      filter(anoPFE=ano, semestrePFE=semestre).\
+                                      order_by(Lower("user__first_name"), Lower("user__last_name"))
+
+    # Conta soh alunos
+    estudantes = alunos_se_inscrevendo.filter(user__tipo_de_usuario=\
+                                          PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
+
+    opcoes = []
+    for estudante in estudantes:
+        opcao = Opcao.objects.filter(aluno=estudante).\
+                              filter(proposta__ano=ano, proposta__semestre=semestre).\
+                              order_by("prioridade")
+        opcoes.append(opcao)
+    estudantes_opcoes = zip(estudantes, opcoes)
+
+    #opcoes = Opcao.objects.filter(proposta__ano=ano).filter(proposta__semestre=semestre)
+
+    context = {
+        'configuracao': configuracao,
+        'propostas': propostas,
+        #'opcoes': opcoes,
+        'estudantes_opcoes': estudantes_opcoes,
+    }
+    return render(request, 'projetos/montar_grupos.html', context=context)
+
+@login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def administracao(request):
     """Mostra página principal para administração do sistema."""

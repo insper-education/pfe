@@ -60,6 +60,7 @@ urlpatterns = [
     path('meuprojeto/', views.meuprojeto, name='meuprojeto'),
     path('migracao/', views.migracao, name='migracao'),
     path('minhas_bancas/', views.minhas_bancas, name='minhas_bancas'),
+    path('montar_grupos/', views.montar_grupos, name='montar_grupos'),
     path('mostra_feedback/<int:feedback_id>', views.mostra_feedback, name='mostra_feedback'),
     path('organizacoes_lista/', views.organizacoes_lista, name='organizacoes_lista'),
     path('organizacoes_prospectadas/', views.organizacoes_prospectadas, name='organizacoes_prospectadas'),

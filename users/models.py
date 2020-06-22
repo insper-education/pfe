@@ -248,6 +248,13 @@ class Aluno(models.Model):
             # And we add this method to the instance of the class.
             setattr(self, method_name, curried_method)
 
+    def get_curso(self):
+        """Retorna em string o nome do curso."""
+        for entry in Aluno.TIPOS_CURSO:
+            if self.curso == entry[0]:
+                return entry[1]
+        return "Sem evento"
+
     class Meta:
         ordering = ['user']
         permissions = ()

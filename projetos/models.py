@@ -684,7 +684,7 @@ class Aviso(models.Model):
                                   help_text='Define o tipo do evento de referência')
 
     delta = models.SmallIntegerField(default=0,
-                                     help_text='dias passados do início do semestre')
+                                     help_text='dias passados do evento definido')
     mensagem = models.TextField(max_length=4096, null=True, blank=True,
                                 help_text='mensagem a ser enviar no texto')
     realizado = models.BooleanField(default=False, help_text='Se já realizado no período')
