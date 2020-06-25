@@ -108,13 +108,23 @@
   {% else %}
     <p>Não existem propostas de projetos disponíveis.</p>
   {% endif %}
-  <p>&nbsp;</p>
 
+  <hr>
+  <form action="" method="post"> {% csrf_token %}  
+    <input type="submit" name="limpar" value="Limpar Pré Alocações">
+    <input type="submit" name="fechar" value="Fechar Projetos">
+  </form>
+
+  <p>&nbsp;</p>
 
   <script>
 
     {% for estudante, opcoes in estudantes_opcoes %}
-      $("#proposta{{opcoes.0.proposta.id}}").append(`
+      {% if estudante.pre_alocacao %}
+        $("#proposta{{estudante.pre_alocacao.id}}").append(`
+      {% else %}
+        $("#proposta{{opcoes.0.proposta.id}}").append(`
+      {% endif %}
       <div id="estudante{{estudante.id}}" draggable="true" class="estudante">
       <a target="_blank" rel="noopener noreferrer" 
        class="ancora" href="{% url 'aluno_detail' estudante.id %}"
@@ -187,20 +197,41 @@
     // observer_proposta.disconnect();
 
 
+    function send_update(estudante, proposta) {
+      $.ajax({
+        url: '{% url "pre_alocar_estudate" %}',
+        data: {
+          'estudante': estudante,
+          'proposta': proposta,
+        },
+        dataType: 'json',
+        success: function (data) {
+          if (data.atualizado) {
+            console.log("Valor atualizado.");
+          }
+        }
+      });
+    }
+
     function dropAluno(e) {
+      
       if($draggedItem) {
         var target = $(e.target);
+        
         if (target.attr('class')=="proposta") {
             $draggedItem.detach();
             $draggedItem.appendTo(target);
+            send_update($draggedItem[0].id, target[0].id)
         } else
         if (target.attr('class')=="titulo" || target.attr('class')=="estudante" ) {
             $draggedItem.detach();
             $draggedItem.appendTo(target.parent());
+            send_update($draggedItem[0].id, target.parent()[0].id)
         } else
         if (target.attr('class')=="ancora") {
             $draggedItem.detach();
             $draggedItem.appendTo(target.parent().parent());
+            send_update($draggedItem[0].id, target.parent().parent()[0].id)
         }
       }
     }

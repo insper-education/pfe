@@ -43,57 +43,59 @@
   {% if mylist %}
     <table id="projetos">
     {% for projeto,prioridades in mylist %} 
-      {% if projeto.disponivel %}
-        <tr id="two" class="row" data-type="{{projeto.ano}}.{{projeto.semestre}}"><td id="ptd">
-        {% if projeto.organizacao.logotipo %}
-          <img id="logotipo_left" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}"><br>
-        {% endif %}
-        <a href="{% url 'projeto_completo' projeto.id %}" class="dark-blue-bold"> 
-          {% if projeto.titulo_final %}
-            {{projeto.titulo_final}}<br>
-            <small>Título Provisório: {{projeto.titulo}}</small><br>
-          {% else %}
-            {{projeto.titulo}}<br>
-          {% endif %}
-        </a>
-        {% if projeto.descricao %}
-          <small>Descrição projeto: {{projeto.descricao}}</small><br>
+      <tr id="two" class="row" data-type="{{projeto.ano}}.{{projeto.semestre}}"><td id="ptd">
+      {% if projeto.organizacao.logotipo %}
+        <img id="logotipo_left" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}"><br>
+      {% endif %}
+      <a href="{% url 'projeto_completo' projeto.id %}" class="dark-blue-bold"> 
+        {% if projeto.titulo_final %}
+          {{projeto.titulo_final}}<br>
+          <small>Título Provisório: {{projeto.titulo}}</small><br>
         {% else %}
-          <small>Descrição proposta: {{projeto.proposta.descricao}}</small><br>
+          {{projeto.titulo}}<br>
         {% endif %}
-        <p style="margin-left:1em;">Organização: <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-            {{ projeto.organizacao.nome }}
-          </a></p>
-        {% if projeto.avancado %}
-          <p style="margin-left:1em;">Tipo: <font color="red">PFE Avançado</font></p>
-        {% endif %}
-        <!-- <p style="margin-left:1em;">Edição: {{projeto.ano}}.{{projeto.semestre}}</p> -->
-        <p style="margin-left:1em;">Orientador: 
+      </a>
+      {% if projeto.descricao %}
+        <small>Descrição projeto: {{projeto.descricao}}</small><br>
+      {% else %}
+        <small>Descrição proposta: {{projeto.proposta.descricao}}</small><br>
+      {% endif %}
+      <p style="margin-left:1em;">Organização: <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
+        {{ projeto.organizacao.nome }}
+      </a></p>
+      {% if projeto.avancado %}
+        <p style="margin-left:1em;">Tipo: <font color="red">PFE Avançado</font></p>
+      {% endif %}
+      <!-- <p style="margin-left:1em;">Edição: {{projeto.ano}}.{{projeto.semestre}}</p> -->
+      <p style="margin-left:1em;">Orientador: 
+        {% if projeto.orientador %}
           <a href="{% url 'professor_detail' projeto.orientador.id %}"> {{projeto.orientador.user.get_full_name}}</a>
           <a href="mailto:{{projeto.orientador.user.email}}"> &lt;{{projeto.orientador.user.email}}&gt;</a>
-        </p>
-        <p style="margin-left:1em;">Alunos:</p>
-        <ol>
-        {% for aluno,prioridade in prioridades %}
-          <li><a href="{% url 'aluno_detail' aluno.id %}"
-              data-toggle="tooltip" data-html="true" animation="true" title="
-              {% if prioridade == 0 %}
-                prioridade não definida
-              {% else %}
-                prioridade #{{prioridade}}
-              {% endif %}">
-              {{aluno.user.get_full_name}}
-              </a>
-              <a href="mailto:{{aluno.user.email}}">&lt;{{aluno.user.email}}&gt;</a>
-              [{{ aluno.get_curso_display }}]
-              <div class="prioridade" style="display: none;">{{prioridade}}</div> <!-- para mostrar no gráfico -->
-              <!-- &nbsp; { {{ aluno.alocacao_set.first.get_conceito_display }} } -->
-          </li>
-        {% endfor %}
-        </ol>
-        <br>
-        </td></tr>
-      {% endif %}
+        {% else %}
+          Não definido
+        {% endif %}
+      </p>
+      <p style="margin-left:1em;">Estudantes:</p>
+      <ol>
+      {% for aluno,prioridade in prioridades %}
+        <li><a href="{% url 'aluno_detail' aluno.id %}"
+            data-toggle="tooltip" data-html="true" animation="true" title="
+            {% if prioridade == 0 %}
+              prioridade não definida
+            {% else %}
+              prioridade #{{prioridade}}
+            {% endif %}">
+            {{aluno.user.get_full_name}}
+            </a>
+            <a href="mailto:{{aluno.user.email}}">&lt;{{aluno.user.email}}&gt;</a>
+            [{{ aluno.get_curso_display }}]
+            <div class="prioridade" style="display: none;">{{prioridade}}</div> <!-- para mostrar no gráfico -->
+            <!-- &nbsp; { {{ aluno.alocacao_set.first.get_conceito_display }} } -->
+        </li>
+      {% endfor %}
+      </ol>
+      <br>
+      </td></tr>
     {% endfor %}
     </table>
 

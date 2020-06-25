@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 25 de Junho de 2020
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  <script>
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
+{% endblock %}
+
+{% block content %}
+  <h3>Montar Grupos</h3>
+  <br>
+
+  {% comment %}
+  <label for="filter">Edição:</label>
+  <select id="filter" onchange="location = this.options[this.selectedIndex].value;">
+    {% for loop in loop_anos %}
+      <option value="{{loop}}.2" {% if ano == loop and semestre == 2 %}selected{% endif %}>{{loop}}.2</option>
+      <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
+    {% endfor %}
+  </select>
+  {% endcomment %}
+
+  {% if projetos %}
+
+    {% for projeto in projetos %}   
+      <a href="{% url 'projeto_completo' projeto.id %}"> 
+        {{projeto.titulo}}
+      </a>
+      <a href="{% url 'organizacao_completo' projeto.organizacao.id %}" class="dark-blue-bold">({{ projeto.organizacao.nome }})</a>
+      <br>
+
+      <label for="projeto{{projeto.id}}">Orientador(a)</label></b>:
+      <select class="orientador" name="projeto{{projeto.id}}" id="projeto{{projeto.id}}" title="Selecione orientador do projeto">
+          <option selected value> -- selecione um orientador(a) -- </option>
+          <optgroup label="Comitê PFE">
+          {% for orientador in orientadores %}
+            {% if orientador.membro_comite %}
+              <option value="orientador{{orientador.id}}" {% if orientador.id == projeto.orientador.user.id %}selected{% endif %}>
+              {{orientador.get_full_name}}
+            </option>  
+            {% endif %}
+          {% endfor %}
+          </optgroup>
+
+          <optgroup label="Professores">
+          {% for orientador in orientadores %}
+            {% if not orientador.membro_comite %}
+              <option value="orientador{{orientador.id}}" {% if orientador.id == projeto.orientador.user.id %}selected{% endif %}>
+              {{orientador.get_full_name}}
+            </option>  
+            {% endif %}
+          {% endfor %}
+          </optgroup>
+
+      </select>
+      
+      
+      <br>
+      <small>
+      <ol>
+        {% for alocacao in projeto.alocacao_set.all %}
+          <li><a href="{% url 'aluno_detail' alocacao.aluno.id %}"
+              data-toggle="tooltip" data-html="true" animation="true" title="">
+              {{alocacao.aluno.user.get_full_name}}
+              </a>
+              <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
+              [{{ alocacao.aluno.get_curso_display }}]
+          </li>
+        {% endfor %}  
+      </ol>
+      </small>
+      <hr>
+    {% endfor %}
+
+  {% else %}
+    <p>Não existem propostas de projetos disponíveis.</p>
+  {% endif %}
+
+  <form action="" method="post"> {% csrf_token %}  
+    <input type="button" onclick="location.href='{% url 'projetos_fechados' %}'"  value="Listar Projetos Fechados">
+  </form>
+
+  <p>&nbsp;</p>
+
+  <script>
+
+  $('.orientador').change(function(evt){
+    $.ajax({
+      url: '{% url "definir_orientador" %}',
+      data: {
+        "projeto": evt.target.id,
+        "orientador": evt.target.value,
+      },
+      dataType: 'json',
+      success: function (data) {
+        if (data.atualizado) {
+          console.log("Valor atualizado.");
+        }
+      }
+    });
+  
+  });
+
+  </script>
+
+{% endblock %}

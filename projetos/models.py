@@ -119,38 +119,53 @@ class Projeto(models.Model):
                                     blank=True,
                                     help_text='Título Final do projeto')
 
-    # MANTER POR É UMA DESCRIÇÃO ATUALIZADA
+    # MANTER COM UMA DESCRIÇÃO ATUALIZADA
     descricao = models.TextField("Descrição", max_length=3000, null=True, blank=True,
                                  help_text='Descricao do projeto')
-    expectativas = models.TextField("Expectativas", max_length=3000,
-                                    help_text='Expectativas em relação ao projeto')
+
+    # CAMPO ANTIGO, MANTIDO SÓ POR HISTÓRICO
     areas = models.TextField("Áreas", max_length=1000,
                              help_text='Áreas da engenharia envolvidas no projeto')
+
+    organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
+                                    help_text='Organização parceira que propôs projeto')
+
+    avancado = models.BooleanField("Avançado", default=False,
+                                   help_text='Se for um projeto de PFE Avançado')
+
+    ano = models.PositiveIntegerField("Ano",
+                                      validators=[MinValueValidator(2018), MaxValueValidator(3018)],
+                                      help_text='Ano que o projeto comeca')
+
+    semestre = models.PositiveIntegerField("Semestre",
+                                           validators=[MinValueValidator(1), MaxValueValidator(2)],
+                                           help_text='Semestre que o projeto comeca')
+
+    orientador = models.ForeignKey('users.Professor', null=True, blank=True,
+                                   on_delete=models.SET_NULL, related_name='professor_orientador',
+                                   help_text='professor orientador do projeto')
+
+    ########################   REMOVER    ##########################
+
+    empresa = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text='Não mais utilizado')
+
+    expectativas = models.TextField("Expectativas", max_length=3000,
+                                    help_text='Expectativas em relação ao projeto')
+
     recursos = models.TextField("Recursos", max_length=1000,
                                 help_text='Recursos a serem disponibilizados aos Alunos')
     anexo = models.FileField("Anexo", upload_to=get_upload_path, null=True, blank=True,
                              help_text='Documento PDF')
     imagem = models.ImageField(null=True, blank=True,
                                help_text='Imagem que representa projeto (se houver)')
-    empresa = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='Não mais utilizado')
-    organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
-                                    help_text='Organização parceira que propôs projeto')
+
     departamento = models.TextField("Departamento", max_length=1000, null=True, blank=True,
                                     help_text='Descrição do departamento que propôs o projeto')
-    avancado = models.BooleanField("Avançado", default=False,
-                                   help_text='Se for um projeto de PFE Avançado')
-    ano = models.PositiveIntegerField("Ano",
-                                      validators=[MinValueValidator(2018), MaxValueValidator(3018)],
-                                      help_text='Ano que o projeto comeca')
-    semestre = models.PositiveIntegerField("Semestre",
-                                           validators=[MinValueValidator(1), MaxValueValidator(2)],
-                                           help_text='Semestre que o projeto comeca')
+
     disponivel = models.BooleanField("Disponível", default=False,
                                      help_text='Se projeto está atualmente disponível para alunos')
-    orientador = models.ForeignKey('users.Professor', null=True, blank=True,
-                                   on_delete=models.SET_NULL, related_name='professor_orientador',
-                                   help_text='professor orientador do projeto')
+
     autorizado = models.ForeignKey('users.Professor', null=True, blank=True,
                                    on_delete=models.SET_NULL,
                                    help_text='Quem autorizou a ser publicado para os alunos')
@@ -183,6 +198,8 @@ class Projeto(models.Model):
                                            null=True, blank=True,
                                            help_text='Áreas de interesse esperas dos alunos')
 
+    ################################################################
+
     proposta = models.ForeignKey('Proposta', null=True, blank=True, on_delete=models.SET_NULL,
                                  help_text='Proposta original do projeto')
 
@@ -211,6 +228,12 @@ class Projeto(models.Model):
     def __str__(self):
         return self.organizacao.sigla+" ("+str(self.ano)+"."+str(self.semestre)+") "+\
             self.get_titulo()
+
+    @classmethod
+    def create(cls, proposta):
+        """Cria um Projeto (entrada) na Banca."""
+        projeto = cls(proposta=proposta)
+        return projeto
 
 class Proposta(models.Model):
     """Dados da Proposta de Projeto para o PFE."""

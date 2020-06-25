@@ -210,8 +210,9 @@ class Aluno(models.Model):
                                    help_text='Caso o aluno tenha trancado ou abandonado o curso')
     cr = models.FloatField(default=0,
                            help_text='Coeficiente de Rendimento')
-    #alocado = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
-    #                            related_name='aluno_alocado', help_text='projeto selecionado')
+
+    pre_alocacao = models.ForeignKey(Proposta, null=True, blank=True, on_delete=models.SET_NULL,
+                                     related_name='aluno_pre_alocado', help_text='proposta pre alocada')
 
     areas_de_interesse = models.ForeignKey(Areas, on_delete=models.SET_NULL,
                                            null=True, blank=True,
@@ -298,6 +299,12 @@ class Alocacao(models.Model):
         ordering = ['projeto__ano', 'projeto__semestre',]
     def __str__(self):
         return self.aluno.user.username+" >>> "+self.projeto.titulo
+    
+    @classmethod
+    def create(cls, estudante, projeto):
+        """Cria um Projeto (entrada) na Banca."""
+        alocacao = cls(projeto=projeto, aluno=estudante)
+        return alocacao
 
 class Parceiro(models.Model):  # da empresa (não do Insper)
     """Classe de usuários com estatus de Parceiro (pessoal das organizações parceiras)."""

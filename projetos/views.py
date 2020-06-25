@@ -743,15 +743,107 @@ def montar_grupos(request):
         opcoes.append(opcao)
     estudantes_opcoes = zip(estudantes, opcoes)
 
-    #opcoes = Opcao.objects.filter(proposta__ano=ano).filter(proposta__semestre=semestre)
+    if request.method == 'POST':
+        if 'limpar' in request.POST:
+            for estudante in estudantes:
+                estudante.pre_alocacao = None
+                estudante.save()
+            
+        if 'fechar' in request.POST:
+            for proposta in propostas:
+                alocados = []
+                for estudante in estudantes:
+                    if estudante.pre_alocacao:
+                        if estudante.pre_alocacao.id == proposta.id:
+                            alocados.append(estudante)
+                    else:
+                        op_aloc = Opcao.objects.filter(aluno=estudante).\
+                                       filter(proposta__ano=ano, proposta__semestre=semestre).\
+                                       filter(prioridade=1).first()
+                        if op_aloc and op_aloc.proposta == proposta:
+                            alocados.append(estudante)
+                if alocados: # pelo menos um estudante no projeto
+
+                    try:
+                        projeto = Projeto.objects.get(proposta=proposta, avancado=False)
+                    except Projeto.DoesNotExist:
+                        projeto = Projeto.create(proposta)
+                    
+                    if not projeto.titulo:
+                        projeto.titulo = proposta.titulo
+
+                    if not projeto.descricao:
+                        projeto.descricao = proposta.descricao
+
+                    if not projeto.organizacao:
+                        projeto.organizacao = proposta.organizacao
+                    
+                    projeto.avancado = False
+                    
+                    projeto.ano = proposta.ano
+                    projeto.semestre = proposta.semestre
+                    
+                    projeto.save()
+
+                    alocacoes = Alocacao.objects.filter(projeto=projeto)
+                    for alocacao in alocacoes: # Apaga todas alocacoes que não tiverem nota
+                        if alocacao.conceito == 127:
+                            alocacao.delete()
+
+                    for alocado in alocados: # alocando estudantes no projeto
+                        alocacao = Alocacao.create(alocado, projeto)
+                        alocacao.save()
+
+                else:
+
+                    try:
+                        projeto = Projeto.objects.get(proposta=proposta, avancado=False)
+                    except Projeto.DoesNotExist:
+                        continue
+
+                    projeto.delete()
+                
+            return redirect('/projetos/selecionar_orientadores/')
+
 
     context = {
         'configuracao': configuracao,
         'propostas': propostas,
-        #'opcoes': opcoes,
         'estudantes_opcoes': estudantes_opcoes,
     }
     return render(request, 'projetos/montar_grupos.html', context=context)
+
+@login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
+def selecionar_orientadores(request):
+    """Selecionar Orientadores para os Projetos."""
+    configuracao = Configuracao.objects.all().first()
+
+    ano = configuracao.ano
+    semestre = configuracao.semestre
+
+    # Vai para próximo semestre
+    if semestre == 1:
+        semestre = 2
+    else:
+        ano += 1
+        semestre = 1
+
+    projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
+
+    professores = PFEUser.objects.all().\
+                        filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0])
+
+    administradores = PFEUser.objects.all().\
+                        filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[3][0])
+
+    orientadores = (professores | administradores).order_by(Lower("first_name"), Lower("last_name"))
+
+    context = {
+        'projetos': projetos,
+        'orientadores': orientadores,
+    }
+    return render(request, 'projetos/selecionar_orientadores.html', context=context)
 
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
@@ -1510,12 +1602,13 @@ def projetos_fechados(request, periodo="vazio"):
     qtd_prioridades = [0, 0, 0, 0, 0, 0]   # para grafico de pizza no final
 
     for projeto in Projeto.objects.all():
+        
         alunos_pfe = Aluno.objects.filter(alocacao__projeto=projeto)
         if alunos_pfe: #len(alunos_pfe) > 0:
+            print(projeto)
             projetos.append(projeto)
             alunos_list.append(alunos_pfe)
             nalunos += len(alunos_pfe)
-            #alunos = []
             prioridades = []
             for aluno in alunos_pfe:
                 opcoes = Opcao.objects.filter(proposta=projeto.proposta)
@@ -3643,6 +3736,91 @@ def validate_alunos(request):
     }
 
     return JsonResponse(data)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def pre_alocar_estudate(request):
+    """Ajax para pre-alocar estudates em propostas."""
+
+    estudante = request.GET.get('estudante', None)
+    estudante_id = int(estudante[len("estudante"):])
+
+    proposta = request.GET.get('proposta', None)
+    proposta_id = int(proposta[len("proposta"):])
+
+    configuracao = Configuracao.objects.all().first()
+
+    ano = configuracao.ano
+    semestre = configuracao.semestre
+
+    # Vai para próximo semestre
+    if semestre == 1:
+        semestre = 2
+    else:
+        ano += 1
+        semestre = 1
+
+    try:
+        proposta = Proposta.objects.get(id=proposta_id)
+        #proposta.save()
+    except Proposta.DoesNotExist:
+        return HttpResponseNotFound('<h1>Proposta não encontrada!</h1>')
+    
+    try:
+        estudante = Aluno.objects.get(id=estudante_id)
+        estudante.pre_alocacao = proposta
+        estudante.save()
+    except Aluno.DoesNotExist:
+        return HttpResponseNotFound('<h1>Estudante não encontrado!</h1>')
+
+    data = {
+        'atualizado': True,
+    }
+
+    return JsonResponse(data)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def definir_orientador(request):
+    """Ajax para definir orientadores de projetos."""
+    
+    orientador_get = request.GET.get('orientador', None)
+    orientador_id = None
+    if orientador_get:
+        orientador_id = int(orientador_get[len("orientador"):])
+    
+
+    projeto_get = request.GET.get('projeto', None)
+    projeto_id = None
+    if projeto_get:
+        projeto_id = int(projeto_get[len("projeto"):])
+
+    if orientador_id:
+        try:
+            pessoa = PFEUser.objects.get(id=orientador_id)
+        except PFEUser.DoesNotExist:
+            return HttpResponseNotFound('<h1>Usuário não encontrado!</h1>')
+
+        try:
+            orientador = Professor.objects.get(user_id=orientador_id)
+        except PFEUser.DoesNotExist:
+            return HttpResponseNotFound('<h1>Orientador não encontrado!</h1>')
+    else:
+        orientador = None
+
+    try:
+        projeto = Projeto.objects.get(id=projeto_id)
+        projeto.orientador = orientador
+        projeto.save()
+    except Projeto.DoesNotExist:
+        return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
+
+    data = {
+        'atualizado': True,
+    }
+
+    return JsonResponse(data)
+
 
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')

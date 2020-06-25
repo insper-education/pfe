@@ -87,6 +87,7 @@ urlpatterns = [
     path('relatorio_backup/', views.relatorio_backup, name='relatorio_backup'),
     path('relatorios/', views.relatorios, name='relatorios'),
     path('selecao_propostas/', views.selecao_propostas, name='selecao_propostas'),
+    path('selecionar_orientadores/', views.selecionar_orientadores, name='selecionar_orientadores'),
     path('servico/', views.servico, name='servico'),
     path('submissao/', views.submissao, name='submissao'),
     path('tabela_documentos/', views.tabela_documentos, name='tabela_documentos'),
@@ -98,6 +99,7 @@ urlpatterns = [
 
     path('ajax/validate_aviso/', views.validate_aviso, name='validate_aviso'),
     path('ajax/validate_alunos/', views.validate_alunos, name='validate_alunos'),
-
+    path('ajax/pre_alocar_estudate/', views.pre_alocar_estudate, name='pre_alocar_estudate'),
+    path('ajax/definir_orientador/', views.definir_orientador, name='definir_orientador'),
 
 ]
