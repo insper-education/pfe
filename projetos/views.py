@@ -2544,6 +2544,21 @@ def meuprojeto(request):
     except Aluno.DoesNotExist:
         return HttpResponse("Aluno não encontrado.", status=401)
 
+    if user.tipo_de_usuario == 2:
+        professor = Professor.objects.get(pk=request.user.professor.pk)
+        return redirect('professor_detail', primarykey=professor.pk)
+
+    configuracao = Configuracao.objects.all().first()
+
+    if not configuracao.liberados_projetos:
+        if aluno.anoPFE > configuracao.ano or (aluno.anoPFE == configuracao.ano and aluno.semestrePFE > configuracao.semestre ):
+            mensagem = "Projetos ainda não disponíveis para visualização."
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, 'generic.html', context=context)
+
     context = {
         'aluno': aluno,
         'configuracao' : Configuracao.objects.all().first(),
