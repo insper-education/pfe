@@ -3260,6 +3260,7 @@ def minhas_bancas(request):
     except Aluno.DoesNotExist:
         return HttpResponse("Aluno não encontrado.", status=401)
 
+    configuracao = Configuracao.objects.all().first()
     if not configuracao.liberados_projetos:
         if aluno.anoPFE > configuracao.ano or (aluno.anoPFE == configuracao.ano and aluno.semestrePFE > configuracao.semestre ):
             mensagem = "Projetos ainda não disponíveis para o seu período de PFE."
