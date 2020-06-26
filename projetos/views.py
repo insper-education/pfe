@@ -1605,7 +1605,6 @@ def projetos_fechados(request, periodo="vazio"):
         
         alunos_pfe = Aluno.objects.filter(alocacao__projeto=projeto)
         if alunos_pfe: #len(alunos_pfe) > 0:
-            print(projeto)
             projetos.append(projeto)
             alunos_list.append(alunos_pfe)
             nalunos += len(alunos_pfe)
