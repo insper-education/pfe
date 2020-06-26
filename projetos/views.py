@@ -2551,8 +2551,8 @@ def meuprojeto(request):
     configuracao = Configuracao.objects.all().first()
 
     if not configuracao.liberados_projetos:
-        if aluno.ano > configuracao.ano or (aluno.ano == configuracao.ano and aluno.semestre > configuracao.semestre )
-            mensagem = "Projetos fechados ainda não disponíveis para visualização."
+        if aluno.anoPFE > configuracao.ano or (aluno.anoPFE == configuracao.ano and aluno.semestrePFE > configuracao.semestre ):
+            mensagem = "Projetos ainda não disponíveis para visualização."
             context = {
                 "area_principal": True,
                 "mensagem": mensagem,
