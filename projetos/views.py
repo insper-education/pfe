@@ -126,7 +126,11 @@ def index_aluno(request):
 @login_required
 def projeto_detalhes(request, primarykey):
     """Exibe uma proposta de projeto com seus detalhes para o estudante aplicar."""
-    projeto = Projeto.objects.get(pk=primarykey)
+    try:
+        projeto = Projeto.objects.get(pk=primarykey)
+    except Projeto.DoesNotExist:
+        return HttpResponse("Projeto não encontrado.", status=401)
+
     context = {
         'projeto': projeto,
         'MEDIA_URL' : settings.MEDIA_URL,
@@ -136,7 +140,11 @@ def projeto_detalhes(request, primarykey):
 @login_required
 def proposta_detalhes(request, primarykey):
     """Exibe uma proposta de projeto com seus detalhes para o estudante aplicar."""
-    proposta = Proposta.objects.get(pk=primarykey)
+    try:
+        proposta = Proposta.objects.get(pk=primarykey)
+    except Proposta.DoesNotExist:
+        return HttpResponse("Proposta não encontrada.", status=401)
+
     context = {
         'proposta': proposta,
         'MEDIA_URL' : settings.MEDIA_URL,
@@ -2871,6 +2879,16 @@ def reembolso_pedir(request):
             aluno = Aluno.objects.get(pk=request.user.aluno.pk)
         except Aluno.DoesNotExist:
             return HttpResponse("Aluno não encontrado.", status=401)
+
+        if not configuracao.liberados_projetos:
+            if aluno.anoPFE > configuracao.ano or (aluno.anoPFE == configuracao.ano and aluno.semestrePFE > configuracao.semestre ):
+                mensagem = "Projetos ainda não disponíveis para o seu período de PFE."
+                context = {
+                    "area_principal": True,
+                    "mensagem": mensagem,
+                }
+                return render(request, 'generic.html', context=context)
+
         projeto = Projeto.objects.filter(alocacao__aluno=aluno).last()
     else:
         projeto = None
@@ -3242,6 +3260,15 @@ def minhas_bancas(request):
     except Aluno.DoesNotExist:
         return HttpResponse("Aluno não encontrado.", status=401)
 
+    if not configuracao.liberados_projetos:
+        if aluno.anoPFE > configuracao.ano or (aluno.anoPFE == configuracao.ano and aluno.semestrePFE > configuracao.semestre ):
+            mensagem = "Projetos ainda não disponíveis para o seu período de PFE."
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, 'generic.html', context=context)
+
     projetos = Projeto.objects.filter(alocacao__aluno=aluno)
     bancas = Banca.objects.filter(projeto__in=projetos).order_by("-startDate")
 
@@ -3420,6 +3447,7 @@ def mapeamento_estudante_projeto(request, anosemestre):
     }
     return render(request, 'projetos/mapeamento_estudante_projeto.html', context)
 
+#@login_required
 def projeto_feedback(request):
     """Para Feedback das Organizações Parceiras."""
     if request.method == 'POST':
