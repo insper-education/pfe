@@ -12,7 +12,7 @@ from django.contrib.admin import SimpleListFilter
 import django.contrib.admin.options as admin_opt
 
 # Dos projetos
-from .models import Projeto, Proposta, Empresa, Organizacao, Banca, Coorientador
+from .models import Projeto, Proposta, Organizacao, Banca, Coorientador
 
 # Das disciplinas
 from .models import Disciplina, Cursada, Recomendada
@@ -47,15 +47,16 @@ def dup_projeto(modeladmin: admin_opt.ModelAdmin, request, queryset):
         modeladmin.log_addition(request=request, object=obj, message=message)
 dup_projeto.short_description = "Duplicar Entrada(s)"
 
-def dup_event(modeladmin: admin_opt.ModelAdmin, request, queryset):
+def dup_entrada(modeladmin: admin_opt.ModelAdmin, request, queryset):
     """Função abaixo permite duplicar entradas no banco de dados"""
+    # Usada em Eventos e Avisos
     for obj in queryset:
         from_id = obj.id
         obj.id = None
         obj.save()
         message = "duplicando de {} para {}".format(from_id, obj.id)
         modeladmin.log_addition(request=request, object=obj, message=message)
-dup_event.short_description = "Duplicar Entrada(s)"
+dup_entrada.short_description = "Duplicar Entrada(s)"
 
 def dup_event_183(modeladmin: admin_opt.ModelAdmin, request, queryset):
     """Função abaixo permite duplicar entradas no banco de dados"""
@@ -74,8 +75,6 @@ def dup_encontros(modeladmin: admin_opt.ModelAdmin, request, queryset):
     for obj in queryset:
         from_id = obj.id
         obj.id = None
-        #obj.startDate += timedelta(days=183)
-        #obj.endDate += timedelta(days=183)
         obj.save()
         message = "duplicando de {} para {}".format(from_id, obj.id)
         modeladmin.log_addition(request=request, object=obj, message=message)
@@ -159,15 +158,9 @@ class ProjetoAdmin(admin.ModelAdmin):
           {'fields':
            ('titulo', 'titulo_final', 'descricao', 'expectativas', 'areas', 'recursos',
             'departamento',
-            'anexo', 'imagem',
-            'avancado', 'ano', 'semestre', 'disponivel',
+            'avancado', 'ano', 'semestre',
             'orientador',
             'autorizado',
-            'perfil_aluno1_computacao', 'perfil_aluno1_mecanica', 'perfil_aluno1_mecatronica',
-            'perfil_aluno2_computacao', 'perfil_aluno2_mecanica', 'perfil_aluno2_mecatronica',
-            'perfil_aluno3_computacao', 'perfil_aluno3_mecanica', 'perfil_aluno3_mecatronica',
-            'perfil_aluno4_computacao', 'perfil_aluno4_mecanica', 'perfil_aluno4_mecatronica',
-            'areas_de_interesse',
             'proposta',
            )
           }),
@@ -177,7 +170,6 @@ class ProjetoAdmin(admin.ModelAdmin):
         )
     actions = [dup_projeto]
     search_fields = ['titulo', 'organizacao__sigla',]
-
 
 @admin.register(Proposta)
 class PropostaAdmin(admin.ModelAdmin):
@@ -216,11 +208,6 @@ class OrganizacaoAdmin(admin.ModelAdmin):
     """Definição da Organização no sistema de administração do Django."""
     list_display = ('sigla', 'nome', 'website')
     search_fields = ['nome',]
-
-# @admin.register(Empresa)
-# class EmpresaAdmin(admin.ModelAdmin):
-#     """Definição do que aparece no sistema de administração do Django."""
-#     list_display = ('sigla',)
 
 @admin.register(Configuracao)
 class ConfiguracaoAdmin(admin.ModelAdmin):
@@ -279,6 +266,7 @@ class AvisoAdmin(admin.ModelAdmin):
     list_filter = ('realizado', 'coordenacao', 'comite_pfe', 'todos_alunos',
                    'todos_orientadores', 'contatos_nas_organizacoes',)
     ordering = ('delta',)
+    actions = [dup_entrada]
     fieldsets = \
         ((None,
           {'fields':
@@ -294,7 +282,7 @@ class AvisoAdmin(admin.ModelAdmin):
 class EventoAdmin(admin.ModelAdmin):
     """Todos os eventos do PFE com suas datas."""
     list_display = ('get_title', 'startDate', 'endDate', 'location', )
-    actions = [dup_event, dup_event_183]
+    actions = [dup_entrada, dup_event_183]
     list_filter = (EventoFilter,)
 
 

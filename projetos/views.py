@@ -734,7 +734,7 @@ def montar_grupos(request):
         semestre = 1
 
     propostas = Proposta.objects.filter(ano=ano, semestre=semestre, disponivel=True)
-    
+
     alunos_se_inscrevendo = Aluno.objects.filter(trancado=False).\
                                       filter(anoPFE=ano, semestrePFE=semestre).\
                                       order_by(Lower("user__first_name"), Lower("user__last_name"))
@@ -756,7 +756,7 @@ def montar_grupos(request):
             for estudante in estudantes:
                 estudante.pre_alocacao = None
                 estudante.save()
-            
+
         if 'fechar' in request.POST:
             for proposta in propostas:
                 alocados = []
@@ -776,7 +776,7 @@ def montar_grupos(request):
                         projeto = Projeto.objects.get(proposta=proposta, avancado=False)
                     except Projeto.DoesNotExist:
                         projeto = Projeto.create(proposta)
-                    
+
                     if not projeto.titulo:
                         projeto.titulo = proposta.titulo
 
@@ -785,12 +785,12 @@ def montar_grupos(request):
 
                     if not projeto.organizacao:
                         projeto.organizacao = proposta.organizacao
-                    
+
                     projeto.avancado = False
-                    
+
                     projeto.ano = proposta.ano
                     projeto.semestre = proposta.semestre
-                    
+
                     projeto.save()
 
                     alocacoes = Alocacao.objects.filter(projeto=projeto)
@@ -810,7 +810,7 @@ def montar_grupos(request):
                         continue
 
                     projeto.delete()
-                
+
             return redirect('/projetos/selecionar_orientadores/')
 
 
@@ -1610,7 +1610,7 @@ def projetos_fechados(request, periodo="vazio"):
     qtd_prioridades = [0, 0, 0, 0, 0, 0]   # para grafico de pizza no final
 
     for projeto in Projeto.objects.all():
-        
+
         alunos_pfe = Aluno.objects.filter(alocacao__projeto=projeto)
         if alunos_pfe: #len(alunos_pfe) > 0:
             projetos.append(projeto)
@@ -2559,7 +2559,8 @@ def meuprojeto(request):
     configuracao = Configuracao.objects.all().first()
 
     if not configuracao.liberados_projetos:
-        if aluno.anoPFE > configuracao.ano or (aluno.anoPFE == configuracao.ano and aluno.semestrePFE > configuracao.semestre ):
+        if aluno.anoPFE > configuracao.ano or\
+          (aluno.anoPFE == configuracao.ano and aluno.semestrePFE > configuracao.semestre):
             mensagem = "Projetos ainda não disponíveis para visualização."
             context = {
                 "area_principal": True,
@@ -2862,7 +2863,6 @@ def carrega_bancos(request):
         "mensagem": mensagem,
     }
     return render(request, 'generic.html', context=context)
-    #return HttpResponse("Bancos carregados")
 
 
 @login_required
@@ -2881,7 +2881,8 @@ def reembolso_pedir(request):
             return HttpResponse("Aluno não encontrado.", status=401)
 
         if not configuracao.liberados_projetos:
-            if aluno.anoPFE > configuracao.ano or (aluno.anoPFE == configuracao.ano and aluno.semestrePFE > configuracao.semestre ):
+            if aluno.anoPFE > configuracao.ano or\
+              (aluno.anoPFE == configuracao.ano and aluno.semestrePFE > configuracao.semestre):
                 mensagem = "Projetos ainda não disponíveis para o seu período de PFE."
                 context = {
                     "area_principal": True,
@@ -3133,6 +3134,7 @@ def editar_banca(banca, request):
     banca.save()
 
 def possiveis_membros_bancas():
+    """Retorna potenciais usuários que podem ser membros de uma banca do PFE."""
     professores = PFEUser.objects.all().\
                                 filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0])
 
@@ -3171,8 +3173,7 @@ def bancas_criar(request):
         semestre = configuracao.semestre
         projetos = Projeto.objects.filter(ano=ano).filter(semestre=semestre).\
                                                    exclude(orientador=None)
-                                                   #filter(disponivel=True)
-        
+
         pessoas = possiveis_membros_bancas()
 
         context = {
@@ -3262,7 +3263,8 @@ def minhas_bancas(request):
 
     configuracao = Configuracao.objects.all().first()
     if not configuracao.liberados_projetos:
-        if aluno.anoPFE > configuracao.ano or (aluno.anoPFE == configuracao.ano and aluno.semestrePFE > configuracao.semestre ):
+        if aluno.anoPFE > configuracao.ano or\
+          (aluno.anoPFE == configuracao.ano and aluno.semestrePFE > configuracao.semestre):
             mensagem = "Projetos ainda não disponíveis para o seu período de PFE."
             context = {
                 "area_principal": True,
@@ -3808,7 +3810,7 @@ def pre_alocar_estudate(request):
         #proposta.save()
     except Proposta.DoesNotExist:
         return HttpResponseNotFound('<h1>Proposta não encontrada!</h1>')
-    
+
     try:
         estudante = Aluno.objects.get(id=estudante_id)
         estudante.pre_alocacao = proposta
@@ -3826,12 +3828,11 @@ def pre_alocar_estudate(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def definir_orientador(request):
     """Ajax para definir orientadores de projetos."""
-    
+
     orientador_get = request.GET.get('orientador', None)
     orientador_id = None
     if orientador_get:
         orientador_id = int(orientador_get[len("orientador"):])
-    
 
     projeto_get = request.GET.get('projeto', None)
     projeto_id = None
@@ -3839,11 +3840,6 @@ def definir_orientador(request):
         projeto_id = int(projeto_get[len("projeto"):])
 
     if orientador_id:
-        try:
-            pessoa = PFEUser.objects.get(id=orientador_id)
-        except PFEUser.DoesNotExist:
-            return HttpResponseNotFound('<h1>Usuário não encontrado!</h1>')
-
         try:
             orientador = Professor.objects.get(user_id=orientador_id)
         except PFEUser.DoesNotExist:
