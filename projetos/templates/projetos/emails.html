@@ -110,7 +110,7 @@
   Todos divididos por projeto (
   <label for="estudantes">Estudantes</label><input id="estudantes" class="estudantes" type="checkbox" checked>&nbsp;
   <label for="orientador">Orientador</label><input id="orientador" class="orientador" type="checkbox" checked>&nbsp;
-  <label for="parceiros">Parceiros</label><input id="parceiros" class="parceiros" type="checkbox" checked>&nbsp;
+  <label for="parceiros">Conexões</label><input id="parceiros" class="parceiros" type="checkbox" checked>&nbsp;
   ):
   <table>
     {% for semestre,projetos in email_p_semestre %}
@@ -123,7 +123,7 @@
                 <a href="javascript:manda(
                   '{% for pessoa in pessoas.estudantes %}{%if pessoa %}{{pessoa.user.first_name|parse_quote}}%20{{pessoa.user.last_name|parse_quote}}%20&lt;{{ pessoa.user.email|parse_quote }}&gt;,{% endif %}{% endfor %}',
                   '{% for pessoa in pessoas.orientador %}{%if pessoa %}{{pessoa.user.first_name|parse_quote}}%20{{pessoa.user.last_name|parse_quote}}%20&lt;{{ pessoa.user.email|parse_quote }}&gt;,{% endif %}{% endfor %}',
-                  '{% for pessoa in pessoas.parceiros %}{%if pessoa %}{{pessoa.user.first_name|parse_quote}}%20{{pessoa.user.last_name|parse_quote}}%20&lt;{{ pessoa.user.email|parse_quote }}&gt;,{% endif %}{% endfor %}',
+                  '{% for pessoa in pessoas.conexoes %}{%if pessoa %}{{pessoa.parceiro.user.first_name|parse_quote}}%20{{pessoa.parceiro.user.last_name|parse_quote}}%20&lt;{{ pessoa.parceiro.user.email|parse_quote }}&gt;,{% endif %}{% endfor %}',
                   '{{projeto}}',
                   {% if projeto.avancado %}true{% else %}false{% endif %}
                 );

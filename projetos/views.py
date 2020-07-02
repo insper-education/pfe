@@ -2998,8 +2998,9 @@ def emails(request):
                               filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
                 alunos_semestre += list(alunos_tmp)
                 orientador = projeto.orientador
-                parceiros = Parceiro.objects.filter(organizacao=projeto.organizacao).\
-                              filter(user__is_active=True)
+                # parceiros = Parceiro.objects.filter(organizacao=projeto.organizacao).\
+                #               filter(user__is_active=True)
+                conexoes = Conexao.objects.filter(projeto=projeto)
 
                 if projeto.orientador not in orientadores:
                     orientadores.append(orientador) # Junta orientadores do semestre
@@ -3019,8 +3020,9 @@ def emails(request):
                 projetos_pessoas[projeto] = dict()
                 projetos_pessoas[projeto]["estudantes"] = list(alunos_tmp) # Pessoas por projeto
                 projetos_pessoas[projeto]["orientador"] = list([orientador]) # Pessoas por projeto
-                projetos_pessoas[projeto]["parceiros"] = list(parceiros) # Pessoas por projeto
-
+                #projetos_pessoas[projeto]["parceiros"] = list(parceiros) # Pessoas por projeto
+                projetos_pessoas[projeto]["conexoes"] = list(conexoes) # Todos conectados ao projeto
+                
         # Parceiros de todas as organizações parceiras
         parceiros_semestre = Parceiro.objects.filter(organizacao__in=organizacoes)
 
