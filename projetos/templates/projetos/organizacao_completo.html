@@ -39,10 +39,12 @@
   <br><strong>contato(s):</strong><br>
   {% for parceiro in organizacao.parceiro_set.all %}
     {% if parceiro.user.is_active %}
-    <li>
+    <li style="margin-bottom: 6px;" >
       <a href="{% url 'parceiro_detail' parceiro.id %}">
         {{parceiro.user.get_full_name}} &nbsp;
       </a>
+      {% comment %}
+
       <a href="mailto:{{parceiro.user.email}}">
         &lt;{{parceiro.user.email}}&gt;
       </a>
@@ -52,10 +54,13 @@
         <span>
       {% endif %}
       &nbsp;
-      {% if parceiro.telefone %} <br>&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; {{parceiro.telefone}} &nbsp;{% endif %}
-      {% if parceiro.celular %} <br>&nbsp;&nbsp;&nbsp;&nbsp;&#x1F4F1;{{parceiro.celular}} &nbsp;{% endif %}
-      {% if parceiro.skype %} <br>&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="skype" style="width:16px;height:16px;">
-      <a href="skype:{{parceiro.skype}}">{{parceiro.skype}}</a>&nbsp; {% endif %}
+      {% endcomment %}
+
+      {% if parceiro.cargo %} <p style="margin-top: -4px; font-size:13px; line-height:1.3;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{parceiro.cargo}}</p>{% endif %}
+      {% if parceiro.telefone %} <p style="line-height:1.0;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; {{parceiro.telefone}} &nbsp;</p>{% endif %}
+      {% if parceiro.celular %} <p style="line-height:1.0;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x1F4F1;{{parceiro.celular}} &nbsp;</p>{% endif %}
+      {% if parceiro.skype %} <p style="line-height:1.0;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="skype" style="width:16px;height:16px;">
+      <a href="skype:{{parceiro.skype}}">{{parceiro.skype}}</a>&nbsp;</p>{% endif %}
     </li>
     {% endif %}
   {% endfor %}
