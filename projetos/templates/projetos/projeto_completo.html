@@ -87,6 +87,7 @@
         <a class="tabulado" href="{% url 'parceiro_detail' conexao.parceiro.id %}">
           {{ conexao.parceiro.user.get_full_name }}
         </a>
+        <a href="mailto:{{conexao.parceiro.user.email}}"> &lt;{{conexao.parceiro.user.email}}&gt;</a>
         <span>
           {% if conexao.gestor_responsavel %}
             [gestor responsavel]

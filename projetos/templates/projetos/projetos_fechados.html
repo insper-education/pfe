@@ -49,7 +49,7 @@
       {% endif %}
       {% for conexao in conexoes %}
         {% if conexao.parceiro and conexao.parceiro.organizacao and conexao.parceiro.organizacao.logotipo %}
-          <img class="logotipo_left" src="{{ conexao.parceiro.organizacao.logotipo.url }}" alt="{{ conexao.parceiro.organizacao.sigla }}">
+          &nbsp;<img class="logotipo_left" src="{{ conexao.parceiro.organizacao.logotipo.url }}" alt="{{ conexao.parceiro.organizacao.sigla }}">
         {% endif %}
       {% endfor %}
       <br>
