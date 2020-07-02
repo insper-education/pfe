@@ -1606,6 +1606,7 @@ def projetos_fechados(request, periodo="vazio"):
     projetos = []
     alunos_list = []
     prioridade_list = []
+    conexoes = []
     nalunos = 0
     qtd_prioridades = [0, 0, 0, 0, 0, 0]   # para grafico de pizza no final
 
@@ -1629,7 +1630,10 @@ def projetos_fechados(request, periodo="vazio"):
                 else:
                     prioridades.append(0)
             prioridade_list.append(zip(alunos_pfe, prioridades))
-    mylist = zip(projetos, prioridade_list)
+            conexoes.append(Conexao.objects.filter(projeto=projeto, colaboracao=True))
+    mylist = zip(projetos, prioridade_list, conexoes)
+        
+
     context = {
         'mylist': mylist,
         'length': len(projetos),

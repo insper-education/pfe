@@ -17,7 +17,7 @@
     .prioridade {display: inline}
   </style>
   <style>
-    #logotipo_left {
+    .logotipo_left {
       max-height:64px;
       max-width:128px;
       height:auto;
@@ -42,11 +42,17 @@
   
   {% if mylist %}
     <table id="projetos">
-    {% for projeto,prioridades in mylist %} 
+    {% for projeto, prioridades, conexoes in mylist %} 
       <tr id="two" class="row" data-type="{{projeto.ano}}.{{projeto.semestre}}"><td id="ptd">
       {% if projeto.organizacao.logotipo %}
-        <img id="logotipo_left" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}"><br>
+        <img class="logotipo_left" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}">
       {% endif %}
+      {% for conexao in conexoes %}
+        {% if conexao.parceiro and conexao.parceiro.organizacao and conexao.parceiro.organizacao.logotipo %}
+          <img class="logotipo_left" src="{{ conexao.parceiro.organizacao.logotipo.url }}" alt="{{ conexao.parceiro.organizacao.sigla }}">
+        {% endif %}
+      {% endfor %}
+      <br>
       <a href="{% url 'projeto_completo' projeto.id %}" class="dark-blue-bold"> 
         {% if projeto.titulo_final %}
           {{projeto.titulo_final}}<br>
@@ -62,7 +68,16 @@
       {% endif %}
       <p style="margin-left:1em;">Organização: <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
         {{ projeto.organizacao.nome }}
-      </a></p>
+      </a>
+      {% for conexao in conexoes %}
+        {% if conexao.parceiro and conexao.parceiro.organizacao %}
+          &nbsp;&nbsp;&nbsp;&nbsp;colaboração:
+          <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
+            {{ conexao.parceiro.organizacao.nome }}
+          </a>
+        {% endif %}
+      {% endfor %}
+      </p>
       {% if projeto.avancado %}
         <p style="margin-left:1em;">Tipo: <font color="red">PFE Avançado</font></p>
       {% endif %}

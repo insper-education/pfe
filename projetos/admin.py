@@ -152,15 +152,13 @@ class EventoFilter(SimpleListFilter):
 class ProjetoAdmin(admin.ModelAdmin):
     """Exibição no sistema de administração do Django para Projeto."""
     list_display = ('organizacao', 'ano', 'semestre', 'orientador', 'get_titulo',)
-    list_filter = (FechadoFilter, 'ano', 'semestre', 'avancado', 'disponivel',)
+    list_filter = (FechadoFilter, 'ano', 'semestre', 'avancado', 'orientador')
     fieldsets = \
         ((None,
           {'fields':
-           ('titulo', 'titulo_final', 'descricao', 'expectativas', 'areas', 'recursos',
-            'departamento',
+           ('titulo', 'titulo_final', 'descricao',
             'avancado', 'ano', 'semestre',
             'orientador',
-            'autorizado',
             'proposta',
            )
           }),

@@ -145,61 +145,6 @@ class Projeto(models.Model):
                                    on_delete=models.SET_NULL, related_name='professor_orientador',
                                    help_text='professor orientador do projeto')
 
-    ########################   REMOVER    ##########################
-
-    empresa = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='Não mais utilizado')
-
-    expectativas = models.TextField("Expectativas", max_length=3000,
-                                    help_text='Expectativas em relação ao projeto')
-
-    recursos = models.TextField("Recursos", max_length=1000,
-                                help_text='Recursos a serem disponibilizados aos Alunos')
-    anexo = models.FileField("Anexo", upload_to=get_upload_path, null=True, blank=True,
-                             help_text='Documento PDF')
-    imagem = models.ImageField(null=True, blank=True,
-                               help_text='Imagem que representa projeto (se houver)')
-
-    departamento = models.TextField("Departamento", max_length=1000, null=True, blank=True,
-                                    help_text='Descrição do departamento que propôs o projeto')
-
-    disponivel = models.BooleanField("Disponível", default=False,
-                                     help_text='Se projeto está atualmente disponível para alunos')
-
-    autorizado = models.ForeignKey('users.Professor', null=True, blank=True,
-                                   on_delete=models.SET_NULL,
-                                   help_text='Quem autorizou a ser publicado para os alunos')
-    perfil_aluno1_computacao = \
-        models.BooleanField(default=False, help_text='Perfil desejado de computação para aluno 1')
-    perfil_aluno1_mecatronica = \
-        models.BooleanField(default=False, help_text='Perfil desejado de mecatrônica para aluno 1')
-    perfil_aluno1_mecanica = \
-        models.BooleanField(default=False, help_text='Perfil desejado de mecânica para aluno 1')
-    perfil_aluno2_computacao = \
-        models.BooleanField(default=False, help_text='Perfil desejado de computação para aluno 2')
-    perfil_aluno2_mecatronica = \
-        models.BooleanField(default=False, help_text='Perfil desejado de mecatrônica para aluno 2')
-    perfil_aluno2_mecanica = \
-        models.BooleanField(default=False, help_text='Perfil desejado de mecânica para aluno 2')
-    perfil_aluno3_computacao = \
-        models.BooleanField(default=False, help_text='Perfil desejado de computação para aluno 3')
-    perfil_aluno3_mecatronica = \
-        models.BooleanField(default=False, help_text='Perfil desejado de mecatrônica para aluno 3')
-    perfil_aluno3_mecanica = \
-        models.BooleanField(default=False, help_text='Perfil desejado de mecânica para aluno 3')
-    perfil_aluno4_computacao = \
-        models.BooleanField(default=False, help_text='Perfil desejado de computação para aluno 4')
-    perfil_aluno4_mecatronica = \
-        models.BooleanField(default=False, help_text='Perfil desejado de mecatrônica para aluno 4')
-    perfil_aluno4_mecanica = \
-        models.BooleanField(default=False, help_text='Perfil desejado de mecânica para aluno 4')
-
-    areas_de_interesse = models.ForeignKey('users.Areas', on_delete=models.SET_NULL,
-                                           null=True, blank=True,
-                                           help_text='Áreas de interesse esperas dos alunos')
-
-    ################################################################
-
     proposta = models.ForeignKey('Proposta', null=True, blank=True, on_delete=models.SET_NULL,
                                  help_text='Proposta original do projeto')
 
@@ -386,7 +331,7 @@ class Configuracao(models.Model):
     liberados_projetos = models.BooleanField(default=False,
                                              help_text='Para que alunos vejam projetos alocados')
     liberadas_propostas = models.BooleanField(default=False,
-                                             help_text='Para que alunos vejam propostas disponiveis')
+                                              help_text='Para alunos verem propostas disponiveis')
 
     class Meta:
         verbose_name = 'Configuração'
@@ -795,9 +740,10 @@ class Conexao(models.Model):
                                 help_text='projeto que possui vínculo da conexão')
     observacao = models.TextField(max_length=256, null=True, blank=True,
                                   help_text='qualquer observação relevante')
-    gestor_responsavel = models.BooleanField(default=False)
-    mentor_tecnico = models.BooleanField(default=False)
-    recursos_humanos = models.BooleanField(default=False)
+    gestor_responsavel = models.BooleanField("Gestor Responsável", default=False)
+    mentor_tecnico = models.BooleanField("Mentor Técnico", default=False)
+    recursos_humanos = models.BooleanField("Recursos Humanos", default=False)
+    colaboracao = models.BooleanField("Colaboração", default=False)
 
     def __str__(self):
         return self.parceiro.user.get_full_name()+" >>> "+\
