@@ -41,12 +41,7 @@
     {% if parceiro.user.is_active %}
     <li style="margin-bottom: 6px;" >
       <a href="{% url 'parceiro_detail' parceiro.id %}">
-        {{parceiro.user.get_full_name}} &nbsp;
-      </a>
-      {% comment %}
-
-      <a href="mailto:{{parceiro.user.email}}">
-        &lt;{{parceiro.user.email}}&gt;
+        {{parceiro.user.get_full_name}}
       </a>
       {% if parceiro.principal_contato %}
         <span data-toggle="tooltip" data-html="true" animation="true" title="Principal Contato">
@@ -54,12 +49,11 @@
         <span>
       {% endif %}
       &nbsp;
-      {% endcomment %}
-
       {% if parceiro.cargo %} <p style="margin-top: -4px; font-size:13px; line-height:1.3;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{parceiro.cargo}}</p>{% endif %}
-      {% if parceiro.telefone %} <p style="line-height:1.0;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; {{parceiro.telefone}} &nbsp;</p>{% endif %}
-      {% if parceiro.celular %} <p style="line-height:1.0;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x1F4F1;{{parceiro.celular}} &nbsp;</p>{% endif %}
-      {% if parceiro.skype %} <p style="line-height:1.0;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="skype" style="width:16px;height:16px;">
+      <p style="line-height:0.95;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x2709; <a href="mailto:{{parceiro.user.email}}">{{parceiro.user.email}}</a></p>
+      {% if parceiro.telefone %} <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; {{parceiro.telefone}} &nbsp;</p>{% endif %}
+      {% if parceiro.celular %} <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x1F4F1;{{parceiro.celular}} &nbsp;</p>{% endif %}
+      {% if parceiro.skype %} <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="skype" style="width:16px;height:16px;">
       <a href="skype:{{parceiro.skype}}">{{parceiro.skype}}</a>&nbsp;</p>{% endif %}
     </li>
     {% endif %}
