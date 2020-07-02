@@ -110,6 +110,7 @@
         <a class="tabulado" href="{% url 'parceiro_detail' conexao.parceiro.id %}" style="color: LightBlue;">
           {{ conexao.parceiro.user.get_full_name }}
         </a>
+        <a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;"> &lt;{{conexao.parceiro.user.email}}&gt;</a>
         <span style="color: lightgrey;">
         {% if conexao.gestor_responsavel %}
           [gestor responsavel]
@@ -119,6 +120,9 @@
         {% endif %}
         {% if conexao.recursos_humanos %}
           [recursos humanos]
+        {% endif %}
+        {% if conexao.colaboracao %}
+          [colaboração]
         {% endif %}
         {% if conexao.observacao %}
           &nbsp;&nbsp;obs: {{conexao.observacao}}
@@ -136,6 +140,7 @@
     <a href="{% url 'professor_detail' projeto.orientador.id %}">
       {{projeto.orientador.user.get_full_name}}
     </a>
+    <a href="mailto:{{projeto.orientador.user.email}}"> &lt;{{projeto.orientador.user.email}}&gt;</a>
   {% endif %}
 
   {% if coorientadores %}
@@ -148,6 +153,7 @@
       <a class="tabulado" href="{% url 'professor_detail' coorientador.usuario.professor.id %}">
         {{ coorientador.usuario.get_full_name }}
       </a>
+      <a href="mailto:{{coorientador.usuario.email}}"> &lt;{{coorientador.usuario.email}}&gt;</a>
       {% if coorientador.observacao %}
         &nbsp;&nbsp;obs: {{coorientador.observacao}}
       {% endif %}
@@ -156,15 +162,6 @@
     </ul>
   {% endif %}
   <br>
-  <strong>autorizado para publicação para os alunos por:</strong>
-  {% if projeto.proposta.autorizado %}
-    <a href="{% url 'professor_detail' projeto.proposta.autorizado.id %}">
-      {{projeto.proposta.autorizado.user.get_full_name}}
-    </a>
-  {% else %}
-    &lt;&lt;aguardando autorização&gt;&gt;
-  {% endif %}
-
 
   <hr>
   <h3>Aluno(s) Alocado(s) no Projeto:</h3>
