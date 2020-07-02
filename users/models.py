@@ -212,7 +212,8 @@ class Aluno(models.Model):
                            help_text='Coeficiente de Rendimento')
 
     pre_alocacao = models.ForeignKey(Proposta, null=True, blank=True, on_delete=models.SET_NULL,
-                                     related_name='aluno_pre_alocado', help_text='proposta pre alocada')
+                                     related_name='aluno_pre_alocado',
+                                     help_text='proposta pre alocada')
 
     areas_de_interesse = models.ForeignKey(Areas, on_delete=models.SET_NULL,
                                            null=True, blank=True,
@@ -299,7 +300,7 @@ class Alocacao(models.Model):
         ordering = ['projeto__ano', 'projeto__semestre',]
     def __str__(self):
         return self.aluno.user.username+" >>> "+self.projeto.titulo
-    
+
     @classmethod
     def create(cls, estudante, projeto):
         """Cria um Projeto (entrada) na Banca."""

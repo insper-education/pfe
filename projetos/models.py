@@ -19,16 +19,16 @@ def get_upload_path(instance, filename):
     caminho = ""
     if isinstance(instance, Documento):
         if instance.organizacao:
-            caminho += instance.organizacao.sigla + "/"
+            caminho += slugify(instance.organizacao.sigla) + "/"
         if instance.usuario:
-            caminho += instance.usuario.username + "/"
+            caminho += slugify(instance.usuario.username) + "/"
         if caminho == "":
             caminho = "documentos/"
     elif isinstance(instance, Projeto):
-        caminho += instance.organizacao.sigla + "/"
+        caminho += slugify(instance.organizacao.sigla) + "/"
         caminho += "projeto" + str(instance.pk) + "/"
     elif isinstance(instance, Organizacao):
-        caminho += instance.sigla + "/logotipo/"
+        caminho += slugify(instance.sigla) + "/logotipo/"
     return "{0}/{1}".format(caminho, filename)
 
 class Organizacao(models.Model):

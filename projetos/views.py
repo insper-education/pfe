@@ -39,6 +39,7 @@ from django.utils import html
 from django.utils import timezone
 from django.utils import text
 
+
 from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador, Opcao, Alocacao, Areas
 from .models import Projeto, Proposta, Organizacao, Configuracao, Evento, Anotacao, Coorientador
 from .models import Feedback, Certificado
@@ -1632,7 +1633,6 @@ def projetos_fechados(request, periodo="vazio"):
             prioridade_list.append(zip(alunos_pfe, prioridades))
             conexoes.append(Conexao.objects.filter(projeto=projeto, colaboracao=True))
     mylist = zip(projetos, prioridade_list, conexoes)
-        
 
     context = {
         'mylist': mylist,
