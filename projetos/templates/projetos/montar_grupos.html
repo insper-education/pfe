@@ -88,7 +88,7 @@
   {% if propostas %}
 
     {% for proposta in propostas %}   
-      <div id="proposta{{proposta.id}}" class="proposta">
+      <div id="proposta{{proposta.id}}" class="proposta" data-propostaid="{{proposta.id}}">
         <div id="titulo{{proposta.id}}" class="titulo">
           <a target="_blank" rel="noopener noreferrer" class="ancora" href="{% url 'proposta_completa' proposta.id %}" style="color: #000062;">{{proposta.titulo}}</a>&nbsp;
           {% if proposta.organizacao and proposta.organizacao.nome %}
@@ -119,13 +119,29 @@
 
   <script>
 
+    function cor_estudante(estudante, proposta) {
+      prioridades = estudante.data("prioridades")
+      estudante.css("background-color", "red");
+      for (var i = 0; i < prioridades.length; ++i) {
+          if(prioridades[i]==proposta) {
+            if(i>4) { // passou da quinta opção
+              estudante.css("background-color", "orange");
+            } else {
+              estudante.css("background-color", "#F0F0F0");
+            }
+            break
+          }
+      }
+    }
+
     {% for estudante, opcoes in estudantes_opcoes %}
       {% if estudante.pre_alocacao %}
         $("#proposta{{estudante.pre_alocacao.id}}").append(`
       {% else %}
         $("#proposta{{opcoes.0.proposta.id}}").append(`
       {% endif %}
-      <div id="estudante{{estudante.id}}" draggable="true" class="estudante">
+      <div id="estudante{{estudante.id}}" draggable="true" class="estudante"
+      data-prioridades="[{% for opcao in opcoes %}{{opcao.proposta.id}}{%if not forloop.last%},{%endif%}{% endfor %}]">
       <a target="_blank" rel="noopener noreferrer" 
        class="ancora" href="{% url 'aluno_detail' estudante.id %}"
        data-toggle="tooltip" data-html="true" animation="true"
@@ -144,6 +160,9 @@
       [{{estudante.get_curso}}]&nbsp;&nbsp;&nbsp;CR:&nbsp;{{estudante.cr}}
       </div>
       `);
+      {% if estudante.pre_alocacao %}
+        cor_estudante($("#estudante{{estudante.id}}"), {{estudante.pre_alocacao.id}})
+      {% endif %}
     {% endfor %}
 
 
@@ -207,11 +226,12 @@
         dataType: 'json',
         success: function (data) {
           if (data.atualizado) {
-            console.log("Valor atualizado.");
+            //console.log("Valor atualizado.");
           }
         }
       });
     }
+
 
     function dropAluno(e) {
       
@@ -222,16 +242,19 @@
             $draggedItem.detach();
             $draggedItem.appendTo(target);
             send_update($draggedItem[0].id, target[0].id)
+            cor_estudante($draggedItem, target.data("propostaid"))
         } else
         if (target.attr('class')=="titulo" || target.attr('class')=="estudante" ) {
             $draggedItem.detach();
             $draggedItem.appendTo(target.parent());
             send_update($draggedItem[0].id, target.parent()[0].id)
+            cor_estudante($draggedItem, target.parent().data("propostaid"))
         } else
         if (target.attr('class')=="ancora") {
             $draggedItem.detach();
             $draggedItem.appendTo(target.parent().parent());
             send_update($draggedItem[0].id, target.parent().parent()[0].id)
+            cor_estudante($draggedItem, target.parent().parent().data("propostaid"))
         }
       }
     }
