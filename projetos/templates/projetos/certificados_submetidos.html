@@ -7,10 +7,8 @@
 
 {% block head %}
 <style>
-
 table, th, td {
 }
-
 table {
   border: 0px;
   border-collapse: separate;
@@ -23,8 +21,6 @@ td {
   border-radius: 6px;
   border: 1px solid red;
 }
-
-
 </style>
 
 {% endblock %}
@@ -62,6 +58,11 @@ td {
                 {{certificado.projeto.get_titulo}}
               </a><br>
               <b>Organização:</b> <a href="{% url 'organizacao_completo' certificado.projeto.organizacao.id %}">{{ certificado.projeto.organizacao.nome }}</a><br>
+            {% endif %}
+            {% if certificado.documento %}
+              <a href="{{ certificado.documento.url }}">
+                <img style="max-height:240px;" src="{{ certificado.documento.url }}" alt="Certificado {{ certificado.usuario }} {{ certificado.projeto }}">
+              </a>
             {% endif %}
           </td>
         </tr>

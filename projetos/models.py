@@ -29,6 +29,12 @@ def get_upload_path(instance, filename):
         caminho += "projeto" + str(instance.pk) + "/"
     elif isinstance(instance, Organizacao):
         caminho += slugify(instance.sigla) + "/logotipo/"
+    elif isinstance(instance, Certificado):
+        if instance.projeto.organizacao:
+            caminho += slugify(instance.projeto.organizacao.sigla) + "/"
+            caminho += "projeto" + str(instance.projeto.pk) + "/"
+        if instance.usuario:
+            caminho += slugify(instance.usuario.username) + "/"
     return "{0}/{1}".format(caminho, filename)
 
 class Organizacao(models.Model):
@@ -543,7 +549,7 @@ class Anotacao(models.Model):
         (3, 'Recusou enviar proposta de projeto'),
         (4, 'Confirmamos um grupo de alunos para o projeto'),
         (5, 'Notificamos que não conseguimos montar projeto'),
-        (6, 'outros'),
+        (254, 'outros'),
     )
 
     tipo_de_retorno = models.PositiveSmallIntegerField(choices=TIPO_DE_RETORNO, default=0)
@@ -911,6 +917,9 @@ class Certificado(models.Model):
 
     observacao = models.TextField(max_length=256, null=True, blank=True,
                                   help_text='qualquer observação relevante')
+
+    documento = models.FileField("Documento", upload_to=get_upload_path, null=True, blank=True,
+                                 help_text='Documento Digital')
 
     def get_certificado(self):
         """Retorna em string o nome do certificado."""

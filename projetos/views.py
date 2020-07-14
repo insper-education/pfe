@@ -2289,11 +2289,9 @@ def get_response(file, path):
     else:
         return None
 
-@login_required
-#@permission_required('users.altera_professor', login_url='/projetos/')
-def arquivos(request, documentos, path):
-    """Permite acessar arquivos do servidor."""
-    local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}".format(documentos, path))
+
+def carrega_arquivo(request, local_path, path):
+    """ Carrega arquivos pela URL. """
     file_path = os.path.abspath(local_path)
     if ".." in file_path:
         raise PermissionDenied
@@ -2326,42 +2324,26 @@ def arquivos(request, documentos, path):
     raise Http404
 
 @login_required
-#@permission_required('users.altera_professor', login_url='/projetos/')
+def arquivos(request, documentos, path):
+    """Permite acessar arquivos do servidor."""
+    local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}".\
+        format(documentos, path))
+    return carrega_arquivo(request, local_path, path)
+
+@login_required
 def arquivos2(request, organizacao, usuario, path):
     """Permite acessar arquivos do servidor."""
-    local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}/{2}".format(organizacao, usuario, path))
-    file_path = os.path.abspath(local_path)
-    if ".." in file_path:
-        raise PermissionDenied
-    if "\\" in file_path:
-        raise PermissionDenied
-    if os.path.exists(file_path):
-        doc = Documento.objects.filter(\
-            documento=local_path[len(settings.BASE_DIR)+len(settings.MEDIA_URL):]).last()
-        if doc:
-            if (doc.tipo_de_documento < 6) and\
-               (PFEUser.objects.get(pk=request.user.pk).tipo_de_usuario != 2):
-                #return HttpResponse("Documento Confidencial")
-                mensagem = "Documento Confidencial!"
-                context = {
-                    "mensagem": mensagem,
-                }
-                return render(request, 'generic.html', context=context)
-        with open(file_path, 'rb') as file:
-            response = get_response(file, path)
-            if not response:
-                #return HttpResponse("Erro ao carregar arquivo (formato não suportado).")
-                mensagem = "Erro ao carregar arquivo (formato não suportado)."
-                context = {
-                    "area_principal": True,
-                    "mensagem": mensagem,
-                }
-                return render(request, 'generic.html', context=context)
-            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
-            return response
-    raise Http404
+    local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}/{2}".\
+        format(organizacao, usuario, path))
+    return carrega_arquivo(request, local_path, path)
 
-####### FIM DA PARTE DE I/O  #########
+@login_required
+def arquivos3(request, organizacao, projeto, usuario, path):
+    """Permite acessar arquivos do servidor."""
+    local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}/{2}/{3}".\
+        format(organizacao, projeto, usuario, path))
+    return carrega_arquivo(request, local_path, path)
+
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
