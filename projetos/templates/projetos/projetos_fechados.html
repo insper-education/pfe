@@ -45,11 +45,16 @@
     {% for projeto, prioridades, conexoes in mylist %} 
       <tr id="two" class="row" data-type="{{projeto.ano}}.{{projeto.semestre}}"><td id="ptd">
       {% if projeto.organizacao.logotipo %}
-        <img class="logotipo_left" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}">
+        <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
+          <img class="logotipo_left" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}">
+        </a>
       {% endif %}
       {% for conexao in conexoes %}
         {% if conexao.parceiro and conexao.parceiro.organizacao and conexao.parceiro.organizacao.logotipo %}
-          &nbsp;<img class="logotipo_left" src="{{ conexao.parceiro.organizacao.logotipo.url }}" alt="{{ conexao.parceiro.organizacao.sigla }}">
+          &nbsp;
+          <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
+            <img class="logotipo_left" src="{{ conexao.parceiro.organizacao.logotipo.url }}" alt="{{ conexao.parceiro.organizacao.sigla }}">
+          </a>
         {% endif %}
       {% endfor %}
       <br>
