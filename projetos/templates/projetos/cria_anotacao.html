@@ -22,10 +22,9 @@
       <br><br>
       <label for="contato">Posição do contato:</label>
       <select id="contato" name="contato">
-        <option value="0">Contactada</option>
-        <option value="1">Confirmada</option>
-        <option value="2">Interessada</option>
-        <option value="3">Recusou</option>
+        {% for retorno in TIPO_DE_RETORNO %}
+          <option value="{{retorno.0}}">{{retorno.1}}</option>
+        {% endfor %}
       </select>
       <br><br>
       <button type="submit">Criar anotação</button>

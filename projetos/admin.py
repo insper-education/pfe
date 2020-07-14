@@ -220,7 +220,7 @@ class DisciplinaAdmin(admin.ModelAdmin):
 @admin.register(Anotacao)
 class AnotacaoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
-    list_display = ('momento', 'organizacao', 'autor',)
+    list_display = ('momento', 'organizacao', 'tipo_de_retorno', 'autor',)
     ordering = ('-momento',)
     search_fields = ['organizacao__nome',]
 

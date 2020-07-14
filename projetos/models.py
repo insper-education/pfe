@@ -537,10 +537,13 @@ class Anotacao(models.Model):
     texto = models.TextField(max_length=2000, help_text='Anotação')
 
     TIPO_DE_RETORNO = ( # não mudar a ordem dos números
-        (0, 'Contactada'),
-        (1, 'Confirmada'),
-        (2, 'Interessada'),
-        (3, 'Recusou'),
+        (0, 'Contactada para enviar proposta'),
+        (1, 'Enviou proposta de projeto'),
+        (2, 'Interessada em enviar proposta'),
+        (3, 'Recusou enviar proposta de projeto'),
+        (4, 'Confirmamos um grupo de alunos para o projeto'),
+        (5, 'Notificamos que não conseguimos montar projeto'),
+        (6, 'outros'),
     )
 
     tipo_de_retorno = models.PositiveSmallIntegerField(choices=TIPO_DE_RETORNO, default=0)

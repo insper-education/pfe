@@ -1312,6 +1312,7 @@ def cria_anotacao(request, login): #acertar isso para pk
     else:
         context = {
             'organizacao': organizacao,
+            'TIPO_DE_RETORNO': Anotacao.TIPO_DE_RETORNO,
             'data_hora': datetime.datetime.now(),
         }
         return render(request, 'projetos/cria_anotacao.html', context=context)
@@ -2988,7 +2989,6 @@ def emails(request):
         alunos_semestre = [] # Alunos do semestre
         organizacoes = [] # Controla as organizações participantes por semestre
         orientadores = [] # Orientadores por semestre
-        parceiros = [] # Pessoas que trabalham nas organizações parceiras
         membros_bancas = [] # Membros das bancas
 
         for projeto in Projeto.objects.filter(ano=ano).filter(semestre=semestre):
@@ -2998,8 +2998,6 @@ def emails(request):
                               filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
                 alunos_semestre += list(alunos_tmp)
                 orientador = projeto.orientador
-                # parceiros = Parceiro.objects.filter(organizacao=projeto.organizacao).\
-                #               filter(user__is_active=True)
                 conexoes = Conexao.objects.filter(projeto=projeto)
 
                 if projeto.orientador not in orientadores:
@@ -3020,9 +3018,8 @@ def emails(request):
                 projetos_pessoas[projeto] = dict()
                 projetos_pessoas[projeto]["estudantes"] = list(alunos_tmp) # Pessoas por projeto
                 projetos_pessoas[projeto]["orientador"] = list([orientador]) # Pessoas por projeto
-                #projetos_pessoas[projeto]["parceiros"] = list(parceiros) # Pessoas por projeto
                 projetos_pessoas[projeto]["conexoes"] = list(conexoes) # Todos conectados ao projeto
-                
+
         # Parceiros de todas as organizações parceiras
         parceiros_semestre = Parceiro.objects.filter(organizacao__in=organizacoes)
 
