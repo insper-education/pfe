@@ -21,7 +21,8 @@
       <textarea name="anotacao" rows="5" cols="64" required></textarea>
       <br><br>
       <label for="contato">Posição do contato:</label>
-      <select id="contato" name="contato">
+      <select id="contato" name="contato" required>
+        <option disabled selected value> -- selecione tipo de contato -- </option>
         {% for retorno in TIPO_DE_RETORNO %}
           <option value="{{retorno.0}}">{{retorno.1}}</option>
         {% endfor %}
