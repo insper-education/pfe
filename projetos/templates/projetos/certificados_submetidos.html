@@ -6,23 +6,24 @@
 {% endcomment %}
 
 {% block head %}
-<style>
-table, th, td {
-}
-table {
-  border: 0px;
-  border-collapse: separate;
-  border-spacing: 1em;
-  padding-left: 0px;
-  padding-right: 0px;
-}
-td {
-  padding: 1rem 1.2rem;
-  border-radius: 6px;
-  border: 1px solid red;
-}
-</style>
-
+  {% load static %}
+  {% load escape_emails %}
+  <style>
+  table, th, td {
+  }
+  table {
+    border: 0px;
+    border-collapse: separate;
+    border-spacing: 1em;
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+  td {
+    padding: 1rem 1.2rem;
+    border-radius: 6px;
+    border: 1px solid red;
+  }
+  </style>
 {% endblock %}
 
 {% block content %}
@@ -60,10 +61,12 @@ td {
               <b>Organização:</b> <a href="{% url 'organizacao_completo' certificado.projeto.organizacao.id %}">{{ certificado.projeto.organizacao.nome }}</a><br>
             {% endif %}
             {% if certificado.documento %}
-              <a href="{{ certificado.documento.url }}">
-                <img style="max-height:240px;" src="{{ certificado.documento.url }}" alt="Certificado {{ certificado.usuario }} {{ certificado.projeto }}">
-              </a>
+              <a href="{{ certificado.documento.url }}"><img style="max-height:240px;" src="{{ certificado.documento.url }}" alt="Certificado {{ certificado.usuario }} {{ certificado.projeto }}"></a><br>
             {% endif %}
+            <a href="mailto:{{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}}%20&lt;{{certificado.usuario.email|parse_quote }}&gt;,?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;&amp;subject=Certificado%20Destaque%20PFE&amp;body={{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}},%0D%0A%0D%0Aatenciosamente,%20coordenação%20PFE">
+              Enviar certificado
+            </a>
+
           </td>
         </tr>
       {% endfor %}
