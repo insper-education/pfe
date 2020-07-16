@@ -1,13 +1,14 @@
 import os
-import sys
 import django
+#import sys
 
-path='/home/ubuntu/pfe'
+#path='/home/ubuntu/pfe'
+#path='/Users/lpsoares/pfe'
 
-if path not in sys.path:
-  sys.path.append(path)
+#if path not in sys.path:
+#  sys.path.append(path)
 
-os.chdir(path)
+#os.chdir(path)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'pfe.settings'
 

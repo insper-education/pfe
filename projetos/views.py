@@ -2571,14 +2571,12 @@ def organizacoes_tabela(request):
     organizacoes_pfe = []
     periodo = []
 
-    ano = 2018
-    semestre = 2
+    ano = 2018    # Ano de início do PFE
+    semestre = 2  # Semestre de início do PFE
     while True:
         organizacoes = []
         grupos = []
-        #for professor in Professor.objects.all().order_by("user__first_name", "user__last_name"):
         for organizacao in Organizacao.objects.all():
-            #count_projetos = 0
             count_projetos = []
             grupos_pfe = Projeto.objects.filter(organizacao=organizacao).\
                                          filter(ano=ano).\
@@ -2587,18 +2585,20 @@ def organizacoes_tabela(request):
                 for grupo in grupos_pfe: # garante que tem alunos no projeto
                     alunos_pfe = Aluno.objects.filter(alocacao__projeto=grupo)
                     if alunos_pfe: #len(alunos_pfe) > 0
-                        #count_projetos += 1
                         count_projetos.append(grupo)
-                #if count_projetos > 0:
                 if count_projetos:
                     organizacoes.append(organizacao)
                     grupos.append(count_projetos)
-        organizacoes_pfe.append(zip(organizacoes, grupos))
-        periodo.append(str(ano)+"."+str(semestre))
+        if organizacoes: # Se não houver nenhum organização não cria entrada na lista
+            organizacoes_pfe.append(zip(organizacoes, grupos))
+            periodo.append(str(ano)+"."+str(semestre))
 
-        if ((ano == configuracao.ano) and (semestre == configuracao.semestre)):
+        # Para de buscar depois do semestre atual
+        if ((semestre == configuracao.semestre + 1) and (ano == configuracao.ano)) or \
+           (ano > configuracao.ano):
             break
 
+        # Avança um semestre
         if semestre == 2:
             semestre = 1
             ano += 1
@@ -2620,14 +2620,13 @@ def professores_tabela(request):
     professores_pfe = []
     periodo = []
 
-    ano = 2018
-    semestre = 2
+    ano = 2018    # Ano de início do PFE
+    semestre = 2  # Semestre de início do PFE
     while True:
         professores = []
         grupos = []
         for professor in Professor.objects.all().order_by(Lower("user__first_name"),
                                                           Lower("user__last_name")):
-            #count_grupos = 0
             count_grupos = []
             grupos_pfe = Projeto.objects.filter(orientador=professor).\
                                         filter(ano=ano).\
@@ -2636,18 +2635,21 @@ def professores_tabela(request):
                 for grupo in grupos_pfe: # garante que tem alunos no projeto
                     alunos_pfe = Aluno.objects.filter(alocacao__projeto=grupo)
                     if alunos_pfe:
-                        #count_grupos += 1
                         count_grupos.append(grupo)
-                #if count_grupos > 0:
                 if count_grupos:
                     professores.append(professor)
                     grupos.append(count_grupos)
-        professores_pfe.append(zip(professores, grupos))
-        periodo.append(str(ano)+"."+str(semestre))
 
-        if ((ano == configuracao.ano) and (semestre == configuracao.semestre)):
+        if professores: # Se não houver nenhum orientador não cria entrada na lista
+            professores_pfe.append(zip(professores, grupos))
+            periodo.append(str(ano)+"."+str(semestre))
+
+        # Para de buscar depois do semestre atual
+        if ((semestre == configuracao.semestre + 1) and (ano == configuracao.ano)) or \
+           (ano > configuracao.ano):
             break
 
+        # Avança um semestre
         if semestre == 2:
             semestre = 1
             ano += 1
@@ -2669,8 +2671,8 @@ def coorientadores_tabela(request):
     professores_pfe = []
     periodo = []
 
-    ano = 2018
-    semestre = 2
+    ano = 2018    # Ano de início do PFE
+    semestre = 2  # Semestre de início do PFE
     while True:
         professores = []
         grupos = []
@@ -2688,12 +2690,16 @@ def coorientadores_tabela(request):
                 if count_grupos:
                     professores.append(professor)
                     grupos.append(count_grupos)
-        professores_pfe.append(zip(professores, grupos))
-        periodo.append(str(ano)+"."+str(semestre))
+        if professores: # Se não houver nenhum co-orientador não cria entrada na lista
+            professores_pfe.append(zip(professores, grupos))
+            periodo.append(str(ano)+"."+str(semestre))
 
-        if ((ano == configuracao.ano) and (semestre == configuracao.semestre)):
+        # Para de buscar depois do semestre atual
+        if ((semestre == configuracao.semestre + 1) and (ano == configuracao.ano)) or \
+           (ano > configuracao.ano):
             break
 
+        # Avança um semestre
         if semestre == 2:
             semestre = 1
             ano += 1

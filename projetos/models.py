@@ -910,8 +910,8 @@ class Certificado(models.Model):
 
     TIPO_DE_CERTIFICADO = ( # não mudar a ordem dos números
         (0, 'Não definido'),
-        (1, 'Aluno destaque'),
-        (2, 'Grupo de alunos destaque'),
+        (1, 'Estudante destaque'),
+        (2, 'Equipe destaque'),
     )
     tipo_de_certificado = models.PositiveSmallIntegerField(choices=TIPO_DE_CERTIFICADO, default=0)
 
