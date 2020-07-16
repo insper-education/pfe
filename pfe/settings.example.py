@@ -187,3 +187,6 @@ DEBUG_TOOLBAR_CONFIG = {
     #'SHOW_TOOLBAR_CALLBACK': 'pfe.settings.show_toolbar',
     'SHOW_TOOLBAR_CALLBACK': show_toolbar,
 }
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+
