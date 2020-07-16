@@ -7,3 +7,5 @@ sudo python3 manage.py makemigrations
 sudo python3 manage.py migrate 
 #sudo python3 manage.py runserver 0.0.0.0:80 &
 sudo systemctl start apache2
+#tail -f /var/log/apache2/error.log
+#tail -f /var/log/apache2/access.log
