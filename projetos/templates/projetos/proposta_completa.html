@@ -48,16 +48,10 @@
 
   <a class="myButton" href="{% url 'proposta_editar' proposta.slug %}">Editar Proposta</a>
 
-  <br>
-  {% if proposta.fechada %}
-    <strong>Projeto fechado:</strong>
-    <a href="{% url 'projeto_completo' projeto.id %}">
-      {{ projeto.get_titulo }}
-    </a>
-    <br>
-  {% endif %}
-
-  <br>
+  {% for projeto in projetos %}
+    <a class="myButton" href="{% url 'projeto_completo' projeto.id %}">Projeto {{projeto.ano}}.{{projeto.semestre}}</a>
+  {% endfor %}
+  <br><br>
 
   <strong>Descrição:</strong>
   {{proposta.descricao|linebreaks|urlize}}
@@ -150,14 +144,20 @@
   <h3>Aluno(s) Aplicando para a Proposta</h3>
   {% for opcao in proposta.opcao_set.all %}
     {% if proposta.ano == opcao.aluno.anoPFE and proposta.semestre == opcao.aluno.semestrePFE %}
-    <a href="{% url 'aluno_detail' opcao.aluno.id %}">
-      <p class="{% if opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}">
+    <a href="{% url 'aluno_detail' opcao.aluno.id %}"
+       class="
+       {% if opcao.aluno in estudantes %}
+        {% if opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}
+       {% else %}
+        {% if opcao.prioridade <= 5 %}green-normal{% else %}yellow-normal{% endif %}
+       {% endif %}
+       ">
         {{opcao.aluno.user.get_full_name}}
         [{{ opcao.aluno.get_curso_display }}]
         &nbsp;=>&nbsp;opção #{{opcao.prioridade}}
         &nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} }
         &nbsp;CR={{opcao.aluno.cr}}
-      </p>
+      <br>
     </a>
     {% endif %}
   {% endfor %}
@@ -166,14 +166,13 @@
   </p>
   {% for opcao in proposta.opcao_set.all %}
     {% if proposta.ano != opcao.aluno.anoPFE or proposta.semestre != opcao.aluno.semestrePFE %}
-    <a href="{% url 'aluno_detail' opcao.aluno.id %}">
-      <p class="red-bold">
+    <a href="{% url 'aluno_detail' opcao.aluno.id %}" class="{% if opcao.aluno in estudantes %}red-bold{% else %}red-normal{% endif%}">
         {{opcao.aluno.user.get_full_name}}
         [{{ opcao.aluno.get_curso_display }}]
         &nbsp;=>&nbsp;opção #{{opcao.prioridade}}
         &nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} }
         &nbsp;CR={{opcao.aluno.cr}}
-      </p>
+      <br>
     </a>
     {% endif %}
   {% endfor %}

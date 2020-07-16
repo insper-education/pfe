@@ -79,6 +79,28 @@ body {
   text-overflow: ellipsis;
 }
 
+
+.red-normal {
+  color: red;
+  font-weight: normal;
+}
+
+.green-normal {
+  color: green;
+  font-weight: normal;
+}
+
+.yellow-normal {
+  color: olive;
+  font-weight: normal;
+}
+
+.dark-blue-normal {
+  color: darkblue;
+  font-weight: normal;
+}
+
+
 .red-bold {
   color: red;
   font-weight: bold;

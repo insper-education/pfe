@@ -954,18 +954,23 @@ def proposta_completa(request, primakey):
     configuracao = Configuracao.objects.all().first()
 
     membros_comite = PFEUser.objects.filter(membro_comite=True)
-    projeto = None
-    if proposta.fechada:
-        projeto = Projeto.objects.get(proposta=proposta)
+    projetos = Projeto.objects.filter(proposta=proposta)
+
+    estudantes = []
+    for projeto in projetos:
+        alocacoes = Alocacao.objects.filter(projeto=projeto)
+        for alocacao in alocacoes:
+            estudantes.append(alocacao.aluno)
 
     opcoes = Opcao.objects.filter(proposta=proposta)
     context = {
-        'configuracao': configuracao,
-        'proposta': proposta,
-        'opcoes': opcoes,
-        'MEDIA_URL' : settings.MEDIA_URL,
-        'projeto' : projeto,
+        "configuracao": configuracao,
+        "proposta": proposta,
+        "opcoes": opcoes,
+        "MEDIA_URL" : settings.MEDIA_URL,
+        "projetos" : projetos,
         "comite": membros_comite,
+        "estudantes": estudantes,
     }
     return render(request, 'projetos/proposta_completa.html', context=context)
 
