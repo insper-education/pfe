@@ -1185,25 +1185,25 @@ def distribuicao_areas(request, tipo):
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def organizacoes_lista(request):
-    """Exibe todas as organizações que já submeteram projetos."""
+    """Exibe todas as organizações que já submeteram propostas de projetos."""
     organizacoes = Organizacao.objects.all()
     fechados = []
     desde = []
     contato = []
     for organizacao in organizacoes:
-        projetos = Projeto.objects.filter(organizacao=organizacao).order_by("ano", "semestre")
-        if projetos.first():
-            desde.append(str(projetos.first().ano)+"."+str(projetos.first().semestre))
+        propostas = Proposta.objects.filter(organizacao=organizacao).order_by("ano", "semestre")
+        if propostas.first():
+            desde.append(str(propostas.first().ano)+"."+str(propostas.first().semestre))
         else:
             desde.append("---------")
 
-        #anot = Anotacao.objects.filter(organizacao=organizacao).order_by("momento").last()
         anot = Anotacao.objects.filter(organizacao=organizacao).order_by("momento").last()
         if anot:
             contato.append(anot)
         else:
             contato.append("---------")
 
+        projetos = Projeto.objects.filter(organizacao=organizacao)
         fechados.append(projetos.filter(alocacao__isnull=False).distinct().count())
 
     organizacoes_list = zip(organizacoes, fechados, desde, contato)
