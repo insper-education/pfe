@@ -6,11 +6,18 @@ Data: 18 de Outubro de 2019
 """
 
 import datetime
+import subprocess
 from celery import task
 
 from .messages import email, htmlizar
 from .views import get_calendario_context
-from .models import Configuracao, Aviso
+from .models import Aviso
+#from .models import Configuracao
+
+@task
+def certbot_renew():
+    """Renova Certificado Digital."""
+    subprocess.call(['sudo', 'certbot', 'renew', '--dry-run'])
 
 @task
 def envia_aviso():
