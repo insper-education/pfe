@@ -20,7 +20,7 @@ from django.utils import html
 from django.utils import timezone
 from django.views import generic
 
-from projetos.models import Configuracao, Projeto, Conexao
+from projetos.models import Configuracao, Projeto, Conexao, Banca
 from projetos.views import cria_areas
 from projetos.messages import email
 
@@ -339,9 +339,13 @@ def professor_detail(request, primarykey):
         return HttpResponse("Professor não encontrado.", status=401)
 
     projetos = Projeto.objects.filter(orientador=professor)
+    bancas = Banca.objects.filter(membro1=professor.user)|\
+             Banca.objects.filter(membro2=professor.user)|\
+             Banca.objects.filter(membro3=professor.user)
     context = {
         'professor': professor,
         'projetos': projetos,
+        'bancas': bancas,
     }
     return render(request, 'users/professor_detail.html', context=context)
 

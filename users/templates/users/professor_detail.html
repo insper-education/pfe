@@ -26,9 +26,10 @@
   {% endif %}
 
   
-  <hr>
-  <h4>Projeto(s) Orientado(s)</h4>
+  
   {% if projetos %}
+    <hr>
+    <h4>Projeto(s) Orientado(s)</h4>
     <ol>
     {% for projeto in projetos %}
       {% if projeto.alocacao_set.all.count > 0 %}
@@ -42,9 +43,45 @@
       Projetos não encontrados
     {% endfor %}
     </ol>
-  {% else %}
-    Projetos não encontrados
   {% endif %}
+
+  {% if bancas %}
+    <hr>
+    <h4>Participação em Banca(s)</h4>
+    <ol>
+    {% for banca in bancas %}
+        <li>
+          <a href="{% url 'banca_ver' banca.id %}">
+          {% if banca.tipo_de_banca == 0 %}
+            Final,
+          {% elif banca.tipo_de_banca == 1 %}
+            Intermediária,
+          {% endif %}
+          {% if banca.startDate %}
+            {{banca.startDate.date}},
+          {% endif %}
+          </a>
+          {% if banca.projeto %}
+            <a href="{% url 'projeto_completo' banca.projeto.id %}">
+              {% if banca.projeto.titulo_final %}
+                {{banca.projeto.titulo_final}}</a>,
+              {% else %}
+                {{banca.projeto.titulo}}</a>,
+              {% endif %}
+          {% endif %}
+          {% if banca.projeto.organizacao %}
+            <a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">
+              {{ banca.projeto.organizacao.nome }}
+            </a>
+          {% endif %}
+        </li>
+    {% empty %}
+      Bancas não encontrados
+    {% endfor %}
+    </ol>
+  {% endif %}
+
+
   <p>&nbsp;</p>
   <p>&nbsp;</p>
 
