@@ -6,7 +6,8 @@
 {% endcomment %}
 
 {% block head %}
-<script src="https://www.w3schools.com/lib/w3.js"></script>
+  {% load static %}
+  <script src="https://www.w3schools.com/lib/w3.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -16,6 +17,8 @@
       <tr>
         <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome</th>
         <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">e-mail</th>
+        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Bancas</th>
+        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Projetos</th>
         <th class="text-center">Lattes</th>
       </tr>
       {% for professor in professores %} 
@@ -26,9 +29,16 @@
                 {{professor.user.get_full_name}}
               </a>
             {% if professor.user.membro_comite %} <u> {% endif %}
+            
+          </td>
+          <td>
+            <a href="mailto:{{professor.user.email}}"> &lt;{{professor.user.email}}&gt;</a><br>
           </td>
           <td class="text-center">
-            <a href="mailto:{{professor.user.email}}"> &lt;{{professor.user.email}}&gt;</a><br>
+            {{professor.user.membro1.count|add:professor.user.membro2.count|add:professor.user.membro3.count|stringformat:"02d" }}
+          </td>
+          <td class="text-center">
+            {{professor.professor_orientador.count|stringformat:"02d"}}
           </td>
           <td >
             {% if professor.lattes %}
