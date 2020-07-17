@@ -17,7 +17,7 @@ from .models import Aviso
 @task
 def certbot_renew():
     """Renova Certificado Digital."""
-    subprocess.call(['sudo', 'certbot', 'renew', '--dry-run'])
+    subprocess.call(['sudo', 'certbot', 'renew', '--quiet'])
 
 @task
 def envia_aviso():

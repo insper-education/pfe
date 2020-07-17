@@ -150,11 +150,15 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '<local_dos_arquivos>')
 
 # CELERY
 # CELERY_TIMEZONE = 'America/Sao_Paulo'
-CELERY_BROKER_URL = 'amqp://<colocarusuario>:<colocarsenha>@localhost//'
+CELERY_BROKER_URL = 'amqp://guest:guest@localhost//'
 CELERY_BEAT_SCHEDULE = {
     'send-email-daily': {
         'task': 'projetos.tasks.envia_aviso',
         'schedule': crontab(hour=6, minute=0),
+    },
+    'certbot-renew': {
+        'task': 'projetos.tasks.certbot_renew',
+        'schedule': crontab(0, 0, day_of_month='1'),
     },
 }
 
@@ -189,4 +193,3 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-
