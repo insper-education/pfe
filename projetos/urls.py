@@ -86,6 +86,7 @@ urlpatterns = [
     path('relatorio/<str:modelo>/<str:formato>', views.relatorio, name='relatorio'),
     path('relatorio_backup/', views.relatorio_backup, name='relatorio_backup'),
     path('relatorios/', views.relatorios, name='relatorios'),
+    path('resultado_avaliacoes/', views.resultado_avaliacoes, name='resultado_avaliacoes'),
     path('selecao_propostas/', views.selecao_propostas, name='selecao_propostas'),
     path('selecionar_orientadores/', views.selecionar_orientadores, name='selecionar_orientadores'),
     path('servico/', views.servico, name='servico'),

@@ -499,6 +499,132 @@ def procura_propostas(request):
     return render(request, 'projetos/procura_propostas.html', context)
 
 
+def converte_conceito(conceito):
+    """ Converte de Letra para Número. """
+    if conceito == "A+":
+        return 10
+    elif conceito == "A" or conceito == "A ":
+        return 9
+    elif conceito == "B+":
+        return 8
+    elif conceito == "B" or conceito == "B ":
+        return 7
+    elif conceito == "C+":
+        return 6
+    elif conceito == "C" or conceito == "C ":
+        return 5
+    elif conceito == "D" or conceito == "D ":
+        return 4
+    return 0
+
+def converte_letra(nota):
+    """ Converte de Número para Letra. """
+    if nota == 10:
+        return "A+"
+    elif nota >= 9:
+        return "A"
+    elif nota >= 8:
+        return "B+"
+    elif nota >= 7:
+        return "B"
+    elif nota >= 6:
+        return "C+"
+    elif nota >= 5:
+        return "C"
+    elif nota >= 4:
+        return "D"
+    return "I"
+
+def get_notas(avalia):
+    """ Faz a média de todas as notas de uma avaliação. """
+    count = 0
+    nota = 0
+    if avalia.objetivo1:
+        nota += converte_conceito(avalia.objetivo1_conceito)
+        count += 1
+    if avalia.objetivo2:
+        nota += converte_conceito(avalia.objetivo2_conceito)
+        count += 1
+    if avalia.objetivo3:
+        nota += converte_conceito(avalia.objetivo3_conceito)
+        count += 1
+    if avalia.objetivo4:
+        nota += converte_conceito(avalia.objetivo4_conceito)
+        count += 1
+    if avalia.objetivo5:
+        nota += converte_conceito(avalia.objetivo5_conceito)
+        count += 1
+    if count:
+        return nota/count
+    else:
+        return 0
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def resultado_avaliacoes(request):
+    """ . """
+
+    configuracao = Configuracao.objects.first()
+    ano = configuracao.ano
+    semestre = configuracao.semestre
+
+    # Vai para próximo semestre
+    # if semestre == 1:
+    #     semestre = 2
+    # else:
+    #     ano += 1
+    #     semestre = 1
+
+    if request.is_ajax() and 'anosemestre' in request.POST:
+        anosemestre = request.POST['anosemestre']
+        ano = int(anosemestre.split(".")[0])
+        semestre = int(anosemestre.split(".")[1])
+    #else:
+    #    return HttpResponse("Algum erro não identificado.", status=401)
+
+    projetos = Projeto.objects.filter(ano=ano).filter(semestre=semestre)
+
+    banca_intermediaria = []
+    banca_final = []
+
+    for projeto in projetos:
+        nota_banca_final = 0
+        #(0, 'final')
+        avaliacoes_banca_final = Avaliacao.objects.filter(projeto=projeto,
+                                                          tipo_de_avaliacao=0)
+        for avali in avaliacoes_banca_final:
+            nota_banca_final += get_notas(avali)
+        if avaliacoes_banca_final:
+            media = nota_banca_final/len(avaliacoes_banca_final)
+            banca_final.append("{0} ({1:.2f})".format(converte_letra(media), media))
+        else:
+            banca_final.append("-")
+
+        nota_banca_intermediaria = 0
+        #(1, 'intermediária')
+        avaliacoes_banca_intermediaria = Avaliacao.objects.filter(projeto=projeto,
+                                                                  tipo_de_avaliacao=1)
+        for avali in avaliacoes_banca_intermediaria:
+            nota_banca_intermediaria += get_notas(avali)
+        if avaliacoes_banca_intermediaria:
+            media = nota_banca_intermediaria/len(avaliacoes_banca_intermediaria)
+            banca_intermediaria.append("{0} ({1:.2f})".format(converte_letra(media), media))
+        else:
+            banca_intermediaria.append("-")
+
+
+    mylist = zip(projetos, banca_intermediaria, banca_final)
+
+    context = {
+        'mylist': mylist,
+        'ano': ano,
+        'semestre': semestre,
+        'loop_anos': range(2018, configuracao.ano+1),
+    }
+
+    return render(request, 'projetos/resultado_avaliacoes.html', context)
+
+
 def get_next_opcao(numb, opcoes):
     """Busca proxima opcao do aluno."""
     numb += 1
