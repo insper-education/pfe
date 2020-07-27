@@ -63,14 +63,9 @@
 {% block content %}
 
   <div style="position:absolute; right:32;">
-    <img class="image" id="bpdf" src="{% static 'images/icone_PDF.png' %}" alt="pdf" style="cursor: pointer;">
+    <img class="image" id="bjpg" src="{% static 'images/icone_JPG.png' %}" alt="jpg" style="cursor: pointer;">
     <img class="image" id="bpng" src="{% static 'images/icone_PNG.png' %}" alt="png" style="cursor: pointer;">
-
-    {% comment %} <input class="image" id="bpng" type="image" src="{% static 'images/icone_PNG.png' %}" />
-    <input class="image" id="bpdf" type="image" src="{% static 'images/icone_PDF.png' %}" /> {% endcomment %}
-
-  
-
+    <img class="image" id="bpdf" src="{% static 'images/icone_PDF.png' %}" alt="pdf" style="cursor: pointer;">
   </div>
 
   <div id="tudo">
@@ -636,18 +631,23 @@
         scrollX: 0,
         scrollY: -window.scrollY
       }).then(function(canvas) {
-        var imgData = canvas.toDataURL('image/png');
         if(tipo=="png") {
+          var imgData = canvas.toDataURL('image/png');
           saveAs(imgData, 'calendario.png'); // GERA PNG 
-        }
-        if(tipo=="pdf") {
-          var w = canvas.width
-          var h = canvas.height
-          var alt = (412 / canvas.width) * canvas.height
-          // GERA PDF
-          var doc = new jsPDF('p', 'px');
-          doc.addImage(imgData, 'PNG', 16, 16, 412, alt);
-          doc.save('calendario.pdf');
+        } else {
+          var imgData = canvas.toDataURL('image/jpeg');
+          if(tipo=="jpg" || tipo=="jpeg") {
+            saveAs(imgData, 'calendario.jpg'); // GERA PNG 
+          } else
+          if(tipo=="pdf") {
+            var w = canvas.width
+            var h = canvas.height
+            var alt = (412 / canvas.width) * canvas.height
+            // GERA PDF
+            var doc = new jsPDF('portrait', 'px', 'a4', true, true);
+            doc.addImage(imgData, 'JPG', 16, 16, 412, alt);
+            doc.save('calendario.pdf');
+          }
         }
       });
       document.querySelector('#tudo').style.width = "100%";
@@ -656,6 +656,10 @@
 
   document.getElementById("bpng").addEventListener("click", function() {
     get_image("png")
+  });
+
+  document.getElementById("bjpg").addEventListener("click", function() {
+    get_image("jpg")
   });
 
   document.getElementById("bpdf").addEventListener("click", function() {
