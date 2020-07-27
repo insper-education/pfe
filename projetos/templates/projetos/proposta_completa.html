@@ -142,6 +142,19 @@
 
   <hr>
   <h3>Aluno(s) Aplicando para a Proposta</h3>
+
+  {% for estudante in sem_opcao %}
+    <a href="{% url 'aluno_detail' estudante.id %}"
+      class="dark-green-bold">
+        {{estudante.user.get_full_name}}
+        [{{ estudante.get_curso_display }}]
+        &nbsp;=>&nbsp;SEM PRIORIDADE DEFINIDA
+        &nbsp;|&nbsp;{ {{estudante.anoPFE}}.{{estudante.semestrePFE}} }
+        &nbsp;CR={{estudante.cr}}
+      <br>
+    </a>
+  {% endfor %}
+
   {% for opcao in proposta.opcao_set.all %}
     {% if proposta.ano == opcao.aluno.anoPFE and proposta.semestre == opcao.aluno.semestrePFE %}
     <a href="{% url 'aluno_detail' opcao.aluno.id %}"

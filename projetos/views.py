@@ -1083,10 +1083,14 @@ def proposta_completa(request, primakey):
     projetos = Projeto.objects.filter(proposta=proposta)
 
     estudantes = []
+    sem_opcao = []
     for projeto in projetos:
         alocacoes = Alocacao.objects.filter(projeto=projeto)
         for alocacao in alocacoes:
-            estudantes.append(alocacao.aluno)
+            if Opcao.objects.filter(proposta=proposta, aluno=alocacao.aluno):
+                estudantes.append(alocacao.aluno)
+            else:
+                sem_opcao.append(alocacao.aluno)
 
     opcoes = Opcao.objects.filter(proposta=proposta)
     context = {
@@ -1097,6 +1101,7 @@ def proposta_completa(request, primakey):
         "projetos" : projetos,
         "comite": membros_comite,
         "estudantes": estudantes,
+        "sem_opcao": sem_opcao,
     }
     return render(request, 'projetos/proposta_completa.html', context=context)
 

@@ -121,6 +121,11 @@ body {
   font-weight: bold;
 }
 
+.dark-green-bold {
+  color: rgb(0, 70, 0);
+  font-weight: bold;
+}
+
 p {
   display: block;
   margin-top: 2px;
