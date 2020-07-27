@@ -39,22 +39,48 @@
     });
   </script>
 
+  <style>
+
+    .image {
+      outline-width: 0;
+      background-color: none;
+    }
+
+    .image:hover {
+      background: #e7e7e7;
+      background-color: none;
+    }
+
+    .image:active {
+      background-color: lightblue;
+    }
+
+  </style>
+
+
 {% endblock %}
 
 {% block content %}
 
   <div style="position:absolute; right:32;">
-    <img id="bpdf" src="{% static 'images/icone_PDF.png' %}" alt="pdf" style="cursor: pointer;">
-    <img id="bpng" src="{% static 'images/icone_PNG.png' %}" alt="png" style="cursor: pointer;">
+    <img class="image" id="bpdf" src="{% static 'images/icone_PDF.png' %}" alt="pdf" style="cursor: pointer;">
+    <img class="image" id="bpng" src="{% static 'images/icone_PNG.png' %}" alt="png" style="cursor: pointer;">
+
+    {% comment %} <input class="image" id="bpng" type="image" src="{% static 'images/icone_PNG.png' %}" />
+    <input class="image" id="bpdf" type="image" src="{% static 'images/icone_PDF.png' %}" /> {% endcomment %}
+
+  
+
   </div>
 
   <div id="tudo">
+
     <h3>Calendário de Eventos do PFE</h3>
     <br>
     
     <div id='calendar'></div>
     
-    &nbsp;Semestre: [<span id="primeiro_semestre">1</span>/<span id="segundo_semestre">2</span>]
+    &nbsp;Semestre: [<span id="primeiro_semestre" style="cursor: pointer;">1</span>/<span id="segundo_semestre" style="cursor: pointer;">2</span>]
 
     {% comment %}
         (1, 'aluno'),
@@ -363,7 +389,7 @@
       $('#event-modal').modal('hide');
     }
 
-    $(function () {
+    function calendario() {
       var currentYear = new Date().getFullYear();
       var currentMonth = new Date().getMonth(); 
       var currentDate = new Date().getDate();
@@ -501,7 +527,9 @@
       $('#save-event').click(function () {
         saveEvent();
       });
-    });
+    }
+    
+    $(calendario);
 
     var currentYear = 2018; //como se fosse global
 
@@ -522,7 +550,10 @@
     function primeiro(e) {
       //console.log("Semestre selected: 1");
       document.getElementById("primeiro_semestre").style.fontWeight = "bold";
+      document.getElementById("primeiro_semestre").style.color = "black";
       document.getElementById("segundo_semestre").style.fontWeight = "normal";
+      document.getElementById("segundo_semestre").style.color = "grey";
+      
       [].forEach.call(document.querySelectorAll('.semestre'), function (el) {
         el.style.display = 'none';
       });
@@ -549,7 +580,10 @@
     function segundo(e) {
       //console.log("Semestre selected: 2 em " + currentYear);
       document.getElementById("primeiro_semestre").style.fontWeight = "normal";
+      document.getElementById("primeiro_semestre").style.color = "grey";
       document.getElementById("segundo_semestre").style.fontWeight = "bold";
+      document.getElementById("segundo_semestre").style.color = "black";
+
       [].forEach.call(document.querySelectorAll('.semestre'), function (el) {
         el.style.display = 'none';
       });
@@ -592,30 +626,41 @@
       {% endif %}
     }
 
-  document.getElementById("bpng").addEventListener("click", function() {
-    html2canvas(document.querySelector('#tudo'), {
+  function get_image(tipo) {
+    //var imgData = null
+    document.querySelector('#tudo').style.width = "1200px";
+    setTimeout(function () {
+      html2canvas(document.querySelector('#tudo'), {
+        width: 1200,
+        windowWidth: 1200,
         scrollX: 0,
         scrollY: -window.scrollY
       }).then(function(canvas) {
-          var imgData = canvas.toDataURL('image/png');  
+        var imgData = canvas.toDataURL('image/png');
+        if(tipo=="png") {
           saveAs(imgData, 'calendario.png'); // GERA PNG 
-      });
-    });
-
-  document.getElementById("bpdf").addEventListener("click", function() {
-    html2canvas(document.querySelector('#tudo'), {
-        scrollX: 0,
-        scrollY: -window.scrollY
-      }).then(function(canvas) {
+        }
+        if(tipo=="pdf") {
           var w = canvas.width
           var h = canvas.height
-          var imgData = canvas.toDataURL('image/png');  
+          var alt = (412 / canvas.width) * canvas.height
           // GERA PDF
-          var doc = new jsPDF('p', 'px', [h, w]);
-          doc.addImage(imgData, 'PNG', 16, 16);
+          var doc = new jsPDF('p', 'px');
+          doc.addImage(imgData, 'PNG', 16, 16, 412, alt);
           doc.save('calendario.pdf');
+        }
       });
-    });
+      document.querySelector('#tudo').style.width = "100%";
+    }, 600);
+  }
+
+  document.getElementById("bpng").addEventListener("click", function() {
+    get_image("png")
+  });
+
+  document.getElementById("bpdf").addEventListener("click", function() {
+    get_image("pdf")
+  });
 
   function saveAs(uri, filename) {
 
@@ -640,11 +685,8 @@
         window.open(uri);
 
     }
-}
+  }
 
   </script>
-
-
-  
 
 {% endblock %}
