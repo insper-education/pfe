@@ -8,12 +8,17 @@
 {% endcomment %}
 
 {% block head %}
+  {% load static %}
+
   <!-- REFERENCIA: https://github.com/year-calendar/js-year-calendar -->
   <script src="https://unpkg.com/js-year-calendar@latest/dist/js-year-calendar.min.js"></script>
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/js-year-calendar@latest/dist/js-year-calendar.min.css" />
   <link rel='stylesheet' href='https://unpkg.com/bootstrap-datepicker@1.8.0/dist/css/bootstrap-datepicker.standalone.min.css'>
   
   <script src="https://unpkg.com/js-year-calendar@latest/locales/js-year-calendar.pt.js"></script>
+
+  <script src="http://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
 
   <style>
     table, th, td {
@@ -38,255 +43,263 @@
 
 {% block content %}
 
-  <h3>Calendário de Eventos do PFE</h3>
-  <br>
-  <div id='calendar'></div>
-  <br>
+  <div style="position:absolute; right:32;">
+    <img id="bpdf" src="{% static 'images/icone_PDF.png' %}" alt="pdf" style="cursor: pointer;">
+    <img id="bpng" src="{% static 'images/icone_PNG.png' %}" alt="png" style="cursor: pointer;">
+  </div>
 
-  &nbsp;Semestre: [<span id="primeiro_semestre">1</span>/<span id="segundo_semestre">2</span>]
+  <div id="tudo">
+    <h3>Calendário de Eventos do PFE</h3>
+    <br>
+    
+    <div id='calendar'></div>
+    
+    &nbsp;Semestre: [<span id="primeiro_semestre">1</span>/<span id="segundo_semestre">2</span>]
 
-  {% comment %}
-      (1, 'aluno'),
-      (2, 'professor'),
-      (3, 'parceiro'),
-      (4, 'administrador'),
-  {% endcomment %}
+    {% comment %}
+        (1, 'aluno'),
+        (2, 'professor'),
+        (3, 'parceiro'),
+        (4, 'administrador'),
+    {% endcomment %}
 
-  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-    <br><span style="font-size:20px" data-toggle="tooltip" data-html="true" animation="true" title=
-    "O semestre da coordenação vai de Março à Agosto e de Setembro a Fevereiro">
-      Operação:
-    </span>
+    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+      <br><span style="font-size:20px" data-toggle="tooltip" data-html="true" animation="true" title=
+      "O semestre da coordenação vai de Março à Agosto e de Setembro a Fevereiro">
+        Operação:
+      </span>
 
-    {% comment %} O certo era ser uma função essa chamadas. {% endcomment %}
-    {% comment %}  Para o ponto e virgula ficar junto dos termos
-    {% if eventos %}
-      {% for evento in coordenacao|dictsort:"endDate" %} 
-        <span class="coordenacao" data-ano="{{evento.endDate.year}}" data-mes="{{evento.endDate.month}}" >
-          {% ifchanged evento.get_title evento.get_semester evento.endDate.year %}   
-            <br><font style="color:{{evento.get_color}}">&#9608;</font> {{evento.get_title}}:
-            {% if evento.startDate == evento.endDate %} 
-              {{evento.endDate.day}}/{{evento.endDate.month}}/{{evento.endDate.year}}
+      {% comment %} O certo era ser uma função essa chamadas. {% endcomment %}
+      {% comment %}  Para o ponto e virgula ficar junto dos termos
+      {% if eventos %}
+        {% for evento in coordenacao|dictsort:"endDate" %} 
+          <span class="coordenacao" data-ano="{{evento.endDate.year}}" data-mes="{{evento.endDate.month}}" >
+            {% ifchanged evento.get_title evento.get_semester evento.endDate.year %}   
+              <br><font style="color:{{evento.get_color}}">&#9608;</font> {{evento.get_title}}:
+              {% if evento.startDate == evento.endDate %} 
+                {{evento.endDate.day}}/{{evento.endDate.month}}/{{evento.endDate.year}}
+              {% else %}
+                {{evento.startDate.day}}/{{evento.startDate.month}}/{{evento.endDate.year}} à {{evento.endDate.day}}/{{evento.endDate.month}}/{{evento.endDate.year}}
+              {% endif %}
             {% else %}
-              {{evento.startDate.day}}/{{evento.startDate.month}}/{{evento.endDate.year}} à {{evento.endDate.day}}/{{evento.endDate.month}}/{{evento.endDate.year}}
-            {% endif %}
-          {% else %}
-            ; {{evento.endDate.day}}/{{evento.endDate.month}}/{{evento.endDate.year}}
-          {% endifchanged %}
+              ; {{evento.endDate.day}}/{{evento.endDate.month}}/{{evento.endDate.year}}
+            {% endifchanged %}
+          </span>
+        {% endfor %}
+      {% endif %}
+      {% endcomment %}  
+      {% if eventos %}{% for evento in coordenacao|dictsort:"endDate" %}<span class="coordenacao" data-ano="{{evento.endDate.year}}" data-mes="{{evento.endDate.month}}" >{% ifchanged evento.get_title evento.get_semester evento.endDate.year %}<br><font style="color:{{evento.get_color}}">&#9608;</font> {{evento.get_title}}: {% if evento.startDate == evento.endDate %}{{evento.endDate.day}}/{{evento.endDate.month}}/{{evento.endDate.year}}{% else %}{{evento.startDate.day}}/{{evento.startDate.month}}/{{evento.endDate.year}} à {{evento.endDate.day}}/{{evento.endDate.month}}/{{evento.endDate.year}}{% endif %}{% else %}; {{evento.endDate.day}}/{{evento.endDate.month}}/{{evento.endDate.year}}{% endifchanged %}</span>{% endfor %}{% endif %}
+
+    {% endif %}
+
+    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+      <br><br><span style="font-size:20px">
+        Acadêmico:
+      </span>
+    {% endif %}
+
+    {% comment %}  Para o ponto e virgula ficar junto dos termos
+    {% for evento in eventos|dictsort:"endDate" %}
+      {% if evento.get_title != "Feriado" and evento.get_title != "Aula Cancelada" %}
+        <span class="ano{{evento.endDate.year}} ano">
+          <span class="semestre" data-mes="{{evento.endDate.month}}">
+            {% ifchanged evento.get_title evento.get_semester evento.endDate.year %}   
+              <br><font style="color:{{evento.get_color}}">&#9608;</font> {{evento.get_title}}:
+              {% if evento.startDate == evento.endDate %} 
+                {{evento.endDate.day}}/{{evento.endDate.month}}
+              {% else %}
+                {{evento.startDate.day}}/{{evento.startDate.month}} à {{evento.endDate.day}}/{{evento.endDate.month}} 
+              {% endif %}
+            {% else %}
+              ; {{evento.endDate.day}}/{{evento.endDate.month}}
+            {% endifchanged %}
+          </span>
+        </span>
+      {% endif %}
+    {% endfor %}
+    {% endcomment %}
+    {% if eventos %}{% for evento in eventos|dictsort:"endDate" %}{% if evento.get_title != "Feriado" and evento.get_title != "Aula Cancelada" %}<span class="ano{{evento.endDate.year}} ano"><span class="semestre" data-mes="{{evento.endDate.month}}">{% ifchanged evento.get_title evento.get_semester evento.endDate.year %}<br><font style="color:{{evento.get_color}}">&#9608;</font> {{evento.get_title}}: {% if evento.startDate == evento.endDate %}{{evento.endDate.day}}/{{evento.endDate.month}}{% else %}{{evento.startDate.day}}/{{evento.startDate.month}} à {{evento.endDate.day}}/{{evento.endDate.month}}{% endif %}{% else %}; {{evento.endDate.day}}/{{evento.endDate.month}}{% endifchanged %}</span></span>{% endif %}{% endfor %}{% endif %}
+
+
+    {% comment %}  Para o ponto e virgula ficar junto dos termos
+    {% if feedbacks %}
+      {% for feedback in feedbacks|dictsort:"endDate" %}
+        <span class="ano{{feedback.endDate.year}} ano">
+          <span class="semestre" data-mes="{{feedback.endDate.month}}">
+            {% ifchanged feedback.get_title feedback.get_semester feedback.endDate.year %} 
+              <br><font style="color:{{feedback.get_color}}">&#9608;</font> {{feedback.get_title}}: 
+              {{feedback.endDate.day}}/{{feedback.endDate.month}}
+            {% else %}
+              ; {{feedback.endDate.day}}/{{feedback.endDate.month}}
+            {% endifchanged %}
+          </span>
         </span>
       {% endfor %}
     {% endif %}
-    {% endcomment %}  
-    {% if eventos %}{% for evento in coordenacao|dictsort:"endDate" %}<span class="coordenacao" data-ano="{{evento.endDate.year}}" data-mes="{{evento.endDate.month}}" >{% ifchanged evento.get_title evento.get_semester evento.endDate.year %}<br><font style="color:{{evento.get_color}}">&#9608;</font> {{evento.get_title}}: {% if evento.startDate == evento.endDate %}{{evento.endDate.day}}/{{evento.endDate.month}}/{{evento.endDate.year}}{% else %}{{evento.startDate.day}}/{{evento.startDate.month}}/{{evento.endDate.year}} à {{evento.endDate.day}}/{{evento.endDate.month}}/{{evento.endDate.year}}{% endif %}{% else %}; {{evento.endDate.day}}/{{evento.endDate.month}}/{{evento.endDate.year}}{% endifchanged %}</span>{% endfor %}{% endif %}
+    {% endcomment %}
+    {% if feedbacks %}{% for feedback in feedbacks|dictsort:"endDate" %}<span class="ano{{feedback.endDate.year}} ano"><span class="semestre" data-mes="{{feedback.endDate.month}}">{% ifchanged feedback.get_title feedback.get_semester feedback.endDate.year %}<br><font style="color:{{feedback.get_color}}">&#9608;</font> {{feedback.get_title}}: {{feedback.endDate.day}}/{{feedback.endDate.month}}{% else %}; {{feedback.endDate.day}}/{{feedback.endDate.month}}{% endifchanged %}</span></span>{% endfor %}{% endif %}
 
-  {% endif %}
-
-  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-    <br><br><span style="font-size:20px">
-      Acadêmico:
-    </span>
-  {% endif %}
-
-  {% comment %}  Para o ponto e virgula ficar junto dos termos
-  {% for evento in eventos|dictsort:"endDate" %}
-    {% if evento.get_title != "Feriado" and evento.get_title != "Aula Cancelada" %}
-      <span class="ano{{evento.endDate.year}} ano">
-        <span class="semestre" data-mes="{{evento.endDate.month}}">
-          {% ifchanged evento.get_title evento.get_semester evento.endDate.year %}   
-            <br><font style="color:{{evento.get_color}}">&#9608;</font> {{evento.get_title}}:
-            {% if evento.startDate == evento.endDate %} 
-              {{evento.endDate.day}}/{{evento.endDate.month}}
+    {% comment %}  Para o ponto e virgula ficar junto dos termos
+    {% if quinzenais %}
+      {% for quinzenal in quinzenais|dictsort:"endDate" %}
+        <span class="ano{{quinzenal.endDate.year}} ano">
+          <span class="semestre" data-mes="{{quinzenal.endDate.month}}">
+            {% ifchanged quinzenal.get_title quinzenal.get_semester quinzenal.endDate.year %} 
+              <br><font style="color:{{quinzenal.get_color}}">&#9608;</font> {{quinzenal.get_title}}: 
+              {{quinzenal.endDate.day}}/{{quinzenal.endDate.month}}
             {% else %}
-              {{evento.startDate.day}}/{{evento.startDate.month}} à {{evento.endDate.day}}/{{evento.endDate.month}} 
-            {% endif %}
-          {% else %}
-            ; {{evento.endDate.day}}/{{evento.endDate.month}}
-          {% endifchanged %}
+              ; {{quinzenal.endDate.day}}/{{quinzenal.endDate.month}}
+            {% endifchanged %}
+          </span>
         </span>
-      </span>
+      {% endfor %}
     {% endif %}
-  {% endfor %}
-  {% endcomment %}
-  {% if eventos %}{% for evento in eventos|dictsort:"endDate" %}{% if evento.get_title != "Feriado" and evento.get_title != "Aula Cancelada" %}<span class="ano{{evento.endDate.year}} ano"><span class="semestre" data-mes="{{evento.endDate.month}}">{% ifchanged evento.get_title evento.get_semester evento.endDate.year %}<br><font style="color:{{evento.get_color}}">&#9608;</font> {{evento.get_title}}: {% if evento.startDate == evento.endDate %}{{evento.endDate.day}}/{{evento.endDate.month}}{% else %}{{evento.startDate.day}}/{{evento.startDate.month}} à {{evento.endDate.day}}/{{evento.endDate.month}}{% endif %}{% else %}; {{evento.endDate.day}}/{{evento.endDate.month}}{% endifchanged %}</span></span>{% endif %}{% endfor %}{% endif %}
+    {% endcomment %}
+    {% if quinzenais %}{% for quinzenal in quinzenais|dictsort:"endDate" %}<span class="ano{{quinzenal.endDate.year}} ano"><span class="semestre" data-mes="{{quinzenal.endDate.month}}">{% ifchanged quinzenal.get_title quinzenal.get_semester quinzenal.endDate.year %}<br><font style="color:{{quinzenal.get_color}}">&#9608;</font> {{quinzenal.get_title}}: {{quinzenal.endDate.day}}/{{quinzenal.endDate.month}}{% else %}; {{quinzenal.endDate.day}}/{{quinzenal.endDate.month}}{% endifchanged %}</span></span>{% endfor %}{% endif %}
 
-
-  {% comment %}  Para o ponto e virgula ficar junto dos termos
-  {% if feedbacks %}
-    {% for feedback in feedbacks|dictsort:"endDate" %}
-      <span class="ano{{feedback.endDate.year}} ano">
-        <span class="semestre" data-mes="{{feedback.endDate.month}}">
-          {% ifchanged feedback.get_title feedback.get_semester feedback.endDate.year %} 
-            <br><font style="color:{{feedback.get_color}}">&#9608;</font> {{feedback.get_title}}: 
-            {{feedback.endDate.day}}/{{feedback.endDate.month}}
-          {% else %}
-            ; {{feedback.endDate.day}}/{{feedback.endDate.month}}
-          {% endifchanged %}
-        </span>
-      </span>
-    {% endfor %}
-  {% endif %}
-  {% endcomment %}
-  {% if feedbacks %}{% for feedback in feedbacks|dictsort:"endDate" %}<span class="ano{{feedback.endDate.year}} ano"><span class="semestre" data-mes="{{feedback.endDate.month}}">{% ifchanged feedback.get_title feedback.get_semester feedback.endDate.year %}<br><font style="color:{{feedback.get_color}}">&#9608;</font> {{feedback.get_title}}: {{feedback.endDate.day}}/{{feedback.endDate.month}}{% else %}; {{feedback.endDate.day}}/{{feedback.endDate.month}}{% endifchanged %}</span></span>{% endfor %}{% endif %}
-
-  {% comment %}  Para o ponto e virgula ficar junto dos termos
-  {% if quinzenais %}
-    {% for quinzenal in quinzenais|dictsort:"endDate" %}
-      <span class="ano{{quinzenal.endDate.year}} ano">
-        <span class="semestre" data-mes="{{quinzenal.endDate.month}}">
-          {% ifchanged quinzenal.get_title quinzenal.get_semester quinzenal.endDate.year %} 
-            <br><font style="color:{{quinzenal.get_color}}">&#9608;</font> {{quinzenal.get_title}}: 
-            {{quinzenal.endDate.day}}/{{quinzenal.endDate.month}}
-          {% else %}
-            ; {{quinzenal.endDate.day}}/{{quinzenal.endDate.month}}
-          {% endifchanged %}
-        </span>
-      </span>
-    {% endfor %}
-  {% endif %}
-  {% endcomment %}
-  {% if quinzenais %}{% for quinzenal in quinzenais|dictsort:"endDate" %}<span class="ano{{quinzenal.endDate.year}} ano"><span class="semestre" data-mes="{{quinzenal.endDate.month}}">{% ifchanged quinzenal.get_title quinzenal.get_semester quinzenal.endDate.year %}<br><font style="color:{{quinzenal.get_color}}">&#9608;</font> {{quinzenal.get_title}}: {{quinzenal.endDate.day}}/{{quinzenal.endDate.month}}{% else %}; {{quinzenal.endDate.day}}/{{quinzenal.endDate.month}}{% endifchanged %}</span></span>{% endfor %}{% endif %}
-
-  {% comment %}  Para o ponto e virgula ficar junto dos termos
-  {% if aulas %}
-    {% for aula in aulas|dictsort:"endDate" %}
-      <span class="ano{{aula.endDate.year}} ano">
-        <span class="semestre" data-mes="{{aula.endDate.month}}">
-          {% ifchanged aula.get_title aula.get_semester aula.endDate.year %} 
-            <br><font style="color:{{aula.get_color}}">&#9608;</font> {{aula.get_title}}: 
-            {{aula.endDate.day}}/{{aula.endDate.month}}
-          {% else %}
-            ; {{aula.endDate.day}}/{{aula.endDate.month}}
-          {% endifchanged %}
-        </span>
-      </span>
-    {% endfor %}
-  {% endif %}
-  {% endcomment %}
-  {% if aulas %}{% for aula in aulas|dictsort:"endDate" %}<span class="ano{{aula.endDate.year}} ano"><span class="semestre" data-mes="{{aula.endDate.month}}">{% ifchanged aula.get_title aula.get_semester aula.endDate.year %}<br><font style="color:{{aula.get_color}}">&#9608;</font> {{aula.get_title}}: {{aula.endDate.day}}/{{aula.endDate.month}}{% else %}; {{aula.endDate.day}}/{{aula.endDate.month}}{% endifchanged %}</span></span>{% endfor %}{% endif %}
-
-  {% comment %}  Para o ponto e virgula ficar junto dos termos
-  {% if laboratorios %}
-    <br>
-    {% for laboratorio in laboratorios|dictsort:"endDate" %}
-      {% if laboratorio.get_title != "Feriado" %}
-        <span class="ano{{laboratorio.endDate.year}} ano">
-          <span class="semestre" data-mes="{{laboratorio.endDate.month}}">
-            {% ifchanged laboratorio.get_title laboratorio.get_semester laboratorio.endDate.year %}   
-              <br><font style="background-image : linear-gradient(to bottom, transparent 80%, {{laboratorio.get_color}} 80%">&nbsp;&nbsp;&nbsp;</font> {{laboratorio.get_title}}: 
-              {% if laboratorio.startDate == laboratorio.endDate %} 
-                {{laboratorio.endDate.day}}/{{laboratorio.endDate.month}}
-              {% else %}
-                {{laboratorio.startDate.day}}/{{laboratorio.startDate.month}} à {{laboratorio.endDate.day}}/{{laboratorio.endDate.month}} 
-              {% endif %}
+    {% comment %}  Para o ponto e virgula ficar junto dos termos
+    {% if aulas %}
+      {% for aula in aulas|dictsort:"endDate" %}
+        <span class="ano{{aula.endDate.year}} ano">
+          <span class="semestre" data-mes="{{aula.endDate.month}}">
+            {% ifchanged aula.get_title aula.get_semester aula.endDate.year %} 
+              <br><font style="color:{{aula.get_color}}">&#9608;</font> {{aula.get_title}}: 
+              {{aula.endDate.day}}/{{aula.endDate.month}}
             {% else %}
-              ; {{laboratorio.endDate.day}}/{{laboratorio.endDate.month}}
+              ; {{aula.endDate.day}}/{{aula.endDate.month}}
             {% endifchanged %}
           </span>
         </span>
-      {% endif %}
-    {% endfor %}
-    <br><font style="text-decoration: underline solid orange">
-    Dias sublinhados possuem disponibilidade de trabalho no laboratório 3 (L3) [as sextas-feiras]
-    </font>
-  {% endif %}
-  {% endcomment %}
-  {% if laboratorios %}
-    <br>
-    {% for laboratorio in laboratorios|dictsort:"endDate" %}{% if laboratorio.get_title != "Feriado" %}<span class="ano{{laboratorio.endDate.year}} ano"><span class="semestre" data-mes="{{laboratorio.endDate.month}}">{% ifchanged laboratorio.get_title laboratorio.get_semester laboratorio.endDate.year %}<br><font style="background-image : linear-gradient(to bottom, transparent 80%, {{laboratorio.get_color}} 80%">&nbsp;&nbsp;&nbsp;</font> {{laboratorio.get_title}}: {% if laboratorio.startDate == laboratorio.endDate %}{{laboratorio.endDate.day}}/{{laboratorio.endDate.month}}{% else %}{{laboratorio.startDate.day}}/{{laboratorio.startDate.month}} à {{laboratorio.endDate.day}}/{{laboratorio.endDate.month}}{% endif %}{% else %}; {{laboratorio.endDate.day}}/{{laboratorio.endDate.month}}{% endifchanged %}</span></span>{% endif %}{% endfor %}
-    <br><font style="text-decoration: underline solid orange">
-    Dias sublinhados possuem disponibilidade de trabalho no laboratório 3 (L3) [as sextas-feiras]
-    </font>
-  {% endif %}
+      {% endfor %}
+    {% endif %}
+    {% endcomment %}
+    {% if aulas %}{% for aula in aulas|dictsort:"endDate" %}<span class="ano{{aula.endDate.year}} ano"><span class="semestre" data-mes="{{aula.endDate.month}}">{% ifchanged aula.get_title aula.get_semester aula.endDate.year %}<br><font style="color:{{aula.get_color}}">&#9608;</font> {{aula.get_title}}: {{aula.endDate.day}}/{{aula.endDate.month}}{% else %}; {{aula.endDate.day}}/{{aula.endDate.month}}{% endifchanged %}</span></span>{% endfor %}{% endif %}
 
-  {% comment %}  Para o ponto e virgula ficar junto dos termos
-  {% if provas %}
-    <br>
-    {% for prova in provas|dictsort:"endDate" %}
-      {% if prova.get_title != "Feriado" %}
-        <span class="ano{{prova.endDate.year}} ano">
-          <span class="semestre" data-mes="{{prova.endDate.month}}">
-            {% ifchanged prova.get_title prova.get_semester prova.endDate.year %}   
-              <br><font style="background-image : linear-gradient(to bottom, transparent 80%, {{prova.get_color}} 80%">&nbsp;&nbsp;&nbsp;</font> {{prova.get_title}}: 
-              {% if prova.startDate == prova.endDate %} 
-                {{prova.endDate.day}}/{{prova.endDate.month}}
+    {% comment %}  Para o ponto e virgula ficar junto dos termos
+    {% if laboratorios %}
+      <br>
+      {% for laboratorio in laboratorios|dictsort:"endDate" %}
+        {% if laboratorio.get_title != "Feriado" %}
+          <span class="ano{{laboratorio.endDate.year}} ano">
+            <span class="semestre" data-mes="{{laboratorio.endDate.month}}">
+              {% ifchanged laboratorio.get_title laboratorio.get_semester laboratorio.endDate.year %}   
+                <br><font style="background-image : linear-gradient(to bottom, transparent 80%, {{laboratorio.get_color}} 80%">&nbsp;&nbsp;&nbsp;</font> {{laboratorio.get_title}}: 
+                {% if laboratorio.startDate == laboratorio.endDate %} 
+                  {{laboratorio.endDate.day}}/{{laboratorio.endDate.month}}
+                {% else %}
+                  {{laboratorio.startDate.day}}/{{laboratorio.startDate.month}} à {{laboratorio.endDate.day}}/{{laboratorio.endDate.month}} 
+                {% endif %}
               {% else %}
-                {{prova.startDate.day}}/{{prova.startDate.month}} à {{prova.endDate.day}}/{{prova.endDate.month}} 
-              {% endif %}
-            {% else %}
-              {% if prova.startDate == prova.endDate %} 
-                ; {{prova.endDate.day}}/{{prova.endDate.month}}
-              {% else %}
-                ; {{prova.startDate.day}}/{{prova.startDate.month}} à {{prova.endDate.day}}/{{prova.endDate.month}} 
-              {% endif %}
-            {% endifchanged %}
+                ; {{laboratorio.endDate.day}}/{{laboratorio.endDate.month}}
+              {% endifchanged %}
+            </span>
           </span>
-        </span>
-      {% endif %}
-    {% endfor %}
-    <br><font style="text-decoration: underline solid red">
-      Semana de provas sublinhado em vermelho
-    </font>
-  {% endif %}
-  {% endcomment %}
-  {% if provas %}
+        {% endif %}
+      {% endfor %}
+      <br><font style="text-decoration: underline solid orange">
+      Dias sublinhados possuem disponibilidade de trabalho no laboratório 3 (L3) [as sextas-feiras]
+      </font>
+    {% endif %}
+    {% endcomment %}
+    {% if laboratorios %}
+      <br>
+      {% for laboratorio in laboratorios|dictsort:"endDate" %}{% if laboratorio.get_title != "Feriado" %}<span class="ano{{laboratorio.endDate.year}} ano"><span class="semestre" data-mes="{{laboratorio.endDate.month}}">{% ifchanged laboratorio.get_title laboratorio.get_semester laboratorio.endDate.year %}<br><font style="background-image : linear-gradient(to bottom, transparent 80%, {{laboratorio.get_color}} 80%">&nbsp;&nbsp;&nbsp;</font> {{laboratorio.get_title}}: {% if laboratorio.startDate == laboratorio.endDate %}{{laboratorio.endDate.day}}/{{laboratorio.endDate.month}}{% else %}{{laboratorio.startDate.day}}/{{laboratorio.startDate.month}} à {{laboratorio.endDate.day}}/{{laboratorio.endDate.month}}{% endif %}{% else %}; {{laboratorio.endDate.day}}/{{laboratorio.endDate.month}}{% endifchanged %}</span></span>{% endif %}{% endfor %}
+      <br><font style="text-decoration: underline solid orange">
+      Dias sublinhados possuem disponibilidade de trabalho no laboratório 3 (L3) [as sextas-feiras]
+      </font>
+    {% endif %}
+
+    {% comment %}  Para o ponto e virgula ficar junto dos termos
+    {% if provas %}
+      <br>
+      {% for prova in provas|dictsort:"endDate" %}
+        {% if prova.get_title != "Feriado" %}
+          <span class="ano{{prova.endDate.year}} ano">
+            <span class="semestre" data-mes="{{prova.endDate.month}}">
+              {% ifchanged prova.get_title prova.get_semester prova.endDate.year %}   
+                <br><font style="background-image : linear-gradient(to bottom, transparent 80%, {{prova.get_color}} 80%">&nbsp;&nbsp;&nbsp;</font> {{prova.get_title}}: 
+                {% if prova.startDate == prova.endDate %} 
+                  {{prova.endDate.day}}/{{prova.endDate.month}}
+                {% else %}
+                  {{prova.startDate.day}}/{{prova.startDate.month}} à {{prova.endDate.day}}/{{prova.endDate.month}} 
+                {% endif %}
+              {% else %}
+                {% if prova.startDate == prova.endDate %} 
+                  ; {{prova.endDate.day}}/{{prova.endDate.month}}
+                {% else %}
+                  ; {{prova.startDate.day}}/{{prova.startDate.month}} à {{prova.endDate.day}}/{{prova.endDate.month}} 
+                {% endif %}
+              {% endifchanged %}
+            </span>
+          </span>
+        {% endif %}
+      {% endfor %}
+      <br><font style="text-decoration: underline solid red">
+        Semana de provas sublinhado em vermelho
+      </font>
+    {% endif %}
+    {% endcomment %}
+    {% if provas %}
+      <br>
+      {% for prova in provas|dictsort:"endDate" %}{% if prova.get_title != "Feriado" %}<span class="ano{{prova.endDate.year}} ano"><span class="semestre" data-mes="{{prova.endDate.month}}">{% ifchanged prova.get_title prova.get_semester prova.endDate.year %}<br><font style="background-image : linear-gradient(to bottom, transparent 80%, {{prova.get_color}} 80%">&nbsp;&nbsp;&nbsp;</font> {{prova.get_title}}: {% if prova.startDate == prova.endDate %}{{prova.endDate.day}}/{{prova.endDate.month}}{% else %}{{prova.startDate.day}}/{{prova.startDate.month}} à {{prova.endDate.day}}/{{prova.endDate.month}}{% endif %}{% else %}{% if prova.startDate == prova.endDate %} ; {{prova.endDate.day}}/{{prova.endDate.month}}{% else %}; {{prova.startDate.day}}/{{prova.startDate.month}} à {{prova.endDate.day}}/{{prova.endDate.month}}{% endif %}{% endifchanged %}</span></span>{% endif %}{% endfor %}
+      <br><font style="text-decoration: underline solid red">
+        Semana de provas sublinhado em vermelho
+      </font>
+    {% endif %}
+
     <br>
-    {% for prova in provas|dictsort:"endDate" %}{% if prova.get_title != "Feriado" %}<span class="ano{{prova.endDate.year}} ano"><span class="semestre" data-mes="{{prova.endDate.month}}">{% ifchanged prova.get_title prova.get_semester prova.endDate.year %}<br><font style="background-image : linear-gradient(to bottom, transparent 80%, {{prova.get_color}} 80%">&nbsp;&nbsp;&nbsp;</font> {{prova.get_title}}: {% if prova.startDate == prova.endDate %}{{prova.endDate.day}}/{{prova.endDate.month}}{% else %}{{prova.startDate.day}}/{{prova.startDate.month}} à {{prova.endDate.day}}/{{prova.endDate.month}}{% endif %}{% else %}{% if prova.startDate == prova.endDate %} ; {{prova.endDate.day}}/{{prova.endDate.month}}{% else %}; {{prova.startDate.day}}/{{prova.startDate.month}} à {{prova.endDate.day}}/{{prova.endDate.month}}{% endif %}{% endifchanged %}</span></span>{% endif %}{% endfor %}
-    <br><font style="text-decoration: underline solid red">
-      Semana de provas sublinhado em vermelho
-    </font>
-  {% endif %}
+    <br>
 
-  <br>
-  <br>
-
-  <div class="modal fade" id="event-modal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Event</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" name="event-index">
-                <form class="form-horizontal">
-                    <div class="form-group row">
-                        <label for="event-name" class="col-sm-4 control-label">Name</label>
-                        <div class="col-sm-8">
-                            <input id="event-name" name="event-name" type="text" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="event-location" class="col-sm-4 control-label">Location</label>
-                        <div class="col-sm-8">
-                            <input id="event-location" name="event-location" type="text" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="min-date" class="col-sm-4 control-label">Dates</label>
-                        <div class="col-sm-8">
-                            <div class="input-group input-daterange" data-provide="datepicker">
-                                <input id="min-date" name="event-start-date" type="text" class="form-control">
-                <div class="input-group-prepend input-group-append">
-                    <div class="input-group-text">to</div>
-                </div>
-                                <input name="event-end-date" type="text" class="form-control">
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="save-event">
-                    Save
-                </button>
-            </div>
-        </div>
+    <div class="modal fade" id="event-modal">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title">Event</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+              </div>
+              <div class="modal-body">
+                  <input type="hidden" name="event-index">
+                  <form class="form-horizontal">
+                      <div class="form-group row">
+                          <label for="event-name" class="col-sm-4 control-label">Name</label>
+                          <div class="col-sm-8">
+                              <input id="event-name" name="event-name" type="text" class="form-control">
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                          <label for="event-location" class="col-sm-4 control-label">Location</label>
+                          <div class="col-sm-8">
+                              <input id="event-location" name="event-location" type="text" class="form-control">
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                          <label for="min-date" class="col-sm-4 control-label">Dates</label>
+                          <div class="col-sm-8">
+                              <div class="input-group input-daterange" data-provide="datepicker">
+                                  <input id="min-date" name="event-start-date" type="text" class="form-control">
+                  <div class="input-group-prepend input-group-append">
+                      <div class="input-group-text">to</div>
+                  </div>
+                                  <input name="event-end-date" type="text" class="form-control">
+                              </div>
+                          </div>
+                      </div>
+                  </form>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-primary" id="save-event">
+                      Save
+                  </button>
+              </div>
+          </div>
+      </div>
     </div>
-  </div>
-  <div id="context-menu">
+    <div id="context-menu">
+    </div>
+
   </div>
 
   <script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js'></script> 
@@ -458,11 +471,11 @@
       
       customDayRenderer: function(element, date) {
           $(element).css('border-radius', '0px');
-          {% comment %}{% if not limpo %}{% endcomment %}
+          {% if not limpo %}
             if(date.getTime() == hoje) {
               $(element).css('outline', '2px solid blue');
             }
-          {% comment %}{% endif %}{% endcomment %}
+          {% endif %}
           if (date.getDay() === 6 || date.getDay() === 0) {
             $(element).css('background-color', 'lightgrey');  
           } else {
@@ -579,6 +592,59 @@
       {% endif %}
     }
 
+  document.getElementById("bpng").addEventListener("click", function() {
+    html2canvas(document.querySelector('#tudo'), {
+        scrollX: 0,
+        scrollY: -window.scrollY
+      }).then(function(canvas) {
+          var imgData = canvas.toDataURL('image/png');  
+          saveAs(imgData, 'calendario.png'); // GERA PNG 
+      });
+    });
+
+  document.getElementById("bpdf").addEventListener("click", function() {
+    html2canvas(document.querySelector('#tudo'), {
+        scrollX: 0,
+        scrollY: -window.scrollY
+      }).then(function(canvas) {
+          var w = canvas.width
+          var h = canvas.height
+          var imgData = canvas.toDataURL('image/png');  
+          // GERA PDF
+          var doc = new jsPDF('p', 'px', [h, w]);
+          doc.addImage(imgData, 'PNG', 16, 16);
+          doc.save('calendario.pdf');
+      });
+    });
+
+  function saveAs(uri, filename) {
+
+    var link = document.createElement('a');
+
+    if (typeof link.download === 'string') {
+
+        link.href = uri;
+        link.download = filename;
+
+        //Firefox requires the link to be in the body
+        document.body.appendChild(link);
+
+        //simulate click
+        link.click();
+
+        //remove the link when done
+        document.body.removeChild(link);
+
+    } else {
+
+        window.open(uri);
+
+    }
+}
+
   </script>
+
+
+  
 
 {% endblock %}
