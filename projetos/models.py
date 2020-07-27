@@ -395,16 +395,16 @@ class Evento(models.Model):
 
     TIPO_EVENTO = (
         (0, 'Feriado', 'lightgrey'),
-        (1, 'Aula Cancelada', 'lightgrey'),
+        (1, 'Aula cancelada', 'lightgrey'),
 
-        (10, 'Início das Aulas', 'red'),
-        (11, 'Evento de Abertura PFE', 'orange'),
+        (10, 'Início das aulas', 'red'),
+        (11, 'Evento de abertura do PFE', 'orange'),
         (12, 'Aula PFE', 'lightgreen'),
-        (13, 'Evento de Encerramento do PFE', 'brown'),
-        (14, 'Banca Intermediária', 'violet'),
-        (15, 'Bancas Finais', 'yellow'),
-        (16, 'Apresentação Final na Organização', 'beige'),
-        (17, 'Apresentação Intermediária na Organização', 'oldlace'),
+        (13, 'Evento de encerramento do PFE', 'brown'),
+        (14, 'Banca intermediária', 'violet'),
+        (15, 'Bancas finais', 'yellow'),
+        (16, 'Apresentação formal final na organização', 'beige'),
+        (17, 'Apresentação opcional intermediária na organização', 'oldlace'),
 
         (20, 'Relato Quinzenal', 'aquamarine'),
         (21, 'Entrega de Planejamento', 'lightblue'),
@@ -419,23 +419,23 @@ class Evento(models.Model):
         (32, 'Avaliação de Pares Final', 'pink'),
 
         (40, 'Laboratório', 'orange'),
-        (41, 'Semana de Provas', 'red'),
+        (41, 'Semana de provas', 'red'),
 
         (101, 'Apólice Seguro Acidentes Pessoais', 'aquamarine'),
 
-        (111, 'Bate-papo com os alunos sobre o PFE', 'lightcyan'),
-        (112, 'Alunos Demonstrarem Interesse em Adiar PFE para 9º Semestre', 'limegreen'),
-        (113, 'Apresentação dos Novos Projetos para os Alunos', 'darkslategray'),
-        (123, 'Seleção de Projetos pelos Aluno para o Próximo Semestre', 'pink'),
-        (124, 'Notificação dos Grupos Formados para os Alunos', 'paleturquoise'),
-        (125, 'Notificação para as Organizações de Projetos Fechados', 'moccasin'),
+        (111, 'Bate-papo com estudante que farão PFE no próximo semestre', 'lightcyan'),
+        (112, 'Alunos demonstrarem interesse em adiar PFE para 9º semestre', 'limegreen'),
+        (113, 'Apresentação dos projetos disponíveis para estudantes', 'darkslategray'),
+        (123, 'Indicação de interesse nos projetos do próximo semestre pelos estudante', 'pink'),
+        (124, 'Notificação para estudantes dos grupos formados', 'paleturquoise'),
+        (125, 'Notificação para organizações dos projetos fechados', 'moccasin'),
 
-        (120, 'Limite para Submissão de Propostas de Projetos pelas Organizações', 'lime'),
-        (121, 'Pré seleção de Propostas de Projetos', 'chartreuse'),
+        (120, 'Limite para submissão de propostas de projetos pelas organizações', 'lime'),
+        (121, 'Pré seleção de propostas de projetos', 'chartreuse'),
 
-        (130, 'Validação dos Projetos pelo Comitê', 'peru'),
+        (130, 'Validação dos projetos pelo comitê', 'peru'),
 
-        (140, 'Reunião de Orientações aos Orientadores', 'maroon'),
+        (140, 'Reunião de orientações aos orientadores', 'maroon'),
     )
 
     tipo_de_evento = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_EVENTO],

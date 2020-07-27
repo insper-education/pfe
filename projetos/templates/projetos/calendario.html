@@ -121,7 +121,7 @@
 
     {% comment %}  Para o ponto e virgula ficar junto dos termos
     {% for evento in eventos|dictsort:"endDate" %}
-      {% if evento.get_title != "Feriado" and evento.get_title != "Aula Cancelada" %}
+      {% if evento.get_title != "Feriado" and evento.get_title != "Aula cancelada" %}
         <span class="ano{{evento.endDate.year}} ano">
           <span class="semestre" data-mes="{{evento.endDate.month}}">
             {% ifchanged evento.get_title evento.get_semester evento.endDate.year %}   
@@ -139,7 +139,7 @@
       {% endif %}
     {% endfor %}
     {% endcomment %}
-    {% if eventos %}{% for evento in eventos|dictsort:"endDate" %}{% if evento.get_title != "Feriado" and evento.get_title != "Aula Cancelada" %}<span class="ano{{evento.endDate.year}} ano"><span class="semestre" data-mes="{{evento.endDate.month}}">{% ifchanged evento.get_title evento.get_semester evento.endDate.year %}<br><font style="color:{{evento.get_color}}">&#9608;</font> {{evento.get_title}}: {% if evento.startDate == evento.endDate %}{{evento.endDate.day}}/{{evento.endDate.month}}{% else %}{{evento.startDate.day}}/{{evento.startDate.month}} à {{evento.endDate.day}}/{{evento.endDate.month}}{% endif %}{% else %}; {{evento.endDate.day}}/{{evento.endDate.month}}{% endifchanged %}</span></span>{% endif %}{% endfor %}{% endif %}
+    {% if eventos %}{% for evento in eventos|dictsort:"endDate" %}{% if evento.get_title != "Feriado" and evento.get_title != "Aula cancelada" %}<span class="ano{{evento.endDate.year}} ano"><span class="semestre" data-mes="{{evento.endDate.month}}">{% ifchanged evento.get_title evento.get_semester evento.endDate.year %}<br><font style="color:{{evento.get_color}}">&#9608;</font> {{evento.get_title}}: {% if evento.startDate == evento.endDate %}{{evento.endDate.day}}/{{evento.endDate.month}}{% else %}{{evento.startDate.day}}/{{evento.startDate.month}} à {{evento.endDate.day}}/{{evento.endDate.month}}{% endif %}{% else %}; {{evento.endDate.day}}/{{evento.endDate.month}}{% endifchanged %}</span></span>{% endif %}{% endfor %}{% endif %}
 
 
     {% comment %}  Para o ponto e virgula ficar junto dos termos
