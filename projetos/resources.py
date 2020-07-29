@@ -8,22 +8,31 @@ Data: 15 de Maio de 2019
 from import_export import resources, fields
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao
-from .models import Projeto, Organizacao, Empresa, Configuracao, Disciplina
+from .models import Projeto, Organizacao, Configuracao, Disciplina, Feedback
 
 
 class ProjetosResource(resources.ModelResource):
+    """Model Resource para tratar dados de Projetos."""
     class Meta:
         model = Projeto
 
 class OrganizacoesResource(resources.ModelResource):
+    """Model Resource para tratar dados de Organizações."""
     class Meta:
         model = Organizacao
 
 class ConfiguracaoResource(resources.ModelResource):
+    """Model Resource para tratar dados de Configurações."""
     class Meta:
         model = Configuracao
 
+class FeedbacksResource(resources.ModelResource):
+    """Model Resource para tratar dados de Feedbacks."""
+    class Meta:
+        model = Feedback
+
 class DisciplinasResource(resources.ModelResource):
+    """Model Resource para tratar dados de Disciplinas."""
     campos = [
         'FAZER',
     ]
@@ -51,10 +60,12 @@ class DisciplinasResource(resources.ModelResource):
 ## MOVER PARA RESOURCES DE USERS (ACCOUNTS)
 
 class UsuariosResource(resources.ModelResource):
+    """Model Resource para tratar dados de Usuários."""
     class Meta:
         model = PFEUser
 
 class AlunosResource(resources.ModelResource):
+    """Model Resource para tratar dados de Estudantes."""
     campos = [
         'usuário (primeira parte do e-mail, obrigatório)',
         'nome',
@@ -74,7 +85,8 @@ class AlunosResource(resources.ModelResource):
             #print("Erro ao recuperar o usuário [username]")
         elif username != "":
             # recupera dados do aluno se ele já estava cadastrado
-            (user, _created) = PFEUser.objects.get_or_create(username=username, tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
+            (user, _created) = PFEUser.objects.get_or_create(username=username,
+                                                             tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
             user.first_name = row.get('nome')
             user.last_name = row.get('sobrenome')
             user.email = row.get('email')
@@ -102,9 +114,16 @@ class AlunosResource(resources.ModelResource):
         model = Aluno
 
 class ProfessoresResource(resources.ModelResource):
+    """Model Resource para tratar dados de Professores."""
     class Meta:
         model = Professor
 
+class ParceirosResource(resources.ModelResource):
+    """Model Resource para tratar dados de Parceiros."""
+    class Meta:
+        model = Parceiro
+
 class OpcoesResource(resources.ModelResource):
+    """Model Resource para tratar dados de Opções."""
     class Meta:
         model = Opcao

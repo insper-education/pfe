@@ -52,11 +52,25 @@
         <td><a href="{% url 'export' 'professores' 'json'%}">JSON</a></td>
     </tr>
     <tr>
+        <td>Parceiros</td>
+        <td><a href="{% url 'export' 'parceiros' 'csv'%}">CSV</a></td>
+        <td><a href="{% url 'export' 'parceiros' 'xls'%}">XLS</a></td>
+        <td><a href="{% url 'export' 'parceiros' 'json'%}">JSON</a></td>
+    </tr>
+    <tr>
         <td>Configuração</td>
         <td><a href="{% url 'export' 'configuracao' 'csv'%}">CSV</a></td>
         <td><a href="{% url 'export' 'configuracao' 'xls'%}">XLS</a></td>
         <td><a href="{% url 'export' 'configuracao' 'json'%}">JSON</a></td>
     </tr>
+    <tr>
+        <td>Feedbacks</td>
+        <td><a href="{% url 'export' 'feedbacks' 'csv'%}">CSV</a></td>
+        <td><a href="{% url 'export' 'feedbacks' 'xls'%}">XLS</a></td>
+        <td><a href="{% url 'export' 'feedbacks' 'json'%}">JSON</a></td>
+    </tr>
+
+
 </table>
 <a href="{% url 'email_backup'%}">Envia e-mail com todos os backups</a>
 <br>

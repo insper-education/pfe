@@ -50,8 +50,8 @@ from .models import ObjetidosDeAprendizagem, Avaliacao
 from .models import get_upload_path
 
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource
-from .resources import AlunosResource, ProfessoresResource
-from .resources import ConfiguracaoResource, DisciplinasResource
+from .resources import AlunosResource, ProfessoresResource, ParceirosResource
+from .resources import ConfiguracaoResource, FeedbacksResource, DisciplinasResource
 from .messages import email, create_message, message_reembolso
 
 @login_required
@@ -1469,10 +1469,13 @@ def export(request, modelo, formato):
         resource = AlunosResource()
     elif modelo == "professores":
         resource = ProfessoresResource()
+    elif modelo == "parceiros":
+        resource = ParceirosResource()
     elif modelo == "configuracao":
         resource = ConfiguracaoResource()
+    elif modelo == "feedbacks":
+        resource = FeedbacksResource()
     else:
-        #return HttpResponse("Chamada irregular : Base de dados desconhecida = "+modelo)
         mensagem = "Chamada irregular : Base de dados desconhecida = " + modelo
         context = {
             "area_principal": True,
@@ -1488,7 +1491,6 @@ def export(request, modelo, formato):
     elif formato == "csv":
         response = HttpResponse(dataset.csv, content_type='text/csv')
     else:
-        #return HttpResponse("Chamada irregular : Formato desconhecido = "+formato)
         mensagem = "Chamada irregular : Formato desconhecido = " + formato
         context = {
             "area_principal": True,
@@ -1544,7 +1546,6 @@ def backup(request, formato):
     elif formato == "json":
         response = HttpResponse(databook.json, content_type='application/json')
     else:
-        #return HttpResponse("Chamada irregular : Formato desconhecido = "+formato)
         mensagem = "Chamada irregular : Formato desconhecido = " + formato
         context = {
             "area_principal": True,
@@ -1567,7 +1568,6 @@ def email_backup(request):
     mail.attach("backup.xlsx", databook.xlsx, 'application/ms-excel')
     mail.attach("backup.json", databook.json, 'application/json')
     mail.send()
-    #return HttpResponse("E-mail enviado.")
     mensagem = "E-mail enviado."
     context = {
         "area_principal": True,
@@ -1582,15 +1582,12 @@ def servico(request):
     configuracao = Configuracao.objects.all().first()
     if request.method == 'POST':
         check_values = request.POST.getlist('selection')
-        if 'manutencao' in check_values:
-            configuracao.manutencao = True
-        else:
-            configuracao.manutencao = False
+        configuracao.manutencao = 'manutencao' in check_values
         configuracao.save()
         return redirect('/projetos/administracao/')
-    else:
-        context = {'manutencao': configuracao.manutencao,}
-        return render(request, 'projetos/servico.html', context)
+
+    context = {'manutencao': configuracao.manutencao,}
+    return render(request, 'projetos/servico.html', context)
 
 def render_to_pdf(template_src, context_dict=None):
     """Renderiza um documento em PDF."""

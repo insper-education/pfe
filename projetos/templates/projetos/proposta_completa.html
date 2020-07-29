@@ -149,7 +149,8 @@
         {{estudante.user.get_full_name}}
         [{{ estudante.get_curso_display }}]
         &nbsp;=>&nbsp;SEM PRIORIDADE DEFINIDA
-        &nbsp;|&nbsp;{ {{estudante.anoPFE}}.{{estudante.semestrePFE}} }
+        &nbsp;|
+        {% comment %} &nbsp;{ {{estudante.anoPFE}}.{{estudante.semestrePFE}} } {% endcomment %}
         &nbsp;CR={{estudante.cr}}
       <br>
     </a>
@@ -168,7 +169,7 @@
         {{opcao.aluno.user.get_full_name}}
         [{{ opcao.aluno.get_curso_display }}]
         &nbsp;=>&nbsp;opção #{{opcao.prioridade}}
-        &nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} }
+        &nbsp;|
         &nbsp;CR={{opcao.aluno.cr}}
       <br>
     </a>
