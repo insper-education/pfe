@@ -3136,7 +3136,7 @@ def emails(request):
                 projetos_pessoas[projeto]["conexoes"] = list(conexoes) # Todos conectados ao projeto
 
         # Parceiros de todas as organizações parceiras
-        parceiros_semestre = Parceiro.objects.filter(organizacao__in=organizacoes)
+        parceiros_semestre = Parceiro.objects.filter(organizacao__in=organizacoes, user__is_active=True)
 
         # Cria listas para enviar para templeate html
         alunos_p_semestre.append(Aluno.objects.filter(trancado=False).\
