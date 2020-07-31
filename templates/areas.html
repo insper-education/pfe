@@ -136,7 +136,7 @@
 </table>
 <div style="height:8px;font-size:8px;">&nbsp;</div>
 <label for="outras">Outras:</label> 
-<input type="text" size="30" id="outras" name="outras" 
+<input type="text" size="30" maxlength="128" id="outras" name="outras" 
 value="{% if areas and areas.outras %}{{areas.outras}}{% endif %}"
 {% if vencido %}disabled{% endif %}>
 

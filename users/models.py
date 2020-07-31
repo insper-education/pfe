@@ -64,7 +64,7 @@ class Areas(models.Model):
     administracao_economia_financas = models.BooleanField("Administração/Economia/Finanças",
                                                           default=False)
 
-    outras = models.CharField("Outras", max_length=32, null=True, blank=True,
+    outras = models.CharField("Outras", max_length=128, null=True, blank=True,
                               help_text='Outras áreas de interesse')
 
     def __str__(self):
@@ -319,7 +319,7 @@ class Parceiro(models.Model):  # da empresa (não do Insper)
                                     blank=True, null=True,
                                     help_text='Organização Parceira')
 
-    cargo = models.CharField("Cargo", max_length=50, blank=True,
+    cargo = models.CharField("Cargo", max_length=90, blank=True,
                              help_text='Cargo Funcional')
     telefone = models.CharField(max_length=20, blank=True,
                                 help_text='Telefone Fixo')
@@ -354,6 +354,10 @@ class Administrador(models.Model):
                        ("altera_professor", "Professor altera valores"), )
     def __str__(self):
         return self.user.username
+
+
+# REMOVER ISSO, ESTÁ DANDO PROBLEMA
+# VER FINAL DE : https://stackoverflow.com/questions/24063057/django-duplicate-key-error-but-key-does-not-exist/24222067#24222067
 
 @receiver(post_save, sender=PFEUser)
 def create_user_dependency(sender, instance, created, **kwargs):
