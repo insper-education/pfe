@@ -176,6 +176,12 @@ class Professor(models.Model):
     def __str__(self):
         return self.user.first_name+" "+self.user.last_name
 
+    @classmethod
+    def create(cls, usuario):
+        """Cria um Professor e já associa o usuário."""
+        professor = cls(user=usuario)
+        return professor
+
 class Aluno(models.Model):
     """Classe de usuários com estatus de Aluno."""
     TIPOS_CURSO = (
@@ -263,6 +269,12 @@ class Aluno(models.Model):
     def __str__(self):
         return self.user.get_full_name()
 
+    @classmethod
+    def create(cls, usuario):
+        """Cria um Estudante e já associa o usuário."""
+        estudante = cls(user=usuario)
+        return estudante
+
 class Opcao(models.Model):
     """Opções de Projetos pelos Alunos com suas prioridades."""
     proposta = models.ForeignKey(Proposta, null=True, blank=True, on_delete=models.SET_NULL)
@@ -341,6 +353,12 @@ class Parceiro(models.Model):  # da empresa (não do Insper)
             return self.user.get_full_name()+" ["+self.organizacao.sigla+"]"
         else:
             return self.user.get_full_name()
+    
+    @classmethod
+    def create(cls, usuario):
+        """Cria um Parceiro e já associa o usuário."""
+        parceiro = cls(user=usuario)
+        return parceiro
 
 class Administrador(models.Model):
     """Classe de usuários com estatus de Administrador."""
@@ -354,32 +372,38 @@ class Administrador(models.Model):
                        ("altera_professor", "Professor altera valores"), )
     def __str__(self):
         return self.user.username
+    
+    # @classmethod
+    # def create(cls, usuario):
+    #     """Cria um Administrador e já associa o usuário."""
+    #     administrador = cls(user=usuario)
+    #     return administrador
 
 
 # REMOVER ISSO, ESTÁ DANDO PROBLEMA
 # VER FINAL DE : https://stackoverflow.com/questions/24063057/django-duplicate-key-error-but-key-does-not-exist/24222067#24222067
 
-@receiver(post_save, sender=PFEUser)
-def create_user_dependency(sender, instance, created, **kwargs):
-    """Quando um usuário do PFE é criado/salvo, seu corespondente específico também é criado."""
-    #print("Chamado -------------------")
-    if instance.tipo_de_usuario == 1: #aluno
-        Aluno.objects.get_or_create(user=instance)
-    elif instance.tipo_de_usuario == 2: #professor
-        Professor.objects.get_or_create(user=instance)
-    elif instance.tipo_de_usuario == 3: #Parceiro
-        Parceiro.objects.get_or_create(user=instance)
-    elif instance.tipo_de_usuario == 4: #administrador
-        Administrador.objects.get_or_create(user=instance)
+# @receiver(post_save, sender=PFEUser)
+# def create_user_dependency(sender, instance, created, **kwargs):
+#     """Quando um usuário do PFE é criado/salvo, seu corespondente específico também é criado."""
+#     #print("Chamado -------------------")
+#     if instance.tipo_de_usuario == 1: #aluno
+#         Aluno.objects.get_or_create(user=instance)
+#     elif instance.tipo_de_usuario == 2: #professor
+#         Professor.objects.get_or_create(user=instance)
+#     elif instance.tipo_de_usuario == 3: #Parceiro
+#         Parceiro.objects.get_or_create(user=instance)
+#     elif instance.tipo_de_usuario == 4: #administrador
+#         Administrador.objects.get_or_create(user=instance)
 
-@receiver(post_save, sender=PFEUser)
-def save_user_dependency(sender, instance, **kwargs):
-    """Quando um usuário do PFE é criado/salvo, seu corespondente específico também é criado."""
-    if instance.tipo_de_usuario == 1: #aluno
-        instance.aluno.save()
-    elif instance.tipo_de_usuario == 2: #professor
-        instance.professor.save()
-    elif instance.tipo_de_usuario == 3: #Parceiro
-        instance.parceiro.save()
-    elif instance.tipo_de_usuario == 4: #administrador
-        instance.administrador.save()
+# @receiver(post_save, sender=PFEUser)
+# def save_user_dependency(sender, instance, **kwargs):
+#     """Quando um usuário do PFE é criado/salvo, seu corespondente específico também é criado."""
+#     if instance.tipo_de_usuario == 1: #aluno
+#         instance.aluno.save()
+#     elif instance.tipo_de_usuario == 2: #professor
+#         instance.professor.save()
+#     elif instance.tipo_de_usuario == 3: #Parceiro
+#         instance.parceiro.save()
+#     elif instance.tipo_de_usuario == 4: #administrador
+#         instance.administrador.save()

@@ -4104,12 +4104,17 @@ def cadastrar_usuario(request):
                 return HttpResponse("Algum erro não identificado.", status=401)
 
             if usuario.tipo_de_usuario == 1 or usuario.tipo_de_usuario == 2:
-                usuario.username = request.POST['email'].split("@")[0]
+                username = request.POST['email'].split("@")[0]
             elif usuario.tipo_de_usuario == 3:
-                usuario.username = request.POST['email'].split("@")[0] + "." + \
+                username = request.POST['email'].split("@")[0] + "." + \
                     request.POST['email'].split("@")[1].split(".")[0]
             else:
                 return HttpResponse("Algum erro não identificado.", status=401)
+            
+            if PFEUser.objects.exclude(pk=usuario.pk).filter(username=username).exists():
+                return HttpResponse('Username "%s" já está sendo usado.' % username, status=401)
+            
+            usuario.username = username
 
             if 'nome' in request.POST and len(request.POST['nome'].split()) > 1:
                 usuario.first_name = request.POST['nome'].split()[0]
@@ -4136,7 +4141,8 @@ def cadastrar_usuario(request):
 
             if usuario.tipo_de_usuario == 1: #estudante
 
-                estudante = Aluno.objects.get(user=usuario)
+                estudante = Aluno.create(usuario)
+                #estudante = Aluno.objects.get(user=usuario)
 
                 if 'matricula' in request.POST:
                     estudante.matricula = request.POST['matricula']
@@ -4160,7 +4166,9 @@ def cadastrar_usuario(request):
                 estudante.save()
 
             elif usuario.tipo_de_usuario == 2: #professor
-                professor = Professor.objects.get(user=usuario)
+
+                professor = Professor.create(usuario)
+                #professor = Professor.objects.get(user=usuario)
 
                 # ("TI", "Tempo Integral"),
                 # ("TP", 'Tempo Parcial'),
@@ -4184,7 +4192,9 @@ def cadastrar_usuario(request):
                 professor.save()
 
             elif usuario.tipo_de_usuario == 3: #Parceiro
-                parceiro = Parceiro.objects.get(user=usuario)
+
+                parceiro = Parceiro.create(usuario)
+                #parceiro = Parceiro.objects.get(user=usuario)
 
                 if 'cargo' in request.POST:
                     parceiro.cargo = request.POST['cargo']
