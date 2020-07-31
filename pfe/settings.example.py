@@ -14,7 +14,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'u3l+px+$jje$+m1+e!6a&02v+oe-6%nr3js)9@2&9m4#jf&1_2'
+SECRET_KEY = '<PONHA UMA SENHA AQUI>'
 # python manage.py shell -c
 #  "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
 
@@ -74,7 +74,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'pfe.wsgi.application'
+#WSGI_APPLICATION = 'pfe.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
@@ -112,7 +112,7 @@ LANGUAGE_CODE = 'pt-br'
 TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
 USE_L10N = True
-USE_TZ = True
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
@@ -173,7 +173,7 @@ CELERY_BEAT_SCHEDULE = {
 
 SITE_ID = 1
 
-SERVER = "http://pfe.insper.edu.br"
+SERVER = "https://pfe.insper.edu.br"
 
 DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.versions.VersionsPanel',
