@@ -72,8 +72,16 @@
 {% endblock %}
 
 {% block content %}
-  <h3>Montar Grupos</h3>
+
+  {% if mensagem %}
+    <h2 class="red-bold">{{mensagem}}</h2>
+    <br>
+  {% endif %}
+
+  <h2>Montar Grupos</h2>
   <br>
+
+
 
   {% comment %}
   <label for="filter">Edição:</label>
@@ -226,7 +234,9 @@
         dataType: 'json',
         success: function (data) {
           if (data.atualizado) {
-            //console.log("Valor atualizado.");
+            console.log("Valor atualizado.");
+          } else {
+            console.log("Valor não atualizado.");
           }
         }
       });

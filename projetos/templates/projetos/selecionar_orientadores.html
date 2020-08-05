@@ -15,7 +15,13 @@
 {% endblock %}
 
 {% block content %}
-  <h3>Montar Grupos</h3>
+
+  {% if mensagem %}
+    <h2 class="red-bold">{{mensagem}}</h2>
+    <br>
+  {% endif %}
+
+  <h3>Selecionar Orientadores</h3>
   <br>
 
   {% comment %}
@@ -103,6 +109,8 @@
       success: function (data) {
         if (data.atualizado) {
           console.log("Valor atualizado.");
+        } else {
+            console.log("Valor não atualizado.");
         }
       }
     });
