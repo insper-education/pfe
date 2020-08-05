@@ -760,6 +760,11 @@ def propor(request):
     ############################################
     #pref_pri_cr = 0.1  # Ficar longe da prioridade tem um custo de 5% na selecao do projeto
 
+
+    # DESLIGANDO
+    return HttpResponseNotFound('<h1>Sistema de propor projetos está obsoleto.</h1>')
+
+
     configuracao = Configuracao.objects.all().first()
     projeto_list = []
     opcoes_list = []
@@ -878,70 +883,88 @@ def montar_grupos(request):
         opcoes.append(opcao)
     estudantes_opcoes = zip(estudantes, opcoes)
 
+    # Checa se usuário é administrador ou professor
+    try:
+        user = PFEUser.objects.get(pk=request.user.pk)
+    except PFEUser.DoesNotExist:
+        return HttpResponse("Usuário não encontrado.", status=401)
+
     if request.method == 'POST':
-        if 'limpar' in request.POST:
-            for estudante in estudantes:
-                estudante.pre_alocacao = None
-                estudante.save()
 
-        if 'fechar' in request.POST:
-            for proposta in propostas:
-                alocados = []
-                for estudante in estudantes:
-                    if estudante.pre_alocacao:
-                        if estudante.pre_alocacao.id == proposta.id:
-                            alocados.append(estudante)
-                    else:
-                        op_aloc = Opcao.objects.filter(aluno=estudante).\
-                                       filter(proposta__ano=ano, proposta__semestre=semestre).\
-                                       filter(prioridade=1).first()
-                        if op_aloc and op_aloc.proposta == proposta:
-                            alocados.append(estudante)
-                if alocados: # pelo menos um estudante no projeto
+        if user:
+            if user.tipo_de_usuario == 4: # admin
 
-                    try:
-                        projeto = Projeto.objects.get(proposta=proposta, avancado=False)
-                    except Projeto.DoesNotExist:
-                        projeto = Projeto.create(proposta)
+                if 'limpar' in request.POST:
+                    for estudante in estudantes:
+                        estudante.pre_alocacao = None
+                        estudante.save()
 
-                    if not projeto.titulo:
-                        projeto.titulo = proposta.titulo
+                if 'fechar' in request.POST:
+                    for proposta in propostas:
+                        alocados = []
+                        for estudante in estudantes:
+                            if estudante.pre_alocacao:
+                                if estudante.pre_alocacao.id == proposta.id:
+                                    alocados.append(estudante)
+                            else:
+                                op_aloc = Opcao.objects.filter(aluno=estudante).\
+                                            filter(proposta__ano=ano, proposta__semestre=semestre).\
+                                            filter(prioridade=1).first()
+                                if op_aloc and op_aloc.proposta == proposta:
+                                    alocados.append(estudante)
+                        if alocados: # pelo menos um estudante no projeto
 
-                    if not projeto.descricao:
-                        projeto.descricao = proposta.descricao
+                            try:
+                                projeto = Projeto.objects.get(proposta=proposta, avancado=False)
+                            except Projeto.DoesNotExist:
+                                projeto = Projeto.create(proposta)
 
-                    if not projeto.organizacao:
-                        projeto.organizacao = proposta.organizacao
+                            if not projeto.titulo:
+                                projeto.titulo = proposta.titulo
 
-                    projeto.avancado = False
+                            if not projeto.descricao:
+                                projeto.descricao = proposta.descricao
 
-                    projeto.ano = proposta.ano
-                    projeto.semestre = proposta.semestre
+                            if not projeto.organizacao:
+                                projeto.organizacao = proposta.organizacao
 
-                    projeto.save()
+                            projeto.avancado = False
 
-                    alocacoes = Alocacao.objects.filter(projeto=projeto)
-                    for alocacao in alocacoes: # Apaga todas alocacoes que não tiverem nota
-                        if alocacao.conceito == 127:
-                            alocacao.delete()
+                            projeto.ano = proposta.ano
+                            projeto.semestre = proposta.semestre
 
-                    for alocado in alocados: # alocando estudantes no projeto
-                        alocacao = Alocacao.create(alocado, projeto)
-                        alocacao.save()
+                            projeto.save()
 
-                else:
+                            alocacoes = Alocacao.objects.filter(projeto=projeto)
+                            for alocacao in alocacoes: # Apaga todas alocacoes que não tiverem nota
+                                if alocacao.conceito == 127:
+                                    alocacao.delete()
 
-                    try:
-                        projeto = Projeto.objects.get(proposta=proposta, avancado=False)
-                    except Projeto.DoesNotExist:
-                        continue
+                            for alocado in alocados: # alocando estudantes no projeto
+                                alocacao = Alocacao.create(alocado, projeto)
+                                alocacao.save()
 
-                    projeto.delete()
+                        else:
 
-            return redirect('/projetos/selecionar_orientadores/')
+                            try:
+                                projeto = Projeto.objects.get(proposta=proposta, avancado=False)
+                            except Projeto.DoesNotExist:
+                                continue
 
+                            projeto.delete()
+
+
+        return redirect('/projetos/selecionar_orientadores/')
+
+    mensagem = None
+
+    if user:
+        if user.tipo_de_usuario != 4: # admin
+            mensagem = "Sua conta não é de administrador, "
+            mensagem += "você pode mexer na tela, contudo suas modificações não serão salvas."
 
     context = {
+        'mensagem': mensagem,
         'configuracao': configuracao,
         'propostas': propostas,
         'estudantes_opcoes': estudantes_opcoes,
@@ -974,7 +997,21 @@ def selecionar_orientadores(request):
 
     orientadores = (professores | administradores).order_by(Lower("first_name"), Lower("last_name"))
 
+    # Checa se usuário é administrador ou professor
+    try:
+        user = PFEUser.objects.get(pk=request.user.pk)
+    except PFEUser.DoesNotExist:
+        return HttpResponse("Usuário não encontrado.", status=401)
+
+    mensagem = None
+
+    if user:
+        if user.tipo_de_usuario != 4: # admin
+            mensagem = "Sua conta não é de administrador, "
+            mensagem += "você pode mexer na tela, contudo suas modificações não serão salvas."
+
     context = {
+        'mensagem': mensagem,
         'projetos': projetos,
         'orientadores': orientadores,
     }
@@ -1104,78 +1141,6 @@ def proposta_completa(request, primakey):
         "sem_opcao": sem_opcao,
     }
     return render(request, 'projetos/proposta_completa.html', context=context)
-
-
-# def get_areas(entrada):
-#     """Retorna dicionário com as áreas de interesse da lista de entrada."""
-
-#     areaspfe = {}
-
-#     areaspfe['Inovação Social'] =\
-#         entrada.filter(inovacao_social=True).count()
-
-#     areaspfe['Ciência dos Dados'] =\
-#         entrada.filter(ciencia_dos_dados=True).count()
-
-#     areaspfe['Modelagem 3D'] =\
-#         entrada.filter(modelagem_3D=True).count()
-
-#     areaspfe['Manufatura'] =\
-#         entrada.filter(manufatura=True).count()
-
-#     areaspfe['Resistência dos Materiais'] =\
-#         entrada.filter(resistencia_dos_materiais=True).count()
-
-#     areaspfe['Modelagem de Sistemas'] =\
-#         entrada.filter(modelagem_de_sistemas=True).count()
-
-#     areaspfe['Controle e Automação'] =\
-#         entrada.filter(controle_e_automacao=True).count()
-
-#     areaspfe['Termodinâmica'] =\
-#         entrada.filter(termodinamica=True).count()
-
-#     areaspfe['Fluidodinâmica'] =\
-#         entrada.filter(fluidodinamica=True).count()
-
-#     areaspfe['Eletrônica Digital'] =\
-#         entrada.filter(eletronica_digital=True).count()
-
-#     areaspfe['Programação'] =\
-#         entrada.filter(programacao=True).count()
-
-#     areaspfe['Inteligência Artificial'] =\
-#         entrada.filter(inteligencia_artificial=True).count()
-
-#     areaspfe['Banco de Bados'] =\
-#         entrada.filter(banco_de_dados=True).count()
-
-#     areaspfe['Computação em Nuvem'] =\
-#         entrada.filter(computacao_em_nuvem=True).count()
-
-#     areaspfe['Visão Computacional'] =\
-#         entrada.filter(visao_computacional=True).count()
-
-#     areaspfe['Computação de Alto Desempenho'] =\
-#         entrada.filter(computacao_de_alto_desempenho=True).count()
-
-#     areaspfe['Robótica'] =\
-#         entrada.filter(robotica=True).count()
-
-#     areaspfe['Realidade Virtual e Aumentada'] =\
-#         entrada.filter(realidade_virtual_aumentada=True).count()
-
-#     areaspfe['Protocolos de Comunicação'] =\
-#         entrada.filter(protocolos_de_comunicacao=True).count()
-
-#     areaspfe['Eficiencia Energética'] =\
-#         entrada.filter(eficiencia_energetica=True).count()
-
-#     areaspfe['Administração, Economia e Finanças'] =\
-#         entrada.filter(administracao_economia_financas=True).count()
-
-#     return areaspfe
-
 
 def get_areas(entrada):
     """Retorna dicionário com as áreas de interesse da lista de entrada."""
@@ -2642,6 +2607,21 @@ def relatorios(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def carregar(request):
     """Para carregar dados para o servidor."""
+
+    try:
+        user = PFEUser.objects.get(pk=request.user.pk)
+    except PFEUser.DoesNotExist:
+        return HttpResponse("Usuário não encontrado.", status=401)
+
+    if user:
+        if user.tipo_de_usuario != 4: # não é admin
+            mensagem = "Você não tem privilégios de administrador!"
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, 'generic.html', context=context)
+    
     return render(request, 'projetos/carregar.html')
 
 @login_required
@@ -3905,40 +3885,65 @@ def validate_alunos(request):
 def pre_alocar_estudate(request):
     """Ajax para pre-alocar estudates em propostas."""
 
-    estudante = request.GET.get('estudante', None)
-    estudante_id = int(estudante[len("estudante"):])
-
-    proposta = request.GET.get('proposta', None)
-    proposta_id = int(proposta[len("proposta"):])
-
-    configuracao = Configuracao.objects.all().first()
-
-    ano = configuracao.ano
-    semestre = configuracao.semestre
-
-    # Vai para próximo semestre
-    if semestre == 1:
-        semestre = 2
-    else:
-        ano += 1
-        semestre = 1
-
     try:
-        proposta = Proposta.objects.get(id=proposta_id)
-        #proposta.save()
-    except Proposta.DoesNotExist:
-        return HttpResponseNotFound('<h1>Proposta não encontrada!</h1>')
+        user = PFEUser.objects.get(pk=request.user.pk)
+    except PFEUser.DoesNotExist:
+        return HttpResponse("Usuário não encontrado.", status=401)
 
-    try:
-        estudante = Aluno.objects.get(id=estudante_id)
-        estudante.pre_alocacao = proposta
-        estudante.save()
-    except Aluno.DoesNotExist:
-        return HttpResponseNotFound('<h1>Estudante não encontrado!</h1>')
+    if user:
 
-    data = {
-        'atualizado': True,
-    }
+        if user.tipo_de_usuario == 4: # admin
+
+            # Código a seguir não estritamente necessário mas pode deixar mais seguro
+            try:
+                administrador = Administrador.objects.get(pk=request.user.administrador.pk)
+            except Administrador.DoesNotExist:
+                return HttpResponse("Administrador não encontrado.", status=401)
+
+            estudante = request.GET.get('estudante', None)
+            estudante_id = int(estudante[len("estudante"):])
+
+            proposta = request.GET.get('proposta', None)
+            proposta_id = int(proposta[len("proposta"):])
+
+            configuracao = Configuracao.objects.all().first()
+
+            ano = configuracao.ano
+            semestre = configuracao.semestre
+
+            # Vai para próximo semestre
+            if semestre == 1:
+                semestre = 2
+            else:
+                ano += 1
+                semestre = 1
+
+            try:
+                proposta = Proposta.objects.get(id=proposta_id)
+            except Proposta.DoesNotExist:
+                return HttpResponseNotFound('<h1>Proposta não encontrada!</h1>')
+
+            try:
+                estudante = Aluno.objects.get(id=estudante_id)
+                estudante.pre_alocacao = proposta
+                estudante.save()
+            except Aluno.DoesNotExist:
+                return HttpResponseNotFound('<h1>Estudante não encontrado!</h1>')
+
+            data = {
+                'atualizado': True,
+            }
+        
+        elif user.tipo_de_usuario == 2: # professor
+
+            # atualizações não serão salvas
+
+            data = {
+                'atualizado': False,
+            }
+
+        else:
+            return HttpResponseNotFound('<h1>Usuário sem privilérios!</h1>')
 
     return JsonResponse(data)
 
@@ -3947,34 +3952,57 @@ def pre_alocar_estudate(request):
 def definir_orientador(request):
     """Ajax para definir orientadores de projetos."""
 
-    orientador_get = request.GET.get('orientador', None)
-    orientador_id = None
-    if orientador_get:
-        orientador_id = int(orientador_get[len("orientador"):])
-
-    projeto_get = request.GET.get('projeto', None)
-    projeto_id = None
-    if projeto_get:
-        projeto_id = int(projeto_get[len("projeto"):])
-
-    if orientador_id:
-        try:
-            orientador = Professor.objects.get(user_id=orientador_id)
-        except PFEUser.DoesNotExist:
-            return HttpResponseNotFound('<h1>Orientador não encontrado!</h1>')
-    else:
-        orientador = None
 
     try:
-        projeto = Projeto.objects.get(id=projeto_id)
-        projeto.orientador = orientador
-        projeto.save()
-    except Projeto.DoesNotExist:
-        return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
+        user = PFEUser.objects.get(pk=request.user.pk)
+    except PFEUser.DoesNotExist:
+        return HttpResponse("Usuário não encontrado.", status=401)
 
-    data = {
-        'atualizado': True,
-    }
+    if user:
+
+        if user.tipo_de_usuario == 4: # admin
+
+            # Código a se usuário é administrador
+
+            orientador_get = request.GET.get('orientador', None)
+            orientador_id = None
+            if orientador_get:
+                orientador_id = int(orientador_get[len("orientador"):])
+
+            projeto_get = request.GET.get('projeto', None)
+            projeto_id = None
+            if projeto_get:
+                projeto_id = int(projeto_get[len("projeto"):])
+
+            if orientador_id:
+                try:
+                    orientador = Professor.objects.get(user_id=orientador_id)
+                except PFEUser.DoesNotExist:
+                    return HttpResponseNotFound('<h1>Orientador não encontrado!</h1>')
+            else:
+                orientador = None
+
+            try:
+                projeto = Projeto.objects.get(id=projeto_id)
+                projeto.orientador = orientador
+                projeto.save()
+            except Projeto.DoesNotExist:
+                return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
+
+            data = {
+                'atualizado': True,
+            }
+        
+        elif user.tipo_de_usuario == 2: # professor
+
+            # atualizações não serão salvas
+
+            data = {
+                'atualizado': False,
+            }
+
+        else:
+            return HttpResponseNotFound('<h1>Usuário sem privilérios!</h1>')
 
     return JsonResponse(data)
 
