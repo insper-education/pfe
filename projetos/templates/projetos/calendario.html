@@ -218,7 +218,7 @@
         {% endif %}
       {% endfor %}
       <br><font style="text-decoration: underline solid orange">
-      Dias sublinhados possuem disponibilidade de trabalho no laboratório 3 (L3) [as sextas-feiras]
+      Dias sublinhados possuem disponibilidade de trabalho no laboratório 3 (L3)
       </font>
     {% endif %}
     {% endcomment %}
@@ -226,7 +226,7 @@
       <br>
       {% for laboratorio in laboratorios|dictsort:"endDate" %}{% if laboratorio.get_title != "Feriado" %}<span class="ano{{laboratorio.endDate.year}} ano"><span class="semestre" data-mes="{{laboratorio.endDate.month}}">{% ifchanged laboratorio.get_title laboratorio.get_semester laboratorio.endDate.year %}<br><font style="background-image : linear-gradient(to bottom, transparent 80%, {{laboratorio.get_color}} 80%">&nbsp;&nbsp;&nbsp;</font> {{laboratorio.get_title}}: {% if laboratorio.startDate == laboratorio.endDate %}{{laboratorio.endDate.day}}/{{laboratorio.endDate.month}}{% else %}{{laboratorio.startDate.day}}/{{laboratorio.startDate.month}} à {{laboratorio.endDate.day}}/{{laboratorio.endDate.month}}{% endif %}{% else %}; {{laboratorio.endDate.day}}/{{laboratorio.endDate.month}}{% endifchanged %}</span></span>{% endif %}{% endfor %}
       <br><font style="text-decoration: underline solid orange">
-      Dias sublinhados possuem disponibilidade de trabalho no laboratório 3 (L3) [as sextas-feiras]
+      Dias sublinhados possuem disponibilidade de trabalho no laboratório 3 (L3)
       </font>
     {% endif %}
 
