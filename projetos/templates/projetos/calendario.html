@@ -87,7 +87,7 @@
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
       <br>
       <input type="checkbox" id="operacao" checked>
-      <span style="font-size:20px" data-toggle="tooltip" data-html="true" animation="true" title=
+      <span id="titulo_operacao" style="font-size:20px" data-toggle="tooltip" data-html="true" animation="true" title=
       "O semestre da coordenação vai de Março à Agosto e de Setembro a Fevereiro">
         Operação:
       </span>
@@ -113,15 +113,14 @@
         {% endif %}
         {% endcomment %}  
         {% if eventos %}{% for evento in coordenacao|dictsort:"endDate" %}<span class="coordenacao" data-ano="{{evento.endDate.year}}" data-mes="{{evento.endDate.month}}" >{% ifchanged evento.get_title evento.get_semester evento.endDate.year %}<br><font style="color:{{evento.get_color}}">&#9608;</font> {{evento.get_title}}: {% if evento.startDate == evento.endDate %}{{evento.endDate.day}}/{{evento.endDate.month}}/{{evento.endDate.year}}{% else %}{{evento.startDate.day}}/{{evento.startDate.month}}/{{evento.endDate.year}} à {{evento.endDate.day}}/{{evento.endDate.month}}/{{evento.endDate.year}}{% endif %}{% else %}; {{evento.endDate.day}}/{{evento.endDate.month}}/{{evento.endDate.year}}{% endifchanged %}</span>{% endfor %}{% endif %}
+      <br>
       </span>
     {% endif %}
 
-
-
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-      <br><br>
+      <br>
       <input type="checkbox" id="academico" checked>
-      <span style="font-size:20px">
+      <span id="titulo_academico" style="font-size:20px">
         Acadêmico:
       </span>
     {% endif %}
@@ -675,6 +674,19 @@
   function get_image(tipo) {
     //var imgData = null
     document.querySelector('#tudo').style.width = "1200px";
+  
+    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+      // Escondendo informações
+      if($('#operacao').is(":not(:checked)")) {
+        $('#titulo_operacao').hide()
+      }          
+      if($('#academico').is(":not(:checked)")) {
+        $('#titulo_academico').hide()
+      }
+      $('#operacao').hide()
+      $('#academico').hide()
+    {% endif %}
+
     setTimeout(function () {
       html2canvas(document.querySelector('#tudo'), {
         width: 1200,
@@ -701,7 +713,19 @@
           }
         }
       });
+      // Reajustando tela para visualização no browser
       document.querySelector('#tudo').style.width = "100%";
+      {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+        if($('#operacao').is(":not(:checked)")) {
+          $('#titulo_operacao').show()
+        }          
+        if($('#academico').is(":not(:checked)")) {
+          $('#titulo_academico').show()
+        }
+        $('#operacao').show()
+        $('#academico').show()
+      {% endif %}
+
     }, 600);
   }
 
