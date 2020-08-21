@@ -303,9 +303,9 @@ class Proposta(models.Model):
         return proposta
 
     def __str__(self):
-        if organizacao:
+        if self.organizacao:
             return self.organizacao.sigla+" ("+str(self.ano)+"."+str(self.semestre)+") "+self.titulo
-        elif:
+        elif self.nome_organizacao:
             return self.nome_organizacao+" ("+str(self.ano)+"."+str(self.semestre)+") "+self.titulo
         else:
             return "ORG. NÃO DEFINIDA"+" ("+str(self.ano)+"."+str(self.semestre)+") "+self.titulo
