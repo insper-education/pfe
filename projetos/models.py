@@ -303,7 +303,12 @@ class Proposta(models.Model):
         return proposta
 
     def __str__(self):
-        return self.titulo+"("+str(self.ano)+"."+str(self.semestre)+")"
+        if organizacao:
+            return self.organizacao.sigla+" ("+str(self.ano)+"."+str(self.semestre)+") "+self.titulo
+        elif:
+            return self.nome_organizacao+" ("+str(self.ano)+"."+str(self.semestre)+") "+self.titulo
+        else:
+            return "ORG. NÃO DEFINIDA"+" ("+str(self.ano)+"."+str(self.semestre)+") "+self.titulo
 
     # pylint: disable=arguments-differ
     def save(self, *args, **kwargs):
