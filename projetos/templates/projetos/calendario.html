@@ -210,7 +210,7 @@
         {% for laboratorio in laboratorios|dictsort:"endDate" %}
           {% if laboratorio.get_title != "Feriado" %}
             <span class="ano{{laboratorio.endDate.year}} ano">
-              <span class="semestre" data-mes="{{laboratorio.endDate.month}}">
+              <span class="semestre lab" data-mes="{{laboratorio.endDate.month}}">
                 {% ifchanged laboratorio.get_title laboratorio.get_semester laboratorio.endDate.year %}   
                   <br><font style="background-image : linear-gradient(to bottom, transparent 80%, {{laboratorio.get_color}} 80%">&nbsp;&nbsp;&nbsp;</font> {{laboratorio.get_title}}: 
                   {% if laboratorio.startDate == laboratorio.endDate %} 
@@ -226,15 +226,15 @@
           {% endif %}
         {% endfor %}
         <br><font style="text-decoration: underline solid orange">
-        Dias sublinhados possuem disponibilidade de trabalho no laboratório 3 (L3)
+        <span id="linha_lab">Dias sublinhados possuem disponibilidade de trabalho no laboratório 3 (L3)</span>
         </font>
       {% endif %}
       {% endcomment %}
       {% if laboratorios %}
         <br>
-        {% for laboratorio in laboratorios|dictsort:"endDate" %}{% if laboratorio.get_title != "Feriado" %}<span class="ano{{laboratorio.endDate.year}} ano"><span class="semestre" data-mes="{{laboratorio.endDate.month}}">{% ifchanged laboratorio.get_title laboratorio.get_semester laboratorio.endDate.year %}<br><font style="background-image : linear-gradient(to bottom, transparent 80%, {{laboratorio.get_color}} 80%">&nbsp;&nbsp;&nbsp;</font> {{laboratorio.get_title}}: {% if laboratorio.startDate == laboratorio.endDate %}{{laboratorio.endDate.day}}/{{laboratorio.endDate.month}}{% else %}{{laboratorio.startDate.day}}/{{laboratorio.startDate.month}} à {{laboratorio.endDate.day}}/{{laboratorio.endDate.month}}{% endif %}{% else %}; {{laboratorio.endDate.day}}/{{laboratorio.endDate.month}}{% endifchanged %}</span></span>{% endif %}{% endfor %}
+        {% for laboratorio in laboratorios|dictsort:"endDate" %}{% if laboratorio.get_title != "Feriado" %}<span class="ano{{laboratorio.endDate.year}} ano"><span class="semestre lab" data-mes="{{laboratorio.endDate.month}}">{% ifchanged laboratorio.get_title laboratorio.get_semester laboratorio.endDate.year %}<br><font style="background-image : linear-gradient(to bottom, transparent 80%, {{laboratorio.get_color}} 80%">&nbsp;&nbsp;&nbsp;</font> {{laboratorio.get_title}}: {% if laboratorio.startDate == laboratorio.endDate %}{{laboratorio.endDate.day}}/{{laboratorio.endDate.month}}{% else %}{{laboratorio.startDate.day}}/{{laboratorio.startDate.month}} à {{laboratorio.endDate.day}}/{{laboratorio.endDate.month}}{% endif %}{% else %}; {{laboratorio.endDate.day}}/{{laboratorio.endDate.month}}{% endifchanged %}</span></span>{% endif %}{% endfor %}
         <br><font style="text-decoration: underline solid orange">
-        Dias sublinhados possuem disponibilidade de trabalho no laboratório 3 (L3)
+        <span id="linha_lab">Dias sublinhados possuem disponibilidade de trabalho no laboratório 3 (L3)</span>
         </font>
       {% endif %}
 
@@ -264,15 +264,15 @@
           {% endif %}
         {% endfor %}
         <br><font style="text-decoration: underline solid red">
-          Semana de provas sublinhado em vermelho
+          <span id="linha_provas">Semana de provas sublinhado em vermelho</span>
         </font>
       {% endif %}
       {% endcomment %}
       {% if provas %}
         <br>
-        {% for prova in provas|dictsort:"endDate" %}{% if prova.get_title != "Feriado" %}<span class="ano{{prova.endDate.year}} ano"><span class="semestre" data-mes="{{prova.endDate.month}}">{% ifchanged prova.get_title prova.get_semester prova.endDate.year %}<br><font style="background-image : linear-gradient(to bottom, transparent 80%, {{prova.get_color}} 80%">&nbsp;&nbsp;&nbsp;</font> {{prova.get_title}}: {% if prova.startDate == prova.endDate %}{{prova.endDate.day}}/{{prova.endDate.month}}{% else %}{{prova.startDate.day}}/{{prova.startDate.month}} à {{prova.endDate.day}}/{{prova.endDate.month}}{% endif %}{% else %}{% if prova.startDate == prova.endDate %} ; {{prova.endDate.day}}/{{prova.endDate.month}}{% else %}; {{prova.startDate.day}}/{{prova.startDate.month}} à {{prova.endDate.day}}/{{prova.endDate.month}}{% endif %}{% endifchanged %}</span></span>{% endif %}{% endfor %}
+        {% for prova in provas|dictsort:"endDate" %}{% if prova.get_title != "Feriado" %}<span class="ano{{prova.endDate.year}} ano"><span class="semestre prova" data-mes="{{prova.endDate.month}}">{% ifchanged prova.get_title prova.get_semester prova.endDate.year %}<br><font style="background-image : linear-gradient(to bottom, transparent 80%, {{prova.get_color}} 80%">&nbsp;&nbsp;&nbsp;</font> {{prova.get_title}}: {% if prova.startDate == prova.endDate %}{{prova.endDate.day}}/{{prova.endDate.month}}{% else %}{{prova.startDate.day}}/{{prova.startDate.month}} à {{prova.endDate.day}}/{{prova.endDate.month}}{% endif %}{% else %}{% if prova.startDate == prova.endDate %} ; {{prova.endDate.day}}/{{prova.endDate.month}}{% else %}; {{prova.startDate.day}}/{{prova.startDate.month}} à {{prova.endDate.day}}/{{prova.endDate.month}}{% endif %}{% endifchanged %}</span></span>{% endif %}{% endfor %}
         <br><font style="text-decoration: underline solid red">
-          Semana de provas sublinhado em vermelho
+          <span id="linha_provas">Semana de provas sublinhado em vermelho</span>
         </font>
       {% endif %}
       
@@ -602,9 +602,19 @@
       [].forEach.call(document.querySelectorAll('.semestre'), function (el) {
         el.style.display = 'none';
       });
+      $('#linha_lab').hide()
+      $('#linha_provas').hide()
       var els = Array.from(document.querySelectorAll(".semestre[data-mes]")).filter(el => Number(el.dataset.mes) < 7);
       [].forEach.call(els, function (el) {
         el.style.display = 'inline';
+        if(el.parentNode.classList.contains('ano'+currentYear)) {
+          if(el.classList.contains('lab')) {
+            $('#linha_lab').show()
+          }
+          if(el.classList.contains('prova')) {
+            $('#linha_provas').show()
+          }
+        }
       });
 
       {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
@@ -632,11 +642,22 @@
       [].forEach.call(document.querySelectorAll('.semestre'), function (el) {
         el.style.display = 'none';
       });
+      $('#linha_lab').hide()
+      $('#linha_provas').hide()
       var els = Array.from(document.querySelectorAll(".semestre[data-mes]")).filter(el => Number(el.dataset.mes) > 6);
       [].forEach.call(els, function (el) {
         el.style.display = 'inline';
+        if(el.parentNode.classList.contains('ano'+currentYear)) {
+          if(el.classList.contains('lab')) {
+            $('#linha_lab').show()
+          }
+          if(el.classList.contains('prova')) {
+            $('#linha_provas').show()
+          }
+        }
       });
-
+      
+      
       {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
         //console.log("Semestre coordenacao selected: 2 em " + currentYear);
         [].forEach.call(document.querySelectorAll('.coordenacao'), function (el) {
