@@ -431,12 +431,15 @@ class Evento(models.Model):
         (111, 'Bate-papo com estudante que farão PFE no próximo semestre', 'lightcyan'),
         (112, 'Alunos demonstrarem interesse em adiar PFE para 9º semestre', 'limegreen'),
         (113, 'Apresentação dos projetos disponíveis para estudantes', 'darkslategray'),
-        (123, 'Indicação de interesse nos projetos do próximo semestre pelos estudante', 'pink'),
-        (124, 'Notificação para estudantes dos grupos formados', 'paleturquoise'),
-        (125, 'Notificação para organizações dos projetos fechados', 'moccasin'),
 
         (120, 'Limite para submissão de propostas de projetos pelas organizações', 'lime'),
         (121, 'Pré seleção de propostas de projetos', 'chartreuse'),
+
+        (123, 'Indicação de interesse nos projetos do próximo semestre pelos estudante', 'pink'),
+        (124, 'Notificação para estudantes dos grupos formados', 'paleturquoise'),
+        (125, 'Notificação para organizações dos projetos fechados', 'moccasin'),
+        (126, 'Professores tiram dúvidas sobre projetos para alunos', 'lightsalmon'),
+
 
         (130, 'Validação dos projetos pelo comitê', 'peru'),
 
