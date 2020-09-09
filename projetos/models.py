@@ -411,13 +411,13 @@ class Evento(models.Model):
         (16, 'Apresentação formal final na organização', 'beige'),
         (17, 'Apresentação opcional intermediária na organização', 'oldlace'),
 
-        (20, 'Relato Quinzenal', 'aquamarine'),
-        (21, 'Entrega de Planejamento', 'lightblue'),
-        (22, 'Entrega do Relatório Intermediário', 'teal'),
-        (23, 'Entrega do Relatório Final', 'aqua'),
-        (24, 'Entrega do Relatório Revisado', 'deepskyblue'),
-        (25, 'Entrega dos Banners', 'chocolate'),
-        (26, 'Entrega do Vídeo', 'lavender'),
+        (20, 'Relato Quinzenal (Individual)', 'aquamarine'),
+        (21, 'Entrega de Relatório Preliminar (Grupo)', 'lightblue'), # esse era o antigo relatório de planejamento
+        (22, 'Entrega do Relatório Intermediário (Grupo e Individual)', 'teal'),
+        (23, 'Entrega do Relatório Final (Grupo e Individual)', 'aqua'),
+        (24, 'Entrega do Relatório Revisado (Grupo)', 'deepskyblue'),
+        (25, 'Entrega do Banner (Grupo)', 'chocolate'),
+        (26, 'Entrega do Vídeo (Grupo)', 'lavender'),
 
         (30, 'Feedback dos Alunos sobre PFE', 'orange'),
         (31, 'Avaliação de Pares Intermediária', 'pink'),
@@ -425,6 +425,9 @@ class Evento(models.Model):
 
         (40, 'Laboratório', 'orange'),
         (41, 'Semana de provas', 'red'),
+
+        (50, 'Apresentação para Certificação Falconi', 'darkorange'),
+
 
         (101, 'Apólice Seguro Acidentes Pessoais', 'aquamarine'),
 
@@ -444,6 +447,7 @@ class Evento(models.Model):
         (130, 'Validação dos projetos pelo comitê', 'peru'),
 
         (140, 'Reunião de orientações aos orientadores', 'maroon'),
+
     )
 
     tipo_de_evento = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_EVENTO],
