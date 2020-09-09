@@ -2291,6 +2291,7 @@ def index_documentos(request):
     # = Documento.objects.filter(tipo_de_documento=10).last() # manual da organização parceira
     manual_planejamento = Documento.objects.filter(tipo_de_documento=13).last() # manual de planej
     manual_relatorio = Documento.objects.filter(tipo_de_documento=12).last() # manual de relatórios
+    template_relatorio = Documento.objects.filter(tipo_de_documento=17).last() # template de relatórios
     termo_parceria = Documento.objects.filter(tipo_de_documento=14).last() # termo de parceria
     context = {
         'MEDIA_URL' : settings.MEDIA_URL,
@@ -2300,6 +2301,7 @@ def index_documentos(request):
         'manual_planejamento' : manual_planejamento,
         'manual_relatorio': manual_relatorio,
         'termo_parceria': termo_parceria,
+        'template_relatorio': template_relatorio,
     }
     return render(request, 'index_documentos.html', context)
 

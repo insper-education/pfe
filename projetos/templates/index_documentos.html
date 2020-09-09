@@ -26,6 +26,9 @@
     {% if manual_relatorio %}
         <a href="../..{{MEDIA_URL}}{{manual_relatorio.documento}}"><h5>Manual para Confecção de Relatórios</h5></a>
     {% endif %}
+    {% if template_relatorio %}
+        <a href="../..{{MEDIA_URL}}{{template_relatorio.documento}}"><h5>Template para Relatórios</h5></a>
+    {% endif %}
 
     {% if user.tipo_de_usuario == 3 or user.tipo_de_usuario == 2 %} <!-- Parceiro ou Professor-->
         <hr>
