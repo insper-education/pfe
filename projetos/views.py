@@ -57,11 +57,13 @@ from .messages import email, create_message, message_reembolso
 @login_required
 def index(request):
     """Página principal do sistema do Projeto Final de Engenharia."""
-    if Configuracao.objects.all().first().manutencao:
+    configuracao = Configuracao.objects.first()
+    
+    if configuracao and configuracao.manutencao:
         return render(request, 'projetos/manutencao.html')
     #num_visits = request.session.get('num_visits', 0) # Numero de visitas a página.
     #request.session['num_visits'] = num_visits + 1
-    configuracao = Configuracao.objects.first()
+    
     context = {
         'configuracao': configuracao,
     }
@@ -78,10 +80,15 @@ def index_aluno(request):
         return HttpResponse("Usuário não encontrado.", status=401)
 
     configuracao = Configuracao.objects.first()
-    vencido = timezone.now() > configuracao.prazo
 
-    ano = configuracao.ano
-    semestre = configuracao.semestre
+    if configuracao:
+        vencido = timezone.now() > configuracao.prazo
+        ano = configuracao.ano
+        semestre = configuracao.semestre
+    else: # caso configuracao ainda não tenha sido definido
+        vencido = True
+        ano = 2018
+        semestre = 2
 
     if usuario.tipo_de_usuario == 1:
         try:
@@ -2878,18 +2885,26 @@ def bancas_index(request):
 def encontros_marcar(request):
     """Encontros a serem agendados pelos alunos."""
     configuracao = Configuracao.objects.all().first()
+    if configuracao:
+        ano = configuracao.ano
+        semestre = configuracao.semestre
+    else:
+        ano = 2018
+        semestre = 2
+
     hoje = datetime.date.today()
-    encontros = Encontro.objects.filter(startDate__gt=hoje)
+    encontros = Encontro.objects.filter(startDate__gt=hoje).order_by('startDate')
 
     try:
         aluno = Aluno.objects.get(pk=request.user.aluno.pk)
     except Aluno.DoesNotExist:
-        return HttpResponse("Estudante não encontrado.", status=401)
+        return HttpResponse("Estudante não encontrado (você não possui conta de estudante).",
+                            status=401)
 
     projeto = Projeto.objects.filter(alocacao__aluno=aluno).\
                               distinct().\
-                              filter(ano=configuracao.ano).\
-                              filter(semestre=configuracao.semestre).last()
+                              filter(ano=ano).\
+                              filter(semestre=semestre).last()
 
     if request.method == 'POST':
         check_values = request.POST.getlist('selection')
