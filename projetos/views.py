@@ -4321,5 +4321,16 @@ def definir_datas(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def migracao(request):
     """temporário"""
+
+    avaliacoes = Avaliacao.objects.filter(tipo_de_entrega=0, tipo_de_banca=0) #FINAL
+    for a in avaliacoes:
+        a.peso = 7
+        a.save()
+
+    avaliacoes = Avaliacao.objects.filter(tipo_de_entrega=0, tipo_de_banca=1) #FINAL
+    for a in avaliacoes:
+        a.peso = 3
+        a.save()
+
     message = "Nada Feito"
     return HttpResponse(message)
