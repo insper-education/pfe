@@ -1279,8 +1279,12 @@ def distribuicao_areas(request, tipo):
             else:
                 return HttpResponse("Algum erro não identificado.", status=401)
 
+        # Estudar forma melhor de fazer isso
+        propostas = [p.proposta.id for p in projetos]
+        propostas_projetos = Proposta.objects.filter(id__in=propostas)
+
         context = {
-            'areaspfe': get_areas(projetos),
+            'areaspfe': get_areas(propostas_projetos),
             'tipo': tipo,
             'periodo': periodo,
         }
