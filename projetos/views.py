@@ -505,7 +505,7 @@ def procura_propostas(request):
 
     return render(request, 'projetos/procura_propostas.html', context)
 
-
+## ISSO ESTA REPETIDO NO MODELS DE USER / CUIDADO
 def converte_conceito(conceito):
     """ Converte de Letra para Número. """
     if conceito == "A+":
@@ -598,6 +598,7 @@ def resultado_avaliacoes(request):
         nota_banca_final = 0
         #(0, 'final')
         avaliacoes_banca_final = Avaliacao.objects.filter(projeto=projeto,
+                                                          tipo_de_entrega=0, # Banca
                                                           tipo_de_avaliacao=0)
         for avali in avaliacoes_banca_final:
             nota_banca_final += get_notas(avali)
@@ -610,6 +611,7 @@ def resultado_avaliacoes(request):
         nota_banca_intermediaria = 0
         #(1, 'intermediária')
         avaliacoes_banca_intermediaria = Avaliacao.objects.filter(projeto=projeto,
+                                                                  tipo_de_entrega=0, # Banca
                                                                   tipo_de_avaliacao=1)
         for avali in avaliacoes_banca_intermediaria:
             nota_banca_intermediaria += get_notas(avali)
@@ -3637,7 +3639,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
 
     if request.method == 'POST':
         if 'avaliador' in request.POST:
-            julgamento = Avaliacao.create(projeto)
+            julgamento = Avaliacao.create(projeto=projeto)
 
             #print(PFEUser.objects.get(pk=int(request.POST['avaliador'])).first_name)
             julgamento.avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
@@ -3647,6 +3649,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
             #    julgamento.tipo_de_avaliacao = 0
             #else:
             #    julgamento.tipo_de_avaliacao = 1
+            julgamento.tipo_de_entrega=0, # Banca
             julgamento.tipo_de_avaliacao = banca.tipo_de_banca
 
             if 'objetivo.1' in request.POST:
@@ -4039,10 +4042,12 @@ def conceitos_obtidos(request, primarykey): #acertar isso para pk
         return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
 
     objetivos = ObjetidosDeAprendizagem.objects.filter(avaliacao_banca=True)
-    banca_inter = Avaliacao.objects.filter(projeto=projeto, tipo_de_avaliacao=1).\
-                                    order_by('avaliador', '-momento')
-    banca_final = Avaliacao.objects.filter(projeto=projeto, tipo_de_avaliacao=0).\
-                                    order_by('avaliador', '-momento')
+    banca_inter = Avaliacao.objects.filter(projeto=projeto, tipo_de_entrega=0,
+                                           tipo_de_avaliacao=1).\
+                                           order_by('avaliador', '-momento')
+    banca_final = Avaliacao.objects.filter(projeto=projeto, tipo_de_entrega=0,
+                                           tipo_de_avaliacao=1).\
+                                           order_by('avaliador', '-momento')
 
     # Quando mudar para Postgres isso vai funcionar.
     #.order_by('momento').distinct('avaliador')

@@ -833,19 +833,46 @@ class ObjetidosDeAprendizagem(models.Model):
 
 class Avaliacao(models.Model):
     """Avaliações realizadas durante o projeto."""
-    avaliador = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
-                                  help_text='avaliador do projeto')
-    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='projeto que foi avaliado')
+
+    TIPO_DE_ENTREGA = ( # não mudar a ordem dos números
+        ( 0, 'Banca'),
+        (10, 'Relatório de Planejamento'),
+        (11, 'Relatório Intermediário de Grupo'),
+        (12, 'Relatório Final de Grupo'),
+        (21, 'Relatório Intermediário Individual'),
+        (22, 'Relatório Final Individual'),
+    )
+    tipo_de_entrega = models.PositiveSmallIntegerField(choices=TIPO_DE_ENTREGA, default=0)
 
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
                                    help_text='Data e hora da comunicação') # hora ordena para dia
+  
+    peso = models.PositiveIntegerField("Peso",
+                                       validators=[MinValueValidator(0), MaxValueValidator(100)],
+                                       help_text='Pesa da avaliação na média (bancas compartilham peso)',
+                                       default=10) # 10% para as bancas
+
+    # A nota só deve ser usada se o sistema de rubricas não foi preenchido corretamente
+    nota = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
+
+    # Somente para Bancas
+    avaliador = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
+                                  help_text='avaliador do projeto')
 
     TIPO_DE_AVALIACAO = ( # não mudar a ordem dos números
         (0, 'final'),
         (1, 'intermediária'),
     )
     tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
+
+    # Para Bancas e Entregas em Grupo
+    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text='projeto que foi avaliado')
+
+    # Para Alocações dos estudantes (caso um aluno reprove ele teria duas alocações)
+    alocacao = models.ForeignKey('users.Alocacao', null=True, blank=True,
+                                 on_delete=models.SET_NULL, related_name='projeto_alocado',
+                                 help_text='relacao de alocação entre projeto e estudante')
 
     CONCEITOS = ( # não mudar a ordem dos números
         ('I ', 'I'),
@@ -893,13 +920,16 @@ class Avaliacao(models.Model):
                                    help_text='qualquer observação relevante')
 
     def __str__(self):
-        if self.tipo_de_avaliacao == 0:
-            tipo = "Avaliação Final: "
+        if self.tipo_de_entrega == 0: # Bancas
+            if self.tipo_de_avaliacao == 0:
+                tipo = "Avaliação Final: "
+            else:
+                tipo = "Avaliação Intermediária: "
+            return tipo+\
+                self.avaliador.get_full_name()+" >>> "+\
+                self.projeto.get_titulo()
         else:
-            tipo = "Avaliação Intermediária: "
-        return tipo+\
-               self.avaliador.get_full_name()+" >>> "+\
-               self.projeto.get_titulo()
+            return "Avaliação tipo : " + str(self.tipo_de_entrega)
 
     @classmethod
     def create(cls, projeto):
@@ -910,7 +940,8 @@ class Avaliacao(models.Model):
     class Meta:
         verbose_name = 'Avaliação'
         verbose_name_plural = 'Avaliações'
-        ordering = ['projeto', 'tipo_de_avaliacao', 'avaliador', 'momento']
+        #ordering = ['projeto', 'tipo_de_avaliacao', 'avaliador', 'momento']
+        ordering = ['momento']
 
 
 class Certificado(models.Model):

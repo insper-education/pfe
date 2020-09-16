@@ -34,6 +34,8 @@
   <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(3)').show() : $('#AlunosTable tr > *:nth-child(3)').hide())" type="checkbox" checked /> Curso</label>&nbsp;&nbsp;&nbsp;
   <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(4)').show() : $('#AlunosTable tr > *:nth-child(4)').hide())" type="checkbox" checked /> Período</label>&nbsp;&nbsp;&nbsp;
   <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(5)').show() : $('#AlunosTable tr > *:nth-child(5)').hide())" type="checkbox" checked /> Projeto</label>&nbsp;&nbsp;&nbsp;
+  <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(6)').show() : $('#AlunosTable tr > *:nth-child(6)').hide())" type="checkbox" checked /> Média (só bancas)</label>&nbsp;&nbsp;&nbsp;
+  <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(7)').show() : $('#AlunosTable tr > *:nth-child(7)').hide())" type="checkbox" checked /> Notas</label>&nbsp;&nbsp;&nbsp;
   
   <br><br>
   <strong>Número Total de Alunos:</strong> {{ num_alunos }}
@@ -50,6 +52,8 @@
                 Projeto
               </a>
             </th>
+            <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(6)')" style="cursor:pointer" class="text-center">Média</th>
+            <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(7)')" style="cursor:pointer" class="text-center">Notas</th>
         </tr>
         {% for aluno in alunos_list %} 
         <tr class="item">
@@ -116,10 +120,18 @@
                     ({{alocacao.projeto.organizacao}})<br>
                     {% if alocacao.projeto.avancado %}</u>{% endif %}
                   </a>
-                {% endif %}    
+                {% endif %}
               {% endfor %}
             {% endif %}
           </td>
+          <td> <!-- Média -->
+            {{aluno.get_media|floatformat:1}}
+          </td>
+          <td><table><tr>
+          {% for aval, nota, peso in aluno.get_notas %} <!-- Notas -->
+            <td>{{aval}}={{nota|floatformat:1}}</td>
+          {% endfor %}
+          </tr></table></td>
         </tr>
         {% endfor %}
       </table>

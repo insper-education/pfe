@@ -15,7 +15,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 #from django.utils.functional import curry
 
-from projetos.models import Projeto, Proposta, Empresa, Organizacao
+from projetos.models import Projeto, Proposta, Empresa, Organizacao, Avaliacao
+
 
 ####   PARA PORTAR AS AREAS DE INTERESSE DE ALUNOS PARA CÁ, E USAR NO PROJETO  #####
 #areas de interesse
@@ -182,6 +183,70 @@ class Professor(models.Model):
         professor = cls(user=usuario)
         return professor
 
+
+## ISSO ESTA REPETIDO NO PROJETOS VIEWS / CUIDADO
+def converte_conceito(conceito):
+    """ Converte de Letra para Número. """
+    if conceito == "A+":
+        return 10
+    elif conceito == "A" or conceito == "A ":
+        return 9
+    elif conceito == "B+":
+        return 8
+    elif conceito == "B" or conceito == "B ":
+        return 7
+    elif conceito == "C+":
+        return 6
+    elif conceito == "C" or conceito == "C ":
+        return 5
+    elif conceito == "D" or conceito == "D ":
+        return 4
+    return 0
+
+def converte_letra(nota):
+    """ Converte de Número para Letra. """
+    if nota == 10:
+        return "A+"
+    elif nota >= 9:
+        return "A"
+    elif nota >= 8:
+        return "B+"
+    elif nota >= 7:
+        return "B"
+    elif nota >= 6:
+        return "C+"
+    elif nota >= 5:
+        return "C"
+    elif nota >= 4:
+        return "D"
+    return "I"
+
+def get_notas(avalia):
+    """ Faz a média de todas as notas de uma avaliação. """
+    count = 0
+    nota = 0
+    if avalia.objetivo1:
+        nota += converte_conceito(avalia.objetivo1_conceito)
+        count += 1
+    if avalia.objetivo2:
+        nota += converte_conceito(avalia.objetivo2_conceito)
+        count += 1
+    if avalia.objetivo3:
+        nota += converte_conceito(avalia.objetivo3_conceito)
+        count += 1
+    if avalia.objetivo4:
+        nota += converte_conceito(avalia.objetivo4_conceito)
+        count += 1
+    if avalia.objetivo5:
+        nota += converte_conceito(avalia.objetivo5_conceito)
+        count += 1
+    if count:
+        return nota/count
+    else:
+        return 0
+
+
+
 class Aluno(models.Model):
     """Classe de usuários com estatus de Aluno."""
     TIPOS_CURSO = (
@@ -263,6 +328,66 @@ class Aluno(models.Model):
                 return entry[1]
         return "Sem evento"
 
+    @property
+    def get_banca_i(self):
+        """Retorna média."""
+        alocacoes = Alocacao.objects.filter(aluno=self.pk)
+        if alocacoes:
+
+            #supondo só uma alocação para agora
+            alocacao = alocacoes.first()
+
+            nota_banca_intermediaria = 0
+
+            avaliacoes_banca_intermediaria = Avaliacao.objects.filter(projeto=alocacao.projeto,
+                                                                    tipo_de_entrega=0, # Banca
+                                                                    tipo_de_avaliacao=1) #(1, 'intermediária')
+
+            for avali in avaliacoes_banca_intermediaria:
+                nota_banca_intermediaria += get_notas(avali)
+            if avaliacoes_banca_intermediaria:
+                media = nota_banca_intermediaria/len(avaliacoes_banca_intermediaria)
+                return media
+            else:
+                return -1000
+
+        return -1000
+
+    @property
+    def get_banca_f(self):
+        """Retorna média."""
+        alocacoes = Alocacao.objects.filter(aluno=self.pk)
+        if alocacoes:
+
+            #supondo só uma alocação para agora
+            alocacao = alocacoes.first()
+
+            nota_banca_final = 0
+            
+            avaliacoes_banca_final = Avaliacao.objects.filter(projeto=alocacao.projeto,
+                                                                    tipo_de_entrega=0, # Banca
+                                                                    tipo_de_avaliacao=0) #(0, 'final')
+            for avali in avaliacoes_banca_final:
+                nota_banca_final += get_notas(avali)
+            if avaliacoes_banca_final:
+                media = nota_banca_final/len(avaliacoes_banca_final)
+                return media
+            else:
+                return -1000
+        return -1000
+
+    @property
+    def get_notas(self):
+        return [("BI", self.get_banca_i, 0.1),("BF", self.get_banca_f, 0.1)]
+    
+    @property
+    def get_media(self):
+        """Retorna média."""
+        nota_final = 0
+        for aval, nota, peso in self.get_notas:
+            nota_final += nota * peso
+        return nota_final
+
     class Meta:
         ordering = ['user']
         permissions = ()
@@ -293,6 +418,8 @@ class Alocacao(models.Model):
     """Projeto em que o aluno está alocado."""
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE)
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
+    
+    # OBSOLETO NÃO DEVE SER USADO E DEVE SER REMOVIDO !!!!!
     CONCEITOS = (
         (127, 'NA'),
         (10, 'A+'),
@@ -305,6 +432,9 @@ class Alocacao(models.Model):
         (0, 'I'),
     )
     conceito = models.PositiveSmallIntegerField(choices=CONCEITOS, default=127)
+    #############################################################################
+
+
     class Meta:
         verbose_name = 'Alocação'
         verbose_name_plural = 'Alocações'
@@ -315,7 +445,7 @@ class Alocacao(models.Model):
 
     @classmethod
     def create(cls, estudante, projeto):
-        """Cria um Projeto (entrada) na Banca."""
+        """Cria um Projeto (entrada) de Alocação."""
         alocacao = cls(projeto=projeto, aluno=estudante)
         return alocacao
 
