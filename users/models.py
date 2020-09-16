@@ -328,65 +328,74 @@ class Aluno(models.Model):
                 return entry[1]
         return "Sem evento"
 
-    @property
-    def get_banca_i(self):
+
+    def get_banca(self, avaliacoes_banca):
         """Retorna média."""
-        alocacoes = Alocacao.objects.filter(aluno=self.pk)
-        if alocacoes:
+        nota_banca = 0
+        for avali in avaliacoes_banca:
+            nota_banca += get_notas(avali)
+        if avaliacoes_banca:
+            media = nota_banca/len(avaliacoes_banca)
+            return media
+        else:
+            return -1000
 
-            #supondo só uma alocação para agora
-            alocacao = alocacoes.first()
-
-            nota_banca_intermediaria = 0
-
-            avaliacoes_banca_intermediaria = Avaliacao.objects.filter(projeto=alocacao.projeto,
-                                                                    tipo_de_entrega=0, # Banca
-                                                                    tipo_de_banca=1) #(1, 'intermediária')
-
-            for avali in avaliacoes_banca_intermediaria:
-                nota_banca_intermediaria += get_notas(avali)
-            if avaliacoes_banca_intermediaria:
-                media = nota_banca_intermediaria/len(avaliacoes_banca_intermediaria)
-                return media
-            else:
-                return -1000
-
-        return -1000
-
-    @property
-    def get_banca_f(self):
-        """Retorna média."""
-        alocacoes = Alocacao.objects.filter(aluno=self.pk)
-        if alocacoes:
-
-            #supondo só uma alocação para agora
-            alocacao = alocacoes.first()
-
-            nota_banca_final = 0
-            
-            avaliacoes_banca_final = Avaliacao.objects.filter(projeto=alocacao.projeto,
-                                                                    tipo_de_entrega=0, # Banca
-                                                                    tipo_de_banca=0) #(0, 'final')
-            for avali in avaliacoes_banca_final:
-                nota_banca_final += get_notas(avali)
-            if avaliacoes_banca_final:
-                media = nota_banca_final/len(avaliacoes_banca_final)
-                return media
-            else:
-                return -1000
-        return -1000
 
     @property
     def get_notas(self):
-        return [("BI", self.get_banca_i, 0.1),("BF", self.get_banca_f, 0.1)]
+
+        notas = []
+
+        alocacoes = Alocacao.objects.filter(aluno=self.pk)
+        if alocacoes:
+
+            #supondo só uma alocação para agora
+            alocacao = alocacoes.first()
+
+            # Bancas
+            avaliacoes_bancas = Avaliacao.objects.filter(projeto=alocacao.projeto, tipo_de_entrega=0) # Banca
+            avaliacoes_banca_interm = avaliacoes_bancas.filter(tipo_de_banca=1) #(1, 'intermediaria')
+            if avaliacoes_banca_interm:
+                peso = float(avaliacoes_banca_interm.first().peso/100)
+                nota_banca_interm = Aluno.get_banca(self, avaliacoes_banca_interm)
+                notas.append( ("BI", nota_banca_interm, peso) )
+            avaliacoes_banca_final = avaliacoes_bancas.filter(tipo_de_banca=0) #(0, 'final')
+            if avaliacoes_banca_final:
+                peso = float(avaliacoes_banca_final.first().peso/100)
+                nota_banca_final = Aluno.get_banca(self, avaliacoes_banca_final)
+                notas.append( ("BF", nota_banca_final, peso) )
+
+            # Avaliações por projeto
+            avaliacoes = Avaliacao.objects.filter(projeto=alocacao.projeto)
+            for avaliacao in avaliacoes:
+                peso = float(avaliacao.peso/100)
+                if avaliacao.tipo_de_entrega == 10: #(10, 'Relatório de Planejamento')
+                    notas.append( ("RP", float(avaliacao.nota), peso) )
+                if avaliacao.tipo_de_entrega == 11: #(11, 'Relatório Intermediário de Grupo'),
+                    notas.append( ("RIG", get_notas(avaliacao), peso) )
+                if avaliacao.tipo_de_entrega == 12: #(12, 'Relatório Final de Grupo'),
+                    notas.append( ("RFG", get_notas(avaliacao), peso) )
+
+        return notas
     
     @property
     def get_media(self):
         """Retorna média."""
         nota_final = 0
+        peso_final = 0
         for aval, nota, peso in self.get_notas:
+            peso_final += peso
             nota_final += nota * peso
-        return nota_final
+        return {"media": nota_final, "pesos": peso_final}
+        
+
+    @property
+    def get_peso(self):
+        """Retorna soma dos pesos das notas."""
+        peso_final = 0
+        for aval, nota, peso in self.get_notas:
+            peso_final += peso
+        return peso_final
 
     class Meta:
         ordering = ['user']

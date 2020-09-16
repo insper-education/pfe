@@ -125,11 +125,19 @@
             {% endif %}
           </td>
           <td> <!-- Média -->
-            {{aluno.get_media|floatformat:1}}
+            {% with media=aluno.get_media %}
+              {% if media.pesos != 1 %}
+                <a style="color:red" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100%">
+              {% endif %}    
+                {{media.media|floatformat:1}}
+              {% if media.pesos != 1 %}
+                </a>
+              {% endif %}
+            {% endwith %}
           </td>
           <td><table><tr>
           {% for aval, nota, peso in aluno.get_notas %} <!-- Notas -->
-            <td>{{aval}}={{nota|floatformat:1}}</td>
+            <td>{{aval}}({% widthratio peso 1 100 %}%)={{nota|floatformat:1}}</td>
           {% endfor %}
           </tr></table></td>
         </tr>

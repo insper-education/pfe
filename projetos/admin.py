@@ -310,8 +310,8 @@ class EncontroAdmin(admin.ModelAdmin):
 @admin.register(Avaliacao)
 class AvaliacaoAdmin(admin.ModelAdmin):
     """Informações das Avaliações."""
-    list_display = ('projeto', 'tipo_de_entrega', 'avaliador', 'momento', )
-    ordering = ('projeto', 'tipo_de_entrega', 'avaliador', 'momento', )
+    list_display = ('tipo_de_entrega', 'projeto', 'avaliador', 'momento', )
+    ordering = ('tipo_de_entrega', 'projeto', 'avaliador', 'momento', )
 
 admin.site.register(Cursada)
 admin.site.register(Recomendada)
