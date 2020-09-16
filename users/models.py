@@ -341,7 +341,7 @@ class Aluno(models.Model):
 
             avaliacoes_banca_intermediaria = Avaliacao.objects.filter(projeto=alocacao.projeto,
                                                                     tipo_de_entrega=0, # Banca
-                                                                    tipo_de_avaliacao=1) #(1, 'intermediária')
+                                                                    tipo_de_banca=1) #(1, 'intermediária')
 
             for avali in avaliacoes_banca_intermediaria:
                 nota_banca_intermediaria += get_notas(avali)
@@ -366,7 +366,7 @@ class Aluno(models.Model):
             
             avaliacoes_banca_final = Avaliacao.objects.filter(projeto=alocacao.projeto,
                                                                     tipo_de_entrega=0, # Banca
-                                                                    tipo_de_avaliacao=0) #(0, 'final')
+                                                                    tipo_de_banca=0) #(0, 'final')
             for avali in avaliacoes_banca_final:
                 nota_banca_final += get_notas(avali)
             if avaliacoes_banca_final:

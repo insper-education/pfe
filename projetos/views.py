@@ -599,7 +599,7 @@ def resultado_avaliacoes(request):
         #(0, 'final')
         avaliacoes_banca_final = Avaliacao.objects.filter(projeto=projeto,
                                                           tipo_de_entrega=0, # Banca
-                                                          tipo_de_avaliacao=0)
+                                                          tipo_de_banca=0)
         for avali in avaliacoes_banca_final:
             nota_banca_final += get_notas(avali)
         if avaliacoes_banca_final:
@@ -612,7 +612,7 @@ def resultado_avaliacoes(request):
         #(1, 'intermediária')
         avaliacoes_banca_intermediaria = Avaliacao.objects.filter(projeto=projeto,
                                                                   tipo_de_entrega=0, # Banca
-                                                                  tipo_de_avaliacao=1)
+                                                                  tipo_de_banca=1)
         for avali in avaliacoes_banca_intermediaria:
             nota_banca_intermediaria += get_notas(avali)
         if avaliacoes_banca_intermediaria:
@@ -3650,7 +3650,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
             #else:
             #    julgamento.tipo_de_avaliacao = 1
             julgamento.tipo_de_entrega=0, # Banca
-            julgamento.tipo_de_avaliacao = banca.tipo_de_banca
+            julgamento.tipo_de_banca = banca.tipo_de_banca
 
             if 'objetivo.1' in request.POST:
                 pk_objetivo1 = int(request.POST['objetivo.1'].split('.')[0])
@@ -4043,10 +4043,10 @@ def conceitos_obtidos(request, primarykey): #acertar isso para pk
 
     objetivos = ObjetidosDeAprendizagem.objects.filter(avaliacao_banca=True)
     banca_inter = Avaliacao.objects.filter(projeto=projeto, tipo_de_entrega=0,
-                                           tipo_de_avaliacao=1).\
+                                           tipo_de_banca=1).\
                                            order_by('avaliador', '-momento')
     banca_final = Avaliacao.objects.filter(projeto=projeto, tipo_de_entrega=0,
-                                           tipo_de_avaliacao=1).\
+                                           tipo_de_banca=0).\
                                            order_by('avaliador', '-momento')
 
     # Quando mudar para Postgres isso vai funcionar.

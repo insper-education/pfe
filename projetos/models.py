@@ -859,11 +859,12 @@ class Avaliacao(models.Model):
     avaliador = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
                                   help_text='avaliador do projeto')
 
+    ## O CERTO ABAIXO É TIPO_DE_BANCA
     TIPO_DE_AVALIACAO = ( # não mudar a ordem dos números
         (0, 'final'),
         (1, 'intermediária'),
     )
-    tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
+    tipo_de_banca = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
 
     # Para Bancas e Entregas em Grupo
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
@@ -921,7 +922,7 @@ class Avaliacao(models.Model):
 
     def __str__(self):
         if self.tipo_de_entrega == 0: # Bancas
-            if self.tipo_de_avaliacao == 0:
+            if self.tipo_de_banca == 0:
                 tipo = "Avaliação Final: "
             else:
                 tipo = "Avaliação Intermediária: "
@@ -941,7 +942,7 @@ class Avaliacao(models.Model):
         verbose_name = 'Avaliação'
         verbose_name_plural = 'Avaliações'
         #ordering = ['projeto', 'tipo_de_avaliacao', 'avaliador', 'momento']
-        ordering = ['momento']
+        ordering = ['momento',]
 
 
 class Certificado(models.Model):
