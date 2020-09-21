@@ -45,12 +45,12 @@ from .models import Projeto, Proposta, Organizacao, Configuracao, Evento, Anotac
 from .models import Feedback, Certificado
 from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade, Conexao
 #from .models import Disciplina
-from .models import ObjetidosDeAprendizagem, Avaliacao
+from .models import ObjetidosDeAprendizagem, Avaliacao, Avaliacao2, Observacao
 
 from .models import get_upload_path
 
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource
-from .resources import AlunosResource, ProfessoresResource, ParceirosResource
+from .resources import AlunosResource, ProfessoresResource, ParceirosResource, AvaliacoesResource
 from .resources import ConfiguracaoResource, FeedbacksResource, DisciplinasResource
 from .messages import email, create_message, message_reembolso
 
@@ -505,7 +505,7 @@ def procura_propostas(request):
 
     return render(request, 'projetos/procura_propostas.html', context)
 
-## ISSO ESTA REPETIDO NO MODELS DE USER / CUIDADO
+## ISSO ESTA REPETIDO NO MODELS DE USER / CUIDADO e DEPOIS EM RESOURCES !!!!!!!!!
 def converte_conceito(conceito):
     """ Converte de Letra para Número. """
     if conceito == "A+":
@@ -2336,8 +2336,10 @@ def carrega(request, dado):
 
     if dado == "disciplinas":
         resource = DisciplinasResource()
-    if dado == "alunos":
+    elif dado == "alunos":
         resource = AlunosResource()
+    elif dado == "avaliacoes":
+        resource = AvaliacoesResource()
     else:
         raise Http404
 
@@ -3643,48 +3645,83 @@ def avaliacao(request, primarykey): #acertar isso para pk
 
     if request.method == 'POST':
         if 'avaliador' in request.POST:
-            julgamento = Avaliacao.create(projeto=projeto)
-
+            #julgamento = Avaliacao.create(projeto=projeto)
+            
             #print(PFEUser.objects.get(pk=int(request.POST['avaliador'])).first_name)
-            julgamento.avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
+            #julgamento.avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
             # julgamento.avaliador = PFEUser.objects.get(pk=request.user.pk)
 
             #if request.POST['tipo_banca'] == "final":
             #    julgamento.tipo_de_avaliacao = 0
             #else:
             #    julgamento.tipo_de_avaliacao = 1
-            julgamento.tipo_de_entrega=0, # Banca
-            julgamento.tipo_de_banca = banca.tipo_de_banca
+            #julgamento.tipo_de_entrega=0, # Banca
+            #julgamento.tipo_de_banca = banca.tipo_de_banca
+
+            if banca.tipo_de_banca == 1: #(1, 'intermediaria'),
+                tipo_de_avaliacao = 1 #( 1, 'Banca Intermediária'),
+            else: # (0, 'final'),
+                tipo_de_avaliacao = 2 #( 2, 'Banca Final'),
 
             if 'objetivo.1' in request.POST:
+                julgamento1 = Avaliacao2.create(projeto=projeto)
+                julgamento1.avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
                 pk_objetivo1 = int(request.POST['objetivo.1'].split('.')[0])
-                julgamento.objetivo1 = ObjetidosDeAprendizagem.objects.get(pk=pk_objetivo1)
-                julgamento.objetivo1_conceito = request.POST['objetivo.1'].split('.')[1]
+                julgamento1.objetivo1 = ObjetidosDeAprendizagem.objects.get(pk=pk_objetivo1)
+                #julgamento.objetivo1_conceito = request.POST['objetivo.1'].split('.')[1]
+                julgamento1.nota = converte_conceito(request.POST['objetivo.1'].split('.')[1])
+                julgamento1.tipo_de_avaliacao = tipo_de_avaliacao
+                julgamento1.save()
 
             if 'objetivo.2' in request.POST:
+                julgamento2 = Avaliacao2.create(projeto=projeto)
+                julgamento2.avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
                 pk_objetivo2 = int(request.POST['objetivo.2'].split('.')[0])
-                julgamento.objetivo2 = ObjetidosDeAprendizagem.objects.get(pk=pk_objetivo2)
-                julgamento.objetivo2_conceito = request.POST['objetivo.2'].split('.')[1]
+                julgamento2.objetivo2 = ObjetidosDeAprendizagem.objects.get(pk=pk_objetivo2)
+                #julgamento.objetivo2_conceito = request.POST['objetivo.2'].split('.')[1]
+                julgamento2.nota = converte_conceito(request.POST['objetivo.2'].split('.')[1])
+                julgamento2.tipo_de_avaliacao = tipo_de_avaliacao
+                julgamento2.save()
 
             if 'objetivo.3' in request.POST:
+                julgamento3 = Avaliacao2.create(projeto=projeto)
+                julgamento3.avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
                 pk_objetivo3 = int(request.POST['objetivo.3'].split('.')[0])
-                julgamento.objetivo3 = ObjetidosDeAprendizagem.objects.get(pk=pk_objetivo3)
-                julgamento.objetivo3_conceito = request.POST['objetivo.3'].split('.')[1]
+                julgamento3.objetivo3 = ObjetidosDeAprendizagem.objects.get(pk=pk_objetivo3)
+                #julgamento.objetivo3_conceito = request.POST['objetivo.3'].split('.')[1]
+                julgamento3.nota = converte_conceito(request.POST['objetivo.3'].split('.')[1])
+                julgamento3.tipo_de_avaliacao = tipo_de_avaliacao
+                julgamento3.save()
 
             if 'objetivo.4' in request.POST:
+                julgamento4 = Avaliacao2.create(projeto=projeto)
+                julgamento4.avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
                 pk_objetivo4 = int(request.POST['objetivo.4'].split('.')[0])
-                julgamento.objetivo4 = ObjetidosDeAprendizagem.objects.get(pk=pk_objetivo4)
-                julgamento.objetivo4_conceito = request.POST['objetivo.4'].split('.')[1]
+                julgamento4.objetivo4 = ObjetidosDeAprendizagem.objects.get(pk=pk_objetivo4)
+                #julgamento.objetivo4_conceito = request.POST['objetivo.4'].split('.')[1]
+                julgamento4.nota = converte_conceito(request.POST['objetivo.4'].split('.')[1])
+                julgamento4.tipo_de_avaliacao = tipo_de_avaliacao
+                julgamento4.save()
 
             if 'objetivo.5' in request.POST:
+                julgamento5 = Avaliacao2.create(projeto=projeto)
+                julgamento5.avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
                 pk_objetivo5 = int(request.POST['objetivo.5'].split('.')[0])
-                julgamento.objetivo5 = ObjetidosDeAprendizagem.objects.get(pk=pk_objetivo5)
-                julgamento.objetivo5_conceito = request.POST['objetivo.5'].split('.')[1]
+                julgamento5.objetivo5 = ObjetidosDeAprendizagem.objects.get(pk=pk_objetivo5)
+                #julgamento.objetivo5_conceito = request.POST['objetivo.5'].split('.')[1]
+                julgamento5.nota = converte_conceito(request.POST['objetivo.5'].split('.')[1])
+                julgamento5.tipo_de_avaliacao = tipo_de_avaliacao
+                julgamento5.save()
 
             if 'observacoes' in request.POST:
-                julgamento.observacoes = request.POST['observacoes']
+                julgamento_observacoes = Avaliacao2.create(projeto=projeto)
+                julgamento_observacoes.avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
+                julgamento_observacoes.observacoes = request.POST['observacoes']
+                julgamento_observacoes.save()
 
-            julgamento.save()
+                #julgamento.observacoes = request.POST['observacoes']
+
+            #julgamento.save()
 
             message = "<h3>Avaliação PFE</h3><br>\n"
             message += "<b>Título do Projeto:</b> {0}<br>\n".format(projeto.get_titulo())
@@ -4045,22 +4082,59 @@ def conceitos_obtidos(request, primarykey): #acertar isso para pk
     except Projeto.DoesNotExist:
         return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
 
-    objetivos = ObjetidosDeAprendizagem.objects.filter(avaliacao_banca=True)
-    banca_inter = Avaliacao.objects.filter(projeto=projeto, tipo_de_entrega=0,
-                                           tipo_de_banca=1).\
-                                           order_by('avaliador', '-momento')
-    banca_final = Avaliacao.objects.filter(projeto=projeto, tipo_de_entrega=0,
-                                           tipo_de_banca=0).\
-                                           order_by('avaliador', '-momento')
+    objetivos = ObjetidosDeAprendizagem.objects.all()
 
-    # Quando mudar para Postgres isso vai funcionar.
-    #.order_by('momento').distinct('avaliador')
+    avaliadores_inter = {}
+    avaliadores_final = {}
+
+    for objetivo in objetivos:
+        bancas_inter = Avaliacao2.objects.filter(projeto=projeto, objetivo=objetivo, tipo_de_avaliacao=1).\
+                                            order_by('avaliador', '-momento')
+        
+        for banca in bancas_inter:
+            if banca.avaliador not in avaliadores_inter:
+                avaliadores_inter[banca.avaliador] = {}
+            if objetivo not in avaliadores_inter[banca.avaliador]:
+                avaliadores_inter[banca.avaliador][objetivo] = banca
+                avaliadores_inter[banca.avaliador]["momento"] = banca.momento
+            # Senão é só uma avaliação de objetivo mais antiga
+
+        bancas_final = Avaliacao2.objects.filter(projeto=projeto, objetivo=objetivo, tipo_de_avaliacao=2).\
+                                            order_by('avaliador', '-momento')
+
+        for banca in bancas_final:
+            if banca.avaliador not in avaliadores_final:
+                avaliadores_final[banca.avaliador] = {}
+            if objetivo not in avaliadores_final[banca.avaliador]:
+                avaliadores_final[banca.avaliador][objetivo] = banca
+            # Senão é só uma avaliação de objetivo mais antiga
+
+
+    observacoes = Observacao.objects.filter(projeto=projeto, tipo_de_avaliacao=1).\
+                                            order_by('avaliador', '-momento')
+
+    for observacao in observacoes:
+        if observacao.avaliador not in avaliadores_inter:
+            avaliadores_inter[observacao.avaliador] = {} # Não devia acontecer isso
+        if "observacoes" not in avaliadores_inter[observacao.avaliador]:
+            avaliadores_inter[observacao.avaliador]["observacoes"] = observacao.observacoes
+        # Senão é só uma avaliação de objetivo mais antiga
+
+    observacoes = Observacao.objects.filter(projeto=projeto, tipo_de_avaliacao=2).\
+                                            order_by('avaliador', '-momento')
+
+    for observacao in observacoes:
+        if observacao.avaliador not in avaliadores_final:
+            avaliadores_final[observacao.avaliador] = {} # Não devia acontecer isso
+        if "observacoes" not in avaliadores_final[observacao.avaliador]:
+            avaliadores_final[observacao.avaliador]["observacoes"] = observacao.observacoes
+        # Senão é só uma avaliação de objetivo mais antiga
 
     context = {
         'objetivos': objetivos,
         'projeto': projeto,
-        'banca_inter' : banca_inter,
-        'banca_final' : banca_final,
+        'avaliadores_inter' : avaliadores_inter,
+        'avaliadores_final' : avaliadores_final,
     }
 
     return render(request, 'projetos/conceitos_obtidos.html', context=context)
@@ -4321,5 +4395,62 @@ def definir_datas(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def migracao(request):
     """temporário"""
-    message = "Nada Feito"
+
+    avaliacoes = Avaliacao.objects.filter(tipo_de_entrega=0)
+    for a in avaliacoes:
+
+        # Execução Técnica
+        a1 = Avaliacao2.objects.create(projeto=a.projeto)
+        a1.avaliador = a.avaliador
+        a1.momento = a.momento
+        a1.objetivo = a.objetivo1
+        a1.nota = converte_conceito(a.objetivo1_conceito)
+        if a.tipo_de_banca == 0: # (0, 'final'),
+            a1.tipo_de_avaliacao = 2 # ( 2, 'Banca Final'),
+            a1.peso = 0.3*0.1*0.4    
+        else: # (1, 'intermediária'),
+            a1.tipo_de_avaliacao = 1 # ( 1, 'Banca Intermediária'),
+            a1.peso = 0.7*0.1*0.4
+        a1.save()
+
+        # Organização
+        a2 = Avaliacao2.objects.create(projeto=a.projeto)
+        a2.avaliador = a.avaliador
+        a2.momento = a.momento
+        a2.objetivo = a.objetivo2
+        a2.nota = converte_conceito(a.objetivo2_conceito)
+        if a.tipo_de_banca == 0: # (0, 'final'),
+            a2.tipo_de_avaliacao = 2 # ( 2, 'Banca Final'),
+            a2.peso = 0.3*0.1*0.3    
+        else: # (1, 'intermediária'),
+            a2.tipo_de_avaliacao = 1 # ( 1, 'Banca Intermediária'),
+            a2.peso = 0.7*0.1*0.3
+        a2.save()
+
+        # Design/Empreendedorismo
+        a3 = Avaliacao2.objects.create(projeto=a.projeto)
+        a3.avaliador = a.avaliador
+        a3.momento = a.momento
+        a3.objetivo = a.objetivo3
+        a3.nota = converte_conceito(a.objetivo3_conceito)
+        if a.tipo_de_banca == 0: # (0, 'final'),
+            a3.tipo_de_avaliacao = 2 # ( 2, 'Banca Final'),
+            a3.peso = 0.3*0.1*0.3 
+        else: # (1, 'intermediária'),
+            a3.tipo_de_avaliacao = 1 # ( 1, 'Banca Intermediária'),
+            a3.peso = 0.7*0.1*0.3
+        a3.save()
+
+        # Observações
+        a4 = Observacao.objects.create(projeto=a.projeto)
+        a4.avaliador = a.avaliador
+        a4.momento = a.momento
+        if a.tipo_de_banca == 0: # (0, 'final'),
+            a4.tipo_de_avaliacao = 2 # ( 2, 'Banca Final'),
+        else: # (1, 'intermediária'),
+            a4.tipo_de_avaliacao = 1 # ( 1, 'Banca Intermediária'),
+        a4.observacoes = a.observacoes
+        a4.save()
+
+    message = "Feito"
     return HttpResponse(message)

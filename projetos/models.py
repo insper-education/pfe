@@ -835,7 +835,9 @@ class Avaliacao(models.Model):
     """Avaliações realizadas durante o projeto."""
 
     TIPO_DE_ENTREGA = ( # não mudar a ordem dos números
-        ( 0, 'Banca'),
+        ( 0, 'Banca'),  #obsoleto
+        ( 1, 'Banca Intermediária'),
+        ( 2, 'Banca Final'),
         (10, 'Relatório de Planejamento'),
         (11, 'Relatório Intermediário de Grupo'),
         (12, 'Relatório Final de Grupo'),
@@ -875,6 +877,7 @@ class Avaliacao(models.Model):
                                  on_delete=models.SET_NULL, related_name='projeto_alocado',
                                  help_text='relacao de alocação entre projeto e estudante')
 
+    #### OBSOLETO, REMOVER ####
     CONCEITOS = ( # não mudar a ordem dos números
         ('I ', 'I'),
         ('D ', 'D'),
@@ -890,30 +893,36 @@ class Avaliacao(models.Model):
     objetivo1 = models.ForeignKey(ObjetidosDeAprendizagem, related_name='objetivo1',
                                   on_delete=models.SET_NULL, null=True, blank=True,
                                   help_text='Objetivo de Aprendizagem 1')
+    #### OBSOLETO, REMOVER ####
     objetivo1_conceito = models.CharField(choices=CONCEITOS, default="NA", max_length=2,
                                           help_text='Conceito Obtido no OA 1')
-
+    ###########################
+    
     objetivo2 = models.ForeignKey(ObjetidosDeAprendizagem, related_name='objetivo2',
                                   on_delete=models.SET_NULL, null=True, blank=True,
                                   help_text='Objetivo de Aprendizagem 2')
+    #### OBSOLETO, REMOVER ####
     objetivo2_conceito = models.CharField(choices=CONCEITOS, default="NA", max_length=2,
                                           help_text='Conceito Obtido no OA 2')
 
     objetivo3 = models.ForeignKey(ObjetidosDeAprendizagem, related_name='objetivo3',
                                   on_delete=models.SET_NULL, null=True, blank=True,
                                   help_text='Objetivo de Aprendizagem 3')
+    #### OBSOLETO, REMOVER ####
     objetivo3_conceito = models.CharField(choices=CONCEITOS, default="NA", max_length=2,
                                           help_text='Conceito Obtido no OA 3')
 
     objetivo4 = models.ForeignKey(ObjetidosDeAprendizagem, related_name='objetivo4',
                                   on_delete=models.SET_NULL, null=True, blank=True,
                                   help_text='Objetivo de Aprendizagem 4')
+    #### OBSOLETO, REMOVER ####
     objetivo4_conceito = models.CharField(choices=CONCEITOS, default="NA", max_length=2,
                                           help_text='Conceito Obtido no OA 4')
 
     objetivo5 = models.ForeignKey(ObjetidosDeAprendizagem, related_name='objetivo5',
                                   on_delete=models.SET_NULL, null=True, blank=True,
                                   help_text='Objetivo de Aprendizagem 5')
+    #### OBSOLETO, REMOVER ####
     objetivo5_conceito = models.CharField(choices=CONCEITOS, default="NA", max_length=2,
                                           help_text='Conceito Obtido no OA 5')
 
@@ -943,6 +952,106 @@ class Avaliacao(models.Model):
         verbose_name_plural = 'Avaliações'
         #ordering = ['projeto', 'tipo_de_avaliacao', 'avaliador', 'momento']
         ordering = ['momento',]
+
+# Usado em Avaliacao e Observacao
+TIPO_DE_AVALIACAO = ( # não mudar a ordem dos números
+    ( 0, 'Não definido'),
+    ( 1, 'Banca Intermediária'),
+    ( 2, 'Banca Final'),
+    (10, 'Relatório de Planejamento'),
+    (11, 'Relatório Intermediário de Grupo'),
+    (12, 'Relatório Final de Grupo'),
+    (21, 'Relatório Intermediário Individual'),
+    (22, 'Relatório Final Individual'),
+)
+
+class Avaliacao2(models.Model):
+    """Avaliações realizadas durante o projeto."""
+
+    tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
+
+    momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
+                                   help_text='Data e hora da comunicação') # hora ordena para dia
+  
+    peso = models.PositiveIntegerField("Peso",
+                                       validators=[MinValueValidator(0), MaxValueValidator(100)],
+                                       help_text='Pesa da avaliação na média (bancas compartilham peso)',
+                                       default=10) # 10% para as bancas
+
+    # A nota será convertida para rubricas se necessário
+    nota = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
+
+    # Somente útil para Bancas
+    avaliador = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
+                                  help_text='avaliador do projeto')
+
+    # Para Bancas e Entregas em Grupo
+    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text='projeto que foi avaliado')
+
+    # Para Alocações dos estudantes (caso um aluno reprove ele teria duas alocações)
+    alocacao = models.ForeignKey('users.Alocacao', null=True, blank=True,
+                                 on_delete=models.SET_NULL, related_name='projeto_alocado2',
+                                 help_text='relacao de alocação entre projeto e estudante')
+
+    objetivo = models.ForeignKey(ObjetidosDeAprendizagem, related_name='objetivo1_2',
+                                 on_delete=models.SET_NULL, null=True, blank=True,
+                                 help_text='Objetivo de Aprendizagem')
+
+    def __str__(self):
+        for i,j in TIPO_DE_AVALIACAO:
+            if self.tipo_de_avaliacao==i:
+                return j
+        return "Avaliação Não Definida"
+
+    @classmethod
+    def create(cls, projeto):
+        """Cria um objeto (entrada) em Avaliação."""
+        avaliacao = cls(projeto=projeto)
+        return avaliacao
+
+    class Meta:
+        verbose_name = 'Avaliação2'
+        verbose_name_plural = 'Avaliações2'
+        ordering = ['momento',]
+
+class Observacao(models.Model):
+    """Observações realizadas durante avaliações."""
+
+    tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
+
+    momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
+                                   help_text='Data e hora da comunicação') # hora ordena para dia
+  
+    # Somente útil para Bancas
+    avaliador = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
+                                  help_text='avaliador do projeto')
+
+    # Para Bancas e Entregas em Grupo
+    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text='projeto que foi avaliado')
+
+    # Para Alocações dos estudantes (caso um aluno reprove ele teria duas alocações)
+    alocacao = models.ForeignKey('users.Alocacao', null=True, blank=True,
+                                 on_delete=models.SET_NULL, related_name='observacao_alocado',
+                                 help_text='relacao de alocação entre projeto e estudante')
+
+    observacoes = models.TextField(max_length=512, null=True, blank=True,
+                                help_text='qualquer observação relevante')
+
+    @classmethod
+    def create(cls, projeto):
+        """Cria um objeto (entrada) em Observacao."""
+        observacao = cls(projeto=projeto)
+        return observacao
+
+    def __str__(self):
+        return "Avaliação tipo : " + str(self.tipo_de_avaliacao)
+
+    class Meta:
+        verbose_name = 'Observação'
+        verbose_name_plural = 'Observações'
+        #ordering = [,]
 
 
 class Certificado(models.Model):

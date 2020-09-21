@@ -32,11 +32,20 @@
     });
   </script>
   <script>
+
+    function conceito(nota) {
+        if( nota >= 9 ) return ("A")
+        if( nota >= 7 ) return ("B")
+        if( nota >= 5 ) return ("C")
+        if( nota >= 4 ) return ("D")
+        return ("I")
+    }
+
     class Objetivo {
       constructor() { 
         this.avaliacoes = 0;
         this.titulo = "";
-        this.rubrica = "";
+        //this.rubrica = "";
         this.total = 0;
       }
       soma_conceito(conceito){
@@ -47,32 +56,37 @@
         if(conceito=="D"||conceito=="D ") this.total += 4
         if(conceito=="I"||conceito=="I ") this.total += 0
       }
+      soma_nota(nota){
+        this.avaliacoes += 1
+        this.total += nota
+      }
       media(){
         let nota = (this.total/this.avaliacoes).toPrecision(2)
-        if( nota >= 9 ) return ("A")
-        if( nota >= 7 ) return ("B")
-        if( nota >= 5 ) return ("C")
-        if( nota >= 4 ) return ("D")
-        return ("I")
+        return conceito(nota)
       }
       texto() {
         let descricao = ""
         descricao += "<li>"
         descricao += this.titulo
-        descricao += ': <span data-toggle="tooltip" data-html="true" animation="true" title="'+this.rubrica+'">'
+        descricao += ": "
+        //descricao += '<span data-toggle="tooltip" data-html="true" animation="true" title="'+this.rubrica+'">'
         descricao += this.media()
-        descricao += "</span></li>"
+        //descricao += "</span>"
+        descricao += "</li>"
         return (descricao)
       }
     }
     class Banca { 
       constructor() { 
-        this.objetivo1 = new Objetivo();
-        this.objetivo2 = new Objetivo();
-        this.objetivo3 = new Objetivo();
-        this.objetivo4 = new Objetivo();
-        this.objetivo5 = new Objetivo();
-      } 
+        this.dict = new Object();
+      }
+
+      add_objetivo(objetivo) {
+        if(!(objetivo.titulo in this.dict)) {
+          this.dict[objetivo.titulo] = objetivo
+        }
+      }
+
     }
     let intermediaria = new Banca(); 
     let final = new Banca(); 
@@ -119,7 +133,7 @@
   {% endfor %}
   </ul>
   
-  {% if banca_inter %}
+  {% if avaliadores_inter %}
     {% for banca in projeto.banca_set.all %}
       {% if banca.tipo_de_banca == 1 %}
         <h5>
@@ -129,86 +143,50 @@
         </h5>
       {% endif %}
     {% endfor %}
-    <table>
-      {% for avaliacao in banca_inter %}
-        {% ifchanged avaliacao.avaliador %}
+    <table>    
+      {% for avaliador, objs in avaliadores_inter.items %}
           <tr><td>
-            <strong>Avaliador{% if avaliacao.avaliador.genero == "F" %}a{% endif %}: </strong>
-              <a href="{% url 'professor_detail' avaliacao.avaliador.professor.id %}">
-                {{avaliacao.avaliador.get_full_name}}
-              </a>
-            <br>
-            <strong>Avaliado em: </strong>{{avaliacao.momento}}<br>
+            <strong>Avaliador{% if avaliador.genero == "F" %}a{% endif %}: </strong>
+            <a href="{% url 'professor_detail' avaliador.professor.id %}">
+              {{avaliador.get_full_name}}
+            </a><br>
+            <strong>Avaliado em: </strong>{{objs.momento}}<br>
             <strong>Conceitos:</strong><br>
             <ul>
-            {% if avaliacao.objetivo1 %}
-              <li>{{avaliacao.objetivo1.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
-                {{objetivos|get_rubrica:avaliacao.objetivo1.id|get_texto:avaliacao.objetivo1_conceito}}">
-                  {{avaliacao.objetivo1_conceito}}</span></li>
-              <script>
-                intermediaria.objetivo1.titulo = "{{avaliacao.objetivo1.titulo}}"
-                intermediaria.objetivo1.rubrica = "{{objetivos|get_rubrica:avaliacao.objetivo1.id|get_texto:avaliacao.objetivo1_conceito}}"
-                intermediaria.objetivo1.soma_conceito("{{avaliacao.objetivo1_conceito}}")
-              </script>
-            {% endif %}
-            {% if avaliacao.objetivo2 %}
-              <li>{{avaliacao.objetivo2.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
-                {{objetivos|get_rubrica:avaliacao.objetivo2.id|get_texto:avaliacao.objetivo2_conceito}}">
-                {{avaliacao.objetivo2_conceito}}</span></li>
-              <script>
-                intermediaria.objetivo2.titulo = "{{avaliacao.objetivo2.titulo}}"
-                intermediaria.objetivo2.rubrica = "{{objetivos|get_rubrica:avaliacao.objetivo2.id|get_texto:avaliacao.objetivo2_conceito}}"
-                intermediaria.objetivo2.soma_conceito("{{avaliacao.objetivo2_conceito}}")
-              </script>
-            {% endif %}
-            {% if avaliacao.objetivo3 %}
-              <li>{{avaliacao.objetivo3.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
-                {{objetivos|get_rubrica:avaliacao.objetivo3.id|get_texto:avaliacao.objetivo3_conceito}}">
-                {{avaliacao.objetivo3_conceito}}</span></li>
-              <script>
-                intermediaria.objetivo3.titulo = "{{avaliacao.objetivo3.titulo}}"
-                intermediaria.objetivo3.rubrica = "{{objetivos|get_rubrica:avaliacao.objetivo3.id|get_texto:avaliacao.objetivo3_conceito}}"
-                intermediaria.objetivo3.soma_conceito("{{avaliacao.objetivo3_conceito}}")
-              </script>
-            {% endif %}
-            {% if avaliacao.objetivo4 %}
-              <li>{{avaliacao.objetivo4.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
-                {{objetivos|get_rubrica:avaliacao.objetivo4.id|get_texto:avaliacao.objetivo4_conceito}}">
-                {{avaliacao.objetivo4_conceito}}</span></li>
-              <script>
-                intermediaria.objetivo4.titulo = "{{avaliacao.objetivo4.titulo}}"
-                intermediaria.objetivo4.rubrica = "{{objetivos|get_rubrica:avaliacao.objetivo4.id|get_texto:avaliacao.objetivo4_conceito}}"
-                intermediaria.objetivo4.soma_conceito("{{avaliacao.objetivo4_conceito}}")
-              </script>
-            {% endif %}
-            {% if avaliacao.objetivo5 %}
-              <li>{{avaliacao.objetivo5.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
-                {{objetivos|get_rubrica:avaliacao.objetivo5.id|get_texto:avaliacao.objetivo5_conceito}}">
-                {{avaliacao.objetivo5_conceito}}</span></li>
-              <script>
-                intermediaria.objetivo5.titulo = "{{avaliacao.objetivo5.titulo}}"
-                intermediaria.objetivo5.rubrica = "{{objetivos|get_rubrica:avaliacao.objetivo5.id|get_texto:avaliacao.objetivo5_conceito}}"
-                intermediaria.objetivo5.soma_conceito("{{avaliacao.objetivo5_conceito}}")
-              </script>
-            {% endif %}
+              {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo != "observacoes" %}
 
-            {% if avaliacao.observacoes %}
-              <li>Observações: {{avaliacao.observacoes}}</li>
-            {% endif %}
+                <li>{{objetivo.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
+                {{objetivos|get_rubrica:objetivo.id|get_texto_nota:conceito.nota}}">
+                <script>document.write(conceito({{conceito.nota}}));</script></span></li>
+                
+                <script>
+                  objetivo_tmp = new Objetivo();
+                  objetivo_tmp.titulo = "{{objetivo.titulo}}"
+                  //objetivo_tmp.rubrica = "{{objetivos|get_rubrica:objetivo.id|get_texto_nota:conceito.nota}}"
+                  intermediaria.add_objetivo(objetivo_tmp)
+                  intermediaria.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}})
+                </script>
+
+              {% endif %}{% endfor %}
+              
+              {% if objs.observacoes %}  
+                <li>Observações: {{objs.observacoes}}</li>
+              {% endif %}
+              
+            
             </ul>
+
           </td></tr>
-        {% endifchanged %}
+
       {% endfor %}
 
       <tr style="background-color: #6060E0; color: white"><td>
         Média das avaliações intermediárias:
         <ul>
         <script>
-          if(intermediaria.objetivo1.avaliacoes>0) document.write(intermediaria.objetivo1.texto());
-          if(intermediaria.objetivo2.avaliacoes>0) document.write(intermediaria.objetivo2.texto());
-          if(intermediaria.objetivo3.avaliacoes>0) document.write(intermediaria.objetivo3.texto());
-          if(intermediaria.objetivo4.avaliacoes>0) document.write(intermediaria.objetivo4.texto());
-          if(intermediaria.objetivo5.avaliacoes>0) document.write(intermediaria.objetivo5.texto());
+          for (var key in intermediaria.dict) {
+            if(intermediaria.dict[key].avaliacoes>0) document.write(intermediaria.dict[key].texto());
+          }
         </script>
         </ul>
       </td></tr>
@@ -218,7 +196,7 @@
 
   <br>
 
-  {% if banca_final %}
+  {% if avaliadores_final %}
     {% for banca in projeto.banca_set.all %}
       {% if banca.tipo_de_banca == 0 %}
         <h5>
@@ -228,92 +206,56 @@
         </h5>
       {% endif %}
     {% endfor %}
-    <table>
-      {% for avaliacao in banca_final %}
-        {% ifchanged avaliacao.avaliador %}
+    <table>    
+      {% for avaliador, objs in avaliadores_final.items %}
           <tr><td>
-            <strong>Avaliador(a): </strong>
-              <a href="{% url 'professor_detail' avaliacao.avaliador.professor.id %}">
-                {{avaliacao.avaliador.get_full_name}}
-              </a>
-            <br>
-            <strong>Avaliado em: </strong>{{avaliacao.momento}}<br>
-            {% if avaliacao.objetivo1 %}
-              &nbsp;&nbsp;<strong>{{avaliacao.objetivo1.titulo}}</strong>: <span data-toggle="tooltip" data-html="true" animation="true" title="
-                {{objetivos|get_rubrica:avaliacao.objetivo1.id|get_texto:avaliacao.objetivo1_conceito}}">
-                  {{avaliacao.objetivo1_conceito}}</span><br>
-              <script>
-                final.objetivo1.titulo = "{{avaliacao.objetivo1.titulo}}"
-                final.objetivo1.rubrica = "{{objetivos|get_rubrica:avaliacao.objetivo1.id|get_texto:avaliacao.objetivo1_conceito}}"
-                final.objetivo1.soma_conceito("{{avaliacao.objetivo1_conceito}}")
-              </script>
-            {% endif %}
-            {% if avaliacao.objetivo2 %}
-              &nbsp;&nbsp;<strong>{{avaliacao.objetivo2.titulo}}</strong>: <span data-toggle="tooltip" data-html="true" animation="true" title="
-                {{objetivos|get_rubrica:avaliacao.objetivo2.id|get_texto:avaliacao.objetivo2_conceito}}">
-                {{avaliacao.objetivo2_conceito}}</span><br>
-              <script>
-                final.objetivo2.titulo = "{{avaliacao.objetivo2.titulo}}"
-                final.objetivo2.rubrica = "{{objetivos|get_rubrica:avaliacao.objetivo2.id|get_texto:avaliacao.objetivo2_conceito}}"
-                final.objetivo2.soma_conceito("{{avaliacao.objetivo2_conceito}}")
-              </script>
-            {% endif %}
-            {% if avaliacao.objetivo3 %}
-              &nbsp;&nbsp;<strong>{{avaliacao.objetivo3.titulo}}</strong>: <span data-toggle="tooltip" data-html="true" animation="true" title="
-                {{objetivos|get_rubrica:avaliacao.objetivo3.id|get_texto:avaliacao.objetivo3_conceito}}">
-                {{avaliacao.objetivo3_conceito}}</span><br>
-              <script>
-                final.objetivo3.titulo = "{{avaliacao.objetivo3.titulo}}"
-                final.objetivo3.rubrica = "{{objetivos|get_rubrica:avaliacao.objetivo3.id|get_texto:avaliacao.objetivo3_conceito}}"
-                final.objetivo3.soma_conceito("{{avaliacao.objetivo3_conceito}}")
-              </script>
-            {% endif %}
-            {% if avaliacao.objetivo4 %}
-              &nbsp;&nbsp;<strong>{{avaliacao.objetivo4.titulo}}</strong>: <span data-toggle="tooltip" data-html="true" animation="true" title="
-                {{objetivos|get_rubrica:avaliacao.objetivo4.id|get_texto:avaliacao.objetivo4_conceito}}">
-                {{avaliacao.objetivo4_conceito}}</span><br>
-              <script>
-                final.objetivo4.titulo = "{{avaliacao.objetivo4.titulo}}"
-                final.objetivo4.rubrica = "{{objetivos|get_rubrica:avaliacao.objetivo4.id|get_texto:avaliacao.objetivo4_conceito}}"
-                final.objetivo4.soma_conceito("{{avaliacao.objetivo4_conceito}}")
-              </script>
-            {% endif %}
-            {% if avaliacao.objetivo5 %}
-              &nbsp;&nbsp;<strong>{{avaliacao.objetivo5.titulo}}</strong>: <span data-toggle="tooltip" data-html="true" animation="true" title="
-                {{objetivos|get_rubrica:avaliacao.objetivo5.id|get_texto:avaliacao.objetivo5_conceito}}">
-                {{avaliacao.objetivo5_conceito}}</span><br>
-              <script>
-                final.objetivo5.titulo = "{{avaliacao.objetivo5.titulo}}"
-                final.objetivo5.rubrica = "{{objetivos|get_rubrica:avaliacao.objetivo5.id|get_texto:avaliacao.objetivo5_conceito}}"
-                final.objetivo5.soma_conceito("{{avaliacao.objetivo5_conceito}}")
-              </script>
-            {% endif %}
+            <strong>Avaliador{% if avaliador.genero == "F" %}a{% endif %}: </strong>
+            <a href="{% url 'professor_detail' avaliador.professor.id %}">
+              {{avaliador.get_full_name}}
+            </a><br>
+            <strong>Avaliado em: </strong>{{objs.momento}}<br>
+            <strong>Conceitos:</strong><br>
+            <ul>
+              {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo != "observacoes" %}
 
-            {% if avaliacao.observacoes %}
-              &nbsp;&nbsp;<strong>Observações</strong>: {{avaliacao.observacoes}}<br>
-            {% endif %}
+                <li>{{objetivo.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
+                {{objetivos|get_rubrica:objetivo.id|get_texto_nota:conceito.nota}}">
+                <script>document.write(conceito({{conceito.nota}}));</script></span></li>
+                
+                <script>
+                  objetivo_tmp = new Objetivo();
+                  objetivo_tmp.titulo = "{{objetivo.titulo}}"
+                  //objetivo_tmp.rubrica = "{{objetivos|get_rubrica:objetivo.id|get_texto_nota:conceito.nota}}"
+                  final.add_objetivo(objetivo_tmp)
+                  final.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}})
+                </script>
 
-            <br>
+              {% endif %}{% endfor %}
+              
+              {% if objs.observacoes %}  
+                <li>Observações: {{objs.observacoes}}</li>
+              {% endif %}
+              
+            
+            </ul>
+
           </td></tr>
-        {% endifchanged %}
+
       {% endfor %}
-      
+
       <tr style="background-color: #6060E0; color: white"><td>
         Média das avaliações finais:
         <ul>
         <script>
-          if(final.objetivo1.avaliacoes>0) document.write(final.objetivo1.texto());
-          if(final.objetivo2.avaliacoes>0) document.write(final.objetivo2.texto());
-          if(final.objetivo3.avaliacoes>0) document.write(final.objetivo3.texto());
-          if(final.objetivo4.avaliacoes>0) document.write(final.objetivo4.texto());
-          if(final.objetivo5.avaliacoes>0) document.write(final.objetivo5.texto());
+          for (var key in final.dict) {
+            if(final.dict[key].avaliacoes>0) document.write(final.dict[key].texto());
+          }
         </script>
         </ul>
       </td></tr>
 
     </table>
   {% endif %}
-
 
 
 

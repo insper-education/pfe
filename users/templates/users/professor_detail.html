@@ -34,8 +34,9 @@
     {% for projeto in projetos %}
       {% if projeto.alocacao_set.all.count > 0 %}
         <li><a href="{% url 'projeto_completo' projeto.id %}">
+        [{{projeto.ano}}.{{projeto.semestre}}] -
         {{projeto.get_titulo}}
-        [{{projeto.ano}}.{{projeto.semestre}}] ({{projeto.organizacao.nome}})
+        ({{projeto.organizacao.nome}})
         { {{ projeto.alocacao_set.all.count }} aluno(s) }
         </a></li>
       {% endif %}
