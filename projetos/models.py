@@ -831,6 +831,9 @@ class ObjetidosDeAprendizagem(models.Model):
         verbose_name = 'ObjetidosDeAprendizagem'
         verbose_name_plural = 'ObjetidosDeAprendizagem'
 
+# REMOVER COMPLETAMENTE AVALIACAO
+# AVALIACAO2 USADA ATUALMENTE.
+
 class Avaliacao(models.Model):
     """Avaliações realizadas durante o projeto."""
 
