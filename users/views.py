@@ -338,10 +338,14 @@ def professor_detail(request, primarykey):
     except Professor.DoesNotExist:
         return HttpResponse("Professor não encontrado.", status=401)
 
-    projetos = Projeto.objects.filter(orientador=professor)
+    projetos = Projeto.objects.filter(orientador=professor).order_by("ano", "semestre", "titulo")
+
     bancas = Banca.objects.filter(membro1=professor.user)|\
              Banca.objects.filter(membro2=professor.user)|\
              Banca.objects.filter(membro3=professor.user)
+
+    bancas = bancas.order_by("startDate")
+
     context = {
         'professor': professor,
         'projetos': projetos,
