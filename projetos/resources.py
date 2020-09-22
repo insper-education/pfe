@@ -5,10 +5,11 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Maio de 2019
 """
 
+import datetime
 from import_export import resources, fields
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao, Alocacao
-from .models import Projeto, Organizacao, Configuracao, Disciplina, Feedback, Avaliacao
+from .models import Projeto, Organizacao, Configuracao, Disciplina, Feedback, Avaliacao, Avaliacao2, ObjetivosDeAprendizagem
 
 
 class ProjetosResource(resources.ModelResource):
@@ -105,8 +106,10 @@ class Avaliacoes2Resource(resources.ModelResource):
         'ano',
         'semestre',
         'avaliação',
+        'objetivo',
         'peso',
         'nota',
+        'momento (dd/mm/aa hh:mm)',
     ]
     def before_import_row(self, row, **kwargs): #forma que arrumei para evitar preencher com o mesmo dado
         estudante_str = row.get('estudante')
@@ -127,24 +130,50 @@ class Avaliacoes2Resource(resources.ModelResource):
             
             projeto = alocacao.projeto
             
+            avaliador = projeto.orientador.user
+
             avaliacao = row.get('avaliação')
             
-            # ( 0, 'Banca'),
-            # (12, 'Relatório Final de Grupo'),
-            # (21, 'Relatório Intermediário Individual'),
-            # (22, 'Relatório Final Individual'),
+            if "momento" in row:
+                mnt = row.get('momento')
+                
+                d = int(mnt[-11:-9])
+                m = int(mnt[-9:-7])
+                a = int("20"+mnt[-7:-5]) # bug do milênio
+                h = int(mnt[-4:-2])
+                min = int(mnt[-2:])
+                
+                t = datetime.datetime(a, m, d, h, min) # momento da última atualização
+            else:
+                t = datetime.datetime.now()
 
             if avaliacao=="RP" or avaliacao=="Relatório de Planejamento" or avaliacao=="Relatorio de Planejamento":
-                (aval, _created) = Avaliacao2.objects.get_or_create(projeto=projeto, tipo_de_entrega=10) #(10, 'Relatório de Planejamento'),
+                avaliador = projeto.orientador.user
+                (aval, _created) = Avaliacao2.objects.get_or_create(projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=10) #(10, 'Relatório de Planejamento'),
                 aval.nota = float(row.get('nota'))
-                aval.avaliador = projeto.orientador.user
 
-            if avaliacao=="RIG" or avaliacao=="Relatório Intermediário Grupo" or avaliacao=="Relatorio Intermediario Grupo":
-                (aval, _created) = Avaliacao2.objects.get_or_create(projeto=projeto, tipo_de_entrega=11) # (11, 'Relatório Intermediário de Grupo'),
+            elif avaliacao=="RIG" or avaliacao=="Relatório Intermediário Grupo" or avaliacao=="Relatorio Intermediario Grupo":
                 
                 objetivo_str = row.get('objetivo')
-                aval.objetivo = recupera_objetivo(objetivo_str)
-                aval.avaliador = projeto.orientador.user
+                objetivo = recupera_objetivo(objetivo_str)
+                avaliador = projeto.orientador.user
+                (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=11) # (11, 'Relatório Intermediário de Grupo'),
+                
+
+                if 'nota' in row:
+                    aval.nota = float(row.get('nota'))
+                else:
+                    desempenho = row.get('desempenho')
+                    aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
+            
+            elif avaliacao=="RFG" or avaliacao=="Relatório Final Grupo" or avaliacao=="Relatório Final de Grupo" or avaliacao=="Relatorio Final Grupo" or avaliacao=="Relatorio Final de Grupo":
+                
+                objetivo_str = row.get('objetivo')
+                objetivo = recupera_objetivo(objetivo_str)
+                avaliador = projeto.orientador.user
+                (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=12) # (12, 'Relatório Final de Grupo'),
+                
+                
 
                 if 'nota' in row:
                     aval.nota = float(row.get('nota'))
@@ -152,7 +181,38 @@ class Avaliacoes2Resource(resources.ModelResource):
                     desempenho = row.get('desempenho')
                     aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
 
-            aval.peso = int(float(row.get('peso'))*100)
+            elif avaliacao=="RII" or avaliacao=="Relatório Intermediário Individual" or avaliacao=="Relatorio Intermediario Individual":
+                
+                objetivo_str = row.get('objetivo')
+                objetivo = recupera_objetivo(objetivo_str)
+                avaliador = projeto.orientador.user
+                (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, alocacao = alocacao, avaliador=avaliador, momento=t, tipo_de_avaliacao=21) #(21, 'Relatório Intermediário Individual'),
+                
+
+                if 'nota' in row:
+                    aval.nota = float(row.get('nota'))
+                else:
+                    desempenho = row.get('desempenho')
+                    aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
+            
+            elif avaliacao=="RFI" or avaliacao=="Relatório Final Individual" or avaliacao=="Relatorio Final Individual":
+
+                objetivo_str = row.get('objetivo')
+                objetivo = recupera_objetivo(objetivo_str)
+                avaliador = projeto.orientador.user
+                (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, alocacao = alocacao, avaliador=avaliador, momento=t, tipo_de_avaliacao=22) #(22, 'Relatório Final Individual'),
+                
+
+                
+
+                if 'nota' in row:
+                    aval.nota = float(row.get('nota'))
+                else:
+                    desempenho = row.get('desempenho')
+                    aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
+
+            peso = int(float(row.get('peso'))*100)
+            aval.peso = peso
 
             aval.save()
             row['id'] = aval.id

@@ -851,7 +851,7 @@ class Avaliacao(models.Model):
 
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
                                    help_text='Data e hora da comunicação') # hora ordena para dia
-  
+    #### VELHO #####
     peso = models.PositiveIntegerField("Peso",
                                        validators=[MinValueValidator(0), MaxValueValidator(100)],
                                        help_text='Pesa da avaliação na média (bancas compartilham peso)',
@@ -976,10 +976,10 @@ class Avaliacao2(models.Model):
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
                                    help_text='Data e hora da comunicação') # hora ordena para dia
   
-    peso = models.DecimalField("Peso",max_digits=4, decimal_places=3,
-                               null=True, blank=True,
-                               validators=[MinValueValidator(0), MaxValueValidator(100)],
-                               help_text='Pesa da avaliação na média (bancas compartilham peso)')
+    peso = models.FloatField("Peso",
+                                       validators=[MinValueValidator(0), MaxValueValidator(100)],
+                                       help_text='Pesa da avaliação na média (bancas compartilham peso)',
+                                       default=10) # 10% para as bancas
 
     # A nota será convertida para rubricas se necessário
     nota = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
