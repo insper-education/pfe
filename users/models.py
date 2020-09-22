@@ -120,8 +120,11 @@ class PFEUser(AbstractUser):
     )
     tipo_de_usuario = models.PositiveSmallIntegerField(choices=TIPO_DE_USUARIO_CHOICES, default=1,
                                                        help_text='cada usuário tem um perfil único')
-    cpf = models.CharField("CPF", max_length=11, null=True, blank=True,
-                           help_text='CPF do usuário')
+
+    # TIRADO, USADO PARA REEMBOLSO, USUÁRIO PREENCHE TODA VEZ QUE PRECISAR
+    #cpf = models.CharField("CPF", max_length=11, null=True, blank=True,
+    #                       help_text='CPF do usuário')
+
     linkedin = models.URLField("LinkedIn", max_length=250, null=True, blank=True,
                                help_text='LinkedIn do usuário')
 
@@ -260,10 +263,13 @@ class Aluno(models.Model):
                              help_text='Curso Matriculado',)
     opcoes = models.ManyToManyField(Proposta, through='Opcao',
                                     help_text='Opcoes de projeto escolhidos')
-    nascimento = models.DateField(null=True, blank=True,
-                                  help_text='Data de nascimento')
-    local_de_origem = models.CharField(max_length=30, blank=True,
-                                       help_text='Local de nascimento')
+    
+    #nascimento = models.DateField(null=True, blank=True,
+    #                              help_text='Data de nascimento')
+    
+    #local_de_origem = models.CharField(max_length=30, blank=True,
+    #                                   help_text='Local de nascimento')
+
     email_pessoal = models.EmailField(null=True, blank=True,
                                       help_text='e-mail pessoal')
 

@@ -9,7 +9,6 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
 from .models import PFEUser, Aluno
-#from .models import Professor, Parceiro
 
 class PFEUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm):
@@ -29,4 +28,4 @@ class PFEUserForm(forms.ModelForm):
 class AlunoForm(forms.ModelForm):
     class Meta:
         model = Aluno
-        fields = ('curso', 'nascimento', 'local_de_origem')
+        fields = ('curso',)
