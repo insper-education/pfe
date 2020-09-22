@@ -158,7 +158,6 @@ class Avaliacoes2Resource(resources.ModelResource):
                 objetivo = recupera_objetivo(objetivo_str)
                 avaliador = projeto.orientador.user
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=11) # (11, 'Relatório Intermediário de Grupo'),
-                
 
                 if 'nota' in row:
                     aval.nota = float(row.get('nota'))
@@ -173,8 +172,6 @@ class Avaliacoes2Resource(resources.ModelResource):
                 avaliador = projeto.orientador.user
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=12) # (12, 'Relatório Final de Grupo'),
                 
-                
-
                 if 'nota' in row:
                     aval.nota = float(row.get('nota'))
                 else:
@@ -202,9 +199,36 @@ class Avaliacoes2Resource(resources.ModelResource):
                 avaliador = projeto.orientador.user
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, alocacao = alocacao, avaliador=avaliador, momento=t, tipo_de_avaliacao=22) #(22, 'Relatório Final Individual'),
                 
+                if 'nota' in row:
+                    aval.nota = float(row.get('nota'))
+                else:
+                    desempenho = row.get('desempenho')
+                    aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
 
+            elif avaliacao=="BI" or avaliacao=="Banca Intermediária" or avaliacao=="Banca Intermediaria":
                 
+                objetivo_str = row.get('objetivo')
+                objetivo = recupera_objetivo(objetivo_str)
 
+                # o certo seria procurar avaliador
+                avaliador = projeto.orientador.user
+                (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=1) # ( 1, 'Banca Intermediária'),
+
+                if 'nota' in row:
+                    aval.nota = float(row.get('nota'))
+                else:
+                    desempenho = row.get('desempenho')
+                    aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
+            
+            elif avaliacao=="BF" or avaliacao=="Banca Final":
+                
+                objetivo_str = row.get('objetivo')
+                objetivo = recupera_objetivo(objetivo_str)
+
+                # o certo seria procurar avaliador
+                avaliador = projeto.orientador.user
+                (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=2) # ( 2, 'Banca Final'),
+                
                 if 'nota' in row:
                     aval.nota = float(row.get('nota'))
                 else:
