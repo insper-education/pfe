@@ -29,7 +29,7 @@ from .models import Entidade
 # Das Organizações
 from .models import Feedback, Conexao
 
-from .models import ObjetivosDeAprendizagem, Avaliacao, Certificado
+from .models import ObjetivosDeAprendizagem, Certificado
 
 from .models import Avaliacao2, Observacao
 
@@ -309,12 +309,6 @@ class EncontroAdmin(admin.ModelAdmin):
     """Informações dos Encontros (com os facilitadores)."""
     list_display = ('startDate', 'hora_fim', 'projeto', 'facilitador', )
     actions = [dup_encontros, dup_encontros_4x, dup_encontros_8x]
-
-@admin.register(Avaliacao)
-class AvaliacaoAdmin(admin.ModelAdmin):
-    """Informações das Avaliações."""
-    list_display = ('tipo_de_entrega', 'projeto', 'avaliador', 'momento', )
-    ordering = ('tipo_de_entrega', 'projeto', 'avaliador', 'momento', )
 
 @admin.register(Avaliacao2)
 class Avaliacao2Admin(admin.ModelAdmin):

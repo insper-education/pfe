@@ -62,8 +62,6 @@ class Organizacao(models.Model):
     ramo_atividade = models.CharField("Ramo de Atividade", max_length=120, null=True, blank=True,
                                       help_text='Ramo de atividade da organização parceira')
 
-    empresa_remover = models.ForeignKey('Empresa', null=True, blank=True, on_delete=models.SET_NULL)
-
     class Meta:
         ordering = ['sigla']
         verbose_name = 'Organização'
@@ -79,43 +77,6 @@ class Organizacao(models.Model):
         return self.nome
     #def documento(self):
     #    return os.path.split(self.contrato.name)[1]
-
-
-class Empresa(models.Model):
-    """Dados das empresas que propõe projetos para o PFE."""
-    #RENOMEAR PARA ORGANIZACAO
-    login = models.CharField(primary_key=True, max_length=20)
-    #login = models.CharField(max_length=20)     # em algum momento concertar isso
-    nome_empresa = models.CharField("Nome Fantasia", max_length=80,
-                                    help_text='Nome fantasia da organização parceira')
-    sigla = models.CharField("Sigla", max_length=20,
-                             help_text='Sigla usada pela organização parceira')
-    endereco = models.TextField("Endereço", max_length=200, null=True, blank=True,
-                                help_text='Endereço da organização parceira')
-    website = models.URLField("website", max_length=250, null=True, blank=True,
-                              help_text='website da organização parceira')
-    informacoes = models.TextField("Informações", max_length=1000, null=True, blank=True,
-                                   help_text='Informações sobre a organização parceira')
-    logotipo = models.ImageField("Logotipo", upload_to=get_upload_path, null=True, blank=True,
-                                 help_text='Logotipo da organização parceira')
-    cnpj = models.CharField("CNPJ", max_length=14, null=True, blank=True,
-                            help_text='Código de CNPJ')
-    inscricao_estadual = models.CharField("Inscrição Estadual", max_length=15,
-                                          null=True, blank=True,
-                                          help_text='Código da inscrição estadual')
-    razao_social = models.CharField("Razão Social", max_length=100, null=True, blank=True,
-                                    help_text='Razão social da organização parceira')
-    ramo_atividade = models.CharField("Ramo de Atividade", max_length=120, null=True, blank=True,
-                                      help_text='Ramo de atividade da organização parceira')
-
-    organizacao_remover = models.ForeignKey(Organizacao, null=True,
-                                            blank=True, on_delete=models.SET_NULL)
-
-    class Meta:
-        ordering = ['sigla']
-
-    def __str__(self):
-        return self.sigla
 
 class Projeto(models.Model):
     """Dados dos projetos para o PFE."""
@@ -247,11 +208,6 @@ class Proposta(models.Model):
     semestre = models.PositiveIntegerField("Semestre",
                                            validators=[MinValueValidator(1), MaxValueValidator(2)],
                                            help_text='Semestre que o projeto comeca')
-
-
-    # Preenchidos depois manualmente
-    organizacao_old = models.ForeignKey(Empresa, on_delete=models.SET_NULL, null=True, blank=True,
-                                        help_text='Não mais utilizado')
 
     organizacao = models.ForeignKey(Organizacao, on_delete=models.SET_NULL, null=True, blank=True,
                                     help_text='Organização parceira que propôs projeto')
@@ -546,8 +502,6 @@ class Anotacao(models.Model):
     """Anotacoes de comunicações com as organizações pareceiras."""
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
                                    help_text='Data e hora da comunicação') # hora ordena para dia
-    organizacao_old = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL,
-                                        help_text='Não mais utilizado')
     organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text='Organização parceira')
     autor = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
@@ -580,8 +534,6 @@ class Anotacao(models.Model):
 
 class Documento(models.Model):
     """Documentos, em geral PDFs, e seus relacionamentos com o PFE."""
-    organizacao_old = models.ForeignKey(Empresa, null=True, blank=True, on_delete=models.SET_NULL,
-                                        help_text='Não mais usado')
     organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text='Organização referente o documento')
     usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
@@ -830,131 +782,6 @@ class ObjetivosDeAprendizagem(models.Model):
     class Meta:
         verbose_name = 'ObjetivosDeAprendizagem'
         verbose_name_plural = 'ObjetivosDeAprendizagem'
-
-# REMOVER COMPLETAMENTE AVALIACAO
-# AVALIACAO2 USADA ATUALMENTE.
-
-class Avaliacao(models.Model):
-    """Avaliações realizadas durante o projeto."""
-
-    TIPO_DE_ENTREGA = ( # não mudar a ordem dos números
-        ( 0, 'Banca'),  #obsoleto
-        ( 1, 'Banca Intermediária'),
-        ( 2, 'Banca Final'),
-        (10, 'Relatório de Planejamento'),
-        (11, 'Relatório Intermediário de Grupo'),
-        (12, 'Relatório Final de Grupo'),
-        (21, 'Relatório Intermediário Individual'),
-        (22, 'Relatório Final Individual'),
-    )
-    tipo_de_entrega = models.PositiveSmallIntegerField(choices=TIPO_DE_ENTREGA, default=0)
-
-    momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
-                                   help_text='Data e hora da comunicação') # hora ordena para dia
-    #### VELHO #####
-    peso = models.PositiveIntegerField("Peso",
-                                       validators=[MinValueValidator(0), MaxValueValidator(100)],
-                                       help_text='Pesa da avaliação na média (bancas compartilham peso)',
-                                       default=10) # 10% para as bancas
-
-    # A nota só deve ser usada se o sistema de rubricas não foi preenchido corretamente
-    nota = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
-
-    # Somente para Bancas
-    avaliador = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
-                                  help_text='avaliador do projeto')
-
-    ## O CERTO ABAIXO É TIPO_DE_BANCA
-    TIPO_DE_AVALIACAO = ( # não mudar a ordem dos números
-        (0, 'final'),
-        (1, 'intermediária'),
-    )
-    tipo_de_banca = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
-
-    # Para Bancas e Entregas em Grupo
-    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='projeto que foi avaliado')
-
-    # Para Alocações dos estudantes (caso um aluno reprove ele teria duas alocações)
-    alocacao = models.ForeignKey('users.Alocacao', null=True, blank=True,
-                                 on_delete=models.SET_NULL, related_name='projeto_alocado',
-                                 help_text='relacao de alocação entre projeto e estudante')
-
-    #### OBSOLETO, REMOVER ####
-    CONCEITOS = ( # não mudar a ordem dos números
-        ('I ', 'I'),
-        ('D ', 'D'),
-        ('C ', 'C'),
-        ('C+', 'C+'),
-        ('B ', 'B'),
-        ('B+', 'B+'),
-        ('A ', 'A'),
-        ('A+', 'A+'),
-        ('NA', 'NA'),
-    )
-
-    objetivo1 = models.ForeignKey(ObjetivosDeAprendizagem, related_name='objetivo1',
-                                  on_delete=models.SET_NULL, null=True, blank=True,
-                                  help_text='Objetivo de Aprendizagem 1')
-    #### OBSOLETO, REMOVER ####
-    objetivo1_conceito = models.CharField(choices=CONCEITOS, default="NA", max_length=2,
-                                          help_text='Conceito Obtido no OA 1')
-    ###########################
-    
-    objetivo2 = models.ForeignKey(ObjetivosDeAprendizagem, related_name='objetivo2',
-                                  on_delete=models.SET_NULL, null=True, blank=True,
-                                  help_text='Objetivo de Aprendizagem 2')
-    #### OBSOLETO, REMOVER ####
-    objetivo2_conceito = models.CharField(choices=CONCEITOS, default="NA", max_length=2,
-                                          help_text='Conceito Obtido no OA 2')
-
-    objetivo3 = models.ForeignKey(ObjetivosDeAprendizagem, related_name='objetivo3',
-                                  on_delete=models.SET_NULL, null=True, blank=True,
-                                  help_text='Objetivo de Aprendizagem 3')
-    #### OBSOLETO, REMOVER ####
-    objetivo3_conceito = models.CharField(choices=CONCEITOS, default="NA", max_length=2,
-                                          help_text='Conceito Obtido no OA 3')
-
-    objetivo4 = models.ForeignKey(ObjetivosDeAprendizagem, related_name='objetivo4',
-                                  on_delete=models.SET_NULL, null=True, blank=True,
-                                  help_text='Objetivo de Aprendizagem 4')
-    #### OBSOLETO, REMOVER ####
-    objetivo4_conceito = models.CharField(choices=CONCEITOS, default="NA", max_length=2,
-                                          help_text='Conceito Obtido no OA 4')
-
-    objetivo5 = models.ForeignKey(ObjetivosDeAprendizagem, related_name='objetivo5',
-                                  on_delete=models.SET_NULL, null=True, blank=True,
-                                  help_text='Objetivo de Aprendizagem 5')
-    #### OBSOLETO, REMOVER ####
-    objetivo5_conceito = models.CharField(choices=CONCEITOS, default="NA", max_length=2,
-                                          help_text='Conceito Obtido no OA 5')
-
-    observacoes = models.TextField(max_length=512, null=True, blank=True,
-                                   help_text='qualquer observação relevante')
-
-    def __str__(self):
-        if self.tipo_de_entrega == 0: # Bancas
-            if self.tipo_de_banca == 0:
-                tipo = "Avaliação Final: "
-            else:
-                tipo = "Avaliação Intermediária: "
-            return tipo+\
-                self.avaliador.get_full_name()+" >>> "+\
-                self.projeto.get_titulo()
-        else:
-            return "Avaliação tipo : " + str(self.tipo_de_entrega)
-
-    @classmethod
-    def create(cls, projeto):
-        """Cria um objeto (entrada) em Avaliação."""
-        avaliacao = cls(projeto=projeto)
-        return avaliacao
-
-    class Meta:
-        verbose_name = 'Avaliação'
-        verbose_name_plural = 'Avaliações'
-        #ordering = ['projeto', 'tipo_de_avaliacao', 'avaliador', 'momento']
-        ordering = ['momento',]
 
 # Usado em Avaliacao e Observacao
 TIPO_DE_AVALIACAO = ( # não mudar a ordem dos números

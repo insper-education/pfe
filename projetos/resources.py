@@ -9,7 +9,7 @@ import datetime
 from import_export import resources, fields
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao, Alocacao
-from .models import Projeto, Organizacao, Configuracao, Disciplina, Feedback, Avaliacao, Avaliacao2, ObjetivosDeAprendizagem
+from .models import Projeto, Organizacao, Configuracao, Disciplina, Feedback, Avaliacao2, ObjetivosDeAprendizagem
 
 
 class ProjetosResource(resources.ModelResource):
@@ -245,7 +245,7 @@ class Avaliacoes2Resource(resources.ModelResource):
         return True
 
     class Meta:
-        model = Avaliacao
+        model = Avaliacao2
 
 
 

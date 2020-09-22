@@ -13,9 +13,8 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-#from django.utils.functional import curry
 
-from projetos.models import Projeto, Proposta, Empresa, Organizacao, Avaliacao2, ObjetivosDeAprendizagem
+from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2, ObjetivosDeAprendizagem
 
 
 ####   PARA PORTAR AS AREAS DE INTERESSE DE ALUNOS PARA CÁ, E USAR NO PROJETO  #####
@@ -120,10 +119,6 @@ class PFEUser(AbstractUser):
     )
     tipo_de_usuario = models.PositiveSmallIntegerField(choices=TIPO_DE_USUARIO_CHOICES, default=1,
                                                        help_text='cada usuário tem um perfil único')
-
-    # TIRADO, USADO PARA REEMBOLSO, USUÁRIO PREENCHE TODA VEZ QUE PRECISAR
-    #cpf = models.CharField("CPF", max_length=11, null=True, blank=True,
-    #                       help_text='CPF do usuário')
 
     linkedin = models.URLField("LinkedIn", max_length=250, null=True, blank=True,
                                help_text='LinkedIn do usuário')
@@ -258,18 +253,11 @@ class Aluno(models.Model):
     user = models.OneToOneField(PFEUser, related_name='aluno', on_delete=models.CASCADE)
     matricula = models.CharField("Matrícula", max_length=8, null=True, blank=True,
                                  help_text='Número de matrícula')
-    #bio = models.TextField(max_length=500, blank=True)
     curso = models.CharField(max_length=1, choices=TIPOS_CURSO,
                              help_text='Curso Matriculado',)
     opcoes = models.ManyToManyField(Proposta, through='Opcao',
                                     help_text='Opcoes de projeto escolhidos')
     
-    #nascimento = models.DateField(null=True, blank=True,
-    #                              help_text='Data de nascimento')
-    
-    #local_de_origem = models.CharField(max_length=30, blank=True,
-    #                                   help_text='Local de nascimento')
-
     email_pessoal = models.EmailField(null=True, blank=True,
                                       help_text='e-mail pessoal')
 
@@ -474,22 +462,6 @@ class Alocacao(models.Model):
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE)
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
     
-    # OBSOLETO NÃO DEVE SER USADO E DEVE SER REMOVIDO !!!!!
-    CONCEITOS = (
-        (127, 'NA'),
-        (10, 'A+'),
-        (9, 'A'),
-        (8, 'B+'),
-        (7, 'B'),
-        (6, 'C+'),
-        (5, 'C'),
-        (4, 'D'),
-        (0, 'I'),
-    )
-    conceito = models.PositiveSmallIntegerField(choices=CONCEITOS, default=127)
-    #############################################################################
-
-
     class Meta:
         verbose_name = 'Alocação'
         verbose_name_plural = 'Alocações'
@@ -508,14 +480,9 @@ class Parceiro(models.Model):  # da empresa (não do Insper)
     """Classe de usuários com estatus de Parceiro (pessoal das organizações parceiras)."""
     user = models.OneToOneField(PFEUser, related_name='parceiro', on_delete=models.CASCADE,
                                 help_text='Identificaçãdo do usuário')
-    organizacao_old = models.ForeignKey(Empresa, on_delete=models.CASCADE,
-                                        blank=True, null=True,
-                                        help_text='Não mais utilizado')
-
     organizacao = models.ForeignKey(Organizacao, on_delete=models.CASCADE,
                                     blank=True, null=True,
                                     help_text='Organização Parceira')
-
     cargo = models.CharField("Cargo", max_length=90, blank=True,
                              help_text='Cargo Funcional')
     telefone = models.CharField(max_length=20, blank=True,
@@ -563,32 +530,3 @@ class Administrador(models.Model):
     #     """Cria um Administrador e já associa o usuário."""
     #     administrador = cls(user=usuario)
     #     return administrador
-
-
-# REMOVER ISSO, ESTÁ DANDO PROBLEMA
-# VER FINAL DE : https://stackoverflow.com/questions/24063057/django-duplicate-key-error-but-key-does-not-exist/24222067#24222067
-
-# @receiver(post_save, sender=PFEUser)
-# def create_user_dependency(sender, instance, created, **kwargs):
-#     """Quando um usuário do PFE é criado/salvo, seu corespondente específico também é criado."""
-#     #print("Chamado -------------------")
-#     if instance.tipo_de_usuario == 1: #aluno
-#         Aluno.objects.get_or_create(user=instance)
-#     elif instance.tipo_de_usuario == 2: #professor
-#         Professor.objects.get_or_create(user=instance)
-#     elif instance.tipo_de_usuario == 3: #Parceiro
-#         Parceiro.objects.get_or_create(user=instance)
-#     elif instance.tipo_de_usuario == 4: #administrador
-#         Administrador.objects.get_or_create(user=instance)
-
-# @receiver(post_save, sender=PFEUser)
-# def save_user_dependency(sender, instance, **kwargs):
-#     """Quando um usuário do PFE é criado/salvo, seu corespondente específico também é criado."""
-#     if instance.tipo_de_usuario == 1: #aluno
-#         instance.aluno.save()
-#     elif instance.tipo_de_usuario == 2: #professor
-#         instance.professor.save()
-#     elif instance.tipo_de_usuario == 3: #Parceiro
-#         instance.parceiro.save()
-#     elif instance.tipo_de_usuario == 4: #administrador
-#         instance.administrador.save()

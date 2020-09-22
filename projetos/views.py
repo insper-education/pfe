@@ -45,7 +45,7 @@ from .models import Projeto, Proposta, Organizacao, Configuracao, Evento, Anotac
 from .models import Feedback, Certificado
 from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade, Conexao
 #from .models import Disciplina
-from .models import ObjetivosDeAprendizagem, Avaliacao, Avaliacao2, Observacao
+from .models import ObjetivosDeAprendizagem, Avaliacao2, Observacao
 
 from .models import get_upload_path
 
@@ -597,9 +597,9 @@ def resultado_avaliacoes(request):
     for projeto in projetos:
         nota_banca_final = 0
         #(0, 'final')
-        avaliacoes_banca_final = Avaliacao.objects.filter(projeto=projeto,
-                                                          tipo_de_entrega=0, # Banca
-                                                          tipo_de_banca=0)
+        avaliacoes_banca_final = Avaliacao2.objects.filter(projeto=projeto,
+                                                          tipo_de_avaliacao=2) # Banca Final
+
         for avali in avaliacoes_banca_final:
             nota_banca_final += get_notas(avali)
         if avaliacoes_banca_final:
@@ -609,10 +609,10 @@ def resultado_avaliacoes(request):
             banca_final.append("-")
 
         nota_banca_intermediaria = 0
-        #(1, 'intermediária')
-        avaliacoes_banca_intermediaria = Avaliacao.objects.filter(projeto=projeto,
-                                                                  tipo_de_entrega=0, # Banca
-                                                                  tipo_de_banca=1)
+
+        avaliacoes_banca_intermediaria = Avaliacao2.objects.filter(projeto=projeto,
+                                                                  tipo_de_entrega=1) # Banca Intermediária
+
         for avali in avaliacoes_banca_intermediaria:
             nota_banca_intermediaria += get_notas(avali)
         if avaliacoes_banca_intermediaria:
@@ -3645,19 +3645,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
 
     if request.method == 'POST':
         if 'avaliador' in request.POST:
-            #julgamento = Avaliacao.create(projeto=projeto)
             
-            #print(PFEUser.objects.get(pk=int(request.POST['avaliador'])).first_name)
-            #julgamento.avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
-            # julgamento.avaliador = PFEUser.objects.get(pk=request.user.pk)
-
-            #if request.POST['tipo_banca'] == "final":
-            #    julgamento.tipo_de_avaliacao = 0
-            #else:
-            #    julgamento.tipo_de_avaliacao = 1
-            #julgamento.tipo_de_entrega=0, # Banca
-            #julgamento.tipo_de_banca = banca.tipo_de_banca
-
             if banca.tipo_de_banca == 1: #(1, 'intermediaria'),
                 tipo_de_avaliacao = 1 #( 1, 'Banca Intermediária'),
             else: # (0, 'final'),
@@ -3835,8 +3823,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
                 "mensagem": resposta,
             }
             return render(request, 'generic.html', context=context)
-            #return HttpResponse(resposta)
-
+            
         return HttpResponse("Avaliação não submetida.")
     else:
         # mes = datetime.date.today().month
