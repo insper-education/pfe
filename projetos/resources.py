@@ -76,25 +76,47 @@ def converte_conceito(conceito):
         return 4
     return 0
 
-class AvaliacoesResource(resources.ModelResource):
+def recupera_objetivo(objetivo_str):
+
+    if objetivo_str == "Comunicação" or objetivo_str == "Comunicacao" or objetivo_str == "CO":
+        objetivo = ObjetivosDeAprendizagem.objects.get(titulo="Comunicação", avaliacao_grupo=True)
+
+    elif objetivo_str == "Comunicação" or objetivo_str == "Comunicacao" or objetivo_str == "DE":
+        objetivo = ObjetivosDeAprendizagem.objects.get(titulo="Design/Empreendedorismo", avaliacao_grupo=True)
+    
+    elif objetivo_str == "Comunicação" or objetivo_str == "Comunicacao" or objetivo_str == "TW":
+        objetivo = ObjetivosDeAprendizagem.objects.get(titulo="Trabalho em Equipe", avaliacao_grupo=True)
+
+    elif objetivo_str == "Organização" or objetivo_str == "Organizacao" or objetivo_str == "OR":
+        objetivo = ObjetivosDeAprendizagem.objects.get(titulo="Organização", avaliacao_grupo=True)
+
+    elif objetivo_str == "Execução Técnica" or objetivo_str == "Execucao Tecnica" or objetivo_str == "TK":
+        objetivo = ObjetivosDeAprendizagem.objects.get(titulo="Execução Técnica", avaliacao_grupo=True)
+
+    else:
+        return "ERROR"
+
+    return objetivo
+
+class Avaliacoes2Resource(resources.ModelResource):
     """Model Resource para tratar dados de Avaliações."""
     campos = [
-        'usuário (primeira parte do e-mail, obrigatório)',
+        'estudante (primeira parte do e-mail, obrigatório)',
         'ano',
         'semestre',
+        'avaliação',
         'peso',
-        'entrega',
         'nota',
     ]
     def before_import_row(self, row, **kwargs): #forma que arrumei para evitar preencher com o mesmo dado
-        username = row.get('usuário')
-        if username is None:
+        estudante_str = row.get('estudante')
+        if estudante_str is None:
             pass
-            #print("Erro ao recuperar o usuário [username]")
-        elif username != "":
+            #print("Erro ao recuperar o estudante [estudante_str]")
+        elif estudante_str != "":
 
             #try:
-            aluno = Aluno.objects.get(user__username=username)
+            aluno = Aluno.objects.get(user__username=estudante_str)
             #except Aluno.DoesNotExist:
             #pass
 
@@ -105,52 +127,30 @@ class AvaliacoesResource(resources.ModelResource):
             
             projeto = alocacao.projeto
             
-            entrega = row.get('entrega')
+            avaliacao = row.get('avaliação')
             
             # ( 0, 'Banca'),
             # (12, 'Relatório Final de Grupo'),
             # (21, 'Relatório Intermediário Individual'),
             # (22, 'Relatório Final Individual'),
 
-            if entrega=="RP" or entrega=="Relatório de Planejamento" or entrega=="Relatorio de Planejamento":
-                (aval, _created) = Avaliacao.objects.get_or_create(projeto=projeto, tipo_de_entrega=10) #(10, 'Relatório de Planejamento'),
+            if avaliacao=="RP" or avaliacao=="Relatório de Planejamento" or avaliacao=="Relatorio de Planejamento":
+                (aval, _created) = Avaliacao2.objects.get_or_create(projeto=projeto, tipo_de_entrega=10) #(10, 'Relatório de Planejamento'),
                 aval.nota = float(row.get('nota'))
                 aval.avaliador = projeto.orientador.user
 
-            if entrega=="RIG" or entrega=="Relatório Intermediário Grupo" or entrega=="Relatorio Intermediario Grupo":
-                (aval, _created) = Avaliacao.objects.get_or_create(projeto=projeto, tipo_de_entrega=11) # (11, 'Relatório Intermediário de Grupo'),
+            if avaliacao=="RIG" or avaliacao=="Relatório Intermediário Grupo" or avaliacao=="Relatorio Intermediario Grupo":
+                (aval, _created) = Avaliacao2.objects.get_or_create(projeto=projeto, tipo_de_entrega=11) # (11, 'Relatório Intermediário de Grupo'),
                 
                 objetivo_str = row.get('objetivo')
+                aval.objetivo = recupera_objetivo(objetivo_str)
+                aval.avaliador = projeto.orientador.user
 
-                if objetivo_str == "Comunicação" or objetivo == "Comunicacao" or objetivo == "CO":
-                    objetivo = ObjetidosDeAprendizagem.objects.get(titulo="Comunicação", avaliacao_grupo=True)
-
-                elif objetivo_str == "Comunicação" or objetivo == "Comunicacao" or objetivo == "DE":
-                    objetivo = ObjetidosDeAprendizagem.objects.get(titulo="Design/Empreendedorismo", avaliacao_grupo=True)
-                
-                elif objetivo_str == "Comunicação" or objetivo == "Comunicacao" or objetivo == "TW":
-                    objetivo = ObjetidosDeAprendizagem.objects.get(titulo="Trabalho em Equipe", avaliacao_grupo=True)
-
-                elif objetivo_str == "Organização" or objetivo == "Organizacao" or objetivo == "OR":
-                    objetivo = ObjetidosDeAprendizagem.objects.get(titulo="Organização", avaliacao_grupo=True)
-
-                elif objetivo_str == "Execução Técnica" or objetivo == "Execucao Tecnica" or objetivo == "TK":
-                    objetivo = ObjetidosDeAprendizagem.objects.get(titulo="Execução Técnica", avaliacao_grupo=True)
-
-                
-                nota = None
                 if 'nota' in row:
-                    nota = float(row.get('nota'))
+                    aval.nota = float(row.get('nota'))
                 else:
                     desempenho = row.get('desempenho')
-                    nota = converte_conceito(desempenho) # CALCULAR NOTA
-
-
-
-                # objetivo1 = 
-                # objetivo1_conceito
-                # aval.nota = float(row.get('nota'))
-                # aval.avaliador = projeto.orientador.user
+                    aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
 
             aval.peso = int(float(row.get('peso'))*100)
 

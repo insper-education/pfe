@@ -795,7 +795,7 @@ class Coorientador(models.Model):
         verbose_name = 'Coorientador'
         verbose_name_plural = 'Coorientadores'
 
-class ObjetidosDeAprendizagem(models.Model):
+class ObjetivosDeAprendizagem(models.Model):
     """Objetidos de Aprendizagem do curso."""
 
     titulo = models.TextField(max_length=128, null=True, blank=True,
@@ -828,8 +828,8 @@ class ObjetidosDeAprendizagem(models.Model):
         return str(self.titulo)
 
     class Meta:
-        verbose_name = 'ObjetidosDeAprendizagem'
-        verbose_name_plural = 'ObjetidosDeAprendizagem'
+        verbose_name = 'ObjetivosDeAprendizagem'
+        verbose_name_plural = 'ObjetivosDeAprendizagem'
 
 # REMOVER COMPLETAMENTE AVALIACAO
 # AVALIACAO2 USADA ATUALMENTE.
@@ -893,7 +893,7 @@ class Avaliacao(models.Model):
         ('NA', 'NA'),
     )
 
-    objetivo1 = models.ForeignKey(ObjetidosDeAprendizagem, related_name='objetivo1',
+    objetivo1 = models.ForeignKey(ObjetivosDeAprendizagem, related_name='objetivo1',
                                   on_delete=models.SET_NULL, null=True, blank=True,
                                   help_text='Objetivo de Aprendizagem 1')
     #### OBSOLETO, REMOVER ####
@@ -901,28 +901,28 @@ class Avaliacao(models.Model):
                                           help_text='Conceito Obtido no OA 1')
     ###########################
     
-    objetivo2 = models.ForeignKey(ObjetidosDeAprendizagem, related_name='objetivo2',
+    objetivo2 = models.ForeignKey(ObjetivosDeAprendizagem, related_name='objetivo2',
                                   on_delete=models.SET_NULL, null=True, blank=True,
                                   help_text='Objetivo de Aprendizagem 2')
     #### OBSOLETO, REMOVER ####
     objetivo2_conceito = models.CharField(choices=CONCEITOS, default="NA", max_length=2,
                                           help_text='Conceito Obtido no OA 2')
 
-    objetivo3 = models.ForeignKey(ObjetidosDeAprendizagem, related_name='objetivo3',
+    objetivo3 = models.ForeignKey(ObjetivosDeAprendizagem, related_name='objetivo3',
                                   on_delete=models.SET_NULL, null=True, blank=True,
                                   help_text='Objetivo de Aprendizagem 3')
     #### OBSOLETO, REMOVER ####
     objetivo3_conceito = models.CharField(choices=CONCEITOS, default="NA", max_length=2,
                                           help_text='Conceito Obtido no OA 3')
 
-    objetivo4 = models.ForeignKey(ObjetidosDeAprendizagem, related_name='objetivo4',
+    objetivo4 = models.ForeignKey(ObjetivosDeAprendizagem, related_name='objetivo4',
                                   on_delete=models.SET_NULL, null=True, blank=True,
                                   help_text='Objetivo de Aprendizagem 4')
     #### OBSOLETO, REMOVER ####
     objetivo4_conceito = models.CharField(choices=CONCEITOS, default="NA", max_length=2,
                                           help_text='Conceito Obtido no OA 4')
 
-    objetivo5 = models.ForeignKey(ObjetidosDeAprendizagem, related_name='objetivo5',
+    objetivo5 = models.ForeignKey(ObjetivosDeAprendizagem, related_name='objetivo5',
                                   on_delete=models.SET_NULL, null=True, blank=True,
                                   help_text='Objetivo de Aprendizagem 5')
     #### OBSOLETO, REMOVER ####
@@ -976,10 +976,10 @@ class Avaliacao2(models.Model):
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
                                    help_text='Data e hora da comunicação') # hora ordena para dia
   
-    peso = models.PositiveIntegerField("Peso",
-                                       validators=[MinValueValidator(0), MaxValueValidator(100)],
-                                       help_text='Pesa da avaliação na média (bancas compartilham peso)',
-                                       default=10) # 10% para as bancas
+    peso = models.DecimalField("Peso",max_digits=4, decimal_places=3,
+                               null=True, blank=True,
+                               validators=[MinValueValidator(0), MaxValueValidator(100)],
+                               help_text='Pesa da avaliação na média (bancas compartilham peso)')
 
     # A nota será convertida para rubricas se necessário
     nota = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
@@ -997,7 +997,7 @@ class Avaliacao2(models.Model):
                                  on_delete=models.SET_NULL, related_name='projeto_alocado2',
                                  help_text='relacao de alocação entre projeto e estudante')
 
-    objetivo = models.ForeignKey(ObjetidosDeAprendizagem, related_name='objetivo1_2',
+    objetivo = models.ForeignKey(ObjetivosDeAprendizagem, related_name='objetivo1_2',
                                  on_delete=models.SET_NULL, null=True, blank=True,
                                  help_text='Objetivo de Aprendizagem')
 

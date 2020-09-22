@@ -45,12 +45,12 @@ from .models import Projeto, Proposta, Organizacao, Configuracao, Evento, Anotac
 from .models import Feedback, Certificado
 from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade, Conexao
 #from .models import Disciplina
-from .models import ObjetidosDeAprendizagem, Avaliacao, Avaliacao2, Observacao
+from .models import ObjetivosDeAprendizagem, Avaliacao, Avaliacao2, Observacao
 
 from .models import get_upload_path
 
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource
-from .resources import AlunosResource, ProfessoresResource, ParceirosResource, AvaliacoesResource
+from .resources import AlunosResource, ProfessoresResource, ParceirosResource, Avaliacoes2Resource
 from .resources import ConfiguracaoResource, FeedbacksResource, DisciplinasResource
 from .messages import email, create_message, message_reembolso
 
@@ -2339,7 +2339,7 @@ def carrega(request, dado):
     elif dado == "alunos":
         resource = AlunosResource()
     elif dado == "avaliacoes":
-        resource = AvaliacoesResource()
+        resource = Avaliacoes2Resource()
     else:
         raise Http404
 
@@ -3633,7 +3633,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
         return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
         #raise Http404("Poll does not exist")
 
-    objetivos = ObjetidosDeAprendizagem.objects.filter(avaliacao_banca=True)
+    objetivos = ObjetivosDeAprendizagem.objects.filter(avaliacao_banca=True)
 
     professores = PFEUser.objects.all().\
                         filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0])
@@ -3667,7 +3667,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
                 julgamento1 = Avaliacao2.create(projeto=projeto)
                 julgamento1.avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
                 pk_objetivo1 = int(request.POST['objetivo.1'].split('.')[0])
-                julgamento1.objetivo1 = ObjetidosDeAprendizagem.objects.get(pk=pk_objetivo1)
+                julgamento1.objetivo1 = ObjetivosDeAprendizagem.objects.get(pk=pk_objetivo1)
                 #julgamento.objetivo1_conceito = request.POST['objetivo.1'].split('.')[1]
                 julgamento1.nota = converte_conceito(request.POST['objetivo.1'].split('.')[1])
                 julgamento1.tipo_de_avaliacao = tipo_de_avaliacao
@@ -3677,7 +3677,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
                 julgamento2 = Avaliacao2.create(projeto=projeto)
                 julgamento2.avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
                 pk_objetivo2 = int(request.POST['objetivo.2'].split('.')[0])
-                julgamento2.objetivo2 = ObjetidosDeAprendizagem.objects.get(pk=pk_objetivo2)
+                julgamento2.objetivo2 = ObjetivosDeAprendizagem.objects.get(pk=pk_objetivo2)
                 #julgamento.objetivo2_conceito = request.POST['objetivo.2'].split('.')[1]
                 julgamento2.nota = converte_conceito(request.POST['objetivo.2'].split('.')[1])
                 julgamento2.tipo_de_avaliacao = tipo_de_avaliacao
@@ -3687,7 +3687,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
                 julgamento3 = Avaliacao2.create(projeto=projeto)
                 julgamento3.avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
                 pk_objetivo3 = int(request.POST['objetivo.3'].split('.')[0])
-                julgamento3.objetivo3 = ObjetidosDeAprendizagem.objects.get(pk=pk_objetivo3)
+                julgamento3.objetivo3 = ObjetivosDeAprendizagem.objects.get(pk=pk_objetivo3)
                 #julgamento.objetivo3_conceito = request.POST['objetivo.3'].split('.')[1]
                 julgamento3.nota = converte_conceito(request.POST['objetivo.3'].split('.')[1])
                 julgamento3.tipo_de_avaliacao = tipo_de_avaliacao
@@ -3697,7 +3697,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
                 julgamento4 = Avaliacao2.create(projeto=projeto)
                 julgamento4.avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
                 pk_objetivo4 = int(request.POST['objetivo.4'].split('.')[0])
-                julgamento4.objetivo4 = ObjetidosDeAprendizagem.objects.get(pk=pk_objetivo4)
+                julgamento4.objetivo4 = ObjetivosDeAprendizagem.objects.get(pk=pk_objetivo4)
                 #julgamento.objetivo4_conceito = request.POST['objetivo.4'].split('.')[1]
                 julgamento4.nota = converte_conceito(request.POST['objetivo.4'].split('.')[1])
                 julgamento4.tipo_de_avaliacao = tipo_de_avaliacao
@@ -3707,7 +3707,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
                 julgamento5 = Avaliacao2.create(projeto=projeto)
                 julgamento5.avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
                 pk_objetivo5 = int(request.POST['objetivo.5'].split('.')[0])
-                julgamento5.objetivo5 = ObjetidosDeAprendizagem.objects.get(pk=pk_objetivo5)
+                julgamento5.objetivo5 = ObjetivosDeAprendizagem.objects.get(pk=pk_objetivo5)
                 #julgamento.objetivo5_conceito = request.POST['objetivo.5'].split('.')[1]
                 julgamento5.nota = converte_conceito(request.POST['objetivo.5'].split('.')[1])
                 julgamento5.tipo_de_avaliacao = tipo_de_avaliacao
@@ -4082,7 +4082,7 @@ def conceitos_obtidos(request, primarykey): #acertar isso para pk
     except Projeto.DoesNotExist:
         return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
 
-    objetivos = ObjetidosDeAprendizagem.objects.all()
+    objetivos = ObjetivosDeAprendizagem.objects.all()
 
     avaliadores_inter = {}
     avaliadores_final = {}
@@ -4396,5 +4396,15 @@ def definir_datas(request):
 def migracao(request):
     """temporário"""
 
-    message = "Nada Feito"
+    avaliacoes = Avaliacao2.objects.filter(tipo_de_avaliacao=1)
+    for a in avaliacoes:
+        a.peso = (0.3*0.1*0.4)*100
+        a.save()
+
+    avaliacoes = Avaliacao2.objects.filter(tipo_de_avaliacao=2)
+    for a in avaliacoes:
+        a.peso = (0.7*0.1*0.4)*100
+        a.save()
+
+    message = "Feito"
     return HttpResponse(message)

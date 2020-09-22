@@ -29,7 +29,7 @@ from .models import Entidade
 # Das Organizações
 from .models import Feedback, Conexao
 
-from .models import ObjetidosDeAprendizagem, Avaliacao, Certificado
+from .models import ObjetivosDeAprendizagem, Avaliacao, Certificado
 
 from .models import Avaliacao2, Observacao
 
@@ -326,7 +326,7 @@ class Avaliacao2Admin(admin.ModelAdmin):
 admin.site.register(Cursada)
 admin.site.register(Recomendada)
 admin.site.register(Entidade)       # Para ser preenchido com as entidades estudantis
-admin.site.register(ObjetidosDeAprendizagem)
+admin.site.register(ObjetivosDeAprendizagem)
 admin.site.register(Certificado)
 
 admin.site.register(Observacao)

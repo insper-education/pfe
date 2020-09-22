@@ -15,7 +15,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 #from django.utils.functional import curry
 
-from projetos.models import Projeto, Proposta, Empresa, Organizacao, Avaliacao
+from projetos.models import Projeto, Proposta, Empresa, Organizacao, Avaliacao2, ObjetivosDeAprendizagem
 
 
 ####   PARA PORTAR AS AREAS DE INTERESSE DE ALUNOS PARA CÁ, E USAR NO PROJETO  #####
@@ -245,8 +245,6 @@ def get_notas(avalia):
     else:
         return 0
 
-
-
 class Aluno(models.Model):
     """Classe de usuários com estatus de Aluno."""
     TIPOS_CURSO = (
@@ -332,14 +330,38 @@ class Aluno(models.Model):
     def get_banca(self, avaliacoes_banca):
         """Retorna média."""
         nota_banca = 0
-        for avali in avaliacoes_banca:
-            nota_banca += get_notas(avali)
-        if avaliacoes_banca:
-            media = nota_banca/len(avaliacoes_banca)
-            return media
-        else:
-            return -1000
+        lista_objetivos = {}
+        objetivos = ObjetivosDeAprendizagem.objects.all()
+        for objetivo in objetivos:
+            bancas = avaliacoes_banca.filter(objetivo=objetivo).\
+                                                order_by('avaliador', '-momento')
+            if bancas:
+                lista_objetivos[objetivo] = {}
+            for banca in bancas:
+                if banca.avaliador not in lista_objetivos[objetivo]:
+                    lista_objetivos[objetivo][banca.avaliador] = (float(banca.nota), float(banca.peso))
+                # Senão é só uma avaliação de objetivo mais antiga
 
+        # média por objetivo
+        val_objetivos = {}
+        for obj in lista_objetivos:
+            val = 0
+            pes = 0
+            for avali in lista_objetivos[obj]:
+                val += lista_objetivos[obj][avali][0]
+                pes += lista_objetivos[obj][avali][1]
+            val_objetivos[obj] = (val/len(lista_objetivos[obj]), pes/len(lista_objetivos[obj]))
+
+        # média dos objetivos
+        val = 0
+        pes = 0
+        for obj in val_objetivos:
+            val += val_objetivos[obj][0]*val_objetivos[obj][1]
+            pes += val_objetivos[obj][1]
+        pes = float(pes)
+        val = float(val)/pes
+        
+        return val, pes
 
     @property
     def get_notas(self):
@@ -353,27 +375,24 @@ class Aluno(models.Model):
             alocacao = alocacoes.first()
 
             # Bancas
-            avaliacoes_bancas = Avaliacao.objects.filter(projeto=alocacao.projeto, tipo_de_entrega=0) # Banca
-            avaliacoes_banca_interm = avaliacoes_bancas.filter(tipo_de_banca=1) #(1, 'intermediaria')
+            avaliacoes_banca_interm = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=1) #(1, 'intermediaria')
             if avaliacoes_banca_interm:
-                peso = float(avaliacoes_banca_interm.first().peso/100)
-                nota_banca_interm = Aluno.get_banca(self, avaliacoes_banca_interm)
-                notas.append( ("BI", nota_banca_interm, peso) )
-            avaliacoes_banca_final = avaliacoes_bancas.filter(tipo_de_banca=0) #(0, 'final')
+                nota_banca_interm, peso = Aluno.get_banca(self, avaliacoes_banca_interm)
+                notas.append( ("BI", nota_banca_interm, peso/100) )
+            avaliacoes_banca_final = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=2) #(2, 'final')
             if avaliacoes_banca_final:
-                peso = float(avaliacoes_banca_final.first().peso/100)
-                nota_banca_final = Aluno.get_banca(self, avaliacoes_banca_final)
-                notas.append( ("BF", nota_banca_final, peso) )
+                nota_banca_final, peso = Aluno.get_banca(self, avaliacoes_banca_final)
+                notas.append( ("BF", nota_banca_final, peso/100) )
 
             # Avaliações por projeto
-            avaliacoes = Avaliacao.objects.filter(projeto=alocacao.projeto)
+            avaliacoes = Avaliacao2.objects.filter(projeto=alocacao.projeto)
             for avaliacao in avaliacoes:
                 peso = float(avaliacao.peso/100)
-                if avaliacao.tipo_de_entrega == 10: #(10, 'Relatório de Planejamento')
+                if avaliacao.tipo_de_avaliacao == 10: #(10, 'Relatório de Planejamento')
                     notas.append( ("RP", float(avaliacao.nota), peso) )
-                if avaliacao.tipo_de_entrega == 11: #(11, 'Relatório Intermediário de Grupo'),
+                if avaliacao.tipo_de_avaliacao == 11: #(11, 'Relatório Intermediário de Grupo'),
                     notas.append( ("RIG", get_notas(avaliacao), peso) )
-                if avaliacao.tipo_de_entrega == 12: #(12, 'Relatório Final de Grupo'),
+                if avaliacao.tipo_de_avaliacao == 12: #(12, 'Relatório Final de Grupo'),
                     notas.append( ("RFG", get_notas(avaliacao), peso) )
 
         return notas
@@ -386,6 +405,7 @@ class Aluno(models.Model):
         for aval, nota, peso in self.get_notas:
             peso_final += peso
             nota_final += nota * peso
+        peso_final = round(peso_final, 1)
         return {"media": nota_final, "pesos": peso_final}
         
 

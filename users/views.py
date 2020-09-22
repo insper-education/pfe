@@ -20,7 +20,7 @@ from django.utils import html
 from django.utils import timezone
 from django.views import generic
 
-from projetos.models import Configuracao, Projeto, Conexao, Banca
+from projetos.models import Configuracao, Projeto, Conexao, Banca, ObjetivosDeAprendizagem
 from projetos.views import cria_areas
 from projetos.messages import email
 
