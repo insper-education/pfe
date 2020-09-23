@@ -18,6 +18,14 @@ function mascara(i){
    if (v.length == 11) i.value += "-";
 }
 </script>
+
+  <script src="https://www.geradorcnpj.com/assets/js/jquery.maskedinput-1.1.4.pack.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){	
+      $("#cpf").mask("999.999.999-99");
+    });
+  </script>
+
 {% endblock %}
 
 {% block content %}
@@ -35,6 +43,8 @@ function mascara(i){
 
     <br><br>
     CPF
+    <label for="cpf">CPF:</label> <input type="text" size="14" maxlength="14" id="cpf" name="cpf" value="{{cpf}}"><br>
+    
     <input name="cpf" id="cpf" oninput="mascara(this)" type="text" placeholder="000.000.000-00" 
     value="{{usuario.cpf|slice:":3"}}.{{usuario.cpf|slice:"3:6"}}.{{usuario.cpf|slice:"6:9"}}-{{usuario.cpf|slice:"9:11"}}" required><br>
     <br>

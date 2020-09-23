@@ -165,14 +165,13 @@ def create_message(aluno, ano, semestre):
     message += '&nbsp;<br>\n'
     return message
 
-def message_reembolso(usuario, projeto, reembolso):
+def message_reembolso(usuario, projeto, reembolso, cpf):
     """ Emite menssagem de reembolso. """
     message = '<br>\n'
     message += '&nbsp;&nbsp;Caro <b>Dept. de Carreiras</b>\n\n'
     message += '<br><br>\n\n'
     message += '&nbsp;&nbsp;Por favor, encaminhem o pedido de reembolso de: '
     message += usuario.first_name+" "+usuario.last_name+" ("+usuario.username+')<br>\n'
-    cpf = str(usuario.cpf)
     message += '&nbsp;&nbsp;CPF: '+cpf[:3]+'.'+cpf[3:6]+'.'+cpf[6:9]+'-'+cpf[9:11]+'<br>\n'
     if usuario.aluno.curso == "C":
         curso = "Computação"

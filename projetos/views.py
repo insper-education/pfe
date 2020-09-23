@@ -2989,8 +2989,7 @@ def reembolso_pedir(request):
         reembolso = Reembolso.create(usuario)
         reembolso.descricao = request.POST['descricao']
 
-        usuario.cpf = int(''.join(i for i in request.POST['cpf'] if i.isdigit()))
-        usuario.save()
+        cpf = int(''.join(i for i in request.POST['cpf'] if i.isdigit()))
 
         reembolso.conta = request.POST['conta']
         reembolso.agencia = request.POST['agencia']
@@ -3013,7 +3012,7 @@ def reembolso_pedir(request):
             if projeto.orientador:
                 #mandar para o orientador se houver
                 recipient_list.append(projeto.orientador.user.email)
-        message = message_reembolso(usuario, projeto, reembolso)
+        message = message_reembolso(usuario, projeto, reembolso, cpf)
         check = email(subject, recipient_list, message)
         if check != 1:
             message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"

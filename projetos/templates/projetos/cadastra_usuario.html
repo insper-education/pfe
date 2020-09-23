@@ -11,13 +11,6 @@
       max-width:100%;
     }
   </style>
-  <script src="https://www.geradorcnpj.com/assets/js/jquery.maskedinput-1.1.4.pack.js"></script>
-  <script type="text/javascript">
-    $(document).ready(function(){	
-      $("#cpf").mask("999.999.999-99");
-    });
-  </script>
-
 {% endblock %}
 
 {% block content %}
@@ -48,7 +41,6 @@
 
     <br><br>
 
-    <label for="cpf">CPF:</label> <input type="text" size="14" maxlength="14" id="cpf" name="cpf" value="{{cpf}}"><br>
     <label for="linkedin">LinkedIn:</label><input type="text" size="73" maxlength="73" id="linkedin" name="linkedin" value="{{linkedin}}" placeholder="https://www.linkedin.com/"><br>
 
     {% comment %}
