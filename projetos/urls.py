@@ -48,6 +48,7 @@ urlpatterns = [
     path('events/<int:event_id>', views.export_calendar, name="event_ics_export"),
     path('export/<str:modelo>/<str:formato>', views.export, name='export'),
     path('exportar/', views.exportar, name='exportar'),
+    path('graficos/', views.graficos, name='graficos'),
     path('histograma/', views.histograma, name='histograma'),
     path('index_aluno/', views.index_aluno, name='index_aluno'),
     path('index_documentos/', views.index_documentos, name='index_documentos'),

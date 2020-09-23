@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 22 de Setembro de 2020
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  <script src="https://www.w3schools.com/lib/w3.js"></script>
+  <script src="{% static 'js/Chart.min.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
+  <script>
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
+{% endblock %}
+
+{% block content %}
+
+    {% comment %} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {% endcomment %}
+    <label for="filter"><b>Edição:</b></label>
+    <select class="filter" data-tableId="projetos">
+        <option value="todas">todas</option>
+        {% for loop in loop_anos %}
+            <option value="{{loop}}.2" {% if ano == loop and semestre == 2 %}selected{% endif %}>{{loop}}.2</option>
+            <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
+        {% endfor %}
+    </select>
+
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+    <label for="filter_curso"><b>Curso:</b></label>
+    <select class="filter_curso" data-tableId="programa">
+        <option value="todos">todos</option>
+        <option value="computação" {% if curso == "computação" %}selected{% endif %}>computação</option>
+        <option value="mecatrônica" {% if curso == "mecatrônica" %}selected{% endif %}>mecatrônica</option>
+        <option value="mecânica" {% if curso == "mecânica" %}selected{% endif %}>mecânica</option>
+    </select>
+
+    <br>
+
+    <div class="2areas2">
+        <br>
+        <h3>Gráficos do PFE</h3>
+
+        {% comment %} 
+        {% for estudante in estudantes %}
+            {{estudante}}
+        {% endfor %}
+        {% endcomment %}
+
+    <div id="canvas-holder">
+        <canvas id="bar-projetos"></canvas>
+        <br><br>
+        <canvas id="chart-generos"></canvas>
+        <br><br>
+        <canvas id="doughnut-situacao"></canvas>
+        <br><br>
+        <canvas id="horizontal-objetivos"></canvas>
+        <br><br>
+        <canvas id="chart-medias"></canvas>
+    </div>
+
+  <script>
+    
+    var config_projetos = {
+        type: 'bar',
+        data: {
+        labels: [
+            {% for loop in loop_anos %}
+            "{{loop}}.2",
+            "{{loop|add:1}}.1",
+            {% endfor %}
+            ],
+        datasets: [
+            {
+            label: "propostas",
+            backgroundColor: "#5e8ea2",
+            data: [
+                    {% for num in num_propostas %}
+                        {{num}},
+                    {% endfor %}
+                ]
+            }, 
+            {
+            label: "projetos",
+            backgroundColor: "#353ecd",
+            data: [
+                    {% for num in num_projetos %}
+                        {{num}},
+                    {% endfor %}
+                ]
+            }, 
+        ]
+        },
+        options: {
+        legend: { display: true },
+        title: {
+            display: true,
+            text: 'Propostas e Projetos'
+        }
+        }
+    };
+
+    var config_generos = {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: [
+            {{ num_alunos_masculino }},
+            {{ num_alunos_feminino }},
+          ],
+          backgroundColor: [
+            'rgb(93, 173, 226)',
+            'rgb(175, 122, 197)',
+          ],
+          label: 'Proporção de cursos entre alunos'
+        }],
+        labels: [
+          'Masculino [{% widthratio num_alunos_masculino num_alunos 100 %}%]',
+          'Feminino [{% widthratio num_alunos_feminino num_alunos 100 %}%]',
+        ]
+      },
+      options: {
+        responsive: true,
+        title: {
+          display: true,
+          text: 'Proporção de gêneros entre alunos',
+          position: 'top'
+        },
+        legend: {
+          display: true,
+          position: "bottom",
+        }
+      }
+    };
+    
+    var config_situacao = {
+        type: 'doughnut',
+        data: {
+        labels: ["Ideal(nota>7)", "Regular(7>nota>5)", "Inferior(5>nota)"],
+        datasets: [
+            {
+            label: "Population (millions)",
+            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+            data: [13, 2, 4]
+            }
+        ]
+        },
+        options: {
+            tooltips: {
+                enabled: false
+            },
+            title: {
+                display: true,
+                text: 'Situação em função da nota dos estudantes',
+                position: 'top'
+            },
+            legend: {
+                display: true,
+                position: "bottom",
+            },
+            plugins: {
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        let sum = 0;
+                        let dataArr = ctx.chart.data.datasets[0].data;
+                        dataArr.map(data => {
+                            sum += data;
+                        });
+                        let percentage = (value*100 / sum).toFixed(1)+"%";
+                        return percentage;
+                    },
+                    color: '#000',
+                }
+            }
+        }
+    }
+
+    
+    var config_objetivos = {
+        type: 'horizontalBar',
+        data: {
+        labels: [
+            "TK", "CO", "E&D"
+            ],
+        datasets: [
+            {
+            label: "Objetivos de Aprendizagem",
+            backgroundColor: ["#a35f55", "#345f5f", "#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+            data: [
+                9.8,
+                7.1,
+                6.2
+                ]
+            }
+        ]
+        },
+        options: {
+            legend: { display: false },
+            title: {
+                display: true,
+                text: 'Médias obtidas nos Objetivos de Aprendizagem'
+            },
+            scales: {
+                xAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    }
+
+    var config_medias = {
+        type: 'line',
+        data: {
+            labels: [
+                {% for loop in loop_anos %}
+                    "{{loop}}.2",
+                    "{{loop|add:1}}.1",
+                {% endfor %}
+            ],
+            datasets: [
+                { 
+                    data: [8,9,8,8.5,7.5,6],
+                    label: "Estudantes Computação",
+                    borderColor: "#3e95cd",
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            title: {
+                display: true,
+                text: 'Médias das notas por semestre'
+            }, 
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        max: 10
+                    }
+                }]
+            }
+
+        }
+    }
+
+
+    function carrega_semestre() {  
+      // Chart da quantidade de projetos
+      var bar_projetos = document.getElementById('bar-projetos').getContext('2d');
+      window.projeto = new Chart(bar_projetos, config_projetos);
+
+      // Chart da proporção de alunos por gênero
+      var chart_generos = document.getElementById('chart-generos').getContext('2d');
+      window.generos = new Chart(chart_generos, config_generos);
+
+      // Chart da situação dos alunos por faixa de notas
+      var doughnut_situacao = document.getElementById('doughnut-situacao').getContext('2d');
+      window.situacao = new Chart(doughnut_situacao, config_situacao);
+
+      // Chart do nível nos objetivos de aprendizagem
+      var horizontal_objetivos = document.getElementById('horizontal-objetivos').getContext('2d');
+      window.objetivos = new Chart(horizontal_objetivos, config_objetivos);
+
+      // Chart do média dos alunos
+      var chart_medias = document.getElementById('chart-medias').getContext('2d');
+      window.medias = new Chart(chart_medias, config_medias);
+    }
+
+    window.onload = carrega_semestre
+  
+  </script>
+
+
+    </div>
+
+    <script>
+        $(".filter").change(function(){
+            var topicId = $(".filter option:selected").attr("value");
+            $.ajax({
+                type: "POST",
+                url: "{% url 'graficos' %}",
+                data: {
+                    topicId: topicId,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                },
+                success: function(response){
+                    $("div.2areas2").replaceWith($("div.2areas2",response));
+                    carrega_semestre();
+                },
+                error: function(response) {
+                    alert('error');
+                }
+
+            });
+        });
+    </script>
+
+{% endblock %}

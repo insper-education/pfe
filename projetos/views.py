@@ -270,39 +270,6 @@ def selecao_propostas(request):
     }
     return render(request, 'projetos/selecao_propostas.html', context)
 
-# PROVAVELMENTE NAO MAIS USADA
-def ordena_projetos(disponivel=True, ano=0, semestre=0):
-    """Gera lista com projetos ordenados pelos com maior interesse pelos alunos."""
-    configuracao = Configuracao.objects.all().first()
-
-    if ano == 0:
-        ano = configuracao.ano
-    if semestre == 0:
-        semestre = configuracao.semestre
-
-    opcoes_list = []
-    if disponivel:
-        projetos = Projeto.objects.filter(ano=ano).\
-                               filter(semestre=semestre).\
-                               filter(disponivel=True)
-    else:
-        projetos = Projeto.objects.filter(ano=ano).\
-                               filter(semestre=semestre)
-    for projeto in projetos:
-        opcoes = Opcao.objects.filter(proposta=projeto.proposta)
-        opcoes_alunos = opcoes.filter(aluno__user__tipo_de_usuario=1)
-        opcoes_validas = opcoes_alunos.filter(aluno__anoPFE=ano).\
-                                       filter(aluno__semestrePFE=semestre)
-        count = 0
-        for opcao in opcoes_validas:
-            if opcao.prioridade <= 5:
-                count += 1
-        opcoes_list.append(count)
-    mylist = zip(projetos, opcoes_list)
-    mylist = sorted(mylist, key=lambda x: x[1], reverse=True)
-    return mylist
-
-
 def ordena_propostas(disponivel=True, ano=0, semestre=0):
     """Gera lista com propostas ordenados pelos com maior interesse pelos alunos."""
     configuracao = Configuracao.objects.all().first()
@@ -3525,7 +3492,6 @@ def mapeamento_estudante_projeto(request, anosemestre):
     ano = int(anosemestre.split(".")[0])
     semestre = int(anosemestre.split(".")[1])
 
-    #lista_projetos = list(zip(*ordena_projetos(False, ano, semestre)))
     lista_propostas = list(zip(*ordena_propostas(False, ano, semestre)))
     if lista_propostas:
         propostas = lista_propostas[0]
@@ -4384,3 +4350,75 @@ def migracao(request):
     """temporário"""
     message = "Nada Feito"
     return HttpResponse(message)
+
+
+
+@login_required
+@permission_required("users.altera_professor", login_url='/projetos/')
+def graficos(request):
+    """Mostra graficos das evoluções do PFE."""
+
+    configuracao = Configuracao.objects.all().first()
+
+    periodo = ""
+    estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
+
+    edicoes = range(2018, configuracao.ano+1)
+
+    # PROPOSTAS
+    num_propostas = []
+    for ano_projeto in edicoes:
+
+        projetos = Proposta.objects.filter(ano=ano_projeto).\
+                                    filter(semestre=2).\
+                                    count()
+        num_propostas.append(projetos)
+
+        projetos = Proposta.objects.filter(ano=ano_projeto+1).\
+                                    filter(semestre=1).\
+                                    count()
+        num_propostas.append(projetos)
+
+    # PROJETOS
+    num_projetos = []
+    for ano_projeto in edicoes:
+
+        projetos = Projeto.objects.filter(ano=ano_projeto).\
+                                   filter(semestre=2).\
+                                   count()
+        num_projetos.append(projetos)
+
+        projetos = Projeto.objects.filter(ano=ano_projeto+1).\
+                                   filter(semestre=1).\
+                                   count()
+        num_projetos.append(projetos)
+
+
+    if request.is_ajax():
+        if 'topicId' in request.POST:
+            if request.POST['topicId'] != 'todas':
+                periodo = request.POST['topicId'].split('.')
+                estudantes = estudantes.filter(anoPFE=int(periodo[0])).\
+                                filter(semestrePFE=int(periodo[1]))
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+
+    # Número de alunos e gêneros
+    num_alunos = estudantes.count()
+    num_alunos_masculino = estudantes.filter(user__genero='M').count() # Estudantes masculino
+    num_alunos_feminino = estudantes.filter(user__genero='F').count() # Estudantes feminino
+
+    context = {
+        #'estudantes': estudantes,
+        "num_propostas": num_propostas,
+        "num_projetos": num_projetos,
+        "num_alunos": num_alunos,
+        "num_alunos_feminino": num_alunos_feminino,
+        "num_alunos_masculino": num_alunos_masculino,
+        'periodo': periodo,
+        'ano': configuracao.ano,
+        'semestre': configuracao.semestre,
+        'loop_anos': edicoes,
+    }
+
+    return render(request, 'projetos/graficos.html', context)
