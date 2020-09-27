@@ -119,7 +119,7 @@ class Avaliacoes2Resource(resources.ModelResource):
         'avaliação',
         'objetivo ou criterio',
         'peso',
-        'nota',
+        'nota ou score (se não houver procura por desempenho)',
         'desempenho (opcional primeiro procura a nota)'
         'momento ou date_modified (dd/mm/aa hh:mm)',
         'observação ou feedback',
@@ -152,7 +152,11 @@ class Avaliacoes2Resource(resources.ModelResource):
             
             avaliador = projeto.orientador.user
 
-            avaliacao = row.get('avaliação')
+            if "avaliação" in row:
+                avaliacao = row.get('avaliação')
+            else:
+                pass
+                print("Erro ao recuperar coluna avaliação")
             
             if "momento" in row:
                 t = le_momento(row.get('momento'))
@@ -176,110 +180,49 @@ class Avaliacoes2Resource(resources.ModelResource):
             if avaliacao=="RP" or avaliacao=="Relatório de Planejamento" or avaliacao=="Relatorio de Planejamento":
                 tipo_de_avaliacao=10  #(10, 'Relatório de Planejamento'),
                 (aval, _created) = Avaliacao2.objects.get_or_create(projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
-                aval.nota = float(row.get('nota'))
 
             elif avaliacao=="RIG" or avaliacao=="Relatório Intermediário Grupo" or avaliacao=="Relatorio Intermediario Grupo":
                 tipo_de_avaliacao=11 # (11, 'Relatório Intermediário de Grupo'),
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
-
-                if 'nota' in row:
-                    aval.nota = float(row.get('nota'))
-                else:
-                    desempenho = row.get('desempenho')
-                    aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
             
             elif avaliacao=="RFG" or avaliacao=="Relatório Final Grupo" or avaliacao=="Relatório Final de Grupo" or avaliacao=="Relatorio Final Grupo" or avaliacao=="Relatorio Final de Grupo":
                 tipo_de_avaliacao=12 # (12, 'Relatório Final de Grupo'),
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
-                
-                if 'nota' in row:
-                    aval.nota = float(row.get('nota'))
-                else:
-                    desempenho = row.get('desempenho')
-                    aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
 
-            elif avaliacao=="RII" or avaliacao=="Relatório Intermediário Individual" or avaliacao=="Relatorio Intermediario Individual":
+            elif avaliacao=="RII" or avaliacao=="Relatório Intermediário Individual" or avaliacao=="Relatorio Intermediario Individual" or avaliacao=="Relatório Parcial Individual" or avaliacao=="Relatorio Parcial Individual":
                 tipo_de_avaliacao=21 #(21, 'Relatório Intermediário Individual'),
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, alocacao = alocacao, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
-                
-                if 'nota' in row:
-                    aval.nota = float(row.get('nota'))
-                else:
-                    desempenho = row.get('desempenho')
-                    aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
-            
+
             elif avaliacao=="RFI" or avaliacao=="Relatório Final Individual" or avaliacao=="Relatorio Final Individual":
                 tipo_de_avaliacao=22 #(22, 'Relatório Final Individual'),
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, alocacao = alocacao, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
-                
-                if 'nota' in row:
-                    aval.nota = float(row.get('nota'))
-                else:
-                    desempenho = row.get('desempenho')
-                    aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
 
             elif avaliacao=="BI" or avaliacao=="Banca Intermediária" or avaliacao=="Banca Intermediaria":
                 tipo_de_avaliacao=1 # ( 1, 'Banca Intermediária'),
-
                 # o certo seria procurar avaliador
-                
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
-
-                if 'nota' in row:
-                    aval.nota = float(row.get('nota'))
-                else:
-                    desempenho = row.get('desempenho')
-                    aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
             
             elif avaliacao=="BF" or avaliacao=="Banca Final":
                 tipo_de_avaliacao=2 # ( 2, 'Banca Final'),
-
                 # o certo seria procurar avaliador
-                
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
-                
-                if 'nota' in row:
-                    aval.nota = float(row.get('nota'))
-                else:
-                    desempenho = row.get('desempenho')
-                    aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
-            
-
-    
     
             ### NÃO MAIS USADAS, FORAM USADAS QUANDO O PFE ERA AINDA EM DOIS SEMESTRES
-
-
-
             elif avaliacao=="PPF" or avaliacao=="Planejamento Primeira Fase":
                 tipo_de_avaliacao=50 # (50, 'Planejamento Primeira Fase'),
                 (aval, _created) = Avaliacao2.objects.get_or_create(projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
-                aval.nota = float(row.get('nota'))
 
             elif avaliacao=="API" or avaliacao=="Avaliação Parcial Individual":
                 tipo_de_avaliacao=51 # (51, 'Avaliação Parcial Individual'),
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, alocacao = alocacao, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
-                
-                if 'nota' in row:
-                    aval.nota = float(row.get('nota'))
-                else:
-                    desempenho = row.get('desempenho')
-                    aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
 
             elif avaliacao=="AFI" or avaliacao=="Avaliação Final Individual":
                 tipo_de_avaliacao=52 # (52, 'Avaliação Final Individual'),
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, alocacao = alocacao, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
-                
-                if 'nota' in row:
-                    aval.nota = float(row.get('nota'))
-                else:
-                    desempenho = row.get('desempenho')
-                    aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
-
 
             else:
                 print("ERRO, AVALIAÇÃO NÃO RECONHECIDA !!!!")
-
+                print(avaliacao)
 
             # CASO A LEITURA TENHA ALGUM FEEDBACK/OBSERVAÇÃO
             if "observação" in row:
@@ -293,6 +236,18 @@ class Avaliacoes2Resource(resources.ModelResource):
                 (obs, _created) = Observacao.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, alocacao=alocacao, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
                 obs.observacoes = obs_str
                 obs.save()
+
+            # recuper nota, se houver
+            if 'nota' in row:
+                aval.nota = float(row.get('nota'))
+            elif 'score' in row:
+                aval.nota = float(row.get('score'))
+            elif 'desempenho' in row:
+                desempenho = row.get('desempenho')
+                aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
+            else:
+                pass
+                print("Erro ao recuperar a nota")
 
             # Todas as avaliações tem de ter peso
             # Pesos são convertidos para porcentagens
