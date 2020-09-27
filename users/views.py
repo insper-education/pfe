@@ -248,6 +248,7 @@ def alunos_listagem(request, anosemestre):
         'totais': totais,
         'ano': ano,
         'semestre': semestre,
+        'ano_semestre': str(ano)+"."+str(semestre),
         'loop_anos': range(2018, configuracao.ano+1),
     }
     return render(request, 'users/alunos_lista.html', context=context)

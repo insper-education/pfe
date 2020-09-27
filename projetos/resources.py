@@ -113,21 +113,29 @@ def le_momento(mnt):
 class Avaliacoes2Resource(resources.ModelResource):
     """Model Resource para tratar dados de Avaliações."""
     campos = [
-        'estudante (primeira parte do e-mail, obrigatório)',
+        'estudante ou user_id (primeira parte do e-mail, obrigatório)',
         'ano',
         'semestre',
         'avaliação',
-        'objetivo',
+        'objetivo ou criterio',
         'peso',
         'nota',
-        'momento (dd/mm/aa hh:mm)',
-        'observação',
+        'desempenho (opcional primeiro procura a nota)'
+        'momento ou date_modified (dd/mm/aa hh:mm)',
+        'observação ou feedback',
     ]
     def before_import_row(self, row, **kwargs): #forma que arrumei para evitar preencher com o mesmo dado
-        estudante_str = row.get('estudante')
+        if 'estudante' in row:
+            estudante_str = row.get('estudante')
+        elif 'user_id' in row:
+            estudante_str = row.get('user_id')
+        else:
+            pass
+            print("Erro ao recuperar coluna estudante ou user_id")
+
         if estudante_str is None:
             pass
-            #print("Erro ao recuperar o estudante [estudante_str]")
+            print("Erro ao recuperar o estudante [estudante_str]")
         elif estudante_str != "":
 
             #try:
@@ -157,6 +165,14 @@ class Avaliacoes2Resource(resources.ModelResource):
 
             avaliador = projeto.orientador.user # por padrão o avaliador é o orientador
 
+            #recupera objetivo, se houver
+            if 'objetivo' in row:
+                objetivo = recupera_objetivo(row.get('objetivo'))
+            elif 'criterio' in row:
+                objetivo = recupera_objetivo(row.get('criterio'))
+            else:
+                objetivo = None
+
             if avaliacao=="RP" or avaliacao=="Relatório de Planejamento" or avaliacao=="Relatorio de Planejamento":
                 tipo_de_avaliacao=10  #(10, 'Relatório de Planejamento'),
                 (aval, _created) = Avaliacao2.objects.get_or_create(projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
@@ -164,8 +180,6 @@ class Avaliacoes2Resource(resources.ModelResource):
 
             elif avaliacao=="RIG" or avaliacao=="Relatório Intermediário Grupo" or avaliacao=="Relatorio Intermediario Grupo":
                 tipo_de_avaliacao=11 # (11, 'Relatório Intermediário de Grupo'),
-                objetivo_str = row.get('objetivo')
-                objetivo = recupera_objetivo(objetivo_str)
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
 
                 if 'nota' in row:
@@ -176,8 +190,6 @@ class Avaliacoes2Resource(resources.ModelResource):
             
             elif avaliacao=="RFG" or avaliacao=="Relatório Final Grupo" or avaliacao=="Relatório Final de Grupo" or avaliacao=="Relatorio Final Grupo" or avaliacao=="Relatorio Final de Grupo":
                 tipo_de_avaliacao=12 # (12, 'Relatório Final de Grupo'),
-                objetivo_str = row.get('objetivo')
-                objetivo = recupera_objetivo(objetivo_str)
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
                 
                 if 'nota' in row:
@@ -188,8 +200,6 @@ class Avaliacoes2Resource(resources.ModelResource):
 
             elif avaliacao=="RII" or avaliacao=="Relatório Intermediário Individual" or avaliacao=="Relatorio Intermediario Individual":
                 tipo_de_avaliacao=21 #(21, 'Relatório Intermediário Individual'),
-                objetivo_str = row.get('objetivo')
-                objetivo = recupera_objetivo(objetivo_str)
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, alocacao = alocacao, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
                 
                 if 'nota' in row:
@@ -200,8 +210,6 @@ class Avaliacoes2Resource(resources.ModelResource):
             
             elif avaliacao=="RFI" or avaliacao=="Relatório Final Individual" or avaliacao=="Relatorio Final Individual":
                 tipo_de_avaliacao=22 #(22, 'Relatório Final Individual'),
-                objetivo_str = row.get('objetivo')
-                objetivo = recupera_objetivo(objetivo_str)
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, alocacao = alocacao, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
                 
                 if 'nota' in row:
@@ -212,8 +220,6 @@ class Avaliacoes2Resource(resources.ModelResource):
 
             elif avaliacao=="BI" or avaliacao=="Banca Intermediária" or avaliacao=="Banca Intermediaria":
                 tipo_de_avaliacao=1 # ( 1, 'Banca Intermediária'),
-                objetivo_str = row.get('objetivo')
-                objetivo = recupera_objetivo(objetivo_str)
 
                 # o certo seria procurar avaliador
                 
@@ -227,8 +233,6 @@ class Avaliacoes2Resource(resources.ModelResource):
             
             elif avaliacao=="BF" or avaliacao=="Banca Final":
                 tipo_de_avaliacao=2 # ( 2, 'Banca Final'),
-                objetivo_str = row.get('objetivo')
-                objetivo = recupera_objetivo(objetivo_str)
 
                 # o certo seria procurar avaliador
                 
@@ -243,7 +247,7 @@ class Avaliacoes2Resource(resources.ModelResource):
 
     
     
-            ### NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES
+            ### NÃO MAIS USADAS, FORAM USADAS QUANDO O PFE ERA AINDA EM DOIS SEMESTRES
 
 
 
@@ -254,8 +258,6 @@ class Avaliacoes2Resource(resources.ModelResource):
 
             elif avaliacao=="API" or avaliacao=="Avaliação Parcial Individual":
                 tipo_de_avaliacao=51 # (51, 'Avaliação Parcial Individual'),
-                objetivo_str = row.get('objetivo')
-                objetivo = recupera_objetivo(objetivo_str)
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, alocacao = alocacao, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
                 
                 if 'nota' in row:
@@ -266,8 +268,6 @@ class Avaliacoes2Resource(resources.ModelResource):
 
             elif avaliacao=="AFI" or avaliacao=="Avaliação Final Individual":
                 tipo_de_avaliacao=52 # (52, 'Avaliação Final Individual'),
-                objetivo_str = row.get('objetivo')
-                objetivo = recupera_objetivo(objetivo_str)
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, alocacao = alocacao, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
                 
                 if 'nota' in row:
@@ -284,20 +284,24 @@ class Avaliacoes2Resource(resources.ModelResource):
             # CASO A LEITURA TENHA ALGUM FEEDBACK/OBSERVAÇÃO
             if "observação" in row:
                 obs_str = row.get('observação')
-                if obs_str != "":
+            if "feedback" in row:
+                obs_str = row.get('feedback')
+            else:
+                obs_str = ""
 
-                    if "objetivo" in row:
-                        objetivo_str = row.get('objetivo')
-                        objetivo = recupera_objetivo(objetivo_str)
-                    else:
-                        objetivo = None
+            if obs_str != "":
+                (obs, _created) = Observacao.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, alocacao=alocacao, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
+                obs.observacoes = obs_str
+                obs.save()
 
-                    (obs, _created) = Observacao.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, alocacao=alocacao, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
-                    obs.observacoes = obs_str
-                    obs.save()
-
-            peso = float(row.get('peso'))*100
-            aval.peso = peso
+            # Todas as avaliações tem de ter peso
+            # Pesos são convertidos para porcentagens
+            if "peso" in row:
+                peso = float(row.get('peso'))*100
+                aval.peso = peso
+            else:
+                pass
+                print("Erro ao recuperar o peso da avaliação")
 
             aval.save()
             row['id'] = aval.id

@@ -336,14 +336,16 @@ class Aluno(models.Model):
     @property
     def get_notas(self):
 
-        notas = []
-
+        edicao = {} # dicionário para cada alocação do estudante (por exemplo DP, ou PFE Avançado)
+        
         alocacoes = Alocacao.objects.filter(aluno=self.pk)
-        if alocacoes:
+        #supondo só uma alocação para agora
+        #alocacao = alocacoes.first()
 
-            #supondo só uma alocação para agora
-            alocacao = alocacoes.first()
+        for alocacao in alocacoes:
 
+            notas = [] # iniciando uma lista de notas vazia
+            
             # Banca Intermediária
             avaliacoes_banca_interm = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=1) #(1, 'intermediaria')
             if avaliacoes_banca_interm:
@@ -403,20 +405,28 @@ class Aluno(models.Model):
                 nota_afi, peso = Aluno.get_banca(self, afi)
                 notas.append( ("AFI", nota_afi, peso/100) )
         
-        
-        return notas
+            edicao[str(alocacao.projeto.ano)+"."+str(alocacao.projeto.semestre)] = notas
+
+        return edicao
     
     @property
-    def get_media(self):
-        """Retorna média."""
-        nota_final = 0
-        peso_final = 0
-        for aval, nota, peso in self.get_notas:
-            peso_final += peso
-            nota_final += nota * peso
-        peso_final = round(peso_final, 1)
-        return {"media": nota_final, "pesos": peso_final}
+    def get_medias(self):
+        """Retorna médias."""
+
+        medias = {} # dicionário para cada alocação do estudante (por exemplo DP, ou PFE Avançado)
         
+        edicoes = self.get_notas
+
+        for ano_semestre,edicao in edicoes.items():
+            nota_final = 0
+            peso_final = 0
+            for aval, nota, peso in edicao:
+                peso_final += peso
+                nota_final += nota * peso
+            peso_final = round(peso_final, 1)
+            medias[ano_semestre] = {"media": nota_final, "pesos": peso_final}
+
+        return medias        
 
     @property
     def get_peso(self):
