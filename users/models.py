@@ -329,7 +329,10 @@ class Aluno(models.Model):
             val += val_objetivos[obj][0]*val_objetivos[obj][1]
             pes += val_objetivos[obj][1]
         pes = float(pes)
-        val = float(val)/pes
+        if pes != 0:
+            val = float(val)/pes
+        else:
+            val = 0
         
         return val, pes
 

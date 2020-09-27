@@ -509,29 +509,6 @@ def converte_letra(nota):
         return "D"
     return "I"
 
-def get_notas(avalia):
-    """ Faz a média de todas as notas de uma avaliação. """
-    count = 0
-    nota = 0
-    if avalia.objetivo1:
-        nota += converte_conceito(avalia.objetivo1_conceito)
-        count += 1
-    if avalia.objetivo2:
-        nota += converte_conceito(avalia.objetivo2_conceito)
-        count += 1
-    if avalia.objetivo3:
-        nota += converte_conceito(avalia.objetivo3_conceito)
-        count += 1
-    if avalia.objetivo4:
-        nota += converte_conceito(avalia.objetivo4_conceito)
-        count += 1
-    if avalia.objetivo5:
-        nota += converte_conceito(avalia.objetivo5_conceito)
-        count += 1
-    if count:
-        return nota/count
-    else:
-        return 0
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
@@ -567,27 +544,22 @@ def resultado_avaliacoes(request):
         avaliacoes_banca_final = Avaliacao2.objects.filter(projeto=projeto,
                                                           tipo_de_avaliacao=2) # Banca Final
 
-        for avali in avaliacoes_banca_final:
-            nota_banca_final += get_notas(avali)
-        if avaliacoes_banca_final:
-            media = nota_banca_final/len(avaliacoes_banca_final)
-            banca_final.append("{0} ({1:.2f})".format(converte_letra(media), media))
+        nota_banca_final, peso = Aluno.get_banca(None, avaliacoes_banca_final)
+        if peso > 0:
+            banca_final.append("{0} ({1:.2f})".format(converte_letra(nota_banca_final), nota_banca_final))
         else:
             banca_final.append("-")
 
         nota_banca_intermediaria = 0
 
         avaliacoes_banca_intermediaria = Avaliacao2.objects.filter(projeto=projeto,
-                                                                  tipo_de_entrega=1) # Banca Intermediária
+                                                                  tipo_de_avaliacao=1) # Banca Intermediária
 
-        for avali in avaliacoes_banca_intermediaria:
-            nota_banca_intermediaria += get_notas(avali)
-        if avaliacoes_banca_intermediaria:
-            media = nota_banca_intermediaria/len(avaliacoes_banca_intermediaria)
-            banca_intermediaria.append("{0} ({1:.2f})".format(converte_letra(media), media))
+        nota_banca_intermediaria, peso = Aluno.get_banca(None, avaliacoes_banca_intermediaria)
+        if peso > 0:
+            banca_intermediaria.append("{0} ({1:.2f})".format(converte_letra(nota_banca_intermediaria), nota_banca_intermediaria))
         else:
             banca_intermediaria.append("-")
-
 
     mylist = zip(projetos, banca_intermediaria, banca_final)
 
