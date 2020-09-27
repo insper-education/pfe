@@ -219,30 +219,6 @@ def converte_letra(nota):
         return "D"
     return "I"
 
-def get_notas(avalia):
-    """ Faz a média de todas as notas de uma avaliação. """
-    count = 0
-    nota = 0
-    if avalia.objetivo1:
-        nota += converte_conceito(avalia.objetivo1_conceito)
-        count += 1
-    if avalia.objetivo2:
-        nota += converte_conceito(avalia.objetivo2_conceito)
-        count += 1
-    if avalia.objetivo3:
-        nota += converte_conceito(avalia.objetivo3_conceito)
-        count += 1
-    if avalia.objetivo4:
-        nota += converte_conceito(avalia.objetivo4_conceito)
-        count += 1
-    if avalia.objetivo5:
-        nota += converte_conceito(avalia.objetivo5_conceito)
-        count += 1
-    if count:
-        return nota/count
-    else:
-        return 0
-
 class Aluno(models.Model):
     """Classe de usuários com estatus de Aluno."""
     TIPOS_CURSO = (
@@ -380,7 +356,7 @@ class Aluno(models.Model):
                 nota_banca_final, peso = Aluno.get_banca(self, avaliacoes_banca_final)
                 notas.append( ("BF", nota_banca_final, peso/100) )
 
-            # Banca Final
+            # Relatório de Planejamento
             rp = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=10).order_by('momento').last() #(10, 'Relatório de Planejamento')
             if rp:
                 notas.append( ("RP", float(rp.nota), rp.peso/100) )
@@ -407,7 +383,26 @@ class Aluno(models.Model):
             rfi = Avaliacao2.objects.filter(alocacao=alocacao, tipo_de_avaliacao=22) #(22, 'Relatório Final Individual'),
             if rfi:
                 nota_rfi, peso = Aluno.get_banca(self, rfi)
-                notas.append( ("RFI", nota_rfi, peso/100) )        
+                notas.append( ("RFI", nota_rfi, peso/100) )
+
+            ### NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES
+            # Planejamento Primeira Fase
+            ppf = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=50).order_by('momento').last() #(50, 'Planejamento Primeira Fase')
+            if ppf:
+                notas.append( ("PPF", float(ppf.nota), ppf.peso/100) )
+
+            # Avaliação Parcial Individual
+            api = Avaliacao2.objects.filter(alocacao=alocacao, tipo_de_avaliacao=51) # (51, 'Avaliação Parcial Individual'),
+            if api:
+                nota_api, peso = Aluno.get_banca(self, api)
+                notas.append( ("API", nota_api, peso/100) )
+
+            # Avaliação Final Individual
+            afi = Avaliacao2.objects.filter(alocacao=alocacao, tipo_de_avaliacao=52) # (52, 'Avaliação Final Individual'),
+            if afi:
+                nota_afi, peso = Aluno.get_banca(self, afi)
+                notas.append( ("AFI", nota_afi, peso/100) )
+        
         
         return notas
     

@@ -4344,15 +4344,6 @@ def definir_datas(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/projetos/')
-def migracao(request):
-    """temporário"""
-    message = "Nada Feito"
-    return HttpResponse(message)
-
-
-
-@login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def graficos(request):
     """Mostra graficos das evoluções do PFE."""
@@ -4421,3 +4412,12 @@ def graficos(request):
     }
 
     return render(request, 'projetos/graficos.html', context)
+
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def migracao(request):
+    """temporário"""
+    message = "Nada Feito"
+    return HttpResponse(message)
+

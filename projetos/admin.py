@@ -313,8 +313,19 @@ class EncontroAdmin(admin.ModelAdmin):
 @admin.register(Avaliacao2)
 class Avaliacao2Admin(admin.ModelAdmin):
     """Informações das Avaliações2."""
+    list_display = ('momento', 'peso', 'tipo_de_avaliacao', 'avaliador', 'projeto', 'alocacao')
+    ordering = ('momento',)
+    list_filter = ('tipo_de_avaliacao', )
+    search_fields = ['projeto__titulo', 'projeto__titulo_final', 'alocacao__aluno__user__username', ]
+
+
+@admin.register(Observacao)
+class ObservacaoAdmin(admin.ModelAdmin):
+    """Informações das Observações."""
     list_display = ('momento', 'tipo_de_avaliacao', 'avaliador', 'projeto', 'alocacao')
     ordering = ('momento',)
+    list_filter = ('tipo_de_avaliacao', )
+    search_fields = ['projeto__titulo', 'projeto__titulo_final', 'alocacao__aluno__user__username', ]
 
 
 admin.site.register(Cursada)
@@ -323,4 +334,4 @@ admin.site.register(Entidade)       # Para ser preenchido com as entidades estud
 admin.site.register(ObjetivosDeAprendizagem)
 admin.site.register(Certificado)
 
-admin.site.register(Observacao)
+

@@ -9,7 +9,7 @@ import datetime
 from import_export import resources, fields
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao, Alocacao
-from .models import Projeto, Organizacao, Configuracao, Disciplina, Feedback, Avaliacao2, ObjetivosDeAprendizagem
+from .models import Projeto, Organizacao, Configuracao, Disciplina, Feedback, Avaliacao2, ObjetivosDeAprendizagem, Observacao
 
 
 class ProjetosResource(resources.ModelResource):
@@ -82,10 +82,10 @@ def recupera_objetivo(objetivo_str):
     if objetivo_str == "Comunicação" or objetivo_str == "Comunicacao" or objetivo_str == "CO":
         objetivo = ObjetivosDeAprendizagem.objects.get(titulo="Comunicação", avaliacao_grupo=True)
 
-    elif objetivo_str == "Comunicação" or objetivo_str == "Comunicacao" or objetivo_str == "DE":
+    elif objetivo_str == "Design/Empreendedorismo" or objetivo_str == "Design e Empreendedorismo" or objetivo_str == "DE":
         objetivo = ObjetivosDeAprendizagem.objects.get(titulo="Design/Empreendedorismo", avaliacao_grupo=True)
     
-    elif objetivo_str == "Comunicação" or objetivo_str == "Comunicacao" or objetivo_str == "TW":
+    elif objetivo_str == "Trabalho em Equipe" or objetivo_str == "TW":
         objetivo = ObjetivosDeAprendizagem.objects.get(titulo="Trabalho em Equipe", avaliacao_grupo=True)
 
     elif objetivo_str == "Organização" or objetivo_str == "Organizacao" or objetivo_str == "OR":
@@ -99,6 +99,17 @@ def recupera_objetivo(objetivo_str):
 
     return objetivo
 
+
+def le_momento(mnt):
+    """ Para ler o momento das células. """
+    d = int(mnt[-11:-9])
+    m = int(mnt[-9:-7])
+    a = int("20"+mnt[-7:-5]) # bug do milênio
+    h = int(mnt[-4:-2])
+    min = int(mnt[-2:])
+    t = datetime.datetime(a, m, d, h, min) # momento da última atualização
+    return t
+
 class Avaliacoes2Resource(resources.ModelResource):
     """Model Resource para tratar dados de Avaliações."""
     campos = [
@@ -110,6 +121,7 @@ class Avaliacoes2Resource(resources.ModelResource):
         'peso',
         'nota',
         'momento (dd/mm/aa hh:mm)',
+        'observação',
     ]
     def before_import_row(self, row, **kwargs): #forma que arrumei para evitar preencher com o mesmo dado
         estudante_str = row.get('estudante')
@@ -135,29 +147,26 @@ class Avaliacoes2Resource(resources.ModelResource):
             avaliacao = row.get('avaliação')
             
             if "momento" in row:
-                mnt = row.get('momento')
-                
-                d = int(mnt[-11:-9])
-                m = int(mnt[-9:-7])
-                a = int("20"+mnt[-7:-5]) # bug do milênio
-                h = int(mnt[-4:-2])
-                min = int(mnt[-2:])
-                
-                t = datetime.datetime(a, m, d, h, min) # momento da última atualização
+                t = le_momento(row.get('momento'))
+            elif "date_modified" in row: # caso esqueça de alterar o nome na coluna
+                t = le_momento(row.get('date_modified'))
             else:
                 t = datetime.datetime.now()
 
+            tipo_de_avaliacao=0 # padrão, mas que não deve acontecer
+
+            avaliador = projeto.orientador.user # por padrão o avaliador é o orientador
+
             if avaliacao=="RP" or avaliacao=="Relatório de Planejamento" or avaliacao=="Relatorio de Planejamento":
-                avaliador = projeto.orientador.user
-                (aval, _created) = Avaliacao2.objects.get_or_create(projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=10) #(10, 'Relatório de Planejamento'),
+                tipo_de_avaliacao=10  #(10, 'Relatório de Planejamento'),
+                (aval, _created) = Avaliacao2.objects.get_or_create(projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
                 aval.nota = float(row.get('nota'))
 
             elif avaliacao=="RIG" or avaliacao=="Relatório Intermediário Grupo" or avaliacao=="Relatorio Intermediario Grupo":
-                
+                tipo_de_avaliacao=11 # (11, 'Relatório Intermediário de Grupo'),
                 objetivo_str = row.get('objetivo')
                 objetivo = recupera_objetivo(objetivo_str)
-                avaliador = projeto.orientador.user
-                (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=11) # (11, 'Relatório Intermediário de Grupo'),
+                (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
 
                 if 'nota' in row:
                     aval.nota = float(row.get('nota'))
@@ -166,11 +175,10 @@ class Avaliacoes2Resource(resources.ModelResource):
                     aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
             
             elif avaliacao=="RFG" or avaliacao=="Relatório Final Grupo" or avaliacao=="Relatório Final de Grupo" or avaliacao=="Relatorio Final Grupo" or avaliacao=="Relatorio Final de Grupo":
-                
+                tipo_de_avaliacao=12 # (12, 'Relatório Final de Grupo'),
                 objetivo_str = row.get('objetivo')
                 objetivo = recupera_objetivo(objetivo_str)
-                avaliador = projeto.orientador.user
-                (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=12) # (12, 'Relatório Final de Grupo'),
+                (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
                 
                 if 'nota' in row:
                     aval.nota = float(row.get('nota'))
@@ -179,13 +187,11 @@ class Avaliacoes2Resource(resources.ModelResource):
                     aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
 
             elif avaliacao=="RII" or avaliacao=="Relatório Intermediário Individual" or avaliacao=="Relatorio Intermediario Individual":
-                
+                tipo_de_avaliacao=21 #(21, 'Relatório Intermediário Individual'),
                 objetivo_str = row.get('objetivo')
                 objetivo = recupera_objetivo(objetivo_str)
-                avaliador = projeto.orientador.user
-                (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, alocacao = alocacao, avaliador=avaliador, momento=t, tipo_de_avaliacao=21) #(21, 'Relatório Intermediário Individual'),
+                (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, alocacao = alocacao, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
                 
-
                 if 'nota' in row:
                     aval.nota = float(row.get('nota'))
                 else:
@@ -193,11 +199,10 @@ class Avaliacoes2Resource(resources.ModelResource):
                     aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
             
             elif avaliacao=="RFI" or avaliacao=="Relatório Final Individual" or avaliacao=="Relatorio Final Individual":
-
+                tipo_de_avaliacao=22 #(22, 'Relatório Final Individual'),
                 objetivo_str = row.get('objetivo')
                 objetivo = recupera_objetivo(objetivo_str)
-                avaliador = projeto.orientador.user
-                (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, alocacao = alocacao, avaliador=avaliador, momento=t, tipo_de_avaliacao=22) #(22, 'Relatório Final Individual'),
+                (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, alocacao = alocacao, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
                 
                 if 'nota' in row:
                     aval.nota = float(row.get('nota'))
@@ -206,13 +211,13 @@ class Avaliacoes2Resource(resources.ModelResource):
                     aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
 
             elif avaliacao=="BI" or avaliacao=="Banca Intermediária" or avaliacao=="Banca Intermediaria":
-                
+                tipo_de_avaliacao=1 # ( 1, 'Banca Intermediária'),
                 objetivo_str = row.get('objetivo')
                 objetivo = recupera_objetivo(objetivo_str)
 
                 # o certo seria procurar avaliador
-                avaliador = projeto.orientador.user
-                (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=1) # ( 1, 'Banca Intermediária'),
+                
+                (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
 
                 if 'nota' in row:
                     aval.nota = float(row.get('nota'))
@@ -221,13 +226,37 @@ class Avaliacoes2Resource(resources.ModelResource):
                     aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
             
             elif avaliacao=="BF" or avaliacao=="Banca Final":
-                
+                tipo_de_avaliacao=2 # ( 2, 'Banca Final'),
                 objetivo_str = row.get('objetivo')
                 objetivo = recupera_objetivo(objetivo_str)
 
                 # o certo seria procurar avaliador
-                avaliador = projeto.orientador.user
-                (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=2) # ( 2, 'Banca Final'),
+                
+                (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
+                
+                if 'nota' in row:
+                    aval.nota = float(row.get('nota'))
+                else:
+                    desempenho = row.get('desempenho')
+                    aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
+            
+
+    
+    
+            ### NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES
+
+
+
+            elif avaliacao=="PPF" or avaliacao=="Planejamento Primeira Fase":
+                tipo_de_avaliacao=50 # (50, 'Planejamento Primeira Fase'),
+                (aval, _created) = Avaliacao2.objects.get_or_create(projeto=projeto, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
+                aval.nota = float(row.get('nota'))
+
+            elif avaliacao=="API" or avaliacao=="Avaliação Parcial Individual":
+                tipo_de_avaliacao=51 # (51, 'Avaliação Parcial Individual'),
+                objetivo_str = row.get('objetivo')
+                objetivo = recupera_objetivo(objetivo_str)
+                (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, alocacao = alocacao, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
                 
                 if 'nota' in row:
                     aval.nota = float(row.get('nota'))
@@ -235,7 +264,39 @@ class Avaliacoes2Resource(resources.ModelResource):
                     desempenho = row.get('desempenho')
                     aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
 
-            peso = int(float(row.get('peso'))*100)
+            elif avaliacao=="AFI" or avaliacao=="Avaliação Final Individual":
+                tipo_de_avaliacao=52 # (52, 'Avaliação Final Individual'),
+                objetivo_str = row.get('objetivo')
+                objetivo = recupera_objetivo(objetivo_str)
+                (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, alocacao = alocacao, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
+                
+                if 'nota' in row:
+                    aval.nota = float(row.get('nota'))
+                else:
+                    desempenho = row.get('desempenho')
+                    aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
+
+
+            else:
+                print("ERRO, AVALIAÇÃO NÃO RECONHECIDA !!!!")
+
+
+            # CASO A LEITURA TENHA ALGUM FEEDBACK/OBSERVAÇÃO
+            if "observação" in row:
+                obs_str = row.get('observação')
+                if obs_str != "":
+
+                    if "objetivo" in row:
+                        objetivo_str = row.get('objetivo')
+                        objetivo = recupera_objetivo(objetivo_str)
+                    else:
+                        objetivo = None
+
+                    (obs, _created) = Observacao.objects.get_or_create(objetivo=objetivo, projeto=projeto, avaliador=avaliador, alocacao=alocacao, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
+                    obs.observacoes = obs_str
+                    obs.save()
+
+            peso = float(row.get('peso'))*100
             aval.peso = peso
 
             aval.save()

@@ -793,6 +793,9 @@ TIPO_DE_AVALIACAO = ( # não mudar a ordem dos números
     (12, 'Relatório Final de Grupo'),
     (21, 'Relatório Intermediário Individual'),
     (22, 'Relatório Final Individual'),
+    (50, 'Planejamento Primeira Fase'),
+    (51, 'Avaliação Parcial Individual'),
+    (52, 'Avaliação Final Individual'),
 )
 
 class Avaliacao2(models.Model):
@@ -821,10 +824,10 @@ class Avaliacao2(models.Model):
 
     # Para Alocações dos estudantes (caso um aluno reprove ele teria duas alocações)
     alocacao = models.ForeignKey('users.Alocacao', null=True, blank=True,
-                                 on_delete=models.SET_NULL, related_name='projeto_alocado2',
+                                 on_delete=models.SET_NULL, related_name='projeto_alocado_avaliacao',
                                  help_text='relacao de alocação entre projeto e estudante')
 
-    objetivo = models.ForeignKey(ObjetivosDeAprendizagem, related_name='objetivo1_2',
+    objetivo = models.ForeignKey(ObjetivosDeAprendizagem, related_name='objetivo_avaliacao',
                                  on_delete=models.SET_NULL, null=True, blank=True,
                                  help_text='Objetivo de Aprendizagem')
 
@@ -865,6 +868,11 @@ class Observacao(models.Model):
     alocacao = models.ForeignKey('users.Alocacao', null=True, blank=True,
                                  on_delete=models.SET_NULL, related_name='observacao_alocado',
                                  help_text='relacao de alocação entre projeto e estudante')
+
+    # Se houver, usando pois no Blackboard alguns estão dessa forma
+    objetivo = models.ForeignKey(ObjetivosDeAprendizagem, related_name='objetivo_observacao',
+                                 on_delete=models.SET_NULL, null=True, blank=True,
+                                 help_text='Objetivo de Aprendizagem')
 
     observacoes = models.TextField(max_length=512, null=True, blank=True,
                                 help_text='qualquer observação relevante')
