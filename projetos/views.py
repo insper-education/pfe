@@ -3484,7 +3484,7 @@ def mapeamento_estudante_projeto(request, anosemestre):
                 opcoes_aluno.append(opcao)
             else:
                 try:
-                    proj = Projeto.objects.get(proposta=proposta)
+                    proj = Projeto.objects.get(proposta=proposta, ano=ano, semestre=semestre)
                     if alocacaos.filter(projeto=proj):
                         # Cria uma opção temporaria
                         opc = Opcao()
