@@ -2179,6 +2179,8 @@ def proposta_editar(request, slug):
         }
         return render(request, 'generic.html', context=context)
 
+    areas = Area.objects.filter(ativa=True)
+
     context = {
         'liberadas_propostas': liberadas_propostas,
         'full_name' : proposta.nome,
@@ -2197,8 +2199,10 @@ def proposta_editar(request, slug):
         'desc_projeto' : proposta.descricao,
         'expectativas' : proposta.expectativas,
         'areas' : proposta.areas_de_interesse,
+        'areast' : areas,
         'recursos' : proposta.recursos,
         'observacoes' : proposta.observacoes,
+        'proposta' : proposta,
         'edicao' : True,
 
     }

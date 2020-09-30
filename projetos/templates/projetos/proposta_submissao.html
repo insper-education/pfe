@@ -99,12 +99,24 @@
     <br><br>
 
     Áreas/Habilidades envolvidas no projeto<br>
-    {% if edicao and liberadas_propostas %}
-      {% with vencido=True %}
-        {% include "areas.html" %}
+    {% if proposta %}
+      {% with aa=proposta.areadeinteresse_set.all %}
+        {% if edicao and liberadas_propostas %}
+          {% with vencido=True %}
+            {% include "areas.html" %}
+          {% endwith %}
+        {% else %}
+          {% include "areas.html" %}
+        {% endif %}
       {% endwith %}
     {% else %}
-      {% include "areas.html" %}
+      {% if edicao and liberadas_propostas %}
+        {% with vencido=True %}
+          {% include "areas.html" %}
+        {% endwith %}
+      {% else %}
+        {% include "areas.html" %}
+      {% endif %}
     {% endif %}
     <br>
     <br>
