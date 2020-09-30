@@ -33,6 +33,8 @@ from .models import ObjetivosDeAprendizagem, Certificado
 
 from .models import Avaliacao2, Observacao
 
+from .models import Area, AreaDeInteresse
+
 
 def dup_projeto(modeladmin: admin_opt.ModelAdmin, request, queryset):
     """Função abaixo permite duplicar entradas no banco de dados"""
@@ -333,5 +335,7 @@ admin.site.register(Recomendada)
 admin.site.register(Entidade)       # Para ser preenchido com as entidades estudantis
 admin.site.register(ObjetivosDeAprendizagem)
 admin.site.register(Certificado)
+admin.site.register(Area)
+admin.site.register(AreaDeInteresse)
 
 

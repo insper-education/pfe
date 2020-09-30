@@ -50,76 +50,16 @@ def create_message(aluno, ano, semestre):
     message += '&nbsp;&nbsp;Suas áreas de interesse são:<br>\n'
     message += '<ul>'
 
-    if aluno.areas_de_interesse.inovacao_social:
-        message += "<li>Inovação Social</li>\n"
-    if aluno.areas_de_interesse.ciencia_dos_dados:
-        message += "<li>Ciência de Dados</li>\n"
-    if aluno.areas_de_interesse.modelagem_3D:
-        message += "<li>Modelagem 3D</li>\n"
-    if aluno.areas_de_interesse.manufatura:
-        message += "<li>Manufatura</li>\n"
-    if aluno.areas_de_interesse.resistencia_dos_materiais:
-        message += "<li>Resistência dos Materiais</li>\n"
-    if aluno.areas_de_interesse.modelagem_de_sistemas:
-        message += "<li>Modelagem de Sistemas</li>\n"
-    if aluno.areas_de_interesse.controle_e_automacao:
-        message += "<li>Controle e Automação</li>\n"
-    if aluno.areas_de_interesse.termodinamica:
-        message += "<li>Termodinâmica</li>\n"
-    if aluno.areas_de_interesse.fluidodinamica:
-        message += "<li>Fluidodinâmica</li>\n"
-    if aluno.areas_de_interesse.eletronica_digital:
-        message += "<li>Eletrônica Digital</li>\n"
-    if aluno.areas_de_interesse.programacao:
-        message += "<li>Programação</li>\n"
-    if aluno.areas_de_interesse.inteligencia_artificial:
-        message += "<li>Inteligência Artificial</li>\n"
-    if aluno.areas_de_interesse.banco_de_dados:
-        message += "<li>Banco de Dados</li>\n"
-    if aluno.areas_de_interesse.computacao_em_nuvem:
-        message += "<li>Computação em Nuvem</li>\n"
-    if aluno.areas_de_interesse.visao_computacional:
-        message += "<li>Visão Computacional</li>\n"
-    if aluno.areas_de_interesse.computacao_de_alto_desempenho:
-        message += "<li>Computação de Alto Desempenho</li>\n"
-    if aluno.areas_de_interesse.robotica:
-        message += "<li>Robótica</li>\n"
-    if aluno.areas_de_interesse.realidade_virtual_aumentada:
-        message += "<li>Realidade Virtual e Aumentada</li>\n"
-    if aluno.areas_de_interesse.protocolos_de_comunicacao:
-        message += "<li>Protocolos de Comunicação</li>\n"
-    if aluno.areas_de_interesse.eficiencia_energetica:
-        message += "<li>Eficiência Energética</li>\n"
-    if aluno.areas_de_interesse.administracao_economia_financas:
-        message += "<li>Administração, Economia e Finanças</li>\n"
-
-    alguma = aluno.areas_de_interesse.inovacao_social or \
-             aluno.areas_de_interesse.ciencia_dos_dados or \
-             aluno.areas_de_interesse.modelagem_3D or \
-             aluno.areas_de_interesse.manufatura or \
-             aluno.areas_de_interesse.resistencia_dos_materiais or \
-             aluno.areas_de_interesse.modelagem_de_sistemas or \
-             aluno.areas_de_interesse.controle_e_automacao or \
-             aluno.areas_de_interesse.termodinamica or \
-             aluno.areas_de_interesse.fluidodinamica or \
-             aluno.areas_de_interesse.eletronica_digital or \
-             aluno.areas_de_interesse.programacao or \
-             aluno.areas_de_interesse.inteligencia_artificial or \
-             aluno.areas_de_interesse.banco_de_dados or \
-             aluno.areas_de_interesse.computacao_em_nuvem or \
-             aluno.areas_de_interesse.visao_computacional or \
-             aluno.areas_de_interesse.computacao_de_alto_desempenho or \
-             aluno.areas_de_interesse.robotica or \
-             aluno.areas_de_interesse.realidade_virtual_aumentada or \
-             aluno.areas_de_interesse.protocolos_de_comunicacao or \
-             aluno.areas_de_interesse.eficiencia_energetica or \
-             aluno.areas_de_interesse.administracao_economia_financas
-
-    if not alguma:
+    areas = AreaDeInteresse.objects.filter(usuario=estudante.user).exclude(area=None)
+    if areas:
+        for area in areas:
+            message += "<li>"+area.area.titulo+"</li>\n"
+    else:
         message += "<br>\nNENHUMA ÁREA DE INTERESSE SELECIONADA!<br>\n<br>\n"
 
-    if aluno.areas_de_interesse.outras:
-        message += "Outras: <u>"+aluno.areas_de_interesse.outras+"</u><br>\n"
+    if AreaDeInteresse.objects.filter(area=None, usuario=estudante.user).exists():
+        outras = AreaDeInteresse.objects.get(area=None, usuario=estudante.user).outras
+        message += "Outras: <u>"+outras+"</u><br>\n"
 
     message += '</ul>'
     message += '<br>\n'

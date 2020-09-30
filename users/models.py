@@ -14,10 +14,10 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2, ObjetivosDeAprendizagem
+from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2, ObjetivosDeAprendizagem, Area
 
 
-####   PARA PORTAR AS AREAS DE INTERESSE DE ALUNOS PARA CÁ, E USAR NO PROJETO  #####
+#### ANTIGO SENDO REMOVIDO ####
 #areas de interesse
 class Areas(models.Model):
     """Áreas de interesse dos projetos de engenharia."""
@@ -163,7 +163,8 @@ class Professor(models.Model):
                                  choices=TIPO_DEDICACAO, null=True, blank=True,
                                  help_text='Tipo de dedicação do professor')
 
-    areas = models.TextField(max_length=500, blank=True)
+    #Não sendo usado
+    #areas = models.TextField(max_length=500, blank=True)
     website = models.URLField(max_length=250, null=True, blank=True)
     lattes = models.URLField(max_length=250, null=True, blank=True)
 

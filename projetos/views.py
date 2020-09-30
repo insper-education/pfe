@@ -45,7 +45,7 @@ from .models import Projeto, Proposta, Organizacao, Configuracao, Evento, Anotac
 from .models import Feedback, Certificado
 from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade, Conexao
 #from .models import Disciplina
-from .models import ObjetivosDeAprendizagem, Avaliacao2, Observacao
+from .models import ObjetivosDeAprendizagem, Avaliacao2, Observacao, Area, AreaDeInteresse
 
 from .models import get_upload_path
 
@@ -1078,6 +1078,9 @@ def proposta_completa(request, primakey):
                 sem_opcao.append(alocacao.aluno)
 
     opcoes = Opcao.objects.filter(proposta=proposta)
+
+    areas = Area.objects.filter(ativa=True)
+
     context = {
         "configuracao": configuracao,
         "proposta": proposta,
@@ -1087,76 +1090,37 @@ def proposta_completa(request, primakey):
         "comite": membros_comite,
         "estudantes": estudantes,
         "sem_opcao": sem_opcao,
+        'areast': areas,
     }
     return render(request, 'projetos/proposta_completa.html', context=context)
 
-def get_areas(entrada):
+
+def get_areas_estudantes(alunos):
     """Retorna dicionário com as áreas de interesse da lista de entrada."""
 
     areaspfe = {}
 
-    areaspfe['Inovação Social'] =\
-        entrada.filter(areas_de_interesse__inovacao_social=True).count()
+    usuarios = []
+    for aluno in alunos:
+        usuarios.append(aluno.user)
 
-    areaspfe['Ciência dos Dados'] =\
-        entrada.filter(areas_de_interesse__ciencia_dos_dados=True).count()
+    areas = Area.objects.filter(ativa=True)
+    for area in areas:
+        count = AreaDeInteresse.objects.filter(usuario__in=usuarios, area=area).count()
+        areaspfe[area.titulo] = count
 
-    areaspfe['Modelagem 3D'] =\
-        entrada.filter(areas_de_interesse__modelagem_3D=True).count()
+    return areaspfe
 
-    areaspfe['Manufatura'] =\
-        entrada.filter(areas_de_interesse__manufatura=True).count()
 
-    areaspfe['Resistência dos Materiais'] =\
-        entrada.filter(areas_de_interesse__resistencia_dos_materiais=True).count()
+def get_areas_propostas(propostas):
+    """Retorna dicionário com as áreas de interesse da lista de entrada."""
 
-    areaspfe['Modelagem de Sistemas'] =\
-        entrada.filter(areas_de_interesse__modelagem_de_sistemas=True).count()
+    areaspfe = {}
 
-    areaspfe['Controle e Automação'] =\
-        entrada.filter(areas_de_interesse__controle_e_automacao=True).count()
-
-    areaspfe['Termodinâmica'] =\
-        entrada.filter(areas_de_interesse__termodinamica=True).count()
-
-    areaspfe['Fluidodinâmica'] =\
-        entrada.filter(areas_de_interesse__fluidodinamica=True).count()
-
-    areaspfe['Eletrônica Digital'] =\
-        entrada.filter(areas_de_interesse__eletronica_digital=True).count()
-
-    areaspfe['Programação'] =\
-        entrada.filter(areas_de_interesse__programacao=True).count()
-
-    areaspfe['Inteligência Artificial'] =\
-        entrada.filter(areas_de_interesse__inteligencia_artificial=True).count()
-
-    areaspfe['Banco de Bados'] =\
-        entrada.filter(areas_de_interesse__banco_de_dados=True).count()
-
-    areaspfe['Computação em Nuvem'] =\
-        entrada.filter(areas_de_interesse__computacao_em_nuvem=True).count()
-
-    areaspfe['Visão Computacional'] =\
-        entrada.filter(areas_de_interesse__visao_computacional=True).count()
-
-    areaspfe['Computação de Alto Desempenho'] =\
-        entrada.filter(areas_de_interesse__computacao_de_alto_desempenho=True).count()
-
-    areaspfe['Robótica'] =\
-        entrada.filter(areas_de_interesse__robotica=True).count()
-
-    areaspfe['Realidade Virtual e Aumentada'] =\
-        entrada.filter(areas_de_interesse__realidade_virtual_aumentada=True).count()
-
-    areaspfe['Protocolos de Comunicação'] =\
-        entrada.filter(areas_de_interesse__protocolos_de_comunicacao=True).count()
-
-    areaspfe['Eficiencia Energética'] =\
-        entrada.filter(areas_de_interesse__eficiencia_energetica=True).count()
-
-    areaspfe['Administração, Economia e Finanças'] =\
-        entrada.filter(areas_de_interesse__administracao_economia_financas=True).count()
+    areas = Area.objects.filter(ativa=True)
+    for area in areas:
+        count = AreaDeInteresse.objects.filter(proposta__in=propostas, area=area).count()
+        areaspfe[area.titulo] = count
 
     return areaspfe
 
@@ -1180,7 +1144,7 @@ def distribuicao_areas(request, tipo):
                 return HttpResponse("Algum erro não identificado.", status=401)
 
         context = {
-            'areaspfe': get_areas(alunos),
+            'areaspfe': get_areas_estudantes(alunos),
             'tipo': tipo,
             'periodo': periodo,
         }
@@ -1200,7 +1164,7 @@ def distribuicao_areas(request, tipo):
                 return HttpResponse("Algum erro não identificado.", status=401)
 
         context = {
-            'areaspfe': get_areas(propostas),
+            'areaspfe': get_areas_propostas(propostas),
             'tipo': tipo,
             'periodo': periodo,
         }
@@ -1223,7 +1187,7 @@ def distribuicao_areas(request, tipo):
         propostas_projetos = Proposta.objects.filter(id__in=propostas)
 
         context = {
-            'areaspfe': get_areas(propostas_projetos),
+            'areaspfe': get_areas_propostas(propostas_projetos),
             'tipo': tipo,
             'periodo': periodo,
         }
@@ -1841,6 +1805,7 @@ def submissao(request):
     return render(request, 'projetos/submissao.html', context)
 
 
+#### CODIGO OBSOLETO, NAO USAR MAIS ######
 def cria_areas(request, areas=None):
     """Cria um objeto Areas e preenche ele."""
     check_values = request.POST.getlist('selection')
@@ -1869,65 +1834,69 @@ def cria_areas(request, areas=None):
     areas.protocolos_de_comunicacao = "protocolos_de_comunicacao" in check_values
     areas.eficiencia_energetica = "eficiencia_energetica" in check_values
     areas.administracao_economia_financas = "administracao_economia_financas" in check_values
-
     outras = request.POST.get("outras", "")
     if outras != "":
         areas.outras = request.POST.get("outras", "")
-
     areas.save()
-
     return areas
+#############################################
 
-def lista_areas(areas):
+def cria_area_estudante(request, estudante):
+    """Cria um objeto Areas e preenche ele."""
+    check_values = request.POST.getlist('selection')
+
+    todas_areas = Area.objects.filter(ativa=True)
+    for area in todas_areas:
+        if area.titulo in check_values:
+            if not AreaDeInteresse.objects.filter(area=area, usuario=estudante.user).exists():
+                AreaDeInteresse.create_estudante_area(estudante, area).save()
+        else:
+            if AreaDeInteresse.objects.filter(area=area, usuario=estudante.user).exists():
+                AreaDeInteresse.objects.get(area=area, usuario=estudante.user).delete()
+
+    outras = request.POST.get("outras", "")
+    if outras != "":
+        (outra, _created) = AreaDeInteresse.objects.get_or_create(area=None, usuario=estudante.user)
+        outra.outras = request.POST.get("outras", "")
+        outra.save()
+    else:
+        if AreaDeInteresse.objects.filter(area=None, usuario=estudante.user).exists():
+            AreaDeInteresse.objects.get(area=None, usuario=estudante.user).delete()
+
+def cria_area_proposta(request, proposta):
+    """Cria um objeto Areas e preenche ele."""
+    check_values = request.POST.getlist('selection')
+
+    todas_areas = Area.objects.filter(ativa=True)
+    for area in todas_areas:
+        if area.titulo in check_values:
+            if not AreaDeInteresse.objects.filter(area=area, proposta=proposta).exists():
+                AreaDeInteresse.create_proposta_area(proposta, area).save()
+        else:
+            if AreaDeInteresse.objects.filter(area=area, proposta=proposta).exists():
+                AreaDeInteresse.objects.get(area=area, proposta=proposta).delete()
+
+    outras = request.POST.get("outras", "")
+    if outras != "":
+        (outra, _created) = AreaDeInteresse.objects.get_or_create(area=None, proposta=proposta)
+        outra.outras = request.POST.get("outras", "")
+        outra.save()
+    else:
+        if AreaDeInteresse.objects.filter(area=None, proposta=proposta).exists():
+            AreaDeInteresse.objects.get(area=None, proposta=proposta).delete()
+
+def lista_areas(proposta):
     """Lista áreas de um objeto Areas."""
 
     mensagem = ""
 
-    if areas.inovacao_social:
-        mensagem += "&bull; Inovacao Social<br>\n"
-    if areas.ciencia_dos_dados:
-        mensagem += "&bull; Ciência dos Dados<br>\n"
-    if areas.modelagem_3D:
-        mensagem += "&bull; Modelagem 3D<br>\n"
-    if areas.manufatura:
-        mensagem += "&bull; Manufatura<br>\n"
-    if areas.resistencia_dos_materiais:
-        mensagem += "&bull; Resistência dos Materiais<br>\n"
-    if areas.modelagem_de_sistemas:
-        mensagem += "&bull; Modelagem de Sistemas<br>\n"
-    if areas.controle_e_automacao:
-        mensagem += "&bull; Controle e Automação<br>\n"
-    if areas.termodinamica:
-        mensagem += "&bull; Termodinâmica<br>\n"
-    if areas.fluidodinamica:
-        mensagem += "&bull; Fluidodinâmica<br>\n"
-    if areas.eletronica_digital:
-        mensagem += "&bull; Eletrônica Digital<br>\n"
-    if areas.programacao:
-        mensagem += "&bull; Programacao<br>\n"
-    if areas.inteligencia_artificial:
-        mensagem += "&bull; Inteligência Artificial<br>\n"
-    if areas.banco_de_dados:
-        mensagem += "&bull; Banco de Dados<br>\n"
-    if areas.computacao_em_nuvem:
-        mensagem += "&bull; Computação em Nuvem<br>\n"
-    if areas.visao_computacional:
-        mensagem += "&bull; Visão Computacional<br>\n"
-    if areas.computacao_de_alto_desempenho:
-        mensagem += "&bull; Computação de Alto Desempenho<br>\n"
-    if areas.robotica:
-        mensagem += "&bull; Robótica<br>\n"
-    if areas.realidade_virtual_aumentada:
-        mensagem += "&bull; Realidade Virtual e Aumentada<br>\n"
-    if areas.protocolos_de_comunicacao:
-        mensagem += "&bull; Protocolos de Comunicação<br>\n"
-    if areas.eficiencia_energetica:
-        mensagem += "&bull; Eficiência Energética<br>\n"
-    if areas.administracao_economia_financas:
-        mensagem += "&bull; Administração, Economia e Finanças<br>\n"
+    areas = AreaDeInteresse.objects.filter(proposta=proposta).exclude(area=None)
+    for area in areas:
+        mensagem += "&bull; "+area.area.titulo+"<br>\n"
 
-    if areas.outras and areas.outras != "":
-        mensagem += "Outras: " + areas.outras + "<br>\n"
+    if AreaDeInteresse.objects.filter(area=None, proposta=proposta).exists():
+        outras = AreaDeInteresse.objects.get(area=None, proposta=proposta).outras
+        mensagem += "Outras: " + outras + "<br>\n"
 
     return mensagem
 
@@ -1966,9 +1935,10 @@ def preenche_proposta(request, proposta):
     proposta.recursos = request.POST.get("recursos", "")
     proposta.observacoes = request.POST.get("observacoes", "")
 
-    proposta.areas_de_interesse = cria_areas(request)
-
+    #proposta.areas_de_interesse = cria_areas(request)
     proposta.save()
+
+    cria_area_proposta(request, proposta)
 
     return proposta
 
@@ -2017,7 +1987,7 @@ def envia_proposta(proposta):
     message += "\n"
 
     message += "<b>Áreas/Habilidades envolvidas no projeto:</b>\n"
-    message += lista_areas(proposta.areas_de_interesse)
+    message += lista_areas(proposta)
 
     message += "\n\n"
     message += "<b>Recursos a serem disponibilizados aos alunos:</b>\n {0}\n\n".\
@@ -2125,6 +2095,8 @@ def proposta_submissao(request):
         }
         return render(request, 'generic.html', context=context)
 
+    areas = Area.objects.filter(ativa=True)
+
     context = {
         'full_name' : full_name,
         'email' : email_sub,
@@ -2141,7 +2113,7 @@ def proposta_submissao(request):
         'titulo' : "",
         'desc_projeto' : "",
         'expectativas' : "",
-        'areas' : None,
+        'areast' : areas,
         'recursos' : "",
         'observacoes' : "",
         'edicao' : False,
@@ -4390,6 +4362,127 @@ def graficos(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def migracao(request):
     """temporário"""
-    message = "Nada Feito"
+
+    if len(Area.objects.all()) < 2:
+        Area.create("Inovação Social").save()
+        Area.create("Ciência dos Dados").save()
+        Area.create("Modelagem 3D").save()
+        Area.create("Manufatura").save()
+        Area.create("Resistência dos Materiais").save()
+        Area.create("Modelagem de Sistemas").save()
+        Area.create("Controle e Automação").save()
+        Area.create("Termodinâmica").save()
+        Area.create("Fluidodinâmica").save()
+        Area.create("Eletrônica Digital").save()
+        Area.create("Programação").save()
+        Area.create("Inteligência Artificial").save()
+        Area.create("Computação em Nuvem").save()
+        Area.create("Banco de Dados").save()
+        Area.create("Visão Computacional").save()
+        Area.create("Computação de Alto Desempenho").save()
+        Area.create("Robótica").save()
+        Area.create("Realidade Virtual/Aumentada").save()
+        Area.create("Protocolos de Comunicação").save()
+        Area.create("Eficiência Energética").save()
+        Area.create("Administração, Economia e Finanças").save()
+
+    if len(AreaDeInteresse.objects.all()) < 2:
+        alunos = Aluno.objects.all()
+        for aluno in alunos:
+            if aluno.areas_de_interesse.inovacao_social:
+                AreaDeInteresse.create_estudante_area(aluno, Area.objects.get(titulo="Inovação Social")).save()
+            if aluno.areas_de_interesse.ciencia_dos_dados:
+                AreaDeInteresse.create_estudante_area(aluno, Area.objects.get(titulo="Ciência dos Dados")).save()
+            if aluno.areas_de_interesse.modelagem_3D:
+                AreaDeInteresse.create_estudante_area(aluno, Area.objects.get(titulo="Modelagem 3D")).save()
+            if aluno.areas_de_interesse.manufatura:
+                AreaDeInteresse.create_estudante_area(aluno, Area.objects.get(titulo="Manufatura")).save()
+            if aluno.areas_de_interesse.resistencia_dos_materiais:
+                AreaDeInteresse.create_estudante_area(aluno, Area.objects.get(titulo="Resistência dos Materiais")).save()
+            if aluno.areas_de_interesse.modelagem_de_sistemas:
+                AreaDeInteresse.create_estudante_area(aluno, Area.objects.get(titulo="Modelagem de Sistemas")).save()
+            if aluno.areas_de_interesse.controle_e_automacao:
+                AreaDeInteresse.create_estudante_area(aluno, Area.objects.get(titulo="Controle e Automação")).save()
+            if aluno.areas_de_interesse.termodinamica:
+                AreaDeInteresse.create_estudante_area(aluno, Area.objects.get(titulo="Termodinâmica")).save()
+            if aluno.areas_de_interesse.fluidodinamica:
+                AreaDeInteresse.create_estudante_area(aluno, Area.objects.get(titulo="Fluidodinâmica")).save()
+            if aluno.areas_de_interesse.eletronica_digital:
+                AreaDeInteresse.create_estudante_area(aluno, Area.objects.get(titulo="Eletrônica Digital")).save()
+            if aluno.areas_de_interesse.programacao:
+                AreaDeInteresse.create_estudante_area(aluno, Area.objects.get(titulo="Programação")).save()
+            if aluno.areas_de_interesse.inteligencia_artificial:
+                AreaDeInteresse.create_estudante_area(aluno, Area.objects.get(titulo="Inteligência Artificial")).save()
+            if aluno.areas_de_interesse.banco_de_dados:
+                AreaDeInteresse.create_estudante_area(aluno, Area.objects.get(titulo="Banco de Dados")).save()
+            if aluno.areas_de_interesse.computacao_em_nuvem:
+                AreaDeInteresse.create_estudante_area(aluno, Area.objects.get(titulo="Computação em Nuvem")).save()
+            if aluno.areas_de_interesse.visao_computacional:
+                AreaDeInteresse.create_estudante_area(aluno, Area.objects.get(titulo="Visão Computacional")).save()
+            if aluno.areas_de_interesse.computacao_de_alto_desempenho:
+                AreaDeInteresse.create_estudante_area(aluno, Area.objects.get(titulo="Computação de Alto Desempenho")).save()
+            if aluno.areas_de_interesse.robotica:
+                AreaDeInteresse.create_estudante_area(aluno, Area.objects.get(titulo="Robótica")).save()
+            if aluno.areas_de_interesse.realidade_virtual_aumentada:
+                AreaDeInteresse.create_estudante_area(aluno, Area.objects.get(titulo="Realidade Virtual/Aumentada")).save()
+            if aluno.areas_de_interesse.protocolos_de_comunicacao:
+                AreaDeInteresse.create_estudante_area(aluno, Area.objects.get(titulo="Protocolos de Comunicação")).save()
+            if aluno.areas_de_interesse.eficiencia_energetica:
+                AreaDeInteresse.create_estudante_area(aluno, Area.objects.get(titulo="Eficiência Energética")).save()
+            if aluno.areas_de_interesse.administracao_economia_financas:
+                AreaDeInteresse.create_estudante_area(aluno, Area.objects.get(titulo="Administração, Economia e Finanças")).save()
+            if aluno.areas_de_interesse.outras:
+                AreaDeInteresse.create_estudante_outras(aluno, aluno.areas_de_interesse.outras).save()
+
+        propostas = Proposta.objects.all()
+        for proposta in propostas:
+            if proposta.areas_de_interesse:
+                if proposta.areas_de_interesse.inovacao_social:
+                    AreaDeInteresse.create_proposta_area(proposta, Area.objects.get(titulo="Inovação Social")).save()
+                if proposta.areas_de_interesse.ciencia_dos_dados:
+                    AreaDeInteresse.create_proposta_area(proposta, Area.objects.get(titulo="Ciência dos Dados")).save()
+                if proposta.areas_de_interesse.modelagem_3D:
+                    AreaDeInteresse.create_proposta_area(proposta, Area.objects.get(titulo="Modelagem 3D")).save()
+                if proposta.areas_de_interesse.manufatura:
+                    AreaDeInteresse.create_proposta_area(proposta, Area.objects.get(titulo="Manufatura")).save()
+                if proposta.areas_de_interesse.resistencia_dos_materiais:
+                    AreaDeInteresse.create_proposta_area(proposta, Area.objects.get(titulo="Resistência dos Materiais")).save()
+                if proposta.areas_de_interesse.modelagem_de_sistemas:
+                    AreaDeInteresse.create_proposta_area(proposta, Area.objects.get(titulo="Modelagem de Sistemas")).save()
+                if proposta.areas_de_interesse.controle_e_automacao:
+                    AreaDeInteresse.create_proposta_area(proposta, Area.objects.get(titulo="Controle e Automação")).save()
+                if proposta.areas_de_interesse.termodinamica:
+                    AreaDeInteresse.create_proposta_area(proposta, Area.objects.get(titulo="Termodinâmica")).save()
+                if proposta.areas_de_interesse.fluidodinamica:
+                    AreaDeInteresse.create_proposta_area(proposta, Area.objects.get(titulo="Fluidodinâmica")).save()
+                if proposta.areas_de_interesse.eletronica_digital:
+                    AreaDeInteresse.create_proposta_area(proposta, Area.objects.get(titulo="Eletrônica Digital")).save()
+                if proposta.areas_de_interesse.programacao:
+                    AreaDeInteresse.create_proposta_area(proposta, Area.objects.get(titulo="Programação")).save()
+                if proposta.areas_de_interesse.inteligencia_artificial:
+                    AreaDeInteresse.create_proposta_area(proposta, Area.objects.get(titulo="Inteligência Artificial")).save()
+                if proposta.areas_de_interesse.banco_de_dados:
+                    AreaDeInteresse.create_proposta_area(proposta, Area.objects.get(titulo="Banco de Dados")).save()
+                if proposta.areas_de_interesse.computacao_em_nuvem:
+                    AreaDeInteresse.create_proposta_area(proposta, Area.objects.get(titulo="Computação em Nuvem")).save()
+                if proposta.areas_de_interesse.visao_computacional:
+                    AreaDeInteresse.create_proposta_area(proposta, Area.objects.get(titulo="Visão Computacional")).save()
+                if proposta.areas_de_interesse.computacao_de_alto_desempenho:
+                    AreaDeInteresse.create_proposta_area(proposta, Area.objects.get(titulo="Computação de Alto Desempenho")).save()
+                if proposta.areas_de_interesse.robotica:
+                    AreaDeInteresse.create_proposta_area(proposta, Area.objects.get(titulo="Robótica")).save()
+                if proposta.areas_de_interesse.realidade_virtual_aumentada:
+                    AreaDeInteresse.create_proposta_area(proposta, Area.objects.get(titulo="Realidade Virtual/Aumentada")).save()
+                if proposta.areas_de_interesse.protocolos_de_comunicacao:
+                    AreaDeInteresse.create_proposta_area(proposta, Area.objects.get(titulo="Protocolos de Comunicação")).save()
+                if proposta.areas_de_interesse.eficiencia_energetica:
+                    AreaDeInteresse.create_proposta_area(proposta, Area.objects.get(titulo="Eficiência Energética")).save()
+                if proposta.areas_de_interesse.administracao_economia_financas:
+                    AreaDeInteresse.create_proposta_area(proposta, Area.objects.get(titulo="Administração, Economia e Finanças")).save()
+                if proposta.areas_de_interesse.outras:
+                    AreaDeInteresse.create_proposta_outras(proposta, proposta.areas_de_interesse.outras).save()
+
+
+    message = "Tudo Feito"
     return HttpResponse(message)
 

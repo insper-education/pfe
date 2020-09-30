@@ -191,121 +191,14 @@
     {% endif %}
   {% endfor %}
 
-  {% if proposta.areas_de_interesse %}
-    <br><hr>
-    <h3>Áreas de Interesse</h3>
-    <table>
-    <tr><td>&nbsp;<input disabled type="checkbox" name="selection" value="inovacao_social" 
-            {% if proposta.areas_de_interesse.inovacao_social %}checked{% endif %}>&nbsp;
-        </td>
-        <td>Inovação Social</td>
-    </tr>
-    <tr><td>&nbsp;<input disabled type="checkbox" name="selection" value="ciencia_dos_dados" 
-            {% if proposta.areas_de_interesse.ciencia_dos_dados %}checked{% endif %}>&nbsp;
-        </td>
-        <td>Ciência dos Dados</td>
-    </tr>
-    <tr><td>&nbsp;<input disabled type="checkbox" name="selection" value="modelagem_3D" 
-            {% if proposta.areas_de_interesse.modelagem_3D %}checked{% endif %}>&nbsp;
-        </td>
-        <td>Modelagem 3D</td>
-    </tr>      
-    <tr><td>&nbsp;<input disabled type="checkbox" name="selection" value="manufatura" 
-            {% if proposta.areas_de_interesse.manufatura %}checked{% endif %}>&nbsp;
-        </td>
-        <td>Manufatura</td>
-    </tr>
-    <tr><td>&nbsp;<input disabled type="checkbox" name="selection" value="resistencia_dos_materiais" 
-            {% if proposta.areas_de_interesse.resistencia_dos_materiais %}checked{% endif %}>&nbsp;
-        </td>
-        <td>Resistência dos Materiais</td>
-    </tr>
-    <tr><td>&nbsp;<input disabled type="checkbox" name="selection" value="modelagem_de_sistemas" 
-            {% if proposta.areas_de_interesse.modelagem_de_sistemas %}checked{% endif %}>&nbsp;
-        </td>
-        <td>Modelagem de Sistemas</td>
-    </tr>
-    <tr><td>&nbsp;<input disabled type="checkbox" name="selection" value="controle_e_automacao" 
-            {% if proposta.areas_de_interesse.controle_e_automacao %}checked{% endif %}>&nbsp;
-        </td>
-        <td>Controle e Automação</td>
-    </tr>      
-    <tr><td>&nbsp;<input disabled type="checkbox" name="selection" value="termodinamica" 
-            {% if proposta.areas_de_interesse.termodinamica %}checked{% endif %}>&nbsp;
-        </td>
-        <td>Termodinâmica</td>
-    </tr>
-    <tr><td>&nbsp;<input disabled type="checkbox" name="selection" value="fluidodinamica" 
-            {% if proposta.areas_de_interesse.fluidodinamica %}checked{% endif %}>&nbsp;
-        </td>
-        <td>Fluidodinâmica</td>
-    </tr>
-    <tr><td>&nbsp;<input disabled type="checkbox" name="selection" value="eletronica_digital" 
-            {% if proposta.areas_de_interesse.eletronica_digital %}checked{% endif %}>&nbsp;
-        </td>
-        <td>Eletrônica Digital</td>
-    </tr>
-    <tr><td>&nbsp;<input disabled type="checkbox" name="selection" value="programacao" 
-            {% if proposta.areas_de_interesse.programacao %}checked{% endif %}>&nbsp;
-        </td>
-        <td>Programação</td>
-    </tr>      
-    <tr><td>&nbsp;<input disabled type="checkbox" name="selection" value="inteligencia_artificial" 
-            {% if proposta.areas_de_interesse.inteligencia_artificial %}checked{% endif %}>&nbsp;
-        </td>
-        <td>Inteligência Artificial</td>
-    </tr>
-    <tr><td>&nbsp;<input disabled type="checkbox" name="selection" value="computacao_em_nuvem" 
-            {% if proposta.areas_de_interesse.computacao_em_nuvem %}checked{% endif %}>&nbsp;
-        </td>
-        <td>Computação em Nuvem</td>
-    </tr>
-    <tr><td>&nbsp;<input disabled type="checkbox" name="selection" value="banco_de_dados" 
-            {% if proposta.areas_de_interesse.banco_de_dados %}checked{% endif %}>&nbsp;
-        </td>
-        <td>Banco de Dados</td>
-    </tr>
-    <tr><td>&nbsp;<input disabled type="checkbox" name="selection" value="visao_computacional" 
-            {% if proposta.areas_de_interesse.visao_computacional %}checked{% endif %}>&nbsp;
-        </td>
-        <td>Visão Computacional</td>
-    </tr>      
-    <tr><td>&nbsp;<input disabled type="checkbox" name="selection" value="computacao_de_alto_desempenho" 
-            {% if proposta.areas_de_interesse.computacao_de_alto_desempenho %}checked{% endif %}>&nbsp;
-        </td>
-        <td>Computação de Alto Desempenho</td>
-    </tr>
-    <tr><td>&nbsp;<input disabled type="checkbox" name="selection" value="robotica" 
-            {% if proposta.areas_de_interesse.robotica %}checked{% endif %}>&nbsp;
-        </td>
-        <td>Robótica</td>
-    </tr>
-    <tr><td>&nbsp;<input disabled type="checkbox" name="selection" value="realidade_virtual_aumentada" 
-            {% if proposta.areas_de_interesse.realidade_virtual_aumentada %}checked{% endif %}>&nbsp;
-        </td>
-        <td>Realidade Virtual/Aumentada</td>
-    </tr>
-    <tr><td>&nbsp;<input disabled type="checkbox" name="selection" value="protocolos_de_comunicacao" 
-            {% if proposta.areas_de_interesse.protocolos_de_comunicacao %}checked{% endif %}>&nbsp;
-        </td>
-        <td>Protocolos de Comunicação</td>
-    </tr>      
-    <tr><td>&nbsp;<input disabled type="checkbox" name="selection" value="eficiencia_energetica" 
-            {% if proposta.areas_de_interesse.eficiencia_energetica %}checked{% endif %}>&nbsp;
-        </td>
-        <td>Eficiência Energética</td>
-    </tr>
-    <tr><td>&nbsp;<input disabled type="checkbox" name="selection" value="administracao_economia_financas" 
-            {% if proposta.areas_de_interesse.administracao_economia_financas %}checked{% endif %}>&nbsp;
-        </td>
-        <td>Administração, Economia e Finanças</td>
-    </tr>
-    </table>
-    {% if proposta.areas_de_interesse.outras %}
-      Outras: {{proposta.areas_de_interesse.outras}}
-    {% endif %}
-  {% endif %}
-
+  <hr>
+  <h3>Áreas de Interesse</h3>
+  {% with aa=proposta.areadeinteresse_set.all %}
+    {% with vencido=True %}
+      {% include "areas.html" %}
+    {% endwith %}
+  {% endwith %}
+  <br>
 
   {% if proposta.recomendada_set.all %}
   <br><hr>

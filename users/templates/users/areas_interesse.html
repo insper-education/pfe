@@ -14,7 +14,9 @@
     <h3>Áreas de Interesse</h3>
     <form method="post">
         {% csrf_token %}
-        {% include "areas.html"%}
+        {% with aa=aluno.user.areadeinteresse_set.all %}
+            {% include "areas.html"%}
+        {% endwith %}
         <p>&nbsp;</p>
         {% if not vencido %}
             <button type="submit">Enviar</button>

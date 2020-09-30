@@ -698,6 +698,7 @@ class Feedback(models.Model):
 
     def __str__(self):
         return str(self.data)
+
     @classmethod
     def create(cls):
         """Cria um objeto (entrada) em Feedback."""
@@ -929,3 +930,93 @@ class Certificado(models.Model):
     class Meta:
         verbose_name = 'Certificado'
         verbose_name_plural = 'Certificados'
+
+class Area(models.Model):
+    """Projeto em que o aluno está alocado."""
+    titulo = models.CharField("Título", max_length=48, null=True, blank=True,
+                              help_text='Titulo da área de interesse')
+
+    descricao = models.CharField("Descrição", max_length=256, null=True, blank=True,
+                              help_text='Descrição da área de interesse')
+
+    ativa = models.BooleanField("Ativa", default=True,
+                                help_text='Se a área de interesse está sendo usada atualmente')
+
+    def __str__(self):
+        return self.titulo
+
+    @classmethod
+    def create(cls, titulo):
+        """ Cria uma Área nova. """
+        area = cls(titulo=titulo)
+        return area
+
+    class Meta:
+        verbose_name = 'Área'
+        verbose_name_plural = 'Áreas'
+
+class AreaDeInteresse(models.Model):
+    """ Usado para fazer o mapeando da proposta ou da pessoa para área de interesse. """
+
+    # As áreas são de interesse ou do usuário ou da proposta (que passa para o projeto)
+    usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text='área dde interessada da pessoa')
+    proposta = models.ForeignKey(Proposta, null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text='área de interesse da proposta')
+
+    # Campo para especificar uma outra área que não a da lista de áreas controladas    
+    outras = models.CharField("Outras", max_length=128, null=True, blank=True,
+                              help_text='Outras áreas de interesse')
+
+    area = models.ForeignKey(Area, null=True, blank=True, on_delete=models.SET_NULL,
+                             help_text='área de interesse')
+
+    class Meta:
+        verbose_name = 'Área de Interesse'
+        verbose_name_plural = 'Áreas de Interesse'
+    def __str__(self):
+        if self.usuario:
+            if self.outras:
+                return self.usuario.get_full_name()+" >>> "+self.outras
+            else:
+                return self.usuario.get_full_name()+" >>> "+str(self.area)
+        elif self.proposta:
+            if self.outras:
+                return self.proposta.titulo+" >>> "+self.outras
+            else:
+                return self.proposta.titulo+" >>> "+str(self.area)
+        else:
+            if self.outras:
+                return self.outras
+            else:
+                return str(self.area)
+
+    @classmethod
+    def create(cls):
+        """Cria uma Área de Interesse nova."""
+        area_de_interesse = cls()
+        return area_de_interesse
+
+    @classmethod
+    def create_estudante_area(cls, estudante, area):
+        """Cria uma Área de Interesse nova."""
+        area_de_interesse = cls(usuario=estudante.user, area=area)
+        return area_de_interesse
+
+    @classmethod
+    def create_estudante_outras(cls, estudante, outras):
+        """Cria uma Área de Interesse nova."""
+        area_de_interesse = cls(usuario=estudante.user, outras=outras)
+        return area_de_interesse
+
+    @classmethod
+    def create_proposta_area(cls, proposta, area):
+        """Cria uma Área de Interesse nova."""
+        area_de_interesse = cls(proposta=proposta, area=area)
+        return area_de_interesse
+
+    @classmethod
+    def create_proposta_outras(cls, proposta, outras):
+        """Cria uma Área de Interesse nova."""
+        area_de_interesse = cls(proposta=proposta, outras=outras)
+        return area_de_interesse

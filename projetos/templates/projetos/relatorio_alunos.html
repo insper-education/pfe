@@ -28,115 +28,13 @@
         <strong>Curso:</strong> {{aluno.get_curso_display}} <br>
         <strong>CR:</strong> {{aluno.cr}} <br><br>
         <strong>Áreas de interesse selecionadas:</strong>
-      
-        <table>
-            <tr><td style="width:12px">
-                    {% if aluno.inovacao_social %}&#10003;{% endif %}
-                </td>
-                <td>Inovação Social</td>
-            </tr>
-            <tr><td>
-                    {% if aluno.ciencia_dos_dados %}&#10003;{% endif %}
-                </td>
-                <td>Ciência dos Dados</td>
-            </tr>
-            <tr><td>
-                    {% if aluno.modelagem_3D %}&#10003;{% endif %}
-                </td>
-                <td>Modelagem 3D</td>
-            </tr>      
-            <tr><td>
-                    {% if aluno.manufatura %}&#10003;{% endif %}
-                </td>
-                <td>Manufatura</td>
-            </tr>
-            <tr><td>
-                    {% if aluno.resistencia_dos_materiais %}&#10003;{% endif %}
-                </td>
-                <td>Resistência dos Materiais</td>
-            </tr>
-            <tr><td>
-                    {% if aluno.modelagem_de_sistemas %}&#10003;{% endif %}
-                </td>
-                <td>Modelagem de Sistemas</td>
-            </tr>
-            <tr><td>
-                    {% if aluno.controle_e_automacao %}&#10003;{% endif %}
-                </td>
-                <td>Controle e Automação</td>
-            </tr>      
-            <tr><td>
-                    {% if aluno.termodinamica %}&#10003;{% endif %}
-                </td>
-                <td>Termodinâmica</td>
-            </tr>
-            <tr><td>
-                    {% if aluno.fluidodinamica %}&#10003;{% endif %}
-                </td>
-                <td>Fluidodinâmica</td>
-            </tr>
-            <tr><td>
-                    {% if aluno.eletronica_digital %}&#10003;{% endif %}
-                </td>
-                <td>Eletrônica Digital</td>
-            </tr>
-            <tr><td>
-                    {% if aluno.programacao %}&#10003;{% endif %}
-                </td>
-                <td>Programação</td>
-            </tr>      
-            <tr><td>
-                    {% if aluno.inteligencia_artificial %}&#10003;{% endif %}
-                </td>
-                <td>Inteligência Artificial</td>
-            </tr>
-            <tr><td>
-                    {% if aluno.computacao_em_nuvem %}&#10003;{% endif %}
-                </td>
-                <td>Computação em Nuvem</td>
-            </tr>
-            <tr><td>
-                    {% if aluno.banco_de_dados %}&#10003;{% endif %}
-                </td>
-                <td>Banco de Dados</td>
-            </tr>
-            <tr><td>
-                    {% if aluno.visao_computacional %}&#10003;{% endif %}
-                </td>
-                <td>Visão Computacional</td>
-            </tr>      
-            <tr><td>
-                    {% if aluno.computacao_de_alto_desempenho %}&#10003;{% endif %}
-                </td>
-                <td>Computação de Alto Desempenho</td>
-            </tr>
-            <tr><td>
-                    {% if aluno.robotica %}&#10003;{% endif %}
-                </td>
-                <td>Robótica</td>
-            </tr>
-            <tr><td>
-                    {% if aluno.realidade_virtual_aumentada %}&#10003;{% endif %}
-                </td>
-                <td>Realidade Virtual/Aumentada</td>
-            </tr>
-            <tr><td>
-                    {% if aluno.protocolos_de_comunicacao %}&#10003;{% endif %}
-                </td>
-                <td>Protocolos de Comunicação</td>
-            </tr>      
-            <tr><td>
-                    {% if aluno.eficiencia_energetica %}&#10003;{% endif %}
-                </td>
-                <td>Eficiência Energética</td>
-            </tr>
-            <tr><td>
-                    {% if aluno.administracao_economia_financas %}&#10003;{% endif %}
-                </td>
-                <td>Administração, Economia e Finanças</td>
-            </tr>
-        
-            </table>
+
+        {% with areas=aluno.areas_de_interesse %}
+            {% with vencido=True %}
+            {% include "areas.html" %}
+            {% endwith %}
+        {% endwith %}
+
           <br>
           <strong>Projetos Selecionados</strong>
           {% for opcao in aluno.opcao_set.all %}

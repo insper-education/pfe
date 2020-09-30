@@ -20,8 +20,8 @@ from django.utils import html
 from django.utils import timezone
 from django.views import generic
 
-from projetos.models import Configuracao, Projeto, Conexao, Banca, ObjetivosDeAprendizagem
-from projetos.views import cria_areas
+from projetos.models import Configuracao, Projeto, Conexao, Banca, ObjetivosDeAprendizagem, Area
+from projetos.views import cria_areas, cria_area_estudante
 from projetos.messages import email
 
 from .forms import PFEUserCreationForm
@@ -110,14 +110,22 @@ def areas_interesse(request):
             semestre = 1
 
         if (not vencido) and request.method == 'POST':
+            # CODIGO OBSOLETO
             areas = cria_areas(request, estudante.areas_de_interesse)
             estudante.areas_de_interesse = areas
             estudante.save()
+            ############
+
+            cria_area_estudante(request, estudante)
+
             return render(request, 'users/atualizado.html',)
+
+        areas = Area.objects.filter(ativa=True)
 
         context = {
             'vencido': vencido,
-            'areas': estudante.areas_de_interesse,
+            'aluno': estudante,
+            'areast': areas,
         }
 
     else: # supostamente professores
@@ -323,10 +331,11 @@ def aluno_detail(request, primarykey):
     """Mostra detalhes sobre o aluno."""
     aluno = Aluno.objects.filter(pk=primarykey).first()
     configuracao = Configuracao.objects.all().first()
+    areas = Area.objects.filter(ativa=True)
     context = {
         'configuracao': configuracao,
         'aluno': aluno,
-        'areas': aluno.areas_de_interesse,
+        'areast': areas,
     }
     return render(request, 'users/aluno_detail.html', context=context)
 
