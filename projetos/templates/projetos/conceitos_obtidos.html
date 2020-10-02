@@ -120,7 +120,7 @@
   {% if projeto.avancado %}
     <strong style="color:red"><u>PFE Avançado</u></strong><br>
   {% endif %}
-  <strong>Alunos:</strong>
+  <strong>Grupo:</strong>
   <ul>
   {% for alocacao in projeto.alocacao_set.all %}
     <a href="{% url 'aluno_detail' alocacao.aluno.id %}">

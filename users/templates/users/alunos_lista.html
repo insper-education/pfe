@@ -18,7 +18,7 @@
 {% endblock %}
 
 {% block content %}
-  <h3>Alunos</h3>
+  <h3>Estudantes</h3>
 
   <label for="filter"><b>Edição:</b></label>
   <select onchange="location = this.options[this.selectedIndex].value;">
@@ -39,7 +39,7 @@
   <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(7)').show() : $('#AlunosTable tr > *:nth-child(7)').hide())" type="checkbox" checked /> Notas</label>&nbsp;&nbsp;&nbsp;
   
   <br><br>
-  <strong>Número Total de Alunos:</strong> {{ num_alunos }}
+  <strong>Número Total de Estudantes:</strong> {{ num_alunos }}
 
   {% if alunos_list %}
     <table id="AlunosTable">
@@ -148,14 +148,14 @@
       </table>
       <br>
   {% else %}
-    <p>Não existem alunos disponíveis.</p>
+    <p>Não existem estudantes disponíveis.</p>
   {% endif %}
 
   <br>
 
   <div id="canvas-holder">
     <canvas id="chart-programas"></canvas>
-    <small>contando alunos alocados em projetos ou não</small>
+    <small>contando estudantes alocados em projetos ou não</small>
     <br><br>
     <canvas id="chart-generos"></canvas>
   </div>
@@ -175,7 +175,7 @@
             'rgb(255, 99, 132)',
             'rgb(255, 205, 86)',
           ],
-          label: 'Proporção de cursos entre alunos'
+          label: 'Proporção de cursos entre estudantes'
         }],
         labels: [
           'Computação [{% widthratio num_alunos_comp num_alunos 100 %}%]',
@@ -187,7 +187,7 @@
         responsive: true,
         title: {
           display: true,
-          text: 'Proporção de cursos entre alunos',
+          text: 'Proporção de cursos entre estudantes',
           position: 'top'
         },
         legend: {
@@ -210,7 +210,7 @@
             'rgb(93, 173, 226)',
             'rgb(175, 122, 197)',
           ],
-          label: 'Proporção de cursos entre alunos'
+          label: 'Proporção de cursos entre estudantes'
         }],
         labels: [
           'Masculino [{% widthratio num_alunos_masculino num_alunos 100 %}%]',
@@ -221,7 +221,7 @@
         responsive: true,
         title: {
           display: true,
-          text: 'Proporção de gêneros entre alunos',
+          text: 'Proporção de gêneros entre estudantes',
           position: 'top'
         },
         legend: {
@@ -233,18 +233,18 @@
 
 
     window.onload = function() {
-      // Chart da proporção de alunos por programas
+      // Chart da proporção de estudantes por programas
       var chart_programas = document.getElementById('chart-programas').getContext('2d');
       window.myPie = new Chart(chart_programas, config_programas);
 
-      // Chart da proporção de alunos por gênero
+      // Chart da proporção de estudantes por gênero
       var chart_generos = document.getElementById('chart-generos').getContext('2d');
       window.myPie = new Chart(chart_generos, config_generos);
     };
   
   </script>
   <br><br>
-  <h5>Quantidade de alunos alocados em projetos</h5>
+  <h5>Quantidade de estudantes alocados em projetos</h5>
   <table id="AlunosTable">
     <tr>
         <th class="text-center" style="border-right: solid 3px;">Periodo</th>
@@ -275,7 +275,7 @@
     {% endif %}
   </table>
   {% if ano == 0 or semestre == 0 %}
-    <small>alunos reprovados contam mais de uma vez</small>
+    <small>estudantes reprovados contam mais de uma vez</small>
   {% endif %}
   <br>
 {% endblock %}

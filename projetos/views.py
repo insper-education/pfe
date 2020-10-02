@@ -4342,7 +4342,7 @@ def graficos(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
-    # Número de alunos e gêneros
+    # Número de estudantes e gêneros
     num_alunos = estudantes.count()
     num_alunos_masculino = estudantes.filter(user__genero='M').count() # Estudantes masculino
     num_alunos_feminino = estudantes.filter(user__genero='F').count() # Estudantes feminino

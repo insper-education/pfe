@@ -16,7 +16,7 @@
 {% endblock %}
 
 {% block content %}
-  <h3>Alunos Inscritos no Semestre</h3>
+  <h3>Estudantes Inscritos no Semestre</h3>
 
   <label for="filter">Edição:</label>
   <select onchange="location = this.options[this.selectedIndex].value;">
@@ -61,7 +61,7 @@
     </form>
     
   {% else %}
-    <p>Não existem alunos disponíveis.</p>
+    <p>Não existem estudantes nesse critério.</p>
   {% endif %}
 
 {% endblock %}
