@@ -28,8 +28,10 @@
   {% if organizacao.logotipo %}
     <img id="logotipo" src="{{ organizacao.logotipo.url }}" alt="{{ organizacao.sigla }}">
   {% endif %}
-  <h3>Organização: {{ organizacao.nome }}</h3>
 
+  <span class="titulo">Organização: {{ organizacao.nome }}</span>
+  <br>
+  
   {% if organizacao.website %}
     <strong>website:</strong> <a href="{{ organizacao.website }}"> {{ organizacao.website }} </a><br>  
   {% endif %}

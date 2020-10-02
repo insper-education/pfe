@@ -20,14 +20,15 @@
     <br>
   {% endif %}
 
-
-  <h5>
-  {% if edicao %}
-    Edição
-  {% else %}
-    Submissão
-  {% endif %}
-  de Proposta de Projeto</h5>
+  <span class="titulo">
+    {% if edicao %}
+      Edição
+    {% else %}
+      Submissão
+    {% endif %}
+    de Proposta de Projeto
+  </span>
+  <br>
 
   {% if professor %}
     <strong>Seu Perfil é de Professor, você está preenchendo para alguma organização</strong><br>

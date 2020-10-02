@@ -4,33 +4,37 @@
     Data: 21 de Abril de 2020
 {% endcomment %}
 
-<script>
-    $(document).ready(function(){
-        $('[data-toggle="tooltip"]').tooltip();
-    });
-</script>
 
-<table>
-    {% for area in areast %}
-        <tr><td>&nbsp;
-                <input type="checkbox" name="selection" id="{{area.id}}" value="{{area.titulo}}"
-                {% for a in aa %}
-                    {% if area == a.area %}checked{% endif %}
-                {% endfor %}
-                {% if vencido %}disabled{% endif %}>&nbsp;
-            </td>
-            <td 
-                {% if area.descricao %}
-                    data-toggle="tooltip" data-html="true" animation="true" title="{{area.descricao}}"
-                {% endif %}
-                >
-                <label for="{{area.id}}" style="line-height:0.6em;">{{area.titulo}}</label>
-            </td>
-        </tr>
-    {% endfor %}
-</table>
-<div style="height:8px;font-size:8px;">&nbsp;</div>
-<label for="outras">Outras:</label> 
-<textarea type="text" cols="29" maxlength="128" id="outras" name="outras" wrap="soft"
-{% if vencido %}disabled{% endif %}
->{% for a in aa %}{% if a.outras %}{{a.outras}}{% endif %}{% endfor %}</textarea>
+
+{% if areast %}
+    <script>
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+
+    <table>
+        {% for area in areast %}
+            <tr><td>&nbsp;
+                    <input type="checkbox" name="selection" id="{{area.id}}" value="{{area.titulo}}"
+                    {% for a in aa %}
+                        {% if area == a.area %}checked{% endif %}
+                    {% endfor %}
+                    {% if vencido %}disabled{% endif %}>&nbsp;
+                </td>
+                <td 
+                    {% if area.descricao %}
+                        data-toggle="tooltip" data-html="true" animation="true" title="{{area.descricao}}"
+                    {% endif %}
+                    >
+                    <label for="{{area.id}}" style="line-height:0.6em;">{{area.titulo}}</label>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    <div style="height:8px;font-size:8px;">&nbsp;</div>
+    <label for="outras">Outras:</label> 
+    <textarea type="text" cols="29" maxlength="128" id="outras" name="outras" wrap="soft"
+    {% if vencido %}disabled{% endif %}
+    >{% for a in aa %}{% if a.outras %}{{a.outras}}{% endif %}{% endfor %}</textarea>
+{% endif %}

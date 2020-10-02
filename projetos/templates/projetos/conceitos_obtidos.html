@@ -96,12 +96,12 @@
 {% block content %}
   {% if projeto.titulo_final %}
     <style>
-        h5 {display: inline;}
+        .titulo {display: inline;}
     </style>
-    <h5>Título: {{projeto.titulo_final}}</h5>
+    <span class="titulo">Título: {{projeto.titulo_final}}</span>
     <small> <br>&nbsp;&nbsp;&nbsp;&nbsp;Título Provisório: {{projeto.titulo}}</small><br>
   {% else %}
-    <h5>Título: {{projeto.titulo}}</h5>
+    <span class="titulo">Título: {{projeto.titulo}}</span>
   {% endif %}
   <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
 

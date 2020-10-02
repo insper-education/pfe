@@ -8,8 +8,10 @@
 {% block content %}
 
   {% if aluno.alocacao_set.all.count > 0 %}
-    <h3>Projeto Alocado</h3>
-    <br><br>
+
+    <span class="titulo">Projeto Alocado</span>
+    <br>
+
     {% for alocado in aluno.alocacao_set.all %}
 
       <h4>[{{alocado.projeto.ano}}.{{alocado.projeto.semestre}}]</h4>

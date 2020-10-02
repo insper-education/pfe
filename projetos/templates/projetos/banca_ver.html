@@ -9,7 +9,9 @@
 {% endblock %}
 
 {% block content %}
-  <h3>Banca</h3>
+
+  <span class="titulo">Banca</span>
+  <br>
 
   {% if banca.startDate %}
     <b>Horário:</b> {{banca.startDate.date}} ({{banca.startDate|date:"l"}}) das {{banca.startDate.time}}

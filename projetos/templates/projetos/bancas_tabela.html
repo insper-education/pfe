@@ -15,8 +15,10 @@
 {% endblock %}
 
 {% block content %}
-  <h3>Alocações em Bancas</h3>
+
+  <span class="titulo">Alocações em Bancas</span>
   <br>
+
   {% for membros,periodo in anos %} 
     <big>{{periodo}}</big>
     {% if membros %}

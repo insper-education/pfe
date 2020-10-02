@@ -13,7 +13,7 @@
   <form method="post" id="definirdatas" enctype="multipart/form-data">
     {% csrf_token %}
 
-    <h5>Datas:</h5>
+    <span class="titulo">Datas:</span>
 
     <label for="inicio">Limite Seleção de Propostas:</label> <input id="limite_propostas" type = "datetime-local" name="limite_propostas" value="{{configuracao.prazo|date:'Y-m-d\TH:i:s'}}">
 

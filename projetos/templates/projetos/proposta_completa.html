@@ -42,7 +42,8 @@
 
 {% block content %}
   {% if proposta.titulo %}
-    <h3>Título: {{proposta.titulo}}</h3>
+    <span class="titulo">Título: {{proposta.titulo}}</span>
+    <br>
   {% endif %}
   <strong>Semestre:</strong> {{proposta.ano}}.{{proposta.semestre}}<br>
 

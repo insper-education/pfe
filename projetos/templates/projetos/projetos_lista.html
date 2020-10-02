@@ -14,27 +14,10 @@
       $('[data-toggle="tooltip"]').tooltip();
     });
   </script>
-  {% comment %}
-  <script>
-    var publicados = 0
-    var fechados = 0
-    var tmp_computacao = 0
-    var tmp_mecatronica = 0
-    var tmp_mecanica = 0
-    var alunos_computacao = 0
-    var alunos_mecatronica = 0
-    var alunos_mecanica = 0
-    var projeto_computacao = 0
-    var projeto_mecatronica = 0
-    var projeto_mecanica = 0
-    var projeto_multidisciplinar = 0
-  </script>
-  {% endcomment %}
-
 {% endblock %}
 
 {% block content %}
-  <h3>
+  <span class="titulo">
     {% if periodo == "todos" %}
       Todos os Projetos
     {% else %}
@@ -48,7 +31,8 @@
       {% endif %}
       {{configuracao.ano}}.{{configuracao.semestre}}
     {% endif %}
-  </h3>
+  </span>
+  <br>
 
   <select onchange="location = this.options[this.selectedIndex].value;">
     <option value="todos" {% if periodo == "todos" %}selected="selected"{% endif %}>todos</option>

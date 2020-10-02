@@ -16,16 +16,18 @@
 
 {% block content %}
   {% if proposta.titulo %}
-    <h3 data-toggle="tooltip" data-html="true" animation="true" title="
+    <span class="titulo" data-toggle="tooltip" data-html="true" animation="true" title="
      Título provisório para a proposta de projeto.
      Durante a execução do projeto o título poderá/deverá sofrer atualizações.
     ">
-      Título: {{proposta.titulo}}<br>
-    </h3>
+      Título: {{proposta.titulo}}
+    </span>
+    <br>
   {% else %}
-    <h5>Problema na identificação do título<br></h5>
+    <span class="titulo">Problema na identificação do título</span>
+    <br>
   {% endif %}
-
+  
   {% if proposta.descricao %}
     <p>
       <strong data-toggle="tooltip" data-html="true" animation="true" title="

@@ -41,8 +41,10 @@
 {% endblock %}
 
 {% block content %}
-  <h3>Listas de e-mails</h3>
+
+  <span class="titulo">Listas de e-mails</span>
   <br>
+
   {% if membros_comite %}
     <a href="
       mailto:{% for membro in membros_comite %}{{membro.first_name|parse_quote}}%20{{membro.last_name|parse_quote}}%20&lt;{{membro.email|parse_quote}}&gt;,{% endfor %}

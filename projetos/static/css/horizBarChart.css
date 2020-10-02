@@ -1,4 +1,4 @@
-.chart{zoom:1;width:98%;padding-left:4px;}
+.chart{zoom:1;width:95%;padding-left:4px;}
 .chart:after{clear:both;content:'.';display:block;height:0;visibility:hidden}
 .chart li{display:block;height:14px;margin-top:3px;position:relative}
 .chart li:before{color:#fff;content:attr(title);left:5px;position:absolute}
@@ -7,10 +7,3 @@
 .chart li .number{color:black;font-size:16px;font-weight:bold;padding-left:4px;position:absolute;top:-2px}
 .chart li.past .bar{background: #5b5b5b;}
 .chart li.past .number{color:#5b5b5b;}
-@media screen and (max-width: 480px){
-    .chart li{height:auto}
-    .chart li:before{color:black;display:block;left:0;position:relative}
-    .chart li.title:before{border-bottom:1px solid}
-    .chart li .bar{height:23px}
-    .chart li .number{display:block;left:0 !important;padding-left:0;position:relative;top:-8px}
-}

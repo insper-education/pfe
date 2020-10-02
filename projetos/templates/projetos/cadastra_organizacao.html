@@ -23,13 +23,15 @@
 
 {% block content %}
 
-  <h5>
-  {% if edicao %}
-    Edição
-  {% else %}
-    Cadastro
-  {% endif %}
-  de Organização</h5>
+  <span class="titulo">
+    {% if edicao %}
+      Edição
+    {% else %}
+      Cadastro
+    {% endif %}
+    de Organização
+  </span>
+  <br>
 
   <form method="post" id="organizacaoform" enctype="multipart/form-data">
     {% csrf_token %}

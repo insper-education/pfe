@@ -7,29 +7,30 @@
 
 {% block content %}
 
-<h3>{{ user.get_full_name }}</h3>
-<strong>Usuário:</strong> {{ user.username }}<br>
-{% if aluno %}
-  <strong>Curso:</strong> {{user.aluno.get_curso_display}}<br>
-  <strong>Ano e Semestre de PFE:</strong> {{user.aluno.anoPFE}}.{{user.aluno.semestrePFE}} <small>(ou posterior)</small><br>
-{% elif professor %}
-  <strong>Perfil:</strong> professor<br>
-{% elif parceiro %}
-  <strong>Perfil:</strong> parceiro<br>
-{% elif administrador %}
-  <strong>Perfil:</strong> administrador<br>
-{% endif %}
-<br>
-{% if user.linkedin %}
-  <strong>LinkedIn:</strong> <a href="{{user.linkedin}}" target="_blank">{{user.linkedin}}</a><br>
-{% endif %}
-{% if user.email %}
-  <strong>e-mail:</strong> <a href="mailto:{{user.email}}">{{user.email}}</a><br>
-{% endif %}
-<br><br>
-<form action="{% url 'password_change' %}">
-  <input type="submit" value="Atualizar Senha" />
-</form>
-{% comment %}<li>Location: {{ user.profile.location }}</li>{% endcomment %}
-{% comment %}<li>Birth Date: {{ user.profile.birth_date }}</li>{% endcomment %}
+  <span class="titulo">{{ user.get_full_name }}</span>
+  <br>
+
+  <strong>Usuário:</strong> {{ user.username }}<br>
+  {% if aluno %}
+    <strong>Curso:</strong> {{user.aluno.get_curso_display}}<br>
+    <strong>Ano e Semestre de PFE:</strong> {{user.aluno.anoPFE}}.{{user.aluno.semestrePFE}} <small>(ou posterior)</small><br>
+  {% elif professor %}
+    <strong>Perfil:</strong> professor<br>
+  {% elif parceiro %}
+    <strong>Perfil:</strong> parceiro<br>
+  {% elif administrador %}
+    <strong>Perfil:</strong> administrador<br>
+  {% endif %}
+  <br>
+  {% if user.linkedin %}
+    <strong>LinkedIn:</strong> <a href="{{user.linkedin}}" target="_blank">{{user.linkedin}}</a><br>
+  {% endif %}
+  {% if user.email %}
+    <strong>e-mail:</strong> <a href="mailto:{{user.email}}">{{user.email}}</a><br>
+  {% endif %}
+  <br><br>
+  <form action="{% url 'password_change' %}">
+    <input type="submit" value="Atualizar Senha" />
+  </form>
+
 {% endblock %}

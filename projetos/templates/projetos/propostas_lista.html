@@ -81,7 +81,7 @@
 {% endblock %}
 
 {% block content %}
-  <h3>
+  <span class="titulo">
     {% if periodo == "todos" %}
       Todos as Propostas
     {% else %}
@@ -95,7 +95,8 @@
       {% endif %}
       {{configuracao.ano}}.{{configuracao.semestre}}
     {% endif %}
-  </h3>
+  </span>
+  <br>
 
   <select onchange="location = this.options[this.selectedIndex].value;">
     <option value="todos" {% if periodo == "todos" %}selected="selected"{% endif %}>todos</option>

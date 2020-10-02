@@ -9,13 +9,15 @@
 {% endblock %}
 
 {% block content %}
-  <h3>Listagem de Bancas</h3>
+
+  <span class="titulo">Listagem de Bancas</span>
+  <br>
 
   <select onchange="location = this.options[this.selectedIndex].value;">
     <option value="todas" {% if periodo == "todas" %}selected="todas"{% endif %}>Todas</option>
     <option value="proximas" {% if periodo == "proximas" %}selected="proximas"{% endif %}>Próximas</option>
   </select>
-  <br><br>
+  <br>
 
   {% if bancas %}
     <table id="BancasTable">

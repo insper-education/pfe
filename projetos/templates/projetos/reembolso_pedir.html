@@ -5,21 +5,19 @@
     Data: 8 de Outubro de 2019
 {% endcomment %}
 
-
-
 {% block head %}
-<script>
-function mascara(i){
-   var v = i.value;
-   if(isNaN(v[v.length-1])){ // impede entrar outro caractere que não seja número
-      i.value = v.substring(0, v.length-1);
-      return;
-   }
-   i.setAttribute("maxlength", "14");
-   if (v.length == 3 || v.length == 7) i.value += ".";
-   if (v.length == 11) i.value += "-";
-}
-</script>
+  <script>
+    function mascara(i){
+      var v = i.value;
+      if(isNaN(v[v.length-1])){ // impede entrar outro caractere que não seja número
+          i.value = v.substring(0, v.length-1);
+          return;
+      }
+      i.setAttribute("maxlength", "14");
+      if (v.length == 3 || v.length == 7) i.value += ".";
+      if (v.length == 11) i.value += "-";
+    }
+  </script>
 
   <script src="https://www.geradorcnpj.com/assets/js/jquery.maskedinput-1.1.4.pack.js"></script>
   <script type="text/javascript">
@@ -31,10 +29,12 @@ function mascara(i){
 {% endblock %}
 
 {% block content %}
-<form method="post" id="reembolsoform" enctype="multipart/form-data">
-    {% csrf_token %}
 
-    <h3>Formulário de Reembolso</h3>
+  <span class="titulo">Formulário de Reembolso</span>
+  <br>
+
+  <form method="post" id="reembolsoform" enctype="multipart/form-data">
+    {% csrf_token %}
 
     Por: {{usuario.get_full_name}}<br>
     Projeto: {{projeto.get_titulo}}<br>
@@ -86,5 +86,5 @@ function mascara(i){
     de carreiras para de fato iniciar o processo de reembolso.
     
     <p>&nbsp;</p>
-</form>
+  </form>
 {% endblock %}

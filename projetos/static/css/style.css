@@ -173,6 +173,16 @@ table, th, td {
   width:450px;
 }
 
+.titulo {
+  font-size: 30px;
+}
+
+@media only screen and (max-width: 740px) {
+  .titulo {
+    font-size: 21px;
+  }
+}
+
 @media only screen and (max-width: 480px) {
   table, th, td {
     font-size: 12px;
@@ -180,4 +190,8 @@ table, th, td {
   #canvas-holder {
     width:100%;
   }
+  .titulo {
+    font-size: 18px;
+  }
 }
+

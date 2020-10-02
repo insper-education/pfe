@@ -15,13 +15,15 @@
 
 {% block content %}
 
-  <h5>
-  {% if edicao %}
-    Edição
-  {% else %}
-    Cadastro
-  {% endif %}
-  de Usuário</h5>
+  <span class="titulo">
+    {% if edicao %}
+      Edição
+    {% else %}
+      Cadastro
+    {% endif %}
+    de Usuário
+  </span>
+  <br>
 
   <form class="myForm" action="" method="post"> {% csrf_token %}  
   

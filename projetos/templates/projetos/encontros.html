@@ -6,19 +6,20 @@
 {% endcomment %}
 
 {% block head %}
-<script>
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    })
-</script>
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
 {% endblock %}
 
 {% block content %}
 <form method="post">
     {% csrf_token %}
 
-    <h3>Datas para encontros</h3>
+    <span class="titulo">Datas para encontros</span>
     <br>
+    
     {% if user.tipo_de_usuario == 1 %}
         <h4>Seu projeto: 
             {% if projeto %}

@@ -9,7 +9,9 @@
 {% endblock %}
 
 {% block content %}
-  <h3>Dinâmicas</h3>
+
+  <span class="titulo">Dinâmicas</span>
+  <br>
 
   <select onchange="location = this.options[this.selectedIndex].value;">
     <option value="todas" {% if periodo == "todas" %}selected="todas"{% endif %}>Todas</option>

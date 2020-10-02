@@ -11,7 +11,10 @@
 {% block content %}
   <form method="get" id="editarbancasform">
     {% csrf_token %}
-    <h3>Bancas</h3>
+
+    <span class="titulo">Bancas</span>
+    <br>
+    
     {% if bancas %}
       <table id="BancasTable">
         {% for banca in bancas %} 
