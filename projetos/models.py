@@ -936,7 +936,7 @@ class Area(models.Model):
     titulo = models.CharField("Título", max_length=48, null=True, blank=True,
                               help_text='Titulo da área de interesse')
 
-    descricao = models.CharField("Descrição", max_length=256, null=True, blank=True,
+    descricao = models.CharField("Descrição", max_length=512, null=True, blank=True,
                               help_text='Descrição da área de interesse')
 
     ativa = models.BooleanField("Ativa", default=True,
