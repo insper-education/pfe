@@ -41,11 +41,15 @@ from django.utils import text
 
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador, Opcao, Alocacao, Areas
+from users.support import configuracao_estudante_vencida
+
 from .models import Projeto, Proposta, Organizacao, Configuracao, Evento, Anotacao, Coorientador
 from .models import Feedback, Certificado
 from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade, Conexao
 #from .models import Disciplina
 from .models import ObjetivosDeAprendizagem, Avaliacao2, Observacao, Area, AreaDeInteresse
+
+
 
 from .models import get_upload_path
 
@@ -1752,49 +1756,35 @@ def submissao(request):
 
     if user.tipo_de_usuario == 1:
 
-        configuracao = Configuracao.objects.first()
+        estudante = Aluno.objects.get(pk=request.user.aluno.pk)
 
-        aluno = Aluno.objects.get(pk=request.user.aluno.pk)
-
-        ano = configuracao.ano
-        semestre = configuracao.semestre
-
-        vencido = timezone.now() > configuracao.prazo
-        if semestre == 1:
-            vencido = vencido or (aluno.anoPFE < ano)
-            vencido = vencido or (aluno.anoPFE == ano and aluno.semestrePFE == 1)
-            semestre = 2
-        else:
-            vencido = vencido or (aluno.anoPFE <= ano)
-            ano += 1
-            semestre = 1
+        vencido = configuracao_estudante_vencida(estudante)
 
         if (not vencido) and request.method == 'POST':
 
-            aluno.trabalhou = request.POST.get("trabalhou", None)
-            aluno.social = request.POST.get("social", None)
-            aluno.entidade = request.POST.get("entidade", None)
-            aluno.familia = request.POST.get("familia", None)
+            estudante.trabalhou = request.POST.get("trabalhou", None)
+            estudante.social = request.POST.get("social", None)
+            estudante.entidade = request.POST.get("entidade", None)
+            estudante.familia = request.POST.get("familia", None)
 
-            aluno.user.linkedin = request.POST.get("linkedin", None)
-            aluno.user.save()
+            estudante.user.linkedin = request.POST.get("linkedin", None)
+            estudante.user.save()
 
-            aluno.save()
+            estudante.save()
             return render(request, 'users/atualizado.html',)
 
         context = {
-            #'mensagem': "",
             'vencido': vencido,
-            'trabalhou' : aluno.trabalhou,
-            'social' : aluno.social,
-            'entidade' : aluno.entidade,
-            'familia' : aluno.familia,
-            'linkedin' : aluno.user.linkedin,
+            'trabalhou' : estudante.trabalhou,
+            'social' : estudante.social,
+            'entidade' : estudante.entidade,
+            'familia' : estudante.familia,
+            'linkedin' : estudante.user.linkedin,
             'entidades' : Entidade.objects.all(),
         }
     else: # Supostamente professores
         context = {
-            'mensagem': "Você não está cadastrado como aluno.",
+            'mensagem': "Você não está cadastrado como estudante.",
             'vencido': True,
             'trabalhou': "",
             'social': "",

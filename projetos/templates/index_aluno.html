@@ -52,6 +52,29 @@
             animation: fadein 0.5s, fadeout 0.5s 2.5s;
         }
         
+
+        #liberado {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 2px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+            font-size: 17px;
+        }
+        
+        #liberado.show {
+            visibility: visible;
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
         @-webkit-keyframes fadein {
             from {bottom: 0; opacity: 0;} 
             to {bottom: 30px; opacity: 1;}
@@ -81,19 +104,34 @@
     </a>
     <hr>
 
-    <a {% if vencido %} class="disabled" onclick="myFunction('vencido')" {% else %} href="{% url 'areas_interesse' %}" {% endif %} >
+    <a href="{% url 'areas_interesse' %}">
         <h5>Selecionar Áreas de Interesse</h5>
     </a>
     
-    <a {% if vencido %} class="disabled" onclick="myFunction('vencido')" {% else %} href="{% url 'submissao' %}" {% endif %} >
+    <a href="{% url 'submissao' %}">
         <h5>Formulário de Informações Adicionais</h5>
     </a>
 
-    <a {% if vencido %} class="disabled" onclick="myFunction('vencido')" {% else %} href="{% url 'selecao_propostas' %}" {% endif %} >
+    <a 
+        {% if vencido %}
+            class="disabled" onclick="myFunction('vencido')" 
+        {% elif not configuracao.liberadas_propostas %}
+            class="disabled" onclick="myFunction('liberado')" 
+        {% else %}
+            href="{% url 'selecao_propostas' %}" 
+        {% endif %} >
         <h5>Selecionar Propostas de Projetos</h5>
     </a>
 
-    <font color="red">Prazo para a seleção dos projetos {{ano}}.{{semestre}}: <b>{{ configuracao.prazo }}</b></font>
+    <font color="red">Prazo para a seleção dos projetos {{ano}}.{{semestre}}:
+        <b>
+        {% if configuracao.liberadas_propostas %}
+            {{configuracao.prazo}}
+        {% else %}
+            ainda não liberado
+        {% endif %}
+        </b>
+    </font>
     <hr>
     <a {% if not projeto %} class="disabled" onclick="myFunction('projeto')" {% else %} href="{% url 'minhas_bancas' %}" {% endif %} >
         <h5>Horário das bancas</h5>
@@ -107,6 +145,7 @@
 
     <div id="projeto">Você não está alocado em um projeto.</div>
     <div id="vencido">Prazo para a seleção dos projetos vencido.</div>
+    <div id="liberado">Propostas ainda não liberadas.</div>
     
     <script>
         function myFunction(mensagem) {

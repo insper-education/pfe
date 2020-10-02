@@ -27,6 +27,7 @@ from projetos.messages import email
 from .forms import PFEUserCreationForm
 from .models import PFEUser, Aluno, Professor, Parceiro, Opcao, Administrador
 
+from .support import configuracao_estudante_vencida
 
 @login_required
 def perfil(request):
@@ -71,6 +72,7 @@ def perfil(request):
 
     return render(request, 'users/profile_detail.html', context=context)
 
+
 @login_required
 @transaction.atomic
 def areas_interesse(request):
@@ -95,27 +97,9 @@ def areas_interesse(request):
         except Aluno.DoesNotExist:
             return HttpResponse("Estudante não encontrado.", status=401)
 
-        configuracao = Configuracao.objects.first()
-        ano = configuracao.ano
-        semestre = configuracao.semestre
-
-        vencido = timezone.now() > configuracao.prazo
-        if semestre == 1:
-            vencido = vencido or (estudante.anoPFE < ano)
-            vencido = vencido or (estudante.anoPFE == ano and estudante.semestrePFE == 1)
-            semestre = 2
-        else:
-            vencido = vencido or (estudante.anoPFE <= ano)
-            ano += 1
-            semestre = 1
+        vencido = configuracao_estudante_vencida(estudante)
 
         if (not vencido) and request.method == 'POST':
-            # CODIGO OBSOLETO
-            areas = cria_areas(request, estudante.areas_de_interesse)
-            estudante.areas_de_interesse = areas
-            estudante.save()
-            ############
-
             cria_area_estudante(request, estudante)
 
             return render(request, 'users/atualizado.html',)
@@ -132,8 +116,6 @@ def areas_interesse(request):
         context = {
             'mensagem': "Você não está cadastrado como aluno.",
             'vencido': True,
-            #'areas': estudante.areas_de_interesse,
-
         }
     return render(request, 'users/areas_interesse.html', context=context)
 
