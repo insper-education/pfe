@@ -1107,7 +1107,7 @@ def get_areas_estudantes(alunos):
     areas = Area.objects.filter(ativa=True)
     for area in areas:
         count = AreaDeInteresse.objects.filter(usuario__in=usuarios, area=area).count()
-        areaspfe[area.titulo] = count
+        areaspfe[area.titulo] = (count, area.descricao)
 
     return areaspfe
 
@@ -1120,7 +1120,7 @@ def get_areas_propostas(propostas):
     areas = Area.objects.filter(ativa=True)
     for area in areas:
         count = AreaDeInteresse.objects.filter(proposta__in=propostas, area=area).count()
-        areaspfe[area.titulo] = count
+        areaspfe[area.titulo] = (count, area.descricao)
 
     return areaspfe
 
@@ -1145,8 +1145,6 @@ def distribuicao_areas(request, tipo):
 
         context = {
             'areaspfe': get_areas_estudantes(alunos),
-            'tipo': tipo,
-            'periodo': periodo,
         }
 
     elif tipo == "propostas":
@@ -1165,8 +1163,6 @@ def distribuicao_areas(request, tipo):
 
         context = {
             'areaspfe': get_areas_propostas(propostas),
-            'tipo': tipo,
-            'periodo': periodo,
         }
 
     elif tipo == "projetos":
@@ -1188,15 +1184,20 @@ def distribuicao_areas(request, tipo):
 
         context = {
             'areaspfe': get_areas_propostas(propostas_projetos),
-            'tipo': tipo,
-            'periodo': periodo,
         }
 
     else:
         return HttpResponse("Algum erro não identificado.", status=401)
 
-    return render(request, 'projetos/distribuicao_areas.html', context)
+    configuracao = Configuracao.objects.all().first()
 
+    context['tipo'] = tipo
+    context['periodo'] = periodo
+    context['ano'] = configuracao.ano
+    context['semestre'] = configuracao.semestre
+    context['loop_anos'] = range(2018, configuracao.ano+1)
+
+    return render(request, 'projetos/distribuicao_areas.html', context)
 
 
 @login_required
