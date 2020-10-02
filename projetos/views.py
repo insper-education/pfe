@@ -4366,6 +4366,146 @@ def graficos(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def migracao(request):
     """temporário"""
+
+    areas = AreaDeInteresse.objects.filter(outras=None)
+
+    for area in areas:
+
+        if area.area.titulo == "Manufatura":
+            areax = Area.objects.get(titulo="Manufatura Avançada")
+            if area.usuario != None:
+                if not AreaDeInteresse.objects.filter(area=areax, usuario=area.usuario).exists():
+                    AreaDeInteresse.create_usuario_area(area.usuario, areax).save()
+            else:
+                if not AreaDeInteresse.objects.filter(area=areax, proposta=area.proposta).exists():
+                    AreaDeInteresse.create_proposta_area(area.proposta, areax).save()
+
+        if area.area.titulo == "Modelagem 3D":
+            areax = Area.objects.get(titulo="Manufatura Avançada")
+            if area.usuario != None:
+                if not AreaDeInteresse.objects.filter(area=areax, usuario=area.usuario).exists():
+                    AreaDeInteresse.create_usuario_area(area.usuario, areax).save()
+            else:
+                if not AreaDeInteresse.objects.filter(area=areax, proposta=area.proposta).exists():
+                    AreaDeInteresse.create_proposta_area(area.proposta, areax).save()
+
+        if area.area.titulo == "Controle e Automação":
+            areax = Area.objects.get(titulo="Controle de Sistemas Dinâmicos")
+            if area.usuario != None:
+                if not AreaDeInteresse.objects.filter(area=areax, usuario=area.usuario).exists():
+                    AreaDeInteresse.create_usuario_area(area.usuario, areax).save()
+            else:
+                if not AreaDeInteresse.objects.filter(area=areax, proposta=area.proposta).exists():
+                    AreaDeInteresse.create_proposta_area(area.proposta, areax).save()
+
+            areax = Area.objects.get(titulo="Automação Industrial")
+            if area.usuario != None:
+                if not AreaDeInteresse.objects.filter(area=areax, usuario=area.usuario).exists():
+                    AreaDeInteresse.create_usuario_area(area.usuario, areax).save()
+            else:
+                if not AreaDeInteresse.objects.filter(area=areax, proposta=area.proposta).exists():
+                    AreaDeInteresse.create_proposta_area(area.proposta, areax).save()
+
+        if area.area.titulo == "Termodinâmica":
+            areax = Area.objects.get(titulo="Simulação Computacional")
+            if area.usuario != None:
+                if not AreaDeInteresse.objects.filter(area=areax, usuario=area.usuario).exists():
+                    AreaDeInteresse.create_usuario_area(area.usuario, areax).save()
+            else:
+                if not AreaDeInteresse.objects.filter(area=areax, proposta=area.proposta).exists():
+                    AreaDeInteresse.create_proposta_area(area.proposta, areax).save()
+
+        if area.area.titulo == "Fluidodinâmica":
+            areax = Area.objects.get(titulo="Simulação Computacional")
+            if area.usuario != None:
+                if not AreaDeInteresse.objects.filter(area=areax, usuario=area.usuario).exists():
+                    AreaDeInteresse.create_usuario_area(area.usuario, areax).save()
+            else:
+                if not AreaDeInteresse.objects.filter(area=areax, proposta=area.proposta).exists():
+                    AreaDeInteresse.create_proposta_area(area.proposta, areax).save()
+
+        if area.area.titulo == "Resistência dos Materiais":
+            areax = Area.objects.get(titulo="Simulação Computacional")
+            if area.usuario != None:
+                if not AreaDeInteresse.objects.filter(area=areax, usuario=area.usuario).exists():
+                    AreaDeInteresse.create_usuario_area(area.usuario, areax).save()
+            else:
+                if not AreaDeInteresse.objects.filter(area=areax, proposta=area.proposta).exists():
+                    AreaDeInteresse.create_proposta_area(area.proposta, areax).save()
+
+        if area.area.titulo == "Eletrônica Digital":
+            areax = Area.objects.get(titulo="Sistemas embarcados")
+            if area.usuario != None:
+                if not AreaDeInteresse.objects.filter(area=areax, usuario=area.usuario).exists():
+                    AreaDeInteresse.create_usuario_area(area.usuario, areax).save()
+            else:
+                if not AreaDeInteresse.objects.filter(area=areax, proposta=area.proposta).exists():
+                    AreaDeInteresse.create_proposta_area(area.proposta, areax).save()
+
+        if area.area.titulo == "Protocolos de Comunicação":
+            areax = Area.objects.get(titulo="Computação em Nuvem")
+            if area.usuario != None:
+                if not AreaDeInteresse.objects.filter(area=areax, usuario=area.usuario).exists():
+                    AreaDeInteresse.create_usuario_area(area.usuario, areax).save()
+            else:
+                if not AreaDeInteresse.objects.filter(area=areax, proposta=area.proposta).exists():
+                    AreaDeInteresse.create_proposta_area(area.proposta, areax).save()
+
+        if area.area.titulo == "Computação de Alto Desempenho":
+            areax = Area.objects.get(titulo="Computação em Nuvem")
+            if area.usuario != None:
+                if not AreaDeInteresse.objects.filter(area=areax, usuario=area.usuario).exists():
+                    AreaDeInteresse.create_usuario_area(area.usuario, areax).save()
+            else:
+                if not AreaDeInteresse.objects.filter(area=areax, proposta=area.proposta).exists():
+                    AreaDeInteresse.create_proposta_area(area.proposta, areax).save()
+
+        if area.area.titulo == "Banco de Dados":
+            areax = Area.objects.get(titulo="Sistemas de Informação")
+            if area.usuario != None:
+                if not AreaDeInteresse.objects.filter(area=areax, usuario=area.usuario).exists():
+                    AreaDeInteresse.create_usuario_area(area.usuario, areax).save()
+            else:
+                if not AreaDeInteresse.objects.filter(area=areax, proposta=area.proposta).exists():
+                    AreaDeInteresse.create_proposta_area(area.proposta, areax).save()
+
+        if area.area.titulo == "Programação":
+            areax = Area.objects.get(titulo="Sistemas de Informação")
+            if area.usuario != None:
+                if not AreaDeInteresse.objects.filter(area=areax, usuario=area.usuario).exists():
+                    AreaDeInteresse.create_usuario_area(area.usuario, areax).save()
+            else:
+                if not AreaDeInteresse.objects.filter(area=areax, proposta=area.proposta).exists():
+                    AreaDeInteresse.create_proposta_area(area.proposta, areax).save()
+
+        if area.area.titulo == "Modelagem de Sistemas":
+            areax = Area.objects.get(titulo="Sistemas de Informação")
+            if area.usuario != None:
+                if not AreaDeInteresse.objects.filter(area=areax, usuario=area.usuario).exists():
+                    AreaDeInteresse.create_usuario_area(area.usuario, areax).save()
+            else:
+                if not AreaDeInteresse.objects.filter(area=areax, proposta=area.proposta).exists():
+                    AreaDeInteresse.create_proposta_area(area.proposta, areax).save()
+
+        if area.area.titulo == "Visão Computacional":
+            areax = Area.objects.get(titulo="Sistemas Interativos")
+            if area.usuario != None:
+                if not AreaDeInteresse.objects.filter(area=areax, usuario=area.usuario).exists():
+                    AreaDeInteresse.create_usuario_area(area.usuario, areax).save()
+            else:
+                if not AreaDeInteresse.objects.filter(area=areax, proposta=area.proposta).exists():
+                    AreaDeInteresse.create_proposta_area(area.proposta, areax).save()
+
+        if area.area.titulo == "Realidade Virtual/Aumentada":
+            areax = Area.objects.get(titulo="Sistemas Interativos")
+            if area.usuario != None:
+                if not AreaDeInteresse.objects.filter(area=areax, usuario=area.usuario).exists():
+                    AreaDeInteresse.create_usuario_area(area.usuario, areax).save()
+            else:
+                if not AreaDeInteresse.objects.filter(area=areax, proposta=area.proposta).exists():
+                    AreaDeInteresse.create_proposta_area(area.proposta, areax).save()
+
+
     message = "Nada Feito"
     return HttpResponse(message)
 

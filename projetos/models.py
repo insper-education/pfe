@@ -1020,3 +1020,9 @@ class AreaDeInteresse(models.Model):
         """Cria uma Área de Interesse nova."""
         area_de_interesse = cls(proposta=proposta, outras=outras)
         return area_de_interesse
+
+    @classmethod
+    def create_usuario_area(cls, usuario, area):
+        """Cria uma Área de Interesse nova."""
+        area_de_interesse = cls(usuario=usuario, area=area)
+        return area_de_interesse
