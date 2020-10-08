@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'projetos.apps.ProjetosConfig',
     'django.contrib.sites',
+    'dbbackup',
     #'debug_toolbar',
 ]
 
@@ -95,6 +96,10 @@ DATABASES = {
     
 }
 
+DBBACKUP_STORAGE = "django.core.files.storage.FileSystemStorage"
+DBBACKUP_STORAGE_OPTIONS = {
+    "location": "../backups/backups"
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -161,6 +166,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '<local_dos_arquivos>')
 # CELERY_TIMEZONE = 'America/Sao_Paulo'
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost//'
 CELERY_BEAT_SCHEDULE = {
+    'backup': {
+        'task': 'projetos.tasks.backup',
+        'schedule': crontab(hour=3, minute=0, day_of_week=1), # Toda segunda-feira as 3:00
+    },
+    "mediabackup": {
+        "task": "core.tasks.mediabackup",
+        "schedule": crontab(hour=3, minute=30, day_of_week=1), # Toda segunda-feira as 3:30
+    },
     'send-email-daily': {
         'task': 'projetos.tasks.envia_aviso',
         'schedule': crontab(hour=6, minute=0),

@@ -8,11 +8,36 @@ Data: 18 de Outubro de 2019
 import datetime
 import subprocess
 from celery import task
+from celery import shared_task
 
 from .messages import email, htmlizar
 from .views import get_calendario_context
 from .models import Aviso
-#from .models import Configuracao
+
+from django.conf import settings
+from django.core.management import call_command
+
+@shared_task
+def backup():
+    if settings.DEBUG is True:
+        return f"Não pode fazer o Backup: Debug está True"
+    else:
+        try:
+            call_command("dbbackup")
+            return f"Backed up successfully: {datetime.datetime.now()}"
+        except:
+            return f"Não foi possível fazer o backup: {datetime.datetime.now()}"
+
+@shared_task
+def mediabackup():
+    if settings.DEBUG is True:
+        return f"Não pode fazer o Backup: Debug está True"
+    else:
+        try:
+            call_command("mediabackup")
+            return f"Backup realizado: {datetime.datetime.now()}"
+        except:
+            return f"Não foi possível fazer o backup: {datetime.datetime.now()}"
 
 @task
 def certbot_renew():
@@ -22,10 +47,7 @@ def certbot_renew():
 @task
 def envia_aviso():
     """Gera um aviso por e-mail."""
-    # configuracao = Configuracao.objects.all().first()
-    # delta = (datetime.date.today() - configuracao.t0).days
-    # avisos = Aviso.objects.filter(delta=delta)
-
+    
     avisos = []
     for aviso in Aviso.objects.all():
         if aviso.get_data() == datetime.date.today():
@@ -53,7 +75,6 @@ def envia_aviso():
                 message += "<br>\nLocal : {0}".format(acao.location)
                 message += "<br>\ndata inicial = {0}".format(acao.startDate)
                 message += "<br>\ndata final = {0}".format(acao.endDate)
-                #message += "<br>\ncolor = {0}".format(acao.color)
                 verify = email(subject, recipient_list, message)
                 if verify != 1:
                     #print("Algum problema de conexão, contacte: lpsoares@insper.edu.br")
