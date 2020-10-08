@@ -4149,10 +4149,6 @@ def cadastrar_usuario(request):
             else:
                 usuario.genero = "X"
 
-            cpf = request.POST['cpf']
-            if cpf:
-                usuario.cpf = cpf[:3]+cpf[4:7]+cpf[8:11]+cpf[12:13]
-
             if 'linkedin' in request.POST:
                 usuario.linkedin = request.POST['linkedin']
 
