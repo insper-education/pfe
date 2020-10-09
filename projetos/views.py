@@ -3521,6 +3521,25 @@ def mostra_feedback(request, feedback_id):
     }
     return render(request, 'projetos/mostra_feedback.html', context)
 
+
+#### ISSO TEM DEVIRAR UM PARÂMETRO DE INTERFACE NO FUTURO ####
+def get_peso(banca, objetivo):
+    if banca == 1: #(1, 'intermediaria')
+        if objetivo.titulo == "Execução Técnica":
+            return 3.6
+        if objetivo.titulo == "Organização":
+            return 2.7
+        if objetivo.titulo == "Design/Empreendedorismo":
+            return 2.7
+    else: # (0, 'final'),
+        if objetivo.titulo == "Execução Técnica":
+            return 8.4
+        if objetivo.titulo == "Organização":
+            return 6.3
+        if objetivo.titulo == "Design/Empreendedorismo":
+            return 6.3
+    return 0 # Algum erro aconteceu
+
 #@login_required
 #@permission_required("users.altera_professor", login_url='/projetos/')
 def avaliacao(request, primarykey): #acertar isso para pk
@@ -3549,126 +3568,96 @@ def avaliacao(request, primarykey): #acertar isso para pk
 
     if request.method == 'POST':
         if 'avaliador' in request.POST:
+
+            avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
             
             if banca.tipo_de_banca == 1: #(1, 'intermediaria'),
                 tipo_de_avaliacao = 1 #( 1, 'Banca Intermediária'),
             else: # (0, 'final'),
                 tipo_de_avaliacao = 2 #( 2, 'Banca Final'),
 
-            if 'objetivo.1' in request.POST:
-                julgamento1 = Avaliacao2.create(projeto=projeto)
-                julgamento1.avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
-                pk_objetivo1 = int(request.POST['objetivo.1'].split('.')[0])
-                julgamento1.objetivo1 = ObjetivosDeAprendizagem.objects.get(pk=pk_objetivo1)
-                #julgamento.objetivo1_conceito = request.POST['objetivo.1'].split('.')[1]
-                julgamento1.nota = converte_conceito(request.POST['objetivo.1'].split('.')[1])
-                julgamento1.tipo_de_avaliacao = tipo_de_avaliacao
-                julgamento1.save()
+            OBJETIVOS_POSSIVEIS = 5
+            julgamento = [None]*OBJETIVOS_POSSIVEIS
+            for i in range(OBJETIVOS_POSSIVEIS):
+                if 'objetivo.{0}'.format(i+1) in request.POST:
+                    obj_nota = request.POST['objetivo.{0}'.format(i+1)]
+                    conceito = obj_nota.split('.')[1]
+                    if conceito != "NA":
+                        julgamento[i] = Avaliacao2.create(projeto=projeto)
+                        julgamento[i].avaliador = avaliador
+                        pk_objetivo = int(obj_nota.split('.')[0])
+                        julgamento[i].objetivo = ObjetivosDeAprendizagem.objects.get(pk=pk_objetivo)
+                        julgamento[i].nota = converte_conceito(conceito)
+                        julgamento[i].tipo_de_avaliacao = tipo_de_avaliacao
+                        julgamento[i].peso = get_peso(tipo_de_avaliacao, julgamento[i].objetivo)
+                        julgamento[i].save()
 
-            if 'objetivo.2' in request.POST:
-                julgamento2 = Avaliacao2.create(projeto=projeto)
-                julgamento2.avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
-                pk_objetivo2 = int(request.POST['objetivo.2'].split('.')[0])
-                julgamento2.objetivo2 = ObjetivosDeAprendizagem.objects.get(pk=pk_objetivo2)
-                #julgamento.objetivo2_conceito = request.POST['objetivo.2'].split('.')[1]
-                julgamento2.nota = converte_conceito(request.POST['objetivo.2'].split('.')[1])
-                julgamento2.tipo_de_avaliacao = tipo_de_avaliacao
-                julgamento2.save()
-
-            if 'objetivo.3' in request.POST:
-                julgamento3 = Avaliacao2.create(projeto=projeto)
-                julgamento3.avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
-                pk_objetivo3 = int(request.POST['objetivo.3'].split('.')[0])
-                julgamento3.objetivo3 = ObjetivosDeAprendizagem.objects.get(pk=pk_objetivo3)
-                #julgamento.objetivo3_conceito = request.POST['objetivo.3'].split('.')[1]
-                julgamento3.nota = converte_conceito(request.POST['objetivo.3'].split('.')[1])
-                julgamento3.tipo_de_avaliacao = tipo_de_avaliacao
-                julgamento3.save()
-
-            if 'objetivo.4' in request.POST:
-                julgamento4 = Avaliacao2.create(projeto=projeto)
-                julgamento4.avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
-                pk_objetivo4 = int(request.POST['objetivo.4'].split('.')[0])
-                julgamento4.objetivo4 = ObjetivosDeAprendizagem.objects.get(pk=pk_objetivo4)
-                #julgamento.objetivo4_conceito = request.POST['objetivo.4'].split('.')[1]
-                julgamento4.nota = converte_conceito(request.POST['objetivo.4'].split('.')[1])
-                julgamento4.tipo_de_avaliacao = tipo_de_avaliacao
-                julgamento4.save()
-
-            if 'objetivo.5' in request.POST:
-                julgamento5 = Avaliacao2.create(projeto=projeto)
-                julgamento5.avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
-                pk_objetivo5 = int(request.POST['objetivo.5'].split('.')[0])
-                julgamento5.objetivo5 = ObjetivosDeAprendizagem.objects.get(pk=pk_objetivo5)
-                #julgamento.objetivo5_conceito = request.POST['objetivo.5'].split('.')[1]
-                julgamento5.nota = converte_conceito(request.POST['objetivo.5'].split('.')[1])
-                julgamento5.tipo_de_avaliacao = tipo_de_avaliacao
-                julgamento5.save()
-
-            if 'observacoes' in request.POST:
-                julgamento_observacoes = Avaliacao2.create(projeto=projeto)
-                julgamento_observacoes.avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
+            julgamento_observacoes = None
+            if 'observacoes' in request.POST and request.POST['observacoes'] != "":
+                julgamento_observacoes = Observacao.create(projeto=projeto)
+                julgamento_observacoes.avaliador = avaliador
                 julgamento_observacoes.observacoes = request.POST['observacoes']
+                julgamento_observacoes.tipo_de_avaliacao = tipo_de_avaliacao
                 julgamento_observacoes.save()
-
-                #julgamento.observacoes = request.POST['observacoes']
-
-            #julgamento.save()
 
             message = "<h3>Avaliação PFE</h3><br>\n"
             message += "<b>Título do Projeto:</b> {0}<br>\n".format(projeto.get_titulo())
             message += "<b>Organização:</b> {0}<br>\n".format(projeto.organizacao)
             message += "<b>Orientador:</b> {0}<br>\n".format(projeto.orientador)
-            message += "<b>Avaliador:</b> {0}<br>\n".format(julgamento.avaliador)
+            message += "<b>Avaliador:</b> {0}<br>\n".format(avaliador)
             message += "<b>Data:</b> {0}<br>\n".format(banca.startDate.strftime("%d/%m/%Y %H:%M"))
 
-            if julgamento.tipo_de_avaliacao == 0:
+            if tipo_de_avaliacao == 1: # (1, 'Banca Intermediária')
+                message += "<b>Banca:</b> Intermediária<br>\n"
+            elif tipo_de_avaliacao == 2: # (2, 'Banca Final')
                 message += "<b>Banca:</b> final<br>\n"
             else:
-                message += "<b>Banca:</b> Intermediária<br>\n"
+                message += "<b>Banca:</b> Não identificada<br>\n"
 
             message += "<br>\n"
             message += "<b>Conceitos:</b><br>\n"
             message += "<table style='border: 1px solid black; "
             message += "border-collapse:collapse; padding: 0.3em;'>"
-            if julgamento.objetivo1:
+            if julgamento[0]:
                 message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
-                    format(julgamento.objetivo1)
+                    format(julgamento[0].objetivo)
                 message += "<td style='border: 1px solid black; text-align:center'>"
                 message += "&nbsp;{0}&nbsp;</td>\n".\
-                    format(julgamento.objetivo1_conceito)
-            if julgamento.objetivo2:
+                    format(converte_letra(julgamento[0].nota))
+            if julgamento[1]:
                 message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
-                    format(julgamento.objetivo2)
+                    format(julgamento[1].objetivo)
                 message += "<td style='border: 1px solid black; text-align:center'>"
                 message += "&nbsp;{0}&nbsp;</td>\n".\
-                    format(julgamento.objetivo2_conceito)
-            if julgamento.objetivo3:
+                    format(converte_letra(julgamento[1].nota))
+            if julgamento[2]:
                 message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
-                    format(julgamento.objetivo3)
+                    format(julgamento[2].objetivo)
                 message += "<td style='border: 1px solid black; text-align:center'>"
                 message += "&nbsp;{0}&nbsp;</td>\n".\
-                    format(julgamento.objetivo3_conceito)
-            if julgamento.objetivo4:
+                    format(converte_letra(julgamento[2].nota))
+            if julgamento[3]:
                 message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
-                    format(julgamento.objetivo4)
+                    format(julgamento[3].objetivo)
                 message += "<td style='border: 1px solid black; text-align:center'>"
                 message += "&nbsp;{0}&nbsp;</td>\n".\
-                    format(julgamento.objetivo4_conceito)
-            if julgamento.objetivo5:
+                    format(converte_letra(julgamento[3].nota))
+            if julgamento[4]:
                 message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
-                    format(julgamento.objetivo5)
+                    format(julgamento[4].objetivo)
                 message += "<td style='border: 1px solid black; text-align:center'>"
                 message += "&nbsp;{0}&nbsp;</td>\n".\
-                    format(julgamento.objetivo5_conceito)
+                    format(converte_letra(julgamento[4].nota))
             message += "</table>"
 
             message += "<br>\n<br>\n"
-            message += "<b>Observações:</b>\n"
-            message += "<p style='border:1px; border-style:solid; padding: 0.3em; margin: 0;'>"
-            message += julgamento.observacoes.replace('\n', '<br>\n')
-            message += "</p>"
-            message += "<br>\n<br>\n"
+
+            if julgamento_observacoes:
+                message += "<b>Observações:</b>\n"
+                message += "<p style='border:1px; border-style:solid; padding: 0.3em; margin: 0;'>"
+                message += julgamento_observacoes.observacoes.replace('\n', '<br>\n')
+                message += "</p>"
+                message += "<br>\n<br>\n"
 
             message += "<br><b>Objetivos de Aprendizagem</b>"
             for objetivo in objetivos:
@@ -3713,7 +3702,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
                 message += "</table>"
 
             subject = 'Banca PFE : {0}'.format(projeto)
-            recipient_list = [projeto.orientador.user.email, julgamento.avaliador.email,]
+            recipient_list = [projeto.orientador.user.email, avaliador.email,]
             check = email(subject, recipient_list, message)
             if check != 1:
                 message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
@@ -3730,18 +3719,12 @@ def avaliacao(request, primarykey): #acertar isso para pk
             
         return HttpResponse("Avaliação não submetida.")
     else:
-        # mes = datetime.date.today().month
-        # if mes <= 4 or (mes > 7 and mes < 11):
-        #     guess_banca = 1 # intermediaria
-        # else:
-        #     guess_banca = 0 # final
 
         context = {
             'pessoas' : pessoas,
             'objetivos': objetivos,
             'projeto': projeto,
             'banca' : banca,
-            #'guess_banca' : guess_banca,
         }
         return render(request, 'projetos/avaliacao.html', context=context)
 

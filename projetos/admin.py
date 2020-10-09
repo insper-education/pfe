@@ -315,7 +315,7 @@ class EncontroAdmin(admin.ModelAdmin):
 @admin.register(Avaliacao2)
 class Avaliacao2Admin(admin.ModelAdmin):
     """Informações das Avaliações2."""
-    list_display = ('momento', 'peso', 'tipo_de_avaliacao', 'avaliador', 'projeto', 'alocacao')
+    list_display = ('momento', 'nota', 'peso', 'objetivo', 'tipo_de_avaliacao', 'avaliador', 'projeto', 'alocacao')
     ordering = ('momento',)
     list_filter = ('tipo_de_avaliacao', )
     search_fields = ['projeto__titulo', 'projeto__titulo_final', 'alocacao__aluno__user__username', ]
