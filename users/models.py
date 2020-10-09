@@ -163,7 +163,7 @@ class Professor(models.Model):
                                  choices=TIPO_DEDICACAO, null=True, blank=True,
                                  help_text='Tipo de dedicação do professor')
 
-    areas = models.TextField(max_length=200, null=True, blank=True,
+    areas = models.TextField(max_length=500, null=True, blank=True,
                              help_text='Áreas de Interesse do Professor')
     website = models.URLField(max_length=75, null=True, blank=True,
                               help_text='Website profissional do Professor')
