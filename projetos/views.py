@@ -3395,18 +3395,6 @@ def export_calendar(request, event_id):
     return response
 
 @login_required
-@permission_required('users.altera_professor', login_url='/projetos/')
-def bancas_agendamento(request):
-    """Lista todas as bancas agendadas futuras para enviar agendaementos."""
-    todas_bancas = Banca.objects.all().order_by("startDate")
-    hoje = datetime.date.today()
-    bancas = todas_bancas.filter(startDate__gt=hoje)
-    context = {
-        'bancas' : bancas,
-    }
-    return render(request, 'projetos/bancas_agendamento.html', context)
-
-@login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
 def mapeamento(request):
     """Chama o mapeamento entre estudantes e projetos do próximo semestre."""
