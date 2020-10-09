@@ -27,8 +27,9 @@
   {% if professor.website %}
     <strong>website:</strong> <a href="{{ professor.website }}"> {{ professor.website }} </a><br>
   {% endif %}
-
-  
+  {% if professor.areas %}
+    <strong>Áreas de Interesse:</strong> {{ professor.areas }}<br>
+  {% endif %}
   
   {% if projetos %}
     <hr>

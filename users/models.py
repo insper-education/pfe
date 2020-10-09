@@ -163,10 +163,12 @@ class Professor(models.Model):
                                  choices=TIPO_DEDICACAO, null=True, blank=True,
                                  help_text='Tipo de dedicação do professor')
 
-    #Não sendo usado
-    #areas = models.TextField(max_length=500, blank=True)
-    website = models.URLField(max_length=250, null=True, blank=True)
-    lattes = models.URLField(max_length=250, null=True, blank=True)
+    areas = models.TextField(max_length=200, null=True, blank=True,
+                             help_text='Áreas de Interesse do Professor')
+    website = models.URLField(max_length=75, null=True, blank=True,
+                              help_text='Website profissional do Professor')
+    lattes = models.URLField(max_length=75, null=True, blank=True,
+                             help_text='Link para o currículo Lattes do Professor')
 
     class Meta:
         verbose_name = 'Professor'

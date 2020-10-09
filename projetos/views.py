@@ -4166,15 +4166,14 @@ def cadastrar_usuario(request):
             elif usuario.tipo_de_usuario == 2: #professor
 
                 professor = Professor.create(usuario)
-                #professor = Professor.objects.get(user=usuario)
 
                 # ("TI", "Tempo Integral"),
                 # ("TP", 'Tempo Parcial'),
 
                 if request.POST['dedicacao'] == "ti":
-                    professor.curso = 'TI'
+                    professor.dedicacao = 'TI'
                 elif request.POST['dedicacao'] == "tp":
-                    professor.curso = 'TP'
+                    professor.dedicacao = 'TP'
                 else:
                     return HttpResponse("Algum erro não identificado.", status=401)
 
