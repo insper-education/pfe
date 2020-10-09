@@ -6,27 +6,53 @@
 {% endcomment %}
 
 {% block head %}
+  {% load static %}
   {% load escape_emails %}
+
+  <style>
+
+    .image {
+      outline-width: 0;
+      background-color: none;
+    }
+
+    .image:hover {
+      background: #e7e7e7;
+      background-color: none;
+    }
+
+    .image:active {
+      background-color: lightblue;
+    }
+
+  </style>
+
 {% endblock %}
 
 {% block content %}
 
+  <div class="images" style="float: right;">
+    <img class="image" id="print" src="{% static 'images/icone_Printer.png' %}" alt="printer" style="cursor: pointer;">
+  </div>
+
   <span class="titulo">Listagem de Bancas</span>
   <br>
 
-  <select onchange="location = this.options[this.selectedIndex].value;">
+  <select id="proximas" onchange="location = this.options[this.selectedIndex].value;">
     <option value="todas" {% if periodo == "todas" %}selected="todas"{% endif %}>Todas</option>
     <option value="proximas" {% if periodo == "proximas" %}selected="proximas"{% endif %}>Próximas</option>
   </select>
   <br>
 
-  <b>Informações: </b>&nbsp;
-  <label><input onchange="($(this).prop('checked') ? $('.local').show() : $('.local').hide())" type="checkbox" checked /> local</label>&nbsp;&nbsp;&nbsp;
-  <label><input onchange="($(this).prop('checked') ? $('.link').show() : $('.link').hide())" type="checkbox" checked /> link</label>&nbsp;&nbsp;&nbsp;
-  <label><input onchange="($(this).prop('checked') ? $('.banca').show() : $('.banca').hide())" type="checkbox" checked /> banca</label>&nbsp;&nbsp;&nbsp;
-  <label><input onchange="($(this).prop('checked') ? $('.grupo').show() : $('.grupo').hide())" type="checkbox" checked /> grupo</label>&nbsp;&nbsp;&nbsp;
-  <label><input onchange="($(this).prop('checked') ? $('.avaliacao').show() : $('.avaliacao').hide())" type="checkbox" checked /> avaliação</label>&nbsp;&nbsp;&nbsp;
-  <label><input onchange="($(this).prop('checked') ? $('.agendamento').show() : $('.agendamento').hide())" type="checkbox" checked /> agendamento</label>&nbsp;&nbsp;&nbsp;
+  <div id="informacoes">
+    <b>Informações: </b>&nbsp;
+    <label><input onchange="($(this).prop('checked') ? $('.local').show() : $('.local').hide())" type="checkbox" checked /> local</label>&nbsp;&nbsp;&nbsp;
+    <label><input onchange="($(this).prop('checked') ? $('.link').show() : $('.link').hide())" type="checkbox" checked /> link</label>&nbsp;&nbsp;&nbsp;
+    <label><input onchange="($(this).prop('checked') ? $('.banca').show() : $('.banca').hide())" type="checkbox" checked /> banca</label>&nbsp;&nbsp;&nbsp;
+    <label><input onchange="($(this).prop('checked') ? $('.grupo').show() : $('.grupo').hide())" type="checkbox" checked /> grupo</label>&nbsp;&nbsp;&nbsp;
+    <label><input onchange="($(this).prop('checked') ? $('.avaliacao').show() : $('.avaliacao').hide())" type="checkbox" checked /> avaliação</label>&nbsp;&nbsp;&nbsp;
+    <label><input onchange="($(this).prop('checked') ? $('.agendamento').show() : $('.agendamento').hide())" type="checkbox" checked /> agendamento</label>&nbsp;&nbsp;&nbsp;
+  </div>
 
   {% if bancas %}
     <table id="BancasTable">
@@ -226,5 +252,15 @@
     <p>Não existem bancas futuras agendadas.</p>
   {% endif %}
   <p>&nbsp;</p>
+
+  <script>
+    document.getElementById("print").addEventListener("click", function() {
+        $('#proximas').hide()
+        $('#informacoes').hide()
+        $('.images').hide()
+        $('.topnav').hide()
+    });
+  </script>
+
 
 {% endblock %}
