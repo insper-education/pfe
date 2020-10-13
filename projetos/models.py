@@ -875,7 +875,7 @@ class Observacao(models.Model):
                                  on_delete=models.SET_NULL, null=True, blank=True,
                                  help_text='Objetivo de Aprendizagem')
 
-    observacoes = models.TextField(max_length=512, null=True, blank=True,
+    observacoes = models.TextField(max_length=2048, null=True, blank=True,
                                 help_text='qualquer observação relevante')
 
     @classmethod
