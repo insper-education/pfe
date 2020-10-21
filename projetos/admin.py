@@ -188,6 +188,7 @@ class PropostaAdmin(admin.ModelAdmin):
             'titulo', 'descricao', 'expectativas',
             'areas_de_interesse',
             'recursos', 'observacoes',
+            'tipo_de_interesse',
             'ano', 'semestre',
             'autorizado', 'disponivel',
             'perfil_aluno1_computacao', 'perfil_aluno1_mecanica', 'perfil_aluno1_mecatronica',

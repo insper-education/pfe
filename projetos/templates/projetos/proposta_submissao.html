@@ -134,6 +134,19 @@
     <textarea id="observacoes" name="observacoes" rows="4" cols="80" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{observacoes}}</textarea>
     <br><br>
 
+    <label for="interesses">O principal interesse da empresa com o projeto é:<br>
+    <small>não será apresentado aos alunos (opcional)</small>
+    </label><br>
+    {% for interesse in interesses %}
+      <label for="{{interesse.0}}">
+        &nbsp;<input type="radio" name="interesse" id="{{interesse.0}}" value="{{interesse.0}}"
+        {% if interesse.0 == tipo_de_interesse %}checked{% endif %}
+        {% if vencido %}disabled{% endif %}>
+        {{ interesse.1 }}
+      </label><br>
+    {% endfor %}
+    <br><br>
+
     Obs.: Ao submeter o projeto, deve ficar claro que a intenção do Projeto Final de Engenharia é 
     que os alunos tenham um contato próximo com as pessoas responsáveis nas instituições parceiras 
     para o desenvolvimento de uma solução em engenharia. Em geral os alunos se deslocam uma vez 

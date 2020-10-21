@@ -62,20 +62,21 @@
     {{proposta.expectativas|linebreaks|urlize}}
   {% endif %}
 
-  {% comment %}
-    {% if projeto.areas %}
-      <br><strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ projeto.areas|linebreaks }}
-    {% endif %}
-  {% endcomment %}
-
   {% if proposta.recursos %}
     <br><strong>Recursos a serem disponibilizados aos Alunos :</strong>
     {{proposta.recursos|linebreaks|urlize}}
   {% endif %}
-  {% if projeto.observacoes %}
+
+  {% if proposta.observacoes %}
     <br><strong>Outras observações :</strong>
     {{proposta.observacoes|linebreaks|urlize}}<br>
   {% endif %}
+
+  {% if proposta.tipo_de_interesse > 0 %}
+    <br><strong>O principal interesse da empresa com o projeto é:</strong><br>
+    {{proposta.get_interesse}}
+  {% endif %}
+
   {% if proposta.anexo %}
     <br><strong>Anexo :</strong>
     <a class="text-success" href="../..{{MEDIA_URL}}{{proposta.anexo}}">{{proposta.anexo}}</a>

@@ -213,7 +213,6 @@ class Proposta(models.Model):
                                                          null=True, blank=True,
                                                          help_text='O principal interesse da empresa com o projeto é')
 
-
     # Preenchidos automaticamente
     ano = models.PositiveIntegerField("Ano",
                                       validators=[MinValueValidator(2018), MaxValueValidator(3018)],
@@ -289,8 +288,15 @@ class Proposta(models.Model):
         super(Proposta, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
-        """Caminha para editar uma proposta."""
+        """Caminho para editar uma proposta."""
         return reverse('proposta_editar', kwargs={'slug': self.slug})
+    
+    def get_interesse(self):
+        """Retorna o texto do interesse da organização na projeto."""
+        for entry in Proposta.TIPO_INTERESSE:
+            if self.tipo_de_interesse == entry[0]:
+                return entry[1]
+        return None
 
 class Configuracao(models.Model):
     """Armazena os dados básicos de funcionamento do sistema."""

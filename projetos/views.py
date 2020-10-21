@@ -1942,7 +1942,11 @@ def preenche_proposta(request, proposta):
     proposta.recursos = request.POST.get("recursos", "")
     proposta.observacoes = request.POST.get("observacoes", "")
 
-    #proposta.areas_de_interesse = cria_areas(request)
+    print(request.POST)
+    tipo = request.POST.get("interesse", "")
+    if tipo != "":
+        proposta.tipo_de_interesse = int(tipo)
+
     proposta.save()
 
     cria_area_proposta(request, proposta)
@@ -2002,6 +2006,9 @@ def envia_proposta(proposta):
     message += "<b>Outras observações para os alunos:</b>\n {0}\n\n".\
                    format(proposta.observacoes)
 
+    message += "<b>O principal interesse da empresa com o projeto é:</b>\n {0}\n\n".\
+                   format(proposta.get_interesse())
+
     message += "\n\n"
     message += "<b>Data da proposta:</b> {0}\n\n\n".\
                    format(proposta.data.strftime("%d/%m/%Y %H:%M"))
@@ -2028,8 +2035,7 @@ def envia_proposta(proposta):
                                                      proposta.titulo)
 
     recipient_list = list(map(str.strip, re.split(",|;", proposta.email)))
-    recipient_list += ["pfe@insper.edu.br", "lpsoares@insper.edu.br",]
-    #recipient_list += ["lpsoares@insper.edu.br",]
+    recipient_list += ["lpsoares@insper.edu.br",]
 
     check = email(subject, recipient_list, message)
     if check != 1:
@@ -2124,6 +2130,8 @@ def proposta_submissao(request):
         'recursos' : "",
         'observacoes' : "",
         'edicao' : False,
+        'interesses' : Proposta.TIPO_INTERESSE,
+        'tipo_de_interesse' : 0 # Não existe na verdade
     }
     return render(request, 'projetos/proposta_submissao.html', context)
 
@@ -2172,19 +2180,22 @@ def proposta_editar(request, slug):
 
     liberadas_propostas = Configuracao.objects.first().liberadas_propostas
 
-    if liberadas_propostas and request.method == 'POST':
-        preenche_proposta(request, proposta)
-        mensagem = envia_proposta(proposta) # Por e-mail
-        resposta = "Submissão de proposta de projeto atualizada com sucesso.<br>"
-        resposta += "Você deve receber um e-mail de confirmação nos próximos instantes.<br>"
-        resposta += "<br><hr>"
-        resposta += mensagem
+    if request.method == 'POST':
+        if not liberadas_propostas:
+            preenche_proposta(request, proposta)
+            mensagem = envia_proposta(proposta) # Por e-mail
+            resposta = "Submissão de proposta de projeto atualizada com sucesso.<br>"
+            resposta += "Você deve receber um e-mail de confirmação nos próximos instantes.<br>"
+            resposta += "<br><hr>"
+            resposta += mensagem
 
-        context = {
-            "voltar": True,
-            "mensagem": resposta,
-        }
-        return render(request, 'generic.html', context=context)
+            context = {
+                "voltar": True,
+                "mensagem": resposta,
+            }
+            return render(request, 'generic.html', context=context)
+        else:
+            return HttpResponse("Propostas não liberadas para edição.", status=401)
 
     areas = Area.objects.filter(ativa=True)
 
@@ -2211,7 +2222,8 @@ def proposta_editar(request, slug):
         'observacoes' : proposta.observacoes,
         'proposta' : proposta,
         'edicao' : True,
-
+        'interesses' : Proposta.TIPO_INTERESSE,
+        'tipo_de_interesse' : proposta.tipo_de_interesse,
     }
     return render(request, 'projetos/proposta_submissao.html', context)
 
