@@ -1249,19 +1249,33 @@ def organizacoes_prospectadas(request):
     todas_organizacoes = Organizacao.objects.all()
     configuracao = Configuracao.objects.all().first()
 
+    ano = configuracao.ano
+    semestre = configuracao.semestre
+
+    # Vai para próximo semestre
+    if semestre == 1:
+        semestre = 2
+    else:
+        ano += 1
+        semestre = 1
+
     disponiveis = []
     submetidas = []
     contato = []
     organizacoes = []
+
+    periodo = 60
+    if request.is_ajax() and 'periodo' in request.POST:
+        periodo = int(request.POST['periodo'])*30 # periodo vem em meses
+
     for organizacao in todas_organizacoes:
         propostas = Proposta.objects.filter(organizacao=organizacao).order_by("ano", "semestre")
         anot = Anotacao.objects.filter(organizacao=organizacao).order_by("momento").last()
 
-        if anot and (datetime.date.today() - anot.momento.date() < datetime.timedelta(days=100)):
+        if anot and (datetime.date.today() - anot.momento.date() < datetime.timedelta(days=periodo)):
             organizacoes.append(organizacao)
             contato.append(anot)
 
-            #elif periodo == "disponiveis":
             if configuracao.semestre == 1:
                 propostas_submetidas = propostas.filter(ano__gte=configuracao.ano).\
                                             exclude(ano=configuracao.ano, semestre=1).distinct()
@@ -1280,6 +1294,8 @@ def organizacoes_prospectadas(request):
         'total_organizacoes': total_organizacoes,
         'total_disponiveis': total_disponiveis,
         'total_submetidas': total_submetidas,
+        'ano': ano,
+        'semestre': semestre,
         'filtro': "todas",
         }
     return render(request, 'projetos/organizacoes_prospectadas.html', context)
@@ -4287,7 +4303,6 @@ def graficos(request):
                                    filter(semestre=1).\
                                    count()
         num_projetos.append(projetos)
-
 
     if request.is_ajax():
         if 'topicId' in request.POST:

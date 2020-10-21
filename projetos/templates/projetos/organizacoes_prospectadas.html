@@ -9,13 +9,6 @@
   {% load static %}
   <script src="https://www.w3schools.com/lib/w3.js"></script>
   <script>
-      var todos_contactados = 0
-      var so_contactados = 0
-      var confirmados = 0
-      var interessados = 0
-      var recusados = 0
-  </script>
-  <script>
     $(document).ready(function(){
       $('[data-toggle="tooltip"]').tooltip();
     });
@@ -24,8 +17,19 @@
 
 {% block content %}
 
-  <span class="titulo">Organizações prospectadas nos últimos 3 mêses</span>
+  <span class="titulo">Organizações prospectadas para projetos a partir de {{ano}}.{{semestre}}</span>
   <br>
+
+  <label for="periodo">Período:</label>
+  <select id="periodo" class="periodo" data-tableId="OrganizacoesTable">
+    <option value="1">1 mês</option>
+    <option value="2" selected>2 mêses</option>
+    <option value="3">3 mêses</option>
+    <option value="6">6 mêses</option>
+    <option value="12">12 mêses</option>
+  </select>
+
+  &nbsp;&nbsp;&nbsp;
 
   <label for="filter">Filtrar:</label>
   <select id="filter" class="filter" data-tableId="OrganizacoesTable">
@@ -38,103 +42,127 @@
   </select>
 
   <br><br>
-  {% if organizacoes_list %}
-    <table id="OrganizacoesTable">
-      <tr>
-        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">
-          Organização
-        </th>
 
-        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">
-          Último<br>Contato
-        </th>
-        
-        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">
-          Mensagem
-        </th>
-        
-        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">
-          <a data-toggle="tooltip" data-html="true" animation="true" title="Contando somente as propostas já autorizadas e disponibilizadas para os estudantes aplicarem"><small>Propostas<br>Disponíveis</small>
-        </th>
+  <div id="tabela">
 
-        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">
-          <a data-toggle="tooltip" data-html="true" animation="true" title="Contando todas as propostas submetidas pela organização, mesmo aquelas que não estão disponibilizadas para os estudantes aplicarem"><small>Propostas<br>Enviadas</small>
-        </th>
-      </tr>
-      {% for organizacao,disponiveis,submetidas,contato in organizacoes_list %} 
-        <tr class="item" 
-        {% if contato != '---------' %}
-            style=
-            {% if contato.tipo_de_retorno == 0 %}
-              "background-color:lightblue" 
-            {% elif contato.tipo_de_retorno == 1 %}
-              "background-color:lightgreen"
-            {% elif contato.tipo_de_retorno == 2 %}
-              "background-color:lemonchiffon"
-            {% elif contato.tipo_de_retorno == 3 %}
-              "background-color:pink" 
-            {% endif %}
-            data-type="{{contato.tipo_de_retorno}}"
-        {% endif %}
-        >
-          <td>
-            <a href="{% url 'organizacao_completo' organizacao.id %}">
-              {{organizacao.nome}}
-            </a>
-          </td>
-          <td>
-            {% if contato == '---------' %}
-              ---------
-            {% else %}
-              {{contato.momento|date:"d/m/Y"}}
-            {% endif %}
-          </td>
-          <td>
-            {% if contato == '---------' %}
-              ---------
-            {% else %}
-              {{contato.texto}}
-            {% endif %}
-          </td>
-          <td class="text-center">
-            {{disponiveis|stringformat:"03d"}}
-          </td>
-          <td class="text-center">
-            {{submetidas|stringformat:"03d"}}
-          </td>
+    <script>
+        var todos_contactados = 0
+        var so_contactados = 0
+        var confirmados = 0
+        var interessados = 0
+        var recusados = 0
+    </script>
+
+    {% if organizacoes_list %}
+
+      <table id="OrganizacoesTable">
+        <tr>
+          <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">
+            Organização
+          </th>
+
+          <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">
+            Último<br>Contato
+          </th>
+          
+          <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">
+            Mensagem
+          </th>
+          
+          <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">
+            <a data-toggle="tooltip" data-html="true" animation="true" title="Contando somente as propostas já autorizadas e disponibilizadas para os estudantes aplicarem"><small>Propostas<br>Disponíveis</small>
+          </th>
+
+          <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">
+            <a data-toggle="tooltip" data-html="true" animation="true" title="Contando todas as propostas submetidas pela organização, mesmo aquelas que não estão disponibilizadas para os estudantes aplicarem"><small>Propostas<br>Enviadas</small>
+          </th>
         </tr>
-        {% if contato != '---------' %}
-          {% if contato.momento|date:'Ymd' > meses3|date:'Ymd' %}
-            <script>todos_contactados += 1</script>
-            {% if contato.tipo_de_retorno == 0 %}
-              <script>so_contactados += 1</script>
-            {% elif contato.tipo_de_retorno == 1 %}
-              <script>confirmados += 1</script>
-            {% elif contato.tipo_de_retorno == 2 %}
-              <script>interessados += 1</script>
-            {% elif contato.tipo_de_retorno == 3 %}
-              <script>recusados += 1</script>
+        {% for organizacao,disponiveis,submetidas,contato in organizacoes_list %} 
+          <tr class="item" 
+          {% if contato != '---------' %}
+              style=
+              {% if contato.tipo_de_retorno == 0 %}
+                "background-color:lightblue" 
+              {% elif contato.tipo_de_retorno == 1 %}
+                "background-color:lightgreen"
+              {% elif contato.tipo_de_retorno == 2 %}
+                "background-color:lemonchiffon"
+              {% elif contato.tipo_de_retorno == 3 %}
+                "background-color:pink" 
+              {% endif %}
+              data-type="{{contato.tipo_de_retorno}}"
+          {% endif %}
+          >
+            <td>
+              <a href="{% url 'organizacao_completo' organizacao.id %}">
+                {{organizacao.nome}}
+              </a>
+            </td>
+            <td>
+              {% if contato == '---------' %}
+                ---------
+              {% else %}
+                {{contato.momento|date:"d/m/Y"}}
+              {% endif %}
+            </td>
+            <td>
+              {% if contato == '---------' %}
+                ---------
+              {% else %}
+                {{contato.texto}}
+              {% endif %}
+            </td>
+            <td class="text-center">
+              {{disponiveis|stringformat:"03d"}}
+            </td>
+            <td class="text-center">
+              {{submetidas|stringformat:"03d"}}
+            </td>
+          </tr>
+          {% if contato != '---------' %}
+            {% if contato.momento|date:'Ymd' > meses3|date:'Ymd' %}
+              <script>todos_contactados += 1</script>
+              {% if contato.tipo_de_retorno == 0 %}
+                <script>so_contactados += 1</script>
+              {% elif contato.tipo_de_retorno == 1 %}
+                <script>confirmados += 1</script>
+              {% elif contato.tipo_de_retorno == 2 %}
+                <script>interessados += 1</script>
+              {% elif contato.tipo_de_retorno == 3 %}
+                <script>recusados += 1</script>
+              {% endif %}
             {% endif %}
           {% endif %}
-        {% endif %}
-      {% endfor %}
-    </table>
-    Organizações contactadas recentemente ({{total_organizacoes}}):<br>
-    &nbsp;<span style="background-color:lightblue">&nbsp;&nbsp;&nbsp;&nbsp;</span> Sondada (<script>document.write(so_contactados);</script>)<br>
-    &nbsp;<span style="background-color:pink">&nbsp;&nbsp;&nbsp;&nbsp;</span> Declinou (<script>document.write(recusados);</script>)<br>
-    &nbsp;<span style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;&nbsp;</span> Interessada (<script>document.write(interessados);</script>)<br>
-    &nbsp;<span style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;&nbsp;</span> Confirmada (<script>document.write(confirmados);</script>)<br>
-    <p>&nbsp;</p>
-    <strong>Total de Propostas Submetidas:</strong> {{ total_disponiveis }}
-    <a data-toggle="tooltip" data-html="true" animation="true" title="Contando todas as propostas, incluindo as (ainda) não disponibilizadas para os estudantes.">
-        ({{ total_submetidas }})
-      </a><br>
+        {% endfor %}
+      </table>
+        
 
-    <br>
-  {% else %}
-    <p>Não existem organizações cadastradas.</p>
-  {% endif %}
+      Organizações contactadas recentemente ({{total_organizacoes}}):<br>
 
+      &nbsp;<span style="background-color:lightblue">&nbsp;&nbsp;&nbsp;&nbsp;</span> Sondada (<span id="so_contactados"></span>)<br>
+      &nbsp;<span style="background-color:pink">&nbsp;&nbsp;&nbsp;&nbsp;</span> Declinou (<span id="recusados"></span>)<br>
+      &nbsp;<span style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;&nbsp;</span> Interessada (<span id="interessados"></span>)<br>
+      &nbsp;<span style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;&nbsp;</span> Confirmada (<span id="confirmados"></span>)<br>
+  
+      <script>
+        document.getElementById('so_contactados').innerHTML = so_contactados;
+        document.getElementById('recusados').innerHTML = recusados;
+        document.getElementById('interessados').innerHTML = interessados;
+        document.getElementById('confirmados').innerHTML = confirmados;
+      </script>
+      
+      <p>&nbsp;</p>
+      <strong>Total de Propostas Submetidas (>={{ano}}.{{semestre}}):</strong> {{ total_disponiveis }}
+      <a data-toggle="tooltip" data-html="true" animation="true" title="Contando todas as propostas, incluindo as (ainda) não disponibilizadas para os estudantes.">
+          ({{ total_submetidas }})
+        </a><br>
+
+      <br>
+    {% else %}
+      <p>Não existem organizações cadastradas.</p>
+    {% endif %}
+
+  </div>
   <p>&nbsp;</p>
 
   <script type="text/javascript">
@@ -163,7 +191,29 @@
     $(document).ready(function(){
       filtra_data();
     });
-  
+
+  </script>
+
+  <script>
+      $(".periodo").change(function(){
+          var periodo = $(".periodo option:selected").attr("value");
+          $.ajax({
+              type: "POST",
+              url: "{% url 'organizacoes_prospectadas' %}",
+              data: {
+                  periodo: periodo,
+                  'csrfmiddlewaretoken': '{{ csrf_token }}',
+              },
+              success: function(response){
+                  $("#tabela").replaceWith($("#tabela",response));
+                  filtra_data();
+              },
+              error: function(response) {
+                  alert('error');
+              }
+
+          });
+      });
   </script>
 
 {% endblock %}
