@@ -13,7 +13,7 @@
 
 {% block content %}
 
-  <span class="titulo">Procura pela Propostas de Projetos</span>
+  <span class="titulo">Procura pelas Propostas de Projetos</span>
   <br>
 
   <label for="filter">Edição:</label>
@@ -298,7 +298,7 @@
       {% if tamanho > 0 %}
         var histograma = new Chart(ctx, config);
       {% else %}
-        $("#chart-container").text("Não há projetos!");
+        $("#chart-container").text("Não há procura por propostas!");
       {% endif %}
 
       canvasP.onclick = function(e) {
@@ -358,8 +358,6 @@
         });
     }
 
-    //window.onload = chart;
-    //window.addEventListener("resize", chart);
     $(".filter").change(carrega_semestre);    
     $(document).ready(carrega_semestre);
 
