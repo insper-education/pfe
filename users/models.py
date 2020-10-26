@@ -134,6 +134,13 @@ class PFEUser(AbstractUser):
     genero = models.CharField(max_length=1, choices=GENERO_CHOICES, default='X',
                               help_text='sexo do usuário')
 
+    TIPO_LINGUA = (
+        (1, 'português'),
+        (2, 'inglês'),
+    )
+    tipo_lingua = models.PositiveSmallIntegerField(choices=TIPO_LINGUA, default=1,
+                                                       help_text='língua usada para comunicar com usuário')
+
     class Meta:
         verbose_name = 'Usuário'
         verbose_name_plural = 'Usuários'

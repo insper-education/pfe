@@ -4151,6 +4151,9 @@ def cadastrar_usuario(request):
             if 'linkedin' in request.POST:
                 usuario.linkedin = request.POST['linkedin']
 
+            if 'lingua' in request.POST:
+                usuario.tipo_lingua = request.POST['lingua']
+
             usuario.save()
 
             if usuario.tipo_de_usuario == 1: #estudante

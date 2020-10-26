@@ -35,6 +35,19 @@
     </a>
     <br>
   {% endif %}
+
+  {% if parceiro.user.tipo_lingua > 1 %}
+    <strong>
+      Linguagem de comunicação: 
+      {% if parceiro.user.tipo_lingua == 2 %}
+        <span style="color: red;">
+          Inglês
+        </span>
+      {% endif %}    
+      <br>
+    </strong>
+  {% endif %}
+  
   {% if parceiro.cargo %}
       <strong>Cargo:</strong> {{parceiro.cargo}}<br>
   {% endif %}
