@@ -42,7 +42,7 @@
     <span class="titulo">Título: {{projeto.titulo_final}}</span>
     <small> <br>&nbsp;&nbsp;&nbsp;&nbsp;Título Provisório: {{projeto.titulo}}</small><br>
   {% else %}
-    <span class="titulo">Título: {{projeto.titulo}}</span>
+    <span style="display:block;" class="titulo">Título: {{projeto.titulo}}</span>
   {% endif %}
   <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
   {% if projeto.avancado %}
@@ -161,7 +161,6 @@
     {% endfor %}
     </ul>
   {% endif %}
-  <br>
 
   <hr>
   <h3>Aluno(s) Alocado(s) no Projeto:</h3>
