@@ -19,13 +19,21 @@
   <span class="titulo">Alocações em Bancas</span>
   <br>
 
+  <b>Informações: </b>&nbsp;
+  <label><input onchange="($(this).prop('checked') ? $('#MembrosTable tr > *:nth-child(2)').show() : $('#MembrosTable tr > *:nth-child(2)').hide())" type="checkbox" checked /> e-mail</label>&nbsp;&nbsp;&nbsp;
+  <label><input onchange="($(this).prop('checked') ? $('#MembrosTable tr > *:nth-child(3)').show() : $('#MembrosTable tr > *:nth-child(3)').hide())" type="checkbox" checked /> Quantidade</label>&nbsp;&nbsp;&nbsp;
+  <label><input onchange="($(this).prop('checked') ? $('#MembrosTable tr > *:nth-child(4)').show() : $('#MembrosTable tr > *:nth-child(4)').hide())" type="checkbox" checked /> Projetos</label>&nbsp;&nbsp;&nbsp;  
+  <br><br>
+
   {% for membros,periodo in anos %} 
     <big>{{periodo}}</big>
     {% if membros %}
       <table id="MembrosTable">
         <tr>
           <th onclick="w3.sortHTML('#MembrosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer;width:300px;" class="text-center">Nome</th>
+          <th onclick="w3.sortHTML('#MembrosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer;width:70px;" class="text-center">e-mail</th>
           <th onclick="w3.sortHTML('#MembrosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer;width:70px;" class="text-center">Quant.</th>
+          <th onclick="w3.sortHTML('#MembrosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer;width:70px;" class="text-center">Projetos</th>
         </tr>
         {% for membro, bancas in membros.items %}
           <tr class="item">
@@ -44,6 +52,9 @@
                 </a>
               {% endif %}  
             </td>
+            <td>
+              <a href="mailto:{{membro.email}}"> &lt;{{membro.email}}&gt;</a><br>
+            </td>
             <td class="text-center" data-toggle="tooltip" data-html="true" animation="true" title="
               {% for banca in bancas %}
                 &bull;
@@ -53,6 +64,15 @@
               {% endfor %}
             "> 
               {{bancas|length}}
+            </td>
+            <td>
+              {% for banca in bancas %}
+                &bull;
+                {{banca.projeto.get_titulo}}
+                [{{banca.projeto.organizacao}}]
+                ({{banca.startDate}})
+                <br>
+              {% endfor %}
             </td>
           </tr>
         {% endfor %}
