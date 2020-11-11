@@ -20,7 +20,7 @@ from django.utils import html
 from django.utils import timezone
 from django.views import generic
 
-from projetos.models import Configuracao, Projeto, Conexao, Banca, ObjetivosDeAprendizagem, Area
+from projetos.models import Configuracao, Projeto, Conexao, Banca, ObjetivosDeAprendizagem, Area, Coorientador
 from projetos.views import cria_areas, cria_area_estudante
 from projetos.messages import email
 
@@ -332,6 +332,8 @@ def professor_detail(request, primarykey):
 
     projetos = Projeto.objects.filter(orientador=professor).order_by("ano", "semestre", "titulo")
 
+    coorientacoes = Coorientador.objects.filter(usuario=professor.user).order_by("projeto__ano", "projeto__semestre", "projeto__titulo")
+
     bancas = Banca.objects.filter(membro1=professor.user)|\
              Banca.objects.filter(membro2=professor.user)|\
              Banca.objects.filter(membro3=professor.user)
@@ -341,6 +343,7 @@ def professor_detail(request, primarykey):
     context = {
         'professor': professor,
         'projetos': projetos,
+        'coorientacoes': coorientacoes,
         'bancas': bancas,
     }
     return render(request, 'users/professor_detail.html', context=context)

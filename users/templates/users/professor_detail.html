@@ -50,6 +50,26 @@
     </ol>
   {% endif %}
 
+  
+  {% if coorientacoes %}
+    <hr>
+    <h4>Projeto(s) Coorientado(s)</h4>
+    <ol>
+    {% for coorientacao in coorientacoes %}
+      {% if coorientacao.projeto.alocacao_set.all.count > 0 %}
+        <li><a href="{% url 'projeto_completo' coorientacao.projeto.id %}">
+        [{{coorientacao.projeto.ano}}.{{coorientacao.projeto.semestre}}] -
+        {{coorientacao.projeto.get_titulo}}
+        ({{coorientacao.projeto.organizacao.nome}})
+        { {{ coorientacao.projeto.alocacao_set.all.count }} aluno(s) }
+        </a></li>
+      {% endif %}
+    {% empty %}
+      Projetos não encontrados
+    {% endfor %}
+    </ol>
+  {% endif %}
+
   {% if bancas %}
     <hr>
     <h4>Participação em Banca(s)</h4>
