@@ -146,3 +146,23 @@ def message_reembolso(usuario, projeto, reembolso, cpf):
     message += 'sem isso o processo não deverá avançar.<br>\n'
 
     return message
+
+def message_agendamento(encontro):
+    """ Emite menssagem de agendamento de dinâmica. """
+    message = '<br>\n'
+    message += '&nbsp;&nbsp;Grupo do Projeto <b>'
+    message += str(encontro.projeto)
+    message += '</b>\n\n'
+    message += '<br><br>\n\n'
+    message += '&nbsp;&nbsp;Marcada dinâmica do PFE: '
+    message += str(encontro.startDate.strftime("%d/%m/%Y %H:%M") ) + ' as ' + str(encontro.endDate.strftime("%H:%M"))
+    message += '<br>\n'
+    if encontro.location:
+        message += '&nbsp;&nbsp;Local: '
+        message += str(encontro.location)
+        message += '<br>\n'
+    if encontro.facilitador:
+        message += '&nbsp;&nbsp;Com: '
+        message += str(encontro.facilitador)
+        message += '<br>\n'
+    return message

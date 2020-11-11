@@ -178,8 +178,22 @@
       </p>
     </a>
   {% endfor %}
-  <br>
+  
+  {% if projeto.encontro_set.all %}
+      <hr>
+      <h3>Dinâmicas Marcadas<br></h3>
+      <ul>
+          {% for dinamica in projeto.encontro_set.all %} 
+              <li>
+                  {{dinamica.startDate}} - {{dinamica.endDate|date:'H:i'}}
+                  {% if dinamica.location %}; em: {{dinamica.location}} {% endif %}
+                  {% if dinamica.facilitador %}; com: {{dinamica.facilitador}} {% endif %}
+              </li>
+          {% endfor %}
+      </ul>
+  {% endif %}
 
+  <br>
   <a class="myButton" href="{% url 'conceitos_obtidos' projeto.id %}">Avaliações</a>
 
   <p>&nbsp;</p>

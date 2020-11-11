@@ -56,7 +56,7 @@ from .models import get_upload_path
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource
 from .resources import AlunosResource, ProfessoresResource, ParceirosResource, Avaliacoes2Resource
 from .resources import ConfiguracaoResource, FeedbacksResource, DisciplinasResource
-from .messages import email, create_message, message_reembolso
+from .messages import email, create_message, message_reembolso, message_agendamento
 
 @login_required
 def index(request):
@@ -2603,15 +2603,16 @@ def meuprojeto(request):
 
     configuracao = Configuracao.objects.all().first()
 
-    if not configuracao.liberados_projetos:
-        if aluno.anoPFE > configuracao.ano or\
-          (aluno.anoPFE == configuracao.ano and aluno.semestrePFE > configuracao.semestre):
-            mensagem = "Projetos ainda não disponíveis para visualização."
-            context = {
-                "area_principal": True,
-                "mensagem": mensagem,
-            }
-            return render(request, 'generic.html', context=context)
+    # LIMITANDO VISUALIZAÇÃO POR PROJETO, AQUI RESTRINGE TUDO, QUANDO NÃO É O CASO, RESOLVENDO NO HTML
+    # if not configuracao.liberados_projetos:
+    #     if aluno.anoPFE > configuracao.ano or\
+    #       (aluno.anoPFE == configuracao.ano and aluno.semestrePFE > configuracao.semestre):
+    #         mensagem = "Projetos ainda não disponíveis para visualização."
+    #         context = {
+    #             "area_principal": True,
+    #             "mensagem": mensagem,
+    #         }
+    #         return render(request, 'generic.html', context=context)
 
     context = {
         'aluno': aluno,
@@ -2856,14 +2857,25 @@ def encontros_marcar(request):
                 if encontro.projeto != projeto:
                     encontro.projeto = projeto
                     encontro.save()
-                agendado = str(encontro.startDate)
+                agendado = encontro
             else:
                 if encontro.projeto == projeto:
                     encontro.projeto = None
                     encontro.save()
         if agendado:
-            #return HttpResponse("Agendado: "+agendado)
-            mensagem = "Agendado: " + agendado
+            subject = 'Dinâmica PFE agendada'
+            recipient_list = []
+            alocacoes = Alocacao.objects.filter(projeto=projeto)
+            for alocacao in alocacoes:
+                recipient_list.append(alocacao.aluno.user.email) #mandar para cada membro do grupo
+            recipient_list.append('pfeinsper@gmail.com') #sempre mandar para a conta do gmail
+
+            message = message_agendamento(agendado)
+            check = email(subject, recipient_list, message)
+            if check != 1:
+                message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+
+            mensagem = "Agendado: " + str(agendado.startDate)
             context = {
                 "area_principal": True,
                 "mensagem": mensagem,

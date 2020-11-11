@@ -72,6 +72,7 @@ class AlocacaoAdmin(admin.ModelAdmin):
     """Definição de Alocacao do PFE."""
     list_display = ('aluno', 'projeto',)
     ordering = ('-projeto__ano', '-projeto__semestre',)
+    search_fields = ['aluno__user__first_name', 'aluno__user__last_name', 'projeto__titulo', 'projeto__titulo_final',]
 
 @admin.register(Parceiro)
 class ParceiroAdmin(admin.ModelAdmin):
