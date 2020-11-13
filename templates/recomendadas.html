@@ -1,0 +1,32 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 12 de Novembro de 2020
+{% endcomment %}
+
+{% if proposta %}
+
+  {% if proposta.recomendada_set.all %}
+  <h4>Disciplina(s) Recomendada(s)</h4>
+  <small>Disciplinas recomendadas que estudantes tenham ou estejam cursando para aplicar na proposta</small>
+  <br><br>
+  <table>
+    <tr>
+      <th>
+        Nome da Disciplina
+      </th>
+    </tr>
+    {% for rec in proposta.recomendada_set.all %}
+    <tr><td>
+        {{rec.disciplina.nome}}
+    </td></tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+  <br>
+
+{% else %}
+
+    <strong>Não foi possível carregar dados da Proposta!</strong>
+
+{% endif %}

@@ -2579,15 +2579,18 @@ def carregar(request):
 def meuprojeto(request):
     """Mostra o projeto do próprio aluno, se for aluno."""
     user = PFEUser.objects.get(pk=request.user.pk)
+
+    # Caso não seja Aluno, Professor ou Administrador (ou seja Parceiro)
     if user.tipo_de_usuario != 1 and user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
-        #return HttpResponse("Você não está cadastrado como aluno ou professor")
         mensagem = "Você não está cadastrado como aluno ou professor!"
         context = {
             "area_principal": True,
             "mensagem": mensagem,
         }
         return render(request, 'generic.html', context=context)
-    if user.tipo_de_usuario == 2:
+    
+    # Caso seja Professor ou Administrador
+    if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4:
         professor = Professor.objects.get(pk=request.user.professor.pk)
         return redirect('professor_detail', primarykey=professor.pk)
 
@@ -2597,22 +2600,7 @@ def meuprojeto(request):
     except Aluno.DoesNotExist:
         return HttpResponse("Aluno não encontrado.", status=401)
 
-    if user.tipo_de_usuario == 2:
-        professor = Professor.objects.get(pk=request.user.professor.pk)
-        return redirect('professor_detail', primarykey=professor.pk)
-
     configuracao = Configuracao.objects.all().first()
-
-    # LIMITANDO VISUALIZAÇÃO POR PROJETO, AQUI RESTRINGE TUDO, QUANDO NÃO É O CASO, RESOLVENDO NO HTML
-    # if not configuracao.liberados_projetos:
-    #     if aluno.anoPFE > configuracao.ano or\
-    #       (aluno.anoPFE == configuracao.ano and aluno.semestrePFE > configuracao.semestre):
-    #         mensagem = "Projetos ainda não disponíveis para visualização."
-    #         context = {
-    #             "area_principal": True,
-    #             "mensagem": mensagem,
-    #         }
-    #         return render(request, 'generic.html', context=context)
 
     context = {
         'aluno': aluno,

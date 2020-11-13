@@ -115,10 +115,10 @@
         <th onclick="w3.sortHTML('#PropostasTable', '.item', 'td:nth-child(2)')" style="cursor:pointer; font-size: 14px;" class="text-center"  >Projeto</th>
         <th onclick="w3.sortHTML('#PropostasTable', '.item', 'td:nth-child(3)')" style="cursor:pointer; font-size: 14px;" class="text-center">Período</th>
         <th onclick="w3.sortHTML('#PropostasTable', '.item', 'td:nth-child(4)')" style="cursor:pointer; font-size: 14px;" class="text-center">Organização</th>
-        <th style="font-size: 14px;">Aluno1</th>
-        <th style="font-size: 14px;">Aluno2</th>
-        <th style="font-size: 14px;">Aluno3</th>
-        <th style="font-size: 14px;">Aluno4</th>
+        <th style="font-size: 12px;">Estudante1</th>
+        <th style="font-size: 12px;">Estudante2</th>
+        <th style="font-size: 12px;">Estudante3</th>
+        <th style="font-size: 12px;">Estudante4</th>
       </tr>      
       {% for proposta in propostas %} 
       {% with disponivel=proposta.disponivel %}
@@ -314,7 +314,7 @@
       {% endwith %}
       {% endfor %}
       
-      <tr><td colspan="8" style="text-align: right; border-left: hidden; border-right: hidden; border-bottom: hidden;">
+      <tr><td colspan="10" style="text-align: right; border-left: hidden; border-right: hidden; border-bottom: hidden;">
         <small style="font-size:12px"><b>C</b>: Computação | <b>X</b>: Mecatrônica | <b>M</b>: Mecânica</small>
       </tr></td>
       

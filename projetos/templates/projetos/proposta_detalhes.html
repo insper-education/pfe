@@ -15,153 +15,20 @@
 {% endblock %}
 
 {% block content %}
-  {% if proposta.titulo %}
-    <span class="titulo" data-toggle="tooltip" data-html="true" animation="true" title="
-     Título provisório para a proposta de projeto.
-     Durante a execução do projeto o título poderá/deverá sofrer atualizações.
-    ">
-      Título: {{proposta.titulo}}
-    </span>
-    <br>
-  {% else %}
-    <span class="titulo">Problema na identificação do título</span>
-    <br>
-  {% endif %}
-  
-  {% if proposta.descricao %}
-    <p>
-      <strong data-toggle="tooltip" data-html="true" animation="true" title="
-      Uma breve descrição do que se trata o projeto e outras informações relevantes.
-      ">
-        Descrição:
-      </strong>
-      {{proposta.descricao|linebreaks|urlize}}<br>
-    </p>
-  {% else %}
-    <p><u>Campo de descrição ausente.<u><br></p>
-    <!-- Campo deveria ser obrigatório -->
-  {% endif %}
 
-  {% if proposta.expectativas %}
-    <p>
-      <strong data-toggle="tooltip" data-html="true" animation="true" title="
-      Exemplos de resultados ou entregas esperadas.
-      Durante o projeto isso deverá ser dicutido com a organização parceira e com os professores orientadores para um melhor alinhamento.
-      Independente do que as organizações sugerirem nesse campo, existem uma série de relatórios, apresentações, vídeos e outros materiais como obrigatórios no PFE.
-      ">
-        Expectativas de resultados/entregas:
-      </strong>
-      {{proposta.expectativas|linebreaks|urlize}}<br>
-    <p>
-  {% else %}
-    <p><u>Campo de expectativas ausente.<u><br></p>
-    <!-- Campo deveria ser obrigatório -->
-  {% endif %}
-
-  {% if proposta.recursos %}
-    <p>
-      <strong data-toggle="tooltip" data-html="true" animation="true" title="
-      Recursos que as organizações informaram que irão disponibilizar para os estudantes.
-      O PFE irá auxiliar em um acesso facilitado para os diversos laboratórios da escola conforme sua disponibiidade.
-      Não existe nenhuma garantia que o PFE irá suprir material de consumo para os alunos, em geral não há recursos para isso.
-      ">
-        Recursos a serem disponibilizados:
-      </strong>
-      {{proposta.recursos|linebreaks|urlize}}<br>
-    </p>
-  {% endif %}
-
-  {% if proposta.observacoes %}
-    <p>
-      <strong data-toggle="tooltip" data-html="true" animation="true" title="
-      Outras observações que a organização parceira considerou relevante para informar aos estudantes.
-      ">
-        Outras observações:
-      </strong>
-      {{proposta.observacoes|linebreaks|urlize}}<br>
-    </p>
-  {% endif %}
-  
-  {% if proposta.anexo %}
-    <p>
-      <strong>Anexo :</strong>
-      <a class="text-success" href="../..{{MEDIA_URL}}{{proposta.anexo}}">{{proposta.anexo}}</a>
-    </p>
-  {% endif %}
+  {% include "proposta.html" %}
 
   <hr>
 
-  <h4 data-toggle="tooltip" data-html="true" animation="true" title="
-     Nome da organização/empresa que está propondo o projeto.
-    ">
-    Organização:
-    {% if proposta.nome_organizacao %}
-      {{proposta.nome_organizacao}}
-    {% elif proposta.organizacao and proposta.organizacao.nome %}
-      {{proposta.organizacao.nome}}
-    {% else %}
-      <u>Organização não definida.</u>
-    {% endif %}
-    <br>
-  </h4>
-  
-  <p>
-    {% if proposta.endereco %}
-      <strong data-toggle="tooltip" data-html="true" animation="true" title="
-       Endereço onde os alunos deverão se deslocar para desenvolver o projeto.
-      ">
-       Endereço Local:
-      </strong>
-      <a href="http://maps.google.com/maps?q={{proposta.endereco}}">
-        {{proposta.endereco|linebreaks}}
-      </a>
-    {% elif proposta.organizacao and proposta.organizacao.endereco %}
-      <strong data-toggle="tooltip" data-html="true" animation="true" title="
-       Endereço da matriz da organização parceira.
-      ">
-       Endereço Matriz:
-      </strong>
-      <a href="http://maps.google.com/maps?q={{proposta.organizacao.endereco}}">
-        {{proposta.organizacao.endereco|linebreaks}}
-      </a>
-    {% else %}
-      <u>não definido.</u>
-    {% endif %}
-    <br>
-  </p>
+  {% include "organizacao.html" %}
 
-  <p>
-    <strong data-toggle="tooltip" data-html="true" animation="true" title="
-     Site da organização e/ou projeto.
-    ">
-    website:
-    </strong>
-    {% if proposta.website %}
-      <a class="tabulado" href="{{proposta.website}}">{{proposta.website}}</a>
-    {% elif proposta.organizacao and proposta.organizacao.website %}
-      <a class="tabulado" href="{{proposta.organizacao.website}}">{{proposta.organizacao.website}}</a>
-    {% else %}
-      <u>não definido.</u>
-    {% endif %}
-    <br><br>
-  </p>
+  <hr>
 
-  <!-- Campo opcional -->
-  {% if proposta.descricao_organizacao %}    
-    <p><strong>Informações sobre a empresa:</strong>
-    {{proposta.descricao_organizacao|linebreaks|urlize}}
-    <br></p>
-  {% elif proposta.organizacao and proposta.organizacao.informacoes %}
-    <p><strong>Informações sobre a empresa:</strong>
-    {{proposta.organizacao.informacoes|linebreaks|urlize}}
-    <br></p>
-  {% endif %}
+  {% include "recomendadas.html" %}
 
-  <!-- Campo opcional -->
-  {% if proposta.departamento %}
-    <p><strong>Informações sobre o departamento na organização:</strong>
-    {{proposta.departamento|linebreaks|urlize}}<br></p>
-  {% endif %}
+  <hr>
+
+  {% include "perfil_estudantes.html" %}
 
   <p>&nbsp;</p>
 {% endblock %}

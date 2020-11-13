@@ -1,0 +1,158 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 12 de Novembro de 2020
+{% endcomment %}
+
+{% if proposta %}
+
+  <h3>Perfil de Estudantes Esperados para Proposta de Projeto</h3>
+  <table>
+    <tr>
+        <th style="text-align:center;min-width:102px" >
+            Estudante
+        </th>
+        <th style="text-align:center;min-width:114px" >
+            Computação
+        </th>
+        <th style="text-align:center;min-width:114px" >
+            Mecânica
+        </th>
+        <th style="text-align:center;min-width:114px" >
+            Mecatrônica
+        </th>
+    </tr>
+    <tr> {% comment %} NAO EH A FORMA MAIS ELEGANTE MAS FUNCIONA POR ENQUANTO {% endcomment %}
+      <td>Estudante 1</td>
+
+      <td style="text-align:center;">
+      {% if editavel %}
+        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosC1" name="alunosC1" value="C1" 
+        {% if proposta.perfil_aluno1_computacao %}checked{% endif %}></label>
+      {% else %}
+        {% if proposta.perfil_aluno1_computacao %}&#x2713;{% endif %}
+      {% endif %}
+      </td>
+      
+      <td style="text-align:center;">
+      {% if editavel %}
+        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosM1" name="alunosM1" value="M1" 
+        {% if proposta.perfil_aluno1_mecanica %}checked{% endif %}></label>
+      {% else %}
+        {% if proposta.perfil_aluno1_mecanica %}&#x2713;{% endif %}
+      {% endif %}
+      </td>
+      
+      <td style="text-align:center;">
+      {% if editavel %}
+        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosX1" name="alunosX1" value="X1" 
+        {% if proposta.perfil_aluno1_mecatronica %}checked{% endif %}></label>
+      {% else %}
+        {% if proposta.perfil_aluno1_mecatronica %}&#x2713;{% endif %}
+      {% endif %}
+      </td>
+      
+    </tr>
+
+    <tr>
+
+      <td>Estudante 2</td>
+
+      <td style="text-align:center;">
+      {% if editavel %}
+        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosC2" name="alunosC2" value="C2" 
+        {% if proposta.perfil_aluno2_computacao %}checked{% endif %}></label>
+      {% else %}
+        {% if proposta.perfil_aluno2_computacao %}&#x2713;{% endif %}
+      {% endif %}
+      </td>
+
+      <td style="text-align:center;">
+      {% if editavel %}
+        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosM2" name="alunosM2" value="M2" 
+        {% if proposta.perfil_aluno2_mecanica %}checked{% endif %}></label></td>
+      {% else %}
+        {% if proposta.perfil_aluno2_mecanica %}&#x2713;{% endif %}
+      {% endif %}
+      </td>
+
+      <td style="text-align:center;">
+      {% if editavel %}
+        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosX2" name="alunosX2" value="X2" 
+        {% if proposta.perfil_aluno2_mecatronica %}checked{% endif %}></label>
+      {% else %}
+        {% if proposta.perfil_aluno2_mecatronica %}&#x2713;{% endif %}
+      {% endif %}
+      </td>
+
+    </tr>
+
+    <tr>
+      <td>Estudante 3</td>
+
+      <td style="text-align:center;">
+      {% if editavel %}
+        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosC3" name="alunosC3" value="C3"
+        {% if proposta.perfil_aluno3_computacao %}checked{% endif %}></label>
+      {% else %}
+        {% if proposta.perfil_aluno3_computacao %}&#x2713;{% endif %}
+      {% endif %}
+      </td>
+
+      <td style="text-align:center;">
+      {% if editavel %}
+        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosM3" name="alunosM3" value="M3"
+        {% if proposta.perfil_aluno3_mecanica %}checked{% endif %}></label>
+      {% else %}
+        {% if proposta.perfil_aluno3_mecanica %}&#x2713;{% endif %}
+      {% endif %}
+      </td>
+
+      <td style="text-align:center;">
+      {% if editavel %}
+        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosX3" name="alunosX3" value="X3"
+        {% if proposta.perfil_aluno3_mecatronica %}checked{% endif %}></label>
+      {% else %}
+        {% if proposta.perfil_aluno3_mecatronica %}&#x2713;{% endif %}
+      {% endif %}
+      </td>
+
+    </tr>
+    <tr>
+      <td>Estudante 4</td>
+
+      <td style="text-align:center;">
+      {% if editavel %}
+        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosC4" name="alunosC4" value="C4"
+        {% if proposta.perfil_aluno4_computacao %}checked{% endif %}></label>
+      {% else %}
+        {% if proposta.perfil_aluno4_computacao %}&#x2713;{% endif %}
+      {% endif %}
+      </td>
+
+      <td style="text-align:center;">
+      {% if editavel %}
+        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosM4" name="alunosM4" value="M4" 
+        {% if proposta.perfil_aluno4_mecanica %}checked{% endif %}></label>
+      {% else %}
+        {% if proposta.perfil_aluno4_mecanica %}&#x2713;{% endif %}
+      {% endif %}
+      </td>
+
+      <td style="text-align:center;">
+      {% if editavel %}
+        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosX4" name="alunosX4" value="X4" 
+        {% if proposta.perfil_aluno4_mecatronica %}checked{% endif %}></label>
+      {% else %}
+        {% if proposta.perfil_aluno4_mecatronica %}&#x2713;{% endif %}
+      {% endif %}
+      </td>
+
+    </tr>
+  </table>
+
+{% else %}
+
+    <strong>Não foi possível carregar dados da Proposta!</strong>
+
+{% endif %}

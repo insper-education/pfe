@@ -222,6 +222,8 @@ class ConfiguracaoAdmin(admin.ModelAdmin):
 class DisciplinaAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
     list_display = ('nome',)
+    ordering = ('nome',)
+    search_fields = ['nome',]
 
 @admin.register(Anotacao)
 class AnotacaoAdmin(admin.ModelAdmin):
@@ -330,9 +332,14 @@ class ObservacaoAdmin(admin.ModelAdmin):
     list_filter = ('tipo_de_avaliacao', )
     search_fields = ['projeto__titulo', 'projeto__titulo_final', 'alocacao__aluno__user__username', ]
 
+@admin.register(Recomendada)
+class RecomendadaAdmin(admin.ModelAdmin):
+    """Disciplinas Recomendas para Estudentes terem cursado para aplicar na Proposta."""
+    list_display = ('proposta', 'disciplina')
+    ordering = ('proposta',)
+    search_fields = ['proposta__titulo']
 
 admin.site.register(Cursada)
-admin.site.register(Recomendada)
 admin.site.register(Entidade)       # Para ser preenchido com as entidades estudantis
 admin.site.register(ObjetivosDeAprendizagem)
 admin.site.register(Certificado)

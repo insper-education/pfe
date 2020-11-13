@@ -41,91 +41,16 @@
 {% endblock %}
 
 {% block content %}
-  {% if proposta.titulo %}
-    <span class="titulo">Título: {{proposta.titulo}}</span>
-    <br>
-  {% endif %}
-  <strong>Semestre:</strong> {{proposta.ano}}.{{proposta.semestre}}<br>
 
-  <a class="myButton" href="{% url 'proposta_editar' proposta.slug %}">Editar Proposta</a>
+  {% with completo=True %}
+    {% include "proposta.html" %}
+  {% endwith %}
 
-  {% for projeto in projetos %}
-    <a class="myButton" href="{% url 'projeto_completo' projeto.id %}">Projeto {{projeto.ano}}.{{projeto.semestre}}</a>
-  {% endfor %}
-  <br><br>
-
-  <strong>Descrição:</strong>
-  {{proposta.descricao|linebreaks|urlize}}
-
-  {% if proposta.expectativas %}
-    <br><strong>Expectativas de resultados/entregas :</strong>
-    {{proposta.expectativas|linebreaks|urlize}}
-  {% endif %}
-
-  {% if proposta.recursos %}
-    <br><strong>Recursos a serem disponibilizados aos Alunos :</strong>
-    {{proposta.recursos|linebreaks|urlize}}
-  {% endif %}
-
-  {% if proposta.observacoes %}
-    <br><strong>Outras observações :</strong>
-    {{proposta.observacoes|linebreaks|urlize}}<br>
-  {% endif %}
-
-  {% if proposta.tipo_de_interesse > 0 %}
-    <br><strong>O principal interesse da empresa com o projeto é:</strong><br>
-    {{proposta.get_interesse}}
-  {% endif %}
-
-  {% if proposta.anexo %}
-    <br><strong>Anexo :</strong>
-    <a class="text-success" href="../..{{MEDIA_URL}}{{proposta.anexo}}">{{proposta.anexo}}</a>
-  {% endif %}
   <hr>
 
-  <h3>Organização:
-    {% if proposta.organizacao %}
-      <a href="{% url 'organizacao_completo' proposta.organizacao.id %}">
-        {{proposta.organizacao.nome}}
-      </a>
-    {% elif proposta.nome_organizacao %}
-      {{proposta.nome_organizacao|linebreaks}}
-    {% else %}
-      Organização não definida.
-    {% endif %}
-  </h3>
-  <p><strong>endereço:</strong>
-    {% if proposta.organizacao %}
-      <a class="tabulado" href="http://maps.google.com/maps?q={{proposta.organizacao.endereco}}">{{proposta.organizacao.endereco|linebreaks}}</a>
-    {% elif proposta.endereco %}
-      {{proposta.endereco|linebreaks|urlize}}
-    {% else %}
-      Endereço não definido.
-    {% endif %}
-  </p>
-
-  <p><strong>website:</strong>
-  {% if proposta.organizacao and proposta.organizacao.website %}
-    <a class="tabulado" href="{{ proposta.organizacao.website }}">{{proposta.organizacao.website}}</a>
-  {% elif proposta.website %}
-    <a class="tabulado" href="{{proposta.website}}">{{proposta.website}}</a>
-  {% else %}
-    website não definido.
-  {% endif %}
-  </p>
-
-  {% if proposta.organizacao and proposta.organizacao.informacoes %}
-    <strong>Informações sobre a empresa :</strong> 
-    {{proposta.organizacao.informacoes|linebreaks|urlize}}<br>
-  {% elif proposta.descricao_organizacao %}
-    <strong>Informações sobre a empresa :</strong> 
-    {{proposta.descricao_organizacao|linebreaks|urlize}}<br>
-  {% endif %}
-
-  {% if proposta.departamento %}
-    <strong>Informações sobre o departamento na empresa :</strong>
-    {{proposta.departamento|linebreaks|urlize}}<br>
-  {% endif %}
+  {% with completo=True %}
+    {% include "organizacao.html" %}
+  {% endwith %}
 
   <strong>Submetido por:</strong><br>
   {{proposta.nome}}<br><br>
@@ -143,6 +68,27 @@
   {% endif %}
 
   <hr>
+  <h3>Áreas de Interesse</h3>
+  {% with aa=proposta.areadeinteresse_set.all %}
+    {% with vencido=True %}
+      {% include "areas.html" %}
+    {% endwith %}
+  {% endwith %}
+  <br>
+  <br>
+  
+  <hr>
+
+  {% include "recomendadas.html" %}
+
+  <hr>
+
+  {% with editavel=True %}
+    {% include "perfil_estudantes.html" %}
+  {% endwith %}
+  
+  <hr>
+
   <h3>Aluno(s) Aplicando para a Proposta</h3>
 
   {% for estudante in sem_opcao %}
@@ -194,87 +140,6 @@
   {% endfor %}
 
   <hr>
-  <h3>Áreas de Interesse</h3>
-  {% with aa=proposta.areadeinteresse_set.all %}
-    {% with vencido=True %}
-      {% include "areas.html" %}
-    {% endwith %}
-  {% endwith %}
-  <br>
-
-  {% if proposta.recomendada_set.all %}
-  <br><hr>
-  <h3>Disciplina(s) Recomendada(s)</h3>
-  <table>
-    <tr>
-      <th>
-        Disciplina
-      </th>
-    </tr>
-    {% for rec in proposta.recomendada_set.all %}
-    <tr><td>
-        {{rec.disciplina.nome}}
-    </td></tr>
-    {% endfor %}
-  </table>
-  {% endif %}
-
-
-  <br><hr>
-  <h3>Perfil de Estudantes Desejados para Proposta de Projeto</h3>
-  <table>
-    <tr>
-        <th style="text-align:center" >
-            Aluno
-        </th>
-        <th style="text-align:center" >
-            Computação
-        </th>
-        <th style="text-align:center" >
-            Mecânica
-        </th>
-        <th style="text-align:center" >
-            Mecatrônica
-        </th>
-    </tr>
-    <tr> <!-- NAO EH A FORMA MAIS ELEGANTE MAS FUNCIONA POR ENQUANTO -->
-      <td>Aluno 1</td>
-      <td style="text-align:center;"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosC1" name="alunosC1" value="C1" 
-        {% if proposta.perfil_aluno1_computacao %}checked{% endif %}></label></td>
-      <td style="text-align:center;"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosM1" name="alunosM1" value="M1" 
-        {% if proposta.perfil_aluno1_mecanica %}checked{% endif %}></label></td>
-      <td style="text-align:center;"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosX1" name="alunosX1" value="X1" 
-        {% if proposta.perfil_aluno1_mecatronica %}checked{% endif %}></label></td>
-    </tr>
-    <tr>
-      <td>Aluno 2</td>
-      <td style="text-align:center"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosC2" name="alunosC2" value="C2" 
-        {% if proposta.perfil_aluno2_computacao %}checked{% endif %}></label></td>
-      <td style="text-align:center"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosM2" name="alunosM2" value="M2" 
-        {% if proposta.perfil_aluno2_mecanica %}checked{% endif %}></label></td>
-      <td style="text-align:center"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosX2" name="alunosX2" value="X2" 
-        {% if proposta.perfil_aluno2_mecatronica %}checked{% endif %}></label></td>
-    </tr>
-    <tr>
-      <td>Aluno 3</td>
-      <td style="text-align:center"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosC3" name="alunosC3" value="C3"
-        {% if proposta.perfil_aluno3_computacao %}checked{% endif %}></label></td>
-      <td style="text-align:center"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosM3" name="alunosM3" value="M3"
-        {% if proposta.perfil_aluno3_mecanica %}checked{% endif %}></label></td>
-      <td style="text-align:center"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosX3" name="alunosX3" value="X3"
-        {% if proposta.perfil_aluno3_mecatronica %}checked{% endif %}></label></td>
-    </tr>
-    <tr>
-      <td>Aluno 4</td>
-      <td style="text-align:center"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosC4" name="alunosC4" value="C4"
-        {% if proposta.perfil_aluno4_computacao %}checked{% endif %}></label></td>
-      <td style="text-align:center"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosM4" name="alunosM4" value="M4" 
-        {% if proposta.perfil_aluno4_mecanica %}checked{% endif %}></label></td>
-      <td style="text-align:center"><label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosX4" name="alunosX4" value="X4" 
-        {% if proposta.perfil_aluno4_mecatronica %}checked{% endif %}></label></td>
-    </tr>
-  </table>
-
 
   <p>&nbsp;</p>
   <form method="post" id="disponibilizacaoform" enctype="multipart/form-data">
@@ -297,14 +162,23 @@
       {% if not proposta.disponivel %}checked{% endif %}
     > Não</label>
 
-    <br><br>
+    <br>
     <button type="submit">Enviar</button>
+    <br>!! Isso será atualizado para AJAX !!
+
+    <br><br>
+    <a class="myButton" href="{% url 'proposta_editar' proposta.slug %}">Editar Proposta</a>
+    <a class="myButton" href="{% url 'proposta_detalhes' proposta.id %}">Visão do Estudante</a>
+
+    {% for projeto in projetos %}
+      <a class="myButton" href="{% url 'projeto_completo' projeto.id %}">Projeto {{projeto.ano}}.{{projeto.semestre}}</a>
+    {% endfor %}
+    <br><br>
+
   </form>
 
   <p>&nbsp;</p>
-
   <p>&nbsp;</p>
-
 
   <script>
     $(".alunos").change(function () {

@@ -1,0 +1,91 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 12 de Novembro de 2020
+{% endcomment %}
+
+{% if proposta.nome_organizacao or proposta.organizacao %}
+
+  <h4 data-toggle="tooltip" data-html="true" animation="true" title="
+     Nome da organização/empresa que está propondo o projeto.
+    ">
+    Organização:
+    {% if proposta.organizacao and proposta.organizacao.nome %}
+        {% if completo %}
+            <a href="{% url 'organizacao_completo' proposta.organizacao.id %}">
+        {% endif %}
+        {{proposta.organizacao.nome}}
+        {% if completo %}
+            </a>
+        {% endif %}
+    {% elif proposta.nome_organizacao %}
+      {{proposta.nome_organizacao}}
+    {% else %}
+      <u>Organização não definida.</u>
+    {% endif %}
+    <br>
+  </h4>
+  
+  <p>
+    {% if proposta.endereco %}
+      <strong data-toggle="tooltip" data-html="true" animation="true" title="
+       Endereço onde os alunos deverão se deslocar para desenvolver o projeto.
+      ">
+       Endereço Local:
+      </strong>
+      <a href="http://maps.google.com/maps?q={{proposta.endereco}}">
+        {{proposta.endereco|linebreaks}}
+      </a>
+    {% elif proposta.organizacao and proposta.organizacao.endereco %}
+      <strong data-toggle="tooltip" data-html="true" animation="true" title="
+       Endereço da matriz da organização parceira.
+      ">
+       Endereço Matriz:
+      </strong>
+      <a href="http://maps.google.com/maps?q={{proposta.organizacao.endereco}}">
+        {{proposta.organizacao.endereco|linebreaks}}
+      </a>
+    {% else %}
+      <u>não definido.</u>
+    {% endif %}
+    <br>
+  </p>
+
+  <p>
+    <strong data-toggle="tooltip" data-html="true" animation="true" title="
+     Site da organização e/ou projeto.
+    ">
+        website:
+    </strong>
+    {% if proposta.website %}
+        <a href="{{proposta.website}}">{{proposta.website}}</a>
+    {% elif proposta.organizacao and proposta.organizacao.website %}
+        <a href="{{proposta.organizacao.website}}">{{proposta.organizacao.website}}</a>
+    {% else %}
+        <u>website não definido.</u>
+    {% endif %}
+    <br><br>
+  </p>
+
+  {% comment %} Campo opcional {% endcomment %}
+  {% if proposta.descricao_organizacao %}    
+    <p><strong>Informações sobre a empresa:</strong>
+    {{proposta.descricao_organizacao|linebreaks|urlize}}
+    <br></p>
+  {% elif proposta.organizacao and proposta.organizacao.informacoes %}
+    <p><strong>Informações sobre a empresa:</strong>
+    {{proposta.organizacao.informacoes|linebreaks|urlize}}
+    <br></p>
+  {% endif %}
+
+  {% comment %} Campo opcional {% endcomment %}
+  {% if proposta.departamento %}
+    <p><strong>Informações sobre o departamento na organização:</strong>
+    {{proposta.departamento|linebreaks|urlize}}<br></p>
+  {% endif %}
+
+{% else %}
+
+    <strong>Não foi possível carregar dados da Organização Parceira!</strong>
+
+{% endif %}

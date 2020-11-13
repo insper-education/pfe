@@ -83,7 +83,9 @@ def areas_interesse(request):
     except PFEUser.DoesNotExist:
         return HttpResponse("Usuário não encontrado.", status=401)
 
-    if user.tipo_de_usuario == 3:
+
+    # Caso não seja Aluno, Professor ou Administrador (ou seja Parceiro)
+    if user.tipo_de_usuario != 1 and user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
         mensagem = "Você não está cadastrado como aluno!"
         context = {
             "area_principal": True,
@@ -91,20 +93,20 @@ def areas_interesse(request):
         }
         return render(request, 'generic.html', context=context)
 
+    areas = Area.objects.filter(ativa=True)
+    
+    # Caso seja estudante
     if user.tipo_de_usuario == 1:
         try:
             estudante = Aluno.objects.get(pk=request.user.aluno.pk)
         except Aluno.DoesNotExist:
             return HttpResponse("Estudante não encontrado.", status=401)
 
-        vencido = configuracao_estudante_vencida(estudante)
+        vencido = configuracao_estudante_vencida(estudante)    
 
         if (not vencido) and request.method == 'POST':
             cria_area_estudante(request, estudante)
-
             return render(request, 'users/atualizado.html',)
-
-        areas = Area.objects.filter(ativa=True)
 
         context = {
             'vencido': vencido,
@@ -112,11 +114,13 @@ def areas_interesse(request):
             'areast': areas,
         }
 
-    else: # supostamente professores
+    else: # supostamente professores ou administrador
         context = {
             'mensagem': "Você não está cadastrado como aluno.",
             'vencido': True,
+            'areast': areas,
         }
+
     return render(request, 'users/areas_interesse.html', context=context)
 
 class SignUp(generic.CreateView):

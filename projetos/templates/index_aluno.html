@@ -8,7 +8,7 @@
 {% block head %}
     <style>
 
-        #projeto {
+        .mensagem {
             visibility: hidden;
             min-width: 250px;
             margin-left: -125px;
@@ -24,52 +24,7 @@
             font-size: 17px;
         }
         
-        #projeto.show {
-            visibility: visible;
-            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-            animation: fadein 0.5s, fadeout 0.5s 2.5s;
-        }
-
-        #vencido {
-            visibility: hidden;
-            min-width: 250px;
-            margin-left: -125px;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 2px;
-            padding: 16px;
-            position: fixed;
-            z-index: 1;
-            left: 50%;
-            bottom: 30px;
-            font-size: 17px;
-        }
-        
-        #vencido.show {
-            visibility: visible;
-            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-            animation: fadein 0.5s, fadeout 0.5s 2.5s;
-        }
-        
-
-        #liberado {
-            visibility: hidden;
-            min-width: 250px;
-            margin-left: -125px;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 2px;
-            padding: 16px;
-            position: fixed;
-            z-index: 1;
-            left: 50%;
-            bottom: 30px;
-            font-size: 17px;
-        }
-        
-        #liberado.show {
+        .show {
             visibility: visible;
             -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
             animation: fadein 0.5s, fadeout 0.5s 2.5s;
@@ -99,7 +54,21 @@
 
 {% block content %}
 
-    <a {% if not projeto %} class="disabled" onclick="myFunction('projeto')" {% else %} href="{% url 'meuprojeto' %}" {% endif %} >
+    {% comment %} Link só irá direto se houver um porjeto de aluno, no começo só o interesse por propostas. {% endcomment %}
+    <a
+        {% comment %} Caso Professor {% endcomment %}
+        {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+            class="disabled" onclick="showMessage('projeto_professor')"
+        
+        {% comment %} Caso Estudante {% endcomment %}
+        {% else %}
+            {% if not projeto %} 
+                class="disabled" onclick="showMessage('projeto')"
+            {% else %}
+                href="{% url 'meuprojeto' %}"
+            {% endif %}
+        {% endif %}
+    >
         <h5>Meu Projeto</h5>
     </a>
     <hr>
@@ -113,13 +82,26 @@
     </a>
 
     <a 
-        {% if vencido %}
-            class="disabled" onclick="myFunction('vencido')" 
-        {% elif not configuracao.liberadas_propostas %}
-            class="disabled" onclick="myFunction('liberado')" 
+        {% comment %} Caso Professor {% endcomment %}
+        {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+            {% if vencido %}
+                style="color:grey"
+            {% elif not configuracao.liberadas_propostas %}
+                style="color:grey"
+            {% endif %}
+            href="{% url 'selecao_propostas' %}"
+
+        {% comment %} Caso Estudante {% endcomment %}
         {% else %}
-            href="{% url 'selecao_propostas' %}" 
-        {% endif %} >
+            {% if vencido %}
+                class="disabled" onclick="showMessage('vencido')" 
+            {% elif not configuracao.liberadas_propostas %}
+                class="disabled" onclick="showMessage('liberado')" 
+            {% else %}
+                href="{% url 'selecao_propostas' %}"
+            {% endif %}
+        {% endif %}
+    >
         <h5>Selecionar Propostas de Projetos</h5>
     </a>
 
@@ -132,33 +114,30 @@
         {% endif %}
         </b>
     </font>
+
     <hr>
-    <a {% if not projeto %} class="disabled" onclick="myFunction('projeto')" {% else %} href="{% url 'minhas_bancas' %}" {% endif %} >
+    
+    <a {% if not projeto %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'minhas_bancas' %}" {% endif %} >
         <h5>Horário das bancas</h5>
     </a>
     
-    <a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="myFunction('projeto')" {% else %} href="{% url 'encontros_marcar' %}" {% endif %} > <!-- tipo_de_usuario == 1 é aluno -->
+    {% comment %} tipo_de_usuario == 1 é aluno {% endcomment %}
+    <a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'encontros_marcar' %}" {% endif %} >
         <h5>Agendar horário das dinâmicas</h5>
     </a>
 
-    <!-- a href=" reembolso " > <h5> Pedido de Reembolso </h5> < / a >  -->
+    {% comment %} <a href=" reembolso " > <h5> Pedido de Reembolso </h5> </a> {% endcomment %}
 
-    <div id="projeto">Você não está alocado em um projeto.</div>
-    <div id="vencido">Prazo para a seleção dos projetos vencido.</div>
-    <div id="liberado">Propostas ainda não liberadas.</div>
+    <div class="mensagem" id="projeto">Você não está alocado em um projeto.</div>
+    <div class="mensagem" id="vencido">Prazo para a seleção dos projetos vencido.</div>
+    <div class="mensagem" id="liberado">Propostas ainda não liberadas.</div>
+    <div class="mensagem" id="projeto_professor">Professor, para ver seus projetos clique no seu nome na barra de título.</div>
     
+    {% comment %} tipo_de_usuario == 2 é professor e tipo_de_usuario == 4 é administrador {% endcomment %}
     <script>
-        function myFunction(mensagem) {
-            var x = document.getElementById(mensagem);
-            x.className = "show";
-            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
-            {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-                if(mensagem=="projeto") {
-                    window.location='{% url 'meuprojeto' %}';
-                } else {
-                    window.location='{% url 'professor_detail' professor_id %}';
-                }   
-            {% endif %}
+        function showMessage(mensagem) {
+            $("#"+mensagem).addClass("show");
+            setTimeout(function(){ $("#"+mensagem).removeClass("show"); }, 3000);
         }
     </script>
 

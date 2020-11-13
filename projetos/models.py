@@ -355,12 +355,10 @@ class Recomendada(models.Model):
     """Disciplinas recomendadas que um aluno ja tenha cursado para fazer o projeto."""
     disciplina = models.ForeignKey(Disciplina, null=True, blank=True, on_delete=models.SET_NULL,
                                    help_text='disciplina recomendada para o projeto')
-    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='projeto que recomenda a disciplina')
     proposta = models.ForeignKey(Proposta, null=True, blank=True, on_delete=models.SET_NULL,
                                  help_text='proposta que recomenda a disciplina')
     def __str__(self):
-        return self.projeto.titulo+" >>> "+self.disciplina.nome
+        return self.proposta.titulo+" >>> "+self.disciplina.nome
 
 class Evento(models.Model):
     """Eventos para a agenda do PFE."""
