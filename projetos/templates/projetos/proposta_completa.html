@@ -68,7 +68,7 @@
   {% endif %}
 
   <hr>
-  <h3>Áreas de Interesse</h3>
+  <h4>Áreas de Interesse</h4>
   {% with aa=proposta.areadeinteresse_set.all %}
     {% with vencido=True %}
       {% include "areas.html" %}
@@ -87,7 +87,7 @@
   
   <hr>
 
-  <h3>Aluno(s) Aplicando para a Proposta</h3>
+  <h4>Aluno(s) Aplicando para a Proposta</h4>
 
   {% for estudante in sem_opcao %}
     <a href="{% url 'aluno_detail' estudante.id %}"
