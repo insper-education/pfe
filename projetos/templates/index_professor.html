@@ -7,8 +7,6 @@
 
 {% block content %}
 
-
-
     <h5>Agendamentos</h5>
     <ul>
         <a href="{% url 'bancas_index' %}"><li>Bancas</li></a>
@@ -17,7 +15,7 @@
 
     <h5>Projetos Fechados</h5>
     <ul>
-        <a href="{% url 'professor_detail' professor_id %}"><li>Meu(s) Projeto(s)</li></a>
+        <li>Meu(s) Projeto(s)<small> (obsoleto, clique no seu nome na barra principal acima)</small></li>
         <a href="{% url 'projetos_fechados' %}"><li>Listagem Geral</li></a>
     </ul>
 
@@ -25,7 +23,7 @@
     <ul>
         <a href="{% url 'organizacoes_prospectadas' %}"><li>Organizações Prospectadas</li></a>
         <a href="{% url 'propostas_lista' 'disponiveis' %}"><li>Propostas Apresentadas</li></a>
-        <a href="{% url 'procura_propostas' %}"><li>Procura pelas Propostas (histograma)</li></a>
+        <a href="{% url 'procura_propostas' %}"><li>Procura pelas Propostas</li></a>
     </ul>
 
     <h5>Estudantes</h5>
@@ -36,9 +34,7 @@
 
     <h5>Áreas de Interesse</h5>
     <ul>
-        <a href="{% url 'distribuicao_areas' 'alunos' %}"><li>Tendência de Áreas de Interesse dos Estudantes</li></a>
-        <a href="{% url 'distribuicao_areas' 'propostas' %}"><li>Tendência de Áreas de Interesse nas Propostas</li></a>
-        <a href="{% url 'distribuicao_areas' 'projetos' %}"><li>Tendência de Áreas de Interesse nos Projetos</li></a>
+        <a href="{% url 'distribuicao_areas' %}"><li>Tendência de Áreas de Interesse (Estudantes/Propostas/Projetos)</li></a>
     </ul>
 
     <h5>Feedbacks</h5>

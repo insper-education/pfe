@@ -205,13 +205,16 @@ class Proposta(models.Model):
         (10, 'aprimorar o entendimento de uma tecnologia/solução com foco no médio prazo, sem interesse a curto prazo.'),
         (20, 'realizar uma prova de conceito, podendo finalizar o desenvolvimento internamente dependendo do resultado.'),
         (30, 'iniciar o desenvolvimento de um projeto que, potencialmente, será continuado internamente no curto prazo.'),
-        (40, 'identificar talentos, com intensão de contrata-los para continuar esse ou outros projetos internamente.'),
+        (40, 'identificar talentos, com intenção de contratá-los para continuar esse ou outros projetos internamente.'),
         (50, 'mentorar estudantes para que empreendam com um produto ou tecnologia da empresa, podendo estabelecer uma parceria ou contrato de fornecimento caso seja criada uma startup a partir desse projeto.'),
     )
 
     tipo_de_interesse = models.PositiveSmallIntegerField(choices=TIPO_INTERESSE,
                                                          null=True, blank=True,
                                                          help_text='O principal interesse da empresa com o projeto é')
+
+    internacional = models.BooleanField("Internacional", default=False,
+                                     help_text='Caso a proposta venha de um parceiro internacional, o que afeta a lingua de comunicação do projeto')
 
     # Preenchidos automaticamente
     ano = models.PositiveIntegerField("Ano",

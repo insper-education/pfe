@@ -25,6 +25,10 @@
         <strong>Semestre:</strong> {{proposta.ano}}.{{proposta.semestre}}<br>
     {% endif %}
 
+    {% if proposta.internacional %}
+        <strong style="color:red">Proposta Internaciona de Projeto, a comunicação do projeto será em inglês.</strong><br>
+    {% endif %}
+
     <br>
 
     {% if proposta.descricao %}

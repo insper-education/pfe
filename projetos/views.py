@@ -1130,41 +1130,49 @@ def get_areas_propostas(propostas):
 
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
-def distribuicao_areas(request, tipo):
+def distribuicao_areas(request):
     """Mostra distribuição por área de interesse dos alunos, propostas e projetos."""
 
-    periodo = ""
-    if tipo == "alunos":
-
-        alunos = Aluno.objects.filter(user__tipo_de_usuario=1)
-
-        if request.is_ajax():
-            if 'topicId' in request.POST:
-                if request.POST['topicId'] != 'todas':
-                    periodo = request.POST['topicId'].split('.')
-                    alunos = alunos.filter(anoPFE=int(periodo[0])).\
-                                    filter(semestrePFE=int(periodo[1]))
+    configuracao = Configuracao.objects.all().first()
+    ano = configuracao.ano              # Ano atual
+    semestre = configuracao.semestre    # Semestre atual
+    todas = False                       # Para mostrar todos os dados de todos os anos e semestres
+    tipo = "estudantes"
+    curso = "todos"
+    
+    if request.is_ajax():
+            
+        if 'tipo' in request.POST and 'edicao' in request.POST:
+            
+            tipo = request.POST['tipo']
+            
+            if request.POST['edicao'] == 'todas':
+                todas = True
             else:
-                return HttpResponse("Algum erro não identificado.", status=401)
+                periodo = request.POST['edicao'].split('.')
+                ano = int(periodo[0])
+                semestre =int(periodo[1])
 
+            if tipo == "estudantes" and 'curso' in request.POST:
+                curso = request.POST['curso']
+
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+
+    if tipo == "estudantes":
+        alunos = Aluno.objects.filter(user__tipo_de_usuario=1)
+        if curso != "todos":
+            alunos = alunos.filter(curso=curso)
+        if not todas:
+            alunos = alunos.filter(anoPFE=ano, semestrePFE=semestre)
         context = {
             'areaspfe': get_areas_estudantes(alunos),
         }
 
     elif tipo == "propostas":
-
         propostas = Proposta.objects.all()
-
-        if request.is_ajax():
-            if 'topicId' in request.POST:
-                if request.POST['topicId'] != 'todas':
-                    periodo = request.POST['topicId'].split('.')
-
-                    propostas = propostas.filter(ano=int(periodo[0])).\
-                                          filter(semestre=int(periodo[1]))
-            else:
-                return HttpResponse("Algum erro não identificado.", status=401)
-
+        if not todas:
+            propostas = propostas.filter(ano=ano, semestre=semestre)
         context = {
             'areaspfe': get_areas_propostas(propostas),
         }
@@ -1172,15 +1180,8 @@ def distribuicao_areas(request, tipo):
     elif tipo == "projetos":
 
         projetos = Projeto.objects.all()
-
-        if request.is_ajax():
-            if 'topicId' in request.POST:
-                if request.POST['topicId'] != 'todas':
-                    periodo = request.POST['topicId'].split('.')
-                    projetos = projetos.filter(ano=int(periodo[0])).\
-                                        filter(semestre=int(periodo[1]))
-            else:
-                return HttpResponse("Algum erro não identificado.", status=401)
+        if not todas:
+            projetos = projetos.filter(ano=ano, semestre=semestre)
 
         # Estudar forma melhor de fazer isso
         propostas = [p.proposta.id for p in projetos]
@@ -1193,13 +1194,11 @@ def distribuicao_areas(request, tipo):
     else:
         return HttpResponse("Algum erro não identificado.", status=401)
 
-    configuracao = Configuracao.objects.all().first()
-
     context['tipo'] = tipo
-    context['periodo'] = periodo
-    context['ano'] = configuracao.ano
-    context['semestre'] = configuracao.semestre
-    context['loop_anos'] = range(2018, configuracao.ano+1)
+    context['periodo'] = str(ano)+"."+str(semestre)
+    context['ano'] = ano
+    context['semestre'] = semestre
+    context['loop_anos'] = range(2018, ano+1)
 
     return render(request, 'projetos/distribuicao_areas.html', context)
 

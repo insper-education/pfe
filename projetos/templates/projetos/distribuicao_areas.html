@@ -30,17 +30,38 @@
 
 {% block content %}
 
-    <label for="filter"><b>Edição:</b></label>
-    <select class="filter" data-tableId="projetos">
+    <span class="titulo">Tendência de Áreas de Interesse</span><br>
+
+    {% comment %} Seletor do tipo de pesquisa {% endcomment %}
+    <label id="labelTipo" for="filterTipo"><b>Tipo:</b></label>
+    <select class="filter" id="filterTipo">
+        <option value="estudantes">Estudantes</option>
+        <option value="propostas">Propostas</option>
+        <option value="projetos">Projetos</option>
+    </select>
+    &nbsp;&nbsp;&nbsp;
+
+    {% comment %} Seletor da edição da pesquisa {% endcomment %}
+    <label id="labelEdicao" for="filterEdicao"><b>Edição:</b></label>
+    <select class="filter" id="filterEdicao">
         <option value="todas">todas</option>
         {% for loop in loop_anos %}
             <option value="{{loop}}.2" {% if ano == loop and semestre == 2 %}selected{% endif %}>{{loop}}.2</option>
             <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
         {% endfor %}
     </select>
+    &nbsp;&nbsp;&nbsp;
+
+    {% comment %} Seletor do filtro de cursos para a pesquisa {% endcomment %}
+    <label id="labelCurso" for="filterCurso"><b>Curso:</b></label>
+    <select class="filter" id="filterCurso">
+        <option value="todos">todos</option>
+        <option value="C">Computação</option>
+        <option value="M">Mecânica</option>
+        <option value="X">Mecatrônica</option>
+    </select>
     <br>
 
-    <span class="titulo">Tendência de Áreas de Interesse ({{tipo}})</span>
     <div style="line-height:80%;"><br></div>
 
     <div class="2areas2" style="line-height: 1.3;">
@@ -63,13 +84,18 @@
     </div>
 
     <script>
-        $(".filter").change(function(){
-            var topicId = $(".filter option:selected").attr("value");
+
+        function atualiza_tabela() {
+            var tipo = $("#filterTipo option:selected").attr("value");
+            var edicao = $("#filterEdicao option:selected").attr("value");
+            var curso =  $("#filterCurso option:selected").attr("value");
             $.ajax({
                 type: "POST",
-                url: "{% url 'distribuicao_areas' tipo %}",
+                url: "{% url 'distribuicao_areas' %}",
                 data: {
-                    topicId: topicId,
+                    tipo: tipo,
+                    edicao: edicao,
+                    curso: curso,
                     'csrfmiddlewaretoken': '{{ csrf_token }}',
                 },
                 success: function(response){
@@ -80,7 +106,23 @@
                     alert('error');
                 }
             });
+        }
+
+        $(".filter").change(atualiza_tabela);  // Caso algum seletor selecionado a tabela é atualizada
+
+        // Botao de curso só faz sentido se tipo == estudantes, senão é desabilitado
+        $("#filterTipo").change(function() {
+            if($("#filterTipo option:selected").attr("value") == "estudantes") {
+                $("#filterCurso").removeAttr('disabled');
+                $("#labelCurso").css('color', 'black');
+            } else {
+                $("#filterCurso").attr('disabled', 'disabled');
+                $("#filterCurso").val("todos");
+                $("#labelCurso").css('color', 'grey');
+            }
+            
         });
+
     </script>
 
 {% endblock %}
