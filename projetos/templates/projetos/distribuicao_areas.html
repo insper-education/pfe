@@ -81,7 +81,17 @@
             </li>
         {% endfor %}
       </ul>
+      
+      {% if tipo == "estudantes" %}
+        Total de Estudantes: {{total}} <small>(total de estudantes que preencheram algum campo: {{total_preenchido}})</small><br>
+      {% elif tipo == "propostas" %}
+         Total de Propostas: {{total}}<br>
+      {% elif tipo == "projetos" %}
+         Total de Projetos: {{total}}<br>
+      {% endif %} 
     </div>
+
+
 
     <script>
 

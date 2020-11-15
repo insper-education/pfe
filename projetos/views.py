@@ -1139,6 +1139,7 @@ def distribuicao_areas(request):
     todas = False                       # Para mostrar todos os dados de todos os anos e semestres
     tipo = "estudantes"
     curso = "todos"
+    total = 0
     
     if request.is_ajax():
             
@@ -1157,7 +1158,7 @@ def distribuicao_areas(request):
                 curso = request.POST['curso']
 
         else:
-            return HttpResponse("Algum erro não identificado.", status=401)
+            return HttpResponse("Algum erro não identificado (POST incompleto).", status=401)
 
     if tipo == "estudantes":
         alunos = Aluno.objects.filter(user__tipo_de_usuario=1)
@@ -1165,7 +1166,13 @@ def distribuicao_areas(request):
             alunos = alunos.filter(curso=curso)
         if not todas:
             alunos = alunos.filter(anoPFE=ano, semestrePFE=semestre)
+        total_preenchido = 0
+        for aluno in alunos:
+            if AreaDeInteresse.objects.filter(usuario=aluno.user).count() > 0:
+                total_preenchido += 1
         context = {
+            'total': alunos.count(),
+            'total_preenchido': total_preenchido,
             'areaspfe': get_areas_estudantes(alunos),
         }
 
@@ -1174,6 +1181,7 @@ def distribuicao_areas(request):
         if not todas:
             propostas = propostas.filter(ano=ano, semestre=semestre)
         context = {
+            'total': propostas.count(),
             'areaspfe': get_areas_propostas(propostas),
         }
 
@@ -1188,11 +1196,12 @@ def distribuicao_areas(request):
         propostas_projetos = Proposta.objects.filter(id__in=propostas)
 
         context = {
+            'total': propostas_projetos.count(),
             'areaspfe': get_areas_propostas(propostas_projetos),
         }
 
     else:
-        return HttpResponse("Algum erro não identificado.", status=401)
+        return HttpResponse("Algum erro não identificado (não encontrado tipo).", status=401)
 
     context['tipo'] = tipo
     context['periodo'] = str(ano)+"."+str(semestre)
