@@ -301,6 +301,53 @@ class Proposta(models.Model):
                 return entry[1]
         return None
 
+    def get_nativamente(self):
+        """Retorna em string com curso mais nativo da proposta."""
+        
+        tmp_computacao = 0
+        tmp_mecanica = 0
+        tmp_mecatronica = 0
+
+        if self.perfil_aluno1_computacao:
+            tmp_computacao += 1
+        if self.perfil_aluno1_mecatronica:
+            tmp_mecatronica += 1
+        if self.perfil_aluno1_mecanica:
+            tmp_mecanica += 1
+        if self.perfil_aluno2_computacao:
+            tmp_computacao += 1
+        if self.perfil_aluno2_mecatronica:
+            tmp_mecatronica += 1
+        if self.perfil_aluno2_mecanica:
+            tmp_mecanica += 1
+        if self.perfil_aluno3_computacao:
+            tmp_computacao += 1
+        if self.perfil_aluno3_mecatronica:
+            tmp_mecatronica += 1
+        if self.perfil_aluno3_mecanica:
+            tmp_mecanica += 1
+        if self.perfil_aluno4_computacao:
+            tmp_computacao += 1
+        if self.perfil_aluno4_mecatronica:
+            tmp_mecatronica += 1
+        if self.perfil_aluno4_mecanica:
+            tmp_mecanica += 1
+
+        # Regras para definir seu um projeto é nativamente de um curso
+        if tmp_computacao == 0 and tmp_mecatronica == 0 and tmp_mecanica == 0:
+            return " "
+
+        if ( tmp_computacao >= 3 ) and (tmp_computacao > tmp_mecatronica + tmp_mecanica ):
+            return "C"
+        elif ( tmp_mecatronica >= 3 ) and (tmp_mecatronica > tmp_computacao + tmp_mecanica ):
+            return "X"
+        elif ( tmp_mecanica >= 3 ) and (tmp_mecanica > tmp_mecatronica + tmp_computacao ):
+            return "M"
+        else:
+            return "?"
+
+        return " "
+
 class Configuracao(models.Model):
     """Armazena os dados básicos de funcionamento do sistema."""
     ano = models.PositiveIntegerField("Ano",

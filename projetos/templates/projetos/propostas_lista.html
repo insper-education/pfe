@@ -210,6 +210,10 @@
             {% endif %}
           </td>
           <td class="text-center">
+            {{ proposta.get_nativamente }} 
+          </td>
+          <td class="text-center">
+            
             {% if proposta.perfil_aluno1_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
             {% if proposta.perfil_aluno1_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
             {% if proposta.perfil_aluno1_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
@@ -274,6 +278,21 @@
           </td>
         </tr>
         <script>
+
+          {% if proposta.get_nativamente  == "C" %} 
+            proposta_computacao += 1
+            {% if disponivel %}proposta_computacao_disponivel += 1;{% endif %}  
+          {% elif proposta.get_nativamente  == "X" %} 
+            proposta_mecatronica += 1
+            {% if disponivel %}proposta_mecatronica_disponivel += 1;{% endif %}
+          {% elif proposta.get_nativamente  == "M" %} 
+            proposta_mecanica += 1
+              {% if disponivel %}proposta_mecanica_disponivel += 1;{% endif %}
+          {% else %} 
+            proposta_multidisciplinar += 1
+            {% if disponivel %}proposta_multidisciplinar_disponivel += 1;{% endif %}
+          {% endif %}
+          
           alunos_computacao += tmp_computacao;
           alunos_mecatronica += tmp_mecatronica;
           alunos_mecanica += tmp_mecanica;
@@ -283,28 +302,6 @@
             alunos_mecatronica_disponivel += tmp_mecatronica;
             alunos_mecanica_disponivel += tmp_mecanica;
           {% endif %}
-
-          if ( ( tmp_computacao >= 3 ) && (tmp_computacao >= tmp_mecatronica + tmp_mecanica ) ) {
-            proposta_computacao += 1;
-            {% if disponivel %}
-              proposta_computacao_disponivel += 1;
-            {% endif %}
-          } else if ( ( tmp_mecatronica >= 3 ) && (tmp_mecatronica >= tmp_computacao + tmp_mecanica ) ) {
-            proposta_mecatronica += 1;
-            {% if disponivel %}
-              proposta_mecatronica_disponivel += 1;
-            {% endif %}
-          } else if ( ( tmp_mecanica >= 3 ) && (tmp_mecanica >= tmp_mecatronica + tmp_computacao ) ) {
-            proposta_mecanica += 1;
-            {% if disponivel %}
-              proposta_mecanica_disponivel += 1;
-            {% endif %}
-          } else {
-            proposta_multidisciplinar += 1;
-            {% if disponivel %}
-              proposta_multidisciplinar_disponivel += 1;
-            {% endif %}
-          }
 
           tmp_computacao = 0;
           tmp_mecatronica = 0;
@@ -329,27 +326,11 @@
     <strong>Número Total de Organizações Participando:</strong> {{num_organizacoes}}<br>
 
     <p>&nbsp;</p>
-
-    <strong>Propostas nativamente multidisciplinar:</strong> <script>document.write(proposta_multidisciplinar_disponivel);</script>
-          <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
-        (<script>document.write(proposta_multidisciplinar);</script>)
-      </a><br>
-
-    <strong>Propostas nativamente de computação:</strong> <script>document.write(proposta_computacao_disponivel);</script>
-              <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
-        (<script>document.write(proposta_computacao);</script>)
-      </a><br>
-
-    <strong>Propostas nativamente de mecatrônica:</strong> <script>document.write(proposta_mecatronica_disponivel);</script>
-              <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
-        (<script>document.write(proposta_mecatronica);</script>)
-      </a><br>
-
-    <strong>Propostas nativamente de mecânica:</strong> <script>document.write(proposta_mecanica_disponivel);</script>
-              <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
-        (<script>document.write(proposta_mecanica);</script>)
-      </a><br>
-
+    <b>Disponibilidade de Propostas:</b><br>
+    {% with nao_disponivel=True %}
+      {% include "propostas_nativamente.html" %}
+    {% endwith %}
+  
     <p>&nbsp;</p>
     <strong>Vagas para estudantes de computação:</strong> <script>document.write(alunos_computacao_disponivel);</script>
               <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">

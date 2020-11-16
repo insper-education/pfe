@@ -306,27 +306,38 @@ def ordena_propostas(disponivel=True, ano=0, semestre=0):
     return mylist
 
 
-def ordena_propostas_novo(disponivel=True, ano=2018, semestre=2):
+def ordena_propostas_novo(disponivel=True, ano=2018, semestre=2, curso='T'):
     """Gera lista com propostas ordenados pelos com maior interesse pelos alunos."""
 
     prioridades = [[], [], [], [], []]
     estudantes = [[], [], [], [], []]
 
+    if ano < 2018:
+        propostas = Proposta.objects.all()
+    else:
+        propostas = Proposta.objects.filter(ano=ano).\
+                                     filter(semestre=semestre)
+
     if disponivel: # somente as propostas disponibilizadas
-        propostas = Proposta.objects.filter(ano=ano).\
-                               filter(semestre=semestre).\
-                               filter(disponivel=True)
-    else: # todas as propostas
-        propostas = Proposta.objects.filter(ano=ano).\
-                               filter(semestre=semestre)
+        propostas = propostas.filter(disponivel=True)
+
     for proposta in propostas:
+
         opcoes = Opcao.objects.filter(proposta=proposta)
-        opcoes_alunos = opcoes.filter(aluno__user__tipo_de_usuario=1)
-        opcoes_validas = opcoes_alunos.filter(aluno__anoPFE=ano).\
-                                       filter(aluno__semestrePFE=semestre)
+
+        # Parte seguinte parece desnecessária
+        opcoes = opcoes.filter(aluno__user__tipo_de_usuario=1)
+
+        # Só opções para a proposta dos estudantes nesse ano e semester
+        opcoes = opcoes.filter(aluno__anoPFE=proposta.ano).\
+                        filter(aluno__semestrePFE=proposta.semestre)
+
+        if curso != 'T':
+            opcoes = opcoes.filter(aluno__curso=curso)
+
         count = [0, 0, 0, 0, 0]
         estudantes_tmp = ["", "", "", "", ""]
-        for opcao in opcoes_validas:
+        for opcao in opcoes:
             if opcao.prioridade == 1:
                 count[0] += 1
                 if estudantes_tmp[0] != "":
@@ -431,11 +442,12 @@ def histograma_ajax(request):
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def procura_propostas(request):
-    """Exibe um histograma com a procura das propostas pelos alunos."""
+    """Exibe um histograma com a procura das propostas pelos estudantes."""
 
     configuracao = Configuracao.objects.first()
     ano = configuracao.ano
     semestre = configuracao.semestre
+    curso = "T" # por padrão todos os cursos
 
     # Vai para próximo semestre
     if semestre == 1:
@@ -444,14 +456,24 @@ def procura_propostas(request):
         ano += 1
         semestre = 1
 
-    if request.is_ajax() and 'anosemestre' in request.POST:
-        anosemestre = request.POST['anosemestre']
-        ano = int(anosemestre.split(".")[0])
-        semestre = int(anosemestre.split(".")[1])
-    #else:
-    #    return HttpResponse("Algum erro não identificado.", status=401)
+    if request.is_ajax():
 
-    mylist = ordena_propostas_novo(True, ano=ano, semestre=semestre)
+        if 'anosemestre' in request.POST:
+
+            if request.POST['anosemestre'] == 'todas':
+                ano = 0
+            else:
+                anosemestre = request.POST['anosemestre'].split(".")
+                ano = int(anosemestre[0])
+                semestre = int(anosemestre[1])
+
+            if 'curso' in request.POST:
+                curso = request.POST['curso']
+
+        else:
+            return HttpResponse("Algum erro não identificado (POST incompleto).", status=401)
+
+    mylist = ordena_propostas_novo(True, ano=ano, semestre=semestre, curso=curso)
 
     propostas = []
     prioridades = [[], [], [], [], []]
@@ -464,6 +486,27 @@ def procura_propostas(request):
         estudantes[0], estudantes[1], estudantes[2], estudantes[3], estudantes[4]\
              = list(unzipped_object)
 
+    # Para procurar as áreas mais procuradas nos projetos
+    opcoes = Opcao.objects.filter(aluno__user__tipo_de_usuario=1, aluno__trancado=False)
+
+    if ano > 0: # Ou seja não são todos os anos e semestres
+        opcoes = opcoes.filter(aluno__anoPFE=ano, aluno__semestrePFE=semestre)
+        opcoes = opcoes.filter(proposta__ano=ano, proposta__semestre=semestre)
+
+    opcoes = opcoes.filter(prioridade=1)
+    
+    if curso!="T": # Caso não se deseje todos os cursos, se filtra qual se deseja
+        opcoes = opcoes.filter(aluno__curso=curso)
+
+    areaspfe = {}
+    areas = Area.objects.filter(ativa=True)
+    for area in areas:
+        count = 0
+        for opcao in opcoes:
+            if AreaDeInteresse.objects.filter(proposta=opcao.proposta, area=area):
+                count += 1
+        areaspfe[area.titulo] = (count, area.descricao)
+
     context = {
         'tamanho': len(propostas)*5,
         'propostas': propostas,
@@ -472,11 +515,13 @@ def procura_propostas(request):
         'ano': ano,
         'semestre': semestre,
         'loop_anos': range(2018, configuracao.ano+1),
+        'areaspfe': areaspfe,
+        'opcoes': opcoes,
     }
 
     return render(request, 'projetos/procura_propostas.html', context)
 
-## ISSO ESTA REPETIDO NO MODELS DE USER / CUIDADO e DEPOIS EM RESOURCES !!!!!!!!!
+## ISSO ESTÁ REPETIDO NO MODELS DE USER / CUIDADO e DEPOIS EM RESOURCES !!!!!!!!!
 def converte_conceito(conceito):
     """ Converte de Letra para Número. """
     if conceito == "A+":

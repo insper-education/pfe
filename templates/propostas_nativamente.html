@@ -1,0 +1,65 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 15 de Novembro de 2020
+{% endcomment %}
+
+&nbsp;&nbsp;nativamente multidisciplinar: <span id="proposta_multidisciplinar_disponivel"></span>
+<a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
+    {% if nao_disponivel %}
+        (<span id="propostas_nativamente_multidisciplinar"></span>)
+    {% endif %}
+</a><br>
+<script>$("#proposta_multidisciplinar_disponivel").text(proposta_multidisciplinar_disponivel);</script>
+{% if nao_disponivel %}
+    <script>
+        if (typeof proposta_multidisciplinar !== 'undefined') {
+            $("#propostas_nativamente_multidisciplinar").text(proposta_multidisciplinar);
+        }
+    </script>
+{% endif %}
+
+&nbsp;&nbsp;nativamente de computação: <span id="proposta_computacao_disponivel"></span>
+<a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
+    {% if nao_disponivel %}
+        (<span id="proposta_computacao"></span>)
+    {% endif %}
+</a><br>
+<script>$("#proposta_computacao_disponivel").text(proposta_computacao_disponivel);</script>
+{% if nao_disponivel %}
+    <script>
+        if (typeof proposta_computacao !== 'undefined') {
+            $("#proposta_computacao").text(proposta_computacao);
+        }
+    </script>
+{% endif %}
+
+&nbsp;&nbsp;nativamente de mecatrônica: <span id="proposta_mecatronica_disponivel"></span>
+<a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
+    {% if nao_disponivel %}
+        (<span id="proposta_mecatronica"></span>)
+    {% endif %}
+</a><br>
+<script>$("#proposta_mecatronica_disponivel").text(proposta_mecatronica_disponivel);</script>
+{% if nao_disponivel %}
+    <script>
+        if (typeof proposta_mecatronica !== 'undefined') {
+            $("#proposta_mecatronica").text(proposta_mecatronica);
+        }
+    </script>
+{% endif %}
+
+&nbsp;&nbsp;nativamente de mecânica: <span id="proposta_mecanica_disponivel"></span>
+<a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
+    {% if nao_disponivel %}
+        (<span id="proposta_mecanica"></span>)
+    {% endif %}
+</a><br>
+<script>$("#proposta_mecanica_disponivel").text(proposta_mecanica_disponivel);</script>
+{% if nao_disponivel %}
+    <script>
+        if (typeof proposta_mecanica !== 'undefined') {
+            $("#proposta_mecanica").text(proposta_mecanica);
+        }
+    </script>
+{% endif %}

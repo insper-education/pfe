@@ -16,336 +16,411 @@
   <span class="titulo">Procura pelas Propostas de Projetos</span>
   <br>
 
-  <label for="filter">Edição:</label>
-  <select id="filter" class="filter" data-tableId="projetos">
+  <label for="filterEdicao">Edição:</label>
+  <select class="filter" id="filterEdicao" data-tableId="projetos">
+    <option value="todas">todas</option>
     {% for loop in loop_anos %}
       <option value="{{loop}}.2" {% if ano == loop and semestre == 2 %}selected{% endif %}>{{loop}}.2</option>
       <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
     {% endfor %}
   </select>
+  &nbsp;&nbsp;&nbsp;
+
+  {% comment %} Seletor do filtro de cursos para a pesquisa {% endcomment %}
+  <label id="labelCurso" for="filterCurso"><b>Curso:</b></label>
+  <select class="filter" id="filterCurso">
+      <option value="T">todos</option>
+      <option value="C">Computação</option>
+      <option value="M">Mecânica</option>
+      <option value="X">Mecatrônica</option>
+  </select>
+  <br>
 
   <div class="2areas2">
 
-  <div id="chart-container" style="position: relative; height:{{tamanho}}vh; width:100%">
-    <canvas id="chart-area"></canvas>
-  </div>
+    <div id="chart-container" style="position: relative; height:{{tamanho}}vh; width:100%">
+      <canvas id="chart-area"></canvas>
+    </div>
   
-  <script>
+    <script>
 
-    var barChartData = {
-			labels: [
-        {% for proposta in propostas %} 
-          '{{proposta.titulo}} ({{proposta.organizacao}})',
-        {% endfor %}
-        ],
-			datasets: [
-      {
-				label: 'Opção #5',
-				backgroundColor: 'rgb(180, 200, 160)',
-        barPercentage: 0.5,
-				data: [
-          {% for prioridade in prioridades.4 %} 
-					  {{prioridade}},
-          {% endfor %}
-        ],
-        estudantes: [{% for estudante in estudantes.4 %} '{{estudante}}',{% endfor %}]
-      },
-      {
-				label: 'Opção #4',
-				backgroundColor: 'rgb(180, 180, 120)',
-        barPercentage: 0.5,
-				data: [
-          {% for prioridade in prioridades.3 %} 
-					  {{prioridade}},
-          {% endfor %}
-        ],
-        estudantes: [{% for estudante in estudantes.3 %} '{{estudante}}',{% endfor %}]
-			},
-      {
-				label: 'Opção #3',
-				backgroundColor: 'rgb(210, 190, 35)',
-        barPercentage: 0.5,
-				data: [
-          {% for prioridade in prioridades.2 %} 
-					  {{prioridade}},
-          {% endfor %}
-        ],
-        estudantes: [{% for estudante in estudantes.2 %} '{{estudante}}',{% endfor %}]
-			},
-      {
-				label: 'Opção #2',
-				backgroundColor: 'rgb(210, 230, 30)',
-        barPercentage: 0.5,
-				data: [
-          {% for prioridade in prioridades.1 %} 
-					  {{prioridade}},
-          {% endfor %}
-        ],
-        estudantes: [{% for estudante in estudantes.1 %} '{{estudante}}',{% endfor %}]
-      }, {
-				label: 'Opção #1',
-				backgroundColor: 'rgb(0, 250, 0)',
-        barPercentage: 0.5,
-				data: [
-          {% for prioridade in prioridades.0 %} 
-					  {{prioridade}},
-          {% endfor %}
-        ],
-        estudantes: [{% for estudante in estudantes.0 %} '{{estudante}}',{% endfor %}]
-			}]
-		};
-
-    var textos = []
-
-    function titulos(animation) {
-      const chartInstance = this.chart;
-      const ctx = chartInstance.ctx;
-      const dataset = this.data.datasets[0];
-      const meta = chartInstance.controller.getDatasetMeta(0);
-
-      // Label
-      textos = []
-      counter = 1
-      Chart.helpers.each(meta.data.forEach((bar, index) => {
-        const label = this.data.labels[index]
-        const labelPositionX = 9
-        const labelPositionY = bar._model.y-(bar._model.height/2)
-        const labelWidth = ctx.measureText(label).width
-
-        ctx.textBaseline = 'bottom'
-        ctx.textAlign = 'left'
-        ctx.fillStyle = '#000000'
-        ctx.font = "12px Open Sans"
-        var espaco = 19
-        if(counter>9) {
-          espaco = 25
-        }
-        label_limpo = label.replace("&amp;", "&")
-        ctx.fillText(label_limpo, labelPositionX+espaco, labelPositionY)
-        ctx.fillText(counter.toString()+"º : ", labelPositionX, labelPositionY)
-        counter = counter + 1
-
-        var campo = {
-            label: label,
-            x: labelPositionX,
-            y: labelPositionY,
-            w: labelWidth,
-            h: 12,
-        };
-
-        textos.push(campo)
-
-      }));
-    }
-
-    function numeros(animation) {
-      const chartInstance = this.chart;
-      const ctx = chartInstance.ctx;
-      const dataset = this.data.datasets[0];
-      const meta = chartInstance.controller.getDatasetMeta(0);
-
-      ctx.textAlign = "center";
-      ctx.textBaseline = 'top';
-      ctx.font = "7px Open Sans";
-      ctx.fillStyle = "#000000";
-
-      // Numeros
-      Chart.helpers.each(this.data.datasets.forEach(function (dataset, i) {
-          var meta = chartInstance.controller.getDatasetMeta(i);
-          Chart.helpers.each(meta.data.forEach(function (bar, index) {
-              data = dataset.data[index];
-                  if(data>0 && dataset._meta[0].hidden!=true) {
-                    ctx.fillText(data, bar._model.x-7, bar._model.y-2);
-                  }
-          }),this)
-      }),this);
-
-      // Label
-      counter = 1
-      Chart.helpers.each(meta.data.forEach((bar, index) => {
-        const label = this.data.labels[index];
-        const labelPositionX = 9;
-        const labelPositionY = bar._model.y-(bar._model.height/2)
-        const labelWidth = ctx.measureText(label).width
-
-        ctx.textBaseline = 'bottom';
-        ctx.textAlign = 'left';
-        ctx.fillStyle = '#000000';
-        ctx.font = "12px Open Sans";
-        var espaco = 19
-        if(counter>9) {
-          espaco = 25
-        }
-        label_limpo = label.replace("&amp;", "&")
-        ctx.fillText(label_limpo, labelPositionX+espaco, labelPositionY)
-        ctx.fillText(counter.toString()+"º : ", labelPositionX, labelPositionY)
-        counter = counter + 1
-
-      }));
-
-    }
-
-    var config = {
-      type: 'horizontalBar',
-				data: barChartData,
-				options: {
-					title: {
-						display: false,
-						text: 'Procuta de Propostas de Projetos'
-					},
-          layout: {
-            padding: {
-              top: 6,
-            }
-          },
-					tooltips: {
-            enabled: false,
-            itemSort: function(a, b) {
-              return b.datasetIndex - a.datasetIndex
-            },
-            callbacks: {
-              label: function (tooltipItems, data) {
-                texto1 = data.datasets[tooltipItems.datasetIndex].label + ": " + tooltipItems.xLabel
-                texto2 = ""
-                if(tooltipItems.xLabel > 0) {
-                  texto2 = "  (" + data.datasets[tooltipItems.datasetIndex].estudantes[tooltipItems.index] + ")"; 
-                }
-                return texto1 + texto2
-              }
-            },
-            custom: function(tooltipModel) {
-                // Tooltip Element
-                var tooltipEl = document.getElementById('chartjs-tooltip');
-
-                // Create element on first render
-                if (!tooltipEl) {
-                    tooltipEl = document.createElement('div');
-                    tooltipEl.id = 'chartjs-tooltip';
-                    tooltipEl.innerHTML = '<table style="background-color: #050505; border-radius: 8px; border: 0px; padding: 20px; border-spacing: 40px 10px;"></table>';
-                    document.body.appendChild(tooltipEl);
-                }
-
-                // Hide if no tooltip
-                if (tooltipModel.opacity === 0) {
-                    tooltipEl.style.opacity = 0;
-                    return;
-                }
-
-                function getBody(bodyItem) {
-                    return bodyItem.lines;
-                }
-
-                // Set Text
-                if (tooltipModel.body) {
-                    var bodyLines = tooltipModel.body.map(getBody);
-
-                    var innerHtml = '<tbody>';
-                    bodyLines.forEach(function(body, i) {
-                        var colors = tooltipModel.labelColors[i];
-                        var style = 'background:' + colors.backgroundColor;
-                        style += '; border-color:' + colors.borderColor;
-                        style += '; border-width: 2px';
-                        
-                        innerHtml += '<tr><td style="padding: 3px; border: 0px; font-size: 9px; height: 8px;"><span style="color:white">' 
-                        innerHtml += '&nbsp;<span style="' + style + '">&nbsp;&nbsp;&nbsp;&nbsp;</span>';
-                        innerHtml += "&nbsp;&nbsp;" + body + '</span>&nbsp;</td></tr>';
-                    });
-                    innerHtml += '</tbody>';
-
-                    var tableRoot = tooltipEl.querySelector('table');
-                    tableRoot.innerHTML = innerHtml;
-                }
-
-                // `this` will be the overall tooltip
-                var position = this._chart.canvas.getBoundingClientRect();
-
-                // Display, position, and set styles for font
-                tooltipEl.style.opacity = 1.0;
-                tooltipEl.style.position = 'absolute';
-                tooltipEl.style.left = position.left + window.pageXOffset + 22 + 'px';
-                tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
-                tooltipEl.style.padding = tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px';
-                tooltipEl.style.pointerEvents = 'none';
-            }
-					},
-					responsive: true,
-
-          maintainAspectRatio: false,
-          legend: {position: 'bottom'},
-					scales: {
-						xAxes: [{
-							stacked: true,
-              ticks: {stepSize: 1,},
-						}],
-						yAxes: [{
-              stacked: true,
-              display: false
-						}]
-					},
-          animation: {
-            onProgress: titulos,
-            onComplete: numeros,
-          },
-  
-				}
-    };
-
-    function chart() {
-
-      var canvasP = document.getElementById('chart-area');
-      var ctx = canvasP.getContext('2d');
-      
-      {% if tamanho > 0 %}
-        var histograma = new Chart(ctx, config);
-      {% else %}
-        $("#chart-container").text("Não há procura por propostas!");
-      {% endif %}
-
-      canvasP.onclick = function(e) {
-
-        const rect = canvasP.getBoundingClientRect()
-        const x = event.clientX - rect.left
-        const y = event.clientY - rect.top
-
-        var label = ""
-
-        textos.forEach((element) => {
-          if( y >= element.y-element.h && y <= element.y ) {
-            label = element.label
-          }
-        })
-
-        if (label == "") {
-          var slice = histograma.getElementAtEvent(e);
-          if (!slice.length) return;
-          label = slice[0]._model.label;
-        }
-        
-        switch (label) {
+      var barChartData = {
+        labels: [
           {% for proposta in propostas %} 
-            case '{{proposta.titulo}} ({{proposta.organizacao}})':
-              location.href = "{% url 'proposta_completa' proposta.id %}";
-              break;
+            '{{proposta.titulo}} ({{proposta.organizacao}})',
           {% endfor %}
-        }
+          ],
+        datasets: [
+        {
+          label: 'Opção #5',
+          backgroundColor: 'rgb(180, 200, 160)',
+          barPercentage: 0.5,
+          data: [
+            {% for prioridade in prioridades.4 %} 
+              {{prioridade}},
+            {% endfor %}
+          ],
+          estudantes: [{% for estudante in estudantes.4 %} '{{estudante}}',{% endfor %}]
+        },
+        {
+          label: 'Opção #4',
+          backgroundColor: 'rgb(180, 180, 120)',
+          barPercentage: 0.5,
+          data: [
+            {% for prioridade in prioridades.3 %} 
+              {{prioridade}},
+            {% endfor %}
+          ],
+          estudantes: [{% for estudante in estudantes.3 %} '{{estudante}}',{% endfor %}]
+        },
+        {
+          label: 'Opção #3',
+          backgroundColor: 'rgb(210, 190, 35)',
+          barPercentage: 0.5,
+          data: [
+            {% for prioridade in prioridades.2 %} 
+              {{prioridade}},
+            {% endfor %}
+          ],
+          estudantes: [{% for estudante in estudantes.2 %} '{{estudante}}',{% endfor %}]
+        },
+        {
+          label: 'Opção #2',
+          backgroundColor: 'rgb(210, 230, 30)',
+          barPercentage: 0.5,
+          data: [
+            {% for prioridade in prioridades.1 %} 
+              {{prioridade}},
+            {% endfor %}
+          ],
+          estudantes: [{% for estudante in estudantes.1 %} '{{estudante}}',{% endfor %}]
+        }, {
+          label: 'Opção #1',
+          backgroundColor: 'rgb(0, 250, 0)',
+          barPercentage: 0.5,
+          data: [
+            {% for prioridade in prioridades.0 %} 
+              {{prioridade}},
+            {% endfor %}
+          ],
+          estudantes: [{% for estudante in estudantes.0 %} '{{estudante}}',{% endfor %}]
+        }]
+      };
+
+      var textos = []
+
+      function titulos(animation) {
+        const chartInstance = this.chart;
+        const ctx = chartInstance.ctx;
+        const dataset = this.data.datasets[0];
+        const meta = chartInstance.controller.getDatasetMeta(0);
+
+        // Label
+        textos = []
+        counter = 1
+        Chart.helpers.each(meta.data.forEach((bar, index) => {
+          const label = this.data.labels[index]
+          const labelPositionX = 9
+          const labelPositionY = bar._model.y-(bar._model.height/2)
+          const labelWidth = ctx.measureText(label).width
+
+          ctx.textBaseline = 'bottom'
+          ctx.textAlign = 'left'
+          ctx.fillStyle = '#000000'
+          ctx.font = "12px Open Sans"
+          var espaco = 19
+          if(counter>9) {
+            espaco = 25
+          }
+          label_limpo = label.replace("&amp;", "&")
+          ctx.fillText(label_limpo, labelPositionX+espaco, labelPositionY)
+          ctx.fillText(counter.toString()+"º : ", labelPositionX, labelPositionY)
+          counter = counter + 1
+
+          var campo = {
+              label: label,
+              x: labelPositionX,
+              y: labelPositionY,
+              w: labelWidth,
+              h: 12,
+          };
+
+          textos.push(campo)
+
+        }));
+      }
+
+      function numeros(animation) {
+        const chartInstance = this.chart;
+        const ctx = chartInstance.ctx;
+        const dataset = this.data.datasets[0];
+        const meta = chartInstance.controller.getDatasetMeta(0);
+
+        ctx.textAlign = "center";
+        ctx.textBaseline = 'top';
+        ctx.font = "7px Open Sans";
+        ctx.fillStyle = "#000000";
+
+        // Numeros
+        Chart.helpers.each(this.data.datasets.forEach(function (dataset, i) {
+            var meta = chartInstance.controller.getDatasetMeta(i);
+            Chart.helpers.each(meta.data.forEach(function (bar, index) {
+                data = dataset.data[index];
+                    if(data>0 && dataset._meta[0] !== null && dataset._meta[0] !== undefined) {
+                      if(dataset._meta[0].hidden != true) {
+                        ctx.fillText(data, bar._model.x-7, bar._model.y-2);
+                      }
+                    }
+            }),this)
+        }),this);
+
+        // Label
+        counter = 1
+        Chart.helpers.each(meta.data.forEach((bar, index) => {
+          const label = this.data.labels[index];
+          const labelPositionX = 9;
+          const labelPositionY = bar._model.y-(bar._model.height/2)
+          const labelWidth = ctx.measureText(label).width
+
+          ctx.textBaseline = 'bottom';
+          ctx.textAlign = 'left';
+          ctx.fillStyle = '#000000';
+          ctx.font = "12px Open Sans";
+          var espaco = 19
+          if(counter>9) {
+            espaco = 25
+          }
+          label_limpo = label.replace("&amp;", "&")
+          ctx.fillText(label_limpo, labelPositionX+espaco, labelPositionY)
+          ctx.fillText(counter.toString()+"º : ", labelPositionX, labelPositionY)
+          counter = counter + 1
+
+        }));
 
       }
 
-    };
-  
-  </script>
+      var config = {
+        type: 'horizontalBar',
+          data: barChartData,
+          options: {
+            title: {
+              display: false,
+              text: 'Procuta de Propostas de Projetos'
+            },
+            layout: {
+              padding: {
+                top: 6,
+              }
+            },
+            tooltips: {
+              enabled: false,
+              itemSort: function(a, b) {
+                return b.datasetIndex - a.datasetIndex
+              },
+              callbacks: {
+                label: function (tooltipItems, data) {
+                  texto1 = data.datasets[tooltipItems.datasetIndex].label + ": " + tooltipItems.xLabel
+                  texto2 = ""
+                  if(tooltipItems.xLabel > 0) {
+                    texto2 = "  (" + data.datasets[tooltipItems.datasetIndex].estudantes[tooltipItems.index] + ")"; 
+                  }
+                  return texto1 + texto2
+                }
+              },
+              custom: function(tooltipModel) {
+                  // Tooltip Element
+                  var tooltipEl = document.getElementById('chartjs-tooltip');
+
+                  // Create element on first render
+                  if (!tooltipEl) {
+                      tooltipEl = document.createElement('div');
+                      tooltipEl.id = 'chartjs-tooltip';
+                      tooltipEl.innerHTML = '<table style="background-color: #050505; border-radius: 8px; border: 0px; padding: 20px; border-spacing: 40px 10px;"></table>';
+                      document.body.appendChild(tooltipEl);
+                  }
+
+                  // Hide if no tooltip
+                  if (tooltipModel.opacity === 0) {
+                      tooltipEl.style.opacity = 0;
+                      return;
+                  }
+
+                  function getBody(bodyItem) {
+                      return bodyItem.lines;
+                  }
+
+                  // Set Text
+                  if (tooltipModel.body) {
+                      var bodyLines = tooltipModel.body.map(getBody);
+
+                      var innerHtml = '<tbody>';
+                      bodyLines.forEach(function(body, i) {
+                          var colors = tooltipModel.labelColors[i];
+                          var style = 'background:' + colors.backgroundColor;
+                          style += '; border-color:' + colors.borderColor;
+                          style += '; border-width: 2px';
+                          
+                          innerHtml += '<tr><td style="padding: 3px; border: 0px; font-size: 9px; height: 8px;"><span style="color:white">' 
+                          innerHtml += '&nbsp;<span style="' + style + '">&nbsp;&nbsp;&nbsp;&nbsp;</span>';
+                          innerHtml += "&nbsp;&nbsp;" + body + '</span>&nbsp;</td></tr>';
+                      });
+                      innerHtml += '</tbody>';
+
+                      var tableRoot = tooltipEl.querySelector('table');
+                      tableRoot.innerHTML = innerHtml;
+                  }
+
+                  // `this` will be the overall tooltip
+                  var position = this._chart.canvas.getBoundingClientRect();
+
+                  // Display, position, and set styles for font
+                  tooltipEl.style.opacity = 1.0;
+                  tooltipEl.style.position = 'absolute';
+                  tooltipEl.style.left = position.left + window.pageXOffset + 22 + 'px';
+                  tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
+                  tooltipEl.style.padding = tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px';
+                  tooltipEl.style.pointerEvents = 'none';
+              }
+            },
+            responsive: true,
+
+            maintainAspectRatio: false,
+            legend: {position: 'bottom'},
+            scales: {
+              xAxes: [{
+                stacked: true,
+                ticks: {stepSize: 1,},
+              }],
+              yAxes: [{
+                stacked: true,
+                display: false
+              }]
+            },
+            animation: {
+              onProgress: titulos,
+              onComplete: numeros,
+            },
+    
+          }
+      };
+
+      function chart() {
+
+        var canvasP = document.getElementById('chart-area');
+        var ctx = canvasP.getContext('2d');
+        
+        {% if tamanho > 0 %}
+          var histograma = new Chart(ctx, config);
+        {% else %}
+          $("#chart-container").text("Não há procura por propostas!");
+        {% endif %}
+
+        canvasP.onclick = function(e) {
+
+          const rect = canvasP.getBoundingClientRect()
+          const x = event.clientX - rect.left
+          const y = event.clientY - rect.top
+
+          var label = ""
+
+          textos.forEach((element) => {
+            if( y >= element.y-element.h && y <= element.y ) {
+              label = element.label
+            }
+          })
+
+          if (label == "") {
+            var slice = histograma.getElementAtEvent(e);
+            if (!slice.length) return;
+            label = slice[0]._model.label;
+          }
+          
+          switch (label) {
+            {% for proposta in propostas %} 
+              case '{{proposta.titulo}} ({{proposta.organizacao}})':
+                location.href = "{% url 'proposta_completa' proposta.id %}";
+                break;
+            {% endfor %}
+          }
+
+        }
+
+      };
+    
+    </script>
+    <br>
+
+    <script>
+      var proposta_computacao_disponivel = 0
+      var proposta_mecatronica_disponivel = 0
+      var proposta_mecanica_disponivel = 0
+      var proposta_multidisciplinar_disponivel = 0
+      {% for proposta in propostas %} 
+        {% with disponivel=proposta.disponivel %}
+          {% if proposta.get_nativamente == "C" %} 
+            {% if disponivel %}proposta_computacao_disponivel += 1;{% endif %}  
+          {% elif proposta.get_nativamente  == "X" %} 
+            {% if disponivel %}proposta_mecatronica_disponivel += 1;{% endif %}
+          {% elif proposta.get_nativamente  == "M" %} 
+              {% if disponivel %}proposta_mecanica_disponivel += 1;{% endif %}
+          {% else %} 
+            {% if disponivel %}proposta_multidisciplinar_disponivel += 1;{% endif %}
+          {% endif %}
+        {% endwith %}
+      {% endfor %}
+    </script>
+
+    <b>Disponibilidade de Propostas:</b><br>
+    {% with nao_disponivel=False %}
+      {% include "propostas_nativamente.html" %}
+    {% endwith %}
+
+    <br>
+
+    <script>
+      var aplicando_multidisciplinar = 0
+      var aplicando_computacao = 0
+      var aplicando_mecatronica = 0
+      var aplicando_mecanica = 0
+      {% for opcao in opcoes %}
+          {% if opcao.proposta.get_nativamente == "C" %} 
+            aplicando_computacao += 1;
+          {% elif opcao.proposta.get_nativamente  == "X" %}
+            aplicando_mecatronica += 1;
+          {% elif opcao.proposta.get_nativamente  == "M" %} 
+            aplicando_mecanica += 1;
+          {% else %} 
+            aplicando_multidisciplinar += 1;
+          {% endif %}
+      {% endfor %}
+    </script>
+
+    <b>Estudante Aplicando como Primeira Opção:</b><br>
+    {% with nao_disponivel=False %}
+      {% include "aplicando_primeira_opcao.html" %}
+    {% endwith %}
+    <br>
+
+    <b>Áreas mais frequente em relação a busca e projetos:</b><br>
+    <ol>
+    {% for area, quantidade in areaspfe.items|dictsortreversed:1 %}
+      <li>{{area}} : {{quantidade.0}}</li>
+    {% endfor %}
+    </ol>
 
   </div>
 
   <script>
   
     function carrega_semestre(){
-        var anosemestre = $(".filter option:selected").attr("value");
+        var anosemestre = $("#filterEdicao option:selected").attr("value");
+        var curso = $("#filterCurso option:selected").attr("value");
         $.ajax({
             type: "POST",
             url: "{% url 'procura_propostas' %}",
             data: {
                 anosemestre: anosemestre,
+                curso: curso,
                 'csrfmiddlewaretoken': '{{ csrf_token }}',
             },
             success: function(response){
