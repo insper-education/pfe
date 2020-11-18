@@ -157,6 +157,20 @@ def proposta_detalhes(request, primarykey):
     except Proposta.DoesNotExist:
         return HttpResponse("Proposta não encontrada.", status=401)
 
+    try:
+        user = PFEUser.objects.get(pk=request.user.pk)
+    except PFEUser.DoesNotExist:
+        return HttpResponse("Usuário não encontrado.", status=401)
+
+    if user.tipo_de_usuario == 1:  # (1, 'aluno')
+        if not (user.aluno.anoPFE==proposta.ano and user.aluno.semestrePFE==proposta.semestre):
+            return HttpResponse("Usuário não tem permissão de acesso.", status=401)
+        if not proposta.disponivel:
+            return HttpResponse("Usuário não tem permissão de acesso.", status=401)
+
+    if user.tipo_de_usuario == 3:  # (3, 'parceiro')
+        return HttpResponse("Usuário não tem permissão de acesso.", status=401)
+
     context = {
         'proposta': proposta,
         'MEDIA_URL' : settings.MEDIA_URL,
