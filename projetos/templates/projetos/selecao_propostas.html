@@ -82,7 +82,7 @@
           {{warnings|linebreaks}}
         </font>
         
-        <input type="submit" value="Enviar" {% if vencido %}disabled{% endif %}>
+        <input type="submit" value="Enviar" {% if vencido or not liberadas_propostas %}disabled{% endif %}>
 
         <small><font color="red">
           Selecione ao menos 5 propostas de projetos (1 ao 5), sendo 1 para a que você tem mais interesse.
