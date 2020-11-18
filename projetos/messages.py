@@ -20,20 +20,20 @@ def email(subject, recipient_list, message):
     return send_mail(subject, message, email_from, recipient_list,
                      html_message=message, fail_silently=True)
 
-def create_message(aluno, ano, semestre):
-    """Cria mensagem quando o aluno termina de preencher o formulário de seleção de propostas"""
+def create_message(estudante, ano, semestre):
+    """Cria mensagem quando o estudante termina de preencher o formulário de seleção de propostas"""
     message = '<br>\n'
-    message += '&nbsp;&nbsp;Estudante: <b>'+aluno.user.first_name+" "+aluno.user.last_name
-    message += " ("+aluno.user.username+')</b>\n\n'
+    message += '&nbsp;&nbsp;Estudante: <b>'+estudante.user.first_name+" "+estudante.user.last_name
+    message += " ("+estudante.user.username+')</b>\n\n'
     message += '&nbsp;<br><br>\n\n'
     message += '&nbsp;&nbsp;Suas opções de propostas de projetos foram:<br>\n'
     message += '<ul>'
-    opcoes = Opcao.objects.filter(aluno=aluno)
+    opcoes = Opcao.objects.filter(aluno=estudante)
     if not opcoes:
         message += "NÃO FORAM ENCONTRADAS OPÇÕES DE ESCOLHA DE PROPOSTAS DE PROJETOS!"
     for opcao in opcoes:
         if opcao.proposta.disponivel:
-            # Mostra somente as propostas do próximo ano, não outras em caso de aluno DP
+            # Mostra somente as propostas do próximo ano, não outras em caso de estudante DP
             if opcao.proposta.ano == ano and\
                opcao.proposta.semestre == semestre:
                 message += "<p>"+str(opcao.prioridade)+" - "
@@ -70,36 +70,36 @@ def create_message(aluno, ano, semestre):
     message += 'Você já trabalhou e/ou estagiou em alguma empresa de engenharia?<br>\n'
     message += ("&nbsp;" * 4)
     message += 'Se sim, qual/quais?<br>\n'
-    if aluno.trabalhou:
-        message += ("&nbsp;" * 4) + '<i>'+aluno.trabalhou+'</i>'
+    if estudante.trabalhou:
+        message += ("&nbsp;" * 4) + '<i>'+estudante.trabalhou+'</i>'
     else:
         message += ("&nbsp;" * 4) + '<i>'+'CAMPO NÃO DEFINIDO'+'</i>'
     message += '<br><br>\n\n'
     message += ("&nbsp;" * 4) + 'Você já participou de atividades sociais?<br>\n'
     message += ("&nbsp;" * 4) + 'Se sim, qual/quais?<br>\n'
-    if aluno.social:
-        message += ("&nbsp;"*4)+'<i>'+aluno.social+'</i>'
+    if estudante.social:
+        message += ("&nbsp;"*4)+'<i>'+estudante.social+'</i>'
     else:
         message += ("&nbsp;"*4)+'<i>'+'CAMPO NÃO DEFINIDO'+'</i>'
     message += '<br><br>\n\n'
     message += ("&nbsp;"*4)+'Você já participou de alguma entidade estudantil do Insper?<br>\n'
     message += ("&nbsp;"*4)+'Liste as que você já participou?<br>\n'
-    if aluno.entidade:
-        message += ("&nbsp;"*4)+'<i>'+aluno.entidade+'</i>'
+    if estudante.entidade:
+        message += ("&nbsp;"*4)+'<i>'+estudante.entidade+'</i>'
     else:
         message += ("&nbsp;"*4)+'<i>'+'CAMPO NÃO DEFINIDO'+'</i>'
     message += '<br><br>\n\n'
     message += ("&nbsp;"*4)+'Você possui familiares em algum empresa que está aplicando?'
     message += 'Ou empresa concorrente direta?<br>\n'
     message += ("&nbsp;"*4)+'Se sim, qual/quais? Qual seu grau de relacionamento.<br>\n'
-    if aluno.familia:
-        message += ("&nbsp;"*4)+'<i>'+aluno.familia+'</i>'
+    if estudante.familia:
+        message += ("&nbsp;"*4)+'<i>'+estudante.familia+'</i>'
     else:
         message += ("&nbsp;"*4)+'<i>'+'CAMPO NÃO DEFINIDO'+'</i>'
     message += '<br><br>\n\n'
-    if aluno.user.linkedin:
-        message += ("&nbsp;"*4)+'<i>LinkedIn:</i> <a href='+aluno.user.linkedin+'>'
-        message += aluno.user.linkedin+'</a>'
+    if estudante.user.linkedin:
+        message += ("&nbsp;"*4)+'<i>LinkedIn:</i> <a href='+estudante.user.linkedin+'>'
+        message += estudante.user.linkedin+'</a>'
         message += '<br><br>\n\n'
     message += '<br>\n'+("&nbsp;"*12)+"atenciosamente, comitê PFE"
     message += '&nbsp;<br>\n'
