@@ -8,6 +8,7 @@ Data: 18 de Outubro de 2019
 from django.conf import settings
 from django.core.mail import send_mail
 from users.models import Opcao
+from .models import AreaDeInteresse
 
 def htmlizar(text):
     """Coloca <br> nas quebras de linha."""
