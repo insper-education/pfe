@@ -142,9 +142,9 @@ def message_reembolso(usuario, projeto, reembolso, cpf):
     message += '<br>\n'+("&nbsp;"*12)+"atenciosamente, coordenação do PFE"
     message += '&nbsp;<br>\n'
     message += '&nbsp;<br>\n'
-    message += '&nbsp;&nbsp;&nbsp;Obs: O aluno deverá entregar todos as notas fiscais originais, '
+    message += '&nbsp;&nbsp;&nbsp;Obs: você deverá entregar todas as notas fiscais originais, '
     message += 'ou senão imprimir, diretamente no departamento de carreiras,'
-    message += 'sem isso o processo não deverá avançar.<br>\n'
+    message += 'sem isso o processo não avançará.<br>\n'
 
     return message
 

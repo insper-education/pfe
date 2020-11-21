@@ -359,15 +359,15 @@ class Configuracao(models.Model):
     manutencao = models.BooleanField(default=False,
                                      help_text='Mostra mensagem de site em manutencao na entrada')
     prazo = models.DateTimeField("Prazo", default=datetime.datetime.now, blank=True,
-                                 help_text='Prazo para os alunos se inscreverem nos projetos')
+                                 help_text='Prazo para os estudantes se inscreverem nos projetos')
     t0 = models.DateField(default=datetime.date.today, blank=True,
                           help_text='Inicio do Semestre Letivo')
     recipient_reembolso = models.CharField(max_length=127, blank=True,
                                            help_text='Separar lista por ponto e virgula')
     liberados_projetos = models.BooleanField(default=False,
-                                             help_text='Para que alunos vejam projetos alocados')
+                                             help_text='Para que estudantes vejam projetos alocados')
     liberadas_propostas = models.BooleanField(default=False,
-                                              help_text='Para alunos verem propostas disponiveis')
+                                              help_text='Para estudantes verem propostas disponiveis')
 
     class Meta:
         verbose_name = 'Configuração'
@@ -442,7 +442,7 @@ class Evento(models.Model):
         (25, 'Entrega do Banner (Grupo)', 'chocolate'),
         (26, 'Entrega do Vídeo (Grupo)', 'lavender'),
 
-        (30, 'Feedback dos Alunos sobre PFE', 'orange'),
+        (30, 'Feedback dos Estudantes sobre PFE', 'orange'),
         (31, 'Avaliação de Pares Intermediária', 'pink'),
         (32, 'Avaliação de Pares Final', 'pink'),
 
@@ -455,7 +455,7 @@ class Evento(models.Model):
         (101, 'Apólice Seguro Acidentes Pessoais', 'aquamarine'),
 
         (111, 'Bate-papo com estudante que farão PFE no próximo semestre', 'lightcyan'),
-        (112, 'Alunos demonstrarem interesse em adiar PFE para 9º semestre', 'limegreen'),
+        (112, 'Estudantes demonstrarem interesse em adiar PFE para 9º semestre', 'limegreen'),
         (113, 'Apresentação dos projetos disponíveis para estudantes', 'darkslategray'),
 
         (120, 'Limite para submissão de propostas de projetos pelas organizações', 'lime'),
@@ -464,7 +464,7 @@ class Evento(models.Model):
         (123, 'Indicação de interesse nos projetos do próximo semestre pelos estudante', 'pink'),
         (124, 'Notificação para estudantes dos grupos formados', 'paleturquoise'),
         (125, 'Notificação para organizações dos projetos fechados', 'moccasin'),
-        (126, 'Professores tiram dúvidas sobre projetos para alunos', 'lightsalmon'),
+        (126, 'Professores tiram dúvidas sobre projetos para estudantes', 'lightsalmon'),
 
 
         (130, 'Validação dos projetos pelo comitê', 'peru'),

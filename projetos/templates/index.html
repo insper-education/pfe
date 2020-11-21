@@ -20,7 +20,7 @@
     <a href="{% url 'calendario' %}"><h5>Calendário Geral</h5></a>
     <hr>
     {% if user.tipo_de_usuario == 1 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-        <a href="{% url 'index_aluno' %}"><h5>Área dos Estudantes</h5></a>
+        <a href="{% url 'index_estudante' %}"><h5>Área dos Estudantes</h5></a>
     {% endif %}
     {% if user.tipo_de_usuario == 3 or user.tipo_de_usuario == 4 %}
         <a href="{% url 'index_organizacao' %}"><h5>Área dos Parceiros</h5></a>

@@ -75,8 +75,8 @@ def index(request):
     return render(request, 'index.html', context=context)
 
 @login_required
-def index_aluno(request):
-    """Mostra página principal do usuário aluno."""
+def index_estudante(request):
+    """Mostra página principal do usuário estudante."""
 
     try:
         usuario = PFEUser.objects.get(pk=request.user.pk)
@@ -132,7 +132,7 @@ def index_aluno(request):
         'vencido': vencido,
         'professor_id': professor_id,
     }
-    return render(request, 'index_aluno.html', context=context)
+    return render(request, 'index_estudante.html', context=context)
 
 
 @login_required
@@ -3549,6 +3549,23 @@ def mapeamento_estudante_projeto(request, anosemestre):
 
         opcoes.append(opcoes_aluno)
 
+    # checa para empresas repetidas, para colocar um número para cada uma
+    repetidas = {}
+    for proposta in propostas:
+        if proposta.organizacao.sigla in repetidas:
+            repetidas[proposta.organizacao.sigla] += 1
+        else:
+            repetidas[proposta.organizacao.sigla] = 0
+    repetidas_limpa = {}
+    for repetida in repetidas:
+        if repetidas[repetida] != 0: # tira zerados
+            repetidas_limpa[repetida] = repetidas[repetida]
+    proposta_indice = {}
+    for proposta in reversed(propostas):
+        if proposta.organizacao.sigla in repetidas_limpa:
+            proposta_indice[proposta.id] = repetidas_limpa[proposta.organizacao.sigla] + 1
+            repetidas_limpa[proposta.organizacao.sigla] -= 1
+
     estudantes = zip(alunos, opcoes)
     context = {
         'estudantes': estudantes,
@@ -3557,6 +3574,7 @@ def mapeamento_estudante_projeto(request, anosemestre):
         'ano': ano,
         'semestre': semestre,
         'loop_anos': range(2018, configuracao.ano+1),
+        'proposta_indice': proposta_indice,
     }
     return render(request, 'projetos/mapeamento_estudante_projeto.html', context)
 

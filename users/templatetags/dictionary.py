@@ -15,3 +15,7 @@ def dict_key(d, k):
         return d[k]
     else:
         return None
+
+@register.filter
+def get_value(dictionary, key):
+    return dictionary.get(key)

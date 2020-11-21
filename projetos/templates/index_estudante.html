@@ -54,7 +54,8 @@
 
 {% block content %}
 
-    {% comment %} Link só irá direto se houver um porjeto de aluno, no começo só o interesse por propostas. {% endcomment %}
+    {% comment %} MEU PROJETO {% endcomment %}
+    {% comment %} Link só irá direto se houver um projeto de estudante, no começo só o interesse por propostas. {% endcomment %}
     <a
         {% comment %} Caso Professor {% endcomment %}
         {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
@@ -73,14 +74,17 @@
     </a>
     <hr>
 
+    {% comment %} ÁREAS DE INTERESSE {% endcomment %}
     <a href="{% url 'areas_interesse' %}">
         <h5>Selecionar Áreas de Interesse</h5>
     </a>
     
+    {% comment %} INFORMAÇÕES ADICIONAIS {% endcomment %}
     <a href="{% url 'submissao' %}">
         <h5>Formulário de Informações Adicionais</h5>
     </a>
 
+    {% comment %} SELECIONAR PROPOSTAS {% endcomment %}
     <a 
         {% comment %} Caso Professor {% endcomment %}
         {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
@@ -105,15 +109,18 @@
         <h5>Selecionar Propostas de Projetos</h5>
     </a>
 
-    <font color="red">Prazo para a seleção dos projetos {{ano}}.{{semestre}}:
-        <b>
-        {% if configuracao.liberadas_propostas %}
-            {{configuracao.prazo}}
-        {% else %}
-            ainda não liberado
-        {% endif %}
-        </b>
-    </font>
+    {% if ano == user.aluno.anoPFE and semestre == user.aluno.semestrePFE %}
+        &nbsp;&nbsp;
+        <font color="red">Prazo para a seleção dos projetos {{ano}}.{{semestre}}:
+            <b>
+            {% if configuracao.liberadas_propostas %}
+                {{configuracao.prazo}}
+            {% else %}
+                ainda não liberado
+            {% endif %}
+            </b>
+        </font>
+    {% endif %}
 
     <hr>
     
@@ -140,5 +147,7 @@
             setTimeout(function(){ $("#"+mensagem).removeClass("show"); }, 3000);
         }
     </script>
+
+    <p>&nbsp;</p>
 
 {% endblock %}
