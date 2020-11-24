@@ -1706,7 +1706,7 @@ def projetos_fechados(request, periodo="vazio"):
     prioridade_list = []
     conexoes = []
     nalunos = 0
-    qtd_prioridades = [0, 0, 0, 0, 0, 0]   # para grafico de pizza no final
+    #qtd_prioridades = [0, 0, 0, 0, 0, 0]   # para grafico de pizza no final
 
     for projeto in Projeto.objects.all():
 
@@ -1718,13 +1718,13 @@ def projetos_fechados(request, periodo="vazio"):
             prioridades = []
             for aluno in alunos_pfe:
                 opcoes = Opcao.objects.filter(proposta=projeto.proposta)
-                opcoes_alunos = opcoes.filter(aluno__user__tipo_de_usuario=1)
-                opcoes1 = opcoes_alunos.filter(aluno__alocacao__projeto=projeto)
-                opcoes2 = opcoes1.filter(aluno=aluno)
-                if len(opcoes2) == 1:
-                    prioridade = opcoes2.first().prioridade
+                opcoes = opcoes.filter(aluno__user__tipo_de_usuario=1)
+                opcoes = opcoes.filter(aluno__alocacao__projeto=projeto)
+                opcoes = opcoes.filter(aluno=aluno)
+                if len(opcoes) == 1:
+                    prioridade = opcoes.first().prioridade
                     prioridades.append(prioridade)
-                    qtd_prioridades[prioridade-1] += 1
+                    #qtd_prioridades[prioridade-1] += 1
                 else:
                     prioridades.append(0)
             prioridade_list.append(zip(alunos_pfe, prioridades))
@@ -1735,7 +1735,7 @@ def projetos_fechados(request, periodo="vazio"):
         'mylist': mylist,
         'length': len(projetos),
         'nalunos': nalunos,
-        'qtd_prioridades': qtd_prioridades,
+        #'qtd_prioridades': qtd_prioridades,
         'periodo': periodo,
     }
     return render(request, 'projetos/projetos_fechados.html', context)
