@@ -523,7 +523,7 @@ def procura_propostas(request):
 
     # conta de maluco para fazer diagrama ficar correto
     tamanho = len(propostas)
-    if tamanho <= 20:
+    if tamanho <= 4:
         tamanho *= 9
     else:
         tamanho *= 5
