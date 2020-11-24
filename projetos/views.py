@@ -2248,7 +2248,7 @@ def proposta_editar(request, slug):
     liberadas_propostas = Configuracao.objects.first().liberadas_propostas
 
     if request.method == 'POST':
-        if not liberadas_propostas:
+        if (not liberadas_propostas) or (user.tipo_de_usuario == 4):
             preenche_proposta(request, proposta)
             mensagem = envia_proposta(proposta) # Por e-mail
             resposta = "Submissão de proposta de projeto atualizada com sucesso.<br>"

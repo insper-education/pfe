@@ -6,6 +6,7 @@
 {% endcomment %}
 
 {% block head %}
+  {% load define_action %}
   <style>
     textarea {
       max-width:100%;
@@ -17,7 +18,15 @@
 
   {% if edicao and liberadas_propostas %}
     <h3 class="red-bold">Propostas de Projetos já liberadas para estudantes, edição desabilitada.</h3>
+    {% if user.tipo_de_usuario == 4 %} {% comment %} tipo_de_usuario == 4 >>> Administrador {% endcomment %}
+      <h5 class="red-bold">Você está logado como administrador e pode editar a proposta.</h3>
+    {% endif %}
     <br>
+  {% endif %}
+
+  {% comment %} Isso permite o Administrador continuar editando a proposta {% endcomment %}
+  {% if user.tipo_de_usuario == 4 %}
+    {% define False as liberadas_propostas %}
   {% endif %}
 
   <span class="titulo">
