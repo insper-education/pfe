@@ -54,7 +54,7 @@ from .models import ObjetivosDeAprendizagem, Avaliacao2, Observacao, Area, AreaD
 from .models import get_upload_path
 
 from .resources import ProjetosResource, OrganizacoesResource, OpcoesResource, UsuariosResource
-from .resources import AlunosResource, ProfessoresResource, ParceirosResource, Avaliacoes2Resource
+from .resources import EstudantesResource, ProfessoresResource, ParceirosResource, Avaliacoes2Resource
 from .resources import ConfiguracaoResource, FeedbacksResource, DisciplinasResource
 from .messages import email, create_message, message_reembolso, message_agendamento
 
@@ -1435,7 +1435,7 @@ def export(request, modelo, formato):
     elif modelo == "usuarios":
         resource = UsuariosResource()
     elif modelo == "alunos":
-        resource = AlunosResource()
+        resource = EstudantesResource()
     elif modelo == "professores":
         resource = ProfessoresResource()
     elif modelo == "parceiros":
@@ -1490,7 +1490,7 @@ def create_backup():
     data_usuarios.title = "Usuarios"
     databook.add_sheet(data_usuarios)
 
-    data_alunos = AlunosResource().export()
+    data_alunos = EstudantesResource().export()
     data_alunos.title = "Alunos"
     databook.add_sheet(data_alunos)
 
@@ -2338,7 +2338,7 @@ def carrega(request, dado):
     if dado == "disciplinas":
         resource = DisciplinasResource()
     elif dado == "alunos":
-        resource = AlunosResource()
+        resource = EstudantesResource()
     elif dado == "avaliacoes":
         resource = Avaliacoes2Resource()
     else:

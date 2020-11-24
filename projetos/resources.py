@@ -9,7 +9,9 @@ import datetime
 from import_export import resources, fields
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao, Alocacao
-from .models import Projeto, Organizacao, Configuracao, Disciplina, Feedback, Avaliacao2, ObjetivosDeAprendizagem, Observacao
+from .models import Projeto, Proposta, Organizacao, Configuracao, Disciplina
+from .models import Feedback, Avaliacao2, ObjetivosDeAprendizagem, Observacao
+from .models import Area, AreaDeInteresse
 
 
 class ProjetosResource(resources.ModelResource):
@@ -276,7 +278,22 @@ class UsuariosResource(resources.ModelResource):
     class Meta:
         model = PFEUser
 
-class AlunosResource(resources.ModelResource):
+
+def atualizar_campo(registro, campo, valor):
+    if (valor is not None) and (valor != ""):
+        tmp = getattr(registro, campo)
+        if (tmp is not None) and (tmp != "") and (tmp != valor):
+            #print("Dado atualizado de {0} para {1}".format(tmp, valor))
+            pass
+        else:
+            #print("Dados iguais em {0} : {0}".format(campo, tmp))
+            pass
+        setattr(registro, campo, valor)
+    else:
+        #print("Não houve atualização de {0}".format(campo))
+        pass
+
+class EstudantesResource(resources.ModelResource):
     """Model Resource para tratar dados de Estudantes."""
     campos = [
         'usuário (primeira parte do e-mail, obrigatório)',
@@ -290,19 +307,22 @@ class AlunosResource(resources.ModelResource):
         'anoPFE',
         'semestrePFE',
     ]
+
     def before_import_row(self, row, **kwargs): #forma que arrumei para evitar preencher com o mesmo dado
         username = row.get('usuário')
         if username is None:
             pass
             #print("Erro ao recuperar o usuário [username]")
         elif username != "":
-            # recupera dados do aluno se ele já estava cadastrado
+            # recupera dados do estudante se ele já estava cadastrado
             (user, _created) = PFEUser.objects.get_or_create(username=username,
                                                              tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
-            user.first_name = row.get('nome')
-            user.last_name = row.get('sobrenome')
-            user.email = row.get('email')
-            user.genero = row.get('gênero')
+            
+            atualizar_campo(user, 'first_name', row.get('nome'))
+            atualizar_campo(user, 'last_name', row.get('sobrenome'))
+            atualizar_campo(user, 'email', row.get('email'))
+            atualizar_campo(user, 'genero', row.get('gênero'))
+
             user.save()
             (aluno, _created) = Aluno.objects.get_or_create(user=user)
             if row.get('curso') == "GRENGCOMP":
@@ -313,12 +333,94 @@ class AlunosResource(resources.ModelResource):
                 aluno.curso = 'M'
             else:
                 pass #erro
-            aluno.matricula = row.get('matrícula')
-            aluno.cr = float(row.get('cr'))
-            aluno.anoPFE = int(row.get('anoPFE'))
-            aluno.semestrePFE = int(row.get('semestrePFE'))
+
+            atualizar_campo(aluno, 'matricula', row.get('matrícula'))
+            atualizar_campo(aluno, 'cr', row.get('cr'))
+            atualizar_campo(aluno, 'anoPFE', row.get('anoPFE'))
+            atualizar_campo(aluno, 'semestrePFE', row.get('semestrePFE'))
+
+            if "familia" in row:
+                aluno.familia = row["familia"]
 
             aluno.save()
+
+            # Isso caça propostas, não deverá ser novamente usado no futuro
+            # Esta criando Opções sem ver se já existiam
+            contador = 1
+            while contador < 100:
+                if str(contador) in row and row[str(contador)] != "":
+                    print(row[str(contador)])
+                    proposta = Proposta.objects.get(id=contador)
+
+                    (op, _created) = Opcao.objects.get_or_create(aluno=aluno, 
+                                                                 proposta=proposta,
+                                                                 prioridade=int(row[str(contador)]))
+
+                    op.save()
+                contador += 1
+
+            if "areas" in row:
+                if "Programação" in row["areas"]:
+                    area = Area.objects.get(ativa=True, titulo="Sistemas de Informação")
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    area_int.save()
+
+                if "Gestão de Projetos" in row["areas"] or "finanças" in row["areas"]:
+                    area = Area.objects.get(ativa=True, titulo="Administração, Economia e Finanças")
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    area_int.save()
+
+                if "Manufatura" in row["areas"]:
+                    area = Area.objects.get(ativa=True, titulo="Manufatura Avançada")
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    area_int.save()
+
+                if "Dados" in row["areas"]:
+                    area = Area.objects.get(ativa=True, titulo="Ciência dos Dados")
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    area_int.save()
+
+                if "Controle" in row["areas"]:
+                    area = Area.objects.get(ativa=True, titulo="Controle de Sistemas Dinâmicos")
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    area_int.save()
+
+                if "Social" in row["areas"]:
+                    area = Area.objects.get(ativa=True, titulo="Inovação Social")
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    area_int.save()
+
+                if "Eletrônica" in row["areas"]:
+                    area = Area.objects.get(ativa=True, titulo="Sistemas Embarcados")
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    area_int.save()
+                    
+                if "3D" in row["areas"]:
+                    area = Area.objects.get(ativa=True, titulo="Sistemas Interativos")
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    area_int.save()
+                
+                if "Robótica" in row["areas"]:
+                    area = Area.objects.get(ativa=True, titulo="Robótica")
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    area_int.save()
+                
+                if "Automação" in row["areas"]:
+                    area = Area.objects.get(ativa=True, titulo="Automação Industrial")
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    area_int.save()
+                
+                if "Machine" in row["areas"] or "AI" in row["areas"]:
+                    area = Area.objects.get(ativa=True, titulo="Inteligência Artificial")
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    area_int.save()
+                
+                if "Machine" in row["areas"]:
+                    area = Area.objects.get(ativa=True, titulo="Inteligência Artificial")
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    area_int.save()
+            
+
             row['id'] = aluno.id
     def skip_row(self, instance, original):
         return True
