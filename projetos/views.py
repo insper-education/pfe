@@ -521,8 +521,15 @@ def procura_propostas(request):
                 count += 1
         areaspfe[area.titulo] = (count, area.descricao)
 
+    # conta de maluco para fazer diagrama ficar correto
+    tamanho = len(propostas)
+    if tamanho <= 20:
+        tamanho *= 9
+    else:
+        tamanho *= 5
+
     context = {
-        'tamanho': len(propostas)*5,
+        'tamanho': tamanho,
         'propostas': propostas,
         'prioridades': prioridades,
         'estudantes': estudantes,
