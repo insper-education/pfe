@@ -133,11 +133,11 @@ class Avaliacoes2Resource(resources.ModelResource):
             estudante_str = row.get('user_id')
         else:
             pass
-            print("Erro ao recuperar coluna estudante ou user_id")
+            #print("Erro ao recuperar coluna estudante ou user_id")
 
         if estudante_str is None:
             pass
-            print("Erro ao recuperar o estudante [estudante_str]")
+            #print("Erro ao recuperar o estudante [estudante_str]")
         elif estudante_str != "":
 
             #try:
@@ -158,7 +158,7 @@ class Avaliacoes2Resource(resources.ModelResource):
                 avaliacao = row.get('avaliação')
             else:
                 pass
-                print("Erro ao recuperar coluna avaliação")
+                #print("Erro ao recuperar coluna avaliação")
             
             if "momento" in row:
                 t = le_momento(row.get('momento'))
@@ -223,8 +223,9 @@ class Avaliacoes2Resource(resources.ModelResource):
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo, projeto=projeto, alocacao = alocacao, avaliador=avaliador, momento=t, tipo_de_avaliacao=tipo_de_avaliacao)
 
             else:
-                print("ERRO, AVALIAÇÃO NÃO RECONHECIDA !!!!")
-                print(avaliacao)
+                pass
+                #print("ERRO, AVALIAÇÃO NÃO RECONHECIDA !!!!")
+                #print(avaliacao)
 
             # CASO A LEITURA TENHA ALGUM FEEDBACK/OBSERVAÇÃO
             if "observação" in row:
@@ -249,7 +250,7 @@ class Avaliacoes2Resource(resources.ModelResource):
                 aval.nota = converte_conceito(desempenho) # CALCULAR NOTA
             else:
                 pass
-                print("Erro ao recuperar a nota")
+                #print("Erro ao recuperar a nota")
 
             # Todas as avaliações tem de ter peso
             # Pesos são convertidos para porcentagens
@@ -258,7 +259,7 @@ class Avaliacoes2Resource(resources.ModelResource):
                 aval.peso = peso
             else:
                 pass
-                print("Erro ao recuperar o peso da avaliação")
+                #print("Erro ao recuperar o peso da avaliação")
 
             aval.save()
             row['id'] = aval.id
@@ -349,7 +350,6 @@ class EstudantesResource(resources.ModelResource):
             contador = 1
             while contador < 100:
                 if str(contador) in row and row[str(contador)] != "":
-                    print(row[str(contador)])
                     proposta = Proposta.objects.get(id=contador)
 
                     (op, _created) = Opcao.objects.get_or_create(aluno=aluno, 
