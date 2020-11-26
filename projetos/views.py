@@ -3614,9 +3614,43 @@ def projeto_feedback(request):
 def lista_feedback(request):
     """Lista todos os feedback das Organizações Parceiras."""
 
+    configuracao = Configuracao.objects.all().first()
+    edicoes = range(2018, configuracao.ano+1)
+
+    # PROJETOS
+    num_projetos = []
+    for ano_projeto in edicoes:
+
+        projetos = Projeto.objects.filter(ano=ano_projeto).\
+                                   filter(semestre=2).\
+                                   count()
+        num_projetos.append(projetos)
+
+        projetos = Projeto.objects.filter(ano=ano_projeto+1).\
+                                   filter(semestre=1).\
+                                   count()
+        num_projetos.append(projetos)
+
+    feedbacks = Feedback.objects.all().order_by("-data")
+    num_feedbacks = []
+
+    # primeiro ano foi diferente
+    nf = Feedback.objects.filter(data__range=["2018-06-01", "2019-05-31"]).count()
+    num_feedbacks.append(nf) 
+ 
+    for ano_projeto in edicoes[1:]:
+        nf = Feedback.objects.filter(data__range=[str(ano_projeto)+"-06-01", str(ano_projeto)+"-12-31"]).count()
+        num_feedbacks.append(nf) 
+        nf = Feedback.objects.filter(data__range=[str(ano_projeto+1)+"-01-01", str(ano_projeto+1)+"-05-31"]).count()
+        num_feedbacks.append(nf) 
+
+
     context = {
-        'feedbacks' : Feedback.objects.all().order_by("-data"),
+        'feedbacks' : feedbacks,
         'SERVER_URL' : settings.SERVER,
+        'loop_anos': edicoes,
+        'num_projetos': num_projetos,
+        'num_feedbacks': num_feedbacks,
     }
     return render(request, 'projetos/lista_feedback.html', context)
 

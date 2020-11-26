@@ -6,7 +6,15 @@
 {% endcomment %}
 
 {% block head %}
+  {% load static %}
   <script src="https://www.w3schools.com/lib/w3.js"></script>
+  <script src="{% static 'js/Chart.min.js' %}"></script>
+  {% comment %} <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script> {% endcomment %}
+  <script>
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
 {% endblock %}
 
 {% block content %}
@@ -67,6 +75,62 @@
   {% endif %}
 
   <p>&nbsp;</p>
+
+  <div id="canvas-holder">
+      <canvas id="bar-feedbacks"></canvas>
+  </div>
+
   <p>&nbsp;</p>
+
+<script>
+    
+    var config_feedbacks = {
+        type: 'bar',
+        data: {
+        labels: [
+            {% for loop in loop_anos %}
+            "{{loop}}.2",
+            "{{loop|add:1}}.1",
+            {% endfor %}
+            ],
+        datasets: [
+            {
+            label: "projetos",
+            backgroundColor: "#5e8ea2",
+            data: [
+                    {% for num in num_projetos %}
+                        {{num}},
+                    {% endfor %}
+                ]
+            }, 
+            {
+            label: "feedbacks",
+            backgroundColor: "#353ecd",
+            data: [
+                    {% for num in num_feedbacks %}
+                        {{num}},
+                    {% endfor %}
+                ]
+            }, 
+        ]
+        },
+        options: {
+        legend: { display: true },
+        title: {
+            display: true,
+            text: 'Projetos e Feedbacks'
+        }
+        }
+    };
+
+    function carrega_grafico() {  
+      // Chart da quantidade de projetos
+      var bar_feedbacks = document.getElementById('bar-feedbacks').getContext('2d');
+      window.projeto = new Chart(bar_feedbacks, config_feedbacks);
+    }
+
+    window.onload = carrega_grafico
+
+    </script>
 
 {% endblock %}
