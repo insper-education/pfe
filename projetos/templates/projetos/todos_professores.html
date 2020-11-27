@@ -7,7 +7,8 @@
 
 {% block head %}
   {% load static %}
-  <script src="https://www.w3schools.com/lib/w3.js"></script>
+  {% comment %} <script src="https://www.w3schools.com/lib/w3.js"></script> {% endcomment %}
+  <script src="{% static 'js/w3.js' %}"></script>
 {% endblock %}
 
 {% block content %}

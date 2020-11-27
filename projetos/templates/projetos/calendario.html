@@ -10,15 +10,28 @@
 {% block head %}
   {% load static %}
 
-  <!-- REFERENCIA: https://github.com/year-calendar/js-year-calendar -->
-  <script src="https://unpkg.com/js-year-calendar@latest/dist/js-year-calendar.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="https://unpkg.com/js-year-calendar@latest/dist/js-year-calendar.min.css" />
-  <link rel='stylesheet' href='https://unpkg.com/bootstrap-datepicker@1.8.0/dist/css/bootstrap-datepicker.standalone.min.css'>
+  {% comment %} REFERENCIA: https://github.com/year-calendar/js-year-calendar {% endcomment %}
   
-  <script src="https://unpkg.com/js-year-calendar@latest/locales/js-year-calendar.pt.js"></script>
+  {% comment %} <script src="https://unpkg.com/js-year-calendar@latest/dist/js-year-calendar.min.js"></script> {% endcomment %}
+  <script src="{% static 'js-year-calendar/dist/js-year-calendar.min.js' %}"></script>
+  
+  {% comment %} <link rel="stylesheet" type="text/css" href="https://unpkg.com/js-year-calendar@latest/dist/js-year-calendar.min.css" /> {% endcomment %}
+  <link rel="stylesheet" type="text/css" href="{% static 'js-year-calendar/dist/js-year-calendar.min.css' %}" />
 
-  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
+  {% comment %} <link rel='stylesheet' href='https://unpkg.com/bootstrap-datepicker@1.8.0/dist/css/bootstrap-datepicker.standalone.min.css'> {% endcomment %}
+  <link rel='stylesheet' href="{% static 'bootstrap-datepicker/dist/css/bootstrap-datepicker.standalone.min.css' %}" crossorigin="anonymous">
+
+  {% comment %} <script src="https://unpkg.com/js-year-calendar@latest/locales/js-year-calendar.pt.js"></script> {% endcomment %}
+  <script src="{% static 'js-year-calendar/locales/js-year-calendar.pt.js' %}"></script>
+
+  {% comment %} <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script> {% endcomment %}
+  <script src="{% static 'js/html2canvas.min.js' %}"></script>
+
+  {% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js" crossorigin="anonymous"></script> {% endcomment %}
+  <script src="{% static 'js/jspdf.min.js' %}"></script>
+
+  {% comment %} <script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js'></script>  {% endcomment %}
+  <script src="{% static 'bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js' %}"></script> 
 
   <style>
     table, th, td {
@@ -333,8 +346,6 @@
 
   </div>
 
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js'></script> 
-  
   <script id="rendered-js">
 
     let calendar = null;

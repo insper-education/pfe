@@ -12,4 +12,4 @@ celerybeat-schedule
 celerybeat.pid
 dump.rdb
 old/
-static/
+/static/

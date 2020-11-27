@@ -7,7 +7,8 @@
 
 {% block head %}
   {% load static %}
-  <script src="https://www.w3schools.com/lib/w3.js"></script>
+  {% comment %} <script src="https://www.w3schools.com/lib/w3.js"></script> {% endcomment %}
+  <script src="{% static 'js/w3.js' %}"></script>
   <script src="{% static 'js/Chart.min.js' %}"></script>
   {% comment %} <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script> {% endcomment %}
   <script>
@@ -96,7 +97,7 @@
         datasets: [
             {
             label: "projetos",
-            backgroundColor: "#5e8ea2",
+            backgroundColor: "#Ae4e82",
             data: [
                     {% for num in num_projetos %}
                         {{num}},
@@ -105,7 +106,7 @@
             }, 
             {
             label: "feedbacks",
-            backgroundColor: "#353ecd",
+            backgroundColor: "#15Cecd",
             data: [
                     {% for num in num_feedbacks %}
                         {{num}},

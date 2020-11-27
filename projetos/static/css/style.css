@@ -13,9 +13,12 @@
   outline-offset: 5px;
 }
 
+/* Compromete o fa-bars, removendo por enquanto */
+/*
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
+*/
 
 .mobile-container {
   max-width: 480px;

@@ -6,13 +6,17 @@
 {% endcomment %}
 
 {% block head %}
+  {% load static %}
+
   <style>
     textarea {
       max-width:100%;
     }
   </style>
 
-  <script src="https://www.geradorcnpj.com/assets/js/jquery.maskedinput-1.1.4.pack.js"></script>
+  {% comment %} <script src="https://www.geradorcnpj.com/assets/js/jquery.maskedinput-1.1.4.pack.js"></script> {% endcomment %}
+  <script src="{% static 'js/jquery.maskedinput-1.1.4.pack.js' %}"></script>
+
   <script type="text/javascript">
     $(document).ready(function(){	
       $("#cnpj").mask("99.999.999/9999-99");
