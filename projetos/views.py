@@ -40,7 +40,11 @@ from django.utils import timezone
 from django.utils import text
 
 
-from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador, Opcao, Alocacao, Areas
+from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador, Opcao, Alocacao
+
+# LIXO REMOVER
+from users.models import LIXO_Areas
+
 from users.support import configuracao_estudante_vencida
 
 from .models import Projeto, Proposta, Organizacao, Configuracao, Evento, Anotacao, Coorientador

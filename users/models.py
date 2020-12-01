@@ -19,7 +19,7 @@ from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2, Objetivo
 
 #### ANTIGO SENDO REMOVIDO ####
 #areas de interesse
-class Areas(models.Model):
+class LIXO_Areas(models.Model):
     """Áreas de interesse dos projetos de engenharia."""
     inovacao_social = models.BooleanField("Inovacao Social",
                                           default=False)
@@ -264,7 +264,7 @@ class Aluno(models.Model):
                                      related_name='aluno_pre_alocado',
                                      help_text='proposta pre alocada')
 
-    areas_de_interesse = models.ForeignKey(Areas, on_delete=models.SET_NULL,
+    LIXO_areas_de_interesse = models.ForeignKey(LIXO_Areas, on_delete=models.SET_NULL,
                                            null=True, blank=True,
                                            help_text='Áreas de interesse dos alunos')
 

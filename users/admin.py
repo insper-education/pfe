@@ -9,7 +9,10 @@ import string
 from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
 from .models import PFEUser, Aluno, Professor, Parceiro, Administrador
-from .models import Opcao, Alocacao, Areas   # Mover para outra área
+from .models import Opcao, Alocacao   # Mover para outra área
+
+
+from .models import LIXO_Areas   # LIXO REMOVER
 
 class FirstLetterFilter(SimpleListFilter):
     """Filtro para separar pela primeira letra do nome."""
@@ -120,7 +123,7 @@ class OpcaoAdmin(admin.ModelAdmin):
     ordering = ('aluno',)
     search_fields = ['aluno__user__first_name', 'aluno__user__last_name',]
 
-admin.site.register(Areas)
+admin.site.register(LIXO_Areas)
 
 class OpcaoInline(admin.TabularInline):
     """.Não me lembro onde uso isso, provavel código morto."""
