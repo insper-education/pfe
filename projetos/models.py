@@ -412,14 +412,13 @@ class Recomendada(models.Model):
 
 class Evento(models.Model):
     """Eventos para a agenda do PFE."""
-    #name = models.CharField(max_length=50, blank=True)
+    
     location = models.CharField(blank=True, max_length=50,
                                 help_text='Onde Ocorrerá o Evento')
     startDate = models.DateField(default=datetime.date.today, blank=True,
                                  help_text='Inicio do Evento')
     endDate = models.DateField(default=datetime.date.today, blank=True,
                                help_text='Fim do Evento')
-    #color = models.CharField(max_length=20, blank=True)
 
     TIPO_EVENTO = (
         (0, 'Feriado', 'lightgrey'),
@@ -465,7 +464,7 @@ class Evento(models.Model):
         (124, 'Notificação para estudantes dos grupos formados', 'paleturquoise'),
         (125, 'Notificação para organizações dos projetos fechados', 'moccasin'),
         (126, 'Professores tiram dúvidas sobre projetos para estudantes', 'lightsalmon'),
-        (127, 'Reunião do Comitê para montar grupos para o próximo semestre', 'azure'),
+        (127, 'Reunião do Comitê para montar grupos para o próximo semestre', 'powderblue'),
 
 
         (130, 'Validação dos projetos pelo comitê', 'peru'),
@@ -477,6 +476,8 @@ class Evento(models.Model):
     tipo_de_evento = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_EVENTO],
                                                       null=True, blank=True,
                                                       help_text='Define o tipo do evento a ocorrer')
+
+    observacao = models.CharField(max_length=50, blank=True, help_text='Qualquer observação relavante')
 
     def get_title(self):
         """Retorna em string o nome do evento."""

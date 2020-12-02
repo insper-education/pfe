@@ -68,6 +68,22 @@
       background-color: lightblue;
     }
 
+    .event-name {
+      font-weight: bold;
+      padding-top: 3px;
+      font-size: 0.8em;
+    }
+
+    .event-location {
+      font-size: 0.8em;
+    }
+
+    .event-observation {
+      font-size: 0.8em;
+      color:darkred;
+    }
+
+
   </style>
 
 
@@ -298,7 +314,7 @@
       <div class="modal-dialog">
           <div class="modal-content">
               <div class="modal-header">
-                  <h5 class="modal-title">Event</h5>
+                  <h5 class="modal-title">Evento</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -307,24 +323,30 @@
                   <input type="hidden" name="event-index">
                   <form class="form-horizontal">
                       <div class="form-group row">
-                          <label for="event-name" class="col-sm-4 control-label">Name</label>
+                          <label for="event-name" class="col-sm-4 control-label">Nome</label>
                           <div class="col-sm-8">
                               <input id="event-name" name="event-name" type="text" class="form-control">
                           </div>
                       </div>
                       <div class="form-group row">
-                          <label for="event-location" class="col-sm-4 control-label">Location</label>
+                          <label for="event-location" class="col-sm-4 control-label">Local</label>
                           <div class="col-sm-8">
                               <input id="event-location" name="event-location" type="text" class="form-control">
                           </div>
                       </div>
                       <div class="form-group row">
-                          <label for="min-date" class="col-sm-4 control-label">Dates</label>
+                          <label for="event-observation" class="col-sm-4 control-label">Obs:</label>
+                          <div class="col-sm-8">
+                              <input id="event-observation" name="event-observation" type="text" class="form-control">
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                          <label for="min-date" class="col-sm-4 control-label">Datas</label>
                           <div class="col-sm-8">
                               <div class="input-group input-daterange" data-provide="datepicker">
                                   <input id="min-date" name="event-start-date" type="text" class="form-control">
                   <div class="input-group-prepend input-group-append">
-                      <div class="input-group-text">to</div>
+                      <div class="input-group-text">até</div>
                   </div>
                                   <input name="event-end-date" type="text" class="form-control">
                               </div>
@@ -354,6 +376,7 @@
       $('#event-modal input[name="event-index"]').val(event ? event.id : '');
       $('#event-modal input[name="event-name"]').val(event ? event.name : '');
       $('#event-modal input[name="event-location"]').val(event ? event.location : '');
+      $('#event-modal input[name="event-observation"]').val(event ? event.observation : '');
       $('#event-modal input[name="event-start-date"]').datepicker('update', event ? event.startDate : '');
       $('#event-modal input[name="event-end-date"]').datepicker('update', event ? event.endDate : '');
       $('#event-modal').modal();
@@ -370,6 +393,7 @@
         id: $('#event-modal input[name="event-index"]').val(),
         name: $('#event-modal input[name="event-name"]').val(),
         location: $('#event-modal input[name="event-location"]').val(),
+        observation: $('#event-modal input[name="event-observation"]').val(),
         startDate: $('#event-modal input[name="event-start-date"]').datepicker('getDate'),
         endDate: $('#event-modal input[name="event-end-date"]').datepicker('getDate') };
 
@@ -381,6 +405,7 @@
           if (dataSource[i].id == event.id) {
             dataSource[i].name = event.name;
             dataSource[i].location = event.location;
+            dataSource[i].observation = event.observation;
             dataSource[i].startDate = event.startDate;
             dataSource[i].endDate = event.endDate;
           }
@@ -411,6 +436,7 @@
                 id: {{evento.id}},
                 name: "{{evento.get_title}}",
                 location: "{{evento.location}}",
+                observation: "{{evento.observacao}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
                 color: "{{evento.get_color}}",
@@ -421,6 +447,7 @@
                 id: {{evento.id}},
                 name: "{{evento.get_title}}",
                 location: "{{evento.location}}",
+                observation: "{{evento.observacao}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
                 color: "{{evento.get_color}}",
@@ -431,6 +458,7 @@
                 id: {{evento.id}},
                 name: "{{evento.get_title}}",
                 location: "{{evento.location}}",
+                observation: "{{evento.observacao}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
                 color: "{{evento.get_color}}",
@@ -441,6 +469,7 @@
                 id: {{evento.id}},
                 name: "{{evento.get_title}}",
                 location: "{{evento.location}}",
+                observation: "{{evento.observacao}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
                 color: "{{evento.get_color}}",
@@ -455,6 +484,7 @@
                 id: {{evento.id}},
                 name: "{{evento.get_title}}",
                 location: "{{evento.location}}",
+                observation: "{{evento.observacao}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
                 color: "{{evento.get_color}}",
@@ -524,9 +554,14 @@
 
             for (var i in e.events) {
               content += '<div class="event-tooltip-content">' +
-              '<div class="event-name" style="color:' + e.events[i].color + '">' + e.events[i].name + '</div>' +
-              '<div class="event-location">' + e.events[i].location + '</div>' +
-              '</div>';
+              '<div class="event-name">' + e.events[i].name + '</div>';
+              if (e.events[i].location) {
+                content += '<div class="event-location">' + "Local: " + e.events[i].location + '</div>'
+              }
+              if (e.events[i].observation) {
+                content += '<div class="event-observation">' + "Obs: " + e.events[i].observation + '</div>'
+              }
+              content += '</div>';
             }
 
             $(e.element).popover({
