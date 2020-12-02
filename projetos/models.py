@@ -465,6 +465,7 @@ class Evento(models.Model):
         (124, 'Notificação para estudantes dos grupos formados', 'paleturquoise'),
         (125, 'Notificação para organizações dos projetos fechados', 'moccasin'),
         (126, 'Professores tiram dúvidas sobre projetos para estudantes', 'lightsalmon'),
+        (127, 'Reunião do Comitê para montar grupos para o próximo semestre', 'azure'),
 
 
         (130, 'Validação dos projetos pelo comitê', 'peru'),
