@@ -1,2 +1,10 @@
 brew services start postgresql
 
+# Aparentemente Melhor
+pg_dump -U pfe pfe -h localhost > backup.sql
+psql -U pfe -h localhost < backup.sql
+
+# Deve funcionar bem
+python3 manage.py dumpdata --natural-primary --natural-foreign > dump.json
+python3 manage.py loaddata out.json
+
