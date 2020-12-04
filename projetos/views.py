@@ -975,8 +975,7 @@ def montar_grupos(request):
 
                             projeto.delete()
 
-
-        return redirect('/projetos/selecionar_orientadores/')
+                    return redirect('/projetos/selecionar_orientadores/')
 
     mensagem = None
 
