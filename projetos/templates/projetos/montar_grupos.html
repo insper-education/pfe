@@ -34,7 +34,8 @@
     
     }
 
-    .titulo {
+    .etiqueta_proposta {
+        font-size: 1.12em;
         color: black;
         width: 99%;
         text-align: left;
@@ -95,7 +96,7 @@
 
     {% for proposta in propostas %}   
       <div id="proposta{{proposta.id}}" class="proposta" data-propostaid="{{proposta.id}}">
-        <div id="titulo{{proposta.id}}" class="titulo">
+        <div id="titulo{{proposta.id}}" class="etiqueta_proposta">
           <a target="_blank" rel="noopener noreferrer" class="ancora" href="{% url 'proposta_completa' proposta.id %}" style="color: #000062;">{{proposta.titulo}}</a>&nbsp;
           {% if proposta.organizacao and proposta.organizacao.nome %}
             <a class="ancora" href="{% url 'organizacao_completo' proposta.organizacao.id %}" style="color: darkblue;">
@@ -252,7 +253,7 @@
             send_update($draggedItem[0].id, target[0].id)
             cor_estudante($draggedItem, target.data("propostaid"))
         } else
-        if (target.attr('class')=="titulo" || target.attr('class')=="estudante" ) {
+        if (target.attr('class')=="etiqueta_proposta" || target.attr('class')=="estudante" ) {
             $draggedItem.detach();
             $draggedItem.appendTo(target.parent());
             send_update($draggedItem[0].id, target.parent()[0].id)
