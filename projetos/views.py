@@ -1747,6 +1747,9 @@ def projetos_fechados(request, periodo="vazio"):
         'nalunos': nalunos,
         #'qtd_prioridades': qtd_prioridades,
         'periodo': periodo,
+        'ano': configuracao.ano,
+        'semestre': configuracao.semestre,
+        'loop_anos': range(2018, configuracao.ano+1),
     }
     return render(request, 'projetos/projetos_fechados.html', context)
 

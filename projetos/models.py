@@ -8,33 +8,40 @@ Data: 15 de Maio de 2019
 import datetime
 import string
 import random
+import re
+
 from django.db import models
 from django.urls import reverse  # To generate URLS by reversing URL patterns
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib import admin
 from django.template.defaultfilters import slugify
+from django.utils.encoding import force_text
 
 def get_upload_path(instance, filename):
     """Caminhos para armazenar os arquivos."""
     caminho = ""
     if isinstance(instance, Documento):
         if instance.organizacao:
-            caminho += slugify(instance.organizacao.sigla) + "/"
+            caminho += slugify(instance.organizacao.sigla_limpa()) + "/"
         if instance.usuario:
             caminho += slugify(instance.usuario.username) + "/"
         if caminho == "":
             caminho = "documentos/"
     elif isinstance(instance, Projeto):
-        caminho += slugify(instance.organizacao.sigla) + "/"
+        caminho += slugify(instance.organizacao.sigla_limpa()) + "/"
         caminho += "projeto" + str(instance.pk) + "/"
     elif isinstance(instance, Organizacao):
-        caminho += slugify(instance.sigla) + "/logotipo/"
+        caminho += slugify(instance.sigla_limpa()) + "/logotipo/"
     elif isinstance(instance, Certificado):
         if instance.projeto.organizacao:
-            caminho += slugify(instance.projeto.organizacao.sigla) + "/"
+            caminho += slugify(instance.projeto.organizacao.sigla_limpa()) + "/"
             caminho += "projeto" + str(instance.projeto.pk) + "/"
         if instance.usuario:
             caminho += slugify(instance.usuario.username) + "/"
+
+    filename = force_text(filename).strip().replace(' ', '_')
+    filename = re.sub(r'(?u)[^-\w.]', '', filename)
+
     return "{0}/{1}".format(caminho, filename)
 
 class Organizacao(models.Model):
@@ -75,9 +82,13 @@ class Organizacao(models.Model):
 
     def __str__(self):
         return self.nome
-    #def documento(self):
-    #    return os.path.split(self.contrato.name)[1]
 
+    def sigla_limpa(self):
+        """ Retorna o texto da sigla sem caracteres especiais ou espaço. """
+        sigla = force_text(self.sigla).strip().replace(' ', '_')
+        sigla = re.sub(r'(?u)[^-\w.]', '', sigla)
+        return sigla
+    
 class Projeto(models.Model):
     """Dados dos projetos para o PFE."""
     titulo = models.CharField("Título", max_length=160,
