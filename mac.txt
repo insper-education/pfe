@@ -2,6 +2,8 @@ brew services start postgresql
 
 # Aparentemente Melhor
 pg_dump -U pfe pfe -h localhost > backup.sql
+dropdb pfe
+createdb pfe 
 psql -U pfe -h localhost < backup.sql
 
 # Deve funcionar bem
