@@ -911,6 +911,8 @@ def montar_grupos(request):
     except PFEUser.DoesNotExist:
         return HttpResponse("Usuário não encontrado.", status=401)
 
+    mensagem = ""
+
     if request.method == 'POST':
 
         if user:
@@ -959,8 +961,11 @@ def montar_grupos(request):
 
                             alocacoes = Alocacao.objects.filter(projeto=projeto)
                             for alocacao in alocacoes: # Apaga todas alocacoes que não tiverem nota
-                                if alocacao.conceito == 127:
+                                avals = list(Avaliacao2.objects.filter(alocacao=alocacao))
+                                if not avals:
                                     alocacao.delete()
+                                else:
+                                    mensagem += "- "+str(alocacao.aluno)+"\n"
 
                             for alocado in alocados: # alocando estudantes no projeto
                                 alocacao = Alocacao.create(alocado, projeto)
@@ -975,9 +980,10 @@ def montar_grupos(request):
 
                             projeto.delete()
 
-                    return redirect('/projetos/selecionar_orientadores/')
+                    if mensagem:
+                        request.session['mensagem'] = 'Estudantes possuiam alocações com notas:\n'+mensagem
 
-    mensagem = None
+                    return redirect('/projetos/selecionar_orientadores/')
 
     if user:
         if user.tipo_de_usuario != 4: # admin
@@ -997,6 +1003,11 @@ def montar_grupos(request):
 def selecionar_orientadores(request):
     """Selecionar Orientadores para os Projetos."""
     configuracao = Configuracao.objects.all().first()
+
+    mensagem = ""
+
+    if 'mensagem' in request.session:
+        mensagem = request.session['mensagem']
 
     ano = configuracao.ano
     semestre = configuracao.semestre
@@ -1023,8 +1034,6 @@ def selecionar_orientadores(request):
         user = PFEUser.objects.get(pk=request.user.pk)
     except PFEUser.DoesNotExist:
         return HttpResponse("Usuário não encontrado.", status=401)
-
-    mensagem = None
 
     if user:
         if user.tipo_de_usuario != 4: # admin
