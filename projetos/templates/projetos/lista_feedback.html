@@ -6,16 +6,13 @@
 {% endcomment %}
 
 {% block head %}
-  {% load static %}
-  {% comment %} <script src="https://www.w3schools.com/lib/w3.js"></script> {% endcomment %}
-  <script src="{% static 'js/w3.js' %}"></script>
-  <script src="{% static 'js/Chart.min.js' %}"></script>
-  {% comment %} <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script> {% endcomment %}
-  <script>
-    $(document).ready(function(){
-      $('[data-toggle="tooltip"]').tooltip();
-    });
-  </script>
+    {% load static %}
+    
+    <script src="{% static 'js/w3.js' %}"></script>
+    <script src="{% static 'js/Chart.min.js' %}"></script>
+    
+    {% comment %} Para chamar os Tooltips {% endcomment %}
+    <script src="{% static 'js/tooltip.js' %}"/></script>
 {% endblock %}
 
 {% block content %}

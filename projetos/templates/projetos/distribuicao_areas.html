@@ -6,26 +6,27 @@
 {% endcomment %}
 
 {% block head %}
-  {% load static %}
-  <link href="{% static 'css/horizBarChart.css' %}" media="all" rel="stylesheet" type="text/css" />
-  <script src="{% static 'js/jquery.min.js' %}"></script>
-  <script src="{% static 'js/jquery.horizBarChart.min.js' %}"></script>
+    {% load static %}
+    <link href="{% static 'css/horizBarChart.css' %}" media="all" rel="stylesheet" type="text/css" />
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/jquery.horizBarChart.min.js' %}"></script>
 
-  <script>
-    function bar(){
-      $('.chart').horizBarChart({
-        selector: '.bar',
-        speed: 800
-      });
-    }
-    $(document).ready(bar);
-  </script>
+    <script>
+        function bar(){
+        $('.chart').horizBarChart({
+            selector: '.bar',
+            speed: 800
+        });
+        }
+        $(document).ready(bar);
+    </script>
 
-  <script>
-    $(document).ready(function(){
-        $('[data-toggle="tooltip"]').tooltip();
-    });
-  </script>
+    {% comment %} Para janela dos Tooltips {% endcomment %}
+    <script src="{% static 'popper-1.16.1/popper.min.js' %}"></script>
+    
+    {% comment %} Para chamar os Tooltips {% endcomment %}
+    <script src="{% static 'js/tooltip.js' %}"/></script>
+
 {% endblock %}
 
 {% block content %}

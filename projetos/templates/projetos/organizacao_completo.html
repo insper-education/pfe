@@ -6,13 +6,14 @@
 {% endcomment %}
 
 {% block head %}
+
   {% load static %}
+
   {% load format_cnpj %}
-  <script>
-    $(document).ready(function(){
-      $('[data-toggle="tooltip"]').tooltip();
-    });
-  </script>
+
+  {% comment %} Para chamar os Tooltips {% endcomment %}
+  <script src="{% static 'js/tooltip.js' %}"/></script>
+
   <style>
     #logotipo {
       max-height:128px;

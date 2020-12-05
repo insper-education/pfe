@@ -6,15 +6,9 @@
 {% endcomment %}
 
 {% block head %}
-  {% comment %}{% load date_extras %}{% endcomment %}
+  {% load static %}
   {% load class_tag %}
-
-  <script>
-    $(document).ready(function(){
-      $('[data-toggle="tooltip"]').tooltip();
-    });
-  </script>
-
+  <script src="{% static 'js/tooltip.js' %}"/></script>
 {% endblock %}
 
 {% block content %}

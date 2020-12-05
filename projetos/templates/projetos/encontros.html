@@ -6,11 +6,8 @@
 {% endcomment %}
 
 {% block head %}
-    <script>
-        $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
-        })
-    </script>
+    {% load static %}
+    <script src="{% static 'js/tooltip.js' %}"/></script>
 {% endblock %}
 
 {% block content %}

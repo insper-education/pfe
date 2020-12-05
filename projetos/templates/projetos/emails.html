@@ -8,11 +8,7 @@
 {% block head %}
   {% load static %}
   {% load escape_emails %}
-  <script>
-    $(document).ready(function(){
-      $('[data-toggle="tooltip"]').tooltip();
-    });
-  </script>
+  <script src="{% static 'js/tooltip.js' %}"/></script>
   <script>
     function manda(estudantes, orientador, parceiros, projeto, avancado) {
       mailto = "mailto:";

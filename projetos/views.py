@@ -1713,52 +1713,72 @@ def relatorio_backup(request):
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
-def projetos_fechados(request, periodo="vazio"):
+def projetos_fechados(request):
     """Lista todos os projetos fechados."""
     configuracao = Configuracao.objects.all().first()
+    ano = configuracao.ano
+    semestre = configuracao.semestre
+    edicoes = []
 
-    if periodo == "vazio":
-        periodo = str(configuracao.ano)+"."+str(configuracao.semestre)
+    if request.is_ajax():
+        if 'edicao' in request.POST:
+            edicao = request.POST['edicao']
+            if edicao == 'todas':
+                projetos_filtrados = Projeto.objects.all()
+            else:
+                ano, semestre = request.POST['edicao'].split('.')
+                projetos_filtrados = Projeto.objects.filter(ano=ano, semestre=semestre)
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+    else:
+        semestre_tmp = 2
+        ano_tmp = 2018
+        while True:
+            if Projeto.objects.filter(ano=ano_tmp, semestre=semestre_tmp).exists():
+                ano = ano_tmp
+                semestre = semestre_tmp
+                edicoes.append(str(ano)+"."+str(semestre))
+            else:
+                break
+            if semestre_tmp == 1:
+                semestre_tmp += 1
+            else:
+                ano_tmp += 1
+                semestre_tmp = 1
 
-    projetos = []
-    alunos_list = []
+        projetos_filtrados = Projeto.objects.filter(ano=ano, semestre=semestre)
+
+    projetos_selecionados = []
     prioridade_list = []
     conexoes = []
-    nalunos = 0
-    #qtd_prioridades = [0, 0, 0, 0, 0, 0]   # para grafico de pizza no final
+    numero_estudantes = 0
 
-    for projeto in Projeto.objects.all():
-
-        alunos_pfe = Aluno.objects.filter(alocacao__projeto=projeto)
-        if alunos_pfe: #len(alunos_pfe) > 0:
-            projetos.append(projeto)
-            alunos_list.append(alunos_pfe)
-            nalunos += len(alunos_pfe)
+    for projeto in projetos_filtrados:
+        estudantes_pfe = Aluno.objects.filter(alocacao__projeto=projeto)
+        if estudantes_pfe: #len(estudantes_pfe) > 0:
+            projetos_selecionados.append(projeto)
+            numero_estudantes += len(estudantes_pfe)
             prioridades = []
-            for aluno in alunos_pfe:
+            for estudante in estudantes_pfe:
                 opcoes = Opcao.objects.filter(proposta=projeto.proposta)
                 opcoes = opcoes.filter(aluno__user__tipo_de_usuario=1)
                 opcoes = opcoes.filter(aluno__alocacao__projeto=projeto)
-                opcoes = opcoes.filter(aluno=aluno)
-                if len(opcoes) == 1:
+                opcoes = opcoes.filter(aluno=estudante)
+                if opcoes:
                     prioridade = opcoes.first().prioridade
                     prioridades.append(prioridade)
-                    #qtd_prioridades[prioridade-1] += 1
                 else:
                     prioridades.append(0)
-            prioridade_list.append(zip(alunos_pfe, prioridades))
+            prioridade_list.append(zip(estudantes_pfe, prioridades))
             conexoes.append(Conexao.objects.filter(projeto=projeto, colaboracao=True))
-    mylist = zip(projetos, prioridade_list, conexoes)
+
+    projetos = zip(projetos_selecionados, prioridade_list, conexoes)
 
     context = {
-        'mylist': mylist,
-        'length': len(projetos),
-        'nalunos': nalunos,
-        #'qtd_prioridades': qtd_prioridades,
-        'periodo': periodo,
-        'ano': configuracao.ano,
-        'semestre': configuracao.semestre,
-        'loop_anos': range(2018, configuracao.ano+1),
+        'projetos': projetos,
+        'numero_projetos': len(projetos_selecionados),
+        'numero_estudantes': numero_estudantes,
+        'edicoes': edicoes,
     }
     return render(request, 'projetos/projetos_fechados.html', context)
 

@@ -6,14 +6,14 @@
 {% endcomment %}
 
 {% block head %}
+
   {% load static %}
-  {% comment %} <script src="https://www.w3schools.com/lib/w3.js"></script> {% endcomment %}
+
   <script src="{% static 'js/w3.js' %}"></script>
-  <script>
-    $(document).ready(function(){
-      $('[data-toggle="tooltip"]').tooltip();
-    });
-  </script>
+
+  {% comment %} Para chamar os Tooltips {% endcomment %}
+  <script src="{% static 'js/tooltip.js' %}"/></script>
+
 {% endblock %}
 
 {% block content %}

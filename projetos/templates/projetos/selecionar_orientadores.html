@@ -6,12 +6,12 @@
 {% endcomment %}
 
 {% block head %}
+
   {% load static %}
-  <script>
-    $(document).ready(function(){
-      $('[data-toggle="tooltip"]').tooltip();
-    });
-  </script>
+
+  {% comment %} Para chamar os Tooltips {% endcomment %}
+  <script src="{% static 'js/tooltip.js' %}"/></script>
+
 {% endblock %}
 
 {% block content %}
