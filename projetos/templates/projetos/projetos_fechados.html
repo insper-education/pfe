@@ -26,13 +26,7 @@
   <span class="titulo">Projetos Fechados</span><br>
   
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
-  <label id="labelEdicao" for="filterEdicao"><b>Edição:</b></label>
-  <select class="filter" id="filterEdicao" data-tableId="projetos">
-      <option value="todas">todas</option>
-      {% for edicao in edicoes %}
-          <option value="{{edicao}}" {% if forloop.last %}selected{% endif %}>{{edicao}}</option>
-      {% endfor %}
-  </select>
+  {% include "edicoes.html" %}
   <br><br>
   
   {% comment %} Tabela com todos os projetos selecionados pelo filtro {% endcomment %}
@@ -132,14 +126,12 @@
 
     <br><br>
     
-    <script type="text/javascript">
+    <script>
 
       function carrega_pagina(){
         filtra_data();
         mostra_grafico();
-        $(document).ready(function(){
-          $('[data-toggle="tooltip"]').tooltip();
-        });
+        {% include "tooltip.js" %}
       }
 
       window.onload = carrega_pagina

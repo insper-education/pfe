@@ -16,92 +16,6 @@ from django.dispatch import receiver
 
 from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2, ObjetivosDeAprendizagem, Area
 
-
-#### ANTIGO SENDO REMOVIDO ####
-#areas de interesse
-class LIXO_Areas(models.Model):
-    """Áreas de interesse dos projetos de engenharia."""
-    inovacao_social = models.BooleanField("Inovacao Social",
-                                          default=False)
-    ciencia_dos_dados = models.BooleanField("Ciência dos Dados",
-                                            default=False)
-    modelagem_3D = models.BooleanField("Modelagem 3D",
-                                       default=False)
-    manufatura = models.BooleanField("Manufatura",
-                                     default=False)
-    resistencia_dos_materiais = models.BooleanField("Resistência dos Materiais",
-                                                    default=False)
-    modelagem_de_sistemas = models.BooleanField("Modelagem de Sistemas",
-                                                default=False)
-    controle_e_automacao = models.BooleanField("Controle e Automação",
-                                               default=False)
-    termodinamica = models.BooleanField("Termodinâmica",
-                                        default=False)
-    fluidodinamica = models.BooleanField("Fuidodinâmica",
-                                         default=False)
-    eletronica_digital = models.BooleanField("Eletrônica Digital",
-                                             default=False)
-    programacao = models.BooleanField("Programação",
-                                      default=False)
-    inteligencia_artificial = models.BooleanField("Inteligência Artificial",
-                                                  default=False)
-    computacao_em_nuvem = models.BooleanField("Computação em Nuvem",
-                                              default=False)
-    banco_de_dados = models.BooleanField("Banco de Dados",
-                                         default=False)
-    visao_computacional = models.BooleanField("Visão Computacional",
-                                              default=False)
-    computacao_de_alto_desempenho = models.BooleanField("Computação de Alto Desempenho",
-                                                        default=False)
-    robotica = models.BooleanField("Robótica",
-                                   default=False)
-    realidade_virtual_aumentada = models.BooleanField("Realidade Virtual e Aumentada",
-                                                      default=False)
-    protocolos_de_comunicacao = models.BooleanField("Protocolos de Comunicação",
-                                                    default=False)
-    eficiencia_energetica = models.BooleanField("Eficiência Energética",
-                                                default=False)
-    administracao_economia_financas = models.BooleanField("Administração/Economia/Finanças",
-                                                          default=False)
-
-    outras = models.CharField("Outras", max_length=128, null=True, blank=True,
-                              help_text='Outras áreas de interesse')
-
-    def __str__(self):
-        return   ("V" if self.inovacao_social else "F") + " "\
-               + ("V" if self.ciencia_dos_dados else "F") + " "\
-               + ("V" if self.modelagem_3D else "F") + " "\
-               + ("V" if self.manufatura else "F") + " "\
-               + ("V" if self.resistencia_dos_materiais else "F") + " "\
-               + ("V" if self.modelagem_de_sistemas else "F") + " "\
-               + ("V" if self.controle_e_automacao else "F") + " "\
-               + ("V" if self.termodinamica else "F") + " "\
-               + ("V" if self.fluidodinamica else "F") + " "\
-               + ("V" if self.eletronica_digital else "F") + " "\
-               + ("V" if self.programacao else "F") + " "\
-               + ("V" if self.inteligencia_artificial else "F") + " "\
-               + ("V" if self.computacao_em_nuvem else "F") + " "\
-               + ("V" if self.banco_de_dados else "F") + " "\
-               + ("V" if self.visao_computacional else "F") + " "\
-               + ("V" if self.computacao_de_alto_desempenho else "F") + " "\
-               + ("V" if self.robotica else "F") + " "\
-               + ("V" if self.realidade_virtual_aumentada else "F") + " "\
-               + ("V" if self.protocolos_de_comunicacao else "F") + " "\
-               + ("V" if self.eficiencia_energetica else "F") + " "\
-               + ("V" if self.administracao_economia_financas else "F") + " "\
-               + (self.outras[:32] if self.outras else "")
-
-    class Meta:
-        verbose_name = 'Áreas'
-        verbose_name_plural = 'Áreas'
-
-    @classmethod
-    def create(cls):
-        """Cria um objeto (entrada) em Areas."""
-        areas = cls()
-        return areas
-
-
 class PFEUser(AbstractUser):
     """Classe base para todos os usuários do PFE (Alunos, Professores, Parceiros)."""
     # Atualizar para AbstractBaseUser que permite colocar mais caracteres nos campos
@@ -263,10 +177,6 @@ class Aluno(models.Model):
     pre_alocacao = models.ForeignKey(Proposta, null=True, blank=True, on_delete=models.SET_NULL,
                                      related_name='aluno_pre_alocado',
                                      help_text='proposta pre alocada')
-
-    LIXO_areas_de_interesse = models.ForeignKey(LIXO_Areas, on_delete=models.SET_NULL,
-                                           null=True, blank=True,
-                                           help_text='Áreas de interesse dos alunos')
 
     trabalhou = models.TextField(max_length=1000, null=True, blank=True,
                                  help_text='Trabalhou ou estagio em alguma empresa de engenharia?')

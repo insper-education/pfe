@@ -14,7 +14,7 @@
   <script src="{% static 'js/Chart.min.js' %}"></script>
 
   {% comment %} Para chamar os Tooltips {% endcomment %}
-  <script src="{% static 'js/tooltip.js' %}"/></script>
+  <script>{% include "tooltip.js" %}</script>
 
 {% endblock %}
 

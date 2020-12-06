@@ -16,24 +16,14 @@
   <span class="titulo">Procura pelas Propostas de Projetos</span>
   <br>
 
-  <label for="filterEdicao">Edição:</label>
-  <select class="filter" id="filterEdicao" data-tableId="projetos">
-    <option value="todas">todas</option>
-    {% for loop in loop_anos %}
-      <option value="{{loop}}.2" {% if ano == loop and semestre == 2 %}selected{% endif %}>{{loop}}.2</option>
-      <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
-    {% endfor %}
-  </select>
+  {% comment %} Seletor da edição da pesquisa {% endcomment %}
+  {% include "edicoes.html" %}
+
   &nbsp;&nbsp;&nbsp;
 
   {% comment %} Seletor do filtro de cursos para a pesquisa {% endcomment %}
-  <label id="labelCurso" for="filterCurso"><b>Curso:</b></label>
-  <select class="filter" id="filterCurso">
-      <option value="T">todos</option>
-      <option value="C">Computação</option>
-      <option value="M">Mecânica</option>
-      <option value="X">Mecatrônica</option>
-  </select>
+  {% include "cursos.html" %}
+  
   <br>
 
   <div class="2areas2">

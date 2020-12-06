@@ -199,10 +199,6 @@ class Proposta(models.Model):
     expectativas = models.TextField("Expectativas", max_length=3000,
                                     help_text='Expectativas em relação ao projeto')
 
-    LIXO_areas_de_interesse = models.ForeignKey('users.LIXO_Areas', on_delete=models.SET_NULL,
-                                           null=True, blank=True,
-                                           help_text='Áreas de interesse esperadas dos alunos')
-
     recursos = models.TextField("Recursos", max_length=1000, null=True, blank=True,
                                 help_text='Recursos a serem disponibilizados aos Alunos')
 

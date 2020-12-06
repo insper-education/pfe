@@ -42,9 +42,6 @@ from django.utils import text
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador, Opcao, Alocacao
 
-# LIXO REMOVER
-from users.models import LIXO_Areas
-
 from users.support import configuracao_estudante_vencida
 
 from .models import Projeto, Proposta, Organizacao, Configuracao, Evento, Anotacao, Coorientador
@@ -52,8 +49,6 @@ from .models import Feedback, Certificado
 from .models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Entidade, Conexao
 #from .models import Disciplina
 from .models import ObjetivosDeAprendizagem, Avaliacao2, Observacao, Area, AreaDeInteresse
-
-
 
 from .models import get_upload_path
 
@@ -137,6 +132,25 @@ def index_estudante(request):
         'professor_id': professor_id,
     }
     return render(request, 'index_estudante.html', context=context)
+
+""" Função usada para recuperar todas as edições de 2018.2 até hoje. """
+def get_edicoes(tipo):
+    edicoes = []
+    semestre_tmp = 2
+    ano_tmp = 2018
+    while True:
+        if tipo.objects.filter(ano=ano_tmp, semestre=semestre_tmp).exists():
+            ano = ano_tmp
+            semestre = semestre_tmp
+            edicoes.append(str(ano)+"."+str(semestre))
+        else:
+            break
+        if semestre_tmp == 1:
+            semestre_tmp += 1
+        else:
+            ano_tmp += 1
+            semestre_tmp = 1
+    return (edicoes, ano, semestre)
 
 
 @login_required
@@ -532,6 +546,8 @@ def procura_propostas(request):
     else:
         tamanho *= 5
 
+    edicoes, ano_lixo, semestre_lixo = get_edicoes(Proposta)
+
     context = {
         'tamanho': tamanho,
         'propostas': propostas,
@@ -539,9 +555,9 @@ def procura_propostas(request):
         'estudantes': estudantes,
         'ano': ano,
         'semestre': semestre,
-        'loop_anos': range(2018, configuracao.ano+1),
         'areaspfe': areaspfe,
         'opcoes': opcoes,
+        "edicoes": edicoes,
     }
 
     return render(request, 'projetos/procura_propostas.html', context)
@@ -1731,21 +1747,7 @@ def projetos_fechados(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
-        semestre_tmp = 2
-        ano_tmp = 2018
-        while True:
-            if Projeto.objects.filter(ano=ano_tmp, semestre=semestre_tmp).exists():
-                ano = ano_tmp
-                semestre = semestre_tmp
-                edicoes.append(str(ano)+"."+str(semestre))
-            else:
-                break
-            if semestre_tmp == 1:
-                semestre_tmp += 1
-            else:
-                ano_tmp += 1
-                semestre_tmp = 1
-
+        edicoes, ano, semestre = get_edicoes(Projeto)
         projetos_filtrados = Projeto.objects.filter(ano=ano, semestre=semestre)
 
     projetos_selecionados = []
@@ -2587,43 +2589,50 @@ def retorna_ternario(propostas):
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
-def propostas_lista(request, periodo):
+def propostas_lista(request):
     """Lista todas as propostas de projetos."""
     configuracao = Configuracao.objects.all().first()
-    propostas = Proposta.objects.all().order_by("ano", "semestre", "organizacao", "titulo",)
-    if periodo == "todos":
-        pass
-    if periodo == "antigos":
-        if configuracao.semestre == 1:
-            propostas = propostas.filter(ano__lt=configuracao.ano)
-        else:
-            propostas = propostas.filter(ano__lte=configuracao.ano).\
-                                       exclude(ano=configuracao.ano, semestre=2)
-    elif periodo == "atuais":
-        propostas = propostas.filter(ano=configuracao.ano, semestre=configuracao.semestre)
-    elif periodo == "disponiveis":
-        if configuracao.semestre == 1:
-            propostas = propostas.filter(ano__gte=configuracao.ano).\
-                                exclude(ano=configuracao.ano, semestre=1)
-        else:
-            propostas = propostas.filter(ano__gt=configuracao.ano)
 
-    ternario_aprovados = retorna_ternario(propostas.filter(disponivel=True))
-    ternario_pendentes = retorna_ternario(propostas.filter(disponivel=False))
+    # propostas = Proposta.objects.all().order_by("ano", "semestre", "organizacao", "titulo",)
+    
+    ano = configuracao.ano
+    semestre = configuracao.semestre
+    edicoes = []
+
+    if request.is_ajax():
+        if 'edicao' in request.POST:
+            edicao = request.POST['edicao']
+            if edicao == 'todas':
+                propostas_filtradas = Proposta.objects.all()
+            else:
+                ano, semestre = request.POST['edicao'].split('.')
+                propostas_filtradas = Proposta.objects.filter(ano=ano, semestre=semestre)
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+    else:
+        edicoes, ano, semestre = get_edicoes(Proposta)
+        propostas_filtradas = Proposta.objects.filter(ano=ano, semestre=semestre)
+
+    propostas_filtradas = propostas_filtradas.order_by("ano", "semestre", "organizacao", "titulo",)
+
+    ternario_aprovados = retorna_ternario(propostas_filtradas.filter(disponivel=True))
+    ternario_pendentes = retorna_ternario(propostas_filtradas.filter(disponivel=False))
 
     dic_organizacoes = {}
-    for proposta in propostas:
+    for proposta in propostas_filtradas:
         if proposta.organizacao and proposta.organizacao not in dic_organizacoes:
             dic_organizacoes[proposta.organizacao] = 0
     num_organizacoes = len(dic_organizacoes)
 
+    edicoes, ano, semestre = get_edicoes(Proposta)
+
     context = {
-        'propostas': propostas,
+        'propostas': propostas_filtradas,
         'num_organizacoes': num_organizacoes,
-        'periodo' : periodo,
         'ternario_aprovados' : ternario_aprovados,
         'ternario_pendentes' : ternario_pendentes,
         'configuracao' : configuracao,
+        "edicoes": edicoes,
     }
     return render(request, 'projetos/propostas_lista.html', context)
 

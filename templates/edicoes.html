@@ -1,0 +1,18 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 6 de Dezembro de 2020
+{% endcomment %}
+
+{% comment %} Seletor da edição da pesquisa {% endcomment %}
+{% if edicoes %}
+
+  <label id="labelEdicao" for="filterEdicao"><b>Edição:</b></label>
+  <select class="filter" id="filterEdicao">
+      <option value="todas">todas</option>
+      {% for edicao in edicoes %}
+          <option value="{{edicao}}" {% if forloop.last %}selected{% endif %}>{{edicao}}</option>
+      {% endfor %}
+  </select>
+
+{% endif %}

@@ -8,7 +8,7 @@
 {% block head %}
   {% load static %}
   <script src="{% static 'js/w3.js' %}"></script>
-  <script src="{% static 'js/tooltip.js' %}"/></script>
+  <script>{% include "tooltip.js" %}</script>
 {% endblock %}
 
 {% block content %}
