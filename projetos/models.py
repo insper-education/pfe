@@ -473,6 +473,7 @@ class Evento(models.Model):
         (126, 'Professores tiram dúvidas sobre projetos para estudantes', 'lightsalmon'),
         (127, 'Reunião do Comitê para montar grupos para o próximo semestre', 'powderblue'),
 
+        (129, 'Limite para contrato pronto para assinatura pelos estudantes', 'coral'),
 
         (130, 'Validação dos projetos pelo comitê', 'peru'),
 
