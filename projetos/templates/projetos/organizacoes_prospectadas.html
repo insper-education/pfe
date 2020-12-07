@@ -40,6 +40,10 @@
     <option value="1" {% if filtro == "confirmadas" %}selected="selected"{% endif %}>confirmadas</option>
     <option value="2" {% if filtro == "interessadas" %}selected="selected"{% endif %}>interessadas</option>
     <option value="3" {% if filtro == "recusaram" %}selected="selected"{% endif %}>recusaram</option>
+    <option value="4" {% if filtro == "notificada" %}selected="selected"{% endif %}>notificada</option>
+    <option value="5" {% if filtro == "sem_grupo" %}selected="selected"{% endif %}>sem grupo</option>
+    <option value="6" {% if filtro == "documentada" %}selected="selected"{% endif %}>documentada</option>
+    
   </select>
 
   <br><br>
@@ -52,6 +56,9 @@
         var confirmados = 0
         var interessados = 0
         var recusados = 0
+        var notificada = 0
+        var documentada = 0
+        var sem_grupo = 0
     </script>
 
     {% if organizacoes_list %}
@@ -83,13 +90,19 @@
           {% if contato != '---------' %}
               style=
               {% if contato.tipo_de_retorno == 0 %}
-                "background-color:lightblue" 
+                "background-color:lightblue" {% comment %} (0, 'Contactada para enviar proposta'), {% endcomment %}
               {% elif contato.tipo_de_retorno == 1 %}
-                "background-color:lightgreen"
+                "background-color:lightgreen" {% comment %} (1, 'Enviou proposta de projeto'), {% endcomment %}
               {% elif contato.tipo_de_retorno == 2 %}
-                "background-color:lemonchiffon"
+                "background-color:lemonchiffon" {% comment %} (2, 'Interessada em enviar proposta'), {% endcomment %}
               {% elif contato.tipo_de_retorno == 3 %}
-                "background-color:pink" 
+                "background-color:pink" {% comment %} (3, 'Recusou enviar proposta de projeto'), {% endcomment %}
+              {% elif contato.tipo_de_retorno == 4 %}
+                "background-color:yellow" {% comment %} (4, 'Confirmamos um grupo de alunos para o projeto'), {% endcomment %}
+              {% elif contato.tipo_de_retorno == 5 %}
+                "background-color:mediumorchid" {% comment %} (5, 'Notificamos que não conseguimos montar projeto'),
+              {% elif contato.tipo_de_retorno == 6 %}
+                "background-color:green" {% comment %} (6, 'Documentação fechada para projeto'), {% endcomment %}
               {% endif %}
               data-type="{{contato.tipo_de_retorno}}"
           {% endif %}
@@ -131,6 +144,12 @@
                 <script>interessados += 1</script>
               {% elif contato.tipo_de_retorno == 3 %}
                 <script>recusados += 1</script>
+              {% elif contato.tipo_de_retorno == 4 %}
+                <script>notificada += 1</script>
+              {% elif contato.tipo_de_retorno == 5 %}
+                <script>sem_grupo += 1</script>
+              {% elif contato.tipo_de_retorno == 6 %}
+                <script>documentada += 1</script>
               {% endif %}
             {% endif %}
           {% endif %}
@@ -144,12 +163,19 @@
       &nbsp;<span style="background-color:pink">&nbsp;&nbsp;&nbsp;&nbsp;</span> Declinou (<span id="recusados"></span>)<br>
       &nbsp;<span style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;&nbsp;</span> Interessada (<span id="interessados"></span>)<br>
       &nbsp;<span style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;&nbsp;</span> Confirmada (<span id="confirmados"></span>)<br>
+
+      &nbsp;<span style="background-color:yellow">&nbsp;&nbsp;&nbsp;&nbsp;</span> Notificada de Grupo Fechado (<span id="notificada"></span>)<br>
+      &nbsp;<span style="background-color:green">&nbsp;&nbsp;&nbsp;&nbsp;</span> Documentação Fechada para Projeto (<span id="documentada"></span>)<br>
+      &nbsp;<span style="background-color:mediumorchid">&nbsp;&nbsp;&nbsp;&nbsp;</span> Avisada que não fechou grupo (<span id="sem_grupo"></span>)<br>
   
       <script>
         document.getElementById('so_contactados').innerHTML = so_contactados;
         document.getElementById('recusados').innerHTML = recusados;
         document.getElementById('interessados').innerHTML = interessados;
         document.getElementById('confirmados').innerHTML = confirmados;
+        document.getElementById('notificada').innerHTML = notificada;
+        document.getElementById('documentada').innerHTML = documentada;
+        document.getElementById('sem_grupo').innerHTML = sem_grupo;
       </script>
       
       <p>&nbsp;</p>
