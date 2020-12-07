@@ -105,9 +105,13 @@
           </td>
 
           <td>
+            {% if projeto.orientador %}
               <a href="{% url 'professor_detail' projeto.orientador.id %}">
                 {{ projeto.orientador }}
               </a>
+            {% else %}
+              <i>Orientador não definido</i>
+            {% endif %}
           </td>
 
           <td>
