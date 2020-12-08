@@ -49,14 +49,23 @@
 
       <br>
       Tipo de banca:<br>
-      &nbsp;&nbsp;<input id="tipo0" type="radio" name="tipo" value="0"> <label for="tipo0">Final</label><br>
-      &nbsp;&nbsp;<input id="tipo1" type="radio" name="tipo" value="1"> <label for="tipo1">Intermediária</label><br>
-
+      {% for numero, texto in TIPO_DE_BANCA %}
+        &nbsp;&nbsp;<input class="tipo_banca" id="tipo{{numero}}" type="radio" name="tipo" value="{{numero}}" {% if banca.tipo_de_banca == numero %}checked{% endif %} required> <label for="tipo{{numero}}">{{texto}}</label><br>
+      {% endfor %}
+      
       <br>
-      <div >
-        <label for="inicio">Inicio:</label> <input id="inicio" type = "datetime-local" name="inicio">
+      <div>
+        <label for="inicio">Inicio:</label> <input id="inicio" type = "datetime-local" name="inicio" 
+        {% if banca %}
+          value="{{banca.startDate|date:'Y-m-d\TH:i:s'}}" 
+        {% endif %} 
+        required>
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <label for="fim">Fim:</label> <input id="fim" type = "datetime-local" name="fim">
+        <label for="fim">Fim:</label> <input id="fim" type = "datetime-local" name="fim"
+        {% if banca %}
+          value="{{banca.endDate|date:'Y-m-d\TH:i:s'}}" 
+        {% endif %} 
+        required>
       </div><br>
 
       <script>
@@ -93,34 +102,25 @@
       <br>
 
       <label for="membro1">Membro 1 da Banca:</label>
-      <select name="membro1" id="membro1" title="Selecione membro da banca">
-          <option disabled selected value> -- selecione um membro da banca -- </option>
-          {% for professor in pessoas %}
-            <option value="{{professor.id}}">
-              {{professor}}
-            </option>  
-          {% endfor %}
+      <select name="membro1" class="pessoas" id="membro1" title="Selecione membro da banca" required
+        oninvalid="this.setCustomValidity('Selecione ao menos duas pessoas para a banca')"
+        oninput="this.setCustomValidity('')"
+        >
+          <option disabled selected value> -- selecione membro da banca -- </option>
       </select><br>
 
       <label for="membro2">Membro 2 da Banca:</label>
-      <select name="membro2" id="membro2" title="Selecione membro da banca">
-          <option disabled selected value> -- selecione um membro da banca -- </option>
-          {% for professor in pessoas %}
-            <option value="{{professor.id}}">
-              {{professor}}
-            </option>  
-          {% endfor %}
+      <select name="membro2" class="pessoas" id="membro2" title="Selecione membro da banca" required
+        oninvalid="this.setCustomValidity('Selecione ao menos duas pessoas para a banca')"
+        oninput="this.setCustomValidity('')"
+        >
+          <option disabled selected value> -- selecione membro da banca -- </option>
       </select><br>
 
       <label for="membro3">Membro 3 da Banca:</label>
-      <select name="membro3" id="membro3" title="Selecione membro da banca">
-          <option disabled selected value> -- selecione um membro da banca -- </option>
-          {% for professor in pessoas %}
-            <option value="{{professor.id}}">
-              {{professor}}
-            </option>  
-          {% endfor %}
-      </select><br>
+      <select name="membro3" class="pessoas" id="membro3" title="Selecione membro da banca">
+          <option disabled selected value> -- selecione membro da banca -- </option>
+      </select><br> 
 
       <br><br>
       <button type="submit">Agendar</button>
@@ -130,5 +130,40 @@
     <p>Não existem projetos disponíveis para marcar uma banca.</p>
   {% endif %}
   <p>&nbsp;</p>
+
+  <script>
+
+    function carrega_pagina(){
+      $('.pessoas').empty();
+      
+      {% comment %} Preenche com as pessas possíveis conforme o tipo de banca {% endcomment %}
+      var tipo = $("input[name='tipo']:checked").val();
+      if (tipo==2) {
+        $('.pessoas').append($("<option disabled selected value></option>").text("-- selecione membro da banca --"));
+        {% for pessoa in falconis %}
+          $('.pessoas').append($("<option></option>").attr("value",{{pessoa.id}}).text("{{pessoa}}"));
+        {% endfor %}
+      } else {
+        $('.pessoas').append($("<option disabled selected value></option>").text("-- selecione membro da banca --"));
+        {% for professor in professores %}
+          $('.pessoas').append($("<option></option>").attr("value",{{professor.id}}).text("{{professor}}"));
+        {% endfor %}
+      }
+      {% if banca and banca.membro1 %}
+        $('#membro1 option[value={{banca.membro1.id}}]').attr('selected','selected');
+      {% endif %}
+      {% if banca and banca.membro2 %}
+        $('#membro2 option[value={{banca.membro2.id}}]').attr('selected','selected');
+      {% endif %}
+      {% if banca and banca.membro3 %}
+        $('#membro3 option[value={{banca.membro3.id}}]').attr('selected','selected');
+      {% endif %}
+    }
+
+    window.onload = carrega_pagina
+
+    $(".tipo_banca").change(carrega_pagina);
+
+  </script>
 
 {% endblock %}

@@ -535,8 +535,9 @@ class Banca(models.Model):
     membro3 = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
                                 related_name='membro3', help_text='membro da banca')
     TIPO_DE_BANCA = ( # não mudar a ordem dos números
-        (0, 'final'),
-        (1, 'intermediaria'),
+        (0, 'Final'),
+        (1, 'Intermediária'),
+        (2, 'Certificação Falconi'),
     )
     tipo_de_banca = models.PositiveSmallIntegerField(choices=TIPO_DE_BANCA, default=0)
     link = models.CharField(max_length=512, blank=True,

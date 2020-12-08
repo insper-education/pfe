@@ -1037,10 +1037,10 @@ def selecionar_orientadores(request):
 
     projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
 
-    professores = PFEUser.objects.all().\
+    professores = PFEUser.objects.\
                         filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0])
 
-    administradores = PFEUser.objects.all().\
+    administradores = PFEUser.objects.\
                         filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[3][0])
 
     orientadores = (professores | administradores).order_by(Lower("first_name"), Lower("last_name"))
@@ -3225,7 +3225,7 @@ def emails(request):
 
     email_p_semestre = zip(semestres, projetos_p_semestre)
 
-    membros_comite = PFEUser.objects.all().filter(membro_comite=True)
+    membros_comite = PFEUser.objects.filter(membro_comite=True)
 
     lista_todos_alunos = Aluno.objects.filter(trancado=False).\
                                  filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
@@ -3307,13 +3307,11 @@ def editar_banca(banca, request):
         banca.membro3 = None
     banca.save()
 
-def possiveis_membros_bancas():
+def professores_membros_bancas():
     """Retorna potenciais usuários que podem ser membros de uma banca do PFE."""
-    professores = PFEUser.objects.all().\
-                                filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0])
+    professores = PFEUser.objects.filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0])
 
-    administradores = PFEUser.objects.all().\
-                                filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[3][0])
+    administradores = PFEUser.objects.filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[3][0])
 
     pessoas = (professores | administradores).order_by(Lower("first_name"), Lower("last_name"))
 
@@ -3330,10 +3328,6 @@ def bancas_criar(request):
             projeto = Projeto.objects.get(id=int(request.POST['projeto']))
             banca = Banca.create(projeto)
             editar_banca(banca, request)
-            # return HttpResponse( # Isso não esta bom assim, ajustar
-            #     "Banca criada.<br>"+\
-            #     "<a href='../bancas_index"+\
-            #     "'>Voltar</a>")
             mensagem = "Banca criada."
             context = {
                 "area_principal": True,
@@ -3345,14 +3339,19 @@ def bancas_criar(request):
     else:
         ano = configuracao.ano
         semestre = configuracao.semestre
-        projetos = Projeto.objects.filter(ano=ano).filter(semestre=semestre).\
-                                                   exclude(orientador=None)
+        projetos = Projeto.objects.filter(ano=ano, semestre=semestre).\
+                                          exclude(orientador=None)
 
-        pessoas = possiveis_membros_bancas()
+        professores = professores_membros_bancas()
+        
+        organizacao = Organizacao.objects.get(sigla="Falconi")
+        falconis = PFEUser.objects.filter(parceiro__organizacao=organizacao)
 
         context = {
             'projetos' : projetos,
-            'pessoas' : pessoas,
+            'professores' : professores,
+            "TIPO_DE_BANCA": Banca.TIPO_DE_BANCA,
+            "falconis": falconis,
         }
         return render(request, 'projetos/bancas_criar.html', context)
 
@@ -3388,12 +3387,17 @@ def bancas_editar(request, primarykey):
 
     projetos = Projeto.objects.exclude(orientador=None).order_by("-ano", "-semestre")
 
-    pessoas = possiveis_membros_bancas()
+    professores = professores_membros_bancas()
+
+    organizacao = Organizacao.objects.get(sigla="Falconi")
+    falconis = PFEUser.objects.filter(parceiro__organizacao=organizacao)
 
     context = {
         'projetos' : projetos,
-        'pessoas' : pessoas,
+        'professores' : professores,
         'banca' : banca,
+        "TIPO_DE_BANCA": Banca.TIPO_DE_BANCA,
+        "falconis": falconis,
     }
     return render(request, 'projetos/bancas_editar.html', context)
 
@@ -3744,10 +3748,10 @@ def avaliacao(request, primarykey): #acertar isso para pk
 
     objetivos = ObjetivosDeAprendizagem.objects.filter(avaliacao_banca=True)
 
-    professores = PFEUser.objects.all().\
+    professores = PFEUser.objects.\
                         filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0])
 
-    administradores = PFEUser.objects.all().\
+    administradores = PFEUser.objects.\
                         filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[3][0])
 
     pessoas = (professores | administradores).order_by(Lower("first_name"), Lower("last_name"))
