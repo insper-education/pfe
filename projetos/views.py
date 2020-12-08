@@ -603,61 +603,44 @@ def converte_letra(nota):
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def resultado_avaliacoes(request):
-    """ . """
+    """ Mostra os resultados das avaliações (Bancas). """
 
     configuracao = Configuracao.objects.first()
-    ano = configuracao.ano
-    semestre = configuracao.semestre
+    
+    edicoes, ano, semestre = get_edicoes(Projeto)
 
-    # Vai para próximo semestre
-    # if semestre == 1:
-    #     semestre = 2
-    # else:
-    #     ano += 1
-    #     semestre = 1
+    if request.is_ajax():
+        if 'edicao' in request.POST:
+            edicao = request.POST['edicao']
+            ano, semestre = request.POST['edicao'].split('.')
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
 
-    if request.is_ajax() and 'anosemestre' in request.POST:
-        anosemestre = request.POST['anosemestre']
-        ano = int(anosemestre.split(".")[0])
-        semestre = int(anosemestre.split(".")[1])
-    #else:
-    #    return HttpResponse("Algum erro não identificado.", status=401)
-
-    projetos = Projeto.objects.filter(ano=ano).filter(semestre=semestre)
+    projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
 
     banca_intermediaria = []
     banca_final = []
 
     for projeto in projetos:
-        nota_banca_final = 0
-        #(0, 'final')
-        avaliacoes_banca_final = Avaliacao2.objects.filter(projeto=projeto,
-                                                          tipo_de_avaliacao=2) # Banca Final
-
-        nota_banca_final, peso = Aluno.get_banca(None, avaliacoes_banca_final)
+        aval_banc_final = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=2) #B. Final
+        nota_banca_final, peso = Aluno.get_banca(None, aval_banc_final)
         if peso > 0:
-            banca_final.append("{0} ({1:.2f})".format(converte_letra(nota_banca_final), nota_banca_final))
+            banca_final.append("{0:5.2f} ({1})".format(nota_banca_final, converte_letra(nota_banca_final)))
         else:
             banca_final.append("-")
 
-        nota_banca_intermediaria = 0
-
-        avaliacoes_banca_intermediaria = Avaliacao2.objects.filter(projeto=projeto,
-                                                                  tipo_de_avaliacao=1) # Banca Intermediária
-
-        nota_banca_intermediaria, peso = Aluno.get_banca(None, avaliacoes_banca_intermediaria)
+        aval_banc_interm = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=1) #B. Int.
+        nota_banca_intermediaria, peso = Aluno.get_banca(None, aval_banc_interm)
         if peso > 0:
-            banca_intermediaria.append("{0} ({1:.2f})".format(converte_letra(nota_banca_intermediaria), nota_banca_intermediaria))
+            banca_intermediaria.append("{0:5.2f} ({1})".format(nota_banca_intermediaria, converte_letra(nota_banca_intermediaria)))
         else:
             banca_intermediaria.append("-")
 
-    mylist = zip(projetos, banca_intermediaria, banca_final)
+    tabela = zip(projetos, banca_intermediaria, banca_final)
 
     context = {
-        'mylist': mylist,
-        'ano': ano,
-        'semestre': semestre,
-        'loop_anos': range(2018, configuracao.ano+1),
+        'tabela': tabela,
+        "edicoes": edicoes,
     }
 
     return render(request, 'projetos/resultado_avaliacoes.html', context)

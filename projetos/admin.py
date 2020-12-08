@@ -252,6 +252,7 @@ class ReembolsoAdmin(admin.ModelAdmin):
 class BancaAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
     list_display = ('projeto', 'get_orientador', 'get_organizacao', 'startDate')
+    search_fields = ['projeto__titulo', 'projeto__organizacao__sigla',]
     def get_orientador(self, obj):
         """Retorna o orientador do projeto da Banca."""
         return obj.projeto.orientador
@@ -321,7 +322,7 @@ class Avaliacao2Admin(admin.ModelAdmin):
     list_display = ('momento', 'nota', 'peso', 'objetivo', 'tipo_de_avaliacao', 'avaliador', 'projeto', 'alocacao')
     ordering = ('momento',)
     list_filter = ('tipo_de_avaliacao', )
-    search_fields = ['projeto__titulo', 'projeto__titulo_final', 'alocacao__aluno__user__username', ]
+    search_fields = ['projeto__titulo', 'projeto__titulo_final', 'alocacao__aluno__user__username', 'projeto__organizacao__sigla' ]
 
 
 @admin.register(Observacao)

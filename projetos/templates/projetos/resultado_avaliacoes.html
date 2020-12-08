@@ -6,9 +6,11 @@
 {% endcomment %}
 
 {% block head %}
+  
   {% load static %}
-  {% comment %} <script src="https://www.w3schools.com/lib/w3.js"></script> {% endcomment %}
+  
   <script src="{% static 'js/w3.js' %}"></script>
+
 {% endblock %}
 
 {% block content %}
@@ -16,31 +18,32 @@
   <span class="titulo">Projetos</span>
   <br>
 
-  <label for="filter">Edição:</label>
-  <select id="filter" class="filter" data-tableId="projetos">
-    {% for loop in loop_anos %}
-      <option value="{{loop}}.2" {% if ano == loop and semestre == 2 %}selected{% endif %}>{{loop}}.2</option>
-      <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
-    {% endfor %}
-  </select>
+  {% comment %} Seletor da edição da pesquisa {% endcomment %}
+  {% include "edicoes.html" %}
 
-<table  id="ProjetosTable" class="projetos">
-  <tr>
-    <td colspan="2">
-    </td>
-    <td colspan="2" class="text-center">
-    <b>Banca</b>
-    </td>
-  </tr>
-  <tr>
+  &nbsp;&nbsp;&nbsp;
+  <b>Informações: </b>&nbsp;
+  <label><input id="organizacao" onchange="($(this).prop('checked') ? $('#ProjetosTable tr > *:nth-child(2)').show() : $('#ProjetosTable tr > *:nth-child(2)').hide())" type="checkbox" checked /> Organização</label>&nbsp;&nbsp;&nbsp;
+  <label><input id="orientador" onchange="($(this).prop('checked') ? $('#ProjetosTable tr > *:nth-child(3)').show() : $('#ProjetosTable tr > *:nth-child(3)').hide())" type="checkbox" /> Orientador</label>&nbsp;&nbsp;&nbsp;
+
+  <table  id="ProjetosTable" class="projetos">
+    <tr>
+      <th style="border-right:0px; border-left:0px;"></th>
+      <th style="border-right:0px; border-left:0px;"></th>
+      <th style="border-right:0px; border-left:0px;"></th>
+      <th colspan="2" class="text-center">
+      <b>Banca</b>
+      </th>
+    </tr>
+    <tr>
       <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Projeto</th>
       <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Organização</th>
-      <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Inter.</th>
-      <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Final</th>
-      {% comment %}<th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Orientador</th>{% endcomment %}
+      <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Orientador</th>
+      <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Inter.</th>
+      <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">Final</th>
     </tr>      
-    {% for projeto, banca_intermediaria, banca_final in mylist %} 
 
+    {% for projeto, banca_intermediaria, banca_final in tabela %} 
     <tr class="item">
         <td>
           <a href="{% url 'projeto_completo' projeto.id %}">
@@ -48,27 +51,30 @@
           </a>
         </td>
         <td>
-            <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-              {{ projeto.organizacao.nome }}
-            </a>
-        </td>
-        <td class="text-center">
-          <a href="{% url 'conceitos_obtidos' projeto.id %}">
-            {{banca_intermediaria}}
+          <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
+            {{ projeto.organizacao.nome }}
           </a>
         </td>
-        <td class="text-center">
+        <td>
+          {% if projeto.orientador %}
+            <a href="{% url 'professor_detail' projeto.orientador.id %}">
+              {{ projeto.orientador }}
+            </a>
+            {% else %}
+              Orientador não definido
+            {% endif %}
+        </td>
+        <td class="text-center" style="white-space: nowrap;">
+          <a href="{% url 'conceitos_obtidos' projeto.id %}">
+            {{ banca_intermediaria }}
+          </a>
+        </td>
+        <td class="text-center" style="white-space: nowrap;">
           <a href="{% url 'conceitos_obtidos' projeto.id %}">
             {{ banca_final }}
           </a>
         </td>
-        {% comment %}
-        <td>
-            <a href="{% url 'professor_detail' projeto.orientador.id %}">
-              {{ projeto.orientador }}
-            </a>
-        </td>
-        {% endcomment %}
+
     </tr>
 
     {% empty %}
@@ -84,17 +90,18 @@
   <script>
   
     function carrega_semestre(){
-        var anosemestre = $(".filter option:selected").attr("value");
+        var edicao = $(".filter option:selected").attr("value");
         $.ajax({
             type: "POST",
             url: "{% url 'resultado_avaliacoes' %}",
             data: {
-                anosemestre: anosemestre,
+                edicao: edicao,
                 'csrfmiddlewaretoken': '{{ csrf_token }}',
             },
             success: function(response){
                 $("table.projetos").replaceWith($("table.projetos",response));
-                chart()
+                $("#organizacao").prop('checked') ? $('#ProjetosTable tr > *:nth-child(2)').show() : $('#ProjetosTable tr > *:nth-child(2)').hide()
+                $("#orientador").prop('checked') ? $('#ProjetosTable tr > *:nth-child(3)').show() : $('#ProjetosTable tr > *:nth-child(3)').hide()
             },
             error: function(response) {
                 console.log('error')
@@ -102,11 +109,13 @@
         });
     }
 
-    //window.onload = chart;
-    //window.addEventListener("resize", chart);
     $(".filter").change(carrega_semestre);    
     $(document).ready(carrega_semestre);
 
+  </script>
+
+  <script>
+    $('#ProjetosTable tr > *:nth-child(3)').hide();
   </script>
 
 {% endblock %}
