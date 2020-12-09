@@ -856,6 +856,10 @@ class ObjetivosDeAprendizagem(models.Model):
     avaliacao_grupo = models.BooleanField("Avaliação do Grupo", default=False,
                                           help_text='Avaliação do Grupo (AG)')
 
+    avaliacao_falconi = models.BooleanField("Avaliação Falconi", default=False,
+                                            help_text='Avaliação Falconi (AF)')
+
+
     def __str__(self):
         return str(self.titulo)
 
@@ -876,6 +880,7 @@ TIPO_DE_AVALIACAO = ( # não mudar a ordem dos números
     (50, 'Planejamento Primeira Fase'),
     (51, 'Avaliação Parcial Individual'),
     (52, 'Avaliação Final Individual'),
+    (99, 'Falconi'),
 )
 
 class Avaliacao2(models.Model):

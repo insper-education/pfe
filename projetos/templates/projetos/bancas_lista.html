@@ -8,6 +8,7 @@
 {% block head %}
   {% load static %}
   {% load escape_emails %}
+  {% load banca_tipo %}
 
   <style>
 
@@ -61,37 +62,40 @@
         <td>
           {% if banca.startDate %}
             <b>Horário:</b> {{banca.startDate.date}} ({{banca.startDate|date:"l"}}) das {{banca.startDate.time}}
+            {% if banca.endDate %}
+              às {{banca.endDate.time}}
+            {% endif %}
+            <br>
           {% endif %}
-          {% if banca.endDate %}
-            às {{banca.endDate.time}}
+          
+          {% if banca.tipo_de_banca is not None %}
+            <b>Tipo:</b> 
+            {{ banca.tipo_de_banca|get_banca }}
+            <br>
           {% endif %}
-          <br>
-          {% if banca.tipo_de_banca == 0 %}
-            <b>Tipo:</b> Final<br>
-          {% elif banca.tipo_de_banca == 1 %}
-            <b>Tipo:</b> Intermediária<br>
-          {% endif %}
+
           {% if banca.projeto %}
             <b>Título do Projeto:</b> 
             <a href="{% url 'projeto_completo' banca.projeto.id %}">
               {% if banca.projeto.titulo_final %}
                 {{banca.projeto.titulo_final}}</a><br>
-                <small>Antigo Título Provisório: 
+                <small>&nbsp;&nbsp;Antigo Título Provisório: 
                   <a href="{% url 'projeto_completo' banca.projeto.id %}">{{banca.projeto.titulo}}</a>
                 </small>
               {% else %}
                 {{banca.projeto.titulo}}</a>
               {% endif %}
+            <br>
           {% endif %}
-          <br>
+
           {% if banca.projeto.organizacao %}
             <b>Organização:</b> 
             <a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">
               {{ banca.projeto.organizacao.nome }}
             </a>
+            <br>
           {% endif %}
-          <br>
-          
+
           {% if banca.location %}
             <span class="local">
               <b>Local:</b> {{banca.location}}
@@ -114,33 +118,36 @@
             <br><br>
           {% endif %}
           
-          <span class="banca">
-            <b>Banca</b>
-            <ol>
-              {% if banca.membro1 %}
-              <li>
-                {{banca.membro1.get_full_name}}
-                <a href="mailto:{{banca.membro1.email}}">&lt;{{banca.membro1.email}}&gt;</a>
-              </li>
-              {% endif %}
-              {% if banca.membro2 %}
-              <li>
-                {{banca.membro2.get_full_name}}
-                <a href="mailto:{{banca.membro2.email}}">&lt;{{banca.membro2.email}}&gt;</a>
-              </li>
-              {% endif %}
-              {% if banca.membro3 %}
-              <li>
-                {{banca.membro3.get_full_name}}
-                <a href="mailto:{{banca.membro3.email}}">&lt;{{banca.membro3.email}}&gt;</a>
-              </li>
-              {% endif %}
-            </ol>
-          </span>
+          {% if banca.membro1 or banca.membro2 or banca.membro3 %}
+            <span class="banca">
+              <b>Membros da Banca da Avaliação:</b>
+              <ol style="margin-bottom:0px;">
+                {% if banca.membro1 %}
+                <li>
+                  {{banca.membro1.get_full_name}}
+                  <a href="mailto:{{banca.membro1.email}}">&lt;{{banca.membro1.email}}&gt;</a>
+                </li>
+                {% endif %}
+                {% if banca.membro2 %}
+                <li>
+                  {{banca.membro2.get_full_name}}
+                  <a href="mailto:{{banca.membro2.email}}">&lt;{{banca.membro2.email}}&gt;</a>
+                </li>
+                {% endif %}
+                {% if banca.membro3 %}
+                <li>
+                  {{banca.membro3.get_full_name}}
+                  <a href="mailto:{{banca.membro3.email}}">&lt;{{banca.membro3.email}}&gt;</a>
+                </li>
+                {% endif %}
+              </ol>
+            </span>
+            <br>
+          {% endif %}
 
           <span class="grupo">
-            <b>Grupo</b>
-            <ul>
+            <b>Grupo:</b>
+            <ul style="margin-bottom:0px;">
               {% for alocacao in banca.projeto.alocacao_set.all %}
                 <li>
                   <a href="{% url 'aluno_detail' alocacao.aluno.id %}">
@@ -151,6 +158,7 @@
                 </li>
               {% endfor %}
             </ul>
+            <br>
           </span>
 
           <span class="avaliacao">

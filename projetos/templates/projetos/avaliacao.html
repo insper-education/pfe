@@ -6,35 +6,25 @@
 {% endcomment %}
 
 {% block head %}
-<script>
-  {% comment %} Acho que isso veio por engano para cá {% endcomment %}
-  $(document).ready(function () {     
-    $('#projeto').change(function(){
-      var titulo = $(this).children(':selected').data('titulo');
-      var organizacao = $(this).children(':selected').data('organizacao');
-      var orientador = $(this).children(':selected').data('orientador');
-      $('#titulo').text(titulo);
-      $('#organizacao').text(organizacao);
-      $('#orientador').text(orientador);
-    })
-  });
-</script>
 
-<style>
-  textarea {
-    max-width:100%;
-  }
-</style>
+  {% load banca_tipo %}
+
+  <style>
+    textarea {
+      max-width:100%;
+    }
+  </style>
+
 {% endblock %}
 
 {% block content %}
-  {% if projeto %}
+  {% if banca %}
     <form method="post" id="avaliacaoform" enctype="multipart/form-data">
       {% csrf_token %}
 
-      <b>Título do Projeto:</b> {{projeto.titulo}}<br>
-      <b>Organização:</b> {{projeto.organizacao}}<br>
-      <b>Orientador{% if projeto.orientador.user.genero == "F" %}a{% endif %}:</b> {{projeto.orientador}}<br>
+      <b>Título do Projeto:</b> {{banca.projeto.titulo}}<br>
+      <b>Organização:</b> {{banca.projeto.organizacao}}<br>
+      <b>Orientador{% if banca.projeto.orientador.user.genero == "F" %}a{% endif %}:</b> {{banca.projeto.orientador}}<br>
       <b>Grupo:</b>
       <ul>
         {% for alocacao in banca.projeto.alocacao_set.all %}
@@ -49,14 +39,12 @@
         {% endfor %}
       </ul>
 
-      <b>Banca:</b>
-      {% if banca.tipo_de_banca == 0 %}Final{% else %}Intermediária{% endif %}
-      {% comment %}
-      <select name="tipo_banca" id="tipo_banca" required>
-        <option value="final" {% if guess_banca == 0 %}selected{% endif %}>final</option>
-        <option value="intermediaria" {% if guess_banca == 1 %}selected{% endif %}>intermediária</option>
-      </select>
-      {% endcomment %}
+      {% if banca.tipo_de_banca is not None %}
+        <b>Banca:</b>
+        {{ banca.tipo_de_banca|get_banca }}
+        <br>
+      {% endif %}
+
       <br>
       <b>Data:</b> {{banca.startDate|date:"DATE_FORMAT"}} das {{banca.startDate|date:"H:i"}} às {{banca.endDate|date:"H:i"}}<br>
       {% if banca.location %}
@@ -68,52 +56,130 @@
       {% endif %}
       
       <br><b><label for="avaliador">Avaliador(a)</label></b>:
-      <select name="avaliador" id="avaliador" title="Selecione avaliador da banca" required>
+      <select name="avaliador" id="avaliador" title="Selecione avaliador da banca" required
+        oninvalid="this.setCustomValidity('Selecione seu nome para o controle das avaliações')"
+        oninput="this.setCustomValidity('')"
+        >
           <option disabled selected value> -- selecione um avaliador -- </option>
-          {% for professor in pessoas %}
-            <option value="{{professor.id}}" {% if professor.id == banca.membro1.id %}selected{% endif %}>
-              {{professor}}
-            </option>  
+          {% for pessoa in pessoas %}
+            <option value="{{pessoa.id}}" {% if pessoa.id == avaliador %}selected{% endif %}>
+              {{pessoa.get_full_name}}
+            </option>   {% if projeto.id == banca.projeto.id %} selected="selected" {% endif %}
           {% endfor %}
-      </select><br>
+      </select>
+      <br><br>
 
-      <br>
-      <h5>Orientações Gerais</h5>
+      {% if orientacoes %}
+        <h5>Orientações Gerais</h5>
+        {{orientacoes|safe}}
+        <br>
+      {% endif %}
 
-O professor(a) orientador(a) é responsável por conduzir a banca. Os membros do grupo terão <b>40 minutos para a apresentação</b>. Os membros da banca terão depois <b>50 minutos para arguição</b> (que serão divididos pelos membros convidados), podendo tirar qualquer dúvida a respeito do projeto e fazerem seus comentários. Caso haja muitas interferências da banca durante a apresentação do grupo, poderá se estender o tempo de apresentação. A dinâmica de apresentação é livre, contudo, <b>todos os alunos devem estar prontos para responder qualquer tipo de pergunta</b> sobre o projeto. Um membro da banca pode fazer uma pergunta direcionada para um aluno específico do grupo se desejar.
-<br><br>
-Como ordem recomendada para a arguição da banca, se deve convidar: professores convidados, professores coorientadores, professor(a) orientador(a) do projeto e por fim demais pessoas assistindo à apresentação. A banca poderá perguntar tanto sobre a apresentação, como o relatório entregue, se espera coletar informações tanto da apresentação, como do relatório, permitindo uma clara ponderação nas rubricas dos objetivos de aprendizado do Projeto Final de Engenharia.
-<br><br>
-As bancas do Projeto Final de Engenharia servem como mais um evidência de aprendizado, assim, além da percepção dos membros da banca em relação ao nível alcançado nos objetivos de aprendizado pelos membros do grupo, serve também como registro da evolução do projeto. Dessa forma, ao final, a banca terá mais <b>15 minutos para ponderar</b>, nesse momento se recomenda dispensar os estudantes e demais convidados externos. Recomendamos 5 minutos para os membros da banca relerem os objetivos de aprendizagem e rubricas, fazerem qualquer anotação e depois 10 minutos para uma discussão final. Cada membro da banca poderá colocar seu veredito sobre grupo, usando as rubricas a seguir. O professor(a) orientador(a) irá publicar (no Blackboard), ao final, a média dos conceitos anotados.
-<br><br>
-No Projeto Final de Engenharia, a maioria dos projetos está sob sigilo. Nos contratos realizados (quando pedido ou necessário) entre a Organização Parceira e o Insper, se tem os professores automaticamente responsáveis por garantir o sigilo das informações. Assim <b>pessoas externas só podem participar das bancas com prévia autorização</b>, isso inclui outros estudantes que não sejam do grupo, familiares ou amigos.
-<br>
+      {% if objetivos %}
+        <br><h5>Objetivos de Aprendizagem</h5>
+        {% for objetivo in objetivos %}
+          <b>{{objetivo.titulo}}</b>: {{objetivo.objetivo}}
+          <table style="width:100%">
+            <tr>
+              <th class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}NA" style="width:10%;">
+                <input type="radio" class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}NA" id="objetivo.{{forloop.counter}}{{objetivo.id}}.NA" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.NA" required> 
+                 <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.NA">N/A</label>
+              </th>
+              <th class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}I" style="width:18%">
+                <input type="radio" class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}I" id="objetivo.{{forloop.counter}}{{objetivo.id}}.I " name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.I " required
+                {% for obj, conceito in conceitos %}
+                  {% if obj == objetivo.id and conceito == "I" %}
+                    checked="checked"
+                  {% endif %}
+                {% endfor %}
+                >
+                <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.I ">Insatisfatório (I)</label>
+              </th>
+              <th class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}D" style="width:18%">
+                <input type="radio" class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}D" id="objetivo.{{forloop.counter}}{{objetivo.id}}.D " name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.D " required
+                {% for obj, conceito in conceitos %}
+                  {% if obj == objetivo.id and conceito == "D" %}
+                    checked="checked"
+                  {% endif %}
+                {% endfor %}
+                >
+                <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.D ">Em Desenvolvimento (D)</label>
+              </th>
+              <th class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}C" style="width:18%">
+                <input type="radio" class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}C" id="objetivo.{{forloop.counter}}{{objetivo.id}}.C " name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.C " required
+                {% for obj, conceito in conceitos %}
+                  {% if obj == objetivo.id and conceito == "C" %}
+                    checked="checked"
+                  {% endif %}
+                {% endfor %}
+                >
+                <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.C ">Essencial (C)</label>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="radio" class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}C" id="objetivo.{{forloop.counter}}{{objetivo.id}}.C+" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.C+" required
+                {% for obj, conceito in conceitos %}
+                  {% if obj == objetivo.id and conceito == "CX" %}
+                    checked="checked"
+                  {% endif %}
+                {% endfor %}
+                >
+                <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.C+">(C+)</label>
+              </th>
+              <th class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}B" style="width:18%">
+                <input type="radio" class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}B" id="objetivo.{{forloop.counter}}{{objetivo.id}}.B " name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.B " required
+                {% for obj, conceito in conceitos %}
+                  {% if obj == objetivo.id and conceito == "B" %}
+                    checked="checked"
+                  {% endif %}
+                {% endfor %}
+                >
+                <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.B ">Proficiente (B)</label>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="radio" class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}B" id="objetivo.{{forloop.counter}}{{objetivo.id}}.B+" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.B+" required
+                {% for obj, conceito in conceitos %}
+                  {% if obj == objetivo.id and conceito == "BX" %}
+                    checked="checked"
+                  {% endif %}
+                {% endfor %}
+                >
+                <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.B+">(B+)</label>
+              </th>
+              <th class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}A" style="width:18%">
+                <input type="radio" class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}A" id="objetivo.{{forloop.counter}}{{objetivo.id}}.A " name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.A " required
+                {% for obj, conceito in conceitos %}
+                  {% if obj == objetivo.id and conceito == "A" %}
+                    checked="checked"
+                  {% endif %}
+                {% endfor %}
+                >
+                <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.A ">Avançado (A)</label>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="radio" class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}A" id="objetivo.{{forloop.counter}}{{objetivo.id}}.A+" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.A+" required
+                {% for obj, conceito in conceitos %}
+                  {% if obj == objetivo.id and conceito == "AX" %}
+                    checked="checked"
+                  {% endif %}
+                {% endfor %}
+                >
+                <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.A+">(A+)</label>
+              </th>
+            </tr>
+            <tr>
+              <td class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}NA"><label for="objetivo.{{forloop.counter}}{{objetivo.id}}.NA">caso prefira não avaliar este objetivo, selecione esta coluna.</label></td>
+              <td class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}I"><label for="objetivo.{{forloop.counter}}{{objetivo.id}}.I ">{{objetivo.rubrica_I}}</label></td>
+              <td class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}D"><label for="objetivo.{{forloop.counter}}{{objetivo.id}}.D ">{{objetivo.rubrica_D}}</label></td>
+              <td class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}C"><label for="objetivo.{{forloop.counter}}{{objetivo.id}}.C ">{{objetivo.rubrica_C}}</label></td>
+              <td class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}B"><label for="objetivo.{{forloop.counter}}{{objetivo.id}}.B ">{{objetivo.rubrica_B}}</label></td>
+              <td class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}A"><label for="objetivo.{{forloop.counter}}{{objetivo.id}}.A ">{{objetivo.rubrica_A}}</label></td>
+            </tr>
+          </table><br>
+        {% endfor %}
 
-      <br><h5>Objetivos de Aprendizagem</h5>
-      {% for objetivo in objetivos %}
-        <b>{{objetivo.titulo}}</b>: {{objetivo.objetivo}}
-        <table style="width:100%">
-          <tr>
-            <th style="width:18%"><input type="radio" id="objetivo.{{forloop.counter}}{{objetivo.id}}.I " name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.I " required> <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.I ">Insatisfatório (I)</label></th>
-            <th style="width:18%"><input type="radio" id="objetivo.{{forloop.counter}}{{objetivo.id}}.D " name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.D " required> <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.D ">Em Desenvolvimento (D)</label></th>
-            <th style="width:18%"><input type="radio" id="objetivo.{{forloop.counter}}{{objetivo.id}}.C " name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.C " required> <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.C ">Essencial (C)</label></th>
-            <th style="width:18%"><input type="radio" id="objetivo.{{forloop.counter}}{{objetivo.id}}.B " name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.B " required> <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.B ">Proficiente (B)</label></th>
-            <th style="width:18%"><input type="radio" id="objetivo.{{forloop.counter}}{{objetivo.id}}.A " name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.A " required> <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.A ">Avançado (A)</label></th>
-            <th style="width:10%"><input type="radio" id="objetivo.{{forloop.counter}}{{objetivo.id}}.NA" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.NA" required> <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.NA">N/A</label></th>
-          </tr>
-          <tr>
-            <td><label for="objetivo.{{forloop.counter}}{{objetivo.id}}.I ">{{objetivo.rubrica_I}}</label></td>
-            <td><label for="objetivo.{{forloop.counter}}{{objetivo.id}}.D ">{{objetivo.rubrica_D}}</label></td>
-            <td><label for="objetivo.{{forloop.counter}}{{objetivo.id}}.C ">{{objetivo.rubrica_C}}</label></td>
-            <td><label for="objetivo.{{forloop.counter}}{{objetivo.id}}.B ">{{objetivo.rubrica_B}}</label></td>
-            <td><label for="objetivo.{{forloop.counter}}{{objetivo.id}}.A ">{{objetivo.rubrica_A}}</label></td>
-            <td><label for="objetivo.{{forloop.counter}}{{objetivo.id}}.NA">caso prefira não avaliar este objetivo, selecione esta coluna.</label></td>
-          </tr>
-        </table><br>
-      {% endfor %}
+      {% else %}
+        <span class="red-bold">Não foram definidos Objetivos de Aprendizagem para essa Avaliação.</span><br>
+      {% endif %}
       
       <br><b>Observações:</b><br>
-      <textarea name="observacoes" rows="8" cols="80" maxlength="2048"></textarea>
+      <textarea name="observacoes" rows="8" cols="80" maxlength="2048">{{observacoes}}</textarea>
       
       <br><br>
       <button type="submit">Enviar Avaliação</button>
@@ -123,5 +189,16 @@ No Projeto Final de Engenharia, a maioria dos projetos está sob sigilo. Nos con
     <p>Não existe projeto disponível para avaliar.</p>
   {% endif %}
   <p>&nbsp;</p>
+  
+  <script>
+
+    function cores(e) {
+      $("."+e.target.classList[0]).css('backgroundColor', '#FFFFFF');
+      $("."+e.target.classList[1]).css('backgroundColor', '#DDDDFF');
+    }
+
+    $('input[type="radio"]').on('click change', cores);
+    
+  </script>
 
 {% endblock %}

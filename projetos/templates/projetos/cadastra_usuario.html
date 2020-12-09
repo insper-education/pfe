@@ -33,10 +33,10 @@
     <br><br>
 
     <label for="nome">Nome do Usuário<br></label><br>
-    <input type="text" size="80" maxlength="80" id="nome" name="nome" value="{{nome}}" required><br>
+    <input type="text" size="80" maxlength="80" id="nome" name="nome" value="{{nome}}" pattern="^\S+(?:[ ]+\S+){1,99}[ ]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')" required><br>
     <br><br>
 
-    <label for="email">e-mail:</label> <input type="email" size="73" maxlength="73" id="email" name="email" value="{{email}}" required><br><br>
+    <label for="email">e-mail:</label> <input type="email" size="73" maxlength="73" id="email" name="email" value="{{email}}" oninvalid="this.setCustomValidity('Digite um e-mail válido')" oninput="this.setCustomValidity('')" required><br><br>
 
     <input type="radio" name="genero" id="masculino" value="masculino"> <label for="masculino"> Masculino</label>&nbsp;&nbsp;&nbsp;
     <input type="radio" name="genero" id="feminino" value="feminino"> <label for="feminino"> Feminino</label>
