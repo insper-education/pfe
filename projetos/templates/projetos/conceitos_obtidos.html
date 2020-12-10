@@ -88,6 +88,7 @@
     }
     let intermediaria = new Banca(); 
     let final = new Banca(); 
+    let falconi = new Banca(); 
   </script>
 {% endblock %}
 
@@ -254,6 +255,71 @@
 
     </table>
   {% endif %}
+
+
+  <br>
+
+  {% if avaliadores_falconi %}
+    {% for banca in projeto.banca_set.all %}
+      {% if banca.tipo_de_banca == 2 %}
+        <h5>
+          <a href="{% url 'banca_ver' banca.id %}">
+            Banca Falconi
+          </a>
+        </h5>
+      {% endif %}
+    {% endfor %}
+    <table>    
+      {% for avaliador, objs in avaliadores_falconi.items %}
+          <tr><td>
+            <strong>Avaliador{% if avaliador.genero == "F" %}a{% endif %}: </strong>
+            <a href="{% url 'parceiro_detail' avaliador.parceiro.id %}">
+              {{avaliador.get_full_name}}
+            </a><br>
+            <strong>Avaliado em: </strong>{{objs.momento}}<br>
+            <strong>Conceitos:</strong><br>
+            <ul>
+              {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo != "observacoes" %}
+
+                <li>{{objetivo.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
+                {{objetivos|get_rubrica:objetivo.id|get_texto_nota:conceito.nota}}">
+                <script>document.write(conceito({{conceito.nota}}));</script></span></li>
+                
+                <script>
+                  objetivo_tmp = new Objetivo();
+                  objetivo_tmp.titulo = "{{objetivo.titulo}}"
+                  //objetivo_tmp.rubrica = "{{objetivos|get_rubrica:objetivo.id|get_texto_nota:conceito.nota}}"
+                  falconi.add_objetivo(objetivo_tmp)
+                  falconi.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}})
+                </script>
+
+              {% endif %}{% endfor %}
+              
+              {% if objs.observacoes %}  
+                <li>Observações: {{objs.observacoes}}</li>
+              {% endif %}
+              
+            
+            </ul>
+
+          </td></tr>
+
+      {% endfor %}
+
+      <tr style="background-color: #6060E0; color: white"><td>
+        Média das avaliações falconi:
+        <ul>
+        <script>
+          for (var key in falconi.dict) {
+            if(falconi.dict[key].avaliacoes>0) document.write(falconi.dict[key].texto());
+          }
+        </script>
+        </ul>
+      </td></tr>
+
+    </table>
+  {% endif %}
+
 
 
 

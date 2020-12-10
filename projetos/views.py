@@ -3967,7 +3967,6 @@ def avaliacao(request, primarykey): #acertar isso para pk
                     message += "</tr>"
                     message += "</table>"
 
-
             subject = 'Banca PFE : {0}'.format(projeto)
             
             recipient_list = [avaliador.email,]
@@ -4279,11 +4278,13 @@ def conceitos_obtidos(request, primarykey): #acertar isso para pk
 
     avaliadores_inter = {}
     avaliadores_final = {}
+    avaliadores_falconi = {}
 
     for objetivo in objetivos:
+
+        # Bancas Intermediárias
         bancas_inter = Avaliacao2.objects.filter(projeto=projeto, objetivo=objetivo, tipo_de_avaliacao=1).\
                                             order_by('avaliador', '-momento')
-        
         for banca in bancas_inter:
             if banca.avaliador not in avaliadores_inter:
                 avaliadores_inter[banca.avaliador] = {}
@@ -4292,20 +4293,31 @@ def conceitos_obtidos(request, primarykey): #acertar isso para pk
                 avaliadores_inter[banca.avaliador]["momento"] = banca.momento
             # Senão é só uma avaliação de objetivo mais antiga
 
+        # Bancas Finais
         bancas_final = Avaliacao2.objects.filter(projeto=projeto, objetivo=objetivo, tipo_de_avaliacao=2).\
                                             order_by('avaliador', '-momento')
-
         for banca in bancas_final:
             if banca.avaliador not in avaliadores_final:
                 avaliadores_final[banca.avaliador] = {}
             if objetivo not in avaliadores_final[banca.avaliador]:
                 avaliadores_final[banca.avaliador][objetivo] = banca
+                avaliadores_final[banca.avaliador]["momento"] = banca.momento
             # Senão é só uma avaliação de objetivo mais antiga
 
+        # Bancas Falconi
+        bancas_falconi = Avaliacao2.objects.filter(projeto=projeto, objetivo=objetivo, tipo_de_avaliacao=99).\
+                                                   order_by('avaliador', '-momento')
+        for banca in bancas_falconi:
+            if banca.avaliador not in avaliadores_falconi:
+                avaliadores_falconi[banca.avaliador] = {}
+            if objetivo not in avaliadores_falconi[banca.avaliador]:
+                avaliadores_falconi[banca.avaliador][objetivo] = banca
+                avaliadores_falconi[banca.avaliador]["momento"] = banca.momento
+            # Senão é só uma avaliação de objetivo mais antiga
 
+    # Bancas Intermediárias
     observacoes = Observacao.objects.filter(projeto=projeto, tipo_de_avaliacao=1).\
                                             order_by('avaliador', '-momento')
-
     for observacao in observacoes:
         if observacao.avaliador not in avaliadores_inter:
             avaliadores_inter[observacao.avaliador] = {} # Não devia acontecer isso
@@ -4313,9 +4325,9 @@ def conceitos_obtidos(request, primarykey): #acertar isso para pk
             avaliadores_inter[observacao.avaliador]["observacoes"] = observacao.observacoes
         # Senão é só uma avaliação de objetivo mais antiga
 
+    # Bancas Finais
     observacoes = Observacao.objects.filter(projeto=projeto, tipo_de_avaliacao=2).\
                                             order_by('avaliador', '-momento')
-
     for observacao in observacoes:
         if observacao.avaliador not in avaliadores_final:
             avaliadores_final[observacao.avaliador] = {} # Não devia acontecer isso
@@ -4323,11 +4335,22 @@ def conceitos_obtidos(request, primarykey): #acertar isso para pk
             avaliadores_final[observacao.avaliador]["observacoes"] = observacao.observacoes
         # Senão é só uma avaliação de objetivo mais antiga
 
+    # Bancas Falconi
+    observacoes = Observacao.objects.filter(projeto=projeto, tipo_de_avaliacao=99).\
+                                            order_by('avaliador', '-momento')
+    for observacao in observacoes:
+        if observacao.avaliador not in avaliadores_falconi:
+            avaliadores_falconi[observacao.avaliador] = {} # Não devia acontecer isso
+        if "observacoes" not in avaliadores_falconi[observacao.avaliador]:
+            avaliadores_falconi[observacao.avaliador]["observacoes"] = observacao.observacoes
+        # Senão é só uma avaliação de objetivo mais antiga
+
     context = {
         'objetivos': objetivos,
         'projeto': projeto,
         'avaliadores_inter' : avaliadores_inter,
         'avaliadores_final' : avaliadores_final,
+        "avaliadores_falconi": avaliadores_falconi,
     }
 
     return render(request, 'projetos/conceitos_obtidos.html', context=context)
