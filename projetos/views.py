@@ -581,41 +581,23 @@ def converte_conceito(conceito):
         return 4
     return 0
 
-def converte_letra(nota):
+def converte_letra(nota, mais="+", espaco=""):
     """ Converte de Número para Letra. """
     if nota == 10:
-        return "A+"
+        return "A"+mais
     elif nota >= 9:
-        return "A"
+        return "A"+espaco
     elif nota >= 8:
-        return "B+"
+        return "B"+mais
     elif nota >= 7:
-        return "B"
+        return "B"+espaco
     elif nota >= 6:
-        return "C+"
+        return "C"+mais
     elif nota >= 5:
-        return "C"
+        return "C"+espaco
     elif nota >= 4:
-        return "D"
-    return "I"
-
-def converte_letra_x(nota):
-    """ Converte de Número para Letra. """
-    if nota == 10:
-        return "AX"
-    elif nota >= 9:
-        return "A"
-    elif nota >= 8:
-        return "BX"
-    elif nota >= 7:
-        return "B"
-    elif nota >= 6:
-        return "CX"
-    elif nota >= 5:
-        return "C"
-    elif nota >= 4:
-        return "D"
-    return "I"
+        return "D"+espaco
+    return "I"+espaco
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
@@ -643,23 +625,23 @@ def resultado_avaliacoes(request):
         aval_banc_final = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=2) #B. Final
         nota_banca_final, peso = Aluno.get_banca(None, aval_banc_final)
         if peso is not None:
-            banca_final.append("{0:5.2f} ({1})".format(nota_banca_final, converte_letra(nota_banca_final)))
+            banca_final.append(("{0}".format(converte_letra(nota_banca_final, espaco="&nbsp;")),"{0:5.2f}".format(nota_banca_final)))
         else:
-            banca_final.append("-")
+            banca_final.append( ("&nbsp;-&nbsp;",None) )
 
         aval_banc_interm = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=1) #B. Int.
         nota_banca_intermediaria, peso = Aluno.get_banca(None, aval_banc_interm)
         if peso is not None:
-            banca_intermediaria.append("{0:5.2f} ({1})".format(nota_banca_intermediaria, converte_letra(nota_banca_intermediaria)))
+            banca_intermediaria.append(("{0}".format(converte_letra(nota_banca_intermediaria, espaco="&nbsp;")),"{0:5.2f}".format(nota_banca_intermediaria)))
         else:
-            banca_intermediaria.append("-")
+            banca_intermediaria.append( ("&nbsp;-&nbsp;",None) )
 
         aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=99) #B. Falconi
         nota_banca_falconi, peso = Aluno.get_banca(None, aval_banc_falconi)
         if peso is not None:
-            banca_falconi.append("{0:5.2f} ({1})".format(nota_banca_falconi, converte_letra(nota_banca_falconi)))
+            banca_falconi.append(("{0}".format(converte_letra(nota_banca_falconi, espaco="&nbsp;")),"{0:5.2f}".format(nota_banca_falconi)))
         else:
-            banca_falconi.append("-")
+            banca_falconi.append( ("&nbsp;-&nbsp;",None) )
 
 
     tabela = zip(projetos, banca_intermediaria, banca_final, banca_falconi)
@@ -3731,13 +3713,15 @@ def get_peso(banca, objetivo):
             return 2.7
         if objetivo.titulo == "Design/Empreendedorismo":
             return 2.7
-    elif banca == 0: # (0, 'final'),
+    elif banca == 2: #( 2, 'Banca Final'),
         if objetivo.titulo == "Execução Técnica":
             return 8.4
         if objetivo.titulo == "Organização":
             return 6.3
         if objetivo.titulo == "Design/Empreendedorismo":
             return 6.3
+    elif banca == 99: #( 99, 'Banca Falconi'),
+        return 0
 
     return 0 # Algum erro aconteceu
 
@@ -3775,6 +3759,9 @@ def avaliacao(request, primarykey): #acertar isso para pk
             elif banca.tipo_de_banca == 2: # (2, 'falconi'),
                 tipo_de_avaliacao = 99 # (99, 'Falconi'),
 
+            # Identifica que uma avaliação já foi realizada anteriormente
+            realizada = Avaliacao2.objects.filter(projeto=projeto, avaliador=avaliador, tipo_de_avaliacao=tipo_de_avaliacao).exists()
+
             OBJETIVOS_POSSIVEIS = 5
             julgamento = [None]*OBJETIVOS_POSSIVEIS
             for i in range(OBJETIVOS_POSSIVEIS):
@@ -3803,6 +3790,11 @@ def avaliacao(request, primarykey): #acertar isso para pk
                 julgamento_observacoes.save()
 
             message = "<h3>Avaliação PFE</h3><br>\n"
+
+            if realizada:
+                message += "<h3 style='color:red;text-align:center;'>"
+                message += "Essa é uma atualização de uma avaliação já enviada anteriormente!"
+                message += "</h3><br><br>"
 
             message += "<b>Título do Projeto:</b> {0}<br>\n".format(projeto.get_titulo())
             message += "<b>Organização:</b> {0}<br>\n".format(projeto.organizacao)
@@ -3862,16 +3854,16 @@ def avaliacao(request, primarykey): #acertar isso para pk
                 message += "</p>"
                 message += "<br>\n<br>\n"
 
+            message += "<a href='" + settings.SERVER + "/projetos/avaliacao/" + str(primarykey)
 
-            message += "<a href='http://127.0.0.1:8000/projetos/avaliacao/" + str(primarykey)
             message += "?avaliador=" + str(avaliador.id)
             for count, julg in enumerate(julgamento):
                 if julg and not julg.na:
                     message += "&objetivo" + str(count) + "=" + str(julg.objetivo.id)
-                    message += "&conceito" + str(count) + "=" + converte_letra_x(julg.nota)
+                    message += "&conceito" + str(count) + "=" + converte_letra(julg.nota, mais="X")
             message += "&observacoes=" + julgamento_observacoes.observacoes
             message += "'>"
-            message += "Caso deseje reenviar sua avaliação clique aqui."
+            message += "Caso deseje reenviar sua avaliação, clique aqui."
             message += "</a><br>\n"
             message += "<br>\n"
 
@@ -3982,6 +3974,8 @@ def avaliacao(request, primarykey): #acertar isso para pk
             resposta = "Avaliação submetida e enviada para:<br>"
             for recipient in recipient_list:
                 resposta += "&bull; {0}<br>".format(recipient)
+            if realizada:
+                resposta += "<br><br><h2>Essa é uma atualização de uma avaliação já enviada anteriormente!</h2><br><br>"
             resposta += "<br><a href='javascript:history.back(1)'>Voltar</a>"
             context = {
                 "area_principal": True,

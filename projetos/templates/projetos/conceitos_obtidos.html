@@ -97,10 +97,28 @@
     <style>
         .titulo {display: inline;}
     </style>
-    <span class="titulo">Título: {{projeto.titulo_final}}</span>
-    <small> <br>&nbsp;&nbsp;&nbsp;&nbsp;Título Provisório: {{projeto.titulo}}</small><br>
+      <span class="titulo">
+        Título: 
+        <a href="{% url 'projeto_completo' projeto.id %}">
+          {{projeto.titulo_final}}
+        </a>
+      </span>
+      <br>
+      <small>
+        &nbsp;&nbsp;&nbsp;&nbsp;Título Provisório: 
+        <a href="{% url 'projeto_completo' projeto.id %}">
+          {{projeto.titulo}}
+        </a>
+      </small>
+      <br>
   {% else %}
-    <span class="titulo">Título: {{projeto.titulo}}</span>
+    <span class="titulo">
+      Título: 
+      <a href="{% url 'projeto_completo' projeto.id %}">
+        {{projeto.titulo}}
+      </a>
+    </span>
+    <br>
   {% endif %}
   <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
 
