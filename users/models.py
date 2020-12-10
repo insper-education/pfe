@@ -228,32 +228,52 @@ class Aluno(models.Model):
             if bancas:
                 lista_objetivos[objetivo] = {}
             for banca in bancas:
-                if banca.avaliador not in lista_objetivos[objetivo]:
-                    lista_objetivos[objetivo][banca.avaliador] = (float(banca.nota), float(banca.peso))
+                if (banca.avaliador not in lista_objetivos[objetivo]):
+                    if banca.na:
+                        lista_objetivos[objetivo][banca.avaliador] = None
+                    else:
+                        lista_objetivos[objetivo][banca.avaliador] = (float(banca.nota), float(banca.peso))
                 # Senão é só uma avaliação de objetivo mais antiga
+
+        if not lista_objetivos:
+            return 0, None
 
         # média por objetivo
         val_objetivos = {}
+        pes_total = 0
         for obj in lista_objetivos:
             val = 0
             pes = 0
-            for avali in lista_objetivos[obj]:
-                val += lista_objetivos[obj][avali][0]
-                pes += lista_objetivos[obj][avali][1]
-            val_objetivos[obj] = (val/len(lista_objetivos[obj]), pes/len(lista_objetivos[obj]))
+            count = 0
+            if lista_objetivos[obj]:
+                for avali in lista_objetivos[obj]:
+                    if lista_objetivos[obj][avali]:
+                        count += 1
+                        val += lista_objetivos[obj][avali][0]
+                        pes += lista_objetivos[obj][avali][1]
+                        pes_total += lista_objetivos[obj][avali][1]
+                if count:
+                    val_objetivos[obj] = (val/count, pes/count)
 
         # média dos objetivos
         val = 0
         pes = 0
         for obj in val_objetivos:
-            val += val_objetivos[obj][0]*val_objetivos[obj][1]
+            if pes_total == 0:  # Deve ser Banca Falconi
+                val += val_objetivos[obj][0]
+            else:
+                val += val_objetivos[obj][0]*val_objetivos[obj][1]
             pes += val_objetivos[obj][1]
-        pes = float(pes)
-        if pes != 0:
-            val = float(val)/pes
-        else:
-            val = 0
         
+        if val_objetivos:
+            pes = float(pes)
+            if pes != 0:
+                val = float(val)/pes
+            else:
+                val = float(val)/len(val_objetivos)
+        else:
+            pes = None
+
         return val, pes
 
     @property

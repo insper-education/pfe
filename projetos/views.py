@@ -637,23 +637,32 @@ def resultado_avaliacoes(request):
 
     banca_intermediaria = []
     banca_final = []
+    banca_falconi = []
 
     for projeto in projetos:
         aval_banc_final = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=2) #B. Final
         nota_banca_final, peso = Aluno.get_banca(None, aval_banc_final)
-        if peso > 0:
+        if peso is not None:
             banca_final.append("{0:5.2f} ({1})".format(nota_banca_final, converte_letra(nota_banca_final)))
         else:
             banca_final.append("-")
 
         aval_banc_interm = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=1) #B. Int.
         nota_banca_intermediaria, peso = Aluno.get_banca(None, aval_banc_interm)
-        if peso > 0:
+        if peso is not None:
             banca_intermediaria.append("{0:5.2f} ({1})".format(nota_banca_intermediaria, converte_letra(nota_banca_intermediaria)))
         else:
             banca_intermediaria.append("-")
 
-    tabela = zip(projetos, banca_intermediaria, banca_final)
+        aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=99) #B. Falconi
+        nota_banca_falconi, peso = Aluno.get_banca(None, aval_banc_falconi)
+        if peso is not None:
+            banca_falconi.append("{0:5.2f} ({1})".format(nota_banca_falconi, converte_letra(nota_banca_falconi)))
+        else:
+            banca_falconi.append("-")
+
+
+    tabela = zip(projetos, banca_intermediaria, banca_final, banca_falconi)
 
     context = {
         'tabela': tabela,
@@ -3772,15 +3781,18 @@ def avaliacao(request, primarykey): #acertar isso para pk
                 if 'objetivo.{0}'.format(i+1) in request.POST:
                     obj_nota = request.POST['objetivo.{0}'.format(i+1)]
                     conceito = obj_nota.split('.')[1]
-                    if conceito != "NA":
-                        julgamento[i] = Avaliacao2.create(projeto=projeto)
-                        julgamento[i].avaliador = avaliador
-                        pk_objetivo = int(obj_nota.split('.')[0])
-                        julgamento[i].objetivo = ObjetivosDeAprendizagem.objects.get(pk=pk_objetivo)
+                    julgamento[i] = Avaliacao2.create(projeto=projeto)
+                    julgamento[i].avaliador = avaliador
+                    pk_objetivo = int(obj_nota.split('.')[0])
+                    julgamento[i].objetivo = ObjetivosDeAprendizagem.objects.get(pk=pk_objetivo)
+                    julgamento[i].tipo_de_avaliacao = tipo_de_avaliacao
+                    if conceito == "NA":
+                        julgamento[i].na = True
+                    else:    
                         julgamento[i].nota = converte_conceito(conceito)
-                        julgamento[i].tipo_de_avaliacao = tipo_de_avaliacao
                         julgamento[i].peso = get_peso(tipo_de_avaliacao, julgamento[i].objetivo)
-                        julgamento[i].save()
+                        julgamento[i].na = False
+                    julgamento[i].save()
 
             julgamento_observacoes = None
             if 'observacoes' in request.POST and request.POST['observacoes'] != "":
@@ -3809,31 +3821,31 @@ def avaliacao(request, primarykey): #acertar isso para pk
             message += "<b>Conceitos:</b><br>\n"
             message += "<table style='border: 1px solid black; "
             message += "border-collapse:collapse; padding: 0.3em;'>"
-            if julgamento[0]:
+            if julgamento[0] and not julgamento[0].na:
                 message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
                     format(julgamento[0].objetivo)
                 message += "<td style='border: 1px solid black; text-align:center'>"
                 message += "&nbsp;{0}&nbsp;</td>\n".\
                     format(converte_letra(julgamento[0].nota))
-            if julgamento[1]:
+            if julgamento[1] and not julgamento[1].na:
                 message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
                     format(julgamento[1].objetivo)
                 message += "<td style='border: 1px solid black; text-align:center'>"
                 message += "&nbsp;{0}&nbsp;</td>\n".\
                     format(converte_letra(julgamento[1].nota))
-            if julgamento[2]:
+            if julgamento[2] and not julgamento[2].na:
                 message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
                     format(julgamento[2].objetivo)
                 message += "<td style='border: 1px solid black; text-align:center'>"
                 message += "&nbsp;{0}&nbsp;</td>\n".\
                     format(converte_letra(julgamento[2].nota))
-            if julgamento[3]:
+            if julgamento[3] and not julgamento[3].na:
                 message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
                     format(julgamento[3].objetivo)
                 message += "<td style='border: 1px solid black; text-align:center'>"
                 message += "&nbsp;{0}&nbsp;</td>\n".\
                     format(converte_letra(julgamento[3].nota))
-            if julgamento[4]:
+            if julgamento[4] and not julgamento[4].na:
                 message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
                     format(julgamento[4].objetivo)
                 message += "<td style='border: 1px solid black; text-align:center'>"
@@ -3854,7 +3866,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
             message += "<a href='http://127.0.0.1:8000/projetos/avaliacao/" + str(primarykey)
             message += "?avaliador=" + str(avaliador.id)
             for count, julg in enumerate(julgamento):
-                if julg:
+                if julg and not julg.na:
                     message += "&objetivo" + str(count) + "=" + str(julg.objetivo.id)
                     message += "&conceito" + str(count) + "=" + converte_letra_x(julg.nota)
             message += "&observacoes=" + julgamento_observacoes.observacoes
@@ -3874,35 +3886,35 @@ def avaliacao(request, primarykey): #acertar isso para pk
                     message += "style='border:1px solid black; border-collapse:collapse; width:100%;'>"
                     message += "<tr>"
 
-                    if converte_letra(julg.nota) == "I":
+                    if (not julg.na) and converte_letra(julg.nota) == "I":
                         message += "<td style='border: 2px solid black; width:18%;"
                         message += " background-color: #F4F4F4;'>"
                     else:
                         message += "<td style='border: 1px solid black; width:18%;'>"
                     message += "Insatisfatório (I)</th>"
 
-                    if converte_letra(julg.nota) == "D":
+                    if (not julg.na) and converte_letra(julg.nota) == "D":
                         message += "<td style='border: 2px solid black; width:18%;"
                         message += " background-color: #F4F4F4;'>"
                     else:
                         message += "<td style='border: 1px solid black; width:18%;'>"
                     message += "Em Desenvolvimento (D)</th>"
 
-                    if converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+":
+                    if (not julg.na) and ( converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+" ):
                         message += "<td style='border: 2px solid black; width:18%;"
                         message += " background-color: #F4F4F4;'>"
                     else:
                         message += "<td style='border: 1px solid black; width:18%;'>"
                     message += "Essencial (C/C+)</th>"
 
-                    if converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+":
+                    if (not julg.na) and ( converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+" ):
                         message += "<td style='border: 2px solid black; width:18%;"
                         message += " background-color: #F4F4F4;'>"
                     else:
                         message += "<td style='border: 1px solid black; width:18%;'>"
                     message += "Proficiente (B/B+)</th>"
 
-                    if converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+":
+                    if (not julg.na) and ( converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+" ):
                         message += "<td style='border: 2px solid black; width:18%;"
                         message += " background-color: #F4F4F4;'>"
                     else:
@@ -3912,7 +3924,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
                     message += "</tr>"
                     message += "<tr>"
 
-                    if converte_letra(julg.nota) == "I":
+                    if (not julg.na) and converte_letra(julg.nota) == "I":
                         message += "<td style='border: 2px solid black;"
                         message += " background-color: #F4F4F4;'>"
                     else:
@@ -3920,7 +3932,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
                     message += "{0}".format(julg.objetivo.rubrica_I)
                     message += "</td>"
 
-                    if converte_letra(julg.nota) == "D":
+                    if (not julg.na) and converte_letra(julg.nota) == "D":
                         message += "<td style='border: 2px solid black;"
                         message += " background-color: #F4F4F4;'>"
                     else:
@@ -3928,7 +3940,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
                     message += "{0}".format(julg.objetivo.rubrica_D)
                     message += "</td>"
 
-                    if converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+":
+                    if (not julg.na) and ( converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+" ):
                         message += "<td style='border: 2px solid black;"
                         message += " background-color: #F4F4F4;'>"
                     else:
@@ -3936,7 +3948,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
                     message += "{0}".format(julg.objetivo.rubrica_C)
                     message += "</td>"
 
-                    if converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+":
+                    if (not julg.na) and ( converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+" ):
                         message += "<td style='border: 2px solid black;"
                         message += " background-color: #F4F4F4;'>"
                     else:
@@ -3944,7 +3956,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
                     message += "{0}".format(julg.objetivo.rubrica_B)
                     message += "</td>"
 
-                    if converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+":
+                    if (not julg.na) and ( converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+" ):
                         message += "<td style='border: 2px solid black;"
                         message += " background-color: #F4F4F4;'>"
                     else:

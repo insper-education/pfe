@@ -31,7 +31,7 @@
       <th style="border-right:0px; border-left:0px;"></th>
       <th style="border-right:0px; border-left:0px;"></th>
       <th style="border-right:0px; border-left:0px;"></th>
-      <th colspan="2" class="text-center">
+      <th colspan="3" class="text-center">
       <b>Banca</b>
       </th>
     </tr>
@@ -41,9 +41,10 @@
       <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Orientador</th>
       <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Inter.</th>
       <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">Final</th>
+      <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">Falconi</th>
     </tr>      
 
-    {% for projeto, banca_intermediaria, banca_final in tabela %} 
+    {% for projeto, banca_intermediaria, banca_final, banca_falconi in tabela %} 
     <tr class="item">
         <td>
           <a href="{% url 'projeto_completo' projeto.id %}">
@@ -72,6 +73,11 @@
         <td class="text-center" style="white-space: nowrap;">
           <a href="{% url 'conceitos_obtidos' projeto.id %}">
             {{ banca_final }}
+          </a>
+        </td>
+        <td class="text-center" style="white-space: nowrap;">
+          <a href="{% url 'conceitos_obtidos' projeto.id %}">
+            {{ banca_falconi }}
           </a>
         </td>
 

@@ -916,6 +916,9 @@ class Avaliacao2(models.Model):
                                  on_delete=models.SET_NULL, null=True, blank=True,
                                  help_text='Objetivo de Aprendizagem')
 
+    na = models.BooleanField("Não Avaliado", default=False,
+                                help_text='Caso o avaliador não tenha avaliado esse quesito')
+
     def __str__(self):
         for i,j in TIPO_DE_AVALIACAO:
             if self.tipo_de_avaliacao==i:
