@@ -10,16 +10,6 @@
 <!-- BASEADO EM: https://github.com/fullcalendar/fullcalendar -->
 
 {% load static %}
-{% comment %} <link href='https://unpkg.com/@fullcalendar/core@4.3.1/main.min.css' rel='stylesheet' />
-<link href='https://unpkg.com/@fullcalendar/daygrid@4.3.0/main.min.css' rel='stylesheet' />
-<link href='https://unpkg.com/@fullcalendar/timegrid@4.3.0/main.min.css' rel='stylesheet' />
-<link href='https://unpkg.com/@fullcalendar/list@4.3.0/main.min.css' rel='stylesheet' />
-
-<script src='https://unpkg.com/@fullcalendar/core@4.3.1/main.min.js'></script>
-<script src='https://unpkg.com/@fullcalendar/interaction@4.3.0/main.min.js'></script>
-<script src='https://unpkg.com/@fullcalendar/daygrid@4.3.0/main.min.js'></script>
-<script src='https://unpkg.com/@fullcalendar/timegrid@4.3.0/main.min.js'></script>
-<script src='https://unpkg.com/@fullcalendar/list@4.3.0/main.min.js'></script> {% endcomment %}
 
 <link href="{% static 'fullcalendar-4.4.2/core/main.min.css' %}" rel='stylesheet' />
 <link href="{% static 'fullcalendar-4.4.2/daygrid/main.min.css' %}" rel='stylesheet' />
@@ -132,7 +122,6 @@
       <div class="one">
         <br><br>
         <a href="{% url 'bancas_criar'%}"><h5>Agendar Banca</h5></a>
-        <a href="{% url 'bancas_buscar'%}"><h5>Editar Banca</h5></a>
         <a href="{% url 'bancas_lista' 'proximas' %}"><h5>Listar Bancas</h5></a>
       </div>
       <div class="two" id='calendar'></div>

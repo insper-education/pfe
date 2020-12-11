@@ -20,6 +20,8 @@ from icalendar import Calendar, Event, vCalAddress
 
 from xhtml2pdf import pisa # Para gerar o PDF
 
+from urllib.parse import quote, unquote
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.sites.models import Site
@@ -3236,18 +3238,27 @@ def emails(request):
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
-def bancas_lista(request, periodo):
-    """Lista todas as bancas agendadas, conforme periodo pedido."""
-    #configuracao = Configuracao.objects.all().first()
-    todas_bancas = Banca.objects.all().order_by("startDate")
-    if periodo == "proximas":
+def bancas_lista(request, periodo_projeto):
+    """Lista as bancas agendadas, conforme periodo ou projeto pedido."""
+
+    projeto = None
+
+    if periodo_projeto == "proximas":
         hoje = datetime.date.today()
-        bancas = todas_bancas.filter(startDate__gt=hoje)
+        bancas = Banca.objects.filter(startDate__gt=hoje).order_by("startDate")
+    elif periodo_projeto == "todas":
+        bancas = Banca.objects.all().order_by("startDate")
     else:
-        bancas = todas_bancas
+        try:
+            projeto = Projeto.objects.get(id=periodo_projeto)
+        except Projeto.DoesNotExist:
+            return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
+        bancas = Banca.objects.filter(projeto=projeto).order_by("startDate")
+
     context = {
         'bancas' : bancas,
-        'periodo' : periodo,
+        'periodo' : periodo_projeto,
+        "projeto" : projeto,
     }
     return render(request, 'projetos/bancas_lista.html', context)
 
@@ -3349,19 +3360,6 @@ def bancas_criar(request):
         }
         return render(request, 'projetos/bancas_criar.html', context)
 
-@login_required
-@permission_required('users.altera_professor', login_url='/projetos/')
-def bancas_buscar(request):
-    """Busca uma banca de avaliação para posteriormente ser editador."""
-    #configuracao = Configuracao.objects.all().first()
-    if request.method == 'POST':
-        return HttpResponse("Acesso Inadequado.")
-    else:
-        bancas = Banca.objects.all().order_by("-startDate")
-        context = {
-            'bancas' : bancas,
-        }
-        return render(request, 'projetos/bancas_buscar.html', context)
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
@@ -3727,23 +3725,21 @@ def get_peso(banca, objetivo):
 
 #@login_required
 #@permission_required("users.altera_professor", login_url='/projetos/')
-def avaliacao(request, primarykey): #acertar isso para pk
+def avaliacao_banca(request, banca_id):
     """Cria uma tela para preencher avaliações de bancas."""
     try:
-        projeto = Projeto.objects.get(pk=primarykey)
+        banca = Banca.objects.get(pk=banca_id)
 
-        try:
-            banca = Banca.objects.filter(projeto=projeto).order_by("startDate").last()
-        except Banca.DoesNotExist:
-            return HttpResponseNotFound('<h1>Banca não encontrada!</h1>')
+        if not banca.projeto:
+            return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')    
 
-    except Projeto.DoesNotExist:
-        return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
+    except Banca.DoesNotExist:
+        return HttpResponseNotFound('<h1>Banca não encontrada!</h1>')
 
     if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1: # Intermediária e Final
-        objetivos = ObjetivosDeAprendizagem.objects.filter(avaliacao_banca=True)
+        objetivos = ObjetivosDeAprendizagem.objects.filter(avaliacao_banca=True).order_by("id")
     elif banca.tipo_de_banca == 2: # Falconi
-        objetivos = ObjetivosDeAprendizagem.objects.filter(avaliacao_falconi=True)
+        objetivos = ObjetivosDeAprendizagem.objects.filter(avaliacao_falconi=True).order_by("id")
     else:
         return HttpResponseNotFound('<h1>Tipo de Banca não indentificado!</h1>')
 
@@ -3760,7 +3756,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
                 tipo_de_avaliacao = 99 # (99, 'Falconi'),
 
             # Identifica que uma avaliação já foi realizada anteriormente
-            realizada = Avaliacao2.objects.filter(projeto=projeto, avaliador=avaliador, tipo_de_avaliacao=tipo_de_avaliacao).exists()
+            realizada = Avaliacao2.objects.filter(projeto=banca.projeto, avaliador=avaliador, tipo_de_avaliacao=tipo_de_avaliacao).exists()
 
             OBJETIVOS_POSSIVEIS = 5
             julgamento = [None]*OBJETIVOS_POSSIVEIS
@@ -3768,7 +3764,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
                 if 'objetivo.{0}'.format(i+1) in request.POST:
                     obj_nota = request.POST['objetivo.{0}'.format(i+1)]
                     conceito = obj_nota.split('.')[1]
-                    julgamento[i] = Avaliacao2.create(projeto=projeto)
+                    julgamento[i] = Avaliacao2.create(projeto=banca.projeto)
                     julgamento[i].avaliador = avaliador
                     pk_objetivo = int(obj_nota.split('.')[0])
                     julgamento[i].objetivo = ObjetivosDeAprendizagem.objects.get(pk=pk_objetivo)
@@ -3783,7 +3779,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
 
             julgamento_observacoes = None
             if 'observacoes' in request.POST and request.POST['observacoes'] != "":
-                julgamento_observacoes = Observacao.create(projeto=projeto)
+                julgamento_observacoes = Observacao.create(projeto=banca.projeto)
                 julgamento_observacoes.avaliador = avaliador
                 julgamento_observacoes.observacoes = request.POST['observacoes']
                 julgamento_observacoes.tipo_de_avaliacao = tipo_de_avaliacao
@@ -3796,10 +3792,10 @@ def avaliacao(request, primarykey): #acertar isso para pk
                 message += "Essa é uma atualização de uma avaliação já enviada anteriormente!"
                 message += "</h3><br><br>"
 
-            message += "<b>Título do Projeto:</b> {0}<br>\n".format(projeto.get_titulo())
-            message += "<b>Organização:</b> {0}<br>\n".format(projeto.organizacao)
-            message += "<b>Orientador:</b> {0}<br>\n".format(projeto.orientador)
-            message += "<b>Avaliador:</b> {0}<br>\n".format(avaliador)
+            message += "<b>Título do Projeto:</b> {0}<br>\n".format(banca.projeto.get_titulo())
+            message += "<b>Organização:</b> {0}<br>\n".format(banca.projeto.organizacao)
+            message += "<b>Orientador:</b> {0}<br>\n".format(banca.projeto.orientador)
+            message += "<b>Avaliador:</b> {0}<br>\n".format(avaliador.get_full_name())
             message += "<b>Data:</b> {0}<br>\n".format(banca.startDate.strftime("%d/%m/%Y %H:%M"))
 
             message += "<b>Banca:</b> "
@@ -3850,19 +3846,20 @@ def avaliacao(request, primarykey): #acertar isso para pk
             if julgamento_observacoes:
                 message += "<b>Observações:</b>\n"
                 message += "<p style='border:1px; border-style:solid; padding: 0.3em; margin: 0;'>"
-                message += julgamento_observacoes.observacoes.replace('\n', '<br>\n')
+                message += html.escape(julgamento_observacoes.observacoes).replace('\n', '<br>\n')
                 message += "</p>"
                 message += "<br>\n<br>\n"
 
-            message += "<a href='" + settings.SERVER + "/projetos/avaliacao/" + str(primarykey)
+            message += "<a href='" + settings.SERVER + "/projetos/avaliacao_banca/" + str(banca_id)
 
             message += "?avaliador=" + str(avaliador.id)
             for count, julg in enumerate(julgamento):
                 if julg and not julg.na:
                     message += "&objetivo" + str(count) + "=" + str(julg.objetivo.id)
                     message += "&conceito" + str(count) + "=" + converte_letra(julg.nota, mais="X")
-            message += "&observacoes=" + julgamento_observacoes.observacoes
+            message += "&observacoes=" + quote(julgamento_observacoes.observacoes)
             message += "'>"
+
             message += "Caso deseje reenviar sua avaliação, clique aqui."
             message += "</a><br>\n"
             message += "<br>\n"
@@ -3959,11 +3956,11 @@ def avaliacao(request, primarykey): #acertar isso para pk
                     message += "</tr>"
                     message += "</table>"
 
-            subject = 'Banca PFE : {0}'.format(projeto)
+            subject = 'Banca PFE : {0}'.format(banca.projeto)
             
             recipient_list = [avaliador.email,]
             if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1: # Intermediária e Final
-                recipient_list += [projeto.orientador.user.email,]
+                recipient_list += [banca.projeto.orientador.user.email,]
             elif banca.tipo_de_banca == 2: # Falconi
                 recipient_list += ["lpsoares@insper.edu.br",]
 
@@ -4026,7 +4023,7 @@ def avaliacao(request, primarykey): #acertar isso para pk
             tmp2 = request.GET.get('conceito'+str(i),'')
             conceitos[i] = (tmp1, tmp2)
     
-        observacoes = request.GET.get('observacoes','')
+        observacoes = unquote(request.GET.get('observacoes',''))
     
         context = {
             'pessoas' : pessoas,

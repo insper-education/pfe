@@ -13,15 +13,14 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'), #pagina inicial
     path('administracao/', views.administracao, name='administracao'),
-    path('avaliacao/<int:primarykey>', views.avaliacao, name='avaliacao'),
+    path('avaliacao_banca/<int:banca_id>', views.avaliacao_banca, name='avaliacao_banca'),
     path('avisos_listar/', views.avisos_listar, name='avisos_listar'),
     path('backup/<str:formato>', views.backup, name='backup'),
     path('banca_ver/<int:primarykey>', views.banca_ver, name='banca_ver'),
     path('bancas_index/', views.bancas_index, name='bancas_index'),
-    path('bancas_buscar/', views.bancas_buscar, name='bancas_buscar'),
     path('bancas_criar/', views.bancas_criar, name='bancas_criar'),
     path('bancas_editar/<int:primarykey>', views.bancas_editar, name='bancas_editar'),
-    path('bancas_lista/<str:periodo>', views.bancas_lista, name='bancas_lista'),
+    path('bancas_lista/<str:periodo_projeto>', views.bancas_lista, name='bancas_lista'),
     path('bancas_tabela/', views.bancas_tabela, name='bancas_tabela'),
     path('cadastrar_organizacao/', views.cadastrar_organizacao, name='cadastrar_organizacao'),
     path('cadastrar_usuario/', views.cadastrar_usuario, name='cadastrar_usuario'),

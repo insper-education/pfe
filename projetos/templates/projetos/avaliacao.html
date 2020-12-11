@@ -81,95 +81,47 @@
           <b>{{objetivo.titulo}}</b>: {{objetivo.objetivo}}
           <table style="width:100%">
             <tr>
-              <th class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}NA" style="width:10%;">
-                <input type="radio" class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}NA" id="objetivo.{{forloop.counter}}{{objetivo.id}}.NA" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.NA" required> 
-                 <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.NA">N/A</label>
+              <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA" style="width:10%;">
+                <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA" id="objetivo{{objetivo.id}}NA" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.NA" required> 
+                 <label for="objetivo.{{objetivo.id}}.NA">N/A</label>
               </th>
-              <th class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}I" style="width:18%">
-                <input type="radio" class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}I" id="objetivo.{{forloop.counter}}{{objetivo.id}}.I " name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.I " required
-                {% for obj, conceito in conceitos %}
-                  {% if obj == objetivo.id and conceito == "I" %}
-                    checked="checked"
-                  {% endif %}
-                {% endfor %}
-                >
-                <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.I ">Insatisfatório (I)</label>
+              <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" style="width:18%">
+                <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" id="objetivo{{objetivo.id}}I" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.I" required>
+                <label for="objetivo.{{objetivo.id}}.I ">Insatisfatório (I)</label>
               </th>
-              <th class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}D" style="width:18%">
-                <input type="radio" class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}D" id="objetivo.{{forloop.counter}}{{objetivo.id}}.D " name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.D " required
-                {% for obj, conceito in conceitos %}
-                  {% if obj == objetivo.id and conceito == "D" %}
-                    checked="checked"
-                  {% endif %}
-                {% endfor %}
-                >
-                <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.D ">Em Desenvolvimento (D)</label>
+              <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" style="width:18%">
+                <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" id="objetivo{{objetivo.id}}D" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.D " required>
+                <label for="objetivo{{objetivo.id}}D ">Em Desenvolvimento (D)</label>
               </th>
-              <th class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}C" style="width:18%">
-                <input type="radio" class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}C" id="objetivo.{{forloop.counter}}{{objetivo.id}}.C " name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.C " required
-                {% for obj, conceito in conceitos %}
-                  {% if obj == objetivo.id and conceito == "C" %}
-                    checked="checked"
-                  {% endif %}
-                {% endfor %}
-                >
-                <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.C ">Essencial (C)</label>
+              <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" style="width:18%">
+                <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C" id="objetivo{{objetivo.id}}C" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.C" required>
+                <label for="objetivo{{objetivo.id}}C ">Essencial (C)</label>
                 &nbsp;&nbsp;&nbsp;&nbsp;
-                <input type="radio" class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}C" id="objetivo.{{forloop.counter}}{{objetivo.id}}.C+" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.C+" required
-                {% for obj, conceito in conceitos %}
-                  {% if obj == objetivo.id and conceito == "CX" %}
-                    checked="checked"
-                  {% endif %}
-                {% endfor %}
-                >
-                <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.C+">(C+)</label>
+                <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" id="objetivo{{objetivo.id}}CX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.C+" required>
+                <label for="objetivo{{objetivo.id}}C+">(C+)</label>
               </th>
-              <th class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}B" style="width:18%">
-                <input type="radio" class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}B" id="objetivo.{{forloop.counter}}{{objetivo.id}}.B " name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.B " required
-                {% for obj, conceito in conceitos %}
-                  {% if obj == objetivo.id and conceito == "B" %}
-                    checked="checked"
-                  {% endif %}
-                {% endfor %}
-                >
-                <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.B ">Proficiente (B)</label>
+              <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" style="width:18%">
+                <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B" id="objetivo{{objetivo.id}}B" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.B" required>
+                <label for="objetivo{{objetivo.id}}B ">Proficiente (B)</label>
                 &nbsp;&nbsp;&nbsp;&nbsp;
-                <input type="radio" class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}B" id="objetivo.{{forloop.counter}}{{objetivo.id}}.B+" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.B+" required
-                {% for obj, conceito in conceitos %}
-                  {% if obj == objetivo.id and conceito == "BX" %}
-                    checked="checked"
-                  {% endif %}
-                {% endfor %}
-                >
-                <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.B+">(B+)</label>
+                <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" id="objetivo{{objetivo.id}}BX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.B+" required>
+                <label for="objetivo{{objetivo.id}}B+">(B+)</label>
               </th>
-              <th class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}A" style="width:18%">
-                <input type="radio" class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}A" id="objetivo.{{forloop.counter}}{{objetivo.id}}.A " name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.A " required
-                {% for obj, conceito in conceitos %}
-                  {% if obj == objetivo.id and conceito == "A" %}
-                    checked="checked"
-                  {% endif %}
-                {% endfor %}
-                >
-                <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.A ">Avançado (A)</label>
+              <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" style="width:18%">
+                <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A" id="objetivo{{objetivo.id}}A" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.A" required>
+                <label for="objetivo{{objetivo.id}}A ">Avançado (A)</label>
                 &nbsp;&nbsp;&nbsp;&nbsp;
-                <input type="radio" class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}A" id="objetivo.{{forloop.counter}}{{objetivo.id}}.A+" name="objetivo.{{ forloop.counter }}" value="{{objetivo.id}}.A+" required
-                {% for obj, conceito in conceitos %}
-                  {% if obj == objetivo.id and conceito == "AX" %}
-                    checked="checked"
-                  {% endif %}
-                {% endfor %}
-                >
-                <label for="objetivo.{{forloop.counter}}{{objetivo.id}}.A+">(A+)</label>
+                <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" id="objetivo{{objetivo.id}}AX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.A+" required>
+                <label for="objetivo{{objetivo.id}}A+">(A+)</label>
               </th>
             </tr>
             <tr>
-              <td class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}NA"><label for="objetivo.{{forloop.counter}}{{objetivo.id}}.NA">caso prefira não avaliar este objetivo, selecione esta coluna.</label></td>
-              <td class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}I"><label for="objetivo.{{forloop.counter}}{{objetivo.id}}.I ">{{objetivo.rubrica_I}}</label></td>
-              <td class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}D"><label for="objetivo.{{forloop.counter}}{{objetivo.id}}.D ">{{objetivo.rubrica_D}}</label></td>
-              <td class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}C"><label for="objetivo.{{forloop.counter}}{{objetivo.id}}.C ">{{objetivo.rubrica_C}}</label></td>
-              <td class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}B"><label for="objetivo.{{forloop.counter}}{{objetivo.id}}.B ">{{objetivo.rubrica_B}}</label></td>
-              <td class="tabela{{forloop.counter}} objetivo{{forloop.counter}}{{objetivo.id}}A"><label for="objetivo.{{forloop.counter}}{{objetivo.id}}.A ">{{objetivo.rubrica_A}}</label></td>
+              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA">caso prefira não avaliar este objetivo, selecione esta coluna.</label></td>
+              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_I}}</label></td>
+              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_D}}</label></td>
+              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_C}}</label></td>
+              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_B}}</label></td>
+              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_A}}</label></td>
             </tr>
           </table><br>
         {% endfor %}
@@ -189,16 +141,25 @@
     <p>Não existe projeto disponível para avaliar.</p>
   {% endif %}
   <p>&nbsp;</p>
-  
+
   <script>
 
-    function cores(e) {
-      $("."+e.target.classList[0]).css('backgroundColor', '#FFFFFF');
-      $("."+e.target.classList[1]).css('backgroundColor', '#DDDDFF');
-    }
+    var branco = '#FFFFFF';
+    var azul = '#DDDDFF';
 
+    {% comment %} Para acertar os valores caso venham conceitos por REST   {% endcomment %}
+    {% for obj, conceito in conceitos %}
+        $("#objetivo{{obj}}"+"{{conceito}}").prop("checked", true);
+        $(".objetivo{{obj}}"+"{{conceito}}").css('backgroundColor', azul);
+    {% endfor %}
+
+    {% comment %} Mudas as cores conforme objetos são clicados {% endcomment %}
+    function cores(e) {
+      $("."+e.target.classList[0]).css('backgroundColor', branco);
+      $("."+e.target.classList[1]).css('backgroundColor', azul);
+    }
     $('input[type="radio"]').on('click change', cores);
-    
+
   </script>
 
 {% endblock %}
