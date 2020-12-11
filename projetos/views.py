@@ -2214,6 +2214,14 @@ def proposta_submissao(request):
 
     areas = Area.objects.filter(ativa=True)
 
+    organizacao_str = request.GET.get('organizacao', None)
+    if organizacao_str:
+        try:
+            organizacao_id = int(organizacao_str)
+            organizacao = Organizacao.objects.get(id=organizacao_id)
+        except (ValueError, Organizacao.DoesNotExist):
+            return HttpResponseNotFound('<h1>Organização não encontrado!</h1>')
+
     context = {
         'full_name' : full_name,
         'email' : email_sub,
@@ -2831,6 +2839,7 @@ def coorientadores_tabela(request):
 
     ano = 2018    # Ano de início do PFE
     semestre = 2  # Semestre de início do PFE
+
     while True:
         professores = []
         grupos = []
@@ -4565,6 +4574,22 @@ def cadastrar_usuario(request):
     context = {
         "organizacoes" : Organizacao.objects.all(),
     }
+
+    tipo = request.GET.get('tipo', None)
+    if tipo:
+        if tipo=="parceiro":
+            organizacao_str = request.GET.get('organizacao', None)
+            if organizacao_str:
+                try:
+                    organizacao_id = int(organizacao_str)
+                    organizacao_selecionada = Organizacao.objects.get(id=organizacao_id)
+                except (ValueError, Organizacao.DoesNotExist):
+                    return HttpResponseNotFound('<h1>Organização não encontrado!</h1>')
+                context["organizacao_selecionada"] = organizacao_selecionada
+        else:
+            return HttpResponseNotFound('<h1>Tipo não reconhecido!</h1>')
+        context["tipo"] = tipo
+
     return render(request, 'projetos/cadastra_usuario.html', context)
 
 @login_required

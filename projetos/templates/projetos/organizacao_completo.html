@@ -39,7 +39,10 @@
   {% if organizacao.informacoes %}
     <strong>Informações sobre a empresa :</strong> {{ organizacao.informacoes|linebreaks }}
   {% endif %}
-  <br><strong>contato(s):</strong><br>
+
+  <br><strong>contato(s):</strong>
+  <small><a href="{% url 'cadastrar_usuario' %}?tipo=parceiro&organizacao={{organizacao.id}}">&#10133;</a></small>
+  <br>
   {% for parceiro in organizacao.parceiro_set.all %}
     {% if parceiro.user.is_active %}
     <li style="margin-bottom: 6px;" >
@@ -61,6 +64,7 @@
     </li>
     {% endif %}
   {% endfor %}
+
   {% for parceiro in organizacao.parceiro_set.all %}
     {% if not parceiro.user.is_active %}
     <li style="color: lightgrey;">
@@ -140,7 +144,7 @@
 
   {% if organizacao.proposta_set.all %}
     <hr>
-    <h3>Propostas</h3>
+    <h3>Propostas <small><a href="{% url 'proposta_submissao' %}?organizacao={{organizacao.id}}">&#10133;</a></small></h3>
     {% for proposta in organizacao.proposta_set.all %}
       <a href="{% url 'proposta_completa' proposta.id %}"> 
         <li>
@@ -171,7 +175,7 @@
   {% endif %}
   
   <hr>
-  <h3>Anotações <a href="{% url 'cria_anotacao' organizacao.id %}">&#10133;</a></h3>
+  <h3>Anotações <small><a href="{% url 'cria_anotacao' organizacao.id %}">&#10133;</a></small></h3>
   {% if organizacao.anotacao_set.all %}
     {% for anotacao in organizacao.anotacao_set.all|dictsortreversed:"momento" %}
       {{anotacao.autor.get_full_name}} [{{anotacao.momento.date}}] : {{anotacao.texto}}<br>

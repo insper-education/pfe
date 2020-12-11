@@ -23,7 +23,7 @@
       <th onclick="w3.sortHTML('#professores', '.item', 'td:nth-child(1)')" style="cursor:pointer; text-align: center;width:300px;">Nome</th>
       <th onclick="w3.sortHTML('#professores', '.item', 'td:nth-child(2)')" style="cursor:pointer; text-align: center;width:70px;">Grupos</th>
     </tr>
-    {% for professor,grupos in professores %} 
+    {% for professor, grupos in professores %} 
       <tr class="item">
         <td>
           <a href="{% url 'professor_detail' professor.id %}">
@@ -38,7 +38,9 @@
             <br>
           {% endfor %}
         "> 
-          {{grupos|length}}
+          <span style="color:blue;">
+            {{grupos|length}}
+          <span>
         </td>
       </tr>
     {% endfor %}

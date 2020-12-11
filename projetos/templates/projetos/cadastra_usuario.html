@@ -27,9 +27,9 @@
 
   <form class="myForm" action="" method="post"> {% csrf_token %}  
   
-    <input type="radio" class="tipo" name="tipo_de_usuario" id="estudante" value="estudante" required> <label for="estudante"> Estudante</label>&nbsp;&nbsp;&nbsp;
-    <input type="radio" class="tipo" name="tipo_de_usuario" id="professor" value="professor" required> <label for="professor"> Professor</label>&nbsp;&nbsp;&nbsp;
-    <input type="radio" class="tipo" name="tipo_de_usuario" id="parceiro" value="parceiro" required> <label for="parceiro"> Parceiro</label>
+    <input type="radio" class="tipo" name="tipo_de_usuario" id="estudante" value="estudante" required {% if tipo == "estudante"%}checked="checked"{% endif %}> <label for="estudante"> Estudante</label>&nbsp;&nbsp;&nbsp;
+    <input type="radio" class="tipo" name="tipo_de_usuario" id="professor" value="professor" required {% if tipo == "professor"%}checked="checked"{% endif %}> <label for="professor"> Professor</label>&nbsp;&nbsp;&nbsp;
+    <input type="radio" class="tipo" name="tipo_de_usuario" id="parceiro" value="parceiro" required {% if tipo == "parceiro"%}checked="checked"{% endif %}> <label for="parceiro"> Parceiro</label>
     <br><br>
 
     <label for="nome">Nome do Usuário<br></label><br>
@@ -58,6 +58,7 @@
 
     <br><br>
 
+    {% comment %} Estudante {% endcomment %}
     <div style="display: block; padding-left: 32px" class="row" data-type="estudante">
 
       <label for="matricula">Matrícula: </label> <input type="text" size="8" maxlength="8" id="matricula" name="matricula" value="{{matricula}}"><br>
@@ -73,6 +74,8 @@
       <input type="number" id="semestre" name="semestre" min="1" max="2" value="{{semestre}}" required>
 
     </div>
+
+    {% comment %} Professor {% endcomment %}
     <div style="display: block; padding-left: 32px" class="row" data-type="professor">
 
       Dedicação: 
@@ -86,13 +89,15 @@
       <label for="lattes">lattes:</label><input type="text" size="73" maxlength="73" id="lattes" name="lattes" value="{{lattes}}" placeholder="https://lattes.cnpq.br/"><br>
 
     </div>
+
+    {% comment %} Parceiro {% endcomment %}
     <div style="display: block; padding-left: 32px" class="row" data-type="parceiro">
 
       <br><b><label for="organizacao">Organização</label></b>:
       <select name="organizacao" id="organizacao" title="Selecione organização">
           <option disabled selected value> -- selecione uma organização -- </option>
           {% for organizacao in organizacoes %}
-            <option value="{{organizacao.id}}">
+            <option value="{{organizacao.id}}" {% if organizacao_selecionada.id == organizacao.id %}selected="selected"{% endif %} >
               {{organizacao}}
             </option>  
           {% endfor %}
