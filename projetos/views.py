@@ -3736,8 +3736,15 @@ def get_peso(banca, objetivo):
 #@permission_required("users.altera_professor", login_url='/projetos/')
 def avaliacao_banca(request, banca_id):
     """Cria uma tela para preencher avaliações de bancas."""
+    
     try:
         banca = Banca.objects.get(pk=banca_id)
+
+        if banca.endDate.date() + datetime.timedelta(days=5) < datetime.date.today():
+            mensagem = "Prazo para submissão da Avaliação de Banca vencido.<br>"
+            mensagem += "Entre em contato com a coordenação do PFE para enviar sua avaliação.<br>"
+            mensagem += "Luciano Pereira Soares <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>.<br>"
+            return HttpResponse(mensagem)
 
         if not banca.projeto:
             return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')    
