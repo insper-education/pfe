@@ -7,110 +7,134 @@
 
 {% block head %}
 
-<!-- BASEADO EM: https://github.com/fullcalendar/fullcalendar -->
+  {% load static %}
+  {% load date_extras %}
 
-{% load static %}
+  <!-- BASEADO EM: https://github.com/fullcalendar/fullcalendar -->
+  <link href="{% static 'fullcalendar-4.4.2/core/main.min.css' %}" rel='stylesheet' />
+  <link href="{% static 'fullcalendar-4.4.2/daygrid/main.min.css' %}" rel='stylesheet' />
+  <link href="{% static 'fullcalendar-4.4.2/timegrid/main.min.css' %}" rel='stylesheet' />
+  <link href="{% static 'fullcalendar-4.4.2/list/main.min.css' %}" rel='stylesheet' />
 
-<link href="{% static 'fullcalendar-4.4.2/core/main.min.css' %}" rel='stylesheet' />
-<link href="{% static 'fullcalendar-4.4.2/daygrid/main.min.css' %}" rel='stylesheet' />
-<link href="{% static 'fullcalendar-4.4.2/timegrid/main.min.css' %}" rel='stylesheet' />
-<link href="{% static 'fullcalendar-4.4.2/list/main.min.css' %}" rel='stylesheet' />
+  <script src="{% static 'fullcalendar-4.4.2/core/main.min.js' %}"></script>
+  <script src="{% static 'fullcalendar-4.4.2/interaction/main.min.js' %}"></script>
+  <script src="{% static 'fullcalendar-4.4.2/daygrid/main.min.js' %}"></script>
+  <script src="{% static 'fullcalendar-4.4.2/timegrid/main.min.js' %}"></script>
+  <script src="{% static 'fullcalendar-4.4.2/list/main.min.js' %}"></script>
 
-<script src="{% static 'fullcalendar-4.4.2/core/main.min.js' %}"></script>
-<script src="{% static 'fullcalendar-4.4.2/interaction/main.min.js' %}"></script>
-<script src="{% static 'fullcalendar-4.4.2/daygrid/main.min.js' %}"></script>
-<script src="{% static 'fullcalendar-4.4.2/timegrid/main.min.js' %}"></script>
-<script src="{% static 'fullcalendar-4.4.2/list/main.min.js' %}"></script>
+  <script src="{% static 'fullcalendar-4.4.2/core/locales/pt-br.js' %}"></script>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var calendarEl = document.getElementById('calendar');
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var calendarEl = document.getElementById('calendar');
 
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-      plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'list' ],
-      header: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
-      },
-      navLinks: true, // can click day/week names to navigate views
-      businessHours: true, // display business hours
-      editable: true,
-      events: [
-        {% for banca in bancas %} 
-          {
-              title: '{% if banca.projeto.titulo_final %}{{banca.projeto.titulo_final}}{% else %}{{banca.projeto.titulo}}{% endif %} [{{banca.projeto.organizacao}}]\nLocal: {% if banca.location %}{{banca.location}}{% else %}N/D{% endif %}\nBanca: {{banca.projeto.orientador.user.first_name}} {{banca.projeto.orientador.user.last_name}}(O){% if banca.membro1 %}; {{banca.membro1.first_name}} {{banca.membro1.last_name}}{% endif %}{% if banca.membro2 %}; {{banca.membro2.first_name}} {{banca.membro2.last_name}}{% endif %}{% if banca.membro3 %}; {{banca.membro3.first_name}} {{banca.membro3.last_name}}{% endif %}',
-              start: '{{banca.startDate.year}}-{{banca.startDate.month|stringformat:"02d"}}-{{banca.startDate.day|stringformat:"02d"}}T{{banca.startDate.hour|stringformat:"02d"}}:{{banca.startDate.minute|stringformat:"02d"}}:00',
-              end: '{{banca.endDate.year}}-{{banca.endDate.month|stringformat:"02d"}}-{{banca.endDate.day|stringformat:"02d"}}T{{banca.endDate.hour|stringformat:"02d"}}:{{banca.endDate.minute|stringformat:"02d"}}:00',
-              constraint: 'bancasIntermediarias20192',
-              color: '#257e4a'
-          },
-        {% endfor %}
-        // area onde as bancas podem ser alocadas
-        {
-          groupId: 'bancasIntermediarias20192',
-          start: '2019-10-07T08:00:00',
-          end: '2019-10-07T18:00:00',
-          rendering: 'background'
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'list' ],
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
         },
-        {
-          groupId: 'bancasIntermediarias20192',
-          start: '2019-10-08T08:00:00',
-          end: '2019-10-08T18:00:00',
-          rendering: 'background'
-        },
+        locale: 'pt-br',
+        navLinks: true, // can click day/week names to navigate views
+        businessHours: true, // display business hours
+        editable: true,
+        events: [
+          {% for banca in bancas %} 
+            {
+                {% if banca.projeto %}
+                  title: '{{banca.projeto.organizacao.sigla}} : ' + 
+                        '{{banca.projeto.get_titulo}}' +
+                        '{% if banca.projeto.orientador %}\nOri.: {{banca.projeto.orientador}}{% endif %}' +
+                        '{% if banca.location %}\nLocal: {{banca.location}}{% endif %}' +
+                        '\nBanca: {{banca.projeto.orientador.user.first_name}} {{banca.projeto.orientador.user.last_name}}(O){% if banca.membro1 %}; {{banca.membro1.first_name}} {{banca.membro1.last_name}}{% endif %}{% if banca.membro2 %}; {{banca.membro2.first_name}} {{banca.membro2.last_name}}{% endif %}{% if banca.membro3 %}; {{banca.membro3.first_name}} {{banca.membro3.last_name}}{% endif %}' +
+                        ' ',
+                {% else %}
+                  title: 'Projeto não identificado',
+                {% endif %}
 
-        // red areas where no events can be dropped
-        {
-          start: '2019-08-24',
-          end: '2019-08-28',
-          overlap: false,
-          rendering: 'background',
-          color: '#ff9f89'
-        },
-        {
-          start: '2019-08-06',
-          end: '2019-08-08',
-          overlap: false,
-          rendering: 'background',
-          color: '#ff9f89'
-        }
-      ]
+                start: '{{banca.startDate.year}}-{{banca.startDate.month|stringformat:"02d"}}-{{banca.startDate.day|stringformat:"02d"}}T{{banca.startDate.hour|stringformat:"02d"}}:{{banca.startDate.minute|stringformat:"02d"}}:00',
+
+                end: '{{banca.endDate.year}}-{{banca.endDate.month|stringformat:"02d"}}-{{banca.endDate.day|stringformat:"02d"}}T{{banca.endDate.hour|stringformat:"02d"}}:{{banca.endDate.minute|stringformat:"02d"}}:00',
+
+                url: '../bancas_editar/{{banca.id}}',
+
+                textColor: '#fafafa',
+
+                {% if banca.tipo_de_banca == 0 %}
+                  color: '#72b354'
+                {% elif banca.tipo_de_banca == 1 %}
+                  color: '#d1a214'
+                {% elif banca.tipo_de_banca == 2 %}
+                  color: '#df52f6'
+                {% else %}
+                  color: '#990000'
+                {% endif %}
+            },
+          {% endfor %}
+
+          // area onde as bancas podem ser alocadas
+          {% for dias in dias_bancas %} 
+            {
+              {% comment %} groupId: 'bancasIntermediarias20192', {% endcomment %}
+              {% with start=dias.startDate %}
+                start: '{{start.year}}-{{start.month|stringformat:"02d"}}-{{start.day|stringformat:"02d"}}',
+              {% endwith %}
+              {% with end=dias.endDate|plus_days:1 %}
+                end: '{{end.year}}-{{end.month|stringformat:"02d"}}-{{end.day|stringformat:"02d"}}',
+              {% endwith %}
+              rendering: 'background',
+
+              {% if dias.tipo_de_evento == 15 %}
+                color: '#72b354'
+              {% elif dias.tipo_de_evento == 14 %}
+                color: '#d1a214'
+              {% elif dias.tipo_de_evento == 19 %}
+                color: '#df52f6'
+              {% else %}
+                color: '#990000'
+              {% endif %}
+
+              {% comment %} color: '#99b9ff' {% endcomment %}
+            },
+          {% endfor %}
+        ]
+      });
+
+      calendar.render();
     });
 
-    calendar.render();
-  });
-
-</script>
-<style>
-  #calendar {
-    max-width: 900px;
-    margin: 0 auto;
-  }
-</style>
-<style>
-.wrap {
-  display: flex;
-}
-
-.one {
-  width: 20%;
-}
-
-.two {
-  width: 80%;
-}
-
-@media (max-width: 900px) {
+  </script>
+  <style>
+    #calendar {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+  </style>
+  <style>
   .wrap {
-    flex-direction: column-reverse;
+    display: flex;
   }
-  .one,
+
+  .one {
+    width: 20%;
+  }
+
   .two {
-    width: auto;
+    width: 80%;
   }
-}
-</style>
+
+  @media (max-width: 900px) {
+    .wrap {
+      flex-direction: column-reverse;
+    }
+    .one,
+    .two {
+      width: auto;
+    }
+  }
+  </style>
+
 {% endblock %}
 
 {% block content %}

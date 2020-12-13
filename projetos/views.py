@@ -2927,8 +2927,16 @@ def bancas_tabela(request):
 def bancas_index(request):
     """Menus de bancas e calendario de bancas."""
     bancas = Banca.objects.all()
+
+    dias_bancas_interm = Evento.objects.filter(tipo_de_evento=14) # (14, 'Banca intermediária', 'violet'),
+    dias_bancas_finais = Evento.objects.filter(tipo_de_evento=15) # (15, 'Bancas finais', 'yellow'),
+    dias_bancas_falcon = Evento.objects.filter(tipo_de_evento=50) # (50, 'Apresentação para Certificação Falconi', 'darkorange'),
+
+    dias_bancas = (dias_bancas_interm | dias_bancas_finais | dias_bancas_falcon)
+
     context = {
         'bancas': bancas,
+        'dias_bancas': dias_bancas,
     }
     return render(request, 'projetos/bancas_index.html', context)
 
