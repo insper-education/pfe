@@ -52,7 +52,22 @@
       {% for numero, texto in TIPO_DE_BANCA %}
         &nbsp;&nbsp;<input class="tipo_banca" id="tipo{{numero}}" type="radio" name="tipo" value="{{numero}}" {% if banca.tipo_de_banca == numero %}checked{% endif %} required> <label for="tipo{{numero}}">{{texto}}</label><br>
       {% endfor %}
-      
+
+      <script>
+      var minutos = 0
+      $(document).ready(function(){
+          $(".tipo_banca").change(function(){
+              var tipo = $(this).val();
+              if(tipo == 2) {  // Banca Falconi
+                minutos=30
+              } else {        // Outras Bancas
+                minutos=120
+              }
+              alert("You have selected the country - " + minutos);
+          });
+      });
+      </script>
+
       <br>
       <div>
         <label for="inicio">Inicio:</label> <input id="inicio" type = "datetime-local" name="inicio" 
@@ -90,7 +105,7 @@
 
         $("#inicio").change(function() {
           var data = new Date($(this).val());
-          data.setHours(data.getHours() + 2);
+          data.setMinutes(data.getMinutes() + minutos);
           $("#fim").val(data.toDatetimeLocal());
         });
       </script>
