@@ -9,6 +9,8 @@
 
   {% load banca_tipo %}
 
+  <script>{% include "tooltip.js" %}</script>
+
   <style>
     textarea {
       max-width:100%;
@@ -130,7 +132,10 @@
         <span class="red-bold">Não foram definidos Objetivos de Aprendizagem para essa Avaliação.</span><br>
       {% endif %}
       
-      <br><b>Observações:</b><br>
+      <br><b data-toggle="tooltip" data-html="true" animation="true"
+             title="Insira qualquer observação que achar relavante. O texto será encaminhado para os orientadores do projeto.">
+        Observações:
+      </b><br>
       <textarea name="observacoes" rows="8" cols="80" maxlength="2048">{{observacoes}}</textarea>
       
       <br><br>
