@@ -30,6 +30,26 @@ from .models import PFEUser, Aluno, Professor, Parceiro, Opcao, Administrador
 from .support import configuracao_estudante_vencida
 
 @login_required
+def user_detail(request, primarykey):
+    """Retorna a página conforme o perfil do usuário."""
+    try:
+        user = PFEUser.objects.get(pk=primarykey)
+    except PFEUser.DoesNotExist:
+        return HttpResponse("Usuário não encontrado.", status=401)
+
+    if user.tipo_de_usuario == 1: #aluno
+        return redirect('aluno_detail', user.aluno.id)
+
+    elif user.tipo_de_usuario == 2: #professor
+        return redirect('professor_detail', user.professor.id)
+
+    elif user.tipo_de_usuario == 3: #parceiro
+        return redirect('parceiro_detail', user.parceiro.id)
+
+    return HttpResponse("Usuário não encontrado.", status=401)
+
+
+@login_required
 def perfil(request):
     """Retorna a página conforme o perfil do usuário."""
     try:

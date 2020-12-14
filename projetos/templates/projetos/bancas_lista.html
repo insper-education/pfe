@@ -83,11 +83,11 @@
 
             {% if banca.projeto %}
               <b>Título do Projeto:</b> 
-              <a href="{% url 'projeto_completo' banca.projeto.id %}">
+              <a class="imprimir" href="{% url 'projeto_completo' banca.projeto.id %}">
                 {% if banca.projeto.titulo_final %}
                   {{banca.projeto.titulo_final}}</a><br>
                   <small>&nbsp;&nbsp;Antigo Título Provisório: 
-                    <a href="{% url 'projeto_completo' banca.projeto.id %}">{{banca.projeto.titulo}}</a>
+                    <a class="imprimir" href="{% url 'projeto_completo' banca.projeto.id %}">{{banca.projeto.titulo}}</a>
                   </small>
                 {% else %}
                   {{banca.projeto.titulo}}</a>
@@ -97,7 +97,7 @@
 
             {% if banca.projeto.organizacao %}
               <b>Organização:</b> 
-              <a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">
+              <a class="imprimir" href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">
                 {{ banca.projeto.organizacao.nome }}
               </a>
               <br>
@@ -120,8 +120,10 @@
             {% if banca.projeto.orientador %}
               <br>
               <b>Orientador:</b> 
-                {{banca.projeto.orientador.user.get_full_name}} 
-                <a href="mailto:{{banca.projeto.orientador.user.email}}">&lt;{{banca.projeto.orientador.user.email}}&gt;</a>
+                <a class="imprimir" href="{% url 'professor_detail' banca.projeto.orientador.id %}">
+                  {{banca.projeto.orientador.user.get_full_name}} 
+                </a>
+                <a class="email" href="mailto:{{banca.projeto.orientador.user.email}}">&lt;{{banca.projeto.orientador.user.email}}&gt;</a>
               <br><br>
             {% endif %}
             
@@ -131,20 +133,26 @@
                 <ol style="margin-bottom:0px;">
                   {% if banca.membro1 %}
                   <li>
-                    {{banca.membro1.get_full_name}}
-                    <a href="mailto:{{banca.membro1.email}}">&lt;{{banca.membro1.email}}&gt;</a>
+                    <a class="imprimir" href="{% url 'user_detail' banca.membro1.id %}">
+                      {{banca.membro1.get_full_name}}
+                    </a>
+                    <a class="email" href="mailto:{{banca.membro1.email}}">&lt;{{banca.membro1.email}}&gt;</a>
                   </li>
                   {% endif %}
                   {% if banca.membro2 %}
                   <li>
-                    {{banca.membro2.get_full_name}}
-                    <a href="mailto:{{banca.membro2.email}}">&lt;{{banca.membro2.email}}&gt;</a>
+                    <a class="imprimir" href="{% url 'user_detail' banca.membro2.id %}">
+                      {{banca.membro2.get_full_name}}
+                    </a>
+                    <a class="email" href="mailto:{{banca.membro2.email}}">&lt;{{banca.membro2.email}}&gt;</a>
                   </li>
                   {% endif %}
                   {% if banca.membro3 %}
                   <li>
-                    {{banca.membro3.get_full_name}}
-                    <a href="mailto:{{banca.membro3.email}}">&lt;{{banca.membro3.email}}&gt;</a>
+                    <a class="imprimir" href="{% url 'user_detail' banca.membro3.id %}">
+                      {{banca.membro3.get_full_name}}
+                    </a>
+                    <a class="email" href="mailto:{{banca.membro3.email}}">&lt;{{banca.membro3.email}}&gt;</a>
                   </li>
                   {% endif %}
                 </ol>
@@ -157,10 +165,10 @@
               <ul style="margin-bottom:0px;">
                 {% for alocacao in banca.projeto.alocacao_set.all %}
                   <li>
-                    <a href="{% url 'aluno_detail' alocacao.aluno.id %}">
+                    <a class="imprimir" href="{% url 'aluno_detail' alocacao.aluno.id %}">
                       {{alocacao.aluno.user.get_full_name}}
                     </a>
-                    <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
+                    <a class="email" href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
                     [{{ alocacao.aluno.get_curso_display }}]
                   </li>
                 {% endfor %}
@@ -169,7 +177,7 @@
             </span>
 
             <span class="avaliacao">
-              <b>Link formulário de avaliação</b>: <a href="/projetos/avaliacao_banca/{{banca.id}}">http://{{ request.get_host }}{% url 'avaliacao_banca' banca.id %}</a>
+              &#9733; <b>Link formulário de avaliação</b>: <a href="/projetos/avaliacao_banca/{{banca.id}}">http://{{ request.get_host }}{% url 'avaliacao_banca' banca.id %}</a>
               <br>
             </span>
 
@@ -280,6 +288,8 @@
         $('#informacoes').hide()
         $('.images').hide()
         $('.topnav').hide()
+        $(".imprimir").removeAttr('href');
+        $('.email').hide()
     });
   </script>
 

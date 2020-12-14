@@ -20,4 +20,5 @@ urlpatterns = [
     path('parceiro_detail/<int:primarykey>', views.parceiro_detail, name='parceiro_detail'),
     path('perfil/', views.perfil, name='perfil'),
     path('professor_detail/<int:primarykey>', views.professor_detail, name='professor_detail'),
+    path('user_detail/<int:primarykey>', views.user_detail, name='user_detail'),
 ]
