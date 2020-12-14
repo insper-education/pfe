@@ -3874,7 +3874,7 @@ def banca_avaliar(request, slug):
                 message += "</p>"
                 message += "<br>\n<br>\n"
 
-            message += "<a href='" + settings.SERVER + "/projetos/avaliacao_banca/" + str(banca.slug)
+            message += "<a href='" + settings.SERVER + "/projetos/banca_avaliar/" + str(banca.slug)
 
             message += "?avaliador=" + str(avaliador.id)
             for count, julg in enumerate(julgamento):
