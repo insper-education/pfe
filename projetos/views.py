@@ -3375,7 +3375,7 @@ def bancas_criar(request):
             "TIPO_DE_BANCA": Banca.TIPO_DE_BANCA,
             "falconis": falconis,
         }
-        return render(request, 'projetos/bancas_criar.html', context)
+        return render(request, 'projetos/bancas_editar.html', context)
 
 
 @login_required
@@ -3742,6 +3742,329 @@ def get_peso(banca, objetivo):
 
 #@login_required
 #@permission_required("users.altera_professor", login_url='/projetos/')
+def banca_avaliar(request, slug):
+    """Cria uma tela para preencher avaliações de bancas."""
+    
+    try:    
+        banca = Banca.objects.get(slug=slug)
+
+        if banca.endDate.date() + datetime.timedelta(days=5) < datetime.date.today():
+            mensagem = "Prazo para submissão da Avaliação de Banca vencido.<br>"
+            mensagem += "Entre em contato com a coordenação do PFE para enviar sua avaliação.<br>"
+            mensagem += "Luciano Pereira Soares <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>.<br>"
+            return HttpResponse(mensagem)
+
+        if not banca.projeto:
+            return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')    
+
+    except Banca.DoesNotExist:
+        return HttpResponseNotFound('<h1>Banca não encontrada!</h1>')
+
+    if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1: # Intermediária e Final
+        objetivos = ObjetivosDeAprendizagem.objects.filter(avaliacao_banca=True).order_by("id")
+    elif banca.tipo_de_banca == 2: # Falconi
+        objetivos = ObjetivosDeAprendizagem.objects.filter(avaliacao_falconi=True).order_by("id")
+    else:
+        return HttpResponseNotFound('<h1>Tipo de Banca não indentificado!</h1>')
+
+    if request.method == 'POST':
+        if 'avaliador' in request.POST:
+
+            avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
+            
+            if banca.tipo_de_banca == 1: #(1, 'intermediaria'),
+                tipo_de_avaliacao = 1 #( 1, 'Banca Intermediária'),
+            elif banca.tipo_de_banca == 0: # (0, 'final'),
+                tipo_de_avaliacao = 2 #( 2, 'Banca Final'),
+            elif banca.tipo_de_banca == 2: # (2, 'falconi'),
+                tipo_de_avaliacao = 99 # (99, 'Falconi'),
+
+            # Identifica que uma avaliação já foi realizada anteriormente
+            realizada = Avaliacao2.objects.filter(projeto=banca.projeto, avaliador=avaliador, tipo_de_avaliacao=tipo_de_avaliacao).exists()
+
+            OBJETIVOS_POSSIVEIS = 5
+            julgamento = [None]*OBJETIVOS_POSSIVEIS
+            for i in range(OBJETIVOS_POSSIVEIS):
+                if 'objetivo.{0}'.format(i+1) in request.POST:
+                    obj_nota = request.POST['objetivo.{0}'.format(i+1)]
+                    conceito = obj_nota.split('.')[1]
+                    julgamento[i] = Avaliacao2.create(projeto=banca.projeto)
+                    julgamento[i].avaliador = avaliador
+                    pk_objetivo = int(obj_nota.split('.')[0])
+                    julgamento[i].objetivo = ObjetivosDeAprendizagem.objects.get(pk=pk_objetivo)
+                    julgamento[i].tipo_de_avaliacao = tipo_de_avaliacao
+                    if conceito == "NA":
+                        julgamento[i].na = True
+                    else:    
+                        julgamento[i].nota = converte_conceito(conceito)
+                        julgamento[i].peso = get_peso(tipo_de_avaliacao, julgamento[i].objetivo)
+                        julgamento[i].na = False
+                    julgamento[i].save()
+
+            julgamento_observacoes = None
+            if 'observacoes' in request.POST and request.POST['observacoes'] != "":
+                julgamento_observacoes = Observacao.create(projeto=banca.projeto)
+                julgamento_observacoes.avaliador = avaliador
+                julgamento_observacoes.observacoes = request.POST['observacoes']
+                julgamento_observacoes.tipo_de_avaliacao = tipo_de_avaliacao
+                julgamento_observacoes.save()
+
+            message = "<h3>Avaliação PFE</h3><br>\n"
+
+            if realizada:
+                message += "<h3 style='color:red;text-align:center;'>"
+                message += "Essa é uma atualização de uma avaliação já enviada anteriormente!"
+                message += "</h3><br><br>"
+
+            message += "<b>Título do Projeto:</b> {0}<br>\n".format(banca.projeto.get_titulo())
+            message += "<b>Organização:</b> {0}<br>\n".format(banca.projeto.organizacao)
+            message += "<b>Orientador:</b> {0}<br>\n".format(banca.projeto.orientador)
+            message += "<b>Avaliador:</b> {0}<br>\n".format(avaliador.get_full_name())
+            message += "<b>Data:</b> {0}<br>\n".format(banca.startDate.strftime("%d/%m/%Y %H:%M"))
+
+            message += "<b>Banca:</b> "
+            TIPOS = dict(Banca.TIPO_DE_BANCA)
+            if banca.tipo_de_banca in TIPOS:
+                message += TIPOS[banca.tipo_de_banca]
+            else:
+                message += "Tipo de banca não definido"
+
+            message += "<br>\n<br>\n"
+            message += "<b>Conceitos:</b><br>\n"
+            message += "<table style='border: 1px solid black; "
+            message += "border-collapse:collapse; padding: 0.3em;'>"
+            if julgamento[0] and not julgamento[0].na:
+                message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
+                    format(julgamento[0].objetivo)
+                message += "<td style='border: 1px solid black; text-align:center'>"
+                message += "&nbsp;{0}&nbsp;</td>\n".\
+                    format(converte_letra(julgamento[0].nota))
+            if julgamento[1] and not julgamento[1].na:
+                message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
+                    format(julgamento[1].objetivo)
+                message += "<td style='border: 1px solid black; text-align:center'>"
+                message += "&nbsp;{0}&nbsp;</td>\n".\
+                    format(converte_letra(julgamento[1].nota))
+            if julgamento[2] and not julgamento[2].na:
+                message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
+                    format(julgamento[2].objetivo)
+                message += "<td style='border: 1px solid black; text-align:center'>"
+                message += "&nbsp;{0}&nbsp;</td>\n".\
+                    format(converte_letra(julgamento[2].nota))
+            if julgamento[3] and not julgamento[3].na:
+                message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
+                    format(julgamento[3].objetivo)
+                message += "<td style='border: 1px solid black; text-align:center'>"
+                message += "&nbsp;{0}&nbsp;</td>\n".\
+                    format(converte_letra(julgamento[3].nota))
+            if julgamento[4] and not julgamento[4].na:
+                message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
+                    format(julgamento[4].objetivo)
+                message += "<td style='border: 1px solid black; text-align:center'>"
+                message += "&nbsp;{0}&nbsp;</td>\n".\
+                    format(converte_letra(julgamento[4].nota))
+            message += "</table>"
+
+            message += "<br>\n<br>\n"
+
+            if julgamento_observacoes:
+                message += "<b>Observações:</b>\n"
+                message += "<p style='border:1px; border-style:solid; padding: 0.3em; margin: 0;'>"
+                message += html.escape(julgamento_observacoes.observacoes).replace('\n', '<br>\n')
+                message += "</p>"
+                message += "<br>\n<br>\n"
+
+            message += "<a href='" + settings.SERVER + "/projetos/avaliacao_banca/" + str(banca.slug)
+
+            message += "?avaliador=" + str(avaliador.id)
+            for count, julg in enumerate(julgamento):
+                if julg and not julg.na:
+                    message += "&objetivo" + str(count) + "=" + str(julg.objetivo.id)
+                    message += "&conceito" + str(count) + "=" + converte_letra(julg.nota, mais="X")
+            message += "&observacoes=" + quote(julgamento_observacoes.observacoes)
+            message += "'>"
+
+            message += "Caso deseje reenviar sua avaliação, clique aqui."
+            message += "</a><br>\n"
+            message += "<br>\n"
+
+            message += "<br><b>Objetivos de Aprendizagem</b>"
+
+            for julg in julgamento:
+
+                if julg:
+
+                    message += "<br><b>{0}</b>: {1}".format(julg.objetivo.titulo, julg.objetivo.objetivo)
+                    message += "<table "
+                    message += "style='border:1px solid black; border-collapse:collapse; width:100%;'>"
+                    message += "<tr>"
+
+                    if (not julg.na) and converte_letra(julg.nota) == "I":
+                        message += "<td style='border: 2px solid black; width:18%;"
+                        message += " background-color: #F4F4F4;'>"
+                    else:
+                        message += "<td style='border: 1px solid black; width:18%;'>"
+                    message += "Insatisfatório (I)</th>"
+
+                    if (not julg.na) and converte_letra(julg.nota) == "D":
+                        message += "<td style='border: 2px solid black; width:18%;"
+                        message += " background-color: #F4F4F4;'>"
+                    else:
+                        message += "<td style='border: 1px solid black; width:18%;'>"
+                    message += "Em Desenvolvimento (D)</th>"
+
+                    if (not julg.na) and ( converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+" ):
+                        message += "<td style='border: 2px solid black; width:18%;"
+                        message += " background-color: #F4F4F4;'>"
+                    else:
+                        message += "<td style='border: 1px solid black; width:18%;'>"
+                    message += "Essencial (C/C+)</th>"
+
+                    if (not julg.na) and ( converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+" ):
+                        message += "<td style='border: 2px solid black; width:18%;"
+                        message += " background-color: #F4F4F4;'>"
+                    else:
+                        message += "<td style='border: 1px solid black; width:18%;'>"
+                    message += "Proficiente (B/B+)</th>"
+
+                    if (not julg.na) and ( converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+" ):
+                        message += "<td style='border: 2px solid black; width:18%;"
+                        message += " background-color: #F4F4F4;'>"
+                    else:
+                        message += "<td style='border: 1px solid black; width:18%;'>"
+                    message += "Avançado (A/A+)</th>"
+
+                    message += "</tr>"
+                    message += "<tr>"
+
+                    if (not julg.na) and converte_letra(julg.nota) == "I":
+                        message += "<td style='border: 2px solid black;"
+                        message += " background-color: #F4F4F4;'>"
+                    else:
+                        message += "<td style='border: 1px solid black;'>"
+                    message += "{0}".format(julg.objetivo.rubrica_I)
+                    message += "</td>"
+
+                    if (not julg.na) and converte_letra(julg.nota) == "D":
+                        message += "<td style='border: 2px solid black;"
+                        message += " background-color: #F4F4F4;'>"
+                    else:
+                        message += "<td style='border: 1px solid black;'>"
+                    message += "{0}".format(julg.objetivo.rubrica_D)
+                    message += "</td>"
+
+                    if (not julg.na) and ( converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+" ):
+                        message += "<td style='border: 2px solid black;"
+                        message += " background-color: #F4F4F4;'>"
+                    else:
+                        message += "<td style='border: 1px solid black;'>"
+                    message += "{0}".format(julg.objetivo.rubrica_C)
+                    message += "</td>"
+
+                    if (not julg.na) and ( converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+" ):
+                        message += "<td style='border: 2px solid black;"
+                        message += " background-color: #F4F4F4;'>"
+                    else:
+                        message += "<td style='border: 1px solid black;'>"
+                    message += "{0}".format(julg.objetivo.rubrica_B)
+                    message += "</td>"
+
+                    if (not julg.na) and ( converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+" ):
+                        message += "<td style='border: 2px solid black;"
+                        message += " background-color: #F4F4F4;'>"
+                    else:
+                        message += "<td style='border: 1px solid black;'>"
+                    message += "{0}".format(julg.objetivo.rubrica_A)
+                    message += "</td>"
+
+                    message += "</tr>"
+                    message += "</table>"
+
+            subject = 'Banca PFE : {0}'.format(banca.projeto)
+            
+            recipient_list = [avaliador.email,]
+            if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1: # Intermediária e Final
+                recipient_list += [banca.projeto.orientador.user.email,]
+            elif banca.tipo_de_banca == 2: # Falconi
+                recipient_list += ["lpsoares@insper.edu.br",]
+
+            check = email(subject, recipient_list, message)
+            if check != 1:
+                message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+
+            resposta = "Avaliação submetida e enviada para:<br>"
+            for recipient in recipient_list:
+                resposta += "&bull; {0}<br>".format(recipient)
+            if realizada:
+                resposta += "<br><br><h2>Essa é uma atualização de uma avaliação já enviada anteriormente!</h2><br><br>"
+            resposta += "<br><a href='javascript:history.back(1)'>Voltar</a>"
+            context = {
+                "area_principal": True,
+                "mensagem": resposta,
+            }
+            return render(request, 'generic.html', context=context)
+            
+        return HttpResponse("Avaliação não submetida.")
+    else:
+
+        orientacoes = ""
+
+        if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1: # Intermediária e Final
+            pessoas = professores_membros_bancas()
+            orientacoes += "O professor(a) orientador(a) é responsável por conduzir a banca. Os membros do grupo terão <b>40 minutos para a apresentação</b>. Os membros da banca terão depois <b>50 minutos para arguição</b> (que serão divididos pelos membros convidados), podendo tirar qualquer dúvida a respeito do projeto e fazerem seus comentários. Caso haja muitas interferências da banca durante a apresentação do grupo, poderá se estender o tempo de apresentação. A dinâmica de apresentação é livre, contudo, <b>todos os membros do grupo devem estar prontos para responder qualquer tipo de pergunta</b> sobre o projeto. Um membro da banca pode fazer uma pergunta direcionada para um estudante específico do grupo se desejar."
+            orientacoes += "<br><br>"
+            orientacoes += "Como ordem recomendada para a arguição da banca, se deve convidar: professores convidados, professores coorientadores, professor(a) orientador(a) do projeto e por fim demais pessoas assistindo à apresentação. A banca poderá perguntar tanto sobre a apresentação, como o relatório entregue, se espera coletar informações tanto da apresentação, como do relatório, permitindo uma clara ponderação nas rubricas dos objetivos de aprendizado do Projeto Final de Engenharia."
+            orientacoes += "<br><br>"
+            orientacoes += "As bancas do Projeto Final de Engenharia servem como mais um evidência de aprendizado, assim, além da percepção dos membros da banca em relação ao nível alcançado nos objetivos de aprendizado pelos membros do grupo, serve também como registro da evolução do projeto. Dessa forma, ao final, a banca terá mais <b>15 minutos para ponderar</b>, nesse momento se recomenda dispensar os estudantes e demais convidados externos. Recomendamos 5 minutos para os membros da banca relerem os objetivos de aprendizagem e rubricas, fazerem qualquer anotação e depois 10 minutos para uma discussão final. Cada membro da banca poderá colocar seu veredito sobre grupo, usando as rubricas a seguir. O professor(a) orientador(a) irá publicar (no Blackboard), ao final, a média dos conceitos anotados."
+            orientacoes += "<br><br>"
+            orientacoes += "No Projeto Final de Engenharia, a maioria dos projetos está sob sigilo, através de contratos realizados (quando pedido ou necessário) entre a Organização Parceira e o Insper, se tem os professores automaticamente responsáveis por garantir o sigilo das informações. Assim <b>pessoas externas só podem participar das bancas com prévia autorização</b>, isso inclui outros estudantes que não sejam do grupo, familiares ou amigos."
+            orientacoes += "<br>"
+
+        elif banca.tipo_de_banca == 2: # Falconi
+            pessoas = falconi_membros_banca()
+            orientacoes += "Os membros do grupo terão <b>15 minutos para a apresentação</b>. Os consultores da Falconi terão depois outros <b>15 minutos para arguição e observações</b>, podendo tirar qualquer dúvida a respeito do projeto e fazerem seus comentários. Caso haja interferências durante a apresentação do grupo, poderá se estender o tempo de apresentação. A dinâmica de apresentação é livre, contudo, <b>todos os membros do grupo devem estar prontos para responder qualquer tipo de pergunta</b> sobre o projeto. Um consultor da Falconi pode fazer uma pergunta direcionada para um estudante específico do grupo se desejar."
+            orientacoes += "<br><br>"
+            orientacoes += "As apresentações para a comissão de consultores da Falconi serão usadas para avaliar os melhores projetos. Cada consultor da Falconi poderá colocar seu veredito sobre grupo, usando as rubricas a seguir. Ao final a coordenação do PFE irá fazer a média das avaliações e os projetos que atingirem os níveis de excelência pré-estabelecidos irão receber o certificado de destaque."
+            orientacoes += "<br><br>"
+            orientacoes += "No Projeto Final de Engenharia, a maioria dos projetos está sob sigilo, através de contratos realizados (quando pedido ou necessário) entre a Organização Parceira e o Insper. A Falconi assinou um documento de responsabilidade em manter o sigilo das informações divulgadas nas apresentações. Assim <b>pessoas externas só podem participar das bancas com prévia autorização</b>, isso inclui outros estudantes que não sejam do grupo, familiares ou amigos."
+            orientacoes += "<br>"
+
+
+        # Carregando dados REST
+
+        avaliador = request.GET.get('avaliador','0')
+        try: 
+            avaliador = int(avaliador)
+        except ValueError:
+            return HttpResponseNotFound('<h1>Usuário não encontrado!</h1>')
+
+        conceitos = [None]*5
+        for i in range(5):
+            try: 
+                tmp1 = int(request.GET.get('objetivo'+str(i),'0'))
+            except ValueError:
+                return HttpResponseNotFound('<h1>Erro em objetivo!</h1>')
+            tmp2 = request.GET.get('conceito'+str(i),'')
+            conceitos[i] = (tmp1, tmp2)
+    
+        observacoes = unquote(request.GET.get('observacoes',''))
+    
+        context = {
+            'pessoas' : pessoas,
+            'objetivos': objetivos,
+            'banca' : banca,
+            "orientacoes": orientacoes,
+            "avaliador": avaliador,
+            "conceitos": conceitos,
+            "observacoes": observacoes,
+        }
+        return render(request, 'projetos/avaliacao.html', context=context)
+
+
+
+
+### ESSA PARTE ABAIXO DEVE SER APAGADA ###
+
 def avaliacao_banca(request, banca_id):
     """Cria uma tela para preencher avaliações de bancas."""
     
@@ -4060,6 +4383,7 @@ def avaliacao_banca(request, banca_id):
         }
         return render(request, 'projetos/avaliacao.html', context=context)
 
+#### ATÉ AQUI #####
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
@@ -4705,11 +5029,33 @@ def graficos(request):
 
     return render(request, 'projetos/graficos.html', context)
 
+import string
+import random
+from django.template.defaultfilters import slugify
 
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def migracao(request):
     """temporário"""
-    message = "Nada Feito"
+
+    bancas = Banca.objects.all()
+
+    for banca in bancas:
+
+        senha = ''.join(random.SystemRandom().\
+                                choice(string.ascii_uppercase + string.digits) for _ in range(6))
+
+        ano = banca.startDate.strftime("%y")
+        mes = int(banca.startDate.strftime("%-m"))
+        if mes > 7:
+            semestre = "2"
+        else:
+            semestre = "1"
+
+        banca.slug = slugify(ano+semestre+str(banca.tipo_de_banca)+senha)
+
+        banca.save()
+
+    message = "Feito"
     return HttpResponse(message)
 

@@ -251,7 +251,7 @@ class ReembolsoAdmin(admin.ModelAdmin):
 @admin.register(Banca)
 class BancaAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
-    list_display = ('projeto', 'get_orientador', 'get_organizacao', 'startDate')
+    list_display = ('projeto', 'get_orientador', 'get_organizacao', 'startDate', 'slug',)
     search_fields = ['projeto__titulo', 'projeto__organizacao__sigla',]
     def get_orientador(self, obj):
         """Retorna o orientador do projeto da Banca."""

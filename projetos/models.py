@@ -520,6 +520,10 @@ class Banca(models.Model):
     """Bancas do PFE."""
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='projeto')
+
+    slug = models.SlugField("slug", unique=True, max_length=64, null=True, blank=True,
+                            help_text="Slug para o endereço da banca")
+
     location = models.CharField(null=True, blank=True, max_length=50,
                                 help_text='sala em que vai ocorrer banca')
     startDate = models.DateTimeField(default=datetime.datetime.now, null=True, blank=True,
@@ -550,6 +554,27 @@ class Banca(models.Model):
         """Cria um objeto (entrada) na Banca."""
         banca = cls(projeto=projeto)
         return banca
+
+    # pylint: disable=arguments-differ
+    def save(self, *args, **kwargs):
+        if not self.id:
+            senha = ''.join(random.SystemRandom().\
+                                   choice(string.ascii_uppercase + string.digits) for _ in range(6))
+
+            ano = self.startDate.strftime("%y")
+            mes = int(self.startDate.strftime("%-m"))
+            if mes > 7:
+                semestre = "2"
+            else:
+                semestre = "1"
+
+            self.slug = slugify(ano+semestre+str(self.tipo_de_banca)+senha)
+
+        super(Banca, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        """Caminho para avaliar uma banca."""
+        return reverse('banca_avaliar', kwargs={'slug': self.slug})
 
     class Meta:
         ordering = ['startDate']

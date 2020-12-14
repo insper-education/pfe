@@ -13,7 +13,11 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'), #pagina inicial
     path('administracao/', views.administracao, name='administracao'),
+
     path('avaliacao_banca/<int:banca_id>', views.avaliacao_banca, name='avaliacao_banca'),
+    path('banca_avaliar/<slug:slug>', views.banca_avaliar, name='banca_avaliar'),
+
+
     path('avisos_listar/', views.avisos_listar, name='avisos_listar'),
     path('backup/<str:formato>', views.backup, name='backup'),
     path('banca_ver/<int:primarykey>', views.banca_ver, name='banca_ver'),
@@ -77,7 +81,6 @@ urlpatterns = [
     path('proposta_completa/<int:primakey>', views.proposta_completa, name='proposta_completa'),
     path('proposta_detalhes/<int:primarykey>', views.proposta_detalhes, name='proposta_detalhes'),
     path('proposta_submissao', views.proposta_submissao, name='proposta_submissao'),
-    #path('proposta_edicao/<int:primarykey>', views.proposta_edicao, name='proposta_edicao'),
     path('proposta_editar/<slug:slug>', views.proposta_editar, name='proposta_editar'),
     path('propostas_lista/', views.propostas_lista, name='propostas_lista'),
     path('reembolso_pedir/', views.reembolso_pedir, name='reembolso_pedir'),
