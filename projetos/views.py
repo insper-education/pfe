@@ -5037,25 +5037,6 @@ from django.template.defaultfilters import slugify
 @permission_required('users.altera_professor', login_url='/projetos/')
 def migracao(request):
     """temporário"""
-
-    bancas = Banca.objects.all()
-
-    for banca in bancas:
-
-        senha = ''.join(random.SystemRandom().\
-                                choice(string.ascii_uppercase + string.digits) for _ in range(6))
-
-        ano = banca.startDate.strftime("%y")
-        mes = int(banca.startDate.strftime("%-m"))
-        if mes > 7:
-            semestre = "2"
-        else:
-            semestre = "1"
-
-        banca.slug = slugify(ano+semestre+str(banca.tipo_de_banca)+senha)
-
-        banca.save()
-
-    message = "Feito"
+    message = "Nada Feito"
     return HttpResponse(message)
 

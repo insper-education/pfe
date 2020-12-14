@@ -177,9 +177,10 @@
             </span>
 
             <span class="avaliacao">
-              &#9733; <b>Link formulário de avaliação</b>: <a href="/projetos/avaliacao_banca/{{banca.id}}">http://{{ request.get_host }}{% url 'avaliacao_banca' banca.id %}</a>
-              <br>
-              <a href="{% url 'banca_avaliar' banca.slug %}">http://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}</a>
+              &#9733; <b>Link formulário de avaliação</b>: 
+              <a href="{% url 'banca_avaliar' banca.slug %}">
+                http://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}
+              </a>
               <br>
             </span>
 
