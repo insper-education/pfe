@@ -67,9 +67,24 @@ class PFEUser(AbstractUser):
         return user
 
     def __str__(self):
-        return self.first_name + " " + self.last_name + \
-            " (" + self.TIPO_DE_USUARIO_CHOICES[self.tipo_de_usuario-1][1] + ")"
-        #return self.username #ver se atualizar isso para first_name não quebra o projeto
+        texto = self.first_name + " " + self.last_name
+        if self.tipo_de_usuario == 1: # (1, 'aluno'),
+            texto += " (estudante"
+            if self.aluno.anoPFE and self.aluno.semestrePFE:
+                texto += " : " + str(self.aluno.anoPFE) + "." + str(self.aluno.semestrePFE)
+        elif self.tipo_de_usuario == 2: #(2, 'professor'),
+            texto += " (professor"
+            if self.professor.dedicacao:
+                texto += " : " + self.professor.dedicacao
+        elif self.tipo_de_usuario == 3: #(3, 'parceiro'),
+            texto += " (parceiro"
+            if self.parceiro.organizacao and self.parceiro.organizacao.sigla:
+                texto += " : " + self.parceiro.organizacao.sigla
+        elif self.tipo_de_usuario == 4: #(4, 'administrador'),
+            texto += " (professor : TI)"
+
+        texto += ")"
+        return texto
 
 class Professor(models.Model):
     """Classe de usuários com estatus de Professor."""
@@ -96,6 +111,7 @@ class Professor(models.Model):
         verbose_name_plural = 'Professores'
         ordering = ['user']
         permissions = (("altera_professor", "Professor altera valores"), )
+
     def __str__(self):
         return self.user.first_name+" "+self.user.last_name
 
