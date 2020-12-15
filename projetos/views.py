@@ -1419,19 +1419,34 @@ def render_to_pdf(template_src, context_dict=None):
         #return HttpResponse(result.getvalue(), content_type='application/pdf')
     return None
 
-def get_calendario_context():
+def get_calendario_context(pk):
     """Contexto para gerar calendário."""
-    eventos = Evento.objects.exclude(tipo_de_evento=12).\
+
+    try:
+        user = PFEUser.objects.get(pk=pk)
+    except PFEUser.DoesNotExist:
+        return None
+
+    eventos = Evento.objects.all()
+    
+    # Estudantes e parceiros não conseguem ver o calendário no futuro
+    configuracao = Configuracao.objects.all().first()
+    if user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4: # Professor e Admin
+        eventos = eventos.filter(startDate__year__lte=configuracao.ano)
+        if configuracao.semestre == 1:
+            eventos = eventos.filter(startDate__month__lte=7)
+
+    eventos_gerais = eventos.exclude(tipo_de_evento=12).\
                              exclude(tipo_de_evento=40).\
                              exclude(tipo_de_evento=41).\
                              exclude(tipo_de_evento=20).\
                              exclude(tipo_de_evento=30).\
                              exclude(tipo_de_evento__gte=100)
-    aulas = Evento.objects.filter(tipo_de_evento=12) #12, 'Aula PFE'
-    laboratorios = Evento.objects.filter(tipo_de_evento=40) #40, 'Laboratório'
-    provas = Evento.objects.filter(tipo_de_evento=41) #41, 'Semana de Provas'
-    quinzenais = Evento.objects.filter(tipo_de_evento=20) #20, 'Relato Quinzenal'
-    feedbacks = Evento.objects.filter(tipo_de_evento=30) #30, 'Feedback dos Alunos sobre PFE'
+    aulas = eventos.filter(tipo_de_evento=12) #12, 'Aula PFE'
+    laboratorios = eventos.filter(tipo_de_evento=40) #40, 'Laboratório'
+    provas = eventos.filter(tipo_de_evento=41) #41, 'Semana de Provas'
+    quinzenais = eventos.filter(tipo_de_evento=20) #20, 'Relato Quinzenal'
+    feedbacks = eventos.filter(tipo_de_evento=30) #30, 'Feedback dos Alunos sobre PFE'
     coordenacao = Evento.objects.filter(tipo_de_evento__gte=100) # Eventos da coordenação
 
     # ISSO NAO ESTA BOM, FAZER ALGO MELHOR
@@ -1439,7 +1454,7 @@ def get_calendario_context():
     # TAMBÉM ESTOU USANDO NO CELERY PARA AVISAR DOS EVENTOS
 
     context = {
-        'eventos': eventos,
+        'eventos': eventos_gerais,
         'aulas': aulas,
         'laboratorios': laboratorios,
         'provas' : provas,
@@ -1453,15 +1468,21 @@ def get_calendario_context():
 @login_required
 def calendario(request):
     """Para exibir um calendário de eventos."""
-    context = get_calendario_context()
-    return render(request, 'projetos/calendario.html', context)
+    context = get_calendario_context(request.user.pk)
+    if context:
+        return render(request, 'projetos/calendario.html', context)
+    else:
+        HttpResponse("Problema ao gerar calendário.", status=401)
 
 @login_required
 def calendario_limpo(request):
     """Para exibir um calendário de eventos."""
-    context = get_calendario_context()
-    context['limpo'] = True
-    return render(request, 'projetos/calendario.html', context)
+    context = get_calendario_context(request.user.pk)
+    if context:
+        context['limpo'] = True
+        return render(request, 'projetos/calendario.html', context)
+    else:
+        HttpResponse("Problema ao gerar calendário.", status=401)
 
 @login_required
 @permission_required("users.altera_professor", login_url='/projetos/')
