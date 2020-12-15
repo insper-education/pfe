@@ -3444,6 +3444,8 @@ def banca_avaliar(request, slug):
                 message += "</p>"
                 message += "<br>\n<br>\n"
 
+
+            # Criar link para reeditar
             message += "<a href='" + settings.SERVER + "/projetos/banca_avaliar/" + str(banca.slug)
 
             message += "?avaliador=" + str(avaliador.id)
@@ -3451,13 +3453,14 @@ def banca_avaliar(request, slug):
                 if julg and not julg.na:
                     message += "&objetivo" + str(count) + "=" + str(julg.objetivo.id)
                     message += "&conceito" + str(count) + "=" + converte_letra(julg.nota, mais="X")
-            message += "&observacoes=" + quote(julgamento_observacoes.observacoes)
+            if julgamento_observacoes:
+                message += "&observacoes=" + quote(julgamento_observacoes.observacoes)
             message += "'>"
-
             message += "Caso deseje reenviar sua avaliação, clique aqui."
             message += "</a><br>\n"
             message += "<br>\n"
 
+            # Relistar os Objetivos de Aprendizagem
             message += "<br><b>Objetivos de Aprendizagem</b>"
 
             for julg in julgamento:
