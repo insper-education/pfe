@@ -24,7 +24,7 @@
 <body>
   {% url 'index' as url_index %}
   {% url 'index_professor' as url_index_professor %}
-  {% url 'index_estudante' as url_index_estudante %}
+  {% url 'index_estudantes' as url_index_estudante %}
   {% url 'perfil' as url_perfil %}
   <div class="topnav">
     <a class="active">
@@ -38,7 +38,14 @@
     <div id="myLinks">
       {% if user.is_authenticated %}
         <a href="{% url 'index'%}">Geral</a>
-        <a href="{% url 'index_estudante'%}">Estudante</a>
+        
+        {% if user.tipo_de_usuario == 1 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+            <a href="{% url 'index_estudantes' %}"><h5>Área dos Estudantes</h5></a>
+        {% endif %}
+        {% if user.tipo_de_usuario == 3 or user.tipo_de_usuario == 4 %}
+            <a href="{% url 'index_parceiros' %}"><h5>Área dos Parceiros</h5></a>
+        {% endif %}
+    
         {% if perms.users.altera_professor %}<a href="{% url 'index_professor'%}">Professor</a>{% endif %}
         {% if perms.users.altera_professor %}<a href="{% url 'administracao'%}">Administração</a>{% endif %}
         <a href="{% url 'index_documentos'%}">Documentos</a>

@@ -25,12 +25,17 @@
             às {{banca.endDate.time}}
           {% endif %}
           <br>
+          <b>Tipo:</b> 
           {% if banca.tipo_de_banca == 0 %}
-            <b>Tipo:</b> Final<br>
+            Final
           {% elif banca.tipo_de_banca == 1 %}
-            <b>Tipo:</b> Intermediária<br>
+            Intermediária
+          {% elif banca.tipo_de_banca == 2 %}
+            Certificação Falconi
           {% endif %}
+          
           {% if banca.projeto %}
+            <br>
             <b>Título do Projeto:</b> 
             <a href="{% url 'projeto_detalhes' banca.projeto.id %}">
               {% if banca.projeto.titulo_final %}
@@ -42,23 +47,22 @@
                 {{banca.projeto.titulo}}</a>
               {% endif %}
           {% endif %}
-          <br>
+          
           {% if banca.projeto.organizacao %}
-            <b>Organização Parceira:</b> 
+            <br><b>Organização Parceira:</b> 
               {{ banca.projeto.organizacao.nome }}
           {% endif %}
-          <br>
+          
           {% if banca.location %}
-            <b>Local:</b> {{banca.location}}
+            <br><b>Local:</b> {{banca.location}}
           {% endif %}
-          <br>
         
           {% if banca.projeto.orientador %}
-            <b>Orientador:</b> 
+            <br><b>Orientador:</b> 
               {{banca.projeto.orientador.user.get_full_name}} 
-            <br>
           {% endif %}
 
+          <br>
           <b>Banca</b>
           <ol>
             {% if banca.membro1 %}
@@ -77,6 +81,7 @@
             </li>
             {% endif %}
           </ol>
+
         </td>
       </tr>
       {% endfor %}

@@ -13,15 +13,13 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.db.models.functions import Lower
 from django.http import HttpResponse
-from django.shortcuts import render
-from django.shortcuts import redirect
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.utils import html
-from django.utils import timezone
+from django.utils import html, timezone
 from django.views import generic
 
 from projetos.models import Configuracao, Projeto, Conexao, Banca, ObjetivosDeAprendizagem, Area, Coorientador
-from projetos.views import cria_areas, cria_area_estudante
+from projetos.views import cria_area_estudante
 from projetos.messages import email
 
 from .forms import PFEUserCreationForm
@@ -93,55 +91,55 @@ def perfil(request):
     return render(request, 'users/profile_detail.html', context=context)
 
 
-@login_required
-@transaction.atomic
-def areas_interesse(request):
-    """Para aluno definir suas áreas de interesse."""
+# @login_required
+# @transaction.atomic
+# def areas_interesse(request):
+#     """Para aluno definir suas áreas de interesse."""
 
-    try:
-        user = PFEUser.objects.get(pk=request.user.pk)
-    except PFEUser.DoesNotExist:
-        return HttpResponse("Usuário não encontrado.", status=401)
+#     try:
+#         user = PFEUser.objects.get(pk=request.user.pk)
+#     except PFEUser.DoesNotExist:
+#         return HttpResponse("Usuário não encontrado.", status=401)
 
 
-    # Caso não seja Aluno, Professor ou Administrador (ou seja Parceiro)
-    if user.tipo_de_usuario != 1 and user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
-        mensagem = "Você não está cadastrado como aluno!"
-        context = {
-            "area_principal": True,
-            "mensagem": mensagem,
-        }
-        return render(request, 'generic.html', context=context)
+#     # Caso não seja Aluno, Professor ou Administrador (ou seja Parceiro)
+#     if user.tipo_de_usuario != 1 and user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
+#         mensagem = "Você não está cadastrado como aluno!"
+#         context = {
+#             "area_principal": True,
+#             "mensagem": mensagem,
+#         }
+#         return render(request, 'generic.html', context=context)
 
-    areas = Area.objects.filter(ativa=True)
+#     areas = Area.objects.filter(ativa=True)
     
-    # Caso seja estudante
-    if user.tipo_de_usuario == 1:
-        try:
-            estudante = Aluno.objects.get(pk=request.user.aluno.pk)
-        except Aluno.DoesNotExist:
-            return HttpResponse("Estudante não encontrado.", status=401)
+#     # Caso seja estudante
+#     if user.tipo_de_usuario == 1:
+#         try:
+#             estudante = Aluno.objects.get(pk=request.user.aluno.pk)
+#         except Aluno.DoesNotExist:
+#             return HttpResponse("Estudante não encontrado.", status=401)
 
-        vencido = configuracao_estudante_vencida(estudante)    
+#         vencido = configuracao_estudante_vencida(estudante)    
 
-        if (not vencido) and request.method == 'POST':
-            cria_area_estudante(request, estudante)
-            return render(request, 'users/atualizado.html',)
+#         if (not vencido) and request.method == 'POST':
+#             cria_area_estudante(request, estudante)
+#             return render(request, 'users/atualizado.html',)
 
-        context = {
-            'vencido': vencido,
-            'aluno': estudante,
-            'areast': areas,
-        }
+#         context = {
+#             'vencido': vencido,
+#             'aluno': estudante,
+#             'areast': areas,
+#         }
 
-    else: # supostamente professores ou administrador
-        context = {
-            'mensagem': "Você não está cadastrado como aluno.",
-            'vencido': True,
-            'areast': areas,
-        }
+#     else: # supostamente professores ou administrador
+#         context = {
+#             'mensagem': "Você não está cadastrado como aluno.",
+#             'vencido': True,
+#             'areast': areas,
+#         }
 
-    return render(request, 'users/areas_interesse.html', context=context)
+#     return render(request, 'users/areas_interesse.html', context=context)
 
 class SignUp(generic.CreateView):
     """Rotina para fazer o login."""

@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'import_export',
     'users.apps.UsersConfig',
     'projetos.apps.ProjetosConfig',
+    'estudantes.apps.EstudantesConfig',
+    'parceiros.apps.ParceirosConfig',
     'django.contrib.sites',
     'dbbackup',
     #'debug_toolbar',

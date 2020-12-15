@@ -18,6 +18,8 @@ from projetos import views
 urlpatterns = [
     path('favicon.ico', RedirectView.as_view(url='/static/favicon.ico')),
     path('', RedirectView.as_view(url='/projetos/', permanent=True)),
+    path('estudantes/', include('estudantes.urls')),
+    path('parceiros/', include('parceiros.urls')),
     path('projetos/', include('projetos.urls')),
     path('users/', include('users.urls')), #Transferir tudo para accounts (NO FUTURO)
     path('users/', include('django.contrib.auth.urls')), #Transferir tudo para accounts (NO FUTURO)
