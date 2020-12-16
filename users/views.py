@@ -19,7 +19,7 @@ from django.utils import html, timezone
 from django.views import generic
 
 from projetos.models import Configuracao, Projeto, Conexao, Banca, ObjetivosDeAprendizagem, Area, Coorientador
-from projetos.views import cria_area_estudante
+
 from projetos.messages import email
 
 from .forms import PFEUserCreationForm
@@ -90,57 +90,6 @@ def perfil(request):
 
     return render(request, 'users/profile_detail.html', context=context)
 
-
-# @login_required
-# @transaction.atomic
-# def areas_interesse(request):
-#     """Para aluno definir suas áreas de interesse."""
-
-#     try:
-#         user = PFEUser.objects.get(pk=request.user.pk)
-#     except PFEUser.DoesNotExist:
-#         return HttpResponse("Usuário não encontrado.", status=401)
-
-
-#     # Caso não seja Aluno, Professor ou Administrador (ou seja Parceiro)
-#     if user.tipo_de_usuario != 1 and user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
-#         mensagem = "Você não está cadastrado como aluno!"
-#         context = {
-#             "area_principal": True,
-#             "mensagem": mensagem,
-#         }
-#         return render(request, 'generic.html', context=context)
-
-#     areas = Area.objects.filter(ativa=True)
-    
-#     # Caso seja estudante
-#     if user.tipo_de_usuario == 1:
-#         try:
-#             estudante = Aluno.objects.get(pk=request.user.aluno.pk)
-#         except Aluno.DoesNotExist:
-#             return HttpResponse("Estudante não encontrado.", status=401)
-
-#         vencido = configuracao_estudante_vencida(estudante)    
-
-#         if (not vencido) and request.method == 'POST':
-#             cria_area_estudante(request, estudante)
-#             return render(request, 'users/atualizado.html',)
-
-#         context = {
-#             'vencido': vencido,
-#             'aluno': estudante,
-#             'areast': areas,
-#         }
-
-#     else: # supostamente professores ou administrador
-#         context = {
-#             'mensagem': "Você não está cadastrado como aluno.",
-#             'vencido': True,
-#             'areast': areas,
-#         }
-
-#     return render(request, 'users/areas_interesse.html', context=context)
-
 class SignUp(generic.CreateView):
     """Rotina para fazer o login."""
     form_class = PFEUserCreationForm
@@ -155,7 +104,7 @@ class Usuario(generic.DetailView):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def alunos_lista(request):
     """Mostra todos os alunos que estão que cursam semestre atual."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
     ano = configuracao.ano
     semestre = configuracao.semestre
     return redirect('alunos_listagem', anosemestre="{0}.{1}".format(ano, semestre))
@@ -164,7 +113,7 @@ def alunos_lista(request):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def alunos_listagem(request, anosemestre):
     """Gera lista com todos os alunos já registrados."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
     alunos_list = Aluno.objects.filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])\
         .order_by(Lower("user__first_name"), Lower("user__last_name")) # Conta soh alunos
 
@@ -269,7 +218,7 @@ def alunos_listagem(request, anosemestre):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def alunos_inscrevendo(request):
     """Mostra todos os alunos que estão se inscrevendo em projetos no próximo semestre."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
 
     if configuracao.semestre == 1:
         ano = configuracao.ano
@@ -284,7 +233,7 @@ def alunos_inscrevendo(request):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def alunos_inscritos(request, anosemestre):
     """Mostra todos os alunos que estão se inscrevendo em projetos."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
 
     ano = int(anosemestre.split(".")[0])
     semestre = int(anosemestre.split(".")[1])
@@ -334,7 +283,7 @@ def alunos_inscritos(request, anosemestre):
 def aluno_detail(request, primarykey):
     """Mostra detalhes sobre o aluno."""
     aluno = Aluno.objects.filter(pk=primarykey).first()
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
     areas = Area.objects.filter(ativa=True)
     context = {
         'configuracao': configuracao,
@@ -379,7 +328,7 @@ def parceiro_detail(request, primarykey):
     except Professor.DoesNotExist:
         return HttpResponse("Professor não encontrado.", status=401)
 
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
     conexoes = Conexao.objects.filter(parceiro=parceiro)
     context = {
         'configuracao': configuracao,
@@ -392,7 +341,7 @@ def parceiro_detail(request, primarykey):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def contas_senhas(request, anosemestre):
     """Envia conta e senha para todos os estudantes que estão no semestre."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
 
     ano = int(anosemestre.split(".")[0])
     semestre = int(anosemestre.split(".")[1])

@@ -124,7 +124,7 @@ class Professor(models.Model):
 
 ## ISSO ESTA REPETIDO NO PROJETOS VIEWS / CUIDADO
 def converte_conceito(conceito):
-    """ Converte de Letra para Número. """
+    """Converte de Letra para Número."""
     if conceito == "A+":
         return 10
     elif conceito == "A" or conceito == "A ":
@@ -142,7 +142,7 @@ def converte_conceito(conceito):
     return 0
 
 def converte_letra(nota):
-    """ Converte de Número para Letra. """
+    """Converte de Número para Letra."""
     if nota == 10:
         return "A+"
     elif nota >= 9:

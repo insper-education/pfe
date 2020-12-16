@@ -12,7 +12,7 @@ from projetos.models import Area, AreaDeInteresse
 
 @register.simple_tag
 def mede_aderencia(estudante, proposta):
-    """ Mede a aderência das áreas de interesse de um estudante em relação a uma proposta de projeto. """
+    """Mede a aderência das áreas de interesse de um estudante em relação a uma proposta de projeto."""
     areas_proposta = AreaDeInteresse.objects.filter(proposta=proposta).values_list('area', flat=True)
     area_comuns = AreaDeInteresse.objects.filter(usuario=estudante.user, area__in=areas_proposta).count()
     if areas_proposta:

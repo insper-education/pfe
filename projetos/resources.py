@@ -62,7 +62,7 @@ class DisciplinasResource(resources.ModelResource):
 
 
 def converte_conceito(conceito):
-    """ Converte de Letra para Número. """
+    """Converte de Letra para Número."""
     if conceito == "A+":
         return 10
     elif conceito == "A" or conceito == "A ":
@@ -103,7 +103,7 @@ def recupera_objetivo(objetivo_str):
 
 
 def le_momento(mnt):
-    """ Para ler o momento das células. """
+    """Para ler o momento das células."""
     d = int(mnt[-11:-9])
     m = int(mnt[-9:-7])
     a = int("20"+mnt[-7:-5]) # bug do milênio

@@ -65,7 +65,7 @@ from .messages import email, create_message, message_reembolso, message_agendame
 @login_required
 def index(request):
     """Página principal do sistema do Projeto Final de Engenharia."""
-    configuracao = Configuracao.objects.first()
+    configuracao = Configuracao.objects.get()
     
     if configuracao and configuracao.manutencao:
         return render(request, 'projetos/manutencao.html')
@@ -78,7 +78,7 @@ def index(request):
     #'num_visits': num_visits,
     return render(request, 'index.html', context=context)
 
-""" Função usada para recuperar todas as edições de 2018.2 até hoje. """
+"""Função usada para recuperar todas as edições de 2018.2 até hoje."""
 def get_edicoes(tipo):
     edicoes = []
     semestre_tmp = 2
@@ -143,7 +143,7 @@ def proposta_detalhes(request, primarykey):
 
 def ordena_propostas(disponivel=True, ano=0, semestre=0):
     """Gera lista com propostas ordenados pelos com maior interesse pelos alunos."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
 
     if ano == 0:
         ano = configuracao.ano
@@ -266,7 +266,7 @@ def ordena_propostas_novo(disponivel=True, ano=2018, semestre=2, curso='T'):
 def histograma(request):
     """Exibe um histograma com a procura dos projetos pelos alunos."""
 
-    configuracao = Configuracao.objects.first()
+    configuracao = Configuracao.objects.get()
     ano = configuracao.ano
     semestre = configuracao.semestre
 
@@ -311,7 +311,7 @@ def histograma_ajax(request):
 def procura_propostas(request):
     """Exibe um histograma com a procura das propostas pelos estudantes."""
 
-    configuracao = Configuracao.objects.first()
+    configuracao = Configuracao.objects.get()
     ano = configuracao.ano
     semestre = configuracao.semestre
     curso = "T" # por padrão todos os cursos
@@ -399,7 +399,7 @@ def procura_propostas(request):
 
 ## ISSO ESTÁ REPETIDO NO MODELS DE USER / CUIDADO e DEPOIS EM RESOURCES !!!!!!!!!
 def converte_conceito(conceito):
-    """ Converte de Letra para Número. """
+    """Converte de Letra para Número."""
     if conceito == "A+":
         return 10
     elif conceito == "A" or conceito == "A ":
@@ -417,7 +417,7 @@ def converte_conceito(conceito):
     return 0
 
 def converte_letra(nota, mais="+", espaco=""):
-    """ Converte de Número para Letra. """
+    """Converte de Número para Letra."""
     if nota == 10:
         return "A"+mais
     elif nota >= 9:
@@ -437,9 +437,9 @@ def converte_letra(nota, mais="+", espaco=""):
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def resultado_avaliacoes(request):
-    """ Mostra os resultados das avaliações (Bancas). """
+    """Mostra os resultados das avaliações (Bancas)."""
 
-    configuracao = Configuracao.objects.first()
+    configuracao = Configuracao.objects.get()
     
     edicoes, ano, semestre = get_edicoes(Projeto)
 
@@ -504,7 +504,7 @@ def get_next_opcao(numb, opcoes):
 
 def get_opcao(numb, opcoes, min_group, max_group, projetos_ajustados):
     """Pega a opcao de preferencia do aluno se possivel."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
     opcao = opcoes.get(prioridade=numb)
     while True:
         opcoesp = Opcao.objects.filter(proposta=opcao.proposta)
@@ -629,7 +629,7 @@ def propor(request):
     return HttpResponseNotFound('<h1>Sistema de propor projetos está obsoleto.</h1>')
 
 
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
     projeto_list = []
     opcoes_list = []
     projetos = Projeto.objects.filter(disponivel=True).\
@@ -712,7 +712,7 @@ def propor(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def montar_grupos(request):
     """Montar grupos para projetos."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
 
     ano = configuracao.ano
     semestre = configuracao.semestre
@@ -839,7 +839,7 @@ def montar_grupos(request):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def selecionar_orientadores(request):
     """Selecionar Orientadores para os Projetos."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
 
     mensagem = ""
 
@@ -930,7 +930,7 @@ def index_professor(request):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def projeto_completo(request, primakey):
     """Mostra um projeto por completo."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
     projeto = Projeto.objects.filter(pk=primakey).first()  # acho que tem de ser get
     opcoes = Opcao.objects.filter(proposta=projeto.proposta)
     conexoes = Conexao.objects.filter(projeto=projeto)
@@ -975,7 +975,7 @@ def proposta_completa(request, primakey):
         }
         return render(request, 'generic.html', context=context)
 
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
 
     membros_comite = PFEUser.objects.filter(membro_comite=True)
     projetos = Projeto.objects.filter(proposta=proposta)
@@ -1042,7 +1042,7 @@ def get_areas_propostas(propostas):
 def distribuicao_areas(request):
     """Mostra distribuição por área de interesse dos alunos, propostas e projetos."""
 
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
     ano = configuracao.ano              # Ano atual
     semestre = configuracao.semestre    # Semestre atual
     todas = False                       # Para mostrar todos os dados de todos os anos e semestres
@@ -1164,7 +1164,7 @@ def organizacoes_lista(request):
 def organizacoes_prospectadas(request):
     """Exibe as organizações prospectadas e a última comunicação."""
     todas_organizacoes = Organizacao.objects.all()
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
 
     ano = configuracao.ano
     semestre = configuracao.semestre
@@ -1398,7 +1398,7 @@ def email_backup(request):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def servico(request):
     """Caso servidor esteja em manutenção."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
     if request.method == 'POST':
         check_values = request.POST.getlist('selection')
         configuracao.manutencao = 'manutencao' in check_values
@@ -1430,7 +1430,7 @@ def get_calendario_context(pk):
     eventos = Evento.objects.all()
     
     # Estudantes e parceiros não conseguem ver o calendário no futuro
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
     if user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4: # Professor e Admin
         eventos = eventos.filter(startDate__year__lte=configuracao.ano)
         if configuracao.semestre == 1:
@@ -1461,7 +1461,7 @@ def get_calendario_context(pk):
         'quinzenais' : quinzenais,
         'feedbacks' : feedbacks,
         'coordenacao' : coordenacao,
-        'semestre' : Configuracao.objects.all().first().semestre,
+        'semestre' : Configuracao.objects.get().semestre,
     }
     return context
 
@@ -1488,7 +1488,7 @@ def calendario_limpo(request):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def relatorio(request, modelo, formato):
     """Gera relatorios em html e PDF."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
 
     if modelo == "projetos":
         context = {
@@ -1542,7 +1542,7 @@ def relatorio_backup(request):
     email_from = settings.EMAIL_HOST_USER
     recipient_list = ['pfeinsper@gmail.com', 'lpsoares@gmail.com',]
     mail = EmailMessage(subject, message, email_from, recipient_list)
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
     context = {
         'projetos': Projeto.objects.all(),
         'alunos': Aluno.objects.all().filter(user__tipo_de_usuario=1).\
@@ -1567,7 +1567,7 @@ def relatorio_backup(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def projetos_fechados(request):
     """Lista todos os projetos fechados."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
     ano = configuracao.ano
     semestre = configuracao.semestre
     edicoes = []
@@ -1624,7 +1624,7 @@ def projetos_fechados(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def tabela_documentos(request):
     """Exibe tabela com todos os documentos armazenados."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
     projetos = Projeto.objects.filter(alocacao__isnull=False).distinct().order_by("ano", "semestre")
     documentos = []
     for projeto in projetos:
@@ -1822,7 +1822,7 @@ def preenche_proposta(request, proposta):
     if proposta is None: # proposta nova
         proposta = Proposta.create()
 
-        configuracao = Configuracao.objects.all().first()
+        configuracao = Configuracao.objects.get()
         ano = configuracao.ano
         semestre = configuracao.semestre
 
@@ -1997,7 +1997,7 @@ def proposta_editar(request, slug):
     except Proposta.DoesNotExist:
         return HttpResponseNotFound('<h1>Proposta de Projeto não encontrada!</h1>')
 
-    liberadas_propostas = Configuracao.objects.first().liberadas_propostas
+    liberadas_propostas = Configuracao.objects.get().liberadas_propostas
 
     if request.method == 'POST':
         if (not liberadas_propostas) or (user.tipo_de_usuario == 4):
@@ -2153,7 +2153,7 @@ def get_response(file, path):
 
 
 def carrega_arquivo(request, local_path, path):
-    """ Carrega arquivos pela URL. """
+    """Carrega arquivos pela URL."""
     file_path = os.path.abspath(local_path)
     if ".." in file_path:
         raise PermissionDenied
@@ -2211,7 +2211,7 @@ def arquivos3(request, organizacao, projeto, usuario, path):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def projetos_lista(request, periodo):
     """Lista todos os projetos."""
-    configuracao = Configuracao.objects.first()
+    configuracao = Configuracao.objects.get()
     projetos = Projeto.objects.filter(alocacao__isnull=False).distinct() # no futuro remover
     projetos = projetos.order_by("ano", "semestre", "organizacao", "titulo",)
     if periodo == "todos":
@@ -2240,7 +2240,7 @@ def projetos_lista(request, periodo):
 
 
 def retorna_ternario(propostas):
-    """ Função retorna dados para gráfico ternário. """
+    """Função retorna dados para gráfico ternário."""
     ternario = []
     for proposta in propostas:
         comp = 0
@@ -2299,7 +2299,7 @@ def retorna_ternario(propostas):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def propostas_lista(request):
     """Lista todas as propostas de projetos."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
 
     # propostas = Proposta.objects.all().order_by("ano", "semestre", "organizacao", "titulo",)
     
@@ -2402,11 +2402,11 @@ def meuprojeto(request):
     except Aluno.DoesNotExist:
         return HttpResponse("Aluno não encontrado.", status=401)
 
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
 
     context = {
         'aluno': aluno,
-        'configuracao' : Configuracao.objects.all().first(),
+        'configuracao' : configuracao,
     }
     return render(request, 'projetos/meuprojeto_aluno.html', context=context)
 
@@ -2415,7 +2415,7 @@ def meuprojeto(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def organizacoes_tabela(request):
     """Alocação das Organizações por semestre."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
 
     organizacoes_pfe = []
     periodo = []
@@ -2464,7 +2464,7 @@ def organizacoes_tabela(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def professores_tabela(request):
     """Alocação dos Orientadores por semestre."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
 
     professores_pfe = []
     periodo = []
@@ -2515,7 +2515,7 @@ def professores_tabela(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def coorientadores_tabela(request):
     """Alocação dos Coorientadores por semestre."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
 
     professores_pfe = []
     periodo = []
@@ -2566,7 +2566,7 @@ def coorientadores_tabela(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def bancas_tabela(request):
     """Lista todas as bancas agendadas, conforme periodo pedido."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
 
     membros_pfe = []
     periodo = []
@@ -2674,7 +2674,7 @@ def carrega_bancos(request):
 @transaction.atomic
 def reembolso_pedir(request):
     """Página com sistema de pedido de reembolso."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
     try:
         usuario = PFEUser.objects.get(pk=request.user.pk)
     except PFEUser.DoesNotExist:
@@ -2744,7 +2744,7 @@ def reembolso_pedir(request):
 @permission_required('users.altera_professor', login_url='/projetos/')
 def avisos_listar(request):
     """Mostra toda a tabela de avisos da coordenação do PFE."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
 
     qualquer_aviso = list(Aviso.objects.all())
 
@@ -2771,7 +2771,7 @@ def emails(request):
     """Gera uma série de lista de emails, com alunos, professores, parceiros, etc."""
     # Deve ter recurso para pegar aluno pelos projetos, opções,
     # pois um aluno que reprova pode aparecer em duas listas.
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
     ano = 2018
     semestre = 2
     semestres = []
@@ -2963,7 +2963,7 @@ def falconi_membros_banca():
 @permission_required('users.altera_professor', login_url='/projetos/')
 def bancas_criar(request):
     """Cria uma banca de avaliação para o projeto."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
     if request.method == 'POST':
         if 'projeto' in request.POST:
 
@@ -3146,7 +3146,7 @@ def export_calendar(request, event_id):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def mapeamento(request):
     """Chama o mapeamento entre estudantes e projetos do próximo semestre."""
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
 
     if configuracao.semestre == 1:
         ano = configuracao.ano
@@ -3161,7 +3161,7 @@ def mapeamento(request):
 @permission_required("users.altera_professor", login_url='/projetos/')
 def mapeamento_estudante_projeto(request, anosemestre):
     """Mapeamento entre estudantes e projetos."""
-    configuracao = Configuracao.objects.first()
+    configuracao = Configuracao.objects.get()
 
     ano = int(anosemestre.split(".")[0])
     semestre = int(anosemestre.split(".")[1])
@@ -3260,7 +3260,7 @@ def projeto_feedback(request):
 def lista_feedback(request):
     """Lista todos os feedback das Organizações Parceiras."""
 
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
     edicoes = range(2018, configuracao.ano+1)
 
     # PROJETOS
@@ -4092,7 +4092,7 @@ def pre_alocar_estudate(request):
             proposta = request.GET.get('proposta', None)
             proposta_id = int(proposta[len("proposta"):])
 
-            configuracao = Configuracao.objects.all().first()
+            configuracao = Configuracao.objects.get()
 
             ano = configuracao.ano
             semestre = configuracao.semestre
@@ -4528,9 +4528,9 @@ def cadastrar_usuario(request):
 @login_required
 @permission_required('users.altera_professor', login_url='/projetos/')
 def definir_datas(request):
-    """ Definir datas do PFE."""
+    """Definir datas do PFE."""
 
-    configuracao = Configuracao.objects.first()
+    configuracao = Configuracao.objects.get()
 
     if request.method == 'POST':
         if 'limite_propostas' in request.POST:
@@ -4559,7 +4559,7 @@ def definir_datas(request):
 def graficos(request):
     """Mostra graficos das evoluções do PFE."""
 
-    configuracao = Configuracao.objects.all().first()
+    configuracao = Configuracao.objects.get()
 
     periodo = ""
     estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)

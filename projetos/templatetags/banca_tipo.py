@@ -12,7 +12,7 @@ register = template.Library()
 
 @register.filter
 def get_banca(value):
-    """ Retorna a string do tipo de banca. """
+    """Retorna a string do tipo de banca."""
     TIPOS = dict(Banca.TIPO_DE_BANCA)
     if value in TIPOS:
         return TIPOS[value]

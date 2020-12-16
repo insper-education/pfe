@@ -41,12 +41,12 @@ def dup_projeto(modeladmin: admin_opt.ModelAdmin, request, queryset):
     for obj in queryset:
         from_id = obj.id
         obj.id = None
-        if Configuracao.objects.all().first().semestre == 1:
+        if Configuracao.objects.get().semestre == 1:
             obj.semestre = 2
-            obj.ano = Configuracao.objects.all().first().ano
+            obj.ano = Configuracao.objects.get().ano
         else:
             obj.semestre = 1
-            obj.ano = Configuracao.objects.all().first().ano + 1
+            obj.ano = Configuracao.objects.get().ano + 1
         obj.save()
         message = "duplicando de {} para {}".format(from_id, obj.id)
         modeladmin.log_addition(request=request, object=obj, message=message)
@@ -134,7 +134,7 @@ class EventoFilter(SimpleListFilter):
             ('academicos', 'Acadêmicos'),
             ('coordenacao', 'Coordenação'),
         ]
-        for ano in range(2018, Configuracao.objects.all().first().ano+1):
+        for ano in range(2018, Configuracao.objects.get().ano+1):
             for semestre in range(1, 3):
                 opcoes.append(("{0}.{1}".format(ano, semestre), "{0}.{1}".format(ano, semestre)))
         return opcoes

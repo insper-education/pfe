@@ -84,7 +84,7 @@ class Organizacao(models.Model):
         return self.nome
 
     def sigla_limpa(self):
-        """ Retorna o texto da sigla sem caracteres especiais ou espaço. """
+        """Retorna o texto da sigla sem caracteres especiais ou espaço."""
         sigla = force_text(self.sigla).strip().replace(' ', '_')
         sigla = re.sub(r'(?u)[^-\w.]', '', sigla)
         return sigla
@@ -748,7 +748,7 @@ class Aviso(models.Model):
 
     def get_data(self):
         """Retorna a data do aviso do semestre."""
-        configuracao = Configuracao.objects.all().first()
+        configuracao = Configuracao.objects.get()
         delta_days = datetime.timedelta(days=self.delta)
         if self.tipo_de_evento:
             eventos = Evento.objects.filter(tipo_de_evento=self.tipo_de_evento).\
@@ -1059,7 +1059,7 @@ class Area(models.Model):
 
     @classmethod
     def create(cls, titulo):
-        """ Cria uma Área nova. """
+        """Cria uma Área nova."""
         area = cls(titulo=titulo)
         return area
 
@@ -1068,7 +1068,7 @@ class Area(models.Model):
         verbose_name_plural = 'Áreas'
 
 class AreaDeInteresse(models.Model):
-    """ Usado para fazer o mapeando da proposta ou da pessoa para área de interesse. """
+    """Usado para fazer o mapeando da proposta ou da pessoa para área de interesse."""
 
     # As áreas são de interesse ou do usuário ou da proposta (que passa para o projeto)
     usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,

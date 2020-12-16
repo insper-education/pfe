@@ -16,7 +16,7 @@
 
     <form method="post">
         {% csrf_token %}
-        {% with aa=aluno.user.areadeinteresse_set.all %}
+        {% with aa=estudante.user.areadeinteresse_set.all %}
             {% include "areas.html"%}
         {% endwith %}
         <p>&nbsp;</p>

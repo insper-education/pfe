@@ -10,7 +10,7 @@ register = template.Library()
 
 @register.filter
 def dict_key(d, k):
-    """ Retorna o valor do dicionário pela chave. """
+    """Retorna o valor do dicionário pela chave."""
     if k in d:
         return d[k]
     else:

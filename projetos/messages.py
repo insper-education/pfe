@@ -107,7 +107,7 @@ def create_message(estudante, ano, semestre):
     return message
 
 def message_reembolso(usuario, projeto, reembolso, cpf):
-    """ Emite menssagem de reembolso. """
+    """Emite menssagem de reembolso."""
     message = '<br>\n'
     message += '&nbsp;&nbsp;Caro <b>Dept. de Carreiras</b>\n\n'
     message += '<br><br>\n\n'
@@ -149,7 +149,7 @@ def message_reembolso(usuario, projeto, reembolso, cpf):
     return message
 
 def message_agendamento(encontro):
-    """ Emite menssagem de agendamento de dinâmica. """
+    """Emite menssagem de agendamento de dinâmica."""
     message = '<br>\n'
     message += '&nbsp;&nbsp;Grupo do Projeto <b>'
     message += str(encontro.projeto)

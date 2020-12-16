@@ -8,11 +8,14 @@ Data: 2 de Outubro de 2020
 from django.utils import timezone
 
 from projetos.models import Configuracao
-from .models import PFEUser, Aluno
+#from .models import PFEUser, Aluno
+
 
 def configuracao_estudante_vencida(estudante):
-    """Retorna verdade se ainda em tempo de estudante atualizar dados. """
-    configuracao = Configuracao.objects.first()
+    """Retorna verdade se ainda em tempo de estudante atualizar dados."""
+
+    configuracao = Configuracao.objects.get()
+
     ano = configuracao.ano
     semestre = configuracao.semestre
 
@@ -27,4 +30,16 @@ def configuracao_estudante_vencida(estudante):
     elif estudante.anoPFE==ano+1:
         if estudante.semestrePFE==1:
             vencido = timezone.now() > configuracao.prazo
+
     return vencido
+
+def adianta_semestre(ano, semestre):
+    """ Adiciona um semestre no par ano, semestre."""
+
+    if semestre == 1:
+        semestre = 2
+    else:
+        ano += 1
+        semestre = 1
+
+    return ano, semestre
