@@ -11,16 +11,21 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
-#from django.views.generic.base import TemplateView # new
 
 from projetos import views
 
 urlpatterns = [
     path('favicon.ico', RedirectView.as_view(url='/static/favicon.ico')),
-    path('', RedirectView.as_view(url='/projetos/', permanent=True)),
+
+    #path('', RedirectView.as_view(url='/', permanent=True)),
+    path('', views.index, name='index'), #pagina inicial
+
     path('estudantes/', include('estudantes.urls')),
     path('parceiros/', include('parceiros.urls')),
     path('projetos/', include('projetos.urls')),
+    path('propostas/', include('propostas.urls')),
+    path('professores/', include('professores.urls')),
+    path('documentos/', include('documentos.urls')),
     path('users/', include('users.urls')), #Transferir tudo para accounts (NO FUTURO)
     path('users/', include('django.contrib.auth.urls')), #Transferir tudo para accounts (NO FUTURO)
     path('accounts/', include('django.contrib.auth.urls')),

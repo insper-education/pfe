@@ -1,0 +1,137 @@
+#!/usr/bin/env python
+"""
+Desenvolvido para o Projeto Final de Engenharia
+Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+Data: 15 de Dezembro de 2020
+"""
+
+from django.conf import settings
+
+from django.shortcuts import render
+
+from django.contrib.auth.decorators import login_required, permission_required
+
+#from django.http import Http404, HttpResponse, HttpResponseNotFound, JsonResponse
+from django.http import HttpResponse
+
+#from projetos.models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Conexao
+from projetos.models import Documento, Configuracao, Projeto
+
+#from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador, Opcao, Alocacao
+from users.models import Aluno
+
+
+
+
+
+@login_required
+def index_documentos(request):
+    """Lista os documentos armazenados no servidor."""
+
+    regulamento = Documento.objects.filter(tipo_de_documento=6).last() # Regulamento PFE
+    plano_de_aprendizagem = Documento.objects.filter(tipo_de_documento=7).last() # Plano de Aprend
+    manual_aluno = Documento.objects.filter(tipo_de_documento=8).last() # manual do aluno
+    # = Documento.objects.filter(tipo_de_documento=9).last() # manual do orientador
+    # = Documento.objects.filter(tipo_de_documento=10).last() # manual da organização parceira
+    manual_planejamento = Documento.objects.filter(tipo_de_documento=13).last() # manual de planej
+    manual_relatorio = Documento.objects.filter(tipo_de_documento=12).last() # manual de relatórios
+    template_relatorio = Documento.objects.filter(tipo_de_documento=17).last() # template de relat.
+    termo_parceria = Documento.objects.filter(tipo_de_documento=14).last() # termo de parceria
+
+    context = {
+        'MEDIA_URL' : settings.MEDIA_URL,
+        'regulamento': regulamento,
+        'plano_de_aprendizagem': plano_de_aprendizagem,
+        'manual_aluno': manual_aluno,
+        'manual_planejamento' : manual_planejamento,
+        'manual_relatorio': manual_relatorio,
+        'termo_parceria': termo_parceria,
+        'template_relatorio': template_relatorio,
+    }
+
+    return render(request, 'documentos/index_documentos.html', context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/projetos/')
+def tabela_documentos(request):
+    """Exibe tabela com todos os documentos armazenados."""
+
+    try:
+        configuracao = Configuracao.objects.get()
+    except Configuracao.DoesNotExist:
+        return HttpResponse("Falha na configuracao do sistema.", status=401)
+
+    projetos = Projeto.objects.filter(alocacao__isnull=False).distinct().order_by("ano", "semestre")
+    documentos = []
+    for projeto in projetos:
+
+        contrato = {}
+
+        # Contratos   -   (0, 'contrato com empresa')
+        contratos = []
+        for doc in Documento.objects.filter(organizacao=projeto.organizacao).\
+                                     filter(tipo_de_documento=0):
+            contratos.append((doc.documento, doc.anotacao, doc.data))
+        contrato["contratos"] = contratos
+
+        # Contrato alunos  -  (1, 'contrato entre empresa e aluno')
+        contratos_alunos = []
+        alunos = Aluno.objects.filter(alocacao__projeto=projeto)
+        for aluno in alunos:
+            documento = Documento.objects.filter(usuario=aluno.user).\
+                                          filter(tipo_de_documento=1).last()
+            if documento:
+                contratos_alunos.append((documento.documento,
+                                         aluno.user.first_name+" "+aluno.user.last_name))
+            else:
+                contratos_alunos.append(("", aluno.user.first_name+" "+aluno.user.last_name))
+        contrato["contratos_alunos"] = contratos_alunos
+
+        # relatorio_final   -   (3, 'relatório final')
+        documento = Documento.objects.filter(projeto=projeto).filter(tipo_de_documento=3).last()
+        if documento:
+            contrato["relatorio_final"] = documento.documento
+        else:
+            contrato["relatorio_final"] = ""
+
+        # Autorização de Publicação da Empresa  -   (4, 'autorização de publicação empresa')
+        documento = Documento.objects.filter(projeto=projeto).filter(tipo_de_documento=4).last()
+        if documento:
+            contrato["autorizacao_publicacao_empresa"] = documento.documento
+        else:
+            contrato["autorizacao_publicacao_empresa"] = ""
+
+        documentos.append(contrato)
+
+        # Autorização de Publicação do Aluno  -   (5, 'autorização de publicação aluno')
+        autorizacao_publicacao_aluno = []
+        alunos = Aluno.objects.filter(alocacao__projeto=projeto)
+        for aluno in alunos:
+            documento = Documento.objects.filter(usuario=aluno.user).\
+                                          filter(tipo_de_documento=5).last()
+            if documento:
+                autorizacao_publicacao_aluno.\
+                    append((documento.documento, aluno.user.first_name+" "+aluno.user.last_name))
+            else:
+                autorizacao_publicacao_aluno.\
+                    append(("", aluno.user.first_name+" "+aluno.user.last_name))
+        contrato["autorizacao_publicacao_aluno"] = autorizacao_publicacao_aluno
+
+        # Outros   -   (14, 'outros')
+        outros = []
+        for doc in Documento.objects.filter(organizacao=projeto.organizacao).\
+                                     filter(tipo_de_documento=14):
+            outros.append((doc.documento, doc.anotacao, doc.data))
+        contrato["outros"] = outros
+    mylist = zip(projetos, documentos)
+
+    # Outros documentos
+    seguros = Documento.objects.filter(tipo_de_documento=15)
+
+    context = {
+        'configuracao': configuracao,
+        'mylist': mylist,
+        'seguros': seguros,
+        'MEDIA_URL' : settings.MEDIA_URL,
+    }
+    return render(request, 'documentos/tabela_documentos.html', context)

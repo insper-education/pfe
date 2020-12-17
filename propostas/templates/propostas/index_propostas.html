@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 15 de Dezembro de 2020
+{% endcomment %}
+
+{% block content %}
+
+    <h5>Proposta de Projetos</h5>
+    <ul>
+        <a href="{% url 'organizacoes_prospect' %}"><li>Organizações Prospectadas</li></a>
+        <a href="{% url 'propostas_apresentadas' %}"><li>Propostas Apresentadas</li></a>
+        <a href="{% url 'procura_propostas' %}"><li>Procura pelas Propostas</li></a>
+        <a href="{% url 'mapeamento' %}"><li>Mapeamento Estudantes e Propostas de Projetos</li></a>
+    </ul>
+    
+{% endblock %}

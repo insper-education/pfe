@@ -40,10 +40,13 @@
   <br>
 
   {% if professor %}
-    <strong>Seu Perfil é de Professor, você está preenchendo para alguma organização</strong><br>
+    <strong>Seu Perfil é de Professor, você está preenchendo para alguma organização.</strong><br>
   {% elif administrador %}
-    <strong>Seu Perfil é de Administrador, você está preenchendo para alguma organização</strong><br>
+    <strong>Seu Perfil é de Administrador, você está preenchendo para alguma organização.</strong><br>
   {% endif %}
+  
+  <strong>Após preencher o documento, você receberá um e-mail com o link para, se desejar, editar essa proposta.</strong><br>
+
   <br>
 
   <form action="" method="post"> {% csrf_token %}  

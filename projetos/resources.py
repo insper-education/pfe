@@ -13,6 +13,7 @@ from .models import Projeto, Proposta, Organizacao, Configuracao, Disciplina
 from .models import Feedback, Avaliacao2, ObjetivosDeAprendizagem, Observacao
 from .models import Area, AreaDeInteresse
 
+from .support import converte_conceito, converte_letra
 
 class ProjetosResource(resources.ModelResource):
     """Model Resource para tratar dados de Projetos."""
@@ -61,24 +62,6 @@ class DisciplinasResource(resources.ModelResource):
         skip_unchanged = True
 
 
-def converte_conceito(conceito):
-    """Converte de Letra para Número."""
-    if conceito == "A+":
-        return 10
-    elif conceito == "A" or conceito == "A ":
-        return 9
-    elif conceito == "B+":
-        return 8
-    elif conceito == "B" or conceito == "B ":
-        return 7
-    elif conceito == "C+":
-        return 6
-    elif conceito == "C" or conceito == "C ":
-        return 5
-    elif conceito == "D" or conceito == "D ":
-        return 4
-    return 0
-
 def recupera_objetivo(objetivo_str):
 
     if objetivo_str == "Comunicação" or objetivo_str == "Comunicacao" or objetivo_str == "CO":
@@ -86,7 +69,7 @@ def recupera_objetivo(objetivo_str):
 
     elif objetivo_str == "Design/Empreendedorismo" or objetivo_str == "Design e Empreendedorismo" or objetivo_str == "DE":
         objetivo = ObjetivosDeAprendizagem.objects.get(titulo="Design/Empreendedorismo", avaliacao_grupo=True)
-    
+
     elif objetivo_str == "Trabalho em Equipe" or objetivo_str == "TW":
         objetivo = ObjetivosDeAprendizagem.objects.get(titulo="Trabalho em Equipe", avaliacao_grupo=True)
 

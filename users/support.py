@@ -8,7 +8,17 @@ Data: 2 de Outubro de 2020
 from django.utils import timezone
 
 from projetos.models import Configuracao
-#from .models import PFEUser, Aluno
+
+def adianta_semestre(ano, semestre):
+    """ Adiciona um semestre no par ano, semestre."""
+
+    if semestre == 1:
+        semestre = 2
+    else:
+        ano += 1
+        semestre = 1
+
+    return ano, semestre
 
 
 def configuracao_estudante_vencida(estudante):
@@ -33,13 +43,23 @@ def configuracao_estudante_vencida(estudante):
 
     return vencido
 
-def adianta_semestre(ano, semestre):
-    """ Adiciona um semestre no par ano, semestre."""
 
-    if semestre == 1:
-        semestre = 2
-    else:
-        ano += 1
-        semestre = 1
+def get_edicoes(tipo):
+    """Função usada para recuperar todas as edições de 2018.2 até hoje."""
 
-    return ano, semestre
+    edicoes = []
+    semestre_tmp = 2
+    ano_tmp = 2018
+    while True:
+        if tipo.objects.filter(ano=ano_tmp, semestre=semestre_tmp).exists():
+            ano = ano_tmp
+            semestre = semestre_tmp
+            edicoes.append(str(ano)+"."+str(semestre))
+        else:
+            break
+        if semestre_tmp == 1:
+            semestre_tmp += 1
+        else:
+            ano_tmp += 1
+            semestre_tmp = 1
+    return (edicoes, ano, semestre)

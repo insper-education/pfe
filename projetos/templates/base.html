@@ -48,6 +48,10 @@
     
         {% if perms.users.altera_professor %}<a href="{% url 'index_professor'%}">Professor</a>{% endif %}
         {% if perms.users.altera_professor %}<a href="{% url 'administracao'%}">Administração</a>{% endif %}
+
+        {% if perms.users.altera_professor %}<a href="{% url 'index_propostas'%}">Propostas</a>{% endif %}
+        {% if perms.users.altera_professor %}<a href="{% url 'index_projetos'%}">Projetos</a>{% endif %}
+
         <a href="{% url 'index_documentos'%}">Documentos</a>
         <a href="{% url 'logout'%}">Logout</a>
       {% else %}

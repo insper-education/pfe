@@ -226,7 +226,7 @@
           var periodo = $(".periodo option:selected").attr("value");
           $.ajax({
               type: "POST",
-              url: "{% url 'organizacoes_prospectadas' %}",
+              url: "{% url 'organizacoes_prospect' %}",
               data: {
                   periodo: periodo,
                   'csrfmiddlewaretoken': '{{ csrf_token }}',

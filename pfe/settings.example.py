@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'projetos.apps.ProjetosConfig',
     'estudantes.apps.EstudantesConfig',
     'parceiros.apps.ParceirosConfig',
+    'professores.apps.ProfessoresConfig',
+    'propostas.apps.PropostasConfig',
     'django.contrib.sites',
     'dbbackup',
     #'debug_toolbar',
@@ -86,16 +88,16 @@ DATABASES = {
     'default': {
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    
+
         'ENGINE': 'django.db.backends.XXX',
         'NAME': 'XXX',
         'USER': 'XXX',
         'PASSWORD': 'XXX',
         'HOST': '127.0.0.1',
         'PORT': '5432',
-    
+
     }
-    
+
 }
 
 DBBACKUP_STORAGE = "django.core.files.storage.FileSystemStorage"

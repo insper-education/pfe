@@ -11,10 +11,13 @@ from functools import partial
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+#from django.db.models.signals import post_save
+#from django.dispatch import receiver
 
-from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2, ObjetivosDeAprendizagem, Area
+#from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2, ObjetivosDeAprendizagem, Area
+from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2, ObjetivosDeAprendizagem
+
+from projetos.support import converte_conceito, converte_letra
 
 class PFEUser(AbstractUser):
     """Classe base para todos os usuários do PFE (Alunos, Professores, Parceiros)."""
@@ -121,43 +124,6 @@ class Professor(models.Model):
         professor = cls(user=usuario)
         return professor
 
-
-## ISSO ESTA REPETIDO NO PROJETOS VIEWS / CUIDADO
-def converte_conceito(conceito):
-    """Converte de Letra para Número."""
-    if conceito == "A+":
-        return 10
-    elif conceito == "A" or conceito == "A ":
-        return 9
-    elif conceito == "B+":
-        return 8
-    elif conceito == "B" or conceito == "B ":
-        return 7
-    elif conceito == "C+":
-        return 6
-    elif conceito == "C" or conceito == "C ":
-        return 5
-    elif conceito == "D" or conceito == "D ":
-        return 4
-    return 0
-
-def converte_letra(nota):
-    """Converte de Número para Letra."""
-    if nota == 10:
-        return "A+"
-    elif nota >= 9:
-        return "A"
-    elif nota >= 8:
-        return "B+"
-    elif nota >= 7:
-        return "B"
-    elif nota >= 6:
-        return "C+"
-    elif nota >= 5:
-        return "C"
-    elif nota >= 4:
-        return "D"
-    return "I"
 
 class Aluno(models.Model):
     """Classe de usuários com estatus de Aluno."""

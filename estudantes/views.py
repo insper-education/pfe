@@ -46,18 +46,19 @@ def index_estudantes(request):
 
     if usuario.tipo_de_usuario == 1: # Estudante
         try:
-            aluno = Aluno.objects.get(pk=request.user.aluno.pk)
+            estudante = Aluno.objects.get(pk=request.user.aluno.pk)
         except Aluno.DoesNotExist:
             return HttpResponse("Estudante não encontrado.", status=401)
 
-        context['projeto'] = Projeto.objects.filter(alocacao__aluno=aluno).last()
+        context['projeto'] = Projeto.objects.filter(alocacao__aluno=estudante).last()
 
         # Estudantes de processos passados sempre terrão seleção vencida
         if semestre == 1:
-            vencido = vencido or (aluno.anoPFE < ano)
-            vencido = vencido or (aluno.anoPFE == ano and aluno.semestrePFE == 1)
+            vencido = vencido or (estudante.anoPFE < ano)
+            vencido = vencido or (estudante.anoPFE == ano and estudante.semestrePFE == 1)
         else:
-            vencido = vencido or (aluno.anoPFE <= ano)
+            vencido = vencido or (estudante.anoPFE <= ano)
+
     elif usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4: # professor & administrador
         try:
             professor_id = Professor.objects.get(pk=request.user.professor.pk).id
@@ -72,6 +73,7 @@ def index_estudantes(request):
     context['semestre'] = semestre
 
     return render(request, 'estudantes/index_estudantes.html', context=context)
+
 
 @login_required
 def areas_interesse(request):
@@ -116,6 +118,7 @@ def areas_interesse(request):
         return render(request, 'generic.html', context=context)
 
     return render(request, 'estudantes/areas_interesse.html', context=context)
+
 
 @login_required
 def encontros_marcar(request):
@@ -197,6 +200,7 @@ def encontros_marcar(request):
         }
         return render(request, 'estudantes/encontros_marcar.html', context)
 
+
 @login_required
 def informacoes_adicionais(request):
     """Para perguntas descritivas ao aluno de onde trabalho, entidades, sociais e familia."""
@@ -255,6 +259,7 @@ def informacoes_adicionais(request):
         }
     return render(request, 'estudantes/informacoes_adicionais.html', context)
 
+
 @login_required
 def minhas_bancas(request):
     """Lista as bancas agendadas para um aluno."""
@@ -281,6 +286,7 @@ def minhas_bancas(request):
         'bancas' : bancas,
     }
     return render(request, 'estudantes/minhas_bancas.html', context)
+
 
 @login_required
 def selecao_propostas(request):

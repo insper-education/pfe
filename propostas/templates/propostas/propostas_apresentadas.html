@@ -633,7 +633,7 @@
       var edicao = $("#filterEdicao option:selected").attr("value");
       $.ajax({
           type: "POST",
-          url: "{% url 'propostas_lista' %}",
+          url: "{% url 'propostas_apresentadas' %}",
           data: {
               edicao: edicao,
               'csrfmiddlewaretoken': '{{ csrf_token }}',
