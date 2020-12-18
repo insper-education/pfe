@@ -43,11 +43,11 @@
             <a href="{% url 'index_estudantes' %}"><h5>Área dos Estudantes</h5></a>
         {% endif %}
         {% if user.tipo_de_usuario == 3 or user.tipo_de_usuario == 4 %}
-            <a href="{% url 'index_parceiros' %}"><h5>Área dos Parceiros</h5></a>
+            <a href="{% url 'index_organizacoes' %}"><h5>Área dos Parceiros</h5></a>
         {% endif %}
     
         {% if perms.users.altera_professor %}<a href="{% url 'index_professor'%}">Professor</a>{% endif %}
-        {% if perms.users.altera_professor %}<a href="{% url 'administracao'%}">Administração</a>{% endif %}
+        {% if perms.users.altera_professor %}<a href="{% url 'index_administracao'%}">Administração</a>{% endif %}
 
         {% if perms.users.altera_professor %}<a href="{% url 'index_propostas'%}">Propostas</a>{% endif %}
         {% if perms.users.altera_professor %}<a href="{% url 'index_projetos'%}">Projetos</a>{% endif %}

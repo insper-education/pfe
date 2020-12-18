@@ -13,8 +13,8 @@ from django.shortcuts import render, redirect
 
 from django.contrib.auth.decorators import login_required, permission_required
 
-#rom django.http import Http404, HttpResponse, , JsonResponse
-from django.http import HttpResponse, HttpResponseNotFound
+#rom django.http import Http404
+from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 
 from django.db.models.functions import Lower
 
@@ -37,7 +37,7 @@ from .support import retorna_ternario, ordena_propostas_novo, ordena_propostas
 from .support import envia_proposta, preenche_proposta
 
 @login_required
-@permission_required("users.altera_professor", login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/')
 def index_propostas(request):
     """Mostra página principal de Propostas."""
 
@@ -47,7 +47,7 @@ def index_propostas(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/')
 def mapeamento(request):
     """Chama o mapeamento entre estudantes e projetos do próximo semestre."""
 
@@ -64,7 +64,7 @@ def mapeamento(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/')
 def map_est_proj(request, anosemestre):
     """Mapeamento entre estudantes e projetos."""
 
@@ -143,7 +143,7 @@ def map_est_proj(request, anosemestre):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/')
 def organizacoes_prospect(request):
     """Exibe as organizações prospectadas e a última comunicação."""
 
@@ -202,7 +202,7 @@ def organizacoes_prospect(request):
     return render(request, 'propostas/organizacoes_prospectadas.html', context)
 
 @login_required
-@permission_required('users.altera_professor', login_url='/projetos/')
+@permission_required('users.altera_professor', login_url='/')
 def procura_propostas(request):
     """Exibe um histograma com a procura das propostas pelos estudantes."""
 
@@ -292,7 +292,7 @@ def procura_propostas(request):
     return render(request, 'propostas/procura_propostas.html', context)
 
 @login_required
-@permission_required('users.altera_professor', login_url='/projetos/')
+@permission_required('users.altera_professor', login_url='/')
 def propostas_apresentadas(request):
     """Lista todas as propostas de projetos."""
 
@@ -343,7 +343,7 @@ def propostas_apresentadas(request):
     return render(request, 'propostas/propostas_apresentadas.html', context)
 
 @login_required
-@permission_required("users.altera_professor", login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/')
 def proposta_completa(request, primakey):
     """Mostra um projeto por completo."""
 
@@ -536,3 +536,56 @@ def proposta_editar(request, slug):
         'tipo_de_interesse' : proposta.tipo_de_interesse,
     }
     return render(request, 'parceiro/proposta_submissao.html', context)
+
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def validate_alunos(request):
+    """Ajax para validar vaga de estudantes em propostas."""
+
+    proposta_id = int(request.GET.get('proposta', None))
+    vaga = request.GET.get('vaga', "  ")
+    checked = request.GET.get('checked', None) == "true"
+
+    try:
+        proposta = Proposta.objects.get(id=proposta_id)
+
+        if vaga[0] == 'C':
+            if vaga[1] == '1':
+                proposta.perfil_aluno1_computacao = checked
+            elif vaga[1] == '2':
+                proposta.perfil_aluno2_computacao = checked
+            elif vaga[1] == '3':
+                proposta.perfil_aluno3_computacao = checked
+            elif vaga[1] == '4':
+                proposta.perfil_aluno4_computacao = checked
+
+        if vaga[0] == 'M':
+            if vaga[1] == '1':
+                proposta.perfil_aluno1_mecanica = checked
+            elif vaga[1] == '2':
+                proposta.perfil_aluno2_mecanica = checked
+            elif vaga[1] == '3':
+                proposta.perfil_aluno3_mecanica = checked
+            elif vaga[1] == '4':
+                proposta.perfil_aluno4_mecanica = checked
+
+        if vaga[0] == 'X':
+            if vaga[1] == '1':
+                proposta.perfil_aluno1_mecatronica = checked
+            elif vaga[1] == '2':
+                proposta.perfil_aluno2_mecatronica = checked
+            elif vaga[1] == '3':
+                proposta.perfil_aluno3_mecatronica = checked
+            elif vaga[1] == '4':
+                proposta.perfil_aluno4_mecatronica = checked
+
+        proposta.save()
+    except Proposta.DoesNotExist:
+        return HttpResponseNotFound('<h1>Proposta não encontrada!</h1>')
+
+    data = {
+        'atualizado': True,
+    }
+
+    return JsonResponse(data)

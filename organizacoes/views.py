@@ -6,6 +6,8 @@ Data: 14 de Dezembro de 2020
 
 import datetime
 
+import dateutil.parser
+
 from django.conf import settings
 
 from django.shortcuts import render
@@ -29,15 +31,64 @@ from propostas.support import envia_proposta, preenche_proposta
 
 
 @login_required
-@permission_required("users.altera_valores", login_url='/projetos/')
-def index_parceiros(request):
+@permission_required("users.altera_valores", login_url='/')
+def index_organizacoes(request):
     """Mostra página principal do usuário que é um parceiro de uma organização."""
 
-    return render(request, 'parceiros/index_parceiros.html')
+    return render(request, 'organizacoes/index_organizacoes.html')
 
 
 @login_required
-@permission_required('users.altera_parceiro', login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/')
+def cria_anotacao(request, login): #acertar isso para pk
+    """Cria um anotação para uma organização parceira."""
+
+    try:
+        organizacao = Organizacao.objects.get(id=login)
+    except Proposta.DoesNotExist:
+        return HttpResponseNotFound('<h1>Organização não encontrada!</h1>')
+
+    if request.method == 'POST':
+        if 'anotacao' in request.POST:
+            anotacao = Anotacao.create(organizacao)
+
+            try:
+                anotacao.autor = PFEUser.objects.get(pk=request.user.pk)
+            except Configuracao.DoesNotExist:
+                return HttpResponse("Usuário não encontrado.", status=401)
+
+            anotacao.texto = request.POST['anotacao']
+            anotacao.tipo_de_retorno = int(request.POST['contato'])
+            anotacao.save()
+            if 'data_hora' in request.POST:
+                try:
+                    anotacao.momento = dateutil.parser.parse(request.POST['data_hora'])
+                except (ValueError, OverflowError):
+                    anotacao.momento = datetime.datetime.now()
+            anotacao.save()
+            mensagem = "Anotação criada."
+        else:
+            mensagem = "<h3 style='color:red'>Anotação não criada.<h3>"
+
+        context = {
+            "area_principal": True,
+            "organizacao_completo": login,
+            "organizacoes_lista": True,
+            "organizacoes_prospectadas": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
+    else:
+        context = {
+            'organizacao': organizacao,
+            'TIPO_DE_RETORNO': Anotacao.TIPO_DE_RETORNO,
+            'data_hora': datetime.datetime.now(),
+        }
+        return render(request, 'organizacoes/cria_anotacao.html', context=context)
+
+
+@login_required
+@permission_required('users.altera_parceiro', login_url='/')
 def parceiro_propostas(request):
     """Lista todas as propostas de projetos."""
 
@@ -55,7 +106,7 @@ def parceiro_propostas(request):
     context = {
         'propostas': propostas,
     }
-    return render(request, 'parceiros/parceiro_propostas.html', context)
+    return render(request, 'organizacoes/parceiro_propostas.html', context)
 
 
 #@login_required
@@ -155,11 +206,11 @@ def proposta_submissao(request):
         'interesses' : Proposta.TIPO_INTERESSE,
         'tipo_de_interesse' : 0 # Não existe na verdade
     }
-    return render(request, 'parceiros/proposta_submissao.html', context)
+    return render(request, 'organizacoes/proposta_submissao.html', context)
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/')
 def organizacoes_lista(request):
     """Exibe todas as organizações que já submeteram propostas de projetos."""
 
@@ -197,11 +248,11 @@ def organizacoes_lista(request):
         'filtro': "todas",
         }
 
-    return render(request, 'parceiros/organizacoes_lista.html', context)
+    return render(request, 'organizacoes/organizacoes_lista.html', context)
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/')
 def organizacao_completo(request, org): #acertar isso para pk
     """Exibe detalhes das organizações parceiras."""
 
@@ -215,10 +266,10 @@ def organizacao_completo(request, org): #acertar isso para pk
         'MEDIA_URL' : settings.MEDIA_URL,
     }
 
-    return render(request, 'parceiros/organizacao_completo.html', context=context)
+    return render(request, 'organizacoes/organizacao_completo.html', context=context)
 
 @login_required
-@permission_required('users.altera_professor', login_url='/projetos/')
+@permission_required('users.altera_professor', login_url='/')
 def organizacoes_tabela(request):
     """Alocação das Organizações por semestre."""
 
@@ -270,4 +321,18 @@ def organizacoes_tabela(request):
         'anos': anos,
     }
 
-    return render(request, 'parceiros/organizacoes_tabela.html', context)
+    return render(request, 'organizacoes/organizacoes_tabela.html', context)
+
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def todos_parceiros(request):
+    """Exibe todas os parceiros (pessoas) de organizações que já submeteram projetos."""
+
+    pareceiros = Parceiro.objects.all()
+
+    context = {
+        'pareceiros': pareceiros,
+        }
+
+    return render(request, 'organizacoes/todos_parceiros.html', context)

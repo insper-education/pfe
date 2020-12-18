@@ -10,22 +10,21 @@ import random
 
 from django.contrib.auth.decorators import login_required, permission_required
 
-from django.db import transaction
 from django.db.models.functions import Lower
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.utils import html, timezone
+from django.utils import html
 from django.views import generic
 
-from projetos.models import Configuracao, Projeto, Conexao, Banca, ObjetivosDeAprendizagem, Area, Coorientador
+from projetos.models import Configuracao, Projeto, Conexao, Banca, Area, Coorientador
 
 from projetos.messages import email
 
 from .forms import PFEUserCreationForm
 from .models import PFEUser, Aluno, Professor, Parceiro, Opcao, Administrador
 
-from .support import configuracao_estudante_vencida
+
 
 @login_required
 def user_detail(request, primarykey):
@@ -101,7 +100,7 @@ class Usuario(generic.DetailView):
     model = Aluno
 
 @login_required
-@permission_required("users.altera_professor", login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/')
 def alunos_lista(request):
     """Mostra todos os alunos que estão que cursam semestre atual."""
     configuracao = Configuracao.objects.get()
@@ -110,7 +109,7 @@ def alunos_lista(request):
     return redirect('alunos_listagem', anosemestre="{0}.{1}".format(ano, semestre))
 
 @login_required
-@permission_required("users.altera_professor", login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/')
 def alunos_listagem(request, anosemestre):
     """Gera lista com todos os alunos já registrados."""
     configuracao = Configuracao.objects.get()
@@ -215,7 +214,7 @@ def alunos_listagem(request, anosemestre):
     return render(request, 'users/alunos_lista.html', context=context)
 
 @login_required
-@permission_required("users.altera_professor", login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/')
 def alunos_inscrevendo(request):
     """Mostra todos os alunos que estão se inscrevendo em projetos no próximo semestre."""
     configuracao = Configuracao.objects.get()
@@ -230,7 +229,7 @@ def alunos_inscrevendo(request):
     return redirect('alunos_inscritos', anosemestre="{0}.{1}".format(ano, semestre))
 
 @login_required
-@permission_required("users.altera_professor", login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/')
 def alunos_inscritos(request, anosemestre):
     """Mostra todos os alunos que estão se inscrevendo em projetos."""
     configuracao = Configuracao.objects.get()
@@ -279,23 +278,28 @@ def alunos_inscritos(request, anosemestre):
     return render(request, 'users/alunos_inscritos.html', context=context)
 
 @login_required
-@permission_required('users.altera_professor', login_url='/projetos/')
+@permission_required('users.altera_professor', login_url='/')
 def aluno_detail(request, primarykey):
     """Mostra detalhes sobre o aluno."""
+
     aluno = Aluno.objects.filter(pk=primarykey).first()
     configuracao = Configuracao.objects.get()
     areas = Area.objects.filter(ativa=True)
+
     context = {
         'configuracao': configuracao,
         'aluno': aluno,
         'areast': areas,
     }
+
     return render(request, 'users/aluno_detail.html', context=context)
 
+
 @login_required
-@permission_required('users.altera_professor', login_url='/projetos/')
+@permission_required('users.altera_professor', login_url='/')
 def professor_detail(request, primarykey):
     """Mostra detalhes sobre o professor."""
+
     try:
         professor = Professor.objects.get(pk=primarykey)
     except Professor.DoesNotExist:
@@ -303,7 +307,10 @@ def professor_detail(request, primarykey):
 
     projetos = Projeto.objects.filter(orientador=professor).order_by("ano", "semestre", "titulo")
 
-    coorientacoes = Coorientador.objects.filter(usuario=professor.user).order_by("projeto__ano", "projeto__semestre", "projeto__titulo")
+    coorientacoes = Coorientador.objects.filter(usuario=professor.user).\
+                                         order_by("projeto__ano",
+                                                  "projeto__semestre",
+                                                  "projeto__titulo")
 
     bancas = Banca.objects.filter(membro1=professor.user)|\
              Banca.objects.filter(membro2=professor.user)|\
@@ -317,12 +324,15 @@ def professor_detail(request, primarykey):
         'coorientacoes': coorientacoes,
         'bancas': bancas,
     }
+
     return render(request, 'users/professor_detail.html', context=context)
 
+
 @login_required
-@permission_required('users.altera_professor', login_url='/projetos/')
+@permission_required('users.altera_professor', login_url='/')
 def parceiro_detail(request, primarykey):
     """Mostra detalhes sobre o parceiro."""
+
     try:
         parceiro = Parceiro.objects.get(pk=primarykey)
     except Professor.DoesNotExist:
@@ -337,10 +347,12 @@ def parceiro_detail(request, primarykey):
     }
     return render(request, 'users/parceiro_detail.html', context=context)
 
+
 @login_required
-@permission_required("users.altera_professor", login_url='/projetos/')
+@permission_required("users.altera_professor", login_url='/')
 def contas_senhas(request, anosemestre):
     """Envia conta e senha para todos os estudantes que estão no semestre."""
+
     configuracao = Configuracao.objects.get()
 
     ano = int(anosemestre.split(".")[0])
@@ -413,4 +425,5 @@ def contas_senhas(request, anosemestre):
         'semestre': semestre,
         'loop_anos': range(2018, configuracao.ano+1),
     }
+
     return render(request, 'users/contas_senhas.html', context=context)

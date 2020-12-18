@@ -27,4 +27,8 @@ urlpatterns = [
     path('proposta_completa/<int:primakey>', views.proposta_completa, name='proposta_completa'),
     path('proposta_detalhes/<int:primarykey>', views.proposta_detalhes, name='proposta_detalhes'),
     path('proposta_editar/<slug:slug>', views.proposta_editar, name='proposta_editar'),
+
+
+    path('ajax/validate_alunos/', views.validate_alunos, name='validate_alunos'),
+
 ]

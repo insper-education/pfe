@@ -58,7 +58,7 @@
 
   {% if banca.projeto %}
     <br>  
-    <b>Link formulário de avaliação</b>: <a href="/projetos/avaliacao/{{banca.projeto.id}}">https://{{ request.get_host }}{% url 'avaliacao' banca.projeto.id %}</a><br>
+    <b>Link formulário de avaliação</b>: <a href="/professores/avaliacao/{{banca.projeto.id}}">https://{{ request.get_host }}{% url 'avaliacao' banca.projeto.id %}</a><br>
   {% endif %}
 
   <br>

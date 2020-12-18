@@ -12,7 +12,9 @@ from . import views
 
 urlpatterns = [
 
-    path('', views.index_parceiros, name='index_parceiros'), #pagina inicial
+    path('', views.index_organizacoes, name='index_organizacoes'), #pagina inicial
+
+    path('cria_anotacao/<str:login>', views.cria_anotacao, name='cria_anotacao'),
 
     path('organizacoes_lista/', views.organizacoes_lista, name='organizacoes_lista'),
     path('organizacao_completo/<str:org>', views.organizacao_completo, name='organizacao_completo'),
@@ -21,4 +23,7 @@ urlpatterns = [
     path('parceiro_propostas', views.parceiro_propostas, name='parceiro_propostas'),
 
     path('proposta_submissao', views.proposta_submissao, name='proposta_submissao'),
+
+    path('todos_parceiros/', views.todos_parceiros, name='todos_parceiros'),
+
 ]

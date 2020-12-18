@@ -15,7 +15,7 @@ from django.utils import timezone
 from projetos.models import Projeto, Proposta, Configuracao, Area
 from projetos.models import Encontro, Banca, Entidade
 
-from projetos.views import cria_area_estudante
+from projetos.support import cria_area_estudante
 
 from projetos.messages import email, message_agendamento, create_message
 

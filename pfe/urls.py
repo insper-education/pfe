@@ -21,11 +21,13 @@ urlpatterns = [
     path('', views.index, name='index'), #pagina inicial
 
     path('estudantes/', include('estudantes.urls')),
-    path('parceiros/', include('parceiros.urls')),
+    path('organizacoes/', include('organizacoes.urls')),
     path('projetos/', include('projetos.urls')),
     path('propostas/', include('propostas.urls')),
     path('professores/', include('professores.urls')),
     path('documentos/', include('documentos.urls')),
+    path('administracao/', include('administracao.urls')),
+    path('calendario/', include('calendario.urls')),
     path('users/', include('users.urls')), #Transferir tudo para accounts (NO FUTURO)
     path('users/', include('django.contrib.auth.urls')), #Transferir tudo para accounts (NO FUTURO)
     path('accounts/', include('django.contrib.auth.urls')),

@@ -139,7 +139,7 @@
 #                     # " (DE): "+remove_projeto.titulo+" (PARA):"+op2.projeto.titulo)
 
 # @login_required
-# @permission_required('users.altera_professor', login_url='/projetos/')
+# @permission_required('users.altera_professor', login_url='/')
 # def propor(request):
 #     """Monta grupos de PFE."""
     ############################################
@@ -230,71 +230,3 @@
     # return HttpResponseNotFound('<h1>Sistema de propor projetos está obsoleto.</h1>')
 
 
-
-# @login_required
-# @permission_required('users.altera_professor', login_url='/projetos/')
-# def pre_alocar_estudante(request):
-#     """Ajax para pre-alocar estudates em propostas."""
-
-#     try:
-#         user = PFEUser.objects.get(pk=request.user.pk)
-#     except PFEUser.DoesNotExist:
-#         return HttpResponse("Usuário não encontrado.", status=401)
-
-#     if user:
-
-#         if user.tipo_de_usuario == 4: # admin
-
-#             # Código a seguir não estritamente necessário mas pode deixar mais seguro
-#             try:
-#                 administrador = Administrador.objects.get(pk=request.user.administrador.pk)
-#             except Administrador.DoesNotExist:
-#                 return HttpResponse("Administrador não encontrado.", status=401)
-
-#             if not administrador:
-#                 return HttpResponse("Administrador não encontrado.", status=401)
-
-#             estudante = request.GET.get('estudante', None)
-#             estudante_id = int(estudante[len("estudante"):])
-
-#             proposta = request.GET.get('proposta', None)
-#             proposta_id = int(proposta[len("proposta"):])
-
-#             try:
-#                 configuracao = Configuracao.objects.get()
-#                 ano = configuracao.ano
-#                 semestre = configuracao.semestre
-#             except Configuracao.DoesNotExist:
-#                 return HttpResponse("Falha na configuracao do sistema.", status=401)
-
-#             # Vai para próximo semestre
-#             ano, semestre = adianta_semestre(ano, semestre)
-
-#             try:
-#                 proposta = Proposta.objects.get(id=proposta_id)
-#             except Proposta.DoesNotExist:
-#                 return HttpResponseNotFound('<h1>Proposta não encontrada!</h1>')
-
-#             try:
-#                 estudante = Aluno.objects.get(id=estudante_id)
-#                 estudante.pre_alocacao = proposta
-#                 estudante.save()
-#             except Aluno.DoesNotExist:
-#                 return HttpResponseNotFound('<h1>Estudante não encontrado!</h1>')
-
-#             data = {
-#                 'atualizado': True,
-#             }
-
-#         elif user.tipo_de_usuario == 2: # professor
-
-#             # atualizações não serão salvas
-
-#             data = {
-#                 'atualizado': False,
-#             }
-
-#         else:
-#             return HttpResponseNotFound('<h1>Usuário sem privilérios!</h1>')
-
-#     return JsonResponse(data)

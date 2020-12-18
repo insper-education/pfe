@@ -52,7 +52,7 @@ def index_documentos(request):
     return render(request, 'documentos/index_documentos.html', context)
 
 @login_required
-@permission_required('users.altera_professor', login_url='/projetos/')
+@permission_required('users.altera_professor', login_url='/')
 def tabela_documentos(request):
     """Exibe tabela com todos os documentos armazenados."""
 
