@@ -14,6 +14,9 @@ from django.utils import text
 
 from .models import Area, AreaDeInteresse
 
+# Estudar raise Http404
+# from django.http import Http404
+
 def converte_conceito(conceito):
     """Converte de Letra para Número."""
     if conceito == "A+":

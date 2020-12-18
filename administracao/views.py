@@ -12,9 +12,10 @@ import dateutil.parser
 from django.shortcuts import render, redirect
 from django.core.mail import EmailMessage
 from django.contrib.auth.decorators import login_required, permission_required
-from django.http import HttpResponse, HttpResponseNotFound, JsonResponse, Http404
+from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.db.models.functions import Lower
 from django.conf import settings
+from django.utils.datastructures import MultiValueDictKeyError
 
 from projetos.models import Configuracao, Organizacao, Proposta, Projeto, Banca
 from projetos.models import Avaliacao2, get_upload_path, Conexao
@@ -37,6 +38,28 @@ def index_administracao(request):
     """Mostra página principal para administração do sistema."""
 
     return render(request, 'administracao/index_admin.html')
+
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def index_carregar(request):
+    """Para carregar dados de arquivos para o servidor."""
+
+    try:
+        user = PFEUser.objects.get(pk=request.user.pk)
+    except PFEUser.DoesNotExist:
+        return HttpResponse("Usuário não encontrado.", status=401)
+
+    if user:
+        if user.tipo_de_usuario != 4: # não é admin
+            mensagem = "Você não tem privilégios de administrador!"
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, 'generic.html', context=context)
+
+    return render(request, 'administracao/carregar.html')
 
 
 @login_required
@@ -158,22 +181,25 @@ def cadastrar_organizacao(request):
     """Cadastra Organização na base de dados do PFE."""
 
     if request.method == 'POST':
+
         if 'nome' in request.POST and 'sigla' in request.POST:
+
             organizacao = Organizacao.create()
-            organizacao.nome = request.POST['nome']
-            organizacao.sigla = request.POST['sigla']
 
-            organizacao.endereco = request.POST['endereco']
-            organizacao.website = request.POST['website']
-            organizacao.informacoes = request.POST['informacoes']
+            organizacao.nome= request.POST.get('nome', None)
+            organizacao.sigla= request.POST.get('sigla', None)
 
-            cnpj = request.POST['cnpj']
+            organizacao.endereco = request.POST.get('endereco', None)
+            organizacao.website = request.POST.get('website', None)
+            organizacao.informacoes = request.POST.get('informacoes', None)
+
+            cnpj = request.POST.get('cnpj', None)
             if cnpj:
                 organizacao.cnpj = cnpj[:2]+cnpj[3:6]+cnpj[7:10]+cnpj[11:15]+cnpj[16:18]
 
-            organizacao.inscricao_estadual = request.POST['inscricao_estadual']
-            organizacao.razao_social = request.POST['razao_social']
-            organizacao.ramo_atividade = request.POST['ramo_atividade']
+            organizacao.inscricao_estadual = request.POST.get('inscricao_estadual', None)
+            organizacao.razao_social = request.POST.get('razao_social', None)
+            organizacao.ramo_atividade = request.POST.get('ramo_atividade', None)
 
             if 'logo' in request.FILES:
                 logotipo = simple_upload(request.FILES['logo'],
@@ -182,28 +208,25 @@ def cadastrar_organizacao(request):
 
             organizacao.save()
 
-            mensagem = "Organização inserida na base de dados."
             context = {
                 "voltar": True,
                 "cadastrar_organizacao": True,
                 "organizacoes_lista": True,
                 "area_principal": True,
-                "mensagem": mensagem,
+                "mensagem": "Organização inserida na base de dados.",
             }
 
         else:
-            mensagem = "<h3 style='color:red'>Falha na inserção na base da dados.<h3>"
+
             context = {
                 "voltar": True,
                 "area_principal": True,
-                "mensagem": mensagem,
+                "mensagem": "<h3 style='color:red'>Falha na inserção na base da dados.<h3>",
             }
 
         return render(request, 'generic.html', context=context)
 
-    context = {
-    }
-    return render(request, 'administracao/cadastra_organizacao.html', context)
+    return render(request, 'administracao/cadastra_organizacao.html')
 
 
 @login_required
@@ -212,25 +235,22 @@ def cadastrar_usuario(request):
     """Cadastra usuário na base de dados do PFE."""
 
     if request.method == 'POST':
+
         if 'email' in request.POST:
+
             usuario = PFEUser.create()
 
-            #is_active
+            usuario.email = request.POST.get('email', None)
 
-            usuario.email = request.POST['email']
-
-            # (1, 'aluno'),
-            # (2, 'professor'),
-            # (3, 'parceiro'),
-            # (4, 'administrador')
-
-            if request.POST['tipo_de_usuario'] == "estudante":
+            tipo_de_usuario = request.POST.get('tipo_de_usuario', None)
+            if tipo_de_usuario == "estudante": # (1, 'aluno')
                 usuario.tipo_de_usuario = 1
-            elif request.POST['tipo_de_usuario'] == "professor":
+            elif tipo_de_usuario == "professor": # (2, 'professor')
                 usuario.tipo_de_usuario = 2
-            elif request.POST['tipo_de_usuario'] == "parceiro":
+            elif tipo_de_usuario == "parceiro": # (3, 'parceiro')
                 usuario.tipo_de_usuario = 3
             else:
+                # (4, 'administrador')
                 return HttpResponse("Algum erro não identificado.", status=401)
 
             if usuario.tipo_de_usuario == 1 or usuario.tipo_de_usuario == 2:
@@ -260,11 +280,8 @@ def cadastrar_usuario(request):
             else:
                 usuario.genero = "X"
 
-            if 'linkedin' in request.POST:
-                usuario.linkedin = request.POST['linkedin']
-
-            if 'lingua' in request.POST:
-                usuario.tipo_lingua = request.POST['lingua']
+            usuario.linkedin = request.POST.get('linkedin', None)
+            usuario.tipo_lingua = request.POST.get('lingua', None)
 
             usuario.save()
 
@@ -272,20 +289,23 @@ def cadastrar_usuario(request):
 
                 estudante = Aluno.create(usuario)
 
-                if 'matricula' in request.POST:
-                    estudante.matricula = request.POST['matricula']
+                estudante.matricula = request.POST.get('matricula', None)
 
-                if request.POST['curso'] == "computacao":
+                curso = request.POST.get('curso', None)
+                if curso == "computacao":
                     estudante.curso = 'C'   # ('C', 'Computação'),
-                elif request.POST['curso'] == "mecanica":
+                elif curso == "mecanica":
                     estudante.curso = 'M'   # ('M', 'Mecânica'),
-                elif request.POST['curso'] == "mecatronica":
+                elif curso == "mecatronica":
                     estudante.curso = 'X'   # ('X', 'Mecatrônica'),
                 else:
                     return HttpResponse("Algum erro não identificado.", status=401)
 
-                estudante.anoPFE = int(request.POST['ano'])
-                estudante.semestrePFE = int(request.POST['semestre'])
+                try:
+                    estudante.anoPFE = int(request.POST['ano'])
+                    estudante.semestrePFE = int(request.POST['semestre'])
+                except (ValueError, OverflowError, MultiValueDictKeyError):
+                    return HttpResponse("Erro na identificação do ano e semestre.", status=401)
 
                 estudante.save()
 
@@ -293,24 +313,17 @@ def cadastrar_usuario(request):
 
                 professor = Professor.create(usuario)
 
-                # ("TI", "Tempo Integral"),
-                # ("TP", 'Tempo Parcial'),
-
-                if request.POST['dedicacao'] == "ti":
+                dedicacao = request.POST.get('dedicacao', None)
+                if dedicacao == "ti": # ("TI", "Tempo Integral"),
                     professor.dedicacao = 'TI'
-                elif request.POST['dedicacao'] == "tp":
+                elif dedicacao == "tp": # ("TP", 'Tempo Parcial'),
                     professor.dedicacao = 'TP'
                 else:
                     return HttpResponse("Algum erro não identificado.", status=401)
 
-                if 'areas' in request.POST:
-                    professor.areas = request.POST['areas']
-
-                if 'website' in request.POST:
-                    professor.website = request.POST['website']
-
-                if 'lattes' in request.POST:
-                    professor.lattes = request.POST['lattes']
+                professor.areas = request.POST.get('areas', None)
+                professor.website = request.POST.get('website', None)
+                professor.lattes = request.POST.get('lattes', None)
 
                 professor.save()
 
@@ -318,47 +331,41 @@ def cadastrar_usuario(request):
 
                 parceiro = Parceiro.create(usuario)
 
-                if 'cargo' in request.POST:
-                    parceiro.cargo = request.POST['cargo']
-
-                if 'telefone' in request.POST:
-                    parceiro.telefone = request.POST['telefone']
-
-                if 'celular' in request.POST:
-                    parceiro.celular = request.POST['celular']
-
-                if 'skype' in request.POST:
-                    parceiro.skype = request.POST['skype']
-
-                if 'observacao' in request.POST:
-                    parceiro.observacao = request.POST['observacao']
+                parceiro.cargo = request.POST.get('cargo', None)
+                parceiro.telefone = request.POST.get('telefone', None)
+                parceiro.celular = request.POST.get('celular', None)
+                parceiro.skype = request.POST.get('skype', None)
+                parceiro.observacao = request.POST.get('observacao', None)
 
                 try:
-                    tmp_pk=int(request.POST['organizacao'])
+                    tmp_pk = int(request.POST['organizacao'])
                     parceiro.organizacao = Organizacao.objects.get(pk=tmp_pk)
-                except Organizacao.DoesNotExist:
+                except (ValueError, OverflowError, Organizacao.DoesNotExist):
                     return HttpResponse("Organização não encontrada.", status=401)
 
-                if 'principal_contato' in request.POST:
-                    parceiro.principal_contato = True
+                parceiro.principal_contato = 'principal_contato' in request.POST
 
                 parceiro.save()
 
             mensagem = "Usuário inserido na base de dados."
+
         else:
             mensagem = "<h3 style='color:red'>Falha na inserção na base da dados.<h3>"
+
         context = {
             "voltar": True,
             "cadastrar_usuario": True,
             "area_principal": True,
             "mensagem": mensagem,
         }
+
         return render(request, 'generic.html', context=context)
 
     context = {
         "organizacoes" : Organizacao.objects.all(),
     }
 
+    # Passado o nome da organização do parceiro a ser cadastrado
     tipo = request.GET.get('tipo', None)
     if tipo:
         if tipo=="parceiro":
@@ -379,24 +386,28 @@ def cadastrar_usuario(request):
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')
-def carrega(request, dado):
+def carrega_arquivo(request, dado):
     """Faz o upload de arquivos CSV para o servidor."""
 
     if dado == "disciplinas":
         resource = DisciplinasResource()
-    elif dado == "alunos":
+    elif dado == "estudantes":
         resource = EstudantesResource()
     elif dado == "avaliacoes":
         resource = Avaliacoes2Resource()
     else:
-        raise Http404
+        return HttpResponseNotFound('<h1>Tipo de dado não reconhecido!</h1>')
 
     # https://simpleisbetterthancomplex.com/packages/2016/08/11/django-import-export.html
     if request.method == 'POST':
 
         dataset = tablib.Dataset()
 
-        new_data = request.FILES['arquivo'].readlines()
+        if 'arquivo' in request.FILES:
+            new_data = request.FILES['arquivo'].readlines()
+        else:
+            return HttpResponseNotFound('<h1>Arquivo não reconhecido!</h1>')
+
         entradas = ""
         for i in new_data:
             texto = i.decode("utf-8")
@@ -408,50 +419,33 @@ def carrega(request, dado):
 
         result = resource.import_data(dataset, dry_run=True, raise_errors=True)
 
-        if not result.has_errors():
-            resource.import_data(dataset, dry_run=False)  # Actually import now
-            string_html = "Importado ({0} registros): <br>".format(len(dataset))
-            for row_values in dataset:
-                string_html += str(row_values) + "<br>"
-            context = {
-                "area_principal": True,
-                "mensagem": string_html,
-            }
-            return render(request, 'generic.html', context=context)
-        else:
+        if result.has_errors():
             mensagem = "Erro ao carregar arquivo." + str(result)
+
             context = {
                 "area_principal": True,
                 "mensagem": mensagem,
             }
+
             return render(request, 'generic.html', context=context)
+
+        resource.import_data(dataset, dry_run=False)  # Actually import now
+        string_html = "Importado ({0} registros): <br>".format(len(dataset))
+        for row_values in dataset:
+            string_html += str(row_values) + "<br>"
+
+        context = {
+            "area_principal": True,
+            "mensagem": string_html,
+        }
+
+        return render(request, 'generic.html', context=context)
 
     context = {
         'campos_permitidos': resource.campos,
     }
+
     return render(request, 'administracao/import.html', context)
-
-
-@login_required
-@permission_required('users.altera_professor', login_url='/')
-def carregar(request):
-    """Para carregar dados para o servidor."""
-
-    try:
-        user = PFEUser.objects.get(pk=request.user.pk)
-    except PFEUser.DoesNotExist:
-        return HttpResponse("Usuário não encontrado.", status=401)
-
-    if user:
-        if user.tipo_de_usuario != 4: # não é admin
-            mensagem = "Você não tem privilégios de administrador!"
-            context = {
-                "area_principal": True,
-                "mensagem": mensagem,
-            }
-            return render(request, 'generic.html', context=context)
-
-    return render(request, 'administracao/carregar.html')
 
 
 @login_required
@@ -465,17 +459,17 @@ def definir_datas(request):
         return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     if request.method == 'POST':
+
         if 'limite_propostas' in request.POST:
             try:
                 configuracao.prazo = dateutil.parser.parse(request.POST['limite_propostas'])
                 configuracao.save()
-                mensagem = "Datas atualizadas."
                 context = {
                     "area_principal": True,
-                    "mensagem": mensagem,
+                    "mensagem": "Datas atualizadas.",
                 }
                 return render(request, 'generic.html', context=context)
-            except (ValueError, OverflowError):
+            except (ValueError, OverflowError, MultiValueDictKeyError):
                 return HttpResponse("Algum erro não identificado.", status=401)
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
@@ -483,6 +477,7 @@ def definir_datas(request):
     context = {
         'configuracao': configuracao,
     }
+
     return render(request, 'administracao/definir_datas.html', context)
 
 
@@ -518,13 +513,9 @@ def montar_grupos(request):
 
     propostas = Proposta.objects.filter(ano=ano, semestre=semestre, disponivel=True)
 
-    alunos_se_inscrevendo = Aluno.objects.filter(trancado=False).\
-                                      filter(anoPFE=ano, semestrePFE=semestre).\
-                                      order_by(Lower("user__first_name"), Lower("user__last_name"))
-
-    # Conta soh alunos
-    estudantes = alunos_se_inscrevendo.filter(user__tipo_de_usuario=\
-                                          PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
+    estudantes = Aluno.objects.filter(trancado=False).\
+                               filter(anoPFE=ano, semestrePFE=semestre).\
+                               order_by(Lower("user__first_name"), Lower("user__last_name"))
 
     opcoes = []
     for estudante in estudantes:
@@ -532,6 +523,7 @@ def montar_grupos(request):
                               filter(proposta__ano=ano, proposta__semestre=semestre).\
                               order_by("prioridade")
         opcoes.append(opcao)
+
     estudantes_opcoes = zip(estudantes, opcoes)
 
     # Checa se usuário é administrador ou professor
@@ -542,83 +534,79 @@ def montar_grupos(request):
 
     mensagem = ""
 
-    if request.method == 'POST':
+    if request.method == 'POST' and user and user.tipo_de_usuario == 4: # admin
 
-        if user:
-            if user.tipo_de_usuario == 4: # admin
+        if 'limpar' in request.POST:
+            for estudante in estudantes:
+                estudante.pre_alocacao = None
+                estudante.save()
 
-                if 'limpar' in request.POST:
-                    for estudante in estudantes:
-                        estudante.pre_alocacao = None
-                        estudante.save()
+        if 'fechar' in request.POST:
+            for proposta in propostas:
+                alocados = []
+                for estudante in estudantes:
+                    if estudante.pre_alocacao:
+                        if estudante.pre_alocacao.id == proposta.id:
+                            alocados.append(estudante)
+                    else:
+                        op_aloc = Opcao.objects.filter(aluno=estudante).\
+                                    filter(proposta__ano=ano, proposta__semestre=semestre).\
+                                    filter(prioridade=1).first()
+                        if op_aloc and op_aloc.proposta == proposta:
+                            alocados.append(estudante)
+                if alocados: # pelo menos um estudante no projeto
 
-                if 'fechar' in request.POST:
-                    for proposta in propostas:
-                        alocados = []
-                        for estudante in estudantes:
-                            if estudante.pre_alocacao:
-                                if estudante.pre_alocacao.id == proposta.id:
-                                    alocados.append(estudante)
-                            else:
-                                op_aloc = Opcao.objects.filter(aluno=estudante).\
-                                            filter(proposta__ano=ano, proposta__semestre=semestre).\
-                                            filter(prioridade=1).first()
-                                if op_aloc and op_aloc.proposta == proposta:
-                                    alocados.append(estudante)
-                        if alocados: # pelo menos um estudante no projeto
+                    try:
+                        projeto = Projeto.objects.get(proposta=proposta, avancado=False)
+                    except Projeto.DoesNotExist:
+                        projeto = Projeto.create(proposta)
 
-                            try:
-                                projeto = Projeto.objects.get(proposta=proposta, avancado=False)
-                            except Projeto.DoesNotExist:
-                                projeto = Projeto.create(proposta)
+                    if not projeto.titulo:
+                        projeto.titulo = proposta.titulo
 
-                            if not projeto.titulo:
-                                projeto.titulo = proposta.titulo
+                    if not projeto.descricao:
+                        projeto.descricao = proposta.descricao
 
-                            if not projeto.descricao:
-                                projeto.descricao = proposta.descricao
+                    if not projeto.organizacao:
+                        projeto.organizacao = proposta.organizacao
 
-                            if not projeto.organizacao:
-                                projeto.organizacao = proposta.organizacao
+                    projeto.avancado = False
 
-                            projeto.avancado = False
+                    projeto.ano = proposta.ano
+                    projeto.semestre = proposta.semestre
 
-                            projeto.ano = proposta.ano
-                            projeto.semestre = proposta.semestre
+                    projeto.save()
 
-                            projeto.save()
-
-                            alocacoes = Alocacao.objects.filter(projeto=projeto)
-                            for alocacao in alocacoes: # Apaga todas alocacoes que não tiverem nota
-                                avals = list(Avaliacao2.objects.filter(alocacao=alocacao))
-                                if not avals:
-                                    alocacao.delete()
-                                else:
-                                    mensagem += "- "+str(alocacao.aluno)+"\n"
-
-                            for alocado in alocados: # alocando estudantes no projeto
-                                alocacao = Alocacao.create(alocado, projeto)
-                                alocacao.save()
-
+                    alocacoes = Alocacao.objects.filter(projeto=projeto)
+                    for alocacao in alocacoes: # Apaga todas alocacoes que não tiverem nota
+                        avals = list(Avaliacao2.objects.filter(alocacao=alocacao))
+                        if not avals:
+                            alocacao.delete()
                         else:
+                            mensagem += "- "+str(alocacao.aluno)+"\n"
 
-                            try:
-                                projeto = Projeto.objects.get(proposta=proposta, avancado=False)
-                            except Projeto.DoesNotExist:
-                                continue
+                    for alocado in alocados: # alocando estudantes no projeto
+                        alocacao = Alocacao.create(alocado, projeto)
+                        alocacao.save()
 
-                            projeto.delete()
+                else:
 
-                    if mensagem:
-                        request.session['mensagem'] = 'Estudantes possuiam alocações com notas:\n'
-                        request.session['mensagem'] += mensagem
+                    try:
+                        projeto = Projeto.objects.get(proposta=proposta, avancado=False)
+                    except Projeto.DoesNotExist:
+                        continue
 
-                    return redirect('/administracao/selecionar_orientadores/')
+                    projeto.delete()
 
-    if user:
-        if user.tipo_de_usuario != 4: # admin
-            mensagem = "Sua conta não é de administrador, "
-            mensagem += "você pode mexer na tela, contudo suas modificações não serão salvas."
+            if mensagem:
+                request.session['mensagem'] = 'Estudantes possuiam alocações com notas:\n'
+                request.session['mensagem'] += mensagem
+
+            return redirect('/administracao/selecionar_orientadores/')
+
+    if user and user.tipo_de_usuario != 4: # admin
+        mensagem = "Sua conta não é de administrador, "
+        mensagem += "você pode mexer na tela, contudo suas modificações não serão salvas."
 
     context = {
         'mensagem': mensagem,
@@ -626,6 +614,7 @@ def montar_grupos(request):
         'propostas': propostas,
         'estudantes_opcoes': estudantes_opcoes,
     }
+
     return render(request, 'administracao/montar_grupos.html', context=context)
 
 
@@ -652,12 +641,8 @@ def selecionar_orientadores(request):
 
     projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
 
-    professores = PFEUser.objects.\
-                        filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0])
-
-    administradores = PFEUser.objects.\
-                        filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[3][0])
-
+    professores = PFEUser.objects.filter(tipo_de_usuario=2) #(2, 'professor')
+    administradores = PFEUser.objects.filter(tipo_de_usuario=4) #(4, 'administrador')
     orientadores = (professores | administradores).order_by(Lower("first_name"), Lower("last_name"))
 
     # Checa se usuário é administrador ou professor
@@ -666,16 +651,16 @@ def selecionar_orientadores(request):
     except PFEUser.DoesNotExist:
         return HttpResponse("Usuário não encontrado.", status=401)
 
-    if user:
-        if user.tipo_de_usuario != 4: # admin
-            mensagem = "Sua conta não é de administrador, "
-            mensagem += "você pode mexer na tela, contudo suas modificações não serão salvas."
+    if user and user.tipo_de_usuario != 4: # admin
+        mensagem = "Sua conta não é de administrador, "
+        mensagem += "você pode mexer na tela, contudo suas modificações não serão salvas."
 
     context = {
         'mensagem': mensagem,
         'projetos': projetos,
         'orientadores': orientadores,
     }
+
     return render(request, 'administracao/selecionar_orientadores.html', context=context)
 
 
@@ -979,21 +964,21 @@ def relatorio_backup(request):
 
     context = {
         'projetos': Projeto.objects.all(),
-        'alunos': Aluno.objects.all().filter(user__tipo_de_usuario=1).\
-                                      filter(anoPFE=configuracao.ano).\
-                                      filter(semestrePFE=configuracao.semestre),
+        'alunos': Aluno.objects.filter(user__tipo_de_usuario=1).\
+                                filter(anoPFE=configuracao.ano).\
+                                filter(semestrePFE=configuracao.semestre),
         'configuracao': configuracao,
     }
 
-    pdf_proj = render_to_pdf('projetos/relatorio_projetos.html', context)
-    pdf_alun = render_to_pdf('projetos/relatorio_alunos.html', context)
+    pdf_proj = render_to_pdf('administracao/relatorio_projetos.html', context)
+    pdf_alun = render_to_pdf('administracao/relatorio_alunos.html', context)
     mail.attach("projetos.pdf", pdf_proj.getvalue(), 'application/pdf')
     mail.attach("alunos.pdf", pdf_alun.getvalue(), 'application/pdf')
     mail.send()
 
-    mensagem = "E-mail enviado."
     context = {
         "area_principal": True,
-        "mensagem": mensagem,
+        "mensagem": "E-mail enviado.",
     }
+
     return render(request, 'generic.html', context=context)

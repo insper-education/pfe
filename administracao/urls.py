@@ -19,8 +19,8 @@ urlpatterns = [
     path('cadastrar_organizacao/', views.cadastrar_organizacao, name='cadastrar_organizacao'),
     path('cadastrar_usuario/', views.cadastrar_usuario, name='cadastrar_usuario'),
 
-    path('carrega/<str:dado>', views.carrega, name='carrega'),
-    path('carregar/', views.carregar, name='carregar'),
+    path('carrega_arquivo/<str:dado>', views.carrega_arquivo, name='carrega_arquivo'),
+    path('index_carregar/', views.index_carregar, name='index_carregar'),
 
     path('definir_datas/', views.definir_datas, name='definir_datas'),
 
