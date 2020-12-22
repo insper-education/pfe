@@ -17,10 +17,12 @@ from django.db.models.functions import Lower
 from django.conf import settings
 from django.utils.datastructures import MultiValueDictKeyError
 
-from projetos.models import Configuracao, Organizacao, Proposta, Projeto, Banca
-from projetos.models import Avaliacao2, get_upload_path, Conexao
+from documentos.support import render_to_pdf
 
-from projetos.support import simple_upload, render_to_pdf
+from projetos.models import Configuracao, Organizacao, Proposta, Projeto, Banca
+from projetos.models import Avaliacao2, get_upload_path, Conexao, Feedback
+
+from projetos.support import simple_upload
 
 from projetos.resources import DisciplinasResource, Avaliacoes2Resource
 from projetos.resources import ProjetosResource, OrganizacoesResource, OpcoesResource
@@ -944,6 +946,49 @@ def email_backup(request):
     }
 
     return render(request, 'generic.html', context=context)
+
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def relatorio(request, modelo, formato):
+    """Gera relatorios em html e PDF."""
+
+    try:
+        configuracao = Configuracao.objects.get()
+    except Configuracao.DoesNotExist:
+        return HttpResponse("Falha na configuracao do sistema.", status=401)
+
+    context = {'configuracao': configuracao}
+
+    if modelo == "projetos":
+        context['projetos'] = Projeto.objects.all()
+        arquivo = "administracao/relatorio_projetos.html"
+
+    elif modelo == "alunos":
+        context['alunos'] = Aluno.objects.all().filter(user__tipo_de_usuario=1).\
+                                                filter(anoPFE=configuracao.ano).\
+                                                filter(semestrePFE=configuracao.semestre)
+        arquivo = "administracao/relatorio_alunos.html"
+
+    elif modelo == "feedbacks":
+        context['feedbacks'] = Feedback.objects.all()
+        arquivo = "administracao/relatorio_feedbacks.html"
+
+    else:
+        context = {
+            "area_principal": True,
+            "mensagem": "Chamada irregular : Base de dados desconhecida = " + modelo,
+        }
+        return render(request, 'generic.html', context=context)
+
+    if formato in ("html", "HTML"):
+        return render(request, arquivo, context)
+
+    if formato in ("pdf", "PDF"):
+        pdf = render_to_pdf(arquivo, context)
+        return HttpResponse(pdf.getvalue(), content_type='application/pdf')
+
+    return HttpResponse("Algum erro não identificado.", status=401)
 
 
 @login_required

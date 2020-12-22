@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 25 de Abril de 2020
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load escape_emails %}
+  <style>
+  table, th, td {
+  }
+  table {
+    border: 0px;
+    border-collapse: separate;
+    border-spacing: 1em;
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+  td {
+    padding: 1rem 1.2rem;
+    border-radius: 6px;
+    border: 1px solid red;
+  }
+  </style>
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">Cerfificados</span>
+  <br>
+
+  {% comment %} Seletor da edição da pesquisa {% endcomment %}
+  {% include "edicoes.html" %}
+
+  &nbsp;&nbsp;&nbsp;
+  <b>Informações: </b>&nbsp;
+  <label><input id="estudantes" onchange="($(this).prop('checked') ? $('.estudantes').show() : $('.estudantes').hide())" type="checkbox" checked /> Estudantes</label>&nbsp;&nbsp;&nbsp;
+  <label><input id="orientador" onchange="($(this).prop('checked') ? $('.orientador').show() : $('.orientador').hide())" type="checkbox" checked /> Orientadores</label>&nbsp;&nbsp;&nbsp;
+  <label><input id="coorientador" onchange="($(this).prop('checked') ? $('.coorientador').show() : $('.coorientador').hide())" type="checkbox" checked /> Coorientadores</label>&nbsp;&nbsp;&nbsp;
+  <label><input id="banca" onchange="($(this).prop('checked') ? $('.banca').show() : $('.banca').hide())" type="checkbox" checked /> Bancas</label>&nbsp;&nbsp;&nbsp;
+
+  {% if certificados %}
+    <table>
+      {% for certificado in certificados %}
+
+        {% if certificado.tipo_de_certificado < 100 %}
+          <tr class="estudantes">
+        {% elif certificado.tipo_de_certificado == 101 %}
+          <tr class="orientador">
+        {% elif certificado.tipo_de_certificado == 102 %}
+          <tr class="coorientador">
+        {% elif certificado.tipo_de_certificado == 103 or certificado.tipo_de_certificado == 104 %}
+          <tr class="banca">
+        {% endif %}
+        
+        <td>
+          <b>{{certificado.get_certificado}}</b><br>
+          {% if certificado.usuario %}
+            {% if certificado.usuario.tipo_de_usuario == 1 %}
+              <a href="{% url 'aluno_detail' certificado.usuario.aluno.id %}">{{certificado.usuario.get_full_name}}</a><br>
+            {% elif certificado.usuario.tipo_de_usuario == 2 %}
+              <a href="{% url 'professor_detail' certificado.usuario.professor.id %}">{{certificado.usuario.get_full_name}}</a><br>
+            {% else %}
+              {{certificado.usuario.get_full_name}}<br>
+            {% endif %}
+          {% endif %}
+
+          {% if certificado.projeto %}
+            <b>Data:</b> {{certificado.data|date:"DATE_FORMAT"}}<br>
+          {% endif %}
+
+          {% if certificado.projeto %}
+            <b>Projeto:</b> <a href="{% url 'projeto_completo' certificado.projeto.id %}">
+              {{certificado.projeto.get_titulo}}
+            </a><br>
+            <b>Organização:</b> <a href="{% url 'organizacao_completo' certificado.projeto.organizacao.id %}">{{ certificado.projeto.organizacao.nome }}</a><br>
+          {% endif %}
+
+          {% if certificado.documento %}
+            <a href="{{ certificado.documento.url }}"><img style="max-height:240px;" src="{{ certificado.documento.url }}" alt="Certificado {{ certificado.usuario }} {{ certificado.projeto }}"></a><br>
+          {% endif %}
+          
+          <a href="mailto:{{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}}%20&lt;{{certificado.usuario.email|parse_quote }}&gt;,?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;&amp;subject=Certificado%20Destaque%20PFE&amp;body={{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}},%0D%0A%0D%0Aatenciosamente,%20coordenação%20PFE">
+            &#x2709; Enviar certificado
+          </a>
+        </td>
+      </tr>
+
+      {% endfor %}
+    </table>
+    <p>&nbsp;</p>
+  {% else %}
+    <p>Não existem certificados.</p>
+  {% endif %}
+  <p>&nbsp;</p>
+
+{% endblock %}

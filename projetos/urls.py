@@ -15,7 +15,6 @@ urlpatterns = [
 
     path('avisos_listar/', views.avisos_listar, name='avisos_listar'),
     path('carrega_bancos/', views.carrega_bancos, name='carrega_bancos'),
-    path('certificados_submetidos/', views.certificados_submetidos, name='certificados_submetidos'),
     path('comite/', views.comite, name='comite'),
     path('completo/<int:primakey>', views.projeto_completo, name='completo'), # REMOVER
     path('dinamicas/<str:periodo>', views.dinamicas, name='dinamicas'),
@@ -34,7 +33,6 @@ urlpatterns = [
     path('projetos_fechados/', views.projetos_fechados, name='projetos_fechados'),
     path('projetos_lista/<str:periodo>', views.projetos_lista, name='projetos_lista'),
     path('reembolso_pedir/', views.reembolso_pedir, name='reembolso_pedir'),
-    path('relatorio/<str:modelo>/<str:formato>', views.relatorio, name='relatorio'),
     path('relatorios/', views.relatorios, name='relatorios'),
     path('ajax/validate_aviso/', views.validate_aviso, name='validate_aviso'),
 

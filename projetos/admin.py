@@ -28,11 +28,8 @@ from .models import Entidade
 
 # Das Organizações
 from .models import Feedback, Conexao
-
 from .models import ObjetivosDeAprendizagem, Certificado
-
 from .models import Avaliacao2, Observacao
-
 from .models import Area, AreaDeInteresse
 
 

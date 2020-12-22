@@ -24,6 +24,8 @@
 
   <script src="{% static 'fullcalendar-4.4.2/core/locales/pt-br.js' %}"></script>
 
+  {% include "cores_bancas.html" %}
+
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       var calendarEl = document.getElementById('calendar');
@@ -61,14 +63,14 @@
 
                 textColor: '#fafafa',
 
-                {% if banca.tipo_de_banca == 0 %}
-                  color: '#72b354'
-                {% elif banca.tipo_de_banca == 1 %}
-                  color: '#d1a214'
-                {% elif banca.tipo_de_banca == 2 %}
-                  color: '#df52f6'
+                {% if banca.tipo_de_banca == 0 %} {% comment %} Banca Final {% endcomment %}
+                  color: color_banca_final
+                {% elif banca.tipo_de_banca == 1 %} {% comment %} Banca Intermediária {% endcomment %}
+                  color: color_banca_intermediaria
+                {% elif banca.tipo_de_banca == 2 %} {% comment %} Banca Falconi {% endcomment %}
+                  color: color_banca_falconi
                 {% else %}
-                  color: '#990000'
+                  color: '#777777'
                 {% endif %}
             },
           {% endfor %}
@@ -85,14 +87,14 @@
               {% endwith %}
               rendering: 'background',
 
-              {% if dias.tipo_de_evento == 15 %}
-                color: '#72b354'
-              {% elif dias.tipo_de_evento == 14 %}
-                color: '#d1a214'
-              {% elif dias.tipo_de_evento == 19 %}
-                color: '#df52f6'
+              {% if dias.tipo_de_evento == 15 %} {% comment %} Banca Final {% endcomment %}
+                color: color_banca_final
+              {% elif dias.tipo_de_evento == 14 %} {% comment %} Banca Intermediária {% endcomment %}
+                color: color_banca_intermediaria
+              {% elif dias.tipo_de_evento == 50 %} {% comment %} Banca Falconi {% endcomment %}
+                color: color_banca_falconi
               {% else %}
-                color: '#990000'
+                color: '#777777'
               {% endif %}
 
               {% comment %} color: '#99b9ff' {% endcomment %}

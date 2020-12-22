@@ -27,6 +27,8 @@
     tr:nth-child(even) {background-color: #f2f2f2;}
   </style>
 
+  {% include "cores_bancas.html" %}
+  
   <script>{% include "tooltip.js" %}</script>
 
   <script>
@@ -197,7 +199,7 @@
 
       {% endfor %}
 
-      <tr style="background-color: #6060E0; color: white"><td>
+      <tr style="background-color: var(--color_banca_intermediaria); color: white"><td>
         Média das avaliações intermediárias:
         <ul>
         <script>
@@ -260,7 +262,7 @@
 
       {% endfor %}
 
-      <tr style="background-color: #6060E0; color: white"><td>
+      <tr style="background-color: var(--color_banca_final); color: white"><td>
         Média das avaliações finais:
         <ul>
         <script>
@@ -324,7 +326,7 @@
 
       {% endfor %}
 
-      <tr style="background-color: #6060E0; color: white"><td>
+      <tr style="background-color: var(--color_banca_falconi); color: white"><td>
         Média das avaliações falconi:
         <ul>
         <script>

@@ -18,6 +18,8 @@ urlpatterns = [
 
     path('organizacoes_lista/', views.organizacoes_lista, name='organizacoes_lista'),
     path('organizacao_completo/<str:org>', views.organizacao_completo, name='organizacao_completo'),
+
+    path('organizacoes_prospect/', views.organizacoes_prospect, name='organizacoes_prospect'),
     path('organizacoes_tabela/', views.organizacoes_tabela, name='organizacoes_tabela'),
 
     path('parceiro_propostas', views.parceiro_propostas, name='parceiro_propostas'),

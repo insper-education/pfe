@@ -100,7 +100,7 @@
               {% elif contato.tipo_de_retorno == 4 %}
                 "background-color:yellow" {% comment %} (4, 'Confirmamos um grupo de alunos para o projeto'), {% endcomment %}
               {% elif contato.tipo_de_retorno == 5 %}
-                "background-color:mediumorchid" {% comment %} (5, 'Notificamos que não conseguimos montar projeto'),
+                "background-color:#c269d8" {% comment %} (5, 'Notificamos que não conseguimos montar projeto'),
               {% elif contato.tipo_de_retorno == 6 %}
                 "background-color:green" {% comment %} (6, 'Documentação fechada para projeto'), {% endcomment %}
               {% endif %}
@@ -166,7 +166,7 @@
 
       &nbsp;<span style="background-color:yellow">&nbsp;&nbsp;&nbsp;&nbsp;</span> Notificada de Grupo Fechado (<span id="notificada"></span>)<br>
       &nbsp;<span style="background-color:green">&nbsp;&nbsp;&nbsp;&nbsp;</span> Documentação Fechada para Projeto (<span id="documentada"></span>)<br>
-      &nbsp;<span style="background-color:mediumorchid">&nbsp;&nbsp;&nbsp;&nbsp;</span> Avisada que não fechou grupo (<span id="sem_grupo"></span>)<br>
+      &nbsp;<span style="background-color:#c269d8">&nbsp;&nbsp;&nbsp;&nbsp;</span> Avisada que não fechou grupo (<span id="sem_grupo"></span>)<br>
   
       <script>
         document.getElementById('so_contactados').innerHTML = so_contactados;

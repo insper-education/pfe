@@ -15,14 +15,12 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse
 
 #from projetos.models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Conexao
-from projetos.models import Documento, Configuracao, Projeto
+from projetos.models import Documento, Configuracao, Projeto, Certificado
 
 #from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador, Opcao, Alocacao
 from users.models import Aluno
 
-
-
-
+from users.support import get_edicoes
 
 @login_required
 def index_documentos(request):
@@ -50,6 +48,34 @@ def index_documentos(request):
     }
 
     return render(request, 'documentos/index_documentos.html', context)
+
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def certificados_submetidos(request):
+    """Lista os Certificados Emitidos."""
+
+    edicoes, _, _ = get_edicoes(Projeto)
+    certificados = Certificado.objects.all()
+
+    context = {
+        'certificados': certificados,
+        'edicoes': edicoes,
+    }
+
+    return render(request, 'documentos/certificados_submetidos.html', context)
+
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def gerar_certificados(request):
+    """Recupera um certificado pelos dados."""
+    certificados = Certificado.objects.all()
+    context = {
+        'certificados': certificados,
+    }
+    return render(request, 'documentos/certificados_submetidos.html', context)
+
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')

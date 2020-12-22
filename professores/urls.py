@@ -29,7 +29,7 @@ urlpatterns = [
 
     path('coorientadores_tabela/', views.coorientadores_tabela, name='coorientadores_tabela'),
 
-    path('professores_tabela/', views.professores_tabela, name='professores_tabela'),
+    path('orientadores_tabela/', views.orientadores_tabela, name='orientadores_tabela'),
 
     path('resultado_avaliacoes/', views.resultado_avaliacoes, name='resultado_avaliacoes'),
 

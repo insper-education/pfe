@@ -5,10 +5,6 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Dezembro de 2020
 """
 
-from io import BytesIO # Para gerar o PDF
-from xhtml2pdf import pisa # Para gerar o PDF
-from django.template.loader import get_template
-
 from django.core.files.storage import FileSystemStorage
 from django.utils import text
 
@@ -139,16 +135,3 @@ def simple_upload(myfile, path="", prefix=""):
     filename = file_system_storage.save(path+prefix+text.get_valid_filename(myfile.name), myfile)
     uploaded_file_url = file_system_storage.url(filename)
     return uploaded_file_url
-
-
-def render_to_pdf(template_src, context_dict=None):
-    """Renderiza um documento em PDF."""
-
-    template = get_template(template_src)
-    html_doc = template.render(context_dict)
-    result = BytesIO()
-    pdf = pisa.pisaDocument(BytesIO(html_doc.encode("utf-8")), result)
-    if not pdf.err:
-        return result
-
-    return None

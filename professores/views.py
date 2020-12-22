@@ -97,7 +97,7 @@ def bancas_index(request):
         'dias_bancas': dias_bancas,
     }
 
-    return render(request, 'projetos/bancas_index.html', context)
+    return render(request, 'professores/bancas_index.html', context)
 
 
 @login_required
@@ -607,7 +607,7 @@ def banca_avaliar(request, slug):
             "conceitos": conceitos,
             "observacoes": observacoes,
         }
-        return render(request, 'professores/avaliacao.html', context=context)
+        return render(request, 'professores/banca_avaliar.html', context=context)
 
 
 @login_required
@@ -705,12 +705,12 @@ def conceitos_obtidos(request, primarykey): #acertar isso para pk
         "avaliadores_falconi": avaliadores_falconi,
     }
 
-    return render(request, 'professor/conceitos_obtidos.html', context=context)
+    return render(request, 'professores/conceitos_obtidos.html', context=context)
 
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')
-def professores_tabela(request):
+def orientadores_tabela(request):
     """Alocação dos Orientadores por semestre."""
 
     try:
@@ -761,7 +761,7 @@ def professores_tabela(request):
     context = {
         'anos': anos,
     }
-    return render(request, 'professores/professores_tabela.html', context)
+    return render(request, 'professores/orientadores_tabela.html', context)
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')

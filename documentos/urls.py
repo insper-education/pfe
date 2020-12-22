@@ -14,6 +14,10 @@ urlpatterns = [
 
     path('', views.index_documentos, name='index_documentos'), #pagina inicial
 
+    path('certificados_submetidos/', views.certificados_submetidos, name='certificados_submetidos'),
+
+    path('gerar_certificados/', views.gerar_certificados, name='gerar_certificados'),
+
     path('tabela_documentos/', views.tabela_documentos, name='tabela_documentos'),
 
 ]

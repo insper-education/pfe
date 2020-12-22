@@ -18,8 +18,6 @@ urlpatterns = [
 
     path('map_est_proj/<str:anosemestre>', views.map_est_proj, name='map_est_proj'),
 
-    path('organizacoes_prospect/', views.organizacoes_prospect, name='organizacoes_prospect'),
-
     path('procura_propostas/', views.procura_propostas, name='procura_propostas'),
 
     path('propostas_apresentadas/', views.propostas_apresentadas, name='propostas_apresentadas'),

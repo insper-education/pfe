@@ -88,7 +88,7 @@ class Organizacao(models.Model):
         sigla = force_text(self.sigla).strip().replace(' ', '_')
         sigla = re.sub(r'(?u)[^-\w.]', '', sigla)
         return sigla
-    
+
 class Projeto(models.Model):
     """Dados dos projetos para o PFE."""
     titulo = models.CharField("Título", max_length=160,
@@ -221,7 +221,7 @@ class Proposta(models.Model):
                                                          help_text='O principal interesse da empresa com o projeto é')
 
     internacional = models.BooleanField("Internacional", default=False,
-                                     help_text='Caso a proposta venha de um parceiro internacional, o que afeta a lingua de comunicação do projeto')
+                                        help_text='Caso a proposta venha de um parceiro internacional, o que afeta a lingua de comunicação do projeto')
 
     # Preenchidos automaticamente
     ano = models.PositiveIntegerField("Ano",
@@ -300,7 +300,7 @@ class Proposta(models.Model):
     def get_absolute_url(self):
         """Caminho para editar uma proposta."""
         return reverse('proposta_editar', kwargs={'slug': self.slug})
-    
+
     def get_interesse(self):
         """Retorna o texto do interesse da organização na projeto."""
         for entry in Proposta.TIPO_INTERESSE:
@@ -310,7 +310,7 @@ class Proposta(models.Model):
 
     def get_nativamente(self):
         """Retorna em string com curso mais nativo da proposta."""
-        
+
         tmp_computacao = 0
         tmp_mecanica = 0
         tmp_mecatronica = 0
@@ -372,9 +372,9 @@ class Configuracao(models.Model):
     recipient_reembolso = models.CharField(max_length=127, blank=True,
                                            help_text='Separar lista por ponto e virgula')
     liberados_projetos = models.BooleanField(default=False,
-                                             help_text='Para que estudantes vejam projetos alocados')
+                                             help_text='Para estudantes verem projetos alocados')
     liberadas_propostas = models.BooleanField(default=False,
-                                              help_text='Para estudantes verem propostas disponiveis')
+                                              help_text='Para estudantes visualizarem propostas')
 
     class Meta:
         verbose_name = 'Configuração'
@@ -419,7 +419,7 @@ class Recomendada(models.Model):
 
 class Evento(models.Model):
     """Eventos para a agenda do PFE."""
-    
+
     location = models.CharField(blank=True, max_length=50,
                                 help_text='Onde Ocorrerá o Evento')
     startDate = models.DateField(default=datetime.date.today, blank=True,
@@ -441,7 +441,7 @@ class Evento(models.Model):
         (17, 'Apresentação opcional intermediária na organização', 'oldlace'),
 
         (20, 'Relato Quinzenal (Individual)', 'aquamarine'),
-        (21, 'Entrega de Relatório Preliminar (Grupo)', 'lightblue'), # esse era o antigo relatório de planejamento
+        (21, 'Entrega de Relatório Preliminar (Grupo)', 'lightblue'), # antigo relat. de planejamento
         (22, 'Entrega do Relatório Intermediário (Grupo e Individual)', 'teal'),
         (23, 'Entrega do Relatório Final (Grupo e Individual)', 'aqua'),
         (24, 'Entrega do Relatório Revisado (Grupo)', 'deepskyblue'),
@@ -456,7 +456,6 @@ class Evento(models.Model):
         (41, 'Semana de provas', 'red'),
 
         (50, 'Apresentação para Certificação Falconi', 'darkorange'),
-
 
         (101, 'Apólice Seguro Acidentes Pessoais', 'aquamarine'),
 
@@ -478,14 +477,14 @@ class Evento(models.Model):
         (130, 'Validação dos projetos pelo comitê', 'peru'),
 
         (140, 'Reunião de orientações aos orientadores', 'maroon'),
-
     )
 
     tipo_de_evento = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_EVENTO],
                                                       null=True, blank=True,
                                                       help_text='Define o tipo do evento a ocorrer')
 
-    observacao = models.CharField(max_length=50, blank=True, help_text='Qualquer observação relavante')
+    observacao = models.CharField(max_length=50, blank=True,
+                                  help_text='Qualquer observação relavante')
 
     def get_title(self):
         """Retorna em string o nome do evento."""
@@ -623,7 +622,6 @@ class Anotacao(models.Model):
     )
 
     tipo_de_retorno = models.PositiveSmallIntegerField(choices=TIPO_DE_RETORNO, default=0)
-
 
     def __str__(self):
         return str(self.momento)
@@ -915,11 +913,10 @@ class Avaliacao2(models.Model):
 
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
                                    help_text='Data e hora da comunicação') # hora ordena para dia
-  
-    peso = models.FloatField("Peso",
-                                       validators=[MinValueValidator(0), MaxValueValidator(100)],
-                                       help_text='Pesa da avaliação na média (bancas compartilham peso)',
-                                       default=10) # 10% para as bancas
+
+    peso = models.FloatField("Peso", validators=[MinValueValidator(0), MaxValueValidator(100)],
+                             help_text='Pesa da avaliação na média (bancas compartilham peso)',
+                             default=10) # 10% para as bancas
 
     # A nota será convertida para rubricas se necessário
     nota = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
@@ -934,7 +931,8 @@ class Avaliacao2(models.Model):
 
     # Para Alocações dos estudantes (caso um aluno reprove ele teria duas alocações)
     alocacao = models.ForeignKey('users.Alocacao', null=True, blank=True,
-                                 on_delete=models.SET_NULL, related_name='projeto_alocado_avaliacao',
+                                 on_delete=models.SET_NULL,
+                                 related_name='projeto_alocado_avaliacao',
                                  help_text='relacao de alocação entre projeto e estudante')
 
     objetivo = models.ForeignKey(ObjetivosDeAprendizagem, related_name='objetivo_avaliacao',
@@ -968,7 +966,7 @@ class Observacao(models.Model):
 
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
                                    help_text='Data e hora da comunicação') # hora ordena para dia
-  
+
     # Somente útil para Bancas
     avaliador = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
                                   help_text='avaliador do projeto')
@@ -1018,6 +1016,12 @@ class Certificado(models.Model):
         (0, 'Não definido'),
         (1, 'Estudante destaque'),
         (2, 'Equipe destaque'),
+        (11, 'Destaque Falconi'),
+        (12, 'Excelência Falconi'),
+        (101, "Orientação de Projeto"),
+        (102, "Coorientação de Projeto"),
+        (103, "Membro de Banca Intermediária"),
+        (104, "Membro de Banca Final"),
     )
     tipo_de_certificado = models.PositiveSmallIntegerField(choices=TIPO_DE_CERTIFICADO, default=0)
 
@@ -1076,7 +1080,7 @@ class AreaDeInteresse(models.Model):
     proposta = models.ForeignKey(Proposta, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='área de interesse da proposta')
 
-    # Campo para especificar uma outra área que não a da lista de áreas controladas    
+    # Campo para especificar uma outra área que não a da lista de áreas controladas
     outras = models.CharField("Outras", max_length=128, null=True, blank=True,
                               help_text='Outras áreas de interesse')
 

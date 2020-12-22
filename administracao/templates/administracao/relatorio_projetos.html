@@ -22,7 +22,7 @@
     {% if projetos %}
 
         {% for projeto in projetos %} 
-        {% if projeto.disponivel %}
+
           <p style="page-break-before: always"></p>
 
           {% if projeto.titulo_final %}
@@ -37,17 +37,16 @@
 
           <strong>Descrição:</strong> {{ projeto.proposta.descricao|linebreaks }}
           <strong>Expectativas de resultados/entregas :</strong> {{ projeto.proposta.expectativas|linebreaks }}
-          {% comment %}
-            <strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ projeto.areas|linebreaks }}
-          {% endcomment %}
           <strong>Recursos a serem disponibilizados aos Estudantes :</strong> {{ projeto.proposta.recursos|linebreaks }}<br>
           <strong>Outras observações :</strong> {{ projeto.proposta.observacoes|linebreaks }}<br>
+
           <hr>
+
           <h5>Organização: {{ projeto.organizacao.nome }}</h5>
           <strong>endereço:</strong> {{ projeto.organizacao.endereco|linebreaks }}
           <strong>website:</strong> <a href="{{ projeto.organizacao.website }}"> {{ projeto.organizacao.website }} </a>        
           <hr class="striped-border">
-        {% endif %}
+
         {% endfor %}
   
         {% else %}

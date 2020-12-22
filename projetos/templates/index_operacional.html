@@ -24,13 +24,14 @@
     <hr>
     <h5>Tabelas de alocação</h5>
     <ul>
-        <a href="{% url 'professores_tabela' %}"><li>Orientadores</li></a>
+        <a href="{% url 'orientadores_tabela' %}"><li>Orientadores</li></a>
         <a href="{% url 'coorientadores_tabela' %}"><li>Coorientadores</li></a>
         <a href="{% url 'organizacoes_tabela' %}"><li>Organizações</li></a>
         <a href="{% url 'bancas_tabela' %}"><li>Bancas</li></a>
     </ul>
 
     <hr>
+    <a href="{% url 'gerar_certificados' %}"><h5>Gerar Certificados</h5></a>
     <a href="{% url 'certificados_submetidos' %}"><h5>Certificados Submetidos</h5></a>
     <a href="{% url 'avisos_listar' %}"><h5>Agenda da Coordenação do PFE</h5></a>
 

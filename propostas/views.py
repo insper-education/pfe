@@ -19,7 +19,7 @@ from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.db.models.functions import Lower
 
 
-#from users.support import configuracao_estudante_vencida, , adianta_semestre
+#from users.support import configuracao_estudante_vencida
 from users.support import get_edicoes, adianta_semestre
 
 #from users.models import , ,  Opcao,
@@ -141,65 +141,6 @@ def map_est_proj(request, anosemestre):
     }
     return render(request, 'propostas/mapeamento_estudante_projeto.html', context)
 
-
-@login_required
-@permission_required("users.altera_professor", login_url='/')
-def organizacoes_prospect(request):
-    """Exibe as organizações prospectadas e a última comunicação."""
-
-    todas_organizacoes = Organizacao.objects.all()
-
-    try:
-        configuracao = Configuracao.objects.get()
-        ano = configuracao.ano              # Ano atual
-        semestre = configuracao.semestre    # Semestre atual
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
-
-    # Vai para próximo semestre
-    ano, semestre = adianta_semestre(ano, semestre)
-
-    disponiveis = []
-    submetidas = []
-    contato = []
-    organizacoes = []
-
-    periodo = 60
-    if request.is_ajax() and 'periodo' in request.POST:
-        periodo = int(request.POST['periodo'])*30 # periodo vem em meses
-
-    for organizacao in todas_organizacoes:
-        propostas = Proposta.objects.filter(organizacao=organizacao).order_by("ano", "semestre")
-        ant = Anotacao.objects.filter(organizacao=organizacao).order_by("momento").last()
-
-        if ant and (datetime.date.today() - ant.momento.date() < datetime.timedelta(days=periodo)):
-            organizacoes.append(organizacao)
-            contato.append(ant)
-
-            if configuracao.semestre == 1:
-                propostas_submetidas = propostas.filter(ano__gte=configuracao.ano).\
-                                            exclude(ano=configuracao.ano, semestre=1).distinct()
-            else:
-                propostas_submetidas = propostas.filter(ano__gt=configuracao.ano).distinct()
-
-            submetidas.append(propostas_submetidas.count())
-            disponiveis.append(propostas_submetidas.filter(disponivel=True).count())
-
-    organizacoes_list = zip(organizacoes, disponiveis, submetidas, contato)
-    total_organizacoes = len(organizacoes)
-    total_disponiveis = sum(disponiveis)
-    total_submetidas = sum(submetidas)
-
-    context = {
-        'organizacoes_list': organizacoes_list,
-        'total_organizacoes': total_organizacoes,
-        'total_disponiveis': total_disponiveis,
-        'total_submetidas': total_submetidas,
-        'ano': ano,
-        'semestre': semestre,
-        'filtro': "todas",
-        }
-    return render(request, 'propostas/organizacoes_prospectadas.html', context)
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')

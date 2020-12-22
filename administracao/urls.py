@@ -33,6 +33,7 @@ urlpatterns = [
 
     path('montar_grupos/', views.montar_grupos, name='montar_grupos'),
 
+    path('relatorio/<str:modelo>/<str:formato>', views.relatorio, name='relatorio'),
     path('relatorio_backup/', views.relatorio_backup, name='relatorio_backup'),
 
     path('selecionar_orientadores/', views.selecionar_orientadores, name='selecionar_orientadores'),
