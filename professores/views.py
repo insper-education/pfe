@@ -828,51 +828,56 @@ def resultado_avaliacoes(request):
 
     edicoes, ano, semestre = get_edicoes(Projeto)
 
-    if request.is_ajax():
-        if 'edicao' in request.POST:
-            ano, semestre = request.POST['edicao'].split('.')
-        else:
-            return HttpResponse("Algum erro não identificado.", status=401)
-
-    projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
-
-    banca_intermediaria = []
-    banca_final = []
-    banca_falconi = []
-
-    for projeto in projetos:
-        aval_banc_final = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=2) #B. Final
-        nota_banca_final, peso = Aluno.get_banca(None, aval_banc_final)
-        if peso is not None:
-            banca_final.append(("{0}".format(converte_letra(nota_banca_final, espaco="&nbsp;")),
-                                "{0:5.2f}".format(nota_banca_final)))
-        else:
-            banca_final.append( ("&nbsp;-&nbsp;",None) )
-
-        aval_banc_interm = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=1) #B. Int.
-        nota_banca_intermediaria, peso = Aluno.get_banca(None, aval_banc_interm)
-        if peso is not None:
-            banca_intermediaria.append(("{0}".format(converte_letra(nota_banca_intermediaria,
-                                                                    espaco="&nbsp;")),
-                                        "{0:5.2f}".format(nota_banca_intermediaria)))
-        else:
-            banca_intermediaria.append( ("&nbsp;-&nbsp;",None) )
-
-        aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=99) #Falc.
-        nota_banca_falconi, peso = Aluno.get_banca(None, aval_banc_falconi)
-        if peso is not None:
-            banca_falconi.append(("{0}".format(converte_letra(nota_banca_falconi, espaco="&nbsp;")),
-                                  "{0:5.2f}".format(nota_banca_falconi)))
-        else:
-            banca_falconi.append( ("&nbsp;-&nbsp;", None) )
-
-
-    tabela = zip(projetos, banca_intermediaria, banca_final, banca_falconi)
-
     context = {
-        'tabela': tabela,
         "edicoes": edicoes,
     }
+
+    if request.is_ajax():
+        if 'edicao' in request.POST:
+            edicao = request.POST['edicao']
+            if edicao == 'todas':
+                projetos = Projeto.objects.all()
+            else:
+                ano, semestre = request.POST['edicao'].split('.')
+                projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
+
+            banca_intermediaria = []
+            banca_final = []
+            banca_falconi = []
+
+            for projeto in projetos:
+                aval_banc_final = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=2) #B. Final
+                nota_banca_final, peso = Aluno.get_banca(None, aval_banc_final)
+                if peso is not None:
+                    banca_final.append(("{0}".format(converte_letra(nota_banca_final, espaco="&nbsp;")),
+                                        "{0:5.2f}".format(nota_banca_final)))
+                else:
+                    banca_final.append( ("&nbsp;-&nbsp;",None) )
+
+                aval_banc_interm = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=1) #B. Int.
+                nota_banca_intermediaria, peso = Aluno.get_banca(None, aval_banc_interm)
+                if peso is not None:
+                    banca_intermediaria.append(("{0}".format(converte_letra(nota_banca_intermediaria,
+                                                                            espaco="&nbsp;")),
+                                                "{0:5.2f}".format(nota_banca_intermediaria)))
+                else:
+                    banca_intermediaria.append( ("&nbsp;-&nbsp;",None) )
+
+                aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=99) #Falc.
+                nota_banca_falconi, peso = Aluno.get_banca(None, aval_banc_falconi)
+                if peso is not None:
+                    banca_falconi.append(("{0}".format(converte_letra(nota_banca_falconi, espaco="&nbsp;")),
+                                        "{0:5.2f}".format(nota_banca_falconi)))
+                else:
+                    banca_falconi.append( ("&nbsp;-&nbsp;", None) )
+
+
+            tabela = zip(projetos, banca_intermediaria, banca_final, banca_falconi)
+
+            context['tabela'] = tabela
+
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
 
     return render(request, 'professores/resultado_avaliacoes.html', context)
 

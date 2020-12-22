@@ -5,7 +5,6 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Dezembro de 2020
 """
 
-import datetime
 
 from django.conf import settings
 
@@ -13,23 +12,17 @@ from django.shortcuts import render, redirect
 
 from django.contrib.auth.decorators import login_required, permission_required
 
-#rom django.http import Http404
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 
 from django.db.models.functions import Lower
 
-
-#from users.support import configuracao_estudante_vencida
 from users.support import get_edicoes, adianta_semestre
 
-#from users.models import , ,  Opcao,
 from users.models import Opcao, Aluno, Alocacao, PFEUser
 from users.models import Professor, Parceiro, Administrador
 
-#from .models import , Proposta, Organizacao, , Evento, , Coorientador
-#from .models import ObjetivosDeAprendizagem, Avaliacao2, Observacao,
-from projetos.models import Proposta, Projeto, Organizacao
-from projetos.models import Configuracao, Anotacao, Area, AreaDeInteresse
+from projetos.models import Proposta, Projeto
+from projetos.models import Configuracao, Area, AreaDeInteresse
 
 
 from .support import retorna_ternario, ordena_propostas_novo, ordena_propostas
