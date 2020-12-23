@@ -10,31 +10,16 @@
   {% load escape_emails %}
   {% load banca_tipo %}
 
-  <style>
-
-    .image {
-      outline-width: 0;
-      background-color: none;
-    }
-
-    .image:hover {
-      background: #e7e7e7;
-      background-color: none;
-    }
-
-    .image:active {
-      background-color: lightblue;
-    }
-
-  </style>
+  {% comment %}
+    Estou achando desnecessário
+    <link rel="stylesheet" href="{% static 'css/impressoras.css' %}">
+  {% endcomment %}
 
 {% endblock %}
 
 {% block content %}
 
-  <div class="images" style="float: right;">
-    <img class="image" id="print" src="{% static 'images/icone_Printer.png' %}" alt="printer" style="cursor: pointer;">
-  </div>
+  {% include "impressora.html" %}
 
   <span class="titulo">Listagem de Bancas</span>
   <br>
@@ -46,9 +31,9 @@
       <option value="{{projeto.id}}" selected>{{projeto}}</option>
     {% endif %}
   </select>
-  <br>
 
-  <div id="informacoes">
+  <span id="informacoes">
+    &nbsp;&nbsp;&nbsp;
     <b>Informações: </b>&nbsp;
     <label><input onchange="($(this).prop('checked') ? $('.local').show() : $('.local').hide())" type="checkbox" checked /> local</label>&nbsp;&nbsp;&nbsp;
     <label><input onchange="($(this).prop('checked') ? $('.link').show() : $('.link').hide())" type="checkbox" checked /> video-conferência</label>&nbsp;&nbsp;&nbsp;
@@ -57,7 +42,7 @@
     <label><input onchange="($(this).prop('checked') ? $('.avaliacao').show() : $('.avaliacao').hide())" type="checkbox" checked /> link avaliação</label>&nbsp;&nbsp;&nbsp;
     <label><input onchange="($(this).prop('checked') ? $('.agendamento').show() : $('.agendamento').hide())" type="checkbox" checked /> agendamento</label>&nbsp;&nbsp;&nbsp;
     <label><input onchange="($(this).prop('checked') ? $('.editar').show() : $('.editar').hide())" type="checkbox" checked /> editar</label>&nbsp;&nbsp;&nbsp;
-  </div>
+  </span>
 
   {% if bancas %}
     <form method="get" id="editarbancasform">
@@ -286,15 +271,14 @@
   <p>&nbsp;</p>
 
   <script>
-    document.getElementById("print").addEventListener("click", function() {
+    document.getElementById("impressora").addEventListener("click", function() {
         $('#proximas').hide()
         $('#informacoes').hide()
-        $('.images').hide()
+        $('.logo_impressoras').hide()
         $('.topnav').hide()
         $(".imprimir").removeAttr('href');
         $('.email').hide()
     });
   </script>
-
 
 {% endblock %}

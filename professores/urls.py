@@ -31,7 +31,7 @@ urlpatterns = [
 
     path('orientadores_tabela/', views.orientadores_tabela, name='orientadores_tabela'),
 
-    path('resultado_avaliacoes/', views.resultado_avaliacoes, name='resultado_avaliacoes'),
+    path('resultado_bancas/', views.resultado_bancas, name='resultado_bancas'),
 
     path('todos_professores/', views.todos_professores, name='todos_professores'),
 

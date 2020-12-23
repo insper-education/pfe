@@ -823,7 +823,7 @@ def coorientadores_tabela(request):
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')
-def resultado_avaliacoes(request):
+def resultado_bancas(request):
     """Mostra os resultados das avaliações (Bancas)."""
 
     edicoes, ano, semestre = get_edicoes(Projeto)
@@ -850,26 +850,29 @@ def resultado_avaliacoes(request):
                 nota_banca_final, peso = Aluno.get_banca(None, aval_banc_final)
                 if peso is not None:
                     banca_final.append(("{0}".format(converte_letra(nota_banca_final, espaco="&nbsp;")),
-                                        "{0:5.2f}".format(nota_banca_final)))
+                                        "{0:5.2f}".format(nota_banca_final),
+                                        nota_banca_final))
                 else:
-                    banca_final.append( ("&nbsp;-&nbsp;",None) )
+                    banca_final.append( ("&nbsp;-&nbsp;", None, 0) )
 
                 aval_banc_interm = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=1) #B. Int.
                 nota_banca_intermediaria, peso = Aluno.get_banca(None, aval_banc_interm)
                 if peso is not None:
                     banca_intermediaria.append(("{0}".format(converte_letra(nota_banca_intermediaria,
                                                                             espaco="&nbsp;")),
-                                                "{0:5.2f}".format(nota_banca_intermediaria)))
+                                                "{0:5.2f}".format(nota_banca_intermediaria),
+                                                nota_banca_intermediaria))
                 else:
-                    banca_intermediaria.append( ("&nbsp;-&nbsp;",None) )
+                    banca_intermediaria.append( ("&nbsp;-&nbsp;", None, 0) )
 
                 aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=99) #Falc.
                 nota_banca_falconi, peso = Aluno.get_banca(None, aval_banc_falconi)
                 if peso is not None:
                     banca_falconi.append(("{0}".format(converte_letra(nota_banca_falconi, espaco="&nbsp;")),
-                                        "{0:5.2f}".format(nota_banca_falconi)))
+                                        "{0:5.2f}".format(nota_banca_falconi),
+                                        nota_banca_falconi))
                 else:
-                    banca_falconi.append( ("&nbsp;-&nbsp;", None) )
+                    banca_falconi.append( ("&nbsp;-&nbsp;", None, 0) )
 
 
             tabela = zip(projetos, banca_intermediaria, banca_final, banca_falconi)
@@ -879,7 +882,7 @@ def resultado_avaliacoes(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
-    return render(request, 'professores/resultado_avaliacoes.html', context)
+    return render(request, 'professores/resultado_bancas.html', context)
 
 
 @login_required

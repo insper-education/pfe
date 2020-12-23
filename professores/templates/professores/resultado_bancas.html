@@ -17,16 +17,23 @@
 
 {% block content %}
 
-  <span class="titulo">Avaliações por Projetos</span>
+  {% include "impressora.html" %}
+
+  <span class="titulo">Resultado das Bancas</span>
   <br>
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" %}
 
-  &nbsp;&nbsp;&nbsp;
-  <b>Informações: </b>&nbsp;
-  <label><input id="organizacao" onchange="($(this).prop('checked') ? $('#ProjetosTable tr > *:nth-child(2)').show() : $('#ProjetosTable tr > *:nth-child(2)').hide())" type="checkbox" checked /> Organização</label>&nbsp;&nbsp;&nbsp;
-  <label><input id="orientador" onchange="($(this).prop('checked') ? $('#ProjetosTable tr > *:nth-child(3)').show() : $('#ProjetosTable tr > *:nth-child(3)').hide())" type="checkbox" /> Orientador</label>&nbsp;&nbsp;&nbsp;
+  <span id="informacoes">
+    &nbsp;&nbsp;&nbsp;
+    <b>Informações: </b>&nbsp;
+    <label><input id="organizacao" onchange="($(this).prop('checked') ? $('#ProjetosTable tr > *:nth-child(2)').show() : $('#ProjetosTable tr > *:nth-child(2)').hide())" type="checkbox" checked /> Organização</label>&nbsp;&nbsp;&nbsp;
+    <label><input id="orientador" onchange="($(this).prop('checked') ? $('#ProjetosTable tr > *:nth-child(3)').show() : $('#ProjetosTable tr > *:nth-child(3)').hide())" type="checkbox" checked /> Orientador</label>&nbsp;&nbsp;&nbsp;
+    <label><input id="grupo" onchange="($(this).prop('checked') ? $('.grupo').show() : $('.grupo').hide())" type="checkbox" checked /> Grupo</label>&nbsp;&nbsp;&nbsp;
+    <label class="grupo"><input id="email" onchange="($(this).prop('checked') ? $('.email').show() : $('.email').hide())" type="checkbox" checked /> e-mail</label>&nbsp;&nbsp;&nbsp;
+    <label class="grupo"><input id="curso" onchange="($(this).prop('checked') ? $('.curso').show() : $('.curso').hide())" type="checkbox" checked /> curso</label>&nbsp;&nbsp;&nbsp;
+  </span>
 
   <table  id="ProjetosTable" class="projetos">
 
@@ -49,20 +56,41 @@
       </tr>      
 
       {% for projeto, banca_intermediaria, banca_final, banca_falconi in tabela %} 
-      <tr class="item">
+      <tr class="item"
+        {% if banca_falconi.2 >= 8 and banca_intermediaria.2 >= 7 and banca_final.2 >= 7 %}
+          style="background-color:lightgreen"
+        {% elif banca_falconi.2 >= 6 and banca_intermediaria.2 >= 7 and banca_final.2 >= 7 %}
+          style="background-color:lemonchiffon"
+        {% endif %}
+      >
           <td>
-            <a href="{% url 'projeto_completo' projeto.id %}">
+            <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">
             {{projeto.get_titulo}}<br>
             </a>
+            <ul class="grupo">
+              {% for alocacao in projeto.alocacao_set.all %}
+                <li>
+                  <a class="imprimir" href="{% url 'aluno_detail' alocacao.aluno.id %}">
+                    {{alocacao.aluno}}
+                  </a>
+                  <span class="email">
+                    <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
+                  </span>
+                  <span class="curso">
+                    [{{ alocacao.aluno.get_curso_display }}]
+                  </span>
+                </li>
+              {% endfor %}
+            </ul>
           </td>
           <td>
-            <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
+            <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">
               {{ projeto.organizacao.nome }}
             </a>
           </td>
           <td>
             {% if projeto.orientador %}
-              <a href="{% url 'professor_detail' projeto.orientador.id %}">
+              <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}">
                 {{ projeto.orientador }}
               </a>
               {% else %}
@@ -70,17 +98,29 @@
               {% endif %}
           </td>
           <td class="text-center" style="white-space: nowrap;">
-            <a href="{% url 'conceitos_obtidos' projeto.id %}" data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_intermediaria.1 }}">
+            <a class="imprimir" href="{% url 'conceitos_obtidos' projeto.id %}"
+              {% if banca_intermediaria.1 %}
+                data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_intermediaria.1 }}"
+              {% endif %}
+              >
               {{ banca_intermediaria.0|safe }}
             </a>
           </td>
           <td class="text-center" style="white-space: nowrap;">
-            <a href="{% url 'conceitos_obtidos' projeto.id %}" data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_final.1 }}">
+            <a class="imprimir" href="{% url 'conceitos_obtidos' projeto.id %}"
+              {% if banca_final.1 %}
+                data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_final.1 }}"
+              {% endif %}
+            >
               {{ banca_final.0|safe }}
             </a>
           </td>
           <td class="text-center" style="white-space: nowrap;">
-            <a href="{% url 'conceitos_obtidos' projeto.id %}" data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_falconi.1 }}">
+            <a class="imprimir" href="{% url 'conceitos_obtidos' projeto.id %}"
+              {% if banca_falconi.1 %}
+                data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_falconi.1 }}"
+              {% endif %}
+            >
               {{ banca_falconi.0|safe }}
             </a>
           </td>
@@ -88,7 +128,7 @@
       </tr>
 
       {% empty %}
-        <tr><td colspan="4">
+        <tr><td colspan="6">
         Não existem projetos disponíveis.
         </td></tr>
       {% endfor %}
@@ -96,6 +136,14 @@
     {% endif %}
 
   </table>
+
+  <br>
+  &nbsp;<span style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    Certificação Excelência Projeto Final de Engenharia FALCONI-INSPER<br>
+
+  &nbsp;<span style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    Certificação Destaque Projeto Final de Engenharia FALCONI-INSPER<br>
+
   <p>&nbsp;</p>
 
 
@@ -105,7 +153,7 @@
         var edicao = $(".filter option:selected").attr("value");
         $.ajax({
             type: "POST",
-            url: "{% url 'resultado_avaliacoes' %}",
+            url: "{% url 'resultado_bancas' %}",
             data: {
                 edicao: edicao,
                 'csrfmiddlewaretoken': '{{ csrf_token }}',
@@ -129,6 +177,19 @@
 
   <script>
     $('#ProjetosTable tr > *:nth-child(3)').hide();
+  </script>
+
+  <script>
+    document.getElementById("impressora").addEventListener("click", function() {
+        
+        //$('#proximas').hide()
+
+        $('#informacoes').hide()
+        $('.logo_impressoras').hide()
+        $('.topnav').hide()
+        $(".imprimir").removeAttr('href');
+        //$('.email').hide()
+    });
   </script>
 
 {% endblock %}
