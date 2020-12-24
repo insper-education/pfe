@@ -99,19 +99,25 @@
     </script>
 
     {% if propostas %}
-      <table id="PropostasTable">
+      <div class="table-responsive">
+      <table id="PropostasTable" class="table table-bordered table-hover table-sm">
+        <caption style="text-align:right">
+          <small style="font-size:12px"><b>C</b>: Computação | <b>X</b>: Mecatrônica | <b>M</b>: Mecânica</small>
+        </caption>
+        <thead class="table-info">
         <tr>
-          <th class="text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Algum professor autorizou que o projeto seja publicado para os estudantes">Autorizado</th>
-          <th class="text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="A proposta se encontra disponível para os alunos aplicarem">Disponível</th>
-          <th class="text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Foi formado um grupo de alunos para essa proposta de projeto">Fechado</th>
-          <th onclick="w3.sortHTML('#PropostasTable', '.item', 'td:nth-child(2)')" style="cursor:pointer; font-size: 14px;" class="text-center"  >Projeto</th>
-          <th onclick="w3.sortHTML('#PropostasTable', '.item', 'td:nth-child(3)')" style="cursor:pointer; font-size: 14px;" class="text-center">Período</th>
-          <th onclick="w3.sortHTML('#PropostasTable', '.item', 'td:nth-child(4)')" style="cursor:pointer; font-size: 14px;" class="text-center">Organização</th>
-          <th style="font-size: 12px;">Estudante1</th>
-          <th style="font-size: 12px;">Estudante2</th>
-          <th style="font-size: 12px;">Estudante3</th>
-          <th style="font-size: 12px;">Estudante4</th>
-        </tr>      
+          <th scope="col" class="text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Algum professor autorizou que o projeto seja publicado para os estudantes">Autorizado</th>
+          <th scope="col" class="text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="A proposta se encontra disponível para os alunos aplicarem">Disponível</th>
+          <th scope="col" class="text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Foi formado um grupo de alunos para essa proposta de projeto">Fechado</th>
+          <th scope="col" onclick="w3.sortHTML('#PropostasTable', '.item', 'td:nth-child(2)')" style="cursor:pointer; font-size: 14px;" class="text-center">Proposta</th>
+          <th scope="col" onclick="w3.sortHTML('#PropostasTable', '.item', 'td:nth-child(3)')" style="cursor:pointer; font-size: 14px;" class="text-center">Período</th>
+          <th scope="col" onclick="w3.sortHTML('#PropostasTable', '.item', 'td:nth-child(4)')" style="cursor:pointer; font-size: 14px;" class="text-center">Organização</th>
+          <th scope="col" style="font-size: 12px;">Estudante1</th>
+          <th scope="col" style="font-size: 12px;">Estudante2</th>
+          <th scope="col" style="font-size: 12px;">Estudante3</th>
+          <th scope="col" style="font-size: 12px;">Estudante4</th>
+        </tr>
+        </thead>
         {% for proposta in propostas %} 
         {% with disponivel=proposta.disponivel %}
         
@@ -143,8 +149,7 @@
               &#x2B24;
             </td>
 
-
-            <td>
+            <th scope="row">
             
               <a href="{% url 'proposta_completa' proposta.id %}"
                 data-toggle="tooltip" data-html="true" animation="true" title="
@@ -185,7 +190,7 @@
                 {% endif %}
               </a>
               
-            </td>
+            </th>
 
             <td class="text-center">
               {{proposta.ano}}.{{proposta.semestre}}
@@ -363,11 +368,11 @@
         {% endwith %}
         {% endfor %}
         
-        <tr><td colspan="10" style="text-align: right; border-left: hidden; border-right: hidden; border-bottom: hidden;">
-          <small style="font-size:12px"><b>C</b>: Computação | <b>X</b>: Mecatrônica | <b>M</b>: Mecânica</small>
-        </tr></td>
+      
         
       </table>
+      </div>
+
       <p>&nbsp;</p>
       <strong>Número Total de Propostas Publicadas:</strong> 
         <span id="propostas_publicadas"></span>

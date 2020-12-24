@@ -40,41 +40,33 @@
     <option value="atuais" {% if periodo == "atuais" %}selected="selected"{% endif %}>atuais</option>
     <option value="próximos" {% if periodo == "próximos" %}selected="selected"{% endif %}>próximos</option>
   </select>
+
+  <span id="informacoes">
+    &nbsp;&nbsp;&nbsp;
+    <b>Informações: </b>&nbsp;
+    <label><input onchange="($(this).prop('checked') ? $('#ProjetosTable tr > *:nth-child(2)').show() : $('#ProjetosTable tr > *:nth-child(2)').hide())" type="checkbox" checked /> Período</label>&nbsp;&nbsp;&nbsp;
+    <label><input onchange="($(this).prop('checked') ? $('#ProjetosTable tr > *:nth-child(3)').show() : $('#ProjetosTable tr > *:nth-child(3)').hide())" type="checkbox" checked /> Orientador</label>&nbsp;&nbsp;&nbsp;
+    <label><input onchange="($(this).prop('checked') ? $('#ProjetosTable tr > *:nth-child(4)').show() : $('#ProjetosTable tr > *:nth-child(4)').hide())" type="checkbox" checked /> Organização</label>&nbsp;&nbsp;&nbsp;
+  </span>
+
   <br><br>
 
   {% if projetos %}
-    <table id="ProjetosTable">
-      <tr>
-        {% comment %}<th class="text-center">Fechado</th>{% endcomment %}
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Projeto</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Período</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Orientador</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Organização</th>
-        {% comment %}
-        <th>Aluno1</th>
-        <th>Aluno2</th>
-        <th>Aluno3</th>
-        <th>Aluno4</th>
-        {% endcomment %}
-      </tr>      
+    <div class="table-responsive">
+    <table id="ProjetosTable" class="table table-bordered table-hover table-sm">
+      <thead class="table-info">
+        <tr>
+          <th scope="col" onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Projeto</th>
+          <th scope="col" onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Período</th>
+          <th scope="col" onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Orientador</th>
+          <th scope="col" onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Organização</th>
+        </tr>
+      </thead>
       {% for projeto in projetos %} 
-      
       <tr class="item">
         {% comment %}{% with disponivel=projeto.disponivel %}{% endcomment %}
 
-          {% comment %}
-          {% if disponivel %}<script>publicados += 1</script>{% endif %}
-          {% if projeto.alocacao_set.all  %}
-            <td class="text-success"  style="text-align:center">
-              <script>fechados += 1</script>
-          {% else %}
-            <td class="text-danger"  style="text-align:center">
-          {% endif %}
-            &#x2B24;
-          </td>
-          {% endcomment %}
-
-          <td>
+          <th scope="row">
           
             {% comment %}{% if not disponivel %}<del>{% endif %}{% endcomment %}
 
@@ -95,7 +87,7 @@
               {% endif %}
             </a>
             {% comment %}{% if not disponivel %}<del>{% endif %}{% endcomment %}
-          </td>
+          </th>
 
           <td class="text-center">
             {% comment %}{% if not disponivel %}<del>{% endif %}{% endcomment %}
@@ -214,6 +206,7 @@
       {% endfor %}
       
     </table>
+    </div>
     {% comment %}
     <p style="text-align: right;"><small>C: Computação | X: Mecatrônica | M: Mecânica</small></p>
     <p>&nbsp;</p>

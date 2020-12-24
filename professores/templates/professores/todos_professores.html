@@ -18,6 +18,7 @@
   {% if professores %}
   <div class="table-responsive">
     <table id="OrganizacoesTable" class="table table-bordered table-hover table-sm">
+    <caption><small>usuários <u>sublinhados</u> são membros do comitê do PFE.</small> </caption>
     <thead class="table-info">
       <tr>
         <th scope="col" onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome</th>
@@ -53,7 +54,6 @@
           </td>
         </tr>
       {% endfor %}
-      <caption><small>usuários <u>sublinhados</u> são membros do comitê do PFE.</small> </caption>
     </table>
     </div>
   {% else %}
