@@ -21,7 +21,6 @@
 {% block content %}
   
   <span class="titulo">{{parceiro.user.get_full_name}}</span>
-  <br>
 
   {% if not parceiro.user.is_active %}
       <p style="color: red;">

@@ -22,7 +22,6 @@
   {% include "impressora.html" %}
 
   <span class="titulo">Listagem de Bancas</span>
-  <br>
 
   <select id="proximas" onchange="location = this.options[this.selectedIndex].value;">
     <option value="todas" {% if periodo == "todas" %}selected="todas"{% endif %}>Todas</option>

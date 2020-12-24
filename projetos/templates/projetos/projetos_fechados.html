@@ -23,6 +23,9 @@
 {% endblock %}
 
 {% block content %}
+
+  {% include "impressora.html" %}
+
   <span class="titulo">Projetos Fechados</span><br>
   
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
@@ -50,7 +53,7 @@
           {% endif %}
         {% endfor %}
         <br>
-        <a href="{% url 'projeto_completo' projeto.id %}" class="dark-blue-bold"> 
+        <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}" class="dark-blue-bold"> 
           {% if projeto.titulo_final %}
             {{projeto.titulo_final}}<br>
             <small>Título Provisório: {{projeto.titulo}}</small><br>
@@ -63,17 +66,18 @@
         {% else %}
           <small>Descrição proposta: {{projeto.proposta.descricao}}</small><br>
         {% endif %}
-        <p style="margin-left:1em;">Organização: <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-          {{ projeto.organizacao.nome }}
-        </a>
-        {% for conexao in conexoes %}
-          {% if conexao.parceiro and conexao.parceiro.organizacao %}
-            &nbsp;&nbsp;&nbsp;&nbsp;colaboração:
-            <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
-              {{ conexao.parceiro.organizacao.nome }}
-            </a>
-          {% endif %}
-        {% endfor %}
+        <p style="margin-left:1em;">Organização:
+          <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">
+            {{ projeto.organizacao.nome }}
+          </a>
+          {% for conexao in conexoes %}
+            {% if conexao.parceiro and conexao.parceiro.organizacao %}
+              &nbsp;&nbsp;&nbsp;&nbsp;colaboração:
+              <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
+                {{ conexao.parceiro.organizacao.nome }}
+              </a>
+            {% endif %}
+          {% endfor %}
         </p>
         {% if projeto.avancado %}
           <p style="margin-left:1em;">Tipo: <font color="red">PFE Avançado</font></p>
@@ -81,7 +85,7 @@
         <!-- <p style="margin-left:1em;">Edição: {{projeto.ano}}.{{projeto.semestre}}</p> -->
         <p style="margin-left:1em;">Orientador: 
           {% if projeto.orientador %}
-            <a href="{% url 'professor_detail' projeto.orientador.id %}"> {{projeto.orientador.user.get_full_name}}</a>
+            <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}"> {{projeto.orientador.user.get_full_name}}</a>
             <a href="mailto:{{projeto.orientador.user.email}}"> &lt;{{projeto.orientador.user.email}}&gt;</a>
           {% else %}
             Não definido
@@ -90,7 +94,7 @@
         <p style="margin-left:1em;">Estudantes:</p>
         <ol>
         {% for aluno,prioridade in prioridades %}
-          <li><a href="{% url 'aluno_detail' aluno.id %}"
+          <li><a class="imprimir" href="{% url 'aluno_detail' aluno.id %}"
               data-toggle="tooltip" data-html="true" animation="true" title="
               {% if prioridade == 0 %}
                 prioridade não definida
@@ -261,6 +265,16 @@
       });
     });
 
+  </script>
+
+  {% comment %} Esconde informações para impressão {% endcomment %}
+  <script>
+    document.getElementById("impressora").addEventListener("click", function() {
+        //$('#informacoes').hide()
+        $('.logo_impressoras').hide()
+        $('.topnav').hide()
+        $(".imprimir").removeAttr('href');
+    });
   </script>
 
 {% endblock %}
