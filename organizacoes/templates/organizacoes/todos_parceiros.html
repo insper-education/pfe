@@ -18,23 +18,29 @@
   <span class="titulo">Parceiros Profissionais</span>
 
   {% if pareceiros %}
-    <table id="ParceirosTable">
-      <tr>
-        <th onclick="w3.sortHTML('#ParceirosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome</th>
-        <th onclick="w3.sortHTML('#ParceirosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Cargo</th>
-        <th onclick="w3.sortHTML('#ParceirosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Organização</th>
-        <th onclick="w3.sortHTML('#ParceirosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">e-mail</th>
-        <th onclick="w3.sortHTML('#ParceirosTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">telefone</th>
-        <th class="text-center">papel</th>
-      </tr>
+    <div class="table-responsive">
+    <table id="ParceirosTable" class="table table-bordered table-hover table-sm">
+      <caption style="text-align:right">
+        <small>GR: Gestor Responsável / MT: Mentor Técnico / RH: Recursos Humanos</small>
+      </caption>
+      <thead class="table-info">
+        <tr>
+          <th scope="col" onclick="w3.sortHTML('#ParceirosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome</th>
+          <th scope="col" onclick="w3.sortHTML('#ParceirosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Cargo</th>
+          <th scope="col" onclick="w3.sortHTML('#ParceirosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Organização</th>
+          <th scope="col" onclick="w3.sortHTML('#ParceirosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">e-mail</th>
+          <th scope="col" onclick="w3.sortHTML('#ParceirosTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">telefone</th>
+          <th scope="col" class="text-center">papel</th>
+        </tr>
+      </thead>
       {% for parceiro in pareceiros %} 
         <tr class="item" {% if not parceiro.user.is_active %} style="color: lightgrey;" {% endif %}>
-          <td>
+          <th scope="row">
             <a href="{% url 'parceiro_detail' parceiro.id %}"
              {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}>
               {{parceiro.user.get_full_name}} 
             </a>
-          </td>
+          </th>
           <td>
             {{parceiro.cargo}} 
           </td>
@@ -81,7 +87,7 @@
         </tr>
       {% endfor %}
     </table>
-    <small>GR: Gestor Responsável / MT: Mentor Técnico / RH: Recursos Humanos</small>
+    </div>
   {% else %}
     <p>Não existem parceiros cadastradas.</p>
   {% endif %}
