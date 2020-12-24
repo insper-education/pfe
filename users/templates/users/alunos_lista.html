@@ -30,37 +30,42 @@
       <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
     {% endfor %}
   </select>
-  <br>
 
-  <b>Informações: </b>&nbsp;
-  <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(2)').show() : $('#AlunosTable tr > *:nth-child(2)').hide())" type="checkbox" checked /> e-mail</label>&nbsp;&nbsp;&nbsp;
-  <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(3)').show() : $('#AlunosTable tr > *:nth-child(3)').hide())" type="checkbox" checked /> Curso</label>&nbsp;&nbsp;&nbsp;
-  <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(4)').show() : $('#AlunosTable tr > *:nth-child(4)').hide())" type="checkbox" checked /> Período</label>&nbsp;&nbsp;&nbsp;
-  <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(5)').show() : $('#AlunosTable tr > *:nth-child(5)').hide())" type="checkbox" checked /> Projeto</label>&nbsp;&nbsp;&nbsp;
-  <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(6)').show() : $('#AlunosTable tr > *:nth-child(6)').hide())" type="checkbox" checked /> Média (só bancas)</label>&nbsp;&nbsp;&nbsp;
-  <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(7)').show() : $('#AlunosTable tr > *:nth-child(7)').hide())" type="checkbox" checked /> Notas</label>&nbsp;&nbsp;&nbsp;
+  <span id="informacoes">
+    &nbsp;&nbsp;&nbsp;
+    <b>Informações: </b>&nbsp;
+    <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(2)').show() : $('#AlunosTable tr > *:nth-child(2)').hide())" type="checkbox" checked /> e-mail</label>&nbsp;&nbsp;&nbsp;
+    <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(3)').show() : $('#AlunosTable tr > *:nth-child(3)').hide())" type="checkbox" checked /> Curso</label>&nbsp;&nbsp;&nbsp;
+    <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(4)').show() : $('#AlunosTable tr > *:nth-child(4)').hide())" type="checkbox" checked /> Período</label>&nbsp;&nbsp;&nbsp;
+    <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(5)').show() : $('#AlunosTable tr > *:nth-child(5)').hide())" type="checkbox" checked /> Projeto</label>&nbsp;&nbsp;&nbsp;
+    <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(6)').show() : $('#AlunosTable tr > *:nth-child(6)').hide())" type="checkbox" checked /> Média (só bancas)</label>&nbsp;&nbsp;&nbsp;
+    <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(7)').show() : $('#AlunosTable tr > *:nth-child(7)').hide())" type="checkbox" checked /> Notas</label>&nbsp;&nbsp;&nbsp;
+  </span>
   
   <br><br>
   <strong>Número Total de Estudantes:</strong> {{ num_alunos }}
 
   {% if alunos_list %}
-    <table id="AlunosTable">
+    <div class="table-responsive">
+    <table id="AlunosTable" class="table table-bordered table-hover table-sm">
+      <thead class="table-info">
         <tr>
-            <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome do Aluno</th>
-            <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">e-mail</th>
-            <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Curso</th>
-            <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Período</th>
-            <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">
+            <th scope="col" onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome do Aluno</th>
+            <th scope="col" onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">e-mail</th>
+            <th scope="col" onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Curso</th>
+            <th scope="col" onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Período</th>
+            <th scope="col" onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">
               <a data-toggle="tooltip" data-html="true" animation="true" title="<small>Projetos <u>sublinhados</u> são de PFE Avançado</small>">
                 Projeto
               </a>
             </th>
-            <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(6)')" style="cursor:pointer" class="text-center">Média</th>
-            <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(7)')" style="cursor:pointer" class="text-center">Notas</th>
+            <th scope="col" onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(6)')" style="cursor:pointer" class="text-center">Média</th>
+            <th scope="col" onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(7)')" style="cursor:pointer" class="text-center">Notas</th>
         </tr>
+        </thead>
         {% for aluno in alunos_list %} 
         <tr class="item">
-          <td>
+          <th scope="row">
             <a href="{% url 'aluno_detail' aluno.id %}" 
                 data-toggle="tooltip" data-html="true" animation="true" title="
                 {% for opcao in aluno.opcao_set.all %}
@@ -83,7 +88,7 @@
             >
               {{aluno.user.get_full_name}}
             </a>
-          </td>
+          </th>
           <td>
             <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
           </td>
@@ -148,6 +153,7 @@
         </tr>
         {% endfor %}
       </table>
+      </div>
       <br>
   {% else %}
     <p>Não existem estudantes disponíveis.</p>
