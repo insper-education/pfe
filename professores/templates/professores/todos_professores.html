@@ -16,8 +16,9 @@
   <span class="titulo">Professores</span>
 
   {% if professores %}
-    <table id="OrganizacoesTable" class="table table-bordered table-hover">
-    <thead>
+  <div class="table-responsive">
+    <table id="OrganizacoesTable" class="table table-bordered table-hover table-sm">
+    <thead class="table-info	">
       <tr>
         <th scope="col" onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome</th>
         <th scope="col" onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">e-mail</th>
@@ -28,7 +29,7 @@
       </thead>
       {% for professor in professores %} 
       <tr class="item">
-          <td>
+          <th scope="row">
             {% if professor.user.membro_comite %} <u> {% endif %}
               <a href="{% url 'professor_detail' professor.id %}">
                 {{professor.user.get_full_name}}
@@ -52,8 +53,9 @@
           </td>
         </tr>
       {% endfor %}
+      <caption><small>usuários <u>sublinhados</u> são membros do comitê do PFE.</small> </caption>
     </table>
-    <small>usuários <u>sublinhados</u> são membros do comitê do PFE.</small> 
+    </div>
   {% else %}
     <p>Não existem professores cadastradas.</p>
   {% endif %}
