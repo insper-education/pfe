@@ -18,30 +18,34 @@
   <span class="titulo">Comitê PFE</span>
 
   {% if professores %}
-    <table id="OrganizacoesTable">
-      <tr>
-        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome</th>
-        <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">e-mail</th>
-        <th class="text-center">Lattes</th>
-      </tr>
-      {% for professor in professores %} 
-      <tr class="item">
-          <td>
-            <a href="{% url 'professor_detail' professor.id %}">
-              {{professor.user.get_full_name}}
-            </a>
-          </td>
-          <td class="text-center">
-            <a href="mailto:{{professor.user.email}}"> &lt;{{professor.user.email}}&gt;</a><br>
-          </td>
-          <td >
-            {% if professor.lattes %}
-              <a rel="noopener noreferrer" target="_blank" href="{{professor.lattes}}"> {{professor.lattes}} </a>
-            {% endif %}
-          </td>
-        </tr>
-      {% endfor %}
-    </table>
+    <div class="table-responsive">
+      <table id="OrganizacoesTable" class="table table-bordered table-hover table-sm">
+        <thead class="table-info">
+          <tr>
+            <th scope="col" onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome</th>
+            <th scope="col" onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">e-mail</th>
+            <th scope="col" class="text-center">Lattes</th>
+          </tr>
+        </thead>
+        {% for professor in professores %} 
+        <tr class="item">
+            <th scope="row">
+              <a href="{% url 'professor_detail' professor.id %}">
+                {{professor.user.get_full_name}}
+              </a>
+            </th>
+            <td class="text-center">
+              <a href="mailto:{{professor.user.email}}"> &lt;{{professor.user.email}}&gt;</a><br>
+            </td>
+            <td >
+              {% if professor.lattes %}
+                <a rel="noopener noreferrer" target="_blank" href="{{professor.lattes}}"> {{professor.lattes}} </a>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
   {% else %}
     <p>Não existem membros do comitê do PFE cadastrados.</p>
   {% endif %}
