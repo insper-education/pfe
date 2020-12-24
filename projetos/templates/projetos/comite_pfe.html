@@ -15,6 +15,10 @@
 
 {% block content %}
 
+  <div class="images" style="float: right;">
+    <img class="image" id="bspreadsheet" src="{% static 'images/icone_SpreadSheet.png' %}" alt="spreadsheet" style="cursor: pointer;">
+  </div>
+
   <span class="titulo">Comitê PFE</span>
 
   {% if professores %}
@@ -50,4 +54,15 @@
     <p>Não existem membros do comitê do PFE cadastrados.</p>
   {% endif %}
   <p>&nbsp;</p>
+
+
+  <script>
+
+    document.getElementById("bspreadsheet").addEventListener("click", function() {
+      //get_spreadsheet()
+      window.open( "{% url 'export' 'organizacoes' 'xls'%}", '_blank');
+    });
+
+  </script>
+
 {% endblock %}

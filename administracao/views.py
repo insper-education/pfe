@@ -844,8 +844,9 @@ def export(request, modelo, formato):
         }
         return render(request, 'generic.html', context=context)
     dataset = resource.export()
-    if(formato == "xls" or formato == "xlsx"):
-        response = HttpResponse(dataset.xlsx, content_type='application/ms-excel')
+    if formato in ("xls", "xlsx"):
+        #response = HttpResponse(dataset.xlsx, content_type='application/ms-excel')
+        response = HttpResponse(dataset.xls, content_type='application/ms-excel')
         formato = "xlsx"
     elif formato == "json":
         response = HttpResponse(dataset.json, content_type='application/json')
