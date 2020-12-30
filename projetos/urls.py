@@ -11,7 +11,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.index_projetos, name='index_projetos'), #pagina inicial
+    path('', views.index, name='index'), #pagina inicial
+    path('index_projetos/', views.index_projetos, name='index_projetos'), #pagina inicial de projs.
 
     path('avisos_listar/', views.avisos_listar, name='avisos_listar'),
     path('carrega_bancos/', views.carrega_bancos, name='carrega_bancos'),
@@ -22,7 +23,6 @@ urlpatterns = [
     path('distribuicao_areas/', views.distribuicao_areas, name='distribuicao_areas'),
     path('edita_aviso/<int:primakey>', views.edita_aviso, name='edita_aviso'),
     path('graficos/', views.graficos, name='graficos'),
-    path('index_operacional/', views.index_operacional, name='index_operacional'),
     path('lista_feedback', views.lista_feedback, name='lista_feedback'),
     path('meuprojeto/', views.meuprojeto, name='meuprojeto'),
     path('migracao/', views.migracao, name='migracao'),

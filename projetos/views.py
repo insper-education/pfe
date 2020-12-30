@@ -28,6 +28,7 @@ from .messages import email, message_reembolso
 
 from .support import get_areas_estudantes, get_areas_propostas, simple_upload
 
+
 @login_required
 def index(request):
     """Página principal do sistema do Projeto Final de Engenharia."""
@@ -54,7 +55,6 @@ def index(request):
 def index_projetos(request):
     """Página principal dos Projetos."""
 
-    ## DEIXANDO TEMPORARIAMENTE POR PROBLEMAS DE CACHE DE BROWSERS
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
@@ -62,22 +62,13 @@ def index_projetos(request):
 
     if configuracao and configuracao.manutencao:
         return render(request, 'projetos/manutencao.html')
-    #num_visits = request.session.get('num_visits', 0) # Numero de visitas a página.
-    #request.session['num_visits'] = num_visits + 1
 
     context = {
         'configuracao': configuracao,
     }
 
     #'num_visits': num_visits,
-    return render(request, 'index.html', context=context)
-
-@login_required
-@permission_required("users.altera_professor", login_url='/')
-def index_operacional(request):
-    """Mostra página principal para equipe operacional."""
-
-    return render(request, 'index_operacional.html')
+    return render(request, 'index_projetos.html', context=context)
 
 
 @login_required
