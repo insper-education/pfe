@@ -101,7 +101,7 @@
       <br>
       <input type="checkbox" id="operacao" checked>
       <span id="titulo_operacao" style="font-size:20px" data-toggle="tooltip" data-html="true" animation="true" title=
-      "O semestre da coordenação vai de Março à Agosto e de Setembro a Fevereiro">
+      "O semestre da coordenação vai de Fevereiro à Julho e de Agosto a Janeiro">
         Operação:
       </span>
 
@@ -709,8 +709,8 @@
         [].forEach.call(document.querySelectorAll('.coordenacao'), function (el) {
           el.style.display = 'none';
         });
-        var els = Array.from(document.querySelectorAll(".coordenacao[data-mes]")).filter(el => Number(el.dataset.mes) <= 8);
-        var els = els.filter(el => Number(el.dataset.mes) >= 3);
+        var els = Array.from(document.querySelectorAll(".coordenacao[data-mes]")).filter(el => Number(el.dataset.mes) <= 7);
+        var els = els.filter(el => Number(el.dataset.mes) >= 2);
         var els = els.filter(el => Number(el.dataset.ano) == currentYear);
         [].forEach.call(els, function (el) {
           el.style.display = 'inline';
@@ -732,7 +732,7 @@
       $('#linha_lab').hide()
       $('#linha_lab_br').hide()
       $('#linha_provas').hide()
-      var els = Array.from(document.querySelectorAll(".semestre[data-mes]")).filter(el => Number(el.dataset.mes) > 6);
+      var els = Array.from(document.querySelectorAll(".semestre[data-mes]")).filter(el => Number(el.dataset.mes) > 7);
       [].forEach.call(els, function (el) {
         el.style.display = 'inline';
         if(el.parentNode.classList.contains('ano'+currentYear)) {
@@ -753,13 +753,13 @@
           el.style.display = 'none';
         });
         
-        var els = Array.from(document.querySelectorAll(".coordenacao[data-mes]")).filter(el => Number(el.dataset.mes) > 8);
+        var els = Array.from(document.querySelectorAll(".coordenacao[data-mes]")).filter(el => Number(el.dataset.mes) > 7);
         var els = els.filter(el => Number(el.dataset.ano) == currentYear);
         [].forEach.call(els, function (el) {
           el.style.display = 'inline';
         });
 
-        var els = Array.from(document.querySelectorAll(".coordenacao[data-mes]")).filter(el => Number(el.dataset.mes) < 3);
+        var els = Array.from(document.querySelectorAll(".coordenacao[data-mes]")).filter(el => Number(el.dataset.mes) < 2);
         var els = els.filter(el => Number(el.dataset.ano) == currentYear+1);
         [].forEach.call(els, function (el) {
           el.style.display = 'inline';
