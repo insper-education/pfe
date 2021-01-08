@@ -491,7 +491,7 @@ class Evento(models.Model):
         for entry in Evento.TIPO_EVENTO:
             if self.tipo_de_evento == entry[0]:
                 return entry[1]
-        return None
+        return "Tipo não definido"
 
     def get_color(self):
         """Retorna uma cor característica do evento para desenhar no calendário."""
@@ -510,8 +510,17 @@ class Evento(models.Model):
         """Retorna a data do evento."""
         return self.startDate
 
+    @classmethod
+    def create(cls):
+        """Cria um objeto (entrada) em Evento."""
+        evento = cls()
+        return evento
+
     def __str__(self):
-        return self.get_title()+" ("+self.startDate.strftime("%d/%m/%Y")+")"
+        texto = self.get_title()
+        if self.startDate:
+            texto += " (" + self.startDate.strftime("%d/%m/%Y") + ")"
+        return texto
     class Meta:
         ordering = ['startDate']
 

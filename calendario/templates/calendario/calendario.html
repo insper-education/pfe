@@ -59,6 +59,12 @@
       font-size: 0.8em;
     }
 
+    .event-type {
+      font-weight: bold;
+      padding-top: 3px;
+      font-size: 0.8em;
+    }
+
     .event-location {
       font-size: 0.8em;
     }
@@ -291,9 +297,14 @@
                   <input type="hidden" name="event-index">
                   <form class="form-horizontal">
                       <div class="form-group row">
-                          <label for="event-name" class="col-sm-4 control-label">Nome</label>
+                          <label for="event-type" class="col-sm-4 control-label">Tipo</label>
                           <div class="col-sm-8">
-                              <input id="event-name" name="event-name" type="text" class="form-control">
+                              {% comment %} <input id="event-name" name="event-name" type="text" class="form-control"> {% endcomment %}
+                              <select id="event-type" name="event-type" class="form-control">
+                                {% for tipo in tipos_eventos %}
+                                  <option value="{{tipo.0}}" data-color="{{tipo.2}}">{{tipo.1}}</option>
+                                {% endfor %}
+                              </select>
                           </div>
                       </div>
                       <div class="form-group row">
@@ -364,65 +375,66 @@
     function editEvent(event) {
       if(event.events.length) { // não vazia
         evento = event.events[0];
-        $('#event-modal input[name="event-index"]').val(evento ? evento.id : '');
-        $('#event-modal input[name="event-name"]').val(evento ? evento.name : '');  
-        $('#event-modal input[name="event-location"]').val(evento ? evento.location : '');
-        $('#event-modal input[name="event-observation"]').val(evento ? evento.observation : '');
-        $('#event-modal input[name="event-start-date"]').datepicker('update', evento ? evento.startDate : '');
-        $('#event-modal input[name="event-end-date"]').datepicker('update', evento ? evento.endDate : '');
-        $('#event-modal').modal();
+      } else {
+        evento = event;
       }
+
+      $('#event-modal input[name="event-index"]').val(evento ? evento.id : '');
+      //$('#event-modal input[name="event-name"]').val(evento ? evento.name : '');
+      $('#event-modal select[name="event-type"]').val(evento ? evento.type : '');
+      $('#event-modal input[name="event-location"]').val(evento ? evento.location : '');
+      $('#event-modal input[name="event-observation"]').val(evento ? evento.observation : '');
+      $('#event-modal input[name="event-start-date"]').datepicker('update', evento ? evento.startDate : '');
+      $('#event-modal input[name="event-end-date"]').datepicker('update', evento ? evento.endDate : '');
+      $('#event-modal').modal();      
     }
 
-    {% comment %} 
-    // NÃO SENDO USADA
+    
+
     function deleteEvent(event) {
-      var dataSource = calendar.getDataSource();
-      calendar.setDataSource(dataSource.filter(item => item.id == event.id));
-    }
-    {% endcomment %}
+      
+      $.ajax({
+        url: '{% url "remove_evento" %}',
+        data: { 
+          id : event.id,
+        },
+        dataType: 'json',
+        success: function (data) {
+          if (data.atualizado) {
+            console.log("Evento removido.");
+          }
+        }
+      });
 
+      var dataSource = calendar.getDataSource();
+      calendar.setDataSource(dataSource.filter(item => item.id != event.id));
+    }
+    
+  
     // Função para salvar evento
     function saveEvent() {
       var event = {
         id: $('#event-modal input[name="event-index"]').val(),
-        name: $('#event-modal input[name="event-name"]').val(),
+        //name: $('#event-modal input[name="event-name"]').val(),
+        name: $('#event-modal select[name="event-type"] option:selected').text(),
+        //type: $('#event-modal input[name="event-type"]').val(),
+        type: $('#event-modal select[name="event-type"] option:selected').val(),
         location: $('#event-modal input[name="event-location"]').val(),
         observation: $('#event-modal input[name="event-observation"]').val(),
         startDate: $('#event-modal input[name="event-start-date"]').datepicker('getDate'),
-        endDate: $('#event-modal input[name="event-end-date"]').datepicker('getDate')
+        endDate: $('#event-modal input[name="event-end-date"]').datepicker('getDate'),
+        color: $('#event-modal select[name="event-type"] option:selected').data("color"),
       };
+
+      if (!event.id) {
+        id = 0;
+      } else {
+        id = event.id;
+      }
 
       var dataSource = calendar.getDataSource();
 
-      if (event.id) {
-        for (var i in dataSource) {
-          if (dataSource[i].id == event.id) {
-            dataSource[i].name = event.name;
-            dataSource[i].location = event.location;
-            dataSource[i].observation = event.observation;
-            dataSource[i].startDate = event.startDate;
-            dataSource[i].endDate = event.endDate;
-          }
-        }
-      } 
-      
-      {% comment %}
-      NÃO É POSSIVEL CRIAR EVENTOS NO MOMENTO
-      else {
-        var newId = 0;
-        for (var i in dataSource) {
-          if (dataSource[i].id > newId) {
-            newId = dataSource[i].id;
-          }
-        }
-
-        newId++;
-        event.id = newId;
-
-        dataSource.push(event);
-      }
-      {% endcomment %}
+      {% comment %} Atualiza na base de dados {% endcomment %}
 
       s = event.startDate;
       var startDate = s.getFullYear() + "-" + (s.getMonth()+1) + "-" +  s.getDate() ;
@@ -430,11 +442,11 @@
       e = event.endDate;
       var endDate = e.getFullYear() + "-" + (e.getMonth()+1) + "-" + e.getDate() ;
 
-      {% comment %} Atualiza na base de dados {% endcomment %}
       $.ajax({
         url: '{% url "atualiza_evento" %}',
         data: { 
-          id : event.id,
+          id : id,
+          type : event.type,
           location : event.location,
           observation : event.observation,
           startDate : startDate,
@@ -444,12 +456,31 @@
         success: function (data) {
           if (data.atualizado) {
             console.log("Evento atualizado.");
+
+            if (event.id) {
+              for (var i in dataSource) {
+                if (dataSource[i].id == event.id) {
+                  dataSource[i].name = event.name;
+                  dataSource[i].type = event.type;
+                  dataSource[i].location = event.location;
+                  dataSource[i].observation = event.observation;
+                  dataSource[i].startDate = event.startDate;
+                  dataSource[i].endDate = event.endDate;
+                }
+              }
+
+            }       
+            else {
+              event.id = data.evento_id;
+              dataSource.push(event);
+            }
+
+            calendar.setDataSource(dataSource);
+            $('#event-modal').modal('hide');
           }
         }
       });
 
-      calendar.setDataSource(dataSource);
-      $('#event-modal').modal('hide');
     }
 
     {% endif %}
@@ -461,6 +492,7 @@
                 name: "{{evento.get_title}}",
                 location: "{{evento.location}}",
                 observation: "{{evento.observacao}}",
+                type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
                 color: "{{evento.get_color}}",
@@ -472,6 +504,7 @@
                 name: "{{evento.get_title}}",
                 location: "{{evento.location}}",
                 observation: "{{evento.observacao}}",
+                type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
                 color: "{{evento.get_color}}",
@@ -483,6 +516,7 @@
                 name: "{{evento.get_title}}",
                 location: "{{evento.location}}",
                 observation: "{{evento.observacao}}",
+                type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
                 color: "{{evento.get_color}}",
@@ -494,6 +528,7 @@
                 name: "{{evento.get_title}}",
                 location: "{{evento.location}}",
                 observation: "{{evento.observacao}}",
+                type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
                 color: "{{evento.get_color}}",
@@ -509,6 +544,7 @@
                 name: "{{evento.get_title}}",
                 location: "{{evento.location}}",
                 observation: "{{evento.observacao}}",
+                type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
                 color: "{{evento.get_color}}",
@@ -562,32 +598,21 @@
         style:'background',
         disabledDays: [], {% comment %} Não estou usando por enquanto. {% endcomment %}
         customDayRenderer: provas_labs,
-        enableRangeSelection: false,
         {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+          enableRangeSelection: true,
           enableContextMenu: true,  // botão da direita sobre o dia
           contextMenuItems: [
             {
-              text: 'Update',
-              click: editEvent 
-            }
-            {% comment %} NÃO SENDO USADA
-            ,
-            {
               text: 'Delete',
               click: deleteEvent
-            } {% endcomment %}
+            }
           ],
           selectRange: function (e) {
-            {% comment %}
-              editEvent({ name: e.name, startDate: e.startDate, endDate: e.endDate });
-              passa tudo.
-            {% endcomment %}
             editEvent(e);
           },
-          clickDay: function(e) {
-            {% comment %} alert('Click on day ' + e.date.toString()); {% endcomment %}
+          {% comment %} clickDay: function(e) {
             editEvent(e);
-          },
+          }, {% endcomment %}
           mouseOnDay: function (e) {
             if (e.events.length > 0) {
               var content = '';
@@ -622,6 +647,7 @@
             $(e.element).popover('hide');
           },
         {% else %}
+          enableRangeSelection: false,
           enableContextMenu: false,  // botão da direita sobre o dia
         {% endif %}
        });

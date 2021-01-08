@@ -19,5 +19,6 @@ urlpatterns = [
     path('events/<int:event_id>', views.export_calendar, name="event_ics_export"),
 
     path('ajax/atualiza_evento/', views.atualiza_evento, name='atualiza_evento'),
+    path('ajax/remove_evento/', views.remove_evento, name='remove_evento'),
 
 ]

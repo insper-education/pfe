@@ -73,6 +73,7 @@ def get_calendario_context(primarykey):
         'feedbacks' : feedbacks,
         'coordenacao' : coordenacao,
         'semestre' : configuracao.semestre,
+        'tipos_eventos': Evento.TIPO_EVENTO,
     }
 
     return context
@@ -200,15 +201,22 @@ def atualiza_evento(request):
 
     try:
         event_id = int(request.GET.get('id', None))
-        evento = Evento.objects.get(id=event_id)
+        if event_id:
+            evento = Evento.objects.get(id=event_id)
+        else:
+            evento = Evento.create()
     except Evento.DoesNotExist:
         return HttpResponseNotFound('<h1>Evento não encontrado!</h1>')
+
+    tipo_de_evento  = int(request.GET.get('type', None))
 
     start_date  = request.GET.get('startDate', None)
     end_date  = request.GET.get('endDate', None)
 
     location = request.GET.get('location', None)[:50]
     observation = request.GET.get('observation', None)[:50]
+
+    evento.tipo_de_evento = tipo_de_evento
 
     evento.startDate = dateutil.parser.parse(start_date)
     evento.endDate = dateutil.parser.parse(end_date)
@@ -217,6 +225,26 @@ def atualiza_evento(request):
     evento.observacao = observation
 
     evento.save()
+
+    data = {
+        'atualizado': True,
+        'evento_id': evento.id,
+    }
+
+    return JsonResponse(data)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def remove_evento(request):
+    """ Ajax para remover eventos. """
+
+    try:
+        event_id = int(request.GET.get('id', None))
+        evento = Evento.objects.get(id=event_id)
+    except Evento.DoesNotExist:
+        return HttpResponseNotFound('<h1>Evento não encontrado!</h1>')
+
+    evento.delete()
 
     data = {
         'atualizado': True,
