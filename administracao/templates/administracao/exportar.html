@@ -8,6 +8,7 @@
 {% block content %}
 
     <span class="titulo">Relatórios</span>
+    <br>
 
     <table>
         <tr>
@@ -17,8 +18,8 @@
         </tr>
         <tr>
             <td>Estudantes</td>
-            <td><a href="{% url 'relatorio' 'alunos' 'HTML'%}">HTML</a></td>
-            <td><a href="{% url 'relatorio' 'alunos' 'PDF'%}">PDF</a></td>
+            <td><a href="{% url 'relatorio' 'estudantes' 'HTML'%}">HTML</a></td>
+            <td><a href="{% url 'relatorio' 'estudantes' 'PDF'%}">PDF</a></td>
         </tr>
         <tr>
             <td>Feedbacks</td>
@@ -32,6 +33,7 @@
     <br>
 
     <span class="titulo">Exportar dados</span>
+    <br>
 
     <table>
         <tr>

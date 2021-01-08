@@ -45,7 +45,7 @@
               Título
             </th>
           </tr>
-    
+
         {% for a in avisos %} 
           {% if a|get_class == "Aviso" %}
             <tr class="linha {% if a.get_data < hoje %}text-success{% else %}text-info{% endif %}"

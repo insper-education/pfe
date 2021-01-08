@@ -15,9 +15,9 @@
 
 {% block content %}
 
-  <div class="images" style="float: right;">
-    <img class="image" id="bspreadsheet" src="{% static 'images/icone_SpreadSheet.png' %}" alt="spreadsheet" style="cursor: pointer;">
-  </div>
+  {% comment %} {% with dados='projetos' %}
+      {% include "planilhas.html" %}
+  {% endwith %} {% endcomment %}
 
   <span class="titulo">Comitê PFE</span>
 
@@ -55,14 +55,5 @@
   {% endif %}
   <p>&nbsp;</p>
 
-
-  <script>
-
-    document.getElementById("bspreadsheet").addEventListener("click", function() {
-      //get_spreadsheet()
-      window.open( "{% url 'export' 'organizacoes' 'xls'%}", '_blank');
-    });
-
-  </script>
 
 {% endblock %}

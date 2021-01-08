@@ -1,0 +1,29 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 30 de Dezembro de 2020
+{% endcomment %}
+
+{% if dados %}
+
+  {% load static %}
+
+  <div class="images" style="float: right;">
+    <img class="image" id="bxls" src="{% static 'images/icone_XLS.png' %}" alt="xls" style="cursor: pointer;">
+    <img class="image" id="bcsv" src="{% static 'images/icone_CSV.png' %}" alt="csv" style="cursor: pointer;">
+    <img class="image" id="bjson" src="{% static 'images/icone_JSON.png' %}" alt="json" style="cursor: pointer;">
+  </div>
+
+  <script>
+    document.getElementById("bxls").addEventListener("click", function() {
+      window.open( "{% url 'export' dados 'xls'%}", '_blank');
+    });
+    document.getElementById("bcsv").addEventListener("click", function() {
+      window.open( "{% url 'export' dados 'csv'%}", '_blank');
+    });
+    document.getElementById("bjson").addEventListener("click", function() {
+      window.open( "{% url 'export' dados 'json'%}", '_blank');
+    });
+  </script>
+
+{% endif %}

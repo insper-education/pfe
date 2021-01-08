@@ -14,10 +14,11 @@ from django.db import models
 #from django.db.models.signals import post_save
 #from django.dispatch import receiver
 
-#from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2, ObjetivosDeAprendizagem, Area
+#from projetos.models import Area
 from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2, ObjetivosDeAprendizagem
 
-from projetos.support import converte_conceito, converte_letra
+#from projetos.support import converte_conceito
+#from projetos.support import converte_letra
 
 class PFEUser(AbstractUser):
     """Classe base para todos os usuários do PFE (Alunos, Professores, Parceiros)."""
@@ -56,7 +57,7 @@ class PFEUser(AbstractUser):
         (2, 'inglês'),
     )
     tipo_lingua = models.PositiveSmallIntegerField(choices=TIPO_LINGUA, default=1,
-                                                       help_text='língua usada para comunicar com usuário')
+                                                   help_text='língua usada para comunicação')
 
     class Meta:
         verbose_name = 'Usuário'
@@ -139,7 +140,7 @@ class Aluno(models.Model):
                              help_text='Curso Matriculado',)
     opcoes = models.ManyToManyField(Proposta, through='Opcao',
                                     help_text='Opcoes de projeto escolhidos')
-    
+
     email_pessoal = models.EmailField(null=True, blank=True,
                                       help_text='e-mail pessoal')
 
@@ -201,7 +202,7 @@ class Aluno(models.Model):
 
     def get_banca(self, avaliacoes_banca):
         """Retorna média."""
-        nota_banca = 0
+        #nota_banca = 0
         lista_objetivos = {}
         objetivos = ObjetivosDeAprendizagem.objects.all()
         for objetivo in objetivos:
@@ -210,11 +211,12 @@ class Aluno(models.Model):
             if bancas:
                 lista_objetivos[objetivo] = {}
             for banca in bancas:
-                if (banca.avaliador not in lista_objetivos[objetivo]):
+                if banca.avaliador not in lista_objetivos[objetivo]:
                     if banca.na:
                         lista_objetivos[objetivo][banca.avaliador] = None
                     else:
-                        lista_objetivos[objetivo][banca.avaliador] = (float(banca.nota), float(banca.peso))
+                        lista_objetivos[objetivo][banca.avaliador] = (float(banca.nota),
+                                                                      float(banca.peso))
                 # Senão é só uma avaliação de objetivo mais antiga
 
         if not lista_objetivos:
@@ -246,7 +248,7 @@ class Aluno(models.Model):
             else:
                 val += val_objetivos[obj][0]*val_objetivos[obj][1]
             pes += val_objetivos[obj][1]
-        
+
         if val_objetivos:
             pes = float(pes)
             if pes != 0:
@@ -260,9 +262,10 @@ class Aluno(models.Model):
 
     @property
     def get_notas(self):
+        """ Recuper as notas do Estudante. """
 
         edicao = {} # dicionário para cada alocação do estudante (por exemplo DP, ou PFE Avançado)
-        
+
         alocacoes = Alocacao.objects.filter(aluno=self.pk)
         #supondo só uma alocação para agora
         #alocacao = alocacoes.first()
@@ -270,94 +273,100 @@ class Aluno(models.Model):
         for alocacao in alocacoes:
 
             notas = [] # iniciando uma lista de notas vazia
-            
-            # Banca Intermediária
-            avaliacoes_banca_interm = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=1) #(1, 'intermediaria')
+
+            # Banca Intermediária (1, 'intermediaria')
+            avaliacoes_banca_interm = Avaliacao2.objects.filter(projeto=alocacao.projeto,
+                                                                tipo_de_avaliacao=1)
             if avaliacoes_banca_interm:
                 nota_banca_interm, peso = Aluno.get_banca(self, avaliacoes_banca_interm)
                 notas.append( ("BI", nota_banca_interm, peso/100) )
-            
-            # Banca Final
-            avaliacoes_banca_final = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=2) #(2, 'final')
+
+            # Banca Final (2, 'final')
+            avaliacoes_banca_final = Avaliacao2.objects.filter(projeto=alocacao.projeto,
+                                                               tipo_de_avaliacao=2)
             if avaliacoes_banca_final:
                 nota_banca_final, peso = Aluno.get_banca(self, avaliacoes_banca_final)
                 notas.append( ("BF", nota_banca_final, peso/100) )
 
-            # Relatório de Planejamento
-            rp = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=10).order_by('momento').last() #(10, 'Relatório de Planejamento')
-            if rp:
-                notas.append( ("RP", float(rp.nota), rp.peso/100) )
+            # Relatório de Planejamento (10, 'Relatório de Planejamento')
+            relp = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=10).\
+                                      order_by('momento').last()
+            if relp:
+                notas.append( ("RP", float(relp.nota), relp.peso/100) )
 
-            # Relatório Intermediário de Grupo
-            rig = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=11) #(11, 'Relatório Intermediário de Grupo'),
+            # Relatório Intermediário de Grupo (11, 'Relatório Intermediário de Grupo'),
+            rig = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=11)
             if rig:
                 nota_rig, peso = Aluno.get_banca(self, rig)
                 notas.append( ("RIG", nota_rig, peso/100) )
 
-            # Relatório Final de Grupo
-            rfg = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=12) #(12, 'Relatório Final de Grupo'),
+            # Relatório Final de Grupo (12, 'Relatório Final de Grupo'),
+            rfg = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=12)
             if rfg:
                 nota_rfg, peso = Aluno.get_banca(self, rfg)
                 notas.append( ("RFG", nota_rfg, peso/100) )
 
-            # Relatório Intermediário Individual
-            rii = Avaliacao2.objects.filter(alocacao=alocacao, tipo_de_avaliacao=21) #(21, 'Relatório Intermediário Individual'),
+            # Relatório Intermediário Individual (21, 'Relatório Intermediário Individual'),
+            rii = Avaliacao2.objects.filter(alocacao=alocacao, tipo_de_avaliacao=21)
             if rii:
                 nota_rii, peso = Aluno.get_banca(self, rii)
                 notas.append( ("RII", nota_rii, peso/100) )
 
-            # Relatório Final Individual
-            rfi = Avaliacao2.objects.filter(alocacao=alocacao, tipo_de_avaliacao=22) #(22, 'Relatório Final Individual'),
+            # Relatório Final Individual (22, 'Relatório Final Individual'),
+            rfi = Avaliacao2.objects.filter(alocacao=alocacao, tipo_de_avaliacao=22)
             if rfi:
                 nota_rfi, peso = Aluno.get_banca(self, rfi)
                 notas.append( ("RFI", nota_rfi, peso/100) )
 
             ### NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES
-            # Planejamento Primeira Fase
-            ppf = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=50).order_by('momento').last() #(50, 'Planejamento Primeira Fase')
+            # Planejamento Primeira Fase  (50, 'Planejamento Primeira Fase')
+            ppf = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=50).\
+                                     order_by('momento').last()
             if ppf:
                 notas.append( ("PPF", float(ppf.nota), ppf.peso/100) )
 
-            # Avaliação Parcial Individual
-            api = Avaliacao2.objects.filter(alocacao=alocacao, tipo_de_avaliacao=51) # (51, 'Avaliação Parcial Individual'),
+            # Avaliação Parcial Individual (51, 'Avaliação Parcial Individual'),
+            api = Avaliacao2.objects.filter(alocacao=alocacao, tipo_de_avaliacao=51)
             if api:
                 nota_api, peso = Aluno.get_banca(self, api)
                 notas.append( ("API", nota_api, peso/100) )
 
-            # Avaliação Final Individual
-            afi = Avaliacao2.objects.filter(alocacao=alocacao, tipo_de_avaliacao=52) # (52, 'Avaliação Final Individual'),
+            # Avaliação Final Individual (52, 'Avaliação Final Individual'),
+            afi = Avaliacao2.objects.filter(alocacao=alocacao, tipo_de_avaliacao=52)
             if afi:
                 nota_afi, peso = Aluno.get_banca(self, afi)
                 notas.append( ("AFI", nota_afi, peso/100) )
-        
+
             edicao[str(alocacao.projeto.ano)+"."+str(alocacao.projeto.semestre)] = notas
 
         return edicao
-    
+
     @property
     def get_medias(self):
         """Retorna médias."""
 
         medias = {} # dicionário para cada alocação do estudante (por exemplo DP, ou PFE Avançado)
-        
+
         edicoes = self.get_notas
 
         for ano_semestre,edicao in edicoes.items():
             nota_final = 0
             peso_final = 0
-            for aval, nota, peso in edicao:
+            #for aval, nota, peso in edicao:
+            for _, nota, peso in edicao:
                 peso_final += peso
                 nota_final += nota * peso
             peso_final = round(peso_final, 1)
             medias[ano_semestre] = {"media": nota_final, "pesos": peso_final}
 
-        return medias        
+        return medias
 
     @property
     def get_peso(self):
         """Retorna soma dos pesos das notas."""
         peso_final = 0
-        for aval, nota, peso in self.get_notas:
+        #for aval, nota, peso in self.get_notas:
+        for _, _, peso in self.get_notas:
             peso_final += peso
         return peso_final
 
@@ -391,7 +400,7 @@ class Alocacao(models.Model):
     """Projeto em que o aluno está alocado."""
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE)
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
-    
+
     class Meta:
         verbose_name = 'Alocação'
         verbose_name_plural = 'Alocações'
@@ -435,7 +444,7 @@ class Parceiro(models.Model):  # da empresa (não do Insper)
             return self.user.get_full_name()+" ["+self.organizacao.sigla+"]"
         else:
             return self.user.get_full_name()
-    
+
     @classmethod
     def create(cls, usuario):
         """Cria um Parceiro e já associa o usuário."""
@@ -454,7 +463,7 @@ class Administrador(models.Model):
                        ("altera_professor", "Professor altera valores"), )
     def __str__(self):
         return self.user.username
-    
+
     # @classmethod
     # def create(cls, usuario):
     #     """Cria um Administrador e já associa o usuário."""

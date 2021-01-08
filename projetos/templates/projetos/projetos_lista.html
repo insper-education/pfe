@@ -18,6 +18,11 @@
 {% endblock %}
 
 {% block content %}
+
+  {% with dados='projetos' %}
+      {% include "planilhas.html" %}
+  {% endwith %}
+
   <span class="titulo">
     {% if periodo == "todos" %}
       Todos os Projetos

@@ -144,11 +144,7 @@ def emails(request):
             break
 
         # Vai para próximo semestre
-        if semestre == 1:
-            semestre = 2
-        else:
-            ano += 1
-            semestre = 1
+        ano, semestre = adianta_semestre(ano, semestre)
 
     email_todos = zip(semestres,
                       alunos_p_semestre,  #na pratica chamaremos de aluno no template
@@ -803,7 +799,6 @@ def definir_orientador(request):
         elif user.tipo_de_usuario == 2: # professor
 
             # atualizações não serão salvas
-
             data = {
                 'atualizado': False,
             }
@@ -826,7 +821,7 @@ def export(request, modelo, formato):
         resource = OpcoesResource()
     elif modelo == "usuarios":
         resource = UsuariosResource()
-    elif modelo == "alunos":
+    elif modelo == "estudantes":
         resource = EstudantesResource()
     elif modelo == "professores":
         resource = ProfessoresResource()
@@ -836,6 +831,8 @@ def export(request, modelo, formato):
         resource = ConfiguracaoResource()
     elif modelo == "feedbacks":
         resource = FeedbacksResource()
+    # elif modelo == "comite":
+    #     resource = ComiteResource()
     else:
         mensagem = "Chamada irregular : Base de dados desconhecida = " + modelo
         context = {
@@ -843,8 +840,8 @@ def export(request, modelo, formato):
             "mensagem": mensagem,
         }
         return render(request, 'generic.html', context=context)
-    dataset = resource.export()
 
+    dataset = resource.export()
 
     databook = tablib.Databook()
 
@@ -912,7 +909,7 @@ def backup(request, formato):
     """Gera um backup de tudo."""
 
     databook = create_backup()
-    if formato == "xls" or formato == "xlsx":
+    if formato in ("xls", "xlsx"):
         response = HttpResponse(databook.xlsx, content_type='application/ms-excel')
         formato = "xlsx"
     elif formato == "json":

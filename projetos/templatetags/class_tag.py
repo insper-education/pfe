@@ -9,6 +9,6 @@ from django import template
 register = template.Library()
 
 @register.filter
-def get_class(tipo_de_banca):
+def get_class(value):
     """Retorna o nome da classe do objeto."""
     return value.__class__.__name__

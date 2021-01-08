@@ -19,6 +19,10 @@
 {% endblock %}
 
 {% block content %}
+
+  {% with dados='estudantes' %}
+      {% include "planilhas.html" %}
+  {% endwith %}
   
   <span class="titulo">Estudantes</span>
 
