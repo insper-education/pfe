@@ -6,7 +6,7 @@ Data: 17 de Dezembro de 2020
 """
 
 import datetime
-
+import dateutil.parser
 
 from icalendar import Calendar, Event, vCalAddress
 
@@ -14,15 +14,13 @@ from django.contrib.auth.decorators import login_required, permission_required
 
 from django.shortcuts import render
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 
 from django.contrib.sites.models import Site
 
 from users.models import PFEUser, Aluno
 
-#from projetos.models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Conexao
 from projetos.models import Banca
-
 
 from projetos.models import Configuracao, Evento
 
@@ -37,7 +35,7 @@ def get_calendario_context(primarykey):
 
     eventos = Evento.objects.all()
 
-    # Estudantes e parceiros não conseguem ver o calendário no futuro
+    # Estudantes e parceiros só conseguem ver os eventos até o semestre atual
 
     try:
         configuracao = Configuracao.objects.get()
@@ -88,7 +86,7 @@ def calendario(request):
     if context:
         return render(request, 'calendario/calendario.html', context)
 
-    HttpResponse("Problema ao gerar calendário.", status=401)
+    return HttpResponse("Problema ao gerar calendário.", status=401)
 
 
 @login_required
@@ -100,13 +98,15 @@ def calendario_limpo(request):
         context['limpo'] = True
         return render(request, 'calendario/calendario.html', context)
 
-    HttpResponse("Problema ao gerar calendário.", status=401)
+    return HttpResponse("Problema ao gerar calendário.", status=401)
 
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
 def export_calendar(request, event_id):
     """Gera evento de calendário."""
+
+    # ATUALMENTE PARA BANCA
 
     try:
         banca = Banca.objects.all().get(pk=event_id)
@@ -192,3 +192,34 @@ def export_calendar(request, event_id):
     response['Content-Disposition'] = 'attachment; filename=Banca{0}.ics'.format(banca.pk)
 
     return response
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def atualiza_evento(request):
+    """ Ajax para atualizar eventos. """
+
+    try:
+        event_id = int(request.GET.get('id', None))
+        evento = Evento.objects.get(id=event_id)
+    except Evento.DoesNotExist:
+        return HttpResponseNotFound('<h1>Evento não encontrado!</h1>')
+
+    start_date  = request.GET.get('startDate', None)
+    end_date  = request.GET.get('endDate', None)
+
+    location = request.GET.get('location', None)[:50]
+    observation = request.GET.get('observation', None)[:50]
+
+    evento.startDate = dateutil.parser.parse(start_date)
+    evento.endDate = dateutil.parser.parse(end_date)
+
+    evento.location = location
+    evento.observacao = observation
+
+    evento.save()
+
+    data = {
+        'atualizado': True,
+    }
+
+    return JsonResponse(data)

@@ -20,6 +20,7 @@
   <script src="{% static 'js/html2canvas.min.js' %}"></script>
   <script src="{% static 'js/jspdf.min.js' %}"></script>
   <script src="{% static 'bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js' %}"></script> 
+  <script src="{% static 'bootstrap-datepicker/dist/locales/bootstrap-datepicker.pt-BR.min.js' %}"></script> 
 
   <style>
     table, th, td {
@@ -276,6 +277,7 @@
     <br>
     <br>
 
+    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
     <div class="modal fade" id="event-modal">
       <div class="modal-dialog">
           <div class="modal-content">
@@ -311,9 +313,9 @@
                           <div class="col-sm-8">
                               <div class="input-group input-daterange" data-provide="datepicker">
                                   <input id="min-date" name="event-start-date" type="text" class="form-control">
-                  <div class="input-group-prepend input-group-append">
-                      <div class="input-group-text">até</div>
-                  </div>
+                                  <div class="input-group-prepend input-group-append">
+                                      <div class="input-group-text">até</div>
+                                  </div>
                                   <input name="event-end-date" type="text" class="form-control">
                               </div>
                           </div>
@@ -331,6 +333,7 @@
     </div>
     <div id="context-menu">
     </div>
+    {% endif %}
 
   </div>
 
@@ -338,22 +341,48 @@
 
     let calendar = null;
 
+    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+
+    {% comment %} Define o formato para dia/mes/ano em português {% endcomment %}
+    formato_br = {
+      format: "dd/mm/yyyy",
+      language: "pt-BR",
+      daysOfWeekHighlighted: "0,6",
+      orientation: "bottom auto",
+      autoclose: true,
+      showOnFocus: true,
+      maxViewMode: 'days',
+      keepEmptyValues: true,
+      templates: {
+      }
+    }
+    $('#event-modal input[name="event-start-date"]').datepicker(formato_br);
+    $('#event-modal input[name="event-end-date"]').datepicker(formato_br);
+
+
+    // Função para tratar edição de evento
     function editEvent(event) {
-      $('#event-modal input[name="event-index"]').val(event ? event.id : '');
-      $('#event-modal input[name="event-name"]').val(event ? event.name : '');
-      $('#event-modal input[name="event-location"]').val(event ? event.location : '');
-      $('#event-modal input[name="event-observation"]').val(event ? event.observation : '');
-      $('#event-modal input[name="event-start-date"]').datepicker('update', event ? event.startDate : '');
-      $('#event-modal input[name="event-end-date"]').datepicker('update', event ? event.endDate : '');
-      $('#event-modal').modal();
+      if(event.events.length) { // não vazia
+        evento = event.events[0];
+        $('#event-modal input[name="event-index"]').val(evento ? evento.id : '');
+        $('#event-modal input[name="event-name"]').val(evento ? evento.name : '');  
+        $('#event-modal input[name="event-location"]').val(evento ? evento.location : '');
+        $('#event-modal input[name="event-observation"]').val(evento ? evento.observation : '');
+        $('#event-modal input[name="event-start-date"]').datepicker('update', evento ? evento.startDate : '');
+        $('#event-modal input[name="event-end-date"]').datepicker('update', evento ? evento.endDate : '');
+        $('#event-modal').modal();
+      }
     }
 
+    {% comment %} 
+    // NÃO SENDO USADA
     function deleteEvent(event) {
       var dataSource = calendar.getDataSource();
-
       calendar.setDataSource(dataSource.filter(item => item.id == event.id));
     }
+    {% endcomment %}
 
+    // Função para salvar evento
     function saveEvent() {
       var event = {
         id: $('#event-modal input[name="event-index"]').val(),
@@ -361,8 +390,8 @@
         location: $('#event-modal input[name="event-location"]').val(),
         observation: $('#event-modal input[name="event-observation"]').val(),
         startDate: $('#event-modal input[name="event-start-date"]').datepicker('getDate'),
-        endDate: $('#event-modal input[name="event-end-date"]').datepicker('getDate') };
-
+        endDate: $('#event-modal input[name="event-end-date"]').datepicker('getDate')
+      };
 
       var dataSource = calendar.getDataSource();
 
@@ -376,9 +405,11 @@
             dataSource[i].endDate = event.endDate;
           }
         }
-      } else
-
-      {
+      } 
+      
+      {% comment %}
+      NÃO É POSSIVEL CRIAR EVENTOS NO MOMENTO
+      else {
         var newId = 0;
         for (var i in dataSource) {
           if (dataSource[i].id > newId) {
@@ -391,10 +422,37 @@
 
         dataSource.push(event);
       }
+      {% endcomment %}
+
+      s = event.startDate;
+      var startDate = s.getFullYear() + "-" + (s.getMonth()+1) + "-" +  s.getDate() ;
+
+      e = event.endDate;
+      var endDate = e.getFullYear() + "-" + (e.getMonth()+1) + "-" + e.getDate() ;
+
+      {% comment %} Atualiza na base de dados {% endcomment %}
+      $.ajax({
+        url: '{% url "atualiza_evento" %}',
+        data: { 
+          id : event.id,
+          location : event.location,
+          observation : event.observation,
+          startDate : startDate,
+          endDate : endDate
+        },
+        dataType: 'json',
+        success: function (data) {
+          if (data.atualizado) {
+            console.log("Evento atualizado.");
+          }
+        }
+      });
 
       calendar.setDataSource(dataSource);
       $('#event-modal').modal('hide');
     }
+
+    {% endif %}
 
     var dataEventosAcademicos = [
         {% for evento in eventos %} 
@@ -500,63 +558,80 @@
 
       calendar = new Calendar('#calendar', {
         language: 'pt',
-        enableContextMenu: true,
-        enableRangeSelection: true,
-        style:'background',
-        contextMenuItems: [
-        {
-          text: 'Update',
-          click: editEvent },
-        {
-          text: 'Delete',
-          click: deleteEvent }],
-
-        selectRange: function (e) {
-          editEvent({ startDate: e.startDate, endDate: e.endDate });
-        },
-        mouseOnDay: function (e) {
-          if (e.events.length > 0) {
-            var content = '';
-
-            for (var i in e.events) {
-              content += '<div class="event-tooltip-content">' +
-              '<div class="event-name">' + e.events[i].name + '</div>';
-              if (e.events[i].location) {
-                content += '<div class="event-location">' + "Local: " + e.events[i].location + '</div>'
-              }
-              if (e.events[i].observation) {
-                content += '<div class="event-observation">' + "Obs: " + e.events[i].observation + '</div>'
-              }
-              content += '</div>';
-            }
-
-            $(e.element).popover({
-              trigger: 'manual',
-              container: 'body',
-              html: true,
-              content: content });
-
-            $(e.element).popover('show');
-          }
-        },
-        mouseOutDay: function (e) {
-          if (e.events.length > 0) {
-            $(e.element).popover('hide');
-          }
-        },
-        dayContextMenu: function (e) {
-          $(e.element).popover('hide');
-        },
-        disabledDays: [], {% comment %} Não estou usando por enquanto. {% endcomment %}
         dataSource: dataEventos,
-      
-      customDayRenderer: provas_labs,
+        style:'background',
+        disabledDays: [], {% comment %} Não estou usando por enquanto. {% endcomment %}
+        customDayRenderer: provas_labs,
+        enableRangeSelection: false,
+        {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+          enableContextMenu: true,  // botão da direita sobre o dia
+          contextMenuItems: [
+            {
+              text: 'Update',
+              click: editEvent 
+            }
+            {% comment %} NÃO SENDO USADA
+            ,
+            {
+              text: 'Delete',
+              click: deleteEvent
+            } {% endcomment %}
+          ],
+          selectRange: function (e) {
+            {% comment %}
+              editEvent({ name: e.name, startDate: e.startDate, endDate: e.endDate });
+              passa tudo.
+            {% endcomment %}
+            editEvent(e);
+          },
+          clickDay: function(e) {
+            {% comment %} alert('Click on day ' + e.date.toString()); {% endcomment %}
+            editEvent(e);
+          },
+          mouseOnDay: function (e) {
+            if (e.events.length > 0) {
+              var content = '';
 
+              for (var i in e.events) {
+                content += '<div class="event-tooltip-content">' +
+                '<div class="event-name">' + e.events[i].name + '</div>';
+                if (e.events[i].location) {
+                  content += '<div class="event-location">' + "Local: " + e.events[i].location + '</div>'
+                }
+                if (e.events[i].observation) {
+                  content += '<div class="event-observation">' + "Obs: " + e.events[i].observation + '</div>'
+                }
+                content += '</div>';
+              }
+
+              $(e.element).popover({
+                trigger: 'manual',
+                container: 'body',
+                html: true,
+                content: content });
+
+              $(e.element).popover('show');
+            }
+          },
+          mouseOutDay: function (e) {
+            if (e.events.length > 0) {
+              $(e.element).popover('hide');
+            }
+          },
+          dayContextMenu: function (e) {
+            $(e.element).popover('hide');
+          },
+        {% else %}
+          enableContextMenu: false,  // botão da direita sobre o dia
+        {% endif %}
        });
 
-      $('#save-event').click(function () {
-        saveEvent();
-      });
+      {% comment %} Botão quando se clica no botão de save do dia {% endcomment %}
+      {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+        $('#save-event').click(function () {
+          saveEvent();
+        });
+      {% endif %}
 
     }
     
