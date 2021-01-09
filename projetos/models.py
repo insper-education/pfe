@@ -437,8 +437,8 @@ class Evento(models.Model):
         (13, 'Evento de encerramento do PFE', 'brown'),
         (14, 'Banca intermediária', 'violet'),
         (15, 'Bancas finais', 'yellow'),
-        (16, 'Apresentação formal final na organização', 'beige'),
-        (17, 'Apresentação opcional intermediária na organização', 'oldlace'),
+        (16, 'Apresentação formal final na organização', 'burlywood'),
+        (17, 'Apresentação opcional intermediária na organização', 'Khaki'),
 
         (20, 'Relato Quinzenal (Individual)', 'aquamarine'),
         (21, 'Entrega de Relatório Preliminar (Grupo)', 'lightblue'), # antigo relat. de planejamento
