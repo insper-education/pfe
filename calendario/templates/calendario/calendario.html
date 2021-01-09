@@ -595,8 +595,30 @@
       calendar = new Calendar('#calendar', {
         language: 'pt',
         dataSource: dataEventos,
-        style:'background',
-        disabledDays: [], {% comment %} Não estou usando por enquanto. {% endcomment %}
+        style:'custom',
+        customDataSourceRenderer: function(element, date, event) {
+          
+          if(event.length==1) {
+           $(element).css({
+              background: event[0].color 
+            });
+          } else if (event.length==2) {
+            $(element).css({
+              background: "-webkit-gradient(linear, left top, right bottom, color-stop(50%," + event[0].color + "), color-stop(50%," + event[1].color + "))" 
+            });
+          } else if (event.length==3) {
+            $(element).css({
+              background: "linear-gradient(to right, " + event[0].color + " 33%, " + event[1].color + " 33% 66%, " + event[2].color + " 66%)" 
+            });
+          } else {
+            $(element).css({  // muitas cores
+              background: "-webkit-radial-gradient(blue, yellow, red, green)" 
+            });
+          }
+          $(element).css('border-radius', '6px'); // para deixar os cantos arredondados
+
+        },
+        {% comment %} disabledDays: [], // Não estou usando por enquanto. {% endcomment %}
         customDayRenderer: provas_labs,
         {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
           enableRangeSelection: true,
