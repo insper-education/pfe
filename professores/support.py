@@ -10,8 +10,10 @@ import dateutil.parser
 
 from django.db.models.functions import Lower
 
-from users.models import PFEUser
-from projetos.models import Organizacao
+from users.models import PFEUser, Professor, Aluno
+from users.support import adianta_semestre
+
+from projetos.models import Organizacao, Projeto
 
 
 def editar_banca(banca, request):
@@ -72,3 +74,64 @@ def falconi_membros_banca():
 
     falconis = PFEUser.objects.filter(parceiro__organizacao=organizacao)
     return falconis
+
+def recupera_orientadores_por_semestre(configuracao):
+    """ Recupera listas de orientadores de projetos ordenadas por semestre. """
+
+    professores_pfe = []
+    periodo = []
+
+    ano = 2018    # Ano de início do PFE
+    semestre = 2  # Semestre de início do PFE
+    while True:
+        professores = []
+        grupos = []
+        for professor in Professor.objects.all().order_by(Lower("user__first_name"),
+                                                          Lower("user__last_name")):
+            count_grupos = []
+            grupos_pfe = Projeto.objects.filter(orientador=professor).\
+                                        filter(ano=ano).\
+                                        filter(semestre=semestre)
+            if grupos_pfe:
+                for grupo in grupos_pfe: # garante que tem alunos no projeto
+                    alunos_pfe = Aluno.objects.filter(alocacao__projeto=grupo)
+                    if alunos_pfe:
+                        count_grupos.append(grupo)
+                if count_grupos:
+                    professores.append(professor)
+                    grupos.append(count_grupos)
+
+        if professores: # Se não houver nenhum orientador não cria entrada na lista
+            professores_pfe.append(zip(professores, grupos))
+            periodo.append(str(ano)+"."+str(semestre))
+
+        # Para de buscar depois do semestre atual
+        if ((semestre == configuracao.semestre + 1) and (ano == configuracao.ano)) or \
+           (ano > configuracao.ano):
+            break
+
+        # Avança um semestre
+        ano, semestre = adianta_semestre(ano, semestre)
+
+    return zip(professores_pfe[::-1], periodo[::-1]) #inverti lista deixando os mais novos primeiro
+
+def recupera_orientadores():
+    """ Recupera listas de todos os orientadores de projetos. """
+
+    professores = []
+    grupos = []
+    for professor in Professor.objects.all().order_by(Lower("user__first_name"),
+                                                        Lower("user__last_name")):
+        count_grupos = []
+        grupos_pfe = Projeto.objects.filter(orientador=professor)
+
+        if grupos_pfe:
+            for grupo in grupos_pfe: # garante que tem alunos no projeto
+                alunos_pfe = Aluno.objects.filter(alocacao__projeto=grupo)
+                if alunos_pfe:
+                    count_grupos.append(grupo)
+            if count_grupos:
+                professores.append(professor)
+                grupos.append(count_grupos)
+
+    return zip(professores, grupos)

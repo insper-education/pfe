@@ -26,7 +26,6 @@
     <tr>
       <th onclick="w3.sortHTML('#professores', '.item', 'td:nth-child(1)')" style="cursor:pointer; text-align: center;width:300px;">Nome</th>
       <th onclick="w3.sortHTML('#professores', '.item', 'td:nth-child(2)')" style="cursor:pointer; text-align: center;width:70px;">Grupos</th>
-      <th style="text-align: center;width:40px;">Cert.</th>
     </tr>
     {% for professor,grupos in professores %} 
       <tr class="item">
@@ -44,11 +43,6 @@
           {% endfor %}
         "> 
           {{grupos|length}}
-        </td>
-        <td>
-          <a href="{% url 'professor_detail' professor.id %}">
-            Teste
-          </a>
         </td>
       </tr>
     {% endfor %}

@@ -2,13 +2,12 @@
 {% comment %}
     Desenvolvido para o Projeto Final de Engenharia
     Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 25 de Abril de 2020
+    Data: 9 de Janeiro de 2021
 {% endcomment %}
 
 {% block head %}
   {% load static %}
   {% load escape_emails %}
-  {% load nospaces %}
   <style>
   table, th, td {
   }
@@ -29,10 +28,7 @@
 
 {% block content %}
 
-  <span class="titulo">Cerfificados</span>
-
-  {% comment %} Seletor da edição da pesquisa {% endcomment %}
-  {% include "edicoes.html" %}
+  <span class="titulo">Cerfificados Gerados</span>
 
   &nbsp;&nbsp;&nbsp;
   <b>Informações: </b>&nbsp;
@@ -40,6 +36,8 @@
   <label><input id="orientador" onchange="($(this).prop('checked') ? $('.orientador').show() : $('.orientador').hide())" type="checkbox" checked /> Orientadores</label>&nbsp;&nbsp;&nbsp;
   <label><input id="coorientador" onchange="($(this).prop('checked') ? $('.coorientador').show() : $('.coorientador').hide())" type="checkbox" checked /> Coorientadores</label>&nbsp;&nbsp;&nbsp;
   <label><input id="banca" onchange="($(this).prop('checked') ? $('.banca').show() : $('.banca').hide())" type="checkbox" checked /> Bancas</label>&nbsp;&nbsp;&nbsp;
+
+  <br>
 
   {% if certificados %}
     <table>
@@ -84,28 +82,11 @@
             <a href="{{ certificado.documento.url }}" target="_blank" rel="noopener noreferrer">{{ certificado.documento.url }}</a><br>
           {% endif %}
           
-          {% nospaces %}
-          {% with servidor="https://pfe.insper.edu.br" %}
           <a href="
             mailto:{{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}}
-            %20&lt;{{certificado.usuario.email|parse_quote }}&gt;
-            ,?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;
-            &amp;subject=Certificado%20PFE
-            &amp;body={{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}},
-            %0D%0A%0D%0A&nbsp;&nbsp;&nbsp;&nbsp;O certificado...
-            %0D%0A
-            %0D%0A%0D%0A&nbsp;&nbsp;&nbsp;&nbsp;O certificado se encontra em:%20
-            {% if certificado.documento %}
-              <a href='{{servidor}}{{ certificado.documento.url }}' target='_blank' rel='noopener noreferrer'>{{servidor}}{{ certificado.documento.url }}</a><br>
-            {% endif %}
-            %0D%0A
-            %0D%0A
-            %0D%0A%0D%0A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;atenciosamente,%20coordenação%20PFE">
+            %20&lt;{{certificado.usuario.email|parse_quote }}&gt;,?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;&amp;subject=Certificado%20Destaque%20PFE&amp;body={{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}},%0D%0A%0D%0Aatenciosamente,%20coordenação%20PFE">
             &#x2709; Enviar certificado
           </a>
-          {% endwith %}
-          {% endnospaces %}
-          
         </td>
       </tr>
 

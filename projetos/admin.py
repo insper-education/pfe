@@ -337,10 +337,23 @@ class RecomendadaAdmin(admin.ModelAdmin):
     ordering = ('proposta',)
     search_fields = ['proposta__titulo']
 
+
+@admin.register(Certificado)
+class CertificadoAdmin(admin.ModelAdmin):
+    """Certificados emitidos."""
+    list_display = ('usuario', 'projeto', 'tipo_de_certificado')
+    ordering = ('data',)
+    list_filter = ('tipo_de_certificado', )
+    search_fields = ['usuario__username', 'projeto__organizacao__sigla',
+                     'projeto__titulo', 'projeto__titulo_final',]
+
+
 admin.site.register(Cursada)
 admin.site.register(Entidade)       # Para ser preenchido com as entidades estudantis
 admin.site.register(ObjetivosDeAprendizagem)
-admin.site.register(Certificado)
+
+
+
 admin.site.register(Area)
 admin.site.register(AreaDeInteresse)
 

@@ -39,10 +39,12 @@ def get_upload_path(instance, filename):
         if instance.usuario:
             caminho += slugify(instance.usuario.username) + "/"
 
-    filename = force_text(filename).strip().replace(' ', '_')
-    filename = re.sub(r'(?u)[^-\w.]', '', filename)
-
-    return "{0}/{1}".format(caminho, filename)
+    if filename:
+        filename = force_text(filename).strip().replace(' ', '_')
+        filename = re.sub(r'(?u)[^-\w.]', '', filename)
+        return "{0}/{1}".format(caminho, filename)
+    else:
+        return "{0}".format(caminho)
 
 class Organizacao(models.Model):
     """Dados das organizações que propõe projetos para o PFE."""

@@ -1,0 +1,68 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 9 de Janeiro de 2021
+{% endcomment %}
+
+{% block head %}
+  <style>
+      @page {
+          size: a4 portrait; /*landscape*/
+          margin: 1.5cm  1.5cm  1.5cm  1.5cm; /* top  right bottom left */
+      }
+  </style>
+
+  <style>
+
+    .titulo_certificado { 
+      font-size: 55px;
+      text-align: center;
+      display: table;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .corpo_certificado { 
+      font-size: 25px;
+      text-align: left;
+      display: table;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+  </style>
+
+
+{% endblock %}
+
+{% block content %}
+    
+  <span class="titulo_certificado">Certificado Orientador</span>
+
+  <span class="corpo_certificado">
+
+    Declaro, para os devidos fins, que 
+
+    o Professor Rafael Corsi Ferrão
+    
+    orientou o relatório de iniciação científica do
+    
+     aluno Gabriel Lopes Monteiro, 
+     
+     no ano de 2019/2020, 
+     
+     com concessão de bolsa do Insper.
+
+    </span>
+
+    <h5>Orientador: {{ projeto.orientador }}</h5>
+
+    {% if projeto.titulo_final %}
+      <h4>Título: {{projeto.titulo_final}}</h4><br>
+    {% else %}
+      <h4>Título: {{projeto.titulo}}</h4><br>
+    {% endif %}
+
+    <h5>Organização: {{ projeto.organizacao.nome }}</h5>
+
+{% endblock %}

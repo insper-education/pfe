@@ -20,3 +20,15 @@ def render_to_pdf(template_src, context_dict=None):
         return result
 
     return None
+
+def render_pdf_file(template_src, context_dict, path):
+    """Renderiza um documento em PDF."""
+
+    template = get_template(template_src)
+    html_doc = template.render(context_dict)
+
+    result = open(path, 'wb')
+    pdf = pisa.pisaDocument(BytesIO(html_doc.encode("utf-8")), result)
+    result.close()
+
+    return pdf

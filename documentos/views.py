@@ -5,6 +5,8 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Dezembro de 2020
 """
 
+import os 
+
 from django.conf import settings
 
 from django.shortcuts import render
@@ -14,13 +16,20 @@ from django.contrib.auth.decorators import login_required, permission_required
 #from django.http import Http404, HttpResponse, HttpResponseNotFound, JsonResponse
 from django.http import HttpResponse
 
+from professores.support import recupera_orientadores
+
 #from projetos.models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Conexao
 from projetos.models import Documento, Configuracao, Projeto, Certificado
+from projetos.models import get_upload_path
+
 
 #from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador, Opcao, Alocacao
 from users.models import Aluno
 
 from users.support import get_edicoes
+
+from .support import render_pdf_file
+
 
 @login_required
 def index_documentos(request):
@@ -70,11 +79,54 @@ def certificados_submetidos(request):
 @permission_required('users.altera_professor', login_url='/')
 def gerar_certificados(request):
     """Recupera um certificado pelos dados."""
-    certificados = Certificado.objects.all()
+
+    context = {'projeto': Projeto.objects.get(id=85)}
+    arquivo = "documentos/certificado_orientador.html"
+    return render(request, arquivo, context)
+
+    orientadores = recupera_orientadores()
+
+    #certificados = Certificado.objects.all()
+    certificados = []
+
+    for orientador in orientadores:
+        for projeto in orientador[1]:
+            # (101, "Orientação de Projeto"),
+            (certificado, _created) = Certificado.objects.get_or_create(usuario=orientador[0].user,
+                                                                        projeto=projeto,
+                                                                        tipo_de_certificado=101)
+
+            if not certificado.documento:
+
+                context = {
+                    'projeto': projeto,
+                }
+                arquivo = "documentos/certificado_orientador.html"
+                
+                path = get_upload_path(certificado, "")
+                 
+                full_path = settings.MEDIA_ROOT + "/" + path
+                os.makedirs(full_path, mode=0o777, exist_ok=True)
+
+                filename = full_path + "certificado.pdf"
+                
+                pdf = render_pdf_file(arquivo, context, filename)
+
+                if (not pdf) or pdf.err:
+                    return HttpResponse("Erro ao gerar certificados.", status=401)
+    
+                certificado.documento = path + "certificado.pdf"
+                certificados.append(certificado)
+                certificado.save()
+
+                break
+        break
+
     context = {
         'certificados': certificados,
     }
-    return render(request, 'documentos/certificados_submetidos.html', context)
+
+    return render(request, 'documentos/gerar_certificados.html', context)
 
 
 @login_required
