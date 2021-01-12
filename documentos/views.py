@@ -75,48 +75,57 @@ def certificados_submetidos(request):
     return render(request, 'documentos/certificados_submetidos.html', context)
 
 
+def atualiza_certificado(usuario, projeto, tipo_de_certificado):
+    """ atualiza os certificados. """
+
+    (certificado, _created) = Certificado.objects.get_or_create(usuario=usuario,
+                                                                projeto=projeto,
+                                                                tipo_de_certificado=tipo_de_certificado)
+
+    if not certificado.documento:
+
+        context = {
+            'projeto': projeto,
+        }
+        arquivo = "documentos/certificado_orientador.html"
+
+        path = get_upload_path(certificado, "")
+
+        full_path = settings.MEDIA_ROOT + "/" + path
+        os.makedirs(full_path, mode=0o777, exist_ok=True)
+
+        filename = full_path + "certificado.pdf"
+
+        pdf = render_pdf_file(arquivo, context, filename)
+
+        if (not pdf) or pdf.err:
+            return HttpResponse("Erro ao gerar certificados.", status=401)
+
+        certificado.documento = path + "certificado.pdf"
+        certificado.save()
+
+        return certificado
+
+    return None
+
 @login_required
 @permission_required('users.altera_professor', login_url='/')
 def gerar_certificados(request):
     """Recupera um certificado pelos dados."""
 
-    orientadores = recupera_orientadores()
-
-    #certificados = Certificado.objects.all()
     certificados = []
 
+    orientadores = recupera_orientadores()
     for orientador in orientadores:
         for projeto in orientador[1]:
             # (101, "Orientação de Projeto"),
-            (certificado, _created) = Certificado.objects.get_or_create(usuario=orientador[0].user,
-                                                                        projeto=projeto,
-                                                                        tipo_de_certificado=101)
-
-            if not certificado.documento:
-
-                context = {
-                    'projeto': projeto,
-                }
-                arquivo = "documentos/certificado_orientador.html"
-                
-                path = get_upload_path(certificado, "")
-                 
-                full_path = settings.MEDIA_ROOT + "/" + path
-                os.makedirs(full_path, mode=0o777, exist_ok=True)
-
-                filename = full_path + "certificado.pdf"
-                
-                pdf = render_pdf_file(arquivo, context, filename)
-
-                if (not pdf) or pdf.err:
-                    return HttpResponse("Erro ao gerar certificados.", status=401)
-    
-                certificado.documento = path + "certificado.pdf"
+            certificado = atualiza_certificado(orientador[0].user, projeto, 101)
+            if certificado:
                 certificados.append(certificado)
-                certificado.save()
-
                 break
         break
+
+    #coorientadores = recupera_coorientadores()
 
     context = {
         'certificados': certificados,

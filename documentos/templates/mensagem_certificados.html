@@ -1,0 +1,48 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 12 de Janeiro de 2021
+{% endcomment %}
+
+{% load escape_emails %}
+
+{% if certificado.tipo_de_certificado < 100 %} {% comment %} estudantes {% endcomment %}
+
+{% elif certificado.tipo_de_certificado == 101 %} {% comment %} orientador {% endcomment %}
+
+    professor{% if certificado.usuario.genero == 'F' %}a{% endif %}
+    {{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}},
+    
+    %0D%0A%0D%0A%0D%0A
+
+    &nbsp;&nbsp;&nbsp;&nbsp;Gostaríamos de agradecer sua dedicação na orientação do Projeto Final de Engenharia.<br>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;Se desejar incluir a informação no seu Currículo Lattes escolha:%20<b>Orientações%20>>%20Orientação e supervisão concluída</b><br>
+    <br>
+
+    opção:%20<b>Trabalho de conclusão de curso de graduação</b><br>
+    título:%20<b>{{certificado.projeto.get_titulo}}</b><br>
+    ano:%20<b>{{certificado.projeto.ano}}</b><br>
+    nome do orientando:%20<b>
+    {% for alocacao in certificado.projeto.alocacao_set.all %}
+      {{alocacao.aluno.user.get_full_name}}{% if not forloop.last %},{% endif %}
+    {% endfor %}
+    </b><br>
+    instituição:%20<b>Insper Instituto de Ensino e Pesquisa</b><br>
+    curso:%20<b>Engenharia</b><br>
+    <br>
+
+
+{% elif certificado.tipo_de_certificado == 102 %} {% comment %} coorientador {% endcomment %}
+
+{% elif certificado.tipo_de_certificado == 103 or certificado.tipo_de_certificado == 104 %} {% comment %} banca {% endcomment %}
+
+{% endif %}
+
+{% if certificado.documento %}
+    %0D%0A%0D%0A&nbsp;&nbsp;&nbsp;&nbsp;O certificado de sua contribuição se encontra em:%20
+    <a href='{{servidor}}{{ certificado.documento.url }}' target='_blank' rel='noopener noreferrer'>{{servidor}}{{ certificado.documento.url }}</a><br>
+{% endif %}
+
+%0D%0A
+%0D%0A%0D%0A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;atenciosamente,%20coordenação%20PFE

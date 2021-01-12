@@ -344,7 +344,7 @@ def arquivos2(request, organizacao, usuario, path):
     return carrega_arquivo(request, local_path, path)
 
 
-@login_required
+#@login_required
 def arquivos3(request, organizacao, projeto, usuario, path):
     """Permite acessar arquivos do servidor."""
 
@@ -828,11 +828,11 @@ def graficos(request):
 
 def cap_name(name):
     """ Capitaliza palavras. """
-    
-    p = ['da', 'de', 'di', 'do', 'du']
+
+    preposicoes = ['da', 'de', 'di', 'do', 'du']
     items = []
     for item in name.split():
-        if item.lower() in p:
+        if item.lower() in preposicoes:
             items.append(item.lower())
         else:
             items.append(item.capitalize())
