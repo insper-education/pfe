@@ -30,6 +30,17 @@
   
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" %}
+
+  <span id="informacoes">
+    &nbsp;&nbsp;&nbsp;
+    <b>Informações: </b>&nbsp;
+    <label><input onchange="($(this).prop('checked') ? $('.logo').show() : $('.logo').hide())" type="checkbox" checked /> Logo</label>&nbsp;&nbsp;&nbsp;
+    <label><input onchange="($(this).prop('checked') ? $('.descricao').show() : $('.descricao').hide())" type="checkbox" checked /> Descrição</label>&nbsp;&nbsp;&nbsp;
+    <label><input onchange="($(this).prop('checked') ? $('.organizacao').show() : $('.organizacao').hide())" type="checkbox" checked /> Organização</label>&nbsp;&nbsp;&nbsp;
+    <label><input onchange="($(this).prop('checked') ? $('.orientador').show() : $('.orientador').hide())" type="checkbox" checked /> Orientador</label>&nbsp;&nbsp;&nbsp;
+    <label><input onchange="($(this).prop('checked') ? $('.estudantes').show() : $('.estudantes').hide())" type="checkbox" checked /> Estudantes</label>&nbsp;&nbsp;&nbsp;
+  </span>
+
   <br><br>
   
   {% comment %} Tabela com todos os projetos selecionados pelo filtro {% endcomment %}
@@ -39,20 +50,24 @@
       <table id="projetos">
       {% for projeto, prioridades, conexoes in projetos %} 
         <tr id="two" class="row" data-type="{{projeto.ano}}.{{projeto.semestre}}"><td id="ptd">
-        {% if projeto.organizacao.logotipo %}
-          <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-            <img class="logotipo_left" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}">
-          </a>
-        {% endif %}
-        {% for conexao in conexoes %}
-          {% if conexao.parceiro and conexao.parceiro.organizacao and conexao.parceiro.organizacao.logotipo %}
-            &nbsp;
-            <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
-              <img class="logotipo_left" src="{{ conexao.parceiro.organizacao.logotipo.url }}" alt="{{ conexao.parceiro.organizacao.sigla }}">
+        <span class="logo">
+          {% if projeto.organizacao.logotipo %}
+            <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
+              <img class="logotipo_left" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}">
             </a>
           {% endif %}
-        {% endfor %}
-        <br>
+          {% for conexao in conexoes %}
+            {% if conexao.parceiro and conexao.parceiro.organizacao and conexao.parceiro.organizacao.logotipo %}
+              &nbsp;
+              <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
+                <img class="logotipo_left" src="{{ conexao.parceiro.organizacao.logotipo.url }}" alt="{{ conexao.parceiro.organizacao.sigla }}">
+              </a>
+            {% endif %}
+          {% endfor %}
+          <br>
+        </span>
+        
+        Projeto:
         <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}" class="dark-blue-bold"> 
           {% if projeto.titulo_final %}
             {{projeto.titulo_final}}<br>
@@ -61,12 +76,16 @@
             {{projeto.titulo}}<br>
           {% endif %}
         </a>
-        {% if projeto.descricao %}
-          <small>Descrição projeto: {{projeto.descricao}}</small><br>
-        {% else %}
-          <small>Descrição proposta: {{projeto.proposta.descricao}}</small><br>
-        {% endif %}
-        <p style="margin-left:1em;">Organização:
+
+        <p class="descricao">
+          {% if projeto.descricao %}
+            <small>Descrição projeto: {{projeto.descricao}}</small><br>
+          {% else %}
+            <small>Descrição proposta: {{projeto.proposta.descricao}}</small><br>
+          {% endif %}
+        </p>
+
+        <p class="organizacao" style="margin-left:1em;">Organização:
           <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">
             {{ projeto.organizacao.nome }}
           </a>
@@ -79,11 +98,13 @@
             {% endif %}
           {% endfor %}
         </p>
+
         {% if projeto.avancado %}
           <p style="margin-left:1em;">Tipo: <font color="red">PFE Avançado</font></p>
         {% endif %}
+
         <!-- <p style="margin-left:1em;">Edição: {{projeto.ano}}.{{projeto.semestre}}</p> -->
-        <p style="margin-left:1em;">Orientador: 
+        <p class="orientador" style="margin-left:1em;">Orientador: 
           {% if projeto.orientador %}
             <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}"> {{projeto.orientador.user.get_full_name}}</a>
             <a href="mailto:{{projeto.orientador.user.email}}"> &lt;{{projeto.orientador.user.email}}&gt;</a>
@@ -91,8 +112,9 @@
             Não definido
           {% endif %}
         </p>
-        <p style="margin-left:1em;">Estudantes:</p>
-        <ol>
+        
+        <p class="estudantes" style="margin-left:1em;">Estudantes:</p>
+        <ol class="estudantes">
         {% for aluno,prioridade in prioridades %}
           <li><a class="imprimir" href="{% url 'aluno_detail' aluno.id %}"
               data-toggle="tooltip" data-html="true" animation="true" title="
@@ -270,7 +292,7 @@
   {% comment %} Esconde informações para impressão {% endcomment %}
   <script>
     document.getElementById("impressora").addEventListener("click", function() {
-        //$('#informacoes').hide()
+        $('#informacoes').hide()
         $('.logo_impressoras').hide()
         $('.topnav').hide()
         $(".imprimir").removeAttr('href');
