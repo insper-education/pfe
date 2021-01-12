@@ -826,6 +826,46 @@ def graficos(request):
 
     return render(request, 'projetos/graficos.html', context)
 
+def cap_name(name):
+    """ Capitaliza palavras. """
+    
+    p = ['da', 'de', 'di', 'do', 'du']
+    items = []
+    for item in name.split():
+        if item.lower() in p:
+            items.append(item.lower())
+        else:
+            items.append(item.capitalize())
+    return ' '.join(items)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def nomes(request):
+    """ Acerta maiúsculas de nomes. """
+
+    alunos = Aluno.objects.all()
+
+    message = ""
+    for aluno in alunos:
+
+        first_name = cap_name(aluno.user.first_name)
+        last_name = cap_name(aluno.user.last_name)
+
+        if ( first_name != aluno.user.first_name ) or ( last_name != aluno.user.last_name ):
+
+            message += aluno.user.first_name + " "
+            message += aluno.user.last_name + "\t\t"
+
+            message += cap_name(aluno.user.first_name) + " "
+            message += cap_name(aluno.user.last_name) + "<br>"
+
+            aluno.user.first_name = first_name
+            aluno.user.last_name = last_name
+
+            aluno.user.save()
+
+    return HttpResponse(message)
+
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')
