@@ -8,61 +8,120 @@
   <style>
       @page {
           size: a4 portrait; /*landscape*/
-          margin: 1.5cm  1.5cm  1.5cm  1.5cm; /* top  right bottom left */
+          margin: 5.0cm  1.3cm  1.3cm  1.5cm; /* top  right bottom left */
+          background-image: url('pfe/papel_timbrado.pdf');
       }
   </style>
 
   <style>
 
     .titulo_certificado { 
-      font-size: 55px;
+      font-family: Verdana;
+      font-weight: bold;
+      font-size: 28px;
       text-align: center;
-      display: table;
-      margin-left: auto;
-      margin-right: auto;
+      display:block;
+      margin-left: 1.3cm;
+      margin-right: 1.3cm;
     }
 
     .corpo_certificado { 
-      font-size: 25px;
+      font-family: Verdana;
+      font-size: 17px;
       text-align: left;
-      display: table;
-      margin-left: auto;
-      margin-right: auto;
+      display:block;
+      margin-left: 1.3cm;
+      margin-right: 1.3cm;
+    }
+
+    .data_certificado { 
+      font-family: Verdana;
+      font-size: 17px;
+      text-align: right;
+      display:block;
+      margin-left: 1.3cm;
+      margin-right: 1.3cm;
+    }
+
+    .signature {
+      width: 250px;
+      border-bottom: 2px solid #000;
     }
 
   </style>
-
 
 {% endblock %}
 
 {% block content %}
     
-  <span class="titulo_certificado">Certificado Orientador</span>
+  <span class="titulo_certificado">
+    Certificado de Orientação<br>
+    Projeto Final de Engenharia
+  </span>
+
+  <br><br>
 
   <span class="corpo_certificado">
 
     Declaro, para os devidos fins, que 
 
-    o Professor Rafael Corsi Ferrão
-    
-    orientou o relatório de iniciação científica do
-    
-     aluno Gabriel Lopes Monteiro, 
-     
-     no ano de 2019/2020, 
-     
-     com concessão de bolsa do Insper.
-
-    </span>
-
-    <h5>Orientador: {{ projeto.orientador }}</h5>
-
-    {% if projeto.titulo_final %}
-      <h4>Título: {{projeto.titulo_final}}</h4><br>
+    {% if projeto.orientador.user.genero == "M" %}
+    o
     {% else %}
-      <h4>Título: {{projeto.titulo}}</h4><br>
+    a
+    {% endif %}
+    
+    professor{% if projeto.orientador.user.genero == "F" %}a{% endif %}
+    
+    <b>{{projeto.orientador}}</b>
+    
+    orientou o Projeto Final de Engenharia / Trabalho de Conclusão de Curso do Insper
+
+    em parceria com: <b>{{ projeto.organizacao.nome }}</b>,
+    
+    intitulado: <b>{{projeto.get_titulo}}</b>,
+    
+    ocorrido no 
+    
+    {% if projeto.semestre == 1 %}
+    primeiro
+    {% else %}
+    segundo
     {% endif %}
 
-    <h5>Organização: {{ projeto.organizacao.nome }}</h5>
+    semestre de {{projeto.ano}}.
+
+    <br>
+    <br>
+
+    Grupo de estudantes:
+    
+    {% for alocacao in projeto.alocacao_set.all %}
+      {{alocacao.aluno.user.get_full_name}}
+      ({{alocacao.aluno.get_curso_completo}}){% if forloop.last %}.{% else %},{% endif %}
+    {% empty %}
+      SEM ALUNOS
+    {% endfor %}
+    <br>
+
+    <br><br>
+  </span>
+
+  <span class="data_certificado">
+    São Paulo,
+    {% now "j \d\e F \d\e Y" %}.
+    <br><br>
+  </span>
+
+  <span class="corpo_certificado">
+    <br><br><br>
+    Atenciosamente,<br><br><br>
+  
+  <img class="signature" src="pfe/signature.png">
+  <br>
+    Prof. Dr. Luciano Pereira Soares<br>
+    <small>Coordenador do Projeto Final de Engenharia do Insper</small><br>
+  </span>
+
 
 {% endblock %}

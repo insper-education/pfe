@@ -9,6 +9,7 @@ from io import BytesIO # Para gerar o PDF
 from xhtml2pdf import pisa # Para gerar o PDF
 from django.template.loader import get_template
 
+
 def render_to_pdf(template_src, context_dict=None):
     """Renderiza um documento em PDF."""
 

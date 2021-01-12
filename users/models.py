@@ -197,8 +197,17 @@ class Aluno(models.Model):
         for entry in Aluno.TIPOS_CURSO:
             if self.curso == entry[0]:
                 return entry[1]
-        return "Sem evento"
+        return "Sem curso"
 
+    def get_curso_completo(self):
+        """Retorna em string com o nome completo do curso."""
+        if self.curso == "C":
+            return "Engenharia de Computação"
+        if self.curso == "M":
+            return "Engenharia Mecânica"
+        if self.curso == "X":
+            return "Engenharia Mecatrônica"
+        return "Sem curso"
 
     def get_banca(self, avaliacoes_banca):
         """Retorna média."""

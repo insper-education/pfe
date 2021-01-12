@@ -92,8 +92,23 @@
             ,?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;
             &amp;subject=Certificado%20PFE
             &amp;body={{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}},
-            %0D%0A%0D%0A&nbsp;&nbsp;&nbsp;&nbsp;O certificado...
-            %0D%0A
+
+            {% if certificado.tipo_de_certificado < 100 %} {% comment %} estudantes {% endcomment %}
+
+            {% elif certificado.tipo_de_certificado == 101 %} {% comment %} orientador {% endcomment %}
+
+              %0D%0A%0D%0A&nbsp;&nbsp;&nbsp;&nbsp;O certificado...
+              %0D%0A
+
+            {% elif certificado.tipo_de_certificado == 102 %} {% comment %} coorientador {% endcomment %}
+
+            {% elif certificado.tipo_de_certificado == 103 or certificado.tipo_de_certificado == 104 %} {% comment %} banca {% endcomment %}
+
+            {% endif %}
+
+            
+
+
             %0D%0A%0D%0A&nbsp;&nbsp;&nbsp;&nbsp;O certificado se encontra em:%20
             {% if certificado.documento %}
               <a href='{{servidor}}{{ certificado.documento.url }}' target='_blank' rel='noopener noreferrer'>{{servidor}}{{ certificado.documento.url }}</a><br>

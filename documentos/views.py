@@ -5,7 +5,7 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Dezembro de 2020
 """
 
-import os 
+import os
 
 from django.conf import settings
 
@@ -79,10 +79,6 @@ def certificados_submetidos(request):
 @permission_required('users.altera_professor', login_url='/')
 def gerar_certificados(request):
     """Recupera um certificado pelos dados."""
-
-    context = {'projeto': Projeto.objects.get(id=85)}
-    arquivo = "documentos/certificado_orientador.html"
-    return render(request, arquivo, context)
 
     orientadores = recupera_orientadores()
 

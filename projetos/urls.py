@@ -27,6 +27,9 @@ urlpatterns = [
     path('meuprojeto/', views.meuprojeto, name='meuprojeto'),
     path('migracao/', views.migracao, name='migracao'),
     path('mostra_feedback/<int:feedback_id>', views.mostra_feedback, name='mostra_feedback'),
+
+    path('nomes/', views.nomes, name='nomes'),
+
     path('projeto_completo/<int:primakey>', views.projeto_completo, name='projeto_completo'),
     path('projeto_detalhes/<int:primarykey>', views.projeto_detalhes, name='projeto_detalhes'),
     path('projeto_feedback', views.projeto_feedback, name='projeto_feedback'),
