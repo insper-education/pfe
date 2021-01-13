@@ -16,7 +16,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 #from django.http import Http404, HttpResponse, HttpResponseNotFound, JsonResponse
 from django.http import HttpResponse
 
-from professores.support import recupera_orientadores
+from professores.support import recupera_orientadores, recupera_coorientadores, recupera_bancas_intermediarias, recupera_bancas_finais
 
 #from projetos.models import Banca, Documento, Encontro, Banco, Reembolso, Aviso, Conexao
 from projetos.models import Documento, Configuracao, Projeto, Certificado
@@ -75,33 +75,49 @@ def certificados_submetidos(request):
     return render(request, 'documentos/certificados_submetidos.html', context)
 
 
-def atualiza_certificado(usuario, projeto, tipo_de_certificado):
+def atualiza_certificado(usuario, projeto, tipo_de_certificado, arquivo, banca=None):
     """ atualiza os certificados. """
 
     (certificado, _created) = Certificado.objects.get_or_create(usuario=usuario,
                                                                 projeto=projeto,
                                                                 tipo_de_certificado=tipo_de_certificado)
 
-    if not certificado.documento:
+    context = {
+        'projeto': projeto,
+    }
 
-        context = {
-            'projeto': projeto,
-        }
-        arquivo = "documentos/certificado_orientador.html"
+    if not certificado.documento:
+        if tipo_de_certificado == 101:
+            tipo = "_orientacao"
+        elif tipo_de_certificado == 102:
+            context['usuario'] = usuario
+            tipo = "_coorientacao"
+        elif tipo_de_certificado == 103:
+            context['usuario'] = usuario
+            context['banca'] = banca
+            tipo = "_banca_intermediaria"
+        elif tipo_de_certificado == 104:
+            context['usuario'] = usuario
+            context['banca'] = banca
+            tipo = "_banca_final"
+        else:
+            tipo = ""
+
+
 
         path = get_upload_path(certificado, "")
 
         full_path = settings.MEDIA_ROOT + "/" + path
         os.makedirs(full_path, mode=0o777, exist_ok=True)
 
-        filename = full_path + "certificado.pdf"
+        filename = full_path + "certificado" + tipo + ".pdf"
 
         pdf = render_pdf_file(arquivo, context, filename)
 
         if (not pdf) or pdf.err:
             return HttpResponse("Erro ao gerar certificados.", status=401)
 
-        certificado.documento = path + "certificado.pdf"
+        certificado.documento = path + "certificado" + tipo + ".pdf"
         certificado.save()
 
         return certificado
@@ -113,19 +129,48 @@ def atualiza_certificado(usuario, projeto, tipo_de_certificado):
 def gerar_certificados(request):
     """Recupera um certificado pelos dados."""
 
+    try:
+        configuracao = Configuracao.objects.get()
+    except Configuracao.DoesNotExist:
+        return HttpResponse("Falha na configuracao do sistema.", status=401)
+
     certificados = []
 
-    orientadores = recupera_orientadores()
+    # (101, "Orientação de Projeto"),
+    orientadores = recupera_orientadores(configuracao.ano, configuracao.semestre)
+    arquivo = "documentos/certificado_orientador.html"
     for orientador in orientadores:
         for projeto in orientador[1]:
-            # (101, "Orientação de Projeto"),
-            certificado = atualiza_certificado(orientador[0].user, projeto, 101)
+            certificado = atualiza_certificado(orientador[0].user, projeto, 101, arquivo)
             if certificado:
                 certificados.append(certificado)
-                break
-        break
 
-    #coorientadores = recupera_coorientadores()
+    # (102, "Coorientação de Projeto"),
+    coorientadores = recupera_coorientadores(configuracao.ano, configuracao.semestre)
+    arquivo = "documentos/certificado_coorientador.html"
+    for coorientador in coorientadores:
+        for projeto in coorientador[1]:
+            certificado = atualiza_certificado(coorientador[0].user, projeto, 102, arquivo)
+            if certificado:
+                certificados.append(certificado)
+
+    # (103, "Membro de Banca Intermediária"),
+    membro_banca = recupera_bancas_intermediarias(configuracao.ano, configuracao.semestre)
+    arquivo = "documentos/certificado_banca_intermediaria.html"
+    for membro in membro_banca:
+        for banca in membro[1]:
+            certificado = atualiza_certificado(membro[0].user, banca.projeto, 103, arquivo, banca=banca)
+            if certificado:
+                certificados.append(certificado)
+
+    # (104, "Membro de Banca Final"),
+    membro_banca = recupera_bancas_finais(configuracao.ano, configuracao.semestre)
+    arquivo = "documentos/certificado_banca_final.html"
+    for membro in membro_banca:
+        for banca in membro[1]:
+            certificado = atualiza_certificado(membro[0].user, banca.projeto, 104, arquivo, banca=banca)
+            if certificado:
+                certificados.append(certificado)
 
     context = {
         'certificados': certificados,

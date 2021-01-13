@@ -829,7 +829,7 @@ def graficos(request):
 def cap_name(name):
     """ Capitaliza palavras. """
 
-    preposicoes = ['da', 'de', 'di', 'do', 'du']
+    preposicoes = ['da', 'de', 'di', 'do', 'du', 'das', 'dos']
     items = []
     for item in name.split():
         if item.lower() in preposicoes:

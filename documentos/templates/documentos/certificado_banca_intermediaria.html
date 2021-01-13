@@ -56,7 +56,7 @@
     
   <span class="titulo_certificado">
     Projeto Final de Engenharia<br>
-    Certificado de Orientação
+    Certificado de Participação em Banca Intermediária<br>
   </span>
 
   <br><br>
@@ -65,37 +65,39 @@
 
     Declaro, para os devidos fins, que 
 
-    {% if projeto.orientador.user.genero == "F" %}
+    {% if usuario.genero == "F" %}
     a
     {% else %}
     o
     {% endif %}
     
-    professor{% if projeto.orientador.user.genero == "F" %}a{% endif %}
+    professor{% if usuario.genero == "F" %}a{% endif %}
     
-    <b>{{projeto.orientador}}</b>
+    <b>{{usuario.get_full_name}}</b>
     
-    orientou o Projeto Final de Engenharia / Trabalho de Conclusão de Curso da Engenharia do Insper.
+    participou da Banca Intermediária do Projeto Final de Engenharia / Trabalho de Conclusão de Curso da Engenharia do Insper, intitulado: <b>{{projeto.get_titulo}}</b>,
+    
+    ocorrido em {{banca.startDate}}.
 
-    <br><br>
-    O projeto foi realizado em parceria com: <b>{{ projeto.organizacao.nome }}</b>,
-    
-    intitulado: <b>{{projeto.get_titulo}}</b>,
-    
-    ocorrido no 
-    
-    {% if projeto.semestre == 1 %}
-    primeiro
-    {% else %}
-    segundo
+    <br>
+    <br>
+
+    A banca foi composta por:
+    {{projeto.orientador}} (orientador),
+    {% if banca.membro1 %}
+      {{banca.membro1.get_full_name}}{% if banca.membro2 and banca.membro3 %},
+      {% elif banca.membro2 or banca.membro3 %}
+      e
+      {% endif %}
+    {% endif %}
+    {% if banca.membro2 %}
+      {{banca.membro2.get_full_name}}{% if banca.membro3 %} e {% else %},{% endif %}
+    {% endif %}
+    {% if banca.membro3 %}
+      {{banca.membro3.get_full_name}},
     {% endif %}
 
-    semestre de {{projeto.ano}}.
-
-    <br>
-    <br>
-
-    Grupo de estudantes:
+    com o grupo de estudantes:
     
     {% for alocacao in projeto.alocacao_set.all %}
       {{alocacao.aluno.user.get_full_name}}

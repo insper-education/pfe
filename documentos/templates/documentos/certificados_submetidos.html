@@ -68,13 +68,14 @@
           {% endif %}
 
           {% if certificado.projeto %}
-            <b>Data:</b> {{certificado.data|date:"DATE_FORMAT"}}<br>
+            <b>Data do certificado:</b> {{certificado.data|date:"DATE_FORMAT"}}<br>
           {% endif %}
 
           {% if certificado.projeto %}
             <b>Projeto:</b> <a href="{% url 'projeto_completo' certificado.projeto.id %}">
               {{certificado.projeto.get_titulo}}
             </a><br>
+            <b>Período de projeto:</b> {{certificado.projeto.ano}}.{{certificado.projeto.semestre}}<br>
             <b>Organização:</b> <a href="{% url 'organizacao_completo' certificado.projeto.organizacao.id %}">{{ certificado.projeto.organizacao.nome }}</a><br>
           {% endif %}
 

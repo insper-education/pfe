@@ -46,7 +46,7 @@ from projetos.models import Projeto, Configuracao
 from projetos.support import converte_letra, converte_conceito
 
 from .support import professores_membros_bancas, falconi_membros_banca, editar_banca
-from .support import recupera_orientadores_por_semestre
+from .support import recupera_orientadores_por_semestre, recupera_coorientadores_por_semestre
 
 
 @login_required
@@ -735,49 +735,10 @@ def coorientadores_tabela(request):
     except Configuracao.DoesNotExist:
         return HttpResponse("Falha na configuracao do sistema.", status=401)
 
-    professores_pfe = []
-    periodo = []
-
-    ano = 2018    # Ano de início do PFE
-    semestre = 2  # Semestre de início do PFE
-
-    while True:
-        professores = []
-        grupos = []
-        for professor in Professor.objects.all().order_by(Lower("user__first_name"),
-                                                          Lower("user__last_name")):
-            count_grupos = []
-            grupos_pfe = Projeto.objects.filter(coorientador__usuario__professor=professor).\
-                                        filter(ano=ano).\
-                                        filter(semestre=semestre)
-            if grupos_pfe:
-                for grupo in grupos_pfe: # garante que tem alunos no projeto
-                    alunos_pfe = Aluno.objects.filter(alocacao__projeto=grupo)
-                    if alunos_pfe:
-                        count_grupos.append(grupo)
-                if count_grupos:
-                    professores.append(professor)
-                    grupos.append(count_grupos)
-        if professores: # Se não houver nenhum co-orientador não cria entrada na lista
-            professores_pfe.append(zip(professores, grupos))
-            periodo.append(str(ano)+"."+str(semestre))
-
-        # Para de buscar depois do semestre atual
-        if ((semestre == configuracao.semestre + 1) and (ano == configuracao.ano)) or \
-           (ano > configuracao.ano):
-            break
-
-        # Avança um semestre
-        if semestre == 2:
-            semestre = 1
-            ano += 1
-        else:
-            semestre = 2
-
-    anos = zip(professores_pfe[::-1], periodo[::-1]) #inverti lista deixando os mais novos primeiro
+    coorientadores = recupera_coorientadores_por_semestre(configuracao)
 
     context = {
-        'anos': anos,
+        'anos': coorientadores,
     }
 
     return render(request, 'professores/coorientadores_tabela.html', context)

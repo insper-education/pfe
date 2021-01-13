@@ -15,7 +15,7 @@
     
     %0D%0A%0D%0A%0D%0A
 
-    &nbsp;&nbsp;&nbsp;&nbsp;Gostaríamos de agradecer sua dedicação na orientação do Projeto Final de Engenharia.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;Gostaríamos de agradecer sua dedicação na Orientação do Projeto Final de Engenharia.<br>
     <br>
     &nbsp;&nbsp;&nbsp;&nbsp;Se desejar incluir a informação no seu Currículo Lattes escolha:%20<b>Orientações%20>>%20Orientação e supervisão concluída</b><br>
     <br>
@@ -32,10 +32,82 @@
     curso:%20<b>Engenharia</b><br>
     <br>
 
-
 {% elif certificado.tipo_de_certificado == 102 %} {% comment %} coorientador {% endcomment %}
 
-{% elif certificado.tipo_de_certificado == 103 or certificado.tipo_de_certificado == 104 %} {% comment %} banca {% endcomment %}
+    professor{% if certificado.usuario.genero == 'F' %}a{% endif %}
+    {{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}},
+    
+    %0D%0A%0D%0A%0D%0A
+
+    &nbsp;&nbsp;&nbsp;&nbsp;Gostaríamos de agradecer sua dedicação na Coorientação do Projeto Final de Engenharia.<br>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;Se desejar incluir a informação no seu Currículo Lattes escolha:%20<b>Orientações%20>>%20Orientação e supervisão concluída</b><br>
+    <br>
+
+    opção:%20<b>Orientação de outra natureza</b><br>
+    título:%20<b>{{certificado.projeto.get_titulo}}</b><br>
+    ano:%20<b>{{certificado.projeto.ano}}</b><br>
+    nome do orientando:%20<b>
+    {% for alocacao in certificado.projeto.alocacao_set.all %}
+      {{alocacao.aluno.user.get_full_name}}{% if not forloop.last %},{% endif %}
+    {% endfor %}
+    </b><br>
+    instituição:%20<b>Insper Instituto de Ensino e Pesquisa</b><br>
+    curso:%20<b>Engenharia</b><br>
+    outras informações:%20<b>Coorientação de TCC</b><br>
+    <br>
+
+{% elif certificado.tipo_de_certificado == 103 %} {% comment %} banca intermediária {% endcomment %}
+
+
+    professor{% if certificado.usuario.genero == 'F' %}a{% endif %}
+    {{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}},
+    
+    %0D%0A%0D%0A%0D%0A
+
+    &nbsp;&nbsp;&nbsp;&nbsp;Gostaríamos de agradecer sua participação na Banca Intermediária do Projeto Final de Engenharia.<br>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;Se desejar incluir a informação no seu Currículo Lattes escolha:%20<b>Bancas%20>>%20Participação em bancas de trabalhos de conclusão</b><br>
+    <br>
+
+    natureza:%20<b>Graduação</b><br>
+    título:%20<b>{{certificado.projeto.get_titulo}}</b><br>
+    ano:%20<b>{{certificado.projeto.ano}}</b><br>
+    nome do candidato:%20<b>
+    {% for alocacao in certificado.projeto.alocacao_set.all %}
+      {{alocacao.aluno.user.get_full_name}}{% if not forloop.last %},{% endif %}
+    {% endfor %}
+    </b><br>
+    instituição:%20<b>Insper Instituto de Ensino e Pesquisa</b><br>
+    curso:%20<b>Engenharia</b><br>
+    outras informações:%20<b>Banca Intermediária de TCC</b><br>
+    <br>
+
+
+{% elif certificado.tipo_de_certificado == 104 %} {% comment %} banca final {% endcomment %}
+
+    professor{% if certificado.usuario.genero == 'F' %}a{% endif %}
+    {{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}},
+    
+    %0D%0A%0D%0A%0D%0A
+
+    &nbsp;&nbsp;&nbsp;&nbsp;Gostaríamos de agradecer sua participação na Banca Final do Projeto Final de Engenharia.<br>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;Se desejar incluir a informação no seu Currículo Lattes escolha:%20<b>Bancas%20>>%20Participação em bancas de trabalhos de conclusão</b><br>
+    <br>
+
+    natureza:%20<b>Graduação</b><br>
+    título:%20<b>{{certificado.projeto.get_titulo}}</b><br>
+    ano:%20<b>{{certificado.projeto.ano}}</b><br>
+    nome do candidato:%20<b>
+    {% for alocacao in certificado.projeto.alocacao_set.all %}
+      {{alocacao.aluno.user.get_full_name}}{% if not forloop.last %},{% endif %}
+    {% endfor %}
+    </b><br>
+    instituição:%20<b>Insper Instituto de Ensino e Pesquisa</b><br>
+    curso:%20<b>Engenharia</b><br>
+    outras informações:%20<b>Banca Final de TCC</b><br>
+    <br>
 
 {% endif %}
 

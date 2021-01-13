@@ -8,6 +8,8 @@
 {% block head %}
   {% load static %}
   {% load escape_emails %}
+  {% load nospaces %}
+
   <style>
   table, th, td {
   }
@@ -66,13 +68,14 @@
           {% endif %}
 
           {% if certificado.projeto %}
-            <b>Data:</b> {{certificado.data|date:"DATE_FORMAT"}}<br>
+            <b>Data do certificado:</b> {{certificado.data|date:"DATE_FORMAT"}}<br>
           {% endif %}
 
           {% if certificado.projeto %}
             <b>Projeto:</b> <a href="{% url 'projeto_completo' certificado.projeto.id %}">
               {{certificado.projeto.get_titulo}}
             </a><br>
+            <b>Período de projeto:</b> {{certificado.projeto.ano}}.{{certificado.projeto.semestre}}<br>
             <b>Organização:</b> <a href="{% url 'organizacao_completo' certificado.projeto.organizacao.id %}">{{ certificado.projeto.organizacao.nome }}</a><br>
           {% endif %}
 
@@ -82,11 +85,19 @@
             <a href="{{ certificado.documento.url }}" target="_blank" rel="noopener noreferrer">{{ certificado.documento.url }}</a><br>
           {% endif %}
           
+          {% nospaces %}
+          {% with servidor="https://pfe.insper.edu.br" %}
           <a href="
             mailto:{{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}}
-            %20&lt;{{certificado.usuario.email|parse_quote }}&gt;,?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;&amp;subject=Certificado%20Destaque%20PFE&amp;body={{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}},%0D%0A%0D%0Aatenciosamente,%20coordenação%20PFE">
-            &#x2709; Enviar certificado [[[ VELHO VELHO ]]]
+            %20&lt;{{certificado.usuario.email|parse_quote }}&gt;
+            ,?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;
+            &amp;subject=Certificado%20PFE
+            &amp;body={% include 'mensagem_certificados.html' %}">
+            &#x2709; Enviar certificado
           </a>
+          {% endwith %}
+          {% endnospaces %}
+
         </td>
       </tr>
 

@@ -1,7 +1,7 @@
 {% comment %}
     Desenvolvido para o Projeto Final de Engenharia
     Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 9 de Janeiro de 2021
+    Data: 13 de Janeiro de 2021
 {% endcomment %}
 
 {% block head %}
@@ -56,7 +56,7 @@
     
   <span class="titulo_certificado">
     Projeto Final de Engenharia<br>
-    Certificado de Orientação
+    Certificado de Coorientação
   </span>
 
   <br><br>
@@ -65,6 +65,20 @@
 
     Declaro, para os devidos fins, que 
 
+    {% if usuario.genero == "F" %}
+    a
+    {% else %}
+    o
+    {% endif %}
+    
+    professor{% if usuario.genero == "F" %}a{% endif %}
+    
+    <b>{{usuario.get_full_name}}</b>
+    
+    coorientou o Projeto Final de Engenharia / Trabalho de Conclusão de Curso da Engenharia do Insper
+
+    apoiando
+
     {% if projeto.orientador.user.genero == "F" %}
     a
     {% else %}
@@ -72,10 +86,10 @@
     {% endif %}
     
     professor{% if projeto.orientador.user.genero == "F" %}a{% endif %}
+
+    orientador{% if projeto.orientador.user.genero == "F" %}a{% endif %}
     
-    <b>{{projeto.orientador}}</b>
-    
-    orientou o Projeto Final de Engenharia / Trabalho de Conclusão de Curso da Engenharia do Insper.
+    <b>{{projeto.orientador}}</b> durante todo o período do projeto.
 
     <br><br>
     O projeto foi realizado em parceria com: <b>{{ projeto.organizacao.nome }}</b>,
