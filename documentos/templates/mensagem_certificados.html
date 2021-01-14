@@ -8,113 +8,115 @@
 
 {% if certificado.tipo_de_certificado < 100 %} {% comment %} estudantes {% endcomment %}
 
-{% elif certificado.tipo_de_certificado == 101 %} {% comment %} orientador {% endcomment %}
+{% else %}
 
-    professor{% if certificado.usuario.genero == 'F' %}a{% endif %}
-    {{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}},
-    
-    %0D%0A%0D%0A%0D%0A
+      Prof{% if certificado.usuario.genero == 'F' %}a{% endif %}.
+      {{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}},      
+      %0D%0A%0D%0A
 
-    &nbsp;&nbsp;&nbsp;&nbsp;Gostaríamos de agradecer sua dedicação na Orientação do Projeto Final de Engenharia.<br>
-    <br>
-    &nbsp;&nbsp;&nbsp;&nbsp;Se desejar incluir a informação no seu Currículo Lattes escolha:%20<b>Orientações%20>>%20Orientação e supervisão concluída</b><br>
-    <br>
+  {% if certificado.tipo_de_certificado == 101 %} {% comment %} orientador {% endcomment %}
 
-    opção:%20<b>Trabalho de conclusão de curso de graduação</b><br>
-    título:%20<b>{{certificado.projeto.get_titulo}}</b><br>
-    ano:%20<b>{{certificado.projeto.ano}}</b><br>
-    nome do orientando:%20<b>
-    {% for alocacao in certificado.projeto.alocacao_set.all %}
-      {{alocacao.aluno.user.get_full_name}}{% if not forloop.last %},{% endif %}
-    {% endfor %}
-    </b><br>
-    instituição:%20<b>Insper Instituto de Ensino e Pesquisa</b><br>
-    curso:%20<b>Engenharia</b><br>
-    <br>
+      {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+      Gostaríamos de agradecer sua dedicação na Orientação do Projeto Final de Engenharia.%0D%0A
+      %0D%0A
+      
+      {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+      Se desejar incluir a informação no seu Currículo Lattes escolha:%20{% if formatada %}%3Cb%3E{% endif %}Orientações%20%3E%3E%20Orientação e supervisão concluída{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      %0D%0A
 
-{% elif certificado.tipo_de_certificado == 102 %} {% comment %} coorientador {% endcomment %}
+      -%20opção:%20{% if formatada %}%3Cb%3E{% endif %}Trabalho de conclusão de curso de graduação{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20título:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.get_titulo}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20ano:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.ano}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20nome do orientando:%20{% if formatada %}%3Cb%3E{% endif %}
+      {% for alocacao in certificado.projeto.alocacao_set.all %}
+        {{alocacao.aluno.user.get_full_name}}{% if not forloop.last %},{% endif %}
+      {% endfor %}
+      {% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20instituição:%20{% if formatada %}%3Cb%3E{% endif %}Insper Instituto de Ensino e Pesquisa{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20curso:%20{% if formatada %}%3Cb%3E{% endif %}Engenharia{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      %0D%0A
 
-    professor{% if certificado.usuario.genero == 'F' %}a{% endif %}
-    {{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}},
-    
-    %0D%0A%0D%0A%0D%0A
+  {% elif certificado.tipo_de_certificado == 102 %} {% comment %} coorientador {% endcomment %}
 
-    &nbsp;&nbsp;&nbsp;&nbsp;Gostaríamos de agradecer sua dedicação na Coorientação do Projeto Final de Engenharia.<br>
-    <br>
-    &nbsp;&nbsp;&nbsp;&nbsp;Se desejar incluir a informação no seu Currículo Lattes escolha:%20<b>Orientações%20>>%20Orientação e supervisão concluída</b><br>
-    <br>
+      {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+      Gostaríamos de agradecer sua dedicação na Coorientação do Projeto Final de Engenharia.%0D%0A
+      %0D%0A
+      
+      {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+      Se desejar incluir a informação no seu Currículo Lattes escolha:%20{% if formatada %}%3Cb%3E{% endif %}Orientações%20%3E%3E%20Orientação e supervisão concluída{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      %0D%0A
 
-    opção:%20<b>Orientação de outra natureza</b><br>
-    título:%20<b>{{certificado.projeto.get_titulo}}</b><br>
-    ano:%20<b>{{certificado.projeto.ano}}</b><br>
-    nome do orientando:%20<b>
-    {% for alocacao in certificado.projeto.alocacao_set.all %}
-      {{alocacao.aluno.user.get_full_name}}{% if not forloop.last %},{% endif %}
-    {% endfor %}
-    </b><br>
-    instituição:%20<b>Insper Instituto de Ensino e Pesquisa</b><br>
-    curso:%20<b>Engenharia</b><br>
-    outras informações:%20<b>Coorientação de TCC</b><br>
-    <br>
+      -%20opção:%20{% if formatada %}%3Cb%3E{% endif %}Orientação de outra natureza{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20título:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.get_titulo}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20ano:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.ano}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20nome do orientando:%20{% if formatada %}%3Cb%3E{% endif %}
+      {% for alocacao in certificado.projeto.alocacao_set.all %}
+        {{alocacao.aluno.user.get_full_name}}{% if not forloop.last %},{% endif %}
+      {% endfor %}
+      {% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20instituição:%20{% if formatada %}%3Cb%3E{% endif %}Insper Instituto de Ensino e Pesquisa{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20curso:%20{% if formatada %}%3Cb%3E{% endif %}Engenharia{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20outras informações:%20{% if formatada %}%3Cb%3E{% endif %}Coorientação de TCC{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      %0D%0A
 
-{% elif certificado.tipo_de_certificado == 103 %} {% comment %} banca intermediária {% endcomment %}
+  {% elif certificado.tipo_de_certificado == 103 %} {% comment %} banca intermediária {% endcomment %}
 
+      {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+      Gostaríamos de agradecer sua participação na Banca Intermediária do Projeto Final de Engenharia.%0D%0A
+      %0D%0A
+      
+      {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+      Se desejar incluir a informação no seu Currículo Lattes escolha:%20{% if formatada %}%3Cb%3E{% endif %}Bancas%20%3E%3E%20Participação em bancas de trabalhos de conclusão{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      %0D%0A
 
-    professor{% if certificado.usuario.genero == 'F' %}a{% endif %}
-    {{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}},
-    
-    %0D%0A%0D%0A%0D%0A
-
-    &nbsp;&nbsp;&nbsp;&nbsp;Gostaríamos de agradecer sua participação na Banca Intermediária do Projeto Final de Engenharia.<br>
-    <br>
-    &nbsp;&nbsp;&nbsp;&nbsp;Se desejar incluir a informação no seu Currículo Lattes escolha:%20<b>Bancas%20>>%20Participação em bancas de trabalhos de conclusão</b><br>
-    <br>
-
-    natureza:%20<b>Graduação</b><br>
-    título:%20<b>{{certificado.projeto.get_titulo}}</b><br>
-    ano:%20<b>{{certificado.projeto.ano}}</b><br>
-    nome do candidato:%20<b>
-    {% for alocacao in certificado.projeto.alocacao_set.all %}
-      {{alocacao.aluno.user.get_full_name}}{% if not forloop.last %},{% endif %}
-    {% endfor %}
-    </b><br>
-    instituição:%20<b>Insper Instituto de Ensino e Pesquisa</b><br>
-    curso:%20<b>Engenharia</b><br>
-    outras informações:%20<b>Banca Intermediária de TCC</b><br>
-    <br>
+      -%20natureza:%20{% if formatada %}%3Cb%3E{% endif %}Graduação{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20título:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.get_titulo}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20ano:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.ano}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20nome do candidato:%20{% if formatada %}%3Cb%3E{% endif %}
+      {% for alocacao in certificado.projeto.alocacao_set.all %}
+        {{alocacao.aluno.user.get_full_name}}{% if not forloop.last %},{% endif %}
+      {% endfor %}
+      {% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20instituição:%20{% if formatada %}%3Cb%3E{% endif %}Insper Instituto de Ensino e Pesquisa{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20curso:%20{% if formatada %}%3Cb%3E{% endif %}Engenharia{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20outras informações:%20{% if formatada %}%3Cb%3E{% endif %}Banca Intermediária de TCC{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      %0D%0A
 
 
-{% elif certificado.tipo_de_certificado == 104 %} {% comment %} banca final {% endcomment %}
+  {% elif certificado.tipo_de_certificado == 104 %} {% comment %} banca final {% endcomment %}
 
-    professor{% if certificado.usuario.genero == 'F' %}a{% endif %}
-    {{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}},
-    
-    %0D%0A%0D%0A%0D%0A
+      {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+      Gostaríamos de agradecer sua participação na Banca Final do Projeto Final de Engenharia.%0D%0A
+      %0D%0A
 
-    &nbsp;&nbsp;&nbsp;&nbsp;Gostaríamos de agradecer sua participação na Banca Final do Projeto Final de Engenharia.<br>
-    <br>
-    &nbsp;&nbsp;&nbsp;&nbsp;Se desejar incluir a informação no seu Currículo Lattes escolha:%20<b>Bancas%20>>%20Participação em bancas de trabalhos de conclusão</b><br>
-    <br>
+      {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+      Se desejar incluir a informação no seu Currículo Lattes escolha:%20{% if formatada %}%3Cb%3E{% endif %}Bancas%20%3E%3E%20Participação em bancas de trabalhos de conclusão{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      %0D%0A
 
-    natureza:%20<b>Graduação</b><br>
-    título:%20<b>{{certificado.projeto.get_titulo}}</b><br>
-    ano:%20<b>{{certificado.projeto.ano}}</b><br>
-    nome do candidato:%20<b>
-    {% for alocacao in certificado.projeto.alocacao_set.all %}
-      {{alocacao.aluno.user.get_full_name}}{% if not forloop.last %},{% endif %}
-    {% endfor %}
-    </b><br>
-    instituição:%20<b>Insper Instituto de Ensino e Pesquisa</b><br>
-    curso:%20<b>Engenharia</b><br>
-    outras informações:%20<b>Banca Final de TCC</b><br>
-    <br>
+      -%20natureza:%20{% if formatada %}%3Cb%3E{% endif %}Graduação{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20título:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.get_titulo}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20ano:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.ano}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20nome do candidato:%20{% if formatada %}%3Cb%3E{% endif %}
+      {% for alocacao in certificado.projeto.alocacao_set.all %}
+        {{alocacao.aluno.user.get_full_name}}{% if not forloop.last %},{% endif %}
+      {% endfor %}
+      {% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20instituição:%20{% if formatada %}%3Cb%3E{% endif %}Insper Instituto de Ensino e Pesquisa{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20curso:%20{% if formatada %}%3Cb%3E{% endif %}Engenharia{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20outras informações:%20{% if formatada %}%3Cb%3E{% endif %}Banca Final de TCC{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      %0D%0A
+
+  {% endif %}
 
 {% endif %}
 
 {% if certificado.documento %}
-    %0D%0A%0D%0A&nbsp;&nbsp;&nbsp;&nbsp;O certificado de sua contribuição se encontra em:%20
-    <a href='{{servidor}}{{ certificado.documento.url }}' target='_blank' rel='noopener noreferrer'>{{servidor}}{{ certificado.documento.url }}</a><br>
+    %0D%0A
+    {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+    O certificado de sua contribuição se encontra em:%20
+    {% if formatada %}%3Ca href='{{servidor}}{{ certificado.documento.url }}' target='_blank' rel='noopener noreferrer'%3E{% endif %}{{servidor}}{{ certificado.documento.url }}{% if formatada %}%3C%2Fa%3E%3Cbr%3E{% endif %}%0D%0A
 {% endif %}
 
-%0D%0A
-%0D%0A%0D%0A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;atenciosamente,%20coordenação%20PFE
+%0D%0A%0D%0A
+{% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20%20%20%20%20{% endif %}
+atenciosamente,%20coordenação%20PFE

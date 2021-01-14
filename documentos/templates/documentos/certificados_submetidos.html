@@ -90,11 +90,9 @@
           
           
           {% nospaces %}
-          {% with servidor="https://pfe.insper.edu.br" %}
-          <a href="
-            mailto:{{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}}
-            %20&lt;{{certificado.usuario.email|parse_quote }}&gt;
-            ,?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;
+          &#x2709; Enviar certificado (
+          {% with servidor='https://pfe.insper.edu.br' %}
+          <a href="mailto:{{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}}%20&lt;{{certificado.usuario.email|parse_quote }}&gt;?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;
             &amp;subject=Certificado%20PFE%20:
             {% if certificado.tipo_de_certificado == 101 %}
               Orientação de Projeto
@@ -105,10 +103,34 @@
             {% elif certificado.tipo_de_certificado == 104 %}
               Membro de Banca Final
             {% endif %}
-            &amp;body={% include 'mensagem_certificados.html' %}">
-            &#x2709; Enviar certificado
+            {% with formatada=True %}
+            &amp;body=
+              {% include 'mensagem_certificados.html' %}
+            ">
+            {% endwith %}
+            formatado
+          </a>
+          /
+          <a href="mailto:{{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}}%20&lt;{{certificado.usuario.email|parse_quote }}&gt;?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;
+            &amp;subject=Certificado%20PFE%20:
+            {% if certificado.tipo_de_certificado == 101 %}
+              Orientação de Projeto
+            {% elif certificado.tipo_de_certificado == 102 %}
+              Coorientação de Projeto
+            {% elif certificado.tipo_de_certificado == 103 %}
+              Membro de Banca Intermediária
+            {% elif certificado.tipo_de_certificado == 104 %}
+              Membro de Banca Final
+            {% endif %}
+            {% with formatada=False %}
+            &amp;body=
+              {% include 'mensagem_certificados.html' %}
+            ">
+            {% endwith %}
+            não formatado
           </a>
           {% endwith %}
+          )
           {% endnospaces %}
           
         </td>
