@@ -126,6 +126,13 @@
 
   <script>
 
+    function atualizar_informacoes() {
+      ($('#estudantes').prop('checked') ? $('.estudantes').show() : $('.estudantes').hide());
+      ($('#orientador').prop('checked') ? $('.orientador').show() : $('.orientador').hide());
+      ($('#coorientador').prop('checked') ? $('.coorientador').show() : $('.coorientador').hide());
+      ($('#banca').prop('checked') ? $('.banca').show() : $('.banca').hide());
+    }
+  
     $(".filter").change(function(){
       $("#spinner").css("visibility", "visible");
       var edicao = $("#filterEdicao option:selected").attr("value");
@@ -138,6 +145,7 @@
         },
         success: function(response){
             $("#certificados").replaceWith($("#certificados",response));
+            atualizar_informacoes()
             $("#spinner").css("visibility", "hidden");
         },
         error: function(response) {

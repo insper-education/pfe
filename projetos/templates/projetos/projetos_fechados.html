@@ -34,11 +34,11 @@
   <span id="informacoes">
     &nbsp;&nbsp;&nbsp;
     <b>Informações: </b>&nbsp;
-    <label><input onchange="($(this).prop('checked') ? $('.logo').show() : $('.logo').hide())" type="checkbox" checked /> Logo</label>&nbsp;&nbsp;&nbsp;
-    <label><input onchange="($(this).prop('checked') ? $('.descricao').show() : $('.descricao').hide())" type="checkbox" checked /> Descrição</label>&nbsp;&nbsp;&nbsp;
-    <label><input onchange="($(this).prop('checked') ? $('.organizacao').show() : $('.organizacao').hide())" type="checkbox" checked /> Organização</label>&nbsp;&nbsp;&nbsp;
-    <label><input onchange="($(this).prop('checked') ? $('.orientador').show() : $('.orientador').hide())" type="checkbox" checked /> Orientador</label>&nbsp;&nbsp;&nbsp;
-    <label><input onchange="($(this).prop('checked') ? $('.estudantes').show() : $('.estudantes').hide())" type="checkbox" checked /> Estudantes</label>&nbsp;&nbsp;&nbsp;
+    <label><input id="logo" onchange="($(this).prop('checked') ? $('.logo').show() : $('.logo').hide())" type="checkbox" checked /> Logo</label>&nbsp;&nbsp;&nbsp;
+    <label><input id="descricao" onchange="($(this).prop('checked') ? $('.descricao').show() : $('.descricao').hide())" type="checkbox" checked /> Descrição</label>&nbsp;&nbsp;&nbsp;
+    <label><input id="organizacao" onchange="($(this).prop('checked') ? $('.organizacao').show() : $('.organizacao').hide())" type="checkbox" checked /> Organização</label>&nbsp;&nbsp;&nbsp;
+    <label><input id="orientador" onchange="($(this).prop('checked') ? $('.orientador').show() : $('.orientador').hide())" type="checkbox" checked /> Orientador</label>&nbsp;&nbsp;&nbsp;
+    <label><input id="estudantes" onchange="($(this).prop('checked') ? $('.estudantes').show() : $('.estudantes').hide())" type="checkbox" checked /> Estudantes</label>&nbsp;&nbsp;&nbsp;
   </span>
 
   <br><br>
@@ -268,6 +268,16 @@
 
     }
 
+
+    function atualizar_informacoes() {
+      ($('#logo').prop('checked') ? $('.logo').show() : $('.logo').hide());
+      ($('#descricao').prop('checked') ? $('.descricao').show() : $('.descricao').hide());
+      ($('#organizacao').prop('checked') ? $('.organizacao').show() : $('.organizacao').hide());
+      ($('#orientador').prop('checked') ? $('.orientador').show() : $('.orientador').hide());
+      ($('#estudantes').prop('checked') ? $('.estudantes').show() : $('.estudantes').hide());
+    }
+
+
     $(".filter").change(function(){
       $("#spinner").css("visibility", "visible");
       var edicao = $("#filterEdicao option:selected").attr("value");
@@ -281,6 +291,7 @@
           success: function(response){
               $("div.projetos").replaceWith($("div.projetos",response));
               carrega_pagina();
+              atualizar_informacoes();
               $("#spinner").css("visibility", "hidden");
           },
           error: function(response) {
