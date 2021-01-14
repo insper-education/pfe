@@ -29,6 +29,10 @@
     <option value="12">12 mêses</option>
   </select>
 
+  <div class="spinner-border spinner-border-sm text-secondary" id="spinner" style="visibility: hidden" role="status" aria-hidden="true">
+    <span class="sr-only">Carregando...</span>
+  </div>
+
   &nbsp;&nbsp;&nbsp;
 
   <label for="filter">Filtrar:</label>
@@ -222,6 +226,7 @@
 
   <script>
       $(".periodo").change(function(){
+          $("#spinner").css("visibility", "visible");
           var periodo = $(".periodo option:selected").attr("value");
           $.ajax({
               type: "POST",
@@ -233,6 +238,7 @@
               success: function(response){
                   $("#tabela").replaceWith($("#tabela",response));
                   filtra_data();
+                  $("#spinner").css("visibility", "hidden");
               },
               error: function(response) {
                   alert('error');

@@ -269,6 +269,7 @@
     }
 
     $(".filter").change(function(){
+      $("#spinner").css("visibility", "visible");
       var edicao = $("#filterEdicao option:selected").attr("value");
       $.ajax({
           type: "POST",
@@ -280,6 +281,7 @@
           success: function(response){
               $("div.projetos").replaceWith($("div.projetos",response));
               carrega_pagina();
+              $("#spinner").css("visibility", "hidden");
           },
           error: function(response) {
               console.log('error')

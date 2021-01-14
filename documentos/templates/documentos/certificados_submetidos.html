@@ -41,8 +41,11 @@
   <label><input id="coorientador" onchange="($(this).prop('checked') ? $('.coorientador').show() : $('.coorientador').hide())" type="checkbox" checked /> Coorientadores</label>&nbsp;&nbsp;&nbsp;
   <label><input id="banca" onchange="($(this).prop('checked') ? $('.banca').show() : $('.banca').hide())" type="checkbox" checked /> Bancas</label>&nbsp;&nbsp;&nbsp;
 
-  {% if certificados %}
-    <table>
+  
+  <table id="certificados">
+
+    {% if certificados %}
+
       {% for certificado in certificados %}
 
         {% if certificado.tipo_de_certificado < 100 %}
@@ -86,8 +89,6 @@
           {% endif %}
           
           
-          
-
           {% nospaces %}
           {% with servidor="https://pfe.insper.edu.br" %}
           <a href="
@@ -114,11 +115,37 @@
       </tr>
 
       {% endfor %}
-    </table>
-    <p>&nbsp;</p>
-  {% else %}
-    <p>Não existem certificados.</p>
-  {% endif %}
+    
+    {% else %}
+      <p>Não existem certificados.</p>
+    {% endif %}
+  
+  </table>
   <p>&nbsp;</p>
+  
+
+  <script>
+
+    $(".filter").change(function(){
+      $("#spinner").css("visibility", "visible");
+      var edicao = $("#filterEdicao option:selected").attr("value");
+      $.ajax({
+        type: "POST",
+        url: "{% url 'certificados_submetidos' %}",
+        data: {
+            edicao: edicao,
+            'csrfmiddlewaretoken': '{{ csrf_token }}',
+        },
+        success: function(response){
+            $("#certificados").replaceWith($("#certificados",response));
+            $("#spinner").css("visibility", "hidden");
+        },
+        error: function(response) {
+            console.log('error')
+        }
+    });
+  });
+
+  </script>
 
 {% endblock %}

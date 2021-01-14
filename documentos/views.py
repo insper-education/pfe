@@ -64,8 +64,21 @@ def index_documentos(request):
 def certificados_submetidos(request):
     """Lista os Certificados Emitidos."""
 
-    edicoes, _, _ = get_edicoes(Projeto)
-    certificados = Certificado.objects.all()
+    edicoes = []
+
+    if request.is_ajax():
+        if 'edicao' in request.POST:
+            edicao = request.POST['edicao']
+            if edicao == 'todas':
+                certificados = Certificado.objects.all()
+            else:
+                ano, semestre = request.POST['edicao'].split('.')
+                certificados = Certificado.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+    else:
+        edicoes, ano, semestre = get_edicoes(Certificado)
+        certificados = Certificado.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
 
     context = {
         'certificados': certificados,

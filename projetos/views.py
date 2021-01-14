@@ -211,13 +211,6 @@ def distribuicao_areas(request):
 def projetos_fechados(request):
     """Lista todos os projetos fechados."""
 
-    try:
-        configuracao = Configuracao.objects.get()
-        ano = configuracao.ano
-        semestre = configuracao.semestre
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
-
     edicoes = []
 
     if request.is_ajax():
