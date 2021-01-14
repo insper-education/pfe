@@ -229,7 +229,7 @@ def recupera_bancas_intermediarias(ano, semestre):
 
         count_bancas = []
 
-        bancas = Banca.objects.filter(tipo_de_banca=0) # (1, 'Intermediária'),
+        bancas = Banca.objects.filter(tipo_de_banca=1) # (1, 'Intermediária'),
 
         bancas = bancas.filter(membro1=professor.user)|\
                  bancas.filter(membro2=professor.user)|\
