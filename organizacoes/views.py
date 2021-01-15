@@ -23,7 +23,7 @@ from users.support import adianta_semestre
 from users.models import PFEUser, Administrador, Parceiro, Professor, Aluno
 
 #from projetos.models import ObjetivosDeAprendizagem, Avaliacao2, Observacao, Area, AreaDeInteresse
-from projetos.models import Area, Proposta, Organizacao, Projeto, Configuracao
+from projetos.models import Area, Proposta, Organizacao, Projeto, Configuracao, Feedback
 
 #from projetos.models import Projeto, Evento, Coorientador
 from projetos.models import Anotacao
@@ -382,6 +382,32 @@ def organizacoes_tabela(request):
     }
 
     return render(request, 'organizacoes/organizacoes_tabela.html', context)
+
+
+
+#@login_required
+def projeto_feedback(request):
+    """Para Feedback das Organizações Parceiras."""
+
+    if request.method == 'POST':
+        feedback = Feedback.create()
+        feedback.nome = request.POST.get("nome", "")
+        feedback.email = request.POST.get("email", "")
+        feedback.empresa = request.POST.get("empresa", "")
+        feedback.tecnico = request.POST.get("tecnico", "")
+        feedback.comunicacao = request.POST.get("comunicacao", "")
+        feedback.organizacao = request.POST.get("organizacao", "")
+        feedback.outros = request.POST.get("outros", "")
+        feedback.save()
+        mensagem = "Feedback recebido, obrigado!"
+        context = {
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
+    else:
+        context = {
+        }
+        return render(request, 'organizacoes/projeto_feedback.html', context)
 
 
 @login_required

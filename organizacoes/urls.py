@@ -26,6 +26,8 @@ urlpatterns = [
 
     path('proposta_submissao', views.proposta_submissao, name='proposta_submissao'),
 
+    path('projeto_feedback', views.projeto_feedback, name='projeto_feedback'),
+
     path('todos_parceiros/', views.todos_parceiros, name='todos_parceiros'),
 
 ]

@@ -566,35 +566,6 @@ def reembolso_pedir(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
-def avisos_listar(request):
-    """Mostra toda a tabela de avisos da coordenação do PFE."""
-
-    try:
-        configuracao = Configuracao.objects.get()
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
-
-    qualquer_aviso = list(Aviso.objects.all())
-
-    eventos = Evento.objects.filter(startDate__year=configuracao.ano)
-    if configuracao.semestre == 1:
-        qualquer_evento = list(eventos.filter(startDate__month__lt=7))
-    else:
-        qualquer_evento = list(eventos.filter(startDate__month__gt=6))
-
-    avisos = sorted(qualquer_aviso+qualquer_evento, key=lambda t: t.get_data())
-
-    context = {
-        'avisos': avisos,
-        'configuracao' : configuracao,
-        'hoje' : datetime.date.today(),
-        'filtro' : "todos",
-    }
-    return render(request, 'projetos/avisos_listar.html', context)
-
-
-@login_required
 @permission_required("users.altera_professor", login_url='/')
 def comite(request):
     """Exibe os professores que estão no comitê do PFE."""
@@ -606,31 +577,6 @@ def comite(request):
         }
 
     return render(request, 'projetos/comite_pfe.html', context)
-
-
-#@login_required
-def projeto_feedback(request):
-    """Para Feedback das Organizações Parceiras."""
-    if request.method == 'POST':
-        feedback = Feedback.create()
-        feedback.nome = request.POST.get("nome", "")
-        feedback.email = request.POST.get("email", "")
-        feedback.empresa = request.POST.get("empresa", "")
-        feedback.tecnico = request.POST.get("tecnico", "")
-        feedback.comunicacao = request.POST.get("comunicacao", "")
-        feedback.organizacao = request.POST.get("organizacao", "")
-        feedback.outros = request.POST.get("outros", "")
-        feedback.save()
-        mensagem = "Feedback recebido, obrigado!"
-        context = {
-            "mensagem": mensagem,
-        }
-        return render(request, 'generic.html', context=context)
-        #return HttpResponse("Feedback recebido, obrigado!")
-    else:
-        context = {
-        }
-        return render(request, 'projetos/projeto_feedback.html', context)
 
 
 @login_required
@@ -702,24 +648,6 @@ def mostra_feedback(request, feedback_id):
     }
 
     return render(request, 'projetos/mostra_feedback.html', context)
-
-
-@login_required
-@permission_required('users.altera_professor', login_url='/')
-def edita_aviso(request, primakey):
-    """Edita aviso."""
-
-    try:
-        aviso = Aviso.objects.get(pk=primakey)
-    except Aviso.DoesNotExist:
-        return HttpResponse("Aviso não encontrado.", status=401)
-
-    context = {
-        'aviso': aviso,
-    }
-
-    return render(request, 'projetos/edita_aviso.html', context)
-
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')

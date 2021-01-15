@@ -14,7 +14,9 @@
       {% csrf_token %}
       <b>Aviso:</b> {{ aviso.titulo }}
       <br>
-      <textarea name="aviso" rows="8" cols="64"></textarea>
+      <textarea name="aviso" rows="8" cols="64">
+        {{ aviso.mensagem }}
+      </textarea>
       <br>
       <button type="submit">Atualizar Aviso</button>
       <p>&nbsp;</p>
