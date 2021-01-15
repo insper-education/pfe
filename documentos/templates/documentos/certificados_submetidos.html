@@ -63,7 +63,7 @@
           {% if certificado.usuario %}
             {% if certificado.usuario.tipo_de_usuario == 1 %}
               <a href="{% url 'aluno_detail' certificado.usuario.aluno.id %}">{{certificado.usuario.get_full_name}}</a><br>
-            {% elif certificado.usuario.tipo_de_usuario == 2 %}
+            {% elif certificado.usuario.tipo_de_usuario == 2 or certificado.usuario.tipo_de_usuario == 4 %}
               <a href="{% url 'professor_detail' certificado.usuario.professor.id %}">{{certificado.usuario.get_full_name}}</a><br>
             {% else %}
               {{certificado.usuario.get_full_name}}<br>
