@@ -64,10 +64,10 @@ def edita_aviso(request, primakey):
 
     if request.method == 'POST':
         if 'aviso' in request.POST:
-            aviso.mensagem = request.POST['aviso']            
+            aviso.mensagem = request.POST['aviso']
             aviso.save()
             return redirect('avisos_listar')
-        
+
         return HttpResponse("Problema com atualização de mensagem.", status=401)
 
     context = {
@@ -75,4 +75,3 @@ def edita_aviso(request, primakey):
     }
 
     return render(request, 'operacional/edita_aviso.html', context)
-

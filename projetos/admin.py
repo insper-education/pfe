@@ -262,7 +262,7 @@ class BancaAdmin(admin.ModelAdmin):
     get_organizacao.short_description = 'Organização'
     get_organizacao.admin_order_field = 'projeto__organizacao'
     ordering = ('-startDate',)
-    
+
 
 @admin.register(Aviso)
 class AvisoAdmin(admin.ModelAdmin):
@@ -307,6 +307,7 @@ class CoorientadorAdmin(admin.ModelAdmin):
     """Conexão entre coorientador e projeto."""
     list_display = ('usuario', 'projeto')
     ordering = ('usuario__first_name', 'usuario__last_name',)
+    search_fields = ['usuario__first_name', 'usuario__last_name',]
 
 @admin.register(Encontro)
 class EncontroAdmin(admin.ModelAdmin):
@@ -317,10 +318,12 @@ class EncontroAdmin(admin.ModelAdmin):
 @admin.register(Avaliacao2)
 class Avaliacao2Admin(admin.ModelAdmin):
     """Informações das Avaliações2."""
-    list_display = ('momento', 'nota', 'peso', 'objetivo', 'tipo_de_avaliacao', 'avaliador', 'projeto', 'alocacao')
+    list_display = ('momento', 'nota', 'peso', 'objetivo',
+                    'tipo_de_avaliacao', 'avaliador', 'projeto', 'alocacao')
     ordering = ('momento',)
     list_filter = ('tipo_de_avaliacao', )
-    search_fields = ['projeto__titulo', 'projeto__titulo_final', 'alocacao__aluno__user__username', 'projeto__organizacao__sigla' ]
+    search_fields = ['projeto__titulo', 'projeto__titulo_final',
+                     'alocacao__aluno__user__username', 'projeto__organizacao__sigla']
 
 
 @admin.register(Observacao)
@@ -329,7 +332,7 @@ class ObservacaoAdmin(admin.ModelAdmin):
     list_display = ('momento', 'tipo_de_avaliacao', 'avaliador', 'projeto', 'alocacao')
     ordering = ('momento',)
     list_filter = ('tipo_de_avaliacao', )
-    search_fields = ['projeto__titulo', 'projeto__titulo_final', 'alocacao__aluno__user__username', ]
+    search_fields = ['projeto__titulo', 'projeto__titulo_final', 'alocacao__aluno__user__username',]
 
 @admin.register(Recomendada)
 class RecomendadaAdmin(admin.ModelAdmin):
@@ -352,10 +355,5 @@ class CertificadoAdmin(admin.ModelAdmin):
 admin.site.register(Cursada)
 admin.site.register(Entidade)       # Para ser preenchido com as entidades estudantis
 admin.site.register(ObjetivosDeAprendizagem)
-
-
-
 admin.site.register(Area)
 admin.site.register(AreaDeInteresse)
-
-
