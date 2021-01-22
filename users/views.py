@@ -126,9 +126,11 @@ def alunos_listagem(request, anosemestre):
     totais["mecânica"] = 0
     totais["mecatrônica"] = 0
 
-    if anosemestre != "todos":
+    if anosemestre not in ("todos", "trancou"):
         ano = int(anosemestre.split(".")[0])
         semestre = int(anosemestre.split(".")[1])
+
+        alunos_list = alunos_list.filter(trancado=False)
 
         alunos_semestre = alunos_list.\
             filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre).distinct()
@@ -152,6 +154,13 @@ def alunos_listagem(request, anosemestre):
                       alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
 
     else:
+
+        if anosemestre == "todos":
+            alunos_list = alunos_list.filter(trancado=False)
+        else:
+            alunos_list = alunos_list.filter(trancado=True)
+            ano = "trancou"
+
         ano_tmp = 2018
         semestre_tmp = 2
         while True:

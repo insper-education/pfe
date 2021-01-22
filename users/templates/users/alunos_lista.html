@@ -29,6 +29,7 @@
   <label for="filter"><b>Edição:</b></label>
   <select onchange="location = this.options[this.selectedIndex].value;">
     <option value="todos">todos</option>
+    <option value="trancou" {% if ano == "trancou" %}selected{% endif %}>trancou</option>
     {% for loop in loop_anos %}
       <option value="{{loop}}.2" {% if ano == loop and semestre == 2 %}selected{% endif %}>{{loop}}.2</option>
       <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
@@ -75,12 +76,12 @@
                 {% for opcao in aluno.opcao_set.all %}
                   <b>#{{ opcao.prioridade }} :</b>
                   {% with alocacoes=aluno.alocacao_set %}
-                    {% if alocacoes.count and opcao.projeto == alocacoes.last.projeto %}
+                    {% if alocacoes.count and opcao.proposta == alocacoes.last.projeto %}
                       <u>
                     {% endif %}
-                        {{opcao.projeto.get_titulo}}
-                      ({{opcao.projeto.organizacao.nome}})
-                    {% if alocacoes.count and opcao.projeto == alocacoes.last.projeto %}
+                        {{opcao.proposta.titulo}}
+                      ({{opcao.proposta.organizacao.nome}})
+                    {% if alocacoes.count and opcao.proposta == alocacoes.last.projeto %}
                       </u>
                     {% endif %}
                   {% endwith %}
@@ -127,13 +128,16 @@
               {% for alocacao in aluno.alocacao_set.all %}
                 {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
                   <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
-                    {% if alocacao.projeto.avancado %}<u>{% endif %}
                     {{alocacao.projeto.get_titulo}}
                   </a>
                   <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
                     ({{alocacao.projeto.organizacao}})<br>
-                    {% if alocacao.projeto.avancado %}</u>{% endif %}
                   </a>
+                  {% if alocacao.projeto.avancado %}
+                    <span style="color:red">
+                      (PFE Avançado)
+                    </span>
+                  {% endif %}
                 {% endif %}
               {% endfor %}
             {% endif %}
