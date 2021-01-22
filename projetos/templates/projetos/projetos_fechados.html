@@ -103,6 +103,10 @@
           <p style="margin-left:1em;">Tipo: <font color="red">PFE Avançado</font></p>
         {% endif %}
 
+        <p class="semestre" style="margin-left:1em; display: none;">Semestre: 
+          {{projeto.ano}}.{{projeto.semestre}}
+        </p>
+
         <!-- <p style="margin-left:1em;">Edição: {{projeto.ano}}.{{projeto.semestre}}</p> -->
         <p class="orientador" style="margin-left:1em;">Orientador: 
           {% if projeto.orientador %}
@@ -275,6 +279,9 @@
       ($('#organizacao').prop('checked') ? $('.organizacao').show() : $('.organizacao').hide());
       ($('#orientador').prop('checked') ? $('.orientador').show() : $('.orientador').hide());
       ($('#estudantes').prop('checked') ? $('.estudantes').show() : $('.estudantes').hide());
+
+      {% comment %} // Só mostra informação de semestre se edição é todas {% endcomment %}
+      ($("#filterEdicao option:selected").attr("value") == "todas" ? $('.semestre').show() : $('.semestre').hide());
     }
 
 
