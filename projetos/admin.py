@@ -352,7 +352,11 @@ class CertificadoAdmin(admin.ModelAdmin):
                      'projeto__titulo', 'projeto__titulo_final',]
 
 
-admin.site.register(Cursada)
+@admin.register(Cursada)
+class CursadaAdmin(admin.ModelAdmin):
+    """ Disciplinas Cursadas. """
+    list_display = ('disciplina', 'aluno', 'nota')
+
 admin.site.register(Entidade)       # Para ser preenchido com as entidades estudantis
 admin.site.register(ObjetivosDeAprendizagem)
 admin.site.register(Area)
