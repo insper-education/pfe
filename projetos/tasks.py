@@ -9,51 +9,57 @@ import datetime
 import subprocess
 from celery import task
 from celery import shared_task
-
-from .messages import email, htmlizar
-from .views import get_calendario_context
-from .models import Aviso
-
 from django.conf import settings
 from django.core.management import call_command
 
+from calendario.views import get_calendario_context
+
+from .models import Aviso
+from .messages import email, htmlizar
+
+
 @shared_task
 def backup():
+    """ Rotina de Backup. """
     if settings.DEBUG is True:
-        return f"Não pode fazer o Backup: Debug está True"
-    else:
-        try:
-            call_command("dbbackup")
-            return f"Backed up successfully: {datetime.datetime.now()}"
-        except:
-            return f"Não foi possível fazer o backup: {datetime.datetime.now()}"
+        return "Não se pode fazer o Backup: Debug está True"
+
+    try:
+        call_command("dbbackup")
+        return f"Backup realizado: {datetime.datetime.now()}"
+    except:
+        return f"Não foi possível fazer o backup: {datetime.datetime.now()}"
+
 
 @shared_task
 def mediabackup():
+    """ Rotina de Backup dos arquivos (media). """
     if settings.DEBUG is True:
-        return f"Não pode fazer o Backup: Debug está True"
-    else:
-        try:
-            call_command("mediabackup")
-            return f"Backup realizado: {datetime.datetime.now()}"
-        except:
-            return f"Não foi possível fazer o backup: {datetime.datetime.now()}"
+        return "Não pode fazer o Backup: Debug está True"
+
+    try:
+        call_command("mediabackup")
+        return f"Backup realizado: {datetime.datetime.now()}"
+    except:
+        return f"Não foi possível fazer o backup: {datetime.datetime.now()}"
+
 
 @task
 def certbot_renew():
     """Renova Certificado Digital."""
     subprocess.call(['sudo', 'certbot', 'renew', '--quiet'])
 
+
 @task
 def envia_aviso():
     """Gera um aviso por e-mail."""
-    
+
     avisos = []
     for aviso in Aviso.objects.all():
         if aviso.get_data() == datetime.date.today():
             avisos.append(aviso)
 
-    recipient_list = ['pfeinsper@gmail.com', 'lpsoares@insper.edu.br',]
+    recipient_list = ['pfeinsper@gmail.com', 'lpsoares@insper.edu.br', ]
     for aviso in avisos:
         subject = 'Aviso: '+aviso.titulo
         if aviso.mensagem:
@@ -62,7 +68,7 @@ def envia_aviso():
             message = "Mensagem não definida."
         verify = email(subject, recipient_list, htmlizar(message))
         if verify != 1:
-            #print("Algum problema de conexão, contacte: lpsoares@insper.edu.br")
+            # print("Algum problema de conexão, contacte: lpsoares@insper.edu.br")
             pass
 
     # Eventos do calendário
@@ -77,5 +83,5 @@ def envia_aviso():
                 message += "<br>\ndata final = {0}".format(acao.endDate)
                 verify = email(subject, recipient_list, message)
                 if verify != 1:
-                    #print("Algum problema de conexão, contacte: lpsoares@insper.edu.br")
+                    # print("Algum problema de conexão, contacte: lpsoares@insper.edu.br")
                     pass

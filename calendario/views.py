@@ -25,13 +25,16 @@ from projetos.models import Banca
 from projetos.models import Configuracao, Evento
 
 
-def get_calendario_context(primarykey):
+def get_calendario_context(primarykey=None):
     """Contexto para gerar calendário."""
 
-    try:
-        user = PFEUser.objects.get(pk=primarykey)
-    except PFEUser.DoesNotExist:
-        return None
+    if primarykey:
+        try:
+            user = PFEUser.objects.get(pk=primarykey)
+        except PFEUser.DoesNotExist:
+            return None
+    else:
+        user = None
 
     eventos = Evento.objects.all()
 
@@ -42,23 +45,24 @@ def get_calendario_context(primarykey):
     except Configuracao.DoesNotExist:
         return HttpResponse("Falha na configuracao do sistema.", status=401)
 
-    if user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4: # Professor e Admin
+    # Se usuário não for Professor nem Admin
+    if user and user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
         eventos = eventos.filter(startDate__year__lte=configuracao.ano)
         if configuracao.semestre == 1:
             eventos = eventos.filter(startDate__month__lte=7)
 
     eventos_gerais = eventos.exclude(tipo_de_evento=12).\
-                             exclude(tipo_de_evento=40).\
-                             exclude(tipo_de_evento=41).\
-                             exclude(tipo_de_evento=20).\
-                             exclude(tipo_de_evento=30).\
-                             exclude(tipo_de_evento__gte=100)
-    aulas = eventos.filter(tipo_de_evento=12) #12, 'Aula PFE'
-    laboratorios = eventos.filter(tipo_de_evento=40) #40, 'Laboratório'
-    provas = eventos.filter(tipo_de_evento=41) #41, 'Semana de Provas'
-    quinzenais = eventos.filter(tipo_de_evento=20) #20, 'Relato Quinzenal'
-    feedbacks = eventos.filter(tipo_de_evento=30) #30, 'Feedback dos Alunos sobre PFE'
-    coordenacao = Evento.objects.filter(tipo_de_evento__gte=100) # Eventos da coordenação
+        exclude(tipo_de_evento=40).\
+        exclude(tipo_de_evento=41).\
+        exclude(tipo_de_evento=20).\
+        exclude(tipo_de_evento=30).\
+        exclude(tipo_de_evento__gte=100)
+    aulas = eventos.filter(tipo_de_evento=12)  # 12, 'Aula PFE'
+    laboratorios = eventos.filter(tipo_de_evento=40)  # 40, 'Laboratório'
+    provas = eventos.filter(tipo_de_evento=41)  # 41, 'Semana de Provas'
+    quinzenais = eventos.filter(tipo_de_evento=20)  # 20, 'Relato Quinzenal'
+    feedbacks = eventos.filter(tipo_de_evento=30)  # 30, 'Feedback dos Alunos sobre PFE'
+    coordenacao = Evento.objects.filter(tipo_de_evento__gte=100)  # Eventos da coordenação
 
     # ISSO NAO ESTA BOM, FAZER ALGO MELHOR
 
@@ -68,11 +72,11 @@ def get_calendario_context(primarykey):
         'eventos': eventos_gerais,
         'aulas': aulas,
         'laboratorios': laboratorios,
-        'provas' : provas,
-        'quinzenais' : quinzenais,
-        'feedbacks' : feedbacks,
-        'coordenacao' : coordenacao,
-        'semestre' : configuracao.semestre,
+        'provas': provas,
+        'quinzenais': quinzenais,
+        'feedbacks': feedbacks,
+        'coordenacao': coordenacao,
+        'semestre': configuracao.semestre,
         'tipos_eventos': Evento.TIPO_EVENTO,
     }
 
@@ -142,7 +146,7 @@ def export_calendar(request, event_id):
     cal_address.params["CN"] = "Luciano Pereira Soares"
     ical_event.add('organizer', cal_address)
 
-    #REMOVER OS xx DOS EMAILS
+    # REMOVER OS xx DOS EMAILS
     if banca.membro1:
         atnd = vCalAddress("MAILTO:{}".format(banca.membro1.email))
         atnd.params["CN"] = "{0} {1}".format(banca.membro1.first_name, banca.membro1.last_name)
@@ -194,6 +198,7 @@ def export_calendar(request, event_id):
 
     return response
 
+
 @login_required
 @permission_required('users.altera_professor', login_url='/')
 def atualiza_evento(request):
@@ -208,10 +213,10 @@ def atualiza_evento(request):
     except Evento.DoesNotExist:
         return HttpResponseNotFound('<h1>Evento não encontrado!</h1>')
 
-    tipo_de_evento  = int(request.GET.get('type', None))
+    tipo_de_evento = int(request.GET.get('type', None))
 
-    start_date  = request.GET.get('startDate', None)
-    end_date  = request.GET.get('endDate', None)
+    start_date = request.GET.get('startDate', None)
+    end_date = request.GET.get('endDate', None)
 
     location = request.GET.get('location', None)[:50]
     observation = request.GET.get('observation', None)[:50]
@@ -232,6 +237,7 @@ def atualiza_evento(request):
     }
 
     return JsonResponse(data)
+
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')
