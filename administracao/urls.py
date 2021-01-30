@@ -12,7 +12,7 @@ from . import views
 
 urlpatterns = [
 
-    path('', views.index_administracao, name='index_administracao'), #pagina inicial
+    path('', views.index_administracao, name='index_administracao'),  # pagina inicial
 
     path('backup/<str:formato>', views.backup, name='backup'),
 

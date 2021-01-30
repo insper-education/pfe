@@ -24,12 +24,20 @@ from projetos.models import Avaliacao2, get_upload_path, Conexao, Feedback
 
 from projetos.support import simple_upload
 
-from projetos.resources import DisciplinasResource, Avaliacoes2Resource
-from projetos.resources import ProjetosResource, OrganizacoesResource, OpcoesResource
-from projetos.resources import ProfessoresResource, EstudantesResource, ParceirosResource
-from projetos.resources import ConfiguracaoResource, FeedbacksResource, UsuariosResource
+from projetos.resources import DisciplinasResource
+from projetos.resources import Avaliacoes2Resource
+from projetos.resources import ProjetosResource
+from projetos.resources import OrganizacoesResource
+from projetos.resources import OpcoesResource
+from projetos.resources import ProfessoresResource
+from projetos.resources import EstudantesResource
+from projetos.resources import ParceirosResource
+from projetos.resources import ConfiguracaoResource
+from projetos.resources import FeedbacksResource
+from projetos.resources import UsuariosResource
 
-from users.models import PFEUser, Aluno, Opcao, Professor, Administrador, Parceiro, Alocacao
+from users.models import PFEUser, Aluno, Professor, Administrador, Parceiro
+from users.models import Opcao, Alocacao
 
 from users.support import adianta_semestre
 
@@ -67,7 +75,7 @@ def index_carregar(request):
 @login_required
 @permission_required("users.altera_professor", login_url='/')
 def emails(request):
-    """Gera uma série de lista de emails, com alunos, professores, parceiros, etc."""
+    """ Gera listas de emails, com alunos, professores, parceiros, etc. """
     # Deve ter recurso para pegar aluno pelos projetos, opções,
     # pois um aluno que reprova pode aparecer em duas listas.
 
@@ -90,12 +98,12 @@ def emails(request):
         projetos_pessoas = {}  # Dicionario com as pessoas do projeto
 
         alunos_semestre = []  # Alunos do semestre
-        organizacoes = []  # Controla as organizações participantes por semestre
+        organizacoes = []  # Controla as organizações participantes p/semestre
         orientadores = []  # Orientadores por semestre
         membros_bancas = []  # Membros das bancas
 
         for projeto in Projeto.objects.filter(ano=ano).filter(semestre=semestre):
-            if Aluno.objects.filter(alocacao__projeto=projeto):  # checa se tem alunos
+            if Aluno.objects.filter(alocacao__projeto=projeto):  # checa se há alunos
                 alunos_tmp = Aluno.objects.filter(trancado=False).\
                               filter(alocacao__projeto=projeto).\
                               filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
@@ -121,7 +129,7 @@ def emails(request):
                 projetos_pessoas[projeto] = dict()
                 projetos_pessoas[projeto]["estudantes"] = list(alunos_tmp)  # Pessoas por projeto
                 projetos_pessoas[projeto]["orientador"] = list([orientador])  # Pessoas por projeto
-                projetos_pessoas[projeto]["conexoes"] = list(conexoes)  # Todos conectados ao projeto
+                projetos_pessoas[projeto]["conexoes"] = list(conexoes)  # Todos conect. ao projeto
 
         # Parceiros de todas as organizações parceiras
         parceiros_semestre = Parceiro.objects.filter(organizacao__in=organizacoes,

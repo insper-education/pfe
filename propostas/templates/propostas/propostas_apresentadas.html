@@ -9,8 +9,6 @@
 
   {% load static %}
   {% load aderencia_aluno %}
-  
-  <script src="{% static 'js/w3.js' %}"></script>
 
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
@@ -63,6 +61,11 @@
 		}
 
 	</style>
+
+  {% with tabela='PropostasTable' %}
+    {% include "tabelas.html" %}
+  {% endwith %}
+
 {% endblock %}
 
 {% block content %}
@@ -71,7 +74,6 @@
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" %}
-  <br><br>
 
   {% comment %} Tabela com todos as propostas selecionadas pelo filtro {% endcomment %}
   <div class="propostas">
@@ -100,22 +102,24 @@
 
     {% if propostas %}
       <div class="table-responsive">
+
       <table id="PropostasTable" class="table table-bordered table-hover table-sm">
+
         <caption style="text-align:right">
           <small style="font-size:12px"><b>C</b>: Computação | <b>X</b>: Mecatrônica | <b>M</b>: Mecânica</small>
         </caption>
         <thead class="table-info">
         <tr>
-          <th scope="col" class="text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Algum professor autorizou que o projeto seja publicado para os estudantes">Autorizado</th>
-          <th scope="col" class="text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="A proposta se encontra disponível para os alunos aplicarem">Disponível</th>
-          <th scope="col" class="text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Foi formado um grupo de alunos para essa proposta de projeto">Fechado</th>
-          <th scope="col" onclick="w3.sortHTML('#PropostasTable', '.item', 'td:nth-child(2)')" style="cursor:pointer; font-size: 14px;" class="text-center">Proposta</th>
-          <th scope="col" onclick="w3.sortHTML('#PropostasTable', '.item', 'td:nth-child(3)')" style="cursor:pointer; font-size: 14px;" class="text-center">Período</th>
-          <th scope="col" onclick="w3.sortHTML('#PropostasTable', '.item', 'td:nth-child(4)')" style="cursor:pointer; font-size: 14px;" class="text-center">Organização</th>
-          <th scope="col" style="font-size: 12px;">Estudante1</th>
-          <th scope="col" style="font-size: 12px;">Estudante2</th>
-          <th scope="col" style="font-size: 12px;">Estudante3</th>
-          <th scope="col" style="font-size: 12px;">Estudante4</th>
+          <th scope="col" class="estados text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Algum professor autorizou que o projeto seja publicado para os estudantes">Autorizado</th>
+          <th scope="col" class="estados text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="A proposta se encontra disponível para os alunos aplicarem">Disponível</th>
+          <th scope="col" class="estados text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Foi formado um grupo de alunos para essa proposta de projeto">Fechado</th>
+          <th scope="col" class="text-center">Proposta</th>
+          <th scope="col" class="periodo text-center">Período</th>
+          <th scope="col" class="text-center organizacao">Organização</th>
+          <th scope="col" class="estudantes" style="font-size: 12px;">Estudante1</th>
+          <th scope="col" class="estudantes" style="font-size: 12px;">Estudante2</th>
+          <th scope="col" class="estudantes" style="font-size: 12px;">Estudante3</th>
+          <th scope="col" class="estudantes" style="font-size: 12px;">Estudante4</th>
         </tr>
         </thead>
         {% for proposta in propostas %} 
@@ -123,30 +127,40 @@
         
           <tr class="item">
 
+            <td class="estados
             {% if proposta.autorizado  %}
-              <td class="text-success"  style="text-align:center">
+              text-success
             {% else %}
-              <td class="text-danger"  style="text-align:center">
+              text-danger
             {% endif %}
+                " style="text-align:center">
               &#x2B24;
             </td>
 
             {% if disponivel %}
               <script>publicados += 1</script>
-              <td class="text-success"  style="text-align:center">
-            {% else %}
-              <td class="text-danger"  style="text-align:center">
             {% endif %}
-              &#x2B24;
+            <td class="estados
+            {% if disponivel %}
+              text-success
+            {% else %}
+              text-danger
+            {% endif %}
+              "  style="text-align:center">
+                &#x2B24;
             </td>
 
             {% if proposta.fechada  %}
-              <td class="text-success"  style="text-align:center">
-                <script>fechados += 1</script>
-            {% else %}
-              <td class="text-danger"  style="text-align:center">
+              <script>fechados += 1</script>
             {% endif %}
-              &#x2B24;
+            <td class="estados
+            {% if proposta.fechada  %}
+              text-success
+            {% else %}
+              text-danger
+            {% endif %}
+              "  style="text-align:center">
+                &#x2B24;
             </td>
 
             <th scope="row">
@@ -192,10 +206,11 @@
               
             </th>
 
-            <td class="text-center">
+            <td class="text-center periodo">
               {{proposta.ano}}.{{proposta.semestre}}
             </td>
-            <td>
+
+            <td class="organizacao">
               {% if proposta.organizacao %}
                 <a href="{% url 'organizacao_completo' proposta.organizacao.id %}">
                   {{ proposta.organizacao.nome }}
@@ -207,9 +222,7 @@
               {% endif %}
             </td>
             
-              
-            
-            <td class="text-center">
+            <td class="text-center estudantes">
               
               {% if proposta.perfil_aluno1_computacao %}
                 {% if proposta.get_nativamente == "C" %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de computação">{% endif %}
@@ -241,7 +254,7 @@
                 {% endif %}
               {% endif %}
             </td>
-            <td class="text-center">
+            <td class="text-center estudantes">
               {% if proposta.perfil_aluno2_computacao %}
                 {% if proposta.get_nativamente == "C" %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de computação">{% endif %}
                   C
@@ -272,7 +285,7 @@
                 {% endif %}
               {% endif %}
             </td>
-            <td class="text-center">
+            <td class="text-center estudantes">
               {% if proposta.perfil_aluno3_computacao %}
                 {% if proposta.get_nativamente == "C" %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de computação">{% endif %}
                   C
@@ -303,7 +316,7 @@
                 {% endif %}
               {% endif %}
             </td>
-            <td class="text-center">
+            <td class="text-center estudantes">
               {% if proposta.perfil_aluno4_computacao %}
                 {% if proposta.get_nativamente == "C" %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de computação">{% endif %}
                   C
@@ -334,8 +347,8 @@
               {% endif %}
             </td>
           </tr>
-          <script>
 
+          <script>
             {% if proposta.get_nativamente  == "C" %} 
               proposta_computacao += 1
               {% if disponivel %}proposta_computacao_disponivel += 1;{% endif %}  

@@ -10,19 +10,24 @@
   {% load static %}
   {% load dictionary %}
 
-  <script src="{% static 'js/w3.js' %}"></script>
   <script src="{% static 'js/Chart.min.js' %}"></script>
 
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
 
+  {% with tabela='AlunosTable' %}
+    {% include "tabelas.html" %}
+  {% endwith %}
+
 {% endblock %}
 
 {% block content %}
 
-  {% with dados='estudantes' %}
-      {% include "planilhas.html" %}
-  {% endwith %}
+  {% comment %}
+    {% with dados='estudantes' %}
+        {% include "planilhas.html" %}
+    {% endwith %}
+  {% endcomment %}
   
   <span class="titulo">Estudantes</span>
 
@@ -35,21 +40,7 @@
       <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
     {% endfor %}
   </select>
-
-  <span id="informacoes">
-    &nbsp;&nbsp;&nbsp;
-    <b>Informações: </b>&nbsp;
-    <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(2)').show() : $('#AlunosTable tr > *:nth-child(2)').hide())" type="checkbox" checked /> e-mail</label>&nbsp;&nbsp;&nbsp;
-    <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(3)').show() : $('#AlunosTable tr > *:nth-child(3)').hide())" type="checkbox" checked /> Curso</label>&nbsp;&nbsp;&nbsp;
-    <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(4)').show() : $('#AlunosTable tr > *:nth-child(4)').hide())" type="checkbox" checked /> Período</label>&nbsp;&nbsp;&nbsp;
-    <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(5)').show() : $('#AlunosTable tr > *:nth-child(5)').hide())" type="checkbox" checked /> Projeto</label>&nbsp;&nbsp;&nbsp;
-    <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(6)').show() : $('#AlunosTable tr > *:nth-child(6)').hide())" type="checkbox" checked /> Média (só bancas)</label>&nbsp;&nbsp;&nbsp;
-    <label><input onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(7)').show() : $('#AlunosTable tr > *:nth-child(7)').hide())" type="checkbox" checked /> Notas</label>&nbsp;&nbsp;&nbsp;
-  </span>
   
-  <br><br>
-  <strong>Número Total de Estudantes:</strong> {{ num_alunos }}
-
   {% if alunos_list %}
     <div class="table-responsive">
     <table id="AlunosTable" class="table table-bordered table-hover table-sm">
@@ -166,7 +157,8 @@
   {% else %}
     <p>Não existem estudantes disponíveis.</p>
   {% endif %}
-
+  
+  <strong>Número Total de Estudantes:</strong> {{ num_alunos }}
   <br>
 
   <div id="canvas-holder">
