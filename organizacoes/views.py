@@ -14,18 +14,18 @@ from django.shortcuts import render
 
 from django.contrib.auth.decorators import login_required, permission_required
 
-#from django.http import Http404, HttpResponse, , JsonResponse
+# from django.http import Http404, HttpResponse, JsonResponse
 from django.http import HttpResponse, HttpResponseNotFound
 
 from users.support import adianta_semestre
 
-#from users.models import Aluno, Opcao, Alocacao
+# from users.models import Aluno, Opcao, Alocacao
 from users.models import PFEUser, Administrador, Parceiro, Professor, Aluno
 
-#from projetos.models import ObjetivosDeAprendizagem, Avaliacao2, Observacao, Area, AreaDeInteresse
+# from projetos.models import ObjetivosDeAprendizagem, Avaliacao2, Observacao, Area, AreaDeInteresse
 from projetos.models import Area, Proposta, Organizacao, Projeto, Configuracao, Feedback
 
-#from projetos.models import Projeto, Evento, Coorientador
+# from projetos.models import Projeto, Evento, Coorientador
 from projetos.models import Anotacao
 
 from propostas.support import envia_proposta, preenche_proposta
@@ -41,8 +41,8 @@ def index_organizacoes(request):
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
-def cria_anotacao(request, login): #acertar isso para pk
-    """Cria um anotação para uma organização parceira."""
+def cria_anotacao(request, login):  # acertar isso para pk
+    """ Cria um anotação para uma organização parceira. """
 
     try:
         organizacao = Organizacao.objects.get(id=login)
@@ -103,14 +103,14 @@ def parceiro_propostas(request):
         return render(request, 'generic.html', context=context)
 
     propostas = Proposta.objects.filter(organizacao=user.parceiro.organizacao).\
-                        order_by("ano", "semestre", "titulo",)
+        order_by("ano", "semestre", "titulo",)
     context = {
         'propostas': propostas,
     }
     return render(request, 'organizacoes/parceiro_propostas.html', context)
 
 
-#@login_required
+# @login_required
 def proposta_submissao(request):
     """Formulário de Submissão de Proposta de Projetos."""
     try:
@@ -130,7 +130,7 @@ def proposta_submissao(request):
 
     if user:
 
-        if user.tipo_de_usuario == 1: # alunos
+        if user.tipo_de_usuario == 1:  # alunos
             mensagem = "Você não está cadastrado como parceiro de uma organização!"
             context = {
                 "area_principal": True,
@@ -141,7 +141,7 @@ def proposta_submissao(request):
         full_name = user.get_full_name()
         email_sub = user.email
 
-        if user.tipo_de_usuario == 3: # parceiro
+        if user.tipo_de_usuario == 3:  # parceiro
             try:
                 parceiro = Parceiro.objects.get(pk=request.user.parceiro.pk)
             except Parceiro.DoesNotExist:
@@ -150,12 +150,12 @@ def proposta_submissao(request):
             website = parceiro.organizacao.website
             endereco = parceiro.organizacao.endereco
             descricao_organizacao = parceiro.organizacao.informacoes
-        elif user.tipo_de_usuario == 2: # professor
+        elif user.tipo_de_usuario == 2:  # professor
             try:
                 professor = Professor.objects.get(pk=request.user.professor.pk)
             except Professor.DoesNotExist:
                 return HttpResponse("Professor não encontrado.", status=401)
-        elif user.tipo_de_usuario == 4: # admin
+        elif user.tipo_de_usuario == 4:  # admin
             try:
                 administrador = Administrador.objects.get(pk=request.user.administrador.pk)
             except Administrador.DoesNotExist:
@@ -163,7 +163,7 @@ def proposta_submissao(request):
 
     if request.method == 'POST':
         proposta = preenche_proposta(request, None)
-        mensagem = envia_proposta(proposta) # Por e-mail
+        mensagem = envia_proposta(proposta)  # Por e-mail
 
         resposta = "Submissão de proposta de projeto realizada com sucesso.<br>"
         resposta += "Você deve receber um e-mail de confirmação nos próximos instantes.<br>"
@@ -185,27 +185,27 @@ def proposta_submissao(request):
             return HttpResponseNotFound('<h1>Organização não encontrado!</h1>')
 
     context = {
-        'full_name' : full_name,
-        'email' : email_sub,
-        'organizacao' : organizacao,
-        'website' : website,
-        'endereco' : endereco,
-        'descricao_organizacao' : descricao_organizacao,
-        'parceiro' : parceiro,
-        'professor' : professor,
-        'administrador' : administrador,
-        'contatos_tecnicos' : "",
-        'contatos_adm' : "",
-        'info_departamento' : "",
-        'titulo' : "",
-        'desc_projeto' : "",
-        'expectativas' : "",
-        'areast' : areas,
-        'recursos' : "",
-        'observacoes' : "",
-        'edicao' : False,
-        'interesses' : Proposta.TIPO_INTERESSE,
-        'tipo_de_interesse' : 0 # Não existe na verdade
+        'full_name': full_name,
+        'email': email_sub,
+        'organizacao': organizacao,
+        'website': website,
+        'endereco': endereco,
+        'descricao_organizacao': descricao_organizacao,
+        'parceiro': parceiro,
+        'professor': professor,
+        'administrador': administrador,
+        'contatos_tecnicos': "",
+        'contatos_adm': "",
+        'info_departamento': "",
+        'titulo': "",
+        'desc_projeto': "",
+        'expectativas': "",
+        'areast': areas,
+        'recursos': "",
+        'observacoes': "",
+        'edicao': False,
+        'interesses': Proposta.TIPO_INTERESSE,
+        'tipo_de_interesse': 0  # Não existe na verdade
     }
     return render(request, 'organizacoes/proposta_submissao.html', context)
 
@@ -234,7 +234,7 @@ def organizacoes_prospect(request):
 
     periodo = 60
     if request.is_ajax() and 'periodo' in request.POST:
-        periodo = int(request.POST['periodo'])*30 # periodo vem em meses
+        periodo = int(request.POST['periodo'])*30  # periodo vem em meses
 
     for organizacao in todas_organizacoes:
         propostas = Proposta.objects.filter(organizacao=organizacao).order_by("ano", "semestre")
@@ -268,6 +268,7 @@ def organizacoes_prospect(request):
         'filtro': "todas",
         }
     return render(request, 'organizacoes/organizacoes_prospectadas.html', context)
+
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
@@ -313,7 +314,7 @@ def organizacoes_lista(request):
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
-def organizacao_completo(request, org): #acertar isso para pk
+def organizacao_completo(request, org):  # acertar isso para pk
     """Exibe detalhes das organizações parceiras."""
 
     try:
@@ -323,10 +324,11 @@ def organizacao_completo(request, org): #acertar isso para pk
 
     context = {
         'organizacao': organizacao,
-        'MEDIA_URL' : settings.MEDIA_URL,
+        'MEDIA_URL': settings.MEDIA_URL,
     }
 
     return render(request, 'organizacoes/organizacao_completo.html', context=context)
+
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')
@@ -352,14 +354,14 @@ def organizacoes_tabela(request):
                                          filter(ano=ano).\
                                          filter(semestre=semestre)
             if grupos_pfe:
-                for grupo in grupos_pfe: # garante que tem alunos no projeto
+                for grupo in grupos_pfe:  # garante que tem alunos no projeto
                     alunos_pfe = Aluno.objects.filter(alocacao__projeto=grupo)
-                    if alunos_pfe: #len(alunos_pfe) > 0
+                    if alunos_pfe:  # len(alunos_pfe) > 0
                         count_projetos.append(grupo)
                 if count_projetos:
                     organizacoes.append(organizacao)
                     grupos.append(count_projetos)
-        if organizacoes: # Se não houver nenhum organização não cria entrada na lista
+        if organizacoes:  # Se não houver nenhum organização não cria entrada na lista
             organizacoes_pfe.append(zip(organizacoes, grupos))
             periodo.append(str(ano)+"."+str(semestre))
 
@@ -375,7 +377,7 @@ def organizacoes_tabela(request):
         else:
             semestre = 2
 
-    anos = zip(organizacoes_pfe[::-1], periodo[::-1]) #inverti lista deixando os mais novos primeiro
+    anos = zip(organizacoes_pfe[::-1], periodo[::-1])  # inverti lista deixando os mais novos primeiro
 
     context = {
         'anos': anos,
@@ -384,8 +386,7 @@ def organizacoes_tabela(request):
     return render(request, 'organizacoes/organizacoes_tabela.html', context)
 
 
-
-#@login_required
+# @login_required
 def projeto_feedback(request):
     """Para Feedback das Organizações Parceiras."""
 

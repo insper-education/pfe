@@ -176,8 +176,7 @@ CELERY_BROKER_URL = 'amqp://guest:guest@localhost//'
 CELERY_BEAT_SCHEDULE = {
     'backup': {
         'task': 'projetos.tasks.backup',
-        # 'schedule': crontab(hour=3, minute=0, day_of_week=1), # Toda segunda-feira as 3:00
-        'schedule': crontab(minute='*/5'), # a cada 5 minutos
+        'schedule': crontab(hour=3, minute=0, day_of_week=1), # Toda segunda-feira as 3:00
     },
     "mediabackup": {
         "task": "core.tasks.mediabackup",

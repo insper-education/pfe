@@ -11,6 +11,7 @@ from django.contrib.admin import SimpleListFilter
 from .models import PFEUser, Aluno, Professor, Parceiro, Administrador
 from .models import Opcao, Alocacao   # Mover para outra área
 
+
 class FirstLetterFilter(SimpleListFilter):
     """Filtro para separar pela primeira letra do nome."""
     # Titulo no painel de busca
@@ -40,9 +41,10 @@ class FirstLetterFilter(SimpleListFilter):
         """
         filter_val = self.value()
         if filter_val in self.letters:
-            if "pfeuser" in str(request): # isso não está nada bom
+            if "pfeuser" in str(request):  # isso não está nada bom
                 return queryset.filter(first_name__istartswith=self.value())
             return queryset.filter(user__first_name__istartswith=self.value())
+
 
 @admin.register(PFEUser)
 class PFEUserAdmin(admin.ModelAdmin):
@@ -57,31 +59,34 @@ class PFEUserAdmin(admin.ModelAdmin):
          {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
     )
     ordering = ('first_name', 'last_name')
-    search_fields = ['first_name', 'last_name',]
+    search_fields = ['first_name', 'last_name', ]
+
 
 @admin.register(Aluno)
 class AlunoAdmin(admin.ModelAdmin):
     """Definição de aluno do PFE."""
     list_display = ('user', 'curso', 'anoPFE', 'semestrePFE')
-    ordering = ('user__first_name', 'user__last_name',)
+    ordering = ('user__first_name', 'user__last_name', )
     list_filter = (FirstLetterFilter, )
-    search_fields = ['user__first_name', 'user__last_name',]
+    search_fields = ['user__first_name', 'user__last_name', ]
+
 
 @admin.register(Alocacao)
 class AlocacaoAdmin(admin.ModelAdmin):
     """Definição de Alocacao do PFE."""
     list_display = ('aluno', 'projeto',)
     ordering = ('-projeto__ano', '-projeto__semestre',)
-    search_fields = ['aluno__user__first_name', 'aluno__user__last_name', 'projeto__titulo', 'projeto__titulo_final',]
+    search_fields = ['aluno__user__first_name', 'aluno__user__last_name', 'projeto__titulo', 'projeto__titulo_final', ]
+
 
 @admin.register(Parceiro)
 class ParceiroAdmin(admin.ModelAdmin):
     """Definição de Parceiro do PFE."""
     list_display = ('get_full_name', 'get_sigla', 'email', 'telefone',
                     'celular', 'principal_contato')
-    ordering = ('user__first_name', 'user__last_name',)
+    ordering = ('user__first_name', 'user__last_name', )
     list_filter = (FirstLetterFilter, )
-    search_fields = ['user__first_name', 'user__last_name',]
+    search_fields = ['user__first_name', 'user__last_name', ]
 
     def get_full_name(self, obj):
         """Retorna o nome completo do usuário"""
@@ -103,22 +108,26 @@ class ParceiroAdmin(admin.ModelAdmin):
         return obj.user.email
     get_full_name.short_description = 'e-mail'
 
+
 @admin.register(Professor)
 class ProfessorAdmin(admin.ModelAdmin):
     """Definição de Professor do PFE."""
     list_display = ('user', 'lattes')
-    ordering = ('user__first_name', 'user__last_name',)
+    ordering = ('user__first_name', 'user__last_name', )
     list_filter = (FirstLetterFilter, )
-    search_fields = ['user__first_name', 'user__last_name',]
+    search_fields = ['user__first_name', 'user__last_name', ]
+
 
 admin.site.register(Administrador)
+
 
 @admin.register(Opcao)
 class OpcaoAdmin(admin.ModelAdmin):
     """Definição de Opções do PFE."""
     list_display = ('aluno', 'proposta', 'prioridade')
-    ordering = ('aluno',)
-    search_fields = ['aluno__user__first_name', 'aluno__user__last_name',]
+    ordering = ('aluno', )
+    search_fields = ['aluno__user__first_name', 'aluno__user__last_name', ]
+
 
 class OpcaoInline(admin.TabularInline):
     """.Não me lembro onde uso isso, provavel código morto."""

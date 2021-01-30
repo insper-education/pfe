@@ -5,7 +5,7 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 17 de Dezembro de 2020
 """
 
-import re           #regular expression (para o import)
+import re           # regular expression (para o import)
 import tablib
 import dateutil.parser
 
@@ -53,7 +53,7 @@ def index_carregar(request):
         return HttpResponse("Usuário não encontrado.", status=401)
 
     if user:
-        if user.tipo_de_usuario != 4: # não é admin
+        if user.tipo_de_usuario != 4:  # não é admin
             mensagem = "Você não tem privilégios de administrador!"
             context = {
                 "area_principal": True,
@@ -87,15 +87,15 @@ def emails(request):
     while True:
         semestres.append(str(ano)+"."+str(semestre))
 
-        projetos_pessoas = {} # Dicionario com as pessoas do projeto
+        projetos_pessoas = {}  # Dicionario com as pessoas do projeto
 
-        alunos_semestre = [] # Alunos do semestre
-        organizacoes = [] # Controla as organizações participantes por semestre
-        orientadores = [] # Orientadores por semestre
-        membros_bancas = [] # Membros das bancas
+        alunos_semestre = []  # Alunos do semestre
+        organizacoes = []  # Controla as organizações participantes por semestre
+        orientadores = []  # Orientadores por semestre
+        membros_bancas = []  # Membros das bancas
 
         for projeto in Projeto.objects.filter(ano=ano).filter(semestre=semestre):
-            if Aluno.objects.filter(alocacao__projeto=projeto): #checa se tem alunos
+            if Aluno.objects.filter(alocacao__projeto=projeto):  # checa se tem alunos
                 alunos_tmp = Aluno.objects.filter(trancado=False).\
                               filter(alocacao__projeto=projeto).\
                               filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
@@ -104,10 +104,10 @@ def emails(request):
                 conexoes = Conexao.objects.filter(projeto=projeto)
 
                 if projeto.orientador not in orientadores:
-                    orientadores.append(orientador) # Junta orientadores do semestre
+                    orientadores.append(orientador)  # Junta orientadores do semestre
 
                 if projeto.organizacao not in organizacoes:
-                    organizacoes.append(projeto.organizacao) # Junta organizações do semestre
+                    organizacoes.append(projeto.organizacao)  # Junta organizações do semestre
 
                 bancas = Banca.objects.filter(projeto=projeto)
                 for banca in bancas:
@@ -119,9 +119,9 @@ def emails(request):
                         membros_bancas.append(banca.membro3)
 
                 projetos_pessoas[projeto] = dict()
-                projetos_pessoas[projeto]["estudantes"] = list(alunos_tmp) # Pessoas por projeto
-                projetos_pessoas[projeto]["orientador"] = list([orientador]) # Pessoas por projeto
-                projetos_pessoas[projeto]["conexoes"] = list(conexoes) # Todos conectados ao projeto
+                projetos_pessoas[projeto]["estudantes"] = list(alunos_tmp)  # Pessoas por projeto
+                projetos_pessoas[projeto]["orientador"] = list([orientador])  # Pessoas por projeto
+                projetos_pessoas[projeto]["conexoes"] = list(conexoes)  # Todos conectados ao projeto
 
         # Parceiros de todas as organizações parceiras
         parceiros_semestre = Parceiro.objects.filter(organizacao__in=organizacoes,
@@ -129,11 +129,11 @@ def emails(request):
 
         # Cria listas para enviar para templeate html
         alunos_p_semestre.append(Aluno.objects.filter(trancado=False).\
-                                filter(anoPFE=ano).\
-                                filter(semestrePFE=semestre).\
-                                filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0]))
+                                 filter(anoPFE=ano).\
+                                 filter(semestrePFE=semestre).\
+                                 filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0]))
 
-        #alocados_p_semestre.append(alunos_semestre)
+        # alocados_p_semestre.append(alunos_semestre)
         orientadores_p_semestre.append(orientadores)
         parceiros_p_semestre.append(parceiros_semestre)
         bancas_p_semestre.append(membros_bancas)
@@ -147,7 +147,7 @@ def emails(request):
         ano, semestre = adianta_semestre(ano, semestre)
 
     email_todos = zip(semestres,
-                      alunos_p_semestre,  #na pratica chamaremos de aluno no template
+                      alunos_p_semestre,  # na pratica chamaremos de aluno no template
                       orientadores_p_semestre,
                       parceiros_p_semestre,
                       bancas_p_semestre)
@@ -157,21 +157,22 @@ def emails(request):
     membros_comite = PFEUser.objects.filter(membro_comite=True)
 
     lista_todos_alunos = Aluno.objects.filter(trancado=False).\
-                                 filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
+        filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
 
     lista_todos_professores = Professor.objects.all()
     lista_todos_parceiros = Parceiro.objects.all()
 
     context = {
-        'email_todos' : email_todos,
-        'email_p_semestre' : email_p_semestre,
-        'membros_comite' : membros_comite,
-        'todos_alunos' : lista_todos_alunos,
-        'todos_professores' : lista_todos_professores,
-        'todos_parceiros' : lista_todos_parceiros,
+        'email_todos': email_todos,
+        'email_p_semestre': email_p_semestre,
+        'membros_comite': membros_comite,
+        'todos_alunos': lista_todos_alunos,
+        'todos_professores': lista_todos_professores,
+        'todos_parceiros': lista_todos_parceiros,
     }
 
     return render(request, 'administracao/emails.html', context=context)
+
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
@@ -184,8 +185,8 @@ def cadastrar_organizacao(request):
 
             organizacao = Organizacao.create()
 
-            organizacao.nome= request.POST.get('nome', None)
-            organizacao.sigla= request.POST.get('sigla', None)
+            organizacao.nome = request.POST.get('nome', None)
+            organizacao.sigla = request.POST.get('sigla', None)
 
             organizacao.endereco = request.POST.get('endereco', None)
             organizacao.website = request.POST.get('website', None)
@@ -241,11 +242,11 @@ def cadastrar_usuario(request):
             usuario.email = request.POST.get('email', None)
 
             tipo_de_usuario = request.POST.get('tipo_de_usuario', None)
-            if tipo_de_usuario == "estudante": # (1, 'aluno')
+            if tipo_de_usuario == "estudante":  # (1, 'aluno')
                 usuario.tipo_de_usuario = 1
-            elif tipo_de_usuario == "professor": # (2, 'professor')
+            elif tipo_de_usuario == "professor":  # (2, 'professor')
                 usuario.tipo_de_usuario = 2
-            elif tipo_de_usuario == "parceiro": # (3, 'parceiro')
+            elif tipo_de_usuario == "parceiro":  # (3, 'parceiro')
                 usuario.tipo_de_usuario = 3
             else:
                 # (4, 'administrador')
@@ -283,7 +284,7 @@ def cadastrar_usuario(request):
 
             usuario.save()
 
-            if usuario.tipo_de_usuario == 1: #estudante
+            if usuario.tipo_de_usuario == 1:  # estudante
 
                 estudante = Aluno.create(usuario)
 
@@ -307,14 +308,14 @@ def cadastrar_usuario(request):
 
                 estudante.save()
 
-            elif usuario.tipo_de_usuario == 2: #professor
+            elif usuario.tipo_de_usuario == 2:  # professor
 
                 professor = Professor.create(usuario)
 
                 dedicacao = request.POST.get('dedicacao', None)
-                if dedicacao == "ti": # ("TI", "Tempo Integral"),
+                if dedicacao == "ti":  # ("TI", "Tempo Integral"),
                     professor.dedicacao = 'TI'
-                elif dedicacao == "tp": # ("TP", 'Tempo Parcial'),
+                elif dedicacao == "tp":  # ("TP", 'Tempo Parcial'),
                     professor.dedicacao = 'TP'
                 else:
                     return HttpResponse("Algum erro não identificado.", status=401)
@@ -325,7 +326,7 @@ def cadastrar_usuario(request):
 
                 professor.save()
 
-            elif usuario.tipo_de_usuario == 3: #Parceiro
+            elif usuario.tipo_de_usuario == 3:  # Parceiro
 
                 parceiro = Parceiro.create(usuario)
 
@@ -360,13 +361,13 @@ def cadastrar_usuario(request):
         return render(request, 'generic.html', context=context)
 
     context = {
-        "organizacoes" : Organizacao.objects.all(),
+        "organizacoes": Organizacao.objects.all(),
     }
 
     # Passado o nome da organização do parceiro a ser cadastrado
     tipo = request.GET.get('tipo', None)
     if tipo:
-        if tipo=="parceiro":
+        if tipo == "parceiro":
             organizacao_str = request.GET.get('organizacao', None)
             if organizacao_str:
                 try:
@@ -409,9 +410,9 @@ def carrega_arquivo(request, dado):
         entradas = ""
         for i in new_data:
             texto = i.decode("utf-8")
-            entradas += re.sub('[^A-Za-z0-9À-ÿ, \r\n@._]+', '', texto) #Limpa caracteres especiais
+            entradas += re.sub('[^A-Za-z0-9À-ÿ, \r\n@._]+', '', texto)  # Limpa caracteres especiais
 
-        #imported_data = dataset.load(entradas, format='csv')
+        # imported_data = dataset.load(entradas, format='csv')
         dataset.load(entradas, format='csv')
         dataset.insert_col(0, col=lambda row: None, header="id")
 
@@ -512,8 +513,8 @@ def montar_grupos(request):
     propostas = Proposta.objects.filter(ano=ano, semestre=semestre, disponivel=True)
 
     estudantes = Aluno.objects.filter(trancado=False).\
-                               filter(anoPFE=ano, semestrePFE=semestre).\
-                               order_by(Lower("user__first_name"), Lower("user__last_name"))
+        filter(anoPFE=ano, semestrePFE=semestre).\
+        order_by(Lower("user__first_name"), Lower("user__last_name"))
 
     opcoes = []
     for estudante in estudantes:
@@ -532,7 +533,7 @@ def montar_grupos(request):
 
     mensagem = ""
 
-    if request.method == 'POST' and user and user.tipo_de_usuario == 4: # admin
+    if request.method == 'POST' and user and user.tipo_de_usuario == 4:  # admin
 
         if 'limpar' in request.POST:
             for estudante in estudantes:
@@ -552,7 +553,7 @@ def montar_grupos(request):
                                     filter(prioridade=1).first()
                         if op_aloc and op_aloc.proposta == proposta:
                             alocados.append(estudante)
-                if alocados: # pelo menos um estudante no projeto
+                if alocados:  # pelo menos um estudante no projeto
 
                     try:
                         projeto = Projeto.objects.get(proposta=proposta, avancado=False)
@@ -576,14 +577,14 @@ def montar_grupos(request):
                     projeto.save()
 
                     alocacoes = Alocacao.objects.filter(projeto=projeto)
-                    for alocacao in alocacoes: # Apaga todas alocacoes que não tiverem nota
+                    for alocacao in alocacoes:  # Apaga todas alocacoes que não tiverem nota
                         avals = list(Avaliacao2.objects.filter(alocacao=alocacao))
                         if not avals:
                             alocacao.delete()
                         else:
                             mensagem += "- "+str(alocacao.aluno)+"\n"
 
-                    for alocado in alocados: # alocando estudantes no projeto
+                    for alocado in alocados:  # alocando estudantes no projeto
                         alocacao = Alocacao.create(alocado, projeto)
                         alocacao.save()
 
@@ -602,7 +603,7 @@ def montar_grupos(request):
 
             return redirect('/administracao/selecionar_orientadores/')
 
-    if user and user.tipo_de_usuario != 4: # admin
+    if user and user.tipo_de_usuario != 4:  # admin
         mensagem = "Sua conta não é de administrador, "
         mensagem += "você pode mexer na tela, contudo suas modificações não serão salvas."
 
@@ -616,11 +617,10 @@ def montar_grupos(request):
     return render(request, 'administracao/montar_grupos.html', context=context)
 
 
-
 @login_required
 @permission_required("users.altera_professor", login_url='/')
 def selecionar_orientadores(request):
-    """Selecionar Orientadores para os Projetos."""
+    """ Selecionar Orientadores para os Projetos. """
 
     try:
         configuracao = Configuracao.objects.get()
@@ -639,8 +639,8 @@ def selecionar_orientadores(request):
 
     projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
 
-    professores = PFEUser.objects.filter(tipo_de_usuario=2) #(2, 'professor')
-    administradores = PFEUser.objects.filter(tipo_de_usuario=4) #(4, 'administrador')
+    professores = PFEUser.objects.filter(tipo_de_usuario=2)  # (2, 'professor')
+    administradores = PFEUser.objects.filter(tipo_de_usuario=4)  # (4, 'administrador')
     orientadores = (professores | administradores).order_by(Lower("first_name"), Lower("last_name"))
 
     # Checa se usuário é administrador ou professor
@@ -649,7 +649,7 @@ def selecionar_orientadores(request):
     except PFEUser.DoesNotExist:
         return HttpResponse("Usuário não encontrado.", status=401)
 
-    if user and user.tipo_de_usuario != 4: # admin
+    if user and user.tipo_de_usuario != 4:  # admin
         mensagem = "Sua conta não é de administrador, "
         mensagem += "você pode mexer na tela, contudo suas modificações não serão salvas."
 
@@ -678,9 +678,10 @@ def servico(request):
         configuracao.save()
         return redirect('/administracao')
 
-    context = {'manutencao': configuracao.manutencao,}
+    context = {'manutencao': configuracao.manutencao, }
 
     return render(request, 'administracao/servico.html', context)
+
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')
@@ -692,61 +693,59 @@ def pre_alocar_estudante(request):
     except PFEUser.DoesNotExist:
         return HttpResponse("Usuário não encontrado.", status=401)
 
-    if user:
+    if user.tipo_de_usuario == 4:  # admin
 
-        if user.tipo_de_usuario == 4: # admin
+        # Código a seguir não estritamente necessário mas pode deixar mais seguro
+        try:
+            administrador = Administrador.objects.get(pk=request.user.administrador.pk)
+        except Administrador.DoesNotExist:
+            return HttpResponse("Administrador não encontrado.", status=401)
 
-            # Código a seguir não estritamente necessário mas pode deixar mais seguro
-            try:
-                administrador = Administrador.objects.get(pk=request.user.administrador.pk)
-            except Administrador.DoesNotExist:
-                return HttpResponse("Administrador não encontrado.", status=401)
+        if not administrador:
+            return HttpResponse("Administrador não encontrado.", status=401)
 
-            if not administrador:
-                return HttpResponse("Administrador não encontrado.", status=401)
+        estudante = request.GET.get('estudante', None)
+        estudante_id = int(estudante[len("estudante"):])
 
-            estudante = request.GET.get('estudante', None)
-            estudante_id = int(estudante[len("estudante"):])
+        proposta = request.GET.get('proposta', None)
+        proposta_id = int(proposta[len("proposta"):])
 
-            proposta = request.GET.get('proposta', None)
-            proposta_id = int(proposta[len("proposta"):])
+        try:
+            configuracao = Configuracao.objects.get()
+            ano = configuracao.ano
+            semestre = configuracao.semestre
+        except Configuracao.DoesNotExist:
+            return HttpResponse("Falha na configuracao do sistema.", status=401)
 
-            try:
-                configuracao = Configuracao.objects.get()
-                ano = configuracao.ano
-                semestre = configuracao.semestre
-            except Configuracao.DoesNotExist:
-                return HttpResponse("Falha na configuracao do sistema.", status=401)
+        # Vai para próximo semestre
+        ano, semestre = adianta_semestre(ano, semestre)
 
-            # Vai para próximo semestre
-            ano, semestre = adianta_semestre(ano, semestre)
+        try:
+            proposta = Proposta.objects.get(id=proposta_id)
+        except Proposta.DoesNotExist:
+            return HttpResponseNotFound('<h1>Proposta não encontrada!</h1>')
 
-            try:
-                proposta = Proposta.objects.get(id=proposta_id)
-            except Proposta.DoesNotExist:
-                return HttpResponseNotFound('<h1>Proposta não encontrada!</h1>')
+        try:
+            estudante = Aluno.objects.get(id=estudante_id)
+            estudante.pre_alocacao = proposta
+            estudante.save()
+        except Aluno.DoesNotExist:
+            return HttpResponseNotFound('<h1>Estudante não encontrado!</h1>')
 
-            try:
-                estudante = Aluno.objects.get(id=estudante_id)
-                estudante.pre_alocacao = proposta
-                estudante.save()
-            except Aluno.DoesNotExist:
-                return HttpResponseNotFound('<h1>Estudante não encontrado!</h1>')
+        data = {
+            'atualizado': True,
+        }
 
-            data = {
-                'atualizado': True,
-            }
+    elif user.tipo_de_usuario == 2:  # professor
 
-        elif user.tipo_de_usuario == 2: # professor
+        # atualizações não serão salvas
 
-            # atualizações não serão salvas
+        data = {
+            'atualizado': False,
+        }
 
-            data = {
-                'atualizado': False,
-            }
-
-        else:
-            return HttpResponseNotFound('<h1>Usuário sem privilérios!</h1>')
+    else:
+        return HttpResponseNotFound('<h1>Usuário sem privilérios!</h1>')
 
     return JsonResponse(data)
 
@@ -761,52 +760,51 @@ def definir_orientador(request):
     except PFEUser.DoesNotExist:
         return HttpResponse("Usuário não encontrado.", status=401)
 
-    if user:
+    if user.tipo_de_usuario == 4:  # admin
 
-        if user.tipo_de_usuario == 4: # admin
+        # Código a se usuário é administrador
 
-            # Código a se usuário é administrador
+        orientador_get = request.GET.get('orientador', None)
+        orientador_id = None
+        if orientador_get:
+            orientador_id = int(orientador_get[len("orientador"):])
 
-            orientador_get = request.GET.get('orientador', None)
-            orientador_id = None
-            if orientador_get:
-                orientador_id = int(orientador_get[len("orientador"):])
+        projeto_get = request.GET.get('projeto', None)
+        projeto_id = None
+        if projeto_get:
+            projeto_id = int(projeto_get[len("projeto"):])
 
-            projeto_get = request.GET.get('projeto', None)
-            projeto_id = None
-            if projeto_get:
-                projeto_id = int(projeto_get[len("projeto"):])
-
-            if orientador_id:
-                try:
-                    orientador = Professor.objects.get(user_id=orientador_id)
-                except Professor.DoesNotExist:
-                    return HttpResponseNotFound('<h1>Orientador não encontrado!</h1>')
-            else:
-                orientador = None
-
+        if orientador_id:
             try:
-                projeto = Projeto.objects.get(id=projeto_id)
-                projeto.orientador = orientador
-                projeto.save()
-            except Projeto.DoesNotExist:
-                return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
-
-            data = {
-                'atualizado': True,
-            }
-
-        elif user.tipo_de_usuario == 2: # professor
-
-            # atualizações não serão salvas
-            data = {
-                'atualizado': False,
-            }
-
+                orientador = Professor.objects.get(user_id=orientador_id)
+            except Professor.DoesNotExist:
+                return HttpResponseNotFound('<h1>Orientador não encontrado!</h1>')
         else:
-            return HttpResponseNotFound('<h1>Usuário sem privilérios!</h1>')
+            orientador = None
+
+        try:
+            projeto = Projeto.objects.get(id=projeto_id)
+            projeto.orientador = orientador
+            projeto.save()
+        except Projeto.DoesNotExist:
+            return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
+
+        data = {
+            'atualizado': True,
+        }
+
+    elif user.tipo_de_usuario == 2:  # professor
+
+        # atualizações não serão salvas
+        data = {
+            'atualizado': False,
+        }
+
+    else:
+        return HttpResponseNotFound('<h1>Usuário sem privilérios!</h1>')
 
     return JsonResponse(data)
+
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
@@ -935,7 +933,7 @@ def email_backup(request):
     subject = 'BACKUP PFE'
     message = "Backup PFE"
     email_from = settings.EMAIL_HOST_USER
-    recipient_list = ['pfeinsper@gmail.com', 'lpsoares@gmail.com',]
+    recipient_list = ['pfeinsper@gmail.com', 'lpsoares@gmail.com', ]
     mail = EmailMessage(subject, message, email_from, recipient_list)
     databook = create_backup()
     mail.attach("backup.xlsx", databook.xlsx, 'application/ms-excel')
@@ -1002,7 +1000,7 @@ def relatorio_backup(request):
     subject = 'RELATÓRIOS PFE'
     message = "Relatórios PFE"
     email_from = settings.EMAIL_HOST_USER
-    recipient_list = ['pfeinsper@gmail.com', 'lpsoares@gmail.com',]
+    recipient_list = ['pfeinsper@gmail.com', 'lpsoares@gmail.com', ]
     mail = EmailMessage(subject, message, email_from, recipient_list)
 
     try:
@@ -1013,8 +1011,8 @@ def relatorio_backup(request):
     context = {
         'projetos': Projeto.objects.all(),
         'alunos': Aluno.objects.filter(user__tipo_de_usuario=1).\
-                                filter(anoPFE=configuracao.ano).\
-                                filter(semestrePFE=configuracao.semestre),
+            filter(anoPFE=configuracao.ano).\
+            filter(semestrePFE=configuracao.semestre),
         'configuracao': configuracao,
     }
 

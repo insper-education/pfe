@@ -26,7 +26,7 @@ from projetos.models import Configuracao, Evento
 
 
 def get_calendario_context(primarykey=None):
-    """Contexto para gerar calendário."""
+    """ Contexto para gerar calendário. """
 
     if primarykey:
         try:

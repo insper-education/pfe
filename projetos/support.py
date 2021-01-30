@@ -13,6 +13,7 @@ from .models import Area, AreaDeInteresse
 # Estudar raise Http404
 # from django.http import Http404
 
+
 def converte_conceito(conceito):
     """Converte de Letra para Número."""
     if conceito == "A+":
@@ -30,6 +31,7 @@ def converte_conceito(conceito):
     elif conceito == "D" or conceito == "D ":
         return 4
     return 0
+
 
 def converte_letra(nota, mais="+", espaco=""):
     """Converte de Número para Letra."""
@@ -106,31 +108,31 @@ def get_areas_propostas(propostas):
 
 #### ISSO TEM DEVIRAR UM PARÂMETRO DE INTERFACE NO FUTURO ####
 def get_peso(banca, objetivo):
-    """Calcula peso nas notas da banca em função do objetivo de aprendizado."""
+    """ Calcula peso nas notas da banca em função do objetivo de aprendizado. """
 
-    if banca == 1: #(1, 'intermediaria')
+    if banca == 1:  # (1, 'intermediaria')
         if objetivo.titulo == "Execução Técnica":
             return 3.6
         if objetivo.titulo == "Organização":
             return 2.7
         if objetivo.titulo == "Design/Empreendedorismo":
             return 2.7
-    elif banca == 2: #( 2, 'Banca Final'),
+    elif banca == 2:  # ( 2, 'Banca Final'),
         if objetivo.titulo == "Execução Técnica":
             return 8.4
         if objetivo.titulo == "Organização":
             return 6.3
         if objetivo.titulo == "Design/Empreendedorismo":
             return 6.3
-    elif banca == 99: #( 99, 'Banca Falconi'),
+    elif banca == 99:  # ( 99, 'Banca Falconi'),
         return 0
 
-    return 0 # Algum erro aconteceu
+    return 0  # Algum erro aconteceu
 
 
 # Faz o upload de arquivos
 def simple_upload(myfile, path="", prefix=""):
-    """Faz uploads para o servidor."""
+    """ Faz uploads para o servidor. """
     file_system_storage = FileSystemStorage()
     filename = file_system_storage.save(path+prefix+text.get_valid_filename(myfile.name), myfile)
     uploaded_file_url = file_system_storage.url(filename)

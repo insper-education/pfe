@@ -1,3 +1,4 @@
+source ~/pfe/env/bin/activate
 touch pfe.log
 sudo chown ubuntu.ubuntu pfe.log
 sudo chmod a+w pfe.log

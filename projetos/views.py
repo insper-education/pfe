@@ -13,14 +13,17 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
 from django.db.models.functions import Lower
-from django.http import Http404, HttpResponse, HttpResponseNotFound, JsonResponse
+from django.http import Http404, HttpResponse, HttpResponseNotFound
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 
 from users.models import PFEUser, Aluno, Professor, Opcao
 
 from users.support import get_edicoes
 
-from .models import Projeto, Proposta, Configuracao, Evento, Coorientador
+from .models import Projeto, Proposta, Configuracao, Coorientador
+# from .models import Evento
+
 from .models import Feedback, AreaDeInteresse
 from .models import Documento, Encontro, Banco, Reembolso, Aviso, Conexao
 
@@ -40,14 +43,14 @@ def index(request):
 
     if configuracao and configuracao.manutencao:
         return render(request, 'projetos/manutencao.html')
-    #num_visits = request.session.get('num_visits', 0) # Numero de visitas a página.
-    #request.session['num_visits'] = num_visits + 1
+    # num_visits = request.session.get('num_visits', 0) # Visitas a página.
+    # request.session['num_visits'] = num_visits + 1
 
     context = {
         'configuracao': configuracao,
     }
 
-    #'num_visits': num_visits,
+    # 'num_visits': num_visits,
     return render(request, 'index.html', context=context)
 
 
@@ -67,13 +70,13 @@ def index_projetos(request):
         'configuracao': configuracao,
     }
 
-    #'num_visits': num_visits,
+    # 'num_visits': num_visits,
     return render(request, 'index_projetos.html', context=context)
 
 
 @login_required
 def projeto_detalhes(request, primarykey):
-    """Exibe uma proposta de projeto com seus detalhes para o estudante aplicar."""
+    """ Exibe proposta de projeto com seus detalhes para estudantes. """
 
     try:
         projeto = Projeto.objects.get(pk=primarykey)
@@ -82,7 +85,7 @@ def projeto_detalhes(request, primarykey):
 
     context = {
         'projeto': projeto,
-        'MEDIA_URL' : settings.MEDIA_URL,
+        'MEDIA_URL': settings.MEDIA_URL,
     }
 
     return render(request, 'projetos/projeto_detalhes.html', context=context)
@@ -113,7 +116,7 @@ def projeto_completo(request, primakey):
         'opcoes': opcoes,
         'conexoes': conexoes,
         'coorientadores': coorientadores,
-        'MEDIA_URL' : settings.MEDIA_URL,
+        'MEDIA_URL': settings.MEDIA_URL,
     }
 
     return render(request, 'projetos/projeto_completo.html', context=context)
@@ -122,7 +125,7 @@ def projeto_completo(request, primakey):
 @login_required
 @permission_required("users.altera_professor", login_url='/')
 def distribuicao_areas(request):
-    """Mostra distribuição por área de interesse dos alunos, propostas e projetos."""
+    """ Distribuição por área de interesse dos alunos/propostas/projetos. """
 
     try:
         configuracao = Configuracao.objects.get()
@@ -131,7 +134,7 @@ def distribuicao_areas(request):
     except Configuracao.DoesNotExist:
         return HttpResponse("Falha na configuracao do sistema.", status=401)
 
-    todas = False                       # Para mostrar todos os dados de todos os anos e semestres
+    todas = False  # Para mostrar todos os dados de todos os anos e semestres
     tipo = "estudantes"
     curso = "todos"
 
@@ -146,13 +149,14 @@ def distribuicao_areas(request):
             else:
                 periodo = request.POST['edicao'].split('.')
                 ano = int(periodo[0])
-                semestre =int(periodo[1])
+                semestre = int(periodo[1])
 
             if tipo == "estudantes" and 'curso' in request.POST:
                 curso = request.POST['curso']
 
         else:
-            return HttpResponse("Algum erro não identificado (POST incompleto).", status=401)
+            return HttpResponse("Erro não identificado (POST incompleto).",
+                                status=401)
 
     if tipo == "estudantes":
         alunos = Aluno.objects.filter(user__tipo_de_usuario=1)
@@ -195,7 +199,8 @@ def distribuicao_areas(request):
         }
 
     else:
-        return HttpResponse("Algum erro não identificado (não encontrado tipo).", status=401)
+        return HttpResponse("Erro não identificado (não encontrado tipo).",
+                            status=401)
 
     context['tipo'] = tipo
     context['periodo'] = str(ano)+"."+str(semestre)
@@ -220,7 +225,8 @@ def projetos_fechados(request):
                 projetos_filtrados = Projeto.objects.all()
             else:
                 ano, semestre = request.POST['edicao'].split('.')
-                projetos_filtrados = Projeto.objects.filter(ano=ano, semestre=semestre)
+                projetos_filtrados = Projeto.objects.filter(ano=ano,
+                                                            semestre=semestre)
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
@@ -234,7 +240,7 @@ def projetos_fechados(request):
 
     for projeto in projetos_filtrados:
         estudantes_pfe = Aluno.objects.filter(alocacao__projeto=projeto)
-        if estudantes_pfe: #len(estudantes_pfe) > 0:
+        if estudantes_pfe:  # len(estudantes_pfe) > 0:
             projetos_selecionados.append(projeto)
             numero_estudantes += len(estudantes_pfe)
             prioridades = []
@@ -249,7 +255,8 @@ def projetos_fechados(request):
                 else:
                     prioridades.append(0)
             prioridade_list.append(zip(estudantes_pfe, prioridades))
-            conexoes.append(Conexao.objects.filter(projeto=projeto, colaboracao=True))
+            conexoes.append(Conexao.objects.filter(projeto=projeto,
+                                                   colaboracao=True))
 
     projetos = zip(projetos_selecionados, prioridade_list, conexoes)
 
@@ -263,8 +270,12 @@ def projetos_fechados(request):
 
 
 def get_response(file, path):
-    """Verifica a extensão do arquivo e retorna o HttpRensponse corespondente."""
-    #image/gif, image/tiff, application/zip, audio/mpeg, audio/ogg, text/csv, text/plain
+    """ Checa extensão do arquivo e retorna HttpRensponse corespondente. """
+
+    # Exemplos:
+    # image/gif, image/tiff, application/zip,
+    # audio/mpeg, audio/ogg, text/csv, text/plain
+
     if path[-3:].lower() == "jpg" or path[-4:].lower() == "jpeg":
         return HttpResponse(file.read(), content_type="image/jpeg")
     elif path[-3:].lower() == "png":
@@ -286,7 +297,7 @@ def carrega_arquivo(request, local_path, path):
     if "\\" in file_path:
         raise PermissionDenied
     if os.path.exists(file_path):
-        doc = Documento.objects.filter(documento=local_path[len(settings.BASE_DIR)+\
+        doc = Documento.objects.filter(documento=local_path[len(settings.BASE_DIR) +\
                                                             len(settings.MEDIA_URL):]).last()
         if doc:
 
@@ -311,7 +322,8 @@ def carrega_arquivo(request, local_path, path):
                     "mensagem": mensagem,
                 }
                 return render(request, 'generic.html', context=context)
-            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+            response['Content-Disposition'] = 'inline; filename=' +\
+                os.path.basename(file_path)
             return response
 
     raise Http404
@@ -337,7 +349,7 @@ def arquivos2(request, organizacao, usuario, path):
     return carrega_arquivo(request, local_path, path)
 
 
-#@login_required
+# @login_required
 def arquivos3(request, organizacao, projeto, usuario, path):
     """Permite acessar arquivos do servidor."""
 
@@ -357,7 +369,7 @@ def projetos_lista(request, periodo):
     except Configuracao.DoesNotExist:
         return HttpResponse("Falha na configuracao do sistema.", status=401)
 
-    projetos = Projeto.objects.filter(alocacao__isnull=False).distinct() # no futuro remover
+    projetos = Projeto.objects.filter(alocacao__isnull=False).distinct()  # no futuro remover
     projetos = projetos.order_by("ano", "semestre", "organizacao", "titulo",)
     if periodo == "todos":
         pass
@@ -378,8 +390,8 @@ def projetos_lista(request, periodo):
 
     context = {
         'projetos': projetos,
-        'periodo' : periodo,
-        'configuracao' : configuracao,
+        'periodo': periodo,
+        'configuracao': configuracao,
     }
 
     return render(request, 'projetos/projetos_lista.html', context)
@@ -433,7 +445,7 @@ def meuprojeto(request):
 
     context = {
         'aluno': aluno,
-        'configuracao' : configuracao,
+        'configuracao': configuracao,
     }
 
     return render(request, 'projetos/meuprojeto_aluno.html', context=context)
@@ -444,6 +456,7 @@ def meuprojeto(request):
 def dinamicas_root(request):
     """Mostra os horários das próximas dinâmicas."""
     return redirect('dinamicas', "proximas")
+
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')
@@ -457,23 +470,24 @@ def dinamicas(request, periodo):
         encontros = todos_encontros
     context = {
         'encontros': encontros,
-        'periodo' : periodo,
+        'periodo': periodo,
     }
     return render(request, 'projetos/dinamicas.html', context)
+
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')
 def carrega_bancos(request):
-    """rotina que carrega arquivo CSV de bancos para base de dados do servidor."""
+    """ Rotina que carrega arquivo CSV de bancos para base de dados do servidor. """
     with open('projetos/bancos.csv') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         for row in csv_reader:
             if line_count == 0:
-                #print("Colunas {} e {}".format(row[0],row[1]))
+                # print("Colunas {} e {}".format(row[0],row[1]))
                 pass
             else:
-                #print('Nome: {}; Código {}'.format(row[0],row[1]))
+                # print('Nome: {}; Código {}'.format(row[0],row[1]))
                 banco = Banco.create(nome=row[0], codigo=row[1])
                 banco.save()
             line_count += 1
@@ -533,7 +547,7 @@ def reembolso_pedir(request):
 
         reembolso.valor = request.POST['valor']
 
-        reembolso.save() # Preciso salvar para pegar o PK
+        reembolso.save()  # Preciso salvar para pegar o PK
         nota_fiscal = simple_upload(request.FILES['arquivo'],
                                     path="reembolsos/",
                                     prefix=str(reembolso.pk)+"_")
@@ -543,11 +557,11 @@ def reembolso_pedir(request):
 
         subject = 'Reembolso PFE : '+usuario.username
         recipient_list = configuracao.recipient_reembolso.split(";")
-        recipient_list.append('pfeinsper@gmail.com') #sempre mandar para a conta do gmail
-        recipient_list.append(usuario.email) #mandar para o usuário que pediu o reembolso
+        recipient_list.append('pfeinsper@gmail.com')  # sempre mandar para a conta do gmail
+        recipient_list.append(usuario.email)  # mandar para o usuário que pediu o reembolso
         if projeto:
             if projeto.orientador:
-                #mandar para o orientador se houver
+                # mandar para o orientador se houver
                 recipient_list.append(projeto.orientador.user.email)
         message = message_reembolso(usuario, projeto, reembolso, cpf)
         check = email(subject, recipient_list, message)
@@ -560,7 +574,7 @@ def reembolso_pedir(request):
             'usuario': usuario,
             'projeto': projeto,
             'bancos': bancos,
-            'configuracao' : configuracao,
+            'configuracao': configuracao,
         }
         return render(request, 'projetos/reembolso_pedir.html', context)
 
@@ -596,13 +610,13 @@ def lista_feedback(request):
     for ano_projeto in edicoes:
 
         projetos = Projeto.objects.filter(ano=ano_projeto).\
-                                   filter(semestre=2).\
-                                   count()
+            filter(semestre=2).\
+            count()
         num_projetos.append(projetos)
 
         projetos = Projeto.objects.filter(ano=ano_projeto+1).\
-                                   filter(semestre=1).\
-                                   count()
+            filter(semestre=1).\
+            count()
         num_projetos.append(projetos)
 
     feedbacks = Feedback.objects.all().order_by("-data")
@@ -610,22 +624,22 @@ def lista_feedback(request):
 
     # primeiro ano foi diferente
     numb_feedb = Feedback.objects.filter(data__range=["2018-06-01", "2019-05-31"]).\
-                          count()
+        count()
     num_feedbacks.append(numb_feedb)
 
     for ano_projeto in edicoes[1:]:
         numb_feedb = Feedback.objects.filter(data__range=[str(ano_projeto)+"-06-01",
                                                           str(ano_projeto)+"-12-31"]).\
-                                      count()
+            count()
         num_feedbacks.append(numb_feedb)
         numb_feedb = Feedback.objects.filter(data__range=[str(ano_projeto+1)+"-01-01",
                                                           str(ano_projeto+1)+"-05-31"]).\
-                                      count()
+            count()
         num_feedbacks.append(numb_feedb)
 
     context = {
-        'feedbacks' : feedbacks,
-        'SERVER_URL' : settings.SERVER,
+        'feedbacks': feedbacks,
+        'SERVER_URL': settings.SERVER,
         'loop_anos': edicoes,
         'num_projetos': num_projetos,
         'num_feedbacks': num_feedbacks,
@@ -644,10 +658,11 @@ def mostra_feedback(request, feedback_id):
         return HttpResponse("Feedback não encontrado.", status=401)
 
     context = {
-        'feedback' : feedback,
+        'feedback': feedback,
     }
 
     return render(request, 'projetos/mostra_feedback.html', context)
+
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')
@@ -696,13 +711,13 @@ def graficos(request):
     for ano_projeto in edicoes:
 
         projetos = Proposta.objects.filter(ano=ano_projeto).\
-                                    filter(semestre=2).\
-                                    count()
+            filter(semestre=2).\
+            count()
         num_propostas.append(projetos)
 
         projetos = Proposta.objects.filter(ano=ano_projeto+1).\
-                                    filter(semestre=1).\
-                                    count()
+            filter(semestre=1).\
+            count()
         num_propostas.append(projetos)
 
     # PROJETOS
@@ -715,8 +730,8 @@ def graficos(request):
         num_projetos.append(projetos)
 
         projetos = Projeto.objects.filter(ano=ano_projeto+1).\
-                                   filter(semestre=1).\
-                                   count()
+            filter(semestre=1).\
+            count()
         num_projetos.append(projetos)
 
     if request.is_ajax():
@@ -724,14 +739,14 @@ def graficos(request):
             if request.POST['topicId'] != 'todas':
                 periodo = request.POST['topicId'].split('.')
                 estudantes = estudantes.filter(anoPFE=int(periodo[0])).\
-                                filter(semestrePFE=int(periodo[1]))
+                    filter(semestrePFE=int(periodo[1]))
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
     # Número de estudantes e gêneros
     num_alunos = estudantes.count()
-    num_alunos_masculino = estudantes.filter(user__genero='M').count() # Estudantes masculino
-    num_alunos_feminino = estudantes.filter(user__genero='F').count() # Estudantes feminino
+    num_alunos_masculino = estudantes.filter(user__genero='M').count()  # Estudantes masculino
+    num_alunos_feminino = estudantes.filter(user__genero='F').count()  # Estudantes feminino
 
     context = {
         "num_propostas": num_propostas,
@@ -747,6 +762,7 @@ def graficos(request):
 
     return render(request, 'projetos/graficos.html', context)
 
+
 def cap_name(name):
     """ Capitaliza palavras. """
 
@@ -758,6 +774,7 @@ def cap_name(name):
         else:
             items.append(item.capitalize())
     return ' '.join(items)
+
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')
@@ -772,7 +789,7 @@ def nomes(request):
         first_name = cap_name(aluno.user.first_name)
         last_name = cap_name(aluno.user.last_name)
 
-        if ( first_name != aluno.user.first_name ) or ( last_name != aluno.user.last_name ):
+        if (first_name != aluno.user.first_name) or (last_name != aluno.user.last_name):
 
             message += aluno.user.first_name + " "
             message += aluno.user.last_name + "\t\t"
