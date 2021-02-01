@@ -433,8 +433,9 @@ class Evento(models.Model):
         (0, 'Feriado', 'lightgrey'),
         (1, 'Aula cancelada', 'lightgrey'),
 
+        (9, 'Alinhamentos iniciais entre Estudantes/Orientadores/Organizações', 'orange'),
         (10, 'Início das aulas', 'red'),
-        (11, 'Evento de abertura do PFE', 'orange'),
+        (11, 'Evento de abertura do PFE', 'orange'),  # Obsoleto
         (12, 'Aula PFE', 'lightgreen'),
         (13, 'Evento de encerramento do PFE', 'brown'),
         (14, 'Banca intermediária', 'violet'),
