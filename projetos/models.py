@@ -17,8 +17,10 @@ from django.contrib import admin
 from django.template.defaultfilters import slugify
 from django.utils.encoding import force_text
 
+
 def get_upload_path(instance, filename):
     """Caminhos para armazenar os arquivos."""
+
     caminho = ""
     if isinstance(instance, Documento):
         if instance.organizacao:
@@ -46,6 +48,7 @@ def get_upload_path(instance, filename):
     else:
         return "{0}".format(caminho)
 
+
 class Organizacao(models.Model):
     """Dados das organizações que propõe projetos para o PFE."""
 
@@ -69,7 +72,7 @@ class Organizacao(models.Model):
     razao_social = models.CharField("Razão Social", max_length=100, null=True, blank=True,
                                     help_text='Razão social da organização parceira')
     ramo_atividade = models.TextField("Ramo de Atividade", max_length=1000, null=True, blank=True,
-                                   help_text='Ramo de atividade da organização parceira')
+                                      help_text='Ramo de atividade da organização parceira')
 
     class Meta:
         ordering = ['sigla']
@@ -91,8 +94,10 @@ class Organizacao(models.Model):
         sigla = re.sub(r'(?u)[^-\w.]', '', sigla)
         return sigla
 
+
 class Projeto(models.Model):
     """Dados dos projetos para o PFE."""
+
     titulo = models.CharField("Título", max_length=160,
                               help_text='Título Provisório do projeto')
     titulo_final = models.CharField("Título Final", max_length=160, null=True,
@@ -151,7 +156,7 @@ class Projeto(models.Model):
             return self.titulo
 
     def __str__(self):
-        return self.organizacao.sigla+" ("+str(self.ano)+"."+str(self.semestre)+") "+\
+        return self.organizacao.sigla + " (" + str(self.ano) + "." + str(self.semestre) + ") " + \
             self.get_titulo()
 
     @classmethod
@@ -159,6 +164,7 @@ class Projeto(models.Model):
         """Cria um Projeto (entrada) na Banca."""
         projeto = cls(proposta=proposta)
         return projeto
+
 
 class Proposta(models.Model):
     """Dados da Proposta de Projeto para o PFE."""
@@ -346,16 +352,17 @@ class Proposta(models.Model):
         if tmp_computacao == 0 and tmp_mecatronica == 0 and tmp_mecanica == 0:
             return " "
 
-        if ( tmp_computacao >= 3 ) and (tmp_computacao > tmp_mecatronica + tmp_mecanica ):
+        if (tmp_computacao >= 3) and (tmp_computacao > tmp_mecatronica + tmp_mecanica):
             return "C"
-        elif ( tmp_mecatronica >= 3 ) and (tmp_mecatronica > tmp_computacao + tmp_mecanica ):
+        elif (tmp_mecatronica >= 3) and (tmp_mecatronica > tmp_computacao + tmp_mecanica):
             return "X"
-        elif ( tmp_mecanica >= 3 ) and (tmp_mecanica > tmp_mecatronica + tmp_computacao ):
+        elif (tmp_mecanica >= 3) and (tmp_mecanica > tmp_mecatronica + tmp_computacao):
             return "M"
         else:
             return "?"
 
         return " "
+
 
 class Configuracao(models.Model):
     """Armazena os dados básicos de funcionamento do sistema."""
@@ -382,8 +389,10 @@ class Configuracao(models.Model):
         verbose_name = 'Configuração'
         verbose_name_plural = 'Configurações'
 
+
 class ConfiguracaoAdmin(admin.ModelAdmin):
     """Usado para configurar a classe Configuracao."""
+
     def has_add_permission(self, request):
         # se já existe uma entrada não é possível adicionar outra.
         count = Configuracao.objects.all().count()
@@ -391,33 +400,44 @@ class ConfiguracaoAdmin(admin.ModelAdmin):
             return True
         return False
 
+
 class Disciplina(models.Model):
     """Disciplinas que os alunos podem cursar."""
+
     nome = models.CharField(max_length=100, help_text='nome')
+
     def __str__(self):
         return self.nome
 
+
 class Cursada(models.Model):
     """Relacionamento entre um aluno e uma disciplina cursada por ele."""
+
     disciplina = models.ForeignKey(Disciplina, null=True, blank=True, on_delete=models.SET_NULL,
                                    help_text='disciplina cursada pelo aluno')
     aluno = models.ForeignKey('users.Aluno', null=True, blank=True, on_delete=models.SET_NULL,
                               help_text='aluno que cursou a disciplina')
     nota = models.PositiveSmallIntegerField(validators=[MaxValueValidator(10)],
                                             help_text='nota obtida pelo aluno na disciplina')
+
     class Meta:
         ordering = ['nota']
+
     def __str__(self):
         return self.aluno.user.username+" >>> "+self.disciplina.nome
 
+
 class Recomendada(models.Model):
     """Disciplinas recomendadas que um aluno ja tenha cursado para fazer o projeto."""
+
     disciplina = models.ForeignKey(Disciplina, null=True, blank=True, on_delete=models.SET_NULL,
                                    help_text='disciplina recomendada para o projeto')
     proposta = models.ForeignKey(Proposta, null=True, blank=True, on_delete=models.SET_NULL,
                                  help_text='proposta que recomenda a disciplina')
+
     def __str__(self):
         return self.proposta.titulo+" >>> "+self.disciplina.nome
+
 
 class Evento(models.Model):
     """Eventos para a agenda do PFE."""
@@ -444,7 +464,7 @@ class Evento(models.Model):
         (17, 'Apresentação opcional intermediária na organização', 'Khaki'),
 
         (20, 'Relato Quinzenal (Individual)', 'aquamarine'),
-        (21, 'Entrega de Relatório Preliminar (Grupo)', 'lightblue'), # antigo relat. de planejamento
+        (21, 'Entrega de Relatório Preliminar (Grupo)', 'lightblue'),  # antigo relat. de planej.
         (22, 'Entrega do Relatório Intermediário (Grupo e Individual)', 'teal'),
         (23, 'Entrega do Relatório Final (Grupo e Individual)', 'aqua'),
         (24, 'Entrega do Relatório Revisado (Grupo)', 'deepskyblue'),
@@ -524,11 +544,14 @@ class Evento(models.Model):
         if self.startDate:
             texto += " (" + self.startDate.strftime("%d/%m/%Y") + ")"
         return texto
+
     class Meta:
         ordering = ['startDate']
 
+
 class Banca(models.Model):
     """Bancas do PFE."""
+
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='projeto')
 
@@ -590,8 +613,10 @@ class Banca(models.Model):
     class Meta:
         ordering = ['startDate']
 
+
 class Encontro(models.Model):
     """Encontros (para dinâmicas de grupos)."""
+
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='projeto')
     location = models.CharField(blank=True, max_length=50,
@@ -612,8 +637,10 @@ class Encontro(models.Model):
     def __str__(self):
         return str(self.startDate)
 
+
 class Anotacao(models.Model):
     """Anotacoes de comunicações com as organizações pareceiras."""
+
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
                                    help_text='Data e hora da comunicação') # hora ordena para dia
     organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
@@ -637,17 +664,21 @@ class Anotacao(models.Model):
 
     def __str__(self):
         return str(self.momento)
+
     @classmethod
     def create(cls, organizacao):
         """Cria um objeto (entrada) em Anotação."""
         anotacao = cls(organizacao=organizacao)
         return anotacao
+
     class Meta:
         verbose_name = 'Anotação'
         verbose_name_plural = 'Anotações'
 
+
 class Documento(models.Model):
     """Documentos, em geral PDFs, e seus relacionamentos com o PFE."""
+
     organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text='Organização referente o documento')
     usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
@@ -682,11 +713,14 @@ class Documento(models.Model):
         (255, 'outros'),
     )
     tipo_de_documento = models.PositiveSmallIntegerField(choices=TIPO_DE_DOCUMENTO, default=0)
+
     def __str__(self):
         return str(self.TIPO_DE_DOCUMENTO[self.tipo_de_documento][1])
 
+
 class Banco(models.Model):
     """Lista dos Bancos Existentes no Brasil."""
+
     nome = models.CharField(max_length=50,
                             help_text='nome do banco')
     codigo = models.PositiveSmallIntegerField(validators=[MaxValueValidator(999)],
@@ -700,6 +734,7 @@ class Banco(models.Model):
 
     def __str__(self):
         return str(self.nome)
+
 
 class Reembolso(models.Model):
     """Armazena os reembolsos pedidos pelos alunos do PFE."""
@@ -723,6 +758,7 @@ class Reembolso(models.Model):
     @classmethod
     def create(cls, usuario):
         """Cria um objeto (entrada) no Reembolso."""
+
         reembolso = cls(usuario=usuario)
         return reembolso
 
@@ -732,6 +768,7 @@ class Reembolso(models.Model):
 
 class Aviso(models.Model):
     """Avisos para a Coordenação do PFE."""
+
     titulo = models.CharField(max_length=120, null=True, blank=True,
                               help_text='Título do Aviso')
 
@@ -758,6 +795,7 @@ class Aviso(models.Model):
 
     def get_data(self):
         """Retorna a data do aviso do semestre."""
+
         configuracao = Configuracao.objects.get()
         delta_days = datetime.timedelta(days=self.delta)
         if self.tipo_de_evento:
@@ -775,6 +813,7 @@ class Aviso(models.Model):
 
     def get_evento(self):
         """Retorna em string o nome do evento."""
+
         for entry in Evento.TIPO_EVENTO:
             if self.tipo_de_evento == entry[0]:
                 return entry[1]
@@ -785,13 +824,16 @@ class Aviso(models.Model):
 
 class Entidade(models.Model):
     """Todas as entidades estudantis do Insper"""
+
     nome = models.CharField(max_length=100,
                             help_text='nome da entidade estudantil')
+
     def __str__(self):
         return self.nome
 
 class Feedback(models.Model):
     """Feedback das organizacoes parceiras."""
+
     data = models.DateField(default=datetime.date.today, blank=True,
                             help_text='Data do Feedback')
     #organizacao_parceira=models.ForeignKey(Empresa,null=True,blank=True,on_delete=models.SET_NULL,
@@ -970,6 +1012,7 @@ class Avaliacao2(models.Model):
         verbose_name = 'Avaliação2'
         verbose_name_plural = 'Avaliações2'
         ordering = ['momento',]
+
 
 class Observacao(models.Model):
     """Observações realizadas durante avaliações."""
