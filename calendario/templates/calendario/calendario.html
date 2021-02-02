@@ -22,6 +22,7 @@
   <script src="{% static 'bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js' %}"></script> 
   <script src="{% static 'bootstrap-datepicker/dist/locales/bootstrap-datepicker.pt-BR.min.js' %}"></script> 
 
+
   <style>
     table, th, td {
       border: 0px;
@@ -42,6 +43,7 @@
     .image {
       outline-width: 0;
       background-color: none;
+      cursor: pointer;
     }
 
     .image:hover {
@@ -74,6 +76,25 @@
       color:darkred;
     }
 
+    .semestre1 {
+      border-radius: 5px 0px 0px 5px;
+      padding: 4px 9px; 
+      background: #D0EED0;
+      cursor: pointer;
+    }
+
+    .semestre2 {
+      border-radius: 0px 5px 5px 0px;
+      padding: 4px 9px; 
+      background: #D0EED0;
+      cursor: pointer;
+    }
+
+    .images {
+      float: right;
+      position: relative;
+      margin-top:-14px;
+    }
 
   </style>
 
@@ -82,10 +103,10 @@
 
 {% block content %}
 
-  <div class="images" style="float: right;">
-    <img class="image" id="bjpg" src="{% static 'images/icone_JPG.png' %}" alt="jpg" style="cursor: pointer;">
-    <img class="image" id="bpng" src="{% static 'images/icone_PNG.png' %}" alt="png" style="cursor: pointer;">
-    <img class="image" id="bpdf" src="{% static 'images/icone_PDF.png' %}" alt="pdf" style="cursor: pointer;">
+  <div class="images">
+    <img class="image" id="bjpg" src="{% static 'images/icone_JPG.png' %}" alt="jpg">
+    <img class="image" id="bpng" src="{% static 'images/icone_PNG.png' %}" alt="png">
+    <img class="image" id="bpdf" src="{% static 'images/icone_PDF.png' %}" alt="pdf">
   </div>
 
   <div id="tudo">
@@ -94,7 +115,10 @@
     
     <div id='calendar'></div>
     
-    &nbsp;Semestre: [<span id="primeiro_semestre" style="cursor: pointer;">1</span>/<span id="segundo_semestre" style="cursor: pointer;">2</span>]
+    &nbsp;Semestre:
+    <span class="semestre1" id="primeiro_semestre">1</span><span class="semestre2" id="segundo_semestre">2</span>
+    <br>    
+
 
     {% comment %}
         (1, 'aluno'),
@@ -767,8 +791,10 @@
       //console.log("Semestre selected: 1");
       document.getElementById("primeiro_semestre").style.fontWeight = "bold";
       document.getElementById("primeiro_semestre").style.color = "black";
+      document.getElementById("primeiro_semestre").style.background = "#10F010";
       document.getElementById("segundo_semestre").style.fontWeight = "normal";
       document.getElementById("segundo_semestre").style.color = "grey";
+      document.getElementById("segundo_semestre").style.background = "#D0EED0";
       
       [].forEach.call(document.querySelectorAll('.semestre'), function (el) {
         el.style.display = 'none';
@@ -809,8 +835,11 @@
       //console.log("Semestre selected: 2 em " + currentYear);
       document.getElementById("primeiro_semestre").style.fontWeight = "normal";
       document.getElementById("primeiro_semestre").style.color = "grey";
+      document.getElementById("primeiro_semestre").style.background = "#D0EED0";
       document.getElementById("segundo_semestre").style.fontWeight = "bold";
       document.getElementById("segundo_semestre").style.color = "black";
+      document.getElementById("segundo_semestre").style.background = "#10F010";
+      
 
       [].forEach.call(document.querySelectorAll('.semestre'), function (el) {
         el.style.display = 'none';
