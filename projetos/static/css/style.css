@@ -39,6 +39,10 @@ body {
   display: none;
 }
 
+#myLinks a {
+  padding: 10px;
+}
+
 .topnav a {
   color: white;
   padding: 14px 16px;
