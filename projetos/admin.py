@@ -183,7 +183,6 @@ class PropostaAdmin(admin.ModelAdmin):
             'contatos_tecnicos', 'contatos_administrativos',
             'descricao_organizacao', 'departamento',
             'titulo', 'descricao', 'expectativas',
-            'areas_de_interesse',
             'recursos', 'observacoes',
             'tipo_de_interesse',
             'ano', 'semestre',
