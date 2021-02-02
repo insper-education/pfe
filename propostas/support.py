@@ -234,10 +234,10 @@ def preenche_proposta(request, proposta):
     return proposta
 
 
-def envia_proposta(proposta):
+def envia_proposta(proposta, enviar=True):
     """Envia Proposta por email."""
 
-    #Isso tinha que ser feito por template, arrumar qualquer hora.
+    # Isso tinha que ser feito por template, arrumar qualquer hora.
     message = "<h3>Proposta de Projeto para o PFE {0}.{1}</h3>\n\n".\
                    format(proposta.ano, proposta.semestre)
 
@@ -315,12 +315,13 @@ def envia_proposta(proposta):
                                                      proposta.semestre,
                                                      proposta.titulo)
 
-    recipient_list = list(map(str.strip, re.split(",|;", proposta.email)))
-    recipient_list += ["lpsoares@insper.edu.br",]
+    if enviar:
+        recipient_list = list(map(str.strip, re.split(",|;", proposta.email)))
+        recipient_list += ["lpsoares@insper.edu.br",]
 
-    check = email(subject, recipient_list, message)
-    if check != 1:
-        message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+        check = email(subject, recipient_list, message)
+        if check != 1:
+            message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
 
     return message
 

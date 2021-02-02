@@ -375,6 +375,7 @@ def proposta_detalhes(request, primarykey):
     }
     return render(request, 'propostas/proposta_detalhes.html', context=context)
 
+
 #@login_required
 def proposta_editar(request, slug):
     """Formulário de Edição de Propostas de Projeto por slug."""
@@ -389,7 +390,7 @@ def proposta_editar(request, slug):
     administrador = None
 
     if user:
-        if user.tipo_de_usuario == 1: # alunos
+        if user.tipo_de_usuario == 1:  # alunos
             mensagem = "Você não está cadastrado como parceiro de uma organização!"
             context = {
                 "area_principal": True,
@@ -397,17 +398,17 @@ def proposta_editar(request, slug):
             }
             return render(request, 'generic.html', context=context)
 
-        if user.tipo_de_usuario == 3: # parceiro
+        if user.tipo_de_usuario == 3:  # parceiro
             try:
                 parceiro = Parceiro.objects.get(pk=request.user.parceiro.pk)
             except Parceiro.DoesNotExist:
                 return HttpResponse("Parceiro não encontrado.", status=401)
-        elif user.tipo_de_usuario == 2: # professor
+        elif user.tipo_de_usuario == 2:  # professor
             try:
                 professor = Professor.objects.get(pk=request.user.professor.pk)
             except Professor.DoesNotExist:
                 return HttpResponse("Professor não encontrado.", status=401)
-        elif user.tipo_de_usuario == 4: # admin
+        elif user.tipo_de_usuario == 4:  # admin
             try:
                 administrador = Administrador.objects.get(pk=request.user.administrador.pk)
             except Administrador.DoesNotExist:
@@ -427,9 +428,13 @@ def proposta_editar(request, slug):
     if request.method == 'POST':
         if (not liberadas_propostas) or (user.tipo_de_usuario == 4):
             preenche_proposta(request, proposta)
-            mensagem = envia_proposta(proposta) # Por e-mail
+            enviar = "mensagem" in request.POST  # Por e-mail se enviar
+            mensagem = envia_proposta(proposta, enviar)
             resposta = "Submissão de proposta de projeto atualizada com sucesso.<br>"
-            resposta += "Você deve receber um e-mail de confirmação nos próximos instantes.<br>"
+
+            if enviar:
+                resposta += "Você deve receber um e-mail de confirmação nos próximos instantes.<br>"
+            
             resposta += "<br><hr>"
             resposta += mensagem
 
@@ -438,38 +443,37 @@ def proposta_editar(request, slug):
                 "mensagem": resposta,
             }
             return render(request, 'generic.html', context=context)
-        else:
-            return HttpResponse("Propostas não liberadas para edição.", status=401)
+        
+        return HttpResponse("Propostas não liberadas para edição.", status=401)
 
     areas = Area.objects.filter(ativa=True)
 
     context = {
         'liberadas_propostas': liberadas_propostas,
-        'full_name' : proposta.nome,
-        'email' : proposta.email,
-        'organizacao' : proposta.nome_organizacao,
-        'website' : proposta.website,
-        'endereco' : proposta.endereco,
-        'descricao_organizacao' : proposta.descricao_organizacao,
-        'parceiro' : parceiro,
-        'professor' : professor,
-        'administrador' : administrador,
-        'contatos_tecnicos' : proposta.contatos_tecnicos,
-        'contatos_adm' : proposta.contatos_administrativos,
-        'info_departamento' : proposta.departamento,
-        'titulo' : proposta.titulo,
-        'desc_projeto' : proposta.descricao,
-        'expectativas' : proposta.expectativas,
-        'areas' : proposta.areas_de_interesse,
-        'areast' : areas,
-        'recursos' : proposta.recursos,
-        'observacoes' : proposta.observacoes,
-        'proposta' : proposta,
-        'edicao' : True,
-        'interesses' : Proposta.TIPO_INTERESSE,
-        'tipo_de_interesse' : proposta.tipo_de_interesse,
+        'full_name': proposta.nome,
+        'email': proposta.email,
+        'organizacao': proposta.nome_organizacao,
+        'website': proposta.website,
+        'endereco': proposta.endereco,
+        'descricao_organizacao': proposta.descricao_organizacao,
+        'parceiro': parceiro,
+        'professor': professor,
+        'administrador': administrador,
+        'contatos_tecnicos': proposta.contatos_tecnicos,
+        'contatos_adm': proposta.contatos_administrativos,
+        'info_departamento': proposta.departamento,
+        'titulo': proposta.titulo,
+        'desc_projeto': proposta.descricao,
+        'expectativas': proposta.expectativas,
+        'areast': areas,
+        'recursos': proposta.recursos,
+        'observacoes': proposta.observacoes,
+        'proposta': proposta,
+        'edicao': True,
+        'interesses': Proposta.TIPO_INTERESSE,
+        'tipo_de_interesse': proposta.tipo_de_interesse,
     }
-    return render(request, 'parceiro/proposta_submissao.html', context)
+    return render(request, 'organizacoes/proposta_submissao.html', context)
 
 
 @login_required

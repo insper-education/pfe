@@ -163,10 +163,14 @@ def proposta_submissao(request):
 
     if request.method == 'POST':
         proposta = preenche_proposta(request, None)
-        mensagem = envia_proposta(proposta)  # Por e-mail
+        enviar = "mensagem" in request.POST  # Por e-mail se enviar
+        mensagem = envia_proposta(proposta, enviar)
 
         resposta = "Submissão de proposta de projeto realizada com sucesso.<br>"
-        resposta += "Você deve receber um e-mail de confirmação nos próximos instantes.<br>"
+        
+        if enviar:
+            resposta += "Você deve receber um e-mail de confirmação nos próximos instantes.<br>"
+        
         resposta += mensagem
         context = {
             "voltar": True,
