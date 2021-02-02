@@ -167,10 +167,10 @@ def proposta_submissao(request):
         mensagem = envia_proposta(proposta, enviar)
 
         resposta = "Submissão de proposta de projeto realizada com sucesso.<br>"
-        
+
         if enviar:
             resposta += "Você deve receber um e-mail de confirmação nos próximos instantes.<br>"
-        
+
         resposta += mensagem
         context = {
             "voltar": True,
@@ -355,8 +355,8 @@ def organizacoes_tabela(request):
         for organizacao in Organizacao.objects.all():
             count_projetos = []
             grupos_pfe = Projeto.objects.filter(organizacao=organizacao).\
-                                         filter(ano=ano).\
-                                         filter(semestre=semestre)
+                filter(ano=ano).\
+                filter(semestre=semestre)
             if grupos_pfe:
                 for grupo in grupos_pfe:  # garante que tem alunos no projeto
                     alunos_pfe = Aluno.objects.filter(alocacao__projeto=grupo)

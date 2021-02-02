@@ -5,25 +5,17 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Dezembro de 2020
 """
 
-import re           #regular expression (para o import)
+import re           # regular expression (para o import)
 
 from django.conf import settings
-
 from django.utils import html
 
-#from projetos.models import Proposta, Organizacao, Configuracao, Anotacao
 from projetos.models import Proposta, Configuracao
-
 from projetos.models import Area, AreaDeInteresse
-
 from projetos.messages import email
-
-#from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador, Opcao, Alocacao
 from users.models import Opcao
-
 from users.support import adianta_semestre
 
-#from .messages import email, create_message, message_agendamento
 
 def cria_area_proposta(request, proposta):
     """Cria um objeto Areas e preenche ele."""
@@ -47,6 +39,7 @@ def cria_area_proposta(request, proposta):
     else:
         if AreaDeInteresse.objects.filter(area=None, proposta=proposta).exists():
             AreaDeInteresse.objects.get(area=None, proposta=proposta).delete()
+
 
 def lista_areas(proposta):
     """Lista áreas de um objeto Areas."""
@@ -78,11 +71,11 @@ def ordena_propostas(disponivel=True, ano=0, semestre=0):
         semestre = configuracao.semestre
 
     opcoes_list = []
-    if disponivel: # somente as propostas disponibilizadas
+    if disponivel:  # somente as propostas disponibilizadas
         propostas = Proposta.objects.filter(ano=ano).\
                                filter(semestre=semestre).\
                                filter(disponivel=True)
-    else: # todas as propostas
+    else:  # todas as propostas
         propostas = Proposta.objects.filter(ano=ano).\
                                filter(semestre=semestre)
     for proposta in propostas:
@@ -112,7 +105,7 @@ def ordena_propostas_novo(disponivel=True, ano=2018, semestre=2, curso='T'):
         propostas = Proposta.objects.filter(ano=ano).\
                                      filter(semestre=semestre)
 
-    if disponivel: # somente as propostas disponibilizadas
+    if disponivel:  # somente as propostas disponibilizadas
         propostas = propostas.filter(disponivel=True)
 
     for proposta in propostas:
@@ -124,7 +117,7 @@ def ordena_propostas_novo(disponivel=True, ano=2018, semestre=2, curso='T'):
 
         # Só opções para a proposta dos estudantes nesse ano e semester
         opcoes = opcoes.filter(aluno__anoPFE=proposta.ano).\
-                        filter(aluno__semestrePFE=proposta.semestre)
+            filter(aluno__semestrePFE=proposta.semestre)
 
         if curso != 'T':
             opcoes = opcoes.filter(aluno__curso=curso)
@@ -190,7 +183,7 @@ def ordena_propostas_novo(disponivel=True, ano=2018, semestre=2, curso='T'):
 def preenche_proposta(request, proposta):
     """Preenche um proposta a partir de um request."""
 
-    if proposta is None: # proposta nova
+    if proposta is None:  # proposta nova
         proposta = Proposta.create()
 
         try:
@@ -239,7 +232,7 @@ def envia_proposta(proposta, enviar=True):
 
     # Isso tinha que ser feito por template, arrumar qualquer hora.
     message = "<h3>Proposta de Projeto para o PFE {0}.{1}</h3>\n\n".\
-                   format(proposta.ano, proposta.semestre)
+        format(proposta.ano, proposta.semestre)
 
     message += "Para editar essa proposta acesse:</b>\n <a href='{0}'>{0}</a>\n\n".\
         format(settings.SERVER+proposta.get_absolute_url())
@@ -259,22 +252,22 @@ def envia_proposta(proposta, enviar=True):
     message += "\n\n"
 
     message += "<b>Contatos Técnicos:</b>\n {0}\n\n".\
-                   format(proposta.contatos_tecnicos)
+        format(proposta.contatos_tecnicos)
 
     message += "<b>Contatos Administrativos:</b>\n {0}\n\n".\
-                   format(proposta.contatos_administrativos)
+        format(proposta.contatos_administrativos)
 
     message += "<b>Informações sobre a instituição/empresa:</b>\n {0}\n\n".\
-                   format(proposta.descricao_organizacao)
+        format(proposta.descricao_organizacao)
 
     message += "<b>Informações sobre a departamento:</b>\n {0}\n\n".\
-                   format(proposta.departamento)
+        format(proposta.departamento)
 
     message += "\n\n"
 
     message += "<b>Descrição do Projeto:</b>\n {0}\n\n".format(proposta.descricao)
     message += "<b>Expectativas de resultados/entregas:</b>\n {0}\n\n".\
-                   format(proposta.expectativas)
+        format(proposta.expectativas)
 
     message += "\n"
 
@@ -283,16 +276,16 @@ def envia_proposta(proposta, enviar=True):
 
     message += "\n\n"
     message += "<b>Recursos a serem disponibilizados aos alunos:</b>\n {0}\n\n".\
-                   format(proposta.recursos)
+        format(proposta.recursos)
     message += "<b>Outras observações para os alunos:</b>\n {0}\n\n".\
-                   format(proposta.observacoes)
+        format(proposta.observacoes)
 
     message += "<b>O principal interesse da empresa com o projeto é:</b>\n {0}\n\n".\
-                   format(proposta.get_interesse())
+        format(proposta.get_interesse())
 
     message += "\n\n"
     message += "<b>Data da proposta:</b> {0}\n\n\n".\
-                   format(proposta.data.strftime("%d/%m/%Y %H:%M"))
+        format(proposta.data.strftime("%d/%m/%Y %H:%M"))
 
     message += "\n\n"
     message += """

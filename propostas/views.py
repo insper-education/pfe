@@ -24,10 +24,9 @@ from users.models import Professor, Parceiro, Administrador
 from projetos.models import Proposta, Projeto
 from projetos.models import Configuracao, Area, AreaDeInteresse
 
-
 from .support import retorna_ternario, ordena_propostas_novo, ordena_propostas
-
 from .support import envia_proposta, preenche_proposta
+
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
@@ -51,7 +50,7 @@ def mapeamento(request):
     except Configuracao.DoesNotExist:
         return HttpResponse("Falha na configuracao do sistema.", status=401)
 
-    ano, semestre = adianta_semestre(ano, semestre) # Vai para próximo semestre
+    ano, semestre = adianta_semestre(ano, semestre)  # Vai para próximo semestre
 
     return redirect('map_est_proj', anosemestre="{0}.{1}".format(ano, semestre))
 
@@ -76,10 +75,11 @@ def map_est_proj(request, anosemestre):
         propostas = []
 
     alunos = Aluno.objects.filter(user__tipo_de_usuario=1).\
-                               filter(anoPFE=ano).\
-                               filter(semestrePFE=semestre).\
-                               filter(trancado=False).\
-                               order_by(Lower("user__first_name"), Lower("user__last_name"))
+        filter(anoPFE=ano).\
+        filter(semestrePFE=semestre).\
+        filter(trancado=False).\
+        order_by(Lower("user__first_name"), Lower("user__last_name"))
+
     opcoes = []
     for aluno in alunos:
         opcoes_aluno = []
@@ -114,7 +114,7 @@ def map_est_proj(request, anosemestre):
             repetidas[proposta.organizacao.sigla] = 0
     repetidas_limpa = {}
     for repetida in repetidas:
-        if repetidas[repetida] != 0: # tira zerados
+        if repetidas[repetida] != 0:  # tira zerados
             repetidas_limpa[repetida] = repetidas[repetida]
     proposta_indice = {}
     for proposta in reversed(propostas):
@@ -147,7 +147,7 @@ def procura_propostas(request):
     except Configuracao.DoesNotExist:
         return HttpResponse("Falha na configuracao do sistema.", status=401)
 
-    curso = "T" # por padrão todos os cursos
+    curso = "T"  # por padrão todos os cursos
 
     ano, semestre = adianta_semestre(ano, semestre)
 
@@ -184,13 +184,13 @@ def procura_propostas(request):
     # Para procurar as áreas mais procuradas nos projetos
     opcoes = Opcao.objects.filter(aluno__user__tipo_de_usuario=1, aluno__trancado=False)
 
-    if ano > 0: # Ou seja não são todos os anos e semestres
+    if ano > 0:  # Ou seja não são todos os anos e semestres
         opcoes = opcoes.filter(aluno__anoPFE=ano, aluno__semestrePFE=semestre)
         opcoes = opcoes.filter(proposta__ano=ano, proposta__semestre=semestre)
 
     opcoes = opcoes.filter(prioridade=1)
 
-    if curso!="T": # Caso não se deseje todos os cursos, se filtra qual se deseja
+    if curso != "T":  # Caso não se deseje todos os cursos, se filtra qual se deseja
         opcoes = opcoes.filter(aluno__curso=curso)
 
     areaspfe = {}
@@ -224,6 +224,7 @@ def procura_propostas(request):
     }
 
     return render(request, 'propostas/procura_propostas.html', context)
+
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')
@@ -269,12 +270,13 @@ def propostas_apresentadas(request):
     context = {
         'propostas': propostas_filtradas,
         'num_organizacoes': num_organizacoes,
-        'ternario_aprovados' : ternario_aprovados,
-        'ternario_pendentes' : ternario_pendentes,
-        'configuracao' : configuracao,
+        'ternario_aprovados': ternario_aprovados,
+        'ternario_pendentes': ternario_pendentes,
+        'configuracao': configuracao,
         "edicoes": edicoes,
     }
     return render(request, 'propostas/propostas_apresentadas.html', context)
+
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
@@ -336,8 +338,8 @@ def proposta_completa(request, primakey):
         "configuracao": configuracao,
         "proposta": proposta,
         "opcoes": opcoes,
-        "MEDIA_URL" : settings.MEDIA_URL,
-        "projetos" : projetos,
+        "MEDIA_URL": settings.MEDIA_URL,
+        "projetos": projetos,
         "comite": membros_comite,
         "estudantes": estudantes,
         "sem_opcao": sem_opcao,
@@ -361,7 +363,7 @@ def proposta_detalhes(request, primarykey):
         return HttpResponse("Usuário não encontrado.", status=401)
 
     if user.tipo_de_usuario == 1:  # (1, 'aluno')
-        if not (user.aluno.anoPFE==proposta.ano and user.aluno.semestrePFE==proposta.semestre):
+        if not (user.aluno.anoPFE == proposta.ano and user.aluno.semestrePFE == proposta.semestre):
             return HttpResponse("Usuário não tem permissão de acesso.", status=401)
         if not proposta.disponivel:
             return HttpResponse("Usuário não tem permissão de acesso.", status=401)
@@ -371,12 +373,12 @@ def proposta_detalhes(request, primarykey):
 
     context = {
         'proposta': proposta,
-        'MEDIA_URL' : settings.MEDIA_URL,
+        'MEDIA_URL': settings.MEDIA_URL,
     }
     return render(request, 'propostas/proposta_detalhes.html', context=context)
 
 
-#@login_required
+# @login_required
 def proposta_editar(request, slug):
     """Formulário de Edição de Propostas de Projeto por slug."""
 
@@ -434,7 +436,7 @@ def proposta_editar(request, slug):
 
             if enviar:
                 resposta += "Você deve receber um e-mail de confirmação nos próximos instantes.<br>"
-            
+
             resposta += "<br><hr>"
             resposta += mensagem
 
@@ -443,7 +445,7 @@ def proposta_editar(request, slug):
                 "mensagem": resposta,
             }
             return render(request, 'generic.html', context=context)
-        
+
         return HttpResponse("Propostas não liberadas para edição.", status=401)
 
     areas = Area.objects.filter(ativa=True)
