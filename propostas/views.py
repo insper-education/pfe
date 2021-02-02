@@ -305,7 +305,7 @@ def proposta_completa(request, primakey):
             mensagem = "Proposta indisponibilizada."
         context = {
             "area_principal": True,
-            "propostas_lista": "disponiveis",
+            "propostas_lista": True,
             "mensagem": mensagem,
         }
         return render(request, 'generic.html', context=context)
