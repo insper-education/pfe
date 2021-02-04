@@ -8,6 +8,7 @@ Data: 2 de Outubro de 2020
 from django.utils import timezone
 
 from projetos.models import Configuracao, Certificado
+from .models import Aluno
 
 
 def adianta_semestre(ano, semestre):
@@ -55,6 +56,9 @@ def get_edicoes(tipo):
         existe = False
         if tipo == Certificado:
             if tipo.objects.filter(projeto__ano=ano_tmp, projeto__semestre=semestre_tmp).exists():
+                existe = True
+        if tipo == Aluno:
+            if tipo.objects.filter(anoPFE=ano_tmp, semestrePFE=semestre_tmp).exists():
                 existe = True
         else:
             if tipo.objects.filter(ano=ano_tmp, semestre=semestre_tmp).exists():

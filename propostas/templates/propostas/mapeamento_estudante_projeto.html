@@ -97,6 +97,9 @@
                     {% endif %}
                   {% else %}
                     {{proposta.nome_organizacao}}
+                    {% if proposta.id in proposta_indice %}
+                      <sup>{{ proposta_indice|get_value:proposta.id }}</sup>
+                    {% endif %}
                   {% endif %}
                 </span>
               </div>

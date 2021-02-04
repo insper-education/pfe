@@ -12,278 +12,308 @@
 
   <script src="{% static 'js/Chart.min.js' %}"></script>
 
-  {% comment %} Para chamar os Tooltips {% endcomment %}
-  <script>{% include "tooltip.js" %}</script>
-
-  {% with tabela='AlunosTable' %}
-    {% include "tabelas.html" %}
-  {% endwith %}
+  {% include "tabelas_includes.html" %}
 
 {% endblock %}
 
 {% block content %}
-
-  {% comment %}
-    {% with dados='estudantes' %}
-        {% include "planilhas.html" %}
-    {% endwith %}
-  {% endcomment %}
   
   <span class="titulo">Estudantes</span>
 
-  <label for="filter"><b>Edição:</b></label>
-  <select onchange="location = this.options[this.selectedIndex].value;">
-    <option value="todos">todos</option>
-    <option value="trancou" {% if ano == "trancou" %}selected{% endif %}>trancou</option>
-    {% for loop in loop_anos %}
-      <option value="{{loop}}.2" {% if ano == loop and semestre == 2 %}selected{% endif %}>{{loop}}.2</option>
-      <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
-    {% endfor %}
-  </select>
-  
-  {% if alunos_list %}
-    <div class="table-responsive">
-    <table id="AlunosTable" class="table table-bordered table-hover table-sm">
-      <thead class="table-info">
-        <tr>
-            <th scope="col" onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome do Aluno</th>
-            <th scope="col" onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">e-mail</th>
-            <th scope="col" onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Curso</th>
-            <th scope="col" onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Período</th>
-            <th scope="col" onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">
-              <a data-toggle="tooltip" data-html="true" animation="true" title="<small>Projetos <u>sublinhados</u> são de PFE Avançado</small>">
-                Projeto
-              </a>
-            </th>
-            <th scope="col" onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(6)')" style="cursor:pointer" class="text-center">Média</th>
-            <th scope="col" onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(7)')" style="cursor:pointer" class="text-center">Notas</th>
-        </tr>
-        </thead>
-        {% for aluno in alunos_list %} 
-        <tr class="item">
-          <th scope="row">
-            <a href="{% url 'aluno_detail' aluno.id %}" 
-                data-toggle="tooltip" data-html="true" animation="true" title="
-                {% for opcao in aluno.opcao_set.all %}
-                  <b>#{{ opcao.prioridade }} :</b>
-                  {% with alocacoes=aluno.alocacao_set %}
-                    {% if alocacoes.count and opcao.proposta == alocacoes.last.projeto %}
-                      <u>
-                    {% endif %}
-                        {{opcao.proposta.titulo}}
-                      ({{opcao.proposta.organizacao.nome}})
-                    {% if alocacoes.count and opcao.proposta == alocacoes.last.projeto %}
-                      </u>
-                    {% endif %}
-                  {% endwith %}
-                  <br>
-                {% empty %}
-                  Aluno(a) não escolheu opções de projetos
-                {% endfor %}
-                "
-            >
-              {{aluno.user.get_full_name}}
-            </a>
-          </th>
-          <td>
-            <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
-          </td>
-          {% if aluno.curso %}
-            <td class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">
-              {{ aluno.get_curso_display }}
-            </td>
-          {% else %}
-            <td>Indefinido</td>
-          {% endif %}
-          <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
-            {% if aluno.alocacao_set.all %}
-              {% for alocacao in aluno.alocacao_set.all %}
-                {% if alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
-                  <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
-                    {% if alocacao.projeto.avancado %}<u>{% endif %}
-                    {{alocacao.projeto.ano}}.{{alocacao.projeto.semestre}}<br>
-                    {% if alocacao.projeto.avancado %}</u>{% endif %}
-                  </a>
-                {% endif %}
-              {% endfor %}
-            {% else %}
-              {% if aluno.anoPFE and aluno.semestrePFE %}
-                {{aluno.anoPFE}}.{{aluno.semestrePFE}}
-              {% else %}
-                Indefinido
-              {% endif %}
-            {% endif %}
-          </td>
-          <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
-            {% if aluno.alocacao_set.all %}
-              {% for alocacao in aluno.alocacao_set.all %}
-                {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
-                  <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
-                    {{alocacao.projeto.get_titulo}}
-                  </a>
-                  <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
-                    ({{alocacao.projeto.organizacao}})<br>
-                  </a>
-                  {% if alocacao.projeto.avancado %}
-                    <span style="color:red">
-                      (PFE Avançado)
-                    </span>
-                  {% endif %}
-                {% endif %}
-              {% endfor %}
-            {% endif %}
-          </td>
-          <td> <!-- Média -->
-            {% with media=aluno.get_medias|dict_key:ano_semestre %}
-              {% if media.pesos != 1 %}
-                <a style="color:red" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100%">
-              {% endif %}    
-                {{media.media|floatformat:1}}
-              {% if media.pesos != 1 %}
-                </a>
-              {% endif %}
-            {% endwith %}
-          </td>
-          <td><table><tr>
-            {% for aval, nota, peso in aluno.get_notas|dict_key:ano_semestre %} <!-- Notas -->
-              <td>{{aval}}({% widthratio peso 1 100 %}%)={{nota|floatformat:1}}</td>
-            {% endfor %}
-          </tr></table></td>
-        </tr>
-        {% endfor %}
-      </table>
-      </div>
-      <br>
-  {% else %}
-    <p>Não existem estudantes disponíveis.</p>
-  {% endif %}
-  
-  <strong>Número Total de Estudantes:</strong> {{ num_alunos }}
-  <br>
-
-  <div id="canvas-holder">
-    <canvas id="chart-programas"></canvas>
-    <small>contando estudantes alocados em projetos ou não</small>
-    <br><br>
-    <canvas id="chart-generos"></canvas>
-  </div>
+  {% comment %} Seletor da edição da pesquisa {% endcomment %}
+  {% include "edicoes.html" %}
 
   <script>
-    var config_programas = {
-      type: 'pie',
-      data: {
-        datasets: [{
-          data: [
-            {{ num_alunos_comp }},
-            {{ num_alunos_mec }},
-            {{ num_alunos_mxt }},
-          ],
-          backgroundColor: [
-            'rgb(75, 192, 192)',
-            'rgb(255, 99, 132)',
-            'rgb(255, 205, 86)',
-          ],
-          label: 'Proporção de cursos entre estudantes'
-        }],
-        labels: [
-          'Computação [{% widthratio num_alunos_comp num_alunos 100 %}%]',
-          'Mecânica [{% widthratio num_alunos_mec num_alunos 100 %}%]',
-          'Mecatrônica [{% widthratio num_alunos_mxt num_alunos 100 %}%]',
-        ]
-      },
-      options: {
-        responsive: true,
-        title: {
-          display: true,
-          text: 'Proporção de cursos entre estudantes',
-          position: 'top'
-        },
-        legend: {
-          display: true,
-          position: "bottom",
-        }
-      }
-    };
-
-
-    var config_generos = {
-      type: 'pie',
-      data: {
-        datasets: [{
-          data: [
-            {{ num_alunos_masculino }},
-            {{ num_alunos_feminino }},
-          ],
-          backgroundColor: [
-            'rgb(93, 173, 226)',
-            'rgb(175, 122, 197)',
-          ],
-          label: 'Proporção de cursos entre estudantes'
-        }],
-        labels: [
-          'Masculino [{% widthratio num_alunos_masculino num_alunos 100 %}%]',
-          'Feminino [{% widthratio num_alunos_feminino num_alunos 100 %}%]',
-        ]
-      },
-      options: {
-        responsive: true,
-        title: {
-          display: true,
-          text: 'Proporção de gêneros entre estudantes',
-          position: 'top'
-        },
-        legend: {
-          display: true,
-          position: "bottom",
-        }
-      }
-    };
-
-
-    window.onload = function() {
-      // Chart da proporção de estudantes por programas
-      var chart_programas = document.getElementById('chart-programas').getContext('2d');
-      window.myPie = new Chart(chart_programas, config_programas);
-
-      // Chart da proporção de estudantes por gênero
-      var chart_generos = document.getElementById('chart-generos').getContext('2d');
-      window.myPie = new Chart(chart_generos, config_generos);
-    };
-  
+    $('#filterEdicao').append($('<option>', {
+        value: "trancou",
+        text: 'trancou'
+        {% comment %} {% if ano == "trancou" %}selected{% endif %} {% endcomment %}
+    }));
   </script>
-  <br><br>
-  <h5>Quantidade de estudantes alocados em projetos</h5>
-  <table id="AlunosTable">
-    <tr>
-        <th class="text-center" style="border-right: solid 3px;">Periodo</th>
-        <th class="text-center">Computação</th>
-        <th class="text-center">Mecânica</th>
-        <th class="text-center">Mecatrônica</th>
-        <th class="text-center" style="border-left: solid 3px;">TOTAL</th>
-    </tr>
-    {% for ano,tabela_ano in tabela_alunos.items %}
-      {% for semestre,tabela_semetre in tabela_ano.items %}
-        <tr>
-            <td class="text-center" style="border-right: solid 3px;"> {{ano}}.{{semestre}} </td>
-            <td class="text-center"> {{tabela_semetre.computação}} </td>
-            <td class="text-center"> {{tabela_semetre.mecânica}} </td>
-            <td class="text-center"> {{tabela_semetre.mecatrônica}} </td>
-            <td class="text-center" style="border-left: solid 3px;"><b> {{tabela_semetre.total}} </b></td>
-        </tr>
-      {% endfor %}
-    {% endfor %}
-    {% if ano == 0 or semestre == 0 %}
-      <tr>
-        <td class="text-center" style="border-right: solid 3px; border-top: double;"> Totais </td>
-        <td class="text-center" style="border-top: double;"> {{totais.computação}} </td>
-        <td class="text-center" style="border-top: double;"> {{totais.mecânica}} </td>
-        <td class="text-center" style="border-top: double;"> {{totais.mecatrônica}} </td>
-        <td class="text-center" style="border-left: solid 3px; border-top: double;"><b> {{totais.total}} </b></td>
-      </tr>
+  
+  <div class="estudantes">
+
+    {% if alunos_list %}
+      <div class="table-responsive">
+      <table id="AlunosTable" class="table table-bordered table-hover table-sm">
+        <thead class="table-info">
+          <tr>
+              <th scope="col" class="text-center">Nome</th>
+              <th scope="col" class="text-center">e-mail</th>
+              <th scope="col" class="text-center">Curso</th>
+              <th scope="col" class="text-center">Período</th>
+              <th scope="col" class="text-center">
+                <a data-toggle="tooltip" data-html="true" animation="true" title="<small>Projetos <u>sublinhados</u> são de PFE Avançado</small>">
+                  Projeto
+                </a>
+              </th>
+              <th scope="col" class="text-center">Média</th>
+              <th scope="col" class="text-center">Notas</th>
+          </tr>
+          </thead>
+          {% for aluno in alunos_list %} 
+          <tr class="item">
+            <th scope="row" data-order="{{aluno.user.get_full_name}}">
+              <a href="{% url 'aluno_detail' aluno.id %}" 
+                  data-toggle="tooltip" data-html="true" animation="true" title="
+                  {% for opcao in aluno.opcao_set.all %}
+                    <b>#{{ opcao.prioridade }} :</b>
+                    {% with alocacoes=aluno.alocacao_set %}
+                      {% if alocacoes.count and opcao.proposta == alocacoes.last.projeto %}
+                        <u>
+                      {% endif %}
+                          {{opcao.proposta.titulo}}
+                        ({{opcao.proposta.organizacao.nome}})
+                      {% if alocacoes.count and opcao.proposta == alocacoes.last.projeto %}
+                        </u>
+                      {% endif %}
+                    {% endwith %}
+                    <br>
+                  {% empty %}
+                    Aluno(a) não escolheu opções de projetos
+                  {% endfor %}
+                  "
+              >
+                {{aluno.user.get_full_name}}
+              </a>
+            </th>
+            <td>
+              <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
+            </td>
+            {% if aluno.curso %}
+              <td class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">
+                {{ aluno.get_curso_display }}
+              </td>
+            {% else %}
+              <td>Indefinido</td>
+            {% endif %}
+            <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
+              {% if aluno.alocacao_set.all %}
+                {% for alocacao in aluno.alocacao_set.all %}
+                  {% if alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
+                    <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
+                      {% if alocacao.projeto.avancado %}<u>{% endif %}
+                      {{alocacao.projeto.ano}}.{{alocacao.projeto.semestre}}<br>
+                      {% if alocacao.projeto.avancado %}</u>{% endif %}
+                    </a>
+                  {% endif %}
+                {% endfor %}
+              {% else %}
+                {% if aluno.anoPFE and aluno.semestrePFE %}
+                  {{aluno.anoPFE}}.{{aluno.semestrePFE}}
+                {% else %}
+                  Indefinido
+                {% endif %}
+              {% endif %}
+            </td>
+            <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
+              {% if aluno.alocacao_set.all %}
+                {% for alocacao in aluno.alocacao_set.all %}
+                  {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
+                    <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
+                      {{alocacao.projeto.get_titulo}}
+                    </a>
+                    <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
+                      ({{alocacao.projeto.organizacao}})<br>
+                    </a>
+                    {% if alocacao.projeto.avancado %}
+                      <span style="color:red">
+                        (PFE Avançado)
+                      </span>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+            </td>
+            <td> <!-- Média -->
+              {% with media=aluno.get_medias|dict_key:ano_semestre %}
+                {% if media.pesos != 1 %}
+                  <a style="color:red" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100%">
+                {% endif %}    
+                  {{media.media|floatformat:1}}
+                {% if media.pesos != 1 %}
+                  </a>
+                {% endif %}
+              {% endwith %}
+            </td>
+            <td><table><tr>
+              {% for aval, nota, peso in aluno.get_notas|dict_key:ano_semestre %} <!-- Notas -->
+                <td>{{aval}}({% widthratio peso 1 100 %}%)={{nota|floatformat:1}}</td>
+              {% endfor %}
+            </tr></table></td>
+          </tr>
+          {% endfor %}
+        </table>
+        </div>
+        <br>
+    {% else %}
+      <p>Não existem estudantes disponíveis.</p>
     {% endif %}
-  </table>
-  {% if ano == 0 or semestre == 0 %}
-    <small>estudantes reprovados contam mais de uma vez</small>
-  {% endif %}
-  <br>
+    
+    <strong>Número Total de Estudantes:</strong> {{ num_alunos }}
+    <br>
+
+    <div id="canvas-holder">
+      <canvas id="chart-programas"></canvas>
+      <small>contando estudantes alocados em projetos ou não</small>
+      <br><br>
+      <canvas id="chart-generos"></canvas>
+    </div>
+
+    <script>
+      var config_programas = {
+        type: 'pie',
+        data: {
+          datasets: [{
+            data: [
+              {{ num_alunos_comp }},
+              {{ num_alunos_mec }},
+              {{ num_alunos_mxt }},
+            ],
+            backgroundColor: [
+              'rgb(75, 192, 192)',
+              'rgb(255, 99, 132)',
+              'rgb(255, 205, 86)',
+            ],
+            label: 'Proporção de cursos entre estudantes'
+          }],
+          labels: [
+            'Computação [{% widthratio num_alunos_comp num_alunos 100 %}%]',
+            'Mecânica [{% widthratio num_alunos_mec num_alunos 100 %}%]',
+            'Mecatrônica [{% widthratio num_alunos_mxt num_alunos 100 %}%]',
+          ]
+        },
+        options: {
+          responsive: true,
+          title: {
+            display: true,
+            text: 'Proporção de cursos entre estudantes',
+            position: 'top'
+          },
+          legend: {
+            display: true,
+            position: "bottom",
+          }
+        }
+      };
+
+
+      var config_generos = {
+        type: 'pie',
+        data: {
+          datasets: [{
+            data: [
+              {{ num_alunos_masculino }},
+              {{ num_alunos_feminino }},
+            ],
+            backgroundColor: [
+              'rgb(93, 173, 226)',
+              'rgb(175, 122, 197)',
+            ],
+            label: 'Proporção de cursos entre estudantes'
+          }],
+          labels: [
+            'Masculino [{% widthratio num_alunos_masculino num_alunos 100 %}%]',
+            'Feminino [{% widthratio num_alunos_feminino num_alunos 100 %}%]',
+          ]
+        },
+        options: {
+          responsive: true,
+          title: {
+            display: true,
+            text: 'Proporção de gêneros entre estudantes',
+            position: 'top'
+          },
+          legend: {
+            display: true,
+            position: "bottom",
+          }
+        }
+      };
+
+      function carrega_pagina(){
+        // Chart da proporção de estudantes por programas
+        var chart_programas = document.getElementById('chart-programas').getContext('2d');
+        window.myPie = new Chart(chart_programas, config_programas);
+
+        // Chart da proporção de estudantes por gênero
+        var chart_generos = document.getElementById('chart-generos').getContext('2d');
+        window.myPie = new Chart(chart_generos, config_generos);
+
+        {% include "tooltip.js" %}
+        
+        {% with tabela='AlunosTable' %}
+          {% include "tabelas_scripts.html" %}
+        {% endwith %}
+
+      };
+
+      window.onload = carrega_pagina
+    
+    </script>
+    <br><br>
+    <h5>Quantidade de estudantes alocados em projetos</h5>
+    <table id="AlunosTable">
+      <tr>
+          <th class="text-center" style="border-right: solid 3px;">Periodo</th>
+          <th class="text-center">Computação</th>
+          <th class="text-center">Mecânica</th>
+          <th class="text-center">Mecatrônica</th>
+          <th class="text-center" style="border-left: solid 3px;">TOTAL</th>
+      </tr>
+      {% for ano,tabela_ano in tabela_alunos.items %}
+        {% for semestre,tabela_semetre in tabela_ano.items %}
+          <tr>
+              <td class="text-center" style="border-right: solid 3px;"> {{ano}}.{{semestre}} </td>
+              <td class="text-center"> {{tabela_semetre.computação}} </td>
+              <td class="text-center"> {{tabela_semetre.mecânica}} </td>
+              <td class="text-center"> {{tabela_semetre.mecatrônica}} </td>
+              <td class="text-center" style="border-left: solid 3px;"><b> {{tabela_semetre.total}} </b></td>
+          </tr>
+        {% endfor %}
+      {% endfor %}
+      {% if ano == 0 or semestre == 0 %}
+        <tr>
+          <td class="text-center" style="border-right: solid 3px; border-top: double;"> Totais </td>
+          <td class="text-center" style="border-top: double;"> {{totais.computação}} </td>
+          <td class="text-center" style="border-top: double;"> {{totais.mecânica}} </td>
+          <td class="text-center" style="border-top: double;"> {{totais.mecatrônica}} </td>
+          <td class="text-center" style="border-left: solid 3px; border-top: double;"><b> {{totais.total}} </b></td>
+        </tr>
+      {% endif %}
+    </table>
+    {% if ano == 0 or semestre == 0 %}
+      <small>estudantes reprovados contam mais de uma vez</small>
+    {% endif %}
+    <br>
+
+
+  </div>
+
+
+  <script>
+
+    $(".filter").change(function(){
+      $("#spinner").css("visibility", "visible");
+      var edicao = $("#filterEdicao option:selected").attr("value");
+      $.ajax({
+          type: "POST",
+          url: "{% url 'alunos_lista' %}",
+          data: {
+              edicao: edicao,
+              'csrfmiddlewaretoken': '{{ csrf_token }}',
+          },
+          success: function(response){
+              $("div.estudantes").replaceWith($("div.estudantes",response));
+              carrega_pagina();
+              $("#spinner").css("visibility", "hidden");
+          },
+          error: function(response) {
+              console.log('error')
+          }
+      });
+    });
+
+  </script>
+
 {% endblock %}

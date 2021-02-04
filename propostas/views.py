@@ -108,19 +108,30 @@ def map_est_proj(request, anosemestre):
     # checa para empresas repetidas, para colocar um número para cada uma
     repetidas = {}
     for proposta in propostas:
-        if proposta.organizacao.sigla in repetidas:
-            repetidas[proposta.organizacao.sigla] += 1
+        if proposta.organizacao:
+            if proposta.organizacao.sigla in repetidas:
+                repetidas[proposta.organizacao.sigla] += 1
+            else:
+                repetidas[proposta.organizacao.sigla] = 0
         else:
-            repetidas[proposta.organizacao.sigla] = 0
+            if proposta.nome_organizacao in repetidas:
+                repetidas[proposta.nome_organizacao] += 1
+            else:
+                repetidas[proposta.nome_organizacao] = 0
     repetidas_limpa = {}
     for repetida in repetidas:
         if repetidas[repetida] != 0:  # tira zerados
             repetidas_limpa[repetida] = repetidas[repetida]
     proposta_indice = {}
     for proposta in reversed(propostas):
-        if proposta.organizacao.sigla in repetidas_limpa:
-            proposta_indice[proposta.id] = repetidas_limpa[proposta.organizacao.sigla] + 1
-            repetidas_limpa[proposta.organizacao.sigla] -= 1
+        if proposta.organizacao:
+            if proposta.organizacao.sigla in repetidas_limpa:
+                proposta_indice[proposta.id] = repetidas_limpa[proposta.organizacao.sigla] + 1
+                repetidas_limpa[proposta.organizacao.sigla] -= 1
+        else:
+            if proposta.nome_organizacao in repetidas_limpa:
+                proposta_indice[proposta.id] = repetidas_limpa[proposta.nome_organizacao] + 1
+                repetidas_limpa[proposta.nome_organizacao] -= 1
 
     estudantes = zip(alunos, opcoes)
     context = {

@@ -11,11 +11,11 @@ from . import views
 
 urlpatterns = [
     path('alunos_lista/', views.alunos_lista, name='alunos_lista'),
-    path('alunos_listagem/<str:anosemestre>', views.alunos_listagem, name='alunos_listagem'),
+    # path('alunos_listagem/<str:anosemestre>', views.alunos_listagem, name='alunos_listagem'),
     path('alunos_inscrevendo/', views.alunos_inscrevendo, name='alunos_inscrevendo'),
     path('alunos_inscritos/<str:anosemestre>', views.alunos_inscritos, name='alunos_inscritos'),
     path('aluno_detail/<int:primarykey>', views.aluno_detail, name='aluno_detail'),
-    #path('areas_interesse/', views.areas_interesse, name='areas_interesse'),
+    # path('areas_interesse/', views.areas_interesse, name='areas_interesse'),
     path('contas_senhas/<str:anosemestre>', views.contas_senhas, name='contas_senhas'),
     path('parceiro_detail/<int:primarykey>', views.parceiro_detail, name='parceiro_detail'),
     path('perfil/', views.perfil, name='perfil'),
