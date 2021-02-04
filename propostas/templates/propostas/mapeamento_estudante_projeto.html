@@ -12,9 +12,6 @@
   {% load aderencia_aluno %}
 
   <script src="{% static 'js/w3.js' %}"></script>
-
-  {% comment %} Para chamar os Tooltips {% endcomment %}
-  <script>{% include "tooltip.js" %}</script>
   
   <style>
 
@@ -62,106 +59,109 @@
 
   <span class="titulo">Mapeamento de Propostas de Projetos por Estudante</span>
 
-  <label for="filter">Edição:</label>
-  <select id="filter" onchange="location = this.options[this.selectedIndex].value;">
-    {% for loop in loop_anos %}
-      <option value="{{loop}}.2" {% if ano == loop and semestre == 2 %}selected{% endif %}>{{loop}}.2</option>
-      <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
-    {% endfor %}
-  </select>
-
-  &nbsp;&nbsp;
-
-  <b>Informações: </b>&nbsp;
-  <label><input onchange="($(this).prop('checked') ? $('#MapeamentoTable tr > *:nth-child(2)').show() : $('#MapeamentoTable tr > *:nth-child(2)').hide())" type="checkbox" checked /> Engenharia</label>&nbsp;&nbsp;&nbsp;
-  <label><input onchange="($(this).prop('checked') ? $('#MapeamentoTable tr > *:nth-child(3)').show() : $('#MapeamentoTable tr > *:nth-child(3)').hide())" type="checkbox"         /> CR</label>&nbsp;&nbsp;&nbsp;
+  {% comment %} Seletor da edição da pesquisa {% endcomment %}
+  {% with n_todas=True %}
+    {% include "edicoes.html" %}
+  {% endwith %}
   
-  <div id="tabela">
+  &nbsp;&nbsp;
+  <b>Informações: </b>&nbsp;
+  <label><input id="curso" onchange="($(this).prop('checked') ? $('#MapeamentoTable tr > *:nth-child(2)').show() : $('#MapeamentoTable tr > *:nth-child(2)').hide())" type="checkbox" checked /> Curso</label>&nbsp;&nbsp;&nbsp;
+  <label><input id="cr" onchange="($(this).prop('checked') ? $('#MapeamentoTable tr > *:nth-child(3)').show() : $('#MapeamentoTable tr > *:nth-child(3)').hide())" type="checkbox"         /> CR</label>&nbsp;&nbsp;&nbsp;
 
-    {% if propostas %}
-      <table id="MapeamentoTable">
-        <tr>
-          <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="bottom">Estudante</th>
-          <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="bottom">Eng</th>
-          <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="bottom">CR</th>
-          {% for proposta in propostas %}   
-            <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child({{ forloop.counter|add:"3" }})')" style="cursor:pointer;
-            {% if not proposta.disponivel %}color:lightgray;{% endif %}"
-            class="rotate">
-              <div>
-                <span>
-                  {% if proposta.organizacao %}
-                    {{proposta.organizacao.sigla}}
-                    {% if proposta.id in proposta_indice %}
-                      <sup>{{ proposta_indice|get_value:proposta.id }}</sup>
-                    {% endif %}
-                  {% else %}
-                    {{proposta.nome_organizacao}}
-                    {% if proposta.id in proposta_indice %}
-                      <sup>{{ proposta_indice|get_value:proposta.id }}</sup>
-                    {% endif %}
-                  {% endif %}
-                </span>
-              </div>
-            </th>
-          {% endfor %}
-        </tr>      
-        {% for estudante,opcoes in estudantes %} 
-          <tr class="item">
-            <td style="text-align:right">
-              <a href="{% url 'aluno_detail' estudante.id %}">
-                {{estudante.user.get_full_name}}
-              </a>
-            </td>
-            <td style="text-align:center">
-              <a href="{% url 'aluno_detail' estudante.id %}">
-                {{estudante.curso}}
-              </a>
-            </td>
-            <td style="text-align:left;border-right: 2px solid black;">
-              <a href="{% url 'aluno_detail' estudante.id %}">
-                {{estudante.cr|floatformat:4}}
-              </a>
-            </td>
-            {% for opcao in opcoes %}
-              {% if opcao %}
-                <td style="text-align:center;
-                    {% with alocacoes=estudante.alocacao_set %}
-                      {% if alocacoes.count and opcao.proposta == alocacoes.last.projeto.proposta %}
-                        background-color:pink;
+  <div class="atualizar">
+    
+    <div id="tabela">
+
+      {% if propostas %}
+        <table id="MapeamentoTable">
+          <tr>
+            <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="bottom">Estudante</th>
+            <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="bottom">Eng</th>
+            <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="bottom">CR</th>
+            {% for proposta in propostas %}   
+              <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child({{ forloop.counter|add:"3" }})')" style="cursor:pointer;
+              {% if not proposta.disponivel %}color:lightgray;{% endif %}"
+              class="rotate">
+                <div>
+                  <span>
+                    {% if proposta.organizacao %}
+                      {{proposta.organizacao.sigla}}
+                      {% if proposta.id in proposta_indice %}
+                        <sup>{{ proposta_indice|get_value:proposta.id }}</sup>
                       {% endif %}
-                    {% endwith %}"
-                    class="{% if opcao.prioridade == 0 %}red-bold{% elif opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}">
-                  <a class="prioridade" href="{% url 'proposta_completa' opcao.proposta.id %}"
-                    data-toggle="tooltip" data-html="true" animation="true" title="
-                    {{ opcao.proposta.titulo }} ({{ opcao.proposta.organizacao.sigla }})
-                    "
-                  >
-                    {% if opcao.prioridade == 0 %}
-                      X
                     {% else %}
-                      {{opcao.prioridade}}
+                      {{proposta.nome_organizacao}}
+                      {% if proposta.id in proposta_indice %}
+                        <sup>{{ proposta_indice|get_value:proposta.id }}</sup>
+                      {% endif %}
                     {% endif %}
-                  </a>
-                </td>
-              {% else %}
-                <td>&nbsp;</td>
-              {% endif %}
+                  </span>
+                </div>
+              </th>
             {% endfor %}
-          </tr>
-        {% endfor %}
-      </table>
-    {% else %}
-      <p>Não existem propostas de projetos disponíveis.</p>
-    {% endif %}
+          </tr>      
+          {% for estudante,opcoes in estudantes %} 
+            <tr class="item">
+              <td style="text-align:right">
+                <a href="{% url 'aluno_detail' estudante.id %}">
+                  {{estudante.user.get_full_name}}
+                </a>
+              </td>
+              <td style="text-align:center">
+                <a href="{% url 'aluno_detail' estudante.id %}">
+                  {{estudante.curso}}
+                </a>
+              </td>
+              <td style="text-align:left;border-right: 2px solid black;">
+                <a href="{% url 'aluno_detail' estudante.id %}">
+                  {{estudante.cr|floatformat:4}}
+                </a>
+              </td>
+              {% for opcao in opcoes %}
+                {% if opcao %}
+                  <td style="text-align:center;
+                      {% with alocacoes=estudante.alocacao_set %}
+                        {% if alocacoes.count and opcao.proposta == alocacoes.last.projeto.proposta %}
+                          background-color:pink;
+                        {% endif %}
+                      {% endwith %}"
+                      class="{% if opcao.prioridade == 0 %}red-bold{% elif opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}">
+                    <a class="prioridade" href="{% url 'proposta_completa' opcao.proposta.id %}"
+                      data-toggle="tooltip" data-html="true" animation="true" title="
+                      {{ opcao.proposta.titulo }} ({{ opcao.proposta.organizacao.sigla }})
+                      "
+                    >
+                      {% if opcao.prioridade == 0 %}
+                        X
+                      {% else %}
+                        {{opcao.prioridade}}
+                      {% endif %}
+                    </a>
+                  </td>
+                {% else %}
+                  <td>&nbsp;</td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </table>
+      {% else %}
+        <p>Não existem propostas de projetos disponíveis.</p>
+      {% endif %}
 
-    <script>
-      {% for proposta in propostas %}
-        {% if not proposta.disponivel %}  
-          $('table td:nth-child({{ forloop.counter|add:"3" }})').css('border','dotted 2px gray');
-        {% endif %}
-      {% endfor %}
-    </script>
+      <script>
+        {% for proposta in propostas %}
+          {% if not proposta.disponivel %}  
+            $('table td:nth-child({{ forloop.counter|add:"3" }})').css('border','dotted 2px gray');
+          {% endif %}
+        {% endfor %}
+
+        $('#MapeamentoTable tr td:nth-child(4)').css('border-left','3px solid black');
+        $('#MapeamentoTable tr > *:nth-child(3)').hide();  
+      </script>
+
+    </div>
 
   </div>
 
@@ -169,8 +169,14 @@
   <p>&nbsp;</p>
 
   <script>
-    $('#MapeamentoTable tr td:nth-child(4)').css('border-left','3px solid black');
-    $('#MapeamentoTable tr > *:nth-child(3)').hide();
+    function carrega_pagina(){
+      ($("#curso").prop('checked') ? $('#MapeamentoTable tr > *:nth-child(2)').show() : $('#MapeamentoTable tr > *:nth-child(2)').hide());
+      ($("#cr").prop('checked') ? $('#MapeamentoTable tr > *:nth-child(3)').show() : $('#MapeamentoTable tr > *:nth-child(3)').hide());
+      {% include "tooltip.js" %}
+    };
+    window.onload = carrega_pagina
   </script>
+
+  {% include "edicoes_ajax.html" %}
 
 {% endblock %}

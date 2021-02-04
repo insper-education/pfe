@@ -14,9 +14,10 @@ urlpatterns = [
 
     path('', views.index_propostas, name='index_propostas'), #pagina inicial
 
-    path('mapeamento/', views.mapeamento, name='mapeamento'),
+    # path('mapeamento/', views.mapeamento, name='mapeamento'),
+    # path('map_est_proj/<str:anosemestre>', views.map_est_proj, name='map_est_proj'),
 
-    path('map_est_proj/<str:anosemestre>', views.map_est_proj, name='map_est_proj'),
+    path('map_est_proj/', views.mapeamento_estudantes_propostas, name='mapeamento_estudantes_propostas'),
 
     path('procura_propostas/', views.procura_propostas, name='procura_propostas'),
 

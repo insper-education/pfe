@@ -9,7 +9,10 @@
 
   <label id="labelEdicao" for="filterEdicao"><b>Edição:</b></label>
   <select class="filter" id="filterEdicao">
-      <option value="todas">todas</option>
+      {% comment %} Se não quiser que aparece a opção todas crie uma variavel n_todas com True {% endcomment %}
+      {% if not n_todas %}
+        <option value="todas">todas</option>
+      {% endif %}
       {% for edicao in edicoes %}
           <option value="{{edicao}}" {% if forloop.last %}selected{% endif %}>{{edicao}}</option>
       {% endfor %}
