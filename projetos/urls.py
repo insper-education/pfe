@@ -1,24 +1,28 @@
 #!/usr/bin/env python
 # pylint: disable=C0103
+
 """
-Desenvolvido para o Projeto Final de Engenharia
+Desenvolvido para o Projeto Final de Engenharia.
+
 Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Maio de 2019
 """
 
 from django.urls import path
 
-from . import views
-
 from organizacoes.views import projeto_feedback
 
+from . import views
+
+
 urlpatterns = [
-    path('', views.index, name='index'), #pagina inicial
-    path('index_projetos/', views.index_projetos, name='index_projetos'), #pagina inicial de projs.
+    path('', views.index, name='index'),  # pagina inicial
+    # path('index_projetos/', views.index_projetos, name='index_projetos'),  # pagina inicial de projs.
+    path('index_projetos/', views.projetos_fechados, name='index_projetos'),  # simplificação atual
 
     path('carrega_bancos/', views.carrega_bancos, name='carrega_bancos'),
     path('comite/', views.comite, name='comite'),
-    path('completo/<int:primakey>', views.projeto_completo, name='completo'), # REMOVER
+    path('completo/<int:primakey>', views.projeto_completo, name='completo'),  # REMOVER
     path('dinamicas/<str:periodo>', views.dinamicas, name='dinamicas'),
     path('dinamicas/', views.dinamicas_root, name='dinamicas_root'),
     path('distribuicao_areas/', views.distribuicao_areas, name='distribuicao_areas'),

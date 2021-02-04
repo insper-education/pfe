@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # pylint: disable=C0103
 """
-Desenvolvido para o Projeto Final de Engenharia
+Desenvolvido para o Projeto Final de Engenharia.
+
 Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 14 de Dezembro de 2020
 """
@@ -12,7 +13,7 @@ from . import views
 
 urlpatterns = [
 
-    path('', views.index_estudantes, name='index_estudantes'), #pagina inicial
+    path('', views.index_estudantes, name='index_estudantes'),  # pagina inicial
 
     path('areas_interesse/', views.areas_interesse, name='areas_interesse'),
 
