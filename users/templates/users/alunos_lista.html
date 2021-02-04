@@ -31,7 +31,7 @@
     }));
   </script>
   
-  <div class="estudantes">
+  <div class="atualizar">
 
     {% if alunos_list %}
       <div class="table-responsive">
@@ -290,30 +290,6 @@
 
   </div>
 
-
-  <script>
-
-    $(".filter").change(function(){
-      $("#spinner").css("visibility", "visible");
-      var edicao = $("#filterEdicao option:selected").attr("value");
-      $.ajax({
-          type: "POST",
-          url: "{% url 'alunos_lista' %}",
-          data: {
-              edicao: edicao,
-              'csrfmiddlewaretoken': '{{ csrf_token }}',
-          },
-          success: function(response){
-              $("div.estudantes").replaceWith($("div.estudantes",response));
-              carrega_pagina();
-              $("#spinner").css("visibility", "hidden");
-          },
-          error: function(response) {
-              console.log('error')
-          }
-      });
-    });
-
-  </script>
+  {% include "edicoes_ajax.html" %}
 
 {% endblock %}

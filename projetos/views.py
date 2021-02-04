@@ -351,36 +351,36 @@ def arquivos3(request, organizacao, projeto, usuario, path):
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')
-def projetos_lista(request, periodo):
+# def projetos_lista(request, periodo):
+def projetos_lista(request):
     """Lista todos os projetos."""
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
         return HttpResponse("Falha na configuracao do sistema.", status=401)
 
-    projetos = Projeto.objects.filter(alocacao__isnull=False).distinct()  # no futuro remover
-    projetos = projetos.order_by("ano", "semestre", "organizacao", "titulo",)
-    if periodo == "todos":
-        pass
-    if periodo == "antigos":
-        if configuracao.semestre == 1:
-            projetos = projetos.filter(ano__lt=configuracao.ano)
+    edicoes = []
+
+    if request.is_ajax():
+        if 'edicao' in request.POST:
+            edicao = request.POST['edicao']
+            if edicao == 'todas':
+                projetos_filtrados = Projeto.objects.all()
+            else:
+                ano, semestre = request.POST['edicao'].split('.')
+                projetos_filtrados = Projeto.objects.filter(ano=ano,
+                                                            semestre=semestre)
         else:
-            projetos = projetos.filter(ano__lte=configuracao.ano).\
-                                       exclude(ano=configuracao.ano, semestre=2)
-    elif periodo == "atuais":
-        projetos = projetos.filter(ano=configuracao.ano, semestre=configuracao.semestre)
-    elif periodo == "próximos":
-        if configuracao.semestre == 1:
-            projetos = projetos.filter(ano__gte=configuracao.ano).\
-                                exclude(ano=configuracao.ano, semestre=1)
-        else:
-            projetos = projetos.filter(ano__gt=configuracao.ano)
+            return HttpResponse("Algum erro não identificado.", status=401)
+    else:
+        edicoes, ano, semestre = get_edicoes(Projeto)
+        projetos_filtrados = Projeto.objects.filter(ano=ano, semestre=semestre)
+
+    projetos = projetos_filtrados.order_by("ano", "semestre", "organizacao", "titulo",)
 
     context = {
         'projetos': projetos,
-        'periodo': periodo,
-        'configuracao': configuracao,
+        'edicoes': edicoes,
     }
 
     return render(request, 'projetos/projetos_lista.html', context)

@@ -42,7 +42,9 @@ urlpatterns = [
     path('projeto_feedback', projeto_feedback, name='projeto_feedback_old'),
 
     path('projetos_fechados/', views.projetos_fechados, name='projetos_fechados'),
-    path('projetos_lista/<str:periodo>', views.projetos_lista, name='projetos_lista'),
+    # path('projetos_lista/<str:periodo>', views.projetos_lista, name='projetos_lista'),
+    path('projetos_lista', views.projetos_lista, name='projetos_lista'),
+
     path('reembolso_pedir/', views.reembolso_pedir, name='reembolso_pedir'),
     path('relatorios/', views.relatorios, name='relatorios'),
     path('ajax/validate_aviso/', views.validate_aviso, name='validate_aviso'),

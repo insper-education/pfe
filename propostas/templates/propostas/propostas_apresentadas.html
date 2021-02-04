@@ -62,21 +62,21 @@
 
 	</style>
 
-  {% with tabela='PropostasTable' %}
-    {% include "tabelas.html" %}
-  {% endwith %}
+
+  {% include "tabelas_includes.html" %}
+
 
 {% endblock %}
 
 {% block content %}
 
-  <span class="titulo">Propostas</span><br>
+  <span class="titulo">Propostas</span>
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" %}
 
   {% comment %} Tabela com todos as propostas selecionadas pelo filtro {% endcomment %}
-  <div class="propostas">
+  <div class="atualizar">
 
     <script>
       var publicados = 0
@@ -637,6 +637,11 @@
         //filtra_data();
         //mostra_grafico();
         {% include "tooltip.js" %}
+
+        {% with tabela='PropostasTable' %}
+          {% include "tabelas_scripts.html" %}
+        {% endwith %}
+
       }
 
       window.onload = carrega_pagina
@@ -645,30 +650,6 @@
 
   </div>
 
-  <script>
-
-     $(".filter").change(function(){
-      $("#spinner").css("visibility", "visible");
-      var edicao = $("#filterEdicao option:selected").attr("value");
-      $.ajax({
-          type: "POST",
-          url: "{% url 'propostas_apresentadas' %}",
-          data: {
-              edicao: edicao,
-              'csrfmiddlewaretoken': '{{ csrf_token }}',
-          },
-          success: function(response){
-              $("div.propostas").replaceWith($("div.propostas",response));
-              carrega_pagina();
-              $("#spinner").css("visibility", "hidden");
-          },
-          error: function(response) {
-              console.log('error')
-          }
-      });
-    });
-
-  </script>
-
+  {% include "edicoes_ajax.html" %}
 
 {% endblock %}

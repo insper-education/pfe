@@ -6,232 +6,223 @@
 {% endcomment %}
 
 {% block head %}
-
-  {% load static %}
+  {% comment %} {% load static %} {% endcomment %}
   {% comment %}{% load aderencia_aluno %}{% endcomment %}
-
-  {% comment %} Para chamar os Tooltips {% endcomment %}
-  <script>{% include "tooltip.js" %}</script>
-
-  {% with tabela='ProjetosTable' %}
-    {% include "tabelas.html" %}
-  {% endwith %}
-
+  {% include "tabelas_includes.html" %}
 {% endblock %}
 
 {% block content %}
 
-  {% comment %}
-    {% with dados='projetos' %}
-      {% include "planilhas.html" %}
-    {% endwith %}
-  {% endcomment %}
+  <span class="titulo">Projetos</span>
 
-  <span class="titulo">
-    {% if periodo == "todos" %}
-      Todos os Projetos
-    {% else %}
-      Projetos
-      {% if periodo == "antigos" %}
-        publicados antes de 
-      {% elif periodo == "atuais" %}
-        disponíveis em
-      {% elif periodo == "próximos" %}
-        após
-      {% endif %}
-      {{configuracao.ano}}.{{configuracao.semestre}}
-    {% endif %}
-  </span>
+  {% comment %} Seletor da edição da pesquisa {% endcomment %}
+  {% include "edicoes.html" %}
 
-  <select onchange="location = this.options[this.selectedIndex].value;">
-    <option value="todos" {% if periodo == "todos" %}selected="selected"{% endif %}>todos</option>
-    <option value="antigos" {% if periodo == "antigos" %}selected="selected"{% endif %}>antigos</option>
-    <option value="atuais" {% if periodo == "atuais" %}selected="selected"{% endif %}>atuais</option>
-    <option value="próximos" {% if periodo == "próximos" %}selected="selected"{% endif %}>próximos</option>
-  </select>
+  <div class="atualizar">
 
-  {% if projetos %}
-    <div class="table-responsive">
-    <table id="ProjetosTable" class="table table-bordered table-hover table-sm">
-      <thead class="table-info">
-        <tr>
-          <th scope="col" class="text-center">Projeto</th>
-          <th scope="col" class="text-center">Período</th>
-          <th scope="col" class="text-center">Orientador</th>
-          <th scope="col" class="text-center">Organização</th>
-        </tr>
-      </thead>
-      {% for projeto in projetos %} 
-      <tr class="item">
-        {% comment %}{% with disponivel=projeto.disponivel %}{% endcomment %}
+    {% if projetos %}
+      <div class="table-responsive">
+      <table id="ProjetosTable" class="table table-bordered table-hover table-sm">
+        <thead class="table-info">
+          <tr>
+            <th scope="col" class="text-center">Projeto</th>
+            <th scope="col" class="text-center">Período</th>
+            <th scope="col" class="text-center">Orientador</th>
+            <th scope="col" class="text-center">Organização</th>
+          </tr>
+        </thead>
+        {% for projeto in projetos %} 
+        <tr class="item">
+          {% comment %}{% with disponivel=projeto.disponivel %}{% endcomment %}
 
-          <th scope="row">
-          
-            {% comment %}{% if not disponivel %}<del>{% endif %}{% endcomment %}
+            <th scope="row" data-order="{{projeto.get_titulo}}">
+            
+              {% comment %}{% if not disponivel %}<del>{% endif %}{% endcomment %}
 
-            <a href="{% url 'projeto_completo' projeto.id %}"
-              data-toggle="tooltip" data-html="true" animation="true" title="
-              {% for alocacao in projeto.alocacao_set.all %}
-                &bull; {{alocacao.aluno.user.get_full_name}} [{{alocacao.aluno.get_curso_display}}]<br>
-              {% empty %}
-                Nenhum aluno alocado nesse projeto
-              {% endfor %}
-              "            
-            >
-              {% if projeto.titulo_final %}
-                {{projeto.titulo_final}}<br>
-                <small>Título Provisório: {{projeto.titulo}}</small>
+              <a href="{% url 'projeto_completo' projeto.id %}"
+                data-toggle="tooltip" data-html="true" animation="true" title="
+                {% for alocacao in projeto.alocacao_set.all %}
+                  &bull; {{alocacao.aluno.user.get_full_name}} [{{alocacao.aluno.get_curso_display}}]<br>
+                {% empty %}
+                  Nenhum aluno alocado nesse projeto
+                {% endfor %}
+                "            
+              >
+                {% if projeto.titulo_final %}
+                  {{projeto.titulo_final}}<br>
+                  <small>Título Provisório: {{projeto.titulo}}</small>
+                {% else %}
+                  {{projeto.titulo}}
+                {% endif %}
+              </a>
+              {% comment %}{% if not disponivel %}<del>{% endif %}{% endcomment %}
+            </th>
+
+            <td class="text-center">
+              {% comment %}{% if not disponivel %}<del>{% endif %}{% endcomment %}
+                {{projeto.ano}}.{{projeto.semestre}}
+              {% comment %}{% if not disponivel %}<del>{% endif %}{% endcomment %}
+            </td>
+
+            <td>
+              {% if projeto.orientador %}
+                <a href="{% url 'professor_detail' projeto.orientador.id %}">
+                  {{ projeto.orientador }}
+                </a>
               {% else %}
-                {{projeto.titulo}}
+                <i>Orientador não definido</i>
               {% endif %}
-            </a>
-            {% comment %}{% if not disponivel %}<del>{% endif %}{% endcomment %}
-          </th>
+            </td>
 
-          <td class="text-center">
-            {% comment %}{% if not disponivel %}<del>{% endif %}{% endcomment %}
-              {{projeto.ano}}.{{projeto.semestre}}
-            {% comment %}{% if not disponivel %}<del>{% endif %}{% endcomment %}
-          </td>
+            <td>
+              {% comment %}{% if not disponivel %}<del>{% endif %}{% endcomment %}
+                <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
+                  {{ projeto.organizacao.nome }}
+                </a>
+              {% comment %}{% if not disponivel %}<del>{% endif %}{% endcomment %}
+            </td>
 
-          <td>
-            {% if projeto.orientador %}
-              <a href="{% url 'professor_detail' projeto.orientador.id %}">
-                {{ projeto.orientador }}
-              </a>
-            {% else %}
-              <i>Orientador não definido</i>
-            {% endif %}
-          </td>
-
-          <td>
-            {% comment %}{% if not disponivel %}<del>{% endif %}{% endcomment %}
-              <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-                {{ projeto.organizacao.nome }}
-              </a>
-            {% comment %}{% if not disponivel %}<del>{% endif %}{% endcomment %}
-          </td>
-
-          {% comment %}
-          <td class="text-center">
-            {% if not disponivel %}
-              <del>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</del>
-            {% else %}
-              {% if projeto.perfil_aluno1_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
-              {% if projeto.perfil_aluno1_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
-              {% if projeto.perfil_aluno1_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
-              <!-- Se não defido conta para os 3 cursos -->
-              {% if not projeto.perfil_aluno1_computacao and not projeto.perfil_aluno1_mecatronica and not projeto.perfil_aluno1_mecanica %}
-                <script>tmp_computacao += 1</script>
-                <script>tmp_mecatronica += 1</script>
-                <script>tmp_mecanica += 1</script>
-                ?
+            {% comment %}
+            <td class="text-center">
+              {% if not disponivel %}
+                <del>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</del>
+              {% else %}
+                {% if projeto.perfil_aluno1_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
+                {% if projeto.perfil_aluno1_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
+                {% if projeto.perfil_aluno1_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
+                <!-- Se não defido conta para os 3 cursos -->
+                {% if not projeto.perfil_aluno1_computacao and not projeto.perfil_aluno1_mecatronica and not projeto.perfil_aluno1_mecanica %}
+                  <script>tmp_computacao += 1</script>
+                  <script>tmp_mecatronica += 1</script>
+                  <script>tmp_mecanica += 1</script>
+                  ?
+                {% endif %}
               {% endif %}
-            {% endif %}
-          </td>
-          <td class="text-center">
-            {% if not disponivel %}
-              <del>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</del>
-            {% else %}
-              {% if projeto.perfil_aluno2_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
-              {% if projeto.perfil_aluno2_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
-              {% if projeto.perfil_aluno2_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
-              <!-- Se não defido conta para os 3 cursos -->
-              {% if not projeto.perfil_aluno2_computacao and not projeto.perfil_aluno2_mecatronica and not projeto.perfil_aluno2_mecanica %}
-                <script>tmp_computacao += 1</script>
-                <script>tmp_mecatronica += 1</script>
-                <script>tmp_mecanica += 1</script>
-                ?
+            </td>
+            <td class="text-center">
+              {% if not disponivel %}
+                <del>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</del>
+              {% else %}
+                {% if projeto.perfil_aluno2_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
+                {% if projeto.perfil_aluno2_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
+                {% if projeto.perfil_aluno2_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
+                <!-- Se não defido conta para os 3 cursos -->
+                {% if not projeto.perfil_aluno2_computacao and not projeto.perfil_aluno2_mecatronica and not projeto.perfil_aluno2_mecanica %}
+                  <script>tmp_computacao += 1</script>
+                  <script>tmp_mecatronica += 1</script>
+                  <script>tmp_mecanica += 1</script>
+                  ?
+                {% endif %}
               {% endif %}
-            {% endif %}
-          </td>
-          <td class="text-center">
-            {% if not disponivel %}
-              <del>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</del>
-            {% else %}
-              {% if projeto.perfil_aluno3_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
-              {% if projeto.perfil_aluno3_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
-              {% if projeto.perfil_aluno3_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
-              <!-- Se não defido conta para os 3 cursos -->
-              {% if not projeto.perfil_aluno3_computacao and not projeto.perfil_aluno3_mecatronica and not projeto.perfil_aluno3_mecanica %}
-                <script>tmp_computacao += 1</script>
-                <script>tmp_mecatronica += 1</script>
-                <script>tmp_mecanica += 1</script>
-                ?
+            </td>
+            <td class="text-center">
+              {% if not disponivel %}
+                <del>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</del>
+              {% else %}
+                {% if projeto.perfil_aluno3_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
+                {% if projeto.perfil_aluno3_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
+                {% if projeto.perfil_aluno3_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
+                <!-- Se não defido conta para os 3 cursos -->
+                {% if not projeto.perfil_aluno3_computacao and not projeto.perfil_aluno3_mecatronica and not projeto.perfil_aluno3_mecanica %}
+                  <script>tmp_computacao += 1</script>
+                  <script>tmp_mecatronica += 1</script>
+                  <script>tmp_mecanica += 1</script>
+                  ?
+                {% endif %}
               {% endif %}
-            {% endif %}
-          </td>
-          <td class="text-center">
-            {% if not disponivel %}
-              <del>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</del>
-            {% else %}
-              {% if projeto.perfil_aluno4_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
-              {% if projeto.perfil_aluno4_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
-              {% if projeto.perfil_aluno4_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
-              {% if not projeto.perfil_aluno4_computacao and not projeto.perfil_aluno4_mecatronica and not projeto.perfil_aluno4_mecanica %}
-                <script>tmp_computacao += 1</script>
-                <script>tmp_mecatronica += 1</script>
-                <script>tmp_mecanica += 1</script>
-                ?
+            </td>
+            <td class="text-center">
+              {% if not disponivel %}
+                <del>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</del>
+              {% else %}
+                {% if projeto.perfil_aluno4_computacao %}C<script>tmp_computacao += 1</script>{% endif %}
+                {% if projeto.perfil_aluno4_mecatronica %}X<script>tmp_mecatronica += 1</script>{% endif %}
+                {% if projeto.perfil_aluno4_mecanica %}M<script>tmp_mecanica += 1</script>{% endif %}
+                {% if not projeto.perfil_aluno4_computacao and not projeto.perfil_aluno4_mecatronica and not projeto.perfil_aluno4_mecanica %}
+                  <script>tmp_computacao += 1</script>
+                  <script>tmp_mecatronica += 1</script>
+                  <script>tmp_mecanica += 1</script>
+                  ?
+                {% endif %}
               {% endif %}
-            {% endif %}
-          </td>
-          {% endcomment %}
+            </td>
+            {% endcomment %}
 
 
-        {% comment %}{% endwith %}{% endcomment %}
-      </tr>
+          {% comment %}{% endwith %}{% endcomment %}
+        </tr>
+        {% comment %}
+        <script>
+          alunos_computacao += tmp_computacao;
+          alunos_mecatronica += tmp_mecatronica;
+          alunos_mecanica += tmp_mecanica;
+
+          if ( ( tmp_computacao >= 3 ) && (tmp_computacao >= tmp_mecatronica + tmp_mecanica ) ) {
+            projeto_computacao += 1;
+          } else if ( ( tmp_mecatronica >= 3 ) && (tmp_mecatronica >= tmp_computacao + tmp_mecanica ) ) {
+            projeto_mecatronica += 1; 
+          } else if ( ( tmp_mecanica >= 3 ) && (tmp_mecanica >= tmp_mecatronica + tmp_computacao ) ) {
+            projeto_mecanica += 1;
+          } else {
+            projeto_multidisciplinar += 1;
+          }
+
+          tmp_computacao = 0;
+          tmp_mecatronica = 0;
+          tmp_mecanica = 0;
+        </script>
+        {% endcomment %}
+        {% endfor %}
+        
+      </table>
+      </div>
       {% comment %}
-      <script>
-        alunos_computacao += tmp_computacao;
-        alunos_mecatronica += tmp_mecatronica;
-        alunos_mecanica += tmp_mecanica;
-
-        if ( ( tmp_computacao >= 3 ) && (tmp_computacao >= tmp_mecatronica + tmp_mecanica ) ) {
-          projeto_computacao += 1;
-        } else if ( ( tmp_mecatronica >= 3 ) && (tmp_mecatronica >= tmp_computacao + tmp_mecanica ) ) {
-          projeto_mecatronica += 1; 
-        } else if ( ( tmp_mecanica >= 3 ) && (tmp_mecanica >= tmp_mecatronica + tmp_computacao ) ) {
-          projeto_mecanica += 1;
-        } else {
-          projeto_multidisciplinar += 1;
-        }
-
-        tmp_computacao = 0;
-        tmp_mecatronica = 0;
-        tmp_mecanica = 0;
-      </script>
+      <p style="text-align: right;"><small>C: Computação | X: Mecatrônica | M: Mecânica</small></p>
+      <p>&nbsp;</p>
       {% endcomment %}
-      {% endfor %}
+      <strong>Número Total de Projetos:</strong> {{ projetos.count }}
+      {% comment %}
+        <a data-toggle="tooltip" data-html="true" animation="true" title="Contando projetos que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
+          ({{ projetos.count }})
+        </a><br>
       
-    </table>
-    </div>
-    {% comment %}
-    <p style="text-align: right;"><small>C: Computação | X: Mecatrônica | M: Mecânica</small></p>
+      <strong>Número Total de Projetos:</strong> <script>document.write(fechados);</script><br>
+      
+      <p>&nbsp;</p>
+      <strong>Projetos nativamente multidisciplinar:</strong> <script>document.write(projeto_multidisciplinar);</script><br>
+      <strong>Projetos nativamente de computação:</strong> <script>document.write(projeto_computacao);</script><br>
+      <strong>Projetos nativamente de mecatrônica:</strong> <script>document.write(projeto_mecatronica);</script><br>
+      <strong>Projetos nativamente de mecânica:</strong> <script>document.write(projeto_mecanica);</script><br>
+      <p>&nbsp;</p>
+      <strong>Vagas para estudantes de computação:</strong> <script>document.write(alunos_computacao);</script><br>
+      <strong>Vagas para estudantes de mecatrônica:</strong> <script>document.write(alunos_mecatronica);</script><br>
+      <strong>Vagas para estudantes de mecânica:</strong> <script>document.write(alunos_mecanica);</script><br>
+      {% endcomment %}
+    {% else %}
+      <p>Não existem projetos disponíveis.</p>
+    {% endif %}
     <p>&nbsp;</p>
-    {% endcomment %}
-    <strong>Número Total de Projetos:</strong> {{ projetos.count }}
-    {% comment %}
-      <a data-toggle="tooltip" data-html="true" animation="true" title="Contando projetos que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
-        ({{ projetos.count }})
-      </a><br>
+
+    <script>
+
+
+      function carrega_pagina() {
+        {% include "tooltip.js" %}
+        
+        {% with tabela='ProjetosTable' %}
+          {% include "tabelas_scripts.html" %}
+        {% endwith %}
+
+      };
+
+      window.onload = carrega_pagina
     
-    <strong>Número Total de Projetos:</strong> <script>document.write(fechados);</script><br>
-    
-    <p>&nbsp;</p>
-    <strong>Projetos nativamente multidisciplinar:</strong> <script>document.write(projeto_multidisciplinar);</script><br>
-    <strong>Projetos nativamente de computação:</strong> <script>document.write(projeto_computacao);</script><br>
-    <strong>Projetos nativamente de mecatrônica:</strong> <script>document.write(projeto_mecatronica);</script><br>
-    <strong>Projetos nativamente de mecânica:</strong> <script>document.write(projeto_mecanica);</script><br>
-    <p>&nbsp;</p>
-    <strong>Vagas para estudantes de computação:</strong> <script>document.write(alunos_computacao);</script><br>
-    <strong>Vagas para estudantes de mecatrônica:</strong> <script>document.write(alunos_mecatronica);</script><br>
-    <strong>Vagas para estudantes de mecânica:</strong> <script>document.write(alunos_mecanica);</script><br>
-    {% endcomment %}
-  {% else %}
-    <p>Não existem projetos disponíveis.</p>
-  {% endif %}
-  <p>&nbsp;</p>
+    </script>
+
+
+  </div>
+
+  {% include "edicoes_ajax.html" %}
 
 
 {% endblock %}
