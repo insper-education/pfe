@@ -27,8 +27,7 @@ from projetos.models import Configuracao, Evento
 
 
 def get_calendario_context(primarykey=None):
-    """ Contexto para gerar calendário. """
-
+    """Contexto para gerar calendário."""
     if primarykey:
         try:
             user = PFEUser.objects.get(pk=primarykey)
@@ -87,7 +86,6 @@ def get_calendario_context(primarykey=None):
 @login_required
 def calendario(request):
     """Para exibir um calendário de eventos."""
-
     context = get_calendario_context(request.user.pk)
     if context:
         return render(request, 'calendario/calendario.html', context)
@@ -98,7 +96,6 @@ def calendario(request):
 @login_required
 def calendario_limpo(request):
     """Para exibir um calendário de eventos."""
-
     context = get_calendario_context(request.user.pk)
     if context:
         context['limpo'] = True
@@ -111,9 +108,7 @@ def calendario_limpo(request):
 @permission_required("users.altera_professor", login_url='/')
 def export_calendar(request, event_id):
     """Gera evento de calendário."""
-
     # ATUALMENTE PARA BANCA
-
     try:
         banca = Banca.objects.all().get(pk=event_id)
     except Banca.DoesNotExist:
@@ -203,8 +198,7 @@ def export_calendar(request, event_id):
 @login_required
 @permission_required('users.altera_professor', login_url='/')
 def atualiza_evento(request):
-    """ Ajax para atualizar eventos. """
-
+    """Ajax para atualizar eventos."""
     try:
         event_id = int(request.GET.get('id', None))
         if event_id:
@@ -243,8 +237,7 @@ def atualiza_evento(request):
 @login_required
 @permission_required('users.altera_professor', login_url='/')
 def remove_evento(request):
-    """ Ajax para remover eventos. """
-
+    """Ajax para remover eventos."""
     try:
         event_id = int(request.GET.get('id', None))
         evento = Evento.objects.get(id=event_id)

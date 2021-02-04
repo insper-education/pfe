@@ -34,23 +34,22 @@ from .support import render_pdf_file
 @login_required
 def index_documentos(request):
     """Lista os documentos armazenados no servidor."""
-
-    regulamento = Documento.objects.filter(tipo_de_documento=6).last() # Regulamento PFE
-    plano_de_aprendizagem = Documento.objects.filter(tipo_de_documento=7).last() # Plano de Aprend
-    manual_aluno = Documento.objects.filter(tipo_de_documento=8).last() # manual do aluno
-    # = Documento.objects.filter(tipo_de_documento=9).last() # manual do orientador
-    # = Documento.objects.filter(tipo_de_documento=10).last() # manual da organização parceira
-    manual_planejamento = Documento.objects.filter(tipo_de_documento=13).last() # manual de planej
-    manual_relatorio = Documento.objects.filter(tipo_de_documento=12).last() # manual de relatórios
-    template_relatorio = Documento.objects.filter(tipo_de_documento=17).last() # template de relat.
-    termo_parceria = Documento.objects.filter(tipo_de_documento=14).last() # termo de parceria
+    regulamento = Documento.objects.filter(tipo_de_documento=6).last()  # Regulamento PFE
+    plano_de_aprendizagem = Documento.objects.filter(tipo_de_documento=7).last()  # Plano de Aprend
+    manual_aluno = Documento.objects.filter(tipo_de_documento=8).last()  # manual do aluno
+    # = Documento.objects.filter(tipo_de_documento=9).last()  # manual do orientador
+    # = Documento.objects.filter(tipo_de_documento=10).last()  # manual da organização parceira
+    manual_planejamento = Documento.objects.filter(tipo_de_documento=13).last()  # manual de planej
+    manual_relatorio = Documento.objects.filter(tipo_de_documento=12).last()  # manual de relatórios
+    template_relatorio = Documento.objects.filter(tipo_de_documento=17).last()  # template de relat.
+    termo_parceria = Documento.objects.filter(tipo_de_documento=14).last()  # termo de parceria
 
     context = {
-        'MEDIA_URL' : settings.MEDIA_URL,
+        'MEDIA_URL': settings.MEDIA_URL,
         'regulamento': regulamento,
         'plano_de_aprendizagem': plano_de_aprendizagem,
         'manual_aluno': manual_aluno,
-        'manual_planejamento' : manual_planejamento,
+        'manual_planejamento': manual_planejamento,
         'manual_relatorio': manual_relatorio,
         'termo_parceria': termo_parceria,
         'template_relatorio': template_relatorio,
@@ -89,8 +88,7 @@ def certificados_submetidos(request):
 
 
 def atualiza_certificado(usuario, projeto, tipo_de_certificado, arquivo, banca=None):
-    """ atualiza os certificados. """
-
+    """Atualiza os certificados."""
     (certificado, _created) = Certificado.objects.get_or_create(usuario=usuario,
                                                                 projeto=projeto,
                                                                 tipo_de_certificado=tipo_de_certificado)
@@ -137,11 +135,11 @@ def atualiza_certificado(usuario, projeto, tipo_de_certificado, arquivo, banca=N
 
     return None
 
+
 @login_required
 @permission_required('users.altera_professor', login_url='/')
 def gerar_certificados(request):
     """Recupera um certificado pelos dados."""
-
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:

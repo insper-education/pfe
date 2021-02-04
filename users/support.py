@@ -13,8 +13,7 @@ from .models import Aluno
 
 
 def adianta_semestre(ano, semestre):
-    """ Adiciona um semestre no par ano, semestre."""
-
+    """Adiciona um semestre no par ano, semestre."""
     if semestre == 1:
         semestre = 2
     else:
@@ -26,7 +25,6 @@ def adianta_semestre(ano, semestre):
 
 def configuracao_estudante_vencida(estudante):
     """Retorna verdade se ainda em tempo de estudante atualizar dados."""
-
     configuracao = Configuracao.objects.get()
 
     ano = configuracao.ano

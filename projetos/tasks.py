@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """
-Desenvolvido para o Projeto Final de Engenharia
+Desenvolvido para o Projeto Final de Engenharia.
+
 Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 18 de Outubro de 2019
 """
@@ -20,7 +21,7 @@ from .messages import email, htmlizar
 
 @shared_task
 def backup():
-    """ Rotina de Backup. """
+    """Rotina de Backup."""
     if settings.DEBUG is True:
         return "Não se pode fazer o Backup: Debug está True"
 
@@ -33,7 +34,7 @@ def backup():
 
 @shared_task
 def mediabackup():
-    """ Rotina de Backup dos arquivos (media). """
+    """Rotina de Backup dos arquivos (media)."""
     if settings.DEBUG is True:
         return "Não pode fazer o Backup: Debug está True"
 
@@ -53,7 +54,6 @@ def certbot_renew():
 @task
 def envia_aviso():
     """Gera um aviso por e-mail."""
-
     avisos = []
     for aviso in Aviso.objects.all():
         if aviso.get_data() == datetime.date.today():
@@ -79,8 +79,11 @@ def envia_aviso():
                 subject = "PFE {0} : {1}".format(event, acao.get_title())
                 message = "{0} : {1}".format(event, acao.get_title())
                 message += "<br>\nLocal : {0}".format(acao.location)
-                message += "<br>\ndata inicial = {0}".format(acao.startDate)
-                message += "<br>\ndata final = {0}".format(acao.endDate)
+                if acao.startDate == acao.endDate:
+                    message += "<br>\ndata = {0}".format(acao.startDate)
+                else:
+                    message += "<br>\ndata inicial = {0}".format(acao.startDate)
+                    message += "<br>\ndata final = {0}".format(acao.endDate)
                 verify = email(subject, recipient_list, message)
                 if verify != 1:
                     # print("Algum problema de conexão, contacte: lpsoares@insper.edu.br")

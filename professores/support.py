@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """
-Desenvolvido para o Projeto Final de Engenharia
+Desenvolvido para o Projeto Final de Engenharia.
+
 Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 17 de Dezembro de 2020
 """
@@ -67,7 +68,6 @@ def professores_membros_bancas():
 
 def falconi_membros_banca():
     """Coleta registros de possiveis membros de banca para Falconi."""
-
     try:
         organizacao = Organizacao.objects.get(sigla="Falconi")
     except Organizacao.DoesNotExist:
@@ -78,8 +78,7 @@ def falconi_membros_banca():
 
 
 def recupera_orientadores_por_semestre(configuracao):
-    """ Recupera listas de orientadores de projetos ordenadas por semestre. """
-
+    """Recupera listas de orientadores de projetos ordenadas por semestre."""
     professores_pfe = []
     periodo = []
 
@@ -95,7 +94,7 @@ def recupera_orientadores_por_semestre(configuracao):
                                         filter(ano=ano).\
                                         filter(semestre=semestre)
             if grupos_pfe:
-                for grupo in grupos_pfe: # garante que tem alunos no projeto
+                for grupo in grupos_pfe:  # garante que tem alunos no projeto
                     alunos_pfe = Aluno.objects.filter(alocacao__projeto=grupo)
                     if alunos_pfe:
                         count_grupos.append(grupo)
@@ -103,7 +102,7 @@ def recupera_orientadores_por_semestre(configuracao):
                     professores.append(professor)
                     grupos.append(count_grupos)
 
-        if professores: # Se não houver nenhum orientador não cria entrada na lista
+        if professores:  # Se não houver nenhum orientador não cria entrada na lista
             professores_pfe.append(zip(professores, grupos))
             periodo.append(str(ano)+"."+str(semestre))
 
@@ -115,12 +114,11 @@ def recupera_orientadores_por_semestre(configuracao):
         # Avança um semestre
         ano, semestre = adianta_semestre(ano, semestre)
 
-    return zip(professores_pfe[::-1], periodo[::-1]) #inverti lista deixando os mais novos primeiro
+    return zip(professores_pfe[::-1], periodo[::-1])  # inverti lista deixando os mais novos primeiro
 
 
 def recupera_coorientadores_por_semestre(configuracao):
-    """ Recupera listas de coorientadores de projetos ordenadas por semestre. """
-
+    """Recupera listas de coorientadores de projetos ordenadas por semestre."""
     professores_pfe = []
     periodo = []
 
@@ -137,7 +135,7 @@ def recupera_coorientadores_por_semestre(configuracao):
                                         filter(ano=ano).\
                                         filter(semestre=semestre)
             if grupos_pfe:
-                for grupo in grupos_pfe: # garante que tem alunos no projeto
+                for grupo in grupos_pfe:  # garante que tem alunos no projeto
                     alunos_pfe = Aluno.objects.filter(alocacao__projeto=grupo)
                     if alunos_pfe:
                         count_grupos.append(grupo)
@@ -156,13 +154,11 @@ def recupera_coorientadores_por_semestre(configuracao):
         # Avança um semestre
         ano, semestre = adianta_semestre(ano, semestre)
 
-    return zip(professores_pfe[::-1], periodo[::-1]) #inverti lista deixando os mais novos primeiro
-
+    return zip(professores_pfe[::-1], periodo[::-1])  # inverti lista deixando os mais novos primeiro
 
 
 def recupera_orientadores(ano, semestre):
-    """ Recupera listas de todos os orientadores de projetos. """
-
+    """Recupera listas de todos os orientadores de projetos."""
     professores = []
     grupos = []
 
@@ -178,7 +174,7 @@ def recupera_orientadores(ano, semestre):
             grupos_pfe = grupos_pfe.filter(ano__lte=ano).exclude(ano=ano, semestre=2)
 
         if grupos_pfe:
-            for grupo in grupos_pfe: # garante que tem alunos no projeto
+            for grupo in grupos_pfe:  # garante que tem alunos no projeto
                 alunos_pfe = Aluno.objects.filter(alocacao__projeto=grupo)
                 if alunos_pfe:
                     count_grupos.append(grupo)
@@ -190,8 +186,7 @@ def recupera_orientadores(ano, semestre):
 
 
 def recupera_coorientadores(ano, semestre):
-    """ Recupera listas de todos os orientadores de projetos. """
-
+    """Recupera listas de todos os orientadores de projetos."""
     professores = []
     grupos = []
 
@@ -219,8 +214,7 @@ def recupera_coorientadores(ano, semestre):
 
 
 def recupera_bancas_intermediarias(ano, semestre):
-    """ Recupera listas de todos os membros de bancas intermediárias. """
-
+    """Recupera listas de todos os membros de bancas intermediárias."""
     professores = []
     grupos = []
 
@@ -229,10 +223,10 @@ def recupera_bancas_intermediarias(ano, semestre):
 
         count_bancas = []
 
-        bancas = Banca.objects.filter(tipo_de_banca=1) # (1, 'Intermediária'),
+        bancas = Banca.objects.filter(tipo_de_banca=1)  # (1, 'Intermediária'),
 
-        bancas = bancas.filter(membro1=professor.user)|\
-                 bancas.filter(membro2=professor.user)|\
+        bancas = bancas.filter(membro1=professor.user) |\
+                 bancas.filter(membro2=professor.user) |\
                  bancas.filter(membro3=professor.user)
 
         if semestre == 2:
@@ -251,8 +245,7 @@ def recupera_bancas_intermediarias(ano, semestre):
 
 
 def recupera_bancas_finais(ano, semestre):
-    """ Recupera listas de todos os membros de bancas intermediárias. """
-
+    """Recupera listas de todos os membros de bancas intermediárias."""
     professores = []
     grupos = []
 
@@ -261,10 +254,10 @@ def recupera_bancas_finais(ano, semestre):
 
         count_bancas = []
 
-        bancas = Banca.objects.filter(tipo_de_banca=0) # (0, 'Final')
+        bancas = Banca.objects.filter(tipo_de_banca=0)  # (0, 'Final')
 
-        bancas = bancas.filter(membro1=professor.user)|\
-                 bancas.filter(membro2=professor.user)|\
+        bancas = bancas.filter(membro1=professor.user) |\
+                 bancas.filter(membro2=professor.user) |\
                  bancas.filter(membro3=professor.user)
 
         if semestre == 2:

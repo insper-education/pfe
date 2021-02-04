@@ -47,7 +47,6 @@ from users.support import adianta_semestre
 @permission_required("users.altera_professor", login_url='/')
 def index_administracao(request):
     """Mostra página principal para administração do sistema."""
-
     return render(request, 'administracao/index_admin.html')
 
 
@@ -55,7 +54,6 @@ def index_administracao(request):
 @permission_required('users.altera_professor', login_url='/')
 def index_carregar(request):
     """Para carregar dados de arquivos para o servidor."""
-
     try:
         user = PFEUser.objects.get(pk=request.user.pk)
     except PFEUser.DoesNotExist:
@@ -76,10 +74,9 @@ def index_carregar(request):
 @login_required
 @permission_required("users.altera_professor", login_url='/')
 def emails(request):
-    """ Gera listas de emails, com alunos, professores, parceiros, etc. """
+    """Gera listas de emails, com alunos, professores, parceiros, etc."""
     # Deve ter recurso para pegar aluno pelos projetos, opções,
     # pois um aluno que reprova pode aparecer em duas listas.
-
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
@@ -187,7 +184,6 @@ def emails(request):
 @permission_required("users.altera_professor", login_url='/')
 def cadastrar_organizacao(request):
     """Cadastra Organização na base de dados do PFE."""
-
     if request.method == 'POST':
 
         if 'nome' in request.POST and 'sigla' in request.POST:
@@ -241,7 +237,6 @@ def cadastrar_organizacao(request):
 @permission_required("users.altera_professor", login_url='/')
 def cadastrar_usuario(request):
     """Cadastra usuário na base de dados do PFE."""
-
     if request.method == 'POST':
 
         if 'email' in request.POST:
@@ -396,7 +391,6 @@ def cadastrar_usuario(request):
 @permission_required('users.altera_professor', login_url='/')
 def carrega_arquivo(request, dado):
     """Faz o upload de arquivos CSV para o servidor."""
-
     if dado == "disciplinas":
         resource = DisciplinasResource()
     elif dado == "estudantes":
@@ -460,7 +454,6 @@ def carrega_arquivo(request, dado):
 @permission_required('users.altera_professor', login_url='/')
 def definir_datas(request):
     """Definir datas do PFE."""
-
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
@@ -493,7 +486,6 @@ def definir_datas(request):
 @permission_required('users.altera_professor', login_url='/')
 def exportar(request):
     """Exporta dados."""
-
     return render(request, 'administracao/exportar.html')
 
 
@@ -509,7 +501,6 @@ def propor(request):
 @permission_required('users.altera_professor', login_url='/')
 def montar_grupos(request):
     """Montar grupos para projetos."""
-
     try:
         configuracao = Configuracao.objects.get()
         ano = configuracao.ano
@@ -629,8 +620,7 @@ def montar_grupos(request):
 @login_required
 @permission_required("users.altera_professor", login_url='/')
 def selecionar_orientadores(request):
-    """ Selecionar Orientadores para os Projetos. """
-
+    """Selecionar Orientadores para os Projetos."""
     try:
         configuracao = Configuracao.objects.get()
         ano = configuracao.ano
@@ -675,7 +665,6 @@ def selecionar_orientadores(request):
 @permission_required("users.altera_professor", login_url='/')
 def servico(request):
     """Caso servidor esteja em manutenção."""
-
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
@@ -696,7 +685,6 @@ def servico(request):
 @permission_required('users.altera_professor', login_url='/')
 def pre_alocar_estudante(request):
     """Ajax para pre-alocar estudates em propostas."""
-
     try:
         user = PFEUser.objects.get(pk=request.user.pk)
     except PFEUser.DoesNotExist:
@@ -763,7 +751,6 @@ def pre_alocar_estudante(request):
 @permission_required('users.altera_professor', login_url='/')
 def definir_orientador(request):
     """Ajax para definir orientadores de projetos."""
-
     try:
         user = PFEUser.objects.get(pk=request.user.pk)
     except PFEUser.DoesNotExist:
@@ -819,7 +806,6 @@ def definir_orientador(request):
 @permission_required("users.altera_professor", login_url='/')
 def export(request, modelo, formato):
     """Exporta dados direto para o navegador nos formatos CSV, XLS e JSON."""
-
     if modelo == "projetos":
         resource = ProjetosResource()
     elif modelo == "organizacoes":
@@ -876,7 +862,6 @@ def export(request, modelo, formato):
 
 def create_backup():
     """Rotina para criar um backup."""
-
     databook = tablib.Databook()
 
     data_projetos = ProjetosResource().export()
@@ -914,7 +899,6 @@ def create_backup():
 @permission_required("users.altera_professor", login_url='/')
 def backup(request, formato):
     """Gera um backup de tudo."""
-
     databook = create_backup()
     if formato in ("xls", "xlsx"):
         response = HttpResponse(databook.xlsx, content_type='application/ms-excel')
@@ -938,7 +922,6 @@ def backup(request, formato):
 @permission_required("users.altera_professor", login_url='/')
 def email_backup(request):
     """Envia um e-mail com os backups."""
-
     subject = 'BACKUP PFE'
     message = "Backup PFE"
     email_from = settings.EMAIL_HOST_USER
@@ -962,7 +945,6 @@ def email_backup(request):
 @permission_required("users.altera_professor", login_url='/')
 def relatorio(request, modelo, formato):
     """Gera relatorios em html e PDF."""
-
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
@@ -1005,7 +987,6 @@ def relatorio(request, modelo, formato):
 @permission_required("users.altera_professor", login_url='/')
 def relatorio_backup(request):
     """Gera um relatório de backup de segurança."""
-
     subject = 'RELATÓRIOS PFE'
     message = "Relatórios PFE"
     email_from = settings.EMAIL_HOST_USER

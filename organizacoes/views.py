@@ -43,8 +43,7 @@ def index_organizacoes(request):
 @login_required
 @permission_required("users.altera_professor", login_url='/')
 def cria_anotacao(request, login):  # acertar isso para pk
-    """ Cria um anotação para uma organização parceira. """
-
+    """Cria um anotação para uma organização parceira."""
     try:
         organizacao = Organizacao.objects.get(id=login)
     except Proposta.DoesNotExist:
@@ -93,7 +92,6 @@ def cria_anotacao(request, login):  # acertar isso para pk
 @permission_required('users.altera_parceiro', login_url='/')
 def parceiro_propostas(request):
     """Lista todas as propostas de projetos."""
-
     user = PFEUser.objects.get(pk=request.user.pk)
     if user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
         mensagem = "Você não está cadastrado como parceiro de uma organização!"
@@ -219,7 +217,6 @@ def proposta_submissao(request):
 @permission_required("users.altera_professor", login_url='/')
 def organizacoes_prospect(request):
     """Exibe as organizações prospectadas e a última comunicação."""
-
     todas_organizacoes = Organizacao.objects.all()
 
     try:
@@ -279,7 +276,6 @@ def organizacoes_prospect(request):
 @permission_required("users.altera_professor", login_url='/')
 def organizacoes_lista(request):
     """Exibe todas as organizações que já submeteram propostas de projetos."""
-
     organizacoes = Organizacao.objects.all()
     fechados = []
     desde = []
@@ -321,7 +317,6 @@ def organizacoes_lista(request):
 @permission_required("users.altera_professor", login_url='/')
 def organizacao_completo(request, org):  # acertar isso para pk
     """Exibe detalhes das organizações parceiras."""
-
     try:
         organizacao = Organizacao.objects.get(id=org)
     except Organizacao.DoesNotExist:
@@ -339,7 +334,6 @@ def organizacao_completo(request, org):  # acertar isso para pk
 @permission_required('users.altera_professor', login_url='/')
 def organizacoes_tabela(request):
     """Alocação das Organizações por semestre."""
-
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
@@ -394,7 +388,6 @@ def organizacoes_tabela(request):
 # @login_required
 def projeto_feedback(request):
     """Para Feedback das Organizações Parceiras."""
-
     if request.method == 'POST':
         feedback = Feedback.create()
         feedback.nome = request.POST.get("nome", "")
@@ -420,7 +413,6 @@ def projeto_feedback(request):
 @permission_required("users.altera_professor", login_url='/')
 def todos_parceiros(request):
     """Exibe todas os parceiros (pessoas) de organizações que já submeteram projetos."""
-
     pareceiros = Parceiro.objects.all()
 
     context = {

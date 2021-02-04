@@ -248,8 +248,7 @@ class Usuario(generic.DetailView):
 @login_required
 @permission_required("users.altera_professor", login_url='/')
 def alunos_lista(request):
-    """ Gera lista com todos os alunos já registrados. """
-
+    """Gera lista com todos os alunos já registrados."""
     configuracao = Configuracao.objects.get()
 
     if request.is_ajax():
@@ -272,12 +271,9 @@ def alunos_lista(request):
         ano = configuracao.ano
         semestre = configuracao.semestre
         anosemestre = "{0}.{1}".format(ano, semestre)
-        
-
 
     alunos_list = Aluno.objects.filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])\
         .order_by(Lower("user__first_name"), Lower("user__last_name"))  # Conta soh alunos
-
 
     ano = 0
     semestre = 0

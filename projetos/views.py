@@ -36,7 +36,6 @@ from .support import get_areas_estudantes, get_areas_propostas, simple_upload
 @login_required
 def index(request):
     """Página principal do sistema do Projeto Final de Engenharia."""
-
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
@@ -58,7 +57,6 @@ def index(request):
 @login_required
 def index_projetos(request):
     """Página principal dos Projetos."""
-
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
@@ -77,8 +75,7 @@ def index_projetos(request):
 
 @login_required
 def projeto_detalhes(request, primarykey):
-    """ Exibe proposta de projeto com seus detalhes para estudantes. """
-
+    """Exibe proposta de projeto com seus detalhes para estudantes."""
     try:
         projeto = Projeto.objects.get(pk=primarykey)
     except Projeto.DoesNotExist:
@@ -96,7 +93,6 @@ def projeto_detalhes(request, primarykey):
 @permission_required("users.altera_professor", login_url='/')
 def projeto_completo(request, primakey):
     """Mostra um projeto por completo."""
-
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
@@ -126,8 +122,7 @@ def projeto_completo(request, primakey):
 @login_required
 @permission_required("users.altera_professor", login_url='/')
 def distribuicao_areas(request):
-    """ Distribuição por área de interesse dos alunos/propostas/projetos. """
-
+    """Distribuição por área de interesse dos alunos/propostas/projetos."""
     try:
         configuracao = Configuracao.objects.get()
         ano = configuracao.ano              # Ano atual
@@ -216,7 +211,6 @@ def distribuicao_areas(request):
 @permission_required('users.altera_professor', login_url='/')
 def projetos_fechados(request):
     """Lista todos os projetos fechados."""
-
     edicoes = []
 
     if request.is_ajax():
@@ -271,12 +265,10 @@ def projetos_fechados(request):
 
 
 def get_response(file, path):
-    """ Checa extensão do arquivo e retorna HttpRensponse corespondente. """
-
+    """Checa extensão do arquivo e retorna HttpRensponse corespondente."""
     # Exemplos:
     # image/gif, image/tiff, application/zip,
     # audio/mpeg, audio/ogg, text/csv, text/plain
-
     if path[-3:].lower() == "jpg" or path[-4:].lower() == "jpeg":
         return HttpResponse(file.read(), content_type="image/jpeg")
     elif path[-3:].lower() == "png":
@@ -333,7 +325,6 @@ def carrega_arquivo(request, local_path, path):
 @login_required
 def arquivos(request, documentos, path):
     """Permite acessar arquivos do servidor."""
-
     local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}".\
         format(documentos, path))
 
@@ -343,7 +334,6 @@ def arquivos(request, documentos, path):
 @login_required
 def arquivos2(request, organizacao, usuario, path):
     """Permite acessar arquivos do servidor."""
-
     local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}/{2}".\
         format(organizacao, usuario, path))
 
@@ -353,7 +343,6 @@ def arquivos2(request, organizacao, usuario, path):
 # @login_required
 def arquivos3(request, organizacao, projeto, usuario, path):
     """Permite acessar arquivos do servidor."""
-
     local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}/{2}/{3}".\
         format(organizacao, projeto, usuario, path))
 
@@ -364,7 +353,6 @@ def arquivos3(request, organizacao, projeto, usuario, path):
 @permission_required('users.altera_professor', login_url='/')
 def projetos_lista(request, periodo):
     """Lista todos os projetos."""
-
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
@@ -408,7 +396,6 @@ def relatorios(request):
 @login_required
 def meuprojeto(request):
     """Mostra o projeto do próprio aluno, se for aluno."""
-
     try:
         user = PFEUser.objects.get(pk=request.user.pk)
     except PFEUser.DoesNotExist:
@@ -479,7 +466,7 @@ def dinamicas(request, periodo):
 @login_required
 @permission_required('users.altera_professor', login_url='/')
 def carrega_bancos(request):
-    """ Rotina que carrega arquivo CSV de bancos para base de dados do servidor. """
+    """Rotina que carrega arquivo CSV de bancos para base de dados do servidor."""
     with open('projetos/bancos.csv') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
@@ -503,7 +490,6 @@ def carrega_bancos(request):
 @login_required
 def reembolso_pedir(request):
     """Página com sistema de pedido de reembolso."""
-
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
@@ -584,7 +570,6 @@ def reembolso_pedir(request):
 @permission_required("users.altera_professor", login_url='/')
 def comite(request):
     """Exibe os professores que estão no comitê do PFE."""
-
     professores = Professor.objects.filter(user__membro_comite=True)
 
     context = {
@@ -598,7 +583,6 @@ def comite(request):
 @permission_required("users.altera_professor", login_url='/')
 def lista_feedback(request):
     """Lista todos os feedback das Organizações Parceiras."""
-
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
@@ -652,7 +636,6 @@ def lista_feedback(request):
 @permission_required("users.altera_professor", login_url='/')
 def mostra_feedback(request, feedback_id):
     """Detalha os feedbacks das Organizações Parceiras."""
-
     try:
         feedback = Feedback.objects.get(id=feedback_id)
     except Feedback.DoesNotExist:
@@ -696,7 +679,6 @@ def validate_aviso(request):
 @permission_required("users.altera_professor", login_url='/')
 def graficos(request):
     """Mostra graficos das evoluções do PFE."""
-
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
@@ -765,8 +747,7 @@ def graficos(request):
 
 
 def cap_name(name):
-    """ Capitaliza palavras. """
-
+    """Capitaliza palavras."""
     preposicoes = ['da', 'de', 'di', 'do', 'du', 'das', 'dos']
     items = []
     for item in name.split():
@@ -780,8 +761,7 @@ def cap_name(name):
 @login_required
 @permission_required('users.altera_professor', login_url='/')
 def nomes(request):
-    """ Acerta maiúsculas de nomes. """
-
+    """Acerta maiúsculas de nomes."""
     alunos = Aluno.objects.all()
 
     message = ""

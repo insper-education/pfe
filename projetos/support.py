@@ -54,7 +54,6 @@ def converte_letra(nota, mais="+", espaco=""):
 
 def cria_area_estudante(request, estudante):
     """Cria um objeto Areas e preenche ele."""
-
     check_values = request.POST.getlist('selection')
 
     todas_areas = Area.objects.filter(ativa=True)
@@ -78,7 +77,6 @@ def cria_area_estudante(request, estudante):
 
 def get_areas_estudantes(alunos):
     """Retorna dicionário com as áreas de interesse da lista de entrada."""
-
     areaspfe = {}
 
     usuarios = []
@@ -95,7 +93,6 @@ def get_areas_estudantes(alunos):
 
 def get_areas_propostas(propostas):
     """Retorna dicionário com as áreas de interesse da lista de entrada."""
-
     areaspfe = {}
 
     areas = Area.objects.filter(ativa=True)
@@ -108,8 +105,7 @@ def get_areas_propostas(propostas):
 
 #### ISSO TEM DEVIRAR UM PARÂMETRO DE INTERFACE NO FUTURO ####
 def get_peso(banca, objetivo):
-    """ Calcula peso nas notas da banca em função do objetivo de aprendizado. """
-
+    """Calcula peso nas notas da banca em função do objetivo de aprendizado."""
     if banca == 1:  # (1, 'intermediaria')
         if objetivo.titulo == "Execução Técnica":
             return 3.6
@@ -132,7 +128,7 @@ def get_peso(banca, objetivo):
 
 # Faz o upload de arquivos
 def simple_upload(myfile, path="", prefix=""):
-    """ Faz uploads para o servidor. """
+    """Faz uploads para o servidor."""
     file_system_storage = FileSystemStorage()
     filename = file_system_storage.save(path+prefix+text.get_valid_filename(myfile.name), myfile)
     uploaded_file_url = file_system_storage.url(filename)

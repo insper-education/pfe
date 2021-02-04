@@ -51,7 +51,6 @@ def get_upload_path(instance, filename):
 
 class Organizacao(models.Model):
     """Dados das organizações que propõe projetos para o PFE."""
-
     nome = models.CharField("Nome Fantasia", max_length=80,
                             help_text='Nome fantasia da organização parceira')
     sigla = models.CharField("Sigla", max_length=20,
@@ -813,7 +812,6 @@ class Aviso(models.Model):
 
     def get_evento(self):
         """Retorna em string o nome do evento."""
-
         for entry in Evento.TIPO_EVENTO:
             if self.tipo_de_evento == entry[0]:
                 return entry[1]
@@ -824,7 +822,6 @@ class Aviso(models.Model):
 
 class Entidade(models.Model):
     """Todas as entidades estudantis do Insper"""
-
     nome = models.CharField(max_length=100,
                             help_text='nome da entidade estudantil')
 
@@ -833,7 +830,6 @@ class Entidade(models.Model):
 
 class Feedback(models.Model):
     """Feedback das organizacoes parceiras."""
-
     data = models.DateField(default=datetime.date.today, blank=True,
                             help_text='Data do Feedback')
     #organizacao_parceira=models.ForeignKey(Empresa,null=True,blank=True,on_delete=models.SET_NULL,
@@ -863,7 +859,6 @@ class Feedback(models.Model):
 
 class Conexao(models.Model):
     """Controla como um usuário se conecta a um projeto."""
-
     parceiro = models.ForeignKey('users.Parceiro', null=True, blank=True,
                                  on_delete=models.SET_NULL,
                                  help_text='parceiro que se conecta ao projeto')
@@ -906,7 +901,6 @@ class Coorientador(models.Model):
 
 class ObjetivosDeAprendizagem(models.Model):
     """Objetidos de Aprendizagem do curso."""
-
     titulo = models.TextField(max_length=128, null=True, blank=True,
                               help_text='Título do objetivo de aprendizagem')
 

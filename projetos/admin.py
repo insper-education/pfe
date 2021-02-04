@@ -47,7 +47,10 @@ def dup_projeto(modeladmin: admin_opt.ModelAdmin, request, queryset):
         obj.save()
         message = "duplicando de {} para {}".format(from_id, obj.id)
         modeladmin.log_addition(request=request, object=obj, message=message)
+
+
 dup_projeto.short_description = "Duplicar Entrada(s)"
+
 
 def dup_entrada(modeladmin: admin_opt.ModelAdmin, request, queryset):
     """Função abaixo permite duplicar entradas no banco de dados"""
@@ -58,7 +61,10 @@ def dup_entrada(modeladmin: admin_opt.ModelAdmin, request, queryset):
         obj.save()
         message = "duplicando de {} para {}".format(from_id, obj.id)
         modeladmin.log_addition(request=request, object=obj, message=message)
+
+
 dup_entrada.short_description = "Duplicar Entrada(s)"
+
 
 def dup_event_183(modeladmin: admin_opt.ModelAdmin, request, queryset):
     """Função abaixo permite duplicar entradas no banco de dados"""
@@ -70,7 +76,10 @@ def dup_event_183(modeladmin: admin_opt.ModelAdmin, request, queryset):
         obj.save()
         message = "duplicando de {} para {}".format(from_id, obj.id)
         modeladmin.log_addition(request=request, object=obj, message=message)
+
+
 dup_event_183.short_description = "Duplicar Entrada(s) adicionando 183 dias"
+
 
 def dup_encontros(modeladmin: admin_opt.ModelAdmin, request, queryset):
     """Função abaixo permite duplicar entradas no banco de dados"""
@@ -80,7 +89,10 @@ def dup_encontros(modeladmin: admin_opt.ModelAdmin, request, queryset):
         obj.save()
         message = "duplicando de {} para {}".format(from_id, obj.id)
         modeladmin.log_addition(request=request, object=obj, message=message)
+
+
 dup_encontros.short_description = "Duplicar Entrada(s)"
+
 
 def dup_encontros_4x(modeladmin: admin_opt.ModelAdmin, request, queryset):
     """Função abaixo permite duplicar entradas no banco de dados 4 X"""
@@ -91,7 +103,10 @@ def dup_encontros_4x(modeladmin: admin_opt.ModelAdmin, request, queryset):
             obj.save()
             message = "duplicando de {} para {}".format(from_id, obj.id)
             modeladmin.log_addition(request=request, object=obj, message=message)
+
+
 dup_encontros_4x.short_description = "Duplicar Entrada(s) 4 X"
+
 
 def dup_encontros_8x(modeladmin: admin_opt.ModelAdmin, request, queryset):
     """Função abaixo permite duplicar entradas no banco de dados 8 X"""
@@ -102,7 +117,10 @@ def dup_encontros_8x(modeladmin: admin_opt.ModelAdmin, request, queryset):
             obj.save()
             message = "duplicando de {} para {}".format(from_id, obj.id)
             modeladmin.log_addition(request=request, object=obj, message=message)
+
+
 dup_encontros_8x.short_description = "Duplicar Entrada(s) 8 X"
+
 
 class FechadoFilter(SimpleListFilter):
     """Para filtrar projetos fechados."""
@@ -120,6 +138,7 @@ class FechadoFilter(SimpleListFilter):
             return queryset.distinct().filter(alocacao__isnull=False)
         if self.value():
             return queryset.distinct().filter(alocacao__isnull=True)
+
 
 class EventoFilter(SimpleListFilter):
     """Para filtrar eventos por semestre."""
@@ -150,6 +169,7 @@ class EventoFilter(SimpleListFilter):
                                                   startDate__month__gt=7)
         return queryset.distinct().all()
 
+
 @admin.register(Projeto)
 class ProjetoAdmin(admin.ModelAdmin):
     """Exibição no sistema de administração do Django para Projeto."""
@@ -165,16 +185,17 @@ class ProjetoAdmin(admin.ModelAdmin):
            )
           }),
          ('Origem', {
-             'fields': ('organizacao',)
+             'fields': ('organizacao', )
          }),
         )
     actions = [dup_projeto]
-    search_fields = ['titulo', 'organizacao__sigla',]
+    search_fields = ['titulo', 'organizacao__sigla', ]
+
 
 @admin.register(Proposta)
 class PropostaAdmin(admin.ModelAdmin):
     """Exibição no sistema de administração do Django para Proposta."""
-    list_display = ('titulo', 'fechada', 'nome', 'organizacao', 'ano', 'semestre',)
+    list_display = ('titulo', 'fechada', 'nome', 'organizacao', 'ano', 'semestre', )
     list_filter = ('ano', 'semestre', )
     fieldsets = \
         ((None,
@@ -203,16 +224,19 @@ class PropostaAdmin(admin.ModelAdmin):
     actions = [dup_projeto]
     search_fields = ['titulo', 'organizacao__sigla',]
 
+
 @admin.register(Organizacao)
 class OrganizacaoAdmin(admin.ModelAdmin):
     """Definição da Organização no sistema de administração do Django."""
     list_display = ('sigla', 'nome', 'website')
     search_fields = ['nome',]
 
+
 @admin.register(Configuracao)
 class ConfiguracaoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
     list_display = ('ano', 'semestre',)
+
 
 @admin.register(Disciplina)
 class DisciplinaAdmin(admin.ModelAdmin):
@@ -221,6 +245,7 @@ class DisciplinaAdmin(admin.ModelAdmin):
     ordering = ('nome',)
     search_fields = ['nome',]
 
+
 @admin.register(Anotacao)
 class AnotacaoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
@@ -228,10 +253,12 @@ class AnotacaoAdmin(admin.ModelAdmin):
     ordering = ('-momento',)
     search_fields = ['organizacao__nome',]
 
+
 @admin.register(Documento)
 class DocumentoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
     list_display = ('tipo_de_documento', 'organizacao', 'usuario', 'projeto')
+
 
 @admin.register(Banco)
 class BancoAdmin(admin.ModelAdmin):
@@ -239,10 +266,12 @@ class BancoAdmin(admin.ModelAdmin):
     list_display = ('nome', 'codigo')
     ordering = ('nome',)
 
+
 @admin.register(Reembolso)
 class ReembolsoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
     list_display = ('usuario', 'data', 'valor')
+
 
 @admin.register(Banca)
 class BancaAdmin(admin.ModelAdmin):
@@ -250,11 +279,13 @@ class BancaAdmin(admin.ModelAdmin):
     list_display = ('projeto', 'get_orientador', 'get_organizacao', 'startDate', 'slug',)
     list_filter = ('tipo_de_banca', 'projeto__ano', 'projeto__semestre',)
     search_fields = ['projeto__titulo', 'projeto__organizacao__sigla',]
+    
     def get_orientador(self, obj):
         """Retorna o orientador do projeto da Banca."""
         return obj.projeto.orientador
     get_orientador.short_description = 'Orientador'
     get_orientador.admin_order_field = 'projeto__orientador'
+
     def get_organizacao(self, obj):
         """Retorna a organização parceira do projeto da Banca."""
         return obj.projeto.organizacao
@@ -295,11 +326,13 @@ class FeedbackAdmin(admin.ModelAdmin):
     """Para ser preenchido com feedbacks das organizacoes."""
     list_display = ('data', 'nome', 'email', 'empresa', )
 
+
 @admin.register(Conexao)
 class ConexaoAdmin(admin.ModelAdmin):
     """Conexão entre parceiro e organização."""
     list_display = ('parceiro', 'projeto',
                     'gestor_responsavel', 'mentor_tecnico', 'recursos_humanos')
+
 
 @admin.register(Coorientador)
 class CoorientadorAdmin(admin.ModelAdmin):
@@ -308,11 +341,13 @@ class CoorientadorAdmin(admin.ModelAdmin):
     ordering = ('usuario__first_name', 'usuario__last_name',)
     search_fields = ['usuario__first_name', 'usuario__last_name',]
 
+
 @admin.register(Encontro)
 class EncontroAdmin(admin.ModelAdmin):
     """Informações dos Encontros (com os facilitadores)."""
     list_display = ('startDate', 'hora_fim', 'projeto', 'facilitador', )
     actions = [dup_encontros, dup_encontros_4x, dup_encontros_8x]
+
 
 @admin.register(Avaliacao2)
 class Avaliacao2Admin(admin.ModelAdmin):
@@ -331,7 +366,7 @@ class ObservacaoAdmin(admin.ModelAdmin):
     list_display = ('momento', 'tipo_de_avaliacao', 'avaliador', 'projeto', 'alocacao')
     ordering = ('momento',)
     list_filter = ('tipo_de_avaliacao', )
-    search_fields = ['projeto__titulo', 'projeto__titulo_final', 'alocacao__aluno__user__username',]
+    search_fields = ['projeto__titulo', 'projeto__titulo_final', 'alocacao__aluno__user__username', ]
 
 @admin.register(Recomendada)
 class RecomendadaAdmin(admin.ModelAdmin):
@@ -353,7 +388,7 @@ class CertificadoAdmin(admin.ModelAdmin):
 
 @admin.register(Cursada)
 class CursadaAdmin(admin.ModelAdmin):
-    """ Disciplinas Cursadas. """
+    """Disciplinas Cursadas."""
     list_display = ('disciplina', 'aluno', 'nota')
 
 admin.site.register(Entidade)       # Para ser preenchido com as entidades estudantis
