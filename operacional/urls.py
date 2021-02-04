@@ -13,10 +13,17 @@ from . import views
 
 urlpatterns = [
 
-    path('', views.index_operacional, name='index_operacional'),  # pagina inicial
+    # pagina inicial
+    path('',
+         views.index_operacional,
+         name='index_operacional'),
 
-    path('avisos_listar/', views.avisos_listar, name='avisos_listar'),
+    path('avisos_listar/',
+         views.avisos_listar,
+         name='avisos_listar'),
 
-    path('edita_aviso/<int:primakey>', views.edita_aviso, name='edita_aviso'),
+    path('edita_aviso/<int:primakey>',
+         views.edita_aviso,
+         name='edita_aviso'),
 
 ]

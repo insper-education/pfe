@@ -13,13 +13,25 @@ from . import views
 
 urlpatterns = [
 
-    path('', views.calendario, name='calendario'),  # pagina inicial
+    # pagina inicial
+    path('',
+         views.calendario,
+         name='calendario'),
 
-    path('calendario_limpo/', views.calendario_limpo, name='calendario_limpo'),
+    path('calendario_limpo/',
+         views.calendario_limpo,
+         name='calendario_limpo'),
 
-    path('events/<int:event_id>', views.export_calendar, name="event_ics_export"),
+    path('events/<int:event_id>',
+         views.export_calendar,
+         name="event_ics_export"),
 
-    path('ajax/atualiza_evento/', views.atualiza_evento, name='atualiza_evento'),
-    path('ajax/remove_evento/', views.remove_evento, name='remove_evento'),
+    path('ajax/atualiza_evento/',
+         views.atualiza_evento,
+         name='atualiza_evento'),
+
+    path('ajax/remove_evento/',
+         views.remove_evento,
+         name='remove_evento'),
 
 ]

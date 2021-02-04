@@ -13,22 +13,45 @@ from . import views
 
 urlpatterns = [
 
-    path('', views.index_organizacoes, name='index_organizacoes'),  # pagina inicial
+    # pagina inicial
+    path('',
+         views.index_organizacoes,
+         name='index_organizacoes'),
 
-    path('cria_anotacao/<str:login>', views.cria_anotacao, name='cria_anotacao'),
+    path('cria_anotacao/<str:login>',
+         views.cria_anotacao,
+         name='cria_anotacao'),
 
-    path('organizacoes_lista/', views.organizacoes_lista, name='organizacoes_lista'),
-    path('organizacao_completo/<str:org>', views.organizacao_completo, name='organizacao_completo'),
+    path('organizacoes_lista/',
+         views.organizacoes_lista,
+         name='organizacoes_lista'),
 
-    path('organizacoes_prospect/', views.organizacoes_prospect, name='organizacoes_prospect'),
-    path('organizacoes_tabela/', views.organizacoes_tabela, name='organizacoes_tabela'),
+    path('organizacao_completo/<str:org>',
+         views.organizacao_completo,
+         name='organizacao_completo'),
 
-    path('parceiro_propostas', views.parceiro_propostas, name='parceiro_propostas'),
+    path('organizacoes_prospect/',
+         views.organizacoes_prospect,
+         name='organizacoes_prospect'),
 
-    path('proposta_submissao', views.proposta_submissao, name='proposta_submissao'),
+    path('organizacoes_tabela/',
+         views.organizacoes_tabela,
+         name='organizacoes_tabela'),
 
-    path('projeto_feedback', views.projeto_feedback, name='projeto_feedback'),
+    path('parceiro_propostas',
+         views.parceiro_propostas,
+         name='parceiro_propostas'),
 
-    path('todos_parceiros/', views.todos_parceiros, name='todos_parceiros'),
+    path('proposta_submissao',
+         views.proposta_submissao,
+         name='proposta_submissao'),
+
+    path('projeto_feedback',
+         views.projeto_feedback,
+         name='projeto_feedback'),
+
+    path('todos_parceiros/',
+         views.todos_parceiros,
+         name='todos_parceiros'),
 
 ]

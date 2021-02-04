@@ -28,7 +28,6 @@ from users.support import configuracao_estudante_vencida, adianta_semestre
 @login_required
 def index_estudantes(request):
     """Mostra página principal do usuário estudante."""
-
     try:
         usuario = PFEUser.objects.get(pk=request.user.pk)
     except PFEUser.DoesNotExist:
@@ -45,7 +44,7 @@ def index_estudantes(request):
     context = {}
     context['configuracao'] = configuracao
 
-    if usuario.tipo_de_usuario == 1: # Estudante
+    if usuario.tipo_de_usuario == 1:  # Estudante
         try:
             estudante = Aluno.objects.get(pk=request.user.aluno.pk)
         except Aluno.DoesNotExist:
@@ -60,7 +59,7 @@ def index_estudantes(request):
         else:
             vencido = vencido or (estudante.anoPFE <= ano)
 
-    elif usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4: # professor & administrador
+    elif usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4:  # professor & administrador
         try:
             professor_id = Professor.objects.get(pk=request.user.professor.pk).id
             context['professor_id'] = professor_id
@@ -124,7 +123,6 @@ def areas_interesse(request):
 @login_required
 def encontros_marcar(request):
     """Encontros a serem agendados pelos alunos."""
-
     try:
         configuracao = Configuracao.objects.get()
         ano = configuracao.ano
@@ -156,7 +154,6 @@ def encontros_marcar(request):
     else:
         return HttpResponse("Estudante não encontrado (você não possui conta de estudante).",
                             status=401)
-
 
     if request.method == 'POST':
         check_values = request.POST.getlist('selection')
@@ -205,7 +202,6 @@ def encontros_marcar(request):
 @login_required
 def informacoes_adicionais(request):
     """Para perguntas descritivas ao aluno de onde trabalho, entidades, sociais e familia."""
-
     try:
         user = PFEUser.objects.get(pk=request.user.pk)
     except PFEUser.DoesNotExist:
@@ -284,7 +280,7 @@ def minhas_bancas(request):
     bancas = Banca.objects.filter(projeto__in=projetos).order_by("-startDate")
 
     context = {
-        'bancas' : bancas,
+        'bancas': bancas,
     }
     return render(request, 'estudantes/minhas_bancas.html', context)
 
@@ -292,7 +288,6 @@ def minhas_bancas(request):
 @login_required
 def selecao_propostas(request):
     """Exibe todos os projetos para os alunos aplicarem."""
-
     try:
         user = PFEUser.objects.get(pk=request.user.pk)
     except PFEUser.DoesNotExist:
@@ -369,15 +364,15 @@ def selecao_propostas(request):
                 message = create_message(aluno, ano, semestre)
 
                 subject = 'PFE : '+aluno.user.username
-                recipient_list = ['pfeinsper@gmail.com', aluno.user.email,]
+                recipient_list = ['pfeinsper@gmail.com', aluno.user.email, ]
                 check = email(subject, recipient_list, message)
                 if check != 1:
                     message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
 
-                context = {'message': message,}
+                context = {'message': message, }
                 return render(request, 'projetos/confirmacao.html', context)
 
-            context = {'warnings': warnings,}
+            context = {'warnings': warnings, }
             return render(request, 'projetos/projetosincompleto.html', context)
 
         opcoes = Opcao.objects.filter(aluno=aluno)

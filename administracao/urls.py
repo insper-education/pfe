@@ -13,36 +13,81 @@ from . import views
 
 urlpatterns = [
 
-    path('', views.index_administracao, name='index_administracao'),  # pagina inicial
+    # pagina inicial
+    path('',
+         views.index_administracao,
+         name='index_administracao'),
 
-    path('backup/<str:formato>', views.backup, name='backup'),
+    path('backup/<str:formato>',
+         views.backup,
+         name='backup'),
 
-    path('cadastrar_organizacao/', views.cadastrar_organizacao, name='cadastrar_organizacao'),
-    path('cadastrar_usuario/', views.cadastrar_usuario, name='cadastrar_usuario'),
+    path('cadastrar_organizacao/',
+         views.cadastrar_organizacao,
+         name='cadastrar_organizacao'),
 
-    path('carrega_arquivo/<str:dado>', views.carrega_arquivo, name='carrega_arquivo'),
-    path('index_carregar/', views.index_carregar, name='index_carregar'),
+    path('cadastrar_usuario/',
+         views.cadastrar_usuario,
+         name='cadastrar_usuario'),
 
-    path('definir_datas/', views.definir_datas, name='definir_datas'),
+    path('carrega_arquivo/<str:dado>',
+         views.carrega_arquivo,
+         name='carrega_arquivo'),
 
-    path('exportar/', views.exportar, name='exportar'),
-    path('email_backup/', views.email_backup, name='email_backup'),
-    path('emails/', views.emails, name='emails'),
-    path('export/<str:modelo>/<str:formato>', views.export, name='export'),
+    path('index_carregar/',
+         views.index_carregar,
+         name='index_carregar'),
 
-    path('propor/', views.propor, name='propor'),
+    path('definir_datas/',
+         views.definir_datas,
+         name='definir_datas'),
 
-    path('montar_grupos/', views.montar_grupos, name='montar_grupos'),
+    path('exportar/',
+         views.exportar,
+         name='exportar'),
 
-    path('relatorio/<str:modelo>/<str:formato>', views.relatorio, name='relatorio'),
-    path('relatorio_backup/', views.relatorio_backup, name='relatorio_backup'),
+    path('email_backup/',
+         views.email_backup,
+         name='email_backup'),
 
-    path('selecionar_orientadores/', views.selecionar_orientadores, name='selecionar_orientadores'),
+    path('emails/',
+         views.emails,
+         name='emails'),
 
-    path('servico/', views.servico, name='servico'),
+    path('export/<str:modelo>/<str:formato>',
+         views.export,
+         name='export'),
 
-    path('pre_alocar_estudante/', views.pre_alocar_estudante, name='pre_alocar_estudante'),
+    path('propor/',
+         views.propor,
+         name='propor'),
 
-    path('ajax/definir_orientador/', views.definir_orientador, name='definir_orientador'),
+    path('montar_grupos/',
+         views.montar_grupos,
+         name='montar_grupos'),
+
+    path('relatorio/<str:modelo>/<str:formato>',
+         views.relatorio,
+         name='relatorio'),
+
+    path('relatorio_backup/',
+         views.relatorio_backup,
+         name='relatorio_backup'),
+
+    path('selecionar_orientadores/',
+         views.selecionar_orientadores,
+         name='selecionar_orientadores'),
+
+    path('servico/',
+         views.servico,
+         name='servico'),
+
+    path('pre_alocar_estudante/',
+         views.pre_alocar_estudante,
+         name='pre_alocar_estudante'),
+
+    path('ajax/definir_orientador/',
+         views.definir_orientador,
+         name='definir_orientador'),
 
 ]
