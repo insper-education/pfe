@@ -111,14 +111,15 @@
 
     <span class="titulo">Calendário de Eventos do PFE</span>
     
-    <div id='calendar'></div>
+    <div id='calendar' style="overflow-x: visible;"></div>
     
+    <br>
     &nbsp;Semestre:
     <span class="semestre1" id="primeiro_semestre">1</span><span class="semestre2" id="segundo_semestre">2</span>
     <br>    
 
-
     {% comment %}
+      Tipo de usuários:
         (1, 'aluno'),
         (2, 'professor'),
         (3, 'parceiro'),
@@ -634,6 +635,7 @@
       calendar = new Calendar('#calendar', {
         language: 'pt',
         dataSource: dataEventos,
+        displayHeader: true, // mostra os anos na parte superior
         style:'custom',
         customDataSourceRenderer: function(element, date, event) {
           
@@ -772,7 +774,6 @@
     var currentYear = 2018; //como se fosse global
 
     document.querySelector('#calendar').addEventListener('yearChanged', function(e) {
-      //console.log("New year selected: " + e.currentYear);
       currentYear = e.currentYear;
       [].forEach.call(document.querySelectorAll('.ano'), function (el) {
         el.style.display = 'none';
@@ -780,13 +781,10 @@
       [].forEach.call(document.querySelectorAll('.ano'+e.currentYear), function (el) {
         el.style.display = 'inline';
       });
-
       carrega_semestre()
-      
      })
 
     function primeiro(e) {
-      //console.log("Semestre selected: 1");
       document.getElementById("primeiro_semestre").style.fontWeight = "bold";
       document.getElementById("primeiro_semestre").style.color = "black";
       document.getElementById("primeiro_semestre").style.background = "#10F010";
@@ -815,7 +813,6 @@
       });
 
       {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-        //console.log("Semestre coordenacao selected: 1 em " + currentYear);
         [].forEach.call(document.querySelectorAll('.coordenacao'), function (el) {
           el.style.display = 'none';
         });
@@ -830,14 +827,12 @@
     document.querySelector('#primeiro_semestre').addEventListener('click', primeiro)
 
     function segundo(e) {
-      //console.log("Semestre selected: 2 em " + currentYear);
       document.getElementById("primeiro_semestre").style.fontWeight = "normal";
       document.getElementById("primeiro_semestre").style.color = "grey";
       document.getElementById("primeiro_semestre").style.background = "#D0EED0";
       document.getElementById("segundo_semestre").style.fontWeight = "bold";
       document.getElementById("segundo_semestre").style.color = "black";
       document.getElementById("segundo_semestre").style.background = "#10F010";
-      
 
       [].forEach.call(document.querySelectorAll('.semestre'), function (el) {
         el.style.display = 'none';
@@ -861,7 +856,6 @@
       
       
       {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-        //console.log("Semestre coordenacao selected: 2 em " + currentYear);
         [].forEach.call(document.querySelectorAll('.coordenacao'), function (el) {
           el.style.display = 'none';
         });
@@ -877,7 +871,6 @@
         [].forEach.call(els, function (el) {
           el.style.display = 'inline';
         });
-
       {% endif %}
 
     }
@@ -886,7 +879,6 @@
     window.onload = carrega_semestre
     
     function carrega_semestre() {
-      //console.log("semestre: {{semestre}}");
       {% if semestre == 1 %}
         primeiro()
       {% else %}
@@ -895,9 +887,7 @@
     }
 
   function get_image(tipo) {
-    //var imgData = null
-    document.querySelector('#tudo').style.width = "1200px";
-  
+    document.querySelector('#tudo').style.width = "1200px";  
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
       // Escondendo informações
       if($('#operacao').is(":not(:checked)")) {
@@ -965,27 +955,15 @@
   });
 
   function saveAs(uri, filename) {
-
     var link = document.createElement('a');
-
     if (typeof link.download === 'string') {
-
         link.href = uri;
         link.download = filename;
-
-        //Firefox requires the link to be in the body
         document.body.appendChild(link);
-
-        //simulate click
-        link.click();
-
-        //remove the link when done
-        document.body.removeChild(link);
-
+        link.click(); // Simular click
+        document.body.removeChild(link); // removendo link quando pronto
     } else {
-
         window.open(uri);
-
     }
   }
 
