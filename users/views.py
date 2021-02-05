@@ -18,7 +18,8 @@ from django.urls import reverse_lazy
 from django.utils import html
 from django.views import generic
 
-from projetos.models import Configuracao, Projeto, Conexao, Banca, Area, Coorientador
+from projetos.models import Configuracao, Projeto, Conexao
+from projetos.models import Banca, Area, Coorientador
 
 from projetos.messages import email
 
@@ -55,7 +56,13 @@ def perfil(request):
     except PFEUser.DoesNotExist:
         return HttpResponse("Usuário não encontrado.", status=401)
 
-    context = {'aluno': False, 'professor': False, 'parceiro': False, 'administrador': False, }
+    context = {
+        'aluno': False,
+        'professor': False,
+        'parceiro': False,
+        'administrador': False,
+    }
+
     if user.tipo_de_usuario == 1:  # aluno
         try:
             context['aluno'] = Aluno.objects.get(pk=request.user.aluno.pk)
@@ -64,19 +71,22 @@ def perfil(request):
 
     elif user.tipo_de_usuario == 2:  # professor
         try:
-            context['professor'] = Professor.objects.get(pk=request.user.professor.pk)
+            context['professor'] = Professor.objects\
+                .get(pk=request.user.professor.pk)
         except Professor.DoesNotExist:
             return HttpResponse("Professor não encontrado.", status=401)
 
     elif user.tipo_de_usuario == 3:  # parceiro
         try:
-            context['parceiro'] = Parceiro.objects.get(pk=request.user.parceiro.pk)
+            context['parceiro'] = Parceiro.objects\
+                .get(pk=request.user.parceiro.pk)
         except Parceiro.DoesNotExist:
             return HttpResponse("Parceiro não encontrado.", status=401)
 
     elif user.tipo_de_usuario == 4:  # administrador
         try:
-            context['administrador'] = Administrador.objects.get(pk=request.user.administrador.pk)
+            context['administrador'] = Administrador.objects\
+                .get(pk=request.user.administrador.pk)
         except Administrador.DoesNotExist:
             return HttpResponse("Administrador não encontrado.", status=401)
 
@@ -93,6 +103,7 @@ def perfil(request):
 
 class SignUp(generic.CreateView):
     """Rotina para fazer o login."""
+
     form_class = PFEUserCreationForm
     success_url = reverse_lazy('login')
     template_name = 'signup.html'
@@ -100,149 +111,8 @@ class SignUp(generic.CreateView):
 
 class Usuario(generic.DetailView):
     """Usuário."""
+
     model = Aluno
-
-
-
-
-# @login_required
-# @permission_required("users.altera_professor", login_url='/')
-# def alunos_lista(request):
-#     """Mostra todos os alunos que estão que cursam semestre atual."""
-#     configuracao = Configuracao.objects.get()
-#     ano = configuracao.ano
-#     semestre = configuracao.semestre
-#     return redirect('alunos_listagem', anosemestre="{0}.{1}".format(ano, semestre))
-
-
-# @login_required
-# @permission_required("users.altera_professor", login_url='/')
-# def alunos_listagem(request, anosemestre):
-#     """Gera lista com todos os alunos já registrados."""
-#     configuracao = Configuracao.objects.get()
-#     alunos_list = Aluno.objects.filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])\
-#         .order_by(Lower("user__first_name"), Lower("user__last_name"))  # Conta soh alunos
-
-#     ano = 0
-#     semestre = 0
-
-#     tabela_alunos = {}
-
-#     totais = {}
-#     totais["computação"] = 0
-#     totais["mecânica"] = 0
-#     totais["mecatrônica"] = 0
-
-#     if anosemestre not in ("todos", "trancou"):
-#         ano = int(anosemestre.split(".")[0])
-#         semestre = int(anosemestre.split(".")[1])
-
-#         alunos_list = alunos_list.filter(trancado=False)
-
-#         alunos_semestre = alunos_list.\
-#             filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre).distinct()
-
-#         tabela_alunos[ano] = {}
-#         tabela_alunos[ano][semestre] = {}
-
-#         tabela_alunos[ano][semestre]["computação"] =\
-#             alunos_semestre.filter(curso__exact='C').count()
-#         totais["computação"] += tabela_alunos[ano][semestre]["computação"]
-#         tabela_alunos[ano][semestre]["mecânica"] =\
-#             alunos_semestre.filter(curso__exact='M').count()
-#         totais["mecânica"] += tabela_alunos[ano][semestre]["mecânica"]
-#         tabela_alunos[ano][semestre]["mecatrônica"] =\
-#             alunos_semestre.filter(curso__exact='X').count()
-#         totais["mecatrônica"] += tabela_alunos[ano][semestre]["mecatrônica"]
-#         tabela_alunos[ano][semestre]["total"] =\
-#             alunos_semestre.count()
-
-#         alunos_list = alunos_semestre |\
-#             alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
-
-#     else:
-
-#         if anosemestre == "todos":
-#             alunos_list = alunos_list.filter(trancado=False)
-#         else:
-#             alunos_list = alunos_list.filter(trancado=True)
-#             ano = "trancou"
-
-#         ano_tmp = 2018
-#         semestre_tmp = 2
-#         while True:
-#             alunos_semestre = alunos_list.\
-#                 filter(alocacao__projeto__ano=ano_tmp, alocacao__projeto__semestre=semestre_tmp).\
-#                 distinct()
-#             if ano_tmp not in tabela_alunos:
-#                 tabela_alunos[ano_tmp] = {}
-#             if semestre_tmp not in tabela_alunos[ano_tmp]:
-#                 tabela_alunos[ano_tmp][semestre_tmp] = {}
-
-#             tabela_alunos[ano_tmp][semestre_tmp]["computação"] =\
-#                 alunos_semestre.filter(curso__exact='C').count()
-#             totais["computação"] += tabela_alunos[ano_tmp][semestre_tmp]["computação"]
-#             tabela_alunos[ano_tmp][semestre_tmp]["mecânica"] =\
-#                 alunos_semestre.filter(curso__exact='M').count()
-#             totais["mecânica"] += tabela_alunos[ano_tmp][semestre_tmp]["mecânica"]
-#             tabela_alunos[ano_tmp][semestre_tmp]["mecatrônica"] =\
-#                 alunos_semestre.filter(curso__exact='X').count()
-#             totais["mecatrônica"] += tabela_alunos[ano_tmp][semestre_tmp]["mecatrônica"]
-#             tabela_alunos[ano_tmp][semestre_tmp]["total"] =\
-#                 alunos_semestre.count()
-
-#             if ((ano_tmp == configuracao.ano) and (semestre_tmp == configuracao.semestre)):
-#                 break
-
-#             if semestre_tmp == 1:
-#                 semestre_tmp = 2
-#             else:
-#                 ano_tmp += 1
-#                 semestre_tmp = 1
-
-#     num_alunos = alunos_list.count()
-#     num_alunos_comp = alunos_list.filter(curso__exact='C').count()  # Conta alunos computacao
-#     num_alunos_mxt = alunos_list.filter(curso__exact='X').count()  # Conta alunos mecatrônica
-#     num_alunos_mec = alunos_list.filter(curso__exact='M').count()  # Conta alunos mecânica
-
-#     num_alunos_masculino = alunos_list.filter(user__genero='M').count()  # Estudantes masculino
-#     num_alunos_feminino = alunos_list.filter(user__genero='F').count()  # Estudantes feminino
-
-#     totais["total"] = totais["computação"] + totais["mecânica"] + totais["mecatrônica"]
-
-#     edicoes, _, _ = get_edicoes(Aluno)
-
-#     context = {
-#         'alunos_list': alunos_list,
-#         'num_alunos': num_alunos,
-#         'num_alunos_comp': num_alunos_comp,
-#         'num_alunos_mxt': num_alunos_mxt,
-#         'num_alunos_mec': num_alunos_mec,
-#         'num_alunos_masculino': num_alunos_masculino,
-#         'num_alunos_feminino': num_alunos_feminino,
-#         'configuracao': configuracao,
-#         'tabela_alunos': tabela_alunos,
-#         'totais': totais,
-#         'ano': ano,
-#         'semestre': semestre,
-#         'ano_semestre': str(ano)+"."+str(semestre),
-#         'loop_anos': range(2018, configuracao.ano+1),
-#         'edicoes': edicoes,
-#     }
-#     return render(request, 'users/alunos_lista.html', context=context)
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 @login_required
@@ -262,18 +132,20 @@ def alunos_lista(request):
             else:
                 # ano, semestre = request.POST['edicao'].split('.')
                 anosemestre = edicao
-                # projetos_filtrados = Projeto.objects.filter(ano=ano, semestre=semestre)
+                # projetos_filtrados = Projeto.objects.filter(ano, semestre)
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
         # edicoes, ano, semestre = get_edicoes(Projeto)
-        # projetos_filtrados = Projeto.objects.filter(ano=ano, semestre=semestre)
+        # projetos_filtrados = Projeto.objects.filter(ano, semestre)
         ano = configuracao.ano
         semestre = configuracao.semestre
         anosemestre = "{0}.{1}".format(ano, semestre)
 
-    alunos_list = Aluno.objects.filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])\
-        .order_by(Lower("user__first_name"), Lower("user__last_name"))  # Conta soh alunos
+    # Conta soh alunos
+    alunos_list = Aluno.objects\
+        .filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])\
+        .order_by(Lower("user__first_name"), Lower("user__last_name"))
 
     ano = 0
     semestre = 0
@@ -291,8 +163,10 @@ def alunos_lista(request):
 
         alunos_list = alunos_list.filter(trancado=False)
 
-        alunos_semestre = alunos_list.\
-            filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre).distinct()
+        alunos_semestre = alunos_list\
+            .filter(alocacao__projeto__ano=ano,
+                    alocacao__projeto__semestre=semestre)\
+            .distinct()
 
         tabela_alunos[ano] = {}
         tabela_alunos[ano][semestre] = {}
@@ -323,9 +197,10 @@ def alunos_lista(request):
         ano_tmp = 2018
         semestre_tmp = 2
         while True:
-            alunos_semestre = alunos_list.\
-                filter(alocacao__projeto__ano=ano_tmp, alocacao__projeto__semestre=semestre_tmp).\
-                distinct()
+            alunos_semestre = alunos_list\
+                .filter(alocacao__projeto__ano=ano_tmp,
+                        alocacao__projeto__semestre=semestre_tmp)\
+                .distinct()
             if ano_tmp not in tabela_alunos:
                 tabela_alunos[ano_tmp] = {}
             if semestre_tmp not in tabela_alunos[ano_tmp]:
@@ -333,17 +208,21 @@ def alunos_lista(request):
 
             tabela_alunos[ano_tmp][semestre_tmp]["computação"] =\
                 alunos_semestre.filter(curso__exact='C').count()
-            totais["computação"] += tabela_alunos[ano_tmp][semestre_tmp]["computação"]
+            totais["computação"] += \
+                tabela_alunos[ano_tmp][semestre_tmp]["computação"]
             tabela_alunos[ano_tmp][semestre_tmp]["mecânica"] =\
                 alunos_semestre.filter(curso__exact='M').count()
-            totais["mecânica"] += tabela_alunos[ano_tmp][semestre_tmp]["mecânica"]
+            totais["mecânica"] += \
+                tabela_alunos[ano_tmp][semestre_tmp]["mecânica"]
             tabela_alunos[ano_tmp][semestre_tmp]["mecatrônica"] =\
                 alunos_semestre.filter(curso__exact='X').count()
-            totais["mecatrônica"] += tabela_alunos[ano_tmp][semestre_tmp]["mecatrônica"]
+            totais["mecatrônica"] += \
+                tabela_alunos[ano_tmp][semestre_tmp]["mecatrônica"]
             tabela_alunos[ano_tmp][semestre_tmp]["total"] =\
                 alunos_semestre.count()
 
-            if ((ano_tmp == configuracao.ano) and (semestre_tmp == configuracao.semestre)):
+            if (ano_tmp == configuracao.ano) and \
+               (semestre_tmp == configuracao.semestre):
                 break
 
             if semestre_tmp == 1:
@@ -353,14 +232,25 @@ def alunos_lista(request):
                 semestre_tmp = 1
 
     num_alunos = alunos_list.count()
-    num_alunos_comp = alunos_list.filter(curso__exact='C').count()  # Conta alunos computacao
-    num_alunos_mxt = alunos_list.filter(curso__exact='X').count()  # Conta alunos mecatrônica
-    num_alunos_mec = alunos_list.filter(curso__exact='M').count()  # Conta alunos mecânica
 
-    num_alunos_masculino = alunos_list.filter(user__genero='M').count()  # Estudantes masculino
-    num_alunos_feminino = alunos_list.filter(user__genero='F').count()  # Estudantes feminino
+    # Conta alunos computacao
+    num_alunos_comp = alunos_list.filter(curso__exact='C').count()
 
-    totais["total"] = totais["computação"] + totais["mecânica"] + totais["mecatrônica"]
+    # Conta alunos mecatrônica
+    num_alunos_mxt = alunos_list.filter(curso__exact='X').count()
+
+    # Conta alunos mecânica
+    num_alunos_mec = alunos_list.filter(curso__exact='M').count()
+
+    # Estudantes masculino
+    num_alunos_masculino = alunos_list.filter(user__genero='M').count()
+
+    # Estudantes feminino
+    num_alunos_feminino = alunos_list.filter(user__genero='F').count()
+
+    totais["total"] = (totais["computação"] +
+                       totais["mecânica"] +
+                       totais["mecatrônica"])
 
     edicoes, _, _ = get_edicoes(Aluno)
 
@@ -384,17 +274,10 @@ def alunos_lista(request):
     return render(request, 'users/alunos_lista.html', context=context)
 
 
-
-
-
-
-
-
-
 @login_required
 @permission_required("users.altera_professor", login_url='/')
 def alunos_inscrevendo(request):
-    """Mostra todos os alunos que estão se inscrevendo em projetos no próximo semestre."""
+    """Mostra alunos que estão farão projetos no próximo semestre."""
     configuracao = Configuracao.objects.get()
 
     if configuracao.semestre == 1:
@@ -404,7 +287,8 @@ def alunos_inscrevendo(request):
         ano = configuracao.ano+1
         semestre = 1
 
-    return redirect('alunos_inscritos', anosemestre="{0}.{1}".format(ano, semestre))
+    return redirect('alunos_inscritos',
+                    anosemestre="{0}.{1}".format(ano, semestre))
 
 
 @login_required
@@ -416,25 +300,32 @@ def alunos_inscritos(request, anosemestre):
     ano = int(anosemestre.split(".")[0])
     semestre = int(anosemestre.split(".")[1])
 
-    alunos_se_inscrevendo = Aluno.objects.filter(trancado=False).\
-                                      filter(anoPFE=ano, semestrePFE=semestre).\
-                                      order_by(Lower("user__first_name"), Lower("user__last_name"))
+    alunos_se_inscrevendo = Aluno.objects.filter(trancado=False)\
+        .filter(anoPFE=ano, semestrePFE=semestre)\
+        .order_by(Lower("user__first_name"), Lower("user__last_name"))
 
     # Conta soh alunos
-    alunos = alunos_se_inscrevendo.filter(user__tipo_de_usuario=\
-                                          PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
+    alunos = alunos_se_inscrevendo\
+        .filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
 
     num_alunos = alunos.count()
-    num_alunos_comp = alunos.filter(curso__exact='C').count()  # Conta alunos computacao
-    num_alunos_mxt = alunos.filter(curso__exact='X').count()  # Conta alunos mecatrônica
-    num_alunos_mec = alunos.filter(curso__exact='M').count()  # Conta alunos mecânica
+
+    # Conta alunos computacao
+    num_alunos_comp = alunos.filter(curso__exact='C').count()
+
+    # Conta alunos mecatrônica
+    num_alunos_mxt = alunos.filter(curso__exact='X').count()
+
+    # Conta alunos mecânica
+    num_alunos_mec = alunos.filter(curso__exact='M').count()
 
     inscritos = 0
     ninscritos = 0
     opcoes = []
     for aluno in alunos:
         opcao = Opcao.objects.filter(aluno=aluno).\
-                              filter(proposta__ano=ano, proposta__semestre=semestre)
+                              filter(proposta__ano=ano,
+                                     proposta__semestre=semestre)
         opcoes.append(opcao)
         if opcao.count() >= 5:
             inscritos += 1
@@ -461,7 +352,6 @@ def alunos_inscritos(request, anosemestre):
 @permission_required('users.altera_professor', login_url='/')
 def aluno_detail(request, primarykey):
     """Mostra detalhes sobre o aluno."""
-
     aluno = Aluno.objects.filter(pk=primarykey).first()
     configuracao = Configuracao.objects.get()
     areas = Area.objects.filter(ativa=True)
@@ -479,22 +369,22 @@ def aluno_detail(request, primarykey):
 @permission_required('users.altera_professor', login_url='/')
 def professor_detail(request, primarykey):
     """Mostra detalhes sobre o professor."""
-
     try:
         professor = Professor.objects.get(pk=primarykey)
     except Professor.DoesNotExist:
         return HttpResponse("Professor não encontrado.", status=401)
 
-    projetos = Projeto.objects.filter(orientador=professor).order_by("ano", "semestre", "titulo")
+    projetos = Projeto.objects.filter(orientador=professor)\
+        .order_by("ano", "semestre", "titulo")
 
-    coorientacoes = Coorientador.objects.filter(usuario=professor.user).\
-                                         order_by("projeto__ano",
-                                                  "projeto__semestre",
-                                                  "projeto__titulo")
+    coorientacoes = Coorientador.objects.filter(usuario=professor.user)\
+        .order_by("projeto__ano",
+                  "projeto__semestre",
+                  "projeto__titulo")
 
-    bancas = Banca.objects.filter(membro1=professor.user) |\
-             Banca.objects.filter(membro2=professor.user) |\
-             Banca.objects.filter(membro3=professor.user)
+    bancas = (Banca.objects.filter(membro1=professor.user) |
+              Banca.objects.filter(membro2=professor.user) |
+              Banca.objects.filter(membro3=professor.user))
 
     bancas = bancas.order_by("startDate")
 
@@ -512,7 +402,6 @@ def professor_detail(request, primarykey):
 @permission_required('users.altera_professor', login_url='/')
 def parceiro_detail(request, primarykey):
     """Mostra detalhes sobre o parceiro."""
-
     try:
         parceiro = Parceiro.objects.get(pk=primarykey)
     except Professor.DoesNotExist:
@@ -532,16 +421,15 @@ def parceiro_detail(request, primarykey):
 @permission_required("users.altera_professor", login_url='/')
 def contas_senhas(request, anosemestre):
     """Envia conta e senha para todos os estudantes que estão no semestre."""
-
     configuracao = Configuracao.objects.get()
 
     ano = int(anosemestre.split(".")[0])
     semestre = int(anosemestre.split(".")[1])
 
-    estudantes = Aluno.objects.filter(trancado=False).\
-                               filter(anoPFE=ano, semestrePFE=semestre).\
-                               filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0]).\
-                               order_by(Lower("user__first_name"), Lower("user__last_name"))
+    estudantes = Aluno.objects.filter(trancado=False)\
+        .filter(anoPFE=ano, semestrePFE=semestre)\
+        .filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])\
+        .order_by(Lower("user__first_name"), Lower("user__last_name"))
 
     if request.method == 'POST':
         mensagem = "Enviado para:<br>\n<br>\n"
@@ -550,8 +438,9 @@ def contas_senhas(request, anosemestre):
                         "&lt;" + estudante.user.email + "&gt;<br>\n"
 
             # Atualizando senha do usuário.
-            senha = ''.join(random.SystemRandom().\
-                choice(string.ascii_lowercase + string.digits) for _ in range(6))
+            senha = ''.join(random.SystemRandom().
+                            choice(string.ascii_lowercase + string.digits)
+                            for _ in range(6))
             estudante.user.set_password(senha)
             estudante.user.save()
 
@@ -590,7 +479,7 @@ def contas_senhas(request, anosemestre):
             recipient_list = [estudante.user.email, 'pfeinsper@gmail.com', ]
             check = email(subject, recipient_list, message_email)
             if check != 1:
-                mensagem = "Problema de conexão, contacte:lpsoares@insper.edu.br"
+                mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
 
         mensagem = html.urlize(mensagem)
         context = {

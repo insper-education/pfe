@@ -9,16 +9,13 @@ Data: 15 de Dezembro de 2020
 
 from django.conf import settings
 
-from django.shortcuts import render, redirect
-
+from django.shortcuts import render
+# from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required, permission_required
-
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
-
 from django.db.models.functions import Lower
 
 from users.support import get_edicoes, adianta_semestre
-
 from users.models import Opcao, Aluno, Alocacao, PFEUser
 from users.models import Professor, Parceiro, Administrador
 
@@ -38,120 +35,10 @@ def index_propostas(request):
     return render(request, 'propostas/index_propostas.html', context=context)
 
 
-
-# @login_required
-# @permission_required("users.altera_professor", login_url='/')
-# def mapeamento(request):
-#     """Chama o mapeamento entre estudantes e projetos do próximo semestre."""
-#     try:
-#         configuracao = Configuracao.objects.get()
-#         ano = configuracao.ano
-#         semestre = configuracao.semestre
-#     except Configuracao.DoesNotExist:
-#         return HttpResponse("Falha na configuracao do sistema.", status=401)
-
-#     ano, semestre = adianta_semestre(ano, semestre)  # Vai para próximo semestre
-
-#     return redirect('map_est_proj', anosemestre="{0}.{1}".format(ano, semestre))
-
-
-# @login_required
-# @permission_required("users.altera_professor", login_url='/')
-# def map_est_proj(request, anosemestre):
-#     """Mapeamento entre estudantes e projetos."""
-
-#     try:
-#         configuracao = Configuracao.objects.get()
-#     except Configuracao.DoesNotExist:
-#         return HttpResponse("Falha na configuracao do sistema.", status=401)
-
-#     ano = int(anosemestre.split(".")[0])
-#     semestre = int(anosemestre.split(".")[1])
-
-#     lista_propostas = list(zip(*ordena_propostas(False, ano, semestre)))
-#     if lista_propostas:
-#         propostas = lista_propostas[0]
-#     else:
-#         propostas = []
-
-#     alunos = Aluno.objects.filter(user__tipo_de_usuario=1).\
-#         filter(anoPFE=ano).\
-#         filter(semestrePFE=semestre).\
-#         filter(trancado=False).\
-#         order_by(Lower("user__first_name"), Lower("user__last_name"))
-
-#     opcoes = []
-#     for aluno in alunos:
-#         opcoes_aluno = []
-#         alocacaos = Alocacao.objects.filter(aluno=aluno)
-#         for proposta in propostas:
-#             opcao = Opcao.objects.filter(aluno=aluno, proposta=proposta).last()
-#             if opcao:
-#                 opcoes_aluno.append(opcao)
-#             else:
-#                 try:
-#                     proj = Projeto.objects.get(proposta=proposta, ano=ano, semestre=semestre)
-#                     if alocacaos.filter(projeto=proj):
-#                         # Cria uma opção temporaria
-#                         opc = Opcao()
-#                         opc.prioridade = 0
-#                         opc.proposta = proposta
-#                         opc.aluno = aluno
-#                         opcoes_aluno.append(opc)
-#                     else:
-#                         opcoes_aluno.append(None)
-#                 except Projeto.DoesNotExist:
-#                     opcoes_aluno.append(None)
-
-#         opcoes.append(opcoes_aluno)
-
-#     # checa para empresas repetidas, para colocar um número para cada uma
-#     repetidas = {}
-#     for proposta in propostas:
-#         if proposta.organizacao:
-#             if proposta.organizacao.sigla in repetidas:
-#                 repetidas[proposta.organizacao.sigla] += 1
-#             else:
-#                 repetidas[proposta.organizacao.sigla] = 0
-#         else:
-#             if proposta.nome_organizacao in repetidas:
-#                 repetidas[proposta.nome_organizacao] += 1
-#             else:
-#                 repetidas[proposta.nome_organizacao] = 0
-#     repetidas_limpa = {}
-#     for repetida in repetidas:
-#         if repetidas[repetida] != 0:  # tira zerados
-#             repetidas_limpa[repetida] = repetidas[repetida]
-#     proposta_indice = {}
-#     for proposta in reversed(propostas):
-#         if proposta.organizacao:
-#             if proposta.organizacao.sigla in repetidas_limpa:
-#                 proposta_indice[proposta.id] = repetidas_limpa[proposta.organizacao.sigla] + 1
-#                 repetidas_limpa[proposta.organizacao.sigla] -= 1
-#         else:
-#             if proposta.nome_organizacao in repetidas_limpa:
-#                 proposta_indice[proposta.id] = repetidas_limpa[proposta.nome_organizacao] + 1
-#                 repetidas_limpa[proposta.nome_organizacao] -= 1
-
-#     estudantes = zip(alunos, opcoes)
-#     context = {
-#         'estudantes': estudantes,
-#         'propostas': propostas,
-#         'configuracao': configuracao,
-#         'ano': ano,
-#         'semestre': semestre,
-#         'loop_anos': range(2018, configuracao.ano+1),
-#         'proposta_indice': proposta_indice,
-#     }
-#     return render(request, 'propostas/mapeamento_estudante_projeto.html', context)
-
-
-
 @login_required
 @permission_required("users.altera_professor", login_url='/')
 def mapeamento_estudantes_propostas(request):
     """Faz o mapeamento entre estudantes e propostas do próximo semestre."""
-    
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
@@ -163,7 +50,6 @@ def mapeamento_estudantes_propostas(request):
 
     if request.is_ajax():
         if 'edicao' in request.POST:
-            edicao = request.POST['edicao']
             ano, semestre = request.POST['edicao'].split('.')
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
@@ -192,7 +78,9 @@ def mapeamento_estudantes_propostas(request):
                 opcoes_aluno.append(opcao)
             else:
                 try:
-                    proj = Projeto.objects.get(proposta=proposta, ano=ano, semestre=semestre)
+                    proj = Projeto.objects.get(proposta=proposta,
+                                               ano=ano,
+                                               semestre=semestre)
                     if alocacaos.filter(projeto=proj):
                         # Cria uma opção temporaria
                         opc = Opcao()
@@ -228,11 +116,13 @@ def mapeamento_estudantes_propostas(request):
     for proposta in reversed(propostas):
         if proposta.organizacao:
             if proposta.organizacao.sigla in repetidas_limpa:
-                proposta_indice[proposta.id] = repetidas_limpa[proposta.organizacao.sigla] + 1
+                proposta_indice[proposta.id] = \
+                    repetidas_limpa[proposta.organizacao.sigla] + 1
                 repetidas_limpa[proposta.organizacao.sigla] -= 1
         else:
             if proposta.nome_organizacao in repetidas_limpa:
-                proposta_indice[proposta.id] = repetidas_limpa[proposta.nome_organizacao] + 1
+                proposta_indice[proposta.id] = \
+                    repetidas_limpa[proposta.nome_organizacao] + 1
                 repetidas_limpa[proposta.nome_organizacao] -= 1
 
     estudantes = zip(alunos, opcoes)
@@ -246,22 +136,9 @@ def mapeamento_estudantes_propostas(request):
         'proposta_indice': proposta_indice,
         'edicoes': edicoes,
     }
-    return render(request, 'propostas/mapeamento_estudante_projeto.html', context)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    return render(request,
+                  'propostas/mapeamento_estudante_projeto.html',
+                  context)
 
 
 @login_required
@@ -294,9 +171,13 @@ def procura_propostas(request):
                 curso = request.POST['curso']
 
         else:
-            return HttpResponse("Algum erro não identificado (POST incompleto).", status=401)
+            return HttpResponse("Erro não identificado (POST incompleto)",
+                                status=401)
 
-    mylist = ordena_propostas_novo(True, ano=ano, semestre=semestre, curso=curso)
+    mylist = ordena_propostas_novo(True,
+                                   ano=ano,
+                                   semestre=semestre,
+                                   curso=curso)
 
     propostas = []
     prioridades = [[], [], [], [], []]
@@ -304,13 +185,17 @@ def procura_propostas(request):
 
     if len(mylist) > 0:
         unzipped_object = zip(*mylist)
+
         propostas,\
-        prioridades[0], prioridades[1], prioridades[2], prioridades[3], prioridades[4],\
-        estudantes[0], estudantes[1], estudantes[2], estudantes[3], estudantes[4]\
-             = list(unzipped_object)
+            prioridades[0], prioridades[1], prioridades[2],\
+            prioridades[3], prioridades[4],\
+            estudantes[0], estudantes[1], estudantes[2],\
+            estudantes[3], estudantes[4]\
+            = list(unzipped_object)
 
     # Para procurar as áreas mais procuradas nos projetos
-    opcoes = Opcao.objects.filter(aluno__user__tipo_de_usuario=1, aluno__trancado=False)
+    opcoes = Opcao.objects.filter(aluno__user__tipo_de_usuario=1,
+                                  aluno__trancado=False)
 
     if ano > 0:  # Ou seja não são todos os anos e semestres
         opcoes = opcoes.filter(aluno__anoPFE=ano, aluno__semestrePFE=semestre)
@@ -318,7 +203,8 @@ def procura_propostas(request):
 
     opcoes = opcoes.filter(prioridade=1)
 
-    if curso != "T":  # Caso não se deseje todos os cursos, se filtra qual se deseja
+    # Caso não se deseje todos os cursos, se filtra qual se deseja
+    if curso != "T":
         opcoes = opcoes.filter(aluno__curso=curso)
 
     areaspfe = {}
@@ -326,7 +212,8 @@ def procura_propostas(request):
     for area in areas:
         count = 0
         for opcao in opcoes:
-            if AreaDeInteresse.objects.filter(proposta=opcao.proposta, area=area):
+            if AreaDeInteresse.objects.filter(proposta=opcao.proposta,
+                                              area=area):
                 count += 1
         areaspfe[area.titulo] = (count, area.descricao)
 
@@ -374,21 +261,30 @@ def propostas_apresentadas(request):
                 propostas_filtradas = Proposta.objects.all()
             else:
                 ano, semestre = request.POST['edicao'].split('.')
-                propostas_filtradas = Proposta.objects.filter(ano=ano, semestre=semestre)
+                propostas_filtradas = Proposta.objects\
+                    .filter(ano=ano,
+                            semestre=semestre)
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
         edicoes, ano, semestre = get_edicoes(Proposta)
-        propostas_filtradas = Proposta.objects.filter(ano=ano, semestre=semestre)
+        propostas_filtradas = Proposta.objects.filter(ano=ano,
+                                                      semestre=semestre)
 
-    propostas_filtradas = propostas_filtradas.order_by("ano", "semestre", "organizacao", "titulo",)
+    propostas_filtradas = propostas_filtradas.order_by("ano",
+                                                       "semestre",
+                                                       "organizacao",
+                                                       "titulo", )
 
-    ternario_aprovados = retorna_ternario(propostas_filtradas.filter(disponivel=True))
-    ternario_pendentes = retorna_ternario(propostas_filtradas.filter(disponivel=False))
+    ternario_aprovados = retorna_ternario(propostas_filtradas
+                                          .filter(disponivel=True))
+    ternario_pendentes = retorna_ternario(propostas_filtradas
+                                          .filter(disponivel=False))
 
     dic_organizacoes = {}
     for proposta in propostas_filtradas:
-        if proposta.organizacao and proposta.organizacao not in dic_organizacoes:
+        if proposta.organizacao and\
+           proposta.organizacao not in dic_organizacoes:
             dic_organizacoes[proposta.organizacao] = 0
     num_organizacoes = len(dic_organizacoes)
 
@@ -409,7 +305,6 @@ def propostas_apresentadas(request):
 @permission_required("users.altera_professor", login_url='/')
 def proposta_completa(request, primakey):
     """Mostra um projeto por completo."""
-
     try:
         proposta = Proposta.objects.get(pk=primakey)
     except Proposta.DoesNotExist:
@@ -421,7 +316,8 @@ def proposta_completa(request, primakey):
                 if request.POST['autorizador'] == "0":
                     proposta.autorizado = None
                 else:
-                    proposta.autorizado = PFEUser.objects.get(pk=int(request.POST['autorizador']))
+                    proposta.autorizado = PFEUser.objects\
+                        .get(pk=int(request.POST['autorizador']))
                 proposta.disponivel = request.POST['disponibilizar'] == 'sim'
                 proposta.save()
             except PFEUser.DoesNotExist:
@@ -477,8 +373,7 @@ def proposta_completa(request, primakey):
 
 @login_required
 def proposta_detalhes(request, primarykey):
-    """Exibe uma proposta de projeto com seus detalhes para o estudante aplicar."""
-
+    """Exibe proposta de projeto com seus detalhes para estudante aplicar."""
     try:
         proposta = Proposta.objects.get(pk=primarykey)
     except Proposta.DoesNotExist:
@@ -490,10 +385,13 @@ def proposta_detalhes(request, primarykey):
         return HttpResponse("Usuário não encontrado.", status=401)
 
     if user.tipo_de_usuario == 1:  # (1, 'aluno')
-        if not (user.aluno.anoPFE == proposta.ano and user.aluno.semestrePFE == proposta.semestre):
-            return HttpResponse("Usuário não tem permissão de acesso.", status=401)
+        if not (user.aluno.anoPFE == proposta.ano and
+                user.aluno.semestrePFE == proposta.semestre):
+            return HttpResponse("Usuário não tem permissão de acesso.",
+                                status=401)
         if not proposta.disponivel:
-            return HttpResponse("Usuário não tem permissão de acesso.", status=401)
+            return HttpResponse("Usuário não tem permissão de acesso.",
+                                status=401)
 
     if user.tipo_de_usuario == 3:  # (3, 'parceiro')
         return HttpResponse("Usuário não tem permissão de acesso.", status=401)
@@ -508,7 +406,6 @@ def proposta_detalhes(request, primarykey):
 # @login_required
 def proposta_editar(request, slug):
     """Formulário de Edição de Propostas de Projeto por slug."""
-
     try:
         user = PFEUser.objects.get(pk=request.user.pk)
     except PFEUser.DoesNotExist:
@@ -520,7 +417,7 @@ def proposta_editar(request, slug):
 
     if user:
         if user.tipo_de_usuario == 1:  # alunos
-            mensagem = "Você não está cadastrado como parceiro de uma organização!"
+            mensagem = "Você não está cadastrado como parceiro!"
             context = {
                 "area_principal": True,
                 "mensagem": mensagem,
@@ -539,14 +436,16 @@ def proposta_editar(request, slug):
                 return HttpResponse("Professor não encontrado.", status=401)
         elif user.tipo_de_usuario == 4:  # admin
             try:
-                administrador = Administrador.objects.get(pk=request.user.administrador.pk)
+                administrador = Administrador.objects\
+                    .get(pk=request.user.administrador.pk)
             except Administrador.DoesNotExist:
-                return HttpResponse("Administrador não encontrado.", status=401)
+                return HttpResponse("Administrador não encontrado.",
+                                    status=401)
 
     try:
         proposta = Proposta.objects.get(slug=slug)
     except Proposta.DoesNotExist:
-        return HttpResponseNotFound('<h1>Proposta de Projeto não encontrada!</h1>')
+        return HttpResponseNotFound('Proposta de Projeto não encontrada!')
 
     try:
         configuracao = Configuracao.objects.get()
@@ -559,10 +458,12 @@ def proposta_editar(request, slug):
             preenche_proposta(request, proposta)
             enviar = "mensagem" in request.POST  # Por e-mail se enviar
             mensagem = envia_proposta(proposta, enviar)
-            resposta = "Submissão de proposta de projeto atualizada com sucesso.<br>"
+            resposta = "Submissão de proposta de projeto "
+            resposta = "atualizada com sucesso.<br>"
 
             if enviar:
-                resposta += "Você deve receber um e-mail de confirmação nos próximos instantes.<br>"
+                resposta += "Você deve receber um e-mail de confirmação "
+                resposta += "nos próximos instantes.<br>"
 
             resposta += "<br><hr>"
             resposta += mensagem
@@ -609,7 +510,6 @@ def proposta_editar(request, slug):
 @permission_required('users.altera_professor', login_url='/')
 def validate_alunos(request):
     """Ajax para validar vaga de estudantes em propostas."""
-
     proposta_id = int(request.GET.get('proposta', None))
     vaga = request.GET.get('vaga', "  ")
     checked = request.GET.get('checked', None) == "true"
