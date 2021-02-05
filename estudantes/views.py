@@ -50,19 +50,21 @@ def index_estudantes(request):
         except Aluno.DoesNotExist:
             return HttpResponse("Estudante não encontrado.", status=401)
 
-        context['projeto'] = Projeto.objects.filter(alocacao__aluno=estudante).last()
+        context['projeto'] = Projeto.objects\
+            .filter(alocacao__aluno=estudante).last()
 
         # Estudantes de processos passados sempre terrão seleção vencida
         if semestre == 1:
-            vencido = vencido or (estudante.anoPFE < ano)
-            vencido = vencido or (estudante.anoPFE == ano and estudante.semestrePFE == 1)
+            vencido |= (estudante.anoPFE < ano)
+            vencido |= (estudante.anoPFE == ano and estudante.semestrePFE == 1)
         else:
-            vencido = vencido or (estudante.anoPFE <= ano)
+            vencido |= (estudante.anoPFE <= ano)
 
-    elif usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4:  # professor & administrador
+    # Caso professor ou administrador
+    elif usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4:
         try:
-            professor_id = Professor.objects.get(pk=request.user.professor.pk).id
-            context['professor_id'] = professor_id
+            prof_id = Professor.objects.get(pk=request.user.professor.pk).id
+            context['professor_id'] = prof_id
         except Professor.DoesNotExist:
             return HttpResponse("Professor não encontrado.", status=401)
 
@@ -78,7 +80,6 @@ def index_estudantes(request):
 @login_required
 def areas_interesse(request):
     """Para estudantes definirem suas áreas de interesse."""
-
     try:
         user = PFEUser.objects.get(pk=request.user.pk)
     except PFEUser.DoesNotExist:
@@ -90,7 +91,7 @@ def areas_interesse(request):
     }
 
     # Caso seja estudante
-    if user.tipo_de_usuario == 1: # Estudante
+    if user.tipo_de_usuario == 1:  # Estudante
         try:
             estudante = Aluno.objects.get(pk=request.user.aluno.pk)
         except Aluno.DoesNotExist:
@@ -105,11 +106,13 @@ def areas_interesse(request):
         context['vencido'] = vencido
         context['aluno'] = estudante
 
-    elif user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4: #  Professores ou Administrador
+    # caso Professores ou Administrador
+    elif user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4:
         context['mensagem'] = "Você não está cadastrado como estudante."
         context['vencido'] = True
 
-    else: # Caso não seja Estudante, Professor ou Administrador (ou seja Parceiro)
+    # caso não seja Estudante, Professor ou Administrador (ou seja Parceiro)
+    else:
         mensagem = "Você não está cadastrado como estudante!"
         context = {
             "area_principal": True,
@@ -131,29 +134,30 @@ def encontros_marcar(request):
         return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     hoje = datetime.date.today()
-    encontros = Encontro.objects.filter(startDate__gt=hoje).order_by('startDate')
+    encontros = Encontro.objects.filter(startDate__gt=hoje)\
+        .order_by('startDate')
 
     try:
         usuario = PFEUser.objects.get(pk=request.user.pk)
     except PFEUser.DoesNotExist:
         return HttpResponse("Usuário não encontrado.", status=401)
 
-    if usuario.tipo_de_usuario == 1: # Estudante
+    if usuario.tipo_de_usuario == 1:  # Estudante
         try:
             estudante = Aluno.objects.get(pk=request.user.aluno.pk)
         except Aluno.DoesNotExist:
             return HttpResponse("Estudante não encontrado.", status=401)
 
         projeto = Projeto.objects.filter(alocacao__aluno=estudante).\
-                                  distinct().\
-                                  filter(ano=ano).\
-                                  filter(semestre=semestre).last()
+            distinct().\
+            filter(ano=ano).\
+            filter(semestre=semestre).last()
 
-    elif usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4: # Professor ou Administrador
+    # caso Professor ou Administrador
+    elif usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4:
         projeto = None
     else:
-        return HttpResponse("Estudante não encontrado (você não possui conta de estudante).",
-                            status=401)
+        return HttpResponse("Você não possui conta de estudante.", status=401)
 
     if request.method == 'POST':
         check_values = request.POST.getlist('selection')
@@ -174,13 +178,15 @@ def encontros_marcar(request):
             recipient_list = []
             alocacoes = Alocacao.objects.filter(projeto=projeto)
             for alocacao in alocacoes:
-                recipient_list.append(alocacao.aluno.user.email) #mandar para cada membro do grupo
-            recipient_list.append('pfeinsper@gmail.com') #sempre mandar para a conta do gmail
+                # mandar para cada membro do grupo
+                recipient_list.append(alocacao.aluno.user.email)
+            # sempre mandar para a conta do gmail
+            recipient_list.append('pfeinsper@gmail.com')
 
             message = message_agendamento(agendado)
             check = email(subject, recipient_list, message)
             if check != 1:
-                message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+                message = "Problema no envio, contacte:lpsoares@insper.edu.br"
 
             mensagem = "Agendado: " + str(agendado.startDate)
             context = {
@@ -201,7 +207,7 @@ def encontros_marcar(request):
 
 @login_required
 def informacoes_adicionais(request):
-    """Para perguntas descritivas ao aluno de onde trabalho, entidades, sociais e familia."""
+    """Perguntas aos estudantes de trabalho/entidades/social/familia."""
     try:
         user = PFEUser.objects.get(pk=request.user.pk)
     except PFEUser.DoesNotExist:
@@ -236,14 +242,14 @@ def informacoes_adicionais(request):
 
         context = {
             'vencido': vencido,
-            'trabalhou' : estudante.trabalhou,
-            'social' : estudante.social,
-            'entidade' : estudante.entidade,
-            'familia' : estudante.familia,
-            'linkedin' : estudante.user.linkedin,
-            'entidades' : Entidade.objects.all(),
+            'trabalhou': estudante.trabalhou,
+            'social': estudante.social,
+            'entidade': estudante.entidade,
+            'familia': estudante.familia,
+            'linkedin': estudante.user.linkedin,
+            'entidades': Entidade.objects.all(),
         }
-    else: # Supostamente professores
+    else:  # Supostamente professores
         context = {
             'mensagem': "Você não está cadastrado como estudante.",
             'vencido': True,
@@ -268,8 +274,9 @@ def minhas_bancas(request):
     configuracao = Configuracao.objects.get()
     if not configuracao.liberados_projetos:
         if aluno.anoPFE > configuracao.ano or\
-          (aluno.anoPFE == configuracao.ano and aluno.semestrePFE > configuracao.semestre):
-            mensagem = "Projetos ainda não disponíveis para o seu período de PFE."
+          (aluno.anoPFE == configuracao.ano and
+           aluno.semestrePFE > configuracao.semestre):
+            mensagem = "Projetos ainda não disponíveis para seu período PFE."
             context = {
                 "area_principal": True,
                 "mensagem": mensagem,
@@ -306,9 +313,10 @@ def selecao_propostas(request):
         ano += 1
         semestre = 1
 
-    propostas = Proposta.objects.filter(ano=ano).\
-                                filter(semestre=semestre).\
-                                filter(disponivel=True)
+    propostas = Proposta.objects\
+        .filter(ano=ano)\
+        .filter(semestre=semestre)\
+        .filter(disponivel=True)
 
     warnings = ""
 
@@ -324,13 +332,14 @@ def selecao_propostas(request):
             return HttpResponse("Estudante não encontrado.", status=401)
 
         if configuracao.semestre == 1:
-            vencido = vencido or (aluno.anoPFE < configuracao.ano)
-            vencido = vencido or (aluno.anoPFE == configuracao.ano and aluno.semestrePFE == 1)
+            vencido |= aluno.anoPFE < configuracao.ano
+            vencido |= aluno.anoPFE == configuracao.ano and \
+                aluno.semestrePFE == 1
         else:
-            vencido = vencido or (aluno.anoPFE <= configuracao.ano)
+            vencido |= aluno.anoPFE <= configuracao.ano
 
         if vencido:
-            mensagem = "Prazo para seleção de propostas de propostas de projetos vencido!"
+            mensagem = "Prazo vencido para seleção de propostas de propostas!"
             context = {
                 "area_aluno": True,
                 "mensagem": mensagem,
@@ -340,34 +349,45 @@ def selecao_propostas(request):
         if liberadas_propostas and request.method == 'POST':
             prioridade = {}
             for proposta in propostas:
-                check_values = request.POST.get('selection'+str(proposta.pk), "0")
+                check_values = request.POST.get('selection'+str(proposta.pk),
+                                                "0")
                 prioridade[proposta.pk] = check_values
             for i in range(1, len(propostas)+1):
                 if i < 6 and list(prioridade.values()).count(str(i)) == 0:
-                    warnings += "Nenhuma proposta com prioridade "+str(i)+"\n"
+                    warnings += "Nenhuma proposta com prioridade "
+                    warnings += str(i)+"\n"
                 if list(prioridade.values()).count(str(i)) > 1:
-                    warnings += "Mais de uma proposta com prioridade "+str(i)+"\n"
+                    warnings += "Mais de uma proposta com prioridade "
+                    warnings += str(i)+"\n"
             if warnings == "":
                 for proposta in propostas:
                     if prioridade[proposta.pk] != "0":
-                        if not aluno.opcoes.filter(pk=proposta.pk): # Se lista for vazia
-                            Opcao.objects.create(aluno=aluno, proposta=proposta,
-                                                 prioridade=int(prioridade[proposta.pk]))
-                        elif Opcao.objects.get(aluno=aluno, proposta=proposta).\
-                                        prioridade != int(prioridade[proposta.pk]):
-                            opc = Opcao.objects.get(aluno=aluno, proposta=proposta)
-                            opc.prioridade = int(prioridade[proposta.pk])
+                        prio_int = int(prioridade[proposta.pk])
+                        # Se lista for vazia
+                        if not aluno.opcoes.filter(pk=proposta.pk):
+                            Opcao.objects\
+                                .create(aluno=aluno,
+                                        proposta=proposta,
+                                        prioridade=prio_int)
+                        elif Opcao.objects.get(aluno=aluno, proposta=proposta)\
+                                .prioridade != prio_int:
+                            opc = Opcao.objects.get(aluno=aluno,
+                                                    proposta=proposta)
+                            opc.prioridade = prio_int
                             opc.save()
                     else:
-                        if aluno.opcoes.filter(pk=proposta.pk): # Se lista não for vazia
-                            Opcao.objects.filter(aluno=aluno, proposta=proposta).delete()
+                        # Se lista não for vazia
+                        if aluno.opcoes.filter(pk=proposta.pk):
+                            Opcao.objects\
+                                .filter(aluno=aluno, proposta=proposta)\
+                                .delete()
                 message = create_message(aluno, ano, semestre)
 
                 subject = 'PFE : '+aluno.user.username
                 recipient_list = ['pfeinsper@gmail.com', aluno.user.email, ]
                 check = email(subject, recipient_list, message)
                 if check != 1:
-                    message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+                    message = "Erro no envio contacte:lpsoares@insper.edu.br"
 
                 context = {'message': message, }
                 return render(request, 'projetos/confirmacao.html', context)

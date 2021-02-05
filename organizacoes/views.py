@@ -6,37 +6,26 @@ Data: 14 de Dezembro de 2020
 """
 
 import datetime
-
 import dateutil.parser
 
 from django.conf import settings
-
 from django.shortcuts import render
-
 from django.contrib.auth.decorators import login_required, permission_required
-
-# from django.http import Http404, HttpResponse, JsonResponse
 from django.http import HttpResponse, HttpResponseNotFound
 
 from users.support import adianta_semestre
-
-# from users.models import Aluno, Opcao, Alocacao
 from users.models import PFEUser, Administrador, Parceiro, Professor, Aluno
 
-# from projetos.models import ObjetivosDeAprendizagem, Avaliacao2, Observacao, Area, AreaDeInteresse
-from projetos.models import Area, Proposta, Organizacao, Projeto, Configuracao, Feedback
-
-# from projetos.models import Projeto, Evento, Coorientador
+from projetos.models import Area, Proposta, Organizacao
+from projetos.models import Projeto, Configuracao, Feedback
 from projetos.models import Anotacao
-
 from propostas.support import envia_proposta, preenche_proposta
 
 
 @login_required
 @permission_required("users.altera_valores", login_url='/')
 def index_organizacoes(request):
-    """Mostra página principal do usuário que é um parceiro de uma organização."""
-
+    """Mostra página principal do parceiro de uma organização."""
     return render(request, 'organizacoes/index_organizacoes.html')
 
 
@@ -63,7 +52,8 @@ def cria_anotacao(request, login):  # acertar isso para pk
             anotacao.save()
             if 'data_hora' in request.POST:
                 try:
-                    anotacao.momento = dateutil.parser.parse(request.POST['data_hora'])
+                    anotacao.momento = dateutil.parser\
+                        .parse(request.POST['data_hora'])
                 except (ValueError, OverflowError):
                     anotacao.momento = datetime.datetime.now()
             anotacao.save()
@@ -85,7 +75,9 @@ def cria_anotacao(request, login):  # acertar isso para pk
             'TIPO_DE_RETORNO': Anotacao.TIPO_DE_RETORNO,
             'data_hora': datetime.datetime.now(),
         }
-        return render(request, 'organizacoes/cria_anotacao.html', context=context)
+        return render(request,
+                      'organizacoes/cria_anotacao.html',
+                      context=context)
 
 
 @login_required
@@ -101,8 +93,9 @@ def parceiro_propostas(request):
         }
         return render(request, 'generic.html', context=context)
 
-    propostas = Proposta.objects.filter(organizacao=user.parceiro.organizacao).\
-        order_by("ano", "semestre", "titulo",)
+    propostas = Proposta.objects\
+        .filter(organizacao=user.parceiro.organizacao)\
+        .order_by("ano", "semestre", "titulo", )
     context = {
         'propostas': propostas,
     }
@@ -130,7 +123,7 @@ def proposta_submissao(request):
     if user:
 
         if user.tipo_de_usuario == 1:  # alunos
-            mensagem = "Você não está cadastrado como parceiro de uma organização!"
+            mensagem = "Você não está cadastrado como parceiro!"
             context = {
                 "area_principal": True,
                 "mensagem": mensagem,
@@ -156,19 +149,23 @@ def proposta_submissao(request):
                 return HttpResponse("Professor não encontrado.", status=401)
         elif user.tipo_de_usuario == 4:  # admin
             try:
-                administrador = Administrador.objects.get(pk=request.user.administrador.pk)
+                administrador = Administrador.objects\
+                    .get(pk=request.user.administrador.pk)
             except Administrador.DoesNotExist:
-                return HttpResponse("Administrador não encontrado.", status=401)
+                return HttpResponse("Administrador não encontrado.",
+                                    status=401)
 
     if request.method == 'POST':
         proposta = preenche_proposta(request, None)
         enviar = "mensagem" in request.POST  # Por e-mail se enviar
         mensagem = envia_proposta(proposta, enviar)
 
-        resposta = "Submissão de proposta de projeto realizada com sucesso.<br>"
+        resposta = "Submissão de proposta de projeto realizada"
+        resposta = "com sucesso.<br>"
 
         if enviar:
-            resposta += "Você deve receber um e-mail de confirmação nos próximos instantes.<br>"
+            resposta += "Você deve receber um e-mail de confirmação"
+            resposta += "nos próximos instantes.<br>"
 
         resposta += mensagem
         context = {
@@ -239,21 +236,27 @@ def organizacoes_prospect(request):
         periodo = int(request.POST['periodo'])*30  # periodo vem em meses
 
     for organizacao in todas_organizacoes:
-        propostas = Proposta.objects.filter(organizacao=organizacao).order_by("ano", "semestre")
-        ant = Anotacao.objects.filter(organizacao=organizacao).order_by("momento").last()
+        propostas = Proposta.objects.filter(organizacao=organizacao)\
+            .order_by("ano", "semestre")
+        ant = Anotacao.objects.filter(organizacao=organizacao)\
+            .order_by("momento").last()
 
-        if ant and (datetime.date.today() - ant.momento.date() < datetime.timedelta(days=periodo)):
+        if ant and (datetime.date.today() - ant.momento.date() <
+                    datetime.timedelta(days=periodo)):
             organizacoes.append(organizacao)
             contato.append(ant)
 
             if configuracao.semestre == 1:
-                propostas_submetidas = propostas.filter(ano__gte=configuracao.ano).\
-                                            exclude(ano=configuracao.ano, semestre=1).distinct()
+                propostas_submetidas = propostas\
+                    .filter(ano__gte=configuracao.ano)\
+                    .exclude(ano=configuracao.ano, semestre=1).distinct()
             else:
-                propostas_submetidas = propostas.filter(ano__gt=configuracao.ano).distinct()
+                propostas_submetidas = propostas\
+                    .filter(ano__gt=configuracao.ano).distinct()
 
             submetidas.append(propostas_submetidas.count())
-            disponiveis.append(propostas_submetidas.filter(disponivel=True).count())
+            disponiveis.append(propostas_submetidas.filter(disponivel=True)
+                                                   .count())
 
     organizacoes_list = zip(organizacoes, disponiveis, submetidas, contato)
     total_organizacoes = len(organizacoes)
@@ -269,7 +272,9 @@ def organizacoes_prospect(request):
         'semestre': semestre,
         'filtro': "todas",
         }
-    return render(request, 'organizacoes/organizacoes_prospectadas.html', context)
+    return render(request,
+                  'organizacoes/organizacoes_prospectadas.html',
+                  context)
 
 
 @login_required
@@ -281,25 +286,30 @@ def organizacoes_lista(request):
     desde = []
     contato = []
     for organizacao in organizacoes:
-        propostas = Proposta.objects.filter(organizacao=organizacao).order_by("ano", "semestre")
+        propostas = Proposta.objects.filter(organizacao=organizacao)\
+            .order_by("ano", "semestre")
         if propostas.first():
-            desde.append(str(propostas.first().ano)+"."+str(propostas.first().semestre))
+            desde.append(str(propostas.first().ano) + "." +
+                         str(propostas.first().semestre))
         else:
             desde.append("---------")
 
-        anot = Anotacao.objects.filter(organizacao=organizacao).order_by("momento").last()
+        anot = Anotacao.objects.filter(organizacao=organizacao)\
+            .order_by("momento").last()
         if anot:
             contato.append(anot)
         else:
             contato.append("---------")
 
         projetos = Projeto.objects.filter(organizacao=organizacao)
-        fechados.append(projetos.filter(alocacao__isnull=False).distinct().count())
+        fechados.append(projetos.filter(alocacao__isnull=False)
+                                .distinct().count())
 
     organizacoes_list = zip(organizacoes, fechados, desde, contato)
     total_organizacoes = Organizacao.objects.all().count()
     total_submetidos = Projeto.objects.all().count()
-    total_fechados = Projeto.objects.filter(alocacao__isnull=False).distinct().count()
+    total_fechados = Projeto.objects.filter(alocacao__isnull=False)\
+        .distinct().count()
 
     context = {
         'organizacoes_list': organizacoes_list,
@@ -327,7 +337,9 @@ def organizacao_completo(request, org):  # acertar isso para pk
         'MEDIA_URL': settings.MEDIA_URL,
     }
 
-    return render(request, 'organizacoes/organizacao_completo.html', context=context)
+    return render(request,
+                  'organizacoes/organizacao_completo.html',
+                  context=context)
 
 
 @login_required
@@ -360,13 +372,16 @@ def organizacoes_tabela(request):
                 if count_projetos:
                     organizacoes.append(organizacao)
                     grupos.append(count_projetos)
-        if organizacoes:  # Se não houver nenhum organização não cria entrada na lista
+
+        # Se não houver nenhum organização não cria entrada na lista
+        if organizacoes:
             organizacoes_pfe.append(zip(organizacoes, grupos))
             periodo.append(str(ano)+"."+str(semestre))
 
         # Para de buscar depois do semestre atual
-        if ((semestre == configuracao.semestre + 1) and (ano == configuracao.ano)) or \
-           (ano > configuracao.ano):
+        if (((semestre == configuracao.semestre + 1) and
+                (ano == configuracao.ano)) or
+                (ano > configuracao.ano)):
             break
 
         # Avança um semestre
@@ -376,7 +391,8 @@ def organizacoes_tabela(request):
         else:
             semestre = 2
 
-    anos = zip(organizacoes_pfe[::-1], periodo[::-1])  # inverti lista deixando os mais novos primeiro
+    # inverti lista deixando os mais novos primeiro
+    anos = zip(organizacoes_pfe[::-1], periodo[::-1])
 
     context = {
         'anos': anos,
@@ -412,7 +428,7 @@ def projeto_feedback(request):
 @login_required
 @permission_required("users.altera_professor", login_url='/')
 def todos_parceiros(request):
-    """Exibe todas os parceiros (pessoas) de organizações que já submeteram projetos."""
+    """Exibe todas os parceiros de organizações que já submeteram projetos."""
     pareceiros = Parceiro.objects.all()
 
     context = {

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """
-Desenvolvido para o Projeto Final de Engenharia
+Desenvolvido para o Projeto Final de Engenharia.
+
 Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Dezembro de 2020
 """
@@ -11,42 +12,25 @@ from urllib.parse import quote, unquote
 
 from django.conf import settings
 from django.shortcuts import render
-
 from django.contrib.auth.decorators import login_required, permission_required
-
 from django.http import HttpResponse, HttpResponseNotFound
-
-from django.db.models.functions import Lower
-
+# from django.db.models.functions import Lower
 from django.utils import html
 
 from users.models import PFEUser, Professor, Aluno
-
 from users.support import get_edicoes
 
-#AreaDeInteresse
 from projetos.models import ObjetivosDeAprendizagem, Avaliacao2, Observacao
-
-#from projetos.support import get_areas_estudantes, get_areas_propostas
+from projetos.models import Banca, Evento
+from projetos.models import Projeto, Configuracao
 from projetos.support import get_peso
-
+from projetos.support import converte_letra, converte_conceito
 from projetos.messages import email
 
-# from .models import Projeto, Proposta, Organizacao, Configuracao, Evento, Anotacao, Coorientador
-# from .models import Feedback, Certificado, Entidade
-# from .models import Documento, Encontro, Banco, Reembolso, Aviso, Conexao
-# from .models import ObjetivosDeAprendizagem, Avaliacao2, , Area, AreaDeInteresse
-
-
-#from .models import , Avaliacao2, Observacao, AreaDeInteresse
-from projetos.models import Banca, Evento
-
-from projetos.models import Projeto, Configuracao
-
-from projetos.support import converte_letra, converte_conceito
-
-from .support import professores_membros_bancas, falconi_membros_banca, editar_banca
-from .support import recupera_orientadores_por_semestre, recupera_coorientadores_por_semestre
+from .support import professores_membros_bancas, falconi_membros_banca
+from .support import editar_banca
+from .support import recupera_orientadores_por_semestre
+from .support import recupera_coorientadores_por_semestre
 
 
 @login_required
@@ -84,14 +68,20 @@ def index_professor(request):
 @permission_required('users.altera_professor', login_url='/')
 def bancas_index(request):
     """Menus de bancas e calendario de bancas."""
-
     bancas = Banca.objects.all()
 
-    dias_bancas_interm = Evento.objects.filter(tipo_de_evento=14) # (14, 'Banca intermediária'
-    dias_bancas_finais = Evento.objects.filter(tipo_de_evento=15) # (15, 'Bancas finais'
-    dias_bancas_falcon = Evento.objects.filter(tipo_de_evento=50) # (50, 'Certificação Falconi'
+    # (14, 'Banca intermediária'
+    dias_bancas_interm = Evento.objects.filter(tipo_de_evento=14)
 
-    dias_bancas = (dias_bancas_interm | dias_bancas_finais | dias_bancas_falcon)
+    # (15, 'Bancas finais'
+    dias_bancas_finais = Evento.objects.filter(tipo_de_evento=15)
+
+    # (50, 'Certificação Falconi'
+    dias_bancas_falcon = Evento.objects.filter(tipo_de_evento=50)
+
+    dias_bancas = (dias_bancas_interm |
+                   dias_bancas_finais |
+                   dias_bancas_falcon)
 
     context = {
         'bancas': bancas,
@@ -129,19 +119,19 @@ def bancas_criar(request):
             }
             return render(request, 'generic.html', context=context)
 
-        return HttpResponse("Banca não registrada, problema com identificação do projeto.")
+        return HttpResponse("Banca não registrada, erro identificando projeto")
 
     ano = configuracao.ano
     semestre = configuracao.semestre
-    projetos = Projeto.objects.filter(ano=ano, semestre=semestre).\
-                                        exclude(orientador=None)
+    projetos = Projeto.objects.filter(ano=ano, semestre=semestre)\
+        .exclude(orientador=None)
 
     professores = professores_membros_bancas()
     falconis = falconi_membros_banca()
 
     context = {
-        'projetos' : projetos,
-        'professores' : professores,
+        'projetos': projetos,
+        'professores': professores,
         "TIPO_DE_BANCA": Banca.TIPO_DE_BANCA,
         "falconis": falconis,
     }
@@ -152,7 +142,6 @@ def bancas_criar(request):
 @permission_required('users.altera_professor', login_url='/')
 def bancas_editar(request, primarykey):
     """Edita uma banca de avaliação para o projeto."""
-
     try:
         banca = Banca.objects.get(pk=primarykey)
     except Banca.DoesNotExist:
@@ -168,15 +157,16 @@ def bancas_editar(request, primarykey):
         }
         return render(request, 'generic.html', context=context)
 
-    projetos = Projeto.objects.exclude(orientador=None).order_by("-ano", "-semestre")
+    projetos = Projeto.objects.exclude(orientador=None)\
+        .order_by("-ano", "-semestre")
 
     professores = professores_membros_bancas()
     falconis = falconi_membros_banca()
 
     context = {
-        'projetos' : projetos,
-        'professores' : professores,
-        'banca' : banca,
+        'projetos': projetos,
+        'professores': professores,
+        'banca': banca,
         "TIPO_DE_BANCA": Banca.TIPO_DE_BANCA,
         "falconis": falconis,
     }
@@ -187,7 +177,6 @@ def bancas_editar(request, primarykey):
 @permission_required('users.altera_professor', login_url='/')
 def bancas_lista(request, periodo_projeto):
     """Lista as bancas agendadas, conforme periodo ou projeto pedido."""
-
     projeto = None
 
     if periodo_projeto == "proximas":
@@ -203,9 +192,9 @@ def bancas_lista(request, periodo_projeto):
         bancas = Banca.objects.filter(projeto=projeto).order_by("startDate")
 
     context = {
-        'bancas' : bancas,
-        'periodo' : periodo_projeto,
-        "projeto" : projeto,
+        'bancas': bancas,
+        'periodo': periodo_projeto,
+        "projeto": projeto,
     }
 
     return render(request, 'professores/bancas_lista.html', context)
@@ -215,7 +204,6 @@ def bancas_lista(request, periodo_projeto):
 @permission_required('users.altera_professor', login_url='/')
 def bancas_tabela(request):
     """Lista todas as bancas agendadas, conforme periodo pedido."""
-
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
@@ -228,10 +216,12 @@ def bancas_tabela(request):
     semestre = 2
     while True:
         membros = dict()
-        bancas = Banca.objects.all().filter(projeto__ano=ano).filter(projeto__semestre=semestre)
+        bancas = Banca.objects.all().filter(projeto__ano=ano)\
+            .filter(projeto__semestre=semestre)
         for banca in bancas:
             if banca.projeto.orientador:
-                membros.setdefault(banca.projeto.orientador.user, []).append(banca)
+                membros.setdefault(banca.projeto.orientador.user, [])\
+                    .append(banca)
             if banca.membro1:
                 membros.setdefault(banca.membro1, []).append(banca)
             if banca.membro2:
@@ -251,10 +241,11 @@ def bancas_tabela(request):
         else:
             semestre = 2
 
-    anos = zip(membros_pfe[::-1], periodo[::-1]) #inverti lista deixando os mais novos primeiro
+    # inverti lista deixando os mais novos primeiro
+    anos = zip(membros_pfe[::-1], periodo[::-1])
 
     context = {
-        'anos' : anos,
+        'anos': anos,
     }
 
     return render(request, 'professores/bancas_tabela.html', context)
@@ -264,23 +255,22 @@ def bancas_tabela(request):
 @permission_required('users.altera_professor', login_url='/')
 def banca_ver(request, primarykey):
     """Retorna banca pedida."""
-
     try:
         banca = Banca.objects.get(id=primarykey)
     except Banca.DoesNotExist:
         return HttpResponseNotFound('<h1>Banca não encontrada!</h1>')
 
     context = {
-        'banca' : banca,
+        'banca': banca,
     }
 
     return render(request, 'professores/banca_ver.html', context)
 
-#@login_required
-#@permission_required("users.altera_professor", login_url='/')
+
+# @login_required
+# @permission_required("users.altera_professor", login_url='/')
 def banca_avaliar(request, slug):
     """Cria uma tela para preencher avaliações de bancas."""
-
     try:
         banca = Banca.objects.get(slug=slug)
 
@@ -296,10 +286,13 @@ def banca_avaliar(request, slug):
     except Banca.DoesNotExist:
         return HttpResponseNotFound('<h1>Banca não encontrada!</h1>')
 
-    if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1: # Intermediária e Final
-        objetivos = ObjetivosDeAprendizagem.objects.filter(avaliacao_banca=True).order_by("id")
-    elif banca.tipo_de_banca == 2: # Falconi
-        objetivos = ObjetivosDeAprendizagem.objects.filter(avaliacao_falconi=True).order_by("id")
+    # Intermediária e Final
+    if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
+        objetivos = ObjetivosDeAprendizagem.objects\
+            .filter(avaliacao_banca=True).order_by("id")
+    elif banca.tipo_de_banca == 2:  # Falconi
+        objetivos = ObjetivosDeAprendizagem.objects\
+            .filter(avaliacao_falconi=True).order_by("id")
     else:
         return HttpResponseNotFound('<h1>Tipo de Banca não indentificado!</h1>')
 
@@ -311,18 +304,18 @@ def banca_avaliar(request, slug):
             except PFEUser.DoesNotExist:
                 return HttpResponse("Usuário não encontrado.", status=401)
 
-            if banca.tipo_de_banca == 1: #(1, 'intermediaria'),
-                tipo_de_avaliacao = 1 #( 1, 'Banca Intermediária'),
-            elif banca.tipo_de_banca == 0: # (0, 'final'),
-                tipo_de_avaliacao = 2 #( 2, 'Banca Final'),
-            elif banca.tipo_de_banca == 2: # (2, 'falconi'),
-                tipo_de_avaliacao = 99 # (99, 'Falconi'),
+            if banca.tipo_de_banca == 1:  # (1, 'intermediaria'),
+                tipo_de_avaliacao = 1  # ( 1, 'Banca Intermediária'),
+            elif banca.tipo_de_banca == 0:  # (0, 'final'),
+                tipo_de_avaliacao = 2  # ( 2, 'Banca Final'),
+            elif banca.tipo_de_banca == 2:  # (2, 'falconi'),
+                tipo_de_avaliacao = 99  # (99, 'Falconi'),
 
             # Identifica que uma avaliação já foi realizada anteriormente
             realizada = Avaliacao2.objects.filter(projeto=banca.projeto,
                                                   avaliador=avaliador,
-                                                  tipo_de_avaliacao=tipo_de_avaliacao).\
-                                           exists()
+                                                  tipo_de_avaliacao=tipo_de_avaliacao)\
+                .exists()
 
             objetivos_possiveis = 5
             julgamento = [None]*objetivos_possiveis
@@ -421,7 +414,6 @@ def banca_avaliar(request, slug):
                 message += "</p>"
                 message += "<br>\n<br>\n"
 
-
             # Criar link para reeditar
             message += "<a href='" + settings.SERVER + "/professores/banca_avaliar/" + str(banca.slug)
 
@@ -463,21 +455,21 @@ def banca_avaliar(request, slug):
                         message += "<td style='border: 1px solid black; width:18%;'>"
                     message += "Em Desenvolvimento (D)</th>"
 
-                    if (not julg.na) and ( converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+" ):
+                    if (not julg.na) and (converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+"):
                         message += "<td style='border: 2px solid black; width:18%;"
                         message += " background-color: #F4F4F4;'>"
                     else:
                         message += "<td style='border: 1px solid black; width:18%;'>"
                     message += "Essencial (C/C+)</th>"
 
-                    if (not julg.na) and ( converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+" ):
+                    if (not julg.na) and (converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+"):
                         message += "<td style='border: 2px solid black; width:18%;"
                         message += " background-color: #F4F4F4;'>"
                     else:
                         message += "<td style='border: 1px solid black; width:18%;'>"
                     message += "Proficiente (B/B+)</th>"
 
-                    if (not julg.na) and ( converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+" ):
+                    if (not julg.na) and (converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+"):
                         message += "<td style='border: 2px solid black; width:18%;"
                         message += " background-color: #F4F4F4;'>"
                     else:
@@ -503,7 +495,7 @@ def banca_avaliar(request, slug):
                     message += "{0}".format(julg.objetivo.rubrica_D)
                     message += "</td>"
 
-                    if (not julg.na) and ( converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+" ):
+                    if (not julg.na) and (converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+"):
                         message += "<td style='border: 2px solid black;"
                         message += " background-color: #F4F4F4;'>"
                     else:
@@ -511,7 +503,7 @@ def banca_avaliar(request, slug):
                     message += "{0}".format(julg.objetivo.rubrica_C)
                     message += "</td>"
 
-                    if (not julg.na) and ( converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+" ):
+                    if (not julg.na) and (converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+"):
                         message += "<td style='border: 2px solid black;"
                         message += " background-color: #F4F4F4;'>"
                     else:
@@ -519,7 +511,7 @@ def banca_avaliar(request, slug):
                     message += "{0}".format(julg.objetivo.rubrica_B)
                     message += "</td>"
 
-                    if (not julg.na) and ( converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+" ):
+                    if (not julg.na) and (converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+"):
                         message += "<td style='border: 2px solid black;"
                         message += " background-color: #F4F4F4;'>"
                     else:
@@ -532,11 +524,13 @@ def banca_avaliar(request, slug):
 
             subject = 'Banca PFE : {0}'.format(banca.projeto)
 
-            recipient_list = [avaliador.email,]
-            if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1: # Intermediária e Final
-                recipient_list += [banca.projeto.orientador.user.email,]
-            elif banca.tipo_de_banca == 2: # Falconi
-                recipient_list += ["lpsoares@insper.edu.br",]
+            recipient_list = [avaliador.email, ]
+
+            # Intermediária e Final
+            if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
+                recipient_list += [banca.projeto.orientador.user.email, ]
+            elif banca.tipo_de_banca == 2:  # Falconi
+                recipient_list += ["lpsoares@insper.edu.br", ]
 
             check = email(subject, recipient_list, message)
             if check != 1:
@@ -559,7 +553,8 @@ def banca_avaliar(request, slug):
 
         orientacoes = ""
 
-        if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1: # Intermediária e Final
+        # Intermediária e Final
+        if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
             pessoas = professores_membros_bancas()
             orientacoes += "O professor(a) orientador(a) é responsável por conduzir a banca. Os membros do grupo terão <b>40 minutos para a apresentação</b>. Os membros da banca terão depois <b>50 minutos para arguição</b> (que serão divididos pelos membros convidados), podendo tirar qualquer dúvida a respeito do projeto e fazerem seus comentários. Caso haja muitas interferências da banca durante a apresentação do grupo, poderá se estender o tempo de apresentação. A dinâmica de apresentação é livre, contudo, <b>todos os membros do grupo devem estar prontos para responder qualquer tipo de pergunta</b> sobre o projeto. Um membro da banca pode fazer uma pergunta direcionada para um estudante específico do grupo se desejar."
             orientacoes += "<br><br>"
@@ -570,7 +565,8 @@ def banca_avaliar(request, slug):
             orientacoes += "No Projeto Final de Engenharia, a maioria dos projetos está sob sigilo, através de contratos realizados (quando pedido ou necessário) entre a Organização Parceira e o Insper, se tem os professores automaticamente responsáveis por garantir o sigilo das informações. Assim <b>pessoas externas só podem participar das bancas com prévia autorização</b>, isso inclui outros estudantes que não sejam do grupo, familiares ou amigos."
             orientacoes += "<br>"
 
-        elif banca.tipo_de_banca == 2: # Falconi
+        # Falconi
+        elif banca.tipo_de_banca == 2:
             pessoas = falconi_membros_banca()
             orientacoes += "Os membros do grupo terão <b>15 minutos para a apresentação</b>. Os consultores da Falconi terão depois outros <b>15 minutos para arguição e observações</b>, podendo tirar qualquer dúvida a respeito do projeto e fazerem seus comentários. Caso haja interferências durante a apresentação do grupo, poderá se estender o tempo de apresentação. A dinâmica de apresentação é livre, contudo, <b>todos os membros do grupo devem estar prontos para responder qualquer tipo de pergunta</b> sobre o projeto. Um consultor da Falconi pode fazer uma pergunta direcionada para um estudante específico do grupo se desejar."
             orientacoes += "<br><br>"
@@ -582,7 +578,7 @@ def banca_avaliar(request, slug):
 
         # Carregando dados REST
 
-        avaliador = request.GET.get('avaliador','0')
+        avaliador = request.GET.get('avaliador', '0')
         try:
             avaliador = int(avaliador)
         except ValueError:
@@ -591,18 +587,18 @@ def banca_avaliar(request, slug):
         conceitos = [None]*5
         for i in range(5):
             try:
-                tmp1 = int(request.GET.get('objetivo'+str(i),'0'))
+                tmp1 = int(request.GET.get('objetivo'+str(i), '0'))
             except ValueError:
                 return HttpResponseNotFound('<h1>Erro em objetivo!</h1>')
-            tmp2 = request.GET.get('conceito'+str(i),'')
+            tmp2 = request.GET.get('conceito'+str(i), '')
             conceitos[i] = (tmp1, tmp2)
 
-        observacoes = unquote(request.GET.get('observacoes',''))
+        observacoes = unquote(request.GET.get('observacoes', ''))
 
         context = {
-            'pessoas' : pessoas,
+            'pessoas': pessoas,
             'objetivos': objetivos,
-            'banca' : banca,
+            'banca': banca,
             "orientacoes": orientacoes,
             "avaliador": avaliador,
             "conceitos": conceitos,
@@ -613,9 +609,8 @@ def banca_avaliar(request, slug):
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
-def conceitos_obtidos(request, primarykey): #acertar isso para pk
+def conceitos_obtidos(request, primarykey):  # acertar isso para pk
     """Visualiza os conceitos obtidos pelos alunos no projeto."""
-
     try:
         projeto = Projeto.objects.get(pk=primarykey)
     except Projeto.DoesNotExist:
@@ -632,8 +627,9 @@ def conceitos_obtidos(request, primarykey): #acertar isso para pk
         # Bancas Intermediárias
         bancas_inter = Avaliacao2.objects.filter(projeto=projeto,
                                                  objetivo=objetivo,
-                                                 tipo_de_avaliacao=1).\
-                                          order_by('avaliador', '-momento')
+                                                 tipo_de_avaliacao=1)\
+            .order_by('avaliador', '-momento')
+
         for banca in bancas_inter:
             if banca.avaliador not in avaliadores_inter:
                 avaliadores_inter[banca.avaliador] = {}
@@ -645,8 +641,9 @@ def conceitos_obtidos(request, primarykey): #acertar isso para pk
         # Bancas Finais
         bancas_final = Avaliacao2.objects.filter(projeto=projeto,
                                                  objetivo=objetivo,
-                                                 tipo_de_avaliacao=2).\
-                                          order_by('avaliador', '-momento')
+                                                 tipo_de_avaliacao=2)\
+            .order_by('avaliador', '-momento')
+
         for banca in bancas_final:
             if banca.avaliador not in avaliadores_final:
                 avaliadores_final[banca.avaliador] = {}
@@ -658,8 +655,9 @@ def conceitos_obtidos(request, primarykey): #acertar isso para pk
         # Bancas Falconi
         bancas_falconi = Avaliacao2.objects.filter(projeto=projeto,
                                                    objetivo=objetivo,
-                                                   tipo_de_avaliacao=99).\
-                                            order_by('avaliador', '-momento')
+                                                   tipo_de_avaliacao=99)\
+            .order_by('avaliador', '-momento')
+
         for banca in bancas_falconi:
             if banca.avaliador not in avaliadores_falconi:
                 avaliadores_falconi[banca.avaliador] = {}
@@ -673,7 +671,7 @@ def conceitos_obtidos(request, primarykey): #acertar isso para pk
                                             order_by('avaliador', '-momento')
     for observacao in observacoes:
         if observacao.avaliador not in avaliadores_inter:
-            avaliadores_inter[observacao.avaliador] = {} # Não devia acontecer isso
+            avaliadores_inter[observacao.avaliador] = {}  # Não devia acontecer isso
         if "observacoes" not in avaliadores_inter[observacao.avaliador]:
             avaliadores_inter[observacao.avaliador]["observacoes"] = observacao.observacoes
         # Senão é só uma avaliação de objetivo mais antiga
@@ -683,7 +681,7 @@ def conceitos_obtidos(request, primarykey): #acertar isso para pk
                                             order_by('avaliador', '-momento')
     for observacao in observacoes:
         if observacao.avaliador not in avaliadores_final:
-            avaliadores_final[observacao.avaliador] = {} # Não devia acontecer isso
+            avaliadores_final[observacao.avaliador] = {}  # Não devia acontecer isso
         if "observacoes" not in avaliadores_final[observacao.avaliador]:
             avaliadores_final[observacao.avaliador]["observacoes"] = observacao.observacoes
         # Senão é só uma avaliação de objetivo mais antiga
@@ -693,7 +691,7 @@ def conceitos_obtidos(request, primarykey): #acertar isso para pk
                                             order_by('avaliador', '-momento')
     for observacao in observacoes:
         if observacao.avaliador not in avaliadores_falconi:
-            avaliadores_falconi[observacao.avaliador] = {} # Não devia acontecer isso
+            avaliadores_falconi[observacao.avaliador] = {}  # Não devia acontecer isso
         if "observacoes" not in avaliadores_falconi[observacao.avaliador]:
             avaliadores_falconi[observacao.avaliador]["observacoes"] = observacao.observacoes
         # Senão é só uma avaliação de objetivo mais antiga
@@ -701,18 +699,18 @@ def conceitos_obtidos(request, primarykey): #acertar isso para pk
     context = {
         'objetivos': objetivos,
         'projeto': projeto,
-        'avaliadores_inter' : avaliadores_inter,
-        'avaliadores_final' : avaliadores_final,
+        'avaliadores_inter': avaliadores_inter,
+        'avaliadores_final': avaliadores_final,
         "avaliadores_falconi": avaliadores_falconi,
     }
 
     return render(request, 'professores/conceitos_obtidos.html', context=context)
 
+
 @login_required
 @permission_required('users.altera_professor', login_url='/')
 def orientadores_tabela(request):
     """Alocação dos Orientadores por semestre."""
-
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
@@ -725,11 +723,11 @@ def orientadores_tabela(request):
     }
     return render(request, 'professores/orientadores_tabela.html', context)
 
+
 @login_required
 @permission_required('users.altera_professor', login_url='/')
 def coorientadores_tabela(request):
     """Alocação dos Coorientadores por semestre."""
-
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
@@ -748,7 +746,6 @@ def coorientadores_tabela(request):
 @permission_required('users.altera_professor', login_url='/')
 def resultado_bancas(request):
     """Mostra os resultados das avaliações (Bancas)."""
-
     edicoes, ano, semestre = get_edicoes(Projeto)
 
     context = {
@@ -769,16 +766,16 @@ def resultado_bancas(request):
             banca_falconi = []
 
             for projeto in projetos:
-                aval_banc_final = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=2) #B. Final
+                aval_banc_final = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=2)  # B. Final
                 nota_banca_final, peso = Aluno.get_banca(None, aval_banc_final)
                 if peso is not None:
                     banca_final.append(("{0}".format(converte_letra(nota_banca_final, espaco="&nbsp;")),
                                         "{0:5.2f}".format(nota_banca_final),
                                         nota_banca_final))
                 else:
-                    banca_final.append( ("&nbsp;-&nbsp;", None, 0) )
+                    banca_final.append(("&nbsp;-&nbsp;", None, 0))
 
-                aval_banc_interm = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=1) #B. Int.
+                aval_banc_interm = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=1)  # B. Int.
                 nota_banca_intermediaria, peso = Aluno.get_banca(None, aval_banc_interm)
                 if peso is not None:
                     banca_intermediaria.append(("{0}".format(converte_letra(nota_banca_intermediaria,
@@ -786,17 +783,16 @@ def resultado_bancas(request):
                                                 "{0:5.2f}".format(nota_banca_intermediaria),
                                                 nota_banca_intermediaria))
                 else:
-                    banca_intermediaria.append( ("&nbsp;-&nbsp;", None, 0) )
+                    banca_intermediaria.append(("&nbsp;-&nbsp;", None, 0))
 
-                aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=99) #Falc.
+                aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=99)  # Falc.
                 nota_banca_falconi, peso = Aluno.get_banca(None, aval_banc_falconi)
                 if peso is not None:
                     banca_falconi.append(("{0}".format(converte_letra(nota_banca_falconi, espaco="&nbsp;")),
                                         "{0:5.2f}".format(nota_banca_falconi),
                                         nota_banca_falconi))
                 else:
-                    banca_falconi.append( ("&nbsp;-&nbsp;", None, 0) )
-
+                    banca_falconi.append(("&nbsp;-&nbsp;", None, 0))
 
             tabela = zip(projetos, banca_intermediaria, banca_final, banca_falconi)
 
@@ -812,7 +808,6 @@ def resultado_bancas(request):
 @permission_required("users.altera_professor", login_url='/')
 def todos_professores(request):
     """Exibe todas os professores que estão cadastrados no PFE."""
-
     professores = Professor.objects.all()
 
     context = {
