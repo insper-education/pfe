@@ -35,16 +35,19 @@ def index_estudantes(request):
 
     try:
         configuracao = Configuracao.objects.get()
-        vencido = timezone.now() > configuracao.prazo
-        ano = configuracao.ano
-        semestre = configuracao.semestre
     except Configuracao.DoesNotExist:
         return HttpResponse("Falha na configuracao do sistema.", status=401)
 
-    context = {}
-    context['configuracao'] = configuracao
+    context = {
+        'configuracao': configuracao,
+        'vencido': timezone.now() > configuracao.prazo
+    }
 
-    if usuario.tipo_de_usuario == 1:  # Estudante
+    ano = configuracao.ano
+    semestre = configuracao.semestre
+
+    # Caso estudante
+    if usuario.tipo_de_usuario == 1:
         try:
             estudante = Aluno.objects.get(pk=request.user.aluno.pk)
         except Aluno.DoesNotExist:
@@ -55,24 +58,25 @@ def index_estudantes(request):
 
         # Estudantes de processos passados sempre terrão seleção vencida
         if semestre == 1:
-            vencido |= (estudante.anoPFE < ano)
-            vencido |= (estudante.anoPFE == ano and estudante.semestrePFE == 1)
+            context['vencido'] |= estudante.anoPFE < ano
+            context['vencido'] |= estudante.anoPFE == ano and \
+                estudante.semestrePFE == 1
         else:
-            vencido |= (estudante.anoPFE <= ano)
+            context['vencido'] |= (estudante.anoPFE <= ano)
 
     # Caso professor ou administrador
     elif usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4:
         try:
-            prof_id = Professor.objects.get(pk=request.user.professor.pk).id
-            context['professor_id'] = prof_id
+            context['professor_id'] = \
+                Professor.objects.get(pk=request.user.professor.pk).id
         except Professor.DoesNotExist:
             return HttpResponse("Professor não encontrado.", status=401)
 
-    context['vencido'] = vencido
+    # Caso parceiro
+    else:
+        return HttpResponse("Usuário sem acesso.", status=401)
 
-    ano, semestre = adianta_semestre(ano, semestre)
-    context['ano'] = ano
-    context['semestre'] = semestre
+    context['ano'], context['semestre'] = adianta_semestre(ano, semestre)
 
     return render(request, 'estudantes/index_estudantes.html', context=context)
 

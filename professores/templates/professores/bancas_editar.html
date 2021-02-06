@@ -6,18 +6,30 @@
 {% endcomment %}
 
 {% block head %}
-<script>
-  $(document).ready(function () {     
-    $('#projeto').change(function(){
-      var titulo = $(this).children(':selected').data('titulo');
-      var organizacao = $(this).children(':selected').data('organizacao');
-      var orientador = $(this).children(':selected').data('orientador');
-      $('#titulo').text(titulo);
-      $('#organizacao').text(organizacao);
-      $('#orientador').text(orientador);
-    })
-  });
-</script>
+
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
+  <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
+
+  <script>
+    $(document).ready(function () {     
+      $('#projeto').change(function(){
+        var titulo = $(this).children(':selected').data('titulo');
+        var organizacao = $(this).children(':selected').data('organizacao');
+        var orientador = $(this).children(':selected').data('orientador');
+        $('#titulo').text(titulo);
+        $('#organizacao').text(organizacao);
+        $('#orientador').text(orientador);
+      })
+    });
+  </script>
+
+  <style>
+    table, th, td {
+      border: 0px;
+    }
+  </style>
+
 {% endblock %}
 
 {% block content %}
@@ -25,23 +37,26 @@
   {% if projetos %}
     <form method="post" id="criarbancasform" enctype="multipart/form-data">
       {% csrf_token %}
+
+
       <label for="projeto">Projeto:</label>
-      <select name="projeto" id="projeto" title="Selecione o projeto"
-      style="width:700px;" required>
+      <select class="selectpicker" name="projeto" id="projeto" title="Selecione o projeto"
+       data-live-search="true" data-width="75%" data-size="5" required>
         {% if not banca %}
           <option disabled selected value> -- selecione um projeto -- </option>
         {% endif %}
         {% for projeto in projetos %}
           <option value="{{projeto.id}}"
+          style="font-size: 0.75em;"
           data-titulo="{{projeto.titulo}}"
           data-organizacao="{{projeto.organizacao}}"
           data-orientador="{{projeto.orientador}}"
           {% if projeto.id == banca.projeto.id %} selected {% endif %}
+          data-subtext="{{projeto.orientador}}"
           >
             {{projeto.ano}}.{{projeto.semestre}}
             ({{projeto.organizacao}})
             {{projeto.titulo}}
-            [{{projeto.orientador}}]
           </option>  
         {% endfor %}
       </select><br><br>
@@ -73,7 +88,9 @@
       <br>
       Tipo de banca:<br>
       {% for numero, texto in TIPO_DE_BANCA %}
-        &nbsp;&nbsp;<input class="tipo_banca" id="tipo{{numero}}" type="radio" name="tipo" value="{{numero}}" {% if banca.tipo_de_banca == numero %}checked{% endif %} required> <label for="tipo{{numero}}">{{texto}}</label><br>
+        <div class="radio">
+          &nbsp;&nbsp;<input class="tipo_banca" id="tipo{{numero}}" type="radio" name="tipo" value="{{numero}}" {% if banca.tipo_de_banca == numero %}checked{% endif %} required> <label for="tipo{{numero}}">{{texto}}</label><br>
+        </div>
       {% endfor %}
 
       <script>
@@ -148,26 +165,44 @@
       /><br>
       <br>
 
-      <label for="membro1">Membro 1 da Banca:</label>
-      <select name="membro1" class="pessoas" id="membro1" title="Selecione membro da banca" required
-        oninvalid="this.setCustomValidity('Selecione ao menos duas pessoas para a banca')"
-        oninput="this.setCustomValidity('')"
-        >
-          <option disabled selected value> -- selecione membro da banca -- </option>
-      </select><br>
-
-      <label for="membro2">Membro 2 da Banca:</label>
-      <select name="membro2" class="pessoas" id="membro2" title="Selecione membro da banca" required
-        oninvalid="this.setCustomValidity('Selecione ao menos duas pessoas para a banca')"
-        oninput="this.setCustomValidity('')"
-        >
-          <option disabled selected value> -- selecione membro da banca -- </option>
-      </select><br>
-
-      <label for="membro3">Membro 3 da Banca:</label>
-      <select name="membro3" class="pessoas" id="membro3" title="Selecione membro da banca">
-          <option disabled selected value> -- selecione membro da banca -- </option>
-      </select><br> 
+      <table>
+        <tr>
+          <td>
+            <label for="membro1">Membro 1 da Banca:</label>
+          </td>
+          <td>
+            <select name="membro1" class="pessoas custom-select custom-select-sm" id="membro1" title="Selecione membro da banca" required
+              oninvalid="this.setCustomValidity('Selecione ao menos duas pessoas para a banca')"
+              oninput="this.setCustomValidity('')"
+              >
+                <option selected value> -- selecione membro da banca -- </option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="membro2">Membro 2 da Banca:</label>
+          </td>
+          <td>
+            <select name="membro2" class="pessoas custom-select custom-select-sm" id="membro2" title="Selecione membro da banca" required
+              oninvalid="this.setCustomValidity('Selecione ao menos duas pessoas para a banca')"
+              oninput="this.setCustomValidity('')"
+              >
+                <option selected value> -- selecione membro da banca -- </option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="membro3">Membro 3 da Banca:</label>
+          </td>
+          <td>
+            <select name="membro3" class="pessoas custom-select custom-select-sm" id="membro3" title="Selecione membro da banca">
+              <option selected value> -- selecione membro da banca -- </option>
+            </select>
+          </td>
+        </tr>
+      </table>
 
       <br><br>
       <button type="submit">Agendar</button>
@@ -186,12 +221,12 @@
       {% comment %} Preenche com as pessas possíveis conforme o tipo de banca {% endcomment %}
       var tipo = $("input[name='tipo']:checked").val();
       if (tipo==2) {
-        $('.pessoas').append($("<option disabled selected value></option>").text("-- selecione membro da banca --"));
+        $('.pessoas').append($("<option selected value></option>").text("-- selecione membro da banca --"));
         {% for pessoa in falconis %}
           $('.pessoas').append($("<option></option>").attr("value",{{pessoa.id}}).text("{{pessoa}}"));
         {% endfor %}
       } else {
-        $('.pessoas').append($("<option disabled selected value></option>").text("-- selecione membro da banca --"));
+        $('.pessoas').append($("<option selected value></option>").text("-- selecione membro da banca --"));
         {% for professor in professores %}
           $('.pessoas').append($("<option></option>").attr("value",{{professor.id}}).text("{{professor}}"));
         {% endfor %}
