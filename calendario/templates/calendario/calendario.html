@@ -492,6 +492,7 @@
                   dataSource[i].observation = event.observation;
                   dataSource[i].startDate = event.startDate;
                   dataSource[i].endDate = event.endDate;
+                  dataSource[i].color = event.color; 
                 }
               }
 
@@ -645,31 +646,32 @@
 
           for (var i in event) {
             if(event[i].type == 40 ) { // (40, 'Laboratório', 'orange'),
-              $(element).css('background-image', 'linear-gradient(to bottom, transparent 80%, ' + event[i].color + ' 80% )');
+              $(element).css('background-image', 'linear-gradient(to bottom, transparent 85%, ' + event[i].color + ' 85% )');
             } else if(event[i].type == 41 ) { // (41, 'Semana de provas', 'red'),
               $(element).css('border-bottom', '4px solid ' + event[i].color);
-              $(element).css('line-height', '0.85');
+              $(element).css('line-height', '1.0');
+              $(element).css('padding-top', '7px');
             } else {
               eventos.push(event[i]);
             }
           }
 
           if(eventos.length==1) {
-           $(element).css({
-              background: eventos[0].color 
+            $(element).css({
+              'background-color': eventos[0].color 
             });
           } else if (eventos.length==2) {
-            $(element).css({
-              background: "-webkit-gradient(linear, left top, right bottom, color-stop(50%," + eventos[0].color + "), color-stop(50%," + eventos[1].color + "))" 
-            });
+            $(element).css(
+              'background', $(element).css('background-image') + ', ' + "-webkit-gradient(linear, left top, right bottom, color-stop(50%," + eventos[0].color + "), color-stop(50%," + eventos[1].color + "))" 
+            );
           } else if (eventos.length==3) {
-            $(element).css({
-              background: "linear-gradient(to right, " + eventos[0].color + " 33%, " + eventos[1].color + " 33% 66%, " + eventos[2].color + " 66%)" 
-            });
+            $(element).css(
+              'background', $(element).css('background-image') + ', ' + "linear-gradient(to right, " + eventos[0].color + " 33%, " + eventos[1].color + " 33% 66%, " + eventos[2].color + " 66%)" 
+            );
           } else if (eventos.length > 3) {
-            $(element).css({  // muitas cores
-              background: "-webkit-radial-gradient(blue, yellow, red, green)" 
-            });
+            $(element).css(  // muitas cores
+              'background', $(element).css('background-image') + ', ' + "-webkit-radial-gradient(blue, yellow, red, green)" 
+            );
           }
           
           //$(element).css('border-radius', '6px'); // para deixar os cantos arredondados
