@@ -28,7 +28,6 @@ def index_operacional(request):
 @permission_required('users.altera_professor', login_url='/')
 def avisos_listar(request):
     """Mostra toda a tabela de avisos da coordenação do PFE."""
-
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
@@ -43,6 +42,8 @@ def avisos_listar(request):
         qualquer_evento = list(eventos.filter(startDate__month__gt=6))
 
     avisos = sorted(qualquer_aviso+qualquer_evento, key=lambda t: t.get_data())
+
+    print(avisos)
 
     context = {
         'avisos': avisos,

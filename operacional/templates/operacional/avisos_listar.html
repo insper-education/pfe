@@ -30,22 +30,33 @@
   <form method="post">
     {% csrf_token %}
     {% if avisos %}
-      <table>
+      <table class="table table-sm">
+        <caption>
+          <small>
+            Co: Coordenação;
+            Cm: Comitê do PFE;
+            Al: Todos os Alunos;
+            Or: Todos os Orientadores;
+            Og: Contatos nas Organizacoes.
+          </small>
+        </caption>
+        <thead style="border: 1px solid black; background-color:#CCCCCC;">
           <tr>
-            <th>
+            <th scope="col" style="text-align:center">
               &#10003;
             </th>
-            <th style="text-align:center">
+            <th scope="col" style="text-align:center">
               Data
             </th>
-            <th style="text-align:center">
+            <th scope="col" style="text-align:center">
               Público
             </th>
-            <th style="text-align:center">
+            <th scope="col" style="text-align:center">
               Título
             </th>
           </tr>
-
+        </thead>
+        <tbody>
         {% for a in avisos %} 
           {% if a|get_class == "Aviso" %}
             <tr class="linha {% if a.get_data < hoje %}text-success{% else %}text-info{% endif %}"
@@ -56,12 +67,12 @@
                   {% if a.todos_orientadores %}Or{% endif %}
                   {% if a.contatos_nas_organizacoes %}Og{% endif %}
                 " >
-              <td>
+              <th  scope="row">
                 <input class="aviso" type="checkbox" id="aviso{{a.id}}" name="aviso{{a.id}}" value="{{a.id}}" 
                 {% if a.realizado %}checked{% endif %}
                 {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
                 >
-              </td>
+              </th>
               <td data-toggle="tooltip" data-html="true" animation="true" title="
                   {% if a.tipo_de_evento %}
                     {{a.get_evento}}{%if a.delta >= 0 %}+{%endif%}{{a.delta}}
@@ -100,8 +111,8 @@
             <tr class="linha" data-type="
                   {% if a.tipo_de_evento < 100 %}Al{% else %}Co{% endif %}
                   Ev">
-              <td>
-              </td>
+              <th  scope="row">
+              </th>
               <td class="{% if a.get_data < hoje %}text-success{% else %}text-info{% endif %}">
                 {{a.get_data}}
               </td>
@@ -119,14 +130,8 @@
 
           {% endif %}
         {% endfor %}
+        </tbody>
       </table>
-      <small>
-      Co: Coordenação;
-      Cm: Comitê do PFE;
-      Al: Todos os Alunos;
-      Or: Todos os Orientadores;
-      Og: Contatos nas Organizacoes.
-      </small>
       <p>&nbsp;</p>
     {% else %}
       <p>Não existem avisos.</p>
