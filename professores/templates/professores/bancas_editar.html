@@ -109,19 +109,26 @@
 
       <br>
       <div>
-        <label for="inicio">Inicio:</label> 
-        <input id="inicio" type="datetime-local" name="inicio" 
-        {% if banca %}
-          value="{{banca.startDate|date:'Y-m-d\TH:i:s'}}" 
-        {% endif %} 
-        required>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <label for="fim">Fim:</label>
-        <input id="fim" type="datetime-local" name="fim"
-        {% if banca %}
-          value="{{banca.endDate|date:'Y-m-d\TH:i:s'}}" 
-        {% endif %} 
-        required>
+        
+          <label for="inicio">
+          <span style="display:inline-block; width:5.5ex; text-align:right;">Inicio:</span>
+          <input id="inicio" type="datetime-local" name="inicio" 
+          {% if banca %}
+            value="{{banca.startDate|date:'Y-m-d\TH:i:s'}}" 
+          {% endif %} 
+          required>
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          </label>
+        
+          <label for="fim">
+          <span style="display:inline-block; width:5.5ex; text-align:right">Fim:</span>
+          <input id="fim" type="datetime-local" name="fim"
+          {% if banca %}
+            value="{{banca.endDate|date:'Y-m-d\TH:i:s'}}" 
+          {% endif %} 
+          required>
+          </label>
+        
       </div><br>
 
       <script>
@@ -151,18 +158,24 @@
         });
       </script>
 
-      <label for="local">Local:</label> <input id="local" name="local" type="text" size="48" 
-      {% if banca %}
-        value="{{banca.location}}"
-      {% endif %} 
-      /><br>
-      <br>
+      
+      <label for="local">Local:
+        <input id="local" name="local" type="text" size="48" style="max-width: 100%;"
+        {% if banca %}
+          value="{{banca.location}}"
+        {% endif %} 
+        />
+      </label> 
+      <br><br>
 
-      <label for="link">Link de Vídeo-conferência:</label> <input id="link" name="link" type="text" size="40"
-      {% if banca %}
-        value="{{banca.link}}"
-      {% endif %} 
-      /><br>
+      <label for="link">Link de Vídeo-conferência:
+        <input id="link" name="link" type="text" size="40" style="max-width: 100%;"
+        {% if banca %}
+          value="{{banca.link}}"
+        {% endif %} 
+        />
+      </label>
+      <br>
       <br>
 
       <table>
