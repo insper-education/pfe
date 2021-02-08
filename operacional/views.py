@@ -43,8 +43,6 @@ def avisos_listar(request):
 
     avisos = sorted(qualquer_aviso+qualquer_evento, key=lambda t: t.get_data())
 
-    print(avisos)
-
     context = {
         'avisos': avisos,
         'configuracao' : configuracao,

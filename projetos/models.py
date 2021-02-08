@@ -532,10 +532,6 @@ class Evento(models.Model):
         """Retorna a data do evento."""
         return self.startDate
 
-    def get_data_short(self):
-        """Retorna a data do evento dd/mm/aa."""
-        return self.startDate
-        
     @classmethod
     def create(cls):
         """Cria um objeto (entrada) em Evento."""
