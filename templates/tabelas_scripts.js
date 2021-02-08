@@ -4,14 +4,14 @@
     Data: 30 de Janeiro de 2021
 {% endcomment %}
 
-var table = $('#{{tabela}}').DataTable( {
-    dom: "<'row'<'col-md-6'><'col-md-6'f>>t<'row'<'col-md-6'i><'col-md-6'p>><'row'<'col-sm'><'col-sm'><'col-sm text-right'l>>",
+var table = $('#{{tabela}}Table').DataTable( {
+    dom: "<'row mr-1'<'col-md-6'><'col-md-6 d-flex flex-row-reverse'f>>t<'row'<'col-md-6'i><'col-md-6'p>><'row'<'col-sm'><'col-md'><'col-md text-right'l>>",
     buttons: [ 'copy', 'csv', 'excel', 'pdf', 'colvis' ],
     lengthMenu: [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "todos"] ],
     stateSave: true,
     language: {
         emptyTable: "Tabela vazia",
-        info: "Exibindo _START_ até _END_ de _TOTAL_ itens",
+        info: "Exibindo de _START_ até _END_ em _TOTAL_ {{tabela}}",
         buttons: {
             colvis: 'Colunas'
         },
@@ -26,4 +26,4 @@ var table = $('#{{tabela}}').DataTable( {
     }
 } );
 
-table.buttons().container().appendTo( '#{{tabela}}_wrapper .col-md-6:eq(0)' );
+table.buttons().container().appendTo( '#{{tabela}}Table_wrapper .col-md-6:eq(0)' );

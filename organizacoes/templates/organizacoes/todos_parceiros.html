@@ -9,10 +9,8 @@
 
   {% load static %}
 
-  {% with tabela='ParceirosTable' %}
-    {% include "tabelas.html" %}
-  {% endwith %}
-
+  {% include "tabelas_includes.html" %}
+  
 {% endblock %}
 
 {% block content %}
@@ -98,4 +96,18 @@
     <p>Não existem parceiros cadastradas.</p>
   {% endif %}
   <p>&nbsp;</p>
+
+
+  <script>
+
+    function carrega_pagina(){
+      {% include "tooltip.js" %}
+      {% with tabela='Parceiros' %}
+        {% include "tabelas_scripts.html" %}
+      {% endwith %}
+    }
+    window.onload = carrega_pagina
+
+  </script>
+
 {% endblock %}

@@ -35,7 +35,7 @@
 
     {% if alunos_list %}
       <div class="table-responsive">
-      <table id="AlunosTable" class="table table-bordered table-hover table-sm">
+      <table id="EstudantesTable" class="table table-bordered table-hover table-sm">
         <thead class="table-info">
           <tr>
               <th scope="col" class="text-center">Nome</th>
@@ -280,7 +280,7 @@
 
     <script>
       function carrega_pagina(){
-        {% with tabela='AlunosTable' %}
+        {% with tabela='Estudantes' %}
           {% include "edicoes_ajax.js" %}
         {% endwith %}
       };

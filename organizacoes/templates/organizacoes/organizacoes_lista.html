@@ -14,8 +14,6 @@
 
   <span class="titulo">Organizações Parceiras</span>
 
-  <form autocomplete="on">
-
   {% if organizacoes_list %}
     <div class="table-responsive">
       <table id="OrganizacoesTable" class="table table-bordered table-hover table-sm">
@@ -62,7 +60,7 @@
       </table>
     </div>
     <p>&nbsp;</p>
-    <strong>Total de Organizações Parceiras:</strong> {{ total_organizacoes }}<br>
+    {% comment %} <strong>Total de Organizações Parceiras:</strong> {{ total_organizacoes }}<br> {% endcomment %}
     <strong>Total de Propostas Submetidas:</strong> {{ total_submetidos }}<br>
     <strong>Total de Projetos Fechados:</strong> {{ total_fechados }}<br>
   {% else %}
@@ -75,7 +73,7 @@
 
     function carrega_pagina(){
       {% include "tooltip.js" %}
-      {% with tabela='OrganizacoesTable' %}
+      {% with tabela='Organizacoes' %}
         {% include "tabelas_scripts.html" %}
       {% endwith %}
     }
@@ -83,7 +81,5 @@
     window.onload = carrega_pagina
 
   </script>
-
-  </form>
 
 {% endblock %}

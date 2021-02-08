@@ -6,9 +6,9 @@
 {% endcomment %}
 
 {% block head %}
-  {% with tabela='ComiteTable' %}
-    {% include "tabelas.html" %}
-  {% endwith %}
+
+  {% include "tabelas_includes.html" %}
+
 {% endblock %}
 
 {% block content %}
@@ -21,7 +21,7 @@
 
   {% if professores %}
     <div class="table-responsive">
-      <table id="ComiteTable" class="table table-bordered table-hover table-sm">
+      <table id="MembrosTable" class="table table-bordered table-hover table-sm">
         <thead class="table-info">
           <tr>
             <th scope="col" class="text-center">Nome</th>
@@ -53,5 +53,17 @@
   {% endif %}
   <p>&nbsp;</p>
 
+
+  <script>
+
+    function carrega_pagina(){
+      {% include "tooltip.js" %}
+      {% with tabela='Membros' %}
+        {% include "tabelas_scripts.html" %}
+      {% endwith %}
+    }
+    window.onload = carrega_pagina
+
+  </script>
 
 {% endblock %}

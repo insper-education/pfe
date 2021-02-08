@@ -70,11 +70,11 @@
           
         </table>
       </div>
-      <strong>Número Total de Projetos:</strong> {{ projetos.count }}
+      {% comment %} <strong>Número Total de Projetos:</strong> {{ projetos.count }} {% endcomment %}
     {% endif %}
     <script>
       function carrega_pagina() {
-        {% with tabela='ProjetosTable' %}
+        {% with tabela='Projetos' %}
           {% include "edicoes_ajax.js" %}
         {% endwith %}
       };
