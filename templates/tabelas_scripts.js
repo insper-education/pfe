@@ -5,7 +5,7 @@
 {% endcomment %}
 
 var table = $('#{{tabela}}').DataTable( {
-    dom: "<'row'<'col-md-6'><'col-md-6'f>>t<'row'<'col-md-6'l><'col-md-6'p>>i",
+    dom: "<'row'<'col-md-6'><'col-md-6'f>>t<'row'<'col-md-6'i><'col-md-6'p>><'row'<'col-sm'><'col-sm'><'col-sm text-right'l>>",
     buttons: [ 'copy', 'csv', 'excel', 'pdf', 'colvis' ],
     lengthMenu: [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "todos"] ],
     stateSave: true,

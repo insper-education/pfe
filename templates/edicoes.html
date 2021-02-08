@@ -11,12 +11,12 @@
   
 
     <div class="row align-items-start mb-2">
-      <div class="col-sm-2">
+      <div class="ml-3">
         <div class="input-group input-group-sm">
           <div class="input-group-prepend">
             <label class="input-group-text" for="filterEdicao">Edição</label>
           </div>
-          <select class="filter custom-select" id="filterEdicao">
+          <select class="filter custom-select w-auto" id="filterEdicao">
             {% comment %} Se não quiser que aparece a opção todas crie uma variavel n_todas com True {% endcomment %}
             {% if not n_todas %}
               <option value="todas">todas</option>
