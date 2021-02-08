@@ -146,8 +146,7 @@
         </table>
         </div>
         <br>
-    {% else %}
-      <p>Não existem estudantes disponíveis.</p>
+
     {% endif %}
     
     <strong>Número Total de Estudantes:</strong> {{ num_alunos }}
@@ -159,6 +158,44 @@
       <br><br>
       <canvas id="chart-generos"></canvas>
     </div>
+
+    <br><br>
+
+    <h5>Quantidade de estudantes alocados em projetos</h5>
+    <table id="AlunosTable">
+      <tr>
+          <th class="text-center" style="border-right: solid 3px;">Periodo</th>
+          <th class="text-center">Computação</th>
+          <th class="text-center">Mecânica</th>
+          <th class="text-center">Mecatrônica</th>
+          <th class="text-center" style="border-left: solid 3px;">TOTAL</th>
+      </tr>
+      {% for ano,tabela_ano in tabela_alunos.items %}
+        {% for semestre,tabela_semetre in tabela_ano.items %}
+          <tr>
+              <td class="text-center" style="border-right: solid 3px;"> {{ano}}.{{semestre}} </td>
+              <td class="text-center"> {{tabela_semetre.computação}} </td>
+              <td class="text-center"> {{tabela_semetre.mecânica}} </td>
+              <td class="text-center"> {{tabela_semetre.mecatrônica}} </td>
+              <td class="text-center" style="border-left: solid 3px;"><b> {{tabela_semetre.total}} </b></td>
+          </tr>
+        {% endfor %}
+      {% endfor %}
+      {% if ano == 0 or semestre == 0 %}
+        <tr>
+          <td class="text-center" style="border-right: solid 3px; border-top: double;"> Totais </td>
+          <td class="text-center" style="border-top: double;"> {{totais.computação}} </td>
+          <td class="text-center" style="border-top: double;"> {{totais.mecânica}} </td>
+          <td class="text-center" style="border-top: double;"> {{totais.mecatrônica}} </td>
+          <td class="text-center" style="border-left: solid 3px; border-top: double;"><b> {{totais.total}} </b></td>
+        </tr>
+      {% endif %}
+    </table>
+    {% if ano == 0 or semestre == 0 %}
+      <small>estudantes reprovados contam mais de uma vez</small>
+    {% endif %}
+    <br>
+
 
     <script>
       var config_programas = {
@@ -231,65 +268,29 @@
         }
       };
 
-      function carrega_pagina(){
-        // Chart da proporção de estudantes por programas
-        var chart_programas = document.getElementById('chart-programas').getContext('2d');
-        window.myPie = new Chart(chart_programas, config_programas);
+      // Chart da proporção de estudantes por programas
+      var chart_programas = document.getElementById('chart-programas').getContext('2d');
+      window.myPie = new Chart(chart_programas, config_programas);
 
-        // Chart da proporção de estudantes por gênero
-        var chart_generos = document.getElementById('chart-generos').getContext('2d');
-        window.myPie = new Chart(chart_generos, config_generos);
+      // Chart da proporção de estudantes por gênero
+      var chart_generos = document.getElementById('chart-generos').getContext('2d');
+      window.myPie = new Chart(chart_generos, config_generos);
 
-        {% include "tooltip.js" %}
-        
-        {% with tabela='AlunosTable' %}
-          {% include "tabelas_scripts.html" %}
-        {% endwith %}
-
-      };
-
-      window.onload = carrega_pagina
-    
     </script>
-    <br><br>
-    <h5>Quantidade de estudantes alocados em projetos</h5>
-    <table id="AlunosTable">
-      <tr>
-          <th class="text-center" style="border-right: solid 3px;">Periodo</th>
-          <th class="text-center">Computação</th>
-          <th class="text-center">Mecânica</th>
-          <th class="text-center">Mecatrônica</th>
-          <th class="text-center" style="border-left: solid 3px;">TOTAL</th>
-      </tr>
-      {% for ano,tabela_ano in tabela_alunos.items %}
-        {% for semestre,tabela_semetre in tabela_ano.items %}
-          <tr>
-              <td class="text-center" style="border-right: solid 3px;"> {{ano}}.{{semestre}} </td>
-              <td class="text-center"> {{tabela_semetre.computação}} </td>
-              <td class="text-center"> {{tabela_semetre.mecânica}} </td>
-              <td class="text-center"> {{tabela_semetre.mecatrônica}} </td>
-              <td class="text-center" style="border-left: solid 3px;"><b> {{tabela_semetre.total}} </b></td>
-          </tr>
-        {% endfor %}
-      {% endfor %}
-      {% if ano == 0 or semestre == 0 %}
-        <tr>
-          <td class="text-center" style="border-right: solid 3px; border-top: double;"> Totais </td>
-          <td class="text-center" style="border-top: double;"> {{totais.computação}} </td>
-          <td class="text-center" style="border-top: double;"> {{totais.mecânica}} </td>
-          <td class="text-center" style="border-top: double;"> {{totais.mecatrônica}} </td>
-          <td class="text-center" style="border-left: solid 3px; border-top: double;"><b> {{totais.total}} </b></td>
-        </tr>
-      {% endif %}
-    </table>
-    {% if ano == 0 or semestre == 0 %}
-      <small>estudantes reprovados contam mais de uma vez</small>
-    {% endif %}
-    <br>
 
+    <script>
+      function carrega_pagina(){
+        {% with tabela='AlunosTable' %}
+          {% include "edicoes_ajax.js" %}
+        {% endwith %}
+      };
+    </script>
 
   </div>
 
-  {% include "edicoes_ajax.html" %}
+  <script>
+    $(".filter").change(carrega_pagina);    
+    $(document).ready(carrega_pagina);
+  </script>  
 
 {% endblock %}

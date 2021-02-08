@@ -6,12 +6,8 @@
 {% endcomment %}
 
 {% block head %}
-
   {% load static %}
   {% load aderencia_aluno %}
-
-  {% comment %} Para chamar os Tooltips {% endcomment %}
-  <script>{% include "tooltip.js" %}</script>
 
   <style>
 		line.axis {
@@ -62,9 +58,7 @@
 
 	</style>
 
-
   {% include "tabelas_includes.html" %}
-
 
 {% endblock %}
 
@@ -624,26 +618,22 @@
 
     </script>
 
-    {% else %}
-      <p>Não existem propostas disponíveis.</p>
     {% endif %}
-    <p>&nbsp;</p>
 
     <script>
-
-      function carrega_pagina(){
-        {% include "tooltip.js" %}
+      function carrega_pagina() {
         {% with tabela='PropostasTable' %}
-          {% include "tabelas_scripts.html" %}
+          {% include "edicoes_ajax.js" %}
         {% endwith %}
-      }
-
-      window.onload = carrega_pagina
-
+      };
     </script>
 
   </div>
+  <p>&nbsp;</p>
 
-  {% include "edicoes_ajax.html" %}
+  <script>
+    $(".filter").change(carrega_pagina);    
+    $(document).ready(carrega_pagina);
+  </script>
 
 {% endblock %}

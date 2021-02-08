@@ -222,45 +222,48 @@ def projetos_fechados(request):
                 ano, semestre = request.POST['edicao'].split('.')
                 projetos_filtrados = Projeto.objects.filter(ano=ano,
                                                             semestre=semestre)
+
+            projetos_selecionados = []
+            prioridade_list = []
+            conexoes = []
+            numero_estudantes = 0
+
+            for projeto in projetos_filtrados:
+                estudantes_pfe = Aluno.objects.filter(alocacao__projeto=projeto)
+                if estudantes_pfe:  # len(estudantes_pfe) > 0:
+                    projetos_selecionados.append(projeto)
+                    numero_estudantes += len(estudantes_pfe)
+                    prioridades = []
+                    for estudante in estudantes_pfe:
+                        opcoes = Opcao.objects.filter(proposta=projeto.proposta)
+                        opcoes = opcoes.filter(aluno__user__tipo_de_usuario=1)
+                        opcoes = opcoes.filter(aluno__alocacao__projeto=projeto)
+                        opcoes = opcoes.filter(aluno=estudante)
+                        if opcoes:
+                            prioridade = opcoes.first().prioridade
+                            prioridades.append(prioridade)
+                        else:
+                            prioridades.append(0)
+                    prioridade_list.append(zip(estudantes_pfe, prioridades))
+                    conexoes.append(Conexao.objects.filter(projeto=projeto,
+                                                        colaboracao=True))
+
+            projetos = zip(projetos_selecionados, prioridade_list, conexoes)
+
+            context = {
+                'projetos': projetos,
+                'numero_projetos': len(projetos_selecionados),
+                'numero_estudantes': numero_estudantes,
+            }
+
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
         edicoes, ano, semestre = get_edicoes(Projeto)
-        projetos_filtrados = Projeto.objects.filter(ano=ano, semestre=semestre)
+        context = {
+            'edicoes': edicoes,
+        }
 
-    projetos_selecionados = []
-    prioridade_list = []
-    conexoes = []
-    numero_estudantes = 0
-
-    for projeto in projetos_filtrados:
-        estudantes_pfe = Aluno.objects.filter(alocacao__projeto=projeto)
-        if estudantes_pfe:  # len(estudantes_pfe) > 0:
-            projetos_selecionados.append(projeto)
-            numero_estudantes += len(estudantes_pfe)
-            prioridades = []
-            for estudante in estudantes_pfe:
-                opcoes = Opcao.objects.filter(proposta=projeto.proposta)
-                opcoes = opcoes.filter(aluno__user__tipo_de_usuario=1)
-                opcoes = opcoes.filter(aluno__alocacao__projeto=projeto)
-                opcoes = opcoes.filter(aluno=estudante)
-                if opcoes:
-                    prioridade = opcoes.first().prioridade
-                    prioridades.append(prioridade)
-                else:
-                    prioridades.append(0)
-            prioridade_list.append(zip(estudantes_pfe, prioridades))
-            conexoes.append(Conexao.objects.filter(projeto=projeto,
-                                                   colaboracao=True))
-
-    projetos = zip(projetos_selecionados, prioridade_list, conexoes)
-
-    context = {
-        'projetos': projetos,
-        'numero_projetos': len(projetos_selecionados),
-        'numero_estudantes': numero_estudantes,
-        'edicoes': edicoes,
-    }
     return render(request, 'projetos/projetos_fechados.html', context)
 
 
@@ -354,13 +357,7 @@ def arquivos3(request, organizacao, projeto, usuario, path):
 # def projetos_lista(request, periodo):
 def projetos_lista(request):
     """Lista todos os projetos."""
-    try:
-        configuracao = Configuracao.objects.get()
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
-
     edicoes = []
-
     if request.is_ajax():
         if 'edicao' in request.POST:
             edicao = request.POST['edicao']
@@ -370,18 +367,17 @@ def projetos_lista(request):
                 ano, semestre = request.POST['edicao'].split('.')
                 projetos_filtrados = Projeto.objects.filter(ano=ano,
                                                             semestre=semestre)
+            projetos = projetos_filtrados.order_by("ano", "semestre", "organizacao", "titulo",)
+            context = {
+                'projetos': projetos,
+            }
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
-        edicoes, ano, semestre = get_edicoes(Projeto)
-        projetos_filtrados = Projeto.objects.filter(ano=ano, semestre=semestre)
-
-    projetos = projetos_filtrados.order_by("ano", "semestre", "organizacao", "titulo",)
-
-    context = {
-        'projetos': projetos,
-        'edicoes': edicoes,
-    }
+        edicoes, _, _ = get_edicoes(Projeto)
+        context = {
+            'edicoes': edicoes,
+        }
 
     return render(request, 'projetos/projetos_lista.html', context)
 

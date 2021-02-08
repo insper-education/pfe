@@ -264,40 +264,39 @@ def propostas_apresentadas(request):
                 propostas_filtradas = Proposta.objects\
                     .filter(ano=ano,
                             semestre=semestre)
+
+            propostas_filtradas = propostas_filtradas.order_by("ano",
+                                                            "semestre",
+                                                            "organizacao",
+                                                            "titulo", )
+
+            ternario_aprovados = retorna_ternario(propostas_filtradas
+                                                .filter(disponivel=True))
+            ternario_pendentes = retorna_ternario(propostas_filtradas
+                                                .filter(disponivel=False))
+
+            dic_organizacoes = {}
+            for proposta in propostas_filtradas:
+                if proposta.organizacao and\
+                proposta.organizacao not in dic_organizacoes:
+                    dic_organizacoes[proposta.organizacao] = 0
+            num_organizacoes = len(dic_organizacoes)
+            context = {
+                'propostas': propostas_filtradas,
+                'num_organizacoes': num_organizacoes,
+                'ternario_aprovados': ternario_aprovados,
+                'ternario_pendentes': ternario_pendentes,
+                'configuracao': configuracao,
+            }
+
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
-        edicoes, ano, semestre = get_edicoes(Proposta)
-        propostas_filtradas = Proposta.objects.filter(ano=ano,
-                                                      semestre=semestre)
+        edicoes, _, _ = get_edicoes(Proposta)
+        context = {
+            "edicoes": edicoes,
+        }
 
-    propostas_filtradas = propostas_filtradas.order_by("ano",
-                                                       "semestre",
-                                                       "organizacao",
-                                                       "titulo", )
-
-    ternario_aprovados = retorna_ternario(propostas_filtradas
-                                          .filter(disponivel=True))
-    ternario_pendentes = retorna_ternario(propostas_filtradas
-                                          .filter(disponivel=False))
-
-    dic_organizacoes = {}
-    for proposta in propostas_filtradas:
-        if proposta.organizacao and\
-           proposta.organizacao not in dic_organizacoes:
-            dic_organizacoes[proposta.organizacao] = 0
-    num_organizacoes = len(dic_organizacoes)
-
-    edicoes, ano, semestre = get_edicoes(Proposta)
-
-    context = {
-        'propostas': propostas_filtradas,
-        'num_organizacoes': num_organizacoes,
-        'ternario_aprovados': ternario_aprovados,
-        'ternario_pendentes': ternario_pendentes,
-        'configuracao': configuracao,
-        "edicoes": edicoes,
-    }
     return render(request, 'propostas/propostas_apresentadas.html', context)
 
 

@@ -12,11 +12,9 @@
 
 {% block content %}
 
-  {% comment %} {% with dados='organizacoes' %}
-      {% include "planilhas.html" %}
-  {% endwith %} {% endcomment %}
-
   <span class="titulo">Organizações Parceiras</span>
+
+  <form autocomplete="on">
 
   {% if organizacoes_list %}
     <div class="table-responsive">
@@ -73,17 +71,19 @@
 
   <p>&nbsp;</p>
 
-    <script>
+  <script>
 
-      function carrega_pagina(){
-        {% include "tooltip.js" %}
-        {% with tabela='OrganizacoesTable' %}
-          {% include "tabelas_scripts.html" %}
-        {% endwith %}
-      }
+    function carrega_pagina(){
+      {% include "tooltip.js" %}
+      {% with tabela='OrganizacoesTable' %}
+        {% include "tabelas_scripts.html" %}
+      {% endwith %}
+    }
 
-      window.onload = carrega_pagina
+    window.onload = carrega_pagina
 
-    </script>
+  </script>
+
+  </form>
 
 {% endblock %}
