@@ -102,9 +102,7 @@
 
     {% if propostas %}
       <div class="table-responsive">
-
       <table id="PropostasTable" class="table table-bordered table-hover table-sm">
-
         <caption style="text-align:right">
           <small style="font-size:12px"><b>C</b>: Computação | <b>X</b>: Mecatrônica | <b>M</b>: Mecânica</small>
         </caption>
@@ -428,7 +426,7 @@
       
       <span id="alunos_mecanica_disponivel"></span>
         <script>$("#alunos_mecanica_disponivel").html(alunos_mecanica_disponivel);</script>
-  <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
+        <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
           (<span id="alunos_mecanica"></span>
         <script>$("#alunos_mecanica").html(alunos_mecanica);</script>)
         </a><br>
@@ -634,14 +632,10 @@
     <script>
 
       function carrega_pagina(){
-        //filtra_data();
-        //mostra_grafico();
         {% include "tooltip.js" %}
-
         {% with tabela='PropostasTable' %}
           {% include "tabelas_scripts.html" %}
         {% endwith %}
-
       }
 
       window.onload = carrega_pagina

@@ -9,6 +9,7 @@ $(document).ready(function() {
   var table = $('#{{tabela}}').DataTable( {
     dom: "<'row'<'col-md-6'><'col-md-6'f>>t<'row'<'col-md-6'l><'col-md-6'p>>i",
     buttons: [ 'copy', 'csv', 'excel', 'pdf', 'colvis' ],
+    lengthMenu: [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "todos"] ],
     language: {
         emptyTable: "Tabela vazia",
         info: "Exibindo _START_ até _END_ de _TOTAL_ itens",
@@ -22,6 +23,7 @@ $(document).ready(function() {
             next:       "Próxima",
             previous:   "Anterior"
         },
+        lengthMenu: "Mostrando _MENU_ itens",
     }
   } );
 

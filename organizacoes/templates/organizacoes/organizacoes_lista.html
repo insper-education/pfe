@@ -6,13 +6,8 @@
 {% endcomment %}
 
 {% block head %}
-
   {% load static %}
-
-  {% with tabela='OrganizacoesTable' %}
-    {% include "tabelas.html" %}
-  {% endwith %}
-
+  {% include "tabelas_includes.html" %}
 {% endblock %}
 
 {% block content %}
@@ -77,5 +72,18 @@
   {% endif %}
 
   <p>&nbsp;</p>
+
+    <script>
+
+      function carrega_pagina(){
+        {% include "tooltip.js" %}
+        {% with tabela='OrganizacoesTable' %}
+          {% include "tabelas_scripts.html" %}
+        {% endwith %}
+      }
+
+      window.onload = carrega_pagina
+
+    </script>
 
 {% endblock %}
