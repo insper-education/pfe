@@ -20,6 +20,18 @@
       width:auto;
     }
   </style>
+
+  {% comment %} Para esconder links {% endcomment %}
+  <style>
+    a.desligado {
+      color: inherit;
+      text-decoration: none;
+      pointer-events: none;
+      cursor: default;
+    }
+  </style>
+
+
 {% endblock %}
 
 {% block content %}
@@ -32,7 +44,7 @@
   {% include "edicoes.html" %}
 
   <span id="informacoes">
-    &nbsp;&nbsp;&nbsp;
+    &nbsp;
     <b>Informações: </b>&nbsp;
     <label><input id="logo" onchange="($(this).prop('checked') ? $('.logo').show() : $('.logo').hide())" type="checkbox" checked /> Logo</label>&nbsp;&nbsp;&nbsp;
     <label><input id="descricao" onchange="($(this).prop('checked') ? $('.descricao').show() : $('.descricao').hide())" type="checkbox" checked /> Descrição</label>&nbsp;&nbsp;&nbsp;
@@ -44,7 +56,7 @@
   <br><br>
   
   {% comment %} Tabela com todos os projetos selecionados pelo filtro {% endcomment %}
-  <div class="atualizar">
+  <div class="atualizar m-2">
     
     {% if projetos %}
       <table id="projetos">
@@ -140,6 +152,7 @@
         </td></tr>
       {% endfor %}
       </table>
+      
 
       <hr>
       <b>Total de projetos = <span id="myCountProj">{{ numero_projetos }}</span> </b> <br>
@@ -272,13 +285,24 @@
     {% endif %}
 
     <script>
+
       {% comment %} Esconde informações para impressão {% endcomment %}
       document.getElementById("impressora").addEventListener("click", function() {
         $('#informacoes').hide()
         $('.logo_impressoras').hide()
         $('.topnav').hide()
-        $(".imprimir").removeAttr('href');
+        $(".imprimir").addClass('desligado');
       });
+
+      $(document).keyup(function(e) {
+        if (e.key === "Escape") {
+          $('#informacoes').show()
+          $('.logo_impressoras').show()
+          $('.topnav').show()
+          $(".imprimir").removeClass('desligado');
+        }
+      });
+
     </script>
 
     <script>
