@@ -123,7 +123,7 @@ def alunos_lista(request):
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
         return HttpResponse("Falha na configuracao do sistema.", status=401)
-    
+
     if request.is_ajax():
         if 'edicao' in request.POST:
             edicao = request.POST['edicao']
@@ -133,7 +133,7 @@ def alunos_lista(request):
                 anosemestre = "trancou"
             else:
                 anosemestre = edicao
-                
+
             # Conta soh alunos
             alunos_list = Aluno.objects\
                 .filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])\
@@ -274,75 +274,65 @@ def alunos_lista(request):
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
-def alunos_inscrevendo(request):
-    """Mostra alunos que estão farão projetos no próximo semestre."""
-    configuracao = Configuracao.objects.get()
-
-    if configuracao.semestre == 1:
-        ano = configuracao.ano
-        semestre = 2
-    else:
-        ano = configuracao.ano+1
-        semestre = 1
-
-    return redirect('alunos_inscritos',
-                    anosemestre="{0}.{1}".format(ano, semestre))
-
-
-@login_required
-@permission_required("users.altera_professor", login_url='/')
-def alunos_inscritos(request, anosemestre):
+def alunos_inscritos(request):
     """Mostra todos os alunos que estão se inscrevendo em projetos."""
-    configuracao = Configuracao.objects.get()
+    if request.is_ajax():
+        if 'edicao' in request.POST:
+            edicao = request.POST['edicao']
 
-    ano = int(anosemestre.split(".")[0])
-    semestre = int(anosemestre.split(".")[1])
+            ano = int(edicao.split(".")[0])
+            semestre = int(edicao.split(".")[1])
 
-    alunos_se_inscrevendo = Aluno.objects.filter(trancado=False)\
-        .filter(anoPFE=ano, semestrePFE=semestre)\
-        .order_by(Lower("user__first_name"), Lower("user__last_name"))
+            alunos_se_inscrevendo = Aluno.objects.filter(trancado=False)\
+                .filter(anoPFE=ano, semestrePFE=semestre)\
+                .order_by(Lower("user__first_name"), Lower("user__last_name"))
 
-    # Conta soh alunos
-    alunos = alunos_se_inscrevendo\
-        .filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
+            # Conta soh alunos
+            alunos = alunos_se_inscrevendo\
+                .filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
 
-    num_alunos = alunos.count()
+            num_alunos = alunos.count()
 
-    # Conta alunos computacao
-    num_alunos_comp = alunos.filter(curso__exact='C').count()
+            # Conta alunos computacao
+            num_alunos_comp = alunos.filter(curso__exact='C').count()
 
-    # Conta alunos mecatrônica
-    num_alunos_mxt = alunos.filter(curso__exact='X').count()
+            # Conta alunos mecatrônica
+            num_alunos_mxt = alunos.filter(curso__exact='X').count()
 
-    # Conta alunos mecânica
-    num_alunos_mec = alunos.filter(curso__exact='M').count()
+            # Conta alunos mecânica
+            num_alunos_mec = alunos.filter(curso__exact='M').count()
 
-    inscritos = 0
-    ninscritos = 0
-    opcoes = []
-    for aluno in alunos:
-        opcao = Opcao.objects.filter(aluno=aluno).\
-                              filter(proposta__ano=ano,
-                                     proposta__semestre=semestre)
-        opcoes.append(opcao)
-        if opcao.count() >= 5:
-            inscritos += 1
+            inscritos = 0
+            ninscritos = 0
+            opcoes = []
+            for aluno in alunos:
+                opcao = Opcao.objects.filter(aluno=aluno)\
+                    .filter(proposta__ano=ano, proposta__semestre=semestre)
+                opcoes.append(opcao)
+                if opcao.count() >= 5:
+                    inscritos += 1
+                else:
+                    ninscritos += 1
+            alunos_list = zip(alunos, opcoes)
+
+            context = {
+                'alunos_list': alunos_list,
+                'num_alunos': num_alunos,
+                'num_alunos_comp': num_alunos_comp,
+                'num_alunos_mxt': num_alunos_mxt,
+                'num_alunos_mec': num_alunos_mec,
+                'inscritos': inscritos,
+                'ninscritos': ninscritos,
+            }
+
         else:
-            ninscritos += 1
-    alunos_list = zip(alunos, opcoes)
+            return HttpResponse("Algum erro não identificado.", status=401)
+    else:
+        edicoes, _, _ = get_edicoes(Aluno)
+        context = {
+                'edicoes': edicoes,
+            }
 
-    context = {
-        'alunos_list': alunos_list,
-        'num_alunos': num_alunos,
-        'num_alunos_comp': num_alunos_comp,
-        'num_alunos_mxt': num_alunos_mxt,
-        'num_alunos_mec': num_alunos_mec,
-        'inscritos': inscritos,
-        'ninscritos': ninscritos,
-        'ano': ano,
-        'semestre': semestre,
-        'loop_anos': range(2018, configuracao.ano+1),
-    }
     return render(request, 'users/alunos_inscritos.html', context=context)
 
 

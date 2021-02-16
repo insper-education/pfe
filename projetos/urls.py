@@ -44,13 +44,9 @@ urlpatterns = [
          views.projeto_completo,
          name='completo'),  # REMOVER
 
-    path('dinamicas/<str:periodo>',
+    path('dinamicas/',
          views.dinamicas,
          name='dinamicas'),
-
-    path('dinamicas/',
-         views.dinamicas_root,
-         name='dinamicas_root'),
 
     path('distribuicao_areas/',
          views.distribuicao_areas,

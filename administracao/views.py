@@ -113,8 +113,8 @@ def emails_semestre(request):
             for projeto in Projeto.objects.filter(ano=ano).filter(semestre=semestre):
                 if Aluno.objects.filter(alocacao__projeto=projeto):  # checa se há alunos
                     estudantes += Aluno.objects.filter(trancado=False).\
-                                  filter(alocacao__projeto=projeto).\
-                                  filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
+                        filter(alocacao__projeto=projeto).\
+                        filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
 
                 if projeto.orientador and (projeto.orientador not in orientadores):
                     orientadores.append(projeto.orientador)  # Junta orientadores do semestre
@@ -126,7 +126,7 @@ def emails_semestre(request):
                 parceiros = Parceiro.objects.filter(organizacao__in=organizacoes,
                                                             user__is_active=True)
                 # IDEAL = conexoes = Conexao.objects.filter(projeto=projeto)
-                
+
                 bancas = Banca.objects.filter(projeto=projeto)
                 for banca in bancas:
                     if banca.membro1 and (banca.membro1 not in membros_bancas):
@@ -138,9 +138,9 @@ def emails_semestre(request):
 
             # Cria listas para estudantes que ainda não estão em projetos
             estudantes_sem_projeto = Aluno.objects.filter(trancado=False).\
-                                    filter(anoPFE=ano).\
-                                    filter(semestrePFE=semestre).\
-                                    filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
+                filter(anoPFE=ano).\
+                filter(semestrePFE=semestre).\
+                filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
             for estudante in estudantes_sem_projeto:
                 if estudante not in estudantes:
                     estudantes.append(estudante)

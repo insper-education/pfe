@@ -16,11 +16,7 @@ urlpatterns = [
          views.alunos_lista,
          name='alunos_lista'),
 
-    path('alunos_inscrevendo/',
-         views.alunos_inscrevendo,
-         name='alunos_inscrevendo'),
-
-    path('alunos_inscritos/<str:anosemestre>',
+    path('alunos_inscritos/',
          views.alunos_inscritos,
          name='alunos_inscritos'),
 

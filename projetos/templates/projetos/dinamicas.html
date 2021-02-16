@@ -12,41 +12,61 @@
 
   <span class="titulo">Dinâmicas</span>
 
-  <select onchange="location = this.options[this.selectedIndex].value;">
-    <option value="todas" {% if periodo == "todas" %}selected="todas"{% endif %}>Todas</option>
-    <option value="proximas" {% if periodo == "proximas" %}selected="proximas"{% endif %}>Próximas</option>
-  </select>
-  <br><br>
+  {% comment %} Seletor da edição da pesquisa {% endcomment %}
+  {% include "edicoes.html" %}
 
-  {% if encontros %}
-    <table>
-      {% for e in encontros %} 
-        <tr>
-          <td>
-            <big><b>{{e.startDate}} - {{e.endDate|date:'H:i'}}</b></big><br>
-            {% if e.projeto %}
-              <b>Projeto:</b> <a href="{% url 'projeto_completo' e.projeto.id %}">
-                {{e.projeto.get_titulo}}
-              </a><br>
-              <b>Organização:</b> <a href="{% url 'organizacao_completo' e.projeto.organizacao.id %}">{{ e.projeto.organizacao.nome }}</a><br>
-              <b>Grupo:</b>
-              <ol>
-                {% for alocacao in e.projeto.alocacao_set.all %} 
-                  <li><a href="{% url 'aluno_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}} [{{ alocacao.aluno.get_curso_display }}] &nbsp;
-                  </a></li>
-                {% endfor %}
-              </ol>
-            {% else %}
-              Horário Livre<br><br>
-            {% endif %}
-          </td>
-        </tr>
-      {% endfor %}
-    </table>
+  <script>
+    $('#filterEdicao').append($('<option>', {
+        value: "proximas",
+        text: 'proximas',
+        selected: 'selected'
+    }));
+  </script>
+
+  <div class="atualizar">
+
+    {% if encontros %}
+      <table>
+        {% for e in encontros %} 
+          <tr>
+            <td>
+              <big><b>{{e.startDate}} - {{e.endDate|date:'H:i'}}</b></big><br>
+              {% if e.projeto %}
+                <b>Projeto:</b> <a href="{% url 'projeto_completo' e.projeto.id %}">
+                  {{e.projeto.get_titulo}}
+                </a><br>
+                <b>Organização:</b> <a href="{% url 'organizacao_completo' e.projeto.organizacao.id %}">{{ e.projeto.organizacao.nome }}</a><br>
+                <b>Grupo:</b>
+                <ol>
+                  {% for alocacao in e.projeto.alocacao_set.all %} 
+                    <li><a href="{% url 'aluno_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}} [{{ alocacao.aluno.get_curso_display }}] &nbsp;
+                    </a></li>
+                  {% endfor %}
+                </ol>
+              {% else %}
+                Horário Livre<br><br>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+      <p>&nbsp;</p>
+    {% else %}
+      <p>Não existem encontros.</p>
+    {% endif %}
     <p>&nbsp;</p>
-  {% else %}
-    <p>Não existem encontros.</p>
-  {% endif %}
-  <p>&nbsp;</p>
+
+    <script>
+      function carrega_pagina(){
+        {% include "edicoes_ajax.js" %}
+      };
+    </script>
+
+  </div>
+
+  <script>
+    $(".filter").change(carrega_pagina);    
+    $(document).ready(carrega_pagina);
+  </script>  
 
 {% endblock %}

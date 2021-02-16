@@ -19,6 +19,9 @@ $.ajax({
         {% if tabela %}
             {% include "tabelas_scripts.js" %}
         {% endif %}
+        {% if graficos %}
+            carrega_graficos();
+        {% endif %}
         $("#spinner").css("visibility", "hidden");
     },
     error: function(response) {
