@@ -6,32 +6,29 @@
 
 {% comment %} Seletor da edição da pesquisa {% endcomment %}
 {% if edicoes %}
-
-  {% comment %} <label id="labelEdicao" for="filterEdicao"><b>Edição:</b></label> {% endcomment %}
-  
-
-    <div class="row align-items-start mb-2">
-      <div class="ml-3">
-        <div class="input-group input-group-sm">
-          <div class="input-group-prepend">
-            <label class="input-group-text" for="filterEdicao">Edição</label>
-          </div>
-          <select class="filter custom-select w-auto" id="filterEdicao">
-            {% comment %} Se não quiser que aparece a opção todas crie uma variavel n_todas com True {% endcomment %}
-            {% if not n_todas %}
-              <option value="todas">todas</option>
-            {% endif %}
-            {% for edicao in edicoes %}
-                <option value="{{edicao}}" {% if forloop.last %}selected{% endif %}>{{edicao}}</option>
-            {% endfor %}
-          </select>
-          <div id="spinner" class="ml-2 input-group-append" style="visibility: hidden">
-            <div class="spinner-border text-secondary ml-auto" style="width: 1.8rem; height: 1.8rem;" role="status" aria-hidden="true">
-              <span class="sr-only input-group-text">Carregando...</span>
-            </div>
+  <div class="row align-items-start mb-2">
+    <div class="ml-3">
+      <div class="input-group input-group-sm">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="filterEdicao">Edição</label>
+        </div>
+        <select class="filter custom-select w-auto" id="filterEdicao">
+          {% comment %} Se não quiser que aparece a opção todas crie uma variavel n_todas com True {% endcomment %}
+          {% if not n_todas %}
+            <option value="todas">todas</option>
+          {% endif %}
+          {% for edicao in edicoes %}
+              <option value="{{edicao}}" {% if forloop.last %}selected{% endif %}>{{edicao}}</option>
+          {% endfor %}
+        </select>
+        <div id="spinner" class="ml-2 input-group-append" style="visibility: hidden">
+          <div class="spinner-border text-secondary ml-auto" style="width: 1.8rem; height: 1.8rem;" role="status" aria-hidden="true">
+            <span class="sr-only input-group-text">Carregando...</span>
           </div>
         </div>
       </div>
     </div>
-
+    <div id="lateral">
+    </div>
+  </div>
 {% endif %}

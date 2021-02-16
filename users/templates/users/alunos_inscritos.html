@@ -24,6 +24,17 @@
     {% include "edicoes.html" %}
   {% endwith %}
 
+  <span id="informacoes">
+    &nbsp;
+    <b>Informações: </b>&nbsp;
+    <label><input id="curso" onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(3)').show() : $('#AlunosTable tr > *:nth-child(3)').hide())" type="checkbox" checked /> Curso</label>&nbsp;&nbsp;&nbsp;
+    <label><input id="cr" onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(4)').show() : $('#AlunosTable tr > *:nth-child(4)').hide())" type="checkbox" /> CR</label>&nbsp;&nbsp;&nbsp;
+  </span>
+
+  <script>
+    $("#informacoes").detach().appendTo("#lateral");
+  </script>
+
   <div class="atualizar">
 
     {% if alunos_list %}
@@ -134,6 +145,8 @@
       function carrega_graficos() {
         var ctx = document.getElementById('chart-area').getContext('2d');
         window.myPie = new Chart(ctx, config);
+        ($('#curso').prop('checked') ? $('#AlunosTable tr > *:nth-child(3)').show() : $('#AlunosTable tr > *:nth-child(3)').hide());
+        ($('#cr').prop('checked') ? $('#AlunosTable tr > *:nth-child(4)').show() : $('#AlunosTable tr > *:nth-child(4)').hide());
       }
     
     </script>
