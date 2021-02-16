@@ -40,6 +40,7 @@ from projetos.resources import UsuariosResource
 from users.models import PFEUser, Aluno, Professor, Administrador, Parceiro
 from users.models import Opcao, Alocacao
 
+from users.support import get_edicoes
 from users.support import adianta_semestre
 
 
@@ -75,109 +76,111 @@ def index_carregar(request):
 @permission_required("users.altera_professor", login_url='/')
 def emails(request):
     """Gera listas de emails, com alunos, professores, parceiros, etc."""
-    # Deve ter recurso para pegar aluno pelos projetos, opções,
-    # pois um aluno que reprova pode aparecer em duas listas.
-    try:
-        configuracao = Configuracao.objects.get()
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
-
-    ano = 2018
-    semestre = 2
-    semestres = []
-    alunos_p_semestre = []
-    orientadores_p_semestre = []
-    parceiros_p_semestre = []
-    projetos_p_semestre = []
-    bancas_p_semestre = []
-    while True:
-        semestres.append(str(ano)+"."+str(semestre))
-
-        projetos_pessoas = {}  # Dicionario com as pessoas do projeto
-
-        alunos_semestre = []  # Alunos do semestre
-        organizacoes = []  # Controla as organizações participantes p/semestre
-        orientadores = []  # Orientadores por semestre
-        membros_bancas = []  # Membros das bancas
-
-        for projeto in Projeto.objects.filter(ano=ano).filter(semestre=semestre):
-            if Aluno.objects.filter(alocacao__projeto=projeto):  # checa se há alunos
-                alunos_tmp = Aluno.objects.filter(trancado=False).\
-                              filter(alocacao__projeto=projeto).\
-                              filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
-                alunos_semestre += list(alunos_tmp)
-                orientador = projeto.orientador
-                conexoes = Conexao.objects.filter(projeto=projeto)
-
-                if projeto.orientador not in orientadores:
-                    orientadores.append(orientador)  # Junta orientadores do semestre
-
-                if projeto.organizacao not in organizacoes:
-                    organizacoes.append(projeto.organizacao)  # Junta organizações do semestre
-
-                bancas = Banca.objects.filter(projeto=projeto)
-                for banca in bancas:
-                    if banca.membro1:
-                        membros_bancas.append(banca.membro1)
-                    if banca.membro2:
-                        membros_bancas.append(banca.membro2)
-                    if banca.membro3:
-                        membros_bancas.append(banca.membro3)
-
-                projetos_pessoas[projeto] = dict()
-                projetos_pessoas[projeto]["estudantes"] = list(alunos_tmp)  # Pessoas por projeto
-                projetos_pessoas[projeto]["orientador"] = list([orientador])  # Pessoas por projeto
-                projetos_pessoas[projeto]["conexoes"] = list(conexoes)  # Todos conect. ao projeto
-
-        # Parceiros de todas as organizações parceiras
-        parceiros_semestre = Parceiro.objects.filter(organizacao__in=organizacoes,
-                                                     user__is_active=True)
-
-        # Cria listas para enviar para templeate html
-        alunos_p_semestre.append(Aluno.objects.filter(trancado=False).\
-                                 filter(anoPFE=ano).\
-                                 filter(semestrePFE=semestre).\
-                                 filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0]))
-
-        # alocados_p_semestre.append(alunos_semestre)
-        orientadores_p_semestre.append(orientadores)
-        parceiros_p_semestre.append(parceiros_semestre)
-        bancas_p_semestre.append(membros_bancas)
-
-        projetos_p_semestre.append(projetos_pessoas)
-
-        if ano > configuracao.ano and semestre == configuracao.semestre:
-            break
-
-        # Vai para próximo semestre
-        ano, semestre = adianta_semestre(ano, semestre)
-
-    email_todos = zip(semestres,
-                      alunos_p_semestre,  # na pratica chamaremos de aluno no template
-                      orientadores_p_semestre,
-                      parceiros_p_semestre,
-                      bancas_p_semestre)
-
-    email_p_semestre = zip(semestres, projetos_p_semestre)
-
     membros_comite = PFEUser.objects.filter(membro_comite=True)
-
     lista_todos_alunos = Aluno.objects.filter(trancado=False).\
         filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
-
     lista_todos_professores = Professor.objects.all()
     lista_todos_parceiros = Parceiro.objects.all()
 
+    edicoes, _, _ = get_edicoes(Aluno)
+
     context = {
-        'email_todos': email_todos,
-        'email_p_semestre': email_p_semestre,
         'membros_comite': membros_comite,
         'todos_alunos': lista_todos_alunos,
         'todos_professores': lista_todos_professores,
         'todos_parceiros': lista_todos_parceiros,
+        'edicoes': edicoes,
     }
 
     return render(request, 'administracao/emails.html', context=context)
+
+
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def emails_semestre(request):
+    """Gera listas de emails por semestre."""
+    if request.is_ajax():
+        if 'edicao' in request.POST:
+            ano, semestre = request.POST['edicao'].split('.')
+
+            estudantes = []  # Alunos do semestre
+            orientadores = []  # Orientadores por semestre
+            organizacoes = []  # Controla as organizações participantes p/semestre
+            parceiros = []
+            membros_bancas = []  # Membros das bancas
+
+            for projeto in Projeto.objects.filter(ano=ano).filter(semestre=semestre):
+                if Aluno.objects.filter(alocacao__projeto=projeto):  # checa se há alunos
+                    estudantes += Aluno.objects.filter(trancado=False).\
+                                  filter(alocacao__projeto=projeto).\
+                                  filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
+
+                if projeto.orientador and (projeto.orientador not in orientadores):
+                    orientadores.append(projeto.orientador)  # Junta orientadores do semestre
+
+                if projeto.organizacao not in organizacoes:
+                    organizacoes.append(projeto.organizacao)  # Junta organizações do semestre
+
+                # Parceiros de todas as organizações parceiras
+                parceiros = Parceiro.objects.filter(organizacao__in=organizacoes,
+                                                            user__is_active=True)
+                # IDEAL = conexoes = Conexao.objects.filter(projeto=projeto)
+                
+                bancas = Banca.objects.filter(projeto=projeto)
+                for banca in bancas:
+                    if banca.membro1 and (banca.membro1 not in membros_bancas):
+                        membros_bancas.append(banca.membro1)
+                    if banca.membro2 and (banca.membro2 not in membros_bancas):
+                        membros_bancas.append(banca.membro2)
+                    if banca.membro3 and (banca.membro3 not in membros_bancas):
+                        membros_bancas.append(banca.membro3)
+
+            # Cria listas para estudantes que ainda não estão em projetos
+            estudantes_sem_projeto = Aluno.objects.filter(trancado=False).\
+                                    filter(anoPFE=ano).\
+                                    filter(semestrePFE=semestre).\
+                                    filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
+            for estudante in estudantes_sem_projeto:
+                if estudante not in estudantes:
+                    estudantes.append(estudante)
+
+
+            data = {}  # Dicionario com as pessoas do projeto
+            data["Estudantes"] = []
+            for i in estudantes:
+                data["Estudantes"].append([i.user.first_name, i.user.last_name, i.user.email])
+
+            data["Orientadores"] = []
+            for i in orientadores:
+                data["Orientadores"].append([i.user.first_name, i.user.last_name, i.user.email])
+
+            data["Parceiros"] = []
+            for i in parceiros:
+                data["Parceiros"].append([i.user.first_name, i.user.last_name, i.user.email])
+
+            data["Bancas"] = []
+            for i in membros_bancas:
+                data["Bancas"].append([i.first_name, i.last_name, i.email])
+
+            return JsonResponse(data)
+
+    return HttpResponse("Algum erro não identificado.", status=401)
+
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def emails_projetos(request):
+    """Gera listas de emails, com alunos, professores, parceiros, etc."""
+    if request.is_ajax():
+        if 'edicao' in request.POST:
+            ano, semestre = request.POST['edicao'].split('.')
+            projetos = Projeto.objects.filter(ano=ano).filter(semestre=semestre)
+            context = {
+                'projetos': projetos,
+            }
+            return render(request, 'administracao/emails_projetos.html', context=context)
+    return HttpResponse("Algum erro não identificado.", status=401)
 
 
 @login_required

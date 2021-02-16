@@ -3,7 +3,7 @@
     Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
     Data: 4 de Fevereiro de 2021
 {% endcomment %}
-         
+
 $("#spinner").css("visibility", "visible");
 var edicao = $("#filterEdicao option:selected").attr("value");
 $.ajax({

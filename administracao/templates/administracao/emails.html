@@ -8,23 +8,26 @@
 {% block head %}
   {% load static %}
   {% load escape_emails %}
-  <script>{% include "tooltip.js" %}</script>
+  <script>
+    {% include "tooltip.js" %}
+  </script>
+
   <script>
     function manda(estudantes, orientador, parceiros, projeto, avancado) {
       mailto = "mailto:";
-      if($('.estudantes:checked').val()) {
+      if($('#estudantes:checked').val()) {
         mailto += estudantes;
       }
-      if($('.orientador:checked').val()) {
+      if($('#orientador:checked').val()) {
         mailto += orientador;
       }
-      if($('.parceiros:checked').val()) {
+      if($('#parceiros:checked').val()) {
         mailto += parceiros;
       }
       mailto += "?cc=Luciano%20Pereira%20Soares<lpsoares@insper.edu.br>,PFE<pfe@insper.edu.br>";
       mailto += "&bcc=Comite%20PFE<comitepfe@insper.edu.br>";
       mailto += "&subject=PFE%20"
-      if(avancado) {
+      if(avancado=="true") {
         mailto += "Avançado%20";
       }
       mailto += "-%20Projeto:%20"
@@ -33,7 +36,19 @@
       mailto += "atenciosamente,%20coordenação%20PFE";
       window.open(mailto);
     }
+  
+    function myfunc(aqui) {
+      estudantes = aqui.data('estudantes');
+      orientador = aqui.data('orientador');
+      conexoes = aqui.data('conexoes');
+      projeto = aqui.data('projeto');
+      avancado = aqui.data('avancado');
+      manda(estudantes, orientador, conexoes, projeto, avancado);
+    }
+
   </script>
+
+
 {% endblock %}
 
 {% block content %}
@@ -41,102 +56,118 @@
   <span class="titulo">Listas de e-mails</span>
 
   {% if membros_comite %}
-    <a href="
-      mailto:{% for membro in membros_comite %}{{membro.first_name|parse_quote}}%20{{membro.last_name|parse_quote}}%20&lt;{{membro.email|parse_quote}}&gt;,{% endfor %}
-      ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
-      &amp;subject=PFE%20Comitê&amp;body=Caros%20membros%20do%20comitê%20do%20PFE,%0D%0A%0D%0A
-      atenciosamente,%20coordenação%20PFE
-    ">Comitê do PFE</a><br>
+    <strong>Comitês</strong>
+    <div class="row align-items-start mb-2">
+      <div class="ml-3">
+        <div class="input-group input-group-sm">
+          <div class="input-group-prepend">
+              <span class="input-group-text">comitê PFE</span>
+          </div>          
+          <div class="input-group-append  ml-1">
+            <a href="
+              mailto:{% for membro in membros_comite %}{{membro.first_name|parse_quote}}%20{{membro.last_name|parse_quote}}%20&lt;{{membro.email|parse_quote}}&gt;,{% endfor %}
+              ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
+              &amp;subject=PFE%20Comitê&amp;body=Caros%20membros%20do%20comitê%20do%20PFE,%0D%0A%0D%0A
+              atenciosamente,%20coordenação%20PFE
+            ">
+              <button class="btn btn-outline-secondary btn-sm" type="button">
+                todos
+              </button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div> 
     <br>
   {% endif %}
 
-  Todos do semestre
-  <table>
-    {% for semestre,alunos,orientadores,parceiros,bancas in email_todos %}
-      <tr>
-        <td>{{semestre}}</td>
-        <td>
-          {% if alunos %}
-            <a href="
-              mailto:{% for aluno in alunos %}{{aluno.user.first_name|parse_quote}}%20{{aluno.user.last_name|parse_quote}}%20&lt;{{aluno.user.email|parse_quote}}&gt;,{% endfor %}
-              ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
-              &amp;bcc=Comite%20PFE&lt;comitepfe@insper.edu.br&gt;
-              &amp;subject=PFE%20{{semestre}}&amp;body=Caros%20alunos,%0D%0A%0D%0A
-              atenciosamente,%20coordenação%20PFE
-            ">Alunos</a><br>
-          {% endif %}
-        </td>
-        <td>
-          {% if orientadores %}
-            <a href="
-              mailto:{% for orientador in orientadores %}{{orientador.user.first_name|parse_quote}}%20{{orientador.user.last_name|parse_quote}}%20&lt;{{ orientador.user.email|parse_quote }}&gt;,{% endfor %}
-              ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
-              &amp;bcc=Comite%20PFE&lt;comitepfe@insper.edu.br&gt;
-              &amp;subject=PFE%20{{semestre}}&amp;body=Caros%20orientadores,%0D%0A%0D%0A
-              atenciosamente,%20coordenação%20PFE
-            ">Orientadores</a><br>
-          {% endif %}
-        </td>
-        <td>
-          {% if parceiros %}
-            <a href="
-              mailto:{% for parceiro in parceiros %}{{parceiro.user.first_name|parse_quote}}%20{{parceiro.user.last_name|parse_quote}}%20&lt;{{ parceiro.user.email|parse_quote }}&gt;,{% endfor %}
-              ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
-              &amp;bcc=Comite%20PFE&lt;comitepfe@insper.edu.br&gt;
-              &amp;subject=PFE%20{{semestre}}&amp;body=Caros%20parceiro%20do%20PFE,%0D%0A%0D%0A
-              atenciosamente,%20coordenação%20PFE
-            ">Parceiros</a><br>
-          {% endif %}
-        </td>
-        <td>
-          {% if bancas %}
-            <a href="
-              mailto:{% for banca in bancas %}{{banca.first_name|parse_quote}}%20{{banca.last_name|parse_quote}}%20&lt;{{ banca.email|parse_quote }}&gt;,{% endfor %}
-              ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
-              &amp;bcc=Comite%20PFE&lt;comitepfe@insper.edu.br&gt;
-              &amp;subject=PFE%20{{semestre}}&amp;body=Caros%20membros%20de%20bancas%20do%20PFE,%0D%0A%0D%0A
-              atenciosamente,%20coordenação%20PFE
-            ">Bancas</a><br>
-          {% endif %}
-        </td>
-      </tr>
-    {% endfor %}
-  </table>
+  <strong>Por semestre</strong>
+  <div class="row align-items-start mb-2">
+    <div class="ml-3">
+      <div class="input-group input-group-sm">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="filterEdicaoSemestre">Edição</label>
+        </div>
+        <select class="custom-select" id="filterEdicaoSemestre">
+          {% for edicao in edicoes reversed %}
+              <option value="{{edicao}}">{{edicao}}</option>
+          {% endfor %}
+        </select>
+        <div id="spinnerSemestre" class="ml-2 input-group-append" style="display:none">
+          <div class="spinner-border text-secondary ml-auto" style="width: 1.8rem; height: 1.8rem;" role="status" aria-hidden="true">
+            <span class="sr-only input-group-text">Carregando...</span>
+          </div>
+        </div>
+        <div class="input-group-append">
+          <a id="Estudantes" href="">
+            <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
+              Estudantes
+            </button>
+          </a>
+          <a href="abc" id="Orientadores">
+            <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
+              Orientadores
+            </button>
+          </a>
+          <a href="abc" id="Parceiros">
+            <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
+              Parceiros
+            </button>
+          </a>
+          <a href="abc" id="Bancas">
+            <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
+              Bancas
+            </button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <br>
 
-  Todos divididos por projeto (
-  <label for="estudantes">Estudantes</label><input id="estudantes" class="estudantes" type="checkbox" checked>&nbsp;
-  <label for="orientador">Orientador</label><input id="orientador" class="orientador" type="checkbox" checked>&nbsp;
-  <label for="parceiros">Conexões</label><input id="parceiros" class="parceiros" type="checkbox" checked>&nbsp;
-  ):
-  <table>
-    {% for semestre,projetos in email_p_semestre %}
-      {% if projetos %}
-        <tr>
-          <td>{{semestre}}</td>
-          {% for projeto, pessoas in projetos.items %}
-            <td>
-              {% if pessoas %}
-                <a href="javascript:manda(
-                  '{% for pessoa in pessoas.estudantes %}{%if pessoa %}{{pessoa.user.first_name|parse_quote}}%20{{pessoa.user.last_name|parse_quote}}%20&lt;{{ pessoa.user.email|parse_quote }}&gt;,{% endif %}{% endfor %}',
-                  '{% for pessoa in pessoas.orientador %}{%if pessoa %}{{pessoa.user.first_name|parse_quote}}%20{{pessoa.user.last_name|parse_quote}}%20&lt;{{ pessoa.user.email|parse_quote }}&gt;,{% endif %}{% endfor %}',
-                  '{% for pessoa in pessoas.conexoes %}{%if pessoa %}{{pessoa.parceiro.user.first_name|parse_quote}}%20{{pessoa.parceiro.user.last_name|parse_quote}}%20&lt;{{ pessoa.parceiro.user.email|parse_quote }}&gt;,{% endif %}{% endfor %}',
-                  '{{projeto}}',
-                  {% if projeto.avancado %}true{% else %}false{% endif %}
-                );
-                "
-                data-toggle="tooltip" data-html="true" animation="true" title="
-                  {{projeto}}
-                "
-                >p{{projeto.pk}}</a><br>
-              {% endif %}
-            </td>
+  <strong>Por projeto</strong>
+  <small>
+    <label class="form-check-label">(&nbsp;incluir:&nbsp;</label>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="checkbox" id="estudantes" value="estudantes" checked>
+      <label class="form-check-label" for="estudantes">Estudantes</label>
+    </div>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="checkbox" id="orientador" value="orientador" checked>
+      <label class="form-check-label" for="orientador">Orientador</label>
+    </div>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="checkbox" id="parceiros" value="parceiros" checked>
+      <label class="form-check-label" for="parceiros">Parceiros</label>
+    </div>
+    <label class="form-check-label">)</label>
+  </small>
+
+
+  <div class="row align-items-start mb-2">
+    <div class="ml-3">
+      <div class="input-group input-group-sm">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="filterEdicaoProjetos">Edição</label>
+        </div>
+        <select class="custom-select" id="filterEdicaoProjetos">
+          {% for edicao in edicoes reversed %}
+              <option value="{{edicao}}">{{edicao}}</option>
           {% endfor %}
-        </tr>
-      {% endif %}
-    {% endfor %}
-  </table>
-  <br>
+        </select>
+        <div id="spinnerProjetos" class="ml-2 input-group-append" style="display:none">
+          <div class="spinner-border text-secondary ml-auto" style="width: 1.8rem; height: 1.8rem;" role="status" aria-hidden="true">
+            <span class="sr-only input-group-text">Carregando...</span>
+          </div>
+        </div>
+        <div id="projetos" class="input-group-append">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br><br><br>
 
   {% if todos_alunos %}
     <a href="
@@ -167,5 +198,125 @@
       atenciosamente,%20coordenação%20PFE
     ">Todos os parceiros do PFE</a><br>
   {% endif %}
+
+
+  <script>
+
+    // Só atualiza e-mails da linha de semestres
+    function carrega_semestre() {
+
+      $("#Estudantes").hide();
+      $("#Orientadores").hide();
+      $("#Parceiros").hide();
+      $("#Bancas").hide();
+
+      $("#spinnerSemestre").show();
+
+      var edicao = $("#filterEdicaoSemestre option:selected").attr("value");
+      $.ajax({
+        type: "POST",
+        url: '{% url "emails_semestre" %}',
+        data: {
+            edicao: edicao,
+            'csrfmiddlewaretoken': '{{ csrf_token }}',
+        },
+        success: function(response){
+
+            // Estudantes
+            if(response.Estudantes.length) {
+              var str = 'mailto:';
+              for (var id in response.Estudantes) {
+                str += response.Estudantes[id][0] + "%20" + response.Estudantes[id][1] + "%20<" + response.Estudantes[id][2] + ">,";
+              }
+              str += "?cc=Luciano%20Pereira%20Soares<lpsoares@insper.edu.br>,PFE<pfe@insper.edu.br>&bcc=Comite%20PFE<comitepfe@insper.edu.br>&subject=PFE&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20coordenação%20PFE";
+              $("#Estudantes").attr("href",str);
+              $("#Estudantes").show();
+            }
+
+            // Orientadores
+            if(response.Orientadores.length) {
+              var str = 'mailto:';
+              for (var id in response.Orientadores) {
+                str += response.Orientadores[id][0] + "%20" + response.Orientadores[id][1] + "%20<" + response.Orientadores[id][2] + ">,";
+              }
+              str += "?cc=Luciano%20Pereira%20Soares<lpsoares@insper.edu.br>,PFE<pfe@insper.edu.br>&bcc=Comite%20PFE<comitepfe@insper.edu.br>&subject=PFE&body=Caros%20orientadores,%0D%0A%0D%0Aatenciosamente,%20coordenação%20PFE";
+              $("#Orientadores").attr("href",str);
+              $("#Orientadores").show();
+            }
+
+            // Parceiros
+            if(response.Parceiros.length) {
+              var str = 'mailto:';
+              for (var id in response.Parceiros) {
+                str += response.Parceiros[id][0] + "%20" + response.Parceiros[id][1] + "%20<" + response.Parceiros[id][2] + ">,";
+              }
+              str += "?cc=Luciano%20Pereira%20Soares<lpsoares@insper.edu.br>,PFE<pfe@insper.edu.br>&bcc=Comite%20PFE<comitepfe@insper.edu.br>&subject=PFE&body=Caros%20parceiros,%0D%0A%0D%0Aatenciosamente,%20coordenação%20PFE";
+              $("#Parceiros").attr("href",str);
+              $("#Parceiros").show();
+            }
+
+            // Bancas
+            if(response.Bancas.length) {
+              var str = 'mailto:';
+              for (var id in response.Bancas) {
+                str += response.Bancas[id][0] + "%20" + response.Bancas[id][1] + "%20<" + response.Bancas[id][2] + ">,";
+              }
+              str += "?cc=Luciano%20Pereira%20Soares<lpsoares@insper.edu.br>,PFE<pfe@insper.edu.br>&bcc=Comite%20PFE<comitepfe@insper.edu.br>&subject=PFE&body=Caros%20membros%20de%bancas,%0D%0A%0D%0Aatenciosamente,%20coordenação%20PFE";
+              $("#Bancas").attr("href",str);
+              $("#Bancas").show();
+            }
+
+            {% include "tooltips.js" %}
+
+            $("#spinnerSemestre").hide();
+
+        },
+        error: function(response) {
+            console.log('error')
+        }
+      });
+    };
+
+
+    // Só atualiza e-mails da linha de projetos
+    function carrega_projetos() {
+      $("#projetos").hide();
+      $("#spinnerProjetos").show();
+
+      var edicao = $("#filterEdicaoProjetos option:selected").attr("value");
+      $.ajax({
+        type: "POST",
+        url: '{% url "emails_projetos" %}',
+        data: {
+            edicao: edicao,
+            'csrfmiddlewaretoken': '{{ csrf_token }}',
+        },
+        success: function(response){
+            $("#projetos").replaceWith($("#projetos",response));
+            {% include "tooltips.js" %}
+            $("#spinnerProjetos").hide();    
+            $("#projetos").show();
+        },
+        error: function(response) {
+            console.log('error')
+        }
+      });
+    };
+
+    function carrega_pagina() {
+      carrega_semestre();
+      carrega_projetos();
+    }
+
+  </script>
+
+  <p>&nbsp;</p>
+
+  <script>
+    $("#filterEdicaoSemestre").change(carrega_semestre);
+    $("#filterEdicaoProjetos").change(carrega_projetos);
+    $(document).ready(carrega_pagina);
+  </script>
+
 
 {% endblock %}

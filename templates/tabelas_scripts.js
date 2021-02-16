@@ -10,19 +10,31 @@ var table = $('#{{tabela}}Table').DataTable( {
     lengthMenu: [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "todos"] ],
     stateSave: true,
     language: {
-        emptyTable: "Tabela vazia",
-        info: "Exibindo de _START_ até _END_ em _TOTAL_ {{tabela}}",
-        buttons: {
-            colvis: 'Colunas'
-        },
-        search: "Busca:",
+        decimal:        "",
+        emptyTable:     "Tabela vazia",
+        info:           "Exibindo de _START_ até _END_ em _TOTAL_ {{tabela}}",
+        infoEmpty:      "Exibindo de 0 até 0 em 0 {{tabela}}",
+        infoFiltered:   "(filtrado de _MAX_ {{tabela}})",
+        infoPostFix:    "",
+        thousands:      "",
+        lengthMenu:     "Mostrando _MENU_ itens",
+        loadingRecords: "Carregando...",
+        processing:     "Processando...",
+        search:         "Busca:",
+        zeroRecords:    "Não foram encontrados registros com a busca",
         paginate: {
             first:      "Primeira",
             last:       "Última",
             next:       "Próxima",
             previous:   "Anterior"
         },
-        lengthMenu: "Mostrando _MENU_ itens",
+        aria: {
+            sortAscending:  ": ativado para ordenar a coluna de forma ascendente",
+            sortDescending: ": ativado para ordenar a coluna de forma descendente"
+        },
+        buttons: {
+            colvis: 'Colunas'
+        }
     }
 } );
 

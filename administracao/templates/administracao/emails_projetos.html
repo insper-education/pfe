@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 15 de Fevereiro de 2021
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load escape_emails %}
+{% endblock %}
+
+{% block content %}
+  <div id="projetos" class="input-group-append">
+    {% for projeto in projetos %}
+      <a onclick="event.preventDefault(); myfunc($(this));"
+        data-estudantes='{% for alocacao in projeto.alocacao_set.all %}{{alocacao.aluno.user.first_name|parse_quote}}%20{{alocacao.aluno.user.last_name|parse_quote}}%20&lt;{{alocacao.aluno.user.email|parse_quote}}&gt;,{% endfor %}'
+        data-orientador='{{projeto.orientador.user.first_name|parse_quote}}%20{{projeto.orientador.user.last_name|parse_quote}}%20&lt;{{ projeto.orientador.user.email|parse_quote }}&gt;,'
+        data-conexoes='{% for pessoa in projeto.conexao_set.all %}{{pessoa.parceiro.user.first_name|parse_quote}}%20{{pessoa.parceiro.user.last_name|parse_quote}}%20&lt;{{ pessoa.parceiro.user.email|parse_quote }}&gt;,{% endfor %}'
+        data-projeto='{{projeto}}'
+        data-avancado='{% if projeto.avancado %}true{% else %}false{% endif %}'
+        data-toggle="tooltip" data-html="true" animation="true" title="{{projeto}}"
+      >
+        <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
+          p{{projeto.pk}}
+        </button>
+      </a>
+    {% endfor %}
+  </div>
+
+{% endblock %}
