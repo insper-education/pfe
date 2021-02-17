@@ -443,7 +443,7 @@ def dinamicas(request):
     #     configuracao = Configuracao.objects.get()
     # except Configuracao.DoesNotExist:
     #     return HttpResponse("Falha na configuracao do sistema.", status=401)
-    
+
     if request.is_ajax():
         if 'edicao' in request.POST:
 

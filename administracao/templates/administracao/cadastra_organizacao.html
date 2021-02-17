@@ -37,8 +37,7 @@
   </span>
   <br>
 
-  <form method="post" id="organizacaoform" enctype="multipart/form-data">
-    {% csrf_token %}
+  <form method="post" id="organizacaoform" enctype="multipart/form-data"> {% csrf_token %}
   
     <label for="organizacao">Nome da Organização:<br></label><br>
     <textarea id="nome" name="nome" rows="1" cols="80" maxlength="100" required>{{nome}}</textarea>

@@ -21,7 +21,8 @@ from django.utils.datastructures import MultiValueDictKeyError
 from documentos.support import render_to_pdf
 
 from projetos.models import Configuracao, Organizacao, Proposta, Projeto, Banca
-from projetos.models import Avaliacao2, get_upload_path, Conexao, Feedback
+from projetos.models import Avaliacao2, get_upload_path, Feedback
+# from projetos.models import Conexao
 
 from projetos.support import simple_upload
 

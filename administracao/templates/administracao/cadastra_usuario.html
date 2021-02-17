@@ -25,7 +25,7 @@
   </span>
   <br>
 
-  <form class="myForm" action="" method="post"> {% csrf_token %}  
+  <form class="myForm" action="" method="post"> {% csrf_token %}
   
     <input type="radio" class="tipo" name="tipo_de_usuario" id="estudante" value="estudante" required {% if tipo == "estudante"%}checked="checked"{% endif %}> <label for="estudante"> Estudante</label>&nbsp;&nbsp;&nbsp;
     <input type="radio" class="tipo" name="tipo_de_usuario" id="professor" value="professor" required {% if tipo == "professor"%}checked="checked"{% endif %}> <label for="professor"> Professor</label>&nbsp;&nbsp;&nbsp;

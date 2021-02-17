@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 18 de Novembro de 2019
+{% endcomment %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">Selecione Conexões</span>
+  <br>
+  <span>Projeto: {{projeto}}</span>
+  <br><br>
+
+  <form method="post" id="conexoesform" enctype="multipart/form-data"> {% csrf_token %}
+
+    {% if parceiros %}
+      <div class="table-responsive">
+      <table id="ParceirosTable" class="table table-bordered table-hover table-sm">
+        <caption style="text-align:right">
+          <small>GR: Gestor Responsável / MT: Mentor Técnico / RH: Recursos Humanos</small>
+        </caption>
+        <thead class="table">
+          <tr>
+            <th scope="col" class="text-center">GR</th>
+            <th scope="col" class="text-center">MT</th>
+            <th scope="col" class="text-center">RH</th>
+            <th scope="col" class="text-center">Nome</th>
+            <th scope="col" class="text-center">Cargo</th>
+            <th scope="col" class="text-center">e-mail</th>
+            <th scope="col" class="text-center">telefone</th>
+          </tr>
+        </thead>
+        {% for parceiro in parceiros %}
+        {% with conexoes=parceiro.conexao_set.all %}
+          <tr class="item" {% if not parceiro.user.is_active %} style="color: lightgrey;" {% endif %}>
+            <th scope="row" style="text-align: center;">
+              <input type="checkbox" name="gestor_responsavel" value="{{parceiro.id}}"
+                {% for conexao in conexoes %}
+                  {% if conexao.projeto == projeto %} 
+                    {% if conexao.gestor_responsavel %}
+                      checked
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+              >   
+            </th>
+            <th scope="row" style="text-align: center;">
+              <input type="checkbox" name="mentor_tecnico" value="{{parceiro.id}}"
+                {% for conexao in conexoes %}
+                  {% if conexao.projeto == projeto %}
+                    {% if conexao.mentor_tecnico %}
+                      checked
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+              >   
+            </th>
+            <th scope="row" style="text-align: center;">
+              <input type="checkbox" name="recursos_humanos" value="{{parceiro.id}}"
+                {% for conexao in conexoes %}
+                  {% if conexao.projeto == projeto %}
+                    {% if conexao.recursos_humanos %}
+                      checked
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+              >   
+            </th>
+            <td>    
+              <a href="{% url 'parceiro_detail' parceiro.id %}"
+              {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}>
+                {{parceiro.user.get_full_name}} 
+              </a>
+            </td>
+            <td>
+              {{parceiro.cargo}} 
+            </td>
+            
+            
+            <td>
+              <a href="mailto:{{parceiro.user.email}}"
+              {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}>
+                &lt;{{parceiro.user.email}}&gt;
+              </a>
+            </td>
+            <td>
+              {% if parceiro.telefone %}
+                {{parceiro.telefone}}
+                {% if parceiro.celular %} 
+                  &nbsp;/&nbsp;
+                  {{parceiro.celular}}
+                {% endif %}
+              {% elif parceiro.celular %}
+                {{parceiro.celular}}
+              {% endif %}
+            </td>
+          </tr>
+        {% endwith %}
+        {% endfor %}
+      </table>
+      </div>
+    {% else %}
+      <p>Não existem parceiros cadastradas para essa organização.</p>
+    {% endif %}
+
+    <input type="submit" value="Seleciona Conexões">
+
+    <p>&nbsp;</p>    
+  </form>
+
+  <script>
+
+    function carrega_pagina(){
+      {% include "tooltip.js" %}
+    }
+    window.onload = carrega_pagina
+
+  </script>
+
+{% endblock %}

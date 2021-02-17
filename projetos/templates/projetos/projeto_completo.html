@@ -80,8 +80,11 @@
   {% if projeto.proposta.departamento %}
     <strong>Informações sobre o departamento na organização :</strong> {{ projeto.proposta.departamento|linebreaks }}
   {% endif %}
+  
+  <strong>conexões:</strong>
+  <small><a href="{% url 'seleciona_conexoes' %}?projeto={{projeto.id}}">&#10133;</a></small>
+  <br>
   {% if conexoes %}
-  <strong>conexões:</strong><br>
     {% for conexao in conexoes %}
       {% if conexao.parceiro.user.is_active %}
         <a class="tabulado" href="{% url 'parceiro_detail' conexao.parceiro.id %}">
@@ -131,6 +134,8 @@
         <br>
       {% endif %}
     {% endfor %}
+  {% else %}
+    Nenhuma conexão específica para esse projeto declarada.
   {% endif %}
 
   {% if projeto.orientador %}

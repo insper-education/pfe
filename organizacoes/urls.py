@@ -50,7 +50,11 @@ urlpatterns = [
          views.projeto_feedback,
          name='projeto_feedback'),
 
-    path('todos_parceiros/',
+    path('seleciona_conexoes/',
+         views.seleciona_conexoes,
+         name='seleciona_conexoes'),
+
+     path('todos_parceiros/',
          views.todos_parceiros,
          name='todos_parceiros'),
 

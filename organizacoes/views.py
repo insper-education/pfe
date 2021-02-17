@@ -9,7 +9,7 @@ import datetime
 import dateutil.parser
 
 from django.conf import settings
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse, HttpResponseNotFound
 
@@ -18,7 +18,7 @@ from users.models import PFEUser, Administrador, Parceiro, Professor, Aluno
 
 from projetos.models import Area, Proposta, Organizacao
 from projetos.models import Projeto, Configuracao, Feedback
-from projetos.models import Anotacao
+from projetos.models import Anotacao, Conexao
 from propostas.support import envia_proposta, preenche_proposta
 
 
@@ -436,3 +436,54 @@ def todos_parceiros(request):
         }
 
     return render(request, 'organizacoes/todos_parceiros.html', context)
+
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def seleciona_conexoes(request):
+    """Exibe todas os parceiros de uma organização específica."""
+
+    # Passado o id do projeto
+    projeto_id = request.GET.get('projeto', None)
+
+    try:
+        projeto = Projeto.objects.get(id=projeto_id)
+    except Projeto.DoesNotExist:
+        return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
+
+    if projeto.organizacao:
+        parceiros = Parceiro.objects.filter(organizacao=projeto.organizacao)
+    else:
+        return HttpResponseNotFound('<h1>Projeto não tem organização definida!</h1>')
+
+    if request.method == 'POST':
+
+        gestor_responsavel = request.POST.getlist("gestor_responsavel")
+        mentor_tecnico = request.POST.getlist("mentor_tecnico")
+        recursos_humanos = request.POST.getlist("recursos_humanos")
+
+        for parceiro in parceiros:
+
+            if str(parceiro.id) in gestor_responsavel or\
+               str(parceiro.id) in mentor_tecnico or\
+               str(parceiro.id) in recursos_humanos:
+                (conexao, _created) = Conexao.objects.get_or_create(parceiro=parceiro,
+                                                                    projeto=projeto)
+
+                conexao.gestor_responsavel = str(parceiro.id) in gestor_responsavel
+                conexao.mentor_tecnico = str(parceiro.id) in mentor_tecnico
+                conexao.recursos_humanos = str(parceiro.id) in recursos_humanos
+                conexao.save()
+
+            else:
+                if Conexao.objects.filter(parceiro=parceiro, projeto=projeto):
+                    Conexao.objects.get(parceiro=parceiro, projeto=projeto).delete()
+
+        return redirect('projeto_completo', projeto_id)
+
+    context = {
+        'projeto': projeto,
+        'parceiros': parceiros,
+        }
+
+    return render(request, 'organizacoes/seleciona_conexoes.html', context)

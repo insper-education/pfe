@@ -53,7 +53,11 @@
     <label><input id="estudantes" onchange="($(this).prop('checked') ? $('.estudantes').show() : $('.estudantes').hide())" type="checkbox" checked /> Estudantes</label>&nbsp;&nbsp;&nbsp;
   </span>
 
-  <br><br>
+  <script>
+    $("#informacoes").detach().appendTo("#lateral");
+  </script>
+
+  <br>
   
   {% comment %} Tabela com todos os projetos selecionados pelo filtro {% endcomment %}
   <div class="atualizar m-2">
