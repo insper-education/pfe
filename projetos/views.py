@@ -225,6 +225,7 @@ def projetos_fechados(request):
 
             projetos_selecionados = []
             prioridade_list = []
+            cooperacoes = []
             conexoes = []
             numero_estudantes = 0
 
@@ -245,10 +246,12 @@ def projetos_fechados(request):
                         else:
                             prioridades.append(0)
                     prioridade_list.append(zip(estudantes_pfe, prioridades))
-                    conexoes.append(Conexao.objects.filter(projeto=projeto,
+                    cooperacoes.append(Conexao.objects.filter(projeto=projeto,
                                                         colaboracao=True))
+                    conexoes.append(Conexao.objects.filter(projeto=projeto,
+                                                        colaboracao=False))
 
-            projetos = zip(projetos_selecionados, prioridade_list, conexoes)
+            projetos = zip(projetos_selecionados, prioridade_list, cooperacoes, conexoes)
 
             context = {
                 'projetos': projetos,
