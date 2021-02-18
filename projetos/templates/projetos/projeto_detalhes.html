@@ -12,6 +12,17 @@
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
 
+
+  <style>
+    #logotipo {
+      max-height:128px;
+      max-width:128px;
+      height:auto;
+      width:auto;
+      float: right;
+    }
+  </style>
+
 {% endblock %}
 
 {% block content %}
@@ -97,6 +108,10 @@
   {% endif %}
 
   <hr>
+
+  {% if projeto.organizacao.logotipo %}
+    <img id="logotipo" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}">
+  {% endif %}
 
   <h4 data-toggle="tooltip" data-html="true" animation="true" title="
      Nome da organização/empresa que está propondo o projeto.

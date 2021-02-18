@@ -6,6 +6,21 @@
 
 {% if proposta.nome_organizacao or proposta.organizacao %}
   <hr>
+
+  <style>
+    #logotipo {
+      max-height:128px;
+      max-width:128px;
+      height:auto;
+      width:auto;
+      float: right;
+    }
+  </style>
+  
+  {% if proposta.organizacao.logotipo %}
+    <img id="logotipo" src="{{ proposta.organizacao.logotipo.url }}" alt="{{ proposta.organizacao.sigla }}">
+  {% endif %}
+
   <h4 data-toggle="tooltip" data-html="true" animation="true" title="
      Nome da organização/empresa que está propondo o projeto.
     ">

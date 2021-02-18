@@ -32,9 +32,21 @@
       top:1px;
     }
   </style>
+
+  <style>
+    #logotipo {
+      max-height:128px;
+      max-width:128px;
+      height:auto;
+      width:auto;
+      float: right;
+    }
+  </style>
+
 {% endblock %}
 
 {% block content %}
+
   {% if projeto.titulo_final %}
     <style>
         .titulo {display: inline;}
@@ -68,6 +80,11 @@
     <a class="text-success" href="../..{{MEDIA_URL}}{{projeto.anexo}}">{{projeto.proposta.anexo}}</a>
   {% endif %}
   <hr>
+
+  
+  {% if projeto.organizacao.logotipo %}
+    <img id="logotipo" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}">
+  {% endif %}
 
   <h3>Organização Parceira: <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a></h3>
   <p><strong>endereço:</strong> <a class="tabulado" href="http://maps.google.com/maps?q={{projeto.organizacao.endereco}}">{{ projeto.organizacao.endereco|linebreaks }}</a></p>
