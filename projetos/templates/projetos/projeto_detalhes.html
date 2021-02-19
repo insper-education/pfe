@@ -44,6 +44,26 @@
     <span class="titulo">Problema na identificação do título<br></span>
   {% endif %}
 
+  <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
+
+  {% if projeto.avancado or projeto.proposta.internacional %}
+    <p><strong>Tipo</strong>:
+
+      {% if projeto.avancado %}
+        <font color="red">PFE Avançado</font>
+      {% endif %}
+
+      {% if projeto.avancado and projeto.proposta.internacional %}
+      /
+      {% endif %}
+
+      {% if projeto.proposta.internacional %}
+        <font color="red">Internacional</font>
+      {% endif %}
+      
+    </p>
+  {% endif %}
+  
   <br>
 
   {% if projeto.proposta.descricao %}

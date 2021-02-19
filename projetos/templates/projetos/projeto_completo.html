@@ -57,9 +57,26 @@
     <span style="display:block;" class="titulo">Título: {{projeto.titulo}}</span>
   {% endif %}
   <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
-  {% if projeto.avancado %}
-    <strong style="color:red"><u>PFE Avançado</u></strong><br>
+
+  {% if projeto.avancado or projeto.proposta.internacional %}
+    <p><strong>Tipo</strong>:
+
+      {% if projeto.avancado %}
+        <font color="red">PFE Avançado</font>
+      {% endif %}
+
+      {% if projeto.avancado and projeto.proposta.internacional %}
+      /
+      {% endif %}
+
+      {% if projeto.proposta.internacional %}
+        <font color="red">Internacional</font>
+      {% endif %}
+      
+    </p>
   {% endif %}
+  
+  
   <a href="{% url 'proposta_completa' projeto.proposta.id %}"><strong>Link para proposta do projeto</strong></a><br>
   <br>
 

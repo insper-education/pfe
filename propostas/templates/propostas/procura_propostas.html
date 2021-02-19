@@ -18,10 +18,15 @@
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" %}
 
-  &nbsp;&nbsp;&nbsp;
+  <span id="informacoes">
+    &nbsp;
+    {% comment %} Seletor do filtro de cursos para a pesquisa {% endcomment %}
+    {% include "cursos.html" %}
+  </span>
 
-  {% comment %} Seletor do filtro de cursos para a pesquisa {% endcomment %}
-  {% include "cursos.html" %}
+  <script>
+    $("#informacoes").detach().appendTo("#lateral");
+  </script>
   
   <br>
 

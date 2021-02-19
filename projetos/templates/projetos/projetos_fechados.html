@@ -103,8 +103,22 @@
           {% endif %}
         </p>
 
-        {% if projeto.avancado %}
-          <p style="margin-left:1em;">Tipo: <font color="red">PFE Avançado</font></p>
+        {% if projeto.avancado or projeto.proposta.internacional %}
+          <p style="margin-left:1em;">Tipo:
+
+            {% if projeto.avancado %}
+              <font color="red">PFE Avançado</font>
+            {% endif %}
+
+            {% if projeto.avancado and projeto.proposta.internacional %}
+            /
+            {% endif %}
+
+            {% if projeto.proposta.internacional %}
+              <font color="red">Internacional</font>
+            {% endif %}
+            
+          </p>
         {% endif %}
 
         <p class="semestre" style="margin-left:1em; display: none;">Semestre: 
