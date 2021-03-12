@@ -18,7 +18,7 @@
 
 {% block content %}
 
-  <span class="titulo">Organizações prospectadas para projetos a partir de {{ano}}.{{semestre}}</span>
+  <span class="titulo">Prospecçõa de Organizações para propostas a partir de {{ano}}.{{semestre}}</span>
 
   <label for="periodo">Período:</label>
   <select id="periodo" class="periodo" data-tableId="OrganizacoesTable">
@@ -27,6 +27,7 @@
     <option value="3">3 mêses</option>
     <option value="6">6 mêses</option>
     <option value="12">12 mêses</option>
+    <option value="9999">tudo</option>
   </select>
 
   <div class="spinner-border spinner-border-sm text-secondary" id="spinner" style="visibility: hidden" role="status" aria-hidden="true">
@@ -73,24 +74,29 @@
           </th>
 
           <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">
+            Interesse
+          </th>
+
+          <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">
             Último<br>Contato
           </th>
           
-          <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">
+          <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">
             Mensagem
           </th>
           
-          <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">
+          <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">
             <a data-toggle="tooltip" data-html="true" animation="true" title="Contando somente as propostas já autorizadas e disponibilizadas para os estudantes aplicarem"><small>Propostas<br>Disponíveis</small>
           </th>
 
-          <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">
+          <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(6)')" style="cursor:pointer" class="text-center">
             <a data-toggle="tooltip" data-html="true" animation="true" title="Contando todas as propostas submetidas pela organização, mesmo aquelas que não estão disponibilizadas para os estudantes aplicarem"><small>Propostas<br>Enviadas</small>
           </th>
         </tr>
+
         {% for organizacao,disponiveis,submetidas,contato in organizacoes_list %} 
           <tr class="item" 
-          {% if contato != '---------' %}
+          {% if contato %}
               style=
               {% if contato.tipo_de_retorno == 0 %}
                 "background-color:lightblue" {% comment %} (0, 'Contactada para enviar proposta'), {% endcomment %}
@@ -115,15 +121,27 @@
                 {{organizacao.nome}}
               </a>
             </td>
+
+            <td style="text-align:center">
+              <small >
+               <span id="{{organizacao.id}}5" onclick="estrelas('{{organizacao.id}}',5)">{% if organizacao.estrelas > 4 %}&#9733;{% else %}&#9734;{% endif %}</span
+              ><span id="{{organizacao.id}}4" onclick="estrelas('{{organizacao.id}}',4)">{% if organizacao.estrelas > 3 %}&#9733;{% else %}&#9734;{% endif %}</span
+              ><span id="{{organizacao.id}}3" onclick="estrelas('{{organizacao.id}}',3)">{% if organizacao.estrelas > 2 %}&#9733;{% else %}&#9734;{% endif %}</span
+              ><span id="{{organizacao.id}}2" onclick="estrelas('{{organizacao.id}}',2)">{% if organizacao.estrelas > 1 %}&#9733;{% else %}&#9734;{% endif %}</span
+              ><span id="{{organizacao.id}}1" onclick="estrelas('{{organizacao.id}}',1)">{% if organizacao.estrelas > 0 %}&#9733;{% else %}&#9734;{% endif %}</span
+              ><span id="{{organizacao.id}}0" onclick="estrelas('{{organizacao.id}}',0)">&nbsp;</span>
+              </small>
+            </td>
+
             <td>
-              {% if contato == '---------' %}
+              {% if not contato %}
                 ---------
               {% else %}
                 {{contato.momento|date:"d/m/Y"}}
               {% endif %}
             </td>
             <td>
-              {% if contato == '---------' %}
+              {% if not contato %}
                 ---------
               {% else %}
                 {{contato.texto}}
@@ -194,6 +212,51 @@
 
   </div>
   <p>&nbsp;</p>
+
+  <script>
+    function estrelas(id, pos) {
+      if(pos > 0) {
+        document.getElementById(id+"1").innerHTML = "&#9733;";
+      } else {
+        document.getElementById(id+"1").innerHTML = "&#9734;";
+      }
+      if(pos > 1) {
+        document.getElementById(id+"2").innerHTML = "&#9733;";
+      } else {
+        document.getElementById(id+"2").innerHTML = "&#9734;";
+      }
+      if(pos > 2) {
+        document.getElementById(id+"3").innerHTML = "&#9733;";
+      } else {
+        document.getElementById(id+"3").innerHTML = "&#9734;";
+      }
+      if(pos > 3) {
+        document.getElementById(id+"4").innerHTML = "&#9733;";
+      } else {
+        document.getElementById(id+"4").innerHTML = "&#9734;";
+      }
+      if(pos > 4) {
+        document.getElementById(id+"5").innerHTML = "&#9733;";
+      } else {
+        document.getElementById(id+"5").innerHTML = "&#9734;";
+      }
+
+      $.ajax({
+        url: '{% url "estrelas" %}',
+        data: {
+          'organizacao': id,
+          'estrelas': pos,
+        },
+        dataType: 'json',
+        success: function (data) {
+          if (data.atualizado) {
+            console.log("Valor atualizado.");
+          }
+        }
+      });
+
+    }
+  </script>
 
   <script type="text/javascript">
 

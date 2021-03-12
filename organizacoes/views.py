@@ -11,7 +11,7 @@ import dateutil.parser
 from django.conf import settings
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 
 from users.support import adianta_semestre
 from users.models import PFEUser, Administrador, Parceiro, Professor, Aluno
@@ -241,8 +241,10 @@ def organizacoes_prospect(request):
         ant = Anotacao.objects.filter(organizacao=organizacao)\
             .order_by("momento").last()
 
-        if ant and (datetime.date.today() - ant.momento.date() <
-                    datetime.timedelta(days=periodo)):
+        if (periodo > 366) or \
+           (ant and (datetime.date.today() - ant.momento.date() <
+                    datetime.timedelta(days=periodo))):
+
             organizacoes.append(organizacao)
             contato.append(ant)
 
@@ -487,3 +489,23 @@ def seleciona_conexoes(request):
         }
 
     return render(request, 'organizacoes/seleciona_conexoes.html', context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def estrelas(request):
+    """Ajax para validar avisos."""
+    organizacao_id = int(request.GET.get('organizacao', None))
+    estrelas = int(request.GET.get('estrelas', 0))
+
+    try:
+        organizacao = Organizacao.objects.get(id=organizacao_id)
+    except Organizacao.DoesNotExist:
+        return HttpResponseNotFound('<h1>Organizacao não encontrada!</h1>')
+    organizacao.estrelas = estrelas
+    organizacao.save()
+
+    data = {
+        'atualizado': True,
+    }
+
+    return JsonResponse(data)

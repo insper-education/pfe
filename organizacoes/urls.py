@@ -58,4 +58,8 @@ urlpatterns = [
          views.todos_parceiros,
          name='todos_parceiros'),
 
+    path('ajax/estrelas/',
+         views.estrelas,
+         name='estrelas'),
+
 ]

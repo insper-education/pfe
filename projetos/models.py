@@ -73,6 +73,9 @@ class Organizacao(models.Model):
     ramo_atividade = models.TextField("Ramo de Atividade", max_length=1000, null=True, blank=True,
                                       help_text='Ramo de atividade da organização parceira')
 
+    estrelas = models.PositiveSmallIntegerField(default=0, help_text='Interesse para o semestre')
+
+
     class Meta:
         ordering = ['sigla']
         verbose_name = 'Organização'
