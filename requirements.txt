@@ -7,3 +7,6 @@ django-debug-toolbar==2.2
 icalendar==4.0.4
 xhtml2pdf==0.2.5
 django-dbbackup==3.3.0
+RabbitMQ==0.2.0
+postgres==3.0.0
+python-dateutil==2.8.1
