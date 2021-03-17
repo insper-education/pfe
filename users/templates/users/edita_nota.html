@@ -6,29 +6,95 @@
 {% endcomment %}
 
 {% block head %}
+  
   {% load static %}
+  
   {% load l10n %}
   {% load dictionary %}
+
   <style>
+
     textarea {
       max-width:100%;
       margin-left: 10px;
       margin-bottom: 18px;
     }
 
-ul {
-  list-style-type: none;
-  padding-left: 10px;
-  margin-bottom: 2px;
-  margin-top: 6px;
-}
+    ul {
+      list-style-type: none;
+      padding-left: 10px;
+      margin-bottom: 2px;
+      margin-top: 6px;
+    }
 
-ul li span {
-  display: inline-block;
-  min-width: 13em;
-}
+    ul li span {
+      display: inline-block;
+      min-width: 13em;
+    }
 
   </style>
+
+  <script>
+    function converteN(nota) {
+      if(nota>=9.5)
+        return "A+"
+      if(nota>=9.0)
+        return "A"
+      if(nota>=8.0)
+        return "B+"
+      if(nota>=7.0)
+        return "B"
+      if(nota>=6.0)
+        return "C+"
+      if(nota>=5.0)
+        return "C"
+      if(nota>=4.0)
+        return "D+"
+      if(nota>=3.0)
+        return "D"
+      if(nota>=2.0)
+        return "D-"
+      return "I"
+    }
+
+    function converteC(conceito) {
+      switch (conceito) {
+        case "A+":
+          nota = 10.00;
+          break;
+        case "A":
+          nota = 9.00;
+          break;
+        case "B+":
+          nota = 8.00;
+          break;
+        case "B":
+          nota = 7.00;
+          break;
+        case "C+":
+          nota = 6.00;
+          break;
+        case "C":
+          nota = 5.00;
+          break;
+        case "D+":
+          nota = 4.00;
+          break;
+        case "D":
+          nota = 3.00;
+          break;
+        case "D-":
+          nota = 2.00;
+          break;
+        case "I":
+          nota = 0.50;
+          break;
+      }
+      return nota;
+    }
+
+  </script>
+
 {% endblock %}
 
 {% block content %}
@@ -45,110 +111,6 @@ ul li span {
 
   <form method="post"> {% csrf_token %}
 
-<script>
-
-  function calculateAvarage()
-  {
-
-
-    soma = 0.0;
-    total = 0.0;
-    {% for objetivo in objetivos %}
-      {% if objetivo.avaliacao_aluno %}
-        nota = parseFloat($("#rii_nota_{{objetivo|truncatechars:7}}").val());
-        peso = parseFloat($("#rii_peso_{{objetivo|truncatechars:7}}").val());
-        if( !isNaN(peso)) {
-          if( !isNaN(nota) ) {
-            soma += ( peso * nota );
-          }
-          total += peso;
-        }
-      {% endif %}
-    {% endfor %}
-    if(total>0){
-      media = soma/total;
-    } else {
-      media = 0;
-    }
-    $("#rii_media").text(media.toFixed(2));
-
-    soma = 0.0;
-    total = 0.0;
-    {% for objetivo in objetivos %}
-      {% if objetivo.avaliacao_grupo %}
-        nota = parseFloat($("#rig_nota_{{objetivo|truncatechars:7}}").val());
-        peso = parseFloat($("#rig_peso_{{objetivo|truncatechars:7}}").val());
-        if( !isNaN(peso)) {
-          if( !isNaN(nota) ) {
-            soma += ( peso * nota );
-          }
-          total += peso;
-        }
-      {% endif %}
-    {% endfor %}
-    if(total>0){
-      media = soma/total;
-    } else {
-      media = 0;
-    }
-    $("#rig_media").text(media.toFixed(2));
-
-
-
-    soma = 0.0;
-    total = 0.0;
-    {% for objetivo in objetivos %}
-      {% if objetivo.avaliacao_aluno %}
-        nota = parseFloat($("#rfi_nota_{{objetivo|truncatechars:7}}").val());
-        peso = parseFloat($("#rfi_peso_{{objetivo|truncatechars:7}}").val());
-        if( !isNaN(peso)) {
-          if( !isNaN(nota) ) {
-            soma += ( peso * nota );
-          }
-          total += peso;
-        }
-      {% endif %}
-    {% endfor %}
-    if(total>0){
-      media = soma/total;
-    } else {
-      media = 0;
-    }
-    $("#rfi_media").text(media.toFixed(2));
-
-
-
-    soma = 0.0;
-    total = 0.0;
-    {% for objetivo in objetivos %}
-      {% if objetivo.avaliacao_grupo %}
-        nota = parseFloat($("#rfg_nota_{{objetivo|truncatechars:7}}").val());
-        peso = parseFloat($("#rfg_peso_{{objetivo|truncatechars:7}}").val());
-        if( !isNaN(peso)) {
-          if( !isNaN(nota) ) {
-            soma += ( peso * nota );
-          }
-          total += peso;
-        }
-      {% endif %}
-    {% endfor %}
-    if(total>0){
-      media = soma/total;
-    } else {
-      media = 0;
-    }
-    $("#rfg_media").text(media.toFixed(2));
-    
-  }
-
-  $(function()
-  {
-      $(".nota").on("change keyup",calculateAvarage)
-      $(".peso").on("change keyup",calculateAvarage)
-  })
-
-</script>
-
     <b>Relatório Intermediário Individual: <span id="rii_media"></span></b>
     <ul>
     {% for objetivo in objetivos reversed %}
@@ -160,17 +122,49 @@ ul li span {
             peso: <input class="peso" id="rii_peso_{{objetivo|truncatechars:7}}" name="rii_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.01" 
             value="{% if peso %}{{peso}}{% else %}3.75{% endif %}" />
           {% endwith %}
+
           &nbsp;&nbsp;
           nota: <input class="nota" id="rii_nota_{{objetivo|truncatechars:7}}" name="rii_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
           value="{% if rii_nota|dict_key:objetivo %}{{rii_nota|dict_key:objetivo}}{% endif %}" />
+
+          &nbsp;&nbsp;
+          conceito:
+          <select class="conc" id="rii_conc_{{objetivo|truncatechars:7}}" name="rii_conc_{{objetivo}}" >
+              <option value="A+">A+</option>
+              <option value="A">A</option>
+              <option value="B+">B+</option>
+              <option value="B">B</option>
+              <option value="C+">C+</option>
+              <option value="C">C</option>
+              <option value="D+">D+</option>
+              <option value="D">D</option>
+              <option value="D-">D-</option>
+              <option value="I">I</option>
+          </select>
+
         </span>
+
+        <script>
+          $(function()
+          {
+              $("#rii_conc_{{objetivo|truncatechars:7}}").on("change",function() {
+                $("#rii_nota_{{objetivo|truncatechars:7}}").val(converteC($(this).val()));
+              });
+              $("#rii_nota_{{objetivo|truncatechars:7}}").on("change",function() {
+                $("#rii_conc_{{objetivo|truncatechars:7}}").val(converteN($(this).val()));
+              });
+          })
+          $("#rii_conc_{{objetivo|truncatechars:7}}").val(converteN($("#rii_nota_{{objetivo|truncatechars:7}}").val()));
+        </script>
+
       {% endif %}
       </li>
     {% endfor %}
     </ul>
     <span style="margin-left: 10px;">Observações:</span><br>
-    <textarea id="rii_obs" name="rii_obs" rows="4" cols="55">{% if rii_obs %}{{rii_obs.observacoes}}{% endif %}</textarea>
+    <textarea id="rii_obs" name="rii_obs" rows="4" cols="72">{% if rii_obs %}{{rii_obs.observacoes}}{% endif %}</textarea>
     <br>
+
 
     <b>Relatório Intermediário de Grupo: <span id="rig_media"></span></b>
     <ul>
@@ -186,13 +180,43 @@ ul li span {
           &nbsp;&nbsp;
           nota: <input class="nota" id="rig_nota_{{objetivo|truncatechars:7}}" name="rig_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
           value="{% if rig_nota|dict_key:objetivo %}{{rig_nota|dict_key:objetivo}}{% endif %}" />
+         
+         &nbsp;&nbsp;
+          conceito:
+          <select class="conc" id="rig_conc_{{objetivo|truncatechars:7}}" name="rig_conc_{{objetivo}}" >
+              <option value="A+">A+</option>
+              <option value="A">A</option>
+              <option value="B+">B+</option>
+              <option value="B">B</option>
+              <option value="C+">C+</option>
+              <option value="C">C</option>
+              <option value="D+">D+</option>
+              <option value="D">D</option>
+              <option value="D-">D-</option>
+              <option value="I">I</option>
+          </select>
+
         </span>
+
+        <script>
+          $(function()
+          {
+              $("#rig_conc_{{objetivo|truncatechars:7}}").on("change",function() {
+                $("#rig_nota_{{objetivo|truncatechars:7}}").val(converteC($(this).val()));
+              });
+              $("#rig_nota_{{objetivo|truncatechars:7}}").on("change",function() {
+                $("#rig_conc_{{objetivo|truncatechars:7}}").val(converteN($(this).val()));
+              });
+          })
+          $("#rig_conc_{{objetivo|truncatechars:7}}").val(converteN($("#rig_nota_{{objetivo|truncatechars:7}}").val()));
+        </script>
+
       {% endif %}
       </li>
     {% endfor %}
     </ul>
     <span style="margin-left: 10px;">Observações:</span><br>
-    <textarea id="rig_obs" name="rig_obs" rows="4" cols="55">{% if rig_obs %}{{rig_obs.observacoes}}{% endif %}</textarea>
+    <textarea id="rig_obs" name="rig_obs" rows="4" cols="72">{% if rig_obs %}{{rig_obs.observacoes}}{% endif %}</textarea>
     <br>
 
 
@@ -210,13 +234,43 @@ ul li span {
           &nbsp;&nbsp;
           nota: <input class="nota" id="rfi_nota_{{objetivo|truncatechars:7}}" name="rfi_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
           value="{% if rfi_nota|dict_key:objetivo %}{{rfi_nota|dict_key:objetivo}}{% endif %}" />
+        
+         &nbsp;&nbsp;
+          conceito:
+          <select class="conc" id="rfi_conc_{{objetivo|truncatechars:7}}" name="rfi_conc_{{objetivo}}" >
+              <option value="A+">A+</option>
+              <option value="A">A</option>
+              <option value="B+">B+</option>
+              <option value="B">B</option>
+              <option value="C+">C+</option>
+              <option value="C">C</option>
+              <option value="D+">D+</option>
+              <option value="D">D</option>
+              <option value="D-">D-</option>
+              <option value="I">I</option>
+          </select>
+
         </span>
+
+        <script>
+          $(function()
+          {
+              $("#rfi_conc_{{objetivo|truncatechars:7}}").on("change",function() {
+                $("#rfi_nota_{{objetivo|truncatechars:7}}").val(converteC($(this).val()));
+              });
+              $("#rfi_nota_{{objetivo|truncatechars:7}}").on("change",function() {
+                $("#rfi_conc_{{objetivo|truncatechars:7}}").val(converteN($(this).val()));
+              });
+          })
+          $("#rfi_conc_{{objetivo|truncatechars:7}}").val(converteN($("#rfi_nota_{{objetivo|truncatechars:7}}").val()));
+        </script>
+
       {% endif %}
       </li>
     {% endfor %}
     </ul>
     <span style="margin-left: 10px;">Observações:</span><br>
-    <textarea id="rfi_obs" name="rfi_obs" rows="4" cols="55">{% if rfi_obs %}{{rfi_obs.observacoes}}{% endif %}</textarea>
+    <textarea id="rfi_obs" name="rfi_obs" rows="4" cols="72">{% if rfi_obs %}{{rfi_obs.observacoes}}{% endif %}</textarea>
     <br>
 
     <b>Relatório Final de Grupo: <span id="rfg_media"></span></b>
@@ -233,13 +287,43 @@ ul li span {
           &nbsp;&nbsp;
           nota: <input class="nota" id="rfg_nota_{{objetivo|truncatechars:7}}" name="rfg_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
           value="{% if rfg_nota|dict_key:objetivo %}{{rfg_nota|dict_key:objetivo}}{% endif %}" />
+         
+          &nbsp;&nbsp;
+          conceito:
+          <select class="conc" id="rfg_conc_{{objetivo|truncatechars:7}}" name="rfg_conc_{{objetivo}}" >
+              <option value="A+">A+</option>
+              <option value="A">A</option>
+              <option value="B+">B+</option>
+              <option value="B">B</option>
+              <option value="C+">C+</option>
+              <option value="C">C</option>
+              <option value="D+">D+</option>
+              <option value="D">D</option>
+              <option value="D-">D-</option>
+              <option value="I">I</option>
+          </select>
+
         </span>
+
+        <script>
+          $(function()
+          {
+              $("#rfg_conc_{{objetivo|truncatechars:7}}").on("change",function() {
+                $("#rfg_nota_{{objetivo|truncatechars:7}}").val(converteC($(this).val()));
+              });
+              $("#rfg_nota_{{objetivo|truncatechars:7}}").on("change",function() {
+                $("#rfg_conc_{{objetivo|truncatechars:7}}").val(converteN($(this).val()));
+              });
+          })
+          $("#rfg_conc_{{objetivo|truncatechars:7}}").val(converteN($("#rfg_nota_{{objetivo|truncatechars:7}}").val()));
+        </script>
+
       {% endif %}
       </li>
     {% endfor %}
     </ul>
     <span style="margin-left: 10px;">Observações:</span><br>
-    <textarea id="rfg_obs" name="rfg_obs" rows="4" cols="55">{% if rfg_obs %}{{rfg_obs.observacoes}}{% endif %}</textarea>
+    <textarea id="rfg_obs" name="rfg_obs" rows="4" cols="72">{% if rfg_obs %}{{rfg_obs.observacoes}}{% endif %}</textarea>
     <br>
 
     <br><br>
@@ -267,7 +351,104 @@ ul li span {
   </script>
 
   <script>
+
+    function calculateAvarage()
+    {
+
+      soma = 0.0;
+      total = 0.0;
+      {% for objetivo in objetivos %}
+        {% if objetivo.avaliacao_aluno %}
+          nota = parseFloat($("#rii_nota_{{objetivo|truncatechars:7}}").val());
+          peso = parseFloat($("#rii_peso_{{objetivo|truncatechars:7}}").val());
+          if( !isNaN(peso)) {
+            if( !isNaN(nota) ) {
+              soma += ( peso * nota );
+            }
+            total += peso;
+          }
+        {% endif %}
+      {% endfor %}
+      if(total>0){
+        media = soma/total;
+      } else {
+        media = 0;
+      }
+      $("#rii_media").text(media.toFixed(2));
+
+      soma = 0.0;
+      total = 0.0;
+      {% for objetivo in objetivos %}
+        {% if objetivo.avaliacao_grupo %}
+          nota = parseFloat($("#rig_nota_{{objetivo|truncatechars:7}}").val());
+          peso = parseFloat($("#rig_peso_{{objetivo|truncatechars:7}}").val());
+          if( !isNaN(peso)) {
+            if( !isNaN(nota) ) {
+              soma += ( peso * nota );
+            }
+            total += peso;
+          }
+        {% endif %}
+      {% endfor %}
+      if(total>0){
+        media = soma/total;
+      } else {
+        media = 0;
+      }
+      $("#rig_media").text(media.toFixed(2));
+
+      soma = 0.0;
+      total = 0.0;
+      {% for objetivo in objetivos %}
+        {% if objetivo.avaliacao_aluno %}
+          nota = parseFloat($("#rfi_nota_{{objetivo|truncatechars:7}}").val());
+          peso = parseFloat($("#rfi_peso_{{objetivo|truncatechars:7}}").val());
+          if( !isNaN(peso)) {
+            if( !isNaN(nota) ) {
+              soma += ( peso * nota );
+            }
+            total += peso;
+          }
+        {% endif %}
+      {% endfor %}
+      if(total>0){
+        media = soma/total;
+      } else {
+        media = 0;
+      }
+      $("#rfi_media").text(media.toFixed(2));
+
+      soma = 0.0;
+      total = 0.0;
+      {% for objetivo in objetivos %}
+        {% if objetivo.avaliacao_grupo %}
+          nota = parseFloat($("#rfg_nota_{{objetivo|truncatechars:7}}").val());
+          peso = parseFloat($("#rfg_peso_{{objetivo|truncatechars:7}}").val());
+          if( !isNaN(peso)) {
+            if( !isNaN(nota) ) {
+              soma += ( peso * nota );
+            }
+            total += peso;
+          }
+        {% endif %}
+      {% endfor %}
+      if(total>0){
+        media = soma/total;
+      } else {
+        media = 0;
+      }
+      $("#rfg_media").text(media.toFixed(2));
+      
+    }
+
+    $(function()
+    {
+        $(".nota").on("change keyup",calculateAvarage)
+        $(".peso").on("change keyup",calculateAvarage)
+    })
+
     $(document).ready(calculateAvarage);
+
   </script>
 
 {% endlocalize %}
