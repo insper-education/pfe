@@ -12,11 +12,14 @@
   <style>
     textarea {
       max-width:100%;
+      margin-left: 10px;
+      margin-bottom: 18px;
     }
 
 ul {
   list-style-type: none;
   padding-left: 10px;
+  margin-bottom: 2px;
 }
 
 ul li span {
@@ -34,8 +37,8 @@ ul li span {
       Edição de Notas
   </span>
 
-  <label for="nome">Nome: </label> {{alocacao.aluno}}<br>
-  <label for="nome">Projeto: </label> {{alocacao.projeto}}<br>
+  <b><label for="nome">Nome: </label></b> {{alocacao.aluno}}<br>
+  <b><label for="nome">Projeto: </label></b> {{alocacao.projeto}}<br>
   <br>
 
   <form method="post"> {% csrf_token %}
@@ -59,6 +62,8 @@ ul li span {
       </li>
     {% endfor %}
     </ul>
+    <span style="margin-left: 10px;">Observações:</span><br>
+    <textarea id="rii_obs" name="rii_obs" rows="4" cols="55">{% if rii_obs %}{{rii_obs.observacoes}}{% endif %}</textarea>
     <br>
 
     <b>Relatório Intermediário de Grupo</b>
@@ -79,6 +84,8 @@ ul li span {
       </li>
     {% endfor %}
     </ul>
+    <span style="margin-left: 10px;">Observações:</span><br>
+    <textarea id="rig_obs" name="rig_obs" rows="4" cols="55">{% if rig_obs %}{{rig_obs.observacoes}}{% endif %}</textarea>
     <br>
 
 
@@ -100,6 +107,8 @@ ul li span {
       </li>
     {% endfor %}
     </ul>
+    <span style="margin-left: 10px;">Observações:</span><br>
+    <textarea id="rfi_obs" name="rfi_obs" rows="4" cols="55">{% if rfi_obs %}{{rfi_obs.observacoes}}{% endif %}</textarea>
     <br>
 
     <b>Relatório Final de Grupo</b>
@@ -120,6 +129,8 @@ ul li span {
       </li>
     {% endfor %}
     </ul>
+    <span style="margin-left: 10px;">Observações:</span><br>
+    <textarea id="rfg_obs" name="rfg_obs" rows="4" cols="55">{% if rfg_obs %}{{rfg_obs.observacoes}}{% endif %}</textarea>
     <br>
 
     <br><br>

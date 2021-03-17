@@ -19,7 +19,7 @@ from django.utils import html
 from django.views import generic
 
 from projetos.models import Configuracao, Projeto, Conexao, ObjetivosDeAprendizagem
-from projetos.models import Banca, Area, Coorientador, Avaliacao2
+from projetos.models import Banca, Area, Coorientador, Avaliacao2, Observacao
 
 from projetos.messages import email
 
@@ -352,17 +352,33 @@ def edita_notas(request, primarykey):
     rii = Avaliacao2.objects.filter(tipo_de_avaliacao=21,
                                     alocacao=alocacao)
 
+    # (21, 'Relatório Intermediário Individual'),
+    rii_obs = Observacao.objects.filter(tipo_de_avaliacao=21,
+                                        alocacao=alocacao)
+
     # (11, 'Relatório Intermediário de Grupo'),
     rig = Avaliacao2.objects.filter(tipo_de_avaliacao=11,
                                     projeto=alocacao.projeto)
+
+    # (21, 'Relatório Intermediário Individual'),
+    rig_obs = Observacao.objects.filter(tipo_de_avaliacao=11,
+                                        projeto=alocacao.projeto)
 
     # (22, 'Relatório Final Individual'),
     rfi = Avaliacao2.objects.filter(tipo_de_avaliacao=22,
                                     alocacao=alocacao)
 
+    # (22, 'Relatório Final Individual'),
+    rfi_obs = Observacao.objects.filter(tipo_de_avaliacao=22,
+                                        alocacao=alocacao)
+
     # (12, 'Relatório Final de Grupo'),
     rfg = Avaliacao2.objects.filter(tipo_de_avaliacao=12,
                                     projeto=alocacao.projeto)
+
+    # (12, 'Relatório Final de Grupo'),
+    rfg_obs = Observacao.objects.filter(tipo_de_avaliacao=12,
+                                        projeto=alocacao.projeto)
 
     # ( 1, 'Banca Intermediária'),
     bi = Avaliacao2.objects.filter(tipo_de_avaliacao=1,
@@ -434,6 +450,52 @@ def edita_notas(request, primarykey):
                     reg.nota = float(nota)
                     reg.save()
 
+        # RII
+        obs = request.POST.get('rii_obs', "")
+        if obs:
+            reg  = rii_obs.last()
+            if not reg:
+                reg = Observacao.create(projeto=alocacao.projeto)
+                reg.tipo_de_avaliacao = 21
+                reg.alocacao = alocacao
+                reg.avaliador = alocacao.projeto.orientador.user
+            reg.observacoes = obs
+            reg.save()
+
+        # RIG
+        obs = request.POST.get('rig_obs', "")
+        if obs:
+            reg  = rig_obs.last()
+            if not reg:
+                reg = Observacao.create(projeto=alocacao.projeto)
+                reg.tipo_de_avaliacao = 11
+                reg.avaliador = alocacao.projeto.orientador.user
+            reg.observacoes = obs
+            reg.save()
+
+        # RFI
+        obs = request.POST.get('rfi_obs', "")
+        if obs:
+            reg  = rfi_obs.last()
+            if not reg:
+                reg = Observacao.create(projeto=alocacao.projeto)
+                reg.tipo_de_avaliacao = 22
+                reg.alocacao = alocacao
+                reg.avaliador = alocacao.projeto.orientador.user
+            reg.observacoes = obs
+            reg.save()
+
+        # RFG
+        obs = request.POST.get('rfg_obs', "")
+        if obs:
+            reg  = rfg_obs.last()
+            if not reg:
+                reg = Observacao.create(projeto=alocacao.projeto)
+                reg.tipo_de_avaliacao = 12
+                reg.avaliador = alocacao.projeto.orientador.user
+            reg.observacoes = obs
+            reg.save()
+
 
         mensagem = "Notas atualizadas<br>\n"
         mensagem = html.urlize(mensagem)
@@ -473,12 +535,16 @@ def edita_notas(request, primarykey):
         'objetivos': objetivos,
         'rii_nota': rii_nota,
         'rii_peso': rii_peso,
+        'rii_obs': rii_obs.last(),
         'rig_nota': rig_nota,
         'rig_peso': rig_peso,
+        'rig_obs': rig_obs.last(),
         'rfi_nota': rfi_nota,
         'rfi_peso': rfi_peso,
+        'rfi_obs': rfi_obs.last(),
         'rfg_nota': rfg_nota,
         'rfg_peso': rfg_peso,
+        'rfg_obs': rfg_obs.last(),
         'bi': bi,
         'bf': bf,
     }
