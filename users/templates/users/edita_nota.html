@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 16 de Março de 2021
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load l10n %}
+  {% load dictionary %}
+  <style>
+    textarea {
+      max-width:100%;
+    }
+
+ul {
+  list-style-type: none;
+  padding-left: 10px;
+}
+
+ul li span {
+  display: inline-block;
+  min-width: 13em;
+}
+
+  </style>
+{% endblock %}
+
+{% block content %}
+{% localize off %}
+
+  <span class="titulo">
+      Edição de Notas
+  </span>
+
+  <label for="nome">Nome: </label> {{alocacao.aluno}}<br>
+  <label for="nome">Projeto: </label> {{alocacao.projeto}}<br>
+  <br>
+
+  <form method="post"> {% csrf_token %}
+
+    <b>Relatório Intermediário Individual</b>
+    <ul>
+    {% for objetivo in objetivos %}
+      <li>
+      {% if objetivo.avaliacao_aluno %}
+        <span>{{objetivo}}</span>
+        <span>
+          {% with peso=rii_peso|dict_key:objetivo %}
+            peso: <input id="rii_peso_{{objetivo}}" name="rii_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.01" 
+            value="{% if peso %}{{peso}}{% else %}9.9{% endif %}" />
+          {% endwith %}
+          &nbsp;&nbsp;
+          nota: <input id="rii_nota_{{objetivo}}" name="rii_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
+          value="{{rii_nota|dict_key:objetivo}}" />          
+        </span>
+      {% endif %}
+      </li>
+    {% endfor %}
+    </ul>
+    <br>
+
+    <b>Relatório Intermediário de Grupo</b>
+    <ul>
+    {% for objetivo in objetivos %}
+      <li>
+      {% if objetivo.avaliacao_grupo %}
+        <span>{{objetivo}}</span>
+        <span>
+          {% with peso=rig_peso|dict_key:objetivo %}
+            peso: <input id="rig_peso_{{objetivo}}" name="rig_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.01" 
+            value="{% if peso %}{{peso}}{% else %}9.9{% endif %}" />
+          {% endwith %}
+          &nbsp;&nbsp;
+          nota: <input id="rig_nota_{{objetivo}}" name="rig_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" value="{{rig_nota|dict_key:objetivo}}" />
+        </span>
+      {% endif %}
+      </li>
+    {% endfor %}
+    </ul>
+    <br>
+
+
+    <b>Relatório Final Individual</b>
+    <ul>
+    {% for objetivo in objetivos %}
+      <li>
+      {% if objetivo.avaliacao_aluno %}
+        <span>{{objetivo}}</span>
+        <span>
+          {% with peso=rfi_peso|dict_key:objetivo %}
+            peso: <input id="rfi_peso_{{objetivo}}" name="rfi_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.01" 
+            value="{% if peso %}{{peso}}{% else %}9.9{% endif %}" />
+          {% endwith %}
+          &nbsp;&nbsp;
+          nota: <input id="rfi_nota_{{objetivo}}" name="rfi_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" value="{{rfi_nota|dict_key:objetivo}}" />
+        </span>
+      {% endif %}
+      </li>
+    {% endfor %}
+    </ul>
+    <br>
+
+    <b>Relatório Final de Grupo</b>
+    <ul>
+    {% for objetivo in objetivos %}
+      <li>
+      {% if objetivo.avaliacao_grupo %}
+        <span>{{objetivo}}</span>
+        <span>
+          {% with peso=rfg_peso|dict_key:objetivo %}
+            peso: <input id="rfg_peso_{{objetivo}}" name="rfg_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.01" 
+            value="{% if peso %}{{peso}}{% else %}9.9{% endif %}" />
+          {% endwith %}
+          &nbsp;&nbsp;
+          nota: <input id="rfg_nota_{{objetivo}}" name="rfg_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" value="{{rfg_nota|dict_key:objetivo}}" />
+        </span>
+      {% endif %}
+      </li>
+    {% endfor %}
+    </ul>
+    <br>
+
+    <br><br>
+    <input type="submit" value="Atualiza Notas">
+    
+  </form>
+
+  <p>&nbsp;</p>
+
+  <script>
+  $('form input').keydown(function (e) {
+    if (e.keyCode == 13) {
+        e.preventDefault();
+        return false;
+    }
+  });
+  </script>
+
+{% endlocalize %}
+{% endblock %}

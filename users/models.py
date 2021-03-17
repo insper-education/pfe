@@ -417,6 +417,36 @@ class Alocacao(models.Model):
         alocacao = cls(projeto=projeto, aluno=estudante)
         return alocacao
 
+    @property
+    def get_media(self):
+        """Retorna média."""
+        edicoes = self.aluno.get_notas
+        edicao = edicoes[str(self.projeto.ano)+"."+str(self.projeto.semestre)]
+
+        nota_final = 0
+        peso_final = 0
+        # for aval, nota, peso in edicao:
+        for _, nota, peso in edicao:
+            peso_final += peso
+            nota_final += nota * peso
+        peso_final = round(peso_final, 1)
+        
+        return  {"media": nota_final, "pesos": peso_final}
+
+        
+
+
+
+
+
+
+    @property
+    def get_notas(self):
+        """Retorna notas do estudante no projeto."""
+        edicoes = self.aluno.get_notas
+        return edicoes[str(self.projeto.ano)+"."+str(self.projeto.semestre)]
+
+
 class Parceiro(models.Model):  # da empresa (não do Insper)
     """Classe de usuários com estatus de Parceiro (pessoal das organizações parceiras)."""
     user = models.OneToOneField(PFEUser, related_name='parceiro', on_delete=models.CASCADE,

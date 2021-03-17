@@ -6,7 +6,9 @@
 {% endcomment %}
 
 {% block head %}
+  {% load static %}
   {% load aderencia_aluno %}
+  {% load dictionary %}
 {% endblock %}
 
 {% block content %}
@@ -57,8 +59,31 @@
             {{alocado.projeto.get_titulo}}
             ({{alocado.projeto.organizacao.nome}})
             { {{alocado.projeto.ano}}.{{alocado.projeto.semestre}} }
-            <br>
             </a>
+            <br>
+            
+            <a style="color:black" href="{% url 'edita_notas' alocado.id %}">
+              {% if alocado.get_notas %}
+                Notas = 
+                {% for aval, nota, peso in alocado.get_notas %}
+                  <span style="background-color:#eef;">{{aval}}({% widthratio peso 1 100 %}%)={{nota|floatformat:1}}</span>
+                {% endfor %}
+                &nbsp;|
+              {% endif %}
+
+              &nbsp;
+              Média = 
+              {% with media=alocado.get_media %}
+                {% if media.pesos != 1 %}
+                  <a style="color:red" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100%">
+                {% endif %}    
+                  {{media.media|floatformat:1}}
+                {% if media.pesos != 1 %}
+                  </a>
+                {% endif %}
+              {% endwith %}
+            </a>
+            <br><br>
         {% endfor %}
     {% endif %}
 

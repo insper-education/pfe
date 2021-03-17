@@ -18,13 +18,14 @@ from django.urls import reverse_lazy
 from django.utils import html
 from django.views import generic
 
-from projetos.models import Configuracao, Projeto, Conexao
-from projetos.models import Banca, Area, Coorientador
+from projetos.models import Configuracao, Projeto, Conexao, ObjetivosDeAprendizagem
+from projetos.models import Banca, Area, Coorientador, Avaliacao2
 
 from projetos.messages import email
 
 from .forms import PFEUserCreationForm
 from .models import PFEUser, Aluno, Professor, Parceiro, Opcao, Administrador
+from .models import Alocacao
 from .support import get_edicoes
 
 
@@ -335,11 +336,151 @@ def alunos_inscritos(request):
 
     return render(request, 'users/alunos_inscritos.html', context=context)
 
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def edita_notas(request, primarykey):
+    """Edita as notas do estudante."""
+
+    try:
+        alocacao = Alocacao.objects.get(pk=primarykey)
+    except Alocacao.DoesNotExist:
+        return HttpResponse("Alocação não encontrada.", status=401)
+
+    objetivos = ObjetivosDeAprendizagem.objects.all()
+
+    # (21, 'Relatório Intermediário Individual'),
+    rii = Avaliacao2.objects.filter(tipo_de_avaliacao=21,
+                                    alocacao=alocacao)
+
+    # (11, 'Relatório Intermediário de Grupo'),
+    rig = Avaliacao2.objects.filter(tipo_de_avaliacao=11,
+                                    projeto=alocacao.projeto)
+
+    # (22, 'Relatório Final Individual'),
+    rfi = Avaliacao2.objects.filter(tipo_de_avaliacao=22,
+                                    alocacao=alocacao)
+
+    # (12, 'Relatório Final de Grupo'),
+    rfg = Avaliacao2.objects.filter(tipo_de_avaliacao=12,
+                                    projeto=alocacao.projeto)
+
+    if request.method == 'POST':
+
+        for objetivo in objetivos:
+
+            # RII
+            if objetivo.avaliacao_aluno:
+                nota = request.POST.get('rii_nota_'+str(objetivo), "")
+                peso = request.POST.get('rii_peso_'+str(objetivo), "")
+                if nota:
+                    (reg, _created)  = rii.get_or_create(objetivo=objetivo)
+                    if _created:
+                        reg.tipo_de_avaliacao = 21
+                        reg.alocacao = alocacao
+                        reg.avaliador = alocacao.projeto.orientador.user
+                        reg.projeto = alocacao.projeto
+                    reg.peso = float(peso)
+                    reg.nota = float(nota)
+                    reg.save()
+
+            # RIG
+            if objetivo.avaliacao_grupo:
+                nota = request.POST.get('rig_nota_'+str(objetivo), "")
+                peso = request.POST.get('rig_peso_'+str(objetivo), "")
+                if nota:
+                    (reg, _created)  = rig.get_or_create(objetivo=objetivo)
+                    if _created:
+                        reg.tipo_de_avaliacao = 11
+                        reg.avaliador = alocacao.projeto.orientador.user
+                        reg.projeto = alocacao.projeto
+                    reg.peso = float(peso)
+                    reg.nota = float(nota)
+                    reg.save()
+
+            # RFI
+            if objetivo.avaliacao_aluno:
+                nota = request.POST.get('rfi_nota_'+str(objetivo), "")
+                peso = request.POST.get('rfi_peso_'+str(objetivo), "")
+                if nota:
+                    (reg, _created)  = rfi.get_or_create(objetivo=objetivo)
+                    if _created:
+                        reg.tipo_de_avaliacao = 22
+                        reg.alocacao = alocacao
+                        reg.avaliador = alocacao.projeto.orientador.user
+                        reg.projeto = alocacao.projeto
+                    reg.peso = float(peso)
+                    reg.nota = float(nota)
+                    reg.save()
+
+            # RFG
+            if objetivo.avaliacao_grupo:
+                nota = request.POST.get('rfg_nota_'+str(objetivo), "")
+                peso = request.POST.get('rfg_peso_'+str(objetivo), "")
+                if nota:
+                    (reg, _created)  = rfg.get_or_create(objetivo=objetivo)
+                    if _created:
+                        reg.tipo_de_avaliacao = 12
+                        reg.avaliador = alocacao.projeto.orientador.user
+                        reg.projeto = alocacao.projeto
+                    reg.peso = float(peso)
+                    reg.nota = float(nota)
+                    reg.save()
+
+
+        mensagem = "Notas atualizadas<br>\n"
+        mensagem = html.urlize(mensagem)
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
+
+    rii_peso = {}
+    rii_nota = {}
+    for registro in rii:
+        rii_nota[registro.objetivo] = registro.nota 
+        rii_peso[registro.objetivo] = registro.peso
+
+    rig_peso = {}
+    rig_nota = {}
+    for registro in rig:
+        rig_nota[registro.objetivo] = registro.nota 
+        rig_peso[registro.objetivo] = registro.peso
+
+    rfi_peso = {}
+    rfi_nota = {}
+    for registro in rfi:
+        rfi_nota[registro.objetivo] = registro.nota 
+        rfi_peso[registro.objetivo] = registro.peso
+
+    rfg_peso = {}
+    rfg_nota = {}
+    for registro in rfg:
+        rfg_nota[registro.objetivo] = registro.nota 
+        rfg_peso[registro.objetivo] = registro.peso
+
+
+    context = {
+        'alocacao': alocacao,
+        'objetivos': objetivos,
+        'rii_nota': rii_nota,
+        'rii_peso': rii_peso,
+        'rig_nota': rig_nota,
+        'rig_peso': rig_peso,
+        'rfi_nota': rfi_nota,
+        'rfi_peso': rfi_peso,
+        'rfg_nota': rfg_nota,
+        'rfg_peso': rfg_peso,
+    }
+
+    return render(request, 'users/edita_nota.html', context=context)
+
+
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')
 def aluno_detail(request, primarykey):
-    """Mostra detalhes sobre o aluno."""
+    """Mostra detalhes sobre o estudante."""
     aluno = Aluno.objects.filter(pk=primarykey).first()
     configuracao = Configuracao.objects.get()
     areas = Area.objects.filter(ativa=True)

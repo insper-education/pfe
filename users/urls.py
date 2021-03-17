@@ -28,6 +28,10 @@ urlpatterns = [
          views.contas_senhas,
          name='contas_senhas'),
 
+    path('edita_notas/<int:primarykey>',
+         views.edita_notas,
+         name='edita_notas'),
+
     path('parceiro_detail/<int:primarykey>',
          views.parceiro_detail,
          name='parceiro_detail'),
