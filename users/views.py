@@ -364,6 +364,14 @@ def edita_notas(request, primarykey):
     rfg = Avaliacao2.objects.filter(tipo_de_avaliacao=12,
                                     projeto=alocacao.projeto)
 
+    # ( 1, 'Banca Intermediária'),
+    bi = Avaliacao2.objects.filter(tipo_de_avaliacao=1,
+                                   projeto=alocacao.projeto)
+
+    # ( 2, 'Banca Final'),
+    bf = Avaliacao2.objects.filter(tipo_de_avaliacao=2,
+                                   projeto=alocacao.projeto)
+
     if request.method == 'POST':
 
         for objetivo in objetivos:
@@ -471,6 +479,8 @@ def edita_notas(request, primarykey):
         'rfi_peso': rfi_peso,
         'rfg_nota': rfg_nota,
         'rfg_peso': rfg_peso,
+        'bi': bi,
+        'bf': bf,
     }
 
     return render(request, 'users/edita_nota.html', context=context)

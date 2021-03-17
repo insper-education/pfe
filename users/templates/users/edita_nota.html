@@ -127,6 +127,14 @@ ul li span {
     
   </form>
 
+  <br><br>
+  {% for b in bi %}
+    {{b}} - {{b.avaliador}} - objetivo: {{b.objetivo}} - peso: {{b.peso}} - nota: {{b.nota}}<br>
+  {% endfor %}
+  {% for b in bf %}
+    {{b}} - {{b.avaliador}} - objetivo: {{b.objetivo}} - peso: {{b.peso}} - nota: {{b.nota}}<br>
+  {% endfor %}
+
   <p>&nbsp;</p>
 
   <script>
