@@ -49,7 +49,7 @@ ul li span {
         <span>
           {% with peso=rii_peso|dict_key:objetivo %}
             peso: <input id="rii_peso_{{objetivo}}" name="rii_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.01" 
-            value="{% if peso %}{{peso}}{% else %}9.9{% endif %}" />
+            value="{% if peso %}{{peso}}{% else %}3.75{% endif %}" />
           {% endwith %}
           &nbsp;&nbsp;
           nota: <input id="rii_nota_{{objetivo}}" name="rii_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
@@ -70,7 +70,7 @@ ul li span {
         <span>
           {% with peso=rig_peso|dict_key:objetivo %}
             peso: <input id="rig_peso_{{objetivo}}" name="rig_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.01" 
-            value="{% if peso %}{{peso}}{% else %}9.9{% endif %}" />
+            value="{% if peso %}{{peso}}{% else %}1.2{% endif %}" />
           {% endwith %}
           &nbsp;&nbsp;
           nota: <input id="rig_nota_{{objetivo}}" name="rig_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" value="{{rig_nota|dict_key:objetivo}}" />
@@ -91,7 +91,7 @@ ul li span {
         <span>
           {% with peso=rfi_peso|dict_key:objetivo %}
             peso: <input id="rfi_peso_{{objetivo}}" name="rfi_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.01" 
-            value="{% if peso %}{{peso}}{% else %}9.9{% endif %}" />
+            value="{% if peso %}{{peso}}{% else %}8.75{% endif %}" />
           {% endwith %}
           &nbsp;&nbsp;
           nota: <input id="rfi_nota_{{objetivo}}" name="rfi_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" value="{{rfi_nota|dict_key:objetivo}}" />
@@ -111,7 +111,7 @@ ul li span {
         <span>
           {% with peso=rfg_peso|dict_key:objetivo %}
             peso: <input id="rfg_peso_{{objetivo}}" name="rfg_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.01" 
-            value="{% if peso %}{{peso}}{% else %}9.9{% endif %}" />
+            value="{% if peso %}{{peso}}{% else %}2.8{% endif %}" />
           {% endwith %}
           &nbsp;&nbsp;
           nota: <input id="rfg_nota_{{objetivo}}" name="rfg_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" value="{{rfg_nota|dict_key:objetivo}}" />
