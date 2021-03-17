@@ -20,6 +20,7 @@ ul {
   list-style-type: none;
   padding-left: 10px;
   margin-bottom: 2px;
+  margin-top: 6px;
 }
 
 ul li span {
@@ -38,25 +39,130 @@ ul li span {
   </span>
 
   <b><label for="nome">Nome: </label></b> {{alocacao.aluno}}<br>
-  <b><label for="nome">Projeto: </label></b> {{alocacao.projeto}}<br>
+  <b><label for="projeto">Projeto: </label></b> {{alocacao.projeto}}<br>
+  <b><label for="orientador">Orientador: </label></b> {{alocacao.projeto.orientador}}<br>
   <br>
 
   <form method="post"> {% csrf_token %}
 
-    <b>Relatório Intermediário Individual</b>
-    <ul>
+<script>
+
+  function calculateAvarage()
+  {
+
+
+    soma = 0.0;
+    total = 0.0;
     {% for objetivo in objetivos %}
+      {% if objetivo.avaliacao_aluno %}
+        nota = parseFloat($("#rii_nota_{{objetivo|truncatechars:7}}").val());
+        peso = parseFloat($("#rii_peso_{{objetivo|truncatechars:7}}").val());
+        if( !isNaN(peso)) {
+          if( !isNaN(nota) ) {
+            soma += ( peso * nota );
+          }
+          total += peso;
+        }
+      {% endif %}
+    {% endfor %}
+    if(total>0){
+      media = soma/total;
+    } else {
+      media = 0;
+    }
+    $("#rii_media").text(media.toFixed(2));
+
+    soma = 0.0;
+    total = 0.0;
+    {% for objetivo in objetivos %}
+      {% if objetivo.avaliacao_grupo %}
+        nota = parseFloat($("#rig_nota_{{objetivo|truncatechars:7}}").val());
+        peso = parseFloat($("#rig_peso_{{objetivo|truncatechars:7}}").val());
+        if( !isNaN(peso)) {
+          if( !isNaN(nota) ) {
+            soma += ( peso * nota );
+          }
+          total += peso;
+        }
+      {% endif %}
+    {% endfor %}
+    if(total>0){
+      media = soma/total;
+    } else {
+      media = 0;
+    }
+    $("#rig_media").text(media.toFixed(2));
+
+
+
+    soma = 0.0;
+    total = 0.0;
+    {% for objetivo in objetivos %}
+      {% if objetivo.avaliacao_aluno %}
+        nota = parseFloat($("#rfi_nota_{{objetivo|truncatechars:7}}").val());
+        peso = parseFloat($("#rfi_peso_{{objetivo|truncatechars:7}}").val());
+        if( !isNaN(peso)) {
+          if( !isNaN(nota) ) {
+            soma += ( peso * nota );
+          }
+          total += peso;
+        }
+      {% endif %}
+    {% endfor %}
+    if(total>0){
+      media = soma/total;
+    } else {
+      media = 0;
+    }
+    $("#rfi_media").text(media.toFixed(2));
+
+
+
+    soma = 0.0;
+    total = 0.0;
+    {% for objetivo in objetivos %}
+      {% if objetivo.avaliacao_grupo %}
+        nota = parseFloat($("#rfg_nota_{{objetivo|truncatechars:7}}").val());
+        peso = parseFloat($("#rfg_peso_{{objetivo|truncatechars:7}}").val());
+        if( !isNaN(peso)) {
+          if( !isNaN(nota) ) {
+            soma += ( peso * nota );
+          }
+          total += peso;
+        }
+      {% endif %}
+    {% endfor %}
+    if(total>0){
+      media = soma/total;
+    } else {
+      media = 0;
+    }
+    $("#rfg_media").text(media.toFixed(2));
+    
+  }
+
+  $(function()
+  {
+      $(".nota").on("change keyup",calculateAvarage)
+      $(".peso").on("change keyup",calculateAvarage)
+  })
+
+</script>
+
+    <b>Relatório Intermediário Individual: <span id="rii_media"></span></b>
+    <ul>
+    {% for objetivo in objetivos reversed %}
       <li>
       {% if objetivo.avaliacao_aluno %}
         <span>{{objetivo}}</span>
         <span>
           {% with peso=rii_peso|dict_key:objetivo %}
-            peso: <input id="rii_peso_{{objetivo}}" name="rii_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.01" 
+            peso: <input class="peso" id="rii_peso_{{objetivo|truncatechars:7}}" name="rii_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.01" 
             value="{% if peso %}{{peso}}{% else %}3.75{% endif %}" />
           {% endwith %}
           &nbsp;&nbsp;
-          nota: <input id="rii_nota_{{objetivo}}" name="rii_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
-          value="{{rii_nota|dict_key:objetivo}}" />          
+          nota: <input class="nota" id="rii_nota_{{objetivo|truncatechars:7}}" name="rii_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
+          value="{% if rii_nota|dict_key:objetivo %}{{rii_nota|dict_key:objetivo}}{% endif %}" />
         </span>
       {% endif %}
       </li>
@@ -66,19 +172,20 @@ ul li span {
     <textarea id="rii_obs" name="rii_obs" rows="4" cols="55">{% if rii_obs %}{{rii_obs.observacoes}}{% endif %}</textarea>
     <br>
 
-    <b>Relatório Intermediário de Grupo</b>
+    <b>Relatório Intermediário de Grupo: <span id="rig_media"></span></b>
     <ul>
-    {% for objetivo in objetivos %}
+    {% for objetivo in objetivos reversed %}
       <li>
       {% if objetivo.avaliacao_grupo %}
         <span>{{objetivo}}</span>
         <span>
           {% with peso=rig_peso|dict_key:objetivo %}
-            peso: <input id="rig_peso_{{objetivo}}" name="rig_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.01" 
+            peso: <input class="peso" id="rig_peso_{{objetivo|truncatechars:7}}" name="rig_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.01" 
             value="{% if peso %}{{peso}}{% else %}1.2{% endif %}" />
           {% endwith %}
           &nbsp;&nbsp;
-          nota: <input id="rig_nota_{{objetivo}}" name="rig_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" value="{{rig_nota|dict_key:objetivo}}" />
+          nota: <input class="nota" id="rig_nota_{{objetivo|truncatechars:7}}" name="rig_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
+          value="{% if rig_nota|dict_key:objetivo %}{{rig_nota|dict_key:objetivo}}{% endif %}" />
         </span>
       {% endif %}
       </li>
@@ -89,19 +196,20 @@ ul li span {
     <br>
 
 
-    <b>Relatório Final Individual</b>
+    <b>Relatório Final Individual: <span id="rfi_media"></span></b>
     <ul>
-    {% for objetivo in objetivos %}
+    {% for objetivo in objetivos reversed %}
       <li>
       {% if objetivo.avaliacao_aluno %}
         <span>{{objetivo}}</span>
         <span>
           {% with peso=rfi_peso|dict_key:objetivo %}
-            peso: <input id="rfi_peso_{{objetivo}}" name="rfi_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.01" 
+            peso: <input class="peso" id="rfi_peso_{{objetivo|truncatechars:7}}" name="rfi_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.01" 
             value="{% if peso %}{{peso}}{% else %}8.75{% endif %}" />
           {% endwith %}
           &nbsp;&nbsp;
-          nota: <input id="rfi_nota_{{objetivo}}" name="rfi_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" value="{{rfi_nota|dict_key:objetivo}}" />
+          nota: <input class="nota" id="rfi_nota_{{objetivo|truncatechars:7}}" name="rfi_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
+          value="{% if rfi_nota|dict_key:objetivo %}{{rfi_nota|dict_key:objetivo}}{% endif %}" />
         </span>
       {% endif %}
       </li>
@@ -111,19 +219,20 @@ ul li span {
     <textarea id="rfi_obs" name="rfi_obs" rows="4" cols="55">{% if rfi_obs %}{{rfi_obs.observacoes}}{% endif %}</textarea>
     <br>
 
-    <b>Relatório Final de Grupo</b>
+    <b>Relatório Final de Grupo: <span id="rfg_media"></span></b>
     <ul>
-    {% for objetivo in objetivos %}
+    {% for objetivo in objetivos reversed %}
       <li>
       {% if objetivo.avaliacao_grupo %}
         <span>{{objetivo}}</span>
         <span>
           {% with peso=rfg_peso|dict_key:objetivo %}
-            peso: <input id="rfg_peso_{{objetivo}}" name="rfg_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.01" 
+            peso: <input class="peso" id="rfg_peso_{{objetivo|truncatechars:7}}" name="rfg_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.01" 
             value="{% if peso %}{{peso}}{% else %}2.8{% endif %}" />
           {% endwith %}
           &nbsp;&nbsp;
-          nota: <input id="rfg_nota_{{objetivo}}" name="rfg_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" value="{{rfg_nota|dict_key:objetivo}}" />
+          nota: <input class="nota" id="rfg_nota_{{objetivo|truncatechars:7}}" name="rfg_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
+          value="{% if rfg_nota|dict_key:objetivo %}{{rfg_nota|dict_key:objetivo}}{% endif %}" />
         </span>
       {% endif %}
       </li>
@@ -155,6 +264,10 @@ ul li span {
         return false;
     }
   });
+  </script>
+
+  <script>
+    $(document).ready(calculateAvarage);
   </script>
 
 {% endlocalize %}
