@@ -396,12 +396,13 @@ def edita_notas(request, primarykey):
             if objetivo.avaliacao_aluno:
                 nota = request.POST.get('rii_nota_'+str(objetivo), "")
                 peso = request.POST.get('rii_peso_'+str(objetivo), "")
-                if nota:
+                if nota != "":
                     (reg, _created)  = rii.get_or_create(objetivo=objetivo)
                     if _created:
                         reg.tipo_de_avaliacao = 21
                         reg.alocacao = alocacao
-                        reg.avaliador = alocacao.projeto.orientador.user
+                        if alocacao.projeto.orientador:
+                            reg.avaliador = alocacao.projeto.orientador.user
                         reg.projeto = alocacao.projeto
                     reg.peso = float(peso)
                     reg.nota = float(nota)
@@ -411,11 +412,12 @@ def edita_notas(request, primarykey):
             if objetivo.avaliacao_grupo:
                 nota = request.POST.get('rig_nota_'+str(objetivo), "")
                 peso = request.POST.get('rig_peso_'+str(objetivo), "")
-                if nota:
+                if nota != "":
                     (reg, _created)  = rig.get_or_create(objetivo=objetivo)
                     if _created:
                         reg.tipo_de_avaliacao = 11
-                        reg.avaliador = alocacao.projeto.orientador.user
+                        if alocacao.projeto.orientador:
+                            reg.avaliador = alocacao.projeto.orientador.user
                         reg.projeto = alocacao.projeto
                     reg.peso = float(peso)
                     reg.nota = float(nota)
@@ -425,12 +427,13 @@ def edita_notas(request, primarykey):
             if objetivo.avaliacao_aluno:
                 nota = request.POST.get('rfi_nota_'+str(objetivo), "")
                 peso = request.POST.get('rfi_peso_'+str(objetivo), "")
-                if nota:
+                if nota != "":
                     (reg, _created)  = rfi.get_or_create(objetivo=objetivo)
                     if _created:
                         reg.tipo_de_avaliacao = 22
                         reg.alocacao = alocacao
-                        reg.avaliador = alocacao.projeto.orientador.user
+                        if alocacao.projeto.orientador:
+                            reg.avaliador = alocacao.projeto.orientador.user
                         reg.projeto = alocacao.projeto
                     reg.peso = float(peso)
                     reg.nota = float(nota)
@@ -440,11 +443,12 @@ def edita_notas(request, primarykey):
             if objetivo.avaliacao_grupo:
                 nota = request.POST.get('rfg_nota_'+str(objetivo), "")
                 peso = request.POST.get('rfg_peso_'+str(objetivo), "")
-                if nota:
+                if nota != "":
                     (reg, _created)  = rfg.get_or_create(objetivo=objetivo)
                     if _created:
                         reg.tipo_de_avaliacao = 12
-                        reg.avaliador = alocacao.projeto.orientador.user
+                        if alocacao.projeto.orientador:
+                            reg.avaliador = alocacao.projeto.orientador.user
                         reg.projeto = alocacao.projeto
                     reg.peso = float(peso)
                     reg.nota = float(nota)
@@ -458,7 +462,8 @@ def edita_notas(request, primarykey):
                 reg = Observacao.create(projeto=alocacao.projeto)
                 reg.tipo_de_avaliacao = 21
                 reg.alocacao = alocacao
-                reg.avaliador = alocacao.projeto.orientador.user
+                if alocacao.projeto.orientador:
+                    reg.avaliador = alocacao.projeto.orientador.user
             reg.observacoes = obs
             reg.save()
 
@@ -469,7 +474,8 @@ def edita_notas(request, primarykey):
             if not reg:
                 reg = Observacao.create(projeto=alocacao.projeto)
                 reg.tipo_de_avaliacao = 11
-                reg.avaliador = alocacao.projeto.orientador.user
+                if alocacao.projeto.orientador:
+                    reg.avaliador = alocacao.projeto.orientador.user
             reg.observacoes = obs
             reg.save()
 
@@ -481,7 +487,8 @@ def edita_notas(request, primarykey):
                 reg = Observacao.create(projeto=alocacao.projeto)
                 reg.tipo_de_avaliacao = 22
                 reg.alocacao = alocacao
-                reg.avaliador = alocacao.projeto.orientador.user
+                if alocacao.projeto.orientador:
+                    reg.avaliador = alocacao.projeto.orientador.user
             reg.observacoes = obs
             reg.save()
 
@@ -492,7 +499,8 @@ def edita_notas(request, primarykey):
             if not reg:
                 reg = Observacao.create(projeto=alocacao.projeto)
                 reg.tipo_de_avaliacao = 12
-                reg.avaliador = alocacao.projeto.orientador.user
+                if alocacao.projeto.orientador:
+                    reg.avaliador = alocacao.projeto.orientador.user
             reg.observacoes = obs
             reg.save()
 

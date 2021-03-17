@@ -36,6 +36,8 @@
 
   <script>
     function converteN(nota) {
+      if(nota=="")
+        return "invalid"
       if(nota>=9.5)
         return "A+"
       if(nota>=9.0)
@@ -54,7 +56,8 @@
         return "D"
       if(nota>=2.0)
         return "D-"
-      return "I"
+      if(nota>=0.0)
+        return "I"
     }
 
     function converteC(conceito) {
@@ -125,7 +128,7 @@
 
           &nbsp;&nbsp;
           nota: <input class="nota" id="rii_nota_{{objetivo|truncatechars:7}}" name="rii_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
-          value="{% if rii_nota|dict_key:objetivo %}{{rii_nota|dict_key:objetivo}}{% endif %}" />
+          value="{% if rii_nota|dict_key:objetivo != None %}{{rii_nota|dict_key:objetivo}}{% endif %}" />
 
           &nbsp;&nbsp;
           conceito:
@@ -179,7 +182,7 @@
           {% endwith %}
           &nbsp;&nbsp;
           nota: <input class="nota" id="rig_nota_{{objetivo|truncatechars:7}}" name="rig_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
-          value="{% if rig_nota|dict_key:objetivo %}{{rig_nota|dict_key:objetivo}}{% endif %}" />
+          value="{% if rig_nota|dict_key:objetivo != None %}{{rig_nota|dict_key:objetivo}}{% endif %}" />
          
          &nbsp;&nbsp;
           conceito:
@@ -233,7 +236,7 @@
           {% endwith %}
           &nbsp;&nbsp;
           nota: <input class="nota" id="rfi_nota_{{objetivo|truncatechars:7}}" name="rfi_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
-          value="{% if rfi_nota|dict_key:objetivo %}{{rfi_nota|dict_key:objetivo}}{% endif %}" />
+          value="{% if rfi_nota|dict_key:objetivo != None %}{{rfi_nota|dict_key:objetivo}}{% endif %}" />
         
          &nbsp;&nbsp;
           conceito:
@@ -286,7 +289,7 @@
           {% endwith %}
           &nbsp;&nbsp;
           nota: <input class="nota" id="rfg_nota_{{objetivo|truncatechars:7}}" name="rfg_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
-          value="{% if rfg_nota|dict_key:objetivo %}{{rfg_nota|dict_key:objetivo}}{% endif %}" />
+          value="{% if rfg_nota|dict_key:objetivo != None %}{{rfg_nota|dict_key:objetivo}}{% endif %}" />
          
           &nbsp;&nbsp;
           conceito:
