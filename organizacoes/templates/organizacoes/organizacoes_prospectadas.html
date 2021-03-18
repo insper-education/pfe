@@ -112,6 +112,8 @@
                 "background-color:#c269d8" {% comment %} (5, 'Notificamos que não conseguimos montar projeto'),
               {% elif contato.tipo_de_retorno == 6 %}
                 "background-color:green" {% comment %} (6, 'Documentação fechada para projeto'), {% endcomment %}
+              {% elif contato.tipo_de_retorno == 7 %}
+                "background-color:lightyellow" {% comment %} (7, 'Envio de Relatório Final'), {% endcomment %}
               {% endif %}
               data-type="{{contato.tipo_de_retorno}}"
           {% endif %}
