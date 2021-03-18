@@ -20,14 +20,19 @@
 
 {% block content %}
 
+    <span class="titulo">Gráficos do PFE</span>
+
     {% comment %} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {% endcomment %}
     <label for="filter"><b>Edição:</b></label>
     <select class="filter" data-tableId="projetos">
+        <option value="2020.2" selected>2020.2</option>
+        {% comment %}
         <option value="todas">todas</option>
         {% for loop in loop_anos %}
             <option value="{{loop}}.2" {% if ano == loop and semestre == 2 %}selected{% endif %}>{{loop}}.2</option>
             <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
         {% endfor %}
+        {% endcomment %}
     </select>
 
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -40,113 +45,30 @@
         <option value="mecânica" {% if curso == "mecânica" %}selected{% endif %}>mecânica</option>
     </select>
 
-    <br>
-
     <div class="2areas2">
-        <br>
-        <span class="titulo">Gráficos do PFE</span>
 
-        {% comment %} 
-        {% for estudante in estudantes %}
-            {{estudante}}
-        {% endfor %}
-        {% endcomment %}
+        {% comment %} Definindo do tamanho dos objetos {% endcomment %}
+        <div id="canvas-holder"> 
 
-    <div id="canvas-holder">
-        <canvas id="bar-projetos"></canvas>
-        <br><br>
-        <canvas id="chart-generos"></canvas>
-        <br><br>
-        <canvas id="doughnut-situacao"></canvas>
-        <br><br>
-        <canvas id="horizontal-objetivos"></canvas>
-        <br><br>
-        <canvas id="chart-medias"></canvas>
-    </div>
+            <canvas id="doughnut-situacao"></canvas>
+            <br><br>
+            <canvas id="horizontal-objetivos"></canvas>
+            <br><br>
+            <canvas id="chart-medias"></canvas>
+        </div>
 
-  <script>
+        <script>
     
-    var config_projetos = {
-        type: 'bar',
-        data: {
-        labels: [
-            {% for loop in loop_anos %}
-            "{{loop}}.2",
-            "{{loop|add:1}}.1",
-            {% endfor %}
-            ],
-        datasets: [
-            {
-            label: "propostas",
-            backgroundColor: "#5e8ea2",
-            data: [
-                    {% for num in num_propostas %}
-                        {{num}},
-                    {% endfor %}
-                ]
-            }, 
-            {
-            label: "projetos",
-            backgroundColor: "#353ecd",
-            data: [
-                    {% for num in num_projetos %}
-                        {{num}},
-                    {% endfor %}
-                ]
-            }, 
-        ]
-        },
-        options: {
-        legend: { display: true },
-        title: {
-            display: true,
-            text: 'Propostas e Projetos'
-        }
-        }
-    };
-
-    var config_generos = {
-      type: 'pie',
-      data: {
-        datasets: [{
-          data: [
-            {{ num_alunos_masculino }},
-            {{ num_alunos_feminino }},
-          ],
-          backgroundColor: [
-            'rgb(93, 173, 226)',
-            'rgb(175, 122, 197)',
-          ],
-          label: 'Proporção de cursos entre alunos'
-        }],
-        labels: [
-          'Masculino [{% widthratio num_alunos_masculino num_alunos 100 %}%]',
-          'Feminino [{% widthratio num_alunos_feminino num_alunos 100 %}%]',
-        ]
-      },
-      options: {
-        responsive: true,
-        title: {
-          display: true,
-          text: 'Proporção de gêneros entre alunos',
-          position: 'top'
-        },
-        legend: {
-          display: true,
-          position: "bottom",
-        }
-      }
-    };
     
     var config_situacao = {
         type: 'doughnut',
         data: {
-        labels: ["Ideal(nota>7)", "Regular(7>nota>5)", "Inferior(5>nota)"],
+        labels: ["Ideal(nota>=7)", "Regular(7>nota>=6)", "Inferior(6>nota)"],
         datasets: [
             {
-            label: "Population (millions)",
+            label: "Estudantes",
             backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-            data: [13, 2, 4]
+            data: [{{notas.ideal}},{{notas.regular}},{{notas.inferior}}]
             }
         ]
         },
@@ -252,13 +174,6 @@
 
 
     function carrega_semestre() {  
-      // Chart da quantidade de projetos
-      var bar_projetos = document.getElementById('bar-projetos').getContext('2d');
-      window.projeto = new Chart(bar_projetos, config_projetos);
-
-      // Chart da proporção de alunos por gênero
-      var chart_generos = document.getElementById('chart-generos').getContext('2d');
-      window.generos = new Chart(chart_generos, config_generos);
 
       // Chart da situação dos alunos por faixa de notas
       var doughnut_situacao = document.getElementById('doughnut-situacao').getContext('2d');

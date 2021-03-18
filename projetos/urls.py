@@ -22,15 +22,16 @@ urlpatterns = [
          views.index,
          name='index'),
 
-    # path('index_projetos/',
-    # views.index_projetos,
-    # name='index_projetos'),
     # pagina inicial de projs.
+    path('index_projetos/',
+        views.index_projetos,
+        name='index_projetos'),
+        
 
     # simplificação atual
-    path('index_projetos/',
-         views.projetos_fechados,
-         name='index_projetos'),
+    #     path('index_projetos/',
+    #          views.projetos_fechados,
+    #          name='index_projetos'),
 
     path('carrega_bancos/',
          views.carrega_bancos,
@@ -96,6 +97,11 @@ urlpatterns = [
     path('projetos_lista',
          views.projetos_lista,
          name='projetos_lista'),
+
+    path('projetos_vs_propostas',
+         views.projetos_vs_propostas,
+         name='projetos_vs_propostas'),
+
 
     path('reembolso_pedir/',
          views.reembolso_pedir,

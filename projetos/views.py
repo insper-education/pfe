@@ -18,7 +18,7 @@ from django.http import Http404, HttpResponse, HttpResponseNotFound
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 
-from users.models import PFEUser, Aluno, Professor, Opcao
+from users.models import PFEUser, Aluno, Professor, Opcao, Alocacao
 
 from users.support import get_edicoes
 
@@ -700,15 +700,12 @@ def validate_aviso(request):
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
-def graficos(request):
+def projetos_vs_propostas(request):
     """Mostra graficos das evoluções do PFE."""
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
         return HttpResponse("Falha na configuracao do sistema.", status=401)
-
-    periodo = ""
-    estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
 
     edicoes = range(2018, configuracao.ano+1)
 
@@ -740,6 +737,29 @@ def graficos(request):
             count()
         num_projetos.append(projetos)
 
+    context = {
+        "num_propostas": num_propostas,
+        "num_projetos": num_projetos,
+        'loop_anos': edicoes,
+    }
+
+    return render(request, 'projetos/projetos_vs_propostas.html', context)
+
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def graficos(request):
+    """Mostra graficos das evoluções do PFE."""
+    try:
+        configuracao = Configuracao.objects.get()
+    except Configuracao.DoesNotExist:
+        return HttpResponse("Falha na configuracao do sistema.", status=401)
+
+    periodo = ""
+    estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
+
+    edicoes = range(2018, configuracao.ano+1)
+
     if request.is_ajax():
         if 'topicId' in request.POST:
             if request.POST['topicId'] != 'todas':
@@ -754,9 +774,18 @@ def graficos(request):
     num_alunos_masculino = estudantes.filter(user__genero='M').count()  # Estudantes masculino
     num_alunos_feminino = estudantes.filter(user__genero='F').count()  # Estudantes feminino
 
+
+    notas_semestre = Alocacao.objects.filter(projeto__ano=2020, projeto__semestre=2)
+    notas_lista = [x.get_media for x in notas_semestre]
+    
+    notas_validas = list(filter(lambda d: d['pesos'] == 1.0, notas_lista))
+
+    notas = {}
+    notas["ideal"] = len(list(filter(lambda d: d['media'] >= 7.0, notas_validas)))
+    notas["regular"] = len(list(filter(lambda d: 7 > d['media'] >= 6.0, notas_validas)))
+    notas["inferior"] = len(list(filter(lambda d: d['media'] < 6.0, notas_validas)))
+
     context = {
-        "num_propostas": num_propostas,
-        "num_projetos": num_projetos,
         "num_alunos": num_alunos,
         "num_alunos_feminino": num_alunos_feminino,
         "num_alunos_masculino": num_alunos_masculino,
@@ -764,6 +793,7 @@ def graficos(request):
         'ano': configuracao.ano,
         'semestre': configuracao.semestre,
         'loop_anos': edicoes,
+        'notas': notas,
     }
 
     return render(request, 'projetos/graficos.html', context)
