@@ -18,17 +18,19 @@
       <label for="data_hora">Data e Hora: </label> <input id="data_hora" type="datetime-local" name="data_hora" value="{{data_hora|date:'Y-m-d\TH:i'}}"><br>
       <br>
       Anotação:<br>
-      <textarea name="anotacao" rows="5" cols="64" required></textarea>
+      <textarea name="anotacao" rows="5" cols="64" required>{% if anotacao %}{{anotacao.texto}}{% endif %}</textarea>
       <br><br>
       <label for="contato">Posição do contato:</label>
       <select id="contato" name="contato" required>
-        <option disabled selected value> -- selecione tipo de contato -- </option>
+        {% if not anotacao %}
+          <option disabled selected value> -- selecione tipo de contato -- </option>
+        {% endif %}
         {% for retorno in TIPO_DE_RETORNO %}
-          <option value="{{retorno.0}}">{{retorno.1}}</option>
+          <option value="{{retorno.0}}" {% if anotacao and anotacao.tipo_de_retorno == retorno.0 %}selected{% endif %} >{{retorno.1}}</option>
         {% endfor %}
       </select>
       <br><br>
-      <button type="submit">Criar anotação</button>
+      <button type="submit">{% if anotacao %}Editar{% else %}Criar{% endif %} anotação</button>
       <p>&nbsp;</p>
     </form>
   {% else %}

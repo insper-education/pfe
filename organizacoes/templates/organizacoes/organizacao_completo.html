@@ -175,10 +175,12 @@
   {% endif %}
   
   <hr>
-  <h3>Anotações <small><a href="{% url 'cria_anotacao' organizacao.id %}">&#10133;</a></small></h3>
+  <h3>Anotações <small><a href="{% url 'anotacao' organizacao.id %}">&#10133;</a></small></h3>
   {% if organizacao.anotacao_set.all %}
     {% for anotacao in organizacao.anotacao_set.all|dictsortreversed:"momento" %}
-      {{anotacao.autor.get_full_name}} [{{anotacao.momento.date}}] : {{anotacao.texto}}<br>
+      <a href="{% url 'anotacao' organizacao.id anotacao.id %}">
+        {{anotacao.autor.get_full_name}} [{{anotacao.momento.date}}] : {{anotacao.texto}}<br>
+      </a>
     {% endfor %}
   {% else %}
     Ainda não existem anotações para essa organização.

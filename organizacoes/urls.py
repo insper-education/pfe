@@ -18,9 +18,13 @@ urlpatterns = [
          views.index_organizacoes,
          name='index_organizacoes'),
 
-    path('cria_anotacao/<str:login>',
-         views.cria_anotacao,
-         name='cria_anotacao'),
+    path('anotacao/<str:organizacao_id>',
+         views.anotacao,
+         name='anotacao'),
+
+    path('anotacao/<str:organizacao_id>/<str:anotacao_id>/',
+         views.anotacao,
+         name='anotacao'),
 
     path('organizacoes_lista/',
          views.organizacoes_lista,

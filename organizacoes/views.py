@@ -31,16 +31,23 @@ def index_organizacoes(request):
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
-def cria_anotacao(request, login):  # acertar isso para pk
+def anotacao(request, organizacao_id, anotacao_id=None):  # acertar isso para pk
     """Cria um anotação para uma organização parceira."""
     try:
-        organizacao = Organizacao.objects.get(id=login)
+        organizacao = Organizacao.objects.get(id=organizacao_id)
     except Proposta.DoesNotExist:
         return HttpResponseNotFound('<h1>Organização não encontrada!</h1>')
 
     if request.method == 'POST':
         if 'anotacao' in request.POST:
-            anotacao = Anotacao.create(organizacao)
+
+            if anotacao_id:
+                try:
+                    anotacao = Anotacao.objects.get(id=anotacao_id)
+                except Anotacao.DoesNotExist:
+                    return HttpResponseNotFound('<h1>Anotação não encontrada!</h1>')
+            else:
+                anotacao = Anotacao.create(organizacao)
 
             try:
                 anotacao.autor = PFEUser.objects.get(pk=request.user.pk)
@@ -57,26 +64,37 @@ def cria_anotacao(request, login):  # acertar isso para pk
                 except (ValueError, OverflowError):
                     anotacao.momento = datetime.datetime.now()
             anotacao.save()
-            mensagem = "Anotação criada."
+            mensagem = "Anotação atualizada."
         else:
             mensagem = "<h3 style='color:red'>Anotação não criada.<h3>"
 
         context = {
             "area_principal": True,
-            "organizacao_completo": login,
+            "organizacao_completo": organizacao_id,
             "organizacoes_lista": True,
             "organizacoes_prospectadas": True,
             "mensagem": mensagem,
         }
         return render(request, 'generic.html', context=context)
     else:
+
+        anotacao = None
+
+        if anotacao_id:
+            try:
+                anotacao = Anotacao.objects.get(id=anotacao_id)
+            except Anotacao.DoesNotExist:
+                return HttpResponseNotFound('<h1>Anotação não encontrada!</h1>')
+
         context = {
             'organizacao': organizacao,
             'TIPO_DE_RETORNO': Anotacao.TIPO_DE_RETORNO,
             'data_hora': datetime.datetime.now(),
+            'anotacao': anotacao,
         }
+
         return render(request,
-                      'organizacoes/cria_anotacao.html',
+                      'organizacoes/anotacao.html',
                       context=context)
 
 
