@@ -45,16 +45,20 @@
         <option value="mecânica" {% if curso == "mecânica" %}selected{% endif %}>mecânica</option>
     </select>
 
-    <div class="2areas2">
+    <div class="container">
 
-        <div class="row">
-            <div class="col-md-10"><canvas id="doughnut-situacao"></canvas></div>
+        <div class="row mt-5">
+            <div class="col"><canvas id="doughnut-situacao"></canvas></div>
+        </div>
+        <div class="row mt-5 justify-content-md-center">
             <div class="col-md-6"><canvas id="doughnut-rii"></canvas></div>
             <div class="col-md-6"><canvas id="doughnut-rig"></canvas></div>
             <div class="col-md-6"><canvas id="doughnut-rfi"></canvas></div>
             <div class="col-md-6"><canvas id="doughnut-rfg"></canvas></div>
         </div>
 
+
+        <br><br><br><br>
         <div style="width:300px;"> 
             <canvas id="horizontal-objetivos"></canvas>
             <br><br>
