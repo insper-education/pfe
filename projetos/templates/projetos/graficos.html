@@ -9,6 +9,8 @@
 
   {% load static %}
   
+  {% load l10n %}
+
   <script src="{% static 'js/w3.js' %}"></script>
   <script src="{% static 'js/Chart.min.js' %}"></script>
   <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
@@ -26,8 +28,8 @@
     <label for="filter"><b>Edição:</b></label>
     <select class="filter" data-tableId="projetos">
         <option value="2020.2" selected>2020.2</option>
-        {% comment %}
         <option value="todas">todas</option>
+        {% comment %}
         {% for loop in loop_anos %}
             <option value="{{loop}}.2" {% if ano == loop and semestre == 2 %}selected{% endif %}>{{loop}}.2</option>
             <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
@@ -47,342 +49,34 @@
 
     <div class="container">
 
-        <div class="row mt-5">
-            <div class="col"><canvas id="doughnut-situacao"></canvas></div>
-        </div>
-        <div class="row mt-5 justify-content-md-center">
-            <div class="col-md-6"><canvas id="doughnut-rii"></canvas></div>
-            <div class="col-md-6"><canvas id="doughnut-rig"></canvas></div>
-            <div class="col-md-6"><canvas id="doughnut-bi"></canvas></div>
-            <div class="col-md-6"><canvas id="doughnut-rfi"></canvas></div>
-            <div class="col-md-6"><canvas id="doughnut-rfg"></canvas></div>
-            <div class="col-md-6"><canvas id="doughnut-bf"></canvas></div>
-        </div>
-
-
-        <br><br><br><br>
-        <div style="width:300px;"> 
+        <div style="width:500px;"> 
             <canvas id="horizontal-objetivos"></canvas>
             <br><br>
             <canvas id="chart-medias"></canvas>
         </div>
 
-
         <script>
-    
-    
-    var config_situacao = {
-        type: 'doughnut',
-        data: {
-        labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-        datasets: [
-            {
-            label: "Estudantes",
-            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-            data: [{{medias.ideal}},{{medias.regular}},{{medias.inferior}}]
-            }
-        ]
-        },
-        options: {
-            tooltips: {
-                enabled: false
-            },
-            title: {
-                display: true,
-                text: 'Médias Finais',
-                position: 'top'
-            },
-            legend: {
-                display: true,
-                position: "bottom",
-            },
-            plugins: {
-                datalabels: {
-                    formatter: (value, ctx) => {
-                        let sum = 0;
-                        let dataArr = ctx.chart.data.datasets[0].data;
-                        dataArr.map(data => {
-                            sum += data;
-                        });
-                        let percentage = (value*100 / sum).toFixed(1)+"%";
-                        return percentage;
-                    },
-                    color: '#000',
-                }
-            }
-        }
-    }
-
-
-    var config_rii = {
-        type: 'doughnut',
-        data: {
-        labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-        datasets: [
-            {
-            label: "Estudantes",
-            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-            data: [{{notas.rii.ideal}},{{notas.rii.regular}},{{notas.rii.inferior}}]
-            }
-        ]
-        },
-        options: {
-            tooltips: {
-                enabled: false
-            },
-            title: {
-                display: true,
-                text: 'Relatório Intermediário Individual',
-                position: 'top'
-            },
-            legend: {
-                display: true,
-                position: "bottom",
-            },
-            plugins: {
-                datalabels: {
-                    formatter: (value, ctx) => {
-                        let sum = 0;
-                        let dataArr = ctx.chart.data.datasets[0].data;
-                        dataArr.map(data => {
-                            sum += data;
-                        });
-                        let percentage = (value*100 / sum).toFixed(1)+"%";
-                        return percentage;
-                    },
-                    color: '#000',
-                }
-            }
-        }
-    }
-
-    var config_rig = {
-        type: 'doughnut',
-        data: {
-        labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-        datasets: [
-            {
-            label: "Estudantes",
-            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-            data: [{{notas.rig.ideal}},{{notas.rig.regular}},{{notas.rig.inferior}}]
-            }
-        ]
-        },
-        options: {
-            tooltips: {
-                enabled: false
-            },
-            title: {
-                display: true,
-                text: 'Relatório Intermediário de Grupo',
-                position: 'top'
-            },
-            legend: {
-                display: true,
-                position: "bottom",
-            },
-            plugins: {
-                datalabels: {
-                    formatter: (value, ctx) => {
-                        let sum = 0;
-                        let dataArr = ctx.chart.data.datasets[0].data;
-                        dataArr.map(data => {
-                            sum += data;
-                        });
-                        let percentage = (value*100 / sum).toFixed(1)+"%";
-                        return percentage;
-                    },
-                    color: '#000',
-                }
-            }
-        }
-    }
-
-    var config_bi = {
-        type: 'doughnut',
-        data: {
-        labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-        datasets: [
-            {
-            label: "Estudantes",
-            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-            data: [{{notas.bi.ideal}},{{notas.bi.regular}},{{notas.bi.inferior}}]
-            }
-        ]
-        },
-        options: {
-            tooltips: {
-                enabled: false
-            },
-            title: {
-                display: true,
-                text: 'Banca Intermediária',
-                position: 'top'
-            },
-            legend: {
-                display: true,
-                position: "bottom",
-            },
-            plugins: {
-                datalabels: {
-                    formatter: (value, ctx) => {
-                        let sum = 0;
-                        let dataArr = ctx.chart.data.datasets[0].data;
-                        dataArr.map(data => {
-                            sum += data;
-                        });
-                        let percentage = (value*100 / sum).toFixed(1)+"%";
-                        return percentage;
-                    },
-                    color: '#000',
-                }
-            }
-        }
-    }
-
-
-
-    var config_rfi = {
-        type: 'doughnut',
-        data: {
-        labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-        datasets: [
-            {
-            label: "Estudantes",
-            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-            data: [{{notas.rfi.ideal}},{{notas.rfi.regular}},{{notas.rfi.inferior}}]
-            }
-        ]
-        },
-        options: {
-            tooltips: {
-                enabled: false
-            },
-            title: {
-                display: true,
-                text: 'Relatório Final Individual',
-                position: 'top'
-            },
-            legend: {
-                display: true,
-                position: "bottom",
-            },
-            plugins: {
-                datalabels: {
-                    formatter: (value, ctx) => {
-                        let sum = 0;
-                        let dataArr = ctx.chart.data.datasets[0].data;
-                        dataArr.map(data => {
-                            sum += data;
-                        });
-                        let percentage = (value*100 / sum).toFixed(1)+"%";
-                        return percentage;
-                    },
-                    color: '#000',
-                }
-            }
-        }
-    }
-
-    var config_rfg = {
-        type: 'doughnut',
-        data: {
-        labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-        datasets: [
-            {
-            label: "Estudantes",
-            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-            data: [{{notas.rfg.ideal}},{{notas.rfg.regular}},{{notas.rfg.inferior}}]
-            }
-        ]
-        },
-        options: {
-            tooltips: {
-                enabled: false
-            },
-            title: {
-                display: true,
-                text: 'Relatório Final de Grupo',
-                position: 'top'
-            },
-            legend: {
-                display: true,
-                position: "bottom",
-            },
-            plugins: {
-                datalabels: {
-                    formatter: (value, ctx) => {
-                        let sum = 0;
-                        let dataArr = ctx.chart.data.datasets[0].data;
-                        dataArr.map(data => {
-                            sum += data;
-                        });
-                        let percentage = (value*100 / sum).toFixed(1)+"%";
-                        return percentage;
-                    },
-                    color: '#000',
-                }
-            }
-        }
-    }
-
-    var config_bf = {
-        type: 'doughnut',
-        data: {
-        labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-        datasets: [
-            {
-            label: "Estudantes",
-            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-            data: [{{notas.bf.ideal}},{{notas.bf.regular}},{{notas.bf.inferior}}]
-            }
-        ]
-        },
-        options: {
-            tooltips: {
-                enabled: false
-            },
-            title: {
-                display: true,
-                text: 'Banca Final',
-                position: 'top'
-            },
-            legend: {
-                display: true,
-                position: "bottom",
-            },
-            plugins: {
-                datalabels: {
-                    formatter: (value, ctx) => {
-                        let sum = 0;
-                        let dataArr = ctx.chart.data.datasets[0].data;
-                        dataArr.map(data => {
-                            sum += data;
-                        });
-                        let percentage = (value*100 / sum).toFixed(1)+"%";
-                        return percentage;
-                    },
-                    color: '#000',
-                }
-            }
-        }
-    }
-
     
     var config_objetivos = {
         type: 'horizontalBar',
         data: {
         labels: [
-            "TK", "CO", "E&D"
+            {% for media in medias %}
+                "{{media.objetivo}}",
+            {% endfor %}
             ],
         datasets: [
             {
             label: "Objetivos de Aprendizagem",
-            backgroundColor: ["#a35f55", "#345f5f", "#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+            backgroundColor: [
+                {% for media in medias %}
+                    "{{media.cor}}",
+                {% endfor %}
+                ],
             data: [
-                9.8,
-                7.1,
-                6.2
+                {% for media in medias %}
+                    {{media.media|stringformat:".2f"|unlocalize}},
+                {% endfor %}
                 ]
             }
         ]
@@ -413,18 +107,20 @@
                 {% endfor %}
             ],
             datasets: [
-                { 
-                    data: [8,9,8,8.5,7.5,6],
-                    label: "Estudantes Computação",
-                    borderColor: "#3e95cd",
-                    fill: false
-                }
+                {% for media in medias %}
+                    { 
+                        data: [,,,,{{media.media|stringformat:".2f"|unlocalize}},],
+                        label: "{{media.objetivo}}",
+                        borderColor: "{{media.cor}}",
+                        fill: false
+                    },
+                {% endfor %}
             ]
         },
         options: {
             title: {
                 display: true,
-                text: 'Médias das notas por semestre'
+                text: 'Evolução nos semestres'
             }, 
             scales: {
                 yAxes: [{
@@ -441,36 +137,6 @@
 
     function carrega_semestre() {  
 
-      // Chart da situação dos alunos por faixa de notas
-      var doughnut_situacao = document.getElementById('doughnut-situacao').getContext('2d');
-      window.situacao = new Chart(doughnut_situacao, config_situacao);
-
-
-      // Chart da situação dos alunos por faixa de notas
-      var doughnut_rii = document.getElementById('doughnut-rii').getContext('2d');
-      window.rii = new Chart(doughnut_rii, config_rii);
-
-      // Chart da situação dos alunos por faixa de notas
-      var doughnut_rig = document.getElementById('doughnut-rig').getContext('2d');
-      window.rig = new Chart(doughnut_rig, config_rig);
-
-      // Chart da situação dos alunos por faixa de notas
-      var doughnut_bi = document.getElementById('doughnut-bi').getContext('2d');
-      window.bi = new Chart(doughnut_bi, config_bi);
-
-      // Chart da situação dos alunos por faixa de notas
-      var doughnut_rfi = document.getElementById('doughnut-rfi').getContext('2d');
-      window.rfi = new Chart(doughnut_rfi, config_rfi);
-
-      // Chart da situação dos alunos por faixa de notas
-      var doughnut_rfg = document.getElementById('doughnut-rfg').getContext('2d');
-      window.rfg = new Chart(doughnut_rfg, config_rfg);
-
-      // Chart da situação dos alunos por faixa de notas
-      var doughnut_bf = document.getElementById('doughnut-bf').getContext('2d');
-      window.bf = new Chart(doughnut_bf, config_bf);
-
-
       // Chart do nível nos objetivos de aprendizagem
       var horizontal_objetivos = document.getElementById('horizontal-objetivos').getContext('2d');
       window.objetivos = new Chart(horizontal_objetivos, config_objetivos);
@@ -478,6 +144,7 @@
       // Chart do média dos alunos
       var chart_medias = document.getElementById('chart-medias').getContext('2d');
       window.medias = new Chart(chart_medias, config_medias);
+
     }
 
     window.onload = carrega_semestre

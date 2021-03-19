@@ -33,6 +33,11 @@ urlpatterns = [
     #          views.projetos_fechados,
     #          name='index_projetos'),
 
+    path('analise_notas/',
+         views.analise_notas,
+         name='analise_notas'),
+
+
     path('carrega_bancos/',
          views.carrega_bancos,
          name='carrega_bancos'),

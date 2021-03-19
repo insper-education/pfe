@@ -22,7 +22,7 @@ from users.models import PFEUser, Aluno, Professor, Opcao, Alocacao
 
 from users.support import get_edicoes
 
-from .models import Projeto, Proposta, Configuracao, Coorientador
+from .models import Projeto, Proposta, Configuracao, Coorientador, Avaliacao2, ObjetivosDeAprendizagem
 # from .models import Evento
 
 from .models import Feedback, AreaDeInteresse
@@ -746,9 +746,10 @@ def projetos_vs_propostas(request):
     return render(request, 'projetos/projetos_vs_propostas.html', context)
 
 
+
 @login_required
 @permission_required("users.altera_professor", login_url='/')
-def graficos(request):
+def analise_notas(request):
     """Mostra graficos das evoluções do PFE."""
     try:
         configuracao = Configuracao.objects.get()
@@ -768,12 +769,6 @@ def graficos(request):
                     filter(semestrePFE=int(periodo[1]))
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
-
-    # Número de estudantes e gêneros
-    num_alunos = estudantes.count()
-    num_alunos_masculino = estudantes.filter(user__genero='M').count()  # Estudantes masculino
-    num_alunos_feminino = estudantes.filter(user__genero='F').count()  # Estudantes feminino
-
 
     valor = {}
     valor["ideal"] = 7.0
@@ -846,15 +841,75 @@ def graficos(request):
     medias["inferior"] = len(list(filter(lambda d: d['media'] < valor["regular"], medias_validas)))
 
     context = {
-        "num_alunos": num_alunos,
-        "num_alunos_feminino": num_alunos_feminino,
-        "num_alunos_masculino": num_alunos_masculino,
         'periodo': periodo,
         'ano': configuracao.ano,
         'semestre': configuracao.semestre,
         'loop_anos': edicoes,
         'medias': medias,
         "notas": notas,
+    }
+
+    return render(request, 'projetos/analise_notas.html', context)
+
+def media(notas_lista):
+    soma = 0
+    total = 0
+    for i in notas_lista:
+        if i:
+            soma += i
+            total += 1
+    return soma / total
+
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def graficos(request):
+    """Mostra graficos das evoluções do PFE."""
+    try:
+        configuracao = Configuracao.objects.get()
+    except Configuracao.DoesNotExist:
+        return HttpResponse("Falha na configuracao do sistema.", status=401)
+
+    periodo = ""
+    estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
+
+    edicoes = range(2018, configuracao.ano+1)
+
+    if request.is_ajax():
+        if 'topicId' in request.POST:
+            if request.POST['topicId'] != 'todas':
+                periodo = request.POST['topicId'].split('.')
+                estudantes = estudantes.filter(anoPFE=int(periodo[0])).\
+                    filter(semestrePFE=int(periodo[1]))
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+
+    # Número de estudantes e gêneros
+    # num_alunos = estudantes.count()
+    # num_alunos_masculino = estudantes.filter(user__genero='M').count()  # Estudantes masculino
+    # num_alunos_feminino = estudantes.filter(user__genero='F').count()  # Estudantes feminino
+
+    avaliacoes = Avaliacao2.objects.all()
+
+    cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9","#7cfa9f","#e8c3b9","#c45890"]
+
+    medias = []
+    objetivos = ObjetivosDeAprendizagem.objects.all()
+    count = 0
+    for objetivo in objetivos:
+        notas_lista = [x.nota for x in avaliacoes if x.objetivo == objetivo]
+        medias.append({"objetivo": objetivo.titulo, "media": media(notas_lista), "cor": cores[count]})
+        count += 1
+
+    context = {
+        # "num_alunos": num_alunos,
+        # "num_alunos_feminino": num_alunos_feminino,
+        # "num_alunos_masculino": num_alunos_masculino,
+        "medias": medias,
+        'periodo': periodo,
+        'ano': configuracao.ano,
+        'semestre': configuracao.semestre,
+        'loop_anos': edicoes,
     }
 
     return render(request, 'projetos/graficos.html', context)

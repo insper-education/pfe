@@ -1,0 +1,424 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 22 de Setembro de 2020
+{% endcomment %}
+
+{% block head %}
+
+  {% load static %}
+  
+  <script src="{% static 'js/w3.js' %}"></script>
+  <script src="{% static 'js/Chart.min.js' %}"></script>
+  <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
+
+  {% comment %} Para chamar os Tooltips {% endcomment %}
+  <script>{% include "tooltip.js" %}</script>
+
+{% endblock %}
+
+{% block content %}
+
+    <span class="titulo">Gráficos do PFE</span>
+
+    {% comment %} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {% endcomment %}
+    <label for="filter"><b>Edição:</b></label>
+    <select class="filter" data-tableId="projetos">
+        <option value="2020.2" selected>2020.2</option>
+        <option value="todas">todas</option>
+        {% comment %}
+        {% for loop in loop_anos %}
+            <option value="{{loop}}.2" {% if ano == loop and semestre == 2 %}selected{% endif %}>{{loop}}.2</option>
+            <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
+        {% endfor %}
+        {% endcomment %}
+    </select>
+
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+    <label for="filter_curso"><b>Curso:</b></label>
+    <select class="filter_curso" data-tableId="programa">
+        <option value="todos">todos</option>
+        <option value="computação" {% if curso == "computação" %}selected{% endif %}>computação</option>
+        <option value="mecatrônica" {% if curso == "mecatrônica" %}selected{% endif %}>mecatrônica</option>
+        <option value="mecânica" {% if curso == "mecânica" %}selected{% endif %}>mecânica</option>
+    </select>
+
+    <div class="container">
+
+        <div class="row mt-5">
+            <div class="col"><canvas id="doughnut-situacao"></canvas></div>
+        </div>
+        <div class="row mt-5 justify-content-md-center">
+            <div class="col-md-6"><canvas id="doughnut-rii"></canvas></div>
+            <div class="col-md-6"><canvas id="doughnut-rig"></canvas></div>
+            <div class="col-md-6"><canvas id="doughnut-bi"></canvas></div>
+            <div class="col-md-6"><canvas id="doughnut-rfi"></canvas></div>
+            <div class="col-md-6"><canvas id="doughnut-rfg"></canvas></div>
+            <div class="col-md-6"><canvas id="doughnut-bf"></canvas></div>
+        </div>
+
+        <script>
+    
+    
+    var config_situacao = {
+        type: 'doughnut',
+        data: {
+        labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+        datasets: [
+            {
+            label: "Estudantes",
+            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+            data: [{{medias.ideal}},{{medias.regular}},{{medias.inferior}}]
+            }
+        ]
+        },
+        options: {
+            tooltips: {
+                enabled: false
+            },
+            title: {
+                display: true,
+                text: 'Médias Finais',
+                position: 'top'
+            },
+            legend: {
+                display: true,
+                position: "bottom",
+            },
+            plugins: {
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        let sum = 0;
+                        let dataArr = ctx.chart.data.datasets[0].data;
+                        dataArr.map(data => {
+                            sum += data;
+                        });
+                        let percentage = (value*100 / sum).toFixed(1)+"%";
+                        return percentage;
+                    },
+                    color: '#000',
+                }
+            }
+        }
+    }
+
+
+    var config_rii = {
+        type: 'doughnut',
+        data: {
+        labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+        datasets: [
+            {
+            label: "Estudantes",
+            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+            data: [{{notas.rii.ideal}},{{notas.rii.regular}},{{notas.rii.inferior}}]
+            }
+        ]
+        },
+        options: {
+            tooltips: {
+                enabled: false
+            },
+            title: {
+                display: true,
+                text: 'Relatório Intermediário Individual',
+                position: 'top'
+            },
+            legend: {
+                display: true,
+                position: "bottom",
+            },
+            plugins: {
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        let sum = 0;
+                        let dataArr = ctx.chart.data.datasets[0].data;
+                        dataArr.map(data => {
+                            sum += data;
+                        });
+                        let percentage = (value*100 / sum).toFixed(1)+"%";
+                        return percentage;
+                    },
+                    color: '#000',
+                }
+            }
+        }
+    }
+
+    var config_rig = {
+        type: 'doughnut',
+        data: {
+        labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+        datasets: [
+            {
+            label: "Estudantes",
+            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+            data: [{{notas.rig.ideal}},{{notas.rig.regular}},{{notas.rig.inferior}}]
+            }
+        ]
+        },
+        options: {
+            tooltips: {
+                enabled: false
+            },
+            title: {
+                display: true,
+                text: 'Relatório Intermediário de Grupo',
+                position: 'top'
+            },
+            legend: {
+                display: true,
+                position: "bottom",
+            },
+            plugins: {
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        let sum = 0;
+                        let dataArr = ctx.chart.data.datasets[0].data;
+                        dataArr.map(data => {
+                            sum += data;
+                        });
+                        let percentage = (value*100 / sum).toFixed(1)+"%";
+                        return percentage;
+                    },
+                    color: '#000',
+                }
+            }
+        }
+    }
+
+    var config_bi = {
+        type: 'doughnut',
+        data: {
+        labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+        datasets: [
+            {
+            label: "Estudantes",
+            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+            data: [{{notas.bi.ideal}},{{notas.bi.regular}},{{notas.bi.inferior}}]
+            }
+        ]
+        },
+        options: {
+            tooltips: {
+                enabled: false
+            },
+            title: {
+                display: true,
+                text: 'Banca Intermediária',
+                position: 'top'
+            },
+            legend: {
+                display: true,
+                position: "bottom",
+            },
+            plugins: {
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        let sum = 0;
+                        let dataArr = ctx.chart.data.datasets[0].data;
+                        dataArr.map(data => {
+                            sum += data;
+                        });
+                        let percentage = (value*100 / sum).toFixed(1)+"%";
+                        return percentage;
+                    },
+                    color: '#000',
+                }
+            }
+        }
+    }
+
+
+
+    var config_rfi = {
+        type: 'doughnut',
+        data: {
+        labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+        datasets: [
+            {
+            label: "Estudantes",
+            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+            data: [{{notas.rfi.ideal}},{{notas.rfi.regular}},{{notas.rfi.inferior}}]
+            }
+        ]
+        },
+        options: {
+            tooltips: {
+                enabled: false
+            },
+            title: {
+                display: true,
+                text: 'Relatório Final Individual',
+                position: 'top'
+            },
+            legend: {
+                display: true,
+                position: "bottom",
+            },
+            plugins: {
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        let sum = 0;
+                        let dataArr = ctx.chart.data.datasets[0].data;
+                        dataArr.map(data => {
+                            sum += data;
+                        });
+                        let percentage = (value*100 / sum).toFixed(1)+"%";
+                        return percentage;
+                    },
+                    color: '#000',
+                }
+            }
+        }
+    }
+
+    var config_rfg = {
+        type: 'doughnut',
+        data: {
+        labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+        datasets: [
+            {
+            label: "Estudantes",
+            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+            data: [{{notas.rfg.ideal}},{{notas.rfg.regular}},{{notas.rfg.inferior}}]
+            }
+        ]
+        },
+        options: {
+            tooltips: {
+                enabled: false
+            },
+            title: {
+                display: true,
+                text: 'Relatório Final de Grupo',
+                position: 'top'
+            },
+            legend: {
+                display: true,
+                position: "bottom",
+            },
+            plugins: {
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        let sum = 0;
+                        let dataArr = ctx.chart.data.datasets[0].data;
+                        dataArr.map(data => {
+                            sum += data;
+                        });
+                        let percentage = (value*100 / sum).toFixed(1)+"%";
+                        return percentage;
+                    },
+                    color: '#000',
+                }
+            }
+        }
+    }
+
+    var config_bf = {
+        type: 'doughnut',
+        data: {
+        labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+        datasets: [
+            {
+            label: "Estudantes",
+            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+            data: [{{notas.bf.ideal}},{{notas.bf.regular}},{{notas.bf.inferior}}]
+            }
+        ]
+        },
+        options: {
+            tooltips: {
+                enabled: false
+            },
+            title: {
+                display: true,
+                text: 'Banca Final',
+                position: 'top'
+            },
+            legend: {
+                display: true,
+                position: "bottom",
+            },
+            plugins: {
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        let sum = 0;
+                        let dataArr = ctx.chart.data.datasets[0].data;
+                        dataArr.map(data => {
+                            sum += data;
+                        });
+                        let percentage = (value*100 / sum).toFixed(1)+"%";
+                        return percentage;
+                    },
+                    color: '#000',
+                }
+            }
+        }
+    }
+
+    function carrega_semestre() {  
+
+      // Chart da situação dos alunos por faixa de notas
+      var doughnut_situacao = document.getElementById('doughnut-situacao').getContext('2d');
+      window.situacao = new Chart(doughnut_situacao, config_situacao);
+
+
+      // Chart da situação dos alunos por faixa de notas
+      var doughnut_rii = document.getElementById('doughnut-rii').getContext('2d');
+      window.rii = new Chart(doughnut_rii, config_rii);
+
+      // Chart da situação dos alunos por faixa de notas
+      var doughnut_rig = document.getElementById('doughnut-rig').getContext('2d');
+      window.rig = new Chart(doughnut_rig, config_rig);
+
+      // Chart da situação dos alunos por faixa de notas
+      var doughnut_bi = document.getElementById('doughnut-bi').getContext('2d');
+      window.bi = new Chart(doughnut_bi, config_bi);
+
+      // Chart da situação dos alunos por faixa de notas
+      var doughnut_rfi = document.getElementById('doughnut-rfi').getContext('2d');
+      window.rfi = new Chart(doughnut_rfi, config_rfi);
+
+      // Chart da situação dos alunos por faixa de notas
+      var doughnut_rfg = document.getElementById('doughnut-rfg').getContext('2d');
+      window.rfg = new Chart(doughnut_rfg, config_rfg);
+
+      // Chart da situação dos alunos por faixa de notas
+      var doughnut_bf = document.getElementById('doughnut-bf').getContext('2d');
+      window.bf = new Chart(doughnut_bf, config_bf);
+
+    }
+
+    window.onload = carrega_semestre
+  
+  </script>
+
+
+    </div>
+
+    <script>
+        $(".filter").change(function(){
+            var topicId = $(".filter option:selected").attr("value");
+            $.ajax({
+                type: "POST",
+                url: "{% url 'graficos' %}",
+                data: {
+                    topicId: topicId,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                },
+                success: function(response){
+                    $("div.2areas2").replaceWith($("div.2areas2",response));
+                    carrega_semestre();
+                },
+                error: function(response) {
+                    alert('error');
+                }
+
+            });
+        });
+    </script>
+
+{% endblock %}
