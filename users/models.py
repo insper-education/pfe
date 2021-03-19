@@ -418,10 +418,16 @@ class Alocacao(models.Model):
         return alocacao
 
     @property
-    def get_media(self):
-        """Retorna média e peso final."""
+    def get_notas(self):
+        """Retorna notas."""
         edicoes = self.aluno.get_notas
         edicao = edicoes[str(self.projeto.ano)+"."+str(self.projeto.semestre)]
+        return edicao
+
+    @property
+    def get_media(self):
+        """Retorna média e peso final."""
+        edicao = self.get_notas
 
         nota_final = 0
         peso_final = 0

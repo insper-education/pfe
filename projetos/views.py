@@ -775,15 +775,59 @@ def graficos(request):
     num_alunos_feminino = estudantes.filter(user__genero='F').count()  # Estudantes feminino
 
 
-    notas_semestre = Alocacao.objects.filter(projeto__ano=2020, projeto__semestre=2)
-    notas_lista = [x.get_media for x in notas_semestre]
-    
-    notas_validas = list(filter(lambda d: d['pesos'] == 1.0, notas_lista))
+    valor = {}
+    valor["ideal"] = 7.0
+    valor["regular"] = 5.0
 
-    notas = {}
-    notas["ideal"] = len(list(filter(lambda d: d['media'] >= 7.0, notas_validas)))
-    notas["regular"] = len(list(filter(lambda d: 7 > d['media'] >= 6.0, notas_validas)))
-    notas["inferior"] = len(list(filter(lambda d: d['media'] < 6.0, notas_validas)))
+    medias_semestre = Alocacao.objects.filter(projeto__ano=2020, projeto__semestre=2)
+
+    notas = {
+        "rii": {"ideal": 0, "regular":0, "inferior": 0},
+        "rig": {"ideal": 0, "regular":0, "inferior": 0},
+        "rfi": {"ideal": 0, "regular":0, "inferior": 0},
+        "rfg": {"ideal": 0, "regular":0, "inferior": 0},
+    }
+
+    notas_lista = [x.get_notas for x in medias_semestre]
+    for nota2 in notas_lista:
+        for nota in nota2:
+            if nota[0] == "RII":
+                if nota[1] >= valor["ideal"]:
+                    notas["rii"]["ideal"] += 1
+                elif nota[1] >= valor["regular"]:
+                    notas["rii"]["regular"] += 1
+                else:
+                    notas["rii"]["inferior"] += 1
+            if nota[0] == "RIG":
+                if nota[1] >= valor["ideal"]:
+                    notas["rig"]["ideal"] += 1
+                elif nota[1] >= valor["regular"]:
+                    notas["rig"]["regular"] += 1
+                else:
+                    notas["rig"]["inferior"] += 1
+            if nota[0] == "RFI":
+                if nota[1] >= valor["ideal"]:
+                    notas["rfi"]["ideal"] += 1
+                elif nota[1] >= valor["regular"]:
+                    notas["rfi"]["regular"] += 1
+                else:
+                    notas["rfi"]["inferior"] += 1
+            if nota[0] == "RFG":
+                if nota[1] >= valor["ideal"]:
+                    notas["rfg"]["ideal"] += 1
+                elif nota[1] >= valor["regular"]:
+                    notas["rfg"]["regular"] += 1
+                else:
+                    notas["rfg"]["inferior"] += 1
+
+    medias_lista = [x.get_media for x in medias_semestre]
+    
+    medias_validas = list(filter(lambda d: d['pesos'] == 1.0, medias_lista))
+
+    medias = {}
+    medias["ideal"] = len(list(filter(lambda d: d['media'] >= valor["ideal"], medias_validas)))
+    medias["regular"] = len(list(filter(lambda d: valor["ideal"] > d['media'] >= valor["regular"], medias_validas)))
+    medias["inferior"] = len(list(filter(lambda d: d['media'] < valor["regular"], medias_validas)))
 
     context = {
         "num_alunos": num_alunos,
@@ -793,7 +837,8 @@ def graficos(request):
         'ano': configuracao.ano,
         'semestre': configuracao.semestre,
         'loop_anos': edicoes,
-        'notas': notas,
+        'medias': medias,
+        "notas": notas,
     }
 
     return render(request, 'projetos/graficos.html', context)
