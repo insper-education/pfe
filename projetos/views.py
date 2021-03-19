@@ -784,8 +784,10 @@ def graficos(request):
     notas = {
         "rii": {"ideal": 0, "regular":0, "inferior": 0},
         "rig": {"ideal": 0, "regular":0, "inferior": 0},
+        "bi":  {"ideal": 0, "regular":0, "inferior": 0},
         "rfi": {"ideal": 0, "regular":0, "inferior": 0},
         "rfg": {"ideal": 0, "regular":0, "inferior": 0},
+        "bf":  {"ideal": 0, "regular":0, "inferior": 0},
     }
 
     notas_lista = [x.get_notas for x in medias_semestre]
@@ -805,6 +807,13 @@ def graficos(request):
                     notas["rig"]["regular"] += 1
                 else:
                     notas["rig"]["inferior"] += 1
+            if nota[0] == "BI":
+                if nota[1] >= valor["ideal"]:
+                    notas["bi"]["ideal"] += 1
+                elif nota[1] >= valor["regular"]:
+                    notas["bi"]["regular"] += 1
+                else:
+                    notas["bi"]["inferior"] += 1
             if nota[0] == "RFI":
                 if nota[1] >= valor["ideal"]:
                     notas["rfi"]["ideal"] += 1
@@ -819,6 +828,13 @@ def graficos(request):
                     notas["rfg"]["regular"] += 1
                 else:
                     notas["rfg"]["inferior"] += 1
+            if nota[0] == "BF":
+                if nota[1] >= valor["ideal"]:
+                    notas["bf"]["ideal"] += 1
+                elif nota[1] >= valor["regular"]:
+                    notas["bf"]["regular"] += 1
+                else:
+                    notas["bf"]["inferior"] += 1
 
     medias_lista = [x.get_media for x in medias_semestre]
     

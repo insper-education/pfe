@@ -53,8 +53,10 @@
         <div class="row mt-5 justify-content-md-center">
             <div class="col-md-6"><canvas id="doughnut-rii"></canvas></div>
             <div class="col-md-6"><canvas id="doughnut-rig"></canvas></div>
+            <div class="col-md-6"><canvas id="doughnut-bi"></canvas></div>
             <div class="col-md-6"><canvas id="doughnut-rfi"></canvas></div>
             <div class="col-md-6"><canvas id="doughnut-rfg"></canvas></div>
+            <div class="col-md-6"><canvas id="doughnut-bf"></canvas></div>
         </div>
 
 
@@ -196,6 +198,50 @@
         }
     }
 
+    var config_bi = {
+        type: 'doughnut',
+        data: {
+        labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+        datasets: [
+            {
+            label: "Estudantes",
+            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+            data: [{{notas.bi.ideal}},{{notas.bi.regular}},{{notas.bi.inferior}}]
+            }
+        ]
+        },
+        options: {
+            tooltips: {
+                enabled: false
+            },
+            title: {
+                display: true,
+                text: 'Banca Intermediária',
+                position: 'top'
+            },
+            legend: {
+                display: true,
+                position: "bottom",
+            },
+            plugins: {
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        let sum = 0;
+                        let dataArr = ctx.chart.data.datasets[0].data;
+                        dataArr.map(data => {
+                            sum += data;
+                        });
+                        let percentage = (value*100 / sum).toFixed(1)+"%";
+                        return percentage;
+                    },
+                    color: '#000',
+                }
+            }
+        }
+    }
+
+
+
     var config_rfi = {
         type: 'doughnut',
         data: {
@@ -257,6 +303,48 @@
             title: {
                 display: true,
                 text: 'Relatório Final de Grupo',
+                position: 'top'
+            },
+            legend: {
+                display: true,
+                position: "bottom",
+            },
+            plugins: {
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        let sum = 0;
+                        let dataArr = ctx.chart.data.datasets[0].data;
+                        dataArr.map(data => {
+                            sum += data;
+                        });
+                        let percentage = (value*100 / sum).toFixed(1)+"%";
+                        return percentage;
+                    },
+                    color: '#000',
+                }
+            }
+        }
+    }
+
+    var config_bf = {
+        type: 'doughnut',
+        data: {
+        labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+        datasets: [
+            {
+            label: "Estudantes",
+            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+            data: [{{notas.bf.ideal}},{{notas.bf.regular}},{{notas.bf.inferior}}]
+            }
+        ]
+        },
+        options: {
+            tooltips: {
+                enabled: false
+            },
+            title: {
+                display: true,
+                text: 'Banca Final',
                 position: 'top'
             },
             legend: {
@@ -367,6 +455,10 @@
       window.rig = new Chart(doughnut_rig, config_rig);
 
       // Chart da situação dos alunos por faixa de notas
+      var doughnut_bi = document.getElementById('doughnut-bi').getContext('2d');
+      window.bi = new Chart(doughnut_bi, config_bi);
+
+      // Chart da situação dos alunos por faixa de notas
       var doughnut_rfi = document.getElementById('doughnut-rfi').getContext('2d');
       window.rfi = new Chart(doughnut_rfi, config_rfi);
 
@@ -374,7 +466,9 @@
       var doughnut_rfg = document.getElementById('doughnut-rfg').getContext('2d');
       window.rfg = new Chart(doughnut_rfg, config_rfg);
 
-
+      // Chart da situação dos alunos por faixa de notas
+      var doughnut_bf = document.getElementById('doughnut-bf').getContext('2d');
+      window.bf = new Chart(doughnut_bf, config_bf);
 
 
       // Chart do nível nos objetivos de aprendizagem
