@@ -114,6 +114,27 @@
 
   <form method="post"> {% csrf_token %}
 
+
+    {% if rpl %}
+    <b>Relatório de Planejamento: <span id="rpl_media"></span></b>
+    <ul>
+      <li>
+        <span>Avaliação Única</span>
+        <span>
+          peso: <input class="peso" id="rpl_peso" name="rpl_peso" type="number"  min="0" max="100" step="0.01" 
+          value="{% if rpl_peso %}{{rpl_peso}}{% else %}6.00{% endif %}" />
+
+          &nbsp;&nbsp;
+          nota: <input class="nota" id="rpl_nota" name="rpl_nota" type="number"  min="0" max="10" step="0.01" 
+          value="{% if rpl_nota != None %}{{rpl_nota}}{% endif %}" />
+      </li>
+    </ul>
+    <span style="margin-left: 10px;">Observações:</span><br>
+    <textarea id="rpl_obs" name="rpl_obs" rows="4" cols="72">{% if rpl_obs %}{{rpl_obs.observacoes}}{% endif %}</textarea>
+    <br>
+    {% endif %}
+
+
     <b>Relatório Intermediário Individual: <span id="rii_media"></span></b>
     <ul>
     {% for objetivo in objetivos reversed %}
@@ -232,7 +253,7 @@
         <span>
           {% with peso=rfi_peso|dict_key:objetivo %}
             peso: <input class="peso" id="rfi_peso_{{objetivo|truncatechars:7}}" name="rfi_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.01" 
-            value="{% if peso %}{{peso}}{% else %}8.75{% endif %}" />
+            value="{% if peso %}{{peso}}{% else %}12.25{% endif %}" />
           {% endwith %}
           &nbsp;&nbsp;
           nota: <input class="nota" id="rfi_nota_{{objetivo|truncatechars:7}}" name="rfi_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 

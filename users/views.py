@@ -348,6 +348,14 @@ def edita_notas(request, primarykey):
 
     objetivos = ObjetivosDeAprendizagem.objects.all()
 
+    # (10, 'Relatório de Planejamento'),
+    rpl = Avaliacao2.objects.filter(tipo_de_avaliacao=10,
+                                    projeto=alocacao.projeto)
+
+    # (10, 'Relatório de Planejamento'),
+    rpl_obs = Observacao.objects.filter(tipo_de_avaliacao=10,
+                                        projeto=alocacao.projeto)
+
     # (21, 'Relatório Intermediário Individual'),
     rii = Avaliacao2.objects.filter(tipo_de_avaliacao=21,
                                     alocacao=alocacao)
@@ -360,7 +368,7 @@ def edita_notas(request, primarykey):
     rig = Avaliacao2.objects.filter(tipo_de_avaliacao=11,
                                     projeto=alocacao.projeto)
 
-    # (21, 'Relatório Intermediário Individual'),
+    # (11, 'Relatório Intermediário de Grupo'),
     rig_obs = Observacao.objects.filter(tipo_de_avaliacao=11,
                                         projeto=alocacao.projeto)
 
@@ -389,6 +397,19 @@ def edita_notas(request, primarykey):
                                    projeto=alocacao.projeto)
 
     if request.method == 'POST':
+
+        # RPL
+        nota = request.POST.get('rpl_nota', "")
+        peso = request.POST.get('rpl_peso', "")
+        if nota != "":
+            (reg, _created)  = rpl.get_or_create(projeto=alocacao.projeto)
+            if _created:
+                reg.tipo_de_avaliacao = 10
+                if alocacao.projeto.orientador:
+                    reg.avaliador = alocacao.projeto.orientador.user
+            reg.peso = float(peso)
+            reg.nota = float(nota)
+            reg.save()
 
         for objetivo in objetivos:
 
@@ -454,6 +475,18 @@ def edita_notas(request, primarykey):
                     reg.nota = float(nota)
                     reg.save()
 
+        # RPL
+        obs = request.POST.get('rpl_obs', "")
+        if obs:
+            reg  = rpl_obs.last()
+            if not reg:
+                reg = Observacao.create(projeto=alocacao.projeto)
+                reg.tipo_de_avaliacao = 10
+                if alocacao.projeto.orientador:
+                    reg.avaliador = alocacao.projeto.orientador.user
+            reg.observacoes = obs
+            reg.save()
+
         # RII
         obs = request.POST.get('rii_obs', "")
         if obs:
@@ -513,6 +546,16 @@ def edita_notas(request, primarykey):
         }
         return render(request, 'generic.html', context=context)
 
+
+    rpl_nota = None
+    rpl_peso = None
+    rpl_existe = False
+    if (alocacao.projeto.ano < 2020) or (alocacao.projeto.ano == 2020 and alocacao.projeto.semestre == 1):
+        rpl_existe = True
+        if rpl:
+            rpl_nota = rpl.last().nota
+            rpl_peso = rpl.last().peso
+
     rii_peso = {}
     rii_nota = {}
     for registro in rii:
@@ -541,6 +584,10 @@ def edita_notas(request, primarykey):
     context = {
         'alocacao': alocacao,
         'objetivos': objetivos,
+        'rpl': rpl_existe,
+        'rpl_nota': rpl_nota,
+        'rpl_peso': rpl_peso,
+        'rpl_obs': rpl_obs.last(),
         'rii_nota': rii_nota,
         'rii_peso': rii_peso,
         'rii_obs': rii_obs.last(),
