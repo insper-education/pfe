@@ -974,5 +974,27 @@ def nomes(request):
 @permission_required('users.altera_professor', login_url='/')
 def migracao(request):
     """temporário"""
-    message = "Nada Feito"
+
+    avaliacoes = Avaliacao2.objects.all()
+
+    avaliacoes = avaliacoes.filter(projeto__ano=2020, projeto__semestre=1)
+    
+    # ( 1, 'Banca Intermediária'),    
+    ri = avaliacoes.filter(tipo_de_avaliacao = 1)
+
+    for i in ri:
+        i.peso = 1
+        i.save()
+
+    # ( 2, 'Banca Final'),
+    ri = avaliacoes.filter(tipo_de_avaliacao = 2)
+    for i in ri:
+        if i.objetivo.titulo == "Execução Técnica":
+            i.peso = 2.8
+        else:
+            i.peso = 2.1
+        i.save()
+
+    #message = "Nada Feito"
+    message = "Feito"
     return HttpResponse(message)
