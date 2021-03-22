@@ -761,20 +761,27 @@ def analise_notas(request):
 
     edicoes = range(2018, configuracao.ano+1)
 
+    medias_semestre = Alocacao.objects.all()
+
     if request.is_ajax():
-        if 'topicId' in request.POST:
-            if request.POST['topicId'] != 'todas':
-                periodo = request.POST['topicId'].split('.')
-                estudantes = estudantes.filter(anoPFE=int(periodo[0])).\
-                    filter(semestrePFE=int(periodo[1]))
+        if 'edicao' in request.POST:
+            if request.POST['edicao'] != 'todas':
+                periodo = request.POST['edicao'].split('.')
+                medias_semestre = medias_semestre.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
+
+        if 'curso' in request.POST:
+            curso = request.POST['curso']
+            if curso != 'T':
+                medias_semestre = medias_semestre.filter(aluno__curso=curso)
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+
 
     valor = {}
     valor["ideal"] = 7.0
     valor["regular"] = 5.0
-
-    medias_semestre = Alocacao.objects.filter(projeto__ano=2020, projeto__semestre=2)
 
     notas = {
         "rii": {"ideal": 0, "regular":0, "inferior": 0},
@@ -858,6 +865,8 @@ def media(notas_lista):
         if i:
             soma += i
             total += 1
+    if total == 0:
+        return None
     return soma / total
 
 
@@ -875,12 +884,20 @@ def graficos(request):
 
     edicoes = range(2018, configuracao.ano+1)
 
+    avaliacoes = Avaliacao2.objects.all()
+
     if request.is_ajax():
-        if 'topicId' in request.POST:
-            if request.POST['topicId'] != 'todas':
-                periodo = request.POST['topicId'].split('.')
-                estudantes = estudantes.filter(anoPFE=int(periodo[0])).\
-                    filter(semestrePFE=int(periodo[1]))
+        if 'edicao' in request.POST:
+            if request.POST['edicao'] != 'todas':
+                periodo = request.POST['edicao'].split('.')
+                avaliacoes = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+
+        if 'curso' in request.POST:
+            curso = request.POST['curso']
+            if curso != 'T':
+                avaliacoes = avaliacoes.filter(alocacao__aluno__curso=curso)
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
@@ -888,8 +905,6 @@ def graficos(request):
     # num_alunos = estudantes.count()
     # num_alunos_masculino = estudantes.filter(user__genero='M').count()  # Estudantes masculino
     # num_alunos_feminino = estudantes.filter(user__genero='F').count()  # Estudantes feminino
-
-    avaliacoes = Avaliacao2.objects.all()
 
     cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9","#7cfa9f","#e8c3b9","#c45890"]
 

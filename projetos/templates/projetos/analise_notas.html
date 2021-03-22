@@ -20,11 +20,11 @@
 
 {% block content %}
 
-    <span class="titulo">Gráficos do PFE</span>
+    <span class="titulo">Análise de Notas/Conceitos</span>
 
     {% comment %} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {% endcomment %}
     <label for="filter"><b>Edição:</b></label>
-    <select class="filter" data-tableId="projetos">
+    <select id="filterEdicao" class="filter" data-tableId="projetos">
         <option value="2020.2" selected>2020.2</option>
         <option value="todas">todas</option>
         {% comment %}
@@ -38,11 +38,11 @@
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
     <label for="filter_curso"><b>Curso:</b></label>
-    <select class="filter_curso" data-tableId="programa">
-        <option value="todos">todos</option>
-        <option value="computação" {% if curso == "computação" %}selected{% endif %}>computação</option>
-        <option value="mecatrônica" {% if curso == "mecatrônica" %}selected{% endif %}>mecatrônica</option>
-        <option value="mecânica" {% if curso == "mecânica" %}selected{% endif %}>mecânica</option>
+    <select id="filterCurso" class="filter" data-tableId="programa">
+        <option value="T">todos</option>
+        <option value="C" {% if curso == "computação" %}selected{% endif %}>computação</option>
+        <option value="M" {% if curso == "mecatrônica" %}selected{% endif %}>mecatrônica</option>
+        <option value="X" {% if curso == "mecânica" %}selected{% endif %}>mecânica</option>
     </select>
 
     <div class="container">
@@ -401,16 +401,17 @@
 
     <script>
         $(".filter").change(function(){
-            var topicId = $(".filter option:selected").attr("value");
+            var edicao = $("#filterEdicao option:selected").attr("value");
+            var curso =  $("#filterCurso option:selected").attr("value");
             $.ajax({
                 type: "POST",
-                url: "{% url 'graficos' %}",
                 data: {
-                    topicId: topicId,
+                    edicao: edicao,
+                    curso: curso,
                     'csrfmiddlewaretoken': '{{ csrf_token }}',
                 },
                 success: function(response){
-                    $("div.2areas2").replaceWith($("div.2areas2",response));
+                    $("div.container").replaceWith($("div.container",response));
                     carrega_semestre();
                 },
                 error: function(response) {
