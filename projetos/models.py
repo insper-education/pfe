@@ -636,6 +636,12 @@ class Encontro(models.Model):
         return self.endDate.strftime("%H:%M")
     hora_fim.short_description = 'Hora Fim'
 
+    @classmethod
+    def create(cls, startDate, endDate):
+        """Cria um objeto (entrada) no Encontro."""
+        encontro = cls(startDate=startDate, endDate=endDate)
+        return encontro
+
     def __str__(self):
         return str(self.startDate)
 

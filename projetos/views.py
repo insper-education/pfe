@@ -440,54 +440,6 @@ def meuprojeto(request):
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')
-def dinamicas(request):
-    """Mostra os horários de dinâmicas."""
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
-
-    if request.is_ajax():
-        if 'edicao' in request.POST:
-
-            encontros = Encontro.objects.all().order_by('startDate')
-
-            edicao = request.POST['edicao']
-            if edicao == 'todas':
-                pass  # segue com encontros
-            elif edicao == 'proximas':
-                hoje = datetime.date.today()
-                encontros = encontros.filter(startDate__gt=hoje)
-            else:
-                periodo = request.POST['edicao'].split('.')
-                ano = int(periodo[0])
-                semestre = int(periodo[1])
-                encontros = encontros.filter(startDate__year=ano)
-                if semestre == 1:
-                    encontros = encontros.filter(startDate__month__lt=8)
-                else:
-                    encontros = encontros.filter(startDate__month__gt=7)
-
-            context = {
-                'encontros': encontros,
-            }
-
-        else:
-            return HttpResponse("Algum erro não identificado.", status=401)
-
-    else:
-
-        edicoes, _, _ = get_edicoes(Projeto)
-        context = {
-                'edicoes': edicoes,
-            }
-
-
-    return render(request, 'projetos/dinamicas.html', context)
-
-
-@login_required
-@permission_required('users.altera_professor', login_url='/')
 def carrega_bancos(request):
     """Rotina que carrega arquivo CSV de bancos para base de dados do servidor."""
     with open('projetos/bancos.csv') as csv_file:

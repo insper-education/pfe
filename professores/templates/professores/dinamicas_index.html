@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 22 de Março de 2021
+{% endcomment %}
+
+{% block head %}
+
+  {% load static %}
+  {% load date_extras %}
+
+  <!-- BASEADO EM: https://github.com/fullcalendar/fullcalendar -->
+  <link href="{% static 'fullcalendar-4.4.2/core/main.min.css' %}" rel='stylesheet' />
+  <link href="{% static 'fullcalendar-4.4.2/daygrid/main.min.css' %}" rel='stylesheet' />
+  <link href="{% static 'fullcalendar-4.4.2/timegrid/main.min.css' %}" rel='stylesheet' />
+  <link href="{% static 'fullcalendar-4.4.2/list/main.min.css' %}" rel='stylesheet' />
+
+  <script src="{% static 'fullcalendar-4.4.2/core/main.min.js' %}"></script>
+  <script src="{% static 'fullcalendar-4.4.2/interaction/main.min.js' %}"></script>
+  <script src="{% static 'fullcalendar-4.4.2/daygrid/main.min.js' %}"></script>
+  <script src="{% static 'fullcalendar-4.4.2/timegrid/main.min.js' %}"></script>
+  <script src="{% static 'fullcalendar-4.4.2/list/main.min.js' %}"></script>
+
+  <script src="{% static 'fullcalendar-4.4.2/core/locales/pt-br.js' %}"></script>
+
+
+{% comment %} ATUALIZAR {% endcomment %}
+  {% include "cores_bancas.html" %}
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var calendarEl = document.getElementById('calendar');
+
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'list' ],
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+        },
+        locale: 'pt-br',
+        navLinks: true, // can click day/week names to navigate views
+        businessHours: true, // display business hours
+        editable: true,
+        events: [
+          {% for encontro in encontros %} 
+            {
+                {% if encontro.projeto %}
+                  title: '{{encontro.projeto.organizacao.sigla}} : ' + 
+                        '{{encontro.projeto.get_titulo}}' +
+                        '{% if encontro.projeto.orientador %}\nOri.: {{encontro.projeto.orientador}}{% endif %}' +
+                        '{% if encontro.location %}\nLocal: {{encontro.location}}{% endif %}' +
+                        '\nFacilitador: {{encontro.facilitador}}',
+                {% else %}
+                  {% if encontro.facilitador %}
+                    title: 'Facilitador: {{encontro.facilitador}}',
+                  {% else %}
+                    title: 'Livre',
+                  {% endif %}
+                {% endif %}
+
+                start: '{{encontro.startDate.year}}-{{encontro.startDate.month|stringformat:"02d"}}-{{encontro.startDate.day|stringformat:"02d"}}T{{encontro.startDate.hour|stringformat:"02d"}}:{{encontro.startDate.minute|stringformat:"02d"}}:00',
+
+                end: '{{encontro.endDate.year}}-{{encontro.endDate.month|stringformat:"02d"}}-{{encontro.endDate.day|stringformat:"02d"}}T{{encontro.endDate.hour|stringformat:"02d"}}:{{encontro.endDate.minute|stringformat:"02d"}}:00',
+
+                url: '../dinamicas_editar/{{encontro.id}}',
+
+                {% if encontro.projeto %}
+                  backgroundColor: '#111183',
+                {% else %}
+                  backgroundColor: '#004f00',
+                {% endif %}
+
+            },
+          {% endfor %}
+        ]
+      });
+
+      calendar.render();
+    });
+
+  </script>
+  <style>
+    #calendar {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+  </style>
+  <style>
+  .wrap {
+    display: flex;
+  }
+
+  .one {
+    width: 20%;
+  }
+
+  .two {
+    width: 80%;
+  }
+
+  @media (max-width: 900px) {
+    .wrap {
+      flex-direction: column-reverse;
+    }
+    .one,
+    .two {
+      width: auto;
+    }
+  }
+  </style>
+
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">Dinâmicas</span>
+
+  <div class="wrap">
+      <div class="one">
+        <br><br>
+        <a href="{% url 'dinamicas_criar'%}"><h5>Agendar Dinâmica</h5></a>
+        <a href="{% url 'dinamicas_lista'%}"><h5>Listar Dinâmicas</h5></a>
+      </div>
+      <div class="two" id='calendar'></div>
+  </div>
+
+{% endblock %}

@@ -7,6 +7,7 @@ Data: 15 de Dezembro de 2020
 """
 
 import datetime
+import dateutil.parser
 
 from urllib.parse import quote, unquote
 
@@ -14,14 +15,15 @@ from django.conf import settings
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse, HttpResponseNotFound
-# from django.db.models.functions import Lower
+from django.db.models.functions import Lower
 from django.utils import html
 
 from users.models import PFEUser, Professor, Aluno
 from users.support import get_edicoes
 
+
 from projetos.models import ObjetivosDeAprendizagem, Avaliacao2, Observacao
-from projetos.models import Banca, Evento
+from projetos.models import Banca, Evento, Encontro
 from projetos.models import Projeto, Configuracao
 from projetos.support import get_peso
 from projetos.support import converte_letra, converte_conceito
@@ -705,6 +707,211 @@ def conceitos_obtidos(request, primarykey):  # acertar isso para pk
     }
 
     return render(request, 'professores/conceitos_obtidos.html', context=context)
+
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def dinamicas_index(request):
+    """Menus de encontros."""
+    encontros = Encontro.objects.all().order_by('startDate')
+
+    context = {
+        'encontros': encontros,
+    }
+
+    return render(request, 'professores/dinamicas_index.html', context)
+
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def dinamicas_criar(request):
+    """Cria um encontro."""
+
+    try:
+        configuracao = Configuracao.objects.get()
+    except Configuracao.DoesNotExist:
+        return HttpResponse("Falha na configuracao do sistema.", status=401)
+
+    if request.method == 'POST':
+
+        if ('inicio' in request.POST) and ('fim' in request.POST):
+
+            try:
+                startDate = dateutil.parser.parse(request.POST['inicio'])
+                endDate = dateutil.parser.parse(request.POST['fim'])
+            except (ValueError, OverflowError):
+                return HttpResponse("Erro com data da Dinâmica!")
+
+            encontro = Encontro.create(startDate, endDate)
+
+            local = request.POST.get('local', None)
+            if local:
+                encontro.location = local
+
+            projeto = request.POST.get('projeto', None)
+            if projeto:
+                projeto = int(projeto)
+                if projeto != 0:
+                    try:
+                        encontro.projeto = Projeto.objects.get(id=projeto)
+                    except Projeto.DoesNotExist:
+                        return HttpResponse("Projeto não encontrado.", status=401)
+                else:
+                    encontro.projeto = None
+
+            facilitador = request.POST.get('facilitador', None)
+            if facilitador:
+                facilitador = int(facilitador)
+                if facilitador != 0:
+                    try:
+                        encontro.facilitador = PFEUser.objects.get(id=facilitador)
+                    except PFEUser.DoesNotExist:
+                        return HttpResponse("Usuário não encontrado.", status=401)
+                else:
+                    encontro.facilitador = None
+
+            encontro.save()
+
+            mensagem = "Dinâmica criada."
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, 'generic.html', context=context)
+
+        return HttpResponse("Dinâmica não registrada, erro!")
+
+    ano = configuracao.ano
+    semestre = configuracao.semestre
+    projetos = Projeto.objects.filter(ano=ano, semestre=semestre)\
+        .exclude(orientador=None)
+
+    pessoas = PFEUser.objects.all().order_by(Lower("first_name"), Lower("last_name"))
+
+    context = {
+        'projetos': projetos,
+        'pessoas': pessoas,
+    }
+    return render(request, 'professores/dinamicas_editar.html', context)
+
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def dinamicas_editar(request, primarykey):
+    """Edita um encontro."""
+    try:
+        encontro = Encontro.objects.get(pk=primarykey)
+    except Encontro.DoesNotExist:
+        return HttpResponse("Encontro não encontrado.", status=401)
+
+    try:
+        configuracao = Configuracao.objects.get()
+    except Configuracao.DoesNotExist:
+        return HttpResponse("Falha na configuracao do sistema.", status=401)
+
+    if request.method == 'POST':
+
+        if ('inicio' in request.POST) and ('fim' in request.POST):
+
+            try:
+                encontro.startDate = dateutil.parser.parse(request.POST['inicio'])
+                encontro.endDate = dateutil.parser.parse(request.POST['fim'])
+            except (ValueError, OverflowError):
+                return HttpResponse("Erro com data da Dinâmica!")
+
+            local = request.POST.get('local', None)
+            if local:
+                encontro.location = local
+
+            projeto = request.POST.get('projeto', None)
+            if projeto:
+                projeto = int(projeto)
+                if projeto != 0:
+                    try:
+                        encontro.projeto = Projeto.objects.get(id=projeto)
+                    except Projeto.DoesNotExist:
+                        return HttpResponse("Projeto não encontrado.", status=401)
+                else:
+                    encontro.projeto = None
+
+            facilitador = request.POST.get('facilitador', None)
+            if facilitador:
+                facilitador = int(facilitador)
+                if facilitador != 0:
+                    try:
+                        encontro.facilitador = PFEUser.objects.get(id=facilitador)
+                    except PFEUser.DoesNotExist:
+                        return HttpResponse("Usuário não encontrado.", status=401)
+                else:
+                    encontro.facilitador = None
+
+            encontro.save()
+
+            mensagem = "Dinâmica criada."
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, 'generic.html', context=context)
+
+        return HttpResponse("Dinâmica não registrada, erro!")
+
+    ano = configuracao.ano
+    semestre = configuracao.semestre
+    projetos = Projeto.objects.filter(ano=ano, semestre=semestre)\
+        .exclude(orientador=None)
+
+    pessoas = PFEUser.objects.all().order_by(Lower("first_name"), Lower("last_name"))
+
+    context = {
+        'projetos': projetos,
+        'pessoas': pessoas,
+        'encontro': encontro,
+    }
+    return render(request, 'professores/dinamicas_editar.html', context)
+
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def dinamicas_lista(request):
+    """Mostra os horários de dinâmicas."""
+
+    if request.is_ajax():
+        if 'edicao' in request.POST:
+
+            encontros = Encontro.objects.all().order_by('startDate')
+
+            edicao = request.POST['edicao']
+            if edicao == 'todas':
+                pass  # segue com encontros
+            elif edicao == 'proximas':
+                hoje = datetime.date.today()
+                encontros = encontros.filter(startDate__gt=hoje)
+            else:
+                periodo = request.POST['edicao'].split('.')
+                ano = int(periodo[0])
+                semestre = int(periodo[1])
+                encontros = encontros.filter(startDate__year=ano)
+                if semestre == 1:
+                    encontros = encontros.filter(startDate__month__lt=8)
+                else:
+                    encontros = encontros.filter(startDate__month__gt=7)
+
+            context = {
+                'encontros': encontros,
+            }
+
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+
+    else:
+
+        edicoes, _, _ = get_edicoes(Projeto)
+        context = {
+                'edicoes': edicoes,
+            }
+
+    return render(request, 'professores/dinamicas_lista.html', context)
 
 
 @login_required

@@ -30,7 +30,9 @@
         {% for e in encontros %} 
           <tr>
             <td>
-              <big><b>{{e.startDate}} - {{e.endDate|date:'H:i'}}</b></big><br>
+              <a href="{% url 'dinamicas_editar' e.id %}">
+                <big><b>{{e.startDate}} - {{e.endDate|date:'H:i'}}</b></big><br>
+              </a>
               {% if e.projeto %}
                 <b>Projeto:</b> <a href="{% url 'projeto_completo' e.projeto.id %}">
                   {{e.projeto.get_titulo}}

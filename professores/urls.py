@@ -54,6 +54,22 @@ urlpatterns = [
          views.coorientadores_tabela,
          name='coorientadores_tabela'),
 
+    path('dinamicas_index/',
+         views.dinamicas_index,
+         name='dinamicas_index'),
+
+    path('dinamicas_criar/',
+         views.dinamicas_criar,
+         name='dinamicas_criar'),
+
+    path('dinamicas_editar/<int:primarykey>',
+         views.dinamicas_editar,
+         name='dinamicas_editar'),
+
+    path('dinamicas_lista/',
+         views.dinamicas_lista,
+         name='dinamicas_lista'),
+
     path('orientadores_tabela/',
          views.orientadores_tabela,
          name='orientadores_tabela'),

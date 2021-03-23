@@ -50,10 +50,6 @@ urlpatterns = [
          views.projeto_completo,
          name='completo'),  # REMOVER
 
-    path('dinamicas/',
-         views.dinamicas,
-         name='dinamicas'),
-
     path('distribuicao_areas/',
          views.distribuicao_areas,
          name='distribuicao_areas'),
