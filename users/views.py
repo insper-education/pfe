@@ -539,6 +539,8 @@ def edita_notas(request, primarykey):
 
 
         mensagem = "Notas atualizadas<br>\n"
+        mensagem += "Peso Final = " + str(alocacao.get_media["pesos"]*100) + "% <br>\n"
+        mensagem += "Média = " + str(alocacao.get_media["media"]) + "<br>\n"
         mensagem = html.urlize(mensagem)
         context = {
             "area_principal": True,
