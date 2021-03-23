@@ -11,6 +11,10 @@
   <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
 
+  <link rel='stylesheet' href="{% static 'bootstrap-datepicker/dist/css/bootstrap-datepicker.standalone.min.css' %}" crossorigin="anonymous">
+  <script src="{% static 'bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js' %}"></script> 
+  <script src="{% static 'bootstrap-datepicker/dist/locales/bootstrap-datepicker.pt-BR.min.js' %}"></script> 
+
   <script>
     $(document).ready(function () {     
       $('#projeto').change(function(){
@@ -37,10 +41,10 @@
     <form method="post" id="dinamicasform" enctype="multipart/form-data">
       {% csrf_token %}
 
-      <div>        
+      <div class="container">   
           <label for="inicio">
           <span style="display:inline-block; width:5.5ex; text-align:right;">Inicio:</span>
-          <input id="inicio" type="datetime-local" name="inicio" 
+          <input id="inicio" type="datetime-local" name="inicio"
           {% if encontro %}
             value="{{encontro.startDate|date:'Y-m-d\TH:i:s'}}" 
           {% endif %} 
@@ -57,8 +61,6 @@
           required>
           </label>
         
-      </div><br>
-
       <script>
         // https://webreflection.medium.com/using-the-input-datetime-local-9503e7efdce
         Date.prototype.toDatetimeLocal =
@@ -79,13 +81,23 @@
                     HH + ':' + II + ':' + SS;
           };
 
+        var minutos = 20;
+
         $("#inicio").change(function() {
           var data = new Date($(this).val());
           data.setMinutes(data.getMinutes() + minutos);
           $("#fim").val(data.toDatetimeLocal());
         });
+
+        $('#inicio').datetimepicker({
+          locale:  moment.locale('en', {
+            week: { dow: 1 }
+          }),
+        });
+
       </script>
       
+      <br><br>
       <label for="local">Local:
         <input id="local" name="local" type="text" size="36" style="max-width: 100%;"
         {% if encontro %}
@@ -104,12 +116,15 @@
           {% endfor %}
       </select>
 
-      <br>
+    </div>
+    
+    <div class="container">
+      
       <br><hr><br>
 
       <label for="projeto">Projeto:</label>
       <select class="selectpicker" name="projeto" id="projeto" title="Selecione o projeto"
-       data-live-search="true" data-width="75%" data-size="5" required>
+       data-live-search="true" data-width="75%" data-size="5">
         <option {% if not encontro %}selected{% endif %} value="0"> -- selecione um projeto -- </option>
         {% for projeto in projetos %}
           <option value="{{projeto.id}}"
@@ -151,8 +166,13 @@
         {% endif %}
       </label><br>
 
+      </div>
+
       <br><br>
-      <button type="submit">{% if encontro %}Editar{% else %}Criar{% endif %}</button>
+
+      <div class="container">
+        <button type="submit">{% if encontro %}Editar{% else %}Criar{% endif %}</button>
+      </div>
       <p>&nbsp;</p>
     </form>
   
