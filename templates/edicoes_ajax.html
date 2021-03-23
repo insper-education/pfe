@@ -13,12 +13,22 @@
 
      $(".filter").change(function(){
       $("#spinner").css("visibility", "visible");
-      var edicao = $("#filterEdicao option:selected").attr("value");
+      {% if not sem_edicao %}
+        var edicao = $("#filterEdicao option:selected").attr("value");
+      {% endif %}
+      {% if com_cursos %}
+        var curso = $("#filterCurso option:selected").attr("value");
+      {% endif %}
       $.ajax({
           type: "POST",
           //url: "Normalmente a mesma página",
           data: {
-              edicao: edicao,
+              {% if not sem_edicao %}
+                edicao: edicao,
+              {% endif %}
+              {% if com_cursos %}
+                curso: curso,
+              {% endif %}
               'csrfmiddlewaretoken': '{{ csrf_token }}',
           },
           success: function(response){

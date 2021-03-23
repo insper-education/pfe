@@ -54,9 +54,13 @@ urlpatterns = [
          views.distribuicao_areas,
          name='distribuicao_areas'),
 
-    path('graficos/',
-         views.graficos,
-         name='graficos'),
+    path('objetivos/',
+         views.objetivos,
+         name='objetivos'),
+
+    path('evolucao_objetivos/',
+         views.evolucao_objetivos,
+         name='evolucao_objetivos'),
 
     path('lista_feedback',
          views.lista_feedback,

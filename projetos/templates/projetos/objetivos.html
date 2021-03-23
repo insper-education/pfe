@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 22 de Setembro de 2020
+{% endcomment %}
+
+{% block head %}
+
+  {% load static %}
+  
+  {% load l10n %}
+
+  <script src="{% static 'js/w3.js' %}"></script>
+  <script src="{% static 'js/Chart.min.js' %}"></script>
+  <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
+
+  {% comment %} Para chamar os Tooltips {% endcomment %}
+  <script>{% include "tooltip.js" %}</script>
+
+{% endblock %}
+
+{% block content %}
+
+    <span class="titulo">Análise por Objetivos de Aprendizado</span>
+
+    {% comment %} Seletor da edição da pesquisa {% endcomment %}
+    {% with com_cursos=True %}
+        {% include "edicoes.html" %}
+    {% endwith %}
+
+    <div class="atualizar">
+    <div class="container">
+
+        <div style="width:500px;"> 
+            <canvas id="horizontal-objetivos"></canvas>
+            <br><br>
+            <canvas id="chart-medias"></canvas>
+        </div>
+
+        <script>
+    
+    var config_objetivos = {
+        type: 'horizontalBar',
+        data: {
+        labels: [
+            {% for media in medias %}
+                "{{media.objetivo}}",
+            {% endfor %}
+            ],
+        datasets: [
+            {
+            label: "Objetivos de Aprendizagem",
+            backgroundColor: [
+                {% for media in medias %}
+                    "{{media.cor}}",
+                {% endfor %}
+                ],
+            data: [
+                {% for media in medias %}
+                    {{media.media|stringformat:".2f"|unlocalize}},
+                {% endfor %}
+                ]
+            }
+        ]
+        },
+        options: {
+            legend: { display: false },
+            title: {
+                display: true,
+                text: 'Médias obtidas nos Objetivos de Aprendizagem'
+            },
+            scales: {
+                xAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    }
+
+    function carrega_pagina() {  
+
+      // Chart do nível nos objetivos de aprendizagem
+      var horizontal_objetivos = document.getElementById('horizontal-objetivos').getContext('2d');
+      window.objetivos = new Chart(horizontal_objetivos, config_objetivos);
+
+    }
+
+    window.onload = carrega_pagina
+  
+  </script>
+
+
+    </div>
+    </div>
+
+    {% with com_cursos=True %}
+        {% include "edicoes_ajax.html" %}
+    {% endwith %}
+
+{% endblock %}

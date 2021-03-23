@@ -8,7 +8,7 @@ Data: 2 de Outubro de 2020
 
 from django.utils import timezone
 
-from projetos.models import Configuracao, Certificado
+from projetos.models import Configuracao, Certificado, Avaliacao2
 from .models import Aluno
 
 
@@ -56,9 +56,11 @@ def get_edicoes(tipo):
         if tipo == Certificado:
             if tipo.objects.filter(projeto__ano=ano_tmp, projeto__semestre=semestre_tmp).exists():
                 existe = True
-        if tipo == Aluno:
+        elif tipo == Aluno:
             if tipo.objects.filter(anoPFE=ano_tmp, semestrePFE=semestre_tmp).exists():
                 existe = True
+        elif tipo == Avaliacao2:
+            return (["2020.1", "2020.2"], 2020, 2) # temporário
         else:
             if tipo.objects.filter(ano=ano_tmp, semestre=semestre_tmp).exists():
                 existe = True

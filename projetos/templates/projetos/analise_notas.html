@@ -22,29 +22,12 @@
 
     <span class="titulo">Análise de Notas/Conceitos</span>
 
-    {% comment %} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {% endcomment %}
-    <label for="filter"><b>Edição:</b></label>
-    <select id="filterEdicao" class="filter" data-tableId="projetos">
-        <option value="2020.2" selected>2020.2</option>
-        <option value="todas">todas</option>
-        {% comment %}
-        {% for loop in loop_anos %}
-            <option value="{{loop}}.2" {% if ano == loop and semestre == 2 %}selected{% endif %}>{{loop}}.2</option>
-            <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
-        {% endfor %}
-        {% endcomment %}
-    </select>
+    {% comment %} Seletor da edição da pesquisa {% endcomment %}
+    {% with com_cursos=True %}
+        {% include "edicoes.html" %}
+    {% endwith %}
 
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-    <label for="filter_curso"><b>Curso:</b></label>
-    <select id="filterCurso" class="filter" data-tableId="programa">
-        <option value="T">todos</option>
-        <option value="C" {% if curso == "computação" %}selected{% endif %}>computação</option>
-        <option value="M" {% if curso == "mecatrônica" %}selected{% endif %}>mecatrônica</option>
-        <option value="X" {% if curso == "mecânica" %}selected{% endif %}>mecânica</option>
-    </select>
-
+    <div class="atualizar">
     <div class="container">
 
         <div class="row mt-5">
@@ -95,8 +78,11 @@
                         dataArr.map(data => {
                             sum += data;
                         });
-                        let percentage = (value*100 / sum).toFixed(1)+"%";
-                        return percentage;
+                        if(sum>0) {
+                            return (value*100 / sum).toFixed(1)+"%";
+                        } else {
+                            return " ";
+                        }
                     },
                     color: '#000',
                 }
@@ -138,8 +124,11 @@
                         dataArr.map(data => {
                             sum += data;
                         });
-                        let percentage = (value*100 / sum).toFixed(1)+"%";
-                        return percentage;
+                        if(sum>0) {
+                            return (value*100 / sum).toFixed(1)+"%";
+                        } else {
+                            return " ";
+                        }
                     },
                     color: '#000',
                 }
@@ -180,8 +169,11 @@
                         dataArr.map(data => {
                             sum += data;
                         });
-                        let percentage = (value*100 / sum).toFixed(1)+"%";
-                        return percentage;
+                        if(sum>0) {
+                            return (value*100 / sum).toFixed(1)+"%";
+                        } else {
+                            return " ";
+                        }
                     },
                     color: '#000',
                 }
@@ -222,8 +214,11 @@
                         dataArr.map(data => {
                             sum += data;
                         });
-                        let percentage = (value*100 / sum).toFixed(1)+"%";
-                        return percentage;
+                        if(sum>0) {
+                            return (value*100 / sum).toFixed(1)+"%";
+                        } else {
+                            return " ";
+                        }
                     },
                     color: '#000',
                 }
@@ -266,8 +261,11 @@
                         dataArr.map(data => {
                             sum += data;
                         });
-                        let percentage = (value*100 / sum).toFixed(1)+"%";
-                        return percentage;
+                        if(sum>0) {
+                            return (value*100 / sum).toFixed(1)+"%";
+                        } else {
+                            return " ";
+                        }
                     },
                     color: '#000',
                 }
@@ -308,8 +306,11 @@
                         dataArr.map(data => {
                             sum += data;
                         });
-                        let percentage = (value*100 / sum).toFixed(1)+"%";
-                        return percentage;
+                        if(sum>0) {
+                            return (value*100 / sum).toFixed(1)+"%";
+                        } else {
+                            return " ";
+                        }
                     },
                     color: '#000',
                 }
@@ -350,8 +351,11 @@
                         dataArr.map(data => {
                             sum += data;
                         });
-                        let percentage = (value*100 / sum).toFixed(1)+"%";
-                        return percentage;
+                        if(sum>0) {
+                            return (value*100 / sum).toFixed(1)+"%";
+                        } else {
+                            return " ";
+                        }
                     },
                     color: '#000',
                 }
@@ -359,7 +363,7 @@
         }
     }
 
-    function carrega_semestre() {  
+    function carrega_pagina() {  
 
       // Chart da situação dos alunos por faixa de notas
       var doughnut_situacao = document.getElementById('doughnut-situacao').getContext('2d');
@@ -392,34 +396,16 @@
 
     }
 
-    window.onload = carrega_semestre
+    window.onload = carrega_pagina
   
   </script>
 
 
     </div>
+    </div>
 
-    <script>
-        $(".filter").change(function(){
-            var edicao = $("#filterEdicao option:selected").attr("value");
-            var curso =  $("#filterCurso option:selected").attr("value");
-            $.ajax({
-                type: "POST",
-                data: {
-                    edicao: edicao,
-                    curso: curso,
-                    'csrfmiddlewaretoken': '{{ csrf_token }}',
-                },
-                success: function(response){
-                    $("div.container").replaceWith($("div.container",response));
-                    carrega_semestre();
-                },
-                error: function(response) {
-                    alert('error');
-                }
-
-            });
-        });
-    </script>
+    {% with com_cursos=True %}
+        {% include "edicoes_ajax.html" %}
+    {% endwith %}
 
 {% endblock %}

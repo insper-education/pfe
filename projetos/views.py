@@ -698,7 +698,6 @@ def projetos_vs_propostas(request):
     return render(request, 'projetos/projetos_vs_propostas.html', context)
 
 
-
 @login_required
 @permission_required("users.altera_professor", login_url='/')
 def analise_notas(request):
@@ -711,8 +710,8 @@ def analise_notas(request):
     periodo = ""
     estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
 
-    edicoes = range(2018, configuracao.ano+1)
-
+    edicoes, ano, semestre = get_edicoes(Avaliacao2)
+    
     medias_semestre = Alocacao.objects.all()
 
     if request.is_ajax():
@@ -730,6 +729,8 @@ def analise_notas(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
+    else: 
+        medias_semestre = medias_semestre.filter(projeto__ano=2020, projeto__semestre=2)
 
     valor = {}
     valor["ideal"] = 7.0
@@ -806,6 +807,7 @@ def analise_notas(request):
         'loop_anos': edicoes,
         'medias': medias,
         "notas": notas,
+        "edicoes": edicoes,
     }
 
     return render(request, 'projetos/analise_notas.html', context)
@@ -824,7 +826,7 @@ def media(notas_lista):
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
-def graficos(request):
+def objetivos(request):
     """Mostra graficos das evoluções do PFE."""
     try:
         configuracao = Configuracao.objects.get()
@@ -834,7 +836,7 @@ def graficos(request):
     periodo = ""
     estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
 
-    edicoes = range(2018, configuracao.ano+1)
+    edicoes, ano, semestre = get_edicoes(Avaliacao2)
 
     avaliacoes = Avaliacao2.objects.all()
 
@@ -853,10 +855,52 @@ def graficos(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
-    # Número de estudantes e gêneros
-    # num_alunos = estudantes.count()
-    # num_alunos_masculino = estudantes.filter(user__genero='M').count()  # Estudantes masculino
-    # num_alunos_feminino = estudantes.filter(user__genero='F').count()  # Estudantes feminino
+    cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9","#7cfa9f","#e8c3b9","#c45890"]
+
+    medias = []
+    objetivos = ObjetivosDeAprendizagem.objects.all()
+    count = 0
+    for objetivo in objetivos:
+        notas = []
+        avaliacoes_tmp = Avaliacao2.objects.all()
+        notas_lista = [x.nota for x in avaliacoes if x.objetivo == objetivo]
+        medias.append({"objetivo": objetivo.titulo, "media": media(notas_lista), "cor": cores[count]})
+        count += 1
+
+    context = {
+        "medias": medias,
+        'periodo': periodo,
+        'ano': configuracao.ano,
+        'semestre': configuracao.semestre,
+        'edicoes': edicoes,
+    }
+
+    return render(request, 'projetos/objetivos.html', context)
+
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def evolucao_objetivos(request):
+    """Mostra graficos das evoluções do PFE."""
+    try:
+        configuracao = Configuracao.objects.get()
+    except Configuracao.DoesNotExist:
+        return HttpResponse("Falha na configuracao do sistema.", status=401)
+
+    periodo = ""
+    estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
+
+    edicoes, ano, semestre = get_edicoes(Avaliacao2)
+
+    avaliacoes = Avaliacao2.objects.all()
+
+    if request.is_ajax():
+        if 'curso' in request.POST:
+            curso = request.POST['curso']
+            if curso != 'T':
+                avaliacoes = avaliacoes.filter(alocacao__aluno__curso=curso)
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
 
     cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9","#7cfa9f","#e8c3b9","#c45890"]
 
@@ -864,22 +908,24 @@ def graficos(request):
     objetivos = ObjetivosDeAprendizagem.objects.all()
     count = 0
     for objetivo in objetivos:
-        notas_lista = [x.nota for x in avaliacoes if x.objetivo == objetivo]
-        medias.append({"objetivo": objetivo.titulo, "media": media(notas_lista), "cor": cores[count]})
+        notas = []
+        for edicao in edicoes:
+            periodo = edicao.split('.')
+            semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
+            notas_lista = [x.nota for x in semestre if x.objetivo == objetivo]
+            notas.append(media(notas_lista))
+        medias.append({"objetivo": objetivo.titulo, "media": notas, "cor": cores[count]})
         count += 1
 
     context = {
-        # "num_alunos": num_alunos,
-        # "num_alunos_feminino": num_alunos_feminino,
-        # "num_alunos_masculino": num_alunos_masculino,
         "medias": medias,
         'periodo': periodo,
         'ano': configuracao.ano,
         'semestre': configuracao.semestre,
-        'loop_anos': edicoes,
+        'edicoes': edicoes,
     }
 
-    return render(request, 'projetos/graficos.html', context)
+    return render(request, 'projetos/evolucao_objetivos.html', context)
 
 
 def cap_name(name):
