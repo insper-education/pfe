@@ -15,6 +15,12 @@
         <a href='javascript:history.back(1)'>Voltar</a><br><br>
     {% endif %} 
 
+    
+    {% if agendar_dinamica %}
+        <a href="{% url 'dinamicas_criar' %}">Agendar outra dinâmica</a><br>
+    {% endif %}
+
+
     {% if cadastrar_organizacao %}
         <a href="{% url 'cadastrar_organizacao' %}">Cadastrar outra organização</a><br>
     {% endif %}

@@ -775,6 +775,7 @@ def dinamicas_criar(request):
             mensagem = "Dinâmica criada."
             context = {
                 "area_principal": True,
+                "agendar_dinamica": True,
                 "mensagem": mensagem,
             }
             return render(request, 'generic.html', context=context)
