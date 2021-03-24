@@ -913,6 +913,7 @@ def evolucao_notas(request):
         medias.append({"curso": curso[1], "media": notas, "cor": cores[count]})
         count += 1
     
+    notas = []
     for edicao in edicoes:
         notas.append(media(notas_total[edicao]))
     medias.append({"curso": "engenharia", "media": notas, "cor": cores[count]})
