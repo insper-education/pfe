@@ -949,7 +949,7 @@ def evolucao_notas(request):
     # (22, 'Relatório Final Individual'),
     avaliacoes = Avaliacao2.objects.filter(tipo_de_avaliacao=21) | Avaliacao2.objects.filter(tipo_de_avaliacao=22)
 
-    medias = []
+    medias_individuais = []
     count = 0
     for curso in Aluno.TIPOS_CURSO:
         notas = []
@@ -959,16 +959,50 @@ def evolucao_notas(request):
             notas_lista = [x.nota for x in semestre if (x.alocacao != None and x.alocacao.aluno.curso == curso[0])]
             notas_total[edicao] += notas_lista
             notas.append(media(notas_lista))
-        medias.append({"curso": curso[1], "media": notas, "cor": cores[count]})
+        medias_individuais.append({"curso": curso[1], "media": notas, "cor": cores[count]})
         count += 1
     
     notas = []
     for edicao in edicoes:
         notas.append(media(notas_total[edicao]))
-    medias.append({"curso": "engenharia", "media": notas, "cor": cores[count]})
+    medias_individuais.append({"curso": "engenharia", "media": notas, "cor": cores[count]})
+
+
+    ################################
+
+
+    # Para armazenar todas as notas de todos os programas de engenharia
+    notas_total = {}
+    for edicao in edicoes:
+        notas_total[edicao] = []
+
+    # médias gerais totais
+    medias_gerais = []
+    count = 0
+    for curso in Aluno.TIPOS_CURSO:
+        notas = []
+        for edicao in edicoes:
+            periodo = edicao.split('.')
+            alocacoes = Alocacao.objects.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
+            notas_lista = []
+            for x in alocacoes:
+                media_loc = x.get_media
+                if media_loc["pesos"] == 1:
+                    notas_lista.append(media_loc["media"])
+
+            notas_total[edicao] += notas_lista
+            notas.append(media(notas_lista))
+        medias_gerais.append({"curso": curso[1], "media": notas, "cor": cores[count]})
+        count += 1
+    
+    notas = []
+    for edicao in edicoes:
+        notas.append(media(notas_total[edicao]))
+    medias_gerais.append({"curso": "engenharia", "media": notas, "cor": cores[count]})
 
     context = {
-        "medias": medias,
+        "medias_individuais": medias_individuais,
+        "medias_gerais": medias_gerais,
         'edicoes': edicoes,
     }
 

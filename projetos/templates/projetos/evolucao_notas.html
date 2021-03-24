@@ -38,61 +38,109 @@
     <div class="container">
 
         <div style="width:860px;"> 
-            <canvas id="chart-medias"></canvas>
+            <canvas id="chart-medias-individuais"></canvas>
+            <canvas id="chart-medias-gerais"></canvas>
         </div>
 
         <script>
     
-    var config_medias = {
-        type: 'line',
-        data: {
-            labels: [
-                {% for edicao in edicoes %}
-                    "{{edicao}}",
-                {% endfor %}
-            ],
-            datasets: [
-                {% for media in medias %}
-                    { 
-                        data: [
-                            {% for nota in media.media %}
-                                {{nota|stringformat:".2f"|unlocalize}},
-                            {% endfor %}
-                        ],
-                        label: "{{media.curso}}",
-                        borderColor: "{{media.cor}}",
-                        fill: false
-                    },
-                {% endfor %}
-            ]
-        },
-        options: {
-            title: {
-                display: true,
-                text: 'Evolução nos semestres'
-            }, 
-            {% comment %} scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true,
-                        max: 10
-                    }
-                }]
-            } {% endcomment %}
+            var config_medias_individuais = {
+                type: 'line',
+                data: {
+                    labels: [
+                        {% for edicao in edicoes %}
+                            "{{edicao}}",
+                        {% endfor %}
+                    ],
+                    datasets: [
+                        {% for media in medias_individuais %}
+                            { 
+                                data: [
+                                    {% for nota in media.media %}
+                                        {{nota|stringformat:".2f"|unlocalize}},
+                                    {% endfor %}
+                                ],
+                                label: "{{media.curso}}",
+                                borderColor: "{{media.cor}}",
+                                fill: false
+                            },
+                        {% endfor %}
+                    ]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: 'Evolução de notas individuais'
+                    }, 
+                    {% comment %} scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                max: 10
+                            }
+                        }]
+                    } {% endcomment %}
 
-        }
-    }
+                }
+            }
+
+    
+            var config_medias_gerais = {
+                type: 'line',
+                data: {
+                    labels: [
+                        {% for edicao in edicoes %}
+                            "{{edicao}}",
+                        {% endfor %}
+                    ],
+                    datasets: [
+                        {% for media in medias_gerais %}
+                            { 
+                                data: [
+                                    {% for nota in media.media %}
+                                        {{nota|stringformat:".2f"|unlocalize}},
+                                    {% endfor %}
+                                ],
+                                label: "{{media.curso}}",
+                                borderColor: "{{media.cor}}",
+                                fill: false
+                            },
+                        {% endfor %}
+                    ]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: 'Evolução médias gerais'
+                    }, 
+                    {% comment %} scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                max: 10
+                            }
+                        }]
+                    } {% endcomment %}
+
+                }
+            }
 
 
-    function carrega_pagina() {  
-      // Chart do média dos alunos
-      var chart_medias = document.getElementById('chart-medias').getContext('2d');
-      window.medias = new Chart(chart_medias, config_medias);
-    }
+            function carrega_pagina() {  
 
-    window.onload = carrega_pagina
-  
-  </script>
+                // Chart do média individuais
+                var chart_medias_individuais = document.getElementById('chart-medias-individuais').getContext('2d');
+                window.medias = new Chart(chart_medias_individuais, config_medias_individuais);
+
+                // Chart do média gerais
+                var chart_medias_gerais = document.getElementById('chart-medias-gerais').getContext('2d');
+                window.medias = new Chart(chart_medias_gerais, config_medias_gerais);
+
+            }
+
+            window.onload = carrega_pagina
+        
+        </script>
 
 
     </div>
