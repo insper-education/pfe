@@ -37,6 +37,9 @@ urlpatterns = [
          views.analise_notas,
          name='analise_notas'),
 
+    path('evolucao_notas/',
+         views.evolucao_notas,
+         name='evolucao_notas'),
 
     path('carrega_bancos/',
          views.carrega_bancos,
@@ -54,9 +57,9 @@ urlpatterns = [
          views.distribuicao_areas,
          name='distribuicao_areas'),
 
-    path('objetivos/',
-         views.objetivos,
-         name='objetivos'),
+    path('analise_objetivos/',
+         views.analise_objetivos,
+         name='analise_objetivos'),
 
     path('evolucao_objetivos/',
          views.evolucao_objetivos,

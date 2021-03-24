@@ -24,7 +24,9 @@
           </select>
         {% endif %}
         {% if com_cursos %}
-          <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          {% if not sem_edicao %}
+            <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          {% endif %}
           <div class="input-group-prepend">
             <label class="input-group-text" for="filterCurso">Curso</label>
           </div>

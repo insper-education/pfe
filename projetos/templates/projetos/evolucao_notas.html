@@ -22,14 +22,17 @@
 
 {% block content %}
 
-    <span class="titulo">Evolução por Objetivos de Aprendizado</span>
+    <span class="titulo">Evolução por Notas/Conceitos</span>
 
     {% comment %} Seletor da edição da pesquisa {% endcomment %}
+    
+    {% comment %}
     {% with sem_edicao=True %}
     {% with com_cursos=True %}
         {% include "edicoes.html" %}
     {% endwith %}
     {% endwith %}
+    {% endcomment %}
 
     <div class="atualizar">
     <div class="container">
@@ -56,7 +59,7 @@
                                 {{nota|stringformat:".2f"|unlocalize}},
                             {% endfor %}
                         ],
-                        label: "{{media.objetivo}}",
+                        label: "{{media.curso}}",
                         borderColor: "{{media.cor}}",
                         fill: false
                     },
@@ -95,10 +98,12 @@
     </div>
     </div>
 
+    {% comment %}
     {% with sem_edicao=True %}
     {% with com_cursos=True %}
         {% include "edicoes_ajax.html" %}
     {% endwith %}
-    {% endwith %}
+    {% endwith %} 
+    {% endcomment %}
 
 {% endblock %}

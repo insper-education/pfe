@@ -826,7 +826,7 @@ def media(notas_lista):
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
-def objetivos(request):
+def analise_objetivos(request):
     """Mostra graficos das evoluções do PFE."""
     try:
         configuracao = Configuracao.objects.get()
@@ -875,7 +875,57 @@ def objetivos(request):
         'edicoes': edicoes,
     }
 
-    return render(request, 'projetos/objetivos.html', context)
+    return render(request, 'projetos/analise_objetivos.html', context)
+
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def evolucao_notas(request):
+    """Mostra graficos das evoluções do PFE."""
+    try:
+        configuracao = Configuracao.objects.get()
+    except Configuracao.DoesNotExist:
+        return HttpResponse("Falha na configuracao do sistema.", status=401)
+
+    periodo = ""
+    estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
+
+    edicoes, _, _ = get_edicoes(Avaliacao2)
+
+    avaliacoes = Avaliacao2.objects.all()
+
+    cores = ["#00af00", "#d40000", "#cccc00", "#000000", ]
+
+    notas_total = {}
+    for edicao in edicoes:
+        notas_total[edicao] = []
+
+    medias = []
+    count = 0
+    for curso in Aluno.TIPOS_CURSO:
+        notas = []
+        for edicao in edicoes:
+            periodo = edicao.split('.')
+            semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
+            notas_lista = [x.nota for x in semestre if (x.alocacao != None and x.alocacao.aluno.curso == curso[0])]
+            notas_total[edicao] += notas_lista
+            notas.append(media(notas_lista))
+        medias.append({"curso": curso[1], "media": notas, "cor": cores[count]})
+        count += 1
+    
+    for edicao in edicoes:
+        notas.append(media(notas_total[edicao]))
+    medias.append({"curso": "engenharia", "media": notas, "cor": cores[count]})
+
+    context = {
+        "medias": medias,
+        'periodo': periodo,
+        'ano': configuracao.ano,
+        'semestre': configuracao.semestre,
+        'edicoes': edicoes,
+    }
+
+    return render(request, 'projetos/evolucao_notas.html', context)
 
 
 @login_required
