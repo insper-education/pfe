@@ -956,7 +956,8 @@ def evolucao_notas(request):
         for edicao in edicoes:
             periodo = edicao.split('.')
             semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
-            notas_lista = [x.nota for x in semestre if (x.alocacao != None and x.alocacao.aluno.curso == curso[0])]
+            #notas_lista = [x.nota for x in semestre if (x.alocacao != None and x.alocacao.aluno.curso == curso[0])]
+            notas_lista = []
             notas_total[edicao] += notas_lista
             notas.append(media(notas_lista))
         medias_individuais.append({"curso": curso[1], "media": notas, "cor": cores[count]})
@@ -983,7 +984,7 @@ def evolucao_notas(request):
         notas = []
         for edicao in edicoes:
             periodo = edicao.split('.')
-            alocacoes = Alocacao.objects.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
+            alocacoes = Alocacao.objects.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1], aluno__curso=curso[0])
             notas_lista = []
             for x in alocacoes:
                 media_loc = x.get_media
