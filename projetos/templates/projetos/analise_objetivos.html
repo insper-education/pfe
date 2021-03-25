@@ -52,7 +52,7 @@
                 type: 'horizontalBar',
                 data: {
                 labels: [
-                    {% for key in medias_geral reversed %}
+                    {% for key in medias_geral %}
                         "{{key}}",
                     {% endfor %}
                     ],
@@ -60,12 +60,12 @@
                     {
                     label: "Objetivos de Aprendizagem",
                     backgroundColor: [
-                        {% for key, value in medias_geral.items reversed %}
+                        {% for key, value in medias_geral.items %}
                             "{{value.cor}}",
                         {% endfor %}
                         ],
                     data: [
-                        {% for key, value in medias_geral.items reversed %}
+                        {% for key, value in medias_geral.items %}
                             {{value.media|stringformat:".2f"|unlocalize}},
                         {% endfor %}
                         ]
@@ -96,7 +96,7 @@
                 type: 'horizontalBar',
                 data: {
                 labels: [
-                    {% for key in medias_rii reversed %}
+                    {% for key in medias_rii %}
                         "{{key}}",
                     {% endfor %}
                     ],
@@ -104,12 +104,12 @@
                     {
                     label: "Objetivos de Aprendizagem",
                     backgroundColor: [
-                        {% for key, value in medias_rii.items reversed %}
+                        {% for key, value in medias_rii.items %}
                             "{{value.cor}}",
                         {% endfor %}
                         ],
                     data: [
-                        {% for key, value in medias_rii.items reversed %}
+                        {% for key, value in medias_rii.items %}
                             {{value.media|stringformat:".2f"|unlocalize}},
                         {% endfor %}
                         ]
@@ -137,7 +137,7 @@
                 type: 'horizontalBar',
                 data: {
                 labels: [
-                    {% for key in medias_rig reversed %}
+                    {% for key in medias_rig %}
                         "{{key}}",
                     {% endfor %}
                     ],
@@ -145,12 +145,12 @@
                     {
                     label: "Objetivos de Aprendizagem",
                     backgroundColor: [
-                        {% for key, value in medias_rig.items reversed %}
+                        {% for key, value in medias_rig.items %}
                             "{{value.cor}}",
                         {% endfor %}
                         ],
                     data: [
-                        {% for key, value in medias_rig.items reversed %}
+                        {% for key, value in medias_rig.items %}
                             {{value.media|stringformat:".2f"|unlocalize}},
                         {% endfor %}
                         ]
@@ -178,7 +178,7 @@
                 type: 'horizontalBar',
                 data: {
                 labels: [
-                    {% for key in medias_bi reversed %}
+                    {% for key in medias_bi %}
                         "{{key}}",
                     {% endfor %}
                     ],
@@ -186,12 +186,12 @@
                     {
                     label: "Objetivos de Aprendizagem",
                     backgroundColor: [
-                        {% for key, value in medias_bi.items reversed %}
+                        {% for key, value in medias_bi.items %}
                             "{{value.cor}}",
                         {% endfor %}
                         ],
                     data: [
-                        {% for key, value in medias_bi.items reversed %}
+                        {% for key, value in medias_bi.items %}
                             {{value.media|stringformat:".2f"|unlocalize}},
                         {% endfor %}
                         ]
@@ -221,7 +221,7 @@
                 type: 'horizontalBar',
                 data: {
                 labels: [
-                    {% for key in medias_rfi reversed %}
+                    {% for key in medias_rfi %}
                         "{{key}}",
                     {% endfor %}
                     ],
@@ -229,12 +229,12 @@
                     {
                     label: "Objetivos de Aprendizagem",
                     backgroundColor: [
-                        {% for key, value in medias_rfi.items reversed %}
+                        {% for key, value in medias_rfi.items %}
                             "{{value.cor}}",
                         {% endfor %}
                         ],
                     data: [
-                        {% for key, value in medias_rfi.items reversed %}
+                        {% for key, value in medias_rfi.items %}
                             {{value.media|stringformat:".2f"|unlocalize}},
                         {% endfor %}
                         ]
@@ -262,7 +262,7 @@
                 type: 'horizontalBar',
                 data: {
                 labels: [
-                    {% for key in medias_rfg reversed %}
+                    {% for key in medias_rfg %}
                         "{{key}}",
                     {% endfor %}
                     ],
@@ -270,12 +270,12 @@
                     {
                     label: "Objetivos de Aprendizagem",
                     backgroundColor: [
-                        {% for key, value in medias_rfg.items reversed %}
+                        {% for key, value in medias_rfg.items %}
                             "{{value.cor}}",
                         {% endfor %}
                         ],
                     data: [
-                        {% for key, value in medias_rfg.items reversed %}
+                        {% for key, value in medias_rfg.items %}
                             {{value.media|stringformat:".2f"|unlocalize}},
                         {% endfor %}
                         ]
@@ -303,7 +303,7 @@
                 type: 'horizontalBar',
                 data: {
                 labels: [
-                    {% for key in medias_bf reversed %}
+                    {% for key in medias_bf %}
                         "{{key}}",
                     {% endfor %}
                     ],
@@ -311,12 +311,12 @@
                     {
                     label: "Objetivos de Aprendizagem",
                     backgroundColor: [
-                        {% for key, value in medias_bf.items reversed %}
+                        {% for key, value in medias_bf.items %}
                             "{{value.cor}}",
                         {% endfor %}
                         ],
                     data: [
-                        {% for key, value in medias_bf.items reversed %}
+                        {% for key, value in medias_bf.items %}
                             {{value.media|stringformat:".2f"|unlocalize}},
                         {% endfor %}
                         ]

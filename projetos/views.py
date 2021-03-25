@@ -996,9 +996,6 @@ def analise_objetivos(request):
 
     for objetivo in objetivos:
         if medias_geral[objetivo]["peso"] > 0:
-            # print(medias_geral[objetivo]["soma"])
-            # print(medias_geral[objetivo]["peso"])
-
             medias_geral[objetivo]["media"] = medias_geral[objetivo]["soma"] / medias_geral[objetivo]["peso"]
         else:
             medias_geral[objetivo]["media"] = 0
@@ -1014,19 +1011,7 @@ def analise_objetivos(request):
         "edicoes": edicoes,
     }
 
-
-
-    # medias = []
-    # objetivos = ObjetivosDeAprendizagem.objects.all()
-    # count = 0
-    # for objetivo in objetivos:
-    #     notas_lista = [x.nota for x in avaliacoes if x.objetivo == objetivo]
-    #     medias.append({"objetivo": objetivo.titulo, "media": media(notas_lista), "cor": cores[count]})
-    #     count += 1
-
-
     return render(request, 'projetos/analise_objetivos.html', context)
-
 
 
 @login_required
