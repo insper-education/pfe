@@ -205,9 +205,9 @@ class Aluno(models.Model):
             return "Engenharia Mecatrônica"
         return "Sem curso"
 
-    def get_banca(self, avaliacoes_banca):
-        """Retorna média."""
-        #nota_banca = 0
+
+    def get_objetivos(self, avaliacoes_banca):
+        """Retorna objetivos."""
         lista_objetivos = {}
         objetivos = ObjetivosDeAprendizagem.objects.all()
         for objetivo in objetivos:
@@ -216,6 +216,7 @@ class Aluno(models.Model):
             if bancas:
                 lista_objetivos[objetivo] = {}
             for banca in bancas:
+                # Se não for o mesmo avaliador
                 if banca.avaliador not in lista_objetivos[objetivo]:
                     if banca.na:
                         lista_objetivos[objetivo][banca.avaliador] = None
@@ -244,6 +245,16 @@ class Aluno(models.Model):
                 if count:
                     val_objetivos[obj] = (val/count, pes/count)
 
+        return val_objetivos, pes_total
+
+    def get_banca(self, avaliacoes_banca):
+        """Retorna média."""
+        
+        val_objetivos, pes_total  = Aluno.get_objetivos(self, avaliacoes_banca)
+
+        if not val_objetivos:
+            return 0, None
+
         # média dos objetivos
         val = 0
         pes = 0
@@ -264,6 +275,92 @@ class Aluno(models.Model):
             pes = None
 
         return val, pes
+
+
+    @property
+    def get_edicoes(self):
+        """Recuper as notas do Estudante."""
+        edicao = {} # dicionário para cada alocação do estudante (por exemplo DP, ou PFE Avançado)
+
+        alocacoes = Alocacao.objects.filter(aluno=self.pk)
+        #supondo só uma alocação para agora
+        #alocacao = alocacoes.first()
+
+        for alocacao in alocacoes:
+
+            notas = [] # iniciando uma lista de notas vazia
+
+            # Banca Intermediária (1, 'intermediaria')
+            avaliacoes_banca_interm = Avaliacao2.objects.filter(projeto=alocacao.projeto,
+                                                                tipo_de_avaliacao=1)
+            if avaliacoes_banca_interm:
+                nota_banca_interm, peso = Aluno.get_objetivos(self, avaliacoes_banca_interm)
+                print(nota_banca_interm)
+                notas.append(("BI", nota_banca_interm, peso/100))
+
+            # Banca Final (2, 'final')
+            avaliacoes_banca_final = Avaliacao2.objects.filter(projeto=alocacao.projeto,
+                                                               tipo_de_avaliacao=2)
+            if avaliacoes_banca_final:
+                nota_banca_final, peso = Aluno.get_objetivos(self, avaliacoes_banca_final)
+                notas.append(("BF", nota_banca_final, peso/100))
+
+            # Relatório de Planejamento (10, 'Relatório de Planejamento')
+            relp = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=10).\
+                                      order_by('momento').last()
+            if relp:
+                notas.append(("RP", float(relp.nota), relp.peso/100))
+
+            # Relatório Intermediário de Grupo (11, 'Relatório Intermediário de Grupo'),
+            rig = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=11)
+            if rig:
+                nota_rig, peso = Aluno.get_objetivos(self, rig)
+                notas.append(("RIG", nota_rig, peso/100))
+
+            # Relatório Final de Grupo (12, 'Relatório Final de Grupo'),
+            rfg = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=12)
+            if rfg:
+                nota_rfg, peso = Aluno.get_objetivos(self, rfg)
+                notas.append(("RFG", nota_rfg, peso/100))
+
+            # Relatório Intermediário Individual (21, 'Relatório Intermediário Individual'),
+            rii = Avaliacao2.objects.filter(alocacao=alocacao, tipo_de_avaliacao=21)
+            if rii:
+                nota_rii, peso = Aluno.get_objetivos(self, rii)
+                notas.append(("RII", nota_rii, peso/100))
+
+            # Relatório Final Individual (22, 'Relatório Final Individual'),
+            rfi = Avaliacao2.objects.filter(alocacao=alocacao, tipo_de_avaliacao=22)
+            if rfi:
+                nota_rfi, peso = Aluno.get_objetivos(self, rfi)
+                notas.append(("RFI", nota_rfi, peso/100))
+
+            ### NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES
+            # Planejamento Primeira Fase  (50, 'Planejamento Primeira Fase')
+            ppf = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=50).\
+                                     order_by('momento').last()
+            if ppf:
+                notas.append( ("PPF", float(ppf.nota), ppf.peso/100) )
+
+            # Avaliação Parcial Individual (51, 'Avaliação Parcial Individual'),
+            api = Avaliacao2.objects.filter(alocacao=alocacao, tipo_de_avaliacao=51)
+            if api:
+                nota_api, peso = Aluno.get_objetivos(self, api)
+                notas.append(("API", nota_api, peso/100))
+
+            # Avaliação Final Individual (52, 'Avaliação Final Individual'),
+            afi = Avaliacao2.objects.filter(alocacao=alocacao, tipo_de_avaliacao=52)
+            if afi:
+                nota_afi, peso = Aluno.get_objetivos(self, afi)
+                notas.append(("AFI", nota_afi, peso/100))
+
+            edicao[str(alocacao.projeto.ano)+"."+str(alocacao.projeto.semestre)] = notas
+
+        return edicao
+
+
+
+
 
     @property
     def get_notas(self):
@@ -418,6 +515,13 @@ class Alocacao(models.Model):
         return alocacao
 
     @property
+    def get_edicoes(self):
+        """Retorna objetivos."""
+        edicoes = self.aluno.get_edicoes
+        edicao = edicoes[str(self.projeto.ano)+"."+str(self.projeto.semestre)]
+        return edicao
+
+    @property
     def get_notas(self):
         """Retorna notas."""
         edicoes = self.aluno.get_notas
@@ -448,11 +552,6 @@ class Alocacao(models.Model):
     def peso(self):
         """Retorna peso final."""
         return self.get_media["pesos"]
-
-
-
-
-
 
     @property
     def get_notas(self):

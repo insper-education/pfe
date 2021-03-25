@@ -32,65 +32,354 @@
     <div class="atualizar">
     <div class="container">
 
-        <div style="width:500px;"> 
-            <canvas id="horizontal-objetivos"></canvas>
-            <br><br>
-            <canvas id="chart-medias"></canvas>
+
+
+        <div class="row mt-5">
+            <div class="col"><canvas id="horizontal-objetivos"></canvas></div>
+        </div>
+        <div class="row mt-5 justify-content-md-center">
+            <div class="col-md-6"><canvas id="objetivos-rii"></canvas></div>
+            <div class="col-md-6"><canvas id="objetivos-rig"></canvas></div>
+            <div class="col-md-6"><canvas id="objetivos-bi"></canvas></div>
+            <div class="col-md-6"><canvas id="objetivos-rfi"></canvas></div>
+            <div class="col-md-6"><canvas id="objetivos-rfg"></canvas></div>
+            <div class="col-md-6"><canvas id="objetivos-bf"></canvas></div>
         </div>
 
         <script>
     
-    var config_objetivos = {
-        type: 'horizontalBar',
-        data: {
-        labels: [
-            {% for media in medias %}
-                "{{media.objetivo}}",
-            {% endfor %}
-            ],
-        datasets: [
-            {
-            label: "Objetivos de Aprendizagem",
-            backgroundColor: [
-                {% for media in medias %}
-                    "{{media.cor}}",
-                {% endfor %}
-                ],
-            data: [
-                {% for media in medias %}
-                    {{media.media|stringformat:".2f"|unlocalize}},
-                {% endfor %}
-                ]
-            }
-        ]
-        },
-        options: {
-            legend: { display: false },
-            title: {
-                display: true,
-                text: 'Médias obtidas nos Objetivos de Aprendizagem'
-            },
-            scales: {
-                xAxes: [{
-                    ticks: {
-                        beginAtZero: true
+            var config_objetivos = {
+                type: 'horizontalBar',
+                data: {
+                labels: [
+                    {% for key in medias_geral reversed %}
+                        "{{key}}",
+                    {% endfor %}
+                    ],
+                datasets: [
+                    {
+                    label: "Objetivos de Aprendizagem",
+                    backgroundColor: [
+                        {% for key, value in medias_geral.items reversed %}
+                            "{{value.cor}}",
+                        {% endfor %}
+                        ],
+                    data: [
+                        {% for key, value in medias_geral.items reversed %}
+                            {{value.media|stringformat:".2f"|unlocalize}},
+                        {% endfor %}
+                        ]
                     }
-                }]
+                ]
+                },
+                options: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Médias Obtidas nos Objetivos de Aprendizagem'
+                    },
+                    scales: {
+                        xAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                max: 10
+                            }
+                        }]
+                    }
+                }
             }
-        }
-    }
 
-    function carrega_pagina() {  
 
-      // Chart do nível nos objetivos de aprendizagem
-      var horizontal_objetivos = document.getElementById('horizontal-objetivos').getContext('2d');
-      window.objetivos = new Chart(horizontal_objetivos, config_objetivos);
 
-    }
 
-    window.onload = carrega_pagina
-  
-  </script>
+            var config_objetivos_rii = {
+                type: 'horizontalBar',
+                data: {
+                labels: [
+                    {% for key in medias_rii reversed %}
+                        "{{key}}",
+                    {% endfor %}
+                    ],
+                datasets: [
+                    {
+                    label: "Objetivos de Aprendizagem",
+                    backgroundColor: [
+                        {% for key, value in medias_rii.items reversed %}
+                            "{{value.cor}}",
+                        {% endfor %}
+                        ],
+                    data: [
+                        {% for key, value in medias_rii.items reversed %}
+                            {{value.media|stringformat:".2f"|unlocalize}},
+                        {% endfor %}
+                        ]
+                    }
+                ]
+                },
+                options: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Relatório Intermediário Individual'
+                    },
+                    scales: {
+                        xAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                max: 10
+                            }
+                        }]
+                    }
+                }
+            }
+
+            var config_objetivos_rig = {
+                type: 'horizontalBar',
+                data: {
+                labels: [
+                    {% for key in medias_rig reversed %}
+                        "{{key}}",
+                    {% endfor %}
+                    ],
+                datasets: [
+                    {
+                    label: "Objetivos de Aprendizagem",
+                    backgroundColor: [
+                        {% for key, value in medias_rig.items reversed %}
+                            "{{value.cor}}",
+                        {% endfor %}
+                        ],
+                    data: [
+                        {% for key, value in medias_rig.items reversed %}
+                            {{value.media|stringformat:".2f"|unlocalize}},
+                        {% endfor %}
+                        ]
+                    }
+                ]
+                },
+                options: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Relatório Intermediário de Grupo'
+                    },
+                    scales: {
+                        xAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                max: 10
+                            }
+                        }]
+                    }
+                }
+            }
+
+            var config_objetivos_bi = {
+                type: 'horizontalBar',
+                data: {
+                labels: [
+                    {% for key in medias_bi reversed %}
+                        "{{key}}",
+                    {% endfor %}
+                    ],
+                datasets: [
+                    {
+                    label: "Objetivos de Aprendizagem",
+                    backgroundColor: [
+                        {% for key, value in medias_bi.items reversed %}
+                            "{{value.cor}}",
+                        {% endfor %}
+                        ],
+                    data: [
+                        {% for key, value in medias_bi.items reversed %}
+                            {{value.media|stringformat:".2f"|unlocalize}},
+                        {% endfor %}
+                        ]
+                    }
+                ]
+                },
+                options: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Banca Intermediária'
+                    },
+                    scales: {
+                        xAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                max: 10
+                            }
+                        }]
+                    }
+                }
+            }
+
+
+
+            var config_objetivos_rfi = {
+                type: 'horizontalBar',
+                data: {
+                labels: [
+                    {% for key in medias_rfi reversed %}
+                        "{{key}}",
+                    {% endfor %}
+                    ],
+                datasets: [
+                    {
+                    label: "Objetivos de Aprendizagem",
+                    backgroundColor: [
+                        {% for key, value in medias_rfi.items reversed %}
+                            "{{value.cor}}",
+                        {% endfor %}
+                        ],
+                    data: [
+                        {% for key, value in medias_rfi.items reversed %}
+                            {{value.media|stringformat:".2f"|unlocalize}},
+                        {% endfor %}
+                        ]
+                    }
+                ]
+                },
+                options: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Relatório Final Individual'
+                    },
+                    scales: {
+                        xAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                max: 10
+                            }
+                        }]
+                    }
+                }
+            }
+
+            var config_objetivos_rfg = {
+                type: 'horizontalBar',
+                data: {
+                labels: [
+                    {% for key in medias_rfg reversed %}
+                        "{{key}}",
+                    {% endfor %}
+                    ],
+                datasets: [
+                    {
+                    label: "Objetivos de Aprendizagem",
+                    backgroundColor: [
+                        {% for key, value in medias_rfg.items reversed %}
+                            "{{value.cor}}",
+                        {% endfor %}
+                        ],
+                    data: [
+                        {% for key, value in medias_rfg.items reversed %}
+                            {{value.media|stringformat:".2f"|unlocalize}},
+                        {% endfor %}
+                        ]
+                    }
+                ]
+                },
+                options: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Relatório Final de Grupo'
+                    },
+                    scales: {
+                        xAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                max: 10
+                            }
+                        }]
+                    }
+                }
+            }
+
+            var config_objetivos_bf = {
+                type: 'horizontalBar',
+                data: {
+                labels: [
+                    {% for key in medias_bf reversed %}
+                        "{{key}}",
+                    {% endfor %}
+                    ],
+                datasets: [
+                    {
+                    label: "Objetivos de Aprendizagem",
+                    backgroundColor: [
+                        {% for key, value in medias_bf.items reversed %}
+                            "{{value.cor}}",
+                        {% endfor %}
+                        ],
+                    data: [
+                        {% for key, value in medias_bf.items reversed %}
+                            {{value.media|stringformat:".2f"|unlocalize}},
+                        {% endfor %}
+                        ]
+                    }
+                ]
+                },
+                options: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Banca Final'
+                    },
+                    scales: {
+                        xAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                max: 10
+                            }
+                        }]
+                    }
+                }
+            }
+
+
+
+            function carrega_pagina() {  
+
+            // Chart do nível nos objetivos de aprendizagem
+            var horizontal_objetivos = document.getElementById('horizontal-objetivos').getContext('2d');
+            window.objetivos = new Chart(horizontal_objetivos, config_objetivos);
+
+
+            // Chart do nível nos objetivos de aprendizagem
+            var objetivos_rii = document.getElementById('objetivos-rii').getContext('2d');
+            window.objetivos = new Chart(objetivos_rii, config_objetivos_rii);
+
+            // Chart do nível nos objetivos de aprendizagem
+            var objetivos_rig = document.getElementById('objetivos-rig').getContext('2d');
+            window.objetivos = new Chart(objetivos_rig, config_objetivos_rig);
+
+            // Chart do nível nos objetivos de aprendizagem
+            var objetivos_bi = document.getElementById('objetivos-bi').getContext('2d');
+            window.objetivos = new Chart(objetivos_bi, config_objetivos_bi);
+
+
+            // Chart do nível nos objetivos de aprendizagem
+            var objetivos_rfi = document.getElementById('objetivos-rfi').getContext('2d');
+            window.objetivos = new Chart(objetivos_rfi, config_objetivos_rfi);
+
+            // Chart do nível nos objetivos de aprendizagem
+            var objetivos_rfg = document.getElementById('objetivos-rfg').getContext('2d');
+            window.objetivos = new Chart(objetivos_rfg, config_objetivos_rfg);
+
+            // Chart do nível nos objetivos de aprendizagem
+            var objetivos_bf = document.getElementById('objetivos-bf').getContext('2d');
+            window.objetivos = new Chart(objetivos_bf, config_objetivos_bf);
+
+
+            }
+
+            window.onload = carrega_pagina
+        
+        </script>
 
 
     </div>
