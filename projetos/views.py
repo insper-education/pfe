@@ -850,7 +850,7 @@ def analise_objetivos(request):
     else: 
         alocacoes = alocacoes.filter(projeto__ano=2020, projeto__semestre=2)
 
-    objetivos = ObjetivosDeAprendizagem.objects.reverse()
+    objetivos = ObjetivosDeAprendizagem.objects.all()
 
     cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9","#7cfa9f","#e8c3b9","#c45890"]
     count = 0
