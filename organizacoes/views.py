@@ -66,6 +66,7 @@ def anotacao(request, organizacao_id, anotacao_id=None):  # acertar isso para pk
         anotacao.save()
 
         data = {
+            'data': anotacao.momento.strftime("%d/%m/%Y"),
             'autor': str(anotacao.autor.get_full_name()),
             'anotacao_id': anotacao.id,
             'atualizado': True,

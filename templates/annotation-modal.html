@@ -55,8 +55,6 @@
         address += '/'+anotacao+'/'
     }
 
-    console.log(address);
-
     $.ajax({
         type: "POST",
         url: address,
@@ -73,7 +71,7 @@
             console.log("Valor não atualizado.");
             }
 
-            //$("#organizacao"+organizacao).attr("href", url+'/'+response.anotacao_id+'/');
+            $("#data"+organizacao).text(response.data);
             $("#organizacao"+organizacao).data("anotacao", response.anotacao_id);
             $("#organizacao"+organizacao).text(texto);
             
