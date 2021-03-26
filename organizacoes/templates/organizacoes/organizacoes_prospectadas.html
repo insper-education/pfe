@@ -144,7 +144,23 @@
             </td>
             <td>
               {% if not contato %}
-                ---------
+                <div style="float:left;width: 95%;">
+                  <a
+                    id='organizacao{{organizacao.id}}'
+                    data-organizacao='{{organizacao.id}}'
+                    class="edit-annotation"
+                    >---------</a
+                  >
+                </div>
+                <div style="float:right;">
+                  <a
+                    data-organizacao='{{organizacao.id}}'
+                    class="create-annotation"
+                    href="{% url 'anotacao' organizacao.id %}"
+                    data-url="{% url 'anotacao' organizacao.id %}"
+                    >&#10133;</a
+                  >
+                </div>
               {% else %}
                 {% comment %} {{contato.texto}} {% endcomment %}
                   <div style="float:left;width: 95%;">
