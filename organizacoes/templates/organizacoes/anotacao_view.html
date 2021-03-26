@@ -1,0 +1,44 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 25 de Março de 2021
+{% endcomment %}
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <div class="modal-header">
+    <h5 id="anotacao" class="modal-title">Anotação: {{ anotacao.organizacao.nome }}</h5>    
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+
+    <label for="data_hora">Data e Hora: </label> <input id="data_hora" class="form-control" type="datetime-local" name="data_hora" value="{{data_hora|date:'Y-m-d\TH:i'}}"><br>
+    
+    <label for="texto">Anotação:</label><br>
+    <textarea id="texto" name="texto" class="form-control" rows="5" required>{% if anotacao %}{{anotacao.texto}}{% endif %}</textarea>
+    <br>
+    <label for="tipo_de_retorno">Posição do contato:</label>
+    <select id="tipo_de_retorno" name="tipo_de_retorno" class="form-control" required>
+      {% if not anotacao %}
+        <option disabled selected value> -- selecione tipo de contato -- </option>
+      {% endif %}
+      {% for retorno in TIPO_DE_RETORNO %}
+        <option value="{{retorno.0}}" {% if anotacao and anotacao.tipo_de_retorno == retorno.0 %}selected{% endif %} >{{retorno.1}}</option>
+      {% endfor %}
+    </select>
+    <input type="submit" style="display:none;"/>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+    <button id="atualiza" type="button" class="btn btn-primary" data-dismiss="modal">Atualizar</button>
+  </div>
+
+</form>
+
+<script>
+  $('#atualiza').on('click', atualiza);
+</script>

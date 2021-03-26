@@ -175,15 +175,34 @@
   {% endif %}
   
   <hr>
-  <h3>Anotações <small><a href="{% url 'anotacao' organizacao.id %}">&#10133;</a></small></h3>
+  <h3>Anotações <small>
+    <a
+      class="open-annotation"
+      href="{% url 'anotacao' organizacao.id %}"
+      data-url="{% url 'anotacao' organizacao.id %}"
+      >&#10133;</a
+    >
+  </small></h3>
   {% if organizacao.anotacao_set.all %}
+  <ul id="lista_anotacoes" style="padding-left: 18px;">
+    
     {% for anotacao in organizacao.anotacao_set.all|dictsortreversed:"momento" %}
-      <a href="{% url 'anotacao' organizacao.id anotacao.id %}">
-        {{anotacao.autor.get_full_name}} [{{anotacao.momento.date}}] : {{anotacao.texto}}<br>
-      </a>
+      <li>
+        <a
+          class="open-annotation"
+          href="{% url 'anotacao' organizacao.id %}"
+          data-url="{% url 'anotacao' organizacao.id %}"
+          data-anotacao="{{anotacao.id}}"
+        >
+          {{anotacao.autor.get_full_name}} [{{anotacao.momento.date}}] : <spam id='anotacao{{anotacao.id}}'>{{anotacao.texto}}</spam>
+        </a>
+      </li>
     {% endfor %}
+    </ul>
   {% else %}
     Ainda não existem anotações para essa organização.
   {% endif %}
+
+  {% include "annotation-modal2.html" %}
 
 {% endblock %}

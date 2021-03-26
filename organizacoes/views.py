@@ -9,9 +9,10 @@ import datetime
 import dateutil.parser
 
 from django.conf import settings
-from django.shortcuts import render, redirect
+
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
 
 from users.support import adianta_semestre
 from users.models import PFEUser, Administrador, Parceiro, Professor, Aluno
@@ -38,53 +39,46 @@ def anotacao(request, organizacao_id, anotacao_id=None):  # acertar isso para pk
     except Proposta.DoesNotExist:
         return HttpResponseNotFound('<h1>Organização não encontrada!</h1>')
 
-    if request.method == 'POST':
-        if 'anotacao' in request.POST:
-
-            if anotacao_id:
-                try:
-                    anotacao = Anotacao.objects.get(id=anotacao_id)
-                except Anotacao.DoesNotExist:
-                    return HttpResponseNotFound('<h1>Anotação não encontrada!</h1>')
-            else:
-                anotacao = Anotacao.create(organizacao)
-
-            try:
-                anotacao.autor = PFEUser.objects.get(pk=request.user.pk)
-            except Configuracao.DoesNotExist:
-                return HttpResponse("Usuário não encontrado.", status=401)
-
-            anotacao.texto = request.POST['anotacao']
-            anotacao.tipo_de_retorno = int(request.POST['contato'])
-            anotacao.save()
-            if 'data_hora' in request.POST:
-                try:
-                    anotacao.momento = dateutil.parser\
-                        .parse(request.POST['data_hora'])
-                except (ValueError, OverflowError):
-                    anotacao.momento = datetime.datetime.now()
-            anotacao.save()
-            mensagem = "Anotação atualizada."
-        else:
-            mensagem = "<h3 style='color:red'>Anotação não criada.<h3>"
-
-        context = {
-            "area_principal": True,
-            "organizacao_completo": organizacao_id,
-            "organizacoes_lista": True,
-            "organizacoes_prospectadas": True,
-            "mensagem": mensagem,
-        }
-        return render(request, 'generic.html', context=context)
-    else:
-
-        anotacao = None
+    if request.is_ajax() and 'texto' in request.POST:
 
         if anotacao_id:
             try:
                 anotacao = Anotacao.objects.get(id=anotacao_id)
             except Anotacao.DoesNotExist:
                 return HttpResponseNotFound('<h1>Anotação não encontrada!</h1>')
+        else:
+            anotacao = Anotacao.create(organizacao)
+
+        try:
+            anotacao.autor = PFEUser.objects.get(pk=request.user.pk)
+        except Configuracao.DoesNotExist:
+            return HttpResponse("Usuário não encontrado.", status=401)
+
+        anotacao.texto = request.POST['texto']
+        anotacao.tipo_de_retorno = int(request.POST['tipo_de_retorno'])
+        anotacao.save()
+        if 'data_hora' in request.POST:
+            try:
+                anotacao.momento = dateutil.parser\
+                    .parse(request.POST['data_hora'])
+            except (ValueError, OverflowError):
+                anotacao.momento = datetime.datetime.now()
+        anotacao.save()
+
+        data = {
+            'autor': str(anotacao.autor.get_full_name()),
+            'anotacao_id': anotacao.id,
+            'atualizado': True,
+        }
+
+        return JsonResponse(data)
+
+    else:
+
+        anotacao = None
+
+        if anotacao_id:
+            anotacao = get_object_or_404(Anotacao, id=anotacao_id)
 
         context = {
             'organizacao': organizacao,
@@ -94,7 +88,7 @@ def anotacao(request, organizacao_id, anotacao_id=None):  # acertar isso para pk
         }
 
         return render(request,
-                      'organizacoes/anotacao.html',
+                      'organizacoes/anotacao_view.html',
                       context=context)
 
 

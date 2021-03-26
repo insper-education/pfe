@@ -1,0 +1,87 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 25 de Março de 2021
+{% endcomment %}
+
+
+<script>
+  var anotacao;
+  var url;
+  var organizacao;
+  $(document).on("click", ".open-annotation", function (e) {
+    e.preventDefault();
+    var $popup = $("#popup");
+    anotacao = $(this).data("anotacao");
+    organizacao = $(this).data("organizacao");
+    url = $(this).data("url");
+
+    var address = url
+    if(anotacao) {
+        address += '/'+anotacao+'/'
+    }
+
+    $(".modal-content", $popup).load(address, function () {
+      $popup.modal("show");
+    });
+  });
+</script>
+
+
+<!-- Modal -->
+<div class="modal fade" id="popup" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+    </div>
+  </div>
+</div>
+
+
+<script>
+
+  function atualiza(e) {
+    
+    if (!$('form')[0].checkValidity()) {
+        $('form').find('input[type="submit"]').click();
+        return false;
+    }
+
+    var texto = $('#texto').val();
+    var data_hora = $('#data_hora').val();
+    var tipo_de_retorno = $('#tipo_de_retorno').val();
+
+    var address = url
+    if(anotacao) {
+        address += '/'+anotacao+'/'
+    }
+
+    console.log(address);
+
+    $.ajax({
+        type: "POST",
+        url: address,
+        data: {
+            'texto':texto,
+            'data_hora':data_hora,
+            'tipo_de_retorno':tipo_de_retorno,
+            'csrfmiddlewaretoken': '{{ csrf_token }}',
+        },
+        success: function(response){
+            if (response.atualizado) {
+            console.log("Valor atualizado.");
+            } else {
+            console.log("Valor não atualizado.");
+            }
+
+            //$("#organizacao"+organizacao).attr("href", url+'/'+response.anotacao_id+'/');
+            $("#organizacao"+organizacao).data("anotacao", response.anotacao_id);
+            $("#organizacao"+organizacao).text(texto);
+            
+        },
+        error: function(response) {
+            console.log('error')
+        }
+    });
+
+  }
+</script> 
