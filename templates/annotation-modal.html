@@ -6,10 +6,43 @@
 
 
 <script>
+
   var anotacao;
   var url;
   var organizacao;
-  $(document).on("click", ".open-annotation", function (e) {
+
+  $(document).on("click", ".edit-annotation", function (e) {
+    e.preventDefault();
+
+    var $popup = $("#popup");
+    anotacao = $(this).data("anotacao");
+    organizacao = $(this).data("organizacao");
+    url = $(this).data("url");
+    
+    $('#confirm').modal({
+        backdrop: 'static',
+        keyboard: false
+    })
+
+    .on('click', '#sim', function(e) {
+      
+      e.preventDefault();
+      $('#confirm').modal('hide');
+
+      var address = url
+      if(anotacao) {
+          address += '/'+anotacao+'/'
+      }
+
+      $(".modal-content", $popup).load(address, function () {
+        $popup.modal("show");
+      });
+    
+    });
+
+  });
+
+  $(document).on("click", ".create-annotation", function (e) {
     e.preventDefault();
     var $popup = $("#popup");
     anotacao = $(this).data("anotacao");
@@ -25,13 +58,40 @@
       $popup.modal("show");
     });
   });
+
 </script>
+
+
+
+
+<div class="modal fade" id="confirm" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar Anotação</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Tem certeza que deseja editar a anotação?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" >Não</button>
+        <button type="button" class="btn btn-primary" id="sim">Sim</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 
 
 <!-- Modal -->
 <div class="modal fade" id="popup" role="dialog">
   <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
+    <div id="modal-content" class="modal-content">
     </div>
   </div>
 </div>
@@ -59,22 +119,21 @@
         type: "POST",
         url: address,
         data: {
-            'texto':texto,
-            'data_hora':data_hora,
-            'tipo_de_retorno':tipo_de_retorno,
+            'texto': texto,
+            'data_hora': data_hora,
+            'tipo_de_retorno': tipo_de_retorno,
             'csrfmiddlewaretoken': '{{ csrf_token }}',
         },
         success: function(response){
             if (response.atualizado) {
-            console.log("Valor atualizado.");
+              console.log("Valor atualizado.");
             } else {
-            console.log("Valor não atualizado.");
+              console.log("Valor não atualizado.");
             }
 
             $("#data"+organizacao).text(response.data);
             $("#organizacao"+organizacao).data("anotacao", response.anotacao_id);
             $("#organizacao"+organizacao).text(texto);
-            
         },
         error: function(response) {
             console.log('error')

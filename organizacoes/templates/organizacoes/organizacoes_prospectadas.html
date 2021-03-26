@@ -73,11 +73,11 @@
             Organização
           </th>
 
-          <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">
+          <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer;" width="85em" class="text-center">
             Interesse
           </th>
 
-          <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">
+          <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" width="97em" class="text-center">
             Último<br>Contato
           </th>
           
@@ -85,11 +85,11 @@
             Mensagem
           </th>
           
-          <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">
+          <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" width="81em" class="text-center">
             <a data-toggle="tooltip" data-html="true" animation="true" title="Contando somente as propostas já autorizadas e disponibilizadas para os estudantes aplicarem"><small>Propostas<br>Disponíveis</small>
           </th>
 
-          <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(6)')" style="cursor:pointer" class="text-center">
+          <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(6)')" style="cursor:pointer" width="81em" class="text-center">
             <a data-toggle="tooltip" data-html="true" animation="true" title="Contando todas as propostas submetidas pela organização, mesmo aquelas que não estão disponibilizadas para os estudantes aplicarem"><small>Propostas<br>Enviadas</small>
           </th>
         </tr>
@@ -151,7 +151,7 @@
                     <a
                       id='organizacao{{organizacao.id}}'
                       data-organizacao='{{organizacao.id}}'
-                      class="open-annotation"
+                      class="edit-annotation"
                       href="{% url 'anotacao' organizacao.id %}"
                       data-url="{% url 'anotacao' organizacao.id %}"
                       data-anotacao="{{contato.id}}"
@@ -161,7 +161,7 @@
                   <div style="float:right;">
                     <a
                       data-organizacao='{{organizacao.id}}'
-                      class="open-annotation"
+                      class="create-annotation"
                       href="{% url 'anotacao' organizacao.id %}"
                       data-url="{% url 'anotacao' organizacao.id %}"
                       >&#10133;</a
