@@ -48,46 +48,6 @@
 
         <script>
     
-{% comment %} var config_objetivos =  {
-  type: 'line',
-  data: {
-    labels: ["January", "February"],
-    datasets: [{
-      label: 'Dataset 1',
-      borderWidth: 2,
-      fill: false,
-      data: [2, 10]
-    }]
-  },
-  options: {
-    responsive: true,
-    title: {
-      display: true,
-      text: 'Chart.js Draw Line On Chart'
-    },
-    tooltips: {
-      mode: 'index',
-      intersect: true
-    },
-    annotation: {
-      annotations: [{
-        type: 'line',
-        mode: 'horizontal',
-        scaleID: 'y-axis-0',
-        value: 5,
-        borderColor: 'rgb(75, 192, 192)',
-        borderWidth: 4,
-        label: {
-          enabled: false,
-          content: 'Test label'
-        }
-      }]
-    }
-  }
-} {% endcomment %}
-
-
-
             var config_objetivos = {
                 type: 'horizontalBar',
                 data: {
@@ -125,6 +85,18 @@
                                 max: 10
                             }
                         }]
+                    },
+                    plugins: {
+                        datalabels: {
+                            formatter: (value, ctx) => {
+                                if(value>0) {
+                                    return (value).toFixed(2);
+                                } else {
+                                    return " ";
+                                }
+                            },
+                            color: '#000',
+                        }
                     },
                     annotation: {
                         annotations: [
@@ -198,6 +170,18 @@
                             }
                         }]
                     },
+                    plugins: {
+                        datalabels: {
+                            formatter: (value, ctx) => {
+                                if(value>0) {
+                                    return (value).toFixed(2);
+                                } else {
+                                    return " ";
+                                }
+                            },
+                            color: '#000',
+                        }
+                    },
                     annotation: {
                         annotations: [
                             {
@@ -267,6 +251,18 @@
                             }
                         }]
                     },
+                    plugins: {
+                        datalabels: {
+                            formatter: (value, ctx) => {
+                                if(value>0) {
+                                    return (value).toFixed(2);
+                                } else {
+                                    return " ";
+                                }
+                            },
+                            color: '#000',
+                        }
+                    },
                     annotation: {
                         annotations: [
                             {
@@ -335,6 +331,18 @@
                                 max: 10
                             }
                         }]
+                    },
+                    plugins: {
+                        datalabels: {
+                            formatter: (value, ctx) => {
+                                if(value>0) {
+                                    return (value).toFixed(2);
+                                } else {
+                                    return " ";
+                                }
+                            },
+                            color: '#000',
+                        }
                     },
                     annotation: {
                         annotations: [
@@ -407,6 +415,18 @@
                             }
                         }]
                     },
+                    plugins: {
+                        datalabels: {
+                            formatter: (value, ctx) => {
+                                if(value>0) {
+                                    return (value).toFixed(2);
+                                } else {
+                                    return " ";
+                                }
+                            },
+                            color: '#000',
+                        }
+                    },
                     annotation: {
                         annotations: [
                             {
@@ -476,6 +496,18 @@
                             }
                         }]
                     },
+                    plugins: {
+                        datalabels: {
+                            formatter: (value, ctx) => {
+                                if(value>0) {
+                                    return (value).toFixed(2);
+                                } else {
+                                    return " ";
+                                }
+                            },
+                            color: '#000',
+                        }
+                    },
                     annotation: {
                         annotations: [
                             {
@@ -544,6 +576,18 @@
                                 max: 10
                             }
                         }]
+                    },
+                    plugins: {
+                        datalabels: {
+                            formatter: (value, ctx) => {
+                                if(value>0) {
+                                    return (value).toFixed(2);
+                                } else {
+                                    return " ";
+                                }
+                            },
+                            color: '#000',
+                        }
                     },
                     annotation: {
                         annotations: [
