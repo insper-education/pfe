@@ -28,390 +28,268 @@
     {% endwith %}
 
     <div class="atualizar">
-    <div class="container">
+        <div class="container">
 
-        {% if medias.ideal or medias.regular or medias.inferior %}
-            <div class="row mt-5">
-                <div class="col"><canvas id="doughnut-situacao"></canvas></div>
+            {% if medias.ideal or medias.regular or medias.inferior %}
+                <div class="row mt-5">
+                    <div class="col"><canvas id="doughnut-situacao"></canvas></div>
+                </div>
+            {% endif %}
+            <div class="row mt-5 justify-content-md-center">
+                <div class="col-md-6"><canvas id="doughnut-rii"></canvas></div>
+                <div class="col-md-6"><canvas id="doughnut-rig"></canvas></div>
+                <div class="col-md-6"><canvas id="doughnut-bi"></canvas></div>
+                <div class="col-md-6"><canvas id="doughnut-rfi"></canvas></div>
+                <div class="col-md-6"><canvas id="doughnut-rfg"></canvas></div>
+                <div class="col-md-6"><canvas id="doughnut-bf"></canvas></div>
             </div>
-        {% endif %}
-        <div class="row mt-5 justify-content-md-center">
-            <div class="col-md-6"><canvas id="doughnut-rii"></canvas></div>
-            <div class="col-md-6"><canvas id="doughnut-rig"></canvas></div>
-            <div class="col-md-6"><canvas id="doughnut-bi"></canvas></div>
-            <div class="col-md-6"><canvas id="doughnut-rfi"></canvas></div>
-            <div class="col-md-6"><canvas id="doughnut-rfg"></canvas></div>
-            <div class="col-md-6"><canvas id="doughnut-bf"></canvas></div>
+
+            <script>
+        
+                var tooltips = {
+                    enabled: false
+                };
+
+                var legend = {
+                    display: true,
+                    position: "bottom",
+                };
+
+                var plugins = {
+                    datalabels: {
+                        formatter: (value, ctx) => {
+                            let sum = 0;
+                            let dataArr = ctx.chart.data.datasets[0].data;
+                            dataArr.map(data => {
+                                sum += data;
+                            });
+                            if(sum>0 && value>0) {
+                                return (value*100 / sum).toFixed(1)+"%";
+                            } else {
+                                return " ";
+                            }
+                        },
+                        color: '#000',
+                    }
+                };
+
+
+                var config_situacao = {
+                    type: 'doughnut',
+                    data: {
+                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                    datasets: [
+                        {
+                        label: "Estudantes",
+                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                        data: [{{medias.ideal}},{{medias.regular}},{{medias.inferior}}]
+                        }
+                    ]
+                    },
+                    options: {
+                        title: {
+                            display: true,
+                            text: 'Médias Finais',
+                            position: 'top'
+                        },
+                        tooltips: tooltips,
+                        legend: legend,
+                        plugins: plugins,
+                    }
+                }
+
+
+                var config_rii = {
+                    type: 'doughnut',
+                    data: {
+                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                    datasets: [
+                        {
+                        label: "Estudantes",
+                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                        data: [{{notas.rii.ideal}},{{notas.rii.regular}},{{notas.rii.inferior}}]
+                        }
+                    ]
+                    },
+                    options: {
+                        title: {
+                            display: true,
+                            text: 'Relatório Intermediário Individual',
+                            position: 'top'
+                        },
+                        tooltips: tooltips,
+                        legend: legend,
+                        plugins: plugins,
+                    }
+                }
+
+                var config_rig = {
+                    type: 'doughnut',
+                    data: {
+                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                    datasets: [
+                        {
+                        label: "Estudantes",
+                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                        data: [{{notas.rig.ideal}},{{notas.rig.regular}},{{notas.rig.inferior}}]
+                        }
+                    ]
+                    },
+                    options: {
+                        title: {
+                            display: true,
+                            text: 'Relatório Intermediário de Grupo',
+                            position: 'top'
+                        },
+                        tooltips: tooltips,
+                        legend: legend,
+                        plugins: plugins,
+                    }
+                }
+
+                var config_bi = {
+                    type: 'doughnut',
+                    data: {
+                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                    datasets: [
+                        {
+                        label: "Estudantes",
+                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                        data: [{{notas.bi.ideal}},{{notas.bi.regular}},{{notas.bi.inferior}}]
+                        }
+                    ]
+                    },
+                    options: {
+                        title: {
+                            display: true,
+                            text: 'Banca Intermediária',
+                            position: 'top'
+                        },
+                        tooltips: tooltips,
+                        legend: legend,
+                        plugins: plugins,
+                    }
+                }
+
+
+
+                var config_rfi = {
+                    type: 'doughnut',
+                    data: {
+                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                    datasets: [
+                        {
+                        label: "Estudantes",
+                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                        data: [{{notas.rfi.ideal}},{{notas.rfi.regular}},{{notas.rfi.inferior}}]
+                        }
+                    ]
+                    },
+                    options: {
+                        title: {
+                            display: true,
+                            text: 'Relatório Final Individual',
+                            position: 'top'
+                        },
+                        tooltips: tooltips,
+                        legend: legend,
+                        plugins: plugins,
+                    }
+                }
+
+                var config_rfg = {
+                    type: 'doughnut',
+                    data: {
+                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                    datasets: [
+                        {
+                        label: "Estudantes",
+                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                        data: [{{notas.rfg.ideal}},{{notas.rfg.regular}},{{notas.rfg.inferior}}]
+                        }
+                    ]
+                    },
+                    options: {
+                        title: {
+                            display: true,
+                            text: 'Relatório Final de Grupo',
+                            position: 'top'
+                        },
+                        tooltips: tooltips,
+                        legend: legend,
+                        plugins: plugins,
+                    }
+                }
+
+                var config_bf = {
+                    type: 'doughnut',
+                    data: {
+                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                    datasets: [
+                        {
+                        label: "Estudantes",
+                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                        data: [{{notas.bf.ideal}},{{notas.bf.regular}},{{notas.bf.inferior}}]
+                        }
+                    ]
+                    },
+                    options: {
+                        title: {
+                            display: true,
+                            text: 'Banca Final',
+                            position: 'top'
+                        },
+                        tooltips: tooltips,
+                        legend: legend,
+                        plugins: plugins,
+                    }
+                }
+
+                function carrega_pagina() {  
+
+                // Chart da situação dos alunos por faixa de 
+                
+                {% if medias.ideal or medias.regular or medias.inferior %}
+                    var doughnut_situacao = document.getElementById('doughnut-situacao').getContext('2d');
+                    window.situacao = new Chart(doughnut_situacao, config_situacao);
+                {% endif %}
+
+
+                // Chart da RII dos alunos por faixa de notas
+                var doughnut_rii = document.getElementById('doughnut-rii').getContext('2d');
+                window.rii = new Chart(doughnut_rii, config_rii);
+
+                // Chart da RIG dos alunos por faixa de notas
+                var doughnut_rig = document.getElementById('doughnut-rig').getContext('2d');
+                window.rig = new Chart(doughnut_rig, config_rig);
+
+                // Chart da BI dos alunos por faixa de notas
+                var doughnut_bi = document.getElementById('doughnut-bi').getContext('2d');
+                window.bi = new Chart(doughnut_bi, config_bi);
+
+                // Chart da RFI dos alunos por faixa de notas
+                var doughnut_rfi = document.getElementById('doughnut-rfi').getContext('2d');
+                window.rfi = new Chart(doughnut_rfi, config_rfi);
+
+                // Chart da RFG dos alunos por faixa de notas
+                var doughnut_rfg = document.getElementById('doughnut-rfg').getContext('2d');
+                window.rfg = new Chart(doughnut_rfg, config_rfg);
+
+                // Chart da BF dos alunos por faixa de notas
+                var doughnut_bf = document.getElementById('doughnut-bf').getContext('2d');
+                window.bf = new Chart(doughnut_bf, config_bf);
+
+                }
+
+                window.onload = carrega_pagina
+            
+            </script>
+
         </div>
-
-        <script>
-    
-    
-    var config_situacao = {
-        type: 'doughnut',
-        data: {
-        labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-        datasets: [
-            {
-            label: "Estudantes",
-            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-            data: [{{medias.ideal}},{{medias.regular}},{{medias.inferior}}]
-            }
-        ]
-        },
-        options: {
-            tooltips: {
-                enabled: false
-            },
-            title: {
-                display: true,
-                text: 'Médias Finais',
-                position: 'top'
-            },
-            legend: {
-                display: true,
-                position: "bottom",
-            },
-            plugins: {
-                datalabels: {
-                    formatter: (value, ctx) => {
-                        let sum = 0;
-                        let dataArr = ctx.chart.data.datasets[0].data;
-                        dataArr.map(data => {
-                            sum += data;
-                        });
-                        if(sum>0 && value>0) {
-                            return (value*100 / sum).toFixed(1)+"%";
-                        } else {
-                            return " ";
-                        }
-                    },
-                    color: '#000',
-                }
-            }
-        }
-    }
-
-
-    var config_rii = {
-        type: 'doughnut',
-        data: {
-        labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-        datasets: [
-            {
-            label: "Estudantes",
-            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-            data: [{{notas.rii.ideal}},{{notas.rii.regular}},{{notas.rii.inferior}}]
-            }
-        ]
-        },
-        options: {
-            tooltips: {
-                enabled: false
-            },
-            title: {
-                display: true,
-                text: 'Relatório Intermediário Individual',
-                position: 'top'
-            },
-            legend: {
-                display: true,
-                position: "bottom",
-            },
-            plugins: {
-                datalabels: {
-                    formatter: (value, ctx) => {
-                        let sum = 0;
-                        let dataArr = ctx.chart.data.datasets[0].data;
-                        dataArr.map(data => {
-                            sum += data;
-                        });
-                        if(sum>0 && value>0) {
-                            return (value*100 / sum).toFixed(1)+"%";
-                        } else {
-                            return " ";
-                        }
-                    },
-                    color: '#000',
-                }
-            }
-        }
-    }
-
-    var config_rig = {
-        type: 'doughnut',
-        data: {
-        labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-        datasets: [
-            {
-            label: "Estudantes",
-            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-            data: [{{notas.rig.ideal}},{{notas.rig.regular}},{{notas.rig.inferior}}]
-            }
-        ]
-        },
-        options: {
-            tooltips: {
-                enabled: false
-            },
-            title: {
-                display: true,
-                text: 'Relatório Intermediário de Grupo',
-                position: 'top'
-            },
-            legend: {
-                display: true,
-                position: "bottom",
-            },
-            plugins: {
-                datalabels: {
-                    formatter: (value, ctx) => {
-                        let sum = 0;
-                        let dataArr = ctx.chart.data.datasets[0].data;
-                        dataArr.map(data => {
-                            sum += data;
-                        });
-                        if(sum>0 && value>0) {
-                            return (value*100 / sum).toFixed(1)+"%";
-                        } else {
-                            return " ";
-                        }
-                    },
-                    color: '#000',
-                }
-            }
-        }
-    }
-
-    var config_bi = {
-        type: 'doughnut',
-        data: {
-        labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-        datasets: [
-            {
-            label: "Estudantes",
-            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-            data: [{{notas.bi.ideal}},{{notas.bi.regular}},{{notas.bi.inferior}}]
-            }
-        ]
-        },
-        options: {
-            tooltips: {
-                enabled: false
-            },
-            title: {
-                display: true,
-                text: 'Banca Intermediária',
-                position: 'top'
-            },
-            legend: {
-                display: true,
-                position: "bottom",
-            },
-            plugins: {
-                datalabels: {
-                    formatter: (value, ctx) => {
-                        let sum = 0;
-                        let dataArr = ctx.chart.data.datasets[0].data;
-                        dataArr.map(data => {
-                            sum += data;
-                        });
-                        if(sum>0 && value>0) {
-                            return (value*100 / sum).toFixed(1)+"%";
-                        } else {
-                            return " ";
-                        }
-                    },
-                    color: '#000',
-                }
-            }
-        }
-    }
-
-
-
-    var config_rfi = {
-        type: 'doughnut',
-        data: {
-        labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-        datasets: [
-            {
-            label: "Estudantes",
-            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-            data: [{{notas.rfi.ideal}},{{notas.rfi.regular}},{{notas.rfi.inferior}}]
-            }
-        ]
-        },
-        options: {
-            tooltips: {
-                enabled: false
-            },
-            title: {
-                display: true,
-                text: 'Relatório Final Individual',
-                position: 'top'
-            },
-            legend: {
-                display: true,
-                position: "bottom",
-            },
-            plugins: {
-                datalabels: {
-                    formatter: (value, ctx) => {
-                        let sum = 0;
-                        let dataArr = ctx.chart.data.datasets[0].data;
-                        dataArr.map(data => {
-                            sum += data;
-                        });
-                        if(sum>0 && value>0) {
-                            return (value*100 / sum).toFixed(1)+"%";
-                        } else {
-                            return " ";
-                        }
-                    },
-                    color: '#000',
-                }
-            }
-        }
-    }
-
-    var config_rfg = {
-        type: 'doughnut',
-        data: {
-        labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-        datasets: [
-            {
-            label: "Estudantes",
-            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-            data: [{{notas.rfg.ideal}},{{notas.rfg.regular}},{{notas.rfg.inferior}}]
-            }
-        ]
-        },
-        options: {
-            tooltips: {
-                enabled: false
-            },
-            title: {
-                display: true,
-                text: 'Relatório Final de Grupo',
-                position: 'top'
-            },
-            legend: {
-                display: true,
-                position: "bottom",
-            },
-            plugins: {
-                datalabels: {
-                    formatter: (value, ctx) => {
-                        let sum = 0;
-                        let dataArr = ctx.chart.data.datasets[0].data;
-                        dataArr.map(data => {
-                            sum += data;
-                        });
-                        if(sum>0 && value>0) {
-                            return (value*100 / sum).toFixed(1)+"%";
-                        } else {
-                            return " ";
-                        }
-                    },
-                    color: '#000',
-                }
-            }
-        }
-    }
-
-    var config_bf = {
-        type: 'doughnut',
-        data: {
-        labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-        datasets: [
-            {
-            label: "Estudantes",
-            backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-            data: [{{notas.bf.ideal}},{{notas.bf.regular}},{{notas.bf.inferior}}]
-            }
-        ]
-        },
-        options: {
-            tooltips: {
-                enabled: false
-            },
-            title: {
-                display: true,
-                text: 'Banca Final',
-                position: 'top'
-            },
-            legend: {
-                display: true,
-                position: "bottom",
-            },
-            plugins: {
-                datalabels: {
-                    formatter: (value, ctx) => {
-                        let sum = 0;
-                        let dataArr = ctx.chart.data.datasets[0].data;
-                        dataArr.map(data => {
-                            sum += data;
-                        });
-                        if(sum>0 && value>0) {
-                            return (value*100 / sum).toFixed(1)+"%";
-                        } else {
-                            return " ";
-                        }
-                    },
-                    color: '#000',
-                }
-            }
-        }
-    }
-
-    function carrega_pagina() {  
-
-      // Chart da situação dos alunos por faixa de 
-      
-      {% if medias.ideal or medias.regular or medias.inferior %}
-        var doughnut_situacao = document.getElementById('doughnut-situacao').getContext('2d');
-        window.situacao = new Chart(doughnut_situacao, config_situacao);
-      {% endif %}
-
-
-      // Chart da situação dos alunos por faixa de notas
-      var doughnut_rii = document.getElementById('doughnut-rii').getContext('2d');
-      window.rii = new Chart(doughnut_rii, config_rii);
-
-      // Chart da situação dos alunos por faixa de notas
-      var doughnut_rig = document.getElementById('doughnut-rig').getContext('2d');
-      window.rig = new Chart(doughnut_rig, config_rig);
-
-      // Chart da situação dos alunos por faixa de notas
-      var doughnut_bi = document.getElementById('doughnut-bi').getContext('2d');
-      window.bi = new Chart(doughnut_bi, config_bi);
-
-      // Chart da situação dos alunos por faixa de notas
-      var doughnut_rfi = document.getElementById('doughnut-rfi').getContext('2d');
-      window.rfi = new Chart(doughnut_rfi, config_rfi);
-
-      // Chart da situação dos alunos por faixa de notas
-      var doughnut_rfg = document.getElementById('doughnut-rfg').getContext('2d');
-      window.rfg = new Chart(doughnut_rfg, config_rfg);
-
-      // Chart da situação dos alunos por faixa de notas
-      var doughnut_bf = document.getElementById('doughnut-bf').getContext('2d');
-      window.bf = new Chart(doughnut_bf, config_bf);
-
-    }
-
-    window.onload = carrega_pagina
-  
-  </script>
-
-
-    </div>
     </div>
 
     {% with com_cursos=True %}
         {% include "edicoes_ajax.html" %}
     {% endwith %}
-    
 
 {% endblock %}

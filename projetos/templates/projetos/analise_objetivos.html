@@ -16,7 +16,6 @@
   <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/0.5.7/chartjs-plugin-annotation.min.js"></script>
 
-
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
 
@@ -32,637 +31,411 @@
     {% endwith %}
 
     <div class="atualizar">
-    <div class="container">
+        <div class="container">
 
-        <div class="row mt-5">
-            <div class="col"><canvas id="horizontal-objetivos"></canvas></div>
-        </div>
-        <div class="row mt-5 justify-content-md-center">
-            <div class="col-md-6"><canvas id="objetivos-rii"></canvas></div>
-            <div class="col-md-6"><canvas id="objetivos-rig"></canvas></div>
-            <div class="col-md-6"><canvas id="objetivos-bi"></canvas></div>
-            <div class="col-md-6"><canvas id="objetivos-rfi"></canvas></div>
-            <div class="col-md-6"><canvas id="objetivos-rfg"></canvas></div>
-            <div class="col-md-6"><canvas id="objetivos-bf"></canvas></div>
-        </div>
+            <div class="row mt-5">
+                <div class="col"><canvas id="horizontal-objetivos"></canvas></div>
+            </div>
+            <div class="row mt-5 justify-content-md-center">
+                <div class="col-md-6"><canvas id="objetivos-rii"></canvas></div>
+                <div class="col-md-6"><canvas id="objetivos-rig"></canvas></div>
+                <div class="col-md-6"><canvas id="objetivos-bi"></canvas></div>
+                <div class="col-md-6"><canvas id="objetivos-rfi"></canvas></div>
+                <div class="col-md-6"><canvas id="objetivos-rfg"></canvas></div>
+                <div class="col-md-6"><canvas id="objetivos-bf"></canvas></div>
+            </div>
 
-        <script>
-    
-            var config_objetivos = {
-                type: 'horizontalBar',
-                data: {
-                labels: [
-                    {% for key in medias_geral %}
-                        "{{key}}",
-                    {% endfor %}
-                    ],
-                datasets: [
-                    {
-                    label: "Objetivos de Aprendizagem",
-                    backgroundColor: [
-                        {% for key, value in medias_geral.items %}
-                            "{{value.cor}}",
-                        {% endfor %}
-                        ],
-                    data: [
-                        {% for key, value in medias_geral.items %}
-                            {{value.media|stringformat:".2f"|unlocalize}},
-                        {% endfor %}
-                        ]
-                    }
-                ]
-                },
-                options: {
-                    legend: { display: false },
-                    title: {
-                        display: true,
-                        text: 'Médias Obtidas nos Objetivos de Aprendizagem'
-                    },
-                    scales: {
-                        xAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                                max: 10
-                            }
-                        }]
-                    },
-                    plugins: {
-                        datalabels: {
-                            formatter: (value, ctx) => {
-                                if(value>0) {
-                                    return (value).toFixed(2);
-                                } else {
-                                    return " ";
-                                }
-                            },
-                            color: '#000',
-                        }
-                    },
-                    annotation: {
-                        annotations: [
-                            {
-                                type: 'line',
-                                mode: 'vertical',
-                                scaleID: 'x-axis-0',
-                                value: 5,
-                                borderColor: 'rgb(225, 12, 12)',
-                                borderWidth: 6,
-                                label: {
-                                    enabled: false,
-                                    content: 'Test label'
-                                }
-                            },
-                            {
-                                type: 'line',
-                                mode: 'vertical',
-                                scaleID: 'x-axis-0',
-                                value: 7,
-                                borderColor: 'rgb(12, 225, 12)',
-                                borderWidth: 6,
-                                label: {
-                                    enabled: false,
-                                    content: 'Test label'
-                                },
-                            }
-                        ]
-                    }
-                }
-            }
-
-
-
-
-            var config_objetivos_rii = {
-                type: 'horizontalBar',
-                data: {
-                labels: [
-                    {% for key in medias_rii %}
-                        "{{key}}",
-                    {% endfor %}
-                    ],
-                datasets: [
-                    {
-                    label: "Objetivos de Aprendizagem",
-                    backgroundColor: [
-                        {% for key, value in medias_rii.items %}
-                            "{{value.cor}}",
-                        {% endfor %}
-                        ],
-                    data: [
-                        {% for key, value in medias_rii.items %}
-                            {{value.media|stringformat:".2f"|unlocalize}},
-                        {% endfor %}
-                        ]
-                    }
-                ]
-                },
-                options: {
-                    legend: { display: false },
-                    title: {
-                        display: true,
-                        text: 'Relatório Intermediário Individual'
-                    },
-                    scales: {
-                        xAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                                max: 10
-                            }
-                        }]
-                    },
-                    plugins: {
-                        datalabels: {
-                            formatter: (value, ctx) => {
-                                if(value>0) {
-                                    return (value).toFixed(2);
-                                } else {
-                                    return " ";
-                                }
-                            },
-                            color: '#000',
-                        }
-                    },
-                    annotation: {
-                        annotations: [
-                            {
-                                type: 'line',
-                                mode: 'vertical',
-                                scaleID: 'x-axis-0',
-                                value: 5,
-                                borderColor: 'rgb(225, 12, 12)',
-                                borderWidth: 3,
-                                label: {
-                                    enabled: false,
-                                    content: 'Test label'
-                                }
-                            },
-                            {
-                                type: 'line',
-                                mode: 'vertical',
-                                scaleID: 'x-axis-0',
-                                value: 7,
-                                borderColor: 'rgb(12, 225, 12)',
-                                borderWidth: 3,
-                                label: {
-                                    enabled: false,
-                                    content: 'Test label'
-                                },
-                            }
-                        ]
-                    }
-                }
-            }
-
-            var config_objetivos_rig = {
-                type: 'horizontalBar',
-                data: {
-                labels: [
-                    {% for key in medias_rig %}
-                        "{{key}}",
-                    {% endfor %}
-                    ],
-                datasets: [
-                    {
-                    label: "Objetivos de Aprendizagem",
-                    backgroundColor: [
-                        {% for key, value in medias_rig.items %}
-                            "{{value.cor}}",
-                        {% endfor %}
-                        ],
-                    data: [
-                        {% for key, value in medias_rig.items %}
-                            {{value.media|stringformat:".2f"|unlocalize}},
-                        {% endfor %}
-                        ]
-                    }
-                ]
-                },
-                options: {
-                    legend: { display: false },
-                    title: {
-                        display: true,
-                        text: 'Relatório Intermediário de Grupo'
-                    },
-                    scales: {
-                        xAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                                max: 10
-                            }
-                        }]
-                    },
-                    plugins: {
-                        datalabels: {
-                            formatter: (value, ctx) => {
-                                if(value>0) {
-                                    return (value).toFixed(2);
-                                } else {
-                                    return " ";
-                                }
-                            },
-                            color: '#000',
-                        }
-                    },
-                    annotation: {
-                        annotations: [
-                            {
-                                type: 'line',
-                                mode: 'vertical',
-                                scaleID: 'x-axis-0',
-                                value: 5,
-                                borderColor: 'rgb(225, 12, 12)',
-                                borderWidth: 3,
-                                label: {
-                                    enabled: false,
-                                    content: 'Test label'
-                                }
-                            },
-                            {
-                                type: 'line',
-                                mode: 'vertical',
-                                scaleID: 'x-axis-0',
-                                value: 7,
-                                borderColor: 'rgb(12, 225, 12)',
-                                borderWidth: 3,
-                                label: {
-                                    enabled: false,
-                                    content: 'Test label'
-                                },
-                            }
-                        ]
-                    }
-                }
-            }
-
-            var config_objetivos_bi = {
-                type: 'horizontalBar',
-                data: {
-                labels: [
-                    {% for key in medias_bi %}
-                        "{{key}}",
-                    {% endfor %}
-                    ],
-                datasets: [
-                    {
-                    label: "Objetivos de Aprendizagem",
-                    backgroundColor: [
-                        {% for key, value in medias_bi.items %}
-                            "{{value.cor}}",
-                        {% endfor %}
-                        ],
-                    data: [
-                        {% for key, value in medias_bi.items %}
-                            {{value.media|stringformat:".2f"|unlocalize}},
-                        {% endfor %}
-                        ]
-                    }
-                ]
-                },
-                options: {
-                    legend: { display: false },
-                    title: {
-                        display: true,
-                        text: 'Banca Intermediária'
-                    },
-                    scales: {
-                        xAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                                max: 10
-                            }
-                        }]
-                    },
-                    plugins: {
-                        datalabels: {
-                            formatter: (value, ctx) => {
-                                if(value>0) {
-                                    return (value).toFixed(2);
-                                } else {
-                                    return " ";
-                                }
-                            },
-                            color: '#000',
-                        }
-                    },
-                    annotation: {
-                        annotations: [
-                            {
-                                type: 'line',
-                                mode: 'vertical',
-                                scaleID: 'x-axis-0',
-                                value: 5,
-                                borderColor: 'rgb(225, 12, 12)',
-                                borderWidth: 3,
-                                label: {
-                                    enabled: false,
-                                    content: 'Test label'
-                                }
-                            },
-                            {
-                                type: 'line',
-                                mode: 'vertical',
-                                scaleID: 'x-axis-0',
-                                value: 7,
-                                borderColor: 'rgb(12, 225, 12)',
-                                borderWidth: 3,
-                                label: {
-                                    enabled: false,
-                                    content: 'Test label'
-                                },
-                            }
-                        ]
-                    }
-                }
-            }
-
-
-
-            var config_objetivos_rfi = {
-                type: 'horizontalBar',
-                data: {
-                labels: [
-                    {% for key in medias_rfi %}
-                        "{{key}}",
-                    {% endfor %}
-                    ],
-                datasets: [
-                    {
-                    label: "Objetivos de Aprendizagem",
-                    backgroundColor: [
-                        {% for key, value in medias_rfi.items %}
-                            "{{value.cor}}",
-                        {% endfor %}
-                        ],
-                    data: [
-                        {% for key, value in medias_rfi.items %}
-                            {{value.media|stringformat:".2f"|unlocalize}},
-                        {% endfor %}
-                        ]
-                    }
-                ]
-                },
-                options: {
-                    legend: { display: false },
-                    title: {
-                        display: true,
-                        text: 'Relatório Final Individual'
-                    },
-                    scales: {
-                        xAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                                max: 10
-                            }
-                        }]
-                    },
-                    plugins: {
-                        datalabels: {
-                            formatter: (value, ctx) => {
-                                if(value>0) {
-                                    return (value).toFixed(2);
-                                } else {
-                                    return " ";
-                                }
-                            },
-                            color: '#000',
-                        }
-                    },
-                    annotation: {
-                        annotations: [
-                            {
-                                type: 'line',
-                                mode: 'vertical',
-                                scaleID: 'x-axis-0',
-                                value: 5,
-                                borderColor: 'rgb(225, 12, 12)',
-                                borderWidth: 3,
-                                label: {
-                                    enabled: false,
-                                    content: 'Test label'
-                                }
-                            },
-                            {
-                                type: 'line',
-                                mode: 'vertical',
-                                scaleID: 'x-axis-0',
-                                value: 7,
-                                borderColor: 'rgb(12, 225, 12)',
-                                borderWidth: 3,
-                                label: {
-                                    enabled: false,
-                                    content: 'Test label'
-                                },
-                            }
-                        ]
-                    }
-                }
-            }
-
-            var config_objetivos_rfg = {
-                type: 'horizontalBar',
-                data: {
-                labels: [
-                    {% for key in medias_rfg %}
-                        "{{key}}",
-                    {% endfor %}
-                    ],
-                datasets: [
-                    {
-                    label: "Objetivos de Aprendizagem",
-                    backgroundColor: [
-                        {% for key, value in medias_rfg.items %}
-                            "{{value.cor}}",
-                        {% endfor %}
-                        ],
-                    data: [
-                        {% for key, value in medias_rfg.items %}
-                            {{value.media|stringformat:".2f"|unlocalize}},
-                        {% endfor %}
-                        ]
-                    }
-                ]
-                },
-                options: {
-                    legend: { display: false },
-                    title: {
-                        display: true,
-                        text: 'Relatório Final de Grupo'
-                    },
-                    scales: {
-                        xAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                                max: 10
-                            }
-                        }]
-                    },
-                    plugins: {
-                        datalabels: {
-                            formatter: (value, ctx) => {
-                                if(value>0) {
-                                    return (value).toFixed(2);
-                                } else {
-                                    return " ";
-                                }
-                            },
-                            color: '#000',
-                        }
-                    },
-                    annotation: {
-                        annotations: [
-                            {
-                                type: 'line',
-                                mode: 'vertical',
-                                scaleID: 'x-axis-0',
-                                value: 5,
-                                borderColor: 'rgb(225, 12, 12)',
-                                borderWidth: 3,
-                                label: {
-                                    enabled: false,
-                                    content: 'Test label'
-                                }
-                            },
-                            {
-                                type: 'line',
-                                mode: 'vertical',
-                                scaleID: 'x-axis-0',
-                                value: 7,
-                                borderColor: 'rgb(12, 225, 12)',
-                                borderWidth: 3,
-                                label: {
-                                    enabled: false,
-                                    content: 'Test label'
-                                },
-                            }
-                        ]
-                    }
-                }
-            }
-
-            var config_objetivos_bf = {
-                type: 'horizontalBar',
-                data: {
-                labels: [
-                    {% for key in medias_bf %}
-                        "{{key}}",
-                    {% endfor %}
-                    ],
-                datasets: [
-                    {
-                    label: "Objetivos de Aprendizagem",
-                    backgroundColor: [
-                        {% for key, value in medias_bf.items %}
-                            "{{value.cor}}",
-                        {% endfor %}
-                        ],
-                    data: [
-                        {% for key, value in medias_bf.items %}
-                            {{value.media|stringformat:".2f"|unlocalize}},
-                        {% endfor %}
-                        ]
-                    }
-                ]
-                },
-                options: {
-                    legend: { display: false },
-                    title: {
-                        display: true,
-                        text: 'Banca Final'
-                    },
-                    scales: {
-                        xAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                                max: 10
-                            }
-                        }]
-                    },
-                    plugins: {
-                        datalabels: {
-                            formatter: (value, ctx) => {
-                                if(value>0) {
-                                    return (value).toFixed(2);
-                                } else {
-                                    return " ";
-                                }
-                            },
-                            color: '#000',
-                        }
-                    },
-                    annotation: {
-                        annotations: [
-                            {
-                                type: 'line',
-                                mode: 'vertical',
-                                scaleID: 'x-axis-0',
-                                value: 5,
-                                borderColor: 'rgb(225, 12, 12)',
-                                borderWidth: 3,
-                                label: {
-                                    enabled: false,
-                                    content: 'Test label'
-                                }
-                            },
-                            {
-                                type: 'line',
-                                mode: 'vertical',
-                                scaleID: 'x-axis-0',
-                                value: 7,
-                                borderColor: 'rgb(12, 225, 12)',
-                                borderWidth: 3,
-                                label: {
-                                    enabled: false,
-                                    content: 'Test label'
-                                },
-                            }
-                        ]
-                    }
-                }
-            }
-
-
-
-            function carrega_pagina() {  
-
-            // Chart do nível nos objetivos de aprendizagem
-            var horizontal_objetivos = document.getElementById('horizontal-objetivos').getContext('2d');
-            window.objetivos = new Chart(horizontal_objetivos, config_objetivos);
-
-
-            // Chart do nível nos objetivos de aprendizagem
-            var objetivos_rii = document.getElementById('objetivos-rii').getContext('2d');
-            window.objetivos = new Chart(objetivos_rii, config_objetivos_rii);
-
-            // Chart do nível nos objetivos de aprendizagem
-            var objetivos_rig = document.getElementById('objetivos-rig').getContext('2d');
-            window.objetivos = new Chart(objetivos_rig, config_objetivos_rig);
-
-            // Chart do nível nos objetivos de aprendizagem
-            var objetivos_bi = document.getElementById('objetivos-bi').getContext('2d');
-            window.objetivos = new Chart(objetivos_bi, config_objetivos_bi);
-
-
-            // Chart do nível nos objetivos de aprendizagem
-            var objetivos_rfi = document.getElementById('objetivos-rfi').getContext('2d');
-            window.objetivos = new Chart(objetivos_rfi, config_objetivos_rfi);
-
-            // Chart do nível nos objetivos de aprendizagem
-            var objetivos_rfg = document.getElementById('objetivos-rfg').getContext('2d');
-            window.objetivos = new Chart(objetivos_rfg, config_objetivos_rfg);
-
-            // Chart do nível nos objetivos de aprendizagem
-            var objetivos_bf = document.getElementById('objetivos-bf').getContext('2d');
-            window.objetivos = new Chart(objetivos_bf, config_objetivos_bf);
-
-
-            }
-
-            window.onload = carrega_pagina
+            <script>
         
-        </script>
+                var config_objetivos = {
+                    type: 'horizontalBar',
+                    data: {
+                    labels: [
+                        {% for key in medias_geral %}
+                            "{{key}}",
+                        {% endfor %}
+                        ],
+                    datasets: [
+                        {
+                        label: "Objetivos de Aprendizagem",
+                        backgroundColor: [
+                            {% for key, value in medias_geral.items %}
+                                "{{value.cor}}",
+                            {% endfor %}
+                            ],
+                        data: [
+                            {% for key, value in medias_geral.items %}
+                                {{value.media|stringformat:".2f"|unlocalize}},
+                            {% endfor %}
+                            ]
+                        }
+                    ]
+                    },
+                    options: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Médias Obtidas nos Objetivos de Aprendizagem'
+                        },
+                        scales: {
+                            xAxes: [{
+                                ticks: {
+                                    beginAtZero: true,
+                                    max: 10
+                                }
+                            }]
+                        },
+                        plugins: {
+                            datalabels: {
+                                formatter: (value, ctx) => {
+                                    if(value>0) {
+                                        return (value).toFixed(2);
+                                    } else {
+                                        return " ";
+                                    }
+                                },
+                                color: '#000',
+                            }
+                        },
+                        annotation: {
+                            annotations: [
+                                {
+                                    type: 'line',
+                                    mode: 'vertical',
+                                    scaleID: 'x-axis-0',
+                                    value: 5,
+                                    borderColor: 'rgb(225, 12, 12)',
+                                    borderWidth: 6,
+                                    label: {
+                                        enabled: false,
+                                        content: 'Test label'
+                                    }
+                                },
+                                {
+                                    type: 'line',
+                                    mode: 'vertical',
+                                    scaleID: 'x-axis-0',
+                                    value: 7,
+                                    borderColor: 'rgb(12, 225, 12)',
+                                    borderWidth: 6,
+                                    label: {
+                                        enabled: false,
+                                        content: 'Test label'
+                                    },
+                                }
+                            ]
+                        }
+                    }
+                }
 
 
-    </div>
+                var scales = {
+                    xAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            max: 10
+                        }
+                    }]
+                };
+
+                var plugins = {
+                    datalabels: {
+                        formatter: (value, ctx) => {
+                            if(value>0) {
+                                return (value).toFixed(2);
+                            } else {
+                                return " ";
+                            }
+                        },
+                        color: '#000',
+                    }
+                };
+
+                var annotation = {
+                    annotations: [
+                        {
+                            type: 'line',
+                            mode: 'vertical',
+                            scaleID: 'x-axis-0',
+                            value: 5,
+                            borderColor: 'rgb(225, 12, 12)',
+                            borderWidth: 3,
+                            label: {
+                                enabled: false,
+                                content: 'Test label'
+                            }
+                        },
+                        {
+                            type: 'line',
+                            mode: 'vertical',
+                            scaleID: 'x-axis-0',
+                            value: 7,
+                            borderColor: 'rgb(12, 225, 12)',
+                            borderWidth: 3,
+                            label: {
+                                enabled: false,
+                                content: 'Test label'
+                            },
+                        }
+                    ]
+                }
+
+                var config_objetivos_rii = {
+                    type: 'horizontalBar',
+                    data: {
+                    labels: [
+                        {% for key in medias_rii %}
+                            "{{key}}",
+                        {% endfor %}
+                        ],
+                    datasets: [
+                        {
+                        label: "Objetivos de Aprendizagem",
+                        backgroundColor: [
+                            {% for key, value in medias_rii.items %}
+                                "{{value.cor}}",
+                            {% endfor %}
+                            ],
+                        data: [
+                            {% for key, value in medias_rii.items %}
+                                {{value.media|stringformat:".2f"|unlocalize}},
+                            {% endfor %}
+                            ]
+                        }
+                    ]
+                    },
+                    options: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Relatório Intermediário Individual'
+                        },
+                        scales: scales,
+                        plugins: plugins,
+                        annotation: annotation,
+                    }
+                }
+
+                var config_objetivos_rig = {
+                    type: 'horizontalBar',
+                    data: {
+                    labels: [
+                        {% for key in medias_rig %}
+                            "{{key}}",
+                        {% endfor %}
+                        ],
+                    datasets: [
+                        {
+                        label: "Objetivos de Aprendizagem",
+                        backgroundColor: [
+                            {% for key, value in medias_rig.items %}
+                                "{{value.cor}}",
+                            {% endfor %}
+                            ],
+                        data: [
+                            {% for key, value in medias_rig.items %}
+                                {{value.media|stringformat:".2f"|unlocalize}},
+                            {% endfor %}
+                            ]
+                        }
+                    ]
+                    },
+                    options: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Relatório Intermediário de Grupo'
+                        },
+                        scales: scales,
+                        plugins: plugins,
+                        annotation: annotation,
+                    }
+                }
+
+                var config_objetivos_bi = {
+                    type: 'horizontalBar',
+                    data: {
+                    labels: [
+                        {% for key in medias_bi %}
+                            "{{key}}",
+                        {% endfor %}
+                        ],
+                    datasets: [
+                        {
+                        label: "Objetivos de Aprendizagem",
+                        backgroundColor: [
+                            {% for key, value in medias_bi.items %}
+                                "{{value.cor}}",
+                            {% endfor %}
+                            ],
+                        data: [
+                            {% for key, value in medias_bi.items %}
+                                {{value.media|stringformat:".2f"|unlocalize}},
+                            {% endfor %}
+                            ]
+                        }
+                    ]
+                    },
+                    options: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Banca Intermediária'
+                        },
+                        scales: scales,
+                        plugins: plugins,
+                        annotation: annotation,
+                    }
+                }
+
+
+
+                var config_objetivos_rfi = {
+                    type: 'horizontalBar',
+                    data: {
+                    labels: [
+                        {% for key in medias_rfi %}
+                            "{{key}}",
+                        {% endfor %}
+                        ],
+                    datasets: [
+                        {
+                        label: "Objetivos de Aprendizagem",
+                        backgroundColor: [
+                            {% for key, value in medias_rfi.items %}
+                                "{{value.cor}}",
+                            {% endfor %}
+                            ],
+                        data: [
+                            {% for key, value in medias_rfi.items %}
+                                {{value.media|stringformat:".2f"|unlocalize}},
+                            {% endfor %}
+                            ]
+                        }
+                    ]
+                    },
+                    options: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Relatório Final Individual'
+                        },
+                        scales: scales,
+                        plugins: plugins,
+                        annotation: annotation,
+                    }
+                }
+
+                var config_objetivos_rfg = {
+                    type: 'horizontalBar',
+                    data: {
+                    labels: [
+                        {% for key in medias_rfg %}
+                            "{{key}}",
+                        {% endfor %}
+                        ],
+                    datasets: [
+                        {
+                        label: "Objetivos de Aprendizagem",
+                        backgroundColor: [
+                            {% for key, value in medias_rfg.items %}
+                                "{{value.cor}}",
+                            {% endfor %}
+                            ],
+                        data: [
+                            {% for key, value in medias_rfg.items %}
+                                {{value.media|stringformat:".2f"|unlocalize}},
+                            {% endfor %}
+                            ]
+                        }
+                    ]
+                    },
+                    options: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Relatório Final de Grupo'
+                        },
+                        scales: scales,
+                        plugins: plugins,
+                        annotation: annotation,
+                    }
+                }
+
+                var config_objetivos_bf = {
+                    type: 'horizontalBar',
+                    data: {
+                    labels: [
+                        {% for key in medias_bf %}
+                            "{{key}}",
+                        {% endfor %}
+                        ],
+                    datasets: [
+                        {
+                        label: "Objetivos de Aprendizagem",
+                        backgroundColor: [
+                            {% for key, value in medias_bf.items %}
+                                "{{value.cor}}",
+                            {% endfor %}
+                            ],
+                        data: [
+                            {% for key, value in medias_bf.items %}
+                                {{value.media|stringformat:".2f"|unlocalize}},
+                            {% endfor %}
+                            ]
+                        }
+                    ]
+                    },
+                    options: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Banca Final'
+                        },
+                        scales: scales,
+                        plugins: plugins,
+                        annotation: annotation,
+                    }
+                }
+
+                function carrega_pagina() {  
+
+                    // Chart do nível nos objetivos de aprendizagem
+                    var horizontal_objetivos = document.getElementById('horizontal-objetivos').getContext('2d');
+                    window.objetivos = new Chart(horizontal_objetivos, config_objetivos);
+
+
+                    // Chart do nível nos objetivos de aprendizagem em RII
+                    var objetivos_rii = document.getElementById('objetivos-rii').getContext('2d');
+                    window.objetivos = new Chart(objetivos_rii, config_objetivos_rii);
+
+                    // Chart do nível nos objetivos de aprendizagem em RIG
+                    var objetivos_rig = document.getElementById('objetivos-rig').getContext('2d');
+                    window.objetivos = new Chart(objetivos_rig, config_objetivos_rig);
+
+                    // Chart do nível nos objetivos de aprendizagem em BI
+                    var objetivos_bi = document.getElementById('objetivos-bi').getContext('2d');
+                    window.objetivos = new Chart(objetivos_bi, config_objetivos_bi);
+
+                    // Chart do nível nos objetivos de aprendizagem em RFI
+                    var objetivos_rfi = document.getElementById('objetivos-rfi').getContext('2d');
+                    window.objetivos = new Chart(objetivos_rfi, config_objetivos_rfi);
+
+                    // Chart do nível nos objetivos de aprendizagem em RFG
+                    var objetivos_rfg = document.getElementById('objetivos-rfg').getContext('2d');
+                    window.objetivos = new Chart(objetivos_rfg, config_objetivos_rfg);
+
+                    // Chart do nível nos objetivos de aprendizagem em BF
+                    var objetivos_bf = document.getElementById('objetivos-bf').getContext('2d');
+                    window.objetivos = new Chart(objetivos_bf, config_objetivos_bf);
+
+                }
+
+                window.onload = carrega_pagina
+            
+            </script>
+
+        </div>
     </div>
 
     {% with com_cursos=True %}
