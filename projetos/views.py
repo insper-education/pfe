@@ -447,10 +447,9 @@ def carrega_bancos(request):
         line_count = 0
         for row in csv_reader:
             if line_count == 0:
-                # print("Colunas {} e {}".format(row[0],row[1]))
                 pass
             else:
-                # print('Nome: {}; Código {}'.format(row[0],row[1]))
+                # ('Nome: {}; Código {}'.format(row[0],row[1]))
                 banco = Banco.create(nome=row[0], codigo=row[1])
                 banco.save()
             line_count += 1
@@ -793,6 +792,7 @@ def analise_notas(request):
 
     medias_lista = [x.get_media for x in medias_semestre]
     
+    # Somente apresenta as médias que esteja completas (pesso = 100%)
     medias_validas = list(filter(lambda d: d['pesos'] == 1.0, medias_lista))
 
     medias = {}

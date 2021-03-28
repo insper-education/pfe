@@ -60,7 +60,7 @@ def get_edicoes(tipo):
             if tipo.objects.filter(anoPFE=ano_tmp, semestrePFE=semestre_tmp).exists():
                 existe = True
         elif tipo == Avaliacao2:
-            return (["2020.1", "2020.2"], 2020, 2) # temporário
+            return (["2019.2", "2020.1", "2020.2"], 2020, 2) # temporário
         else:
             if tipo.objects.filter(ano=ano_tmp, semestre=semestre_tmp).exists():
                 existe = True

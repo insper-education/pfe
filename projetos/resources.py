@@ -105,7 +105,7 @@ class Avaliacoes2Resource(resources.ModelResource):
         'objetivo ou criterio',
         'peso',
         'nota ou score (se não houver procura por desempenho)',
-        'desempenho (opcional primeiro procura a nota)'
+        'desempenho (opcional primeiro procura a nota)',
         'momento ou date_modified (dd/mm/aa hh:mm)',
         'observação ou feedback',
     ]

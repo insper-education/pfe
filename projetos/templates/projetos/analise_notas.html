@@ -30,9 +30,11 @@
     <div class="atualizar">
     <div class="container">
 
-        <div class="row mt-5">
-            <div class="col"><canvas id="doughnut-situacao"></canvas></div>
-        </div>
+        {% if medias.ideal or medias.regular or medias.inferior %}
+            <div class="row mt-5">
+                <div class="col"><canvas id="doughnut-situacao"></canvas></div>
+            </div>
+        {% endif %}
         <div class="row mt-5 justify-content-md-center">
             <div class="col-md-6"><canvas id="doughnut-rii"></canvas></div>
             <div class="col-md-6"><canvas id="doughnut-rig"></canvas></div>
@@ -365,9 +367,12 @@
 
     function carrega_pagina() {  
 
-      // Chart da situação dos alunos por faixa de notas
-      var doughnut_situacao = document.getElementById('doughnut-situacao').getContext('2d');
-      window.situacao = new Chart(doughnut_situacao, config_situacao);
+      // Chart da situação dos alunos por faixa de 
+      
+      {% if medias.ideal or medias.regular or medias.inferior %}
+        var doughnut_situacao = document.getElementById('doughnut-situacao').getContext('2d');
+        window.situacao = new Chart(doughnut_situacao, config_situacao);
+      {% endif %}
 
 
       // Chart da situação dos alunos por faixa de notas
@@ -407,5 +412,6 @@
     {% with com_cursos=True %}
         {% include "edicoes_ajax.html" %}
     {% endwith %}
+    
 
 {% endblock %}

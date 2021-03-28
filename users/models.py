@@ -295,7 +295,6 @@ class Aluno(models.Model):
                                                                 tipo_de_avaliacao=1)
             if avaliacoes_banca_interm:
                 nota_banca_interm, peso = Aluno.get_objetivos(self, avaliacoes_banca_interm)
-                print(nota_banca_interm)
                 notas.append(("BI", nota_banca_interm, peso/100))
 
             # Banca Final (2, 'final')

@@ -215,7 +215,6 @@ def preenche_proposta(request, proposta):
     proposta.recursos = request.POST.get("recursos", "")
     proposta.observacoes = request.POST.get("observacoes", "")
 
-    print(request.POST)
     tipo = request.POST.get("interesse", "")
     if tipo != "":
         proposta.tipo_de_interesse = int(tipo)
