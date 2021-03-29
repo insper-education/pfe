@@ -398,6 +398,70 @@
                     }
                 }
 
+            </script>
+
+<!-- ------------------------------------------------------------------------------- -->
+
+            <br><br><br><br>
+            <h2>Visualização Radar</h2>
+            <div class="row mt-5">
+                <div class="col"><canvas id="radial-objetivos"></canvas></div>
+            </div>
+
+            <script>
+        
+                var config_radial_objetivos = {
+                    type: 'radar',
+                    data: {
+                        labels: [
+                            {% for key in medias_geral %}
+                                "{{key}}",
+                            {% endfor %}
+                            ],
+                        datasets: [
+                            {
+                            label: "Objetivos de Aprendizagem",
+                            pointBackgroundColor: [
+                                {% for key, value in medias_geral.items %}
+                                    "{{value.cor}}",
+                                {% endfor %}
+                                ],
+                            data: [
+                                {% for key, value in medias_geral.items %}
+                                    {{value.media|stringformat:".2f"|unlocalize}},
+                                {% endfor %}
+                                ],
+                            scaleOverride: true,
+                            pointRadius: 5,
+                            backgroundColor: "rgba(0,0,240,0.1)",
+                            },
+                        ]
+                    },
+                    options: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Médias Obtidas nos Objetivos de Aprendizagem'
+                        },
+                        scale: {
+                            angleLines: {
+                                display: false
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                suggestedMin: 0,
+                                suggestedMax: 10
+                            }
+                        },
+                    }
+                }
+
+            </script>
+
+
+
+            <script>
+
                 function carrega_pagina() {  
 
                     // Chart do nível nos objetivos de aprendizagem
@@ -428,6 +492,12 @@
                     // Chart do nível nos objetivos de aprendizagem em BF
                     var objetivos_bf = document.getElementById('objetivos-bf').getContext('2d');
                     window.objetivos = new Chart(objetivos_bf, config_objetivos_bf);
+
+
+                    // Chart radial do nível nos objetivos de aprendizagem
+                    var radial_objetivos = document.getElementById('radial-objetivos').getContext('2d');
+                    window.objetivos = new Chart(radial_objetivos, config_radial_objetivos);
+
 
                 }
 
