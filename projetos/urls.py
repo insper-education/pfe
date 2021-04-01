@@ -65,6 +65,11 @@ urlpatterns = [
          views.evolucao_objetivos,
          name='evolucao_objetivos'),
 
+    path('lista_acompanhamento',
+         views.lista_acompanhamento,
+         name='lista_acompanhamento'),
+
+
     path('lista_feedback',
          views.lista_feedback,
          name='lista_feedback'),

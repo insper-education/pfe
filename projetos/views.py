@@ -25,7 +25,7 @@ from users.support import get_edicoes
 from .models import Projeto, Proposta, Configuracao, Coorientador, Avaliacao2, ObjetivosDeAprendizagem
 # from .models import Evento
 
-from .models import Feedback, AreaDeInteresse
+from .models import Feedback, AreaDeInteresse, Acompanhamento
 from .models import Documento, Encontro, Banco, Reembolso, Aviso, Conexao
 
 from .messages import email, message_reembolso
@@ -604,6 +604,20 @@ def lista_feedback(request):
         'num_feedbacks': num_feedbacks,
     }
     return render(request, 'projetos/lista_feedback.html', context)
+
+
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def lista_acompanhamento(request):
+    """Lista todos os acompanhamentos das Organizações Parceiras."""
+
+    acompanhamentos = Acompanhamento.objects.all().order_by("-data")
+
+    context = {
+        'acompanhamentos': acompanhamentos,
+    }
+    return render(request, 'projetos/lista_acompanhamento.html', context)
 
 
 @login_required

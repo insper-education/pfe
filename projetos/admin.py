@@ -27,7 +27,7 @@ from .models import Configuracao, Aviso, Documento, Anotacao, Reembolso, Banco
 from .models import Entidade
 
 # Das Organizações
-from .models import Feedback, Conexao
+from .models import Feedback, Conexao, Acompanhamento
 from .models import ObjetivosDeAprendizagem, Certificado
 from .models import Avaliacao2, Observacao
 from .models import Area, AreaDeInteresse
@@ -395,3 +395,5 @@ admin.site.register(Entidade)       # Para ser preenchido com as entidades estud
 admin.site.register(ObjetivosDeAprendizagem)
 admin.site.register(Area)
 admin.site.register(AreaDeInteresse)
+
+admin.site.register(Acompanhamento)

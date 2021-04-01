@@ -846,6 +846,24 @@ class Entidade(models.Model):
     def __str__(self):
         return self.nome
 
+class Acompanhamento(models.Model):
+    """Acompanhamento das organizacoes parceiras."""
+    data = models.DateField(default=datetime.date.today, blank=True,
+                            help_text='Data da Resposta')
+    autor = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
+                              help_text='quem enviou a observação de acompanhamento')
+    texto = models.TextField(max_length=1000, help_text='Feedback Outros')
+
+    def __str__(self):
+        return str(self.data)
+
+    @classmethod
+    def create(cls):
+        """Cria um objeto (entrada) em Acompanhamento."""
+        acompanhamento = cls()
+        return acompanhamento
+
+
 class Feedback(models.Model):
     """Feedback das organizacoes parceiras."""
     data = models.DateField(default=datetime.date.today, blank=True,
