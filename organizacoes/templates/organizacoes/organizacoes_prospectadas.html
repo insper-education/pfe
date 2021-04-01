@@ -56,6 +56,7 @@
   <div id="tabela">
 
     <script>
+        // Total
         var todos_contactados = 0
         var so_contactados = 0
         var confirmados = 0
@@ -64,6 +65,18 @@
         var notificada = 0
         var documentada = 0
         var sem_grupo = 0
+
+        // Por curso
+        var todos_contactados_curso = {"C":0, "M":0, "X":0};
+        var so_contactados_curso = {"C":0, "M":0, "X":0};
+        var confirmados_curso = {"C":0, "M":0, "X":0};
+        var interessados_curso = {"C":0, "M":0, "X":0};
+        var recusados_curso = {"C":0, "M":0, "X":0};
+        var notificada_curso = {"C":0, "M":0, "X":0};
+        var documentada_curso = {"C":0, "M":0, "X":0};
+        var sem_grupo_curso = {"C":0, "M":0, "X":0};
+
+
     </script>
 
     {% if organizacoes_list %}
@@ -159,10 +172,9 @@
               {% if not contato %}
                 <div style="float:left;width: 95%;">
                   <a
-                    class="imprimir" 
                     id='organizacao{{organizacao.id}}'
                     data-organizacao='{{organizacao.id}}'
-                    class="edit-annotation"
+                    class="edit-annotation imprimir"
                     >---------</a
                   >
                 </div>
@@ -179,10 +191,9 @@
                 {% comment %} {{contato.texto}} {% endcomment %}
                   <div style="float:left;width: 95%;">
                     <a
-                      class="imprimir" 
                       id='organizacao{{organizacao.id}}'
                       data-organizacao='{{organizacao.id}}'
-                      class="edit-annotation"
+                      class="edit-annotation imprimir"
                       href="{% url 'anotacao' organizacao.id %}"
                       data-url="{% url 'anotacao' organizacao.id %}"
                       data-anotacao="{{contato.id}}"
@@ -209,21 +220,69 @@
           </tr>
           {% if contato != '---------' %}
             {% if contato.momento|date:'Ymd' > meses3|date:'Ymd' %}
-              <script>todos_contactados += 1</script>
+              <script>
+                todos_contactados += 1;
+                {% if organizacao.area_computacao %}todos_contactados_curso["C"] += 1;{% endif %}
+                {% if organizacao.area_mecatronica %}todos_contactados_curso["X"] += 1;{% endif %}
+                {% if organizacao.area_mecanica %}todos_contactados_curso["M"] += 1;{% endif %}
+              </script>
+
               {% if contato.tipo_de_retorno == 0 %}
-                <script>so_contactados += 1</script>
+                <script>
+                  so_contactados += 1;
+                  {% if organizacao.area_computacao %}so_contactados_curso["C"] += 1;{% endif %}
+                  {% if organizacao.area_mecatronica %}so_contactados_curso["X"] += 1;{% endif %}
+                  {% if organizacao.area_mecanica %}so_contactados_curso["M"] += 1;{% endif %}
+                </script>
+
               {% elif contato.tipo_de_retorno == 1 %}
-                <script>confirmados += 1</script>
+                <script>
+                  confirmados += 1
+                  {% if organizacao.area_computacao %}confirmados_curso["C"] += 1;{% endif %}
+                  {% if organizacao.area_mecatronica %}confirmados_curso["X"] += 1;{% endif %}
+                  {% if organizacao.area_mecanica %}confirmados_curso["M"] += 1;{% endif %}
+                </script>
+
               {% elif contato.tipo_de_retorno == 2 %}
-                <script>interessados += 1</script>
+                <script>
+                  interessados += 1
+                  {% if organizacao.area_computacao %}interessados_curso["C"] += 1;{% endif %}
+                  {% if organizacao.area_mecatronica %}interessados_curso["X"] += 1;{% endif %}
+                  {% if organizacao.area_mecanica %}interessados_curso["M"] += 1;{% endif %}
+                </script>
+
               {% elif contato.tipo_de_retorno == 3 %}
-                <script>recusados += 1</script>
+                <script>
+                  recusados += 1
+                  {% if organizacao.area_computacao %}recusados_curso["C"] += 1;{% endif %}
+                  {% if organizacao.area_mecatronica %}recusados_curso["X"] += 1;{% endif %}
+                  {% if organizacao.area_mecanica %}recusados_curso["M"] += 1;{% endif %}
+                </script>
+
               {% elif contato.tipo_de_retorno == 4 %}
-                <script>notificada += 1</script>
+                <script>
+                  notificada += 1
+                  {% if organizacao.area_computacao %}notificada_curso["C"] += 1;{% endif %}
+                  {% if organizacao.area_mecatronica %}notificada_curso["X"] += 1;{% endif %}
+                  {% if organizacao.area_mecanica %}notificada_curso["M"] += 1;{% endif %}
+                </script>
+
               {% elif contato.tipo_de_retorno == 5 %}
-                <script>sem_grupo += 1</script>
+                <script>
+                  sem_grupo += 1
+                  {% if organizacao.area_computacao %}sem_grupo_curso["C"] += 1;{% endif %}
+                  {% if organizacao.area_mecatronica %}sem_grupo_curso["X"] += 1;{% endif %}
+                  {% if organizacao.area_mecanica %}sem_grupo_curso["M"] += 1;{% endif %}
+                </script>
+
               {% elif contato.tipo_de_retorno == 6 %}
-                <script>documentada += 1</script>
+                <script>
+                  documentada += 1
+                  {% if organizacao.area_computacao %}documentada_curso["C"] += 1;{% endif %}
+                  {% if organizacao.area_mecatronica %}documentada_curso["X"] += 1;{% endif %}
+                  {% if organizacao.area_mecanica %}documentada_curso["M"] += 1;{% endif %}
+                </script>
+
               {% endif %}
             {% endif %}
           {% endif %}
@@ -242,13 +301,19 @@
       &nbsp;<span style="background-color:#e289df">&nbsp;&nbsp;&nbsp;&nbsp;</span> Avisada que não fechou grupo (<span id="sem_grupo"></span>)<br>
   
       <script>
-        document.getElementById('so_contactados').innerHTML = so_contactados;
-        document.getElementById('recusados').innerHTML = recusados;
-        document.getElementById('interessados').innerHTML = interessados;
-        document.getElementById('confirmados').innerHTML = confirmados;
-        document.getElementById('notificada').innerHTML = notificada;
-        document.getElementById('documentada').innerHTML = documentada;
-        document.getElementById('sem_grupo').innerHTML = sem_grupo;
+
+        function atualiza_situacoes() {
+          document.getElementById('so_contactados').innerHTML = so_contactados+" - C:"+so_contactados_curso["C"]+", M:"+so_contactados_curso["M"]+", X:"+so_contactados_curso["X"];
+          document.getElementById('recusados').innerHTML = recusados+" - C:"+recusados_curso["C"]+", M:"+recusados_curso["M"]+", X:"+recusados_curso["X"];
+          document.getElementById('interessados').innerHTML = interessados+" - C:"+interessados_curso["C"]+", M:"+interessados_curso["M"]+", X:"+interessados_curso["X"];
+          document.getElementById('confirmados').innerHTML = confirmados+" - C:"+confirmados_curso["C"]+", M:"+confirmados_curso["M"]+", X:"+confirmados_curso["X"];
+          document.getElementById('notificada').innerHTML = notificada+" - C:"+notificada_curso["C"]+", M:"+notificada_curso["M"]+", X:"+notificada_curso["X"];
+          document.getElementById('documentada').innerHTML = documentada+" - C:"+documentada_curso["C"]+", M:"+documentada_curso["M"]+", X:"+documentada_curso["X"];
+          document.getElementById('sem_grupo').innerHTML = sem_grupo+" - C:"+sem_grupo_curso["C"]+", M:"+sem_grupo_curso["M"]+", X:"+sem_grupo_curso["X"];
+        }
+
+        atualiza_situacoes();
+
       </script>
       
       <p>&nbsp;</p>

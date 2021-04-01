@@ -4,6 +4,11 @@
     Data: 25 de Março de 2021
 {% endcomment %}
 
+{% comment %}
+{% load static %}
+<script src="{% static 'js/jquery-3.5.1.min.js' %}"></script>
+{% endcomment %}
+
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
 
