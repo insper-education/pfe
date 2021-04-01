@@ -1,4 +1,11 @@
+#starta servidor
 brew services start postgresql
+
+# Mostra mensagens de erro
+postgres -D /usr/local/var/postgres
+
+# Atualiza base de dados (se necessário)
+brew postgresql-upgrade-database
 
 # Aparentemente Melhor
 pg_dump -U pfe pfe -h localhost > backup.sql

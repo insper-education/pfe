@@ -21,17 +21,6 @@
     }
   </style>
 
-  {% comment %} Para esconder links {% endcomment %}
-  <style>
-    a.desligado {
-      color: inherit;
-      text-decoration: none;
-      pointer-events: none;
-      cursor: default;
-    }
-  </style>
-
-
 {% endblock %}
 
 {% block content %}
@@ -355,27 +344,6 @@
     </script>
 
     {% endif %}
-
-    <script>
-
-      {% comment %} Esconde informações para impressão {% endcomment %}
-      document.getElementById("impressora").addEventListener("click", function() {
-        $('#informacoes').hide()
-        $('.logo_impressoras').hide()
-        $('.topnav').hide()
-        $(".imprimir").addClass('desligado');
-      });
-
-      $(document).keyup(function(e) {
-        if (e.key === "Escape") {
-          $('#informacoes').show()
-          $('.logo_impressoras').show()
-          $('.topnav').show()
-          $(".imprimir").removeClass('desligado');
-        }
-      });
-
-    </script>
 
     <script>
       function carrega_pagina() {

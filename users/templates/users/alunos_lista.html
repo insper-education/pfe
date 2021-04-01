@@ -195,6 +195,12 @@
     {% endif %}
     <br>
 
+    {% if ano == 0 or semestre == 0 %}
+      <div id="canvas-holder">
+        <canvas id="total-estudantes"></canvas>
+      </div>
+    {% endif %}
+
 
     <script>
       var config_programas = {
@@ -267,6 +273,71 @@
         }
       };
 
+           
+      var labels = []
+      var est_computacao = []
+      var est_mecatronica = []
+      var est_mecanica = []
+
+      {% for ano,tabela_ano in tabela_alunos.items %}
+        {% for semestre,tabela_semetre in tabela_ano.items %}
+          labels.push("{{ano}}.{{semestre}}");
+          est_computacao.push({{tabela_semetre.computação}});
+          est_mecatronica.push({{tabela_semetre.mecatrônica}});
+          est_mecanica.push({{tabela_semetre.mecânica}});
+        {% endfor %}
+      {% endfor %}
+    
+      var config_totais = {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              data: est_computacao,
+              backgroundColor: 'rgb(75, 192, 192)',
+              label: 'Computação'
+            },
+            {
+              data: est_mecatronica,
+              backgroundColor: 'rgb(255, 205, 86)',
+              label: 'Mecatrônica'
+            },
+            {
+              data: est_mecanica,
+              backgroundColor: 'rgb(255, 99, 132)',
+              label: 'Mecânica'
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          title: {
+            display: true,
+            text: 'Estudantes por tipo por semestre',
+            position: 'top'
+          },
+          legend: {
+            display: true,
+            position: "bottom",
+          },
+          tooltips: {
+						mode: 'index',
+						intersect: false
+					},
+					responsive: true,
+					scales: {
+						xAxes: [{
+							stacked: true,
+						}],
+						yAxes: [{
+							stacked: true
+						}]
+					}
+        }
+      };
+
+
       // Chart da proporção de estudantes por programas
       var chart_programas = document.getElementById('chart-programas').getContext('2d');
       window.myPie = new Chart(chart_programas, config_programas);
@@ -274,6 +345,12 @@
       // Chart da proporção de estudantes por gênero
       var chart_generos = document.getElementById('chart-generos').getContext('2d');
       window.myPie = new Chart(chart_generos, config_generos);
+
+      {% if ano == 0 or semestre == 0 %}
+        // Chart da proporção de estudantes por gênero
+        var chart_totais = document.getElementById('total-estudantes').getContext('2d');
+        window.myPie = new Chart(chart_totais, config_totais);
+      {% endif %}
 
     </script>
 

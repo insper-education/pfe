@@ -506,7 +506,7 @@ def seleciona_conexoes(request):
 @login_required
 @permission_required('users.altera_professor', login_url='/')
 def estrelas(request):
-    """Ajax para validar avisos."""
+    """Ajax para validar estrelas de interesse."""
     organizacao_id = int(request.GET.get('organizacao', None))
     estrelas = int(request.GET.get('estrelas', 0))
 
@@ -515,6 +515,34 @@ def estrelas(request):
     except Organizacao.DoesNotExist:
         return HttpResponseNotFound('<h1>Organizacao não encontrada!</h1>')
     organizacao.estrelas = estrelas
+    organizacao.save()
+
+    data = {
+        'atualizado': True,
+    }
+
+    return JsonResponse(data)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def areas(request):
+    """Ajax para validar area da organização."""
+    organizacao_id = int(request.GET.get('organizacao', None))
+    curso = request.GET.get('curso', "")
+    situacao = True if (request.GET.get('situacao', "") == "true") else False
+    
+    try:
+        organizacao = Organizacao.objects.get(id=organizacao_id)
+    except Organizacao.DoesNotExist:
+        return HttpResponseNotFound('<h1>Organizacao não encontrada!</h1>')
+    
+    if curso == "C":
+        organizacao.area_computacao = situacao
+    elif curso == "X":
+        organizacao.area_mecatronica = situacao
+    elif curso == "M":
+        organizacao.area_mecanica = situacao
+    
     organizacao.save()
 
     data = {

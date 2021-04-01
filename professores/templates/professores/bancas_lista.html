@@ -23,7 +23,7 @@
 
   <span class="titulo">Listagem de Bancas</span>
 
-  <select id="proximas" onchange="location = this.options[this.selectedIndex].value;">
+  <select class="esconder" id="proximas" onchange="location = this.options[this.selectedIndex].value;">
     <option value="todas" {% if periodo == "todas" %}selected="todas"{% endif %}>Todas</option>
     <option value="proximas" {% if periodo == "proximas" %}selected="proximas"{% endif %}>Próximas</option>
     {% if projeto %}
@@ -254,7 +254,7 @@
             </a>
           </span>
 
-          <span class="editar">
+          <span class="editar esconder">
             <button style="float: right;" type="submit" formaction="../bancas_editar/{{banca.pk}}">Editar</button>
             <br>
           </span>
@@ -268,16 +268,5 @@
     <p>Não existem bancas definidas.</p>
   {% endif %}
   <p>&nbsp;</p>
-
-  <script>
-    document.getElementById("impressora").addEventListener("click", function() {
-        $('#proximas').hide()
-        $('#informacoes').hide()
-        $('.logo_impressoras').hide()
-        $('.topnav').hide()
-        $(".imprimir").removeAttr('href');
-        $('.email').hide()
-    });
-  </script>
 
 {% endblock %}

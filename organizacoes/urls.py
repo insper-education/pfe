@@ -66,4 +66,9 @@ urlpatterns = [
          views.estrelas,
          name='estrelas'),
 
+     path('ajax/areas/',
+         views.areas,
+         name='areas'),
+
+
 ]

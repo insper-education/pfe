@@ -178,14 +178,4 @@
     $('#ProjetosTable tr > *:nth-child(3)').hide();
   </script>
 
-  {% comment %} Esconde informações para impressão {% endcomment %}
-  <script>
-    document.getElementById("impressora").addEventListener("click", function() {
-        $('#informacoes').hide()
-        $('.logo_impressoras').hide()
-        $('.topnav').hide()
-        $(".imprimir").removeAttr('href');
-    });
-  </script>
-
 {% endblock %}

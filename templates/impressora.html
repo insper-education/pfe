@@ -6,6 +6,41 @@
 
 {% load static %}
 
+{% comment %} Para esconder links {% endcomment %}
+<style>
+    a.desligado {
+        color: inherit;
+        text-decoration: none;
+        pointer-events: none;
+        cursor: default;
+    }
+</style>
+
 <div class="logo_impressoras" style="float: right;">
     <img class="logo_impressora" id="impressora" src="{% static 'images/icone_Printer.png' %}" alt="impressora" style="cursor: pointer;">
 </div>
+
+<script>
+
+    {% comment %} Esconde informações para impressão {% endcomment %}
+    document.getElementById("impressora").addEventListener("click", function() {
+        $('#informacoes').hide()
+        $('.logo_impressoras').hide()
+        $('.topnav').hide()
+        $(".imprimir").addClass('desligado');
+        $('.esconder').hide()
+        $('.email').hide()
+    });
+
+    $(document).keyup(function(e) {
+        if (e.key === "Escape") {
+            $('#informacoes').show()
+            $('.logo_impressoras').show()
+            $('.topnav').show()
+            $(".imprimir").removeClass('desligado');
+            $('.esconder').show()
+            $('.email').show()
+        }
+    });
+
+</script>

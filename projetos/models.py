@@ -75,6 +75,14 @@ class Organizacao(models.Model):
 
     estrelas = models.PositiveSmallIntegerField(default=0, help_text='Interesse para o semestre')
 
+    area_computacao = models.BooleanField("Área Computação", default=False,
+                                   help_text='Se for uma organização típica de projeto de computação')
+
+    area_mecatronica = models.BooleanField("Área Mecatrônica", default=False,
+                                   help_text='Se for uma organização típica de projeto de mecatrônica')
+
+    area_mecanica = models.BooleanField("Área Mecânica", default=False,
+                                   help_text='Se for uma organização típica de projeto de mecânica')
 
     class Meta:
         ordering = ['sigla']
