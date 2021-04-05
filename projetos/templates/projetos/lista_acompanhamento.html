@@ -21,20 +21,13 @@
 
   <table id="AcompanhamentoTable">
     <tr>
-      <th>ver</th>
-      <th onclick="w3.sortHTML('#AcompanhamentoTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Nome</th>
-      <th onclick="w3.sortHTML('#AcompanhamentoTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Organização</th>
-      <th onclick="w3.sortHTML('#AcompanhamentoTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">Data</th>
+      <th onclick="w3.sortHTML('#AcompanhamentoTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome</th>
+      <th onclick="w3.sortHTML('#AcompanhamentoTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Organização</th>
+      <th onclick="w3.sortHTML('#AcompanhamentoTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Data</th>
+      <th class="text-center">Mensagem</th>
     </tr>      
     {% for acompanhamento in acompanhamentos %} 
       <tr class="item">
-        <td class="text-center">
-          <a
-          {% comment %} href="{% url 'mostra_feedback' feedback.id %}" {% endcomment %}
-          >
-            &#x1f441;
-          </a>
-        </td>
         <td>
           {% if acompanhamento.autor %}
             {{acompanhamento.autor.get_full_name}}
