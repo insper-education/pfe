@@ -85,12 +85,19 @@ def emails(request):
 
     edicoes, _, _ = get_edicoes(Aluno)
 
+    try:
+        configuracao = Configuracao.objects.get()
+        atual = str(configuracao.ano)+"."+str(configuracao.semestre)
+    except Configuracao.DoesNotExist:
+        return HttpResponse("Falha na configuracao do sistema.", status=401)
+
     context = {
         'membros_comite': membros_comite,
         'todos_alunos': lista_todos_alunos,
         'todos_professores': lista_todos_professores,
         'todos_parceiros': lista_todos_parceiros,
         'edicoes': edicoes,
+        'atual': atual,
     }
 
     return render(request, 'administracao/emails.html', context=context)

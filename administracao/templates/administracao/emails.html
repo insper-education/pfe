@@ -90,7 +90,7 @@
         </div>
         <select class="custom-select" id="filterEdicaoSemestre">
           {% for edicao in edicoes reversed %}
-              <option value="{{edicao}}">{{edicao}}</option>
+              <option value="{{edicao}}" {% if edicao == atual %}selected{% endif %}>{{edicao}}</option>
           {% endfor %}
         </select>
         <div id="spinnerSemestre" class="ml-2 input-group-append" style="display:none">
@@ -153,7 +153,7 @@
         </div>
         <select class="custom-select" id="filterEdicaoProjetos">
           {% for edicao in edicoes reversed %}
-              <option value="{{edicao}}">{{edicao}}</option>
+              <option value="{{edicao}}" {% if edicao == atual %}selected{% endif %}>{{edicao}}</option>
           {% endfor %}
         </select>
         <div id="spinnerProjetos" class="ml-2 input-group-append" style="display:none">
