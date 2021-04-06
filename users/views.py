@@ -22,6 +22,7 @@ from projetos.models import Configuracao, Projeto, Conexao, ObjetivosDeAprendiza
 from projetos.models import Banca, Area, Coorientador, Avaliacao2, Observacao
 
 from projetos.messages import email
+from projetos.support import calcula_objetivos
 
 from .forms import PFEUserCreationForm
 from .models import PFEUser, Aluno, Professor, Parceiro, Opcao, Administrador
@@ -609,21 +610,59 @@ def edita_notas(request, primarykey):
     return render(request, 'users/edita_nota.html', context=context)
 
 
-
 @login_required
 @permission_required('users.altera_professor', login_url='/')
 def aluno_detail(request, primarykey):
     """Mostra detalhes sobre o estudante."""
     aluno = Aluno.objects.filter(pk=primarykey).first()
-    configuracao = Configuracao.objects.get()
     areas = Area.objects.filter(ativa=True)
 
-    context = {
-        'configuracao': configuracao,
-        'aluno': aluno,
-        'areast': areas,
-    }
+    alocacoes = Alocacao.objects.filter(aluno=aluno)
 
+    context = calcula_objetivos(alocacoes)
+
+    media_individual = {}
+    media_grupo = {}
+
+    for media in context["medias_geral"]:
+
+        count = 0
+        media_individual[media] = {}
+        media_individual[media]["cor"] = context["medias_geral"][media]["cor"]
+        media_individual[media]["media"] = 0
+        if media.avaliacao_aluno:
+            media_individual[media]["media"] += context["medias_rii"][media]["media"]
+            count += 1
+        if media.avaliacao_aluno:
+            media_individual[media]["media"] += context["medias_rfi"][media]["media"]
+            count += 1
+        if count > 0:
+            media_individual[media]["media"] /= count
+
+        count = 0
+        media_grupo[media] = {}
+        media_grupo[media]["cor"] = context["medias_geral"][media]["cor"]
+        media_grupo[media]["media"] = 0
+        if media.avaliacao_grupo:
+            media_grupo[media]["media"] += context["medias_rig"][media]["media"]
+            count += 1
+        if media.avaliacao_grupo:
+            media_grupo[media]["media"] += context["medias_rfg"][media]["media"]
+            count += 1
+        if media.avaliacao_banca:
+            media_grupo[media]["media"] += context["medias_bi"][media]["media"]
+            count += 1
+        if media.avaliacao_banca:
+            media_grupo[media]["media"] += context["medias_bf"][media]["media"]
+            count += 1
+        if count > 0:
+            media_grupo[media]["media"] /= count
+
+    context['media_individual'] = media_individual
+    context['media_grupo'] = media_grupo
+    context['aluno'] = aluno
+    context['areast'] = areas
+    
     return render(request, 'users/aluno_detail.html', context=context)
 
 

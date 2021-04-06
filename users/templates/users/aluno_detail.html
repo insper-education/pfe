@@ -9,6 +9,10 @@
   {% load static %}
   {% load aderencia_aluno %}
   {% load dictionary %}
+  {% load l10n %}
+
+  <script src="{% static 'js/Chart.min.js' %}"></script>
+
 {% endblock %}
 
 {% block content %}
@@ -51,6 +55,48 @@
   {% endwith %}
   <br>
 
+      {% if aluno.opcao_set.all %}
+        <hr>
+        <h3>Propostas Selecionadas</h3>
+        <p id="regular"> 
+        {% for opcao in aluno.opcao_set.all %}
+            {% if opcao.proposta.ano == opcao.aluno.anoPFE and opcao.proposta.semestre == opcao.aluno.semestrePFE %}
+                <a href="{% url 'proposta_completa' opcao.proposta.id %}">
+                <p><b>{{opcao.prioridade}}</b> - 
+                    {{opcao.proposta.titulo}}
+                    ({{opcao.proposta.organizacao.nome}})
+                    {{ '{' }}{{opcao.proposta.ano}}.{{opcao.proposta.semestre}}{{ '}' }}
+                    |{% mede_aderencia aluno opcao.proposta %}%|
+                </p>
+                </a>
+            {% endif %}
+        {% endfor %}
+        </p>
+        <script>
+            if($.trim($("#regular").html())=='') {
+                $("#regular").text("Nenhuma proposta selecionada para o semestre regular.");
+            }
+        </script>
+        <p id="quebra" style="line-height:2px; display:none">
+            --------------------------------------------------------------------------------------
+        </p>
+        {% for opcao in aluno.opcao_set.all %}
+            {% if opcao.proposta.ano != opcao.aluno.anoPFE or opcao.proposta.semestre != opcao.aluno.semestrePFE %}
+                <script>
+                  $("#quebra").show();
+                </script>
+                <a href="{% url 'proposta_completa' opcao.proposta.id %}">
+                <p><b>{{opcao.prioridade}}</b> - 
+                    {{opcao.proposta.titulo}}
+                    ({{opcao.proposta.organizacao.nome}})
+                    {{ '{' }}{{opcao.proposta.ano}}.{{opcao.proposta.semestre}}{{ '}' }}
+                    |{% mede_aderencia aluno opcao.proposta %}%|
+                </p>
+                </a>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
     {% if aluno.alocacao_set.all.count > 0 %}
         <hr>
         <h3>Projeto Alocado</h3>
@@ -83,49 +129,178 @@
                 {% endif %}
               {% endwith %}
             </a>
-            <br><br>
+            
+            <div class="row mt-1 justify-content-md-center">
+                <div class="col-md-4"><canvas id="radial-geral"></canvas></div>
+                <div class="col-md-4"><canvas id="radial-individual"></canvas></div>
+                <div class="col-md-4"><canvas id="radial-grupo"></canvas></div>
+            </div>
+
+            <script>
+                var config_radial_individual = {
+                    type: 'radar',
+                    data: {
+                        labels: [
+                            {% for key in media_individual %}
+                                "{{key}}",
+                            {% endfor %}
+                            ],
+                        datasets: [
+                            {
+                            label: "Objetivos de Aprendizagem",
+                            pointBackgroundColor: [
+                                {% for key, value in media_individual.items %}
+                                    "{{value.cor}}",
+                                {% endfor %}
+                                ],
+                            data: [
+                                {% for key, value in media_individual.items %}
+                                    {{value.media|stringformat:".2f"|unlocalize}},
+                                {% endfor %}
+                                ],
+                            scaleOverride: true,
+                            pointRadius: 5,
+                            backgroundColor: "rgba(0,0,240,0.1)",
+                            },
+                        ]
+                    },
+                    options: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Avaliação Individual'
+                        },
+                        scale: {
+                            angleLines: {
+                                display: false
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                suggestedMin: 0,
+                                suggestedMax: 10
+                            }
+                        },
+                    }
+                }
+
+                var config_radial_grupo = {
+                    type: 'radar',
+                    data: {
+                        labels: [
+                            {% for key in media_grupo %}
+                                "{{key}}",
+                            {% endfor %}
+                            ],
+                        datasets: [
+                            {
+                            label: "Objetivos de Aprendizagem",
+                            pointBackgroundColor: [
+                                {% for key, value in media_grupo.items %}
+                                    "{{value.cor}}",
+                                {% endfor %}
+                                ],
+                            data: [
+                                {% for key, value in media_grupo.items %}
+                                    {{value.media|stringformat:".2f"|unlocalize}},
+                                {% endfor %}
+                                ],
+                            scaleOverride: true,
+                            pointRadius: 5,
+                            backgroundColor: "rgba(0,0,240,0.1)",
+                            },
+                        ]
+                    },
+                    options: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Avaliação Grupo'
+                        },
+                        scale: {
+                            angleLines: {
+                                display: false
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                suggestedMin: 0,
+                                suggestedMax: 10
+                            }
+                        },
+                    }
+                }
+
+                var config_radial_geral = {
+                    type: 'radar',
+                    data: {
+                        labels: [
+                            {% for key in medias_geral %}
+                                "{{key}}",
+                            {% endfor %}
+                            ],
+                        datasets: [
+                            {
+                            label: "Objetivos de Aprendizagem",
+                            pointBackgroundColor: [
+                                {% for key, value in medias_geral.items %}
+                                    "{{value.cor}}",
+                                {% endfor %}
+                                ],
+                            data: [
+                                {% for key, value in medias_geral.items %}
+                                    {{value.media|stringformat:".2f"|unlocalize}},
+                                {% endfor %}
+                                ],
+                            scaleOverride: true,
+                            pointRadius: 5,
+                            backgroundColor: "rgba(0,0,240,0.1)",
+                            },
+                        ]
+                    },
+                    options: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Avaliação Geral'
+                        },
+                        scale: {
+                            angleLines: {
+                                display: false
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                suggestedMin: 0,
+                                suggestedMax: 10
+                            }
+                        },
+                    }
+                }
+
+            </script>
+
         {% endfor %}
     {% endif %}
 
-    {% if aluno.opcao_set.all %}
-        <hr>
-        <h3>Propostas Selecionadas</h3>
-        <p id="regular"> 
-        {% for opcao in aluno.opcao_set.all %}
-            {% if opcao.proposta.ano == opcao.aluno.anoPFE and opcao.proposta.semestre == opcao.aluno.semestrePFE %}
-                <a href="{% url 'proposta_completa' opcao.proposta.id %}">
-                <p><b>{{opcao.prioridade}}</b> - 
-                    {{opcao.proposta.titulo}}
-                    ({{opcao.proposta.organizacao.nome}})
-                    {{ '{' }}{{opcao.proposta.ano}}.{{opcao.proposta.semestre}}{{ '}' }}
-                    |{% mede_aderencia aluno opcao.proposta %}%|
-                </p>
-                </a>
-            {% endif %}
-        {% endfor %}
-        </p>
-        <script>
-            if($.trim($("#regular").html())=='') {
-                $("#regular").text("Nenhuma proposta selecionada para o semestre regular.");
-            }
-        </script>
-        <p style="line-height:2px">
-            --------------------------------------------------------------------------------------
-        </p>
-        {% for opcao in aluno.opcao_set.all %}
-            {% if opcao.proposta.ano != opcao.aluno.anoPFE or opcao.proposta.semestre != opcao.aluno.semestrePFE %}
-                <a href="{% url 'proposta_completa' opcao.proposta.id %}">
-                <p><b>{{opcao.prioridade}}</b> - 
-                    {{opcao.proposta.titulo}}
-                    ({{opcao.proposta.organizacao.nome}})
-                    {{ '{' }}{{opcao.proposta.ano}}.{{opcao.proposta.semestre}}{{ '}' }}
-                    |{% mede_aderencia aluno opcao.proposta %}%|
-                </p>
-                </a>
-            {% endif %}
-        {% endfor %}
-    {% endif %}
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>      
+
+    <p>&nbsp;</p>   
+
+    
+    <script>
+
+        function carrega_pagina() {  
+            // Chart radial do nível nos objetivos de aprendizagem
+            var radial_geral = document.getElementById('radial-geral').getContext('2d');
+            window.objetivos = new Chart(radial_geral, config_radial_geral);
+
+            var radial_individual = document.getElementById('radial-individual').getContext('2d');
+            window.objetivos = new Chart(radial_individual, config_radial_individual);
+
+            var radial_grupo = document.getElementById('radial-grupo').getContext('2d');
+            window.objetivos = new Chart(radial_grupo, config_radial_grupo);
+
+        }
+
+        window.onload = carrega_pagina
+    
+    </script>   
 
 {% endblock %}

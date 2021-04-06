@@ -30,7 +30,7 @@ from .models import Documento, Encontro, Banco, Reembolso, Aviso, Conexao
 
 from .messages import email, message_reembolso
 
-from .support import get_areas_estudantes, get_areas_propostas, simple_upload
+from .support import get_areas_estudantes, get_areas_propostas, simple_upload, calcula_objetivos
 
 
 @login_required
@@ -864,166 +864,10 @@ def analise_objetivos(request):
     else: 
         alocacoes = alocacoes.filter(projeto__ano=2020, projeto__semestre=2)
 
-    objetivos = ObjetivosDeAprendizagem.objects.all().order_by('id')
 
-    cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9","#7cfa9f","#e8c3b9","#c45890"]
-    count = 0
-    cores_obj = {}
-    for objetivo in objetivos:
-        cores_obj[objetivo] = cores[count]
-        count += 1
+    context = calcula_objetivos(alocacoes)
 
-    valor = {}
-    valor["ideal"] = 7.0
-    valor["regular"] = 5.0
-
-    notas = {
-        "rii": {},
-        "rig": {},
-        "bi":  {},
-        "rfi": {},
-        "rfg": {},
-        "bf":  {},
-    }
-
-    pesos = {
-        "rii": {},
-        "rig": {},
-        "bi":  {},
-        "rfi": {},
-        "rfg": {},
-        "bf":  {},
-    }
-
-    
-    for nota in notas:
-        for objetivo in objetivos:
-            notas[nota][objetivo] = 0
-            pesos[nota][objetivo] = 0
-
-    notas_lista = [x.get_edicoes for x in alocacoes]
-
-    for nota2 in notas_lista:
-        for nota in nota2:
-            if nota[0] == "RII":
-                for k,v in nota[1].items():
-                    notas["rii"][k] += v[0] * v[1]
-                    pesos["rii"][k] += v[1]
-            if nota[0] == "RIG":
-                for k,v in nota[1].items():
-                    notas["rig"][k] += v[0] * v[1]
-                    pesos["rig"][k] += v[1]
-            if nota[0] == "BI":
-                for k,v in nota[1].items():
-                    notas["bi"][k] += v[0] * v[1]
-                    pesos["bi"][k] += v[1]
-            if nota[0] == "RFI":
-                for k,v in nota[1].items():
-                    notas["rfi"][k] += v[0] * v[1]
-                    pesos["rfi"][k] += v[1]
-            if nota[0] == "RFG":
-                for k,v in nota[1].items():
-                    notas["rfg"][k] += v[0] * v[1]
-                    pesos["rfg"][k] += v[1]
-            if nota[0] == "BF":
-                for k,v in nota[1].items():
-                    notas["bf"][k] += v[0] * v[1]
-                    pesos["bf"][k] += v[1]
-
-
-    medias_geral = {}
-    for objetivo in objetivos:
-        medias_geral[objetivo] = {}
-        medias_geral[objetivo]["cor"] = cores_obj[objetivo]
-        medias_geral[objetivo]["soma"] = 0
-        medias_geral[objetivo]["peso"] = 0
-
-    medias_rii = {}
-    for objetivo in objetivos:
-        medias_rii[objetivo] = {}
-        medias_rii[objetivo]["cor"] = cores_obj[objetivo]
-        if pesos["rii"][objetivo]>0:
-            medias_rii[objetivo]["media"] = notas["rii"][objetivo] / pesos["rii"][objetivo]
-            medias_geral[objetivo]["soma"] += notas["rii"][objetivo]
-            medias_geral[objetivo]["peso"] += pesos["rii"][objetivo]
-        else:
-            medias_rii[objetivo]["media"] = 0
-
-    medias_rig = {}
-    for objetivo in objetivos:
-        medias_rig[objetivo] = {}
-        medias_rig[objetivo]["cor"] = cores_obj[objetivo]
-        if pesos["rig"][objetivo]>0:
-            medias_rig[objetivo]["media"] = notas["rig"][objetivo] / pesos["rig"][objetivo]
-            medias_geral[objetivo]["soma"] += notas["rig"][objetivo]
-            medias_geral[objetivo]["peso"] += pesos["rig"][objetivo]
-        else:
-            medias_rig[objetivo]["media"] = 0
-
-
-    medias_bi = {}
-    for objetivo in objetivos:
-        medias_bi[objetivo] = {}
-        medias_bi[objetivo]["cor"] = cores_obj[objetivo]
-        if pesos["bi"][objetivo]>0:
-            medias_bi[objetivo]["media"] = notas["bi"][objetivo] / pesos["bi"][objetivo]
-            medias_geral[objetivo]["soma"] += notas["bi"][objetivo]
-            medias_geral[objetivo]["peso"] += pesos["bi"][objetivo]
-        else:
-            medias_bi[objetivo]["media"] = 0
-
-
-    medias_rfi = {}
-    for objetivo in objetivos:
-        medias_rfi[objetivo] = {}
-        medias_rfi[objetivo]["cor"] = cores_obj[objetivo]
-        if pesos["rfi"][objetivo]>0:
-            medias_rfi[objetivo]["media"] = notas["rfi"][objetivo] / pesos["rfi"][objetivo]
-            medias_geral[objetivo]["soma"] += notas["rfi"][objetivo]
-            medias_geral[objetivo]["peso"] += pesos["rfi"][objetivo]
-        else:
-            medias_rfi[objetivo]["media"] = 0
-
-
-    medias_rfg = {}
-    for objetivo in objetivos:
-        medias_rfg[objetivo] = {}
-        medias_rfg[objetivo]["cor"] = cores_obj[objetivo]
-        if pesos["rfg"][objetivo]>0:
-            medias_rfg[objetivo]["media"] = notas["rfg"][objetivo] / pesos["rfg"][objetivo]
-            medias_geral[objetivo]["soma"] += notas["rfg"][objetivo]
-            medias_geral[objetivo]["peso"] += pesos["rfg"][objetivo]
-        else:
-            medias_rfg[objetivo]["media"] = 0
-
-
-    medias_bf = {}
-    for objetivo in objetivos:
-        medias_bf[objetivo] = {}
-        medias_bf[objetivo]["cor"] = cores_obj[objetivo]
-        if pesos["bf"][objetivo]>0:
-            medias_bf[objetivo]["media"] = notas["bf"][objetivo] / pesos["bf"][objetivo]
-            medias_geral[objetivo]["soma"] += notas["bf"][objetivo]
-            medias_geral[objetivo]["peso"] += pesos["bf"][objetivo]
-        else:
-            medias_bf[objetivo]["media"] = 0
-
-    for objetivo in objetivos:
-        if medias_geral[objetivo]["peso"] > 0:
-            medias_geral[objetivo]["media"] = medias_geral[objetivo]["soma"] / medias_geral[objetivo]["peso"]
-        else:
-            medias_geral[objetivo]["media"] = 0
-
-    context = {
-        "medias_rii": medias_rii,
-        "medias_rig": medias_rig,
-        "medias_bi": medias_bi,
-        "medias_rfi": medias_rfi,
-        "medias_rfg": medias_rfg,
-        "medias_bf": medias_bf,
-        'medias_geral': medias_geral,
-        "edicoes": edicoes,
-    }
+    context["edicoes"] = edicoes
 
     return render(request, 'projetos/analise_objetivos.html', context)
 
