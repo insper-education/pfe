@@ -638,6 +638,8 @@ def aluno_detail(request, primarykey):
             count += 1
         if count > 0:
             media_individual[media]["media"] /= count
+        else:
+            media_individual[media]["media"] = -1
 
         count = 0
         media_grupo[media] = {}
@@ -657,6 +659,8 @@ def aluno_detail(request, primarykey):
             count += 1
         if count > 0:
             media_grupo[media]["media"] /= count
+        else:
+            media_grupo[media]["media"] = -1
 
     context['media_individual'] = media_individual
     context['media_grupo'] = media_grupo

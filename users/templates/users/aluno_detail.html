@@ -155,7 +155,11 @@
                                 ],
                             data: [
                                 {% for key, value in media_individual.items %}
-                                    {{value.media|stringformat:".2f"|unlocalize}},
+                                    {% if value.media >= 0 %}
+                                      {{value.media|stringformat:".2f"|unlocalize}},
+                                    {% else %}
+                                      null,
+                                    {% endif %}
                                 {% endfor %}
                                 ],
                             scaleOverride: true,
