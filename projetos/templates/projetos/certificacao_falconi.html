@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 7 de Abril de 2021
+{% endcomment %}
+
+{% block head %}
+
+  {% load static %}
+  {% load l10n %}
+
+  <script src="{% static 'js/w3.js' %}"></script>
+  <script src="{% static 'js/Chart.min.js' %}"></script>
+  <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
+
+  {% comment %} Para chamar os Tooltips {% endcomment %}
+  <script>{% include "tooltip.js" %}</script>
+
+{% endblock %}
+
+{% block content %}
+
+    <span class="titulo">Análise dos Conceitos das Certificações Falconi</span>
+
+    {% comment %} Seletor da edição da pesquisa {% endcomment %}
+    {% with n_todas=True %}
+        {% include "edicoes.html" %}
+    {% endwith %}
+    
+    <div class="atualizar">
+        <div class="container">
+
+            <div class="row mt-5 justify-content-md-center">
+                <div class="col-md-6"><canvas id="pie-falconi"></canvas></div>
+                <div class="col-md-6"><canvas id="bar-falconi"></canvas></div>
+            </div>
+
+            <script>
+        
+                var tooltips = {
+                    enabled: false
+                };
+
+                var plugins = {
+                    datalabels: {
+                        formatter: (value, ctx) => {
+                            let sum = 0;
+                            let dataArr = ctx.chart.data.datasets[0].data;
+                            dataArr.map(data => {
+                                sum += data;
+                            });
+                            if(sum>0 && value>0) {
+                                return (value*100 / sum).toFixed(1)+"%";
+                            } else {
+                                return " ";
+                            }
+                        },
+                        color: '#000',
+                    }
+                };
+
+                var config_pie_falconi = {
+                    type: 'pie',
+                    data: {
+                    labels: ["Selecionados", "Não selecionados"],
+                    datasets: [
+                        {
+                        label: "Projetos",
+                        backgroundColor: ["#1e951e", "#8e8e11"],
+                        data: [{{selecionados}},{{nao_selecionados}}]
+                        }
+                    ]
+                    },
+                    options: {
+                        title: {
+                            display: true,
+                            text: 'Projetos Selecionados',
+                            position: 'top'
+                        },
+                        tooltips: tooltips,
+                        legend: {
+                            display: true,
+                            position: "bottom",
+                        },
+                        plugins: plugins,
+                    }
+                }
+                
+                var config_bar_falconi = {
+                    type: 'bar',
+                    data: {
+                    labels: ["I", "D", "C", "C+", "B", "B+", "A", "A+"],
+                    datasets: [
+                        {
+                        label: "Projetos",
+                        backgroundColor: ["#F10c0c", "#8e8e11", "#1e951e", "#1e951e", "#1e951e", "#1e951e", "#1e951e", "#1e951e"],
+                        data: [
+                            {% for conceito in conceitos %}
+                                {{conceito|stringformat:".2f"|unlocalize}},
+                            {% endfor %}
+                            ]
+                        }
+                    ]
+                    },
+                    options: {
+                        title: {
+                            display: true,
+                            text: 'Conceitos dos Projetos ',
+                            position: 'top'
+                        },
+                        tooltips: tooltips,
+                        legend: {
+                            display: false,
+                            position: "bottom",
+                        },
+                        plugins: plugins,
+                    scales: {
+                        xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Conceitos'
+                                }
+                            }],
+                        yAxes: [{
+                                display: true,
+                                ticks: {
+                                    beginAtZero: true,
+                                    steps: 10,
+                                    stepValue: 5,
+                                    max: 100
+                                }
+                            }]
+                        },
+                    }
+                }
+
+                function carrega_pagina() {  
+                    // Chart dos projetos selecionados para certificação Falconi
+                    var pie_falconi = document.getElementById('pie-falconi').getContext('2d');
+                    window.situacao = new Chart(pie_falconi, config_pie_falconi);
+                
+                    // Chart dos conceitos obtidos dos projetos selecionados para certificação Falconi
+                    var bar_falconi = document.getElementById('bar-falconi').getContext('2d');
+                    window.situacao = new Chart(bar_falconi, config_bar_falconi);
+                }
+
+                window.onload = carrega_pagina
+            
+            </script>
+
+        </div>
+    </div>
+
+    
+    {% include "edicoes_ajax.html" %}
+    
+
+{% endblock %}

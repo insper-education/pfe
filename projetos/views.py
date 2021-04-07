@@ -828,6 +828,83 @@ def analise_notas(request):
 
     return render(request, 'projetos/analise_notas.html', context)
 
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def certificacao_falconi(request):
+    """Mostra graficos das certificacões Falconi."""
+    try:
+        configuracao = Configuracao.objects.get()
+    except Configuracao.DoesNotExist:
+        return HttpResponse("Falha na configuracao do sistema.", status=401)
+
+    periodo = ""
+    
+    edicoes, ano, semestre = get_edicoes(Avaliacao2)
+    edicoes = ["2020.2"]
+    
+
+    if request.is_ajax():
+        if 'edicao' in request.POST:
+            if request.POST['edicao'] != 'todas':
+                periodo = request.POST['edicao'].split('.')
+                projetos = Projeto.objects.filter(ano=periodo[0], semestre=periodo[1])
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+
+        # if 'curso' in request.POST:
+        #     curso = request.POST['curso']
+        #     if curso != 'T':
+        #         medias_semestre = medias_semestre.filter(aluno__curso=curso)
+        # else:
+        #     return HttpResponse("Algum erro não identificado.", status=401)
+
+    else: 
+        projetos = Projeto.objects.filter(ano=2020, semestre=2)
+
+    # conceitos = I, D, C, C+, B, B+, A, A+
+    conceitos = [0, 0, 0, 0, 0, 0, 0, 0]
+    total = len(projetos)
+    selecionados = 0
+    for projeto in projetos:
+        aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=99)  # Falc.
+        nota_banca_falconi, peso = Aluno.get_banca(None, aval_banc_falconi)
+        if peso is not None:
+            selecionados += 1
+            if nota_banca_falconi >= 9.5:
+                conceitos[7] += 1
+            elif nota_banca_falconi >= 9.0:
+                conceitos[6] += 1
+            elif nota_banca_falconi >= 8.0:
+                conceitos[5] += 1
+            elif nota_banca_falconi >= 7.0:
+                conceitos[4] += 1
+            elif nota_banca_falconi >= 6.0:
+                conceitos[3] += 1
+            elif nota_banca_falconi >= 5.0:
+                conceitos[2] += 1
+            elif nota_banca_falconi >= 4.0:
+                conceitos[1] += 1
+            else:
+                conceitos[0] += 1
+
+    for i in range(8):
+        conceitos[i] *= 100/selecionados
+
+    print(conceitos)
+
+    context = {
+        'ano': configuracao.ano,
+        'semestre': configuracao.semestre,
+        "edicoes": edicoes,
+        "selecionados": selecionados,
+        "nao_selecionados": total - selecionados,
+        "conceitos": conceitos,
+    }
+
+    return render(request, 'projetos/certificacao_falconi.html', context)
+
+
 def media(notas_lista):
     soma = 0
     total = 0
