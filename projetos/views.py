@@ -891,8 +891,6 @@ def certificacao_falconi(request):
     for i in range(8):
         conceitos[i] *= 100/selecionados
 
-    print(conceitos)
-
     context = {
         'ano': configuracao.ano,
         'semestre': configuracao.semestre,
