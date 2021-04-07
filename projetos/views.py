@@ -8,6 +8,7 @@ Data: 15 de Maio de 2019
 
 import os
 import datetime
+import dateutil.parser
 import csv
 
 from django.conf import settings
@@ -19,6 +20,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 
 from users.models import PFEUser, Aluno, Professor, Opcao, Alocacao
+from users.models import Parceiro
 
 from users.support import get_edicoes
 
@@ -1090,6 +1092,55 @@ def nomes(request):
             aluno.user.save()
 
     return HttpResponse(message)
+
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def acompanhamento_view(request):
+    """Cria um anotação para uma organização parceira."""
+    
+    acompanhamentos = Acompanhamento.objects.all().order_by("-data")
+    
+    if request.is_ajax() and 'texto' in request.POST:
+        acompanhamento = Acompanhamento.create()
+        
+        try:
+            parceiro_id = int(request.POST['parceiro'])
+            parceiro = Parceiro.objects.get(id=parceiro_id)
+            acompanhamento.autor = parceiro.user
+        except Parceiro.DoesNotExist:
+            return HttpResponse("Usuário não encontrado.", status=401)
+
+        acompanhamento.texto = request.POST['texto']
+
+        if 'data_hora' in request.POST:
+            try:
+                acompanhamento.data = dateutil.parser\
+                    .parse(request.POST['data_hora'])
+            except (ValueError, OverflowError):
+                acompanhamento.data = datetime.datetime.now()
+
+        acompanhamento.save()
+
+        data = {
+            'data': acompanhamento.data.strftime("%Y.%m.%d"),
+            'autor': str(acompanhamento.autor.get_full_name()),
+            'org': str(parceiro.organizacao),
+            'atualizado': True,
+        }
+
+        return JsonResponse(data)
+
+    parceiros = Parceiro.objects.all()
+
+    context = {
+            'parceiros': parceiros,
+            'data_hora': datetime.datetime.now(),
+        }
+
+    return render(request,
+                    'projetos/acompanhamento_view.html',
+                    context=context)
 
 
 @login_required

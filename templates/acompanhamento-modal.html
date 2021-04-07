@@ -1,0 +1,80 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 7 de Abril de 2021
+{% endcomment %}
+
+
+<script>
+  var acompanhamento;
+  var url;
+  
+  $(document).on("click", ".open-acompanhamento", function (e) {
+    e.preventDefault();
+    var $popup = $("#popup");
+    
+    url = $(this).data("url");
+
+    var address = url
+    
+    $(".modal-content", $popup).load(address, function () {
+      $popup.modal("show");
+    }); 
+
+  });
+
+</script>
+
+
+<!-- Modal -->
+<div class="modal fade" id="popup" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+    </div>
+  </div>
+</div>
+
+
+<script>
+
+  function atualiza(e) {
+    
+    if (!$('form')[0].checkValidity()) {
+        $('form').find('input[type="submit"]').click();
+        return false;
+    }
+
+    var texto = $('#texto').val();
+    var data_hora = $('#data_hora').val();
+    var parceiro = $('#parceiro').val();
+
+    var address = url
+
+    $.ajax({
+        type: "POST",
+        url: address,
+        data: {
+            'texto':texto,
+            'data_hora':data_hora,
+            'parceiro':parceiro,
+            'csrfmiddlewaretoken': '{{ csrf_token }}',
+        },
+        success: function(response){
+            if (response.atualizado) {
+              console.log("Valor atualizado.");
+
+              linha_nova = "<tr><td>"+response.autor+"</td><td>"+response.org+"</td><td>"+response.data+"</td><td>"+texto+"</td></tr>";
+              $('#AcompanhamentoTable tr:first').after(linha_nova);
+
+            } else {
+              console.log("Valor não atualizado.");
+            }
+            
+        },
+        error: function(response) {
+            console.log('error')
+        }
+    });
+
+  }
+</script> 

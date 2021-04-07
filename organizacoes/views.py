@@ -51,7 +51,7 @@ def anotacao(request, organizacao_id, anotacao_id=None):  # acertar isso para pk
 
         try:
             anotacao.autor = PFEUser.objects.get(pk=request.user.pk)
-        except Configuracao.DoesNotExist:
+        except PFEUser.DoesNotExist:
             return HttpResponse("Usuário não encontrado.", status=401)
 
         anotacao.texto = request.POST['texto']

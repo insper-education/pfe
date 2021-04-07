@@ -17,7 +17,14 @@
 
 {% block content %}
 
-  <span class="titulo">Listagem dos Acompanhamentos das Organizações Parceiras</span>
+  <span class="titulo">Listagem dos Acompanhamentos das Organizações Parceiras
+    <a
+      class="open-acompanhamento"
+      href="{% url 'acompanhamento_view' %}"
+      data-url="{% url 'acompanhamento_view' %}"
+      >&#10133;</a
+    >
+  </span>
 
   <table id="AcompanhamentoTable">
     <tr>
@@ -53,5 +60,7 @@
   </table>
 
   <p>&nbsp;</p>
+
+  {% include "acompanhamento-modal.html" %}
 
 {% endblock %}
