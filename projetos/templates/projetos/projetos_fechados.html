@@ -41,6 +41,8 @@
     <label><input id="estudantes" onchange="($(this).prop('checked') ? $('.estudantes').show() : $('.estudantes').hide())" type="checkbox" checked /> Estudantes</label>&nbsp;&nbsp;&nbsp;
     <label><input id="organizacao" onchange="($(this).prop('checked') ? $('.organizacao').show() : $('.organizacao').hide())" type="checkbox" checked /> Organização</label>&nbsp;&nbsp;&nbsp;
     <label><input id="conexoes" onchange="($(this).prop('checked') ? $('.conexoes').show() : $('.conexoes').hide())" type="checkbox" checked /> Conexões</label>&nbsp;&nbsp;&nbsp;
+    <label><input id="totais" onchange="($(this).prop('checked') ? $('.totais').show() : $('.totais').hide())" type="checkbox" checked /> Totais</label>&nbsp;&nbsp;&nbsp;
+    <label><input id="grafico" onchange="($(this).prop('checked') ? $('.grafico').show() : $('.grafico').hide())" type="checkbox" checked /> Gráfico</label>&nbsp;&nbsp;&nbsp;
   </span>
 
   <script>
@@ -74,7 +76,7 @@
           <br>
         </span>
         
-        Projeto:
+        <b>Projeto:</b>
         <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}" class="dark-blue-bold"> 
           {% if projeto.titulo_final %}
             {{projeto.titulo_final}}<br>
@@ -86,9 +88,9 @@
 
         <p class="descricao">
           {% if projeto.descricao %}
-            <small>Descrição projeto: {{projeto.descricao}}</small><br>
+            <small><b>Descrição projeto:</b> {{projeto.descricao}}</small><br>
           {% else %}
-            <small>Descrição proposta: {{projeto.proposta.descricao}}</small><br>
+            <small><b>Descrição proposta:</b> {{projeto.proposta.descricao}}</small><br>
           {% endif %}
         </p>
 
@@ -110,12 +112,12 @@
           </p>
         {% endif %}
 
-        <p class="semestre" style="margin-left:1em; display: none;">Semestre: 
+        <p class="semestre" style="margin-left:1em; display: none;"><b>Semestre:</b>
           {{projeto.ano}}.{{projeto.semestre}}
         </p>
 
         <!-- <p style="margin-left:1em;">Edição: {{projeto.ano}}.{{projeto.semestre}}</p> -->
-        <p class="orientador" style="margin-left:1em;">Orientador: 
+        <p class="orientador" style="margin-left:1em;"><b>Orientador:</b>
           {% if projeto.orientador %}
             <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}"> {{projeto.orientador.user.get_full_name}}</a>
             <a href="mailto:{{projeto.orientador.user.email}}"> &lt;{{projeto.orientador.user.email}}&gt;</a>
@@ -124,7 +126,7 @@
           {% endif %}
         </p>
         
-        <p class="estudantes" style="margin-left:1em;">Estudantes:</p>
+        <p class="estudantes" style="margin-left:1em;"><b>Estudantes:</b></p>
         <ol class="estudantes" style="margin-bottom:5px;">
         {% for aluno,prioridade in prioridades %}
           <li><a class="imprimir" href="{% url 'aluno_detail' aluno.id %}"
@@ -144,7 +146,7 @@
         {% endfor %}
         </ol>
 
-        <p class="organizacao" style="margin-left:1em;">Organização:
+        <p class="organizacao" style="margin-left:1em;"><b>Organização:</b>
           <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">
             {{ projeto.organizacao.nome }}
           </a>
@@ -216,11 +218,13 @@
 
 
       <hr>
-      <b>Total de projetos = <span id="myCountProj">{{ numero_projetos }}</span> </b> <br>
-      <b>Total de estudantes = <span id="myCountAlun">{{ numero_estudantes }}</span> </b> <br>    
-      <br><br>
+      <div class="totais">
+        <b>Total de projetos = <span id="myCountProj">{{ numero_projetos }}</span> </b> <br>
+        <b>Total de estudantes = <span id="myCountAlun">{{ numero_estudantes }}</span> </b> <br>    
+        <br><br>
+      </div>
 
-      <div id="canvas-holder">
+      <div class="grafico" id="canvas-holder">
         <canvas id="chart-area"></canvas>
       </div>
 
@@ -334,6 +338,8 @@
       ($('#organizacao').prop('checked') ? $('.organizacao').show() : $('.organizacao').hide());
       ($('#orientador').prop('checked') ? $('.orientador').show() : $('.orientador').hide());
       ($('#estudantes').prop('checked') ? $('.estudantes').show() : $('.estudantes').hide());
+      ($('#totais').prop('checked') ? $('.totais').show() : $('.totais').hide());
+      ($('#grafico').prop('checked') ? $('.grafico').show() : $('.grafico').hide());
 
       {% comment %} // Só mostra informação de semestre se edição é todas {% endcomment %}
       ($("#filterEdicao option:selected").attr("value") == "todas" ? $('.semestre').show() : $('.semestre').hide());
