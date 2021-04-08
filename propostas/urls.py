@@ -46,4 +46,9 @@ urlpatterns = [
          views.validate_alunos,
          name='validate_alunos'),
 
+     path('ajax/link_organizacao/<int:proposta_id>',
+         views.link_organizacao,
+         name='link_organizacao'),
+
 ]
+

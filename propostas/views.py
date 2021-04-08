@@ -19,7 +19,7 @@ from users.support import get_edicoes, adianta_semestre
 from users.models import Opcao, Aluno, Alocacao, PFEUser
 from users.models import Professor, Parceiro, Administrador
 
-from projetos.models import Proposta, Projeto
+from projetos.models import Proposta, Projeto, Organizacao
 from projetos.models import Configuracao, Area, AreaDeInteresse
 
 from .support import retorna_ternario, ordena_propostas_novo, ordena_propostas
@@ -555,3 +555,45 @@ def validate_alunos(request):
     }
 
     return JsonResponse(data)
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def link_organizacao(request, proposta_id): 
+    """Cria um anotação para uma organização parceira."""
+    try:
+        proposta = Proposta.objects.get(id=proposta_id)
+    except Proposta.DoesNotExist:
+        return HttpResponseNotFound('<h1>Proposta não encontrada!</h1>')
+
+    if request.is_ajax() and 'organizacao_id' in request.POST:
+
+        organizacao_id = int(request.POST['organizacao_id'])
+        
+        try:
+            organizacao = Organizacao.objects.get(id=organizacao_id)
+        except Organizacao.DoesNotExist:
+            return HttpResponseNotFound('<h1>Organização não encontrada!</h1>')
+    
+        proposta.organizacao = organizacao
+
+        proposta.save()
+        
+        data = {
+            'organizacao': str(organizacao),
+            'organizacao_id': organizacao.id,
+            'proposta': proposta_id,
+            'atualizado': True,
+        }
+
+        return JsonResponse(data)
+
+    else:
+
+        context = {
+            'organizacoes': Organizacao.objects.all(),
+            'proposta': proposta,
+        }
+
+        return render(request,
+                      'propostas/organizacao_view.html',
+                      context=context)

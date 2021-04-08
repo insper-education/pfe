@@ -1,0 +1,68 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 8 de Abril de 2021
+{% endcomment %}
+
+<script>
+
+  var proposta;
+  var url;
+
+  $(document).on("click", ".link-organizacao", function (e) {
+    e.preventDefault();
+    var $popup = $("#popup");
+    proposta = $(this).data("proposta");
+    url = $(this).data("url");
+
+    $(".modal-content", $popup).load(url, function () {
+      $popup.modal("show");
+    });
+  });
+
+</script>
+
+
+<!-- Modal -->
+<div class="modal fade" id="popup" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div id="modal-content" class="modal-content">
+    </div>
+  </div>
+</div>
+
+
+<script>
+
+  function atualiza(e) {
+    
+    if (!$('form')[0].checkValidity()) {
+        $('form').find('input[type="submit"]').click();
+        return false;
+    }
+
+    var organizacao_id = $('#organizacao').val();
+    
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: {
+            'organizacao_id': organizacao_id,
+            'csrfmiddlewaretoken': '{{ csrf_token }}',
+        },
+        success: function(response){
+            if (response.atualizado) {
+              console.log("Valor atualizado.");
+              novo = "<a href='../../organizacoes/organizacao_completo/"+response.organizacao_id+"'>"+response.organizacao+"</a>";
+              $('#proposta'+response.proposta).html(novo);
+            } else {
+              console.log("Valor não atualizado.");
+            }
+        },
+        error: function(response) {
+            console.log('error')
+        }
+    });
+
+  }
+</script> 

@@ -1,0 +1,38 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 8 de Abril de 2021
+{% endcomment %}
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+
+    <label for="organizacao">Organização:</label>
+    <select id="organizacao" name="organizacao" class="form-control" required>
+      {% if not organizacoes %}
+        <option disabled selected value> -- selecione tipo de contato -- </option>
+      {% endif %}
+      {% for organizacao in organizacoes %}
+        <option value="{{organizacao.id}}" {% if proposta.organizacao == organizacao %}selected{% endif %} >{{organizacao.sigla}}</option>
+      {% endfor %}
+    </select>
+    <input type="submit" style="display:none;"/>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+    <button id="atualiza" type="button" class="btn btn-primary" data-dismiss="modal">Atualizar</button>
+  </div>
+
+</form>
+
+<script>
+  $('#atualiza').on('click', atualiza);
+</script>

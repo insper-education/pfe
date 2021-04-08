@@ -36,7 +36,7 @@ def anotacao(request, organizacao_id, anotacao_id=None):  # acertar isso para pk
     """Cria um anotação para uma organização parceira."""
     try:
         organizacao = Organizacao.objects.get(id=organizacao_id)
-    except Proposta.DoesNotExist:
+    except Organizacao.DoesNotExist:
         return HttpResponseNotFound('<h1>Organização não encontrada!</h1>')
 
     if request.is_ajax() and 'texto' in request.POST:
