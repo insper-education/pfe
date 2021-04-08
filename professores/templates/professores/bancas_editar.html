@@ -30,6 +30,12 @@
     }
   </style>
 
+  <style>
+    .btn-group.bootstrap-select select {
+        width: 1px !important;
+      }
+  </style>
+
 {% endblock %}
 
 {% block content %}
@@ -38,13 +44,12 @@
     <form method="post" id="criarbancasform" enctype="multipart/form-data">
       {% csrf_token %}
 
-
       <label for="projeto">Projeto:</label>
       <select class="selectpicker" name="projeto" id="projeto" title="Selecione o projeto"
-       data-live-search="true" data-width="75%" data-size="5" required>
-        {% if not banca %}
-          <option disabled selected value> -- selecione um projeto -- </option>
-        {% endif %}
+       data-live-search="true" data-width="75%" data-size="5" required
+       oninvalid="this.setCustomValidity('Selecione o projeto da banca')"
+       oninput="this.setCustomValidity('')"
+       >
         {% for projeto in projetos %}
           <option value="{{projeto.id}}"
           style="font-size: 0.75em;"
