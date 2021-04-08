@@ -37,15 +37,15 @@ def editar_banca(banca, request):
         banca.link = request.POST['link']
 
     try:
-        if 'membro1' in request.POST:
+        if 'membro1' in request.POST and request.POST['membro1'].isnumeric():
             banca.membro1 = PFEUser.objects.get(id=int(request.POST['membro1']))
         else:
             banca.membro1 = None
-        if 'membro2' in request.POST:
+        if 'membro2' in request.POST and request.POST['membro2'].isnumeric():
             banca.membro2 = PFEUser.objects.get(id=int(request.POST['membro2']))
         else:
             banca.membro2 = None
-        if 'membro3' in request.POST:
+        if 'membro3' in request.POST and request.POST['membro3'].isnumeric():
             banca.membro3 = PFEUser.objects.get(id=int(request.POST['membro3']))
         else:
             banca.membro3 = None

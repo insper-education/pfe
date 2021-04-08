@@ -46,10 +46,7 @@
 
       <label for="projeto">Projeto:</label>
       <select class="selectpicker" name="projeto" id="projeto" title="Selecione o projeto"
-       data-live-search="true" data-width="75%" data-size="5" required
-       oninvalid="this.setCustomValidity('Selecione o projeto da banca')"
-       oninput="this.setCustomValidity('')"
-       >
+       data-live-search="true" data-width="75%" data-size="5" required>
         {% for projeto in projetos %}
           <option value="{{projeto.id}}"
           style="font-size: 0.75em;"
