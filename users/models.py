@@ -101,7 +101,7 @@ class Professor(models.Model):
 
     areas = models.TextField(max_length=500, null=True, blank=True,
                              help_text='Áreas de Interesse do Professor')
-    website = models.URLField(max_length=75, null=True, blank=True,
+    website = models.URLField(max_length=250, null=True, blank=True,
                               help_text='Website profissional do Professor')
     lattes = models.URLField(max_length=75, null=True, blank=True,
                              help_text='Link para o currículo Lattes do Professor')
