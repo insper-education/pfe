@@ -10,19 +10,21 @@ import re           # regular expression (para o import)
 import tablib
 import dateutil.parser
 
-from django.shortcuts import render, redirect
-from django.core.mail import EmailMessage
-from django.contrib.auth.decorators import login_required, permission_required
-from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
-from django.db.models.functions import Lower
 from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
+from django.core.mail import EmailMessage
+from django.db.models.functions import Lower
+from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
+from django.shortcuts import render, redirect
 from django.utils.datastructures import MultiValueDictKeyError
 
 from documentos.support import render_to_pdf
 
 from projetos.models import Configuracao, Organizacao, Proposta, Projeto, Banca
 from projetos.models import Avaliacao2, get_upload_path, Feedback
-# from projetos.models import Conexao
 
 from projetos.support import simple_upload
 
@@ -341,6 +343,14 @@ def cadastrar_usuario(request):
 
                 professor.save()
 
+                content_type = ContentType.objects.get_for_model(Professor)
+                permission = Permission.objects.get(
+                    codename='change_professor',
+                    content_type=content_type,
+                )
+                usuario.user_permissions.add(permission)
+                usuario.save()
+
             elif usuario.tipo_de_usuario == 3:  # Parceiro
 
                 parceiro = Parceiro.create(usuario)
@@ -360,6 +370,14 @@ def cadastrar_usuario(request):
                 parceiro.principal_contato = 'principal_contato' in request.POST
 
                 parceiro.save()
+
+                content_type = ContentType.objects.get_for_model(Parceiro)
+                permission = Permission.objects.get(
+                    codename='change_parceiro',
+                    content_type=content_type,
+                )
+                usuario.user_permissions.add(permission)
+                usuario.save()
 
             mensagem = "Usuário inserido na base de dados."
 
