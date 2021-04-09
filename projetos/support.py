@@ -11,9 +11,6 @@ from .models import ObjetivosDeAprendizagem
 
 from .models import Area, AreaDeInteresse
 
-# Estudar raise Http404
-# from django.http import Http404
-
 
 def converte_conceito(conceito):
     """Converte de Letra para Número."""

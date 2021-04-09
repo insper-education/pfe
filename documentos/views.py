@@ -9,9 +9,9 @@ Data: 15 de Dezembro de 2020
 import os
 
 from django.conf import settings
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404
 
 from professores.support import recupera_orientadores
 from professores.support import recupera_coorientadores
@@ -153,10 +153,11 @@ def atualiza_certificado(usuario, projeto, tipo_cert, arquivo, banca=None):
 @permission_required('users.altera_professor', login_url='/')
 def gerar_certificados(request):
     """Recupera um certificado pelos dados."""
-    try:
-        configuracao = Configuracao.objects.get()
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     certificados = []
 
@@ -225,10 +226,11 @@ def gerar_certificados(request):
 @permission_required('users.altera_professor', login_url='/')
 def tabela_documentos(request):
     """Exibe tabela com todos os documentos armazenados."""
-    try:
-        configuracao = Configuracao.objects.get()
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     projetos = Projeto.objects.filter(alocacao__isnull=False)\
         .distinct().order_by("ano", "semestre")

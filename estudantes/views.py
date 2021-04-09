@@ -10,7 +10,7 @@ import datetime
 from django.contrib.auth.decorators import login_required
 
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 
 from projetos.models import Projeto, Proposta, Configuracao, Area
@@ -28,15 +28,17 @@ from users.support import configuracao_estudante_vencida, adianta_semestre
 @login_required
 def index_estudantes(request):
     """Mostra página principal do usuário estudante."""
-    try:
-        usuario = PFEUser.objects.get(pk=request.user.pk)
-    except PFEUser.DoesNotExist:
-        return HttpResponse("Usuário não encontrado.", status=401)
+    usuario = get_object_or_404(PFEUser, pk=request.user.pk)
+    # try:
+    #     usuario = PFEUser.objects.get(pk=request.user.pk)
+    # except PFEUser.DoesNotExist:
+    #     return HttpResponse("Usuário não encontrado.", status=401)
 
-    try:
-        configuracao = Configuracao.objects.get()
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     context = {
         'configuracao': configuracao,
@@ -48,10 +50,11 @@ def index_estudantes(request):
 
     # Caso estudante
     if usuario.tipo_de_usuario == 1:
-        try:
-            estudante = Aluno.objects.get(pk=request.user.aluno.pk)
-        except Aluno.DoesNotExist:
-            return HttpResponse("Estudante não encontrado.", status=401)
+        estudante = get_object_or_404(Aluno, pk=request.user.aluno.pk)
+        # try:
+        #     estudante = Aluno.objects.get(pk=request.user.aluno.pk)
+        # except Aluno.DoesNotExist:
+        #     return HttpResponse("Estudante não encontrado.", status=401)
 
         context['projeto'] = Projeto.objects\
             .filter(alocacao__aluno=estudante).last()
@@ -66,11 +69,12 @@ def index_estudantes(request):
 
     # Caso professor ou administrador
     elif usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4:
-        try:
-            context['professor_id'] = \
-                Professor.objects.get(pk=request.user.professor.pk).id
-        except Professor.DoesNotExist:
-            return HttpResponse("Professor não encontrado.", status=401)
+        context['professor_id'] = get_object_or_404(Professor, pk=request.user.professor.pk).id
+        # try:
+        #     context['professor_id'] = \
+        #         Professor.objects.get(pk=request.user.professor.pk).id
+        # except Professor.DoesNotExist:
+        #     return HttpResponse("Professor não encontrado.", status=401)
 
     # Caso parceiro
     else:
@@ -84,10 +88,11 @@ def index_estudantes(request):
 @login_required
 def areas_interesse(request):
     """Para estudantes definirem suas áreas de interesse."""
-    try:
-        user = PFEUser.objects.get(pk=request.user.pk)
-    except PFEUser.DoesNotExist:
-        return HttpResponse("Usuário não encontrado.", status=401)
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
+    # try:
+    #     user = PFEUser.objects.get(pk=request.user.pk)
+    # except PFEUser.DoesNotExist:
+    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     areas = Area.objects.filter(ativa=True)
     context = {
@@ -96,10 +101,11 @@ def areas_interesse(request):
 
     # Caso seja estudante
     if user.tipo_de_usuario == 1:  # Estudante
-        try:
-            estudante = Aluno.objects.get(pk=request.user.aluno.pk)
-        except Aluno.DoesNotExist:
-            return HttpResponse("Estudante não encontrado.", status=401)
+        estudante = get_object_or_404(Aluno, pk=request.user.aluno.pk)
+        # try:
+        #     estudante = Aluno.objects.get(pk=request.user.aluno.pk)
+        # except Aluno.DoesNotExist:
+        #     return HttpResponse("Estudante não encontrado.", status=401)
 
         vencido = configuracao_estudante_vencida(estudante)
 
@@ -130,27 +136,32 @@ def areas_interesse(request):
 @login_required
 def encontros_marcar(request):
     """Encontros a serem agendados pelos alunos."""
-    try:
-        configuracao = Configuracao.objects.get()
-        ano = configuracao.ano
-        semestre = configuracao.semestre
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    ano = configuracao.ano
+    semestre = configuracao.semestre
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    #     ano = configuracao.ano
+    #     semestre = configuracao.semestre
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     hoje = datetime.date.today()
     encontros = Encontro.objects.filter(startDate__gt=hoje)\
         .order_by('startDate')
 
-    try:
-        usuario = PFEUser.objects.get(pk=request.user.pk)
-    except PFEUser.DoesNotExist:
-        return HttpResponse("Usuário não encontrado.", status=401)
+    usuario = get_object_or_404(PFEUser, pk=request.user.pk)
+    # try:
+    #     usuario = PFEUser.objects.get(pk=request.user.pk)
+    # except PFEUser.DoesNotExist:
+    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     if usuario.tipo_de_usuario == 1:  # Estudante
-        try:
-            estudante = Aluno.objects.get(pk=request.user.aluno.pk)
-        except Aluno.DoesNotExist:
-            return HttpResponse("Estudante não encontrado.", status=401)
+        estudante = get_object_or_404(Aluno, pk=request.user.aluno.pk)
+        # try:
+        #     estudante = Aluno.objects.get(pk=request.user.aluno.pk)
+        # except Aluno.DoesNotExist:
+        #     return HttpResponse("Estudante não encontrado.", status=401)
 
         projeto = Projeto.objects.filter(alocacao__aluno=estudante).\
             distinct().\
@@ -212,10 +223,11 @@ def encontros_marcar(request):
 @login_required
 def informacoes_adicionais(request):
     """Perguntas aos estudantes de trabalho/entidades/social/familia."""
-    try:
-        user = PFEUser.objects.get(pk=request.user.pk)
-    except PFEUser.DoesNotExist:
-        return HttpResponse("Usuário não encontrado.", status=401)
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
+    # try:
+    #     user = PFEUser.objects.get(pk=request.user.pk)
+    # except PFEUser.DoesNotExist:
+    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     if user.tipo_de_usuario == 3:
         mensagem = "Você não está cadastrado como aluno!"
@@ -270,10 +282,11 @@ def informacoes_adicionais(request):
 @login_required
 def minhas_bancas(request):
     """Lista as bancas agendadas para um aluno."""
-    try:
-        aluno = Aluno.objects.get(pk=request.user.aluno.pk)
-    except Aluno.DoesNotExist:
-        return HttpResponse("Aluno não encontrado.", status=401)
+    aluno = get_object_or_404(Aluno, pk=request.user.aluno.pk)
+    # try:
+    #     aluno = Aluno.objects.get(pk=request.user.aluno.pk)
+    # except Aluno.DoesNotExist:
+    #     return HttpResponse("Aluno não encontrado.", status=401)
 
     configuracao = Configuracao.objects.get()
     if not configuracao.liberados_projetos:
@@ -299,12 +312,14 @@ def minhas_bancas(request):
 @login_required
 def selecao_propostas(request):
     """Exibe todos os projetos para os alunos aplicarem."""
-    try:
-        user = PFEUser.objects.get(pk=request.user.pk)
-    except PFEUser.DoesNotExist:
-        return HttpResponse("Usuário não encontrado.", status=401)
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
+    # try:
+    #     user = PFEUser.objects.get(pk=request.user.pk)
+    # except PFEUser.DoesNotExist:
+    #     return HttpResponse("Usuário não encontrado.", status=401)
 
-    configuracao = Configuracao.objects.get()
+    #configuracao = Configuracao.objects.get()
+    configuracao = get_object_or_404(Configuracao)
     ano = configuracao.ano
     semestre = configuracao.semestre
 
@@ -330,10 +345,11 @@ def selecao_propostas(request):
 
         vencido = timezone.now() > configuracao.prazo
 
-        try:
-            aluno = Aluno.objects.get(pk=request.user.aluno.pk)
-        except Aluno.DoesNotExist:
-            return HttpResponse("Estudante não encontrado.", status=401)
+        aluno = get_object_or_404(Aluno, pk=request.user.aluno.pk)
+        # try:
+        #     aluno = Aluno.objects.get(pk=request.user.aluno.pk)
+        # except Aluno.DoesNotExist:
+        #     return HttpResponse("Estudante não encontrado.", status=401)
 
         if configuracao.semestre == 1:
             vencido |= aluno.anoPFE < configuracao.ano

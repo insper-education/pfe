@@ -18,7 +18,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.mail import EmailMessage
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.datastructures import MultiValueDictKeyError
 
 from documentos.support import render_to_pdf
@@ -58,10 +58,12 @@ def index_administracao(request):
 @permission_required('users.altera_professor', login_url='/')
 def index_carregar(request):
     """Para carregar dados de arquivos para o servidor."""
-    try:
-        user = PFEUser.objects.get(pk=request.user.pk)
-    except PFEUser.DoesNotExist:
-        return HttpResponse("Usuário não encontrado.", status=401)
+    
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
+    # try:
+    #     user = PFEUser.objects.get(pk=request.user.pk)
+    # except PFEUser.DoesNotExist:
+    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     if user:
         if user.tipo_de_usuario != 4:  # não é admin
@@ -87,11 +89,14 @@ def emails(request):
 
     edicoes, _, _ = get_edicoes(Aluno)
 
-    try:
-        configuracao = Configuracao.objects.get()
-        atual = str(configuracao.ano)+"."+str(configuracao.semestre)
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    #     atual = str(configuracao.ano)+"."+str(configuracao.semestre)
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
+
+    configuracao = get_object_or_404(Configuracao)
+    atual = str(configuracao.ano)+"."+str(configuracao.semestre)
 
     context = {
         'membros_comite': membros_comite,
@@ -483,10 +488,11 @@ def carrega_arquivo(request, dado):
 @permission_required('users.altera_professor', login_url='/')
 def definir_datas(request):
     """Definir datas do PFE."""
-    try:
-        configuracao = Configuracao.objects.get()
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     if request.method == 'POST':
 
@@ -530,12 +536,15 @@ def propor(request):
 @permission_required('users.altera_professor', login_url='/')
 def montar_grupos(request):
     """Montar grupos para projetos."""
-    try:
-        configuracao = Configuracao.objects.get()
-        ano = configuracao.ano
-        semestre = configuracao.semestre
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    ano = configuracao.ano
+    semestre = configuracao.semestre
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    #     ano = configuracao.ano
+    #     semestre = configuracao.semestre
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     ano, semestre = adianta_semestre(ano, semestre)
 
@@ -555,10 +564,11 @@ def montar_grupos(request):
     estudantes_opcoes = zip(estudantes, opcoes)
 
     # Checa se usuário é administrador ou professor
-    try:
-        user = PFEUser.objects.get(pk=request.user.pk)
-    except PFEUser.DoesNotExist:
-        return HttpResponse("Usuário não encontrado.", status=401)
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
+    # try:
+    #     user = PFEUser.objects.get(pk=request.user.pk)
+    # except PFEUser.DoesNotExist:
+    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     mensagem = ""
 
@@ -650,12 +660,15 @@ def montar_grupos(request):
 @permission_required("users.altera_professor", login_url='/')
 def selecionar_orientadores(request):
     """Selecionar Orientadores para os Projetos."""
-    try:
-        configuracao = Configuracao.objects.get()
-        ano = configuracao.ano
-        semestre = configuracao.semestre
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    ano = configuracao.ano
+    semestre = configuracao.semestre
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    #     ano = configuracao.ano
+    #     semestre = configuracao.semestre
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     mensagem = ""
 
@@ -672,10 +685,11 @@ def selecionar_orientadores(request):
     orientadores = (professores | administradores).order_by(Lower("first_name"), Lower("last_name"))
 
     # Checa se usuário é administrador ou professor
-    try:
-        user = PFEUser.objects.get(pk=request.user.pk)
-    except PFEUser.DoesNotExist:
-        return HttpResponse("Usuário não encontrado.", status=401)
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
+    # try:
+    #     user = PFEUser.objects.get(pk=request.user.pk)
+    # except PFEUser.DoesNotExist:
+    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     if user and user.tipo_de_usuario != 4:  # admin
         mensagem = "Sua conta não é de administrador, "
@@ -694,10 +708,11 @@ def selecionar_orientadores(request):
 @permission_required("users.altera_professor", login_url='/')
 def servico(request):
     """Caso servidor esteja em manutenção."""
-    try:
-        configuracao = Configuracao.objects.get()
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     if request.method == 'POST':
         check_values = request.POST.getlist('selection')
@@ -714,18 +729,20 @@ def servico(request):
 @permission_required('users.altera_professor', login_url='/')
 def pre_alocar_estudante(request):
     """Ajax para pre-alocar estudates em propostas."""
-    try:
-        user = PFEUser.objects.get(pk=request.user.pk)
-    except PFEUser.DoesNotExist:
-        return HttpResponse("Usuário não encontrado.", status=401)
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
+    # try:
+    #     user = PFEUser.objects.get(pk=request.user.pk)
+    # except PFEUser.DoesNotExist:
+    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     if user.tipo_de_usuario == 4:  # admin
 
         # Código a seguir não estritamente necessário mas pode deixar mais seguro
-        try:
-            administrador = Administrador.objects.get(pk=request.user.administrador.pk)
-        except Administrador.DoesNotExist:
-            return HttpResponse("Administrador não encontrado.", status=401)
+        administrador = get_object_or_404(Administrador, pk=request.user.administrador.pk)
+        # try:
+        #     administrador = Administrador.objects.get(pk=request.user.administrador.pk)
+        # except Administrador.DoesNotExist:
+        #     return HttpResponse("Administrador não encontrado.", status=401)
 
         if not administrador:
             return HttpResponse("Administrador não encontrado.", status=401)
@@ -736,27 +753,34 @@ def pre_alocar_estudante(request):
         proposta = request.GET.get('proposta', None)
         proposta_id = int(proposta[len("proposta"):])
 
-        try:
-            configuracao = Configuracao.objects.get()
-            ano = configuracao.ano
-            semestre = configuracao.semestre
-        except Configuracao.DoesNotExist:
-            return HttpResponse("Falha na configuracao do sistema.", status=401)
+        configuracao = get_object_or_404(Configuracao)
+        ano = configuracao.ano
+        semestre = configuracao.semestre
+        # try:
+        #     configuracao = Configuracao.objects.get()
+        #     ano = configuracao.ano
+        #     semestre = configuracao.semestre
+        # except Configuracao.DoesNotExist:
+        #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
         # Vai para próximo semestre
         ano, semestre = adianta_semestre(ano, semestre)
 
-        try:
-            proposta = Proposta.objects.get(id=proposta_id)
-        except Proposta.DoesNotExist:
-            return HttpResponseNotFound('<h1>Proposta não encontrada!</h1>')
+        proposta = get_object_or_404(Proposta, id=proposta_id)
+        # try:
+        #     proposta = Proposta.objects.get(id=proposta_id)
+        # except Proposta.DoesNotExist:
+        #     return HttpResponseNotFound('<h1>Proposta não encontrada!</h1>')
 
-        try:
-            estudante = Aluno.objects.get(id=estudante_id)
-            estudante.pre_alocacao = proposta
-            estudante.save()
-        except Aluno.DoesNotExist:
-            return HttpResponseNotFound('<h1>Estudante não encontrado!</h1>')
+        estudante = get_object_or_404(Aluno, id=estudante_id)
+        estudante.pre_alocacao = proposta
+        estudante.save()
+        # try:
+        #     estudante = Aluno.objects.get(id=estudante_id)
+        #     estudante.pre_alocacao = proposta
+        #     estudante.save()
+        # except Aluno.DoesNotExist:
+        #     return HttpResponseNotFound('<h1>Estudante não encontrado!</h1>')
 
         data = {
             'atualizado': True,
@@ -780,10 +804,11 @@ def pre_alocar_estudante(request):
 @permission_required('users.altera_professor', login_url='/')
 def definir_orientador(request):
     """Ajax para definir orientadores de projetos."""
-    try:
-        user = PFEUser.objects.get(pk=request.user.pk)
-    except PFEUser.DoesNotExist:
-        return HttpResponse("Usuário não encontrado.", status=401)
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
+    # try:
+    #     user = PFEUser.objects.get(pk=request.user.pk)
+    # except PFEUser.DoesNotExist:
+    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     if user.tipo_de_usuario == 4:  # admin
 
@@ -800,19 +825,23 @@ def definir_orientador(request):
             projeto_id = int(projeto_get[len("projeto"):])
 
         if orientador_id:
-            try:
-                orientador = Professor.objects.get(user_id=orientador_id)
-            except Professor.DoesNotExist:
-                return HttpResponseNotFound('<h1>Orientador não encontrado!</h1>')
+            orientador = get_object_or_404(Professor, user_id=orientador_id)
+            # try:
+            #     orientador = Professor.objects.get(user_id=orientador_id)
+            # except Professor.DoesNotExist:
+            #     return HttpResponseNotFound('<h1>Orientador não encontrado!</h1>')
         else:
             orientador = None
 
-        try:
-            projeto = Projeto.objects.get(id=projeto_id)
-            projeto.orientador = orientador
-            projeto.save()
-        except Projeto.DoesNotExist:
-            return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
+        projeto = get_object_or_404(Projeto, id=projeto_id)
+        projeto.orientador = orientador
+        projeto.save()
+        # try:
+        #     projeto = Projeto.objects.get(id=projeto_id)
+        #     projeto.orientador = orientador
+        #     projeto.save()
+        # except Projeto.DoesNotExist:
+        #     return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
 
         data = {
             'atualizado': True,
@@ -974,10 +1003,11 @@ def email_backup(request):
 @permission_required("users.altera_professor", login_url='/')
 def relatorio(request, modelo, formato):
     """Gera relatorios em html e PDF."""
-    try:
-        configuracao = Configuracao.objects.get()
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     context = {'configuracao': configuracao}
 
@@ -1022,10 +1052,11 @@ def relatorio_backup(request):
     recipient_list = ['pfeinsper@gmail.com', 'lpsoares@gmail.com', ]
     mail = EmailMessage(subject, message, email_from, recipient_list)
 
-    try:
-        configuracao = Configuracao.objects.get()
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     context = {
         'projetos': Projeto.objects.all(),

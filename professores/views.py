@@ -12,15 +12,14 @@ import dateutil.parser
 from urllib.parse import quote, unquote
 
 from django.conf import settings
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
-from django.http import HttpResponse, HttpResponseNotFound
 from django.db.models.functions import Lower
+from django.http import HttpResponse, HttpResponseNotFound
+from django.shortcuts import render, get_object_or_404
 from django.utils import html
 
 from users.models import PFEUser, Professor, Aluno
 from users.support import get_edicoes
-
 
 from projetos.models import ObjetivosDeAprendizagem, Avaliacao2, Observacao
 from projetos.models import Banca, Evento, Encontro
@@ -39,11 +38,11 @@ from .support import recupera_coorientadores_por_semestre
 @permission_required("users.altera_professor", login_url='/')
 def index_professor(request):
     """Mostra página principal do usuário professor."""
-
-    try:
-        user = PFEUser.objects.get(pk=request.user.pk)
-    except PFEUser.DoesNotExist:
-        return HttpResponse("Usuário não encontrado.", status=401)
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
+    # try:
+    #     user = PFEUser.objects.get(pk=request.user.pk)
+    # except PFEUser.DoesNotExist:
+    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     if user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
         mensagem = "Você não está cadastrado como professor!"
@@ -97,19 +96,19 @@ def bancas_index(request):
 @permission_required('users.altera_professor', login_url='/')
 def bancas_criar(request):
     """Cria uma banca de avaliação para o projeto."""
-
-    try:
-        configuracao = Configuracao.objects.get()
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     if request.method == 'POST':
         if 'projeto' in request.POST:
-
-            try:
-                projeto = Projeto.objects.get(id=int(request.POST['projeto']))
-            except Projeto.DoesNotExist:
-                return HttpResponse("Projeto não encontrado.", status=401)
+            projeto = get_object_or_404(Projeto, id=int(request.POST['projeto']))
+            # try:
+            #     projeto = Projeto.objects.get(id=int(request.POST['projeto']))
+            # except Projeto.DoesNotExist:
+            #     return HttpResponse("Projeto não encontrado.", status=401)
 
             banca = Banca.create(projeto)
             editar_banca(banca, request)
@@ -144,10 +143,11 @@ def bancas_criar(request):
 @permission_required('users.altera_professor', login_url='/')
 def bancas_editar(request, primarykey):
     """Edita uma banca de avaliação para o projeto."""
-    try:
-        banca = Banca.objects.get(pk=primarykey)
-    except Banca.DoesNotExist:
-        return HttpResponse("Banca não encontrada.", status=401)
+    banca = get_object_or_404(Banca, pk=primarykey)
+    # try:
+    #     banca = Banca.objects.get(pk=primarykey)
+    # except Banca.DoesNotExist:
+    #     return HttpResponse("Banca não encontrada.", status=401)
 
     if request.method == 'POST':
         editar_banca(banca, request)
@@ -187,10 +187,11 @@ def bancas_lista(request, periodo_projeto):
     elif periodo_projeto == "todas":
         bancas = Banca.objects.all().order_by("startDate")
     else:
-        try:
-            projeto = Projeto.objects.get(id=periodo_projeto)
-        except Projeto.DoesNotExist:
-            return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
+        projeto = get_object_or_404(Projeto, id=periodo_projeto)
+        # try:
+        #     projeto = Projeto.objects.get(id=periodo_projeto)
+        # except Projeto.DoesNotExist:
+        #     return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
         bancas = Banca.objects.filter(projeto=projeto).order_by("startDate")
 
     context = {
@@ -206,10 +207,11 @@ def bancas_lista(request, periodo_projeto):
 @permission_required('users.altera_professor', login_url='/')
 def bancas_tabela(request):
     """Lista todas as bancas agendadas, conforme periodo pedido."""
-    try:
-        configuracao = Configuracao.objects.get()
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     membros_pfe = []
     periodo = []
@@ -257,10 +259,11 @@ def bancas_tabela(request):
 @permission_required('users.altera_professor', login_url='/')
 def banca_ver(request, primarykey):
     """Retorna banca pedida."""
-    try:
-        banca = Banca.objects.get(id=primarykey)
-    except Banca.DoesNotExist:
-        return HttpResponseNotFound('<h1>Banca não encontrada!</h1>')
+    banca = get_object_or_404(Banca, id=primarykey)
+    # try:
+    #     banca = Banca.objects.get(id=primarykey)
+    # except Banca.DoesNotExist:
+    #     return HttpResponseNotFound('<h1>Banca não encontrada!</h1>')
 
     context = {
         'banca': banca,
@@ -300,11 +303,12 @@ def banca_avaliar(request, slug):
 
     if request.method == 'POST':
         if 'avaliador' in request.POST:
-
-            try:
-                avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
-            except PFEUser.DoesNotExist:
-                return HttpResponse("Usuário não encontrado.", status=401)
+            
+            avaliador = get_object_or_404(PFEUser, pk=int(request.POST['avaliador']))
+            # try:
+            #     avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
+            # except PFEUser.DoesNotExist:
+            #     return HttpResponse("Usuário não encontrado.", status=401)
 
             if banca.tipo_de_banca == 1:  # (1, 'intermediaria'),
                 tipo_de_avaliacao = 1  # ( 1, 'Banca Intermediária'),
@@ -328,11 +332,13 @@ def banca_avaliar(request, slug):
                     julgamento[i] = Avaliacao2.create(projeto=banca.projeto)
                     julgamento[i].avaliador = avaliador
 
-                    try:
-                        pk_objetivo = int(obj_nota.split('.')[0])
-                        julgamento[i].objetivo = ObjetivosDeAprendizagem.objects.get(pk=pk_objetivo)
-                    except ObjetivosDeAprendizagem.DoesNotExist:
-                        return HttpResponse("Objetivo de Aprendizagem não encontrados.", status=401)
+                    pk_objetivo = int(obj_nota.split('.')[0])
+                    julgamento[i].objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=pk_objetivo)
+                    # try:
+                    #     pk_objetivo = int(obj_nota.split('.')[0])
+                    #     julgamento[i].objetivo = ObjetivosDeAprendizagem.objects.get(pk=pk_objetivo)
+                    # except ObjetivosDeAprendizagem.DoesNotExist:
+                    #     return HttpResponse("Objetivo de Aprendizagem não encontrados.", status=401)
 
                     julgamento[i].tipo_de_avaliacao = tipo_de_avaliacao
                     if conceito == "NA":
@@ -613,10 +619,11 @@ def banca_avaliar(request, slug):
 @permission_required("users.altera_professor", login_url='/')
 def conceitos_obtidos(request, primarykey):  # acertar isso para pk
     """Visualiza os conceitos obtidos pelos alunos no projeto."""
-    try:
-        projeto = Projeto.objects.get(pk=primarykey)
-    except Projeto.DoesNotExist:
-        return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
+    projeto = get_object_or_404(Projeto, pk=primarykey)
+    # try:
+    #     projeto = Projeto.objects.get(pk=primarykey)
+    # except Projeto.DoesNotExist:
+    #     return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
 
     objetivos = ObjetivosDeAprendizagem.objects.all()
 
@@ -726,11 +733,11 @@ def dinamicas_index(request):
 @permission_required('users.altera_professor', login_url='/')
 def dinamicas_criar(request):
     """Cria um encontro."""
-
-    try:
-        configuracao = Configuracao.objects.get()
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     if request.method == 'POST':
 
@@ -763,10 +770,11 @@ def dinamicas_criar(request):
             if facilitador:
                 facilitador = int(facilitador)
                 if facilitador != 0:
-                    try:
-                        encontro.facilitador = PFEUser.objects.get(id=facilitador)
-                    except PFEUser.DoesNotExist:
-                        return HttpResponse("Usuário não encontrado.", status=401)
+                    encontro.facilitador = get_object_or_404(PFEUser, id=facilitador)
+                    # try:
+                    #     encontro.facilitador = PFEUser.objects.get(id=facilitador)
+                    # except PFEUser.DoesNotExist:
+                    #     return HttpResponse("Usuário não encontrado.", status=401)
                 else:
                     encontro.facilitador = None
 
@@ -800,15 +808,17 @@ def dinamicas_criar(request):
 @permission_required('users.altera_professor', login_url='/')
 def dinamicas_editar(request, primarykey):
     """Edita um encontro."""
-    try:
-        encontro = Encontro.objects.get(pk=primarykey)
-    except Encontro.DoesNotExist:
-        return HttpResponse("Encontro não encontrado.", status=401)
+    encontro = get_object_or_404(Encontro, pk=primarykey)
+    # try:
+    #     encontro = Encontro.objects.get(pk=primarykey)
+    # except Encontro.DoesNotExist:
+    #     return HttpResponse("Encontro não encontrado.", status=401)
 
-    try:
-        configuracao = Configuracao.objects.get()
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     if request.method == 'POST':
 
@@ -828,10 +838,11 @@ def dinamicas_editar(request, primarykey):
             if projeto:
                 projeto = int(projeto)
                 if projeto != 0:
-                    try:
-                        encontro.projeto = Projeto.objects.get(id=projeto)
-                    except Projeto.DoesNotExist:
-                        return HttpResponse("Projeto não encontrado.", status=401)
+                    encontro.projeto = get_object_or_404(Projeto, id=projeto)
+                    # try:
+                    #     encontro.projeto = Projeto.objects.get(id=projeto)
+                    # except Projeto.DoesNotExist:
+                    #     return HttpResponse("Projeto não encontrado.", status=401)
                 else:
                     encontro.projeto = None
 
@@ -839,10 +850,11 @@ def dinamicas_editar(request, primarykey):
             if facilitador:
                 facilitador = int(facilitador)
                 if facilitador != 0:
-                    try:
-                        encontro.facilitador = PFEUser.objects.get(id=facilitador)
-                    except PFEUser.DoesNotExist:
-                        return HttpResponse("Usuário não encontrado.", status=401)
+                    encontro.facilitador = get_object_or_404(PFEUser, id=facilitador)
+                    # try:
+                    #     encontro.facilitador = PFEUser.objects.get(id=facilitador)
+                    # except PFEUser.DoesNotExist:
+                    #     return HttpResponse("Usuário não encontrado.", status=401)
                 else:
                     encontro.facilitador = None
 
@@ -919,10 +931,11 @@ def dinamicas_lista(request):
 @permission_required('users.altera_professor', login_url='/')
 def orientadores_tabela(request):
     """Alocação dos Orientadores por semestre."""
-    try:
-        configuracao = Configuracao.objects.get()
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuração do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuração do sistema.", status=401)
 
     orientadores = recupera_orientadores_por_semestre(configuracao)
 
@@ -936,10 +949,11 @@ def orientadores_tabela(request):
 @permission_required('users.altera_professor', login_url='/')
 def coorientadores_tabela(request):
     """Alocação dos Coorientadores por semestre."""
-    try:
-        configuracao = Configuracao.objects.get()
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     coorientadores = recupera_coorientadores_por_semestre(configuracao)
 

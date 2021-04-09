@@ -8,12 +8,10 @@ Data: 15 de Dezembro de 2020
 
 
 from django.conf import settings
-
-from django.shortcuts import render
-# from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required, permission_required
-from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.db.models.functions import Lower
+from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
+from django.shortcuts import render, get_object_or_404
 
 from users.support import get_edicoes, adianta_semestre
 from users.models import Opcao, Aluno, Alocacao, PFEUser
@@ -39,10 +37,11 @@ def index_propostas(request):
 @permission_required("users.altera_professor", login_url='/')
 def mapeamento_estudantes_propostas(request):
     """Faz o mapeamento entre estudantes e propostas do próximo semestre."""
-    try:
-        configuracao = Configuracao.objects.get()
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     ano = configuracao.ano
     semestre = configuracao.semestre
@@ -145,12 +144,15 @@ def mapeamento_estudantes_propostas(request):
 @permission_required('users.altera_professor', login_url='/')
 def procura_propostas(request):
     """Exibe um histograma com a procura das propostas pelos estudantes."""
-    try:
-        configuracao = Configuracao.objects.get()
-        ano = configuracao.ano
-        semestre = configuracao.semestre
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    ano = configuracao.ano
+    semestre = configuracao.semestre
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    #     ano = configuracao.ano
+    #     semestre = configuracao.semestre
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     curso = "T"  # por padrão todos os cursos
 
@@ -245,10 +247,11 @@ def procura_propostas(request):
 @permission_required('users.altera_professor', login_url='/')
 def propostas_apresentadas(request):
     """Lista todas as propostas de projetos."""
-    try:
-        configuracao = Configuracao.objects.get()
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     ano = configuracao.ano
     semestre = configuracao.semestre
@@ -304,10 +307,11 @@ def propostas_apresentadas(request):
 @permission_required("users.altera_professor", login_url='/')
 def proposta_completa(request, primakey):
     """Mostra um projeto por completo."""
-    try:
-        proposta = Proposta.objects.get(pk=primakey)
-    except Proposta.DoesNotExist:
-        return HttpResponse("Proposta não encontrada.", status=401)
+    proposta = get_object_or_404(Proposta, pk=primakey)
+    # try:
+    #     proposta = Proposta.objects.get(pk=primakey)
+    # except Proposta.DoesNotExist:
+    #     return HttpResponse("Proposta não encontrada.", status=401)
 
     if request.method == 'POST':
         if 'autorizador' in request.POST:
@@ -334,10 +338,11 @@ def proposta_completa(request, primakey):
         }
         return render(request, 'generic.html', context=context)
 
-    try:
-        configuracao = Configuracao.objects.get()
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     membros_comite = PFEUser.objects.filter(membro_comite=True)
     projetos = Projeto.objects.filter(proposta=proposta)
@@ -373,15 +378,17 @@ def proposta_completa(request, primakey):
 @login_required
 def proposta_detalhes(request, primarykey):
     """Exibe proposta de projeto com seus detalhes para estudante aplicar."""
-    try:
-        proposta = Proposta.objects.get(pk=primarykey)
-    except Proposta.DoesNotExist:
-        return HttpResponse("Proposta não encontrada.", status=401)
+    proposta = get_object_or_404(Proposta, pk=primarykey)
+    # try:
+    #     proposta = Proposta.objects.get(pk=primarykey)
+    # except Proposta.DoesNotExist:
+    #     return HttpResponse("Proposta não encontrada.", status=401)
 
-    try:
-        user = PFEUser.objects.get(pk=request.user.pk)
-    except PFEUser.DoesNotExist:
-        return HttpResponse("Usuário não encontrado.", status=401)
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
+    # try:
+    #     user = PFEUser.objects.get(pk=request.user.pk)
+    # except PFEUser.DoesNotExist:
+    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     if user.tipo_de_usuario == 1:  # (1, 'aluno')
         if not (user.aluno.anoPFE == proposta.ano and
@@ -424,33 +431,39 @@ def proposta_editar(request, slug):
             return render(request, 'generic.html', context=context)
 
         if user.tipo_de_usuario == 3:  # parceiro
-            try:
-                parceiro = Parceiro.objects.get(pk=request.user.parceiro.pk)
-            except Parceiro.DoesNotExist:
-                return HttpResponse("Parceiro não encontrado.", status=401)
+            parceiro = get_object_or_404(Parceiro, pk=request.user.parceiro.pk)
+            # try:
+            #     parceiro = Parceiro.objects.get(pk=request.user.parceiro.pk)
+            # except Parceiro.DoesNotExist:
+            #     return HttpResponse("Parceiro não encontrado.", status=401)
         elif user.tipo_de_usuario == 2:  # professor
-            try:
-                professor = Professor.objects.get(pk=request.user.professor.pk)
-            except Professor.DoesNotExist:
-                return HttpResponse("Professor não encontrado.", status=401)
+            professor = get_object_or_404(Professor, pk=request.user.professor.pk)
+            # try:
+            #     professor = Professor.objects.get(pk=request.user.professor.pk)
+            # except Professor.DoesNotExist:
+            #     return HttpResponse("Professor não encontrado.", status=401)
         elif user.tipo_de_usuario == 4:  # admin
-            try:
-                administrador = Administrador.objects\
-                    .get(pk=request.user.administrador.pk)
-            except Administrador.DoesNotExist:
-                return HttpResponse("Administrador não encontrado.",
-                                    status=401)
+            administrador = get_object_or_404(Administrador, pk=request.user.administrador.pk)
+            # try:
+            #     administrador = Administrador.objects\
+            #         .get(pk=request.user.administrador.pk)
+            # except Administrador.DoesNotExist:
+            #     return HttpResponse("Administrador não encontrado.",
+            #                         status=401)
 
-    try:
-        proposta = Proposta.objects.get(slug=slug)
-    except Proposta.DoesNotExist:
-        return HttpResponseNotFound('Proposta de Projeto não encontrada!')
+    proposta = get_object_or_404(Proposta, slug=slug)
+    # try:
+    #     proposta = Proposta.objects.get(slug=slug)
+    # except Proposta.DoesNotExist:
+    #     return HttpResponseNotFound('Proposta de Projeto não encontrada!')
 
-    try:
-        configuracao = Configuracao.objects.get()
-        liberadas_propostas = configuracao.liberadas_propostas
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    liberadas_propostas = configuracao.liberadas_propostas
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    #     liberadas_propostas = configuracao.liberadas_propostas
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     if request.method == 'POST':
         if (not liberadas_propostas) or (user.tipo_de_usuario == 4):
@@ -560,19 +573,20 @@ def validate_alunos(request):
 @permission_required("users.altera_professor", login_url='/')
 def link_organizacao(request, proposta_id): 
     """Cria um anotação para uma organização parceira."""
-    try:
-        proposta = Proposta.objects.get(id=proposta_id)
-    except Proposta.DoesNotExist:
-        return HttpResponseNotFound('<h1>Proposta não encontrada!</h1>')
+    proposta = get_object_or_404(Proposta, id=proposta_id)
+    # try:
+    #     proposta = Proposta.objects.get(id=proposta_id)
+    # except Proposta.DoesNotExist:
+    #     return HttpResponseNotFound('<h1>Proposta não encontrada!</h1>')
 
     if request.is_ajax() and 'organizacao_id' in request.POST:
 
         organizacao_id = int(request.POST['organizacao_id'])
-        
-        try:
-            organizacao = Organizacao.objects.get(id=organizacao_id)
-        except Organizacao.DoesNotExist:
-            return HttpResponseNotFound('<h1>Organização não encontrada!</h1>')
+        organizacao = get_object_or_404(Organizacao, id=organizacao_id)
+        # try:
+        #     organizacao = Organizacao.objects.get(id=organizacao_id)
+        # except Organizacao.DoesNotExist:
+        #     return HttpResponseNotFound('<h1>Organização não encontrada!</h1>')
     
         proposta.organizacao = organizacao
 

@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 
 from django.db.models.functions import Lower
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.utils import html
 from django.views import generic
@@ -33,10 +33,11 @@ from .support import get_edicoes
 @login_required
 def user_detail(request, primarykey):
     """Retorna a página conforme o perfil do usuário."""
-    try:
-        user = PFEUser.objects.get(pk=primarykey)
-    except PFEUser.DoesNotExist:
-        return HttpResponse("Usuário não encontrado.", status=401)
+    user = get_object_or_404(PFEUser, pk=primarykey)
+    # try:
+    #     user = PFEUser.objects.get(pk=primarykey)
+    # except PFEUser.DoesNotExist:
+    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     if user.tipo_de_usuario == 1:  # aluno
         return redirect('aluno_detail', user.aluno.id)
@@ -53,10 +54,11 @@ def user_detail(request, primarykey):
 @login_required
 def perfil(request):
     """Retorna a página conforme o perfil do usuário."""
-    try:
-        user = PFEUser.objects.get(pk=request.user.pk)
-    except PFEUser.DoesNotExist:
-        return HttpResponse("Usuário não encontrado.", status=401)
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
+    # try:
+    #     user = PFEUser.objects.get(pk=request.user.pk)
+    # except PFEUser.DoesNotExist:
+    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     context = {
         'aluno': False,
@@ -66,31 +68,35 @@ def perfil(request):
     }
 
     if user.tipo_de_usuario == 1:  # aluno
-        try:
-            context['aluno'] = Aluno.objects.get(pk=request.user.aluno.pk)
-        except Aluno.DoesNotExist:
-            return HttpResponse("Estudante não encontrado.", status=401)
+        context['aluno'] = get_object_or_404(Aluno, pk=request.user.aluno.pk)
+        # try:
+        #     context['aluno'] = Aluno.objects.get(pk=request.user.aluno.pk)
+        # except Aluno.DoesNotExist:
+        #     return HttpResponse("Estudante não encontrado.", status=401)
 
     elif user.tipo_de_usuario == 2:  # professor
-        try:
-            context['professor'] = Professor.objects\
-                .get(pk=request.user.professor.pk)
-        except Professor.DoesNotExist:
-            return HttpResponse("Professor não encontrado.", status=401)
+        context['professor'] = get_object_or_404(Professor, pk=request.user.professor.pk)
+        # try:
+        #     context['professor'] = Professor.objects\
+        #         .get(pk=request.user.professor.pk)
+        # except Professor.DoesNotExist:
+        #     return HttpResponse("Professor não encontrado.", status=401)
 
     elif user.tipo_de_usuario == 3:  # parceiro
-        try:
-            context['parceiro'] = Parceiro.objects\
-                .get(pk=request.user.parceiro.pk)
-        except Parceiro.DoesNotExist:
-            return HttpResponse("Parceiro não encontrado.", status=401)
+        context['parceiro'] = get_object_or_404(Parceiro, pk=request.user.parceiro.pk)
+        # try:
+        #     context['parceiro'] = Parceiro.objects\
+        #         .get(pk=request.user.parceiro.pk)
+        # except Parceiro.DoesNotExist:
+        #     return HttpResponse("Parceiro não encontrado.", status=401)
 
     elif user.tipo_de_usuario == 4:  # administrador
-        try:
-            context['administrador'] = Administrador.objects\
-                .get(pk=request.user.administrador.pk)
-        except Administrador.DoesNotExist:
-            return HttpResponse("Administrador não encontrado.", status=401)
+        context['administrador'] = get_object_or_404(Administrador, pk=request.user.administrador.pk)
+        # try:
+        #     context['administrador'] = Administrador.objects\
+        #         .get(pk=request.user.administrador.pk)
+        # except Administrador.DoesNotExist:
+        #     return HttpResponse("Administrador não encontrado.", status=401)
 
     else:
         mensagem = "Seu perfil não foi encontrado!"
@@ -121,10 +127,11 @@ class Usuario(generic.DetailView):
 @permission_required("users.altera_professor", login_url='/')
 def alunos_lista(request):
     """Gera lista com todos os alunos já registrados."""
-    try:
-        configuracao = Configuracao.objects.get()
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     if request.is_ajax():
         if 'edicao' in request.POST:
@@ -341,11 +348,11 @@ def alunos_inscritos(request):
 @permission_required('users.altera_professor', login_url='/')
 def edita_notas(request, primarykey):
     """Edita as notas do estudante."""
-
-    try:
-        alocacao = Alocacao.objects.get(pk=primarykey)
-    except Alocacao.DoesNotExist:
-        return HttpResponse("Alocação não encontrada.", status=401)
+    alocacao = get_object_or_404(Alocacao, pk=primarykey)
+    # try:
+    #     alocacao = Alocacao.objects.get(pk=primarykey)
+    # except Alocacao.DoesNotExist:
+    #     return HttpResponse("Alocação não encontrada.", status=401)
 
     objetivos = ObjetivosDeAprendizagem.objects.all()
 
@@ -674,10 +681,11 @@ def aluno_detail(request, primarykey):
 @permission_required('users.altera_professor', login_url='/')
 def professor_detail(request, primarykey):
     """Mostra detalhes sobre o professor."""
-    try:
-        professor = Professor.objects.get(pk=primarykey)
-    except Professor.DoesNotExist:
-        return HttpResponse("Professor não encontrado.", status=401)
+    professor = get_object_or_404(Professor, pk=primarykey)
+    # try:
+    #     professor = Professor.objects.get(pk=primarykey)
+    # except Professor.DoesNotExist:
+    #     return HttpResponse("Professor não encontrado.", status=401)
 
     projetos = Projeto.objects.filter(orientador=professor)\
         .order_by("ano", "semestre", "titulo")
@@ -707,12 +715,15 @@ def professor_detail(request, primarykey):
 @permission_required('users.altera_professor', login_url='/')
 def parceiro_detail(request, primarykey):
     """Mostra detalhes sobre o parceiro."""
-    try:
-        parceiro = Parceiro.objects.get(pk=primarykey)
-    except Professor.DoesNotExist:
-        return HttpResponse("Professor não encontrado.", status=401)
+    parceiro = get_object_or_404(Parceiro, pk=primarykey)
+    # try:
+    #     parceiro = Parceiro.objects.get(pk=primarykey)
+    # except Professor.DoesNotExist:
+    #     return HttpResponse("Professor não encontrado.", status=401)
 
-    configuracao = Configuracao.objects.get()
+    # configuracao = Configuracao.objects.get()
+    configuracao = get_object_or_404(Configuracao)
+
     conexoes = Conexao.objects.filter(parceiro=parceiro)
     context = {
         'configuracao': configuracao,
@@ -726,7 +737,8 @@ def parceiro_detail(request, primarykey):
 @permission_required("users.altera_professor", login_url='/')
 def contas_senhas(request, anosemestre):
     """Envia conta e senha para todos os estudantes que estão no semestre."""
-    configuracao = Configuracao.objects.get()
+    configuracao = get_object_or_404(Configuracao)
+    # configuracao = Configuracao.objects.get()
 
     ano = int(anosemestre.split(".")[0])
     semestre = int(anosemestre.split(".")[1])

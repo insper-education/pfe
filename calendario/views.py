@@ -14,7 +14,7 @@ from icalendar import Calendar, Event, vCalAddress
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.sites.models import Site
 from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from users.models import PFEUser, Aluno
 
@@ -34,11 +34,11 @@ def get_calendario_context(primarykey=None):
     eventos = Evento.objects.all()
 
     # Estudantes e parceiros só conseguem ver os eventos até o semestre atual
-
-    try:
-        configuracao = Configuracao.objects.get()
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     # Se usuário não for Professor nem Admin
     if user and user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
@@ -150,10 +150,11 @@ def gera_descricao_banca(banca, alunos):
 def export_calendar(request, event_id):
     """Gera evento de calendário."""
     # ATUALMENTE PARA BANCA
-    try:
-        banca = Banca.objects.all().get(pk=event_id)
-    except Banca.DoesNotExist:
-        return HttpResponse("Banca não encontrada.", status=401)
+    banca = get_object_or_404(Banca, pk=event_id)
+    # try:
+    #     banca = Banca.objects.all().get(pk=event_id)
+    # except Banca.DoesNotExist:
+    #     return HttpResponse("Banca não encontrada.", status=401)
 
     cal = Calendar()
     site = Site.objects.get_current()

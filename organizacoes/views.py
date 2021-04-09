@@ -34,25 +34,28 @@ def index_organizacoes(request):
 @permission_required("users.altera_professor", login_url='/')
 def anotacao(request, organizacao_id, anotacao_id=None):  # acertar isso para pk
     """Cria um anotação para uma organização parceira."""
-    try:
-        organizacao = Organizacao.objects.get(id=organizacao_id)
-    except Organizacao.DoesNotExist:
-        return HttpResponseNotFound('<h1>Organização não encontrada!</h1>')
+    organizacao = get_object_or_404(Organizacao, id=organizacao_id)
+    # try:
+    #     organizacao = Organizacao.objects.get(id=organizacao_id)
+    # except Organizacao.DoesNotExist:
+    #     return HttpResponseNotFound('<h1>Organização não encontrada!</h1>')
 
     if request.is_ajax() and 'texto' in request.POST:
 
         if anotacao_id:
-            try:
-                anotacao = Anotacao.objects.get(id=anotacao_id)
-            except Anotacao.DoesNotExist:
-                return HttpResponseNotFound('<h1>Anotação não encontrada!</h1>')
+            anotacao = get_object_or_404(Anotacao, id=anotacao_id)
+            # try:
+            #     anotacao = Anotacao.objects.get(id=anotacao_id)
+            # except Anotacao.DoesNotExist:
+            #     return HttpResponseNotFound('<h1>Anotação não encontrada!</h1>')
         else:
             anotacao = Anotacao.create(organizacao)
 
-        try:
-            anotacao.autor = PFEUser.objects.get(pk=request.user.pk)
-        except PFEUser.DoesNotExist:
-            return HttpResponse("Usuário não encontrado.", status=401)
+        anotacao.autor = get_object_or_404(PFEUser, pk=request.user.pk)
+        # try:
+        #     anotacao.autor = PFEUser.objects.get(pk=request.user.pk)
+        # except PFEUser.DoesNotExist:
+        #     return HttpResponse("Usuário não encontrado.", status=401)
 
         anotacao.texto = request.POST['texto']
         anotacao.tipo_de_retorno = int(request.POST['tipo_de_retorno'])
@@ -147,26 +150,29 @@ def proposta_submissao(request):
         email_sub = user.email
 
         if user.tipo_de_usuario == 3:  # parceiro
-            try:
-                parceiro = Parceiro.objects.get(pk=request.user.parceiro.pk)
-            except Parceiro.DoesNotExist:
-                return HttpResponse("Parceiro não encontrado.", status=401)
+            parceiro = get_object_or_404(Parceiro, pk=request.user.parceiro.pk)
+            # try:
+            #     parceiro = Parceiro.objects.get(pk=request.user.parceiro.pk)
+            # except Parceiro.DoesNotExist:
+            #     return HttpResponse("Parceiro não encontrado.", status=401)
             organizacao = parceiro.organizacao
             website = parceiro.organizacao.website
             endereco = parceiro.organizacao.endereco
             descricao_organizacao = parceiro.organizacao.informacoes
         elif user.tipo_de_usuario == 2:  # professor
-            try:
-                professor = Professor.objects.get(pk=request.user.professor.pk)
-            except Professor.DoesNotExist:
-                return HttpResponse("Professor não encontrado.", status=401)
+            professor = get_object_or_404(Professor, pk=request.user.professor.pk)
+            # try:
+            #     professor = Professor.objects.get(pk=request.user.professor.pk)
+            # except Professor.DoesNotExist:
+            #     return HttpResponse("Professor não encontrado.", status=401)
         elif user.tipo_de_usuario == 4:  # admin
-            try:
-                administrador = Administrador.objects\
-                    .get(pk=request.user.administrador.pk)
-            except Administrador.DoesNotExist:
-                return HttpResponse("Administrador não encontrado.",
-                                    status=401)
+            administrador = get_object_or_404(Administrador, pk=request.user.administrador.pk)
+            # try:
+            #     administrador = Administrador.objects\
+            #         .get(pk=request.user.administrador.pk)
+            # except Administrador.DoesNotExist:
+            #     return HttpResponse("Administrador não encontrado.",
+            #                         status=401)
 
     if request.method == 'POST':
         proposta = preenche_proposta(request, None)
@@ -228,13 +234,15 @@ def proposta_submissao(request):
 def organizacoes_prospect(request):
     """Exibe as organizações prospectadas e a última comunicação."""
     todas_organizacoes = Organizacao.objects.all()
-
-    try:
-        configuracao = Configuracao.objects.get()
-        ano = configuracao.ano              # Ano atual
-        semestre = configuracao.semestre    # Semestre atual
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    ano = configuracao.ano              # Ano atual
+    semestre = configuracao.semestre    # Semestre atual
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    #     ano = configuracao.ano              # Ano atual
+    #     semestre = configuracao.semestre    # Semestre atual
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     # Vai para próximo semestre
     ano, semestre = adianta_semestre(ano, semestre)
@@ -342,10 +350,11 @@ def organizacoes_lista(request):
 @permission_required("users.altera_professor", login_url='/')
 def organizacao_completo(request, org):  # acertar isso para pk
     """Exibe detalhes das organizações parceiras."""
-    try:
-        organizacao = Organizacao.objects.get(id=org)
-    except Organizacao.DoesNotExist:
-        return HttpResponseNotFound('<h1>Organização não encontrada!</h1>')
+    organizacao = get_object_or_404(Organizacao, id=org)
+    # try:
+    #     organizacao = Organizacao.objects.get(id=org)
+    # except Organizacao.DoesNotExist:
+    #     return HttpResponseNotFound('<h1>Organização não encontrada!</h1>')
 
     context = {
         'organizacao': organizacao,
@@ -361,10 +370,11 @@ def organizacao_completo(request, org):  # acertar isso para pk
 @permission_required('users.altera_professor', login_url='/')
 def organizacoes_tabela(request):
     """Alocação das Organizações por semestre."""
-    try:
-        configuracao = Configuracao.objects.get()
-    except Configuracao.DoesNotExist:
-        return HttpResponse("Falha na configuracao do sistema.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    # try:
+    #     configuracao = Configuracao.objects.get()
+    # except Configuracao.DoesNotExist:
+    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     organizacoes_pfe = []
     periodo = []
@@ -461,10 +471,11 @@ def seleciona_conexoes(request):
     # Passado o id do projeto
     projeto_id = request.GET.get('projeto', None)
 
-    try:
-        projeto = Projeto.objects.get(id=projeto_id)
-    except Projeto.DoesNotExist:
-        return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
+    projeto = get_object_or_404(Projeto, id=projeto_id)
+    # try:
+    #     projeto = Projeto.objects.get(id=projeto_id)
+    # except Projeto.DoesNotExist:
+    #     return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
 
     if projeto.organizacao:
         parceiros = Parceiro.objects.filter(organizacao=projeto.organizacao)
@@ -510,10 +521,11 @@ def estrelas(request):
     organizacao_id = int(request.GET.get('organizacao', None))
     estrelas = int(request.GET.get('estrelas', 0))
 
-    try:
-        organizacao = Organizacao.objects.get(id=organizacao_id)
-    except Organizacao.DoesNotExist:
-        return HttpResponseNotFound('<h1>Organizacao não encontrada!</h1>')
+    organizacao = get_object_or_404(Organizacao, id=organizacao_id)
+    # try:
+    #     organizacao = Organizacao.objects.get(id=organizacao_id)
+    # except Organizacao.DoesNotExist:
+    #     return HttpResponseNotFound('<h1>Organizacao não encontrada!</h1>')
     organizacao.estrelas = estrelas
     organizacao.save()
 
@@ -531,10 +543,11 @@ def areas(request):
     curso = request.GET.get('curso', "")
     situacao = True if (request.GET.get('situacao', "") == "true") else False
     
-    try:
-        organizacao = Organizacao.objects.get(id=organizacao_id)
-    except Organizacao.DoesNotExist:
-        return HttpResponseNotFound('<h1>Organizacao não encontrada!</h1>')
+    organizacao = get_object_or_404(Organizacao, id=organizacao_id)
+    # try:
+    #     organizacao = Organizacao.objects.get(id=organizacao_id)
+    # except Organizacao.DoesNotExist:
+    #     return HttpResponseNotFound('<h1>Organizacao não encontrada!</h1>')
     
     if curso == "C":
         organizacao.area_computacao = situacao
