@@ -16,6 +16,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import EmailMessage
+from django.db import transaction
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -199,6 +200,7 @@ def emails_projetos(request):
 
 
 @login_required
+@transaction.atomic
 @permission_required("users.altera_professor", login_url='/')
 def cadastrar_organizacao(request):
     """Cadastra Organização na base de dados do PFE."""
@@ -252,6 +254,7 @@ def cadastrar_organizacao(request):
 
 
 @login_required
+@transaction.atomic
 @permission_required("users.altera_professor", login_url='/')
 def cadastrar_usuario(request):
     """Cadastra usuário na base de dados do PFE."""
@@ -485,6 +488,7 @@ def carrega_arquivo(request, dado):
 
 
 @login_required
+@transaction.atomic
 @permission_required('users.altera_professor', login_url='/')
 def definir_datas(request):
     """Definir datas do PFE."""
@@ -533,6 +537,7 @@ def propor(request):
 
 
 @login_required
+@transaction.atomic
 @permission_required('users.altera_professor', login_url='/')
 def montar_grupos(request):
     """Montar grupos para projetos."""
@@ -705,6 +710,7 @@ def selecionar_orientadores(request):
 
 
 @login_required
+@transaction.atomic
 @permission_required("users.altera_professor", login_url='/')
 def servico(request):
     """Caso servidor esteja em manutenção."""
@@ -726,6 +732,7 @@ def servico(request):
 
 
 @login_required
+@transaction.atomic
 @permission_required('users.altera_professor', login_url='/')
 def pre_alocar_estudante(request):
     """Ajax para pre-alocar estudates em propostas."""
@@ -801,6 +808,7 @@ def pre_alocar_estudante(request):
 
 
 @login_required
+@transaction.atomic
 @permission_required('users.altera_professor', login_url='/')
 def definir_orientador(request):
     """Ajax para definir orientadores de projetos."""

@@ -14,6 +14,7 @@ import csv
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.db.models.functions import Lower
 from django.http import Http404, HttpResponse, HttpResponseNotFound
 from django.http import JsonResponse
@@ -452,6 +453,7 @@ def meuprojeto(request):
 
 
 @login_required
+@transaction.atomic
 @permission_required('users.altera_professor', login_url='/')
 def carrega_bancos(request):
     """Rotina que carrega arquivo CSV de bancos para base de dados do servidor."""
@@ -475,6 +477,7 @@ def carrega_bancos(request):
 
 
 @login_required
+@transaction.atomic
 def reembolso_pedir(request):
     """Página com sistema de pedido de reembolso."""
     configuracao = get_object_or_404(Configuracao)
@@ -656,6 +659,7 @@ def mostra_feedback(request, feedback_id):
 
 
 @login_required
+@transaction.atomic
 @permission_required('users.altera_professor', login_url='/')
 def validate_aviso(request):
     """Ajax para validar avisos."""
@@ -1165,6 +1169,7 @@ def cap_name(name):
 
 
 @login_required
+@transaction.atomic
 @permission_required('users.altera_professor', login_url='/')
 def nomes(request):
     """Acerta maiúsculas de nomes."""
@@ -1193,6 +1198,7 @@ def nomes(request):
 
 
 @login_required
+@transaction.atomic
 @permission_required("users.altera_professor", login_url='/')
 def acompanhamento_view(request):
     """Cria um anotação para uma organização parceira."""

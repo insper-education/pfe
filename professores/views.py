@@ -13,6 +13,7 @@ from urllib.parse import quote, unquote
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
+from django.db import transaction
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
@@ -274,6 +275,7 @@ def banca_ver(request, primarykey):
 
 # @login_required
 # @permission_required("users.altera_professor", login_url='/')
+@transaction.atomic
 def banca_avaliar(request, slug):
     """Cria uma tela para preencher avaliações de bancas."""
     try:
@@ -730,6 +732,7 @@ def dinamicas_index(request):
 
 
 @login_required
+@transaction.atomic
 @permission_required('users.altera_professor', login_url='/')
 def dinamicas_criar(request):
     """Cria um encontro."""
@@ -805,6 +808,7 @@ def dinamicas_criar(request):
 
 
 @login_required
+@transaction.atomic
 @permission_required('users.altera_professor', login_url='/')
 def dinamicas_editar(request, primarykey):
     """Edita um encontro."""

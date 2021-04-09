@@ -10,7 +10,7 @@ import string
 import random
 
 from django.contrib.auth.decorators import login_required, permission_required
-
+from django.db import transaction
 from django.db.models.functions import Lower
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -345,6 +345,7 @@ def alunos_inscritos(request):
     return render(request, 'users/alunos_inscritos.html', context=context)
 
 @login_required
+@transaction.atomic
 @permission_required('users.altera_professor', login_url='/')
 def edita_notas(request, primarykey):
     """Edita as notas do estudante."""
@@ -734,6 +735,7 @@ def parceiro_detail(request, primarykey):
 
 
 @login_required
+@transaction.atomic
 @permission_required("users.altera_professor", login_url='/')
 def contas_senhas(request, anosemestre):
     """Envia conta e senha para todos os estudantes que estão no semestre."""

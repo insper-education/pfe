@@ -9,6 +9,7 @@ Data: 15 de Dezembro de 2020
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
+from django.db import transaction
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404
@@ -304,6 +305,7 @@ def propostas_apresentadas(request):
 
 
 @login_required
+@transaction.atomic
 @permission_required("users.altera_professor", login_url='/')
 def proposta_completa(request, primakey):
     """Mostra um projeto por completo."""
@@ -519,6 +521,7 @@ def proposta_editar(request, slug):
 
 
 @login_required
+@transaction.atomic
 @permission_required('users.altera_professor', login_url='/')
 def validate_alunos(request):
     """Ajax para validar vaga de estudantes em propostas."""
@@ -570,6 +573,7 @@ def validate_alunos(request):
     return JsonResponse(data)
 
 @login_required
+@transaction.atomic
 @permission_required("users.altera_professor", login_url='/')
 def link_organizacao(request, proposta_id): 
     """Cria um anotação para uma organização parceira."""

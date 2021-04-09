@@ -10,6 +10,7 @@ import os
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
+from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 
@@ -150,6 +151,7 @@ def atualiza_certificado(usuario, projeto, tipo_cert, arquivo, banca=None):
 
 
 @login_required
+@transaction.atomic
 @permission_required('users.altera_professor', login_url='/')
 def gerar_certificados(request):
     """Recupera um certificado pelos dados."""

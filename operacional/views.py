@@ -8,10 +8,10 @@ Data: 29 de Dezembro de 2020
 
 import datetime
 
-from django.shortcuts import render, redirect, get_object_or_404
-
 from django.contrib.auth.decorators import login_required, permission_required
+from django.db import transaction
 from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 
 from projetos.models import Aviso, Evento, Configuracao
 
@@ -53,6 +53,7 @@ def avisos_listar(request):
 
 
 @login_required
+@transaction.atomic
 @permission_required('users.altera_professor', login_url='/')
 def edita_aviso(request, primakey):
     """Edita aviso."""

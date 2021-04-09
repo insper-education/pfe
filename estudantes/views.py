@@ -8,7 +8,7 @@ Data: 14 de Dezembro de 2020
 import datetime
 
 from django.contrib.auth.decorators import login_required
-
+from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
@@ -134,6 +134,7 @@ def areas_interesse(request):
 
 
 @login_required
+@transaction.atomic
 def encontros_marcar(request):
     """Encontros a serem agendados pelos alunos."""
     configuracao = get_object_or_404(Configuracao)
@@ -221,6 +222,7 @@ def encontros_marcar(request):
 
 
 @login_required
+@transaction.atomic
 def informacoes_adicionais(request):
     """Perguntas aos estudantes de trabalho/entidades/social/familia."""
     user = get_object_or_404(PFEUser, pk=request.user.pk)
@@ -310,6 +312,7 @@ def minhas_bancas(request):
 
 
 @login_required
+@transaction.atomic
 def selecao_propostas(request):
     """Exibe todos os projetos para os alunos aplicarem."""
     user = get_object_or_404(PFEUser, pk=request.user.pk)

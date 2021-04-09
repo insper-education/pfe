@@ -13,6 +13,7 @@ from icalendar import Calendar, Event, vCalAddress
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.sites.models import Site
+from django.db import transaction
 from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 
@@ -215,6 +216,7 @@ def export_calendar(request, event_id):
 
 
 @login_required
+@transaction.atomic
 @permission_required('users.altera_professor', login_url='/')
 def atualiza_evento(request):
     """Ajax para atualizar eventos."""
@@ -254,14 +256,17 @@ def atualiza_evento(request):
 
 
 @login_required
+@transaction.atomic
 @permission_required('users.altera_professor', login_url='/')
 def remove_evento(request):
     """Ajax para remover eventos."""
-    try:
-        event_id = int(request.GET.get('id', None))
-        evento = Evento.objects.get(id=event_id)
-    except Evento.DoesNotExist:
-        return HttpResponseNotFound('<h1>Evento não encontrado!</h1>')
+    event_id = int(request.GET.get('id', None))
+    evento = get_object_or_404(Evento, id=event_id)
+    # try:
+    #     event_id = int(request.GET.get('id', None))
+    #     evento = Evento.objects.get(id=event_id)
+    # except Evento.DoesNotExist:
+    #     return HttpResponseNotFound('<h1>Evento não encontrado!</h1>')
 
     evento.delete()
 

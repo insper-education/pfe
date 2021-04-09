@@ -9,8 +9,8 @@ import datetime
 import dateutil.parser
 
 from django.conf import settings
-
 from django.contrib.auth.decorators import login_required, permission_required
+from django.db import transaction
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
@@ -31,6 +31,7 @@ def index_organizacoes(request):
 
 
 @login_required
+@transaction.atomic
 @permission_required("users.altera_professor", login_url='/')
 def anotacao(request, organizacao_id, anotacao_id=None):  # acertar isso para pk
     """Cria um anotação para uma organização parceira."""
@@ -427,6 +428,7 @@ def organizacoes_tabela(request):
 
 
 # @login_required
+@transaction.atomic
 def projeto_feedback(request):
     """Para Feedback das Organizações Parceiras."""
     if request.method == 'POST':
@@ -464,6 +466,7 @@ def todos_parceiros(request):
 
 
 @login_required
+@transaction.atomic
 @permission_required("users.altera_professor", login_url='/')
 def seleciona_conexoes(request):
     """Exibe todas os parceiros de uma organização específica."""
@@ -515,6 +518,7 @@ def seleciona_conexoes(request):
     return render(request, 'organizacoes/seleciona_conexoes.html', context)
 
 @login_required
+@transaction.atomic
 @permission_required('users.altera_professor', login_url='/')
 def estrelas(request):
     """Ajax para validar estrelas de interesse."""
@@ -536,6 +540,7 @@ def estrelas(request):
     return JsonResponse(data)
 
 @login_required
+@transaction.atomic
 @permission_required('users.altera_professor', login_url='/')
 def areas(request):
     """Ajax para validar area da organização."""
