@@ -26,15 +26,14 @@
         <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Projeto</th>
         <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Período</th>
         <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Organização</th>
-        <th class="text-center">Contr. Organização</th>
-        <th class="text-center">Contr. Aluno</th>
+        <th class="text-center">Contrato<br>Organização</th>
+        <th class="text-center">Contrato<br>Estudantes</th>
         <th class="text-center">Rel. Final</th>
         <th class="text-center">Aut. Pub. Organização</th>
         <th class="text-center">Aut. Pub. Aluno</th>
-        <th class="text-center">Outros</th>
+        {% comment %} <th class="text-center">Outros</th> {% endcomment %}
       </tr>      
       {% for projeto,documento in mylist %} 
-        {% if projeto.disponivel %}
           <tr class="item">
             <td>
               <a href="{% url 'projeto_completo' projeto.id %}">
@@ -145,25 +144,28 @@
               {% endfor %}
             </td>
 
-            <td style="text-align:center"> <!-- (14, 'outros') -->
-              {% if documento.outros %}
-                {% for doc in documento.outros %}
-                  <a class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
-                  target="_blank" rel="noopener noreferrer"
-                  data-toggle="tooltip" data-html="true" animation="true" 
-                  {% if doc.1 or doc.2%}
-                      title="
-                        {% if doc.1 %}anotação: {{doc.1}} <br>{% endif %}
-                        {% if doc.2 %}data: {{doc.2}} {% endif %}
-                      "
-                    {% endif %}
-                  >
-                  &#x2B24;</a>
-                {% endfor %}
-              {% endif %}
-            </td>
+            {% comment %}
+              <td style="text-align:center"> <!-- (14, 'outros') -->
+                {% if documento.outros %}
+                  {% for doc in documento.outros %}
+                    <a class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
+                    target="_blank" rel="noopener noreferrer"
+                    data-toggle="tooltip" data-html="true" animation="true" 
+                    {% if doc.1 or doc.2%}
+                        title="
+                          {% if doc.1 %}anotação: {{doc.1}} <br>{% endif %}
+                          {% if doc.2 %}data: {{doc.2}} {% endif %}
+                        "
+                      {% endif %}
+                    >
+                    &#x2B24;</a>
+                  {% endfor %}
+                {% endif %}
+              </td>
+            {% endcomment %}
+
           </tr>
-        {% endif %}
+        
       {% endfor %}
     </table>
   {% else %}
@@ -171,40 +173,5 @@
   {% endif %}
 
   <br>
-  <br>
-
-  <h3>Documentação dos Seguros</h3>
-  <br>
-
-  {% if seguros %}
-    <table id="SegurosTable">
-      <tr>
-        <th onclick="w3.sortHTML('#SegurosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Data</th>
-        <th class="text-center">Documento</th>
-      </tr>      
-    {% for seguro in seguros %} 
-      <tr class="item">
-        <td style="text-align:center">
-            {{seguro.data}}
-        </td>
-        <td style="text-align:center">
-          <a class="text-success" href="../..{{MEDIA_URL}}{{seguro.documento}}" 
-          target="_blank" rel="noopener noreferrer"
-          data-toggle="tooltip" data-html="true" animation="true" 
-          {% if seguro.anotacao %}
-            title="anotação: {{seguro.anotacao}}"
-          {% endif %}
-          >
-            &#x2B24;
-          </a>
-        </td>
-      </tr>
-    {% endfor %}
-    </table>
-  {% else %}
-    <p>Não existem documentos de seguros disponíveis.</p>
-  {% endif %}
-  <br>
-  <br>
-
+  
 {% endblock %}

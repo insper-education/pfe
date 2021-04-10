@@ -229,13 +229,9 @@ def gerar_certificados(request):
 def tabela_documentos(request):
     """Exibe tabela com todos os documentos armazenados."""
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
-    projetos = Projeto.objects.filter(alocacao__isnull=False)\
-        .distinct().order_by("ano", "semestre")
+    projetos = Projeto.objects.all().order_by("ano", "semestre")
+
     documentos = []
     for projeto in projetos:
 
@@ -316,3 +312,17 @@ def tabela_documentos(request):
         'MEDIA_URL': settings.MEDIA_URL,
     }
     return render(request, 'documentos/tabela_documentos.html', context)
+
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def tabela_seguros(request):
+    """Exibe tabela com todos os seguros armazenados."""
+    seguros = Documento.objects.filter(tipo_de_documento=15)
+
+    context = {
+        'seguros': seguros,
+        'MEDIA_URL': settings.MEDIA_URL,
+    }
+
+    return render(request, 'documentos/tabela_seguros.html', context)

@@ -30,4 +30,8 @@ urlpatterns = [
          views.tabela_documentos,
          name='tabela_documentos'),
 
+    path('tabela_seguros/',
+         views.tabela_seguros,
+         name='tabela_seguros'),
+
 ]
