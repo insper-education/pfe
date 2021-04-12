@@ -68,15 +68,15 @@ class PFEUser(AbstractUser):
 
     def __str__(self):
         texto = self.first_name + " " + self.last_name
-        if self.tipo_de_usuario == 1: # (1, 'aluno'),
+        if self.tipo_de_usuario == 1 and hasattr(self,'aluno'): # (1, 'aluno'),
             texto += " (estudante"
             if self.aluno.anoPFE and self.aluno.semestrePFE:
                 texto += " : " + str(self.aluno.anoPFE) + "." + str(self.aluno.semestrePFE)
-        elif self.tipo_de_usuario == 2: #(2, 'professor'),
+        elif self.tipo_de_usuario == 2 and hasattr(self,'professor'): #(2, 'professor'),
             texto += " (professor"
             if self.professor.dedicacao:
                 texto += " : " + self.professor.dedicacao
-        elif self.tipo_de_usuario == 3: #(3, 'parceiro'),
+        elif self.tipo_de_usuario == 3 and hasattr(self,'parceiro'): #(3, 'parceiro'),
             texto += " (parceiro"
             if self.parceiro.organizacao and self.parceiro.organizacao.sigla:
                 texto += " : " + self.parceiro.organizacao.sigla
