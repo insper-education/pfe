@@ -12,6 +12,8 @@
     {% include "tooltip.js" %}
   </script>
 
+  {% comment %} Removendo nomes dos e-mails devido a limitações do Outlook. {% endcomment %}
+
   <script>
     function manda(estudantes, orientador, parceiros, projeto, avancado) {
       mailto = "mailto:";
@@ -24,8 +26,10 @@
       if($('#parceiros:checked').val()) {
         mailto += parceiros;
       }
-      mailto += "?cc=Luciano%20Pereira%20Soares<lpsoares@insper.edu.br>,PFE<pfe@insper.edu.br>";
-      mailto += "&bcc=Comite%20PFE<comitepfe@insper.edu.br>";
+      //mailto += "?cc=Luciano%20Pereira%20Soares<lpsoares@insper.edu.br>,PFE<pfe@insper.edu.br>";
+      mailto += "?cc=lpsoares@insper.edu.br,pfe@insper.edu.br";
+      //mailto += "&bcc=Comite%20PFE<comitepfe@insper.edu.br>";
+      mailto += "&bcc=comitepfe@insper.edu.br";
       mailto += "&subject=PFE%20"
       if(avancado=="true") {
         mailto += "Avançado%20";
@@ -65,11 +69,19 @@
           </div>          
           <div class="input-group-append  ml-1">
             <a href="
+              mailto:{% for membro in membros_comite %}{{membro.email|parse_quote}},{% endfor %}
+              ?cc=lpsoares@insper.edu.br,pfe@insper.edu.br
+              &amp;subject=PFE%20Comitê&amp;body=Caros%20membros%20do%20comitê%20do%20PFE,%0D%0A%0D%0A
+              atenciosamente,%20coordenação%20PFE
+            ">
+            {% comment %}
+            <a href="
               mailto:{% for membro in membros_comite %}{{membro.first_name|parse_quote}}%20{{membro.last_name|parse_quote}}%20&lt;{{membro.email|parse_quote}}&gt;,{% endfor %}
               ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
               &amp;subject=PFE%20Comitê&amp;body=Caros%20membros%20do%20comitê%20do%20PFE,%0D%0A%0D%0A
               atenciosamente,%20coordenação%20PFE
             ">
+            {% endcomment %}
               <button class="btn btn-outline-secondary btn-sm" type="button">
                 todos
               </button>
@@ -171,15 +183,32 @@
 
   {% if todos_alunos %}
     <a href="
+      mailto:{% for aluno in todos_alunos %}{{ aluno.user.email|parse_quote }},{% endfor %}
+      ?cc=lpsoares@insper.edu.br,pfe@insper.edu.br
+      &amp;bcc=comitepfe@insper.edu.br
+      &amp;subject=PFE%20&amp;body=Caros%20alunos,%0D%0A%0D%0A
+      atenciosamente,%20coordenação%20PFE
+    ">Todos os alunos do PFE</a><br>
+    {% comment %}
+    <a href="
       mailto:{% for aluno in todos_alunos %}{{aluno.user.first_name|parse_quote}}%20{{aluno.user.last_name|parse_quote}}%20&lt;{{ aluno.user.email|parse_quote }}&gt;,{% endfor %}
       ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
       &amp;bcc=ComitePFE&lt;comitepfe@insper.edu.br&gt;
       &amp;subject=PFE%20&amp;body=Caros%20alunos,%0D%0A%0D%0A
       atenciosamente,%20coordenação%20PFE
     ">Todos os alunos do PFE</a><br>
+    {% endcomment %}
   {% endif %}
 
   {% if todos_professores %}
+    <a href="
+      mailto:{% for professor in todos_professores %}{{ professor.user.email|parse_quote }},{% endfor %}
+      ?cc=lpsoares@insper.edu.br,pfe@insper.edu.br
+      &amp;bcc=comitepfe@insper.edu.br
+      &amp;subject=PFE&amp;body=Caros%20professores%20do%PFE,%0D%0A%0D%0A
+      atenciosamente,%20coordenação%20PFE
+    ">Todos os professores do PFE</a><br>
+    {% comment %}     
     <a href="
       mailto:{% for professor in todos_professores %}{{professor.user.first_name|parse_quote}}%20{{professor.user.last_name|parse_quote}}%20&lt;{{ professor.user.email|parse_quote }}&gt;,{% endfor %}
       ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
@@ -187,9 +216,18 @@
       &amp;subject=PFE&amp;body=Caros%20professores%20do%PFE,%0D%0A%0D%0A
       atenciosamente,%20coordenação%20PFE
     ">Todos os professores do PFE</a><br>
+    {% endcomment %}
   {% endif %}
 
   {% if todos_parceiros %}
+    <a href="
+      mailto:{% for parceiro in todos_parceiros %}{{ parceiro.user.email|parse_quote }},{% endfor %}
+      ?cc=lpsoares@insper.edu.br,pfe@insper.edu.br
+      &amp;bcc=comitepfe@insper.edu.br
+      &amp;subject=PFE&amp;body=Caros%20parceiro%20do%PFE,%0D%0A%0D%0A
+      atenciosamente,%20coordenação%20PFE
+    ">Todos os parceiros do PFE</a><br>
+    {% comment %}
     <a href="
       mailto:{% for parceiro in todos_parceiros %}{{parceiro.user.first_name|parse_quote}}%20{{parceiro.user.last_name|parse_quote}}%20&lt;{{ parceiro.user.email|parse_quote }}&gt;,{% endfor %}
       ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
@@ -197,6 +235,7 @@
       &amp;subject=PFE&amp;body=Caros%20parceiro%20do%PFE,%0D%0A%0D%0A
       atenciosamente,%20coordenação%20PFE
     ">Todos os parceiros do PFE</a><br>
+    {% endcomment %}
   {% endif %}
 
 
@@ -226,9 +265,11 @@
             if(response.Estudantes.length) {
               var str = 'mailto:';
               for (var id in response.Estudantes) {
-                str += response.Estudantes[id][0] + "%20" + response.Estudantes[id][1] + "%20<" + response.Estudantes[id][2] + ">,";
+                //str += response.Estudantes[id][0] + "%20" + response.Estudantes[id][1] + "%20<" + response.Estudantes[id][2] + ">,";
+                str += response.Estudantes[id][2] + ",";
               }
-              str += "?cc=Luciano%20Pereira%20Soares<lpsoares@insper.edu.br>,PFE<pfe@insper.edu.br>&bcc=Comite%20PFE<comitepfe@insper.edu.br>&subject=PFE&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20coordenação%20PFE";
+              //str += "?cc=Luciano%20Pereira%20Soares<lpsoares@insper.edu.br>,PFE<pfe@insper.edu.br>&bcc=Comite%20PFE<comitepfe@insper.edu.br>&subject=PFE&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20coordenação%20PFE";
+              str += "?cc=lpsoares@insper.edu.br,pfe@insper.edu.br&bcc=comitepfe@insper.edu.br&subject=PFE&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20coordenação%20PFE";
               $("#Estudantes").attr("href",str);
               $("#Estudantes").show();
             }
@@ -237,9 +278,11 @@
             if(response.Orientadores.length) {
               var str = 'mailto:';
               for (var id in response.Orientadores) {
-                str += response.Orientadores[id][0] + "%20" + response.Orientadores[id][1] + "%20<" + response.Orientadores[id][2] + ">,";
+                //str += response.Orientadores[id][0] + "%20" + response.Orientadores[id][1] + "%20<" + response.Orientadores[id][2] + ">,";
+                str += response.Orientadores[id][2] + ",";
               }
-              str += "?cc=Luciano%20Pereira%20Soares<lpsoares@insper.edu.br>,PFE<pfe@insper.edu.br>&bcc=Comite%20PFE<comitepfe@insper.edu.br>&subject=PFE&body=Caros%20orientadores,%0D%0A%0D%0Aatenciosamente,%20coordenação%20PFE";
+              //str += "?cc=Luciano%20Pereira%20Soares<lpsoares@insper.edu.br>,PFE<pfe@insper.edu.br>&bcc=Comite%20PFE<comitepfe@insper.edu.br>&subject=PFE&body=Caros%20orientadores,%0D%0A%0D%0Aatenciosamente,%20coordenação%20PFE";
+              str += "?cc=lpsoares@insper.edu.br,pfe@insper.edu.br&bcc=comitepfe@insper.edu.br&subject=PFE&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20coordenação%20PFE";
               $("#Orientadores").attr("href",str);
               $("#Orientadores").show();
             }
@@ -248,9 +291,11 @@
             if(response.Parceiros.length) {
               var str = 'mailto:';
               for (var id in response.Parceiros) {
-                str += response.Parceiros[id][0] + "%20" + response.Parceiros[id][1] + "%20<" + response.Parceiros[id][2] + ">,";
+                //str += response.Parceiros[id][0] + "%20" + response.Parceiros[id][1] + "%20<" + response.Parceiros[id][2] + ">,";
+                str += response.Parceiros[id][2] + ",";
               }
-              str += "?cc=Luciano%20Pereira%20Soares<lpsoares@insper.edu.br>,PFE<pfe@insper.edu.br>&bcc=Comite%20PFE<comitepfe@insper.edu.br>&subject=PFE&body=Caros%20parceiros,%0D%0A%0D%0Aatenciosamente,%20coordenação%20PFE";
+              //str += "?cc=Luciano%20Pereira%20Soares<lpsoares@insper.edu.br>,PFE<pfe@insper.edu.br>&bcc=Comite%20PFE<comitepfe@insper.edu.br>&subject=PFE&body=Caros%20parceiros,%0D%0A%0D%0Aatenciosamente,%20coordenação%20PFE";
+              str += "?cc=lpsoares@insper.edu.br,pfe@insper.edu.br&bcc=comitepfe@insper.edu.br&subject=PFE&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20coordenação%20PFE";
               $("#Parceiros").attr("href",str);
               $("#Parceiros").show();
             }
@@ -259,9 +304,11 @@
             if(response.Bancas.length) {
               var str = 'mailto:';
               for (var id in response.Bancas) {
-                str += response.Bancas[id][0] + "%20" + response.Bancas[id][1] + "%20<" + response.Bancas[id][2] + ">,";
+                //str += response.Bancas[id][0] + "%20" + response.Bancas[id][1] + "%20<" + response.Bancas[id][2] + ">,";
+                str += response.Bancas[id][2] + ",";
               }
-              str += "?cc=Luciano%20Pereira%20Soares<lpsoares@insper.edu.br>,PFE<pfe@insper.edu.br>&bcc=Comite%20PFE<comitepfe@insper.edu.br>&subject=PFE&body=Caros%20membros%20de%bancas,%0D%0A%0D%0Aatenciosamente,%20coordenação%20PFE";
+              //str += "?cc=Luciano%20Pereira%20Soares<lpsoares@insper.edu.br>,PFE<pfe@insper.edu.br>&bcc=Comite%20PFE<comitepfe@insper.edu.br>&subject=PFE&body=Caros%20membros%20de%bancas,%0D%0A%0D%0Aatenciosamente,%20coordenação%20PFE";
+              str += "?cc=lpsoares@insper.edu.br,pfe@insper.edu.br&bcc=comitepfe@insper.edu.br&subject=PFE&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20coordenação%20PFE";
               $("#Bancas").attr("href",str);
               $("#Bancas").show();
             }
