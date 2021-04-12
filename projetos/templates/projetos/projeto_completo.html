@@ -202,7 +202,7 @@
   {% endif %}
 
   <hr>
-  <h3>Aluno(s) Alocado(s) no Projeto:</h3>
+  <h3>Estudante(s) Alocado(s) no Projeto:</h3>
   {% for alocacao in projeto.alocacao_set.all %}
     <a href="{% url 'aluno_detail' alocacao.aluno.id %}">
       <p>
@@ -229,6 +229,33 @@
                   {% if dinamica.facilitador %}; com: {{dinamica.facilitador}} {% endif %}
               </li>
           {% endfor %}
+      </ul>
+  {% endif %}
+
+  {% if documentos %}
+      <hr>
+      <h3>Entregas<br></h3>
+      <ul>
+        {% for documento in documentos %} 
+          {% if documento.documento and documento.link %}
+            <li>
+              {{documento}}
+              <a href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+              <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
+            </li>
+          {% else %}
+            {% if documento.documento %}
+              <li>
+                <a href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
+              </li>
+            {% endif %}
+            {% if documento.link %}
+              <li>
+                <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
+              </li>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
       </ul>
   {% endif %}
 

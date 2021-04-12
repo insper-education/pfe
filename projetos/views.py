@@ -100,20 +100,22 @@ def projeto_detalhes(request, primarykey):
 def projeto_completo(request, primakey):
     """Mostra um projeto por completo."""
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     projeto = get_object_or_404(Projeto, pk=primakey)
-    # try:
-    #     projeto = Projeto.objects.get(pk=primakey)
-    # except Projeto.DoesNotExist:
-    #     return HttpResponse("Projeto não encontrado.", status=401)
 
     opcoes = Opcao.objects.filter(proposta=projeto.proposta)
     conexoes = Conexao.objects.filter(projeto=projeto)
     coorientadores = Coorientador.objects.filter(projeto=projeto)
+
+    # TIPO_DE_DOCUMENTO = ( # não mudar a ordem dos números
+    # (3, 'Relatório Final'),
+    # (18, 'Vídeo do Projeto'),
+    # (19, 'Slides da Apresentação Final'),
+    # (20, 'Banner'),
+    # )
+
+    documentos = Documento.objects.filter(projeto=projeto,
+        tipo_de_documento__in=(3, 18, 19, 20))
 
     context = {
         'configuracao': configuracao,
@@ -121,6 +123,7 @@ def projeto_completo(request, primakey):
         'opcoes': opcoes,
         'conexoes': conexoes,
         'coorientadores': coorientadores,
+        'documentos': documentos,
         'MEDIA_URL': settings.MEDIA_URL,
     }
 
@@ -311,12 +314,9 @@ def carrega_arquivo(request, local_path, path):
                                                             len(settings.MEDIA_URL):]).last()
         if doc:
             user = get_object_or_404(PFEUser, pk=request.user.pk)
-            # try:
-            #     user = PFEUser.objects.get(pk=request.user.pk)
-            # except PFEUser.DoesNotExist:
-            #     return HttpResponse("Usuário não encontrado.", status=401)
 
-            if (doc.tipo_de_documento < 6) and (user.tipo_de_usuario != 2):
+            if (doc.confidencial) and \
+                not ( (user.tipo_de_usuario == 2) or (user.tipo_de_usuario == 4) ):
                 mensagem = "Documento Confidencial"
                 context = {
                     "mensagem": mensagem,

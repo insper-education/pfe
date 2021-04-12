@@ -702,34 +702,42 @@ class Documento(models.Model):
                                 help_text='Usuário do documento')
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='Documento do Projeto')
-    documento = models.FileField(upload_to=get_upload_path,
+    documento = models.FileField(null=True, blank=True,
+                                 upload_to=get_upload_path,
                                  help_text='Documento PDF')
+    link = models.URLField("link", max_length=250, null=True, blank=True,
+                              help_text='website da organização parceira')
     anotacao = models.CharField(null=True, blank=True, max_length=50,
                                 help_text='qualquer anotação sobre o documento em questão')
     data = models.DateField(null=True, blank=True,
                             help_text='Data do documento')
     TIPO_DE_DOCUMENTO = ( # não mudar a ordem dos números
-        (0, 'contrato com empresa'),
-        (1, 'contrato entre empresa e aluno'),
-        (2, 'contrado de confidencialidade'),
-        (3, 'relatório final'),
-        (4, 'autorização de publicação empresa'),
-        (5, 'autorização de publicação aluno'),
-        (6, 'regulamento PFE'),
-        (7, 'plano de aprendizado'),
-        (8, 'manual do aluno'),
-        (9, 'manual do orientador'),
-        (10, 'manual da organização parceira'),
-        (11, 'manual do carreiras'),
-        (12, 'manual de relatórios'),
-        (13, 'manual de planejamentos'),
-        (14, 'termo de parceria'),
-        (15, 'seguros'),
-        (16, 'outros_antigo'),
-        (17, 'template de relatórios'),
-        (255, 'outros'),
+        (0, 'Contrato com Organização Parceira'),
+        (1, 'Contrato entre Organização e Estudante'),
+        (2, 'Contrado de Confidencialidade'),
+        (3, 'Relatório Final'),
+        (4, 'Autorização de Publicação Empresa'),
+        (5, 'Autorização de Publicação Estudante'),
+        (6, 'Regulamento PFE'),
+        (7, 'Plano de Aprendizado'),
+        (8, 'Manual do Estudante'),
+        (9, 'Manual do Orientador'),
+        (10, 'Manual da Organização Parceira'),
+        (11, 'Manual do Carreiras'),
+        (12, 'Manual de Relatórios'),
+        (13, 'Manual de Planejamentos'),
+        (14, 'Termo de Parceria'),
+        (15, 'Seguros'),
+        (16, 'Outros_antigo'),
+        (17, 'Template de Relatórios'),
+        (18, 'Vídeo do Projeto'),
+        (19, 'Slides da Apresentação Final'),
+        (20, 'Banner'),
+        (255, 'Outros'),
     )
     tipo_de_documento = models.PositiveSmallIntegerField(choices=TIPO_DE_DOCUMENTO, default=0)
+
+    confidencial = models.BooleanField(default=True, help_text='Documento confidêncial')
 
     def __str__(self):
         return str(self.TIPO_DE_DOCUMENTO[self.tipo_de_documento][1])
