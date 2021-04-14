@@ -434,42 +434,30 @@ def proposta_editar(request, slug):
 
         if user.tipo_de_usuario == 3:  # parceiro
             parceiro = get_object_or_404(Parceiro, pk=request.user.parceiro.pk)
-            # try:
-            #     parceiro = Parceiro.objects.get(pk=request.user.parceiro.pk)
-            # except Parceiro.DoesNotExist:
-            #     return HttpResponse("Parceiro não encontrado.", status=401)
         elif user.tipo_de_usuario == 2:  # professor
             professor = get_object_or_404(Professor, pk=request.user.professor.pk)
-            # try:
-            #     professor = Professor.objects.get(pk=request.user.professor.pk)
-            # except Professor.DoesNotExist:
-            #     return HttpResponse("Professor não encontrado.", status=401)
         elif user.tipo_de_usuario == 4:  # admin
             administrador = get_object_or_404(Administrador, pk=request.user.administrador.pk)
-            # try:
-            #     administrador = Administrador.objects\
-            #         .get(pk=request.user.administrador.pk)
-            # except Administrador.DoesNotExist:
-            #     return HttpResponse("Administrador não encontrado.",
-            #                         status=401)
-
+            
     proposta = get_object_or_404(Proposta, slug=slug)
-    # try:
-    #     proposta = Proposta.objects.get(slug=slug)
-    # except Proposta.DoesNotExist:
-    #     return HttpResponseNotFound('Proposta de Projeto não encontrada!')
 
     configuracao = get_object_or_404(Configuracao)
     liberadas_propostas = configuracao.liberadas_propostas
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    #     liberadas_propostas = configuracao.liberadas_propostas
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
+
+    configuracao = get_object_or_404(Configuracao)
+    ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
+    if proposta.ano != ano or proposta.semestre != semestre:
+        vencida = True
+    else:
+        vencida = False
 
     if request.method == 'POST':
         if (not liberadas_propostas) or (user.tipo_de_usuario == 4):
-            preenche_proposta(request, proposta)
+            if vencida:
+                proposta = preenche_proposta(request, None)
+            else:
+                preenche_proposta(request, proposta)
+
             enviar = "mensagem" in request.POST  # Por e-mail se enviar
             mensagem = envia_proposta(proposta, enviar)
             resposta = "Submissão de proposta de projeto "
@@ -516,6 +504,8 @@ def proposta_editar(request, slug):
         'edicao': True,
         'interesses': Proposta.TIPO_INTERESSE,
         'tipo_de_interesse': proposta.tipo_de_interesse,
+        'ano_semestre': str(proposta.ano)+"."+str(proposta.semestre),
+        'vencida': vencida,
     }
     return render(request, 'organizacoes/proposta_submissao.html', context)
 

@@ -36,6 +36,7 @@
       Submissão
     {% endif %}
     de Proposta de Projeto
+    (PFE {{ano_semestre}})
   </span>
 
   {% if professor %}
@@ -172,7 +173,11 @@
     
     <br><br>
     {% if not liberadas_propostas %}
-      {% if edicao %}
+      {% if vencida %}
+        <spam class="red-bold">Essa proposta foi submetida em um semestre anterior,
+        ao salvar, você gerará uma nova proposta para o semestre atual.<br></spam>
+        <input type="submit" value="Nova Proposta de Projeto ">
+      {% elif edicao %}
         <input type="submit" value="Atualizar Proposta de Projeto">
       {% else %}
         <input type="submit" value="Enviar Proposta de Projeto">

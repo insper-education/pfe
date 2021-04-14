@@ -127,6 +127,9 @@ def proposta_submissao(request):
     except PFEUser.DoesNotExist:
         user = None
 
+    configuracao = get_object_or_404(Configuracao)
+    ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
+
     parceiro = None
     professor = None
     administrador = None
@@ -225,6 +228,7 @@ def proposta_submissao(request):
         'observacoes': "",
         'edicao': False,
         'interesses': Proposta.TIPO_INTERESSE,
+        'ano_semestre': str(ano)+"."+str(semestre),
         'tipo_de_interesse': 0  # Não existe na verdade
     }
     return render(request, 'organizacoes/proposta_submissao.html', context)
