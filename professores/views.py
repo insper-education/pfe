@@ -180,26 +180,28 @@ def bancas_editar(request, primarykey):
 @permission_required('users.altera_professor', login_url='/')
 def bancas_lista(request, periodo_projeto):
     """Lista as bancas agendadas, conforme periodo ou projeto pedido."""
-    projeto = None
-
+    context = {'periodo': periodo_projeto}
+    
     if periodo_projeto == "proximas":
+        # Coletando bancas agendadas a partir de hoje
         hoje = datetime.date.today()
         bancas = Banca.objects.filter(startDate__gt=hoje).order_by("startDate")
+
+        # checando se projetos atuais tem banca marcada
+        configuracao = get_object_or_404(Configuracao)
+        projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
+        for banca in bancas:
+            projetos = projetos.exclude(id=banca.projeto.id)
+        context["sem_banca"] = projetos
+
     elif periodo_projeto == "todas":
         bancas = Banca.objects.all().order_by("startDate")
     else:
         projeto = get_object_or_404(Projeto, id=periodo_projeto)
-        # try:
-        #     projeto = Projeto.objects.get(id=periodo_projeto)
-        # except Projeto.DoesNotExist:
-        #     return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
+        context["projeto"] = projeto
         bancas = Banca.objects.filter(projeto=projeto).order_by("startDate")
 
-    context = {
-        'bancas': bancas,
-        'periodo': periodo_projeto,
-        "projeto": projeto,
-    }
+    context["bancas"] = bancas
 
     return render(request, 'professores/bancas_lista.html', context)
 

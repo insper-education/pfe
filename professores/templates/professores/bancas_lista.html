@@ -269,4 +269,30 @@
   {% endif %}
   <p>&nbsp;</p>
 
+  {% if sem_banca %}
+    <br>
+    <h5>Projetos ativos sem bancas agendadas:</h5>
+    <ul>
+    {% for projeto in sem_banca %}
+      <li>
+
+        {% if projeto.orientador %}
+          <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}">
+            {{projeto.orientador.user.get_full_name}}:
+          </a>
+        {% endif %}
+
+        <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
+
+        {% if projeto.organizacao %}
+          [<a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}"
+            >{{ projeto.organizacao.nome }}</a
+          >]
+        {% endif %}
+
+      </li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+
 {% endblock %}
