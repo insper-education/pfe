@@ -1249,10 +1249,16 @@ def acompanhamento_view(request):
                     'projetos/acompanhamento_view.html',
                     context=context)
 
+from django.contrib.admin.models import LogEntry
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')
 def migracao(request):
     """temporário"""
     message = "Nada Feito"
+
+    logs = LogEntry.objects.all()
+    for log in logs:
+        print(log)
+
     return HttpResponse(message)
