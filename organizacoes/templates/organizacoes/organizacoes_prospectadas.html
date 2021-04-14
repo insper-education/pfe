@@ -113,7 +113,7 @@
         </tr>
 
         {% for organizacao,disponiveis,submetidas,contato in organizacoes_list %} 
-          <tr class="item" 
+          <tr id="tr{{organizacao.id}}" class="item" 
           {% if contato %}
               style=
               {% if contato.tipo_de_retorno == 0 %}
