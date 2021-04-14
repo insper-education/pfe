@@ -1255,10 +1255,10 @@ from django.contrib.admin.models import LogEntry
 @permission_required('users.altera_professor', login_url='/')
 def migracao(request):
     """temporário"""
-    message = "Nada Feito"
-
+    #message = "Nada Feito"
+    message = ""
     logs = LogEntry.objects.all()
     for log in logs:
-        print(log)
+        message += str(log)+"<br>\n"
 
     return HttpResponse(message)
