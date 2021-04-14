@@ -81,6 +81,10 @@ urlpatterns = [
          views.lista_feedback,
          name='lista_feedback'),
 
+    path('logs/',
+         views.logs,
+         name='logs'),
+
     path('meuprojeto/',
          views.meuprojeto,
          name='meuprojeto'),
