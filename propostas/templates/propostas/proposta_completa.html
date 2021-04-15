@@ -66,7 +66,6 @@
     <br><br>
   {% endif %}
 
-  <hr>
   <h4>Áreas de Interesse</h4>
   {% with aa=proposta.areadeinteresse_set.all %}
     {% with vencido=True %}
@@ -74,15 +73,8 @@
     {% endwith %}
   {% endwith %}
   <br>
-  <br>
 
   {% include "recomendadas.html" %}
-
-  {% with editavel=True %}
-    {% include "perfil_estudantes.html" %}
-  {% endwith %}
-  
-  <hr>
 
   <h4>Aluno(s) Aplicando para a Proposta</h4>
 
@@ -133,14 +125,16 @@
     </a>
     {% endif %}
   {% endfor %}
+  <br>
 
-  <hr>
-
-  <p>&nbsp;</p>
+  {% with editavel=True %}
+    {% include "perfil_estudantes.html" %}
+  {% endwith %}
+  
   <form method="post" id="disponibilizacaoform" enctype="multipart/form-data">
     {% csrf_token %}
     <br><b><label for="autorizador">Autorizado por</label></b>:
-    <select name="autorizador" id="autorizador" title="Selecione quem autorizou proposta" required>
+    <select class="fechar_proposta" name="autorizador" id="autorizador" title="Selecione quem autorizou proposta" required>
         <option value='0'> ---- </option>
         {% for pessoa in comite %}
           <option value="{{pessoa.id}}" {% if pessoa.id == proposta.autorizado.id %}selected{% endif %}>
@@ -150,16 +144,13 @@
     </select>
 
     <br><b>Disponibilizar: </b>
-    <label><input type="radio" name="disponibilizar" value="sim"
+    <label><input class="fechar_proposta" type="radio" name="disponibilizar" value="sim"
       {% if proposta.disponivel %}checked{% endif %}
     > Sim</label>
-    <label><input type="radio" name="disponibilizar" value="nao"
+    <label><input class="fechar_proposta" type="radio" name="disponibilizar" value="nao"
       {% if not proposta.disponivel %}checked{% endif %}
     > Não</label>
 
-    <br>
-    <button type="submit">Enviar</button>
-    <br>!! Isso será atualizado para AJAX !!
 
     <br><br>
     <a class="myButton" href="{% url 'proposta_editar' proposta.slug %}">Editar Proposta</a>
@@ -175,6 +166,34 @@
   <p>&nbsp;</p>
   <p>&nbsp;</p>
 
+<script>
+
+     function fechar_proposta() {
+      var autorizador = $("#autorizador option:selected").attr("value");
+      var disponibilizar = $('input[name=disponibilizar]:checked', '#disponibilizacaoform').val();
+
+      $.ajax({
+          type: "POST",
+          data: {    
+              autorizador: autorizador,
+              disponibilizar: disponibilizar,
+              'csrfmiddlewaretoken': '{{ csrf_token }}',
+          },
+          success: function(response){
+            if (response.atualizado) {
+              console.log("Valor atualizado.");
+            }
+          },
+          error: function(response) {
+              console.log('error')
+          }
+      });
+    }
+
+    $(".fechar_proposta").change(fechar_proposta);
+
+  </script>
+
   <script>
     $(".alunos").change(function () {
       var vaga = $(this).val();
@@ -188,10 +207,13 @@
           'checked': checked,
         },
         dataType: 'json',
-        success: function (data) {
-          if (data.atualizado) {
+        success: function (response) {
+          if (response.atualizado) {
             console.log("Valor atualizado.");
           }
+        },
+        error: function(response) {
+            console.log('error')
         }
       });
     });

@@ -310,12 +310,8 @@ def propostas_apresentadas(request):
 def proposta_completa(request, primakey):
     """Mostra um projeto por completo."""
     proposta = get_object_or_404(Proposta, pk=primakey)
-    # try:
-    #     proposta = Proposta.objects.get(pk=primakey)
-    # except Proposta.DoesNotExist:
-    #     return HttpResponse("Proposta não encontrada.", status=401)
 
-    if request.method == 'POST':
+    if request.is_ajax():
         if 'autorizador' in request.POST:
             try:
                 if request.POST['autorizador'] == "0":
@@ -329,22 +325,24 @@ def proposta_completa(request, primakey):
                 return HttpResponse("Autorizador não encontrado.", status=401)
         else:
             return HttpResponse("Autorizador não encontrado.", status=401)
-        if proposta.disponivel:
-            mensagem = "Proposta disponibilizada."
-        else:
-            mensagem = "Proposta indisponibilizada."
-        context = {
-            "area_principal": True,
-            "propostas_lista": True,
-            "mensagem": mensagem,
+        
+        data = {
+            'atualizado': True,
         }
-        return render(request, 'generic.html', context=context)
+        return JsonResponse(data)
+
+        # if proposta.disponivel:
+        #     mensagem = "Proposta disponibilizada."
+        # else:
+        #     mensagem = "Proposta indisponibilizada."
+        # context = {
+        #     "area_principal": True,
+        #     "propostas_lista": True,
+        #     "mensagem": mensagem,
+        # }
+        # return render(request, 'generic.html', context=context)
 
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     membros_comite = PFEUser.objects.filter(membro_comite=True)
     projetos = Projeto.objects.filter(proposta=proposta)
