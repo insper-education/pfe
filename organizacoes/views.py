@@ -36,27 +36,15 @@ def index_organizacoes(request):
 def anotacao(request, organizacao_id, anotacao_id=None):  # acertar isso para pk
     """Cria um anotação para uma organização parceira."""
     organizacao = get_object_or_404(Organizacao, id=organizacao_id)
-    # try:
-    #     organizacao = Organizacao.objects.get(id=organizacao_id)
-    # except Organizacao.DoesNotExist:
-    #     return HttpResponseNotFound('<h1>Organização não encontrada!</h1>')
 
     if request.is_ajax() and 'texto' in request.POST:
 
         if anotacao_id:
             anotacao = get_object_or_404(Anotacao, id=anotacao_id)
-            # try:
-            #     anotacao = Anotacao.objects.get(id=anotacao_id)
-            # except Anotacao.DoesNotExist:
-            #     return HttpResponseNotFound('<h1>Anotação não encontrada!</h1>')
         else:
             anotacao = Anotacao.create(organizacao)
 
         anotacao.autor = get_object_or_404(PFEUser, pk=request.user.pk)
-        # try:
-        #     anotacao.autor = PFEUser.objects.get(pk=request.user.pk)
-        # except PFEUser.DoesNotExist:
-        #     return HttpResponse("Usuário não encontrado.", status=401)
 
         anotacao.texto = request.POST['texto']
         anotacao.tipo_de_retorno = int(request.POST['tipo_de_retorno'])

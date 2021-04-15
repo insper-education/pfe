@@ -56,27 +56,7 @@
   <div id="tabela">
 
     <script>
-        // Total
-        var todos_contactados = 0
-        var so_contactados = 0
-        var confirmados = 0
-        var interessados = 0
-        var recusados = 0
-        var notificada = 0
-        var documentada = 0
-        var sem_grupo = 0
-
-        // Por curso
-        var todos_contactados_curso = {"C":0, "M":0, "X":0};
-        var so_contactados_curso = {"C":0, "M":0, "X":0};
-        var confirmados_curso = {"C":0, "M":0, "X":0};
-        var interessados_curso = {"C":0, "M":0, "X":0};
-        var recusados_curso = {"C":0, "M":0, "X":0};
-        var notificada_curso = {"C":0, "M":0, "X":0};
-        var documentada_curso = {"C":0, "M":0, "X":0};
-        var sem_grupo_curso = {"C":0, "M":0, "X":0};
-
-
+        var lista_organizacoes = [];
     </script>
 
     {% if organizacoes_list %}
@@ -221,69 +201,14 @@
           {% if contato != '---------' %}
             {% if contato.momento|date:'Ymd' > meses3|date:'Ymd' %}
               <script>
-                todos_contactados += 1;
-                {% if organizacao.area_computacao %}todos_contactados_curso["C"] += 1;{% endif %}
-                {% if organizacao.area_mecatronica %}todos_contactados_curso["X"] += 1;{% endif %}
-                {% if organizacao.area_mecanica %}todos_contactados_curso["M"] += 1;{% endif %}
+                lista_organizacoes.push(
+                  [ {{contato.tipo_de_retorno}},
+                    {{organizacao.area_computacao|yesno:"true,false"}}, 
+                    {{organizacao.area_mecatronica|yesno:"true,false"}}, 
+                    {{organizacao.area_mecanica|yesno:"true,false"}} ]
+                );
               </script>
 
-              {% if contato.tipo_de_retorno == 0 %}
-                <script>
-                  so_contactados += 1;
-                  {% if organizacao.area_computacao %}so_contactados_curso["C"] += 1;{% endif %}
-                  {% if organizacao.area_mecatronica %}so_contactados_curso["X"] += 1;{% endif %}
-                  {% if organizacao.area_mecanica %}so_contactados_curso["M"] += 1;{% endif %}
-                </script>
-
-              {% elif contato.tipo_de_retorno == 1 %}
-                <script>
-                  confirmados += 1
-                  {% if organizacao.area_computacao %}confirmados_curso["C"] += 1;{% endif %}
-                  {% if organizacao.area_mecatronica %}confirmados_curso["X"] += 1;{% endif %}
-                  {% if organizacao.area_mecanica %}confirmados_curso["M"] += 1;{% endif %}
-                </script>
-
-              {% elif contato.tipo_de_retorno == 2 %}
-                <script>
-                  interessados += 1
-                  {% if organizacao.area_computacao %}interessados_curso["C"] += 1;{% endif %}
-                  {% if organizacao.area_mecatronica %}interessados_curso["X"] += 1;{% endif %}
-                  {% if organizacao.area_mecanica %}interessados_curso["M"] += 1;{% endif %}
-                </script>
-
-              {% elif contato.tipo_de_retorno == 3 %}
-                <script>
-                  recusados += 1
-                  {% if organizacao.area_computacao %}recusados_curso["C"] += 1;{% endif %}
-                  {% if organizacao.area_mecatronica %}recusados_curso["X"] += 1;{% endif %}
-                  {% if organizacao.area_mecanica %}recusados_curso["M"] += 1;{% endif %}
-                </script>
-
-              {% elif contato.tipo_de_retorno == 4 %}
-                <script>
-                  notificada += 1
-                  {% if organizacao.area_computacao %}notificada_curso["C"] += 1;{% endif %}
-                  {% if organizacao.area_mecatronica %}notificada_curso["X"] += 1;{% endif %}
-                  {% if organizacao.area_mecanica %}notificada_curso["M"] += 1;{% endif %}
-                </script>
-
-              {% elif contato.tipo_de_retorno == 5 %}
-                <script>
-                  sem_grupo += 1
-                  {% if organizacao.area_computacao %}sem_grupo_curso["C"] += 1;{% endif %}
-                  {% if organizacao.area_mecatronica %}sem_grupo_curso["X"] += 1;{% endif %}
-                  {% if organizacao.area_mecanica %}sem_grupo_curso["M"] += 1;{% endif %}
-                </script>
-
-              {% elif contato.tipo_de_retorno == 6 %}
-                <script>
-                  documentada += 1
-                  {% if organizacao.area_computacao %}documentada_curso["C"] += 1;{% endif %}
-                  {% if organizacao.area_mecatronica %}documentada_curso["X"] += 1;{% endif %}
-                  {% if organizacao.area_mecanica %}documentada_curso["M"] += 1;{% endif %}
-                </script>
-
-              {% endif %}
             {% endif %}
           {% endif %}
         {% endfor %}
@@ -302,14 +227,73 @@
   
       <script>
 
+        function preenche_cursos(tipo_de_retorno) {
+
+          mensagem = "";
+          C = 0; M = 0; X = 0; CM = 0; CX = 0; MX = 0; CMX = 0;
+          total = 0
+
+          for (var cursos in lista_organizacoes) {
+            if(lista_organizacoes[cursos][0] == tipo_de_retorno) {
+              if(lista_organizacoes[cursos][1] && lista_organizacoes[cursos][2] && lista_organizacoes[cursos][3]) CMX += 1;
+              else if(lista_organizacoes[cursos][1] && lista_organizacoes[cursos][2]) CX += 1;
+              else if(lista_organizacoes[cursos][1] && lista_organizacoes[cursos][3]) CM += 1;
+              else if(lista_organizacoes[cursos][2] && lista_organizacoes[cursos][3]) MX += 1;
+              else if(lista_organizacoes[cursos][1]) C += 1;
+              else if(lista_organizacoes[cursos][2]) X += 1;
+              else if(lista_organizacoes[cursos][3]) M += 1;
+              total += 1;
+            }
+          }
+
+          primeiro = true;
+          if(total > 0) {
+            mensagem += total+" -";
+            if(C>0) {
+              if(primeiro) primeiro = false; else mensagem += ","; 
+              mensagem += " C:"+C;
+            }
+            if(M>0) {
+              if(primeiro) primeiro = false; else mensagem += ","; 
+              mensagem += " M:"+M;
+            }
+            if(X>0) {
+              if(primeiro) primeiro = false; else mensagem += ","; 
+              mensagem += " X:"+X;
+            }
+            if(CM>0) {
+              if(primeiro) primeiro = false; else mensagem += ","; 
+              mensagem += " CM:"+CM;
+            }
+            if(CX>0) {
+              if(primeiro) primeiro = false; else mensagem += ","; 
+              mensagem += " CX:"+CX;
+            }
+            if(MX>0) {
+              if(primeiro) primeiro = false; else mensagem += ","; 
+              mensagem += " MX:"+MX;
+            }
+            if(CMX>0) {
+              if(primeiro) primeiro = false; else mensagem += ","; 
+              mensagem += " CMX:"+CMX;
+            }
+          }
+          else {
+            mensagem += "0";
+          }
+
+          return(mensagem);
+
+        }
+
         function atualiza_situacoes() {
-          document.getElementById('so_contactados').innerHTML = so_contactados+" - C:"+so_contactados_curso["C"]+", M:"+so_contactados_curso["M"]+", X:"+so_contactados_curso["X"];
-          document.getElementById('recusados').innerHTML = recusados+" - C:"+recusados_curso["C"]+", M:"+recusados_curso["M"]+", X:"+recusados_curso["X"];
-          document.getElementById('interessados').innerHTML = interessados+" - C:"+interessados_curso["C"]+", M:"+interessados_curso["M"]+", X:"+interessados_curso["X"];
-          document.getElementById('confirmados').innerHTML = confirmados+" - C:"+confirmados_curso["C"]+", M:"+confirmados_curso["M"]+", X:"+confirmados_curso["X"];
-          document.getElementById('notificada').innerHTML = notificada+" - C:"+notificada_curso["C"]+", M:"+notificada_curso["M"]+", X:"+notificada_curso["X"];
-          document.getElementById('documentada').innerHTML = documentada+" - C:"+documentada_curso["C"]+", M:"+documentada_curso["M"]+", X:"+documentada_curso["X"];
-          document.getElementById('sem_grupo').innerHTML = sem_grupo+" - C:"+sem_grupo_curso["C"]+", M:"+sem_grupo_curso["M"]+", X:"+sem_grupo_curso["X"];
+          document.getElementById('so_contactados').innerHTML = preenche_cursos(0);
+          document.getElementById('recusados').innerHTML = preenche_cursos(3);
+          document.getElementById('interessados').innerHTML = preenche_cursos(2);
+          document.getElementById('confirmados').innerHTML = preenche_cursos(1);
+          document.getElementById('notificada').innerHTML = preenche_cursos(4);
+          document.getElementById('documentada').innerHTML = preenche_cursos(6);
+          document.getElementById('sem_grupo').innerHTML = preenche_cursos(5);
         }
 
         atualiza_situacoes();
