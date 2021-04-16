@@ -298,9 +298,10 @@ def get_response(file, path):
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
     elif path[-3:].lower() == "pdf":
         return HttpResponse(file.read(), content_type="application/pdf")
+    elif path[-3:].lower() == "mp4":
+        return HttpResponse(file.read(), content_type="video/mp4")
     else:
         return None
-
 
 def carrega_arquivo(request, local_path, path):
     """Carrega arquivos pela URL."""
