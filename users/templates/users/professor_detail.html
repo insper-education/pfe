@@ -105,6 +105,11 @@
     </ol>
   {% endif %}
 
+  {% if user.tipo_de_usuario == 4 %}
+      <a href="{% url 'edita_usuario' professor.user.id %}">
+      <button style="float: right;">Editar</button>
+      </a>
+  {% endif %}
 
   <p>&nbsp;</p>
   <p>&nbsp;</p>

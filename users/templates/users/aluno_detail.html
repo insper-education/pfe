@@ -285,7 +285,11 @@
         {% endfor %}
     {% endif %}
 
-
+    {% if user.tipo_de_usuario == 4 %}
+        <a href="{% url 'edita_usuario' aluno.user.id %}">
+        <button style="float: right;">Editar</button>
+        </a>
+    {% endif %}
     <p>&nbsp;</p>   
 
     
