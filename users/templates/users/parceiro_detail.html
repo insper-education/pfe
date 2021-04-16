@@ -20,13 +20,21 @@
 
 {% block content %}
   
-  <span class="titulo">{{parceiro.user.get_full_name}}</span>
+  <span class="titulo">
+    {{parceiro.user.get_full_name}}
+    {% if parceiro.principal_contato %}
+      <span data-toggle="tooltip" data-html="true" animation="true" title="Principal Contato">
+        &#x2B50;
+      </span>
+    {% endif %}
+  </span>
 
   {% if not parceiro.user.is_active %}
       <p style="color: red;">
           - NÃO ATIVO -
       </p>
   {% endif %}
+
   {% if parceiro.organizacao %}
     <strong>Organização:</strong>
     <a href="{% url 'organizacao_completo' parceiro.organizacao.id %}">
@@ -92,6 +100,11 @@
     {% endfor %}
     </ol>
   {% endif %}
+
+  {% if user.tipo_de_usuario == 4 %}
+    <a href="{% url 'edita_usuario' parceiro.user.id %}">
+      <button style="float: right;">Editar</button>
+    </a>  {% endif %}
   <p>&nbsp;</p>
   
 {% endblock %}

@@ -253,6 +253,150 @@ def cadastrar_organizacao(request):
     return render(request, 'administracao/cadastra_organizacao.html')
 
 
+
+def registro_usuario(request, user=None):
+
+    if not user:
+        usuario = PFEUser.create()
+    else:
+        usuario = user
+
+    usuario.email = request.POST.get('email', None)
+
+    tipo_de_usuario = request.POST.get('tipo_de_usuario', None)
+    if tipo_de_usuario == "estudante":  # (1, 'aluno')
+        usuario.tipo_de_usuario = 1
+    elif tipo_de_usuario == "professor":  # (2, 'professor')
+        usuario.tipo_de_usuario = 2
+    elif tipo_de_usuario == "parceiro":  # (3, 'parceiro')
+        usuario.tipo_de_usuario = 3
+    else:
+        # (4, 'administrador')
+        return ("Algum erro não identificado.", 401)
+
+    # se for um usuário novo
+    if not user:
+        if usuario.tipo_de_usuario == 1 or usuario.tipo_de_usuario == 2:
+            username = request.POST['email'].split("@")[0]
+        elif usuario.tipo_de_usuario == 3:
+            username = request.POST['email'].split("@")[0] + "." + \
+                request.POST['email'].split("@")[1].split(".")[0]
+        else:
+            return ("Algum erro não identificado.", 401)
+
+        if PFEUser.objects.exclude(pk=usuario.pk).filter(username=username).exists():
+            return ('Username "%s" já está sendo usado.' % username, 401)
+
+        usuario.username = username
+
+    if 'nome' in request.POST and len(request.POST['nome'].split()) > 1:
+        usuario.first_name = request.POST['nome'].split()[0]
+        usuario.last_name = " ".join(request.POST['nome'].split()[1:])
+    else:
+        return ("Erro: Não inserido nome completo no formulário.", 401)
+
+    if 'genero' in request.POST:
+        if request.POST['genero'] == "masculino":
+            usuario.genero = "M"
+        elif request.POST['genero'] == "feminino":
+            usuario.genero = "F"
+    else:
+        usuario.genero = "X"
+
+    usuario.linkedin = request.POST.get('linkedin', None)
+    usuario.tipo_lingua = request.POST.get('lingua', None)
+
+    usuario.save()
+
+    if usuario.tipo_de_usuario == 1:  # estudante
+
+        if not hasattr(user, 'aluno'):
+            estudante = Aluno.create(usuario)
+        else:
+            estudante = user.aluno
+
+        estudante.matricula = request.POST.get('matricula', None)
+
+        curso = request.POST.get('curso', None)
+        if curso == "computacao":
+            estudante.curso = 'C'   # ('C', 'Computação'),
+        elif curso == "mecanica":
+            estudante.curso = 'M'   # ('M', 'Mecânica'),
+        elif curso == "mecatronica":
+            estudante.curso = 'X'   # ('X', 'Mecatrônica'),
+        else:
+            return ("Algum erro não identificado.", 401)
+
+        try:
+            estudante.anoPFE = int(request.POST['ano'])
+            estudante.semestrePFE = int(request.POST['semestre'])
+        except (ValueError, OverflowError, MultiValueDictKeyError):
+            return ("Erro na identificação do ano e semestre.", 401)
+
+        estudante.save()
+
+    elif usuario.tipo_de_usuario == 2:  # professor
+
+        if not hasattr(user, 'professor'):
+            professor = Professor.create(usuario)
+        else:
+            professor = user.professor
+
+        dedicacao = request.POST.get('dedicacao', None)
+        if dedicacao == "ti":  # ("TI", "Tempo Integral"),
+            professor.dedicacao = 'TI'
+        elif dedicacao == "tp":  # ("TP", 'Tempo Parcial'),
+            professor.dedicacao = 'TP'
+        else:
+            return ("Algum erro não identificado.", 401)
+
+        professor.areas = request.POST.get('areas', None)
+        professor.website = request.POST.get('website', None)
+        professor.lattes = request.POST.get('lattes', None)
+
+        professor.save()
+
+        content_type = ContentType.objects.get_for_model(Professor)
+        permission = Permission.objects.get(
+            codename='change_professor',
+            content_type=content_type,
+        )
+        usuario.user_permissions.add(permission)
+        usuario.save()
+
+    elif usuario.tipo_de_usuario == 3:  # Parceiro
+
+        if not hasattr(user, 'parceiro'):
+            parceiro = Parceiro.create(usuario)
+        else:
+            parceiro = user.parceiro
+
+        parceiro.cargo = request.POST.get('cargo', None)
+        parceiro.telefone = request.POST.get('telefone', None)
+        parceiro.celular = request.POST.get('celular', None)
+        parceiro.skype = request.POST.get('skype', None)
+        parceiro.observacao = request.POST.get('observacao', None)
+
+        try:
+            tmp_pk = int(request.POST['organizacao'])
+            parceiro.organizacao = Organizacao.objects.get(pk=tmp_pk)
+        except (ValueError, OverflowError, Organizacao.DoesNotExist):
+            return ("Organização não encontrada.", 401)
+
+        parceiro.principal_contato = 'principal_contato' in request.POST
+
+        parceiro.save()
+
+        content_type = ContentType.objects.get_for_model(Parceiro)
+        permission = Permission.objects.get(
+            codename='change_parceiro',
+            content_type=content_type,
+        )
+        usuario.user_permissions.add(permission)
+        usuario.save()
+
+    return ("Usuário inserido na base de dados.", 200)
+
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", login_url='/')
@@ -261,133 +405,9 @@ def cadastrar_usuario(request):
     if request.method == 'POST':
 
         if 'email' in request.POST:
-
-            usuario = PFEUser.create()
-
-            usuario.email = request.POST.get('email', None)
-
-            tipo_de_usuario = request.POST.get('tipo_de_usuario', None)
-            if tipo_de_usuario == "estudante":  # (1, 'aluno')
-                usuario.tipo_de_usuario = 1
-            elif tipo_de_usuario == "professor":  # (2, 'professor')
-                usuario.tipo_de_usuario = 2
-            elif tipo_de_usuario == "parceiro":  # (3, 'parceiro')
-                usuario.tipo_de_usuario = 3
-            else:
-                # (4, 'administrador')
-                return HttpResponse("Algum erro não identificado.", status=401)
-
-            if usuario.tipo_de_usuario == 1 or usuario.tipo_de_usuario == 2:
-                username = request.POST['email'].split("@")[0]
-            elif usuario.tipo_de_usuario == 3:
-                username = request.POST['email'].split("@")[0] + "." + \
-                    request.POST['email'].split("@")[1].split(".")[0]
-            else:
-                return HttpResponse("Algum erro não identificado.", status=401)
-
-            if PFEUser.objects.exclude(pk=usuario.pk).filter(username=username).exists():
-                return HttpResponse('Username "%s" já está sendo usado.' % username, status=401)
-
-            usuario.username = username
-
-            if 'nome' in request.POST and len(request.POST['nome'].split()) > 1:
-                usuario.first_name = request.POST['nome'].split()[0]
-                usuario.last_name = " ".join(request.POST['nome'].split()[1:])
-            else:
-                return HttpResponse("Erro: Não inserido nome completo no formulário.", status=401)
-
-            if 'genero' in request.POST:
-                if request.POST['genero'] == "masculino":
-                    usuario.genero = "M"
-                elif request.POST['genero'] == "feminino":
-                    usuario.genero = "F"
-            else:
-                usuario.genero = "X"
-
-            usuario.linkedin = request.POST.get('linkedin', None)
-            usuario.tipo_lingua = request.POST.get('lingua', None)
-
-            usuario.save()
-
-            if usuario.tipo_de_usuario == 1:  # estudante
-
-                estudante = Aluno.create(usuario)
-
-                estudante.matricula = request.POST.get('matricula', None)
-
-                curso = request.POST.get('curso', None)
-                if curso == "computacao":
-                    estudante.curso = 'C'   # ('C', 'Computação'),
-                elif curso == "mecanica":
-                    estudante.curso = 'M'   # ('M', 'Mecânica'),
-                elif curso == "mecatronica":
-                    estudante.curso = 'X'   # ('X', 'Mecatrônica'),
-                else:
-                    return HttpResponse("Algum erro não identificado.", status=401)
-
-                try:
-                    estudante.anoPFE = int(request.POST['ano'])
-                    estudante.semestrePFE = int(request.POST['semestre'])
-                except (ValueError, OverflowError, MultiValueDictKeyError):
-                    return HttpResponse("Erro na identificação do ano e semestre.", status=401)
-
-                estudante.save()
-
-            elif usuario.tipo_de_usuario == 2:  # professor
-
-                professor = Professor.create(usuario)
-
-                dedicacao = request.POST.get('dedicacao', None)
-                if dedicacao == "ti":  # ("TI", "Tempo Integral"),
-                    professor.dedicacao = 'TI'
-                elif dedicacao == "tp":  # ("TP", 'Tempo Parcial'),
-                    professor.dedicacao = 'TP'
-                else:
-                    return HttpResponse("Algum erro não identificado.", status=401)
-
-                professor.areas = request.POST.get('areas', None)
-                professor.website = request.POST.get('website', None)
-                professor.lattes = request.POST.get('lattes', None)
-
-                professor.save()
-
-                content_type = ContentType.objects.get_for_model(Professor)
-                permission = Permission.objects.get(
-                    codename='change_professor',
-                    content_type=content_type,
-                )
-                usuario.user_permissions.add(permission)
-                usuario.save()
-
-            elif usuario.tipo_de_usuario == 3:  # Parceiro
-
-                parceiro = Parceiro.create(usuario)
-
-                parceiro.cargo = request.POST.get('cargo', None)
-                parceiro.telefone = request.POST.get('telefone', None)
-                parceiro.celular = request.POST.get('celular', None)
-                parceiro.skype = request.POST.get('skype', None)
-                parceiro.observacao = request.POST.get('observacao', None)
-
-                try:
-                    tmp_pk = int(request.POST['organizacao'])
-                    parceiro.organizacao = Organizacao.objects.get(pk=tmp_pk)
-                except (ValueError, OverflowError, Organizacao.DoesNotExist):
-                    return HttpResponse("Organização não encontrada.", status=401)
-
-                parceiro.principal_contato = 'principal_contato' in request.POST
-
-                parceiro.save()
-
-                content_type = ContentType.objects.get_for_model(Parceiro)
-                permission = Permission.objects.get(
-                    codename='change_parceiro',
-                    content_type=content_type,
-                )
-                usuario.user_permissions.add(permission)
-                usuario.save()
-
-            mensagem = "Usuário inserido na base de dados."
+            mensagem, codigo = registro_usuario(request)
+            if codigo != 200:
+                return HttpResponse(mensagem, status=codigo)
 
         else:
             mensagem = "<h3 style='color:red'>Falha na inserção na base da dados.<h3>"
@@ -423,6 +443,50 @@ def cadastrar_usuario(request):
 
     return render(request, 'administracao/cadastra_usuario.html', context)
 
+
+@login_required
+@transaction.atomic
+@permission_required("users.altera_professor", login_url='/')
+def edita_usuario(request, primakey):
+    """Cadastra usuário na base de dados do PFE."""
+    user = get_object_or_404(PFEUser, id=primakey)
+
+    if request.method == 'POST':
+
+        if 'email' in request.POST:
+            mensagem, codigo = registro_usuario(request, user)
+            if codigo != 200:
+                return HttpResponse(mensagem, status=codigo)
+
+        else:
+            mensagem = "<h3 style='color:red'>Falha na inserção na base da dados.<h3>"
+
+        context = {
+            "voltar": True,
+            "cadastrar_usuario": True,
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+
+        return render(request, 'generic.html', context=context)
+
+    context = {
+        "usuario": user,
+        "organizacoes": Organizacao.objects.all(),
+    }
+
+    if user.tipo_de_usuario == 1:
+        context["tipo"] = "estudante"
+    elif user.tipo_de_usuario == 2:
+        context["tipo"] = "professor"
+    elif user.tipo_de_usuario == 3:
+        context["tipo"] = "parceiro"
+        if user.parceiro.organizacao:
+            context["organizacao_selecionada"] = user.parceiro.organizacao
+    else:
+        return HttpResponse("Erro com tipo de usuário", status=401)
+
+    return render(request, 'administracao/cadastra_usuario.html', context)
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')

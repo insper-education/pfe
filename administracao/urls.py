@@ -30,6 +30,10 @@ urlpatterns = [
          views.cadastrar_usuario,
          name='cadastrar_usuario'),
 
+    path('edita_usuario/<int:primakey>',
+         views.edita_usuario,
+         name='edita_usuario'),
+
     path('carrega_arquivo/<str:dado>',
          views.carrega_arquivo,
          name='carrega_arquivo'),

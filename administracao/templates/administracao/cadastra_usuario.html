@@ -16,7 +16,7 @@
 {% block content %}
 
   <span class="titulo">
-    {% if edicao %}
+    {% if usuario %}
       Edição
     {% else %}
       Cadastro
@@ -33,17 +33,17 @@
     <br><br>
 
     <label for="nome">Nome do Usuário<br></label><br>
-    <input type="text" size="80" maxlength="80" id="nome" name="nome" value="{{nome}}" pattern="^\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')" required><br>
+    <input type="text" size="80" maxlength="80" id="nome" name="nome" value="{{usuario.get_full_name}}" pattern="^\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')" required><br>
     <br><br>
 
-    <label for="email">e-mail:</label> <input type="email" size="73" maxlength="73" id="email" name="email" value="{{email}}" oninvalid="this.setCustomValidity('Digite um e-mail válido')" oninput="this.setCustomValidity('')" required><br><br>
+    <label for="email">e-mail:</label> <input type="email" size="73" maxlength="73" id="email" name="email" value="{{usuario.email}}" oninvalid="this.setCustomValidity('Digite um e-mail válido')" oninput="this.setCustomValidity('')" required><br><br>
 
-    <input type="radio" name="genero" id="masculino" value="masculino"> <label for="masculino"> Masculino</label>&nbsp;&nbsp;&nbsp;
-    <input type="radio" name="genero" id="feminino" value="feminino"> <label for="feminino"> Feminino</label>
+    <input type="radio" name="genero" id="masculino" value="masculino" {% if usuario.genero == 'M'%}checked{% endif %}> <label for="masculino"> Masculino</label>&nbsp;&nbsp;&nbsp;
+    <input type="radio" name="genero" id="feminino" value="feminino" {% if usuario.genero == 'F'%}checked{% endif %}> <label for="feminino"> Feminino</label>
 
     <br><br>
 
-    <label for="linkedin">LinkedIn:</label> <input type="text" size="73" maxlength="73" id="linkedin" name="linkedin" value="{{linkedin}}" placeholder="https://www.linkedin.com/"><br>
+    <label for="linkedin">LinkedIn:</label> <input type="text" size="73" maxlength="73" id="linkedin" name="linkedin" value="{% if usuario.linkedin %}{{usuario.linkedin}}{% endif %}" placeholder="https://www.linkedin.com/"><br>
 
     <br><label for="lingua">Língua</label>:
     <select name="lingua" id="lingua" title="Linguagem">
@@ -61,17 +61,17 @@
     {% comment %} Estudante {% endcomment %}
     <div style="display: block; padding-left: 32px" class="row" data-type="estudante">
 
-      <label for="matricula">Matrícula: </label> <input type="text" size="8" maxlength="8" id="matricula" name="matricula" value="{{matricula}}"><br>
+      <label for="matricula">Matrícula: </label> <input type="text" size="8" maxlength="8" id="matricula" name="matricula" value="{{usuario.aluno.matricula}}"><br>
  
       Curso: 
-      <input type="radio" name="curso" id="computacao" value="computacao" required> <label for="computacao"> Computação</label>&nbsp;&nbsp;&nbsp;
-      <input type="radio" name="curso" id="mecanica" value="mecanica" required> <label for="mecanica"> Mecânica</label>&nbsp;&nbsp;&nbsp;
-      <input type="radio" name="curso" id="mecatronica" value="mecatronica" required> <label for="mecatronica"> Mecatrônica</label>
+      <input type="radio" name="curso" id="computacao" value="computacao" {% if usuario.aluno.curso == 'C' %}checked{% endif %} required> <label for="computacao"> Computação</label>&nbsp;&nbsp;&nbsp;
+      <input type="radio" name="curso" id="mecanica" value="mecanica" {% if usuario.aluno.curso == 'M' %}checked{% endif %} required> <label for="mecanica"> Mecânica</label>&nbsp;&nbsp;&nbsp;
+      <input type="radio" name="curso" id="mecatronica" value="mecatronica" {% if usuario.aluno.curso == 'X' %}checked{% endif %} required> <label for="mecatronica"> Mecatrônica</label>
       <br>
       <label for="ano">Ano PFE: </label> 
-      <input type="number" id="ano" name="ano" min="2018" max="3018" value="{{ano}}" required>&nbsp;&nbsp;&nbsp;
+      <input type="number" id="ano" name="ano" min="2018" max="3018" value="{{usuario.aluno.anoPFE}}" required>&nbsp;&nbsp;&nbsp;
       <label for="semestre">Semestre PFE: </label> 
-      <input type="number" id="semestre" name="semestre" min="1" max="2" value="{{semestre}}" required>
+      <input type="number" id="semestre" name="semestre" min="1" max="2" value="{{usuario.aluno.semestrePFE}}" required>
 
     </div>
 
@@ -79,14 +79,14 @@
     <div style="display: block; padding-left: 32px" class="row" data-type="professor">
 
       Dedicação: 
-      <input type="radio" name="dedicacao" id="ti" value="ti" required> <label for="ti"> TI</label>&nbsp;&nbsp;&nbsp;
-      <input type="radio" name="dedicacao" id="tp" value="tp" required> <label for="tp"> TP</label>
+      <input type="radio" name="dedicacao" id="ti" value="ti" {% if usuario.professor.dedicacao == "TI" %}checked{% endif %} required> <label for="ti"> TI</label>&nbsp;&nbsp;&nbsp;
+      <input type="radio" name="dedicacao" id="tp" value="tp" {% if usuario.professor.dedicacao == "TP" %}checked{% endif %} required> <label for="tp"> TP</label>
       <br>
 
-      <label for="areas">Áreas de interesse: </label> <input type="text" size="75" maxlength="500" id="areas" name="areas" value="{{areas}}"><br>
+      <label for="areas">Áreas de interesse: </label> <input type="text" size="75" maxlength="500" id="areas" name="areas" value="{{usuario.professor.areas}}"><br>
  
-      <label for="website">website:</label><input type="text" size="73" maxlength="250" id="website" name="website" value="{{website}}" placeholder="https://www.insper.edu.br/"><br>
-      <label for="lattes">lattes:</label><input type="text" size="73" maxlength="73" id="lattes" name="lattes" value="{{lattes}}" placeholder="https://lattes.cnpq.br/"><br>
+      <label for="website">website:</label><input type="text" size="73" maxlength="250" id="website" name="website" value="{{usuario.professor.website}}" placeholder="https://www.insper.edu.br/"><br>
+      <label for="lattes">lattes:</label><input type="text" size="73" maxlength="73" id="lattes" name="lattes" value="{{usuario.professor.lattes}}" placeholder="https://lattes.cnpq.br/"><br>
 
     </div>
 
@@ -103,22 +103,22 @@
           {% endfor %}
       </select><br>
 
-      <label for="cargo">cargo:</label><input type="text" size="50" maxlength="90" id="cargo" name="cargo" value="{{cargo}}"><br>
+      <label for="cargo">cargo:</label><input type="text" size="50" maxlength="90" id="cargo" name="cargo" value="{{usuario.parceiro.cargo}}"><br>
       
-      <label for="telefone">telefone:</label><input type="text" size="20" maxlength="20" id="telefone" name="telefone" value="{{telefone}}"><br>
-      <label for="celular">celular:</label><input type="text" size="20" maxlength="20" id="celular" name="celular" value="{{celular}}"><br>
-      <label for="skype">skype:</label><input type="text" size="32" maxlength="32" id="skype" name="skype" value="{{skype}}"><br>
+      <label for="telefone">telefone:</label><input type="text" size="20" maxlength="20" id="telefone" name="telefone" value="{{usuario.parceiro.telefone}}"><br>
+      <label for="celular">celular:</label><input type="text" size="20" maxlength="20" id="celular" name="celular" value="{{usuario.parceiro.celular}}"><br>
+      <label for="skype">skype:</label><input type="text" size="32" maxlength="32" id="skype" name="skype" value="{{usuario.parceiro.skype}}"><br>
 
       <label for="observacao">Observações:</label><br>
-      <textarea id="observacao" name="observacao" rows="4" cols="80" maxlength="500">{{observacao}}</textarea><br>
+      <textarea id="observacao" name="observacao" rows="4" cols="80" maxlength="500">{{usuario.parceiro.observacao}}</textarea><br>
 
-      <input type="checkbox" id="principal_contato" name="principal_contato" value="True">
+      <input type="checkbox" id="principal_contato" name="principal_contato" value="True" {% if usuario.parceiro.principal_contato %}checked{% endif %}>
       <label for="principal_contato"> Principal Contato</label><br>
 
     </div>
 
     <br><br>
-    <input type="submit" value="Cadastrar Usuário">
+    <input type="submit" value="{% if usuario %}Atualiza{% else %}Cadastrar{% endif %} Usuário">
     
     {% comment %}
         <label for="endereco">Endereço<br></label><br>

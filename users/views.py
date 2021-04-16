@@ -717,17 +717,10 @@ def professor_detail(request, primarykey):
 def parceiro_detail(request, primarykey):
     """Mostra detalhes sobre o parceiro."""
     parceiro = get_object_or_404(Parceiro, pk=primarykey)
-    # try:
-    #     parceiro = Parceiro.objects.get(pk=primarykey)
-    # except Professor.DoesNotExist:
-    #     return HttpResponse("Professor não encontrado.", status=401)
-
-    # configuracao = Configuracao.objects.get()
-    configuracao = get_object_or_404(Configuracao)
 
     conexoes = Conexao.objects.filter(parceiro=parceiro)
+
     context = {
-        'configuracao': configuracao,
         'parceiro': parceiro,
         'conexoes': conexoes,
     }
