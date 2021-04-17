@@ -356,9 +356,18 @@ def get_response(file, path, request):
         return HttpResponse(file.read(), content_type="image/jpeg")
     elif path[-3:].lower() == "png":
         return HttpResponse(file.read(), content_type="image/png")
-    elif path[-3:].lower() == "doc" or path[-4:].lower() == "docx":
+    elif path[-3:].lower() == "doc":
+        return HttpResponse(file.read(), content_type=\
+            'application/msword')
+    elif path[-4:].lower() == "docx":
         return HttpResponse(file.read(), content_type=\
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    elif path[-3:].lower() == "ppt":
+        return HttpResponse(file.read(), content_type=\
+            'application/vnd.ms-powerpoint')
+    elif path[-4:].lower() == "pptx":
+        return HttpResponse(file.read(), content_type=\
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation')
     elif path[-3:].lower() == "pdf":
         return HttpResponse(file.read(), content_type="application/pdf")
     elif path[-3:].lower() == "mp4":
