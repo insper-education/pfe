@@ -7,9 +7,15 @@ Data: 15 de Maio de 2019
 """
 
 import os
+import re
 import datetime
 import dateutil.parser
 import csv
+import mimetypes
+
+from wsgiref.util import FileWrapper
+
+from django.http.response import StreamingHttpResponse
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
@@ -284,19 +290,7 @@ def projetos_fechados(request):
     return render(request, 'projetos/projetos_fechados.html', context)
 
 
-
-
-import os
-import re
-import mimetypes
-from wsgiref.util import FileWrapper
-
-from django.http.response import StreamingHttpResponse
-
-
-range_re = re.compile(r'bytes\s*=\s*(\d+)\s*-\s*(\d*)', re.I)
-
-
+# FONTE: https://stackoverflow.com/questions/33208849/python-django-streaming-video-mp4-file-using-httpresponse/41289535#41289535
 class RangeFileWrapper(object):
     def __init__(self, filelike, blksize=8192, offset=0, length=None):
         self.filelike = filelike
@@ -330,10 +324,12 @@ class RangeFileWrapper(object):
 
 def stream_video(request, path):
     range_header = request.META.get('HTTP_RANGE', '').strip()
+    range_re = re.compile(r'bytes\s*=\s*(\d+)\s*-\s*(\d*)', re.I)
     range_match = range_re.match(range_header)
     size = os.path.getsize(path)
     content_type, encoding = mimetypes.guess_type(path)
     content_type = content_type or 'application/octet-stream'
+    resp = None
     if range_match:
         first_byte, last_byte = range_match.groups()
         first_byte = int(first_byte) if first_byte else 0
@@ -342,18 +338,16 @@ def stream_video(request, path):
             last_byte = size - 1
         length = last_byte - first_byte + 1
         resp = StreamingHttpResponse(RangeFileWrapper(open(path, 'rb'), offset=first_byte, length=length), status=206, content_type=content_type)
-        resp['Content-Length'] = str(length)
+        #resp['Content-Length'] = str(length)
         resp['Content-Range'] = 'bytes %s-%s/%s' % (first_byte, last_byte, size)
     else:
         resp = StreamingHttpResponse(FileWrapper(open(path, 'rb')), content_type=content_type)
-        resp['Content-Length'] = str(size)
+        #resp['Content-Length'] = str(size)
     resp['Accept-Ranges'] = 'bytes'
     return resp
 
 
-
-
-def get_response(file, path):
+def get_response(file, path, request):
     """Checa extensão do arquivo e retorna HttpRensponse corespondente."""
     # Exemplos:
     # image/gif, image/tiff, application/zip,
@@ -368,7 +362,8 @@ def get_response(file, path):
     elif path[-3:].lower() == "pdf":
         return HttpResponse(file.read(), content_type="application/pdf")
     elif path[-3:].lower() == "mp4":
-        return HttpResponse(file.read(), content_type="video/mp4")
+        return stream_video(request, file.name)
+        # return HttpResponse(file.read(), content_type="video/mp4")
     else:
         return None
 
@@ -394,8 +389,7 @@ def carrega_arquivo(request, local_path, path):
                 return render(request, 'generic.html', context=context)
 
         with open(file_path, 'rb') as file:
-            return stream_video(request, file.name)
-            response = get_response(file, path)
+            response = get_response(file, path, request)
             if not response:
                 mensagem = "Erro ao carregar arquivo (formato não suportado)."
                 context = {
@@ -404,7 +398,7 @@ def carrega_arquivo(request, local_path, path):
                 }
                 return render(request, 'generic.html', context=context)
             response['Content-Disposition'] = 'inline; filename=' +\
-                os.path.basename(file_path)
+               os.path.basename(file_path)
             return response
 
     raise Http404
