@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 17 de Abril de 2021
+{% endcomment %}
+
+{% block head %}
+
+  {% load static %}
+  {% load arquivo_tipo %}
+
+  <script src="{% static 'js/w3.js' %}"></script>
+
+  {% comment %} Para chamar os Tooltips {% endcomment %}
+  <script>{% include "tooltip.js" %}</script>
+
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">Atas do Comitê do PFE</span>
+
+  {% if atas %}
+    <table id="AtasTable">
+      <tr>
+        <th onclick="w3.sortHTML('#AtasTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Data</th>
+        <th class="text-center">Documento</th>
+      </tr>      
+    {% for ata in atas %} 
+      <tr class="item">
+        <td style="text-align:center">
+            {{ata.data}}
+        </td>
+        <td style="text-align:center">
+          <a href="../..{{MEDIA_URL}}{{ata.documento}}" 
+          target="_blank" rel="noopener noreferrer"
+          data-toggle="tooltip" data-html="true" animation="true" 
+          {% if ata.anotacao %}
+            title="anotação: {{ata.anotacao}}"
+          {% endif %}
+          >
+            {{ata.documento|get_tipo}}
+          </a>
+        </td>
+      </tr>
+    {% endfor %}
+    </table>
+  {% else %}
+    <p>Não existem documentos disponíveis.</p>
+  {% endif %}
+  <br>
+
+{% endblock %}

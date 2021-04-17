@@ -51,6 +51,7 @@
         <hr>
         <h5>Área do Professor</h5>
         <a href="{% url 'tabela_documentos' %}"><h5>Tabelas de Documentação dos Projetos Fechados</h5></a>
+        <a href="{% url 'tabela_atas' %}"><h5>Atas do Comitê</h5></a>
     {% endif %}
 
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Professor ou Adm -->

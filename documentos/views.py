@@ -228,87 +228,8 @@ def gerar_certificados(request):
 @permission_required('users.altera_professor', login_url='/')
 def tabela_documentos(request):
     """Exibe tabela com todos os documentos armazenados."""
-    # configuracao = get_object_or_404(Configuracao)
-
     projetos = Projeto.objects.all().order_by("ano", "semestre")
-
-    # documentos = []
-    # for projeto in projetos:
-
-    #     contrato = {}
-
-    #     # Contratos   -   (0, 'contrato com empresa')
-    #     contratos = []
-    #     for doc in Documento.objects.filter(organizacao=projeto.organizacao)\
-    #             .filter(tipo_de_documento=0):
-    #         contratos.append((doc.documento, doc.anotacao, doc.data))
-    #     contrato["contratos"] = contratos
-
-    #     # Contrato alunos  -  (1, 'contrato entre empresa e aluno')
-    #     contratos_alunos = []
-    #     alunos = Aluno.objects.filter(alocacao__projeto=projeto)
-    #     for aluno in alunos:
-    #         documento = Documento.objects.filter(usuario=aluno.user).\
-    #                                       filter(tipo_de_documento=1).last()
-    #         if documento:
-    #             contratos_alunos.append((documento.documento,
-    #                                      aluno.user.first_name + " " +
-    #                                      aluno.user.last_name))
-    #         else:
-    #             contratos_alunos.append(("",
-    #                                      aluno.user.first_name + " " +
-    #                                      aluno.user.last_name))
-    #     contrato["contratos_alunos"] = contratos_alunos
-
-    #     # relatorio_final   -   (3, 'relatório final')
-    #     documento = Documento.objects.filter(projeto=projeto)\
-    #         .filter(tipo_de_documento=3).last()
-    #     if documento:
-    #         contrato["relatorio_final"] = documento.documento
-    #     else:
-    #         contrato["relatorio_final"] = ""
-
-    #     # Autor. de Public. da Empresa (4, 'autorização de publicação empresa')
-    #     documento = Documento.objects.filter(projeto=projeto)\
-    #         .filter(tipo_de_documento=4).last()
-    #     if documento:
-    #         contrato["autorizacao_publicacao_empresa"] = documento.documento
-    #     else:
-    #         contrato["autorizacao_publicacao_empresa"] = ""
-
-    #     documentos.append(contrato)
-
-    #     # Autor. de Public do Estudante (5, 'autorização de publicação aluno')
-    #     autorizacao_publicacao_aluno = []
-    #     alunos = Aluno.objects.filter(alocacao__projeto=projeto)
-    #     for aluno in alunos:
-    #         documento = Documento.objects.filter(usuario=aluno.user).\
-    #                                       filter(tipo_de_documento=5).last()
-    #         if documento:
-    #             autorizacao_publicacao_aluno.\
-    #                 append((documento.documento,
-    #                         aluno.user.first_name+" "+aluno.user.last_name))
-    #         else:
-    #             autorizacao_publicacao_aluno.\
-    #                 append(("",
-    #                         aluno.user.first_name+" "+aluno.user.last_name))
-    #     contrato["autorizacao_publicacao_aluno"] = autorizacao_publicacao_aluno
-
-    #     # Outros   -   (14, 'outros')
-    #     outros = []
-    #     for doc in Documento.objects.filter(organizacao=projeto.organizacao)\
-    #             .filter(tipo_de_documento=14):
-    #         outros.append((doc.documento, doc.anotacao, doc.data))
-    #     contrato["outros"] = outros
-    # mylist = zip(projetos, documentos)
-
-    # Outros documentos
-    # seguros = Documento.objects.filter(tipo_de_documento=15)
-
     context = {
-        # 'configuracao': configuracao,
-        # 'mylist': mylist,
-        # 'seguros': seguros,
         'projetos': projetos,
         'MEDIA_URL': settings.MEDIA_URL,
     }
@@ -320,10 +241,19 @@ def tabela_documentos(request):
 def tabela_seguros(request):
     """Exibe tabela com todos os seguros armazenados."""
     seguros = Documento.objects.filter(tipo_de_documento=15)
-
     context = {
         'seguros': seguros,
         'MEDIA_URL': settings.MEDIA_URL,
     }
-
     return render(request, 'documentos/tabela_seguros.html', context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def tabela_atas(request):
+    """Exibe tabela com todos os seguros armazenados."""
+    atas = Documento.objects.filter(tipo_de_documento=21)
+    context = {
+        'atas': atas,
+        'MEDIA_URL': settings.MEDIA_URL,
+    }
+    return render(request, 'documentos/tabela_atas.html', context)
