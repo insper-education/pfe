@@ -251,7 +251,7 @@ def tabela_seguros(request):
 @permission_required('users.altera_professor', login_url='/')
 def tabela_atas(request):
     """Exibe tabela com todos os seguros armazenados."""
-    atas = Documento.objects.filter(tipo_de_documento=21)
+    atas = Documento.objects.filter(tipo_de_documento=21).order_by("-data")
     context = {
         'atas': atas,
         'MEDIA_URL': settings.MEDIA_URL,

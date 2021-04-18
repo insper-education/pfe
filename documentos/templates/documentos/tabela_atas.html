@@ -23,29 +23,35 @@
 
   {% if atas %}
     <table id="AtasTable">
-      <tr>
-        <th onclick="w3.sortHTML('#AtasTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Data</th>
-        <th class="text-center">Documento</th>
-      </tr>      
-    {% for ata in atas %} 
-      <tr class="item">
-        <td style="text-align:center">
-            {{ata.data}}
-        </td>
-        <td style="text-align:center">
-          <a href="../..{{MEDIA_URL}}{{ata.documento}}" 
-          target="_blank" rel="noopener noreferrer"
-          data-toggle="tooltip" data-html="true" animation="true" 
-          {% if ata.anotacao %}
-            title="anotação: {{ata.anotacao}}"
-          {% endif %}
-          >
-            {{ata.documento|get_tipo}}
-          </a>
-        </td>
-      </tr>
-    {% endfor %}
+      <thead>
+        <tr>
+          <th onclick="w3.sortHTML('#AtasTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Data</th>
+          <th class="text-center">Documento</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% regroup atas by data as grouped %}
+        {% for group in grouped %}
+          {% for obj in group.list %}
+            <tr class="item">
+              {% ifchanged %}<td rowspan="{{ group.list|length }}">{{ obj.data }}</td>{% endifchanged %}
+              <td style="text-align:center">
+                <a href="../..{{MEDIA_URL}}{{obj.documento}}" 
+                  target="_blank" rel="noopener noreferrer"
+                  data-toggle="tooltip" data-html="true" animation="true" 
+                  {% if obj.anotacao %}
+                    title="anotação: {{obj.anotacao}}"
+                  {% endif %}
+                >
+                  {{obj.documento|get_tipo}}
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        {% endfor %}
+      </tbody>
     </table>
+
   {% else %}
     <p>Não existem documentos disponíveis.</p>
   {% endif %}
