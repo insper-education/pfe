@@ -496,7 +496,7 @@ def banca_avaliar(request, slug):
                         message += " background-color: #F4F4F4;'>"
                     else:
                         message += "<td style='border: 1px solid black;'>"
-                    message += "{0}".format(julg.objetivo.rubrica_I)
+                    message += "{0}".format(julg.objetivo.rubrica_intermediaria_I)
                     message += "</td>"
 
                     if (not julg.na) and converte_letra(julg.nota) == "D":
@@ -504,7 +504,7 @@ def banca_avaliar(request, slug):
                         message += " background-color: #F4F4F4;'>"
                     else:
                         message += "<td style='border: 1px solid black;'>"
-                    message += "{0}".format(julg.objetivo.rubrica_D)
+                    message += "{0}".format(julg.objetivo.rubrica_intermediaria_D)
                     message += "</td>"
 
                     if (not julg.na) and (converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+"):
@@ -512,7 +512,7 @@ def banca_avaliar(request, slug):
                         message += " background-color: #F4F4F4;'>"
                     else:
                         message += "<td style='border: 1px solid black;'>"
-                    message += "{0}".format(julg.objetivo.rubrica_C)
+                    message += "{0}".format(julg.objetivo.rubrica_intermediaria_C)
                     message += "</td>"
 
                     if (not julg.na) and (converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+"):
@@ -520,7 +520,7 @@ def banca_avaliar(request, slug):
                         message += " background-color: #F4F4F4;'>"
                     else:
                         message += "<td style='border: 1px solid black;'>"
-                    message += "{0}".format(julg.objetivo.rubrica_B)
+                    message += "{0}".format(julg.objetivo.rubrica_intermediaria_B)
                     message += "</td>"
 
                     if (not julg.na) and (converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+"):
@@ -528,7 +528,7 @@ def banca_avaliar(request, slug):
                         message += " background-color: #F4F4F4;'>"
                     else:
                         message += "<td style='border: 1px solid black;'>"
-                    message += "{0}".format(julg.objetivo.rubrica_A)
+                    message += "{0}".format(julg.objetivo.rubrica_intermediaria_A)
                     message += "</td>"
 
                     message += "</tr>"
@@ -568,11 +568,11 @@ def banca_avaliar(request, slug):
         # Intermediária e Final
         if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
             pessoas = professores_membros_bancas()
-            orientacoes += "O professor(a) orientador(a) é responsável por conduzir a banca. Os membros do grupo terão <b>40 minutos para a apresentação</b>. Os membros da banca terão depois <b>50 minutos para arguição</b> (que serão divididos pelos membros convidados), podendo tirar qualquer dúvida a respeito do projeto e fazerem seus comentários. Caso haja muitas interferências da banca durante a apresentação do grupo, poderá se estender o tempo de apresentação. A dinâmica de apresentação é livre, contudo, <b>todos os membros do grupo devem estar prontos para responder qualquer tipo de pergunta</b> sobre o projeto. Um membro da banca pode fazer uma pergunta direcionada para um estudante específico do grupo se desejar."
+            orientacoes += "Os orientadores são responsáveis por conduzir a banca. Os membros do grupo terão <b>40 minutos para a apresentação</b>. Os membros da banca terão depois <b>50 minutos para arguição</b> (que serão divididos pelos membros convidados), podendo tirar qualquer dúvida a respeito do projeto e fazerem seus comentários. Caso haja muitas interferências da banca durante a apresentação do grupo, poderá se estender o tempo de apresentação. A dinâmica de apresentação é livre, contudo, <b>todos os membros do grupo devem estar prontos para responder qualquer tipo de pergunta</b> sobre o projeto, assim um membro da banca pode fazer uma pergunta direcionada para um estudante específico do grupo se desejar. Caso o grupo demore mais que os 40 minutos a banca poderá definir uma punição em um objetivo de aprendizado, idealmente no objetivo de Comunicação."
             orientacoes += "<br><br>"
-            orientacoes += "Como ordem recomendada para a arguição da banca, se deve convidar: professores convidados, professores coorientadores, professor(a) orientador(a) do projeto e por fim demais pessoas assistindo à apresentação. A banca poderá perguntar tanto sobre a apresentação, como o relatório entregue, se espera coletar informações tanto da apresentação, como do relatório, permitindo uma clara ponderação nas rubricas dos objetivos de aprendizado do Projeto Final de Engenharia."
+            orientacoes += "Como ordem recomendada para a arguição da banca, se deve convidar: professores convidados, professores coorientadores, orientador(a) do projeto e por fim demais pessoas assistindo à apresentação. A banca poderá perguntar tanto sobre a apresentação, como o relatório entregue, permitindo uma clara ponderação nas rubricas dos objetivos de aprendizado."
             orientacoes += "<br><br>"
-            orientacoes += "As bancas do Projeto Final de Engenharia servem como mais um evidência de aprendizado, assim, além da percepção dos membros da banca em relação ao nível alcançado nos objetivos de aprendizado pelos membros do grupo, serve também como registro da evolução do projeto. Dessa forma, ao final, a banca terá mais <b>15 minutos para ponderar</b>, nesse momento se recomenda dispensar os estudantes e demais convidados externos. Recomendamos 5 minutos para os membros da banca relerem os objetivos de aprendizagem e rubricas, fazerem qualquer anotação e depois 10 minutos para uma discussão final. Cada membro da banca poderá colocar seu veredito sobre grupo, usando as rubricas a seguir. O professor(a) orientador(a) irá publicar (no Blackboard), ao final, a média dos conceitos anotados."
+            orientacoes += "As bancas do Projeto Final de Engenharia servem como mais um evidência de aprendizado, assim, além da percepção dos membros da banca em relação ao nível alcançado nos objetivos de aprendizado pelos membros do grupo, serve também como registro da evolução do projeto. Dessa forma, ao final, a banca terá mais <b>15 minutos para ponderar</b>, nesse momento se pede para dispensar os estudantes e demais convidados externos. Recomendamos 5 minutos para os membros da banca relerem os objetivos de aprendizagem e rubricas, fazerem qualquer anotação e depois 10 minutos para uma discussão final. Cada membro da banca poderá colocar seu veredito sobre grupo, usando as rubricas a seguir. O(a) orientador(a) irá publicar (no Blackboard) posteriormente os conceitos."
             orientacoes += "<br><br>"
             orientacoes += "No Projeto Final de Engenharia, a maioria dos projetos está sob sigilo, através de contratos realizados (quando pedido ou necessário) entre a Organização Parceira e o Insper, se tem os professores automaticamente responsáveis por garantir o sigilo das informações. Assim <b>pessoas externas só podem participar das bancas com prévia autorização</b>, isso inclui outros estudantes que não sejam do grupo, familiares ou amigos."
             orientacoes += "<br>"

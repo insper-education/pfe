@@ -953,15 +953,15 @@ class ObjetivosDeAprendizagem(models.Model):
     objetivo = models.TextField(max_length=256, null=True, blank=True,
                                 help_text='Descrição do objetivo de aprendizagem')
 
-    rubrica_I = models.TextField(max_length=1024, null=True, blank=True,
+    rubrica_intermediaria_I = models.TextField(max_length=1024, null=True, blank=True,
                                  help_text='Rubrica do conceito I')
-    rubrica_D = models.TextField(max_length=1024, null=True, blank=True,
+    rubrica_intermediaria_D = models.TextField(max_length=1024, null=True, blank=True,
                                  help_text='Rubrica do conceito D')
-    rubrica_C = models.TextField(max_length=1024, null=True, blank=True,
+    rubrica_intermediaria_C = models.TextField(max_length=1024, null=True, blank=True,
                                  help_text='Rubrica do conceito C')
-    rubrica_B = models.TextField(max_length=1024, null=True, blank=True,
+    rubrica_intermediaria_B = models.TextField(max_length=1024, null=True, blank=True,
                                  help_text='Rubrica do conceito B')
-    rubrica_A = models.TextField(max_length=1024, null=True, blank=True,
+    rubrica_intermediaria_A = models.TextField(max_length=1024, null=True, blank=True,
                                  help_text='Rubrica do conceito A')
 
     avaliacao_aluno = models.BooleanField("Avaliação do Aluno", default=False,

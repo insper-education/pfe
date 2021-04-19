@@ -17,28 +17,28 @@ def get_rubrica(objetivos, objetivo):
 def get_texto_conceito(objetivo, conceito):
     """Permite buscar o texto de uma rubrica."""
     if conceito == "A " or conceito == "A+":
-        return objetivo.rubrica_A
+        return objetivo.rubrica_intermediaria_A
     if conceito == "B " or conceito == "B+":
-        return objetivo.rubrica_B
+        return objetivo.rubrica_intermediaria_B
     if conceito == "C " or conceito == "C+":
-        return objetivo.rubrica_C
+        return objetivo.rubrica_intermediaria_C
     if conceito == "D ":
-        return objetivo.rubrica_D
+        return objetivo.rubrica_intermediaria_D
     if conceito == "I ":
-        return objetivo.rubrica_I
+        return objetivo.rubrica_intermediaria_I
     return "Erro"
 
 @register.filter
 def get_texto_nota(objetivo, nota):
     """Permite buscar o texto de uma rubrica."""
     if nota >= 9:
-        return objetivo.rubrica_A
+        return objetivo.rubrica_intermediaria_A
     if nota >= 7:
-        return objetivo.rubrica_B
+        return objetivo.rubrica_intermediaria_B
     if nota >= 5:
-        return objetivo.rubrica_C
+        return objetivo.rubrica_intermediaria_C
     if nota >= 4:
-        return objetivo.rubrica_D
+        return objetivo.rubrica_intermediaria_D
     if nota >= 0:
-        return objetivo.rubrica_I
+        return objetivo.rubrica_intermediaria_I
     return "Erro"
