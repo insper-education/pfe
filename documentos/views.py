@@ -58,15 +58,19 @@ def index_documentos(request):
     # termo de parceria
     termo_parceria = Documento.objects.filter(tipo_de_documento=14).last()
 
+    # manual para apresentação na banca
+    manual_apresentacao = Documento.objects.filter(tipo_de_documento=22).last()
+
     context = {
-        'MEDIA_URL': settings.MEDIA_URL,
-        'regulamento': regulamento,
-        'plano_de_aprendizagem': plano_de_aprend,
-        'manual_aluno': manual_aluno,
-        'manual_planejamento': manual_planejamento,
-        'manual_relatorio': manual_relatorio,
-        'termo_parceria': termo_parceria,
-        'template_relatorio': template_relatorio,
+        "MEDIA_URL": settings.MEDIA_URL,
+        "regulamento": regulamento,
+        "plano_de_aprendizagem": plano_de_aprend,
+        "manual_aluno": manual_aluno,
+        "manual_planejamento": manual_planejamento,
+        "manual_relatorio": manual_relatorio,
+        "termo_parceria": termo_parceria,
+        "template_relatorio": template_relatorio,
+        "manual_apresentacao": manual_apresentacao,
     }
 
     return render(request, 'documentos/index_documentos.html', context)

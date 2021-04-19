@@ -734,6 +734,7 @@ class Documento(models.Model):
         (19, 'Slides da Apresentação Final'),
         (20, 'Banner'),
         (21, "Ata do Comitê do PFE"),
+        (22, "Manual de Apresentação"),
         (255, 'Outros'),
     )
     tipo_de_documento = models.PositiveSmallIntegerField(choices=TIPO_DE_DOCUMENTO, default=0)

@@ -35,7 +35,10 @@
             <a href="../..{{MEDIA_URL}}{{manual_relatorio.documento}}"><h5>Manual para Confecção de Relatórios</h5></a>
         {% endif %}
         {% if template_relatorio %}
-            <a href="../..{{MEDIA_URL}}{{template_relatorio.documento}}"><h5>Template para Relatórios</h5></a>
+            <a href="../..{{MEDIA_URL}}{{template_relatorio.documento}}"><h5 style="margin-left: 20px;">Template para Relatórios</h5></a>
+        {% endif %}
+        {% if manual_apresentacao %}
+            <a href="../..{{MEDIA_URL}}{{manual_apresentacao.documento}}"><h5>Manual de Apresentação para Banca</h5></a>
         {% endif %}
     {% endif %}
 
