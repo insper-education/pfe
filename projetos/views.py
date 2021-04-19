@@ -1232,10 +1232,10 @@ def evolucao_objetivos(request):
 
 def cap_name(name):
     """Capitaliza palavras."""
-    preposicoes = ['da', 'de', 'di', 'do', 'du', 'das', 'dos']
+    excecoes = ['e', 'da', 'de', 'di', 'do', 'du', 'das', 'dos']
     items = []
     for item in name.split():
-        if item.lower() in preposicoes:
+        if item.lower() in excecoes:
             items.append(item.lower())
         else:
             items.append(item.capitalize())

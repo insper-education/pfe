@@ -24,7 +24,7 @@
 
     {% if user.tipo_de_usuario == 1 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Estudante ou Professor ou Adm -->
         <hr>
-        <h5>Área do Aluno</h5> <!-- Aluno -->
+        <h5>Área dos Estudantes</h5> <!-- Estudante -->
         {% if manual_aluno %}
             <a href="../..{{MEDIA_URL}}{{manual_aluno.documento}}"><h5>Manual para os Estudantes</h5></a>
         {% endif %}
