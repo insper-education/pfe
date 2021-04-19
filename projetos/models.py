@@ -954,15 +954,25 @@ class ObjetivosDeAprendizagem(models.Model):
                                 help_text='Descrição do objetivo de aprendizagem')
 
     rubrica_intermediaria_I = models.TextField(max_length=1024, null=True, blank=True,
-                                 help_text='Rubrica do conceito I')
+                                 help_text='Rubrica intermediária do conceito I')
+    rubrica_final_I = models.TextField(max_length=1024, null=True, blank=True,
+                                 help_text='Rubrica final do conceito I')
     rubrica_intermediaria_D = models.TextField(max_length=1024, null=True, blank=True,
-                                 help_text='Rubrica do conceito D')
+                                 help_text='Rubrica intermediária do conceito D')
+    rubrica_final_D = models.TextField(max_length=1024, null=True, blank=True,
+                                 help_text='Rubrica final do conceito D')
     rubrica_intermediaria_C = models.TextField(max_length=1024, null=True, blank=True,
-                                 help_text='Rubrica do conceito C')
+                                 help_text='Rubrica intermediária do conceito C')
+    rubrica_final_C = models.TextField(max_length=1024, null=True, blank=True,
+                                 help_text='Rubrica final do conceito C')    
     rubrica_intermediaria_B = models.TextField(max_length=1024, null=True, blank=True,
-                                 help_text='Rubrica do conceito B')
+                                 help_text='Rubrica intermediária do conceito B')
+    rubrica_final_B = models.TextField(max_length=1024, null=True, blank=True,
+                                 help_text='Rubrica final do conceito B')
     rubrica_intermediaria_A = models.TextField(max_length=1024, null=True, blank=True,
-                                 help_text='Rubrica do conceito A')
+                                 help_text='Rubrica intermediária do conceito A')
+    rubrica_final_A = models.TextField(max_length=1024, null=True, blank=True,
+                                 help_text='Rubrica final do conceito A')
 
     avaliacao_aluno = models.BooleanField("Avaliação do Aluno", default=False,
                                           help_text='Avaliação do Aluno (AA)')

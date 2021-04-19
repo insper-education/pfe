@@ -496,7 +496,10 @@ def banca_avaliar(request, slug):
                         message += " background-color: #F4F4F4;'>"
                     else:
                         message += "<td style='border: 1px solid black;'>"
-                    message += "{0}".format(julg.objetivo.rubrica_intermediaria_I)
+                    if banca.tipo_de_banca == 1:
+                        message += "{0}".format(julg.objetivo.rubrica_intermediaria_I)
+                    else:
+                        message += "{0}".format(julg.objetivo.rubrica_final_I)
                     message += "</td>"
 
                     if (not julg.na) and converte_letra(julg.nota) == "D":
@@ -504,7 +507,10 @@ def banca_avaliar(request, slug):
                         message += " background-color: #F4F4F4;'>"
                     else:
                         message += "<td style='border: 1px solid black;'>"
-                    message += "{0}".format(julg.objetivo.rubrica_intermediaria_D)
+                    if banca.tipo_de_banca == 1:
+                        message += "{0}".format(julg.objetivo.rubrica_intermediaria_D)
+                    else:
+                        message += "{0}".format(julg.objetivo.rubrica_final_D)
                     message += "</td>"
 
                     if (not julg.na) and (converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+"):
@@ -512,7 +518,10 @@ def banca_avaliar(request, slug):
                         message += " background-color: #F4F4F4;'>"
                     else:
                         message += "<td style='border: 1px solid black;'>"
-                    message += "{0}".format(julg.objetivo.rubrica_intermediaria_C)
+                    if banca.tipo_de_banca == 1:
+                        message += "{0}".format(julg.objetivo.rubrica_intermediaria_C)
+                    else:
+                        message += "{0}".format(julg.objetivo.rubrica_final_C)
                     message += "</td>"
 
                     if (not julg.na) and (converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+"):
@@ -520,7 +529,10 @@ def banca_avaliar(request, slug):
                         message += " background-color: #F4F4F4;'>"
                     else:
                         message += "<td style='border: 1px solid black;'>"
-                    message += "{0}".format(julg.objetivo.rubrica_intermediaria_B)
+                    if banca.tipo_de_banca == 1:
+                        message += "{0}".format(julg.objetivo.rubrica_intermediaria_B)
+                    else:
+                        message += "{0}".format(julg.objetivo.rubrica_final_B)
                     message += "</td>"
 
                     if (not julg.na) and (converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+"):
@@ -528,7 +540,10 @@ def banca_avaliar(request, slug):
                         message += " background-color: #F4F4F4;'>"
                     else:
                         message += "<td style='border: 1px solid black;'>"
-                    message += "{0}".format(julg.objetivo.rubrica_intermediaria_A)
+                    if banca.tipo_de_banca == 1:
+                        message += "{0}".format(julg.objetivo.rubrica_intermediaria_A)
+                    else:
+                        message += "{0}".format(julg.objetivo.rubrica_final_A)
                     message += "</td>"
 
                     message += "</tr>"

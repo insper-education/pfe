@@ -118,12 +118,21 @@
               </th>
             </tr>
             <tr>
-              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA">caso prefira não avaliar este objetivo, selecione esta coluna.</label></td>
-              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_intermediaria_I}}</label></td>
-              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_intermediaria_D}}</label></td>
-              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_intermediaria_C}}</label></td>
-              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_intermediaria_B}}</label></td>
-              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_intermediaria_A}}</label></td>
+              {% if banca.tipo_de_banca is not None and banca.tipo_de_banca == 1 %} {% comment %} Banca Intermediária {% endcomment %}
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA">caso prefira não avaliar este objetivo, selecione esta coluna.</label></td>
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_intermediaria_I}}</label></td>
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_intermediaria_D}}</label></td>
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_intermediaria_C}}</label></td>
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_intermediaria_B}}</label></td>
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_intermediaria_A}}</label></td>
+              {% else %}
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA">caso prefira não avaliar este objetivo, selecione esta coluna.</label></td>
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_final_I}}</label></td>
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_final_D}}</label></td>
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_final_C}}</label></td>
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_final_B}}</label></td>
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_final_A}}</label></td>
+              {% endif %}
             </tr>
           </table><br>
         {% endfor %}

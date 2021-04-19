@@ -42,3 +42,33 @@ def get_texto_nota(objetivo, nota):
     if nota >= 0:
         return objetivo.rubrica_intermediaria_I
     return "Erro"
+
+@register.filter
+def get_texto_intermediaria_nota(objetivo, nota):
+    """Permite buscar o texto de uma rubrica."""
+    if nota >= 9:
+        return objetivo.rubrica_intermediaria_A
+    if nota >= 7:
+        return objetivo.rubrica_intermediaria_B
+    if nota >= 5:
+        return objetivo.rubrica_intermediaria_C
+    if nota >= 4:
+        return objetivo.rubrica_intermediaria_D
+    if nota >= 0:
+        return objetivo.rubrica_intermediaria_I
+    return "Erro"
+
+@register.filter
+def get_texto_final_nota(objetivo, nota):
+    """Permite buscar o texto de uma rubrica."""
+    if nota >= 9:
+        return objetivo.rubrica_final_A
+    if nota >= 7:
+        return objetivo.rubrica_final_B
+    if nota >= 5:
+        return objetivo.rubrica_final_C
+    if nota >= 4:
+        return objetivo.rubrica_final_D
+    if nota >= 0:
+        return objetivo.rubrica_final_I
+    return "Erro"

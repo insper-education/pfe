@@ -106,7 +106,7 @@
         </a>
       </span>
       <small>
-        &nbsp;&nbsp;&nbsp;&nbsp;Título Provisório: 
+        <br>&nbsp;&nbsp;&nbsp;&nbsp;Título Provisório: 
         <a href="{% url 'projeto_completo' projeto.id %}">
           {{projeto.titulo}}
         </a>
@@ -173,7 +173,7 @@
               {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo != "observacoes" %}
 
                 <li>{{objetivo.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
-                {{objetivos|get_rubrica:objetivo.id|get_texto_nota:conceito.nota}}">
+                {{objetivos|get_rubrica:objetivo.id|get_texto_intermediaria_nota:conceito.nota}}">
                 <script>document.write(conceito({{conceito.nota}}));</script></span></li>
                 
                 <script>
@@ -236,7 +236,7 @@
               {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo != "observacoes" %}
 
                 <li>{{objetivo.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
-                {{objetivos|get_rubrica:objetivo.id|get_texto_nota:conceito.nota}}">
+                {{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}">
                 <script>document.write(conceito({{conceito.nota}}));</script></span></li>
                 
                 <script>
@@ -300,7 +300,7 @@
               {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo != "observacoes" %}
 
                 <li>{{objetivo.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
-                {{objetivos|get_rubrica:objetivo.id|get_texto_nota:conceito.nota}}">
+                {{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}">
                 <script>document.write(conceito({{conceito.nota}}));</script></span></li>
                 
                 <script>
