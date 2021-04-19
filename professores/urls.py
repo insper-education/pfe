@@ -70,6 +70,10 @@ urlpatterns = [
          views.dinamicas_lista,
          name='dinamicas_lista'),
 
+    path('objetivos_rubricas/',
+         views.objetivos_rubricas,
+         name='objetivos_rubricas'),
+     
     path('orientadores_tabela/',
          views.orientadores_tabela,
          name='orientadores_tabela'),

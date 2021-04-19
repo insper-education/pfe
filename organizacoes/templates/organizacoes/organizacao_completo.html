@@ -207,7 +207,7 @@
           data-url="{% url 'anotacao' organizacao.id %}"
           data-anotacao="{{anotacao.id}}"
         >
-          {{anotacao.autor.get_full_name}} [<spam id='data{{anotacao.id}}'>{{anotacao.momento.date|date:"d/m/Y"}}</spam>] : <spam id='anotacao{{anotacao.id}}'>{{anotacao.texto}}</spam>
+          {{anotacao.autor.get_full_name}} [<span id='data{{anotacao.id}}'>{{anotacao.momento.date|date:"d/m/Y"}}</span>] : <span id='anotacao{{anotacao.id}}'>{{anotacao.texto}}</span>
         </a>
       </li>
     {% endfor %}

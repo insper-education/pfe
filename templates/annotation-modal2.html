@@ -77,7 +77,7 @@
               $("#anotacao"+anotacao).text(texto);
               $("#data"+anotacao).text(response.data);
             } else {
-              $("#lista_anotacoes").prepend("<li><a class='open-annotation' href='"+url+"' data-url='"+url+"' data-anotacao='"+response.anotacao_id+"'>"+response.autor+" [<spam id='data"+response.anotacao_id+"'>"+response.data+"</spam>] : <spam id='anotacao"+response.anotacao_id+"'>"+texto+'</spam></a></li>');
+              $("#lista_anotacoes").prepend("<li><a class='open-annotation' href='"+url+"' data-url='"+url+"' data-anotacao='"+response.anotacao_id+"'>"+response.autor+" [<span id='data"+response.anotacao_id+"'>"+response.data+"</span>] : <span id='anotacao"+response.anotacao_id+"'>"+texto+'</span></a></li>');
 
             }
             

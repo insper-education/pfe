@@ -40,10 +40,6 @@ from .support import recupera_coorientadores_por_semestre
 def index_professor(request):
     """Mostra página principal do usuário professor."""
     user = get_object_or_404(PFEUser, pk=request.user.pk)
-    # try:
-    #     user = PFEUser.objects.get(pk=request.user.pk)
-    # except PFEUser.DoesNotExist:
-    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     if user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
         mensagem = "Você não está cadastrado como professor!"
@@ -1058,3 +1054,26 @@ def todos_professores(request):
         }
 
     return render(request, 'professores/todos_professores.html', context)
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def objetivos_rubricas(request):
+    """Exibe os objetivos e rubricas."""
+    
+    objetivos = ObjetivosDeAprendizagem.objects.all().order_by("id")
+    
+    #     conceitos = [None]*5
+    # for i in range(5):
+    #     try:
+    #         tmp1 = int(request.GET.get('objetivo'+str(i), '0'))
+    #     except ValueError:
+    #         return HttpResponseNotFound('<h1>Erro em objetivo!</h1>')
+    #     tmp2 = request.GET.get('conceito'+str(i), '')
+    #     conceitos[i] = (tmp1, tmp2)
+
+    context = {
+        'objetivos': objetivos,
+        # "conceitos": conceitos,
+    }
+
+    return render(request, 'professores/objetivos_rubricas.html', context)

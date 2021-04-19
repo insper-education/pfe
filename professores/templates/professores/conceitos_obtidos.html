@@ -151,15 +151,16 @@
   </ul>
   
   {% if avaliadores_inter %}
+    <h5>
     {% for banca in projeto.banca_set.all %}
       {% if banca.tipo_de_banca == 1 %}
-        <h5>
           <a href="{% url 'banca_ver' banca.id %}">
-            Banca Intermediária
+            Banca Intermediária ({{banca.startDate|date:"d/m/y"}})
           </a>
-        </h5>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       {% endif %}
     {% endfor %}
+    </h5>
     <table>    
       {% for avaliador, objs in avaliadores_inter.items %}
           <tr><td>
@@ -214,15 +215,16 @@
   <br>
 
   {% if avaliadores_final %}
+    <h5>
     {% for banca in projeto.banca_set.all %}
       {% if banca.tipo_de_banca == 0 %}
-        <h5>
           <a href="{% url 'banca_ver' banca.id %}">
-            Banca Final
+            Banca Final ({{banca.startDate|date:"d/m/y"}})
           </a>
-        </h5>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       {% endif %}
     {% endfor %}
+    </h5>
     <table>    
       {% for avaliador, objs in avaliadores_final.items %}
           <tr><td>
@@ -278,15 +280,16 @@
   <br>
 
   {% if avaliadores_falconi %}
+    <h5>
     {% for banca in projeto.banca_set.all %}
-      {% if banca.tipo_de_banca == 2 %}
-        <h5>
+      {% if banca.tipo_de_banca == 2 %}    
           <a href="{% url 'banca_ver' banca.id %}">
-            Banca Falconi
+            Banca Falconi ({{banca.startDate|date:"d/m/y"}})
           </a>
-        </h5>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       {% endif %}
     {% endfor %}
+    </h5>
     <table>    
       {% for avaliador, objs in avaliadores_falconi.items %}
           <tr><td>
