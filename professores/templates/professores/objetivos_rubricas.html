@@ -21,9 +21,6 @@
     <b>{{objetivo.titulo}}</b>: {{objetivo.objetivo}}
     <table style="width:100%">
       <tr>
-        <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA" style="width:10%;">
-            <label for="objetivo.{{objetivo.id}}.NA">N/A</label>
-        </th>
         <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" style="width:18%">
           <label for="objetivo.{{objetivo.id}}.I ">Insatisfatório (I)</label>
         </th>
@@ -41,15 +38,12 @@
         </th>
       </tr>
       <tr>
-          <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA">caso prefira não avaliar este objetivo, selecione esta coluna.</label></td>
           <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_intermediaria_I}}</label></td>
           <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_intermediaria_D}}</label></td>
           <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_intermediaria_C}}</label></td>
           <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_intermediaria_B}}</label></td>
           <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_intermediaria_A}}</label></td>
-      
       </tr>
-      
     </table><br>
   {% endfor %}
 
@@ -61,9 +55,6 @@
     <b>{{objetivo.titulo}}</b>: {{objetivo.objetivo}}
     <table style="width:100%">
       <tr>
-        <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA" style="width:10%;">
-            <label for="objetivo.{{objetivo.id}}.NA">N/A</label>
-        </th>
         <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" style="width:18%">
           <label for="objetivo.{{objetivo.id}}.I ">Insatisfatório (I)</label>
         </th>
@@ -81,7 +72,6 @@
         </th>
       </tr>
       <tr>
-          <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA">caso prefira não avaliar este objetivo, selecione esta coluna.</label></td>
           <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_final_I}}</label></td>
           <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_final_D}}</label></td>
           <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_final_C}}</label></td>
