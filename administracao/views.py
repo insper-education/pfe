@@ -395,7 +395,10 @@ def registro_usuario(request, user=None):
         usuario.user_permissions.add(permission)
         usuario.save()
 
-    return ("Usuário inserido na base de dados.", 200)
+    if user:
+        return ("Usuário atualizado na base de dados.", 200)
+    else:
+        return ("Usuário inserido na base de dados.", 200)
 
 @login_required
 @transaction.atomic
