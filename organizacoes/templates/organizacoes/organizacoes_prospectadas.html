@@ -170,6 +170,9 @@
               {% else %}
                 {% comment %} {{contato.texto}} {% endcomment %}
                   <div style="float:left;width: 95%;">
+                    <span>
+                      {{contato.autor.first_name}}:
+                    </span>
                     <a
                       id='organizacao{{organizacao.id}}'
                       data-organizacao='{{organizacao.id}}'
@@ -208,7 +211,6 @@
                     {{organizacao.area_mecanica|yesno:"true,false"}} ]
                 );
               </script>
-
             {% endif %}
           {% endif %}
         {% endfor %}
