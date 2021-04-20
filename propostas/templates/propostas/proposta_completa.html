@@ -79,7 +79,7 @@
   <h4>Aluno(s) Aplicando para a Proposta</h4>
 
   {% for estudante in sem_opcao %}
-    <a href="{% url 'aluno_detail' estudante.id %}"
+    <a href="{% url 'estudante_detail' estudante.id %}"
       class="dark-green-bold">
         {{estudante.user.get_full_name}}
         [{{ estudante.get_curso_display }}]
@@ -93,7 +93,7 @@
 
   {% for opcao in proposta.opcao_set.all %}
     {% if proposta.ano == opcao.aluno.anoPFE and proposta.semestre == opcao.aluno.semestrePFE %}
-    <a href="{% url 'aluno_detail' opcao.aluno.id %}"
+    <a href="{% url 'estudante_detail' opcao.aluno.id %}"
        class="
        {% if opcao.aluno in estudantes %}
         {% if opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}
@@ -115,7 +115,7 @@
   </p>
   {% for opcao in proposta.opcao_set.all %}
     {% if proposta.ano != opcao.aluno.anoPFE or proposta.semestre != opcao.aluno.semestrePFE %}
-    <a href="{% url 'aluno_detail' opcao.aluno.id %}" class="{% if opcao.aluno in estudantes %}red-bold{% else %}red-normal{% endif%}">
+    <a href="{% url 'estudante_detail' opcao.aluno.id %}" class="{% if opcao.aluno in estudantes %}red-bold{% else %}red-normal{% endif%}">
         {{opcao.aluno.user.get_full_name}}
         [{{ opcao.aluno.get_curso_display }}]
         &nbsp;=>&nbsp;opção #{{opcao.prioridade}}

@@ -46,14 +46,12 @@
                   Projeto
                 </a>
               </th>
-              <th scope="col" class="text-center">Média</th>
-              <th scope="col" class="text-center">Notas</th>
           </tr>
           </thead>
           {% for aluno in alunos_list %} 
           <tr class="item">
             <th scope="row" data-order="{{aluno.user.get_full_name}}">
-              <a href="{% url 'aluno_detail' aluno.id %}" 
+              <a href="{% url 'estudante_detail' aluno.id %}" 
                   data-toggle="tooltip" data-html="true" animation="true" title="
                   {% for opcao in aluno.opcao_set.all %}
                     <b>#{{ opcao.prioridade }} :</b>
@@ -86,16 +84,18 @@
             {% else %}
               <td>Indefinido</td>
             {% endif %}
-            <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
+            {% comment %} <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}"> {% endcomment %}
+            <td>
               {% if aluno.alocacao_set.all %}
                 {% for alocacao in aluno.alocacao_set.all %}
-                  {% if alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
+                  {% comment %} {% if alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %} {% endcomment %}
                     <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
                       {% if alocacao.projeto.avancado %}<u>{% endif %}
-                      {{alocacao.projeto.ano}}.{{alocacao.projeto.semestre}}<br>
+                      {{alocacao.projeto.ano}}.{{alocacao.projeto.semestre}}
                       {% if alocacao.projeto.avancado %}</u>{% endif %}
+                      <br>
                     </a>
-                  {% endif %}
+                  {% comment %} {% endif %} {% endcomment %}
                 {% endfor %}
               {% else %}
                 {% if aluno.anoPFE and aluno.semestrePFE %}
@@ -113,32 +113,17 @@
                       {{alocacao.projeto.get_titulo}}
                     </a>
                     <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
-                      ({{alocacao.projeto.organizacao}})<br>
+                      ({{alocacao.projeto.organizacao}})
                     </a>
                     {% if alocacao.projeto.avancado %}
                       <span style="color:red">
-                        (PFE Avançado)
+                        [PFE Avançado]
                       </span>
                     {% endif %}
+                    <br>
                   {% endif %}
                 {% endfor %}
               {% endif %}
-            </td>
-            <td> <!-- Média -->
-              {% with media=aluno.get_medias|dict_key:ano_semestre %}
-                {% if media.pesos != 1 %}
-                  <a style="color:red" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100% ({% widthratio media.pesos 1 100 %}%)">
-                {% endif %}    
-                  {{media.media|floatformat:1}}
-                {% if media.pesos != 1 %}
-                  </a>
-                {% endif %}
-              {% endwith %}
-            </td>
-            <td>
-              {% for aval, nota, peso in aluno.get_notas|dict_key:ano_semestre %} <!-- Notas -->
-                  <span style="background-color:#eef;">{{aval}}({% widthratio peso 1 100 %}%)={{nota|floatformat:1}}</span>
-              {% endfor %}
             </td>
           </tr>
           {% endfor %}

@@ -41,7 +41,7 @@
         {% for estudante in estudantes %} 
         <tr class="item">
           <td>
-            <a href="{% url 'aluno_detail' estudante.id %}">
+            <a href="{% url 'estudante_detail' estudante.id %}">
               {{estudante.user.get_full_name}}
             </a>
           </td>

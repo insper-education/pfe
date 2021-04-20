@@ -129,7 +129,7 @@
         <p class="estudantes" style="margin-left:1em;"><b>Estudantes:</b></p>
         <ol class="estudantes" style="margin-bottom:5px;">
         {% for aluno,prioridade in prioridades %}
-          <li><a class="imprimir" href="{% url 'aluno_detail' aluno.id %}"
+          <li><a class="imprimir" href="{% url 'estudante_detail' aluno.id %}"
               data-toggle="tooltip" data-html="true" animation="true" title="
               {% if prioridade == 0 %}
                 prioridade não definida

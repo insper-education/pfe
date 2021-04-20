@@ -40,7 +40,7 @@ def user_detail(request, primarykey):
     #     return HttpResponse("Usuário não encontrado.", status=401)
 
     if user.tipo_de_usuario == 1:  # aluno
-        return redirect('aluno_detail', user.aluno.id)
+        return redirect('estudante_detail', user.aluno.id)
 
     elif user.tipo_de_usuario == 2:  # professor
         return redirect('professor_detail', user.professor.id)
@@ -125,13 +125,9 @@ class Usuario(generic.DetailView):
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
-def alunos_lista(request):
+def estudantes_lista(request):
     """Gera lista com todos os alunos já registrados."""
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     if request.is_ajax():
         if 'edicao' in request.POST:
@@ -278,12 +274,60 @@ def alunos_lista(request):
                 'edicoes': edicoes,
             }
 
-    return render(request, 'users/alunos_lista.html', context=context)
+    return render(request, 'users/estudantes_lista.html', context=context)
 
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
-def alunos_inscritos(request):
+def estudantes_notas(request):
+    """Gera lista com todos os alunos já registrados."""
+    configuracao = get_object_or_404(Configuracao)
+
+    if request.is_ajax():
+        if 'edicao' in request.POST:
+
+            anosemestre = request.POST['edicao']
+            ano = int(anosemestre.split(".")[0])
+            semestre = int(anosemestre.split(".")[1])
+
+            # Conta soh alunos
+            alunos_list = Aluno.objects\
+                .filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])\
+                .order_by(Lower("user__first_name"), Lower("user__last_name"))
+
+            alunos_list = alunos_list.filter(trancado=False)
+
+            alunos_semestre = alunos_list\
+                .filter(alocacao__projeto__ano=ano,
+                        alocacao__projeto__semestre=semestre)\
+                .distinct()
+
+            alunos_list = alunos_semestre |\
+                alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
+
+            context = {
+                'alunos_list': alunos_list,
+                'configuracao': configuracao,
+                'ano': ano,
+                'semestre': semestre,
+                'ano_semestre': str(ano)+"."+str(semestre),
+                'loop_anos': range(2018, configuracao.ano+1),
+            }
+
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+    else:
+        edicoes, _, _ = get_edicoes(Aluno)
+        context = {
+                'edicoes': edicoes,
+            }
+
+    return render(request, 'users/estudantes_notas.html', context=context)
+
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def estudantes_inscritos(request):
     """Mostra todos os alunos que estão se inscrevendo em projetos."""
     if request.is_ajax():
         if 'edicao' in request.POST:
@@ -342,7 +386,7 @@ def alunos_inscritos(request):
                 'edicoes': edicoes,
             }
 
-    return render(request, 'users/alunos_inscritos.html', context=context)
+    return render(request, 'users/estudantes_inscritos.html', context=context)
 
 @login_required
 @transaction.atomic
@@ -620,7 +664,7 @@ def edita_notas(request, primarykey):
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')
-def aluno_detail(request, primarykey):
+def estudante_detail(request, primarykey):
     """Mostra detalhes sobre o estudante."""
     aluno = Aluno.objects.filter(pk=primarykey).first()
     areas = Area.objects.filter(ativa=True)
@@ -675,7 +719,7 @@ def aluno_detail(request, primarykey):
     context['aluno'] = aluno
     context['areast'] = areas
     
-    return render(request, 'users/aluno_detail.html', context=context)
+    return render(request, 'users/estudante_detail.html', context=context)
 
 
 @login_required

@@ -12,17 +12,21 @@ from . import views
 
 urlpatterns = [
 
-    path('alunos_lista/',
-         views.alunos_lista,
-         name='alunos_lista'),
+    path('estudantes_lista/',
+         views.estudantes_lista,
+         name='estudantes_lista'),
 
-    path('alunos_inscritos/',
-         views.alunos_inscritos,
-         name='alunos_inscritos'),
+    path('estudantes_notas/',
+         views.estudantes_notas,
+         name='estudantes_notas'),
 
-    path('aluno_detail/<int:primarykey>',
-         views.aluno_detail,
-         name='aluno_detail'),
+    path('estudantes_inscritos/',
+         views.estudantes_inscritos,
+         name='estudantes_inscritos'),
+
+    path('estudante_detail/<int:primarykey>',
+         views.estudante_detail,
+         name='estudante_detail'),
 
     path('contas_senhas/<str:anosemestre>',
          views.contas_senhas,

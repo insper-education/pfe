@@ -204,7 +204,7 @@
   <hr>
   <h3>Estudante(s) Alocado(s) no Projeto:</h3>
   {% for alocacao in projeto.alocacao_set.all %}
-    <a href="{% url 'aluno_detail' alocacao.aluno.id %}">
+    <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
       <p>
         {{alocacao.aluno.user.get_full_name}} 
         &lt;{{alocacao.aluno.user.email}}&gt; 

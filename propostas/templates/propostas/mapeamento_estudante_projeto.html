@@ -104,17 +104,17 @@
           {% for estudante,opcoes in estudantes %} 
             <tr class="item">
               <td style="text-align:right">
-                <a href="{% url 'aluno_detail' estudante.id %}">
+                <a href="{% url 'estudante_detail' estudante.id %}">
                   {{estudante.user.get_full_name}}
                 </a>
               </td>
               <td style="text-align:center">
-                <a href="{% url 'aluno_detail' estudante.id %}">
+                <a href="{% url 'estudante_detail' estudante.id %}">
                   {{estudante.curso}}
                 </a>
               </td>
               <td style="text-align:left;border-right: 2px solid black;">
-                <a href="{% url 'aluno_detail' estudante.id %}">
+                <a href="{% url 'estudante_detail' estudante.id %}">
                   {{estudante.cr|floatformat:4}}
                 </a>
               </td>

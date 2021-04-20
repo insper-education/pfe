@@ -69,7 +69,7 @@
             <ul class="grupo">
               {% for alocacao in projeto.alocacao_set.all %}
                 <li>
-                  <a class="imprimir" href="{% url 'aluno_detail' alocacao.aluno.id %}">
+                  <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">
                     {{alocacao.aluno}}
                   </a>
                   <span class="email">

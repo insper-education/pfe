@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 20 de Abril de 2021
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load dictionary %}
+  {% include "tabelas_includes.html" %}
+{% endblock %}
+
+{% block content %}
+  
+  <span class="titulo">Avaliações por Estudante</span>
+
+  {% comment %} Seletor da edição da pesquisa {% endcomment %}
+  {% with n_todas=True %}
+      {% include "edicoes.html" %}
+  {% endwith %}
+  
+  <div class="atualizar">
+
+    {% if alunos_list %}
+      <div class="table-responsive">
+      <table id="EstudantesTable" class="table table-bordered table-hover table-sm">
+        <thead class="table-info">
+          <tr>
+              <th scope="col" class="text-center">Nome</th>
+              <th scope="col" class="text-center">e-mail</th>
+              <th scope="col" class="text-center">Curso</th>
+              <th scope="col" class="text-center">Período</th>
+              <th scope="col" class="text-center">
+                <a data-toggle="tooltip" data-html="true" animation="true" title="<small>Projetos <u>sublinhados</u> são de PFE Avançado</small>">
+                  Projeto
+                </a>
+              </th>
+              <th scope="col" class="text-center">Média</th>
+              <th scope="col" class="text-center">Notas</th>
+          </tr>
+          </thead>
+          {% for aluno in alunos_list %} 
+          <tr class="item">
+            <th scope="row" data-order="{{aluno.user.get_full_name}}">
+              <a href="{% url 'estudante_detail' aluno.id %}" 
+                  data-toggle="tooltip" data-html="true" animation="true" title="
+                  {% for opcao in aluno.opcao_set.all %}
+                    <b>#{{ opcao.prioridade }} :</b>
+                    {% with alocacoes=aluno.alocacao_set %}
+                      {% if alocacoes.count and opcao.proposta == alocacoes.last.projeto %}
+                        <u>
+                      {% endif %}
+                          {{opcao.proposta.titulo}}
+                        ({{opcao.proposta.organizacao.nome}})
+                      {% if alocacoes.count and opcao.proposta == alocacoes.last.projeto %}
+                        </u>
+                      {% endif %}
+                    {% endwith %}
+                    <br>
+                  {% empty %}
+                    Aluno(a) não escolheu opções de projetos
+                  {% endfor %}
+                  "
+              >
+                {{aluno.user.get_full_name}}
+              </a>
+            </th>
+            <td>
+              <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
+            </td>
+            {% if aluno.curso %}
+              <td class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">
+                {{ aluno.get_curso_display }}
+              </td>
+            {% else %}
+              <td>Indefinido</td>
+            {% endif %}
+            <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
+              {% if aluno.alocacao_set.all %}
+                {% for alocacao in aluno.alocacao_set.all %}
+                  {% if alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
+                    <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
+                      {% if alocacao.projeto.avancado %}<u>{% endif %}
+                      {{alocacao.projeto.ano}}.{{alocacao.projeto.semestre}}<br>
+                      {% if alocacao.projeto.avancado %}</u>{% endif %}
+                    </a>
+                  {% endif %}
+                {% endfor %}
+              {% else %}
+                {% if aluno.anoPFE and aluno.semestrePFE %}
+                  {{aluno.anoPFE}}.{{aluno.semestrePFE}}
+                {% else %}
+                  Indefinido
+                {% endif %}
+              {% endif %}
+            </td>
+            <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
+              {% if aluno.alocacao_set.all %}
+                {% for alocacao in aluno.alocacao_set.all %}
+                  {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
+                    <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
+                      {{alocacao.projeto.get_titulo}}
+                    </a>
+                    <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
+                      ({{alocacao.projeto.organizacao}})<br>
+                    </a>
+                    {% if alocacao.projeto.avancado %}
+                      <span style="color:red">
+                        (PFE Avançado)
+                      </span>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+            </td>
+            <td> <!-- Média -->
+              {% with media=aluno.get_medias|dict_key:ano_semestre %}
+                {% if media.pesos != 1 %}
+                  <a style="color:red" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100% ({% widthratio media.pesos 1 100 %}%)">
+                {% endif %}    
+                  {{media.media|floatformat:1}}
+                {% if media.pesos != 1 %}
+                  </a>
+                {% endif %}
+              {% endwith %}
+            </td>
+            <td>
+              {% for aval, nota, peso in aluno.get_notas|dict_key:ano_semestre %} <!-- Notas -->
+                  <span style="background-color:#eef;">{{aval}}({% widthratio peso 1 100 %}%)={{nota|floatformat:1}}</span>
+              {% endfor %}
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+        </div>
+        <br>
+
+    {% endif %}
+
+    <script>
+      function carrega_pagina(){
+        {% with tabela='Estudantes' %}
+          {% include "edicoes_ajax.js" %}
+        {% endwith %}
+      };
+      function recarregar_pagina(){
+        carrega_pagina();
+      }
+    </script>
+
+  </div>
+
+  <script>
+    $(".filter").change(carrega_pagina);    
+    $(document).ready(carrega_pagina);
+  </script>  
+
+{% endblock %}

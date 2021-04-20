@@ -148,7 +148,7 @@
       <div id="estudante{{estudante.id}}" draggable="true" class="estudante"
       data-prioridades="[{% for opcao in opcoes %}{{opcao.proposta.id}}{%if not forloop.last%},{%endif%}{% endfor %}]">
       <a target="_blank" rel="noopener noreferrer" 
-       class="ancora" href="{% url 'aluno_detail' estudante.id %}"
+       class="ancora" href="{% url 'estudante_detail' estudante.id %}"
        data-toggle="tooltip" data-html="true" animation="true"
         title="
         {% for opcao in opcoes %}
