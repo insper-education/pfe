@@ -1062,18 +1062,8 @@ def objetivos_rubricas(request):
     
     objetivos = ObjetivosDeAprendizagem.objects.all().order_by("id")
     
-    #     conceitos = [None]*5
-    # for i in range(5):
-    #     try:
-    #         tmp1 = int(request.GET.get('objetivo'+str(i), '0'))
-    #     except ValueError:
-    #         return HttpResponseNotFound('<h1>Erro em objetivo!</h1>')
-    #     tmp2 = request.GET.get('conceito'+str(i), '')
-    #     conceitos[i] = (tmp1, tmp2)
-
     context = {
-        'objetivos': objetivos,
-        # "conceitos": conceitos,
+        'objetivos': objetivos,    
     }
 
     return render(request, 'professores/objetivos_rubricas.html', context)

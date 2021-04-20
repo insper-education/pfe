@@ -34,7 +34,7 @@ def index_documentos(request):
     # Regulamento PFE
     regulamento = Documento.objects.filter(tipo_de_documento=6).last()
 
-    # Plano de Aprend
+    # Plano de Aprendizado
     plano_de_aprend = Documento.objects.filter(tipo_de_documento=7).last()
 
     # manual do aluno
@@ -61,6 +61,9 @@ def index_documentos(request):
     # manual para apresentação na banca
     manual_apresentacao = Documento.objects.filter(tipo_de_documento=22).last()
 
+    # manual de participação em bancas
+    manual_bancas = Documento.objects.filter(tipo_de_documento=23).last()
+
     context = {
         "MEDIA_URL": settings.MEDIA_URL,
         "regulamento": regulamento,
@@ -71,9 +74,10 @@ def index_documentos(request):
         "termo_parceria": termo_parceria,
         "template_relatorio": template_relatorio,
         "manual_apresentacao": manual_apresentacao,
+        "manual_bancas": manual_bancas,
     }
 
-    return render(request, 'documentos/index_documentos.html', context)
+    return render(request, "documentos/index_documentos.html", context)
 
 
 @login_required
