@@ -394,10 +394,6 @@ def estudantes_inscritos(request):
 def edita_notas(request, primarykey):
     """Edita as notas do estudante."""
     alocacao = get_object_or_404(Alocacao, pk=primarykey)
-    # try:
-    #     alocacao = Alocacao.objects.get(pk=primarykey)
-    # except Alocacao.DoesNotExist:
-    #     return HttpResponse("Alocação não encontrada.", status=401)
 
     objetivos = ObjetivosDeAprendizagem.objects.all()
 
@@ -449,6 +445,48 @@ def edita_notas(request, primarykey):
     bf = Avaliacao2.objects.filter(tipo_de_avaliacao=2,
                                    projeto=alocacao.projeto)
 
+    # Antigo (até 2019.1)
+    # (50, 'Planejamento Primeira Fase'),
+    ppf = Avaliacao2.objects.filter(tipo_de_avaliacao=50,
+                                    projeto=alocacao.projeto)
+
+    # (50, 'Planejamento Primeira Fase'),
+    ppf_obs = Observacao.objects.filter(tipo_de_avaliacao=50,
+                                        projeto=alocacao.projeto)
+
+    # (51, 'Avaliação Parcial Individual'),
+    api = Avaliacao2.objects.filter(tipo_de_avaliacao=51,
+                                    alocacao=alocacao)
+
+    # (51, 'Avaliação Parcial Individual'),
+    api_obs = Observacao.objects.filter(tipo_de_avaliacao=51,
+                                        alocacao=alocacao)
+
+    # (52, 'Avaliação Final Individual'), 
+    afi = Avaliacao2.objects.filter(tipo_de_avaliacao=52,
+                                    projeto=alocacao.projeto)
+
+    # (52, 'Avaliação Final Individual'), 
+    afi_obs = Observacao.objects.filter(tipo_de_avaliacao=52,
+                                        projeto=alocacao.projeto)
+
+    # (53, 'Avaliação Parcial de Grupo'),
+    apg = Avaliacao2.objects.filter(tipo_de_avaliacao=53,
+                                    projeto=alocacao.projeto)
+
+    # (53, 'Avaliação Parcial de Grupo'),
+    apg_obs = Observacao.objects.filter(tipo_de_avaliacao=53,
+                                        projeto=alocacao.projeto)
+
+    # (54, 'Avaliação Final de Grupo'),
+    afg = Avaliacao2.objects.filter(tipo_de_avaliacao=54,
+                                    projeto=alocacao.projeto)
+
+    # (54, 'Avaliação Final de Grupo'),
+    afg_obs = Observacao.objects.filter(tipo_de_avaliacao=54,
+                                        projeto=alocacao.projeto)
+
+
     if request.method == 'POST':
 
         # RPL
@@ -458,6 +496,19 @@ def edita_notas(request, primarykey):
             (reg, _created)  = rpl.get_or_create(projeto=alocacao.projeto)
             if _created:
                 reg.tipo_de_avaliacao = 10
+                if alocacao.projeto.orientador:
+                    reg.avaliador = alocacao.projeto.orientador.user
+            reg.peso = float(peso)
+            reg.nota = float(nota)
+            reg.save()
+
+        # PPF
+        nota = request.POST.get('ppf_nota', "")
+        peso = request.POST.get('ppf_peso', "")
+        if nota != "":
+            (reg, _created)  = ppf.get_or_create(projeto=alocacao.projeto)
+            if _created:
+                reg.tipo_de_avaliacao = 50
                 if alocacao.projeto.orientador:
                     reg.avaliador = alocacao.projeto.orientador.user
             reg.peso = float(peso)
@@ -528,6 +579,71 @@ def edita_notas(request, primarykey):
                     reg.nota = float(nota)
                     reg.save()
 
+            # ANTIGO
+
+            # APG
+            if objetivo.avaliacao_grupo:
+                nota = request.POST.get('apg_nota_'+str(objetivo), "")
+                peso = request.POST.get('apg_peso_'+str(objetivo), "")
+                if nota != "":
+                    (reg, _created)  = apg.get_or_create(objetivo=objetivo)
+                    if _created:
+                        reg.tipo_de_avaliacao = 53
+                        if alocacao.projeto.orientador:
+                            reg.avaliador = alocacao.projeto.orientador.user
+                        reg.projeto = alocacao.projeto
+                    reg.peso = float(peso)
+                    reg.nota = float(nota)
+                    reg.save()
+
+            # API
+            if objetivo.avaliacao_aluno:
+                nota = request.POST.get('api_nota_'+str(objetivo), "")
+                peso = request.POST.get('api_peso_'+str(objetivo), "")
+                if nota != "":
+                    (reg, _created)  = api.get_or_create(objetivo=objetivo)
+                    if _created:
+                        reg.tipo_de_avaliacao = 51
+                        reg.alocacao = alocacao
+                        if alocacao.projeto.orientador:
+                            reg.avaliador = alocacao.projeto.orientador.user
+                        reg.projeto = alocacao.projeto
+                    reg.peso = float(peso)
+                    reg.nota = float(nota)
+                    reg.save()
+
+            # AFG
+            if objetivo.avaliacao_grupo:
+                nota = request.POST.get('afg_nota_'+str(objetivo), "")
+                peso = request.POST.get('afg_peso_'+str(objetivo), "")
+                if nota != "":
+                    (reg, _created)  = afg.get_or_create(objetivo=objetivo)
+                    if _created:
+                        reg.tipo_de_avaliacao = 54
+                        if alocacao.projeto.orientador:
+                            reg.avaliador = alocacao.projeto.orientador.user
+                        reg.projeto = alocacao.projeto
+                    reg.peso = float(peso)
+                    reg.nota = float(nota)
+                    reg.save()
+
+            # AFI
+            if objetivo.avaliacao_aluno:
+                nota = request.POST.get('afi_nota_'+str(objetivo), "")
+                peso = request.POST.get('afi_peso_'+str(objetivo), "")
+                if nota != "":
+                    (reg, _created)  = afi.get_or_create(objetivo=objetivo)
+                    if _created:
+                        reg.tipo_de_avaliacao = 52
+                        reg.alocacao = alocacao
+                        if alocacao.projeto.orientador:
+                            reg.avaliador = alocacao.projeto.orientador.user
+                        reg.projeto = alocacao.projeto
+                    reg.peso = float(peso)
+                    reg.nota = float(nota)
+                    reg.save()
+
+        
         # RPL
         obs = request.POST.get('rpl_obs', "")
         if obs:
@@ -591,6 +707,69 @@ def edita_notas(request, primarykey):
             reg.save()
 
 
+        # PPF
+        obs = request.POST.get('ppf_obs', "")
+        if obs:
+            reg  = ppf_obs.last()
+            if not reg:
+                reg = Observacao.create(projeto=alocacao.projeto)
+                reg.tipo_de_avaliacao = 50
+                if alocacao.projeto.orientador:
+                    reg.avaliador = alocacao.projeto.orientador.user
+            reg.observacoes = obs
+            reg.save()
+
+        # APG
+        obs = request.POST.get('apg_obs', "")
+        if obs:
+            reg  = apg_obs.last()
+            if not reg:
+                reg = Observacao.create(projeto=alocacao.projeto)
+                reg.tipo_de_avaliacao = 53
+                if alocacao.projeto.orientador:
+                    reg.avaliador = alocacao.projeto.orientador.user
+            reg.observacoes = obs
+            reg.save()
+
+        # API
+        obs = request.POST.get('api_obs', "")
+        if obs:
+            reg  = api_obs.last()
+            if not reg:
+                reg = Observacao.create(projeto=alocacao.projeto)
+                reg.tipo_de_avaliacao = 51
+                reg.alocacao = alocacao
+                if alocacao.projeto.orientador:
+                    reg.avaliador = alocacao.projeto.orientador.user
+            reg.observacoes = obs
+            reg.save()
+
+        # AFG
+        obs = request.POST.get('afg_obs', "")
+        if obs:
+            reg  = afg_obs.last()
+            if not reg:
+                reg = Observacao.create(projeto=alocacao.projeto)
+                reg.tipo_de_avaliacao = 54
+                if alocacao.projeto.orientador:
+                    reg.avaliador = alocacao.projeto.orientador.user
+            reg.observacoes = obs
+            reg.save()
+
+        # AFI
+        obs = request.POST.get('afi_obs', "")
+        if obs:
+            reg  = afi_obs.last()
+            if not reg:
+                reg = Observacao.create(projeto=alocacao.projeto)
+                reg.tipo_de_avaliacao = 52
+                reg.alocacao = alocacao
+                if alocacao.projeto.orientador:
+                    reg.avaliador = alocacao.projeto.orientador.user
+            reg.observacoes = obs
+            reg.save()
+
+
         mensagem = "Notas atualizadas<br>\n"
         mensagem += "Peso Final = " + str(alocacao.get_media["pesos"]*100) + "% <br>\n"
         mensagem += "Média = " + str(alocacao.get_media["media"]) + "<br>\n"
@@ -601,15 +780,46 @@ def edita_notas(request, primarykey):
         }
         return render(request, 'generic.html', context=context)
 
-
+    # Para projetos antigos
     rpl_nota = None
     rpl_peso = None
     rpl_existe = False
+
     if (alocacao.projeto.ano < 2020) or (alocacao.projeto.ano == 2020 and alocacao.projeto.semestre == 1):
         rpl_existe = True
         if rpl:
             rpl_nota = rpl.last().nota
             rpl_peso = rpl.last().peso
+
+    # Para projetos bem antigos
+    ppf_nota = None
+    ppf_peso = None
+    api_peso = {}
+    api_nota = {}
+    afi_peso = {}
+    afi_nota = {}
+    apg_peso = {}
+    apg_nota = {}
+    afg_peso = {}
+    afg_nota = {}
+    aval_existe = False
+    if (alocacao.projeto.ano == 2018) or (alocacao.projeto.ano == 2019 and alocacao.projeto.semestre == 1):
+        aval_existe = True
+        if ppf:
+            ppf_nota = ppf.last().nota
+            ppf_peso = ppf.last().peso
+        for registro in api:
+            api_nota[registro.objetivo] = registro.nota 
+            api_peso[registro.objetivo] = registro.peso
+        for registro in afi:
+            afi_nota[registro.objetivo] = registro.nota 
+            afi_peso[registro.objetivo] = registro.peso
+        for registro in apg:
+            apg_nota[registro.objetivo] = registro.nota 
+            apg_peso[registro.objetivo] = registro.peso
+        for registro in afg:
+            afg_nota[registro.objetivo] = registro.nota 
+            afg_peso[registro.objetivo] = registro.peso
 
     rii_peso = {}
     rii_nota = {}
@@ -635,11 +845,11 @@ def edita_notas(request, primarykey):
         rfg_nota[registro.objetivo] = registro.nota 
         rfg_peso[registro.objetivo] = registro.peso
 
-
     context = {
         'alocacao': alocacao,
         'objetivos': objetivos,
         'rpl': rpl_existe,
+        "aval": aval_existe,
         'rpl_nota': rpl_nota,
         'rpl_peso': rpl_peso,
         'rpl_obs': rpl_obs.last(),
@@ -657,6 +867,21 @@ def edita_notas(request, primarykey):
         'rfg_obs': rfg_obs.last(),
         'bi': bi,
         'bf': bf,
+        "ppf_nota": ppf_nota,
+        "ppf_peso": ppf_peso,
+        "ppf_obs": ppf_obs.last(),
+        "api_nota": api_nota,
+        "api_peso": api_peso,
+        "api_obs": api_obs.last(),
+        "afi_nota": afi_nota,
+        "afi_peso": afi_peso,
+        "afi_obs": afi_obs.last(),
+        "apg_nota": apg_nota,
+        "apg_peso": apg_peso,
+        "apg_obs": apg_obs.last(),
+        "afg_nota": afg_nota,
+        "afg_peso": afg_peso,
+        "afg_obs": afg_obs.last(),
     }
 
     return render(request, 'users/edita_nota.html', context=context)
@@ -697,22 +922,23 @@ def estudante_detail(request, primarykey):
         media_grupo[media] = {}
         media_grupo[media]["cor"] = context["medias_geral"][media]["cor"]
         media_grupo[media]["media"] = 0
-        if media.avaliacao_grupo:
+        
+        if media.avaliacao_grupo and context["medias_rig"][media]["media"] >= 0:
             media_grupo[media]["media"] += context["medias_rig"][media]["media"]
             count += 1
-        if media.avaliacao_grupo:
+        if media.avaliacao_grupo and context["medias_rfg"][media]["media"] >= 0:
             media_grupo[media]["media"] += context["medias_rfg"][media]["media"]
             count += 1
-        if media.avaliacao_banca:
+        if media.avaliacao_banca and context["medias_bi"][media]["media"] >= 0:
             media_grupo[media]["media"] += context["medias_bi"][media]["media"]
             count += 1
-        if media.avaliacao_banca:
+        if media.avaliacao_banca and context["medias_bf"][media]["media"] >= 0:
             media_grupo[media]["media"] += context["medias_bf"][media]["media"]
             count += 1
         if count > 0:
             media_grupo[media]["media"] /= count
         else:
-            media_grupo[media]["media"] = -1
+            media_grupo[media]["media"] = 0
 
     context['media_individual'] = media_individual
     context['media_grupo'] = media_grupo

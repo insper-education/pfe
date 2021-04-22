@@ -1000,14 +1000,16 @@ TIPO_DE_AVALIACAO = ( # não mudar a ordem dos números
     ( 0, 'Não definido'),
     ( 1, 'Banca Intermediária'),
     ( 2, 'Banca Final'),
-    (10, 'Relatório de Planejamento'),
+    (10, 'Relatório de Planejamento'),      # usado até 2020.1
     (11, 'Relatório Intermediário de Grupo'),
     (12, 'Relatório Final de Grupo'),
     (21, 'Relatório Intermediário Individual'),
     (22, 'Relatório Final Individual'),
-    (50, 'Planejamento Primeira Fase'),
-    (51, 'Avaliação Parcial Individual'),
-    (52, 'Avaliação Final Individual'),
+    (50, 'Planejamento Primeira Fase'),     # usado até 2019.1
+    (51, 'Avaliação Parcial Individual'),   # usado até 2019.1
+    (52, 'Avaliação Final Individual'),     # usado até 2019.1
+    (53, 'Avaliação Parcial de Grupo'),     # usado até 2019.1
+    (54, 'Avaliação Final de Grupo'),       # usado até 2019.1
     (99, 'Falconi'),
 )
 

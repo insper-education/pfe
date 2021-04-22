@@ -353,12 +353,21 @@ class Aluno(models.Model):
                 nota_afi, peso = Aluno.get_objetivos(self, afi)
                 notas.append(("AFI", nota_afi, peso/100))
 
+            # Avaliação Parcial de Grupo (53, 'Avaliação Parcial de Grupo'),
+            apg = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=53)
+            if apg:
+                nota_apg, peso = Aluno.get_objetivos(self, apg)
+                notas.append(("APG", nota_apg, peso/100))
+
+            # Avaliação Final de Grupo (54, 'Avaliação Final de Grupo'),
+            afg = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=54)
+            if afg:
+                nota_afg, peso = Aluno.get_objetivos(self, afg)
+                notas.append(("AFG", nota_afg, peso/100))
+
             edicao[str(alocacao.projeto.ano)+"."+str(alocacao.projeto.semestre)] = notas
 
         return edicao
-
-
-
 
 
     @property
@@ -436,6 +445,18 @@ class Aluno(models.Model):
             if afi:
                 nota_afi, peso = Aluno.get_banca(self, afi)
                 notas.append(("AFI", nota_afi, peso/100))
+
+            # Avaliação Parcial de Grupo (53, 'Avaliação Parcial de Grupo'),
+            apg = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=53)
+            if apg:
+                nota_apg, peso = Aluno.get_banca(self, apg)
+                notas.append(("APG", nota_apg, peso/100))
+
+            # Avaliação Final de Grupo (54, 'Avaliação Final de Grupo'),
+            afg = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=54)
+            if afg:
+                nota_afg, peso = Aluno.get_banca(self, afg)
+                notas.append(("AFG", nota_afg, peso/100))
 
             edicao[str(alocacao.projeto.ano)+"."+str(alocacao.projeto.semestre)] = notas
 

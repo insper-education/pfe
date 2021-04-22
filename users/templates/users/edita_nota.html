@@ -109,29 +109,265 @@
 
   <b><label for="nome">Nome: </label></b> {{alocacao.aluno}}<br>
   <b><label for="projeto">Projeto: </label></b> {{alocacao.projeto}}<br>
-  <b><label for="orientador">Orientador: </label></b> {{alocacao.projeto.orientador}}<br>
+  <b><label for="orientador">Orientador{% if alocacao.projeto.orientador.user.genero == 'F' %}a{% endif %}: </label></b> {{alocacao.projeto.orientador}}<br>
   <br>
 
   <form method="post"> {% csrf_token %}
 
+    {% if aval %}
+      <b>Planejamento Primeira Fase: <span id="ppf_media"></span></b>
+      <ul>
+        <li>
+          <span>Avaliação Única</span>
+          <span>
+            peso: <input class="peso" id="ppf_peso" name="ppf_peso" type="number"  min="0" max="100" step="0.001" 
+            value="{% if ppf_peso %}{{ppf_peso}}{% else %}1.50{% endif %}" />
+
+            &nbsp;&nbsp;
+            nota: <input class="nota" id="ppf_nota" name="ppf_nota" type="number"  min="0" max="10" step="0.01" 
+            value="{% if ppf_nota != None %}{{ppf_nota}}{% endif %}" />
+        </li>
+      </ul>
+      <span style="margin-left: 10px;">Observações:</span><br>
+      <textarea id="ppf_obs" name="ppf_obs" rows="4" cols="72">{% if ppf_obs %}{{ppf_obs.observacoes}}{% endif %}</textarea>
+      <br>
+
+
+      <b>Avaliação Parcial Individual: <span id="api_media"></span></b>
+      <ul>
+      {% for objetivo in objetivos reversed %}
+        <li>
+        {% if objetivo.titulo == "Execução Técnica" or objetivo.titulo == "Trabalho em Equipe" %}
+          <span>{{objetivo}}</span>
+          <span>
+            {% with peso=api_peso|dict_key:objetivo %}
+              peso: <input class="peso" id="api_peso_{{objetivo|truncatechars:7}}" name="api_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
+              value="{% if peso %}{{peso}}{% else %}3.75{% endif %}" />
+            {% endwith %}
+
+            &nbsp;&nbsp;
+            nota: <input class="nota" id="api_nota_{{objetivo|truncatechars:7}}" name="api_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
+            value="{% if api_nota|dict_key:objetivo != None %}{{api_nota|dict_key:objetivo}}{% endif %}" />
+
+            &nbsp;&nbsp;
+            conceito:
+            <select class="conc" id="api_conc_{{objetivo|truncatechars:7}}" name="api_conc_{{objetivo}}" >
+                <option value="A+">A+</option>
+                <option value="A">A</option>
+                <option value="B+">B+</option>
+                <option value="B">B</option>
+                <option value="C+">C+</option>
+                <option value="C">C</option>
+                <option value="D+">D+</option>
+                <option value="D">D</option>
+                <option value="D-">D-</option>
+                <option value="I">I</option>
+            </select>
+
+          </span>
+
+          <script>
+            $(function()
+            {
+                $("#api_conc_{{objetivo|truncatechars:7}}").on("change",function() {
+                  $("#api_nota_{{objetivo|truncatechars:7}}").val(converteC($(this).val()));
+                });
+                $("#api_nota_{{objetivo|truncatechars:7}}").on("change",function() {
+                  $("#api_conc_{{objetivo|truncatechars:7}}").val(converteN($(this).val()));
+                });
+            })
+            $("#api_conc_{{objetivo|truncatechars:7}}").val(converteN($("#api_nota_{{objetivo|truncatechars:7}}").val()));
+          </script>
+
+        {% endif %}
+        </li>
+      {% endfor %}
+      </ul>
+      <span style="margin-left: 10px;">Observações:</span><br>
+      <textarea id="api_obs" name="api_obs" rows="4" cols="72">{% if api_obs %}{{api_obs.observacoes}}{% endif %}</textarea>
+      <br>
+
+
+      <b>Avaliação Parcial de Grupo: <span id="apg_media"></span></b>
+      <ul>
+      {% for objetivo in objetivos reversed %}
+        <li>
+        {% if objetivo.avaliacao_grupo %}
+          <span>{{objetivo}}</span>
+          <span>
+            {% with peso=apg_peso|dict_key:objetivo %}
+              peso: <input class="peso" id="apg_peso_{{objetivo|truncatechars:7}}" name="apg_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
+              value="{% if peso %}{{peso}}{% else %}1.2{% endif %}" />
+            {% endwith %}
+            &nbsp;&nbsp;
+            nota: <input class="nota" id="apg_nota_{{objetivo|truncatechars:7}}" name="apg_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
+            value="{% if apg_nota|dict_key:objetivo != None %}{{apg_nota|dict_key:objetivo}}{% endif %}" />
+          
+          &nbsp;&nbsp;
+            conceito:
+            <select class="conc" id="apg_conc_{{objetivo|truncatechars:7}}" name="apg_conc_{{objetivo}}" >
+                <option value="A+">A+</option>
+                <option value="A">A</option>
+                <option value="B+">B+</option>
+                <option value="B">B</option>
+                <option value="C+">C+</option>
+                <option value="C">C</option>
+                <option value="D+">D+</option>
+                <option value="D">D</option>
+                <option value="D-">D-</option>
+                <option value="I">I</option>
+            </select>
+
+          </span>
+
+          <script>
+            $(function()
+            {
+                $("#apg_conc_{{objetivo|truncatechars:7}}").on("change",function() {
+                  $("#apg_nota_{{objetivo|truncatechars:7}}").val(converteC($(this).val()));
+                });
+                $("#apg_nota_{{objetivo|truncatechars:7}}").on("change",function() {
+                  $("#apg_conc_{{objetivo|truncatechars:7}}").val(converteN($(this).val()));
+                });
+            })
+            $("#apg_conc_{{objetivo|truncatechars:7}}").val(converteN($("#apg_nota_{{objetivo|truncatechars:7}}").val()));
+          </script>
+
+        {% endif %}
+        </li>
+      {% endfor %}
+      </ul>
+      <span style="margin-left: 10px;">Observações:</span><br>
+      <textarea id="apg_obs" name="apg_obs" rows="4" cols="72">{% if apg_obs %}{{apg_obs.observacoes}}{% endif %}</textarea>
+      <br>
+
+
+      <b>Avaliação Final Individual: <span id="afi_media"></span></b>
+      <ul>
+      {% for objetivo in objetivos reversed %}
+        <li>
+        {% if objetivo.titulo == "Execução Técnica" or objetivo.titulo == "Trabalho em Equipe" %}
+          <span>{{objetivo}}</span>
+          <span>
+            {% with peso=afi_peso|dict_key:objetivo %}
+              peso: <input class="peso" id="afi_peso_{{objetivo|truncatechars:7}}" name="afi_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
+              value="{% if peso %}{{peso}}{% else %}8.75{% endif %}" />
+            {% endwith %}
+            &nbsp;&nbsp;
+            nota: <input class="nota" id="afi_nota_{{objetivo|truncatechars:7}}" name="afi_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
+            value="{% if afi_nota|dict_key:objetivo != None %}{{afi_nota|dict_key:objetivo}}{% endif %}" />
+          
+          &nbsp;&nbsp;
+            conceito:
+            <select class="conc" id="afi_conc_{{objetivo|truncatechars:7}}" name="afi_conc_{{objetivo}}" >
+                <option value="A+">A+</option>
+                <option value="A">A</option>
+                <option value="B+">B+</option>
+                <option value="B">B</option>
+                <option value="C+">C+</option>
+                <option value="C">C</option>
+                <option value="D+">D+</option>
+                <option value="D">D</option>
+                <option value="D-">D-</option>
+                <option value="I">I</option>
+            </select>
+
+          </span>
+
+          <script>
+            $(function()
+            {
+                $("#afi_conc_{{objetivo|truncatechars:7}}").on("change",function() {
+                  $("#afi_nota_{{objetivo|truncatechars:7}}").val(converteC($(this).val()));
+                });
+                $("#afi_nota_{{objetivo|truncatechars:7}}").on("change",function() {
+                  $("#afi_conc_{{objetivo|truncatechars:7}}").val(converteN($(this).val()));
+                });
+            })
+            $("#afi_conc_{{objetivo|truncatechars:7}}").val(converteN($("#afi_nota_{{objetivo|truncatechars:7}}").val()));
+          </script>
+
+        {% endif %}
+        </li>
+      {% endfor %}
+      </ul>
+      <span style="margin-left: 10px;">Observações:</span><br>
+      <textarea id="afi_obs" name="afi_obs" rows="4" cols="72">{% if afi_obs %}{{afi_obs.observacoes}}{% endif %}</textarea>
+      <br>
+
+      <b>Avaliação Final de Grupo: <span id="afg_media"></span></b>
+      <ul>
+      {% for objetivo in objetivos reversed %}
+        <li>
+        {% if objetivo.avaliacao_grupo %}
+          <span>{{objetivo}}</span>
+          <span>
+            {% with peso=afg_peso|dict_key:objetivo %}
+              peso: <input class="peso" id="afg_peso_{{objetivo|truncatechars:7}}" name="afg_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
+              value="{% if peso %}{{peso}}{% else %}3.5{% endif %}" />
+            {% endwith %}
+            &nbsp;&nbsp;
+            nota: <input class="nota" id="afg_nota_{{objetivo|truncatechars:7}}" name="afg_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
+            value="{% if afg_nota|dict_key:objetivo != None %}{{afg_nota|dict_key:objetivo}}{% endif %}" />
+          
+            &nbsp;&nbsp;
+            conceito:
+            <select class="conc" id="afg_conc_{{objetivo|truncatechars:7}}" name="afg_conc_{{objetivo}}" >
+                <option value="A+">A+</option>
+                <option value="A">A</option>
+                <option value="B+">B+</option>
+                <option value="B">B</option>
+                <option value="C+">C+</option>
+                <option value="C">C</option>
+                <option value="D+">D+</option>
+                <option value="D">D</option>
+                <option value="D-">D-</option>
+                <option value="I">I</option>
+            </select>
+
+          </span>
+
+          <script>
+            $(function()
+            {
+                $("#afg_conc_{{objetivo|truncatechars:7}}").on("change",function() {
+                  $("#afg_nota_{{objetivo|truncatechars:7}}").val(converteC($(this).val()));
+                });
+                $("#afg_nota_{{objetivo|truncatechars:7}}").on("change",function() {
+                  $("#afg_conc_{{objetivo|truncatechars:7}}").val(converteN($(this).val()));
+                });
+            })
+            $("#afg_conc_{{objetivo|truncatechars:7}}").val(converteN($("#afg_nota_{{objetivo|truncatechars:7}}").val()));
+          </script>
+
+        {% endif %}
+        </li>
+      {% endfor %}
+      </ul>
+      <span style="margin-left: 10px;">Observações:</span><br>
+      <textarea id="afg_obs" name="afg_obs" rows="4" cols="72">{% if afg_obs %}{{afg_obs.observacoes}}{% endif %}</textarea>
+      <br>
+
+
+    {% endif %}
 
     {% if rpl %}
-    <b>Relatório de Planejamento: <span id="rpl_media"></span></b>
-    <ul>
-      <li>
-        <span>Avaliação Única</span>
-        <span>
-          peso: <input class="peso" id="rpl_peso" name="rpl_peso" type="number"  min="0" max="100" step="0.01" 
-          value="{% if rpl_peso %}{{rpl_peso}}{% else %}6.00{% endif %}" />
+      <b>Relatório de Planejamento: <span id="rpl_media"></span></b>
+      <ul>
+        <li>
+          <span>Avaliação Única</span>
+          <span>
+            peso: <input class="peso" id="rpl_peso" name="rpl_peso" type="number"  min="0" max="100" step="0.01" 
+            value="{% if rpl_peso %}{{rpl_peso}}{% else %}1.50{% endif %}" />
 
-          &nbsp;&nbsp;
-          nota: <input class="nota" id="rpl_nota" name="rpl_nota" type="number"  min="0" max="10" step="0.01" 
-          value="{% if rpl_nota != None %}{{rpl_nota}}{% endif %}" />
-      </li>
-    </ul>
-    <span style="margin-left: 10px;">Observações:</span><br>
-    <textarea id="rpl_obs" name="rpl_obs" rows="4" cols="72">{% if rpl_obs %}{{rpl_obs.observacoes}}{% endif %}</textarea>
-    <br>
+            &nbsp;&nbsp;
+            nota: <input class="nota" id="rpl_nota" name="rpl_nota" type="number"  min="0" max="10" step="0.01" 
+            value="{% if rpl_nota != None %}{{rpl_nota}}{% endif %}" />
+        </li>
+      </ul>
+      <span style="margin-left: 10px;">Observações:</span><br>
+      <textarea id="rpl_obs" name="rpl_obs" rows="4" cols="72">{% if rpl_obs %}{{rpl_obs.observacoes}}{% endif %}</textarea>
+      <br>
     {% endif %}
 
 
@@ -143,7 +379,7 @@
         <span>{{objetivo}}</span>
         <span>
           {% with peso=rii_peso|dict_key:objetivo %}
-            peso: <input class="peso" id="rii_peso_{{objetivo|truncatechars:7}}" name="rii_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.01" 
+            peso: <input class="peso" id="rii_peso_{{objetivo|truncatechars:7}}" name="rii_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
             value="{% if peso %}{{peso}}{% else %}3.75{% endif %}" />
           {% endwith %}
 
@@ -198,7 +434,7 @@
         <span>{{objetivo}}</span>
         <span>
           {% with peso=rig_peso|dict_key:objetivo %}
-            peso: <input class="peso" id="rig_peso_{{objetivo|truncatechars:7}}" name="rig_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.01" 
+            peso: <input class="peso" id="rig_peso_{{objetivo|truncatechars:7}}" name="rig_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
             value="{% if peso %}{{peso}}{% else %}1.2{% endif %}" />
           {% endwith %}
           &nbsp;&nbsp;
@@ -252,7 +488,7 @@
         <span>{{objetivo}}</span>
         <span>
           {% with peso=rfi_peso|dict_key:objetivo %}
-            peso: <input class="peso" id="rfi_peso_{{objetivo|truncatechars:7}}" name="rfi_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.01" 
+            peso: <input class="peso" id="rfi_peso_{{objetivo|truncatechars:7}}" name="rfi_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
             value="{% if peso %}{{peso}}{% else %}12.25{% endif %}" />
           {% endwith %}
           &nbsp;&nbsp;
@@ -305,8 +541,8 @@
         <span>{{objetivo}}</span>
         <span>
           {% with peso=rfg_peso|dict_key:objetivo %}
-            peso: <input class="peso" id="rfg_peso_{{objetivo|truncatechars:7}}" name="rfg_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.01" 
-            value="{% if peso %}{{peso}}{% else %}2.8{% endif %}" />
+            peso: <input class="peso" id="rfg_peso_{{objetivo|truncatechars:7}}" name="rfg_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
+            value="{% if peso %}{{peso}}{% else %}2.1{% endif %}" />
           {% endwith %}
           &nbsp;&nbsp;
           nota: <input class="nota" id="rfg_nota_{{objetivo|truncatechars:7}}" name="rfg_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
@@ -378,6 +614,90 @@
 
     function calculateAvarage()
     {
+
+      soma = 0.0;
+      total = 0.0;
+      {% for objetivo in objetivos %}
+        {% if objetivo.avaliacao_aluno %}
+          nota = parseFloat($("#api_nota_{{objetivo|truncatechars:7}}").val());
+          peso = parseFloat($("#api_peso_{{objetivo|truncatechars:7}}").val());
+          if( !isNaN(peso)) {
+            if( !isNaN(nota) ) {
+              soma += ( peso * nota );
+            }
+            total += peso;
+          }
+        {% endif %}
+      {% endfor %}
+      if(total>0){
+        media = soma/total;
+      } else {
+        media = 0;
+      }
+      $("#api_media").text(media.toFixed(2));
+
+      soma = 0.0;
+      total = 0.0;
+      {% for objetivo in objetivos %}
+        {% if objetivo.avaliacao_aluno %}
+          nota = parseFloat($("#afi_nota_{{objetivo|truncatechars:7}}").val());
+          peso = parseFloat($("#afi_peso_{{objetivo|truncatechars:7}}").val());
+          if( !isNaN(peso)) {
+            if( !isNaN(nota) ) {
+              soma += ( peso * nota );
+            }
+            total += peso;
+          }
+        {% endif %}
+      {% endfor %}
+      if(total>0){
+        media = soma/total;
+      } else {
+        media = 0;
+      }
+      $("#afi_media").text(media.toFixed(2));
+
+      soma = 0.0;
+      total = 0.0;
+      {% for objetivo in objetivos %}
+        {% if objetivo.avaliacao_grupo %}
+          nota = parseFloat($("#apg_nota_{{objetivo|truncatechars:7}}").val());
+          peso = parseFloat($("#apg_peso_{{objetivo|truncatechars:7}}").val());
+          if( !isNaN(peso)) {
+            if( !isNaN(nota) ) {
+              soma += ( peso * nota );
+            }
+            total += peso;
+          }
+        {% endif %}
+      {% endfor %}
+      if(total>0){
+        media = soma/total;
+      } else {
+        media = 0;
+      }
+      $("#apg_media").text(media.toFixed(2));
+
+      soma = 0.0;
+      total = 0.0;
+      {% for objetivo in objetivos %}
+        {% if objetivo.avaliacao_grupo %}
+          nota = parseFloat($("#afg_nota_{{objetivo|truncatechars:7}}").val());
+          peso = parseFloat($("#afg_peso_{{objetivo|truncatechars:7}}").val());
+          if( !isNaN(peso)) {
+            if( !isNaN(nota) ) {
+              soma += ( peso * nota );
+            }
+            total += peso;
+          }
+        {% endif %}
+      {% endfor %}
+      if(total>0){
+        media = soma/total;
+      } else {
+        media = 0;
+      }
+      $("#afg_media").text(media.toFixed(2));
 
       soma = 0.0;
       total = 0.0;

@@ -36,12 +36,24 @@
                 </div>
             {% endif %}
             <div class="row mt-5 justify-content-md-center">
-                <div class="col-md-6"><canvas id="doughnut-rii"></canvas></div>
-                <div class="col-md-6"><canvas id="doughnut-rig"></canvas></div>
-                <div class="col-md-6"><canvas id="doughnut-bi"></canvas></div>
-                <div class="col-md-6"><canvas id="doughnut-rfi"></canvas></div>
-                <div class="col-md-6"><canvas id="doughnut-rfg"></canvas></div>
-                <div class="col-md-6"><canvas id="doughnut-bf"></canvas></div>
+                {% if notas.rii.ideal or notas.rii.regular or notas.rii.inferior %}
+                    <div class="col-md-6"><canvas id="doughnut-rii"></canvas></div>
+                {% endif %}
+                {% if notas.rig.ideal or notas.rig.regular or notas.rig.inferior %}
+                    <div class="col-md-6"><canvas id="doughnut-rig"></canvas></div>
+                {% endif %}
+                {% if notas.bi.ideal or notas.bi.regular or notas.bi.inferior %}
+                    <div class="col-md-6"><canvas id="doughnut-bi"></canvas></div>
+                {% endif %}
+                {% if notas.rfi.ideal or notas.rfi.regular or notas.rfi.inferior %}
+                    <div class="col-md-6"><canvas id="doughnut-rfi"></canvas></div>
+                {% endif %}
+                {% if notas.rfg.ideal or notas.rfg.regular or notas.rfg.inferior %}
+                    <div class="col-md-6"><canvas id="doughnut-rfg"></canvas></div>
+                {% endif %}
+                {% if notas.bf.ideal or notas.bf.regular or notas.bf.inferior %}
+                    <div class="col-md-6"><canvas id="doughnut-bf"></canvas></div>
+                {% endif %}
             </div>
 
             <script>
@@ -247,37 +259,47 @@
 
                 function carrega_pagina() {  
 
-                // Chart da situação dos alunos por faixa de 
-                
-                {% if medias.ideal or medias.regular or medias.inferior %}
-                    var doughnut_situacao = document.getElementById('doughnut-situacao').getContext('2d');
-                    window.situacao = new Chart(doughnut_situacao, config_situacao);
-                {% endif %}
+                    {% if medias.ideal or medias.regular or medias.inferior %}
+                        // Chart da situação dos alunos por faixa de nota
+                        var doughnut_situacao = document.getElementById('doughnut-situacao').getContext('2d');
+                        window.situacao = new Chart(doughnut_situacao, config_situacao);
+                    {% endif %}
 
+                    {% if notas.rii.ideal or notas.rii.regular or notas.rii.inferior %}
+                        // Chart da RII dos alunos por faixa de notas
+                        var doughnut_rii = document.getElementById('doughnut-rii').getContext('2d');
+                        window.rii = new Chart(doughnut_rii, config_rii);
+                    {% endif %}
 
-                // Chart da RII dos alunos por faixa de notas
-                var doughnut_rii = document.getElementById('doughnut-rii').getContext('2d');
-                window.rii = new Chart(doughnut_rii, config_rii);
+                    {% if notas.rig.ideal or notas.rig.regular or notas.rig.inferior %}
+                        // Chart da RIG dos alunos por faixa de notas
+                        var doughnut_rig = document.getElementById('doughnut-rig').getContext('2d');
+                        window.rig = new Chart(doughnut_rig, config_rig);
+                    {% endif %}
 
-                // Chart da RIG dos alunos por faixa de notas
-                var doughnut_rig = document.getElementById('doughnut-rig').getContext('2d');
-                window.rig = new Chart(doughnut_rig, config_rig);
+                    {% if notas.bi.ideal or notas.bi.regular or notas.bi.inferior %}
+                        // Chart da BI dos alunos por faixa de notas
+                        var doughnut_bi = document.getElementById('doughnut-bi').getContext('2d');
+                        window.bi = new Chart(doughnut_bi, config_bi);
+                    {% endif %}
 
-                // Chart da BI dos alunos por faixa de notas
-                var doughnut_bi = document.getElementById('doughnut-bi').getContext('2d');
-                window.bi = new Chart(doughnut_bi, config_bi);
+                    {% if notas.rfi.ideal or notas.rfi.regular or notas.rfi.inferior %}
+                        // Chart da RFI dos alunos por faixa de notas
+                        var doughnut_rfi = document.getElementById('doughnut-rfi').getContext('2d');
+                        window.rfi = new Chart(doughnut_rfi, config_rfi);
+                    {% endif %}
 
-                // Chart da RFI dos alunos por faixa de notas
-                var doughnut_rfi = document.getElementById('doughnut-rfi').getContext('2d');
-                window.rfi = new Chart(doughnut_rfi, config_rfi);
+                    {% if notas.rfg.ideal or notas.rfg.regular or notas.rfg.inferior %}
+                        // Chart da RFG dos alunos por faixa de notas
+                        var doughnut_rfg = document.getElementById('doughnut-rfg').getContext('2d');
+                        window.rfg = new Chart(doughnut_rfg, config_rfg);
+                    {% endif %}
 
-                // Chart da RFG dos alunos por faixa de notas
-                var doughnut_rfg = document.getElementById('doughnut-rfg').getContext('2d');
-                window.rfg = new Chart(doughnut_rfg, config_rfg);
-
-                // Chart da BF dos alunos por faixa de notas
-                var doughnut_bf = document.getElementById('doughnut-bf').getContext('2d');
-                window.bf = new Chart(doughnut_bf, config_bf);
+                    {% if notas.bf.ideal or notas.bf.regular or notas.bf.inferior %}
+                        // Chart da BF dos alunos por faixa de notas
+                        var doughnut_bf = document.getElementById('doughnut-bf').getContext('2d');
+                        window.bf = new Chart(doughnut_bf, config_bf);
+                    {% endif %}
 
                 }
 

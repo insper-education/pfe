@@ -211,79 +211,85 @@ def calcula_objetivos(alocacoes):
 
     medias_rii = {}
     for objetivo in objetivos:
-        medias_rii[objetivo] = {}
-        medias_rii[objetivo]["cor"] = cores_obj[objetivo]
         if pesos["rii"][objetivo]>0:
+            if not objetivo in medias_rii:
+                medias_rii[objetivo] = {}
+                medias_rii[objetivo]["cor"] = cores_obj[objetivo]
             medias_rii[objetivo]["media"] = notas["rii"][objetivo] / pesos["rii"][objetivo]
             medias_geral[objetivo]["soma"] += notas["rii"][objetivo]
             medias_geral[objetivo]["peso"] += pesos["rii"][objetivo]
-        else:
-            medias_rii[objetivo]["media"] = 0
+        # else:
+        #     medias_rii[objetivo]["media"] = -1
 
     medias_rig = {}
     for objetivo in objetivos:
-        medias_rig[objetivo] = {}
-        medias_rig[objetivo]["cor"] = cores_obj[objetivo]
         if pesos["rig"][objetivo]>0:
+            if not objetivo in medias_rig:
+                medias_rig[objetivo] = {}
+                medias_rig[objetivo]["cor"] = cores_obj[objetivo]
             medias_rig[objetivo]["media"] = notas["rig"][objetivo] / pesos["rig"][objetivo]
             medias_geral[objetivo]["soma"] += notas["rig"][objetivo]
             medias_geral[objetivo]["peso"] += pesos["rig"][objetivo]
-        else:
-            medias_rig[objetivo]["media"] = 0
+        # else:
+        #     medias_rig[objetivo]["media"] = -1
 
 
     medias_bi = {}
     for objetivo in objetivos:
-        medias_bi[objetivo] = {}
-        medias_bi[objetivo]["cor"] = cores_obj[objetivo]
         if pesos["bi"][objetivo]>0:
+            if not objetivo in medias_bi:
+                medias_bi[objetivo] = {}
+                medias_bi[objetivo]["cor"] = cores_obj[objetivo]
             medias_bi[objetivo]["media"] = notas["bi"][objetivo] / pesos["bi"][objetivo]
             medias_geral[objetivo]["soma"] += notas["bi"][objetivo]
             medias_geral[objetivo]["peso"] += pesos["bi"][objetivo]
-        else:
-            medias_bi[objetivo]["media"] = 0
+        # else:
+        #     medias_bi[objetivo]["media"] = -1
 
 
     medias_rfi = {}
     for objetivo in objetivos:
-        medias_rfi[objetivo] = {}
-        medias_rfi[objetivo]["cor"] = cores_obj[objetivo]
         if pesos["rfi"][objetivo]>0:
+            if not objetivo in medias_rfi:
+                medias_rfi[objetivo] = {}
+                medias_rfi[objetivo]["cor"] = cores_obj[objetivo]
             medias_rfi[objetivo]["media"] = notas["rfi"][objetivo] / pesos["rfi"][objetivo]
             medias_geral[objetivo]["soma"] += notas["rfi"][objetivo]
             medias_geral[objetivo]["peso"] += pesos["rfi"][objetivo]
-        else:
-            medias_rfi[objetivo]["media"] = 0
+        # else:
+        #     medias_rfi[objetivo]["media"] = -1
 
 
     medias_rfg = {}
     for objetivo in objetivos:
-        medias_rfg[objetivo] = {}
-        medias_rfg[objetivo]["cor"] = cores_obj[objetivo]
         if pesos["rfg"][objetivo]>0:
+            if not objetivo in medias_rfg:
+                medias_rfg[objetivo] = {}
+                medias_rfg[objetivo]["cor"] = cores_obj[objetivo]
             medias_rfg[objetivo]["media"] = notas["rfg"][objetivo] / pesos["rfg"][objetivo]
             medias_geral[objetivo]["soma"] += notas["rfg"][objetivo]
             medias_geral[objetivo]["peso"] += pesos["rfg"][objetivo]
-        else:
-            medias_rfg[objetivo]["media"] = 0
+        # else:
+        #     medias_rfg[objetivo]["media"] = -1
 
 
     medias_bf = {}
     for objetivo in objetivos:
-        medias_bf[objetivo] = {}
-        medias_bf[objetivo]["cor"] = cores_obj[objetivo]
         if pesos["bf"][objetivo]>0:
+            if not objetivo in medias_bf:
+                medias_bf[objetivo] = {}
+                medias_bf[objetivo]["cor"] = cores_obj[objetivo]
             medias_bf[objetivo]["media"] = notas["bf"][objetivo] / pesos["bf"][objetivo]
             medias_geral[objetivo]["soma"] += notas["bf"][objetivo]
             medias_geral[objetivo]["peso"] += pesos["bf"][objetivo]
-        else:
-            medias_bf[objetivo]["media"] = 0
+        # else:
+        #     medias_bf[objetivo]["media"] = -1
 
     for objetivo in objetivos:
         if medias_geral[objetivo]["peso"] > 0:
             medias_geral[objetivo]["media"] = medias_geral[objetivo]["soma"] / medias_geral[objetivo]["peso"]
         else:
-            medias_geral[objetivo]["media"] = 0
+            medias_geral[objetivo]["media"] = -1
 
     context = {
         "medias_rii": medias_rii,

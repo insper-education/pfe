@@ -31,18 +31,32 @@
     {% endwith %}
 
     <div class="atualizar">
+
         <div class="container">
 
             <div class="row mt-5">
                 <div class="col"><canvas id="horizontal-objetivos"></canvas></div>
             </div>
             <div class="row mt-5 justify-content-md-center">
-                <div class="col-md-6"><canvas id="objetivos-rii"></canvas></div>
-                <div class="col-md-6"><canvas id="objetivos-rig"></canvas></div>
-                <div class="col-md-6"><canvas id="objetivos-bi"></canvas></div>
-                <div class="col-md-6"><canvas id="objetivos-rfi"></canvas></div>
-                <div class="col-md-6"><canvas id="objetivos-rfg"></canvas></div>
-                <div class="col-md-6"><canvas id="objetivos-bf"></canvas></div>
+                {% if medias_rii %}
+                    <div class="col-md-6"><canvas id="objetivos-rii"></canvas></div>
+                {% endif %}
+                {% if medias_rig %}
+                    <div class="col-md-6"><canvas id="objetivos-rig"></canvas></div>
+                {% endif %}
+                {% if medias_bi %}
+                    <div class="col-md-6"><canvas id="objetivos-bi"></canvas></div>
+                {% endif %}
+                {% if medias_rfi %}
+                    <div class="col-md-6"><canvas id="objetivos-rfi"></canvas></div>
+                {% endif %}
+                {% if medias_rfg %}
+                    <div class="col-md-6"><canvas id="objetivos-rfg"></canvas></div>
+                {% endif %}
+                {% if medias_bf %}
+                    <div class="col-md-6"><canvas id="objetivos-bf"></canvas></div>
+                {% endif %}
+
             </div>
 
             <script>
@@ -51,8 +65,10 @@
                     type: 'horizontalBar',
                     data: {
                     labels: [
-                        {% for key in medias_geral %}
-                            "{{key}}",
+                        {% for key, value in medias_geral.items %}
+                            {% if value.media >= 0 %}
+                                "{{key}}",
+                            {% endif %}
                         {% endfor %}
                         ],
                     datasets: [
@@ -60,12 +76,16 @@
                         label: "Objetivos de Aprendizagem",
                         backgroundColor: [
                             {% for key, value in medias_geral.items %}
-                                "{{value.cor}}",
+                                {% if value.media >= 0 %}
+                                    "{{value.cor}}",
+                                {% endif %}
                             {% endfor %}
                             ],
                         data: [
                             {% for key, value in medias_geral.items %}
-                                {{value.media|stringformat:".2f"|unlocalize}},
+                                {% if value.media >= 0 %}
+                                    {{value.media|stringformat:".2f"|unlocalize}},
+                                {% endif %}
                             {% endfor %}
                             ]
                         }
@@ -184,8 +204,10 @@
                     type: 'horizontalBar',
                     data: {
                     labels: [
-                        {% for key in medias_rii %}
-                            "{{key}}",
+                        {% for key, value in medias_rii.items %}
+                            {% if value.media >= 0 %}
+                                "{{key}}",
+                            {% endif %}
                         {% endfor %}
                         ],
                     datasets: [
@@ -193,12 +215,16 @@
                         label: "Objetivos de Aprendizagem",
                         backgroundColor: [
                             {% for key, value in medias_rii.items %}
-                                "{{value.cor}}",
+                                {% if value.media >= 0 %}
+                                    "{{value.cor}}",
+                                {% endif %}
                             {% endfor %}
                             ],
                         data: [
                             {% for key, value in medias_rii.items %}
-                                {{value.media|stringformat:".2f"|unlocalize}},
+                                {% if value.media >= 0 %}
+                                    {{value.media|stringformat:".2f"|unlocalize}},
+                                {% endif %}
                             {% endfor %}
                             ]
                         }
@@ -220,8 +246,10 @@
                     type: 'horizontalBar',
                     data: {
                     labels: [
-                        {% for key in medias_rig %}
-                            "{{key}}",
+                        {% for key, value in medias_rig.items %}
+                            {% if value.media >= 0 %}
+                                "{{key}}",
+                            {% endif %}
                         {% endfor %}
                         ],
                     datasets: [
@@ -229,12 +257,16 @@
                         label: "Objetivos de Aprendizagem",
                         backgroundColor: [
                             {% for key, value in medias_rig.items %}
-                                "{{value.cor}}",
+                                {% if value.media >= 0 %}
+                                    "{{value.cor}}",
+                                {% endif %}
                             {% endfor %}
                             ],
                         data: [
                             {% for key, value in medias_rig.items %}
-                                {{value.media|stringformat:".2f"|unlocalize}},
+                                {% if value.media >= 0 %}
+                                    {{value.media|stringformat:".2f"|unlocalize}},
+                                {% endif %}
                             {% endfor %}
                             ]
                         }
@@ -256,8 +288,10 @@
                     type: 'horizontalBar',
                     data: {
                     labels: [
-                        {% for key in medias_bi %}
-                            "{{key}}",
+                        {% for key, value in medias_bi.items %}
+                            {% if value.media >= 0 %}
+                                "{{key}}",
+                            {% endif %}
                         {% endfor %}
                         ],
                     datasets: [
@@ -265,12 +299,16 @@
                         label: "Objetivos de Aprendizagem",
                         backgroundColor: [
                             {% for key, value in medias_bi.items %}
-                                "{{value.cor}}",
+                                {% if value.media >= 0 %}
+                                    "{{value.cor}}",
+                                {% endif %}
                             {% endfor %}
                             ],
                         data: [
                             {% for key, value in medias_bi.items %}
-                                {{value.media|stringformat:".2f"|unlocalize}},
+                                {% if value.media >= 0 %}
+                                    {{value.media|stringformat:".2f"|unlocalize}},
+                                {% endif %}
                             {% endfor %}
                             ]
                         }
@@ -294,8 +332,10 @@
                     type: 'horizontalBar',
                     data: {
                     labels: [
-                        {% for key in medias_rfi %}
-                            "{{key}}",
+                        {% for key, value in medias_rfi.items %}
+                            {% if value.media >= 0 %}
+                                "{{key}}",
+                            {% endif %}
                         {% endfor %}
                         ],
                     datasets: [
@@ -303,12 +343,16 @@
                         label: "Objetivos de Aprendizagem",
                         backgroundColor: [
                             {% for key, value in medias_rfi.items %}
-                                "{{value.cor}}",
+                                {% if value.media >= 0 %}
+                                    "{{value.cor}}",
+                                {% endif %}
                             {% endfor %}
                             ],
                         data: [
                             {% for key, value in medias_rfi.items %}
-                                {{value.media|stringformat:".2f"|unlocalize}},
+                                {% if value.media >= 0 %}
+                                    {{value.media|stringformat:".2f"|unlocalize}},
+                                {% endif %}
                             {% endfor %}
                             ]
                         }
@@ -330,8 +374,10 @@
                     type: 'horizontalBar',
                     data: {
                     labels: [
-                        {% for key in medias_rfg %}
-                            "{{key}}",
+                        {% for key, value in medias_rfg.items %}
+                            {% if value.media >= 0 %}
+                                "{{key}}",
+                            {% endif %}
                         {% endfor %}
                         ],
                     datasets: [
@@ -339,12 +385,16 @@
                         label: "Objetivos de Aprendizagem",
                         backgroundColor: [
                             {% for key, value in medias_rfg.items %}
-                                "{{value.cor}}",
+                                {% if value.media >= 0 %}
+                                    "{{value.cor}}",
+                                {% endif %}
                             {% endfor %}
                             ],
                         data: [
                             {% for key, value in medias_rfg.items %}
-                                {{value.media|stringformat:".2f"|unlocalize}},
+                                {% if value.media >= 0 %}
+                                    {{value.media|stringformat:".2f"|unlocalize}},
+                                {% endif %}
                             {% endfor %}
                             ]
                         }
@@ -366,8 +416,10 @@
                     type: 'horizontalBar',
                     data: {
                     labels: [
-                        {% for key in medias_bf %}
-                            "{{key}}",
+                        {% for key, value in medias_bf.items %}
+                            {% if value.media >= 0 %}
+                                "{{key}}",
+                            {% endif %}
                         {% endfor %}
                         ],
                     datasets: [
@@ -375,12 +427,16 @@
                         label: "Objetivos de Aprendizagem",
                         backgroundColor: [
                             {% for key, value in medias_bf.items %}
-                                "{{value.cor}}",
+                                {% if value.media >= 0 %}
+                                    "{{value.cor}}",
+                                {% endif %}
                             {% endfor %}
                             ],
                         data: [
                             {% for key, value in medias_bf.items %}
-                                {{value.media|stringformat:".2f"|unlocalize}},
+                                {% if value.media >= 0 %}
+                                    {{value.media|stringformat:".2f"|unlocalize}},
+                                {% endif %}
                             {% endfor %}
                             ]
                         }
@@ -408,30 +464,41 @@
                     var horizontal_objetivos = document.getElementById('horizontal-objetivos').getContext('2d');
                     window.objetivos = new Chart(horizontal_objetivos, config_objetivos);
 
+                    {% if medias_rii %}
+                        // Chart do nível nos objetivos de aprendizagem em RII
+                        var objetivos_rii = document.getElementById('objetivos-rii').getContext('2d');
+                        window.objetivos = new Chart(objetivos_rii, config_objetivos_rii);
+                    {% endif %}
 
-                    // Chart do nível nos objetivos de aprendizagem em RII
-                    var objetivos_rii = document.getElementById('objetivos-rii').getContext('2d');
-                    window.objetivos = new Chart(objetivos_rii, config_objetivos_rii);
+                    {% if medias_rig %}
+                        // Chart do nível nos objetivos de aprendizagem em RIG
+                        var objetivos_rig = document.getElementById('objetivos-rig').getContext('2d');
+                        window.objetivos = new Chart(objetivos_rig, config_objetivos_rig);
+                    {% endif %}
 
-                    // Chart do nível nos objetivos de aprendizagem em RIG
-                    var objetivos_rig = document.getElementById('objetivos-rig').getContext('2d');
-                    window.objetivos = new Chart(objetivos_rig, config_objetivos_rig);
+                    {% if medias_bi %}
+                        // Chart do nível nos objetivos de aprendizagem em BI
+                        var objetivos_bi = document.getElementById('objetivos-bi').getContext('2d');
+                        window.objetivos = new Chart(objetivos_bi, config_objetivos_bi);
+                    {% endif %}
 
-                    // Chart do nível nos objetivos de aprendizagem em BI
-                    var objetivos_bi = document.getElementById('objetivos-bi').getContext('2d');
-                    window.objetivos = new Chart(objetivos_bi, config_objetivos_bi);
+                    {% if medias_rfi %}
+                        // Chart do nível nos objetivos de aprendizagem em RFI
+                        var objetivos_rfi = document.getElementById('objetivos-rfi').getContext('2d');
+                        window.objetivos = new Chart(objetivos_rfi, config_objetivos_rfi);
+                    {% endif %}
 
-                    // Chart do nível nos objetivos de aprendizagem em RFI
-                    var objetivos_rfi = document.getElementById('objetivos-rfi').getContext('2d');
-                    window.objetivos = new Chart(objetivos_rfi, config_objetivos_rfi);
+                    {% if medias_rfg %}
+                        // Chart do nível nos objetivos de aprendizagem em RFG
+                        var objetivos_rfg = document.getElementById('objetivos-rfg').getContext('2d');
+                        window.objetivos = new Chart(objetivos_rfg, config_objetivos_rfg);
+                    {% endif %}
 
-                    // Chart do nível nos objetivos de aprendizagem em RFG
-                    var objetivos_rfg = document.getElementById('objetivos-rfg').getContext('2d');
-                    window.objetivos = new Chart(objetivos_rfg, config_objetivos_rfg);
-
-                    // Chart do nível nos objetivos de aprendizagem em BF
-                    var objetivos_bf = document.getElementById('objetivos-bf').getContext('2d');
-                    window.objetivos = new Chart(objetivos_bf, config_objetivos_bf);
+                    {% if medias_bf %}
+                        // Chart do nível nos objetivos de aprendizagem em BF
+                        var objetivos_bf = document.getElementById('objetivos-bf').getContext('2d');
+                        window.objetivos = new Chart(objetivos_bf, config_objetivos_bf);
+                    {% endif %}
 
                 }
 

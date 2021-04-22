@@ -12,6 +12,7 @@ from celery import task
 from celery import shared_task
 from django.conf import settings
 from django.core.management import call_command
+from django.core.management import execute_from_command_line
 
 from calendario.views import get_calendario_context
 
@@ -40,6 +41,8 @@ def mediabackup():
 
     try:
         call_command("mediabackup")
+        #argv = ['', 'mediabackup', '--compress']
+        #execute_from_command_line(argv)
         return f"Backup realizado: {datetime.datetime.now()}"
     except:
         return f"Não foi possível fazer o backup: {datetime.datetime.now()}"
