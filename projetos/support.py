@@ -155,6 +155,10 @@ def calcula_objetivos(alocacoes):
         "rfi": {},
         "rfg": {},
         "bf":  {},
+        "api": {},  # antiga
+        "apg": {},  # antiga
+        "afi": {},  # antiga
+        "afg": {},  # antiga
     }
 
     pesos = {
@@ -164,6 +168,10 @@ def calcula_objetivos(alocacoes):
         "rfi": {},
         "rfg": {},
         "bf":  {},
+        "api": {},  # antiga
+        "apg": {},  # antiga
+        "afi": {},  # antiga
+        "afg": {},  # antiga
     }
 
     
@@ -180,26 +188,43 @@ def calcula_objetivos(alocacoes):
                 for k,v in nota[1].items():
                     notas["rii"][k] += v[0] * v[1]
                     pesos["rii"][k] += v[1]
-            if nota[0] == "RIG":
+            elif nota[0] == "RIG":
                 for k,v in nota[1].items():
                     notas["rig"][k] += v[0] * v[1]
                     pesos["rig"][k] += v[1]
-            if nota[0] == "BI":
+            elif nota[0] == "BI":
                 for k,v in nota[1].items():
                     notas["bi"][k] += v[0] * v[1]
                     pesos["bi"][k] += v[1]
-            if nota[0] == "RFI":
+            elif nota[0] == "RFI":
                 for k,v in nota[1].items():
                     notas["rfi"][k] += v[0] * v[1]
                     pesos["rfi"][k] += v[1]
-            if nota[0] == "RFG":
+            elif nota[0] == "RFG":
                 for k,v in nota[1].items():
                     notas["rfg"][k] += v[0] * v[1]
                     pesos["rfg"][k] += v[1]
-            if nota[0] == "BF":
+            elif nota[0] == "BF":
                 for k,v in nota[1].items():
                     notas["bf"][k] += v[0] * v[1]
                     pesos["bf"][k] += v[1]
+            elif nota[0] == "API":
+                for k,v in nota[1].items():
+                    notas["api"][k] += v[0] * v[1]
+                    pesos["api"][k] += v[1]
+            elif nota[0] == "APG":
+                for k,v in nota[1].items():
+                    notas["apg"][k] += v[0] * v[1]
+                    pesos["apg"][k] += v[1]
+            elif nota[0] == "AFI":
+                for k,v in nota[1].items():
+                    notas["afi"][k] += v[0] * v[1]
+                    pesos["afi"][k] += v[1]
+            elif nota[0] == "AFG":
+                for k,v in nota[1].items():
+                    notas["afg"][k] += v[0] * v[1]
+                    pesos["afg"][k] += v[1]
+            
 
 
     medias_geral = {}
@@ -285,6 +310,55 @@ def calcula_objetivos(alocacoes):
         # else:
         #     medias_bf[objetivo]["media"] = -1
 
+
+    # ANTIGAS 
+    medias_api = {}
+    for objetivo in objetivos:
+        if pesos["api"][objetivo]>0:
+            if not objetivo in medias_api:
+                medias_api[objetivo] = {}
+                medias_api[objetivo]["cor"] = cores_obj[objetivo]
+            medias_api[objetivo]["media"] = notas["api"][objetivo] / pesos["api"][objetivo]
+            medias_geral[objetivo]["soma"] += notas["api"][objetivo]
+            medias_geral[objetivo]["peso"] += pesos["api"][objetivo]
+
+    medias_apg = {}
+    for objetivo in objetivos:
+        if pesos["apg"][objetivo]>0:
+            if not objetivo in medias_apg:
+                medias_apg[objetivo] = {}
+                medias_apg[objetivo]["cor"] = cores_obj[objetivo]
+            medias_apg[objetivo]["media"] = notas["apg"][objetivo] / pesos["apg"][objetivo]
+            medias_geral[objetivo]["soma"] += notas["apg"][objetivo]
+            medias_geral[objetivo]["peso"] += pesos["apg"][objetivo]
+
+    medias_afi = {}
+    for objetivo in objetivos:
+        if pesos["afi"][objetivo]>0:
+            if not objetivo in medias_afi:
+                medias_afi[objetivo] = {}
+                medias_afi[objetivo]["cor"] = cores_obj[objetivo]
+            medias_afi[objetivo]["media"] = notas["afi"][objetivo] / pesos["afi"][objetivo]
+            medias_geral[objetivo]["soma"] += notas["afi"][objetivo]
+            medias_geral[objetivo]["peso"] += pesos["afi"][objetivo]
+
+    medias_afg = {}
+    for objetivo in objetivos:
+        if pesos["afg"][objetivo]>0:
+            if not objetivo in medias_afg:
+                medias_afg[objetivo] = {}
+                medias_afg[objetivo]["cor"] = cores_obj[objetivo]
+            medias_afg[objetivo]["media"] = notas["afg"][objetivo] / pesos["afg"][objetivo]
+            medias_geral[objetivo]["soma"] += notas["afg"][objetivo]
+            medias_geral[objetivo]["peso"] += pesos["afg"][objetivo]
+
+
+
+
+
+
+
+
     for objetivo in objetivos:
         if medias_geral[objetivo]["peso"] > 0:
             medias_geral[objetivo]["media"] = medias_geral[objetivo]["soma"] / medias_geral[objetivo]["peso"]
@@ -292,6 +366,10 @@ def calcula_objetivos(alocacoes):
             medias_geral[objetivo]["media"] = -1
 
     context = {
+        "medias_api": medias_api,
+        "medias_apg": medias_apg,
+        "medias_afi": medias_afi,
+        "medias_afg": medias_afg,
         "medias_rii": medias_rii,
         "medias_rig": medias_rig,
         "medias_bi": medias_bi,

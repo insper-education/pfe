@@ -308,7 +308,7 @@ class Aluno(models.Model):
             relp = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=10).\
                                       order_by('momento').last()
             if relp:
-                notas.append(("RP", float(relp.nota), relp.peso/100))
+                notas.append(("RPL", float(relp.nota), relp.peso/100))
 
             # Relatório Intermediário de Grupo (11, 'Relatório Intermediário de Grupo'),
             rig = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=11)
@@ -401,7 +401,7 @@ class Aluno(models.Model):
             relp = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=10).\
                                       order_by('momento').last()
             if relp:
-                notas.append(("RP", float(relp.nota), relp.peso/100))
+                notas.append(("RPL", float(relp.nota), relp.peso/100))
 
             # Relatório Intermediário de Grupo (11, 'Relatório Intermediário de Grupo'),
             rig = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=11)

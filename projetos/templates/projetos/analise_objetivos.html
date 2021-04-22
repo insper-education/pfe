@@ -33,11 +33,30 @@
     <div class="atualizar">
 
         <div class="container">
-
-            <div class="row mt-5">
-                <div class="col"><canvas id="horizontal-objetivos"></canvas></div>
-            </div>
+        
+            {% if medias_geral %}
+                <div class="row mt-5">
+                    <div class="col"><canvas id="horizontal-objetivos"></canvas></div>
+                </div>
+            {% endif %}
             <div class="row mt-5 justify-content-md-center">
+
+                {% comment %} Avaliações Antigas {% endcomment %}
+                {% if medias_api %}
+                    <div class="col-md-6"><canvas id="objetivos-api"></canvas></div>
+                {% endif %}
+                {% if medias_apg %}
+                    <div class="col-md-6"><canvas id="objetivos-apg"></canvas></div>
+                {% endif %}
+                {% if medias_afi %}
+                    <div class="col-md-6"><canvas id="objetivos-afi"></canvas></div>
+                {% endif %}
+                {% if medias_afg %}
+                    <div class="col-md-6"><canvas id="objetivos-afg"></canvas></div>
+                {% endif %}
+
+
+
                 {% if medias_rii %}
                     <div class="col-md-6"><canvas id="objetivos-rii"></canvas></div>
                 {% endif %}
@@ -199,6 +218,187 @@
                         }
                     ]
                 }
+
+
+
+                {% comment %} Avaliações Antigas {% endcomment %}
+
+                var config_objetivos_api = {
+                    type: 'horizontalBar',
+                    data: {
+                    labels: [
+                        {% for key, value in medias_api.items %}
+                            {% if value.media >= 0 %}
+                                "{{key}}",
+                            {% endif %}
+                        {% endfor %}
+                        ],
+                    datasets: [
+                        {
+                        label: "Objetivos de Aprendizagem",
+                        backgroundColor: [
+                            {% for key, value in medias_api.items %}
+                                {% if value.media >= 0 %}
+                                    "{{value.cor}}",
+                                {% endif %}
+                            {% endfor %}
+                            ],
+                        data: [
+                            {% for key, value in medias_api.items %}
+                                {% if value.media >= 0 %}
+                                    {{value.media|stringformat:".2f"|unlocalize}},
+                                {% endif %}
+                            {% endfor %}
+                            ]
+                        }
+                    ]
+                    },
+                    options: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Avaliação Parcial Individual'
+                        },
+                        scales: scales,
+                        plugins: plugins,
+                        annotation: annotation,
+                    }
+                }
+
+                var config_objetivos_apg = {
+                    type: 'horizontalBar',
+                    data: {
+                    labels: [
+                        {% for key, value in medias_apg.items %}
+                            {% if value.media >= 0 %}
+                                "{{key}}",
+                            {% endif %}
+                        {% endfor %}
+                        ],
+                    datasets: [
+                        {
+                        label: "Objetivos de Aprendizagem",
+                        backgroundColor: [
+                            {% for key, value in medias_apg.items %}
+                                {% if value.media >= 0 %}
+                                    "{{value.cor}}",
+                                {% endif %}
+                            {% endfor %}
+                            ],
+                        data: [
+                            {% for key, value in medias_apg.items %}
+                                {% if value.media >= 0 %}
+                                    {{value.media|stringformat:".2f"|unlocalize}},
+                                {% endif %}
+                            {% endfor %}
+                            ]
+                        }
+                    ]
+                    },
+                    options: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Avaliação Parcial de Grupo'
+                        },
+                        scales: scales,
+                        plugins: plugins,
+                        annotation: annotation,
+                    }
+                }
+
+
+                var config_objetivos_afi = {
+                    type: 'horizontalBar',
+                    data: {
+                    labels: [
+                        {% for key, value in medias_afi.items %}
+                            {% if value.media >= 0 %}
+                                "{{key}}",
+                            {% endif %}
+                        {% endfor %}
+                        ],
+                    datasets: [
+                        {
+                        label: "Objetivos de Aprendizagem",
+                        backgroundColor: [
+                            {% for key, value in medias_afi.items %}
+                                {% if value.media >= 0 %}
+                                    "{{value.cor}}",
+                                {% endif %}
+                            {% endfor %}
+                            ],
+                        data: [
+                            {% for key, value in medias_afi.items %}
+                                {% if value.media >= 0 %}
+                                    {{value.media|stringformat:".2f"|unlocalize}},
+                                {% endif %}
+                            {% endfor %}
+                            ]
+                        }
+                    ]
+                    },
+                    options: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Avaliação Final Individual'
+                        },
+                        scales: scales,
+                        plugins: plugins,
+                        annotation: annotation,
+                    }
+                }
+
+                var config_objetivos_afg = {
+                    type: 'horizontalBar',
+                    data: {
+                    labels: [
+                        {% for key, value in medias_afg.items %}
+                            {% if value.media >= 0 %}
+                                "{{key}}",
+                            {% endif %}
+                        {% endfor %}
+                        ],
+                    datasets: [
+                        {
+                        label: "Objetivos de Aprendizagem",
+                        backgroundColor: [
+                            {% for key, value in medias_afg.items %}
+                                {% if value.media >= 0 %}
+                                    "{{value.cor}}",
+                                {% endif %}
+                            {% endfor %}
+                            ],
+                        data: [
+                            {% for key, value in medias_afg.items %}
+                                {% if value.media >= 0 %}
+                                    {{value.media|stringformat:".2f"|unlocalize}},
+                                {% endif %}
+                            {% endfor %}
+                            ]
+                        }
+                    ]
+                    },
+                    options: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Avaliação Final de Grupo'
+                        },
+                        scales: scales,
+                        plugins: plugins,
+                        annotation: annotation,
+                    }
+                }
+
+
+
+
+
+
+
+
 
                 var config_objetivos_rii = {
                     type: 'horizontalBar',
@@ -460,9 +660,40 @@
 
                 function carrega_pagina() {  
 
-                    // Chart do nível nos objetivos de aprendizagem
-                    var horizontal_objetivos = document.getElementById('horizontal-objetivos').getContext('2d');
-                    window.objetivos = new Chart(horizontal_objetivos, config_objetivos);
+                    {% if medias_geral %}
+                        // Chart do nível nos objetivos de aprendizagem
+                        var horizontal_objetivos = document.getElementById('horizontal-objetivos').getContext('2d');
+                        window.objetivos = new Chart(horizontal_objetivos, config_objetivos);
+                    {% endif %}
+
+                    {% comment %} Avaliações Antigas {% endcomment %}
+                    {% if medias_api %}
+                        // Chart do nível nos objetivos de aprendizagem em API
+                        var objetivos_api = document.getElementById('objetivos-api').getContext('2d');
+                        window.objetivos = new Chart(objetivos_api, config_objetivos_api);
+                    {% endif %}
+
+                    {% if medias_apg %}
+                        // Chart do nível nos objetivos de aprendizagem em APG
+                        var objetivos_apg = document.getElementById('objetivos-apg').getContext('2d');
+                        window.objetivos = new Chart(objetivos_apg, config_objetivos_apg);
+                    {% endif %}
+
+                    {% if medias_afi %}
+                        // Chart do nível nos objetivos de aprendizagem em AFI
+                        var objetivos_afi = document.getElementById('objetivos-afi').getContext('2d');
+                        window.objetivos = new Chart(objetivos_afi, config_objetivos_afi);
+                    {% endif %}
+
+                    {% if medias_afg %}
+                        // Chart do nível nos objetivos de aprendizagem em AFG
+                        var objetivos_afg = document.getElementById('objetivos-afg').getContext('2d');
+                        window.objetivos = new Chart(objetivos_afg, config_objetivos_afg);
+                    {% endif %}
+
+
+
+
 
                     {% if medias_rii %}
                         // Chart do nível nos objetivos de aprendizagem em RII

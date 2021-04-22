@@ -36,6 +36,27 @@
                 </div>
             {% endif %}
             <div class="row mt-5 justify-content-md-center">
+                {% comment %} Avaliações Antigas {% endcomment %}
+                {% if notas.ppf.ideal or notas.ppf.regular or notas.ppf.inferior %}
+                    <div class="col-md-6"><canvas id="doughnut-ppf"></canvas></div>
+                {% endif %}
+                {% if notas.api.ideal or notas.api.regular or notas.api.inferior %}
+                    <div class="col-md-6"><canvas id="doughnut-api"></canvas></div>
+                {% endif %}
+                {% if notas.apg.ideal or notas.apg.regular or notas.apg.inferior %}
+                    <div class="col-md-6"><canvas id="doughnut-apg"></canvas></div>
+                {% endif %}
+                {% if notas.afi.ideal or notas.afi.regular or notas.afi.inferior %}
+                    <div class="col-md-6"><canvas id="doughnut-afi"></canvas></div>
+                {% endif %}
+                {% if notas.afg.ideal or notas.afg.regular or notas.afg.inferior %}
+                    <div class="col-md-6"><canvas id="doughnut-afg"></canvas></div>
+                {% endif %}
+                {% if notas.rpl.ideal or notas.rpl.regular or notas.rpl.inferior %}
+                    <div class="col-md-6"><canvas id="doughnut-rpl"></canvas></div>
+                {% endif %}
+
+
                 {% if notas.rii.ideal or notas.rii.regular or notas.rii.inferior %}
                     <div class="col-md-6"><canvas id="doughnut-rii"></canvas></div>
                 {% endif %}
@@ -109,6 +130,154 @@
                         plugins: plugins,
                     }
                 }
+
+                {% comment %} Avaliações Antigas {% endcomment %}
+                var config_ppf = {
+                    type: 'doughnut',
+                    data: {
+                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                    datasets: [
+                        {
+                        label: "Estudantes",
+                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                        data: [{{notas.ppf.ideal}},{{notas.ppf.regular}},{{notas.ppf.inferior}}]
+                        }
+                    ]
+                    },
+                    options: {
+                        title: {
+                            display: true,
+                            text: 'Avaliação de Planejamento Preliminar',
+                            position: 'top'
+                        },
+                        tooltips: tooltips,
+                        legend: legend,
+                        plugins: plugins,
+                    }
+                }
+
+                var config_api = {
+                    type: 'doughnut',
+                    data: {
+                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                    datasets: [
+                        {
+                        label: "Estudantes",
+                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                        data: [{{notas.api.ideal}},{{notas.api.regular}},{{notas.api.inferior}}]
+                        }
+                    ]
+                    },
+                    options: {
+                        title: {
+                            display: true,
+                            text: 'Avaliação Preliminar Individual',
+                            position: 'top'
+                        },
+                        tooltips: tooltips,
+                        legend: legend,
+                        plugins: plugins,
+                    }
+                }
+
+                var config_apg = {
+                    type: 'doughnut',
+                    data: {
+                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                    datasets: [
+                        {
+                        label: "Estudantes",
+                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                        data: [{{notas.apg.ideal}},{{notas.apg.regular}},{{notas.apg.inferior}}]
+                        }
+                    ]
+                    },
+                    options: {
+                        title: {
+                            display: true,
+                            text: 'Avaliação Preliminar de Grupo',
+                            position: 'top'
+                        },
+                        tooltips: tooltips,
+                        legend: legend,
+                        plugins: plugins,
+                    }
+                }
+
+
+                var config_afi = {
+                    type: 'doughnut',
+                    data: {
+                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                    datasets: [
+                        {
+                        label: "Estudantes",
+                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                        data: [{{notas.afi.ideal}},{{notas.afi.regular}},{{notas.afi.inferior}}]
+                        }
+                    ]
+                    },
+                    options: {
+                        title: {
+                            display: true,
+                            text: 'Avaliação Final Individual',
+                            position: 'top'
+                        },
+                        tooltips: tooltips,
+                        legend: legend,
+                        plugins: plugins,
+                    }
+                }
+
+                var config_afg = {
+                    type: 'doughnut',
+                    data: {
+                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                    datasets: [
+                        {
+                        label: "Estudantes",
+                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                        data: [{{notas.afg.ideal}},{{notas.afg.regular}},{{notas.afg.inferior}}]
+                        }
+                    ]
+                    },
+                    options: {
+                        title: {
+                            display: true,
+                            text: 'Avaliação Final de Grupo',
+                            position: 'top'
+                        },
+                        tooltips: tooltips,
+                        legend: legend,
+                        plugins: plugins,
+                    }
+                }
+
+                var config_rpl = {
+                    type: 'doughnut',
+                    data: {
+                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                    datasets: [
+                        {
+                        label: "Estudantes",
+                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                        data: [{{notas.rpl.ideal}},{{notas.rpl.regular}},{{notas.rpl.inferior}}]
+                        }
+                    ]
+                    },
+                    options: {
+                        title: {
+                            display: true,
+                            text: 'Relatório de Planejamento',
+                            position: 'top'
+                        },
+                        tooltips: tooltips,
+                        legend: legend,
+                        plugins: plugins,
+                    }
+                }
+
+
 
 
                 var config_rii = {
@@ -264,6 +433,48 @@
                         var doughnut_situacao = document.getElementById('doughnut-situacao').getContext('2d');
                         window.situacao = new Chart(doughnut_situacao, config_situacao);
                     {% endif %}
+
+
+                    {% comment %} Avaliações Antigas {% endcomment %}
+                    {% if notas.ppf.ideal or notas.ppf.regular or notas.ppf.inferior %}
+                        // Chart da PPF dos alunos por faixa de notas
+                        var doughnut_ppf = document.getElementById('doughnut-ppf').getContext('2d');
+                        window.ppf = new Chart(doughnut_ppf, config_ppf);
+                    {% endif %}
+
+                    {% if notas.api.ideal or notas.api.regular or notas.api.inferior %}
+                        // Chart da API dos alunos por faixa de notas
+                        var doughnut_api = document.getElementById('doughnut-api').getContext('2d');
+                        window.api = new Chart(doughnut_api, config_api);
+                    {% endif %}
+
+                    {% if notas.apg.ideal or notas.apg.regular or notas.apg.inferior %}
+                        // Chart da APG dos alunos por faixa de notas
+                        var doughnut_apg = document.getElementById('doughnut-apg').getContext('2d');
+                        window.apg = new Chart(doughnut_apg, config_apg);
+                    {% endif %}
+
+                    {% if notas.afi.ideal or notas.afi.regular or notas.afi.inferior %}
+                        // Chart da AFI dos alunos por faixa de notas
+                        var doughnut_afi = document.getElementById('doughnut-afi').getContext('2d');
+                        window.afi = new Chart(doughnut_afi, config_afi);
+                    {% endif %}
+
+                    {% if notas.afg.ideal or notas.afg.regular or notas.afg.inferior %}
+                        // Chart da AFG dos alunos por faixa de notas
+                        var doughnut_afg = document.getElementById('doughnut-afg').getContext('2d');
+                        window.afg = new Chart(doughnut_afg, config_afg);
+                    {% endif %}
+
+                    {% if notas.rpl.ideal or notas.rpl.regular or notas.rpl.inferior %}
+                        // Chart da RPL dos alunos por faixa de notas
+                        var doughnut_rpl = document.getElementById('doughnut-rpl').getContext('2d');
+                        window.rpl = new Chart(doughnut_rpl, config_rpl);
+                    {% endif %}
+
+
+
+
 
                     {% if notas.rii.ideal or notas.rii.regular or notas.rii.inferior %}
                         // Chart da RII dos alunos por faixa de notas

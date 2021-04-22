@@ -815,10 +815,6 @@ def projetos_vs_propostas(request):
 def analise_notas(request):
     """Mostra graficos das evoluções do PFE."""
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     periodo = ""
     estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
@@ -856,6 +852,12 @@ def analise_notas(request):
         "rfi": {"ideal": 0, "regular":0, "inferior": 0},
         "rfg": {"ideal": 0, "regular":0, "inferior": 0},
         "bf":  {"ideal": 0, "regular":0, "inferior": 0},
+        "rpl": {"ideal": 0, "regular":0, "inferior": 0},
+        "ppf": {"ideal": 0, "regular":0, "inferior": 0},
+        "api": {"ideal": 0, "regular":0, "inferior": 0},
+        "apg": {"ideal": 0, "regular":0, "inferior": 0},
+        "afg": {"ideal": 0, "regular":0, "inferior": 0},
+        "afi": {"ideal": 0, "regular":0, "inferior": 0},
     }
 
     notas_lista = [x.get_notas for x in medias_semestre]
@@ -868,41 +870,83 @@ def analise_notas(request):
                     notas["rii"]["regular"] += 1
                 else:
                     notas["rii"]["inferior"] += 1
-            if nota[0] == "RIG":
+            elif nota[0] == "RIG":
                 if nota[1] >= valor["ideal"]:
                     notas["rig"]["ideal"] += 1
                 elif nota[1] >= valor["regular"]:
                     notas["rig"]["regular"] += 1
                 else:
                     notas["rig"]["inferior"] += 1
-            if nota[0] == "BI":
+            elif nota[0] == "BI":
                 if nota[1] >= valor["ideal"]:
                     notas["bi"]["ideal"] += 1
                 elif nota[1] >= valor["regular"]:
                     notas["bi"]["regular"] += 1
                 else:
                     notas["bi"]["inferior"] += 1
-            if nota[0] == "RFI":
+            elif nota[0] == "RFI":
                 if nota[1] >= valor["ideal"]:
                     notas["rfi"]["ideal"] += 1
                 elif nota[1] >= valor["regular"]:
                     notas["rfi"]["regular"] += 1
                 else:
                     notas["rfi"]["inferior"] += 1
-            if nota[0] == "RFG":
+            elif nota[0] == "RFG":
                 if nota[1] >= valor["ideal"]:
                     notas["rfg"]["ideal"] += 1
                 elif nota[1] >= valor["regular"]:
                     notas["rfg"]["regular"] += 1
                 else:
                     notas["rfg"]["inferior"] += 1
-            if nota[0] == "BF":
+            elif nota[0] == "BF":
                 if nota[1] >= valor["ideal"]:
                     notas["bf"]["ideal"] += 1
                 elif nota[1] >= valor["regular"]:
                     notas["bf"]["regular"] += 1
                 else:
                     notas["bf"]["inferior"] += 1
+            elif nota[0] == "RPL":
+                if nota[1] >= valor["ideal"]:
+                    notas["rpl"]["ideal"] += 1
+                elif nota[1] >= valor["regular"]:
+                    notas["rpl"]["regular"] += 1
+                else:
+                    notas["rpl"]["inferior"] += 1
+            elif nota[0] == "PPF":
+                if nota[1] >= valor["ideal"]:
+                    notas["ppf"]["ideal"] += 1
+                elif nota[1] >= valor["regular"]:
+                    notas["ppf"]["regular"] += 1
+                else:
+                    notas["ppf"]["inferior"] += 1
+            elif nota[0] == "APG":
+                if nota[1] >= valor["ideal"]:
+                    notas["apg"]["ideal"] += 1
+                elif nota[1] >= valor["regular"]:
+                    notas["apg"]["regular"] += 1
+                else:
+                    notas["apg"]["inferior"] += 1
+            elif nota[0] == "API":
+                if nota[1] >= valor["ideal"]:
+                    notas["api"]["ideal"] += 1
+                elif nota[1] >= valor["regular"]:
+                    notas["api"]["regular"] += 1
+                else:
+                    notas["api"]["inferior"] += 1
+            elif nota[0] == "AFG":
+                if nota[1] >= valor["ideal"]:
+                    notas["afg"]["ideal"] += 1
+                elif nota[1] >= valor["regular"]:
+                    notas["afg"]["regular"] += 1
+                else:
+                    notas["afg"]["inferior"] += 1
+            elif nota[0] == "AFI":
+                if nota[1] >= valor["ideal"]:
+                    notas["afi"]["ideal"] += 1
+                elif nota[1] >= valor["regular"]:
+                    notas["afi"]["regular"] += 1
+                else:
+                    notas["afi"]["inferior"] += 1    
 
     medias_lista = [x.get_media for x in medias_semestre]
     
