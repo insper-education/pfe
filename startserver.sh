@@ -1,4 +1,6 @@
 source ~/pfe/env/bin/activate
+#sudo systemctl start postgresql.service
+#sudo systemctl enable postgresql.service
 touch pfe.log
 sudo chown ubuntu.ubuntu pfe.log
 sudo chmod a+w pfe.log
