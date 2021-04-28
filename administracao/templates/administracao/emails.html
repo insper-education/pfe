@@ -37,7 +37,7 @@
       mailto += "-%20Projeto:%20"
       mailto += projeto
       mailto += "&body=Caros,%0D%0A%0D%0A";
-      mailto += "atenciosamente,%20coordenação%20PFE";
+      mailto += "atenciosamente,%20Luciano%20P%20Soares%20(coordenação%20PFE)";
       window.open(mailto);
     }
   
@@ -72,14 +72,14 @@
               mailto:{% for membro in membros_comite %}{{membro.email|parse_quote}},{% endfor %}
               ?cc=lpsoares@insper.edu.br,pfe@insper.edu.br
               &amp;subject=PFE%20Comitê&amp;body=Caros%20membros%20do%20comitê%20do%20PFE,%0D%0A%0D%0A
-              atenciosamente,%20coordenação%20PFE
+              atenciosamente,%20Luciano%20P%20Soares%20(coordenação%20PFE)
             ">
             {% comment %}
             <a href="
               mailto:{% for membro in membros_comite %}{{membro.first_name|parse_quote}}%20{{membro.last_name|parse_quote}}%20&lt;{{membro.email|parse_quote}}&gt;,{% endfor %}
               ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
               &amp;subject=PFE%20Comitê&amp;body=Caros%20membros%20do%20comitê%20do%20PFE,%0D%0A%0D%0A
-              atenciosamente,%20coordenação%20PFE
+              atenciosamente,%20Luciano%20P%20Soares%20(coordenação%20PFE)
             ">
             {% endcomment %}
               <button class="btn btn-outline-secondary btn-sm" type="button">
@@ -139,7 +139,7 @@
   <br>
 
   <strong>Por projeto</strong>
-  <label class="form-check-label">(</label>
+  <label class="form-check-label">( <span style="font-size: 0.85em;">incluindo: </span></label>
   <small>
     <div class="form-check form-check-inline mr-1">
       <input class="form-check-input" type="checkbox" id="estudantes" value="estudantes" checked>
@@ -179,65 +179,69 @@
     </div>
   </div>
 
-  <br><br><br>
 
-  {% if todos_alunos %}
-    <a href="
-      mailto:{% for aluno in todos_alunos %}{{ aluno.user.email|parse_quote }},{% endfor %}
-      ?cc=lpsoares@insper.edu.br,pfe@insper.edu.br
-      &amp;bcc=comitepfe@insper.edu.br
-      &amp;subject=PFE%20&amp;body=Caros%20alunos,%0D%0A%0D%0A
-      atenciosamente,%20coordenação%20PFE
-    ">Todos os alunos do PFE</a><br>
-    {% comment %}
-    <a href="
-      mailto:{% for aluno in todos_alunos %}{{aluno.user.first_name|parse_quote}}%20{{aluno.user.last_name|parse_quote}}%20&lt;{{ aluno.user.email|parse_quote }}&gt;,{% endfor %}
-      ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
-      &amp;bcc=ComitePFE&lt;comitepfe@insper.edu.br&gt;
-      &amp;subject=PFE%20&amp;body=Caros%20alunos,%0D%0A%0D%0A
-      atenciosamente,%20coordenação%20PFE
-    ">Todos os alunos do PFE</a><br>
-    {% endcomment %}
+  {% if user.tipo_de_usuario == 4 %}
+    <br><br>
+    <b>Acesso de administração:</b>
+    <br>
+    {% if todos_alunos %}
+      <a href="
+        mailto:{% for aluno in todos_alunos %}{{ aluno.user.email|parse_quote }},{% endfor %}
+        ?cc=lpsoares@insper.edu.br,pfe@insper.edu.br
+        &amp;bcc=comitepfe@insper.edu.br
+        &amp;subject=PFE%20&amp;body=Caros%20alunos,%0D%0A%0D%0A
+        atenciosamente,%20coordenação%20PFE
+      ">Todos os alunos do PFE</a><br>
+      {% comment %}
+      <a href="
+        mailto:{% for aluno in todos_alunos %}{{aluno.user.first_name|parse_quote}}%20{{aluno.user.last_name|parse_quote}}%20&lt;{{ aluno.user.email|parse_quote }}&gt;,{% endfor %}
+        ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
+        &amp;bcc=ComitePFE&lt;comitepfe@insper.edu.br&gt;
+        &amp;subject=PFE%20&amp;body=Caros%20alunos,%0D%0A%0D%0A
+        atenciosamente,%20coordenação%20PFE
+      ">Todos os alunos do PFE</a><br>
+      {% endcomment %}
+    {% endif %}
+
+    {% if todos_professores %}
+      <a href="
+        mailto:{% for professor in todos_professores %}{{ professor.user.email|parse_quote }},{% endfor %}
+        ?cc=lpsoares@insper.edu.br,pfe@insper.edu.br
+        &amp;bcc=comitepfe@insper.edu.br
+        &amp;subject=PFE&amp;body=Caros%20professores%20do%PFE,%0D%0A%0D%0A
+        atenciosamente,%20coordenação%20PFE
+      ">Todos os professores do PFE</a><br>
+      {% comment %}     
+      <a href="
+        mailto:{% for professor in todos_professores %}{{professor.user.first_name|parse_quote}}%20{{professor.user.last_name|parse_quote}}%20&lt;{{ professor.user.email|parse_quote }}&gt;,{% endfor %}
+        ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
+        &amp;bcc=Comite%20PFE&lt;comitepfe@insper.edu.br&gt;
+        &amp;subject=PFE&amp;body=Caros%20professores%20do%PFE,%0D%0A%0D%0A
+        atenciosamente,%20coordenação%20PFE
+      ">Todos os professores do PFE</a><br>
+      {% endcomment %}
+    {% endif %}
+
+    {% if todos_parceiros %}
+      <a href="
+        mailto:{% for parceiro in todos_parceiros %}{{ parceiro.user.email|parse_quote }},{% endfor %}
+        ?cc=lpsoares@insper.edu.br,pfe@insper.edu.br
+        &amp;bcc=comitepfe@insper.edu.br
+        &amp;subject=PFE&amp;body=Caros%20parceiro%20do%PFE,%0D%0A%0D%0A
+        atenciosamente,%20coordenação%20PFE
+      ">Todos os parceiros do PFE</a><br>
+      {% comment %}
+      <a href="
+        mailto:{% for parceiro in todos_parceiros %}{{parceiro.user.first_name|parse_quote}}%20{{parceiro.user.last_name|parse_quote}}%20&lt;{{ parceiro.user.email|parse_quote }}&gt;,{% endfor %}
+        ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
+        &amp;bcc=Comite%20PFE&lt;comitepfe@insper.edu.br&gt;
+        &amp;subject=PFE&amp;body=Caros%20parceiro%20do%PFE,%0D%0A%0D%0A
+        atenciosamente,%20coordenação%20PFE
+      ">Todos os parceiros do PFE</a><br>
+      {% endcomment %}
+    {% endif %}
+
   {% endif %}
-
-  {% if todos_professores %}
-    <a href="
-      mailto:{% for professor in todos_professores %}{{ professor.user.email|parse_quote }},{% endfor %}
-      ?cc=lpsoares@insper.edu.br,pfe@insper.edu.br
-      &amp;bcc=comitepfe@insper.edu.br
-      &amp;subject=PFE&amp;body=Caros%20professores%20do%PFE,%0D%0A%0D%0A
-      atenciosamente,%20coordenação%20PFE
-    ">Todos os professores do PFE</a><br>
-    {% comment %}     
-    <a href="
-      mailto:{% for professor in todos_professores %}{{professor.user.first_name|parse_quote}}%20{{professor.user.last_name|parse_quote}}%20&lt;{{ professor.user.email|parse_quote }}&gt;,{% endfor %}
-      ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
-      &amp;bcc=Comite%20PFE&lt;comitepfe@insper.edu.br&gt;
-      &amp;subject=PFE&amp;body=Caros%20professores%20do%PFE,%0D%0A%0D%0A
-      atenciosamente,%20coordenação%20PFE
-    ">Todos os professores do PFE</a><br>
-    {% endcomment %}
-  {% endif %}
-
-  {% if todos_parceiros %}
-    <a href="
-      mailto:{% for parceiro in todos_parceiros %}{{ parceiro.user.email|parse_quote }},{% endfor %}
-      ?cc=lpsoares@insper.edu.br,pfe@insper.edu.br
-      &amp;bcc=comitepfe@insper.edu.br
-      &amp;subject=PFE&amp;body=Caros%20parceiro%20do%PFE,%0D%0A%0D%0A
-      atenciosamente,%20coordenação%20PFE
-    ">Todos os parceiros do PFE</a><br>
-    {% comment %}
-    <a href="
-      mailto:{% for parceiro in todos_parceiros %}{{parceiro.user.first_name|parse_quote}}%20{{parceiro.user.last_name|parse_quote}}%20&lt;{{ parceiro.user.email|parse_quote }}&gt;,{% endfor %}
-      ?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;,PFE&lt;pfe@insper.edu.br&gt;
-      &amp;bcc=Comite%20PFE&lt;comitepfe@insper.edu.br&gt;
-      &amp;subject=PFE&amp;body=Caros%20parceiro%20do%PFE,%0D%0A%0D%0A
-      atenciosamente,%20coordenação%20PFE
-    ">Todos os parceiros do PFE</a><br>
-    {% endcomment %}
-  {% endif %}
-
 
   <script>
 
