@@ -943,6 +943,7 @@ def estudante_detail(request, primarykey):
     context['media_individual'] = media_individual
     context['media_grupo'] = media_grupo
     context['aluno'] = aluno
+    context['alocacoes'] = alocacoes
     context['areast'] = areas
     
     return render(request, 'users/estudante_detail.html', context=context)

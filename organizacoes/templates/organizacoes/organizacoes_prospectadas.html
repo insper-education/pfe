@@ -20,7 +20,7 @@
 
   {% include "impressora.html" %}
 
-  <span class="titulo">Prospecçõa de Organizações para propostas a partir de {{ano}}.{{semestre}}</span>
+  <span class="titulo">Prospecção de Organizações para propostas a partir de {{ano}}.{{semestre}}</span>
 
   <label for="periodo">Período:</label>
   <select id="periodo" class="periodo" data-tableId="OrganizacoesTable">
@@ -103,7 +103,7 @@
               {% elif contato.tipo_de_retorno == 2 %}
                 "background-color:lemonchiffon" {% comment %} (2, 'Interessada em enviar proposta'), {% endcomment %}
               {% elif contato.tipo_de_retorno == 3 %}
-                "background-color:pink" {% comment %} (3, 'Recusou enviar proposta de projeto'), {% endcomment %}
+                "background-color:pink" {% comment %} (3, 'Não vai enviar proposta de projeto'), {% endcomment %}
               {% elif contato.tipo_de_retorno == 4 %}
                 "background-color:yellow" {% comment %} (4, 'Confirmamos um grupo de alunos para o projeto'), {% endcomment %}
               {% elif contato.tipo_de_retorno == 5 %}

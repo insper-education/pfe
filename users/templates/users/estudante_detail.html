@@ -97,10 +97,11 @@
         {% endfor %}
     {% endif %}
 
-    {% if aluno.alocacao_set.all.count > 0 %}
+    {% if alocacoes.count > 0 %}
         <hr>
         <h3>Projeto Alocado</h3>
-        {% for alocado in aluno.alocacao_set.all %}
+        {% for alocado in alocacoes %}
+
             <a href="{% url 'projeto_completo' alocado.projeto.id %}">
             {{alocado.projeto.get_titulo}}
             ({{alocado.projeto.organizacao.nome}})
@@ -131,14 +132,14 @@
             </a>
             
             <div class="row mt-1 justify-content-md-center">
-                <div class="col-md-4"><canvas id="radial-geral"></canvas></div>
-                <div class="col-md-4"><canvas id="radial-individual"></canvas></div>
-                <div class="col-md-4"><canvas id="radial-grupo"></canvas></div>
+                <div class="col-md-4"><canvas id="radial-geral{{alocado.id}}"></canvas></div>
+                <div class="col-md-4"><canvas id="radial-individual{{alocado.id}}"></canvas></div>
+                <div class="col-md-4"><canvas id="radial-grupo{{alocado.id}}"></canvas></div>
             </div>
             <small>Cálculo das avaliações supõe mesmo peso para todas as avaliações</small>
 
             <script>
-                var config_radial_individual = {
+                var config_radial_individual{{alocado.id}} = {
                     type: 'radar',
                     data: {
                         labels: [
@@ -188,7 +189,7 @@
                     }
                 }
 
-                var config_radial_grupo = {
+                var config_radial_grupo{{alocado.id}} = {
                     type: 'radar',
                     data: {
                         labels: [
@@ -234,7 +235,7 @@
                     }
                 }
 
-                var config_radial_geral = {
+                var config_radial_geral{{alocado.id}} = {
                     type: 'radar',
                     data: {
                         labels: [
@@ -280,6 +281,16 @@
                     }
                 }
 
+                // Chart radial do nível nos objetivos de aprendizagem
+                var radial_geral{{alocado.id}} = document.getElementById('radial-geral{{alocado.id}}').getContext('2d');
+                new Chart(radial_geral{{alocado.id}}, config_radial_geral{{alocado.id}});
+
+                var radial_individual{{alocado.id}} = document.getElementById('radial-individual{{alocado.id}}').getContext('2d');
+                new Chart(radial_individual{{alocado.id}}, config_radial_individual{{alocado.id}});
+
+                var radial_grupo{{alocado.id}} = document.getElementById('radial-grupo{{alocado.id}}').getContext('2d');
+                new Chart(radial_grupo{{alocado.id}}, config_radial_grupo{{alocado.id}});
+
             </script>
 
         {% endfor %}
@@ -296,16 +307,6 @@
     <script>
 
         function carrega_pagina() {  
-            // Chart radial do nível nos objetivos de aprendizagem
-            var radial_geral = document.getElementById('radial-geral').getContext('2d');
-            window.objetivos = new Chart(radial_geral, config_radial_geral);
-
-            var radial_individual = document.getElementById('radial-individual').getContext('2d');
-            window.objetivos = new Chart(radial_individual, config_radial_individual);
-
-            var radial_grupo = document.getElementById('radial-grupo').getContext('2d');
-            window.objetivos = new Chart(radial_grupo, config_radial_grupo);
-
         }
 
         window.onload = carrega_pagina

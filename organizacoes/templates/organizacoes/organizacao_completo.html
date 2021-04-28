@@ -46,8 +46,8 @@
 
   {% if organizacao.area_computacao or organizacao.area_mecatronica or organizacao.area_mecanica %}
      <strong>Áreas de projetos :</strong>
-    {% if organizacao.area_computacao %}Computação{% endif %}{% if organizacao.area_mecatronica or organizacao.area_mecanica %}, {% endif %}
-    {% if organizacao.area_mecatronica %}Mecatrônica{% endif %}{% if organizacao.area_mecanica %}, {% endif %}
+    {% if organizacao.area_computacao %}Computação{% if organizacao.area_mecatronica or organizacao.area_mecanica %}, {% endif %}{% endif %}
+    {% if organizacao.area_mecatronica %}Mecatrônica{% if organizacao.area_mecanica %}, {% endif %}{% endif %}
     {% if organizacao.area_mecanica %}Mecânica {% endif %}
     <br>
   {% endif %}
