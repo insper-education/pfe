@@ -38,6 +38,7 @@
         <thead class="table-info">
           <tr>
               <th scope="col" class="text-center">Nome</th>
+              <th scope="col" class="text-center">Matrícula</th>
               <th scope="col" class="text-center">e-mail</th>
               <th scope="col" class="text-center">Curso</th>
               <th scope="col" class="text-center">Período</th>
@@ -74,8 +75,11 @@
                 {{aluno.user.get_full_name}}
               </a>
             </th>
+            <td style="text-align: right;">
+              {{aluno.matricula}}
+            </td>
             <td>
-              <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
+              <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a>
             </td>
             {% if aluno.curso %}
               <td class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">
