@@ -40,10 +40,6 @@
     <strong>Informações sobre a empresa :</strong> {{ organizacao.informacoes|linebreaks }}
   {% endif %}
 
-  {% if organizacao.informacoes %}
-    <strong>Informações sobre a empresa :</strong> {{ organizacao.informacoes|linebreaks }}
-  {% endif %}
-
   {% if organizacao.area_computacao or organizacao.area_mecatronica or organizacao.area_mecanica %}
      <strong>Áreas de projetos :</strong>
     {% if organizacao.area_computacao %}Computação{% if organizacao.area_mecatronica or organizacao.area_mecanica %}, {% endif %}{% endif %}

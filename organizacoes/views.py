@@ -143,28 +143,14 @@ def proposta_submissao(request):
 
         if user.tipo_de_usuario == 3:  # parceiro
             parceiro = get_object_or_404(Parceiro, pk=request.user.parceiro.pk)
-            # try:
-            #     parceiro = Parceiro.objects.get(pk=request.user.parceiro.pk)
-            # except Parceiro.DoesNotExist:
-            #     return HttpResponse("Parceiro não encontrado.", status=401)
             organizacao = parceiro.organizacao
             website = parceiro.organizacao.website
             endereco = parceiro.organizacao.endereco
             descricao_organizacao = parceiro.organizacao.informacoes
         elif user.tipo_de_usuario == 2:  # professor
             professor = get_object_or_404(Professor, pk=request.user.professor.pk)
-            # try:
-            #     professor = Professor.objects.get(pk=request.user.professor.pk)
-            # except Professor.DoesNotExist:
-            #     return HttpResponse("Professor não encontrado.", status=401)
         elif user.tipo_de_usuario == 4:  # admin
             administrador = get_object_or_404(Administrador, pk=request.user.administrador.pk)
-            # try:
-            #     administrador = Administrador.objects\
-            #         .get(pk=request.user.administrador.pk)
-            # except Administrador.DoesNotExist:
-            #     return HttpResponse("Administrador não encontrado.",
-            #                         status=401)
 
     if request.method == 'POST':
         proposta = preenche_proposta(request, None)

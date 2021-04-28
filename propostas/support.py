@@ -303,7 +303,7 @@ def envia_proposta(proposta, enviar=True):
     message = html.urlize(message)
     message = message.replace('\n', '<br>\n')
 
-    subject = 'Proposta PFE : ({0}.{1} - {2}'.format(proposta.ano,
+    subject = 'Proposta PFE : ({0}.{1} - {2})'.format(proposta.ano,
                                                      proposta.semestre,
                                                      proposta.titulo)
 
