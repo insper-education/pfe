@@ -736,6 +736,7 @@ class Documento(models.Model):
         (21, "Ata do Comitê do PFE"),
         (22, "Manual de Apresentação"),
         (23, "Manual de Bancas"),
+        (24, 'Manual de Avaliações'),
         (255, 'Outros'),
     )
     tipo_de_documento = models.PositiveSmallIntegerField(choices=TIPO_DE_DOCUMENTO, default=0)

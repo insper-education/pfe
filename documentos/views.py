@@ -41,7 +41,10 @@ def index_documentos(request):
     manual_aluno = Documento.objects.filter(tipo_de_documento=8).last()
 
     # manual do orientador
-    # = Documento.objects.filter(tipo_de_documento=9).last()
+    manual_orientador = Documento.objects.filter(tipo_de_documento=9).last()
+
+    # manual de avaliações
+    manual_avaliacoes = Documento.objects.filter(tipo_de_documento=24).last()
 
     # manual da organização parceira
     # = Documento.objects.filter(tipo_de_documento=10).last()
@@ -75,6 +78,8 @@ def index_documentos(request):
         "template_relatorio": template_relatorio,
         "manual_apresentacao": manual_apresentacao,
         "manual_bancas": manual_bancas,
+        "manual_orientador": manual_orientador,
+        "manual_avaliacoes": manual_avaliacoes,
     }
 
     return render(request, "documentos/index_documentos.html", context)

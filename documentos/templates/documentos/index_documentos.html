@@ -58,6 +58,13 @@
         {% if manual_bancas %}
             <a href="../..{{MEDIA_URL}}{{manual_bancas.documento}}"><h5>Manual de Participação em Bancas</h5></a>
         {% endif %}
+        {% if manual_orientador %}
+            <a href="../..{{MEDIA_URL}}{{manual_orientador.documento}}"><h5>Manual do Orientador</h5></a>
+        {% endif %}
+        {% if manual_avaliacoes %}
+            <a href="../..{{MEDIA_URL}}{{manual_avaliacoes.documento}}"><h5>Manual de Avaliações</h5></a>
+        {% endif %}
+
     {% endif %}
 
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Professor ou Adm -->
