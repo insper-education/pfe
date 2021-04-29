@@ -13,7 +13,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
-from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2, ObjetivosDeAprendizagem
+from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2, ObjetivosDeAprendizagem, Reprovacao
 from projetos.support import calcula_objetivos
 
 class PFEUser(AbstractUser):
@@ -376,9 +376,7 @@ class Aluno(models.Model):
         edicao = {} # dicionário para cada alocação do estudante (por exemplo DP, ou PFE Avançado)
 
         alocacoes = Alocacao.objects.filter(aluno=self.pk)
-        #supondo só uma alocação para agora
-        #alocacao = alocacoes.first()
-
+        
         for alocacao in alocacoes:
 
             notas = [] # iniciando uma lista de notas vazia
@@ -469,7 +467,7 @@ class Aluno(models.Model):
 
         edicoes = self.get_notas
 
-        for ano_semestre,edicao in edicoes.items():
+        for ano_semestre, edicao in edicoes.items():
             nota_final = 0
             peso_final = 0
             # for aval, nota, peso in edicao:
@@ -478,6 +476,13 @@ class Aluno(models.Model):
                 nota_final += nota * peso
             peso_final = round(peso_final, 1)
             medias[ano_semestre] = {"media": nota_final, "pesos": peso_final}
+
+        alocacoes = Alocacao.objects.filter(aluno=self.pk)
+        for alocacao in alocacoes:
+            reprovacao = Reprovacao.objects.filter(alocacao=alocacao)
+            if reprovacao:
+                ano_semestre = str(alocacao.projeto.ano) + "." + str(alocacao.projeto.semestre)
+                medias[ano_semestre] = {"media": reprovacao.last().nota, "pesos": 1}
 
         return medias
 
@@ -551,6 +556,11 @@ class Alocacao(models.Model):
     @property
     def get_media(self):
         """Retorna média e peso final."""
+
+        reprovacao = Reprovacao.objects.filter(alocacao=self)
+        if reprovacao:
+            return  {"media": reprovacao.last().nota, "pesos": 1}
+
         edicao = self.get_notas
 
         nota_final = 0

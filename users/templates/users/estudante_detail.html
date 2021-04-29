@@ -125,12 +125,18 @@
               &nbsp;
               Média = 
               {% with media=alocado.get_media %}
+                {% if media.media < 5 %}
+                    <span style="color:red">
+                {% endif %}
                 {% if media.pesos != 1 %}
-                  <a style="color:red" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100%">
-                {% endif %}    
-                  {{media.media|floatformat:1}}
+                  <a style="color:orange" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100%">
+                {% endif %}
+                {{media.media|floatformat:1}}
                 {% if media.pesos != 1 %}
                   </a>
+                {% endif %}
+                {% if media.media < 5 %}
+                    </span>
                 {% endif %}
               {% endwith %}
             </a>

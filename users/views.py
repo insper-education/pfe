@@ -19,7 +19,7 @@ from django.utils import html
 from django.views import generic
 
 from projetos.models import Configuracao, Projeto, Conexao, ObjetivosDeAprendizagem
-from projetos.models import Banca, Area, Coorientador, Avaliacao2, Observacao
+from projetos.models import Banca, Area, Coorientador, Avaliacao2, Observacao, Reprovacao
 
 from projetos.messages import email
 from projetos.support import calcula_objetivos
@@ -486,6 +486,8 @@ def edita_notas(request, primarykey):
     afg_obs = Observacao.objects.filter(tipo_de_avaliacao=54,
                                         projeto=alocacao.projeto)
 
+    # Reprovação
+    falha = Reprovacao.objects.filter(alocacao=alocacao)
 
     if request.method == 'POST':
 
@@ -769,6 +771,14 @@ def edita_notas(request, primarykey):
             reg.observacoes = obs
             reg.save()
 
+        # Reprovacao
+        rep = request.POST.get('reprovacao', "")
+        if rep:
+            reg  = falha.last()
+            if not reg:
+                reg = Reprovacao.create(alocacao=alocacao)
+            reg.nota = rep
+            reg.save()
 
         mensagem = "Notas atualizadas<br>\n"
         mensagem += "Peso Final = " + str(alocacao.get_media["pesos"]*100) + "% <br>\n"
@@ -845,6 +855,11 @@ def edita_notas(request, primarykey):
         rfg_nota[registro.objetivo] = registro.nota 
         rfg_peso[registro.objetivo] = registro.peso
 
+    if falha:
+        reprovacao = falha.last().nota
+    else:
+        reprovacao = None
+
     context = {
         'alocacao': alocacao,
         'objetivos': objetivos,
@@ -882,6 +897,7 @@ def edita_notas(request, primarykey):
         "afg_nota": afg_nota,
         "afg_peso": afg_peso,
         "afg_obs": afg_obs.last(),
+        "reprovacao": reprovacao,
     }
 
     return render(request, 'users/edita_nota.html', context=context)

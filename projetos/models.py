@@ -1068,6 +1068,32 @@ class Avaliacao2(models.Model):
         ordering = ['momento',]
 
 
+class Reprovacao(models.Model):
+    """Reprovações controladas por falha em Objetivos de Aprendizagem."""
+
+    # Para Alocações dos estudantes (caso um aluno reprove ele teria duas alocações)
+    alocacao = models.ForeignKey('users.Alocacao', null=True,
+                                 on_delete=models.SET_NULL,
+                                 related_name='projeto_alocado_reprovacao',
+                                 help_text='alocação que sofreu reprovação')
+
+    # A nota será convertida para rubricas se necessário
+    nota = models.DecimalField(max_digits=4, decimal_places=2)
+
+    def __str__(self):
+        return str(self.alocacao) + "Nota: " + str(self.nota)
+
+    @classmethod
+    def create(cls, alocacao):
+        """Cria um objeto (entrada) em Reprovação."""
+        reprovacao = cls(alocacao=alocacao)
+        return reprovacao
+
+    class Meta:
+        verbose_name = 'Reprovação'
+        verbose_name_plural = 'Reprovações'
+
+
 class Observacao(models.Model):
     """Observações realizadas durante avaliações."""
 

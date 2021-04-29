@@ -29,7 +29,7 @@ from .models import Entidade
 # Das Organizações
 from .models import Feedback, Conexao, Acompanhamento
 from .models import ObjetivosDeAprendizagem, Certificado
-from .models import Avaliacao2, Observacao
+from .models import Avaliacao2, Observacao, Reprovacao
 from .models import Area, AreaDeInteresse
 
 
@@ -360,6 +360,13 @@ class Avaliacao2Admin(admin.ModelAdmin):
     list_filter = ('tipo_de_avaliacao', 'projeto__ano', 'projeto__semestre')
     search_fields = ['projeto__titulo', 'projeto__titulo_final',
                      'alocacao__aluno__user__username', 'projeto__organizacao__sigla']
+
+
+@admin.register(Reprovacao)
+class Reprovacao(admin.ModelAdmin):
+    """Informações das Reprovações."""
+    list_display = ('alocacao', 'nota',)
+    search_fields = ['alocacao__aluno__user__username',]
 
 
 @admin.register(Observacao)

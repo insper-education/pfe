@@ -586,6 +586,40 @@
     <textarea id="rfg_obs" name="rfg_obs" rows="4" cols="72">{% if rfg_obs %}{{rfg_obs.observacoes}}{% endif %}</textarea>
     <br>
 
+
+
+
+
+
+
+
+
+
+    <br>
+    <b>Nota de Reprovação:</b>
+    <ul>
+      <li>
+        <span>Devido a falha em um OA</span>
+        <span>
+          Nota: <input class="nota" id="reprovacao" name="reprovacao" type="number"  min="0" max="10" step="0.01" 
+          value="{% if reprovacao != None %}{{reprovacao}}{% endif %}" />
+        </span>
+      </li>
+    </ul>
+    <br>
+
+
+
+
+
+
+
+
+
+
+
+
+
     <br><br>
     <input type="submit" value="Atualiza Notas">
     
