@@ -898,50 +898,6 @@ def estudante_detail(request, primarykey):
 
     context = calcula_objetivos(alocacoes)
 
-    media_individual = {}
-    media_grupo = {}
-
-    for media in context["medias_geral"]:
-
-        count = 0
-        media_individual[media] = {}
-        media_individual[media]["cor"] = context["medias_geral"][media]["cor"]
-        media_individual[media]["media"] = 0
-        if media.avaliacao_aluno and media in context["medias_rii"]:
-            media_individual[media]["media"] += context["medias_rii"][media]["media"]
-            count += 1
-        if media.avaliacao_aluno and media in context["medias_rfi"]:
-            media_individual[media]["media"] += context["medias_rfi"][media]["media"]
-            count += 1
-        if count > 0:
-            media_individual[media]["media"] /= count
-        else:
-            media_individual[media]["media"] = 0
-
-        count = 0
-        media_grupo[media] = {}
-        media_grupo[media]["cor"] = context["medias_geral"][media]["cor"]
-        media_grupo[media]["media"] = 0
-        
-        if media.avaliacao_grupo and media in context["medias_rig"]:
-            media_grupo[media]["media"] += context["medias_rig"][media]["media"]
-            count += 1
-        if media.avaliacao_grupo and media in context["medias_rfg"]:
-            media_grupo[media]["media"] += context["medias_rfg"][media]["media"]
-            count += 1
-        if media.avaliacao_banca and media in context["medias_bi"]:
-            media_grupo[media]["media"] += context["medias_bi"][media]["media"]
-            count += 1
-        if media.avaliacao_banca and media in context["medias_bf"]:
-            media_grupo[media]["media"] += context["medias_bf"][media]["media"]
-            count += 1
-        if count > 0:
-            media_grupo[media]["media"] /= count
-        else:
-            media_grupo[media]["media"] = 0
-
-    context['media_individual'] = media_individual
-    context['media_grupo'] = media_grupo
     context['aluno'] = aluno
     context['alocacoes'] = alocacoes
     context['areast'] = areas

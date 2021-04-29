@@ -14,7 +14,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2, ObjetivosDeAprendizagem
-
+from projetos.support import calcula_objetivos
 
 class PFEUser(AbstractUser):
     """Classe base para todos os usuários do PFE (Alunos, Professores, Parceiros)."""
@@ -562,6 +562,13 @@ class Alocacao(models.Model):
         peso_final = round(peso_final, 1)
         
         return  {"media": nota_final, "pesos": peso_final}
+
+    @property
+    def get_medias_oo(self):
+        """Retorna OOs."""
+        alocacoes = Alocacao.objects.filter(id=self.id)
+        context = calcula_objetivos(alocacoes)
+        return context
 
     @property
     def media(self):

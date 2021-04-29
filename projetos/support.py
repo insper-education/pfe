@@ -174,7 +174,6 @@ def calcula_objetivos(alocacoes):
         "afg": {},  # antiga
     }
 
-    
     for nota in notas:
         for objetivo in objetivos:
             notas[nota][objetivo] = 0
@@ -224,8 +223,6 @@ def calcula_objetivos(alocacoes):
                 for k,v in nota[1].items():
                     notas["afg"][k] += v[0] * v[1]
                     pesos["afg"][k] += v[1]
-            
-
 
     medias_geral = {}
     for objetivo in objetivos:
@@ -243,8 +240,6 @@ def calcula_objetivos(alocacoes):
             medias_rii[objetivo]["media"] = notas["rii"][objetivo] / pesos["rii"][objetivo]
             medias_geral[objetivo]["soma"] += notas["rii"][objetivo]
             medias_geral[objetivo]["peso"] += pesos["rii"][objetivo]
-        # else:
-        #     medias_rii[objetivo]["media"] = -1
 
     medias_rig = {}
     for objetivo in objetivos:
@@ -255,9 +250,6 @@ def calcula_objetivos(alocacoes):
             medias_rig[objetivo]["media"] = notas["rig"][objetivo] / pesos["rig"][objetivo]
             medias_geral[objetivo]["soma"] += notas["rig"][objetivo]
             medias_geral[objetivo]["peso"] += pesos["rig"][objetivo]
-        # else:
-        #     medias_rig[objetivo]["media"] = -1
-
 
     medias_bi = {}
     for objetivo in objetivos:
@@ -268,9 +260,6 @@ def calcula_objetivos(alocacoes):
             medias_bi[objetivo]["media"] = notas["bi"][objetivo] / pesos["bi"][objetivo]
             medias_geral[objetivo]["soma"] += notas["bi"][objetivo]
             medias_geral[objetivo]["peso"] += pesos["bi"][objetivo]
-        # else:
-        #     medias_bi[objetivo]["media"] = -1
-
 
     medias_rfi = {}
     for objetivo in objetivos:
@@ -281,9 +270,6 @@ def calcula_objetivos(alocacoes):
             medias_rfi[objetivo]["media"] = notas["rfi"][objetivo] / pesos["rfi"][objetivo]
             medias_geral[objetivo]["soma"] += notas["rfi"][objetivo]
             medias_geral[objetivo]["peso"] += pesos["rfi"][objetivo]
-        # else:
-        #     medias_rfi[objetivo]["media"] = -1
-
 
     medias_rfg = {}
     for objetivo in objetivos:
@@ -294,9 +280,6 @@ def calcula_objetivos(alocacoes):
             medias_rfg[objetivo]["media"] = notas["rfg"][objetivo] / pesos["rfg"][objetivo]
             medias_geral[objetivo]["soma"] += notas["rfg"][objetivo]
             medias_geral[objetivo]["peso"] += pesos["rfg"][objetivo]
-        # else:
-        #     medias_rfg[objetivo]["media"] = -1
-
 
     medias_bf = {}
     for objetivo in objetivos:
@@ -307,9 +290,6 @@ def calcula_objetivos(alocacoes):
             medias_bf[objetivo]["media"] = notas["bf"][objetivo] / pesos["bf"][objetivo]
             medias_geral[objetivo]["soma"] += notas["bf"][objetivo]
             medias_geral[objetivo]["peso"] += pesos["bf"][objetivo]
-        # else:
-        #     medias_bf[objetivo]["media"] = -1
-
 
     # ANTIGAS 
     medias_api = {}
@@ -352,18 +332,67 @@ def calcula_objetivos(alocacoes):
             medias_geral[objetivo]["soma"] += notas["afg"][objetivo]
             medias_geral[objetivo]["peso"] += pesos["afg"][objetivo]
 
-
-
-
-
-
-
-
     for objetivo in objetivos:
         if medias_geral[objetivo]["peso"] > 0:
             medias_geral[objetivo]["media"] = medias_geral[objetivo]["soma"] / medias_geral[objetivo]["peso"]
         else:
             medias_geral[objetivo]["media"] = -1
+
+
+    media_individual = {}
+    media_grupo = {}
+
+    for media in medias_geral:
+
+        count = 0
+        media_individual[media] = {}
+        media_individual[media]["cor"] = medias_geral[media]["cor"]
+        media_individual[media]["media"] = 0
+        if media.avaliacao_aluno and media in medias_api: # antiga
+            media_individual[media]["media"] += medias_api[media]["media"]
+            count += 1
+        if media.avaliacao_aluno and media in medias_afi: # antiga
+            media_individual[media]["media"] += medias_afi[media]["media"]
+            count += 1
+        if media.avaliacao_aluno and media in medias_rii:
+            media_individual[media]["media"] += medias_rii[media]["media"]
+            count += 1
+        if media.avaliacao_aluno and media in medias_rfi:
+            media_individual[media]["media"] += medias_rfi[media]["media"]
+            count += 1
+        if count > 0:
+            media_individual[media]["media"] /= count
+        else:
+            media_individual[media]["media"] = None
+
+        count = 0
+        media_grupo[media] = {}
+        media_grupo[media]["cor"] = medias_geral[media]["cor"]
+        media_grupo[media]["media"] = 0
+        
+        if media.avaliacao_grupo and media in medias_apg: # antiga
+            media_grupo[media]["media"] += medias_apg[media]["media"]
+            count += 1
+        if media.avaliacao_grupo and media in medias_afg: # antiga
+            media_grupo[media]["media"] += medias_afg[media]["media"]
+            count += 1
+        if media.avaliacao_grupo and media in medias_rig:
+            media_grupo[media]["media"] += medias_rig[media]["media"]
+            count += 1
+        if media.avaliacao_grupo and media in medias_rfg:
+            media_grupo[media]["media"] += medias_rfg[media]["media"]
+            count += 1
+        if media.avaliacao_banca and media in medias_bi:
+            media_grupo[media]["media"] += medias_bi[media]["media"]
+            count += 1
+        if media.avaliacao_banca and media in medias_bf:
+            media_grupo[media]["media"] += medias_bf[media]["media"]
+            count += 1
+        if count > 0:
+            media_grupo[media]["media"] /= count
+        else:
+            media_grupo[media]["media"] = None
+
 
     context = {
         "medias_api": medias_api,
@@ -377,6 +406,8 @@ def calcula_objetivos(alocacoes):
         "medias_rfg": medias_rfg,
         "medias_bf": medias_bf,
         'medias_geral': medias_geral,
+        "media_individual": media_individual,
+        "media_grupo": media_grupo,
     }
 
     return context
