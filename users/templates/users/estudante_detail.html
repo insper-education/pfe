@@ -109,9 +109,12 @@
         {% for alocado in alocacoes %}
             <span style="color:black">Projeto: </span>
             <a href="{% url 'projeto_completo' alocado.projeto.id %}">
-            {{alocado.projeto.get_titulo}}
-            ({{alocado.projeto.organizacao.nome}})
-            { {{alocado.projeto.ano}}.{{alocado.projeto.semestre}} }
+                {{alocado.projeto.get_titulo}}
+                ({{alocado.projeto.organizacao.nome}})
+                { {{alocado.projeto.ano}}.{{alocado.projeto.semestre}} }
+                {% if alocado.projeto.avancado %}
+                    <font color="red">[PFE Avançado]</font>
+                {% endif %}
             </a>
             <br>
             
