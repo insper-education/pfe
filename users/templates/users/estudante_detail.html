@@ -28,7 +28,9 @@
   {% endif %}
   <strong>Curso:</strong> {{aluno.get_curso_display}}<br>
   <strong>Periodo PFE:</strong> {{aluno.anoPFE}}.{{aluno.semestrePFE}}<br>
-  <strong>CR:</strong> {{aluno.cr}} <br>
+  {% if aluno.cr %}
+    <strong>CR:</strong> {{aluno.cr}} <br>
+  {% endif %}
 
   {% if aluno.trabalhou %}
     <br><strong>{{aluno.get_trabalhou_help_text }}</strong> {{ aluno.trabalhou|linebreaks }}
