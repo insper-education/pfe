@@ -1051,7 +1051,7 @@ def media(notas_lista):
     total = 0
     for i in notas_lista:
         if i:
-            soma += i
+            soma += float(i)
             total += 1
     if total == 0:
         return None
