@@ -464,11 +464,11 @@ def edita_notas(request, primarykey):
 
     # (52, 'Avaliação Final Individual'), 
     afi = Avaliacao2.objects.filter(tipo_de_avaliacao=52,
-                                    projeto=alocacao.projeto)
+                                    alocacao=alocacao)
 
     # (52, 'Avaliação Final Individual'), 
     afi_obs = Observacao.objects.filter(tipo_de_avaliacao=52,
-                                        projeto=alocacao.projeto)
+                                        alocacao=alocacao)
 
     # (53, 'Avaliação Parcial de Grupo'),
     apg = Avaliacao2.objects.filter(tipo_de_avaliacao=53,
