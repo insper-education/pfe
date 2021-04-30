@@ -34,10 +34,15 @@
   <script>
 
     function conceito(nota) {
+        if( nota >= 9.5 ) return ("A+")
         if( nota >= 9 ) return ("A")
+        if( nota >= 8 ) return ("B+")
         if( nota >= 7 ) return ("B")
+        if( nota >= 6 ) return ("C+")
         if( nota >= 5 ) return ("C")
-        if( nota >= 4 ) return ("D")
+        if( nota >= 4 ) return ("D+")
+        if( nota >= 3 ) return ("D")
+        if( nota >= 2 ) return ("D-")
         return ("I")
     }
 
@@ -45,15 +50,19 @@
       constructor() { 
         this.avaliacoes = 0;
         this.titulo = "";
-        //this.rubrica = "";
         this.total = 0;
       }
       soma_conceito(conceito){
         this.avaliacoes += 1
-        if(conceito=="A"||conceito=="A ") this.total += 10
-        if(conceito=="B"||conceito=="B ") this.total += 8
-        if(conceito=="C"||conceito=="C ") this.total += 6
-        if(conceito=="D"||conceito=="D ") this.total += 4
+        if(conceito=="A+"||conceito=="A+ ") this.total += 10
+        if(conceito=="A"||conceito=="A ") this.total += 9
+        if(conceito=="B+"||conceito=="B+ ") this.total += 8
+        if(conceito=="B"||conceito=="B ") this.total += 7
+        if(conceito=="C+"||conceito=="C+ ") this.total += 6
+        if(conceito=="C"||conceito=="C ") this.total += 5
+        if(conceito=="D+"||conceito=="D+ ") this.total += 4
+        if(conceito=="D"||conceito=="D ") this.total += 3
+        if(conceito=="D-"||conceito=="D- ") this.total += 2
         if(conceito=="I"||conceito=="I ") this.total += 0
       }
       soma_nota(nota){
@@ -69,9 +78,7 @@
         descricao += "<li>"
         descricao += this.titulo
         descricao += ": "
-        //descricao += '<span data-toggle="tooltip" data-html="true" animation="true" title="'+this.rubrica+'">'
         descricao += this.media()
-        //descricao += "</span>"
         descricao += "</li>"
         return (descricao)
       }
