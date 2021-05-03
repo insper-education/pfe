@@ -27,26 +27,31 @@
         <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Período</th>
         <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Organização</th>
         <th class="text-center">Documentos</th>
-        {% comment %}
-          <th class="text-center">Contrato<br>Organização</th>
-          <th class="text-center">Contrato<br>Estudantes</th>
-          <th class="text-center">Rel. Final</th>
-          <th class="text-center">Aut. Pub. Organização</th>
-          <th class="text-center">Aut. Pub. Aluno</th>
-          <th class="text-center">Outros</th>
-        {% endcomment %}
-
-
       </tr>      
       {% for projeto in projetos %} 
           <tr class="item">
             <td>
-              <a href="{% url 'projeto_completo' projeto.id %}">
+              <a href="{% url 'projeto_completo' projeto.id %}"
+                data-toggle="tooltip" data-html="true" animation="true" 
+                title="
+                  {% for alocacao in projeto.alocacao_set.all %}
+                      &bull; {{alocacao.aluno.user.get_full_name}}
+                      ({{alocacao.aluno.get_curso_completo}}){% if not forloop.last %}<br>{% endif %}
+                  {% endfor %}
+                "
+              >
                 {% if projeto.titulo_final %}
-                  {{projeto.titulo_final}}<br>
+                  {{projeto.titulo_final}}
+                  {% if projeto.avancado %}
+                    <strong style="color:red"><u>[Avançado]</u></strong><br>
+                  {% endif %}
+                  <br>
                   <small>Título Provisório: {{projeto.titulo}}</small>
                 {% else %}
                   {{projeto.titulo}}
+                  {% if projeto.avancado %}
+                    <strong style="color:red"><u>[Avançado]</u></strong><br>
+                  {% endif %}
                 {% endif %}
               </a>
             </td>
