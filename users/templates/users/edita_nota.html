@@ -358,7 +358,7 @@
           <span>Avaliação Única</span>
           <span>
             peso: <input class="peso" id="rpl_peso" name="rpl_peso" type="number"  min="0" max="100" step="0.01" 
-            value="{% if rpl_peso %}{{rpl_peso}}{% else %}1.50{% endif %}" />
+            value="{% if rpl_peso %}{{rpl_peso}}{% else %}7.0{% endif %}" />
 
             &nbsp;&nbsp;
             nota: <input class="nota" id="rpl_nota" name="rpl_nota" type="number"  min="0" max="10" step="0.01" 
@@ -380,7 +380,7 @@
         <span>
           {% with peso=rii_peso|dict_key:objetivo %}
             peso: <input class="peso" id="rii_peso_{{objetivo|truncatechars:7}}" name="rii_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
-            value="{% if peso %}{{peso}}{% else %}3.75{% endif %}" />
+            value="{% if peso %}{{peso}}{% else %}4.0{% endif %}" />
           {% endwith %}
 
           &nbsp;&nbsp;
@@ -435,7 +435,7 @@
         <span>
           {% with peso=rig_peso|dict_key:objetivo %}
             peso: <input class="peso" id="rig_peso_{{objetivo|truncatechars:7}}" name="rig_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
-            value="{% if peso %}{{peso}}{% else %}1.2{% endif %}" />
+            value="{% if peso %}{{peso}}{% else %}1.4{% endif %}" />
           {% endwith %}
           &nbsp;&nbsp;
           nota: <input class="nota" id="rig_nota_{{objetivo|truncatechars:7}}" name="rig_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
@@ -489,7 +489,7 @@
         <span>
           {% with peso=rfi_peso|dict_key:objetivo %}
             peso: <input class="peso" id="rfi_peso_{{objetivo|truncatechars:7}}" name="rfi_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
-            value="{% if peso %}{{peso}}{% else %}12.25{% endif %}" />
+            value="{% if peso %}{{peso}}{% else %}12.5{% endif %}" />
           {% endwith %}
           &nbsp;&nbsp;
           nota: <input class="nota" id="rfi_nota_{{objetivo|truncatechars:7}}" name="rfi_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
@@ -542,7 +542,7 @@
         <span>
           {% with peso=rfg_peso|dict_key:objetivo %}
             peso: <input class="peso" id="rfg_peso_{{objetivo|truncatechars:7}}" name="rfg_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
-            value="{% if peso %}{{peso}}{% else %}2.1{% endif %}" />
+            value="{% if peso %}{{peso}}{% else %}4.0{% endif %}" />
           {% endwith %}
           &nbsp;&nbsp;
           nota: <input class="nota" id="rfg_nota_{{objetivo|truncatechars:7}}" name="rfg_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 

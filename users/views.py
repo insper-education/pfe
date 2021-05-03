@@ -781,8 +781,8 @@ def edita_notas(request, primarykey):
             reg.save()
 
         mensagem = "Notas de <b>" + alocacao.aluno.user.get_full_name() + "</b> atualizadas:<br>\n"
-        mensagem += "&nbsp;&nbsp;Peso Final = " + str(alocacao.get_media["pesos"]*100) + "% <br>\n"
-        mensagem += "&nbsp;&nbsp;Média Final= " + str(alocacao.get_media["media"]) + "<br>\n"
+        mensagem += "&nbsp;&nbsp;Peso Final = " + str(round(alocacao.get_media["pesos"]*100, 2)) + "% <br>\n"
+        mensagem += "&nbsp;&nbsp;Média Final= " + str(round(alocacao.get_media["media"], 2)) + "<br>\n"
         mensagem = html.urlize(mensagem)
         context = {
             "area_principal": True,
