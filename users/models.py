@@ -474,7 +474,7 @@ class Aluno(models.Model):
             for _, nota, peso in edicao:
                 peso_final += peso
                 nota_final += nota * peso
-            peso_final = round(peso_final, 1)
+            peso_final = round(peso_final, 2)
             medias[ano_semestre] = {"media": nota_final, "pesos": peso_final}
 
         alocacoes = Alocacao.objects.filter(aluno=self.pk)
@@ -569,7 +569,7 @@ class Alocacao(models.Model):
         for _, nota, peso in edicao:
             peso_final += peso
             nota_final += nota * peso
-        peso_final = round(peso_final, 1)
+        peso_final = round(peso_final, 2)
         
         return  {"media": nota_final, "pesos": peso_final}
 
