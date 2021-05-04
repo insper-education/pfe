@@ -43,6 +43,10 @@
                   <a href="mailto:{{e.facilitador.email}}">&lt;{{e.facilitador.email}}&gt;</a>&nbsp;
                   <br>
                 {% endif %}
+                {% if e.location %}
+                  <b>Local:</b> {{ e.location }}
+                  <br>
+                {% endif %}
                 <b>Grupo:</b>
                 <ol>
                   {% for alocacao in e.projeto.alocacao_set.all %} 
