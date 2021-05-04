@@ -30,7 +30,7 @@
               <th scope="col" class="text-center">Nome</th>
               <th scope="col" class="text-center">e-mail</th>
               <th scope="col" class="text-center">Curso</th>
-              <th scope="col" class="text-center">Período</th>
+              {% comment %} <th scope="col" class="text-center">Período</th> {% endcomment %}
               <th scope="col" class="text-center">
                 <a data-toggle="tooltip" data-html="true" animation="true" title="<small>Projetos <u>sublinhados</u> são de PFE Avançado</small>">
                   Projeto
@@ -44,6 +44,7 @@
           <tr class="item">
             <th scope="row" data-order="{{aluno.user.get_full_name}}">
               <a href="{% url 'estudante_detail' aluno.id %}" 
+                  {% comment %}
                   data-toggle="tooltip" data-html="true" animation="true" title="
                   {% for opcao in aluno.opcao_set.all %}
                     <b>#{{ opcao.prioridade }} :</b>
@@ -61,7 +62,8 @@
                   {% empty %}
                     Aluno(a) não escolheu opções de projetos
                   {% endfor %}
-                  "
+                  " 
+                  {% endcomment %}
               >
                 {{aluno.user.get_full_name}}
               </a>
@@ -76,7 +78,7 @@
             {% else %}
               <td>Indefinido</td>
             {% endif %}
-            <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
+            {% comment %} <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
               {% if aluno.alocacao_set.all %}
                 {% for alocacao in aluno.alocacao_set.all %}
                   {% if alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
@@ -94,8 +96,10 @@
                   Indefinido
                 {% endif %}
               {% endif %}
-            </td>
-            <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
+            </td> {% endcomment %}
+            <td 
+            {% comment %} class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}" {% endcomment %}
+            >
               {% if aluno.alocacao_set.all %}
                 {% for alocacao in aluno.alocacao_set.all %}
                   {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}

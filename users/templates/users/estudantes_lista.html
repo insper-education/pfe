@@ -53,6 +53,7 @@
           <tr class="item">
             <th scope="row" data-order="{{aluno.user.get_full_name}}">
               <a href="{% url 'estudante_detail' aluno.id %}" 
+                  {% comment %}               
                   data-toggle="tooltip" data-html="true" animation="true" title="
                   {% for opcao in aluno.opcao_set.all %}
                     <b>#{{ opcao.prioridade }} :</b>
@@ -71,12 +72,18 @@
                     Aluno(a) não escolheu opções de projetos
                   {% endfor %}
                   "
+                  {% endcomment %}
               >
                 {{aluno.user.get_full_name}}
               </a>
             </th>
             <td style="text-align: right;">
-              {{aluno.matricula}}
+              {% if aluno.matricula %}
+                {{aluno.matricula}}
+              {% else %}
+                N/I
+              {% endif %}
+
             </td>
             <td>
               <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a>
@@ -92,14 +99,14 @@
             <td>
               {% if aluno.alocacao_set.all %}
                 {% for alocacao in aluno.alocacao_set.all %}
-                  {% comment %} {% if alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %} {% endcomment %}
+                  {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
                     <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
                       {% if alocacao.projeto.avancado %}<u>{% endif %}
                       {{alocacao.projeto.ano}}.{{alocacao.projeto.semestre}}
                       {% if alocacao.projeto.avancado %}</u>{% endif %}
                       <br>
                     </a>
-                  {% comment %} {% endif %} {% endcomment %}
+                  {% endif %}
                 {% endfor %}
               {% else %}
                 {% if aluno.anoPFE and aluno.semestrePFE %}
