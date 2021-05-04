@@ -138,8 +138,8 @@
               {% endif %}">
               {{aluno.user.get_full_name}}
               </a>
-              <a href="mailto:{{aluno.user.email}}">&lt;{{aluno.user.email}}&gt;</a>
               [{{ aluno.get_curso_display }}]
+              <a href="mailto:{{aluno.user.email}}">&lt;{{aluno.user.email}}&gt;</a>
               <div class="prioridade" style="display: none;">{{prioridade}}</div> <!-- para mostrar no gráfico -->
               <!-- &nbsp; { {{ aluno.alocacao_set.first.get_conceito_display }} } -->
           </li>
