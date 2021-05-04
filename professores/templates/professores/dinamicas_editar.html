@@ -7,13 +7,21 @@
 
 {% block head %}
 
+
+
   {% load static %}
+  
+  
+
   <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
+
 
   <link rel='stylesheet' href="{% static 'bootstrap-datepicker/dist/css/bootstrap-datepicker.standalone.min.css' %}" crossorigin="anonymous">
   <script src="{% static 'bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js' %}"></script> 
   <script src="{% static 'bootstrap-datepicker/dist/locales/bootstrap-datepicker.pt-BR.min.js' %}"></script> 
+
+{% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.25.3/moment.min.js"></script>  {% endcomment %}
 
   <script>
     $(document).ready(function () {     
@@ -41,10 +49,11 @@
     <form method="post" id="dinamicasform" enctype="multipart/form-data">
       {% csrf_token %}
 
+      {% comment %} Se livrar do datetime-local, ele não funciona bem {% endcomment %}
       <div class="container">   
           <label for="inicio">
           <span style="display:inline-block; width:5.5ex; text-align:right;">Inicio:</span>
-          <input id="inicio" type="datetime-local" name="inicio"
+          <input id="inicio"  type="datetime-local" name="inicio"
           {% if encontro %}
             value="{{encontro.startDate|date:'Y-m-d\TH:i:s'}}" 
           {% endif %} 
@@ -54,7 +63,7 @@
         
           <label for="fim">
           <span style="display:inline-block; width:5.5ex; text-align:right">Fim:</span>
-          <input id="fim" type="datetime-local" name="fim"
+          <input id="fim"  type="datetime-local" name="fim"
           {% if encontro %}
             value="{{encontro.endDate|date:'Y-m-d\TH:i:s'}}" 
           {% endif %} 
@@ -89,14 +98,9 @@
           $("#fim").val(data.toDatetimeLocal());
         });
 
-        $('#inicio').datetimepicker({
-          locale:  moment.locale('en', {
-            week: { dow: 1 }
-          }),
-        });
-
       </script>
       
+
       <br><br>
       <label for="local">Local:
         <input id="local" name="local" type="text" size="36" style="max-width: 100%;" maxlength="280"
@@ -109,11 +113,24 @@
 
       <br>
       Facilitador:<br>
-      <select name="facilitador" class="pessoas custom-select custom-select-sm" id="facilitador" title="Selecione o facilitador">
+      <select name="facilitador" class="pessoas selectpicker" id="facilitador" title="Selecione o facilitador"
+        data-live-search="true" data-width="50%" data-size="10">
           <option {% if not encontro %}selected{% endif %} value="0"> -- selecione o facilitador -- </option>
-          {% for pessoa in pessoas %}
-            <option value="{{pessoa.id}}" {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa}}</option>
-          {% endfor %}
+          <optgroup label="Professores">
+            {% for pessoa in professores %}
+              <option value="{{pessoa.id}}" {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa}}</option>
+            {% endfor %}
+          </optgroup>
+          <optgroup label="Falconi">
+            {% for pessoa in falconis %}
+              <option value="{{pessoa.id}}" {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa}}</option>
+            {% endfor %}
+          </optgroup>
+          <optgroup label="Outros">
+            {% for pessoa in pessoas %}
+              <option value="{{pessoa.id}}" {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa}}</option>
+            {% endfor %}
+          </optgroup>
       </select>
 
     </div>
@@ -124,7 +141,7 @@
 
       <label for="projeto">Projeto:</label>
       <select class="selectpicker" name="projeto" id="projeto" title="Selecione o projeto"
-       data-live-search="true" data-width="75%" data-size="5">
+       data-live-search="true" data-width="75%" data-size="10">
         <option {% if not encontro %}selected{% endif %} value="0"> -- selecione um projeto -- </option>
         {% for projeto in projetos %}
           <option value="{{projeto.id}}"

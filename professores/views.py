@@ -24,7 +24,7 @@ from users.support import get_edicoes
 
 from projetos.models import ObjetivosDeAprendizagem, Avaliacao2, Observacao
 from projetos.models import Banca, Evento, Encontro
-from projetos.models import Projeto, Configuracao
+from projetos.models import Projeto, Configuracao, Organizacao
 from projetos.support import get_peso
 from projetos.support import converte_letra, converte_conceito
 from projetos.messages import email
@@ -811,11 +811,24 @@ def dinamicas_criar(request):
     projetos = Projeto.objects.filter(ano=ano, semestre=semestre)\
         .exclude(orientador=None)
 
-    pessoas = PFEUser.objects.all().order_by(Lower("first_name"), Lower("last_name"))
+    # Buscando pessoas para lista de Facilitadores
+    professores_tmp = PFEUser.objects.filter(tipo_de_usuario=2)  # (2, 'professor')
+    administradores = PFEUser.objects.filter(tipo_de_usuario=4)  # (4, 'administrador')
+    professores = (professores_tmp | administradores).order_by(Lower("first_name"), Lower("last_name"))
+
+    parceiros = PFEUser.objects.filter(tipo_de_usuario=3)
+    organizacao = get_object_or_404(Organizacao, sigla="Falconi")
+    falconis = parceiros.filter(parceiro__organizacao=organizacao).order_by(Lower("first_name"), Lower("last_name"))
+
+    outros_parceiros = parceiros.exclude(parceiro__organizacao=organizacao)
+    estudantes = PFEUser.objects.filter(tipo_de_usuario=1)  # (1, 'estudantes')
+    pessoas = (outros_parceiros | estudantes).order_by(Lower("first_name"), Lower("last_name"))
 
     context = {
-        'projetos': projetos,
-        'pessoas': pessoas,
+        "projetos": projetos,
+        "professores": professores,
+        "falconis": falconis,
+        "pessoas": pessoas,
     }
     return render(request, 'professores/dinamicas_editar.html', context)
 
@@ -860,7 +873,7 @@ def dinamicas_editar(request, primarykey):
 
             encontro.save()
 
-            mensagem = "Dinâmica criada."
+            mensagem = "Dinâmica atualizada."
             context = {
                 "area_principal": True,
                 "mensagem": mensagem,
@@ -874,10 +887,23 @@ def dinamicas_editar(request, primarykey):
     projetos = Projeto.objects.filter(ano=ano, semestre=semestre)\
         .exclude(orientador=None)
 
-    pessoas = PFEUser.objects.all().order_by(Lower("first_name"), Lower("last_name"))
+    # Buscando pessoas para lista de Facilitadores
+    professores_tmp = PFEUser.objects.filter(tipo_de_usuario=2)  # (2, 'professor')
+    administradores = PFEUser.objects.filter(tipo_de_usuario=4)  # (4, 'administrador')
+    professores = (professores_tmp | administradores).order_by(Lower("first_name"), Lower("last_name"))
+
+    parceiros = PFEUser.objects.filter(tipo_de_usuario=3)
+    organizacao = get_object_or_404(Organizacao, sigla="Falconi")
+    falconis = parceiros.filter(parceiro__organizacao=organizacao).order_by(Lower("first_name"), Lower("last_name"))
+
+    outros_parceiros = parceiros.exclude(parceiro__organizacao=organizacao)
+    estudantes = PFEUser.objects.filter(tipo_de_usuario=1)  # (1, 'estudantes')
+    pessoas = (outros_parceiros | estudantes).order_by(Lower("first_name"), Lower("last_name"))
 
     context = {
         'projetos': projetos,
+        "professores": professores,
+        "falconis": falconis,
         'pessoas': pessoas,
         'encontro': encontro,
     }
