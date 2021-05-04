@@ -136,9 +136,9 @@
               {% else %}
                 prioridade #{{prioridade}}
               {% endif %}">
-              {{aluno.user.get_full_name}}
+                {{aluno.user.get_full_name}}
+                [{{ aluno.get_curso_display }}]
               </a>
-              [{{ aluno.get_curso_display }}]
               <a href="mailto:{{aluno.user.email}}">&lt;{{aluno.user.email}}&gt;</a>
               <div class="prioridade" style="display: none;">{{prioridade}}</div> <!-- para mostrar no gráfico -->
               <!-- &nbsp; { {{ aluno.alocacao_set.first.get_conceito_display }} } -->
@@ -166,9 +166,29 @@
           {% if conexao.parceiro.user.is_active %}
             <a class="imprimir" href="{% url 'parceiro_detail' conexao.parceiro.id %}">
               {{ conexao.parceiro.user.get_full_name }}
+              <span>
+                {% if conexao.gestor_responsavel %}
+                  [gestor responsavel]
+                {% endif %}
+                {% if conexao.mentor_tecnico %}
+                  [mentor técnico]
+                {% endif %}
+                {% if conexao.recursos_humanos %}
+                  [recursos humanos]
+                {% endif %}
+                {% if conexao.colaboracao %}
+                  [colaboração]
+                {% endif %}
+                {% if conexao.observacao %}
+                  &nbsp;&nbsp;obs: {{conexao.observacao}}
+                {% endif %}
+              </span>
             </a>
             <a href="mailto:{{conexao.parceiro.user.email}}"> &lt;{{conexao.parceiro.user.email}}&gt;</a>
-            <span>
+          {% else %}
+            <a class="imprimir" href="{% url 'parceiro_detail' conexao.parceiro.id %}" style="color: LightBlue;">
+              {{ conexao.parceiro.user.get_full_name }}
+              <span style="color: lightgrey;">
               {% if conexao.gestor_responsavel %}
                 [gestor responsavel]
               {% endif %}
@@ -184,29 +204,9 @@
               {% if conexao.observacao %}
                 &nbsp;&nbsp;obs: {{conexao.observacao}}
               {% endif %}
-            </span>
-          {% else %}
-            <a class="imprimir" href="{% url 'parceiro_detail' conexao.parceiro.id %}" style="color: LightBlue;">
-              {{ conexao.parceiro.user.get_full_name }}
+              </span>
             </a>
             <a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;"> &lt;{{conexao.parceiro.user.email}}&gt;</a>
-            <span style="color: lightgrey;">
-            {% if conexao.gestor_responsavel %}
-              [gestor responsavel]
-            {% endif %}
-            {% if conexao.mentor_tecnico %}
-              [mentor técnico]
-            {% endif %}
-            {% if conexao.recursos_humanos %}
-              [recursos humanos]
-            {% endif %}
-            {% if conexao.colaboracao %}
-              [colaboração]
-            {% endif %}
-            {% if conexao.observacao %}
-              &nbsp;&nbsp;obs: {{conexao.observacao}}
-            {% endif %}
-            </span>
             <br>
           {% endif %}
           </li>
