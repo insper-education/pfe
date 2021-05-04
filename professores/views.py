@@ -826,16 +826,7 @@ def dinamicas_criar(request):
 def dinamicas_editar(request, primarykey):
     """Edita um encontro."""
     encontro = get_object_or_404(Encontro, pk=primarykey)
-    # try:
-    #     encontro = Encontro.objects.get(pk=primarykey)
-    # except Encontro.DoesNotExist:
-    #     return HttpResponse("Encontro não encontrado.", status=401)
-
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     if request.method == 'POST':
 
@@ -856,10 +847,6 @@ def dinamicas_editar(request, primarykey):
                 projeto = int(projeto)
                 if projeto != 0:
                     encontro.projeto = get_object_or_404(Projeto, id=projeto)
-                    # try:
-                    #     encontro.projeto = Projeto.objects.get(id=projeto)
-                    # except Projeto.DoesNotExist:
-                    #     return HttpResponse("Projeto não encontrado.", status=401)
                 else:
                     encontro.projeto = None
 
@@ -868,10 +855,6 @@ def dinamicas_editar(request, primarykey):
                 facilitador = int(facilitador)
                 if facilitador != 0:
                     encontro.facilitador = get_object_or_404(PFEUser, id=facilitador)
-                    # try:
-                    #     encontro.facilitador = PFEUser.objects.get(id=facilitador)
-                    # except PFEUser.DoesNotExist:
-                    #     return HttpResponse("Usuário não encontrado.", status=401)
                 else:
                     encontro.facilitador = None
 

@@ -629,7 +629,7 @@ class Encontro(models.Model):
 
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='projeto')
-    location = models.CharField(blank=True, max_length=50,
+    location = models.CharField(blank=True, max_length=280,
                                 help_text='sala em que vai ocorrer a dinâmica')
     startDate = models.DateTimeField(default=datetime.datetime.now,
                                      help_text='Inicio da Dinâmica')
