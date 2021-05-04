@@ -197,16 +197,15 @@
               {% if objs.observacoes %}  
                 <li>Observações: {{objs.observacoes}}</li>
               {% endif %}
-              
-            
+
             </ul>
 
           </td></tr>
 
       {% endfor %}
 
-      <tr style="background-color: var(--color_banca_intermediaria); color: white"><td>
-        Média das avaliações intermediárias:
+      <tr style="background-color: var(--color_banca_intermediaria); color: darkslategrey"><td>
+        <b>Média das avaliações intermediárias:
         <ul>
         <script>
           for (var key in intermediaria.dict) {
@@ -214,6 +213,7 @@
           }
         </script>
         </ul>
+        </b>
       </td></tr>
 
     </table>
@@ -269,7 +269,8 @@
 
       {% endfor %}
 
-      <tr style="background-color: var(--color_banca_final); color: white"><td>
+      <tr style="background-color: var(--color_banca_final); color: darkslategrey"><td>
+        <b>
         Média das avaliações finais:
         <ul>
         <script>
@@ -278,6 +279,7 @@
           }
         </script>
         </ul>
+        </b>
       </td></tr>
 
     </table>
@@ -334,7 +336,8 @@
 
       {% endfor %}
 
-      <tr style="background-color: var(--color_banca_falconi); color: white"><td>
+      <tr style="background-color: var(--color_banca_falconi); color: darkslategrey"><td>
+        <b>
         Média das avaliações falconi:
         <ul>
         <script>
@@ -343,6 +346,7 @@
           }
         </script>
         </ul>
+        </b>
       </td></tr>
 
     </table>
