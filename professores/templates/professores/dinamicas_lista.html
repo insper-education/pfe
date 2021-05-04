@@ -38,6 +38,11 @@
                   {{e.projeto.get_titulo}}
                 </a><br>
                 <b>Organização:</b> <a href="{% url 'organizacao_completo' e.projeto.organizacao.id %}">{{ e.projeto.organizacao.nome }}</a><br>
+                {% if e.facilitador %}
+                  <b>Facilitador:</b> <a href="{% url 'user_detail' e.facilitador.id %}">{{ e.facilitador.get_full_name }}</a>
+                  <a href="mailto:{{e.facilitador.email}}">&lt;{{e.facilitador.email}}&gt;</a>&nbsp;
+                  <br>
+                {% endif %}
                 <b>Grupo:</b>
                 <ol>
                   {% for alocacao in e.projeto.alocacao_set.all %} 
