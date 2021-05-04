@@ -644,6 +644,12 @@ class Encontro(models.Model):
         return self.endDate.strftime("%H:%M")
     hora_fim.short_description = 'Hora Fim'
 
+    def url_location(self):
+        """checa se link."""
+        if self.location[:4] == "http":
+            return True
+        return False
+
     @classmethod
     def create(cls, startDate, endDate):
         """Cria um objeto (entrada) no Encontro."""

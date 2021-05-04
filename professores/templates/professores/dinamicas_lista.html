@@ -44,7 +44,14 @@
                   <br>
                 {% endif %}
                 {% if e.location %}
-                  <b>Local:</b> {{ e.location }}
+                  <b>Local:</b> 
+                  {% if e.url_location %}
+                    <a href="{{e.location}}">
+                  {% endif %}
+                  {{e.location}}
+                  {% if e.url_location %}
+                    </a>
+                  {% endif %}
                   <br>
                 {% endif %}
                 <b>Grupo:</b>
