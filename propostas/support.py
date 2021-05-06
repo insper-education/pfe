@@ -309,11 +309,11 @@ def envia_proposta(proposta, enviar=True):
 
     if enviar:
         recipient_list = list(map(str.strip, re.split(",|;", proposta.email)))
-        recipient_list += ["lpsoares@insper.edu.br",]
+        recipient_list += ["lpsoares@insper.edu.br", "lpsoares@gmail.com",]
 
         check = email(subject, recipient_list, message)
         if check != 1:
-            message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+            message = "<b>Algum problema de conexão, contacte: lpsoares@insper.edu.br</b>"
 
     return message
 
