@@ -16,9 +16,10 @@ def htmlizar(text):
 
 def email(subject, recipient_list, message):
     """Envia um e-mail para o HOST_USER."""
-    email_from = settings.EMAIL_HOST_USER
+    email_from = settings.EMAIL_USER + " <" + settings.EMAIL_HOST_USER + ">"
+    auth_user = settings.EMAIL_HOST_USER
     return send_mail(subject, message, email_from, recipient_list,
-                     html_message=message, fail_silently=True)
+                     fail_silently=True, auth_user=auth_user, html_message=message)
 
 def create_message(estudante, ano, semestre):
     """Cria mensagem quando o estudante termina de preencher o formulário de seleção de propostas"""

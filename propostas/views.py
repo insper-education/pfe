@@ -459,7 +459,7 @@ def proposta_editar(request, slug):
             enviar = "mensagem" in request.POST  # Por e-mail se enviar
             mensagem = envia_proposta(proposta, enviar)
             resposta = "Submissão de proposta de projeto "
-            resposta = "atualizada com sucesso.<br>"
+            resposta += "atualizada com sucesso.<br>"
 
             if enviar:
                 resposta += "Você deve receber um e-mail de confirmação "
