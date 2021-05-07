@@ -1228,10 +1228,6 @@ def evolucao_notas(request):
 def evolucao_objetivos(request):
     """Mostra graficos das evoluções do PFE."""
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     periodo = ""
     estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
