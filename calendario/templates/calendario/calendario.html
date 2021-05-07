@@ -15,10 +15,12 @@
   <link rel="stylesheet" type="text/css" href="{% static 'js-year-calendar/dist/js-year-calendar.min.css' %}" />
   <link rel='stylesheet' href="{% static 'bootstrap-datepicker/dist/css/bootstrap-datepicker.standalone.min.css' %}" crossorigin="anonymous">
   <script src="{% static 'js-year-calendar/locales/js-year-calendar.pt.js' %}"></script>
-  <script src="{% static 'js/html2canvas.min.js' %}"></script>
-  <script src="{% static 'js/jspdf.min.js' %}"></script>
   <script src="{% static 'bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js' %}"></script> 
   <script src="{% static 'bootstrap-datepicker/dist/locales/bootstrap-datepicker.pt-BR.min.js' %}"></script> 
+
+  {% comment %} Para gerar as imagens {% endcomment %}
+  <script src="{% static 'js/html2canvas.min.js' %}"></script>
+  <script src="{% static 'js/jspdf.min.js' %}"></script>
 
 
   <style>
@@ -37,21 +39,6 @@
   <script>{% include "tooltip.js" %}</script>
 
   <style>
-
-    .image {
-      outline-width: 0;
-      background-color: none;
-      cursor: pointer;
-    }
-
-    .image:hover {
-      background: #e7e7e7;
-      background-color: none;
-    }
-
-    .image:active {
-      background-color: lightblue;
-    }
 
     .event-name {
       font-weight: bold;
@@ -101,11 +88,43 @@
 
 {% block content %}
 
-  <div class="images">
-    <img class="image" id="bjpg" src="{% static 'images/icone_JPG.png' %}" alt="jpg">
-    <img class="image" id="bpng" src="{% static 'images/icone_PNG.png' %}" alt="png">
-    <img class="image" id="bpdf" src="{% static 'images/icone_PDF.png' %}" alt="pdf">
-  </div>
+  <script>
+
+    function ajusta() {
+      document.querySelector('#tudo').style.width = "1200px";  
+      {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+        // Escondendo informações
+        if($('#operacao').is(":not(:checked)")) {
+          $('#titulo_operacao').hide()
+        }          
+        if($('#academico').is(":not(:checked)")) {
+          $('#titulo_academico').hide()
+        }
+        $('#operacao').hide()
+        $('#academico').hide()
+      {% endif %}
+    }
+
+    function reajusta() {
+        // Reajustando tela para visualização no browser
+        document.querySelector('#tudo').style.width = "100%";
+        {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+          if($('#operacao').is(":not(:checked)")) {
+            $('#titulo_operacao').show()
+          }          
+          if($('#academico').is(":not(:checked)")) {
+            $('#titulo_academico').show()
+          }
+          $('#operacao').show()
+          $('#academico').show()
+        {% endif %}
+    }
+
+  </script>
+
+  {% with file_name="calendario" %}
+    {% include "save_image.html" %}
+  {% endwith %}
 
   <div id="tudo">
 
@@ -887,87 +906,6 @@
         segundo()
       {% endif %}
     }
-
-  function get_image(tipo) {
-    document.querySelector('#tudo').style.width = "1200px";  
-    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-      // Escondendo informações
-      if($('#operacao').is(":not(:checked)")) {
-        $('#titulo_operacao').hide()
-      }          
-      if($('#academico').is(":not(:checked)")) {
-        $('#titulo_academico').hide()
-      }
-      $('#operacao').hide()
-      $('#academico').hide()
-    {% endif %}
-
-    setTimeout(function () {
-      html2canvas(document.querySelector('#tudo'), {
-        width: 1200,
-        windowWidth: 1200,
-        scrollX: 0,
-        scrollY: -window.scrollY
-      }).then(function(canvas) {
-        if(tipo=="png") {
-          var imgData = canvas.toDataURL('image/png');
-          saveAs(imgData, 'calendario.png'); // GERA PNG 
-        } else {
-          var imgData = canvas.toDataURL('image/jpeg');
-          if(tipo=="jpg" || tipo=="jpeg") {
-            saveAs(imgData, 'calendario.jpg'); // GERA PNG 
-          } else
-          if(tipo=="pdf") {
-            var w = canvas.width
-            var h = canvas.height
-            var alt = (412 / canvas.width) * canvas.height
-            // GERA PDF
-            var doc = new jsPDF('portrait', 'px', 'a4', true, true);
-            doc.addImage(imgData, 'JPG', 16, 16, 412, alt);
-            doc.save('calendario.pdf');
-          }
-        }
-      });
-      // Reajustando tela para visualização no browser
-      document.querySelector('#tudo').style.width = "100%";
-      {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-        if($('#operacao').is(":not(:checked)")) {
-          $('#titulo_operacao').show()
-        }          
-        if($('#academico').is(":not(:checked)")) {
-          $('#titulo_academico').show()
-        }
-        $('#operacao').show()
-        $('#academico').show()
-      {% endif %}
-
-    }, 600);
-  }
-
-  document.getElementById("bpng").addEventListener("click", function() {
-    get_image("png")
-  });
-
-  document.getElementById("bjpg").addEventListener("click", function() {
-    get_image("jpg")
-  });
-
-  document.getElementById("bpdf").addEventListener("click", function() {
-    get_image("pdf")
-  });
-
-  function saveAs(uri, filename) {
-    var link = document.createElement('a');
-    if (typeof link.download === 'string') {
-        link.href = uri;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click(); // Simular click
-        document.body.removeChild(link); // removendo link quando pronto
-    } else {
-        window.open(uri);
-    }
-  }
 
   </script>
 

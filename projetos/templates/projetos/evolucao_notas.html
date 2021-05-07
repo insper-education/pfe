@@ -18,9 +18,24 @@
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
 
+  {% comment %} Para gerar as imagens {% endcomment %}
+  <script src="{% static 'js/html2canvas.min.js' %}"></script>
+  <script src="{% static 'js/jspdf.min.js' %}"></script>
+
 {% endblock %}
 
 {% block content %}
+
+    <script>
+        function ajusta() { }
+        function reajusta() { }
+    </script>
+
+    {% with file_name="evolucao_notas" %}
+        {% include "save_image.html" %}
+    {% endwith %}
+
+    <div id="tudo">
 
     <span class="titulo">Evolução por Notas/Conceitos</span>
 
@@ -34,6 +49,7 @@
     {% endwith %}
     {% endcomment %}
 
+    
     <div class="atualizar">
     <div class="container">
 
@@ -145,6 +161,7 @@
         </script>
 
 
+    </div>
     </div>
     </div>
 

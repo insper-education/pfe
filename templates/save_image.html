@@ -1,0 +1,130 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 7 de Maio de 2021
+{% endcomment %}
+
+{% load static %}
+
+<style>
+
+    .images {
+      float: right;
+      position: relative;
+      margin-top:-14px;
+      outline-width: 0;
+      background-color: none;
+      cursor: pointer;
+    }
+
+    .image:hover {
+      background: #e7e7e7;
+      background-color: none;
+    }
+
+    .image:active {
+      background-color: lightblue;
+    }
+
+</style>
+
+<div class="images">
+  <img class="image" id="bjpg" src="{% static 'images/icone_JPG.png' %}" alt="jpg">
+  <img class="image" id="bpng" src="{% static 'images/icone_PNG.png' %}" alt="png">
+  <img class="image" id="bpdf" src="{% static 'images/icone_PDF.png' %}" alt="pdf">
+</div>
+
+<script>
+
+  function ajusta() {
+    document.querySelector('#tudo').style.width = "1200px";  
+    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+      // Escondendo informações
+      if($('#operacao').is(":not(:checked)")) {
+        $('#titulo_operacao').hide()
+      }          
+      if($('#academico').is(":not(:checked)")) {
+        $('#titulo_academico').hide()
+      }
+      $('#operacao').hide()
+      $('#academico').hide()
+    {% endif %}
+  }
+
+  function reajusta() {
+      // Reajustando tela para visualização no browser
+      document.querySelector('#tudo').style.width = "100%";
+      {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+        if($('#operacao').is(":not(:checked)")) {
+          $('#titulo_operacao').show()
+        }          
+        if($('#academico').is(":not(:checked)")) {
+          $('#titulo_academico').show()
+        }
+        $('#operacao').show()
+        $('#academico').show()
+      {% endif %}
+  }
+
+  function get_image(tipo) {
+
+    ajusta();
+
+    setTimeout(function () {
+      html2canvas(document.querySelector('#tudo'), {
+        width: 1200,
+        windowWidth: 1200,
+        scrollX: 0,
+        scrollY: -window.scrollY
+      }).then(function(canvas) {
+        if(tipo=="png") {
+          var imgData = canvas.toDataURL('image/png');
+          saveAs(imgData, '{{file_name}}.png'); // GERA PNG 
+        } else {
+          var imgData = canvas.toDataURL('image/jpeg');
+          if(tipo=="jpg" || tipo=="jpeg") {
+            saveAs(imgData, '{{file_name}}.jpg'); // GERA PNG 
+          } else
+          if(tipo=="pdf") {
+            var w = canvas.width
+            var h = canvas.height
+            var alt = (412 / canvas.width) * canvas.height
+            // GERA PDF
+            var doc = new jsPDF('portrait', 'px', 'a4', true, true);
+            doc.addImage(imgData, 'JPG', 16, 16, 412, alt);
+            doc.save('{{file_name}}.pdf');
+          }
+        }
+      });
+
+      reajusta();
+
+    }, 600);
+  }
+
+  document.getElementById("bpng").addEventListener("click", function() {
+    get_image("png")
+  });
+
+  document.getElementById("bjpg").addEventListener("click", function() {
+    get_image("jpg")
+  });
+
+  document.getElementById("bpdf").addEventListener("click", function() {
+    get_image("pdf")
+  });
+
+  function saveAs(uri, filename) {
+    var link = document.createElement('a');
+    if (typeof link.download === 'string') {
+        link.href = uri;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click(); // Simular click
+        document.body.removeChild(link); // removendo link quando pronto
+    } else {
+        window.open(uri);
+    }
+  }
+
+</script>

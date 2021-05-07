@@ -19,9 +19,24 @@
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
 
+  {% comment %} Para gerar as imagens {% endcomment %}
+  <script src="{% static 'js/html2canvas.min.js' %}"></script>
+  <script src="{% static 'js/jspdf.min.js' %}"></script>
+
 {% endblock %}
 
 {% block content %}
+
+    <script>
+        function ajusta() { }
+        function reajusta() { }
+    </script>
+
+    {% with file_name="analise_objetivos" %}
+        {% include "save_image.html" %}
+    {% endwith %}
+
+    <div id="tudo">
 
     <span class="titulo">Análise por Objetivos de Aprendizado</span>
 
@@ -30,6 +45,7 @@
         {% include "edicoes.html" %}
     {% endwith %}
 
+    
     <div class="atualizar">
 
         <div class="container">
@@ -738,6 +754,7 @@
             </script>
 
         </div>
+    </div>
     </div>
 
     {% with com_cursos=True %}
