@@ -518,7 +518,7 @@ def validate_alunos(request):
     checked = request.GET.get('checked', None) == "true"
 
     try:
-        proposta = Proposta.objects.get(id=proposta_id)
+        proposta = Proposta.objects.select_for_update().get(id=proposta_id)
 
         if vaga[0] == 'C':
             if vaga[1] == '1':
