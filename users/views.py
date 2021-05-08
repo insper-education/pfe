@@ -140,7 +140,7 @@ def estudantes_lista(request):
                 anosemestre = edicao
 
             # Conta soh alunos
-            alunos_list = Aluno.objects\
+            alunos_todos = Aluno.objects\
                 .filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])\
                 .order_by(Lower("user__first_name"), Lower("user__last_name"))
 
@@ -158,7 +158,7 @@ def estudantes_lista(request):
                 ano = int(anosemestre.split(".")[0])
                 semestre = int(anosemestre.split(".")[1])
 
-                alunos_list = alunos_list.filter(trancado=False)
+                alunos_list = alunos_todos.filter(trancado=False)
 
                 alunos_semestre = alunos_list\
                     .filter(alocacao__projeto__ano=ano,
@@ -186,9 +186,9 @@ def estudantes_lista(request):
             else:
 
                 if anosemestre == "todos":
-                    alunos_list = alunos_list.filter(trancado=False)
+                    alunos_list = alunos_todos.filter(trancado=False)
                 else:
-                    alunos_list = alunos_list.filter(trancado=True)
+                    alunos_list = alunos_todos.filter(trancado=True)
                     ano = "trancou"
 
                 ano_tmp = 2018
@@ -228,6 +228,10 @@ def estudantes_lista(request):
                         ano_tmp += 1
                         semestre_tmp = 1
 
+                alunos_list = alunos_list.filter(anoPFE__lte=configuracao.ano).distinct()
+                if configuracao.semestre == 1:
+                    alunos_list = alunos_list.exclude(anoPFE=configuracao.ano, semestrePFE=2)
+                
             num_alunos = alunos_list.count()
 
             # Conta alunos computacao
