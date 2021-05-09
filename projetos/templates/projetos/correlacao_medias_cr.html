@@ -128,9 +128,7 @@
                     
                     plugins: {
                         colorschemes: {
-                            {% if alocacoes %}
-                                scheme: 'office.Angles6',
-                            {% elif estudantes_computacao and estudantes_mecanica and estudantes_mecatronica %}
+                            {% if estudantes_computacao and estudantes_mecanica and estudantes_mecatronica %}
                                 scheme: 'office.Berlin6',
                             {% else %}
                                 scheme: 'office.Angles6',
