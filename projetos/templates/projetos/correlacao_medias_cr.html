@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 8 de Maio de 2021
+{% endcomment %}
+
+{% block head %}
+
+  {% load static %}
+  
+  {% load l10n %}
+
+  <script src="{% static 'js/w3.js' %}"></script>
+  <script src="{% static 'js/Chart.min.js' %}"></script>
+  <script src="{% static 'js/chartjs-plugin-colorschemes.min.js' %}"></script>
+  {% comment %} <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script> {% endcomment %}
+
+  {% comment %} Para chamar os Tooltips {% endcomment %}
+  <script>{% include "tooltip.js" %}</script>
+
+  {% comment %} Para gerar as imagens {% endcomment %}
+  <script src="{% static 'js/html2canvas.min.js' %}"></script>
+  <script src="{% static 'js/jspdf.min.js' %}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+  <script>
+    function ajusta() { }
+    function reajusta() { }
+  </script>
+
+  {% with file_name="analise_notas" %}
+    {% include "save_image.html" %}
+  {% endwith %}
+
+    <div id="tudo">
+
+    <span class="titulo">Correlação entre Médias e CR</span>
+
+    {% comment %} Seletor da edição da pesquisa {% endcomment %}
+    {% with com_cursos=True %}
+        {% include "edicoes.html" %}
+    {% endwith %}
+
+    <div class="atualizar">
+        <div class="container">
+
+            {% if True %}
+                <div class="row mt-5">
+                    <div class="col"><canvas id="correlacao"></canvas></div>
+                </div>
+            {% endif %}
+
+            <script>
+        
+                {% for key, alocacoes_tmp in alocacoes.items %}
+                    var data{{key}} = [
+                    {% for alocacao in alocacoes_tmp %}
+                        {% with media=alocacao.get_media %}
+                            {% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
+                                {
+                                    x: {{media.media|unlocalize}},
+                                    y: {{alocacao.aluno.cr|unlocalize}},
+                                    name: "{{alocacao.aluno.user.get_full_name}}"
+                                },
+                            {% endif %}
+                        {% endwith %}
+                    {% endfor %}
+                    ];
+                {% endfor %}
+
+                var data_estudantes_computacao = [
+                {% for alocacao in estudantes_computacao %}
+                    {% with media=alocacao.get_media %}
+                        {% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
+                            {
+                                x: {{media.media|unlocalize}},
+                                y: {{alocacao.aluno.cr|unlocalize}},
+                                name: "{{alocacao.aluno.user.get_full_name}}"
+                            },
+                        {% endif %}
+                    {% endwith %}
+                {% endfor %}
+                ];
+
+                var data_estudantes_mecanica = [
+                {% for alocacao in estudantes_mecanica %}
+                    {% with media=alocacao.get_media %}
+                        {% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
+                            {
+                                x: {{media.media|unlocalize}},
+                                y: {{alocacao.aluno.cr|unlocalize}},
+                                name: "{{alocacao.aluno.user.get_full_name}}"
+                            },
+                        {% endif %}
+                    {% endwith %}
+                {% endfor %}
+                ];
+
+                var data_estudantes_mecatronica = [
+                {% for alocacao in estudantes_mecatronica %}
+                    {% with media=alocacao.get_media %}
+                        {% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
+                            {
+                                x: {{media.media|unlocalize}},
+                                y: {{alocacao.aluno.cr|unlocalize}},
+                                name: "{{alocacao.aluno.user.get_full_name}}"
+                            },
+                        {% endif %}
+                    {% endwith %}
+                {% endfor %}
+                ];
+
+                var options = {
+                    responsive: true, // Instruct chart js to respond nicely.
+                    maintainAspectRatio: true, // Add to prevent default behaviour of full-width/height 
+                    tooltips: {
+                        callbacks: {
+                            label: function(tooltipItem, data) {
+                                var label = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].name;
+                                return label + ': (' + tooltipItem.xLabel + ', ' + tooltipItem.yLabel + ')';
+                            }
+                        }
+                    },
+                    
+                    plugins: {
+                        colorschemes: {
+                            {% if alocacoes %}
+                                scheme: 'office.Angles6',
+                            {% elif estudantes_computacao and estudantes_mecanica and estudantes_mecatronica %}
+                                scheme: 'office.Berlin6',
+                            {% else %}
+                                scheme: 'office.Angles6',
+                            {% endif %}
+                        }
+                    },
+
+                };
+
+                var config_corelacao = {
+                    type: 'scatter',
+                    data: {
+                        datasets: [
+
+                            {% for key, alocacao_tmp in alocacoes.items %}
+                                {
+                                    label: '{{key}}',
+                                    data: data{{key}},
+                                },
+                            {% endfor %}
+
+                            {% if estudantes_computacao %}
+                                {
+                                    label: 'Computação',
+                                    data: data_estudantes_computacao,
+                                },
+                            {% endif %}
+                            {% if estudantes_mecanica %}
+                                {
+                                    label: 'Mecânica',
+                                    data: data_estudantes_mecanica,
+                                },
+                            {% endif %}
+                            {% if estudantes_mecatronica %}
+                                {
+                                    label: 'Mecatrônica',
+                                    data: data_estudantes_mecatronica,
+                                },
+                            {% endif %}
+                            ]
+                    },
+                    options: options
+                }
+
+                function carrega_pagina() {  
+
+                    {% if True %}
+                        var corr = document.getElementById('correlacao').getContext('2d');
+                        window.corr = new Chart(corr, config_corelacao);
+                    {% endif %}
+
+                }
+
+                window.onload = carrega_pagina
+            
+            </script>
+
+        </div>
+    </div>
+    </div>
+
+    {% with com_cursos=True %}
+        {% include "edicoes_ajax.html" %}
+    {% endwith %}
+
+{% endblock %}

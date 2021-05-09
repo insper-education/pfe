@@ -1097,10 +1097,6 @@ def analise_objetivos(request):
 def graficos(request):
     """Mostra graficos das evoluções do PFE."""
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     periodo = ""
     estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
@@ -1268,6 +1264,77 @@ def evolucao_objetivos(request):
     }
 
     return render(request, 'projetos/evolucao_objetivos.html', context)
+
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def correlacao_medias_cr(request):
+    """Mostra graficos da correlação entre notas e o CR dos estudantes."""
+    configuracao = get_object_or_404(Configuracao)
+
+    periodo = ""
+
+    edicoes, ano, semestre = get_edicoes(Avaliacao2)
+
+    alocacoes = None
+    estudantes_computacao = None
+    estudantes_mecanica = None
+    estudantes_mecatronica = None
+
+    if request.is_ajax():
+        
+        if 'edicao' in request.POST:
+
+            curso = request.POST['curso']
+
+            if request.POST['edicao'] != 'todas':
+                periodo = request.POST['edicao'].split('.')
+                alocacoes_tmp = Alocacao.objects.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
+                
+                if curso == 'C':
+                    estudantes_computacao = alocacoes_tmp.filter(aluno__curso="C")
+                elif curso == 'M':
+                    estudantes_mecanica = alocacoes_tmp.filter(aluno__curso="M")
+                elif curso == 'X':
+                    estudantes_mecatronica = alocacoes_tmp.filter(aluno__curso="X")
+                else:
+                    estudantes_computacao = alocacoes_tmp.filter(aluno__curso="C")
+                    estudantes_mecanica = alocacoes_tmp.filter(aluno__curso="M")
+                    estudantes_mecatronica = alocacoes_tmp.filter(aluno__curso="X")
+
+            else:
+                alocacoes = {}
+                for edicao in edicoes:
+                    periodo = edicao.split('.')
+                    semestre = Alocacao.objects.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
+                    if curso == 'T':
+                        alocacoes[periodo[0]+"_"+periodo[1]] = semestre
+                    else:
+                        semestre = semestre.filter(aluno__curso=curso)
+                        alocacoes[periodo[0]+"_"+periodo[1]] = semestre
+
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+    else:
+        alocacoes_tmp = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
+        estudantes_computacao = alocacoes_tmp.filter(aluno__curso="C")
+        estudantes_mecanica = alocacoes_tmp.filter(aluno__curso="M")
+        estudantes_mecatronica = alocacoes_tmp.filter(aluno__curso="X")
+
+    context = {
+        "alocacoes": alocacoes,
+        "estudantes_computacao": estudantes_computacao,
+        "estudantes_mecanica": estudantes_mecanica,
+        "estudantes_mecatronica": estudantes_mecatronica,
+        'periodo': periodo,
+        'ano': configuracao.ano,
+        'semestre': configuracao.semestre,
+        'edicoes': edicoes,
+    }
+
+    return render(request, 'projetos/correlacao_medias_cr.html', context)
+
+
 
 
 def cap_name(name):

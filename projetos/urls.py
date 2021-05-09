@@ -77,6 +77,10 @@ urlpatterns = [
          views.certificacao_falconi,
          name='certificacao_falconi'),
 
+     path('correlacao_medias_cr',
+         views.correlacao_medias_cr,
+         name='correlacao_medias_cr'),
+
     path('lista_feedback',
          views.lista_feedback,
          name='lista_feedback'),
