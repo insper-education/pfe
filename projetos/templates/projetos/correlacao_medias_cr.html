@@ -27,14 +27,14 @@
 
 {% block content %}
 
-  <script>
-    function ajusta() { }
-    function reajusta() { }
-  </script>
+    <script>
+        function ajusta() { }
+        function reajusta() { }
+    </script>
 
-  {% with file_name="correlacao" %}
-    {% include "save_image.html" %}
-  {% endwith %}
+    {% with file_name="correlacao" %}
+        {% include "save_image.html" %}
+    {% endwith %}
 
     <div id="tudo">
 
@@ -44,6 +44,17 @@
     {% with com_cursos=True %}
         {% include "edicoes.html" %}
     {% endwith %}
+
+    <div class="input-group input-group-sm mt-1">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="individual" id="inlineRadio1" value="media" checked>
+            <label class="form-check-label" for="inlineRadio1">Médias Finais</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="individual" id="inlineRadio2" value="individual">
+            <label class="form-check-label" for="inlineRadio2">Notas Individuais</label>
+        </div>
+    </div>
 
     <div class="atualizar">
         <div class="container">
@@ -56,13 +67,49 @@
 
             <script>
         
-                {% for key, alocacoes_tmp in alocacoes.items %}
-                    var data{{key}} = [
-                    {% for alocacao in alocacoes_tmp %}
+                {% if alocacoes %}
+
+                    {% for key, alocacoes_tmp in alocacoes.items %}
+                        var data{{key}} = [
+                        {% for alocacao in alocacoes_tmp %}
+                            {% with media=alocacao.get_media %}
+                                {% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
+                                    {
+                                        x: {{media.media|unlocalize}},
+                                        i: {{media.individual|unlocalize}},
+                                        y: {{alocacao.aluno.cr|unlocalize}},
+                                        name: "{{alocacao.aluno.user.get_full_name}}"
+                                    },
+                                {% endif %}
+                            {% endwith %}
+                        {% endfor %}
+                        ];
+                    {% endfor %}
+
+                    {% for key, alocacoes_tmp in alocacoes.items %}
+                        var data{{key}}_i = [];
+                        for (var est in data{{key}}) {
+                            data{{key}}_i.push(
+                                {
+                                    x: data{{key}}[est].i,
+                                    y: data{{key}}[est].y,
+                                    name: data{{key}}[est].name
+                                }
+                            );
+                        }
+                    {% endfor %}
+
+                {% endif %}
+
+                {% if estudantes_computacao %}
+
+                    var data_estudantes_computacao = [
+                    {% for alocacao in estudantes_computacao %}
                         {% with media=alocacao.get_media %}
                             {% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
                                 {
                                     x: {{media.media|unlocalize}},
+                                    i: {{media.individual|unlocalize}},
                                     y: {{alocacao.aluno.cr|unlocalize}},
                                     name: "{{alocacao.aluno.user.get_full_name}}"
                                 },
@@ -70,49 +117,79 @@
                         {% endwith %}
                     {% endfor %}
                     ];
-                {% endfor %}
 
-                var data_estudantes_computacao = [
-                {% for alocacao in estudantes_computacao %}
-                    {% with media=alocacao.get_media %}
-                        {% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
+                    var data_estudantes_computacao_i = [];
+                    for (var est in data_estudantes_computacao) {
+                        data_estudantes_computacao_i.push(
                             {
-                                x: {{media.media|unlocalize}},
-                                y: {{alocacao.aluno.cr|unlocalize}},
-                                name: "{{alocacao.aluno.user.get_full_name}}"
-                            },
-                        {% endif %}
-                    {% endwith %}
-                {% endfor %}
-                ];
+                                x: data_estudantes_computacao[est].i,
+                                y: data_estudantes_computacao[est].y,
+                                name: data_estudantes_computacao[est].name
+                            }
+                        );
+                    }
 
-                var data_estudantes_mecanica = [
-                {% for alocacao in estudantes_mecanica %}
-                    {% with media=alocacao.get_media %}
-                        {% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
-                            {
-                                x: {{media.media|unlocalize}},
-                                y: {{alocacao.aluno.cr|unlocalize}},
-                                name: "{{alocacao.aluno.user.get_full_name}}"
-                            },
-                        {% endif %}
-                    {% endwith %}
-                {% endfor %}
-                ];
+                {% endif %}
 
-                var data_estudantes_mecatronica = [
-                {% for alocacao in estudantes_mecatronica %}
-                    {% with media=alocacao.get_media %}
-                        {% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
+                {% if estudantes_mecanica %}
+
+                    var data_estudantes_mecanica = [
+                    {% for alocacao in estudantes_mecanica %}
+                        {% with media=alocacao.get_media %}
+                            {% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
+                                {
+                                    x: {{media.media|unlocalize}},
+                                    i: {{media.individual|unlocalize}},
+                                    y: {{alocacao.aluno.cr|unlocalize}},
+                                    name: "{{alocacao.aluno.user.get_full_name}}"
+                                },
+                            {% endif %}
+                        {% endwith %}
+                    {% endfor %}
+                    ];
+
+                    var data_estudantes_mecanica_i = [];
+                    for (var est in data_estudantes_mecanica) {
+                        data_estudantes_mecanica_i.push(
                             {
-                                x: {{media.media|unlocalize}},
-                                y: {{alocacao.aluno.cr|unlocalize}},
-                                name: "{{alocacao.aluno.user.get_full_name}}"
-                            },
-                        {% endif %}
-                    {% endwith %}
-                {% endfor %}
-                ];
+                                x: data_estudantes_mecanica[est].i,
+                                y: data_estudantes_mecanica[est].y,
+                                name: data_estudantes_mecanica[est].name
+                            }
+                        );
+                    }
+
+                {% endif %}
+
+                {% if estudantes_mecatronica %}
+
+                    var data_estudantes_mecatronica = [
+                    {% for alocacao in estudantes_mecatronica %}
+                        {% with media=alocacao.get_media %}
+                            {% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
+                                {
+                                    x: {{media.media|unlocalize}},
+                                    i: {{media.individual|unlocalize}},
+                                    y: {{alocacao.aluno.cr|unlocalize}},
+                                    name: "{{alocacao.aluno.user.get_full_name}}"
+                                },
+                            {% endif %}
+                        {% endwith %}
+                    {% endfor %}
+                    ];
+
+                    var data_estudantes_mecatronica_i = [];
+                    for (var est in data_estudantes_mecatronica) {
+                        data_estudantes_mecatronica_i.push(
+                            {
+                                x: data_estudantes_mecatronica[est].i,
+                                y: data_estudantes_mecatronica[est].y,
+                                name: data_estudantes_mecatronica[est].name
+                            }
+                        );
+                    }
+
+                {% endif %}
 
                 var options = {
                     responsive: true, // Instruct chart js to respond nicely.
@@ -145,59 +222,157 @@
                         xAxes: [{
                             scaleLabel: {
                                 display: true,
-                                labelString: 'Média'
+                                labelString: 'Médias Finais'
                             }
                         }]
                     },
 
                 };
 
-                var config_corelacao = {
-                    type: 'scatter',
-                    data: {
-                        datasets: [
 
-                            {% for key, alocacao_tmp in alocacoes.items %}
-                                {
-                                    label: '{{key}}',
-                                    data: data{{key}},
-                                },
-                            {% endfor %}
-
-                            {% if estudantes_computacao %}
-                                {
-                                    label: 'Computação',
-                                    data: data_estudantes_computacao,
-                                },
-                            {% endif %}
-                            {% if estudantes_mecanica %}
-                                {
-                                    label: 'Mecânica',
-                                    data: data_estudantes_mecanica,
-                                },
-                            {% endif %}
-                            {% if estudantes_mecatronica %}
-                                {
-                                    label: 'Mecatrônica',
-                                    data: data_estudantes_mecatronica,
-                                },
-                            {% endif %}
-                            ]
+                var options_i = {
+                    responsive: true, // Instruct chart js to respond nicely.
+                    maintainAspectRatio: true, // Add to prevent default behaviour of full-width/height 
+                    tooltips: {
+                        callbacks: {
+                            label: function(tooltipItem, data) {
+                                var label = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].name;
+                                return label + ': (' + tooltipItem.xLabel + ', ' + tooltipItem.yLabel + ')';
+                            }
+                        }
                     },
-                    options: options
-                }
+                    
+                    plugins: {
+                        colorschemes: {
+                            {% if estudantes_computacao and estudantes_mecanica and estudantes_mecatronica %}
+                                scheme: 'office.Berlin6',
+                            {% else %}
+                                scheme: 'office.Angles6',
+                            {% endif %}
+                        }
+                    },
+                    scales: {
+                        yAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'CR'
+                            }
+                        }],
+                        xAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Notas Individuais'
+                            }
+                        }]
+                    },
+
+                };
+
+                var datasets_media = [
+                    {% for key, alocacao_tmp in alocacoes.items %}
+                        {
+                            label: '{{key}}',
+                            data: data{{key}},
+                        },
+                    {% endfor %}
+
+                    {% if estudantes_computacao %}
+                        {
+                            label: 'Computação',
+                            data: data_estudantes_computacao,
+                        },
+                    {% endif %}
+                    {% if estudantes_mecanica %}
+                        {
+                            label: 'Mecânica',
+                            data: data_estudantes_mecanica,
+                        },
+                    {% endif %}
+                    {% if estudantes_mecatronica %}
+                        {
+                            label: 'Mecatrônica',
+                            data: data_estudantes_mecatronica,
+                        },
+                    {% endif %}
+                    ]
+
+                var datasets_i = [
+                    {% for key, alocacao_tmp in alocacoes.items %}
+                        {
+                            label: '{{key}}',
+                            data: data{{key}}_i,
+                        },
+                    {% endfor %}
+
+                    {% if estudantes_computacao %}
+                        {
+                            label: 'Computação',
+                            data: data_estudantes_computacao_i,
+                        },
+                    {% endif %}
+                    {% if estudantes_mecanica %}
+                        {
+                            label: 'Mecânica',
+                            data: data_estudantes_mecanica_i,
+                        },
+                    {% endif %}
+                    {% if estudantes_mecatronica %}
+                        {
+                            label: 'Mecatrônica',
+                            data: data_estudantes_mecatronica_i,
+                        },
+                    {% endif %}
+                    ]
+
 
                 function carrega_pagina() {  
 
-                    {% if True %}
-                        var corr = document.getElementById('correlacao').getContext('2d');
-                        window.corr = new Chart(corr, config_corelacao);
-                    {% endif %}
+                    valor_individual = $("input[type='radio'][name=individual]:checked").val();
+                    
+                    if (valor_individual == "media") {
+                        var config_corelacao = {
+                            type: 'scatter',
+                            data: {
+                                datasets: datasets_media,
+                            },
+                            options: options
+                        }
+                    } else {
+                        var config_corelacao = {
+                            type: 'scatter',
+                            data: {
+                                datasets: datasets_i,
+                            },
+                            options: options_i
+                        }
+
+                    }
+                    
+                    if( window.corr!==undefined)
+                        window.corr.destroy();
+                    var corr = document.getElementById('correlacao').getContext('2d');
+                    window.corr = new Chart(corr, config_corelacao);
+
 
                 }
 
                 window.onload = carrega_pagina
             
+            </script>
+
+            <script>
+                $('input[type=radio][name=individual]').change(function() {
+                    
+                    carrega_pagina();
+
+                    {% comment %} if (this.value == 'media') {
+                        alert("Media");
+                    }
+                    else if (this.value == 'individual') {
+                        alert("Individual");
+                    }
+                     {% endcomment %}
+                });
             </script>
 
         </div>

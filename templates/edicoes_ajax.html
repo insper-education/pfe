@@ -19,6 +19,9 @@
       {% if com_cursos %}
         var curso = $("#filterCurso option:selected").attr("value");
       {% endif %}
+      {% if com_individual %}
+        var individual = $("#filterCurso option:selected").attr("value");
+      {% endif %}
       $.ajax({
           type: "POST",
           //url: "Normalmente a mesma página",

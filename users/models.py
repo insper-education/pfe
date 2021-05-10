@@ -564,14 +564,26 @@ class Alocacao(models.Model):
         edicao = self.get_notas
 
         nota_final = 0
+        nota_individual = 0
         peso_final = 0
-        # for aval, nota, peso in edicao:
-        for _, nota, peso in edicao:
+        peso_individual = 0
+        for aval, nota, peso in edicao:
             peso_final += peso
             nota_final += nota * peso
+            if aval in ("RII", "RFI", "API", "AFI"):
+                peso_individual += peso
+                nota_individual += nota * peso
         peso_final = round(peso_final, 2)
         
-        return  {"media": nota_final, "pesos": peso_final}
+        individual = None
+        if peso_individual > 0:
+            individual = nota_individual/peso_individual
+
+        return  {
+            "media": nota_final,
+            "pesos": peso_final,
+            "individual": individual,
+        }
 
     @property
     def get_medias_oo(self):
