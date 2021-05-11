@@ -69,9 +69,13 @@
         this.avaliacoes += 1
         this.total += nota
       }
+      nota(){
+        let nota = this.total/this.avaliacoes
+        return nota;
+      }
       media(){
-        let nota = (this.total/this.avaliacoes).toPrecision(2)
-        return conceito(nota)
+        let nota = this.nota().toPrecision(2);
+        return conceito(nota);
       }
       texto() {
         let descricao = ""
@@ -83,6 +87,7 @@
         return (descricao)
       }
     }
+
     class Banca { 
       constructor() { 
         this.dict = new Object();
@@ -92,6 +97,24 @@
         if(!(objetivo.titulo in this.dict)) {
           this.dict[objetivo.titulo] = objetivo
         }
+      }
+
+      media_calculada(){
+        
+        let descricao = "&#10149; Nota Final Calculada = "
+
+        var nota_final = 0;
+        var contagem = 0;
+        for (var key in intermediaria.dict) {
+            if(this.dict[key].avaliacoes>0) {
+              nota_final += intermediaria.dict[key].nota();
+              contagem += 1;
+            }
+        }
+
+        descricao += (nota_final/contagem).toPrecision(2);
+
+        return (descricao)
       }
 
     }
@@ -214,6 +237,9 @@
         </script>
         </ul>
         </b>
+        <script>
+          document.write(intermediaria.media_calculada());
+        </script>
       </td></tr>
 
     </table>
@@ -280,6 +306,9 @@
         </script>
         </ul>
         </b>
+        <script>
+          document.write(final.media_calculada());
+        </script>
       </td></tr>
 
     </table>
@@ -347,6 +376,9 @@
         </script>
         </ul>
         </b>
+        <script>
+          document.write(falconi.media_calculada());
+        </script>
       </td></tr>
 
     </table>
