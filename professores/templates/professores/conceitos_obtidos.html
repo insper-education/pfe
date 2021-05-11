@@ -46,37 +46,47 @@
         return ("I")
     }
 
+    function converte_nota(conceito) {
+      if(conceito=="A+"||conceito=="A+ ") return(10);
+        if(conceito=="A"||conceito=="A ") return(9);
+        if(conceito=="B+"||conceito=="B+ ") return(8);
+        if(conceito=="B"||conceito=="B ") return(7);
+        if(conceito=="C+"||conceito=="C+ ") return(6);
+        if(conceito=="C"||conceito=="C ") return(5);
+        if(conceito=="D+"||conceito=="D+ ") return(4);
+        if(conceito=="D"||conceito=="D ") return(3);
+        if(conceito=="D-"||conceito=="D- ") return(2);
+        if(conceito=="I"||conceito=="I ") return(0);
+        return(0);
+    }
+
     class Objetivo {
       constructor() { 
         this.avaliacoes = 0;
         this.titulo = "";
         this.total = 0;
       }
+
       soma_conceito(conceito){
         this.avaliacoes += 1
-        if(conceito=="A+"||conceito=="A+ ") this.total += 10
-        if(conceito=="A"||conceito=="A ") this.total += 9
-        if(conceito=="B+"||conceito=="B+ ") this.total += 8
-        if(conceito=="B"||conceito=="B ") this.total += 7
-        if(conceito=="C+"||conceito=="C+ ") this.total += 6
-        if(conceito=="C"||conceito=="C ") this.total += 5
-        if(conceito=="D+"||conceito=="D+ ") this.total += 4
-        if(conceito=="D"||conceito=="D ") this.total += 3
-        if(conceito=="D-"||conceito=="D- ") this.total += 2
-        if(conceito=="I"||conceito=="I ") this.total += 0
+        this.total += converte_nota(conceito);
       }
+
       soma_nota(nota){
         this.avaliacoes += 1
         this.total += nota
       }
+
       nota(){
         let nota = this.total/this.avaliacoes
         return nota;
       }
+
       media(){
         let nota = this.nota().toPrecision(3);
         return conceito(nota);
       }
+
       texto() {
         let descricao = ""
         descricao += "<li>"
@@ -86,6 +96,7 @@
         descricao += "</li>"
         return (descricao)
       }
+
     }
 
     class Banca { 
@@ -112,7 +123,21 @@
             }
         }
 
+        descricao += '<span data-toggle="tooltip" data-html="true" animation="true" '
+        descricao += ' title="Média usando conceitos finais '
+        descricao += '(cálculo com todos os conceitos intermediários levaria a nota=' + (nota_final/contagem).toPrecision(3) + ')">'
+        
+        var nota_final = 0;
+        var contagem = 0;
+        for (var key in intermediaria.dict) {
+            if(this.dict[key].avaliacoes>0) {
+              nota_final += converte_nota(intermediaria.dict[key].media());
+              contagem += 1;
+            }
+        }
+
         descricao += (nota_final/contagem).toPrecision(3);
+        descricao += '</span>'
 
         return (descricao)
       }
