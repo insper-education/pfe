@@ -116,9 +116,9 @@
 
         var nota_final = 0;
         var contagem = 0;
-        for (var key in intermediaria.dict) {
+        for (var key in this.dict) {
             if(this.dict[key].avaliacoes>0) {
-              nota_final += intermediaria.dict[key].nota();
+              nota_final += this.dict[key].nota();
               contagem += 1;
             }
         }
@@ -129,9 +129,9 @@
         
         var nota_final = 0;
         var contagem = 0;
-        for (var key in intermediaria.dict) {
+        for (var key in this.dict) {
             if(this.dict[key].avaliacoes>0) {
-              nota_final += converte_nota(intermediaria.dict[key].media());
+              nota_final += converte_nota(this.dict[key].media());
               contagem += 1;
             }
         }
