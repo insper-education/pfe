@@ -136,8 +136,11 @@
               {% endwith %}
             </td>
             <td>
-              {% for aval, nota, peso in aluno.get_notas|dict_key:ano_semestre %} <!-- Notas -->
-                  <span style="background-color:#eef;">{{aval}}({% widthratio peso 1 100 %}%)={{nota|floatformat:1}}</span>
+              {% for aval, nota, peso, descr in aluno.get_notas|dict_key:ano_semestre %} <!-- Notas -->
+                  <span style="background-color:#eef;" data-toggle="tooltip" data-html="true" animation="true" 
+                   title="{{descr}}">
+                    {{aval}}({% widthratio peso 1 100 %}%)={{nota|floatformat:1}}
+                  </span>
               {% endfor %}
             </td>
           </tr>

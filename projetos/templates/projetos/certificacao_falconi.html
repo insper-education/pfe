@@ -17,9 +17,24 @@
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
 
+  {% comment %} Para gerar as imagens {% endcomment %}
+  <script src="{% static 'js/html2canvas.min.js' %}"></script>
+  <script src="{% static 'js/jspdf.min.js' %}"></script>
+
 {% endblock %}
 
 {% block content %}
+
+    <script>
+        function ajusta() { }
+        function reajusta() { }
+    </script>
+
+    {% with file_name="falconi" %}
+        {% include "save_image.html" %}
+    {% endwith %}
+
+    <div id="tudo">
 
     <span class="titulo">Análise dos Conceitos das Certificações Falconi</span>
 
@@ -152,7 +167,7 @@
 
         </div>
     </div>
-
+    </div>
     
     {% include "edicoes_ajax.html" %}
     

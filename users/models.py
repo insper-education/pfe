@@ -7,6 +7,8 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Maio de 2019
 """
 
+import math
+
 from functools import partial
 
 from django.contrib.auth.models import AbstractUser
@@ -243,7 +245,15 @@ class Aluno(models.Model):
                         pes += lista_objetivos[obj][avali][1]
                         pes_total += lista_objetivos[obj][avali][1]
                 if count:
-                    val_objetivos[obj] = (val/count, pes/count)
+                    valor = val/count
+                    peso = pes/count
+
+                    if valor >= 9.5:
+                        valor = 10
+                    else:
+                        valor = float(math.floor(valor))
+
+                    val_objetivos[obj] = (valor, peso)
 
         return val_objetivos, pes_total
 
@@ -386,75 +396,75 @@ class Aluno(models.Model):
                                                                 tipo_de_avaliacao=1)
             if avaliacoes_banca_interm:
                 nota_banca_interm, peso = Aluno.get_banca(self, avaliacoes_banca_interm)
-                notas.append( ("BI", nota_banca_interm, peso/100) )
+                notas.append( ("BI", nota_banca_interm, peso/100, "Banca Intermediária") )
 
             # Banca Final (2, 'final')
             avaliacoes_banca_final = Avaliacao2.objects.filter(projeto=alocacao.projeto,
                                                                tipo_de_avaliacao=2)
             if avaliacoes_banca_final:
                 nota_banca_final, peso = Aluno.get_banca(self, avaliacoes_banca_final)
-                notas.append(("BF", nota_banca_final, peso/100))
+                notas.append(("BF", nota_banca_final, peso/100, "Banca Final"))
 
             # Relatório de Planejamento (10, 'Relatório de Planejamento')
             relp = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=10).\
                                       order_by('momento').last()
             if relp:
-                notas.append(("RPL", float(relp.nota), relp.peso/100))
+                notas.append(("RPL", float(relp.nota), relp.peso/100, "Relatório de Planejamento"))
 
             # Relatório Intermediário de Grupo (11, 'Relatório Intermediário de Grupo'),
             rig = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=11)
             if rig:
                 nota_rig, peso = Aluno.get_banca(self, rig)
-                notas.append(("RIG", nota_rig, peso/100))
+                notas.append(("RIG", nota_rig, peso/100, "Relatório Intermediário de Grupo"))
 
             # Relatório Final de Grupo (12, 'Relatório Final de Grupo'),
             rfg = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=12)
             if rfg:
                 nota_rfg, peso = Aluno.get_banca(self, rfg)
-                notas.append(("RFG", nota_rfg, peso/100))
+                notas.append(("RFG", nota_rfg, peso/100, "Relatório Final de Grupo"))
 
             # Relatório Intermediário Individual (21, 'Relatório Intermediário Individual'),
             rii = Avaliacao2.objects.filter(alocacao=alocacao, tipo_de_avaliacao=21)
             if rii:
                 nota_rii, peso = Aluno.get_banca(self, rii)
-                notas.append(("RII", nota_rii, peso/100))
+                notas.append(("RII", nota_rii, peso/100, "Relatório Intermediário Individual"))
 
             # Relatório Final Individual (22, 'Relatório Final Individual'),
             rfi = Avaliacao2.objects.filter(alocacao=alocacao, tipo_de_avaliacao=22)
             if rfi:
                 nota_rfi, peso = Aluno.get_banca(self, rfi)
-                notas.append(("RFI", nota_rfi, peso/100))
+                notas.append(("RFI", nota_rfi, peso/100, "Relatório Final Individual"))
 
             ### NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES
             # Planejamento Primeira Fase  (50, 'Planejamento Primeira Fase')
             ppf = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=50).\
                                      order_by('momento').last()
             if ppf:
-                notas.append( ("PPF", float(ppf.nota), ppf.peso/100) )
+                notas.append( ("PPF", float(ppf.nota), ppf.peso/100, "Planejamento Primeira Fase") )
 
             # Avaliação Parcial Individual (51, 'Avaliação Parcial Individual'),
             api = Avaliacao2.objects.filter(alocacao=alocacao, tipo_de_avaliacao=51)
             if api:
                 nota_api, peso = Aluno.get_banca(self, api)
-                notas.append(("API", nota_api, peso/100))
+                notas.append(("API", nota_api, peso/100, "Avaliação Parcial Individual"))
 
             # Avaliação Final Individual (52, 'Avaliação Final Individual'),
             afi = Avaliacao2.objects.filter(alocacao=alocacao, tipo_de_avaliacao=52)
             if afi:
                 nota_afi, peso = Aluno.get_banca(self, afi)
-                notas.append(("AFI", nota_afi, peso/100))
+                notas.append(("AFI", nota_afi, peso/100, "Avaliação Final Individual"))
 
             # Avaliação Parcial de Grupo (53, 'Avaliação Parcial de Grupo'),
             apg = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=53)
             if apg:
                 nota_apg, peso = Aluno.get_banca(self, apg)
-                notas.append(("APG", nota_apg, peso/100))
+                notas.append(("APG", nota_apg, peso/100, "Avaliação Parcial de Grupo"))
 
             # Avaliação Final de Grupo (54, 'Avaliação Final de Grupo'),
             afg = Avaliacao2.objects.filter(projeto=alocacao.projeto, tipo_de_avaliacao=54)
             if afg:
                 nota_afg, peso = Aluno.get_banca(self, afg)
-                notas.append(("AFG", nota_afg, peso/100))
+                notas.append(("AFG", nota_afg, peso/100, "Avaliação Final de Grupo"))
 
             edicao[str(alocacao.projeto.ano)+"."+str(alocacao.projeto.semestre)] = notas
 
@@ -471,7 +481,7 @@ class Aluno(models.Model):
             nota_final = 0
             peso_final = 0
             # for aval, nota, peso in edicao:
-            for _, nota, peso in edicao:
+            for _, nota, peso, _ in edicao:
                 peso_final += peso
                 nota_final += nota * peso
             peso_final = round(peso_final, 2)
@@ -490,7 +500,7 @@ class Aluno(models.Model):
     def get_peso(self):
         """Retorna soma dos pesos das notas."""
         peso_final = 0
-        for _, _, peso in self.get_notas:
+        for _, _, peso, _ in self.get_notas:
             peso_final += peso
         return peso_final
 
@@ -567,7 +577,7 @@ class Alocacao(models.Model):
         nota_individual = 0
         peso_final = 0
         peso_individual = 0
-        for aval, nota, peso in edicao:
+        for aval, nota, peso, _ in edicao:
             peso_final += peso
             nota_final += nota * peso
             if aval in ("RII", "RFI", "API", "AFI"):
