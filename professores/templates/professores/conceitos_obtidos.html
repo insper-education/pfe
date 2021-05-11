@@ -74,7 +74,7 @@
         return nota;
       }
       media(){
-        let nota = this.nota().toPrecision(2);
+        let nota = this.nota().toPrecision(3);
         return conceito(nota);
       }
       texto() {
@@ -112,7 +112,7 @@
             }
         }
 
-        descricao += (nota_final/contagem).toPrecision(2);
+        descricao += (nota_final/contagem).toPrecision(3);
 
         return (descricao)
       }
