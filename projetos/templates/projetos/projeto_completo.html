@@ -118,10 +118,12 @@
   <strong>conexões:</strong>
   <small><a href="{% url 'seleciona_conexoes' %}?projeto={{projeto.id}}">&#10133;</a></small>
   <br>
+  <ul>
   {% if conexoes %}
     {% for conexao in conexoes %}
+    <li>
       {% if conexao.parceiro.user.is_active %}
-        <a class="tabulado" href="{% url 'parceiro_detail' conexao.parceiro.id %}">
+        <a href="{% url 'parceiro_detail' conexao.parceiro.id %}">
           {{ conexao.parceiro.user.get_full_name }}
         </a>
         <a href="mailto:{{conexao.parceiro.user.email}}"> &lt;{{conexao.parceiro.user.email}}&gt;</a>
@@ -167,15 +169,17 @@
         </span>
         <br>
       {% endif %}
+      </li>
     {% endfor %}
   {% else %}
     Nenhuma conexão específica para esse projeto declarada.
   {% endif %}
+  </ul>
 
   {% if projeto.orientador %}
     <hr>
     <h3>Orientador{% if projeto.orientador.user.genero == "F" %}a{% endif %}: </h3>
-    &nbsp;
+    &nbsp;&nbsp;&nbsp;&#8614;
     <a href="{% url 'professor_detail' projeto.orientador.id %}">
       {{projeto.orientador.user.get_full_name}}
     </a>
@@ -183,13 +187,14 @@
   {% endif %}
 
   {% if coorientadores %}
-    <br><br>
-    &nbsp;<strong>coorientador(es):</strong><br>
+    <br>
+    <div style="margin-top: 10px;">
+      <strong>&nbsp;&nbsp;coorientador(es):</strong>
+    </div>
     <ul>
     {% for coorientador in coorientadores %}
       <li>
-      &nbsp;
-      <a class="tabulado" href="{% url 'professor_detail' coorientador.usuario.professor.id %}">
+      <a href="{% url 'professor_detail' coorientador.usuario.professor.id %}">
         {{ coorientador.usuario.get_full_name }}
       </a>
       <a href="mailto:{{coorientador.usuario.email}}"> &lt;{{coorientador.usuario.email}}&gt;</a>
@@ -202,21 +207,27 @@
   {% endif %}
 
   <hr>
-  <h3>Estudante(s) Alocado(s) no Projeto:</h3>
-  {% for alocacao in projeto.alocacao_set.all %}
-    <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
-      <p>
-        {{alocacao.aluno.user.get_full_name}} 
-        &lt;{{alocacao.aluno.user.email}}&gt; 
-        [{{ alocacao.aluno.get_curso_display }}]
-        {% for opcao in alocacao.aluno.opcao_set.all %}
-          {% if opcao.projeto == projeto %}
-            (opção #{{opcao.prioridade}})
-          {% endif %}
-        {% endfor %}
-      </p>
-    </a>
-  {% endfor %}
+  {% with alocacoes=projeto.alocacao_set.all %}
+    <h3>Estudante{% if alocacoes.count > 2 %}s{% endif %} Alocado{% if alocacoes.count > 2 %}s{% endif %} no Projeto:</h3>
+    <ul>
+    {% for alocacao in alocacoes %}
+      <li>
+      <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
+        <p>
+          {{alocacao.aluno.user.get_full_name}} 
+          &lt;{{alocacao.aluno.user.email}}&gt; 
+          [{{ alocacao.aluno.get_curso_display }}]
+          {% for opcao in alocacao.aluno.opcao_set.all %}
+            {% if opcao.projeto == projeto %}
+              (opção #{{opcao.prioridade}})
+            {% endif %}
+          {% endfor %}
+        </p>
+      </a>
+      </li>
+    {% endfor %}
+    </ul>
+  {% endwith %}
   
   {% if projeto.encontro_set.all %}
       <hr>
@@ -225,8 +236,25 @@
           {% for dinamica in projeto.encontro_set.all %} 
               <li>
                   {{dinamica.startDate}} - {{dinamica.endDate|date:'H:i'}}
-                  {% if dinamica.location %}; em: {{dinamica.location}} {% endif %}
-                  {% if dinamica.facilitador %}; com: {{dinamica.facilitador}} {% endif %}
+                  <ul>
+                    {% if dinamica.location %}
+                      <li> local:
+                      {% if dinamica.url_location %}
+                        <a href="{{dinamica.location}}">
+                      {% endif %}
+                      {{dinamica.location}}
+                      {% if dinamica.url_location %}
+                        </a>
+                      {% endif %}
+                    {% endif %}
+                    {% if dinamica.facilitador %}
+                      <li>facilitador: 
+                        <a href="{% url 'user_detail' dinamica.facilitador.id %}">
+                          {{dinamica.facilitador}}
+                        </a>
+                      </li>
+                    {% endif %}
+                  </ul>
               </li>
           {% endfor %}
       </ul>
