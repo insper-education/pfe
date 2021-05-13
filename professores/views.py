@@ -303,12 +303,8 @@ def banca_avaliar(request, slug):
 
     if request.method == 'POST':
         if 'avaliador' in request.POST:
-            
+
             avaliador = get_object_or_404(PFEUser, pk=int(request.POST['avaliador']))
-            # try:
-            #     avaliador = PFEUser.objects.get(pk=int(request.POST['avaliador']))
-            # except PFEUser.DoesNotExist:
-            #     return HttpResponse("Usuário não encontrado.", status=401)
 
             if banca.tipo_de_banca == 1:  # (1, 'intermediaria'),
                 tipo_de_avaliacao = 1  # ( 1, 'Banca Intermediária'),
@@ -334,11 +330,6 @@ def banca_avaliar(request, slug):
 
                     pk_objetivo = int(obj_nota.split('.')[0])
                     julgamento[i].objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=pk_objetivo)
-                    # try:
-                    #     pk_objetivo = int(obj_nota.split('.')[0])
-                    #     julgamento[i].objetivo = ObjetivosDeAprendizagem.objects.get(pk=pk_objetivo)
-                    # except ObjetivosDeAprendizagem.DoesNotExist:
-                    #     return HttpResponse("Objetivo de Aprendizagem não encontrados.", status=401)
 
                     julgamento[i].tipo_de_avaliacao = tipo_de_avaliacao
                     if conceito == "NA":

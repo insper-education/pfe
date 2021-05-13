@@ -101,23 +101,23 @@ def get_areas_propostas(propostas):
     return areaspfe
 
 
-#### ISSO TEM DEVIRAR UM PARÂMETRO DE INTERFACE NO FUTURO ####
+# ISSO TEM DE VIRAR UM PARÂMETRO DE INTERFACE NO FUTURO ####
 def get_peso(banca, objetivo):
     """Calcula peso nas notas da banca em função do objetivo de aprendizado."""
     if banca == 1:  # (1, 'intermediaria')
         if objetivo.titulo == "Execução Técnica":
-            return 3.6
+            return 4.8
         if objetivo.titulo == "Organização":
-            return 2.7
+            return 3.6
         if objetivo.titulo == "Design/Empreendedorismo":
-            return 2.7
+            return 3.6
     elif banca == 2:  # ( 2, 'Banca Final'),
         if objetivo.titulo == "Execução Técnica":
-            return 8.4
+            return 7.2
         if objetivo.titulo == "Organização":
-            return 6.3
+            return 5.4
         if objetivo.titulo == "Design/Empreendedorismo":
-            return 6.3
+            return 5.4
     elif banca == 99:  # ( 99, 'Banca Falconi'),
         return 0
 
