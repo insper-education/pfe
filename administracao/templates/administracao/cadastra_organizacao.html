@@ -15,7 +15,8 @@
   </style>
 
   {% comment %} <script src="https://www.geradorcnpj.com/assets/js/jquery.maskedinput-1.1.4.pack.js"></script> {% endcomment %}
-  <script src="{% static 'js/jquery.maskedinput-1.1.4.pack.js' %}"></script>
+  {% comment %} <script src="{% static 'js/jquery.maskedinput-1.1.4.pack.js' %}"></script> {% endcomment %}
+  <script src="{% static 'js/jquery.maskedinput.min.js' %}"></script>
 
   <script type="text/javascript">
     $(document).ready(function(){	
@@ -60,7 +61,7 @@
 
     <br><br>
 
-    <label for="cnpj">CNPJ:</label> <input type="text" id="cnpj" name="cnpj" size="18" value="{{cnpj}}"><br>
+    <label for="cnpj">CNPJ:</label> <input type="text" id="cnpj" name="cnpj" size="19" value="{{cnpj}}"><br>
 
     <label for="inscricao_estadual">Inscrição Estadual:</label> <input type="text" size="48" id="inscricao_estadual" name="inscricao_estadual" value="{{inscricao_estadual}}"><br>
     <label for="razao_social">Razão Social:</label> <input type="text" size="48" id="razao_social" name="razao_social" value="{{razao_social}}"><br>
