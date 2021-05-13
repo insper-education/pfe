@@ -1447,27 +1447,5 @@ def logs(request):
 def migracao(request):
     """temporário"""
     
-    ano = 2021
-    semestre = 1
-    
-    objetivo = ObjetivosDeAprendizagem.objects.get(titulo="Execução Técnica")
-    aval = Avaliacao2.objects.filter(projeto__ano=ano, projeto__semestre=semestre, tipo_de_avaliacao=1, objetivo=objetivo)
-    for a in aval:
-        a.peso = 4.8
-        a.save()
-
-    objetivo = ObjetivosDeAprendizagem.objects.get(titulo="Organização")
-    aval = Avaliacao2.objects.filter(projeto__ano=ano, projeto__semestre=semestre, tipo_de_avaliacao=1, objetivo=objetivo)
-    for a in aval:
-        a.peso = 3.6
-        a.save()
-
-    objetivo = ObjetivosDeAprendizagem.objects.get(titulo="Design/Empreendedorismo")
-    aval = Avaliacao2.objects.filter(projeto__ano=ano, projeto__semestre=semestre, tipo_de_avaliacao=1, objetivo=objetivo)
-    for a in aval:
-        a.peso = 3.6
-        a.save()
-    
-
-    message = "Feito"
+    message = "Nada Feito"
     return HttpResponse(message)
