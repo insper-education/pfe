@@ -249,10 +249,6 @@ def procura_propostas(request):
 def propostas_apresentadas(request):
     """Lista todas as propostas de projetos."""
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     ano = configuracao.ano
     semestre = configuracao.semestre
@@ -282,7 +278,7 @@ def propostas_apresentadas(request):
             dic_organizacoes = {}
             for proposta in propostas_filtradas:
                 if proposta.organizacao and\
-                proposta.organizacao not in dic_organizacoes:
+                  proposta.organizacao not in dic_organizacoes:
                     dic_organizacoes[proposta.organizacao] = 0
             num_organizacoes = len(dic_organizacoes)
             context = {
@@ -291,6 +287,7 @@ def propostas_apresentadas(request):
                 'ternario_aprovados': ternario_aprovados,
                 'ternario_pendentes': ternario_pendentes,
                 'configuracao': configuracao,
+                "edicao": edicao,
             }
 
         else:
