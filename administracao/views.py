@@ -59,12 +59,8 @@ def index_administracao(request):
 @permission_required('users.altera_professor', login_url='/')
 def index_carregar(request):
     """Para carregar dados de arquivos para o servidor."""
-    
+
     user = get_object_or_404(PFEUser, pk=request.user.pk)
-    # try:
-    #     user = PFEUser.objects.get(pk=request.user.pk)
-    # except PFEUser.DoesNotExist:
-    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     if user:
         if user.tipo_de_usuario != 4:  # não é admin
@@ -210,11 +206,23 @@ def cadastrar_organizacao(request):
 
             organizacao = Organizacao.create()
 
-            organizacao.nome = request.POST.get('nome', None)
-            organizacao.sigla = request.POST.get('sigla', None)
+            nome = request.POST.get('nome', None)
+            if nome: 
+                organizacao.nome = nome.strip()
+
+            sigla = request.POST.get('sigla', None)
+            if sigla:
+                organizacao.sigla = sigla.strip()
 
             organizacao.endereco = request.POST.get('endereco', None)
-            organizacao.website = request.POST.get('website', None)
+
+            website = request.POST.get('website', None)
+            if website:
+                if website[:4] == "http":
+                    organizacao.website = website.strip()
+                else:
+                    organizacao.website = "http://" + website.strip()
+
             organizacao.informacoes = request.POST.get('informacoes', None)
 
             cnpj = request.POST.get('cnpj', None)
@@ -255,13 +263,16 @@ def cadastrar_organizacao(request):
 
 
 def registro_usuario(request, user=None):
+    """Rotina para cadastrar usuário no sistema."""
 
     if not user:
         usuario = PFEUser.create()
     else:
         usuario = user
 
-    usuario.email = request.POST.get('email', None)
+    email = request.POST.get('email', None)
+    if email:
+        usuario.email = email.strip()
 
     tipo_de_usuario = request.POST.get('tipo_de_usuario', None)
     if tipo_de_usuario == "estudante":  # (1, 'aluno')

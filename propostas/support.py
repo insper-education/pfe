@@ -82,7 +82,7 @@ def ordena_propostas(disponivel=True, ano=0, semestre=0):
         opcoes = Opcao.objects.filter(proposta=proposta)
         opcoes_alunos = opcoes.filter(aluno__user__tipo_de_usuario=1)
         opcoes_validas = opcoes_alunos.filter(aluno__anoPFE=ano).\
-                                       filter(aluno__semestrePFE=semestre)
+            filter(aluno__semestrePFE=semestre)
         count = 0
         for opcao in opcoes_validas:
             if opcao.prioridade <= 5:
@@ -199,16 +199,16 @@ def preenche_proposta(request, proposta):
         proposta.ano = ano
         proposta.semestre = semestre
 
-    proposta.nome = request.POST.get("nome", "")
-    proposta.email = request.POST.get("email", "")
-    proposta.website = request.POST.get("website", "")
-    proposta.nome_organizacao = request.POST.get("organizacao", "")
+    proposta.nome = request.POST.get("nome", "").strip()
+    proposta.email = request.POST.get("email", "").strip()
+    proposta.website = request.POST.get("website", "").strip()
+    proposta.nome_organizacao = request.POST.get("organizacao", "").strip()
     proposta.endereco = request.POST.get("endereco", "")
     proposta.contatos_tecnicos = request.POST.get("contatos_tecnicos", "")
     proposta.contatos_administrativos = request.POST.get("contatos_adm", "")
     proposta.descricao_organizacao = request.POST.get("descricao_organizacao", "")
     proposta.departamento = request.POST.get("info_departamento", "")
-    proposta.titulo = request.POST.get("titulo", "")
+    proposta.titulo = request.POST.get("titulo", "").strip()
 
     proposta.descricao = request.POST.get("desc_projeto", "")
     proposta.expectativas = request.POST.get("expectativas", "")
@@ -304,12 +304,12 @@ def envia_proposta(proposta, enviar=True):
     message = message.replace('\n', '<br>\n')
 
     subject = 'Proposta PFE : ({0}.{1} - {2})'.format(proposta.ano,
-                                                     proposta.semestre,
-                                                     proposta.titulo)
+                                                      proposta.semestre,
+                                                      proposta.titulo)
 
     if enviar:
         recipient_list = list(map(str.strip, re.split(",|;", proposta.email)))
-        recipient_list += ["lucianops@insper.edu.br", "lpsoares@gmail.com",]
+        recipient_list += ["lucianops@insper.edu.br", "lpsoares@gmail.com", ]
 
         check = email(subject, recipient_list, message)
         if check != 1:

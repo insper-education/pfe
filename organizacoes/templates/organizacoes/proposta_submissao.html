@@ -51,8 +51,10 @@
 
   <form action="" method="post"> {% csrf_token %}  
 
-    <label for="nome">Nome:</label><input type="text" size="75" maxlength="127" id="nome" name="nome" value="{{full_name}}"  pattern="^\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')"  required {% if edicao and liberadas_propostas %}disabled{% endif %}><br><br>
-    <label for="email">e-mail:</label><input type="text" size="75"  maxlength="80" id="email" name="email" value="{{email}}" pattern="^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,99  }[\s]*([;,][\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})*$" oninvalid="this.setCustomValidity('Digite um ou mais endereços de e-mail (e-mails separados por ponto e vírgula)')" oninput="this.setCustomValidity('')" required {% if edicao and liberadas_propostas %}disabled{% endif %}><br><br>
+    <label for="nome">Nome:</label><input type="text" size="75" maxlength="127" id="nome" name="nome" value="{{full_name}}" 
+      pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')"  required {% if edicao and liberadas_propostas %}disabled{% endif %}><br><br>
+    <label for="email">e-mail:</label><input type="text" size="75"  maxlength="80" id="email" name="email" value="{{email}}" 
+      pattern="^[\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,99}[\s]*([;,][\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})*[\s]*$" oninvalid="this.setCustomValidity('Digite um ou mais endereços de e-mail (e-mails separados por ponto e vírgula)')" oninput="this.setCustomValidity('')" required {% if edicao and liberadas_propostas %}disabled{% endif %}><br><br>
     
     <label for="organizacao">Nome da Instituição/Empresa<br>
     <small>sigla e nome comercial/fantasia se houver (aqui não é necessário indicar a Razão Social)</small>

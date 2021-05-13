@@ -33,7 +33,8 @@
     <br><br>
 
     <label for="nome">Nome do Usuário<br></label><br>
-    <input type="text" size="80" maxlength="80" id="nome" name="nome" value="{{usuario.get_full_name}}" pattern="^\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')" required><br>
+    <input type="text" size="80" maxlength="80" id="nome" name="nome" value="{{usuario.get_full_name}}"
+      pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')" required><br>
     <br><br>
 
     <label for="email">e-mail:</label> <input type="email" size="73" maxlength="73" id="email" name="email" value="{{usuario.email}}" oninvalid="this.setCustomValidity('Digite um e-mail válido')" oninput="this.setCustomValidity('')" required><br><br>
@@ -94,7 +95,7 @@
     <div style="display: block; padding-left: 32px" class="row" data-type="parceiro">
 
       <br><b><label for="organizacao">Organização</label></b>:
-      <select name="organizacao" id="organizacao" title="Selecione organização">
+      <select name="organizacao" id="organizacao" title="Selecione organização" required>
           <option disabled selected value> -- selecione uma organização -- </option>
           {% for organizacao in organizacoes %}
             <option value="{{organizacao.id}}" {% if organizacao_selecionada.id == organizacao.id %}selected="selected"{% endif %} >
@@ -149,9 +150,11 @@
 
       // Para não validar o que está escondido
       $("div:hidden").children('input').attr("disabled", true);
+      $("div:hidden").children('select').attr("disabled", true);
 
       // Para validar o que está visível
       $("div:visible").children('input').attr("disabled", false);
+      $("div:visible").children('select').attr("disabled", false);
 
     }
 
