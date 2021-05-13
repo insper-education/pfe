@@ -135,7 +135,7 @@
 
       <b>Avaliação Parcial Individual: <span id="api_media"></span></b>
       <ul>
-      {% for objetivo in objetivos reversed %}
+      {% for objetivo in objetivos %}
         <li>
         {% if objetivo.titulo == "Execução Técnica" or objetivo.titulo == "Trabalho em Equipe" %}
           <span>{{objetivo}}</span>
@@ -190,7 +190,7 @@
 
       <b>Avaliação Parcial de Grupo: <span id="apg_media"></span></b>
       <ul>
-      {% for objetivo in objetivos reversed %}
+      {% for objetivo in objetivos %}
         <li>
         {% if objetivo.avaliacao_grupo %}
           <span>{{objetivo}}</span>
@@ -244,7 +244,7 @@
 
       <b>Avaliação Final Individual: <span id="afi_media"></span></b>
       <ul>
-      {% for objetivo in objetivos reversed %}
+      {% for objetivo in objetivos %}
         <li>
         {% if objetivo.titulo == "Execução Técnica" or objetivo.titulo == "Trabalho em Equipe" %}
           <span>{{objetivo}}</span>
@@ -297,7 +297,7 @@
 
       <b>Avaliação Final de Grupo: <span id="afg_media"></span></b>
       <ul>
-      {% for objetivo in objetivos reversed %}
+      {% for objetivo in objetivos %}
         <li>
         {% if objetivo.avaliacao_grupo %}
           <span>{{objetivo}}</span>
@@ -373,7 +373,7 @@
 
     <b>Relatório Intermediário Individual: <span id="rii_media"></span></b>
     <ul>
-    {% for objetivo in objetivos reversed %}
+    {% for objetivo in objetivos %}
       <li>
       {% if objetivo.avaliacao_aluno %}
         <span>{{objetivo}}</span>
@@ -428,7 +428,7 @@
 
     <b>Relatório Intermediário de Grupo: <span id="rig_media"></span></b>
     <ul>
-    {% for objetivo in objetivos reversed %}
+    {% for objetivo in objetivos %}
       <li>
       {% if objetivo.avaliacao_grupo %}
         <span>{{objetivo}}</span>
@@ -482,7 +482,7 @@
 
     <b>Relatório Final Individual: <span id="rfi_media"></span></b>
     <ul>
-    {% for objetivo in objetivos reversed %}
+    {% for objetivo in objetivos %}
       <li>
       {% if objetivo.avaliacao_aluno %}
         <span>{{objetivo}}</span>
@@ -535,7 +535,7 @@
 
     <b>Relatório Final de Grupo: <span id="rfg_media"></span></b>
     <ul>
-    {% for objetivo in objetivos reversed %}
+    {% for objetivo in objetivos %}
       <li>
       {% if objetivo.avaliacao_grupo %}
         <span>{{objetivo}}</span>

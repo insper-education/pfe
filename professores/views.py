@@ -94,18 +94,11 @@ def bancas_index(request):
 def bancas_criar(request):
     """Cria uma banca de avaliação para o projeto."""
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     if request.method == 'POST':
         if 'projeto' in request.POST:
-            projeto = get_object_or_404(Projeto, id=int(request.POST['projeto']))
-            # try:
-            #     projeto = Projeto.objects.get(id=int(request.POST['projeto']))
-            # except Projeto.DoesNotExist:
-            #     return HttpResponse("Projeto não encontrado.", status=401)
+            projeto = get_object_or_404(Projeto,
+                                        id=int(request.POST['projeto']))
 
             banca = Banca.create(projeto)
             editar_banca(banca, request)
@@ -177,7 +170,7 @@ def bancas_editar(request, primarykey):
 def bancas_lista(request, periodo_projeto):
     """Lista as bancas agendadas, conforme periodo ou projeto pedido."""
     context = {'periodo': periodo_projeto}
-    
+
     if periodo_projeto == "proximas":
         # Coletando bancas agendadas a partir de hoje
         hoje = datetime.date.today()
@@ -185,7 +178,8 @@ def bancas_lista(request, periodo_projeto):
 
         # checando se projetos atuais tem banca marcada
         configuracao = get_object_or_404(Configuracao)
-        projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
+        projetos = Projeto.objects.filter(ano=configuracao.ano,
+                                          semestre=configuracao.semestre)
         for banca in bancas:
             projetos = projetos.exclude(id=banca.projeto.id)
         context["sem_banca"] = projetos
@@ -207,10 +201,6 @@ def bancas_lista(request, periodo_projeto):
 def bancas_tabela(request):
     """Lista todas as bancas agendadas, conforme periodo pedido."""
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     membros_pfe = []
     periodo = []
@@ -280,9 +270,12 @@ def banca_avaliar(request, slug):
         banca = Banca.objects.get(slug=slug)
 
         if banca.endDate.date() + datetime.timedelta(days=5) < datetime.date.today():
-            mensagem = "Prazo para submissão da Avaliação de Banca vencido.<br>"
-            mensagem += "Entre em contato com a coordenação do PFE para enviar sua avaliação.<br>"
-            mensagem += "Luciano Pereira Soares <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>.<br>"
+            mensagem = "Prazo de submissão da Avaliação de Banca vencido.<br>"
+            mensagem += "Entre em contato com a coordenação do PFE "
+            mensagem += "para enviar sua avaliação.<br>"
+            mensagem += "Luciano Pereira Soares "
+            mensagem += "<a href='mailto:lpsoares@insper.edu.br'>"
+            mensagem += "lpsoares@insper.edu.br</a>.<br>"
             return HttpResponse(mensagem)
 
         if not banca.projeto:
@@ -299,12 +292,13 @@ def banca_avaliar(request, slug):
         objetivos = ObjetivosDeAprendizagem.objects\
             .filter(avaliacao_falconi=True).order_by("id")
     else:
-        return HttpResponseNotFound('<h1>Tipo de Banca não indentificado!</h1>')
+        return HttpResponseNotFound('<h1>Tipo de Banca não indentificado</h1>')
 
     if request.method == 'POST':
         if 'avaliador' in request.POST:
 
-            avaliador = get_object_or_404(PFEUser, pk=int(request.POST['avaliador']))
+            avaliador = get_object_or_404(PFEUser,
+                                          pk=int(request.POST['avaliador']))
 
             if banca.tipo_de_banca == 1:  # (1, 'intermediaria'),
                 tipo_de_avaliacao = 1  # ( 1, 'Banca Intermediária'),
@@ -329,14 +323,16 @@ def banca_avaliar(request, slug):
                     julgamento[i].avaliador = avaliador
 
                     pk_objetivo = int(obj_nota.split('.')[0])
-                    julgamento[i].objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=pk_objetivo)
+                    julgamento[i].objetivo = get_object_or_404(ObjetivosDeAprendizagem,
+                                                               pk=pk_objetivo)
 
                     julgamento[i].tipo_de_avaliacao = tipo_de_avaliacao
                     if conceito == "NA":
                         julgamento[i].na = True
                     else:
                         julgamento[i].nota = converte_conceito(conceito)
-                        julgamento[i].peso = get_peso(tipo_de_avaliacao, julgamento[i].objetivo)
+                        julgamento[i].peso = get_peso(tipo_de_avaliacao,
+                                                      julgamento[i].objetivo)
                         julgamento[i].na = False
                     julgamento[i].save()
 
@@ -414,7 +410,8 @@ def banca_avaliar(request, slug):
                 message += "<br>\n<br>\n"
 
             # Criar link para reeditar
-            message += "<a href='" + settings.SERVER + "/professores/banca_avaliar/" + str(banca.slug)
+            message += "<a href='" + settings.SERVER
+            message += "/professores/banca_avaliar/" + str(banca.slug)
 
             message += "?avaliador=" + str(avaliador.id)
             for count, julg in enumerate(julgamento):
@@ -589,9 +586,7 @@ def banca_avaliar(request, slug):
             orientacoes += "No Projeto Final de Engenharia, a maioria dos projetos está sob sigilo, através de contratos realizados (quando pedido ou necessário) entre a Organização Parceira e o Insper. A Falconi assinou um documento de responsabilidade em manter o sigilo das informações divulgadas nas apresentações. Assim <b>pessoas externas só podem participar das bancas com prévia autorização</b>, isso inclui outros estudantes que não sejam do grupo, familiares ou amigos."
             orientacoes += "<br>"
 
-
         # Carregando dados REST
-
         avaliador = request.GET.get('avaliador', '0')
         try:
             avaliador = int(avaliador)
@@ -683,7 +678,7 @@ def conceitos_obtidos(request, primarykey):  # acertar isso para pk
 
     # Bancas Intermediárias
     observacoes = Observacao.objects.filter(projeto=projeto, tipo_de_avaliacao=1).\
-                                            order_by('avaliador', '-momento')
+        order_by('avaliador', '-momento')
     for observacao in observacoes:
         if observacao.avaliador not in avaliadores_inter:
             avaliadores_inter[observacao.avaliador] = {}  # Não devia acontecer isso
@@ -693,7 +688,7 @@ def conceitos_obtidos(request, primarykey):  # acertar isso para pk
 
     # Bancas Finais
     observacoes = Observacao.objects.filter(projeto=projeto, tipo_de_avaliacao=2).\
-                                            order_by('avaliador', '-momento')
+        order_by('avaliador', '-momento')
     for observacao in observacoes:
         if observacao.avaliador not in avaliadores_final:
             avaliadores_final[observacao.avaliador] = {}  # Não devia acontecer isso
@@ -703,7 +698,7 @@ def conceitos_obtidos(request, primarykey):  # acertar isso para pk
 
     # Bancas Falconi
     observacoes = Observacao.objects.filter(projeto=projeto, tipo_de_avaliacao=99).\
-                                            order_by('avaliador', '-momento')
+        order_by('avaliador', '-momento')
     for observacao in observacoes:
         if observacao.avaliador not in avaliadores_falconi:
             avaliadores_falconi[observacao.avaliador] = {}  # Não devia acontecer isso
@@ -778,10 +773,6 @@ def dinamicas_criar(request):
                 facilitador = int(facilitador)
                 if facilitador != 0:
                     encontro.facilitador = get_object_or_404(PFEUser, id=facilitador)
-                    # try:
-                    #     encontro.facilitador = PFEUser.objects.get(id=facilitador)
-                    # except PFEUser.DoesNotExist:
-                    #     return HttpResponse("Usuário não encontrado.", status=401)
                 else:
                     encontro.facilitador = None
 
@@ -879,17 +870,20 @@ def dinamicas_editar(request, primarykey):
         .exclude(orientador=None)
 
     # Buscando pessoas para lista de Facilitadores
-    professores_tmp = PFEUser.objects.filter(tipo_de_usuario=2)  # (2, 'professor')
-    administradores = PFEUser.objects.filter(tipo_de_usuario=4)  # (4, 'administrador')
-    professores = (professores_tmp | administradores).order_by(Lower("first_name"), Lower("last_name"))
+    professores_tmp = PFEUser.objects.filter(tipo_de_usuario=2)  # 'professor'
+    administradores = PFEUser.objects.filter(tipo_de_usuario=4)  # 'administr'
+    professores = (professores_tmp | administradores).order_by(Lower("first_name"),
+                                                               Lower("last_name"))
 
     parceiros = PFEUser.objects.filter(tipo_de_usuario=3)
     organizacao = get_object_or_404(Organizacao, sigla="Falconi")
-    falconis = parceiros.filter(parceiro__organizacao=organizacao).order_by(Lower("first_name"), Lower("last_name"))
+    falconis = parceiros.filter(parceiro__organizacao=organizacao).order_by(Lower("first_name"),
+                                                                            Lower("last_name"))
 
     outros_parceiros = parceiros.exclude(parceiro__organizacao=organizacao)
     estudantes = PFEUser.objects.filter(tipo_de_usuario=1)  # (1, 'estudantes')
-    pessoas = (outros_parceiros | estudantes).order_by(Lower("first_name"), Lower("last_name"))
+    pessoas = (outros_parceiros | estudantes).order_by(Lower("first_name"),
+                                                       Lower("last_name"))
 
     context = {
         'projetos': projetos,
@@ -1028,12 +1022,15 @@ def resultado_bancas(request):
                 nota_banca_falconi, peso = Aluno.get_banca(None, aval_banc_falconi)
                 if peso is not None:
                     banca_falconi.append(("{0}".format(converte_letra(nota_banca_falconi, espaco="&nbsp;")),
-                                        "{0:5.2f}".format(nota_banca_falconi),
-                                        nota_banca_falconi))
+                                          "{0:5.2f}".format(nota_banca_falconi),
+                                          nota_banca_falconi))
                 else:
                     banca_falconi.append(("&nbsp;-&nbsp;", None, 0))
 
-            tabela = zip(projetos, banca_intermediaria, banca_final, banca_falconi)
+            tabela = zip(projetos,
+                         banca_intermediaria,
+                         banca_final,
+                         banca_falconi)
 
             context['tabela'] = tabela
 
@@ -1055,13 +1052,14 @@ def todos_professores(request):
 
     return render(request, 'professores/todos_professores.html', context)
 
+
 @login_required
 @permission_required("users.altera_professor", login_url='/')
 def objetivos_rubricas(request):
     """Exibe os objetivos e rubricas."""
-    
+
     objetivos = ObjetivosDeAprendizagem.objects.all().order_by("id")
-    
+
     context = {
         'objetivos': objetivos,    
     }

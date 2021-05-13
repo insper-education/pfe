@@ -137,7 +137,7 @@
                     <span style="color:red">
                 {% endif %}
                 {% if media.pesos != 1 %}
-                  <a style="color:orange" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100%">
+                  <a style="color:orange" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100% ({% widthratio media.pesos 1 100 %}%)">
                 {% endif %}
                 {{media.media|floatformat:1}}
                 {% if media.pesos != 1 %}
