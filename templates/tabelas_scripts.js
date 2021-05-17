@@ -6,8 +6,7 @@
 
 // Atualizar com: $.fn.dataTables.Buttons.stripData
 function stripData( str ) {
-    
-    console.log(str);
+
 	if ( typeof str !== 'string' ) {
 		return str;
 	}
