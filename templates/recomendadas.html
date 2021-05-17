@@ -6,29 +6,78 @@
 
 {% if proposta %}
 
-  {% if proposta.recomendada_set.all %}
+  {% if proposta.recomendada_set.all or editavel %}
     <hr>
+    <h4>
+    <h4 style="margin-bottom: 0px;">
+      Disciplina(s) Recomendada(s)
+      {% if editavel %}
+        <small>
+          <a
+            data-proposta='{{proposta.id}}'
+            class="link-disciplina"
+            href="{% url 'link_disciplina' proposta.id %}"
+            data-url="{% url 'link_disciplina' proposta.id %}"
+            >&#10133;</a>
+        </small>
+      {% endif %}
+    </h4>
+    <small>Disciplinas recomendadas que estudantes tenham ou estejam cursando para aplicar na proposta</small><br>
     
-    <h4>Disciplina(s) Recomendada(s)</h4>
-    <small>Disciplinas recomendadas que estudantes tenham ou estejam cursando para aplicar na proposta</small>
-    <br><br>
-    <table>
+    <table id="disciplinas_recomendadas" style="margin-top: 10px;">
       <tr>
         <th>
           Nome da Disciplina
         </th>
       </tr>
       {% for rec in proposta.recomendada_set.all %}
-      <tr><td>
-          {{rec.disciplina.nome}}
-      </td></tr>
+        <tr id="disciplina{{rec.disciplina.id}}"><td>
+            {{rec.disciplina.nome}}
+            {% if editavel %}
+              <div class="esconder" style="float:right;">
+                &nbsp;
+                <a onclick="event.preventDefault(); remove_disciplina($(this));"
+                   data-disciplina='{{rec.disciplina.id}}'
+                   data-proposta='{{proposta.id}}'>
+                  <i class="far fa-trash-alt"></i>
+                </a>
+              </div>
+            {% endif %}
+        </td></tr>
       {% endfor %}
     </table>
+
+    {% if editavel %}
+      {% include "disciplina-modal.html" %}
+    {% endif %}
+
   {% endif %}
   <br>
 
-{% else %}
+  <script>
 
-    <strong>Não foi possível carregar dados da Proposta!</strong>
+    function remove_disciplina(aqui) {
+      disciplina = aqui.data('disciplina');
+      proposta = aqui.data('proposta');
+
+      $.ajax({
+          type: "POST",
+          url: '{% url "remover_disciplina" %}',
+          data: {
+              'disciplina_id': disciplina,
+              'proposta_id': proposta,
+              'csrfmiddlewaretoken': '{{ csrf_token }}',
+          },
+          success: function(response){
+            $('#disciplina'+disciplina).remove();
+          },
+          error: function(response) {
+              console.log('error')
+          }
+      });
+
+
+    }
+  </script>
 
 {% endif %}

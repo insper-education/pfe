@@ -18,8 +18,8 @@ from users.support import get_edicoes, adianta_semestre
 from users.models import Opcao, Aluno, Alocacao, PFEUser
 from users.models import Professor, Parceiro, Administrador
 
-from projetos.models import Proposta, Projeto, Organizacao
-from projetos.models import Configuracao, Area, AreaDeInteresse
+from projetos.models import Proposta, Projeto, Organizacao, Disciplina
+from projetos.models import Configuracao, Area, AreaDeInteresse, Recomendada
 
 from .support import retorna_ternario, ordena_propostas_novo, ordena_propostas
 from .support import envia_proposta, preenche_proposta
@@ -39,10 +39,6 @@ def index_propostas(request):
 def mapeamento_estudantes_propostas(request):
     """Faz o mapeamento entre estudantes e propostas do próximo semestre."""
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     ano = configuracao.ano
     semestre = configuracao.semestre
@@ -563,19 +559,11 @@ def validate_alunos(request):
 def link_organizacao(request, proposta_id): 
     """Cria um anotação para uma organização parceira."""
     proposta = get_object_or_404(Proposta, id=proposta_id)
-    # try:
-    #     proposta = Proposta.objects.get(id=proposta_id)
-    # except Proposta.DoesNotExist:
-    #     return HttpResponseNotFound('<h1>Proposta não encontrada!</h1>')
 
     if request.is_ajax() and 'organizacao_id' in request.POST:
 
         organizacao_id = int(request.POST['organizacao_id'])
         organizacao = get_object_or_404(Organizacao, id=organizacao_id)
-        # try:
-        #     organizacao = Organizacao.objects.get(id=organizacao_id)
-        # except Organizacao.DoesNotExist:
-        #     return HttpResponseNotFound('<h1>Organização não encontrada!</h1>')
     
         proposta.organizacao = organizacao
 
@@ -590,13 +578,75 @@ def link_organizacao(request, proposta_id):
 
         return JsonResponse(data)
 
-    else:
+    context = {
+        'organizacoes': Organizacao.objects.all(),
+        'proposta': proposta,
+    }
 
-        context = {
-            'organizacoes': Organizacao.objects.all(),
-            'proposta': proposta,
+    return render(request,
+                  'propostas/organizacao_view.html',
+                  context=context)
+
+
+@login_required
+@transaction.atomic
+@permission_required("users.altera_professor", login_url='/')
+def link_disciplina(request, proposta_id):
+    """Adicionar Disciplina Recomendada."""
+    proposta = get_object_or_404(Proposta, id=proposta_id)
+    if request.is_ajax() and 'disciplina_id' in request.POST:
+
+        disciplina_id = int(request.POST['disciplina_id'])
+        disciplina = get_object_or_404(Disciplina, id=disciplina_id)
+
+        ja_existe = Recomendada.objects.filter(proposta=proposta, disciplina=disciplina)
+
+        if ja_existe:
+            return HttpResponseNotFound('Já existe')
+
+        else:
+            recomendada = Recomendada.create()
+            recomendada.proposta = proposta
+            recomendada.disciplina = disciplina
+            recomendada.save()
+
+            data = {
+                'disciplina': str(disciplina),
+                'disciplina_id': disciplina.id,
+                'proposta_id': proposta_id,
+                'atualizado': True,
+            }
+
+            return JsonResponse(data)
+
+    context = {
+        'disciplinas': Disciplina.objects.all(),
+        'proposta': proposta,
+    }
+
+    return render(request,
+                  'propostas/disciplina_view.html',
+                  context=context)
+
+
+@login_required
+@transaction.atomic
+@permission_required("users.altera_professor", login_url='/')
+def remover_disciplina(request):
+    """Remove Disciplina Recomendada."""
+    if request.is_ajax() and 'disciplina_id' in request.POST and 'proposta_id' in request.POST:
+
+        proposta_id = int(request.POST['proposta_id'])
+        disciplina_id = int(request.POST['disciplina_id'])
+
+        instances = Recomendada.objects.filter(proposta__id=proposta_id, disciplina__id = disciplina_id)
+        for instance in instances:
+            instance.delete()
+
+        data = {
+            'atualizado': True,
         }
 
-        return render(request,
-                      'propostas/organizacao_view.html',
-                      context=context)
+        return JsonResponse(data)
+
+    return HttpResponseNotFound('Requisição errada')

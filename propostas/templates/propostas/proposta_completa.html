@@ -74,8 +74,7 @@
   {% endwith %}
   <br>
 
-  {% include "recomendadas.html" %}
-
+  <br>
   <h4>Aluno(s) Aplicando para a Proposta</h4>
 
   {% for estudante in sem_opcao %}
@@ -126,6 +125,10 @@
     {% endif %}
   {% endfor %}
   <br>
+
+  {% with editavel=True %}
+    {% include "recomendadas.html" %}
+  {% endwith %}
 
   {% with editavel=True %}
     {% include "perfil_estudantes.html" %}

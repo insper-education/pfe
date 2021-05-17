@@ -448,6 +448,12 @@ class Recomendada(models.Model):
     def __str__(self):
         return self.proposta.titulo+" >>> "+self.disciplina.nome
 
+    @classmethod
+    def create(cls):
+        """Cria um objeto (entrada) em Recomendada."""
+        recomendada = cls()
+        return recomendada
+
 
 class Evento(models.Model):
     """Eventos para a agenda do PFE."""

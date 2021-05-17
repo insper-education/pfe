@@ -15,15 +15,15 @@
         </th>
         <th style="text-align:center;min-width:114px" >
             Computação
-            <input type="checkbox" id="alunosC">
+            {% if editavel %}<input type="checkbox" id="alunosC">{% endif %}
         </th>
         <th style="text-align:center;min-width:114px" >
             Mecânica
-            <input type="checkbox" id="alunosM">
+            {% if editavel %}<input type="checkbox" id="alunosM">{% endif %}
         </th>
         <th style="text-align:center;min-width:114px" >
             Mecatrônica
-            <input type="checkbox" id="alunosX">
+            {% if editavel %}<input type="checkbox" id="alunosX">{% endif %}
         </th>
     </tr>
     <tr> {% comment %} NAO EH A FORMA MAIS ELEGANTE MAS FUNCIONA POR ENQUANTO {% endcomment %}
@@ -155,91 +155,93 @@
     </tr>
   </table>
 
-  <script>
+  {% if editavel %}
+    <script>
 
-    function atualiza_colunas() {
+      function atualiza_colunas() {
 
-      if( $("#alunosC1").is(':checked') && $("#alunosC2").is(':checked') && $("#alunosC3").is(':checked') && $("#alunosC4").is(':checked') ) {
-        $("#alunosC").prop("checked", true); 
-        $("#alunosC").prop("indeterminate", false);
-      } else if( (! $("#alunosC1").is(':checked')) && (! $("#alunosC2").is(':checked')) && (! $("#alunosC3").is(':checked')) && (! $("#alunosC4").is(':checked')) ) {
-        $("#alunosC").prop("checked", false); 
-        $("#alunosC").prop("indeterminate", false);
-      } else {
-        $("#alunosC").prop("indeterminate", true);
+        if( $("#alunosC1").is(':checked') && $("#alunosC2").is(':checked') && $("#alunosC3").is(':checked') && $("#alunosC4").is(':checked') ) {
+          $("#alunosC").prop("checked", true); 
+          $("#alunosC").prop("indeterminate", false);
+        } else if( (! $("#alunosC1").is(':checked')) && (! $("#alunosC2").is(':checked')) && (! $("#alunosC3").is(':checked')) && (! $("#alunosC4").is(':checked')) ) {
+          $("#alunosC").prop("checked", false); 
+          $("#alunosC").prop("indeterminate", false);
+        } else {
+          $("#alunosC").prop("indeterminate", true);
+        }
+
+        if( $("#alunosM1").is(':checked') && $("#alunosM2").is(':checked') && $("#alunosM3").is(':checked') && $("#alunosM4").is(':checked') ) {
+          $("#alunosM").prop("checked", true); 
+          $("#alunosM").prop("indeterminate", false);
+        } else if( (! $("#alunosM1").is(':checked')) && (! $("#alunosM2").is(':checked')) && (! $("#alunosM3").is(':checked')) && (! $("#alunosM4").is(':checked')) ) {
+          $("#alunosM").prop("checked", false); 
+          $("#alunosM").prop("indeterminate", false);
+        } else {
+          $("#alunosM").prop("indeterminate", true);
+        }
+
+        if( $("#alunosX1").is(':checked') && $("#alunosX2").is(':checked') && $("#alunosX3").is(':checked') && $("#alunosX4").is(':checked') ) {
+          $("#alunosX").prop("checked", true); 
+          $("#alunosX").prop("indeterminate", false);
+        } else if( (! $("#alunosX1").is(':checked')) && (! $("#alunosX2").is(':checked')) && (! $("#alunosX3").is(':checked')) && (! $("#alunosX4").is(':checked')) ) {
+          $("#alunosX").prop("checked", false);
+          $("#alunosX").prop("indeterminate", false);
+        } else {
+          $("#alunosX").prop("indeterminate", true);
+        }
+
       }
 
-      if( $("#alunosM1").is(':checked') && $("#alunosM2").is(':checked') && $("#alunosM3").is(':checked') && $("#alunosM4").is(':checked') ) {
-        $("#alunosM").prop("checked", true); 
-        $("#alunosM").prop("indeterminate", false);
-      } else if( (! $("#alunosM1").is(':checked')) && (! $("#alunosM2").is(':checked')) && (! $("#alunosM3").is(':checked')) && (! $("#alunosM4").is(':checked')) ) {
-        $("#alunosM").prop("checked", false); 
-        $("#alunosM").prop("indeterminate", false);
-      } else {
-        $("#alunosM").prop("indeterminate", true);
-      }
-
-      if( $("#alunosX1").is(':checked') && $("#alunosX2").is(':checked') && $("#alunosX3").is(':checked') && $("#alunosX4").is(':checked') ) {
-        $("#alunosX").prop("checked", true); 
-        $("#alunosX").prop("indeterminate", false);
-      } else if( (! $("#alunosX1").is(':checked')) && (! $("#alunosX2").is(':checked')) && (! $("#alunosX3").is(':checked')) && (! $("#alunosX4").is(':checked')) ) {
-        $("#alunosX").prop("checked", false);
-        $("#alunosX").prop("indeterminate", false);
-      } else {
-        $("#alunosX").prop("indeterminate", true);
-      }
-
-    }
-
-    atualiza_colunas();
-
-    $('.alunos').change(function() {
       atualiza_colunas();
-    });
 
-    $('#alunosC').change(function() {
-      if( $("#alunosC").is(':checked') ) {
-        $("#alunosC1").prop("checked", true).change();;
-        $("#alunosC2").prop("checked", true).change();;
-        $("#alunosC3").prop("checked", true).change();;
-        $("#alunosC4").prop("checked", true).change();;
-      } else {
-        $("#alunosC1").prop("checked", false).change();;
-        $("#alunosC2").prop("checked", false).change();;
-        $("#alunosC3").prop("checked", false).change();;
-        $("#alunosC4").prop("checked", false).change();;
-      }
-    });
+      $('.alunos').change(function() {
+        atualiza_colunas();
+      });
 
-    $('#alunosM').change(function() {
-      if( $("#alunosM").is(':checked') ) {
-        $("#alunosM1").prop("checked", true).change();;
-        $("#alunosM2").prop("checked", true).change();;
-        $("#alunosM3").prop("checked", true).change();;
-        $("#alunosM4").prop("checked", true).change();;
-      } else {
-        $("#alunosM1").prop("checked", false).change();;
-        $("#alunosM2").prop("checked", false).change();;
-        $("#alunosM3").prop("checked", false).change();;
-        $("#alunosM4").prop("checked", false).change();;
-      }
-    });
+      $('#alunosC').change(function() {
+        if( $("#alunosC").is(':checked') ) {
+          $("#alunosC1").prop("checked", true).change();;
+          $("#alunosC2").prop("checked", true).change();;
+          $("#alunosC3").prop("checked", true).change();;
+          $("#alunosC4").prop("checked", true).change();;
+        } else {
+          $("#alunosC1").prop("checked", false).change();;
+          $("#alunosC2").prop("checked", false).change();;
+          $("#alunosC3").prop("checked", false).change();;
+          $("#alunosC4").prop("checked", false).change();;
+        }
+      });
 
-    $('#alunosX').change(function() {
-      if( $("#alunosX").is(':checked') ) {
-        $("#alunosX1").prop("checked", true).change();;
-        $("#alunosX2").prop("checked", true).change();;
-        $("#alunosX3").prop("checked", true).change();;
-        $("#alunosX4").prop("checked", true).change();;
-      } else {
-        $("#alunosX1").prop("checked", false).change();;
-        $("#alunosX2").prop("checked", false).change();;
-        $("#alunosX3").prop("checked", false).change();;
-        $("#alunosX4").prop("checked", false).change();;
-      }
-    });
+      $('#alunosM').change(function() {
+        if( $("#alunosM").is(':checked') ) {
+          $("#alunosM1").prop("checked", true).change();;
+          $("#alunosM2").prop("checked", true).change();;
+          $("#alunosM3").prop("checked", true).change();;
+          $("#alunosM4").prop("checked", true).change();;
+        } else {
+          $("#alunosM1").prop("checked", false).change();;
+          $("#alunosM2").prop("checked", false).change();;
+          $("#alunosM3").prop("checked", false).change();;
+          $("#alunosM4").prop("checked", false).change();;
+        }
+      });
 
-  </script>
+      $('#alunosX').change(function() {
+        if( $("#alunosX").is(':checked') ) {
+          $("#alunosX1").prop("checked", true).change();;
+          $("#alunosX2").prop("checked", true).change();;
+          $("#alunosX3").prop("checked", true).change();;
+          $("#alunosX4").prop("checked", true).change();;
+        } else {
+          $("#alunosX1").prop("checked", false).change();;
+          $("#alunosX2").prop("checked", false).change();;
+          $("#alunosX3").prop("checked", false).change();;
+          $("#alunosX4").prop("checked", false).change();;
+        }
+      });
+
+    </script>
+  {% endif %}
 
 {% else %}
 

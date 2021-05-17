@@ -46,9 +46,19 @@ urlpatterns = [
          views.validate_alunos,
          name='validate_alunos'),
 
-     path('ajax/link_organizacao/<int:proposta_id>',
+    path('ajax/link_organizacao/<int:proposta_id>',
          views.link_organizacao,
          name='link_organizacao'),
+
+    path('ajax/link_disciplina/<int:proposta_id>',
+         views.link_disciplina,
+         name='link_disciplina'),
+
+    path('ajax/remover_disciplina',
+         views.remover_disciplina,
+         name='remover_disciplina'),
+
+
 
 ]
 

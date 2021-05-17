@@ -110,10 +110,11 @@
             <th scope="col" class="periodo text-center">Período</th>
           {% endif %}
           <th scope="col" class="text-center organizacao">Organização</th>
-          <th scope="col" class="estudantes" style="font-size: 12px;">Estudante1</th>
-          <th scope="col" class="estudantes" style="font-size: 12px;">Estudante2</th>
-          <th scope="col" class="estudantes" style="font-size: 12px;">Estudante3</th>
-          <th scope="col" class="estudantes" style="font-size: 12px;">Estudante4</th>
+          <th scope="col" class="estudantes text-center" style="font-size: 12px;">Estudante1</th>
+          <th scope="col" class="estudantes text-center" style="font-size: 12px;">Estudante2</th>
+          <th scope="col" class="estudantes text-center" style="font-size: 12px;">Estudante3</th>
+          <th scope="col" class="estudantes text-center" style="font-size: 12px;">Estudante4</th>
+          <th scope="col" class="text-center" style="font-size: 12px;">Disc. Recomendadas</th>
         </tr>
         </thead>
         {% for proposta in propostas %} 
@@ -356,6 +357,14 @@
               {% endif %}
             </td>
             {% endspaceless %}
+
+            <td style="font-size: 12px;">
+              <ul style="margin-bottom: 2px; padding-left: 16px;">
+                {% for recomendada in proposta.recomendada_set.all %}
+                  <li>{{recomendada.disciplina.nome}}</li>
+                {% endfor %}
+              </ul>
+            </td>
 
           </tr>
 
