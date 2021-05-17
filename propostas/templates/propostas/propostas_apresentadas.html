@@ -355,7 +355,7 @@
             <td style="font-size: 12px;">
               <ul style="margin-bottom: 2px; padding-left: 16px;">
                 {% for recomendada in proposta.recomendada_set.all %}
-                  <li>{{recomendada.disciplina.nome}}</li>
+                  <li>{{recomendada.disciplina.nome}};<br></li>
                 {% endfor %}
               </ul>
             </td>
