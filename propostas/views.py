@@ -620,7 +620,7 @@ def link_disciplina(request, proposta_id):
             return JsonResponse(data)
 
     context = {
-        'disciplinas': Disciplina.objects.all(),
+        'disciplinas': Disciplina.objects.all().order_by("nome"),
         'proposta': proposta,
     }
 
