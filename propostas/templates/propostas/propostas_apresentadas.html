@@ -122,40 +122,34 @@
         
           <tr class="item">
 
-            <td class="estados
+            <td style="text-align:center; font-size: large; font-weight: bold;" class="estados
             {% if proposta.autorizado  %}
-              text-success
+              text-success">&#x2713
             {% else %}
-              text-danger
+              text-danger">&#x2718;
             {% endif %}
-                " style="text-align:center">
-              &#x2B24;
             </td>
 
             {% if disponivel %}
               <script>publicados += 1</script>
             {% endif %}
-            <td class="estados
+            <td style="text-align:center; font-size: large; font-weight: bold;" class="estados
             {% if disponivel %}
-              text-success
+              text-success">&#x2713
             {% else %}
-              text-danger
+              text-danger">&#x2718;
             {% endif %}
-              "  style="text-align:center">
-                &#x2B24;
             </td>
 
             {% if proposta.fechada  %}
               <script>fechados += 1</script>
             {% endif %}
-            <td class="estados
+            <td style="text-align:center; font-size: large; font-weight: bold;" class="estados
             {% if proposta.fechada  %}
-              text-success
+              text-success">&#x2713
             {% else %}
-              text-danger
+              text-danger">&#x2718;
             {% endif %}
-              "  style="text-align:center">
-                &#x2B24;
             </td>
 
             <th scope="row">
