@@ -98,9 +98,13 @@ def parceiro_propostas(request):
         }
         return render(request, 'generic.html', context=context)
 
-    propostas = Proposta.objects\
-        .filter(organizacao=user.parceiro.organizacao)\
-        .order_by("ano", "semestre", "titulo", )
+    if hasattr(user, 'parceiro'):
+        propostas = Proposta.objects\
+            .filter(organizacao=user.parceiro.organizacao)\
+            .order_by("ano", "semestre", "titulo", )
+    else:
+        propostas = None
+
     context = {
         'propostas': propostas,
     }

@@ -483,10 +483,6 @@ def relatorios(request):
 def meuprojeto(request):
     """Mostra o projeto do próprio aluno, se for aluno."""
     user = get_object_or_404(PFEUser, pk=request.user.pk)
-    # try:
-    #     user = PFEUser.objects.get(pk=request.user.pk)
-    # except PFEUser.DoesNotExist:
-    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     # Caso não seja Aluno, Professor ou Administrador (ou seja Parceiro)
     if user.tipo_de_usuario != 1 and user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
@@ -500,11 +496,6 @@ def meuprojeto(request):
     # Caso seja Professor ou Administrador
     if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4:
         professor = get_object_or_404(Professor, pk=request.user.professor.pk)
-        # try:
-        #     professor = Professor.objects.get(pk=request.user.professor.pk)
-        # except Professor.DoesNotExist:
-        #     return HttpResponse("Professor não encontrado.", status=401)
-
         return redirect('professor_detail', primarykey=professor.pk)
 
     # vvvv Caso seja um aluno  vvv
@@ -1449,23 +1440,26 @@ def logs(request):
 @permission_required('users.altera_professor', login_url='/')
 def conexoes_estabelecidas(request):
     """Mostra usuários conectados"""
-    message = "<h3>Usuários Conectados</h3><br>"
-    sessions = Session.objects.filter(expire_date__gte=timezone.now())
-    for session in sessions:
-        data = session.get_decoded()
-        user_id = data.get('_auth_user_id', None)
-        try:
-            user = PFEUser.objects.get(id=user_id)
-            message += "- " + str(user)
-            message += "; autenticado: " + str(user.is_authenticated)
-            message += "; conectado desde: " + str(user.last_login)
-            message += "; permissões: " + str(user.get_all_permissions())[:120]
-            message += "<br>"
-        except PFEUser.DoesNotExist:
-            message += "PROBLEMA COM USER ID = " + str(user_id)
-            message += "; Data = " + str(data)
-            message += "<br>"
-    return HttpResponse(message)
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
+    if user.tipo_de_usuario == 4:
+        message = "<h3>Usuários Conectados</h3><br>"
+        sessions = Session.objects.filter(expire_date__gte=timezone.now())
+        for session in sessions:
+            data = session.get_decoded()
+            user_id = data.get('_auth_user_id', None)
+            try:
+                user = PFEUser.objects.get(id=user_id)
+                message += "- " + str(user)
+                message += "; autenticado: " + str(user.is_authenticated)
+                message += "; conectado desde: " + str(user.last_login)
+                message += "; permissões: " + str(user.get_all_permissions())[:120]
+                message += "<br>"
+            except PFEUser.DoesNotExist:
+                message += "PROBLEMA COM USER ID = " + str(user_id)
+                message += "; Data = " + str(data)
+                message += "<br>"
+        return HttpResponse(message)
+    return HttpResponse("Você não tem privilégios")
 
 
 @login_required
