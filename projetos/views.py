@@ -1442,10 +1442,36 @@ def logs(request):
         message += str(log)+"<br>\n"
     return HttpResponse(message)
 
+
+from django.contrib.auth.models import User
+from django.contrib.sessions.models import Session
+from django.utils import timezone
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def conexoes_estabelecidas(request):
+    """Mostra usuários conectados"""
+    message = "<h3>Usuários Conectados</h3><br>"
+
+    sessions = Session.objects.filter(expire_date__gte=timezone.now())
+    
+    for session in sessions:
+        data = session.get_decoded()
+        user_id = data.get('_auth_user_id', None)
+        user = PFEUser.objects.get(id=user_id)
+        message += "- " + str(user)
+        
+        message += "; autenticado: " + str(user.is_authenticated)
+        message += "; conectado desde: " + str(user.last_login)
+        message += "; permissões: " + str(user.get_all_permissions())[:120]
+        message += "<br>"
+
+    return HttpResponse(message)
+
+
 @login_required
 @permission_required('users.altera_professor', login_url='/')
 def migracao(request):
     """temporário"""
-    
     message = "Nada Feito"
     return HttpResponse(message)

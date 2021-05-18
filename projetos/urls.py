@@ -37,6 +37,10 @@ urlpatterns = [
          views.analise_notas,
          name='analise_notas'),
 
+    path('conexoes_estabelecidas/',
+         views.conexoes_estabelecidas,
+         name='conexoes_estabelecidas'),
+
     path('evolucao_notas/',
          views.evolucao_notas,
          name='evolucao_notas'),
