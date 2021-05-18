@@ -24,6 +24,9 @@ function stripData( str ) {
 	str = str.replace( /^\s+|\s+$/g, '' );
 	str = str.replace( /\n/g, ' ' );
 
+    str = str.replace( /&lt;/g, '<' );
+    str = str.replace( /&gt;/g, '>' );
+
 	// if ( config.decodeEntities ) {
 	// 	_exportTextarea.innerHTML = str;
 	// 	str = _exportTextarea.value;
