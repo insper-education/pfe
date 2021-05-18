@@ -1463,6 +1463,7 @@ def conexoes_estabelecidas(request):
             message += "<br>"
         except PFEUser.DoesNotExist:
             message += "PROBLEMA COM USER ID = " + str(user_id)
+            message += "; Data = " + str(data)
             message += "<br>"
     return HttpResponse(message)
 
