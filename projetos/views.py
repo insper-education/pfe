@@ -19,12 +19,14 @@ from django.http.response import StreamingHttpResponse
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.sessions.models import Session
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models.functions import Lower
 from django.http import Http404, HttpResponse, HttpResponseNotFound
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
 
 from users.models import PFEUser, Aluno, Professor, Opcao, Alocacao
 from users.models import Parceiro
@@ -1443,29 +1445,25 @@ def logs(request):
     return HttpResponse(message)
 
 
-from django.contrib.auth.models import User
-from django.contrib.sessions.models import Session
-from django.utils import timezone
-
 @login_required
 @permission_required('users.altera_professor', login_url='/')
 def conexoes_estabelecidas(request):
     """Mostra usuários conectados"""
     message = "<h3>Usuários Conectados</h3><br>"
-
     sessions = Session.objects.filter(expire_date__gte=timezone.now())
-    
     for session in sessions:
         data = session.get_decoded()
         user_id = data.get('_auth_user_id', None)
-        user = PFEUser.objects.get(id=user_id)
-        message += "- " + str(user)
-        
-        message += "; autenticado: " + str(user.is_authenticated)
-        message += "; conectado desde: " + str(user.last_login)
-        message += "; permissões: " + str(user.get_all_permissions())[:120]
-        message += "<br>"
-
+        try:
+            user = PFEUser.objects.get(id=user_id)
+            message += "- " + str(user)
+            message += "; autenticado: " + str(user.is_authenticated)
+            message += "; conectado desde: " + str(user.last_login)
+            message += "; permissões: " + str(user.get_all_permissions())[:120]
+            message += "<br>"
+        except PFEUser.DoesNotExist:
+            message += "PROBLEMA COM USER ID = " + str(user_id)
+            message += "<br>"
     return HttpResponse(message)
 
 
