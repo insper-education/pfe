@@ -68,7 +68,7 @@ def create_message(estudante, ano, semestre):
     message += '&nbsp;&nbsp;Suas informações adicionais são:<br>\n'
     message += '<br>\n'
     message += ("&nbsp;" * 4)
-    message += 'Você já trabalhou e/ou estagiou em alguma empresa de engenharia?<br>\n'
+    message += 'Você já trabalhou/trabalha ou estagiou/estagia em alguma empresa de engenharia?<br>\n'
     message += ("&nbsp;" * 4)
     message += 'Se sim, qual/quais?<br>\n'
     if estudante.trabalhou:
