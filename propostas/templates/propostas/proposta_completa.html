@@ -6,6 +6,9 @@
 {% endcomment %}
 
 {% block head %}
+  
+  {% load static %}
+
   <style>
     .myButton {
       box-shadow:inset 0px 1px 0px 0px #f9eca0;
@@ -38,6 +41,12 @@
        text-align: center;
     }
   </style>
+
+  {% comment %} Para o gráfico no final da página {% endcomment %}
+  <script src="{% static 'js/Chart.min.js' %}"></script>
+  <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/Chart.min.css' %}">
+  
 
 {% endblock %}
 
@@ -73,6 +82,50 @@
     {% endwith %}
   {% endwith %}
   <br>
+
+  {% with editavel=True %}
+    {% include "recomendadas.html" %}
+  {% endwith %}
+
+  {% with editavel=True %}
+    {% include "perfil_estudantes.html" %}
+  {% endwith %}
+
+  <hr>
+
+  <form method="post" id="disponibilizacaoform" enctype="multipart/form-data">
+    {% csrf_token %}
+    <br><b><label for="autorizador">Autorizado por</label></b>:
+    <select class="fechar_proposta" name="autorizador" id="autorizador" title="Selecione quem autorizou proposta" required>
+        <option value='0'> ---- </option>
+        {% for pessoa in comite %}
+          <option value="{{pessoa.id}}" {% if pessoa.id == proposta.autorizado.id %}selected{% endif %}>
+            {{pessoa}}
+          </option>  
+        {% endfor %}
+    </select>
+
+    <br><b>Disponibilizar: </b>
+    <label><input class="fechar_proposta" type="radio" name="disponibilizar" value="sim"
+      {% if proposta.disponivel %}checked{% endif %}
+    > Sim</label>
+    <label><input class="fechar_proposta" type="radio" name="disponibilizar" value="nao"
+      {% if not proposta.disponivel %}checked{% endif %}
+    > Não</label>
+
+
+    <br><br>
+    <a class="myButton" href="{% url 'proposta_editar' proposta.slug %}">Editar Proposta</a>
+    <a class="myButton" href="{% url 'proposta_detalhes' proposta.id %}">Visão do Estudante</a>
+
+    {% for projeto in projetos %}
+      <a class="myButton" href="{% url 'projeto_completo' projeto.id %}">Projeto {{projeto.ano}}.{{projeto.semestre}}</a>
+    {% endfor %}
+    <br><br>
+
+  </form>
+
+  {% include "prioridades.html" %}
 
   <br>
   <h4>Aluno(s) Aplicando para a Proposta</h4>
@@ -125,46 +178,6 @@
     {% endif %}
   {% endfor %}
   <br>
-
-  {% with editavel=True %}
-    {% include "recomendadas.html" %}
-  {% endwith %}
-
-  {% with editavel=True %}
-    {% include "perfil_estudantes.html" %}
-  {% endwith %}
-  
-  <form method="post" id="disponibilizacaoform" enctype="multipart/form-data">
-    {% csrf_token %}
-    <br><b><label for="autorizador">Autorizado por</label></b>:
-    <select class="fechar_proposta" name="autorizador" id="autorizador" title="Selecione quem autorizou proposta" required>
-        <option value='0'> ---- </option>
-        {% for pessoa in comite %}
-          <option value="{{pessoa.id}}" {% if pessoa.id == proposta.autorizado.id %}selected{% endif %}>
-            {{pessoa}}
-          </option>  
-        {% endfor %}
-    </select>
-
-    <br><b>Disponibilizar: </b>
-    <label><input class="fechar_proposta" type="radio" name="disponibilizar" value="sim"
-      {% if proposta.disponivel %}checked{% endif %}
-    > Sim</label>
-    <label><input class="fechar_proposta" type="radio" name="disponibilizar" value="nao"
-      {% if not proposta.disponivel %}checked{% endif %}
-    > Não</label>
-
-
-    <br><br>
-    <a class="myButton" href="{% url 'proposta_editar' proposta.slug %}">Editar Proposta</a>
-    <a class="myButton" href="{% url 'proposta_detalhes' proposta.id %}">Visão do Estudante</a>
-
-    {% for projeto in projetos %}
-      <a class="myButton" href="{% url 'projeto_completo' projeto.id %}">Projeto {{projeto.ano}}.{{projeto.semestre}}</a>
-    {% endfor %}
-    <br><br>
-
-  </form>
 
   <p>&nbsp;</p>
   <p>&nbsp;</p>

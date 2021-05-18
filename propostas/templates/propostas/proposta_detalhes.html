@@ -12,6 +12,11 @@
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
 
+  {% comment %} Para o gráfico no final da página {% endcomment %}
+  <script src="{% static 'js/Chart.min.js' %}"></script>
+  <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/Chart.min.css' %}">
+
 {% endblock %}
 
 {% block content %}
@@ -23,6 +28,8 @@
   {% include "recomendadas.html" %}
 
   {% include "perfil_estudantes.html" %}
+
+  {% include "prioridades.html" %}
 
   <p>&nbsp;</p>
 {% endblock %}

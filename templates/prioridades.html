@@ -1,0 +1,126 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 17 de Maio de 2021
+{% endcomment %}
+
+<hr>
+
+<br>
+<h5 style="margin-bottom: 0px;">Procura da Proposta</h5>
+<small>Quantidade de estudantes em cada opção para está proposta de projeto<br></small>
+<div class="container-fluid">
+  <div class="row align-self-start" style="max-width: 800px">
+    <div class="col">
+      <canvas style="height: 112px" id="horizontal"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+  var config_horizontal = {
+      type: 'horizontalBar',
+      data: {
+        labels: [
+              "Procura",
+            ],
+        datasets: [
+            {
+              label: 'Opção #5',
+              backgroundColor: 'rgb(180, 200, 160)',
+              data: [
+                {{procura.5}},
+              ],
+            },
+            {
+              label: 'Opção #4',
+              backgroundColor: 'rgb(180, 180, 120)',
+              data: [
+                {{procura.4}},
+              ],
+            },
+            {
+              label: 'Opção #3',
+              backgroundColor: 'rgb(210, 190, 35)',
+              data: [
+                {{procura.3}},
+              ],
+            },
+            {
+              label: 'Opção #2',
+              backgroundColor: 'rgb(210, 230, 30)',
+              data: [
+                {{procura.2}},
+              ],
+            },
+            {
+              label: 'Opção #1',
+              backgroundColor: 'rgb(0, 250, 0)',
+              data: [
+                {{procura.1}},
+              ],
+            },
+        ]
+      },
+      options: {
+          legend: { display: true },
+          title: {
+              display: false,
+              text: 'Procura'
+          },
+          responsive: true,
+          maintainAspectRatio: false,
+          legend: {position: 'bottom'},
+          tooltips: {
+            enabled: false
+          },
+          scales: {
+            
+              x: {
+                stacked: true,
+              },
+              y: {
+                stacked: true
+              },
+ 
+              yAxes: [{
+                  stacked: true,
+                  ticks: {
+                      min: 0,
+                      beginAtZero: true,
+                      precision: 0,
+                  }
+              }],
+
+              xAxes: [{
+                  stacked: true,
+                  ticks: {
+                      min: 0,
+                      beginAtZero: true,
+                      precision: 0,
+                  }
+              }]
+          },
+          plugins: {
+              datalabels: {
+                  formatter: (value, ctx) => {
+                      if(value>0) {
+                          return (value).toFixed(0);
+                      } else {
+                          return " ";
+                      }
+                  },
+                  color: '#000',
+              }
+          },
+      }
+    }
+
+    function carrega_pagina() {     
+        var horizontal = document.getElementById('horizontal').getContext('2d');
+        window.horizontal = new Chart(horizontal, config_horizontal);
+    }
+
+    window.onload = carrega_pagina
+
+</script>

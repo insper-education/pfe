@@ -352,6 +352,13 @@ def proposta_completa(request, primakey):
 
     opcoes = Opcao.objects.filter(proposta=proposta)
 
+    procura = {}
+    procura["1"] = opcoes.filter(prioridade=1).count()
+    procura["2"] = opcoes.filter(prioridade=2).count()
+    procura["3"] = opcoes.filter(prioridade=3).count()
+    procura["4"] = opcoes.filter(prioridade=4).count()
+    procura["5"] = opcoes.filter(prioridade=5).count()
+
     areas = Area.objects.filter(ativa=True)
 
     context = {
@@ -364,6 +371,7 @@ def proposta_completa(request, primakey):
         "estudantes": estudantes,
         "sem_opcao": sem_opcao,
         'areast': areas,
+        "procura": procura,
     }
     return render(request, 'propostas/proposta_completa.html', context=context)
 
@@ -372,16 +380,7 @@ def proposta_completa(request, primakey):
 def proposta_detalhes(request, primarykey):
     """Exibe proposta de projeto com seus detalhes para estudante aplicar."""
     proposta = get_object_or_404(Proposta, pk=primarykey)
-    # try:
-    #     proposta = Proposta.objects.get(pk=primarykey)
-    # except Proposta.DoesNotExist:
-    #     return HttpResponse("Proposta não encontrada.", status=401)
-
     user = get_object_or_404(PFEUser, pk=request.user.pk)
-    # try:
-    #     user = PFEUser.objects.get(pk=request.user.pk)
-    # except PFEUser.DoesNotExist:
-    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     if user.tipo_de_usuario == 1:  # (1, 'aluno')
         if not (user.aluno.anoPFE == proposta.ano and
@@ -395,9 +394,19 @@ def proposta_detalhes(request, primarykey):
     if user.tipo_de_usuario == 3:  # (3, 'parceiro')
         return HttpResponse("Usuário não tem permissão de acesso.", status=401)
 
+    opcoes = Opcao.objects.filter(proposta=proposta)
+
+    procura = {}
+    procura["1"] = opcoes.filter(prioridade=1).count()
+    procura["2"] = opcoes.filter(prioridade=2).count()
+    procura["3"] = opcoes.filter(prioridade=3).count()
+    procura["4"] = opcoes.filter(prioridade=4).count()
+    procura["5"] = opcoes.filter(prioridade=5).count()
+
     context = {
         'proposta': proposta,
         'MEDIA_URL': settings.MEDIA_URL,
+        "procura": procura,
     }
     return render(request, 'propostas/proposta_detalhes.html', context=context)
 

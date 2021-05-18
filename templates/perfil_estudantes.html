@@ -5,29 +5,27 @@
 {% endcomment %}
 
 {% if proposta %}
-  <hr>
-
   <h5>Perfil de Estudantes Esperados para Proposta de Projeto</h5>
   <table>
     <tr>
-        <th style="text-align:center;min-width:102px" >
+        <th style="text-align:center; width:112px" >
             Estudante
         </th>
-        <th style="text-align:center;min-width:114px" >
+        <th style="text-align:center; width:138px" >
             Computação
             {% if editavel %}<input type="checkbox" id="alunosC">{% endif %}
         </th>
-        <th style="text-align:center;min-width:114px" >
+        <th style="text-align:center; width:138px" >
             Mecânica
             {% if editavel %}<input type="checkbox" id="alunosM">{% endif %}
         </th>
-        <th style="text-align:center;min-width:114px" >
+        <th style="text-align:center; width:138px" >
             Mecatrônica
             {% if editavel %}<input type="checkbox" id="alunosX">{% endif %}
         </th>
     </tr>
     <tr> {% comment %} NAO EH A FORMA MAIS ELEGANTE MAS FUNCIONA POR ENQUANTO {% endcomment %}
-      <td>Estudante 1</td>
+      <td>Estudante&nbsp;1</td>
 
       <td style="text-align:center;">
       {% if editavel %}
@@ -60,7 +58,7 @@
 
     <tr>
 
-      <td>Estudante 2</td>
+      <td>Estudante&nbsp;2</td>
 
       <td style="text-align:center;">
       {% if editavel %}
@@ -92,7 +90,7 @@
     </tr>
 
     <tr>
-      <td>Estudante 3</td>
+      <td>Estudante&nbsp;3</td>
 
       <td style="text-align:center;">
       {% if editavel %}
@@ -123,7 +121,7 @@
 
     </tr>
     <tr>
-      <td>Estudante 4</td>
+      <td>Estudante&nbsp;4</td>
 
       <td style="text-align:center;">
       {% if editavel %}
