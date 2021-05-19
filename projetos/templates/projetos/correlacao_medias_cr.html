@@ -15,6 +15,7 @@
   <script src="{% static 'js/Chart.min.js' %}"></script>
   <script src="{% static 'js/chartjs-plugin-colorschemes.min.js' %}"></script>
   {% comment %} <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script> {% endcomment %}
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-trendline"></script>
 
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
@@ -60,14 +61,24 @@
         <div class="container">
 
             {% if True %}
-                <div class="row mt-5">
-                    <div class="col"><canvas id="correlacao"></canvas></div>
+                <div class="chart-container" style="position: relative; max-width:80vh">
+                    <canvas id="correlacao"></canvas>
                 </div>
             {% endif %}
+            
+            <br>
+            <small>
+                <div id="semestres"></div>
+                <div id="computacao"></div>
+                <div id="mecanica"></div>
+                <div id="mecatronica"></div>
+            </small>
 
             <script>
         
                 {% if alocacoes %}
+
+                    semestres = ""
 
                     {% for key, alocacoes_tmp in alocacoes.items %}
                         var data{{key}} = [
@@ -84,7 +95,12 @@
                             {% endwith %}
                         {% endfor %}
                         ];
+
+                        semestres += "Quantidade de estudantes em {{key}} = " + data{{key}}.length + "<br>"
+
                     {% endfor %}
+                    
+                    $("#semestres").html(semestres);
 
                     {% for key, alocacoes_tmp in alocacoes.items %}
                         var data{{key}}_i = [];
@@ -118,6 +134,10 @@
                     {% endfor %}
                     ];
 
+                    if (data_estudantes_computacao.length > 0) {
+                        $("#computacao").html("Quantidade de estudantes de Computação = " + data_estudantes_computacao.length);
+                    }
+                    
                     var data_estudantes_computacao_i = [];
                     for (var est in data_estudantes_computacao) {
                         data_estudantes_computacao_i.push(
@@ -148,6 +168,10 @@
                     {% endfor %}
                     ];
 
+                    if (data_estudantes_mecanica.length > 0) {
+                        $("#mecanica").html("Quantidade de estudantes de Mecânica = " + data_estudantes_mecanica.length);
+                    }
+                    
                     var data_estudantes_mecanica_i = [];
                     for (var est in data_estudantes_mecanica) {
                         data_estudantes_mecanica_i.push(
@@ -178,6 +202,10 @@
                     {% endfor %}
                     ];
 
+                    if (data_estudantes_mecatronica.length > 0) {
+                        $("#mecatronica").html("Quantidade de estudantes de Mecatrônica = " + data_estudantes_mecatronica.length);
+                    }
+                    
                     var data_estudantes_mecatronica_i = [];
                     for (var est in data_estudantes_mecatronica) {
                         data_estudantes_mecatronica_i.push(
@@ -192,8 +220,9 @@
                 {% endif %}
 
                 var options = {
-                    responsive: true, // Instruct chart js to respond nicely.
-                    maintainAspectRatio: true, // Add to prevent default behaviour of full-width/height 
+                    aspectRatio: 1,
+                    responsive: true,
+                    maintainAspectRatio: true,
                     tooltips: {
                         callbacks: {
                             label: function(tooltipItem, data) {
@@ -217,12 +246,20 @@
                             scaleLabel: {
                                 display: true,
                                 labelString: 'CR'
+                            },
+                            ticks: {
+                                min: 0,
+                                max: 10,
                             }
                         }],
                         xAxes: [{
                             scaleLabel: {
                                 display: true,
                                 labelString: 'Médias Finais'
+                            },
+                            ticks: {
+                                min: 0,
+                                max: 10,
                             }
                         }]
                     },
@@ -231,8 +268,9 @@
 
 
                 var options_i = {
-                    responsive: true, // Instruct chart js to respond nicely.
-                    maintainAspectRatio: true, // Add to prevent default behaviour of full-width/height 
+                    aspectRatio: 1,
+                    responsive: true,
+                    maintainAspectRatio: true,
                     tooltips: {
                         callbacks: {
                             label: function(tooltipItem, data) {
@@ -256,12 +294,20 @@
                             scaleLabel: {
                                 display: true,
                                 labelString: 'CR'
+                            },
+                            ticks: {
+                                min: 0,
+                                max: 10,
                             }
                         }],
                         xAxes: [{
                             scaleLabel: {
                                 display: true,
                                 labelString: 'Notas Individuais'
+                            },
+                            ticks: {
+                                min: 0,
+                                max: 10,
                             }
                         }]
                     },
@@ -273,6 +319,11 @@
                         {
                             label: '{{key}}',
                             data: data{{key}},
+                            trendlineLinear: {
+                                style: "rgb(100 ,100 ,100, 0.4)",
+                                lineStyle: "dotted",
+                                width: 2
+                            }
                         },
                     {% endfor %}
 
@@ -280,18 +331,33 @@
                         {
                             label: 'Computação',
                             data: data_estudantes_computacao,
+                            trendlineLinear: {
+                                style: "rgb(23 ,155 , 23, 0.4)",
+                                lineStyle: "dotted",
+                                width: 2
+                            }
                         },
                     {% endif %}
                     {% if estudantes_mecanica %}
                         {
                             label: 'Mecânica',
                             data: data_estudantes_mecanica,
+                            trendlineLinear: {
+                                style: "rgb(155, 23, 23, 0.4)",
+                                lineStyle: "dotted",
+                                width: 2
+                            }
                         },
                     {% endif %}
                     {% if estudantes_mecatronica %}
                         {
                             label: 'Mecatrônica',
                             data: data_estudantes_mecatronica,
+                            trendlineLinear: {
+                                style: "rgb(155, 155, 23, 0.4)",
+                                lineStyle: "dotted",
+                                width: 2
+                            }
                         },
                     {% endif %}
                     ]
@@ -301,6 +367,11 @@
                         {
                             label: '{{key}}',
                             data: data{{key}}_i,
+                            trendlineLinear: {
+                                style: "rgb(100 ,100 , 100, 0.4)",
+                                lineStyle: "dotted",
+                                width: 2
+                            }
                         },
                     {% endfor %}
 
@@ -308,18 +379,33 @@
                         {
                             label: 'Computação',
                             data: data_estudantes_computacao_i,
+                            trendlineLinear: {
+                                style: "rgb(23 ,155 , 23, 0.4)",
+                                lineStyle: "dotted",
+                                width: 2
+                            }
                         },
                     {% endif %}
                     {% if estudantes_mecanica %}
                         {
                             label: 'Mecânica',
                             data: data_estudantes_mecanica_i,
+                            trendlineLinear: {
+                                style: "rgb(155, 23, 23, 0.4)",
+                                lineStyle: "dotted",
+                                width: 2
+                            }
                         },
                     {% endif %}
                     {% if estudantes_mecatronica %}
                         {
                             label: 'Mecatrônica',
                             data: data_estudantes_mecatronica_i,
+                            trendlineLinear: {
+                                style: "rgb(155, 155, 23, 0.4)",
+                                lineStyle: "dotted",
+                                width: 2
+                            }
                         },
                     {% endif %}
                     ]
