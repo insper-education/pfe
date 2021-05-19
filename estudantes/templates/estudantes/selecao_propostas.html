@@ -25,13 +25,53 @@ table { width: inherit !important; }
       {% endif %}
 
     {% endif %}
+
+    <style>
+      .ordenar {
+        box-shadow:inset 0px 1px 3px 0px #91b8b3;
+        background:linear-gradient(to bottom, #768d87 5%, #6c7c7c 100%);
+        background-color:#768d87;
+        border-radius:5px;
+        border:1px solid #566963;
+        display:inline-block;
+        cursor:pointer;
+        color:#ffffff;
+        font-family:Arial;
+        font-size:13px;
+        font-weight:bold;
+        padding:3px 3px;
+        text-decoration:none;
+        text-shadow:0px -1px 0px #2b665e;
+        margin-left:10px;
+        margin-bottom: 3px;    
+      }
+
+      .ordenar:hover {
+        background:linear-gradient(to bottom, #6c7c7c 5%, #768d87 100%);
+        background-color:#6c7c7c;
+      }
+      
+      .ordenar:active {
+        position:relative;
+        top:1px;
+      }
+
+      .alinha {
+        display: flex;
+        align-items: center;
+      }
+
+    </style>
     
-    <span class="titulo">Propostas de Projetos Disponíveis</span>
-    
+    <div class="alinha">
+      <span class="titulo">Propostas de Projetos Disponíveis</span>
+      <button class="ordenar" onclick="sortTable()">Ordenar</button>
+    </div>
+
     {% if propostas %}
       <form action="" method="post"> {% csrf_token %}
         {% if liberadas_propostas %}
-          <table  class="table table-hover table-bordered  table-sm ">
+          <table id="propostas" class="table table-hover table-bordered table-sm ">
             <tbody>
             {% for proposta in propostas %} 
               {% if proposta.disponivel %}
@@ -105,5 +145,39 @@ table { width: inherit !important; }
     {% else %}
       <p>Não existem Propostas de Projetos disponíveis.</p>
     {% endif %}
+
+  <script>
+    {% comment %} https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_sort_table_number {% endcomment %}
+    function sortTable() {
+
+      var rows, switching, i, x, y, shouldSwitch;
+      switching = true;
+      while (switching) {
+        switching = false;
+        rows = $('#propostas > tbody > tr');
+        for (i = 0; i < (rows.length - 1); i++) {
+          
+          shouldSwitch = false;
+          
+          x = rows[i].getElementsByTagName("TH")[0].getElementsByTagName("select")[0].value;
+          y = rows[i + 1].getElementsByTagName("TH")[0].getElementsByTagName("select")[0].value;
+
+          //console.log(x);
+
+          if (Number(x) > Number(y)) {
+            shouldSwitch = true;
+            
+            break;
+          }
+        }
+
+        if (shouldSwitch) {
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+        }
+
+      }
+    }
+  </script>
 
 {% endblock %}
