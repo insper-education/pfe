@@ -50,7 +50,7 @@ table { width: inherit !important; }
         background:linear-gradient(to bottom, #6c7c7c 5%, #768d87 100%);
         background-color:#6c7c7c;
       }
-      
+
       .ordenar:active {
         position:relative;
         top:1px;
@@ -162,7 +162,8 @@ table { width: inherit !important; }
           x = rows[i].getElementsByTagName("TH")[0].getElementsByTagName("select")[0].value;
           y = rows[i + 1].getElementsByTagName("TH")[0].getElementsByTagName("select")[0].value;
 
-          //console.log(x);
+          if(x==0) x=Number.POSITIVE_INFINITY;
+          if(y==0) y=Number.POSITIVE_INFINITY;
 
           if (Number(x) > Number(y)) {
             shouldSwitch = true;
