@@ -24,7 +24,7 @@
   <span class="titulo" data-toggle="tooltip" data-html="true" animation="true" title="
      Nome da organização/empresa que está propondo o projeto.
     ">
-    Organização:
+    <b>Organização:</b>
     {% if proposta.organizacao and proposta.organizacao.nome %}
         {% if completo %}
             <a href="{% url 'organizacao_completo' proposta.organizacao.id %}">
