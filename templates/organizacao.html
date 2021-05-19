@@ -21,7 +21,7 @@
     <img id="logotipo" src="{{ proposta.organizacao.logotipo.url }}" alt="{{ proposta.organizacao.sigla }}">
   {% endif %}
 
-  <h4 data-toggle="tooltip" data-html="true" animation="true" title="
+  <span class="titulo" data-toggle="tooltip" data-html="true" animation="true" title="
      Nome da organização/empresa que está propondo o projeto.
     ">
     Organização:
@@ -39,7 +39,7 @@
       <u>Organização não definida.</u>
     {% endif %}
     <br>
-  </h4>
+  </span>
   
   <p>
     {% if proposta.endereco %}
