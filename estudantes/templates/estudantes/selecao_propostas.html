@@ -7,9 +7,39 @@
 
 {% block head %}
 
-<style>
-table { width: inherit !important; }
-</style>
+    <style>
+      .ordenar {
+        box-shadow:inset 0px 1px 3px 0px #91b8b3;
+        background:linear-gradient(to bottom, #96ada7 5%, #8c9c9c 100%);
+        background-color:#96ada7;
+        border-radius:5px;
+        border:1px solid #768983;
+        display:inline-block;
+        cursor:pointer;
+        color:#ffffff;
+        font-family:Arial;
+        font-size:13px;
+        font-weight:bold;
+        padding:3px 3px;
+        text-decoration:none;
+        text-shadow:0px -1px 0px #2b665e;
+        margin-left:10px;
+        margin-bottom: 3px;    
+        float: right;
+      }
+
+      .ordenar:hover {
+        background:linear-gradient(to bottom, #8c9c9c 5%, #96ada7 100%);
+        background-color:#8c9c9c;
+      }
+
+      .ordenar:active {
+        position:relative;
+        top:1px;
+      }
+
+    </style>
+
 {% endblock %}
 
 {% block content %}
@@ -25,126 +55,100 @@ table { width: inherit !important; }
       {% endif %}
 
     {% endif %}
-
-    <style>
-      .ordenar {
-        box-shadow:inset 0px 1px 3px 0px #91b8b3;
-        background:linear-gradient(to bottom, #768d87 5%, #6c7c7c 100%);
-        background-color:#768d87;
-        border-radius:5px;
-        border:1px solid #566963;
-        display:inline-block;
-        cursor:pointer;
-        color:#ffffff;
-        font-family:Arial;
-        font-size:13px;
-        font-weight:bold;
-        padding:3px 3px;
-        text-decoration:none;
-        text-shadow:0px -1px 0px #2b665e;
-        margin-left:10px;
-        margin-bottom: 3px;    
-      }
-
-      .ordenar:hover {
-        background:linear-gradient(to bottom, #6c7c7c 5%, #768d87 100%);
-        background-color:#6c7c7c;
-      }
-
-      .ordenar:active {
-        position:relative;
-        top:1px;
-      }
-
-      .alinha {
-        display: flex;
-        align-items: center;
-      }
-
-    </style>
     
-    <div class="alinha">
-      <span class="titulo">Propostas de Projetos Disponíveis</span>
-      <button class="ordenar" onclick="sortTable()">Ordenar</button>
+    <div class="row">
+      <div class="col">
+          <span class="titulo">Propostas de Projetos Disponíveis</span>
+        </div>
+      <div class="col-2 align-self-end">
+        <button class="ordenar" onclick="sortTable()">Ordenar&nbsp;&#x21e3;</button>
+      </div>
     </div>
+    <div class="row">
+      <div class="col">
 
-    {% if propostas %}
-      <form action="" method="post"> {% csrf_token %}
-        {% if liberadas_propostas %}
-          <table id="propostas" class="table table-hover table-bordered table-sm ">
-            <tbody>
-            {% for proposta in propostas %} 
-              {% if proposta.disponivel %}
-                <tr>
-                  <th scope="row" class="align-middle">
-                    <select id="selection{{proposta.pk}}" name="selection{{proposta.pk}}" 
-                    {% if vencido %}disabled{% endif %}></select>
-                    <script type="text/javascript">
-                      var select = document.getElementById("selection{{proposta.pk}}");
-                      select.options[select.options.length] = new Option("--", 0);
-                      for(var index=1; index<={{propostas|length}}; index++){
-                        select.options[select.options.length] = new Option(index, index);
-                      }
+        {% if propostas %}
+          <form action="" method="post"> {% csrf_token %}
+            {% if liberadas_propostas %}
 
-                      // Para agora nao encontrei forma mais inteligente de fazer isso
-                      {% for opcao in opcoes %} 
-                        {% if opcao.proposta.pk == proposta.pk %}
-                        select.selectedIndex = {{ opcao.prioridade }};
-                        {% endif %}
-                      {% endfor %}
+              <table id="propostas" class="table table-hover table-bordered table-sm ">
+                <tbody>
+                {% for proposta in propostas %} 
+                  {% if proposta.disponivel %}
+                    <tr>
+                      <th scope="row" class="align-middle" style="text-align:center; width: 1%;">
+                        <select id="selection{{proposta.pk}}" name="selection{{proposta.pk}}" 
+                        {% if vencido %}disabled{% endif %}></select>
+                        <script type="text/javascript">
+                          var select = document.getElementById("selection{{proposta.pk}}");
+                          select.options[select.options.length] = new Option("--", 0);
+                          for(var index=1; index<={{propostas|length}}; index++){
+                            select.options[select.options.length] = new Option(index, index);
+                          }
 
-                    </script>
-                  </th>
-                  <td>
-                    <a href="{% url 'proposta_detalhes' proposta.pk %}">
-                      {% if proposta.titulo %}
-                        {{proposta.titulo}}
-                      {% else %}
-                        PROBLEMA EM RECUPERAR TÍTULO DA PROPOSTA
-                      {% endif %}
-                      <font color="darkblue">
-                        {% if proposta.nome_organizacao %}
-                          ({{ proposta.nome_organizacao }})
-                        {% elif proposta.organizacao and proposta.organizacao.nome %}
-                          ({{ proposta.organizacao.nome }})
-                        {% else %}
-                          PROBLEMA EM RECUPERAR ORGANIZAÇÃO DA PROPOSTA
-                        {% endif %}
-                      </font>
-                    </a>
-                  </td>
-                </tr>
-              {% endif %}
-            {% endfor %}
-            </tbody>
-          </table>
-          <p>&nbsp;</p>
+                          // Para agora nao encontrei forma mais inteligente de fazer isso
+                          {% for opcao in opcoes %} 
+                            {% if opcao.proposta.pk == proposta.pk %}
+                            select.selectedIndex = {{ opcao.prioridade }};
+                            {% endif %}
+                          {% endfor %}
+
+                        </script>
+                      </th>
+                      <td>
+                        <a style="display: block;" href="{% url 'proposta_detalhes' proposta.pk %}">
+                          {% if proposta.titulo %}
+                            {{proposta.titulo}}
+                          {% else %}
+                            PROBLEMA EM RECUPERAR TÍTULO DA PROPOSTA
+                          {% endif %}
+                          <font color="darkblue">
+                            {% if proposta.nome_organizacao %}
+                              ({{ proposta.nome_organizacao }})
+                            {% elif proposta.organizacao and proposta.organizacao.nome %}
+                              ({{ proposta.organizacao.nome }})
+                            {% else %}
+                              PROBLEMA EM RECUPERAR ORGANIZAÇÃO DA PROPOSTA
+                            {% endif %}
+                          </font>
+                        </a>
+                      </td>
+                    </tr>
+                  {% endif %}
+                {% endfor %}
+                </tbody>
+              </table>
+              
+            {% else %}
+              Propostas ainda não liberadas.
+            {% endif %}
+
+            <font color="red">
+              {{warnings|linebreaks}}
+            </font>
+
+            <div style="display: flex;">      
+              
+              <input type="submit" style="margin-right: 14px;" value="Enviar" {% if vencido or not liberadas_propostas %}disabled{% endif %}>
+
+              <small style="float: right;"><font color="red">
+                Selecione ao menos 5 propostas de projetos (1 ao 5), sendo 1 para a que você tem mais interesse.
+              </font></small>
+              
+            </div>
+
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+
+          </form>
+
         {% else %}
-          Propostas ainda não liberadas.
+          <p>Não existem Propostas de Projetos disponíveis.</p>
         {% endif %}
 
-        <font color="red">
-          {{warnings|linebreaks}}
-        </font>
+      </div>
+    </div>
 
-        <div style="display: flex;">      
-          
-          <input type="submit" style="margin-right: 14px;" value="Enviar" {% if vencido or not liberadas_propostas %}disabled{% endif %}>
-
-          <small style="float: right;"><font color="red">
-            Selecione ao menos 5 propostas de projetos (1 ao 5), sendo 1 para a que você tem mais interesse.
-          </font></small>
-          
-        </div>
-
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-
-      </form>
-
-    {% else %}
-      <p>Não existem Propostas de Projetos disponíveis.</p>
-    {% endif %}
 
   <script>
     {% comment %} https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_sort_table_number {% endcomment %}
