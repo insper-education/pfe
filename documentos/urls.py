@@ -26,6 +26,10 @@ urlpatterns = [
          views.gerar_certificados,
          name='gerar_certificados'),
 
+    path('relatorios_publicos/',
+         views.relatorios_publicos,
+         name='relatorios_publicos'),
+
     path('tabela_atas/',
          views.tabela_atas,
          name='tabela_atas'),

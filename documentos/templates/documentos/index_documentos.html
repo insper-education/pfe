@@ -21,6 +21,7 @@
     {% if plano_de_aprendizagem %}
         <a href="../..{{MEDIA_URL}}{{plano_de_aprendizagem.documento}}"><h5>Plano de Aprendizagem</h5></a>
     {% endif %}
+    <a href="{% url 'relatorios_publicos' %}"><h5>Relatórios Públicos</h5></a>
 
     {% if user.tipo_de_usuario == 1 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Estudante ou Professor ou Adm -->
         <hr>

@@ -120,10 +120,11 @@ def projeto_completo(request, primakey):
     # (18, 'Vídeo do Projeto'),
     # (19, 'Slides da Apresentação Final'),
     # (20, 'Banner'),
+    # (25, 'Relatório Publicado'),
     # )
 
     documentos = Documento.objects.filter(projeto=projeto,
-        tipo_de_documento__in=(3, 18, 19, 20))
+                                          tipo_de_documento__in=(3, 18, 19, 20, 25))
 
     context = {
         'configuracao': configuracao,

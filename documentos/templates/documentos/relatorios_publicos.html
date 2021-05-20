@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 20 de Maio de 2020
+{% endcomment %}
+
+{% block head %}
+
+  {% load static %}
+
+  <script src="{% static 'js/w3.js' %}"></script>
+
+  {% comment %} Para chamar os Tooltips {% endcomment %}
+  <script>{% include "tooltip.js" %}</script>
+
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">Relatórios Públicos</span>
+
+  {% if relatorios %}
+    <table id="RelatoriosTable">
+      <tr>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Projeto</th>
+        <th class="text-center">Estudantes</th>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Orientador</th>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Organização</th>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">Período</th>
+        <th class="text-center">Documento</th>
+      </tr>      
+      {% for relatorio in relatorios %} 
+          <tr class="item">
+            <td>
+              {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                <a href="{% url 'projeto_completo' relatorio.projeto.id %}">
+              {% endif %}
+                {{relatorio.projeto.get_titulo}}
+                {% if relatorio.projeto.avancado %}
+                  <strong style="color:red"><u>[Avançado]</u></strong><br>
+                {% endif %}
+              {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                </a>
+              {% endif %}
+            </td>
+
+            <td>
+              {% for alocacao in relatorio.projeto.alocacao_set.all %}
+                {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                  <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
+                {% endif %}
+                    &bull; {{alocacao.aluno.user.get_full_name}}
+                {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                  </a>
+                {% endif %}
+                {% if not forloop.last %}<br>{% endif %}
+              {% endfor %}
+            </td>
+
+
+            <td>
+              {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                <a href="{% url 'professor_detail' relatorio.projeto.orientador.id %}">
+              {% endif %}
+                {{relatorio.projeto.orientador}}
+              {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                </a>
+              {% endif %}
+            </td>
+
+            <td>
+              {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                <a href="{% url 'organizacao_completo' relatorio.projeto.organizacao.id %}">
+              {% endif %}
+                {{ relatorio.projeto.organizacao.nome }}
+              {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                </a>
+              {% endif %}
+            </td>
+
+            <td style="text-align:center">
+                {{relatorio.projeto.ano}}.{{relatorio.projeto.semestre}}
+            </td>
+
+            <td>
+                <a href="{{relatorio.link}}" target="_blank" rel="noopener noreferrer">{{relatorio.link}}</a>
+            </td>
+
+          </tr>
+
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>Não existem projetos disponíveis.</p>
+  {% endif %}
+
+  <br>
+  
+{% endblock %}

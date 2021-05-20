@@ -237,6 +237,20 @@ def gerar_certificados(request):
     return render(request, 'documentos/gerar_certificados.html', context)
 
 
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def relatorios_publicos(request):
+    """Exibe relatórios públicos."""
+    relatorios = Documento.objects.filter(tipo_de_documento=25)
+
+    context = {
+        'relatorios': relatorios,
+        'MEDIA_URL': settings.MEDIA_URL,
+    }
+    return render(request, 'documentos/relatorios_publicos.html', context)
+
+
 @login_required
 @permission_required('users.altera_professor', login_url='/')
 def tabela_documentos(request):
