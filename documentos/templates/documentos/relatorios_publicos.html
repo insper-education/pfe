@@ -30,7 +30,10 @@
         <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">Período</th>
         <th class="text-center">Documento</th>
       </tr>      
-      {% for relatorio in relatorios %} 
+      {% for relatorio in relatorios %}
+
+        {% if relatorio.link and relatorio.projeto %}
+
           <tr class="item">
             <td>
               {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
@@ -60,13 +63,19 @@
 
 
             <td>
-              {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-                <a href="{% url 'professor_detail' relatorio.projeto.orientador.id %}">
+
+              {% if relatorio.projeto.orientador %}
+
+                {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                  <a href="{% url 'professor_detail' relatorio.projeto.orientador.id %}">
+                {% endif %}
+                  {{relatorio.projeto.orientador}}
+                {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                  </a>
+                {% endif %}
+
               {% endif %}
-                {{relatorio.projeto.orientador}}
-              {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-                </a>
-              {% endif %}
+
             </td>
 
             <td>
@@ -88,6 +97,8 @@
             </td>
 
           </tr>
+
+          {% endif %}
 
       {% endfor %}
     </table>
