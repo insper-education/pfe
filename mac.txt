@@ -7,13 +7,23 @@ postgres -D /usr/local/var/postgres
 # Atualiza base de dados (se necessário)
 brew postgresql-upgrade-database
 
-# Aparentemente Melhor
+# Backup dbbackup
+psql -U Username -h 127.0.0.1 -d DatabaseName 
+\l  (para listas bancos de dados)
+dropdb DatabaseName (linha de comando)
+createdb DatabaseName (linha de comando)
+git clone https://github.com/lpsoares/pfe
+python3 manage.py migrate
+python3 manage.py dbrestore
+python3 manage.py mediarestore
+
+# Backup pelo postgres
 pg_dump -U pfe pfe -h localhost > backup.sql
 dropdb pfe
 createdb pfe 
 psql -U pfe -h localhost < backup.sql
 
-# Deve funcionar bem
+# Backup pelo Django
 python3 manage.py dumpdata --natural-primary --natural-foreign > dump.json
 python3 manage.py loaddata out.json
 

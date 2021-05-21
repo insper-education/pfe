@@ -40,9 +40,9 @@ def mediabackup():
         return "Não pode fazer o Backup: Debug está True"
 
     try:
-        call_command("mediabackup")
-        #argv = ['', 'mediabackup', '--compress']
-        #execute_from_command_line(argv)
+        # call_command("mediabackup")
+        argv = ['', 'mediabackup', '--compress']
+        execute_from_command_line(argv)
         return f"Backup realizado: {datetime.datetime.now()}"
     except:
         return f"Não foi possível fazer o backup: {datetime.datetime.now()}"
