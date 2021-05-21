@@ -13,6 +13,7 @@ psql -U Username -h 127.0.0.1 -d DatabaseName
 dropdb DatabaseName (linha de comando)
 createdb DatabaseName (linha de comando)
 git clone https://github.com/lpsoares/pfe
+python3 manage.py makemigrations
 python3 manage.py migrate
 python3 manage.py dbrestore
 python3 manage.py mediarestore
@@ -27,3 +28,5 @@ psql -U pfe -h localhost < backup.sql
 python3 manage.py dumpdata --natural-primary --natural-foreign > dump.json
 python3 manage.py loaddata out.json
 
+# Virtual environment
+source ./env/bin/activate
