@@ -48,11 +48,6 @@ from .support import get_areas_estudantes, get_areas_propostas, simple_upload, c
 def index(request):
     """Página principal do sistema do Projeto Final de Engenharia."""
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
-
     if configuracao and configuracao.manutencao:
         return render(request, 'projetos/manutencao.html')
     # num_visits = request.session.get('num_visits', 0) # Visitas a página.
@@ -70,10 +65,6 @@ def index(request):
 def index_projetos(request):
     """Página principal dos Projetos."""
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     if configuracao and configuracao.manutencao:
         return render(request, 'projetos/manutencao.html')
@@ -90,10 +81,6 @@ def index_projetos(request):
 def projeto_detalhes(request, primarykey):
     """Exibe proposta de projeto com seus detalhes para estudantes."""
     projeto = get_object_or_404(Projeto, pk=primarykey)
-    # try:
-    #     projeto = Projeto.objects.get(pk=primarykey)
-    # except Projeto.DoesNotExist:
-    #     return HttpResponse("Projeto não encontrado.", status=401)
 
     context = {
         'projeto': projeto,
@@ -549,22 +536,10 @@ def carrega_bancos(request):
 def reembolso_pedir(request):
     """Página com sistema de pedido de reembolso."""
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
-
     usuario = get_object_or_404(PFEUser, pk=request.user.pk)
-    # try:
-    #     usuario = PFEUser.objects.get(pk=request.user.pk)
-    # except PFEUser.DoesNotExist:
-    #     return HttpResponse("Usuário não encontrado.", status=401)
+
     if usuario.tipo_de_usuario == 1:
         aluno = get_object_or_404(Aluno, pk=request.user.aluno.pk)
-        # try:
-        #     aluno = Aluno.objects.get(pk=request.user.aluno.pk)
-        # except Aluno.DoesNotExist:
-        #     return HttpResponse("Aluno não encontrado.", status=401)
 
         if not configuracao.liberados_projetos:
             if aluno.anoPFE > configuracao.ano or\
@@ -589,10 +564,6 @@ def reembolso_pedir(request):
         reembolso.agencia = request.POST['agencia']
 
         reembolso.banco = get_object_or_404(Banco, codigo=request.POST['banco'])
-        # try:
-        #     reembolso.banco = Banco.objects.get(codigo=request.POST['banco'])
-        # except Banco.DoesNotExist:
-        #     return HttpResponse("Banco não encontrado.", status=401)
 
         reembolso.valor = request.POST['valor']
 
@@ -646,10 +617,6 @@ def comite(request):
 def lista_feedback(request):
     """Lista todos os feedback das Organizações Parceiras."""
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     edicoes = range(2018, configuracao.ano+1)
 
@@ -714,10 +681,6 @@ def lista_acompanhamento(request):
 def mostra_feedback(request, feedback_id):
     """Detalha os feedbacks das Organizações Parceiras."""
     feedback = get_object_or_404(Feedback, id=feedback_id)
-    # try:
-    #     feedback = Feedback.objects.get(id=feedback_id)
-    # except Feedback.DoesNotExist:
-    #     return HttpResponse("Feedback não encontrado.", status=401)
 
     context = {
         'feedback': feedback,
@@ -741,10 +704,6 @@ def validate_aviso(request):
             aviso.save()
     else:
         aviso = get_object_or_404(Aviso, id=aviso_id)
-        # try:
-        #     aviso = Aviso.objects.get(id=aviso_id)
-        # except Aviso.DoesNotExist:
-        #     return HttpResponseNotFound('<h1>Aviso não encontrado!</h1>')
         aviso.realizado = checked
         aviso.save()
 
@@ -760,10 +719,6 @@ def validate_aviso(request):
 def projetos_vs_propostas(request):
     """Mostra graficos das evoluções do PFE."""
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     edicoes = range(2018, configuracao.ano+1)
 
@@ -970,10 +925,6 @@ def analise_notas(request):
 def certificacao_falconi(request):
     """Mostra graficos das certificacões Falconi."""
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     periodo = ""
     
@@ -1386,12 +1337,6 @@ def acompanhamento_view(request):
         parceiro_id = int(request.POST['parceiro'])
         parceiro = get_object_or_404(Parceiro, id=parceiro_id)
         acompanhamento.autor = parceiro.user
-        # try:
-        #     parceiro_id = int(request.POST['parceiro'])
-        #     parceiro = Parceiro.objects.get(id=parceiro_id)
-        #     acompanhamento.autor = parceiro.user
-        # except Parceiro.DoesNotExist:
-        #     return HttpResponse("Usuário não encontrado.", status=401)
 
         acompanhamento.texto = request.POST['texto']
 
@@ -1463,9 +1408,20 @@ def conexoes_estabelecidas(request):
     return HttpResponse("Você não tem privilégios")
 
 
+
+from users.models import OpcaoTemporaria
+
 @login_required
 @permission_required('users.altera_professor', login_url='/')
 def migracao(request):
     """temporário"""
     message = "Nada Feito"
+
+    opcoes = Opcao.objects.filter(proposta__ano=2021, proposta__semestre=2)
+    for opcao in opcoes:
+        (reg, _created) = OpcaoTemporaria.objects.get_or_create(proposta=opcao.proposta, aluno=opcao.aluno, prioridade=opcao.prioridade)
+        reg.save()
+
+
+
     return HttpResponse(message)

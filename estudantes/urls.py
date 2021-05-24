@@ -38,4 +38,8 @@ urlpatterns = [
          views.selecao_propostas,
          name='selecao_propostas'),
 
+    path('ajax/opcao_temporaria/',
+         views.opcao_temporaria,
+         name='opcao_temporaria'),
+
 ]

@@ -77,7 +77,7 @@
                   {% if proposta.disponivel %}
                     <tr>
                       <th scope="row" class="align-middle" style="text-align:center; width: 1%;">
-                        <select id="selection{{proposta.pk}}" name="selection{{proposta.pk}}" 
+                        <select class="opcoes" id="selection{{proposta.pk}}" name="selection{{proposta.pk}}" 
                         {% if vencido %}disabled{% endif %}></select>
                         <script type="text/javascript">
                           var select = document.getElementById("selection{{proposta.pk}}");
@@ -87,7 +87,7 @@
                           }
 
                           // Para agora nao encontrei forma mais inteligente de fazer isso
-                          {% for opcao in opcoes %} 
+                          {% for opcao in opcoes_temporarias %} 
                             {% if opcao.proposta.pk == proposta.pk %}
                             select.selectedIndex = {{ opcao.prioridade }};
                             {% endif %}
@@ -183,6 +183,34 @@
 
       }
     }
+
+    function carrega_pagina() {  
+      sortTable();
+    }
+
+    window.onload = carrega_pagina
+
+    function atualiza_opcao_temporaria() {
+
+      var proposta_id = $(this).attr("id").slice(9);
+      var prioridade = $(this).val(); 
+
+      $.ajax({
+          type: "POST",
+          url: '{% url "opcao_temporaria" %}',
+          data: {    
+              proposta_id: proposta_id,
+              prioridade: prioridade,
+              'csrfmiddlewaretoken': '{{ csrf_token }}',
+          },
+          success: function(response){},
+          error: function(response) {}
+      });
+
+    }
+    
+    $(".opcoes").change(atualiza_opcao_temporaria);
+
   </script>
 
 {% endblock %}

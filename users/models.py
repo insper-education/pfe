@@ -594,7 +594,39 @@ class Opcao(models.Model):
         permissions = (("altera_professor", "Professor altera valores"), )
 
     def __str__(self):
-        return self.aluno.user.username + " >>> " + self.proposta.titulo
+        mensagem = ""
+        if self.aluno and self.aluno.user and self.aluno.user.username:
+            mensagem += self.aluno.user.username
+        mensagem += " >>> "
+        if self.proposta and self.proposta.titulo:
+            mensagem += self.proposta.titulo
+        return mensagem
+
+
+class OpcaoTemporaria(models.Model):
+    """Opções Temporárias de Projetos pelos Alunos com suas prioridades."""
+
+    proposta = models.ForeignKey(Proposta, null=True, blank=True,
+                                 on_delete=models.SET_NULL)
+
+    aluno = models.ForeignKey(Aluno, null=True, blank=True,
+                              on_delete=models.CASCADE)
+
+    prioridade = models.PositiveSmallIntegerField(null=True, blank=True,)
+
+    class Meta:
+        verbose_name = 'Opção Temporária'
+        verbose_name_plural = 'Opções Temporárias'
+        ordering = ['prioridade']
+
+    def __str__(self):
+        mensagem = ""
+        if self.aluno and self.aluno.user and self.aluno.user.username:
+            mensagem += self.aluno.user.username
+        mensagem += " >>> "
+        if self.proposta and self.proposta.titulo:
+            mensagem += self.proposta.titulo
+        return mensagem
 
 
 class Alocacao(models.Model):

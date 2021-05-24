@@ -147,7 +147,6 @@ urlpatterns = [
          views.validate_aviso,
          name='validate_aviso'),
 
-
     path('graficos/',
          views.graficos,
          name='graficos'),

@@ -10,6 +10,7 @@ import datetime
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 
@@ -20,7 +21,7 @@ from projetos.support import cria_area_estudante
 
 from projetos.messages import email, message_agendamento, create_message
 
-from users.models import PFEUser, Aluno, Professor, Alocacao, Opcao
+from users.models import PFEUser, Aluno, Professor, Alocacao, Opcao, OpcaoTemporaria
 
 from users.support import configuracao_estudante_vencida, adianta_semestre
 
@@ -29,16 +30,7 @@ from users.support import configuracao_estudante_vencida, adianta_semestre
 def index_estudantes(request):
     """Mostra página principal do usuário estudante."""
     usuario = get_object_or_404(PFEUser, pk=request.user.pk)
-    # try:
-    #     usuario = PFEUser.objects.get(pk=request.user.pk)
-    # except PFEUser.DoesNotExist:
-    #     return HttpResponse("Usuário não encontrado.", status=401)
-
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     context = {
         'configuracao': configuracao,
@@ -399,10 +391,10 @@ def selecao_propostas(request):
             context = {'warnings': warnings, }
             return render(request, 'projetos/projetosincompleto.html', context)
 
-        opcoes = Opcao.objects.filter(aluno=aluno)
+        opcoes_temporarias = OpcaoTemporaria.objects.filter(aluno=aluno)
 
     elif user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4:
-        opcoes = []
+        opcoes_temporarias = []
 
     else:
         return HttpResponse("Acesso irregular.", status=401)
@@ -411,9 +403,38 @@ def selecao_propostas(request):
         'liberadas_propostas': liberadas_propostas,
         'vencido': vencido,
         'propostas': propostas,
-        'opcoes': opcoes,
+        'opcoes_temporarias': opcoes_temporarias,
         'ano': ano,
         'semestre': semestre,
         'warnings': warnings,
     }
     return render(request, 'estudantes/selecao_propostas.html', context)
+
+@login_required
+@transaction.atomic
+def opcao_temporaria(request):
+    """Ajax para definir opção temporária."""
+
+    try:
+        proposta_id = int(request.POST.get('proposta_id', None))
+        prioridade = int(request.POST.get('prioridade', None))
+    except (ValueError, TypeError):
+        # erro na conversao
+        return JsonResponse({'atualizado': False}, status=500)
+
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
+    if user.tipo_de_usuario != 1:
+        return JsonResponse({'atualizado': False}, status=500)
+
+    proposta = get_object_or_404(Proposta, id=proposta_id)
+
+    (reg, _created) = OpcaoTemporaria.objects.get_or_create(proposta=proposta, aluno=user.aluno)
+
+    reg.prioridade = prioridade
+    reg.save()
+
+    data = {
+        'atualizado': True,
+    }
+
+    return JsonResponse(data)

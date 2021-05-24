@@ -9,7 +9,7 @@ import string
 from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
 from .models import PFEUser, Aluno, Professor, Parceiro, Administrador
-from .models import Opcao, Alocacao   # Mover para outra área
+from .models import Opcao, OpcaoTemporaria, Alocacao   # Mover para outra área
 
 
 class FirstLetterFilter(SimpleListFilter):
@@ -124,6 +124,14 @@ admin.site.register(Administrador)
 @admin.register(Opcao)
 class OpcaoAdmin(admin.ModelAdmin):
     """Definição de Opções do PFE."""
+    list_display = ('aluno', 'proposta', 'prioridade')
+    ordering = ('aluno', )
+    search_fields = ['aluno__user__first_name', 'aluno__user__last_name', ]
+
+
+@admin.register(OpcaoTemporaria)
+class OpcaoTemporariaAdmin(admin.ModelAdmin):
+    """Definição de Opções Temporárias do PFE."""
     list_display = ('aluno', 'proposta', 'prioridade')
     ordering = ('aluno', )
     search_fields = ['aluno__user__first_name', 'aluno__user__last_name', ]
