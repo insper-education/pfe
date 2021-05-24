@@ -436,7 +436,7 @@ def cadastrar_usuario(request):
         return render(request, 'generic.html', context=context)
 
     context = {
-        "organizacoes": Organizacao.objects.all(),
+        "organizacoes": Organizacao.objects.all().order_by("nome"),
     }
 
     # Passado o nome da organização do parceiro a ser cadastrado

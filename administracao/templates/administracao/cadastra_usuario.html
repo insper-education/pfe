@@ -99,7 +99,7 @@
           <option disabled selected value> -- selecione uma organização -- </option>
           {% for organizacao in organizacoes %}
             <option value="{{organizacao.id}}" {% if organizacao_selecionada.id == organizacao.id %}selected="selected"{% endif %} >
-              {{organizacao}}
+              {{organizacao.nome}}
             </option>  
           {% endfor %}
       </select><br>
