@@ -1,5 +1,9 @@
+#criar
+createuser pfe
+
 #starta servidor
 brew services start postgresql
+brew services start postgresql@12
 
 # Mostra mensagens de erro
 postgres -D /usr/local/var/postgres
@@ -13,10 +17,12 @@ psql -U Username -h 127.0.0.1 -d DatabaseName
 dropdb DatabaseName (linha de comando)
 createdb DatabaseName (linha de comando)
 git clone https://github.com/lpsoares/pfe
+(atualizar settings.py)
 python3 manage.py makemigrations
 python3 manage.py migrate
+(python3 manage.py migrate --fake)
 python3 manage.py dbrestore
-python3 manage.py mediarestore
+python3 manage.py mediarestore -z
 
 # Backup pelo postgres
 pg_dump -U pfe pfe -h localhost > backup.sql

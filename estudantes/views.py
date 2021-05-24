@@ -89,10 +89,6 @@ def index_estudantes(request):
 def areas_interesse(request):
     """Para estudantes definirem suas áreas de interesse."""
     user = get_object_or_404(PFEUser, pk=request.user.pk)
-    # try:
-    #     user = PFEUser.objects.get(pk=request.user.pk)
-    # except PFEUser.DoesNotExist:
-    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     areas = Area.objects.filter(ativa=True)
     context = {
@@ -102,11 +98,6 @@ def areas_interesse(request):
     # Caso seja estudante
     if user.tipo_de_usuario == 1:  # Estudante
         estudante = get_object_or_404(Aluno, pk=request.user.aluno.pk)
-        # try:
-        #     estudante = Aluno.objects.get(pk=request.user.aluno.pk)
-        # except Aluno.DoesNotExist:
-        #     return HttpResponse("Estudante não encontrado.", status=401)
-
         vencido = configuracao_estudante_vencida(estudante)
 
         if (not vencido) and request.method == 'POST':
@@ -114,7 +105,7 @@ def areas_interesse(request):
             return render(request, 'users/atualizado.html',)
 
         context['vencido'] = vencido
-        context['aluno'] = estudante
+        context['estudante'] = estudante
 
     # caso Professores ou Administrador
     elif user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4:
