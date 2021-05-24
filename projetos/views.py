@@ -1416,12 +1416,4 @@ from users.models import OpcaoTemporaria
 def migracao(request):
     """temporário"""
     message = "Nada Feito"
-
-    opcoes = Opcao.objects.filter(proposta__ano=2021, proposta__semestre=2)
-    for opcao in opcoes:
-        (reg, _created) = OpcaoTemporaria.objects.get_or_create(proposta=opcao.proposta, aluno=opcao.aluno, prioridade=opcao.prioridade)
-        reg.save()
-
-
-
     return HttpResponse(message)
