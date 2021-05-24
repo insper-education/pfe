@@ -9,6 +9,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from users.models import Opcao
 from .models import AreaDeInteresse
+from .models import Area
 
 def htmlizar(text):
     """Coloca <br> nas quebras de linha."""
@@ -52,11 +53,13 @@ def create_message(estudante, ano, semestre):
     message += '&nbsp;&nbsp;Suas áreas de interesse são:<br>\n'
     message += '<ul>'
 
-    areas = AreaDeInteresse.objects.filter(usuario=estudante.user).exclude(area=None)
-    if areas:
-        for area in areas:
-            message += "<li>"+area.area.titulo+"</li>\n"
-    else:
+    todas_areas = Area.objects.filter(ativa=True)
+    alguma = False
+    for area in todas_areas:
+        if AreaDeInteresse.objects.filter(usuario=estudante.user, area=area):
+            message += "<li>"+area.titulo+"</li>\n"
+            alguma = True
+    if not alguma:
         message += "<br>\nNENHUMA ÁREA DE INTERESSE SELECIONADA!<br>\n<br>\n"
 
     if AreaDeInteresse.objects.filter(area=None, usuario=estudante.user).exists():

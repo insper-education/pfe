@@ -81,8 +81,8 @@ def get_areas_estudantes(alunos):
     for aluno in alunos:
         usuarios.append(aluno.user)
 
-    areas = Area.objects.filter(ativa=True)
-    for area in areas:
+    todas_areas = Area.objects.filter(ativa=True)
+    for area in todas_areas:
         count = AreaDeInteresse.objects.filter(usuario__in=usuarios, area=area).count()
         areaspfe[area.titulo] = (count, area.descricao)
 

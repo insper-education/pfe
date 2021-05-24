@@ -307,12 +307,6 @@ def minhas_bancas(request):
 def selecao_propostas(request):
     """Exibe todos os projetos para os alunos aplicarem."""
     user = get_object_or_404(PFEUser, pk=request.user.pk)
-    # try:
-    #     user = PFEUser.objects.get(pk=request.user.pk)
-    # except PFEUser.DoesNotExist:
-    #     return HttpResponse("Usuário não encontrado.", status=401)
-
-    #configuracao = Configuracao.objects.get()
     configuracao = get_object_or_404(Configuracao)
     ano = configuracao.ano
     semestre = configuracao.semestre
@@ -340,10 +334,6 @@ def selecao_propostas(request):
         vencido = timezone.now() > configuracao.prazo
 
         aluno = get_object_or_404(Aluno, pk=request.user.aluno.pk)
-        # try:
-        #     aluno = Aluno.objects.get(pk=request.user.aluno.pk)
-        # except Aluno.DoesNotExist:
-        #     return HttpResponse("Estudante não encontrado.", status=401)
 
         if configuracao.semestre == 1:
             vencido |= aluno.anoPFE < configuracao.ano
@@ -373,7 +363,7 @@ def selecao_propostas(request):
                 if list(prioridade.values()).count(str(i)) > 1:
                     warnings += "Mais de uma proposta com prioridade "
                     warnings += str(i)+"\n"
-            if warnings == "":
+            if warnings == "":  # Submissão Completa
                 for proposta in propostas:
                     if prioridade[proposta.pk] != "0":
                         prio_int = int(prioridade[proposta.pk])
