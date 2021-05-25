@@ -218,14 +218,14 @@
 
       Organizações contactadas recentemente ({{total_organizacoes}}):<br>
 
-      &nbsp;<span style="background-color:lightblue">&nbsp;&nbsp;&nbsp;&nbsp;</span> Sondada (<span id="so_contactados"></span>)<br>
-      &nbsp;<span style="background-color:pink">&nbsp;&nbsp;&nbsp;&nbsp;</span> Declinou (<span id="recusados"></span>)<br>
-      &nbsp;<span style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;&nbsp;</span> Interessada (<span id="interessados"></span>)<br>
-      &nbsp;<span style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;&nbsp;</span> Confirmada (<span id="confirmados"></span>)<br>
+      &nbsp;<span style="background-color:lightblue">&nbsp;&nbsp;&nbsp;&nbsp;</span> Sondada <span id="so_contactados"></span><br>
+      &nbsp;<span style="background-color:pink">&nbsp;&nbsp;&nbsp;&nbsp;</span> Declinou <span id="recusados"></span><br>
+      &nbsp;<span style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;&nbsp;</span> Interessada <span id="interessados"></span><br>
+      &nbsp;<span style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;&nbsp;</span> Confirmada <span id="confirmados"></span><br>
 
-      &nbsp;<span style="background-color:yellow">&nbsp;&nbsp;&nbsp;&nbsp;</span> Notificada de Grupo Fechado (<span id="notificada"></span>)<br>
-      &nbsp;<span style="background-color:green">&nbsp;&nbsp;&nbsp;&nbsp;</span> Documentação Fechada para Projeto (<span id="documentada"></span>)<br>
-      &nbsp;<span style="background-color:#e289df">&nbsp;&nbsp;&nbsp;&nbsp;</span> Avisada que não fechou grupo (<span id="sem_grupo"></span>)<br>
+      &nbsp;<span style="background-color:yellow">&nbsp;&nbsp;&nbsp;&nbsp;</span> Notificada de Grupo Fechado <span id="notificada"></span><br>
+      &nbsp;<span style="background-color:green">&nbsp;&nbsp;&nbsp;&nbsp;</span> Documentação Fechada para Projeto <span id="documentada"></span><br>
+      &nbsp;<span style="background-color:#e289df">&nbsp;&nbsp;&nbsp;&nbsp;</span> Avisada que não fechou grupo <span id="sem_grupo"></span><br>
   
       <script>
 
@@ -250,7 +250,10 @@
 
           primeiro = true;
           if(total > 0) {
-            mensagem += total+" -";
+            mensagem += " = ";
+            mensagem += total;
+            mensagem += " [" + Math.round((total/{{total_organizacoes}})*100) + "%]";
+            mensagem += " (";
             if(C>0) {
               if(primeiro) primeiro = false; else mensagem += ","; 
               mensagem += " C:"+C;
@@ -279,9 +282,10 @@
               if(primeiro) primeiro = false; else mensagem += ","; 
               mensagem += " CMX:"+CMX;
             }
+            mensagem += " )";
           }
           else {
-            mensagem += "0";
+            mensagem += " = 0 [0%]";
           }
 
           return(mensagem);
