@@ -8,7 +8,11 @@
 {% block head %}
   {% load static %}
   {% load dictionary %}
+  {% load l10n %}
   {% include "tabelas_includes.html" %}
+  
+  <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/plug-ins/1.10.24/api/average().js"></script>
+
 {% endblock %}
 
 {% block content %}
@@ -40,6 +44,7 @@
               <th scope="col" class="text-center">Notas</th>
           </tr>
           </thead>
+          <tbody>
           {% for aluno in alunos_list %} 
           <tr class="item">
             <th scope="row" data-order="{{aluno.user.get_full_name}}">
@@ -118,44 +123,89 @@
                 {% endfor %}
               {% endif %}
             </td>
-            <td> <!-- Média -->
+            <td> {% comment %} <!-- Média --> {% endcomment %}
+            
               {% with media=aluno.get_medias|dict_key:ano_semestre %}
+
                 {% if media.media < 5 %}
                     <span style="color:red">
                 {% endif %}
+
                 {% if media.pesos != 1 %}
                   <a style="color:orange" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100% ({% widthratio media.pesos 1 100 %}%)">
                 {% endif %}    
+
                 {{media.media|floatformat:2}}
+                {% comment %} {{media.media|stringformat:".2f"|unlocalize}} {% endcomment %}
+              
                 {% if media.pesos != 1 %}
                   </a>
                 {% endif %}
+                
                 {% if media.media < 5 %}
                     </span>
                 {% endif %}
+
               {% endwith %}
+ 
             </td>
             <td>
               {% for aval, nota, peso, descr in aluno.get_notas|dict_key:ano_semestre %} <!-- Notas -->
                   <span style="background-color:#eef;" data-toggle="tooltip" data-html="true" animation="true" 
                    title="{{descr}}">
+                    {% comment %} {{aval}}({% widthratio peso 1 100 %}%)={{nota|stringformat:".1f"|unlocalize}} {% endcomment %}
                     {{aval}}({% widthratio peso 1 100 %}%)={{nota|floatformat:1}}
                   </span>
               {% endfor %}
             </td>
           </tr>
           {% endfor %}
+          </tbody>
         </table>
         </div>
         <br>
+
+        <b>Média no semestre = <span id="media"></span></b><br>
+        <b>Desvio padrão no semestre = <span id="desvio"></span></b><br>
+
+        <script>
+
+          var sum = 0;
+          var count = 0;
+          var array = [];
+          var all = $('#EstudantesTable > tbody > tr');
+          all.each(function() {
+              texto = $('td:eq(3)', this).text().trim().replace(",", ".");
+              nota = parseFloat(texto)
+              if(!isNaN(nota)) {
+                sum += nota
+                array.push(nota);
+                count++;
+              }
+          });
+
+          if(count > 0) {
+
+            $('#media').html((sum / count).toFixed(3));
+
+            var tamanho = array.length
+            var mean = array.reduce((a, b) => a + b) / tamanho
+            std = Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / tamanho)
+            $('#desvio').html(std.toFixed(5));
+
+          }
+          
+        </script>
 
     {% endif %}
 
     <script>
       function carrega_pagina(){
-        {% with tabela='Estudantes' %}
-          {% include "edicoes_ajax.js" %}
-        {% endwith %}
+        {% comment %} {% with media=4 %} {% endcomment %}
+          {% with tabela='Estudantes' %}
+            {% include "edicoes_ajax.js" %}
+          {% endwith %}
+        {% comment %} {% endwith %} {% endcomment %}
       };
       function recarregar_pagina(){
         carrega_pagina();
@@ -166,7 +216,8 @@
 
   <script>
     $(".filter").change(carrega_pagina);    
-    $(document).ready(carrega_pagina);
+    //$(document).ready(carrega_pagina);
+    window.onload = carrega_pagina
   </script>  
-
+  
 {% endblock %}

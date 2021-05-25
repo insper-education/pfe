@@ -4,6 +4,7 @@
     Data: 4 de Fevereiro de 2021
 {% endcomment %}
 
+
 $("#spinner").css("visibility", "visible");
 var edicao = $("#filterEdicao option:selected").attr("value");
 $.ajax({
@@ -18,6 +19,13 @@ $.ajax({
         {% include "tooltips.js" %}
         {% if tabela %}
             {% include "tabelas_scripts.js" %}
+            // {% if media %}
+            //     var media = table.column({{media}}).data().average();
+            //     var media_num = parseFloat(media)
+            //     if(!isNaN(media_num)) {
+            //         $('#media').html(media_num.toFixed(2));
+            //     }
+            // {% endif %}
         {% endif %}
         {% if graficos %}
             carrega_graficos();

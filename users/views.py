@@ -34,10 +34,6 @@ from .support import get_edicoes
 def user_detail(request, primarykey):
     """Retorna a página conforme o perfil do usuário."""
     user = get_object_or_404(PFEUser, pk=primarykey)
-    # try:
-    #     user = PFEUser.objects.get(pk=primarykey)
-    # except PFEUser.DoesNotExist:
-    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     if user.tipo_de_usuario == 1:  # aluno
         return redirect('estudante_detail', user.aluno.id)
@@ -55,10 +51,6 @@ def user_detail(request, primarykey):
 def perfil(request):
     """Retorna a página conforme o perfil do usuário."""
     user = get_object_or_404(PFEUser, pk=request.user.pk)
-    # try:
-    #     user = PFEUser.objects.get(pk=request.user.pk)
-    # except PFEUser.DoesNotExist:
-    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     context = {
         'aluno': False,
@@ -69,34 +61,15 @@ def perfil(request):
 
     if user.tipo_de_usuario == 1:  # aluno
         context['aluno'] = get_object_or_404(Aluno, pk=request.user.aluno.pk)
-        # try:
-        #     context['aluno'] = Aluno.objects.get(pk=request.user.aluno.pk)
-        # except Aluno.DoesNotExist:
-        #     return HttpResponse("Estudante não encontrado.", status=401)
 
     elif user.tipo_de_usuario == 2:  # professor
         context['professor'] = get_object_or_404(Professor, pk=request.user.professor.pk)
-        # try:
-        #     context['professor'] = Professor.objects\
-        #         .get(pk=request.user.professor.pk)
-        # except Professor.DoesNotExist:
-        #     return HttpResponse("Professor não encontrado.", status=401)
 
     elif user.tipo_de_usuario == 3:  # parceiro
         context['parceiro'] = get_object_or_404(Parceiro, pk=request.user.parceiro.pk)
-        # try:
-        #     context['parceiro'] = Parceiro.objects\
-        #         .get(pk=request.user.parceiro.pk)
-        # except Parceiro.DoesNotExist:
-        #     return HttpResponse("Parceiro não encontrado.", status=401)
 
     elif user.tipo_de_usuario == 4:  # administrador
         context['administrador'] = get_object_or_404(Administrador, pk=request.user.administrador.pk)
-        # try:
-        #     context['administrador'] = Administrador.objects\
-        #         .get(pk=request.user.administrador.pk)
-        # except Administrador.DoesNotExist:
-        #     return HttpResponse("Administrador não encontrado.", status=401)
 
     else:
         mensagem = "Seu perfil não foi encontrado!"
