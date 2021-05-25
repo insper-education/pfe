@@ -14,7 +14,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 
-from projetos.models import Projeto, Proposta, Configuracao, Area
+from projetos.models import Projeto, Proposta, Configuracao, Area, AreaDeInteresse
 from projetos.models import Encontro, Banca, Entidade
 
 from projetos.support import cria_area_estudante
@@ -123,22 +123,12 @@ def encontros_marcar(request):
     configuracao = get_object_or_404(Configuracao)
     ano = configuracao.ano
     semestre = configuracao.semestre
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    #     ano = configuracao.ano
-    #     semestre = configuracao.semestre
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     hoje = datetime.date.today()
     encontros = Encontro.objects.filter(startDate__gt=hoje)\
         .order_by('startDate')
 
     usuario = get_object_or_404(PFEUser, pk=request.user.pk)
-    # try:
-    #     usuario = PFEUser.objects.get(pk=request.user.pk)
-    # except PFEUser.DoesNotExist:
-    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     if usuario.tipo_de_usuario == 1:  # Estudante
         estudante = get_object_or_404(Aluno, pk=request.user.aluno.pk)
@@ -209,10 +199,6 @@ def encontros_marcar(request):
 def informacoes_adicionais(request):
     """Perguntas aos estudantes de trabalho/entidades/social/familia."""
     user = get_object_or_404(PFEUser, pk=request.user.pk)
-    # try:
-    #     user = PFEUser.objects.get(pk=request.user.pk)
-    # except PFEUser.DoesNotExist:
-    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     if user.tipo_de_usuario == 3:
         mensagem = "Você não está cadastrado como aluno!"
@@ -268,10 +254,6 @@ def informacoes_adicionais(request):
 def minhas_bancas(request):
     """Lista as bancas agendadas para um aluno."""
     aluno = get_object_or_404(Aluno, pk=request.user.aluno.pk)
-    # try:
-    #     aluno = Aluno.objects.get(pk=request.user.aluno.pk)
-    # except Aluno.DoesNotExist:
-    #     return HttpResponse("Aluno não encontrado.", status=401)
 
     configuracao = Configuracao.objects.get()
     if not configuracao.liberados_projetos:
@@ -399,6 +381,10 @@ def selecao_propostas(request):
     else:
         return HttpResponse("Acesso irregular.", status=401)
 
+    areas_normais = AreaDeInteresse.objects.filter(usuario=user, area__ativa=True).exists()
+    areas_outras = AreaDeInteresse.objects.filter(usuario=user, area=None).exists()
+    areas = areas_normais or areas_outras
+
     context = {
         'liberadas_propostas': liberadas_propostas,
         'vencido': vencido,
@@ -406,6 +392,8 @@ def selecao_propostas(request):
         'opcoes_temporarias': opcoes_temporarias,
         'ano': ano,
         'semestre': semestre,
+        "prazo": configuracao.prazo,
+        "areas": areas,
         'warnings': warnings,
     }
     return render(request, 'estudantes/selecao_propostas.html', context)

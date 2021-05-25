@@ -63,9 +63,10 @@ def cria_area_estudante(request, estudante):
             if AreaDeInteresse.objects.filter(area=area, usuario=estudante.user).exists():
                 AreaDeInteresse.objects.get(area=area, usuario=estudante.user).delete()
 
-    outras = request.POST.get("outras", "")
+    outras = request.POST.get("outras", "").strip()
     if outras != "":
         (outra, _created) = AreaDeInteresse.objects.get_or_create(area=None, usuario=estudante.user)
+        outra.ativa = True
         outra.outras = request.POST.get("outras", "")
         outra.save()
     else:
