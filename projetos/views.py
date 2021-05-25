@@ -906,6 +906,7 @@ def analise_notas(request):
     medias["ideal"] = len(list(filter(lambda d: d['media'] >= valor["ideal"], medias_validas)))
     medias["regular"] = len(list(filter(lambda d: valor["ideal"] > d['media'] >= valor["regular"], medias_validas)))
     medias["inferior"] = len(list(filter(lambda d: d['media'] < valor["regular"], medias_validas)))
+    medias["total"] = len(medias_validas)
 
     context = {
         'periodo': periodo,
@@ -1033,6 +1034,8 @@ def analise_objetivos(request):
     context = calcula_objetivos(alocacoes)
 
     context["edicoes"] = edicoes
+    context["total_geral"] = len(alocacoes)
+    
 
     return render(request, 'projetos/analise_objetivos.html', context)
 
