@@ -66,19 +66,19 @@ def dup_entrada(modeladmin: admin_opt.ModelAdmin, request, queryset):
 dup_entrada.short_description = "Duplicar Entrada(s)"
 
 
-def dup_event_183(modeladmin: admin_opt.ModelAdmin, request, queryset):
+def dup_event_182(modeladmin: admin_opt.ModelAdmin, request, queryset):
     """Função abaixo permite duplicar entradas no banco de dados"""
     for obj in queryset:
         from_id = obj.id
         obj.id = None
-        obj.startDate += timedelta(days=183)
-        obj.endDate += timedelta(days=183)
+        obj.startDate += timedelta(days=182)
+        obj.endDate += timedelta(days=182)
         obj.save()
         message = "duplicando de {} para {}".format(from_id, obj.id)
         modeladmin.log_addition(request=request, object=obj, message=message)
 
 
-dup_event_183.short_description = "Duplicar Entrada(s) adicionando 183 dias"
+dup_event_182.short_description = "Duplicar Entrada(s) adicionando 182 dias"
 
 
 def dup_encontros(modeladmin: admin_opt.ModelAdmin, request, queryset):
@@ -319,9 +319,9 @@ class AvisoAdmin(admin.ModelAdmin):
 class EventoAdmin(admin.ModelAdmin):
     """Todos os eventos do PFE com suas datas."""
     list_display = ('get_title', 'startDate', 'endDate', 'location', )
-    actions = [dup_entrada, dup_event_183]
+    actions = [dup_entrada, dup_event_182]
     list_filter = (EventoFilter,)
-
+    ordering = ('-startDate',)
 
 @admin.register(Feedback)
 class FeedbackAdmin(admin.ModelAdmin):
