@@ -22,7 +22,6 @@
   <script src="{% static 'js/html2canvas.min.js' %}"></script>
   <script src="{% static 'js/jspdf.min.js' %}"></script>
 
-
   <style>
     table, th, td {
       border: 0px;
@@ -200,7 +199,12 @@
                       {{evento.startDate.day}}/{{evento.startDate.month}} à {{evento.endDate.day}}/{{evento.endDate.month}} 
                     {% endif %}
                   {% else %}
+                    {% if evento.startDate == evento.endDate %} 
                     ; {{evento.endDate.day}}/{{evento.endDate.month}}
+                    {% else %}
+                    ;  {{evento.startDate.day}}/{{evento.startDate.month}} à {{evento.endDate.day}}/{{evento.endDate.month}} 
+                    {% endif %}
+
                   {% endifchanged %}
                 </span>
               </span>
