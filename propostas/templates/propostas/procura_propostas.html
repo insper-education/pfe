@@ -15,20 +15,10 @@
 
   <span class="titulo">Procura pelas Propostas de Projetos</span>
 
-  {% comment %} Seletor da edição da pesquisa {% endcomment %}
-  {% include "edicoes.html" %}
-
-  <span id="informacoes">
-    &nbsp;
-    {% comment %} Seletor do filtro de cursos para a pesquisa {% endcomment %}
-    {% include "cursos.html" %}
-  </span>
-
-  <script>
-    $("#informacoes").detach().appendTo("#lateral");
-  </script>
-  
-  <br>
+  {% comment %} Seletor da edição e curso da pesquisa {% endcomment %}
+  {% with com_cursos=True %}
+    {% include "edicoes.html" %}
+  {% endwith %}
 
   <div class="2areas2">
 
@@ -145,6 +135,7 @@
       }
 
       function numeros(animation) {
+
         const chartInstance = this.chart;
         const ctx = chartInstance.ctx;
         const dataset = this.data.datasets[0];
@@ -160,17 +151,21 @@
             var meta = chartInstance.controller.getDatasetMeta(i);
             Chart.helpers.each(meta.data.forEach(function (bar, index) {
                 data = dataset.data[index];
-                    if(data>0 && dataset._meta[0] !== null && dataset._meta[0] !== undefined) {
-                      if(dataset._meta[0].hidden != true) {
-                        ctx.fillText(data, bar._model.x-7, bar._model.y-2);
-                      }
-                    }
+                var key = Object.keys(dataset._meta)[0];
+                if(data>0 && dataset._meta[key] !== null && dataset._meta[key] !== undefined) {
+                  if(dataset._meta[key].hidden != true) {
+                    ctx.fillText(data, bar._model.x-7, bar._model.y-2);
+                  }
+                }
             }),this)
         }),this);
 
+
+        {% comment %} 
         // Label
         counter = 1
         Chart.helpers.each(meta.data.forEach((bar, index) => {
+
           const label = this.data.labels[index];
           const labelPositionX = 9;
           const labelPositionY = bar._model.y-(bar._model.height/2)
@@ -190,6 +185,7 @@
           counter = counter + 1
 
         }));
+        {% endcomment %}
 
       }
 
@@ -368,7 +364,6 @@
     {% with nao_disponivel=False %}
       {% include "propostas_nativamente.html" %}
     {% endwith %}
-
     <br>
 
     <script>
@@ -389,13 +384,11 @@
       {% endfor %}
     </script>
 
-    
     <b>Estudante Aplicando como Primeira Opção:</b><br>
     {% with nao_disponivel=False %}
       {% include "aplicando_primeira_opcao.html" %}
     {% endwith %}
     <br>
-    
 
     <b>Áreas mais frequente em relação a busca e projetos:</b><br>
     <ol>
@@ -408,7 +401,7 @@
 
   <script>
   
-    function carrega_semestre(){
+    function recarregar_pagina(){
         var anosemestre = $("#filterEdicao option:selected").attr("value");
         var curso = $("#filterCurso option:selected").attr("value");
         $.ajax({
@@ -429,8 +422,8 @@
         });
     }
 
-    $(".filter").change(carrega_semestre);    
-    $(document).ready(carrega_semestre);
+    $(".filter").change(recarregar_pagina);    
+    $(document).ready(recarregar_pagina);
 
   </script>
 
