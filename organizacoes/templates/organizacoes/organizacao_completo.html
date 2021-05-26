@@ -143,15 +143,28 @@
 
   {% if organizacao.documento_set.all %}
     <hr>
-    <h3>Contratos</h3>
-    {% for contrato in organizacao.documento_set.all %}
-        <li><a href="../..{{MEDIA_URL}}{{ contrato.documento }}"> {{ contrato }} 
-        {% if contrato.projeto %}
-          - {{contrato.projeto.get_titulo}}
+    <h3>Documentos</h3>
+    {% for documento in organizacao.documento_set.all %}
+        <li>
+        {% if documento.documento %}
+          <a href="../..{{MEDIA_URL}}{{ documento.documento }}" target="_blank" rel="noopener noreferrer">
+        {% elif documento.link %}
+          <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">
         {% endif %}
-        {% if contrato.usuario %}
-          - {{ contrato.usuario.get_full_name }} 
+        {{ documento }} 
+        {% if documento.projeto %}
+          - {{documento.projeto.get_titulo}}
         {% endif %}
+        {% if documento.usuario %}
+          - {{ documento.usuario.get_full_name }} 
+        {% endif %}
+        {% if documento.data %}
+                  : {{ documento.data }} 
+        {% endif %}
+        {% if documento.anotacao %}
+                  [Obs: {{ documento.anotacao }} ]
+        {% endif %}
+
         </a></li>
     {% endfor %}
   {% endif %}
