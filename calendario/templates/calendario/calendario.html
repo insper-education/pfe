@@ -702,27 +702,8 @@
         },
         {% comment %} disabledDays: [], // Não estou usando por enquanto. {% endcomment %}
         customDayRenderer: dias_especiais,
-        {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-          enableRangeSelection: true,
-          enableContextMenu: true,  // botão da direita sobre o dia
-          contextMenuItems: [
-            {
-              text: 'Editar',
-              click: editEvent
-            }
-            ,
-            {
-              text: 'Delete',
-              click: deleteEvent
-            }
-          ],
-          selectRange: function (e) {
-            editEvent(e);
-          },
-          {% comment %} clickDay: function(e) {
-            editEvent(e);
-          }, {% endcomment %}
-          mouseOnDay: function (e) {
+
+        mouseOnDay: function (e) {
             if (e.events.length > 0) {
               var content = '';
 
@@ -754,6 +735,25 @@
           },
           dayContextMenu: function (e) {
             $(e.element).popover('hide');
+          },
+
+
+        {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+          enableRangeSelection: true,
+          enableContextMenu: true,  // botão da direita sobre o dia
+          contextMenuItems: [
+            {
+              text: 'Editar',
+              click: editEvent
+            }
+            ,
+            {
+              text: 'Delete',
+              click: deleteEvent
+            }
+          ],
+          selectRange: function (e) {
+            editEvent(e);
           },
         {% else %}
           enableRangeSelection: false,
