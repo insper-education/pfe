@@ -646,21 +646,19 @@
 
     <script>
       function carrega_pagina() {
-        {% with tabela='Propostas' %}
-          {% include "edicoes_ajax.js" %}
-        {% endwith %}
       };
-      function recarregar_pagina(){
-        carrega_pagina();
-      }
+      window.onload = carrega_pagina
     </script>
 
   </div>
   <p>&nbsp;</p>
 
+  {% with tabela='Propostas' %}
+    {% include "edicoes_ajax.html" %}
+  {% endwith %}
+
   <script>
-    $(".filter").change(carrega_pagina);    
-    $(document).ready(carrega_pagina);
+    recarregar_pagina();
   </script>
 
 {% endblock %}

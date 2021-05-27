@@ -5,8 +5,7 @@
 {% endcomment %}
 
 
-{% comment %} Rever e usar só um {% endcomment %} 
-
+{% comment %} Usar só esse, não o .js {% endcomment %} 
 
 {% if edicoes %}
   <script>
@@ -36,6 +35,13 @@
           },
           success: function(response){
               $(".atualizar").replaceWith($(".atualizar",response));
+              {% include "tooltips.js" %}
+              {% if tabela %}
+                {% include "tabelas_scripts.js" %}
+              {% endif %}
+              {% if graficos %}
+                carrega_graficos();
+              {% endif %}
               carrega_pagina();
               $("#spinner").css("visibility", "hidden");
           },

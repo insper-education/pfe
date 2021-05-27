@@ -5,6 +5,9 @@
 {% endcomment %}
 
 
+
+{% comment %} OBSOLETO {% endcomment %}
+{% comment %}
 $("#spinner").css("visibility", "visible");
 var edicao = $("#filterEdicao option:selected").attr("value");
 $.ajax({
@@ -36,3 +39,4 @@ $.ajax({
         console.log('error')
     }
 });
+{% endcomment %}

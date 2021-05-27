@@ -127,6 +127,17 @@ def estudantes_lista(request):
             totais["mecânica"] = 0
             totais["mecatrônica"] = 0
 
+            if 'curso' in request.POST:
+
+                curso = request.POST['curso']
+
+                if curso == 'C':
+                    alunos_todos = alunos_todos.filter(curso="C")
+                elif curso == 'M':
+                    alunos_todos = alunos_todos.filter(curso="M")
+                elif curso == 'X':
+                    alunos_todos = alunos_todos.filter(curso="X")
+
             if anosemestre not in ("todos", "trancou"):
                 ano = int(anosemestre.split(".")[0])
                 semestre = int(anosemestre.split(".")[1])

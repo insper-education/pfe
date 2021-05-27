@@ -152,21 +152,19 @@
     </script>
 
     <script>
-      function carrega_pagina(){
-        {% with graficos=True %}
-          {% include "edicoes_ajax.js" %}
-        {% endwith %}
+      function carrega_pagina() {
       };
-      function recarregar_pagina(){
-        carrega_pagina();
-      }
+      window.onload = carrega_pagina
     </script>
 
   </div>
 
+  {% with graficos=True %}
+    {% include "edicoes_ajax.html" %}
+  {% endwith %}
+
   <script>
-    $(".filter").change(carrega_pagina);    
-    $(document).ready(carrega_pagina);
-  </script>  
+    recarregar_pagina();
+  </script>
 
 {% endblock %}
