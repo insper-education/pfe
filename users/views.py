@@ -971,9 +971,20 @@ def parceiro_detail(request, primarykey):
 @permission_required("users.altera_professor", login_url='/')
 def contas_senhas(request, anosemestre):
     """Envia conta e senha para todos os estudantes que estão no semestre."""
-    configuracao = get_object_or_404(Configuracao)
-    # configuracao = Configuracao.objects.get()
+    
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
 
+    if user:
+        if user.tipo_de_usuario != 4:  # não é admin
+            mensagem = "Você não tem privilégios de administrador!"
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, 'generic.html', context=context)
+    
+    configuracao = get_object_or_404(Configuracao)
+    
     ano = int(anosemestre.split(".")[0])
     semestre = int(anosemestre.split(".")[1])
 

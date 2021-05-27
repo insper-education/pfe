@@ -31,8 +31,11 @@
     </ul>
 
     <hr>
-    <a href="{% url 'gerar_certificados' %}"><h5>Gerar Certificados</h5></a>
-    <a href="{% url 'certificados_submetidos' %}"><h5>Listas de Certificados</h5></a>
+    <h5>Certificados</h5>
+    <ul>
+        <a href="{% url 'certificados_submetidos' %}"><li>Listar Certificados</li></a>
+        <a href="{% url 'gerar_certificados' %}"><li>Gerar Novos</li></a>
+    </ul>
 
     <hr>
     <a href="{% url 'avisos_listar' %}"><h5>Agenda da Coordenação do PFE</h5></a>

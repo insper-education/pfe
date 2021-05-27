@@ -24,7 +24,7 @@ from propostas.support import envia_proposta, preenche_proposta
 
 
 @login_required
-@permission_required("users.altera_valores", login_url='/')
+@permission_required("users.altera_professor", login_url='/')
 def index_organizacoes(request):
     """Mostra página principal do parceiro de uma organização."""
     return render(request, 'organizacoes/index_organizacoes.html')
@@ -86,7 +86,7 @@ def anotacao(request, organizacao_id, anotacao_id=None):  # acertar isso para pk
 
 
 @login_required
-@permission_required('users.altera_parceiro', login_url='/')
+@permission_required('users.altera_professor', login_url='/')
 def parceiro_propostas(request):
     """Lista todas as propostas de projetos."""
     user = PFEUser.objects.get(pk=request.user.pk)
