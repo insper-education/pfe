@@ -335,6 +335,10 @@
           <div class="modal-content">
               <div class="modal-header">
                   <h5 class="modal-title">Evento</h5>
+                  {% if user.tipo_de_usuario != 4 %}
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span id="permissao" style="color:red; text-decoration: underline solid red">Restrito a Administrador</span>
+                  {% endif %}
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -435,7 +439,12 @@
       $('#event-modal input[name="event-observation"]').val(evento ? evento.observation : '');
       $('#event-modal input[name="event-start-date"]').datepicker('update', evento ? evento.startDate : '');
       $('#event-modal input[name="event-end-date"]').datepicker('update', evento ? evento.endDate : '');
-      $('#event-modal').modal();      
+
+      {% if user.tipo_de_usuario != 4 %}
+        $('#save-event').prop("disabled",true);
+      {% endif %}
+
+      $('#event-modal').modal();
     }
 
     
