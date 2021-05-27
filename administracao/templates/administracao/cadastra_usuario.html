@@ -84,10 +84,10 @@
       <input type="radio" name="dedicacao" id="tp" value="tp" {% if usuario.professor.dedicacao == "TP" %}checked{% endif %} required> <label for="tp"> TP</label>
       <br>
 
-      <label for="areas">Áreas de interesse: </label> <input type="text" size="75" maxlength="500" id="areas" name="areas" value="{{usuario.professor.areas}}"><br>
+      <label for="areas">Áreas de interesse: </label> <input type="text" size="75" maxlength="500" id="areas" name="areas"{% if usuario.professor.areas %} value="{{usuario.professor.areas}}" {% endif %} ><br>
  
-      <label for="website">website:</label><input type="text" size="73" maxlength="250" id="website" name="website" value="{{usuario.professor.website}}" placeholder="https://www.insper.edu.br/"><br>
-      <label for="lattes">lattes:</label><input type="text" size="73" maxlength="73" id="lattes" name="lattes" value="{{usuario.professor.lattes}}" placeholder="https://lattes.cnpq.br/"><br>
+      <label for="website">website:</label><input type="text" size="73" maxlength="250" id="website" name="website" {% if usuario.professor.website %} value="{{usuario.professor.website}}" {% endif %} placeholder="https://www.insper.edu.br/"><br>
+      <label for="lattes">lattes:</label><input type="text" size="73" maxlength="73" id="lattes" name="lattes" {% if usuario.professor.lattes %} value="{{usuario.professor.lattes}}" {% endif %} placeholder="https://lattes.cnpq.br/"><br>
 
     </div>
 
