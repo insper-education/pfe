@@ -166,69 +166,77 @@ def atualiza_certificado(usuario, projeto, tipo_cert, arquivo, banca=None):
 @login_required
 @transaction.atomic
 @permission_required('users.altera_professor', login_url='/')
+def selecao_geracao_certificados(request):
+    """Recupera um certificado pelos dados."""
+    return render(request, 'documentos/selecao_geracao_certificados.html')
+
+
+@login_required
+@transaction.atomic
+@permission_required('users.altera_professor', login_url='/')
 def gerar_certificados(request):
     """Recupera um certificado pelos dados."""
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     certificados = []
+    
+    if 'orientador' in request.POST:
+        # (101, "Orientação de Projeto"),
+        orientadores = recupera_orientadores(configuracao.ano,
+                                            configuracao.semestre)
+        arquivo = "documentos/certificado_orientador.html"
+        for orientador in orientadores:
+            for projeto in orientador[1]:
+                certificado = atualiza_certificado(orientador[0].user,
+                                                projeto,
+                                                101,
+                                                arquivo)
+                if certificado:
+                    certificados.append(certificado)
 
-    # (101, "Orientação de Projeto"),
-    orientadores = recupera_orientadores(configuracao.ano,
-                                         configuracao.semestre)
-    arquivo = "documentos/certificado_orientador.html"
-    for orientador in orientadores:
-        for projeto in orientador[1]:
-            certificado = atualiza_certificado(orientador[0].user,
-                                               projeto,
-                                               101,
-                                               arquivo)
-            if certificado:
-                certificados.append(certificado)
+    if 'coorientador' in request.POST:
+        # (102, "Coorientação de Projeto"),
+        coorientadores = recupera_coorientadores(configuracao.ano,
+                                                configuracao.semestre)
+        arquivo = "documentos/certificado_coorientador.html"
+        for coorientador in coorientadores:
+            for projeto in coorientador[1]:
+                certificado = atualiza_certificado(coorientador[0].user,
+                                                projeto,
+                                                102,
+                                                arquivo)
+                if certificado:
+                    certificados.append(certificado)
 
-    # (102, "Coorientação de Projeto"),
-    coorientadores = recupera_coorientadores(configuracao.ano,
-                                             configuracao.semestre)
-    arquivo = "documentos/certificado_coorientador.html"
-    for coorientador in coorientadores:
-        for projeto in coorientador[1]:
-            certificado = atualiza_certificado(coorientador[0].user,
-                                               projeto,
-                                               102,
-                                               arquivo)
-            if certificado:
-                certificados.append(certificado)
+    if 'banca' in request.POST:
+        # (103, "Membro de Banca Intermediária"),
+        membro_banca = recupera_bancas_intermediarias(configuracao.ano,
+                                                    configuracao.semestre)
+        arquivo = "documentos/certificado_banca_intermediaria.html"
+        for membro in membro_banca:
+            for banca in membro[1]:
+                certificado = atualiza_certificado(membro[0].user,
+                                                banca.projeto,
+                                                103,
+                                                arquivo,
+                                                banca=banca)
+                if certificado:
+                    certificados.append(certificado)
 
-    # (103, "Membro de Banca Intermediária"),
-    membro_banca = recupera_bancas_intermediarias(configuracao.ano,
-                                                  configuracao.semestre)
-    arquivo = "documentos/certificado_banca_intermediaria.html"
-    for membro in membro_banca:
-        for banca in membro[1]:
-            certificado = atualiza_certificado(membro[0].user,
-                                               banca.projeto,
-                                               103,
-                                               arquivo,
-                                               banca=banca)
-            if certificado:
-                certificados.append(certificado)
-
-    # (104, "Membro de Banca Final"),
-    membro_banca = recupera_bancas_finais(configuracao.ano,
-                                          configuracao.semestre)
-    arquivo = "documentos/certificado_banca_final.html"
-    for membro in membro_banca:
-        for banca in membro[1]:
-            certificado = atualiza_certificado(membro[0].user,
-                                               banca.projeto,
-                                               104,
-                                               arquivo,
-                                               banca=banca)
-            if certificado:
-                certificados.append(certificado)
+    if 'banca' in request.POST:
+        # (104, "Membro de Banca Final"),
+        membro_banca = recupera_bancas_finais(configuracao.ano,
+                                            configuracao.semestre)
+        arquivo = "documentos/certificado_banca_final.html"
+        for membro in membro_banca:
+            for banca in membro[1]:
+                certificado = atualiza_certificado(membro[0].user,
+                                                banca.projeto,
+                                                104,
+                                                arquivo,
+                                                banca=banca)
+                if certificado:
+                    certificados.append(certificado)
 
     context = {
         'certificados': certificados,

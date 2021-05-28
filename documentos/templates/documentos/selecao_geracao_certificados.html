@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 9 de Janeiro de 2021
+{% endcomment %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">Seleção de Cerfificados</span>
+  <br>
+  Selecione os tipos de certificados a serem gerados:
+  <br>
+
+  <form method="post" action="{% url 'gerar_certificados' %}" enctype="multipart/form-data"> {% csrf_token %}
+    {% comment %} <label><input id="estudantes" name="estudantes" type="checkbox" checked /> Estudantes</label>&nbsp;&nbsp;&nbsp; {% endcomment %}
+    <label><input id="orientador" name="orientador" type="checkbox" checked /> Orientadores</label>&nbsp;&nbsp;&nbsp;
+    <label><input id="coorientador" name="coorientador" type="checkbox" checked /> Coorientadores</label>&nbsp;&nbsp;&nbsp;
+    <label><input id="banca" name="banca" type="checkbox" checked /> Bancas</label>&nbsp;&nbsp;&nbsp;
+    <br><br>
+
+    <input type="submit" value="Gerar">
+
+  </form>
+
+  <p>&nbsp;</p>
+
+{% endblock %}

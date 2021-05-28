@@ -33,8 +33,8 @@
   <span class="titulo">Cerfificados Gerados</span>
 
   &nbsp;&nbsp;&nbsp;
-  <b>Informações: </b>&nbsp;
-  <label><input id="estudantes" onchange="($(this).prop('checked') ? $('.estudantes').show() : $('.estudantes').hide())" type="checkbox" checked /> Estudantes</label>&nbsp;&nbsp;&nbsp;
+  <b>Tipos: </b>&nbsp;
+  {% comment %} <label><input id="estudantes" onchange="($(this).prop('checked') ? $('.estudantes').show() : $('.estudantes').hide())" type="checkbox" checked /> Estudantes</label>&nbsp;&nbsp;&nbsp; {% endcomment %}
   <label><input id="orientador" onchange="($(this).prop('checked') ? $('.orientador').show() : $('.orientador').hide())" type="checkbox" checked /> Orientadores</label>&nbsp;&nbsp;&nbsp;
   <label><input id="coorientador" onchange="($(this).prop('checked') ? $('.coorientador').show() : $('.coorientador').hide())" type="checkbox" checked /> Coorientadores</label>&nbsp;&nbsp;&nbsp;
   <label><input id="banca" onchange="($(this).prop('checked') ? $('.banca').show() : $('.banca').hide())" type="checkbox" checked /> Bancas</label>&nbsp;&nbsp;&nbsp;
@@ -105,7 +105,7 @@
     </table>
     <p>&nbsp;</p>
   {% else %}
-    <p>Não existem certificados.</p>
+    <p>Não foram gerados certificados.</p>
   {% endif %}
   <p>&nbsp;</p>
 
