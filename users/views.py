@@ -382,7 +382,6 @@ def estudantes_inscritos(request):
 @permission_required('users.altera_professor', login_url='/')
 def edita_notas(request, primarykey):
     """Edita as notas do estudante."""
-
     alocacao = get_object_or_404(Alocacao, pk=primarykey)
 
     objetivos = ObjetivosDeAprendizagem.objects.all().order_by("id")
@@ -480,6 +479,17 @@ def edita_notas(request, primarykey):
     falha = Reprovacao.objects.filter(alocacao=alocacao)
 
     if request.method == 'POST':
+
+        user = get_object_or_404(PFEUser, pk=request.user.pk)
+
+        if user:
+            if user.tipo_de_usuario != 4:  # não é admin
+                mensagem = "Você não tem autorização de modificar notas!"
+                context = {
+                    "area_principal": True,
+                    "mensagem": mensagem,
+                }
+                return render(request, 'generic.html', context=context)
 
         # RPL
         nota = request.POST.get('rpl_nota', "")

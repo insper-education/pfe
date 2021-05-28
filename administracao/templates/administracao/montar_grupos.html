@@ -116,8 +116,8 @@
 
   <hr>
   <form action="" method="post"> {% csrf_token %}  
-    <input type="submit" name="limpar" value="Resetar Pré Alocações">
-    <input type="submit" name="fechar" value="Fechar Projetos">
+    <input type="submit" name="limpar" value="Resetar Pré Alocações" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+    <input type="submit" name="fechar" value="Fechar Projetos" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
   </form>
 
   <p>&nbsp;</p>

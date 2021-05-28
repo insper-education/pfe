@@ -121,15 +121,17 @@
           <span>Avaliação Única</span>
           <span>
             peso: <input class="peso" id="ppf_peso" name="ppf_peso" type="number"  min="0" max="100" step="0.001" 
-            value="{% if ppf_peso %}{{ppf_peso}}{% else %}1.50{% endif %}" />
+            value="{% if ppf_peso %}{{ppf_peso}}{% else %}1.50{% endif %}"
+            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
 
             &nbsp;&nbsp;
             nota: <input class="nota" id="ppf_nota" name="ppf_nota" type="number"  min="0" max="10" step="0.01" 
-            value="{% if ppf_nota != None %}{{ppf_nota}}{% endif %}" />
+            value="{% if ppf_nota != None %}{{ppf_nota}}{% endif %}"
+            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
         </li>
       </ul>
       <span style="margin-left: 10px;">Observações:</span><br>
-      <textarea id="ppf_obs" name="ppf_obs" rows="4" cols="72">{% if ppf_obs %}{{ppf_obs.observacoes}}{% endif %}</textarea>
+      <textarea id="ppf_obs" name="ppf_obs" rows="4" cols="72" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>{% if ppf_obs %}{{ppf_obs.observacoes}}{% endif %}</textarea>
       <br>
 
 
@@ -142,16 +144,19 @@
           <span>
             {% with peso=api_peso|dict_key:objetivo %}
               peso: <input class="peso" id="api_peso_{{objetivo|truncatechars:7}}" name="api_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
-              value="{% if peso %}{{peso}}{% else %}3.75{% endif %}" />
+              value="{% if peso %}{{peso}}{% else %}3.75{% endif %}"
+              {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
             {% endwith %}
 
             &nbsp;&nbsp;
             nota: <input class="nota" id="api_nota_{{objetivo|truncatechars:7}}" name="api_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
-            value="{% if api_nota|dict_key:objetivo != None %}{{api_nota|dict_key:objetivo}}{% endif %}" />
+            value="{% if api_nota|dict_key:objetivo != None %}{{api_nota|dict_key:objetivo}}{% endif %}"
+            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
 
             &nbsp;&nbsp;
             conceito:
-            <select class="conc" id="api_conc_{{objetivo|truncatechars:7}}" name="api_conc_{{objetivo}}" >
+            <select class="conc" id="api_conc_{{objetivo|truncatechars:7}}" name="api_conc_{{objetivo}}"
+            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
                 <option value="A+">A+</option>
                 <option value="A">A</option>
                 <option value="B+">B+</option>
@@ -184,7 +189,7 @@
       {% endfor %}
       </ul>
       <span style="margin-left: 10px;">Observações:</span><br>
-      <textarea id="api_obs" name="api_obs" rows="4" cols="72">{% if api_obs %}{{api_obs.observacoes}}{% endif %}</textarea>
+      <textarea id="api_obs" name="api_obs" rows="4" cols="72" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>{% if api_obs %}{{api_obs.observacoes}}{% endif %}</textarea>
       <br>
 
 
@@ -197,15 +202,18 @@
           <span>
             {% with peso=apg_peso|dict_key:objetivo %}
               peso: <input class="peso" id="apg_peso_{{objetivo|truncatechars:7}}" name="apg_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
-              value="{% if peso %}{{peso}}{% else %}1.2{% endif %}" />
+              value="{% if peso %}{{peso}}{% else %}1.2{% endif %}"
+              {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
             {% endwith %}
             &nbsp;&nbsp;
             nota: <input class="nota" id="apg_nota_{{objetivo|truncatechars:7}}" name="apg_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
-            value="{% if apg_nota|dict_key:objetivo != None %}{{apg_nota|dict_key:objetivo}}{% endif %}" />
+            value="{% if apg_nota|dict_key:objetivo != None %}{{apg_nota|dict_key:objetivo}}{% endif %}"
+            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
           
           &nbsp;&nbsp;
             conceito:
-            <select class="conc" id="apg_conc_{{objetivo|truncatechars:7}}" name="apg_conc_{{objetivo}}" >
+            <select class="conc" id="apg_conc_{{objetivo|truncatechars:7}}" name="apg_conc_{{objetivo}}"
+            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
                 <option value="A+">A+</option>
                 <option value="A">A</option>
                 <option value="B+">B+</option>
@@ -238,7 +246,7 @@
       {% endfor %}
       </ul>
       <span style="margin-left: 10px;">Observações:</span><br>
-      <textarea id="apg_obs" name="apg_obs" rows="4" cols="72">{% if apg_obs %}{{apg_obs.observacoes}}{% endif %}</textarea>
+      <textarea id="apg_obs" name="apg_obs" rows="4" cols="72" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>{% if apg_obs %}{{apg_obs.observacoes}}{% endif %}</textarea>
       <br>
 
 
@@ -251,15 +259,18 @@
           <span>
             {% with peso=afi_peso|dict_key:objetivo %}
               peso: <input class="peso" id="afi_peso_{{objetivo|truncatechars:7}}" name="afi_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
-              value="{% if peso %}{{peso}}{% else %}8.75{% endif %}" />
+              value="{% if peso %}{{peso}}{% else %}8.75{% endif %}"
+              {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
             {% endwith %}
             &nbsp;&nbsp;
             nota: <input class="nota" id="afi_nota_{{objetivo|truncatechars:7}}" name="afi_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
-            value="{% if afi_nota|dict_key:objetivo != None %}{{afi_nota|dict_key:objetivo}}{% endif %}" />
+            value="{% if afi_nota|dict_key:objetivo != None %}{{afi_nota|dict_key:objetivo}}{% endif %}"
+            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
           
           &nbsp;&nbsp;
             conceito:
-            <select class="conc" id="afi_conc_{{objetivo|truncatechars:7}}" name="afi_conc_{{objetivo}}" >
+            <select class="conc" id="afi_conc_{{objetivo|truncatechars:7}}" name="afi_conc_{{objetivo}}"
+            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
                 <option value="A+">A+</option>
                 <option value="A">A</option>
                 <option value="B+">B+</option>
@@ -292,7 +303,7 @@
       {% endfor %}
       </ul>
       <span style="margin-left: 10px;">Observações:</span><br>
-      <textarea id="afi_obs" name="afi_obs" rows="4" cols="72">{% if afi_obs %}{{afi_obs.observacoes}}{% endif %}</textarea>
+      <textarea id="afi_obs" name="afi_obs" rows="4" cols="72" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>{% if afi_obs %}{{afi_obs.observacoes}}{% endif %}</textarea>
       <br>
 
       <b>Avaliação Final de Grupo: <span id="afg_media"></span></b>
@@ -304,15 +315,18 @@
           <span>
             {% with peso=afg_peso|dict_key:objetivo %}
               peso: <input class="peso" id="afg_peso_{{objetivo|truncatechars:7}}" name="afg_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
-              value="{% if peso %}{{peso}}{% else %}3.5{% endif %}" />
+              value="{% if peso %}{{peso}}{% else %}3.5{% endif %}"
+              {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
             {% endwith %}
             &nbsp;&nbsp;
             nota: <input class="nota" id="afg_nota_{{objetivo|truncatechars:7}}" name="afg_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
-            value="{% if afg_nota|dict_key:objetivo != None %}{{afg_nota|dict_key:objetivo}}{% endif %}" />
+            value="{% if afg_nota|dict_key:objetivo != None %}{{afg_nota|dict_key:objetivo}}{% endif %}"
+            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
           
             &nbsp;&nbsp;
             conceito:
-            <select class="conc" id="afg_conc_{{objetivo|truncatechars:7}}" name="afg_conc_{{objetivo}}" >
+            <select class="conc" id="afg_conc_{{objetivo|truncatechars:7}}" name="afg_conc_{{objetivo}}"
+            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
                 <option value="A+">A+</option>
                 <option value="A">A</option>
                 <option value="B+">B+</option>
@@ -345,7 +359,7 @@
       {% endfor %}
       </ul>
       <span style="margin-left: 10px;">Observações:</span><br>
-      <textarea id="afg_obs" name="afg_obs" rows="4" cols="72">{% if afg_obs %}{{afg_obs.observacoes}}{% endif %}</textarea>
+      <textarea id="afg_obs" name="afg_obs" rows="4" cols="72" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>{% if afg_obs %}{{afg_obs.observacoes}}{% endif %}</textarea>
       <br>
 
 
@@ -358,15 +372,17 @@
           <span>Avaliação Única</span>
           <span>
             peso: <input class="peso" id="rpl_peso" name="rpl_peso" type="number"  min="0" max="100" step="0.01" 
-            value="{% if rpl_peso %}{{rpl_peso}}{% else %}7.0{% endif %}" />
+            value="{% if rpl_peso %}{{rpl_peso}}{% else %}7.0{% endif %}"
+            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
 
             &nbsp;&nbsp;
             nota: <input class="nota" id="rpl_nota" name="rpl_nota" type="number"  min="0" max="10" step="0.01" 
-            value="{% if rpl_nota != None %}{{rpl_nota}}{% endif %}" />
+            value="{% if rpl_nota != None %}{{rpl_nota}}{% endif %}"
+            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
         </li>
       </ul>
       <span style="margin-left: 10px;">Observações:</span><br>
-      <textarea id="rpl_obs" name="rpl_obs" rows="4" cols="72">{% if rpl_obs %}{{rpl_obs.observacoes}}{% endif %}</textarea>
+      <textarea id="rpl_obs" name="rpl_obs" rows="4" cols="72" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>{% if rpl_obs %}{{rpl_obs.observacoes}}{% endif %}</textarea>
       <br>
     {% endif %}
 
@@ -380,16 +396,19 @@
         <span>
           {% with peso=rii_peso|dict_key:objetivo %}
             peso: <input class="peso" id="rii_peso_{{objetivo|truncatechars:7}}" name="rii_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
-            value="{% if peso %}{{peso}}{% else %}5.0{% endif %}" />
+            value="{% if peso %}{{peso}}{% else %}5.0{% endif %}"
+            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
           {% endwith %}
 
           &nbsp;&nbsp;
           nota: <input class="nota" id="rii_nota_{{objetivo|truncatechars:7}}" name="rii_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
-          value="{% if rii_nota|dict_key:objetivo != None %}{{rii_nota|dict_key:objetivo}}{% endif %}" />
+          value="{% if rii_nota|dict_key:objetivo != None %}{{rii_nota|dict_key:objetivo}}{% endif %}"
+          {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
 
           &nbsp;&nbsp;
           conceito:
-          <select class="conc" id="rii_conc_{{objetivo|truncatechars:7}}" name="rii_conc_{{objetivo}}" >
+          <select class="conc" id="rii_conc_{{objetivo|truncatechars:7}}" name="rii_conc_{{objetivo}}"
+          {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
               <option value="A+">A+</option>
               <option value="A">A</option>
               <option value="B+">B+</option>
@@ -422,7 +441,7 @@
     {% endfor %}
     </ul>
     <span style="margin-left: 10px;">Observações:</span><br>
-    <textarea id="rii_obs" name="rii_obs" rows="4" cols="72">{% if rii_obs %}{{rii_obs.observacoes}}{% endif %}</textarea>
+    <textarea id="rii_obs" name="rii_obs" rows="4" cols="72" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>{% if rii_obs %}{{rii_obs.observacoes}}{% endif %}</textarea>
     <br>
 
 
@@ -435,15 +454,18 @@
         <span>
           {% with peso=rig_peso|dict_key:objetivo %}
             peso: <input class="peso" id="rig_peso_{{objetivo|truncatechars:7}}" name="rig_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
-            value="{% if peso %}{{peso}}{% else %}1.6{% endif %}" />
+            value="{% if peso %}{{peso}}{% else %}1.6{% endif %}"
+            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
           {% endwith %}
           &nbsp;&nbsp;
           nota: <input class="nota" id="rig_nota_{{objetivo|truncatechars:7}}" name="rig_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
-          value="{% if rig_nota|dict_key:objetivo != None %}{{rig_nota|dict_key:objetivo}}{% endif %}" />
+          value="{% if rig_nota|dict_key:objetivo != None %}{{rig_nota|dict_key:objetivo}}{% endif %}"
+          {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
          
          &nbsp;&nbsp;
           conceito:
-          <select class="conc" id="rig_conc_{{objetivo|truncatechars:7}}" name="rig_conc_{{objetivo}}" >
+          <select class="conc" id="rig_conc_{{objetivo|truncatechars:7}}" name="rig_conc_{{objetivo}}"
+          {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
               <option value="A+">A+</option>
               <option value="A">A</option>
               <option value="B+">B+</option>
@@ -476,7 +498,7 @@
     {% endfor %}
     </ul>
     <span style="margin-left: 10px;">Observações:</span><br>
-    <textarea id="rig_obs" name="rig_obs" rows="4" cols="72">{% if rig_obs %}{{rig_obs.observacoes}}{% endif %}</textarea>
+    <textarea id="rig_obs" name="rig_obs" rows="4" cols="72" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>{% if rig_obs %}{{rig_obs.observacoes}}{% endif %}</textarea>
     <br>
 
 
@@ -489,15 +511,18 @@
         <span>
           {% with peso=rfi_peso|dict_key:objetivo %}
             peso: <input class="peso" id="rfi_peso_{{objetivo|truncatechars:7}}" name="rfi_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
-            value="{% if peso %}{{peso}}{% else %}7.5{% endif %}" />
+            value="{% if peso %}{{peso}}{% else %}7.5{% endif %}"
+            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
           {% endwith %}
           &nbsp;&nbsp;
           nota: <input class="nota" id="rfi_nota_{{objetivo|truncatechars:7}}" name="rfi_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
-          value="{% if rfi_nota|dict_key:objetivo != None %}{{rfi_nota|dict_key:objetivo}}{% endif %}" />
+          value="{% if rfi_nota|dict_key:objetivo != None %}{{rfi_nota|dict_key:objetivo}}{% endif %}"
+          {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
         
          &nbsp;&nbsp;
           conceito:
-          <select class="conc" id="rfi_conc_{{objetivo|truncatechars:7}}" name="rfi_conc_{{objetivo}}" >
+          <select class="conc" id="rfi_conc_{{objetivo|truncatechars:7}}" name="rfi_conc_{{objetivo}}"
+          {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
               <option value="A+">A+</option>
               <option value="A">A</option>
               <option value="B+">B+</option>
@@ -530,7 +555,7 @@
     {% endfor %}
     </ul>
     <span style="margin-left: 10px;">Observações:</span><br>
-    <textarea id="rfi_obs" name="rfi_obs" rows="4" cols="72">{% if rfi_obs %}{{rfi_obs.observacoes}}{% endif %}</textarea>
+    <textarea id="rfi_obs" name="rfi_obs" rows="4" cols="72" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>{% if rfi_obs %}{{rfi_obs.observacoes}}{% endif %}</textarea>
     <br>
 
     <b>Relatório Final de Grupo: <span id="rfg_media"></span></b>
@@ -542,15 +567,18 @@
         <span>
           {% with peso=rfg_peso|dict_key:objetivo %}
             peso: <input class="peso" id="rfg_peso_{{objetivo|truncatechars:7}}" name="rfg_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
-            value="{% if peso %}{{peso}}{% else %}2.4{% endif %}" />
+            value="{% if peso %}{{peso}}{% else %}2.4{% endif %}"
+            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
           {% endwith %}
           &nbsp;&nbsp;
           nota: <input class="nota" id="rfg_nota_{{objetivo|truncatechars:7}}" name="rfg_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
-          value="{% if rfg_nota|dict_key:objetivo != None %}{{rfg_nota|dict_key:objetivo}}{% endif %}" />
+          value="{% if rfg_nota|dict_key:objetivo != None %}{{rfg_nota|dict_key:objetivo}}{% endif %}"
+          {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
          
           &nbsp;&nbsp;
           conceito:
-          <select class="conc" id="rfg_conc_{{objetivo|truncatechars:7}}" name="rfg_conc_{{objetivo}}" >
+          <select class="conc" id="rfg_conc_{{objetivo|truncatechars:7}}" name="rfg_conc_{{objetivo}}"
+          {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
               <option value="A+">A+</option>
               <option value="A">A</option>
               <option value="B+">B+</option>
@@ -583,7 +611,7 @@
     {% endfor %}
     </ul>
     <span style="margin-left: 10px;">Observações:</span><br>
-    <textarea id="rfg_obs" name="rfg_obs" rows="4" cols="72">{% if rfg_obs %}{{rfg_obs.observacoes}}{% endif %}</textarea>
+    <textarea id="rfg_obs" name="rfg_obs" rows="4" cols="72" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>{% if rfg_obs %}{{rfg_obs.observacoes}}{% endif %}</textarea>
     <br>
 
     <br>
@@ -593,14 +621,15 @@
         <span>Devido a falha em um OA</span>
         <span>
           Nota: <input class="nota" id="reprovacao" name="reprovacao" type="number"  min="0" max="10" step="0.001" 
-          value="{% if reprovacao != None %}{{reprovacao}}{% endif %}" />
+          value="{% if reprovacao != None %}{{reprovacao}}{% endif %}"
+          {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
         </span>
       </li>
     </ul>
     <br>
 
     <br><br>
-    <input type="submit" value="Atualiza Notas">
+    <input type="submit" value="Atualiza Notas" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
     
   </form>
 

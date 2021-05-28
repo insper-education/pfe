@@ -139,13 +139,13 @@
     <label for="recursos">Recursos a serem disponibilizados aos alunos<br>
     <small>algo será fornecido para os alunos? ex: kits de desenvolvimento, matérias primas, acesso a infra de cloud. (opcional)</small>
     </label><br>
-    <textarea id="recursos" name="recursos" rows="5" cols="80" maxlength="1000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{recursos}}</textarea>
+    <textarea id="recursos" name="recursos" rows="5" cols="80" maxlength="1000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if recursos and recursos != None and recursos != "None" %}{{recursos}}{% endif %}</textarea>
     <br><br>
 
     <label for="observacoes">Outras observações que considere relevante para os alunos<br>
     <small>caso desejar apresentar alguma informação adicional aos alunos (opcional)</small>
     </label><br>
-    <textarea id="observacoes" name="observacoes" rows="5" cols="80" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{observacoes}}</textarea>
+    <textarea id="observacoes" name="observacoes" rows="5" cols="80" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if observacoes and observacoes != None and observacoes != "None" %}{{observacoes}}{% endif %}</textarea>
     <br><br>
 
     <label for="interesses">O principal interesse da empresa com o projeto é:<br>
@@ -155,7 +155,9 @@
       <label for="{{interesse.0}}">
         &nbsp;<input type="radio" name="interesse" id="{{interesse.0}}" value="{{interesse.0}}"
         {% if interesse.0 == tipo_de_interesse %}checked{% endif %}
-        {% if vencido %}disabled{% endif %}>
+        {% if vencido %}disabled{% endif %}
+        {% if edicao and liberadas_propostas %}disabled{% endif %}
+        >
         {{ interesse.1 }}
       </label><br>
     {% endfor %}
@@ -186,10 +188,12 @@
       {% endif %}
     {% endif %}
   
-    &nbsp;&nbsp;&nbsp;
-    <input type="checkbox" name="mensagem" value="enviar" checked>
-    <label for="mensagem">enviar mensagem (e-mail) de confirmação</label>
-
+    {% if not liberadas_propostas %}
+      &nbsp;&nbsp;&nbsp;
+      <input type="checkbox" name="mensagem" value="enviar" checked>
+      <label for="mensagem">enviar mensagem (e-mail) de confirmação</label>
+    {% endif %}
+    
   </form>
 
   <p>&nbsp;</p>
