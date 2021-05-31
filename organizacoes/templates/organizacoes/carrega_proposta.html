@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 31 de Maio de 2021
+{% endcomment %}
+
+{% block head %}
+  {% load define_action %}
+  <style>
+    textarea {
+      max-width:100%;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+
+  {% if edicao and liberadas_propostas %}
+    <h3 class="red-bold">Propostas de Projetos já liberadas para estudantes, edição desabilitada.</h3>
+    {% if user.tipo_de_usuario == 4 %} {% comment %} tipo_de_usuario == 4 >>> Administrador {% endcomment %}
+      <h5 class="red-bold">Você está logado como administrador e pode editar a proposta.</h3>
+    {% endif %}
+    <br>
+  {% endif %}
+
+  <span class="titulo">
+      Carregar Proposta de Projeto (PFE {{ano_semestre}})
+  </span>
+
+  {% if professor %}
+    <strong>Seu Perfil é de Professor, você está preenchendo para alguma organização.</strong><br>
+  {% elif administrador %}
+    <strong>Seu Perfil é de Administrador, você está preenchendo para alguma organização.</strong><br>
+  {% endif %}
+  
+  <strong>Após preencher o documento, você receberá um e-mail com o link para, se desejar, editar essa proposta.</strong><br>
+
+  <br>
+
+  <form action="" method="post" enctype="multipart/form-data"> {% csrf_token %}  
+
+    <label for="nome">Nome:</label><input type="text" size="75" maxlength="127" id="nome" name="nome" value="{{full_name}}" 
+      pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')"  required><br><br>
+    <label for="email">e-mail:</label><input type="text" size="75"  maxlength="80" id="email" name="email" value="{{email}}" 
+      pattern="^[\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,99}[\s]*([;,][\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})*[\s]*$" oninvalid="this.setCustomValidity('Digite um ou mais endereços de e-mail (e-mails separados por ponto e vírgula)')" oninput="this.setCustomValidity('')" required><br><br>
+    
+    
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <label for="arquivo">Arquivo PDF:</label> 
+    <input id="arquivo" type="file" name="arquivo" accept="application/pdf">
+
+    <br><br>
+
+    <input type="submit" value="Enviar Proposta de Projeto">
+    
+    {% if not liberadas_propostas %}
+      &nbsp;&nbsp;&nbsp;
+      <input type="checkbox" name="mensagem" value="enviar" checked>
+      <label for="mensagem">enviar mensagem (e-mail) de confirmação</label>
+    {% endif %}
+    
+  </form>
+
+  <p>&nbsp;</p>
+
+{% endblock %}

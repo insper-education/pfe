@@ -6,6 +6,7 @@ Data: 15 de Dezembro de 2020
 """
 
 import re           # regular expression (para o import)
+import PyPDF2
 
 from django.conf import settings
 from django.utils import html
@@ -17,11 +18,16 @@ from users.models import Opcao
 from users.support import adianta_semestre
 
 
-def cria_area_proposta(request, proposta):
-    """Cria um objeto Areas e preenche ele."""
+def decodificar(campo, campos):
+    """Recupera um campo de um documento PDF."""
+    if campo in campos and "/V" in campos[campo]:
+        if isinstance(campos[campo]["/V"], PyPDF2.generic.ByteStringObject):
+            return campos[campo]["/V"].replace(b'\r', b'\n').decode('ISO-8859-1').strip()
+        return campos[campo]["/V"].strip()
+    return None
 
-    check_values = request.POST.getlist('selection')
 
+def areas_propostas(check_values, outras, proposta):
     todas_areas = Area.objects.filter(ativa=True)
     for area in todas_areas:
         if area.titulo in check_values:
@@ -31,14 +37,31 @@ def cria_area_proposta(request, proposta):
             if AreaDeInteresse.objects.filter(area=area, proposta=proposta).exists():
                 AreaDeInteresse.objects.get(area=area, proposta=proposta).delete()
 
-    outras = request.POST.get("outras", "")
-    if outras != "":
+    if outras and outras != "":
         (outra, _created) = AreaDeInteresse.objects.get_or_create(area=None, proposta=proposta)
-        outra.outras = request.POST.get("outras", "")
+        outra.outras = outras
         outra.save()
     else:
         if AreaDeInteresse.objects.filter(area=None, proposta=proposta).exists():
             AreaDeInteresse.objects.get(area=None, proposta=proposta).delete()
+
+
+def cria_area_proposta(request, proposta):
+    """Cria um objeto Areas e preenche ele."""
+    check_values = request.POST.getlist('selection')
+    outras = request.POST.get("outras", "")
+    areas_propostas(check_values, outras, proposta)
+
+
+def cria_area_proposta_pdf(campos, proposta):
+    """Cria um objeto Areas e preenche ele."""
+    check_values = []
+    for campo in campos:
+        if "/V" in campos[campo]:
+            if campos[campo]["/V"] == "/Yes":
+                check_values.append(str(campo))
+    outras = decodificar("outras", campos)
+    areas_propostas(check_values, outras, proposta)
 
 
 def lista_areas(proposta):
@@ -222,6 +245,54 @@ def preenche_proposta(request, proposta):
     proposta.save()
 
     cria_area_proposta(request, proposta)
+
+    return proposta
+
+
+def preenche_proposta_pdf(campos, proposta):
+    """Preenche um proposta a partir de um dicionario PDF."""
+
+    if proposta is None:  # proposta nova
+        proposta = Proposta.create()
+
+        try:
+            configuracao = Configuracao.objects.get()
+            ano = configuracao.ano              # Ano atual
+            semestre = configuracao.semestre    # Semestre atual
+        except Configuracao.DoesNotExist:
+            return None
+
+        # Vai para próximo semestre
+        ano, semestre = adianta_semestre(ano, semestre)
+
+        proposta.ano = ano
+        proposta.semestre = semestre
+
+    proposta.nome = campos["nome"]
+    proposta.email = campos["email"]
+
+    proposta.website = decodificar("site", campos)
+    proposta.nome_organizacao = decodificar("organizacao", campos)
+    proposta.endereco = decodificar("endereco", campos)
+    proposta.contatos_tecnicos = decodificar("contatos_tecnicos", campos)
+    proposta.contatos_administrativos = decodificar("contatos_administrativos", campos)
+    proposta.descricao_organizacao = decodificar("descricao_organizacao", campos)
+    proposta.departamento = decodificar("departamento", campos)
+
+    proposta.titulo = decodificar("titulo", campos)
+    proposta.descricao = decodificar("descricao", campos)
+    proposta.expectativas = decodificar("expectativas", campos)
+
+    proposta.recursos = decodificar("recursos", campos)
+    proposta.observacoes = decodificar("observacoes", campos)
+
+    # tipo = request.POST.get("interesse", "")
+    # if tipo != "":
+    #     proposta.tipo_de_interesse = int(tipo)
+
+    proposta.save()
+
+    cria_area_proposta_pdf(campos, proposta)
 
     return proposta
 

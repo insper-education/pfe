@@ -8,6 +8,10 @@ Data: 14 de Dezembro de 2020
 import datetime
 import dateutil.parser
 
+from collections import OrderedDict
+#from PyPDF2 import PdfFileWriter
+from PyPDF2 import PdfFileReader
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
@@ -20,7 +24,10 @@ from users.models import PFEUser, Administrador, Parceiro, Professor, Aluno
 from projetos.models import Area, Proposta, Organizacao
 from projetos.models import Projeto, Configuracao, Feedback
 from projetos.models import Anotacao, Conexao
-from propostas.support import envia_proposta, preenche_proposta
+from projetos.models import get_upload_path
+from projetos.support import simple_upload
+
+from propostas.support import envia_proposta, preenche_proposta, preenche_proposta_pdf
 
 
 @login_required
@@ -211,6 +218,125 @@ def proposta_submissao(request):
     }
     return render(request, 'organizacoes/proposta_submissao.html', context)
 
+
+def _getFields(obj, tree=None, retval=None, fileobj=None):
+    """
+    Extracts field data if this PDF contains interactive form fields.
+    The *tree* and *retval* parameters are for recursive use.
+
+    :param fileobj: A file object (usually a text file) to write
+        a report to on all interactive form fields found.
+    :return: A dictionary where each key is a field name, and each
+        value is a :class:`Field<PyPDF2.generic.Field>` object. By
+        default, the mapping name is used for keys.
+    :rtype: dict, or ``None`` if form data could not be located.
+    """
+    fieldAttributes = {'/FT': 'Field Type', '/Parent': 'Parent', '/T': 'Field Name', '/TU': 'Alternate Field Name',
+                       '/TM': 'Mapping Name', '/Ff': 'Field Flags', '/V': 'Value', '/DV': 'Default Value'}
+    if retval is None:
+        retval = OrderedDict()
+        catalog = obj.trailer["/Root"]
+        # get the AcroForm tree
+        if "/AcroForm" in catalog:
+            tree = catalog["/AcroForm"]
+        else:
+            return None
+    if tree is None:
+        return retval
+
+    obj._checkKids(tree, retval, fileobj)
+    for attr in fieldAttributes:
+        if attr in tree:
+            # Tree is a field
+            obj._buildField(tree, retval, fileobj, fieldAttributes)
+            break
+
+    if "/Fields" in tree:
+        fields = tree["/Fields"]
+        for f in fields:
+            field = f.getObject()
+            obj._buildField(field, retval, fileobj, fieldAttributes)
+
+    return retval
+
+
+def get_form_fields(infile):
+    infile = PdfFileReader(open(infile, 'rb'))
+    fields = _getFields(infile)
+    return fields
+
+
+# @login_required
+def carrega_proposta(request):
+    """Página para carregar Proposta de Projetos em PDF."""
+    try:
+        user = PFEUser.objects.get(pk=request.user.pk)
+    except PFEUser.DoesNotExist:
+        user = None
+
+    configuracao = get_object_or_404(Configuracao)
+    ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
+
+    full_name = ""
+    email_sub = ""
+
+    if user:
+
+        if user.tipo_de_usuario == 1:  # alunos
+            mensagem = "Você não está cadastrado como parceiro!"
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, 'generic.html', context=context)
+
+        full_name = user.get_full_name()
+        email_sub = user.email
+
+    if request.method == 'POST':
+        
+        
+        if 'arquivo' in request.FILES:
+            arquivo = simple_upload(request.FILES['arquivo'],
+                                    path=get_upload_path(None, ""))
+            # organizacao.arquivo = logotipo[len(settings.MEDIA_URL):]
+
+            fields = get_form_fields(arquivo[1:])
+            #resposta += fields["organizacao"]["/V"]
+
+            mensagem = ""
+
+            fields["nome"] = request.POST.get("nome", "").strip()
+            fields["email"] = request.POST.get("email", "").strip()
+
+            proposta = preenche_proposta_pdf(fields, None)
+
+            enviar = "mensagem" in request.POST  # Por e-mail se enviar
+            mensagem = envia_proposta(proposta, enviar)
+
+            resposta = "Submissão de proposta de projeto realizada "
+            resposta += "com sucesso.<br>"
+
+            if enviar:
+                resposta += "Você deve receber um e-mail de confirmação "
+                resposta += "nos próximos instantes.<br>"
+
+        else:
+            mensagem = "Arquivo não identificado"
+
+        resposta = mensagem
+        context = {
+            "voltar": True,
+            "mensagem": resposta,
+        }
+        return render(request, 'generic.html', context=context)
+
+    context = {
+        'full_name': full_name,
+        'email': email_sub,
+        'ano_semestre': str(ano)+"."+str(semestre),
+    }
+    return render(request, 'organizacoes/carrega_proposta.html', context)
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')

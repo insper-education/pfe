@@ -386,6 +386,12 @@ def carrega_arquivo(request, local_path, path):
                     "mensagem": mensagem,
                 }
                 return render(request, 'generic.html', context=context)
+        else:
+            mensagem = "Documento não registrado"
+            context = {
+                "mensagem": mensagem,
+            }
+            return render(request, 'generic.html', context=context)
 
         with open(file_path, 'rb') as file:
             response = get_response(file, path, request)
@@ -421,7 +427,7 @@ def arquivos2(request, organizacao, usuario, path):
     return carrega_arquivo(request, local_path, path)
 
 
-# @login_required
+@login_required
 def arquivos3(request, organizacao, projeto, usuario, path):
     """Permite acessar arquivos do servidor."""
     local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}/{2}/{3}".\

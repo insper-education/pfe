@@ -26,6 +26,10 @@ urlpatterns = [
          views.anotacao,
          name='anotacao'),
 
+    path('carrega_proposta/',
+         views.carrega_proposta,
+         name='carrega_proposta'),
+
     path('organizacoes_lista/',
          views.organizacoes_lista,
          name='organizacoes_lista'),

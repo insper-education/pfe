@@ -40,6 +40,8 @@ def get_upload_path(instance, filename):
             caminho += "projeto" + str(instance.projeto.pk) + "/"
         if instance.usuario:
             caminho += slugify(instance.usuario.username) + "/"
+    else:  # Arquivo Temporário
+        caminho += "tmp/"
 
     if filename:
         filename = force_text(filename).strip().replace(' ', '_')

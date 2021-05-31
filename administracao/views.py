@@ -86,12 +86,6 @@ def emails(request):
 
     edicoes, _, _ = get_edicoes(Aluno)
 
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    #     atual = str(configuracao.ano)+"."+str(configuracao.semestre)
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
-
     configuracao = get_object_or_404(Configuracao)
     atual = str(configuracao.ano)+"."+str(configuracao.semestre)
 
