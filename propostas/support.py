@@ -6,7 +6,7 @@ Data: 15 de Dezembro de 2020
 """
 
 import re           # regular expression (para o import)
-import PyPDF2
+# import PyPDF2  # TEMPORARIO
 
 from django.conf import settings
 from django.utils import html
@@ -20,10 +20,12 @@ from users.support import adianta_semestre
 
 def decodificar(campo, campos):
     """Recupera um campo de um documento PDF."""
-    if campo in campos and "/V" in campos[campo]:
-        if isinstance(campos[campo]["/V"], PyPDF2.generic.ByteStringObject):
-            return campos[campo]["/V"].replace(b'\r', b'\n').decode('ISO-8859-1').strip()
-        return campos[campo]["/V"].strip()
+
+    # TEMPORARIO
+    # if campo in campos and "/V" in campos[campo]:
+    #     if isinstance(campos[campo]["/V"], PyPDF2.generic.ByteStringObject):
+    #         return campos[campo]["/V"].replace(b'\r', b'\n').decode('ISO-8859-1').strip()
+    #     return campos[campo]["/V"].strip()
     return None
 
 
