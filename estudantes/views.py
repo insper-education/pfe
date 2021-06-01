@@ -347,12 +347,20 @@ def selecao_propostas(request):
                                 .create(aluno=aluno,
                                         proposta=proposta,
                                         prioridade=prio_int)
-                        elif Opcao.objects.get(aluno=aluno, proposta=proposta)\
-                                .prioridade != prio_int:
-                            opc = Opcao.objects.get(aluno=aluno,
-                                                    proposta=proposta)
-                            opc.prioridade = prio_int
-                            opc.save()
+
+                        else:
+                            opcoes_tmp = Opcao.objects.filter(aluno=aluno, proposta=proposta)
+                            if opcoes_tmp.count() > 1:  # Algum erro isso não deveria ter acontecido
+                                opcoes_tmp.delete()  # apaga tudo e cria um novo
+                                opc = Opcao.objects.create(aluno=aluno,
+                                                           proposta=proposta,
+                                                           prioridade=prio_int)
+                                opc.save()
+                            else:
+                                opc = opcoes_tmp.last()
+                                opc.prioridade = prio_int
+                                opc.save()
+
                     else:
                         # Se lista não for vazia
                         if aluno.opcoes.filter(pk=proposta.pk):
