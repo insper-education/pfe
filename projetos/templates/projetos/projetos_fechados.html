@@ -132,9 +132,9 @@
           <li><a class="imprimir" href="{% url 'estudante_detail' aluno.id %}"
               data-toggle="tooltip" data-html="true" animation="true" title="
               {% if prioridade == 0 %}
-                prioridade não definida
+                opção não definida
               {% else %}
-                prioridade #{{prioridade}}
+                opção #{{prioridade}}
               {% endif %}">
                 {{aluno.user.get_full_name}}
                 [{{ aluno.get_curso_display }}]
@@ -315,7 +315,7 @@
             responsive: true,
             title: {
                   display: true,
-                  text: 'Proporção entre prioridade alocada dos alunos',
+                  text: 'Proporção entre opção alocada dos alunos',
                   position: "top",
             },
             legend: {
