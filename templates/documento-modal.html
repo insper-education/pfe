@@ -1,0 +1,36 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 1 de Junho de 2021
+{% endcomment %}
+
+
+<script>
+  var documento;
+  var url;
+  
+  $(document).on("click", ".open-documento", function (e) {
+    e.preventDefault();
+    var $popup = $("#popup");
+    documento = $(this).data("documento");
+    url = $(this).data("url");
+
+    var address = url
+    if(documento) {
+        address += '/'+documento+'/'
+    }
+
+    $(".modal-content", $popup).load(address, function () {
+      $popup.modal("show");
+    });
+  });
+
+</script>
+
+<!-- Modal -->
+<div class="modal fade" id="popup" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+    </div>
+  </div>
+</div>

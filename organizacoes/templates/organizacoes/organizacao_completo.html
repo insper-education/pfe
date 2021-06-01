@@ -141,33 +141,42 @@
     <i style="color:red">Não disponível</i>
   {% endif %}
 
-  {% if organizacao.documento_set.all %}
-    <hr>
-    <h3>Documentos</h3>
-    {% for documento in organizacao.documento_set.all %}
-        <li>
-        {% if documento.documento %}
-          <a href="../..{{MEDIA_URL}}{{ documento.documento }}" target="_blank" rel="noopener noreferrer">
-        {% elif documento.link %}
-          <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">
-        {% endif %}
-        {{ documento }} 
-        {% if documento.projeto %}
-          - {{documento.projeto.get_titulo}}
-        {% endif %}
-        {% if documento.usuario %}
-          - {{ documento.usuario.get_full_name }} 
-        {% endif %}
-        {% if documento.data %}
-                  : {{ documento.data }} 
-        {% endif %}
-        {% if documento.anotacao %}
-                  [Obs: {{ documento.anotacao }} ]
-        {% endif %}
+  
+  <hr>
+  <h3>Documentos
+    <small>
+      <a
+        class="open-documento"
+        href="{% url 'adiciona_documento' organizacao.id %}"
+        data-url="{% url 'adiciona_documento' organizacao.id %}"
+        >&#10133;</a
+      >
+    </small>
+  </h3>
+  {% for documento in organizacao.documento_set.all %}
+      <li>
+      {% if documento.documento %}
+        <a href="../..{{MEDIA_URL}}{{ documento.documento }}" target="_blank" rel="noopener noreferrer">
+      {% elif documento.link %}
+        <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">
+      {% endif %}
+      {{ documento }} 
+      {% if documento.projeto %}
+        - {{documento.projeto.get_titulo}}
+      {% endif %}
+      {% if documento.usuario %}
+        - {{ documento.usuario.get_full_name }} 
+      {% endif %}
+      {% if documento.data %}
+                : {{ documento.data }} 
+      {% endif %}
+      {% if documento.anotacao %}
+                [Obs: {{ documento.anotacao }} ]
+      {% endif %}
 
-        </a></li>
-    {% endfor %}
-  {% endif %}
+      </a></li>
+  {% endfor %}
+
 
   {% if organizacao.proposta_set.all %}
     <hr>
@@ -233,6 +242,7 @@
     Ainda não existem anotações para essa organização.
   {% endif %}
 
+  {% include "documento-modal.html" %}
   {% include "annotation-modal2.html" %}
 
 {% endblock %}

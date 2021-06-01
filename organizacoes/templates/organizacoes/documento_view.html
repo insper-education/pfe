@@ -1,0 +1,60 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 1 de Junho de 2021
+{% endcomment %}
+
+<form id="meuForm" method="post" action="{% url 'adiciona_documento' organizacao.id %}" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <div class="modal-header">
+    <h5 id="documentacao" class="modal-title">Documento em: {{ organizacao.nome }}</h5>    
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+
+    <label for="data">Data: </label> <input id="data" class="form-control" type="date" name="data" value="{{data|date:'Y-m-d'}}"><br>
+    
+    <label for="arquivo">Documento (PDF):</label> 
+    <input id="arquivo" type="file" name="arquivo" accept="application/pdf">
+    <br><br>
+    
+    <label for="linkedin">Link:</label> <input type="text" size="73" maxlength="73" id="link" name="link" placeholder="https://"><br>
+    <br>
+
+    <label for="projeto">Projeto:</label>
+    <select id="projeto" name="projeto" class="form-control">
+      <option selected value> -- nenhum projeto -- </option>
+      {% for projeto in projetos %}
+        <option value="{{projeto.id}}">{{projeto.get_titulo}} [{{projeto.ano}}.{{projeto.semestre}}] </option>
+      {% endfor %}
+    </select>
+
+    <br>
+    <label for="tipo_de_documento">Tipo de documento:</label>
+    <select id="tipo_de_documento" name="tipo_de_documento" class="form-control" required="required" >
+      <option disabled selected value> -- selecione tipo de documento -- </option>
+      {% for retorno in TIPO_DE_DOCUMENTO %}
+        <option value="{{retorno.0}}">{{retorno.1}}</option>
+      {% endfor %}
+    </select>
+
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+    <button id="atualiza" type="submit" class="btn btn-primary">Enviar</button>
+  </div>
+
+</form>
+
+<script>
+  $('#atualiza').on('submit', function(e) {
+      $('#popup').modal('hide');
+      $('form#meuForm').submit();
+      return false;
+  });
+</script> 

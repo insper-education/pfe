@@ -23,7 +23,7 @@ from users.models import PFEUser, Administrador, Parceiro, Professor, Aluno
 
 from projetos.models import Area, Proposta, Organizacao
 from projetos.models import Projeto, Configuracao, Feedback
-from projetos.models import Anotacao, Conexao
+from projetos.models import Anotacao, Conexao, Documento
 from projetos.models import get_upload_path
 from projetos.support import simple_upload
 
@@ -89,6 +89,78 @@ def anotacao(request, organizacao_id, anotacao_id=None):  # acertar isso para pk
 
         return render(request,
                       'organizacoes/anotacao_view.html',
+                      context=context)
+
+
+@login_required
+@transaction.atomic
+@permission_required("users.altera_professor", login_url='/')
+def adiciona_documento(request, organizacao_id):
+    """Cria um anotação para uma organização parceira."""
+    organizacao = get_object_or_404(Organizacao, id=organizacao_id)
+
+    if request.method == 'POST':
+
+        documento = Documento.create()
+
+        documento.organizacao = organizacao
+        # documento.usuario = 
+
+        projeto_id = request.POST.get("projeto", "")
+        if projeto_id:
+            documento.projeto = Projeto.objects.get(id=projeto_id)
+
+        if 'data' in request.POST:
+            try:
+                documento.data = dateutil.parser\
+                    .parse(request.POST['data'])
+            except (ValueError, OverflowError):
+                documento.data = datetime.date.today()
+
+        try:
+            tipo_de_documento = request.POST.get("tipo_de_documento", "")
+            documento.tipo_de_documento = tipo_de_documento
+        except (ValueError, OverflowError):
+            documento.tipo_de_documento = 255
+
+        link = request.POST.get("link", "")
+        if link:
+            if link[:4] != "http":
+                link = "http://" + link
+            documento.link = link
+
+        # anotacao = 
+
+        documento.confidencial = True
+
+        documento.save()
+
+        if 'arquivo' in request.FILES:
+            arquivo = simple_upload(request.FILES['arquivo'],
+                                    path=get_upload_path(documento, ""))
+            documento.documento = arquivo[len(settings.MEDIA_URL):]
+
+        documento.save()
+
+        # return HttpResponse(status=204)
+        return redirect('organizacao_completo', org=organizacao.id)
+
+    else:
+
+        documento = None
+
+        projetos = Projeto.objects.filter(organizacao=organizacao)
+        
+        context = {
+            'organizacao': organizacao,
+            'TIPO_DE_DOCUMENTO': Documento.TIPO_DE_DOCUMENTO,
+            'data': datetime.date.today(),
+            'documento': documento,
+            "projetos": projetos,
+        }
+
+        return render(request,
+                      'organizacoes/documento_view.html',
                       context=context)
 
 
@@ -458,10 +530,6 @@ def organizacoes_lista(request):
 def organizacao_completo(request, org):  # acertar isso para pk
     """Exibe detalhes das organizações parceiras."""
     organizacao = get_object_or_404(Organizacao, id=org)
-    # try:
-    #     organizacao = Organizacao.objects.get(id=org)
-    # except Organizacao.DoesNotExist:
-    #     return HttpResponseNotFound('<h1>Organização não encontrada!</h1>')
 
     context = {
         'organizacao': organizacao,
@@ -478,10 +546,6 @@ def organizacao_completo(request, org):  # acertar isso para pk
 def organizacoes_tabela(request):
     """Alocação das Organizações por semestre."""
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     organizacoes_pfe = []
     periodo = []
@@ -581,10 +645,6 @@ def seleciona_conexoes(request):
     projeto_id = request.GET.get('projeto', None)
 
     projeto = get_object_or_404(Projeto, id=projeto_id)
-    # try:
-    #     projeto = Projeto.objects.get(id=projeto_id)
-    # except Projeto.DoesNotExist:
-    #     return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
 
     if projeto.organizacao:
         parceiros = Parceiro.objects.filter(organizacao=projeto.organizacao)
@@ -632,10 +692,6 @@ def estrelas(request):
     estrelas = int(request.GET.get('estrelas', 0))
 
     organizacao = get_object_or_404(Organizacao, id=organizacao_id)
-    # try:
-    #     organizacao = Organizacao.objects.get(id=organizacao_id)
-    # except Organizacao.DoesNotExist:
-    #     return HttpResponseNotFound('<h1>Organizacao não encontrada!</h1>')
     organizacao.estrelas = estrelas
     organizacao.save()
 
@@ -653,13 +709,8 @@ def areas(request):
     organizacao_id = int(request.GET.get('organizacao', None))
     curso = request.GET.get('curso', "")
     situacao = True if (request.GET.get('situacao', "") == "true") else False
-    
     organizacao = get_object_or_404(Organizacao, id=organizacao_id)
-    # try:
-    #     organizacao = Organizacao.objects.get(id=organizacao_id)
-    # except Organizacao.DoesNotExist:
-    #     return HttpResponseNotFound('<h1>Organizacao não encontrada!</h1>')
-    
+
     if curso == "C":
         organizacao.area_computacao = situacao
     elif curso == "X":

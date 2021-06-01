@@ -25,6 +25,8 @@ def get_upload_path(instance, filename):
     if isinstance(instance, Documento):
         if instance.organizacao:
             caminho += slugify(instance.organizacao.sigla_limpa()) + "/"
+        if instance.projeto:
+            caminho += "projeto" + str(instance.projeto.pk) + "/"
         if instance.usuario:
             caminho += slugify(instance.usuario.username) + "/"
         if caminho == "":
@@ -759,7 +761,16 @@ class Documento(models.Model):
     confidencial = models.BooleanField(default=True, help_text='Documento confidêncial')
 
     def __str__(self):
-        return str(self.TIPO_DE_DOCUMENTO[self.tipo_de_documento][1])
+        if self.tipo_de_documento == 255:
+            return self.TIPO_DE_DOCUMENTO[-1][1]
+        else:
+            return str(self.TIPO_DE_DOCUMENTO[self.tipo_de_documento][1])
+
+    @classmethod
+    def create(cls):
+        """Cria um objeto (entrada) em Documento."""
+        documento = cls()
+        return documento
 
 
 class Banco(models.Model):
