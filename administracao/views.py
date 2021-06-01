@@ -362,11 +362,25 @@ def registro_usuario(request, user=None):
         professor.save()
 
         content_type = ContentType.objects.get_for_model(Professor)
-        permission = Permission.objects.get(
-            codename='change_professor',
-            content_type=content_type,
-        )
-        usuario.user_permissions.add(permission)
+
+        try:
+            permission = Permission.objects.get(
+                codename='change_professor',
+                content_type=content_type,
+            )
+            usuario.user_permissions.add(permission)
+        except (Permission.DoesNotExist):
+            pass  # não encontrada a permissão
+
+        try:  # <Permission: users | Professor | Professor altera valores>
+            permission = Permission.objects.get(
+                codename='altera_professor',
+                content_type=content_type,
+            )
+            usuario.user_permissions.add(permission)
+        except (Permission.DoesNotExist):
+            pass  # não encontrada a permissão
+
         usuario.save()
 
     elif usuario.tipo_de_usuario == 3:  # Parceiro
