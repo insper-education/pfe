@@ -374,8 +374,8 @@ def carrega_arquivo(request, local_path, path):
     if "\\" in file_path:
         raise PermissionDenied
     if os.path.exists(file_path):
-        doc = Documento.objects.filter(documento=local_path[len(settings.BASE_DIR) +\
-                                                            len(settings.MEDIA_URL):]).last()
+        documento = local_path[len(settings.BASE_DIR) + len(settings.MEDIA_URL):]
+        doc = Documento.objects.filter(documento=documento).last()
         if doc:
             user = get_object_or_404(PFEUser, pk=request.user.pk)
 
@@ -386,8 +386,9 @@ def carrega_arquivo(request, local_path, path):
                     "mensagem": mensagem,
                 }
                 return render(request, 'generic.html', context=context)
-        else:
-            mensagem = "Documento não registrado"
+
+        if documento[:3] == "tmp":
+            mensagem = "Documento não acessível"
             context = {
                 "mensagem": mensagem,
             }
