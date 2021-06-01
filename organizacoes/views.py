@@ -350,12 +350,6 @@ def organizacoes_prospect(request):
     configuracao = get_object_or_404(Configuracao)
     ano = configuracao.ano              # Ano atual
     semestre = configuracao.semestre    # Semestre atual
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    #     ano = configuracao.ano              # Ano atual
-    #     semestre = configuracao.semestre    # Semestre atual
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     # Vai para próximo semestre
     ano, semestre = adianta_semestre(ano, semestre)

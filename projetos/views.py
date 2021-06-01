@@ -36,7 +36,7 @@ from users.support import get_edicoes
 from .models import Projeto, Proposta, Configuracao, Coorientador, Avaliacao2, ObjetivosDeAprendizagem
 # from .models import Evento
 
-from .models import Feedback, AreaDeInteresse, Acompanhamento
+from .models import Feedback, AreaDeInteresse, Acompanhamento, Anotacao, Organizacao
 from .models import Documento, Encontro, Banco, Reembolso, Aviso, Conexao
 
 from .messages import email, message_reembolso
@@ -729,37 +729,87 @@ def projetos_vs_propostas(request):
 
     edicoes = range(2018, configuracao.ano+1)
 
-    # PROPOSTAS
+    # PROPOSTAS e ORGANIZACOES COM PROPOSTAS
     num_propostas = []
+    org_propostas = []
     for ano_projeto in edicoes:
 
-        projetos = Proposta.objects.filter(ano=ano_projeto).\
-            filter(semestre=2).\
-            count()
-        num_propostas.append(projetos)
+        # Segundo Semeste
+        propostas = Proposta.objects.filter(ano=ano_projeto).\
+            filter(semestre=2)
+        num_propostas.append(propostas.count())
+        tmp_org = {}
+        for projeto in propostas:
+            if projeto.organizacao:
+                tmp_org[projeto.organizacao.id] = "True"
+        org_propostas.append(len(tmp_org))
 
-        projetos = Proposta.objects.filter(ano=ano_projeto+1).\
-            filter(semestre=1).\
-            count()
-        num_propostas.append(projetos)
+        # Primeiro Semestre
+        propostas = Proposta.objects.filter(ano=ano_projeto+1).\
+            filter(semestre=1)
+        num_propostas.append(propostas.count())
+        tmp_org = {}
+        for projeto in propostas:
+            if projeto.organizacao:
+                tmp_org[projeto.organizacao.id] = "True"
+        org_propostas.append(len(tmp_org))
 
-    # PROJETOS
+    # PROJETOS e ORGANIZACOES COM PROJETOS
     num_projetos = []
+    org_projetos = []
     for ano_projeto in edicoes:
 
+        # Segundo Semeste
         projetos = Projeto.objects.filter(ano=ano_projeto).\
-                                   filter(semestre=2).\
-                                   count()
-        num_projetos.append(projetos)
+                                   filter(semestre=2)
+        num_projetos.append(projetos.count())
+        tmp_org = {}
+        for projeto in projetos:
+            if projeto.organizacao:
+                tmp_org[projeto.organizacao.id] = "True"
+        org_projetos.append(len(tmp_org))
 
+        # Primeiro Semestre
         projetos = Projeto.objects.filter(ano=ano_projeto+1).\
-            filter(semestre=1).\
-            count()
-        num_projetos.append(projetos)
+            filter(semestre=1)
+        num_projetos.append(projetos.count())
+        tmp_org = {}
+        for projeto in projetos:
+            if projeto.organizacao:
+                tmp_org[projeto.organizacao.id] = "True"
+        org_projetos.append(len(tmp_org))
+
+    # ORGANIZACOES PROSPECTADAS
+    org_prospectadas = []
+    todas_organizacoes = Organizacao.objects.all()
+    for ano_projeto in edicoes:
+
+        # Diferente dos outros, aqui se olha quem foi prospectado no semestre anterior
+
+        # Primeiro Semestre
+        count_organizacoes = 0
+        for organizacao in todas_organizacoes:
+            if Anotacao.objects.filter(organizacao=organizacao,
+                                       momento__year=ano_projeto,
+                                       momento__month__lt=7).exists():
+                count_organizacoes += 1
+        org_prospectadas.append(count_organizacoes)
+
+        # Segundo Semeste
+        count_organizacoes = 0
+        for organizacao in todas_organizacoes:
+            if Anotacao.objects.filter(organizacao=organizacao,
+                                       momento__year=ano_projeto,
+                                       momento__month__gt=6).exists():
+                count_organizacoes += 1
+        org_prospectadas.append(count_organizacoes)
 
     context = {
         "num_propostas": num_propostas,
         "num_projetos": num_projetos,
+        "org_prospectadas": org_prospectadas,
+        "org_propostas": org_propostas,
+        "org_projetos": org_projetos,
         'loop_anos': edicoes,
     }
 

@@ -19,14 +19,21 @@
 {% endblock %}
 
 {% block content %}
-    <span class="titulo">Projetos vs Propostas</span>
-    <br>
+    <span class="titulo">Organizações, Projetos e Propostas</span>
+    
     <div class="2areas2">
 
-    <div id="canvas-holder">
-        <canvas id="bar-projetos"></canvas>
-        <br><br>
-    </div>
+        <div id="canvas-holder">
+
+            <canvas id="bar-projetos"></canvas>
+            <br>
+
+            <canvas id="bar-organizacoes"></canvas>
+            <small>Dados de prospecção até 2019.2 estão incompletos.</small>
+            <br><br>
+
+        </div>
+
     </div>
 
     <script>
@@ -62,18 +69,71 @@
             ]
             },
             options: {
-            legend: { display: true },
-            title: {
-                display: true,
-                text: 'Propostas e Projetos'
-            }
+                legend: { display: true },
+                title: {
+                    display: true,
+                    text: 'Propostas e Projetos'
+                }
             }
         };
 
+        var config_organizacoes = {
+            type: 'bar',
+            data: {
+            labels: [
+                {% for loop in loop_anos %}
+                "{{loop}}.2",
+                "{{loop|add:1}}.1",
+                {% endfor %}
+                ],
+            datasets: [
+                {
+                    label: "prospectadas (semestre anterior)",
+                    backgroundColor: "#f9d5e5",
+                    data: [
+                            {% for num in org_prospectadas %}
+                                {{num}},
+                            {% endfor %}
+                        ]
+                }, 
+                {
+                    label: "com proposta",
+                    backgroundColor: "#e06377",
+                    data: [
+                            {% for num in org_propostas %}
+                                {{num}},
+                            {% endfor %}
+                        ]
+                },
+                {
+                    label: "com projeto",
+                    backgroundColor: "#c83349",
+                    data: [
+                            {% for num in org_projetos %}
+                                {{num}},
+                            {% endfor %}
+                        ]
+                },
+            ]
+            },
+            options: {
+                legend: { display: true },
+                title: {
+                    display: true,
+                    text: 'Organizações Envolvidas'
+                }
+            }
+        };
+
+
         function carrega_semestre() {  
-        // Chart da quantidade de projetos
-        var bar_projetos = document.getElementById('bar-projetos').getContext('2d');
-        window.projeto = new Chart(bar_projetos, config_projetos);
+            // Chart da quantidade de projetos
+            var bar_projetos = document.getElementById('bar-projetos').getContext('2d');
+            window.projeto = new Chart(bar_projetos, config_projetos);
+
+            // Chart da quantidade de organizacoes
+            var bar_organizacoes = document.getElementById('bar-organizacoes').getContext('2d');
+            window.organizacoes = new Chart(bar_organizacoes, config_organizacoes);
         }
 
         window.onload = carrega_semestre
