@@ -35,9 +35,16 @@
         {% include "save_image.html" %}
     {% endwith %}
 
-    <div id="tudo">
-
     <span class="titulo">Evolução por Notas/Conceitos</span>
+    
+    {% comment %} Seletor da edição da pesquisa {% endcomment %}
+    {% with sem_edicao=True %}
+    {% with com_cursos=True %}
+        {% include "edicoes.html" %}
+    {% endwith %}
+    {% endwith %} 
+
+    <div id="tudo">
 
     {% comment %} Seletor da edição da pesquisa {% endcomment %}
     
@@ -55,6 +62,7 @@
 
         <div style="width:860px;"> 
             <canvas id="chart-medias-individuais"></canvas>
+            <br>
             <canvas id="chart-medias-gerais"></canvas>
         </div>
 
@@ -165,12 +173,10 @@
     </div>
     </div>
 
-    {% comment %}
     {% with sem_edicao=True %}
     {% with com_cursos=True %}
         {% include "edicoes_ajax.html" %}
     {% endwith %}
     {% endwith %} 
-    {% endcomment %}
 
 {% endblock %}

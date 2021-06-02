@@ -53,6 +53,14 @@
 
     $(".filter").change(recarregar_pagina);
 
+    // pequeno tempo para select voltar a funcionar
+    function recarregar() {
+        setTimeout(function () {
+                recarregar_pagina();
+        }, 10);
+    }
+    recarregar();
+
   </script>
 
 {% endif %}

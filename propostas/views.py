@@ -42,96 +42,100 @@ def mapeamento_estudantes_propostas(request):
 
     ano = configuracao.ano
     semestre = configuracao.semestre
-    edicoes = []
+    edicoes, ano, semestre = get_edicoes(Proposta)
 
     if request.is_ajax():
         if 'edicao' in request.POST:
             ano, semestre = request.POST['edicao'].split('.')
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
-    else:
-        edicoes, ano, semestre = get_edicoes(Proposta)
+        
+        lista_propostas = list(zip(*ordena_propostas(False, ano, semestre)))
+        if lista_propostas:
+            propostas = lista_propostas[0]
+        else:
+            propostas = []
 
-    lista_propostas = list(zip(*ordena_propostas(False, ano, semestre)))
-    if lista_propostas:
-        propostas = lista_propostas[0]
-    else:
-        propostas = []
+        alunos = Aluno.objects.filter(user__tipo_de_usuario=1).\
+            filter(anoPFE=ano).\
+            filter(semestrePFE=semestre).\
+            filter(trancado=False).\
+            order_by(Lower("user__first_name"), Lower("user__last_name"))
 
-    alunos = Aluno.objects.filter(user__tipo_de_usuario=1).\
-        filter(anoPFE=ano).\
-        filter(semestrePFE=semestre).\
-        filter(trancado=False).\
-        order_by(Lower("user__first_name"), Lower("user__last_name"))
-
-    opcoes = []
-    for aluno in alunos:
-        opcoes_aluno = []
-        alocacaos = Alocacao.objects.filter(aluno=aluno)
-        for proposta in propostas:
-            opcao = Opcao.objects.filter(aluno=aluno, proposta=proposta).last()
-            if opcao:
-                opcoes_aluno.append(opcao)
-            else:
-                try:
-                    proj = Projeto.objects.get(proposta=proposta,
-                                               ano=ano,
-                                               semestre=semestre)
-                    if alocacaos.filter(projeto=proj):
-                        # Cria uma opção temporaria
-                        opc = Opcao()
-                        opc.prioridade = 0
-                        opc.proposta = proposta
-                        opc.aluno = aluno
-                        opcoes_aluno.append(opc)
-                    else:
+        opcoes = []
+        for aluno in alunos:
+            opcoes_aluno = []
+            alocacaos = Alocacao.objects.filter(aluno=aluno)
+            for proposta in propostas:
+                opcao = Opcao.objects.filter(aluno=aluno, proposta=proposta).last()
+                if opcao:
+                    opcoes_aluno.append(opcao)
+                else:
+                    try:
+                        proj = Projeto.objects.get(proposta=proposta,
+                                                ano=ano,
+                                                semestre=semestre)
+                        if alocacaos.filter(projeto=proj):
+                            # Cria uma opção temporaria
+                            opc = Opcao()
+                            opc.prioridade = 0
+                            opc.proposta = proposta
+                            opc.aluno = aluno
+                            opcoes_aluno.append(opc)
+                        else:
+                            opcoes_aluno.append(None)
+                    except Projeto.DoesNotExist:
                         opcoes_aluno.append(None)
-                except Projeto.DoesNotExist:
-                    opcoes_aluno.append(None)
 
-        opcoes.append(opcoes_aluno)
+            opcoes.append(opcoes_aluno)
 
-    # checa para empresas repetidas, para colocar um número para cada uma
-    repetidas = {}
-    for proposta in propostas:
-        if proposta.organizacao:
-            if proposta.organizacao.sigla in repetidas:
-                repetidas[proposta.organizacao.sigla] += 1
+        # checa para empresas repetidas, para colocar um número para cada uma
+        repetidas = {}
+        for proposta in propostas:
+            if proposta.organizacao:
+                if proposta.organizacao.sigla in repetidas:
+                    repetidas[proposta.organizacao.sigla] += 1
+                else:
+                    repetidas[proposta.organizacao.sigla] = 0
             else:
-                repetidas[proposta.organizacao.sigla] = 0
-        else:
-            if proposta.nome_organizacao in repetidas:
-                repetidas[proposta.nome_organizacao] += 1
+                if proposta.nome_organizacao in repetidas:
+                    repetidas[proposta.nome_organizacao] += 1
+                else:
+                    repetidas[proposta.nome_organizacao] = 0
+        repetidas_limpa = {}
+        for repetida in repetidas:
+            if repetidas[repetida] != 0:  # tira zerados
+                repetidas_limpa[repetida] = repetidas[repetida]
+        proposta_indice = {}
+        for proposta in reversed(propostas):
+            if proposta.organizacao:
+                if proposta.organizacao.sigla in repetidas_limpa:
+                    proposta_indice[proposta.id] = \
+                        repetidas_limpa[proposta.organizacao.sigla] + 1
+                    repetidas_limpa[proposta.organizacao.sigla] -= 1
             else:
-                repetidas[proposta.nome_organizacao] = 0
-    repetidas_limpa = {}
-    for repetida in repetidas:
-        if repetidas[repetida] != 0:  # tira zerados
-            repetidas_limpa[repetida] = repetidas[repetida]
-    proposta_indice = {}
-    for proposta in reversed(propostas):
-        if proposta.organizacao:
-            if proposta.organizacao.sigla in repetidas_limpa:
-                proposta_indice[proposta.id] = \
-                    repetidas_limpa[proposta.organizacao.sigla] + 1
-                repetidas_limpa[proposta.organizacao.sigla] -= 1
-        else:
-            if proposta.nome_organizacao in repetidas_limpa:
-                proposta_indice[proposta.id] = \
-                    repetidas_limpa[proposta.nome_organizacao] + 1
-                repetidas_limpa[proposta.nome_organizacao] -= 1
+                if proposta.nome_organizacao in repetidas_limpa:
+                    proposta_indice[proposta.id] = \
+                        repetidas_limpa[proposta.nome_organizacao] + 1
+                    repetidas_limpa[proposta.nome_organizacao] -= 1
 
-    estudantes = zip(alunos, opcoes)
-    context = {
-        'estudantes': estudantes,
-        'propostas': propostas,
-        'configuracao': configuracao,
-        'ano': ano,
-        'semestre': semestre,
-        'loop_anos': range(2018, configuracao.ano+1),
-        'proposta_indice': proposta_indice,
-        'edicoes': edicoes,
-    }
+        estudantes = zip(alunos, opcoes)
+        context = {
+            'estudantes': estudantes,
+            'propostas': propostas,
+            'configuracao': configuracao,
+            'ano': ano,
+            'semestre': semestre,
+            'loop_anos': range(2018, configuracao.ano+1),
+            'proposta_indice': proposta_indice,
+            'edicoes': edicoes,
+        }
+
+    else:
+        context = {
+            "edicoes": edicoes,
+        }
+
     return render(request,
                   'propostas/mapeamento_estudante_projeto.html',
                   context)

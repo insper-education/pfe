@@ -821,15 +821,14 @@ def projetos_vs_propostas(request):
 def analise_notas(request):
     """Mostra graficos das evoluções do PFE."""
     configuracao = get_object_or_404(Configuracao)
-
-    periodo = ""
-    estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
-
     edicoes, ano, semestre = get_edicoes(Avaliacao2)
     
-    medias_semestre = Alocacao.objects.all()
-
     if request.is_ajax():
+
+        periodo = ""
+        estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
+        medias_semestre = Alocacao.objects.all()
+
         if 'edicao' in request.POST:
             if request.POST['edicao'] != 'todas':
                 periodo = request.POST['edicao'].split('.')
@@ -844,136 +843,139 @@ def analise_notas(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
-    else: 
-        medias_semestre = medias_semestre.filter(projeto__ano=2020, projeto__semestre=2)
+        valor = {}
+        valor["ideal"] = 7.0
+        valor["regular"] = 5.0
 
-    valor = {}
-    valor["ideal"] = 7.0
-    valor["regular"] = 5.0
+        notas = {
+            "rii": {"ideal": 0, "regular":0, "inferior": 0},
+            "rig": {"ideal": 0, "regular":0, "inferior": 0},
+            "bi":  {"ideal": 0, "regular":0, "inferior": 0},
+            "rfi": {"ideal": 0, "regular":0, "inferior": 0},
+            "rfg": {"ideal": 0, "regular":0, "inferior": 0},
+            "bf":  {"ideal": 0, "regular":0, "inferior": 0},
+            "rpl": {"ideal": 0, "regular":0, "inferior": 0},
+            "ppf": {"ideal": 0, "regular":0, "inferior": 0},
+            "api": {"ideal": 0, "regular":0, "inferior": 0},
+            "apg": {"ideal": 0, "regular":0, "inferior": 0},
+            "afg": {"ideal": 0, "regular":0, "inferior": 0},
+            "afi": {"ideal": 0, "regular":0, "inferior": 0},
+        }
 
-    notas = {
-        "rii": {"ideal": 0, "regular":0, "inferior": 0},
-        "rig": {"ideal": 0, "regular":0, "inferior": 0},
-        "bi":  {"ideal": 0, "regular":0, "inferior": 0},
-        "rfi": {"ideal": 0, "regular":0, "inferior": 0},
-        "rfg": {"ideal": 0, "regular":0, "inferior": 0},
-        "bf":  {"ideal": 0, "regular":0, "inferior": 0},
-        "rpl": {"ideal": 0, "regular":0, "inferior": 0},
-        "ppf": {"ideal": 0, "regular":0, "inferior": 0},
-        "api": {"ideal": 0, "regular":0, "inferior": 0},
-        "apg": {"ideal": 0, "regular":0, "inferior": 0},
-        "afg": {"ideal": 0, "regular":0, "inferior": 0},
-        "afi": {"ideal": 0, "regular":0, "inferior": 0},
-    }
+        notas_lista = [x.get_notas for x in medias_semestre]
+        for nota2 in notas_lista:
+            for nota in nota2:
+                if nota[0] == "RII":
+                    if nota[1] >= valor["ideal"]:
+                        notas["rii"]["ideal"] += 1
+                    elif nota[1] >= valor["regular"]:
+                        notas["rii"]["regular"] += 1
+                    else:
+                        notas["rii"]["inferior"] += 1
+                elif nota[0] == "RIG":
+                    if nota[1] >= valor["ideal"]:
+                        notas["rig"]["ideal"] += 1
+                    elif nota[1] >= valor["regular"]:
+                        notas["rig"]["regular"] += 1
+                    else:
+                        notas["rig"]["inferior"] += 1
+                elif nota[0] == "BI":
+                    if nota[1] >= valor["ideal"]:
+                        notas["bi"]["ideal"] += 1
+                    elif nota[1] >= valor["regular"]:
+                        notas["bi"]["regular"] += 1
+                    else:
+                        notas["bi"]["inferior"] += 1
+                elif nota[0] == "RFI":
+                    if nota[1] >= valor["ideal"]:
+                        notas["rfi"]["ideal"] += 1
+                    elif nota[1] >= valor["regular"]:
+                        notas["rfi"]["regular"] += 1
+                    else:
+                        notas["rfi"]["inferior"] += 1
+                elif nota[0] == "RFG":
+                    if nota[1] >= valor["ideal"]:
+                        notas["rfg"]["ideal"] += 1
+                    elif nota[1] >= valor["regular"]:
+                        notas["rfg"]["regular"] += 1
+                    else:
+                        notas["rfg"]["inferior"] += 1
+                elif nota[0] == "BF":
+                    if nota[1] >= valor["ideal"]:
+                        notas["bf"]["ideal"] += 1
+                    elif nota[1] >= valor["regular"]:
+                        notas["bf"]["regular"] += 1
+                    else:
+                        notas["bf"]["inferior"] += 1
+                elif nota[0] == "RPL":
+                    if nota[1] >= valor["ideal"]:
+                        notas["rpl"]["ideal"] += 1
+                    elif nota[1] >= valor["regular"]:
+                        notas["rpl"]["regular"] += 1
+                    else:
+                        notas["rpl"]["inferior"] += 1
+                elif nota[0] == "PPF":
+                    if nota[1] >= valor["ideal"]:
+                        notas["ppf"]["ideal"] += 1
+                    elif nota[1] >= valor["regular"]:
+                        notas["ppf"]["regular"] += 1
+                    else:
+                        notas["ppf"]["inferior"] += 1
+                elif nota[0] == "APG":
+                    if nota[1] >= valor["ideal"]:
+                        notas["apg"]["ideal"] += 1
+                    elif nota[1] >= valor["regular"]:
+                        notas["apg"]["regular"] += 1
+                    else:
+                        notas["apg"]["inferior"] += 1
+                elif nota[0] == "API":
+                    if nota[1] >= valor["ideal"]:
+                        notas["api"]["ideal"] += 1
+                    elif nota[1] >= valor["regular"]:
+                        notas["api"]["regular"] += 1
+                    else:
+                        notas["api"]["inferior"] += 1
+                elif nota[0] == "AFG":
+                    if nota[1] >= valor["ideal"]:
+                        notas["afg"]["ideal"] += 1
+                    elif nota[1] >= valor["regular"]:
+                        notas["afg"]["regular"] += 1
+                    else:
+                        notas["afg"]["inferior"] += 1
+                elif nota[0] == "AFI":
+                    if nota[1] >= valor["ideal"]:
+                        notas["afi"]["ideal"] += 1
+                    elif nota[1] >= valor["regular"]:
+                        notas["afi"]["regular"] += 1
+                    else:
+                        notas["afi"]["inferior"] += 1    
 
-    notas_lista = [x.get_notas for x in medias_semestre]
-    for nota2 in notas_lista:
-        for nota in nota2:
-            if nota[0] == "RII":
-                if nota[1] >= valor["ideal"]:
-                    notas["rii"]["ideal"] += 1
-                elif nota[1] >= valor["regular"]:
-                    notas["rii"]["regular"] += 1
-                else:
-                    notas["rii"]["inferior"] += 1
-            elif nota[0] == "RIG":
-                if nota[1] >= valor["ideal"]:
-                    notas["rig"]["ideal"] += 1
-                elif nota[1] >= valor["regular"]:
-                    notas["rig"]["regular"] += 1
-                else:
-                    notas["rig"]["inferior"] += 1
-            elif nota[0] == "BI":
-                if nota[1] >= valor["ideal"]:
-                    notas["bi"]["ideal"] += 1
-                elif nota[1] >= valor["regular"]:
-                    notas["bi"]["regular"] += 1
-                else:
-                    notas["bi"]["inferior"] += 1
-            elif nota[0] == "RFI":
-                if nota[1] >= valor["ideal"]:
-                    notas["rfi"]["ideal"] += 1
-                elif nota[1] >= valor["regular"]:
-                    notas["rfi"]["regular"] += 1
-                else:
-                    notas["rfi"]["inferior"] += 1
-            elif nota[0] == "RFG":
-                if nota[1] >= valor["ideal"]:
-                    notas["rfg"]["ideal"] += 1
-                elif nota[1] >= valor["regular"]:
-                    notas["rfg"]["regular"] += 1
-                else:
-                    notas["rfg"]["inferior"] += 1
-            elif nota[0] == "BF":
-                if nota[1] >= valor["ideal"]:
-                    notas["bf"]["ideal"] += 1
-                elif nota[1] >= valor["regular"]:
-                    notas["bf"]["regular"] += 1
-                else:
-                    notas["bf"]["inferior"] += 1
-            elif nota[0] == "RPL":
-                if nota[1] >= valor["ideal"]:
-                    notas["rpl"]["ideal"] += 1
-                elif nota[1] >= valor["regular"]:
-                    notas["rpl"]["regular"] += 1
-                else:
-                    notas["rpl"]["inferior"] += 1
-            elif nota[0] == "PPF":
-                if nota[1] >= valor["ideal"]:
-                    notas["ppf"]["ideal"] += 1
-                elif nota[1] >= valor["regular"]:
-                    notas["ppf"]["regular"] += 1
-                else:
-                    notas["ppf"]["inferior"] += 1
-            elif nota[0] == "APG":
-                if nota[1] >= valor["ideal"]:
-                    notas["apg"]["ideal"] += 1
-                elif nota[1] >= valor["regular"]:
-                    notas["apg"]["regular"] += 1
-                else:
-                    notas["apg"]["inferior"] += 1
-            elif nota[0] == "API":
-                if nota[1] >= valor["ideal"]:
-                    notas["api"]["ideal"] += 1
-                elif nota[1] >= valor["regular"]:
-                    notas["api"]["regular"] += 1
-                else:
-                    notas["api"]["inferior"] += 1
-            elif nota[0] == "AFG":
-                if nota[1] >= valor["ideal"]:
-                    notas["afg"]["ideal"] += 1
-                elif nota[1] >= valor["regular"]:
-                    notas["afg"]["regular"] += 1
-                else:
-                    notas["afg"]["inferior"] += 1
-            elif nota[0] == "AFI":
-                if nota[1] >= valor["ideal"]:
-                    notas["afi"]["ideal"] += 1
-                elif nota[1] >= valor["regular"]:
-                    notas["afi"]["regular"] += 1
-                else:
-                    notas["afi"]["inferior"] += 1    
+        medias_lista = [x.get_media for x in medias_semestre]
+        
+        # Somente apresenta as médias que esteja completas (pesso = 100%)
+        medias_validas = list(filter(lambda d: d['pesos'] == 1.0, medias_lista))
 
-    medias_lista = [x.get_media for x in medias_semestre]
-    
-    # Somente apresenta as médias que esteja completas (pesso = 100%)
-    medias_validas = list(filter(lambda d: d['pesos'] == 1.0, medias_lista))
+        medias = {}
+        medias["ideal"] = len(list(filter(lambda d: d['media'] >= valor["ideal"], medias_validas)))
+        medias["regular"] = len(list(filter(lambda d: valor["ideal"] > d['media'] >= valor["regular"], medias_validas)))
+        medias["inferior"] = len(list(filter(lambda d: d['media'] < valor["regular"], medias_validas)))
+        medias["total"] = len(medias_validas)
 
-    medias = {}
-    medias["ideal"] = len(list(filter(lambda d: d['media'] >= valor["ideal"], medias_validas)))
-    medias["regular"] = len(list(filter(lambda d: valor["ideal"] > d['media'] >= valor["regular"], medias_validas)))
-    medias["inferior"] = len(list(filter(lambda d: d['media'] < valor["regular"], medias_validas)))
-    medias["total"] = len(medias_validas)
+        context = {
+            'periodo': periodo,
+            'ano': configuracao.ano,
+            'semestre': configuracao.semestre,
+            'loop_anos': edicoes,
+            'medias': medias,
+            "notas": notas,
+            "edicoes": edicoes,
+        }
 
-    context = {
-        'periodo': periodo,
-        'ano': configuracao.ano,
-        'semestre': configuracao.semestre,
-        'loop_anos': edicoes,
-        'medias': medias,
-        "notas": notas,
-        "edicoes": edicoes,
-    }
+    else:
+        context = {
+            "edicoes": edicoes,
+        }
+
 
     return render(request, 'projetos/analise_notas.html', context)
 
@@ -984,13 +986,13 @@ def certificacao_falconi(request):
     """Mostra graficos das certificacões Falconi."""
     configuracao = get_object_or_404(Configuracao)
 
-    periodo = ""
-    
     edicoes, ano, semestre = get_edicoes(Avaliacao2)
     edicoes = ["2020.2"]
-    
 
     if request.is_ajax():
+
+        periodo = ""
+
         if 'edicao' in request.POST:
             if request.POST['edicao'] != 'todas':
                 periodo = request.POST['edicao'].split('.')
@@ -1005,46 +1007,49 @@ def certificacao_falconi(request):
         # else:
         #     return HttpResponse("Algum erro não identificado.", status=401)
 
+        
+        # conceitos = I, D, C, C+, B, B+, A, A+
+        conceitos = [0, 0, 0, 0, 0, 0, 0, 0]
+        total = len(projetos)
+        selecionados = 0
+        for projeto in projetos:
+            aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=99)  # Falc.
+            nota_banca_falconi, peso = Aluno.get_banca(None, aval_banc_falconi)
+            if peso is not None:
+                selecionados += 1
+                if nota_banca_falconi >= 9.5:
+                    conceitos[7] += 1
+                elif nota_banca_falconi >= 9.0:
+                    conceitos[6] += 1
+                elif nota_banca_falconi >= 8.0:
+                    conceitos[5] += 1
+                elif nota_banca_falconi >= 7.0:
+                    conceitos[4] += 1
+                elif nota_banca_falconi >= 6.0:
+                    conceitos[3] += 1
+                elif nota_banca_falconi >= 5.0:
+                    conceitos[2] += 1
+                elif nota_banca_falconi >= 4.0:
+                    conceitos[1] += 1
+                else:
+                    conceitos[0] += 1
+
+        for i in range(8):
+            conceitos[i] *= 100/selecionados
+
+        context = {
+            'ano': configuracao.ano,
+            'semestre': configuracao.semestre,
+            "edicoes": edicoes,
+            "selecionados": selecionados,
+            "nao_selecionados": total - selecionados,
+            "conceitos": conceitos,
+        }
+
     else: 
-        projetos = Projeto.objects.filter(ano=2020, semestre=2)
-
-    # conceitos = I, D, C, C+, B, B+, A, A+
-    conceitos = [0, 0, 0, 0, 0, 0, 0, 0]
-    total = len(projetos)
-    selecionados = 0
-    for projeto in projetos:
-        aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=99)  # Falc.
-        nota_banca_falconi, peso = Aluno.get_banca(None, aval_banc_falconi)
-        if peso is not None:
-            selecionados += 1
-            if nota_banca_falconi >= 9.5:
-                conceitos[7] += 1
-            elif nota_banca_falconi >= 9.0:
-                conceitos[6] += 1
-            elif nota_banca_falconi >= 8.0:
-                conceitos[5] += 1
-            elif nota_banca_falconi >= 7.0:
-                conceitos[4] += 1
-            elif nota_banca_falconi >= 6.0:
-                conceitos[3] += 1
-            elif nota_banca_falconi >= 5.0:
-                conceitos[2] += 1
-            elif nota_banca_falconi >= 4.0:
-                conceitos[1] += 1
-            else:
-                conceitos[0] += 1
-
-    for i in range(8):
-        conceitos[i] *= 100/selecionados
-
-    context = {
-        'ano': configuracao.ano,
-        'semestre': configuracao.semestre,
-        "edicoes": edicoes,
-        "selecionados": selecionados,
-        "nao_selecionados": total - selecionados,
-        "conceitos": conceitos,
-    }
+        context = {
+            "edicoes": edicoes,
+        }
 
     return render(request, 'projetos/certificacao_falconi.html', context)
 
@@ -1067,9 +1072,10 @@ def analise_objetivos(request):
     """Mostra graficos das evoluções do PFE."""
     edicoes, ano, semestre = get_edicoes(Avaliacao2)
 
-    alocacoes = Alocacao.objects.all()
-
     if request.is_ajax():
+
+        alocacoes = Alocacao.objects.all()
+
         if 'edicao' in request.POST:
             if request.POST['edicao'] != 'todas':
                 periodo = request.POST['edicao'].split('.')
@@ -1084,65 +1090,64 @@ def analise_objetivos(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
+        context = calcula_objetivos(alocacoes)
+        context["edicoes"] = edicoes
+        context["total_geral"] = len(alocacoes)
+
     else: 
-        alocacoes = alocacoes.filter(projeto__ano=2020, projeto__semestre=2)
-
-
-    context = calcula_objetivos(alocacoes)
-
-    context["edicoes"] = edicoes
-    context["total_geral"] = len(alocacoes)
-    
+        context = {
+            "edicoes": edicoes,
+        }
 
     return render(request, 'projetos/analise_objetivos.html', context)
 
 
-@login_required
-@permission_required("users.altera_professor", login_url='/')
-def graficos(request):
-    """Mostra graficos das evoluções do PFE."""
-    configuracao = get_object_or_404(Configuracao)
+# @login_required
+# @permission_required("users.altera_professor", login_url='/')
+# def graficos(request):
+#     """Mostra graficos das evoluções do PFE."""
+#     configuracao = get_object_or_404(Configuracao)
 
-    periodo = ""
-    estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
+#     periodo = ""
+#     estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
 
-    edicoes, _, _ = get_edicoes(Avaliacao2)
+#     edicoes, _, _ = get_edicoes(Avaliacao2)
 
-    avaliacoes = Avaliacao2.objects.all()
+#     avaliacoes = Avaliacao2.objects.all()
 
-    cores = ["#00af00", "#d40000", "#cccc00", "#000000", ]
+#     cores = ["#00af00", "#d40000", "#cccc00", "#000000", ]
 
-    notas_total = {}
-    for edicao in edicoes:
-        notas_total[edicao] = []
+#     notas_total = {}
+#     for edicao in edicoes:
+#         notas_total[edicao] = []
 
-    medias = []
-    count = 0
-    for curso in Aluno.TIPOS_CURSO:
-        notas = []
-        for edicao in edicoes:
-            periodo = edicao.split('.')
-            semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
-            notas_lista = [x.nota for x in semestre if (x.alocacao != None and x.alocacao.aluno.curso == curso[0])]
-            notas_total[edicao] += notas_lista
-            notas.append(media(notas_lista))
-        medias.append({"curso": curso[1], "media": notas, "cor": cores[count]})
-        count += 1
+#     medias = []
+#     count = 0
+#     for curso in Aluno.TIPOS_CURSO:
+#         notas = []
+#         for edicao in edicoes:
+#             periodo = edicao.split('.')
+#             semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
+#             notas_lista = [x.nota for x in semestre if (x.alocacao != None and x.alocacao.aluno.curso == curso[0])]
+#             notas_total[edicao] += notas_lista
+#             notas.append(media(notas_lista))
+#         medias.append({"curso": curso[1], "media": notas, "cor": cores[count]})
+#         count += 1
     
-    notas = []
-    for edicao in edicoes:
-        notas.append(media(notas_total[edicao]))
-    medias.append({"curso": "Engenharia", "media": notas, "cor": cores[count]})
+#     notas = []
+#     for edicao in edicoes:
+#         notas.append(media(notas_total[edicao]))
+#     medias.append({"curso": "Engenharia", "media": notas, "cor": cores[count]})
 
-    context = {
-        "medias": medias,
-        'periodo': periodo,
-        'ano': configuracao.ano,
-        'semestre': configuracao.semestre,
-        'edicoes': edicoes,
-    }
+#     context = {
+#         "medias": medias,
+#         'periodo': periodo,
+#         'ano': configuracao.ano,
+#         'semestre': configuracao.semestre,
+#         'edicoes': edicoes,
+#     }
 
-    return render(request, 'projetos/graficos.html', context)
+#     return render(request, 'projetos/graficos.html', context)
 
 
 
@@ -1152,74 +1157,96 @@ def evolucao_notas(request):
     """Mostra graficos das evoluções do PFE."""
     edicoes, _, _ = get_edicoes(Avaliacao2)
 
-    cores = ["#00af00", "#d40000", "#cccc00", "#000000", ]
+    if request.is_ajax():
 
-    # Para armazenar todas as notas de todos os programas de engenharia
-    notas_total = {}
-    for edicao in edicoes:
-        notas_total[edicao] = []
+        avaliacoes = Avaliacao2.objects.all()
+        alocacoes = Alocacao.objects.all()
 
-    # médias gerais individuais
-    # (21, 'Relatório Intermediário Individual'),
-    # (22, 'Relatório Final Individual'),
-    avaliacoes = Avaliacao2.objects.filter(tipo_de_avaliacao=21) | Avaliacao2.objects.filter(tipo_de_avaliacao=22)
+        if 'curso' in request.POST:
+            curso = request.POST['curso']
+            if curso != 'T':
+                avaliacoes = avaliacoes.filter(alocacao__aluno__curso=curso)
+                alocacoes = alocacoes.filter(aluno__curso=curso)
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
 
-    medias_individuais = []
-    count = 0
-    for curso in Aluno.TIPOS_CURSO:
-        notas = []
+        cores = ["#00af00", "#d40000", "#cccc00", "#000000", ]
+
+        # Para armazenar todas as notas de todos os programas de engenharia
+        notas_total = {}
         for edicao in edicoes:
-            periodo = edicao.split('.')
-            semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
-            notas_lista = [x.nota for x in semestre if (x.alocacao != None and x.alocacao.aluno.curso == curso[0])]
-            notas_total[edicao] += notas_lista
-            notas.append(media(notas_lista))
-        medias_individuais.append({"curso": curso[1], "media": notas, "cor": cores[count]})
-        count += 1
-    
-    notas = []
-    for edicao in edicoes:
-        notas.append(media(notas_total[edicao]))
-    medias_individuais.append({"curso": "engenharia", "media": notas, "cor": cores[count]})
+            notas_total[edicao] = []
+
+        # médias gerais individuais
+        # (21, 'Relatório Intermediário Individual'),
+        # (22, 'Relatório Final Individual'),
+        avaliacoes = avaliacoes.filter(tipo_de_avaliacao=21) | avaliacoes.filter(tipo_de_avaliacao=22)
+
+        medias_individuais = []
+        count = 0
+        for curso in Aluno.TIPOS_CURSO:
+            notas = []
+            for edicao in edicoes:
+                periodo = edicao.split('.')
+                semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
+                notas_lista = [x.nota for x in semestre if (x.alocacao != None and x.alocacao.aluno.curso == curso[0])]
+                notas_total[edicao] += notas_lista
+                notas.append(media(notas_lista))
+            if notas != [None] * len(notas):  # não está vazio
+                medias_individuais.append({"curso": curso[1], "media": notas, "cor": cores[count]})
+            count += 1
+        
+        if len(medias_individuais) > 1:
+            notas = []
+            for edicao in edicoes:
+                notas.append(media(notas_total[edicao]))
+            medias_individuais.append({"curso": "engenharia", "media": notas, "cor": cores[count]})
 
 
-    ################################
+        ################################
 
 
-    # Para armazenar todas as notas de todos os programas de engenharia
-    notas_total = {}
-    for edicao in edicoes:
-        notas_total[edicao] = []
-
-    # médias gerais totais
-    medias_gerais = []
-    count = 0
-    for curso in Aluno.TIPOS_CURSO:
-        notas = []
+        # Para armazenar todas as notas de todos os programas de engenharia
+        notas_total = {}
         for edicao in edicoes:
-            periodo = edicao.split('.')
-            alocacoes = Alocacao.objects.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1], aluno__curso=curso[0])
-            notas_lista = []
-            for x in alocacoes:
-                media_loc = x.get_media
-                if media_loc["pesos"] == 1:
-                    notas_lista.append(media_loc["media"])
+            notas_total[edicao] = []
 
-            notas_total[edicao] += notas_lista
-            notas.append(media(notas_lista))
-        medias_gerais.append({"curso": curso[1], "media": notas, "cor": cores[count]})
-        count += 1
+        # médias gerais totais
+        medias_gerais = []
+        count = 0
+        for curso in Aluno.TIPOS_CURSO:
+            notas = []
+            for edicao in edicoes:
+                periodo = edicao.split('.')
+                alocacoes_tmp = alocacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1], aluno__curso=curso[0])
+                notas_lista = []
+                for x in alocacoes_tmp:
+                    media_loc = x.get_media
+                    if media_loc["pesos"] == 1:
+                        notas_lista.append(media_loc["media"])
+
+                notas_total[edicao] += notas_lista
+                notas.append(media(notas_lista))
+            if notas != [None] * len(notas):  # não está vazio
+                medias_gerais.append({"curso": curso[1], "media": notas, "cor": cores[count]})
+            count += 1
+        
+        if len(medias_gerais) > 1:
+            notas = []
+            for edicao in edicoes:
+                notas.append(media(notas_total[edicao]))
+            medias_gerais.append({"curso": "engenharia", "media": notas, "cor": cores[count]})
+
+        context = {
+            "medias_individuais": medias_individuais,
+            "medias_gerais": medias_gerais,
+            "edicoes": edicoes,
+        }
     
-    notas = []
-    for edicao in edicoes:
-        notas.append(media(notas_total[edicao]))
-    medias_gerais.append({"curso": "engenharia", "media": notas, "cor": cores[count]})
-
-    context = {
-        "medias_individuais": medias_individuais,
-        "medias_gerais": medias_gerais,
-        'edicoes': edicoes,
-    }
+    else:
+        context = {
+            "edicoes": edicoes,
+        }
 
     return render(request, 'projetos/evolucao_notas.html', context)
 
@@ -1229,15 +1256,15 @@ def evolucao_notas(request):
 def evolucao_objetivos(request):
     """Mostra graficos das evoluções do PFE."""
     configuracao = get_object_or_404(Configuracao)
-
-    periodo = ""
-    estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
-
     edicoes, ano, semestre = get_edicoes(Avaliacao2)
 
-    avaliacoes = Avaliacao2.objects.all()
-
     if request.is_ajax():
+        
+        periodo = ""
+        estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
+
+        avaliacoes = Avaliacao2.objects.all()
+
         if 'curso' in request.POST:
             curso = request.POST['curso']
             if curso != 'T':
@@ -1245,28 +1272,34 @@ def evolucao_objetivos(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
-    cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9","#7cfa9f","#e8c3b9","#c45890"]
+        cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9","#7cfa9f","#e8c3b9","#c45890"]
 
-    medias = []
-    objetivos = ObjetivosDeAprendizagem.objects.all()
-    count = 0
-    for objetivo in objetivos:
-        notas = []
-        for edicao in edicoes:
-            periodo = edicao.split('.')
-            semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
-            notas_lista = [x.nota for x in semestre if x.objetivo == objetivo]
-            notas.append(media(notas_lista))
-        medias.append({"objetivo": objetivo.titulo, "media": notas, "cor": cores[count]})
-        count += 1
+        medias = []
+        objetivos = ObjetivosDeAprendizagem.objects.all()
+        count = 0
+        for objetivo in objetivos:
+            notas = []
+            for edicao in edicoes:
+                periodo = edicao.split('.')
+                semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
+                notas_lista = [x.nota for x in semestre if x.objetivo == objetivo]
+                notas.append(media(notas_lista))
+            medias.append({"objetivo": objetivo.titulo, "media": notas, "cor": cores[count]})
+            count += 1
 
-    context = {
-        "medias": medias,
-        'periodo': periodo,
-        'ano': configuracao.ano,
-        'semestre': configuracao.semestre,
-        'edicoes': edicoes,
-    }
+        context = {
+            "medias": medias,
+            'periodo': periodo,
+            'ano': configuracao.ano,
+            'semestre': configuracao.semestre,
+            'edicoes': edicoes,
+        }
+
+    else:
+
+        context = {
+            "edicoes": edicoes,
+        }
 
     return render(request, 'projetos/evolucao_objetivos.html', context)
 
@@ -1276,17 +1309,14 @@ def evolucao_objetivos(request):
 def correlacao_medias_cr(request):
     """Mostra graficos da correlação entre notas e o CR dos estudantes."""
     configuracao = get_object_or_404(Configuracao)
-
-    periodo = ""
-
     edicoes, ano, semestre = get_edicoes(Avaliacao2)
 
-    alocacoes = None
-    estudantes_computacao = None
-    estudantes_mecanica = None
-    estudantes_mecatronica = None
-
     if request.is_ajax():
+        periodo = ""
+        alocacoes = None
+        estudantes_computacao = None
+        estudantes_mecanica = None
+        estudantes_mecatronica = None
         
         if 'edicao' in request.POST:
 
@@ -1320,26 +1350,29 @@ def correlacao_medias_cr(request):
 
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
-    else:
-        alocacoes_tmp = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
-        estudantes_computacao = alocacoes_tmp.filter(aluno__curso="C")
-        estudantes_mecanica = alocacoes_tmp.filter(aluno__curso="M")
-        estudantes_mecatronica = alocacoes_tmp.filter(aluno__curso="X")
+        # else:
+        #     alocacoes_tmp = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
+        #     estudantes_computacao = alocacoes_tmp.filter(aluno__curso="C")
+        #     estudantes_mecanica = alocacoes_tmp.filter(aluno__curso="M")
+        #     estudantes_mecatronica = alocacoes_tm`p.filter(aluno__curso="X")
 
-    context = {
-        "alocacoes": alocacoes,
-        "estudantes_computacao": estudantes_computacao,
-        "estudantes_mecanica": estudantes_mecanica,
-        "estudantes_mecatronica": estudantes_mecatronica,
-        'periodo': periodo,
-        'ano': configuracao.ano,
-        'semestre': configuracao.semestre,
-        'edicoes': edicoes,
-    }
+        context = {
+            "alocacoes": alocacoes,
+            "estudantes_computacao": estudantes_computacao,
+            "estudantes_mecanica": estudantes_mecanica,
+            "estudantes_mecatronica": estudantes_mecatronica,
+            'periodo': periodo,
+            'ano': configuracao.ano,
+            'semestre': configuracao.semestre,
+            'edicoes': edicoes,
+        }
+
+    else:
+        context = {
+            'edicoes': edicoes,
+        }
 
     return render(request, 'projetos/correlacao_medias_cr.html', context)
-
-
 
 
 def cap_name(name):

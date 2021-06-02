@@ -932,7 +932,7 @@ def dinamicas_lista(request):
 
         edicoes, _, _ = get_edicoes(Projeto)
         context = {
-                'edicoes': edicoes,
+                "edicoes": edicoes,
             }
 
     return render(request, 'professores/dinamicas_lista.html', context)
@@ -943,13 +943,7 @@ def dinamicas_lista(request):
 def orientadores_tabela(request):
     """Alocação dos Orientadores por semestre."""
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuração do sistema.", status=401)
-
     orientadores = recupera_orientadores_por_semestre(configuracao)
-
     context = {
         'anos': orientadores,
     }
@@ -961,17 +955,10 @@ def orientadores_tabela(request):
 def coorientadores_tabela(request):
     """Alocação dos Coorientadores por semestre."""
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
-
     coorientadores = recupera_coorientadores_por_semestre(configuracao)
-
     context = {
         'anos': coorientadores,
     }
-
     return render(request, 'professores/coorientadores_tabela.html', context)
 
 
@@ -980,7 +967,6 @@ def coorientadores_tabela(request):
 def resultado_bancas(request):
     """Mostra os resultados das avaliações (Bancas)."""
     edicoes, ano, semestre = get_edicoes(Projeto)
-
     context = {
         "edicoes": edicoes,
     }
