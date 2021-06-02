@@ -19,7 +19,13 @@
               <option value="todas">todas</option>
             {% endif %}
             {% for edicao in edicoes %}
-                <option value="{{edicao}}" {% if forloop.last %}selected{% endif %}>{{edicao}}</option>
+                <option value="{{edicao}}" 
+                    {% if selecionada %}
+                      {% if selecionada == edicao %}selected{% endif %}
+                    {% else %}
+                      {% if forloop.last %}selected{% endif %}
+                    {% endif %}
+                >{{edicao}}</option>
             {% endfor %}
           </select>
         {% endif %}

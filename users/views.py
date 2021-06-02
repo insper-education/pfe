@@ -27,7 +27,7 @@ from projetos.support import calcula_objetivos
 from .forms import PFEUserCreationForm
 from .models import PFEUser, Aluno, Professor, Parceiro, Opcao, Administrador
 from .models import Alocacao
-from .support import get_edicoes
+from .support import get_edicoes, adianta_semestre
 
 
 @login_required
@@ -369,9 +369,16 @@ def estudantes_inscritos(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
+        
         edicoes, _, _ = get_edicoes(Aluno)
+
+        configuracao = get_object_or_404(Configuracao)
+        ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
+        selecionada = str(ano) + "." + str(semestre)
+
         context = {
                 'edicoes': edicoes,
+                "selecionada": selecionada,
             }
 
     return render(request, 'users/estudantes_inscritos.html', context=context)
