@@ -101,21 +101,25 @@
     {% endif %}
   {% endfor %}
 
-  <br><strong>Razão Social:</strong> 
+  <br>
+  <strong>Dados Cadastrais:</strong><br>
+  &nbsp;&nbsp;&nbsp;Razão Social:
   {% if organizacao.razao_social %}
     {{ organizacao.razao_social }}
   {% else %}
     <i style="color:red">Não disponível</i>
   {% endif %}
   &nbsp;&nbsp;&nbsp;
-  <br><strong>Ramo de Atividade:</strong>
+  <br>
+  &nbsp;&nbsp;&nbsp;Ramo de Atividade:
   {% if organizacao.ramo_atividade %}
     {{ organizacao.ramo_atividade }}
   {% else %}
     <i style="color:red">Não disponível</i>
   {% endif %}
   &nbsp;&nbsp;&nbsp;
-  <br><strong>CNPJ:</strong> 
+  <br>
+  &nbsp;&nbsp;&nbsp;CNPJ:
   {% if organizacao.cnpj %}
   <a href="http://servicos.receita.fazenda.gov.br/Servicos/cnpjreva/Cnpjreva_Solicitacao.asp?cnpj={{organizacao.cnpj}}">
     {{ organizacao.cnpj|cnpj }}
@@ -124,7 +128,7 @@
     <i style="color:red">Não disponível</i>
   {% endif %}
   &nbsp;&nbsp;&nbsp;
-  <strong>Inscrição Estadual:</strong>
+  Inscrição Estadual:
   {% if organizacao.inscricao_estadual %}
     <a href="http://www.sintegra.gov.br/">
       {{ organizacao.inscricao_estadual }}
@@ -132,7 +136,8 @@
   {% else %}
     <i style="color:red">Não disponível</i>
   {% endif %}
-  <br><strong>endereço(s):</strong>
+  <br>
+  &nbsp;&nbsp;&nbsp;endereço(s):
   {% if organizacao.endereco %}
     <a style="margin-left:16px;display:block;" href="http://maps.google.com/maps?q={{organizacao.endereco}}">
       {{ organizacao.endereco|linebreaks }}
@@ -154,7 +159,7 @@
     </small>
   </h3>
   {% for documento in organizacao.documento_set.all %}
-      <li>
+    <li>
       {% if documento.documento %}
         <a href="../..{{MEDIA_URL}}{{ documento.documento }}" target="_blank" rel="noopener noreferrer">
       {% elif documento.link %}
@@ -173,8 +178,11 @@
       {% if documento.anotacao %}
                 [Obs: {{ documento.anotacao }} ]
       {% endif %}
+    </a></li>
+  {% empty %}
 
-      </a></li>
+  {% comment %} {% if not organizacao.documento_set.all %} {% endcomment %}
+    Ainda não existem documentos para essa organização.
   {% endfor %}
 
 
@@ -222,7 +230,7 @@
       >&#10133;</a
     >
   </small></h3>
-  {% if organizacao.anotacao_set.all %}
+  
   <ul id="lista_anotacoes" style="padding-left: 18px;">
     
     {% for anotacao in organizacao.anotacao_set.all|dictsortreversed:"momento" %}
@@ -238,10 +246,11 @@
       </li>
     {% endfor %}
     </ul>
-  {% else %}
+  
+  <span id="sem_anotacoes" {% if organizacao.anotacao_set.all %}style="visibility: hidden;"{% endif %}>
     Ainda não existem anotações para essa organização.
-  {% endif %}
-
+  </span>
+  
   {% include "documento-modal.html" %}
   {% include "annotation-modal2.html" %}
 
