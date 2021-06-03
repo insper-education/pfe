@@ -86,7 +86,6 @@ body {
   text-overflow: ellipsis;
 }
 
-
 .red-normal {
   color: red;
   font-weight: normal;
@@ -180,8 +179,6 @@ table, th, td {
   width:450px;
 }
 
-
-
 .titulo {
   font-size: 30px;
   display: block;
@@ -233,3 +230,7 @@ table, th, td {
     padding-bottom: 0.05em;  
   }
 } 
+
+@page {
+  size: auto;
+}
