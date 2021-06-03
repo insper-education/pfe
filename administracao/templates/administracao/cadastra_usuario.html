@@ -116,6 +116,12 @@
       <input type="checkbox" id="principal_contato" name="principal_contato" value="True" {% if usuario.parceiro.principal_contato %}checked{% endif %}>
       <label for="principal_contato"> Principal Contato</label><br>
 
+      {% if usuario %}
+        <input type='hidden' value='0' name='ativo'>
+        <input type="checkbox" id="ativo" value='1' name="ativo" {% if usuario.is_active %}checked="checked"{% endif %}>
+        <label for="ativo">Ativo (está ainda trabalhando na organização)</label>
+      {% endif %}
+
     </div>
 
     <br><br>

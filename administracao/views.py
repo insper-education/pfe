@@ -311,6 +311,12 @@ def registro_usuario(request, user=None):
     usuario.linkedin = request.POST.get('linkedin', None)
     usuario.tipo_lingua = request.POST.get('lingua', None)
 
+    if 'ativo' in request.POST:
+        if request.POST['ativo'] == "1":
+            usuario.is_active = True
+        else:
+            usuario.is_active = False
+
     usuario.save()
 
     if usuario.tipo_de_usuario == 1:  # estudante
