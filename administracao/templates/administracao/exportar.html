@@ -10,6 +10,11 @@
     <span class="titulo">Exportar Relatórios</span>
     <table>
         <tr>
+            <td>Propostas</td>
+            <td><a href="{% url 'relatorio' 'propostas' 'HTML'%}">HTML</a></td>
+            <td><a href="{% url 'relatorio' 'propostas' 'PDF'%}">PDF</a></td>
+        </tr>
+        <tr>
             <td>Projetos</td>
             <td><a href="{% url 'relatorio' 'projetos' 'HTML'%}">HTML</a></td>
             <td><a href="{% url 'relatorio' 'projetos' 'PDF'%}">PDF</a></td>

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 3 de Junho de 2021
+{% endcomment %}
+
+{% block head %}
+<style>
+    @page {
+        size: a4 portrait; /*landscape*/
+        margin: 1.5cm  1.5cm  1.5cm  1.5cm; /* top  right bottom left */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    
+    <span class="titulo">Propostas Disponíveis - PFE 
+    {% comment %}     
+      {{configuracao.ano}}.{{configuracao.semestre}}
+    {% endcomment %}
+    </span>
+
+    {% if propostas %}
+
+      {% for proposta in propostas %} 
+
+        <p style="page-break-before: always"></p>
+
+          {% with completo=True %}
+            {% include "proposta.html" %}
+          {% endwith %}
+
+          {% with completo=True %}
+            {% include "organizacao.html" %}
+          {% endwith %}
+
+          <strong>Submetido por:</strong><br>
+          {{proposta.nome}}<br><br>
+
+          {% if proposta.contatos_tecnicos %}
+            <strong>Contatos Técnicos</strong><br>
+            {{proposta.contatos_tecnicos|linebreaks|urlize}}
+            <br><br>
+          {% endif %}
+
+          {% if proposta.contatos_administrativos %}
+            <strong>Contatos Administrativos</strong><br>
+            {{proposta.contatos_administrativos|linebreaks|urlize}}
+            <br><br>
+          {% endif %}
+
+          <h4>Áreas de Interesse</h4>
+          {% with aa=proposta.areadeinteresse_set.all %}
+            {% with vencido=True %}
+              {% include "areas.html" %}
+            {% endwith %}
+          {% endwith %}
+          <br>
+
+          {% with editavel=False %}
+            {% include "recomendadas.html" %}
+          {% endwith %}
+
+          {% with editavel=False %}
+            {% include "perfil_estudantes.html" %}
+          {% endwith %}
+
+        <hr class="striped-border">
+
+      {% endfor %}
+  
+    {% else %}
+      <p>Não existem propostas disponíveis.</p>
+    {% endif %}
+
+{% endblock %}

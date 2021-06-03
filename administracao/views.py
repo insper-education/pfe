@@ -1104,14 +1104,13 @@ def email_backup(request):
 def relatorio(request, modelo, formato):
     """Gera relatorios em html e PDF."""
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
-
     context = {'configuracao': configuracao}
 
-    if modelo == "projetos":
+    if modelo == "propostas":
+        context['propostas'] = Proposta.objects.all()
+        arquivo = "administracao/relatorio_propostas.html"
+
+    elif modelo == "projetos":
         context['projetos'] = Projeto.objects.all()
         arquivo = "administracao/relatorio_projetos.html"
 
