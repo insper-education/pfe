@@ -40,6 +40,7 @@ from projetos.resources import ParceirosResource
 from projetos.resources import ConfiguracaoResource
 from projetos.resources import FeedbacksResource
 from projetos.resources import UsuariosResource
+from projetos.resources import Avaliacao2Resource
 
 from users.models import PFEUser, Aluno, Professor, Administrador, Parceiro
 from users.models import Opcao, Alocacao
@@ -970,6 +971,8 @@ def export(request, modelo, formato):
         resource = OrganizacoesResource()
     elif modelo == "opcoes":
         resource = OpcoesResource()
+    elif modelo == "avaliacoes":
+        resource = Avaliacao2Resource()
     elif modelo == "usuarios":
         resource = UsuariosResource()
     elif modelo == "estudantes":
@@ -1033,6 +1036,10 @@ def create_backup():
     data_opcoes = OpcoesResource().export()
     data_opcoes.title = "Opcoes"
     databook.add_sheet(data_opcoes)
+
+    data_avaliacoes = Avaliacoes2Resource().export()
+    data_avaliacoes.title = "Avaliações"
+    databook.add_sheet(data_avaliacoes)
 
     data_usuarios = UsuariosResource().export()
     data_usuarios.title = "Usuarios"
@@ -1152,10 +1159,6 @@ def relatorio_backup(request):
     mail = EmailMessage(subject, message, email_from, recipient_list)
 
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     context = {
         'projetos': Projeto.objects.all(),
