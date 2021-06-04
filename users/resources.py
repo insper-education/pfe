@@ -10,9 +10,12 @@ from import_export import resources
 
 from .models import Aluno
 
+
 # ISSO AINDA ESTA SENDO USADO, VERIFICAR !!
 class AlunoResource(resources.ModelResource):
     """Classe de recursos para alunos."""
+
     class Meta:
         """Classe Meta."""
+
         model = Aluno

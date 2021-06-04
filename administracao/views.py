@@ -11,7 +11,7 @@ import tablib
 import dateutil.parser
 
 from django.conf import settings
-from django.contrib.auth import get_user_model
+# from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
@@ -40,7 +40,6 @@ from projetos.resources import ParceirosResource
 from projetos.resources import ConfiguracaoResource
 from projetos.resources import FeedbacksResource
 from projetos.resources import UsuariosResource
-from projetos.resources import Avaliacao2Resource
 
 from users.models import PFEUser, Aluno, Professor, Administrador, Parceiro
 from users.models import Opcao, Alocacao
@@ -60,7 +59,6 @@ def index_administracao(request):
 @permission_required('users.altera_professor', login_url='/')
 def index_carregar(request):
     """Para carregar dados de arquivos para o servidor."""
-
     user = get_object_or_404(PFEUser, pk=request.user.pk)
 
     if user:
@@ -131,7 +129,7 @@ def emails_semestre(request):
 
                 # Parceiros de todas as organizações parceiras
                 parceiros = Parceiro.objects.filter(organizacao__in=organizacoes,
-                                                            user__is_active=True)
+                                                    user__is_active=True)
                 # IDEAL = conexoes = Conexao.objects.filter(projeto=projeto)
 
                 bancas = Banca.objects.filter(projeto=projeto)
@@ -202,7 +200,7 @@ def cadastrar_organizacao(request):
             organizacao = Organizacao.create()
 
             nome = request.POST.get('nome', None)
-            if nome: 
+            if nome:
                 organizacao.nome = nome.strip()
 
             sigla = request.POST.get('sigla', None)
@@ -259,7 +257,6 @@ def cadastrar_organizacao(request):
 
 def registro_usuario(request, user=None):
     """Rotina para cadastrar usuário no sistema."""
-
     if not user:
         usuario = PFEUser.create()
     else:
@@ -376,7 +373,7 @@ def registro_usuario(request, user=None):
                 content_type=content_type,
             )
             usuario.user_permissions.add(permission)
-        except (Permission.DoesNotExist):
+        except Permission.DoesNotExist:
             pass  # não encontrada a permissão
 
         try:  # <Permission: users | Professor | Professor altera valores>
@@ -385,7 +382,7 @@ def registro_usuario(request, user=None):
                 content_type=content_type,
             )
             usuario.user_permissions.add(permission)
-        except (Permission.DoesNotExist):
+        except Permission.DoesNotExist:
             pass  # não encontrada a permissão
 
         usuario.save()
@@ -423,8 +420,8 @@ def registro_usuario(request, user=None):
 
     if user:
         return ("Usuário atualizado na base de dados.", 200)
-    else:
-        return ("Usuário inserido na base de dados.", 200)
+
+    return ("Usuário inserido na base de dados.", 200)
 
 @login_required
 @transaction.atomic
@@ -972,7 +969,7 @@ def export(request, modelo, formato):
     elif modelo == "opcoes":
         resource = OpcoesResource()
     elif modelo == "avaliacoes":
-        resource = Avaliacao2Resource()
+        resource = Avaliacoes2Resource()
     elif modelo == "usuarios":
         resource = UsuariosResource()
     elif modelo == "estudantes":
@@ -1163,8 +1160,8 @@ def relatorio_backup(request):
     context = {
         'projetos': Projeto.objects.all(),
         'alunos': Aluno.objects.filter(user__tipo_de_usuario=1).\
-            filter(anoPFE=configuracao.ano).\
-            filter(semestrePFE=configuracao.semestre),
+          filter(anoPFE=configuracao.ano).\
+          filter(semestrePFE=configuracao.semestre),
         'configuracao': configuracao,
     }
 

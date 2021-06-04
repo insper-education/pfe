@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """
-Desenvolvido para o Projeto Final de Engenharia
+Desenvolvido para o Projeto Final de Engenharia.
+
 Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Maio de 2019
 """
@@ -19,31 +20,37 @@ from .support import converte_conceito
 
 class ProjetosResource(resources.ModelResource):
     """Model Resource para tratar dados de Projetos."""
+
     class Meta:
+        """Meta do Projeto."""
+
         model = Projeto
-
-
-class Avaliacao2Resource(resources.ModelResource):
-    """Model Resource para tratar dados de Avaliações."""
-    class Meta:
-        model = Avaliacao2
 
 
 class OrganizacoesResource(resources.ModelResource):
     """Model Resource para tratar dados de Organizações."""
+
     class Meta:
+        """Meta do Projeto."""
+
         model = Organizacao
 
 
 class ConfiguracaoResource(resources.ModelResource):
     """Model Resource para tratar dados de Configurações."""
+
     class Meta:
+        """Meta do Configuração."""
+
         model = Configuracao
 
 
 class FeedbacksResource(resources.ModelResource):
     """Model Resource para tratar dados de Feedbacks."""
+
     class Meta:
+        """Meta do Projeto."""
+
         model = Feedback
 
 
@@ -56,12 +63,16 @@ class DisciplinasResource(resources.ModelResource):
     nome = fields.Field(attribute='nome', column_name='nome')
 
     def get_instance(self, instance_loader, row):
-        # Returning False prevents us from looking in the
-        # database for rows that already exist
+        """
+        Return False.
+
+        Prevents us from looking in the
+        database for rows that already exist.
+        """
         return False
 
-    # forma que arrumei para evitar preencher com o mesmo dado
     def before_import_row(self, row, **kwargs):
+        """Forma que arrumei para evitar preencher com o mesmo dado."""
         nome = row.get('nome')
         if nome is None:
             pass
@@ -71,9 +82,12 @@ class DisciplinasResource(resources.ModelResource):
             row['id'] = reg.id
 
     def skip_row(self, instance, original):
+        """Sempre pula linha."""
         return True
 
     class Meta:
+        """Meta do Projeto."""
+
         model = Disciplina
         fields = ('nome',)
         export_order = fields
@@ -81,27 +95,24 @@ class DisciplinasResource(resources.ModelResource):
 
 
 def recupera_objetivo(objetivo_str):
-
-    if objetivo_str == "Comunicação" or objetivo_str == "Comunicacao" or objetivo_str == "CO":
+    """Recupera o objeto ObjetivoDeAprendizagem pelo nome."""
+    if objetivo_str in ("Comunicação", "Comunicacao", "CO"):
         objetivo = ObjetivosDeAprendizagem.objects.get(titulo="Comunicação",
                                                        avaliacao_grupo=True)
 
-    elif objetivo_str == "Design/Empreendedorismo" or\
-      objetivo_str == "Design e Empreendedorismo" or objetivo_str == "DE":
+    elif objetivo_str in ("Design/Empreendedorismo", "Design e Empreendedorismo", "DE"):
         objetivo = ObjetivosDeAprendizagem.objects.get(titulo="Design/Empreendedorismo",
                                                        avaliacao_grupo=True)
 
-    elif objetivo_str == "Trabalho em Equipe" or objetivo_str == "TW":
+    elif objetivo_str in ("Trabalho em Equipe", "TW"):
         objetivo = ObjetivosDeAprendizagem.objects.get(titulo="Trabalho em Equipe",
                                                        avaliacao_grupo=True)
 
-    elif objetivo_str == "Organização" or objetivo_str == "Organizacao" or objetivo_str == "OR":
+    elif objetivo_str in ("Organização", "Organizacao", "OR"):
         objetivo = ObjetivosDeAprendizagem.objects.get(titulo="Organização",
                                                        avaliacao_grupo=True)
 
-    elif objetivo_str == "Execução Técnica" or\
-      objetivo_str == "Execucao Tecnica" or\
-      objetivo_str == "TK":
+    elif objetivo_str in ("Execução Técnica", "Execucao Tecnica", "TK"):
         objetivo = ObjetivosDeAprendizagem.objects.get(titulo="Execução Técnica",
                                                        avaliacao_grupo=True)
 
@@ -113,17 +124,18 @@ def recupera_objetivo(objetivo_str):
 
 def le_momento(mnt):
     """Para ler o momento das células."""
-    d = int(mnt[-11:-9])
-    m = int(mnt[-9:-7])
-    a = int("20"+mnt[-7:-5])  # bug do milênio
-    h = int(mnt[-4:-2])
-    min = int(mnt[-2:])
-    t = datetime.datetime(a, m, d, h, min)  # momento da última atualização
-    return t
+    dia = int(mnt[-11:-9])
+    mes = int(mnt[-9:-7])
+    ano = int("20"+mnt[-7:-5])  # bug do milênio
+    hora = int(mnt[-4:-2])
+    minuto = int(mnt[-2:])
+    tempo = datetime.datetime(ano, mes, dia, hora, minuto)  # momento da última atualização
+    return tempo
 
 
 class Avaliacoes2Resource(resources.ModelResource):
     """Model Resource para tratar dados de Avaliações."""
+
     campos = [
         'estudante ou user_id (primeira parte do e-mail, obrigatório)',
         'ano',
@@ -137,8 +149,8 @@ class Avaliacoes2Resource(resources.ModelResource):
         'observação ou feedback',
     ]
 
-    # forma que arrumei para evitar preencher com o mesmo dado
     def before_import_row(self, row, **kwargs):
+        """Forma que arrumei para evitar preencher com o mesmo dado."""
         if 'estudante' in row:
             estudante_str = row.get('estudante')
         elif 'user_id' in row:
@@ -175,13 +187,13 @@ class Avaliacoes2Resource(resources.ModelResource):
                 # print("Erro ao recuperar coluna avaliação")
 
             if "momento" in row:
-                t = le_momento(row.get('momento'))
+                momento = le_momento(row.get('momento'))
             elif "date_modified" in row:  # caso esqueça de alterar o nome na coluna
-                t = le_momento(row.get('date_modified'))
+                momento = le_momento(row.get('date_modified'))
             else:
-                t = datetime.datetime.now()
+                momento = datetime.datetime.now()
 
-            tipo_de_avaliacao = 0  # padrão, mas que não deve acontecer
+            tipo = 0  # tipo de avaliação padrão, mas que não deve acontecer
 
             avaliador = projeto.orientador.user  # por padrão o avaliador é o orientador
 
@@ -193,90 +205,110 @@ class Avaliacoes2Resource(resources.ModelResource):
             else:
                 objetivo = None
 
-            if avaliacao == "RP" or avaliacao == "Relatório de Planejamento" or avaliacao == "Relatorio de Planejamento":
-                tipo_de_avaliacao = 10  # (10, 'Relatório de Planejamento'),
+            if avaliacao in ("RP",
+                             "Relatório de Planejamento",
+                             "Relatorio de Planejamento"):
+                tipo = 10  # (10, 'Relatório de Planejamento'),
                 (aval, _created) = Avaliacao2.objects.get_or_create(projeto=projeto,
                                                                     avaliador=avaliador,
-                                                                    momento=t,
-                                                                    tipo_de_avaliacao=tipo_de_avaliacao)
+                                                                    momento=momento,
+                                                                    tipo_de_avaliacao=tipo)
 
-            elif avaliacao == "RIG" or avaliacao == "Relatório Intermediário Grupo" or avaliacao == "Relatorio Intermediario Grupo":
-                tipo_de_avaliacao = 11  # (11, 'Relatório Intermediário de Grupo'),
+            elif avaliacao in ("RIG",
+                               "Relatório Intermediário Grupo",
+                               "Relatorio Intermediario Grupo"):
+                tipo = 11  # (11, 'Relatório Intermediário de Grupo'),
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo,
                                                                     projeto=projeto,
                                                                     avaliador=avaliador,
-                                                                    momento=t,
-                                                                    tipo_de_avaliacao=tipo_de_avaliacao)
+                                                                    momento=momento,
+                                                                    tipo_de_avaliacao=tipo)
 
-            elif avaliacao == "RFG" or avaliacao == "Relatório Final Grupo" or avaliacao == "Relatório Final de Grupo" or avaliacao == "Relatorio Final Grupo" or avaliacao == "Relatorio Final de Grupo":
-                tipo_de_avaliacao = 12  # (12, 'Relatório Final de Grupo'),
+            elif avaliacao in ("RFG",
+                               "Relatório Final Grupo",
+                               "Relatório Final de Grupo",
+                               "Relatorio Final Grupo",
+                               "Relatorio Final de Grupo"):
+                tipo = 12  # (12, 'Relatório Final de Grupo'),
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo,
                                                                     projeto=projeto,
                                                                     avaliador=avaliador,
-                                                                    momento=t,
-                                                                    tipo_de_avaliacao=tipo_de_avaliacao)
+                                                                    momento=momento,
+                                                                    tipo_de_avaliacao=tipo)
 
-            elif avaliacao == "RII" or avaliacao == "Relatório Intermediário Individual" or avaliacao == "Relatorio Intermediario Individual" or avaliacao == "Relatório Parcial Individual" or avaliacao == "Relatorio Parcial Individual":
-                tipo_de_avaliacao = 21  # (21, 'Relatório Intermediário Individual'),
+            elif avaliacao in ("RII",
+                               "Relatório Intermediário Individual",
+                               "Relatorio Intermediario Individual",
+                               "Relatório Parcial Individual",
+                               "Relatorio Parcial Individual"):
+                tipo = 21  # (21, 'Relatório Intermediário Individual'),
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo,
                                                                     projeto=projeto,
                                                                     alocacao=alocacao,
                                                                     avaliador=avaliador,
-                                                                    momento=t,
-                                                                    tipo_de_avaliacao=tipo_de_avaliacao)
+                                                                    momento=momento,
+                                                                    tipo_de_avaliacao=tipo)
 
-            elif avaliacao == "RFI" or avaliacao == "Relatório Final Individual" or avaliacao == "Relatorio Final Individual":
-                tipo_de_avaliacao = 22  # (22, 'Relatório Final Individual'),
+            elif avaliacao in ("RFI",
+                               "Relatório Final Individual",
+                               "Relatorio Final Individual"):
+                tipo = 22  # (22, 'Relatório Final Individual'),
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo,
                                                                     projeto=projeto,
                                                                     alocacao=alocacao,
                                                                     avaliador=avaliador,
-                                                                    momento=t,
-                                                                    tipo_de_avaliacao=tipo_de_avaliacao)
+                                                                    momento=momento,
+                                                                    tipo_de_avaliacao=tipo)
 
-            elif avaliacao == "BI" or avaliacao == "Banca Intermediária" or avaliacao == "Banca Intermediaria":
-                tipo_de_avaliacao = 1  # ( 1, 'Banca Intermediária'),
+            elif avaliacao in ("BI",
+                               "Banca Intermediária",
+                               "Banca Intermediaria"):
+                tipo = 1  # ( 1, 'Banca Intermediária'),
                 # o certo seria procurar avaliador
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo,
                                                                     projeto=projeto,
                                                                     avaliador=avaliador,
-                                                                    momento=t,
-                                                                    tipo_de_avaliacao=tipo_de_avaliacao)
+                                                                    momento=momento,
+                                                                    tipo_de_avaliacao=tipo)
 
-            elif avaliacao == "BF" or avaliacao == "Banca Final":
-                tipo_de_avaliacao = 2  # ( 2, 'Banca Final'),
+            elif avaliacao in ("BF",
+                               "Banca Final"):
+                tipo = 2  # ( 2, 'Banca Final'),
                 # o certo seria procurar avaliador
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo,
                                                                     projeto=projeto,
                                                                     avaliador=avaliador,
-                                                                    momento=t,
-                                                                    tipo_de_avaliacao=tipo_de_avaliacao)
+                                                                    momento=momento,
+                                                                    tipo_de_avaliacao=tipo)
 
             # NÃO MAIS USADAS, FORAM USADAS QUANDO O PFE ERA AINDA EM DOIS SEMESTRES
-            elif avaliacao == "PPF" or avaliacao == "Planejamento Primeira Fase":
-                tipo_de_avaliacao = 50  # (50, 'Planejamento Primeira Fase'),
+            elif avaliacao in ("PPF",
+                               "Planejamento Primeira Fase"):
+                tipo = 50  # (50, 'Planejamento Primeira Fase'),
                 (aval, _created) = Avaliacao2.objects.get_or_create(projeto=projeto,
                                                                     avaliador=avaliador,
-                                                                    momento=t,
-                                                                    tipo_de_avaliacao=tipo_de_avaliacao)
+                                                                    momento=momento,
+                                                                    tipo_de_avaliacao=tipo)
 
-            elif avaliacao == "API" or avaliacao == "Avaliação Parcial Individual":
-                tipo_de_avaliacao = 51  # (51, 'Avaliação Parcial Individual'),
+            elif avaliacao in ("API",
+                               "Avaliação Parcial Individual"):
+                tipo = 51  # (51, 'Avaliação Parcial Individual'),
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo,
                                                                     projeto=projeto,
                                                                     alocacao=alocacao,
                                                                     avaliador=avaliador,
-                                                                    momento=t,
-                                                                    tipo_de_avaliacao=tipo_de_avaliacao)
+                                                                    momento=momento,
+                                                                    tipo_de_avaliacao=tipo)
 
-            elif avaliacao == "AFI" or avaliacao == "Avaliação Final Individual":
-                tipo_de_avaliacao = 52  # (52, 'Avaliação Final Individual'),
+            elif avaliacao in ("AFI",
+                               "Avaliação Final Individual"):
+                tipo = 52  # (52, 'Avaliação Final Individual'),
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo,
                                                                     projeto=projeto,
                                                                     alocacao=alocacao,
                                                                     avaliador=avaliador,
-                                                                    momento=t,
-                                                                    tipo_de_avaliacao=tipo_de_avaliacao)
+                                                                    momento=momento,
+                                                                    tipo_de_avaliacao=tipo)
 
             else:
                 pass
@@ -296,8 +328,8 @@ class Avaliacoes2Resource(resources.ModelResource):
                                                                    projeto=projeto,
                                                                    avaliador=avaliador,
                                                                    alocacao=alocacao,
-                                                                   momento=t,
-                                                                   tipo_de_avaliacao=tipo_de_avaliacao)
+                                                                   momento=momento,
+                                                                   tipo_de_avaliacao=tipo)
                 obs.observacoes = obs_str
                 obs.save()
 
@@ -326,9 +358,12 @@ class Avaliacoes2Resource(resources.ModelResource):
             row['id'] = aval.id
 
     def skip_row(self, instance, original):
+        """Sempre pula linha."""
         return True
 
     class Meta:
+        """Meta para Avaliações."""
+
         model = Avaliacao2
 
 
@@ -336,27 +371,29 @@ class Avaliacoes2Resource(resources.ModelResource):
 
 class UsuariosResource(resources.ModelResource):
     """Model Resource para tratar dados de Usuários."""
+
     class Meta:
+        """Meta para PFEUser."""
+
         model = PFEUser
 
 
 def atualizar_campo(registro, campo, valor):
+    """Atualiza o campo."""
     if (valor is not None) and (valor != ""):
         tmp = getattr(registro, campo)
         if (tmp is not None) and (tmp != "") and (tmp != valor):
-            # print("Dado atualizado de {0} para {1}".format(tmp, valor))
-            pass
+            pass  # ("Dado atualizado de {0} para {1}".format(tmp, valor))
         else:
-            # print("Dados iguais em {0} : {0}".format(campo, tmp))
-            pass
+            pass  # print("Dados iguais em {0} : {0}".format(campo, tmp))
         setattr(registro, campo, valor)
     else:
-        # print("Não houve atualização de {0}".format(campo))
-        pass
+        pass  # print("Não houve atualização de {0}".format(campo))
 
 
 class EstudantesResource(resources.ModelResource):
     """Model Resource para tratar dados de Estudantes."""
+
     campos = [
         'usuário (primeira parte do e-mail, obrigatório)',
         'nome',
@@ -370,15 +407,17 @@ class EstudantesResource(resources.ModelResource):
         'semestrePFE',
     ]
 
-    def before_import_row(self, row, **kwargs):  # forma que arrumei para evitar preencher com o mesmo dado
+    def before_import_row(self, row, **kwargs):
+        """Forma que arrumei para evitar preencher com o mesmo dado."""
         username = row.get('usuário')
         if username is None:
             pass
             # print("Erro ao recuperar o usuário [username]")
         elif username != "":
             # recupera dados do estudante se ele já estava cadastrado
+            # TIPO_DE_USUARIO_CHOICES = (1, 'aluno')
             (user, _created) = PFEUser.objects.get_or_create(username=username,
-                                                             tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
+                                                             tipo_de_usuario=1)
 
             atualizar_campo(user, 'first_name', row.get('nome'))
             atualizar_campo(user, 'last_name', row.get('sobrenome'))
@@ -408,101 +447,125 @@ class EstudantesResource(resources.ModelResource):
 
             # Isso caça propostas, não deverá ser novamente usado no futuro
             # Esta criando Opções sem ver se já existiam
-            contador = 1
-            while contador < 100:
-                if str(contador) in row and row[str(contador)] != "":
-                    proposta = Proposta.objects.get(id=contador)
+            contad = 1
+            while contad < 100:
+                if str(contad) in row and row[str(contad)] != "":
+                    proposta = Proposta.objects.get(id=contad)
 
-                    (op, _created) = Opcao.objects.get_or_create(aluno=aluno,
-                                                                 proposta=proposta,
-                                                                 prioridade=int(row[str(contador)]))
+                    (opt, _created) = Opcao.objects.get_or_create(aluno=aluno,
+                                                                  proposta=proposta,
+                                                                  prioridade=int(row[str(contad)]))
 
-                    op.save()
-                contador += 1
+                    opt.save()
+                contad += 1
 
             if "areas" in row:
                 if "Programação" in row["areas"]:
                     area = Area.objects.get(ativa=True, titulo="Sistemas de Informação")
-                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area,
+                                                                                 usuario=user)
                     area_int.save()
 
                 if "Gestão de Projetos" in row["areas"] or "finanças" in row["areas"]:
                     area = Area.objects.get(ativa=True, titulo="Administração, Economia e Finanças")
-                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area,
+                                                                                 usuario=user)
                     area_int.save()
 
                 if "Manufatura" in row["areas"]:
                     area = Area.objects.get(ativa=True, titulo="Manufatura Avançada")
-                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area,
+                                                                                 usuario=user)
                     area_int.save()
 
                 if "Dados" in row["areas"]:
                     area = Area.objects.get(ativa=True, titulo="Ciência dos Dados")
-                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area,
+                                                                                 usuario=user)
                     area_int.save()
 
                 if "Controle" in row["areas"]:
                     area = Area.objects.get(ativa=True, titulo="Controle de Sistemas Dinâmicos")
-                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area,
+                                                                                 usuario=user)
                     area_int.save()
 
                 if "Social" in row["areas"]:
                     area = Area.objects.get(ativa=True, titulo="Inovação Social")
-                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area,
+                                                                                 usuario=user)
                     area_int.save()
 
                 if "Eletrônica" in row["areas"]:
                     area = Area.objects.get(ativa=True, titulo="Sistemas Embarcados")
-                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area,
+                                                                                 usuario=user)
                     area_int.save()
 
                 if "3D" in row["areas"]:
                     area = Area.objects.get(ativa=True, titulo="Sistemas Interativos")
-                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area,
+                                                                                 usuario=user)
                     area_int.save()
 
                 if "Robótica" in row["areas"]:
                     area = Area.objects.get(ativa=True, titulo="Robótica")
-                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area,
+                                                                                 usuario=user)
                     area_int.save()
 
                 if "Automação" in row["areas"]:
                     area = Area.objects.get(ativa=True, titulo="Automação Industrial")
-                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area,
+                                                                                 usuario=user)
                     area_int.save()
 
                 if "Machine" in row["areas"] or "AI" in row["areas"]:
                     area = Area.objects.get(ativa=True, titulo="Inteligência Artificial")
-                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area,
+                                                                                 usuario=user)
                     area_int.save()
 
                 if "Machine" in row["areas"]:
                     area = Area.objects.get(ativa=True, titulo="Inteligência Artificial")
-                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area, usuario=user)
+                    (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area,
+                                                                                 usuario=user)
                     area_int.save()
 
             row['id'] = aluno.id
 
     def skip_row(self, instance, original):
+        """Sempre pula linha."""
         return True
 
     class Meta:
+        """Meta de Estudantes."""
+
         model = Aluno
 
 
 class ProfessoresResource(resources.ModelResource):
     """Model Resource para tratar dados de Professores."""
+
     class Meta:
+        """Meta do Professores."""
+
         model = Professor
 
 
 class ParceirosResource(resources.ModelResource):
     """Model Resource para tratar dados de Parceiros."""
+
     class Meta:
+        """Meta do Parceiros."""
+
         model = Parceiro
 
 
 class OpcoesResource(resources.ModelResource):
     """Model Resource para tratar dados de Opções."""
+
     class Meta:
+        """Meta do Opções."""
+
         model = Opcao
