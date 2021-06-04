@@ -49,7 +49,7 @@ def mapeamento_estudantes_propostas(request):
             ano, semestre = request.POST['edicao'].split('.')
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
-        
+
         lista_propostas = list(zip(*ordena_propostas(False, ano, semestre)))
         if lista_propostas:
             propostas = lista_propostas[0]
@@ -73,8 +73,8 @@ def mapeamento_estudantes_propostas(request):
                 else:
                     try:
                         proj = Projeto.objects.get(proposta=proposta,
-                                                ano=ano,
-                                                semestre=semestre)
+                                                   ano=ano,
+                                                   semestre=semestre)
                         if alocacaos.filter(projeto=proj):
                             # Cria uma opção temporaria
                             opc = Opcao()
@@ -266,14 +266,14 @@ def propostas_apresentadas(request):
                             semestre=semestre)
 
             propostas_filtradas = propostas_filtradas.order_by("ano",
-                                                            "semestre",
-                                                            "organizacao",
-                                                            "titulo", )
+                                                               "semestre",
+                                                               "organizacao",
+                                                               "titulo", )
 
             ternario_aprovados = retorna_ternario(propostas_filtradas
-                                                .filter(disponivel=True))
+                                                  .filter(disponivel=True))
             ternario_pendentes = retorna_ternario(propostas_filtradas
-                                                .filter(disponivel=False))
+                                                  .filter(disponivel=False))
 
             dic_organizacoes = {}
             for proposta in propostas_filtradas:
@@ -322,7 +322,7 @@ def proposta_completa(request, primakey):
                 return HttpResponse("Autorizador não encontrado.", status=401)
         else:
             return HttpResponse("Autorizador não encontrado.", status=401)
-        
+
         data = {
             'atualizado': True,
         }
@@ -442,7 +442,7 @@ def proposta_editar(request, slug):
             professor = get_object_or_404(Professor, pk=request.user.professor.pk)
         elif user.tipo_de_usuario == 4:  # admin
             administrador = get_object_or_404(Administrador, pk=request.user.administrador.pk)
-            
+
     proposta = get_object_or_404(Proposta, slug=slug)
 
     configuracao = get_object_or_404(Configuracao)
@@ -450,10 +450,8 @@ def proposta_editar(request, slug):
 
     configuracao = get_object_or_404(Configuracao)
     ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
-    if proposta.ano != ano or proposta.semestre != semestre:
-        vencida = True
-    else:
-        vencida = False
+
+    vencida = proposta.ano != ano or proposta.semestre != semestre
 
     if request.method == 'POST':
         if (not liberadas_propostas) or (user.tipo_de_usuario == 4):
@@ -569,7 +567,7 @@ def validate_alunos(request):
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", login_url='/')
-def link_organizacao(request, proposta_id): 
+def link_organizacao(request, proposta_id):
     """Cria um anotação para uma organização parceira."""
     proposta = get_object_or_404(Proposta, id=proposta_id)
 
@@ -577,11 +575,11 @@ def link_organizacao(request, proposta_id):
 
         organizacao_id = int(request.POST['organizacao_id'])
         organizacao = get_object_or_404(Organizacao, id=organizacao_id)
-    
+
         proposta.organizacao = organizacao
 
         proposta.save()
-        
+
         data = {
             'organizacao': str(organizacao),
             'organizacao_id': organizacao.id,
@@ -617,20 +615,19 @@ def link_disciplina(request, proposta_id):
         if ja_existe:
             return HttpResponseNotFound('Já existe')
 
-        else:
-            recomendada = Recomendada.create()
-            recomendada.proposta = proposta
-            recomendada.disciplina = disciplina
-            recomendada.save()
+        recomendada = Recomendada.create()
+        recomendada.proposta = proposta
+        recomendada.disciplina = disciplina
+        recomendada.save()
 
-            data = {
-                'disciplina': str(disciplina),
-                'disciplina_id': disciplina.id,
-                'proposta_id': proposta_id,
-                'atualizado': True,
-            }
+        data = {
+            'disciplina': str(disciplina),
+            'disciplina_id': disciplina.id,
+            'proposta_id': proposta_id,
+            'atualizado': True,
+        }
 
-            return JsonResponse(data)
+        return JsonResponse(data)
 
     context = {
         'disciplinas': Disciplina.objects.all().order_by("nome"),
@@ -652,7 +649,7 @@ def remover_disciplina(request):
         proposta_id = int(request.POST['proposta_id'])
         disciplina_id = int(request.POST['disciplina_id'])
 
-        instances = Recomendada.objects.filter(proposta__id=proposta_id, disciplina__id = disciplina_id)
+        instances = Recomendada.objects.filter(proposta__id=proposta_id, disciplina__id=disciplina_id)
         for instance in instances:
             instance.delete()
 

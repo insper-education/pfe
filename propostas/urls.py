@@ -58,7 +58,4 @@ urlpatterns = [
          views.remover_disciplina,
          name='remover_disciplina'),
 
-
-
 ]
-

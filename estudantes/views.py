@@ -43,10 +43,6 @@ def index_estudantes(request):
     # Caso estudante
     if usuario.tipo_de_usuario == 1:
         estudante = get_object_or_404(Aluno, pk=request.user.aluno.pk)
-        # try:
-        #     estudante = Aluno.objects.get(pk=request.user.aluno.pk)
-        # except Aluno.DoesNotExist:
-        #     return HttpResponse("Estudante não encontrado.", status=401)
 
         context['projeto'] = Projeto.objects\
             .filter(alocacao__aluno=estudante).last()
@@ -62,11 +58,6 @@ def index_estudantes(request):
     # Caso professor ou administrador
     elif usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4:
         context['professor_id'] = get_object_or_404(Professor, pk=request.user.professor.pk).id
-        # try:
-        #     context['professor_id'] = \
-        #         Professor.objects.get(pk=request.user.professor.pk).id
-        # except Professor.DoesNotExist:
-        #     return HttpResponse("Professor não encontrado.", status=401)
 
     # Caso parceiro
     else:
@@ -132,10 +123,6 @@ def encontros_marcar(request):
 
     if usuario.tipo_de_usuario == 1:  # Estudante
         estudante = get_object_or_404(Aluno, pk=request.user.aluno.pk)
-        # try:
-        #     estudante = Aluno.objects.get(pk=request.user.aluno.pk)
-        # except Aluno.DoesNotExist:
-        #     return HttpResponse("Estudante não encontrado.", status=401)
 
         projeto = Projeto.objects.filter(alocacao__aluno=estudante).\
             distinct().\
@@ -186,12 +173,11 @@ def encontros_marcar(request):
 
         return HttpResponse("Problema! Por favor reportar.")
 
-    else:
-        context = {
-            'encontros': encontros,
-            'projeto': projeto,
-        }
-        return render(request, 'estudantes/encontros_marcar.html', context)
+    context = {
+        'encontros': encontros,
+        'projeto': projeto,
+    }
+    return render(request, 'estudantes/encontros_marcar.html', context)
 
 
 @login_required
@@ -410,7 +396,6 @@ def selecao_propostas(request):
 @transaction.atomic
 def opcao_temporaria(request):
     """Ajax para definir opção temporária."""
-
     try:
         proposta_id = int(request.POST.get('proposta_id', None))
         prioridade = int(request.POST.get('prioridade', None))

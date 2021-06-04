@@ -13,24 +13,40 @@ from .models import PFEUser, Aluno
 
 
 class PFEUserCreationForm(UserCreationForm):
+    """Form para criação de PFEUser."""
+
     class Meta(UserCreationForm):
+        """Meta para UserCreationForm."""
+
         model = PFEUser
         fields = ('username', 'email')
 
 
 class PFEUserChangeForm(UserChangeForm):
+    """Form para trocar de PFEUser."""
+
     class Meta:
+        """Meta para PFEUserChangeForm."""
+
         model = PFEUser
         fields = ('username', 'email')
 
 
 class PFEUserForm(forms.ModelForm):
+    """Form para PFEUser."""
+
     class Meta:
+        """Meta para PFEUserForm."""
+
         model = PFEUser
         fields = ('first_name', 'last_name', 'email')
 
 
 class AlunoForm(forms.ModelForm):
+    """Form para Aluno."""
+
     class Meta:
+        """Meta para AlunoForm."""
+
         model = Aluno
         fields = ('curso',)

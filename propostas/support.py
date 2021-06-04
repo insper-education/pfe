@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """
-Desenvolvido para o Projeto Final de Engenharia
+Desenvolvido para o Projeto Final de Engenharia.
+
 Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Dezembro de 2020
 """
@@ -66,7 +67,6 @@ def cria_area_proposta_pdf(campos, proposta):
 
 def lista_areas(proposta):
     """Lista áreas de um objeto Areas."""
-
     mensagem = ""
 
     areas = AreaDeInteresse.objects.filter(proposta=proposta).exclude(area=None)
@@ -82,7 +82,6 @@ def lista_areas(proposta):
 
 def ordena_propostas(disponivel=True, ano=0, semestre=0):
     """Gera lista com propostas ordenados pelos com maior interesse pelos alunos."""
-
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
@@ -118,7 +117,6 @@ def ordena_propostas(disponivel=True, ano=0, semestre=0):
 
 def ordena_propostas_novo(disponivel=True, ano=2018, semestre=2, curso='T'):
     """Gera lista com propostas ordenados pelos com maior interesse pelos alunos."""
-
     prioridades = [[], [], [], [], []]
     estudantes = [[], [], [], [], []]
 
@@ -205,7 +203,6 @@ def ordena_propostas_novo(disponivel=True, ano=2018, semestre=2, curso='T'):
 
 def preenche_proposta(request, proposta):
     """Preenche um proposta a partir de um request."""
-
     if proposta is None:  # proposta nova
         proposta = Proposta.create()
 
@@ -251,7 +248,6 @@ def preenche_proposta(request, proposta):
 
 def preenche_proposta_pdf(campos, proposta):
     """Preenche um proposta a partir de um dicionario PDF."""
-
     if proposta is None:  # proposta nova
         proposta = Proposta.create()
 
@@ -299,7 +295,6 @@ def preenche_proposta_pdf(campos, proposta):
 
 def envia_proposta(proposta, enviar=True):
     """Envia Proposta por email."""
-
     # Isso tinha que ser feito por template, arrumar qualquer hora.
     message = "<h3>Proposta de Projeto para o PFE {0}.{1}</h3>\n\n".\
         format(proposta.ano, proposta.semestre)

@@ -47,7 +47,6 @@ def configuracao_estudante_vencida(estudante):
 
 def get_edicoes(tipo):
     """Função usada para recuperar todas as edições de 2018.2 até hoje."""
-
     edicoes = []
     semestre_tmp = 2
     ano_tmp = 2018

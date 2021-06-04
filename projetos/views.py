@@ -9,21 +9,23 @@ Data: 15 de Maio de 2019
 import os
 import re
 import datetime
-import dateutil.parser
 import csv
 import mimetypes
 
 from wsgiref.util import FileWrapper
+import dateutil.parser
 
 from django.http.response import StreamingHttpResponse
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.admin.models import LogEntry
 from django.contrib.sessions.models import Session
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models.functions import Lower
-from django.http import Http404, HttpResponse, HttpResponseNotFound
+from django.http import Http404, HttpResponse
+# from django.http import HttpResponseNotFound
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
@@ -33,11 +35,14 @@ from users.models import Parceiro
 
 from users.support import get_edicoes
 
-from .models import Projeto, Proposta, Configuracao, Coorientador, Avaliacao2, ObjetivosDeAprendizagem
+from .models import Projeto, Proposta, Configuracao
+from .models import Coorientador, Avaliacao2, ObjetivosDeAprendizagem
 # from .models import Evento
 
 from .models import Feedback, AreaDeInteresse, Acompanhamento, Anotacao, Organizacao
-from .models import Documento, Encontro, Banco, Reembolso, Aviso, Conexao
+from .models import Documento
+# from .models import Encontro
+from .models import Banco, Reembolso, Aviso, Conexao
 
 from .messages import email, message_reembolso
 
@@ -133,12 +138,6 @@ def distribuicao_areas(request):
     configuracao = get_object_or_404(Configuracao)
     ano = configuracao.ano              # Ano atual
     semestre = configuracao.semestre    # Semestre atual
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    #     ano = configuracao.ano              # Ano atual
-    #     semestre = configuracao.semestre    # Semestre atual
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     todas = False  # Para mostrar todos os dados de todos os anos e semestres
     tipo = "estudantes"
@@ -257,9 +256,9 @@ def projetos_fechados(request):
                             prioridades.append(0)
                     prioridade_list.append(zip(estudantes_pfe, prioridades))
                     cooperacoes.append(Conexao.objects.filter(projeto=projeto,
-                                                        colaboracao=True))
+                                                              colaboracao=True))
                     conexoes.append(Conexao.objects.filter(projeto=projeto,
-                                                        colaboracao=False))
+                                                           colaboracao=False))
 
             projetos = zip(projetos_selecionados, prioridade_list, cooperacoes, conexoes)
 
@@ -280,8 +279,9 @@ def projetos_fechados(request):
     return render(request, 'projetos/projetos_fechados.html', context)
 
 
-# FONTE: https://stackoverflow.com/questions/33208849/python-django-streaming-video-mp4-file-using-httpresponse/41289535#41289535
-class RangeFileWrapper(object):
+# FONTE: https://stackoverflow.com/questions/33208849/
+# ... python-django-streaming-video-mp4-file-using-httpresponse/41289535#41289535
+class RangeFileWrapper:
     def __init__(self, filelike, blksize=8192, offset=0, length=None):
         self.filelike = filelike
         self.filelike.seek(offset, os.SEEK_SET)
@@ -302,14 +302,14 @@ class RangeFileWrapper(object):
             if data:
                 return data
             raise StopIteration()
-        else:
-            if self.remaining <= 0:
-                raise StopIteration()
-            data = self.filelike.read(min(self.remaining, self.blksize))
-            if not data:
-                raise StopIteration()
-            self.remaining -= len(data)
-            return data
+
+        if self.remaining <= 0:
+            raise StopIteration()
+        data = self.filelike.read(min(self.remaining, self.blksize))
+        if not data:
+            raise StopIteration()
+        self.remaining -= len(data)
+        return data
 
 
 def stream_video(request, path):
@@ -317,7 +317,8 @@ def stream_video(request, path):
     range_re = re.compile(r'bytes\s*=\s*(\d+)\s*-\s*(\d*)', re.I)
     range_match = range_re.match(range_header)
     size = os.path.getsize(path)
-    content_type, encoding = mimetypes.guess_type(path)
+    # content_type, encoding = mimetypes.guess_type(path)
+    content_type, _ = mimetypes.guess_type(path)
     content_type = content_type or 'application/octet-stream'
     resp = None
     if range_match:
@@ -327,7 +328,8 @@ def stream_video(request, path):
         if last_byte >= size:
             last_byte = size - 1
         length = last_byte - first_byte + 1
-        resp = StreamingHttpResponse(RangeFileWrapper(open(path, 'rb'), offset=first_byte, length=length), status=206, content_type=content_type)
+        resp = StreamingHttpResponse(RangeFileWrapper(open(path, 'rb'), offset=first_byte, length=length),
+                                     status=206, content_type=content_type)
         #resp['Content-Length'] = str(length)
         resp['Content-Range'] = 'bytes %s-%s/%s' % (first_byte, last_byte, size)
     else:
@@ -380,7 +382,7 @@ def carrega_arquivo(request, local_path, path):
             user = get_object_or_404(PFEUser, pk=request.user.pk)
 
             if (doc.confidencial) and \
-                not ( (user.tipo_de_usuario == 2) or (user.tipo_de_usuario == 4) ):
+                not ((user.tipo_de_usuario == 2) or (user.tipo_de_usuario == 4)):
                 mensagem = "Documento Confidencial"
                 context = {
                     "mensagem": mensagem,
@@ -561,6 +563,7 @@ def reembolso_pedir(request):
         projeto = Projeto.objects.filter(alocacao__aluno=aluno).last()
     else:
         projeto = None
+
     if request.method == 'POST':
         reembolso = Reembolso.create(usuario)
         reembolso.descricao = request.POST['descricao']
@@ -595,15 +598,15 @@ def reembolso_pedir(request):
         if check != 1:
             message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
         return HttpResponse(message)
-    else:
-        bancos = Banco.objects.all().order_by(Lower("nome"), "codigo")
-        context = {
-            'usuario': usuario,
-            'projeto': projeto,
-            'bancos': bancos,
-            'configuracao': configuracao,
-        }
-        return render(request, 'projetos/reembolso_pedir.html', context)
+
+    bancos = Banco.objects.all().order_by(Lower("nome"), "codigo")
+    context = {
+        'usuario': usuario,
+        'projeto': projeto,
+        'bancos': bancos,
+        'configuracao': configuracao,
+    }
+    return render(request, 'projetos/reembolso_pedir.html', context)
 
 
 @login_required
@@ -674,7 +677,6 @@ def lista_feedback(request):
 @permission_required("users.altera_professor", login_url='/')
 def lista_acompanhamento(request):
     """Lista todos os acompanhamentos das Organizações Parceiras."""
-
     acompanhamentos = Acompanhamento.objects.all().order_by("-data")
 
     context = {
@@ -821,18 +823,19 @@ def projetos_vs_propostas(request):
 def analise_notas(request):
     """Mostra graficos das evoluções do PFE."""
     configuracao = get_object_or_404(Configuracao)
-    edicoes, ano, semestre = get_edicoes(Avaliacao2)
-    
+    edicoes, _, _ = get_edicoes(Avaliacao2)
+
     if request.is_ajax():
 
         periodo = ""
-        estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
+        # estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
         medias_semestre = Alocacao.objects.all()
 
         if 'edicao' in request.POST:
             if request.POST['edicao'] != 'todas':
                 periodo = request.POST['edicao'].split('.')
-                medias_semestre = medias_semestre.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
+                medias_semestre = medias_semestre.filter(projeto__ano=periodo[0],
+                                                         projeto__semestre=periodo[1])
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
@@ -948,10 +951,10 @@ def analise_notas(request):
                     elif nota[1] >= valor["regular"]:
                         notas["afi"]["regular"] += 1
                     else:
-                        notas["afi"]["inferior"] += 1    
+                        notas["afi"]["inferior"] += 1
 
         medias_lista = [x.get_media for x in medias_semestre]
-        
+
         # Somente apresenta as médias que esteja completas (pesso = 100%)
         medias_validas = list(filter(lambda d: d['pesos'] == 1.0, medias_lista))
 
@@ -986,7 +989,7 @@ def certificacao_falconi(request):
     """Mostra graficos das certificacões Falconi."""
     configuracao = get_object_or_404(Configuracao)
 
-    edicoes, ano, semestre = get_edicoes(Avaliacao2)
+    edicoes, _, _ = get_edicoes(Avaliacao2)
     edicoes = ["2020.2"]
 
     if request.is_ajax():
@@ -1007,13 +1010,13 @@ def certificacao_falconi(request):
         # else:
         #     return HttpResponse("Algum erro não identificado.", status=401)
 
-        
         # conceitos = I, D, C, C+, B, B+, A, A+
         conceitos = [0, 0, 0, 0, 0, 0, 0, 0]
         total = len(projetos)
         selecionados = 0
         for projeto in projetos:
-            aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=99)  # Falc.
+            aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto,
+                                                          tipo_de_avaliacao=99)  # Falc.
             nota_banca_falconi, peso = Aluno.get_banca(None, aval_banc_falconi)
             if peso is not None:
                 selecionados += 1
@@ -1046,7 +1049,7 @@ def certificacao_falconi(request):
             "conceitos": conceitos,
         }
 
-    else: 
+    else:
         context = {
             "edicoes": edicoes,
         }
@@ -1070,7 +1073,7 @@ def media(notas_lista):
 @permission_required("users.altera_professor", login_url='/')
 def analise_objetivos(request):
     """Mostra graficos das evoluções do PFE."""
-    edicoes, ano, semestre = get_edicoes(Avaliacao2)
+    edicoes, _, _ = get_edicoes(Avaliacao2)
 
     if request.is_ajax():
 
@@ -1094,61 +1097,12 @@ def analise_objetivos(request):
         context["edicoes"] = edicoes
         context["total_geral"] = len(alocacoes)
 
-    else: 
+    else:
         context = {
             "edicoes": edicoes,
         }
 
     return render(request, 'projetos/analise_objetivos.html', context)
-
-
-# @login_required
-# @permission_required("users.altera_professor", login_url='/')
-# def graficos(request):
-#     """Mostra graficos das evoluções do PFE."""
-#     configuracao = get_object_or_404(Configuracao)
-
-#     periodo = ""
-#     estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
-
-#     edicoes, _, _ = get_edicoes(Avaliacao2)
-
-#     avaliacoes = Avaliacao2.objects.all()
-
-#     cores = ["#00af00", "#d40000", "#cccc00", "#000000", ]
-
-#     notas_total = {}
-#     for edicao in edicoes:
-#         notas_total[edicao] = []
-
-#     medias = []
-#     count = 0
-#     for curso in Aluno.TIPOS_CURSO:
-#         notas = []
-#         for edicao in edicoes:
-#             periodo = edicao.split('.')
-#             semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
-#             notas_lista = [x.nota for x in semestre if (x.alocacao != None and x.alocacao.aluno.curso == curso[0])]
-#             notas_total[edicao] += notas_lista
-#             notas.append(media(notas_lista))
-#         medias.append({"curso": curso[1], "media": notas, "cor": cores[count]})
-#         count += 1
-    
-#     notas = []
-#     for edicao in edicoes:
-#         notas.append(media(notas_total[edicao]))
-#     medias.append({"curso": "Engenharia", "media": notas, "cor": cores[count]})
-
-#     context = {
-#         "medias": medias,
-#         'periodo': periodo,
-#         'ano': configuracao.ano,
-#         'semestre': configuracao.semestre,
-#         'edicoes': edicoes,
-#     }
-
-#     return render(request, 'projetos/graficos.html', context)
-
 
 
 @login_required
@@ -1195,7 +1149,7 @@ def evolucao_notas(request):
             if notas != [None] * len(notas):  # não está vazio
                 medias_individuais.append({"curso": curso[1], "media": notas, "cor": cores[count]})
             count += 1
-        
+
         if len(medias_individuais) > 1:
             notas = []
             for edicao in edicoes:
@@ -1218,10 +1172,12 @@ def evolucao_notas(request):
             notas = []
             for edicao in edicoes:
                 periodo = edicao.split('.')
-                alocacoes_tmp = alocacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1], aluno__curso=curso[0])
+                alocacoes_tmp = alocacoes.filter(projeto__ano=periodo[0],
+                                                 projeto__semestre=periodo[1],
+                                                 aluno__curso=curso[0])
                 notas_lista = []
-                for x in alocacoes_tmp:
-                    media_loc = x.get_media
+                for alocacao in alocacoes_tmp:
+                    media_loc = alocacao.get_media
                     if media_loc["pesos"] == 1:
                         notas_lista.append(media_loc["media"])
 
@@ -1230,7 +1186,7 @@ def evolucao_notas(request):
             if notas != [None] * len(notas):  # não está vazio
                 medias_gerais.append({"curso": curso[1], "media": notas, "cor": cores[count]})
             count += 1
-        
+
         if len(medias_gerais) > 1:
             notas = []
             for edicao in edicoes:
@@ -1242,7 +1198,7 @@ def evolucao_notas(request):
             "medias_gerais": medias_gerais,
             "edicoes": edicoes,
         }
-    
+
     else:
         context = {
             "edicoes": edicoes,
@@ -1256,12 +1212,12 @@ def evolucao_notas(request):
 def evolucao_objetivos(request):
     """Mostra graficos das evoluções do PFE."""
     configuracao = get_object_or_404(Configuracao)
-    edicoes, ano, semestre = get_edicoes(Avaliacao2)
+    edicoes, _, semestre = get_edicoes(Avaliacao2)
 
     if request.is_ajax():
-        
+
         periodo = ""
-        estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
+        # estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
 
         avaliacoes = Avaliacao2.objects.all()
 
@@ -1272,7 +1228,7 @@ def evolucao_objetivos(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
-        cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9","#7cfa9f","#e8c3b9","#c45890"]
+        cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9", "#7cfa9f", "#e8c3b9", "#c45890"]
 
         medias = []
         objetivos = ObjetivosDeAprendizagem.objects.all()
@@ -1309,7 +1265,7 @@ def evolucao_objetivos(request):
 def correlacao_medias_cr(request):
     """Mostra graficos da correlação entre notas e o CR dos estudantes."""
     configuracao = get_object_or_404(Configuracao)
-    edicoes, ano, semestre = get_edicoes(Avaliacao2)
+    edicoes, _, semestre = get_edicoes(Avaliacao2)
 
     if request.is_ajax():
         periodo = ""
@@ -1317,15 +1273,16 @@ def correlacao_medias_cr(request):
         estudantes_computacao = None
         estudantes_mecanica = None
         estudantes_mecatronica = None
-        
+
         if 'edicao' in request.POST:
 
             curso = request.POST['curso']
 
             if request.POST['edicao'] != 'todas':
                 periodo = request.POST['edicao'].split('.')
-                alocacoes_tmp = Alocacao.objects.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
-                
+                alocacoes_tmp = Alocacao.objects.filter(projeto__ano=periodo[0],
+                                                        projeto__semestre=periodo[1])
+
                 if curso == 'C':
                     estudantes_computacao = alocacoes_tmp.filter(aluno__curso="C")
                 elif curso == 'M':
@@ -1341,7 +1298,8 @@ def correlacao_medias_cr(request):
                 alocacoes = {}
                 for edicao in edicoes:
                     periodo = edicao.split('.')
-                    semestre = Alocacao.objects.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
+                    semestre = Alocacao.objects.filter(projeto__ano=periodo[0],
+                                                       projeto__semestre=periodo[1])
                     if curso == 'T':
                         alocacoes[periodo[0]+"_"+periodo[1]] = semestre
                     else:
@@ -1421,12 +1379,10 @@ def nomes(request):
 @permission_required("users.altera_professor", login_url='/')
 def acompanhamento_view(request):
     """Cria um anotação para uma organização parceira."""
-    
-    acompanhamentos = Acompanhamento.objects.all().order_by("-data")
-    
+    # acompanhamentos = Acompanhamento.objects.all().order_by("-data")
     if request.is_ajax() and 'texto' in request.POST:
         acompanhamento = Acompanhamento.create()
-        
+
         parceiro_id = int(request.POST['parceiro'])
         parceiro = get_object_or_404(Parceiro, id=parceiro_id)
         acompanhamento.autor = parceiro.user
@@ -1454,23 +1410,22 @@ def acompanhamento_view(request):
     parceiros = Parceiro.objects.all()
 
     context = {
-            'parceiros': parceiros,
-            'data_hora': datetime.datetime.now(),
-        }
+        'parceiros': parceiros,
+        'data_hora': datetime.datetime.now(),
+    }
 
     return render(request,
-                    'projetos/acompanhamento_view.html',
-                    context=context)
+                  'projetos/acompanhamento_view.html',
+                  context=context)
 
-from django.contrib.admin.models import LogEntry
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')
 def logs(request):
-    """alguns logs de Admin"""
+    """Alguns logs de Admin."""
     message = ""
-    logs = LogEntry.objects.all()
-    for log in logs:
+    mensagens = LogEntry.objects.all()
+    for log in mensagens:
         message += str(log)+"<br>\n"
     return HttpResponse(message)
 
@@ -1478,7 +1433,7 @@ def logs(request):
 @login_required
 @permission_required('users.altera_professor', login_url='/')
 def conexoes_estabelecidas(request):
-    """Mostra usuários conectados"""
+    """Mostra usuários conectados."""
     user = get_object_or_404(PFEUser, pk=request.user.pk)
     if user.tipo_de_usuario == 4:
         message = "<h3>Usuários Conectados</h3><br>"
@@ -1501,12 +1456,9 @@ def conexoes_estabelecidas(request):
     return HttpResponse("Você não tem privilégios")
 
 
-
-from users.models import OpcaoTemporaria
-
 @login_required
 @permission_required('users.altera_professor', login_url='/')
 def migracao(request):
-    """temporário"""
+    """temporário."""
     message = "Nada Feito"
     return HttpResponse(message)

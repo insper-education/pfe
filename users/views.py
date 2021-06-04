@@ -259,8 +259,8 @@ def estudantes_lista(request):
     else:
         edicoes, _, _ = get_edicoes(Aluno)
         context = {
-                'edicoes': edicoes,
-            }
+            'edicoes': edicoes,
+        }
 
     return render(request, 'users/estudantes_lista.html', context=context)
 
@@ -307,8 +307,8 @@ def estudantes_notas(request):
     else:
         edicoes, _, _ = get_edicoes(Aluno)
         context = {
-                'edicoes': edicoes,
-            }
+            'edicoes': edicoes,
+        }
 
     return render(request, 'users/estudantes_notas.html', context=context)
 
@@ -369,7 +369,7 @@ def estudantes_inscritos(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
-        
+
         edicoes, _, _ = get_edicoes(Aluno)
 
         configuracao = get_object_or_404(Configuracao)
@@ -377,9 +377,9 @@ def estudantes_inscritos(request):
         selecionada = str(ano) + "." + str(semestre)
 
         context = {
-                'edicoes': edicoes,
-                "selecionada": selecionada,
-            }
+            'edicoes': edicoes,
+            "selecionada": selecionada,
+        }
 
     return render(request, 'users/estudantes_inscritos.html', context=context)
 
@@ -988,7 +988,6 @@ def parceiro_detail(request, primarykey):
 @permission_required("users.altera_professor", login_url='/')
 def contas_senhas(request, anosemestre):
     """Envia conta e senha para todos os estudantes que estão no semestre."""
-    
     user = get_object_or_404(PFEUser, pk=request.user.pk)
 
     if user:
@@ -999,9 +998,9 @@ def contas_senhas(request, anosemestre):
                 "mensagem": mensagem,
             }
             return render(request, 'generic.html', context=context)
-    
+
     configuracao = get_object_or_404(Configuracao)
-    
+
     ano = int(anosemestre.split(".")[0])
     semestre = int(anosemestre.split(".")[1])
 

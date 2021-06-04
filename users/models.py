@@ -95,6 +95,7 @@ class PFEUser(AbstractUser):
 
 class Professor(models.Model):
     """Classe de usuários com estatus de Professor."""
+
     user = models.OneToOneField(PFEUser, related_name='professor', on_delete=models.CASCADE)
 
     TIPO_DEDICACAO = (
@@ -131,6 +132,7 @@ class Professor(models.Model):
 
 class Aluno(models.Model):
     """Classe de usuários com estatus de Aluno."""
+
     TIPOS_CURSO = (
         ('C', 'Computação'),
         ('M', 'Mecânica'),
@@ -187,7 +189,6 @@ class Aluno(models.Model):
     # https://bradmontgomery.net/blog/django-hack-help-text-modal-instance/
     def _get_help_text(self, field_name):
         """Given a field name, return it's help text."""
-
         for field in self._meta.fields:
             if field.name == field_name:
                 return field.help_text
@@ -276,7 +277,6 @@ class Aluno(models.Model):
 
     def get_banca(self, avaliacoes_banca):
         """Retorna média."""
-
         val_objetivos, pes_total = Aluno.get_objetivos(self, avaliacoes_banca)
 
         if not val_objetivos:
@@ -306,7 +306,6 @@ class Aluno(models.Model):
     @property
     def get_edicoes(self):
         """Recuper as notas do Estudante."""
-
         edicao = {}  # dicionário para cada alocação do estudante (por exemplo DP, ou PFE Avançado)
 
         alocacoes = Alocacao.objects.filter(aluno=self.pk)
@@ -525,7 +524,6 @@ class Aluno(models.Model):
     @property
     def get_medias(self):
         """Retorna médias."""
-
         medias = {}  # dicionário para cada alocação do estudante
 
         edicoes = self.get_notas
@@ -561,10 +559,13 @@ class Aluno(models.Model):
         return peso_final
 
     class Meta:
+        """Meta para Aluno."""
+
         ordering = ['user']
         permissions = ()
 
     def __str__(self):
+        """Retorna o nome completo do estudante."""
         return self.user.get_full_name()
 
     @classmethod
@@ -588,6 +589,8 @@ class Opcao(models.Model):
     prioridade = models.PositiveSmallIntegerField()
 
     class Meta:
+        """Meta para Opcao."""
+
         verbose_name = 'Opção'
         verbose_name_plural = 'Opções'
         ordering = ['prioridade']
@@ -615,6 +618,8 @@ class OpcaoTemporaria(models.Model):
     prioridade = models.PositiveSmallIntegerField(null=True, blank=True,)
 
     class Meta:
+        """Meta para OpcaoTemporaria."""
+
         verbose_name = 'Opção Temporária'
         verbose_name_plural = 'Opções Temporárias'
         ordering = ['prioridade']
@@ -631,10 +636,13 @@ class OpcaoTemporaria(models.Model):
 
 class Alocacao(models.Model):
     """Projeto em que o aluno está alocado."""
+
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE)
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
 
     class Meta:
+        """Meta para Alocacao."""
+
         verbose_name = 'Alocação'
         verbose_name_plural = 'Alocações'
         permissions = (("altera_professor", "Professor altera valores"), )
@@ -665,7 +673,6 @@ class Alocacao(models.Model):
     @property
     def get_media(self):
         """Retorna média e peso final."""
-
         reprovacao = Reprovacao.objects.filter(alocacao=self)
         if reprovacao:
             return {"media": reprovacao.last().nota, "pesos": 1}
@@ -714,6 +721,7 @@ class Alocacao(models.Model):
 
 class Parceiro(models.Model):  # da empresa (não do Insper)
     """Classe de usuários com estatus de Parceiro (das organizações)."""
+
     user = models.OneToOneField(PFEUser, related_name='parceiro',
                                 on_delete=models.CASCADE,
                                 help_text='Identificaçãdo do usuário')
@@ -734,6 +742,8 @@ class Parceiro(models.Model):  # da empresa (não do Insper)
     principal_contato = models.BooleanField("Principal Contato", default=False)
 
     class Meta:
+        """Meta para Parceiro."""
+
         ordering = ['user']
         permissions = (("altera_parceiro", "Parceiro altera valores"),)
 
@@ -752,11 +762,14 @@ class Parceiro(models.Model):  # da empresa (não do Insper)
 
 class Administrador(models.Model):
     """Classe de usuários com estatus de Administrador."""
+
     user = models.OneToOneField(PFEUser,
                                 related_name='administrador',
                                 on_delete=models.CASCADE)
 
     class Meta:
+        """Meta para Administrador."""
+
         verbose_name = 'Administrador'
         verbose_name_plural = 'Administradores'
         ordering = ['user']
