@@ -37,8 +37,9 @@
                   Projeto
                 </a>
               </th>
-              <th scope="col" class="text-center">Média</th>
               <th scope="col" class="text-center">Notas</th>
+              <th scope="col" class="text-center">Média</th>
+              {% comment %} <th scope="col" class="text-center">BI</th> {% endcomment %}
           </tr>
           </thead>
           <tbody>
@@ -120,40 +121,39 @@
                 {% endfor %}
               {% endif %}
             </td>
-            <td> {% comment %} <!-- Média --> {% endcomment %}
-            
-              {% with media=aluno.get_medias|dict_key:ano_semestre %}
-
-                {% if media.media < 5 %}
-                    <span style="color:red">
-                {% endif %}
-
-                {% if media.pesos != 1 %}
-                  <a style="color:orange" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100% ({% widthratio media.pesos 1 100 %}%)">
-                {% endif %}    
-
-                {{media.media|floatformat:2}}
-                {% comment %} {{media.media|stringformat:".2f"|unlocalize}} {% endcomment %}
-              
-                {% if media.pesos != 1 %}
-                  </a>
-                {% endif %}
-                
-                {% if media.media < 5 %}
-                    </span>
-                {% endif %}
-
-              {% endwith %}
- 
-            </td>
             <td>
+              <script>
+                var nota_linha = 0;
+                var peso_linha = 0;
+              </script>
               {% for aval, nota, peso, descr in aluno.get_notas|dict_key:ano_semestre %} <!-- Notas -->
                   <span style="background-color:#eef;" data-toggle="tooltip" data-html="true" animation="true" 
                    title="{{descr}}">
                     {% comment %} {{aval}}({% widthratio peso 1 100 %}%)={{nota|stringformat:".1f"|unlocalize}} {% endcomment %}
                     {{aval}}({% widthratio peso 1 100 %}%)={{nota|floatformat:1}}
                   </span>
+                  <script>
+                    nota_linha += {{nota|unlocalize}}*{{peso|unlocalize}};
+                    peso_linha += {{peso|unlocalize}};
+                  </script>
               {% endfor %}
+            </td>
+            <td id="media{{aluno.id}}"> {% comment %} <!-- Média --> {% endcomment %}
+              <span></span>
+              <script>
+                if (peso_linha>0) {
+                  var media = nota_linha/peso_linha;
+                  var span = $("#media{{aluno.id}} > span");
+                  if(peso_linha != 1) {
+                    span.html('<a style="color:orange" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100% (' + peso_linha*100 + '%)">' + media.toFixed(2) + '</a>');
+                  } else {
+                    span.html(media.toFixed(2));
+                  }
+                  if(media < 5) {
+                    span.css("color", "red");
+                  }
+                }
+              </script>
             </td>
           </tr>
           {% endfor %}
@@ -172,7 +172,7 @@
           var array = [];
           var all = $('#EstudantesTable > tbody > tr');
           all.each(function() {
-              texto = $('td:eq(3)', this).text().trim().replace(",", ".");
+              texto = $('td:eq(4)', this).text().trim().replace(",", ".");
               nota = parseFloat(texto)
               if(!isNaN(nota)) {
                 sum += nota

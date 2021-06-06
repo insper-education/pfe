@@ -60,16 +60,20 @@ def perfil(request):
     }
 
     if user.tipo_de_usuario == 1:  # aluno
-        context['aluno'] = get_object_or_404(Aluno, pk=request.user.aluno.pk)
+        context['aluno'] = get_object_or_404(Aluno,
+                                             pk=request.user.aluno.pk)
 
     elif user.tipo_de_usuario == 2:  # professor
-        context['professor'] = get_object_or_404(Professor, pk=request.user.professor.pk)
+        context['professor'] = get_object_or_404(Professor,
+                                                 pk=request.user.professor.pk)
 
     elif user.tipo_de_usuario == 3:  # parceiro
-        context['parceiro'] = get_object_or_404(Parceiro, pk=request.user.parceiro.pk)
+        context['parceiro'] = get_object_or_404(Parceiro,
+                                                pk=request.user.parceiro.pk)
 
     elif user.tipo_de_usuario == 4:  # administrador
-        context['administrador'] = get_object_or_404(Administrador, pk=request.user.administrador.pk)
+        context['administrador'] = get_object_or_404(Administrador,
+                                                     pk=request.user.administrador.pk)
 
     else:
         mensagem = "Seu perfil não foi encontrado!"
@@ -434,12 +438,12 @@ def edita_notas(request, primarykey):
                                         projeto=alocacao.projeto)
 
     # ( 1, 'Banca Intermediária'),
-    bi = Avaliacao2.objects.filter(tipo_de_avaliacao=1,
-                                   projeto=alocacao.projeto)
+    bai = Avaliacao2.objects.filter(tipo_de_avaliacao=1,
+                                    projeto=alocacao.projeto)
 
     # ( 2, 'Banca Final'),
-    bf = Avaliacao2.objects.filter(tipo_de_avaliacao=2,
-                                   projeto=alocacao.projeto)
+    baf = Avaliacao2.objects.filter(tipo_de_avaliacao=2,
+                                    projeto=alocacao.projeto)
 
     # Antigo (até 2019.1)
     # (50, 'Planejamento Primeira Fase'),
@@ -893,8 +897,8 @@ def edita_notas(request, primarykey):
         'rfg_nota': rfg_nota,
         'rfg_peso': rfg_peso,
         'rfg_obs': rfg_obs.last(),
-        'bi': bi,
-        'bf': bf,
+        'bi': bai,
+        'bf': baf,
         "ppf_nota": ppf_nota,
         "ppf_peso": ppf_peso,
         "ppf_obs": ppf_obs.last(),
