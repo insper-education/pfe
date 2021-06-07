@@ -9,16 +9,40 @@
   {% load static %}
   {% comment %} Para desenhar gráficos na página {% endcomment %}
   <script src="{% static 'js/Chart.min.js' %}"/></script>
+
   <style>
     .prioridade {
       display: inline
     }
+
     .logotipo_left {
       max-height:64px;
       max-width:128px;
       height:auto;
       width:auto;
     }
+    
+  </style>
+
+
+  <style>
+    .arrow {
+      border: solid black;
+      border-width: 0px 2px 2px 0px;
+      display: inline-block;
+      padding: 2px;
+      vertical-align: middle;
+    }
+
+    .right {
+      transform: rotate(-45deg);
+      -webkit-transform: rotate(-45deg);
+    }
+
+    #toggle {
+      display:inline-block; 
+    }
+
   </style>
 
 {% endblock %}
@@ -27,27 +51,36 @@
 
   {% include "impressora.html" %}
 
-  <span class="titulo">Projetos</span><br>
+  <span class="titulo">Projetos</span>
   
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" %}
 
-  <span id="informacoes">
-    &nbsp;
-    <b>Informações: </b>&nbsp;
-    <label><input id="logo" onchange="($(this).prop('checked') ? $('.logo').show() : $('.logo').hide())" type="checkbox" checked /> Logo</label>&nbsp;&nbsp;&nbsp;
-    <label><input id="descricao" onchange="($(this).prop('checked') ? $('.descricao').show() : $('.descricao').hide())" type="checkbox" checked /> Descrição</label>&nbsp;&nbsp;&nbsp;
-    <label><input id="orientador" onchange="($(this).prop('checked') ? $('.orientador').show() : $('.orientador').hide())" type="checkbox" checked /> Orientador</label>&nbsp;&nbsp;&nbsp;
-    <label><input id="estudantes" onchange="($(this).prop('checked') ? $('.estudantes').show() : $('.estudantes').hide())" type="checkbox" checked /> Estudantes</label>&nbsp;&nbsp;&nbsp;
-    <label><input id="organizacao" onchange="($(this).prop('checked') ? $('.organizacao').show() : $('.organizacao').hide())" type="checkbox" checked /> Organização</label>&nbsp;&nbsp;&nbsp;
-    <label><input id="conexoes" onchange="($(this).prop('checked') ? $('.conexoes').show() : $('.conexoes').hide())" type="checkbox" checked /> Conexões</label>&nbsp;&nbsp;&nbsp;
-    <label><input id="totais" onchange="($(this).prop('checked') ? $('.totais').show() : $('.totais').hide())" type="checkbox" checked /> Totais</label>&nbsp;&nbsp;&nbsp;
-    <label><input id="grafico" onchange="($(this).prop('checked') ? $('.grafico').show() : $('.grafico').hide())" type="checkbox" checked /> Gráfico</label>&nbsp;&nbsp;&nbsp;
+  <script>
+    $(document).on('click','#informacoes_tag',function(){
+      $( "#toggle" ).toggle( "slide" );
+    });
+  </script>
+
+  <span id="informacoes" style="border: 1px solid gray; border-radius: 2px; padding: 1px; margin-left: 20px;">
+    <span id="informacoes_tag">&nbsp;Informações <i class="arrow right"></i>&nbsp;</span>
+    <div id="toggle" style="display: none; height: 1em;">
+      <label><input id="logo" onchange="($(this).prop('checked') ? $('.logo').show() : $('.logo').hide())" type="checkbox" checked /> Logo</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="descricao" onchange="($(this).prop('checked') ? $('.descricao').show() : $('.descricao').hide())" type="checkbox" checked /> Descrição</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="orientador" onchange="($(this).prop('checked') ? $('.orientador').show() : $('.orientador').hide())" type="checkbox" checked /> Orientador</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="estudantes" onchange="($(this).prop('checked') ? $('.estudantes').show() : $('.estudantes').hide())" type="checkbox" checked /> Estudantes</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="organizacao" onchange="($(this).prop('checked') ? $('.organizacao').show() : $('.organizacao').hide())" type="checkbox" checked /> Organização</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="conexoes" onchange="($(this).prop('checked') ? $('.conexoes').show() : $('.conexoes').hide())" type="checkbox" checked /> Conexões</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="totais" onchange="($(this).prop('checked') ? $('.totais').show() : $('.totais').hide())" type="checkbox" checked /> Totais</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="grafico" onchange="($(this).prop('checked') ? $('.grafico').show() : $('.grafico').hide())" type="checkbox" checked /> Gráfico</label>&nbsp;&nbsp;&nbsp;
+    </div>
   </span>
 
+  {% comment %} 
   <script>
     $("#informacoes").detach().appendTo("#lateral");
   </script>
+  {% endcomment %}
 
   <br>
   

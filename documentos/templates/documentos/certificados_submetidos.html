@@ -25,6 +25,28 @@
     border: 1px solid red;
   }
   </style>
+
+
+  <style>
+    .arrow {
+      border: solid black;
+      border-width: 0px 2px 2px 0px;
+      display: inline-block;
+      padding: 2px;
+      vertical-align: middle;
+    }
+
+    .right {
+      transform: rotate(-45deg);
+      -webkit-transform: rotate(-45deg);
+    }
+
+    #toggle {
+      display:inline-block; 
+    }
+
+  </style>
+
 {% endblock %}
 
 {% block content %}
@@ -34,12 +56,21 @@
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" %}
 
-  &nbsp;&nbsp;&nbsp;
-  <b>Tipos: </b>&nbsp;
-  <label><input id="estudantes" onchange="($(this).prop('checked') ? $('.estudantes').show() : $('.estudantes').hide())" type="checkbox" checked /> Estudantes</label>&nbsp;&nbsp;&nbsp;
-  <label><input id="orientador" onchange="($(this).prop('checked') ? $('.orientador').show() : $('.orientador').hide())" type="checkbox" checked /> Orientadores</label>&nbsp;&nbsp;&nbsp;
-  <label><input id="coorientador" onchange="($(this).prop('checked') ? $('.coorientador').show() : $('.coorientador').hide())" type="checkbox" checked /> Coorientadores</label>&nbsp;&nbsp;&nbsp;
-  <label><input id="banca" onchange="($(this).prop('checked') ? $('.banca').show() : $('.banca').hide())" type="checkbox" checked /> Bancas</label>&nbsp;&nbsp;&nbsp;
+  <script>
+    $(document).on('click','#informacoes_tag',function(){
+      $( "#toggle" ).toggle( "slide" );
+    });
+  </script>
+
+  <span id="informacoes" style="border: 1px solid gray; border-radius: 2px; padding: 1px; margin-left: 20px;">
+    <span id="informacoes_tag">&nbsp;Tipos <i class="arrow right"></i>&nbsp;</span>
+    <div id="toggle" style="display: none; height: 1em;">
+      <label><input id="estudantes" onchange="($(this).prop('checked') ? $('.estudantes').show() : $('.estudantes').hide())" type="checkbox" checked /> Estudantes</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="orientador" onchange="($(this).prop('checked') ? $('.orientador').show() : $('.orientador').hide())" type="checkbox" checked /> Orientadores</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="coorientador" onchange="($(this).prop('checked') ? $('.coorientador').show() : $('.coorientador').hide())" type="checkbox" checked /> Coorientadores</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="banca" onchange="($(this).prop('checked') ? $('.banca').show() : $('.banca').hide())" type="checkbox" checked /> Bancas</label>&nbsp;&nbsp;&nbsp;
+    </div>
+  </span>
 
   
   <table id="certificados">
