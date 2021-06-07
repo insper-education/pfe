@@ -634,12 +634,6 @@ def montar_grupos(request):
     configuracao = get_object_or_404(Configuracao)
     ano = configuracao.ano
     semestre = configuracao.semestre
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    #     ano = configuracao.ano
-    #     semestre = configuracao.semestre
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     ano, semestre = adianta_semestre(ano, semestre)
 
@@ -656,14 +650,14 @@ def montar_grupos(request):
                               order_by("prioridade")
         opcoes.append(opcao)
 
+        # Caso haja um pré-alocação de anos anteriores, limpar a pré-alocação
+        if estudante.pre_alocacao and estudante.pre_alocacao not in propostas:
+            estudante.pre_alocacao = None
+
     estudantes_opcoes = zip(estudantes, opcoes)
 
     # Checa se usuário é administrador ou professor
     user = get_object_or_404(PFEUser, pk=request.user.pk)
-    # try:
-    #     user = PFEUser.objects.get(pk=request.user.pk)
-    # except PFEUser.DoesNotExist:
-    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     mensagem = ""
 

@@ -127,7 +127,8 @@
     function cor_estudante(estudante, proposta) {
       prioridades = estudante.data("prioridades")
       estudante.css("background-color", "#FF7090");
-      for (var i = 0; i < prioridades.length; ++i) {
+      if (prioridades !== undefined) {
+        for (var i = 0; i < prioridades.length; ++i) {
           if(prioridades[i]==proposta) {
             if(i>4) { // passou da quinta opção
               estudante.css("background-color", "orange");
@@ -136,6 +137,7 @@
             }
             break
           }
+        }
       }
     }
 
@@ -166,7 +168,10 @@
       </div>
       `);
       {% if estudante.pre_alocacao %}
+        console.log("PRE{{estudante.id}}");
+        console.log($("#estudante{{estudante.id}}"));
         cor_estudante($("#estudante{{estudante.id}}"), {{estudante.pre_alocacao.id}})
+        console.log("POS");
       {% endif %}
     {% endfor %}
 
