@@ -125,23 +125,23 @@
 
             {% if banca.link %}
               <span class="link">
-                <b>Link vídeo-conferência:</b> <a href="{{banca.link}}">{{banca.link}}</a>
+                <b>Link vídeo-conferência:</b> <small><a href="{{banca.link}}"><span style="word-break: break-all;">{{banca.link}}</span></a></small>
                 <br>
               </span>
             {% endif %}
 
             {% if banca.projeto.orientador %}
-              <br>
+              <div class="orientador" style="margin-top: 8px;">
               <b>Orientador:</b> 
                 <a class="imprimir" href="{% url 'professor_detail' banca.projeto.orientador.id %}">
                   {{banca.projeto.orientador.user.get_full_name}} 
                 </a>
                 <a class="email" href="mailto:{{banca.projeto.orientador.user.email}}">&lt;{{banca.projeto.orientador.user.email}}&gt;</a>
-              <br><br>
+              </div>
             {% endif %}
             
             {% if banca.membro1 or banca.membro2 or banca.membro3 %}
-              <span class="banca">
+              <div class="banca" style="margin-top: 8px;">
                 <b>Membros da Banca da Avaliação:</b>
                 <ol style="margin-bottom:0px;">
                   {% if banca.membro1 %}
@@ -169,11 +169,10 @@
                   </li>
                   {% endif %}
                 </ol>
-              </span>
-              <br>
+              </div>
             {% endif %}
 
-            <span class="grupo">
+            <div class="grupo" style="margin-top: 8px;">
               <b>Grupo:</b>
               <ul style="margin-bottom:0px;">
                 {% for alocacao in banca.projeto.alocacao_set.all %}
@@ -186,19 +185,16 @@
                   </li>
                 {% endfor %}
               </ul>
-              <br>
-            </span>
+            </div>
 
-            <span class="avaliacao">
+            <div class="avaliacao" style="margin-top: 8px;">
               &#9733; <b>Link formulário de avaliação</b>: 
               <a href="{% url 'banca_avaliar' banca.slug %}">
                 http://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}
               </a>
-              <br>
-            </span>
+            </div>
 
-            <span class="agendamento">
-              <br>
+            <div class="agendamento" style="margin-top: 8px;">
               <b>Agendamento</b>: 
               <a href="
               mailto:
@@ -281,7 +277,7 @@
             <a href="{% url 'event_ics_export' banca.id %}">
               ics
             </a>
-          </span>
+          </div>
 
           <span class="editar esconder">
             <button style="float: right;" type="submit" formaction="../bancas_editar/{{banca.pk}}">Editar</button>
