@@ -29,7 +29,7 @@
     <a href="{% url 'projeto_completo' banca.projeto.id %}">
       {% if banca.projeto.titulo_final %}
         {{banca.projeto.titulo_final}}</a><br>
-        <small>Antigo Título Provisório: 
+        <small>Título original: 
           <a href="{% url 'projeto_completo' banca.projeto.id %}">{{banca.projeto.titulo}}</a>
         </small>
       {% else %}
