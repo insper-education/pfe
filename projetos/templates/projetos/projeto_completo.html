@@ -23,10 +23,10 @@
     <style>
         .titulo {display: inline;}
     </style>
-    <span class="titulo">Título: {{projeto.titulo_final}}</span>
-    <small> <br>&nbsp;&nbsp;&nbsp;&nbsp;Título Provisório: {{projeto.titulo}}</small><br>
+    <span class="titulo">Projeto: {{projeto.titulo_final}}</span>
+    <br><i>&nbsp;&nbsp;&nbsp;&nbsp;Título Provisório: {{projeto.titulo}}</i><br>
   {% else %}
-    <span style="display:block;" class="titulo">Título: {{projeto.titulo}}</span>
+    <span style="display:block;" class="titulo">Projeto: {{projeto.titulo}}</span>
   {% endif %}
   <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
 
@@ -48,13 +48,19 @@
     </p>
   {% endif %}
   
-  
-  <a href="{% url 'proposta_completa' projeto.proposta.id %}"><strong>Link para proposta do projeto</strong></a><br>
-  <br>
+  <div class="descricao" style="margin-top: 8px;">
+    <strong>Descrição:</strong>
+    {% if projeto.descricao %}
+      {{ projeto.descricao|linebreaks }}
+    {% else %}
+      {{ projeto.proposta.descricao|linebreaks }}
+    {% endif %}
+  </div>
 
-  <strong>Descrição:</strong> {{ projeto.proposta.descricao|linebreaks }}
   {% if projeto.proposta.expectativas %}
-    <br><strong>Expectativas de resultados/entregas :</strong> {{ projeto.proposta.expectativas|linebreaks }}
+    <div class="expectativas" style="margin-top: 8px;">
+      <strong>Expectativas de resultados/entregas :</strong> {{ projeto.proposta.expectativas|linebreaks }}
+    </div>
   {% endif %}
   {% comment %}
     {% if projeto.areas %}
@@ -62,12 +68,15 @@
     {% endif %}
   {% endcomment %}
   {% if projeto.proposta.recursos %}
-    <br><strong>Recursos a serem disponibilizados aos Estudantes :</strong> {{ projeto.proposta.recursos|linebreaks }}
+    <div class="recusos" style="margin-top: 8px;">
+      <strong>Recursos a serem disponibilizados aos Estudantes :</strong> {{ projeto.proposta.recursos|linebreaks }}
+    </div>
   {% endif %}
   {% if projeto.proposta.anexo %}
     <br><strong>Anexo :</strong>
     <a class="text-success" href="../..{{MEDIA_URL}}{{projeto.anexo}}">{{projeto.proposta.anexo}}</a>
   {% endif %}
+  
   <hr>
 
   
@@ -260,8 +269,10 @@
   {% endif %}
 
   <br>
+  <a class="myButton" href="{% url 'proposta_completa' projeto.id %}">Proposta</a>
   <a class="myButton" href="{% url 'conceitos_obtidos' projeto.id %}">Avaliações</a>
   <a class="myButton" href="{% url 'bancas_lista' projeto.id %}">Bancas</a>
+  <a class="myButton" href="{% url 'editar_projeto' projeto.id %}">Editar</a>
   
   <p>&nbsp;</p>
 

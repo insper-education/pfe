@@ -14,7 +14,6 @@ from organizacoes.views import projeto_feedback
 
 from . import views
 
-
 urlpatterns = [
 
     # pagina inicial (herança problemática)
@@ -73,17 +72,21 @@ urlpatterns = [
          views.lista_acompanhamento,
          name='lista_acompanhamento'),
 
-     path('acompanhamento_view',
+    path('acompanhamento_view',
          views.acompanhamento_view,
          name='acompanhamento_view'),
 
-     path('certificacao_falconi',
+    path('certificacao_falconi',
          views.certificacao_falconi,
          name='certificacao_falconi'),
 
-     path('correlacao_medias_cr',
+    path('correlacao_medias_cr',
          views.correlacao_medias_cr,
          name='correlacao_medias_cr'),
+
+    path('editar_projeto/<int:primarykey>',
+         views.editar_projeto,
+         name='editar_projeto'),
 
     path('lista_feedback',
          views.lista_feedback,
@@ -133,7 +136,6 @@ urlpatterns = [
     path('projetos_vs_propostas',
          views.projetos_vs_propostas,
          name='projetos_vs_propostas'),
-
 
     path('reembolso_pedir/',
          views.reembolso_pedir,

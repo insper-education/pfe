@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 8 de Junho de 2021
+{% endcomment %}
+
+{% block head %}
+  <style>
+    textarea {
+      max-width:100%;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">Edição de Projeto</span>
+
+  <form method="post"> {% csrf_token %}  
+
+    <label for="titulo">Título:</label><br>
+    <input type="text" size="80" maxlength="160" id="titulo" name="titulo"
+    value="{% if projeto.titulo_final %}{{projeto.titulo_final}}{% else %}{{projeto.titulo}}{% endif %}">
+    <br><br>
+
+    <label for="descricao">Descrição do Projeto</label><br>
+    <textarea id="descricao" name="descricao" rows="10" cols="80" maxlength="3000"
+    >{% if projeto.descricao %}{{projeto.descricao}}{% else %}{{projeto.proposta.descricao}}{% endif %}</textarea>
+    <br><br>
+
+    <input type="submit" value="Atualizar Projeto">
+    
+  </form>
+
+  <p>&nbsp;</p>
+
+{% endblock %}

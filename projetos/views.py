@@ -1332,6 +1332,32 @@ def correlacao_medias_cr(request):
 
     return render(request, 'projetos/correlacao_medias_cr.html', context)
 
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def editar_projeto(request, primarykey):
+    """Editar Projeto."""
+
+    projeto = Projeto.objects.get(id=primarykey)
+
+    if request.method == 'POST':
+
+        titulo = request.POST.get('titulo', None)
+        if titulo and ( projeto.titulo_final or projeto.titulo != titulo):
+            projeto.titulo_final = titulo
+
+        descricao = request.POST.get('descricao', None)
+        if descricao and ( projeto.descricao or projeto.proposta.descricao != descricao):
+            projeto.descricao = descricao
+
+        projeto.save()
+
+        return redirect('projeto_completo', primakey=primarykey)
+
+    context = {
+        "projeto": projeto,
+    }
+    return render(request, 'projetos/editar_projeto.html', context)
+
 
 def cap_name(name):
     """Capitaliza palavras."""
