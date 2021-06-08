@@ -106,6 +106,7 @@ def bancas_criar(request):
             context = {
                 "area_principal": True,
                 "bancas_index": True,
+                "agendar_banca": True,
                 "mensagem": mensagem,
             }
             return render(request, 'generic.html', context=context)

@@ -9,13 +9,17 @@
 
 {% block content %}
     {{mensagem|safe}}
- 
-    <br>
+    
+    <br><br>
+
     {% if voltar %}
         <a href='javascript:history.back(1)'>Voltar</a><br><br>
     {% endif %} 
 
-    
+    {% if agendar_banca %}
+        <a href="{% url 'bancas_criar' %}">Agendar outra banca</a><br>
+    {% endif %}
+
     {% if agendar_dinamica %}
         <a href="{% url 'dinamicas_criar' %}">Agendar outra dinâmica</a><br>
     {% endif %}
