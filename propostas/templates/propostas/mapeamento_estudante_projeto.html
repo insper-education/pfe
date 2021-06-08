@@ -153,6 +153,10 @@
                       {% with alocacoes=estudante.alocacao_set %}
                         {% if alocacoes.count and opcao.proposta == alocacoes.last.projeto.proposta %}
                           background-color:pink;
+                        {% elif opcao.proposta == estudante.pre_alocacao %}
+                          background-color:yellow;
+                        {% elif opcao.prioridade == 1 and not estudante.pre_alocacao %}
+                          background-color:yellow;
                         {% endif %}
                       {% endwith %}"
                       class="{% if opcao.prioridade == 0 %}red-bold{% elif opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}">
