@@ -159,10 +159,12 @@
 
     function cor_estudante(estudante, proposta) {
       prioridades = estudante.data("prioridades")
+      var opcao = "X";
       estudante.css("background-color", "#FF7090");
       if (prioridades !== undefined) {
         for (var i = 0; i < prioridades.length; ++i) {
           if(prioridades[i]==proposta) {
+            opcao = i+1;
             if(i>4) { // passou da quinta opção
               estudante.css("background-color", "orange");
             } else {
@@ -172,6 +174,7 @@
           }
         }
       }
+      estudante.find(".opcao > span").html(opcao);
     }
 
     {% for estudante, opcoes in estudantes_opcoes %}
@@ -197,27 +200,11 @@
         {% endfor %}  
         ">
         <span id="nome{{estudante.id}}">{{estudante.user.get_full_name}}</span></a>
-        <span style="float: right;">opção #<span id="opcao{{estudante.id}}">1</span></span><br>
+        <span class="opcao" style="float: right;">opção #<span>1</span></span><br>
       [{{estudante.get_curso}}]&nbsp;&nbsp;&nbsp;CR:&nbsp;{{estudante.cr}}
       </div>
       `);
       {% if estudante.pre_alocacao %}
-
-        var proposta = {{estudante.pre_alocacao.id}};
-        var opcao = "X";
-      
-        prioridades = $("#estudante{{estudante.id}}").data("prioridades")
-        if (prioridades !== undefined) {
-          for (var i = 0; i < prioridades.length; ++i) {
-            if(prioridades[i]==proposta) {
-              opcao = i+1;
-              break
-            }
-          }
-        }
-
-        $("#opcao{{estudante.id}}").html(opcao);
-
         cor_estudante($("#estudante{{estudante.id}}"), {{estudante.pre_alocacao.id}})
       {% endif %}
     {% endfor %}
