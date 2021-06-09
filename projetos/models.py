@@ -877,6 +877,13 @@ class Aviso(models.Model):
     def __str__(self):
         return str(self.titulo)
 
+    @classmethod
+    def create(cls):
+        """Cria um objeto (entrada) em Aviso."""
+        aviso = cls()
+        return aviso
+
+
 class Entidade(models.Model):
     """Todas as entidades estudantis do Insper"""
     nome = models.CharField(max_length=100,

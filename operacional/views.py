@@ -28,10 +28,6 @@ def index_operacional(request):
 def avisos_listar(request):
     """Mostra toda a tabela de avisos da coordenação do PFE."""
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     qualquer_aviso = list(Aviso.objects.all())
 
@@ -52,27 +48,68 @@ def avisos_listar(request):
     return render(request, 'operacional/avisos_listar.html', context)
 
 
+def trata_aviso(aviso, request):
+    try:
+        aviso.titulo = request.POST['titulo']
+        aviso.delta = int(request.POST['delta'])
+        aviso.mensagem = request.POST['mensagem']
+        aviso.tipo_de_evento = int(request.POST['evento'])
+
+        aviso.coordenacao = "coordenacao" in request.POST
+        aviso.comite_pfe = "comite_pfe" in request.POST
+        aviso.todos_alunos = "todos_alunos" in request.POST
+        aviso.todos_orientadores = "todos_orientadores" in request.POST
+        aviso.contatos_nas_organizacoes = "contatos_nas_organizacoes" in request.POST
+
+    except (ValueError, OverflowError):
+        return HttpResponse("Algum erro não identificado.", status=401)
+
+    aviso.save()
+
+
 @login_required
 @transaction.atomic
 @permission_required('users.altera_professor', login_url='/')
 def edita_aviso(request, primakey):
     """Edita aviso."""
     aviso = get_object_or_404(Aviso, pk=primakey)
-    # try:
-    #     aviso = Aviso.objects.get(pk=primakey)
-    # except Aviso.DoesNotExist:
-    #     return HttpResponse("Aviso não encontrado.", status=401)
 
     if request.method == 'POST':
-        if 'aviso' in request.POST:
-            aviso.mensagem = request.POST['aviso']
-            aviso.save()
+        if 'mensagem' in request.POST:
+            trata_aviso(aviso, request)
             return redirect('avisos_listar')
 
         return HttpResponse("Problema com atualização de mensagem.", status=401)
 
     context = {
-        'aviso': aviso,
+        "aviso": aviso,
+        "eventos": Evento.TIPO_EVENTO,
+    }
+
+    return render(request, 'operacional/edita_aviso.html', context)
+
+
+
+@login_required
+@transaction.atomic
+@permission_required('users.altera_professor', login_url='/')
+def cria_aviso(request):
+    """Cria aviso."""
+
+    if request.method == 'POST':
+        
+        if 'mensagem' in request.POST:
+
+            aviso = Aviso.create()
+
+            trata_aviso(aviso, request)
+            
+            return redirect('avisos_listar')
+
+        return HttpResponse("Problema com atualização de mensagem.", status=401)
+
+    context = {
+        "eventos": Evento.TIPO_EVENTO,
     }
 
     return render(request, 'operacional/edita_aviso.html', context)

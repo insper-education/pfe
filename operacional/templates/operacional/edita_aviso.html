@@ -12,12 +12,49 @@
   
     <form method="post" id="edita_aviso" enctype="multipart/form-data">
       {% csrf_token %}
-      <b>Aviso:</b> {{ aviso.titulo }}
+      
+      <label for="titulo"><b>Aviso:</b></label>
+      <input type="text" size="96" maxlength="120" id="titulo" name="titulo" value="{{aviso.titulo}}" required>
+      <br><br>
+
+      <label for="evento"><b>Evento relacionado</b></label>:
+      <select name="evento" id="evento" title="Selecione evento" required>
+          <option disabled selected value> -- selecione evento -- </option>
+          {% for evento in eventos %}
+            <option value="{{evento.0}}" {% if aviso.tipo_de_evento == evento.0 %}selected="selected"{% endif %}>
+              {{evento.1}}
+            </option>  
+          {% endfor %}
+      </select>
+
+      &nbsp;&nbsp;<label for="delta"><b>Delta</b></label>:
+      <input name="delta" id="delta" type="number" min="-186" max="186" step="1" value="{{aviso.delta}}" required/>
       <br>
-      <textarea name="aviso" rows="8" cols="64">
-        {{ aviso.mensagem }}
-      </textarea>
+
+      <textarea name="mensagem" rows="12" cols="102">{{ aviso.mensagem }}</textarea>
       <br>
+
+      <label for="coordenacao">Coordenação</label>
+      <input type="checkbox" id="coordenacao" name="coordenacao" {% if aviso.coordenacao %}checked{% endif %}>
+      &nbsp;&nbsp;&nbsp;
+
+      <label for="comite_pfe">Comitê</label>
+      <input type="checkbox" id="comite_pfe" name="comite_pfe" {% if aviso.comite_pfe %}checked{% endif %}>
+      &nbsp;&nbsp;&nbsp;
+
+      <label for="todos_alunos">Alunos</label>
+      <input type="checkbox" id="todos_alunos" name="todos_alunos" {% if aviso.todos_alunos %}checked{% endif %}>
+      &nbsp;&nbsp;&nbsp;
+
+      <label for="todos_orientadores">Orientadores</label>
+      <input type="checkbox" id="todos_orientadores" name="todos_orientadores" {% if aviso.todos_orientadores %}checked{% endif %}>
+      &nbsp;&nbsp;&nbsp;
+
+      <label for="contatos_nas_organizacoes">Contatos nas Organizações</label>
+      <input type="checkbox" id="contatos_nas_organizacoes" name="contatos_nas_organizacoes" {% if aviso.contatos_nas_organizacoes %}checked{% endif %}>
+
+      <br><br>
+
       <button type="submit">Atualizar Aviso</button>
       <p>&nbsp;</p>
     </form>

@@ -47,7 +47,7 @@
     <option value="Og" {% if filtro == "Og" %}selected="selected"{% endif %}>Contatos nas Organizacoes</option>
     <option value="Ev" {% if filtro == "Ev" %}selected="selected"{% endif %}>Evento</option>
   </select>
-  <br><br>
+  <br>
 
   <form method="post">
     {% csrf_token %}
@@ -160,11 +160,14 @@
         </tbody>
       </table>
       </div>
-      <p>&nbsp;</p>
+
     {% else %}
       <p>Não existem avisos.</p>
     {% endif %}
-    <input type='button' class="limpa" value="Limpa Tudo"
+    <a href="{% url 'cria_aviso' %}">
+      <input type='button' class="cria" value="Cria Aviso">
+    </a>
+    <input type='button' class="limpa" value="Limpa Checagem"
       {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
     >
     <p>&nbsp;</p>
