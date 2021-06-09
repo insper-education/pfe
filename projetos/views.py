@@ -1449,6 +1449,17 @@ def acompanhamento_view(request):
 @permission_required('users.altera_professor', login_url='/')
 def logs(request):
     """Alguns logs de Admin."""
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
+
+    # Caso não seja Administrador
+    if user.tipo_de_usuario != 4:
+        mensagem = "Você não está cadastrado como administador"
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
+    
     message = ""
     mensagens = LogEntry.objects.all()
     for log in mensagens:
