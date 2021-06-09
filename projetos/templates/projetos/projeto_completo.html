@@ -6,6 +6,10 @@
 {% endcomment %}
 
 {% block head %}
+  {% load static %}
+  {% load l10n %}
+  <script src="{% static 'js/Chart.min.js' %}"></script>
+
   <style>
     #logotipo {
       max-height:128px;
@@ -188,27 +192,95 @@
   {% endif %}
 
   <hr>
-  {% with alocacoes=projeto.alocacao_set.all %}
-    <h3>Estudante{% if alocacoes.count > 2 %}s{% endif %} Alocado{% if alocacoes.count > 2 %}s{% endif %} no Projeto:</h3>
-    <ul>
-    {% for alocacao in alocacoes %}
-      <li>
-      <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
-        <p>
-          {{alocacao.aluno.user.get_full_name}} 
-          &lt;{{alocacao.aluno.user.email}}&gt; 
-          [{{ alocacao.aluno.get_curso_display }}]
-          {% for opcao in alocacao.aluno.opcao_set.all %}
-            {% if opcao.projeto == projeto %}
-              (opção #{{opcao.prioridade}})
-            {% endif %}
-          {% endfor %}
-        </p>
-      </a>
-      </li>
-    {% endfor %}
-    </ul>
-  {% endwith %}
+  <h3>Estudante{% if alocacoes.count > 2 %}s{% endif %} Alocado{% if alocacoes.count > 2 %}s{% endif %} no Projeto:</h3>
+  <ul>
+  {% for alocacao in alocacoes %}
+    <li>
+    <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
+      <p>
+        {{alocacao.aluno.user.get_full_name}} 
+        &lt;{{alocacao.aluno.user.email}}&gt; 
+        [{{ alocacao.aluno.get_curso_display }}]
+        {% for opcao in alocacao.aluno.opcao_set.all %}
+          {% if opcao.projeto == projeto %}
+            (opção #{{opcao.prioridade}})
+          {% endif %}
+        {% endfor %}
+      </p>
+    </a>
+    </li>
+  {% endfor %}
+  </ul>
+
+  {% if medias_oo %}
+    <div class="row mt-1">
+        <div class="col-md-4"><canvas id="radial-grupo"></canvas></div>
+    </div>
+
+    <script>
+      var config_radial_grupo = {
+        type: 'radar',
+        data: {
+            labels: [
+                {% for key, value in medias_oo.media_grupo.items %}
+                    {% if value.media >= 0 %}
+                        "{{key}}",
+                    {% else %}
+                        "",
+                    {% endif %}
+                {% endfor %}
+                ],
+            datasets: [
+                {
+                label: "Objetivos de Aprendizagem",
+                pointBackgroundColor: [
+                    {% for key, value in medias_oo.media_grupo.items %}
+                        {% comment %} {% if value.media >= 0 %} {% endcomment %}
+                            "{{value.cor}}",
+                        {% comment %} {% endif %} {% endcomment %}
+                    {% endfor %}
+                    ],
+                data: [
+                    {% for key, value in medias_oo.media_grupo.items %}
+                        {% if value.media >= 0 %}
+                            {{value.media|stringformat:".2f"|unlocalize}},
+                        {% else %}
+                            null,
+                        {% endif %}
+                    {% endfor %}
+                    ],
+                scaleOverride: true,
+                pointRadius: 5,
+                backgroundColor: "rgba(0,0,240,0.1)",
+                },
+            ]
+        },
+        options: {
+            legend: { display: false },
+            title: {
+                display: true,
+                text: 'Avaliação Grupo'
+            },
+            scale: {
+                angleLines: {
+                    display: false
+                },
+                ticks: {
+                    beginAtZero: true,
+                    suggestedMin: 0,
+                    suggestedMax: 10
+                }
+            },
+        }
+      }
+
+      var radial_grupo = document.getElementById('radial-grupo').getContext('2d');
+      new Chart(radial_grupo, config_radial_grupo);
+
+    </script>
+
+  {% endif %}
+
   
   {% if projeto.encontro_set.all %}
       <hr>

@@ -103,9 +103,16 @@ def projeto_completo(request, primakey):
 
     projeto = get_object_or_404(Projeto, pk=primakey)
 
+    alocacoes = Alocacao.objects.filter(projeto=projeto)
+
     opcoes = Opcao.objects.filter(proposta=projeto.proposta)
     conexoes = Conexao.objects.filter(projeto=projeto)
     coorientadores = Coorientador.objects.filter(projeto=projeto)
+
+    medias_oo = None
+    if alocacoes:
+        alocacao = alocacoes.first()
+        medias_oo = alocacao.get_medias_oo
 
     # TIPO_DE_DOCUMENTO = ( # não mudar a ordem dos números
     # (3, 'Relatório Final'),
@@ -121,6 +128,8 @@ def projeto_completo(request, primakey):
     context = {
         'configuracao': configuracao,
         'projeto': projeto,
+        "alocacoes": alocacoes,
+        "medias_oo": medias_oo,
         'opcoes': opcoes,
         'conexoes': conexoes,
         'coorientadores': coorientadores,
