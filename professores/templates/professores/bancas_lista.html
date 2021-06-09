@@ -45,6 +45,11 @@
 
   <select class="esconder" id="proximas" onchange="location = this.options[this.selectedIndex].value;">
     <option value="todas" {% if periodo == "todas" %}selected="todas"{% endif %}>Todas</option>
+    {% for edicao in edicoes %}
+      <option value="{{edicao}}"
+        {% if periodo == edicao %}selected{% endif %}
+      >{{edicao}}</option>
+    {% endfor %}
     <option value="proximas" {% if periodo == "proximas" %}selected="proximas"{% endif %}>Próximas</option>
     {% if projeto %}
       <option value="{{projeto.id}}" selected>{{projeto}}</option>

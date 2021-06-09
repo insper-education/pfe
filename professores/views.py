@@ -187,6 +187,18 @@ def bancas_lista(request, periodo_projeto):
 
     elif periodo_projeto == "todas":
         bancas = Banca.objects.all().order_by("startDate")
+
+    elif '.' in periodo_projeto:
+        periodo = periodo_projeto.split('.')
+        try:
+            ano = int(periodo[0])
+            semestre = int(periodo[1])
+        except ValueError:
+            return HttpResponseNotFound('<h1>Erro em!</h1>')
+
+        bancas = Banca.objects.filter(projeto__ano=ano)\
+            .filter(projeto__semestre=semestre).order_by("startDate")
+
     else:
         projeto = get_object_or_404(Projeto, id=periodo_projeto)
         context["projeto"] = projeto
@@ -194,6 +206,9 @@ def bancas_lista(request, periodo_projeto):
 
     context["bancas"] = bancas
 
+    edicoes, _, _ = get_edicoes(Projeto)
+    context["edicoes"] = edicoes
+    
     return render(request, 'professores/bancas_lista.html', context)
 
 
@@ -250,10 +265,6 @@ def bancas_tabela(request):
 def banca_ver(request, primarykey):
     """Retorna banca pedida."""
     banca = get_object_or_404(Banca, id=primarykey)
-    # try:
-    #     banca = Banca.objects.get(id=primarykey)
-    # except Banca.DoesNotExist:
-    #     return HttpResponseNotFound('<h1>Banca não encontrada!</h1>')
 
     context = {
         'banca': banca,
