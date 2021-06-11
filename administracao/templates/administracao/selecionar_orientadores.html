@@ -92,11 +92,60 @@
     <input type="button" onclick="location.href='{% url 'projetos_fechados' %}'"  value="Listar Projetos Fechados">
   </form>
 
+  <br><br>
+  <span id="lista_orientadores"></span>
+
   <p>&nbsp;</p>
 
   <script>
 
+
+  function atualizar_count_orientadores() {
+
+    var balanceadas = 0;
+    var desbalanceadas = 0;
+    var vazias = 0;
+
+    var lista_orientadores = {};
+
+    var orientadores = $('.orientador');
+    for (var i = 0; i < orientadores.length; i++) {
+      if($(orientadores[i]).val()) {
+        var orientador = $(orientadores[i]).find('option:selected').text();
+        if(orientador in lista_orientadores) {
+          lista_orientadores[orientador] += 1;
+        } else {
+          lista_orientadores[orientador] = 1;
+        }
+
+      }
+      
+    }
+
+    // Check se há alocações realizadas
+    if(Object.keys(lista_orientadores).length !== 0) {
+      var tabela = "Alocações de Orientadores<br>"
+
+      // Cria uma tabela
+      tabela += "<table>"
+      
+      for (var orientador in lista_orientadores){
+        tabela += "<tr><td>" + orientador + "</td><td>" + lista_orientadores[orientador] + "</td></tr>";
+      }
+      tabela += "</table>"
+
+      // Define valor da tabela
+      $("#lista_orientadores").html(tabela);
+    }
+
+  }
+
+  atualizar_count_orientadores();
+
   $('.orientador').change(function(evt){
+
+    atualizar_count_orientadores();
+
     $.ajax({
       url: '{% url "definir_orientador" %}',
       data: {
