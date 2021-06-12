@@ -360,8 +360,11 @@
 
   <a class="myButton"
    data-toggle="tooltip" data-html="true" animation="true" title="Acessa a versão avançada desse projeto"
-   onclick="cria_avancado()" style="color:white;"
-   {% comment %} href="{% url 'projeto_avancado' projeto.id %}" {% endcomment %}
+    {% if projetos_avancados %}
+      href="{% url 'projeto_avancado' projeto.id %}"
+    {% else %}
+      onclick="cria_avancado()" style="color:white;"
+    {% endif %}
    >Avançado</a>
   
   <a class="myButton"
@@ -370,12 +373,14 @@
   
   <p>&nbsp;</p>
 
-  <script>
-    function cria_avancado() {
-      if (confirm('Não existe uma versão avançada desse projeto, deseja criar?')) {
-        window.open("{% url 'projeto_avancado' projeto.id %}");
+  {% if not projetos_avancados %}
+    <script>
+      function cria_avancado() {
+        if (confirm('Não existe uma versão avançada desse projeto, deseja criar?')) {
+          window.open("{% url 'projeto_avancado' projeto.id %}");
+        }
       }
-    }
-  </script>
+    </script>
+  {% endif %}
 
 {% endblock %}

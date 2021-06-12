@@ -32,7 +32,7 @@ from django.utils import timezone
 
 from users.models import PFEUser, Aluno, Professor, Opcao, Alocacao
 from users.models import Parceiro
-
+from users.support import adianta_semestre
 from users.support import get_edicoes
 
 from .models import Projeto, Proposta, Configuracao
@@ -125,16 +125,19 @@ def projeto_completo(request, primarykey):
     documentos = Documento.objects.filter(projeto=projeto,
                                           tipo_de_documento__in=(3, 18, 19, 20, 25))
 
+    projetos_avancados = Projeto.objects.filter(avancado=projeto)
+
     context = {
-        'configuracao': configuracao,
-        'projeto': projeto,
+        "configuracao": configuracao,
+        "projeto": projeto,
         "alocacoes": alocacoes,
         "medias_oo": medias_oo,
-        'opcoes': opcoes,
-        'conexoes': conexoes,
-        'coorientadores': coorientadores,
-        'documentos': documentos,
-        'MEDIA_URL': settings.MEDIA_URL,
+        "opcoes": opcoes,
+        "conexoes": conexoes,
+        "coorientadores": coorientadores,
+        "documentos": documentos,
+        "projetos_avancados": projetos_avancados,
+        "MEDIA_URL": settings.MEDIA_URL,
     }
 
     return render(request, 'projetos/projeto_completo.html', context=context)
@@ -521,16 +524,30 @@ def meuprojeto(request):
 @permission_required('users.altera_professor', login_url='/')
 def projeto_avancado(request, primarykey):
     """cria projeto avançado e avança para ele."""
-    configuracao = get_object_or_404(Configuracao)
 
     projeto = Projeto.objects.get(id=primarykey)
 
-    # projeto_avancado = Projeto.objects.filter(id=primarykey).last()
-    projeto_avancado = Projeto.objects.filter(avancado=projeto).last()
-    projeto_avancado.pk = None  # Duplica objeto
-    projeto_avancado.save()
+    projetos_avancados = Projeto.objects.filter(avancado=projeto)
+    if projetos_avancados:
+        novo_projeto = projetos_avancados.last()  # só retorna o último
+    else:
+        novo_projeto = Projeto.objects.get(id=primarykey)
+        novo_projeto.pk = None  # Duplica objeto
+
+        configuracao = get_object_or_404(Configuracao)
+        ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
+
+        if projeto.titulo_final:
+            novo_projeto.titulo = projeto.titulo_final
+            novo_projeto.titulo_final = None
+
+        novo_projeto.avancado = projeto
+        novo_projeto.ano = ano
+        novo_projeto.semestre = semestre
+
+        novo_projeto.save()
     
-    return redirect('projeto_completo', primarykey=projeto_avancado.id)
+    return redirect('projeto_completo', primarykey=novo_projeto.id)
 
 
 @login_required
