@@ -97,11 +97,11 @@ def projeto_detalhes(request, primarykey):
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
-def projeto_completo(request, primakey):
+def projeto_completo(request, primarykey):
     """Mostra um projeto por completo."""
     configuracao = get_object_or_404(Configuracao)
 
-    projeto = get_object_or_404(Projeto, pk=primakey)
+    projeto = get_object_or_404(Projeto, pk=primarykey)
 
     alocacoes = Alocacao.objects.filter(projeto=projeto)
 
@@ -506,16 +506,8 @@ def meuprojeto(request):
 
     # vvvv Caso seja um aluno  vvv
     aluno = get_object_or_404(Aluno, pk=request.user.aluno.pk)
-    # try:
-    #     aluno = Aluno.objects.get(pk=request.user.aluno.pk)
-    # except Aluno.DoesNotExist:
-    #     return HttpResponse("Estudante não encontrado.", status=401)
 
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     context = {
         'aluno': aluno,
@@ -523,6 +515,22 @@ def meuprojeto(request):
     }
 
     return render(request, 'projetos/meuprojeto_aluno.html', context=context)
+
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def projeto_avancado(request, primarykey):
+    """cria projeto avançado e avança para ele."""
+    configuracao = get_object_or_404(Configuracao)
+
+    projeto = Projeto.objects.get(id=primarykey)
+
+    # projeto_avancado = Projeto.objects.filter(id=primarykey).last()
+    projeto_avancado = Projeto.objects.filter(avancado=projeto).last()
+    projeto_avancado.pk = None  # Duplica objeto
+    projeto_avancado.save()
+    
+    return redirect('projeto_completo', primarykey=projeto_avancado.id)
 
 
 @login_required
@@ -1360,7 +1368,7 @@ def editar_projeto(request, primarykey):
 
         projeto.save()
 
-        return redirect('projeto_completo', primakey=primarykey)
+        return redirect('projeto_completo', primarykey=primarykey)
 
     context = {
         "projeto": projeto,

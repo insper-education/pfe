@@ -22,7 +22,7 @@ urlpatterns = [
          views.avisos_listar,
          name='avisos_listar'),
 
-    path('edita_aviso/<int:primakey>',
+    path('edita_aviso/<int:primarykey>',
          views.edita_aviso,
          name='edita_aviso'),
 

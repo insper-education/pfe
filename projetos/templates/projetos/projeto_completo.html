@@ -8,7 +8,12 @@
 {% block head %}
   {% load static %}
   {% load l10n %}
+
+  {% comment %} Para plotar os gráficos {% endcomment %}
   <script src="{% static 'js/Chart.min.js' %}"></script>
+
+  {% comment %} Para chamar os Tooltips {% endcomment %}
+  <script>{% include "tooltip.js" %}</script>
 
   <style>
     #logotipo {
@@ -340,12 +345,37 @@
       </ul>
   {% endif %}
 
-  <br>
-  <a class="myButton" href="{% url 'proposta_completa' projeto.id %}">Proposta</a>
-  <a class="myButton" href="{% url 'conceitos_obtidos' projeto.id %}">Avaliações</a>
-  <a class="myButton" href="{% url 'bancas_lista' projeto.id %}">Bancas</a>
-  <a class="myButton" href="{% url 'editar_projeto' projeto.id %}">Editar</a>
+  <hr>
+  <a class="myButton"
+   data-toggle="tooltip" data-html="true" animation="true" title="Acessa a poposta do projeto"
+   href="{% url 'proposta_completa' projeto.id %}">Proposta</a>
+
+  <a class="myButton"
+   data-toggle="tooltip" data-html="true" animation="true" title="Acessa as avaliações das bancas"
+   href="{% url 'conceitos_obtidos' projeto.id %}">Avaliações</a>
+
+  <a class="myButton"
+   data-toggle="tooltip" data-html="true" animation="true" title="Acessa os agendamentos das bancas"
+   href="{% url 'bancas_lista' projeto.id %}">Bancas</a>
+
+  <a class="myButton"
+   data-toggle="tooltip" data-html="true" animation="true" title="Acessa a versão avançada desse projeto"
+   onclick="cria_avancado()" style="color:white;"
+   {% comment %} href="{% url 'projeto_avancado' projeto.id %}" {% endcomment %}
+   >Avançado</a>
+  
+  <a class="myButton"
+   data-toggle="tooltip" data-html="true" animation="true" title="Permite editar alguns campos do projeto"
+   href="{% url 'editar_projeto' projeto.id %}">Editar</a>
   
   <p>&nbsp;</p>
+
+  <script>
+    function cria_avancado() {
+      if (confirm('Não existe uma versão avançada desse projeto, deseja criar?')) {
+        window.open("{% url 'projeto_avancado' projeto.id %}");
+      }
+    }
+  </script>
 
 {% endblock %}

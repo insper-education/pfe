@@ -304,9 +304,9 @@ def propostas_apresentadas(request):
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", login_url='/')
-def proposta_completa(request, primakey):
+def proposta_completa(request, primarykey):
     """Mostra um projeto por completo."""
-    proposta = get_object_or_404(Proposta, pk=primakey)
+    proposta = get_object_or_404(Proposta, pk=primarykey)
 
     if request.is_ajax():
         if 'autorizador' in request.POST:

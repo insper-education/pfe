@@ -52,7 +52,7 @@ urlpatterns = [
          views.comite,
          name='comite'),
 
-    path('completo/<int:primakey>',
+    path('completo/<int:primarykey>',
          views.projeto_completo,
          name='completo'),  # REMOVER
 
@@ -112,7 +112,11 @@ urlpatterns = [
          views.nomes,
          name='nomes'),
 
-    path('projeto_completo/<int:primakey>',
+    path('projeto_avancado/<int:primarykey>',
+         views.projeto_avancado,
+         name='projeto_avancado'),
+
+    path('projeto_completo/<int:primarykey>',
          views.projeto_completo,
          name='projeto_completo'),
 

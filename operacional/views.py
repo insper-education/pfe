@@ -70,9 +70,9 @@ def trata_aviso(aviso, request):
 @login_required
 @transaction.atomic
 @permission_required('users.altera_professor', login_url='/')
-def edita_aviso(request, primakey):
+def edita_aviso(request, primarykey):
     """Edita aviso."""
-    aviso = get_object_or_404(Aviso, pk=primakey)
+    aviso = get_object_or_404(Aviso, pk=primarykey)
 
     if request.method == 'POST':
         if 'mensagem' in request.POST:

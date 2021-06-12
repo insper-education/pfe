@@ -473,9 +473,9 @@ def cadastrar_usuario(request):
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", login_url='/')
-def edita_usuario(request, primakey):
+def edita_usuario(request, primarykey):
     """Cadastra usuário na base de dados do PFE."""
-    user = get_object_or_404(PFEUser, id=primakey)
+    user = get_object_or_404(PFEUser, id=primarykey)
 
     if request.method == 'POST':
 
@@ -697,7 +697,7 @@ def montar_grupos(request):
                     if not projeto.organizacao:
                         projeto.organizacao = proposta.organizacao
 
-                    projeto.avancado = False
+                    # projeto.avancado = None
 
                     projeto.ano = proposta.ano
                     projeto.semestre = proposta.semestre

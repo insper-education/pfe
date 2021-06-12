@@ -30,7 +30,7 @@ urlpatterns = [
          views.propostas_apresentadas,
          name='propostas_apresentadas'),
 
-    path('proposta_completa/<int:primakey>',
+    path('proposta_completa/<int:primarykey>',
          views.proposta_completa,
          name='proposta_completa'),
 
