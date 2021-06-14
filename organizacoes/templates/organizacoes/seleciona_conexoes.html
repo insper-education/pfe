@@ -6,6 +6,9 @@
 {% endcomment %}
 
 {% block head %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
+  <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -106,6 +109,20 @@
     {% else %}
       <p>Não existem parceiros cadastradas para essa organização.</p>
     {% endif %}
+
+    <label for="colaboracao">Colaboração externa</label></b>:
+    <select class="selectpicker" name="colaboracao" id="colaboracao" title="Selecione quem está colaborando com o projeto"
+    data-live-search="true" data-width="560px">
+        <option selected value> -- selecione um colaborador(a) -- </option>
+        <optgroup label="Organização">
+        {% for colaborador in todos_parceiros %}  
+          <option value="{{colaborador.id}}" {% if colaborador.id == colaboradores.id %}selected{% endif %}>
+            {{colaborador.user.get_full_name}}
+          </option>
+        {% endfor %}
+        </optgroup>
+    </select>
+    <br><br><br>
 
     <small><button onclick="location.href='{% url "cadastrar_usuario" %}?tipo=parceiro&organizacao={{projeto.organizacao.id}}'" type="button" style="float: right;">
       Cadastrar Novo Parceiro

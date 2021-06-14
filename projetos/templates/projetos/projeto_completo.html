@@ -16,7 +16,7 @@
   <script>{% include "tooltip.js" %}</script>
 
   <style>
-    #logotipo {
+    .logotipo {
       max-height:128px;
       max-width:128px;
       height:auto;
@@ -24,6 +24,18 @@
       float: right;
     }
   </style>
+
+ <style>
+    .logotipo_left {
+      max-height:64px;
+      max-width:128px;
+      height:auto;
+      width:auto;
+      float: right;
+      margin-left: 10px;
+    } 
+  </style>
+
 {% endblock %}
 
 {% block content %}
@@ -88,36 +100,90 @@
   
   <hr>
 
-  
+  {% for conexao in cooperacoes %}
+    {% if conexao.parceiro and conexao.parceiro.organizacao and conexao.parceiro.organizacao.logotipo %}
+      <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
+        <img class="logotipo_left" src="{{ conexao.parceiro.organizacao.logotipo.url }}" alt="{{ conexao.parceiro.organizacao.sigla }}">
+      </a>
+    {% endif %}
+  {% endfor %}
+
   {% if projeto.organizacao.logotipo %}
-    <img id="logotipo" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}">
+    <img class="logotipo" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}">
   {% endif %}
 
   <h3>Organização: <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a></h3>
-  <p><strong>endereço:</strong> <a class="tabulado" href="http://maps.google.com/maps?q={{projeto.organizacao.endereco}}">{{ projeto.organizacao.endereco|linebreaks }}</a></p>
+
+  {% for conexao in cooperacoes %}
+    {% if conexao.parceiro and conexao.parceiro.organizacao %}
+      <span>
+      &nbsp;&nbsp;&nbsp;Colaboração:
+      <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
+        {{conexao.parceiro.organizacao}}
+      </a>
+      </span>
+    {% endif %}
+  {% endfor %}
+
+  <div class="endereco" style="margin-top: 8px;">
+    <p><strong>endereço:</strong> <a class="tabulado" href="http://maps.google.com/maps?q={{projeto.organizacao.endereco}}">{{ projeto.organizacao.endereco|linebreaks }}</a></p>
+  </div>
+  
   {% if projeto.organizacao.website %}
-    <p><strong>website:</strong>  <a class="tabulado" href="{{ projeto.organizacao.website }}"> {{ projeto.organizacao.website }} </a></p>
-  {% endif %} 
-  {% if projeto.organizacao.informacoes %}
-    <strong>Informações sobre a organização :</strong> {{ projeto.organizacao.informacoes|linebreaks }}
+    <div class="website" style="margin-top: 8px;">
+      <p><strong>website:</strong>  <a class="tabulado" href="{{ projeto.organizacao.website }}"> {{ projeto.organizacao.website }} </a></p>
+    </div>
   {% endif %}
+
+  {% if projeto.organizacao.informacoes %}
+    <div class="informacoes" style="margin-top: 8px;">
+      <strong>Informações sobre a organização :</strong> {{ projeto.organizacao.informacoes|linebreaks }}
+    </div>
+  {% endif %}
+
   {% if projeto.proposta.departamento %}
-    <strong>Informações sobre o departamento na organização :</strong> {{ projeto.proposta.departamento|linebreaks }}
+    <div class="departamento" style="margin-top: 8px;">
+      <strong>Informações sobre o departamento na organização :</strong> {{ projeto.proposta.departamento|linebreaks }}
+    </div>
   {% endif %}
   
-  <strong>conexões:</strong>
-  <small><a href="{% url 'seleciona_conexoes' %}?projeto={{projeto.id}}">&#10133;</a></small>
-  <br>
-  <ul>
-  {% if conexoes %}
-    {% for conexao in conexoes %}
-    <li>
-      {% if conexao.parceiro.user.is_active %}
-        <a href="{% url 'parceiro_detail' conexao.parceiro.id %}">
-          {{ conexao.parceiro.user.get_full_name }}
-        </a>
-        <a href="mailto:{{conexao.parceiro.user.email}}"> &lt;{{conexao.parceiro.user.email}}&gt;</a>
-        <span>
+  <div class="conexoes" style="margin-top: 8px;">
+    <strong>conexões:</strong>
+    <small><a href="{% url 'seleciona_conexoes' %}?projeto={{projeto.id}}">&#10133;</a></small>
+    <br>
+    <ul>
+    {% if conexoes %}
+      {% for conexao in conexoes %}
+      <li>
+        {% if conexao.parceiro.user.is_active %}
+          <a href="{% url 'parceiro_detail' conexao.parceiro.id %}">
+            {{ conexao.parceiro.user.get_full_name }}
+          </a>
+          <a href="mailto:{{conexao.parceiro.user.email}}"> &lt;{{conexao.parceiro.user.email}}&gt;</a>
+          <span>
+            {% if conexao.gestor_responsavel %}
+              [gestor responsavel]
+            {% endif %}
+            {% if conexao.mentor_tecnico %}
+              [mentor técnico]
+            {% endif %}
+            {% if conexao.recursos_humanos %}
+              [recursos humanos]
+            {% endif %}
+            {% if conexao.colaboracao %}
+              [colaboração]
+            {% endif %}
+            {% if conexao.observacao %}
+              &nbsp;&nbsp;obs: {{conexao.observacao}}
+            {% endif %}
+          </span>
+          <br>
+        {% else %}
+          <a class="tabulado" href="{% url 'parceiro_detail' conexao.parceiro.id %}" style="color: LightBlue;">
+            {{ conexao.parceiro.user.get_full_name }}
+          </a>
+          <a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;"> &lt;{{conexao.parceiro.user.email}}&gt;</a>
+          <span style="color: lightgrey;">
           {% if conexao.gestor_responsavel %}
             [gestor responsavel]
           {% endif %}
@@ -133,38 +199,16 @@
           {% if conexao.observacao %}
             &nbsp;&nbsp;obs: {{conexao.observacao}}
           {% endif %}
-        </span>
-        <br>
-      {% else %}
-        <a class="tabulado" href="{% url 'parceiro_detail' conexao.parceiro.id %}" style="color: LightBlue;">
-          {{ conexao.parceiro.user.get_full_name }}
-        </a>
-        <a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;"> &lt;{{conexao.parceiro.user.email}}&gt;</a>
-        <span style="color: lightgrey;">
-        {% if conexao.gestor_responsavel %}
-          [gestor responsavel]
+          </span>
+          <br>
         {% endif %}
-        {% if conexao.mentor_tecnico %}
-          [mentor técnico]
-        {% endif %}
-        {% if conexao.recursos_humanos %}
-          [recursos humanos]
-        {% endif %}
-        {% if conexao.colaboracao %}
-          [colaboração]
-        {% endif %}
-        {% if conexao.observacao %}
-          &nbsp;&nbsp;obs: {{conexao.observacao}}
-        {% endif %}
-        </span>
-        <br>
-      {% endif %}
-      </li>
-    {% endfor %}
-  {% else %}
-    Nenhuma conexão específica para esse projeto declarada.
-  {% endif %}
-  </ul>
+        </li>
+      {% endfor %}
+    {% else %}
+      Nenhuma conexão específica para esse projeto declarada.
+    {% endif %}
+    </ul>
+  </div>
 
   {% if projeto.orientador %}
     <hr>

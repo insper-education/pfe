@@ -130,6 +130,8 @@ def projeto_completo(request, primarykey):
 
     projetos_avancados = Projeto.objects.filter(avancado=projeto)
 
+    cooperacoes = Conexao.objects.filter(projeto=projeto, colaboracao=True)
+
     context = {
         "configuracao": configuracao,
         "projeto": projeto,
@@ -140,6 +142,7 @@ def projeto_completo(request, primarykey):
         "coorientadores": coorientadores,
         "documentos": documentos,
         "projetos_avancados": projetos_avancados,
+        "cooperacoes": cooperacoes,
         "MEDIA_URL": settings.MEDIA_URL,
     }
 

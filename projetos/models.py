@@ -689,7 +689,7 @@ class Anotacao(models.Model):
         (1, 'Enviou proposta de projeto'),
         (2, 'Interessada em enviar proposta'),
         (3, 'Não vai enviar proposta de projeto'),
-        (4, 'Confirmamos um grupo de alunos para o projeto'),
+        (4, 'Confirmamos um grupo de estudantes para o projeto'),
         (5, 'Notificamos que não conseguimos montar projeto'),
         (6, 'Documentação fechada para projeto'),
         (7, 'Envio de Relatório Final'),

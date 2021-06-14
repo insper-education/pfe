@@ -668,11 +668,29 @@ def seleciona_conexoes(request):
                 if Conexao.objects.filter(parceiro=parceiro, projeto=projeto):
                     Conexao.objects.get(parceiro=parceiro, projeto=projeto).delete()
 
+        colaboracao = request.POST.get('colaboracao', None)
+        if colaboracao and colaboracao != "":
+            parceiro = Parceiro.objects.get(id=colaboracao)
+            (conexao, _created) = Conexao.objects.get_or_create(parceiro=parceiro,
+                                                                projeto=projeto)
+            conexao.colaboracao = True
+            conexao.save()
+
         return redirect('projeto_completo', projeto_id)
 
+
+    todos_parceiros = Parceiro.objects.all()
+
+    colaboradores = None
+    cooperacoes = Conexao.objects.filter(projeto=projeto, colaboracao=True)
+    if cooperacoes:
+        colaboradores = cooperacoes.last().parceiro
+
     context = {
-        'projeto': projeto,
-        'parceiros': parceiros,
+        "projeto": projeto,
+        "parceiros": parceiros,
+        "todos_parceiros": todos_parceiros,
+        "colaboradores": colaboradores,
         }
 
     return render(request, 'organizacoes/seleciona_conexoes.html', context)
