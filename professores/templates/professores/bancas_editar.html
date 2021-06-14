@@ -186,7 +186,7 @@
             <label for="membro1">Membro 1 da Banca:</label>
           </td>
           <td>
-            <select name="membro1" class="pessoas custom-select custom-select-sm" id="membro1" title="Selecione membro da banca" required
+            <select name="membro1" class="pessoas custom-select custom-select-sm membros" id="membro1" title="Selecione membro da banca" required
               oninvalid="this.setCustomValidity('Selecione ao menos duas pessoas para a banca')"
               oninput="this.setCustomValidity('')"
               >
@@ -199,7 +199,7 @@
             <label for="membro2">Membro 2 da Banca:</label>
           </td>
           <td>
-            <select name="membro2" class="pessoas custom-select custom-select-sm" id="membro2" title="Selecione membro da banca" required
+            <select name="membro2" class="pessoas custom-select custom-select-sm membros" id="membro2" title="Selecione membro da banca" required
               oninvalid="this.setCustomValidity('Selecione ao menos duas pessoas para a banca')"
               oninput="this.setCustomValidity('')"
               >
@@ -212,7 +212,7 @@
             <label for="membro3">Membro 3 da Banca:</label>
           </td>
           <td>
-            <select name="membro3" class="pessoas custom-select custom-select-sm" id="membro3" title="Selecione membro da banca">
+            <select name="membro3" class="pessoas custom-select custom-select-sm membros" id="membro3" title="Selecione membro da banca">
               <option selected value> -- selecione membro da banca -- </option>
             </select>
           </td>
@@ -220,7 +220,8 @@
       </table>
 
       <br><br>
-      <button type="submit">Agendar</button>
+      <button id="submit" type="submit">Agendar</button>
+      <span id="mensagem"></span>
       <p>&nbsp;</p>
     </form>
   {% else %}
@@ -229,6 +230,25 @@
   <p>&nbsp;</p>
 
   <script>
+
+    $(".membros").change(function(){
+      var membros  = $('.membros')
+      var dic = {};
+      for(mem in membros){
+        var chave = membros.eq(mem).val()
+        if(typeof chave !== "undefined" && chave != "") {
+          if(chave in dic) {
+            $("#submit").prop("disabled",true);
+            $("#mensagem").html("Os membros devem ser diferentes");
+            return;
+          } else {
+            dic[chave] = true;
+          }
+        }
+      }
+      $("#submit").prop("disabled",false);
+      $("#mensagem").html("");
+    });  
 
     function carrega_pagina(){
       $('.pessoas').empty();

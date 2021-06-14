@@ -1383,12 +1383,48 @@ def editar_projeto(request, primarykey):
         if descricao and ( projeto.descricao or projeto.proposta.descricao != descricao):
             projeto.descricao = descricao
 
+        orientador_id = request.POST.get('orientador', None)
+        orientador = get_object_or_404(Professor, pk=orientador_id)
+        projeto.orientador = orientador
+
+        alocacoes = Alocacao.objects.filter(projeto=projeto).delete()
+        
+        estudante_id = request.POST.get('estudante1', None)
+        estudante = get_object_or_404(Aluno, pk=estudante_id)
+        alocacao = Alocacao.create(estudante, projeto)
+        alocacao.save()
+
+        estudante_id = request.POST.get('estudante2', None)
+        estudante = get_object_or_404(Aluno, pk=estudante_id)
+        alocacao = Alocacao.create(estudante, projeto)
+        alocacao.save()
+
+        estudante_id = request.POST.get('estudante3', None)
+        estudante = get_object_or_404(Aluno, pk=estudante_id)
+        alocacao = Alocacao.create(estudante, projeto)
+        alocacao.save()
+
+        estudante_id = request.POST.get('estudante4', None)
+        estudante = get_object_or_404(Aluno, pk=estudante_id)
+        alocacao = Alocacao.create(estudante, projeto)
+        alocacao.save()
+
+
         projeto.save()
 
         return redirect('projeto_completo', primarykey=primarykey)
 
+
+    professores = Professor.objects.all()
+    alocacoes = Alocacao.objects.filter(projeto=projeto)
+
+    estudantes = Aluno.objects.all()
+
     context = {
         "projeto": projeto,
+        "professores": professores,
+        "alocacoes": alocacoes,
+        "estudantes": estudantes,
     }
     return render(request, 'projetos/editar_projeto.html', context)
 

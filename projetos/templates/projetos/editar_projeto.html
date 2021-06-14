@@ -6,6 +6,14 @@
 {% endcomment %}
 
 {% block head %}
+
+
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
+  <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
+
+  {% load index %}
+
   <style>
     textarea {
       max-width:100%;
@@ -29,9 +37,85 @@
     >{% if projeto.descricao %}{{projeto.descricao}}{% else %}{{projeto.proposta.descricao}}{% endif %}</textarea>
     <br><br>
 
-    <input type="submit" value="Atualizar Projeto">
+    <label for="orientador">Orientador(a)</label></b>:
+    <select class="selectpicker show-tick" name="orientador" id="orientador" title="Selecione orientador do projeto"
+    data-width="560px">
+        <option selected value> -- selecione um orientador(a) -- </option>
+        <optgroup label="Comitê PFE">
+        {% for orientador in professores %}
+          {% if orientador.user.membro_comite %}
+            <option value="{{orientador.id}}" {% if orientador.id == projeto.orientador.id %}selected{% endif %}>
+            {{orientador.user.get_full_name}}
+          </option>
+          {% endif %}
+        {% endfor %}
+        </optgroup>
+
+        <optgroup label="Professores">
+        {% for orientador in professores %}
+          {% if not orientador.user.membro_comite %}
+            <option value="{{orientador.id}}" {% if orientador.id == projeto.orientador.id %}selected{% endif %}>
+            {{orientador.user.get_full_name}}
+          </option>  
+          {% endif %}
+        {% endfor %}
+        </optgroup>
+
+    </select>
+
+    <br><br>
+    Grupo:<br>
+    {% for membro in '0123'|make_list %}
+      {% with alocacao=alocacoes|index:forloop.counter0 %}
+        &nbsp;&nbsp;<label for="estudante{{forloop.counter}}">Estudante <span style="width:1em;text-align:left;display:inline-block;">{{forloop.counter}}</span></label></b>:
+        <select class="selectpicker show-tick estudantes" name="estudante{{forloop.counter}}" id="estudante{{forloop.counter}}" title="Selecione estudante membro do projeto"
+        data-live-search="true" data-width="560px">
+            <option selected value> -- selecione um estudante -- </option>
+            <optgroup label="Semestre PFE">
+            {% for estudante in estudantes %}
+              {% if estudante %}
+                <option value="{{estudante.id}}" {% if estudante.id == alocacao.aluno.id %}selected{% endif %}>
+                {{estudante.user.get_full_name}}
+              </option>  
+              {% endif %}
+            {% endfor %}
+            </optgroup>
+        </select>
+        <br>
+      {% endwith %}
+    {% endfor %}
+
+
+    <br><br>
+
+    <input id="submit" type="submit" value="Atualizar Projeto">
+    <span id="mensagem"></span>
     
   </form>
+
+  <script>
+
+    $(".estudantes").change(function(){
+      var estudantes  = $('.estudantes > select')
+      var dic = {};
+      for(est in estudantes){
+        var chave = estudantes.eq(est).val()
+        if(typeof chave !== "undefined" && chave != "") {
+          if(chave in dic) {
+            $("#submit").prop("disabled",true);
+            $("#mensagem").html("Os estudantes devem ser diferentes");
+            return;
+          } else {
+            dic[chave] = true;
+          }
+        }
+      }
+      $("#submit").prop("disabled",false);
+      $("#mensagem").html("");
+    });  
+
+  </script>
+
 
   <p>&nbsp;</p>
 
