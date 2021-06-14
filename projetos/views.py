@@ -114,6 +114,9 @@ def projeto_completo(request, primarykey):
         alocacao = alocacoes.first()
         medias_oo = alocacao.get_medias_oo
 
+        if not (medias_oo['medias_apg'] or medias_oo['medias_afg'] or medias_oo['medias_rig'] or medias_oo['medias_bi'] or medias_oo['medias_rfg'] or medias_oo['medias_bf']):
+            medias_oo = None
+
     # TIPO_DE_DOCUMENTO = ( # não mudar a ordem dos números
     # (3, 'Relatório Final'),
     # (18, 'Vídeo do Projeto'),
