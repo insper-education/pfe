@@ -1390,24 +1390,28 @@ def editar_projeto(request, primarykey):
         alocacoes = Alocacao.objects.filter(projeto=projeto).delete()
         
         estudante_id = request.POST.get('estudante1', None)
-        estudante = get_object_or_404(Aluno, pk=estudante_id)
-        alocacao = Alocacao.create(estudante, projeto)
-        alocacao.save()
+        if estudante_id:
+            estudante = get_object_or_404(Aluno, pk=estudante_id)
+            alocacao = Alocacao.create(estudante, projeto)
+            alocacao.save()
 
         estudante_id = request.POST.get('estudante2', None)
-        estudante = get_object_or_404(Aluno, pk=estudante_id)
-        alocacao = Alocacao.create(estudante, projeto)
-        alocacao.save()
+        if estudante_id:
+            estudante = get_object_or_404(Aluno, pk=estudante_id)
+            alocacao = Alocacao.create(estudante, projeto)
+            alocacao.save()
 
         estudante_id = request.POST.get('estudante3', None)
-        estudante = get_object_or_404(Aluno, pk=estudante_id)
-        alocacao = Alocacao.create(estudante, projeto)
-        alocacao.save()
+        if estudante_id:
+            estudante = get_object_or_404(Aluno, pk=estudante_id)
+            alocacao = Alocacao.create(estudante, projeto)
+            alocacao.save()
 
         estudante_id = request.POST.get('estudante4', None)
-        estudante = get_object_or_404(Aluno, pk=estudante_id)
-        alocacao = Alocacao.create(estudante, projeto)
-        alocacao.save()
+        if estudante_id:
+            estudante = get_object_or_404(Aluno, pk=estudante_id)
+            alocacao = Alocacao.create(estudante, projeto)
+            alocacao.save()
 
 
         projeto.save()
