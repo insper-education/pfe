@@ -21,20 +21,21 @@
     <img id="logotipo" src="{{ proposta.organizacao.logotipo.url }}" alt="{{ proposta.organizacao.sigla }}">
   {% endif %}
 
-  <span class="titulo" data-toggle="tooltip" data-html="true" animation="true" title="
-     Nome da organização/empresa que está propondo o projeto.
-    ">
+  <span class="titulo">
     <b>Organização:</b>
     {% if proposta.organizacao and proposta.organizacao.nome %}
         {% if completo %}
-            <a href="{% url 'organizacao_completo' proposta.organizacao.id %}">
+            <a data-toggle="tooltip" data-html="true" animation="true" title="Nome da organização/empresa que está propondo o projeto."
+              href="{% url 'organizacao_completo' proposta.organizacao.id %}">
         {% endif %}
         {{proposta.organizacao.nome}}
         {% if completo %}
             </a>
         {% endif %}
     {% elif proposta.nome_organizacao %}
-      {{proposta.nome_organizacao}}
+      <span data-toggle="tooltip" data-html="true" animation="true" title="Nome da organização/empresa que está propondo o projeto.">
+        {{proposta.nome_organizacao}}
+      </span>
     {% else %}
       <u>Organização não definida.</u>
     {% endif %}
