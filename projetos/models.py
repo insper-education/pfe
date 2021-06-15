@@ -529,6 +529,9 @@ class Evento(models.Model):
                                                       null=True, blank=True,
                                                       help_text='Define o tipo do evento a ocorrer')
 
+    descricao = models.CharField(max_length=500, blank=True,
+                                  help_text='Descrição do evento')
+
     observacao = models.CharField(max_length=50, blank=True,
                                   help_text='Qualquer observação relavante')
 

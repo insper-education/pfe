@@ -36,10 +36,6 @@ def get_calendario_context(primarykey=None):
 
     # Estudantes e parceiros só conseguem ver os eventos até o semestre atual
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     # Se usuário não for Professor nem Admin
     if user and user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
@@ -221,7 +217,7 @@ def export_calendar(request, event_id):
 def atualiza_evento(request):
     """Ajax para atualizar eventos."""
     try:
-        event_id = int(request.GET.get('id', None))
+        event_id = int(request.POST.get('id', None))
         if event_id:
             evento = Evento.objects.get(id=event_id)
         else:
@@ -229,13 +225,15 @@ def atualiza_evento(request):
     except Evento.DoesNotExist:
         return HttpResponseNotFound('<h1>Evento não encontrado!</h1>')
 
-    tipo_de_evento = int(request.GET.get('type', None))
+    tipo_de_evento = int(request.POST.get('type', None))
 
-    start_date = request.GET.get('startDate', None)
-    end_date = request.GET.get('endDate', None)
+    start_date = request.POST.get('startDate', None)
+    end_date = request.POST.get('endDate', None)
 
-    location = request.GET.get('location', None)[:50]
-    observation = request.GET.get('observation', None)[:50]
+    location = request.POST.get('location', "")[:50]
+    observation = request.POST.get('observation', "")[:50]
+    descricao = request.POST.get('descricao', "")[:500]
+    print(descricao)
 
     evento.tipo_de_evento = tipo_de_evento
 
@@ -244,6 +242,7 @@ def atualiza_evento(request):
 
     evento.location = location
     evento.observacao = observation
+    evento.descricao = descricao
 
     evento.save()
 
@@ -260,14 +259,9 @@ def atualiza_evento(request):
 @permission_required('users.altera_professor', login_url='/')
 def remove_evento(request):
     """Ajax para remover eventos."""
-    event_id = int(request.GET.get('id', None))
+    event_id = int(request.POST.get('id', None))
     evento = get_object_or_404(Evento, id=event_id)
-    # try:
-    #     event_id = int(request.GET.get('id', None))
-    #     evento = Evento.objects.get(id=event_id)
-    # except Evento.DoesNotExist:
-    #     return HttpResponseNotFound('<h1>Evento não encontrado!</h1>')
-
+    
     evento.delete()
 
     data = {
