@@ -110,7 +110,7 @@
         </span>
         
         <b>Projeto:</b>
-        <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}" class="dark-blue-bold"> 
+        <a class="imprimir" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_completo' projeto.id %}" class="dark-blue-bold"> 
           {% if projeto.titulo_final %}
             {{projeto.titulo_final}}<br>
             <small>Título original: {{projeto.titulo}}</small><br>
