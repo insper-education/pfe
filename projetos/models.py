@@ -761,6 +761,7 @@ class Documento(models.Model):
         (24, 'Manual de Avaliações'),
         (25, 'Relatório Publicado'),
         (26, 'Notificação de Relatório'),
+        (27, 'Apresentação da Banca Final'),
         (255, 'Outros'),
     )
     tipo_de_documento = models.PositiveSmallIntegerField(choices=TIPO_DE_DOCUMENTO, default=0)

@@ -210,6 +210,9 @@ table, th, td {
 }
 
 @media only screen and (max-width: 740px) {
+  table, th, td {
+    font-size: 14px;
+  }
   .titulo {
     font-size: 21px;
     display: block;

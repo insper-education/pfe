@@ -15,6 +15,30 @@
     textarea {
       max-width:100%;
     }
+
+    label {
+      margin: 4px;
+    }
+
+    table, td {
+        vertical-align: top;
+    }
+
+    @media only screen and (max-width: 1000px) {
+      table, th, td {
+        font-size: 14px;
+      }
+    }
+
+    @media only screen and (max-width: 900px) {
+      table, th, td {
+        font-size: 12px;
+      }
+      .nivel {
+        display:none;
+      }
+    } 
+
   </style>
 
 {% endblock %}
@@ -83,38 +107,53 @@
           <b>{{objetivo.titulo}}</b>: {{objetivo.objetivo}}
           <table style="width:100%">
             <tr>
-              <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA" style="width:10%;">
-                <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA" id="objetivo{{objetivo.id}}NA" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.NA" required> 
-                 <label for="objetivo.{{objetivo.id}}.NA">N/A</label>
+              <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}NA" style="width:10%;">
+                <label for="objetivo.{{objetivo.id}}.NA" style="white-space: nowrap;">
+                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA" id="objetivo{{objetivo.id}}NA" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.NA" required> 
+                  N/A
+                </label>
               </th>
-              <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" style="width:18%">
-                <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" id="objetivo{{objetivo.id}}I" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.I" required>
-                <label for="objetivo.{{objetivo.id}}.I ">Insatisfatório (I)</label>
+              <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I" style="width:18%">
+                <label for="objetivo.{{objetivo.id}}.I " style="white-space: nowrap;">
+                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" id="objetivo{{objetivo.id}}I" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.I" required>
+                  <span class="nivel">Insatisfatório&nbsp;</span>(I)
+                </label>
               </th>
-              <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" style="width:18%">
-                <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" id="objetivo{{objetivo.id}}D" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.D " required>
-                <label for="objetivo{{objetivo.id}}D ">Em Desenvolvimento (D)</label>
+              <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}D" style="width:18%">
+                <label for="objetivo{{objetivo.id}}D " style="white-space: nowrap;">
+                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" id="objetivo{{objetivo.id}}D" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.D " required>
+                  <span class="nivel">Em Desenvolvimento&nbsp;</span>(D)
+                </label>
               </th>
-              <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" style="width:18%">
-                <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C" id="objetivo{{objetivo.id}}C" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.C" required>
-                <label for="objetivo{{objetivo.id}}C ">Essencial (C)</label>
-                &nbsp;&nbsp;&nbsp;&nbsp;
-                <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" id="objetivo{{objetivo.id}}CX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.C+" required>
-                <label for="objetivo{{objetivo.id}}C+">(C+)</label>
+              <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" style="width:18%">
+                <label for="objetivo{{objetivo.id}}C " style="white-space: nowrap; margin-right: 2em;">
+                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C" id="objetivo{{objetivo.id}}C" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.C" required>
+                  <span class="nivel">Essencial&nbsp;</span>(C)
+                </label>
+                <label for="objetivo{{objetivo.id}}C+" style="white-space: nowrap;">
+                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" id="objetivo{{objetivo.id}}CX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.C+" required>
+                  (C+)
+                </label>
               </th>
-              <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" style="width:18%">
-                <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B" id="objetivo{{objetivo.id}}B" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.B" required>
-                <label for="objetivo{{objetivo.id}}B ">Proficiente (B)</label>
-                &nbsp;&nbsp;&nbsp;&nbsp;
-                <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" id="objetivo{{objetivo.id}}BX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.B+" required>
-                <label for="objetivo{{objetivo.id}}B+">(B+)</label>
+              <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" style="width:18%">
+                <label for="objetivo{{objetivo.id}}B " style="white-space: nowrap; margin-right: 2em;">
+                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B" id="objetivo{{objetivo.id}}B" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.B" required>
+                  <span class="nivel">Proficiente&nbsp;</span>(B)
+                </label>
+                <label for="objetivo{{objetivo.id}}B+" style="white-space: nowrap;">
+                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" id="objetivo{{objetivo.id}}BX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.B+" required>
+                  (B+)
+                </label>
               </th>
-              <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" style="width:18%">
-                <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A" id="objetivo{{objetivo.id}}A" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.A" required>
-                <label for="objetivo{{objetivo.id}}A ">Avançado (A)</label>
-                &nbsp;&nbsp;&nbsp;&nbsp;
-                <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" id="objetivo{{objetivo.id}}AX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.A+" required>
-                <label for="objetivo{{objetivo.id}}A+">(A+)</label>
+              <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" style="width:18%">
+                <label for="objetivo{{objetivo.id}}A " style="white-space: nowrap; margin-right: 2em;">
+                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A" id="objetivo{{objetivo.id}}A" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.A" required>
+                  <span class="nivel">Avançado&nbsp;</span>(A)
+                </label>
+                <label for="objetivo{{objetivo.id}}A+" style="white-space: nowrap;">
+                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" id="objetivo{{objetivo.id}}AX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.A+" required>
+                  (A+)
+                </label>
               </th>
             </tr>
             <tr>
