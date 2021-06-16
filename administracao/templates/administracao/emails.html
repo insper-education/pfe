@@ -191,7 +191,7 @@
         &amp;bcc=comitepfe@insper.edu.br
         &amp;subject=PFE%20&amp;body=Caros%20alunos,%0D%0A%0D%0A
         atenciosamente,%20coordenação%20PFE
-      ">Todos os alunos do PFE</a><br>
+      ">Todos os estudantes do PFE</a><br>
       {% comment %}
       <a href="
         mailto:{% for aluno in todos_alunos %}{{aluno.user.first_name|parse_quote}}%20{{aluno.user.last_name|parse_quote}}%20&lt;{{ aluno.user.email|parse_quote }}&gt;,{% endfor %}
@@ -199,7 +199,7 @@
         &amp;bcc=ComitePFE&lt;comitepfe@insper.edu.br&gt;
         &amp;subject=PFE%20&amp;body=Caros%20alunos,%0D%0A%0D%0A
         atenciosamente,%20coordenação%20PFE
-      ">Todos os alunos do PFE</a><br>
+      ">Todos os estudantes do PFE</a><br>
       {% endcomment %}
     {% endif %}
 
