@@ -62,7 +62,7 @@ def get_calendario_context(primarykey=None):
     # 20, 'Relato Quinzenal'
     quinzenais = eventos.filter(tipo_de_evento=20)
 
-    # 30, 'Feedback dos Alunos sobre PFE'
+    # 30, 'Feedback dos Estudantes sobre PFE'
     feedbacks = eventos.filter(tipo_de_evento=30)
 
     # Eventos da coordenação
