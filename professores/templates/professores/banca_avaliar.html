@@ -17,7 +17,7 @@
     }
 
     label {
-      margin: 4px;
+      margin: 3px;
     }
 
     table, td {
@@ -81,8 +81,8 @@
         <br>
       {% endif %}
       
-      <br><b><label for="avaliador">Avaliador(a)</label></b>:
-      <select name="avaliador" id="avaliador" title="Selecione avaliador da banca" required
+      <br><b><label for="avaliador">Avaliador(a):</label></b
+      ><select name="avaliador" id="avaliador" title="Selecione avaliador da banca" required
         oninvalid="this.setCustomValidity('Selecione seu nome para o controle das avaliações')"
         oninput="this.setCustomValidity('')"
         >
@@ -105,6 +105,7 @@
         <br><h5>Objetivos de Aprendizagem</h5>
         {% for objetivo in objetivos %}
           <b>{{objetivo.titulo}}</b>: {{objetivo.objetivo}}
+          <div class="table-responsive">
           <table style="width:100%">
             <tr>
               <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}NA" style="width:10%;">
@@ -173,7 +174,9 @@
                 <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_final_A}}</label></td>
               {% endif %}
             </tr>
-          </table><br>
+          </table>
+          </div>
+          <br>
         {% endfor %}
 
       {% else %}
