@@ -17,6 +17,7 @@
         (4, 'administrador'),
     {% endcomment %}
 
+    <br>
     <a href="{% url 'calendario' %}"><h5>Calendário Geral</h5></a>
     <hr>
     {% if user.tipo_de_usuario == 1 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}

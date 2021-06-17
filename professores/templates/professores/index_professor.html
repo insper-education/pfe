@@ -6,7 +6,7 @@
 {% endcomment %}
 
 {% block content %}
-
+    <br>
     <h5>Agendamentos</h5>
     <ul>
         <a href="{% url 'bancas_index' %}"><li>Bancas</li></a>
@@ -26,15 +26,52 @@
 
     <h5>Avaliações</h5>
     <ul>
-        <a href="{% url 'objetivos_rubricas' %}"><li>Objetivos de Aprendizado e Rubricas</li></a>
-        <a href="{% url 'estudantes_notas' %}"><li>Resultados das Avaliações dos Estudantes</li></a>
-        <a href="{% url 'resultado_projetos' %}"><li>Resultados por Projeto</li></a>
-        <a href="{% url 'analise_notas' %}"><li>Análise por Notas/Conceitos</li></a>
-        <a href="{% url 'evolucao_notas' %}"><li>Evolução por Notas/Conceitos</li></a>
-        <a href="{% url 'analise_objetivos' %}"><li>Análise por Objetivos de Aprendizado</li></a>
-        <a href="{% url 'evolucao_objetivos' %}"><li>Evolução por Objetivos de Aprendizado</li></a>
-        <a href="{% url 'correlacao_medias_cr' %}"><li>Correlação entre Médias e CR</li></a>
-        <a href="{% url 'certificacao_falconi' %}"><li>Certificações Falconi</li></a>
+        <li>Cadastro de Objetivos de Aprendizado e Rubricas</li>
+        <li style="list-style-type:none;margin-bottom: 1em;">
+            <ul>
+                <a href="{% url 'objetivos_rubricas' %}"><li>Objetivos de Aprendizado e Rubricas</li></a>
+            </ul>
+        </li>
+        
+        <li>Tabelas de Notas</li>
+        <li style="list-style-type:none;margin-bottom: 1em;">
+            <ul>
+                <a href="{% url 'estudantes_notas' %}"><li>Resultados das Avaliações dos Estudantes</li></a>
+                <a href="{% url 'resultado_projetos' %}"><li>Resultados por Projeto</li></a>
+            </ul>
+        </li>
+
+        <li>Notas e Conceitos</li>
+        <li style="list-style-type:none;margin-bottom: 1em;">
+            <ul>
+                <a href="{% url 'analise_notas' %}"><li>Análise por Notas/Conceitos</li></a>
+                <a href="{% url 'evolucao_notas' %}"><li>Evolução por Notas/Conceitos</li></a>
+            </ul>
+        </li>
+        
+        <li>Objetivos de Aprendizado</li>
+        <li style="list-style-type:none;margin-bottom: 1em;">
+            <ul>
+                <a href="{% url 'analise_objetivos' %}"><li>Análise por Objetivos de Aprendizado</li></a>
+                <a href="{% url 'evolucao_objetivos' %}"><li>Evolução por Objetivos de Aprendizado</li></a>
+            </ul>
+        </li>
+
+        <li>Correlações</li>
+        <li style="list-style-type:none;margin-bottom: 1em;">
+            <ul>
+                <a href="{% url 'correlacao_medias_cr' %}"><li>Correlação entre Médias e CR</li></a>
+            </ul>
+        </li>
+
+        <li>Certificações</li>
+        <li style="list-style-type:none;margin-bottom: 1em;">
+            <ul>
+                <a href="{% url 'certificacao_falconi' %}"><li>Certificações Falconi</li></a>
+            </ul>
+        </li>
+
+        
     </ul>
 
     <p>&nbsp;</p>
