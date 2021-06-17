@@ -17,9 +17,9 @@ from . import views
 urlpatterns = [
 
     # pagina inicial (herança problemática)
-    path('',
-         views.index,
-         name='index'),
+    #     path('',
+    #          views.index,
+    #          name='index'),
 
     # pagina inicial de projs.
     path('index_projetos/',
