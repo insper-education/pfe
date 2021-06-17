@@ -29,7 +29,7 @@
     <select id="projeto" name="projeto" class="form-control">
       <option selected value> -- nenhum projeto -- </option>
       {% for projeto in projetos %}
-        <option value="{{projeto.id}}">{{projeto.get_titulo}} [{{projeto.ano}}.{{projeto.semestre}}] </option>
+        <option value="{{projeto.id}}">{{projeto.get_titulo}} [{{projeto.ano}}.{{projeto.semestre}}]{% if projeto.avancado %} {Avançado}{% endif %}</option>
       {% endfor %}
     </select>
 
