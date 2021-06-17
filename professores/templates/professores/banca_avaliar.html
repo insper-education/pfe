@@ -55,7 +55,7 @@
 
       th, td {        
         flex-basis: 100%;
-        height: calc(130px - 5vw);;
+        min-height: calc(130px - 5vw);;
       }
 
     }
@@ -75,11 +75,13 @@
     <form method="post" id="avaliacaoform" enctype="multipart/form-data">
       {% csrf_token %}
 
-      <b>Título do Projeto:</b> {{banca.projeto.titulo}}<br>
+      <b>Projeto:</b> {{banca.projeto.titulo}}<br>
       <b>Organização:</b> {{banca.projeto.organizacao}}<br>
       <b>Orientador{% if banca.projeto.orientador.user.genero == "F" %}a{% endif %}:</b> {{banca.projeto.orientador}}<br>
       <b>Grupo:</b>
-      <ul>
+
+
+      <ul style="padding-left: 34px;">
         {% for alocacao in banca.projeto.alocacao_set.all %}
           <li>
             {% comment %} <a href="{% url 'estudante_detail' alocacao.aluno.id %}">{% endcomment %} 
@@ -108,7 +110,7 @@
         <br>
       {% endif %}
       
-      <br><b><label for="avaliador">Avaliador(a):</label></b
+      <br><b><label style="margin: 0px;" for="avaliador">Avaliador(a):</label></b
       ><select name="avaliador" id="avaliador" title="Selecione avaliador da banca" required
         oninvalid="this.setCustomValidity('Selecione seu nome para o controle das avaliações')"
         oninput="this.setCustomValidity('')"
