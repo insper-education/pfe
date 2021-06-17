@@ -16,10 +16,10 @@ from . import views
 
 urlpatterns = [
 
-    # pagina inicial (herança problemática)
-    #     path('',
-    #          views.index,
-    #          name='index'),
+    # link antigo (remover em breve)
+    path('',
+         views.index,
+         name='index_antigo'),
 
     # pagina inicial de projs.
     path('index_projetos/',
