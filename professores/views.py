@@ -19,7 +19,7 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 from django.utils import html
 
-from users.models import PFEUser, Professor, Aluno
+from users.models import PFEUser, Professor, Aluno, Alocacao
 from users.support import get_edicoes
 
 from projetos.models import ObjetivosDeAprendizagem, Avaliacao2, Observacao
@@ -976,7 +976,7 @@ def coorientadores_tabela(request):
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')
-def resultado_bancas(request):
+def resultado_projetos(request):
     """Mostra os resultados das avaliações (Bancas)."""
     edicoes, ano, semestre = get_edicoes(Projeto)
     context = {
@@ -992,11 +992,46 @@ def resultado_bancas(request):
                 ano, semestre = request.POST['edicao'].split('.')
                 projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
 
+            relatorio_intermediario = []
+            relatorio_final = []
             banca_intermediaria = []
             banca_final = []
             banca_falconi = []
 
             for projeto in projetos:
+
+                aval_banc_final = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=2)  # Rel. Intermediário
+                nota_banca_final, peso = Aluno.get_banca(None, aval_banc_final)
+
+                alocacoes = Alocacao.objects.filter(projeto=projeto)
+                
+                if alocacoes:
+
+                    primeira = alocacoes.first()
+                    medias = primeira.get_media
+
+                    if medias["peso_grupo_inter"] is not None and medias["peso_grupo_inter"] > 0:
+                        nota = medias["nota_grupo_inter"]/medias["peso_grupo_inter"]
+                        relatorio_intermediario.append(("{0}".format(converte_letra(nota, espaco="&nbsp;")),
+                                            "{0:5.2f}".format(nota),
+                                            nota))
+                    else:
+                        relatorio_intermediario.append(("&nbsp;-&nbsp;", None, 0))
+
+                    if medias["peso_grupo_final"] is not None and medias["peso_grupo_final"] > 0:
+                        nota = medias["nota_grupo_final"]/medias["peso_grupo_final"]
+                        relatorio_final.append(("{0}".format(converte_letra(nota, espaco="&nbsp;")),
+                                            "{0:5.2f}".format(nota),
+                                            nota))
+                    else:
+                        relatorio_final.append(("&nbsp;-&nbsp;", None, 0))
+
+                else:
+                    relatorio_intermediario.append(("&nbsp;-&nbsp;", None, 0))
+                    relatorio_final.append(("&nbsp;-&nbsp;", None, 0))
+
+
+
                 aval_banc_final = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=2)  # B. Final
                 nota_banca_final, peso = Aluno.get_banca(None, aval_banc_final)
                 if peso is not None:
@@ -1026,6 +1061,8 @@ def resultado_bancas(request):
                     banca_falconi.append(("&nbsp;-&nbsp;", None, 0))
 
             tabela = zip(projetos,
+                        relatorio_intermediario,
+                        relatorio_final,
                          banca_intermediaria,
                          banca_final,
                          banca_falconi)
@@ -1035,7 +1072,7 @@ def resultado_bancas(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
-    return render(request, 'professores/resultado_bancas.html', context)
+    return render(request, 'professores/resultado_projetos.html', context)
 
 
 @login_required

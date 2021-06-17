@@ -681,14 +681,24 @@ class Alocacao(models.Model):
 
         nota_final = 0
         nota_individual = 0
+        nota_grupo_inter = 0
+        nota_grupo_final = 0
         peso_final = 0
         peso_individual = 0
+        peso_grupo_inter = 0
+        peso_grupo_final = 0
         for aval, nota, peso, _ in edicao:
             peso_final += peso
             nota_final += nota * peso
             if aval in ("RII", "RFI", "API", "AFI"):
                 peso_individual += peso
                 nota_individual += nota * peso
+            if aval in ("RIG", "APG", "RPL", "PPF"):
+                peso_grupo_inter += peso
+                nota_grupo_inter += nota * peso
+            if aval in ("RFG", "AFG"):
+                peso_grupo_final += peso
+                nota_grupo_final += nota * peso
         peso_final = round(peso_final, 2)
 
         individual = None
@@ -698,6 +708,10 @@ class Alocacao(models.Model):
         return {
             "media": nota_final,
             "pesos": peso_final,
+            "peso_grupo_inter": peso_grupo_inter,
+            "nota_grupo_inter": nota_grupo_inter,
+            "peso_grupo_final": peso_grupo_final,
+            "nota_grupo_final": nota_grupo_final,
             "individual": individual,
         }
 

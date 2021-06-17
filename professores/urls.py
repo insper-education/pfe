@@ -78,9 +78,9 @@ urlpatterns = [
          views.orientadores_tabela,
          name='orientadores_tabela'),
 
-    path('resultado_bancas/',
-         views.resultado_bancas,
-         name='resultado_bancas'),
+    path('resultado_projetos/',
+         views.resultado_projetos,
+         name='resultado_projetos'),
 
     path('todos_professores/',
          views.todos_professores,
