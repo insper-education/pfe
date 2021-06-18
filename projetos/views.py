@@ -123,10 +123,11 @@ def projeto_completo(request, primarykey):
     # (19, 'Slides da Apresentação Final'),
     # (20, 'Banner'),
     # (25, 'Relatório Publicado'),
+    # (27, 'Apresentação da Banca Final'),
     # )
 
     documentos = Documento.objects.filter(projeto=projeto,
-                                          tipo_de_documento__in=(3, 18, 19, 20, 25))
+                                          tipo_de_documento__in=(3, 18, 19, 20, 25, 27))
 
     projetos_avancados = Projeto.objects.filter(avancado=projeto)
 
