@@ -42,6 +42,10 @@ urlpatterns = [
          views.proposta_editar,
          name='proposta_editar'),
 
+    path('projeto_criar/<int:proposta_id>',
+         views.projeto_criar,
+         name='projeto_criar'),
+
     path('ajax/validate_alunos/',
          views.validate_alunos,
          name='validate_alunos'),

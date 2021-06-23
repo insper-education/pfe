@@ -13,6 +13,8 @@ from django.db import transaction
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect
+
 
 from users.support import get_edicoes, adianta_semestre
 from users.models import Opcao, Aluno, Alocacao, PFEUser
@@ -305,7 +307,7 @@ def propostas_apresentadas(request):
 @transaction.atomic
 @permission_required("users.altera_professor", login_url='/')
 def proposta_completa(request, primarykey):
-    """Mostra um projeto por completo."""
+    """Mostra uma proposta por completo."""
     proposta = get_object_or_404(Proposta, pk=primarykey)
 
     if request.is_ajax():
@@ -660,3 +662,21 @@ def remover_disciplina(request):
         return JsonResponse(data)
 
     return HttpResponseNotFound('Requisição errada')
+
+
+@login_required
+@transaction.atomic
+@permission_required('users.altera_professor', login_url='/')
+def projeto_criar(request, proposta_id):
+    """Criar projeto de proposta."""
+    proposta = get_object_or_404(Proposta, id=proposta_id)
+
+    projeto = Projeto.create(proposta)
+    projeto.titulo = proposta.titulo
+    projeto.descricao = proposta.descricao
+    projeto.organizacao = proposta.organizacao
+    projeto.ano = proposta.ano
+    projeto.semestre = proposta.semestre
+    projeto.save()
+
+    return redirect('projeto_completo', primarykey=projeto.id)

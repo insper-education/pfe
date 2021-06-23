@@ -682,9 +682,8 @@ def montar_grupos(request):
                         if op_aloc and op_aloc.proposta == proposta:
                             alocados.append(estudante)
                 if alocados:  # pelo menos um estudante no projeto
-
                     try:
-                        projeto = Projeto.objects.get(proposta=proposta, avancado=False)
+                        projeto = Projeto.objects.get(proposta=proposta, avancado=None)
                     except Projeto.DoesNotExist:
                         projeto = Projeto.create(proposta)
 
@@ -717,13 +716,16 @@ def montar_grupos(request):
                         alocacao.save()
 
                 else:
-
-                    try:
-                        projeto = Projeto.objects.get(proposta=proposta, avancado=False)
-                    except Projeto.DoesNotExist:
+                    projetos = Projeto.objects.filter(proposta=proposta, avancado=None)
+                    if not projetos:
                         continue
 
-                    projeto.delete()
+                    for projeto in projetos:
+                        alocacoes = Alocacao.objects.filter(projeto=projeto)
+                        for alocacao in alocacoes:  # Apaga todas alocacoes que não tiverem nota
+                            alocacao.delete()
+
+                        projeto.delete()
 
             if mensagem:
                 request.session['mensagem'] = 'Estudantes possuiam alocações com notas:\n'

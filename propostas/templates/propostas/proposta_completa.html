@@ -93,8 +93,21 @@
 
     {% for projeto in projetos %}
       <a class="myButton" href="{% url 'projeto_completo' projeto.id %}">Projeto {{projeto.ano}}.{{projeto.semestre}}</a>
+    {% empty %}
+      <a class="myButton" data-toggle="tooltip" data-html="true" animation="true" title="criar projeto dessa proposta"
+      onclick="cria_projeto()" style="color:white;">Criar Projeto</a>
     {% endfor %}
     <br><br>
+
+  {% if not projetos %}
+    <script>
+      function cria_projeto() {
+        if (confirm('Não existe um projeto para essa proposta, deseja criar?')) {
+          window.open("{% url 'projeto_criar' proposta.id %}");
+        }
+      }
+    </script>
+  {% endif %}
 
   </form>
 
