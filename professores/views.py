@@ -633,10 +633,6 @@ def banca_avaliar(request, slug):
 def conceitos_obtidos(request, primarykey):  # acertar isso para pk
     """Visualiza os conceitos obtidos pelos alunos no projeto."""
     projeto = get_object_or_404(Projeto, pk=primarykey)
-    # try:
-    #     projeto = Projeto.objects.get(pk=primarykey)
-    # except Projeto.DoesNotExist:
-    #     return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
 
     objetivos = ObjetivosDeAprendizagem.objects.all()
 

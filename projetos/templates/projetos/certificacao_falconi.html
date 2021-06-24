@@ -9,6 +9,162 @@
 
   {% load static %}
   {% load l10n %}
+  {% load rubricas %}
+
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 8px;
+    }
+
+    table, th, td {
+      border: 1px solid lightgrey;
+    }
+
+    tr:nth-child(even) {background-color: #f2f2f2;}
+  </style>
+
+  {% include "cores_bancas.html" %}
+  
+  <script>
+
+    function conceito(nota) {
+        if( nota >= 9.5 ) return ("A+")
+        if( nota >= 9 ) return ("A")
+        if( nota >= 8 ) return ("B+")
+        if( nota >= 7 ) return ("B")
+        if( nota >= 6 ) return ("C+")
+        if( nota >= 5 ) return ("C")
+        if( nota >= 4 ) return ("D+")
+        if( nota >= 3 ) return ("D")
+        if( nota >= 2 ) return ("D-")
+        return ("I")
+    }
+
+    function converte_nota(conceito) {
+      if(conceito=="A+"||conceito=="A+ ") return(10);
+        if(conceito=="A"||conceito=="A ") return(9);
+        if(conceito=="B+"||conceito=="B+ ") return(8);
+        if(conceito=="B"||conceito=="B ") return(7);
+        if(conceito=="C+"||conceito=="C+ ") return(6);
+        if(conceito=="C"||conceito=="C ") return(5);
+        if(conceito=="D+"||conceito=="D+ ") return(4);
+        if(conceito=="D"||conceito=="D ") return(3);
+        if(conceito=="D-"||conceito=="D- ") return(2);
+        if(conceito=="I"||conceito=="I ") return(0);
+        return(0);
+    }
+
+    class Objetivo {
+      constructor() { 
+        this.avaliacoes = 0;
+        this.titulo = "";
+        this.total = 0;
+      }
+
+      soma_conceito(conceito){
+        this.avaliacoes += 1
+        this.total += converte_nota(conceito);
+      }
+
+      soma_nota(nota){
+        this.avaliacoes += 1
+        this.total += nota
+      }
+
+      nota(){
+        let nota = this.total/this.avaliacoes
+        return nota;
+      }
+
+      media(){
+        let nota = this.nota().toPrecision(3);
+        return conceito(nota);
+      }
+
+      texto() {
+        let descricao = ""
+        descricao += "<li>"
+        descricao += this.titulo
+        descricao += ": "
+        descricao += this.media()
+        descricao += "</li>"
+        return (descricao)
+      }
+
+    }
+
+    class Banca { 
+      constructor() { 
+        this.dict = new Object();
+      }
+
+      add_objetivo(objetivo) {
+        if(!(objetivo.titulo in this.dict)) {
+          this.dict[objetivo.titulo] = objetivo
+        }
+      }
+
+      media_calculada(){
+        
+        let descricao = "&#10149; Nota Final Calculada = "
+
+        var nota_final = 0;
+        var contagem = 0;
+        for (var key in this.dict) {
+            if(this.dict[key].avaliacoes>0) {
+              nota_final += this.dict[key].nota();
+              contagem += 1;
+            }
+        }
+
+        descricao += '<span data-toggle="tooltip" data-html="true" animation="true" '
+        descricao += ' title="Média usando conceitos finais '
+        descricao += '(cálculo com todos os conceitos intermediários levaria a nota=' + (nota_final/contagem).toPrecision(3) + ')">'
+        
+        var nota_final = 0;
+        var contagem = 0;
+        for (var key in this.dict) {
+            if(this.dict[key].avaliacoes>0) {
+              nota_final += converte_nota(this.dict[key].media());
+              contagem += 1;
+            }
+        }
+
+        descricao += (nota_final/contagem).toPrecision(3);
+        descricao += '</span>'
+
+        return (descricao)
+      }
+
+    }
+    let intermediaria = new Banca(); 
+    let final = new Banca(); 
+    let falconi = new Banca(); 
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   <script src="{% static 'js/w3.js' %}"></script>
   <script src="{% static 'js/Chart.min.js' %}"></script>
@@ -166,6 +322,99 @@
             </script>
 
         </div>
+        <br>
+
+        {% if projetos_selecionados %}
+            <br>
+            <h4>Projetos Selecionados:<br></h4>
+            {% for projeto, avaliadores_falconi in bancas %}
+                {{projeto}}<br>
+
+
+                {% comment %}
+                
+                <br>
+
+                {% if avaliadores_falconi %}
+                    <h5>
+                    {% for banca in projeto.banca_set.all %}
+                    {% if banca.tipo_de_banca == 2 %}    
+                        <a href="{% url 'banca_ver' banca.id %}">
+                            Banca Falconi ({{banca.startDate|date:"d/m/y"}})
+                        </a>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    {% endif %}
+                    {% endfor %}
+                    </h5>
+                    <table>    
+                    {% for avaliador, objs in avaliadores_falconi.items %}
+                        <tr><td>
+                            <strong>Avaliador{% if avaliador.genero == "F" %}a{% endif %}: </strong>
+                            <a href="{% url 'parceiro_detail' avaliador.parceiro.id %}">
+                            {{avaliador.get_full_name}}
+                            </a><br>
+                            <strong>Avaliado em: </strong>{{objs.momento}}<br>
+                            <strong>Conceitos:</strong><br>
+                            <ul>
+                            {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo != "observacoes" %}
+
+                                <li>{{objetivo.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
+                                {{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}">
+                                <span id="t{{avaliador.id}}_{{objetivo.id}}"></span>
+                                <script>$("#t{{avaliador.id}}_{{objetivo.id}}").html(conceito({{conceito.nota}}));</script>
+                                </span></li>
+                                
+                                <script>
+                                objetivo_tmp = new Objetivo();
+                                objetivo_tmp.titulo = "{{objetivo.titulo}}"
+                                //objetivo_tmp.rubrica = "{{objetivos|get_rubrica:objetivo.id|get_texto_nota:conceito.nota}}"
+                                falconi.add_objetivo(objetivo_tmp)
+                                falconi.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}})
+                                </script>
+
+                            {% endif %}{% endfor %}
+                            
+                            {% if objs.observacoes %}  
+                                <li>Observações: {{objs.observacoes}}</li>
+                            {% endif %}
+                            
+                            
+                            </ul>
+
+                        </td></tr>
+
+                    {% endfor %}
+
+                    <tr style="background-color: var(--color_banca_falconi); color: darkslategrey"><td>
+                        <b>
+                        Média das avaliações falconi:
+                        <ul>
+                        <script>
+                        for (var key in falconi.dict) {
+                            if(falconi.dict[key].avaliacoes>0) document.write(falconi.dict[key].texto());
+                        }
+                        </script>
+                        </ul>
+                        </b>
+                        <script>
+                        document.write(falconi.media_calculada());
+                        </script>
+                    </td></tr>
+
+                    </table>
+                {% endif %}
+                
+                
+                {% endcomment %}
+
+
+
+
+
+
+            {% endfor %}
+        {% endif %}
+
     </div>
     </div>
     

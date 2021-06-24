@@ -35,7 +35,7 @@ from users.models import Parceiro
 from users.support import adianta_semestre
 from users.support import get_edicoes
 
-from .models import Projeto, Proposta, Configuracao
+from .models import Projeto, Proposta, Configuracao, Observacao
 from .models import Coorientador, Avaliacao2, ObjetivosDeAprendizagem
 # from .models import Evento
 
@@ -1031,7 +1031,7 @@ def certificacao_falconi(request):
     configuracao = get_object_or_404(Configuracao)
 
     edicoes, _, _ = get_edicoes(Avaliacao2)
-    edicoes = ["2020.2"]
+    edicoes = ["2020.2", "2021.1"]
 
     if request.is_ajax():
 
@@ -1055,9 +1055,14 @@ def certificacao_falconi(request):
         conceitos = [0, 0, 0, 0, 0, 0, 0, 0]
         total = len(projetos)
         selecionados = 0
+        projetos_selecionados = []
         for projeto in projetos:
             aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto,
                                                           tipo_de_avaliacao=99)  # Falc.
+
+            if aval_banc_falconi:
+                projetos_selecionados.append(projeto)
+
             nota_banca_falconi, peso = Aluno.get_banca(None, aval_banc_falconi)
             if peso is not None:
                 selecionados += 1
@@ -1078,8 +1083,51 @@ def certificacao_falconi(request):
                 else:
                     conceitos[0] += 1
 
-        for i in range(8):
-            conceitos[i] *= 100/selecionados
+        if selecionados:
+            for i in range(8):
+                conceitos[i] *= 100/selecionados
+
+
+        # Para as avaliações individuais
+        objetivos = ObjetivosDeAprendizagem.objects.all()
+
+        avaliadores = []
+
+        for projeto in projetos_selecionados:
+
+            avaliadores_falconi = {}
+
+            for objetivo in objetivos:
+
+                # Bancas Falconi
+                bancas_falconi = Avaliacao2.objects.filter(projeto=projeto,
+                                                        objetivo=objetivo,
+                                                        tipo_de_avaliacao=99)\
+                    .order_by('avaliador', '-momento')
+
+                for banca in bancas_falconi:
+                    if banca.avaliador not in avaliadores_falconi:
+                        avaliadores_falconi[banca.avaliador] = {}
+                    if objetivo not in avaliadores_falconi[banca.avaliador]:
+                        avaliadores_falconi[banca.avaliador][objetivo] = banca
+                        avaliadores_falconi[banca.avaliador]["momento"] = banca.momento
+                    # Senão é só uma avaliação de objetivo mais antiga
+
+            # Bancas Falconi
+            observacoes = Observacao.objects.filter(projeto=projeto, tipo_de_avaliacao=99).\
+                order_by('avaliador', '-momento')
+            for observacao in observacoes:
+                if observacao.avaliador not in avaliadores_falconi:
+                    avaliadores_falconi[observacao.avaliador] = {}  # Não devia acontecer isso
+                if "observacoes" not in avaliadores_falconi[observacao.avaliador]:
+                    avaliadores_falconi[observacao.avaliador]["observacoes"] = observacao.observacoes
+                # Senão é só uma avaliação de objetivo mais antiga
+            
+            avaliadores.append(avaliadores_falconi)
+
+        bancas = zip(projetos_selecionados, avaliadores)
+        
+    
 
         context = {
             'ano': configuracao.ano,
@@ -1088,6 +1136,9 @@ def certificacao_falconi(request):
             "selecionados": selecionados,
             "nao_selecionados": total - selecionados,
             "conceitos": conceitos,
+            "projetos_selecionados": projetos_selecionados,
+            'objetivos': objetivos,
+            "bancas": bancas,
         }
 
     else:
