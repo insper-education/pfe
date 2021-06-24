@@ -110,23 +110,7 @@
         }
       }
 
-      media_calculada(){
-        
-        let descricao = "&#10149; Nota Final Calculada = "
-
-        var nota_final = 0;
-        var contagem = 0;
-        for (var key in this.dict) {
-            if(this.dict[key].avaliacoes>0) {
-              nota_final += this.dict[key].nota();
-              contagem += 1;
-            }
-        }
-
-        descricao += '<span data-toggle="tooltip" data-html="true" animation="true" '
-        descricao += ' title="Média usando conceitos finais '
-        descricao += '(cálculo com todos os conceitos intermediários levaria a nota=' + (nota_final/contagem).toPrecision(3) + ')">'
-        
+      media() {
         var nota_final = 0;
         var contagem = 0;
         for (var key in this.dict) {
@@ -136,7 +120,31 @@
             }
         }
 
-        descricao += (nota_final/contagem).toPrecision(3);
+        return (nota_final/contagem);
+      }
+
+      media_geral() {
+        var nota_final = 0;
+        var contagem = 0;
+        for (var key in this.dict) {
+            if(this.dict[key].avaliacoes>0) {
+              nota_final += this.dict[key].nota();
+              contagem += 1;
+            }
+        }
+
+        return (nota_final/contagem)
+      }
+
+      media_calculada(){
+        
+        let descricao = "&#10149; Nota Final Calculada = "
+
+        descricao += '<span data-toggle="tooltip" data-html="true" animation="true" '
+        descricao += ' title="Média usando conceitos finais '
+        descricao += '(cálculo com todos os conceitos intermediários levaria a nota=' + (this.media_geral()).toPrecision(3) + ')">'
+        
+        descricao += (this.media()).toPrecision(3);
         descricao += '</span>'
 
         return (descricao)
@@ -231,7 +239,8 @@
 
                 <li>{{objetivo.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
                 {{objetivos|get_rubrica:objetivo.id|get_texto_intermediaria_nota:conceito.nota}}">
-                <script>document.write(conceito({{conceito.nota}}));</script></span></li>
+                <span id="inter{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
+                <script>$("#inter{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(conceito({{conceito.nota}}));</script>
                 
                 <script>
                   objetivo_tmp = new Objetivo();
@@ -255,16 +264,16 @@
 
       <tr style="background-color: var(--color_banca_intermediaria); color: darkslategrey"><td>
         <b>Média das avaliações intermediárias:
-        <ul>
+        <ul id="med_aval"></ul>
         <script>
           for (var key in intermediaria.dict) {
-            if(intermediaria.dict[key].avaliacoes>0) document.write(intermediaria.dict[key].texto());
+            if(intermediaria.dict[key].avaliacoes>0) $('#med_aval').append(intermediaria.dict[key].texto());
           }
         </script>
-        </ul>
         </b>
+        <span id="med_interm_calc"></span>
         <script>
-          document.write(intermediaria.media_calculada());
+          $("#med_interm_calc").html(intermediaria.media_calculada());
         </script>
       </td></tr>
 
@@ -298,7 +307,8 @@
 
                 <li>{{objetivo.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
                 {{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}">
-                <script>document.write(conceito({{conceito.nota}}));</script></span></li>
+                <span id="final{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
+                <script>$("#final{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(conceito({{conceito.nota}}));</script>
                 
                 <script>
                   objetivo_tmp = new Objetivo();
@@ -324,16 +334,18 @@
       <tr style="background-color: var(--color_banca_final); color: darkslategrey"><td>
         <b>
         Média das avaliações finais:
-        <ul>
+        <ul id="med_final"></ul>
         <script>
           for (var key in final.dict) {
-            if(final.dict[key].avaliacoes>0) document.write(final.dict[key].texto());
+            if(final.dict[key].avaliacoes>0) $('#med_final').append(final.dict[key].texto());
           }
         </script>
-        </ul>
+        
         </b>
+
+        <span id="med_final_calc"></span>
         <script>
-          document.write(final.media_calculada());
+          $("#med_final_calc").html(final.media_calculada());
         </script>
       </td></tr>
 
@@ -368,8 +380,8 @@
 
                 <li>{{objetivo.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
                 {{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}">
-                <script>document.write(conceito({{conceito.nota}}));</script></span></li>
-                
+                <span id="falconi{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
+                <script>$("#falconi{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(conceito({{conceito.nota}}));</script>
                 <script>
                   objetivo_tmp = new Objetivo();
                   objetivo_tmp.titulo = "{{objetivo.titulo}}"
@@ -394,17 +406,18 @@
       <tr style="background-color: var(--color_banca_falconi); color: darkslategrey"><td>
         <b>
         Média das avaliações falconi:
-        <ul>
+        <ul id="med_falconi"></ul>
         <script>
           for (var key in falconi.dict) {
-            if(falconi.dict[key].avaliacoes>0) document.write(falconi.dict[key].texto());
+            if(falconi.dict[key].avaliacoes>0) $('#med_falconi').append(falconi.dict[key].texto());
           }
         </script>
-        </ul>
         </b>
+        <span id="med_falconi_calc"></span>
         <script>
-          document.write(falconi.media_calculada());
+          $("#med_falconi_calc").html(falconi.media_calculada());
         </script>
+
       </td></tr>
 
     </table>

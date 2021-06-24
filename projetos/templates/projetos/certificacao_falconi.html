@@ -110,23 +110,7 @@
         }
       }
 
-      media_calculada(){
-        
-        let descricao = "&#10149; Nota Final Calculada = "
-
-        var nota_final = 0;
-        var contagem = 0;
-        for (var key in this.dict) {
-            if(this.dict[key].avaliacoes>0) {
-              nota_final += this.dict[key].nota();
-              contagem += 1;
-            }
-        }
-
-        descricao += '<span data-toggle="tooltip" data-html="true" animation="true" '
-        descricao += ' title="Média usando conceitos finais '
-        descricao += '(cálculo com todos os conceitos intermediários levaria a nota=' + (nota_final/contagem).toPrecision(3) + ')">'
-        
+      media() {
         var nota_final = 0;
         var contagem = 0;
         for (var key in this.dict) {
@@ -136,35 +120,39 @@
             }
         }
 
-        descricao += (nota_final/contagem).toPrecision(3);
+        return (nota_final/contagem);
+      }
+
+      media_geral() {
+        var nota_final = 0;
+        var contagem = 0;
+        for (var key in this.dict) {
+            if(this.dict[key].avaliacoes>0) {
+              nota_final += this.dict[key].nota();
+              contagem += 1;
+            }
+        }
+
+        return (nota_final/contagem)
+      }
+
+      media_calculada(){
+        
+        let descricao = "&#10149; Nota Final Calculada = "
+
+        descricao += '<span data-toggle="tooltip" data-html="true" animation="true" '
+        descricao += ' title="Média usando conceitos finais '
+        descricao += '(cálculo com todos os conceitos intermediários levaria a nota=' + (this.media_geral()).toPrecision(3) + ')">'
+        
+        descricao += (this.media()).toPrecision(3);
         descricao += '</span>'
 
         return (descricao)
       }
 
     }
-    let intermediaria = new Banca(); 
-    let final = new Banca(); 
-    let falconi = new Banca(); 
+
   </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   <script src="{% static 'js/w3.js' %}"></script>
   <script src="{% static 'js/Chart.min.js' %}"></script>
@@ -265,7 +253,7 @@
                     datasets: [
                         {
                         label: "Projetos",
-                        backgroundColor: ["#F10c0c", "#8e8e11", "#1e951e", "#c0c0c0b0", "#c0c0c0b0", "#ffd700B0", "#ffd700B0", "#ffd700B0"],
+                        backgroundColor: ["#F10c0c", "#8e8e11", "#1e951e", "#c0c0f0b0", "#c0c0f0b0", "#ffd700b0", "#ffd700b0", "#ffd700b0"],
                         data: [
                             {% for conceito in conceitos %}
                                 {{conceito|stringformat:".2f"|unlocalize}},
@@ -328,15 +316,16 @@
             <br>
             <h4>Projetos Selecionados:<br></h4>
             {% for projeto, avaliadores_falconi in bancas %}
-                {{projeto}}<br>
-
-
-                {% comment %}
                 
-                <br>
+                <script>
+                    var falconi = new Banca(); 
+                </script>
 
                 {% if avaliadores_falconi %}
-                    <h5>
+                    <h6>
+                    <a href="{% url 'projeto_completo' projeto.id %}">
+                        {{projeto}}
+                    </a><br>
                     {% for banca in projeto.banca_set.all %}
                     {% if banca.tipo_de_banca == 2 %}    
                         <a href="{% url 'banca_ver' banca.id %}">
@@ -345,7 +334,7 @@
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     {% endif %}
                     {% endfor %}
-                    </h5>
+                    </h6>
                     <table>    
                     {% for avaliador, objs in avaliadores_falconi.items %}
                         <tr><td>
@@ -360,8 +349,8 @@
 
                                 <li>{{objetivo.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
                                 {{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}">
-                                <span id="t{{avaliador.id}}_{{objetivo.id}}"></span>
-                                <script>$("#t{{avaliador.id}}_{{objetivo.id}}").html(conceito({{conceito.nota}}));</script>
+                                <span id="falconi{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
+                                <script>$("#falconi{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(conceito({{conceito.nota}}));</script>
                                 </span></li>
                                 
                                 <script>
@@ -385,33 +374,45 @@
 
                     {% endfor %}
 
-                    <tr style="background-color: var(--color_banca_falconi); color: darkslategrey"><td>
-                        <b>
+                    <tr id="falconi_{{projeto.id}}" style="color: darkslategrey"><td style="display: flex; align-items: center; flex-wrap: wrap;">
+                        <div><b>
                         Média das avaliações falconi:
-                        <ul>
+                        <ul id="med_falconi_{{projeto.id}}"></ul>
                         <script>
                         for (var key in falconi.dict) {
-                            if(falconi.dict[key].avaliacoes>0) document.write(falconi.dict[key].texto());
+                            if(falconi.dict[key].avaliacoes>0) $('#med_falconi_{{projeto.id}}').append(falconi.dict[key].texto());
                         }
                         </script>
-                        </ul>
                         </b>
+                        <span id="med_falconi_calc_{{projeto.id}}"></span>
+                        </div>
+                        <div style="float: right;flex-grow:1;text-align: center; margin-top: 20px;">
+                            <span id="med_falconi_situacao_{{projeto.id}}" style="border: 2px solid gray; border-radius: 25px; padding: 9px; white-space: nowrap;"></span>
+                        </div>
                         <script>
-                        document.write(falconi.media_calculada());
+                            $("#med_falconi_calc_{{projeto.id}}").html(falconi.media_calculada());
+                            var media = falconi.media();
+                            if(media>=8) {
+                                $("#falconi_{{projeto.id}}").css("background-color","#ffd700b0");
+                                $("#med_falconi_situacao_{{projeto.id}}").css("background-color","#ffd700b0");
+                                $("#med_falconi_situacao_{{projeto.id}}").html("Excelência Projeto Final de Engenharia FALCONI-INSPER");
+                            } else if(media>=6) {
+                                $("#falconi_{{projeto.id}}").css("background-color","#c0c0f0b0");
+                                $("#med_falconi_situacao_{{projeto.id}}").css("background-color","#c0c0f0b0");
+                                $("#med_falconi_situacao_{{projeto.id}}").html("Destaque Projeto Final de Engenharia FALCONI-INSPER");
+                            } else {
+                                $("#med_falconi_situacao_{{projeto.id}}").html("Não obteve certificado");
+                            }
+                            
+                            {% comment %}  {% endcomment %}
                         </script>
                     </td></tr>
 
                     </table>
                 {% endif %}
                 
-                
-                {% endcomment %}
 
-
-
-
-
-
+                <br><br>
             {% endfor %}
         {% endif %}
 
