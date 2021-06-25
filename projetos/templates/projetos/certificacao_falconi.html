@@ -152,8 +152,12 @@
         descricao += ' title="Média usando conceitos finais '
         descricao += '(cálculo com todos os conceitos intermediários levaria a nota=' + (this.media_geral()).toPrecision(3) + ')">'
         
-        descricao += (this.media()).toPrecision(3);
-        descricao += '</span>'
+        var media_final = this.media();
+        descricao += "<b style='font-size: 1.16em;'>";
+        descricao += conceito(media_final);
+        descricao += "("+media_final.toPrecision(3)+")";
+        descricao += "</b>";
+        descricao += '</span>';
 
         return (descricao)
       }
