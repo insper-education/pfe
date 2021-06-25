@@ -27,6 +27,14 @@
     }
 
     tr:nth-child(even) {background-color: #f2f2f2;}
+
+    @media print {
+        .grafico, .container {
+            min-width:100% !important;
+        }
+    }
+        
+
   </style>
 
   {% include "cores_bancas.html" %}
@@ -174,9 +182,12 @@
         function reajusta() { }
     </script>
 
+    {% include "impressora.html" %}
+    
     {% with file_name="falconi" %}
         {% include "save_image.html" %}
     {% endwith %}
+
 
     <div id="tudo">
 
@@ -190,13 +201,27 @@
     <div class="atualizar">
         <div class="container">
 
-            <div class="row mt-5 justify-content-md-center">
-                <div class="col-md-6"><canvas id="pie-falconi"></canvas></div>
-                <div class="col-md-6"><canvas id="bar-falconi"></canvas></div>
+            <div class="row mt-5 justify-content-around graficos">
+                <div class="col-md-6 mb-5 grafico"><canvas id="pie-falconi"></canvas></div>
+                <div class="col-md-6 mb-5 grafico"><canvas id="bar-falconi"></canvas></div>
             </div>
+            
 
             <script>
         
+                // Para o label colorido das barras
+                Chart.plugins.register({
+                    beforeDraw: function (chart) {
+                        if (chart.config.data.datasets[0].labelColor) {
+                            let legends = chart.legend.legendItems;
+                            legends.forEach(function (e, i) {
+                                e.fillStyle = chart.config.data.datasets[i].labelColor;
+                                e.strokeStyle = chart.config.data.datasets[i].labelColor;
+                            });
+                        }
+                    }
+                });
+
                 var tooltips = {
                     enabled: false
                 };
@@ -243,22 +268,46 @@
                             position: "bottom",
                         },
                         plugins: plugins,
+                        responsive: true,
+                        maintainAspectRatio: true,
                     }
                 }
-                
+
                 var config_bar_falconi = {
                     type: 'bar',
                     data: {
                     labels: ["I", "D", "C", "C+", "B", "B+", "A", "A+"],
                     datasets: [
                         {
-                        label: "Projetos",
-                        backgroundColor: ["#F10c0c", "#8e8e11", "#1e951e", "#c0c0f0b0", "#c0c0f0b0", "#ffd700b0", "#ffd700b0", "#ffd700b0"],
+                        label: "Excelência Projeto Final de Engenharia FALCONI-INSPER",
+                        backgroundColor: ["#bbbbbb", "#bbbbbb", "#bbbbbb", "#c0c0f0b0", "#c0c0f0b0", "#ffd700b0", "#ffd700b0", "#ffd700b0"],
+                        labelColor: "#ffd700b0",
                         data: [
                             {% for conceito in conceitos %}
                                 {{conceito|stringformat:".2f"|unlocalize}},
                             {% endfor %}
-                            ]
+                            ],
+                        stack: 'Stack 0',
+                        },
+                        {
+                        label: "Destaque Projeto Final de Engenharia FALCONI-INSPER",
+                        labelColor: "#c0c0f0b0",
+                        data: [
+                            {% for conceito in conceitos %}
+                                0,
+                            {% endfor %}
+                            ],
+                        stack: 'Stack 0',
+                        },
+                        {
+                        label: "Não obteve certificado",
+                        labelColor: "#bbbbbb",
+                        data: [
+                            {% for conceito in conceitos %}
+                                0,
+                            {% endfor %}
+                            ],
+                        stack: 'Stack 0',
                         }
                     ]
                     },
@@ -270,15 +319,23 @@
                         },
                         tooltips: tooltips,
                         legend: {
-                            display: false,
+                            display: true,
                             position: "bottom",
                         },
                         plugins: plugins,
+                        responsive: true,
+                        aspectRatio: 1.5, 
                     scales: {
+                        x: {
+                            stacked: true,
+                        },
+                        y: {
+                            stacked: true
+                        },
                         xAxes: [{
                                 display: true,
                                 scaleLabel: {
-                                    display: true,
+                                    display: false,
                                     labelString: 'Conceitos'
                                 }
                             }],
@@ -286,8 +343,6 @@
                                 display: true,
                                 ticks: {
                                     beginAtZero: true,
-                                    steps: 10,
-                                    stepValue: 5,
                                     max: 100
                                 }
                             }]
@@ -298,11 +353,13 @@
                 function carrega_pagina() {  
                     // Chart dos projetos selecionados para certificação Falconi
                     var pie_falconi = document.getElementById('pie-falconi').getContext('2d');
-                    window.situacao = new Chart(pie_falconi, config_pie_falconi);
+                    window.proporcao = new Chart(pie_falconi, config_pie_falconi);
                 
                     // Chart dos conceitos obtidos dos projetos selecionados para certificação Falconi
                     var bar_falconi = document.getElementById('bar-falconi').getContext('2d');
                     window.situacao = new Chart(bar_falconi, config_bar_falconi);
+                    document.getElementById('bar-falconi').innerHTML = window.situacao.generateLegend();
+
                 }
 
                 window.onload = carrega_pagina
@@ -310,13 +367,15 @@
             </script>
 
         </div>
-        <br>
-
+        
+        
         {% if projetos_selecionados %}
-            <br>
+            <p style="page-break-before: always"></p>
             <h4>Projetos Selecionados:<br></h4>
             {% for projeto, avaliadores_falconi in bancas %}
-                
+                {% if not forloop.first %}  
+                    <p style="page-break-before: always"></p>
+                {% endif %}
                 <script>
                     var falconi = new Banca(); 
                 </script>
@@ -411,7 +470,6 @@
                     </table>
                 {% endif %}
                 
-
                 <br><br>
             {% endfor %}
         {% endif %}
