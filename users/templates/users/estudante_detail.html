@@ -148,13 +148,15 @@
                 {% endif %}
               {% endwith %}
             </a>
-            
-            <div class="row mt-1 justify-content-md-center">
-                <div class="col-md-4"><canvas id="radial-geral{{alocado.id}}"></canvas></div>
-                <div class="col-md-4"><canvas id="radial-individual{{alocado.id}}"></canvas></div>
-                <div class="col-md-4"><canvas id="radial-grupo{{alocado.id}}"></canvas></div>
-            </div>
-            <small>Cálculo das avaliações supõe mesmo peso para todas as avaliações</small><br><br>
+
+            {% if alocado.peso > 0 %}
+                <div class="row mt-1 justify-content-md-center">
+                    <div class="col-md-4"><canvas id="radial-geral{{alocado.id}}"></canvas></div>
+                    <div class="col-md-4"><canvas id="radial-individual{{alocado.id}}"></canvas></div>
+                    <div class="col-md-4"><canvas id="radial-grupo{{alocado.id}}"></canvas></div>
+                </div>
+                <small>Exibição radar supõe mesmo peso para todas as avaliações</small><br><br>
+            {% endif %}
 
             {% with medias_oo=alocado.get_medias_oo %}
                 <script>
