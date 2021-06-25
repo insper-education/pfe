@@ -62,6 +62,8 @@ class PFEUser(AbstractUser):
                                                    help_text='língua usada para comunicação')
 
     class Meta:
+        """Classe Meta."""
+
         verbose_name = 'Usuário'
         verbose_name_plural = 'Usuários'
         ordering = ['first_name', 'last_name']
@@ -73,6 +75,7 @@ class PFEUser(AbstractUser):
         return user
 
     def __str__(self):
+        """Retorno padrão textual do objeto."""
         texto = self.first_name + " " + self.last_name
         if self.tipo_de_usuario == 1 and hasattr(self, 'aluno'):  # (1, 'aluno'),
             texto += " (estudante"
@@ -115,12 +118,15 @@ class Professor(models.Model):
                              help_text='Link para o currículo Lattes do Professor')
 
     class Meta:
+        """Classe Meta."""
+
         verbose_name = 'Professor'
         verbose_name_plural = 'Professores'
         ordering = ['user']
         permissions = (("altera_professor", "Professor altera valores"), )
 
     def __str__(self):
+        """Retorno padrão textual do objeto."""
         return self.user.first_name+" "+self.user.last_name
 
     @classmethod
@@ -194,6 +200,7 @@ class Aluno(models.Model):
                 return field.help_text
 
     def __init__(self, *args, **kwargs):
+        """Inicia objeto."""
         # Call the superclass first; it'll create all of the field objects.
         super(Aluno, self).__init__(*args, **kwargs)
 
@@ -597,6 +604,7 @@ class Opcao(models.Model):
         permissions = (("altera_professor", "Professor altera valores"), )
 
     def __str__(self):
+        """Retorno padrão textual do objeto."""
         mensagem = ""
         if self.aluno and self.aluno.user and self.aluno.user.username:
             mensagem += self.aluno.user.username
@@ -625,6 +633,7 @@ class OpcaoTemporaria(models.Model):
         ordering = ['prioridade']
 
     def __str__(self):
+        """Retorno padrão textual do objeto."""
         mensagem = ""
         if self.aluno and self.aluno.user and self.aluno.user.username:
             mensagem += self.aluno.user.username
@@ -649,6 +658,7 @@ class Alocacao(models.Model):
         ordering = ['projeto__ano', 'projeto__semestre', ]
 
     def __str__(self):
+        """Retorno padrão textual do objeto."""
         return self.aluno.user.username+" >>> "+self.projeto.titulo
 
     @classmethod
@@ -762,10 +772,11 @@ class Parceiro(models.Model):  # da empresa (não do Insper)
         permissions = (("altera_parceiro", "Parceiro altera valores"),)
 
     def __str__(self):
+        """Retorno padrão textual do objeto."""
         if self.organizacao:
             return self.user.get_full_name()+" ["+self.organizacao.sigla+"]"
-        else:
-            return self.user.get_full_name()
+
+        return self.user.get_full_name()
 
     @classmethod
     def create(cls, usuario):
@@ -791,6 +802,7 @@ class Administrador(models.Model):
                        ("altera_professor", "Professor altera valores"), )
 
     def __str__(self):
+        """Retorno padrão textual do objeto."""
         return self.user.username
 
     # @classmethod

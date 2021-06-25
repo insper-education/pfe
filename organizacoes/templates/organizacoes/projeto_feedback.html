@@ -20,43 +20,94 @@
 {% block content %}
 
   <span class="titulo">Formulário de Feedback de Organizações Parceiras</span>
-  <br>
 
   <form action="" method="post"> {% csrf_token %}  
 
-    <label for="nome">Nome:</label> <input type="text" size="75" id="nome" name="nome"><br>
-    <label for="email">e-mail:</label> <input type="email" size="75" id="email" name="email"><br>
-    <label for="empresa">Empresa:</label> <input type="text" size="72" id="empresa" name="empresa"><br>
+    <div class="form-group mt-4">
 
-    <br>
-    <p>O projeto avançou conforme o esperado? Se SIM, você sabe qual foi a fórmula do sucesso?
-    Se NÃO, consegue identificar os motivos? Por exemplo: demora em fechar o escopo, estudantes
-    pouco engajados, estudantes com dúvidas básicas em determinado assunto, equipe não entrosada, ...</p>
-    <textarea name="tecnico" rows="4" cols="80" maxlength="1000"></textarea>
-    <br><br>
+      <div class="form-group row" style="max-width: 700px;">
+        <label for="nome" class="col-sm-2 col-form-label">Nome</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="nome" name="nome">
+        </div>
+      </div>
+      <div class="form-group row" style="max-width: 700px;">
+        <label for="email" class="col-sm-2 col-form-label">e&#8209;mail</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="email" name="email">
+        </div>
+      </div>
+      <div class="form-group row" style="max-width: 700px;">
+        <label for="empresa" class="col-sm-2 col-form-label">Empresa</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="empresa" name="empresa">
+        </div>
+      </div>
 
-    <p>Parte do esperado com essa atividade era que os estudantes entendessem melhor qual era o desafio
-    proposto e discutissem com vocês como prototipar e implementar o acordado. Os estudantes foram
-    ativos em se comunicar, entendendo o desejo de vocês (e de seus usuários finais se for o
-    caso) e discutir possíveis soluções? Você pode comentar brevemente como foram essas interações?
-    </p>
-    <textarea name="comunicacao" rows="4" cols="80" maxlength="1000"></textarea>
-    <br><br>
+      
+      <p class="text-danger">O preenchimento das identificações acima é opcional.</p>
 
-    <p>A equipe de estudantes alocada para o seu projeto estava devidamente organizada? Por exemplo:
-    os estudantes foram pontuais nos encontros, se portaram de forma adequada, todos se dedicaram
-    de acordo, apresentaram uma proposta de condução do projeto adequada?
-    </p>
-    <textarea name="organizacao" rows="4" cols="80" maxlength="1000"></textarea>
-    <br><br>
+      <label for="tecnico" class="mt-5" style="max-width: 860px;">O projeto avançou conforme o esperado? Se SIM, você sabe qual foi a fórmula do sucesso?
+      Se NÃO, consegue identificar os motivos? Por exemplo: demora em fechar o escopo, estudantes
+      pouco engajados, estudantes com dúvidas básicas em determinado assunto, equipe não entrosada, ...</label>
+      <textarea name="tecnico" class="form-control" style="max-width: 860px;" rows="5" id="tecnico" maxlength="1000"></textarea>
 
-    <p>Tem outras observações que gostaria de compartilhar conosco? Por exemplo o processo de
-    interação com o Insper, ou algo que o Insper devia ter previsto nesta proposta de parceria?
-    </p>
-    <textarea name="outros" rows="4" cols="80" maxlength="1000"></textarea>
-    <br><br>
+      <label for="comunicacao" class="mt-5" style="max-width: 860px;">Parte do esperado com essa atividade era que os estudantes entendessem melhor qual era o desafio
+      proposto e discutissem com vocês como prototipar e implementar o acordado. Os estudantes foram
+      ativos em se comunicar, entendendo o desejo de vocês (e de seus usuários finais se for o
+      caso) e discutir possíveis soluções? Você pode comentar brevemente como foram essas interações?</label>    
+      <textarea name="comunicacao" class="form-control" style="max-width: 860px;" rows="5" id="comunicacao" maxlength="1000"></textarea>
+    
+      <label for="organizacao" class="mt-5" style="max-width: 860px;">A equipe de estudantes alocada para o seu projeto estava devidamente organizada? Por exemplo:
+      os estudantes foram pontuais nos encontros, se portaram de forma adequada, todos se dedicaram
+      de acordo, apresentaram uma proposta de condução do projeto adequada?</label>
+      <textarea name="organizacao" class="form-control" style="max-width: 860px;" rows="5" id="organizacao" maxlength="1000"></textarea>
 
-    <input type="submit" value="Enviar">
+      <label for="outros" class="mt-5" style="max-width: 860px;">Tem outras observações que gostaria de compartilhar conosco? Por exemplo o processo de
+      interação com o Insper, ou algo que o Insper devia ter previsto nesta proposta de parceria?</label>
+      <textarea name="outros" class="form-control" style="max-width: 860px;" rows="5" id="outros" maxlength="1000"></textarea>
+
+      <label for="nps" class="mt-5" style="max-width: 860px;">Em uma escala de 0 a 10, o quanto você recomendaria o PFE (Projeto Final de Engenharia) para outras empresas?</label>
+      <div style="position:relative; max-width: 860px;">
+        <span id="cor_texto" style="position:absolute; color:red; min-width:100px;">
+          <span id="myValue">N/D</span>
+        </span>
+        <input type="range" class="custom-range" id="nps" name="nps" min="-1" max="10" value="-1">
+      </div>
+
+      <script type="text/javascript" charset="utf-8">
+        var myRange = document.querySelector('#nps');
+        var myValue = document.querySelector('#myValue');
+
+        var off = myRange.offsetWidth / (parseInt(myRange.max) - parseInt(myRange.min));
+        var px =  ((myRange.valueAsNumber - parseInt(myRange.min)) * off) - (myValue.offsetParent.offsetWidth / 2);
+
+        myValue.parentElement.style.left = px + 'px';
+        myValue.parentElement.style.top = myRange.offsetHeight + 'px';
+        myValue.innerHTML = myRange.value;
+
+        function desenha_numero(){
+          let px = ((myRange.valueAsNumber - parseInt(myRange.min)) * off) - (myValue.offsetWidth / 2);
+          if(myRange.value < 0) {
+            myValue.innerHTML = "N/D";  
+            $("#cor_texto").css("color", "red");
+          } else {
+            myValue.innerHTML = myRange.value;
+            $("#cor_texto").css("color", "blue");
+          }
+          myValue.parentElement.style.left = px + 'px';
+        };
+
+        myRange.oninput = desenha_numero;
+
+        desenha_numero();
+
+      </script>
+
+      <br><br><br>
+      <input type="submit" value="Enviar">
+
+    </div>
 
   </form>
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """
-Desenvolvido para o Projeto Final de Engenharia
+Desenvolvido para o Projeto Final de Engenharia.
+
 Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Maio de 2019
 """
@@ -20,7 +21,6 @@ from django.utils.encoding import force_text
 
 def get_upload_path(instance, filename):
     """Caminhos para armazenar os arquivos."""
-
     caminho = ""
     if isinstance(instance, Documento):
         if instance.organizacao:
@@ -55,6 +55,7 @@ def get_upload_path(instance, filename):
 
 class Organizacao(models.Model):
     """Dados das organizações que propõe projetos para o PFE."""
+
     nome = models.CharField("Nome Fantasia", max_length=80,
                             help_text='Nome fantasia da organização parceira')
     sigla = models.CharField("Sigla", max_length=20,
@@ -80,13 +81,13 @@ class Organizacao(models.Model):
     estrelas = models.PositiveSmallIntegerField(default=0, help_text='Interesse para o semestre')
 
     area_computacao = models.BooleanField("Área Computação", default=False,
-                                   help_text='Se for uma organização típica de projeto de computação')
+                                          help_text='Se for uma organização típica de projeto de computação')
 
     area_mecatronica = models.BooleanField("Área Mecatrônica", default=False,
-                                   help_text='Se for uma organização típica de projeto de mecatrônica')
+                                           help_text='Se for uma organização típica de projeto de mecatrônica')
 
     area_mecanica = models.BooleanField("Área Mecânica", default=False,
-                                   help_text='Se for uma organização típica de projeto de mecânica')
+                                        help_text='Se for uma organização típica de projeto de mecânica')
 
     class Meta:
         ordering = ['sigla']
@@ -100,6 +101,7 @@ class Organizacao(models.Model):
         return organizacao
 
     def __str__(self):
+        """Retorno padrão textual."""
         return self.nome
 
     def sigla_limpa(self):
@@ -133,7 +135,7 @@ class Projeto(models.Model):
     #                                help_text='Se for um projeto de PFE Avançado')
 
     avancado = models.ForeignKey("self", null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='projeto original em caso de avançado')
+                                 help_text='projeto original em caso de avançado')
 
     ano = models.PositiveIntegerField("Ano",
                                       validators=[MinValueValidator(2018), MaxValueValidator(3018)],
@@ -173,6 +175,7 @@ class Projeto(models.Model):
             return self.titulo
 
     def __str__(self):
+        """Retorno padrão textual."""
         return self.organizacao.sigla + " (" + str(self.ano) + "." + str(self.semestre) + ") " + \
             self.get_titulo()
 
@@ -306,12 +309,12 @@ class Proposta(models.Model):
         return proposta
 
     def __str__(self):
+        """Retorno padrão textual."""
         if self.organizacao:
             return self.organizacao.sigla+" ("+str(self.ano)+"."+str(self.semestre)+") "+self.titulo
-        elif self.nome_organizacao:
+        if self.nome_organizacao:
             return self.nome_organizacao+" ("+str(self.ano)+"."+str(self.semestre)+") "+self.titulo
-        else:
-            return "ORG. NÃO DEFINIDA"+" ("+str(self.ano)+"."+str(self.semestre)+") "+self.titulo
+        return "ORG. NÃO DEFINIDA"+" ("+str(self.ano)+"."+str(self.semestre)+") "+self.titulo
 
     # pylint: disable=arguments-differ
     def save(self, *args, **kwargs):
@@ -335,7 +338,6 @@ class Proposta(models.Model):
 
     def get_nativamente(self):
         """Retorna em string com curso mais nativo da proposta."""
-
         tmp_computacao = 0
         tmp_mecanica = 0
         tmp_mecatronica = 0
@@ -383,6 +385,7 @@ class Proposta(models.Model):
 
 class Configuracao(models.Model):
     """Armazena os dados básicos de funcionamento do sistema."""
+
     ano = models.PositiveIntegerField("Ano",
                                       validators=[MinValueValidator(2018), MaxValueValidator(3018)],
                                       help_text='Ano que o projeto comeca')
@@ -424,6 +427,7 @@ class Disciplina(models.Model):
     nome = models.CharField(max_length=100, help_text='nome')
 
     def __str__(self):
+        """Retorno padrão textual."""
         return self.nome
 
 
@@ -438,9 +442,12 @@ class Cursada(models.Model):
                                             help_text='nota obtida pelo aluno na disciplina')
 
     class Meta:
+        """Classe Meta."""
+
         ordering = ['nota']
 
     def __str__(self):
+        """Retorno padrão textual."""
         return self.aluno.user.username+" >>> "+self.disciplina.nome
 
 
@@ -453,6 +460,7 @@ class Recomendada(models.Model):
                                  help_text='proposta que recomenda a disciplina')
 
     def __str__(self):
+        """Retorno padrão textual."""
         return self.proposta.titulo+" >>> "+self.disciplina.nome
 
     @classmethod
@@ -566,6 +574,7 @@ class Evento(models.Model):
         return evento
 
     def __str__(self):
+        """Retorno padrão textual."""
         texto = self.get_title()
         if self.startDate:
             texto += " (" + self.startDate.strftime("%d/%m/%Y") + ")"
@@ -937,6 +946,10 @@ class Feedback(models.Model):
     organizacao = models.TextField(max_length=1000, help_text='Feedback Organização')
     outros = models.TextField(max_length=1000, help_text='Feedback Outros')
 
+    nps = models.PositiveIntegerField("NPS", null=True, blank=True,
+                                      validators=[MinValueValidator(0), MaxValueValidator(10)],
+                                      help_text='Valor Net Promoter Score')
+
     def __str__(self):
         return str(self.data)
 
@@ -997,25 +1010,25 @@ class ObjetivosDeAprendizagem(models.Model):
                                 help_text='Descrição do objetivo de aprendizagem')
 
     rubrica_intermediaria_I = models.TextField(max_length=1024, null=True, blank=True,
-                                 help_text='Rubrica intermediária do conceito I')
+                                               help_text='Rubrica intermediária do conceito I')
     rubrica_final_I = models.TextField(max_length=1024, null=True, blank=True,
-                                 help_text='Rubrica final do conceito I')
+                                       help_text='Rubrica final do conceito I')
     rubrica_intermediaria_D = models.TextField(max_length=1024, null=True, blank=True,
-                                 help_text='Rubrica intermediária do conceito D')
+                                               help_text='Rubrica intermediária do conceito D')
     rubrica_final_D = models.TextField(max_length=1024, null=True, blank=True,
-                                 help_text='Rubrica final do conceito D')
+                                       help_text='Rubrica final do conceito D')
     rubrica_intermediaria_C = models.TextField(max_length=1024, null=True, blank=True,
-                                 help_text='Rubrica intermediária do conceito C')
+                                               help_text='Rubrica intermediária do conceito C')
     rubrica_final_C = models.TextField(max_length=1024, null=True, blank=True,
-                                 help_text='Rubrica final do conceito C')    
+                                       help_text='Rubrica final do conceito C')    
     rubrica_intermediaria_B = models.TextField(max_length=1024, null=True, blank=True,
-                                 help_text='Rubrica intermediária do conceito B')
+                                               help_text='Rubrica intermediária do conceito B')
     rubrica_final_B = models.TextField(max_length=1024, null=True, blank=True,
-                                 help_text='Rubrica final do conceito B')
+                                       help_text='Rubrica final do conceito B')
     rubrica_intermediaria_A = models.TextField(max_length=1024, null=True, blank=True,
-                                 help_text='Rubrica intermediária do conceito A')
+                                               help_text='Rubrica intermediária do conceito A')
     rubrica_final_A = models.TextField(max_length=1024, null=True, blank=True,
-                                 help_text='Rubrica final do conceito A')
+                                       help_text='Rubrica final do conceito A')
 
     avaliacao_aluno = models.BooleanField("Avaliação do Aluno", default=False,
                                           help_text='Avaliação do Aluno (AA)')
@@ -1089,11 +1102,11 @@ class Avaliacao2(models.Model):
                                  help_text='Objetivo de Aprendizagem')
 
     na = models.BooleanField("Não Avaliado", default=False,
-                                help_text='Caso o avaliador não tenha avaliado esse quesito')
+                             help_text='Caso o avaliador não tenha avaliado esse quesito')
 
     def __str__(self):
-        for i,j in TIPO_DE_AVALIACAO:
-            if self.tipo_de_avaliacao==i:
+        for i, j in TIPO_DE_AVALIACAO:
+            if self.tipo_de_avaliacao == i:
                 return j
         return "Avaliação Não Definida"
 
@@ -1162,7 +1175,7 @@ class Observacao(models.Model):
                                  help_text='Objetivo de Aprendizagem')
 
     observacoes = models.TextField(max_length=2048, null=True, blank=True,
-                                help_text='qualquer observação relevante')
+                                   help_text='qualquer observação relevante')
 
     @classmethod
     def create(cls, projeto):
@@ -1229,7 +1242,7 @@ class Area(models.Model):
                               help_text='Titulo da área de interesse')
 
     descricao = models.CharField("Descrição", max_length=512, null=True, blank=True,
-                              help_text='Descrição da área de interesse')
+                                 help_text='Descrição da área de interesse')
 
     ativa = models.BooleanField("Ativa", default=True,
                                 help_text='Se a área de interesse está sendo usada atualmente')
@@ -1254,7 +1267,7 @@ class AreaDeInteresse(models.Model):
     usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='área dde interessada da pessoa')
     proposta = models.ForeignKey(Proposta, null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='área de interesse da proposta')
+                                 help_text='área de interesse da proposta')
 
     # Campo para especificar uma outra área que não a da lista de áreas controladas
     outras = models.CharField("Outras", max_length=128, null=True, blank=True,

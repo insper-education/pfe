@@ -5,17 +5,19 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 14 de Dezembro de 2020
 """
 
+from collections import OrderedDict
+
 import datetime
 import dateutil.parser
 
-from collections import OrderedDict
 #from PyPDF2 import PdfFileWriter
 from PyPDF2 import PdfFileReader
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
-from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
+# from django.http import HttpResponse
+from django.http import HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
 from users.support import adianta_semestre
@@ -47,49 +49,48 @@ def anotacao(request, organizacao_id, anotacao_id=None):  # acertar isso para pk
     if request.is_ajax() and 'texto' in request.POST:
 
         if anotacao_id:
-            anotacao = get_object_or_404(Anotacao, id=anotacao_id)
+            anotacao_obj = get_object_or_404(Anotacao, id=anotacao_id)
         else:
-            anotacao = Anotacao.create(organizacao)
+            anotacao_obj = Anotacao.create(organizacao)
 
-        anotacao.autor = get_object_or_404(PFEUser, pk=request.user.pk)
+        anotacao_obj.autor = get_object_or_404(PFEUser, pk=request.user.pk)
 
-        anotacao.texto = request.POST['texto']
-        anotacao.tipo_de_retorno = int(request.POST['tipo_de_retorno'])
-        anotacao.save()
+        anotacao_obj.texto = request.POST['texto']
+        anotacao_obj.tipo_de_retorno = int(request.POST['tipo_de_retorno'])
+        anotacao_obj.save()
         if 'data_hora' in request.POST:
             try:
-                anotacao.momento = dateutil.parser\
+                anotacao_obj.momento = dateutil.parser\
                     .parse(request.POST['data_hora'])
             except (ValueError, OverflowError):
-                anotacao.momento = datetime.datetime.now()
-        anotacao.save()
+                anotacao_obj.momento = datetime.datetime.now()
+        anotacao_obj.save()
 
         data = {
-            'data': anotacao.momento.strftime("%d/%m/%Y"),
-            'autor': str(anotacao.autor.get_full_name()),
-            'anotacao_id': anotacao.id,
+            'data': anotacao_obj.momento.strftime("%d/%m/%Y"),
+            'autor': str(anotacao_obj.autor.get_full_name()),
+            'anotacao_id': anotacao_obj.id,
             'atualizado': True,
         }
 
         return JsonResponse(data)
 
-    else:
 
-        anotacao = None
+    anotacao_obj = None
 
-        if anotacao_id:
-            anotacao = get_object_or_404(Anotacao, id=anotacao_id)
+    if anotacao_id:
+        anotacao_obj = get_object_or_404(Anotacao, id=anotacao_id)
 
-        context = {
-            'organizacao': organizacao,
-            'TIPO_DE_RETORNO': Anotacao.TIPO_DE_RETORNO,
-            'data_hora': datetime.datetime.now(),
-            'anotacao': anotacao,
-        }
+    context = {
+        'organizacao': organizacao,
+        'TIPO_DE_RETORNO': Anotacao.TIPO_DE_RETORNO,
+        'data_hora': datetime.datetime.now(),
+        'anotacao': anotacao_obj,
+    }
 
-        return render(request,
-                      'organizacoes/anotacao_view.html',
-                      context=context)
+    return render(request,
+                  'organizacoes/anotacao_view.html',
+                  context=context)
 
 
 @login_required
@@ -104,7 +105,6 @@ def adiciona_documento(request, organizacao_id):
         documento = Documento.create()
 
         documento.organizacao = organizacao
-        # documento.usuario = 
 
         projeto_id = request.POST.get("projeto", "")
         if projeto_id:
@@ -129,8 +129,6 @@ def adiciona_documento(request, organizacao_id):
                 link = "http://" + link
             documento.link = link
 
-        # anotacao = 
-
         documento.confidencial = True
 
         documento.save()
@@ -145,23 +143,22 @@ def adiciona_documento(request, organizacao_id):
         # return HttpResponse(status=204)
         return redirect('organizacao_completo', org=organizacao.id)
 
-    else:
 
-        documento = None
+    documento = None
 
-        projetos = Projeto.objects.filter(organizacao=organizacao)
-        
-        context = {
-            'organizacao': organizacao,
-            'TIPO_DE_DOCUMENTO': Documento.TIPO_DE_DOCUMENTO,
-            'data': datetime.date.today(),
-            'documento': documento,
-            "projetos": projetos,
-        }
+    projetos = Projeto.objects.filter(organizacao=organizacao)
 
-        return render(request,
-                      'organizacoes/documento_view.html',
-                      context=context)
+    context = {
+        'organizacao': organizacao,
+        'TIPO_DE_DOCUMENTO': Documento.TIPO_DE_DOCUMENTO,
+        'data': datetime.date.today(),
+        'documento': documento,
+        "projetos": projetos,
+    }
+
+    return render(request,
+                  'organizacoes/documento_view.html',
+                  context=context)
 
 
 @login_required
@@ -294,6 +291,7 @@ def proposta_submissao(request):
 def _getFields(obj, tree=None, retval=None, fileobj=None):
     """
     Extracts field data if this PDF contains interactive form fields.
+
     The *tree* and *retval* parameters are for recursive use.
 
     :param fileobj: A file object (usually a text file) to write
@@ -366,8 +364,7 @@ def carrega_proposta(request):
         email_sub = user.email
 
     if request.method == 'POST':
-        
-        
+
         if 'arquivo' in request.FILES:
             arquivo = simple_upload(request.FILES['arquivo'],
                                     path=get_upload_path(None, ""))
@@ -437,7 +434,7 @@ def organizacoes_prospect(request):
 
         if (periodo > 366) or \
            (ant and (datetime.date.today() - ant.momento.date() <
-                    datetime.timedelta(days=periodo))):
+                     datetime.timedelta(days=periodo))):
 
             organizacoes.append(organizacao)
             contato.append(ant)
@@ -604,16 +601,27 @@ def projeto_feedback(request):
         feedback.comunicacao = request.POST.get("comunicacao", "")
         feedback.organizacao = request.POST.get("organizacao", "")
         feedback.outros = request.POST.get("outros", "")
+
+        try:
+            nps = int(request.POST.get("nps", "-1"))
+            if nps < 0:
+                feedback.nps = None
+            else:
+                feedback.nps = nps
+        except (ValueError, OverflowError):
+            return HttpResponseNotFound('<h1>Erro com valor NPS!</h1>')
+
         feedback.save()
+
         mensagem = "Feedback recebido, obrigado!"
         context = {
             "mensagem": mensagem,
         }
         return render(request, 'generic.html', context=context)
-    else:
-        context = {
-        }
-        return render(request, 'organizacoes/projeto_feedback.html', context)
+
+    context = {
+    }
+    return render(request, 'organizacoes/projeto_feedback.html', context)
 
 
 @login_required
@@ -634,7 +642,6 @@ def todos_parceiros(request):
 @permission_required("users.altera_professor", login_url='/')
 def seleciona_conexoes(request):
     """Exibe todas os parceiros de uma organização específica."""
-
     # Passado o id do projeto
     projeto_id = request.GET.get('projeto', None)
 
@@ -701,10 +708,10 @@ def seleciona_conexoes(request):
 def estrelas(request):
     """Ajax para validar estrelas de interesse."""
     organizacao_id = int(request.GET.get('organizacao', None))
-    estrelas = int(request.GET.get('estrelas', 0))
+    numero_estrelas = int(request.GET.get('estrelas', 0))
 
     organizacao = get_object_or_404(Organizacao, id=organizacao_id)
-    organizacao.estrelas = estrelas
+    organizacao.estrelas = numero_estrelas
     organizacao.save()
 
     data = {
@@ -729,7 +736,7 @@ def areas(request):
         organizacao.area_mecatronica = situacao
     elif curso == "M":
         organizacao.area_mecanica = situacao
-    
+
     organizacao.save()
 
     data = {
