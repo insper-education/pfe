@@ -28,6 +28,10 @@
 
     tr:nth-child(even) {background-color: #f2f2f2;}
 
+    .grafico {
+        text-align: center;
+    }
+
     @media print {
         .grafico, .container {
             min-width:100% !important;
@@ -205,9 +209,9 @@
     <div class="atualizar">
         <div class="container">
 
-            <div class="row mt-5 justify-content-around graficos">
-                <div class="col-md-6 mb-5 grafico"><canvas id="pie-falconi"></canvas></div>
-                <div class="col-md-6 mb-5 grafico"><canvas style="min-height:300px" id="bar-falconi"></canvas></div>
+            <div class="row mt-4 justify-content-center text-center graficos">
+                <div class="col-md-6 col-xs-6 mb-5 grafico"><canvas id="pie-falconi"></canvas></div>
+                <div class="col-md-6 col-xs-6 mb-5 grafico"><canvas style="min-height:300px" id="bar-falconi"></canvas></div>
             </div>
             
 
@@ -421,12 +425,12 @@
 
                 {% if avaliadores_falconi %}
                     <h6>
-                    <a href="{% url 'projeto_completo' projeto.id %}">
+                    <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">
                         {{projeto}}
                     </a><br>
                     {% for banca in projeto.banca_set.all %}
                     {% if banca.tipo_de_banca == 2 %}    
-                        <a href="{% url 'banca_ver' banca.id %}">
+                        <a class="imprimir" href="{% url 'banca_ver' banca.id %}">
                             Banca Falconi ({{banca.startDate|date:"d/m/y"}})
                         </a>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -437,7 +441,7 @@
                     {% for avaliador, objs in avaliadores_falconi.items %}
                         <tr><td>
                             <strong>Avaliador{% if avaliador.genero == "F" %}a{% endif %}: </strong>
-                            <a href="{% url 'parceiro_detail' avaliador.parceiro.id %}">
+                            <a class="imprimir" href="{% url 'parceiro_detail' avaliador.parceiro.id %}">
                             {{avaliador.get_full_name}}
                             </a><br>
                             <strong>Avaliado em: </strong>{{objs.momento}}<br>
