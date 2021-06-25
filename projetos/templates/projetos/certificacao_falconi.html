@@ -203,7 +203,7 @@
 
             <div class="row mt-5 justify-content-around graficos">
                 <div class="col-md-6 mb-5 grafico"><canvas id="pie-falconi"></canvas></div>
-                <div class="col-md-6 mb-5 grafico"><canvas id="bar-falconi"></canvas></div>
+                <div class="col-md-6 mb-5 grafico"><canvas style="min-height:300px" id="bar-falconi"></canvas></div>
             </div>
             
 
@@ -226,23 +226,6 @@
                     enabled: false
                 };
 
-                var plugins = {
-                    datalabels: {
-                        formatter: (value, ctx) => {
-                            let sum = 0;
-                            let dataArr = ctx.chart.data.datasets[0].data;
-                            dataArr.map(data => {
-                                sum += data;
-                            });
-                            if(sum>0 && value>0) {
-                                return (value*100 / sum).toFixed(1)+"%";
-                            } else {
-                                return " ";
-                            }
-                        },
-                        color: '#000',
-                    }
-                };
 
                 var config_pie_falconi = {
                     type: 'pie',
@@ -259,7 +242,7 @@
                     options: {
                         title: {
                             display: true,
-                            text: 'Projetos Selecionados',
+                            text: 'Projetos Selecionados para Certificação Falconi',
                             position: 'top'
                         },
                         tooltips: tooltips,
@@ -267,9 +250,34 @@
                             display: true,
                             position: "bottom",
                         },
-                        plugins: plugins,
+                        plugins: {
+                            datalabels: {
+                                formatter: (value, ctx) => {
+                                    let sum = 0;
+                                    let dataArr = ctx.chart.data.datasets[0].data;
+                                    dataArr.map(data => {
+                                        sum += data;
+                                    });
+                                    if(sum>0 && value>0) {
+                                        return (value*100 / sum).toFixed(1)+"%";
+                                    } else {
+                                        return " ";
+                                    }
+                                },
+                                color: '#000',
+                                font: function(context) {
+                                    var width = context.chart.width;
+                                    var size = Math.round(width / 35);
+
+                                    return {
+                                        size: size
+                                    };
+                                }
+                            }
+                        },
                         responsive: true,
                         maintainAspectRatio: true,
+                        aspectRatio: 1.5, 
                     }
                 }
 
@@ -280,7 +288,7 @@
                     datasets: [
                         {
                         label: "Excelência Projeto Final de Engenharia FALCONI-INSPER",
-                        backgroundColor: ["#bbbbbb", "#bbbbbb", "#bbbbbb", "#c0c0f0b0", "#c0c0f0b0", "#ffd700b0", "#ffd700b0", "#ffd700b0"],
+                        backgroundColor: ["#e6ffcc", "#e6ffcc", "#e6ffcc", "#c0c0f0b0", "#c0c0f0b0", "#ffd700b0", "#ffd700b0", "#ffd700b0"],
                         labelColor: "#ffd700b0",
                         data: [
                             {% for conceito in conceitos %}
@@ -301,7 +309,7 @@
                         },
                         {
                         label: "Não obteve certificado",
-                        labelColor: "#bbbbbb",
+                        labelColor: "#e6ffcc",
                         data: [
                             {% for conceito in conceitos %}
                                 0,
@@ -314,7 +322,7 @@
                     options: {
                         title: {
                             display: true,
-                            text: 'Conceitos dos Projetos ',
+                            text: 'Conceitos Obtidos nas Bancas Falconi',
                             position: 'top'
                         },
                         tooltips: tooltips,
@@ -322,9 +330,34 @@
                             display: true,
                             position: "bottom",
                         },
-                        plugins: plugins,
+                        plugins: {
+                            datalabels: {
+                                formatter: (value, ctx) => {
+                                    let sum = 0;
+                                    let dataArr = ctx.chart.data.datasets[0].data;
+                                    dataArr.map(data => {
+                                        sum += data;
+                                    });
+                                    if(sum>0 && value>0) {
+                                        return (value*100 / sum).toFixed(1)+"%";
+                                    } else {
+                                        return " ";
+                                    }
+                                },
+                                color: '#000',
+                                font: function(context) {
+                                    var width = context.chart.width;
+                                    var size = Math.round(width / 45);
+
+                                    return {
+                                        size: size
+                                    };
+                                }
+                            }
+                        },
                         responsive: true,
-                        aspectRatio: 1.5, 
+                        {% comment %} aspectRatio: 1.5, {% endcomment %}
+                        maintainAspectRatio: false,
                     scales: {
                         x: {
                             stacked: true,
@@ -343,7 +376,9 @@
                                 display: true,
                                 ticks: {
                                     beginAtZero: true,
-                                    max: 100
+                                    min: 0,
+                                    max: 100,
+                                    stepSize: 10,
                                 }
                             }]
                         },
