@@ -72,22 +72,27 @@
         <span id="cor_texto" style="position:absolute; color:red; min-width:100px;">
           <span id="myValue">N/D</span>
         </span>
-        <input type="range" class="custom-range" id="nps" name="nps" min="-1" max="10" value="-1">
+        <input type="range" class="custom-range" id="nps" name="nps" min="-1" max="10" value="-1" style="padding-left: 20px; padding-right: 20px;">
       </div>
 
       <script type="text/javascript" charset="utf-8">
         var myRange = document.querySelector('#nps');
         var myValue = document.querySelector('#myValue');
 
-        var off = myRange.offsetWidth / (parseInt(myRange.max) - parseInt(myRange.min));
+        var off = (myRange.offsetWidth - (parseInt(myRange.style.paddingRight) + parseInt(myRange.style.paddingLeft) ) ) / (parseInt(myRange.max) - parseInt(myRange.min));
+        
+        {% comment %}
         var px =  ((myRange.valueAsNumber - parseInt(myRange.min)) * off) - (myValue.offsetParent.offsetWidth / 2);
-
         myValue.parentElement.style.left = px + 'px';
-        myValue.parentElement.style.top = myRange.offsetHeight + 'px';
         myValue.innerHTML = myRange.value;
+        {% endcomment %}
+        
+        myValue.parentElement.style.top = myRange.offsetHeight + 'px';
+        
+        console.log(myValue.clientWidth);
 
         function desenha_numero(){
-          let px = ((myRange.valueAsNumber - parseInt(myRange.min)) * off) - (myValue.offsetWidth / 2);
+          let px = ((myRange.valueAsNumber - parseInt(myRange.min)) * off) - (myValue.offsetWidth / 2) + parseInt(myRange.style.paddingLeft);
           if(myRange.value < 0) {
             myValue.innerHTML = "N/D";  
             $("#cor_texto").css("color", "red");
