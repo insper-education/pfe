@@ -7,13 +7,29 @@
 
 {% block head %}
   <style>
-    textarea {
-      max-width:100%;
+    
+    datalist {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      margin-top: -10px;
+      padding-left: 50px;
+      padding-right: 50px;
     }
-    p {
-      white-space: wrap;
-      max-width: 75ch;
+    option {
+      font-size: 1em;
+      width: 2ex;
+      display: flex;
+      justify-content: center;
+      z-index: -1;
     }
+
+    @media only screen and (max-width: 400px) {
+      option {
+        font-size: 3vw;
+      }
+    }
+
   </style>
 {% endblock %}
 
@@ -69,27 +85,36 @@
 
       <label for="nps" class="mt-5" style="max-width: 860px;">Em uma escala de 0 a 10, o quanto você recomendaria o PFE (Projeto Final de Engenharia) para outras empresas?</label>
       <div style="position:relative; max-width: 860px;">
+        {% comment %}
         <span id="cor_texto" style="position:absolute; color:red; min-width:100px;">
-          <span id="myValue">N/D</span>
+          <span id="myValue"></span>
         </span>
-        <input type="range" class="custom-range" id="nps" name="nps" min="-1" max="10" value="-1" style="padding-left: 50px; padding-right: 50px;">
+        {% endcomment %}
+        <input type="range" class="custom-range" id="nps" name="nps" min="-1" max="10" list="ticks" value="-1" style="padding-left: 50px; padding-right: 50px;">
+        <datalist id="ticks">
+            <option>N/D</option>
+            <option>0</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>8</option>
+            <option>9</option>
+            <option>10</option>
+        </datalist>
       </div>
 
+      {% comment %} 
       <script type="text/javascript" charset="utf-8">
         var myRange = document.querySelector('#nps');
         var myValue = document.querySelector('#myValue');
 
         var off = (myRange.offsetWidth - (parseInt(myRange.style.paddingRight) + parseInt(myRange.style.paddingLeft) ) ) / (parseInt(myRange.max) - parseInt(myRange.min));
         
-        {% comment %}
-        var px =  ((myRange.valueAsNumber - parseInt(myRange.min)) * off) - (myValue.offsetParent.offsetWidth / 2);
-        myValue.parentElement.style.left = px + 'px';
-        myValue.innerHTML = myRange.value;
-        {% endcomment %}
-        
         myValue.parentElement.style.top = myRange.offsetHeight + 'px';
-        
-        console.log(myValue.clientWidth);
 
         function desenha_numero(){
           let px = ((myRange.valueAsNumber - parseInt(myRange.min)) * off) - (myValue.offsetWidth / 2) + parseInt(myRange.style.paddingLeft);
@@ -108,9 +133,10 @@
         desenha_numero();
 
       </script>
+      {% endcomment %}
 
       <br><br><br>
-      <input type="submit" value="Enviar">
+      <input class="btn btn-secondary" type="submit" value="Enviar">
 
     </div>
 
