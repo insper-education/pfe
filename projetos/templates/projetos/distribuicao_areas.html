@@ -8,7 +8,7 @@
 {% block head %}
     {% load static %}
     <link href="{% static 'css/horizBarChart.css' %}" media="all" rel="stylesheet" type="text/css" />
-    <script src="{% static 'js/jquery.min.js' %}"></script>
+    {% comment %} <script src="{% static 'js/jquery.min.js' %}"></script> {% endcomment %}
     <script src="{% static 'js/jquery.horizBarChart.min.js' %}"></script>
 
     {% comment %} Para gerar as imagens {% endcomment %}
@@ -120,12 +120,20 @@
 
     <script>
 
+        var request_ajax_d = null;
+
         function atualiza_tabela() {
+
+            if (request_ajax_d != null){ 
+                request_ajax_d.abort();
+                request_ajax_d = null;
+            }
+            
             $("#spinner").css("visibility", "visible");
             var tipo = $("#filterTipo option:selected").attr("value");
             var edicao = $("#filterEdicao option:selected").attr("value");
             var curso =  $("#filterCurso option:selected").attr("value");
-            $.ajax({
+            request_ajax_d = $.ajax({
                 type: "POST",
                 url: "{% url 'distribuicao_areas' %}",
                 data: {

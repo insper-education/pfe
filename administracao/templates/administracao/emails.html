@@ -245,8 +245,15 @@
 
   <script>
 
+    var request_ajax_e = null;
+
     // Só atualiza e-mails da linha de semestres
     function carrega_semestre() {
+
+      if (request_ajax_e != null){ 
+          request_ajax_e.abort();
+          request_ajax_e = null;
+      }
 
       $("#Estudantes").hide();
       $("#Orientadores").hide();
@@ -256,7 +263,7 @@
       $("#spinnerSemestre").show();
 
       var edicao = $("#filterEdicaoSemestre option:selected").attr("value");
-      $.ajax({
+      request_ajax_e = $.ajax({
         type: "POST",
         url: '{% url "emails_semestre" %}',
         data: {

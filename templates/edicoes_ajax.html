@@ -10,7 +10,15 @@
 {% if edicoes %}
   <script>
 
+     var request_ajax = null;
+
      function recarregar_pagina() {
+      
+      if (request_ajax != null){ 
+          request_ajax.abort();
+          request_ajax = null;
+      }
+
       $("#spinner").css("visibility", "visible");
       {% if not sem_edicao %}
         var edicao = $("#filterEdicao option:selected").attr("value");
@@ -21,7 +29,7 @@
       {% if com_individual %}
         var individual = $("#filterCurso option:selected").attr("value");
       {% endif %}
-      $.ajax({
+      request_ajax = $.ajax({
           type: "POST",
           //url: "Normalmente a mesma página",
           data: {
@@ -45,9 +53,11 @@
               carrega_pagina();
               $("#spinner").css("visibility", "hidden");
           },
-          error: function(response) {
-              console.log('error')
-          }
+          {% comment %}
+            error: function(response) {
+                console.log('error: '+response.statusText)
+            }
+          {% endcomment %}
       });
     }
 

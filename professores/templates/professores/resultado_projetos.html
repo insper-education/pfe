@@ -200,25 +200,35 @@
 
   <script>
   
+    var request_ajax_r = null;
+
     function carrega_semestre(){
-        var edicao = $(".filter option:selected").attr("value");
-        $.ajax({
-            type: "POST",
-            url: "{% url 'resultado_projetos' %}",
-            data: {
-                edicao: edicao,
-                'csrfmiddlewaretoken': '{{ csrf_token }}',
-            },
-            success: function(response){
-                $("table.projetos").replaceWith($("table.projetos",response));
-                $("#organizacao").prop('checked') ? $('#ProjetosTable tr > *:nth-child(2)').show() : $('#ProjetosTable tr > *:nth-child(2)').hide()
-                $("#orientador").prop('checked') ? $('#ProjetosTable tr > *:nth-child(3)').show() : $('#ProjetosTable tr > *:nth-child(3)').hide()
-                {% include "tooltip.js" %}
-            },
+
+      if (request_ajax_r != null){ 
+          request_ajax_r.abort();
+          request_ajax_r = null;
+      }
+
+      var edicao = $(".filter option:selected").attr("value");
+      request_ajax_r = $.ajax({
+          type: "POST",
+          url: "{% url 'resultado_projetos' %}",
+          data: {
+              edicao: edicao,
+              'csrfmiddlewaretoken': '{{ csrf_token }}',
+          },
+          success: function(response){
+              $("table.projetos").replaceWith($("table.projetos",response));
+              $("#organizacao").prop('checked') ? $('#ProjetosTable tr > *:nth-child(2)').show() : $('#ProjetosTable tr > *:nth-child(2)').hide()
+              $("#orientador").prop('checked') ? $('#ProjetosTable tr > *:nth-child(3)').show() : $('#ProjetosTable tr > *:nth-child(3)').hide()
+              {% include "tooltip.js" %}
+          },
+          {% comment %}             
             error: function(response) {
                 console.log('error')
             }
-        });
+          {% endcomment %}
+      });
     }
 
     $(".filter").change(carrega_semestre);    

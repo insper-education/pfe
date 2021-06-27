@@ -401,10 +401,19 @@
 
   <script>
   
-    function recarregar_pagina(){
+    var request_ajax_pp= null;
+
+
+    function recarregar_pagina() 
+
+        if (request_ajax_pp != null){ 
+            request_ajax_pp.abort();
+            request_ajax_pp = null;
+        }
+
         var anosemestre = $("#filterEdicao option:selected").attr("value");
         var curso = $("#filterCurso option:selected").attr("value");
-        $.ajax({
+        request_ajax_pp = $.ajax({
             type: "POST",
             url: "{% url 'procura_propostas' %}",
             data: {

@@ -185,11 +185,19 @@
       ($('#coorientador').prop('checked') ? $('.coorientador').show() : $('.coorientador').hide());
       ($('#banca').prop('checked') ? $('.banca').show() : $('.banca').hide());
     }
+
+    var request_ajax_c = null;
   
     $(".filter").change(function(){
+
+      if (request_ajax_c != null){ 
+          request_ajax_c.abort();
+          request_ajax_c = null;
+      }
+
       $("#spinner").css("visibility", "visible");
       var edicao = $("#filterEdicao option:selected").attr("value");
-      $.ajax({
+      request_ajax_c = $.ajax({
         type: "POST",
         url: "{% url 'certificados_submetidos' %}",
         data: {
@@ -201,9 +209,11 @@
             atualizar_informacoes()
             $("#spinner").css("visibility", "hidden");
         },
-        error: function(response) {
-            console.log('error')
-        }
+        {% comment %} 
+          error: function(response) {
+              console.log('error')
+          }
+        {% endcomment %}
     });
   });
 
