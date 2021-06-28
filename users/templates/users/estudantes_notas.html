@@ -148,10 +148,12 @@
                     if(peso_linha != 1) {
                       media_tag.html('<a style="color:orange" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100% (' + (peso_linha*100).toFixed(0)+ '%)" {% if alocacao %}href="{% url 'edita_notas' alocacao.id %}"{% endif %} target="_blank" rel="noopener noreferrer">' + media.toFixed(2) + '</a>');
                     } else {
-                      media_tag.html('<a {% if alocacao %}href="{% url 'edita_notas' alocacao.id %}"{% endif %} target="_blank" rel="noopener noreferrer">' + media.toFixed(2) + '</a>');
-                    }
-                    if(media < 5) {
-                      media_tag.css("color", "red");
+                      tag_txt = '<a {% if alocacao %}href="{% url 'edita_notas' alocacao.id %}"{% endif %} target="_blank" rel="noopener noreferrer" '
+                      if(media < 5) {
+                         tag_txt += 'style="color:red"'
+                      }
+                      tag_txt += '>' + media.toFixed(2) + '</a>'
+                      media_tag.html(tag_txt);
                     }
                   }
                 </script>
