@@ -121,40 +121,43 @@
                 {% endfor %}
               {% endif %}
             </td>
-            <td>
-              <script>
-                var nota_linha = 0;
-                var peso_linha = 0;
-              </script>
-              {% for aval, nota, peso, descr in aluno.get_notas|dict_key:ano_semestre %} <!-- Notas -->
-                  <span style="background-color:#eef;" data-toggle="tooltip" data-html="true" animation="true" 
-                   title="{{descr}}">
-                    {% comment %} {{aval}}({% widthratio peso 1 100 %}%)={{nota|stringformat:".1f"|unlocalize}} {% endcomment %}
-                    {{aval}}({% widthratio peso 1 100 %}%)={{nota|floatformat:1}}
-                  </span>
-                  <script>
-                    nota_linha += {{nota|unlocalize}}*{{peso|unlocalize}};
-                    peso_linha += {{peso|unlocalize}};
-                  </script>
-              {% endfor %}
-            </td>
-            <td id="media{{aluno.id}}"> {% comment %} <!-- Média --> {% endcomment %}
-              <span></span>
-              <script>
-                if (peso_linha>0) {
-                  var media = nota_linha/peso_linha;
-                  var span = $("#media{{aluno.id}} > span");
-                  if(peso_linha != 1) {
-                    span.html('<a style="color:orange" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100% (' + peso_linha*100 + '%)">' + media.toFixed(2) + '</a>');
-                  } else {
-                    span.html(media.toFixed(2));
+            {% with alocacao=aluno.get_alocacoes|dict_key:ano_semestre %}
+              <td>
+                <script>
+                  var nota_linha = 0;
+                  var peso_linha = 0;
+                </script>
+                {% for aval, nota, peso, descr in aluno.get_notas|dict_key:ano_semestre %} <!-- Notas -->
+                    <span style="background-color:#eef;" data-toggle="tooltip" data-html="true" animation="true" 
+                    title="{{descr}}">
+                      {% comment %} {{aval}}({% widthratio peso 1 100 %}%)={{nota|stringformat:".1f"|unlocalize}} {% endcomment %}
+                      {{aval}}({% widthratio peso 1 100 %}%)={{nota|floatformat:1}}
+                    </span>
+                    <script>
+                      nota_linha += {{nota|unlocalize}}*{{peso|unlocalize}};
+                      peso_linha += {{peso|unlocalize}};
+                    </script>
+                {% endfor %}
+              </td>
+              <td id="media{{aluno.id}}"> {% comment %} <!-- Média --> {% endcomment %}
+                <a {% if alocacao %}href="{% url 'edita_notas' alocacao.id %}"{% endif %}></a>
+                
+                <script>
+                  if (peso_linha>0) {
+                    var media = nota_linha/peso_linha;
+                    var span = $("#media{{aluno.id}} > a");
+                    if(peso_linha != 1) {
+                      span.html('<a style="color:orange" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100% (' + peso_linha*100 + '%)">' + media.toFixed(2) + '</a>');
+                    } else {
+                      span.html(media.toFixed(2));
+                    }
+                    if(media < 5) {
+                      span.css("color", "red");
+                    }
                   }
-                  if(media < 5) {
-                    span.css("color", "red");
-                  }
-                }
-              </script>
-            </td>
+                </script>
+              </td>
+            {% endwith %}
           </tr>
           {% endfor %}
           </tbody>

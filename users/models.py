@@ -557,6 +557,20 @@ class Aluno(models.Model):
 
         return medias
 
+
+    @property
+    def get_alocacoes(self):
+        """Retorna alocações do estudante."""
+        alocacoes = {}  # dicionário para cada alocação do estudante
+
+        todas_alocacao = Alocacao.objects.filter(aluno=self.pk)
+
+        for alocacao in todas_alocacao:
+            ano_semestre = str(alocacao.projeto.ano) + "." + str(alocacao.projeto.semestre)
+            alocacoes[ano_semestre] = alocacao
+
+        return alocacoes
+
     @property
     def get_peso(self):
         """Retorna soma dos pesos das notas."""
