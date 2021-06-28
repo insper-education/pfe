@@ -140,7 +140,7 @@
                 {% endfor %}
               </td>
               <td id="media{{aluno.id}}"> {% comment %} <!-- Média --> {% endcomment %}
-                <a {% if alocacao %}href="{% url 'edita_notas' alocacao.id %}"{% endif %}></a>
+                <a {% if alocacao %}href="{% url 'edita_notas' alocacao.id %}"{% endif %} target="_blank" rel="noopener noreferrer"></a>
                 
                 <script>
                   if (peso_linha>0) {
