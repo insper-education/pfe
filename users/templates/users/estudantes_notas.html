@@ -141,18 +141,17 @@
               </td>
               <td id="media{{aluno.id}}"> {% comment %} <!-- Média --> {% endcomment %}
                 <a {% if alocacao %}href="{% url 'edita_notas' alocacao.id %}"{% endif %} target="_blank" rel="noopener noreferrer"></a>
-                
                 <script>
                   if (peso_linha>0) {
                     var media = nota_linha/peso_linha;
-                    var span = $("#media{{aluno.id}} > a");
+                    var media_tag = $("#media{{aluno.id}}");
                     if(peso_linha != 1) {
-                      span.html('<a style="color:orange" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100% (' + peso_linha*100 + '%)">' + media.toFixed(2) + '</a>');
+                      media_tag.html('<a style="color:orange" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100% (' + (peso_linha*100).toFixed(0)+ '%)" {% if alocacao %}href="{% url 'edita_notas' alocacao.id %}"{% endif %} target="_blank" rel="noopener noreferrer">' + media.toFixed(2) + '</a>');
                     } else {
-                      span.html(media.toFixed(2));
+                      media_tag.html('<a {% if alocacao %}href="{% url 'edita_notas' alocacao.id %}"{% endif %} target="_blank" rel="noopener noreferrer">' + media.toFixed(2) + '</a>');
                     }
                     if(media < 5) {
-                      span.css("color", "red");
+                      media_tag.css("color", "red");
                     }
                   }
                 </script>

@@ -431,7 +431,7 @@ class Aluno(models.Model):
             if avaliacoes_banca_interm:
                 nota_banca_interm, peso = Aluno.get_banca(self,
                                                           avaliacoes_banca_interm)
-                notas.append(("BI", nota_banca_interm, peso/100,
+                notas.append(("BI", nota_banca_interm, peso/100 if peso else 0,
                               "Banca Intermediária"))
 
             # Banca Final (2)
@@ -440,7 +440,7 @@ class Aluno(models.Model):
             if avaliacoes_banca_final:
                 nota_banca_final, peso = Aluno.get_banca(self,
                                                          avaliacoes_banca_final)
-                notas.append(("BF", nota_banca_final, peso/100,
+                notas.append(("BF", nota_banca_final, peso/100 if peso else 0,
                               "Banca Final"))
 
             # Relatório de Planejamento (10)
