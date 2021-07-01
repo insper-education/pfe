@@ -1230,9 +1230,11 @@ class Certificado(models.Model):
         return None
 
     def __str__(self):
-        return self.usuario.get_full_name()+" >>> "+\
-               self.projeto.get_titulo()+\
-               " ("+str(self.projeto.ano)+"."+str(self.projeto.semestre)+")"
+        texto = self.usuario.get_full_name() + " >>> "
+        if self.projeto:
+            texto += self.projeto.get_titulo()
+            texto += " (" + str(self.projeto.ano) + "." + str(self.projeto.semestre) + ")"
+        return texto
 
     class Meta:
         verbose_name = 'Certificado'
