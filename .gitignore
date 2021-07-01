@@ -13,5 +13,3 @@ celerybeat.pid
 dump.rdb
 old/
 /static/
-pfe/signature.png
-pfe/papel_timbrado.pdf

@@ -18,6 +18,8 @@ from professores.support import recupera_orientadores
 from professores.support import recupera_coorientadores
 from professores.support import recupera_bancas_intermediarias
 from professores.support import recupera_bancas_finais
+from professores.support import recupera_bancas_falconi
+from professores.support import recupera_mentorias
 
 from projetos.models import Documento, Configuracao, Projeto, Certificado
 from projetos.models import get_upload_path
@@ -140,6 +142,14 @@ def atualiza_certificado(usuario, projeto, tipo_cert, arquivo, banca=None):
             context['usuario'] = usuario
             context['banca'] = banca
             tipo = "_banca_final"
+        elif tipo_cert == 105:
+            context['usuario'] = usuario
+            context['banca'] = banca
+            tipo = "_banca_falconi"
+        elif tipo_cert == 106:
+            context['usuario'] = usuario
+            context['dinamica'] = banca
+            tipo = "_mentoria"
         else:
             tipo = ""
 
@@ -177,6 +187,11 @@ def selecao_geracao_certificados(request):
 def gerar_certificados(request):
     """Recupera um certificado pelos dados."""
     configuracao = get_object_or_404(Configuracao)
+
+    if not os.path.exists("arquivos/signature.png"):
+        return HttpResponse("Arquivo de assinatura não encontrado.", status=401)
+    if not os.path.exists("arquivos/papel_timbrado.pdf"):
+        return HttpResponse("Papel timbrado não encontrado.", status=401)
 
     certificados = []
 
@@ -233,6 +248,36 @@ def gerar_certificados(request):
                 certificado = atualiza_certificado(membro[0].user,
                                                    banca.projeto,
                                                    104,
+                                                   arquivo,
+                                                   banca=banca)
+                if certificado:
+                    certificados.append(certificado)
+
+    if 'banca' in request.POST:
+        # (105, "Membro de Banca Falconi"),
+        membro_banca = recupera_bancas_falconi(configuracao.ano,
+                                               configuracao.semestre)
+        arquivo = "documentos/certificado_banca_falconi.html"
+        for membro in membro_banca:
+            for banca in membro[1]:
+                certificado = atualiza_certificado(membro[0].user,
+                                                   banca.projeto,
+                                                   105,
+                                                   arquivo,
+                                                   banca=banca)
+                if certificado:
+                    certificados.append(certificado)
+        
+    if 'mentores' in request.POST:
+        # (106, "Mentoria de Grupo"),
+        membro_banca = recupera_mentorias(configuracao.ano,
+                                          configuracao.semestre)
+        arquivo = "documentos/certificado_mentoria.html"
+        for membro in membro_banca:
+            for banca in membro[1]:
+                certificado = atualiza_certificado(membro[0],
+                                                   banca.projeto,
+                                                   106,
                                                    arquivo,
                                                    banca=banca)
                 if certificado:

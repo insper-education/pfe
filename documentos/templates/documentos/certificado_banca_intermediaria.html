@@ -5,11 +5,14 @@
 {% endcomment %}
 
 {% block head %}
+
+  <meta http-equiv="content-type" content="text/html; charset=utf-8"> 
+  
   <style>
       @page {
           size: a4 portrait; /*landscape*/
           margin: 5.0cm  1.3cm  1.3cm  1.5cm; /* top  right bottom left */
-          background-image: url('pfe/papel_timbrado.pdf');
+          background-image: url('arquivos/papel_timbrado.pdf');
       }
   </style>
 
@@ -63,27 +66,30 @@
 
   <span class="corpo_certificado">
 
-    Declaro, para os devidos fins, que 
-
-    {% if usuario.genero == "F" %}
-    a
-    {% else %}
-    o
+     Prezad{% if usuario.genero == "F" %}a{% else %}o{% endif %}
+    {% if usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4 %}
+      professor{% if usuario.genero == "F" %}a{% endif %}
     {% endif %}
-    
-    professor{% if usuario.genero == "F" %}a{% endif %}
-    
-    <b>{{usuario.get_full_name}}</b>
-    
-    participou da Banca Intermediária do Projeto Final de Engenharia / Trabalho de Conclusão de Curso da Engenharia do Insper, intitulado: <b>{{projeto.get_titulo}}</b>,
-    
+    <b>{{usuario.get_full_name}}</b>,
+    <br><br>
+
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Em nome do comitê do Projeto Final de Engenharia do Insper, venho agradecer sua
+    participação na qualidade de membro da Banca Intermediária do Projeto Final de Engenharia / Trabalho
+    de Conclusão de Curso da Engenharia do Insper. O projeto foi realizado em parceria com:
+    <b>{{ projeto.organizacao.nome }}</b>,
+    intitulado: <b>{{projeto.get_titulo}}</b>,
     ocorrido em {{banca.startDate}}.
-
     <br>
     <br>
 
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Agradecemos seu tempo e esforço para esse processo de avaliação de grande importância.
+    <br>
+    <br>
+
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     A banca foi composta por:
-    {{projeto.orientador}} (orientador),
     {% if banca.membro1 %}
       {{banca.membro1.get_full_name}}{% if banca.membro2 and banca.membro3 %},
       {% elif banca.membro2 or banca.membro3 %}
@@ -98,7 +104,6 @@
     {% endif %}
 
     com o grupo de estudantes:
-    
     {% for alocacao in projeto.alocacao_set.all %}
       {{alocacao.aluno.user.get_full_name}}
       ({{alocacao.aluno.get_curso_completo}}){% if forloop.last %}.{% else %},{% endif %}
@@ -117,14 +122,11 @@
   </span>
 
   <span class="corpo_certificado">
-    <br><br>
-    Atenciosamente,<br><br>
-  
-  <img class="signature" src="pfe/signature.png">
-  <br>
-    Prof. Dr. Luciano Pereira Soares<br>
-    <small>Coordenador do Projeto Final de Engenharia do Insper</small><br>
+    Atenciosamente,<br>
+    <img class="signature" src="arquivos/signature.png">
+    <br>
+      Prof. Dr. Luciano Pereira Soares<br>
+      <small>Coordenador do Projeto Final de Engenharia do Insper</small><br>
   </span>
-
-
+    
 {% endblock %}

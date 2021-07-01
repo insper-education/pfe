@@ -9,8 +9,11 @@
 {% if certificado.tipo_de_certificado < 100 %} {% comment %} estudantes {% endcomment %}
 
 {% else %}
-
-      Prof{% if certificado.usuario.genero == 'F' %}a{% endif %}.
+      {% if certificado.usuario.tipo_de_usuario == 2 or certificado.usuario.tipo_de_usuario == 4 %}
+        Prof{% if certificado.usuario.genero == 'F' %}a{% endif %}.
+      {% else %}
+        Prezad{% if certificado.usuario.genero == 'F' %}a{% else %}o{% endif %}
+      {% endif %}
       {{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}},      
       %0D%0A%0D%0A
 
@@ -106,6 +109,26 @@
       -%20outras informações:%20{% if formatada %}%3Cb%3E{% endif %}Banca Final de TCC{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
       %0D%0A
 
+  {% elif certificado.tipo_de_certificado == 105 %} {% comment %} banca falconi {% endcomment %}
+
+      {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+      Gostaríamos de agradecer sua participação na Banca de Certificação Falconi do Projeto Final de Engenharia.%0D%0A
+      %0D%0A
+
+      {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+      Sua participação foi muito importante para os nossos estudantes e professores.%20{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      %0D%0A
+
+  {% elif certificado.tipo_de_certificado == 106 %} {% comment %} mentoria {% endcomment %}
+
+      {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+      Gostaríamos de agradecer sua participação como mentor{% if certificado.usuario.genero == 'F' %}a{% endif %} no Projeto Final de Engenharia do Insper.%0D%0A
+      %0D%0A
+
+      {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+      Esperamos que tenha tido uma boa experiência com nossos estudantes e agradecemos muito por todo seu tempo dedicado%20{% if formatada %}%3Cb%3E{% endif %}
+      %0D%0A
+
   {% endif %}
 
 {% endif %}
@@ -113,7 +136,7 @@
 {% if certificado.documento %}
     %0D%0A
     {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
-    O certificado de sua contribuição se encontra em:%20
+    A carta que preparamos sobre sua contribuição se encontra em:%20
     {% if formatada %}%3Ca href='{{servidor}}{{ certificado.documento.url }}' target='_blank' rel='noopener noreferrer'%3E{% endif %}{{servidor}}{{ certificado.documento.url }}{% if formatada %}%3C%2Fa%3E%3Cbr%3E{% endif %}%0D%0A
 {% endif %}
 

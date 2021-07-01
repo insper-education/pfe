@@ -10,11 +10,12 @@ import dateutil.parser
 
 
 from django.db.models.functions import Lower
+from django.shortcuts import get_object_or_404
 
-from users.models import PFEUser, Professor, Aluno
+from users.models import PFEUser, Professor, Aluno, Parceiro
 from users.support import adianta_semestre
 
-from projetos.models import Organizacao, Projeto, Banca
+from projetos.models import Organizacao, Projeto, Banca, Encontro
 
 
 def editar_banca(banca, request):
@@ -273,3 +274,67 @@ def recupera_bancas_finais(ano, semestre):
                 grupos.append(count_bancas)
 
     return zip(professores, grupos)
+
+
+def recupera_bancas_falconi(ano, semestre):
+    """Recupera listas de todos os membros de bancas falconi."""
+    membros = []
+    grupos = []
+
+    organizacao = get_object_or_404(Organizacao, sigla="Falconi")
+    falconis = Parceiro.objects.filter(organizacao=organizacao).order_by(Lower("user__first_name"),
+                                                                         Lower("user__last_name"))
+
+    for membro in falconis:
+
+        count_bancas = []
+
+        bancas = Banca.objects.filter(tipo_de_banca=2)  #  (2, 'Certificação Falconi'),
+
+
+        bancas = bancas.filter(membro1=membro.user) |\
+                 bancas.filter(membro2=membro.user) |\
+                 bancas.filter(membro3=membro.user)
+
+        if semestre == 2:
+            bancas = bancas.filter(projeto__ano__lte=ano)
+        else:
+            bancas = bancas.filter(projeto__ano__lte=ano).exclude(projeto__ano=ano, projeto__semestre=2)
+
+        if bancas:
+            for banca in bancas:
+                count_bancas.append(banca)
+            if count_bancas:
+                membros.append(membro)
+                grupos.append(count_bancas)
+
+    return zip(membros, grupos)
+
+
+def recupera_mentorias(ano, semestre):
+    """Recupera listas de todos os mentores das dinâmicas no semestre."""
+    membros = []
+    grupos = []
+
+    mentores = PFEUser.objects.filter(tipo_de_usuario__gt=1)  # estudantes não entram nos mentores
+    mentores = mentores.order_by(Lower("first_name"), Lower("last_name"))
+
+    for mentor in mentores:
+
+        count_encontros = []
+
+        encontros = Encontro.objects.filter(facilitador=mentor)
+
+        if semestre == 2:
+            encontros = encontros.filter(startDate__year__lte = ano)
+        else:
+            encontros = encontros.filter(startDate__year__lte = ano, startDate__month__lte = 7)
+
+        if encontros:
+            for encontro in encontros:
+                count_encontros.append(encontro)
+            if count_encontros:
+                membros.append(mentor)
+                grupos.append(count_encontros)
+
+    return zip(membros, grupos)

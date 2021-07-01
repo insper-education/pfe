@@ -1,7 +1,7 @@
 {% comment %}
     Desenvolvido para o Projeto Final de Engenharia
     Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 9 de Janeiro de 2021
+    Data: 1 de Julho de 2021
 {% endcomment %}
 
 {% block head %}
@@ -30,7 +30,7 @@
 
     .corpo_certificado { 
       font-family: Verdana;
-      font-size: 17px;
+      font-size: 16px;
       text-align: left;
       display:block;
       margin-left: 1.3cm;
@@ -39,7 +39,7 @@
 
     .data_certificado { 
       font-family: Verdana;
-      font-size: 17px;
+      font-size: 16px;
       text-align: right;
       display:block;
       margin-left: 1.3cm;
@@ -59,7 +59,7 @@
     
   <span class="titulo_certificado">
     Projeto Final de Engenharia<br>
-    Certificado de Participação em Banca Final<br>
+    Certificado de Participação em Banca Falconi<br>
   </span>
 
   <br><br>
@@ -67,15 +67,12 @@
   <span class="corpo_certificado">
 
     Prezad{% if usuario.genero == "F" %}a{% else %}o{% endif %}
-    {% if usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4 %}
-      professor{% if usuario.genero == "F" %}a{% endif %}
-    {% endif %}
     <b>{{usuario.get_full_name}}</b>,
     <br><br>
 
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     Em nome do comitê do Projeto Final de Engenharia do Insper, venho agradecer sua
-    participação na qualidade de membro da Banca Final do Projeto Final de Engenharia / Trabalho
+    participação na qualidade de membro da Banca de Certificação Falconi do Projeto Final de Engenharia / Trabalho
     de Conclusão de Curso da Engenharia do Insper. O projeto foi realizado em parceria com:
     <b>{{ projeto.organizacao.nome }}</b>,
     intitulado: <b>{{projeto.get_titulo}}</b>,
@@ -84,7 +81,8 @@
     <br>
 
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    Agradecemos seu tempo e esforço para esse processo de avaliação de grande importância.
+    Sua participação foi de suma importância para assegurarmos um processo de mensuração da qualidade dos projetos
+    desenvolvidos no semestre pelos nossos estudantes.
     <br>
     <br>
 
@@ -122,11 +120,14 @@
   </span>
 
   <span class="corpo_certificado">
-    Atenciosamente,<br>
-    <img class="signature" src="arquivos/signature.png">
     <br>
-      Prof. Dr. Luciano Pereira Soares<br>
-      <small>Coordenador do Projeto Final de Engenharia do Insper</small><br>
+    Atenciosamente,<br>
+  
+  <img class="signature" src="arquivos/signature.png">
+  <br>
+    Prof. Dr. Luciano Pereira Soares<br>
+    <small>Coordenador do Projeto Final de Engenharia do Insper</small><br>
   </span>
+
 
 {% endblock %}

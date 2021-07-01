@@ -38,7 +38,7 @@
   <label><input id="orientador" onchange="($(this).prop('checked') ? $('.orientador').show() : $('.orientador').hide())" type="checkbox" checked /> Orientadores</label>&nbsp;&nbsp;&nbsp;
   <label><input id="coorientador" onchange="($(this).prop('checked') ? $('.coorientador').show() : $('.coorientador').hide())" type="checkbox" checked /> Coorientadores</label>&nbsp;&nbsp;&nbsp;
   <label><input id="banca" onchange="($(this).prop('checked') ? $('.banca').show() : $('.banca').hide())" type="checkbox" checked /> Bancas</label>&nbsp;&nbsp;&nbsp;
-
+  <label><input id="mentoria" onchange="($(this).prop('checked') ? $('.mentoria').show() : $('.mentoria').hide())" type="checkbox" checked /> Mentoria</label>&nbsp;&nbsp;&nbsp;
   <br>
 
   {% if certificados %}
@@ -51,8 +51,10 @@
           <tr class="orientador">
         {% elif certificado.tipo_de_certificado == 102 %}
           <tr class="coorientador">
-        {% elif certificado.tipo_de_certificado == 103 or certificado.tipo_de_certificado == 104 %}
+        {% elif certificado.tipo_de_certificado == 103 or certificado.tipo_de_certificado == 104 or certificado.tipo_de_certificado == 105 %}
           <tr class="banca">
+        {% elif certificado.tipo_de_certificado == 106 %}
+          <tr class="mentoria">
         {% endif %}
         
         <td>

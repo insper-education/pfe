@@ -823,19 +823,11 @@ def servico(request):
 def pre_alocar_estudante(request):
     """Ajax para pre-alocar estudates em propostas."""
     user = get_object_or_404(PFEUser, pk=request.user.pk)
-    # try:
-    #     user = PFEUser.objects.get(pk=request.user.pk)
-    # except PFEUser.DoesNotExist:
-    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     if user.tipo_de_usuario == 4:  # admin
 
         # Código a seguir não estritamente necessário mas pode deixar mais seguro
         administrador = get_object_or_404(Administrador, pk=request.user.administrador.pk)
-        # try:
-        #     administrador = Administrador.objects.get(pk=request.user.administrador.pk)
-        # except Administrador.DoesNotExist:
-        #     return HttpResponse("Administrador não encontrado.", status=401)
 
         if not administrador:
             return HttpResponse("Administrador não encontrado.", status=401)
@@ -849,31 +841,15 @@ def pre_alocar_estudante(request):
         configuracao = get_object_or_404(Configuracao)
         ano = configuracao.ano
         semestre = configuracao.semestre
-        # try:
-        #     configuracao = Configuracao.objects.get()
-        #     ano = configuracao.ano
-        #     semestre = configuracao.semestre
-        # except Configuracao.DoesNotExist:
-        #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
         # Vai para próximo semestre
         ano, semestre = adianta_semestre(ano, semestre)
 
         proposta = get_object_or_404(Proposta, id=proposta_id)
-        # try:
-        #     proposta = Proposta.objects.get(id=proposta_id)
-        # except Proposta.DoesNotExist:
-        #     return HttpResponseNotFound('<h1>Proposta não encontrada!</h1>')
 
         estudante = get_object_or_404(Aluno, id=estudante_id)
         estudante.pre_alocacao = proposta
         estudante.save()
-        # try:
-        #     estudante = Aluno.objects.get(id=estudante_id)
-        #     estudante.pre_alocacao = proposta
-        #     estudante.save()
-        # except Aluno.DoesNotExist:
-        #     return HttpResponseNotFound('<h1>Estudante não encontrado!</h1>')
 
         data = {
             'atualizado': True,

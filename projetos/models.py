@@ -37,7 +37,7 @@ def get_upload_path(instance, filename):
     elif isinstance(instance, Organizacao):
         caminho += slugify(instance.sigla_limpa()) + "/logotipo/"
     elif isinstance(instance, Certificado):
-        if instance.projeto.organizacao:
+        if instance.projeto and instance.projeto.organizacao:
             caminho += slugify(instance.projeto.organizacao.sigla_limpa()) + "/"
             caminho += "projeto" + str(instance.projeto.pk) + "/"
         if instance.usuario:
@@ -1211,6 +1211,8 @@ class Certificado(models.Model):
         (102, "Coorientação de Projeto"),
         (103, "Membro de Banca Intermediária"),
         (104, "Membro de Banca Final"),
+        (105, "Membro da Banca Falconi"),
+        (106, "Mentoria de Grupo"),
     )
     tipo_de_certificado = models.PositiveSmallIntegerField(choices=TIPO_DE_CERTIFICADO, default=0)
 

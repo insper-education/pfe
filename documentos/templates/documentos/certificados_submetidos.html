@@ -69,9 +69,9 @@
       <label><input id="orientador" onchange="($(this).prop('checked') ? $('.orientador').show() : $('.orientador').hide())" type="checkbox" checked /> Orientadores</label>&nbsp;&nbsp;&nbsp;
       <label><input id="coorientador" onchange="($(this).prop('checked') ? $('.coorientador').show() : $('.coorientador').hide())" type="checkbox" checked /> Coorientadores</label>&nbsp;&nbsp;&nbsp;
       <label><input id="banca" onchange="($(this).prop('checked') ? $('.banca').show() : $('.banca').hide())" type="checkbox" checked /> Bancas</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="mentoria" onchange="($(this).prop('checked') ? $('.mentoria').show() : $('.mentoria').hide())" type="checkbox" checked /> Mentorias</label>&nbsp;&nbsp;&nbsp;
     </div>
   </span>
-
   
   <table id="certificados">
 
@@ -85,8 +85,10 @@
           <tr class="orientador">
         {% elif certificado.tipo_de_certificado == 102 %}
           <tr class="coorientador">
-        {% elif certificado.tipo_de_certificado == 103 or certificado.tipo_de_certificado == 104 %}
+        {% elif certificado.tipo_de_certificado == 103 or certificado.tipo_de_certificado == 104 or certificado.tipo_de_certificado == 105 %}
           <tr class="banca">
+        {% elif certificado.tipo_de_certificado == 106 %}
+          <tr class="mentoria">
         {% endif %}
         
         <td>
@@ -133,6 +135,10 @@
               Membro de Banca Intermediária
             {% elif certificado.tipo_de_certificado == 104 %}
               Membro de Banca Final
+            {% elif certificado.tipo_de_certificado == 105 %}
+              Membro de Banca Falconi
+            {% elif certificado.tipo_de_certificado == 106 %}
+              Mentoria de Projeto
             {% endif %}
             {% with formatada=True %}
             &amp;body=
@@ -142,8 +148,8 @@
             formatado
           </a>
           /
-          <a href="mailto:{{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}}%20&lt;{{certificado.usuario.email|parse_quote }}&gt;?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;
-            &amp;subject=Certificado%20PFE%20:
+          <a href="mailto:{{certificado.usuario.email|parse_quote }}?{% comment %}cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;&amp;{% endcomment %}
+            subject=Certificado%20PFE%20:
             {% if certificado.tipo_de_certificado == 101 %}
               Orientação de Projeto
             {% elif certificado.tipo_de_certificado == 102 %}
@@ -152,6 +158,10 @@
               Membro de Banca Intermediária
             {% elif certificado.tipo_de_certificado == 104 %}
               Membro de Banca Final
+            {% elif certificado.tipo_de_certificado == 105 %}
+              Membro de Banca Falconi
+            {% elif certificado.tipo_de_certificado == 106 %}
+              Mentoria de Projeto
             {% endif %}
             {% with formatada=False %}
             &amp;body=

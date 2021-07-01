@@ -396,6 +396,7 @@ def carrega_arquivo(request, local_path, path):
         raise PermissionDenied
     if os.path.exists(file_path):
         documento = local_path[len(settings.BASE_DIR) + len(settings.MEDIA_URL):]
+
         doc = Documento.objects.filter(documento=documento).last()
         if doc:
             user = get_object_or_404(PFEUser, pk=request.user.pk)
@@ -449,7 +450,8 @@ def arquivos2(request, organizacao, usuario, path):
     return carrega_arquivo(request, local_path, path)
 
 
-@login_required
+# @login_required
+# Para pegar certificados não pode ter o login required
 def arquivos3(request, organizacao, projeto, usuario, path):
     """Permite acessar arquivos do servidor."""
     local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}/{2}/{3}".\

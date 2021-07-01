@@ -1,7 +1,7 @@
 {% comment %}
     Desenvolvido para o Projeto Final de Engenharia
     Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 9 de Janeiro de 2021
+    Data: 1 de Julho de 2021
 {% endcomment %}
 
 {% block head %}
@@ -30,7 +30,7 @@
 
     .corpo_certificado { 
       font-family: Verdana;
-      font-size: 17px;
+      font-size: 16px;
       text-align: left;
       display:block;
       margin-left: 1.3cm;
@@ -39,7 +39,7 @@
 
     .data_certificado { 
       font-family: Verdana;
-      font-size: 17px;
+      font-size: 16px;
       text-align: right;
       display:block;
       margin-left: 1.3cm;
@@ -59,49 +59,25 @@
     
   <span class="titulo_certificado">
     Projeto Final de Engenharia<br>
-    Certificado de Participação em Banca Final<br>
+    Certificado de Mentoria<br>
   </span>
 
   <br><br>
 
   <span class="corpo_certificado">
 
-    Prezad{% if usuario.genero == "F" %}a{% else %}o{% endif %}
-    {% if usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4 %}
-      professor{% if usuario.genero == "F" %}a{% endif %}
-    {% endif %}
+   Prezad{% if usuario.genero == "F" %}a{% else %}o{% endif %}
     <b>{{usuario.get_full_name}}</b>,
     <br><br>
 
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     Em nome do comitê do Projeto Final de Engenharia do Insper, venho agradecer sua
-    participação na qualidade de membro da Banca Final do Projeto Final de Engenharia / Trabalho
-    de Conclusão de Curso da Engenharia do Insper. O projeto foi realizado em parceria com:
+    participação como mentor{% if usuario.genero == "F" %}a{% endif %} no Projeto Final de Engenharia / Trabalho
+    de Conclusão de Curso da Engenharia do Insper.
+    
+    O projeto mentorado foi realizado em parceria com:
     <b>{{ projeto.organizacao.nome }}</b>,
     intitulado: <b>{{projeto.get_titulo}}</b>,
-    ocorrido em {{banca.startDate}}.
-    <br>
-    <br>
-
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    Agradecemos seu tempo e esforço para esse processo de avaliação de grande importância.
-    <br>
-    <br>
-
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    A banca foi composta por:
-    {% if banca.membro1 %}
-      {{banca.membro1.get_full_name}}{% if banca.membro2 and banca.membro3 %},
-      {% elif banca.membro2 or banca.membro3 %}
-      e
-      {% endif %}
-    {% endif %}
-    {% if banca.membro2 %}
-      {{banca.membro2.get_full_name}}{% if banca.membro3 %} e {% else %},{% endif %}
-    {% endif %}
-    {% if banca.membro3 %}
-      {{banca.membro3.get_full_name}},
-    {% endif %}
 
     com o grupo de estudantes:
     {% for alocacao in projeto.alocacao_set.all %}
@@ -110,9 +86,13 @@
     {% empty %}
       SEM ESTUDANTES
     {% endfor %}
-    <br>
-
     <br><br>
+
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Sua participação contribuiu com a formação dos nossos estudantes, permitindo eles estarem melhor 
+    preparados nas competências de engenharia. Somos realmente muito gratos por todo o seu tempo e interesse.
+    <br>
+    <br>
   </span>
 
   <span class="data_certificado">
@@ -122,11 +102,13 @@
   </span>
 
   <span class="corpo_certificado">
-    Atenciosamente,<br>
-    <img class="signature" src="arquivos/signature.png">
     <br>
-      Prof. Dr. Luciano Pereira Soares<br>
-      <small>Coordenador do Projeto Final de Engenharia do Insper</small><br>
+    Atenciosamente,<br>
+  
+  <img class="signature" src="arquivos/signature.png">
+  <br>
+    Prof. Dr. Luciano Pereira Soares<br>
+    <small>Coordenador do Projeto Final de Engenharia do Insper</small><br>
   </span>
 
 {% endblock %}

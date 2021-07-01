@@ -5,11 +5,14 @@
 {% endcomment %}
 
 {% block head %}
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8"> 
+
   <style>
       @page {
           size: a4 portrait; /*landscape*/
           margin: 5.0cm  1.3cm  1.3cm  1.5cm; /* top  right bottom left */
-          background-image: url('pfe/papel_timbrado.pdf');
+          background-image: url('arquivos/papel_timbrado.pdf');
       }
   </style>
 
@@ -27,7 +30,7 @@
 
     .corpo_certificado { 
       font-family: Verdana;
-      font-size: 17px;
+      font-size: 16px;
       text-align: left;
       display:block;
       margin-left: 1.3cm;
@@ -36,7 +39,7 @@
 
     .data_certificado { 
       font-family: Verdana;
-      font-size: 17px;
+      font-size: 16px;
       text-align: right;
       display:block;
       margin-left: 1.3cm;
@@ -115,14 +118,13 @@
   </span>
 
   <span class="corpo_certificado">
-    <br><br>
-    Atenciosamente,<br><br>
+    <br>
+    Atenciosamente,<br>
   
-  <img class="signature" src="pfe/signature.png">
+  <img class="signature" src="arquivos/signature.png">
   <br>
     Prof. Dr. Luciano Pereira Soares<br>
     <small>Coordenador do Projeto Final de Engenharia do Insper</small><br>
   </span>
-
 
 {% endblock %}
