@@ -148,8 +148,8 @@
             formatado
           </a>
           /
-          <a href="mailto:{{certificado.usuario.email|parse_quote }}?{% comment %}cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;&amp;{% endcomment %}
-            subject=Certificado%20PFE%20:
+          <a href="mailto:{{certificado.usuario.email|parse_quote }}{% comment %}cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;&amp;{% endcomment %}
+            ?subject=Certificado%20PFE%20:
             {% if certificado.tipo_de_certificado == 101 %}
               Orientação de Projeto
             {% elif certificado.tipo_de_certificado == 102 %}
