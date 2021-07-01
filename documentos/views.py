@@ -128,7 +128,7 @@ def atualiza_certificado(usuario, projeto, tipo_cert, arquivo, banca=None):
         'projeto': projeto,
     }
 
-    if not certificado.documento:
+    if projeto and not certificado.documento:
         if tipo_cert == 101:
             tipo = "_orientacao"
         elif tipo_cert == 102:
