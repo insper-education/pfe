@@ -126,7 +126,7 @@
           &#x2709; Enviar certificado (
           {% with servidor='https://pfe.insper.edu.br' %}
           <a href="mailto:{{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}}%20&lt;{{certificado.usuario.email|parse_quote }}&gt;?cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;
-            &amp;subject=Certificado%20PFE%20:
+            &amp;subject=PFE%20Insper%20:
             {% if certificado.tipo_de_certificado == 101 %}
               Orientação de Projeto
             {% elif certificado.tipo_de_certificado == 102 %}
@@ -149,7 +149,7 @@
           </a>
           /
           <a href="mailto:{{certificado.usuario.email|parse_quote }}{% comment %}cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;&amp;{% endcomment %}
-            ?subject=Certificado%20PFE%20:
+            ?subject=PFE%20Insper%20:
             {% if certificado.tipo_de_certificado == 101 %}
               Orientação de Projeto
             {% elif certificado.tipo_de_certificado == 102 %}
