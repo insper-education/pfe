@@ -392,7 +392,7 @@ class CertificadoAdmin(admin.ModelAdmin):
     """Certificados emitidos."""
     list_display = ('usuario', 'projeto', 'tipo_de_certificado')
     ordering = ('data',)
-    list_filter = ('tipo_de_certificado', )
+    list_filter = ('tipo_de_certificado', 'data',)
     search_fields = ['usuario__username', 'projeto__organizacao__sigla',
                      'projeto__titulo', 'projeto__titulo_final',]
 
