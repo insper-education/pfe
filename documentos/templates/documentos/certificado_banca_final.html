@@ -90,7 +90,7 @@
 
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     A banca foi composta por:
-    {{projeto.orientador.get_full_name}}
+    {{projeto.orientador.user.get_full_name}},
     {% if banca.membro1 %}
       {{banca.membro1.get_full_name}}{% if banca.membro2 and banca.membro3 %},
       {% elif banca.membro2 or banca.membro3 %}
