@@ -214,7 +214,6 @@
                 <div class="col-md-6 col-xs-6 mb-5 grafico"><canvas style="min-height:300px" id="bar-falconi"></canvas></div>
             </div>
             
-
             <script>
         
                 // Para o label colorido das barras
@@ -437,6 +436,28 @@
                     {% endif %}
                     {% endfor %}
                     </h6>
+
+
+  Grupo:
+  <ul>
+  {% for alocacao in projeto.alocacao_set.all %}
+    <li>
+    <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
+      <p>
+        {{alocacao.aluno.user.get_full_name}} 
+        {% comment %} &lt;{{alocacao.aluno.user.email}}&gt;  {% endcomment %}
+        [{{ alocacao.aluno.get_curso_display }}]
+        {% for opcao in alocacao.aluno.opcao_set.all %}
+          {% if opcao.projeto == projeto %}
+            (opção #{{opcao.prioridade}})
+          {% endif %}
+        {% endfor %}
+      </p>
+    </a>
+    </li>
+  {% endfor %}
+  </ul>
+
                     <table>    
                     {% for avaliador, objs in avaliadores_falconi.items %}
                         <tr><td>
