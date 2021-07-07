@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 3 de Julho de 2021
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+
+  <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
+  <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
+
+  <style>
+    textarea {
+      max-width:100%;
+    }
+  </style>
+
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">
+   Carrega Certificado
+  </span>
+  <br>
+
+  <form method="post" enctype="multipart/form-data"> {% csrf_token %}
+
+    <label for="usuario">
+      <span style="display:inline-block; width:7.5ex; text-align:right;">Usuário:</span>
+      <select class="selectpicker show-tick" name="usuario" id="usuario" title="Selecione usuário"
+      data-live-search="true" data-width="560px">
+          <option selected value> -- selecione usuário -- </option>
+          {% comment %} <optgroup label="Semestre PFE"> {% endcomment %}
+          {% for usuario in usuarios %}
+            {% if usuario %}
+              <option value="{{usuario.id}}" data-projeto="{{usuario.aluno.alocacao_set.last.projeto.id}}" {% if usuario.id == alocacao.aluno.id %}selected{% endif %}>
+              {{usuario.get_full_name}}
+            </option>  
+            {% endif %}
+          {% endfor %}
+          {% comment %} </optgroup> {% endcomment %}
+      </select>
+    </label>
+    <br><br>
+
+    <label for="projeto">
+      <span style="display:inline-block; width:7.5ex; text-align:right;">Projeto:</span>
+      <select class="selectpicker show-tick" name="projeto" id="projeto" title="Selecione projeto"
+      data-live-search="true" data-width="560px">
+          <option selected value> -- selecione projeto -- </option>
+          {% comment %} <optgroup label="Semestre PFE"> {% endcomment %}
+          {% for projeto in projetos %}
+            {% if projeto %}
+              <option value="{{projeto.id}}" {% if projeto.id == alocacao.aluno.id %}selected{% endif %}>
+              {{projeto.get_titulo}}
+            </option>  
+            {% endif %}
+          {% endfor %}
+          {% comment %} </optgroup> {% endcomment %}
+      </select>
+    </label>
+    <br><br>
+
+    <label for="data">
+      <span style="display:inline-block; width:7.5ex; text-align:right;">Data:</span>
+      <input id="data" type="date" name="data" value="{{data|date:'Y-m-d'}}">
+    </label>
+    <br><br>
+
+    <label for="tipo">
+      <span style="display:inline-block; width:7.5ex; text-align:right;">Tipo:</span>
+      <select class="selectpicker show-tick" name="tipo" id="tipo" title="Selecione tipo de certificado"
+      data-live-search="true" data-width="560px">
+          <option selected value> -- selecione tipo de certificado -- </option>
+          {% comment %} <optgroup label="Semestre PFE"> {% endcomment %}
+          {% for tipo in TIPO_DE_CERTIFICADO %}
+            {% if tipo %}
+              <option value="{{tipo.0}}" {% if tipo.0 == alocacao.aluno.id %}selected{% endif %}>
+              {{tipo.1}}
+            </option>  
+            {% endif %}
+          {% endfor %}
+          {% comment %} </optgroup> {% endcomment %}
+      </select>
+    </label>
+    <br><br>
+
+    <label for="observacao">Observação:<br></label><br>
+    <textarea id="observacao" name="observacao" rows="3" cols="80" maxlength="1000">{{observacao}}</textarea>
+    <br><br>
+
+    <label for="documento">Certificado:</label> 
+    <input id="documento" type="file" name="documento" accept="*">
+    <br><br>
+
+    <input type="submit" value="Cadastrar Certificado">
+
+  </form>
+
+  <script>
+
+    // Atualiza o projeto em função do estudante selecionado
+    $("#usuario").change(function() {
+      var projeto = $("#usuario option:selected").attr("data-projeto");
+      $('#projeto').selectpicker('val', projeto);
+    });
+
+  </script>
+
+  <p>&nbsp;</p>
+
+{% endblock %}

@@ -26,6 +26,10 @@ urlpatterns = [
          views.edita_aviso,
          name='edita_aviso'),
 
+    path('carregar_certificado/',
+         views.carregar_certificado,
+         name='carregar_certificado'),
+
     path('cria_aviso/',
          views.cria_aviso,
          name='cria_aviso'),

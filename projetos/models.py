@@ -1229,6 +1229,12 @@ class Certificado(models.Model):
                 return entry[1]
         return None
 
+    @classmethod
+    def create(cls):
+        """Cria um objeto (entrada) em Certificado."""
+        certificado = cls()
+        return certificado
+
     def __str__(self):
         texto = self.usuario.get_full_name() + " >>> "
         if self.projeto:
