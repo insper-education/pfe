@@ -106,7 +106,6 @@ def edita_aviso(request, primarykey):
 def carregar_certificado(request):
     """Carrega certificado na base de dados do PFE."""
     if request.method == 'POST':
-        print(request.POST)
         if 'usuario' in request.POST and 'tipo' in request.POST and "documento" in request.FILES:
 
             certificado = Certificado.create()

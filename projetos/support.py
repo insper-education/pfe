@@ -130,7 +130,9 @@ def get_peso(banca, objetivo):
 def simple_upload(myfile, path="", prefix=""):
     """Faz uploads para o servidor."""
     file_system_storage = FileSystemStorage()
-    filename = file_system_storage.save(path+prefix+text.get_valid_filename(myfile.name), myfile)
+    filename = str(myfile.name.encode('utf-8').decode('ascii', 'ignore'))
+    name = path+prefix+text.get_valid_filename(filename)
+    filename = file_system_storage.save(name, myfile)
     uploaded_file_url = file_system_storage.url(filename)
     return uploaded_file_url
 
