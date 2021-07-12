@@ -18,7 +18,7 @@ from django.urls import reverse_lazy
 from django.utils import html
 from django.views import generic
 
-from projetos.models import Configuracao, Projeto, Conexao, ObjetivosDeAprendizagem
+from projetos.models import Certificado, Configuracao, Projeto, Conexao, ObjetivosDeAprendizagem
 from projetos.models import Banca, Area, Coorientador, Avaliacao2, Observacao, Reprovacao
 
 from projetos.messages import email
@@ -928,11 +928,14 @@ def estudante_detail(request, primarykey):
     areas = Area.objects.filter(ativa=True)
 
     alocacoes = Alocacao.objects.filter(aluno=aluno)
+    certificados = Certificado.objects.filter(usuario=aluno.user)
 
     context = calcula_objetivos(alocacoes)
 
     context['aluno'] = aluno
     context['alocacoes'] = alocacoes
+    context['certificados'] = certificados
+    context['TIPO_DE_CERTIFICADO'] = Certificado.TIPO_DE_CERTIFICADO
     context['areast'] = areas
 
     return render(request, 'users/estudante_detail.html', context=context)

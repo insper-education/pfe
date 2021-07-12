@@ -99,6 +99,24 @@
         {% endfor %}
     {% endif %}
 
+    {% if certificados %}
+        <hr>
+        <h3>Certificados</h3>
+        <ul>
+        {% for certificado in certificados %}
+            <li>
+                {{certificado.get_certificado}}
+                {% if certificado.data %}
+                    em {{certificado.data|date:"DATE_FORMAT"}}
+                {% endif %}
+                {% if certificado.documento %}
+                    - documento: <a href="{{ certificado.documento.url }}" target="_blank" rel="noopener noreferrer">{{ certificado.documento.url }}</a><br>
+                {% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
     {% if alocacoes.count > 0 %}
         <hr>
         {% if alocacoes.count == 1 %}

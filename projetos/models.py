@@ -173,6 +173,11 @@ class Projeto(models.Model):
             return self.titulo_final
         else:
             return self.titulo
+    
+    def certificado_orientador(self):
+        """Retorna link do certificado."""
+        certificado = Certificado.objects.filter(usuario=self.orientador.user, projeto=self, tipo_de_certificado=101)
+        return certificado
 
     def __str__(self):
         """Retorno padrão textual."""
