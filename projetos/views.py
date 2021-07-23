@@ -773,6 +773,11 @@ def projetos_vs_propostas(request):
 
     edicoes = range(2018, configuracao.ano+1)
 
+    edicoes2, _, _ = get_edicoes(Projeto)
+
+    total_org_propostas = {}
+    total_org_projetos = {}
+
     # PROPOSTAS e ORGANIZACOES COM PROPOSTAS
     num_propostas = []
     org_propostas = []
@@ -786,6 +791,7 @@ def projetos_vs_propostas(request):
         for projeto in propostas:
             if projeto.organizacao:
                 tmp_org[projeto.organizacao.id] = "True"
+                total_org_propostas[projeto.organizacao.id] = "True"
         org_propostas.append(len(tmp_org))
 
         # Primeiro Semestre
@@ -796,6 +802,7 @@ def projetos_vs_propostas(request):
         for projeto in propostas:
             if projeto.organizacao:
                 tmp_org[projeto.organizacao.id] = "True"
+                total_org_propostas[projeto.organizacao.id] = "True"
         org_propostas.append(len(tmp_org))
 
     # PROJETOS e ORGANIZACOES COM PROJETOS
@@ -811,6 +818,7 @@ def projetos_vs_propostas(request):
         for projeto in projetos:
             if projeto.organizacao:
                 tmp_org[projeto.organizacao.id] = "True"
+                total_org_projetos[projeto.organizacao.id] = "True"
         org_projetos.append(len(tmp_org))
 
         # Primeiro Semestre
@@ -821,6 +829,7 @@ def projetos_vs_propostas(request):
         for projeto in projetos:
             if projeto.organizacao:
                 tmp_org[projeto.organizacao.id] = "True"
+                total_org_projetos[projeto.organizacao.id] = "True"
         org_projetos.append(len(tmp_org))
 
     # ORGANIZACOES PROSPECTADAS
@@ -851,10 +860,15 @@ def projetos_vs_propostas(request):
     context = {
         "num_propostas": num_propostas,
         "num_projetos": num_projetos,
+        "total_propostas": sum(num_propostas),
+        "total_projetos": sum(num_projetos),
         "org_prospectadas": org_prospectadas,
         "org_propostas": org_propostas,
         "org_projetos": org_projetos,
+        "total_org_propostas": len(total_org_propostas),
+        "total_org_projetos": len(total_org_projetos),
         'loop_anos': edicoes,
+        'edicoes': edicoes2,
     }
 
     return render(request, 'projetos/projetos_vs_propostas.html', context)

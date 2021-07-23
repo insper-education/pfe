@@ -26,10 +26,18 @@
         <div id="canvas-holder">
 
             <canvas id="bar-projetos"></canvas>
+            <small>
+                <p>Recebemos <b>{{total_propostas}}</b> propostas de projetos no total.</p>
+                <p>Realizados <b>{{total_projetos}}</b> projetos no total.</p>
+            </small>
             <br>
 
             <canvas id="bar-organizacoes"></canvas>
-            <small>Dados de prospecção até 2019.2 estão incompletos.</small>
+            <small>
+                <p>Recebemos propostas de <b>{{total_org_propostas}}</b> organizações distintas.</p>
+                <p>Realizados projetos de <b>{{total_org_projetos}}</b> organizações distintas.</p>
+                <p>Dados de prospecção até 2019.2 estão incompletos.</p>
+            </small>
             <br><br>
 
         </div>
@@ -42,15 +50,14 @@
             type: 'bar',
             data: {
             labels: [
-                {% for loop in loop_anos %}
-                "{{loop}}.2",
-                "{{loop|add:1}}.1",
+                {% for edicao in edicoes %}
+                    "{{edicao}}",
                 {% endfor %}
                 ],
             datasets: [
                 {
                 label: "propostas",
-                backgroundColor: "#5e8ea2",
+                backgroundColor: "#8ebed2",
                 data: [
                         {% for num in num_propostas %}
                             {{num}},
@@ -59,7 +66,7 @@
                 }, 
                 {
                 label: "projetos",
-                backgroundColor: "#353ecd",
+                backgroundColor: "#656efd",
                 data: [
                         {% for num in num_projetos %}
                             {{num}},
@@ -73,6 +80,11 @@
                 title: {
                     display: true,
                     text: 'Propostas e Projetos'
+                },
+                plugins: {
+                    datalabels: {
+                        color: '#000000'
+                    }
                 }
             }
         };
@@ -81,15 +93,14 @@
             type: 'bar',
             data: {
             labels: [
-                {% for loop in loop_anos %}
-                "{{loop}}.2",
-                "{{loop|add:1}}.1",
+                {% for edicao in edicoes %}
+                    "{{edicao}}",
                 {% endfor %}
                 ],
             datasets: [
                 {
                     label: "prospectadas (semestre anterior)",
-                    backgroundColor: "#f9d5e5",
+                    backgroundColor: "#ffe0f0",
                     data: [
                             {% for num in org_prospectadas %}
                                 {{num}},
@@ -98,7 +109,7 @@
                 }, 
                 {
                     label: "com proposta",
-                    backgroundColor: "#e06377",
+                    backgroundColor: "#e56883",
                     data: [
                             {% for num in org_propostas %}
                                 {{num}},
@@ -107,7 +118,7 @@
                 },
                 {
                     label: "com projeto",
-                    backgroundColor: "#c83349",
+                    backgroundColor: "#f84359",
                     data: [
                             {% for num in org_projetos %}
                                 {{num}},
@@ -121,6 +132,20 @@
                 title: {
                     display: true,
                     text: 'Organizações Envolvidas'
+                },
+                plugins: {
+                    datalabels: {
+                        color: '#000000',
+                        font: function(context) {
+                            var width = context.chart.width;
+                            var size = Math.round(width / 45);
+
+                            return {
+                                size: size
+                            };
+                        }
+                    },
+                    
                 }
             }
         };
