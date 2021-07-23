@@ -129,6 +129,20 @@
       Esperamos que tenha tido uma boa experiência com nossos estudantes e agradecemos muito por todo seu tempo dedicado%20{% if formatada %}%3Cb%3E{% endif %}
       %0D%0A
 
+  {% elif certificado.tipo_de_certificado == 107 %} {% comment %} mentoria técnica {% endcomment %}
+
+      {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+      Primeiramente muito obrigado pela parceria com o Insper no Projeto Final de Engenharia. 
+      Gostaríamos de agradecer sua participação como mentor{% if certificado.usuario.genero == 'F' %}a{% endif %} no Projeto Final de Engenharia do Insper.
+      Esperamos que tenha tido uma boa experiência com nossos estudantes e agradecemos muito por todo seu tempo dedicado.
+      Foi muito bom poder ter nossos estudantes trabalhando com toda a equipe da {{certificado.projeto.organizacao}}.%20{% if formatada %}%3Cb%3E{% endif %}%0D%0A
+      %0D%0A
+
+      {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+      Gostaríamos de coletar alguns feedbacks de você sobre o processo.
+      Seria algo curto mesmo, para saber se tudo correu bem e se você tem alguma sugestão de como podemos fazer no futuro.
+      O link do formulário está em https://pfe.insper.edu.br/organizacoes/projeto_feedback%20{% if formatada %}%3Cb%3E{% endif %}%0D%0A
+
   {% endif %}
 
 {% endif %}
@@ -142,4 +156,4 @@
 
 %0D%0A%0D%0A
 {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20%20%20%20%20{% endif %}
-atenciosamente,%20coordenação%20PFE
+atenciosamente,%20Luciano%20Soares%20(coordenação%20PFE)

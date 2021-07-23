@@ -49,8 +49,8 @@ def get_upload_path(instance, filename):
         filename = force_text(filename).strip().replace(' ', '_')
         filename = re.sub(r'(?u)[^-\w.]', '', filename)
         return "{0}/{1}".format(caminho, filename)
-    else:
-        return "{0}".format(caminho)
+    
+    return "{0}".format(caminho)
 
 
 class Organizacao(models.Model):
@@ -171,8 +171,7 @@ class Projeto(models.Model):
         """Caso tenha titulo atualizado, retorna esse, senão retorna o original e único."""
         if self.titulo_final:
             return self.titulo_final
-        else:
-            return self.titulo
+        return self.titulo
     
     def certificado_orientador(self):
         """Retorna link do certificado."""
@@ -785,8 +784,7 @@ class Documento(models.Model):
     def __str__(self):
         if self.tipo_de_documento == 255:
             return self.TIPO_DE_DOCUMENTO[-1][1]
-        else:
-            return str(self.TIPO_DE_DOCUMENTO[self.tipo_de_documento][1])
+        return str(self.TIPO_DE_DOCUMENTO[self.tipo_de_documento][1])
 
     @classmethod
     def create(cls):
@@ -975,7 +973,7 @@ class Conexao(models.Model):
     observacao = models.TextField(max_length=256, null=True, blank=True,
                                   help_text='qualquer observação relevante')
     gestor_responsavel = models.BooleanField("Gestor Responsável", default=False)
-    mentor_tecnico = models.BooleanField("Mentor Técnico", default=False)
+    mentor_tecnico = models.BooleanField("Mentoria Técnica", default=False)
     recursos_humanos = models.BooleanField("Recursos Humanos", default=False)
     colaboracao = models.BooleanField("Colaboração", default=False)
 
@@ -1206,7 +1204,7 @@ class Certificado(models.Model):
     data = models.DateField(default=datetime.date.today, blank=True,
                             help_text='data do certificado')
 
-    TIPO_DE_CERTIFICADO = ( # não mudar a ordem dos números
+    TIPO_DE_CERTIFICADO = (  # não mudar a ordem dos números
         (0, 'Não definido'),
         (1, 'Estudante destaque'),
         (2, 'Equipe destaque'),
@@ -1217,7 +1215,8 @@ class Certificado(models.Model):
         (103, "Membro de Banca Intermediária"),
         (104, "Membro de Banca Final"),
         (105, "Membro da Banca Falconi"),
-        (106, "Mentoria de Grupo"),
+        (106, "Mentoria de Grupo"),  # mentor na Falconi
+        (107, "Mentoria Técnica"),  # mentor da empresa
     )
     tipo_de_certificado = models.PositiveSmallIntegerField(choices=TIPO_DE_CERTIFICADO, default=0)
 
@@ -1294,22 +1293,20 @@ class AreaDeInteresse(models.Model):
     class Meta:
         verbose_name = 'Área de Interesse'
         verbose_name_plural = 'Áreas de Interesse'
+
     def __str__(self):
         if self.usuario:
             if self.outras:
                 return self.usuario.get_full_name()+" >>> "+self.outras
-            else:
-                return self.usuario.get_full_name()+" >>> "+str(self.area)
+            return self.usuario.get_full_name()+" >>> "+str(self.area)
         elif self.proposta:
             if self.outras:
                 return self.proposta.titulo+" >>> "+self.outras
-            else:
-                return self.proposta.titulo+" >>> "+str(self.area)
+            return self.proposta.titulo+" >>> "+str(self.area)
         else:
             if self.outras:
                 return self.outras
-            else:
-                return str(self.area)
+            return str(self.area)
 
     @classmethod
     def create(cls):

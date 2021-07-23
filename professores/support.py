@@ -15,7 +15,7 @@ from django.shortcuts import get_object_or_404
 from users.models import PFEUser, Professor, Aluno, Parceiro
 from users.support import adianta_semestre
 
-from projetos.models import Organizacao, Projeto, Banca, Encontro
+from projetos.models import Organizacao, Projeto, Banca, Encontro, Conexao
 
 
 def editar_banca(banca, request):
@@ -316,7 +316,7 @@ def recupera_mentorias(ano, semestre):
     membros = []
     grupos = []
 
-    mentores = PFEUser.objects.filter(tipo_de_usuario__gt=1)  # estudantes não entram nos mentores
+    mentores = PFEUser.objects.filter(tipo_de_usuario__gt=1, is_active=True)  # estudantes não entram nos mentores
     mentores = mentores.order_by(Lower("first_name"), Lower("last_name"))
 
     for mentor in mentores:
@@ -326,9 +326,9 @@ def recupera_mentorias(ano, semestre):
         encontros = Encontro.objects.filter(facilitador=mentor)
 
         if semestre == 2:
-            encontros = encontros.filter(startDate__year__lte = ano)
+            encontros = encontros.filter(startDate__year__lte=ano)
         else:
-            encontros = encontros.filter(startDate__year__lte = ano, startDate__month__lte = 7)
+            encontros = encontros.filter(startDate__year__lte=ano, startDate__month__lte=7)
 
         if encontros:
             for encontro in encontros:
@@ -336,5 +336,29 @@ def recupera_mentorias(ano, semestre):
             if count_encontros:
                 membros.append(mentor)
                 grupos.append(count_encontros)
+
+    return zip(membros, grupos)
+
+
+def recupera_mentorias_técnica(ano, semestre):
+    """Recupera listas de todos os mentores nas empresas no semestre."""
+    membros = []
+    grupos = []
+
+    mentores = PFEUser.objects.filter(tipo_de_usuario=3, is_active=True)  # soh parceiros ativos
+    mentores = mentores.order_by(Lower("first_name"), Lower("last_name"))
+
+    for mentor in mentores:
+
+        count_conexoes = []
+
+        conexoes = Conexao.objects.filter(projeto__ano=ano, projeto__semestre=semestre, parceiro=mentor.parceiro, mentor_tecnico=True)
+
+        if conexoes:
+            for conexao in conexoes:
+                count_conexoes.append(conexao)
+            if count_conexoes:
+                membros.append(mentor)
+                grupos.append(count_conexoes)
 
     return zip(membros, grupos)

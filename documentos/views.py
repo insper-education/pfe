@@ -20,6 +20,7 @@ from professores.support import recupera_bancas_intermediarias
 from professores.support import recupera_bancas_finais
 from professores.support import recupera_bancas_falconi
 from professores.support import recupera_mentorias
+from professores.support import recupera_mentorias_técnica
 
 from projetos.models import Documento, Configuracao, Projeto, Certificado
 from projetos.models import get_upload_path
@@ -149,7 +150,11 @@ def atualiza_certificado(usuario, projeto, tipo_cert, arquivo, banca=None):
         elif tipo_cert == 106:
             context['usuario'] = usuario
             context['dinamica'] = banca
-            tipo = "_mentoria"
+            tipo = "_mentoria_falconi"
+        elif tipo_cert == 107:
+            context['usuario'] = usuario
+            context['count_projetos'] = banca
+            tipo = "_mentoria_tecnica"
         else:
             tipo = ""
 
@@ -267,9 +272,9 @@ def gerar_certificados(request):
                                                    banca=banca)
                 if certificado:
                     certificados.append(certificado)
-        
+
     if 'mentores' in request.POST:
-        # (106, "Mentoria de Grupo"),
+        # (106, "Mentoria de Grupo"),  # mentor na Falconi
         membro_banca = recupera_mentorias(configuracao.ano,
                                           configuracao.semestre)
         arquivo = "documentos/certificado_mentoria.html"
@@ -278,6 +283,21 @@ def gerar_certificados(request):
                 certificado = atualiza_certificado(membro[0],
                                                    banca.projeto,
                                                    106,
+                                                   arquivo,
+                                                   banca=banca)
+                if certificado:
+                    certificados.append(certificado)
+
+    if 'mentores' in request.POST:
+        # (107, "Mentoria Técnica"),  # mentor da empresa
+        membros = recupera_mentorias_técnica(configuracao.ano,
+                                             configuracao.semestre)
+        arquivo = "documentos/certificado_mentoria_tecnica.html"
+        for membro in membros:
+            for banca in membro[1]:
+                certificado = atualiza_certificado(membro[0],
+                                                   banca.projeto,
+                                                   107,
                                                    arquivo,
                                                    banca=banca)
                 if certificado:

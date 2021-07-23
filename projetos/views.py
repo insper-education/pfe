@@ -533,7 +533,6 @@ def meuprojeto(request):
 @permission_required('users.altera_professor', login_url='/')
 def projeto_avancado(request, primarykey):
     """cria projeto avançado e avança para ele."""
-
     projeto = Projeto.objects.get(id=primarykey)
 
     projetos_avancados = Projeto.objects.filter(avancado=projeto)
@@ -555,7 +554,7 @@ def projeto_avancado(request, primarykey):
         novo_projeto.semestre = semestre
 
         novo_projeto.save()
-    
+
     return redirect('projeto_completo', primarykey=novo_projeto.id)
 
 
@@ -1124,12 +1123,10 @@ def certificacao_falconi(request):
                 if "observacoes" not in avaliadores_falconi[observacao.avaliador]:
                     avaliadores_falconi[observacao.avaliador]["observacoes"] = observacao.observacoes
                 # Senão é só uma avaliação de objetivo mais antiga
-            
+
             avaliadores.append(avaliadores_falconi)
 
         bancas = zip(projetos_selecionados, avaliadores)
-        
-    
 
         context = {
             'ano': configuracao.ano,
@@ -1448,7 +1445,7 @@ def editar_projeto(request, primarykey):
         projeto.orientador = orientador
 
         alocacoes = Alocacao.objects.filter(projeto=projeto).delete()
-        
+
         estudante_id = request.POST.get('estudante1', None)
         if estudante_id:
             estudante = get_object_or_404(Aluno, pk=estudante_id)
@@ -1593,7 +1590,7 @@ def logs(request):
             "mensagem": mensagem,
         }
         return render(request, 'generic.html', context=context)
-    
+
     message = ""
     mensagens = LogEntry.objects.all()
     for log in mensagens:

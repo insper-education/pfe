@@ -139,6 +139,8 @@
               Membro de Banca Falconi
             {% elif certificado.tipo_de_certificado == 106 %}
               Mentoria de Projeto
+            {% elif certificado.tipo_de_certificado == 107 %}
+              Mentoria de Projeto
             {% endif %}
             {% with formatada=True %}
             &amp;body=
@@ -161,6 +163,8 @@
             {% elif certificado.tipo_de_certificado == 105 %}
               Membro de Banca Falconi
             {% elif certificado.tipo_de_certificado == 106 %}
+              Mentoria de Projeto
+            {% elif certificado.tipo_de_certificado == 107 %}
               Mentoria de Projeto
             {% endif %}
             {% with formatada=False %}
