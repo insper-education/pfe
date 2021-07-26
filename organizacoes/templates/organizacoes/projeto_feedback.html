@@ -85,11 +85,11 @@
 
       <label for="nps" class="mt-5" style="max-width: 860px;">Em uma escala de 0 a 10, o quanto você recomendaria o PFE (Projeto Final de Engenharia) para colegas ou parceiros de outras empresas?</label>
       <div style="position:relative; max-width: 860px;">
-        {% comment %}
+        
         <span id="cor_texto" style="position:absolute; color:red; min-width:100px;">
           <span id="myValue"></span>
         </span>
-        {% endcomment %}
+        
         <input type="range" class="custom-range" id="nps" name="nps" min="-1" max="10" list="ticks" value="-1" style="padding-left: 50px; padding-right: 50px;">
         <datalist id="ticks">
             <option>N/D</option>
@@ -107,14 +107,13 @@
         </datalist>
       </div>
 
-      {% comment %} 
       <script type="text/javascript" charset="utf-8">
         var myRange = document.querySelector('#nps');
         var myValue = document.querySelector('#myValue');
 
         var off = (myRange.offsetWidth - (parseInt(myRange.style.paddingRight) + parseInt(myRange.style.paddingLeft) ) ) / (parseInt(myRange.max) - parseInt(myRange.min));
         
-        myValue.parentElement.style.top = myRange.offsetHeight + 'px';
+        // myValue.parentElement.style.top = myRange.offsetHeight + 'px';
 
         function desenha_numero(){
           let px = ((myRange.valueAsNumber - parseInt(myRange.min)) * off) - (myValue.offsetWidth / 2) + parseInt(myRange.style.paddingLeft);
@@ -125,7 +124,7 @@
             myValue.innerHTML = myRange.value;
             $("#cor_texto").css("color", "blue");
           }
-          myValue.parentElement.style.left = px + 'px';
+          // myValue.parentElement.style.left = px + 'px';
         };
 
         myRange.oninput = desenha_numero;
@@ -133,7 +132,6 @@
         desenha_numero();
 
       </script>
-      {% endcomment %}
 
       <br><br><br>
       <input class="btn btn-secondary" type="submit" value="Enviar">
