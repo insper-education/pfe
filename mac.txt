@@ -38,3 +38,4 @@ python3 manage.py loaddata out.json
 source ./env/bin/activate
 
 # outros
+
