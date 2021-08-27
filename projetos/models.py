@@ -322,7 +322,7 @@ class Proposta(models.Model):
 
     # pylint: disable=arguments-differ
     def save(self, *args, **kwargs):
-        if not self.id:
+        if (not self.id) or (not self.slug):
             senha = ''.join(random.SystemRandom().\
                                    choice(string.ascii_uppercase + string.digits) for _ in range(6))
             self.slug = slugify(str(self.ano)+"-"+str(self.semestre)+"-"+self.titulo[:50]+"-"+senha)
