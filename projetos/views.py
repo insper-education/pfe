@@ -1455,8 +1455,9 @@ def editar_projeto(request, primarykey):
             projeto.descricao = descricao
 
         orientador_id = request.POST.get('orientador', None)
-        orientador = get_object_or_404(Professor, pk=orientador_id)
-        projeto.orientador = orientador
+        if orientador_id:
+            orientador = get_object_or_404(Professor, pk=orientador_id)
+            projeto.orientador = orientador
 
         alocacoes = Alocacao.objects.filter(projeto=projeto).delete()
 

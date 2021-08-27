@@ -115,6 +115,8 @@ def encontros_marcar(request):
     ano = configuracao.ano
     semestre = configuracao.semestre
 
+    aviso = None  # Mensagem de aviso caso algum problema
+
     hoje = datetime.date.today()
     encontros = Encontro.objects.filter(startDate__gt=hoje)\
         .order_by('startDate')
@@ -137,17 +139,31 @@ def encontros_marcar(request):
 
     if request.method == 'POST':
         check_values = request.POST.getlist('selection')
+        
         agendado = None
-        for encontro in encontros:
-            if str(encontro.id) == check_values[0]:
-                if encontro.projeto != projeto:
-                    encontro.projeto = projeto
-                    encontro.save()
-                agendado = encontro
-            else:
-                if encontro.projeto == projeto:
-                    encontro.projeto = None
-                    encontro.save()
+
+        if not check_values:
+            aviso = "Selecione um horário."
+
+        else:    
+            for encontro in encontros:
+                if str(encontro.id) == check_values[0]:
+                    
+                    if encontro.projeto is None or encontro.projeto == projeto:
+                        # Se projeto estava sem seleção ainda, selecionar
+                        encontro.projeto = projeto
+                        encontro.save()
+                        agendado = encontro
+
+                    elif encontro.projeto != projeto:
+                        # Se projeto foi selecionad por outro grupo
+                        aviso = "Infelizmente nesse meio tempo algum grupo selecionou o horário indicado!\nPor favor, selecione outro horário."
+
+                else:
+                    # Limpa seleção caso haja uma mudança
+                    if encontro.projeto == projeto:
+                        encontro.projeto = None
+                        encontro.save()
 
         if agendado:
             subject = 'Dinâmica PFE agendada'
@@ -171,11 +187,13 @@ def encontros_marcar(request):
             }
             return render(request, 'generic.html', context=context)
 
-        return HttpResponse("Problema! Por favor reportar.")
+        if not aviso:
+            return HttpResponse("Problema! Por favor reportar.")
 
     context = {
-        'encontros': encontros,
-        'projeto': projeto,
+        "encontros": encontros,
+        "projeto": projeto,
+        "aviso": aviso,
     }
     return render(request, 'estudantes/encontros_marcar.html', context)
 

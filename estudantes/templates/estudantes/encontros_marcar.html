@@ -8,6 +8,8 @@
 {% block head %}
     {% load static %}
     <script>{% include "tooltip.js" %}</script>
+    {% comment %} <meta http-equiv="refresh" content="5"> {% endcomment %}
+   
 {% endblock %}
 
 {% block content %}
@@ -19,7 +21,7 @@
     {% if user.tipo_de_usuario == 1 %}
         <h4>Seu projeto: 
             {% if projeto %}
-                {{projeto.get_titulo}}
+                {{projeto.get_titulo}} ({{projeto.organizacao}})
             {% else %}
                 &lt; PROJETO NÃO ENCONTRADO &gt;
             {% endif %}
@@ -28,7 +30,13 @@
         <h5>Somente visualização das opções de encontros (você não está registrado como estudante)</h5>
     {% endif %}
     <br><br>
-    <div class="control"></div>
+
+    {% if aviso %}
+        <h3 class="red-bold">{{aviso|linebreaks}}</h3>
+        <br><br>
+    {% endif %}
+
+    <div id="horarios" class="control">
         {% for e in encontros %}
             <label class="radio" 
               {% if e.projeto and e.projeto != projeto %}
@@ -58,5 +66,34 @@
 
     <p>&nbsp;</p>
     <p>&nbsp;</p>
+
+
+  <script>
+
+    var refInterval = window.setInterval('update()', 120000); // 2 minutos
+
+    var update = function() {
+        $.ajax({
+            type: "GET",
+            url: '{% url "encontros_marcar" %}',
+            data: {    
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+            },
+            success: function(response){
+
+                var value = $( "input[type=radio][name=selection]:checked" ).val();;
+
+                $("#horarios").replaceWith($("#horarios",response));
+
+                if(!$("input[type=radio][name=selection][value=" + value + "]").prop('disabled')){
+                    $("input[type=radio][name=selection][value=" + value + "]").prop('checked', true);
+                } 
+
+            },
+        });
+    };
+
+  </script>
+
 </form>
 {% endblock %}
