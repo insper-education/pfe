@@ -931,6 +931,7 @@ class Acompanhamento(models.Model):
 
 class Feedback(models.Model):
     """Feedback das organizacoes parceiras."""
+
     data = models.DateField(default=datetime.date.today, blank=True,
                             help_text='Data do Feedback')
     #organizacao_parceira=models.ForeignKey(Empresa,null=True,blank=True,on_delete=models.SET_NULL,
@@ -944,10 +945,14 @@ class Feedback(models.Model):
     #isso esta bem baguncado
     empresa = models.CharField(max_length=120, null=True, blank=True,
                                help_text='Empresa de quem está dando o Feedback')
-    tecnico = models.TextField(max_length=1000, help_text='Feedback Técnico')
-    comunicacao = models.TextField(max_length=1000, help_text='Feedback Comunicação')
-    organizacao = models.TextField(max_length=1000, help_text='Feedback Organização')
-    outros = models.TextField(max_length=1000, help_text='Feedback Outros')
+    tecnico = models.TextField(max_length=1000, null=True, blank=True,
+                               help_text='Feedback Técnico')
+    comunicacao = models.TextField(max_length=1000, null=True, blank=True,
+                                   help_text='Feedback Comunicação')
+    organizacao = models.TextField(max_length=1000, null=True, blank=True,
+                                   help_text='Feedback Organização')
+    outros = models.TextField(max_length=1000, null=True, blank=True,
+                              help_text='Feedback Outros')
 
     nps = models.PositiveIntegerField("NPS", null=True, blank=True,
                                       validators=[MinValueValidator(0), MaxValueValidator(10)],
