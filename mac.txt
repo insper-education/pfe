@@ -1,9 +1,13 @@
+#Instalar postgres
+brew install postgresql@10
+Se necessário:  initdb --locale=C -E UTF-8 /usr/local/var/postgres
+
 #criar
 createuser pfe
+createdb pfe 
 
 #starta servidor
-brew services start postgresql
-brew services start postgresql@12
+brew services start postgresql@10
 
 # Mostra mensagens de erro
 postgres -D /usr/local/var/postgres
@@ -14,8 +18,8 @@ brew postgresql-upgrade-database
 # Backup dbbackup
 psql -U Username -h 127.0.0.1 -d DatabaseName 
 \l  (para listas bancos de dados)
-dropdb DatabaseName (linha de comando)
-createdb DatabaseName (linha de comando)
+dropdb pie [dropdb DatabaseName (linha de comando)]
+createdb pfe [createdb DatabaseName (linha de comando)]
 git clone https://github.com/lpsoares/pfe
 (atualizar settings.py)
 python3 manage.py makemigrations
