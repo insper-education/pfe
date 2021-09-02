@@ -179,6 +179,7 @@ def estudantes_lista(request):
                     alunos_list = alunos_todos.filter(trancado=True)
                     ano = "trancou"
 
+                # Rotina para contar quantidad de alunos
                 ano_tmp = 2018
                 semestre_tmp = 2
                 while True:
@@ -216,9 +217,11 @@ def estudantes_lista(request):
                         ano_tmp += 1
                         semestre_tmp = 1
 
-                alunos_list = alunos_list.filter(anoPFE__lte=configuracao.ano).distinct()
-                if configuracao.semestre == 1:
-                    alunos_list = alunos_list.exclude(anoPFE=configuracao.ano, semestrePFE=2)
+                # Se todos selecionados, não incluir alunos dos semestres futuros
+                if anosemestre == "todos":
+                    alunos_list = alunos_list.filter(anoPFE__lte=configuracao.ano).distinct()
+                    if configuracao.semestre == 1:
+                        alunos_list = alunos_list.exclude(anoPFE=configuracao.ano, semestrePFE=2)
 
             num_alunos = alunos_list.count()
 

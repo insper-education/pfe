@@ -61,6 +61,9 @@ class PFEUser(AbstractUser):
     tipo_lingua = models.PositiveSmallIntegerField(choices=TIPO_LINGUA, default=1,
                                                    help_text='língua usada para comunicação')
 
+    observacoes = models.TextField("Observações", max_length=500, blank=True,
+                                   help_text='Observações')
+
     class Meta:
         """Classe Meta."""
 

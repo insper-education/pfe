@@ -309,6 +309,8 @@ def registro_usuario(request, user=None):
     usuario.linkedin = request.POST.get('linkedin', None)
     usuario.tipo_lingua = request.POST.get('lingua', None)
 
+    usuario.observacoes = request.POST.get('observacao', None)
+
     if 'ativo' in request.POST:
         if request.POST['ativo'] == "1":
             usuario.is_active = True
@@ -341,6 +343,8 @@ def registro_usuario(request, user=None):
             estudante.semestrePFE = int(request.POST['semestre'])
         except (ValueError, OverflowError, MultiValueDictKeyError):
             return ("Erro na identificação do ano e semestre.", 401)
+
+        estudante.trancado = 'estudante_trancado' in request.POST
 
         estudante.save()
 
@@ -398,8 +402,7 @@ def registro_usuario(request, user=None):
         parceiro.telefone = request.POST.get('telefone', None)
         parceiro.celular = request.POST.get('celular', None)
         parceiro.skype = request.POST.get('skype', None)
-        parceiro.observacao = request.POST.get('observacao', None)
-
+        
         try:
             tmp_pk = int(request.POST['organizacao'])
             parceiro.organizacao = Organizacao.objects.get(pk=tmp_pk)

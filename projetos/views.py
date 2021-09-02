@@ -1643,5 +1643,11 @@ def conexoes_estabelecidas(request):
 @permission_required('users.altera_professor', login_url='/')
 def migracao(request):
     """temporário."""
-    message = "Nada Feito"
+    message = "Feito"
+
+    parceiros = Parceiro.objects.all()
+    for parceiro in parceiros:
+        parceiro.user.observacoes = parceiro.observacao
+        parceiro.user.save()
+
     return HttpResponse(message)

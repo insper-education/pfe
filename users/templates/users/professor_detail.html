@@ -34,6 +34,13 @@
   {% if professor.areas %}
     <strong>Áreas de Interesse:</strong> {{ professor.areas }}<br>
   {% endif %}
+
+  {% if professor.user.observacoes %}
+      <strong>Observações:</strong>
+      <div style="display: block; padding-left: 18px">
+      {{professor.user.observacoes|linebreaks}}
+      </div>
+  {% endif %}
   
   {% if projetos %}
     <hr>

@@ -50,14 +50,18 @@
     <select name="lingua" id="lingua" title="Linguagem">
       <option value=1 selected>Português</option>  
       <option value=2>Inglês</option>  
-    </select><br>
+    </select>
+    <br><br>
+
+    <label for="observacao">Observações:</label><br>
+    <textarea id="observacao" name="observacao" rows="4" cols="80" maxlength="500">{{usuario.observacoes}}</textarea><br>
 
     {% comment %}
     <input type="checkbox" id="membro_comite" name="membro_comite" value="True">
     <label for="membro_comite"> Membro do Comitê</label><br>  
     {% endcomment %}
 
-    <br><br>
+    <br>
 
     {% comment %} Estudante {% endcomment %}
     <div style="display: block; padding-left: 32px" class="row" data-type="estudante">
@@ -73,6 +77,10 @@
       <input type="number" id="ano" name="ano" min="2018" max="3018" value="{{usuario.aluno.anoPFE}}" required>&nbsp;&nbsp;&nbsp;
       <label for="semestre">Semestre PFE: </label> 
       <input type="number" id="semestre" name="semestre" min="1" max="2" value="{{usuario.aluno.semestrePFE}}" required>
+      
+      <br><br>
+      <input type="checkbox" id="estudante_trancado" name="estudante_trancado" value="True" {% if usuario.aluno.trancado %}checked{% endif %}>
+      <label for="estudante_trancado"> Trancado</label><br>
 
     </div>
 
@@ -109,9 +117,6 @@
       <label for="telefone">telefone:</label><input type="text" size="20" maxlength="20" id="telefone" name="telefone" value="{{usuario.parceiro.telefone}}"><br>
       <label for="celular">celular:</label><input type="text" size="20" maxlength="20" id="celular" name="celular" value="{{usuario.parceiro.celular}}"><br>
       <label for="skype">skype:</label><input type="text" size="32" maxlength="32" id="skype" name="skype" value="{{usuario.parceiro.skype}}"><br>
-
-      <label for="observacao">Observações:</label><br>
-      <textarea id="observacao" name="observacao" rows="4" cols="80" maxlength="500">{{usuario.parceiro.observacao}}</textarea><br>
 
       <input type="checkbox" id="principal_contato" name="principal_contato" value="True" {% if usuario.parceiro.principal_contato %}checked{% endif %}>
       <label for="principal_contato"> Principal Contato</label><br>
