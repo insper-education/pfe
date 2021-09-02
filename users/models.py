@@ -777,8 +777,6 @@ class Parceiro(models.Model):  # da empresa (não do Insper)
                                help_text='Telefone Celular')
     skype = models.CharField(max_length=32, blank=True,
                              help_text='Identificação Skype')
-    observacao = models.TextField("Observações", max_length=500, blank=True,
-                                  help_text='Observações')
 
     principal_contato = models.BooleanField("Principal Contato", default=False)
 
