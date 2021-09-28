@@ -6,6 +6,27 @@
 {% endcomment %}
 
 {% block head %}
+
+  <style>
+    .arrow {
+      border: solid black;
+      border-width: 0px 2px 2px 0px;
+      display: inline-block;
+      padding: 2px;
+      vertical-align: middle;
+    }
+
+    .right {
+      transform: rotate(-45deg);
+      -webkit-transform: rotate(-45deg);
+    }
+
+    #toggle {
+      display:inline-block; 
+    }
+
+  </style>
+  
 {% endblock %}
 
 {% block content %}
@@ -23,6 +44,23 @@
     }));
   </script>
 
+  <script>
+    $(document).on('click','#informacoes_tag',function(){
+      $( "#toggle" ).toggle( "slide" );
+    });
+  </script>
+
+  <span id="informacoes" style="border: 1px solid gray; border-radius: 2px; padding: 1px; margin-left: 20px;">
+    <span id="informacoes_tag">&nbsp;Informações <i class="arrow right"></i>&nbsp;</span>
+    <div id="toggle" style="display: none; height: 1em;">
+      <label><input onchange="($(this).prop('checked') ? $('.local').show() : $('.local').hide())" type="checkbox" checked /> local</label>&nbsp;&nbsp;&nbsp;
+      <label><input onchange="($(this).prop('checked') ? $('.grupo').show() : $('.grupo').hide())" type="checkbox" checked /> grupo</label>&nbsp;&nbsp;&nbsp;
+      <label><input onchange="($(this).prop('checked') ? $('.curso').show() : $('.curso').hide())" type="checkbox" checked /> curso</label>&nbsp;&nbsp;&nbsp;
+      <label><input onchange="($(this).prop('checked') ? $('.facilitador').show() : $('.facilitador').hide())" type="checkbox" checked /> facilitador</label>&nbsp;&nbsp;&nbsp;
+    </div>
+  </span>
+
+
   <div class="atualizar">
 
     {% if encontros %}
@@ -39,28 +77,36 @@
                 </a><br>
                 <b>Organização:</b> <a href="{% url 'organizacao_completo' e.projeto.organizacao.id %}">{{ e.projeto.organizacao.nome }}</a><br>
                 {% if e.facilitador %}
-                  <b>Facilitador:</b> <a href="{% url 'user_detail' e.facilitador.id %}">{{ e.facilitador.get_full_name }}</a>
-                  <a href="mailto:{{e.facilitador.email}}">&lt;{{e.facilitador.email}}&gt;</a>&nbsp;
-                  <br>
+                  <div class="facilitador" style="margin-top: 8px;">
+                    <b>Facilitador:</b> <a href="{% url 'user_detail' e.facilitador.id %}">{{ e.facilitador.get_full_name }}</a>
+                    <a href="mailto:{{e.facilitador.email}}">&lt;{{e.facilitador.email}}&gt;</a>&nbsp;
+                    <br>
+                  </div>
                 {% endif %}
                 {% if e.location %}
-                  <b>Local:</b> 
-                  {% if e.url_location %}
-                    <a href="{{e.location}}">
-                  {% endif %}
-                  {{e.location}}
-                  {% if e.url_location %}
-                    </a>
-                  {% endif %}
-                  <br>
+                  <div class="local" style="margin-top: 8px;">
+                    <b>Local:</b> 
+                    {% if e.url_location %}
+                      <a href="{{e.location}}">
+                    {% endif %}
+                    {{e.location}}
+                    {% if e.url_location %}
+                      </a>
+                    {% endif %}
+                    <br>
+                  </div>
                 {% endif %}
-                <b>Grupo:</b>
-                <ol>
-                  {% for alocacao in e.projeto.alocacao_set.all %} 
-                    <li><a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}} [{{ alocacao.aluno.get_curso_display }}]  <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>&nbsp;
-                    </a></li>
-                  {% endfor %}
-                </ol>
+                <div class="grupo" style="margin-top: 8px;">
+                  <b>Grupo:</b>
+                  <ol>
+                    {% for alocacao in e.projeto.alocacao_set.all %} 
+                      <li><a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}
+                      <span class="curso">[{{ alocacao.aluno.get_curso_display }}]</span>
+                      <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>&nbsp;
+                      </a></li>
+                    {% endfor %}
+                  </ol>
+                </div>
               {% else %}
                 Horário Livre<br><br>
               {% endif %}
