@@ -56,6 +56,27 @@
     {% endif %}
   </select>
  
+  &nbsp;&nbsp;&nbsp;
+
+  <script>
+    function tipo_banca(selectObject) {
+      var value = selectObject.value;
+      if(value == "todos") {
+        $('.item').show();
+      } else {
+        $('.item').hide();
+        $('.'+value).show();
+      }
+    }
+  </script>
+
+  <select class="esconder" id="tipo" onchange="tipo_banca(this)">
+    <option value="todos" {% if tipo == "todos" %}selected="todos"{% endif %} >todos</option>
+    <option value="Intermediária" {% if tipo == "Intermediária" %}selected{% endif %}>intermediária</option>
+    <option value="Final" {% if tipo == "Final" %}selected{% endif %}>final</option>
+    <option value="Falconi" {% if tipo == "Falconi" %}selected{% endif %}>falconi</option>
+  </select>
+
   <script>
     $(document).on('click','#informacoes_tag',function(){
       $( "#toggle" ).toggle( "slide" );
@@ -83,7 +104,7 @@
 
       <table id="BancasTable">
         {% for banca in bancas %} 
-        <tr class="item">
+        <tr class="item {{ banca.tipo_de_banca|get_banca }}">
           <td>
             {% if banca.startDate %}
               <b>Horário:</b> {{banca.startDate.date}} ({{banca.startDate|date:"l"}}) das {{banca.startDate.time}}
