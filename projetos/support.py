@@ -141,7 +141,7 @@ def calcula_objetivos(alocacoes):
 
     objetivos = ObjetivosDeAprendizagem.objects.all().order_by('id')
 
-    cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9", "#7cfa9f", "#e8c3b9", "#c45890"]
+    cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9", "#7cfa9f", "#e8c3b9", "#c45890", "#375330"]
     count = 0
     cores_obj = {}
     for objetivo in objetivos:
