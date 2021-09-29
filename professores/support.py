@@ -56,7 +56,7 @@ def editar_banca(banca, request):
     banca.save()
 
 
-def professores_membros_bancas():
+def professores_membros_bancas(banca=None):
     """Retorna potenciais usuários que podem ser membros de uma banca do PFE."""
     professores = PFEUser.objects.filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0])
 
@@ -64,10 +64,27 @@ def professores_membros_bancas():
 
     pessoas = (professores | administradores).order_by(Lower("first_name"), Lower("last_name"))
 
-    return pessoas
+    id_membros = []
+
+    if banca:
+        id_membros.append(banca.projeto.orientador.user.id) # orientador
+        if banca.membro1:
+            id_membros.append(banca.membro1.id) # membro
+        if banca.membro2:
+            id_membros.append(banca.membro2.id) # membro
+        if banca.membro3:
+            id_membros.append(banca.membro3.id) # membro
+
+    print(id_membros)
+
+    membros = pessoas.filter(pk__in=id_membros)
+
+    return pessoas, membros
+
+    
 
 
-def falconi_membros_banca():
+def falconi_membros_banca(banca=None):
     """Coleta registros de possiveis membros de banca para Falconi."""
     try:
         organizacao = Organizacao.objects.get(sigla="Falconi")
@@ -75,7 +92,20 @@ def falconi_membros_banca():
         return None
 
     falconis = PFEUser.objects.filter(parceiro__organizacao=organizacao)
-    return falconis
+
+    id_membros = []
+
+    if banca:
+        if banca.membro1:
+            id_membros.append(banca.membro1.id) # membro
+        if banca.membro2:
+            id_membros.append(banca.membro2.id) # membro
+        if banca.membro3:
+            id_membros.append(banca.membro3.id) # membro
+
+    membros = falconis.filter(pk__in=id_membros)
+
+    return falconis, membros
 
 
 def recupera_orientadores_por_semestre(configuracao):

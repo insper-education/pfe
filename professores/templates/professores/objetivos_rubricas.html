@@ -14,11 +14,12 @@
     Objetivos de Aprendizagem</h5>
   </span>
   
-  <br>
-  <h6><b>Primeira Fase (Intermediária)</b></h6>
-
   {% for objetivo in objetivos %}
-    <b>{{objetivo.titulo}}</b>: {{objetivo.objetivo}}
+    <b>{{objetivo.titulo}}</b>: {{objetivo.objetivo}}<br>
+    <b>Data Inicial</b>: {{objetivo.data_inicial}}
+    <b>Data Final</b>: {% if objetivo.data_final %}{{objetivo.data_final}}{% else %}Atual{% endif %}
+
+    <div style="margin-top: 6px;"><b><i>Primeira Fase (Intermediária)</i></b></div>
     <table style="width:100%">
       <tr>
         <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" style="width:18%">
@@ -44,15 +45,9 @@
           <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_intermediaria_B}}</label></td>
           <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_intermediaria_A}}</label></td>
       </tr>
-    </table><br>
-  {% endfor %}
+    </table>
 
-
-  <br><br>
-  <h6><b>Segunda Fase (Final)</b></h6>
-
-  {% for objetivo in objetivos %}
-    <b>{{objetivo.titulo}}</b>: {{objetivo.objetivo}}
+    <div style="margin-top: 6px;"><b><i>Segunda Fase (Final)</i></b></div>
     <table style="width:100%">
       <tr>
         <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" style="width:18%">
@@ -79,6 +74,11 @@
           <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_final_A}}</label></td>
       </tr>
     </table><br>
+
   {% endfor %}
+
+
+  
+    
 
 {% endblock %}

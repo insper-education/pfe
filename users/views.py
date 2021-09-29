@@ -8,6 +8,7 @@ Data: 15 de Maio de 2019
 
 import string
 import random
+import datetime
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
@@ -398,7 +399,20 @@ def edita_notas(request, primarykey):
     """Edita as notas do estudante."""
     alocacao = get_object_or_404(Alocacao, pk=primarykey)
 
-    objetivos = ObjetivosDeAprendizagem.objects.all().order_by("id")
+    objetivos = ObjetivosDeAprendizagem.objects.all()
+
+    if alocacao.projeto.semestre == 1:
+        mes = 3
+    else:
+        mes = 9
+
+    data_projeto = datetime.datetime(alocacao.projeto.ano, mes, 1)
+
+    objetivos = objetivos.filter(data_inicial__lt=data_projeto)
+    objetivos = objetivos.filter(data_final__gt=data_projeto) | objetivos.filter(data_final__isnull=True)
+
+    objetivos = objetivos.order_by("id")
+
 
     # (10, 'Relatório de Planejamento'),
     rpl = Avaliacao2.objects.filter(tipo_de_avaliacao=10,

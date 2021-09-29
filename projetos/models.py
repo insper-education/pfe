@@ -1011,6 +1011,7 @@ class Coorientador(models.Model):
 
 class ObjetivosDeAprendizagem(models.Model):
     """Objetidos de Aprendizagem do curso."""
+
     titulo = models.TextField(max_length=128, null=True, blank=True,
                               help_text='Título do objetivo de aprendizagem')
 
@@ -1050,6 +1051,11 @@ class ObjetivosDeAprendizagem(models.Model):
     avaliacao_falconi = models.BooleanField("Avaliação Falconi", default=False,
                                             help_text='Avaliação Falconi (AF)')
 
+    data_inicial = models.DateField("Data Inicial", null=True, blank=True,
+                                    help_text='Data Inicial de Uso')
+
+    data_final = models.DateField("Data Final", null=True, blank=True,
+                                  help_text='Data Final de Uso')
 
     def __str__(self):
         return str(self.titulo)

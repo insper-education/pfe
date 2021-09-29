@@ -118,8 +118,8 @@ def bancas_criar(request):
     projetos = Projeto.objects.filter(ano=ano, semestre=semestre)\
         .exclude(orientador=None)
 
-    professores = professores_membros_bancas()
-    falconis = falconi_membros_banca()
+    professores, _ = professores_membros_bancas()
+    falconis, _ = falconi_membros_banca()
 
     context = {
         'projetos': projetos,
@@ -153,8 +153,8 @@ def bancas_editar(request, primarykey):
     projetos = Projeto.objects.exclude(orientador=None)\
         .order_by("-ano", "-semestre")
 
-    professores = professores_membros_bancas()
-    falconis = falconi_membros_banca()
+    professores, _ = professores_membros_bancas()
+    falconis, _ = falconi_membros_banca()
 
     context = {
         'projetos': projetos,
@@ -296,13 +296,17 @@ def banca_avaliar(request, slug):
     except Banca.DoesNotExist:
         return HttpResponseNotFound('<h1>Banca não encontrada!</h1>')
 
-    # Intermediária e Final
+    objetivos = ObjetivosDeAprendizagem.objects.all()
+
+    # Só os objetivos atualmente em uso
+    hoje = datetime.date.today()
+    objetivos = objetivos.filter(data_final__gt=hoje) | objetivos.filter(data_final__isnull=True)
+
+    # Banca(Intermediária, Final) ou Falconi
     if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
-        objetivos = ObjetivosDeAprendizagem.objects\
-            .filter(avaliacao_banca=True).order_by("id")
+        objetivos = objetivos.filter(avaliacao_banca=True).order_by("id")
     elif banca.tipo_de_banca == 2:  # Falconi
-        objetivos = ObjetivosDeAprendizagem.objects\
-            .filter(avaliacao_falconi=True).order_by("id")
+        objetivos = objetivos.filter(avaliacao_falconi=True).order_by("id")
     else:
         return HttpResponseNotFound('<h1>Tipo de Banca não indentificado</h1>')
 
@@ -325,28 +329,32 @@ def banca_avaliar(request, slug):
                                                   tipo_de_avaliacao=tipo_de_avaliacao)\
                 .exists()
 
-            objetivos_possiveis = 5
+            objetivos_possiveis = len(objetivos)
             julgamento = [None]*objetivos_possiveis
-            for i in range(objetivos_possiveis):
-                if 'objetivo.{0}'.format(i+1) in request.POST:
-                    obj_nota = request.POST['objetivo.{0}'.format(i+1)]
-                    conceito = obj_nota.split('.')[1]
-                    julgamento[i] = Avaliacao2.create(projeto=banca.projeto)
-                    julgamento[i].avaliador = avaliador
+            
+            avaliacoes = dict(filter(lambda elem: elem[0][:9] == "objetivo.", request.POST.items()))
 
-                    pk_objetivo = int(obj_nota.split('.')[0])
-                    julgamento[i].objetivo = get_object_or_404(ObjetivosDeAprendizagem,
-                                                               pk=pk_objetivo)
+            for i, aval in enumerate(avaliacoes):
 
-                    julgamento[i].tipo_de_avaliacao = tipo_de_avaliacao
-                    if conceito == "NA":
-                        julgamento[i].na = True
-                    else:
-                        julgamento[i].nota = converte_conceito(conceito)
-                        julgamento[i].peso = get_peso(tipo_de_avaliacao,
-                                                      julgamento[i].objetivo)
-                        julgamento[i].na = False
-                    julgamento[i].save()
+                #obj_nota = request.POST['objetivo.{0}'.format(i+1)]
+                obj_nota = request.POST[aval]
+                conceito = obj_nota.split('.')[1]
+                julgamento[i] = Avaliacao2.create(projeto=banca.projeto)
+                julgamento[i].avaliador = avaliador
+
+                pk_objetivo = int(obj_nota.split('.')[0])
+                julgamento[i].objetivo = get_object_or_404(ObjetivosDeAprendizagem,
+                                                            pk=pk_objetivo)
+
+                julgamento[i].tipo_de_avaliacao = tipo_de_avaliacao
+                if conceito == "NA":
+                    julgamento[i].na = True
+                else:
+                    julgamento[i].nota = converte_conceito(conceito)
+                    julgamento[i].peso = get_peso(tipo_de_avaliacao,
+                                                    julgamento[i].objetivo)
+                    julgamento[i].na = False
+                julgamento[i].save()
 
             julgamento_observacoes = None
             if 'observacoes' in request.POST and request.POST['observacoes'] != "":
@@ -380,36 +388,15 @@ def banca_avaliar(request, slug):
             message += "<b>Conceitos:</b><br>\n"
             message += "<table style='border: 1px solid black; "
             message += "border-collapse:collapse; padding: 0.3em;'>"
-            if julgamento[0] and not julgamento[0].na:
-                message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
-                    format(julgamento[0].objetivo)
-                message += "<td style='border: 1px solid black; text-align:center'>"
-                message += "&nbsp;{0}&nbsp;</td>\n".\
-                    format(converte_letra(julgamento[0].nota))
-            if julgamento[1] and not julgamento[1].na:
-                message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
-                    format(julgamento[1].objetivo)
-                message += "<td style='border: 1px solid black; text-align:center'>"
-                message += "&nbsp;{0}&nbsp;</td>\n".\
-                    format(converte_letra(julgamento[1].nota))
-            if julgamento[2] and not julgamento[2].na:
-                message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
-                    format(julgamento[2].objetivo)
-                message += "<td style='border: 1px solid black; text-align:center'>"
-                message += "&nbsp;{0}&nbsp;</td>\n".\
-                    format(converte_letra(julgamento[2].nota))
-            if julgamento[3] and not julgamento[3].na:
-                message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
-                    format(julgamento[3].objetivo)
-                message += "<td style='border: 1px solid black; text-align:center'>"
-                message += "&nbsp;{0}&nbsp;</td>\n".\
-                    format(converte_letra(julgamento[3].nota))
-            if julgamento[4] and not julgamento[4].na:
-                message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
-                    format(julgamento[4].objetivo)
-                message += "<td style='border: 1px solid black; text-align:center'>"
-                message += "&nbsp;{0}&nbsp;</td>\n".\
-                    format(converte_letra(julgamento[4].nota))
+
+            for i in range(objetivos_possiveis):
+                if julgamento[i] and not julgamento[i].na:
+                    message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
+                        format(julgamento[i].objetivo)
+                    message += "<td style='border: 1px solid black; text-align:center'>"
+                    message += "&nbsp;{0}&nbsp;</td>\n".\
+                        format(converte_letra(julgamento[i].nota))
+
             message += "</table>"
 
             message += "<br>\n<br>\n"
@@ -578,7 +565,7 @@ def banca_avaliar(request, slug):
 
         # Intermediária e Final
         if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
-            pessoas = professores_membros_bancas()
+            pessoas, membros = professores_membros_bancas(banca)
             orientacoes += "Os orientadores são responsáveis por conduzir a banca. Os membros do grupo terão <b>40 minutos para a apresentação</b>. Os membros da banca terão depois <b>50 minutos para arguição</b> (que serão divididos pelos membros convidados), podendo tirar qualquer dúvida a respeito do projeto e fazerem seus comentários. Caso haja muitas interferências da banca durante a apresentação do grupo, poderá se estender o tempo de apresentação. A dinâmica de apresentação é livre, contudo, <b>todos os membros do grupo devem estar prontos para responder qualquer tipo de pergunta</b> sobre o projeto, assim um membro da banca pode fazer uma pergunta direcionada para um estudante específico do grupo se desejar. Caso o grupo demore mais que os 40 minutos a banca poderá definir uma punição em um objetivo de aprendizado, idealmente no objetivo de Comunicação."
             orientacoes += "<br><br>"
             orientacoes += "Como ordem recomendada para a arguição da banca, se deve convidar: professores convidados, professores coorientadores, orientador(a) do projeto e por fim demais pessoas assistindo à apresentação. A banca poderá perguntar tanto sobre a apresentação, como o relatório entregue, permitindo uma clara ponderação nas rubricas dos objetivos de aprendizado."
@@ -590,7 +577,7 @@ def banca_avaliar(request, slug):
 
         # Falconi
         elif banca.tipo_de_banca == 2:
-            pessoas = falconi_membros_banca()
+            pessoas, membros = falconi_membros_banca(banca)
             orientacoes += "Os membros do grupo terão <b>15 minutos para a apresentação</b>. Os consultores da Falconi terão depois outros <b>15 minutos para arguição e observações</b>, podendo tirar qualquer dúvida a respeito do projeto e fazerem seus comentários. Caso haja interferências durante a apresentação do grupo, poderá se estender o tempo de apresentação. A dinâmica de apresentação é livre, contudo, <b>todos os membros do grupo devem estar prontos para responder qualquer tipo de pergunta</b> sobre o projeto. Um consultor da Falconi pode fazer uma pergunta direcionada para um estudante específico do grupo se desejar."
             orientacoes += "<br><br>"
             orientacoes += "As apresentações para a comissão de consultores da Falconi serão usadas para avaliar os melhores projetos. Cada consultor da Falconi poderá colocar seu veredito sobre grupo, usando as rubricas a seguir. Ao final a coordenação do PFE irá fazer a média das avaliações e os projetos que atingirem os níveis de excelência pré-estabelecidos irão receber o certificado de destaque."
@@ -618,6 +605,7 @@ def banca_avaliar(request, slug):
 
         context = {
             'pessoas': pessoas,
+            'membros': membros,
             'objetivos': objetivos,
             'banca': banca,
             "orientacoes": orientacoes,
@@ -1088,8 +1076,12 @@ def todos_professores(request):
 @permission_required("users.altera_professor", login_url='/')
 def objetivos_rubricas(request):
     """Exibe os objetivos e rubricas."""
+    objetivos = ObjetivosDeAprendizagem.objects.all()
 
-    objetivos = ObjetivosDeAprendizagem.objects.all().order_by("id")
+    hoje = datetime.date.today()
+    objetivos = objetivos.filter(data_final__gt=hoje) | objetivos.filter(data_final__isnull=True)
+
+    objetivos = objetivos.order_by("id")
 
     context = {
         'objetivos': objetivos,    

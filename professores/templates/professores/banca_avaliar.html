@@ -110,19 +110,33 @@
         <br>
       {% endif %}
       
+
       <br><b><label style="margin: 0px;" for="avaliador">Avaliador(a):</label></b
       ><select name="avaliador" id="avaliador" title="Selecione avaliador da banca" required
         oninvalid="this.setCustomValidity('Selecione seu nome para o controle das avaliações')"
         oninput="this.setCustomValidity('')"
         >
           <option disabled selected value> -- selecione um avaliador -- </option>
-          {% for pessoa in pessoas %}
-            <option value="{{pessoa.id}}" {% if pessoa.id == avaliador %}selected{% endif %}>
-              {{pessoa.get_full_name}}
-            </option>   {% if projeto.id == banca.projeto.id %} selected="selected" {% endif %}
-          {% endfor %}
+
+          <optgroup label="Membros da Banca">
+            {% for pessoa in membros %}
+              <option value="{{pessoa.id}}" {% if pessoa.id == avaliador %}selected{% endif %}>
+                {{pessoa.get_full_name}}
+              </option>
+            {% endfor %}
+          </optgroup>
+
+          <optgroup label="Lista Completa">
+            {% for pessoa in pessoas %}
+              <option value="{{pessoa.id}}" {% if pessoa.id == avaliador %}selected{% endif %}>
+                {{pessoa.get_full_name}}
+              </option>
+            {% endfor %}
+          </optgroup>
+
       </select>
       <br><br>
+
 
       {% if orientacoes %}
         <h5>Orientações Gerais</h5>

@@ -124,6 +124,7 @@ dup_encontros_8x.short_description = "Duplicar Entrada(s) 8 X"
 
 class FechadoFilter(SimpleListFilter):
     """Para filtrar projetos fechados."""
+
     title = 'Projetos Fechados'
     parameter_name = ''
 
@@ -142,6 +143,7 @@ class FechadoFilter(SimpleListFilter):
 
 class EventoFilter(SimpleListFilter):
     """Para filtrar eventos por semestre."""
+
     title = 'Publico/Semestre'
     parameter_name = ''
 
@@ -173,6 +175,7 @@ class EventoFilter(SimpleListFilter):
 @admin.register(Projeto)
 class ProjetoAdmin(admin.ModelAdmin):
     """Exibição no sistema de administração do Django para Projeto."""
+
     list_display = ('organizacao', 'ano', 'semestre', 'orientador', 'get_titulo',)
     list_filter = (FechadoFilter, 'ano', 'semestre', 'avancado', 'orientador')
     fieldsets = \
@@ -195,6 +198,7 @@ class ProjetoAdmin(admin.ModelAdmin):
 @admin.register(Proposta)
 class PropostaAdmin(admin.ModelAdmin):
     """Exibição no sistema de administração do Django para Proposta."""
+
     list_display = ('titulo', 'fechada', 'nome', 'organizacao', 'ano', 'semestre', )
     list_filter = ('ano', 'semestre', )
     fieldsets = \
@@ -228,6 +232,7 @@ class PropostaAdmin(admin.ModelAdmin):
 @admin.register(Organizacao)
 class OrganizacaoAdmin(admin.ModelAdmin):
     """Definição da Organização no sistema de administração do Django."""
+
     list_display = ('sigla', 'nome', 'website')
     search_fields = ['nome',]
 
@@ -235,12 +240,14 @@ class OrganizacaoAdmin(admin.ModelAdmin):
 @admin.register(Configuracao)
 class ConfiguracaoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
+
     list_display = ('ano', 'semestre',)
 
 
 @admin.register(Disciplina)
 class DisciplinaAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
+
     list_display = ('nome',)
     ordering = ('nome',)
     search_fields = ['nome',]
@@ -249,6 +256,7 @@ class DisciplinaAdmin(admin.ModelAdmin):
 @admin.register(Anotacao)
 class AnotacaoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
+
     list_display = ('momento', 'organizacao', 'tipo_de_retorno', 'autor',)
     ordering = ('-momento',)
     search_fields = ['organizacao__nome',]
@@ -257,6 +265,7 @@ class AnotacaoAdmin(admin.ModelAdmin):
 @admin.register(Documento)
 class DocumentoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
+
     list_display = ('tipo_de_documento', 'data', 'organizacao', 'usuario', 'projeto')
     list_filter = ('tipo_de_documento', 'confidencial')
     search_fields = ['projeto__titulo', 'projeto__titulo_final',
@@ -265,6 +274,7 @@ class DocumentoAdmin(admin.ModelAdmin):
 @admin.register(Banco)
 class BancoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
+
     list_display = ('nome', 'codigo')
     ordering = ('nome',)
 
@@ -272,12 +282,14 @@ class BancoAdmin(admin.ModelAdmin):
 @admin.register(Reembolso)
 class ReembolsoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
+
     list_display = ('usuario', 'data', 'valor')
 
 
 @admin.register(Banca)
 class BancaAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
+
     list_display = ('projeto', 'get_orientador', 'get_organizacao', 'startDate', 'slug',)
     list_filter = ('tipo_de_banca', 'projeto__ano', 'projeto__semestre',)
     search_fields = ['projeto__titulo', 'projeto__organizacao__sigla',]
@@ -299,6 +311,7 @@ class BancaAdmin(admin.ModelAdmin):
 @admin.register(Aviso)
 class AvisoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
+
     list_display = ('titulo', 'tipo_de_evento', 'delta', 'realizado',)
     list_filter = ('realizado', 'coordenacao', 'comite_pfe', 'todos_alunos',
                    'todos_orientadores', 'contatos_nas_organizacoes',)
@@ -318,6 +331,7 @@ class AvisoAdmin(admin.ModelAdmin):
 @admin.register(Evento)
 class EventoAdmin(admin.ModelAdmin):
     """Todos os eventos do PFE com suas datas."""
+
     list_display = ('get_title', 'startDate', 'endDate', 'location', )
     actions = [dup_entrada, dup_event_182]
     list_filter = (EventoFilter,)
@@ -326,12 +340,14 @@ class EventoAdmin(admin.ModelAdmin):
 @admin.register(Feedback)
 class FeedbackAdmin(admin.ModelAdmin):
     """Para ser preenchido com feedbacks das organizacoes."""
+
     list_display = ('data', 'nome', 'email', 'empresa', )
 
 
 @admin.register(Conexao)
 class ConexaoAdmin(admin.ModelAdmin):
     """Conexão entre parceiro e organização."""
+
     list_display = ('parceiro', 'projeto',
                     'gestor_responsavel', 'mentor_tecnico', 'recursos_humanos', 'colaboracao')
     search_fields = ['parceiro__user__first_name', 'parceiro__user__last_name',
@@ -341,6 +357,7 @@ class ConexaoAdmin(admin.ModelAdmin):
 @admin.register(Coorientador)
 class CoorientadorAdmin(admin.ModelAdmin):
     """Conexão entre coorientador e projeto."""
+
     list_display = ('usuario', 'projeto')
     ordering = ('usuario__first_name', 'usuario__last_name',)
     search_fields = ['usuario__first_name', 'usuario__last_name',]
@@ -349,6 +366,7 @@ class CoorientadorAdmin(admin.ModelAdmin):
 @admin.register(Encontro)
 class EncontroAdmin(admin.ModelAdmin):
     """Informações dos Encontros (com os facilitadores)."""
+
     list_display = ('startDate', 'hora_fim', 'projeto', 'facilitador', )
     actions = [dup_encontros, dup_encontros_4x, dup_encontros_8x]
 
@@ -356,6 +374,7 @@ class EncontroAdmin(admin.ModelAdmin):
 @admin.register(Avaliacao2)
 class Avaliacao2Admin(admin.ModelAdmin):
     """Informações das Avaliações2."""
+
     list_display = ('momento', 'nota', 'peso', 'objetivo',
                     'tipo_de_avaliacao', 'avaliador', 'projeto', 'alocacao')
     ordering = ('momento',)
@@ -367,6 +386,7 @@ class Avaliacao2Admin(admin.ModelAdmin):
 @admin.register(Reprovacao)
 class Reprovacao(admin.ModelAdmin):
     """Informações das Reprovações."""
+
     list_display = ('alocacao', 'nota',)
     search_fields = ['alocacao__aluno__user__username',]
 
@@ -374,6 +394,7 @@ class Reprovacao(admin.ModelAdmin):
 @admin.register(Observacao)
 class ObservacaoAdmin(admin.ModelAdmin):
     """Informações das Observações."""
+
     list_display = ('momento', 'tipo_de_avaliacao', 'avaliador', 'projeto', 'alocacao')
     ordering = ('momento',)
     list_filter = ('tipo_de_avaliacao', )
@@ -382,6 +403,7 @@ class ObservacaoAdmin(admin.ModelAdmin):
 @admin.register(Recomendada)
 class RecomendadaAdmin(admin.ModelAdmin):
     """Disciplinas Recomendas para Estudentes terem cursado para aplicar na Proposta."""
+
     list_display = ('proposta', 'disciplina')
     ordering = ('proposta',)
     search_fields = ['proposta__titulo']
@@ -390,6 +412,7 @@ class RecomendadaAdmin(admin.ModelAdmin):
 @admin.register(Certificado)
 class CertificadoAdmin(admin.ModelAdmin):
     """Certificados emitidos."""
+
     list_display = ('usuario', 'projeto', 'tipo_de_certificado')
     ordering = ('data',)
     list_filter = ('tipo_de_certificado', 'data',)
@@ -400,11 +423,20 @@ class CertificadoAdmin(admin.ModelAdmin):
 @admin.register(Cursada)
 class CursadaAdmin(admin.ModelAdmin):
     """Disciplinas Cursadas."""
+
     list_display = ('disciplina', 'aluno', 'nota')
 
+
+@admin.register(ObjetivosDeAprendizagem)
+class CursadaAdmin(admin.ModelAdmin):
+    """Disciplinas Cursadas."""
+
+    list_display = ("titulo", "data_inicial", "data_final")
+    actions = [dup_entrada]
+
+
+
 admin.site.register(Entidade)       # Para ser preenchido com as entidades estudantis
-admin.site.register(ObjetivosDeAprendizagem)
 admin.site.register(Area)
 admin.site.register(AreaDeInteresse)
-
 admin.site.register(Acompanhamento)
