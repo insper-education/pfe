@@ -27,6 +27,10 @@
 
   <form method="post"> {% csrf_token %}  
 
+    <label for="titulo">Título Original:</label><br>
+    <input type="text" size="80" maxlength="160" id="titulo_original" name="titulo_original" value="{{projeto.titulo}}" disabled>
+    <br><br>
+
     <label for="titulo">Título:</label><br>
     <input type="text" size="80" maxlength="160" id="titulo" name="titulo"
     value="{% if projeto.titulo_final %}{{projeto.titulo_final}}{% else %}{{projeto.titulo}}{% endif %}">
