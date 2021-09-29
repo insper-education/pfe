@@ -59,6 +59,7 @@
             {{projeto.ano}}.{{projeto.semestre}}
             ({{projeto.organizacao}})
             {{projeto.titulo}}
+            {% if projeto.avancado %}[Avançado]{% endif %}
           </option>  
         {% endfor %}
       </select><br><br>
