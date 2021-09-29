@@ -67,12 +67,16 @@
     <div id="toggle" style="display: none; height: 1em;">
       <label><input id="logo" onchange="($(this).prop('checked') ? $('.logo').show() : $('.logo').hide())" type="checkbox" checked /> Logo</label>&nbsp;&nbsp;&nbsp;
       <label><input id="descricao" onchange="($(this).prop('checked') ? $('.descricao').show() : $('.descricao').hide())" type="checkbox" checked /> Descrição</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="apresentacoes" onchange="($(this).prop('checked') ? $('.apresentacao').show() : $('.apresentacao').hide())" type="checkbox" checked /> Apresentações</label>&nbsp;&nbsp;&nbsp;
       <label><input id="orientador" onchange="($(this).prop('checked') ? $('.orientador').show() : $('.orientador').hide())" type="checkbox" checked /> Orientador</label>&nbsp;&nbsp;&nbsp;
       <label><input id="estudantes" onchange="($(this).prop('checked') ? $('.estudantes').show() : $('.estudantes').hide())" type="checkbox" checked /> Estudantes</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="curso" onchange="($(this).prop('checked') ? $('.curso').show() : $('.curso').hide())" type="checkbox" checked /> Cursos</label>&nbsp;&nbsp;&nbsp;
       <label><input id="organizacao" onchange="($(this).prop('checked') ? $('.organizacao').show() : $('.organizacao').hide())" type="checkbox" checked /> Organização</label>&nbsp;&nbsp;&nbsp;
       <label><input id="conexoes" onchange="($(this).prop('checked') ? $('.conexoes').show() : $('.conexoes').hide())" type="checkbox" checked /> Conexões</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="papeis" onchange="($(this).prop('checked') ? $('.papeis').show() : $('.papeis').hide())" type="checkbox" checked /> Papéis</label>&nbsp;&nbsp;&nbsp;
       <label><input id="totais" onchange="($(this).prop('checked') ? $('.totais').show() : $('.totais').hide())" type="checkbox" checked /> Totais</label>&nbsp;&nbsp;&nbsp;
       <label><input id="grafico" onchange="($(this).prop('checked') ? $('.grafico').show() : $('.grafico').hide())" type="checkbox" checked /> Gráfico</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="emails" onchange="($(this).prop('checked') ? $('.emails').show() : $('.emails').hide())" type="checkbox" checked /> e-mails</label>&nbsp;&nbsp;&nbsp;
     </div>
   </span>
 
@@ -127,6 +131,18 @@
           {% endif %}
         </p>
 
+        <p class="apresentacao_organizacao apresentacao">
+          {% if projeto.proposta.descricao_organizacao %}
+            <small><b>Apresentação da Organizaçã Parceira:</b> {{projeto.proposta.descricao_organizacao}}</small><br>
+          {% endif %}
+        </p>
+
+        <p class="apresentacao_departamento apresentacao">
+          {% if projeto.proposta.departamento %}
+            <small><b>Apresentação do Departamento:</b> {{projeto.proposta.departamento}}</small><br>
+          {% endif %}
+        </p>
+
         {% if projeto.avancado or projeto.proposta.internacional %}
           <p style="margin-left:1em;">Tipo:
 
@@ -153,7 +169,7 @@
         <p class="orientador" style="margin-left:1em;"><b>Orientador:</b>
           {% if projeto.orientador %}
             <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}"> {{projeto.orientador.user.get_full_name}}</a>
-            <a href="mailto:{{projeto.orientador.user.email}}"> &lt;{{projeto.orientador.user.email}}&gt;</a>
+            <span class="emails"><a href="mailto:{{projeto.orientador.user.email}}"> &lt;{{projeto.orientador.user.email}}&gt;</a></span>
           {% else %}
             Não definido
           {% endif %}
@@ -170,9 +186,9 @@
                 opção #{{prioridade}}
               {% endif %}">
                 {{aluno.user.get_full_name}}
-                [{{ aluno.get_curso_display }}]
+                <span class="curso">[{{ aluno.get_curso_display }}]</span>
               </a>
-              <a href="mailto:{{aluno.user.email}}">&lt;{{aluno.user.email}}&gt;</a>
+              <span class="emails"><a href="mailto:{{aluno.user.email}}">&lt;{{aluno.user.email}}&gt;</a></span>
               <div class="prioridade" style="display: none;">{{prioridade}}</div> <!-- para mostrar no gráfico -->
               <!-- &nbsp; { {{ aluno.alocacao_set.first.get_conceito_display }} } -->
           </li>
@@ -199,7 +215,7 @@
           {% if conexao.parceiro.user.is_active %}
             <a class="imprimir" href="{% url 'parceiro_detail' conexao.parceiro.id %}">
               {{ conexao.parceiro.user.get_full_name }}
-              <span>
+              <span class="papeis">
                 {% if conexao.gestor_responsavel %}
                   [gestor responsavel]
                 {% endif %}
@@ -217,7 +233,7 @@
                 {% endif %}
               </span>
             </a>
-            <a href="mailto:{{conexao.parceiro.user.email}}"> &lt;{{conexao.parceiro.user.email}}&gt;</a>
+            <span class="emails"><a href="mailto:{{conexao.parceiro.user.email}}"> &lt;{{conexao.parceiro.user.email}}&gt;</a></span>
           {% else %}
             <a class="imprimir" href="{% url 'parceiro_detail' conexao.parceiro.id %}" style="color: LightBlue;">
               {{ conexao.parceiro.user.get_full_name }}
@@ -239,7 +255,7 @@
               {% endif %}
               </span>
             </a>
-            <a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;"> &lt;{{conexao.parceiro.user.email}}&gt;</a>
+            <span class="emails"><a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;"> &lt;{{conexao.parceiro.user.email}}&gt;</a></span>
             <br>
           {% endif %}
           </li>

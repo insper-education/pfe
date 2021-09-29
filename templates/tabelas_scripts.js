@@ -69,7 +69,7 @@ var table = $('#{{tabela}}Table').DataTable( {
             title: 'Projeto Final de Engenharia',
             orientation: 'landscape',
             pageSize: 'A4',
-            text: '<spam class="fa fa-file-pdf-o">PDF</spam>',
+            text: '<span class="fa fa-file-pdf-o">PDF</span>',
         } ),
         
         'colvis'
