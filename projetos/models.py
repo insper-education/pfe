@@ -993,6 +993,7 @@ class Conexao(models.Model):
 
 class Coorientador(models.Model):
     """Controla lista de coorientadores por projeto."""
+
     usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='coorientador de um projeto')
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,

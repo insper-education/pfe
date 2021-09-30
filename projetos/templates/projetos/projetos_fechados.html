@@ -166,7 +166,7 @@
         </p>
 
         <!-- <p style="margin-left:1em;">Edição: {{projeto.ano}}.{{projeto.semestre}}</p> -->
-        <p class="orientador" style="margin-left:1em;"><b>Orientador:</b>
+        <p class="orientador" style="margin-left:1em;"><b>Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
           {% if projeto.orientador %}
             <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}"> {{projeto.orientador.user.get_full_name}}</a>
             <span class="emails"><a href="mailto:{{projeto.orientador.user.email}}"> &lt;{{projeto.orientador.user.email}}&gt;</a></span>
@@ -174,7 +174,19 @@
             Não definido
           {% endif %}
         </p>
-        
+
+        {% with coorientadores=projeto.coorientador_set.all %}
+          {% if coorientadores %}
+            {% for coorientador in coorientadores %}
+              <p class="coorientador" style="margin-left:1em;"><b>Coorientador{% if coorientador.usuario.genero == 'F' %}a{% endif %}:</b>
+              <a class="imprimir" href="{% url 'professor_detail' coorientador.usuario.professor.id %}">
+                {{ coorientador.usuario.get_full_name }}
+              </a>
+              <span class="emails"><a href="mailto:{{coorientador.usuario.email}}"> &lt;{{coorientador.usuario.email}}&gt;</a></span>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
         <p class="estudantes" style="margin-left:1em;"><b>Estudantes:</b></p>
         <ol class="estudantes" style="margin-bottom:5px;">
         {% for aluno,prioridade in prioridades %}

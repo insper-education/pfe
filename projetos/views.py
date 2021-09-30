@@ -1459,6 +1459,13 @@ def editar_projeto(request, primarykey):
             orientador = get_object_or_404(Professor, pk=orientador_id)
             projeto.orientador = orientador
 
+        coorientador_id = request.POST.get('coorientador', None)
+        if coorientador_id:
+            coorientador = get_object_or_404(PFEUser, pk=coorientador_id)
+            (reg, _created) = Coorientador.objects.get_or_create(projeto=projeto)
+            reg.usuario = coorientador
+            reg.save()
+
         alocacoes = Alocacao.objects.filter(projeto=projeto).delete()
 
         estudante_id = request.POST.get('estudante1', None)
@@ -1496,11 +1503,14 @@ def editar_projeto(request, primarykey):
 
     estudantes = Aluno.objects.all()
 
+    coorientadores = Coorientador.objects.filter(projeto=projeto)
+
     context = {
         "projeto": projeto,
         "professores": professores,
         "alocacoes": alocacoes,
         "estudantes": estudantes,
+        "coorientadores": coorientadores,
     }
     return render(request, 'projetos/editar_projeto.html', context)
 

@@ -66,8 +66,20 @@
         </optgroup>
 
     </select>
+    <br>
 
+    <label for="coorientador"><small>Coorientador(a)</small></label></b>:
+    <select class="selectpicker show-tick" name="coorientador" id="coorientador" title="Selecione coorientador do projeto"
+    data-width="560px">
+        <option selected value> -- selecione um coorientador(a) -- </option>
+        {% for professor in professores %}
+          <option value="{{professor.user.id}}" {% if professor.user.id == coorientadores.last.usuario.id %}selected{% endif %}>
+            {{professor.user.get_full_name}}
+          </option>  
+        {% endfor %}
+    </select>
     <br><br>
+
     Grupo:<br>
     {% for membro in '0123'|make_list %}
       {% with alocacao=alocacoes|index:forloop.counter0 %}
