@@ -401,7 +401,7 @@ def registro_usuario(request, user=None):
         parceiro.cargo = request.POST.get('cargo', None)
         parceiro.telefone = request.POST.get('telefone', None)
         parceiro.celular = request.POST.get('celular', None)
-        parceiro.skype = request.POST.get('skype', None)
+        parceiro.instant_messaging = request.POST.get('instant_messaging', None)
         
         try:
             tmp_pk = int(request.POST['organizacao'])

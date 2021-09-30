@@ -63,11 +63,18 @@
   {% endif %}
   <strong>e-mail:</strong> <a href="mailto:{{parceiro.user.email}}"> &lt;{{parceiro.user.email}}&gt;</a><br>
   &nbsp;
-  {% if parceiro.telefone %}&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; {{parceiro.telefone}} &nbsp;<br>{% endif %}
-  {% if parceiro.celular %}&nbsp;&nbsp;&nbsp;&nbsp;&#x1F4F1; {{parceiro.celular}} &nbsp;<br>{% endif %}
+  {% if parceiro.telefone %}&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; 
+    <a href="tel:{{parceiro.telefone}}">{{parceiro.telefone}}</a>&nbsp;<br>
+  {% endif %}
+
+  {% if parceiro.celular %}&nbsp;&nbsp;&nbsp;&nbsp;&#x1F4F1;
+    <a href="tel:{{parceiro.celular}}">{{parceiro.celular}}</a>&nbsp;
+    <a href="https://wa.me/{{parceiro.celular|cut:' '}}"><img src="{% static 'images/whatsapp.svg' %}" alt="whatsapp" style="width:16px;height:16px;"></a>
+    <br>
+  {% endif %}
   
-  {% if parceiro.skype %}&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="skype" style="width:16px;height:16px;">
-    <a href="skype:{{parceiro.skype}}">{{parceiro.skype}}</a>&nbsp;<br>
+  {% if parceiro.instant_messaging %}&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="instant_messaging" style="width:16px;height:16px;">
+    {% comment %} <a href="instant_messaging:{{parceiro.instant_messaging}}">{% endcomment %}{{parceiro.instant_messaging}}{% comment %}</a>{% endcomment %}&nbsp;<br> 
   {% endif %}
   <p>&nbsp;</p>
 
