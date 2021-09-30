@@ -13,7 +13,14 @@
 
 {% block content %}
   
-  <span class="titulo">Professores</span>
+  <span class="titulo">Professores
+    <a
+      href="{% url 'cadastrar_usuario' %}?tipo=professor"
+      >&#10133;</a>
+  </span>
+
+
+
 
   {% if professores %}
   <div class="table-responsive">

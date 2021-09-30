@@ -12,7 +12,10 @@
 
 {% block content %}
 
-  <span class="titulo">Organizações Parceiras</span>
+  <span class="titulo">Organizações Parceiras<a
+      href="{% url 'cadastrar_organizacao' %}"
+      >&#10133;</a>
+  </span>
 
   {% if organizacoes_list %}
     <div class="table-responsive">

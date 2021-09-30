@@ -466,6 +466,11 @@ def cadastrar_usuario(request):
                 except (ValueError, Organizacao.DoesNotExist):
                     return HttpResponseNotFound('<h1>Organização não encontrado!</h1>')
                 context["organizacao_selecionada"] = organizacao_selecionada
+
+        elif tipo == "professor":
+            pass
+        elif tipo == "estudante":
+            pass
         else:
             return HttpResponseNotFound('<h1>Tipo não reconhecido!</h1>')
         context["tipo"] = tipo

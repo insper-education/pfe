@@ -18,7 +18,13 @@
 
 {% block content %}
   
-  <span class="titulo">Estudantes</span>
+  <span class="titulo">Estudantes
+    <a
+      href="{% url 'cadastrar_usuario' %}?tipo=estudante"
+      >&#10133;</a>
+  </span>
+
+
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% with com_cursos=True %}
