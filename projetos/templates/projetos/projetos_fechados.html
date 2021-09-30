@@ -72,6 +72,7 @@
       <label><input id="estudantes" onchange="($(this).prop('checked') ? $('.estudantes').show() : $('.estudantes').hide())" type="checkbox" checked /> Estudantes</label>&nbsp;&nbsp;&nbsp;
       <label><input id="curso" onchange="($(this).prop('checked') ? $('.curso').show() : $('.curso').hide())" type="checkbox" checked /> Cursos</label>&nbsp;&nbsp;&nbsp;
       <label><input id="organizacao" onchange="($(this).prop('checked') ? $('.organizacao').show() : $('.organizacao').hide())" type="checkbox" checked /> Organização</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="website" onchange="($(this).prop('checked') ? $('.website').show() : $('.website').hide())" type="checkbox" checked /> Website</label>&nbsp;&nbsp;&nbsp;
       <label><input id="conexoes" onchange="($(this).prop('checked') ? $('.conexoes').show() : $('.conexoes').hide())" type="checkbox" checked /> Conexões</label>&nbsp;&nbsp;&nbsp;
       <label><input id="papeis" onchange="($(this).prop('checked') ? $('.papeis').show() : $('.papeis').hide())" type="checkbox" checked /> Papéis</label>&nbsp;&nbsp;&nbsp;
       <label><input id="totais" onchange="($(this).prop('checked') ? $('.totais').show() : $('.totais').hide())" type="checkbox" checked /> Totais</label>&nbsp;&nbsp;&nbsp;
@@ -209,14 +210,23 @@
 
         <p class="organizacao" style="margin-left:1em;"><b>Organização:</b>
           <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-            {{ projeto.organizacao.nome }}
-          </a>
+            {{ projeto.organizacao.nome }}</a>
+            {% if projeto.organizacao.website %}
+              <span class="website">
+                (<a href="{{projeto.organizacao.website}}"
+                    >{{ projeto.organizacao.website }}</a>)
+              </span>
+            {% endif %}
           {% for cooperacao in cooperacoes %}
             {% if cooperacao.parceiro and cooperacao.parceiro.organizacao %}
               &nbsp;&nbsp;&nbsp;&nbsp;colaboração:
               <a href="{% url 'organizacao_completo' cooperacao.parceiro.organizacao.id %}">
-                {{ cooperacao.parceiro.organizacao.nome }}
-              </a>
+                {{ cooperacao.parceiro.organizacao.nome }}</a>
+                {% if cooperacao.parceiro.organizacao.website %}
+                  <span class="website">
+                  (<a href="{{cooperacao.parceiro.organizacao.website}}"
+                    >{{ cooperacao.parceiro.organizacao.website }}</a>)
+                {% endif %}
             {% endif %}
           {% endfor %}
         </p>
