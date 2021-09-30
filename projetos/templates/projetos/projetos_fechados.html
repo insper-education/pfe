@@ -78,6 +78,7 @@
       <label><input id="totais" onchange="($(this).prop('checked') ? $('.totais').show() : $('.totais').hide())" type="checkbox" checked /> Totais</label>&nbsp;&nbsp;&nbsp;
       <label><input id="grafico" onchange="($(this).prop('checked') ? $('.grafico').show() : $('.grafico').hide())" type="checkbox" checked /> Gráfico</label>&nbsp;&nbsp;&nbsp;
       <label><input id="emails" onchange="($(this).prop('checked') ? $('.emails').show() : $('.emails').hide())" type="checkbox" checked /> e-mails</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="emails" onchange="($(this).prop('checked') ? $('.avancado').show() : $('.avancado').hide())" type="checkbox" checked /> Avancados</label>&nbsp;&nbsp;&nbsp;
     </div>
   </span>
 
@@ -94,9 +95,12 @@
     
     {% if projetos %}
       <table id="projetos">
-      {% for projeto, prioridades, cooperacoes, conexoes in projetos %} 
-        <tr id="two" class="row" data-type="{{projeto.ano}}.{{projeto.semestre}}">
+      {% for projeto, prioridades, cooperacoes, conexoes in projetos %}
+        <tr id="two" class="row {% if projeto.avancado %}avancado{% endif %}" data-type="{{projeto.ano}}.{{projeto.semestre}}">
         <td id="ptd" style="margin-bottom:3em;">
+        {% if projeto.avancado %}
+          <br><br>
+        {% endif %}
         <span class="logo">
           {% if projeto.organizacao.logotipo %}
             <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
@@ -290,11 +294,25 @@
 
       <hr>
       <div class="totais">
-        <b>Total de projetos = <span id="myCountProj">{{ numero_projetos }}</span> </b> <br>
-        <b>Total de estudantes = <span id="myCountAlun">{{ numero_estudantes }}</span> </b> <br>    
-        <br><br>
+        <b>Total de projetos = 
+        <span class="avancado">{{ numero_projetos|add:numero_projetos_avancado }}</span>
+        </b>
+        <span class="avancado">[</span>
+        {{ numero_projetos }}
+        <span class="avancado">regular(es) + {{ numero_projetos_avancado }} avançado(s) ]</span>
+        <br>
+
+        <b>Total de estudantes =
+        <span class="avancado">{{ numero_estudantes|add:numero_estudantes_avancado}}</span>
+        </b>
+        <span class="avancado">[</span>
+        {{ numero_estudantes }}
+        <span class="avancado"> regular(es) + {{ numero_estudantes_avancado }} avançado(s) ]</span>
+        <br>
+
       </div>
 
+      <br>
       <div class="grafico" id="canvas-holder">
         <canvas id="chart-area"></canvas>
       </div>

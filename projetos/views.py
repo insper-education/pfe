@@ -251,17 +251,30 @@ def projetos_fechados(request):
                 projetos_filtrados = Projeto.objects.filter(ano=ano,
                                                             semestre=semestre)
 
+            projetos_filtrados = projetos_filtrados.order_by("-avancado", "organizacao")
+
             projetos_selecionados = []
             prioridade_list = []
             cooperacoes = []
             conexoes = []
+
             numero_estudantes = 0
+            numero_estudantes_avancado = 0
+
+            numero_projetos = 0
+            numero_projetos_avancado = 0
 
             for projeto in projetos_filtrados:
                 estudantes_pfe = Aluno.objects.filter(alocacao__projeto=projeto)
                 if estudantes_pfe:  # len(estudantes_pfe) > 0:
                     projetos_selecionados.append(projeto)
-                    numero_estudantes += len(estudantes_pfe)
+                    if projeto.avancado:
+                        numero_estudantes_avancado += len(estudantes_pfe)
+                        numero_projetos_avancado += 1
+                    else:
+                        numero_estudantes += len(estudantes_pfe)
+                        numero_projetos += 1
+
                     prioridades = []
                     for estudante in estudantes_pfe:
                         opcoes = Opcao.objects.filter(proposta=projeto.proposta)
@@ -283,8 +296,10 @@ def projetos_fechados(request):
 
             context = {
                 'projetos': projetos,
-                'numero_projetos': len(projetos_selecionados),
+                'numero_projetos': numero_projetos,
+                'numero_projetos_avancado': numero_projetos_avancado,
                 'numero_estudantes': numero_estudantes,
+                'numero_estudantes_avancado': numero_estudantes_avancado,
             }
 
         else:
