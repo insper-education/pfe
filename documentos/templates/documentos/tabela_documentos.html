@@ -14,16 +14,58 @@
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
 
+  <style>
+    .arrow {
+      border: solid black;
+      border-width: 0px 2px 2px 0px;
+      display: inline-block;
+      padding: 2px;
+      vertical-align: middle;
+    }
+
+    .right {
+      transform: rotate(-45deg);
+      -webkit-transform: rotate(-45deg);
+    }
+
+    #toggle {
+      display:inline-block; 
+    }
+
+  </style>
+
+
 {% endblock %}
 
 {% block content %}
 
   <span class="titulo">Documentação dos Projetos</span>
 
+  <script>
+    $(document).on('click','#informacoes_tag',function(){
+      $( "#toggle" ).toggle( "slide" );
+    });
+  </script>
+  
+  <span id="informacoes" style="border: 1px solid gray; border-radius: 2px; padding: 1px; margin-left: 20px;">
+    <span id="informacoes_tag">&nbsp;Informações <i class="arrow right"></i>&nbsp;</span>
+    <div id="toggle" style="display: none; height: 1em;">
+      <label><input id="organizacao" onchange="($(this).prop('checked') ? $('#ProjetosTable tr > *:nth-child(2)').show() : $('#ProjetosTable tr > *:nth-child(2)').hide())" type="checkbox" checked /> Estudantes</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="orientador" onchange="($(this).prop('checked') ? $('#ProjetosTable tr > *:nth-child(3)').show() : $('#ProjetosTable tr > *:nth-child(3)').hide())" type="checkbox" checked /> Orientador</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="documentos" onchange="($(this).prop('checked') ? $('#ProjetosTable tr > *:nth-child(4)').show() : $('#ProjetosTable tr > *:nth-child(4)').hide())" type="checkbox" checked /> Período</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="documentos" onchange="($(this).prop('checked') ? $('#ProjetosTable tr > *:nth-child(5)').show() : $('#ProjetosTable tr > *:nth-child(5)').hide())" type="checkbox" checked /> Organização</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="documentos" onchange="($(this).prop('checked') ? $('#ProjetosTable tr > *:nth-child(6)').show() : $('#ProjetosTable tr > *:nth-child(6)').hide())" type="checkbox" checked /> Documentos</label>&nbsp;&nbsp;&nbsp;
+    </div>
+  </span>
+
+  <br><br>
+
   {% if projetos %}
     <table id="ProjetosTable">
       <tr>
         <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Projeto</th>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Estudantes</th>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Orientador</th>
         <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Período</th>
         <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Organização</th>
         <th class="text-center">Documentos</th>
@@ -55,15 +97,50 @@
                 {% endif %}
               </a>
             </td>
+            
+
+            <!-- Estudantes -->
+            <td style="min-width:18em;">
+              <small>
+              <ul class="grupo" style="padding-left: 20px;margin-bottom: 0px;">
+                {% for alocacao in projeto.alocacao_set.all %}
+                  <li>
+                    <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">
+                      {{alocacao.aluno}}
+                    </a>
+                    <span class="curso">
+                      [{{ alocacao.aluno.get_curso_display }}]
+                    </span>
+                  </li>
+                {% endfor %}
+              </ul>
+              </small>
+            </td>
+
+            <!-- Orientador -->
+            <td>
+              {% if projeto.orientador %}
+                <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}">
+                  {{ projeto.orientador }}
+                </a>
+              {% else %}
+                Orientador não definido
+              {% endif %}
+            </td>
+
+            <!-- Período -->
             <td style="text-align:center">
                 {{projeto.ano}}.{{projeto.semestre}}
             </td>
+
+            <!-- Organização -->
             <td>
               <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
                 {{ projeto.organizacao.nome }}
               </a>
             </td>
             
+            <!-- Documentos -->
             <td  style="text-align:left;min-width:18em;"><small>
 
       <ul style="padding-left: 20px;margin-bottom: 0px;">
