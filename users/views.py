@@ -8,7 +8,6 @@ Data: 15 de Maio de 2019
 
 import string
 import random
-import datetime
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
@@ -19,11 +18,11 @@ from django.urls import reverse_lazy
 from django.utils import html
 from django.views import generic
 
-from projetos.models import Certificado, Configuracao, Projeto, Conexao, ObjetivosDeAprendizagem
+from projetos.models import Certificado, Configuracao, Projeto, Conexao
 from projetos.models import Banca, Area, Coorientador, Avaliacao2, Observacao, Reprovacao
 
 from projetos.messages import email
-from projetos.support import calcula_objetivos
+from projetos.support import get_objetivos_alocacao, calcula_objetivos
 
 from .forms import PFEUserCreationForm
 from .models import PFEUser, Aluno, Professor, Parceiro, Opcao, Administrador
@@ -399,20 +398,7 @@ def edita_notas(request, primarykey):
     """Edita as notas do estudante."""
     alocacao = get_object_or_404(Alocacao, pk=primarykey)
 
-    objetivos = ObjetivosDeAprendizagem.objects.all()
-
-    if alocacao.projeto.semestre == 1:
-        mes = 3
-    else:
-        mes = 9
-
-    data_projeto = datetime.datetime(alocacao.projeto.ano, mes, 1)
-
-    objetivos = objetivos.filter(data_inicial__lt=data_projeto)
-    objetivos = objetivos.filter(data_final__gt=data_projeto) | objetivos.filter(data_final__isnull=True)
-
-    objetivos = objetivos.order_by("id")
-
+    objetivos = get_objetivos_alocacao(alocacao)
 
     # (10, 'Relatório de Planejamento'),
     rpl = Avaliacao2.objects.filter(tipo_de_avaliacao=10,
@@ -963,10 +949,6 @@ def estudante_detail(request, primarykey):
 def professor_detail(request, primarykey):
     """Mostra detalhes sobre o professor."""
     professor = get_object_or_404(Professor, pk=primarykey)
-    # try:
-    #     professor = Professor.objects.get(pk=primarykey)
-    # except Professor.DoesNotExist:
-    #     return HttpResponse("Professor não encontrado.", status=401)
 
     projetos = Projeto.objects.filter(orientador=professor)\
         .order_by("ano", "semestre", "titulo")

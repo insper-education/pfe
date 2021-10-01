@@ -96,29 +96,7 @@ class DisciplinasResource(resources.ModelResource):
 
 def recupera_objetivo(objetivo_str):
     """Recupera o objeto ObjetivoDeAprendizagem pelo nome."""
-    if objetivo_str in ("Comunicação", "Comunicacao", "CO"):
-        objetivo = ObjetivosDeAprendizagem.objects.get(titulo="Comunicação",
-                                                       avaliacao_grupo=True)
-
-    elif objetivo_str in ("Design/Empreendedorismo", "Design e Empreendedorismo", "DE"):
-        objetivo = ObjetivosDeAprendizagem.objects.get(titulo="Design/Empreendedorismo",
-                                                       avaliacao_grupo=True)
-
-    elif objetivo_str in ("Trabalho em Equipe", "TW"):
-        objetivo = ObjetivosDeAprendizagem.objects.get(titulo="Trabalho em Equipe",
-                                                       avaliacao_grupo=True)
-
-    elif objetivo_str in ("Organização", "Organizacao", "OR"):
-        objetivo = ObjetivosDeAprendizagem.objects.get(titulo="Organização",
-                                                       avaliacao_grupo=True)
-
-    elif objetivo_str in ("Execução Técnica", "Execucao Tecnica", "TK"):
-        objetivo = ObjetivosDeAprendizagem.objects.get(titulo="Execução Técnica",
-                                                       avaliacao_grupo=True)
-
-    else:
-        return "ERROR"
-
+    objetivo = ObjetivosDeAprendizagem.objects.get(titulo=objetivo_str)
     return objetivo
 
 

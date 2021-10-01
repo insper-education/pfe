@@ -25,8 +25,8 @@ from users.support import get_edicoes
 from projetos.models import ObjetivosDeAprendizagem, Avaliacao2, Observacao
 from projetos.models import Banca, Evento, Encontro
 from projetos.models import Projeto, Configuracao, Organizacao
-from projetos.support import get_peso
 from projetos.support import converte_letra, converte_conceito
+from projetos.support import get_objetivos_atuais
 from projetos.messages import email
 
 from .support import professores_membros_bancas, falconi_membros_banca
@@ -296,11 +296,7 @@ def banca_avaliar(request, slug):
     except Banca.DoesNotExist:
         return HttpResponseNotFound('<h1>Banca não encontrada!</h1>')
 
-    objetivos = ObjetivosDeAprendizagem.objects.all()
-
-    # Só os objetivos atualmente em uso
-    hoje = datetime.date.today()
-    objetivos = objetivos.filter(data_final__gt=hoje) | objetivos.filter(data_final__isnull=True)
+    objetivos = get_objetivos_atuais()
 
     # Banca(Intermediária, Final) ou Falconi
     if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
@@ -336,7 +332,6 @@ def banca_avaliar(request, slug):
 
             for i, aval in enumerate(avaliacoes):
 
-                #obj_nota = request.POST['objetivo.{0}'.format(i+1)]
                 obj_nota = request.POST[aval]
                 conceito = obj_nota.split('.')[1]
                 julgamento[i] = Avaliacao2.create(projeto=banca.projeto)
@@ -351,8 +346,14 @@ def banca_avaliar(request, slug):
                     julgamento[i].na = True
                 else:
                     julgamento[i].nota = converte_conceito(conceito)
-                    julgamento[i].peso = get_peso(tipo_de_avaliacao,
-                                                    julgamento[i].objetivo)
+
+                    if tipo_de_avaliacao == 1:  # (1, 'intermediaria')        
+                        julgamento[i].peso = julgamento[i].objetivo.peso_banca_intermediaria
+                    elif tipo_de_avaliacao == 2:  # ( 2, 'Banca Final'),
+                        julgamento[i].peso = julgamento[i].objetivo.peso_banca_intermediaria
+                    elif tipo_de_avaliacao == 99:  # ( 99, 'Banca Falconi'),
+                        julgamento[i].peso = julgamento[i].objetivo.peso_banca_falconi
+
                     julgamento[i].na = False
                 julgamento[i].save()
 
@@ -1076,15 +1077,10 @@ def todos_professores(request):
 @permission_required("users.altera_professor", login_url='/')
 def objetivos_rubricas(request):
     """Exibe os objetivos e rubricas."""
-    objetivos = ObjetivosDeAprendizagem.objects.all()
-
-    hoje = datetime.date.today()
-    objetivos = objetivos.filter(data_final__gt=hoje) | objetivos.filter(data_final__isnull=True)
-
-    objetivos = objetivos.order_by("id")
+    objetivos = get_objetivos_atuais()
 
     context = {
-        'objetivos': objetivos,    
+        'objetivos': objetivos, 
     }
 
     return render(request, 'professores/objetivos_rubricas.html', context)

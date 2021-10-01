@@ -574,13 +574,14 @@ class Aluno(models.Model):
 
         return alocacoes
 
-    @property
-    def get_peso(self):
-        """Retorna soma dos pesos das notas."""
-        peso_final = 0
-        for _, _, peso, _ in self.get_notas:
-            peso_final += peso
-        return peso_final
+    # APARENTEMENTE NÃO MAIS SENDO USADO
+    # @property
+    # def get_peso(self):
+    #     """Retorna soma dos pesos das notas."""
+    #     peso_final = 0
+    #     for _, _, peso, _ in self.get_notas:
+    #         peso_final += peso
+    #     return peso_final
 
     class Meta:
         """Meta para Aluno."""

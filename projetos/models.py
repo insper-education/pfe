@@ -1058,6 +1058,27 @@ class ObjetivosDeAprendizagem(models.Model):
     data_final = models.DateField("Data Final", null=True, blank=True,
                                   help_text='Data Final de Uso')
 
+    peso_intermediario_individual = models.FloatField(default=0,
+                                                      help_text='peso intermediário individual)')
+
+    peso_intermediario_grupo = models.FloatField(default=0,
+                                                 help_text='peso intermediário grupo)')
+
+    peso_final_individual = models.FloatField(default=0,
+                                              help_text='peso final individual)')
+
+    peso_final_grupo = models.FloatField(default=0,
+                                         help_text='peso final grupo)')
+
+    peso_banca_intermediaria = models.FloatField(default=0,
+                                                 help_text='peso para banca intermediária)')
+
+    peso_banca_final = models.FloatField(default=0,
+                                         help_text='peso para banca final)')
+
+    peso_banca_falconi = models.FloatField(default=0,
+                                           help_text='peso para banca falconi)')
+
     def __str__(self):
         return str(self.titulo)
 
@@ -1082,6 +1103,7 @@ TIPO_DE_AVALIACAO = ( # não mudar a ordem dos números
     (54, 'Avaliação Final de Grupo'),       # usado até 2019.1
     (99, 'Falconi'),
 )
+
 
 class Avaliacao2(models.Model):
     """Avaliações realizadas durante o projeto."""

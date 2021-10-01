@@ -6,9 +6,11 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Dezembro de 2020
 """
 
+import datetime
+
 from django.core.files.storage import FileSystemStorage
 from django.utils import text
-from .models import ObjetivosDeAprendizagem
+from .models import Avaliacao2, ObjetivosDeAprendizagem
 
 from .models import Area, AreaDeInteresse
 
@@ -104,26 +106,34 @@ def get_areas_propostas(propostas):
 
 
 # ISSO TEM DE VIRAR UM PARÂMETRO DE INTERFACE NO FUTURO ####
-def get_peso(banca, objetivo):
-    """Calcula peso nas notas da banca em função do objetivo de aprendizado."""
-    if banca == 1:  # (1, 'intermediaria')
-        if objetivo.titulo == "Execução Técnica":
-            return 4.8
-        if objetivo.titulo == "Organização":
-            return 3.6
-        if objetivo.titulo == "Design/Empreendedorismo":
-            return 3.6
-    elif banca == 2:  # ( 2, 'Banca Final'),
-        if objetivo.titulo == "Execução Técnica":
-            return 7.2
-        if objetivo.titulo == "Organização":
-            return 5.4
-        if objetivo.titulo == "Design/Empreendedorismo":
-            return 5.4
-    elif banca == 99:  # ( 99, 'Banca Falconi'),
-        return 0
+# def get_peso(banca, objetivo):
+#     """Calcula peso nas notas da banca em função do objetivo de aprendizado."""
+#     if banca == 1:  # (1, 'intermediaria')
+#         if objetivo.titulo == "Execução Técnica":
+#             return 4.8
+#         if objetivo.titulo == "Organização":
+#             return 3.6
+#         if objetivo.titulo == "Design/Empreendedorismo":
+#             return 3.6
+#     elif banca == 2:  # ( 2, 'Banca Final'),
+#         if objetivo.titulo == "Execução Técnica":
+#             return 7.2
+#         if objetivo.titulo == "Organização":
+#             return 5.4
+#         if objetivo.titulo == "Design/Empreendedorismo":
+#             return 5.4
+#     elif banca == 99:  # ( 99, 'Banca Falconi'),
+#         return 0
 
-    return 0  # Algum erro aconteceu
+#     return 0  # Algum erro aconteceu
+
+# Substituir por:
+# if tipo_de_avaliacao == 1:  # (1, 'intermediaria')        
+#                         julgamento[i].peso = julgamento[i].objetivo.peso_banca_intermediaria
+#                     elif tipo_de_avaliacao == 2:  # ( 2, 'Banca Final'),
+#                         julgamento[i].peso = julgamento[i].objetivo.peso_banca_intermediaria
+#                     elif tipo_de_avaliacao == 99:  # ( 99, 'Banca Falconi'),
+#                         julgamento[i].peso = julgamento[i].objetivo.peso_banca_falconi
 
 
 # Faz o upload de arquivos
@@ -137,16 +147,54 @@ def simple_upload(myfile, path="", prefix=""):
     return uploaded_file_url
 
 
+def get_objetivos_atuais():
+    objetivos = ObjetivosDeAprendizagem.objects.all()
+
+    # Só os objetivos atualmente em uso
+    hoje = datetime.date.today()
+    objetivos = objetivos.filter(data_final__gt=hoje) | objetivos.filter(data_final__isnull=True)
+
+    objetivos = objetivos.order_by("id")
+
+    return objetivos
+
+def get_objetivos_alocacao(alocacao):
+    """Retorna todos objetivos de aprendizado da época de uma alocação."""
+    objetivos = ObjetivosDeAprendizagem.objects.all()
+
+    if alocacao.projeto.semestre == 1:
+        mes = 3
+    else:
+        mes = 9
+
+    data_projeto = datetime.datetime(alocacao.projeto.ano, mes, 1)
+
+    objetivos = objetivos.filter(data_inicial__lt=data_projeto)
+    objetivos = objetivos.filter(data_final__gt=data_projeto) | objetivos.filter(data_final__isnull=True)
+
+    objetivos = objetivos.order_by("id")
+
+    return objetivos
+
+
+def get_objetivos_alocacoes(alocacoes):
+    """Verifica todos os objetivos de aprendizado de várias alocações."""
+    objetivos = None
+
+    if len(alocacoes) > 0:
+        objetivos = get_objetivos_alocacao(alocacoes[0])
+
+        for alocacao in alocacoes[1:]:
+            objetivos = objetivos | get_objetivos_alocacao(alocacao)
+
+        objetivos = objetivos.order_by("id")
+
+    return objetivos
+
+
 def calcula_objetivos(alocacoes):
-
-    objetivos = ObjetivosDeAprendizagem.objects.all().order_by('id')
-
-    cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9", "#7cfa9f", "#e8c3b9", "#c45890", "#375330"]
-    count = 0
-    cores_obj = {}
-    for objetivo in objetivos:
-        cores_obj[objetivo] = cores[count]
-        count += 1
+    """Calcula notas/conceitos por Objetivo de Aprendizagem."""
+    objetivos = get_objetivos_alocacoes(alocacoes)
 
     valor = {}
     valor["ideal"] = 7.0
@@ -178,171 +226,59 @@ def calcula_objetivos(alocacoes):
         "afg": {},  # antiga
     }
 
-    for nota in notas:
-        for objetivo in objetivos:
-            notas[nota][objetivo] = 0
-            pesos[nota][objetivo] = 0
-
     notas_lista = [x.get_edicoes for x in alocacoes]
+
+    avaliacoes = [("RII", "rii"), ("RIG", "rig"), ("BI", "bi"), ("RFI", "rfi"), ("RFG", "rfg"),
+                  ("BF", "bf"), ("API", "api"), ("APG", "apg"), ("AFI", "afi"), ("AFG", "afg"),]
+
+    objetivos_avaliados = set()
 
     for nota2 in notas_lista:
         for nota in nota2:
-            if nota[0] == "RII":
-                for k, v in nota[1].items():
-                    notas["rii"][k] += v[0] * v[1]
-                    pesos["rii"][k] += v[1]
-            elif nota[0] == "RIG":
-                for k, v in nota[1].items():
-                    notas["rig"][k] += v[0] * v[1]
-                    pesos["rig"][k] += v[1]
-            elif nota[0] == "BI":
-                for k, v in nota[1].items():
-                    notas["bi"][k] += v[0] * v[1]
-                    pesos["bi"][k] += v[1]
-            elif nota[0] == "RFI":
-                for k, v in nota[1].items():
-                    notas["rfi"][k] += v[0] * v[1]
-                    pesos["rfi"][k] += v[1]
-            elif nota[0] == "RFG":
-                for k, v in nota[1].items():
-                    notas["rfg"][k] += v[0] * v[1]
-                    pesos["rfg"][k] += v[1]
-            elif nota[0] == "BF":
-                for k, v in nota[1].items():
-                    notas["bf"][k] += v[0] * v[1]
-                    pesos["bf"][k] += v[1]
-            elif nota[0] == "API":
-                for k, v in nota[1].items():
-                    notas["api"][k] += v[0] * v[1]
-                    pesos["api"][k] += v[1]
-            elif nota[0] == "APG":
-                for k, v in nota[1].items():
-                    notas["apg"][k] += v[0] * v[1]
-                    pesos["apg"][k] += v[1]
-            elif nota[0] == "AFI":
-                for k, v in nota[1].items():
-                    notas["afi"][k] += v[0] * v[1]
-                    pesos["afi"][k] += v[1]
-            elif nota[0] == "AFG":
-                for k, v in nota[1].items():
-                    notas["afg"][k] += v[0] * v[1]
-                    pesos["afg"][k] += v[1]
+            for avaliacao in avaliacoes:
+                if nota[0] == avaliacao[0]:
+                    for k, val in nota[1].items():
+                        if k in notas[avaliacao[1]]:
+                            notas[avaliacao[1]][k] += val[0] * val[1]
+                            pesos[avaliacao[1]][k] += val[1]
+                        else:
+                            notas[avaliacao[1]][k] = val[0] * val[1]
+                            pesos[avaliacao[1]][k] = val[1]
+                            objetivos_avaliados.add(k)
+
+    cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9", "#7cfa9f", "#e8c3b9", "#c45890", "#375330"]
+    count = 0
+    cores_obj = {}
+    for objetivo in objetivos_avaliados:
+        cores_obj[objetivo] = cores[count]
+        count += 1
 
     medias_geral = {}
-    for objetivo in objetivos:
+    for objetivo in objetivos_avaliados:
         medias_geral[objetivo] = {}
         medias_geral[objetivo]["cor"] = cores_obj[objetivo]
         medias_geral[objetivo]["soma"] = 0
         medias_geral[objetivo]["peso"] = 0
 
-    medias_rii = {}
-    for objetivo in objetivos:
-        if pesos["rii"][objetivo] > 0:
-            if not objetivo in medias_rii:
-                medias_rii[objetivo] = {}
-                medias_rii[objetivo]["cor"] = cores_obj[objetivo]
-            medias_rii[objetivo]["media"] = notas["rii"][objetivo] / pesos["rii"][objetivo]
-            medias_geral[objetivo]["soma"] += notas["rii"][objetivo]
-            medias_geral[objetivo]["peso"] += pesos["rii"][objetivo]
+    medias = {}
 
-    medias_rig = {}
-    for objetivo in objetivos:
-        if pesos["rig"][objetivo] > 0:
-            if not objetivo in medias_rig:
-                medias_rig[objetivo] = {}
-                medias_rig[objetivo]["cor"] = cores_obj[objetivo]
-            medias_rig[objetivo]["media"] = notas["rig"][objetivo] / pesos["rig"][objetivo]
-            medias_geral[objetivo]["soma"] += notas["rig"][objetivo]
-            medias_geral[objetivo]["peso"] += pesos["rig"][objetivo]
+    for avaliacao in avaliacoes:
+        medias[avaliacao[1]] = {}
+        for objetivo in objetivos_avaliados:
+            if objetivo in pesos[avaliacao[1]] and pesos[avaliacao[1]][objetivo] > 0:
+                if objetivo not in medias[avaliacao[1]]:
+                    medias[avaliacao[1]][objetivo] = {}
+                    medias[avaliacao[1]][objetivo]["cor"] = cores_obj[objetivo]
+                medias[avaliacao[1]][objetivo]["media"] = notas[avaliacao[1]][objetivo] / pesos[avaliacao[1]][objetivo]
+                medias_geral[objetivo]["soma"] += notas[avaliacao[1]][objetivo]
+                medias_geral[objetivo]["peso"] += pesos[avaliacao[1]][objetivo]
 
-    medias_bi = {}
-    for objetivo in objetivos:
-        if pesos["bi"][objetivo] > 0:
-            if not objetivo in medias_bi:
-                medias_bi[objetivo] = {}
-                medias_bi[objetivo]["cor"] = cores_obj[objetivo]
-            medias_bi[objetivo]["media"] = notas["bi"][objetivo] / pesos["bi"][objetivo]
-            medias_geral[objetivo]["soma"] += notas["bi"][objetivo]
-            medias_geral[objetivo]["peso"] += pesos["bi"][objetivo]
-
-    medias_rfi = {}
-    for objetivo in objetivos:
-        if pesos["rfi"][objetivo] > 0:
-            if not objetivo in medias_rfi:
-                medias_rfi[objetivo] = {}
-                medias_rfi[objetivo]["cor"] = cores_obj[objetivo]
-            medias_rfi[objetivo]["media"] = notas["rfi"][objetivo] / pesos["rfi"][objetivo]
-            medias_geral[objetivo]["soma"] += notas["rfi"][objetivo]
-            medias_geral[objetivo]["peso"] += pesos["rfi"][objetivo]
-
-    medias_rfg = {}
-    for objetivo in objetivos:
-        if pesos["rfg"][objetivo] > 0:
-            if not objetivo in medias_rfg:
-                medias_rfg[objetivo] = {}
-                medias_rfg[objetivo]["cor"] = cores_obj[objetivo]
-            medias_rfg[objetivo]["media"] = notas["rfg"][objetivo] / pesos["rfg"][objetivo]
-            medias_geral[objetivo]["soma"] += notas["rfg"][objetivo]
-            medias_geral[objetivo]["peso"] += pesos["rfg"][objetivo]
-
-    medias_bf = {}
-    for objetivo in objetivos:
-        if pesos["bf"][objetivo] > 0:
-            if not objetivo in medias_bf:
-                medias_bf[objetivo] = {}
-                medias_bf[objetivo]["cor"] = cores_obj[objetivo]
-            medias_bf[objetivo]["media"] = notas["bf"][objetivo] / pesos["bf"][objetivo]
-            medias_geral[objetivo]["soma"] += notas["bf"][objetivo]
-            medias_geral[objetivo]["peso"] += pesos["bf"][objetivo]
-
-    # ANTIGAS
-    medias_api = {}
-    for objetivo in objetivos:
-        if pesos["api"][objetivo] > 0:
-            if not objetivo in medias_api:
-                medias_api[objetivo] = {}
-                medias_api[objetivo]["cor"] = cores_obj[objetivo]
-            medias_api[objetivo]["media"] = notas["api"][objetivo] / pesos["api"][objetivo]
-            medias_geral[objetivo]["soma"] += notas["api"][objetivo]
-            medias_geral[objetivo]["peso"] += pesos["api"][objetivo]
-
-    medias_apg = {}
-    for objetivo in objetivos:
-        if pesos["apg"][objetivo] > 0:
-            if not objetivo in medias_apg:
-                medias_apg[objetivo] = {}
-                medias_apg[objetivo]["cor"] = cores_obj[objetivo]
-            medias_apg[objetivo]["media"] = notas["apg"][objetivo] / pesos["apg"][objetivo]
-            medias_geral[objetivo]["soma"] += notas["apg"][objetivo]
-            medias_geral[objetivo]["peso"] += pesos["apg"][objetivo]
-
-    medias_afi = {}
-    for objetivo in objetivos:
-        if pesos["afi"][objetivo] > 0:
-            if not objetivo in medias_afi:
-                medias_afi[objetivo] = {}
-                medias_afi[objetivo]["cor"] = cores_obj[objetivo]
-            medias_afi[objetivo]["media"] = notas["afi"][objetivo] / pesos["afi"][objetivo]
-            medias_geral[objetivo]["soma"] += notas["afi"][objetivo]
-            medias_geral[objetivo]["peso"] += pesos["afi"][objetivo]
-
-    medias_afg = {}
-    for objetivo in objetivos:
-        if pesos["afg"][objetivo] > 0:
-            if not objetivo in medias_afg:
-                medias_afg[objetivo] = {}
-                medias_afg[objetivo]["cor"] = cores_obj[objetivo]
-            medias_afg[objetivo]["media"] = notas["afg"][objetivo] / pesos["afg"][objetivo]
-            medias_geral[objetivo]["soma"] += notas["afg"][objetivo]
-            medias_geral[objetivo]["peso"] += pesos["afg"][objetivo]
-
-    for objetivo in objetivos:
+    for objetivo in objetivos_avaliados:
         if medias_geral[objetivo]["peso"] > 0:
             media = medias_geral[objetivo]["soma"] / medias_geral[objetivo]["peso"]
             medias_geral[objetivo]["media"] = media
         else:
             medias_geral[objetivo]["media"] = -1
-
 
     media_individual = {}
     media_grupo = {}
@@ -353,17 +289,17 @@ def calcula_objetivos(alocacoes):
         media_individual[media] = {}
         media_individual[media]["cor"] = medias_geral[media]["cor"]
         media_individual[media]["media"] = 0
-        if media.avaliacao_aluno and media in medias_api: # antiga
-            media_individual[media]["media"] += medias_api[media]["media"]
+        if media.avaliacao_aluno and media in medias["api"]: # antiga
+            media_individual[media]["media"] += medias["api"][media]["media"]
             count += 1
-        if media.avaliacao_aluno and media in medias_afi: # antiga
-            media_individual[media]["media"] += medias_afi[media]["media"]
+        if media.avaliacao_aluno and media in medias["afi"]: # antiga
+            media_individual[media]["media"] += medias["afi"][media]["media"]
             count += 1
-        if media.avaliacao_aluno and media in medias_rii:
-            media_individual[media]["media"] += medias_rii[media]["media"]
+        if media.avaliacao_aluno and media in medias["rii"]:
+            media_individual[media]["media"] += medias["rii"][media]["media"]
             count += 1
-        if media.avaliacao_aluno and media in medias_rfi:
-            media_individual[media]["media"] += medias_rfi[media]["media"]
+        if media.avaliacao_aluno and media in medias["rfi"]:
+            media_individual[media]["media"] += medias["rfi"][media]["media"]
             count += 1
         if count > 0:
             media_individual[media]["media"] /= count
@@ -375,41 +311,40 @@ def calcula_objetivos(alocacoes):
         media_grupo[media]["cor"] = medias_geral[media]["cor"]
         media_grupo[media]["media"] = 0
 
-        if media.avaliacao_grupo and media in medias_apg: # antiga
-            media_grupo[media]["media"] += medias_apg[media]["media"]
+        if media.avaliacao_grupo and media in medias["apg"]: # antiga
+            media_grupo[media]["media"] += medias["apg"][media]["media"]
             count += 1
-        if media.avaliacao_grupo and media in medias_afg: # antiga
-            media_grupo[media]["media"] += medias_afg[media]["media"]
+        if media.avaliacao_grupo and media in medias["afg"]: # antiga
+            media_grupo[media]["media"] += medias["afg"][media]["media"]
             count += 1
-        if media.avaliacao_grupo and media in medias_rig:
-            media_grupo[media]["media"] += medias_rig[media]["media"]
+        if media.avaliacao_grupo and media in medias["rig"]:
+            media_grupo[media]["media"] += medias["rig"][media]["media"]
             count += 1
-        if media.avaliacao_grupo and media in medias_rfg:
-            media_grupo[media]["media"] += medias_rfg[media]["media"]
+        if media.avaliacao_grupo and media in medias["rfg"]:
+            media_grupo[media]["media"] += medias["rfg"][media]["media"]
             count += 1
-        if media.avaliacao_banca and media in medias_bi:
-            media_grupo[media]["media"] += medias_bi[media]["media"]
+        if media.avaliacao_banca and media in medias["bi"]:
+            media_grupo[media]["media"] += medias["bi"][media]["media"]
             count += 1
-        if media.avaliacao_banca and media in medias_bf:
-            media_grupo[media]["media"] += medias_bf[media]["media"]
+        if media.avaliacao_banca and media in medias["bf"]:
+            media_grupo[media]["media"] += medias["bf"][media]["media"]
             count += 1
         if count > 0:
             media_grupo[media]["media"] /= count
         else:
             media_grupo[media]["media"] = None
 
-
     context = {
-        "medias_api": medias_api,
-        "medias_apg": medias_apg,
-        "medias_afi": medias_afi,
-        "medias_afg": medias_afg,
-        "medias_rii": medias_rii,
-        "medias_rig": medias_rig,
-        "medias_bi": medias_bi,
-        "medias_rfi": medias_rfi,
-        "medias_rfg": medias_rfg,
-        "medias_bf": medias_bf,
+        "medias_api": medias["api"],
+        "medias_apg": medias["apg"],
+        "medias_afi": medias["afi"],
+        "medias_afg": medias["afg"],
+        "medias_rii": medias["rii"],
+        "medias_rig": medias["rig"],
+        "medias_bi": medias["bi"],
+        "medias_rfi": medias["rfi"],
+        "medias_rfg": medias["rfg"],
+        "medias_bf": medias["bf"],
         'medias_geral': medias_geral,
         "media_individual": media_individual,
         "media_grupo": media_grupo,
