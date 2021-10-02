@@ -428,15 +428,20 @@ class CursadaAdmin(admin.ModelAdmin):
 
 
 @admin.register(ObjetivosDeAprendizagem)
-class CursadaAdmin(admin.ModelAdmin):
-    """Disciplinas Cursadas."""
+class ObjetivosDeAprendizagemAdmin(admin.ModelAdmin):
+    """Objetivos de Aprendizagem."""
 
     list_display = ("titulo", "data_inicial", "data_final")
     actions = [dup_entrada]
 
 
+@admin.register(Acompanhamento)
+class AcompanhamentoAdmin(admin.ModelAdmin):
+    """Acompanhamentos intermediários."""
+
+    list_display = ("data", "autor")
+
 
 admin.site.register(Entidade)       # Para ser preenchido com as entidades estudantis
 admin.site.register(Area)
 admin.site.register(AreaDeInteresse)
-admin.site.register(Acompanhamento)
