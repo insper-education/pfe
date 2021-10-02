@@ -37,14 +37,18 @@
       <tr class="item">
         <td>
           {% if acompanhamento.autor %}
-            {{acompanhamento.autor.get_full_name}}
+            <a class="imprimir" href="{% url 'parceiro_detail' acompanhamento.autor.parceiro.id %}">
+              {{ acompanhamento.autor.get_full_name }}
+            </a>
           {% else %}
             Anônimo
           {% endif %}
         </td>
         <td>
           {% if acompanhamento.autor.parceiro.organizacao %}
-            {{acompanhamento.autor.parceiro.organizacao}}
+            <a class="imprimir" href="{% url 'organizacao_completo' acompanhamento.autor.parceiro.organizacao.id %}">
+              {{ acompanhamento.autor.parceiro.organizacao }}
+            </a>
           {% else %}
             Anônimo
           {% endif %}

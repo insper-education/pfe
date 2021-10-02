@@ -214,13 +214,14 @@
 
         <p class="organizacao" style="margin-left:1em;"><b>Organização:</b>
           <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-            {{ projeto.organizacao.nome }}</a>
-            {% if projeto.organizacao.website %}
-              <span class="website">
-                (<a href="{{projeto.organizacao.website}}"
-                    >{{ projeto.organizacao.website }}</a>)
-              </span>
-            {% endif %}
+            {{ projeto.organizacao.nome }}
+          </a>
+          {% if projeto.organizacao.website %}
+            <span class="website">
+              (<a href="{{projeto.organizacao.website}}"
+                  >{{ projeto.organizacao.website }}</a>)
+            </span>
+          {% endif %}
           {% for cooperacao in cooperacoes %}
             {% if cooperacao.parceiro and cooperacao.parceiro.organizacao %}
               &nbsp;&nbsp;&nbsp;&nbsp;colaboração:
