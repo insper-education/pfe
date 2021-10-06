@@ -6,51 +6,55 @@
 {% endcomment %}
 
 {% block head %}
-
   {% load static %}
-
-  <script src="{% static 'js/w3.js' %}"></script>
-
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
-
+  {% include "tabelas_includes.html" %}
 {% endblock %}
 
 {% block content %}
 
   <span class="titulo">Alocação de Organizações Parceiras</span>
 
-  {% for organizacoes,periodo in anos %} 
-    <big>{{periodo}}</big>
-    <table id="organizacoes">
-      <tr>
-        <th onclick="w3.sortHTML('#organizacoes', '.item', 'td:nth-child(1)')" style="cursor:pointer; text-align: center;width:425px;">Organização</th>
-        <th onclick="w3.sortHTML('#organizacoes', '.item', 'td:nth-child(2)')" style="cursor:pointer; text-align: center;width:70px;">Projetos</th>
-      </tr>
-      {% for organizacao,projetos in organizacoes %} 
-        <tr class="item">
-          <td>
-            <a href="{% url 'organizacao_completo' organizacao.id %}">
-              {{organizacao.nome}}
-            </a>
-          </td>
-          <td style="text-align: center;" data-toggle="tooltip" data-html="true" animation="true" title="
-            {% for projeto in projetos %}
-              &bull;
-              {{projeto.get_titulo}}
-              [{{projeto.orientador}}]
-              <br>
-            {% endfor %}
-          "> 
-            {{projetos|length}}
-          </td>
-        </tr>
-      {% endfor %}
-    </table>
-    <br>
-  {% endfor %}
+  <div class="table-responsive">
+
+    {% for organizacoes,periodo in anos %} 
+      <big>{{periodo}}</big>
+      <table id="organizacoes"class="table table-bordered table-hover table-sm" style="width: auto;">
+        <thead class="table-info">
+          <tr>
+            <th scope="col" style="text-align: center;width:425px;">Organização</th>
+            <th scope="col" style="text-align: center;width:70px;">Projetos</th>
+          </tr>
+        </thead>
+        {% for organizacao,projetos in organizacoes %} 
+          <tr class="item">
+            <td>
+              <a href="{% url 'organizacao_completo' organizacao.id %}">
+                {{organizacao.nome}}
+              </a>
+            </td>
+            <td style="text-align: center;" data-toggle="tooltip" data-html="true" animation="true" title="
+              {% for projeto in projetos %}
+                &bull;
+                {{projeto.get_titulo}}
+                [{{projeto.orientador}}]
+                <br>
+              {% endfor %}
+            "> 
+              {{projetos|length}}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+      <br>
+    {% endfor %}
   
+  </div>
+
   <br>
   <br>
+
+  {% include "tabelas_simples_scripts.html" %}
 
 {% endblock %}

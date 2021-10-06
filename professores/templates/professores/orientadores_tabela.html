@@ -6,51 +6,55 @@
 {% endcomment %}
 
 {% block head %}
-
   {% load static %}
-
-  <script src="{% static 'js/w3.js' %}"></script>
-
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
-
+  {% include "tabelas_includes.html" %}
 {% endblock %}
 
 {% block content %}
 
   <span class="titulo">Alocação de Orientadores</span>
 
-  {% for professores,periodo in anos %} 
-  <big>{{periodo}}</big>
-  <table id="professores">
-    <tr>
-      <th onclick="w3.sortHTML('#professores', '.item', 'td:nth-child(1)')" style="cursor:pointer; text-align: center;width:300px;">Nome</th>
-      <th onclick="w3.sortHTML('#professores', '.item', 'td:nth-child(2)')" style="cursor:pointer; text-align: center;width:70px;">Grupos</th>
-    </tr>
-    {% for professor,grupos in professores %} 
-      <tr class="item">
-        <td>
-          <a href="{% url 'professor_detail' professor.id %}">
-            {{professor.user.get_full_name}}
-          </a>
-        </td>
-        <td style="text-align: center;" data-toggle="tooltip" data-html="true" animation="true" title="
-          {% for grupo in grupos %}
-            &bull;
-            {{grupo.get_titulo}}
-            [{{grupo.organizacao}}]
-            <br>
-          {% endfor %}
-        "> 
-          {{grupos|length}}
-        </td>
-      </tr>
+  <div class="table-responsive">
+
+    {% for professores,periodo in anos %} 
+      <big>{{periodo}}</big>
+      <table id="professores" class="table table-bordered table-hover table-sm" style="width: auto;">
+        <thead class="table-info">
+          <tr>
+            <th scope="col" style="text-align: center;width:300px;">Nome</th>
+            <th scope="col" style="text-align: center;width:70px;">Grupos</th>
+          </tr>
+        </thead>
+        {% for professor,grupos in professores %} 
+          <tr class="item">
+            <td>
+              <a href="{% url 'professor_detail' professor.id %}">
+                {{professor.user.get_full_name}}
+              </a>
+            </td>
+            <td style="text-align: center;" data-toggle="tooltip" data-html="true" animation="true" title="
+              {% for grupo in grupos %}
+                &bull;
+                {{grupo.get_titulo}}
+                [{{grupo.organizacao}}]
+                <br>
+              {% endfor %}
+            "> 
+              {{grupos|length}}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+      <br>
     {% endfor %}
-  </table>
-  <br>
-  {% endfor %}
   
+  </div>
+
   <br>
   <br>
+
+  {% include "tabelas_simples_scripts.html" %}
 
 {% endblock %}
