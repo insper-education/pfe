@@ -281,7 +281,7 @@ def banca_avaliar(request, slug):
     try:
         banca = Banca.objects.get(slug=slug)
 
-        if banca.endDate.date() + datetime.timedelta(days=5) < datetime.date.today():
+        if banca.endDate.date() + datetime.timedelta(days=9) < datetime.date.today():
             mensagem = "Prazo de submissão da Avaliação de Banca vencido.<br>"
             mensagem += "Entre em contato com a coordenação do PFE "
             mensagem += "para enviar sua avaliação.<br>"
