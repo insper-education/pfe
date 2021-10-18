@@ -344,6 +344,11 @@ def registro_usuario(request, user=None):
         except (ValueError, OverflowError, MultiValueDictKeyError):
             return ("Erro na identificação do ano e semestre.", 401)
 
+        try:
+            estudante.cr = float(request.POST['cr'])
+        except (ValueError, OverflowError, MultiValueDictKeyError):
+            return ("Erro na inclusão do CR.", 401)
+
         estudante.trancado = 'estudante_trancado' in request.POST
 
         estudante.save()
