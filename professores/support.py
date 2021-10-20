@@ -75,8 +75,6 @@ def professores_membros_bancas(banca=None):
         if banca.membro3:
             id_membros.append(banca.membro3.id) # membro
 
-    print(id_membros)
-
     membros = pessoas.filter(pk__in=id_membros)
 
     return pessoas, membros

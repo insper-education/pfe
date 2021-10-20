@@ -281,14 +281,17 @@ def banca_avaliar(request, slug):
     try:
         banca = Banca.objects.get(slug=slug)
 
-        if banca.endDate.date() + datetime.timedelta(days=9) < datetime.date.today():
-            mensagem = "Prazo de submissão da Avaliação de Banca vencido.<br>"
-            mensagem += "Entre em contato com a coordenação do PFE "
-            mensagem += "para enviar sua avaliação.<br>"
-            mensagem += "Luciano Pereira Soares "
-            mensagem += "<a href='mailto:lpsoares@insper.edu.br'>"
-            mensagem += "lpsoares@insper.edu.br</a>.<br>"
-            return HttpResponse(mensagem)
+        user = get_object_or_404(PFEUser, pk=request.user.pk)
+
+        if user.tipo_de_usuario != 4:  # Não é administrador
+            if banca.endDate.date() + datetime.timedelta(days=9) < datetime.date.today():
+                mensagem = "Prazo de submissão da Avaliação de Banca vencido.<br>"
+                mensagem += "Entre em contato com a coordenação do PFE "
+                mensagem += "para enviar sua avaliação.<br>"
+                mensagem += "Luciano Pereira Soares "
+                mensagem += "<a href='mailto:lpsoares@insper.edu.br'>"
+                mensagem += "lpsoares@insper.edu.br</a>.<br>"
+                return HttpResponse(mensagem)
 
         if not banca.projeto:
             return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
@@ -297,7 +300,7 @@ def banca_avaliar(request, slug):
         return HttpResponseNotFound('<h1>Banca não encontrada!</h1>')
 
     objetivos = get_objetivos_atuais()
-
+    
     # Banca(Intermediária, Final) ou Falconi
     if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
         objetivos = objetivos.filter(avaliacao_banca=True).order_by("id")
@@ -575,7 +578,7 @@ def banca_avaliar(request, slug):
             orientacoes += "<br><br>"
             orientacoes += "No Projeto Final de Engenharia, a maioria dos projetos está sob sigilo, através de contratos realizados (quando pedido ou necessário) entre a Organização Parceira e o Insper, se tem os professores automaticamente responsáveis por garantir o sigilo das informações. Assim <b>pessoas externas só podem participar das bancas com prévia autorização</b>, isso inclui outros estudantes que não sejam do grupo, familiares ou amigos."
             orientacoes += "<br>"
-
+        
         # Falconi
         elif banca.tipo_de_banca == 2:
             pessoas, membros = falconi_membros_banca(banca)
@@ -592,7 +595,7 @@ def banca_avaliar(request, slug):
             avaliador = int(avaliador)
         except ValueError:
             return HttpResponseNotFound('<h1>Usuário não encontrado!</h1>')
-
+        
         conceitos = [None]*5
         for i in range(5):
             try:
@@ -603,7 +606,7 @@ def banca_avaliar(request, slug):
             conceitos[i] = (tmp1, tmp2)
 
         observacoes = unquote(request.GET.get('observacoes', ''))
-
+        
         context = {
             'pessoas': pessoas,
             'membros': membros,
