@@ -1096,22 +1096,22 @@ def certificacao_falconi(request):
             nota_banca_falconi, peso = Aluno.get_banca(None, aval_banc_falconi)
             if peso is not None:
                 selecionados += 1
-                if nota_banca_falconi >= 9.5:
+                if nota_banca_falconi >= 9.5:  # conceito A+
                     conceitos[7] += 1
-                elif nota_banca_falconi >= 9.0:
+                elif nota_banca_falconi >= 8.5:  # conceito A
                     conceitos[6] += 1
-                elif nota_banca_falconi >= 8.0:
+                elif nota_banca_falconi >= 7.5:  # conceito B+
                     conceitos[5] += 1
-                elif nota_banca_falconi >= 7.0:
+                elif nota_banca_falconi >= 6.5:  # conceito B
                     conceitos[4] += 1
-                elif nota_banca_falconi >= 6.0:
+                elif nota_banca_falconi >= 5.5:  # conceito C+
                     conceitos[3] += 1
-                elif nota_banca_falconi >= 5.0:
+                elif nota_banca_falconi >= 4.5:  # conceito C
                     conceitos[2] += 1
-                elif nota_banca_falconi >= 4.0:
+                elif nota_banca_falconi >= 1.5:  # Qualquer D
                     conceitos[1] += 1
                 else:
-                    conceitos[0] += 1
+                    conceitos[0] += 1  # conceito I
 
         if selecionados:
             for i in range(8):

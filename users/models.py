@@ -248,7 +248,7 @@ class Aluno(models.Model):
             for banca in bancas:
                 # Se não for o mesmo avaliador
                 if banca.avaliador not in lista_objetivos[objetivo]:
-                    if banca.na:
+                    if banca.na or (banca.nota is None) or (banca.peso is None):
                         lista_objetivos[objetivo][banca.avaliador] = None
                     else:
                         lista_objetivos[objetivo][banca.avaliador] = (float(banca.nota),
