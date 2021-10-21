@@ -281,17 +281,18 @@ def banca_avaliar(request, slug):
     try:
         banca = Banca.objects.get(slug=slug)
 
-        user = get_object_or_404(PFEUser, pk=request.user.pk)
+        adm = PFEUser.objects.filter(pk=request.user.pk, tipo_de_usuario=4).exists()  # se adm
 
-        if user.tipo_de_usuario != 4:  # Não é administrador
-            if banca.endDate.date() + datetime.timedelta(days=30) < datetime.date.today():
-                mensagem = "Prazo de submissão da Avaliação de Banca vencido.<br>"
-                mensagem += "Entre em contato com a coordenação do PFE "
-                mensagem += "para enviar sua avaliação.<br>"
-                mensagem += "Luciano Pereira Soares "
-                mensagem += "<a href='mailto:lpsoares@insper.edu.br'>"
-                mensagem += "lpsoares@insper.edu.br</a>.<br>"
-                return HttpResponse(mensagem)
+        if adm:  # é administrador
+            pass  # usuário sempre autorizado
+        elif banca.endDate.date() + datetime.timedelta(days=30) < datetime.date.today():
+            mensagem = "Prazo de submissão da Avaliação de Banca vencido.<br>"
+            mensagem += "Entre em contato com a coordenação do PFE "
+            mensagem += "para enviar sua avaliação.<br>"
+            mensagem += "Luciano Pereira Soares "
+            mensagem += "<a href='mailto:lpsoares@insper.edu.br'>"
+            mensagem += "lpsoares@insper.edu.br</a>.<br>"
+            return HttpResponse(mensagem)
 
         if not banca.projeto:
             return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')

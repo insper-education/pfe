@@ -31,6 +31,8 @@ def get_texto_conceito(objetivo, conceito):
 @register.filter
 def get_texto_nota(objetivo, nota):
     """Permite buscar o texto de uma rubrica."""
+    if not nota:
+        return ""
     if nota >= 9:
         return objetivo.rubrica_intermediaria_A
     if nota >= 7:
@@ -46,6 +48,8 @@ def get_texto_nota(objetivo, nota):
 @register.filter
 def get_texto_intermediaria_nota(objetivo, nota):
     """Permite buscar o texto de uma rubrica."""
+    if not nota:
+        return ""
     if nota >= 9:
         return objetivo.rubrica_intermediaria_A
     if nota >= 7:
@@ -61,6 +65,8 @@ def get_texto_intermediaria_nota(objetivo, nota):
 @register.filter
 def get_texto_final_nota(objetivo, nota):
     """Permite buscar o texto de uma rubrica."""
+    if not nota:
+        return ""
     if nota >= 9:
         return objetivo.rubrica_final_A
     if nota >= 7:
