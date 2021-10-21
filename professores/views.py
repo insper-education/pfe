@@ -284,7 +284,7 @@ def banca_avaliar(request, slug):
         user = get_object_or_404(PFEUser, pk=request.user.pk)
 
         if user.tipo_de_usuario != 4:  # Não é administrador
-            if banca.endDate.date() + datetime.timedelta(days=9) < datetime.date.today():
+            if banca.endDate.date() + datetime.timedelta(days=30) < datetime.date.today():
                 mensagem = "Prazo de submissão da Avaliação de Banca vencido.<br>"
                 mensagem += "Entre em contato com a coordenação do PFE "
                 mensagem += "para enviar sua avaliação.<br>"
