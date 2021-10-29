@@ -36,22 +36,25 @@ def converte_conceito(conceito):
 
 def converte_letra(nota, mais="+", espaco=""):
     """Converte de Número para Letra."""
-    if nota == 10:
+    if nota > 9.5:
         return "A"+mais
-    elif nota >= 9:
+    elif nota >= 8.5:
         return "A"+espaco
-    elif nota >= 8:
+    elif nota >= 7.5:
         return "B"+mais
-    elif nota >= 7:
+    elif nota >= 6.5:
         return "B"+espaco
-    elif nota >= 6:
+    elif nota >= 5.5:
         return "C"+mais
-    elif nota >= 5:
+    elif nota >= 4.5:
         return "C"+espaco
-    elif nota >= 4:
+    elif nota >= 3.5:
+        return "D"+mais
+    elif nota >= 2.5:
         return "D"+espaco
+    elif nota >= 1.5:
+        return "D"+"-"
     return "I"+espaco
-
 
 def cria_area_estudante(request, estudante):
     """Cria um objeto Areas e preenche ele."""
