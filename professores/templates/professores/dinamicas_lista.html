@@ -31,6 +31,8 @@
 
 {% block content %}
 
+  {% include "impressora.html" %}
+
   <span class="titulo">Dinâmicas</span>
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
@@ -68,18 +70,18 @@
         {% for e in encontros %} 
           <tr>
             <td>
-              <a href="{% url 'dinamicas_editar' e.id %}">
+              <a class="imprimir" href="{% url 'dinamicas_editar' e.id %}">
                 <big><b>{{e.startDate}} - {{e.endDate|date:'H:i'}}</b></big><br>
               </a>
               {% if e.projeto %}
-                <b>Projeto:</b> <a href="{% url 'projeto_completo' e.projeto.id %}">
+                <b>Projeto:</b> <a class="imprimir" href="{% url 'projeto_completo' e.projeto.id %}">
                   {{e.projeto.get_titulo}}
                 </a><br>
-                <b>Organização:</b> <a href="{% url 'organizacao_completo' e.projeto.organizacao.id %}">{{ e.projeto.organizacao.nome }}</a><br>
+                <b>Organização:</b> <a class="imprimir" href="{% url 'organizacao_completo' e.projeto.organizacao.id %}">{{ e.projeto.organizacao.nome }}</a><br>
                 {% if e.facilitador %}
                   <div class="facilitador" style="margin-top: 8px;">
-                    <b>Facilitador:</b> <a href="{% url 'user_detail' e.facilitador.id %}">{{ e.facilitador.get_full_name }}</a>
-                    <a href="mailto:{{e.facilitador.email}}">&lt;{{e.facilitador.email}}&gt;</a>&nbsp;
+                    <b>Facilitador:</b> <a class="imprimir" href="{% url 'user_detail' e.facilitador.id %}">{{ e.facilitador.get_full_name }}</a>
+                    <a class="email" href="mailto:{{e.facilitador.email}}">&lt;{{e.facilitador.email}}&gt;</a>&nbsp;
                     <br>
                   </div>
                 {% endif %}
@@ -100,9 +102,9 @@
                   <b>Grupo:</b>
                   <ol>
                     {% for alocacao in e.projeto.alocacao_set.all %} 
-                      <li><a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}
+                      <li><a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}
                       <span class="curso">[{{ alocacao.aluno.get_curso_display }}]</span>
-                      <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>&nbsp;
+                      <a class="email" href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>&nbsp;
                       </a></li>
                     {% endfor %}
                   </ol>
