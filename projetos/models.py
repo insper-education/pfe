@@ -56,7 +56,7 @@ def get_upload_path(instance, filename):
 class Organizacao(models.Model):
     """Dados das organizações que propõe projetos para o PFE."""
 
-    nome = models.CharField("Nome Fantasia", max_length=80,
+    nome = models.CharField("Nome Fantasia", max_length=100,
                             help_text='Nome fantasia da organização parceira')
     sigla = models.CharField("Sigla", max_length=20,
                              help_text='Sigla usada pela organização parceira')
