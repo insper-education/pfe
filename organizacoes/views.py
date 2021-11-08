@@ -10,13 +10,11 @@ from collections import OrderedDict
 import datetime
 import dateutil.parser
 
-#from PyPDF2 import PdfFileWriter
 from PyPDF2 import PdfFileReader
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
-# from django.http import HttpResponse
 from django.http import HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
@@ -682,6 +680,13 @@ def seleciona_conexoes(request):
                                                                 projeto=projeto)
             conexao.colaboracao = True
             conexao.save()
+        else:
+            conexoes_colab = Conexao.objects.filter(colaboracao=True,
+                                                    projeto=projeto)
+
+            if conexoes_colab.exists():  # Caso já exista uma conexão
+                for conexao in conexoes_colab:
+                    conexao.delete()  # apagar
 
         return redirect('projeto_completo', projeto_id)
 

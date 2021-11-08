@@ -34,7 +34,7 @@
 
 <script>
 
-  function atualiza(e) {
+  function atualiza_organizacao(e) {
     
     if (!$('form')[0].checkValidity()) {
         $('form').find('input[type="submit"]').click();
@@ -52,12 +52,20 @@
         },
         success: function(response){
             if (response.atualizado) {
-              console.log("Valor atualizado.");
+              //console.log("Valor atualizado.");
+
+              $('#organizacao_nome').html(response.organizacao);  // Para organizacao completo
+
               novo = "<a href='../../organizacoes/organizacao_completo/"+response.organizacao_id+"'>"+response.organizacao+"</a>";
-              $('#proposta'+response.proposta).html(novo);
-            } else {
-              console.log("Valor não atualizado.");
+              $('#proposta'+response.proposta).html(novo);  // Só para tabela
+              $('#organizacao_link').html(response.organizacao);  // Para organizacao completo
+              
+              $('#organizacao_endereco').html(response.endereco);  // Para organizacao completo
+
             }
+            //else {
+            //  console.log("Valor não atualizado.");
+            //}
         },
         error: function(response) {
             console.log('error')

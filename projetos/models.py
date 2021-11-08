@@ -303,6 +303,10 @@ class Proposta(models.Model):
     data = models.DateTimeField(default=datetime.datetime.now,
                                 help_text='data e hora da criação da proposta de projeto')
 
+    colaboracao = models.ForeignKey(Organizacao, on_delete=models.SET_NULL, null=True, blank=True,
+                                    related_name='colaboracao',
+                                    help_text='Organização colaborando para a proposta de projeto')
+
     class Meta:
         ordering = ['organizacao', 'ano', 'semestre']
 
@@ -408,6 +412,10 @@ class Configuracao(models.Model):
                                              help_text='Para estudantes verem projetos alocados')
     liberadas_propostas = models.BooleanField(default=False,
                                               help_text='Para estudantes visualizarem propostas')
+
+    min_props = models.PositiveIntegerField(default=5,
+        help_text='Quantidade mínima de propostas a serem selecionas pelos estudantes')
+
 
     class Meta:
         verbose_name = 'Configuração'

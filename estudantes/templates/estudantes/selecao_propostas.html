@@ -65,7 +65,7 @@
     <br><br>
     <h5>
     {% endif %}
-    
+
     <div class="row">
       <div class="col">
           <span class="titulo">Propostas de Projetos Disponíveis</span>
@@ -143,7 +143,7 @@
               <input type="submit" style="margin-right: 14px;" value="Confirmar" {% if vencido or not liberadas_propostas or not areas %}disabled{% endif %}>
 
               <small style="float: right;"><font color="red">
-                Selecione ao menos 5 propostas (1 a 5), sendo 1 para a que você tem mais interesse.
+                Selecione ao menos {{min_props}} propostas (1 a {{min_props}}), sendo 1 para a que você tem mais interesse.
               </font></small>
               
             </div>

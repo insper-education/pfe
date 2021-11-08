@@ -585,6 +585,7 @@ def link_organizacao(request, proposta_id):
         data = {
             'organizacao': str(organizacao),
             'organizacao_id': organizacao.id,
+            'organizacao_endereco': organizacao.endereco,
             'proposta': proposta_id,
             'atualizado': True,
         }

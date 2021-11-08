@@ -25,10 +25,12 @@
     <b>Organização:</b>
     {% if proposta.organizacao and proposta.organizacao.nome %}
         {% if completo %}
-            <a data-toggle="tooltip" data-html="true" animation="true" title="Nome da organização/empresa que está propondo o projeto."
+            <a id="organizacao_link" data-toggle="tooltip" data-html="true" animation="true" title="Nome da organização/empresa que está propondo o projeto."
               href="{% url 'organizacao_completo' proposta.organizacao.id %}">
         {% endif %}
-        {{proposta.organizacao.nome}}
+        <span id="organizacao_nome">
+          {{proposta.organizacao.nome}}
+        </span>
         {% if completo %}
             </a>
         {% endif %}
@@ -39,6 +41,15 @@
     {% else %}
       <u>Organização não definida.</u>
     {% endif %}
+    <span class="esconder">
+      <a
+        data-proposta='{{proposta.id}}'
+        class="link-organizacao"
+        href="{% url 'link_organizacao' proposta.id %}"
+        data-url="{% url 'link_organizacao' proposta.id %}"
+        ><small>&#128279;</small></a
+      >
+    </span>
     <br>
   </span>
   
@@ -58,7 +69,7 @@
       ">
        Endereço Matriz:
       </strong>
-      <a href="http://maps.google.com/maps?q={{proposta.organizacao.endereco}}">
+      <a id="organizacao_endereco" href="http://maps.google.com/maps?q={{proposta.organizacao.endereco}}">
         {{proposta.organizacao.endereco|linebreaks}}
       </a>
     {% else %}
@@ -99,6 +110,8 @@
     <p><strong>Informações sobre o departamento na organização:</strong>
     {{proposta.departamento|linebreaks|urlize}}<br></p>
   {% endif %}
+
+  {% include "organizacao-modal.html" %}
 
 {% else %}
 

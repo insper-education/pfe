@@ -289,6 +289,8 @@ def selecao_propostas(request):
     ano = configuracao.ano
     semestre = configuracao.semestre
 
+    min_props = configuracao.min_props
+
     liberadas_propostas = configuracao.liberadas_propostas
 
     # Vai para próximo semestre
@@ -335,7 +337,7 @@ def selecao_propostas(request):
                                                 "0")
                 prioridade[proposta.pk] = check_values
             for i in range(1, len(propostas)+1):
-                if i < 6 and list(prioridade.values()).count(str(i)) == 0:
+                if i < min_props+1 and list(prioridade.values()).count(str(i)) == 0:
                     warnings += "Nenhuma proposta com prioridade "
                     warnings += str(i)+"\n"
                 if list(prioridade.values()).count(str(i)) > 1:
@@ -401,6 +403,7 @@ def selecao_propostas(request):
         'liberadas_propostas': liberadas_propostas,
         'vencido': vencido,
         'propostas': propostas,
+        "min_props": min_props,
         'opcoes_temporarias': opcoes_temporarias,
         'ano': ano,
         'semestre': semestre,
