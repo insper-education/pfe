@@ -927,7 +927,8 @@ def dinamicas_lista(request):
             sem_dinamicas = Projeto.objects.filter(ano=configuracao.ano,
                                             semestre=configuracao.semestre)
             for encontro in encontros:
-                sem_dinamicas = sem_dinamicas.exclude(id=encontro.projeto.id)
+                if encontro.projeto:
+                    sem_dinamicas = sem_dinamicas.exclude(id=encontro.projeto.id)
 
             context = {
                 "sem_dinamicas": sem_dinamicas,
