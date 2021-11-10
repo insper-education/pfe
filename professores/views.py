@@ -922,7 +922,15 @@ def dinamicas_lista(request):
                 else:
                     encontros = encontros.filter(startDate__month__gt=7)
 
+            # checando se projetos atuais tem banca marcada
+            configuracao = get_object_or_404(Configuracao)
+            sem_dinamicas = Projeto.objects.filter(ano=configuracao.ano,
+                                            semestre=configuracao.semestre)
+            for encontro in encontros:
+                sem_dinamicas = sem_dinamicas.exclude(id=encontro.projeto.id)
+
             context = {
+                "sem_dinamicas": sem_dinamicas,
                 'encontros': encontros,
             }
 
