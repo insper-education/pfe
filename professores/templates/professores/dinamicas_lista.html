@@ -55,6 +55,7 @@
   <span id="informacoes" style="border: 1px solid gray; border-radius: 2px; padding: 1px; margin-left: 20px;">
     <span id="informacoes_tag">&nbsp;Informações <i class="arrow right"></i>&nbsp;</span>
     <div id="toggle" style="display: none; height: 1em;">
+      <label><input onchange="($(this).prop('checked') ? $('.orientador').show() : $('.orientador').hide())" type="checkbox" checked /> orientador</label>&nbsp;&nbsp;&nbsp;
       <label><input onchange="($(this).prop('checked') ? $('.local').show() : $('.local').hide())" type="checkbox" checked /> local</label>&nbsp;&nbsp;&nbsp;
       <label><input onchange="($(this).prop('checked') ? $('.grupo').show() : $('.grupo').hide())" type="checkbox" checked /> grupo</label>&nbsp;&nbsp;&nbsp;
       <label><input onchange="($(this).prop('checked') ? $('.curso').show() : $('.curso').hide())" type="checkbox" checked /> curso</label>&nbsp;&nbsp;&nbsp;
@@ -79,6 +80,16 @@
                   {{e.projeto.get_titulo}}
                 </a><br>
                 <b>Organização:</b> <a class="imprimir" href="{% url 'organizacao_completo' e.projeto.organizacao.id %}">{{ e.projeto.organizacao.nome }}</a><br>
+                <span class="orientador">
+                  {% if e.projeto.orientador %}
+                    <b>Orientador:</b> 
+                    <a class="imprimir" href="{% url 'professor_detail' e.projeto.orientador.id %}">
+                      {{e.projeto.orientador.user.get_full_name}} 
+                    </a>
+                    <a class="email" href="mailto:{{e.projeto.orientador.user.email}}">&lt;{{e.projeto.orientador.user.email}}&gt;</a>
+                  {% endif %}
+                </span>
+                
                 {% if e.facilitador %}
                   <div class="facilitador" style="margin-top: 8px;">
                     <b>Facilitador:</b> <a class="imprimir" href="{% url 'user_detail' e.facilitador.id %}">{{ e.facilitador.get_full_name }}</a>
