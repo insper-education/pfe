@@ -498,12 +498,12 @@ class Evento(models.Model):
         (11, 'Evento de abertura do PFE', 'orange'),  # Obsoleto
         (12, 'Aula PFE', 'lightgreen'),
         (13, 'Evento de encerramento do PFE', 'brown'),
-        (14, 'Banca intermediária', 'violet'),
-        (15, 'Bancas finais', 'yellow'),
+        (14, 'Bancas Intermediárias', 'violet'),
+        (15, 'Bancas Finais', 'yellow'),
         (16, 'Apresentação formal final na organização', 'burlywood'),
         (17, 'Apresentação opcional intermediária na organização', 'Khaki'),
 
-        (20, 'Relato Quinzenal (Individual)', 'aquamarine'),
+        (20, 'Relato quinzenal (Individual)', 'aquamarine'),
         (21, 'Entrega de Relatório Preliminar (Grupo)', 'lightblue'),  # antigo relat. de planej.
         (22, 'Entrega do Relatório Intermediário (Grupo e Individual)', 'teal'),
         (23, 'Entrega do Relatório Final (Grupo e Individual)', 'aqua'),
@@ -511,7 +511,7 @@ class Evento(models.Model):
         (25, 'Entrega do Banner (Grupo)', 'chocolate'),
         (26, 'Entrega do Vídeo (Grupo)', 'lavender'),
 
-        (30, 'Feedback dos Estudantes sobre PFE', 'orange'),
+        (30, 'Feedback dos estudantes sobre PFE', 'orange'),
         (31, 'Avaliação de Pares Intermediária', 'pink'),
         (32, 'Avaliação de Pares Final', 'pink'),
 
@@ -533,7 +533,7 @@ class Evento(models.Model):
         (124, 'Notificação para estudantes dos grupos formados', 'paleturquoise'),
         (125, 'Notificação para organizações dos projetos fechados', 'moccasin'),
         (126, 'Professores tiram dúvidas sobre projetos para estudantes', 'lightsalmon'),
-        (127, 'Reunião do Comitê para montar grupos para o próximo semestre', 'powderblue'),
+        (127, 'Reunião do comitê para montar grupos para o próximo semestre', 'powderblue'),
 
         (129, 'Limite para contrato pronto para assinatura pelos estudantes', 'coral'),
 
