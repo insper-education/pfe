@@ -586,6 +586,7 @@ def link_organizacao(request, proposta_id):
             'organizacao': str(organizacao),
             'organizacao_id': organizacao.id,
             'organizacao_endereco': organizacao.endereco,
+            'organizacao_website': organizacao.website,
             'proposta': proposta_id,
             'atualizado': True,
         }

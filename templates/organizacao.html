@@ -35,9 +35,11 @@
             </a>
         {% endif %}
     {% elif proposta.nome_organizacao %}
-      <span data-toggle="tooltip" data-html="true" animation="true" title="Nome da organização/empresa que está propondo o projeto.">
-        {{proposta.nome_organizacao}}
-      </span>
+      <a id="organizacao_link">
+        <span data-toggle="tooltip" data-html="true" animation="true" title="Nome da organização/empresa que está propondo o projeto.">
+          {{proposta.nome_organizacao}}
+        </span>
+      </a>
     {% else %}
       <u>Organização não definida.</u>
     {% endif %}
@@ -62,7 +64,7 @@
       ">
        Endereço Local:
       </strong>
-      <a href="http://maps.google.com/maps?q={{proposta.endereco}}">
+      <a id="organizacao_endereco" href="http://maps.google.com/maps?q={{proposta.endereco}}">
         {{proposta.endereco|linebreaks}}
       </a>
     {% elif proposta.organizacao and proposta.organizacao.endereco %}
@@ -87,11 +89,11 @@
         website:
     </strong>
     {% if proposta.website %}
-        <a href="{{proposta.website}}">{{proposta.website}}</a>
+        <a id="organizacao_website" href="{{proposta.website}}">{{proposta.website}}</a>
     {% elif proposta.organizacao and proposta.organizacao.website %}
-        <a href="{{proposta.organizacao.website}}">{{proposta.organizacao.website}}</a>
+        <a id="organizacao_website" href="{{proposta.organizacao.website}}">{{proposta.organizacao.website}}</a>
     {% else %}
-        <u>website não definido.</u>
+        <a id="organizacao_website"><u>website não definido.</u></a>
     {% endif %}
     <br><br>
   </p>
