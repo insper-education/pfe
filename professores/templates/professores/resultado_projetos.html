@@ -119,6 +119,8 @@
               {{ projeto.organizacao.nome }}
             </a>
           </td>
+          
+          {% comment %} Orientador {% endcomment %}
           <td>
             {% if projeto.orientador %}
               <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}">
@@ -129,43 +131,55 @@
               {% endif %}
           </td>
 
+          {% comment %} Relatório Intermediário {% endcomment %}
           <td class="text-center" style="white-space: nowrap;">
             <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}"
               {% if relatorio_intermediario.1 %}
-                data-toggle="tooltip" data-html="true" animation="true" title="{{ relatorio_intermediario.1 }}"
-              {% endif %}
+                data-toggle="tooltip" data-html="true" animation="true" title="{{ relatorio_intermediario.0|safe }}">
+              {{ relatorio_intermediario.1|safe }}
+              {% else %}
               >
-              {{ relatorio_intermediario.0|safe }}
-            </a>
-          </td>
-          <td class="text-center" style="white-space: nowrap;">
-            <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}"
-              {% if relatorio_final.1 %}
-                data-toggle="tooltip" data-html="true" animation="true" title="{{ relatorio_final.1 }}"
               {% endif %}
-              >
-              {{ relatorio_final.0|safe }}
             </a>
           </td>
 
+        {% comment %} Relatório Final {% endcomment %}
+          <td class="text-center" style="white-space: nowrap;">
+            <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}"
+              {% if relatorio_final.1 %}
+                data-toggle="tooltip" data-html="true" animation="true" title="{{ relatorio_final.0|safe }}">
+              {{ relatorio_final.1|safe }}
+              {% else %}
+              >
+              {% endif %}
+            </a>
+          </td>
+
+        {% comment %} Banca Intermediária {% endcomment %}
           <td class="text-center" style="white-space: nowrap;">
             <a class="imprimir" href="{% url 'conceitos_obtidos' projeto.id %}"
               {% if banca_intermediaria.1 %}
-                data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_intermediaria.1 }}"
-              {% endif %}
+                data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_intermediaria.0|safe }}">
+                {{ banca_intermediaria.1|safe }}
+              {% else %}
               >
-              {{ banca_intermediaria.0|safe }}
+              {% endif %}
             </a>
           </td>
+
+          {% comment %} Banca Final {% endcomment %}
           <td class="text-center" style="white-space: nowrap;">
             <a class="imprimir" href="{% url 'conceitos_obtidos' projeto.id %}"
               {% if banca_final.1 %}
-                data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_final.1 }}"
+                data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_final.0|safe }}">
+                {{ banca_final.1|safe }}
+              {% else %}
+              >
               {% endif %}
-            >
-              {{ banca_final.0|safe }}
             </a>
           </td>
+
+          {% comment %} Banca Falconi {% endcomment %}
           <td class="text-center" style="white-space: nowrap;">
             <a class="imprimir" href="{% url 'conceitos_obtidos' projeto.id %}"
               {% if banca_falconi.1 %}
@@ -209,6 +223,7 @@
           request_ajax_r = null;
       }
 
+      $("#spinner").css("visibility", "visible");
       var edicao = $(".filter option:selected").attr("value");
       request_ajax_r = $.ajax({
           type: "POST",
@@ -222,6 +237,7 @@
               $("#organizacao").prop('checked') ? $('#ProjetosTable tr > *:nth-child(2)').show() : $('#ProjetosTable tr > *:nth-child(2)').hide()
               $("#orientador").prop('checked') ? $('#ProjetosTable tr > *:nth-child(3)').show() : $('#ProjetosTable tr > *:nth-child(3)').hide()
               {% include "tooltip.js" %}
+              $("#spinner").css("visibility", "hidden");
           },
           {% comment %}             
             error: function(response) {
