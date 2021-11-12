@@ -249,7 +249,7 @@ def calcula_objetivos(alocacoes):
                             pesos[avaliacao[1]][k] = val[1]
                             objetivos_avaliados.add(k)
 
-    cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9", "#7cfa9f", "#e8c3b9", "#c45890", "#375330"]
+    cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9", "#7cfa9f", "#e8c3b9", "#c45890", "#375330", "#a48577"]
     count = 0
     cores_obj = {}
     for objetivo in objetivos_avaliados:
