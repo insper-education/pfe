@@ -7,6 +7,7 @@
 
 {% block head %}
   {% load static %}
+  {% load certificado_banca %}
   <style>
     #logotipo {
       max-height:128px;
@@ -103,6 +104,64 @@
         {Recursos Humanos}
       {% endif %}
       </a></li>
+    {% endfor %}
+    </ol>
+  {% endif %}
+
+
+  {% if mentorias %}
+    <hr>
+    <h3>Mentoria nos Projetos</h3>
+    <ol>
+    {% for mentoria in mentorias %}
+      <li>
+      <a href="{% url 'dinamicas_editar' mentoria.id %}">
+      {{mentoria.projeto.get_titulo}}
+      [{{mentoria.projeto.ano}}.{{mentoria.projeto.semestre}}]
+      em {{mentoria.startDate}}
+      </a>
+      </li>
+    {% endfor %}
+    </ol>
+  {% endif %}
+
+{% if bancas %}
+    <hr>
+    <h4>Participação em Banca(s)</h4>
+    <ol>
+    {% for banca in bancas %}
+        <li>
+          <a href="{% url 'banca_ver' banca.id %}">
+          {% if banca.tipo_de_banca == 2 %}
+            Certificação Falconi,
+          {% else %}
+            Desconhecido,
+          {% endif %}
+          {% if banca.startDate %}
+            {{banca.startDate.date}},
+          {% endif %}
+          </a>
+          {% if banca.projeto %}
+            <a href="{% url 'projeto_completo' banca.projeto.id %}">
+              {% if banca.projeto.titulo_final %}
+                {{banca.projeto.titulo_final}}</a>,
+              {% else %}
+                {{banca.projeto.titulo}}</a>,
+              {% endif %}
+          {% endif %}
+          {% if banca.projeto.organizacao %}
+            <a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">
+              {{ banca.projeto.organizacao.nome }}
+            </a>
+          {% endif %}
+          {% with certificado=banca|certificado_banca:parceiro.user %}
+            {% if certificado %}
+              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a><br>
+            {% endif %}
+          {% endwith %}
+        </li>
+    {% empty %}
+      Bancas não encontrados
     {% endfor %}
     </ol>
   {% endif %}

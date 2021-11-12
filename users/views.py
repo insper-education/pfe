@@ -18,7 +18,7 @@ from django.urls import reverse_lazy
 from django.utils import html
 from django.views import generic
 
-from projetos.models import Certificado, Configuracao, Projeto, Conexao
+from projetos.models import Certificado, Configuracao, Projeto, Conexao, Encontro
 from projetos.models import Banca, Area, Coorientador, Avaliacao2, Observacao, Reprovacao
 
 from projetos.messages import email
@@ -982,9 +982,19 @@ def parceiro_detail(request, primarykey):
 
     conexoes = Conexao.objects.filter(parceiro=parceiro)
 
+    mentorias = Encontro.objects.filter(facilitador=parceiro.user)
+
+    bancas = (Banca.objects.filter(membro1=parceiro.user) |
+              Banca.objects.filter(membro2=parceiro.user) |
+              Banca.objects.filter(membro3=parceiro.user))
+
+    bancas = bancas.order_by("startDate")
+
     context = {
-        'parceiro': parceiro,
-        'conexoes': conexoes,
+        "parceiro": parceiro,
+        "conexoes": conexoes,
+        "mentorias": mentorias,
+        "bancas": bancas,
     }
     return render(request, 'users/parceiro_detail.html', context=context)
 
