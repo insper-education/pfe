@@ -1,6 +1,8 @@
 #!/usr/bin/env python
+
 """
-Desenvolvido para o Projeto Final de Engenharia
+Desenvolvido para o Projeto Final de Engenharia.
+
 Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 14 de Novembro de 2019
 """
@@ -34,7 +36,7 @@ from .models import Area, AreaDeInteresse
 
 
 def dup_projeto(modeladmin: admin_opt.ModelAdmin, request, queryset):
-    """Função abaixo permite duplicar entradas no banco de dados"""
+    """Função abaixo permite duplicar entradas no banco de dados."""
     for obj in queryset:
         from_id = obj.id
         obj.id = None
@@ -53,7 +55,7 @@ dup_projeto.short_description = "Duplicar Entrada(s)"
 
 
 def dup_entrada(modeladmin: admin_opt.ModelAdmin, request, queryset):
-    """Função abaixo permite duplicar entradas no banco de dados"""
+    """Função abaixo permite duplicar entradas no banco de dados."""
     # Usada em Eventos e Avisos
     for obj in queryset:
         from_id = obj.id
@@ -67,7 +69,7 @@ dup_entrada.short_description = "Duplicar Entrada(s)"
 
 
 def dup_event_182(modeladmin: admin_opt.ModelAdmin, request, queryset):
-    """Função abaixo permite duplicar entradas no banco de dados"""
+    """Função abaixo permite duplicar entradas no banco de dados."""
     for obj in queryset:
         from_id = obj.id
         obj.id = None
@@ -82,7 +84,7 @@ dup_event_182.short_description = "Duplicar Entrada(s) adicionando 182 dias"
 
 
 def dup_encontros(modeladmin: admin_opt.ModelAdmin, request, queryset):
-    """Função abaixo permite duplicar entradas no banco de dados"""
+    """Função abaixo permite duplicar entradas no banco de dados."""
     for obj in queryset:
         from_id = obj.id
         obj.id = None
@@ -95,7 +97,7 @@ dup_encontros.short_description = "Duplicar Entrada(s)"
 
 
 def dup_encontros_4x(modeladmin: admin_opt.ModelAdmin, request, queryset):
-    """Função abaixo permite duplicar entradas no banco de dados 4 X"""
+    """Função abaixo permite duplicar entradas no banco de dados 4 X."""
     for obj in queryset:
         for _ in range(4):
             from_id = obj.id
@@ -109,7 +111,7 @@ dup_encontros_4x.short_description = "Duplicar Entrada(s) 4 X"
 
 
 def dup_encontros_8x(modeladmin: admin_opt.ModelAdmin, request, queryset):
-    """Função abaixo permite duplicar entradas no banco de dados 8 X"""
+    """Função abaixo permite duplicar entradas no banco de dados 8 X."""
     for obj in queryset:
         for _ in range(8):
             from_id = obj.id
@@ -139,6 +141,7 @@ class FechadoFilter(SimpleListFilter):
             return queryset.distinct().filter(alocacao__isnull=False)
         if self.value():
             return queryset.distinct().filter(alocacao__isnull=True)
+        return None
 
 
 class EventoFilter(SimpleListFilter):
@@ -293,7 +296,7 @@ class BancaAdmin(admin.ModelAdmin):
     list_display = ('projeto', 'get_orientador', 'get_organizacao', 'startDate', 'slug',)
     list_filter = ('tipo_de_banca', 'projeto__ano', 'projeto__semestre',)
     search_fields = ['projeto__titulo', 'projeto__organizacao__sigla',]
-    
+
     def get_orientador(self, obj):
         """Retorna o orientador do projeto da Banca."""
         return obj.projeto.orientador
@@ -336,6 +339,7 @@ class EventoAdmin(admin.ModelAdmin):
     actions = [dup_entrada, dup_event_182]
     list_filter = (EventoFilter,)
     ordering = ('-startDate',)
+    search_fields = ["tipo_de_evento", "descricao", "location", "observacao",]
 
 @admin.register(Feedback)
 class FeedbackAdmin(admin.ModelAdmin):
@@ -384,7 +388,7 @@ class Avaliacao2Admin(admin.ModelAdmin):
 
 
 @admin.register(Reprovacao)
-class Reprovacao(admin.ModelAdmin):
+class ReprovacaoAdmin(admin.ModelAdmin):
     """Informações das Reprovações."""
 
     list_display = ('alocacao', 'nota',)
@@ -398,7 +402,7 @@ class ObservacaoAdmin(admin.ModelAdmin):
     list_display = ('momento', 'tipo_de_avaliacao', 'avaliador', 'projeto', 'alocacao')
     ordering = ('momento',)
     list_filter = ('tipo_de_avaliacao', )
-    search_fields = ['projeto__titulo', 'projeto__titulo_final', 'alocacao__aluno__user__username', ]
+    search_fields = ['projeto__titulo', 'projeto__titulo_final', 'alocacao__aluno__user__username']
 
 @admin.register(Recomendada)
 class RecomendadaAdmin(admin.ModelAdmin):

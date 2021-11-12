@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 """
 Desenvolvido para o Projeto Final de Engenharia
 Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
@@ -160,7 +161,7 @@ def message_agendamento(encontro):
     message += '</b>\n\n'
     message += '<br><br>\n\n'
     message += '&nbsp;&nbsp;Marcada dinâmica do PFE: '
-    message += str(encontro.startDate.strftime("%d/%m/%Y %H:%M") ) + ' as ' + str(encontro.endDate.strftime("%H:%M"))
+    message += str(encontro.startDate.strftime("%d/%m/%Y %H:%M")) + ' as ' + str(encontro.endDate.strftime("%H:%M"))
     message += '<br>\n'
     if encontro.location:
         message += '&nbsp;&nbsp;Local: '

@@ -49,7 +49,7 @@ def get_upload_path(instance, filename):
         filename = force_text(filename).strip().replace(' ', '_')
         filename = re.sub(r'(?u)[^-\w.]', '', filename)
         return "{0}/{1}".format(caminho, filename)
-    
+
     return "{0}".format(caminho)
 
 
@@ -172,7 +172,7 @@ class Projeto(models.Model):
         if self.titulo_final:
             return self.titulo_final
         return self.titulo
-    
+
     def certificado_orientador(self):
         """Retorna link do certificado."""
         certificado = Certificado.objects.filter(usuario=self.orientador.user, projeto=self, tipo_de_certificado=101)
@@ -385,10 +385,7 @@ class Proposta(models.Model):
             return "X"
         elif (tmp_mecanica >= 3) and (tmp_mecanica > tmp_mecatronica + tmp_computacao):
             return "M"
-        else:
-            return "?"
-
-        return " "
+        return "?"
 
 
 class Configuracao(models.Model):
@@ -550,7 +547,7 @@ class Evento(models.Model):
                                                       help_text='Define o tipo do evento a ocorrer')
 
     descricao = models.CharField(max_length=500, blank=True,
-                                  help_text='Descrição do evento')
+                                 help_text='Descrição do evento')
 
     observacao = models.CharField(max_length=50, blank=True,
                                   help_text='Qualquer observação relavante')
@@ -682,7 +679,7 @@ class Encontro(models.Model):
     hora_fim.short_description = 'Hora Fim'
 
     def url_location(self):
-        """checa se link."""
+        """Checa se link."""
         if self.location[:4] == "http":
             return True
         return False
@@ -749,7 +746,7 @@ class Documento(models.Model):
                                  upload_to=get_upload_path,
                                  help_text='Documento PDF')
     link = models.URLField("link", max_length=250, null=True, blank=True,
-                              help_text='website da organização parceira')
+                           help_text='website da organização parceira')
     anotacao = models.CharField(null=True, blank=True, max_length=50,
                                 help_text='qualquer anotação sobre o documento em questão')
     data = models.DateField(null=True, blank=True,
@@ -821,6 +818,7 @@ class Banco(models.Model):
 
 class Reembolso(models.Model):
     """Armazena os reembolsos pedidos pelos alunos do PFE."""
+
     usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='usuário pedindo reembolso')
     banco = models.ForeignKey(Banco, null=True, on_delete=models.SET_NULL,
@@ -841,7 +839,6 @@ class Reembolso(models.Model):
     @classmethod
     def create(cls, usuario):
         """Cria um objeto (entrada) no Reembolso."""
-
         reembolso = cls(usuario=usuario)
         return reembolso
 
@@ -878,7 +875,6 @@ class Aviso(models.Model):
 
     def get_data(self):
         """Retorna a data do aviso do semestre."""
-
         configuracao = Configuracao.objects.get()
         delta_days = datetime.timedelta(days=self.delta)
         if self.tipo_de_evento:
@@ -912,7 +908,8 @@ class Aviso(models.Model):
 
 
 class Entidade(models.Model):
-    """Todas as entidades estudantis do Insper"""
+    """Todas as entidades estudantis do Insper."""
+
     nome = models.CharField(max_length=100,
                             help_text='nome da entidade estudantil')
 
@@ -921,6 +918,7 @@ class Entidade(models.Model):
 
 class Acompanhamento(models.Model):
     """Acompanhamento das organizacoes parceiras."""
+
     data = models.DateField(default=datetime.date.today, blank=True,
                             help_text='Data da Resposta')
     autor = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
@@ -977,6 +975,7 @@ class Feedback(models.Model):
 
 class Conexao(models.Model):
     """Controla como um usuário se conecta a um projeto."""
+
     parceiro = models.ForeignKey('users.Parceiro', null=True, blank=True,
                                  on_delete=models.SET_NULL,
                                  help_text='parceiro que se conecta ao projeto')
@@ -1038,7 +1037,7 @@ class ObjetivosDeAprendizagem(models.Model):
     rubrica_intermediaria_C = models.TextField(max_length=1024, null=True, blank=True,
                                                help_text='Rubrica intermediária do conceito C')
     rubrica_final_C = models.TextField(max_length=1024, null=True, blank=True,
-                                       help_text='Rubrica final do conceito C')    
+                                       help_text='Rubrica final do conceito C')
     rubrica_intermediaria_B = models.TextField(max_length=1024, null=True, blank=True,
                                                help_text='Rubrica intermediária do conceito B')
     rubrica_final_B = models.TextField(max_length=1024, null=True, blank=True,
@@ -1096,9 +1095,9 @@ class ObjetivosDeAprendizagem(models.Model):
 
 # Usado em Avaliacao e Observacao
 TIPO_DE_AVALIACAO = ( # não mudar a ordem dos números
-    ( 0, 'Não definido'),
-    ( 1, 'Banca Intermediária'),
-    ( 2, 'Banca Final'),
+    (0, 'Não definido'),
+    (1, 'Banca Intermediária'),
+    (2, 'Banca Final'),
     (10, 'Relatório de Planejamento'),      # usado até 2020.1
     (11, 'Relatório Intermediário de Grupo'),
     (12, 'Relatório Final de Grupo'),
@@ -1239,6 +1238,7 @@ class Observacao(models.Model):
 
 class Certificado(models.Model):
     """Certificados das Premiações do PFE."""
+
     usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='pessoa premiada com certificado')
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
@@ -1294,6 +1294,7 @@ class Certificado(models.Model):
 
 class Area(models.Model):
     """Projeto em que o aluno está alocado."""
+
     titulo = models.CharField("Título", max_length=48, null=True, blank=True,
                               help_text='Titulo da área de interesse')
 
@@ -1341,14 +1342,13 @@ class AreaDeInteresse(models.Model):
             if self.outras:
                 return self.usuario.get_full_name()+" >>> "+self.outras
             return self.usuario.get_full_name()+" >>> "+str(self.area)
-        elif self.proposta:
+        if self.proposta:
             if self.outras:
                 return self.proposta.titulo+" >>> "+self.outras
             return self.proposta.titulo+" >>> "+str(self.area)
-        else:
-            if self.outras:
-                return self.outras
-            return str(self.area)
+        if self.outras:
+            return self.outras
+        return str(self.area)
 
     @classmethod
     def create(cls):
