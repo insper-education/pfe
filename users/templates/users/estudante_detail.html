@@ -122,7 +122,7 @@
                     em {{certificado.data|date:"DATE_FORMAT"}}
                 {% endif %}
                 {% if certificado.documento %}
-                    - documento: <a href="{{ certificado.documento.url }}" target="_blank" rel="noopener noreferrer">{{ certificado.documento.url }}</a><br>
+                    - documento: <a href="{{ certificado.documento.url }}" target="_blank" rel="noopener noreferrer"><span style="word-break: break-all;">{{ certificado.documento.url }}</span></a><br>
                 {% endif %}
             </li>
         {% endfor %}
@@ -180,10 +180,12 @@
             </a>
 
             {% if alocado.peso > 0 %}
-                <div class="row mt-1 justify-content-md-center">
-                    <div class="col-md-4"><canvas id="radial-geral{{alocado.id}}"></canvas></div>
-                    <div class="col-md-4"><canvas id="radial-individual{{alocado.id}}"></canvas></div>
-                    <div class="col-md-4"><canvas id="radial-grupo{{alocado.id}}"></canvas></div>
+                <div class="table-responsive">
+                    <div class="row mt-1 justify-content-md-center">
+                        <div style="position: relative; height:240px; width:480px"><canvas id="radial-geral{{alocado.id}}"></canvas></div>
+                        <div style="position: relative; height:240px; width:480px"><canvas id="radial-individual{{alocado.id}}"></canvas></div>
+                        <div style="position: relative; height:240px; width:480px"><canvas id="radial-grupo{{alocado.id}}"></canvas></div>
+                    </div>
                 </div>
                 <small>Exibição radar supõe mesmo peso para todas as avaliações</small><br><br>
             {% endif %}
