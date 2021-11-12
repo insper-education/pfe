@@ -31,7 +31,7 @@
       var barChartData = {
         labels: [
           {% for proposta in propostas %} 
-            '{{proposta.titulo}} ({{proposta.organizacao}})',
+            "{{proposta.titulo}} ({{proposta.organizacao|escapejs}})",
           {% endfor %}
           ],
         datasets: [
