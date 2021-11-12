@@ -233,7 +233,6 @@ def atualiza_evento(request):
     location = request.POST.get('location', "")[:50]
     observation = request.POST.get('observation', "")[:50]
     descricao = request.POST.get('descricao', "")[:500]
-    print(descricao)
 
     evento.tipo_de_evento = tipo_de_evento
 
