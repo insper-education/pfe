@@ -36,6 +36,7 @@
       </p>
   {% endif %}
 
+  <strong>Usuário:</strong> {{ parceiro.user.username }}<br>
   {% if parceiro.organizacao %}
     <strong>Organização:</strong>
     <a href="{% url 'organizacao_completo' parceiro.organizacao.id %}">

@@ -19,6 +19,7 @@
   
   <span class="titulo">{{aluno.user.get_full_name}}</span>
 
+  <strong>Usuário:</strong> {{ aluno.user.username }}<br>
   <strong>e-mail:</strong> <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
   {% if aluno.user.linkedin %}
     <strong>LinkedIn:</strong> <a href="{{aluno.user.linkedin}}" target="_blank">{{aluno.user.linkedin}}</a><br>

@@ -14,6 +14,7 @@
   
   <span class="titulo">{{professor.user.get_full_name}}</span>
 
+  <strong>Usuário:</strong> {{ professor.user.username }}<br>
   <strong>Regime de Dedicação:</strong>
   {% if professor.dedicacao %}
     {{professor.dedicacao}}
