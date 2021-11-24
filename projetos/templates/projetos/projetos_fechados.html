@@ -54,7 +54,9 @@
   <span class="titulo">Projetos</span>
   
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
-  {% include "edicoes.html" %}
+  {% with com_cursos=True %}
+      {% include "edicoes.html" %}
+  {% endwith %}
 
   <script>
     $(document).on('click','#informacoes_tag',function(){
@@ -450,6 +452,8 @@
   </div>
   <p>&nbsp;</p>
 
-  {% include "edicoes_ajax.html" %}
+  {% with com_cursos=True %}
+      {% include "edicoes_ajax.html" %}
+  {% endwith %}
 
 {% endblock %}

@@ -251,6 +251,14 @@ def projetos_fechados(request):
                 projetos_filtrados = Projeto.objects.filter(ano=ano,
                                                             semestre=semestre)
 
+            if 'curso' in request.POST:
+                curso = request.POST['curso']
+
+            if 'curso' in request.POST:
+                curso = request.POST['curso']    
+            else:
+                return HttpResponse("Algum erro não identificado.", status=401)
+
             projetos_filtrados = projetos_filtrados.order_by("-avancado", "organizacao")
 
             projetos_selecionados = []
@@ -265,7 +273,11 @@ def projetos_fechados(request):
             numero_projetos_avancado = 0
 
             for projeto in projetos_filtrados:
+
                 estudantes_pfe = Aluno.objects.filter(alocacao__projeto=projeto)
+                if curso != 'T':
+                    estudantes_pfe = estudantes_pfe.filter(alocacao__aluno__curso=curso)
+                
                 if estudantes_pfe:  # len(estudantes_pfe) > 0:
                     projetos_selecionados.append(projeto)
                     if projeto.avancado:
