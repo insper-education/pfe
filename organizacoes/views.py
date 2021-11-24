@@ -498,7 +498,7 @@ def organizacoes_lista(request):
 
     organizacoes_list = zip(organizacoes, fechados, desde, contato)
     total_organizacoes = Organizacao.objects.all().count()
-    total_submetidos = Projeto.objects.all().count()
+    total_submetidos = Proposta.objects.all().count()
     total_fechados = Projeto.objects.filter(alocacao__isnull=False)\
         .distinct().count()
 
