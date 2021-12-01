@@ -277,7 +277,7 @@ def projetos_fechados(request):
                 estudantes_pfe = Aluno.objects.filter(alocacao__projeto=projeto)
                 if curso != 'T':
                     estudantes_pfe = estudantes_pfe.filter(alocacao__aluno__curso=curso)
-                
+
                 if estudantes_pfe:  # len(estudantes_pfe) > 0:
                     projetos_selecionados.append(projeto)
                     if projeto.avancado:
