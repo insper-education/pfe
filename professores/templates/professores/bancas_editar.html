@@ -17,9 +17,12 @@
         var titulo = $(this).children(':selected').data('titulo');
         var organizacao = $(this).children(':selected').data('organizacao');
         var orientador = $(this).children(':selected').data('orientador');
+        var orientador_id = $(this).children(':selected').data('orientador_id');
+        //console.log(orientador_id);
         $('#titulo').text(titulo);
         $('#organizacao').text(organizacao);
         $('#orientador').text(orientador);
+        $('#orientador_id').val(orientador_id);
       })
     });
   </script>
@@ -53,6 +56,7 @@
           data-titulo="{{projeto.titulo}}"
           data-organizacao="{{projeto.organizacao}}"
           data-orientador="{{projeto.orientador}}"
+          data-orientador_id="{{projeto.orientador.user.id}}"
           {% if projeto.id == banca.projeto.id %} selected {% endif %}
           data-subtext="{{projeto.orientador}}"
           >
@@ -86,7 +90,9 @@
         {% else %}
           Sem identificação de Orientador(a)
         {% endif %}
-      </label><br>
+      </label>
+      <label hidden id="orientador_id"></label>
+      <br>
 
       <br>
       Tipo de banca:<br>
@@ -235,9 +241,17 @@
     $(".membros").change(function(){
       var membros  = $('.membros')
       var dic = {};
+      var orientador_id = $('#orientador_id').val();
       for(mem in membros){
         var chave = membros.eq(mem).val()
         if(typeof chave !== "undefined" && chave != "") {
+
+          if(chave == orientador_id) {
+            $("#submit").prop("disabled",true);
+            $("#mensagem").html("Orientador não pode ser selecionado como membro da banca");
+            return;
+          }
+
           if(chave in dic) {
             $("#submit").prop("disabled",true);
             $("#mensagem").html("Os membros devem ser diferentes");

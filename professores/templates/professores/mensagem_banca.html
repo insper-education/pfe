@@ -30,6 +30,7 @@ mailto:
   {% endif %}
   ,
 {% endif %}
+{% comment %} 
 {% for alocacao in banca.projeto.alocacao_set.all %}
   {% if com_nome %}
     {{alocacao.aluno.user.first_name|parse_quote}}%20{{alocacao.aluno.user.last_name|parse_quote}}%20&lt;
@@ -40,6 +41,7 @@ mailto:
   {% endif %}
   ,
 {% endfor %}
+{% endcomment %}
 {% if com_nome %}
   {{banca.projeto.orientador.user.first_name|parse_quote}}%20{{banca.projeto.orientador.user.last_name|parse_quote}}%20&lt;
 {% endif %}
