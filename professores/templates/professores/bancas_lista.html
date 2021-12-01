@@ -167,6 +167,24 @@
                 <a class="email" href="mailto:{{banca.projeto.orientador.user.email}}">&lt;{{banca.projeto.orientador.user.email}}&gt;</a>
               </div>
             {% endif %}
+
+            {% with coorientadores=banca.projeto.coorientador_set.all %}
+            {% if coorientadores %}
+            <div class="coorientadores" style="margin-top: 8px;">
+              <b>Coorientação:</b>
+              <ul style="margin-bottom:0px;">
+                {% for coorientador in coorientadores %}
+                  <li>
+                    <a class="imprimir" href="{% url 'professor_detail' coorientador.id %}">
+                      {{coorientador.usuario.get_full_name}} 
+                    </a>
+                    <a class="email" href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+            {% endwith %}
             
             {% if banca.membro1 or banca.membro2 or banca.membro3 %}
               <div class="banca" style="margin-top: 8px;">

@@ -42,6 +42,16 @@ mailto:
   ,
 {% endfor %}
 {% endcomment %}
+{% for coorientador in banca.projeto.coorientador_set.all %}
+  {% if com_nome %}
+    {{coorientador.usuario.first_name|parse_quote}}%20{{coorientador.usuario.last_name|parse_quote}}%20&lt;
+  {% endif %}
+  {{coorientador.usuario.email|parse_quote}}
+  {% if com_nome %}
+    &gt;
+  {% endif %}
+  ,
+{% endfor %}
 {% if com_nome %}
   {{banca.projeto.orientador.user.first_name|parse_quote}}%20{{banca.projeto.orientador.user.last_name|parse_quote}}%20&lt;
 {% endif %}
