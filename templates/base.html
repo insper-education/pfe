@@ -43,7 +43,7 @@
             <a href="{% url 'index_estudantes' %}">Área dos Estudantes</a>
         {% endif %}
 
-        {% if user.tipo_de_usuario == 3 or user.tipo_de_usuario == 4 %}
+        {% if user.tipo_de_usuario == 3 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
             <a href="{% url 'index_organizacoes' %}">Área dos Parceiros</a>
         {% endif %}
     
