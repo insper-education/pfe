@@ -135,14 +135,12 @@ def bancas_criar(request):
 def bancas_editar(request, primarykey):
     """Edita uma banca de avaliação para o projeto."""
     banca = get_object_or_404(Banca, pk=primarykey)
-    # try:
-    #     banca = Banca.objects.get(pk=primarykey)
-    # except Banca.DoesNotExist:
-    #     return HttpResponse("Banca não encontrada.", status=401)
 
     if request.method == 'POST':
-        editar_banca(banca, request)
-        mensagem = "Banca editada."
+        if editar_banca(banca, request):
+            mensagem = "Banca editada."
+        else:
+            mensagem = "Erro ao Editar banca."
         context = {
             "area_principal": True,
             "bancas_index": True,

@@ -20,6 +20,15 @@ from projetos.models import Organizacao, Projeto, Banca, Encontro, Conexao
 
 def editar_banca(banca, request):
     """Edita os valores de uma banca por um request Http."""
+
+    if 'projeto' in request.POST:
+        try:
+            banca.projeto = Projeto.objects.get(id=int(request.POST['projeto']))
+        except Projeto.DoesNotExist:
+            return False
+    else:
+        return False
+
     if 'inicio' in request.POST:
         try:
             banca.startDate = dateutil.parser.parse(request.POST['inicio'])
@@ -51,9 +60,11 @@ def editar_banca(banca, request):
         else:
             banca.membro3 = None
     except PFEUser.DoesNotExist:
-        return None
+        return False
 
     banca.save()
+
+    return True
 
 
 def professores_membros_bancas(banca=None):
