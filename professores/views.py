@@ -121,11 +121,17 @@ def bancas_criar(request):
     professores, _ = professores_membros_bancas()
     falconis, _ = falconi_membros_banca()
 
+    # Coletando bancas agendadas a partir de hoje
+    hoje = datetime.date.today()
+    bancas_agendadas = Banca.objects.filter(startDate__gt=hoje).order_by("startDate")
+    projetos_agendados = list(bancas_agendadas.values_list('projeto', flat=True))
+
     context = {
         'projetos': projetos,
         'professores': professores,
         "TIPO_DE_BANCA": Banca.TIPO_DE_BANCA,
         "falconis": falconis,
+        "projetos_agendados": projetos_agendados,
     }
     return render(request, 'professores/bancas_editar.html', context)
 

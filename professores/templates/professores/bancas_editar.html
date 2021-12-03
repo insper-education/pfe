@@ -18,11 +18,16 @@
         var organizacao = $(this).children(':selected').data('organizacao');
         var orientador = $(this).children(':selected').data('orientador');
         var orientador_id = $(this).children(':selected').data('orientador_id');
-        //console.log(orientador_id);
         $('#titulo').text(titulo);
         $('#organizacao').text(organizacao);
         $('#orientador').text(orientador);
         $('#orientador_id').val(orientador_id);
+
+        var mensagem = $(this).children(':selected').data('mensagem');
+        if(mensagem) { 
+          $("#mensagem").html(mensagem);
+        }
+
       })
     });
   </script>
@@ -42,7 +47,7 @@
 {% endblock %}
 
 {% block content %}
-
+ 
   {% if projetos %}
     <form method="post" id="criarbancasform" enctype="multipart/form-data">
       {% csrf_token %}
@@ -52,17 +57,16 @@
        data-live-search="true" data-width="75%" data-size="5" required>
         {% for projeto in projetos %}
           <option value="{{projeto.id}}"
-          style="font-size: 0.75em;"
+          style="font-size: 0.75em;{% if projeto.id in projetos_agendados %}color: lightgrey;{% endif %}"
           data-titulo="{{projeto.titulo}}"
           data-organizacao="{{projeto.organizacao}}"
           data-orientador="{{projeto.orientador}}"
           data-orientador_id="{{projeto.orientador.user.id}}"
           {% if projeto.id == banca.projeto.id %} selected {% endif %}
           data-subtext="{{projeto.orientador}}"
+          {% if projeto.id in projetos_agendados %}data-mensagem="Banca já agendada"{% endif %}
           >
-            {{projeto.ano}}.{{projeto.semestre}}
-            ({{projeto.organizacao}})
-            {{projeto.titulo}}
+            {{projeto.ano}}.{{projeto.semestre}} ({{projeto.organizacao}}) {{projeto.titulo}}
             {% if projeto.avancado %}[Avançado]{% endif %}
           </option>  
         {% endfor %}
