@@ -714,6 +714,8 @@ class Anotacao(models.Model):
         (5, 'Notificamos que não conseguimos montar projeto'),
         (6, 'Documentação fechada para projeto'),
         (7, 'Envio de Relatório Final'),
+        (10, 'Autorizou a publicação do Relatório Final'),
+        (11, 'Negou a publicação do Relatório Final'),
         (254, 'outros'),
     )
 
