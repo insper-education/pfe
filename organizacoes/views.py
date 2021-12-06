@@ -78,11 +78,14 @@ def anotacao(request, organizacao_id, anotacao_id=None):  # acertar isso para pk
 
     if anotacao_id:
         anotacao_obj = get_object_or_404(Anotacao, id=anotacao_id)
+        data_hora = anotacao_obj.momento
+    else:
+        data_hora = datetime.datetime.now()
 
     context = {
         'organizacao': organizacao,
         'TIPO_DE_RETORNO': Anotacao.TIPO_DE_RETORNO,
-        'data_hora': datetime.datetime.now(),
+        'data_hora': data_hora,
         'anotacao': anotacao_obj,
     }
 
