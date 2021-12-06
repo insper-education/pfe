@@ -410,7 +410,8 @@ def get_response(file, path, request):
         return HttpResponse(file.read(), content_type="application/pdf")
     elif path[-3:].lower() == "mp4":
         return stream_video(request, file.name)
-        # return HttpResponse(file.read(), content_type="video/mp4")
+    elif path[-3:].lower() == "mkv":
+        return HttpResponse(file.read(), content_type="video/webm")
     else:
         return None
 
