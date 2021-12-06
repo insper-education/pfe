@@ -4,7 +4,14 @@
     Data: 1 de Junho de 2021
 {% endcomment %}
 
-<form id="meuForm" method="post" action="{% url 'adiciona_documento' organizacao.id %}" enctype="multipart/form-data">
+<form id="meuForm" method="post"
+      {% if projeto %}
+        action="{% url 'adiciona_documento_proj' projeto.id %}"
+      {% else %}
+        action="{% url 'adiciona_documento_org' organizacao.id %}"
+      {% endif %}
+      enctype="multipart/form-data">
+
   {% csrf_token %}
 
   <div class="modal-header">
@@ -28,8 +35,10 @@
     <label for="projeto">Projeto:</label>
     <select id="projeto" name="projeto" class="form-control">
       <option selected value> -- nenhum projeto -- </option>
-      {% for projeto in projetos %}
-        <option value="{{projeto.id}}">{{projeto.get_titulo|slice:":90"}} [{{projeto.ano}}.{{projeto.semestre}}]{% if projeto.avancado %} {Avançado}{% endif %}</option>
+      {% for proj in projetos %}
+        <option value="{{proj.id}}" {% if proj.id == projeto.id %}selected="selected"{% endif %}>
+          {{proj.get_titulo|slice:":90"}} [{{proj.ano}}.{{proj.semestre}}]{% if proj.avancado %} {Avançado}{% endif %}
+        </option>
       {% endfor %}
     </select>
 

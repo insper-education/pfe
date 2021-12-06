@@ -26,9 +26,13 @@ urlpatterns = [
          views.anotacao,
          name='anotacao'),
 
-    path('adiciona_documento/<str:organizacao_id>',
-         views.adiciona_documento,
-         name='adiciona_documento'),
+    path('adiciona_documento_org/<str:organizacao_id>',
+         views.adiciona_documento_org,
+         name='adiciona_documento_org'),
+
+     path('adiciona_documento_proj/<str:projeto_id>',
+         views.adiciona_documento_proj,
+         name='adiciona_documento_proj'),
 
     path('carrega_proposta/',
          views.carrega_proposta,

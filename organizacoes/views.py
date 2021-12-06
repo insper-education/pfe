@@ -94,59 +94,59 @@ def anotacao(request, organizacao_id, anotacao_id=None):  # acertar isso para pk
                   context=context)
 
 
+
+def cria_documento(request, organizacao):
+
+    documento = Documento.create()
+
+    documento.organizacao = organizacao
+
+    projeto_id = request.POST.get("projeto", "")
+    if projeto_id:
+        documento.projeto = Projeto.objects.get(id=projeto_id)
+
+    if 'data' in request.POST:
+        try:
+            documento.data = dateutil.parser\
+                .parse(request.POST['data'])
+        except (ValueError, OverflowError):
+            documento.data = datetime.date.today()
+
+    try:
+        tipo_de_documento = request.POST.get("tipo_de_documento", "")
+        documento.tipo_de_documento = tipo_de_documento
+    except (ValueError, OverflowError):
+        documento.tipo_de_documento = 255
+
+    link = request.POST.get("link", "")
+    if link:
+        if link[:4] != "http":
+            link = "http://" + link
+        documento.link = link
+
+    documento.confidencial = True
+
+    documento.save()
+
+    if 'arquivo' in request.FILES:
+        arquivo = simple_upload(request.FILES['arquivo'],
+                                path=get_upload_path(documento, ""))
+        documento.documento = arquivo[len(settings.MEDIA_URL):]
+
+    documento.save()
+
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", login_url='/')
-def adiciona_documento(request, organizacao_id):
+def adiciona_documento_org(request, organizacao_id):
     """Cria um anotação para uma organização parceira."""
     organizacao = get_object_or_404(Organizacao, id=organizacao_id)
 
     if request.method == 'POST':
-
-        documento = Documento.create()
-
-        documento.organizacao = organizacao
-
-        projeto_id = request.POST.get("projeto", "")
-        if projeto_id:
-            documento.projeto = Projeto.objects.get(id=projeto_id)
-
-        if 'data' in request.POST:
-            try:
-                documento.data = dateutil.parser\
-                    .parse(request.POST['data'])
-            except (ValueError, OverflowError):
-                documento.data = datetime.date.today()
-
-        try:
-            tipo_de_documento = request.POST.get("tipo_de_documento", "")
-            documento.tipo_de_documento = tipo_de_documento
-        except (ValueError, OverflowError):
-            documento.tipo_de_documento = 255
-
-        link = request.POST.get("link", "")
-        if link:
-            if link[:4] != "http":
-                link = "http://" + link
-            documento.link = link
-
-        documento.confidencial = True
-
-        documento.save()
-
-        if 'arquivo' in request.FILES:
-            arquivo = simple_upload(request.FILES['arquivo'],
-                                    path=get_upload_path(documento, ""))
-            documento.documento = arquivo[len(settings.MEDIA_URL):]
-
-        documento.save()
-
-        # return HttpResponse(status=204)
+        cria_documento(request, organizacao)
         return redirect('organizacao_completo', org=organizacao.id)
 
-
     documento = None
-
     projetos = Projeto.objects.filter(organizacao=organizacao)
 
     context = {
@@ -155,6 +155,34 @@ def adiciona_documento(request, organizacao_id):
         'data': datetime.date.today(),
         'documento': documento,
         "projetos": projetos,
+    }
+
+    return render(request,
+                  'organizacoes/documento_view.html',
+                  context=context)
+
+@login_required
+@transaction.atomic
+@permission_required("users.altera_professor", login_url='/')
+def adiciona_documento_proj(request, projeto_id):
+    """Cria um anotação para um projeto."""
+    projeto = get_object_or_404(Projeto, id=projeto_id)
+    organizacao = projeto.organizacao
+
+    if request.method == 'POST':
+        cria_documento(request, organizacao)
+        return redirect('projeto_completo', projeto_id)
+
+    documento = None
+    projetos = Projeto.objects.filter(organizacao=organizacao)
+
+    context = {
+        "organizacao": organizacao,
+        "TIPO_DE_DOCUMENTO": Documento.TIPO_DE_DOCUMENTO,
+        "data": datetime.date.today(),
+        "documento": documento,
+        "projetos": projetos,
+        "projeto": projeto,
     }
 
     return render(request,

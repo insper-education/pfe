@@ -334,7 +334,42 @@
 
   {% endif %}
 
-  
+  <hr>
+  <h3>Documentos
+    <small>
+      <a
+        class="open-documento"
+        href="{% url 'adiciona_documento_proj' projeto.id %}"
+        data-url="{% url 'adiciona_documento_proj' projeto.id %}"
+        >&#10133;</a
+      >
+    </small>
+  </h3>
+  {% for documento in projeto.documento_set.all %}
+    <li>
+      {% if documento.documento %}
+        <a href="../..{{MEDIA_URL}}{{ documento.documento }}" target="_blank" rel="noopener noreferrer">
+      {% elif documento.link %}
+        <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">
+      {% endif %}
+      {{ documento }} 
+      {% if documento.projeto %}
+        - {{documento.projeto.get_titulo}}
+      {% endif %}
+      {% if documento.usuario %}
+        - {{ documento.usuario.get_full_name }} 
+      {% endif %}
+      {% if documento.data %}
+                : {{ documento.data }} 
+      {% endif %}
+      {% if documento.anotacao %}
+                [Obs: {{ documento.anotacao }} ]
+      {% endif %}
+    </a></li>
+  {% empty %}
+    Ainda não existem documentos para esse projeto.
+  {% endfor %}
+
   {% if projeto.encontro_set.all %}
       <hr>
       <h3>Dinâmicas Marcadas<br></h3>
@@ -432,5 +467,8 @@
       }
     </script>
   {% endif %}
+
+  {% include "documento-modal.html" %}
+  {% include "annotation-modal2.html" %}
 
 {% endblock %}
