@@ -13,6 +13,8 @@
 
 {% block content %}
 
+  {% include "impressora.html" %}
+
   <span class="titulo">Alocação de Coorientadores</span>
   
   <div class="table-responsive">
@@ -29,7 +31,7 @@
         {% for professor, grupos in professores %} 
           <tr class="item">
             <td>
-              <a href="{% url 'professor_detail' professor.id %}">
+              <a class="imprimir" href="{% url 'professor_detail' professor.id %}">
                 {{professor.user.get_full_name}}
               </a>
             </td>

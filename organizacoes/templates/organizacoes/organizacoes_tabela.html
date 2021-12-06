@@ -14,6 +14,8 @@
 
 {% block content %}
 
+  {% include "impressora.html" %}
+
   <span class="titulo">Alocação de Organizações Parceiras</span>
 
   <div class="table-responsive">
@@ -30,7 +32,7 @@
         {% for organizacao,projetos in organizacoes %} 
           <tr class="item">
             <td>
-              <a href="{% url 'organizacao_completo' organizacao.id %}">
+              <a class="imprimir" href="{% url 'organizacao_completo' organizacao.id %}">
                 {{organizacao.nome}}
               </a>
             </td>
