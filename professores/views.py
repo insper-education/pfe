@@ -240,8 +240,8 @@ def bancas_tabela(request):
             
             for banca in bancas:
                 if banca.projeto.orientador:
-                    membros.setdefault(banca.projeto.orientador.user, [])\
-                        .append(banca)
+                    if banca.tipo_de_banca != 2:  # Nao eh Falconi
+                        membros.setdefault(banca.projeto.orientador.user, []).append(banca)
                 if banca.membro1:
                     membros.setdefault(banca.membro1, []).append(banca)
                 if banca.membro2:
