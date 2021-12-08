@@ -69,6 +69,11 @@ body {
   color: white;
 }
 
+.active_local {
+  background-color: rgb(255, 166, 0);
+  color: white;
+}
+
 #pfelogo { 
   color: rgb(50, 50, 50);
   font-size: 15px;

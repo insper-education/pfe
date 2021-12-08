@@ -21,12 +21,12 @@
   {% block head %}
   {% endblock %}
 </head>
-<body>
+<body{% if request.get_host == "127.0.0.1:8000" %} style="background-color: #FFF6F6;"{% endif %}>
   {% url 'index' as url_index %}
   {% url 'perfil' as url_perfil %}
 
   <div class="topnav">
-    <a class="active">
+    <a {% if request.get_host == "127.0.0.1:8000" %}class="active_local"{% else %}class="active"{% endif %}>
       <img 
       {% if user.is_authenticated %} onclick="location.href='{{ url_index }}'" {% endif %}
       src="{% static 'images/logoInsper.png' %}" alt="Insper" style="width:59px;height:23px;">
