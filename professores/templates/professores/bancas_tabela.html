@@ -32,22 +32,7 @@
           </thead>
           {% for membro, bancas in membros.items %}
             <tr class="item">
-              <td>
-                {% if membro.tipo_de_usuario == 2 %}
-                  <a class="imprimir" href="{% url 'professor_detail' membro.professor.id %}">
-                    {{membro.get_full_name}}
-                  </a>
-                {% elif membro.tipo_de_usuario == 3 %}
-                  <a class="imprimir" href="{% url 'parceiro_detail' membro.parceiro.id %}">
-                    {{membro.get_full_name}}
-                  </a>
-                {% elif membro.tipo_de_usuario == 4 %}
-                  <a class="imprimir" href="{% url 'professor_detail' membro.professor.id %}">
-                    {{membro.get_full_name}}
-                  </a>
-                {% endif %}
-                <a href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a>
-              </td>
+              <td>{% if membro.tipo_de_usuario == 2 %}<a class="imprimir" href="{% url 'professor_detail' membro.professor.id %}">{{membro.get_full_name}}</a>{% elif membro.tipo_de_usuario == 3 %}<a class="imprimir" href="{% url 'parceiro_detail' membro.parceiro.id %}">{{membro.get_full_name}}</a>{% elif membro.tipo_de_usuario == 4 %}<a class="imprimir" href="{% url 'professor_detail' membro.professor.id %}">{{membro.get_full_name}}</a>{% endif %} <a href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a></td>
               <td style="text-align: center;"> 
                 {{bancas|length}}
               </td>
