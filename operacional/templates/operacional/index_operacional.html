@@ -12,36 +12,35 @@
     <hr>
     <h5>Listagem completa</h5>
     <ul>
-        <a href="{% url 'estudantes_lista' %}"><li>Estudantes</li></a>
-        <a href="{% url 'todos_parceiros' %}"><li>Parceiros</li></a>
-        <a href="{% url 'todos_professores' %}"><li>Professores</li></a>
-        <a href="{% url 'comite' %}"><li>Comitê</li></a>
+        <li><a href="{% url 'estudantes_lista' %}">Estudantes</a></li>
+        <li><a href="{% url 'todos_parceiros' %}">Parceiros</a></li>
+        <li><a href="{% url 'todos_professores' %}">Professores</a></li>
+        <li><a href="{% url 'comite' %}">Comitê</a></li>
     </ul>
     <ul>
-        <a href="{% url 'organizacoes_lista' %}"><li>Organizações</li></a>
+        <li><a href="{% url 'organizacoes_lista' %}">Organizações</a></li>
     </ul>
     <ul>
-        <a href="{% url 'propostas_apresentadas' %}"><li>Propostas</li></a>
-        <a href="{% url 'projetos_lista' %}"><li>Projetos</li></a>
-        
+        <li><a href="{% url 'propostas_apresentadas' %}">Propostas</a></li>
+        <li><a href="{% url 'projetos_lista' %}">Projetos</a></li>
     </ul>
 
     <hr>
     <h5>Tabelas de alocação</h5>
     <ul>
-        <a href="{% url 'orientadores_tabela' %}"><li>Orientadores</li></a>
-        <a href="{% url 'coorientadores_tabela' %}"><li>Coorientadores</li></a>
-        <a href="{% url 'organizacoes_tabela' %}"><li>Organizações</li></a>
-        <a href="{% url 'bancas_tabela' %}"><li>Bancas</li></a>
+        <li><a href="{% url 'orientadores_tabela' %}">Orientadores</a> <a href="{% url 'orientadores_tabela_completa' %}">(completa)</a></li>
+        <li><a href="{% url 'coorientadores_tabela' %}">Coorientadores</a> <a href="{% url 'coorientadores_tabela_completa' %}">(completa)</a></li>
+        <li><a href="{% url 'organizacoes_tabela' %}">Organizações</a></li>
+        <li><a href="{% url 'bancas_tabela' %}">Bancas</a> <a href="{% url 'bancas_tabela_completa' %}">(completa)</a></li>
     </ul>
 
     <hr>
     <h5>Certificados</h5>
     <ul>
-        <a href="{% url 'certificados_submetidos' %}"><li>Listar Certificados</li></a>
-        <a href="{% url 'selecao_geracao_certificados' %}"><li>Gerar Novos Certificados</li></a>
-        <a href="{% url 'certificacao_falconi' %}"><li>Certificações Falconi</li></a>
-        <a href="{% url 'carregar_certificado' %}"><li>Carregar Certificado</li></a>
+        <li><a href="{% url 'certificados_submetidos' %}">Listar Certificados</a></li>
+        <li><a href="{% url 'selecao_geracao_certificados' %}">Gerar Novos Certificados</a></li>
+        <li><a href="{% url 'certificacao_falconi' %}">Certificações Falconi</a></li>
+        <li><a href="{% url 'carregar_certificado' %}">Carregar Certificado</a></li>
     </ul>
 
     <hr>

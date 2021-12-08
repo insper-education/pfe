@@ -24,8 +24,6 @@
       >&#10133;</a>
   </span>
 
-
-
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% with com_cursos=True %}
     {% include "edicoes.html" %}
@@ -40,8 +38,8 @@
   
   <div class="atualizar">
 
-    {% if alunos_list %}
-      <div class="table-responsive">
+    
+    <div class="table-responsive">
       <table id="EstudantesTable" class="table table-bordered table-hover table-sm" style="width: 100%;">
         <thead class="table-info">
           <tr>
@@ -147,10 +145,9 @@
           </tr>
           {% endfor %}
         </table>
-        </div>
-        <br>
+      </div>
+      <br>
 
-    {% endif %}
     
     <strong>Número Total de Estudantes:</strong> {{ num_alunos }}
     <br>

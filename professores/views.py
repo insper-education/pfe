@@ -22,7 +22,7 @@ from django.utils import html
 from users.models import PFEUser, Professor, Aluno, Alocacao
 from users.support import get_edicoes
 
-from projetos.models import ObjetivosDeAprendizagem, Avaliacao2, Observacao
+from projetos.models import Coorientador, ObjetivosDeAprendizagem, Avaliacao2, Observacao
 from projetos.models import Banca, Evento, Encontro
 from projetos.models import Projeto, Configuracao, Organizacao
 from projetos.support import converte_letra, converte_conceito
@@ -216,9 +216,55 @@ def bancas_lista(request, periodo_projeto):
     return render(request, 'professores/bancas_lista.html', context)
 
 
+
 @login_required
 @permission_required('users.altera_professor', login_url='/')
 def bancas_tabela(request):
+    """Lista todas as bancas agendadas, conforme periodo pedido."""
+    configuracao = get_object_or_404(Configuracao)
+
+    if request.is_ajax():
+        if 'edicao' in request.POST:
+            edicao = request.POST['edicao']
+
+            if edicao == 'todas':
+                bancas = Banca.objects.all()
+            else:
+                ano, semestre = request.POST['edicao'].split('.')
+                if semestre == "1/2":
+                    bancas = Banca.objects.filter(projeto__ano=ano)
+                else:
+                    bancas = Banca.objects.all().filter(projeto__ano=ano).filter(projeto__semestre=semestre)
+
+            membros = dict()
+            
+            for banca in bancas:
+                if banca.projeto.orientador:
+                    membros.setdefault(banca.projeto.orientador.user, [])\
+                        .append(banca)
+                if banca.membro1:
+                    membros.setdefault(banca.membro1, []).append(banca)
+                if banca.membro2:
+                    membros.setdefault(banca.membro2, []).append(banca)
+                if banca.membro3:
+                    membros.setdefault(banca.membro3, []).append(banca)
+
+        context = {
+            "membros": membros,
+        }
+
+    else:
+        edicoes, _, _ = get_edicoes(Projeto, anual=True)
+        context = {
+            "edicoes": edicoes,
+        }
+
+    return render(request, 'professores/bancas_tabela.html', context)
+
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def bancas_tabela_completa(request):
     """Lista todas as bancas agendadas, conforme periodo pedido."""
     configuracao = get_object_or_404(Configuracao)
 
@@ -261,7 +307,7 @@ def bancas_tabela(request):
         'anos': anos,
     }
 
-    return render(request, 'professores/bancas_tabela.html', context)
+    return render(request, 'professores/bancas_tabela_completa.html', context)
 
 
 @login_required
@@ -954,14 +1000,84 @@ def dinamicas_lista(request):
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')
-def orientadores_tabela(request):
+def orientadores_tabela_completa(request):
     """Alocação dos Orientadores por semestre."""
     configuracao = get_object_or_404(Configuracao)
     orientadores = recupera_orientadores_por_semestre(configuracao)
     context = {
         'anos': orientadores,
     }
+    return render(request, 'professores/orientadores_tabela_completa.html', context)
+
+
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def orientadores_tabela(request):
+    """Alocação dos Orientadores por semestre."""
+    configuracao = get_object_or_404(Configuracao)
+
+    if request.is_ajax():
+        if 'edicao' in request.POST:
+            edicao = request.POST['edicao']
+
+            professores_pfe = Professor.objects.all().order_by(Lower("user__first_name"),
+                                                               Lower("user__last_name"))
+
+            professores = []
+
+            if edicao == 'todas':
+                professores_pfe = professores_pfe.filter(professor_orientador__isnull=False).distinct()
+            else:
+                ano, semestre = request.POST['edicao'].split('.')
+                if semestre == "1/2":
+                    professores_pfe = professores_pfe.filter(professor_orientador__ano=ano).distinct()
+                else:
+                    professores_pfe = professores_pfe.filter(professor_orientador__ano=ano,
+                                                             professor_orientador__semestre=semestre).distinct()
+
+            professores = professores_pfe
+
+            grupos = []
+
+            for professor in professores:
+
+                grupos_pfe = Projeto.objects.filter(orientador=professor)
+
+                if edicao != 'todas':
+                    if semestre == "1/2":
+                        grupos_pfe = grupos_pfe.filter(ano=ano)
+                    else:
+                        grupos_pfe = grupos_pfe.filter(ano=ano).\
+                                                filter(semestre=semestre)
+
+
+                grupos.append(grupos_pfe)
+
+            orientacoes = zip(professores, grupos)
+
+        context = {
+            "orientacoes": orientacoes,
+        }
+
+    else:
+        edicoes, _, _ = get_edicoes(Projeto, anual=True)
+        context = {
+            "edicoes": edicoes,
+        }
+
     return render(request, 'professores/orientadores_tabela.html', context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def coorientadores_tabela_completa(request):
+    """Alocação dos Coorientadores por semestre."""
+    configuracao = get_object_or_404(Configuracao)
+    coorientadores = recupera_coorientadores_por_semestre(configuracao)
+    context = {
+        'anos': coorientadores,
+    }
+    return render(request, 'professores/coorientadores_tabela_completa.html', context)
 
 
 @login_required
@@ -969,11 +1085,57 @@ def orientadores_tabela(request):
 def coorientadores_tabela(request):
     """Alocação dos Coorientadores por semestre."""
     configuracao = get_object_or_404(Configuracao)
-    coorientadores = recupera_coorientadores_por_semestre(configuracao)
-    context = {
-        'anos': coorientadores,
-    }
+
+    if request.is_ajax():
+        if 'edicao' in request.POST:
+            edicao = request.POST['edicao']
+
+            professores_pfe = Professor.objects.all().order_by(Lower("user__first_name"),
+                                                               Lower("user__last_name"))
+
+            professores = []
+
+            if edicao == 'todas':
+                professores_pfe = professores_pfe.filter(user__coorientador__isnull=False).distinct()
+            else:
+                ano, semestre = request.POST['edicao'].split('.')
+                if semestre == "1/2":
+                    professores_pfe = professores_pfe.filter(user__coorientador__projeto__ano=ano).distinct()
+                else:
+                    professores_pfe = professores_pfe.filter(user__coorientador__projeto__ano=ano,
+                                                             user__coorientador__projeto__semestre=semestre).distinct()
+
+            professores = professores_pfe
+
+            grupos = []
+
+            for professor in professores:
+
+                grupos_pfe = Coorientador.objects.filter(usuario=professor.user)
+
+                if edicao != 'todas':
+                    if semestre == "1/2":
+                        grupos_pfe = grupos_pfe.filter(projeto__ano=ano)
+                    else:
+                        grupos_pfe = grupos_pfe.filter(projeto__ano=ano).\
+                                                filter(projeto__semestre=semestre)
+
+                grupos.append(grupos_pfe)
+
+            orientacoes = zip(professores, grupos)
+
+        context = {
+            "orientacoes": orientacoes,
+        }
+
+    else:
+        edicoes, _, _ = get_edicoes(Projeto, anual=True)
+        context = {
+            "edicoes": edicoes,
+        }
+
     return render(request, 'professores/coorientadores_tabela.html', context)
+
 
 
 @login_required

@@ -42,6 +42,10 @@ urlpatterns = [
          views.bancas_tabela,
          name='bancas_tabela'),
 
+    path('bancas_tabela_completa/',
+         views.bancas_tabela_completa,
+         name='bancas_tabela_completa'),
+
     path('banca_avaliar/<slug:slug>',
          views.banca_avaliar,
          name='banca_avaliar'),
@@ -49,6 +53,10 @@ urlpatterns = [
     path('conceitos_obtidos/<int:primarykey>',
          views.conceitos_obtidos,
          name='conceitos_obtidos'),
+
+    path('coorientadores_tabela_completa/',
+         views.coorientadores_tabela_completa,
+         name='coorientadores_tabela_completa'),
 
     path('coorientadores_tabela/',
          views.coorientadores_tabela,
@@ -77,6 +85,10 @@ urlpatterns = [
     path('orientadores_tabela/',
          views.orientadores_tabela,
          name='orientadores_tabela'),
+
+    path('orientadores_tabela_completa/',
+         views.orientadores_tabela_completa,
+         name='orientadores_tabela_completa'),
 
     path('resultado_projetos/',
          views.resultado_projetos,

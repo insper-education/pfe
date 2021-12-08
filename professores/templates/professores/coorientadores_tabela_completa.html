@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 16 de Fevereiro de 2020
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  <script>{% include "tooltip.js" %}</script>
+  {% include "tabelas_includes.html" %}
+{% endblock %}
+
+{% block content %}
+
+  {% include "impressora.html" %}
+
+  <span class="titulo">Alocação de Coorientadores</span>
+  
+  <div class="table-responsive">
+
+    {% for professores,periodo in anos %} 
+      <big>{{periodo}}</big>
+      <table id="professores"class="table table-bordered table-hover table-sm" style="width: auto;">
+        <thead class="table-info">
+          <tr>
+            <th scope="col" style="text-align: center;width:300px;">Nome</th>
+            <th scope="col" style="text-align: center;width:70px;">Grupos</th>
+          </tr>
+        </thead>
+        {% for professor, grupos in professores %} 
+          <tr class="item">
+            <td>
+              <a class="imprimir" href="{% url 'professor_detail' professor.id %}">
+                {{professor.user.get_full_name}}
+              </a>
+            </td>
+            <td style="text-align: center;" data-toggle="tooltip" data-html="true" animation="true" title="
+              {% for grupo in grupos %}
+                &bull;
+                {{grupo.get_titulo}}
+                [{{grupo.organizacao}}]
+                <br>
+              {% endfor %}
+            "> 
+              <span style="color:blue;">
+                {{grupos|length}}
+              <span>
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+      <br>
+    {% endfor %}
+  
+  </div>
+
+  <br>
+  <br>
+
+  {% include "tabelas_simples_scripts.html" %}
+
+{% endblock %}

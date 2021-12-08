@@ -266,7 +266,7 @@ def estudantes_lista(request):
     else:
         edicoes, _, _ = get_edicoes(Aluno)
         context = {
-            'edicoes': edicoes,
+            "edicoes": edicoes,
         }
 
     return render(request, 'users/estudantes_lista.html', context=context)

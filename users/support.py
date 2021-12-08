@@ -45,7 +45,7 @@ def configuracao_estudante_vencida(estudante):
     return vencido
 
 
-def get_edicoes(tipo):
+def get_edicoes(tipo, anual=False):
     """Função usada para recuperar todas as edições de 2018.2 até hoje."""
     edicoes = []
     semestre_tmp = 2
@@ -59,10 +59,13 @@ def get_edicoes(tipo):
             if tipo.objects.filter(anoPFE=ano_tmp, semestrePFE=semestre_tmp).exists():
                 existe = True
         elif tipo == Avaliacao2:
-            return (["2018.2", "2019.1", "2019.2", "2020.1", "2020.2", "2021.1"], 2020, 2) # temporário
+            return (["2018.2", "2019.1", "2019.2", "2020.1", "2020.2", "2021.1", "2021.2"], 2020, 2) # temporário
         else:
             if tipo.objects.filter(ano=ano_tmp, semestre=semestre_tmp).exists():
                 existe = True
+
+        if anual and semestre_tmp == 1:
+            edicoes.append(str(ano_tmp)+".1/2")
 
         if existe:
             ano = ano_tmp

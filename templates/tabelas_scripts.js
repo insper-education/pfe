@@ -20,6 +20,9 @@ function stripData( str ) {
     str = str.replace( /&nbsp;/g, ' ' );
     str = str.replace( /🔗/g, '' );
 
+    str = str.replace( /&amp;/g, '&' );
+    
+
     str = str.replace( /<[^>]*>/g, '' );
 	str = str.replace( /^\s+|\s+$/g, '' );
 	str = str.replace( /\n/g, ' ' );
@@ -27,10 +30,7 @@ function stripData( str ) {
     str = str.replace( /&lt;/g, '<' );
     str = str.replace( /&gt;/g, '>' );
 
-	// if ( config.decodeEntities ) {
-	// 	_exportTextarea.innerHTML = str;
-	// 	str = _exportTextarea.value;
-	// }
+    //str = str.replace( /<br\s*\/?>/ig, "\r\n" );
 
 	return str;
 };

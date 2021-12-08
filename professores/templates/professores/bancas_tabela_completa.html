@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 17 de Janeiro de 2020
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  <script>{% include "tooltip.js" %}</script>
+  {% include "tabelas_includes.html" %}
+{% endblock %}
+
+{% block content %}
+
+  {% include "impressora.html" %}
+
+  <span class="titulo">Alocações em Bancas</span>
+
+  <b>Informações: </b>&nbsp;
+  <label><input onchange="($(this).prop('checked') ? $('#MembrosTable tr > *:nth-child(2)').show() : $('#MembrosTable tr > *:nth-child(2)').hide())" type="checkbox" checked /> e-mail</label>&nbsp;&nbsp;&nbsp;
+  <label><input onchange="($(this).prop('checked') ? $('#MembrosTable tr > *:nth-child(3)').show() : $('#MembrosTable tr > *:nth-child(3)').hide())" type="checkbox" checked /> Quantidade</label>&nbsp;&nbsp;&nbsp;
+  <label><input onchange="($(this).prop('checked') ? $('#MembrosTable tr > *:nth-child(4)').show() : $('#MembrosTable tr > *:nth-child(4)').hide())" type="checkbox" checked /> Projetos</label>&nbsp;&nbsp;&nbsp;  
+  <br><br>
+
+  <div class="table-responsive">
+  
+    {% for membros,periodo in anos %} 
+      <big>{{periodo}}</big>
+      {% if membros %}
+        <table id="MembrosTable" class="table table-bordered table-hover table-sm" style="width: auto;">
+          <thead class="table-info">
+            <tr>
+              <th scope="col" class="text-center">Nome</th>
+              <th scope="col" class="text-center">e-mail</th>
+              <th scope="col" class="text-center">Quant.</th>
+              <th scope="col" class="text-center">Projetos</th>
+            </tr>
+          </thead>
+          {% for membro, bancas in membros.items %}
+            <tr class="item">
+              <td>
+                {% if membro.tipo_de_usuario == 2 %}
+                  <a class="imprimir" href="{% url 'professor_detail' membro.professor.id %}">
+                    {{membro.get_full_name}}
+                  </a>
+                {% elif membro.tipo_de_usuario == 3 %}
+                  <a class="imprimir" href="{% url 'parceiro_detail' membro.parceiro.id %}">
+                    {{membro.get_full_name}}
+                  </a>
+                {% elif membro.tipo_de_usuario == 4 %}
+                  <a class="imprimir" href="{% url 'professor_detail' membro.professor.id %}">
+                    {{membro.get_full_name}}
+                  </a>
+                {% endif %}  
+              </td>
+              <td>
+                <a href="mailto:{{membro.email}}"> &lt;{{membro.email}}&gt;</a><br>
+              </td>
+              <td class="text-center" data-toggle="tooltip" data-html="true" animation="true" title="
+                {% for banca in bancas %}
+                  &bull;
+                  {{banca.projeto.get_titulo}}
+                  ({{banca.startDate}})
+                  <br>
+                {% endfor %}
+              "> 
+                {{bancas|length}}
+              </td>
+              <td>
+                <small>
+                {% for banca in bancas %}
+                  &bull;
+                  {{banca.projeto.get_titulo}}
+                  [{{banca.projeto.organizacao}}]
+                  ({{banca.startDate}})
+                  <br>
+                {% endfor %}
+                </small>
+              </td>
+            </tr>
+          {% endfor %}
+        </table>
+        <br>
+      {% else %}
+        <p>Não existem bancas.</p>
+        <br>
+      {% endif %}
+    {% endfor %}
+
+  </div>
+
+  <br>
+  <p>&nbsp;</p>
+
+  {% include "tabelas_simples_scripts.html" %}
+
+{% endblock %}

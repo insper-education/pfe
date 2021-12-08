@@ -2,12 +2,11 @@
 {% comment %}
     Desenvolvido para o Projeto Final de Engenharia
     Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 17 de Janeiro de 2020
+    Data: 4 de Setembro de 2019
 {% endcomment %}
 
 {% block head %}
   {% load static %}
-  <script>{% include "tooltip.js" %}</script>
   {% include "tabelas_includes.html" %}
 {% endblock %}
 
@@ -15,26 +14,20 @@
 
   {% include "impressora.html" %}
 
-  <span class="titulo">Alocações em Bancas</span>
+  <span class="titulo">Alocação em Bancas</span>
 
-  <b>Informações: </b>&nbsp;
-  <label><input onchange="($(this).prop('checked') ? $('#MembrosTable tr > *:nth-child(2)').show() : $('#MembrosTable tr > *:nth-child(2)').hide())" type="checkbox" checked /> e-mail</label>&nbsp;&nbsp;&nbsp;
-  <label><input onchange="($(this).prop('checked') ? $('#MembrosTable tr > *:nth-child(3)').show() : $('#MembrosTable tr > *:nth-child(3)').hide())" type="checkbox" checked /> Quantidade</label>&nbsp;&nbsp;&nbsp;
-  <label><input onchange="($(this).prop('checked') ? $('#MembrosTable tr > *:nth-child(4)').show() : $('#MembrosTable tr > *:nth-child(4)').hide())" type="checkbox" checked /> Projetos</label>&nbsp;&nbsp;&nbsp;  
-  <br><br>
+  {% include "edicoes.html" %}
 
-  <div class="table-responsive">
-  
-    {% for membros,periodo in anos %} 
-      <big>{{periodo}}</big>
-      {% if membros %}
-        <table id="MembrosTable" class="table table-bordered table-hover table-sm" style="width: auto;">
+  <div class="atualizar">
+
+    <div class="table-responsive">
+
+        <table id="BancasTable" class="table table-bordered table-hover table-sm" style="width: auto;">
           <thead class="table-info">
             <tr>
-              <th scope="col" class="text-center">Nome</th>
-              <th scope="col" class="text-center">e-mail</th>
-              <th scope="col" class="text-center">Quant.</th>
-              <th scope="col" class="text-center">Projetos</th>
+              <th scope="col" style="text-align: center;width:300px;">Nome</th>
+              <th scope="col" style="text-align: center;width:70px;">Grupos</th>
+              <th scope="col" style="text-align: center;width:auto;">Projetos</th>
             </tr>
           </thead>
           {% for membro, bancas in membros.items %}
@@ -52,47 +45,35 @@
                   <a class="imprimir" href="{% url 'professor_detail' membro.professor.id %}">
                     {{membro.get_full_name}}
                   </a>
-                {% endif %}  
+                {% endif %}
+                <a href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a>
               </td>
-              <td>
-                <a href="mailto:{{membro.email}}"> &lt;{{membro.email}}&gt;</a><br>
-              </td>
-              <td class="text-center" data-toggle="tooltip" data-html="true" animation="true" title="
-                {% for banca in bancas %}
-                  &bull;
-                  {{banca.projeto.get_titulo}}
-                  ({{banca.startDate}})
-                  <br>
-                {% endfor %}
-              "> 
+              <td style="text-align: center;"> 
                 {{bancas|length}}
               </td>
-              <td>
-                <small>
-                {% for banca in bancas %}
-                  &bull;
-                  {{banca.projeto.get_titulo}}
-                  [{{banca.projeto.organizacao}}]
-                  ({{banca.startDate}})
-                  <br>
-                {% endfor %}
-                </small>
+              <td style="text-align: left;">
+                <small>{% for banca in bancas %}&bull; {{banca.projeto.get_titulo}} [{{banca.projeto.organizacao}}]({{banca.startDate}})<br>{% endfor %}</small>
               </td>
             </tr>
           {% endfor %}
         </table>
         <br>
-      {% else %}
-        <p>Não existem bancas.</p>
-        <br>
-      {% endif %}
-    {% endfor %}
+
+    </div>
+
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+
+    <script>
+      function carrega_pagina() {
+      };
+      window.onload = carrega_pagina
+    </script>
 
   </div>
 
-  <br>
-  <p>&nbsp;</p>
-
-  {% include "tabelas_simples_scripts.html" %}
+  {% with tabela='Bancas' %}
+      {% include "edicoes_ajax.html" %}
+  {% endwith %}
 
 {% endblock %}

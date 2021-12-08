@@ -7,8 +7,6 @@
 
 {% block head %}
   {% load static %}
-  {% comment %} Para chamar os Tooltips {% endcomment %}
-  <script>{% include "tooltip.js" %}</script>
   {% include "tabelas_includes.html" %}
 {% endblock %}
 
@@ -18,45 +16,50 @@
 
   <span class="titulo">Alocação de Orientadores</span>
 
-  <div class="table-responsive">
+  {% include "edicoes.html" %}
 
-    {% for professores,periodo in anos %} 
-      <big>{{periodo}}</big>
-      <table id="professores" class="table table-bordered table-hover table-sm" style="width: auto;">
-        <thead class="table-info">
-          <tr>
-            <th scope="col" style="text-align: center;width:300px;">Nome</th>
-            <th scope="col" style="text-align: center;width:70px;">Grupos</th>
-          </tr>
-        </thead>
-        {% for professor,grupos in professores %} 
-          <tr class="item">
-            <td>
-              <a class="imprimir" href="{% url 'professor_detail' professor.id %}">
-                {{professor.user.get_full_name}}
-              </a>
-            </td>
-            <td style="text-align: center;" data-toggle="tooltip" data-html="true" animation="true" title="
-              {% for grupo in grupos %}
-                &bull;
-                {{grupo.get_titulo}}
-                [{{grupo.organizacao}}]
-                <br>
-              {% endfor %}
-            "> 
-              {{grupos|length}}
-            </td>
-          </tr>
-        {% endfor %}
-      </table>
-      <br>
-    {% endfor %}
-  
+  <div class="atualizar">
+
+    <div class="table-responsive">
+
+        <table id="OrientacoesTable" class="table table-bordered table-hover table-sm" style="width: auto;">
+          <thead class="table-info">
+            <tr>
+              <th scope="col" style="text-align: center;width:300px;">Nome</th>
+              <th scope="col" style="text-align: center;width:70px;">Grupos</th>
+              <th scope="col" style="text-align: center;width:auto;">Projetos</th>
+            </tr>
+          </thead>
+          {% for professor, grupos in orientacoes %} 
+
+            <tr class="item">
+              <td>
+                <a class="imprimir" href="{% url 'professor_detail' professor.id %}">{{professor.user.get_full_name}}</a> <a href="mailto:{{professor.user.email}}">&lt;{{professor.user.email}}&gt;</a>
+              </td>
+              <td style="text-align: center;"> 
+                {{grupos|length}}
+              </td>
+              <td style="text-align: left;">{% for grupo in grupos %}<p>&bull; [{{grupo.ano}}.{{grupo.semestre}}] {{grupo.get_titulo}} ({{grupo.organizacao}}) { {{ grupo.alocacao_set.all.count }} estudante(s) }<br></p>{% endfor %}</td>
+            </tr>
+          {% endfor %}
+        </table>
+        <br>
+
+    </div>
+
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+
+    <script>
+      function carrega_pagina() {
+      };
+      window.onload = carrega_pagina
+    </script>
+
   </div>
 
-  <br>
-  <br>
-
-  {% include "tabelas_simples_scripts.html" %}
+  {% with tabela='Orientacoes' %}
+      {% include "edicoes_ajax.html" %}
+  {% endwith %}
 
 {% endblock %}
