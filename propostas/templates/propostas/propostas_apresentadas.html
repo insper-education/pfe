@@ -123,8 +123,9 @@
         {% for proposta in propostas %} 
         {% with disponivel=proposta.disponivel %}
         
-          <tr class="item">
+          <tr class="item"> 
 
+            {% comment %} Autorizado {% endcomment %}
             <td style="text-align:center; font-size: large; font-weight: bold;" class="estados
             {% if proposta.autorizado  %}
               text-success">&#x2713
@@ -133,27 +134,31 @@
             {% endif %}
             </td>
 
+            {% comment %} Disponível {% endcomment %}
             {% if disponivel %}
               <script>publicados += 1</script>
             {% endif %}
             <td style="text-align:center; font-size: large; font-weight: bold;" class="estados
-            {% if disponivel %}
-              text-success">&#x2713
-            {% else %}
-              text-danger">&#x2718;
-            {% endif %}
+              {% if disponivel %}
+                text-success">&#x2713
+              {% else %}
+                text-danger">&#x2718;
+              {% endif %}
             </td>
 
-            {% if proposta.fechada  %}
+            {% comment %} Fechado {% endcomment %}
+            {% with fechada=proposta.projeto_set.exists %}
+            {% if fechada %}
               <script>fechados += 1</script>
             {% endif %}
             <td style="text-align:center; font-size: large; font-weight: bold;" class="estados
-            {% if proposta.fechada  %}
-              text-success">&#x2713
-            {% else %}
-              text-danger">&#x2718;
-            {% endif %}
+              {% if fechada  %}
+                text-success">&#x2713
+              {% else %}
+                text-danger">&#x2718;
+              {% endif %}            
             </td>
+            {% endwith %}
 
             <th scope="row">
             
