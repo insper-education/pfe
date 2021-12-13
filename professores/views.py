@@ -1137,16 +1137,8 @@ def coorientadores_tabela(request):
     return render(request, 'professores/coorientadores_tabela.html', context)
 
 
-
-@login_required
-@permission_required('users.altera_professor', login_url='/')
-def resultado_projetos(request):
-    """Mostra os resultados das avaliações (Bancas)."""
-    edicoes, ano, semestre = get_edicoes(Projeto)
-    context = {
-        "edicoes": edicoes,
-    }
-
+# Criei esse função temporária para tratar caso a edição seja passada diretamente na URL
+def resultado_projetos_intern(request, ano=None, semestre=None):
     if request.is_ajax():
         if 'edicao' in request.POST:
             edicao = request.POST['edicao']
@@ -1225,18 +1217,49 @@ def resultado_projetos(request):
                     banca_falconi.append(("&nbsp;-&nbsp;", None, 0))
 
             tabela = zip(projetos,
-                        relatorio_intermediario,
-                        relatorio_final,
+                         relatorio_intermediario,
+                         relatorio_final,
                          banca_intermediaria,
                          banca_final,
                          banca_falconi)
 
-            context['tabela'] = tabela
+            context = {'tabela': tabela}
 
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
+    else:
+        edicoes, _, _ = get_edicoes(Projeto)
+
+        if ano and semestre:
+            selecionada = str(ano) + "." + str(semestre)
+        else:
+            selecionada = None
+
+        context = {
+            "edicoes": edicoes,
+            "selecionada": selecionada,
+        }
+
     return render(request, 'professores/resultado_projetos.html', context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def resultado_projetos_edicao(request, edicao):
+    """Mostra os resultados das avaliações (Bancas) para uma edição."""
+    edicao = edicao.split('.')
+    try:
+        ano = int(edicao[0])
+        semestre = int(edicao[1])
+    except ValueError:
+        return HttpResponseNotFound('<h1>Erro em!</h1>')
+    return resultado_projetos_intern(request, ano, semestre)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def resultado_projetos(request):
+    """Mostra os resultados das avaliações (Bancas)."""
+    return resultado_projetos_intern(request)
 
 
 @login_required
