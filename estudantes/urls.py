@@ -26,6 +26,10 @@ urlpatterns = [
          views.encontros_marcar,
          name='encontros_marcar'),
 
+    path('estudante_feedback',
+         views.estudante_feedback,
+         name='estudante_feedback'),
+
     path('informacoes_adicionais/',
          views.informacoes_adicionais,
          name='informacoes_adicionais'),

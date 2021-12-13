@@ -14,7 +14,7 @@ from django.contrib.admin import SimpleListFilter
 import django.contrib.admin.options as admin_opt
 
 # Dos projetos
-from .models import Projeto, Proposta, Organizacao, Banca, Coorientador
+from .models import FeedbackEstudante, Projeto, Proposta, Organizacao, Banca, Coorientador
 
 # Das disciplinas
 from .models import Disciplina, Cursada, Recomendada
@@ -347,6 +347,12 @@ class FeedbackAdmin(admin.ModelAdmin):
 
     list_display = ('data', 'nome', 'email', 'empresa', )
 
+
+@admin.register(FeedbackEstudante)
+class FeedbackAdmin(admin.ModelAdmin):
+    """Para ser preenchido com feedbacks dos estudantes."""
+
+    list_display = ('data',)
 
 @admin.register(Conexao)
 class ConexaoAdmin(admin.ModelAdmin):

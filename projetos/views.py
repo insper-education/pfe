@@ -40,7 +40,7 @@ from .models import Coorientador, Avaliacao2, ObjetivosDeAprendizagem
 # from .models import Evento
 
 from .models import Feedback, AreaDeInteresse, Acompanhamento, Anotacao, Organizacao
-from .models import Documento
+from .models import Documento, FeedbackEstudante
 # from .models import Encontro
 from .models import Banco, Reembolso, Aviso, Conexao
 
@@ -743,6 +743,58 @@ def lista_feedback(request):
 
 
 
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def lista_feedback_estudantes(request):
+    """Lista todos os feedback das Organizações Parceiras."""
+    configuracao = get_object_or_404(Configuracao)
+
+    edicoes = range(2018, configuracao.ano+1)
+
+    # ESTUDANTES
+    num_estudantes = []
+    for ano in edicoes:
+
+        estudantes = Aluno.objects.filter(anoPFE=ano).\
+            filter(semestrePFE=2).\
+            count()
+        num_estudantes.append(estudantes)
+
+        estudantes = Aluno.objects.filter(anoPFE=ano+1).\
+            filter(semestrePFE=1).\
+            count()
+        num_estudantes.append(estudantes)
+
+    feedbacks = FeedbackEstudante.objects.all().order_by("-data")
+    num_feedbacks = []
+
+    # primeiro ano foi diferente
+    numb_feedb = feedbacks.filter(data__range=["2018-06-01", "2019-05-31"]).\
+        count()
+    num_feedbacks.append(numb_feedb)
+
+    for ano_projeto in edicoes[1:]:
+        numb_feedb = feedbacks.filter(data__range=[str(ano_projeto)+"-06-01",
+                                                          str(ano_projeto)+"-12-31"]).\
+            count()
+        num_feedbacks.append(numb_feedb)
+        numb_feedb = feedbacks.filter(data__range=[str(ano_projeto+1)+"-01-01",
+                                                          str(ano_projeto+1)+"-05-31"]).\
+            count()
+        num_feedbacks.append(numb_feedb)
+
+    context = {
+        'feedbacks': feedbacks,
+        'SERVER_URL': settings.SERVER,
+        'loop_anos': edicoes,
+        'num_estudantes': num_estudantes,
+        'num_feedbacks': num_feedbacks,
+    }
+    return render(request, 'projetos/lista_feedback_estudantes.html', context)
+
+
+
 @login_required
 @permission_required("users.altera_professor", login_url='/')
 def lista_acompanhamento(request):
@@ -766,6 +818,19 @@ def mostra_feedback(request, feedback_id):
     }
 
     return render(request, 'projetos/mostra_feedback.html', context)
+
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def mostra_feedback_estudante(request, feedback_id):
+    """Detalha os feedbacks das Organizações Parceiras."""
+    feedback = get_object_or_404(FeedbackEstudante, id=feedback_id)
+
+    context = {
+        'feedback': feedback,
+    }
+
+    return render(request, 'projetos/mostra_feedback_estudante.html', context)
 
 
 @login_required

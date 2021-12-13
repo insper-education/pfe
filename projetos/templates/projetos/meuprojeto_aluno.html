@@ -5,6 +5,22 @@
     Data: 5 de Agosto de 2019
 {% endcomment %}
 
+{% block head %}
+  <style>
+
+    hr.style-five {
+        border: 0;
+        height: 0;
+        box-shadow: 0 0 10px 1px black;
+    }
+    hr.style-five:after {  /* Not really supposed to work, but does */
+        content: "\00a0";  /* Prevent margin collapse */
+    }
+
+  </style>
+{% endblock %}
+
+
 {% block content %}
 
   {% if aluno.alocacao_set.all.count > 0 %}
@@ -12,7 +28,7 @@
     <span class="titulo">Projeto(s) Alocado(s)</span>
     <br>
 
-    {% for alocado in aluno.alocacao_set.all %}
+    {% for alocado in aluno.alocacao_set.all.reverse %}
 
       <h4>[{{alocado.projeto.ano}}.{{alocado.projeto.semestre}}]</h4>
       
@@ -25,6 +41,10 @@
       {% else %}
         {% include "projeto.html" %}
       {% endif %}
+
+      <p>&nbsp;</p>
+      {% if not forloop.last %} <hr class="style-five"> {% endif %}
+      <p>&nbsp;</p>
 
     {% endfor %}
   {% else %}

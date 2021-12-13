@@ -94,6 +94,10 @@ urlpatterns = [
          views.resultado_projetos,
          name='resultado_projetos'),
 
+    path('resultado_projetos/<str:edicao>',
+         views.resultado_projetos_edicao,
+         name='resultado_projetos_edicao'),
+
     path('todos_professores/',
          views.todos_professores,
          name='todos_professores'),

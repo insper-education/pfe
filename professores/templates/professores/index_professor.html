@@ -5,24 +5,36 @@
     Data: 15 de Maio de 2019
 {% endcomment %}
 
+{% block head %}
+  {% comment %} Para chamar os Tooltips {% endcomment %}
+  <script>{% include "tooltip.js" %}</script>
+{% endblock %}
+
 {% block content %}
     <br>
     <h5>Agendamentos</h5>
     <ul>
-        <a href="{% url 'bancas_index' %}"><li>Bancas</li></a>
-        <a href="{% url 'dinamicas_index' %}"><li>Dinâmicas</li></a>
+        <li><a href="{% url 'bancas_index' %}">Bancas</a></li>
+        <li><a href="{% url 'dinamicas_index' %}">Dinâmicas</a></li>
     </ul>
 
     <h5>Áreas de Interesse</h5>
     <ul>
-        <a href="{% url 'distribuicao_areas' %}"><li>Tendência de Áreas de Interesse (Estudantes/Propostas/Projetos)</li></a>
+        <li><a href="{% url 'distribuicao_areas' %}">Tendência de Áreas de Interesse (Estudantes/Propostas/Projetos)</a></li>
     </ul>
 
     <h5>Feedbacks das Organizações Parceiras</h5>
     <ul>
-        <a href="{% url 'lista_acompanhamento' %}"><li>Acompanhamento Intermediário</li></a>
-        <a href="{% url 'lista_feedback' %}"><li>Comentários Finais</li></a>
+        <li><a href="{% url 'lista_acompanhamento' %}">Acompanhamento Intermediário</a></li>
+        <li><a href="{% url 'lista_feedback' %}">Comentários Finais</a></li>
     </ul>
+
+    <h5>Feedbacks dos Estudantes</h5>
+    <ul>
+        <li><a data-toggle="tooltip" data-html="true" animation="true" title="Consultar a CPA para dados">Acompanhamento CPA</a></li>
+        <li><a href="{% url 'lista_feedback_estudantes' %}">Acompanhamento Final</a></li>
+    </ul>
+
 
     <h5>Avaliações</h5>
     <ul>

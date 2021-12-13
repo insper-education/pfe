@@ -11,11 +11,13 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import HttpResponse
 from django.http import JsonResponse
+from django.http import HttpResponseNotFound
+
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 
 from projetos.models import Projeto, Proposta, Configuracao, Area, AreaDeInteresse
-from projetos.models import Encontro, Banca, Entidade
+from projetos.models import Encontro, Banca, Entidade, FeedbackEstudante
 
 from projetos.support import cria_area_estudante
 
@@ -196,6 +198,51 @@ def encontros_marcar(request):
         "aviso": aviso,
     }
     return render(request, 'estudantes/encontros_marcar.html', context)
+
+
+# @login_required
+@transaction.atomic
+def estudante_feedback(request):
+    """Para Feedback finais dos Estudantes."""
+
+    usuario = get_object_or_404(PFEUser, pk=request.user.pk)
+    projeto = Projeto.objects.filter(alocacao__aluno=usuario.aluno).order_by("ano", "semestre").last()
+
+    # SALVAR PROJETO
+
+    if request.method == 'POST':
+        feedback = FeedbackEstudante.create()
+        feedback.nome = request.POST.get("nome", "")
+        feedback.email = request.POST.get("email", "")
+        feedback.empresa = request.POST.get("empresa", "")
+        feedback.tecnico = request.POST.get("tecnico", "")
+        feedback.comunicacao = request.POST.get("comunicacao", "")
+        feedback.organizacao = request.POST.get("organizacao", "")
+        feedback.outros = request.POST.get("outros", "")
+
+        try:
+            nps = int(request.POST.get("nps", "-1"))
+            if nps < 0:
+                feedback.nps = None
+            else:
+                feedback.nps = nps
+        except (ValueError, OverflowError):
+            return HttpResponseNotFound('<h1>Erro com valor NPS!</h1>')
+
+        feedback.save()
+
+        mensagem = "Feedback recebido, obrigado!"
+        context = {
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
+
+    context = {
+        "usuario": usuario,
+        "projeto": projeto,
+    }
+    return render(request, 'estudantes/estudante_feedback.html', context)
+
 
 
 @login_required

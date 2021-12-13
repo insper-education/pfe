@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 13 de Janeiro de 2020
+{% endcomment %}
+
+{% block head %}
+    {% load static %}
+    
+    <script src="{% static 'js/w3.js' %}"></script>
+    <script src="{% static 'js/Chart.min.js' %}"></script>
+    
+    {% comment %} Para chamar os Tooltips {% endcomment %}
+    <script>{% include "tooltip.js" %}</script>
+{% endblock %}
+
+{% block content %}
+
+  {% url 'estudante_feedback' as feedback_url%}
+
+  <span class="titulo">Listagem de Feedbacks Finais dos Estudantes</span>
+
+  Link para pesquisa: <a href="{{ feedback_url }}">{{ SERVER_URL }}{{ feedback_url }}</a><br><br>
+  
+  <!-- VER: https://stackoverflow.com/questions/53202862/trying-to-sort-tables-with-w3-js-but-its-not-sorting-numbers-properly -->
+
+  {% if feedbacks %}
+    <table id="FeedbacksTable">
+      <tr>
+        <th>ver</th>
+        <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Nome</th>
+        <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Projeto</th>
+        <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">Data</th>
+      </tr>      
+      {% for feedback in feedbacks %} 
+        <tr class="item">
+          <td class="text-center">
+            <a href="{% url 'mostra_feedback_estudante' feedback.id %}">
+              &#x1f441;
+            </a>
+          </td>
+          <td>
+            {% if feedback.nome %}
+              {{feedback.nome}}
+            {% else %}
+              Anônimo
+            {% endif %}
+          </td>
+          <td>
+            {% if feedback.email %}
+              {{feedback.email}}
+            {% else %}
+              Anônimo
+            {% endif %}
+          </td>
+          <td>
+            {% if feedback.empresa %}
+              {{feedback.empresa}}
+            {% else %}
+              Anônimo
+            {% endif %}
+          </td>
+          <td>
+            {{feedback.data|date:"Y.m.d"}}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>Não existem feedbacks disponíveis.</p>
+  {% endif %}
+
+  <p>&nbsp;</p>
+
+  <div id="canvas-holder">
+      <canvas id="bar-feedbacks"></canvas>
+  </div>
+
+  <p>&nbsp;</p>
+
+<script>
+    
+    var config_feedbacks = {
+        type: 'bar',
+        data: {
+        labels: [
+            {% for loop in loop_anos %}
+            "{{loop}}.2",
+            "{{loop|add:1}}.1",
+            {% endfor %}
+            ],
+        datasets: [
+            {
+            label: "estudantes",
+            backgroundColor: "#0E7E32",
+            data: [
+                    {% for num in num_estudantes %}
+                        {{num}},
+                    {% endfor %}
+                ]
+            }, 
+            {
+            label: "feedbacks",
+            backgroundColor: "#15Cecd",
+            data: [
+                    {% for num in num_feedbacks %}
+                        {{num}},
+                    {% endfor %}
+                ]
+            }, 
+        ]
+        },
+        options: {
+        legend: { display: true },
+        title: {
+            display: true,
+            text: 'Estudantes e Feedbacks'
+        }
+        }
+    };
+
+    function carrega_grafico() {  
+      // Chart da quantidade de projetos
+      var bar_feedbacks = document.getElementById('bar-feedbacks').getContext('2d');
+      window.projeto = new Chart(bar_feedbacks, config_feedbacks);
+    }
+
+    window.onload = carrega_grafico
+
+    </script>
+
+{% endblock %}

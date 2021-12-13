@@ -975,6 +975,62 @@ class Feedback(models.Model):
         feedback = cls()
         return feedback
 
+
+
+class FeedbackEstudante(models.Model):
+    """Feedback dos estudantes."""
+
+    data = models.DateField(default=datetime.date.today, blank=True,
+                            help_text='Data do Feedback')
+         
+    aluno = models.ForeignKey('users.Aluno', null=True, blank=True, on_delete=models.SET_NULL,
+                              help_text='aluno que fez o feedback')
+
+    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text='projeto que estava no feedback')
+
+    TIPO_RECOMENDARIA = ( # não mudar a ordem dos números
+        (1, 'Não recomendo'),
+        (2, 'Recomendo com ressalvas'),
+        (3, 'Recomendo fortemente'),
+    )
+    recomendaria = models.PositiveSmallIntegerField(choices=TIPO_RECOMENDARIA, null=True, blank=True,
+                                                    help_text='O quanto você recomendaria fazermos um projeto de PFE nos próximos semestres com a Empresa Parceira?')
+
+
+    primeira_opcao = models.BooleanField("Primeira Opção", null=True, blank=True,
+                                         help_text='Agora que você conhece mais da Empresa Parceira, essa seria uma das primeiras opções para você fazer estágio ou ser contratado de forma efetiva?')
+
+    TIPO_PROPOSTA = ( # não mudar a ordem dos números
+        (1, 'Recebi convite e apliquei'),
+        (2, 'Não recebi convite, mas apliquei'),
+        (3, 'Recebi convite, mas não apliquei'),
+        (4, 'Não recebi, nem apliquei'),
+        (5, 'Não haviam vagas em aberto'),
+    )
+    proposta = models.PositiveSmallIntegerField(choices=TIPO_PROPOSTA, null=True, blank=True,
+                                                    help_text='Tendo ou não buscado alguma proposta da Empresa Parceira para estágio ou contrato de trabalho.')
+
+
+    TIPO_TRABALHANDO = ( # não mudar a ordem dos números
+        (1, 'Empresa do Projeto do PFE'),
+        (2, 'Outra'),
+        (3, 'Ainda não'),
+        (4, 'Prefiro não responder'),
+    )
+    trabalhando = models.PositiveSmallIntegerField(choices=TIPO_TRABALHANDO, null=True, blank=True,
+                                                    help_text='Você já está trabalhando (ou em vias de trabalhar) em alguma empresa?')
+
+    def __str__(self):
+        return str(self.data)
+
+    @classmethod
+    def create(cls):
+        """Cria um objeto (entrada) em FeedbackEstudante."""
+        feedback = cls()
+        return feedback
+
+
 class Conexao(models.Model):
     """Controla como um usuário se conecta a um projeto."""
 
