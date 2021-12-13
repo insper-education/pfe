@@ -92,6 +92,10 @@ urlpatterns = [
          views.lista_feedback,
          name='lista_feedback'),
 
+    path('lista_feedback_estudantes',
+        views.lista_feedback_estudantes,
+        name='lista_feedback_estudantes'),
+
     path('logs/',
          views.logs,
          name='logs'),
@@ -107,6 +111,10 @@ urlpatterns = [
     path('mostra_feedback/<int:feedback_id>',
          views.mostra_feedback,
          name='mostra_feedback'),
+
+    path('mostra_feedback_estudante/<int:feedback_id>',
+         views.mostra_feedback_estudante,
+         name='mostra_feedback_estudante'),
 
     path('nomes/',
          views.nomes,
