@@ -7,7 +7,7 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Maio de 2019
 """
 
-import math
+from decimal import Decimal, ROUND_HALF_UP
 
 from functools import partial
 
@@ -276,17 +276,15 @@ class Aluno(models.Model):
                     valor = val/count
                     peso = pes/count
 
-                    if valor >= 9.5:
-                        valor = 10
-                    else:
-                        valor = float(math.floor(valor))
+                    # Para sempre arredondar 5.5 para 6 e 6.5 para 7 por exemplo.
+                    valor = float(Decimal(valor).quantize(0, ROUND_HALF_UP))
 
                     val_objetivos[obj] = (valor, peso)
 
         return val_objetivos, pes_total
 
     def get_banca(self, avaliacoes_banca):
-        """Retorna média."""
+        """Retorna média final das bancas informadas."""
         val_objetivos, pes_total = Aluno.get_objetivos(self, avaliacoes_banca)
 
         if not val_objetivos:
