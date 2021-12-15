@@ -779,22 +779,6 @@ def lista_feedback_estudantes(request):
             count()
         num_feedbacks.append(numb_feedb)
 
-
-    # # primeiro ano foi diferente
-    # numb_feedb = todos_feedbacks.filter(momento__range=["2018-06-01", "2019-05-31"]).\
-    #     count()
-    # num_feedbacks.append(numb_feedb)
-
-    # for ano_projeto in edicoes[1:]:
-    #     numb_feedb = todos_feedbacks.filter(momento__range=[str(ano_projeto)+"-06-01",
-    #                                                       str(ano_projeto)+"-12-31"]).\
-    #         count()
-    #     num_feedbacks.append(numb_feedb)
-    #     numb_feedb = todos_feedbacks.filter(momento__range=[str(ano_projeto+1)+"-01-01",
-    #                                                       str(ano_projeto+1)+"-05-31"]).\
-    #         count()
-    #     num_feedbacks.append(numb_feedb)
-
     ano = 2021
     semestre = 2
     estudantes = Aluno.objects.filter(trancado=False, anoPFE=ano, semestrePFE=semestre)

@@ -175,12 +175,18 @@
   </h3>
   {% for documento in organizacao.documento_set.all %}
     <li>
-      {% if documento.documento %}
-        <a href="../..{{MEDIA_URL}}{{ documento.documento }}" target="_blank" rel="noopener noreferrer">
-      {% elif documento.link %}
-        <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">
+      {% if documento.documento and documento.link %}
+          {{documento}}
+          <a href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+          <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
+      {% else %}
+        {% if documento.documento %}
+          <a href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
+        {% endif %}
+        {% if documento.link %}
+          <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
+        {% endif %}
       {% endif %}
-      {{ documento }} 
       {% if documento.projeto %}
         - {{documento.projeto.get_titulo}}
       {% endif %}
@@ -193,7 +199,7 @@
       {% if documento.anotacao %}
                 [Obs: {{ documento.anotacao }} ]
       {% endif %}
-    </a></li>
+    </li>
   {% empty %}
 
   {% comment %} {% if not organizacao.documento_set.all %} {% endcomment %}
