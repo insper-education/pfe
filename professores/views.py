@@ -1156,8 +1156,9 @@ def resultado_projetos_intern(request, ano=None, semestre=None):
 
             for projeto in projetos:
 
-                aval_banc_final = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=2)  # Rel. Intermediário
-                nota_banca_final, peso = Aluno.get_banca(None, aval_banc_final)
+                # Aparentemente código repetido por erro
+                # aval_banc_final = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=2)  # (2, 'Banca Final'),
+                # nota_banca_final, peso = Aluno.get_banca(None, aval_banc_final, eh_banca=True)
 
                 alocacoes = Alocacao.objects.filter(projeto=projeto)
                 
@@ -1187,9 +1188,9 @@ def resultado_projetos_intern(request, ano=None, semestre=None):
                     relatorio_final.append(("&nbsp;-&nbsp;", None, 0))
 
 
-
                 aval_banc_final = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=2)  # B. Final
-                nota_banca_final, peso = Aluno.get_banca(None, aval_banc_final)
+                nota_banca_final, peso = Aluno.get_banca(None, aval_banc_final, eh_banca=True)
+
                 if peso is not None:
                     banca_final.append(("{0}".format(converte_letra(nota_banca_final, espaco="&nbsp;")),
                                         "{0:5.2f}".format(nota_banca_final),
@@ -1198,7 +1199,7 @@ def resultado_projetos_intern(request, ano=None, semestre=None):
                     banca_final.append(("&nbsp;-&nbsp;", None, 0))
 
                 aval_banc_interm = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=1)  # B. Int.
-                nota_banca_intermediaria, peso = Aluno.get_banca(None, aval_banc_interm)
+                nota_banca_intermediaria, peso = Aluno.get_banca(None, aval_banc_interm, eh_banca=True)
                 if peso is not None:
                     banca_intermediaria.append(("{0}".format(converte_letra(nota_banca_intermediaria,
                                                                             espaco="&nbsp;")),

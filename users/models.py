@@ -246,12 +246,12 @@ class Aluno(models.Model):
             return "Engenharia Mecatrônica"
         return "Sem curso"
 
-    def get_objetivos(self, avaliacoes_banca):
+    def get_objetivos(self, avaliacoes, eh_banca=False):
         """Retorna objetivos."""
         lista_objetivos = {}
         objetivos = ObjetivosDeAprendizagem.objects.all()
         for objetivo in objetivos:
-            bancas = avaliacoes_banca.filter(objetivo=objetivo).\
+            bancas = avaliacoes.filter(objetivo=objetivo).\
                 order_by('avaliador', '-momento')
             if bancas:
                 lista_objetivos[objetivo] = {}
@@ -286,16 +286,21 @@ class Aluno(models.Model):
                     valor = val/count
                     peso = pes/count
 
-                    # Para sempre arredondar 5.5 para 6 e 6.5 para 7 por exemplo.
-                    valor = float(Decimal(valor).quantize(0, ROUND_HALF_UP))
+                    print(eh_banca)
+
+                    if eh_banca:
+                        # Para sempre arredondar 5.5 para 6 e 6.5 para 7 por exemplo.
+                        valor = float(Decimal(valor).quantize(0, ROUND_HALF_UP))
+                    else:
+                        valor = float(valor)
 
                     val_objetivos[obj] = (valor, peso)
 
         return val_objetivos, pes_total
 
-    def get_banca(self, avaliacoes_banca):
+    def get_banca(self, avaliacoes_banca, eh_banca=False):
         """Retorna média final das bancas informadas."""
-        val_objetivos, pes_total = Aluno.get_objetivos(self, avaliacoes_banca)
+        val_objetivos, pes_total = Aluno.get_objetivos(self, avaliacoes_banca, eh_banca=eh_banca)
 
         if not val_objetivos:
             return 0, None
@@ -339,7 +344,7 @@ class Aluno(models.Model):
                                                                 tipo_de_avaliacao=1)
             if avaliacoes_banca_interm:
                 nota_banca_interm, peso = Aluno.get_objetivos(self,
-                                                              avaliacoes_banca_interm)
+                                                              avaliacoes_banca_interm, eh_banca=True)
                 notas.append(("BI", nota_banca_interm, peso/100))
 
             # Banca Final (2)
@@ -347,7 +352,7 @@ class Aluno(models.Model):
                                                                tipo_de_avaliacao=2)
             if avaliacoes_banca_final:
                 nota_banca_final, peso = Aluno.get_objetivos(self,
-                                                             avaliacoes_banca_final)
+                                                             avaliacoes_banca_final, eh_banca=True)
                 notas.append(("BF", nota_banca_final, peso/100))
 
             # Relatório de Planejamento (10)
@@ -441,7 +446,8 @@ class Aluno(models.Model):
                                                                 tipo_de_avaliacao=1)
             if avaliacoes_banca_interm:
                 nota_banca_interm, peso = Aluno.get_banca(self,
-                                                          avaliacoes_banca_interm)
+                                                          avaliacoes_banca_interm,
+                                                          eh_banca=True)
                 notas.append(("BI", nota_banca_interm, peso/100 if peso else 0,
                               "Banca Intermediária"))
 
@@ -450,7 +456,8 @@ class Aluno(models.Model):
                                                                tipo_de_avaliacao=2)
             if avaliacoes_banca_final:
                 nota_banca_final, peso = Aluno.get_banca(self,
-                                                         avaliacoes_banca_final)
+                                                         avaliacoes_banca_final,
+                                                         eh_banca=True)
                 notas.append(("BF", nota_banca_final, peso/100 if peso else 0,
                               "Banca Final"))
 
