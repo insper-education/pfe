@@ -7,9 +7,13 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Maio de 2019
 """
 
+from hashids import Hashids
+
 from decimal import Decimal, ROUND_HALF_UP
 
 from functools import partial
+
+from django.conf import settings
 
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -98,6 +102,12 @@ class PFEUser(AbstractUser):
         texto += ")"
         return texto
 
+    @property
+    def hashid(self):
+        """Recuper o hash id do usuário."""
+        hashids = Hashids(salt=settings.SALT, min_length=8)
+        hid = hashids.encode(self.id)
+        return hid
 
 class Professor(models.Model):
     """Classe de usuários com estatus de Professor."""

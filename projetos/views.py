@@ -742,8 +742,6 @@ def lista_feedback(request):
     return render(request, 'projetos/lista_feedback.html', context)
 
 
-
-
 @login_required
 @permission_required("users.altera_professor", login_url='/')
 def lista_feedback_estudantes(request):
@@ -752,8 +750,11 @@ def lista_feedback_estudantes(request):
 
     edicoes = range(2018, configuracao.ano+1)
 
-    # ESTUDANTES
+    todos_feedbacks = FeedbackEstudante.objects.all().order_by("-momento")
+
+    num_feedbacks = []
     num_estudantes = []
+
     for ano in edicoes:
 
         estudantes = Aluno.objects.filter(anoPFE=ano).\
@@ -766,30 +767,70 @@ def lista_feedback_estudantes(request):
             count()
         num_estudantes.append(estudantes)
 
-    feedbacks = FeedbackEstudante.objects.all().order_by("-data")
-    num_feedbacks = []
-
-    # primeiro ano foi diferente
-    numb_feedb = feedbacks.filter(data__range=["2018-06-01", "2019-05-31"]).\
-        count()
-    num_feedbacks.append(numb_feedb)
-
-    for ano_projeto in edicoes[1:]:
-        numb_feedb = feedbacks.filter(data__range=[str(ano_projeto)+"-06-01",
-                                                          str(ano_projeto)+"-12-31"]).\
+        numb_feedb = todos_feedbacks.filter(projeto__ano=ano).\
+            filter(projeto__semestre=2).\
+            values('estudante').distinct().\
             count()
         num_feedbacks.append(numb_feedb)
-        numb_feedb = feedbacks.filter(data__range=[str(ano_projeto+1)+"-01-01",
-                                                          str(ano_projeto+1)+"-05-31"]).\
+
+        numb_feedb = todos_feedbacks.filter(projeto__ano=ano+1).\
+            filter(projeto__semestre=1).\
+            values('estudante').distinct().\
             count()
         num_feedbacks.append(numb_feedb)
+
+
+    # # primeiro ano foi diferente
+    # numb_feedb = todos_feedbacks.filter(momento__range=["2018-06-01", "2019-05-31"]).\
+    #     count()
+    # num_feedbacks.append(numb_feedb)
+
+    # for ano_projeto in edicoes[1:]:
+    #     numb_feedb = todos_feedbacks.filter(momento__range=[str(ano_projeto)+"-06-01",
+    #                                                       str(ano_projeto)+"-12-31"]).\
+    #         count()
+    #     num_feedbacks.append(numb_feedb)
+    #     numb_feedb = todos_feedbacks.filter(momento__range=[str(ano_projeto+1)+"-01-01",
+    #                                                       str(ano_projeto+1)+"-05-31"]).\
+    #         count()
+    #     num_feedbacks.append(numb_feedb)
+
+    ano = 2021
+    semestre = 2
+    estudantes = Aluno.objects.filter(trancado=False, anoPFE=ano, semestrePFE=semestre)
+
+    projetos = []
+    feedbacks = []
+    for estudante in estudantes:
+
+        alocacao = Alocacao.objects.filter(projeto__ano=ano,
+                                           projeto__semestre=semestre,
+                                           aluno=estudante).last()
+
+        if alocacao:
+            projetos.append(alocacao.projeto)
+
+            feedback = todos_feedbacks.filter(projeto=alocacao.projeto,
+                                              estudante=estudante).first()
+
+            if feedback:
+                feedbacks.append(feedback)
+            else:
+                feedbacks.append(None)
+
+        else:
+            projetos.append(None)
+            feedbacks.append(None)
+
+
+    alocacoes = zip(estudantes, projetos, feedbacks)
 
     context = {
-        'feedbacks': feedbacks,
-        'SERVER_URL': settings.SERVER,
-        'loop_anos': edicoes,
-        'num_estudantes': num_estudantes,
-        'num_feedbacks': num_feedbacks,
+        "SERVER_URL": settings.SERVER,
+        "loop_anos": edicoes,
+        "num_estudantes": num_estudantes,
+        "num_feedbacks": num_feedbacks,
+        "alocacoes": alocacoes,
     }
     return render(request, 'projetos/lista_feedback_estudantes.html', context)
 
@@ -826,11 +867,16 @@ def mostra_feedback_estudante(request, feedback_id):
     """Detalha os feedbacks das Organizações Parceiras."""
     feedback = get_object_or_404(FeedbackEstudante, id=feedback_id)
 
+    usuario = feedback.estudante.user
+    projeto = feedback.projeto
+
     context = {
-        'feedback': feedback,
+        "usuario": usuario,
+        "projeto": projeto,
+        "feedback": feedback,
     }
 
-    return render(request, 'projetos/mostra_feedback_estudante.html', context)
+    return render(request, 'estudantes/estudante_feedback.html', context)
 
 
 @login_required

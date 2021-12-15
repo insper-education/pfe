@@ -6,6 +6,9 @@ Data: 14 de Dezembro de 2020
 """
 
 import datetime
+from hashids import Hashids
+
+from django.conf import settings
 
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
@@ -17,7 +20,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 
 from projetos.models import Projeto, Proposta, Configuracao, Area, AreaDeInteresse
-from projetos.models import Encontro, Banca, Entidade, FeedbackEstudante
+from projetos.models import Encontro, Banca, Entidade, FeedbackEstudante, Evento
 
 from projetos.support import cria_area_estudante
 
@@ -46,8 +49,10 @@ def index_estudantes(request):
     if usuario.tipo_de_usuario == 1:
         estudante = get_object_or_404(Aluno, pk=request.user.aluno.pk)
 
-        context['projeto'] = Projeto.objects\
-            .filter(alocacao__aluno=estudante).last()
+        projeto = Projeto.objects\
+            .filter(alocacao__aluno=estudante).order_by("ano", "semestre").last()
+
+        context['projeto'] = projeto
 
         # Estudantes de processos passados sempre terrão seleção vencida
         if semestre == 1:
@@ -56,6 +61,18 @@ def index_estudantes(request):
                 estudante.semestrePFE == 1
         else:
             context['vencido'] |= (estudante.anoPFE <= ano)
+
+        if projeto:
+            hoje = datetime.date.today()
+
+            eventos = Evento.objects.filter(startDate__year=projeto.ano)
+            if projeto.semestre == 1:
+                banca_final = eventos.filter(tipo_de_evento=15, startDate__month__lt=7).last()
+            else:
+                banca_final = eventos.filter(tipo_de_evento=15, startDate__month__gt=6).last()
+
+            if banca_final:
+                context['fase_final'] = hoje > banca_final.endDate
 
     # Caso professor ou administrador
     elif usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4:
@@ -66,6 +83,8 @@ def index_estudantes(request):
         return HttpResponse("Usuário sem acesso.", status=401)
 
     context['ano'], context['semestre'] = adianta_semestre(ano, semestre)
+
+
 
     return render(request, 'estudantes/index_estudantes.html', context=context)
 
@@ -200,34 +219,32 @@ def encontros_marcar(request):
     return render(request, 'estudantes/encontros_marcar.html', context)
 
 
-# @login_required
-@transaction.atomic
-def estudante_feedback(request):
+def estudante_feedback_geral(request, usuario):
     """Para Feedback finais dos Estudantes."""
-
-    usuario = get_object_or_404(PFEUser, pk=request.user.pk)
     projeto = Projeto.objects.filter(alocacao__aluno=usuario.aluno).order_by("ano", "semestre").last()
-
-    # SALVAR PROJETO
 
     if request.method == 'POST':
         feedback = FeedbackEstudante.create()
-        feedback.nome = request.POST.get("nome", "")
-        feedback.email = request.POST.get("email", "")
-        feedback.empresa = request.POST.get("empresa", "")
-        feedback.tecnico = request.POST.get("tecnico", "")
-        feedback.comunicacao = request.POST.get("comunicacao", "")
-        feedback.organizacao = request.POST.get("organizacao", "")
-        feedback.outros = request.POST.get("outros", "")
+        feedback.estudante = usuario.aluno
+        feedback.projeto = projeto
 
-        try:
-            nps = int(request.POST.get("nps", "-1"))
-            if nps < 0:
-                feedback.nps = None
-            else:
-                feedback.nps = nps
-        except (ValueError, OverflowError):
-            return HttpResponseNotFound('<h1>Erro com valor NPS!</h1>')
+        recomendaria = request.POST.get("recomendaria", None)
+        if recomendaria:
+            feedback.recomendaria = int(recomendaria[len("option"):])
+            
+        primeira_opcao = request.POST.get("primeira_opcao", None)
+        if primeira_opcao:
+            feedback.primeira_opcao = primeira_opcao[len("option"):] == "S"
+
+        proposta = request.POST.get("proposta", None)
+        if proposta:
+            feedback.proposta = int(proposta[len("option"):])
+
+        trabalhando = request.POST.get("trabalhando", None)
+        if trabalhando:
+            feedback.trabalhando = int(trabalhando[len("option"):])
+
+        feedback.outros = request.POST.get("outros", "")
 
         feedback.save()
 
@@ -243,6 +260,28 @@ def estudante_feedback(request):
     }
     return render(request, 'estudantes/estudante_feedback.html', context)
 
+
+
+@login_required
+@transaction.atomic
+def estudante_feedback(request):
+    """Para Feedback finais dos Estudantes."""
+    usuario = get_object_or_404(PFEUser, pk=request.user.pk)
+    return estudante_feedback_geral(request, usuario)
+
+
+@transaction.atomic
+def estudante_feedback_hashid(request, hashid):
+    """Para Feedback finais dos Estudantes."""
+    hashids = Hashids(salt=settings.SALT, min_length=8)
+
+    try:
+        id = hashids.decode(hashid)[0]
+        usuario = get_object_or_404(PFEUser, pk=id)
+        return estudante_feedback_geral(request, usuario)
+
+    except (ValueError, TypeError, PFEUser.DoesNotExist):
+        return HttpResponseNotFound('<h1>Usuário não encontrado!</h1>')
 
 
 @login_required

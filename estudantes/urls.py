@@ -30,6 +30,14 @@ urlpatterns = [
          views.estudante_feedback,
          name='estudante_feedback'),
 
+    path('estudante_feedback',
+         views.estudante_feedback,
+         name='estudante_feedback'),
+
+    path('estudante_feedback/<str:hashid>',
+        views.estudante_feedback_hashid,
+        name='estudante_feedback_hashid'),
+
     path('informacoes_adicionais/',
          views.informacoes_adicionais,
          name='informacoes_adicionais'),

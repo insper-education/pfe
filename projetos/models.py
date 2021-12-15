@@ -980,11 +980,11 @@ class Feedback(models.Model):
 class FeedbackEstudante(models.Model):
     """Feedback dos estudantes."""
 
-    data = models.DateField(default=datetime.date.today, blank=True,
-                            help_text='Data do Feedback')
-         
-    aluno = models.ForeignKey('users.Aluno', null=True, blank=True, on_delete=models.SET_NULL,
-                              help_text='aluno que fez o feedback')
+    momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
+                                help_text='Data e hora do feedback')
+
+    estudante = models.ForeignKey('users.Aluno', null=True, blank=True, on_delete=models.SET_NULL,
+                              help_text='estudante que fez o feedback')
 
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='projeto que estava no feedback')
@@ -1021,8 +1021,12 @@ class FeedbackEstudante(models.Model):
     trabalhando = models.PositiveSmallIntegerField(choices=TIPO_TRABALHANDO, null=True, blank=True,
                                                     help_text='Você já está trabalhando (ou em vias de trabalhar) em alguma empresa?')
 
+
+    outros = models.TextField(max_length=1000, null=True, blank=True,
+                              help_text='Feedback Outros')
+
     def __str__(self):
-        return str(self.data)
+        return str(self.momento) + " - " + str(self.estudante) + " : " + str(self.projeto)
 
     @classmethod
     def create(cls):

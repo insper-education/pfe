@@ -1,0 +1,48 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 15 de Dezembro de 2021
+{% endcomment %}
+
+{% load escape_emails %}
+
+Olá {{estudante.user.get_full_name}},
+
+%0D%0A%0D%0A
+{% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+Estamos encerrando o PFE, e gostaríamos de saber o impacto do PFE na sua vida profissional para nos ajudar a oferecer um curso sempre melhor, gostaríamos de fazer algumas perguntas finais (trataremos os seus dados como confidenciais):
+
+%0D%0A%0D%0A
+{% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+&bull; O quanto você recomendaria fazermos um projeto de PFE nos próximos semestres com a empresa que fez o PFE?
+
+%0D%0A
+{% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+&bull; Agora que você conhece mais da empresa, essa seria uma das primeiras opções para você fazer estágio ou ser contratado de forma efetiva?
+
+%0D%0A
+{% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+&bull; Você buscaria estágio nessa empresa?
+
+%0D%0A
+{% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+&bull; Você já está trabalhando (ou em vias de trabalhar) em alguma empresa?
+
+%0D%0A%0D%0A
+{% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+Por favor, responda essas 4 perguntas no link abaixo:%0D%0A
+{% if formatada %}%3Ca href="{{ request.scheme }}://{{ request.get_host }}{% url 'estudante_feedback_hashid' estudante.user.hashid %}" target='_blank' rel='noopener noreferrer'%3E{% endif %}{{ request.scheme }}://{{ request.get_host }}{% url 'estudante_feedback_hashid' estudante.user.hashid %}{% if formatada %}%3C%2Fa%3E%3Cbr%3E{% endif %}%0D%0A
+
+%0D%0A
+{% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+Aproveitamos e nos colocamos a disposição para qualquer conversa/esclarecimento.
+%0D%0A
+{% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20%20%20%20%20{% endif %}
+PFE <pfe@insper.edu.br>
+%0D%0A
+{% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20%20%20%20%20{% endif %}
+Carreiras <carreiras@insper.edu.br>
+
+%0D%0A%0D%0A
+{% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20%20%20%20%20%20%20%20%20{% endif %}
+atenciosamente,%20Luciano%20Soares%20(coordenação%20PFE)

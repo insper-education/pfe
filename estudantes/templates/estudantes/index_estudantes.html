@@ -135,10 +135,9 @@
 
     <hr>
 
-    <a href="{% url 'estudante_feedback' %}"><h5>Enviar feedback de projeto</h5></a>
-
-
-
+    <a {% if not fase_final %} class="disabled" onclick="showMessage('final')" {% else %} href="{% url 'estudante_feedback' %}" {% endif %} >
+        <h5>Enviar feedback final de projeto</h5>
+    </a>
 
 
     {% comment %} <a href=" reembolso " > <h5> Pedido de Reembolso </h5> </a> {% endcomment %}
@@ -146,6 +145,7 @@
     <div class="mensagem" id="projeto">Você não está alocado em um projeto.</div>
     <div class="mensagem" id="vencido">Prazo para a seleção dos projetos vencido.</div>
     <div class="mensagem" id="liberado">Propostas ainda não liberadas.</div>
+    <div class="mensagem" id="final">Você ainda não está na fase final de projeto.</div>
     <div class="mensagem" id="projeto_professor">Professor, para ver seus projetos clique no seu nome na barra de título.</div>
     
     {% comment %} tipo_de_usuario == 2 é professor e tipo_de_usuario == 4 é administrador {% endcomment %}

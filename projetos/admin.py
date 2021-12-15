@@ -345,14 +345,14 @@ class EventoAdmin(admin.ModelAdmin):
 class FeedbackAdmin(admin.ModelAdmin):
     """Para ser preenchido com feedbacks das organizacoes."""
 
-    list_display = ('data', 'nome', 'email', 'empresa', )
+    list_display = ("data", "nome", "email", "empresa", )
 
 
 @admin.register(FeedbackEstudante)
 class FeedbackAdmin(admin.ModelAdmin):
     """Para ser preenchido com feedbacks dos estudantes."""
 
-    list_display = ('data',)
+    list_display = ("momento", "estudante", "projeto", )
 
 @admin.register(Conexao)
 class ConexaoAdmin(admin.ModelAdmin):
