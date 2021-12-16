@@ -25,7 +25,12 @@
   
   <!-- VER: https://stackoverflow.com/questions/53202862/trying-to-sort-tables-with-w3-js-but-its-not-sorting-numbers-properly -->
 
-  
+    <script>
+      var recomendaria = [0, 0, 0];
+      var primeira_opcao = [0, 0];
+      var proposta = [0, 0, 0];
+    </script>
+
     <table id="FeedbacksTable">
       <tr>
         <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome</th>
@@ -48,6 +53,17 @@
               </a>
             {% endif %}
           </td>
+          {% if feedback.recomendaria %}
+            <script>recomendaria[{{feedback.recomendaria}}-1] += 1;</script>
+          {% endif %}
+          {% if feedback.primeira_opcao != None %}
+            <script>primeira_opcao{% if feedback.primeira_opcao %}[0]{% else %}[1]{% endif %} += 1;</script>
+          {% endif %}
+          
+            {% comment %} 
+              {{feedback.proposta}}
+           {% endcomment %}
+
           <td style='font-size:80%' class="text-center">
             <a href="mailto:{{estudante.user.email}}?subject=Feedback%20Final%20PFE&amp;body={% include 'mensagem_feedback_final.html' %}">
               e-mail
@@ -61,13 +77,93 @@
   <p>&nbsp;</p>
 
   <div id="canvas-holder">
+      <canvas id="chart-recomendaria"></canvas>
+      <canvas id="chart-primeira_opcao"></canvas>
+  </div>
+
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+  <div id="canvas-holder">
       <canvas id="bar-feedbacks"></canvas>
   </div>
 
   <p>&nbsp;</p>
 
-<script>
+  <script>
+
+      var config_recomendaria = {     // REFERENTE AO PIE CHART
+        type: 'pie',
+        data: {
+          datasets: [{
+            data: recomendaria,
+            backgroundColor: [
+              "#e74c3c",
+              "#95a5a6",
+              "#34495e",
+            ],
+          }],
+          labels: [
+            'Não recomendo',
+            'Recomendo com ressalvas',
+            'Recomendo fortemente',
+          ]
+        },
+        options: {
+          responsive: true,
+          title: {
+                display: true,
+                text: 'Recomendaria Organização Parceira',
+                position: "top",
+          },
+          legend: {
+            display: true,
+            position: "bottom",
+            labels: {
+              fontColor: "#333",
+              fontSize: 14
+            }
+          }
+        }
+      };
     
+
+      var config_primeira_opcao = {     // REFERENTE AO PIE CHART
+        type: 'pie',
+        data: {
+          datasets: [{
+            data: primeira_opcao,
+            backgroundColor: [
+              "#2ecc71",
+              "#3498db",
+              "#9b59b6",
+              "#f1c40f",
+            ],
+          }],
+          labels: [
+            'Sim',
+            'Não',
+          ]
+        },
+        options: {
+          responsive: true,
+          title: {
+                display: true,
+                text: 'Primeira Opção',
+                position: "top",
+          },
+          legend: {
+            display: true,
+            position: "bottom",
+            labels: {
+              fontColor: "#333",
+              fontSize: 14
+            }
+          }
+        }
+      };
+
     var config_feedbacks = {
         type: 'bar',
         data: {
@@ -111,6 +207,13 @@
       // Chart da quantidade de projetos
       var bar_feedbacks = document.getElementById('bar-feedbacks').getContext('2d');
       window.projeto = new Chart(bar_feedbacks, config_feedbacks);
+
+      var context_recomendaria = $("#chart-recomendaria").get(0).getContext('2d'); // REFERENTE AO PIE CHART
+      window.myPie = new Chart(context_recomendaria, config_recomendaria); // REFERENTE AO PIE CHART
+
+      var context_primeira_opcao = $("#chart-primeira_opcao").get(0).getContext('2d'); // REFERENTE AO PIE CHART
+      window.myPie2 = new Chart(context_primeira_opcao, config_primeira_opcao); // REFERENTE AO PIE CHART
+
     }
 
     window.onload = carrega_grafico
