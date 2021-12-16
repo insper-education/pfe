@@ -182,8 +182,8 @@
           {% comment %} Banca Falconi {% endcomment %}
           <td class="text-center" style="white-space: nowrap;">
             <a class="imprimir" href="{% url 'conceitos_obtidos' projeto.id %}"
-              {% if banca_falconi.0 %}
-                data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_falconi.1 }}"
+              {% if banca_falconi.1 %}
+                data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_falconi.0|safe }}"
                 {{ banca_falconi.1|safe }}
               {% else %}
               >
