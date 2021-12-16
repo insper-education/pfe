@@ -286,8 +286,6 @@ class Aluno(models.Model):
                     valor = val/count
                     peso = pes/count
 
-                    print(eh_banca)
-
                     if eh_banca:
                         # Para sempre arredondar 5.5 para 6 e 6.5 para 7 por exemplo.
                         valor = float(Decimal(valor).quantize(0, ROUND_HALF_UP))
