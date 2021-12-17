@@ -1189,7 +1189,7 @@ def resultado_projetos_intern(request, ano=None, semestre=None):
 
 
                 aval_banc_final = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=2)  # B. Final
-                nota_banca_final, peso = Aluno.get_banca(None, aval_banc_final, eh_banca=True)
+                nota_banca_final, peso, avaliadores = Aluno.get_banca(None, aval_banc_final, eh_banca=True)
 
                 if peso is not None:
                     banca_final.append(("{0}".format(converte_letra(nota_banca_final, espaco="&nbsp;")),
@@ -1199,7 +1199,7 @@ def resultado_projetos_intern(request, ano=None, semestre=None):
                     banca_final.append(("&nbsp;-&nbsp;", None, 0))
 
                 aval_banc_interm = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=1)  # B. Int.
-                nota_banca_intermediaria, peso = Aluno.get_banca(None, aval_banc_interm, eh_banca=True)
+                nota_banca_intermediaria, peso, avaliadores = Aluno.get_banca(None, aval_banc_interm, eh_banca=True)
                 if peso is not None:
                     banca_intermediaria.append(("{0}".format(converte_letra(nota_banca_intermediaria,
                                                                             espaco="&nbsp;")),
@@ -1209,9 +1209,12 @@ def resultado_projetos_intern(request, ano=None, semestre=None):
                     banca_intermediaria.append(("&nbsp;-&nbsp;", None, 0))
 
                 aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=99)  # Falc.
-                nota_banca_falconi, peso = Aluno.get_banca(None, aval_banc_falconi)
+                nota_banca_falconi, peso, avaliadores = Aluno.get_banca(None, aval_banc_falconi)
                 if peso is not None:
-                    banca_falconi.append(("{0}".format(converte_letra(nota_banca_falconi, espaco="&nbsp;")),
+                    nomes = ""
+                    for nome in avaliadores:
+                        nomes += "&#8226; "+str(nome)+"<br>"
+                    banca_falconi.append(("{0}".format(nomes),
                                           "{0:5.2f}".format(nota_banca_falconi),
                                           nota_banca_falconi))
                 else:

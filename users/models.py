@@ -249,6 +249,7 @@ class Aluno(models.Model):
     def get_objetivos(self, avaliacoes, eh_banca=False):
         """Retorna objetivos."""
         lista_objetivos = {}
+        avaliadores = set()
         objetivos = ObjetivosDeAprendizagem.objects.all()
         for objetivo in objetivos:
             bancas = avaliacoes.filter(objetivo=objetivo).\
@@ -258,6 +259,7 @@ class Aluno(models.Model):
             for banca in bancas:
                 # Se não for o mesmo avaliador
                 if banca.avaliador not in lista_objetivos[objetivo]:
+                    avaliadores.add(banca.avaliador)
                     if banca.na or (banca.nota is None) or (banca.peso is None):
                         lista_objetivos[objetivo][banca.avaliador] = None
                     else:
@@ -266,7 +268,7 @@ class Aluno(models.Model):
                 # Senão é só uma avaliação de objetivo mais antiga
 
         if not lista_objetivos:
-            return 0, None
+            return 0, None, None
 
         # média por objetivo
         val_objetivos = {}
@@ -294,14 +296,14 @@ class Aluno(models.Model):
 
                     val_objetivos[obj] = (valor, peso)
 
-        return val_objetivos, pes_total
+        return val_objetivos, pes_total, avaliadores
 
     def get_banca(self, avaliacoes_banca, eh_banca=False):
         """Retorna média final das bancas informadas."""
-        val_objetivos, pes_total = Aluno.get_objetivos(self, avaliacoes_banca, eh_banca=eh_banca)
+        val_objetivos, pes_total, avaliadores = Aluno.get_objetivos(self, avaliacoes_banca, eh_banca=eh_banca)
 
         if not val_objetivos:
-            return 0, None
+            return 0, None, None
 
         # média dos objetivos
         val = 0
@@ -322,7 +324,7 @@ class Aluno(models.Model):
         else:
             pes = None
 
-        return val, pes
+        return val, pes, avaliadores
 
     @property
     def get_edicoes(self):
@@ -341,7 +343,7 @@ class Aluno(models.Model):
             avaliacoes_banca_interm = Avaliacao2.objects.filter(projeto=alocacao.projeto,
                                                                 tipo_de_avaliacao=1)
             if avaliacoes_banca_interm:
-                nota_banca_interm, peso = Aluno.get_objetivos(self,
+                nota_banca_interm, peso, avaliadores = Aluno.get_objetivos(self,
                                                               avaliacoes_banca_interm, eh_banca=True)
                 notas.append(("BI", nota_banca_interm, peso/100))
 
@@ -349,7 +351,7 @@ class Aluno(models.Model):
             avaliacoes_banca_final = Avaliacao2.objects.filter(projeto=alocacao.projeto,
                                                                tipo_de_avaliacao=2)
             if avaliacoes_banca_final:
-                nota_banca_final, peso = Aluno.get_objetivos(self,
+                nota_banca_final, peso, avaliadores = Aluno.get_objetivos(self,
                                                              avaliacoes_banca_final, eh_banca=True)
                 notas.append(("BF", nota_banca_final, peso/100))
 
@@ -364,28 +366,28 @@ class Aluno(models.Model):
             rig = Avaliacao2.objects.filter(projeto=alocacao.projeto,
                                             tipo_de_avaliacao=11)
             if rig:
-                nota_rig, peso = Aluno.get_objetivos(self, rig)
+                nota_rig, peso, avaliadores = Aluno.get_objetivos(self, rig)
                 notas.append(("RIG", nota_rig, peso/100))
 
             # Relatório Final de Grupo (12)
             rfg = Avaliacao2.objects.filter(projeto=alocacao.projeto,
                                             tipo_de_avaliacao=12)
             if rfg:
-                nota_rfg, peso = Aluno.get_objetivos(self, rfg)
+                nota_rfg, peso, avaliadores = Aluno.get_objetivos(self, rfg)
                 notas.append(("RFG", nota_rfg, peso/100))
 
             # Relatório Intermediário Individual (21)
             rii = Avaliacao2.objects.filter(alocacao=alocacao,
                                             tipo_de_avaliacao=21)
             if rii:
-                nota_rii, peso = Aluno.get_objetivos(self, rii)
+                nota_rii, peso, avaliadores = Aluno.get_objetivos(self, rii)
                 notas.append(("RII", nota_rii, peso/100))
 
             # Relatório Final Individual (22)
             rfi = Avaliacao2.objects.filter(alocacao=alocacao,
                                             tipo_de_avaliacao=22)
             if rfi:
-                nota_rfi, peso = Aluno.get_objetivos(self, rfi)
+                nota_rfi, peso, avaliadores = Aluno.get_objetivos(self, rfi)
                 notas.append(("RFI", nota_rfi, peso/100))
 
             # NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES
@@ -400,28 +402,28 @@ class Aluno(models.Model):
             api = Avaliacao2.objects.filter(alocacao=alocacao,
                                             tipo_de_avaliacao=51)
             if api:
-                nota_api, peso = Aluno.get_objetivos(self, api)
+                nota_api, peso, avaliadores = Aluno.get_objetivos(self, api)
                 notas.append(("API", nota_api, peso/100))
 
             # Avaliação Final Individual (52),
             afi = Avaliacao2.objects.filter(alocacao=alocacao,
                                             tipo_de_avaliacao=52)
             if afi:
-                nota_afi, peso = Aluno.get_objetivos(self, afi)
+                nota_afi, peso, avaliadores = Aluno.get_objetivos(self, afi)
                 notas.append(("AFI", nota_afi, peso/100))
 
             # Avaliação Parcial de Grupo (53)
             apg = Avaliacao2.objects.filter(projeto=alocacao.projeto,
                                             tipo_de_avaliacao=53)
             if apg:
-                nota_apg, peso = Aluno.get_objetivos(self, apg)
+                nota_apg, peso, avaliadores = Aluno.get_objetivos(self, apg)
                 notas.append(("APG", nota_apg, peso/100))
 
             # Avaliação Final de Grupo (54)
             afg = Avaliacao2.objects.filter(projeto=alocacao.projeto,
                                             tipo_de_avaliacao=54)
             if afg:
-                nota_afg, peso = Aluno.get_objetivos(self, afg)
+                nota_afg, peso, avaliadores = Aluno.get_objetivos(self, afg)
                 notas.append(("AFG", nota_afg, peso/100))
 
             edicao[str(alocacao.projeto.ano)+"."+str(alocacao.projeto.semestre)] = notas
@@ -443,7 +445,7 @@ class Aluno(models.Model):
             avaliacoes_banca_interm = Avaliacao2.objects.filter(projeto=alocacao.projeto,
                                                                 tipo_de_avaliacao=1)
             if avaliacoes_banca_interm:
-                nota_banca_interm, peso = Aluno.get_banca(self,
+                nota_banca_interm, peso, avaliadores = Aluno.get_banca(self,
                                                           avaliacoes_banca_interm,
                                                           eh_banca=True)
                 notas.append(("BI", nota_banca_interm, peso/100 if peso else 0,
@@ -453,7 +455,7 @@ class Aluno(models.Model):
             avaliacoes_banca_final = Avaliacao2.objects.filter(projeto=alocacao.projeto,
                                                                tipo_de_avaliacao=2)
             if avaliacoes_banca_final:
-                nota_banca_final, peso = Aluno.get_banca(self,
+                nota_banca_final, peso, avaliadores = Aluno.get_banca(self,
                                                          avaliacoes_banca_final,
                                                          eh_banca=True)
                 notas.append(("BF", nota_banca_final, peso/100 if peso else 0,
@@ -471,7 +473,7 @@ class Aluno(models.Model):
             rig = Avaliacao2.objects.filter(projeto=alocacao.projeto,
                                             tipo_de_avaliacao=11)
             if rig:
-                nota_rig, peso = Aluno.get_banca(self, rig)
+                nota_rig, peso, avaliadores = Aluno.get_banca(self, rig)
                 notas.append(("RIG", nota_rig, peso/100,
                               "Relatório Intermediário de Grupo"))
 
@@ -479,7 +481,7 @@ class Aluno(models.Model):
             rfg = Avaliacao2.objects.filter(projeto=alocacao.projeto,
                                             tipo_de_avaliacao=12)
             if rfg:
-                nota_rfg, peso = Aluno.get_banca(self, rfg)
+                nota_rfg, peso, avaliadores = Aluno.get_banca(self, rfg)
                 notas.append(("RFG", nota_rfg, peso/100,
                               "Relatório Final de Grupo"))
 
@@ -487,7 +489,7 @@ class Aluno(models.Model):
             rii = Avaliacao2.objects.filter(alocacao=alocacao,
                                             tipo_de_avaliacao=21)
             if rii:
-                nota_rii, peso = Aluno.get_banca(self, rii)
+                nota_rii, peso, avaliadores = Aluno.get_banca(self, rii)
                 notas.append(("RII", nota_rii, peso/100,
                               "Relatório Intermediário Individual"))
 
@@ -495,7 +497,7 @@ class Aluno(models.Model):
             rfi = Avaliacao2.objects.filter(alocacao=alocacao,
                                             tipo_de_avaliacao=22)
             if rfi:
-                nota_rfi, peso = Aluno.get_banca(self, rfi)
+                nota_rfi, peso, avaliadores = Aluno.get_banca(self, rfi)
                 notas.append(("RFI", nota_rfi, peso/100,
                               "Relatório Final Individual"))
 
@@ -512,7 +514,7 @@ class Aluno(models.Model):
             api = Avaliacao2.objects.filter(alocacao=alocacao,
                                             tipo_de_avaliacao=51)
             if api:
-                nota_api, peso = Aluno.get_banca(self, api)
+                nota_api, peso, avaliadores = Aluno.get_banca(self, api)
                 notas.append(("API", nota_api, peso/100,
                               "Avaliação Parcial Individual"))
 
@@ -520,7 +522,7 @@ class Aluno(models.Model):
             afi = Avaliacao2.objects.filter(alocacao=alocacao,
                                             tipo_de_avaliacao=52)
             if afi:
-                nota_afi, peso = Aluno.get_banca(self, afi)
+                nota_afi, peso, avaliadores = Aluno.get_banca(self, afi)
                 notas.append(("AFI", nota_afi, peso/100,
                               "Avaliação Final Individual"))
 
@@ -528,7 +530,7 @@ class Aluno(models.Model):
             apg = Avaliacao2.objects.filter(projeto=alocacao.projeto,
                                             tipo_de_avaliacao=53)
             if apg:
-                nota_apg, peso = Aluno.get_banca(self, apg)
+                nota_apg, peso, avaliadores = Aluno.get_banca(self, apg)
                 notas.append(("APG", nota_apg, peso/100,
                               "Avaliação Parcial de Grupo"))
 
@@ -536,7 +538,7 @@ class Aluno(models.Model):
             afg = Avaliacao2.objects.filter(projeto=alocacao.projeto,
                                             tipo_de_avaliacao=54)
             if afg:
-                nota_afg, peso = Aluno.get_banca(self, afg)
+                nota_afg, peso, avaliadores = Aluno.get_banca(self, afg)
                 notas.append(("AFG", nota_afg, peso/100,
                               "Avaliação Final de Grupo"))
 

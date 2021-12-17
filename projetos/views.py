@@ -1201,7 +1201,7 @@ def certificacao_falconi(request):
             if aval_banc_falconi:
                 projetos_selecionados.append(projeto)
 
-            nota_banca_falconi, peso = Aluno.get_banca(None, aval_banc_falconi)
+            nota_banca_falconi, peso, avaliadores = Aluno.get_banca(None, aval_banc_falconi)
             if peso is not None:
                 selecionados += 1
                 if nota_banca_falconi >= 9.5:  # conceito A+
