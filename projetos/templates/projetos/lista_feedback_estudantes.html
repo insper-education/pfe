@@ -10,7 +10,9 @@
     
     <script src="{% static 'js/w3.js' %}"></script>
     <script src="{% static 'js/Chart.min.js' %}"></script>
-    
+    {% comment %} <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script> {% endcomment %}
+    <script src="{% static 'js/chartjs-plugin-labels.js' %}"></script>
+
     {% comment %} Para chamar os Tooltips {% endcomment %}
     <script>{% include "tooltip.js" %}</script>
 {% endblock %}
@@ -28,7 +30,9 @@
     <script>
       var recomendaria = [0, 0, 0];
       var primeira_opcao = [0, 0];
-      var proposta = [0, 0, 0];
+      var proposta = [0, 0, 0, 0, 0];
+      var trabalhando = [0, 0, 0, 0];
+      var comentarios = [];
     </script>
 
     <table id="FeedbacksTable">
@@ -59,10 +63,16 @@
           {% if feedback.primeira_opcao != None %}
             <script>primeira_opcao{% if feedback.primeira_opcao %}[0]{% else %}[1]{% endif %} += 1;</script>
           {% endif %}
-          
-            {% comment %} 
-              {{feedback.proposta}}
-           {% endcomment %}
+          {% if feedback.recomendaria %}
+            <script>proposta[{{feedback.proposta}}-1] += 1;</script>
+          {% endif %}
+          {% if feedback.trabalhando %}
+            <script>trabalhando[{{feedback.trabalhando}}-1] += 1;</script>
+          {% endif %}
+          {% if feedback.outros %}
+            <script>comentarios.push("{{feedback.outros}}");</script>
+          {% endif %}
+
 
           <td style='font-size:80%' class="text-center">
             <a href="mailto:{{estudante.user.email}}?subject=Feedback%20Final%20PFE&amp;body={% include 'mensagem_feedback_final.html' %}">
@@ -77,10 +87,28 @@
   <p>&nbsp;</p>
 
   <div id="canvas-holder">
-      <canvas id="chart-recomendaria"></canvas>
-      <canvas id="chart-primeira_opcao"></canvas>
+      <canvas style="background-color: #eee;" id="chart-recomendaria"></canvas>
+      <p>&nbsp;</p>
+      <canvas style="background-color: #eee;"  id="chart-primeira_opcao"></canvas>
+      <p>&nbsp;</p>
+      <canvas style="background-color: #eee;"  id="chart-proposta"></canvas>
+      <p>&nbsp;</p>
+      <canvas style="background-color: #eee;"  id="chart-trabalhando"></canvas>
   </div>
 
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  Comentários:<br>
+  <table id="ComentariosTable"  style="background-color: #eee;" >
+    <tr><td></td></tr>
+  </table>
+
+  <script>
+    comentarios.forEach(function(texto, i) {
+      $('#ComentariosTable tr:last').after("<tr><td>" + texto + "</td></tr>");
+    })
+  </script>
 
   <p>&nbsp;</p>
   <p>&nbsp;</p>
@@ -118,12 +146,25 @@
                 position: "top",
           },
           legend: {
-            display: true,
+            display: false,
             position: "bottom",
             labels: {
               fontColor: "#333",
               fontSize: 14
             }
+          },
+          plugins: {
+            labels: [
+              {
+                render: 'label',
+                fontColor: '#000',
+                fontStyle: 'bold',
+                position: 'outside'
+              },
+              {
+                render: 'percentage'
+              }
+            ]
           }
         }
       };
@@ -150,19 +191,141 @@
           responsive: true,
           title: {
                 display: true,
-                text: 'Primeira Opção',
+                text: 'Empresa seria uma das primeiras opções',
                 position: "top",
           },
           legend: {
-            display: true,
+            display: false,
             position: "bottom",
             labels: {
               fontColor: "#333",
               fontSize: 14
             }
+          },
+          plugins: {
+            labels: [
+              {
+                render: 'label',
+                fontColor: '#000',
+                fontStyle: 'bold',
+                position: 'outside'
+              },
+              {
+                render: 'percentage'
+              }
+            ]
           }
         }
       };
+
+
+      var config_proposta = {     // REFERENTE AO PIE CHART
+        type: 'pie',
+        data: {
+          datasets: [{
+            data: proposta,
+            backgroundColor: [
+              "#bb79d6",
+              "#f1c40f",
+              "#f10fc4",
+              "#0ff1c4",
+              "#59b69b",
+            ],
+          }],
+          labels: [
+            'Recebi convite e apliquei',
+            'Não recebi convite, mas apliquei',
+            'Recebi convite, mas não apliquei',
+            'Não recebi, nem apliquei',
+            'Não haviam vagas em aberto',
+          ]
+        },
+        options: {
+          responsive: true,
+          title: {
+                display: true,
+                text: 'Recebeu proposta de estágio',
+                position: "top",
+          },
+          legend: {
+            display: false,
+            position: "bottom",
+            labels: {
+              fontColor: "#333",
+              fontSize: 14
+            }
+          },
+          plugins: {
+            labels: [
+              {
+                render: 'label',
+                fontColor: '#000',
+                fontStyle: 'bold',
+                position: 'outside'
+              },
+              {
+                render: 'percentage'
+              }
+            ]
+          }
+        }
+      };
+
+
+
+      var config_trabalhando = {     // REFERENTE AO PIE CHART
+        type: 'pie',
+        data: {
+          datasets: [{
+            data: trabalhando,
+            backgroundColor: [
+              "#bb79d6",
+              "#f1c40f",
+              "#f10fc4",
+              "#0ff1c4",
+            ],
+          }],
+          labels: [
+            'Empresa do Projeto do PFE',
+            'Outra',
+            'Ainda não',
+            'Prefiro não responder',
+          ]
+        },
+        options: {
+          responsive: true,
+          title: {
+                display: true,
+                text: 'Onde está trabalhando',
+                position: "top",
+          },
+          legend: {
+            display: false,
+            position: "bottom",
+            labels: {
+              fontColor: "#333",
+              fontSize: 14
+            }
+          },
+          plugins: {
+            labels: [
+              {
+                render: 'label',
+                fontColor: '#000',
+                fontStyle: 'bold',
+                position: 'outside'
+              },
+              {
+                render: 'percentage'
+              }
+            ]
+          }
+        }
+      };
+
+
+
+
 
     var config_feedbacks = {
         type: 'bar',
@@ -195,11 +358,20 @@
         ]
         },
         options: {
-        legend: { display: true },
-        title: {
-            display: true,
-            text: 'Estudantes e Feedbacks'
-        }
+          legend: { display: true },
+          title: {
+              display: true,
+              text: 'Estudantes e Feedbacks'
+          },
+          plugins: {
+            labels: [
+              {
+                render: 'value',
+                fontColor: '#000',
+                fontStyle: 'bold',
+              }
+            ]
+          }
         }
     };
 
@@ -213,6 +385,12 @@
 
       var context_primeira_opcao = $("#chart-primeira_opcao").get(0).getContext('2d'); // REFERENTE AO PIE CHART
       window.myPie2 = new Chart(context_primeira_opcao, config_primeira_opcao); // REFERENTE AO PIE CHART
+
+      var context_proposta = $("#chart-proposta").get(0).getContext('2d'); // REFERENTE AO PIE CHART
+      window.myPie3 = new Chart(context_proposta, config_proposta); // REFERENTE AO PIE CHART
+
+      var context_trabalhando = $("#chart-trabalhando").get(0).getContext('2d'); // REFERENTE AO PIE CHART
+      window.myPie4 = new Chart(context_trabalhando, config_trabalhando); // REFERENTE AO PIE CHART
 
     }
 
