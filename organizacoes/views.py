@@ -15,7 +15,7 @@ from PyPDF2 import PdfFileReader
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
-from django.http import HttpResponseNotFound, JsonResponse
+from django.http import HttpResponseNotFound, JsonResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect, get_object_or_404
 
 from users.support import adianta_semestre
@@ -97,43 +97,62 @@ def anotacao(request, organizacao_id, anotacao_id=None):  # acertar isso para pk
 
 def cria_documento(request, organizacao):
 
-    documento = Documento.create()
 
-    documento.organizacao = organizacao
-
+    projeto = None
     projeto_id = request.POST.get("projeto", "")
     if projeto_id:
-        documento.projeto = Projeto.objects.get(id=projeto_id)
+        projeto = Projeto.objects.get(id=projeto_id)
 
+    data = datetime.date.today()
     if 'data' in request.POST:
         try:
-            documento.data = dateutil.parser\
+            data = dateutil.parser\
                 .parse(request.POST['data'])
         except (ValueError, OverflowError):
-            documento.data = datetime.date.today()
+            pass
 
+    tipo_de_documento = 255
     try:
         tipo_de_documento = request.POST.get("tipo_de_documento", "")
-        documento.tipo_de_documento = tipo_de_documento
     except (ValueError, OverflowError):
-        documento.tipo_de_documento = 255
+        pass
 
-    link = request.POST.get("link", "")
+    link = request.POST.get("link", None)
     if link:
         if link[:4] != "http":
             link = "http://" + link
-        documento.link = link
 
-    documento.confidencial = True
+        max_length = Documento._meta.get_field('link').max_length
+        if len(link) > max_length - 1:
+            return "<h1>Erro: Nome do link maior que " + str(max_length) + " caracteres.</h1>"
 
-    documento.save()
+    max_length = Documento._meta.get_field('documento').max_length
+    if 'arquivo' in request.FILES and len(request.FILES['arquivo'].name) > max_length - 1:
+            return "<h1>Erro: Nome do arquivo maior que " + str(max_length) + " caracteres.</h1>"
+
+    # Criando documento na base de dados
+    documento = Documento.create()
+
+    documento.organizacao = organizacao
+    documento.projeto = projeto
+    documento.tipo_de_documento = tipo_de_documento
+    documento.data = data
+    documento.link = link
+
+    if tipo_de_documento == 25:  #(25, 'Relatório Publicado'),
+        documento.confidencial = False
+    else:
+        documento.confidencial = True
 
     if 'arquivo' in request.FILES:
         arquivo = simple_upload(request.FILES['arquivo'],
                                 path=get_upload_path(documento, ""))
+
         documento.documento = arquivo[len(settings.MEDIA_URL):]
 
     documento.save()
+
+    return None
 
 @login_required
 @transaction.atomic
@@ -143,7 +162,9 @@ def adiciona_documento_org(request, organizacao_id):
     organizacao = get_object_or_404(Organizacao, id=organizacao_id)
 
     if request.method == 'POST':
-        cria_documento(request, organizacao)
+        erro = cria_documento(request, organizacao)
+        if erro:
+            return HttpResponseBadRequest(erro)
         return redirect('organizacao_completo', org=organizacao.id)
 
     documento = None
@@ -170,7 +191,9 @@ def adiciona_documento_proj(request, projeto_id):
     organizacao = projeto.organizacao
 
     if request.method == 'POST':
-        cria_documento(request, organizacao)
+        erro = cria_documento(request, organizacao)
+        if erro:
+            return HttpResponseBadRequest(erro)
         return redirect('projeto_completo', projeto_id)
 
     documento = None
