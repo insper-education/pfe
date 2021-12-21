@@ -744,7 +744,7 @@ class Documento(models.Model):
                                 help_text='Usuário do documento')
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='Documento do Projeto')
-    documento = models.FileField(null=True, blank=True, max_length=150,
+    documento = models.FileField(null=True, blank=True, max_length=160,
                                  upload_to=get_upload_path,
                                  help_text='Documento PDF')
     link = models.URLField("link", max_length=250, null=True, blank=True,
