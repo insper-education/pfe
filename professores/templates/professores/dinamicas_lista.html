@@ -33,7 +33,7 @@
 
   {% include "impressora.html" %}
 
-  <span class="titulo">Dinâmicas</span>
+  <span class="titulo">Mentorias</span>
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" %}
@@ -137,7 +137,7 @@
     <div class="sem_agendamento">
       {% if sem_dinamicas %}
         <br>
-        <h5>Projetos ativos sem dinâmicas agendadas:</h5>
+        <h5>Projetos ativos sem mentorias agendadas:</h5>
         <ul>
         {% for projeto in sem_dinamicas %}
           <li>

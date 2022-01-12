@@ -130,7 +130,7 @@
     
     {% comment %} tipo_de_usuario == 1 é aluno {% endcomment %}
     <a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'encontros_marcar' %}" {% endif %} >
-        <h5>Agendar horário das dinâmicas</h5>
+        <h5>Agendar horário das mentorias</h5>
     </a>
 
     <hr>

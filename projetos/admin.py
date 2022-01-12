@@ -19,7 +19,7 @@ from .models import FeedbackEstudante, Projeto, Proposta, Organizacao, Banca, Co
 # Das disciplinas
 from .models import Disciplina, Cursada, Recomendada
 
-# Das dinâmicas
+# Das dinâmicas (Mentorias)
 from .models import Encontro, Evento
 
 # Da coordenação
