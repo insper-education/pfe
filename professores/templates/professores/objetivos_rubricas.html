@@ -15,65 +15,85 @@
   </span>
   
   {% for objetivo in objetivos %}
-    <b>{{objetivo.titulo}}</b>: {{objetivo.objetivo}}<br>
-    <b>Data Inicial</b>: {{objetivo.data_inicial}}
-    <b>Data Final</b>: {% if objetivo.data_final %}{{objetivo.data_final}}{% else %}Atual{% endif %}
+    <div class="border rounded" style="padding: 15px; margin-top: 20px;">
 
-    <div style="margin-top: 6px;"><b><i>Primeira Fase (Intermediária)</i></b></div>
-    <table style="width:100%">
-      <tr>
-        <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" style="width:18%">
-          <label for="objetivo.{{objetivo.id}}.I ">Insatisfatório (I)</label>
-        </th>
-        <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" style="width:18%">
-          <label for="objetivo{{objetivo.id}}D ">Em Desenvolvimento (D)</label>
-        </th>
-        <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" style="width:18%">
-          <label for="objetivo{{objetivo.id}}C ">Essencial (C/C+)</label>
-        </th>
-        <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" style="width:18%">
-          <label for="objetivo{{objetivo.id}}B ">Proficiente (B/B+)</label>
-        </th>
-        <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" style="width:18%">
-          <label for="objetivo{{objetivo.id}}A ">Avançado (A/A+)</label>
-        </th>
-      </tr>
-      <tr>
-          <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_intermediaria_I}}</label></td>
-          <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_intermediaria_D}}</label></td>
-          <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_intermediaria_C}}</label></td>
-          <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_intermediaria_B}}</label></td>
-          <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_intermediaria_A}}</label></td>
-      </tr>
-    </table>
+      <b>Objetivo</b>: {{objetivo.titulo}}
+      <span class="editar esconder">
+        <a style="color: inherit;" href="{% url 'objetivo_editar' objetivo.pk %}">&#x270E;</a>
+      </span>
+      <br>
 
-    <div style="margin-top: 6px;"><b><i>Segunda Fase (Final)</i></b></div>
-    <table style="width:100%">
-      <tr>
-        <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" style="width:18%">
-          <label for="objetivo.{{objetivo.id}}.I ">Insatisfatório (I)</label>
-        </th>
-        <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" style="width:18%">
-          <label for="objetivo{{objetivo.id}}D ">Em Desenvolvimento (D)</label>
-        </th>
-        <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" style="width:18%">
-          <label for="objetivo{{objetivo.id}}C ">Essencial (C/C+)</label>
-        </th>
-        <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" style="width:18%">
-          <label for="objetivo{{objetivo.id}}B ">Proficiente (B/B+)</label>
-        </th>
-        <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" style="width:18%">
-          <label for="objetivo{{objetivo.id}}A ">Avançado (A/A+)</label>
-        </th>
-      </tr>
-      <tr>
-          <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_final_I}}</label></td>
-          <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_final_D}}</label></td>
-          <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_final_C}}</label></td>
-          <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_final_B}}</label></td>
-          <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_final_A}}</label></td>
-      </tr>
-    </table><br>
+      <b>Definição</b>: {{objetivo.objetivo}}<br>
+
+      
+
+      <b>Data Inicial</b>: {{objetivo.data_inicial}}
+      <b>Data Final</b>: {% if objetivo.data_final %}{{objetivo.data_final}}{% else %}Atual{% endif %}<br>
+
+      <b>Avaliado em</b>: 
+        {% if objetivo.avaliacao_aluno %}Avaliação Individual do Aluno pelo Orientador{% if objetivo.avaliacao_banca or objetivo.avaliacao_grupo or objetivo.avaliacao_falconi%},{% endif %}{% endif %}
+        {% if objetivo.avaliacao_banca %}Avaliação do Grupo pela Banca Acadêmica{% if objetivo.avaliacao_grupo or objetivo.avaliacao_falconi%},{% endif %}{% endif %}
+        {% if objetivo.avaliacao_grupo %}Avaliação do Grupo pelo Orientador{% if objetivo.avaliacao_falconi%},{% endif %}{% endif %}
+        {% if objetivo.avaliacao_falconi %}Avaliação do Grupo pela Banca Falconi{% endif %}
+        <br>
+
+      <div style="margin-top: 6px;"><b><i>Primeira Fase (Intermediária)</i></b></div>
+      <table style="width:100%">
+        <tr>
+          <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" style="width:18%">
+            <label for="objetivo.{{objetivo.id}}.I ">Insatisfatório (I)</label>
+          </th>
+          <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" style="width:18%">
+            <label for="objetivo{{objetivo.id}}D ">Em Desenvolvimento (D)</label>
+          </th>
+          <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" style="width:18%">
+            <label for="objetivo{{objetivo.id}}C ">Essencial (C/C+)</label>
+          </th>
+          <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" style="width:18%">
+            <label for="objetivo{{objetivo.id}}B ">Proficiente (B/B+)</label>
+          </th>
+          <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" style="width:18%">
+            <label for="objetivo{{objetivo.id}}A ">Avançado (A/A+)</label>
+          </th>
+        </tr>
+        <tr>
+            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_intermediaria_I}}</label></td>
+            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_intermediaria_D}}</label></td>
+            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_intermediaria_C}}</label></td>
+            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_intermediaria_B}}</label></td>
+            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_intermediaria_A}}</label></td>
+        </tr>
+      </table>
+
+      <div style="margin-top: 6px;"><b><i>Segunda Fase (Final)</i></b></div>
+      <table style="width:100%">
+        <tr>
+          <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" style="width:18%">
+            <label for="objetivo.{{objetivo.id}}.I ">Insatisfatório (I)</label>
+          </th>
+          <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" style="width:18%">
+            <label for="objetivo{{objetivo.id}}D ">Em Desenvolvimento (D)</label>
+          </th>
+          <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" style="width:18%">
+            <label for="objetivo{{objetivo.id}}C ">Essencial (C/C+)</label>
+          </th>
+          <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" style="width:18%">
+            <label for="objetivo{{objetivo.id}}B ">Proficiente (B/B+)</label>
+          </th>
+          <th class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" style="width:18%">
+            <label for="objetivo{{objetivo.id}}A ">Avançado (A/A+)</label>
+          </th>
+        </tr>
+        <tr>
+            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_final_I}}</label></td>
+            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_final_D}}</label></td>
+            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_final_C}}</label></td>
+            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_final_B}}</label></td>
+            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_final_A}}</label></td>
+        </tr>
+      </table>
+
+    </div>
 
   {% endfor %}
 

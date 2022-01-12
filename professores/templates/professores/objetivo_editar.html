@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 12 de Janeiro de 2022
+{% endcomment %}
+
+{% block head %}
+
+  {% load static %}
+  {% load l10n %}
+
+  <style>
+    table, th, td {
+      border: 0px;
+      padding:0 15px 0 0;
+    }
+  </style>
+
+{% endblock %}
+
+
+
+{% block content %}
+ 
+  {% if objetivo %}
+    <form method="post" id="editarobjetivoform" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <h3><label for="projeto">Objetivo de Aprendizagem</label></h3><br>
+
+      <label for="titulo">Título:
+        <input id="titulo" name="titulo" type="text" size="75" maxlength="128" style="max-width: 100%;"
+        {% if objetivo %}
+          value="{{objetivo.titulo}}"
+        {% endif %} 
+        />
+      </label> 
+      <br>
+
+      <label for="descricao">Descrição:<br>
+        <textarea id="descricao" name="descricao" rows="4" cols="80" style="max-width: 100%;">{% if objetivo %}{{objetivo.objetivo}}{% endif %} </textarea>
+      </label>
+      <br>
+
+      <div>
+        
+          <label for="inicio">
+          <span style="display:inline-block; width:5.5ex; text-align:right;">Inicio:</span>
+          <input id="inicio" type="date-local" name="inicio" 
+          {% if objetivo %}
+            value="{{objetivo.data_inicial|date:'Y-m-d'}}" 
+          {% endif %} 
+          required>
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          </label>
+        
+          <label for="fim">
+          <span style="display:inline-block; width:5.5ex; text-align:right">Fim:</span>
+          <input id="fim" type="date-local" name="fim"
+          {% if objetivo %}
+            value="{{objetivo.data_final|date:'Y-m-d'}}" 
+          {% endif %} 
+          required>
+          </label>
+        
+      </div><br>
+
+      <script>
+        // https://webreflection.medium.com/using-the-input-datetime-local-9503e7efdce
+        Date.prototype.toDatetimeLocal =
+          function toDatetimeLocal() {
+            var
+              date = this,
+              ten = function (i) {
+                return (i < 10 ? '0' : '') + i;
+              },
+              YYYY = date.getFullYear(),
+              MM = ten(date.getMonth() + 1),
+              DD = ten(date.getDate()),
+              HH = ten(date.getHours()),
+              II = ten(date.getMinutes()),
+              SS = ten(date.getSeconds())
+            ;
+            return YYYY + '-' + MM + '-' + DD + 'T' +
+                    HH + ':' + II + ':' + SS;
+          };
+
+        $("#inicio").change(function() {
+          var data = new Date($(this).val());
+          data.setMinutes(data.getMinutes() + minutos);
+          $("#fim").val(data.toDatetimeLocal());
+        });
+      </script>
+
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">
+              <b>Avaliado por</b>
+            </th>
+            <th scope="col" style="text-align:center;">
+              <b>Peso Intermediário</b>
+            </th>
+            <th scope="col" style="text-align:center;">
+              <b>Peso Final</b>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="avaliacao_aluno" {% if objetivo.avaliacao_aluno %}checked{% endif %}>
+                <label class="form-check-label" for="avaliacao_aluno">
+                  Avaliação Individual do Aluno pelo Orientador
+                </label>
+              </div>
+            </td>
+            <td style="text-align:center;">
+              <input id="peso_intermediario_individual" name="peso_intermediario_individual" type="number" step='0.01' style="width: 5em;text-align: right;"
+              {% if objetivo %}
+                value="{{objetivo.peso_intermediario_individual|stringformat:".2f"|unlocalize}}"
+              {% endif %} />      
+            </td>
+            <td style="text-align:center;">
+              <input id="peso_final_individual" name="peso_final_individual" type="number" step='0.01' style="width: 5em;text-align: right;"
+              {% if objetivo %}
+                value="{{objetivo.peso_final_individual|stringformat:".2f"|unlocalize}}"
+              {% endif %} />
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="avaliacao_banca" {% if objetivo.avaliacao_banca %}checked{% endif %}>
+                <label class="form-check-label" for="avaliacao_banca">
+                  Avaliação do Grupo pela Banca Acadêmica
+                </label>
+              </div>
+            </td>
+            <td style="text-align:center;">
+              <input id="peso_banca_intermediaria" name="peso_banca_intermediaria" type="number" step='0.01' style="width: 5em;text-align: right;"
+              {% if objetivo %}
+                value="{{objetivo.peso_banca_intermediaria|stringformat:".2f"|unlocalize}}"
+              {% endif %} />      
+            </td>
+            <td style="text-align:center;">
+              <input id="peso_banca_final" name="peso_banca_final" type="number" step='0.01' style="width: 5em;text-align: right;"
+              {% if objetivo %}
+                value="{{objetivo.peso_banca_final|stringformat:".2f"|unlocalize}}"
+              {% endif %} />
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="avaliacao_grupo" {% if objetivo.avaliacao_grupo %}checked{% endif %}>
+                <label class="form-check-label" for="avaliacao_grupo">
+                  Avaliação do Grupo pelo Orientador
+                </label>
+              </div>
+            </td>
+            <td style="text-align:center;">
+              <input id="peso_intermediario_grupo" name="peso_intermediario_grupo" type="number" step='0.01' style="width: 5em;text-align: right;"
+              {% if objetivo %}
+                value="{{objetivo.peso_intermediario_grupo|stringformat:".2f"|unlocalize}}"
+              {% endif %} />      
+            </td>
+            <td style="text-align:center;">
+              <input id="peso_final_grupo" name="peso_final_grupo" type="number" step='0.01' style="width: 5em;text-align: right;"
+              {% if objetivo %}
+                value="{{objetivo.peso_final_grupo|stringformat:".2f"|unlocalize}}"
+              {% endif %} />
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="avaliacao_falconi" {% if objetivo.avaliacao_falconi %}checked{% endif %}>
+                <label class="form-check-label" for="avaliacao_falconi">
+                  Avaliação do Grupo pela Banca Falconi
+                </label>
+              </div>
+            </td>
+            <td style="text-align:center;"> 
+            </td>
+            <td style="text-align:center;">
+              <input id="peso_banca_falconi" name="peso_banca_falconi" type="number" step='0.01' style="width: 5em;text-align: right;"
+              {% if objetivo %}
+                value="{{objetivo.peso_banca_falconi|stringformat:".2f"|unlocalize}}"
+              {% endif %} />
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    
+        <br>
+      
+      <label for="rubrica_intermediaria_I">Rubrica intermediária I:<br>
+        <textarea id="rubrica_intermediaria_I" name="rubrica_intermediaria_I" rows="4" cols="80" style="max-width: 100%;">{% if objetivo %}{{objetivo.rubrica_intermediaria_I}}{% endif %} </textarea>
+      </label>
+      <br>
+
+      <label for="rubrica_final_I">Rubrica Final I:<br>
+        <textarea id="rubrica_final_I" name="rubrica_final_I" rows="4" cols="80" style="max-width: 100%;">{% if objetivo %}{{objetivo.rubrica_final_I}}{% endif %} </textarea>
+      </label>
+      <br><br>
+
+
+      <label for="rubrica_intermediaria_D">Rubrica intermediária D:<br>
+        <textarea id="rubrica_intermediaria_D" name="rubrica_intermediaria_D" rows="4" cols="80" style="max-width: 100%;">{% if objetivo %}{{objetivo.rubrica_intermediaria_D}}{% endif %} </textarea>
+      </label>
+      <br>
+
+      <label for="rubrica_final_D">Rubrica Final D:<br>
+        <textarea id="rubrica_final_D" name="rubrica_final_D" rows="4" cols="80" style="max-width: 100%;">{% if objetivo %}{{objetivo.rubrica_final_D}}{% endif %} </textarea>
+      </label>
+      <br><br>
+
+
+      <label for="rubrica_intermediaria_C">Rubrica intermediária C:<br>
+        <textarea id="rubrica_intermediaria_C" name="rubrica_intermediaria_C" rows="4" cols="80" style="max-width: 100%;">{% if objetivo %}{{objetivo.rubrica_intermediaria_C}}{% endif %} </textarea>
+      </label>
+      <br>
+
+      <label for="rubrica_final_C">Rubrica Final C:<br>
+        <textarea id="rubrica_final_C" name="rubrica_final_C" rows="4" cols="80" style="max-width: 100%;">{% if objetivo %}{{objetivo.rubrica_final_C}}{% endif %} </textarea>
+      </label>
+      <br><br>
+
+
+      <label for="rubrica_intermediaria_B">Rubrica intermediária B:<br>
+        <textarea id="rubrica_intermediaria_B" name="rubrica_intermediaria_B" rows="4" cols="80" style="max-width: 100%;">{% if objetivo %}{{objetivo.rubrica_intermediaria_B}}{% endif %} </textarea>
+      </label>
+      <br>
+
+      <label for="rubrica_final_B">Rubrica Final B:<br>
+        <textarea id="rubrica_final_B" name="rubrica_final_B" rows="4" cols="80" style="max-width: 100%;">{% if objetivo %}{{objetivo.rubrica_final_B}}{% endif %} </textarea>
+      </label>
+      <br><br>
+
+      <label for="rubrica_intermediaria_A">Rubrica intermediária A:<br>
+        <textarea id="rubrica_intermediaria_A" name="rubrica_intermediaria_A" rows="4" cols="80" style="max-width: 100%;">{% if objetivo %}{{objetivo.rubrica_intermediaria_A}}{% endif %} </textarea>
+      </label>
+      <br>
+
+      <label for="rubrica_final_A">Rubrica Final A:<br>
+        <textarea id="rubrica_final_A" name="rubrica_final_A" rows="4" cols="80" style="max-width: 100%;">{% if objetivo %}{{objetivo.rubrica_final_A}}{% endif %} </textarea>
+      </label>
+      
+
+      <br><br>
+      <button id="submit" type="submit">Atualizar</button> (NOT WORKING)
+      <span id="mensagem"></span>
+      <p>&nbsp;</p>
+    </form>
+  {% else %}
+    <p>Erro ao recuperar objetivo de aprendizagem.</p>
+  {% endif %}
+  <p>&nbsp;</p>
+
+
+  <script>
+
+    function carrega_pagina(){}
+      
+    window.onload = carrega_pagina
+
+  </script>
+
+{% endblock %}

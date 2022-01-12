@@ -78,6 +78,10 @@ urlpatterns = [
          views.dinamicas_lista,
          name='dinamicas_lista'),
 
+    path('objetivo_editar/<int:primarykey>',
+         views.objetivo_editar,
+         name='objetivo_editar'),
+
     path('objetivos_rubricas/',
          views.objetivos_rubricas,
          name='objetivos_rubricas'),

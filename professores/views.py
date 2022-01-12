@@ -1279,6 +1279,31 @@ def todos_professores(request):
     return render(request, 'professores/todos_professores.html', context)
 
 
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def objetivo_editar(request, primarykey):
+    """Edita um objetivo de aprendizado."""
+    objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=primarykey)
+
+    if request.method == 'POST':
+        if editar_banca(objetivo, request):
+            mensagem = "Banca editada."
+        else:
+            mensagem = "Erro ao Editar banca."
+        context = {
+            "area_principal": True,
+            "bancas_index": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
+
+    context = {
+        'objetivo': objetivo,
+    }
+    return render(request, 'professores/objetivo_editar.html', context)
+
+
 @login_required
 @permission_required("users.altera_professor", login_url='/')
 def objetivos_rubricas(request):
