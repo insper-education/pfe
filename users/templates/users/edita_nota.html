@@ -143,13 +143,13 @@
           <span>{{objetivo}}</span>
           <span>
             {% with peso=api_peso|dict_key:objetivo %}
-              peso: <input class="peso" id="api_peso_{{objetivo|truncatechars:7}}" name="api_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
+              peso: <input class="peso" id="api_peso_{{objetivo|truncatechars:7}}" name="api_peso_{{objetivo}}" type="number"  min="0" max="100" step="any" style="width: 7em"
               value="{% if peso %}{{peso}}{% else %}3.75{% endif %}"
               {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
             {% endwith %}
 
             &nbsp;&nbsp;
-            nota: <input class="nota" id="api_nota_{{objetivo|truncatechars:7}}" name="api_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
+            nota: <input class="nota" id="api_nota_{{objetivo|truncatechars:7}}" name="api_nota_{{objetivo}}" type="number"  min="0" max="10" step="any" style="width: 4em"
             value="{% if api_nota|dict_key:objetivo != None %}{{api_nota|dict_key:objetivo}}{% endif %}"
             {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
 
@@ -201,12 +201,12 @@
           <span>{{objetivo}}</span>
           <span>
             {% with peso=apg_peso|dict_key:objetivo %}
-              peso: <input class="peso" id="apg_peso_{{objetivo|truncatechars:7}}" name="apg_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
+              peso: <input class="peso" id="apg_peso_{{objetivo|truncatechars:7}}" name="apg_peso_{{objetivo}}" type="number"  min="0" max="100" step="any" style="width: 7em"
               value="{% if peso %}{{peso}}{% else %}1.2{% endif %}"
               {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
             {% endwith %}
             &nbsp;&nbsp;
-            nota: <input class="nota" id="apg_nota_{{objetivo|truncatechars:7}}" name="apg_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
+            nota: <input class="nota" id="apg_nota_{{objetivo|truncatechars:7}}" name="apg_nota_{{objetivo}}" type="number"  min="0" max="10" step="any" style="width: 4em"
             value="{% if apg_nota|dict_key:objetivo != None %}{{apg_nota|dict_key:objetivo}}{% endif %}"
             {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
           
@@ -258,12 +258,12 @@
           <span>{{objetivo}}</span>
           <span>
             {% with peso=afi_peso|dict_key:objetivo %}
-              peso: <input class="peso" id="afi_peso_{{objetivo|truncatechars:7}}" name="afi_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
+              peso: <input class="peso" id="afi_peso_{{objetivo|truncatechars:7}}" name="afi_peso_{{objetivo}}" type="number"  min="0" max="100" step="any" style="width: 7em"
               value="{% if peso %}{{peso}}{% else %}8.75{% endif %}"
               {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
             {% endwith %}
             &nbsp;&nbsp;
-            nota: <input class="nota" id="afi_nota_{{objetivo|truncatechars:7}}" name="afi_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
+            nota: <input class="nota" id="afi_nota_{{objetivo|truncatechars:7}}" name="afi_nota_{{objetivo}}" type="number"  min="0" max="10" step="any" style="width: 4em"
             value="{% if afi_nota|dict_key:objetivo != None %}{{afi_nota|dict_key:objetivo}}{% endif %}"
             {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
           
@@ -314,12 +314,12 @@
           <span>{{objetivo}}</span>
           <span>
             {% with peso=afg_peso|dict_key:objetivo %}
-              peso: <input class="peso" id="afg_peso_{{objetivo|truncatechars:7}}" name="afg_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
+              peso: <input class="peso" id="afg_peso_{{objetivo|truncatechars:7}}" name="afg_peso_{{objetivo}}" type="number"  min="0" max="100" step="any" style="width: 7em"
               value="{% if peso %}{{peso}}{% else %}3.5{% endif %}"
               {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
             {% endwith %}
             &nbsp;&nbsp;
-            nota: <input class="nota" id="afg_nota_{{objetivo|truncatechars:7}}" name="afg_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
+            nota: <input class="nota" id="afg_nota_{{objetivo|truncatechars:7}}" name="afg_nota_{{objetivo}}" type="number"  min="0" max="10" step="any" style="width: 4em"
             value="{% if afg_nota|dict_key:objetivo != None %}{{afg_nota|dict_key:objetivo}}{% endif %}"
             {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
           
@@ -397,13 +397,13 @@
         <span>{{objetivo}}</span>
         <span>
           {% with peso=rii_peso|dict_key:objetivo %}
-            peso: <input class="peso" id="rii_peso_{{objetivo|truncatechars:7}}" name="rii_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
+            peso: <input class="peso" id="rii_peso_{{objetivo|truncatechars:7}}" name="rii_peso_{{objetivo}}" type="number"  min="0" max="100" step="any" style="width: 7em"
             value="{% if peso %}{{peso}}{% else %}{{rii_peso_padrao|dict_key:objetivo}}{% endif %}"
             {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
           {% endwith %}
 
           &nbsp;&nbsp;
-          nota: <input class="nota" id="rii_nota_{{objetivo|truncatechars:7}}" name="rii_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
+          nota: <input class="nota" id="rii_nota_{{objetivo|truncatechars:7}}" name="rii_nota_{{objetivo}}" type="number"  min="0" max="10" step="any" style="width: 4em"
           value="{% if rii_nota|dict_key:objetivo != None %}{{rii_nota|dict_key:objetivo}}{% endif %}"
           {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
 
@@ -455,12 +455,12 @@
         <span>{{objetivo}}</span>
         <span>
           {% with peso=rig_peso|dict_key:objetivo %}
-            peso: <input class="peso" id="rig_peso_{{objetivo|truncatechars:7}}" name="rig_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
+            peso: <input class="peso" id="rig_peso_{{objetivo|truncatechars:7}}" name="rig_peso_{{objetivo}}" type="number"  min="0" max="100" step="any" style="width: 7em"
             value="{% if peso %}{{peso}}{% else %}{{rig_peso_padrao|dict_key:objetivo}}{% endif %}"
             {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
           {% endwith %}
           &nbsp;&nbsp;
-          nota: <input class="nota" id="rig_nota_{{objetivo|truncatechars:7}}" name="rig_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
+          nota: <input class="nota" id="rig_nota_{{objetivo|truncatechars:7}}" name="rig_nota_{{objetivo}}" type="number"  min="0" max="10" step="any" style="width: 4em"
           value="{% if rig_nota|dict_key:objetivo != None %}{{rig_nota|dict_key:objetivo}}{% endif %}"
           {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
          
@@ -512,12 +512,12 @@
         <span>{{objetivo}}</span>
         <span>
           {% with peso=rfi_peso|dict_key:objetivo %}
-            peso: <input class="peso" id="rfi_peso_{{objetivo|truncatechars:7}}" name="rfi_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
+            peso: <input class="peso" id="rfi_peso_{{objetivo|truncatechars:7}}" name="rfi_peso_{{objetivo}}" type="number"  min="0" max="100" step="any" style="width: 7em"
             value="{% if peso %}{{peso}}{% else %}{{rfi_peso_padrao|dict_key:objetivo}}{% endif %}"
             {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
           {% endwith %}
           &nbsp;&nbsp;
-          nota: <input class="nota" id="rfi_nota_{{objetivo|truncatechars:7}}" name="rfi_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
+          nota: <input class="nota" id="rfi_nota_{{objetivo|truncatechars:7}}" name="rfi_nota_{{objetivo}}" type="number"  min="0" max="10" step="any" style="width: 4em"
           value="{% if rfi_nota|dict_key:objetivo != None %}{{rfi_nota|dict_key:objetivo}}{% endif %}"
           {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
         
@@ -568,12 +568,12 @@
         <span>{{objetivo}}</span>
         <span>
           {% with peso=rfg_peso|dict_key:objetivo %}
-            peso: <input class="peso" id="rfg_peso_{{objetivo|truncatechars:7}}" name="rfg_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
+            peso: <input class="peso" id="rfg_peso_{{objetivo|truncatechars:7}}" name="rfg_peso_{{objetivo}}" type="number"  min="0" max="100" step="any" style="width: 7em"
             value="{% if peso %}{{peso}}{% else %}{{rfg_peso_padrao|dict_key:objetivo}}{% endif %}"
             {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
           {% endwith %}
           &nbsp;&nbsp;
-          nota: <input class="nota" id="rfg_nota_{{objetivo|truncatechars:7}}" name="rfg_nota_{{objetivo}}" type="number"  min="0" max="10" step="0.01" 
+          nota: <input class="nota" id="rfg_nota_{{objetivo|truncatechars:7}}" name="rfg_nota_{{objetivo}}" type="number"  min="0" max="10" step="any" style="width: 4em"
           value="{% if rfg_nota|dict_key:objetivo != None %}{{rfg_nota|dict_key:objetivo}}{% endif %}"
           {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
          
