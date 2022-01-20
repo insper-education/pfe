@@ -404,7 +404,7 @@ def banca_avaliar(request, slug):
                     if tipo_de_avaliacao == 1:  # (1, 'intermediaria')        
                         julgamento[i].peso = julgamento[i].objetivo.peso_banca_intermediaria
                     elif tipo_de_avaliacao == 2:  # ( 2, 'Banca Final'),
-                        julgamento[i].peso = julgamento[i].objetivo.peso_banca_intermediaria
+                        julgamento[i].peso = julgamento[i].objetivo.peso_banca_final
                     elif tipo_de_avaliacao == 99:  # ( 99, 'Banca Falconi'),
                         julgamento[i].peso = julgamento[i].objetivo.peso_banca_falconi
 

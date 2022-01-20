@@ -387,6 +387,8 @@
     {% endif %}
 
 
+    {% comment %}  ----------------------------  PARTE ATUAL ----------------------------  {% endcomment %}
+
     <b>Relatório Intermediário Individual: <span id="rii_media"></span></b>
     <ul>
     {% for objetivo in objetivos %}
@@ -396,7 +398,7 @@
         <span>
           {% with peso=rii_peso|dict_key:objetivo %}
             peso: <input class="peso" id="rii_peso_{{objetivo|truncatechars:7}}" name="rii_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
-            value="{% if peso %}{{peso}}{% else %}5.0{% endif %}"
+            value="{% if peso %}{{peso}}{% else %}{{rii_peso_padrao|dict_key:objetivo}}{% endif %}"
             {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
           {% endwith %}
 
@@ -454,7 +456,7 @@
         <span>
           {% with peso=rig_peso|dict_key:objetivo %}
             peso: <input class="peso" id="rig_peso_{{objetivo|truncatechars:7}}" name="rig_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
-            value="{% if peso %}{{peso}}{% else %}1.6{% endif %}"
+            value="{% if peso %}{{peso}}{% else %}{{rig_peso_padrao|dict_key:objetivo}}{% endif %}"
             {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
           {% endwith %}
           &nbsp;&nbsp;
@@ -511,7 +513,7 @@
         <span>
           {% with peso=rfi_peso|dict_key:objetivo %}
             peso: <input class="peso" id="rfi_peso_{{objetivo|truncatechars:7}}" name="rfi_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
-            value="{% if peso %}{{peso}}{% else %}7.5{% endif %}"
+            value="{% if peso %}{{peso}}{% else %}{{rfi_peso_padrao|dict_key:objetivo}}{% endif %}"
             {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
           {% endwith %}
           &nbsp;&nbsp;
@@ -567,7 +569,7 @@
         <span>
           {% with peso=rfg_peso|dict_key:objetivo %}
             peso: <input class="peso" id="rfg_peso_{{objetivo|truncatechars:7}}" name="rfg_peso_{{objetivo}}" type="number"  min="0" max="100" step="0.001" 
-            value="{% if peso %}{{peso}}{% else %}2.4{% endif %}"
+            value="{% if peso %}{{peso}}{% else %}{{rfg_peso_padrao|dict_key:objetivo}}{% endif %}"
             {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
           {% endwith %}
           &nbsp;&nbsp;
@@ -618,7 +620,7 @@
     <b>Nota de Reprovação:</b>
     <ul>
       <li>
-        <span>Devido a falha em um OA</span>
+        <span>Devido a falha em um OA ou média individual insuficiente</span>
         <span>
           Nota: <input class="nota" id="reprovacao" name="reprovacao" type="number"  min="0" max="10" step="0.001" 
           value="{% if reprovacao != None %}{{reprovacao}}{% endif %}"

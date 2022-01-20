@@ -1776,5 +1776,23 @@ def conexoes_estabelecidas(request):
 @permission_required('users.altera_professor', login_url='/')
 def migracao(request):
     """temporário."""
-    message = "Nada Feito"
+
+    # (11, 'Relatório Intermediário de Grupo'),
+    avals = Avaliacao2.objects.filter(projeto__ano=2021, projeto__semestre=2, tipo_de_avaliacao=11)
+    for aval in avals:
+        if aval.peso == 1.6:
+            print(aval.peso)
+            aval.peso = 8.0/6.0
+            aval.save()
+
+    # (2, 'Banca Final'),
+    avals = Avaliacao2.objects.filter(projeto__ano=2021, projeto__semestre=2, tipo_de_avaliacao=2)
+    for aval in avals:
+        if aval.peso == 3.0:
+            print(aval.peso)
+            aval.peso = 4.5
+            aval.save()
+
+
+    message = "Feito"
     return HttpResponse(message)

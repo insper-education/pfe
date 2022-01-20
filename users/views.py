@@ -856,6 +856,11 @@ def edita_notas(request, primarykey):
     for registro in rii:
         rii_nota[registro.objetivo] = registro.nota
         rii_peso[registro.objetivo] = registro.peso
+    
+    # Peso padrão da nota do conceito do objetivo na avaliação
+    rii_peso_padrao = {}
+    for objetivo in objetivos:
+        rii_peso_padrao[objetivo] = objetivo.peso_intermediario_individual
 
     rig_peso = {}
     rig_nota = {}
@@ -863,17 +868,32 @@ def edita_notas(request, primarykey):
         rig_nota[registro.objetivo] = registro.nota
         rig_peso[registro.objetivo] = registro.peso
 
+    # Peso padrão da nota do conceito do objetivo na avaliação
+    rig_peso_padrao = {}
+    for objetivo in objetivos:
+        rig_peso_padrao[objetivo] = objetivo.peso_intermediario_grupo
+
     rfi_peso = {}
     rfi_nota = {}
     for registro in rfi:
         rfi_nota[registro.objetivo] = registro.nota
         rfi_peso[registro.objetivo] = registro.peso
 
+    # Peso padrão da nota do conceito do objetivo na avaliação
+    rfi_peso_padrao = {}
+    for objetivo in objetivos:
+        rfi_peso_padrao[objetivo] = objetivo.peso_final_individual
+
     rfg_peso = {}
     rfg_nota = {}
     for registro in rfg:
         rfg_nota[registro.objetivo] = registro.nota
         rfg_peso[registro.objetivo] = registro.peso
+
+    # Peso padrão da nota do conceito do objetivo na avaliação
+    rfg_peso_padrao = {}
+    for objetivo in objetivos:
+        rfg_peso_padrao[objetivo] = objetivo.peso_final_grupo
 
     if falha:
         reprovacao = falha.last().nota
@@ -891,15 +911,19 @@ def edita_notas(request, primarykey):
         'rii_nota': rii_nota,
         'rii_peso': rii_peso,
         'rii_obs': rii_obs.last(),
+        "rii_peso_padrao": rii_peso_padrao,
         'rig_nota': rig_nota,
         'rig_peso': rig_peso,
         'rig_obs': rig_obs.last(),
+        "rig_peso_padrao": rig_peso_padrao,
         'rfi_nota': rfi_nota,
         'rfi_peso': rfi_peso,
         'rfi_obs': rfi_obs.last(),
+        "rfi_peso_padrao": rfi_peso_padrao,
         'rfg_nota': rfg_nota,
         'rfg_peso': rfg_peso,
         'rfg_obs': rfg_obs.last(),
+        "rfg_peso_padrao": rfg_peso_padrao,
         'bi': bai,
         'bf': baf,
         "ppf_nota": ppf_nota,
