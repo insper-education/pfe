@@ -748,6 +748,10 @@ class Alocacao(models.Model):
         if peso_individual > 0:
             individual = nota_individual/peso_individual
 
+        # Arredonda os valores finais para auxiliar do check de peso 100% e média 5.
+        nota_final = round(nota_final, 6)
+        peso_final = round(peso_final, 9)
+
         return {
             "media": nota_final,
             "pesos": peso_final,

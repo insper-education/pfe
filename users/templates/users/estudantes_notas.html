@@ -142,11 +142,14 @@
               <td id="media{{aluno.id}}"> {% comment %} <!-- Média --> {% endcomment %}
                 <a {% if alocacao %}href="{% url 'edita_notas' alocacao.id %}"{% endif %} target="_blank" rel="noopener noreferrer"></a>
                 <script>
+                  peso_linha = +peso_linha.toFixed(9); // arredonda valores
+                  
                   if (peso_linha>0) {
                     var media = nota_linha/peso_linha;
+                    media = +media.toFixed(6); // arredonda valores
                     var media_tag = $("#media{{aluno.id}}");
                     if(peso_linha != 1) {
-                      media_tag.html('<a style="color:orange" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100% (' + (peso_linha*100).toFixed(0)+ '%)" {% if alocacao %}href="{% url 'edita_notas' alocacao.id %}"{% endif %} target="_blank" rel="noopener noreferrer">' + media.toFixed(2) + '</a>');
+                      media_tag.html('<a style="color:orange" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100% (' + (peso_linha*100).toFixed(1)+ '%)" {% if alocacao %}href="{% url 'edita_notas' alocacao.id %}"{% endif %} target="_blank" rel="noopener noreferrer">' + media.toFixed(2) + '</a>');
                     } else {
                       tag_txt = '<a {% if alocacao %}href="{% url 'edita_notas' alocacao.id %}"{% endif %} target="_blank" rel="noopener noreferrer" '
                       if(media < 5) {
