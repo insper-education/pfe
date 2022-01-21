@@ -140,26 +140,33 @@
                 {% endfor %}
               </td>
               <td id="media{{aluno.id}}"> {% comment %} <!-- Média --> {% endcomment %}
-                <a {% if alocacao %}href="{% url 'edita_notas' alocacao.id %}"{% endif %} target="_blank" rel="noopener noreferrer"></a>
-                <script>
-                  peso_linha = +peso_linha.toFixed(9); // arredonda valores
-                  
-                  if (peso_linha>0) {
-                    var media = nota_linha/peso_linha;
-                    media = +media.toFixed(6); // arredonda valores
+                {% if alocacao %}
+                  <a href="{% url 'edita_notas' alocacao.id %}" target="_blank" rel="noopener noreferrer"></a>
+                  <script>
                     var media_tag = $("#media{{aluno.id}}");
-                    if(peso_linha != 1) {
-                      media_tag.html('<a style="color:orange" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100% (' + (peso_linha*100).toFixed(1)+ '%)" {% if alocacao %}href="{% url 'edita_notas' alocacao.id %}"{% endif %} target="_blank" rel="noopener noreferrer">' + media.toFixed(2) + '</a>');
-                    } else {
-                      tag_txt = '<a {% if alocacao %}href="{% url 'edita_notas' alocacao.id %}"{% endif %} target="_blank" rel="noopener noreferrer" '
-                      if(media < 5) {
-                         tag_txt += 'style="color:red"'
+
+                    {% if alocacao.projeto_alocado_reprovacao.all %}
+                      media_tag.html('<a style="color:red" data-toggle="tooltip" data-html="true" animation="true" title="Reprovação por alguma falha de objetivo de aprendizado ou não obtida média individual suficiente" href="{% url 'edita_notas' alocacao.id %}" target="_blank" rel="noopener noreferrer">{{ alocacao.projeto_alocado_reprovacao.last.nota }}</a>');
+                    {% else %}
+                      peso_linha = +peso_linha.toFixed(9); // arredonda valores
+                      if (peso_linha>0) {
+                        var media = nota_linha/peso_linha;
+                        media = +media.toFixed(6); // arredonda valores
+                        if(peso_linha != 1) {
+                          media_tag.html('<a style="color:orange" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100% (' + (peso_linha*100).toFixed(1)+ '%)" href="{% url 'edita_notas' alocacao.id %}" target="_blank" rel="noopener noreferrer">' + media.toFixed(2) + '</a>');
+                        } else {
+                          tag_txt = '<a {% if alocacao %}href="{% url 'edita_notas' alocacao.id %}"{% endif %} target="_blank" rel="noopener noreferrer" '
+                          if(media < 5) {
+                            tag_txt += 'style="color:red"'
+                          }
+                          tag_txt += '>' + media.toFixed(2) + '</a>'
+                          media_tag.html(tag_txt);
+                        }
                       }
-                      tag_txt += '>' + media.toFixed(2) + '</a>'
-                      media_tag.html(tag_txt);
-                    }
-                  }
-                </script>
+                    {% endif %}
+
+                  </script>
+                {% endif %}
               </td>
             {% endwith %}
           </tr>
