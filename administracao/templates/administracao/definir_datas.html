@@ -15,7 +15,13 @@
 
     <span class="titulo">Datas:</span>
 
-    <label for="inicio">Limite Seleção de Propostas:</label> <input id="limite_propostas" type = "datetime-local" name="limite_propostas" value="{{configuracao.prazo|date:'Y-m-d\TH:i:s'}}">
+    <label for="limite_propostas">Limite Seleção de Propostas:</label> <input id="limite_propostas" type = "datetime-local" name="limite_propostas" value="{{configuracao.prazo|date:'Y-m-d\TH:i:s'}}">
+    <br>
+
+    Período Liberado&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;<label for="periodo_ano">ano:</label> <input id="periodo_ano" name="periodo_ano" type="number" min="2018" max="9999" step="1" value="{{configuracao.ano}}"/>
+    &nbsp;&nbsp;&nbsp;<label for="periodo_semestre">semestre:</label> <input id="periodo_semestre" name="periodo_semestre" type="number" min="1" max="2" step="1" value="{{configuracao.semestre}}"/>
+    <br>
 
     <br><br>
     <button type="submit">Confirmar</button>

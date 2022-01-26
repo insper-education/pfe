@@ -596,16 +596,14 @@ def carrega_arquivo(request, dado):
 def definir_datas(request):
     """Definir datas do PFE."""
     configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     if request.method == 'POST':
 
-        if 'limite_propostas' in request.POST:
+        if "limite_propostas" and "periodo_ano" and "periodo_semestre" in request.POST:
             try:
                 configuracao.prazo = dateutil.parser.parse(request.POST['limite_propostas'])
+                configuracao.ano = int(request.POST['periodo_ano'])
+                configuracao.semestre = int(request.POST['periodo_semestre'])
                 configuracao.save()
                 context = {
                     "area_principal": True,
