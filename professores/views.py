@@ -34,6 +34,7 @@ from .support import editar_banca
 from .support import recupera_orientadores_por_semestre
 from .support import recupera_coorientadores_por_semestre
 
+from estudantes.models import Relato
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
@@ -1143,12 +1144,66 @@ def coorientadores_tabela(request):
 @transaction.atomic
 def relato_avaliar(request, primarykey, ordenacao):
     """Cria uma tela para preencher avaliações de relato quinzenal."""
+    try:
+        relato = Relato.objects.get(id=primarykey)
+        if not relato.alocacao:
+            return HttpResponseNotFound('<h1>Alocação não encontrada!</h1>')
+    except Relato.DoesNotExist:
+        return HttpResponseNotFound('<h1>Relato não encontrado!</h1>')
 
-    context = {
-        "area_principal": True,
-        "mensagem": "avaliação realizada",
-    }
-    return render(request, 'generic.html', context=context)
+    objetivos = get_objetivos_atuais()
+    objetivos = objetivos.filter(avaliacao_aluno=True).order_by("id")
+    
+    avaliador = relato.alocacao.projeto.orientador.user
+
+    tipo_de_avaliacao = 200 + ordenacao  # (200, "Relato Quinzenal 1"),
+
+    if request.method == 'POST':
+        
+        objetivos_possiveis = len(objetivos)
+        julgamento = [None]*objetivos_possiveis
+        
+        avaliacoes = dict(filter(lambda elem: elem[0][:9] == "objetivo.", request.POST.items()))
+
+        for i, aval in enumerate(avaliacoes):
+
+            pk_objetivo = int(aval.split('.')[1])
+            objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=pk_objetivo)
+
+            (julgamento[i], _created) = Avaliacao2.objects.get_or_create(alocacao=relato.alocacao,
+                                                                         tipo_de_avaliacao=tipo_de_avaliacao,
+                                                                         objetivo=objetivo)
+
+            julgamento[i].projeto = relato.alocacao.projeto
+            julgamento[i].avaliador = avaliador
+
+            obj_nota = request.POST[aval]
+            julgamento[i].nota = obj_nota
+
+            julgamento[i].peso = 0.0
+            
+            julgamento[i].save()
+
+        context = {
+            "area_principal": True,
+            "mensagem": "avaliação realizada",
+        }
+        return render(request, 'generic.html', context=context)
+
+
+    else:  # GET
+        
+        # Identifica que uma avaliação já foi realizada anteriormente
+        # avaliacoes = Avaliacao2.objects.filter(alocacao=relato.alocacao,
+        #                                         avaliador=avaliador,
+        #                                         tipo_de_avaliacao=tipo_de_avaliacao)
+
+        context = {
+            "objetivos": objetivos,
+            "relato": relato,
+            "ordenacao": ordenacao,
+        }
+        return render(request, 'professores/relato_avaliar.html', context=context)
 
 
 # Criei esse função temporária para tratar caso a edição seja passada diretamente na URL
