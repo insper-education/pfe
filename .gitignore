@@ -1,7 +1,6 @@
 *.sqlite3
 *.pyc
-users/migrations/????_*.py
-projetos/migrations/????_*.py
+*/migrations/????_*.py
 pfe/settings.py
 .vscode/
 *.log
