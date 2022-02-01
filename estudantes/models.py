@@ -32,4 +32,4 @@ class Relato(models.Model):
     class Meta:
         verbose_name = 'Relato'
         verbose_name_plural = 'Relatos'
-        ordering = ['momento', 'alocacao']
+        # ordering = ['momento', 'alocacao']

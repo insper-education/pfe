@@ -336,11 +336,20 @@
 
   <hr>
   <h3>Relatos Quinzenais</h3>
-  {% for evento in projeto.get_relatos %}
+  {% for evento, relatos in projeto.get_relatos %}
     <p style="padding-left: 18px;">
       <a href="{% url 'relato_avaliar' projeto.id evento.id %}">
         {{ forloop.counter }} - Relatos {{evento.endDate}}
       <a>
+      {% for alocacao in alocacoes %}
+        <small>
+        {% if alocacao.id in relatos %}
+          &#9989;
+        {% else %}
+          &#10060;
+        {% endif %}
+        </small>
+      {% endfor %}
     </p>
   {% endfor %}
 

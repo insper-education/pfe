@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.template.defaultfilters import slugify
 from django.utils.encoding import force_text
 
+from estudantes.models import Relato
 
 def get_upload_path(instance, filename):
     """Caminhos para armazenar os arquivos."""
@@ -192,7 +193,23 @@ class Projeto(models.Model):
         else:
             eventos = Evento.objects.filter(tipo_de_evento=20, endDate__year=self.ano, endDate__month__gt=6).order_by('endDate')
 
-        return eventos
+        # alocacoes = Alocacao.objects.filter(projeto=self)
+
+        relatos = []
+
+        for index in range(len(eventos)):
+        
+            if not index: # index == 0:
+
+                relato = Relato.objects.filter(alocacao__projeto=self, momento__lte=eventos[0].endDate + datetime.timedelta(days=1)).order_by().values('alocacao').distinct().values_list('alocacao_id')
+
+            else:
+
+                relato = Relato.objects.filter(alocacao__projeto=self, momento__gt=eventos[index-1].endDate + datetime.timedelta(days=1), momento__lte=eventos[index].endDate + datetime.timedelta(days=1)).order_by().values('alocacao').distinct().values_list('alocacao_id')
+
+            relatos.append([u[0] for u in relato])
+    
+        return zip(eventos, relatos)
 
     @classmethod
     def create(cls, proposta):
