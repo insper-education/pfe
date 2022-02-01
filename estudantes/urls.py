@@ -50,6 +50,10 @@ urlpatterns = [
          views.relato_quinzenal,
          name='relato_quinzenal'),
 
+    path('relato_visualizar/<int:id>',
+         views.relato_visualizar,
+         name='relato_visualizar'),
+
     path('selecao_propostas/',
          views.selecao_propostas,
          name='selecao_propostas'),

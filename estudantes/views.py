@@ -10,7 +10,7 @@ from hashids import Hashids
 
 from django.conf import settings
 
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.http import HttpResponse
 from django.http import JsonResponse
@@ -441,6 +441,21 @@ def relato_quinzenal(request):
             "relato": None,
         }
     return render(request, 'estudantes/relato_quinzenal.html', context)
+
+
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def relato_visualizar(request, id):
+    """Perguntas aos estudantes de trabalho/entidades/social/familia."""
+    
+    relato = get_object_or_404(Relato, pk=id)
+
+    context = {
+        "relato": relato,
+    }
+    
+    return render(request, 'estudantes/relato_visualizar.html', context)
 
 
 @login_required

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 1 de Fevereiro de 2022
+{% endcomment %}
+
+{% block head %}
+<style>
+textarea {
+  max-width:100%;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">Relato Quinzenal</span>
+  <br>
+
+  <form action="" method="post"> {% csrf_token %}
+
+    <b>Estudante:</b> {{relato.alocacao.aluno}}<br>
+    <b>Projeto:</b> {{relato.alocacao.projeto}}<br>
+    <b>Relato submetido:</b> {{relato.momento}}<br>
+    <br>
+
+    <textarea id="relato" name="relato" rows="18" cols="160" maxlength="4096" disabled>{{relato.texto}}</textarea>
+
+  </form>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+{% endblock %}

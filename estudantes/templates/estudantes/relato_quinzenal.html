@@ -34,10 +34,10 @@ textarea {
     <br><br>
 
     <label for="relato">Informe seu relato quinzenal (máximo 4000 caracteres).</label><br>
-    <textarea id="relato" name="relato" rows="10" cols="80" maxlength="4096" {% if not prazo %}disabled{% endif %}>{{relato}}</textarea>
+    <textarea id="relato" name="relato" rows="18" cols="160" maxlength="4096" {% if not prazo %}disabled{% endif %}>{{relato}}</textarea>
     
     <br><br>
-    <input  {% if not prazo %}disabled{% endif %} type="submit" value="Atualizar">
+    <input  {% if not prazo %}disabled{% endif %} type="submit" value="Enviar">
 
   </form>
 

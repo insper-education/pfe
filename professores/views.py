@@ -1142,47 +1142,54 @@ def coorientadores_tabela(request):
 @login_required
 @permission_required("users.altera_professor", login_url='/')
 @transaction.atomic
-def relato_avaliar(request, primarykey, ordenacao):
-    """Cria uma tela para preencher avaliações de relato quinzenal."""
-    try:
-        relato = Relato.objects.get(id=primarykey)
-        if not relato.alocacao:
-            return HttpResponseNotFound('<h1>Alocação não encontrada!</h1>')
-    except Relato.DoesNotExist:
-        return HttpResponseNotFound('<h1>Relato não encontrado!</h1>')
+def relato_avaliar(request, projeto_id, evento_id):
+    """Cria uma tela para preencher avaliações dos relatos quinzenais."""
+
+    projeto = get_object_or_404(Projeto, pk=projeto_id)
+    evento = get_object_or_404(Evento, pk=evento_id)
+
+    evento_anterior = Evento.objects.filter(tipo_de_evento=20, endDate__lt=evento.endDate).order_by('endDate').last()
+    
+    alocacoes = Alocacao.objects.filter(projeto=projeto)
+
+    relatos = []
+    for alocacao in alocacoes:
+        relatos.append(Relato.objects.filter(alocacao=alocacao,
+                                    momento__gt=evento_anterior.endDate + datetime.timedelta(days=1),
+                                    momento__lte=evento.endDate + datetime.timedelta(days=1)).order_by('momento').last() )
 
     objetivos = get_objetivos_atuais()
     objetivos = objetivos.filter(avaliacao_aluno=True).order_by("id")
     
-    avaliador = relato.alocacao.projeto.orientador.user
+    # avaliador = projeto.orientador.user
 
-    tipo_de_avaliacao = 200 + ordenacao  # (200, "Relato Quinzenal 1"),
+    # tipo_de_avaliacao = 200 + ordenacao  # (200, "Relato Quinzenal 1"),
 
     if request.method == 'POST':
         
-        objetivos_possiveis = len(objetivos)
-        julgamento = [None]*objetivos_possiveis
+        # objetivos_possiveis = len(objetivos)
+        # julgamento = [None]*objetivos_possiveis
         
-        avaliacoes = dict(filter(lambda elem: elem[0][:9] == "objetivo.", request.POST.items()))
+        # avaliacoes = dict(filter(lambda elem: elem[0][:9] == "objetivo.", request.POST.items()))
 
-        for i, aval in enumerate(avaliacoes):
+        # for i, aval in enumerate(avaliacoes):
 
-            pk_objetivo = int(aval.split('.')[1])
-            objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=pk_objetivo)
+        #     pk_objetivo = int(aval.split('.')[1])
+        #     objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=pk_objetivo)
 
-            (julgamento[i], _created) = Avaliacao2.objects.get_or_create(alocacao=relato.alocacao,
-                                                                         tipo_de_avaliacao=tipo_de_avaliacao,
-                                                                         objetivo=objetivo)
+        #     (julgamento[i], _created) = Avaliacao2.objects.get_or_create(alocacao=relato.alocacao,
+        #                                                                  tipo_de_avaliacao=tipo_de_avaliacao,
+        #                                                                  objetivo=objetivo)
 
-            julgamento[i].projeto = relato.alocacao.projeto
-            julgamento[i].avaliador = avaliador
+        #     julgamento[i].projeto = relato.alocacao.projeto
+        #     julgamento[i].avaliador = avaliador
 
-            obj_nota = request.POST[aval]
-            julgamento[i].nota = obj_nota
+        #     obj_nota = request.POST[aval]
+        #     julgamento[i].nota = obj_nota
 
-            julgamento[i].peso = 0.0
+        #     julgamento[i].peso = 0.0
             
-            julgamento[i].save()
+        #     julgamento[i].save()
 
         context = {
             "area_principal": True,
@@ -1200,8 +1207,9 @@ def relato_avaliar(request, primarykey, ordenacao):
 
         context = {
             "objetivos": objetivos,
-            "relato": relato,
-            "ordenacao": ordenacao,
+            "projeto": projeto,
+            "alocacoes_relatos": zip(alocacoes, relatos),
+            "evento": evento,
         }
         return render(request, 'professores/relato_avaliar.html', context=context)
 

@@ -335,6 +335,17 @@
   {% endif %}
 
   <hr>
+  <h3>Relatos Quinzenais</h3>
+  {% for evento in projeto.get_relatos %}
+    <p style="padding-left: 18px;">
+      <a href="{% url 'relato_avaliar' projeto.id evento.id %}">
+        {{ forloop.counter }} - Relatos {{evento.endDate}}
+      <a>
+    </p>
+  {% endfor %}
+
+
+  <hr>
   <h3>Documentos
     <small>
       <a

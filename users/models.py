@@ -791,7 +791,7 @@ class Alocacao(models.Model):
             eventos = Evento.objects.filter(tipo_de_evento=20, endDate__year=self.projeto.ano, endDate__month__gt=6).order_by('endDate')
 
         relatos = []
-        avals = []
+        # avals = []
 
         for index in range(len(eventos)):
             if not index: # index == 0:
@@ -800,14 +800,14 @@ class Alocacao(models.Model):
                 relato = Relato.objects.filter(alocacao=self, momento__gt=eventos[index-1].endDate + datetime.timedelta(days=1), momento__lte=eventos[index].endDate + datetime.timedelta(days=1)).order_by('momento').last()
             relatos.append(relato)
         
-            if relato:
-                aval = Avaliacao2.objects.filter(alocacao=relato.alocacao,
-                                                 tipo_de_avaliacao=200+index)
-            else:
-                aval = None
-            avals.append(aval)
+            # if relato:
+            #     aval = Avaliacao2.objects.filter(alocacao=relato.alocacao,
+            #                                      tipo_de_avaliacao=200+index)
+            # else:
+            #     aval = None
+            # avals.append(aval)
 
-        return zip(eventos, relatos, range(len(eventos)), avals)
+        return zip(eventos, relatos, range(len(eventos)))
 
 
 class Parceiro(models.Model):  # da empresa (não do Insper)

@@ -183,6 +183,17 @@ class Projeto(models.Model):
         return self.organizacao.sigla + " (" + str(self.ano) + "." + str(self.semestre) + ") " + \
             self.get_titulo()
 
+    @property
+    def get_relatos(self):
+        """Retorna todos os possiveis relatos quinzenais para o projeto."""
+
+        if self.semestre == 1:
+            eventos = Evento.objects.filter(tipo_de_evento=20, endDate__year=self.ano, endDate__month__lt=7).order_by('endDate')
+        else:
+            eventos = Evento.objects.filter(tipo_de_evento=20, endDate__year=self.ano, endDate__month__gt=6).order_by('endDate')
+
+        return eventos
+
     @classmethod
     def create(cls, proposta):
         """Cria um Projeto (entrada) na Banca."""
