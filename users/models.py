@@ -7,6 +7,7 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Maio de 2019
 """
 
+import datetime
 from hashids import Hashids
 
 from decimal import Decimal, ROUND_HALF_UP
@@ -20,9 +21,10 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2
-from projetos.models import ObjetivosDeAprendizagem, Reprovacao
+from projetos.models import ObjetivosDeAprendizagem, Reprovacao, Evento
 from projetos.support import calcula_objetivos
 
+from estudantes.models import Relato
 
 class PFEUser(AbstractUser):
     """Classe base para todos os usuários do PFE."""
@@ -778,6 +780,34 @@ class Alocacao(models.Model):
     def peso(self):
         """Retorna peso final."""
         return self.get_media["pesos"]
+
+    @property
+    def get_relatos(self):
+        """Retorna todos os possiveis relatos quinzenais da alocacao."""
+        
+        if self.projeto.semestre == 1:
+            eventos = Evento.objects.filter(tipo_de_evento=20, endDate__year=self.projeto.ano, endDate__month__lt=7).order_by('endDate')
+        else:
+            eventos = Evento.objects.filter(tipo_de_evento=20, endDate__year=self.projeto.ano, endDate__month__gt=6).order_by('endDate')
+
+        relatos = []
+        avals = []
+
+        for index in range(len(eventos)):
+            if not index: # index == 0:
+                relato = Relato.objects.filter(alocacao=self, momento__lte=eventos[0].endDate + datetime.timedelta(days=1)).order_by('momento').last()
+            else:
+                relato = Relato.objects.filter(alocacao=self, momento__gt=eventos[index-1].endDate + datetime.timedelta(days=1), momento__lte=eventos[index].endDate + datetime.timedelta(days=1)).order_by('momento').last()
+            relatos.append(relato)
+        
+            if relato:
+                aval = Avaliacao2.objects.filter(alocacao=relato.alocacao,
+                                                 tipo_de_avaliacao=200+index)
+            else:
+                aval = None
+            avals.append(aval)
+
+        return zip(eventos, relatos, range(len(eventos)), avals)
 
 
 class Parceiro(models.Model):  # da empresa (não do Insper)

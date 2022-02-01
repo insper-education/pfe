@@ -94,6 +94,10 @@ urlpatterns = [
          views.orientadores_tabela_completa,
          name='orientadores_tabela_completa'),
 
+    path('relato_avaliar/<int:primarykey>/<int:ordenacao>',
+         views.relato_avaliar,
+         name='relato_avaliar'),
+
     path('resultado_projetos/',
          views.resultado_projetos,
          name='resultado_projetos'),

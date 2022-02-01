@@ -1165,12 +1165,23 @@ TIPO_DE_AVALIACAO = ( # não mudar a ordem dos números
     (12, 'Relatório Final de Grupo'),
     (21, 'Relatório Intermediário Individual'),
     (22, 'Relatório Final Individual'),
+
     (50, 'Planejamento Primeira Fase'),     # usado até 2019.1
     (51, 'Avaliação Parcial Individual'),   # usado até 2019.1
     (52, 'Avaliação Final Individual'),     # usado até 2019.1
     (53, 'Avaliação Parcial de Grupo'),     # usado até 2019.1
     (54, 'Avaliação Final de Grupo'),       # usado até 2019.1
     (99, 'Falconi'),
+    (200, "Relato Quinzenal 1"),
+    (201, "Relato Quinzenal 2"),
+    (202, "Relato Quinzenal 3"),
+    (203, "Relato Quinzenal 4"),
+    (204, "Relato Quinzenal 5"),
+    (205, "Relato Quinzenal 6"),
+    (206, "Relato Quinzenal 7"),
+    (207, "Relato Quinzenal 8"),
+    (208, "Relato Quinzenal 9"),
+    (209, "Relato Quinzenal 10"),
 )
 
 
@@ -1194,6 +1205,7 @@ class Avaliacao2(models.Model):
                                   help_text='avaliador do projeto')
 
     # Para Bancas e Entregas em Grupo
+    # Isso pode ser removido visto que na alocacao já tem o projeto.
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='projeto que foi avaliado')
 
@@ -1220,6 +1232,12 @@ class Avaliacao2(models.Model):
     def create(cls, projeto):
         """Cria um objeto (entrada) em Avaliação."""
         avaliacao = cls(projeto=projeto)
+        return avaliacao
+
+    @classmethod
+    def create(cls, alocacao):
+        """Cria um objeto (entrada) em Avaliação."""
+        avaliacao = cls(alocacao=alocacao)
         return avaliacao
 
     class Meta:

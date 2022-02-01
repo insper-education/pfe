@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 31 de Janeiro de 2022
+{% endcomment %}
+
+{% block head %}
+
+  {% load banca_tipo %}
+
+  <script>{% include "tooltip.js" %}</script>
+
+  <style>
+    textarea {
+      max-width:100%;
+    }
+
+    label {
+      margin: 3px;
+    }
+
+    table, td {
+        vertical-align: top;
+    }
+
+    @media only screen and (max-width: 1100px) {
+      table, th, td {
+        font-size: 14px;
+      }
+    }
+
+    @media only screen and (max-width: 1000px) {
+      table, th, td {
+        font-size: 12px;
+      }
+      .nivel {
+        display:none;
+      }
+    } 
+
+    @media only screen and (max-width: 800px) {
+      table, th, td {
+        font-size: 14px;
+      }
+
+      tbody {
+        display: flex;
+      }
+
+      tr {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      th, td {        
+        flex-basis: 100%;
+        min-height: calc(130px - 5vw);;
+      }
+
+    }
+
+    @media only screen and (max-width: 500px) {
+      table, th, td {
+        font-size: 12px;
+      }
+    }
+
+    label.reduzido {
+      display: block;
+      line-height: 1.2;
+      font-size: 14px;
+    }
+
+
+    datalist {
+      display: flex;
+      justify-content: space-between;
+    }
+    
+  </style>
+
+{% endblock %}
+
+{% block content %}
+
+  {% if relato %}
+    <form method="post" id="avaliacaoform" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <b>Estudante:</b> {{relato.alocacao.aluno}}<br>
+      <b>Projeto:</b> {{relato.alocacao.projeto.titulo}}<br>
+      <b>Orientador{% if relato.alocacao.projeto.orientador.user.genero == "F" %}a{% endif %}:</b> {{relato.alocacao.projeto.orientador}}<br>
+
+      <br>
+      <b>Data do relato:</b> {{relato.momento|date:"DATE_FORMAT"}}<br>
+      <br>
+
+      <label for="relato">Relato quinzenal:</label><br>
+      <textarea id="relato" name="relato" rows="10" cols="80" maxlength="4096" disabled>{{relato.texto}}</textarea>
+      <br><br>
+
+      {% if objetivos %}
+        <br><h5>Ponderação por Objetivos de Aprendizagem</h5>
+        {% for objetivo in objetivos %}
+        
+        <label for="nps">
+          <div data-toggle="modal" data-target="#modal{{objetivo.id}}">
+            <b>{{objetivo.titulo}}</b>: {{objetivo.objetivo}}
+          </div>
+        </label>
+          
+                
+      <!-- Modal -->
+                
+      <div class="modal fade" id="modal{{objetivo.id}}" tabindex="-1" role="dialog" aria-labelledby="modalLabel{{objetivo.id}}" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h6 class="modal-title" id="modalLabel{{objetivo.id}}">
+                <b>{{objetivo.titulo}}</b>: {{objetivo.objetivo}}</h6>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="table-responsive">
+                <table style="width:100%">
+                  <tr>
+                    <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I">
+                    </th>
+                    <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I">
+                      <label style="white-space: nowrap;">
+                        <font size="2"><span class="nivel">Insatisfatório&nbsp;</span>(I)</font>
+                      </label>
+                    </th>
+                    <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}D">
+                      <label style="white-space: nowrap;">
+                        <font size="2"><span class="nivel">Em Desenvolvimento&nbsp;</span>(D)</font>
+                      </label>
+                    </th>
+                    <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX">
+                      <label style="white-space: nowrap; margin-right: 2em;">
+                        <font size="2"><span class="nivel">Essencial&nbsp;</span>(C)</font>
+                      </label>
+                    </th>
+                    <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX">
+                      <label style="white-space: nowrap; margin-right: 2em;">
+                        <font size="2"><span class="nivel">Proficiente&nbsp;</span>(B)</font>
+                      </label>
+                    </th>
+                    <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX">
+                      <label style="white-space: nowrap; margin-right: 2em;">
+                        <font size="2"><span class="nivel">Avançado&nbsp;</span>(A)</font>
+                      </label>
+                    </th>
+                  </tr>
+                  <tr>
+                    {% comment %} Fase Intermediária {% endcomment %}
+                      <td style="text-align:center; vertical-align: middle;"><label for="objetivo{{objetivo.id}}NA" class="reduzido"><b>fase intermediária</b></label></td>
+                      <td><label class="reduzido">{{objetivo.rubrica_intermediaria_I}}</label></td>
+                      <td><label class="reduzido">{{objetivo.rubrica_intermediaria_D}}</label></td>
+                      <td><label class="reduzido">{{objetivo.rubrica_intermediaria_C}}</label></td>
+                      <td><label class="reduzido">{{objetivo.rubrica_intermediaria_B}}</label></td>
+                      <td><label class="reduzido">{{objetivo.rubrica_intermediaria_A}}</label></td>
+                    </tr>  
+                    <tr>
+                      {% comment %} Fase Final {% endcomment %}
+                      <td style="text-align:center; vertical-align: middle;"><label for="objetivo{{objetivo.id}}NA" class="reduzido"><b>fase final</b></label></td>
+                      <td><label class="reduzido">{{objetivo.rubrica_final_I}}</label></td>
+                      <td><label class="reduzido">{{objetivo.rubrica_final_D}}</label></td>
+                      <td><label class="reduzido">{{objetivo.rubrica_final_C}}</label></td>
+                      <td><label class="reduzido">{{objetivo.rubrica_final_B}}</label></td>
+                      <td><label class="reduzido">{{objetivo.rubrica_final_A}}</label></td>
+                  </tr>
+                </table>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="position:relative; max-width: 860px;">
+        
+        <input type="range" id="objetivo.{{objetivo.id}}" class="form-range" name="objetivo.{{objetivo.id}}" min="0" max="10" step="1.0" list="ticks" value="0" style="width: 860px; max-width: 100%;">
+        <datalist id="ticks">
+            <option value="0" label="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5" label="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10" label="10">10</option>
+        </datalist>
+      </div>
+
+
+      <br>
+          
+        {% endfor %}
+
+      {% else %}
+        <span class="red-bold">Não foram definidos Objetivos de Aprendizagem para essa Avaliação.</span><br>
+      {% endif %}
+      
+      <br><br>
+      <button type="submit">Enviar Avaliação</button>
+      <p>&nbsp;</p>
+    </form>
+  {% else %}
+    <p>Não existe relato disponível para avaliar.</p>
+  {% endif %}
+  <p>&nbsp;</p>
+
+
+{% endblock %}

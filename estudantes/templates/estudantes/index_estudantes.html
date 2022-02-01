@@ -135,6 +135,11 @@
 
     <hr>
 
+    {% comment %} Relato Quinzenal {% endcomment %}
+    <a href="{% url 'relato_quinzenal' %}">
+        <h5>Formulário de Relato Quinzenal</h5>
+    </a>
+
     <a {% if not fase_final %} class="disabled" onclick="showMessage('final')" {% else %} href="{% url 'estudante_feedback' %}" {% endif %} >
         <h5>Enviar feedback final de projeto</h5>
     </a>

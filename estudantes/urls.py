@@ -46,6 +46,10 @@ urlpatterns = [
          views.minhas_bancas,
          name='minhas_bancas'),
 
+    path('relato_quinzenal/',
+         views.relato_quinzenal,
+         name='relato_quinzenal'),
+
     path('selecao_propostas/',
          views.selecao_propostas,
          name='selecao_propostas'),

@@ -374,6 +374,34 @@
                 </script>
             {% endwith %}
 
+            <br><br>
+            &nbsp;&nbsp;Relatos Quinzenais:<br>
+            
+                {% for evento, relato, ordem, avals in alocado.get_relatos %}
+                    {% if relato %}
+                        <a style="padding-left: 18px;" href="{% url 'relato_avaliar' relato.id ordem%}">
+                            {{ordem|add:1}} - Relato {{evento.endDate}} : Preenchido pelo estudante em {{relato.momento}}
+                        </a>
+                        
+                        <ul style="margin-bottom: 8px; padding-left: 64px;">
+                            {% for aval in avals %}
+                            <li>{{aval.objetivo}} = {{aval.nota}}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p style="padding-left: 18px;">{{ordem|add:1}} - Relato {{evento.endDate}} : Relato não preenchido pelo estudante</p>
+                    {% endif %}
+                    
+                {% endfor %}
+            
+
+
+
+
+
+
+
+
         {% endfor %}
     {% endif %}
 

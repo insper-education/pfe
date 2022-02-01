@@ -30,6 +30,7 @@ from users.models import PFEUser, Aluno, Professor, Alocacao, Opcao, OpcaoTempor
 
 from users.support import configuracao_estudante_vencida, adianta_semestre
 
+from .models import Relato
 
 @login_required
 def index_estudantes(request):
@@ -131,7 +132,7 @@ def areas_interesse(request):
 @login_required
 @transaction.atomic
 def encontros_marcar(request):
-    """Encontros a serem agendados pelos alunos."""
+    """Encontros a serem agendados pelos estudantes."""
     configuracao = get_object_or_404(Configuracao)
     ano = configuracao.ano
     semestre = configuracao.semestre
@@ -368,8 +369,84 @@ def minhas_bancas(request):
 
 @login_required
 @transaction.atomic
+def relato_quinzenal(request):
+    """Perguntas aos estudantes de trabalho/entidades/social/familia."""
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
+
+    hoje = datetime.date.today()
+
+    # (20, 'Relato quinzenal (Individual)', 'aquamarine'),
+    prazo = Evento.objects.filter(tipo_de_evento=20, endDate__gte=hoje).order_by('endDate').first()
+
+    if user.tipo_de_usuario == 3:
+        mensagem = "Você não está cadastrado como estudante!"
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
+
+    if user.tipo_de_usuario == 1:
+
+        configuracao = get_object_or_404(Configuracao)
+        ano = configuracao.ano
+        semestre = configuracao.semestre
+
+        estudante = Aluno.objects.get(pk=request.user.aluno.pk)
+
+        alocacao = Alocacao.objects.filter(aluno=estudante,
+                                           projeto__ano=ano,
+                                           projeto__semestre=semestre).last()
+
+        if not alocacao:
+            context = {
+                "prazo": None,
+                "mensagem": "Você não está alocao em um projeto esse semestre.",
+                "relato": None,
+                
+            }
+            return render(request, 'estudantes/relato_quinzenal.html', context)
+
+        if request.method == 'POST':
+            
+            texto_relato = request.POST.get("relato", None)
+            relato = Relato.objects.create(alocacao=alocacao)
+
+            relato.texto = texto_relato
+            relato.save()
+
+            return render(request, 'users/atualizado.html',)
+
+        relato_anterior = Evento.objects.filter(tipo_de_evento=20, endDate__lt=hoje).order_by('endDate').last()
+        if not relato_anterior:
+            return HttpResponseNotFound('<h1>Erro ao buscar prazos!</h1>')
+
+        prazo_anterior = relato_anterior.endDate + datetime.timedelta(days=1)
+        
+        relato = Relato.objects.filter(alocacao=alocacao, momento__gt=prazo_anterior).order_by('momento').last()
+        
+        texto = ''
+        if relato:
+            texto = relato.texto
+
+        context = {
+            "prazo": prazo,
+            "alocacao": alocacao,
+            "relato": texto,
+        }
+    else:  # Supostamente professores
+        context = {
+            "prazo": prazo,
+            "mensagem": "Você não está cadastrado como estudante.",
+            "relato": None,
+        }
+    return render(request, 'estudantes/relato_quinzenal.html', context)
+
+
+@login_required
+@transaction.atomic
 def selecao_propostas(request):
-    """Exibe todos os projetos para os alunos aplicarem."""
+    """Exibe todos os projetos para os estudantes aplicarem."""
     user = get_object_or_404(PFEUser, pk=request.user.pk)
     configuracao = get_object_or_404(Configuracao)
     ano = configuracao.ano

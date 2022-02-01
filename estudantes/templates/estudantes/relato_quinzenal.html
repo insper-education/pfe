@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 26 de Janeiro de 2022
+{% endcomment %}
+
+{% block head %}
+<style>
+textarea {
+  max-width:100%;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+  {% if mensagem %}
+    <h2 class="red-bold">{{mensagem}}</h2>
+  {% endif %}
+
+  <span class="titulo">Formulário de Relato Quinzenal</span>
+  <br>
+
+  <form action="" method="post"> {% csrf_token %}
+
+    Prazo para a submissão do relato: <b style='color:red;'>
+    {% if prazo %}
+      {{prazo.endDate}}
+    {% else %}
+      Não há mais datas para relatos.
+    {% endif %}
+    </b>
+    <br><br>
+
+    <label for="relato">Informe seu relato quinzenal (máximo 4000 caracteres).</label><br>
+    <textarea id="relato" name="relato" rows="10" cols="80" maxlength="4096" {% if not prazo %}disabled{% endif %}>{{relato}}</textarea>
+    
+    <br><br>
+    <input  {% if not prazo %}disabled{% endif %} type="submit" value="Atualizar">
+
+  </form>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+{% endblock %}
