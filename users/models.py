@@ -24,7 +24,7 @@ from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2
 from projetos.models import ObjetivosDeAprendizagem, Reprovacao, Evento
 from projetos.support import calcula_objetivos
 
-from estudantes.models import Relato
+
 
 class PFEUser(AbstractUser):
     """Classe base para todos os usuários do PFE."""
@@ -793,19 +793,6 @@ class Alocacao(models.Model):
         relatos = []
         avals = []
 
-        for index in range(len(eventos)):
-            if not index: # index == 0:
-                relato = Relato.objects.filter(alocacao=self, momento__lte=eventos[0].endDate + datetime.timedelta(days=1)).order_by('momento').last()
-            else:
-                relato = Relato.objects.filter(alocacao=self, momento__gt=eventos[index-1].endDate + datetime.timedelta(days=1), momento__lte=eventos[index].endDate + datetime.timedelta(days=1)).order_by('momento').last()
-            relatos.append(relato)
-        
-            if relato:
-                aval = Avaliacao2.objects.filter(alocacao=relato.alocacao,
-                                                 tipo_de_avaliacao=200+index)
-            else:
-                aval = None
-            avals.append(aval)
 
         return zip(eventos, relatos, range(len(eventos)), avals)
 
