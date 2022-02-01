@@ -16,9 +16,9 @@ postgres -D /usr/local/var/postgres
 brew postgresql-upgrade-database
 
 # Backup dbbackup
-psql -U Username -h 127.0.0.1 -d DatabaseName 
+psql -U pfe -h 127.0.0.1 -d pfe (psql -U Username -h 127.0.0.1 -d DatabaseName)
 \l  (para listas bancos de dados)
-dropdb pie [dropdb DatabaseName (linha de comando)]
+dropdb pfe [dropdb DatabaseName (linha de comando)]
 createdb pfe [createdb DatabaseName (linha de comando)]
 git clone https://github.com/lpsoares/pfe
 (atualizar settings.py)
