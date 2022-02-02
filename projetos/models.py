@@ -1200,16 +1200,16 @@ TIPO_DE_AVALIACAO = ( # não mudar a ordem dos números
     (53, 'Avaliação Parcial de Grupo'),     # usado até 2019.1
     (54, 'Avaliação Final de Grupo'),       # usado até 2019.1
     (99, 'Falconi'),
-    (200, "Relato Quinzenal 1"),
-    (201, "Relato Quinzenal 2"),
-    (202, "Relato Quinzenal 3"),
-    (203, "Relato Quinzenal 4"),
-    (204, "Relato Quinzenal 5"),
-    (205, "Relato Quinzenal 6"),
-    (206, "Relato Quinzenal 7"),
-    (207, "Relato Quinzenal 8"),
-    (208, "Relato Quinzenal 9"),
-    (209, "Relato Quinzenal 10"),
+    (200, "Relato Quinzenal"),
+    (201, "Relato Quinzenal 1"),
+    (202, "Relato Quinzenal 2"),
+    (203, "Relato Quinzenal 3"),
+    (204, "Relato Quinzenal 4"),
+    (205, "Relato Quinzenal 5"),
+    (206, "Relato Quinzenal 6"),
+    (207, "Relato Quinzenal 7"),
+    (208, "Relato Quinzenal 8"),
+    (209, "Relato Quinzenal 9"),
 )
 
 
@@ -1232,8 +1232,7 @@ class Avaliacao2(models.Model):
     avaliador = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
                                   help_text='avaliador do projeto')
 
-    # Para Bancas e Entregas em Grupo
-    # Isso pode ser removido visto que na alocacao já tem o projeto.
+    # Para Bancas e Entregas em Grupo (quando avaliando o grupo inteiro)
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='projeto que foi avaliado')
 

@@ -1158,15 +1158,40 @@ def relato_avaliar(request, projeto_id, evento_id):
                                     momento__gt=evento_anterior.endDate + datetime.timedelta(days=1),
                                     momento__lte=evento.endDate + datetime.timedelta(days=1)).order_by('momento').last() )
 
-    objetivos = get_objetivos_atuais()
-    objetivos = objetivos.filter(avaliacao_aluno=True).order_by("id")
+    # objetivos = get_objetivos_atuais()
+    # objetivos = objetivos.filter(avaliacao_aluno=True).order_by("id")
     
     # avaliador = projeto.orientador.user
 
     # tipo_de_avaliacao = 200 + ordenacao  # (200, "Relato Quinzenal 1"),
 
     if request.method == 'POST':
-        
+
+        # edicao = request.POST['op']
+        avaliacoes = dict(filter(lambda elem: elem[0][:3] == "op.", request.POST.items()))
+
+        for i, aval in enumerate(avaliacoes):
+
+            relato_id = int(aval.split('.')[1])
+            relato = get_object_or_404(Relato, pk=relato_id)
+
+            obj_nota = request.POST[aval]
+            
+            relato.avaliacao = float(obj_nota)  # Seria melhor decimal.
+            relato.save()
+
+        observacoes = request.POST["observacoes"]
+
+        if observacoes != "":
+
+            user = get_object_or_404(PFEUser, pk=request.user.pk)
+
+            obs = Observacao.objects.create(projeto=projeto,
+                                            avaliador=user,
+                                            tipo_de_avaliacao=200)  # (200, "Relato Quinzenal"),
+            obs.observacoes = observacoes
+            obs.save()
+
         # objetivos_possiveis = len(objetivos)
         # julgamento = [None]*objetivos_possiveis
         
@@ -1206,7 +1231,7 @@ def relato_avaliar(request, projeto_id, evento_id):
         #                                         tipo_de_avaliacao=tipo_de_avaliacao)
 
         context = {
-            "objetivos": objetivos,
+            # "objetivos": objetivos,
             "projeto": projeto,
             "alocacoes_relatos": zip(alocacoes, relatos),
             "evento": evento,

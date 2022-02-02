@@ -107,12 +107,12 @@
 
         <label>Desempenho esperado</label>:&nbsp;&nbsp;&nbsp;&nbsp;
         <div class="custom-control custom-radio custom-control-inline">
-          <input type="radio" id="customRadioInline1" name="customRadioInline1" class="custom-control-input">
-          <label class="custom-control-label" for="customRadioInline1">Adequado</label>
+          <input type="radio" id="customRadioInline0{{relato.id}}" name="op.{{relato.id}}" class="custom-control-input" value="1" {% if not relato %}disabled {% else %} {% if relato.avaliacao > 0 %}checked="checked"{% endif %} {% endif %}>
+          <label class="custom-control-label" for="customRadioInline0{{relato.id}}">Adequado</label>
         </div>
         <div class="custom-control custom-radio custom-control-inline">
-          <input type="radio" id="customRadioInline2" name="customRadioInline1" class="custom-control-input">
-          <label class="custom-control-label" for="customRadioInline2">Inadequado</label>
+          <input type="radio" id="customRadioInline1{{relato.id}}" name="op.{{relato.id}}" class="custom-control-input" value="0" {% if not relato %}disabled {% else %} {% if relato.avaliacao == 0 %}checked="checked"{% endif %} {% endif %}>
+          <label class="custom-control-label" for="customRadioInline1{{relato.id}}">Inadequado</label>
         </div>
 
         </div>
@@ -234,7 +234,7 @@
   {% endfor %}
 
   <label for="observacoes">Informe suas observações para a coordenação do PFE.</label><br>
-  <textarea id="observacoes" name="observacoes" rows="18" cols="164" maxlength="4096"></textarea>
+  <textarea id="observacoes" name="observacoes" rows="18" cols="164" maxlength="4096" placeholder="Caso identifique alguma dificuldade com algum aluno ou o grupo, descreva aqui que a coordenação do PFE irá lhe auxiliar."></textarea>
 
   <p>&nbsp;</p>
 
