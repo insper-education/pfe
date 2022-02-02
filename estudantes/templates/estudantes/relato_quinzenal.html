@@ -34,7 +34,9 @@ textarea {
     <br><br>
 
     <label for="relato">Informe seu relato quinzenal (máximo 4000 caracteres).</label><br>
-    <textarea id="relato" name="relato" rows="18" cols="160" maxlength="4096" {% if not prazo %}disabled{% endif %} placeholder="Descreva brevemente as SUAS contribuições para o projeto, quais foram os SEUS aprendizados, quais competências VOCÊ desenvolveu nesse último período. Se quiser você também pode fazer um breve reflexão em como poderiam contribuir de forma mais eficiente para o projeto nas próximas semanas.">{{relato}}</textarea>
+    <textarea id="relato" name="relato" rows="18" cols="160" maxlength="4096" {% if not prazo %}disabled{% endif %} 
+              placeholder="Descreva brevemente as SUAS contribuições para o projeto, quais foram os SEUS aprendizados, quais competências VOCÊ desenvolveu nesse último período. Se quiser você também pode fazer um breve reflexão em como poderiam contribuir de forma mais eficiente para o projeto nas próximas semanas."
+      >{% if relato %}{{relato}}{% endif %}</textarea>
     
     <br><br>
     <input  {% if not prazo %}disabled{% endif %} type="submit" value="Enviar">
