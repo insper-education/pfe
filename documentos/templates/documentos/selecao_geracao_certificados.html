@@ -12,15 +12,21 @@
 
   <span class="titulo">Seleção de Cerfificados</span>
   <br>
-  Selecione os tipos de certificados a serem gerados:
+  Selecione a data e os tipos de certificados a serem gerados:
   <br>
 
   <form method="post" action="{% url 'gerar_certificados' %}" enctype="multipart/form-data"> {% csrf_token %}
+
+    {% comment %} Seletor da edição da pesquisa {% endcomment %}
+    {% include "edicoes.html" %}
+    <br>
+
     {% comment %} <label><input id="estudantes" name="estudantes" type="checkbox" checked /> Estudantes</label>&nbsp;&nbsp;&nbsp; {% endcomment %}
     <label><input id="orientador" name="orientador" type="checkbox" checked /> Orientadores</label>&nbsp;&nbsp;&nbsp;
     <label><input id="coorientador" name="coorientador" type="checkbox" checked /> Coorientadores</label>&nbsp;&nbsp;&nbsp;
     <label><input id="banca" name="banca" type="checkbox" checked /> Bancas</label>&nbsp;&nbsp;&nbsp;
-    <label><input id="mentores" name="mentores" type="checkbox" checked /> Mentores</label>&nbsp;&nbsp;&nbsp;
+    <label><input id="mentoria_tecnica" name="mentoria_tecnica" type="checkbox" checked /> Mentorias Técnicas</label>&nbsp;&nbsp;&nbsp;
+    <label><input id="mentoria_falconi" name="mentoria_falconi" type="checkbox" checked /> Mentorias Falconi</label>&nbsp;&nbsp;&nbsp;
     <br><br>
 
     <input type="submit" value="Gerar">

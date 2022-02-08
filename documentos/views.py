@@ -183,7 +183,16 @@ def atualiza_certificado(usuario, projeto, tipo_cert, arquivo, banca=None):
 @permission_required('users.altera_professor', login_url='/')
 def selecao_geracao_certificados(request):
     """Recupera um certificado pelos dados."""
-    return render(request, 'documentos/selecao_geracao_certificados.html')
+
+    edicoes, _, _ = get_edicoes(Projeto)
+    
+
+    context = {
+        'edicoes': edicoes,
+    }
+
+    return render(request, 'documentos/selecao_geracao_certificados.html', context)
+
 
 
 @login_required
@@ -191,19 +200,20 @@ def selecao_geracao_certificados(request):
 @permission_required('users.altera_professor', login_url='/')
 def gerar_certificados(request):
     """Recupera um certificado pelos dados."""
-    configuracao = get_object_or_404(Configuracao)
-
     if not os.path.exists("arquivos/signature.png"):
         return HttpResponse("Arquivo de assinatura não encontrado.", status=401)
     if not os.path.exists("arquivos/papel_timbrado.pdf"):
         return HttpResponse("Papel timbrado não encontrado.", status=401)
 
-    certificados = []
+    if 'edicao' in request.POST:
+        ano, semestre = request.POST['edicao'].split('.')
+    else:
+        return HttpResponse("Algum erro não identificado.", status=401)
 
+    certificados = []
     if 'orientador' in request.POST:
         # (101, "Orientação de Projeto"),
-        orientadores = recupera_orientadores(configuracao.ano,
-                                             configuracao.semestre)
+        orientadores = recupera_orientadores(ano, semestre)
         arquivo = "documentos/certificado_orientador.html"
         for orientador in orientadores:
             for projeto in orientador[1]:
@@ -216,8 +226,7 @@ def gerar_certificados(request):
 
     if 'coorientador' in request.POST:
         # (102, "Coorientação de Projeto"),
-        coorientadores = recupera_coorientadores(configuracao.ano,
-                                                 configuracao.semestre)
+        coorientadores = recupera_coorientadores(ano, semestre)
         arquivo = "documentos/certificado_coorientador.html"
         for coorientador in coorientadores:
             for projeto in coorientador[1]:
@@ -230,8 +239,7 @@ def gerar_certificados(request):
 
     if 'banca' in request.POST:
         # (103, "Membro de Banca Intermediária"),
-        membro_banca = recupera_bancas_intermediarias(configuracao.ano,
-                                                      configuracao.semestre)
+        membro_banca = recupera_bancas_intermediarias(ano, semestre)
         arquivo = "documentos/certificado_banca_intermediaria.html"
         for membro in membro_banca:
             for banca in membro[1]:
@@ -245,8 +253,7 @@ def gerar_certificados(request):
 
     if 'banca' in request.POST:
         # (104, "Membro de Banca Final"),
-        membro_banca = recupera_bancas_finais(configuracao.ano,
-                                              configuracao.semestre)
+        membro_banca = recupera_bancas_finais(ano, semestre)
         arquivo = "documentos/certificado_banca_final.html"
         for membro in membro_banca:
             for banca in membro[1]:
@@ -260,8 +267,7 @@ def gerar_certificados(request):
 
     if 'banca' in request.POST:
         # (105, "Membro de Banca Falconi"),
-        membro_banca = recupera_bancas_falconi(configuracao.ano,
-                                               configuracao.semestre)
+        membro_banca = recupera_bancas_falconi(ano, semestre)
         arquivo = "documentos/certificado_banca_falconi.html"
         for membro in membro_banca:
             for banca in membro[1]:
@@ -273,10 +279,9 @@ def gerar_certificados(request):
                 if certificado:
                     certificados.append(certificado)
 
-    if 'mentores' in request.POST:
+    if 'mentoria_falconi' in request.POST:
         # (106, "Mentoria de Grupo"),  # mentor na Falconi
-        membro_banca = recupera_mentorias(configuracao.ano,
-                                          configuracao.semestre)
+        membro_banca = recupera_mentorias(ano, semestre)
         arquivo = "documentos/certificado_mentoria.html"
         for membro in membro_banca:
             for banca in membro[1]:
@@ -288,10 +293,9 @@ def gerar_certificados(request):
                 if certificado:
                     certificados.append(certificado)
 
-    if 'mentores' in request.POST:
+    if 'mentoria_tecnica' in request.POST:
         # (107, "Mentoria Técnica"),  # mentor da empresa
-        membros = recupera_mentorias_técnica(configuracao.ano,
-                                             configuracao.semestre)
+        membros = recupera_mentorias_técnica(ano, semestre)
         arquivo = "documentos/certificado_mentoria_tecnica.html"
         for membro in membros:
             for banca in membro[1]:

@@ -13,7 +13,7 @@
           <div class="input-group-prepend">
             <label class="input-group-text" for="filterEdicao" onClick="recarregar_pagina()">Edição</label>
           </div>
-          <select class="filter custom-select w-auto" id="filterEdicao">
+          <select class="filter custom-select w-auto" id="filterEdicao" name="edicao">
             {% comment %} Se não quiser que aparece a opção todas crie uma variavel n_todas com True {% endcomment %}
             {% if not n_todas %}
               <option value="todas">todas</option>
@@ -36,7 +36,7 @@
           <div class="input-group-prepend">
             <label class="input-group-text" for="filterCurso">Curso</label>
           </div>
-          <select class="filter custom-select w-auto" id="filterCurso">
+          <select class="filter custom-select w-auto" id="filterCurso" name="curso">
               <option value="T">todos</option>
               <option value="C" {% if curso == "computação" %}selected{% endif %}>computação</option>
               <option value="X" {% if curso == "mecatrônica" %}selected{% endif %}>mecatrônica</option>
