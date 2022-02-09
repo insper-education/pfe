@@ -157,7 +157,7 @@ def get_objetivos_atuais():
     hoje = datetime.date.today()
     objetivos = objetivos.filter(data_final__gt=hoje) | objetivos.filter(data_final__isnull=True)
 
-    objetivos = objetivos.order_by("id")
+    objetivos = objetivos.order_by("ordem")
 
     return objetivos
 
@@ -175,7 +175,7 @@ def get_objetivos_alocacao(alocacao):
     objetivos = objetivos.filter(data_inicial__lt=data_projeto)
     objetivos = objetivos.filter(data_final__gt=data_projeto) | objetivos.filter(data_final__isnull=True)
 
-    objetivos = objetivos.order_by("id")
+    objetivos = objetivos.order_by("ordem")
 
     return objetivos
 
@@ -190,7 +190,7 @@ def get_objetivos_alocacoes(alocacoes):
         for alocacao in alocacoes[1:]:
             objetivos = objetivos | get_objetivos_alocacao(alocacao)
 
-        objetivos = objetivos.order_by("id")
+        objetivos = objetivos.order_by("ordem")
 
     return objetivos
 
