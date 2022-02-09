@@ -441,7 +441,7 @@ class CursadaAdmin(admin.ModelAdmin):
 class ObjetivosDeAprendizagemAdmin(admin.ModelAdmin):
     """Objetivos de Aprendizagem."""
 
-    list_display = ("titulo", "data_inicial", "data_final")
+    list_display = ("titulo", "data_inicial", "data_final", "ordem")
     actions = [dup_entrada]
 
 

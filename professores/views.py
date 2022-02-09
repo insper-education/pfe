@@ -355,9 +355,9 @@ def banca_avaliar(request, slug):
     
     # Banca(Intermediária, Final) ou Falconi
     if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
-        objetivos = objetivos.filter(avaliacao_banca=True).order_by("id")
+        objetivos = objetivos.filter(avaliacao_banca=True)
     elif banca.tipo_de_banca == 2:  # Falconi
-        objetivos = objetivos.filter(avaliacao_falconi=True).order_by("id")
+        objetivos = objetivos.filter(avaliacao_falconi=True)
     else:
         return HttpResponseNotFound('<h1>Tipo de Banca não indentificado</h1>')
 
@@ -1158,11 +1158,10 @@ def relato_avaliar(request, projeto_id, evento_id):
                                     momento__gt=evento_anterior.endDate + datetime.timedelta(days=1),
                                     momento__lte=evento.endDate + datetime.timedelta(days=1)).order_by('momento').last() )
 
+    # SE UM DIA DECIDIR AVALIAR OS RELATOS POR OBJETIVOS DE APRENDIZAGEM
     # objetivos = get_objetivos_atuais()
-    # objetivos = objetivos.filter(avaliacao_aluno=True).order_by("id")
-    
+    # objetivos = objetivos.filter(avaliacao_aluno=True)
     # avaliador = projeto.orientador.user
-
     # tipo_de_avaliacao = 200 + ordenacao  # (200, "Relato Quinzenal 1"),
 
     if request.method == 'POST':

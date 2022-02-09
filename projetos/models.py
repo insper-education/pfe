@@ -1156,25 +1156,28 @@ class ObjetivosDeAprendizagem(models.Model):
                                   help_text='Data Final de Uso')
 
     peso_intermediario_individual = models.FloatField(default=0,
-                                                      help_text='peso intermediário individual)')
+                                                      help_text='peso intermediário individual')
 
     peso_intermediario_grupo = models.FloatField(default=0,
-                                                 help_text='peso intermediário grupo)')
+                                                 help_text='peso intermediário grupo')
 
     peso_final_individual = models.FloatField(default=0,
-                                              help_text='peso final individual)')
+                                              help_text='peso final individual')
 
     peso_final_grupo = models.FloatField(default=0,
-                                         help_text='peso final grupo)')
+                                         help_text='peso final grupo')
 
     peso_banca_intermediaria = models.FloatField(default=0,
-                                                 help_text='peso para banca intermediária)')
+                                                 help_text='peso para banca intermediária')
 
     peso_banca_final = models.FloatField(default=0,
-                                         help_text='peso para banca final)')
+                                         help_text='peso para banca final')
 
     peso_banca_falconi = models.FloatField(default=0,
-                                           help_text='peso para banca falconi)')
+                                           help_text='peso para banca falconi')
+
+    ordem = models.PositiveSmallIntegerField(help_text='ordem para aparecer nas listas')
+
 
     def __str__(self):
         return str(self.titulo)
