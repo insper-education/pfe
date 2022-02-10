@@ -1,4 +1,4 @@
-Django==2.2.25
+Django==2.2.27
 celery==5.2.2
 # vine==1.3.0 creio que não estou usando mais
 psycopg2-binary==2.8.5
