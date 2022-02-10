@@ -130,7 +130,7 @@
                 {% for aval, nota, peso, descr in aluno.get_notas|dict_key:ano_semestre %} <!-- Notas -->
                     <span style="background-color:#eef;" data-toggle="tooltip" data-html="true" animation="true" 
                     title="{{descr}}">
-                      {% comment %} {{aval}}({% widthratio peso 1 100 %}%)={{nota|stringformat:".1f"|unlocalize}} {% endcomment %}
+                      <!-- {{aval}}({% widthratio peso 1 100 %}%)={{nota|stringformat:".1f"|unlocalize}} -->
                       {{aval}}({% widthratio peso 1 100 %}%)={{nota|floatformat:1}}
                     </span>
                     <script>
@@ -146,9 +146,9 @@
                     var media_tag = $("#media{{aluno.id}}");
 
                     {% if alocacao.projeto_alocado_reprovacao.all %}
-                      media_tag.html('<a style="color:red" data-toggle="tooltip" data-html="true" animation="true" title="Reprovação por alguma falha de objetivo de aprendizado ou não obtida média individual suficiente" href="{% url 'edita_notas' alocacao.id %}" target="_blank" rel="noopener noreferrer">{{ alocacao.projeto_alocado_reprovacao.last.nota }}</a>');
+                      media_tag.html('<a style="color:red" data-toggle="tooltip" data-html="true" animation="true" title="Reprovação por alguma falha de objetivo de aprendizado ou não obtida média individual suficiente" href="{% url 'edita_notas' alocacao.id %}" target="_blank" rel="noopener noreferrer">{{ alocacao.projeto_alocado_reprovacao.last.nota|stringformat:".2f"|unlocalize }}</a>');
                     {% else %}
-                      peso_linha = +peso_linha.toFixed(9); // arredonda valores
+                      peso_linha = +peso_linha.toFixed(7); // arredonda valores
                       if (peso_linha>0) {
                         var media = nota_linha/peso_linha;
                         media = +media.toFixed(6); // arredonda valores
