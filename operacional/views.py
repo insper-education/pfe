@@ -35,15 +35,43 @@ def avisos_listar(request):
     """Mostra toda a tabela de avisos da coordenação do PFE."""
     configuracao = get_object_or_404(Configuracao)
 
-    qualquer_aviso = list(Aviso.objects.all())
-
     eventos = Evento.objects.filter(startDate__year=configuracao.ano)
     if configuracao.semestre == 1:
-        qualquer_evento = list(eventos.filter(startDate__month__lt=7))
+        eventos = eventos.filter(startDate__month__lt=7)
     else:
-        qualquer_evento = list(eventos.filter(startDate__month__gt=6))
+        eventos = eventos.filter(startDate__month__gt=6)
 
-    avisos = sorted(qualquer_aviso+qualquer_evento, key=lambda t: t.get_data())
+    avisos = []
+    for evento in eventos:
+        avisos.append(
+            {"class": "Evento",
+             "tipo_de_evento": evento.tipo_de_evento,
+             "titulo": evento.get_title(),
+             "data": evento.get_data(),
+             "id": None,
+             "realizado": False,
+             "color": evento.get_color(),
+            })
+
+        for aviso in Aviso.objects.filter(tipo_de_evento=evento.tipo_de_evento):
+            avisos.append(
+                {"class": "Aviso",
+                "tipo_de_evento": aviso.tipo_de_evento,
+                "titulo": aviso.titulo,
+                "data": evento.get_data() + datetime.timedelta(days=aviso.delta),
+                "id": aviso.id,
+                "realizado": aviso.realizado,
+                "data_realizado": aviso.data_realizado,
+                "evento": aviso.get_evento(),
+                "delta": aviso.delta,
+                "coordenacao": aviso.coordenacao,
+                "comite_pfe": aviso.comite_pfe,
+                "todos_alunos": aviso.todos_alunos,
+                "todos_orientadores": aviso.todos_orientadores,
+                "contatos_nas_organizacoes": aviso.contatos_nas_organizacoes,
+                })
+
+    avisos = sorted(avisos, key=lambda t: t["data"])
 
     context = {
         'avisos': avisos,
@@ -51,6 +79,7 @@ def avisos_listar(request):
         'hoje' : datetime.date.today(),
         'filtro' : "todos",
     }
+
     return render(request, 'operacional/avisos_listar.html', context)
 
 

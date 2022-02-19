@@ -868,18 +868,21 @@ def mostra_feedback_estudante(request, feedback_id):
 @permission_required('users.altera_professor', login_url='/')
 def validate_aviso(request):
     """Ajax para validar avisos."""
-    aviso_id = int(request.GET.get('aviso', None))
+    aviso_id = int(request.GET.get('aviso', None)[len("aviso"):])
     checked = request.GET.get('checked', None) == "true"
+    value = request.GET.get('value', None)
 
-    if aviso_id == 0:
-        avisos = Aviso.objects.all()
-        for aviso in avisos:
-            aviso.realizado = False
-            aviso.save()
+    aviso = get_object_or_404(Aviso, id=aviso_id)
+    aviso.realizado = checked
+
+    if checked:
+        # Marca a data do aviso como ultima marcação
+        aviso.data_realizado = dateutil.parser.parse(value)
     else:
-        aviso = get_object_or_404(Aviso, id=aviso_id)
-        aviso.realizado = checked
-        aviso.save()
+        # Marca a data do aviso como dia anterior
+        aviso.data_realizado = dateutil.parser.parse(value) - datetime.timedelta(days=1)
+
+    aviso.save()
 
     data = {
         'atualizado': True,

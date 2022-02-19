@@ -315,7 +315,7 @@ class BancaAdmin(admin.ModelAdmin):
 class AvisoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
 
-    list_display = ('titulo', 'tipo_de_evento', 'delta', 'realizado',)
+    list_display = ('titulo', 'tipo_de_evento', 'delta', 'realizado', "data_realizado",)
     list_filter = ('realizado', 'coordenacao', 'comite_pfe', 'todos_alunos',
                    'todos_orientadores', 'contatos_nas_organizacoes',)
     ordering = ('delta',)
@@ -323,7 +323,7 @@ class AvisoAdmin(admin.ModelAdmin):
     fieldsets = \
         ((None,
           {'fields':
-           ('titulo', 'tipo_de_evento', 'delta', 'mensagem', 'realizado',)
+           ('titulo', 'tipo_de_evento', 'delta', 'mensagem', 'realizado', "data_realizado")
           }),
          ('Interesse', {
              'fields': ('coordenacao', 'comite_pfe', 'todos_alunos',

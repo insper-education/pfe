@@ -891,7 +891,12 @@ class Aviso(models.Model):
                                      help_text='dias passados do evento definido')
     mensagem = models.TextField(max_length=4096, null=True, blank=True,
                                 help_text='mensagem a ser enviar no texto')
-    realizado = models.BooleanField(default=False, help_text='Se já realizado no período')
+    
+    realizado = models.BooleanField(default=False, help_text='Se já realizado no período')  # NAO MAIS USADO
+
+    data_realizado = models.DateField(default=datetime.date.today, blank=True,
+                                      help_text='Data de quando o evento foi realizado pela última vez')
+
     coordenacao = \
         models.BooleanField(default=False, help_text='Para organização do PFE')
     comite_pfe = \

@@ -80,82 +80,87 @@
           </tr>
         </thead>
         <tbody>
-        {% for a in avisos %} 
-          {% if a|get_class == "Aviso" %}
-            <tr class="linha {% if a.get_data < hoje %}text-success{% else %}text-info{% endif %}"
-                data-type="
-                  {% if a.coordenacao %}Co{% endif %}
-                  {% if a.comite_pfe %}Cm{% endif %}
-                  {% if a.todos_alunos %}Al{% endif %}
-                  {% if a.todos_orientadores %}Or{% endif %}
-                  {% if a.contatos_nas_organizacoes %}Og{% endif %}
-                " >
-              <th style="vertical-align: middle;" scope="row">
-                <input class="aviso" type="checkbox" id="aviso{{a.id}}" name="aviso{{a.id}}" value="{{a.id}}" 
-                {% if a.realizado %}checked{% endif %}
-                {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
-                >
-              </th>
-              <td style="vertical-align: middle;" data-toggle="tooltip" data-html="true" animation="true" title="
-                  {% if a.tipo_de_evento %}
-                    {{a.get_evento}}{%if a.delta >= 0 %}+{%endif%}{{a.delta}}
-                  {% else %}
-                    delta={{a.delta}}
-                  {% endif %}
-                ">
-                {% comment %}{{ configuracao.t0|plus_days:a.delta  }}{% endcomment %}
-                <label style="line-height: 0px;" for="aviso{{a.id}}">
-                  <span class="data_longa">{{a.get_data}}</span>
-                  <span class="data_curta">{{a.get_data|date:"d/m/y"}}</span>
-                </label>
-              </td>
-              <td style="vertical-align: middle;">
-                {% if a.coordenacao %}
-                  <span data-toggle="tooltip" data-html="true" animation="true" title="Coordenação">Co</span>
-                {% endif %}
-                {% if a.comite_pfe %}
-                  <span data-toggle="tooltip" data-html="true" animation="true" title="Comite do PFE">Cm</span>
-                {% endif %}
-                {% if a.todos_alunos %}
-                  <span data-toggle="tooltip" data-html="true" animation="true" title="Todos os Alunos">Al</span>
-                {% endif %}
-                {% if a.todos_orientadores %}
-                  <span data-toggle="tooltip" data-html="true" animation="true" title="Todos os Orientadores">Or</span>
-                {% endif %}
-                {% if a.contatos_nas_organizacoes %}
-                  <span data-toggle="tooltip" data-html="true" animation="true" title="Contatos nas Organizacoes">Og</span>
-                {% endif %}
-              </td>
-              <td style="vertical-align: middle;">
-                <a href="{% url 'edita_aviso' a.id %}">
-                  {{a.titulo}}
-                </a>
-              </td>
-            </tr>
-          {% endif %}
-          {% if a|get_class == "Evento" %}
-            <tr style="vertical-align: middle;" class="linha" data-type="
-                  {% if a.tipo_de_evento < 100 %}Al{% else %}Co{% endif %}
-                  Ev">
-              <th  scope="row">
-              </th>
-              <td style="vertical-align: middle;" class="{% if a.get_data < hoje %}text-success{% else %}text-info{% endif %}">
-                  <span class="data_longa">{{a.get_data}}</span>
-                  <span class="data_curta">{{a.get_data|date:"d/m/y"}}</span>
-              </td>
-              <td style="vertical-align: middle;" class="{% if a.get_data < hoje %}text-success{% else %}text-info{% endif %}">
-                {% if a.tipo_de_evento < 100 %}
-                  <span data-toggle="tooltip" data-html="true" animation="true" title="Todos os Alunos">Al</span>
-                {% else %}
-                  <span data-toggle="tooltip" data-html="true" animation="true" title="Coordenação">Co</span>
-                {% endif %}
-              </td>
-              <td style="vertical-align: middle; background-color:{{a.get_color}}">
-                {{a.get_title}}
-              </td>
-            </tr>
+        {% for a in avisos %}
 
-          {% endif %}
+        {% if a.class == "Evento" %}
+        <tr style="vertical-align: middle;" class="linha" data-type="
+              {% comment %} {% if a.tipo_de_evento < 100 %}Al{% else %}Co{% endif %} {% endcomment %}
+              Co Ev">
+          <th  scope="row">
+          </th>
+          <td style="vertical-align: middle;" class="{% if a.data < hoje %}text-success{% else %}text-info{% endif %}">
+              <span class="data_longa">{{a.data}}</span>
+              <span class="data_curta">{{a.data|date:"d/m/y"}}</span>
+          </td>
+          <td style="vertical-align: middle;" class="{% if a.data < hoje %}text-success{% else %}text-info{% endif %}">
+            {% comment %} {% if a.tipo_de_evento < 100 %}
+              <span data-toggle="tooltip" data-html="true" animation="true" title="Todos os Alunos">Al</span>
+            {% else %} {% endcomment %}
+              <span data-toggle="tooltip" data-html="true" animation="true" title="Coordenação">Co</span>
+            {% comment %} {% endif %} {% endcomment %}
+          </td>
+          <td style="vertical-align: middle; background-color:{{a.color}}">
+            {{a.titulo}}
+          </td>
+        </tr>
+
+        {% else %}
+          <tr class="linha {% if a.data < hoje %}text-success{% else %}text-info{% endif %}"
+          data-type="
+            {% if a.coordenacao %}Co{% endif %}
+            {% if a.comite_pfe %}Cm{% endif %}
+            {% if a.todos_alunos %}Al{% endif %}
+            {% if a.todos_orientadores %}Or{% endif %}
+            {% if a.contatos_nas_organizacoes %}Og{% endif %}
+          " >
+
+          <th style="vertical-align: middle; text-align:center;" scope="row">
+            <input class="aviso" type="checkbox" id="aviso{{a.id}}" name="aviso{{a.id}}" value="{{a.data|date:"d/m/Y"}}" 
+            {% comment %} {% if a.realizado %}checked{% endif %} {% endcomment %}
+            {% if a.data <= a.data_realizado %}checked{% endif %}
+            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
+            >
+          </th>
+          
+          <td style="vertical-align: middle;" data-toggle="tooltip" data-html="true" animation="true" title="
+              {% if a.tipo_de_evento %}
+                {{a.evento}}{%if a.delta >= 0 %}+{%endif%}{{a.delta}}
+              {% else %}
+                delta={{a.delta}}
+              {% endif %}
+            ">
+            <label style="line-height: 0px;" for="aviso{{a.id}}">
+              <span class="data_longa">{{a.data}}</span>
+              <span class="data_curta">{{a.data|date:"d/m/y"}}</span>
+            </label>
+          </td>
+
+          <td style="vertical-align: middle;">
+            {% if a.coordenacao %}
+              <span data-toggle="tooltip" data-html="true" animation="true" title="Coordenação">Co</span>
+            {% endif %}
+            {% if a.comite_pfe %}
+              <span data-toggle="tooltip" data-html="true" animation="true" title="Comite do PFE">Cm</span>
+            {% endif %}
+            {% if a.todos_alunos %}
+              <span data-toggle="tooltip" data-html="true" animation="true" title="Todos os Alunos">Al</span>
+            {% endif %}
+            {% if a.todos_orientadores %}
+              <span data-toggle="tooltip" data-html="true" animation="true" title="Todos os Orientadores">Or</span>
+            {% endif %}
+            {% if a.contatos_nas_organizacoes %}
+              <span data-toggle="tooltip" data-html="true" animation="true" title="Contatos nas Organizacoes">Og</span>
+            {% endif %}
+          </td>
+
+          <td style="vertical-align: middle;">
+            {% if a.id %}<a href="{% url 'edita_aviso' a.id %}">{% endif %}
+              {{a.titulo}}
+            {% if a.id %}</a>{% endif %}
+          </td>
+        </tr>
+        {% endif %}
+
         {% endfor %}
         </tbody>
       </table>
@@ -167,9 +172,7 @@
     <a href="{% url 'cria_aviso' %}">
       <input type='button' class="cria" value="Cria Aviso">
     </a>
-    <input type='button' class="limpa" value="Limpa Checagem"
-      {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
-    >
+    
     <p>&nbsp;</p>
 
   </form>
@@ -201,14 +204,17 @@
 
   <script>
     $(".aviso").change(function () {
-      var aviso = $(this).val();
+
+      var aviso = $(this).prop('name');
       var checked = $(this).prop('checked');
+      var value = $(this).val();
 
       $.ajax({
         url: '{% url "validate_aviso" %}',
         data: {
           'aviso': aviso,
           'checked': checked,
+          'value': value,
         },
         dataType: 'json',
         success: function (data) {
@@ -219,22 +225,6 @@
       });
     });
 
-    $('.limpa').on('click', function () {
-      $.ajax({
-        url: '{% url "validate_aviso" %}',
-        data: {
-          'aviso': 0,
-          'checked': true,
-        },
-        dataType: 'json',
-        success: function (data) {
-          if (data.atualizado) {
-            console.log("Valores atualizados.");
-            location.reload();
-          }
-        }
-      });
-    });
   </script>
 
 {% endblock %}
