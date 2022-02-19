@@ -7,6 +7,7 @@
 
 {% block content %}
     <br>
+    <a href="{% url 'avisos_listar' %}"><h5>Agenda do PFE</h5></a>
     <a href="{% url 'emails' %}"><h5>Listas de e-mails</h5></a>
 
     <hr>
@@ -42,9 +43,6 @@
         <li><a href="{% url 'certificacao_falconi' %}">Certificações Falconi</a></li>
         <li><a href="{% url 'carregar_certificado' %}">Carregar Certificado</a></li>
     </ul>
-
-    <hr>
-    <a href="{% url 'avisos_listar' %}"><h5>Agenda da Coordenação do PFE</h5></a>
 
     <p>&nbsp;</p>
     

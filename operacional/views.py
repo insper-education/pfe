@@ -73,6 +73,28 @@ def avisos_listar(request):
 
     avisos = sorted(avisos, key=lambda t: t["data"])
 
+    # IDs dos avisos buscados
+    ids = [d['id'] for d in avisos if d['id'] is not None]
+
+    sem_avisos = Aviso.objects.all().exclude(id__in=ids)
+    for aviso in sem_avisos:
+            avisos.append(
+                {"class": "Aviso",
+                "tipo_de_evento": aviso.tipo_de_evento,
+                "titulo": aviso.titulo,
+                "data": None,
+                "id": aviso.id,
+                "realizado": aviso.realizado,
+                "data_realizado": aviso.data_realizado,
+                "evento": aviso.get_evento(),
+                "delta": aviso.delta,
+                "coordenacao": aviso.coordenacao,
+                "comite_pfe": aviso.comite_pfe,
+                "todos_alunos": aviso.todos_alunos,
+                "todos_orientadores": aviso.todos_orientadores,
+                "contatos_nas_organizacoes": aviso.contatos_nas_organizacoes,
+                })
+
     context = {
         'avisos': avisos,
         'configuracao' : configuracao,

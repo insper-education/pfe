@@ -42,8 +42,8 @@
     <option value="todos" {% if filtro == "todos" %}selected="selected"{% endif %}>todos</option>
     <option value="Co" {% if filtro == "Co" %}selected="selected"{% endif %}>Coordenação</option>
     <option value="Cm" {% if filtro == "Cm" %}selected="selected"{% endif %}>Comitê PFE</option>
-    <option value="Al" {% if filtro == "Al" %}selected="selected"{% endif %}>Todos os Estudantes</option>
-    <option value="Or" {% if filtro == "Or" %}selected="selected"{% endif %}>Todos os Orientadores</option>
+    <option value="Es" {% if filtro == "Es" %}selected="selected"{% endif %}>Estudantes</option>
+    <option value="Or" {% if filtro == "Or" %}selected="selected"{% endif %}>Orientadores</option>
     <option value="Og" {% if filtro == "Og" %}selected="selected"{% endif %}>Contatos nas Organizacoes</option>
     <option value="Ev" {% if filtro == "Ev" %}selected="selected"{% endif %}>Evento</option>
   </select>
@@ -58,8 +58,8 @@
           <small>
             Co: Coordenação;
             Cm: Comitê do PFE;
-            Al: Todos os Alunos;
-            Or: Todos os Orientadores;
+            Es: Estudantes;
+            Or: Orientadores;
             Og: Contatos nas Organizacoes.
           </small>
         </caption>
@@ -94,7 +94,7 @@
           </td>
           <td style="vertical-align: middle;" class="{% if a.data < hoje %}text-success{% else %}text-info{% endif %}">
             {% comment %} {% if a.tipo_de_evento < 100 %}
-              <span data-toggle="tooltip" data-html="true" animation="true" title="Todos os Alunos">Al</span>
+              <span data-toggle="tooltip" data-html="true" animation="true" title="Todos Estudantes">Al</span>
             {% else %} {% endcomment %}
               <span data-toggle="tooltip" data-html="true" animation="true" title="Coordenação">Co</span>
             {% comment %} {% endif %} {% endcomment %}
@@ -105,33 +105,46 @@
         </tr>
 
         {% else %}
-          <tr class="linha {% if a.data < hoje %}text-success{% else %}text-info{% endif %}"
+          <tr 
+          class="linha
+            {% if a.data %}
+              {% if a.data < hoje %}text-success{% else %}text-info{% endif %}
+            {% else %}
+              text-muted
+            {% endif %}
+          "
           data-type="
             {% if a.coordenacao %}Co{% endif %}
             {% if a.comite_pfe %}Cm{% endif %}
-            {% if a.todos_alunos %}Al{% endif %}
+            {% if a.todos_alunos %}Es{% endif %}
             {% if a.todos_orientadores %}Or{% endif %}
             {% if a.contatos_nas_organizacoes %}Og{% endif %}
           " >
 
           <th style="vertical-align: middle; text-align:center;" scope="row">
-            <input class="aviso" type="checkbox" id="aviso{{a.id}}" name="aviso{{a.id}}" value="{{a.data|date:"d/m/Y"}}" 
-            {% comment %} {% if a.realizado %}checked{% endif %} {% endcomment %}
-            {% if a.data <= a.data_realizado %}checked{% endif %}
-            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
-            >
+            {% if a.data %}
+              <input class="aviso" type="checkbox" id="aviso{{a.id}}" name="aviso{{a.id}}" value="{{a.data|date:"d/m/Y"}}" 
+              {% comment %} {% if a.realizado %}checked{% endif %} {% endcomment %}
+              {% if a.data <= a.data_realizado %}checked{% endif %}
+              {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
+              >
+            {% endif %}
           </th>
           
           <td style="vertical-align: middle;" data-toggle="tooltip" data-html="true" animation="true" title="
               {% if a.tipo_de_evento %}
-                {{a.evento}}{%if a.delta >= 0 %}+{%endif%}{{a.delta}}
+                {{a.evento}} {%if a.delta >= 0 %}+ {{a.delta}}{%else%}- {% widthratio a.delta 1 -1 %}{%endif%}
               {% else %}
                 delta={{a.delta}}
               {% endif %}
             ">
             <label style="line-height: 0px;" for="aviso{{a.id}}">
-              <span class="data_longa">{{a.data}}</span>
-              <span class="data_curta">{{a.data|date:"d/m/y"}}</span>
+              {% if a.data%}
+                <span class="data_longa">{{a.data}}</span>
+                <span class="data_curta">{{a.data|date:"d/m/y"}}</span>
+              {% else %}
+                Sem evento no semestre
+              {% endif %}
             </label>
           </td>
 
@@ -143,10 +156,10 @@
               <span data-toggle="tooltip" data-html="true" animation="true" title="Comite do PFE">Cm</span>
             {% endif %}
             {% if a.todos_alunos %}
-              <span data-toggle="tooltip" data-html="true" animation="true" title="Todos os Alunos">Al</span>
+              <span data-toggle="tooltip" data-html="true" animation="true" title="Estudantes">Es</span>
             {% endif %}
             {% if a.todos_orientadores %}
-              <span data-toggle="tooltip" data-html="true" animation="true" title="Todos os Orientadores">Or</span>
+              <span data-toggle="tooltip" data-html="true" animation="true" title="Orientadores">Or</span>
             {% endif %}
             {% if a.contatos_nas_organizacoes %}
               <span data-toggle="tooltip" data-html="true" animation="true" title="Contatos nas Organizacoes">Og</span>
@@ -154,7 +167,7 @@
           </td>
 
           <td style="vertical-align: middle;">
-            {% if a.id %}<a href="{% url 'edita_aviso' a.id %}">{% endif %}
+            {% if a.id %}<a {% if not a.data %}class="text-muted"{% endif %} href="{% url 'edita_aviso' a.id %}">{% endif %}
               {{a.titulo}}
             {% if a.id %}</a>{% endif %}
           </td>
