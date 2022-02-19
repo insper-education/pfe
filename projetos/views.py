@@ -1779,15 +1779,5 @@ def conexoes_estabelecidas(request):
 @permission_required('users.altera_professor', login_url='/')
 def migracao(request):
     """temporário."""
-    message = "Feito"
-
-    for aviso in Aviso.objects.all():
-        aviso.coordenacao = True
-        aviso.comite_pfe = False
-        aviso.todos_alunos = False
-        aviso.todos_orientadores = False
-        aviso.contatos_nas_organizacoes = False
-        aviso.save()
-
-
+    message = "Nada Feito"
     return HttpResponse(message)
