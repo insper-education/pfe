@@ -13,10 +13,11 @@ from celery import shared_task
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management import execute_from_command_line
+import django.db.models.query
 
 from calendario.views import get_calendario_context
 
-from .models import Aviso
+from .models import Aviso, Evento, Configuracao
 from .messages import email, htmlizar
 
 
@@ -57,12 +58,28 @@ def certbot_renew():
 @task
 def envia_aviso():
     """Gera um aviso por e-mail."""
-    avisos = []
-    for aviso in Aviso.objects.all():
-        if aviso.get_data() == datetime.date.today():
-            avisos.append(aviso)
+    try:
+        configuracao = Configuracao.objects.get()
+    except Configuracao.DoesNotExist:
+        return None
 
     recipient_list = ['pfeinsper@gmail.com', 'lpsoares@insper.edu.br', ]
+
+    # Checa avisos do dia e envia e-mail para coordenação
+    eventos = Evento.objects.filter(startDate__year=configuracao.ano)
+    if configuracao.semestre == 1:
+        eventos = eventos.filter(startDate__month__lt=7)
+    else:
+        eventos = eventos.filter(startDate__month__gt=6)
+
+    # Checa avisos do dia e envia e-mail para coordenação
+    avisos = []
+    for evento in eventos:
+        for aviso in Aviso.objects.filter(tipo_de_evento=evento.tipo_de_evento):
+            data_evento = evento.get_data() + datetime.timedelta(days=aviso.delta)
+            if data_evento == datetime.date.today():
+                avisos.append(aviso)
+
     for aviso in avisos:
         subject = 'Aviso: '+aviso.titulo
         if aviso.mensagem:
@@ -74,20 +91,21 @@ def envia_aviso():
             # print("Algum problema de conexão, contacte: lpsoares@insper.edu.br")
             pass
 
-    # Eventos do calendário
+    # Checa eventos do calendário e envia e-mail para destinatário
     context = get_calendario_context()
     for event in context:
-        for acao in context[event]:
-            if acao.startDate == datetime.date.today():
-                subject = "PFE {0} : {1}".format(event, acao.get_title())
-                message = "{0} : {1}".format(event, acao.get_title())
-                message += "<br>\nLocal : {0}".format(acao.location)
-                if acao.startDate == acao.endDate:
-                    message += "<br>\ndata = {0}".format(acao.startDate)
-                else:
-                    message += "<br>\ndata inicial = {0}".format(acao.startDate)
-                    message += "<br>\ndata final = {0}".format(acao.endDate)
-                verify = email(subject, recipient_list, message)
-                if verify != 1:
-                    # print("Algum problema de conexão, contacte: lpsoares@insper.edu.br")
-                    pass
+        if context[event] and isinstance(context[event], django.db.models.query.QuerySet) and context[event].model is Evento:
+            for acao in context[event]:
+                if acao.startDate == datetime.date.today():
+                    subject = "PFE {0} : {1}".format(event, acao.get_title())
+                    message = "{0} : {1}".format(event, acao.get_title())
+                    message += "<br>\nLocal : {0}".format(acao.location)
+                    if acao.startDate == acao.endDate:
+                        message += "<br>\ndata = {0}".format(acao.startDate)
+                    else:
+                        message += "<br>\ndata inicial = {0}".format(acao.startDate)
+                        message += "<br>\ndata final = {0}".format(acao.endDate)
+                    verify = email(subject, recipient_list, message)
+                    if verify != 1:
+                        # print("Algum problema de conexão, contacte: lpsoares@insper.edu.br")
+                        pass
