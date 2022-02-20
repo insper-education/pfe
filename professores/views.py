@@ -1213,6 +1213,9 @@ def relato_avaliar(request, projeto_id, evento_id):
             obs.observacoes = observacoes
             obs.save()
 
+            # Manda mensagem para coordenados
+            email("Anotação Quinzenal", ["lpsoares@insper.edu.br"], observacoes+str(user))
+            
         # objetivos_possiveis = len(objetivos)
         # julgamento = [None]*objetivos_possiveis
         
