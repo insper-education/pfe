@@ -20,6 +20,7 @@ from calendario.views import get_calendario_context
 from .models import Aviso, Evento, Configuracao
 from .messages import email, htmlizar
 
+from users.models import Aluno, Professor, PFEUser
 
 @shared_task
 def backup():
@@ -63,7 +64,7 @@ def envia_aviso():
     except Configuracao.DoesNotExist:
         return None
 
-    recipient_list = ['pfeinsper@gmail.com', 'lpsoares@insper.edu.br', ]
+    recipient_list = ['pfeinsper@gmail.com', ]
 
     # Checa avisos do dia e envia e-mail para coordenação
     eventos = Evento.objects.filter(startDate__year=configuracao.ano)
@@ -81,14 +82,32 @@ def envia_aviso():
                 avisos.append(aviso)
 
     for aviso in avisos:
-        subject = 'Aviso: '+aviso.titulo
+
+        if aviso.coordenacao:
+            recipient_list += ['lpsoares@insper.edu.br', ]
+        if aviso.comite_pfe:
+            comite = PFEUser.objects.filter(membro_comite=True)
+            lista_comite = [obj.email for obj in comite]
+            recipient_list += lista_comite
+        if aviso.todos_alunos:
+            estudantes = Aluno.objects.filter(alocacao__projeto__ano=configuracao.ano, alocacao__projeto__semestre=configuracao.semestre)
+            lista_estudantes = [obj.user.email for obj in estudantes]
+            recipient_list += lista_estudantes
+        if aviso.todos_orientadores:
+            orientadores = Professor.objects.filter(professor_orientador__ano=configuracao.ano, professor_orientador__semestre=configuracao.semestre)
+            lista_orientadores = [obj.user.email for obj in orientadores]
+            recipient_list += lista_orientadores
+        if aviso.contatos_nas_organizacoes:
+            recipient_list += []
+
+        subject = 'Aviso: ' + aviso.titulo
         if aviso.mensagem:
             message = aviso.mensagem
         else:
             message = "Mensagem não definida."
         verify = email(subject, recipient_list, htmlizar(message))
         if verify != 1:
-            # print("Algum problema de conexão, contacte: lpsoares@insper.edu.br")
+            # Algum problema de conexão, contacte: lpsoares@insper.edu.br
             pass
 
     # Checa eventos do calendário e envia e-mail para destinatário
@@ -107,5 +126,5 @@ def envia_aviso():
                         message += "<br>\ndata final = {0}".format(acao.endDate)
                     verify = email(subject, recipient_list, message)
                     if verify != 1:
-                        # print("Algum problema de conexão, contacte: lpsoares@insper.edu.br")
+                        # Algum problema de conexão, contacte: lpsoares@insper.edu.br
                         pass

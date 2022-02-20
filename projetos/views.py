@@ -1780,4 +1780,16 @@ def conexoes_estabelecidas(request):
 def migracao(request):
     """temporário."""
     message = "Nada Feito"
+
+    recipient_list = ['pfeinsper@gmail.com', ]
+
+    configuracao = get_object_or_404(Configuracao)
+    comite = PFEUser.objects.filter(membro_comite=True)
+    
+    lista_comite = [obj.email for obj in comite]
+
+    recipient_list += lista_comite
+
+    print(recipient_list)
+
     return HttpResponse(message)
