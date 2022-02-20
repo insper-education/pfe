@@ -98,6 +98,10 @@ urlpatterns = [
          views.relato_avaliar,
          name='relato_avaliar'),
 
+    path('relatos_quinzenais/',
+         views.relatos_quinzenais,
+         name='relatos_quinzenais'),
+
     path('resultado_projetos/',
          views.resultado_projetos,
          name='resultado_projetos'),

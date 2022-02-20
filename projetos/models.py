@@ -195,8 +195,6 @@ class Projeto(models.Model):
         else:
             eventos = Evento.objects.filter(tipo_de_evento=20, endDate__year=self.ano, endDate__month__gt=6, startDate__lt=proximo).order_by('endDate')
 
-        print(eventos)
-
         # alocacoes = Alocacao.objects.filter(projeto=self)
 
         relatos = []
@@ -220,6 +218,8 @@ class Projeto(models.Model):
             relatos.append([u[0] for u in relato.order_by().values('alocacao').distinct().values_list('alocacao_id')])
     
         return zip(eventos, relatos, avaliados)
+
+        
 
     @classmethod
     def create(cls, proposta):

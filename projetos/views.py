@@ -1572,52 +1572,46 @@ def editar_projeto(request, primarykey):
 
     if request.method == 'POST':
 
+        # Atualiza título
         titulo = request.POST.get('titulo', None)
         if titulo and ( projeto.titulo_final or projeto.titulo != titulo):
             projeto.titulo_final = titulo
 
+        # Atualiza descrição
         descricao = request.POST.get('descricao', None)
         if descricao and ( projeto.descricao or projeto.proposta.descricao != descricao):
             projeto.descricao = descricao
 
+        # Realoca orientador
         orientador_id = request.POST.get('orientador', None)
         if orientador_id:
             orientador = get_object_or_404(Professor, pk=orientador_id)
             projeto.orientador = orientador
 
+        # Realoca coorientador
         coorientador_id = request.POST.get('coorientador', None)
         if coorientador_id:
             coorientador = get_object_or_404(PFEUser, pk=coorientador_id)
             (reg, _created) = Coorientador.objects.get_or_create(projeto=projeto)
             reg.usuario = coorientador
             reg.save()
+        
+        # Realoca estudantes
+        estudantes_ids = []
+        for numero in range(1, 5):  # Estudantes de 1 a 4
+            estudante_id = request.POST.get('estudante'+str(numero), None)
+            if estudante_id:
+                estudantes_ids.append(int(estudante_id))
 
-        alocacoes = Alocacao.objects.filter(projeto=projeto).delete()
+        # Apaga os estudantes que não estão mais no projeto
+        Alocacao.objects.filter(projeto=projeto).exclude(aluno__id__in=estudantes_ids).delete()
 
-        estudante_id = request.POST.get('estudante1', None)
-        if estudante_id:
-            estudante = get_object_or_404(Aluno, pk=estudante_id)
-            alocacao = Alocacao.create(estudante, projeto)
-            alocacao.save()
-
-        estudante_id = request.POST.get('estudante2', None)
-        if estudante_id:
-            estudante = get_object_or_404(Aluno, pk=estudante_id)
-            alocacao = Alocacao.create(estudante, projeto)
-            alocacao.save()
-
-        estudante_id = request.POST.get('estudante3', None)
-        if estudante_id:
-            estudante = get_object_or_404(Aluno, pk=estudante_id)
-            alocacao = Alocacao.create(estudante, projeto)
-            alocacao.save()
-
-        estudante_id = request.POST.get('estudante4', None)
-        if estudante_id:
-            estudante = get_object_or_404(Aluno, pk=estudante_id)
-            alocacao = Alocacao.create(estudante, projeto)
-            alocacao.save()
-
+        # Aloca os estudantes que não estavam alocados
+        for estudante_id in estudantes_ids:
+            if not Alocacao.objects.filter(projeto=projeto, aluno__id=estudante_id).exists():
+                estudante = get_object_or_404(Aluno, pk=estudante_id)
+                alocacao = Alocacao.create(estudante, projeto)
+                alocacao.save()
 
         projeto.save()
 
@@ -1780,16 +1774,4 @@ def conexoes_estabelecidas(request):
 def migracao(request):
     """temporário."""
     message = "Nada Feito"
-
-    recipient_list = ['pfeinsper@gmail.com', ]
-
-    configuracao = get_object_or_404(Configuracao)
-    comite = PFEUser.objects.filter(membro_comite=True)
-    
-    lista_comite = [obj.email for obj in comite]
-
-    recipient_list += lista_comite
-
-    print(recipient_list)
-
     return HttpResponse(message)

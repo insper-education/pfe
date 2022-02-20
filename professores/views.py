@@ -1141,6 +1141,26 @@ def coorientadores_tabela(request):
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
+def relatos_quinzenais(request):
+    """Formulários com os projetos e relatos a avaliar do professor orientador."""
+
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
+
+    configuracao = get_object_or_404(Configuracao)
+
+    projetos = Projeto.objects.filter(orientador=user.professor, ano=configuracao.ano, semestre=configuracao.semestre)
+
+    context = {
+        "user": user,
+        "projetos": projetos,
+    }
+
+    return render(request, 'professores/relatos_quinzenais.html', context=context)
+
+
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
 @transaction.atomic
 def relato_avaliar(request, projeto_id, evento_id):
     """Cria uma tela para preencher avaliações dos relatos quinzenais."""
@@ -1155,8 +1175,8 @@ def relato_avaliar(request, projeto_id, evento_id):
     relatos = []
     for alocacao in alocacoes:
         relatos.append(Relato.objects.filter(alocacao=alocacao,
-                                    momento__gt=evento_anterior.endDate + datetime.timedelta(days=1),
-                                    momento__lte=evento.endDate + datetime.timedelta(days=1)).order_by('momento').last() )
+                                    momento__gt=evento_anterior.endDate,
+                                    momento__lte=evento.endDate).order_by('momento').last() )
 
     # SE UM DIA DECIDIR AVALIAR OS RELATOS POR OBJETIVOS DE APRENDIZAGEM
     # objetivos = get_objetivos_atuais()
@@ -1185,9 +1205,10 @@ def relato_avaliar(request, projeto_id, evento_id):
 
             user = get_object_or_404(PFEUser, pk=request.user.pk)
 
-            obs = Observacao.objects.create(projeto=projeto,
-                                            avaliador=user,
-                                            tipo_de_avaliacao=200)  # (200, "Relato Quinzenal"),
+            (obs, _created) = Observacao.objects.get_or_create(projeto=projeto,
+                                                               avaliador=user,
+                                                               momento=evento.endDate,  # data marcada do fim do evento
+                                                               tipo_de_avaliacao=200)  # (200, "Relato Quinzenal"),
             obs.observacoes = observacoes
             obs.save()
 
@@ -1234,16 +1255,14 @@ def relato_avaliar(request, projeto_id, evento_id):
 
         obs = Observacao.objects.filter(projeto=projeto,
                                         avaliador=user,
-                                        momento__gt=evento_anterior.endDate + datetime.timedelta(days=1),
-                                        momento__lte=evento.endDate + datetime.timedelta(days=1),
-                                        tipo_de_avaliacao=200).order_by('momento').last()  # (200, "Relato Quinzenal"),
+                                        momento__gt=evento_anterior.endDate,
+                                        momento__lte=evento.endDate,
+                                        tipo_de_avaliacao=200).last()  # (200, "Relato Quinzenal"),
 
         if obs:
             observacoes = obs.observacoes
         else:
             observacoes = None
-
-        print(observacoes)
 
         context = {
             # "objetivos": objetivos,

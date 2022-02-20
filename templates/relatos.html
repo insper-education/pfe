@@ -5,7 +5,6 @@
 {% endcomment %}
 
 {% if projeto %}
-  <h3>Relatos Quinzenais</h3>
   {% for evento, relatos, avaliado in projeto.get_relatos %}
     <p style="padding-left: 18px;">
       <a href="{% url 'relato_avaliar' projeto.id evento.id %}">
@@ -13,11 +12,13 @@
       <a>
       {% for alocacao in alocacoes %}
         <small>
-        {% if alocacao.id in relatos %}
-          &#9989;
-        {% else %}
-          &#10060;
-        {% endif %}
+            <span data-toggle="tooltip" data-html="true" animation="true" title="{{alocacao.aluno}}">
+            {% if alocacao.id in relatos %}
+                &#9989;
+            {% else %}
+                &#10060;
+            {% endif %}
+            </span>
         </small>
       {% endfor %}
     &nbsp;-

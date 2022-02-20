@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 20 de Fevereiro de 2022
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+
+  {% comment %} Para chamar os Tooltips {% endcomment %}
+  <script>{% include "tooltip.js" %}</script>
+
+{% endblock %}
+
+{% block content %}
+
+  {% for projeto in projetos %}
+
+    <strong>Projeto:</strong> {{projeto.get_titulo}}<br>
+    <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
+    {% if projeto.avancado or projeto.proposta.internacional %}
+      <p><strong>Tipo</strong>:
+
+        {% if projeto.avancado %}
+          <font color="red">PFE Avançado</font>
+        {% endif %}
+
+        {% if projeto.avancado and projeto.proposta.internacional %}
+        /
+        {% endif %}
+
+        {% if projeto.proposta.internacional %}
+          <font color="red">Internacional</font>
+        {% endif %}
+        
+      </p>
+    {% endif %}
+
+    <strong>Organização:</strong> <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a><br>
+
+    <strong>Relatos (prazos para estudantes):</strong><br>
+
+    {% with alocacoes=projeto.alocacao_set.all %}
+      {% include "relatos.html" %}
+    {% endwith %}
+
+    {% if not forloop.last %}
+      <hr>
+    {% endif %}
+
+  {% endfor %}
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+{% endblock %}
