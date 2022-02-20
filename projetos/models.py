@@ -187,29 +187,39 @@ class Projeto(models.Model):
     @property
     def get_relatos(self):
         """Retorna todos os possiveis relatos quinzenais para o projeto."""
+        
+        proximo = datetime.date.today() + datetime.timedelta(days=14)
 
         if self.semestre == 1:
-            eventos = Evento.objects.filter(tipo_de_evento=20, endDate__year=self.ano, endDate__month__lt=7).order_by('endDate')
+            eventos = Evento.objects.filter(tipo_de_evento=20, endDate__year=self.ano, endDate__month__lt=7, startDate__lt=proximo).order_by('endDate')
         else:
-            eventos = Evento.objects.filter(tipo_de_evento=20, endDate__year=self.ano, endDate__month__gt=6).order_by('endDate')
+            eventos = Evento.objects.filter(tipo_de_evento=20, endDate__year=self.ano, endDate__month__gt=6, startDate__lt=proximo).order_by('endDate')
+
+        print(eventos)
 
         # alocacoes = Alocacao.objects.filter(projeto=self)
 
         relatos = []
+        avaliados = []  # se o orientador fez alguma avaliação dos relatos
 
         for index in range(len(eventos)):
         
             if not index: # index == 0:
-
-                relato = Relato.objects.filter(alocacao__projeto=self, momento__lte=eventos[0].endDate + datetime.timedelta(days=1)).order_by().values('alocacao').distinct().values_list('alocacao_id')
+                relato = Relato.objects.filter(alocacao__projeto=self, momento__lte=eventos[0].endDate + datetime.timedelta(days=1))
 
             else:
+                relato = Relato.objects.filter(alocacao__projeto=self, momento__gt=eventos[index-1].endDate + datetime.timedelta(days=1), momento__lte=eventos[index].endDate + datetime.timedelta(days=1))
 
-                relato = Relato.objects.filter(alocacao__projeto=self, momento__gt=eventos[index-1].endDate + datetime.timedelta(days=1), momento__lte=eventos[index].endDate + datetime.timedelta(days=1)).order_by().values('alocacao').distinct().values_list('alocacao_id')
+            avaliado = False
+            for r in relato:
+                if r.avaliacao >= 0:
+                    avaliado = True
+                    break
+            avaliados.append(avaliado)
 
-            relatos.append([u[0] for u in relato])
+            relatos.append([u[0] for u in relato.order_by().values('alocacao').distinct().values_list('alocacao_id')])
     
-        return zip(eventos, relatos)
+        return zip(eventos, relatos, avaliados)
 
     @classmethod
     def create(cls, proposta):

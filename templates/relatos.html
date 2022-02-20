@@ -1,0 +1,31 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 20 de Fevereiro de 2022
+{% endcomment %}
+
+{% if projeto %}
+  <h3>Relatos Quinzenais</h3>
+  {% for evento, relatos, avaliado in projeto.get_relatos %}
+    <p style="padding-left: 18px;">
+      <a href="{% url 'relato_avaliar' projeto.id evento.id %}">
+        {{ forloop.counter }} - Relatos {{evento.endDate}}
+      <a>
+      {% for alocacao in alocacoes %}
+        <small>
+        {% if alocacao.id in relatos %}
+          &#9989;
+        {% else %}
+          &#10060;
+        {% endif %}
+        </small>
+      {% endfor %}
+    &nbsp;-
+    {% if avaliado %}
+        <span style="color:green">Avaliado pelo Orientador</span>
+    {% else %}
+        <span style="color:brown">Sem avaliação do Orientador</span>
+    {% endif %}
+    </p>
+  {% endfor %}
+{% endif %}

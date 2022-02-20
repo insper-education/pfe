@@ -1229,9 +1229,26 @@ def relato_avaliar(request, projeto_id, evento_id):
         #                                         avaliador=avaliador,
         #                                         tipo_de_avaliacao=tipo_de_avaliacao)
 
+
+        user = get_object_or_404(PFEUser, pk=request.user.pk)
+
+        obs = Observacao.objects.filter(projeto=projeto,
+                                        avaliador=user,
+                                        momento__gt=evento_anterior.endDate + datetime.timedelta(days=1),
+                                        momento__lte=evento.endDate + datetime.timedelta(days=1),
+                                        tipo_de_avaliacao=200).order_by('momento').last()  # (200, "Relato Quinzenal"),
+
+        if obs:
+            observacoes = obs.observacoes
+        else:
+            observacoes = None
+
+        print(observacoes)
+
         context = {
             # "objetivos": objetivos,
             "projeto": projeto,
+            "observacoes": observacoes,
             "alocacoes_relatos": zip(alocacoes, relatos),
             "evento": evento,
         }
