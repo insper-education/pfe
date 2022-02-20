@@ -1175,8 +1175,9 @@ def relato_avaliar(request, projeto_id, evento_id):
     relatos = []
     for alocacao in alocacoes:
         relatos.append(Relato.objects.filter(alocacao=alocacao,
-                                    momento__gt=evento_anterior.endDate,
-                                    momento__lte=evento.endDate).order_by('momento').last() )
+                                    momento__gt=evento_anterior.endDate + datetime.timedelta(days=1),
+                                    momento__lte=evento.endDate + datetime.timedelta(days=1)).order_by('momento').last() )
+                                    # O datetime.timedelta(days=1) é necessário pois temos de checar passadas 24 horas, senão valo começo do dia
 
     # SE UM DIA DECIDIR AVALIAR OS RELATOS POR OBJETIVOS DE APRENDIZAGEM
     # objetivos = get_objetivos_atuais()
@@ -1255,10 +1256,10 @@ def relato_avaliar(request, projeto_id, evento_id):
 
         obs = Observacao.objects.filter(projeto=projeto,
                                         avaliador=user,
-                                        momento__gt=evento_anterior.endDate,
-                                        momento__lte=evento.endDate,
+                                        momento__gt=evento_anterior.endDate + datetime.timedelta(days=1),
+                                        momento__lte=evento.endDate + datetime.timedelta(days=1),
                                         tipo_de_avaliacao=200).last()  # (200, "Relato Quinzenal"),
-
+                                        # O datetime.timedelta(days=1) é necessário pois temos de checar passadas 24 horas, senão valo começo do dia
         if obs:
             observacoes = obs.observacoes
         else:
