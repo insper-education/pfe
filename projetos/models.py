@@ -208,11 +208,13 @@ class Projeto(models.Model):
             else:
                 relato = Relato.objects.filter(alocacao__projeto=self, momento__gt=eventos[index-1].endDate + datetime.timedelta(days=1), momento__lte=eventos[index].endDate + datetime.timedelta(days=1))
 
-            avaliado = False
+            avaliado = []
             for r in relato:
-                if r.avaliacao >= 0:
-                    avaliado = True
-                    break
+                if r.avaliacao > 0:
+                    avaliado.append(True)
+                if r.avaliacao == 0:
+                    avaliado.append(False)
+                    
             avaliados.append(avaliado)
 
             relatos.append([u[0] for u in relato.order_by().values('alocacao').distinct().values_list('alocacao_id')])
@@ -1219,15 +1221,6 @@ TIPO_DE_AVALIACAO = ( # não mudar a ordem dos números
     (54, 'Avaliação Final de Grupo'),       # usado até 2019.1
     (99, 'Falconi'),
     (200, "Relato Quinzenal"),
-    (201, "Relato Quinzenal 1"),
-    (202, "Relato Quinzenal 2"),
-    (203, "Relato Quinzenal 3"),
-    (204, "Relato Quinzenal 4"),
-    (205, "Relato Quinzenal 5"),
-    (206, "Relato Quinzenal 6"),
-    (207, "Relato Quinzenal 7"),
-    (208, "Relato Quinzenal 8"),
-    (209, "Relato Quinzenal 9"),
 )
 
 

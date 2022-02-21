@@ -1201,67 +1201,79 @@ def relato_avaliar(request, projeto_id, evento_id):
     # avaliador = projeto.orientador.user
     # tipo_de_avaliacao = 200 + ordenacao  # (200, "Relato Quinzenal 1"),
 
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
+
+    # Só o próprio orientador pode editar uma avaliação
+    if user == projeto.orientador.user:
+        editor = True
+    else:
+        editor = False
+
     if request.method == 'POST':
 
-        # edicao = request.POST['op']
-        avaliacoes = dict(filter(lambda elem: elem[0][:3] == "op.", request.POST.items()))
+        if editor:
 
-        for i, aval in enumerate(avaliacoes):
+            # edicao = request.POST['op']
+            avaliacoes = dict(filter(lambda elem: elem[0][:3] == "op.", request.POST.items()))
 
-            relato_id = int(aval.split('.')[1])
-            relato = get_object_or_404(Relato, pk=relato_id)
+            for i, aval in enumerate(avaliacoes):
 
-            obj_nota = request.POST[aval]
+                relato_id = int(aval.split('.')[1])
+                relato = get_object_or_404(Relato, pk=relato_id)
+
+                obj_nota = request.POST[aval]
+                
+                relato.avaliacao = float(obj_nota)  # Seria melhor decimal.
+                relato.save()
+
+            observacoes = request.POST["observacoes"]
+
+            if observacoes != "":
+
+                user = get_object_or_404(PFEUser, pk=request.user.pk)
+
+                (obs, _created) = Observacao.objects.get_or_create(projeto=projeto,
+                                                                avaliador=user,
+                                                                momento=evento.endDate,  # data marcada do fim do evento
+                                                                tipo_de_avaliacao=200)  # (200, "Relato Quinzenal"),
+                obs.observacoes = observacoes
+                obs.save()
+
+                # Manda mensagem para coordenados
+                email("Anotação Quinzenal", ["lpsoares@insper.edu.br"], observacoes+str(user))
+                
+            # objetivos_possiveis = len(objetivos)
+            # julgamento = [None]*objetivos_possiveis
             
-            relato.avaliacao = float(obj_nota)  # Seria melhor decimal.
-            relato.save()
+            # avaliacoes = dict(filter(lambda elem: elem[0][:9] == "objetivo.", request.POST.items()))
 
-        observacoes = request.POST["observacoes"]
+            # for i, aval in enumerate(avaliacoes):
 
-        if observacoes != "":
+            #     pk_objetivo = int(aval.split('.')[1])
+            #     objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=pk_objetivo)
 
-            user = get_object_or_404(PFEUser, pk=request.user.pk)
+            #     (julgamento[i], _created) = Avaliacao2.objects.get_or_create(alocacao=relato.alocacao,
+            #                                                                  tipo_de_avaliacao=tipo_de_avaliacao,
+            #                                                                  objetivo=objetivo)
 
-            (obs, _created) = Observacao.objects.get_or_create(projeto=projeto,
-                                                               avaliador=user,
-                                                               momento=evento.endDate,  # data marcada do fim do evento
-                                                               tipo_de_avaliacao=200)  # (200, "Relato Quinzenal"),
-            obs.observacoes = observacoes
-            obs.save()
+            #     julgamento[i].projeto = relato.alocacao.projeto
+            #     julgamento[i].avaliador = avaliador
 
-            # Manda mensagem para coordenados
-            email("Anotação Quinzenal", ["lpsoares@insper.edu.br"], observacoes+str(user))
+            #     obj_nota = request.POST[aval]
+            #     julgamento[i].nota = obj_nota
+
+            #     julgamento[i].peso = 0.0
+                
+            #     julgamento[i].save()
+
+            context = {
+                "area_principal": True,
+                "mensagem": "avaliação realizada",
+            }
+            return render(request, 'generic.html', context=context)
             
-        # objetivos_possiveis = len(objetivos)
-        # julgamento = [None]*objetivos_possiveis
-        
-        # avaliacoes = dict(filter(lambda elem: elem[0][:9] == "objetivo.", request.POST.items()))
-
-        # for i, aval in enumerate(avaliacoes):
-
-        #     pk_objetivo = int(aval.split('.')[1])
-        #     objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=pk_objetivo)
-
-        #     (julgamento[i], _created) = Avaliacao2.objects.get_or_create(alocacao=relato.alocacao,
-        #                                                                  tipo_de_avaliacao=tipo_de_avaliacao,
-        #                                                                  objetivo=objetivo)
-
-        #     julgamento[i].projeto = relato.alocacao.projeto
-        #     julgamento[i].avaliador = avaliador
-
-        #     obj_nota = request.POST[aval]
-        #     julgamento[i].nota = obj_nota
-
-        #     julgamento[i].peso = 0.0
-            
-        #     julgamento[i].save()
-
-        context = {
-            "area_principal": True,
-            "mensagem": "avaliação realizada",
-        }
-        return render(request, 'generic.html', context=context)
-
+        else:
+            return HttpResponseNotFound('<h1>Erro na edição do relato!</h1>')
 
     else:  # GET
         
@@ -1270,11 +1282,7 @@ def relato_avaliar(request, projeto_id, evento_id):
         #                                         avaliador=avaliador,
         #                                         tipo_de_avaliacao=tipo_de_avaliacao)
 
-
-        user = get_object_or_404(PFEUser, pk=request.user.pk)
-
         obs = Observacao.objects.filter(projeto=projeto,
-                                        avaliador=user,
                                         momento__gt=evento_anterior.endDate + datetime.timedelta(days=1),
                                         momento__lte=evento.endDate + datetime.timedelta(days=1),
                                         tipo_de_avaliacao=200).last()  # (200, "Relato Quinzenal"),
@@ -1286,6 +1294,7 @@ def relato_avaliar(request, projeto_id, evento_id):
 
         context = {
             # "objetivos": objetivos,
+            "editor": editor,
             "projeto": projeto,
             "observacoes": observacoes,
             "alocacoes_relatos": zip(alocacoes, relatos),

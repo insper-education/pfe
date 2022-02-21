@@ -5,7 +5,7 @@
 {% endcomment %}
 
 {% if projeto %}
-  {% for evento, relatos, avaliado in projeto.get_relatos %}
+  {% for evento, relatos, avaliados in projeto.get_relatos %}
     <p style="padding-left: 18px;">
       <a href="{% url 'relato_avaliar' projeto.id evento.id %}">
         {{ forloop.counter }} - Relatos {{evento.endDate}}
@@ -21,8 +21,11 @@
           </small>
         {% endfor %}
       &nbsp;-
-      {% if avaliado %}
+      {% if avaliados %}
           <span style="color:green">Avaliado pelo Orientador</span>
+          {% for avaliado in avaliados %}
+            {% if avaliado %}&#x1F44D;{% else %}&#x1F44E;{% endif %}
+          {% endfor %}
       {% else %}
           <span style="color:brown">Sem avaliação do Orientador</span>
       {% endif %}
