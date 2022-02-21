@@ -248,8 +248,8 @@
     <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
       <p>
         {{alocacao.aluno.user.get_full_name}} 
-        &lt;{{alocacao.aluno.user.email}}&gt; 
         [{{ alocacao.aluno.get_curso_display }}]
+        &lt;{{alocacao.aluno.user.email}}&gt; 
         {% for opcao in alocacao.aluno.opcao_set.all %}
           {% if opcao.projeto == projeto %}
             (opção #{{opcao.prioridade}})
