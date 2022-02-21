@@ -1158,6 +1158,22 @@ def relatos_quinzenais(request):
     return render(request, 'professores/relatos_quinzenais.html', context=context)
 
 
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def relatos_quinzenais_todos(request):
+    """Formulários com os projetos e relatos a avaliar do professor orientador."""
+
+    configuracao = get_object_or_404(Configuracao)
+
+    projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
+
+    context = {
+        "administracao": True,
+        "projetos": projetos,
+    }
+
+    return render(request, 'professores/relatos_quinzenais.html', context=context)
+
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')

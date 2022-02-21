@@ -9,24 +9,24 @@
     <p style="padding-left: 18px;">
       <a href="{% url 'relato_avaliar' projeto.id evento.id %}">
         {{ forloop.counter }} - Relatos {{evento.endDate}}
+        {% for alocacao in alocacoes %}
+          <small>
+              <span data-toggle="tooltip" data-html="true" animation="true" title="{{alocacao.aluno}}">
+              {% if alocacao.id in relatos %}
+                  &#9989;
+              {% else %}
+                  &#10060;
+              {% endif %}
+              </span>
+          </small>
+        {% endfor %}
+      &nbsp;-
+      {% if avaliado %}
+          <span style="color:green">Avaliado pelo Orientador</span>
+      {% else %}
+          <span style="color:brown">Sem avaliação do Orientador</span>
+      {% endif %}
       <a>
-      {% for alocacao in alocacoes %}
-        <small>
-            <span data-toggle="tooltip" data-html="true" animation="true" title="{{alocacao.aluno}}">
-            {% if alocacao.id in relatos %}
-                &#9989;
-            {% else %}
-                &#10060;
-            {% endif %}
-            </span>
-        </small>
-      {% endfor %}
-    &nbsp;-
-    {% if avaliado %}
-        <span style="color:green">Avaliado pelo Orientador</span>
-    {% else %}
-        <span style="color:brown">Sem avaliação do Orientador</span>
-    {% endif %}
     </p>
   {% endfor %}
 {% endif %}
