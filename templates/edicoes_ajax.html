@@ -26,6 +26,9 @@
       {% if com_cursos %}
         var curso = $("#filterCurso option:selected").attr("value");
       {% endif %}
+      {% if com_objetivos %}
+        var objetivo = $("#filterObjetivo option:selected").attr("value");
+      {% endif %}
       {% if com_individual %}
         var individual = $("#filterCurso option:selected").attr("value");
       {% endif %}
@@ -38,6 +41,9 @@
               {% endif %}
               {% if com_cursos %}
                 curso: curso,
+              {% endif %}
+              {% if com_objetivos %}
+                objetivo: objetivo,
               {% endif %}
               'csrfmiddlewaretoken': '{{ csrf_token }}',
           },

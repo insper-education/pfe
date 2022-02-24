@@ -43,6 +43,24 @@
               <option value="M" {% if curso == "mecânica" %}selected{% endif %}>mecânica</option>
           </select>
         {% endif %}
+
+        {% if com_objetivos %}
+          
+            <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          
+          <div class="input-group-prepend">
+            <label class="input-group-text" for="filterObjetivo">Objetivo de Aprendizagem</label>
+          </div>
+          <select class="filter custom-select w-auto" id="filterObjetivo" name="objetivo">
+
+                {% for objetivo in objetivos %}
+                  <option value="{{objetivo.id}}" 
+                  {% if objetivo.id == obj_selecionado %}selected{% endif %}>{{objetivo}} - {{objetivo.data_inicial}}</option>
+                {% endfor %}
+
+          </select>
+        {% endif %}
+
         <div id="spinner" class="ml-2 input-group-append" style="visibility: hidden">
           <div class="spinner-border text-secondary ml-auto" style="width: 1.8rem; height: 1.8rem;" role="status" aria-hidden="true">
             <span class="sr-only input-group-text">Carregando...</span>

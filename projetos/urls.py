@@ -68,6 +68,10 @@ urlpatterns = [
          views.evolucao_objetivos,
          name='evolucao_objetivos'),
 
+    path('evolucao_por_objetivo/',
+         views.evolucao_por_objetivo,
+         name='evolucao_por_objetivo'),
+
     path('lista_acompanhamento',
          views.lista_acompanhamento,
          name='lista_acompanhamento'),

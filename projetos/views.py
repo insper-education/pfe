@@ -1299,6 +1299,17 @@ def media(notas_lista):
         return None
     return soma / total
 
+# Didide pela proporção de 5 e 7
+def divide57(notas_lista):
+    valores = [0, 0, 0] 
+    for i in notas_lista:
+        if i < 5:
+            valores[0] += 1
+        elif i > 7:
+            valores[2] += 1
+        else:
+            valores[1] += 1
+    return valores
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
@@ -1489,6 +1500,76 @@ def evolucao_objetivos(request):
         }
 
     return render(request, 'projetos/evolucao_objetivos.html', context)
+
+
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def evolucao_por_objetivo(request):
+    """Mostra graficos das evoluções do PFE."""
+    configuracao = get_object_or_404(Configuracao)
+    edicoes, _, semestre = get_edicoes(Avaliacao2)
+
+    objetivos = ObjetivosDeAprendizagem.objects.all()
+
+    if request.is_ajax():
+
+        periodo = ""
+        # estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
+
+        avaliacoes = Avaliacao2.objects.all()
+
+        if 'curso' in request.POST:
+            curso = request.POST['curso']
+            if curso != 'T':
+                avaliacoes = avaliacoes.filter(alocacao__aluno__curso=curso)
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+
+        cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9", "#7cfa9f", "#e8c3b9", "#c45890", "#375330", "#a48577"]
+
+        low = []
+        mid = []
+        high = []
+        
+        id_objetivo = request.POST['objetivo']
+        objetivo = ObjetivosDeAprendizagem.objects.get(id=id_objetivo)
+
+        for edicao in edicoes:
+            periodo = edicao.split('.')
+            semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
+            notas_lista = [x.nota for x in semestre if x.objetivo == objetivo]
+            notas = divide57(notas_lista)
+            soma = sum(notas)
+            if soma > 0:
+                low.append(100*notas[0]/soma)
+                mid.append(100*notas[1]/soma)
+                high.append(100*notas[2]/soma)
+            else:
+                low.append(0)
+                mid.append(0)
+                high.append(0)
+            # medias.append({"objetivo": objetivo.titulo, "media": notas, "cor": cores[count]})
+
+        context = {
+            "low": low,
+            "mid": mid,
+            "high": high,
+            'periodo': periodo,
+            'ano': configuracao.ano,
+            'semestre': configuracao.semestre,
+            'edicoes': edicoes,
+            "objetivos": objetivos,
+        }
+
+    else:
+
+        context = {
+            "edicoes": edicoes,
+            "objetivos": objetivos,
+        }
+
+    return render(request, 'projetos/evolucao_por_objetivo.html', context)
 
 
 @login_required

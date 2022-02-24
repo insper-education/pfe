@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 23 de Fevereiro de 2022
+{% endcomment %}
+
+{% block head %}
+
+  {% load static %}
+  
+  {% load l10n %}
+
+  <script src="{% static 'js/w3.js' %}"></script>
+  <script src="{% static 'js/Chart.min.js' %}"></script>
+  <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
+
+  {% comment %} Para chamar os Tooltips {% endcomment %}
+  <script>{% include "tooltip.js" %}</script>
+
+  {% comment %} Para gerar as imagens {% endcomment %}
+  <script src="{% static 'js/html2canvas.min.js' %}"></script>
+  <script src="{% static 'js/jspdf.min.js' %}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+    <script>
+        function ajusta() { }
+        function reajusta() { }
+    </script>
+
+    {% with file_name="evolucao_objetivos" %}
+        {% include "save_image.html" %}
+    {% endwith %}
+
+    <div id="tudo">
+
+    <span class="titulo">Evolução por Objetivo de Aprendizado</span>
+
+    {% comment %} Seletor da edição da pesquisa {% endcomment %}
+    {% with sem_edicao=True %}
+    {% with com_cursos=True %}
+    {% with com_objetivos=True %}
+        {% include "edicoes.html" %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+
+    <div class="atualizar">
+    <div class="container">
+
+        <div style="max-width:860px;margin: auto;"> 
+            <canvas id="chart-medias"></canvas>
+        </div>
+
+        <script>
+          
+          var config_medias = {
+            type: 'bar',
+            data: {
+                labels: [
+                {% for edicao in edicoes %}
+                    "{{edicao}}",
+                {% endfor %}
+              ],
+              datasets: [{
+                  label: "< 5.0",
+                  data: [
+                    {% for nota in low %}
+                        {{nota|stringformat:".2f"|unlocalize}},
+                    {% endfor %}
+                  ],
+                  backgroundColor: 'rgb(255,87,31)',
+                },
+                {
+                  label: ">= 5.0 & <= 7.0",
+                  data: [
+                    {% for nota in mid %}
+                        {{nota|stringformat:".2f"|unlocalize}},
+                    {% endfor %}
+                  ],
+                  backgroundColor: 'rgb(204,204,0)',
+                },
+                {
+                  label: "> 7.0",
+                  data: [
+                    {% for nota in high %}
+                        {{nota|stringformat:".2f"|unlocalize}},
+                    {% endfor %}
+                  ],
+                  backgroundColor: 'rgb(0,166,149)',
+                }
+              ]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: 'Proporção nos semestres'
+                }, 
+              scales: {
+                xAxes: [{
+                  stacked: true,
+                }],
+                yAxes: [{
+                  stacked: true,
+                  ticks: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }]
+              },
+              plugins: {
+                datalabels: {
+                  color: 'white',
+                  font: {
+                    weight: 'bold'
+                  },
+                  formatter: function(value, context) {
+                    return Math.round(value) + '%';
+                  }
+                }
+              }
+            }
+          }
+
+    function carrega_pagina() {  
+      // Chart do média dos alunos
+      var chart_medias = document.getElementById('chart-medias').getContext('2d');
+      window.medias = new Chart(chart_medias, config_medias);
+    }
+
+    window.onload = carrega_pagina
+  
+  </script>
+
+
+    </div>
+    </div>
+    </div>
+
+    {% with sem_edicao=True %}
+    {% with com_cursos=True %}
+    {% with com_objetivos=True %}
+        {% include "edicoes_ajax.html" %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+
+{% endblock %}
