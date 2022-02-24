@@ -46,6 +46,7 @@
       if($('#academico').is(":not(:checked)")) {
         $('#titulo_academico').hide()
       }
+      $('.image').hide()
       $('#operacao').hide()
       $('#academico').hide()
     {% endif %}
@@ -61,6 +62,7 @@
         if($('#academico').is(":not(:checked)")) {
           $('#titulo_academico').show()
         }
+        $('.image').show()
         $('#operacao').show()
         $('#academico').show()
       {% endif %}

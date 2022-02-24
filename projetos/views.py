@@ -1009,8 +1009,8 @@ def analise_notas(request):
 
     if request.is_ajax():
 
-        periodo = ""
-        # estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
+        periodo = ["todo", "periodo"]
+        
         medias_semestre = Alocacao.objects.all()
 
         if 'edicao' in request.POST:
@@ -1154,6 +1154,7 @@ def analise_notas(request):
             'medias': medias,
             "notas": notas,
             "edicoes": edicoes,
+            "curso": curso,
         }
 
     else:
@@ -1321,6 +1322,8 @@ def analise_objetivos(request):
 
         alocacoes = Alocacao.objects.all()
 
+        periodo = ["todo", "periodo"]
+
         if 'edicao' in request.POST:
             if request.POST['edicao'] != 'todas':
                 periodo = request.POST['edicao'].split('.')
@@ -1338,6 +1341,8 @@ def analise_objetivos(request):
         context = calcula_objetivos(alocacoes)
         context["edicoes"] = edicoes
         context["total_geral"] = len(alocacoes)
+        context["curso"] = curso
+        context["periodo"] = periodo
 
     else:
         context = {
@@ -1380,16 +1385,16 @@ def evolucao_notas(request):
 
         medias_individuais = []
         count = 0
-        for curso in Aluno.TIPOS_CURSO:
+        for t_curso in Aluno.TIPOS_CURSO:
             notas = []
             for edicao in edicoes:
                 periodo = edicao.split('.')
                 semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
-                notas_lista = [x.nota for x in semestre if (x.alocacao != None and x.alocacao.aluno.curso == curso[0])]
+                notas_lista = [x.nota for x in semestre if (x.alocacao != None and x.alocacao.aluno.curso == t_curso[0])]
                 notas_total[edicao] += notas_lista
                 notas.append(media(notas_lista))
             if notas != [None] * len(notas):  # não está vazio
-                medias_individuais.append({"curso": curso[1], "media": notas, "cor": cores[count]})
+                medias_individuais.append({"curso": t_curso[1], "media": notas, "cor": cores[count]})
             count += 1
 
         if len(medias_individuais) > 1:
@@ -1410,13 +1415,13 @@ def evolucao_notas(request):
         # médias gerais totais
         medias_gerais = []
         count = 0
-        for curso in Aluno.TIPOS_CURSO:
+        for t_curso in Aluno.TIPOS_CURSO:
             notas = []
             for edicao in edicoes:
                 periodo = edicao.split('.')
                 alocacoes_tmp = alocacoes.filter(projeto__ano=periodo[0],
                                                  projeto__semestre=periodo[1],
-                                                 aluno__curso=curso[0])
+                                                 aluno__curso=t_curso[0])
                 notas_lista = []
                 for alocacao in alocacoes_tmp:
                     media_loc = alocacao.get_media
@@ -1426,7 +1431,7 @@ def evolucao_notas(request):
                 notas_total[edicao] += notas_lista
                 notas.append(media(notas_lista))
             if notas != [None] * len(notas):  # não está vazio
-                medias_gerais.append({"curso": curso[1], "media": notas, "cor": cores[count]})
+                medias_gerais.append({"curso": t_curso[1], "media": notas, "cor": cores[count]})
             count += 1
 
         if len(medias_gerais) > 1:
@@ -1439,6 +1444,7 @@ def evolucao_notas(request):
             "medias_individuais": medias_individuais,
             "medias_gerais": medias_gerais,
             "edicoes": edicoes,
+            "curso": curso,
         }
 
     else:
@@ -1458,7 +1464,7 @@ def evolucao_objetivos(request):
 
     if request.is_ajax():
 
-        periodo = ""
+        # periodo = ["todo", "periodo"]
         # estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
 
         avaliacoes = Avaliacao2.objects.all()
@@ -1487,10 +1493,10 @@ def evolucao_objetivos(request):
 
         context = {
             "medias": medias,
-            'periodo': periodo,
             'ano': configuracao.ano,
             'semestre': configuracao.semestre,
             'edicoes': edicoes,
+            "curso": curso,
         }
 
     else:
@@ -1513,9 +1519,6 @@ def evolucao_por_objetivo(request):
     objetivos = ObjetivosDeAprendizagem.objects.all()
 
     if request.is_ajax():
-
-        periodo = ""
-        # estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
 
         avaliacoes = Avaliacao2.objects.all()
 
@@ -1555,10 +1558,11 @@ def evolucao_por_objetivo(request):
             "low": low,
             "mid": mid,
             "high": high,
-            'periodo': periodo,
+            'curso': curso,
             'ano': configuracao.ano,
             'semestre': configuracao.semestre,
             'edicoes': edicoes,
+            "objetivo": objetivo,
             "objetivos": objetivos,
         }
 
@@ -1580,7 +1584,9 @@ def correlacao_medias_cr(request):
     edicoes, _, semestre = get_edicoes(Avaliacao2)
 
     if request.is_ajax():
-        periodo = ""
+
+        periodo = ["todo", "periodo"]
+
         alocacoes = None
         estudantes_computacao = None
         estudantes_mecanica = None
@@ -1617,6 +1623,7 @@ def correlacao_medias_cr(request):
                     else:
                         semestre = semestre.filter(aluno__curso=curso)
                         alocacoes[periodo[0]+"_"+periodo[1]] = semestre
+                periodo = ["todo", "periodo"]
 
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
@@ -1635,6 +1642,7 @@ def correlacao_medias_cr(request):
             'ano': configuracao.ano,
             'semestre': configuracao.semestre,
             'edicoes': edicoes,
+            "curso": curso,
         }
 
     else:

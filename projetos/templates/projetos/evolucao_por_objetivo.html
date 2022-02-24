@@ -8,7 +8,7 @@
 {% block head %}
 
   {% load static %}
-  
+  {% load addstr %}
   {% load l10n %}
 
   <script src="{% static 'js/w3.js' %}"></script>
@@ -22,6 +22,16 @@
   <script src="{% static 'js/html2canvas.min.js' %}"></script>
   <script src="{% static 'js/jspdf.min.js' %}"></script>
 
+  <style>
+    .cabecalho {
+      float: left;
+      position: relative;
+      margin-top: 0px;
+      outline-width: 0;
+      background-color: none;
+    }
+  </style>
+
 {% endblock %}
 
 {% block content %}
@@ -31,24 +41,32 @@
         function reajusta() { }
     </script>
 
-    {% with file_name="evolucao_objetivos" %}
-        {% include "save_image.html" %}
-    {% endwith %}
-
     <div id="tudo">
+      
+        <div class="cabecalho">
+          <span class="titulo">Evolução por Objetivo de Aprendizado</span>
 
-    <span class="titulo">Evolução por Objetivo de Aprendizado</span>
+          {% comment %} Seletor da edição da pesquisa {% endcomment %}
+          {% with sem_edicao=True %}
+          {% with com_cursos=True %}
+          {% with com_objetivos=True %}
+              {% include "edicoes.html" %}
+          {% endwith %}
+          {% endwith %}
+          {% endwith %}
 
-    {% comment %} Seletor da edição da pesquisa {% endcomment %}
-    {% with sem_edicao=True %}
-    {% with com_cursos=True %}
-    {% with com_objetivos=True %}
-        {% include "edicoes.html" %}
-    {% endwith %}
-    {% endwith %}
-    {% endwith %}
+        </div>
 
     <div class="atualizar">
+
+      {% if curso and objetivo %}
+        {% with file_name="evolucao_por_objetivos_"|addstr:curso|addstr:"_"|addstr:objetivo|addstr:"_"|addstr:objetivo.data_inicial %}
+            {% include "save_image.html" %}
+        {% endwith %}
+      {% endif %}
+
+      <div><br><br><br></div>{% comment %} Solução pouco elegante, mas funciona. {% endcomment %}
+
     <div class="container">
 
         <div style="max-width:860px;margin: auto;"> 
