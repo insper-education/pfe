@@ -64,8 +64,6 @@ def envia_aviso():
     except Configuracao.DoesNotExist:
         return None
 
-    recipient_list = ['pfeinsper@gmail.com', ]
-
     # Checa avisos do dia e envia e-mail para coordenação
     eventos = Evento.objects.filter(startDate__year=configuracao.ano)
     if configuracao.semestre == 1:
@@ -82,6 +80,8 @@ def envia_aviso():
                 avisos.append(aviso)
 
     for aviso in avisos:
+
+        recipient_list = ['pfeinsper@gmail.com', ]
 
         if aviso.coordenacao:
             recipient_list += ['lpsoares@insper.edu.br', ]
@@ -112,6 +112,7 @@ def envia_aviso():
 
     # Checa eventos do calendário e envia e-mail para destinatário
     context = get_calendario_context()
+    recipient_list = ['pfeinsper@gmail.com', 'lpsoares@insper.edu.br',]  # Soh manda para coordenação
     for event in context:
         if context[event] and isinstance(context[event], django.db.models.query.QuerySet) and context[event].model is Evento:
             for acao in context[event]:
