@@ -311,28 +311,29 @@ def envia_proposta(proposta, enviar=True):
 
     message += "<b>Nome da Organização:</b> {0}\n".\
         format(proposta.nome_organizacao)
-    message += "<b>Website:</b> {0}\n".format(proposta.website)
-    message += "<b>Endereco:</b> {0}\n".format(proposta.endereco)
+    message += "<b>Website:</b> {0}\n".format("" if proposta.website is None else proposta.website)
+    message += "<b>Endereco:</b> {0}\n".format("" if proposta.website is None else proposta.endereco)
 
     message += "\n\n"
 
     message += "<b>Contatos Técnicos:</b>\n {0}\n\n".\
-        format(proposta.contatos_tecnicos)
+        format("--" if proposta.contatos_tecnicos is None else proposta.contatos_tecnicos)
 
     message += "<b>Contatos Administrativos:</b>\n {0}\n\n".\
-        format(proposta.contatos_administrativos)
+        format("--" if proposta.contatos_administrativos is None else proposta.contatos_administrativos)
 
     message += "<b>Informações sobre a instituição/empresa:</b>\n {0}\n\n".\
-        format(proposta.descricao_organizacao)
+        format("--" if proposta.descricao_organizacao is None else proposta.descricao_organizacao)
 
     message += "<b>Informações sobre a departamento:</b>\n {0}\n\n".\
-        format(proposta.departamento)
+        format("--" if proposta.departamento is None else proposta.departamento)
 
     message += "\n\n"
 
     message += "<b>Descrição do Projeto:</b>\n {0}\n\n".format(proposta.descricao)
     message += "<b>Expectativas de resultados/entregas:</b>\n {0}\n\n".\
-        format(proposta.expectativas)
+        format("--" if proposta.expectativas is None else proposta.expectativas)
+        
 
     message += "\n"
 
@@ -341,12 +342,13 @@ def envia_proposta(proposta, enviar=True):
 
     message += "\n\n"
     message += "<b>Recursos a serem disponibilizados aos alunos:</b>\n {0}\n\n".\
-        format(proposta.recursos)
+        format("--" if proposta.recursos is None else proposta.recursos)
+
     message += "<b>Outras observações para os alunos:</b>\n {0}\n\n".\
-        format(proposta.observacoes)
+        format("--" if proposta.observacoes is None else proposta.observacoes)
 
     message += "<b>O principal interesse da empresa com o projeto é:</b>\n {0}\n\n".\
-        format(proposta.get_interesse())
+        format("--" if proposta.get_interesse() is None else proposta.get_interesse())
 
     message += "\n\n"
     message += "<b>Data da proposta:</b> {0}\n\n\n".\
@@ -375,7 +377,7 @@ def envia_proposta(proposta, enviar=True):
 
     if enviar:
         recipient_list = list(map(str.strip, re.split(",|;", proposta.email)))
-        recipient_list += ["lucianops@insper.edu.br", "lpsoares@gmail.com", ]
+        recipient_list += ["lucianops@insper.edu.br",]
 
         check = email(subject, recipient_list, message)
         if check != 1:
