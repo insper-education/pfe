@@ -6,15 +6,16 @@
 
 {% extends "admin/base.html" %}
 
-{% if request.get_host == "127.0.0.1:8000" %}
-  {% block extrastyle %}
+{% block extrastyle %}
+  {% if request.get_host == "127.0.0.1:8000" %}
     <style>
       body, tbody, .module, .submit-row, #content-related {
         background-color: #FFECEC !important;
       }
     </style>
-  {% endblock %}
-{% endif %}
+  {% endif %}
+{% endblock %}
+
 
 {% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
 
