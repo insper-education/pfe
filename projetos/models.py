@@ -288,6 +288,13 @@ class Proposta(models.Model):
         (50, 'mentorar estudantes para que empreendam com um produto ou tecnologia da empresa, podendo estabelecer uma parceria ou contrato de fornecimento caso seja criada uma startup a partir desse projeto.'),
     )
 
+    aprimorar = models.BooleanField(default=False, help_text=TIPO_INTERESSE[0][1])
+    realizar = models.BooleanField(default=False, help_text=TIPO_INTERESSE[1][1])
+    iniciar = models.BooleanField(default=False, help_text=TIPO_INTERESSE[2][1])
+    identificar = models.BooleanField(default=False, help_text=TIPO_INTERESSE[3][1])
+    mentorar = models.BooleanField(default=False, help_text=TIPO_INTERESSE[4][1])
+    
+    # ESSE ESTA OBSOLETO
     tipo_de_interesse = models.PositiveSmallIntegerField(choices=TIPO_INTERESSE,
                                                          null=True, blank=True,
                                                          help_text='O principal interesse da empresa com o projeto é')

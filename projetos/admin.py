@@ -212,6 +212,7 @@ class PropostaAdmin(admin.ModelAdmin):
             'descricao_organizacao', 'departamento',
             'titulo', 'descricao', 'expectativas',
             'recursos', 'observacoes',
+            "aprimorar", "realizar", "iniciar", "identificar", "mentorar",
             'tipo_de_interesse',
             'ano', 'semestre',
             'autorizado', 'disponivel',

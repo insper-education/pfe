@@ -1862,5 +1862,20 @@ def conexoes_estabelecidas(request):
 @permission_required('users.altera_professor', login_url='/')
 def migracao(request):
     """temporário."""
-    message = "Nada Feito"
+    message = "Feito"
+
+    propostas = Proposta.objects.all()
+    for proposta in propostas:
+        if proposta.tipo_de_interesse == 10:
+            proposta.aprimorar = True
+        elif proposta.tipo_de_interesse == 20:
+            proposta.realizar = True
+        elif proposta.tipo_de_interesse == 30:
+            proposta.iniciar = True
+        elif proposta.tipo_de_interesse == 40:
+            proposta.identificar = True
+        elif proposta.tipo_de_interesse == 50:
+            proposta.mentorar = True
+        proposta.save()
+
     return HttpResponse(message)
