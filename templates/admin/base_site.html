@@ -1,0 +1,25 @@
+<!--
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 4 de Março de 2022
+-->
+
+{% extends "admin/base.html" %}
+
+{% if request.get_host == "127.0.0.1:8000" %}
+  {% block extrastyle %}
+    <style>
+      body, tbody, .module, .submit-row, #content-related {
+        background-color: #FFECEC !important;
+      }
+    </style>
+  {% endblock %}
+{% endif %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

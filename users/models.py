@@ -868,10 +868,4 @@ class Administrador(models.Model):
 
     def __str__(self):
         """Retorno padrão textual do objeto."""
-        return self.user.username
-
-    # @classmethod
-    # def create(cls, usuario):
-    #     """Cria um Administrador e já associa o usuário."""
-    #     administrador = cls(user=usuario)
-    #     return administrador
+        return self.user.get_full_name()

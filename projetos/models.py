@@ -437,7 +437,7 @@ class Configuracao(models.Model):
     semestre = models.PositiveIntegerField("Semestre",
                                            validators=[MinValueValidator(1), MaxValueValidator(2)],
                                            help_text='Semestre que o projeto comeca')
-    manutencao = models.BooleanField(default=False,
+    manutencao = models.BooleanField("Manutenção", default=False,
                                      help_text='Mostra mensagem de site em manutencao na entrada')
     prazo = models.DateTimeField("Prazo", default=datetime.datetime.now, blank=True,
                                  help_text='Prazo para os estudantes se inscreverem nos projetos')
@@ -450,9 +450,11 @@ class Configuracao(models.Model):
     liberadas_propostas = models.BooleanField(default=False,
                                               help_text='Para estudantes visualizarem propostas')
 
-    min_props = models.PositiveIntegerField(default=5,
+    min_props = models.PositiveIntegerField("Mínimo de Propostas para Estudantes Selecionarem", default=5,
         help_text='Quantidade mínima de propostas a serem selecionas pelos estudantes')
 
+    coordenacao = models.ForeignKey('users.Administrador', null=True, blank=True, on_delete=models.SET_NULL,
+                                    help_text='responsável pela coordenação do PFE')
 
     class Meta:
         verbose_name = 'Configuração'

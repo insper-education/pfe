@@ -42,9 +42,9 @@ urlpatterns = [
          views.index_carregar,
          name='index_carregar'),
 
-    path('definir_datas/',
-         views.definir_datas,
-         name='definir_datas'),
+    path('configurar/',
+         views.configurar,
+         name='configurar'),
 
     path('exportar/',
          views.exportar,

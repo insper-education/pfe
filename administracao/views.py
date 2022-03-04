@@ -82,19 +82,22 @@ def emails(request):
         filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
     lista_todos_professores = Professor.objects.all()
     lista_todos_parceiros = Parceiro.objects.all()
-
+ 
     edicoes, _, _ = get_edicoes(Aluno)
 
     configuracao = get_object_or_404(Configuracao)
     atual = str(configuracao.ano)+"."+str(configuracao.semestre)
 
+    coordenacao = configuracao.coordenacao
+
     context = {
-        'membros_comite': membros_comite,
-        'todos_alunos': lista_todos_alunos,
-        'todos_professores': lista_todos_professores,
-        'todos_parceiros': lista_todos_parceiros,
-        'edicoes': edicoes,
-        'atual': atual,
+        "membros_comite": membros_comite,
+        "todos_alunos": lista_todos_alunos,
+        "todos_professores": lista_todos_professores,
+        "todos_parceiros": lista_todos_parceiros,
+        "edicoes": edicoes,
+        "atual": atual,
+        "coordenacao": coordenacao,
     }
 
     return render(request, 'administracao/emails.html', context=context)
@@ -593,7 +596,7 @@ def carrega_arquivo(request, dado):
 @login_required
 @transaction.atomic
 @permission_required('users.altera_professor', login_url='/')
-def definir_datas(request):
+def configurar(request):
     """Definir datas do PFE."""
     configuracao = get_object_or_404(Configuracao)
 
@@ -619,7 +622,7 @@ def definir_datas(request):
         'configuracao': configuracao,
     }
 
-    return render(request, 'administracao/definir_datas.html', context)
+    return render(request, 'administracao/configurar.html', context)
 
 
 @login_required
