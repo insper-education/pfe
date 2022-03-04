@@ -10,7 +10,7 @@
 
 {% block content %}
 
-  <form method="post" id="definirdatas" enctype="multipart/form-data">
+  <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
     <span class="titulo">Datas:</span>
@@ -22,6 +22,13 @@
     &nbsp;&nbsp;&nbsp;<label for="periodo_ano">ano:</label> <input id="periodo_ano" name="periodo_ano" type="number" min="2018" max="9999" step="1" value="{{configuracao.ano}}"/>
     &nbsp;&nbsp;&nbsp;<label for="periodo_semestre">semestre:</label> <input id="periodo_semestre" name="periodo_semestre" type="number" min="1" max="2" step="1" value="{{configuracao.semestre}}"/>
     <br>
+
+    <br>
+    <input type="checkbox" id="liberados_projetos" name="liberados_projetos" {% if configuracao.liberados_projetos %}checked{% endif %}>
+    <label for="liberados_projetos"> Projetos Liberados para Estudantes</label><br>  
+
+    <input type="checkbox" id="liberadas_propostas" name="liberadas_propostas" {% if configuracao.liberadas_propostas %}checked{% endif %}>
+    <label for="liberadas_propostas"> Propostas Liberadas para Estudantes</label><br>  
 
     <br><br>
     <button type="submit">Confirmar</button>
