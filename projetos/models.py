@@ -384,12 +384,15 @@ class Proposta(models.Model):
         """Caminho para editar uma proposta."""
         return reverse('proposta_editar', kwargs={'slug': self.slug})
 
-    def get_interesse(self):
-        """Retorna o texto do interesse da organização na projeto."""
-        for entry in Proposta.TIPO_INTERESSE:
-            if self.tipo_de_interesse == entry[0]:
-                return entry[1]
-        return None
+    def get_interesses(self):
+        interesses = [
+            ["aprimorar", Proposta.TIPO_INTERESSE[0][1], self.aprimorar],
+            ["realizar", Proposta.TIPO_INTERESSE[1][1], self.realizar],
+            ["iniciar", Proposta.TIPO_INTERESSE[2][1], self.iniciar],
+            ["identificar", Proposta.TIPO_INTERESSE[3][1], self.identificar],
+            ["mentorar", Proposta.TIPO_INTERESSE[4][1], self.mentorar],
+        ]
+        return interesses
 
     def get_nativamente(self):
         """Retorna em string com curso mais nativo da proposta."""

@@ -148,13 +148,13 @@
     <textarea id="observacoes" name="observacoes" rows="5" cols="80" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if observacoes and observacoes != None and observacoes != "None" %}{{observacoes}}{% endif %}</textarea>
     <br><br>
 
-    <label for="interesses">O principal interesse da empresa com o projeto é:<br>
+    <label for="interesses">O principal interesse com o projeto é:<br>
     <small>não será apresentado aos alunos (opcional)</small>
     </label><br>
     {% for interesse in interesses %}
       <label for="{{interesse.0}}">
-        &nbsp;<input type="radio" name="interesse" id="{{interesse.0}}" value="{{interesse.0}}"
-        {% if interesse.0 == tipo_de_interesse %}checked{% endif %}
+        &nbsp;<input type="checkbox" name="{{interesse.0}}" id="{{interesse.0}}"
+        {% if interesse.2 %}checked{% endif %}
         {% if vencido %}disabled{% endif %}
         {% if edicao and liberadas_propostas %}disabled{% endif %}
         >

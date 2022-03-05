@@ -484,6 +484,8 @@ def proposta_editar(request, slug):
 
     areas = Area.objects.filter(ativa=True)
 
+    interesses = proposta.get_interesses()
+
     context = {
         'liberadas_propostas': liberadas_propostas,
         'full_name': proposta.nome,
@@ -506,7 +508,7 @@ def proposta_editar(request, slug):
         'observacoes': proposta.observacoes,
         'proposta': proposta,
         'edicao': True,
-        'interesses': Proposta.TIPO_INTERESSE,
+        'interesses': interesses,
         'tipo_de_interesse': proposta.tipo_de_interesse,
         'ano_semestre': str(proposta.ano)+"."+str(proposta.semestre),
         'vencida': vencida,

@@ -313,6 +313,14 @@ def proposta_submissao(request):
         except (ValueError, Organizacao.DoesNotExist):
             return HttpResponseNotFound('<h1>Organização não encontrado!</h1>')
 
+    interesses = [
+        ["aprimorar", Proposta.TIPO_INTERESSE[0][1], False],
+        ["realizar", Proposta.TIPO_INTERESSE[1][1], False],
+        ["iniciar", Proposta.TIPO_INTERESSE[2][1], False],
+        ["identificar", Proposta.TIPO_INTERESSE[3][1], False],
+        ["mentorar", Proposta.TIPO_INTERESSE[4][1], False],
+    ]
+
     context = {
         'full_name': full_name,
         'email': email_sub,
@@ -333,9 +341,8 @@ def proposta_submissao(request):
         'recursos': "",
         'observacoes': "",
         'edicao': False,
-        'interesses': Proposta.TIPO_INTERESSE,
+        'interesses': interesses,
         'ano_semestre': str(ano)+"."+str(semestre),
-        'tipo_de_interesse': 0  # Não existe na verdade
     }
     return render(request, 'organizacoes/proposta_submissao.html', context)
 

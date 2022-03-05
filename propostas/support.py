@@ -52,6 +52,7 @@ def cria_area_proposta(request, proposta):
     check_values = request.POST.getlist('selection')
     outras = request.POST.get("outras", "")
     areas_propostas(check_values, outras, proposta)
+    return check_values
 
 
 def cria_area_proposta_pdf(campos, proposta):
@@ -63,6 +64,7 @@ def cria_area_proposta_pdf(campos, proposta):
                 check_values.append(str(campo))
     outras = decodificar("outras", campos)
     areas_propostas(check_values, outras, proposta)
+    return check_values
 
 
 def lista_areas(proposta):
@@ -235,9 +237,11 @@ def preenche_proposta(request, proposta):
     proposta.recursos = request.POST.get("recursos", "")
     proposta.observacoes = request.POST.get("observacoes", "")
 
-    tipo = request.POST.get("interesse", "")
-    if tipo != "":
-        proposta.tipo_de_interesse = int(tipo)
+    proposta.aprimorar = "aprimorar" in request.POST
+    proposta.realizar = "realizar" in request.POST
+    proposta.iniciar = "iniciar" in request.POST
+    proposta.identificar = "identificar" in request.POST
+    proposta.mentorar = "mentorar" in request.POST
 
     proposta.save()
 
@@ -282,13 +286,17 @@ def preenche_proposta_pdf(campos, proposta):
     proposta.recursos = decodificar("recursos", campos)
     proposta.observacoes = decodificar("observacoes", campos)
 
-    # tipo = request.POST.get("interesse", "")
-    # if tipo != "":
-    #     proposta.tipo_de_interesse = int(tipo)
-
     proposta.save()
 
-    cria_area_proposta_pdf(campos, proposta)
+    check_values = cria_area_proposta_pdf(campos, proposta)
+
+    proposta.aprimorar =  "interesse#0" in check_values
+    proposta.realizar =  "interesse#1" in check_values
+    proposta.iniciar =  "interesse#2" in check_values
+    proposta.identificar =  "interesse#3" in check_values
+    proposta.mentorar =  "interesse#4" in check_values
+    
+    proposta.save()
 
     return proposta
 
@@ -347,8 +355,20 @@ def envia_proposta(proposta, enviar=True):
     message += "<b>Outras observações para os alunos:</b>\n {0}\n\n".\
         format("--" if proposta.observacoes is None else proposta.observacoes)
 
-    message += "<b>O principal interesse da empresa com o projeto é:</b>\n {0}\n\n".\
-        format("--" if proposta.get_interesse() is None else proposta.get_interesse())
+    message += "<b>O principal interesse com o projeto é:</b>\n"
+    if proposta.aprimorar:
+        message += "- {0}<br>".format(Proposta.TIPO_INTERESSE[0][1])
+    if proposta.realizar:
+        message += "- {0}<br>".format(Proposta.TIPO_INTERESSE[1][1])
+    if proposta.iniciar:
+        message += "- {0}<br>".format(Proposta.TIPO_INTERESSE[2][1])
+    if proposta.identificar:
+        message += "- {0}<br>".format(Proposta.TIPO_INTERESSE[3][1])
+    if proposta.mentorar:
+        message += "- {0}<br>".format(Proposta.TIPO_INTERESSE[4][1])
+
+    message += "\n\n"
+
 
     message += "\n\n"
     message += "<b>Data da proposta:</b> {0}\n\n\n".\

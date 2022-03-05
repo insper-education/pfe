@@ -91,10 +91,13 @@
     {% endif %}
 
     {% if completo %}
-        {% if proposta.tipo_de_interesse > 0 %}
-            <br><strong>O principal interesse da empresa com o projeto é:</strong><br>
-            {{proposta.get_interesse}}
-        {% endif %}
+        <br><strong>O principal interesse com o projeto é:</strong><br>
+        {% for interesse in proposta.get_interesses %}
+            {% if interesse.2 %}
+                - {{ interesse.1 }}<br>
+            {% endif %}
+        {% endfor %}
+        <br>
     {% endif %}
 
 {% else %}
