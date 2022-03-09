@@ -1302,15 +1302,19 @@ def media(notas_lista):
 
 # Didide pela proporção de 5 e 7
 def divide57(notas_lista):
-    valores = [0, 0, 0] 
-    for i in notas_lista:
-        if i < 5:
-            valores[0] += 1
-        elif i > 7:
-            valores[2] += 1
-        else:
-            valores[1] += 1
-    return valores
+    if notas_lista:
+        valores = [0, 0, 0]
+        for i in notas_lista:
+            if i:
+                if i < 5:
+                    valores[0] += 1
+                elif i > 7:
+                    valores[2] += 1
+                else:
+                    valores[1] += 1
+        return valores
+    else:
+        return [0, 0, 0]
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
@@ -1622,7 +1626,7 @@ def evolucao_por_objetivo(request):
         for edicao in edicoes:
             periodo = edicao.split('.')
             semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
-            notas_lista = [x.nota for x in semestre if x.objetivo == objetivo]
+            notas_lista = [x.nota for x in semestre if x.objetivo == objetivo and not x.na]
             notas = divide57(notas_lista)
             soma = sum(notas)
             if soma > 0:
