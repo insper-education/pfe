@@ -29,8 +29,9 @@
       {% if com_objetivos %}
         var objetivo = $("#filterObjetivo option:selected").attr("value");
       {% endif %}
-      {% if com_individual %}
-        var individual = $("#filterCurso option:selected").attr("value");
+      {% if ind_grup %}
+        var individuais = $("#individuais").is(':checked');
+        var grupo = $("#grupo").is(':checked');
       {% endif %}
       request_ajax = $.ajax({
           type: "POST",
@@ -44,6 +45,10 @@
               {% endif %}
               {% if com_objetivos %}
                 objetivo: objetivo,
+              {% endif %}
+              {% if ind_grup %}
+                individuais: individuais,
+                grupo: grupo,
               {% endif %}
               'csrfmiddlewaretoken': '{{ csrf_token }}',
           },

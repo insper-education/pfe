@@ -50,7 +50,9 @@
             {% comment %} Seletor da edição da pesquisa {% endcomment %}
             {% with sem_edicao=True %}
             {% with com_cursos=True %}
+            {% with ind_grup=True %}
                 {% include "edicoes.html" %}
+            {% endwith %}
             {% endwith %}
             {% endwith %}
 
@@ -126,14 +128,15 @@
   
   </script>
 
-
     </div>
     </div>
     </div>
 
     {% with sem_edicao=True %}
     {% with com_cursos=True %}
+    {% with ind_grup=True %}
         {% include "edicoes_ajax.html" %}
+    {% endwith %}
     {% endwith %}
     {% endwith %}
 

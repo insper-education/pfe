@@ -34,7 +34,7 @@
             <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
           {% endif %}
           <div class="input-group-prepend">
-            <label class="input-group-text" for="filterCurso">Curso</label>
+            <label class="input-group-text" for="filterCurso" onClick="recarregar_pagina()">Curso</label>
           </div>
           <select class="filter custom-select w-auto" id="filterCurso" name="curso">
               <option value="T">todos</option>
@@ -46,10 +46,10 @@
 
         {% if com_objetivos %}
           
-            <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
           
           <div class="input-group-prepend">
-            <label class="input-group-text" for="filterObjetivo">Objetivo de Aprendizagem</label>
+            <label class="input-group-text" for="filterObjetivo" onClick="recarregar_pagina()">Objetivo de Aprendizagem</label>
           </div>
           <select class="filter custom-select w-auto" id="filterObjetivo" name="objetivo">
 
@@ -59,6 +59,22 @@
                 {% endfor %}
 
           </select>
+        {% endif %}
+
+        {% if ind_grup %}
+
+          <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+
+          <div class="form-check mb-2 mr-sm-2">
+            <input class="filter form-check-input" type="checkbox" id="individuais" checked >
+            <label class="form-check-label" for="individuais">Individuais</label>
+          </div>
+
+          <div class="form-check mb-2 mr-sm-2">
+            <input class="filter form-check-input" type="checkbox" id="grupo" checked >
+            <label class="form-check-label" for="grupo">Grupo</label>
+          </div>
+
         {% endif %}
 
         <div id="spinner" class="ml-2 input-group-append" style="visibility: hidden">

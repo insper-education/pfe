@@ -44,13 +44,16 @@
     <div id="tudo">
       
         <div class="cabecalho">
+
           <span class="titulo">Evolução por Objetivo de Aprendizado</span>
 
           {% comment %} Seletor da edição da pesquisa {% endcomment %}
           {% with sem_edicao=True %}
           {% with com_cursos=True %}
           {% with com_objetivos=True %}
+          {% with ind_grup=True %}
               {% include "edicoes.html" %}
+          {% endwith %}
           {% endwith %}
           {% endwith %}
           {% endwith %}
@@ -161,7 +164,9 @@
     {% with sem_edicao=True %}
     {% with com_cursos=True %}
     {% with com_objetivos=True %}
+    {% with ind_grup=True %}
         {% include "edicoes_ajax.html" %}
+    {% endwith %}
     {% endwith %}
     {% endwith %}
     {% endwith %}

@@ -1464,15 +1464,54 @@ def evolucao_objetivos(request):
 
     if request.is_ajax():
 
-        # periodo = ["todo", "periodo"]
-        # estudantes = Aluno.objects.filter(user__tipo_de_usuario=1)
-
-        avaliacoes = Avaliacao2.objects.all()
-
         if 'curso' in request.POST:
             curso = request.POST['curso']
-            if curso != 'T':
-                avaliacoes = avaliacoes.filter(alocacao__aluno__curso=curso)
+            grupo = 'grupo' in request.POST and request.POST["grupo"]=="true"
+            individuais = 'individuais' in request.POST and request.POST["individuais"]=="true"
+
+            if curso == 'T':
+
+                # Avaliações Individuais
+                if (individuais):
+                    avaliacoes_ind = Avaliacao2.objects.filter(alocacao__isnull=False)
+                else:
+                    avaliacoes_ind = Avaliacao2.objects.none()
+
+                # Avaliações Grupais
+                if grupo:
+                    avaliacoes_grupo = Avaliacao2.objects.filter(alocacao__isnull=True, projeto__isnull=False)
+                else:
+                    avaliacoes_grupo = Avaliacao2.objects.none()
+
+                avaliacoes = avaliacoes_ind | avaliacoes_grupo
+
+            else:
+
+                # Avaliações Individuais
+                if (individuais):
+                    avaliacoes_ind = Avaliacao2.objects.filter(alocacao__aluno__curso=curso)
+                else:
+                    avaliacoes_ind = Avaliacao2.objects.none()
+
+                # Avaliações Grupais
+                if grupo:
+                    # identificando projetos com estudantes do curso (pelo menos um)
+                    projetos_selecionados = []
+                    projetos = Projeto.objects.all()
+                    for projeto in projetos:
+                        alocacoes = Alocacao.objects.filter(projeto=projeto)
+                        for alocacao in alocacoes:
+                            if alocacao.aluno.curso == curso:
+                                projetos_selecionados.append(projeto)
+                                break
+                            
+                    avaliacoes_grupo = Avaliacao2.objects.filter(alocacao__isnull=True, projeto__in=projetos_selecionados)
+
+                else:
+                    avaliacoes_grupo = Avaliacao2.objects.none()
+
+                avaliacoes = avaliacoes_ind | avaliacoes_grupo
+
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
@@ -1520,12 +1559,54 @@ def evolucao_por_objetivo(request):
 
     if request.is_ajax():
 
-        avaliacoes = Avaliacao2.objects.all()
-
         if 'curso' in request.POST:
             curso = request.POST['curso']
-            if curso != 'T':
-                avaliacoes = avaliacoes.filter(alocacao__aluno__curso=curso)
+            grupo = 'grupo' in request.POST and request.POST["grupo"]=="true"
+            individuais = 'individuais' in request.POST and request.POST["individuais"]=="true"
+
+            if curso == 'T':
+
+                # Avaliações Individuais
+                if (individuais):
+                    avaliacoes_ind = Avaliacao2.objects.filter(alocacao__isnull=False)
+                else:
+                    avaliacoes_ind = Avaliacao2.objects.none()
+
+                # Avaliações Grupais
+                if grupo:
+                    avaliacoes_grupo = Avaliacao2.objects.filter(alocacao__isnull=True, projeto__isnull=False)
+                else:
+                    avaliacoes_grupo = Avaliacao2.objects.none()
+
+                avaliacoes = avaliacoes_ind | avaliacoes_grupo
+
+            else:
+
+                # Avaliações Individuais
+                if (individuais):
+                    avaliacoes_ind = Avaliacao2.objects.filter(alocacao__aluno__curso=curso)
+                else:
+                    avaliacoes_ind = Avaliacao2.objects.none()
+
+                # Avaliações Grupais
+                if grupo:
+                    # identificando projetos com estudantes do curso (pelo menos um)
+                    projetos_selecionados = []
+                    projetos = Projeto.objects.all()
+                    for projeto in projetos:
+                        alocacoes = Alocacao.objects.filter(projeto=projeto)
+                        for alocacao in alocacoes:
+                            if alocacao.aluno.curso == curso:
+                                projetos_selecionados.append(projeto)
+                                break
+                            
+                    avaliacoes_grupo = Avaliacao2.objects.filter(alocacao__isnull=True, projeto__in=projetos_selecionados)
+
+                else:
+                    avaliacoes_grupo = Avaliacao2.objects.none()
+
+                avaliacoes = avaliacoes_ind | avaliacoes_grupo
+
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
