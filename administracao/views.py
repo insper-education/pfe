@@ -320,6 +320,12 @@ def registro_usuario(request, user=None):
         else:
             usuario.is_active = False
 
+    if 'comite' in request.POST:
+        if request.POST['comite'] == "1":
+            usuario.membro_comite = True
+        else:
+            usuario.membro_comite = False
+
     usuario.save()
 
     if usuario.tipo_de_usuario == 1:  # estudante
@@ -490,7 +496,7 @@ def cadastrar_usuario(request):
 @transaction.atomic
 @permission_required("users.altera_professor", login_url='/')
 def edita_usuario(request, primarykey):
-    """Cadastra usuário na base de dados do PFE."""
+    """Edita cadastro de usuário na base de dados do PFE."""
     user = get_object_or_404(PFEUser, id=primarykey)
 
     if request.method == 'POST':

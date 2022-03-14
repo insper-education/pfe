@@ -102,6 +102,8 @@
       <label for="website">website:</label><input type="text" size="73" maxlength="250" id="website" name="website" {% if usuario.professor.website %} value="{{usuario.professor.website}}" {% endif %} placeholder="https://www.insper.edu.br/"><br>
       <label for="lattes">lattes:</label><input type="text" size="73" maxlength="73" id="lattes" name="lattes" {% if usuario.professor.lattes %} value="{{usuario.professor.lattes}}" {% endif %} placeholder="https://lattes.cnpq.br/"><br>
 
+
+
     </div>
 
     {% comment %} Parceiro {% endcomment %}
@@ -126,13 +128,21 @@
       <input type="checkbox" id="principal_contato" name="principal_contato" value="True" {% if usuario.parceiro.principal_contato %}checked{% endif %}>
       <label for="principal_contato"> Principal Contato</label><br>
 
-      {% if usuario %}
-        <input type='hidden' value='0' name='ativo'>
-        <input type="checkbox" id="ativo" value='1' name="ativo" {% if usuario.is_active %}checked="checked"{% endif %}>
-        <label for="ativo">Ativo (está ainda trabalhando na organização)</label>
-      {% endif %}
-
     </div>
+
+    {% if usuario %}
+      
+      <br>
+      <input type='hidden' value='0' name='ativo'>
+      <input type="checkbox" id="ativo" value='1' name="ativo" {% if usuario.is_active %}checked="checked"{% endif %}>
+      <label for="ativo">Ativo (está ainda trabalhando na organização)</label>
+
+      <br>
+      <input type='hidden' value='0' name='comite'>
+      <input type="checkbox" id="comite" value='1' name="comite" {% if usuario.membro_comite %}checked="checked"{% endif %}>
+      <label for="comite">Membro Comitê PFE</label>
+
+    {% endif %}
 
     <br><br>
     <input type="submit" value="{% if usuario %}Atualiza{% else %}Cadastrar{% endif %} Usuário">
