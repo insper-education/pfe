@@ -556,6 +556,8 @@ def carrega_arquivo(request, dado):
 
         if 'arquivo' in request.FILES:
             new_data = request.FILES['arquivo'].readlines()
+            if ';' in str(new_data)[:32]:
+                return HttpResponseNotFound('<h1>Arquivo de dados possui ponto e vírgula (;) !</h1>')
         else:
             return HttpResponseNotFound('<h1>Arquivo não reconhecido!</h1>')
 

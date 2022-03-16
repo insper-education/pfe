@@ -359,50 +359,64 @@ class UsuariosResource(resources.ModelResource):
 def atualizar_campo(registro, campo, valor):
     """Atualiza o campo."""
     if (valor is not None) and (valor != ""):
-        tmp = getattr(registro, campo)
-        if (tmp is not None) and (tmp != "") and (tmp != valor):
-            pass  # ("Dado atualizado de {0} para {1}".format(tmp, valor))
-        else:
-            pass  # print("Dados iguais em {0} : {0}".format(campo, tmp))
+        # tmp = getattr(registro, campo)
+        # if (tmp is not None) and (tmp != "") and (tmp != valor):
+        #     pass  # ("Dado atualizado de {0} para {1}".format(tmp, valor))
+        # else:
+        #     pass  # ("Dados iguais em {0} : {0}".format(campo, tmp))
         setattr(registro, campo, valor)
     else:
-        pass  # print("Não houve atualização de {0}".format(campo))
+        pass  # ("Não houve atualização de {0}".format(campo))
 
 
 class EstudantesResource(resources.ModelResource):
     """Model Resource para tratar dados de Estudantes."""
 
     campos = [
-        'usuário (primeira parte do e-mail, obrigatório)',
+        'email (e-mail institucional, com titulo da coluna sem o traço separando "e" de "mail")',
         'nome',
         'sobrenome',
-        'email (sem o traço separando "e" de "mail")',
+        'nome_compl (somente usado se nome e sobrenome não presentes)',
         'gênero (M|F)',
-        'curso (GRENGCOMP|GRENGMECAT|GRENGMECA)',
-        'matrícula',
+        'curso [GRENGCOMP|GRENGMECAT|GRENGMECA]',
+        'matrícula (número)',
         'cr (ponto como separador decimal)',
         'anoPFE',
         'semestrePFE',
+        'usuário (desnecessário, pois é pego pelo e-mail)',
     ]
 
     def before_import_row(self, row, **kwargs):
         """Forma que arrumei para evitar preencher com o mesmo dado."""
-        username = row.get('usuário')
-        if username is None:
+        EMAIL_ESTUDANTE = "@al.insper.edu.br"
+
+        email = row.get("email")
+        if email is None:
             pass
-            # print("Erro ao recuperar o usuário [username]")
-        elif username != "":
+            # print("Erro ao recuperar o e-mail do usuário [email]")
+        elif EMAIL_ESTUDANTE in email:
+
+            username = email.split(EMAIL_ESTUDANTE)[0].strip()
+
             # recupera dados do estudante se ele já estava cadastrado
             # TIPO_DE_USUARIO_CHOICES = (1, 'aluno')
             (user, _created) = PFEUser.objects.get_or_create(username=username,
+                                                             email=email.strip(),
                                                              tipo_de_usuario=1)
+
+            nome_compl = row.get('nome_compl')
+            if (nome_compl is not None) and (nome_compl != ""):
+                nome_compl_txt = nome_compl.split(" ",1)
+                user.first_name = nome_compl_txt[0].strip()
+                user.last_name = nome_compl_txt[1].strip()
 
             atualizar_campo(user, 'first_name', row.get('nome'))
             atualizar_campo(user, 'last_name', row.get('sobrenome'))
-            atualizar_campo(user, 'email', row.get('email'))
+            
             atualizar_campo(user, 'genero', row.get('gênero'))
 
             user.save()
+
             (aluno, _created) = Aluno.objects.get_or_create(user=user)
             if row.get('curso') == "GRENGCOMP":
                 aluno.curso = 'C'
