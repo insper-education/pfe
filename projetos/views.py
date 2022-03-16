@@ -1836,7 +1836,7 @@ def nomes(request):
 
         if (first_name != aluno.user.first_name) or (last_name != aluno.user.last_name):
 
-            message += aluno.user.first_name + " "
+            message += aluno.user.first_name + " >> "
             message += aluno.user.last_name + "\t\t"
 
             message += cap_name(aluno.user.first_name) + " "

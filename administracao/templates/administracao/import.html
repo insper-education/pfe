@@ -12,9 +12,10 @@
 
   <span class="titulo">Carregamento de CSV (Comma Separated Values)</span>
 
-  <strong>(realmente separado por vírgula, não funciona com ponto e vírgula)</strong>
-  <strong>(não mudar o maiúscula e minúscula dos nomes das colunas)</strong>
-  <br><br>
+  <strong>(realmente separado por vírgula, não funciona com ponto e vírgula)</strong><br>
+  <strong>(não mudar o maiúscula e minúscula dos nomes das colunas)</strong><br>
+
+  <br>
   <h6>Campos Permitidos:</h6>
   <ul>
   {% for campo in campos_permitidos %}
@@ -24,7 +25,7 @@
   <br>
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <input type="file" name="arquivo">
+    <input type="file" name="arquivo" accept=".csv">
     <button type="submit">Enviar Arquivo</button>
   </form>
 {% endblock %}
