@@ -33,6 +33,9 @@
         var individuais = $("#individuais").is(':checked');
         var grupo = $("#grupo").is(':checked');
       {% endif %}
+      {% if so_finais %}
+        var so_finais = $("#so_finais").is(':checked');
+      {% endif %}
       request_ajax = $.ajax({
           type: "POST",
           //url: "Normalmente a mesma página",
@@ -49,6 +52,9 @@
               {% if ind_grup %}
                 individuais: individuais,
                 grupo: grupo,
+              {% endif %}
+              {% if so_finais %}
+                so_finais: so_finais,
               {% endif %}
               'csrfmiddlewaretoken': '{{ csrf_token }}',
           },

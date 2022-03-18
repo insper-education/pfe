@@ -51,7 +51,9 @@
             {% with sem_edicao=True %}
             {% with com_cursos=True %}
             {% with ind_grup=True %}
+            {% with so_finais=True %}
                 {% include "edicoes.html" %}
+            {% endwith %}
             {% endwith %}
             {% endwith %}
             {% endwith %}
@@ -135,7 +137,9 @@
     {% with sem_edicao=True %}
     {% with com_cursos=True %}
     {% with ind_grup=True %}
+    {% with so_finais=True %}
         {% include "edicoes_ajax.html" %}
+    {% endwith %}
     {% endwith %}
     {% endwith %}
     {% endwith %}

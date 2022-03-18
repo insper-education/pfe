@@ -1472,20 +1472,28 @@ def evolucao_objetivos(request):
             curso = request.POST['curso']
             grupo = 'grupo' in request.POST and request.POST["grupo"]=="true"
             individuais = 'individuais' in request.POST and request.POST["individuais"]=="true"
+            so_finais = "so_finais" in request.POST and request.POST["so_finais"]=="true"
+
+            if so_finais:
+                # Somenete avaliações finais do PFE
+                tipos = [2, 12, 22, 52, 54]
+                avaliacoes_sep = Avaliacao2.objects.filter(tipo_de_avaliacao__in=tipos)
+            else:
+                avaliacoes_sep = Avaliacao2.objects.all()
 
             if curso == 'T':
 
                 # Avaliações Individuais
                 if (individuais):
-                    avaliacoes_ind = Avaliacao2.objects.filter(alocacao__isnull=False)
+                    avaliacoes_ind = avaliacoes_sep.filter(alocacao__isnull=False)
                 else:
-                    avaliacoes_ind = Avaliacao2.objects.none()
+                    avaliacoes_ind = avaliacoes_sep.none()
 
                 # Avaliações Grupais
                 if grupo:
-                    avaliacoes_grupo = Avaliacao2.objects.filter(alocacao__isnull=True, projeto__isnull=False)
+                    avaliacoes_grupo = avaliacoes_sep.filter(alocacao__isnull=True, projeto__isnull=False)
                 else:
-                    avaliacoes_grupo = Avaliacao2.objects.none()
+                    avaliacoes_grupo = avaliacoes_sep.none()
 
                 avaliacoes = avaliacoes_ind | avaliacoes_grupo
 
@@ -1493,9 +1501,9 @@ def evolucao_objetivos(request):
 
                 # Avaliações Individuais
                 if (individuais):
-                    avaliacoes_ind = Avaliacao2.objects.filter(alocacao__aluno__curso=curso)
+                    avaliacoes_ind = avaliacoes_sep.filter(alocacao__aluno__curso=curso)
                 else:
-                    avaliacoes_ind = Avaliacao2.objects.none()
+                    avaliacoes_ind = avaliacoes_sep.none()
 
                 # Avaliações Grupais
                 if grupo:
@@ -1503,7 +1511,7 @@ def evolucao_objetivos(request):
                     projetos_selecionados = []
                     projetos = Projeto.objects.all()
                     for projeto in projetos:
-                        alocacoes = Alocacao.objects.filter(projeto=projeto)
+                        alocacoes = avaliacoes_sep.filter(projeto=projeto)
                         for alocacao in alocacoes:
                             if alocacao.aluno.curso == curso:
                                 projetos_selecionados.append(projeto)
@@ -1563,24 +1571,33 @@ def evolucao_por_objetivo(request):
 
     if request.is_ajax():
 
-        if 'curso' in request.POST:
+        if "curso" in request.POST:
             curso = request.POST['curso']
-            grupo = 'grupo' in request.POST and request.POST["grupo"]=="true"
-            individuais = 'individuais' in request.POST and request.POST["individuais"]=="true"
+            grupo = "grupo" in request.POST and request.POST["grupo"]=="true"
+            individuais = "individuais" in request.POST and request.POST["individuais"]=="true"
+
+            so_finais = "so_finais" in request.POST and request.POST["so_finais"]=="true"
+
+            if so_finais:
+                # Somenete avaliações finais do PFE
+                tipos = [2, 12, 22, 52, 54]
+                avaliacoes_sep = Avaliacao2.objects.filter(tipo_de_avaliacao__in=tipos)
+            else:
+                avaliacoes_sep = Avaliacao2.objects.all()
 
             if curso == 'T':
 
                 # Avaliações Individuais
                 if (individuais):
-                    avaliacoes_ind = Avaliacao2.objects.filter(alocacao__isnull=False)
+                    avaliacoes_ind = avaliacoes_sep.filter(alocacao__isnull=False)
                 else:
-                    avaliacoes_ind = Avaliacao2.objects.none()
+                    avaliacoes_ind = avaliacoes_sep.none()
 
                 # Avaliações Grupais
                 if grupo:
-                    avaliacoes_grupo = Avaliacao2.objects.filter(alocacao__isnull=True, projeto__isnull=False)
+                    avaliacoes_grupo = avaliacoes_sep.filter(alocacao__isnull=True, projeto__isnull=False)
                 else:
-                    avaliacoes_grupo = Avaliacao2.objects.none()
+                    avaliacoes_grupo = avaliacoes_sep.none()
 
                 avaliacoes = avaliacoes_ind | avaliacoes_grupo
 
@@ -1588,9 +1605,9 @@ def evolucao_por_objetivo(request):
 
                 # Avaliações Individuais
                 if (individuais):
-                    avaliacoes_ind = Avaliacao2.objects.filter(alocacao__aluno__curso=curso)
+                    avaliacoes_ind = avaliacoes_sep.filter(alocacao__aluno__curso=curso)
                 else:
-                    avaliacoes_ind = Avaliacao2.objects.none()
+                    avaliacoes_ind = avaliacoes_sep.none()
 
                 # Avaliações Grupais
                 if grupo:
@@ -1598,7 +1615,7 @@ def evolucao_por_objetivo(request):
                     projetos_selecionados = []
                     projetos = Projeto.objects.all()
                     for projeto in projetos:
-                        alocacoes = Alocacao.objects.filter(projeto=projeto)
+                        alocacoes = avaliacoes_sep.filter(projeto=projeto)
                         for alocacao in alocacoes:
                             if alocacao.aluno.curso == curso:
                                 projetos_selecionados.append(projeto)
