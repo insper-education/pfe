@@ -96,8 +96,22 @@
       >
           <td>
             <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">
-            {{projeto.get_titulo}}<br>
+              {{projeto.get_titulo}}
             </a>
+
+            {% if projeto.avancado %}
+              <font color="red">PFE Avançado</font>
+            {% endif %}
+    
+            {% if projeto.avancado and projeto.proposta.internacional %}
+            /
+            {% endif %}
+    
+            {% if projeto.proposta.internacional %}
+              <font color="red">Internacional</font>
+            {% endif %}
+            <br>
+
             <ul class="grupo" style="margin-bottom: 6px;">
               {% for alocacao in projeto.alocacao_set.all %}
                 <li>
