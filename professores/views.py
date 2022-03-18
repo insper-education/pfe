@@ -1333,8 +1333,6 @@ def resultado_projetos_intern(request, ano=None, semestre=None):
                     primeira = alocacoes.first()
                     medias = primeira.get_media
 
-                    a = medias["peso_grupo_inter"]
-
                     if ("peso_grupo_inter" in medias) and (medias["peso_grupo_inter"] is not None) and (medias["peso_grupo_inter"] > 0):
                         nota = medias["nota_grupo_inter"]/medias["peso_grupo_inter"]
                         relatorio_intermediario.append(("{0}".format(converte_letra(nota, espaco="&nbsp;")),
