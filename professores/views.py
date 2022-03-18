@@ -1333,7 +1333,9 @@ def resultado_projetos_intern(request, ano=None, semestre=None):
                     primeira = alocacoes.first()
                     medias = primeira.get_media
 
-                    if medias["peso_grupo_inter"] is not None and medias["peso_grupo_inter"] > 0:
+                    a = medias["peso_grupo_inter"]
+
+                    if ("peso_grupo_inter" in medias) and (medias["peso_grupo_inter"] is not None) and (medias["peso_grupo_inter"] > 0):
                         nota = medias["nota_grupo_inter"]/medias["peso_grupo_inter"]
                         relatorio_intermediario.append(("{0}".format(converte_letra(nota, espaco="&nbsp;")),
                                             "{0:5.2f}".format(nota),
@@ -1341,7 +1343,7 @@ def resultado_projetos_intern(request, ano=None, semestre=None):
                     else:
                         relatorio_intermediario.append(("&nbsp;-&nbsp;", None, 0))
 
-                    if medias["peso_grupo_final"] is not None and medias["peso_grupo_final"] > 0:
+                    if ("peso_grupo_final" in medias) and (medias["peso_grupo_final"] is not None) and (medias["peso_grupo_final"] > 0):
                         nota = medias["nota_grupo_final"]/medias["peso_grupo_final"]
                         relatorio_final.append(("{0}".format(converte_letra(nota, espaco="&nbsp;")),
                                             "{0:5.2f}".format(nota),
