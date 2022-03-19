@@ -14,7 +14,7 @@ class Relato(models.Model):
                                  related_name='projeto_alocado_relato',
                                  help_text='relacao de alocação entre projeto e estudante')
 
-    texto = models.TextField("Texto", max_length=1000, null=True, blank=True,
+    texto = models.TextField("Texto", max_length=2100, null=True, blank=True,
                                    help_text='Texto do relato')
 
     avaliacao = models.DecimalField("Avaliação", default=-1, max_digits=2, decimal_places=0,

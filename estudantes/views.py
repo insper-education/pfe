@@ -433,13 +433,16 @@ def relato_quinzenal(request):
             "prazo": prazo,
             "alocacao": alocacao,
             "relato": texto,
+            "max_length": Relato._meta.get_field('texto').max_length,
         }
     else:  # Supostamente professores
         context = {
             "prazo": prazo,
             "mensagem": "Você não está cadastrado como estudante.",
             "relato": None,
+            "max_length": Relato._meta.get_field('texto').max_length,
         }
+
     return render(request, 'estudantes/relato_quinzenal.html', context)
 
 
