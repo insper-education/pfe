@@ -1511,7 +1511,7 @@ def evolucao_objetivos(request):
                     projetos_selecionados = []
                     projetos = Projeto.objects.all()
                     for projeto in projetos:
-                        alocacoes = avaliacoes_sep.filter(projeto=projeto)
+                        alocacoes = Alocacao.objects.filter(projeto=projeto)
                         for alocacao in alocacoes:
                             if alocacao.aluno.curso == curso:
                                 projetos_selecionados.append(projeto)
@@ -1615,7 +1615,7 @@ def evolucao_por_objetivo(request):
                     projetos_selecionados = []
                     projetos = Projeto.objects.all()
                     for projeto in projetos:
-                        alocacoes = avaliacoes_sep.filter(projeto=projeto)
+                        alocacoes = Alocacao.objects.filter(projeto=projeto)
                         for alocacao in alocacoes:
                             if alocacao.aluno.curso == curso:
                                 projetos_selecionados.append(projeto)
