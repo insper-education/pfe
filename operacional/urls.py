@@ -34,4 +34,9 @@ urlpatterns = [
          views.cria_aviso,
          name='cria_aviso'),
 
+    path('deleta_aviso/<int:primarykey>',
+         views.deleta_aviso,
+         name='deleta_aviso'),
+
+
 ]

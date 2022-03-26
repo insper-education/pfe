@@ -245,3 +245,12 @@ def cria_aviso(request):
     }
 
     return render(request, 'operacional/edita_aviso.html', context)
+
+
+@login_required
+@transaction.atomic
+@permission_required('users.altera_professor', login_url='/')
+def deleta_aviso(request, primarykey):
+    """Apaga aviso."""
+    Aviso.objects.filter(id=primarykey).delete()
+    return redirect('avisos_listar')
