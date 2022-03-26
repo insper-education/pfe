@@ -331,11 +331,29 @@ def relatorios_publicos(request):
 @permission_required('users.altera_professor', login_url='/')
 def tabela_documentos(request):
     """Exibe tabela com todos os documentos armazenados."""
-    projetos = Projeto.objects.all().order_by("ano", "semestre")
-    context = {
-        'projetos': projetos,
-        'MEDIA_URL': settings.MEDIA_URL,
-    }
+
+    if request.is_ajax():
+        if 'edicao' in request.POST:
+            edicao = request.POST['edicao']
+            if edicao == 'todas':
+                projetos = Projeto.objects.all()
+            else:
+                ano, semestre = request.POST['edicao'].split('.')
+                projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
+
+        context = {
+            "projetos": projetos,
+            "edicao": edicao,
+            "MEDIA_URL": settings.MEDIA_URL,
+        }
+
+    else:
+    
+        edicoes, _, _ = get_edicoes(Projeto)
+        context = {
+            "edicoes": edicoes,
+        }
+
     return render(request, 'documentos/tabela_documentos.html', context)
 
 

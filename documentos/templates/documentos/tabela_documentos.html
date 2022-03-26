@@ -8,8 +8,7 @@
 {% block head %}
 
   {% load static %}
-
-  <script src="{% static 'js/w3.js' %}"></script>
+  {% include "tabelas_includes.html" %}
 
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
@@ -39,7 +38,12 @@
 
 {% block content %}
 
+  {% include "impressora.html" %}
+
   <span class="titulo">Documentação dos Projetos</span>
+
+  {% comment %} Seletor da edição da pesquisa {% endcomment %}
+  {% include "edicoes.html" %}
 
   <script>
     $(document).on('click','#informacoes_tag',function(){
@@ -50,242 +54,286 @@
   <span id="informacoes" style="border: 1px solid gray; border-radius: 2px; padding: 1px; margin-left: 20px;">
     <span id="informacoes_tag">&nbsp;Informações <i class="arrow right"></i>&nbsp;</span>
     <div id="toggle" style="display: none; height: 1em;">
-      <label><input id="organizacao" onchange="($(this).prop('checked') ? $('#ProjetosTable tr > *:nth-child(2)').show() : $('#ProjetosTable tr > *:nth-child(2)').hide())" type="checkbox" checked /> Estudantes</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="orientador" onchange="($(this).prop('checked') ? $('#ProjetosTable tr > *:nth-child(3)').show() : $('#ProjetosTable tr > *:nth-child(3)').hide())" type="checkbox" checked /> Orientador</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="documentos" onchange="($(this).prop('checked') ? $('#ProjetosTable tr > *:nth-child(4)').show() : $('#ProjetosTable tr > *:nth-child(4)').hide())" type="checkbox" checked /> Período</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="documentos" onchange="($(this).prop('checked') ? $('#ProjetosTable tr > *:nth-child(5)').show() : $('#ProjetosTable tr > *:nth-child(5)').hide())" type="checkbox" checked /> Organização</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="documentos" onchange="($(this).prop('checked') ? $('#ProjetosTable tr > *:nth-child(6)').show() : $('#ProjetosTable tr > *:nth-child(6)').hide())" type="checkbox" checked /> Documentos</label>&nbsp;&nbsp;&nbsp;
+      <label><input onchange="($(this).prop('checked') ? $('.tit_ori').show() : $('.tit_ori').hide())" type="checkbox" checked />Título Original</label>&nbsp;&nbsp;&nbsp;
+      <label><input onchange="($(this).prop('checked') ? $('.curso').show() : $('.curso').hide())" type="checkbox" checked />Curso</label>&nbsp;&nbsp;&nbsp;
+      <label><input onchange="($(this).prop('checked') ? $('.coorientadores').show() : $('.coorientadores').hide())" type="checkbox" checked />Coorientadores</label>&nbsp;&nbsp;&nbsp;
+      <label><input onchange="($(this).prop('checked') ? $('.confidencial').show() : $('.confidencial').hide())" type="checkbox" checked />Confidenciais</label>&nbsp;&nbsp;&nbsp;
     </div>
   </span>
-
+  
   <br><br>
+  
+  <div class="atualizar">
 
-  {% if projetos %}
-    <table id="ProjetosTable">
-      <tr>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Projeto</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Estudantes</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Orientador</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Período</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Organização</th>
-        <th class="text-center">Documentos</th>
-      </tr>      
-      {% for projeto in projetos %} 
-          <tr class="item">
-            <td>
-              <a href="{% url 'projeto_completo' projeto.id %}"
-                data-toggle="tooltip" data-html="true" animation="true" 
-                title="
-                  {% for alocacao in projeto.alocacao_set.all %}
-                      &bull; {{alocacao.aluno.user.get_full_name}}
-                      ({{alocacao.aluno.get_curso_completo}}){% if not forloop.last %}<br>{% endif %}
-                  {% endfor %}
-                "
-              >
-                {% if projeto.titulo_final %}
-                  {{projeto.titulo_final}}
-                  {% if projeto.avancado %}
-                    <strong style="color:red"><u>[Avançado]</u></strong><br>
-                  {% endif %}
-                  <br>
-                  <small>Título original: {{projeto.titulo}}</small>
-                {% else %}
-                  {{projeto.titulo}}
-                  {% if projeto.avancado %}
-                    <strong style="color:red"><u>[Avançado]</u></strong><br>
-                  {% endif %}
-                {% endif %}
-              </a>
-            </td>
-            
+    <div class="table-responsive">
 
-            <!-- Estudantes -->
-            <td style="min-width:18em;">
-              <small>
-              <ul class="grupo" style="padding-left: 20px;margin-bottom: 0px;">
-                {% for alocacao in projeto.alocacao_set.all %}
-                  <li>
-                    <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">
-                      {{alocacao.aluno}}
-                    </a>
-                    <span class="curso">
-                      [{{ alocacao.aluno.get_curso_display }}]
+      <table id="ProjetosTable" class="table table-bordered table-hover table-sm" style="width: auto;">
+
+        <thead class="table-info">
+          <tr>
+            <th scope="col" style="text-align: center;width:auto;">Projeto</th>
+            <th scope="col" style="text-align: center;width:auto;">Estudantes</th>
+            <th scope="col" style="text-align: center;width:auto;">Orientador</th>
+            <th scope="col" style="text-align: center;width:auto;">Período</th>
+            <th scope="col" style="text-align: center;width:auto;">Organização</th>
+            <th scope="col" style="text-align: center;width:auto;">Documentos</th>
+          </tr>
+        </thead>
+
+        {% for projeto in projetos %} 
+            <tr class="item">
+              <td>
+                <a href="{% url 'projeto_completo' projeto.id %}"
+                  data-toggle="tooltip" data-html="true" animation="true" 
+                  title="
+                    {% for alocacao in projeto.alocacao_set.all %}
+                        &bull; {{alocacao.aluno.user.get_full_name}}
+                        ({{alocacao.aluno.get_curso_completo}}){% if not forloop.last %}<br>{% endif %}
+                    {% endfor %}
+                  "
+                >
+                  {% if projeto.titulo_final %}
+                    {{projeto.titulo_final}}
+                    {% if projeto.avancado %}
+                      <strong style="color:red"><u>[Avançado]</u></strong><br>
+                    {% endif %}
+                    <span class="tit_ori">
+                      <br>
+                      <small>Título original: {{projeto.titulo}}</small>
                     </span>
-                  </li>
-                {% endfor %}
-              </ul>
-              </small>
-            </td>
-
-            <!-- Orientador -->
-            <td>
-              {% if projeto.orientador %}
-                <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}">
-                  {{ projeto.orientador }}
+                  {% else %}
+                    {{projeto.titulo}}
+                    {% if projeto.avancado %}
+                      <strong style="color:red"><u>[Avançado]</u></strong><br>
+                    {% endif %}
+                  {% endif %}
                 </a>
-              {% else %}
-                Orientador não definido
-              {% endif %}
-            </td>
-
-            <!-- Período -->
-            <td style="text-align:center">
-                {{projeto.ano}}.{{projeto.semestre}}
-            </td>
-
-            <!-- Organização -->
-            <td>
-              <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-                {{ projeto.organizacao.nome }}
-              </a>
-            </td>
-            
-            <!-- Documentos -->
-            <td  style="text-align:left;min-width:18em;"><small>
-
-      <ul style="padding-left: 20px;margin-bottom: 0px;">
-        {% for documento in projeto.documento_set.all %} 
-          {% if documento.documento and documento.link %}
-            <li>
-              {{documento}}
-              <a href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
-              <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
-            </li>
-          {% else %}
-            {% if documento.documento %}
-              <li>
-                <a href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
-              </li>
-            {% endif %}
-            {% if documento.link %}
-              <li>
-                <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
-              </li>
-            {% endif %}
-          {% endif %}
-        {% endfor %}
-      </ul>
-
-            </small></td>
-
-            {% comment %} 
-              <td  style="text-align:center"> <!-- (0, 'contrato com empresa') -->
-                {% if documento.contratos %}
-                  {% for doc in documento.contratos %}
-                    <a class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}"
-                    target="_blank" rel="noopener noreferrer" 
-                    data-toggle="tooltip" data-html="true" animation="true" 
-                    {% if doc.1 or doc.2%}
-                        title="
-                          {% if doc.1 %}anotação: {{doc.1}} <br>{% endif %}
-                          {% if doc.2 %}data: {{doc.2}} {% endif %}
-                        "
-                      {% endif %}
-                    >
-                    &#x2B24;</a>
-                  {% endfor %}
-                {% else %}
-                  {% if projeto.organizacao.sigla == "INOVACAO" %}
-                    <a class="text-info" data-toggle="tooltip" data-html="true" animation="true" title="isento">&#x2B24;</a>
-                  {% elif projeto.semestre > configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre <= configuracao.semestre and projeto.ano > configuracao.ano %}
-                    <a class="text-warning" data-toggle="tooltip" data-html="true" animation="true" title="aguardando">&#x2B24;</a>
-                  {% else %}
-                    <a class="text-danger" data-toggle="tooltip" data-html="true" animation="true" title="pendente">&#x2B24;</a>
-                  {% endif %}
-                {% endif %}
               </td>
-
-              <td  style="text-align:center"> <!-- (1, 'contrato entre empresa e aluno') -->
-                {% for doc in documento.contratos_alunos %}
-                  <a 
-                  {% if doc.0 %}
-                    class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
-                  {% else %}
-                    {% if projeto.semestre > configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre <= configuracao.semestre and projeto.ano > configuracao.ano %}
-                      class="text-warning" 
-                    {% else %}
-                      class="text-danger" 
-                    {% endif %}
-                  {% endif %}
-                  target="_blank" rel="noopener noreferrer"
-                  data-toggle="tooltip" data-html="true" animation="true" 
-                  title="{{doc.1}}">
-                  &#x2B24;</a>
-                {% endfor %}
-              </td>
-
-              <td  style="text-align:center"> <!-- (3, 'relatório final') -->
-                {% if documento.relatorio_final %}
-                  <a class="text-success" href="../..{{MEDIA_URL}}{{documento.relatorio_final}}" target="_blank" rel="noopener noreferrer">&#x2B24;</a>
-                {% else %}
-                  {% if projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
-                    <a class="text-warning" data-toggle="tooltip" data-html="true" animation="true" title="aguardando">&#x2B24;</a>
-                  {% else %}
-                    <a class="text-danger" data-toggle="tooltip" data-html="true" animation="true" title="pendente">&#x2B24;</a>
-                  {% endif %}
-                {% endif %}
-              </td>
-
-              <td  style="text-align:center"> <!-- (4, 'autorização de publicação empresa') -->
-                {% if documento.autorizacao_publicacao_empresa %}
-                  <a class="text-success" href="../..{{MEDIA_URL}}{{documento.autorizacao_publicacao_empresa}}" target="_blank" rel="noopener noreferrer">&#x2B24;</a>
-                {% else %}
-                  {% if projeto.organizacao.sigla == "INOVACAO" %}
-                    <a class="text-info" data-toggle="tooltip" data-html="true" animation="true" title="isento">&#x2B24;</a>
-                  {% elif projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
-                    <a class="text-warning" data-toggle="tooltip" data-html="true" animation="true" title="aguardando">&#x2B24;</a>
-                  {% else %}
-                    <a class="text-danger" data-toggle="tooltip" data-html="true" animation="true" title="pendente">&#x2B24;</a>
-                  {% endif %}
-                {% endif %}
-              </td>
-
-              <td  style="text-align:center"> <!-- (5, 'autorização de publicação  aluno') -->
-                {% for doc in documento.autorizacao_publicacao_aluno %}
-                  <a 
-                  {% if doc.0 %}
-                    class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
-                  {% else %}
-                    {% if projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
-                      class="text-warning" 
-                    {% else %}
-                      class="text-danger" 
-                    {% endif %}
-                  {% endif %}
-                  target="_blank" rel="noopener noreferrer"
-                  data-toggle="tooltip" data-html="true" animation="true" 
-                  title="{{doc.1}}">
-                  &#x2B24;</a>
-                {% endfor %}
-              </td> 
               
-              <td style="text-align:center"> <!-- (14, 'outros') -->
-                {% if documento.outros %}
-                  {% for doc in documento.outros %}
-                    <a class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
+
+              <!-- Estudantes -->
+              <td style="min-width:18em;">
+                <small>
+                <ul class="grupo" style="padding-left: 20px;margin-bottom: 0px;">
+                  {% for alocacao in projeto.alocacao_set.all %}
+                    <li>
+                      <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">
+                        {{alocacao.aluno}}
+                      </a>
+                      <span class="curso">
+                        [{{ alocacao.aluno.get_curso_display }}]
+                      </span>
+                    </li>
+                  {% endfor %}
+                </ul>
+                </small>
+              </td>
+
+              <!-- Orientador -->
+              <td>
+                {% if projeto.orientador %}
+                  <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}">
+                    {{ projeto.orientador }}
+                  </a>
+                {% else %}
+                  Orientador não definido
+                {% endif %}
+
+                {% with coorientadores=projeto.coorientador_set.all %}
+                  {% if coorientadores %}
+                  <span class="coorientadores">
+                  <br>coorientador:
+                    {% for coorientador in coorientadores %}
+                        <a class="imprimir" href="{% url 'professor_detail' coorientador.id %}">
+                          {{coorientador.usuario.get_full_name}} 
+                        </a>
+                        {% comment %} <a class="email" href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a> {% endcomment %}
+                        {% if not forloop.last %}
+                          ;
+                        {% endif %}
+                    {% endfor %}
+                    </span>
+                  {% endif %}
+                {% endwith %}
+            
+
+              </td>
+
+              <!-- Período -->
+              <td style="text-align:center">
+                  {{projeto.ano}}.{{projeto.semestre}}
+              </td>
+
+              <!-- Organização -->
+              <td>
+                <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
+                  {{ projeto.organizacao.nome }}
+                </a>
+              </td>
+              
+              <!-- Documentos -->
+              <td  style="text-align:left;min-width:18em;"><small>
+
+        <ul style="padding-left: 20px;margin-bottom: 0px;">
+          {% for documento in projeto.documento_set.all %} 
+            {% if documento.confidencial %}
+              <span class="confidencial">
+            {% endif %}
+            {% if documento.documento and documento.link %}
+              <li>
+                {{documento}}
+                <a href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+                <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
+              </li>
+            {% else %}
+              {% if documento.documento %}
+                <li>
+                  <a href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
+                </li>
+              {% endif %}
+              {% if documento.link %}
+                <li>
+                  <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
+                </li>
+              {% endif %}
+            {% endif %}
+            {% if documento.confidencial %}
+              </span>
+            {% endif %}
+          {% endfor %}
+        </ul>
+
+              </small></td>
+
+              {% comment %} 
+                <td  style="text-align:center"> <!-- (0, 'contrato com empresa') -->
+                  {% if documento.contratos %}
+                    {% for doc in documento.contratos %}
+                      <a class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}"
+                      target="_blank" rel="noopener noreferrer" 
+                      data-toggle="tooltip" data-html="true" animation="true" 
+                      {% if doc.1 or doc.2%}
+                          title="
+                            {% if doc.1 %}anotação: {{doc.1}} <br>{% endif %}
+                            {% if doc.2 %}data: {{doc.2}} {% endif %}
+                          "
+                        {% endif %}
+                      >
+                      &#x2B24;</a>
+                    {% endfor %}
+                  {% else %}
+                    {% if projeto.organizacao.sigla == "INOVACAO" %}
+                      <a class="text-info" data-toggle="tooltip" data-html="true" animation="true" title="isento">&#x2B24;</a>
+                    {% elif projeto.semestre > configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre <= configuracao.semestre and projeto.ano > configuracao.ano %}
+                      <a class="text-warning" data-toggle="tooltip" data-html="true" animation="true" title="aguardando">&#x2B24;</a>
+                    {% else %}
+                      <a class="text-danger" data-toggle="tooltip" data-html="true" animation="true" title="pendente">&#x2B24;</a>
+                    {% endif %}
+                  {% endif %}
+                </td>
+
+                <td  style="text-align:center"> <!-- (1, 'contrato entre empresa e aluno') -->
+                  {% for doc in documento.contratos_alunos %}
+                    <a 
+                    {% if doc.0 %}
+                      class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
+                    {% else %}
+                      {% if projeto.semestre > configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre <= configuracao.semestre and projeto.ano > configuracao.ano %}
+                        class="text-warning" 
+                      {% else %}
+                        class="text-danger" 
+                      {% endif %}
+                    {% endif %}
                     target="_blank" rel="noopener noreferrer"
                     data-toggle="tooltip" data-html="true" animation="true" 
-                    {% if doc.1 or doc.2%}
-                        title="
-                          {% if doc.1 %}anotação: {{doc.1}} <br>{% endif %}
-                          {% if doc.2 %}data: {{doc.2}} {% endif %}
-                        "
-                      {% endif %}
-                    >
+                    title="{{doc.1}}">
                     &#x2B24;</a>
                   {% endfor %}
-                {% endif %}
-              </td>
-            {% endcomment %}
+                </td>
 
-          </tr>
-        
-      {% endfor %}
-    </table>
-  {% else %}
-    <p>Não existem projetos disponíveis.</p>
-  {% endif %}
+                <td  style="text-align:center"> <!-- (3, 'relatório final') -->
+                  {% if documento.relatorio_final %}
+                    <a class="text-success" href="../..{{MEDIA_URL}}{{documento.relatorio_final}}" target="_blank" rel="noopener noreferrer">&#x2B24;</a>
+                  {% else %}
+                    {% if projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
+                      <a class="text-warning" data-toggle="tooltip" data-html="true" animation="true" title="aguardando">&#x2B24;</a>
+                    {% else %}
+                      <a class="text-danger" data-toggle="tooltip" data-html="true" animation="true" title="pendente">&#x2B24;</a>
+                    {% endif %}
+                  {% endif %}
+                </td>
 
-  <br>
+                <td  style="text-align:center"> <!-- (4, 'autorização de publicação empresa') -->
+                  {% if documento.autorizacao_publicacao_empresa %}
+                    <a class="text-success" href="../..{{MEDIA_URL}}{{documento.autorizacao_publicacao_empresa}}" target="_blank" rel="noopener noreferrer">&#x2B24;</a>
+                  {% else %}
+                    {% if projeto.organizacao.sigla == "INOVACAO" %}
+                      <a class="text-info" data-toggle="tooltip" data-html="true" animation="true" title="isento">&#x2B24;</a>
+                    {% elif projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
+                      <a class="text-warning" data-toggle="tooltip" data-html="true" animation="true" title="aguardando">&#x2B24;</a>
+                    {% else %}
+                      <a class="text-danger" data-toggle="tooltip" data-html="true" animation="true" title="pendente">&#x2B24;</a>
+                    {% endif %}
+                  {% endif %}
+                </td>
+
+                <td  style="text-align:center"> <!-- (5, 'autorização de publicação  aluno') -->
+                  {% for doc in documento.autorizacao_publicacao_aluno %}
+                    <a 
+                    {% if doc.0 %}
+                      class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
+                    {% else %}
+                      {% if projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
+                        class="text-warning" 
+                      {% else %}
+                        class="text-danger" 
+                      {% endif %}
+                    {% endif %}
+                    target="_blank" rel="noopener noreferrer"
+                    data-toggle="tooltip" data-html="true" animation="true" 
+                    title="{{doc.1}}">
+                    &#x2B24;</a>
+                  {% endfor %}
+                </td> 
+                
+                <td style="text-align:center"> <!-- (14, 'outros') -->
+                  {% if documento.outros %}
+                    {% for doc in documento.outros %}
+                      <a class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
+                      target="_blank" rel="noopener noreferrer"
+                      data-toggle="tooltip" data-html="true" animation="true" 
+                      {% if doc.1 or doc.2%}
+                          title="
+                            {% if doc.1 %}anotação: {{doc.1}} <br>{% endif %}
+                            {% if doc.2 %}data: {{doc.2}} {% endif %}
+                          "
+                        {% endif %}
+                      >
+                      &#x2B24;</a>
+                    {% endfor %}
+                  {% endif %}
+                </td>
+              {% endcomment %}
+
+            </tr>
+          
+        {% endfor %}
+      </table>
+
+    </div>
+
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+
+    <script>
+      function carrega_pagina() { };
+      window.onload = carrega_pagina
+    </script>
+
+  </div>
+
+  {% with tabela='Projetos' %}
+    {% include "edicoes_ajax.html" %}
+  {% endwith %}
   
 {% endblock %}

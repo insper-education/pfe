@@ -48,6 +48,16 @@ var buttonCommon = {
 
 var table = $('#{{tabela}}Table').DataTable( {
     dom: "<'row mr-1'<'col-md-6'><'col-md-6 d-flex flex-row-reverse'f>>t<'row'<'col-md-6'i><'col-md-6'p>><'row'<'col-sm'><'col-md'><'col-md text-right'l>>",
+
+    {% comment %} Colocar bancas quando todas as edições {% endcomment %}
+    createdRow: function( row, data, dataIndex){
+        if( $("#filterEdicao option:selected").attr("value") == "todas" ) {
+            if( data[3].slice(-1) ==  '1'){
+                $(row).css('background-color', '#F0F0F0');
+            }
+        }
+    },          
+
     buttons: [ 
         
         $.extend( true, {}, buttonCommon, {
