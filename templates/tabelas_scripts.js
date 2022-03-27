@@ -46,18 +46,44 @@ var buttonCommon = {
     }
 };
 
+{% comment %} Colocar bancas quando todas as edições {% endcomment %}
+var col = -1
+var headerObj = $('#{{tabela}}Table').find('th');
+for (var i = 0; i < headerObj.length; i +=1){
+    if(headerObj.eq(i).text() == "Período") {
+        col = i;
+    }
+}
+
 var table = $('#{{tabela}}Table').DataTable( {
     dom: "<'row mr-1'<'col-md-6'><'col-md-6 d-flex flex-row-reverse'f>>t<'row'<'col-md-6'i><'col-md-6'p>><'row'<'col-sm'><'col-md'><'col-md text-right'l>>",
 
     {% comment %} Colocar bancas quando todas as edições {% endcomment %}
-    createdRow: function( row, data, dataIndex){
-        if( $("#filterEdicao option:selected").attr("value") == "todas" ) {
-            if( data[3].slice(-1) ==  '1'){
-                $(row).css('background-color', '#F0F0F0');
+    createdRow: function( row, data, dataIndex, cells){
+        if( $("#filterEdicao option:selected").attr("value") == "todas" ) {            
+            if( data[col].slice(-1) ==  '1'){
+                $(row).css('background-color', '#F8F8F8');
+                $(row).hover(function(){
+                    $(this).css('background-color', '#E0E0E0');
+                }, function() {
+                    $(this).css('background-color', '#F8F8F8');
+                });
+                // console.log(headerObj);
+                // ._DT_CellIndex.previousSibling.previousSibling.data ou nodeValue
             }
         }
     },          
 
+{% comment %} 
+    $('td').click(function(){
+        var col = $(this).prevAll().length;
+        var headerObj = $(this).parents('table').find('th').eq(col);
+        // A quick test!
+        alert("My cell header is called: " + headerObj.text());
+        }); {% endcomment %}
+
+
+    
     buttons: [ 
         
         $.extend( true, {}, buttonCommon, {
