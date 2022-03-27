@@ -62,14 +62,12 @@ var table = $('#{{tabela}}Table').DataTable( {
     createdRow: function( row, data, dataIndex, cells){
         if( $("#filterEdicao option:selected").attr("value") == "todas" ) {            
             if( data[col].slice(-1) ==  '1'){
-                $(row).css('background-color', '#F8F8F8');
+                $(row).css('background-color', '#F0F0F0');
                 $(row).hover(function(){
                     $(this).css('background-color', '#E0E0E0');
                 }, function() {
                     $(this).css('background-color', '#F8F8F8');
                 });
-                // console.log(headerObj);
-                // ._DT_CellIndex.previousSibling.previousSibling.data ou nodeValue
             }
         }
     },          
