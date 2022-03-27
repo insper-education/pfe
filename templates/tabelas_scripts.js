@@ -62,11 +62,11 @@ var table = $('#{{tabela}}Table').DataTable( {
     createdRow: function( row, data, dataIndex, cells){
         if( $("#filterEdicao option:selected").attr("value") == "todas" ) {            
             if( data[col].slice(-1) ==  '1'){
-                $(row).css('background-color', '#F0F0F0');
+                $(row).css('background-color', '#D0D0D0');
                 $(row).hover(function(){
-                    $(this).css('background-color', '#E0E0E0');
+                    $(this).css('background-color', '#C0C0C0');
                 }, function() {
-                    $(this).css('background-color', '#F8F8F8');
+                    $(this).css('background-color', '#D0D0D0');
                 });
             }
         }
