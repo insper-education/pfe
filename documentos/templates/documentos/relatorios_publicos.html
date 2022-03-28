@@ -9,6 +9,12 @@
 
   {% load static %}
 
+  <style>
+    td {
+      padding: 8px;
+    }
+</style>
+
   <script src="{% static 'js/w3.js' %}"></script>
 
   {% comment %} Para chamar os Tooltips {% endcomment %}
@@ -93,7 +99,12 @@
             </td>
 
             <td>
-                <a href="{{relatorio.link}}" target="_blank" rel="noopener noreferrer">{{relatorio.link}}</a>
+                {% if relatorio.link%}
+                  <a href="{{relatorio.link}}" target="_blank" rel="noopener noreferrer">{{relatorio.link}}</a><br>
+                {% endif %}
+                {% if relatorio.documento%}
+                  <a href="http://{{request.get_host}}{{MEDIA_URL}}{{relatorio.documento}}" target="_blank" rel="noopener noreferrer">http://{{request.get_host}}{{MEDIA_URL}}{{relatorio.documento}}</a>
+                {% endif %}
             </td>
 
           </tr>
