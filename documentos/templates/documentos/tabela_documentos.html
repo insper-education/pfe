@@ -144,7 +144,7 @@
                   <span class="coorientadores">
                   <br>coorientador:
                     {% for coorientador in coorientadores %}
-                        <a class="imprimir" href="{% url 'professor_detail' coorientador.id %}">
+                        <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">
                           {{coorientador.usuario.get_full_name}} 
                         </a>
                         {% comment %} <a class="email" href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a> {% endcomment %}
