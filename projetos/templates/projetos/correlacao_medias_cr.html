@@ -126,7 +126,7 @@
                 {% if estudantes_computacao %}
                     var data_estudantes_computacao = [{% for alocacao in estudantes_computacao %}{% with media=alocacao.get_media %}{% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
                                 {  x: {{media.media|unlocalize}}, y: {{alocacao.aluno.cr|unlocalize}},
-                                   i: {{media.individual|unlocalize}},
+                                {% if media.individual %}i: {{media.individual|unlocalize}},{% endif %}
                                    name: "{{alocacao.aluno.user.get_full_name}}"
                                 }{% if not forloop.last %},{% endif %}{% endif %}{% endwith %}{% endfor %}];
                     if (data_estudantes_computacao.length > 0) {
@@ -150,7 +150,7 @@
                 {% if estudantes_mecanica %}
                     var data_estudantes_mecanica = [{% for alocacao in estudantes_mecanica %}{% with media=alocacao.get_media %}{% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
                                 {  x: {{media.media|unlocalize}}, y: {{alocacao.aluno.cr|unlocalize}},
-                                   i: {{media.individual|unlocalize}},
+                                   {% if media.individual %}i: {{media.individual|unlocalize}},{% endif %}
                                    name: "{{alocacao.aluno.user.get_full_name}}"
                                 }{% if not forloop.last %},{% endif %}{% endif %}{% endwith %}{% endfor %}];
                     if (data_estudantes_mecanica.length > 0) {
@@ -174,7 +174,7 @@
                 {% if estudantes_mecatronica %}
                     var data_estudantes_mecatronica = [{% for alocacao in estudantes_mecatronica %}{% with media=alocacao.get_media %}{% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
                                 {  x: {{media.media|unlocalize}}, y: {{alocacao.aluno.cr|unlocalize}},
-                                   i: {{media.individual|unlocalize}},
+                                {% if media.individual %}i: {{media.individual|unlocalize}},{% endif %}
                                    name: "{{alocacao.aluno.user.get_full_name}}"
                                 }{% if not forloop.last %},{% endif %}{% endif %}{% endwith %}{% endfor %}];
                     if (data_estudantes_mecatronica.length > 0) {
