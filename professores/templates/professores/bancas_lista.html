@@ -89,11 +89,12 @@
       <label><input onchange="($(this).prop('checked') ? $('.local').show() : $('.local').hide())" type="checkbox" checked /> local</label>&nbsp;&nbsp;&nbsp;
       <label><input onchange="($(this).prop('checked') ? $('.link').show() : $('.link').hide())" type="checkbox" checked /> video-conferência</label>&nbsp;&nbsp;&nbsp;
       <label><input onchange="($(this).prop('checked') ? $('.grupo').show() : $('.grupo').hide())" type="checkbox" checked /> grupo</label>&nbsp;&nbsp;&nbsp;
-      <label><input onchange="($(this).prop('checked') ? $('.orientador').show() : $('.orientador').hide())" type="checkbox" checked /> orientador</label>&nbsp;&nbsp;&nbsp;
+      <label><input onchange="($(this).prop('checked') ? $('.orientacao').show() : $('.orientacao').hide())" type="checkbox" checked /> orientação</label>&nbsp;&nbsp;&nbsp;
       <label><input onchange="($(this).prop('checked') ? $('.curso').show() : $('.curso').hide())" type="checkbox" checked /> curso</label>&nbsp;&nbsp;&nbsp;
       <label><input onchange="($(this).prop('checked') ? $('.banca').show() : $('.banca').hide())" type="checkbox" checked /> avaliadores</label>&nbsp;&nbsp;&nbsp;
       <label><input onchange="($(this).prop('checked') ? $('.avaliacao').show() : $('.avaliacao').hide())" type="checkbox" checked /> link avaliação</label>&nbsp;&nbsp;&nbsp;
       <label><input onchange="($(this).prop('checked') ? $('.agendamento').show() : $('.agendamento').hide())" type="checkbox" checked /> agendamento</label>&nbsp;&nbsp;&nbsp;
+      <label><input onchange="($(this).prop('checked') ? $('.email').show() : $('.email').hide())" type="checkbox" checked /> e-mail</label>&nbsp;&nbsp;&nbsp;
       <label><input onchange="($(this).prop('checked') ? $('.editar').show() : $('.editar').hide())" type="checkbox" checked /> editar</label>&nbsp;&nbsp;&nbsp;
       <label><input onchange="($(this).prop('checked') ? $('.sem_agendamento').show() : $('.sem_agendamento').hide())" type="checkbox" checked /> sem agendamento</label>&nbsp;&nbsp;&nbsp;
     </div>
@@ -159,7 +160,7 @@
             {% endif %}
 
             {% if banca.projeto.orientador %}
-              <div class="orientador" style="margin-top: 8px;">
+              <div class="orientacao" style="margin-top: 8px;">
               <b>Orientador:</b> 
                 <a class="imprimir" href="{% url 'professor_detail' banca.projeto.orientador.id %}">
                   {{banca.projeto.orientador.user.get_full_name}} 
@@ -170,7 +171,7 @@
 
             {% with coorientadores=banca.projeto.coorientador_set.all %}
             {% if coorientadores %}
-            <div class="coorientadores" style="margin-top: 8px;">
+            <div class="orientacao" style="margin-top: 8px;">
               <b>Coorientação:</b>
               <ul style="margin-bottom:0px;">
                 {% for coorientador in coorientadores %}
