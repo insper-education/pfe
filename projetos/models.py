@@ -1279,15 +1279,9 @@ class Avaliacao2(models.Model):
         return "Avaliação Não Definida"
 
     @classmethod
-    def create(cls, projeto):
+    def create(cls, projeto=None, alocacao=None):
         """Cria um objeto (entrada) em Avaliação."""
-        avaliacao = cls(projeto=projeto)
-        return avaliacao
-
-    @classmethod
-    def create(cls, alocacao):
-        """Cria um objeto (entrada) em Avaliação."""
-        avaliacao = cls(alocacao=alocacao)
+        avaliacao = cls(projeto=projeto, alocacao=alocacao)
         return avaliacao
 
     class Meta:

@@ -541,7 +541,7 @@ def banca_avaliar(request, slug):
                         message += "{0}".format(julg.objetivo.rubrica_final_I)
                     message += "</td>"
 
-                    if (not julg.na) and converte_letra(julg.nota) == "D":
+                    if (not julg.na) and (converte_letra(julg.nota) == "D-" or converte_letra(julg.nota) == "D" or converte_letra(julg.nota) == "D+"):
                         message += "<td style='border: 2px solid black;"
                         message += " background-color: #F4F4F4;'>"
                     else:

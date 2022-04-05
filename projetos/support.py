@@ -29,8 +29,12 @@ def converte_conceito(conceito):
         return 6
     elif conceito in ("C", "C "):
         return 5
-    elif conceito in ("D", "D "):
+    elif conceito in ("D+", "D+ "):
         return 4
+    elif conceito in ("D", "D "):
+        return 3
+    elif conceito in ("D-", "D- "):
+        return 2
     return 0
 
 
