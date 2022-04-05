@@ -458,7 +458,7 @@ def banca_avaliar(request, slug):
             message += "<br>\n<br>\n"
 
             if julgamento_observacoes:
-                message += "<b>Observações:</b>\n"
+                message += "<b>Observações (somente enviada para orientador):</b>\n"
                 message += "<p style='border:1px; border-style:solid; padding: 0.3em; margin: 0;'>"
                 message += html.escape(julgamento_observacoes.observacoes).replace('\n', '<br>\n')
                 message += "</p>"
