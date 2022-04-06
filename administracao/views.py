@@ -466,6 +466,8 @@ def cadastrar_usuario(request):
 
     context = {
         "organizacoes": Organizacao.objects.all().order_by("nome"),
+        "linkedin_length": PFEUser._meta.get_field('linkedin').max_length,
+        "email_length": PFEUser._meta.get_field('email').max_length,
     }
 
     # Passado o nome da organização do parceiro a ser cadastrado
@@ -521,6 +523,8 @@ def edita_usuario(request, primarykey):
     context = {
         "usuario": user,
         "organizacoes": Organizacao.objects.all(),
+        "linkedin_length": PFEUser._meta.get_field('linkedin').max_length,
+        "email_length": PFEUser._meta.get_field('email').max_length,
     }
 
     if user.tipo_de_usuario == 1:

@@ -46,7 +46,7 @@ class PFEUser(AbstractUser):
         models.PositiveSmallIntegerField(choices=TIPO_DE_USUARIO_CHOICES, default=1,
                                          help_text='cada usuário tem um perfil único')
 
-    linkedin = models.URLField("LinkedIn", max_length=250, null=True, blank=True,
+    linkedin = models.URLField("LinkedIn", max_length=256, null=True, blank=True,
                                help_text='LinkedIn do usuário')
 
     membro_comite = \

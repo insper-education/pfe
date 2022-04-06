@@ -39,14 +39,15 @@
       pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')" required><br>
     <br><br>
 
-    <label for="email">e-mail:</label> <input type="email" size="73" maxlength="73" id="email" name="email" value="{{usuario.email}}" oninvalid="this.setCustomValidity('Digite um e-mail válido')" oninput="this.setCustomValidity('')" required><br><br>
+    <label for="email">e-mail:</label> <input type="email" size="73" maxlength="{{email_length|add:-2}}" id="email" name="email" value="{{usuario.email}}" oninvalid="this.setCustomValidity('Digite um e-mail válido')" oninput="this.setCustomValidity('')" required><br><br>
 
     <input type="radio" name="genero" id="masculino" value="masculino" {% if usuario.genero == 'M'%}checked{% endif %}> <label for="masculino"> Masculino</label>&nbsp;&nbsp;&nbsp;
     <input type="radio" name="genero" id="feminino" value="feminino" {% if usuario.genero == 'F'%}checked{% endif %}> <label for="feminino"> Feminino</label>
 
     <br><br>
 
-    <label for="linkedin">LinkedIn:</label> <input type="text" size="73" maxlength="73" id="linkedin" name="linkedin" value="{% if usuario.linkedin %}{{usuario.linkedin}}{% endif %}" placeholder="https://www.linkedin.com/"><br>
+    
+    <label for="linkedin">LinkedIn:</label> <input type="text" size="73" maxlength="{{linkedin_length|add:-2}}" id="linkedin" name="linkedin" value="{% if usuario.linkedin %}{{usuario.linkedin}}{% endif %}" placeholder="https://www.linkedin.com/"><br>
 
     <br><label for="lingua">Língua</label>:
     <select name="lingua" id="lingua" title="Linguagem">
