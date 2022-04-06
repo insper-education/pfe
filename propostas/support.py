@@ -307,6 +307,7 @@ def envia_proposta(proposta, enviar=True):
     message = "<h3>Proposta de Projeto para o PFE {0}.{1}</h3>\n\n".\
         format(proposta.ano, proposta.semestre)
 
+    message += "A sua proposta de Projeto Final de Engenharia foi registrada.\n"
     message += "Para editar essa proposta acesse:</b>\n <a href='{0}'>{0}</a>\n\n".\
         format(settings.SERVER+proposta.get_absolute_url())
 
