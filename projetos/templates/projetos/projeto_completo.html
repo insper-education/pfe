@@ -350,26 +350,30 @@
     </small>
   </h3>
   {% for documento in projeto.documento_set.all %}
-    <li>
-      {% if documento.documento and documento.link %}
-          {{documento}}
-          <a href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
-          <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
-      {% else %}
-        {% if documento.documento %}
-          <a href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
-        {% endif %}
-        {% if documento.link %}
-          <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
-        {% endif %}
+    {% if documento.confidencial %}
+      <i data-toggle="tooltip" data-html="true" animation="true" title="confidencial" class="fa fa-lock"></i>
+    {% else %}
+      <i data-toggle="tooltip" data-html="true" animation="true" title="público" class="fa fa-unlock"></i>
+    {% endif %}
+    {% if documento.documento and documento.link %}
+        {{documento}}
+        <a href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+        <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
+    {% else %}
+      {% if documento.documento %}
+        <a href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
       {% endif %}
-      {% if documento.data %}
-                : {{ documento.data }}
+      {% if documento.link %}
+        <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
       {% endif %}
-      {% if documento.anotacao %}
-                [Obs: {{ documento.anotacao }} ]
-      {% endif %}
-    </li>
+    {% endif %}
+    {% if documento.data %}
+              : {{ documento.data }}
+    {% endif %}
+    {% if documento.anotacao %}
+              [Obs: {{ documento.anotacao }} ]
+    {% endif %}
+    <br>
   {% empty %}
     Ainda não existem documentos para esse projeto.
   {% endfor %}

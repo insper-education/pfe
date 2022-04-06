@@ -26,10 +26,10 @@
     <label for="data">Data: </label> <input id="data" class="form-control" type="date" name="data" value="{{data|date:'Y-m-d'}}"><br>
     
     <label for="arquivo">Documento:</label> 
-    <input id="arquivo" type="file" name="arquivo" accept="text/plain, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation, image/*, video/mp4, video/x-m4v, video/webm, video/x-matroska, video/*, .mkv">
+    <input required id="arquivo" type="file" name="arquivo" accept="text/plain, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation, image/*, video/mp4, video/x-m4v, video/webm, video/x-matroska, video/*, .mkv">
     <br><br>
     
-    <label for="linkedin">Link:</label> <input type="text" size="73" maxlength="73" id="link" name="link" placeholder="https://"><br>
+    <label for="link">Link:</label> <input required type="text" size="73" maxlength="73" id="link" name="link" placeholder="https://"><br>
     <br>
 
     <label for="projeto">Projeto:</label>
@@ -51,12 +51,45 @@
       {% endfor %}
     </select>
 
+    <br>
+    <input type="checkbox" id="confidencial" name="confidencial" value="true" checked>
+    <label for="confidencial"> Confidencial</label><br>
+
   </div>
 
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
     <button id="atualiza" type="submit" class="btn btn-primary">Enviar</button>
   </div>
+
+  <script>
+    $('#tipo_de_documento').change(function() {
+      if($(this).val()==25) { //  (25, 'Relatório Publicado'),
+        $('#confidencial').prop("checked", false);
+      } else {
+        $('#confidencial').prop("checked", true);
+      }
+    });
+
+    // Pelo menos um campo deve ser selecionado
+    $('#arquivo').change(function() {
+      if($(this).val()) {
+        $('#link').prop('required', false);
+      } else {
+        $('#link').prop('required', true);
+      }
+    });
+    //$inputs.not(this).prop('required', !$(this).val().length);
+
+    $('#link').on('input',function(e){
+      if($(this).val()) {
+        $('#arquivo').prop('required', false);
+      } else {
+        $('#arquivo').prop('required', true);
+      }
+    });
+
+  </script>
 
 </form>
 

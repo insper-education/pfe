@@ -94,9 +94,8 @@ def anotacao(request, organizacao_id, anotacao_id=None):  # acertar isso para pk
                   context=context)
 
 
-
+# Adiciona um novo documento na base de dados
 def cria_documento(request, organizacao):
-
 
     projeto = None
     projeto_id = request.POST.get("projeto", "")
@@ -130,6 +129,8 @@ def cria_documento(request, organizacao):
     if 'arquivo' in request.FILES and len(request.FILES['arquivo'].name) > max_length - 1:
             return "<h1>Erro: Nome do arquivo maior que " + str(max_length) + " caracteres.</h1>"
 
+    confidencial = "confidencial" in request.POST and request.POST["confidencial"] == "true"
+
     # Criando documento na base de dados
     documento = Documento.create()
 
@@ -138,11 +139,14 @@ def cria_documento(request, organizacao):
     documento.tipo_de_documento = tipo_de_documento
     documento.data = data
     documento.link = link
+    documento.confidencial = confidencial
 
-    if tipo_de_documento == 25:  #(25, 'Relatório Publicado'),
-        documento.confidencial = False
-    else:
-        documento.confidencial = True
+    print(confidencial)
+
+    # if tipo_de_documento == 25:  #(25, 'Relatório Publicado'),
+    #     documento.confidencial = False
+    # else:
+    #     documento.confidencial = True
 
     if 'arquivo' in request.FILES:
         arquivo = simple_upload(request.FILES['arquivo'],
