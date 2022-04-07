@@ -136,7 +136,7 @@
     <hr>
 
     {% comment %} Relato Quinzenal {% endcomment %}
-    <a href="{% url 'relato_quinzenal' %}">
+    <a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'relato_quinzenal' %}" {% endif %} >
         <h5>Formulário de Relato Quinzenal</h5>
     </a>
 
