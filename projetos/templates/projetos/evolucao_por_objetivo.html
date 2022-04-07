@@ -84,8 +84,8 @@
             type: 'bar',
             data: {
                 labels: [
-                {% for edicao in edicoes %}
-                    "{{edicao}}",
+                {% for edicao, alocacoes in estudantes %}
+                    ["{{edicao}}", "({{alocacoes}} estudantes)"],
                 {% endfor %}
               ],
               datasets: [{

@@ -1640,6 +1640,8 @@ def evolucao_por_objetivo(request):
         id_objetivo = request.POST['objetivo']
         objetivo = ObjetivosDeAprendizagem.objects.get(id=id_objetivo)
 
+        alocacoes = []
+
         for edicao in edicoes:
             periodo = edicao.split('.')
             semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
@@ -1656,6 +1658,16 @@ def evolucao_por_objetivo(request):
                 high.append(0)
             # medias.append({"objetivo": objetivo.titulo, "media": notas, "cor": cores[count]})
 
+            alocacoes_tmp = Alocacao.objects.filter(projeto__ano=periodo[0],
+                                                    projeto__semestre=periodo[1])
+
+            if curso != 'T':
+                alocacoes_tmp = alocacoes_tmp.filter(aluno__curso=curso)
+
+            alocacoes.append(alocacoes_tmp.count())
+
+        estudantes = zip(edicoes, alocacoes)
+
         context = {
             "low": low,
             "mid": mid,
@@ -1666,6 +1678,7 @@ def evolucao_por_objetivo(request):
             'edicoes': edicoes,
             "objetivo": objetivo,
             "objetivos": objetivos,
+            "estudantes": estudantes,
         }
 
     else:
