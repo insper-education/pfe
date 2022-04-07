@@ -401,7 +401,7 @@ def relato_quinzenal(request):
         if not alocacao:
             context = {
                 "prazo": None,
-                "mensagem": "Você não está alocao em um projeto esse semestre.",
+                "mensagem": "Você não está alocado em um projeto esse semestre.",
                 "relato": None,
                 
             }
