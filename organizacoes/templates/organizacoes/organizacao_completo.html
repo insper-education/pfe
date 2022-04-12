@@ -10,6 +10,7 @@
   {% load static %}
 
   {% load format_cnpj %}
+  {% load order_by %}
 
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
@@ -52,7 +53,7 @@
   <br><strong>contato(s):</strong>
   <small><a href="{% url 'cadastrar_usuario' %}?tipo=parceiro&organizacao={{organizacao.id}}">&#10133;</a></small>
   <br>
-  {% for parceiro in organizacao.parceiro_set.all %}
+  {% for parceiro in organizacao.parceiro_set.all|order_by:"-principal_contato" %}
     {% if parceiro.user.is_active %}
     <li style="margin-bottom: 6px;" >
       <a href="{% url 'parceiro_detail' parceiro.id %}">
@@ -85,7 +86,7 @@
     {% endif %}
   {% endfor %}
 
-  {% for parceiro in organizacao.parceiro_set.all %}
+  {% for parceiro in organizacao.parceiro_set.all|dictsort:"principal_contato" %}
     {% if not parceiro.user.is_active %}
     <li style="color: lightgrey;">
       <a href="{% url 'parceiro_detail' parceiro.id %}" style="color: LightBlue;">
