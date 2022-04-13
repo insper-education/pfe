@@ -1026,7 +1026,7 @@ def parceiro_detail(request, primarykey):
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", login_url='/')
-def contas_senhas(request, anosemestre):
+def contas_senhas(request, anosemestre=None):
     """Envia conta e senha para todos os estudantes que estão no semestre."""
     user = get_object_or_404(PFEUser, pk=request.user.pk)
 
@@ -1041,17 +1041,22 @@ def contas_senhas(request, anosemestre):
 
     configuracao = get_object_or_404(Configuracao)
 
-    ano = int(anosemestre.split(".")[0])
-    semestre = int(anosemestre.split(".")[1])
-
-    estudantes = Aluno.objects.filter(trancado=False)\
-        .filter(anoPFE=ano, semestrePFE=semestre)\
-        .filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])\
-        .order_by(Lower("user__first_name"), Lower("user__last_name"))
+    if anosemestre:
+        ano = int(anosemestre.split(".")[0])
+        semestre = int(anosemestre.split(".")[1])
+        edicoes, _, _ = get_edicoes(Aluno)
+    else:
+        edicoes, ano, semestre = get_edicoes(Aluno)
 
     if request.method == 'POST':
+
+        estudantes = request.POST.getlist('estudante', None)
+
         mensagem = "Enviado para:<br>\n<br>\n"
-        for estudante in estudantes:
+        for estudante_id in estudantes:
+
+            estudante = Aluno.objects.get(id=estudante_id)
+
             mensagem += estudante.user.get_full_name() + " " +\
                         "&lt;" + estudante.user.email + "&gt;<br>\n"
 
@@ -1106,11 +1111,15 @@ def contas_senhas(request, anosemestre):
         }
         return render(request, 'generic.html', context=context)
 
+    estudantes = Aluno.objects.filter(trancado=False)\
+        .filter(anoPFE=ano, semestrePFE=semestre)\
+        .filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])\
+        .order_by(Lower("user__first_name"), Lower("user__last_name"))
+
     context = {
         'estudantes': estudantes,
-        'ano': ano,
-        'semestre': semestre,
-        'loop_anos': range(2018, configuracao.ano+1),
+        'edicao': str(ano)+"."+str(semestre),
+        'edicoes': edicoes,
     }
 
     return render(request, 'users/contas_senhas.html', context=context)

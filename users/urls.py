@@ -28,6 +28,10 @@ urlpatterns = [
          views.estudante_detail,
          name='estudante_detail'),
 
+    path('contas_senhas/',
+         views.contas_senhas,
+         name='contas_senhas'),
+
     path('contas_senhas/<str:anosemestre>',
          views.contas_senhas,
          name='contas_senhas'),

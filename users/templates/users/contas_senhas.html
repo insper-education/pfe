@@ -14,6 +14,12 @@
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
 
+  <style>
+    td {
+      padding: 4px;
+    }
+    </style>
+
 {% endblock %}
 
 {% block content %}
@@ -22,9 +28,8 @@
 
   <label for="filter">Edição:</label>
   <select onchange="location = this.options[this.selectedIndex].value;">
-    {% for loop in loop_anos %}
-      <option value="{{loop}}.2" {% if ano == loop and semestre == 2 %}selected{% endif %}>{{loop}}.2</option>
-      <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
+    {% for loop in edicoes %}
+      <option value="{{loop}}" {% if edicao == loop %}selected{% endif %}>{{loop}}</option>
     {% endfor %}
   </select>
   <br>
@@ -35,11 +40,15 @@
 
       <table id="EstudantesTable">
         <tr>
+            <th class="text-center">&nbsp;<input type="checkbox" id="todos" checked>&nbsp;</th>
             <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome do Aluno</th>
             <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">e-mail</th>
         </tr>
         {% for estudante in estudantes %} 
         <tr class="item">
+          <td class="text-center">
+            <input type="checkbox" id="estudante" name="estudante" value="{{estudante.id}}" checked>
+          </td>
           <td>
             <a href="{% url 'estudante_detail' estudante.id %}">
               {{estudante.user.get_full_name}}
@@ -65,5 +74,11 @@
   {% else %}
     <p>Não existem estudantes nesse critério.</p>
   {% endif %}
+
+  <script>
+    $("#todos").change(function () {
+      $("input:checkbox").prop('checked', $(this).prop("checked"));
+    });
+  </script>
 
 {% endblock %}
