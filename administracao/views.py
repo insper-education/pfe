@@ -328,6 +328,9 @@ def registro_usuario(request, user=None):
 
     usuario.save()
 
+    # Agora que o usuario foi criado, criar o tipo para não gerar inconsistências
+    mensagem = ""
+
     if usuario.tipo_de_usuario == 1:  # estudante
 
         if not hasattr(user, 'aluno'):
@@ -345,18 +348,22 @@ def registro_usuario(request, user=None):
         elif curso == "mecatronica":
             estudante.curso = 'X'   # ('X', 'Mecatrônica'),
         else:
-            return ("Algum erro não identificado.", 401)
+            estudante.curso = None
+            mensagem += "Algum erro não identificado.<br>"
 
         try:
             estudante.anoPFE = int(request.POST['ano'])
             estudante.semestrePFE = int(request.POST['semestre'])
         except (ValueError, OverflowError, MultiValueDictKeyError):
-            return ("Erro na identificação do ano e semestre.", 401)
+            estudante.anoPFE = None
+            estudante.semestrePFE = None
+            mensagem += "Erro na identificação do ano e semestre.<br>"
 
         try:
             estudante.cr = float(request.POST['cr'])
         except (ValueError, OverflowError, MultiValueDictKeyError):
-            return ("Erro na inclusão do CR.", 401)
+            estudante.cr = 0
+            mensagem += "Erro na inclusão do CR.<br>"
 
         estudante.trancado = 'estudante_trancado' in request.POST
 
@@ -375,7 +382,8 @@ def registro_usuario(request, user=None):
         elif dedicacao == "tp":  # ("TP", 'Tempo Parcial'),
             professor.dedicacao = 'TP'
         else:
-            return ("Algum erro não identificado.", 401)
+            professor.dedicacao = None
+            mensagem += "Algum erro não identificado.<br>"
 
         professor.areas = request.POST.get('areas', None)
         professor.website = request.POST.get('website', None)
@@ -421,7 +429,8 @@ def registro_usuario(request, user=None):
             tmp_pk = int(request.POST['organizacao'])
             parceiro.organizacao = Organizacao.objects.get(pk=tmp_pk)
         except (ValueError, OverflowError, Organizacao.DoesNotExist):
-            return ("Organização não encontrada.", 401)
+            parceiro.organizacao = None
+            mensagem += "Organização não encontrada.<br>"
 
         parceiro.principal_contato = 'principal_contato' in request.POST
 
@@ -435,10 +444,13 @@ def registro_usuario(request, user=None):
         usuario.user_permissions.add(permission)
         usuario.save()
 
-    if user:
+    if mensagem != "":
+        return (mensagem, 401)
+    elif user:
         return ("Usuário atualizado na base de dados.", 200)
-
-    return ("Usuário inserido na base de dados.", 200)
+    else:
+        return ("Usuário inserido na base de dados.", 200)
+    
 
 @login_required
 @transaction.atomic
