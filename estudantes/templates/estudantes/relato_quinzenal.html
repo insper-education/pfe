@@ -43,15 +43,19 @@ textarea {
 
   </form>
 
-  <p>&nbsp;</p>
-  <hr>
-  <p>&nbsp;</p>
+  {% if relatos %}
 
-  <h5>Relatos Anteriores:</h5><br>
-  {% for item in relatos %}
-    <b>{{item.momento}}</b><br>
-    <textarea rows="18" cols="160" disabled>{{item.texto}}</textarea><br><br>
-  {% endfor %}
+    <p>&nbsp;</p>
+    <hr>
+    <p>&nbsp;</p>
+
+    <h5>Relatos Anteriores:</h5><br>
+    {% for item in relatos %}
+      <b>{{item.momento}}</b><br>
+      <textarea rows="18" cols="160" disabled>{{item.texto}}</textarea><br><br>
+    {% endfor %}
+
+  {% endif %}
 
   <p>&nbsp;</p>
   <p>&nbsp;</p>
