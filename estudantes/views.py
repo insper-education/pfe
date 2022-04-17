@@ -378,6 +378,11 @@ def relato_quinzenal(request):
     # (20, 'Relato quinzenal (Individual)', 'aquamarine'),
     prazo = Evento.objects.filter(tipo_de_evento=20, endDate__gte=hoje).order_by('endDate').first()
 
+    context = {
+        "prazo": prazo,
+        "max_length": Relato._meta.get_field('texto').max_length,
+    }
+
     if user.tipo_de_usuario == 3:
         mensagem = "Você não está cadastrado como estudante!"
         context = {
@@ -403,7 +408,6 @@ def relato_quinzenal(request):
                 "prazo": None,
                 "mensagem": "Você não está alocado em um projeto esse semestre.",
                 "relato": None,
-                
             }
             return render(request, 'estudantes/relato_quinzenal.html', context)
 
@@ -429,19 +433,14 @@ def relato_quinzenal(request):
         if relato:
             texto = relato.texto
 
-        context = {
-            "prazo": prazo,
-            "alocacao": alocacao,
-            "relato": texto,
-            "max_length": Relato._meta.get_field('texto').max_length,
-        }
+        relatos = Relato.objects.filter(alocacao=alocacao).order_by('momento')
+        context["relatos"] = relatos
+        context["alocacao"] = alocacao
+        context["relato"] = texto
+
     else:  # Supostamente professores
-        context = {
-            "prazo": prazo,
-            "mensagem": "Você não está cadastrado como estudante.",
-            "relato": None,
-            "max_length": Relato._meta.get_field('texto').max_length,
-        }
+        context["mensagem"] = "Você não está cadastrado como estudante."
+        context["relato"] = None
 
     return render(request, 'estudantes/relato_quinzenal.html', context)
 

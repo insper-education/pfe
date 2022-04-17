@@ -69,7 +69,7 @@
     {% comment %} Estudante {% endcomment %}
     <div style="display: block; padding-left: 32px" class="row" data-type="estudante">
 
-      <label for="matricula">Matrícula: </label> <input type="text" size="8" maxlength="8" id="matricula" name="matricula" value="{{usuario.aluno.matricula}}"><br>
+      <label for="matricula">Matrícula: </label> <input type="text" size="8" maxlength="8" id="matricula" name="matricula" {% if usuario and usuario.aluno and usuario.aluno.matricula %}value="{{usuario.aluno.matricula}}"{% endif %}><br>
  
       Curso: 
       <input type="radio" name="curso" id="computacao" value="computacao" {% if usuario.aluno.curso == 'C' %}checked{% endif %} required> <label for="computacao"> Computação</label>&nbsp;&nbsp;&nbsp;
