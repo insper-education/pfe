@@ -192,19 +192,23 @@ def distribuicao_areas(request):
         for aluno in alunos:
             if AreaDeInteresse.objects.filter(usuario=aluno.user).count() > 0:
                 total_preenchido += 1
+        areaspfe, outras = get_areas_estudantes(alunos)
         context = {
             'total': alunos.count(),
             'total_preenchido': total_preenchido,
-            'areaspfe': get_areas_estudantes(alunos),
+            'areaspfe': areaspfe,
+            'outras': outras,
         }
 
     elif tipo == "propostas":
         propostas = Proposta.objects.all()
         if not todas:
             propostas = propostas.filter(ano=ano, semestre=semestre)
+        areaspfe, outras = get_areas_propostas(propostas)
         context = {
             'total': propostas.count(),
-            'areaspfe': get_areas_propostas(propostas),
+            'areaspfe': areaspfe,
+            'outras': outras,
         }
 
     elif tipo == "projetos":
@@ -217,9 +221,12 @@ def distribuicao_areas(request):
         propostas = [p.proposta.id for p in projetos]
         propostas_projetos = Proposta.objects.filter(id__in=propostas)
 
+        areaspfe, outras = get_areas_propostas(propostas_projetos)
+
         context = {
             'total': propostas_projetos.count(),
-            'areaspfe': get_areas_propostas(propostas_projetos),
+            'areaspfe': areaspfe,
+            'outras': outras,
         }
 
     else:

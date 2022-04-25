@@ -105,7 +105,13 @@
                 </li>
             {% endfor %}
         </ul>
-        
+
+        <b>Outras:</b> 
+        {% for outra in outras %}
+            {{outra.outras}}{% if not forloop.last %},{% endif %}
+        {% endfor %}
+
+        <br><br>
         {% if tipo == "estudantes" %}
             Total de Estudantes: {{total}} <small>(total de estudantes que preencheram algum campo: {{total_preenchido}})</small><br>
         {% elif tipo == "propostas" %}

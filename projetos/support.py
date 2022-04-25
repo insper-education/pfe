@@ -97,7 +97,9 @@ def get_areas_estudantes(alunos):
         count = AreaDeInteresse.objects.filter(usuario__in=usuarios, area=area).count()
         areaspfe[area.titulo] = (count, area.descricao)
 
-    return areaspfe
+    outras = AreaDeInteresse.objects.filter(usuario__in=usuarios, area__isnull=True)
+
+    return areaspfe, outras
 
 
 def get_areas_propostas(propostas):
@@ -109,7 +111,9 @@ def get_areas_propostas(propostas):
         count = AreaDeInteresse.objects.filter(proposta__in=propostas, area=area).count()
         areaspfe[area.titulo] = (count, area.descricao)
 
-    return areaspfe
+    outras = AreaDeInteresse.objects.filter(proposta__in=propostas, area__isnull=True)
+
+    return areaspfe, outras
 
 
 # ISSO TEM DE VIRAR UM PARÂMETRO DE INTERFACE NO FUTURO ####
