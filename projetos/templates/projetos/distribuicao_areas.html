@@ -100,8 +100,9 @@
                     {{key}}<br>
                 </span>
                 <li class="past" title="" style="margin-top:0px; margin-bottom: 12px;">
-                    <span class="bar" data-number="{{value.0}}"></span>
-                    <span class="number">{{value.0}}</span>
+                    <span class="bar" data-number="{{value.0.count}}"></span>
+                    <span data-toggle="tooltip" data-html="true" animation="true" title="{% for user in value.0 %}{{user.usuario.get_full_name}}&amp;lt;{{user.usuario.email}}&amp;gt;&lt;br&gt;{% endfor %}"
+                    class="number">{{value.0.count}}</span>
                 </li>
             {% endfor %}
         </ul>

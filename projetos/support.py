@@ -94,8 +94,8 @@ def get_areas_estudantes(alunos):
 
     todas_areas = Area.objects.filter(ativa=True)
     for area in todas_areas:
-        count = AreaDeInteresse.objects.filter(usuario__in=usuarios, area=area).count()
-        areaspfe[area.titulo] = (count, area.descricao)
+        areas = AreaDeInteresse.objects.filter(usuario__in=usuarios, area=area)
+        areaspfe[area.titulo] = (areas, area.descricao)
 
     outras = AreaDeInteresse.objects.filter(usuario__in=usuarios, area__isnull=True)
 
@@ -108,8 +108,8 @@ def get_areas_propostas(propostas):
 
     areas = Area.objects.filter(ativa=True)
     for area in areas:
-        count = AreaDeInteresse.objects.filter(proposta__in=propostas, area=area).count()
-        areaspfe[area.titulo] = (count, area.descricao)
+        areas = AreaDeInteresse.objects.filter(proposta__in=propostas, area=area)
+        areaspfe[area.titulo] = (areas, area.descricao)
 
     outras = AreaDeInteresse.objects.filter(proposta__in=propostas, area__isnull=True)
 
