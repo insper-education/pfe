@@ -151,6 +151,7 @@
                 },
                 success: function(response){
                     $("div.2areas2").replaceWith($("div.2areas2",response));
+                    {% include "tooltips.js" %}
                     bar();
                     $("#spinner").css("visibility", "hidden");
                 },
