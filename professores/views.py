@@ -116,8 +116,7 @@ def bancas_criar(request):
 
     ano = configuracao.ano
     semestre = configuracao.semestre
-    projetos = Projeto.objects.filter(ano=ano, semestre=semestre)\
-        .exclude(orientador=None)
+    projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
 
     professores, _ = professores_membros_bancas()
     falconis, _ = falconi_membros_banca()

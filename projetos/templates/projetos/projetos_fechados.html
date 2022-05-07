@@ -103,23 +103,25 @@
         {% if projeto.avancado %}
           <br><br>
         {% endif %}
-        <span class="logo">
-          {% if projeto.organizacao.logotipo %}
-            <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-              <img class="logotipo_left" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}">
-            </a>
-          {% endif %}
-          {% for conexao in cooperacoes %}
-            {% if conexao.parceiro and conexao.parceiro.organizacao and conexao.parceiro.organizacao.logotipo %}
-              &nbsp;
-              <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
-                <img class="logotipo_left" src="{{ conexao.parceiro.organizacao.logotipo.url }}" alt="{{ conexao.parceiro.organizacao.sigla }}">
+        {% if projeto.organizacao %}
+          <span class="logo">
+            {% if projeto.organizacao.logotipo %}
+              <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
+                <img class="logotipo_left" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}">
               </a>
             {% endif %}
-          {% endfor %}
-          <br>
-        </span>
-        
+            {% for conexao in cooperacoes %}
+              {% if conexao.parceiro and conexao.parceiro.organizacao and conexao.parceiro.organizacao.logotipo %}
+                &nbsp;
+                <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
+                  <img class="logotipo_left" src="{{ conexao.parceiro.organizacao.logotipo.url }}" alt="{{ conexao.parceiro.organizacao.sigla }}">
+                </a>
+              {% endif %}
+            {% endfor %}
+            <br>
+          </span>
+        {% endif %}
+
         <b>Projeto:</b>
         <a class="imprimir" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_completo' projeto.id %}" class="dark-blue-bold"> 
           {% if projeto.titulo_final %}
@@ -214,28 +216,33 @@
         {% endfor %}
         </ol>
 
+
         <p class="organizacao" style="margin-left:1em;"><b>Organização:</b>
-          <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-            {{ projeto.organizacao.nome }}
-          </a>
-          {% if projeto.organizacao.website %}
-            <span class="website">
-              (<a href="{{projeto.organizacao.website}}"
-                  >{{ projeto.organizacao.website }}</a>)
-            </span>
-          {% endif %}
-          {% for cooperacao in cooperacoes %}
-            {% if cooperacao.parceiro and cooperacao.parceiro.organizacao %}
-              &nbsp;&nbsp;&nbsp;&nbsp;colaboração:
-              <a href="{% url 'organizacao_completo' cooperacao.parceiro.organizacao.id %}">
-                {{ cooperacao.parceiro.organizacao.nome }}</a>
-                {% if cooperacao.parceiro.organizacao.website %}
-                  <span class="website">
-                  (<a href="{{cooperacao.parceiro.organizacao.website}}"
-                    >{{ cooperacao.parceiro.organizacao.website }}</a>)
-                {% endif %}
+          {% if projeto.organizacao %}
+            <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">
+              {{ projeto.organizacao.nome }}
+            </a>
+            {% if projeto.organizacao.website %}
+              <span class="website">
+                (<a href="{{projeto.organizacao.website}}"
+                    >{{ projeto.organizacao.website }}</a>)
+              </span>
             {% endif %}
-          {% endfor %}
+            {% for cooperacao in cooperacoes %}
+              {% if cooperacao.parceiro and cooperacao.parceiro.organizacao %}
+                &nbsp;&nbsp;&nbsp;&nbsp;colaboração:
+                <a href="{% url 'organizacao_completo' cooperacao.parceiro.organizacao.id %}">
+                  {{ cooperacao.parceiro.organizacao.nome }}</a>
+                  {% if cooperacao.parceiro.organizacao.website %}
+                    <span class="website">
+                    (<a href="{{cooperacao.parceiro.organizacao.website}}"
+                      >{{ cooperacao.parceiro.organizacao.website }}</a>)
+                  {% endif %}
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            NÃO DEFINIDA
+          {% endif %}
         </p>
 
         <ol class="conexoes" style="margin-bottom:0px;">

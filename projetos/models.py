@@ -181,8 +181,19 @@ class Projeto(models.Model):
 
     def __str__(self):
         """Retorno padrão textual."""
-        return self.organizacao.sigla + " (" + str(self.ano) + "." + str(self.semestre) + ") " + \
-            self.get_titulo()
+        texto = ""
+
+        if self.organizacao and self.organizacao.sigla:
+            texto = self.organizacao.sigla
+        else:
+            texto = "SEM ORGANIZAÇÃO DEFINIDA"
+
+        if self.ano and self.semestre:
+            texto += " (" + str(self.ano) + "." + str(self.semestre) + ") "
+        else:
+            texto += " (SEM PERÍODO DEFINIDO)"
+
+        return texto + self.get_titulo()
 
     @property
     def get_relatos(self):
@@ -246,13 +257,14 @@ class Proposta(models.Model):
     nome_organizacao = models.CharField("Organização", max_length=120, null=True, blank=True,
                                         help_text='Nome da Organização/Empresa')
 
-    endereco = models.TextField("Endereço", max_length=400,
+    endereco = models.TextField("Endereço", max_length=400, null=True, blank=True,
                                 help_text='Endereço da Instituiçã')
 
     contatos_tecnicos = models.TextField("Contatos Técnicos", max_length=400,
                                          help_text='Contatos Técnicos')
 
     contatos_administrativos = models.TextField("Contatos Administrativos", max_length=400,
+                                                null=True, blank=True,
                                                 help_text='Contatos Administrativos')
 
     descricao_organizacao = models.TextField("Descrição da Organização", max_length=3000,

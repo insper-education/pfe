@@ -108,11 +108,17 @@
     {% endif %}
   {% endfor %}
 
-  {% if projeto.organizacao.logotipo %}
+  {% if projeto.organizacao and projeto.organizacao.logotipo %}
     <img class="logotipo" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}">
   {% endif %}
 
-  <h3>Organização: <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a></h3>
+  <h3>Organização:
+    {% if projeto.organizacao %}
+      <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>
+    {% else %}
+      NÃO DEFINIDA
+    {% endif %}
+  </h3>
 
   {% for conexao in cooperacoes %}
     {% if conexao.parceiro and conexao.parceiro.organizacao %}

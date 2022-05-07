@@ -60,10 +60,10 @@
           style="font-size: 0.75em;{% if projeto.id in projetos_agendados %}color: lightgrey;{% endif %}"
           data-titulo="{{projeto.titulo}}"
           data-organizacao="{{projeto.organizacao}}"
-          data-orientador="{{projeto.orientador}}"
-          data-orientador_id="{{projeto.orientador.user.id}}"
+          data-orientador="{% if projeto.orientador %}{{projeto.orientador}}{% else %}SEM ORIENTADOR{% endif %}"
+          data-orientador_id="{% if projeto.orientador %}{{projeto.orientador.user.id}}{% else %}0{% endif %}"
           {% if projeto.id == banca.projeto.id %} selected {% endif %}
-          data-subtext="{{projeto.orientador}}"
+          data-subtext="{% if projeto.orientador %}{{projeto.orientador}}{% else %}SEM ORIENTADOR{% endif %}"
           {% if projeto.id in projetos_agendados %}data-mensagem="Banca já agendada"{% endif %}
           >
             {{projeto.ano}}.{{projeto.semestre}} ({{projeto.organizacao}}) {{projeto.titulo}}
