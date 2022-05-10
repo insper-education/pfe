@@ -412,6 +412,7 @@ def carrega_proposta(request):
 
     full_name = ""
     email_sub = ""
+    parceiro = False
 
     if user:
 
@@ -425,6 +426,8 @@ def carrega_proposta(request):
 
         full_name = user.get_full_name()
         email_sub = user.email
+
+        parceiro = user.tipo_de_usuario == 3  # parceiro
 
     if request.method == 'POST':
 
@@ -464,6 +467,7 @@ def carrega_proposta(request):
     context = {
         'full_name': full_name,
         'email': email_sub,
+        "parceiro": parceiro,
         'ano_semestre': str(ano)+"."+str(semestre),
     }
     return render(request, 'organizacoes/carrega_proposta.html', context)

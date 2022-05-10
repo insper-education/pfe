@@ -40,9 +40,9 @@
 
   <form action="" method="post" enctype="multipart/form-data"> {% csrf_token %}  
 
-    <label for="nome">Nome:</label><input type="text" size="75" maxlength="127" id="nome" name="nome" value="{{full_name}}" 
-      pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')"  required><br><br>
-    <label for="email">e-mail:</label><input type="text" size="75"  maxlength="80" id="email" name="email" value="{{email}}" 
+    <label for="nome">Nome:</label> <input type="text" size="75" maxlength="127" id="nome" name="nome" value="{% if parceiro %}{{full_name}}{% endif %}" 
+      pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')" required><br><br>
+    <label for="email">e-mail:</label> <input type="text" size="75"  maxlength="80" id="email" name="email" value="{% if parceiro %}{{email}}{% endif %}" 
       pattern="^[\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,99}[\s]*([;,][\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})*[\s]*$" oninvalid="this.setCustomValidity('Digite um ou mais endereços de e-mail (e-mails separados por ponto e vírgula)')" oninput="this.setCustomValidity('')" required><br><br>
     
     

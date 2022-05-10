@@ -51,9 +51,9 @@
 
   <form action="" method="post"> {% csrf_token %}  
 
-    <label for="nome">Nome:</label><input type="text" size="75" maxlength="127" id="nome" name="nome" value="{{full_name}}" 
+    <label for="nome">Nome:</label> <input type="text" size="75" maxlength="127" id="nome" name="nome" value="{% if parceiro %}{{full_name}}{% endif %}" 
       pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')"  required {% if edicao and liberadas_propostas %}disabled{% endif %}><br><br>
-    <label for="email">e-mail:</label><input type="text" size="75"  maxlength="80" id="email" name="email" value="{{email}}" 
+    <label for="email">e-mail:</label> <input type="text" size="75"  maxlength="80" id="email" name="email" value="{% if parceiro %}{{email}}{% endif %}" 
       pattern="^[\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,99}[\s]*([;,][\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})*[\s]*$" oninvalid="this.setCustomValidity('Digite um ou mais endereços de e-mail (e-mails separados por ponto e vírgula)')" oninput="this.setCustomValidity('')" required {% if edicao and liberadas_propostas %}disabled{% endif %}><br><br>
     
     <label for="organizacao">Nome da Instituição/Empresa<br>
@@ -62,12 +62,12 @@
     <textarea id="organizacao" name="organizacao" rows="1" cols="80" maxlength="120" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{ organizacao }}</textarea>
     <br><br>
 
-    <label for="website">website:</label><input type="text" size="73"  maxlength="250" id="website" name="website" value="{{website}}" placeholder="https://www.insper.edu.br" required {% if edicao and liberadas_propostas %}disabled{% endif %}><br><br>
+    <label for="website">website:</label> <input type="text" size="73"  maxlength="250" id="website" name="website" value="{{website}}" placeholder="https://www.insper.edu.br" required {% if edicao and liberadas_propostas %}disabled{% endif %}><br><br>
 
     <label for="endereco">Endereço<br>
     <small>onde os alunos deverão ir para desenvolver o projeto</small>
     </label><br>
-    <textarea id="endereco" name="endereco" rows="3" cols="80" maxlength="400" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{endereco}}</textarea>
+    <textarea id="endereco" name="endereco" rows="3" cols="80" maxlength="400" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{endereco}}</textarea>
     <br><br>
 
     <label for="contatos_tecnicos">Contatos Técnicos<br>  
@@ -79,7 +79,7 @@
     <label for="contatos_adm">Contatos Administrativos<br>     
     <small>nome/e-mail/telefone, com quem devemos resolver questões contratuais e RH</small>
     </label><br>
-    <textarea id="contatos_adm" name="contatos_adm" rows="3" cols="80" maxlength="400" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{contatos_adm}}</textarea>
+    <textarea id="contatos_adm" name="contatos_adm" rows="3" cols="80" maxlength="400" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{contatos_adm}}</textarea>
     <br><br>
 
     <label for="descricao_organizacao">Informações sobre a instituição/empresa<br>
