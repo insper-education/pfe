@@ -478,6 +478,9 @@ class Configuracao(models.Model):
     coordenacao = models.ForeignKey('users.Administrador', null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text='responsável pela coordenação do PFE')
 
+    lingua = models.CharField(max_length=2, blank=True, default="pt",
+                              help_text='Língua do sistema')
+
     class Meta:
         verbose_name = 'Configuração'
         verbose_name_plural = 'Configurações'
@@ -1151,8 +1154,11 @@ class Coorientador(models.Model):
 class ObjetivosDeAprendizagem(models.Model):
     """Objetidos de Aprendizagem do curso."""
 
-    titulo = models.TextField(max_length=128, null=True, blank=True,
+    titulo = models.TextField("Título", max_length=128, null=True, blank=True,
                               help_text='Título do objetivo de aprendizagem')
+
+    titulo_en = models.TextField("Título Inglês", max_length=128, null=True, blank=True,
+                              help_text='Título do objetivo de aprendizagem em inglês')
 
     objetivo = models.TextField(max_length=256, null=True, blank=True,
                                 help_text='Descrição do objetivo de aprendizagem')

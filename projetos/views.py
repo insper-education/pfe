@@ -1546,7 +1546,13 @@ def evolucao_objetivos(request):
                 semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
                 notas_lista = [x.nota for x in semestre if x.objetivo == objetivo]
                 notas.append(media(notas_lista))
-            medias.append({"objetivo": objetivo.titulo, "media": notas, "cor": cores[count]})
+
+            if configuracao.lingua == "pt":
+                titulo = objetivo.titulo
+            else:
+                titulo = objetivo.titulo_en
+
+            medias.append({"objetivo": titulo, "media": notas, "cor": cores[count]})
             count += 1
 
         context = {
@@ -1686,6 +1692,7 @@ def evolucao_por_objetivo(request):
             "objetivo": objetivo,
             "objetivos": objetivos,
             "estudantes": estudantes,
+            "lingua": configuracao.lingua,
         }
 
     else:

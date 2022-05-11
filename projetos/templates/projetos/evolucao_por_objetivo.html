@@ -85,7 +85,7 @@
             data: {
                 labels: [
                 {% for edicao, alocacoes in estudantes %}
-                    ["{{edicao}}", "({{alocacoes}} estudantes)"],
+                    ["{{edicao}}", "({{alocacoes}} {% if lingua == "pt" %}estudantes{% else %}students{% endif %})"],
                 {% endfor %}
               ],
               datasets: [{
