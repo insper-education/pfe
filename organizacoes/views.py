@@ -431,23 +431,28 @@ def carrega_proposta(request):
 
     if request.method == 'POST':
 
+        resposta = ""
+
         if 'arquivo' in request.FILES:
             arquivo = simple_upload(request.FILES['arquivo'],
                                     path=get_upload_path(None, ""))
 
             fields = get_form_fields(arquivo[1:])
 
-            mensagem = ""
-
             fields["nome"] = request.POST.get("nome", "").strip()
             fields["email"] = request.POST.get("email", "").strip()
 
-            proposta = preenche_proposta_pdf(fields, None)
+            proposta, erros = preenche_proposta_pdf(fields, None)
 
             enviar = "mensagem" in request.POST  # Por e-mail se enviar
             mensagem = envia_proposta(proposta, enviar)
 
-            resposta = "Submissão de proposta de projeto realizada "
+            if erros:
+                resposta += "ERROS:<br><b style='color:red;font-size:40px'>"
+                resposta += erros + "<br><br>"
+                resposta += "</b>"
+
+            resposta += "Submissão de proposta de projeto realizada "
             resposta += "com sucesso.<br>"
 
             if enviar:
@@ -457,7 +462,7 @@ def carrega_proposta(request):
         else:
             mensagem = "Arquivo não identificado"
 
-        resposta = mensagem
+        resposta += mensagem
         context = {
             "voltar": True,
             "mensagem": resposta,

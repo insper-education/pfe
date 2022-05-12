@@ -286,6 +286,23 @@ def preenche_proposta_pdf(campos, proposta):
     proposta.recursos = decodificar("recursos", campos)
     proposta.observacoes = decodificar("observacoes", campos)
 
+    mensagem = ""
+    if proposta.nome == None:
+        proposta.nome = "NOME NÃO DEFINIDO"
+        mensagem += "NOME NÃO DEFINIDO<br>"
+    if proposta.titulo == None:
+        proposta.titulo = "TÍTULO NÃO DEFINIDO"
+        mensagem += "TÍTULO NÃO DEFINIDO<br>"
+    if proposta.descricao == None:
+        proposta.descricao = "DESCRIÇÃO NÃO DEFINIDA"
+        mensagem += "DESCRIÇÃO NÃO DEFINIDA<br>"
+    if proposta.contatos_tecnicos == None:
+        proposta.contatos_tecnicos = "CONTATOS TÉCNICOS NÃO DEFINIDOS"
+        mensagem += "CONTATOS TÉCNICOS NÃO DEFINIDOS<br>"
+    if proposta.expectativas == None:
+        proposta.expectativas = "EXPECTATIVAS NÃO DEFINIDAS"
+        mensagem += "EXPECTATIVAS NÃO DEFINIDAS<br>"
+
     proposta.save()
 
     check_values = cria_area_proposta_pdf(campos, proposta)
@@ -298,7 +315,7 @@ def preenche_proposta_pdf(campos, proposta):
     
     proposta.save()
 
-    return proposta
+    return proposta, mensagem
 
 
 def envia_proposta(proposta, enviar=True):
