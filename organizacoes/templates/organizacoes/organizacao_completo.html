@@ -52,7 +52,7 @@
   <br><strong>contato(s):</strong>
   <small><a href="{% url 'cadastrar_usuario' %}?tipo=parceiro&organizacao={{organizacao.id}}">&#10133;</a></small>
   <br>
-  {% for parceiro in organizacao.parceiro_set.all|order_by:"-principal_contato" %}
+  {% for parceiro in organizacao.parceiro_set.all|order_by:"-principal_contato,user" %}
     {% if parceiro.user.is_active %}
     <li style="margin-bottom: 6px;" >
       <a href="{% url 'parceiro_detail' parceiro.id %}">
