@@ -191,6 +191,51 @@ def emails_projetos(request):
     return HttpResponse("Algum erro não identificado.", status=401)
 
 
+def registra_organizacao(request, org=None):
+    """Rotina para cadastrar organizacao no sistema."""
+
+    if not org:
+        organizacao = Organizacao.create()
+    else:
+        organizacao = org
+
+    nome = request.POST.get('nome', None)
+    if nome:
+        organizacao.nome = nome.strip()
+
+    sigla = request.POST.get('sigla', None)
+    if sigla:
+        organizacao.sigla = sigla.strip()
+
+    organizacao.endereco = request.POST.get('endereco', None)
+
+    website = request.POST.get('website', None)
+    if website:
+        if website[:4] == "http":
+            organizacao.website = website.strip()
+        else:
+            organizacao.website = "http://" + website.strip()
+
+    organizacao.informacoes = request.POST.get('informacoes', None)
+
+    cnpj = request.POST.get('cnpj', None)
+    if cnpj:
+        organizacao.cnpj = cnpj[:2]+cnpj[3:6]+cnpj[7:10]+cnpj[11:15]+cnpj[16:18]
+
+    organizacao.inscricao_estadual = request.POST.get('inscricao_estadual', None)
+    organizacao.razao_social = request.POST.get('razao_social', None)
+    organizacao.ramo_atividade = request.POST.get('ramo_atividade', None)
+
+    if 'logo' in request.FILES:
+        logotipo = simple_upload(request.FILES['logo'],
+                                    path=get_upload_path(organizacao, ""))
+        organizacao.logotipo = logotipo[len(settings.MEDIA_URL):]
+
+    organizacao.save()
+
+    return "", 200
+
+
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", login_url='/')
@@ -200,41 +245,9 @@ def cadastrar_organizacao(request):
 
         if 'nome' in request.POST and 'sigla' in request.POST:
 
-            organizacao = Organizacao.create()
-
-            nome = request.POST.get('nome', None)
-            if nome:
-                organizacao.nome = nome.strip()
-
-            sigla = request.POST.get('sigla', None)
-            if sigla:
-                organizacao.sigla = sigla.strip()
-
-            organizacao.endereco = request.POST.get('endereco', None)
-
-            website = request.POST.get('website', None)
-            if website:
-                if website[:4] == "http":
-                    organizacao.website = website.strip()
-                else:
-                    organizacao.website = "http://" + website.strip()
-
-            organizacao.informacoes = request.POST.get('informacoes', None)
-
-            cnpj = request.POST.get('cnpj', None)
-            if cnpj:
-                organizacao.cnpj = cnpj[:2]+cnpj[3:6]+cnpj[7:10]+cnpj[11:15]+cnpj[16:18]
-
-            organizacao.inscricao_estadual = request.POST.get('inscricao_estadual', None)
-            organizacao.razao_social = request.POST.get('razao_social', None)
-            organizacao.ramo_atividade = request.POST.get('ramo_atividade', None)
-
-            if 'logo' in request.FILES:
-                logotipo = simple_upload(request.FILES['logo'],
-                                         path=get_upload_path(organizacao, ""))
-                organizacao.logotipo = logotipo[len(settings.MEDIA_URL):]
-
-            organizacao.save()
+            mensagem, codigo = registra_organizacao(request)
+            if codigo != 200:
+                return HttpResponse(mensagem, status=codigo)
 
             context = {
                 "voltar": True,
@@ -256,6 +269,47 @@ def cadastrar_organizacao(request):
 
     return render(request, 'administracao/cadastra_organizacao.html')
 
+
+@login_required
+@transaction.atomic
+@permission_required("users.altera_professor", login_url='/')
+def edita_organizacao(request, primarykey):
+    """Edita Organização na base de dados do PFE."""
+
+    organizacao = get_object_or_404(Organizacao, id=primarykey)
+
+    if request.method == 'POST':
+
+        if 'nome' in request.POST and 'sigla' in request.POST:
+
+            mensagem, codigo = registra_organizacao(request, organizacao)
+            if codigo != 200:
+                return HttpResponse(mensagem, status=codigo)
+
+            context = {
+                "voltar": True,
+                "cadastrar_organizacao": True,
+                "organizacoes_lista": True,
+                "area_principal": True,
+                "mensagem": "Organização atualizada na base de dados.",
+            }
+
+        else:
+
+            context = {
+                "voltar": True,
+                "area_principal": True,
+                "mensagem": "<h3 style='color:red'>Falha na inserção na base da dados.<h3>",
+            }
+
+        return render(request, 'generic.html', context=context)
+
+    context = {
+        "organizacao": organizacao,
+        "edicao": True,
+    }
+
+    return render(request, 'administracao/cadastra_organizacao.html', context=context)
 
 
 def registro_usuario(request, user=None):
