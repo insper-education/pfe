@@ -433,35 +433,29 @@
       
       <span id="alunos_computacao_disponivel"></span>
         <script>$("#alunos_computacao_disponivel").html(alunos_computacao_disponivel);</script>
-                <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
-          (<span id="alunos_computacao"></span>
-        <script>$("#alunos_computacao").html(alunos_computacao);</script>)
+            <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
+          (<span id="alunos_computacao"></span><script>$("#alunos_computacao").html(alunos_computacao);</script>)
         </a><br>
 
       <strong>Vagas para estudantes de mecatrônica:</strong> 
       <span id="alunos_mecatronica_disponivel"></span>
         <script>$("#alunos_mecatronica_disponivel").html(alunos_mecatronica_disponivel);</script>
-
-                    <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
-          (<span id="alunos_mecatronica"></span>
-        <script>$("#alunos_mecatronica").html(alunos_mecatronica);</script>)
+            <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
+          (<span id="alunos_mecatronica"></span><script>$("#alunos_mecatronica").html(alunos_mecatronica);</script>)
         </a><br>
 
       <strong>Vagas para estudantes de mecânica:</strong> 
-      
       <span id="alunos_mecanica_disponivel"></span>
         <script>$("#alunos_mecanica_disponivel").html(alunos_mecanica_disponivel);</script>
         <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
-          (<span id="alunos_mecanica"></span>
-        <script>$("#alunos_mecanica").html(alunos_mecanica);</script>)
+          (<span id="alunos_mecanica"></span><script>$("#alunos_mecanica").html(alunos_mecanica);</script>)
         </a><br>
 
     <p>&nbsp;</p>
     <p>&nbsp;</p>
 
   <h5>Plot Ternário de Propostas entre Cursos</h5>
-  <div id="plot">
-  </div>
+  <div id="plot"></div>
 
   {% include "organizacao-modal.html" %}
 
@@ -471,55 +465,62 @@
   <!-- https://gist.github.com/widged/5780720 -->
   <script>
   (function() {
-    var svg = d3.select('#plot').append('svg')
-                .attr("width", 400)
-                .attr("height", 400);
 
-      var w = 300;
-      var h = 260;
+    let width = screen.width-20;
+    if(width>800) { // Nao quero graficos maior que 800
+      width=800
+    }
+
+    var svg = d3.select('#plot').append('svg')
+                .attr("width", width)
+                .attr("height", width);
+
+      var w = width*0.8;
+      var h = w*0.9;
+      
       var m = 20;
 
       svg.append("text")
-          .attr("x", -230)
-          .attr("y", 140 )
-          .attr("transform", "rotate(-60)")
+          .attr("x", 10)
+          .attr("y", h )
+          .attr("transform", "rotate(-60 10 "+h+")")
           .text("Computação")
           .classed('tick-text tick-a', true);
 
       svg.append("text")
-          .attr("x", 280)
-          .attr("y", 300 )
+          .attr("x", w-20)
+          .attr("y", h+40 )
           .text("Mecatrônica")
           .classed('tick-text tick-b', true);
 
       svg.append("text")
-          .attr("x", 117)
-          .attr("y", -155 )
-          .attr("transform", "rotate(60)")
+          .attr("x", ((w/2)+50))
+          .attr("y", 20 )
+          .attr("transform", "rotate(60 "+((w/2)+50)+" 20)")
           .text("Mecânica")
           .classed('tick-text tick-c', true);
 
     svg.append("circle")
-      .attr("cx", 70)
-      .attr("cy", 317)
+      .attr("cx", (w/2)-80)
+      .attr("cy", h+55)
       .attr("r", 7)
       .attr("fill", "teal");
       
     svg.append("text")
-      .attr("x", 80)
-      .attr("y", 320)
+      .attr("x", (w/2)-70)
+      .attr("y", h+60)
       .text("autorizado")
       .classed('tick-text2 tick-p', true);
 
     svg.append("circle")
-      .attr("cx", 200)
-      .attr("cy", 317)
+      .attr("cx", (w/2)+60)
+      .attr("cy", h+55)
       .attr("r", 7)
       .attr("fill", "brown");
       
     svg.append("text")
-      .attr("x", 210)
-      .attr("y", 320)
+      .attr("x", (w/2)+70)
+      .attr("y", h+60)
       .text("pendente")
       .classed('tick-text2 tick-y', true);
 
