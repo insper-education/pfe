@@ -41,19 +41,19 @@
   <form method="post" id="organizacaoform" enctype="multipart/form-data"> {% csrf_token %}
   
     <label for="organizacao">Nome da Organização:<br></label><br>
-    <textarea id="nome" name="nome" rows="1" cols="80" maxlength="100" required>{{organizacao.nome}}</textarea>
+    <textarea id="nome" name="nome" rows="1" cols="80" maxlength="100" required>{% if organizacao.nome %}{{organizacao.nome}}{% endif %}</textarea>
     <br><br>
 
-    <label for="sigla">Sigla:</label> <input type="text" size="48" id="sigla" name="sigla" value="{{organizacao.sigla}}" required><br><br>
+    <label for="sigla">Sigla:</label> <input type="text" size="48" id="sigla" name="sigla" value="{% if organizacao.sigla %}{{organizacao.sigla}}{% endif %}" required><br><br>
 
     <label for="endereco">Endereço:<br></label><br>
-    <textarea id="endereco" name="endereco" rows="3" cols="80" maxlength="1000">{{organizacao.endereco}}</textarea>
+    <textarea id="endereco" name="endereco" rows="3" cols="80" maxlength="1000">{% if organizacao.endereco %}{{organizacao.endereco}}{% endif %}</textarea>
     <br><br>
 
-    <label for="website">website:</label><input type="text" size="73" id="website" name="website" value="{{organizacao.website}}" placeholder="https://www.insper.edu.br"><br><br>
+    <label for="website">website:</label><input type="text" size="73" id="website" name="website" value="{% if organizacao.website %}{{organizacao.website}}{% endif %}" placeholder="https://www.insper.edu.br"><br><br>
 
     <label for="informacoes">Informações sobre a organização:</label><br>
-    <textarea id="informacoes" name="informacoes" rows="4" cols="80" maxlength="1000">{{organizacao.informacoes}}</textarea>
+    <textarea id="informacoes" name="informacoes" rows="4" cols="80" maxlength="1000">{% if organizacao.informacoes %}{{organizacao.informacoes}}{% endif %}</textarea>
     <br><br>
 
     <label for="logo">Logotipo da organização:</label>
@@ -66,13 +66,13 @@
     
     <br><br>
 
-    <label for="cnpj">CNPJ:</label> <input type="text" id="cnpj" name="cnpj" size="19" value="{{organizacao.cnpj}}"><br>
+    <label for="cnpj">CNPJ:</label> <input type="text" id="cnpj" name="cnpj" size="19" value="{% if organizacao.cnpj %}{{organizacao.cnpj}}{% endif %}"><br>
 
-    <label for="inscricao_estadual">Inscrição Estadual:</label> <input type="text" size="48" id="inscricao_estadual" name="inscricao_estadual" value="{{organizacao.inscricao_estadual}}"><br>
-    <label for="razao_social">Razão Social:</label> <input type="text" size="48" id="razao_social" name="razao_social" value="{{organizacao.razao_social}}"><br>
+    <label for="inscricao_estadual">Inscrição Estadual:</label> <input type="text" size="48" id="inscricao_estadual" name="inscricao_estadual" value="{% if organizacao.inscricao_estadual%}{{organizacao.inscricao_estadual}}{% endif %}"><br>
+    <label for="razao_social">Razão Social:</label> <input type="text" size="48" id="razao_social" name="razao_social" value="{% if organizacao.razao_social %}{{organizacao.razao_social}}{% endif %}"><br>
     
     <label for="ramo_atividade">Ramo de Atividade:</label><br>
-    <textarea id="ramo_atividade" name="ramo_atividade" rows="4" cols="80" maxlength="256">{{organizacao.ramo_atividade}}</textarea>
+    <textarea id="ramo_atividade" name="ramo_atividade" rows="4" cols="80" maxlength="256">{% if organizacao.ramo_atividade%}{{organizacao.ramo_atividade}}{% endif %}</textarea>
     <br><br>
 
     <input type="submit" value="{% if edicao %}Atualizar{% else %}Cadastrar{% endif %} Organização Parceira">
