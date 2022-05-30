@@ -906,7 +906,7 @@ def projetos_vs_propostas(request):
 
     edicoes = range(2018, configuracao.ano+1)
 
-    edicoes2, _, _ = get_edicoes(Projeto)
+    edicoes2, _, _ = get_edicoes(Proposta)
 
     total_org_propostas = {}
     total_org_projetos = {}
@@ -914,22 +914,13 @@ def projetos_vs_propostas(request):
     # PROPOSTAS e ORGANIZACOES COM PROPOSTAS
     num_propostas = []
     org_propostas = []
-    for ano_projeto in edicoes:
 
-        # Segundo Semeste
-        propostas = Proposta.objects.filter(ano=ano_projeto).\
-            filter(semestre=2)
-        num_propostas.append(propostas.count())
-        tmp_org = {}
-        for projeto in propostas:
-            if projeto.organizacao:
-                tmp_org[projeto.organizacao.id] = "True"
-                total_org_propostas[projeto.organizacao.id] = "True"
-        org_propostas.append(len(tmp_org))
+    for edicao in edicoes2:
 
-        # Primeiro Semestre
-        propostas = Proposta.objects.filter(ano=ano_projeto+1).\
-            filter(semestre=1)
+        ano_projeto, semestre = edicao.split('.')
+
+        propostas = Proposta.objects.filter(ano=int(ano_projeto)).\
+            filter(semestre=semestre)
         num_propostas.append(propostas.count())
         tmp_org = {}
         for projeto in propostas:
@@ -941,22 +932,12 @@ def projetos_vs_propostas(request):
     # PROJETOS e ORGANIZACOES COM PROJETOS
     num_projetos = []
     org_projetos = []
-    for ano_projeto in edicoes:
+    for edicao in edicoes2:
 
-        # Segundo Semeste
-        projetos = Projeto.objects.filter(ano=ano_projeto).\
-                                   filter(semestre=2)
-        num_projetos.append(projetos.count())
-        tmp_org = {}
-        for projeto in projetos:
-            if projeto.organizacao:
-                tmp_org[projeto.organizacao.id] = "True"
-                total_org_projetos[projeto.organizacao.id] = "True"
-        org_projetos.append(len(tmp_org))
+        ano_projeto, semestre = edicao.split('.')
 
-        # Primeiro Semestre
-        projetos = Projeto.objects.filter(ano=ano_projeto+1).\
-            filter(semestre=1)
+        projetos = Projeto.objects.filter(ano=int(ano_projeto)).\
+            filter(semestre=semestre)
         num_projetos.append(projetos.count())
         tmp_org = {}
         for projeto in projetos:
@@ -989,6 +970,7 @@ def projetos_vs_propostas(request):
                                        momento__month__gt=6).exists():
                 count_organizacoes += 1
         org_prospectadas.append(count_organizacoes)
+
 
     context = {
         "num_propostas": num_propostas,
