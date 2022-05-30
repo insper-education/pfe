@@ -19,24 +19,46 @@
 {% endblock %}
 
 {% block content %}
-    <span class="titulo">Organizações, Projetos e Propostas</span>
+    <span class="titulo">
+        {% if lingua == "pt" %}
+            Organizações, Projetos e Propostas
+        {% else %}
+            Organizations, Projects e Proposals
+        {% endif %}
+    </span>
     
+
+    
+
     <div class="2areas2">
 
         <div id="canvas-holder">
 
             <canvas id="bar-projetos"></canvas>
             <small>
-                <p>Recebemos <b>{{total_propostas}}</b> propostas de projetos no total.</p>
-                <p>Realizados <b>{{total_projetos}}</b> projetos no total.</p>
+                {% if lingua == "pt" %}
+                    <p>Recebemos <b>{{total_propostas}}</b> propostas de projetos no total.</p>
+                    <p>Realizados <b>{{total_projetos}}</b> projetos no total.</p>
+                {% else %}
+                    <p>Received <b>{{total_propostas}}</b> project proposals.</p>
+                    <p>Carried out <b>{{total_projetos}}</b> projects.</p>
+                {% endif %}
             </small>
             <br>
 
             <canvas id="bar-organizacoes"></canvas>
             <small>
-                <p>Recebemos propostas de <b>{{total_org_propostas}}</b> organizações distintas.</p>
-                <p>Realizados projetos com <b>{{total_org_projetos}}</b> organizações distintas.</p>
-                <p>Dados de prospecção até 2019.2 estão incompletos.</p>
+                {% if lingua == "pt" %}
+                    <p>Recebemos propostas de <b>{{total_org_propostas}}</b> organizações distintas.</p>
+                    <p>Realizados projetos com <b>{{total_org_projetos}}</b> organizações distintas.</p>
+                    <p>Dados de prospecção até 2019.2 estão incompletos.</p>
+                {% else %}
+                    <p>Proposals received from <b>{{total_org_propostas}}</b> differente organizations.</p>
+                    <p>Projects carried out from  <b>{{total_org_projetos}}</b> different organizations.</p>
+                    <p>Information about prospection until 2019.2 is incomplete.</p>
+                {% endif %}
+
+                
             </small>
             <br><br>
 
@@ -56,22 +78,22 @@
                 ],
             datasets: [
                 {
-                label: "propostas",
-                backgroundColor: "#8ebed2",
-                data: [
-                        {% for num in num_propostas %}
-                            {{num}},
-                        {% endfor %}
-                    ]
+                    label: "{% if lingua == 'pt' %}propostas{% else %}proposals{% endif %}",
+                    backgroundColor: "#8ebed2",
+                    data: [
+                            {% for num in num_propostas %}
+                                {{num}},
+                            {% endfor %}
+                        ]
                 }, 
                 {
-                label: "projetos",
-                backgroundColor: "#656efd",
-                data: [
-                        {% for num in num_projetos %}
-                            {{num}},
-                        {% endfor %}
-                    ]
+                    label: "{% if lingua == 'pt' %}projetos{% else %}projects{% endif %}",
+                    backgroundColor: "#656efd",
+                    data: [
+                            {% for num in num_projetos %}
+                                {{num}},
+                            {% endfor %}
+                        ]
                 }, 
             ]
             },
@@ -79,7 +101,8 @@
                 legend: { display: true },
                 title: {
                     display: true,
-                    text: 'Propostas e Projetos'
+                    text: "{% if lingua == 'pt' %}Propostas e Projetos{% else %}Proposals and Projects{% endif %}",
+
                 },
                 plugins: {
                     datalabels: {
@@ -99,7 +122,7 @@
                 ],
             datasets: [
                 {
-                    label: "prospectadas (semestre anterior)",
+                    label: "{% if lingua == 'pt' %}prospectadas (semestre anterior){% else %}prospected (previous semester){% endif %}",
                     backgroundColor: "#ffe0f0",
                     data: [
                             {% for num in org_prospectadas %}
@@ -108,7 +131,7 @@
                         ]
                 }, 
                 {
-                    label: "com proposta",
+                    label: "{% if lingua == 'pt' %}com propostas{% else %}with proposals{% endif %}",
                     backgroundColor: "#e56883",
                     data: [
                             {% for num in org_propostas %}
@@ -117,7 +140,7 @@
                         ]
                 },
                 {
-                    label: "com projeto",
+                    label: "{% if lingua == 'pt' %}com projetos{% else %}with projects{% endif %}",
                     backgroundColor: "#f84359",
                     data: [
                             {% for num in org_projetos %}
@@ -131,7 +154,7 @@
                 legend: { display: true },
                 title: {
                     display: true,
-                    text: 'Organizações Envolvidas'
+                    text: "{% if lingua == 'pt' %}Organizações Envolvidas{% else %}Organizations Involved{% endif %}",
                 },
                 plugins: {
                     datalabels: {

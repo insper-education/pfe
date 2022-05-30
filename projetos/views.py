@@ -982,8 +982,9 @@ def projetos_vs_propostas(request):
         "org_projetos": org_projetos,
         "total_org_propostas": len(total_org_propostas),
         "total_org_projetos": len(total_org_projetos),
-        'loop_anos': edicoes,
-        'edicoes': edicoes2,
+        "loop_anos": edicoes,
+        "edicoes": edicoes2,
+        "lingua": configuracao.lingua,
     }
 
     return render(request, 'projetos/projetos_vs_propostas.html', context)
