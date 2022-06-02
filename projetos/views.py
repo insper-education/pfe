@@ -434,14 +434,18 @@ def carrega_arquivo(request, local_path, path):
 
         doc = Documento.objects.filter(documento=documento).last()
         if doc:
-            user = get_object_or_404(PFEUser, pk=request.user.pk)
+
+            mensagem = "Documento Confidencial"
+            context = {"mensagem": mensagem,}
+
+            try:
+                user = PFEUser.objects.get(pk=request.user.pk)
+            except PFEUser.DoesNotExist:
+                if doc.confidencial: 
+                    return render(request, 'generic.html', context=context)    
 
             if (doc.confidencial) and \
                 not ((user.tipo_de_usuario == 2) or (user.tipo_de_usuario == 4)):
-                mensagem = "Documento Confidencial"
-                context = {
-                    "mensagem": mensagem,
-                }
                 return render(request, 'generic.html', context=context)
 
         if documento[:3] == "tmp":
@@ -476,7 +480,8 @@ def arquivos(request, documentos, path):
     return carrega_arquivo(request, local_path, path)
 
 
-@login_required
+# @login_required
+# Para pegar os relatórios publicos
 def arquivos2(request, organizacao, usuario, path):
     """Permite acessar arquivos do servidor."""
     local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}/{2}".\

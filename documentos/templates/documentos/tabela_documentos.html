@@ -136,7 +136,7 @@
                     {{ projeto.orientador }}
                   </a>
                 {% else %}
-                  Orientador não definido
+                  ORIENTADOR NÃO DEFINIDO
                 {% endif %}
 
                 {% with coorientadores=projeto.coorientador_set.all %}
@@ -166,9 +166,13 @@
 
               <!-- Organização -->
               <td>
-                <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-                  {{ projeto.organizacao.nome }}
-                </a>
+                {% if projeto and projeto.organizacao %}
+                  <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
+                    {{ projeto.organizacao.nome }}
+                  </a>
+                {% else %}
+                  ORGANIZAÇÃO NÃO DEFINIDA
+                {% endif %}
               </td>
               
               <!-- Documentos -->
