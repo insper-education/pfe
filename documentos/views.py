@@ -314,7 +314,7 @@ def gerar_certificados(request):
     return render(request, 'documentos/gerar_certificados.html', context)
 
 
-@login_required
+# @login_required
 def relatorios_publicos(request):
     """Exibe relatórios públicos."""
     relatorios = Documento.objects.filter(tipo_de_documento=25, confidencial=False)\
