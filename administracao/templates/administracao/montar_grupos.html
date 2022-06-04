@@ -297,7 +297,8 @@
         else prioridade6m += 1;
 
       {% else %}
-        nao_definido += 1;
+        // Se não pre alocado, vai para opcao 1.
+        prioridade1 += 1;
       {% endif %}
       
       count_alunos += 1;
