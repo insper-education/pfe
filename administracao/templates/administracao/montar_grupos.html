@@ -92,19 +92,20 @@
 
     {% for proposta in propostas %}   
 
-    <div style="width: 100%; display: table; border-collapse:separate; border-spacing: 8px;">
+    <div style="width: 100%; border-collapse:separate;">
 
-    <div style="display: table-row;">
+    <div style="display: flex; align-items: center; align-content: center; margin-bottom: 8px;">
+      
+      <div style="width: 68px; vertical-align:middle; margin-right: 8px;">
 
-      <div style="display: table-cell; vertical-align: middle; width: 68px;">
-        {% if proposta.organizacao.logotipo %}
-          <img id="logotipo" src="{{ proposta.organizacao.logotipo.url }}" alt="{{ proposta.organizacao.sigla }}">
-        {% endif %}
+          {% if proposta.organizacao.logotipo %}
+            <img id="logotipo" src="{{ proposta.organizacao.logotipo.url }}" alt="{{ proposta.organizacao.sigla }}">
+          {% endif %}
+
       </div>
 
       <div id="proposta{{proposta.id}}" class="proposta" data-propostaid="{{proposta.id}}">
 
-        
         <div id="titulo{{proposta.id}}" class="etiqueta_proposta">
 
           <a target="_blank" rel="noopener noreferrer" class="ancora" href="{% url 'proposta_completa' proposta.id %}" style="color: #000062;"
