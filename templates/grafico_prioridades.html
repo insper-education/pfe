@@ -1,0 +1,63 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 4 de Junho de 2022
+{% endcomment %}
+
+<script>
+
+  function mostra_grafico() { // REFERENTE AO PIE CHART
+    var config = {     // REFERENTE AO PIE CHART
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: [
+            prioridade1,
+            prioridade2,
+            prioridade3,
+            prioridade4,
+            prioridade5,
+            prioridade6m,
+          ],
+          backgroundColor: [
+            "#2ecc71",
+            "#3498db",
+            "#95a5a6",
+            "#9b59b6",
+            "#f1c40f",
+            "#e74c3c",
+            "#34495e"
+          ],
+        }],
+        labels: [
+          '#1 ['+parseInt(100*prioridade1/(count_alunos-nao_definido))+'%]',
+          '#2 ['+parseInt(100*prioridade2/(count_alunos-nao_definido))+'%]',
+          '#3 ['+parseInt(100*prioridade3/(count_alunos-nao_definido))+'%]',
+          '#4 ['+parseInt(100*prioridade4/(count_alunos-nao_definido))+'%]',
+          '#5 ['+parseInt(100*prioridade5/(count_alunos-nao_definido))+'%]',
+          '#>=6 ['+parseInt(100*prioridade6m/(count_alunos-nao_definido))+'%]',
+        ]
+      },
+      options: {
+        responsive: true,
+        title: {
+              display: true,
+              text: 'Proporção entre opção alocada dos alunos',
+              position: "top",
+        },
+        legend: {
+          display: true,
+          position: "bottom",
+          labels: {
+            fontColor: "#333",
+            fontSize: 14
+          }
+        }
+      }
+    };
+
+    var context = $("#chart-area").get(0).getContext('2d'); // REFERENTE AO PIE CHART
+    window.myPie = new Chart(context, config); // REFERENTE AO PIE CHART
+  }
+
+</script>
