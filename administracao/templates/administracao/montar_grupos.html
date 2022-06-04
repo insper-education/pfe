@@ -96,68 +96,87 @@
 
     <div style="width: 100%; border-collapse:separate;">
 
-    <div style="display: flex; align-items: center; align-content: center; margin-bottom: 8px;">
-      
-      <div style="width: 68px; vertical-align:middle; margin-right: 8px;">
+      <div style="display: flex; align-items: center; align-content: center; margin-bottom: 8px;">
+        
+        <div style="width: 68px; vertical-align:middle; margin-right: 8px;">
 
-          {% if proposta.organizacao.logotipo %}
-            <img id="logotipo" src="{{ proposta.organizacao.logotipo.url }}" alt="{{ proposta.organizacao.sigla }}">
-          {% endif %}
+            {% if proposta.organizacao.logotipo %}
+              <img id="logotipo" src="{{ proposta.organizacao.logotipo.url }}" alt="{{ proposta.organizacao.sigla }}">
+            {% endif %}
 
-      </div>
+        </div>
 
-      <div id="proposta{{proposta.id}}" class="proposta" data-propostaid="{{proposta.id}}">
+        <div id="proposta{{proposta.id}}" class="proposta" data-propostaid="{{proposta.id}}">
 
-        <div id="titulo{{proposta.id}}" class="etiqueta_proposta">
+          <div id="titulo{{proposta.id}}" class="etiqueta_proposta">
 
-          <a target="_blank" rel="noopener noreferrer" class="ancora" href="{% url 'proposta_completa' proposta.id %}" style="color: #000062;"
-          data-toggle="tooltip" data-html="true" animation="true" title="
-                {% for opcaop in proposta.opcao_set.all %}
-                  {% with alocacoes=opcaop.aluno.alocacao_set %}
-                    {% if alocacoes.count %}
-                      {% if opcaop.proposta == alocacoes.last.proposta %}
-                        <u>
-                        {% if opcaop.aluno %}
-                          {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.get_curso_display}}]
+            <a target="_blank" rel="noopener noreferrer" class="ancora" href="{% url 'proposta_completa' proposta.id %}" style="color: #000062;"
+            data-toggle="tooltip" data-html="true" animation="true" title="
+                  {% for opcaop in proposta.opcao_set.all %}
+                    {% with alocacoes=opcaop.aluno.alocacao_set %}
+                      {% if alocacoes.count %}
+                        {% if opcaop.proposta == alocacoes.last.proposta %}
+                          <u>
+                          {% if opcaop.aluno %}
+                            {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.get_curso_display}}]
+                          {% endif %}
+                          #{{ opcaop.prioridade }}
+                          </u>
+                        {% else %}
+                          {% if opcaop.aluno %}
+                            {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.get_curso_display}}]
+                          {% endif %}
+                          #{{ opcaop.prioridade }}
                         {% endif %}
-                        #{{ opcaop.prioridade }}
-                        </u>
                       {% else %}
                         {% if opcaop.aluno %}
                           {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.get_curso_display}}]
                         {% endif %}
                         #{{ opcaop.prioridade }}
                       {% endif %}
-                    {% else %}
-                      {% if opcaop.aluno %}
-                        {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.get_curso_display}}]
-                      {% endif %}
-                      #{{ opcaop.prioridade }}
-                    {% endif %}
-                    |{% mede_aderencia opcaop.aluno proposta %}%|<br>
-                  {% endwith %}
-                {% empty %}
-                  Nenhum aluno escolheu essa proposta
-                {% endfor %}
-                "            
-              >
-          
-          {{proposta.titulo}}
-          </a>&nbsp;
-          {% if proposta.organizacao and proposta.organizacao.nome %}
-            <a class="ancora" href="{% url 'organizacao_completo' proposta.organizacao.id %}" style="color: darkblue;">
-              ({{ proposta.organizacao.nome }})
-            </a>
-          {% elif proposta.nome_organizacao %}
-            <a  class="ancora" style="color: darkblue;">({{ proposta.nome_organizacao }})</a>
-          {% else %}
-            PROBLEMA EM RECUPERAR ORGANIZAÇÃO DA PROPOSTA
-          {% endif %}
+                      |{% mede_aderencia opcaop.aluno proposta %}%|<br>
+                    {% endwith %}
+                  {% empty %}
+                    Nenhum aluno escolheu essa proposta
+                  {% endfor %}
+                  "            
+                >
+            
+            {{proposta.titulo}}
+            </a>&nbsp;
+            {% if proposta.organizacao and proposta.organizacao.nome %}
+              <a class="ancora" href="{% url 'organizacao_completo' proposta.organizacao.id %}" style="color: darkblue;">
+                ({{ proposta.organizacao.nome }})
+              </a>
+            {% elif proposta.nome_organizacao %}
+              <a  class="ancora" style="color: darkblue;">({{ proposta.nome_organizacao }})</a>
+            {% else %}
+              PROBLEMA EM RECUPERAR ORGANIZAÇÃO DA PROPOSTA
+            {% endif %}
+          </div>
+
+        </div>
+
+        <div style="width: 1.0em; vertical-align:middle; margin-left: 4px;">
+          <tt style="font-size: smaller;">
+            {% if proposta.perfil_aluno1_computacao %}C{% else %}&nbsp;{% endif %}{% if proposta.perfil_aluno1_mecanica %}M{% else %}&nbsp;{% endif %}{% if proposta.perfil_aluno1_mecatronica %}X{% else %}&nbsp;{% endif %}
+            <br>
+
+            {% if proposta.perfil_aluno2_computacao %}C{% else %}&nbsp;{% endif %}{% if proposta.perfil_aluno2_mecanica %}M{% else %}&nbsp;{% endif %}{% if proposta.perfil_aluno2_mecatronica %}X{% else %}&nbsp;{% endif %}
+            <br>
+            
+            {% if proposta.perfil_aluno3_computacao %}C{% else %}&nbsp;{% endif %}{% if proposta.perfil_aluno3_mecanica %}M{% else %}&nbsp;{% endif %}{% if proposta.perfil_aluno3_mecatronica %}X{% else %}&nbsp;{% endif %}
+            <br>
+            
+            {% if proposta.perfil_aluno4_computacao %}C{% else %}&nbsp;{% endif %}{% if proposta.perfil_aluno4_mecanica %}M{% else %}&nbsp;{% endif %}{% if proposta.perfil_aluno4_mecatronica %}X{% else %}&nbsp;{% endif %}
+            <br>
+            
+          </tt>
+          {% comment %} {{ proposta.organizacao.logotipo.url }} {% endcomment %}
         </div>
 
       </div>
 
-    </div>
     </div>
 
     {% endfor %}
