@@ -105,7 +105,7 @@
       <div id="proposta{{proposta.id}}" class="proposta" data-propostaid="{{proposta.id}}">
 
         
-        <div id="titulo{{proposta.id}}" class="etiqueta_proposta" >
+        <div id="titulo{{proposta.id}}" class="etiqueta_proposta">
 
           <a target="_blank" rel="noopener noreferrer" class="ancora" href="{% url 'proposta_completa' proposta.id %}" style="color: #000062;"
           data-toggle="tooltip" data-html="true" animation="true" title="
@@ -241,7 +241,7 @@
       {% else %}
         $("#proposta{{opcoes.0.proposta.id}}").append(`
       {% endif %}
-      <div id="estudante{{estudante.id}}" draggable="true" class="estudante"
+      <div id="estudante{{estudante.id}}" draggable="true" class="estudante" data-cr="{{estudante.cr}}"
       data-prioridades="[{% for opcao in opcoes %}{{opcao.proposta.id}}{%if not forloop.last%},{%endif%}{% endfor %}]">
       <a target="_blank" rel="noopener noreferrer" 
        class="ancora" href="{% url 'estudante_detail' estudante.id %}"
@@ -279,12 +279,27 @@
         $('.proposta').on('dragover', preventDefault);
         $('.proposta').on('drop', dropAluno);
         $(window).on('unload', salvar_estado );
+
+
+        // ORDENA CRs por Projeto
+        $('.proposta').each(function(index, element) {
+          ordenaCR($(this), "div");
+        });
+
     });
+
+    function ordenaCR(parent, childSelector) {
+      var items = parent.children(childSelector).sort(function(a, b) {
+          var obj1 = $(a).data("cr");
+          var obj2 = $(b).data("cr");
+          return (obj2 < obj1) ? -1 : (obj2 > obj1) ? 1 : 0;
+      });
+      parent.append(items);
+    }
 
     function salvar_estado() {
       return "SALVAR ESTADO!";
     }
-
     
     function atualizar_count_propostas() {
 
@@ -335,8 +350,6 @@
         childList: true
     };
 
-
-
     var propostas = $('.proposta');
     for (var i = 0; i < propostas.length; i++) {
         colorir_proposta(propostas[i]);
@@ -373,30 +386,29 @@
       });
     }
 
-
     function dropAluno(e) {
       
       if($draggedItem) {
         var target = $(e.target);
-        
+        var final_target = null;
+
         if (target.attr('class')=="proposta") {
-            $draggedItem.detach();
-            $draggedItem.appendTo(target);
-            send_update($draggedItem[0].id, target[0].id)
-            cor_estudante($draggedItem, target.data("propostaid"))
-        } else
-        if (target.attr('class')=="etiqueta_proposta" || target.attr('class')=="estudante" ) {
-            $draggedItem.detach();
-            $draggedItem.appendTo(target.parent());
-            send_update($draggedItem[0].id, target.parent()[0].id)
-            cor_estudante($draggedItem, target.parent().data("propostaid"))
-        } else
-        if (target.attr('class')=="ancora") {
-            $draggedItem.detach();
-            $draggedItem.appendTo(target.parent().parent());
-            send_update($draggedItem[0].id, target.parent().parent()[0].id)
-            cor_estudante($draggedItem, target.parent().parent().data("propostaid"))
+          final_target = target;
+        } else if (target.attr('class')=="etiqueta_proposta" || target.attr('class')=="estudante" ) {
+          final_target = target.parent();
+        } else if (target.attr('class')=="ancora") {
+          final_target = target.parent().parent();
         }
+        
+        if(final_target != null) {
+          $draggedItem.detach();
+          $draggedItem.appendTo(final_target);
+          send_update($draggedItem[0].id, final_target[0].id)
+          cor_estudante($draggedItem, final_target.data("propostaid"))
+  
+          ordenaCR(final_target, "div");
+        }
+
       }
     }
 
