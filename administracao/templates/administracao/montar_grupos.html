@@ -170,13 +170,50 @@
   </form>
 
   <br><br>
-  Propostas Balanceadas: <span id="balanceadas">-</span><br>
-  Propostas Desbalanceadas: <span id="desbalanceadas">-</span><br>
-  Propostas Vazias: <span id="vazias">-</span><br>
 
+  <input id="balanceada" type="checkbox" name="balanceada" checked onchange="escondePropostas()"/>
+  <label for="balanceada">Propostas Balanceadas: <span id="balanceadas">-</span></label><br>
+  
+  <input id="desbalanceada" type="checkbox" name="desbalanceada" checked onchange="escondePropostas()"/>
+  <label for="desbalanceada">Propostas Desbalanceadas: <span id="desbalanceadas">-</span></label><br>
+
+  <input id="vazia" type="checkbox" name="vazia" checked onchange="escondePropostas()"/>
+  <label for="vazia">Propostas Vazias: <span id="vazias">-</span></label><br>
+  
   <p>&nbsp;</p>
 
   <script>
+
+    function escondePropostas(){
+
+        var propostas = $('.proposta');
+        for (var i = 0; i < propostas.length; i++) {
+          qtd_estudantes = $(propostas[i]).children('div').length - 1
+          if(qtd_estudantes == 0) {
+              // VAZIA
+              if($('#vazia').is(":checked")) {
+                $(propostas[i]).parent().show();
+              } else {
+                $(propostas[i]).parent().hide();
+              }
+          } else if(qtd_estudantes > 4 || qtd_estudantes < 3) {
+              // DESBAL
+              if($('#desbalanceada').is(":checked")) {
+                $(propostas[i]).parent().show();
+              } else {
+                $(propostas[i]).parent().hide();
+              }
+          } else {
+              // BALL
+              if($('#balanceada').is(":checked")) {
+                $(propostas[i]).parent().show();
+              } else {
+                $(propostas[i]).parent().hide();
+              }
+          }
+        }
+
+    }
 
     function cor_estudante(estudante, proposta) {
       prioridades = estudante.data("prioridades")
@@ -262,8 +299,7 @@
             vazias += 1;
         } else if(qtd_estudantes > 4 || qtd_estudantes < 3) {
             desbalanceadas += 1;
-        }
-        else {
+        } else {
             balanceadas += 1;
         }
       }
