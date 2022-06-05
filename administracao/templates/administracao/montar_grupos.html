@@ -157,12 +157,12 @@
 
         </div>
 
-        <div style="width: 1.0em; vertical-align:middle; margin-left: 4px;">
+        <div style="width: 1.0em; vertical-align:middle; margin-right: 6px; margin-left: 4px;">
           <a class="ancora" style="color: #000062;" data-toggle="tooltip" data-html="true" animation="true" title=
           "{% for rec in proposta.recomendada_set.all %}
             {{rec.disciplina.nome}}<br>
           {% endfor %}">
-            <tt style="font-size: smaller;">
+            <tt style="display: block; font-size: smaller;">
               {% if proposta.perfil_aluno1_computacao %}C{% else %}&nbsp;{% endif %}{% if proposta.perfil_aluno1_mecanica %}M{% else %}&nbsp;{% endif %}{% if proposta.perfil_aluno1_mecatronica %}X{% else %}&nbsp;{% endif %}<br>
               {% if proposta.perfil_aluno2_computacao %}C{% else %}&nbsp;{% endif %}{% if proposta.perfil_aluno2_mecanica %}M{% else %}&nbsp;{% endif %}{% if proposta.perfil_aluno2_mecatronica %}X{% else %}&nbsp;{% endif %}<br>
               {% if proposta.perfil_aluno3_computacao %}C{% else %}&nbsp;{% endif %}{% if proposta.perfil_aluno3_mecanica %}M{% else %}&nbsp;{% endif %}{% if proposta.perfil_aluno3_mecatronica %}X{% else %}&nbsp;{% endif %}<br>
