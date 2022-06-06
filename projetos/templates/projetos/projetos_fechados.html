@@ -389,18 +389,21 @@
       {% comment %} // Só mostra informação de semestre se edição é todas {% endcomment %}
       ($("#filterEdicao option:selected").attr("value") == "todas" ? $('.semestre').show() : $('.semestre').hide());
 
-      filtra_data();
-      mostra_grafico();
+      
 
     </script>
 
     {% include "grafico_prioridades.html" %}
     
+    <script>
+      filtra_data();
+      mostra_grafico();
+    </script>
+
     {% endif %}
 
     <script>
-      function carrega_pagina() {
-      };
+      function carrega_pagina() {};
       $(document).ready(carrega_pagina);
     </script>
     
