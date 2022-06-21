@@ -1167,7 +1167,7 @@ def certificacao_falconi(request):
     """Mostra graficos das certificacões Falconi."""
     configuracao = get_object_or_404(Configuracao)
 
-    edicoes, _, _ = get_edicoes(Avaliacao2)
+    edicoes, _, _ = get_edicoes(Projeto)
 
     # cortando ["2018.2", "2019.1", "2019.2", "2020.1", ....]
     edicoes = edicoes[4:]
