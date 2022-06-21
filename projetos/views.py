@@ -1168,7 +1168,9 @@ def certificacao_falconi(request):
     configuracao = get_object_or_404(Configuracao)
 
     edicoes, _, _ = get_edicoes(Avaliacao2)
-    edicoes = ["2020.2", "2021.1"]
+
+    # cortando ["2018.2", "2019.1", "2019.2", "2020.1", ....]
+    edicoes = edicoes[4:]
 
     if request.is_ajax():
 
