@@ -33,6 +33,7 @@
         <th style="cursor:pointer" class="text-center">e-mail</th>
         <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Organização</th>
         <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">Data</th>
+        <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(6)')" style="cursor:pointer" class="text-center">NPS</th>
       </tr>      
       {% for feedback in feedbacks %} 
         <tr class="item">
@@ -64,6 +65,11 @@
           </td>
           <td>
             {{feedback.data|date:"Y.m.d"}}
+          </td>
+          <td style="text-align:right">
+            {% if feedback.nps %}
+              {{feedback.nps}}
+            {% endif %}
           </td>
         </tr>
       {% endfor %}
