@@ -67,7 +67,7 @@
     </div>
 
     <script>
-    
+
         var config_projetos = {
             type: 'bar',
             data: {
@@ -84,7 +84,12 @@
                             {% for num in num_propostas %}
                                 {{num}},
                             {% endfor %}
-                        ]
+                        ],
+                    projetos: [
+                        {% for proj in nome_propostas %}
+                            [{% for nome in proj %}[`({{nome.organizacao}}) {{nome.titulo}}`],{% endfor %}],
+                        {% endfor %}
+                    ],
                 }, 
                 {
                     label: "{% if lingua == 'pt' %}projetos{% else %}projects{% endif %}",
@@ -93,7 +98,12 @@
                             {% for num in num_projetos %}
                                 {{num}},
                             {% endfor %}
-                        ]
+                        ],
+                    projetos: [
+                        {% for proj in nome_projetos %}
+                            [{% for nome in proj %}[`({{nome.organizacao}}) {{nome.get_titulo}}`],{% endfor %}],
+                        {% endfor %}
+                    ],
                 }, 
             ]
             },
@@ -103,12 +113,23 @@
                     display: true,
                     text: "{% if lingua == 'pt' %}Propostas e Projetos{% else %}Proposals and Projects{% endif %}",
 
-                },
+                }, 
                 plugins: {
                     datalabels: {
                         color: '#000000'
+                    },
+                },
+                tooltips: {
+                    footerFontStyle: 'normal',
+                    callbacks: {
+                      footer: function(tooltipItem, data) {
+                        let value = data.datasets[tooltipItem[0].datasetIndex].projetos[tooltipItem[0].index];
+                        console.log (value);
+                        return value
+                      }
                     }
-                }
+                },
+
             }
         };
 

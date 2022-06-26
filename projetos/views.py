@@ -919,13 +919,14 @@ def projetos_vs_propostas(request):
     # PROPOSTAS e ORGANIZACOES COM PROPOSTAS
     num_propostas = []
     org_propostas = []
-
+    nome_propostas = []
     for edicao in edicoes2:
 
         ano_projeto, semestre = edicao.split('.')
 
         propostas = Proposta.objects.filter(ano=int(ano_projeto)).\
             filter(semestre=semestre)
+        nome_propostas.append(propostas)
         num_propostas.append(propostas.count())
         tmp_org = {}
         for projeto in propostas:
@@ -937,12 +938,14 @@ def projetos_vs_propostas(request):
     # PROJETOS e ORGANIZACOES COM PROJETOS
     num_projetos = []
     org_projetos = []
+    nome_projetos = []
     for edicao in edicoes2:
 
         ano_projeto, semestre = edicao.split('.')
 
         projetos = Projeto.objects.filter(ano=int(ano_projeto)).\
             filter(semestre=semestre)
+        nome_projetos.append(projetos)
         num_projetos.append(projetos.count())
         tmp_org = {}
         for projeto in projetos:
@@ -979,7 +982,9 @@ def projetos_vs_propostas(request):
 
     context = {
         "num_propostas": num_propostas,
+        "nome_propostas": nome_propostas,
         "num_projetos": num_projetos,
+        "nome_projetos": nome_projetos,
         "total_propostas": sum(num_propostas),
         "total_projetos": sum(num_projetos),
         "org_prospectadas": org_prospectadas,
