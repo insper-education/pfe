@@ -31,6 +31,19 @@
       outline-width: 0;
       background-color: none;
     }
+
+    canvas {
+      border: 1px solid black;
+    }
+    
+    .resizable-content {
+        min-height: 350px;
+        resize: both;
+        overflow: auto;
+        position: relative;
+        margin: auto;
+    }
+
   </style>
 
 {% endblock %}
@@ -78,7 +91,9 @@
             </div>
 
             <div class="row mt-5">
-                <div class="col"><canvas id="horizontal-objetivos"></canvas></div>
+                <div class="col resizable-content">
+                    <canvas id="horizontal-objetivos"></canvas>
+                </div>
             </div>
 
             <div><br><br><br></div>{% comment %} Solução pouco elegante, mas funciona. {% endcomment %}
@@ -126,7 +141,7 @@
         },
         options: {
             legend: { display: true },
-            
+            maintainAspectRatio: false,
             title: {
                 display: true,
                 text: 'Médias Obtidas nos Objetivos de Aprendizagem'
@@ -204,6 +219,9 @@
     </div>
     </div>
     </div>
+
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
 
     {% with sem_edicao=True %}
     {% with com_cursos=True %}
