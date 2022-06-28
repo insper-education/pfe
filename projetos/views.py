@@ -1540,23 +1540,16 @@ def evolucao_objetivos(request):
             for edicao in edicoes:
                 periodo = edicao.split('.')
                 semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
-                notas_lista = [x.nota for x in semestre if x.objetivo == objetivo]
-
+                notas_lista = [x.nota for x in semestre if x.objetivo == objetivo and not x.na]
+                
+                notas = divide57(notas_lista)
+                soma = sum(notas)
                 faixa = [0, 0, 0]
-                tl = len(notas_lista)
-                if tl:
-                    for n in notas_lista:
-                        if n < 5:
-                            faixa[0] +=1 
-                        elif n < 7:
-                            faixa[1] +=1 
-                        else:
-                            faixa[2] +=1
-                    
-                    faixa[0] = (faixa[0]/tl)*100
-                    faixa[1] = (faixa[1]/tl)*100
-                    faixa[2] = (faixa[2]/tl)*100
-
+                if soma > 0:
+                    faixa[0] = 100*notas[0]/soma
+                    faixa[1] = 100*notas[1]/soma
+                    faixa[2] = 100*notas[2]/soma
+                
                 notas.append(media(notas_lista))
                 faixas.append(faixa)
 
@@ -1576,7 +1569,6 @@ def evolucao_objetivos(request):
             'semestre': configuracao.semestre,
             'edicoes': edicoes,
             "curso": curso,
-            #"objetivos": objetivos,
         }
 
     else:
@@ -1586,113 +1578,6 @@ def evolucao_objetivos(request):
         }
 
     return render(request, 'projetos/evolucao_objetivos.html', context)
-
-
-@login_required
-@permission_required("users.altera_professor", login_url='/')
-def evolucao_objetivos_copy(request):
-    """Mostra graficos das evoluções do PFE."""
-    configuracao = get_object_or_404(Configuracao)
-    edicoes, _, semestre = get_edicoes(Avaliacao2)
-
-    if request.is_ajax():
-
-        if 'curso' in request.POST:
-            curso = request.POST['curso']
-            grupo = 'grupo' in request.POST and request.POST["grupo"]=="true"
-            individuais = 'individuais' in request.POST and request.POST["individuais"]=="true"
-            so_finais = "so_finais" in request.POST and request.POST["so_finais"]=="true"
-
-            if so_finais:
-                # Somenete avaliações finais do PFE
-                tipos = [2, 12, 22, 52, 54]
-                avaliacoes_sep = Avaliacao2.objects.filter(tipo_de_avaliacao__in=tipos)
-            else:
-                avaliacoes_sep = Avaliacao2.objects.all()
-
-            if curso == 'T':
-
-                # Avaliações Individuais
-                if (individuais):
-                    avaliacoes_ind = avaliacoes_sep.filter(alocacao__isnull=False)
-                else:
-                    avaliacoes_ind = avaliacoes_sep.none()
-
-                # Avaliações Grupais
-                if grupo:
-                    avaliacoes_grupo = avaliacoes_sep.filter(alocacao__isnull=True, projeto__isnull=False)
-                else:
-                    avaliacoes_grupo = avaliacoes_sep.none()
-
-                avaliacoes = avaliacoes_ind | avaliacoes_grupo
-
-            else:
-
-                # Avaliações Individuais
-                if (individuais):
-                    avaliacoes_ind = avaliacoes_sep.filter(alocacao__aluno__curso=curso)
-                else:
-                    avaliacoes_ind = avaliacoes_sep.none()
-
-                # Avaliações Grupais
-                if grupo:
-                    # identificando projetos com estudantes do curso (pelo menos um)
-                    projetos_selecionados = []
-                    projetos = Projeto.objects.all()
-                    for projeto in projetos:
-                        alocacoes = Alocacao.objects.filter(projeto=projeto)
-                        for alocacao in alocacoes:
-                            if alocacao.aluno.curso == curso:
-                                projetos_selecionados.append(projeto)
-                                break
-                            
-                    avaliacoes_grupo = Avaliacao2.objects.filter(alocacao__isnull=True, projeto__in=projetos_selecionados)
-
-                else:
-                    avaliacoes_grupo = Avaliacao2.objects.none()
-
-                avaliacoes = avaliacoes_ind | avaliacoes_grupo
-
-        else:
-            return HttpResponse("Algum erro não identificado.", status=401)
-
-        cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9", "#7cfa9f", "#e8c3b9", "#c45890", "#b76353", "#a48577"]
-
-        medias = []
-        objetivos = ObjetivosDeAprendizagem.objects.all()
-        count = 0
-        for objetivo in objetivos:
-            notas = []
-            for edicao in edicoes:
-                periodo = edicao.split('.')
-                semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
-                notas_lista = [x.nota for x in semestre if x.objetivo == objetivo]
-                notas.append(media(notas_lista))
-
-            if configuracao.lingua == "pt":
-                titulo = objetivo.titulo
-            else:
-                titulo = objetivo.titulo_en
-
-            medias.append({"objetivo": titulo, "media": notas, "cor": cores[count]})
-            count += 1
-
-        context = {
-            "medias": medias,
-            'ano': configuracao.ano,
-            'semestre': configuracao.semestre,
-            'edicoes': edicoes,
-            "curso": curso,
-        }
-
-    else:
-
-        context = {
-            "edicoes": edicoes,
-        }
-
-    return render(request, 'projetos/evolucao_objetivos.html', context)
-
 
 
 @login_required
