@@ -88,16 +88,6 @@
                 </div>
             </div>
 
-            <div class="row mt-5">
-                <div class="col resizable-content">
-                    <canvas id="horizontal-objetivos"></canvas>
-                </div>
-            </div>
-
-            <div style="max-width:860px;margin: auto;"> 
-                <canvas id="chart-medias"></canvas>
-            </div>
-
             <div><br><br><br></div>{% comment %} Solução pouco elegante, mas funciona. {% endcomment %}
 
             <script>
@@ -107,98 +97,6 @@
                         "{{edicao}}",
                     {% endfor %}
                 ]
-
-              var datasets = [
-                  {% for media in medias %}
-                    { 
-                        data: [{% for nota in media.media %}{% if nota >= 0 %}{{nota|stringformat:".2f"|unlocalize}}{% endif %},{% endfor %}],
-                        label: "{{media.objetivo}}",
-                        borderColor: "{{media.cor}}",
-                        backgroundColor: "{{media.cor}}",
-                        fill: false,
-                        spanGaps: true,
-                    },
-                  {% endfor %}
-                ] 
-
-    var config_medias = {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: datasets,
-        },
-        options: {
-            title: {
-                display: true,
-                text: 'Evolução nos semestres'
-            }, 
-        }
-    }
-
-    var config_objetivos = {
-        type: 'horizontalBar',
-        data: {
-          labels: labels,
-          datasets: datasets,
-        },
-        options: {
-            legend: { display: true },
-            maintainAspectRatio: false,
-            title: {
-                display: true,
-                text: 'Médias Obtidas nos Objetivos de Aprendizagem'
-            },
-            scales: {
-                xAxes: [{
-                    ticks: {
-                        beginAtZero: true,
-                        max: 10
-                    }
-                }]
-            },
-            plugins: {
-                datalabels: {
-                    formatter: (value, ctx) => {
-                        if(value>0) {
-                            return (value).toFixed(2);
-                        } else {
-                            return " ";
-                        }
-                    },
-                    color: '#000',
-                }
-            },
-            annotation: {
-                annotations: [
-                    {
-                        type: 'line',
-                        mode: 'vertical',
-                        scaleID: 'x-axis-0',
-                        value: 5,
-                        borderColor: 'rgb(225, 12, 12)',
-                        borderWidth: 6,
-                        label: {
-                            enabled: false,
-                            content: 'Test label'
-                        }
-                    },
-                    {
-                        type: 'line',
-                        mode: 'vertical',
-                        scaleID: 'x-axis-0',
-                        value: 7,
-                        borderColor: 'rgb(12, 225, 12)',
-                        borderWidth: 6,
-                        label: {
-                            enabled: false,
-                            content: 'Test label'
-                        },
-                    }
-                ]
-            }
-        }
-    }
-
 
               var div_datasets = [
                   {% for media in medias %}
@@ -300,13 +198,13 @@
             },
             annotation: {
                 annotations: [
-                    {
+                    {% comment %} {
                         type: 'line',
                         mode: 'vertical',
                         scaleID: 'x-axis-0',
-                        value: 20,
-                        borderColor: 'grey',
-                        borderWidth: 3,
+                        value: 5,
+                        borderColor: 'rgb(225, 12, 12)',
+                        borderWidth: 6,
                         label: {
                             enabled: false,
                             content: 'Test label'
@@ -316,33 +214,24 @@
                         type: 'line',
                         mode: 'vertical',
                         scaleID: 'x-axis-0',
-                        value: 60,
-                        borderColor: 'grey',
-                        borderWidth: 3,
+                        value: 7,
+                        borderColor: 'rgb(12, 225, 12)',
+                        borderWidth: 6,
                         label: {
                             enabled: false,
                             content: 'Test label'
                         },
-                    }
+                    } {% endcomment %}
                 ]
             }
         }
     }
 
+
     function carrega_pagina() {  
-      
-      var div_objetivos = document.getElementById('horizontal-div_objetivos').getContext('2d');
-      window.div_objetivos = new Chart(div_objetivos, config_div_objetivos);
 
-      {% comment %} {% if medias_geral %} {% endcomment %}
-        // Chart do nível nos objetivos de aprendizagem
-        var horizontal_objetivos = document.getElementById('horizontal-objetivos').getContext('2d');
-        window.objetivos = new Chart(horizontal_objetivos, config_objetivos);
-      {% comment %} {% endif %} {% endcomment %}
-
-      // Chart do média dos alunos
-      var chart_medias = document.getElementById('chart-medias').getContext('2d');
-      window.medias = new Chart(chart_medias, config_medias);
+        var div_objetivos = document.getElementById('horizontal-div_objetivos').getContext('2d');
+        window.div_objetivos = new Chart(div_objetivos, config_div_objetivos);
 
     }
 
