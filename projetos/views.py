@@ -1542,13 +1542,12 @@ def evolucao_objetivos(request):
                 semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
                 notas_lista = [x.nota for x in semestre if x.objetivo == objetivo and not x.na]
                 
-                notas = divide57(notas_lista)
-                soma = sum(notas)
-                faixa = [0, 0, 0]
+                faixa = divide57(notas_lista)
+                soma = sum(faixa)
                 if soma > 0:
-                    faixa[0] = 100*notas[0]/soma
-                    faixa[1] = 100*notas[1]/soma
-                    faixa[2] = 100*notas[2]/soma
+                    faixa[0] = 100*faixa[0]/soma
+                    faixa[1] = 100*faixa[1]/soma
+                    faixa[2] = 100*faixa[2]/soma
                 
                 notas.append(media(notas_lista))
                 faixas.append(faixa)
