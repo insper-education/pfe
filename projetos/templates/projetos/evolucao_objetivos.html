@@ -242,6 +242,7 @@
                     },
                     
                   {% endfor %}
+
                 ] 
 
     var config_div_objetivos = {
@@ -288,6 +289,14 @@
                               if(ds[ctx.datasetIndex - 1].stack == ds[ctx.datasetIndex].stack) {
                                 return ''
                               } else {
+                                tmp = ctx.datasetIndex - 1;
+                                while(tmp >= 0) {
+                                    // evita nomes repetidos
+                                    if(ds[ctx.datasetIndex].stack == ds[tmp].stack) {
+                                        return ''
+                                    }
+                                    tmp -= 1;
+                                }
                                 return ds[ctx.datasetIndex].stack;
                               }
                             } else {

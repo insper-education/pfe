@@ -1468,7 +1468,6 @@ def evolucao_objetivos(request):
     configuracao = get_object_or_404(Configuracao)
     edicoes, _, semestre = get_edicoes(Avaliacao2)
 
-
     if request.is_ajax():
 
         if 'curso' in request.POST:
