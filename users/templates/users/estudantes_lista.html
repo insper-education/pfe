@@ -129,9 +129,11 @@
                     <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
                       {{alocacao.projeto.get_titulo}}
                     </a>
-                    <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
-                      ({{alocacao.projeto.organizacao}})
-                    </a>
+                    {% if alocacao.projeto and alocacao.projeto.organizacao %}
+                      <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
+                        ({{alocacao.projeto.organizacao}})
+                      </a>
+                    {% endif %}
                     {% if alocacao.projeto.avancado %}
                       <span style="color:red">
                         [PFE Avançado]

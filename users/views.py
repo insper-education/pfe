@@ -187,6 +187,10 @@ def estudantes_lista(request):
                         .filter(alocacao__projeto__ano=ano_tmp,
                                 alocacao__projeto__semestre=semestre_tmp)\
                         .distinct()
+
+                    if not alunos_semestre:
+                        break
+
                     if ano_tmp not in tabela_alunos:
                         tabela_alunos[ano_tmp] = {}
                     if semestre_tmp not in tabela_alunos[ano_tmp]:
@@ -207,21 +211,15 @@ def estudantes_lista(request):
                     tabela_alunos[ano_tmp][semestre_tmp]["total"] =\
                         alunos_semestre.count()
 
-                    if (ano_tmp == configuracao.ano) and \
-                    (semestre_tmp == configuracao.semestre):
-                        break
-
                     if semestre_tmp == 1:
                         semestre_tmp = 2
                     else:
                         ano_tmp += 1
                         semestre_tmp = 1
 
-                # Se todos selecionados, não incluir alunos dos semestres futuros
+                # Só alunos já alocados
                 if anosemestre == "todos":
-                    alunos_list = alunos_list.filter(anoPFE__lte=configuracao.ano).distinct()
-                    if configuracao.semestre == 1:
-                        alunos_list = alunos_list.exclude(anoPFE=configuracao.ano, semestrePFE=2)
+                    alunos_list = alunos_list.filter(alocacao__projeto__isnull=False).distinct()
 
             num_alunos = alunos_list.count()
 
