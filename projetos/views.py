@@ -502,7 +502,6 @@ def arquivos3(request, organizacao, projeto, usuario, path):
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')
-# def projetos_lista(request, periodo):
 def projetos_lista(request):
     """Lista todos os projetos."""
     edicoes = []

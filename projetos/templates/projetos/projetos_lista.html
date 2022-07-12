@@ -23,23 +23,19 @@
           <thead class="table-info">
             <tr>
               <th scope="col" class="text-center">Projeto</th>
+              <th scope="col" class="text-center">Estudantes</th>
               <th scope="col" class="text-center">Período</th>
               <th scope="col" class="text-center">Orientador</th>
               <th scope="col" class="text-center">Organização</th>
             </tr>
           </thead>
-          {% for projeto in projetos %} 
+          {% for projeto in projetos %}
+          {% with estudantes=projeto.alocacao_set.all %}
           <tr class="item">
-              <th scope="row" data-order="{{projeto.get_titulo}}">
-                <a href="{% url 'projeto_completo' projeto.id %}"
-                  data-toggle="tooltip" data-html="true" animation="true" title="
-                  {% for alocacao in projeto.alocacao_set.all %}
-                    &bull; {{alocacao.aluno.user.get_full_name}} [{{alocacao.aluno.get_curso_display}}]<br>
-                  {% empty %}
-                    Nenhum aluno alocado nesse projeto
-                  {% endfor %}
-                  "            
-                >
+              <th scope="row" data-order="{{projeto.get_titulo}}"
+              {% comment %} rowspan="{{estudantes.count}}" {% endcomment %}
+              >
+                <a href="{% url 'projeto_completo' projeto.id %}">
                   {% if projeto.titulo_final %}
                     {{projeto.titulo_final}}<br>
                     <small>Título original: {{projeto.titulo}}</small>
@@ -48,10 +44,20 @@
                   {% endif %}
                 </a>
               </th>
-              <td class="text-center">
-                  {{projeto.ano}}.{{projeto.semestre}}
-              </td>
               <td>
+                {% comment %} {% with alocacao=estudantes|first %} {% endcomment %}
+                {% for alocacao in estudantes %}&bull; {{alocacao.aluno.user.get_full_name}} [{{alocacao.aluno.get_curso_display}}]<br>{% empty %}
+                  Nenhum aluno alocado nesse projeto
+                {% endfor %}
+              </td>
+              <td class="text-center"
+              {% comment %} rowspan="{{estudantes.count}}" {% endcomment %}
+              >
+                  {{projeto.ano}}&middot;{{projeto.semestre}}
+              </td>
+              <td
+              {% comment %} rowspan="{{estudantes.count}}" {% endcomment %}
+              >
                 {% if projeto.orientador %}
                   <a href="{% url 'professor_detail' projeto.orientador.id %}">
                     {{ projeto.orientador }}
@@ -60,12 +66,25 @@
                   <i>Orientador não definido</i>
                 {% endif %}
               </td>
-              <td>
+              <td
+              {% comment %} rowspan="{{estudantes.count}}" {% endcomment %}
+              >
                   <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
                     {{ projeto.organizacao.nome }}
                   </a>
               </td>
-          </tr>          
+
+            </tr>
+          
+            {% comment %}
+            {% for alocacao in estudantes|slice:"1:" %}
+              <tr><td>
+                {{alocacao.aluno.user.get_full_name}} [{{alocacao.aluno.get_curso_display}}]<br>
+              </td></tr>
+            {% endfor %}
+            {% endcomment %}
+          
+          {% endwith %}
           {% endfor %}
           
         </table>
