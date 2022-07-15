@@ -855,6 +855,13 @@ class Documento(models.Model):
 
     confidencial = models.BooleanField(default=True, help_text='Documento confidêncial')
 
+    LINGUA_DO_DOCUMENTO = ( # não mudar a ordem dos números
+        (0, 'Português'),
+        (1, 'Inglês'),
+    )
+
+    lingua_do_documento = models.PositiveSmallIntegerField(choices=LINGUA_DO_DOCUMENTO, default=0)
+
     def __str__(self):
         if self.tipo_de_documento == 255:
             return self.TIPO_DE_DOCUMENTO[-1][1]

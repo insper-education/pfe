@@ -270,7 +270,7 @@ class DocumentoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
 
     list_display = ('tipo_de_documento', 'data', 'organizacao', 'usuario', 'projeto')
-    list_filter = ('tipo_de_documento', 'confidencial')
+    list_filter = ("tipo_de_documento", "confidencial", "lingua_do_documento", )
     search_fields = ['projeto__titulo', 'projeto__titulo_final',
                      'usuario__username', 'projeto__organizacao__sigla',]
 
