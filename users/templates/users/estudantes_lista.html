@@ -48,11 +48,8 @@
               <th scope="col" class="text-center">e-mail</th>
               <th scope="col" class="text-center">Curso</th>
               <th scope="col" class="text-center">Período</th>
-              <th scope="col" class="text-center">
-                <a data-toggle="tooltip" data-html="true" animation="true" title="<small>Projetos <u>sublinhados</u> são de PFE Avançado</small>">
-                  Projeto
-                </a>
-              </th>
+              <th scope="col" class="text-center">Projeto</th>
+              <th scope="col" class="text-center">Organização</th>
           </tr>
           </thead>
           {% for aluno in alunos_list %} 
@@ -129,17 +126,24 @@
                     <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
                       {{alocacao.projeto.get_titulo}}
                     </a>
-                    {% if alocacao.projeto and alocacao.projeto.organizacao %}
-                      <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
-                        ({{alocacao.projeto.organizacao}})
-                      </a>
-                    {% endif %}
                     {% if alocacao.projeto.avancado %}
                       <span style="color:red">
                         [PFE Avançado]
                       </span>
                     {% endif %}
-                    <br>
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+            </td>
+            <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
+              {% if aluno.alocacao_set.all %}
+                {% for alocacao in aluno.alocacao_set.all %}
+                  {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
+                    {% if alocacao.projeto and alocacao.projeto.organizacao %}
+                      <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
+                        {{alocacao.projeto.organizacao}}
+                      </a>
+                    {% endif %}
                   {% endif %}
                 {% endfor %}
               {% endif %}
@@ -147,6 +151,7 @@
           </tr>
           {% endfor %}
         </table>
+        <p style="text-align:right;"><small>Projetos <u>sublinhados</u> são de PFE Avançado</small></p>
       </div>
       <br>
 
