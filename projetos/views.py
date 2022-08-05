@@ -40,7 +40,7 @@ from .models import Coorientador, Avaliacao2, ObjetivosDeAprendizagem
 # from .models import Evento
 
 from .models import Feedback, AreaDeInteresse, Acompanhamento, Anotacao, Organizacao
-from .models import Documento, FeedbackEstudante
+from .models import Documento, FeedbackEstudante, Area
 # from .models import Encontro
 from .models import Banco, Reembolso, Aviso, Conexao
 
@@ -1576,6 +1576,39 @@ def evolucao_objetivos(request):
         }
 
     return render(request, 'projetos/evolucao_objetivos.html', context)
+
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def filtro_projetos(request):
+    """Filtra os projetos."""
+    edicoes = []
+    if request.is_ajax():
+        if 'edicao' in request.POST:
+            edicao = request.POST['edicao']
+            if edicao == 'todas':
+                projetos_filtrados = Projeto.objects.all()
+            else:
+                ano, semestre = request.POST['edicao'].split('.')
+                projetos_filtrados = Projeto.objects.filter(ano=ano,
+                                                            semestre=semestre)
+            projetos = projetos_filtrados.order_by("ano", "semestre", "organizacao", "titulo",)
+            context = {
+                'projetos': projetos,
+            }
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+    else:
+        edicoes, _, _ = get_edicoes(Projeto)
+
+        areas = Area.objects.filter(ativa=True)
+        
+        context = {
+            "edicoes": edicoes,
+            "areast": areas,
+        }
+
+    return render(request, 'projetos/filtra_projetos.html', context)
 
 
 @login_required

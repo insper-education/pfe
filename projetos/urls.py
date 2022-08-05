@@ -92,6 +92,10 @@ urlpatterns = [
          views.editar_projeto,
          name='editar_projeto'),
 
+     path('filtro_projetos',
+         views.filtro_projetos,
+         name='filtro_projetos'),
+
     path('lista_feedback',
          views.lista_feedback,
          name='lista_feedback'),

@@ -15,10 +15,14 @@
     <table>
         {% for area in areast %}
             <tr><td>&nbsp;
-                    <input type="checkbox" name="selection" id="{{area.id}}" value="{{area.titulo}}"
-                    {% for a in aa %}
-                        {% if area == a.area %}checked{% endif %}
-                    {% endfor %}
+                    <input type="checkbox" name="selection" id="{{area.id}}" value="{{area.titulo}}" class="filtra_area"
+                    {% if tudo_ligado %}
+                        checked
+                    {% else %}
+                        {% for a in aa %}
+                            {% if area == a.area %}checked{% endif %}
+                        {% endfor %}
+                    {% endif %}
                     {% if vencido %}disabled{% endif %}>&nbsp;
                 </td>
                 <td style="padding-left: 6px; padding-right: 6px;"
@@ -32,8 +36,12 @@
         {% endfor %}
     </table>
     <div style="height:8px;font-size:8px;">&nbsp;</div>
-    <label for="outras">Outras:</label> 
-    <textarea type="text" cols="29" maxlength="128" id="outras" name="outras" wrap="soft"
-    {% if vencido %}disabled{% endif %}
-    >{% for a in aa %}{% if a.outras %}{{a.outras}}{% endif %}{% endfor %}</textarea>
+    
+    {% if not not_outras %}
+        <label for="outras">Outras:</label> 
+        <textarea type="text" cols="29" maxlength="128" id="outras" name="outras" wrap="soft"
+        {% if vencido %}disabled{% endif %}
+        >{% for a in aa %}{% if a.outras %}{{a.outras}}{% endif %}{% endfor %}</textarea>
+    {% endif %}        
+
 {% endif %}
