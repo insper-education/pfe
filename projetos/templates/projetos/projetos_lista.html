@@ -69,9 +69,13 @@
               <td
               {% comment %} rowspan="{{estudantes.count}}" {% endcomment %}
               >
+                {% if projeto.organizacao %}
                   <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
                     {{ projeto.organizacao.nome }}
                   </a>
+                {% else %}
+                  <i>Organização não definida</i>
+                {% endif %}
               </td>
 
             </tr>
