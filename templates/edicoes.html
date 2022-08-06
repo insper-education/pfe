@@ -85,6 +85,14 @@
           </div>
         {% endif %}
 
+        {% if avancados %}
+          <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          <div class="form-check mb-2 mr-sm-2">
+            <input class="filter form-check-input" type="checkbox" id="avancados" checked >
+            <label class="form-check-label" for="avancados">Avancados</label>
+          </div>
+        {% endif %}
+
         <div id="spinner" class="ml-2 input-group-append" style="visibility: hidden">
           <div class="spinner-border text-secondary ml-auto" style="width: 1.8rem; height: 1.8rem;" role="status" aria-hidden="true">
             <span class="sr-only input-group-text">Carregando...</span>

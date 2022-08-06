@@ -514,6 +514,12 @@ def projetos_lista(request):
                 ano, semestre = request.POST['edicao'].split('.')
                 projetos_filtrados = Projeto.objects.filter(ano=ano,
                                                             semestre=semestre)
+
+            avancados = "avancados" in request.POST and request.POST["avancados"]=="true"
+            print(avancados)
+            if not avancados:
+                projetos_filtrados = projetos_filtrados.filter(avancado__isnull=True)
+
             projetos = projetos_filtrados.order_by("ano", "semestre", "organizacao", "titulo",)
             context = {
                 'projetos': projetos,

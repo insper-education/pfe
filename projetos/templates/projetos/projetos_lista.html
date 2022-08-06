@@ -14,7 +14,9 @@
   <span class="titulo">Projetos</span>
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
-  {% include "edicoes.html" %}
+  {% with avancados=True %}
+    {% include "edicoes.html" %}
+  {% endwith %}
 
   <div class="atualizar">
     {% if projetos %}
@@ -22,11 +24,11 @@
         <table id="ProjetosTable" class="table table-bordered table-hover table-sm" style="width: 100%;">
           <thead class="table-info">
             <tr>
-              <th scope="col" class="text-center">Projeto</th>
-              <th scope="col" class="text-center">Estudantes</th>
-              <th scope="col" class="text-center">Período</th>
-              <th scope="col" class="text-center">Orientador</th>
-              <th scope="col" class="text-center">Organização</th>
+              <th scope="col" class="text-center">{% if lingua == "pt" %}Projeto{% else %}Project{% endif %}</th>
+              <th scope="col" class="text-center">{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}</th>
+              <th scope="col" class="text-center">{% if lingua == "pt" %}Período{% else %}Semester{% endif %}</th>
+              <th scope="col" class="text-center">{% if lingua == "pt" %}Orientador{% else %}Advisor{% endif %}</th>
+              <th scope="col" class="text-center">{% if lingua == "pt" %}Organização{% else %}Sponsor{% endif %}</th>
             </tr>
           </thead>
           {% for projeto in projetos %}
@@ -41,6 +43,9 @@
                     <small>Título original: {{projeto.titulo}}</small>
                   {% else %}
                     {{projeto.titulo}}
+                  {% endif %}
+                  {% if projeto.avancado %}
+                    <strong style="color:red"><u>[Avançado]</u></strong><br>
                   {% endif %}
                 </a>
               </th>
@@ -106,7 +111,9 @@
   <p>&nbsp;</p>
 
   {% with tabela='Projetos' %}
+  {% with avancados=True %}
     {% include "edicoes_ajax.html" %}
+  {% endwith %}
   {% endwith %}
 
 {% endblock %}

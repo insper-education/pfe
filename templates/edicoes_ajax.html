@@ -36,6 +36,10 @@
       {% if so_finais %}
         var so_finais = $("#so_finais").is(':checked');
       {% endif %}
+      {% if avancados %}
+        var avancados = $("#avancados").is(':checked');
+      {% endif %}
+      
 
       request_ajax = $.ajax({
           type: "POST",
@@ -56,6 +60,9 @@
               {% endif %}
               {% if so_finais %}
                 so_finais: so_finais,
+              {% endif %}
+              {% if avancados %}
+                avancados: avancados,
               {% endif %}
               'csrfmiddlewaretoken': '{{ csrf_token }}',
           },
