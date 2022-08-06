@@ -16,10 +16,11 @@
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" %}
 
-  <br>Áreas de Interesse<br>
   {% with tudo_ligado=True %}
+  {% with titulo_areas=True %}
   {% with not_outras=True %}
       {% include "areas.html"%}
+  {% endwith %}
   {% endwith %}
   {% endwith %}
 
