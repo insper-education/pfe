@@ -516,7 +516,7 @@ def projetos_lista(request):
                                                             semestre=semestre)
 
             avancados = "avancados" in request.POST and request.POST["avancados"]=="true"
-            print(avancados)
+
             if not avancados:
                 projetos_filtrados = projetos_filtrados.filter(avancado__isnull=True)
 
