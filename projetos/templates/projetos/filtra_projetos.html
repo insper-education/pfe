@@ -36,6 +36,10 @@
               <th scope="col" class="text-center">Período</th>
               <th scope="col" class="text-center">Orientador</th>
               <th scope="col" class="text-center">Organização</th>
+              <th scope="col" class="text-center">Orientador</th>
+              <th scope="col" class="text-center">Bancas</th>
+              <th scope="col" class="text-center">Falconi</th>
+              <th scope="col" class="text-center">Média</th>
             </tr>
           </thead>
           {% for projeto in projetos %}
@@ -52,6 +56,9 @@
                     <small>Título original: {{projeto.titulo}}</small>
                   {% else %}
                     {{projeto.titulo}}
+                  {% endif %}
+                  {% if projeto.avancado %}
+                    <strong style="color:red"><u>[Avançado]</u></strong><br>
                   {% endif %}
                 </a>
               </th>
@@ -94,6 +101,25 @@
                 {% endif %}
               </td>
 
+              {% with medias=projeto.medias %}
+              <td>
+                {{medias.0|floatformat:1|safe}}
+              </td>
+
+              <td>
+                {{medias.1|floatformat:1|safe}}
+              </td>
+
+              <td>
+                {{medias.2|floatformat:1|safe}}
+              </td>
+
+              <td>
+                {{medias.3|floatformat:1|safe}}
+              </td>
+
+              {% endwith %}
+
             </tr>
           
             {% comment %}
@@ -114,10 +140,47 @@
     {% endif %}
 
     <script>
+
+      var table = null;
+
       function carrega_pagina() {
+
+        table = $('#ProjetosTable').DataTable();
+        
+        $.fn.dataTable.ext.search.push(
+          function(settings, data, dataIndex) {
+            
+            if(table) {
+              filterList = $("input.filtra_area[type=checkbox]");
+              encontrou = false;      
+              filterList.each(function(i, el) {
+                  if($(el)[0].checked) {
+                    if($(table.row(dataIndex).node()).hasClass($(el)[0].id)) {
+                      encontrou = true;
+                    }
+                  }
+              });
+              return encontrou;
+            }
+            return true;
+          }
+        );
+
+        table.draw();
+        //table.search("Bioengenharia").draw();
+
       };
       window.onload = carrega_pagina
+
+      $(".filtra_area").change(function(){
+        if(table) {
+          table.draw();
+        }
+      });
+      
     </script>
+
+{% comment %} 
 
     <script type="text/javascript">
 
@@ -138,6 +201,8 @@
       });
 
     </script>
+ {% endcomment %}
+
 
   </div>
   <p>&nbsp;</p>

@@ -72,16 +72,6 @@ var table = $('#{{tabela}}Table').DataTable( {
         }
     },          
 
-{% comment %} 
-    $('td').click(function(){
-        var col = $(this).prevAll().length;
-        var headerObj = $(this).parents('table').find('th').eq(col);
-        // A quick test!
-        alert("My cell header is called: " + headerObj.text());
-        }); {% endcomment %}
-
-
-    
     buttons: [ 
         
         $.extend( true, {}, buttonCommon, {

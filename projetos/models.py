@@ -19,6 +19,7 @@ from django.template.defaultfilters import slugify
 from django.utils.encoding import force_text
 
 from estudantes.models import Relato
+import users.models
 
 def get_upload_path(instance, filename):
     """Caminhos para armazenar os arquivos."""
@@ -232,7 +233,51 @@ class Projeto(models.Model):
     
         return zip(eventos, relatos, avaliados)
 
-        
+    @property
+    def media_falconi(self):
+        aval_banc_falconi = Avaliacao2.objects.filter(projeto=self, tipo_de_avaliacao=99)  # Falc.
+        nota_banca_falconi, _, _ = users.models.Aluno.get_banca(None, aval_banc_falconi)
+        return nota_banca_falconi
+
+    @property
+    def media_bancas(self):
+        aval_bancas = Avaliacao2.objects.filter(projeto=self, tipo_de_avaliacao__in=[1, 2])  # Bancas.
+        nota_bancas, _, _ = users.models.Aluno.get_banca(None, aval_bancas)
+        return nota_bancas
+
+    @property
+    def media_orientador(self):
+        alocacoes = users.models.Alocacao.objects.filter(projeto=self)
+        if alocacoes:
+            primeira = alocacoes.first()
+            medias = primeira.get_media
+
+            nota = 0
+            peso = 0
+            if ("peso_grupo_inter" in medias) and (medias["peso_grupo_inter"] is not None) and (medias["peso_grupo_inter"] > 0):
+                nota += medias["nota_grupo_inter"]
+                peso += medias["peso_grupo_inter"]
+                
+            if ("peso_grupo_final" in medias) and (medias["peso_grupo_final"] is not None) and (medias["peso_grupo_final"] > 0):
+                nota += medias["nota_grupo_final"]
+                peso += medias["peso_grupo_final"]
+                
+            if peso:
+                return nota/peso
+            return 0.0
+
+        else:
+            return 0.0
+
+
+    @property
+    def medias(self):
+        notas = [0,0,0,0]
+        notas[0] = self.media_orientador
+        notas[1] = self.media_bancas
+        notas[2] = self.media_falconi
+        notas[3] = (notas[0] + notas[1] + notas[2])/3
+        return notas
 
     @classmethod
     def create(cls, proposta):
