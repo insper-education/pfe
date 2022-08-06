@@ -61,7 +61,7 @@ var table = $('#{{tabela}}Table').DataTable( {
     {% comment %} Colocar bancas quando todas as edições {% endcomment %}
     createdRow: function( row, data, dataIndex, cells){
         if( $("#filterEdicao option:selected").attr("value") == "todas" ) {            
-            if( data[col].slice(-1) ==  '1'){
+            if( data[col] != null && data[col].slice(-1) ==  '1'){
                 $(row).css('background-color', '#D0D0D0');
                 $(row).hover(function(){
                     $(this).css('background-color', '#C0C0C0');
