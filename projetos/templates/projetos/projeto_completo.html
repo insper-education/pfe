@@ -65,7 +65,17 @@
       {% if projeto.proposta.internacional %}
         <font color="red">Internacional</font>
       {% endif %}
+
+      {% if projeto.avancado or projeto.proposta.internacional %}
+        {% if projeto.proposta.intercambio %}
+          /
+        {% endif %}
+      {% endif %}
       
+      {% if projeto.proposta.intercambio %}
+        <font color="red">Intercâmbio</font>
+      {% endif %}
+
     </p>
   {% endif %}
   
