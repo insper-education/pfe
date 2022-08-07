@@ -20,7 +20,7 @@ from users.support import get_edicoes, adianta_semestre
 from users.models import Opcao, Aluno, Alocacao, PFEUser
 from users.models import Professor, Parceiro, Administrador
 
-from projetos.models import Proposta, Projeto, Organizacao, Disciplina
+from projetos.models import Proposta, Projeto, Organizacao, Disciplina, Conexao
 from projetos.models import Configuracao, Area, AreaDeInteresse, Recomendada
 
 from .support import retorna_ternario, ordena_propostas_novo, ordena_propostas
@@ -141,6 +141,98 @@ def mapeamento_estudantes_propostas(request):
     return render(request,
                   'propostas/mapeamento_estudante_projeto.html',
                   context)
+
+
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def procura_grupos(request):
+    """Lista todos os projetos e grupos."""
+    edicoes = []
+
+    if request.is_ajax():
+        if 'edicao' in request.POST:
+            edicao = request.POST['edicao']
+            if edicao == 'todas':
+                projetos_filtrados = Projeto.objects.all()
+            else:
+                ano, semestre = request.POST['edicao'].split('.')
+                projetos_filtrados = Projeto.objects.filter(ano=ano,
+                                                            semestre=semestre)
+
+            if 'curso' in request.POST:
+                curso = request.POST['curso']
+
+            if 'curso' in request.POST:
+                curso = request.POST['curso']    
+            else:
+                return HttpResponse("Algum erro não identificado.", status=401)
+
+            projetos_filtrados = projetos_filtrados.order_by("-avancado", "organizacao")
+
+            projetos_selecionados = []
+            prioridade_list = []
+            cooperacoes = []
+            conexoes = []
+
+            numero_estudantes = 0
+            numero_estudantes_avancado = 0
+
+            numero_projetos = 0
+            numero_projetos_avancado = 0
+
+            for projeto in projetos_filtrados:
+
+                estudantes_pfe = Aluno.objects.filter(alocacao__projeto=projeto)
+                if curso != 'T':
+                    estudantes_pfe = estudantes_pfe.filter(alocacao__aluno__curso=curso)
+
+                if estudantes_pfe:  # len(estudantes_pfe) > 0:
+                    projetos_selecionados.append(projeto)
+                    if projeto.avancado:
+                        numero_estudantes_avancado += len(estudantes_pfe)
+                        numero_projetos_avancado += 1
+                    else:
+                        numero_estudantes += len(estudantes_pfe)
+                        numero_projetos += 1
+
+                    prioridades = []
+                    for estudante in estudantes_pfe:
+                        opcoes = Opcao.objects.filter(proposta=projeto.proposta)
+                        opcoes = opcoes.filter(aluno__user__tipo_de_usuario=1)
+                        opcoes = opcoes.filter(aluno__alocacao__projeto=projeto)
+                        opcoes = opcoes.filter(aluno=estudante)
+                        if opcoes:
+                            prioridade = opcoes.first().prioridade
+                            prioridades.append(prioridade)
+                        else:
+                            prioridades.append(0)
+                    prioridade_list.append(zip(estudantes_pfe, prioridades))
+                    cooperacoes.append(Conexao.objects.filter(projeto=projeto,
+                                                              colaboracao=True))
+                    conexoes.append(Conexao.objects.filter(projeto=projeto,
+                                                           colaboracao=False))
+
+            projetos = zip(projetos_selecionados, prioridade_list, cooperacoes, conexoes)
+
+            context = {
+                'projetos': projetos,
+                'numero_projetos': numero_projetos,
+                'numero_projetos_avancado': numero_projetos_avancado,
+                'numero_estudantes': numero_estudantes,
+                'numero_estudantes_avancado': numero_estudantes_avancado,
+            }
+
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+    else:
+        edicoes, ano, semestre = get_edicoes(Projeto)
+        context = {
+            'edicoes': edicoes,
+        }
+
+    return render(request, 'projetos/projetos_fechados.html', context)
+
 
 
 @login_required

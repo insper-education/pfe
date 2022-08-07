@@ -26,6 +26,10 @@ urlpatterns = [
          views.procura_propostas,
          name='procura_propostas'),
 
+     path('procura_grupos/',
+         views.procura_grupos,
+         name='procura_grupos'),
+
     path('propostas_apresentadas/',
          views.propostas_apresentadas,
          name='propostas_apresentadas'),

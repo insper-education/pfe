@@ -78,8 +78,9 @@
       <label><input id="conexoes" onchange="($(this).prop('checked') ? $('.conexoes').show() : $('.conexoes').hide())" type="checkbox" checked /> Conexões</label>&nbsp;&nbsp;&nbsp;
       <label><input id="papeis" onchange="($(this).prop('checked') ? $('.papeis').show() : $('.papeis').hide())" type="checkbox" checked /> Papéis</label>&nbsp;&nbsp;&nbsp;
       <label><input id="totais" onchange="($(this).prop('checked') ? $('.totais').show() : $('.totais').hide())" type="checkbox" checked /> Totais</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="grafico" onchange="($(this).prop('checked') ? $('.grafico').show() : $('.grafico').hide())" type="checkbox" checked /> Gráfico</label>&nbsp;&nbsp;&nbsp;
       <label><input id="emails" onchange="($(this).prop('checked') ? $('.emails').show() : $('.emails').hide())" type="checkbox" checked /> e-mails</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="avancado" onchange="($(this).prop('checked') ? $('.avancado').show() : $('.avancado').hide())" type="checkbox" checked /> Avancados</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="emails" onchange="($(this).prop('checked') ? $('.avancado').show() : $('.avancado').hide())" type="checkbox" checked /> Avancados</label>&nbsp;&nbsp;&nbsp;
     </div>
   </span>
 
@@ -316,22 +317,25 @@
         <b>Total de projetos = 
         <span class="avancado">{{ numero_projetos|add:numero_projetos_avancado }}</span>
         </b>
-        {% if numero_projetos_avancado > 0 %}
-          <span class="avancado">[ {{ numero_projetos_avancado }} avançado(s) ]</span>
-        {% endif %}
+        <span class="avancado">[</span>
+        {{ numero_projetos }}
+        <span class="avancado">regular(es) + {{ numero_projetos_avancado }} avançado(s) ]</span>
         <br>
 
         <b>Total de estudantes =
         <span class="avancado">{{ numero_estudantes|add:numero_estudantes_avancado}}</span>
         </b>
-        {% if numero_estudantes_avancado > 0 %}
-          <span class="avancado"> [ {{ numero_estudantes_avancado }} avançado(s) ]</span>
-        {% endif %}
+        <span class="avancado">[</span>
+        {{ numero_estudantes }}
+        <span class="avancado"> regular(es) + {{ numero_estudantes_avancado }} avançado(s) ]</span>
         <br>
 
       </div>
 
       <br>
+      <div class="grafico" id="canvas-holder">
+        <canvas id="chart-area"></canvas>
+      </div>
 
     <br><br>
     
@@ -390,14 +394,20 @@
       ($('#orientador').prop('checked') ? $('.orientador').show() : $('.orientador').hide());
       ($('#estudantes').prop('checked') ? $('.estudantes').show() : $('.estudantes').hide());
       ($('#totais').prop('checked') ? $('.totais').show() : $('.totais').hide());
+      ($('#grafico').prop('checked') ? $('.grafico').show() : $('.grafico').hide());
 
       {% comment %} // Só mostra informação de semestre se edição é todas {% endcomment %}
       ($("#filterEdicao option:selected").attr("value") == "todas" ? $('.semestre').show() : $('.semestre').hide());
 
+      
+
     </script>
 
+    {% include "grafico_prioridades.html" %}
+    
     <script>
       filtra_data();
+      mostra_grafico();
     </script>
 
     {% endif %}
