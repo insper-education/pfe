@@ -101,8 +101,16 @@
                 </span>
                 <li class="past" title="" style="margin-top:0px; margin-bottom: 12px;">
                     <span class="bar" data-number="{{value.0.count}}"></span>
-                    <span data-toggle="tooltip" data-html="true" animation="true" title="{% for user in value.0 %}{{user.usuario.get_full_name}}&amp;lt;{{user.usuario.email}}&amp;gt;&lt;br&gt;{% endfor %}"
+                    <span data-toggle="tooltip" data-html="true" animation="true"
+                    {% if tipo == "estudantes" %}
+                        title="{% for user in value.0 %}{{user.usuario.get_full_name}}&amp;lt;{{user.usuario.email}}&amp;gt;&lt;br&gt;{% endfor %}"
+                    {% elif tipo == "propostas" %}
+                        title="{% for proposta in value.0 %}{{proposta}}&lt;br&gt;{% endfor %}"
+                    {% elif tipo == "projetos" %}
+                        title="{% for projeto in value.0 %}{{projeto}}&lt;br&gt;{% endfor %}"
+                    {% endif %}
                     class="number">{{value.0.count}}</span>
+                    
                 </li>
             {% endfor %}
         </ul>
