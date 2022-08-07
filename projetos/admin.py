@@ -207,7 +207,7 @@ class PropostaAdmin(admin.ModelAdmin):
     fieldsets = \
         ((None,
           {'fields':
-           ('nome', 'email', 'nome_organizacao', 'website', 'endereco', 'internacional',
+           ('nome', 'email', 'nome_organizacao', 'website', 'endereco', 'internacional', 'intercambio', 
             'contatos_tecnicos', 'contatos_administrativos',
             'descricao_organizacao', 'departamento',
             'titulo', 'descricao', 'expectativas',

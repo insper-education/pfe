@@ -146,6 +146,13 @@
                 {% if alocado.projeto.avancado %}
                     <font color="red">[PFE Avançado]</font>
                 {% endif %}
+                {% if alocado.projeto.proposta.internacional %}
+                    <font color="red">[Internacional]</font>
+                {% endif %}
+                {% if alocado.projeto.proposta.intercambio %}
+                    <font color="red">[Intercâmbio]</font>
+                {% endif %}
+
             </a>
             <br>
             

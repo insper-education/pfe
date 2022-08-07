@@ -44,9 +44,17 @@
                   {% else %}
                     {{projeto.titulo}}
                   {% endif %}
+                  <u><strong style="color:red">
                   {% if projeto.avancado %}
-                    <strong style="color:red"><u>[Avançado]</u></strong><br>
+                    [Avançado]
                   {% endif %}
+                  {% if projeto.proposta.internacional %}
+                    [Internacional]
+                  {% endif %}
+                  {% if projeto.proposta.intercambio %}
+                    [Intercâmbio]
+                  {% endif %}
+                  </strong></u><br>
                 </a>
               </th>
               <td>

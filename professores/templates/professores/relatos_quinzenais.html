@@ -20,7 +20,7 @@
     <strong>Projeto:</strong> <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a><br>
     <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
     {% if administracao %}<strong>Orientador:</strong> <a href="{% url 'professor_detail' projeto.orientador.id %}">{{projeto.orientador}}</a><br>{% endif %}
-    {% if projeto.avancado or projeto.proposta.internacional %}
+    {% if projeto.avancado or projeto.proposta.internacional or projeto.proposta.intercambio %}
       <p><strong>Tipo</strong>:
 
         {% if projeto.avancado %}
@@ -28,11 +28,21 @@
         {% endif %}
 
         {% if projeto.avancado and projeto.proposta.internacional %}
-        /
+          /
         {% endif %}
 
         {% if projeto.proposta.internacional %}
           <font color="red">Internacional</font>
+        {% endif %}
+
+        {% if projeto.avancado or projeto.proposta.internacional %}
+          {% if projeto.proposta.intercambio %}
+            /
+          {% endif %}
+        {% endif %}
+
+        {% if projeto.proposta.intercambio %}
+          <font color="red">Intercâmbio</font>
         {% endif %}
         
       </p>

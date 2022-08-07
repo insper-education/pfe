@@ -359,6 +359,9 @@ class Proposta(models.Model):
     internacional = models.BooleanField("Internacional", default=False,
                                         help_text='Caso a proposta venha de um parceiro internacional, o que afeta a lingua de comunicação do projeto')
 
+    intercambio = models.BooleanField("Intercâmbio", default=False,
+                                        help_text='Caso a proposta venha de um intercâmbio')
+
     # Preenchidos automaticamente
     ano = models.PositiveIntegerField("Ano",
                                       validators=[MinValueValidator(2018), MaxValueValidator(3018)],

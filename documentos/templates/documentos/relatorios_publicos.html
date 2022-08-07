@@ -59,9 +59,17 @@
                 <a href="{% url 'projeto_completo' relatorio.projeto.id %}">
               {% endif %}
                 {{relatorio.projeto.get_titulo}}
+                <u><strong style="color:red">
                 {% if relatorio.projeto.avancado %}
-                  <strong style="color:red"><u>[Avançado]</u></strong><br>
+                  [Avançado]
                 {% endif %}
+                {% if relatorio.projeto.proposta.internacional %}
+                  [Internacional]
+                {% endif %}
+                {% if relatorio.projeto.proposta.intercambio %}
+                  [Intercâmbio]
+                {% endif %}
+                </strong></u><br>
               {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
                 </a>
               {% endif %}

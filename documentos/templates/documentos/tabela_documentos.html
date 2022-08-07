@@ -94,9 +94,17 @@
                 >
                   {% if projeto.titulo_final %}
                     {{projeto.titulo_final}}
+                    <u><strong style="color:red">
                     {% if projeto.avancado %}
-                      <strong style="color:red"><u>[Avançado]</u></strong><br>
+                      [Avançado]
                     {% endif %}
+                    {% if projeto.proposta.internacional %}
+                      [Internacional]
+                    {% endif %}
+                    {% if projeto.proposta.intercambio %}
+                      [Intercâmbio]
+                    {% endif %}
+                    </strong></u>
                     <span class="tit_ori">
                       <br>
                       <small>Título original: {{projeto.titulo}}</small>

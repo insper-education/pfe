@@ -152,7 +152,7 @@
           {% endif %}
         </p>
 
-        {% if projeto.avancado or projeto.proposta.internacional %}
+        {% if projeto.avancado or projeto.proposta.internacional or projeto.proposta.intercambio %}
           <p style="margin-left:1em;">Tipo:
 
             {% if projeto.avancado %}
@@ -160,13 +160,23 @@
             {% endif %}
 
             {% if projeto.avancado and projeto.proposta.internacional %}
-            /
+              /
             {% endif %}
 
             {% if projeto.proposta.internacional %}
               <font color="red">Internacional</font>
             {% endif %}
             
+            {% if projeto.avancado or projeto.proposta.internacional %}
+              {% if projeto.proposta.intercambio %}
+                /
+              {% endif %}
+            {% endif %}
+
+            {% if projeto.proposta.intercambio %}
+              <font color="red">Intercâmbio</font>
+            {% endif %}
+      
           </p>
         {% endif %}
 

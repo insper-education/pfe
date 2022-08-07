@@ -291,9 +291,18 @@
 
           <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
 
-          {% if projeto.avancado %}
-            <strong style="color:red"><u>[Avançado]</u></strong>
-          {% endif %}
+          <u><strong style="color:red">
+            {% if projeto.avancado %}
+              [Avançado]
+            {% endif %}
+            {% if projeto.proposta.internacional %}
+              [Internacional]
+            {% endif %}
+            {% if projeto.proposta.intercambio %}
+              [Intercâmbio]
+            {% endif %}
+          </strong></u><br>
+          
 
           {% if projeto.organizacao %}
             [<a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}"

@@ -202,9 +202,18 @@
       {{projeto.organizacao}}
     </a><br>
   
-  {% if projeto.avancado %}
-    <strong style="color:red"><u>PFE Avançado</u></strong><br>
-  {% endif %}
+  <u><strong style="color:red">
+    {% if projeto.avancado %}
+      [Avançado]
+    {% endif %}
+    {% if projeto.proposta.internacional %}
+      [Internacional]
+    {% endif %}
+    {% if projeto.proposta.intercambio %}
+      [Intercâmbio]
+    {% endif %}
+  </strong></u><br>
+
   <strong>Grupo:</strong>
   <ul>
   {% for alocacao in projeto.alocacao_set.all %}
