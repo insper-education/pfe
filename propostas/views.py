@@ -231,7 +231,7 @@ def procura_grupos(request):
             'edicoes': edicoes,
         }
 
-    return render(request, 'projetos/projetos_fechados.html', context)
+    return render(request, 'propostas/procura_grupos.html', context)
 
 
 
