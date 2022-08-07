@@ -94,7 +94,14 @@
                 >
                   {% if projeto.titulo_final %}
                     {{projeto.titulo_final}}
-                    <u><strong style="color:red">
+                    <span class="tit_ori">
+                      <br>
+                      <small>Título original: {{projeto.titulo}}</small>
+                    </span>
+                  {% else %}
+                    {{projeto.titulo}}
+                  {% endif %}
+                  <u><strong style="color:red">
                     {% if projeto.avancado %}
                       [Avançado]
                     {% endif %}
@@ -105,16 +112,6 @@
                       [Intercâmbio]
                     {% endif %}
                     </strong></u>
-                    <span class="tit_ori">
-                      <br>
-                      <small>Título original: {{projeto.titulo}}</small>
-                    </span>
-                  {% else %}
-                    {{projeto.titulo}}
-                    {% if projeto.avancado %}
-                      <strong style="color:red"><u>[Avançado]</u></strong><br>
-                    {% endif %}
-                  {% endif %}
                 </a>
               </td>
               
