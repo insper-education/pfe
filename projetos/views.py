@@ -1857,6 +1857,10 @@ def editar_projeto(request, primarykey):
             (reg, _created) = Coorientador.objects.get_or_create(projeto=projeto)
             reg.usuario = coorientador
             reg.save()
+        else:
+            coorientadores = Coorientador.objects.filter(projeto=projeto)
+            for coorientador in coorientadores:
+                coorientador.delete()
         
         # Realoca estudantes
         estudantes_ids = []
