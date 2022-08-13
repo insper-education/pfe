@@ -57,7 +57,7 @@
         { {{ projeto.alocacao_set.all.count }} estudante(s) }
         </a>
         {% if projeto.certificado_orientador %}
-          <a href="{{ projeto.certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a><br>
+          <a href="{{ projeto.certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a>
         {% endif %}
         {% if projeto.proposta.intercambio %}
           <sup data-toggle="tooltip" data-html="true" animation="true" title="Professor Responsável">PR</sup>
