@@ -161,7 +161,13 @@
 
             {% if banca.projeto.orientador %}
               <div class="orientacao" style="margin-top: 8px;">
-              <b>Orientador:</b> 
+              
+                {% if banca.projeto.proposta.intercambio %}
+                  <b>Professor{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
+                {% else %}
+                  <b>Orientador{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
+                {% endif %}
+                
                 <a class="imprimir" href="{% url 'professor_detail' banca.projeto.orientador.id %}">
                   {{banca.projeto.orientador.user.get_full_name}} 
                 </a>

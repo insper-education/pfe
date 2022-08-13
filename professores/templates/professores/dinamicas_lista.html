@@ -82,7 +82,11 @@
                 <b>Organização:</b> <a class="imprimir" href="{% url 'organizacao_completo' e.projeto.organizacao.id %}">{{ e.projeto.organizacao.nome }}</a><br>
                 <span class="orientador">
                   {% if e.projeto.orientador %}
-                    <b>Orientador:</b> 
+                    {% if e.projeto.proposta.intercambio %}
+                      <b>Professor{% if e.projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
+                    {% else %}
+                      <b>Orientador{% if e.projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
+                    {% endif %}
                     <a class="imprimir" href="{% url 'professor_detail' e.projeto.orientador.id %}">
                       {{e.projeto.orientador.user.get_full_name}} 
                     </a>

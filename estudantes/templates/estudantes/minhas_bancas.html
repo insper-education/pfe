@@ -57,8 +57,13 @@
           {% endif %}
         
           {% if banca.projeto.orientador %}
-            <br><b>Orientador:</b> 
-              {{banca.projeto.orientador.user.get_full_name}} 
+            <br>
+            {% if banca.projeto.proposta.intercambio %}
+              <b>Professor{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
+            {% else %}
+              <b>Orientador{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
+            {% endif %}
+            {{banca.projeto.orientador.user.get_full_name}} 
           {% endif %}
 
           <br>

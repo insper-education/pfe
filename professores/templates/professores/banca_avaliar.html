@@ -76,8 +76,21 @@
       {% csrf_token %}
 
       <b>Projeto:</b> {{banca.projeto.titulo}}<br>
-      <b>Organização:</b> {{banca.projeto.organizacao}}<br>
-      <b>Orientador{% if banca.projeto.orientador.user.genero == "F" %}a{% endif %}:</b> {{banca.projeto.orientador}}<br>
+      {% if banca.projeto.orientador %}
+        <b>Organização:</b> {{banca.projeto.organizacao}}<br>
+      {% else %}
+        Organização: Não definida
+      {% endif %}
+      {% if banca.projeto.orientador %}
+        {% if banca.projeto.proposta.intercambio %}
+          <b>Professor{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
+        {% else %}
+          <b>Orientador{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
+        {% endif %}
+        {{banca.projeto.orientador}}<br>
+      {% else %}
+        Orientador: Não definido
+      {% endif %}
       <b>Grupo:</b>
 
 

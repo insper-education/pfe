@@ -228,12 +228,18 @@
 
   {% if projeto.orientador %}
     <hr>
-    <h3>Orientador{% if projeto.orientador.user.genero == "F" %}a{% endif %}: </h3>
+    {% if projeto.proposta.intercambio %}
+      <h3>Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável: </h3>
+    {% else %}
+      <h3>Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}: </h3>
+    {% endif %}
     &nbsp;&nbsp;&nbsp;&#8614;
     <a href="{% url 'professor_detail' projeto.orientador.id %}">
       {{projeto.orientador.user.get_full_name}}
     </a>
     <a href="mailto:{{projeto.orientador.user.email}}"> &lt;{{projeto.orientador.user.email}}&gt;</a>
+  {% else %}
+    <h3>Orientador: Não definido</h3>
   {% endif %}
 
   {% if coorientadores %}

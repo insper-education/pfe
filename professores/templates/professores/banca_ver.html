@@ -62,7 +62,11 @@
 
   <br>
   {% if banca.projeto.orientador %}
-    <b>Orientador:</b> 
+      {% if banca.projeto.proposta.intercambio %}
+        <b>Professor{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
+      {% else %}
+        <b>Orientador{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
+      {% endif %}
       {{banca.projeto.orientador.user.get_full_name}} 
       <a href="mailto:{{banca.projeto.orientador.user.email}}">&lt;{{banca.projeto.orientador.user.email}}&gt;</a>
     <br>

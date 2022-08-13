@@ -184,12 +184,17 @@
         </p>
 
         <!-- <p style="margin-left:1em;">Edição: {{projeto.ano}}.{{projeto.semestre}}</p> -->
-        <p class="orientador" style="margin-left:1em;"><b>Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
+        <p class="orientador" style="margin-left:1em;">
           {% if projeto.orientador %}
+            {% if projeto.proposta.intercambio %}
+              <b>Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
+            {% else %}
+              <b>Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
+            {% endif %}
             <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}"> {{projeto.orientador.user.get_full_name}}</a>
             <span class="emails"><a href="mailto:{{projeto.orientador.user.email}}"> &lt;{{projeto.orientador.user.email}}&gt;</a></span>
           {% else %}
-            Não definido
+            Orientador: Não definido
           {% endif %}
         </p>
 
