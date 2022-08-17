@@ -26,6 +26,23 @@
     table, th, td {
       border: 0px;
     }
+
+    .div-table {
+      display: table;         
+      width: auto;         
+      border-spacing: 5px; /* cellspacing:poor IE support for  this */
+    }
+    .div-table-row {
+      display: table-row;
+      width: auto;
+      clear: both;
+    }
+    .div-table-col {
+      float: left; /* fix for  buggy browsers */
+      display: table-column;
+      padding-right: 10px;
+    }
+
   </style>
 
   <script>
@@ -298,7 +315,7 @@
       {% endif %}
 
       {% if provas %}
-        <br>{% nospaces %}
+        {% nospaces %}
         {% for prova in provas|dictsort:"endDate" %}
           {% if prova.get_title != "Feriado" %}
             <span class="ano{{prova.endDate.year}} ano">
@@ -329,7 +346,7 @@
           <span id="linha_provas"><br>Semana de provas sublinhado em vermelho</span>
         </font>
       {% endif %}
-      
+      <br>
     </span>
 
 
@@ -346,24 +363,30 @@
 
       {% if aulas %}
         {% nospaces %}
-          <ul>
+        <div class="div-table">
+          <div class="div-table-row">
+             <div class="div-table-col" style="width: 70px;"><b>Data</b></div>
+             <div class="div-table-col" style="width: 400px;"><b>Aula</b></div>
+             <div class="div-table-col" style="width: 400px;"><b>Local</b></div>
+          </div>
           {% for aula in aulas|dictsort:"endDate" %}
+          
               <span class="ano{{aula.endDate.year}} ano">
                 <span class="semestre" data-mes="{{aula.endDate.month}}">
-                  <li>
-                    {{aula.endDate.day}}/{{aula.endDate.month}}: {{aula.observacao}} [{{aula.location}}] 
-                  </li>
+                  <div class="div-table-row">       
+                    <div class="div-table-col" style="width: 70px;">{{aula.endDate.day}}/{{aula.endDate.month}}</div>
+                    <div class="div-table-col" style="width: 400px;">{{aula.observacao}}</div> 
+                    <div class="div-table-col" style="width: 400px;">{{aula.location}}</div>
+                  </div><br>
                 </span>
               </span>
+
           {% endfor %}
-          <ul>
+            </div>
         {% endnospaces %}
       {% endif %}
 
     </span>
-
-
-
 
     <br>
     <br>
