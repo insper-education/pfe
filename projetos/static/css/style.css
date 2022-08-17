@@ -190,6 +190,7 @@ table, th, td {
   font-size: 30px;
   display: block;
   padding-bottom: 0.25em;
+  padding-top: 10px;
 }
 
 /* Feito com https://www.bestcssbuttongenerator.com/ */
