@@ -332,6 +332,39 @@
       
     </span>
 
+
+
+    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+      <br>
+      <input type="checkbox" id="aulas" checked>
+      <span id="titulo_aulas" style="font-size:20px">
+        Aulas:
+      </span>
+    {% endif %}
+
+    <span class="lista_aulas">
+
+      {% if aulas %}
+        {% nospaces %}
+          <ul>
+          {% for aula in aulas|dictsort:"endDate" %}
+              <span class="ano{{aula.endDate.year}} ano">
+                <span class="semestre" data-mes="{{aula.endDate.month}}">
+                  <li>
+                    {{aula.endDate.day}}/{{aula.endDate.month}}: {{aula.observacao}} [{{aula.location}}] 
+                  </li>
+                </span>
+              </span>
+          {% endfor %}
+          <ul>
+        {% endnospaces %}
+      {% endif %}
+
+    </span>
+
+
+
+
     <br>
     <br>
 
@@ -850,6 +883,10 @@
         });
         $('#academico').click(function() {
           $('.lista_academico')[this.checked ? "show" : "hide"]();
+          atualiza_visualizacao()
+        });
+        $('#aulas').click(function() {
+          $('.lista_aulas')[this.checked ? "show" : "hide"]();
           atualiza_visualizacao()
         });
     {% endif %}
