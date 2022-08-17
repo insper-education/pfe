@@ -362,8 +362,8 @@
         <div class="div-table">
           <div class="div-table-row">
              <div class="div-table-col" style="flex-basis: 100px; flex-grow: 0; flex-shrink: 0;"><b>Data</b></div>
-             <div class="div-table-col" style="width: 400px;"><b>Aula</b></div>
-             <div class="div-table-col" style="width: 400px;"><b>Local</b></div>
+             <div class="div-table-col" style="max-width: 500px; flex-basis: 400px;"><b>Aula</b></div>
+             <div class="div-table-col" style="flex-basis: 400px;"><b>Local</b></div>
           </div>
           {% for aula in aulas|dictsort:"endDate" %}
           
@@ -371,8 +371,8 @@
                 <span class="semestre" data-mes="{{aula.endDate.month}}">
                   <div class="div-table-row">       
                     <div class="div-table-col" style="flex-basis: 100px; flex-grow: 0; flex-shrink: 0;">{{aula.endDate|date:"d/m/Y"}}</div>
-                    <div class="div-table-col" style="width: 400px;">{{aula.observacao}}</div> 
-                    <div class="div-table-col" style="width: 400px;">{{aula.location}}</div>
+                    <div class="div-table-col" style="max-width: 500px; flex-basis: 400px;">{{aula.observacao}}</div> 
+                    <div class="div-table-col" style="flex-basis: 400px;">{{aula.location}}</div>
                   </div>
                 </span>
               </span>
