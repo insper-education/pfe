@@ -230,9 +230,9 @@ def atualiza_evento(request):
     start_date = request.POST.get('startDate', None)
     end_date = request.POST.get('endDate', None)
 
-    location = request.POST.get('location', "")[:50]
-    observation = request.POST.get('observation', "")[:50]
-    descricao = request.POST.get('descricao', "")[:500]
+    location = request.POST.get('location', "")[:Evento._meta.get_field('location').max_length]
+    observation = request.POST.get('observation', "")[:Evento._meta.get_field('observacao').max_length]
+    descricao = request.POST.get('descricao', "")[:Evento._meta.get_field('descricao').max_length]
 
     evento.tipo_de_evento = tipo_de_evento
 
