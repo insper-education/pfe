@@ -664,7 +664,7 @@ class Evento(models.Model):
     descricao = models.CharField(max_length=500, blank=True,
                                  help_text='Descrição do evento')
 
-    observacao = models.CharField(max_length=50, blank=True,
+    observacao = models.CharField(max_length=64, blank=True,
                                   help_text='Qualquer observação relavante')
 
     def get_title(self):
