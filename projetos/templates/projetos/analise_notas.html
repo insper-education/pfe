@@ -44,7 +44,9 @@
 
     <div class="cabecalho">
 
-        <span class="titulo">Análise de Notas/Conceitos</span>
+        <span class="titulo">
+            {% if lingua == "pt" %}Análise de Notas/Conceitos{% else %}Grade Analysis{% endif %}
+        </span>
 
         {% comment %} Seletor da edição da pesquisa {% endcomment %}
         {% with com_cursos=True %}
@@ -148,7 +150,7 @@
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
                         {
-                        label: "Estudantes",
+                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
                         backgroundColor: ["#1e951e", "#8e8e11", "#F10c0c"],
                         data: [{{medias.ideal}},{{medias.regular}},{{medias.inferior}}]
                         }
@@ -157,7 +159,7 @@
                     options: {
                         title: {
                             display: true,
-                            text: 'Médias Finais [{{medias.total}} estudantes]',
+                            text: '{% if lingua == "pt" %}Médias Finais [{{medias.total}} estudantes]{% else %}Final Grades [{{medias.total}} students]{% endif %}',
                             position: 'top'
                         },
                         tooltips: tooltips,
@@ -173,7 +175,7 @@
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
                         {
-                        label: "Estudantes",
+                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
                         backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
                         data: [{{notas.ppf.ideal}},{{notas.ppf.regular}},{{notas.ppf.inferior}}]
                         }
@@ -182,7 +184,7 @@
                     options: {
                         title: {
                             display: true,
-                            text: 'Avaliação de Planejamento Preliminar',
+                            text: '{% if lingua == "pt" %}Avaliação de Planejamento Preliminar{% else %}Preliminary Planning Assessment{% endif %}',
                             position: 'top'
                         },
                         tooltips: tooltips,
@@ -197,7 +199,7 @@
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
                         {
-                        label: "Estudantes",
+                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
                         backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
                         data: [{{notas.api.ideal}},{{notas.api.regular}},{{notas.api.inferior}}]
                         }
@@ -206,7 +208,7 @@
                     options: {
                         title: {
                             display: true,
-                            text: 'Avaliação Preliminar Individual',
+                            text: '{% if lingua == "pt" %}Avaliação Preliminar Individual{% else %}Individual Preliminary Assessment{% endif %}',
                             position: 'top'
                         },
                         tooltips: tooltips,
@@ -221,7 +223,7 @@
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
                         {
-                        label: "Estudantes",
+                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
                         backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
                         data: [{{notas.apg.ideal}},{{notas.apg.regular}},{{notas.apg.inferior}}]
                         }
@@ -230,7 +232,7 @@
                     options: {
                         title: {
                             display: true,
-                            text: 'Avaliação Preliminar de Grupo',
+                            text: '{% if lingua == "pt" %}Avaliação Preliminar de Grupo{% else %}Group Preliminary Assessment{% endif %}',
                             position: 'top'
                         },
                         tooltips: tooltips,
@@ -246,7 +248,7 @@
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
                         {
-                        label: "Estudantes",
+                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
                         backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
                         data: [{{notas.afi.ideal}},{{notas.afi.regular}},{{notas.afi.inferior}}]
                         }
@@ -255,7 +257,7 @@
                     options: {
                         title: {
                             display: true,
-                            text: 'Avaliação Final Individual',
+                            text: '{% if lingua == "pt" %}Avaliação Final Individual{% else %}Individual Final Assessment{% endif %}',
                             position: 'top'
                         },
                         tooltips: tooltips,
@@ -270,7 +272,7 @@
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
                         {
-                        label: "Estudantes",
+                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
                         backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
                         data: [{{notas.afg.ideal}},{{notas.afg.regular}},{{notas.afg.inferior}}]
                         }
@@ -279,7 +281,7 @@
                     options: {
                         title: {
                             display: true,
-                            text: 'Avaliação Final de Grupo',
+                            text: '{% if lingua == "pt" %}Avaliação Final de Grupo{% else %}Group Final Assessment{% endif %}',
                             position: 'top'
                         },
                         tooltips: tooltips,
@@ -294,7 +296,7 @@
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
                         {
-                        label: "Estudantes",
+                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
                         backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
                         data: [{{notas.rpl.ideal}},{{notas.rpl.regular}},{{notas.rpl.inferior}}]
                         }
@@ -303,7 +305,7 @@
                     options: {
                         title: {
                             display: true,
-                            text: 'Relatório de Planejamento',
+                            text: '{% if lingua == "pt" %}Relatório de Planejamento{% else %}Planning Report{% endif %}',
                             position: 'top'
                         },
                         tooltips: tooltips,
@@ -321,7 +323,7 @@
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
                         {
-                        label: "Estudantes",
+                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
                         backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
                         data: [{{notas.rii.ideal}},{{notas.rii.regular}},{{notas.rii.inferior}}]
                         }
@@ -330,7 +332,7 @@
                     options: {
                         title: {
                             display: true,
-                            text: 'Relatório Intermediário Individual',
+                            text: '{% if lingua == "pt" %}Relatório Intermediário Individual{% else %}Individual Interim Report{% endif %}',
                             position: 'top'
                         },
                         tooltips: tooltips,
@@ -345,7 +347,7 @@
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
                         {
-                        label: "Estudantes",
+                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
                         backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
                         data: [{{notas.rig.ideal}},{{notas.rig.regular}},{{notas.rig.inferior}}]
                         }
@@ -354,7 +356,7 @@
                     options: {
                         title: {
                             display: true,
-                            text: 'Relatório Intermediário de Grupo',
+                            text: '{% if lingua == "pt" %}Relatório Intermediário de Grupo{% else %}Intermediate Group Report{% endif %}',
                             position: 'top'
                         },
                         tooltips: tooltips,
@@ -369,7 +371,7 @@
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
                         {
-                        label: "Estudantes",
+                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
                         backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
                         data: [{{notas.bi.ideal}},{{notas.bi.regular}},{{notas.bi.inferior}}]
                         }
@@ -378,7 +380,7 @@
                     options: {
                         title: {
                             display: true,
-                            text: 'Banca Intermediária',
+                            text: '{% if lingua == "pt" %}Banca Intermediária{% else %}Interim Evaluation Board{% endif %}',
                             position: 'top'
                         },
                         tooltips: tooltips,
@@ -395,7 +397,7 @@
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
                         {
-                        label: "Estudantes",
+                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
                         backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
                         data: [{{notas.rfi.ideal}},{{notas.rfi.regular}},{{notas.rfi.inferior}}]
                         }
@@ -404,7 +406,7 @@
                     options: {
                         title: {
                             display: true,
-                            text: 'Relatório Final Individual',
+                            text: '{% if lingua == "pt" %}Relatório Final Individual{% else %}Individual Final Report{% endif %}',
                             position: 'top'
                         },
                         tooltips: tooltips,
@@ -419,7 +421,7 @@
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
                         {
-                        label: "Estudantes",
+                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
                         backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
                         data: [{{notas.rfg.ideal}},{{notas.rfg.regular}},{{notas.rfg.inferior}}]
                         }
@@ -428,7 +430,7 @@
                     options: {
                         title: {
                             display: true,
-                            text: 'Relatório Final de Grupo',
+                            text: '{% if lingua == "pt" %}Relatório Final Individual{% else %}Final Group Report{% endif %}',
                             position: 'top'
                         },
                         tooltips: tooltips,
@@ -443,7 +445,7 @@
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
                         {
-                        label: "Estudantes",
+                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
                         backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
                         data: [{{notas.bf.ideal}},{{notas.bf.regular}},{{notas.bf.inferior}}]
                         }
@@ -452,7 +454,7 @@
                     options: {
                         title: {
                             display: true,
-                            text: 'Banca Final',
+                            text: '{% if lingua == "pt" %}Banca Final{% else %}Final Evaluation Board{% endif %}',
                             position: 'top'
                         },
                         tooltips: tooltips,

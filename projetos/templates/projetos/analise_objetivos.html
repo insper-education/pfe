@@ -46,7 +46,9 @@
 
         <div class="cabecalho">
         
-            <span class="titulo">Análise por Objetivos de Aprendizado</span>
+            <span class="titulo">
+                {% if lingua == "pt" %}Análise por Objetivos de Aprendizado{% else %}Analysis by Learning Goals{% endif %}
+            </span>
 
             {% comment %} Seletor da edição da pesquisa {% endcomment %}
             {% with com_cursos=True %}
@@ -119,13 +121,13 @@
                     labels: [
                         {% for key, value in medias_geral.items %}
                             {% if value.media >= 0 %}
-                                "{{key}}",
+                                "{% if lingua == 'pt' %}{{key}}{% else %}{{key.titulo_en}}{% endif %}",
                             {% endif %}
                         {% endfor %}
                         ],
                     datasets: [
                         {
-                        label: "Objetivos de Aprendizagem",
+                        label: "{% if lingua == "pt" %}Objetivos de Aprendizagem{% else %}Learning Goals{% endif %}",
                         backgroundColor: [
                             {% for key, value in medias_geral.items %}
                                 {% if value.media >= 0 %}
@@ -147,7 +149,7 @@
                         legend: { display: false },
                         title: {
                             display: true,
-                            text: 'Médias Obtidas nos Objetivos de Aprendizagem [{{total_geral}} estudantes]'
+                            text: '{% if lingua == "pt" %}Médias Obtidas nos Objetivos de Aprendizagem [{{total_geral}} estudantes]{% else %}Grades Averages Obtained in Learning Goals [{{total_geral}} students]{% endif %}'
                         },
                         scales: {
                             xAxes: [{
@@ -262,13 +264,13 @@
                     labels: [
                         {% for key, value in medias_api.items %}
                             {% if value.media >= 0 %}
-                                "{{key}}",
+                                "{% if lingua == 'pt' %}{{key}}{% else %}{{key.titulo_en}}{% endif %}",
                             {% endif %}
                         {% endfor %}
                         ],
                     datasets: [
                         {
-                        label: "Objetivos de Aprendizagem",
+                        label: "{% if lingua == "pt" %}Objetivos de Aprendizagem{% else %}Learning Goals{% endif %}",
                         backgroundColor: [
                             {% for key, value in medias_api.items %}
                                 {% if value.media >= 0 %}
@@ -290,7 +292,7 @@
                         legend: { display: false },
                         title: {
                             display: true,
-                            text: 'Avaliação Parcial Individual'
+                            text: '{% if lingua == "pt" %}Avaliação Parcial Individual{% else %}Individual Partial Assessment{% endif %}'
                         },
                         scales: scales,
                         plugins: plugins,
@@ -304,13 +306,13 @@
                     labels: [
                         {% for key, value in medias_apg.items %}
                             {% if value.media >= 0 %}
-                                "{{key}}",
+                                "{% if lingua == 'pt' %}{{key}}{% else %}{{key.titulo_en}}{% endif %}",
                             {% endif %}
                         {% endfor %}
                         ],
                     datasets: [
                         {
-                        label: "Objetivos de Aprendizagem",
+                        label: "{% if lingua == "pt" %}Objetivos de Aprendizagem{% else %}Learning Goals{% endif %}",
                         backgroundColor: [
                             {% for key, value in medias_apg.items %}
                                 {% if value.media >= 0 %}
@@ -332,7 +334,7 @@
                         legend: { display: false },
                         title: {
                             display: true,
-                            text: 'Avaliação Parcial de Grupo'
+                            text: '{% if lingua == "pt" %}Avaliação Parcial de Grupo{% else %}Partial Group Assessment{% endif %}'
                         },
                         scales: scales,
                         plugins: plugins,
@@ -347,13 +349,13 @@
                     labels: [
                         {% for key, value in medias_afi.items %}
                             {% if value.media >= 0 %}
-                                "{{key}}",
+                                "{% if lingua == 'pt' %}{{key}}{% else %}{{key.titulo_en}}{% endif %}",
                             {% endif %}
                         {% endfor %}
                         ],
                     datasets: [
                         {
-                        label: "Objetivos de Aprendizagem",
+                        label: "{% if lingua == "pt" %}Objetivos de Aprendizagem{% else %}Learning Goals{% endif %}",
                         backgroundColor: [
                             {% for key, value in medias_afi.items %}
                                 {% if value.media >= 0 %}
@@ -375,7 +377,7 @@
                         legend: { display: false },
                         title: {
                             display: true,
-                            text: 'Avaliação Final Individual'
+                            text: '{% if lingua == "pt" %}Avaliação Final Individual{% else %}Individual Final Assessment{% endif %}'
                         },
                         scales: scales,
                         plugins: plugins,
@@ -389,13 +391,13 @@
                     labels: [
                         {% for key, value in medias_afg.items %}
                             {% if value.media >= 0 %}
-                                "{{key}}",
+                                "{% if lingua == 'pt' %}{{key}}{% else %}{{key.titulo_en}}{% endif %}",
                             {% endif %}
                         {% endfor %}
                         ],
                     datasets: [
                         {
-                        label: "Objetivos de Aprendizagem",
+                        label: "{% if lingua == "pt" %}Objetivos de Aprendizagem{% else %}Learning Goals{% endif %}",
                         backgroundColor: [
                             {% for key, value in medias_afg.items %}
                                 {% if value.media >= 0 %}
@@ -417,7 +419,7 @@
                         legend: { display: false },
                         title: {
                             display: true,
-                            text: 'Avaliação Final de Grupo'
+                            text: '{% if lingua == "pt" %}Avaliação Final de Grupo{% else %}Final Group Assessment{% endif %}'
                         },
                         scales: scales,
                         plugins: plugins,
@@ -431,13 +433,13 @@
                     labels: [
                         {% for key, value in medias_rii.items %}
                             {% if value.media >= 0 %}
-                                "{{key}}",
+                                "{% if lingua == 'pt' %}{{key}}{% else %}{{key.titulo_en}}{% endif %}",
                             {% endif %}
                         {% endfor %}
                         ],
                     datasets: [
                         {
-                        label: "Objetivos de Aprendizagem",
+                        label: "{% if lingua == "pt" %}Objetivos de Aprendizagem{% else %}Learning Goals{% endif %}",
                         backgroundColor: [
                             {% for key, value in medias_rii.items %}
                                 {% if value.media >= 0 %}
@@ -459,7 +461,7 @@
                         legend: { display: false },
                         title: {
                             display: true,
-                            text: 'Relatório Intermediário Individual'
+                            text: '{% if lingua == "pt" %}Relatório Intermediário Individual{% else %}Individual Interim Report{% endif %}'
                         },
                         scales: scales,
                         plugins: plugins,
@@ -473,13 +475,13 @@
                     labels: [
                         {% for key, value in medias_rig.items %}
                             {% if value.media >= 0 %}
-                                "{{key}}",
+                                "{% if lingua == 'pt' %}{{key}}{% else %}{{key.titulo_en}}{% endif %}",
                             {% endif %}
                         {% endfor %}
                         ],
                     datasets: [
                         {
-                        label: "Objetivos de Aprendizagem",
+                        label: "{% if lingua == "pt" %}Objetivos de Aprendizagem{% else %}Learning Goals{% endif %}",
                         backgroundColor: [
                             {% for key, value in medias_rig.items %}
                                 {% if value.media >= 0 %}
@@ -501,7 +503,7 @@
                         legend: { display: false },
                         title: {
                             display: true,
-                            text: 'Relatório Intermediário de Grupo'
+                            text: '{% if lingua == "pt" %}Relatório Intermediário de Grupo{% else %}Intermediate Group Report{% endif %}'
                         },
                         scales: scales,
                         plugins: plugins,
@@ -515,13 +517,13 @@
                     labels: [
                         {% for key, value in medias_bi.items %}
                             {% if value.media >= 0 %}
-                                "{{key}}",
+                                "{% if lingua == 'pt' %}{{key}}{% else %}{{key.titulo_en}}{% endif %}",
                             {% endif %}
                         {% endfor %}
                         ],
                     datasets: [
                         {
-                        label: "Objetivos de Aprendizagem",
+                        label: "{% if lingua == "pt" %}Objetivos de Aprendizagem{% else %}Learning Goals{% endif %}",
                         backgroundColor: [
                             {% for key, value in medias_bi.items %}
                                 {% if value.media >= 0 %}
@@ -543,7 +545,7 @@
                         legend: { display: false },
                         title: {
                             display: true,
-                            text: 'Banca Intermediária'
+                            text: '{% if lingua == "pt" %}Banca Intermediária{% else %}Interim Evaluation Board{% endif %}'
                         },
                         scales: scales,
                         plugins: plugins,
@@ -559,13 +561,13 @@
                     labels: [
                         {% for key, value in medias_rfi.items %}
                             {% if value.media >= 0 %}
-                                "{{key}}",
+                                "{% if lingua == 'pt' %}{{key}}{% else %}{{key.titulo_en}}{% endif %}",
                             {% endif %}
                         {% endfor %}
                         ],
                     datasets: [
                         {
-                        label: "Objetivos de Aprendizagem",
+                        label: "{% if lingua == "pt" %}Objetivos de Aprendizagem{% else %}Learning Goals{% endif %}",
                         backgroundColor: [
                             {% for key, value in medias_rfi.items %}
                                 {% if value.media >= 0 %}
@@ -587,7 +589,7 @@
                         legend: { display: false },
                         title: {
                             display: true,
-                            text: 'Relatório Final Individual'
+                            text: '{% if lingua == "pt" %}Relatório Final Individual{% else %}Individual Final Report{% endif %}'
                         },
                         scales: scales,
                         plugins: plugins,
@@ -601,13 +603,13 @@
                     labels: [
                         {% for key, value in medias_rfg.items %}
                             {% if value.media >= 0 %}
-                                "{{key}}",
+                                "{% if lingua == 'pt' %}{{key}}{% else %}{{key.titulo_en}}{% endif %}",
                             {% endif %}
                         {% endfor %}
                         ],
                     datasets: [
                         {
-                        label: "Objetivos de Aprendizagem",
+                        label: "{% if lingua == "pt" %}Objetivos de Aprendizagem{% else %}Learning Goals{% endif %}",
                         backgroundColor: [
                             {% for key, value in medias_rfg.items %}
                                 {% if value.media >= 0 %}
@@ -629,7 +631,7 @@
                         legend: { display: false },
                         title: {
                             display: true,
-                            text: 'Relatório Final de Grupo'
+                            text: "{% if lingua == "pt" %}Relatório Final de Grupo{% else %}Final Group Report{% endif %}"
                         },
                         scales: scales,
                         plugins: plugins,
@@ -643,13 +645,13 @@
                     labels: [
                         {% for key, value in medias_bf.items %}
                             {% if value.media >= 0 %}
-                                "{{key}}",
+                                "{% if lingua == 'pt' %}{{key}}{% else %}{{key.titulo_en}}{% endif %}",
                             {% endif %}
                         {% endfor %}
                         ],
                     datasets: [
                         {
-                        label: "Objetivos de Aprendizagem",
+                        label: "{% if lingua == "pt" %}Objetivos de Aprendizagem{% else %}Learning Goals{% endif %}",
                         backgroundColor: [
                             {% for key, value in medias_bf.items %}
                                 {% if value.media >= 0 %}
