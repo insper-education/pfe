@@ -452,6 +452,16 @@ class AcompanhamentoAdmin(admin.ModelAdmin):
     list_display = ("data", "autor")
 
 
+@admin.register(AreaDeInteresse)
+class AreaDeInteresseAdmin(admin.ModelAdmin):
+    """Area De Interesse."""
+
+    list_display = ("area", "usuario", "proposta",)
+    list_filter = ('area',)
+    search_fields = ['usuario__username', 'projeto__organizacao__sigla',
+                     'projeto__titulo', 'projeto__titulo_final',]
+
+
 admin.site.register(Entidade)       # Para ser preenchido com as entidades estudantis
 admin.site.register(Area)
-admin.site.register(AreaDeInteresse)
+

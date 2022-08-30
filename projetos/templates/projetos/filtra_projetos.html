@@ -73,7 +73,11 @@
               </th>
               <td>
                 {% for area in areas %}
-                  {{area.area}};
+                  {% if area.outras %}
+                    {{area.outras}};
+                  {% else %}
+                    {{area.area}};
+                  {% endif %}
                 {% endfor %}
               </td>
               <td>
