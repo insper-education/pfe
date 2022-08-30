@@ -26,6 +26,7 @@
 
   <div class="atualizar">
     {% if projetos %}
+    {{organizacao.proposta_set.count|stringformat:"03d"}}
       <div class="table-responsive">
         <table id="ProjetosTable" class="table table-bordered table-hover table-sm" style="width: 100%;">
           <thead class="table-info">
