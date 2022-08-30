@@ -159,6 +159,12 @@
           function(settings, data, dataIndex) {
             
             if(table) {
+
+              // Se o principal estiver selecionado, todos aparecem, mesmo sem nenhuma área marcada
+              if( $("#titulo_areas").is(':checked') ) {
+                return true;
+              }
+
               filterList = $("input.filtra_area[type=checkbox]");
               encontrou = false;      
               filterList.each(function(i, el) {
