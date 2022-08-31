@@ -1879,6 +1879,10 @@ def editar_projeto(request, primarykey):
                 alocacao = Alocacao.create(estudante, projeto)
                 alocacao.save()
 
+        # Define projeto com time misto (estudantes de outras instituições)
+        projeto.time_misto = 'time_misto' in request.POST
+
+
         projeto.save()
 
         return redirect('projeto_completo', primarykey=primarykey)

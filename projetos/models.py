@@ -154,6 +154,9 @@ class Projeto(models.Model):
     proposta = models.ForeignKey('Proposta', null=True, blank=True, on_delete=models.SET_NULL,
                                  help_text='Proposta original do projeto')
 
+    time_misto = models.BooleanField("Time Misto", default=False,
+                                        help_text='Caso o projeto conte com membros externos a instituição')
+
     class Meta:
         ordering = ['organizacao', 'ano', 'semestre']
         permissions = (("altera_empresa", "Empresa altera valores"),
