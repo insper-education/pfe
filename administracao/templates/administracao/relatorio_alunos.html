@@ -25,7 +25,10 @@
 
         <h3>Aluno: {{aluno.user.get_full_name}}</h3>
         <strong>Curso:</strong> {{aluno.get_curso_display}} <br>
-        <strong>CR:</strong> {{aluno.cr}} <br><br>
+        <strong>CR:</strong> {{aluno.cr}} <br>
+        {% if aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span><br>{% endif %}
+        <br>
+
         <strong>Áreas de interesse selecionadas:</strong>
 
         {% with areas=aluno.areas_de_interesse %}

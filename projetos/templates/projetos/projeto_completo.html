@@ -281,6 +281,7 @@
             (opção #{{opcao.prioridade}})
           {% endif %}
         {% endfor %}
+        {% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}
       </p>
     </a>
     </li>

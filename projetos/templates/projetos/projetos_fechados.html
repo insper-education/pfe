@@ -228,6 +228,7 @@
                 <span class="curso">[{{ aluno.get_curso_display }}]</span>
               </a>
               <span class="emails"><a href="mailto:{{aluno.user.email}}">&lt;{{aluno.user.email}}&gt;</a></span>
+              {% if aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span>{% endif %}
               <div class="prioridade" style="display: none;">{{prioridade}}</div> <!-- para mostrar no gráfico -->
               <!-- &nbsp; { {{ aluno.alocacao_set.first.get_conceito_display }} } -->
           </li>

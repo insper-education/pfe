@@ -207,6 +207,9 @@ class Aluno(models.Model):
     familia = models.TextField(max_length=1000, null=True, blank=True,\
         help_text='Possui familiares em empresa que está aplicando? Ou empresa concorrente?')
 
+    externo = models.CharField("Externo", max_length=40, null=True, blank=True,
+                               help_text='Instituição de onde o estudante vem')
+
     # https://bradmontgomery.net/blog/django-hack-help-text-modal-instance/
     def _get_help_text(self, field_name):
         """Given a field name, return it's help text."""

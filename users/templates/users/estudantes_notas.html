@@ -69,6 +69,7 @@
                   {% endcomment %}
               >
                 {{aluno.user.get_full_name}}
+                {% if aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span>{% endif %}
               </a>
             </th>
             <td>
