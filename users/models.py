@@ -155,9 +155,12 @@ class Aluno(models.Model):
     """Classe de usuários com estatus de Aluno."""
 
     TIPOS_CURSO = (
-        ('C', 'Computação'),
-        ('M', 'Mecânica'),
-        ('X', 'Mecatrônica'),
+        ('C', 'Engenharia de Computação'),
+        ('M', 'Engenharia Mecânica'),
+        ('X', 'Engenharia Mecatrônica'),
+        ('B', 'Ciência da Computação'),
+        ('T', 'Electrical and Electronics Engineering'),
+        ('E', 'Electrical Engineering'),
     )
     user = models.OneToOneField(PFEUser, related_name='aluno',
                                 on_delete=models.CASCADE)
