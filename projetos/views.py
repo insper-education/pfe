@@ -275,9 +275,11 @@ def projetos_fechados(request):
 
             numero_estudantes = 0
             numero_estudantes_avancado = 0
+            numero_estudantes_externos = 0
 
             numero_projetos = 0
             numero_projetos_avancado = 0
+            projetos_time_misto = 0
 
             for projeto in projetos_filtrados:
 
@@ -293,6 +295,8 @@ def projetos_fechados(request):
                     else:
                         numero_estudantes += len(estudantes_pfe)
                         numero_projetos += 1
+                    if projeto.time_misto:
+                        projetos_time_misto += 1
 
                     prioridades = []
                     for estudante in estudantes_pfe:
@@ -305,6 +309,8 @@ def projetos_fechados(request):
                             prioridades.append(prioridade)
                         else:
                             prioridades.append(0)
+                        if estudante.externo:
+                            numero_estudantes_externos += 1
                     prioridade_list.append(zip(estudantes_pfe, prioridades))
                     cooperacoes.append(Conexao.objects.filter(projeto=projeto,
                                                               colaboracao=True))
@@ -319,6 +325,8 @@ def projetos_fechados(request):
                 'numero_projetos_avancado': numero_projetos_avancado,
                 'numero_estudantes': numero_estudantes,
                 'numero_estudantes_avancado': numero_estudantes_avancado,
+                "numero_estudantes_externos": numero_estudantes_externos,
+                "projetos_time_misto": projetos_time_misto,
             }
 
         else:
