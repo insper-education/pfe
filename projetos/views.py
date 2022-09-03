@@ -1575,12 +1575,23 @@ def evolucao_objetivos(request):
 
             count += 1
 
+        # Número de estudantes por semestre
+        students = []
+        if curso == 'T':
+            alunos = Aluno.objects.all()
+        else:
+            alunos = Aluno.objects.filter(curso=curso)
+        for edicao in edicoes:
+            periodo = edicao.split('.')
+            students.append(alunos.filter(anoPFE=periodo[0], semestrePFE=periodo[1]).count())
+
         context = {
             "medias": medias,
-            'ano': configuracao.ano,
-            'semestre': configuracao.semestre,
-            'edicoes': edicoes,
+            "ano": configuracao.ano,
+            "semestre": configuracao.semestre,
+            "edicoes": edicoes,
             "curso": curso,
+            "students": students,
         }
 
     else:

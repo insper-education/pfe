@@ -55,7 +55,7 @@
 
         <div class="cabecalho">
 
-            <span class="titulo">Evolução em Objetivos de Aprendizado</span>
+            <span class="titulo">{% if lingua == "pt" %}Evolução em Objetivos de Aprendizado{% else %}Evolution in Learning Goals{% endif %}</span>
 
             {% comment %} Seletor da edição da pesquisa {% endcomment %}
             {% with sem_edicao=True %}
@@ -83,13 +83,13 @@
         <div class="container">
 
             <div class="row mt-5">
-                <div class="col resizable-content">
+                <div style="height: {{edicoes|length}}00px" class="col resizable-content">
                     <canvas id="horizontal-div_objetivos"></canvas>
                 </div>
             </div>
 
             <div class="row mt-5">
-                <div class="col resizable-content">
+                <div style="height: {{edicoes|length}}00px" class="col resizable-content">
                     <canvas id="horizontal-objetivos"></canvas>
                 </div>
             </div>
@@ -105,6 +105,12 @@
               var labels = [
                     {% for edicao in edicoes %}
                         "{{edicao}}",
+                    {% endfor %}
+                ]
+
+                var students = [
+                    {% for student in students %}
+                        "{{student}} student{% if student > 1 %}s{% endif %}",
                     {% endfor %}
                 ]
 
@@ -130,7 +136,7 @@
         options: {
             title: {
                 display: true,
-                text: 'Evolução nos semestres'
+                text: '{% if lingua == "pt" %}Evolução nos semestres{% else %}Evolution by semester{% endif %}'
             }, 
         }
     }
@@ -138,7 +144,7 @@
     var config_objetivos = {
         type: 'horizontalBar',
         data: {
-          labels: labels,
+          //labels: labels,
           datasets: datasets,
         },
         options: {
@@ -146,7 +152,7 @@
             maintainAspectRatio: false,
             title: {
                 display: true,
-                text: 'Médias Obtidas nos Objetivos de Aprendizagem'
+                text: '{% if lingua == "pt" %}Médias Obtidas nos Objetivos de Aprendizagem{% else %}Average Grades Obtained in Learning Goals{% endif %}'
             },
             scales: {
                 xAxes: [{
@@ -154,7 +160,22 @@
                         beginAtZero: true,
                         max: 10
                     }
-                }]
+                }],
+
+                yAxes: [{
+                    labels: labels,
+                  },
+                  {
+                    position: 'right',
+                    labels: students,
+                    gridLines: {
+                      display: false
+                    },
+                    type: 'category',
+                    offset: true
+                  }
+                ]
+
             },
             plugins: {
                 datalabels: {
@@ -248,10 +269,9 @@
     var config_div_objetivos = {
         type: 'horizontalBar',
         data: {
-          labels: labels,
           datasets: div_datasets,
         },
-        options: {
+        options: {            
             legend: { display: false },
             maintainAspectRatio: false,
             title: {
@@ -266,12 +286,33 @@
                     stacked: true
                 },
                 xAxes: [{
+                    gridLines: {
+                        display: true
+                      },
                     ticks: {
-                        //beginAtZero: true,
-                        min: -20,
+                        callback: function(val, index) {
+                            if(val >= 0 ) return val;
+                            return '';
+                          },
+                        min: -18,
                         max: 100,
-                    }
+                        stepSize:20
+                    },
                 }],
+                
+                yAxes: [{
+                    labels: labels,
+                  },
+                  {
+                    position: 'right',
+                    labels: students,
+                    gridLines: {
+                      display: false
+                    },
+                    type: 'category',
+                    offset: true
+                  }
+                ]
                 //yAxes: [ { ticks: {mirror: true} }],
             },
             plugins: {
