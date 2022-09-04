@@ -550,6 +550,7 @@ def organizacoes_lista(request):
     fechados = []
     desde = []
     contato = []
+    grupos = []
     for organizacao in organizacoes:
         propostas = Proposta.objects.filter(organizacao=organizacao)\
             .order_by("ano", "semestre")
@@ -566,11 +567,20 @@ def organizacoes_lista(request):
         else:
             contato.append("---------")
 
-        projetos = Projeto.objects.filter(organizacao=organizacao)
-        fechados.append(projetos.filter(alocacao__isnull=False)
-                                .distinct().count())
+        projetos = Projeto.objects.filter(organizacao=organizacao).filter(alocacao__isnull=False).distinct()
+        fechados.append(projetos.count())
 
-    organizacoes_list = zip(organizacoes, fechados, desde, contato)
+        tipo_estudantes = ""
+        for projeto in projetos:
+            estudantes = Aluno.objects.filter(alocacao__projeto=projeto)
+            tipos = ""
+            for estudante in estudantes:
+                tipos += estudante.curso
+            tipo_estudantes += "["+tipos+"]"
+        grupos.append(tipo_estudantes)
+
+
+    organizacoes_list = zip(organizacoes, fechados, desde, contato, grupos)
     total_organizacoes = Organizacao.objects.all().count()
     total_submetidos = Proposta.objects.all().count()
     total_fechados = Projeto.objects.filter(alocacao__isnull=False)\
@@ -583,7 +593,8 @@ def organizacoes_lista(request):
         'total_fechados': total_fechados,
         'meses3': datetime.date.today() - datetime.timedelta(days=100),
         'filtro': "todas",
-        }
+        "grupos": grupos,
+    }
 
     return render(request, 'organizacoes/organizacoes_lista.html', context)
 
