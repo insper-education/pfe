@@ -51,7 +51,12 @@ textarea {
 
     <h5>Relatos Anteriores:</h5><br>
     {% for item in relatos %}
-      <b>{{item.momento}}</b><br>
+      <b>{{item.momento}}</b>&nbsp;&nbsp;&nbsp;
+      Situação: 
+      {% if item.avaliacao == -1 %}aguardando orientador{% endif %}
+      {% if item.avaliacao == 0 %}desempenho dentro do esperado{% endif %}
+      {% if item.avaliacao == 1 %}desempenho abaixo do esperado{% endif %}
+      <br>
       <textarea rows="18" cols="160" disabled>{{item.texto}}</textarea><br><br>
     {% endfor %}
 
