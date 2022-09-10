@@ -54,8 +54,8 @@ textarea {
       <b>{{item.momento}}</b>&nbsp;&nbsp;&nbsp;
       Situação: 
       {% if item.avaliacao == -1 %}aguardando orientador{% endif %}
-      {% if item.avaliacao == 0 %}desempenho dentro do esperado{% endif %}
-      {% if item.avaliacao == 1 %}desempenho abaixo do esperado{% endif %}
+      {% if item.avaliacao == 0 %}desempenho abaixo do esperado{% endif %}
+      {% if item.avaliacao == 1 %}desempenho dentro do esperado{% endif %}
       <br>
       <textarea rows="18" cols="160" disabled>{{item.texto}}</textarea><br><br>
     {% endfor %}
