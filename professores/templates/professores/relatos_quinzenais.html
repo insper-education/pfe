@@ -15,60 +15,91 @@
 
 {% block content %}
 
-  {% for projeto in projetos %}
+  <span class="titulo">Relatos Quinzenais</span>
 
-    <strong>Projeto:</strong> <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a><br>
-    <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
-    {% if administracao %}<strong>Orientador:</strong> <a href="{% url 'professor_detail' projeto.orientador.id %}">{{projeto.orientador}}</a><br>{% endif %}
-    {% if projeto.avancado or projeto.proposta.internacional or projeto.proposta.intercambio %}
-      <p><strong>Tipo</strong>:
+  {% comment %} Seletor da edição da pesquisa {% endcomment %}
+  {% include "edicoes.html" %}
+  <br>
 
-        {% if projeto.avancado %}
-          <font color="red">PFE Avançado</font>
+  <div class="atualizar">
+
+    {% for projeto in projetos %}
+
+      <strong>Projeto:</strong> <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a><br>
+      <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
+      {% if administracao %}<strong>Orientador:</strong>
+        {% if projeto.orientador %}
+          <a href="{% url 'professor_detail' projeto.orientador.id %}">{{projeto.orientador}}</a>
+        {% else %}
+          ORIENTADOR NÃO DEFINIDO
         {% endif %}
+      <br>
+      {% endif %}
+      {% if projeto.avancado or projeto.proposta.internacional or projeto.proposta.intercambio %}
+        <p><strong>Tipo</strong>:
 
-        {% if projeto.avancado and projeto.proposta.internacional %}
-          /
-        {% endif %}
+          {% if projeto.avancado %}
+            <font color="red">PFE Avançado</font>
+          {% endif %}
 
-        {% if projeto.proposta.internacional %}
-          <font color="red">Internacional</font>
-        {% endif %}
-
-        {% if projeto.avancado or projeto.proposta.internacional %}
-          {% if projeto.proposta.intercambio %}
+          {% if projeto.avancado and projeto.proposta.internacional %}
             /
           {% endif %}
-        {% endif %}
 
-        {% if projeto.proposta.intercambio %}
-          <font color="red">Intercâmbio</font>
-        {% endif %}
+          {% if projeto.proposta.internacional %}
+            <font color="red">Internacional</font>
+          {% endif %}
 
-        {% if projeto.time_misto %}
-          <font color="red">Time Misto</font>
-        {% endif %}
-        
-      </p>
-    {% endif %}
+          {% if projeto.avancado or projeto.proposta.internacional %}
+            {% if projeto.proposta.intercambio %}
+              /
+            {% endif %}
+          {% endif %}
 
-    <strong>Organização:</strong> <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a><br>
+          {% if projeto.proposta.intercambio %}
+            <font color="red">Intercâmbio</font>
+          {% endif %}
 
-    <strong>Relatos (prazos para estudantes):</strong><br>
+          {% if projeto.time_misto %}
+            <font color="red">Time Misto</font>
+          {% endif %}
+          
+        </p>
+      {% endif %}
 
-    {% with alocacoes=projeto.alocacao_set.all %}
-      {% include "relatos.html" %}
-    {% endwith %}
+      <strong>Organização:</strong>
+      {% if projeto.organizacao %}
+        <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>
+      {% else %}
+        ORGANIZAÇAO NÃO DEFINIDA
+      {% endif %}
+      <br>
 
-    {% if not forloop.last %}
-      <hr>
-    {% endif %}
+      <strong>Relatos (prazos para estudantes):</strong><br>
 
-  {% empty %}
+      {% with alocacoes=projeto.alocacao_set.all %}
+        {% include "relatos.html" %}
+      {% endwith %}
 
-    Você não está alocado em projetos esse semestre.
+      {% if not forloop.last %}
+        <hr>
+      {% endif %}
 
-  {% endfor %}
+    {% empty %}
+
+      Você não está alocado em projetos esse semestre.
+
+    {% endfor %}
+
+    <script>
+      function carrega_pagina(){
+      };
+      window.onload = carrega_pagina
+    </script>
+
+  </div>
+
+  {% include "edicoes_ajax.html" %}
 
   <p>&nbsp;</p>
   <p>&nbsp;</p>

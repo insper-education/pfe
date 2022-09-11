@@ -1162,14 +1162,34 @@ def relatos_quinzenais(request):
 def relatos_quinzenais_todos(request):
     """Formulários com os projetos e relatos a avaliar do professor orientador."""
 
-    configuracao = get_object_or_404(Configuracao)
+    if request.is_ajax():
 
-    projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
+        if 'edicao' in request.POST:
 
-    context = {
-        "administracao": True,
-        "projetos": projetos,
-    }
+            projetos = Projeto.objects.all()
+
+            edicao = request.POST['edicao']
+            if edicao != 'todas':
+                periodo = request.POST['edicao'].split('.')
+                ano = int(periodo[0])
+                semestre = int(periodo[1])
+                projetos = projetos.filter(ano=ano, semestre=semestre)
+                
+            context = {
+                "administracao": True,
+                "projetos": projetos,
+            }
+
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+
+    else:
+
+        edicoes, _, _ = get_edicoes(Projeto)
+        context = {
+                "administracao": True,
+                "edicoes": edicoes,
+            }
 
     return render(request, 'professores/relatos_quinzenais.html', context=context)
 
