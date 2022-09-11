@@ -10,6 +10,9 @@
   {% load class_tag %}
   <script>{% include "tooltip.js" %}</script>
 
+  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
+  {% include "reload.html" %}
+
   {% comment %} // Código a seguir serve para mudar formato da data conforme tamanho da tela. {% endcomment %}
   <style>
     

@@ -1,0 +1,15 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 11 de Setembro de 2022
+{% endcomment %}
+
+<script>
+  window.onpageshow = function(evt) {
+    // If persisted then it is in the page cache, force a reload of the page.
+    if (evt.persisted) {
+        document.body.style.display = "none";
+        location.reload();
+    }
+  };
+</script>
