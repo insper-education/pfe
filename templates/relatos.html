@@ -24,7 +24,9 @@
       {% if avaliados %}
           <span style="color:green">Avaliado pelo Orientador</span>
           {% for avaliado in avaliados %}
-            {% if avaliado %}&#x1F44D;{% else %}&#x1F44E;{% endif %}
+            <span data-toggle="tooltip" data-html="true" animation="true" title="{{avaliado.1}}">
+            {% if avaliado.0 %}&#x1F44D;{% else %}&#x1F44E;{% endif %}
+            </span>
           {% endfor %}
       {% else %}
           <span style="color:brown">Sem avaliação do Orientador</span>

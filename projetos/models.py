@@ -226,9 +226,9 @@ class Projeto(models.Model):
             avaliado = []
             for r in relato:
                 if r.avaliacao > 0:
-                    avaliado.append(True)
+                    avaliado.append([True, r.alocacao.aluno])
                 if r.avaliacao == 0:
-                    avaliado.append(False)
+                    avaliado.append([False, r.alocacao.aluno])
                     
             avaliados.append(avaliado)
 
