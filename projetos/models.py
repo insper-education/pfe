@@ -1219,9 +1219,16 @@ class ObjetivosDeAprendizagem(models.Model):
     titulo_en = models.TextField("Título Inglês", max_length=128, null=True, blank=True,
                               help_text='Título do objetivo de aprendizagem em inglês')
 
+
+
     objetivo = models.TextField(max_length=256, null=True, blank=True,
                                 help_text='Descrição do objetivo de aprendizagem')
 
+    objetivo_en = models.TextField(max_length=256, null=True, blank=True,
+                                   help_text='Descrição do objetivo de aprendizagem')
+
+
+    # Rubricas de Grupo Intermediárias e Finais
     rubrica_intermediaria_I = models.TextField(max_length=1024, null=True, blank=True,
                                                help_text='Rubrica intermediária do conceito I')
     rubrica_final_I = models.TextField(max_length=1024, null=True, blank=True,
@@ -1242,6 +1249,82 @@ class ObjetivosDeAprendizagem(models.Model):
                                                help_text='Rubrica intermediária do conceito A')
     rubrica_final_A = models.TextField(max_length=1024, null=True, blank=True,
                                        help_text='Rubrica final do conceito A')
+
+
+
+    # Rubricas de Individuais Intermediárias e Finais
+    rubrica_intermediaria_individual_I = models.TextField(max_length=1024, null=True, blank=True,
+                                                         help_text='Rubrica intermediária do conceito I')
+    rubrica_final_individual_I = models.TextField(max_length=1024, null=True, blank=True,
+                                                 help_text='Rubrica final do conceito I')
+    rubrica_intermediaria_individual_D = models.TextField(max_length=1024, null=True, blank=True,
+                                                         help_text='Rubrica intermediária do conceito D')
+    rubrica_final_individual_D = models.TextField(max_length=1024, null=True, blank=True,
+                                                 help_text='Rubrica final do conceito D')
+    rubrica_intermediaria_individual_C = models.TextField(max_length=1024, null=True, blank=True,
+                                                         help_text='Rubrica intermediária do conceito C')
+    rubrica_final_individual_C = models.TextField(max_length=1024, null=True, blank=True,
+                                                 help_text='Rubrica final do conceito C')
+    rubrica_intermediaria_individual_B = models.TextField(max_length=1024, null=True, blank=True,
+                                                         help_text='Rubrica intermediária do conceito B')
+    rubrica_final_individual_B = models.TextField(max_length=1024, null=True, blank=True,
+                                                 help_text='Rubrica final do conceito B')
+    rubrica_intermediaria_individual_A = models.TextField(max_length=1024, null=True, blank=True,
+                                                         help_text='Rubrica intermediária do conceito A')
+    rubrica_final_individual_A = models.TextField(max_length=1024, null=True, blank=True,
+                                                 help_text='Rubrica final do conceito A')
+
+
+
+    # Rubricas de Grupo Intermediárias e Finais em Inglês
+    rubrica_intermediaria_I_en = models.TextField(max_length=1024, null=True, blank=True,
+                                               help_text='Rubrica intermediária do conceito I')
+    rubrica_final_I_en = models.TextField(max_length=1024, null=True, blank=True,
+                                       help_text='Rubrica final do conceito I')
+    rubrica_intermediaria_D_en = models.TextField(max_length=1024, null=True, blank=True,
+                                               help_text='Rubrica intermediária do conceito D')
+    rubrica_final_D_en = models.TextField(max_length=1024, null=True, blank=True,
+                                       help_text='Rubrica final do conceito D')
+    rubrica_intermediaria_C_en = models.TextField(max_length=1024, null=True, blank=True,
+                                               help_text='Rubrica intermediária do conceito C')
+    rubrica_final_C_en = models.TextField(max_length=1024, null=True, blank=True,
+                                       help_text='Rubrica final do conceito C')
+    rubrica_intermediaria_B_en = models.TextField(max_length=1024, null=True, blank=True,
+                                               help_text='Rubrica intermediária do conceito B')
+    rubrica_final_B_en = models.TextField(max_length=1024, null=True, blank=True,
+                                       help_text='Rubrica final do conceito B')
+    rubrica_intermediaria_A_en = models.TextField(max_length=1024, null=True, blank=True,
+                                               help_text='Rubrica intermediária do conceito A')
+    rubrica_final_A_en = models.TextField(max_length=1024, null=True, blank=True,
+                                       help_text='Rubrica final do conceito A')
+
+
+
+    # Rubricas de Individuais Intermediárias e Finais em Inglês
+    rubrica_intermediaria_individual_I_en = models.TextField(max_length=1024, null=True, blank=True,
+                                                         help_text='Rubrica intermediária do conceito I')
+    rubrica_final_individual_I_en = models.TextField(max_length=1024, null=True, blank=True,
+                                                 help_text='Rubrica final do conceito I')
+    rubrica_intermediaria_individual_D_en = models.TextField(max_length=1024, null=True, blank=True,
+                                                         help_text='Rubrica intermediária do conceito D')
+    rubrica_final_individual_D_en = models.TextField(max_length=1024, null=True, blank=True,
+                                                 help_text='Rubrica final do conceito D')
+    rubrica_intermediaria_individual_C_en = models.TextField(max_length=1024, null=True, blank=True,
+                                                         help_text='Rubrica intermediária do conceito C')
+    rubrica_final_individual_C_en = models.TextField(max_length=1024, null=True, blank=True,
+                                                 help_text='Rubrica final do conceito C')
+    rubrica_intermediaria_individual_B_en = models.TextField(max_length=1024, null=True, blank=True,
+                                                         help_text='Rubrica intermediária do conceito B')
+    rubrica_final_individual_B_en = models.TextField(max_length=1024, null=True, blank=True,
+                                                 help_text='Rubrica final do conceito B')
+    rubrica_intermediaria_individual_A_en = models.TextField(max_length=1024, null=True, blank=True,
+                                                         help_text='Rubrica intermediária do conceito A')
+    rubrica_final_individual_A_en = models.TextField(max_length=1024, null=True, blank=True,
+                                                 help_text='Rubrica final do conceito A')
+
+
+
+
 
     avaliacao_aluno = models.BooleanField("Avaliação do Aluno", default=False,
                                           help_text='Avaliação do Aluno (AA)')
