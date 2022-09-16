@@ -224,6 +224,7 @@
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_intermediaria_B}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_intermediaria_A}}</label></td>
         </tr>
+        {% if objetivo.avaliacao_aluno %}
         <tr>
             {% comment %} Rubricas Individuais {% endcomment %}
             <td style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;"><span lang="pt">INDIVIDUAL</span><span lang="en">INDIVIDUAL</span></td>
@@ -233,6 +234,7 @@
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_intermediaria_individual_B}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_intermediaria_individual_A}}</label></td>
           </tr>
+          {% endif %}
       </table>
       </div>
 
@@ -266,16 +268,17 @@
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_intermediaria_B_en}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_intermediaria_A_en}}</label></td>
         </tr>
+        {% if objetivo.avaliacao_aluno %}
         <tr>
-            {% comment %} Rubricas Individuais {% endcomment %}
-            <td style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;"><span lang="pt">INDIVIDUAL</span><span lang="en">INDIVIDUAL</span></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_intermediaria_individual_I_en}}</label></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_intermediaria_individual_D_en}}</label></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_intermediaria_individual_C_en}}</label></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_intermediaria_individual_B_en}}</label></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_intermediaria_individual_A_en}}</label></td>
-
-          </tr>
+          {% comment %} Rubricas Individuais {% endcomment %}
+          <td style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;"><span lang="pt">INDIVIDUAL</span><span lang="en">INDIVIDUAL</span></td>
+          <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_intermediaria_individual_I_en}}</label></td>
+          <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_intermediaria_individual_D_en}}</label></td>
+          <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_intermediaria_individual_C_en}}</label></td>
+          <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_intermediaria_individual_B_en}}</label></td>
+          <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_intermediaria_individual_A_en}}</label></td>
+        </tr>
+        {% endif %}
       </table>
       </div>
 
@@ -314,6 +317,7 @@
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_final_B}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_final_A}}</label></td>
         </tr>
+        {% if objetivo.avaliacao_aluno %}
         <tr>
             {% comment %} Rubricas Individuais {% endcomment %}
             <td style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;"><span lang="pt">INDIVIDUAL</span><span lang="en">INDIVIDUAL</span></td>
@@ -323,6 +327,7 @@
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_final_individual_B}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_final_individual_A}}</label></td>
         </tr>
+        {% endif %}
       </table>
       </div>
 
@@ -356,6 +361,7 @@
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_final_B_en}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_final_A_en}}</label></td>
         </tr>
+        {% if objetivo.avaliacao_aluno %}
         <tr>
             {% comment %} Rubricas Individuais {% endcomment %}
             <td style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;"><span lang="pt">INDIVIDUAL</span><span lang="en">INDIVIDUAL</span></td>
@@ -365,6 +371,7 @@
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_final_individual_B_en}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_final_individual_A_en}}</label></td>
         </tr>
+        {% endif %}
       </table>
       </div>
 
