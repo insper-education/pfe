@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 20 de Setembro de 2022
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load dictionary %}
+  {% load l10n %}
+  {% include "tabelas_includes.html" %}
+{% endblock %}
+
+{% block content %}
+  
+  <span class="titulo">
+    {% if lingua == 'pt' %}Objetivos de Aprendizagem por Estudante{% else %}Learning Goals by Student{% endif %}
+    (Individual)
+  </span>
+
+  {% comment %} Seletor da edição da pesquisa {% endcomment %}
+  {% with n_todas=True %}
+      {% include "edicoes.html" %}
+  {% endwith %}
+  
+  <div class="atualizar">
+
+    {% if alunos_list %}
+      <div class="table-responsive">
+      <table id="EstudantesTable" class="table table-bordered table-hover table-sm">
+        <thead class="table-info">
+          <tr>
+              <th scope="col" class="text-center">Nome</th>
+              <th scope="col" class="text-center">e-mail</th>
+              <th scope="col" class="text-center">Curso</th>
+              {% comment %} <th scope="col" class="text-center">Período</th> {% endcomment %}
+              <th scope="col" class="text-center">
+                <a data-toggle="tooltip" data-html="true" animation="true" title="<small>Projetos <u>sublinhados</u> são de PFE Avançado</small>">
+                  Projeto
+                </a>
+              </th>
+              {% for objetivo in objetivos %}
+                <th scope="col" class="text-center">{{objetivo}}</th>
+              {% endfor %}
+          </tr>
+          </thead>
+          <tbody>
+          {% for aluno in alunos_list %} 
+          <tr class="item">
+            <th scope="row" data-order="{{aluno.user.get_full_name}}">
+              <a href="{% url 'estudante_detail' aluno.id %}">
+                {{aluno.user.get_full_name}}
+                {% if aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span>{% endif %}
+              </a>
+            </th>
+            <td>
+              <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
+            </td>
+            {% if aluno.curso %}
+              <td class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">
+                {{ aluno.get_curso_display }}
+              </td>
+            {% else %}
+              <td>Indefinido</td>
+            {% endif %}
+            <td>
+              {% if aluno.alocacao_set.all %}
+                {% for alocacao in aluno.alocacao_set.all %}
+                  {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
+                    <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
+                      {{alocacao.projeto.get_titulo}}
+                    </a>
+                    {% if alocacao.projeto and alocacao.projeto.organizacao %}
+                      <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
+                        ({{alocacao.projeto.organizacao}})<br>
+                      </a>
+                    {% else %}
+                      SEM ORGANIZAÇÃO
+                    {% endif %}
+                    {% if alocacao.projeto.avancado %}
+                      <span style="color:red">(PFE Avançado)</span>
+                    {% endif %}
+                    {% if alocacao.projeto.proposta.internacional %}
+                      <span style="color:red">(Internacional)</span>
+                    {% endif %}
+                    {% if alocacao.projeto.proposta.intercambio %}
+                      <span style="color:red">(Intercâmbio)</span>
+                    {% endif %}
+                    {% if alocacao.projeto.time_misto %}
+                      <span style="color:red">(Time Misto)</span>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+            </td>
+            {% with alocacao=aluno.get_alocacoes|dict_key:ano_semestre %}
+              {% with medias_oo=alocacao.get_medias_oo %}
+                {% for key, value in medias_oo.media_individual.items %}
+                  <td style="text-align:right;">
+                    {% comment %} {{key}}:  {% endcomment %}
+                    {{value.media|stringformat:".2f"}}
+                  </td>
+                {% endfor %}
+              {% endwith %}  
+            {% endwith %}
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        </div>
+        <br>
+
+    {% endif %}
+
+    <script>
+      function carrega_pagina() {
+      };
+      window.onload = carrega_pagina
+    </script>
+
+  </div>
+
+  {% with tabela='Estudantes' %}
+    {% include "edicoes_ajax.html" %}
+  {% endwith %}
+  
+{% endblock %}

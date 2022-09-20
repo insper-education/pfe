@@ -20,6 +20,10 @@ urlpatterns = [
          views.estudantes_notas,
          name='estudantes_notas'),
 
+    path('estudantes_objetivos/',
+         views.estudantes_objetivos,
+         name='estudantes_objetivos'),
+
     path('estudantes_inscritos/',
          views.estudantes_inscritos,
          name='estudantes_inscritos'),

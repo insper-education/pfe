@@ -8,6 +8,8 @@ Data: 15 de Maio de 2019
 
 import string
 import random
+import datetime
+
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
@@ -20,6 +22,7 @@ from django.views import generic
 
 from projetos.models import Certificado, Configuracao, Projeto, Conexao, Encontro
 from projetos.models import Banca, Area, Coorientador, Avaliacao2, Observacao, Reprovacao
+from projetos.models import ObjetivosDeAprendizagem
 
 from projetos.messages import email
 from projetos.support import get_objetivos_alocacao, calcula_objetivos
@@ -316,6 +319,71 @@ def estudantes_notas(request):
         }
 
     return render(request, 'users/estudantes_notas.html', context=context)
+
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def estudantes_objetivos(request):
+    """Gera lista com todos os alunos já registrados."""
+    configuracao = get_object_or_404(Configuracao)
+
+    if request.is_ajax():
+        if 'edicao' in request.POST:
+
+            anosemestre = request.POST['edicao']
+            ano = int(anosemestre.split(".")[0])
+            semestre = int(anosemestre.split(".")[1])
+
+            # Conta soh alunos
+            alunos_list = Aluno.objects\
+                .filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])\
+                .order_by(Lower("user__first_name"), Lower("user__last_name"))
+
+            alunos_list = alunos_list.filter(trancado=False)
+
+            alunos_semestre = alunos_list\
+                .filter(alocacao__projeto__ano=ano,
+                        alocacao__projeto__semestre=semestre)\
+                .distinct()
+
+            alunos_list = alunos_semestre |\
+                alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
+
+            # Filtra os Objetivos de Aprendizagem do semestre
+            objetivos = ObjetivosDeAprendizagem.objects.all()
+
+            #Nao está filtrando todos os semestres
+            if semestre == 1:
+                mes = 3
+            else:
+                mes = 9
+
+            data_projeto = datetime.datetime(ano, mes, 1)
+
+            objetivos = objetivos.filter(data_inicial__lt=data_projeto)
+            objetivos = objetivos.filter(data_final__gt=data_projeto) | objetivos.filter(data_final__isnull=True)
+
+            objetivos = objetivos.order_by("ordem")
+
+            context = {
+                'alunos_list': alunos_list,
+                'configuracao': configuracao,
+                'ano': ano,
+                'semestre': semestre,
+                'ano_semestre': str(ano)+"."+str(semestre),
+                'loop_anos': range(2018, configuracao.ano+1),
+                "objetivos": objetivos,
+            }
+
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+    else:
+        edicoes, _, _ = get_edicoes(Aluno)
+        context = {
+            'edicoes': edicoes,
+        }
+
+    return render(request, 'users/estudantes_objetivos.html', context=context)
 
 
 @login_required

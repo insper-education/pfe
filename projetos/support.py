@@ -205,7 +205,7 @@ def get_objetivos_alocacoes(alocacoes):
 
 def calcula_objetivos(alocacoes):
     """Calcula notas/conceitos por Objetivo de Aprendizagem."""
-    objetivos = get_objetivos_alocacoes(alocacoes)
+    #objetivos = get_objetivos_alocacoes(alocacoes)
 
     valor = {}
     valor["ideal"] = 7.0
@@ -256,6 +256,9 @@ def calcula_objetivos(alocacoes):
                             notas[avaliacao[1]][k] = val[0] * val[1]
                             pesos[avaliacao[1]][k] = val[1]
                             objetivos_avaliados.add(k)
+
+    # Ordena os obejtivos pelo indice de ordem deles
+    objetivos_avaliados = sorted(objetivos_avaliados, key=lambda oo: oo.ordem)
 
     cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9", "#7cfa9f", "#e8c3b9", "#c45890", "#375330", "#a48577"]
     count = 0
