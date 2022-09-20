@@ -45,7 +45,9 @@
       
         <div class="cabecalho">
 
-          <span class="titulo">Evolução por Objetivo de Aprendizado</span>
+          <span class="titulo">
+            {% if lingua == 'pt' %}Evolução por Objetivo de Aprendizado{% else %}Evolution by Learning Goal{% endif %}
+          </span>
 
           {% comment %} Seletor da edição da pesquisa {% endcomment %}
           {% with sem_edicao=True %}
