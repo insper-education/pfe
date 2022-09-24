@@ -275,10 +275,16 @@
             // Estudantes
             if(response.Estudantes.length) {
               var str = 'mailto:';
+
+              var emails = [];
               for (var id in response.Estudantes) {
                 //str += response.Estudantes[id][0] + "%20" + response.Estudantes[id][1] + "%20<" + response.Estudantes[id][2] + ">,";
-                str += response.Estudantes[id][2] + ",";
+                //str += response.Estudantes[id][2];
+                //str += ",";
+                emails.push(response.Estudantes[id][2]);
               }
+              str += emails.join(",");
+
               //str += "?cc=Luciano%20Pereira%20Soares<{{coordenacao.user.email}}>,PFE<pfe@insper.edu.br>&bcc=Comite%20PFE<comitepfe@insper.edu.br>&subject=PFE&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20Luciano%20P%20Soares%20(coordenação%20PFE)";
               str += "?cc={{coordenacao.user.email}},pfe@insper.edu.br&bcc=comitepfe@insper.edu.br&subject=PFE&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20Luciano%20P%20Soares%20(coordenação%20PFE)";
               $("#Estudantes").attr("href",str);
@@ -288,10 +294,15 @@
             // Orientadores
             if(response.Orientadores.length) {
               var str = 'mailto:';
+
+              var emails = [];
               for (var id in response.Orientadores) {
                 //str += response.Orientadores[id][0] + "%20" + response.Orientadores[id][1] + "%20<" + response.Orientadores[id][2] + ">,";
-                str += response.Orientadores[id][2] + ",";
+                //str += response.Orientadores[id][2] + ",";
+                emails.push(response.Orientadores[id][2]);
               }
+              str += emails.join(",");
+
               //str += "?cc=Luciano%20Pereira%20Soares<{{coordenacao.user.email}}>,PFE<pfe@insper.edu.br>&bcc=Comite%20PFE<comitepfe@insper.edu.br>&subject=PFE&body=Caros%20orientadores,%0D%0A%0D%0Aatenciosamente,%20Luciano%20P%20Soares%20(coordenação%20PFE)";
               str += "?cc={{coordenacao.user.email}},pfe@insper.edu.br&bcc=comitepfe@insper.edu.br&subject=PFE&body=Caros%20orientadores,%0D%0A%0D%0Aatenciosamente,%20Luciano%20P%20Soares%20(coordenação%20PFE)";
               $("#Orientadores").attr("href",str);
@@ -301,10 +312,15 @@
             // Parceiros
             if(response.Parceiros.length) {
               var str = 'mailto:';
+
+              var emails = [];
               for (var id in response.Parceiros) {
                 //str += response.Parceiros[id][0] + "%20" + response.Parceiros[id][1] + "%20<" + response.Parceiros[id][2] + ">,";
-                str += response.Parceiros[id][2] + ",";
+                //str += response.Parceiros[id][2] + ",";
+                emails.push(response.Parceiros[id][2]);
               }
+              str += emails.join(",");
+
               //str += "?cc=Luciano%20Pereira%20Soares<{{coordenacao.user.email}}>,PFE<pfe@insper.edu.br>&bcc=Comite%20PFE<comitepfe@insper.edu.br>&subject=PFE&body=Caros%20parceiros,%0D%0A%0D%0Aatenciosamente,%20Luciano%20P%20Soares%20(coordenação%20PFE)";
               str += "?cc={{coordenacao.user.email}},pfe@insper.edu.br&bcc=comitepfe@insper.edu.br&subject=PFE&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20Luciano%20P%20Soares%20(coordenação%20PFE)";
               $("#Parceiros").attr("href",str);
@@ -314,10 +330,15 @@
             // Bancas
             if(response.Bancas.length) {
               var str = 'mailto:';
+
+              var emails = [];
               for (var id in response.Bancas) {
                 //str += response.Bancas[id][0] + "%20" + response.Bancas[id][1] + "%20<" + response.Bancas[id][2] + ">,";
-                str += response.Bancas[id][2] + ",";
+                //str += response.Bancas[id][2] + ",";
+                emails.push(response.Bancas[id][2]);
               }
+              str += emails.join(",");
+              
               //str += "?cc=Luciano%20Pereira%20Soares<{{coordenacao.user.email}}>,PFE<pfe@insper.edu.br>&bcc=Comite%20PFE<comitepfe@insper.edu.br>&subject=PFE&body=Caros%20membros%20de%bancas,%0D%0A%0D%0Aatenciosamente,%20Luciano%20P%20Soares%20(coordenação%20PFE)";
               str += "?cc={{coordenacao.user.email}},pfe@insper.edu.br&bcc=comitepfe@insper.edu.br&subject=PFE&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20Luciano%20P%20Soares%20(coordenação%20PFE)";
               $("#Bancas").attr("href",str);
