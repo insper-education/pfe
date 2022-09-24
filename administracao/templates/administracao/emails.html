@@ -73,7 +73,7 @@
               ?cc={{coordenacao.user.email}},pfe@insper.edu.br
               &amp;subject=PFE%20Comitê&amp;body=Caros%20membros%20do%20comitê%20do%20PFE,%0D%0A%0D%0A
               atenciosamente,%20Luciano%20P%20Soares%20(coordenação%20PFE)
-            ">
+            " target="_blank">
             {% comment %}
             <a href="
               mailto:{% for membro in membros_comite %}{{membro.first_name|parse_quote}}%20{{membro.last_name|parse_quote}}%20&lt;{{membro.email|parse_quote}}&gt;,{% endfor %}
@@ -111,22 +111,22 @@
           </div>
         </div>
         <div class="input-group-append">
-          <a id="Estudantes" href="">
+          <a id="Estudantes" href="" target="_blank">
             <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
               Estudantes
             </button>
           </a>
-          <a href="abc" id="Orientadores">
+          <a href="abc" id="Orientadores" target="_blank">
             <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
               Orientadores
             </button>
           </a>
-          <a href="abc" id="Parceiros">
+          <a href="abc" id="Parceiros" target="_blank">
             <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
               Parceiros
             </button>
           </a>
-          <a href="abc" id="Bancas">
+          <a href="abc" id="Bancas" target="_blank">
             <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
               Bancas
             </button>
@@ -210,7 +210,7 @@
         &amp;bcc=comitepfe@insper.edu.br
         &amp;subject=PFE&amp;body=Caros%20professores%20do%PFE,%0D%0A%0D%0A
         atenciosamente,%20coordenação%20PFE
-      ">Todos os professores do PFE</a><br>
+      " target="_blank">Todos os professores do PFE</a><br>
       {% comment %}     
       <a href="
         mailto:{% for professor in todos_professores %}{{professor.user.first_name|parse_quote}}%20{{professor.user.last_name|parse_quote}}%20&lt;{{ professor.user.email|parse_quote }}&gt;,{% endfor %}
@@ -229,7 +229,7 @@
         &amp;bcc=comitepfe@insper.edu.br
         &amp;subject=PFE&amp;body=Caros%20parceiro%20do%PFE,%0D%0A%0D%0A
         atenciosamente,%20coordenação%20PFE
-      ">Todos os parceiros do PFE</a><br>
+      " target="_blank">Todos os parceiros do PFE</a><br>
       {% comment %}
       <a href="
         mailto:{% for parceiro in todos_parceiros %}{{parceiro.user.first_name|parse_quote}}%20{{parceiro.user.last_name|parse_quote}}%20&lt;{{ parceiro.user.email|parse_quote }}&gt;,{% endfor %}
@@ -338,7 +338,7 @@
                 emails.push(response.Bancas[id][2]);
               }
               str += emails.join(",");
-              
+
               //str += "?cc=Luciano%20Pereira%20Soares<{{coordenacao.user.email}}>,PFE<pfe@insper.edu.br>&bcc=Comite%20PFE<comitepfe@insper.edu.br>&subject=PFE&body=Caros%20membros%20de%bancas,%0D%0A%0D%0Aatenciosamente,%20Luciano%20P%20Soares%20(coordenação%20PFE)";
               str += "?cc={{coordenacao.user.email}},pfe@insper.edu.br&bcc=comitepfe@insper.edu.br&subject=PFE&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20Luciano%20P%20Soares%20(coordenação%20PFE)";
               $("#Bancas").attr("href",str);
@@ -356,7 +356,7 @@
             jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
             console.log('error'+request.responseText);
           {% else %}
-            jQuery("body").html("Erro no servidor do PFE. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
+            jQuery("body").html("Erro no servidor do PFE. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br' target='_blank'>lpsoares@insper.edu.br</a>");
           {% endif %}
         }
       });
@@ -388,7 +388,7 @@
             jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
             console.log('error'+request.responseText);
           {% else %}
-            jQuery("body").html("Erro no servidor do PFE. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
+            jQuery("body").html("Erro no servidor do PFE. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br' target='_blank'>lpsoares@insper.edu.br</a>");
           {% endif %}
         }
       });
