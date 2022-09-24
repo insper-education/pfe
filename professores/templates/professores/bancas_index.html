@@ -10,6 +10,9 @@
   {% load static %}
   {% load date_extras %}
 
+  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
+  {% include "reload.html" %}
+
   <!-- BASEADO EM: https://github.com/fullcalendar/fullcalendar -->
   <link href="{% static 'fullcalendar-4.4.2/core/main.min.css' %}" rel='stylesheet' />
   <link href="{% static 'fullcalendar-4.4.2/daygrid/main.min.css' %}" rel='stylesheet' />
