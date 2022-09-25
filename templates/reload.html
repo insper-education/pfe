@@ -8,11 +8,8 @@
   console.log("GERAL");
   $(window).bind("pageshow", function(event) {
     console.log("ONPAGESHOW");
-    if (event.originalEvent.persisted) {
+    if (event.persisted || event.originalEvent.persisted || window.performance.getEntriesByType("navigation")[0].type === 'back_forward') {
       console.log("RELOAD");
-    }
-    if (event.persisted) {
-      console.log("RELOAD2");
     }
   });
 </script>
