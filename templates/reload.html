@@ -5,11 +5,10 @@
 {% endcomment %}
 
 <script>
-  console.log("GERAL");
   $(window).bind("pageshow", function(event) {
-    console.log("ONPAGESHOW");
     if (event.persisted || event.originalEvent.persisted || window.performance.getEntriesByType("navigation")[0].type === 'back_forward') {
-      console.log("RELOAD");
+      document.body.style.display = "none";
+      location.reload();
     }
   });
 </script>
