@@ -6,9 +6,11 @@
 
 <script>
   window.onpageshow = function(evt) {
+    console.log("ONPAGESHOW");
     // If persisted then it is in the page cache, force a reload of the page.
     if (evt.persisted) {
         document.body.style.display = "none";
+        console.log("RELOAD");
         location.reload();
     }
   };
