@@ -11,7 +11,7 @@ Caros Membros da Banca,%0D%0A%0D%0A
 %20%20%20%20Primeiramente muito obrigado por terem aceito fazer parte da banca {% if banca.tipo_de_banca == 0 %}Final{% elif banca.tipo_de_banca == 1 %}Intermediária{% endif %} do Projeto Final de Engenharia.%0D%0A%0D%0A
 %20%20%20%20Em anexo está o relatório submetido pelos estudantes para o projeto onde você foi alocado como membro da banca.%0D%0A%0D%0A
 %20%20%20%20Nas bancas do PFE os estudantes tem no máximo 40min para a apresentação. Depois, se orienta que a arguição de todos os membros não passe de 50min. Ao final das arguições vocês podem pedir para os alunos se retirarem da reunião e fazer qualquer discussão.%0D%0A%0D%0A
-%20%20%20%20Por favor, preencha a avaliação no link abaixo, idealmente logo após o encerramento da banca. Ao fazer isso, um e-mail é diretamente enviado para o orientador e o cálculo de média já é realizado para ser usado para a nota da avaliação de banca do grupo.%0D%0A%0D%0A
+%20%20%20%20Por favor, preencha a avaliação no link abaixo, idealmente logo após a conclusão da banca (um e-mail será enviado para você e o orientador).%0D%0A%0D%0A
 %20%20%20%20Também deixamos um manual de participação em bancas em anexo caso tenha dúvidas, contudo podem tirar suas dúvidas diretamente com o orientador do projeto, ou mesmo comigo.%0D%0A%0D%0A
 %20%20%20%20%20%20%20%20atenciosamente, Luciano P Soares%0D%0A%0D%0A------------%0D%0A%0D%0A
 ★ Link formulário de avaliação: http://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}
