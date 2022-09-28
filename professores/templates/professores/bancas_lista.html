@@ -250,13 +250,13 @@
             <div class="agendamento" style="margin-top: 8px;">
               <b>Agendamento</b>: mensagem
                 {% with com_nome=True %}
-                  <a href="{% include 'professores/mensagem_banca.html' %}">
+                  <a href="{% include 'professores/mensagem_banca.html' %}" target="_blank">
                 {% endwith %}          
                   <!--&amp;attach='events/{{banca.pk}}'-->
                   CN
                   </a>
                 {% with com_nome=False %}
-                  <a href="{% include 'professores/mensagem_banca.html' %}">
+                  <a href="{% include 'professores/mensagem_banca.html' %}" target="_blank">
                 {% endwith %}          
                   <!--&amp;attach='events/{{banca.pk}}'-->
                   SN

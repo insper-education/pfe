@@ -1,144 +1,46 @@
 {% load escape_emails %}
-mailto:
-{% if banca.membro1 %}
-  {% if com_nome %}
-    {{banca.membro1.first_name}}%20{{banca.membro1.last_name|parse_quote}}%20&lt;
-  {% endif %}
-  {{banca.membro1.email|parse_quote}}
-  {% if com_nome %}
-    &gt;
-  {% endif %}
-  ,
-{% endif %}
-{% if banca.membro2 %}
-  {% if com_nome %}
-    {{banca.membro2.first_name}}%20{{banca.membro2.last_name|parse_quote}}%20&lt;
-  {% endif %}
-  {{banca.membro2.email|parse_quote}}
-  {% if com_nome %}
-    &gt;
-  {% endif %}
-  ,
-{% endif %}
-{% if banca.membro3 %}
-  {% if com_nome %}
-    {{banca.membro3.first_name}}%20{{banca.membro3.last_name|parse_quote}}%20&lt;
-  {% endif %}
-  {{banca.membro3.email|parse_quote}}
-  {% if com_nome %}
-    &gt;
-  {% endif %}
-  ,
-{% endif %}
-{% comment %} 
-{% for alocacao in banca.projeto.alocacao_set.all %}
-  {% if com_nome %}
-    {{alocacao.aluno.user.first_name|parse_quote}}%20{{alocacao.aluno.user.last_name|parse_quote}}%20&lt;
-  {% endif %}
-  {{alocacao.aluno.user.email|parse_quote}}
-  {% if com_nome %}
-    &gt;
-  {% endif %}
-  ,
-{% endfor %}
-{% endcomment %}
-{% for coorientador in banca.projeto.coorientador_set.all %}
-  {% if com_nome %}
-    {{coorientador.usuario.first_name|parse_quote}}%20{{coorientador.usuario.last_name|parse_quote}}%20&lt;
-  {% endif %}
-  {{coorientador.usuario.email|parse_quote}}
-  {% if com_nome %}
-    &gt;
-  {% endif %}
-  ,
-{% endfor %}
-{% if com_nome %}
-  {{banca.projeto.orientador.user.first_name|parse_quote}}%20{{banca.projeto.orientador.user.last_name|parse_quote}}%20&lt;
-{% endif %}
-{{banca.projeto.orientador.user.email|parse_quote}}
-{% if com_nome %}
-  &gt;
-{% endif %}
-?cc=
-{% if com_nome %}
-  Luciano%20Pereira%20Soares&lt;
-{% endif %}
-lpsoares@insper.edu.br
-{% if com_nome %}
-  &gt;
-{% endif %}
-{% comment %}
-  ,
-  {% if com_nome %}
-    Comite%20PFE&lt;
-  {% endif %}
-  comitepfe@insper.edu.br
-  {% if com_nome %}
-    &gt;
-  {% endif %}
-{% endcomment %}
+mailto:{% if banca.membro1 %}{% if com_nome %}{{banca.membro1.first_name}}%20{{banca.membro1.last_name|parse_quote}}%20&lt;{% endif %}{{banca.membro1.email|parse_quote}}{% if com_nome %}&gt;{% endif %},{% endif %}
+{% if banca.membro2 %}{% if com_nome %}{{banca.membro2.first_name}}%20{{banca.membro2.last_name|parse_quote}}%20&lt;{% endif %}{{banca.membro2.email|parse_quote}}{% if com_nome %}&gt;{% endif %},{% endif %}
+{% if banca.membro3 %}{% if com_nome %}{{banca.membro3.first_name}}%20{{banca.membro3.last_name|parse_quote}}%20&lt;{% endif %}{{banca.membro3.email|parse_quote}}{% if com_nome %}&gt;{% endif %},{% endif %}
+{% for coorientador in banca.projeto.coorientador_set.all %}{% if com_nome %}{{coorientador.usuario.first_name|parse_quote}}%20{{coorientador.usuario.last_name|parse_quote}}%20&lt;{% endif %}{{coorientador.usuario.email|parse_quote}}{% if com_nome %}&gt;{% endif %},{% endfor %}
+{% if com_nome %}{{banca.projeto.orientador.user.first_name|parse_quote}}%20{{banca.projeto.orientador.user.last_name|parse_quote}}%20&lt;{% endif %}{{banca.projeto.orientador.user.email|parse_quote}}{% if com_nome %}&gt;{% endif %}
+?cc={% if com_nome %}Luciano%20Pereira%20Soares&lt;{% endif %}lpsoares@insper.edu.br{% if com_nome %}&gt;{% endif %}
 &amp;subject=Banca%20PFE%20-%20Projeto:%20{% if banca.projeto.titulo_final %}{{banca.projeto.titulo_final|parse_quote}}{% else %}{{banca.projeto.titulo|parse_quote}}{% endif %}
 &amp;body=
-
 Caros Membros da Banca,%0D%0A%0D%0A
- 
 %20%20%20%20Primeiramente muito obrigado por terem aceito fazer parte da banca {% if banca.tipo_de_banca == 0 %}Final{% elif banca.tipo_de_banca == 1 %}Intermediária{% endif %} do Projeto Final de Engenharia.%0D%0A%0D%0A
- 
 %20%20%20%20Em anexo está o relatório submetido pelos estudantes para o projeto onde você foi alocado como membro da banca.%0D%0A%0D%0A
- 
 %20%20%20%20Nas bancas do PFE os estudantes tem no máximo 40min para a apresentação. Depois, se orienta que a arguição de todos os membros não passe de 50min. Caso necessário, ao final das arguições vocês podem pedir para os alunos se retirarem da reunião e fazer qualquer discussão.%0D%0A%0D%0A
- 
 %20%20%20%20Por favor, preencha a avaliação no link abaixo, idealmente logo após o encerramento da banca. Ao fazer isso, um e-mail é diretamente enviado para o orientador e o cálculo de média já é realizado para ser usado para a nota da avaliação de banca do grupo.%0D%0A%0D%0A
- 
 %20%20%20%20Também deixamos um manual de participação em bancas em anexo caso tenha dúvidas, contudo podem tirar suas dúvidas diretamente com o orientador do projeto, ou mesmo comigo.%0D%0A%0D%0A
- 
 %20%20%20%20%20%20%20%20atenciosamente, Luciano P Soares%0D%0A%0D%0A
-
 %0D%0A%0D%0A
 ------------
 %0D%0A%0D%0A
-
 ★ Link formulário de avaliação: http://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}
-
 %0D%0A%0D%0A
 %0D%0A%0D%0A
-
 Agendamento%20para%20banca%20do%20PFE.%0D%0A%0D%0A
 Horário: {{banca.startDate.date}} ({{banca.startDate|date:'l'}}) das {{banca.startDate.time}}
 às {{banca.endDate.time}}%0D%0A
 {% if banca.tipo_de_banca == 0 %}
   Tipo: Final%0D%0A
-{% elif banca.tipo_de_banca == 1 %}
-  Tipo: Intermediária%0D%0A
-{% else %}
-  Tipo: Falconi%0D%0A
-{% endif %}
-{% if banca.projeto %}
-  Título do Projeto:
+{% elif banca.tipo_de_banca == 1 %}Tipo: Intermediária%0D%0A{% else %}Tipo: Falconi%0D%0A{% endif %}
+{% if banca.projeto %}Título do Projeto:
  {% if banca.projeto.titulo_final %}{{banca.projeto.titulo_final|parse_quote}}{% else %}{{banca.projeto.titulo|parse_quote}}{% endif %}
 {% endif %}
 %0D%0A
-{% if banca.projeto.organizacao.nome %}
-  Organização Parceira: {{ banca.projeto.organizacao.nome|parse_quote }}%0D%0A
-{% endif %}
-{% if banca.location %}
-  Local: {{banca.location|parse_quote}}%0D%0A
-{% endif %}
-{% if banca.link %}
-  Link vídeo-conferência: {{banca.link|parse_quote}}%0D%0A
-{% endif %}
-{% if banca.projeto.orientador %}
-%0D%0AOrientador:%0D%0A
-  - {{banca.projeto.orientador.user.first_name|parse_quote}} {{banca.projeto.orientador.user.last_name|parse_quote}} 
+{% if banca.projeto.organizacao.nome %}Organização Parceira: {{ banca.projeto.organizacao.nome|parse_quote }}%0D%0A{% endif %}
+{% if banca.location %}Local: {{banca.location|parse_quote}}%0D%0A{% endif %}
+{% if banca.link %}Link vídeo-conferência: {{banca.link|parse_quote}}%0D%0A{% endif %}
+{% if banca.projeto.orientador %}%0D%0AOrientador:%0D%0A - {{banca.projeto.orientador.user.first_name|parse_quote}} {{banca.projeto.orientador.user.last_name|parse_quote}} 
 %0D%0A%0D%0A
 {% endif %}
 Banca:%0D%0A
-{% if banca.membro1 %}
-  - {{banca.membro1.first_name|parse_quote}} {{banca.membro1.last_name|parse_quote}}
+{% if banca.membro1 %} - {{banca.membro1.first_name|parse_quote}} {{banca.membro1.last_name|parse_quote}}
 %0D%0A
 {% endif %}
-{% if banca.membro2 %}
-  - {{banca.membro2.first_name|parse_quote}} {{banca.membro2.last_name|parse_quote}}
+{% if banca.membro2 %} - {{banca.membro2.first_name|parse_quote}} {{banca.membro2.last_name|parse_quote}}
 %0D%0A
 {% endif %}
 {% if banca.membro3 %}
