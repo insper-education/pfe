@@ -19,7 +19,9 @@
           request_ajax = null;
       }
 
+      $(".filter").attr('disabled', true);
       $("#spinner").css("visibility", "visible");
+
       {% if not sem_edicao %}
         var edicao = $("#filterEdicao option:selected").attr("value");
       {% endif %}
@@ -77,6 +79,7 @@
               {% endif %}
               carrega_pagina();
               $("#spinner").css("visibility", "hidden");
+              $(".filter").attr('disabled',false);
           },
           error: function (request, status, error) {
             {% if user.tipo_de_usuario == 4 %} 

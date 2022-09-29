@@ -1390,7 +1390,7 @@ def evolucao_notas(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
-        cores = ["#00af00", "#d40000", "#cccc00", "#000000", ]
+        cores = ["#00af00", "#d40000", "#cccc00", "#000000", "#0000af", "#d4af00", "#222222", "#123456",]
 
         # Para armazenar todas as notas de todos os programas de engenharia
         notas_total = {}
@@ -1406,6 +1406,8 @@ def evolucao_notas(request):
         count = 0
         for t_curso in Aluno.TIPOS_CURSO:
             notas = []
+            if count > len(cores):
+                return HttpResponse("Erro, limite de cores por linha atingido.", status=401)
             for edicao in edicoes:
                 periodo = edicao.split('.')
                 semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
@@ -1415,7 +1417,7 @@ def evolucao_notas(request):
             if notas != [None] * len(notas):  # não está vazio
                 medias_individuais.append({"curso": t_curso[1], "media": notas, "cor": cores[count]})
             count += 1
-
+            
         if len(medias_individuais) > 1:
             notas = []
             for edicao in edicoes:
