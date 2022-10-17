@@ -617,6 +617,7 @@ def banca_avaliar(request, slug):
     else:
 
         orientacoes = ""
+        orientacoes_en = ""
 
         # Intermediária e Final
         if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
@@ -629,6 +630,16 @@ def banca_avaliar(request, slug):
             orientacoes += "<br><br>"
             orientacoes += "No Projeto Final de Engenharia, a maioria dos projetos está sob sigilo, através de contratos realizados (quando pedido ou necessário) entre a Organização Parceira e o Insper, se tem os professores automaticamente responsáveis por garantir o sigilo das informações. Assim <b>pessoas externas só podem participar das bancas com prévia autorização</b>, isso inclui outros estudantes que não sejam do grupo, familiares ou amigos."
             orientacoes += "<br>"
+
+            orientacoes_en += "The advisors are responsible for leading the presentation. The group members will have <b>40 minutes for the presentation</b>. The evaluation board members will then have <b>50 minutes for the discussion</b> (which will be divided by the invited members), being able to ask any questions about the project and make their comments. If there is a lot of interference from the examination members during the group's presentation, the presentation time may be extended. <b>all group members should be ready to answer any kind of question</b> about the project, so a board member can ask a question directed at a specific student in the group if desired. If a group takes longer than 40 minutes, the examination board will be able to define a punishment in a learning objective, ideally in the Communication objective."
+            orientacoes_en += "<br><br>"
+            orientacoes_en += "As recommended order for the board members's argument, the following should be invited: guest professors, co-advisor professors, project supervisor and finally other people watching the presentation. The examination board may ask about the presentation, as well as the report delivered, enabling a clear weighting for the learning objectives rubrics."
+            orientacoes_en += "<br><br>"
+            orientacoes_en += "Presentations of the Final Engineering Project serve as another evidence of learning, thus, in addition to the perception of the members of the board in relation to the level reached in the learning objectives by the members of the group, it also serves as a record of the evolution of the project. In this way, at the end, the examination board will have more <b>15 minutes to consider</b>, at which point they are asked to dismiss students and other external guests. We recommend 5 minutes for panel members to reread the learning objectives and rubrics, make any notes, and then 10 minutes for a final discussion. Each board member will be able to define a verdict for the group, using the rubrics below. The advisor will later post (on Blackboard) the grades (average)."
+            orientacoes_en += "<br><br>"
+            orientacoes_en += "In the Final Engineering Project, most projects are kept confidential, through contracts made (when requested or necessary) between the Partner Organization and Insper, the professors are automatically responsible for guaranteeing the confidentiality of the information. <b>external people can only participate in the presentaions with prior authorization</b>, this includes other students who are not part of the group, family or friends."
+            orientacoes_en += "<br>"
+            
         
         # Falconi
         elif banca.tipo_de_banca == 2:
@@ -639,6 +650,13 @@ def banca_avaliar(request, slug):
             orientacoes += "<br><br>"
             orientacoes += "No Projeto Final de Engenharia, a maioria dos projetos está sob sigilo, através de contratos realizados (quando pedido ou necessário) entre a Organização Parceira e o Insper. A Falconi assinou um documento de responsabilidade em manter o sigilo das informações divulgadas nas apresentações. Assim <b>pessoas externas só podem participar das bancas com prévia autorização</b>, isso inclui outros estudantes que não sejam do grupo, familiares ou amigos."
             orientacoes += "<br>"
+
+            orientacoes_en += "Group members will have <b>15 minutes for the presentation</b>. Falconi consultants will then have another <b>15 minutes for discussion and observations</b>, being able to clarify any doubts about the project and make their comments. If there is interference during the group presentation, the presentation time may be extended. The presentation dynamics is free, however, <b>all group members must be ready to answer any type of question< /b> about the project. A Falconi consultant can ask a question directed at a specific student in the group if desired."
+            orientacoes_en += "<br><br>"
+            orientacoes_en += "The presentations to Falconi's commission of consultants will be used to evaluate the best projects. Each Falconi consultant will be able to put his verdict on the group, using the following rubrics. At the end, the PFE coordination will average the evaluations and the projects that reach the pre-established levels of excellence will receive the outstanding certificate."
+            orientacoes_en += "<br><br>"
+            orientacoes_en += "In the Final Engineering Project, most projects are kept confidential, through contracts made (when requested or necessary) between the Partner Organization and Insper. Falconi signed a document of responsibility to maintain the confidentiality of the information disclosed in the presentations. So <b>external people can only participate in the stands with prior authorization</b>, this includes other students who are not part of the group, family or friends."
+            orientacoes_en += "<br>"
 
         # Carregando dados REST
         avaliador = request.GET.get('avaliador', '0')
@@ -664,6 +682,7 @@ def banca_avaliar(request, slug):
             'objetivos': objetivos,
             'banca': banca,
             "orientacoes": orientacoes,
+            "orientacoes_en": orientacoes_en,
             "avaliador": avaliador,
             "conceitos": conceitos,
             "observacoes": observacoes,

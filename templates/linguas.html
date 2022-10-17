@@ -1,0 +1,27 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 16 de Outubro de 2022
+{% endcomment %}
+
+{% comment %} Coloque essa chamada sempre no final do arquivo {% endcomment %}
+
+<script>
+  var text_pt = "<span style='cursor: pointer;'>&nbsp;<b>PT</b>|EN&nbsp;</span>";
+  var text_en = "<span style='cursor: pointer;'>&nbsp;PT|<b>EN</b>&nbsp;</span>";
+
+  if ($('html').is(':lang(pt)')) {
+    $("#language_button").html(text_pt);
+    $('[lang="en"]').css('display', 'none');
+  } else {
+    $("#language_button").html(text_en);
+    $('[lang="pt"]').css('display', 'none');
+  }
+
+  $("body").on("click", "#language_button", function(e) {
+    $('[lang="pt"]').toggle();
+    $('[lang="en"]').toggle();
+    if($('[lang="en"]').is(":visible")) $("#language_button").html(text_en);  
+    else $("#language_button").html(text_pt);
+  });
+</script>

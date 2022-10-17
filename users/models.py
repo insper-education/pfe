@@ -119,6 +119,7 @@ class Professor(models.Model):
     TIPO_DEDICACAO = (
         ("TI", "Tempo Integral"),
         ("TP", 'Tempo Parcial'),
+        ("V", 'Visitante'),
     )
 
     dedicacao = models.CharField("Dedicação", max_length=2,

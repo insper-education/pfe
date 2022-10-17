@@ -71,28 +71,41 @@
 {% endblock %}
 
 {% block content %}
+
+  <div id="language_button" style="user-select: none; border-radius: 10px;border: 2px solid #AAAAAA;float: right; margin-top: 4px; margin-left: 8px"></div>
+
+  <span class="titulo">
+    <span lang="pt">Formulário de Avaliação de Bancas</span>
+    <span lang="en">Evaluation Board Form</span>
+  </span>  
+
+  <span lang="pt"></span><span lang="en"></span>
+
   {% if banca %}
     <form method="post" id="avaliacaoform" enctype="multipart/form-data">
       {% csrf_token %}
 
-      <b>Projeto:</b> {{banca.projeto.titulo}}<br>
+      <b lang="pt">Projeto:</b><b lang="en">Project:</b> {{banca.projeto.titulo}}<br>
       {% if banca.projeto.orientador %}
-        <b>Organização:</b> {{banca.projeto.organizacao}}<br>
+      <b lang="pt">Organização:</b><b lang="en">Organization:</b> {{banca.projeto.organizacao}}<br>
       {% else %}
-        Organização: Não definida
+        <span lang="pt">Organização: Não definida</span><span lang="en">Organization: Not defined</span>
       {% endif %}
       {% if banca.projeto.orientador %}
         {% if banca.projeto.proposta.intercambio %}
-          <b>Professor{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
+          <b lang="pt">Professor{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
+          <b lang="en">Professor in charge:</b>
         {% else %}
-          <b>Orientador{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
+          <b lang="pt">Orientador{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
+          <b lang="en">Advisor:</b>
         {% endif %}
         {{banca.projeto.orientador}}<br>
       {% else %}
-        Orientador: Não definido
+        <span lang="pt">Orientador: Não definido</span>
+        <span lang="en">Advisor: Not defined</span>
       {% endif %}
-      <b>Grupo:</b>
-
+      <b lang="pt">Grupo:</b>
+      <b lang="en">Group:</b>
 
       <ul style="padding-left: 34px;">
         {% for alocacao in banca.projeto.alocacao_set.all %}
@@ -108,15 +121,16 @@
       </ul>
 
       {% if banca.tipo_de_banca is not None %}
-        <b>Banca:</b>
+        <b lang="pt">Banca:</b>
+        <b lang="en">Presentation:</b>
         {{ banca.tipo_de_banca|get_banca }}
         <br>
       {% endif %}
 
       <br>
-      <b>Data:</b> {{banca.startDate|date:"DATE_FORMAT"}} das {{banca.startDate|date:"H:i"}} às {{banca.endDate|date:"H:i"}}<br>
+      <b lang="pt">Data:</b><b lang="en">Date:</b> {{banca.startDate|date:"DATE_FORMAT"}} das {{banca.startDate|date:"H:i"}} às {{banca.endDate|date:"H:i"}}<br>
       {% if banca.location %}
-        <b>Local:</b> {{banca.location}}<br>
+        <b lang="pt">Local:</b><b lang="en">Location:</b> {{banca.location}}<br>
       {% endif %}  
       {% if banca.link %}
         <b>Link:</b> <a href="{{banca.link}}">{{banca.link}}</a>
@@ -124,12 +138,13 @@
       {% endif %}
       
 
-      <br><b><label style="margin: 0px;" for="avaliador">Avaliador(a):</label></b
+      <br><b><label style="margin: 0px;" for="avaliador"><span lang="pt">Avaliador(a)</span><span lang="en">Evaluator</span>:</label></b
       ><select name="avaliador" id="avaliador" title="Selecione avaliador da banca" required
         oninvalid="this.setCustomValidity('Selecione seu nome para o controle das avaliações')"
         oninput="this.setCustomValidity('')"
         >
-          <option disabled selected value> -- selecione um avaliador -- </option>
+          
+          <option disabled selected value id="selecione_avaliador"> -- selecione um avaliador -- </option>
 
           <optgroup label="Membros da Banca">
             {% for pessoa in membros %}
@@ -150,17 +165,18 @@
       </select>
       <br><br>
 
-
       {% if orientacoes %}
-        <h5>Orientações Gerais</h5>
-        {{orientacoes|safe}}
+        <h5 lang="pt">Orientações Gerais</h5><h5 lang="en">Guidelines</h5>
+        <span lang="pt">{{orientacoes|safe}}</span>
+        <span lang="en">{{orientacoes_en|safe}}</span>
         <br>
       {% endif %}
 
       {% if objetivos %}
-        <br><h5>Objetivos de Aprendizagem</h5>
+        <br><h5 lang="pt">Objetivos de Aprendizagem</h5><h5 lang="en">Learning Goals</h5>
         {% for objetivo in objetivos %}
-          <b>{{objetivo.titulo}}</b>: {{objetivo.objetivo}}
+          <b lang="pt">{{objetivo.titulo}}</b><b lang="en">{{objetivo.titulo_en}}</b>: <span lang="pt">{{objetivo.objetivo}}</span><span lang="en">{{objetivo.objetivo_en}}</span>
+          
           <div class="table-responsive">
           <table style="width:100%">
             <tr>
@@ -172,19 +188,19 @@
               </th>
               <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I" style="width:18%">
                 <label for="objetivo.{{objetivo.id}}.I " style="white-space: nowrap;">
-                  <span class="nivel">Insatisfatório&nbsp;</span>(I)
+                  <span class="nivel" lang="pt">Insatisfatório&nbsp;</span><span class="nivel" lang="en">Unsatisfactory&nbsp;</span>(I)
                   <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" id="objetivo{{objetivo.id}}I" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.I" required>
                 </label>
               </th>
               <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}D" style="width:18%">
                 <label for="objetivo{{objetivo.id}}D " style="white-space: nowrap;">
-                  <span class="nivel">Em Desenvolvimento&nbsp;</span>(D)
+                  <span class="nivel" lang="pt">Em Desenvolvimento&nbsp;</span><span class="nivel" lang="en">under Development&nbsp;</span>(D)
                   <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" id="objetivo{{objetivo.id}}D" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.D " required>
                 </label>
               </th>
               <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" style="width:18%">
                 <label for="objetivo{{objetivo.id}}C " style="white-space: nowrap; margin-right: 2em;">
-                  <span class="nivel">Essencial&nbsp;</span>(C)
+                  <span class="nivel" lang="pt">Essencial&nbsp;</span><span class="nivel" lang="en">Fundamental&nbsp;</span>(C)
                   <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C" id="objetivo{{objetivo.id}}C" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.C" required>
                 </label>
                 <label for="objetivo{{objetivo.id}}C+" style="white-space: nowrap;">
@@ -194,7 +210,7 @@
               </th>
               <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" style="width:18%">
                 <label for="objetivo{{objetivo.id}}B " style="white-space: nowrap; margin-right: 2em;">
-                  <span class="nivel">Proficiente&nbsp;</span>(B)
+                  <span class="nivel" lang="pt">Proficiente&nbsp;</span><span class="nivel" lang="en">Proficient&nbsp;</span>(B)
                   <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B" id="objetivo{{objetivo.id}}B" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.B" required>
                 </label>
                 <label for="objetivo{{objetivo.id}}B+" style="white-space: nowrap;">
@@ -204,7 +220,7 @@
               </th>
               <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" style="width:18%">
                 <label for="objetivo{{objetivo.id}}A " style="white-space: nowrap; margin-right: 2em;">
-                  <span class="nivel">Avançado&nbsp;</span>(A)
+                  <span class="nivel" lang="pt">Avançado&nbsp;</span><span class="nivel" lang="en">Advanced&nbsp;</span>(A)
                   <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A" id="objetivo{{objetivo.id}}A" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.A" required>
                 </label>
                 <label for="objetivo{{objetivo.id}}A+" style="white-space: nowrap;">
@@ -215,19 +231,19 @@
             </tr>
             <tr>
               {% if banca.tipo_de_banca is not None and banca.tipo_de_banca == 1 %} {% comment %} Banca Intermediária {% endcomment %}
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA">caso prefira não avaliar este objetivo, selecione esta coluna.</label></td>
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_intermediaria_I}}</label></td>
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_intermediaria_D}}</label></td>
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_intermediaria_C}}</label></td>
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_intermediaria_B}}</label></td>
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_intermediaria_A}}</label></td>
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA" lang="pt">caso prefira não avaliar este objetivo, selecione esta coluna.</label><label for="objetivo{{objetivo.id}}NA" lang="en">if you prefer not to evaluate this objective, select this column.</label></td>
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I" lang="pt">{{objetivo.rubrica_intermediaria_I}}</label><label for="objetivo{{objetivo.id}}I" lang="en">{{objetivo.rubrica_intermediaria_I_en}}</label></td>
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D" lang="pt">{{objetivo.rubrica_intermediaria_D}}</label><label for="objetivo{{objetivo.id}}D" lang="en">{{objetivo.rubrica_intermediaria_D_en}}</label></td>
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C" lang="pt">{{objetivo.rubrica_intermediaria_C}}</label><label for="objetivo{{objetivo.id}}C" lang="en">{{objetivo.rubrica_intermediaria_C_en}}</label></td>
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B" lang="pt">{{objetivo.rubrica_intermediaria_B}}</label><label for="objetivo{{objetivo.id}}B" lang="en">{{objetivo.rubrica_intermediaria_B_en}}</label></td>
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A" lang="pt">{{objetivo.rubrica_intermediaria_A}}</label><label for="objetivo{{objetivo.id}}A" lang="en">{{objetivo.rubrica_intermediaria_A_en}}</label></td>
               {% else %}
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA">caso prefira não avaliar este objetivo, selecione esta coluna.</label></td>
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_final_I}}</label></td>
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_final_D}}</label></td>
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_final_C}}</label></td>
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_final_B}}</label></td>
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_final_A}}</label></td>
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA" lang="pt">caso prefira não avaliar este objetivo, selecione esta coluna.</label><label for="objetivo{{objetivo.id}}NA" lang="en">if you prefer not to evaluate this objective, select this column.</label></td>
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I" lang="pt">{{objetivo.rubrica_final_I}}</label><label for="objetivo{{objetivo.id}}I" lang="en">{{objetivo.rubrica_final_I_en}}</label></td>
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D" lang="pt">{{objetivo.rubrica_final_D}}</label><label for="objetivo{{objetivo.id}}D" lang="en">{{objetivo.rubrica_final_D_en}}</label></td>
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C" lang="pt">{{objetivo.rubrica_final_C}}</label><label for="objetivo{{objetivo.id}}C" lang="en">{{objetivo.rubrica_final_C_en}}</label></td>
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B" lang="pt">{{objetivo.rubrica_final_B}}</label><label for="objetivo{{objetivo.id}}B" lang="en">{{objetivo.rubrica_final_B_en}}</label></td>
+                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A" lang="pt">{{objetivo.rubrica_final_A}}</label><label for="objetivo{{objetivo.id}}A" lang="en">{{objetivo.rubrica_final_A_en}}</label></td>
               {% endif %}
             </tr>
           </table>
@@ -241,16 +257,17 @@
       
       <br><b data-toggle="tooltip" data-html="true" animation="true"
              title="Insira qualquer observação que achar relavante. O texto será encaminhado para os orientadores do projeto.">
-        Observações (somente enviada para orientador):
+        <span lang="pt">Observações (somente enviada para orientador)</span ><span lang="en">Evaluation Observations (only sent to advisor)</span>:
       </b><br>
       <textarea name="observacoes" rows="8" cols="80" maxlength="2048">{{observacoes}}</textarea>
       
       <br><br>
-      <button type="submit">Enviar Avaliação</button>
+      <button type="submit"><span lang="pt">Enviar Avaliação</span><span lang="en">Submit Evaluation</span></button>
       <p>&nbsp;</p>
     </form>
   {% else %}
-    <p>Não existe projeto disponível para avaliar.</p>
+    <p lang="pt">Não existe projeto disponível para avaliar.</p>
+    <p lang="en">There is no project available to evaluate.</p>
   {% endif %}
   <p>&nbsp;</p>
 
@@ -272,6 +289,15 @@
     }
     $('input[type="radio"]').on('click change', cores);
 
+  </script>
+
+  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+  {% include "linguas.html" %}
+  <script>
+    $("body").on("click", "#language_button", function(e) {
+      if($('[lang="en"]').is(":visible")) $("#selecione_avaliador").text(" -- select evaluator -- ");  
+      else $("#selecione_avaliador").text(" -- selecione um avaliador -- ");
+    });
   </script>
 
 {% endblock %}
