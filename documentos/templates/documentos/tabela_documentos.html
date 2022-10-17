@@ -43,7 +43,9 @@
   <span class="titulo">Documentação dos Projetos</span>
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
-  {% include "edicoes.html" %}
+  {% with com_cursos=True %}
+      {% include "edicoes.html" %}
+  {% endwith %}
 
   <script>
     $(document).on('click','#informacoes_tag',function(){
@@ -351,7 +353,9 @@
   </div>
 
   {% with tabela='Projetos' %}
-    {% include "edicoes_ajax.html" %}
+  {% with com_cursos=True %}
+      {% include "edicoes_ajax.html" %}
+  {% endwith %}
   {% endwith %}
   
 {% endblock %}

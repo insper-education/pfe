@@ -259,9 +259,6 @@ def projetos_fechados(request):
                                                             semestre=semestre)
 
             if 'curso' in request.POST:
-                curso = request.POST['curso']
-
-            if 'curso' in request.POST:
                 curso = request.POST['curso']    
             else:
                 return HttpResponse("Algum erro não identificado.", status=401)
