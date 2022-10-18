@@ -5,6 +5,11 @@
     Data: 28 de Maio de 2019
 {% endcomment %}
 
+{% block head %}
+  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
+  {% include "reload.html" %}
+{% endblock %}
+
 {% block content %}
 
   <span class="titulo">{{ user.get_full_name }}</span>

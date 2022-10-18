@@ -8,6 +8,10 @@
 {% block head %}
   {% load static %}
   {% load certificado_banca %}
+
+  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
+  {% include "reload.html" %}
+  
   <style>
     #logotipo {
       max-height:128px;

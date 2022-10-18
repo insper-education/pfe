@@ -13,6 +13,9 @@
 
   <script src="{% static 'js/Chart.min.js' %}"></script>
 
+  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
+  {% include "reload.html" %}
+
 {% endblock %}
 
 {% block content %}
