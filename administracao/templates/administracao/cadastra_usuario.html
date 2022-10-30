@@ -6,7 +6,12 @@
 {% endcomment %}
 
 {% block head %}
+
+  {% load static %}
   {% load l10n %}
+
+  <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
+  <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
 
   <style>
     textarea {
@@ -26,8 +31,9 @@
     de Usuário
   </span>
   <br>
+  <form  >
 
-  <form class="myForm" action="" method="post"> {% csrf_token %}
+  <form class="myForm" action="" id="cadastrauser" method="post" enctype="multipart/form-data"> {% csrf_token %}
   
     <input type="radio" class="tipo" name="tipo_de_usuario" id="estudante" value="estudante" required {% if tipo == "estudante"%}checked="checked"{% endif %}> <label for="estudante"> Estudante</label>&nbsp;&nbsp;&nbsp;
     <input type="radio" class="tipo" name="tipo_de_usuario" id="professor" value="professor" required {% if tipo == "professor"%}checked="checked"{% endif %}> <label for="professor"> Professor</label>&nbsp;&nbsp;&nbsp;
@@ -103,22 +109,24 @@
       <label for="website">website:</label><input type="text" size="73" maxlength="250" id="website" name="website" {% if usuario.professor.website %} value="{{usuario.professor.website}}" {% endif %} placeholder="https://www.insper.edu.br/"><br>
       <label for="lattes">lattes:</label><input type="text" size="73" maxlength="73" id="lattes" name="lattes" {% if usuario.professor.lattes %} value="{{usuario.professor.lattes}}" {% endif %} placeholder="https://lattes.cnpq.br/"><br>
 
-
-
     </div>
 
     {% comment %} Parceiro {% endcomment %}
     <div style="display: block; padding-left: 32px" class="row" data-type="parceiro">
 
-      <br><b><label for="organizacao">Organização</label></b>:
-      <select name="organizacao" id="organizacao" title="Selecione organização" required>
-          <option disabled selected value> -- selecione uma organização -- </option>
-          {% for organizacao in organizacoes %}
-            <option value="{{organizacao.id}}" {% if organizacao_selecionada.id == organizacao.id %}selected="selected"{% endif %} >
-              {{organizacao.nome}}
-            </option>  
-          {% endfor %}
-      </select><br>
+      <div style="margin-bottom: 10px;">
+        <br><b><label for="organizacao">Organização</label></b>:
+        <select name="organizacao" id="organizacao" class="selectpicker" title="Selecione organização" data-live-search="true" data-width="42%" data-size="10" required>
+            <option disabled selected value> -- selecione uma organização -- </option>
+            <optgroup label="Outros">
+            {% for organizacao in organizacoes %}
+              <option value="{{organizacao.id}}" {% if organizacao_selecionada.id == organizacao.id %}selected="selected"{% endif %} >
+                {{organizacao.nome}}
+              </option>  
+            {% endfor %}
+            </optgroup>
+        </select>
+      </div>
 
       <label for="cargo">cargo:</label><input type="text" size="50" maxlength="90" id="cargo" name="cargo" value="{{usuario.parceiro.cargo}}"><br>
       
@@ -182,6 +190,9 @@
       // Para validar o que está visível
       $("div:visible").children('input').attr("disabled", false);
       $("div:visible").children('select').attr("disabled", false);
+
+      // para a busca do nome
+      $("input[type=search]").attr("disabled", false);
 
     }
 
