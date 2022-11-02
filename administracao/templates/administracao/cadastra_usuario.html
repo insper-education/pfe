@@ -107,25 +107,24 @@
  
       <label for="website">website:</label><input type="text" size="73" maxlength="250" id="website" name="website" {% if usuario.professor.website %} value="{{usuario.professor.website}}" {% endif %} placeholder="https://www.insper.edu.br/"><br>
       <label for="lattes">lattes:</label><input type="text" size="73" maxlength="73" id="lattes" name="lattes" {% if usuario.professor.lattes %} value="{{usuario.professor.lattes}}" {% endif %} placeholder="https://lattes.cnpq.br/"><br>
-    
+
     </div>
 
     {% comment %} Parceiro {% endcomment %}
-    <div style="display: block; padding-left: 32px" class="row" data-type="parceiro">
+    <div id="parceiro_div" style="display: block; padding-left: 32px" class="row" data-type="parceiro">
 
-      <div style="margin-bottom: 10px;">
-        <br><b><label for="organizacao">Organização</label></b>:
-        <select name="organizacao" id="organizacao" class="selectpicker" title="Selecione organização" data-live-search="true" data-width="42%" data-size="10" required>
-            <option disabled selected value> -- selecione uma organização -- </option>
-            {% for organizacao in organizacoes %}
-              <option value="{{organizacao.id}}" {% if organizacao_selecionada.id == organizacao.id %}selected="selected"{% endif %} >
-                {{organizacao.nome}}
-              </option>  
-            {% endfor %}
-        </select>
-      </div>
-
-      <label for="cargo">cargo:</label><input type="text" size="50" maxlength="90" id="cargo" name="cargo" value="{{usuario.parceiro.cargo}}"><br>
+      <br><b><label for="organizacao">Organização</label></b>:
+      <select required name="organizacao" id="organizacao" class="selectpicker" title="Selecione organização" data-live-search="true" data-width="42%" data-size="10" >
+          <option disabled value=""> -- selecione uma organização -- </option>
+          {% for organizacao in organizacoes %}
+            <option value="{{organizacao.id}}" {% if organizacao_selecionada.id == organizacao.id %}selected="selected"{% endif %} >
+              {{organizacao.nome}}
+            </option>  
+          {% endfor %}
+      </select>
+      <br>
+      
+      <label style="margin-top: 10px;" for="cargo">cargo:</label><input type="text" size="50" maxlength="90" id="cargo" name="cargo" value="{{usuario.parceiro.cargo}}"><br>
       
       <label for="telefone">telefone:</label><input type="text" size="20" maxlength="20" id="telefone" name="telefone" value="{{usuario.parceiro.telefone}}"><br>
       <label for="celular">celular:</label><input type="text" size="20" maxlength="20" id="celular" name="celular" value="{{usuario.parceiro.celular}}"><br>
@@ -190,6 +189,7 @@
 
       // para a busca do nome
       $("input[type=search]").attr("disabled", false);
+      $("#parceiro_div").children('select').attr("disabled", false);
 
     }
 
