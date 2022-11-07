@@ -23,8 +23,10 @@ def decodificar(campo, campos):
     """Recupera um campo de um documento PDF."""
     if campo in campos and "/V" in campos[campo]:
         if isinstance(campos[campo]["/V"], PyPDF2.generic.ByteStringObject):
-            return campos[campo]["/V"].replace(b'\r', b'\n').decode('ISO-8859-1').strip()
-        return campos[campo]["/V"].strip()
+            texto = campos[campo]["/V"].replace(b'\r', b'\n').decode('ISO-8859-1').strip() 
+        else:
+            texto = campos[campo]["/V"].strip()
+        return texto.replace("\x00", "\uFFFD")
     return None
 
 
