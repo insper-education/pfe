@@ -179,7 +179,7 @@
         Operação:
       </span>
 
-      <span class="lista_operacao">
+      <span id="lista_operacao" class="lista_operacao">
         {% if coordenacao %}
           {% nospaces %}
             {% for evento in coordenacao|dictsort:"endDate" %} 
@@ -210,7 +210,7 @@
       </span>
     {% endif %}
 
-    <span class="lista_academico">
+    <span id="lista_academico" class="lista_academico">
 
       {% if eventos %}
         {% nospaces %}
@@ -363,7 +363,7 @@
       </span>
     {% endif %}
 
-    <span class="lista_aulas">
+    <span id="lista_aulas" class="lista_aulas">
 
       {% if aulas %}
         {% nospaces %}
@@ -626,6 +626,16 @@
 
             calendar.setDataSource(dataSource);
             $('#event-modal').modal('hide');
+
+            //location.reload();
+            //$("#lista_operacao").replaceWith($("#lista_operacao",data));
+            //$("#lista_academico").replaceWith($("#lista_academico",data));
+            //$("#lista_aulas").replaceWith($("#lista_aulas",data));
+
+            $("#lista_operacao").replaceWith("FAZER REFRESH DA PÁGINA");
+            $("#lista_academico").replaceWith("FAZER REFRESH DA PÁGINA");
+            $("#lista_aulas").replaceWith("FAZER REFRESH DA PÁGINA");
+
           }
         },
         error: function (request, status, error) {
