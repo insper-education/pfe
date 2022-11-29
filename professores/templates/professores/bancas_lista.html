@@ -233,8 +233,8 @@
                     <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">
                       {{alocacao.aluno.user.get_full_name}}
                     </a>
-                    <a class="email" href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
                     <span class="curso">[{{ alocacao.aluno.get_curso_display }}]</span>
+                    <a class="email" href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
                   </li>
                 {% endfor %}
               </ul>
