@@ -103,7 +103,45 @@ def bancas_criar(request):
 
             banca = Banca.create(projeto)
             editar_banca(banca, request)
-            mensagem = "Banca criada."
+            mensagem = "Banca criada.<br><br>"
+
+            mensagem += "Data: " + banca.startDate.strftime("%d/%m/%Y - %H:%M:%S") + "<br><br>"
+
+            mensagem += "Envolvidos:<br><ul>"
+
+            # Orientador
+            if banca.projeto.orientador:
+                mensagem += "<li>" + banca.projeto.orientador.user.get_full_name() + " [orientador] "
+                mensagem += '<a href="mailto:' + banca.projeto.orientador.user.email + '">&lt;' + banca.projeto.orientador.user.email + "&gt;</a></li>"
+            
+            # coorientadores
+            for coorientador in banca.projeto.coorientador_set.all():
+                mensagem += "<li>" + coorientador.usuario.get_full_name() + " [coorientador] "
+                mensagem += '<a href="mailto:' + coorientador.usuario.email + '">&lt;' + coorientador.usuario.email + "&gt;</a></li>"
+
+            # membro1
+            if banca.membro1:
+                mensagem += "<li>" + banca.membro1.get_full_name() + " [membro da banca] "
+                mensagem += '<a href="mailto:' + banca.membro1.email + '">&lt;' + banca.membro1.email + "&gt;</a></li>"
+            
+            # membro2
+            if banca.membro2:
+                mensagem += "<li>" + banca.membro2.get_full_name() + " [membro da banca] "
+                mensagem += '<a href="mailto:' + banca.membro2.email + '">&lt;' + banca.membro2.email + "&gt;</a></li>"
+
+            # membro3
+            if banca.membro3:
+                mensagem += "<li>" + banca.membro3.get_full_name() + " [membro da banca] "
+                mensagem += '<a href="mailto:' + banca.membro3.email + '">&lt;' + banca.membro3.email + "&gt;</a></li>"
+
+            # estudantes
+            for alocacao in banca.projeto.alocacao_set.all():
+                mensagem += "<li>" + alocacao.aluno.user.get_full_name()
+                mensagem += "[" + alocacao.aluno.get_curso_display() + "] "
+                mensagem += '<a href="mailto:' + alocacao.aluno.user.email + '">&lt;' + alocacao.aluno.user.email + "&gt;</a></li>"
+            
+            mensagem += "</ul>"
+            
             context = {
                 "area_principal": True,
                 "bancas_index": True,
