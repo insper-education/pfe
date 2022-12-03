@@ -366,6 +366,9 @@ def banca_ver(request, primarykey):
 @transaction.atomic
 def banca_avaliar(request, slug):
     """Cria uma tela para preencher avaliações de bancas."""
+    configuracao = get_object_or_404(Configuracao)
+    coordenacao = configuracao.coordenacao
+
     try:
         banca = Banca.objects.get(slug=slug)
 
@@ -377,9 +380,9 @@ def banca_avaliar(request, slug):
             mensagem = "Prazo de submissão da Avaliação de Banca vencido.<br>"
             mensagem += "Entre em contato com a coordenação do PFE "
             mensagem += "para enviar sua avaliação.<br>"
-            mensagem += "Luciano Pereira Soares "
-            mensagem += "<a href='mailto:lpsoares@insper.edu.br'>"
-            mensagem += "lpsoares@insper.edu.br</a>.<br>"
+            mensagem += coordenacao.user.get_full_name + " "
+            mensagem += "<a href='mailto:" + coordenacao.user.email + "'>"
+            mensagem += coordenacao.user.email + "</a>.<br>"
             return HttpResponse(mensagem)
 
         if not banca.projeto:
@@ -633,7 +636,7 @@ def banca_avaliar(request, slug):
             if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
                 recipient_list += [banca.projeto.orientador.user.email, ]
             elif banca.tipo_de_banca == 2:  # Falconi
-                recipient_list += ["lpsoares@insper.edu.br", ]
+                recipient_list += [coordenacao.user.email, ]
 
             check = email(subject, recipient_list, message)
             if check != 1:
@@ -1315,9 +1318,16 @@ def relato_avaliar(request, projeto_id, evento_id):
                 obs.observacoes = observacoes
                 obs.save()
 
-                # Manda mensagem para coordenados
-                email("Anotação Quinzenal", ["lpsoares@insper.edu.br"], observacoes+"<br><br>"+str(user))
-                
+                coordenacoes = PFEUser.objects.filter(coordenacao=True)
+                email_coordenacoes = []
+                for coordenador in coordenacoes:
+                    email_coordenacoes.append(str(coordenador.email))
+                #print("AQUI")
+                #print(email_coordenacoes)
+                # Manda mensagem para coordenadores
+                email("Anotação Quinzenal", email_coordenacoes, observacoes+"<br><br>"+str(user))
+                #print("ALI")
+
             # objetivos_possiveis = len(objetivos)
             # julgamento = [None]*objetivos_possiveis
             

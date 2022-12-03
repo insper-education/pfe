@@ -70,6 +70,9 @@ class PFEUser(AbstractUser):
     observacoes = models.TextField("Observações", max_length=500, blank=True,
                                    help_text='Observações')
 
+    coordenacao = \
+        models.BooleanField("Coordenação", default=False, help_text='caso coordenador do PFE')
+
     class Meta:
         """Classe Meta."""
 

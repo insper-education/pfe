@@ -26,6 +26,7 @@ from projetos.models import Documento, Configuracao, Projeto, Certificado
 from projetos.models import get_upload_path
 
 # from users.models import Aluno
+from users.models import PFEUser
 from users.support import get_edicoes
 
 from .support import render_pdf_file
@@ -110,9 +111,15 @@ def certificados_submetidos(request):
         certificados = Certificado.objects\
             .filter(projeto__ano=ano, projeto__semestre=semestre)
 
+    configuracao = get_object_or_404(Configuracao)
+    coordenacao = configuracao.coordenacao
+    #coordenacoes = PFEUser.objects.filter(coordenacao=True)
+
     context = {
-        'certificados': certificados,
-        'edicoes': edicoes,
+        "certificados": certificados,
+        "edicoes": edicoes,
+        "coordenacao": coordenacao,
+        #"coordenacoes": coordenacoes,
     }
 
     return render(request, 'documentos/certificados_submetidos.html', context)
@@ -307,8 +314,12 @@ def gerar_certificados(request):
                 if certificado:
                     certificados.append(certificado)
 
+    configuracao = get_object_or_404(Configuracao)
+    coordenacao = configuracao.coordenacao
+
     context = {
         'certificados': certificados,
+        "coordenacao": coordenacao,
     }
 
     return render(request, 'documentos/gerar_certificados.html', context)

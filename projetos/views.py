@@ -831,12 +831,17 @@ def lista_feedback_estudantes(request):
 
     alocacoes = zip(estudantes, projetos, feedbacks)
 
+    configuracao = get_object_or_404(Configuracao)
+    coordenacao = configuracao.coordenacao
+
     context = {
         "SERVER_URL": settings.SERVER,
         "loop_anos": edicoes,
         "num_estudantes": num_estudantes,
         "num_feedbacks": num_feedbacks,
         "alocacoes": alocacoes,
+        "coordenacao": coordenacao,
+
     }
     return render(request, 'projetos/lista_feedback_estudantes.html', context)
 

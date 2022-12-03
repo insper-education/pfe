@@ -89,6 +89,7 @@ def emails(request):
     atual = str(configuracao.ano)+"."+str(configuracao.semestre)
 
     coordenacao = configuracao.coordenacao
+    coordenacoes = PFEUser.objects.filter(coordenacao=True)
 
     context = {
         "membros_comite": membros_comite,
@@ -98,6 +99,7 @@ def emails(request):
         "edicoes": edicoes,
         "atual": atual,
         "coordenacao": coordenacao,
+        "coordenacoes": coordenacoes,
     }
 
     return render(request, 'administracao/emails.html', context=context)
