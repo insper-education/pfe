@@ -327,10 +327,10 @@
       <hr>
       <div class="totais">
         <b>Total de projetos = 
-        <span class="avancado">{{ numero_projetos|add:numero_projetos_avancado }}</span>
+        <span>{{ numero_projetos }}</span>
         </b>
         {% if numero_projetos_avancado > 0 %}
-          <span class="avancado">[ {{ numero_projetos_avancado }} avançado{% if numero_projetos_avancado > 1 %}s{% endif %} ]</span>
+          <span class="avancado">[ +{{ numero_projetos_avancado }} avançado{% if numero_projetos_avancado > 1 %}s{% endif %} ]</span>
         {% endif %}
         {% if projetos_time_misto > 0 %}
           <span class="avancado">[ {{ projetos_time_misto }} time{% if projetos_time_misto > 1 %}s{% endif %} misto{% if projetos_time_misto > 1 %}s{% endif %} ]</span>
@@ -338,10 +338,10 @@
         <br>
 
         <b>Total de estudantes =
-        <span class="avancado">{{ numero_estudantes|add:numero_estudantes_avancado}}</span>
+        <span>{{ numero_estudantes}}</span>
         </b>
         {% if numero_estudantes_avancado > 0 %}
-          <span class="avancado"> [ {{ numero_estudantes_avancado }} avançado{% if numero_estudantes_avancado > 1 %}s{% endif %} ]</span>
+          <span class="avancado"> [ +{{ numero_estudantes_avancado }} avançado{% if numero_estudantes_avancado > 1 %}s{% endif %} ]</span>
         {% endif %}
         {% if numero_estudantes_externos > 0 %}
           <span class="avancado">[ {{ numero_estudantes_externos }} externo{% if numero_estudantes_externos > 1 %}s{% endif %} ]</span>
