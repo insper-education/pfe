@@ -416,8 +416,8 @@ def registro_usuario(request, user=None):
         try:
             estudante.cr = float(request.POST['cr'])
         except (ValueError, OverflowError, MultiValueDictKeyError):
-            estudante.cr = 0
-            mensagem += "Erro na inclusão do CR.<br>"
+            pass
+            #estudante.cr = 0
 
         estudante.trancado = 'estudante_trancado' in request.POST
 
