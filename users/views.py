@@ -1133,6 +1133,8 @@ def contas_senhas(request, anosemestre=None):
             estudante.user.set_password(senha)
             estudante.user.save()
 
+            coordenacao = configuracao.coordenacao
+
             # Preparando mensagem para enviar para usuário.
             message_email = estudante.user.get_full_name() + ",\n\n\n"
             message_email += "Você está recebendo sua conta e senha para acessar o sistema do "
@@ -1155,7 +1157,7 @@ def contas_senhas(request, anosemestre=None):
             message_email += "Sua senha é: <b>" + senha + "</b>\n"
             message_email += "\n\n"
             message_email += "Qualquer dúvida, envie e-mail para: "
-            message_email += "<a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>"
+            message_email += coordenacao.user.get_full_name + "<a href='mailto:" + coordenacao.user.email + "'>" + coordenacao.user.email + "</a>"
             message_email += "\n\n"
             message_email += "Nos próximos dias o departamento de carreiras entrará em contato "
             message_email += "com datas de reuniões para maiores esclarecimentos dos projetos."

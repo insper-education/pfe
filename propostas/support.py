@@ -16,6 +16,7 @@ from projetos.models import Proposta, Configuracao
 from projetos.models import Area, AreaDeInteresse
 from projetos.messages import email
 from users.models import Opcao
+from users.models import PFEUser
 from users.support import adianta_semestre
 
 
@@ -417,7 +418,11 @@ def envia_proposta(proposta, enviar=True):
 
     if enviar:
         recipient_list = list(map(str.strip, re.split(",|;", proposta.email)))
-        recipient_list += ["lucianops@insper.edu.br",]
+        
+        coordenacoes = PFEUser.objects.filter(coordenacao=True)
+        for coordenador in coordenacoes:
+            recipient_list.append(str(coordenador.email))
+        #recipient_list += ["lucianops@insper.edu.br",]
 
         check = email(subject, recipient_list, message)
         if check != 1:

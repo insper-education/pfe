@@ -1322,11 +1322,9 @@ def relato_avaliar(request, projeto_id, evento_id):
                 email_coordenacoes = []
                 for coordenador in coordenacoes:
                     email_coordenacoes.append(str(coordenador.email))
-                #print("AQUI")
-                #print(email_coordenacoes)
+
                 # Manda mensagem para coordenadores
                 email("Anotação Quinzenal", email_coordenacoes, observacoes+"<br><br>"+str(user))
-                #print("ALI")
 
             # objetivos_possiveis = len(objetivos)
             # julgamento = [None]*objetivos_possiveis
