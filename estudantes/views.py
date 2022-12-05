@@ -194,6 +194,12 @@ def encontros_marcar(request):
             for alocacao in alocacoes:
                 # mandar para cada membro do grupo
                 recipient_list.append(alocacao.aluno.user.email)
+            
+            # coordenadores do curso
+            coordenacoes = PFEUser.objects.filter(coordenacao=True)
+            for coordenador in coordenacoes:
+                recipient_list.append(str(coordenador.email))
+
             # sempre mandar para a conta do gmail
             recipient_list.append('pfeinsper@gmail.com')
 
