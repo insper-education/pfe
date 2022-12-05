@@ -163,6 +163,7 @@ def encontros_marcar(request):
         check_values = request.POST.getlist('selection')
         
         agendado = None
+        cancelado = None
 
         if not check_values:
             aviso = "Selecione um horário."
@@ -184,6 +185,7 @@ def encontros_marcar(request):
                 else:
                     # Limpa seleção caso haja uma mudança
                     if encontro.projeto == projeto:
+                        cancelado = "dia " + str(encontro.startDate.strftime("%d/%m/%Y")) + " das " + str(encontro.startDate.strftime("%H:%M")) + ' às ' + str(encontro.endDate.strftime("%H:%M"))
                         encontro.projeto = None
                         encontro.save()
 
@@ -203,7 +205,7 @@ def encontros_marcar(request):
             # sempre mandar para a conta do gmail
             recipient_list.append('pfeinsper@gmail.com')
 
-            message = message_agendamento(agendado)
+            message = message_agendamento(agendado, cancelado)
             check = email(subject, recipient_list, message)
             if check != 1:
                 message = "Problema no envio, contacte:lpsoares@insper.edu.br"

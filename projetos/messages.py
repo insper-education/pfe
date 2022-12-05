@@ -153,7 +153,7 @@ def message_reembolso(usuario, projeto, reembolso, cpf):
 
     return message
 
-def message_agendamento(encontro):
+def message_agendamento(encontro, cancelado):
     """Emite menssagem de agendamento de dinâmica."""
     message = '<br>\n'
     message += '&nbsp;&nbsp;Grupo do Projeto <b>'
@@ -161,7 +161,7 @@ def message_agendamento(encontro):
     message += '</b>\n\n'
     message += '<br><br>\n\n'
     message += '&nbsp;&nbsp;Marcada dinâmica do PFE: '
-    message += str(encontro.startDate.strftime("%d/%m/%Y %H:%M")) + ' as ' + str(encontro.endDate.strftime("%H:%M"))
+    message += 'dia ' + str(encontro.startDate.strftime("%d/%m/%Y")) + ' das ' + str(encontro.startDate.strftime("%H:%M")) + ' às ' + str(encontro.endDate.strftime("%H:%M"))
     message += '<br>\n'
     if encontro.location:
         message += '&nbsp;&nbsp;Local: '
@@ -171,4 +171,10 @@ def message_agendamento(encontro):
         message += '&nbsp;&nbsp;Com: '
         message += str(encontro.facilitador)
         message += '<br>\n'
+
+    if cancelado:
+        message += '<br>\n'
+        message += '&nbsp;&nbsp;<font color="red">Obs: horário previamente agendado ' + cancelado + ' foi cancelado.</font><br>\n'
+        message += '<br>\n'
+
     return message
