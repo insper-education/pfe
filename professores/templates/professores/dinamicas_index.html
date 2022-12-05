@@ -46,6 +46,12 @@
         navLinks: true, // can click day/week names to navigate views
         businessHours: true, // display business hours
         editable: true,
+        eventTimeFormat: {
+          hour: '2-digit', //2-digit, numeric
+          minute: '2-digit', //2-digit, numeric
+          meridiem: false, //lowercase, short, narrow, false (display of AM/PM)
+          hour12: false //true, false
+        },
         events: [
           {% for encontro in encontros %} 
             {
@@ -54,27 +60,14 @@
                         '{{encontro.projeto.get_titulo}}' +
                         '{% if encontro.projeto.orientador %}\nOri.: {{encontro.projeto.orientador}}{% endif %}' +
                         '{% if encontro.location %}\nLocal: {{encontro.location}}{% endif %}' +
-                        '\nFacilitador: {{encontro.facilitador}}',
+                        '{% if encontro.facilitador %}\nFacilitador: {{encontro.facilitador}}{% endif %}',
                 {% else %}
-                  {% if encontro.facilitador %}
-                    title: 'Facilitador: {{encontro.facilitador}}',
-                  {% else %}
-                    title: 'Livre',
-                  {% endif %}
+                  {% if encontro.facilitador %}title: 'Facilitador: {{encontro.facilitador}}',{% else %}title: 'Livre',{% endif %}
                 {% endif %}
-
                 start: '{{encontro.startDate.year}}-{{encontro.startDate.month|stringformat:"02d"}}-{{encontro.startDate.day|stringformat:"02d"}}T{{encontro.startDate.hour|stringformat:"02d"}}:{{encontro.startDate.minute|stringformat:"02d"}}:00',
-
                 end: '{{encontro.endDate.year}}-{{encontro.endDate.month|stringformat:"02d"}}-{{encontro.endDate.day|stringformat:"02d"}}T{{encontro.endDate.hour|stringformat:"02d"}}:{{encontro.endDate.minute|stringformat:"02d"}}:00',
-
                 url: '../dinamicas_editar/{{encontro.id}}',
-
-                {% if encontro.projeto %}
-                  backgroundColor: '#111183',
-                {% else %}
-                  backgroundColor: '#004f00',
-                {% endif %}
-
+                {% if encontro.projeto %}backgroundColor: '#111183',{% else %}backgroundColor: '#004f00',{% endif %}
             },
           {% endfor %}
         ]
