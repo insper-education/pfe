@@ -223,8 +223,8 @@
     <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
       <li>
         {{alocacao.aluno.user.get_full_name}} 
-        &lt;{{alocacao.aluno.user.email}}&gt; 
         [{{ alocacao.aluno.get_curso_display }}]
+        &lt;{{alocacao.aluno.user.email}}&gt; 
       </li>
     </a>
   {% endfor %}
