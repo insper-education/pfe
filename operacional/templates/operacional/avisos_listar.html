@@ -107,6 +107,7 @@
           </td>
         </tr>
 
+        {% comment %} Caso um aviso {% endcomment %}
         {% else %}
           <tr 
           class="linha
@@ -128,7 +129,7 @@
             {% if a.data %}
               <input class="aviso" type="checkbox" id="aviso{{a.id}}" name="aviso{{a.id}}" value="{{a.data|date:"d/m/Y"}}" 
               {% comment %} {% if a.realizado %}checked{% endif %} {% endcomment %}
-              {% if a.data <= a.data_realizado %}checked{% endif %}
+              {% if a.realizado %}checked{% endif %}
               {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
               >
             {% endif %}

@@ -141,8 +141,6 @@ def cria_documento(request, organizacao):
     documento.link = link
     documento.confidencial = confidencial
 
-    print(confidencial)
-
     # if tipo_de_documento == 25:  #(25, 'Relatório Publicado'),
     #     documento.confidencial = False
     # else:
