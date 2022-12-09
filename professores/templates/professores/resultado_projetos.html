@@ -91,10 +91,18 @@
 
       {% for projeto, relatorio_intermediario, relatorio_final, banca_intermediaria, banca_final, banca_falconi in tabela %} 
       <tr class="item"
-        {% if banca_falconi.2 >= 8 and banca_intermediaria.2 >= 7 and banca_final.2 >= 7 %}
-          style="background-color:lightgreen"
-        {% elif banca_falconi.2 >= 6 and banca_intermediaria.2 >= 7 and banca_final.2 >= 7 %}
-          style="background-color:lemonchiffon"
+        {% if banca_falconi.2 >= 8 %}
+          {% if banca_intermediaria.2 >= 7 and banca_final.2 >= 7 and relatorio_final.2 >= 7 and relatorio_intermediario.2 >= 7 %}
+            style="background-color:lightgreen"
+          {% else %}
+            style="background-color:#DAF7A6"
+          {% endif %}
+        {% elif banca_falconi.2 >= 6 %}
+          {% if banca_intermediaria.2 >= 7 and banca_final.2 >= 7 and relatorio_final.2 >= 7 and relatorio_intermediario.2 >= 7 %}
+            style="background-color:lemonchiffon"
+          {% else %}
+            style="background-color:#ffffed"
+          {% endif %}
         {% endif %}
       >
           <td>
