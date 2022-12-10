@@ -649,7 +649,7 @@ def mensagem_orientador(banca):
                 else:
                     message2 += "N/A</li>"
 
-        if objs["observacoes"]:
+        if "observacoes" in objs and objs["observacoes"]:
             message2 += "<li>Observações: " + objs["observacoes"] + "</li>"
 
         message2 += "</ul>"
