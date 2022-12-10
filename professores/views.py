@@ -545,6 +545,18 @@ def converte_conceitos(nota):
     if( nota >= 1.5 ): return ("D-")
     return ("I")
 
+def arredonda_conceitos(nota):
+    if( nota >= 9.5 ): return 10
+    if( nota >= 8.5 ): return 9
+    if( nota >= 7.5 ): return 8
+    if( nota >= 6.5 ): return 7
+    if( nota >= 5.5 ): return 6
+    if( nota >= 4.5 ): return 5
+    if( nota >= 3.5 ): return 4
+    if( nota >= 2.5 ): return 3
+    if( nota >= 1.5 ): return 2
+    return 0
+
 # Mensagem preparada para o orientador/coordenador
 def mensagem_orientador(banca):
     message = "<h3>Nova Avaliação de Banca PFE</h3><br>\n"
@@ -669,7 +681,7 @@ def mensagem_orientador(banca):
         message += txt
         message += ": "
         media = obj["nota"]/obj["qtd"]
-        medias += media
+        medias += arredonda_conceitos(media)
         message += converte_conceitos(media)
         message += "</li>"
 
