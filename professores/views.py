@@ -678,7 +678,7 @@ def mensagem_orientador(banca):
     message += "&#10149; Nota Final Calculada = "
     message += '<span>'
     message += "<b style='font-size: 1.16em;'>"
-    message += str(medias/len(obj_avaliados))
+    message += "%.2f" % (medias/len(obj_avaliados))
     message += "</b><br>"
     message += '</span>'
 
