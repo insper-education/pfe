@@ -146,8 +146,9 @@
         
         var media_final = this.media();
         descricao += "<b style='font-size: 1.16em;'>";
-        descricao += conceito(media_final);
-        descricao += "("+media_final.toPrecision(3)+")";
+        //descricao += conceito(media_final);
+        //descricao += "("+media_final.toPrecision(3)+")";
+        descricao += media_final.toPrecision(3);
         descricao += "</b>";
         descricao += '</span>';
 

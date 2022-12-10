@@ -361,6 +361,492 @@ def banca_ver(request, primarykey):
     return render(request, 'professores/banca_ver.html', context)
 
 
+# Mensagem preparada para o avaliador
+def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, objetivos_possiveis, realizada):
+    message = "<h3>Avaliação PFE</h3><br>\n"
+
+    if realizada:
+        message += "<h3 style='color:red;text-align:center;'>"
+        message += "Essa é uma atualização de uma avaliação já enviada anteriormente!"
+        message += "</h3><br><br>"
+
+    message += "<b>Título do Projeto:</b> {0}<br>\n".format(banca.projeto.get_titulo())
+    message += "<b>Organização:</b> {0}<br>\n".format(banca.projeto.organizacao)
+    message += "<b>Orientador:</b> {0}<br>\n".format(banca.projeto.orientador)
+    message += "<b>Avaliador:</b> {0}<br>\n".format(avaliador.get_full_name())
+    message += "<b>Data:</b> {0}<br>\n".format(banca.startDate.strftime("%d/%m/%Y %H:%M"))
+
+    message += "<b>Banca:</b> "
+    tipos = dict(Banca.TIPO_DE_BANCA)
+    if banca.tipo_de_banca in tipos:
+        message += tipos[banca.tipo_de_banca]
+    else:
+        message += "Tipo de banca não definido"
+
+    message += "<br>\n<br>\n"
+    message += "<b>Conceitos:</b><br>\n"
+    message += "<table style='border: 1px solid black; "
+    message += "border-collapse:collapse; padding: 0.3em;'>"
+
+    for i in range(objetivos_possiveis):
+        if julgamento[i] and not julgamento[i].na:
+            message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
+                format(julgamento[i].objetivo)
+            message += "<td style='border: 1px solid black; text-align:center'>"
+            message += "&nbsp;{0}&nbsp;</td>\n".\
+                format(converte_letra(julgamento[i].nota))
+
+    message += "</table>"
+
+    message += "<br>\n<br>\n"
+
+    if julgamento_observacoes:
+        message += "<b>Observações (somente enviada para orientador):</b>\n"
+        message += "<p style='border:1px; border-style:solid; padding: 0.3em; margin: 0;'>"
+        message += html.escape(julgamento_observacoes.observacoes).replace('\n', '<br>\n')
+        message += "</p>"
+        message += "<br>\n<br>\n"
+
+    # Criar link para reeditar
+    message += "<a href='" + settings.SERVER
+    message += "/professores/banca_avaliar/" + str(banca.slug)
+
+    message += "?avaliador=" + str(avaliador.id)
+    for count, julg in enumerate(julgamento):
+        if julg and not julg.na:
+            message += "&objetivo" + str(count) + "=" + str(julg.objetivo.id)
+            message += "&conceito" + str(count) + "=" + converte_letra(julg.nota, mais="X")
+    if julgamento_observacoes:
+        message += "&observacoes=" + quote(julgamento_observacoes.observacoes)
+    message += "'>"
+    message += "Caso deseje reenviar sua avaliação, clique aqui."
+    message += "</a><br>\n"
+    message += "<br>\n"
+
+    # Relistar os Objetivos de Aprendizagem
+    message += "<br><b>Objetivos de Aprendizagem</b>"
+
+    for julg in julgamento:
+
+        if julg:
+
+            message += "<br><b>{0}</b>: {1}".format(julg.objetivo.titulo, julg.objetivo.objetivo)
+            message += "<table "
+            message += "style='border:1px solid black; border-collapse:collapse; width:100%;'>"
+            message += "<tr>"
+
+            if (not julg.na) and converte_letra(julg.nota) == "I":
+                message += "<td style='border: 2px solid black; width:18%;"
+                message += " background-color: #F4F4F4;'>"
+            else:
+                message += "<td style='border: 1px solid black; width:18%;'>"
+            message += "Insatisfatório (I)</th>"
+
+            if (not julg.na) and converte_letra(julg.nota) == "D":
+                message += "<td style='border: 2px solid black; width:18%;"
+                message += " background-color: #F4F4F4;'>"
+            else:
+                message += "<td style='border: 1px solid black; width:18%;'>"
+            message += "Em Desenvolvimento (D)</th>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+"):
+                message += "<td style='border: 2px solid black; width:18%;"
+                message += " background-color: #F4F4F4;'>"
+            else:
+                message += "<td style='border: 1px solid black; width:18%;'>"
+            message += "Essencial (C/C+)</th>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+"):
+                message += "<td style='border: 2px solid black; width:18%;"
+                message += " background-color: #F4F4F4;'>"
+            else:
+                message += "<td style='border: 1px solid black; width:18%;'>"
+            message += "Proficiente (B/B+)</th>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+"):
+                message += "<td style='border: 2px solid black; width:18%;"
+                message += " background-color: #F4F4F4;'>"
+            else:
+                message += "<td style='border: 1px solid black; width:18%;'>"
+            message += "Avançado (A/A+)</th>"
+
+            message += "</tr>"
+            message += "<tr>"
+
+            if (not julg.na) and converte_letra(julg.nota) == "I":
+                message += "<td style='border: 2px solid black;"
+                message += " background-color: #F4F4F4;'>"
+            else:
+                message += "<td style='border: 1px solid black;'>"
+            if banca.tipo_de_banca == 1:
+                message += "{0}".format(julg.objetivo.rubrica_intermediaria_I)
+            else:
+                message += "{0}".format(julg.objetivo.rubrica_final_I)
+            message += "</td>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "D-" or converte_letra(julg.nota) == "D" or converte_letra(julg.nota) == "D+"):
+                message += "<td style='border: 2px solid black;"
+                message += " background-color: #F4F4F4;'>"
+            else:
+                message += "<td style='border: 1px solid black;'>"
+            if banca.tipo_de_banca == 1:
+                message += "{0}".format(julg.objetivo.rubrica_intermediaria_D)
+            else:
+                message += "{0}".format(julg.objetivo.rubrica_final_D)
+            message += "</td>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+"):
+                message += "<td style='border: 2px solid black;"
+                message += " background-color: #F4F4F4;'>"
+            else:
+                message += "<td style='border: 1px solid black;'>"
+            if banca.tipo_de_banca == 1:
+                message += "{0}".format(julg.objetivo.rubrica_intermediaria_C)
+            else:
+                message += "{0}".format(julg.objetivo.rubrica_final_C)
+            message += "</td>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+"):
+                message += "<td style='border: 2px solid black;"
+                message += " background-color: #F4F4F4;'>"
+            else:
+                message += "<td style='border: 1px solid black;'>"
+            if banca.tipo_de_banca == 1:
+                message += "{0}".format(julg.objetivo.rubrica_intermediaria_B)
+            else:
+                message += "{0}".format(julg.objetivo.rubrica_final_B)
+            message += "</td>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+"):
+                message += "<td style='border: 2px solid black;"
+                message += " background-color: #F4F4F4;'>"
+            else:
+                message += "<td style='border: 1px solid black;'>"
+            if banca.tipo_de_banca == 1:
+                message += "{0}".format(julg.objetivo.rubrica_intermediaria_A)
+            else:
+                message += "{0}".format(julg.objetivo.rubrica_final_A)
+            message += "</td>"
+
+            message += "</tr>"
+            message += "</table>"
+
+    return message
+
+def converte_conceitos(nota):
+    if( nota >= 9.5 ): return ("A+")
+    if( nota >= 8.5 ): return ("A")
+    if( nota >= 7.5 ): return ("B+")
+    if( nota >= 6.5 ): return ("B")
+    if( nota >= 5.5 ): return ("C+")
+    if( nota >= 4.5 ): return ("C")
+    if( nota >= 3.5 ): return ("D+")
+    if( nota >= 2.5 ): return ("D")
+    if( nota >= 1.5 ): return ("D-")
+    return ("I")
+
+# Mensagem preparada para o orientador/coordenador
+def mensagem_orientador(banca):
+    message = "<h3>Nova Avaliação de Banca PFE</h3><br>\n"
+
+    message += "<b>Título do Projeto:</b> {0}<br>\n".format(banca.projeto.get_titulo())
+    message += "<b>Organização:</b> {0}<br>\n".format(banca.projeto.organizacao)
+    message += "<b>Orientador:</b> {0}<br>\n".format(banca.projeto.orientador)
+    message += "<b>Data:</b> {0}<br>\n".format(banca.startDate.strftime("%d/%m/%Y %H:%M"))
+
+    message += "<b>Banca:</b> "
+    tipos = dict(Banca.TIPO_DE_BANCA)
+    if banca.tipo_de_banca in tipos:
+        message += tipos[banca.tipo_de_banca]
+    else:
+        message += "Tipo de banca não definido"
+
+    message += "<br><br><b style='color: bloodred; font-size: 1.5em;'>"
+    message += "AGUARDE TODOS OS MEMBROS DA BANCA FAZEREM SUAS AVALIAÇOES E<br>"
+    message += "INSIRA OS SEGUINTES CONCEITOS NO CAMPO DA BANCA NO BLACKBOARD.<br>"
+    message += "NÃO ALTERE A NOTA FINAL NO BLACKBOARD MANUALMENTE!<br>"
+    message += "</b>"
+
+    message += "Em caso de dúvia nas notas mais atuais, consulte: "
+    message += "<a href='http://pfe.insper.edu.br/professores/conceitos_obtidos/" + str(banca.projeto.id) + "'>"
+    message += "http://pfe.insper.edu.br/professores/conceitos_obtidos/" + str(banca.projeto.id) + "</a>"
+
+    objetivos = ObjetivosDeAprendizagem.objects.all()
+
+    avaliadores = {}
+
+    if banca.tipo_de_banca == 0: #Final
+        tipo_de_avaliacao = 2 #Final
+    elif banca.tipo_de_banca == 1: #Iterm
+        tipo_de_avaliacao = 1 #Iterm
+    elif banca.tipo_de_banca == 2: #Falconi
+        tipo_de_avaliacao = 99 #Falconi
+    else:
+        tipo_de_avaliacao = 200 #Erro
+    
+    for objetivo in objetivos:
+
+        avaliacoes = Avaliacao2.objects.filter(projeto=banca.projeto,
+                                                 objetivo=objetivo,
+                                                 tipo_de_avaliacao=tipo_de_avaliacao)\
+            .order_by('avaliador', '-momento')
+
+        for avaliacao in avaliacoes:
+            if avaliacao.avaliador not in avaliadores:
+                avaliadores[avaliacao.avaliador] = {}
+            if objetivo not in avaliadores[avaliacao.avaliador]:
+                avaliadores[avaliacao.avaliador][objetivo] = avaliacao
+                avaliadores[avaliacao.avaliador]["momento"] = avaliacao.momento
+
+    observacoes = Observacao.objects.filter(projeto=banca.projeto, tipo_de_avaliacao=tipo_de_avaliacao).\
+        order_by('avaliador', '-momento')
+    for observacao in observacoes:
+        if observacao.avaliador not in avaliadores:
+            avaliadores[observacao.avaliador] = {}  # Não devia acontecer isso
+        if "observacoes" not in avaliadores[observacao.avaliador]:
+            avaliadores[observacao.avaliador]["observacoes"] = observacao.observacoes
+
+    message += "<br><br>"
+
+    obj_avaliados = {}
+
+    message += "<table>"
+
+    message2 = ""  # Para inverter a ordem de apresentação
+
+    for avaliador, objs in avaliadores.items():
+          
+        message2 += "<tr><td>"
+
+        message2 += "<strong>Avaliador"
+        if avaliador.genero == "F":
+             message2 += "a"
+        message2 += ": </strong>"
+        message2 += avaliador.get_full_name() + "<br>"
+
+        message2 += "<strong>Avaliado em: </strong>"
+        message2 += objs["momento"].strftime('%d/%m/%Y às %H:%M') + "<br>"
+
+        message2 += "<strong>Conceitos:</strong><br>"
+
+        message2 += "<ul style='margin-top: 0px;'>"
+
+        for objetivo, conceito in objs.items():
+            if objetivo != "momento" and objetivo != "observacoes":
+                message2 += "<li>"
+                message2 += objetivo.titulo
+                message2 += " : "
+                if conceito.nota:
+                    message2 += converte_conceitos(conceito.nota)                
+                    message2 += "</li>"
+                    if objetivo.titulo in obj_avaliados:
+                        obj_avaliados[objetivo.titulo]["nota"] += conceito.nota
+                        obj_avaliados[objetivo.titulo]["qtd"] += 1
+                    else:
+                        obj_avaliados[objetivo.titulo] = {}
+                        obj_avaliados[objetivo.titulo]["nota"] = conceito.nota
+                        obj_avaliados[objetivo.titulo]["qtd"] = 1
+                else:
+                    message2 += "N/A</li>"
+
+        if objs["observacoes"]:
+            message2 += "<li>Observações: " + objs["observacoes"] + "</li>"
+
+        message2 += "</ul>"
+        message2 += "</td></tr>"
+    
+
+    message += "<tr style='color:red;'>"
+    message += "<td style='padding-bottom: 40px;'>"
+    message += "<div style='border-width:3px; border-style:solid; border-color:#ff0000; display: inline-block; padding: 10px;'>"
+    message += "<b>" + "Média das avaliações: "
+    message += "<ul>"
+    
+
+    medias = 0
+    for txt, obj in obj_avaliados.items():
+        message += "<li>"
+        message += txt
+        message += ": "
+        media = obj["nota"]/obj["qtd"]
+        medias += media
+        message += converte_conceitos(media)
+        message += "</li>"
+
+    message += "</ul>"
+    
+    message += "&#10149; Nota Final Calculada = "
+    message += '<span>'
+    message += "<b style='font-size: 1.16em;'>"
+    message += str(medias/len(obj_avaliados))
+    message += "</b><br>"
+    message += '</span>'
+
+    message += "</b></div>"
+
+    message += "</td></tr>"
+
+    message += message2
+
+    message += "</table>"
+    
+
+
+
+
+
+    '''
+    message += "<br>\n<br>\n"
+    message += "<b>Conceitos:</b><br>\n"
+    message += "<table style='border: 1px solid black; "
+    message += "border-collapse:collapse; padding: 0.3em;'>"
+
+    for i in range(objetivos_possiveis):
+        if julgamento[i] and not julgamento[i].na:
+            message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
+                format(julgamento[i].objetivo)
+            message += "<td style='border: 1px solid black; text-align:center'>"
+            message += "&nbsp;{0}&nbsp;</td>\n".\
+                format(converte_letra(julgamento[i].nota))
+
+    message += "</table>"
+
+    message += "<br>\n<br>\n"
+
+    if julgamento_observacoes:
+        message += "<b>Observações (somente enviada para orientador):</b>\n"
+        message += "<p style='border:1px; border-style:solid; padding: 0.3em; margin: 0;'>"
+        message += html.escape(julgamento_observacoes.observacoes).replace('\n', '<br>\n')
+        message += "</p>"
+        message += "<br>\n<br>\n"
+
+    # Criar link para reeditar
+    message += "<a href='" + settings.SERVER
+    message += "/professores/banca_avaliar/" + str(banca.slug)
+
+    message += "?avaliador=" + str(avaliador.id)
+    for count, julg in enumerate(julgamento):
+        if julg and not julg.na:
+            message += "&objetivo" + str(count) + "=" + str(julg.objetivo.id)
+            message += "&conceito" + str(count) + "=" + converte_letra(julg.nota, mais="X")
+    if julgamento_observacoes:
+        message += "&observacoes=" + quote(julgamento_observacoes.observacoes)
+    message += "'>"
+    message += "Caso deseje reenviar sua avaliação, clique aqui."
+    message += "</a><br>\n"
+    message += "<br>\n"
+
+    # Relistar os Objetivos de Aprendizagem
+    message += "<br><b>Objetivos de Aprendizagem</b>"
+
+    for julg in julgamento:
+
+        if julg:
+
+            message += "<br><b>{0}</b>: {1}".format(julg.objetivo.titulo, julg.objetivo.objetivo)
+            message += "<table "
+            message += "style='border:1px solid black; border-collapse:collapse; width:100%;'>"
+            message += "<tr>"
+
+            if (not julg.na) and converte_letra(julg.nota) == "I":
+                message += "<td style='border: 2px solid black; width:18%;"
+                message += " background-color: #F4F4F4;'>"
+            else:
+                message += "<td style='border: 1px solid black; width:18%;'>"
+            message += "Insatisfatório (I)</th>"
+
+            if (not julg.na) and converte_letra(julg.nota) == "D":
+                message += "<td style='border: 2px solid black; width:18%;"
+                message += " background-color: #F4F4F4;'>"
+            else:
+                message += "<td style='border: 1px solid black; width:18%;'>"
+            message += "Em Desenvolvimento (D)</th>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+"):
+                message += "<td style='border: 2px solid black; width:18%;"
+                message += " background-color: #F4F4F4;'>"
+            else:
+                message += "<td style='border: 1px solid black; width:18%;'>"
+            message += "Essencial (C/C+)</th>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+"):
+                message += "<td style='border: 2px solid black; width:18%;"
+                message += " background-color: #F4F4F4;'>"
+            else:
+                message += "<td style='border: 1px solid black; width:18%;'>"
+            message += "Proficiente (B/B+)</th>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+"):
+                message += "<td style='border: 2px solid black; width:18%;"
+                message += " background-color: #F4F4F4;'>"
+            else:
+                message += "<td style='border: 1px solid black; width:18%;'>"
+            message += "Avançado (A/A+)</th>"
+
+            message += "</tr>"
+            message += "<tr>"
+
+            if (not julg.na) and converte_letra(julg.nota) == "I":
+                message += "<td style='border: 2px solid black;"
+                message += " background-color: #F4F4F4;'>"
+            else:
+                message += "<td style='border: 1px solid black;'>"
+            if banca.tipo_de_banca == 1:
+                message += "{0}".format(julg.objetivo.rubrica_intermediaria_I)
+            else:
+                message += "{0}".format(julg.objetivo.rubrica_final_I)
+            message += "</td>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "D-" or converte_letra(julg.nota) == "D" or converte_letra(julg.nota) == "D+"):
+                message += "<td style='border: 2px solid black;"
+                message += " background-color: #F4F4F4;'>"
+            else:
+                message += "<td style='border: 1px solid black;'>"
+            if banca.tipo_de_banca == 1:
+                message += "{0}".format(julg.objetivo.rubrica_intermediaria_D)
+            else:
+                message += "{0}".format(julg.objetivo.rubrica_final_D)
+            message += "</td>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+"):
+                message += "<td style='border: 2px solid black;"
+                message += " background-color: #F4F4F4;'>"
+            else:
+                message += "<td style='border: 1px solid black;'>"
+            if banca.tipo_de_banca == 1:
+                message += "{0}".format(julg.objetivo.rubrica_intermediaria_C)
+            else:
+                message += "{0}".format(julg.objetivo.rubrica_final_C)
+            message += "</td>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+"):
+                message += "<td style='border: 2px solid black;"
+                message += " background-color: #F4F4F4;'>"
+            else:
+                message += "<td style='border: 1px solid black;'>"
+            if banca.tipo_de_banca == 1:
+                message += "{0}".format(julg.objetivo.rubrica_intermediaria_B)
+            else:
+                message += "{0}".format(julg.objetivo.rubrica_final_B)
+            message += "</td>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+"):
+                message += "<td style='border: 2px solid black;"
+                message += " background-color: #F4F4F4;'>"
+            else:
+                message += "<td style='border: 1px solid black;'>"
+            if banca.tipo_de_banca == 1:
+                message += "{0}".format(julg.objetivo.rubrica_intermediaria_A)
+            else:
+                message += "{0}".format(julg.objetivo.rubrica_final_A)
+            message += "</td>"
+
+            message += "</tr>"
+            message += "</table>"
+
+    '''
+    return message
+
 # @login_required
 # @permission_required("users.altera_professor", login_url='/')
 @transaction.atomic
@@ -460,187 +946,27 @@ def banca_avaliar(request, slug):
                 julgamento_observacoes.tipo_de_avaliacao = tipo_de_avaliacao
                 julgamento_observacoes.save()
 
-            message = "<h3>Avaliação PFE</h3><br>\n"
 
-            if realizada:
-                message += "<h3 style='color:red;text-align:center;'>"
-                message += "Essa é uma atualização de uma avaliação já enviada anteriormente!"
-                message += "</h3><br><br>"
-
-            message += "<b>Título do Projeto:</b> {0}<br>\n".format(banca.projeto.get_titulo())
-            message += "<b>Organização:</b> {0}<br>\n".format(banca.projeto.organizacao)
-            message += "<b>Orientador:</b> {0}<br>\n".format(banca.projeto.orientador)
-            message += "<b>Avaliador:</b> {0}<br>\n".format(avaliador.get_full_name())
-            message += "<b>Data:</b> {0}<br>\n".format(banca.startDate.strftime("%d/%m/%Y %H:%M"))
-
-            message += "<b>Banca:</b> "
-            tipos = dict(Banca.TIPO_DE_BANCA)
-            if banca.tipo_de_banca in tipos:
-                message += tipos[banca.tipo_de_banca]
-            else:
-                message += "Tipo de banca não definido"
-
-            message += "<br>\n<br>\n"
-            message += "<b>Conceitos:</b><br>\n"
-            message += "<table style='border: 1px solid black; "
-            message += "border-collapse:collapse; padding: 0.3em;'>"
-
-            for i in range(objetivos_possiveis):
-                if julgamento[i] and not julgamento[i].na:
-                    message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
-                        format(julgamento[i].objetivo)
-                    message += "<td style='border: 1px solid black; text-align:center'>"
-                    message += "&nbsp;{0}&nbsp;</td>\n".\
-                        format(converte_letra(julgamento[i].nota))
-
-            message += "</table>"
-
-            message += "<br>\n<br>\n"
-
-            if julgamento_observacoes:
-                message += "<b>Observações (somente enviada para orientador):</b>\n"
-                message += "<p style='border:1px; border-style:solid; padding: 0.3em; margin: 0;'>"
-                message += html.escape(julgamento_observacoes.observacoes).replace('\n', '<br>\n')
-                message += "</p>"
-                message += "<br>\n<br>\n"
-
-            # Criar link para reeditar
-            message += "<a href='" + settings.SERVER
-            message += "/professores/banca_avaliar/" + str(banca.slug)
-
-            message += "?avaliador=" + str(avaliador.id)
-            for count, julg in enumerate(julgamento):
-                if julg and not julg.na:
-                    message += "&objetivo" + str(count) + "=" + str(julg.objetivo.id)
-                    message += "&conceito" + str(count) + "=" + converte_letra(julg.nota, mais="X")
-            if julgamento_observacoes:
-                message += "&observacoes=" + quote(julgamento_observacoes.observacoes)
-            message += "'>"
-            message += "Caso deseje reenviar sua avaliação, clique aqui."
-            message += "</a><br>\n"
-            message += "<br>\n"
-
-            # Relistar os Objetivos de Aprendizagem
-            message += "<br><b>Objetivos de Aprendizagem</b>"
-
-            for julg in julgamento:
-
-                if julg:
-
-                    message += "<br><b>{0}</b>: {1}".format(julg.objetivo.titulo, julg.objetivo.objetivo)
-                    message += "<table "
-                    message += "style='border:1px solid black; border-collapse:collapse; width:100%;'>"
-                    message += "<tr>"
-
-                    if (not julg.na) and converte_letra(julg.nota) == "I":
-                        message += "<td style='border: 2px solid black; width:18%;"
-                        message += " background-color: #F4F4F4;'>"
-                    else:
-                        message += "<td style='border: 1px solid black; width:18%;'>"
-                    message += "Insatisfatório (I)</th>"
-
-                    if (not julg.na) and converte_letra(julg.nota) == "D":
-                        message += "<td style='border: 2px solid black; width:18%;"
-                        message += " background-color: #F4F4F4;'>"
-                    else:
-                        message += "<td style='border: 1px solid black; width:18%;'>"
-                    message += "Em Desenvolvimento (D)</th>"
-
-                    if (not julg.na) and (converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+"):
-                        message += "<td style='border: 2px solid black; width:18%;"
-                        message += " background-color: #F4F4F4;'>"
-                    else:
-                        message += "<td style='border: 1px solid black; width:18%;'>"
-                    message += "Essencial (C/C+)</th>"
-
-                    if (not julg.na) and (converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+"):
-                        message += "<td style='border: 2px solid black; width:18%;"
-                        message += " background-color: #F4F4F4;'>"
-                    else:
-                        message += "<td style='border: 1px solid black; width:18%;'>"
-                    message += "Proficiente (B/B+)</th>"
-
-                    if (not julg.na) and (converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+"):
-                        message += "<td style='border: 2px solid black; width:18%;"
-                        message += " background-color: #F4F4F4;'>"
-                    else:
-                        message += "<td style='border: 1px solid black; width:18%;'>"
-                    message += "Avançado (A/A+)</th>"
-
-                    message += "</tr>"
-                    message += "<tr>"
-
-                    if (not julg.na) and converte_letra(julg.nota) == "I":
-                        message += "<td style='border: 2px solid black;"
-                        message += " background-color: #F4F4F4;'>"
-                    else:
-                        message += "<td style='border: 1px solid black;'>"
-                    if banca.tipo_de_banca == 1:
-                        message += "{0}".format(julg.objetivo.rubrica_intermediaria_I)
-                    else:
-                        message += "{0}".format(julg.objetivo.rubrica_final_I)
-                    message += "</td>"
-
-                    if (not julg.na) and (converte_letra(julg.nota) == "D-" or converte_letra(julg.nota) == "D" or converte_letra(julg.nota) == "D+"):
-                        message += "<td style='border: 2px solid black;"
-                        message += " background-color: #F4F4F4;'>"
-                    else:
-                        message += "<td style='border: 1px solid black;'>"
-                    if banca.tipo_de_banca == 1:
-                        message += "{0}".format(julg.objetivo.rubrica_intermediaria_D)
-                    else:
-                        message += "{0}".format(julg.objetivo.rubrica_final_D)
-                    message += "</td>"
-
-                    if (not julg.na) and (converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+"):
-                        message += "<td style='border: 2px solid black;"
-                        message += " background-color: #F4F4F4;'>"
-                    else:
-                        message += "<td style='border: 1px solid black;'>"
-                    if banca.tipo_de_banca == 1:
-                        message += "{0}".format(julg.objetivo.rubrica_intermediaria_C)
-                    else:
-                        message += "{0}".format(julg.objetivo.rubrica_final_C)
-                    message += "</td>"
-
-                    if (not julg.na) and (converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+"):
-                        message += "<td style='border: 2px solid black;"
-                        message += " background-color: #F4F4F4;'>"
-                    else:
-                        message += "<td style='border: 1px solid black;'>"
-                    if banca.tipo_de_banca == 1:
-                        message += "{0}".format(julg.objetivo.rubrica_intermediaria_B)
-                    else:
-                        message += "{0}".format(julg.objetivo.rubrica_final_B)
-                    message += "</td>"
-
-                    if (not julg.na) and (converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+"):
-                        message += "<td style='border: 2px solid black;"
-                        message += " background-color: #F4F4F4;'>"
-                    else:
-                        message += "<td style='border: 1px solid black;'>"
-                    if banca.tipo_de_banca == 1:
-                        message += "{0}".format(julg.objetivo.rubrica_intermediaria_A)
-                    else:
-                        message += "{0}".format(julg.objetivo.rubrica_final_A)
-                    message += "</td>"
-
-                    message += "</tr>"
-                    message += "</table>"
-
-            subject = 'Banca PFE : {0}'.format(banca.projeto)
-
+            # Envio de mensagem para Avaliador
+            message = mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, objetivos_possiveis, realizada)
+            subject = 'Avaliação de Banca PFE : {0}'.format(banca.projeto)
             recipient_list = [avaliador.email, ]
-
-            # Intermediária e Final
-            if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
-                recipient_list += [banca.projeto.orientador.user.email, ]
-            elif banca.tipo_de_banca == 2:  # Falconi
-                recipient_list += [coordenacao.user.email, ]
-
             check = email(subject, recipient_list, message)
             if check != 1:
-                message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+                message_error = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+
+
+            # Envio de mensagem para Orientador / Coordenação
+            message = mensagem_orientador(banca)
+            subject = 'Avaliação de Banca PFE : {0}'.format(banca.projeto)
+            # Intermediária e Final
+            if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
+                recipient_list = [banca.projeto.orientador.user.email, ]
+            elif banca.tipo_de_banca == 2:  # Falconi
+                recipient_list = [coordenacao.user.email, ]
+            check = email(subject, recipient_list, message)
+            if check != 1:
+                message_error = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
 
             resposta = "Avaliação submetida e enviada para:<br>"
             for recipient in recipient_list:
