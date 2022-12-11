@@ -78,6 +78,10 @@ urlpatterns = [
          views.dinamicas_lista,
          name='dinamicas_lista'),
 
+     path('informe_bancas/<int:tipo>',
+          views.informe_bancas,
+         name='informe_bancas'),
+
     path('objetivo_editar/<int:primarykey>',
          views.objetivo_editar,
          name='objetivo_editar'),
