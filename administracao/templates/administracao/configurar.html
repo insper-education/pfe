@@ -29,6 +29,11 @@
 
     <input type="checkbox" id="liberadas_propostas" name="liberadas_propostas" {% if configuracao.liberadas_propostas %}checked{% endif %}>
     <label for="liberadas_propostas"> Propostas Liberadas para Estudantes</label><br>  
+    
+    <br>
+    <label for="prazo_preencher_banca">Prazo para preencher avaliação de banca:</label> <input id="prazo_preencher_banca" name="prazo_preencher_banca" type="number" min="0" max="9999" step="1" value="{{configuracao.prazo_preencher_banca}}"/> dias
+    
+    <br>
 
     <br><br>
     <button type="submit">Confirmar</button>

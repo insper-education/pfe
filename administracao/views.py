@@ -691,6 +691,8 @@ def configurar(request):
                 configuracao.liberados_projetos = 'liberados_projetos' in request.POST
                 configuracao.liberadas_propostas = 'liberadas_propostas' in request.POST
 
+                configuracao.prazo_preencher_banca = int(request.POST['prazo_preencher_banca'])
+
                 configuracao.save()
                 context = {
                     "area_principal": True,

@@ -532,6 +532,9 @@ class Configuracao(models.Model):
     lingua = models.CharField(max_length=2, blank=True, default="pt",
                               help_text='Língua do sistema')
 
+    prazo_preencher_banca = models.PositiveIntegerField("Prazo para banca", default=30,
+                                           help_text='Prazo máximo para membros de uma banca colocarem suas avaliações')
+
     class Meta:
         verbose_name = 'Configuração'
         verbose_name_plural = 'Configurações'

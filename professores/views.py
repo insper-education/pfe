@@ -718,6 +718,8 @@ def banca_avaliar(request, slug):
     configuracao = get_object_or_404(Configuracao)
     coordenacao = configuracao.coordenacao
 
+    prazo_preencher_banca = configuracao.prazo_preencher_banca
+
     try:
         banca = Banca.objects.get(slug=slug)
 
@@ -725,7 +727,7 @@ def banca_avaliar(request, slug):
 
         if adm:  # é administrador
             pass  # usuário sempre autorizado
-        elif banca.endDate.date() + datetime.timedelta(days=30) < datetime.date.today():
+        elif banca.endDate.date() + datetime.timedelta(days=prazo_preencher_banca) < datetime.date.today():
             mensagem = "Prazo de submissão da Avaliação de Banca vencido.<br>"
             mensagem += "Entre em contato com a coordenação do PFE "
             mensagem += "para enviar sua avaliação.<br>"
