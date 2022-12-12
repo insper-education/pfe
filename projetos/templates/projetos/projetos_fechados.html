@@ -69,8 +69,10 @@
     <div id="toggle" style="display: none; height: 1em;">
       <label><input id="logo" onchange="($(this).prop('checked') ? $('.logo').show() : $('.logo').hide())" type="checkbox" checked /> Logo</label>&nbsp;&nbsp;&nbsp;
       <label><input id="descricao" onchange="($(this).prop('checked') ? $('.descricao').show() : $('.descricao').hide())" type="checkbox" checked /> Descrição</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="titulo_original" onchange="($(this).prop('checked') ? $('.titulo_original').show() : $('.titulo_original').hide())" type="checkbox" checked /> Título original</label>&nbsp;&nbsp;&nbsp;
       <label><input id="apresentacoes" onchange="($(this).prop('checked') ? $('.apresentacao').show() : $('.apresentacao').hide())" type="checkbox" checked /> Apresentações</label>&nbsp;&nbsp;&nbsp;
       <label><input id="orientador" onchange="($(this).prop('checked') ? $('.orientador').show() : $('.orientador').hide())" type="checkbox" checked /> Orientador</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="coorientador" onchange="($(this).prop('checked') ? $('.coorientador').show() : $('.coorientador').hide())" type="checkbox" checked /> Coorientador</label>&nbsp;&nbsp;&nbsp;
       <label><input id="estudantes" onchange="($(this).prop('checked') ? $('.estudantes').show() : $('.estudantes').hide())" type="checkbox" checked /> Estudantes</label>&nbsp;&nbsp;&nbsp;
       <label><input id="curso" onchange="($(this).prop('checked') ? $('.curso').show() : $('.curso').hide())" type="checkbox" checked /> Cursos</label>&nbsp;&nbsp;&nbsp;
       <label><input id="organizacao" onchange="($(this).prop('checked') ? $('.organizacao').show() : $('.organizacao').hide())" type="checkbox" checked /> Organização</label>&nbsp;&nbsp;&nbsp;
@@ -124,12 +126,15 @@
         <b>Projeto:</b>
         <a class="imprimir" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_completo' projeto.id %}" class="dark-blue-bold"> 
           {% if projeto.titulo_final %}
-            {{projeto.titulo_final}}<br>
-            <small>Título original: {{projeto.titulo}}</small><br>
+            {{projeto.titulo_final}}</a><br>
+            <p class="titulo_original">
+            <small>Título original: 
+              <a class="imprimir" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_completo' projeto.id %}" class="dark-blue-bold"> {{projeto.titulo}}</a></small><br>
+            </p>
           {% else %}
-            {{projeto.titulo}}<br>
+            {{projeto.titulo}}</a><br>
           {% endif %}
-        </a>
+        
 
         <p class="descricao">
           {% if projeto.descricao %}
