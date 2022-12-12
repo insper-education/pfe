@@ -34,7 +34,10 @@
 
         <div id="canvas-holder">
 
-            <canvas id="bar-projetos"></canvas>
+            <div class="chart-container" style="position: relative; width:100vw; max-height: 768px; max-width: 1240px; padding-right: 30px;">
+                <canvas id="bar-projetos"></canvas>
+            </div>
+            
             <small>
                 {% if lingua == "pt" %}
                     <p>Recebemos <b>{{total_propostas}}</b> propostas de projetos no total.</p>
@@ -46,7 +49,10 @@
             </small>
             <br>
 
-            <canvas id="bar-organizacoes"></canvas>
+            <div class="chart-container" style="position: relative; width:100vw; max-height: 768px; max-width: 1240px; padding-right: 30px;">
+                <canvas id="bar-organizacoes"></canvas>
+            </div>
+            
             <small>
                 {% if lingua == "pt" %}
                     <p>Recebemos propostas de <b>{{total_org_propostas}}</b> organizações distintas.</p>
