@@ -1157,7 +1157,7 @@ def contas_senhas(request, anosemestre=None):
             message_email += "Sua senha é: <b>" + senha + "</b>\n"
             message_email += "\n\n"
             message_email += "Qualquer dúvida, envie e-mail para: "
-            message_email += coordenacao.user.get_full_name + "<a href='mailto:" + coordenacao.user.email + "'>" + coordenacao.user.email + "</a>"
+            message_email += coordenacao.user.get_full_name() + "<a href='mailto:" + coordenacao.user.email + "'>" + coordenacao.user.email + "</a>"
             message_email += "\n\n"
             message_email += "Nos próximos dias o departamento de carreiras entrará em contato "
             message_email += "com datas de reuniões para maiores esclarecimentos dos projetos."

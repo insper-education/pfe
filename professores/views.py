@@ -729,7 +729,7 @@ def banca_avaliar(request, slug):
             mensagem = "Prazo de submissão da Avaliação de Banca vencido.<br>"
             mensagem += "Entre em contato com a coordenação do PFE "
             mensagem += "para enviar sua avaliação.<br>"
-            mensagem += coordenacao.user.get_full_name + " "
+            mensagem += coordenacao.user.get_full_name() + " "
             mensagem += "<a href='mailto:" + coordenacao.user.email + "'>"
             mensagem += coordenacao.user.email + "</a>.<br>"
             return HttpResponse(mensagem)
