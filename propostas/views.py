@@ -403,6 +403,16 @@ def proposta_completa(request, primarykey):
     proposta = get_object_or_404(Proposta, pk=primarykey)
 
     if request.is_ajax():
+
+        # Troca Conformidade de Proposta
+        for dict in request.POST:
+            if dict[0:5]=="dict[":
+                tmp = False
+                if request.POST[dict] == "true":
+                    tmp = True
+                setattr(proposta, dict[5:-1], tmp)
+
+        # Define autorizador
         if 'autorizador' in request.POST:
             try:
                 if request.POST['autorizador'] == "0":
@@ -421,17 +431,6 @@ def proposta_completa(request, primarykey):
             'atualizado': True,
         }
         return JsonResponse(data)
-
-        # if proposta.disponivel:
-        #     mensagem = "Proposta disponibilizada."
-        # else:
-        #     mensagem = "Proposta indisponibilizada."
-        # context = {
-        #     "area_principal": True,
-        #     "propostas_lista": True,
-        #     "mensagem": mensagem,
-        # }
-        # return render(request, 'generic.html', context=context)
 
     configuracao = get_object_or_404(Configuracao)
 
