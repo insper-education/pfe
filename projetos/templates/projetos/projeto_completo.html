@@ -23,9 +23,7 @@
       width:auto;
       float: right;
     }
-  </style>
-
- <style>
+  
     .logotipo_left {
       max-height:64px;
       max-width:128px;
@@ -33,7 +31,27 @@
       width:auto;
       float: right;
       margin-left: 10px;
-    } 
+    }
+
+    .unselectable {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      -o-user-select:none;
+      user-select: none;
+    }
+
+    .selectable {
+      -webkit-touch-callout: all;
+      -webkit-user-select: all;
+      -khtml-user-select: all;
+      -moz-user-select: all;
+      -ms-user-select: all;
+      -o-user-select:all;
+      user-select: all;
+    }
   </style>
 
 {% endblock %}
@@ -171,63 +189,54 @@
     <strong>conexões:</strong>
     <small><a href="{% url 'seleciona_conexoes' %}?projeto={{projeto.id}}">&#10133;</a></small>
     <br>
-    <ul>
     {% if conexoes %}
+      <table style="border: 0px; margin-left: 20px;">
       {% for conexao in conexoes %}
-      <li>
         {% if conexao.parceiro.user.is_active %}
-          <a href="{% url 'parceiro_detail' conexao.parceiro.id %}">
-            {{ conexao.parceiro.user.get_full_name }}
-          </a>
-          <a href="mailto:{{conexao.parceiro.user.email}}"> &lt;{{conexao.parceiro.user.email}}&gt;</a>
-          <span>
-            {% if conexao.gestor_responsavel %}
-              [gestor responsavel]
-            {% endif %}
-            {% if conexao.mentor_tecnico %}
-              [mentoria técnica]
-            {% endif %}
-            {% if conexao.recursos_humanos %}
-              [recursos humanos]
-            {% endif %}
-            {% if conexao.colaboracao %}
-              [colaboração]
-            {% endif %}
-            {% if conexao.observacao %}
-              &nbsp;&nbsp;obs: {{conexao.observacao}}
-            {% endif %}
-          </span>
-          <br>
+          <tr>
+            <td style="border: 0px;">
+              <span class="unselectable">&bull;</span>
+              <a href="{% url 'parceiro_detail' conexao.parceiro.id %}">
+                {{ conexao.parceiro.user.get_full_name }}
+              </a>
+              <a href="mailto:{{conexao.parceiro.user.email}}"> &lt;{{conexao.parceiro.user.email}}&gt;</a><br>
+            </td>
+            <td  style="border: 0px; padding-left: 12px;">
+              {% if conexao.gestor_responsavel %}[gestor responsavel]{% endif %}
+              {% if conexao.mentor_tecnico %}[mentoria técnica]{% endif %}
+              {% if conexao.recursos_humanos %}[recursos humanos]{% endif %}
+              {% if conexao.colaboracao %}[colaboração]{% endif %}
+              {% if conexao.observacao %}&nbsp;&nbsp;obs: {{conexao.observacao}}{% endif %}
+              <br>
+            </td>
+          </tr>
         {% else %}
-          <a class="tabulado" href="{% url 'parceiro_detail' conexao.parceiro.id %}" style="color: LightBlue;">
-            {{ conexao.parceiro.user.get_full_name }}
-          </a>
-          <a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;"> &lt;{{conexao.parceiro.user.email}}&gt;</a>
-          <span style="color: lightgrey;">
-          {% if conexao.gestor_responsavel %}
-            [gestor responsavel]
-          {% endif %}
-          {% if conexao.mentor_tecnico %}
-            [mentoria técnica]
-          {% endif %}
-          {% if conexao.recursos_humanos %}
-            [recursos humanos]
-          {% endif %}
-          {% if conexao.colaboracao %}
-            [colaboração]
-          {% endif %}
-          {% if conexao.observacao %}
-            &nbsp;&nbsp;obs: {{conexao.observacao}}
-          {% endif %}
-          </span>
-          <br>
+          <tr>
+            <td style="border: 0px;">
+              <span class="unselectable" style="color: lightgrey;">&bull;</span>
+              <a href="{% url 'parceiro_detail' conexao.parceiro.id %}" style="color: LightBlue;">
+                {{ conexao.parceiro.user.get_full_name }}
+              </a>
+              <a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;"> &lt;{{conexao.parceiro.user.email}}&gt;</a><br>
+              </td>
+              <td  style="color: lightgrey; border: 0px; padding-left: 12px;">
+                {% if conexao.gestor_responsavel %}[gestor responsavel]{% endif %}
+                {% if conexao.mentor_tecnico %}[mentoria técnica]{% endif %}
+                {% if conexao.recursos_humanos %}[recursos humanos]{% endif %}
+                {% if conexao.colaboracao %}[colaboração]{% endif %}
+                {% if conexao.observacao %}&nbsp;&nbsp;obs: {{conexao.observacao}}{% endif %}
+                <br>
+              </td>
+            </tr>
         {% endif %}
-        </li>
+        
+        
       {% endfor %}
+      </table>
     {% else %}
       Nenhuma conexão específica para esse projeto declarada.
     {% endif %}
-    </ul>
+    
   </div>
 
   {% if projeto.orientador %}
