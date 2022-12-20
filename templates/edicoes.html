@@ -105,4 +105,12 @@
     <div id="lateral">
     </div>
   </div>
+
+  {% comment %} Salva a última edição selecionada {% endcomment %}
+  <script>
+    window.onbeforeunload = function() {
+      localStorage.setItem("filterEdicao", $('#filterEdicao').val());
+    }
+  </script>
+
 {% endif %}

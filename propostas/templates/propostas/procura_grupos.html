@@ -82,7 +82,7 @@
       <label><input id="emails" onchange="($(this).prop('checked') ? $('.emails').show() : $('.emails').hide())" type="checkbox" checked /> e-mails</label>&nbsp;&nbsp;&nbsp;
       <label><input id="emails" onchange="($(this).prop('checked') ? $('.avancado').show() : $('.avancado').hide())" type="checkbox" checked /> Avancados</label>&nbsp;&nbsp;&nbsp;
     </div>
-  </span>
+  </span>{% comment %} Mais elementos no carrega_pagina() {% endcomment %}
 
   {% comment %} 
   <script>
@@ -422,7 +422,23 @@
     {% endif %}
 
     <script>
-      function carrega_pagina() {};
+      function carrega_pagina() {
+        ($("#logo").prop('checked') ? $('.logo').show() : $('.logo').hide());
+        ($("#descricao").prop('checked') ? $('.descricao').show() : $('.descricao').hide());
+        ($("#apresentacao").prop('checked') ? $('.apresentacao').show() : $('.apresentacao').hide());
+        ($("#orientador").prop('checked') ? $('.orientador').show() : $('.orientador').hide());
+        ($("#estudantes").prop('checked') ? $('.estudantes').show() : $('.estudantes').hide());
+        ($("#curso").prop('checked') ? $('.curso').show() : $('.curso').hide());
+        ($("#organizacao").prop('checked') ? $('.organizacao').show() : $('.organizacao').hide());
+        ($("#website").prop('checked') ? $('.website').show() : $('.website').hide());
+        ($("#conexoes").prop('checked') ? $('.conexoes').show() : $('.conexoes').hide());
+        ($("#papeis").prop('checked') ? $('.papeis').show() : $('.papeis').hide());
+        ($("#totais").prop('checked') ? $('.totais').show() : $('.totais').hide());
+        ($("#grafico").prop('checked') ? $('.grafico').show() : $('.grafico').hide());
+        ($("#emails").prop('checked') ? $('.emails').show() : $('.emails').hide());
+        ($("#avancado").prop('checked') ? $('.avancado').show() : $('.avancado').hide());
+      };
+
       $(document).ready(carrega_pagina);
     </script>
     

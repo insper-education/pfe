@@ -56,7 +56,7 @@
       <label><input id="curso" onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(3)').show() : $('#AlunosTable tr > *:nth-child(3)').hide())" type="checkbox" checked /> Curso</label>&nbsp;&nbsp;&nbsp;
       <label><input id="cr" onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(4)').show() : $('#AlunosTable tr > *:nth-child(4)').hide())" type="checkbox" /> CR</label>&nbsp;&nbsp;&nbsp;
     </div>
-  </span>
+  </span> {% comment %} Mais elementos no carrega_pagina() {% endcomment %}
 
   {% comment %} <script>
     $("#informacoes").detach().appendTo("#lateral");
@@ -180,6 +180,8 @@
 
     <script>
       function carrega_pagina() {
+        ($("#curso").prop('checked') ? $('#AlunosTable tr > *:nth-child(3)').show() : $('#AlunosTable tr > *:nth-child(3)').hide());
+        ($("#cr").prop('checked') ? $('#AlunosTable tr > *:nth-child(4)').show() : $('#AlunosTable tr > *:nth-child(4)').hide());
       };
       window.onload = carrega_pagina
     </script>

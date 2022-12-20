@@ -86,19 +86,19 @@
   <span id="informacoes" style="border: 1px solid gray; border-radius: 2px; padding: 1px; margin-left: 20px;">
     <span id="informacoes_tag">&nbsp;Informações <i class="arrow right"></i>&nbsp;</span>
     <div id="toggle" style="display: none; height: 1em;">
-      <label><input onchange="($(this).prop('checked') ? $('.local').show() : $('.local').hide())" type="checkbox" checked /> local</label>&nbsp;&nbsp;&nbsp;
-      <label><input onchange="($(this).prop('checked') ? $('.link').show() : $('.link').hide())" type="checkbox" checked /> video-conferência</label>&nbsp;&nbsp;&nbsp;
-      <label><input onchange="($(this).prop('checked') ? $('.grupo').show() : $('.grupo').hide())" type="checkbox" checked /> grupo</label>&nbsp;&nbsp;&nbsp;
-      <label><input onchange="($(this).prop('checked') ? $('.orientacao').show() : $('.orientacao').hide())" type="checkbox" checked /> orientação</label>&nbsp;&nbsp;&nbsp;
-      <label><input onchange="($(this).prop('checked') ? $('.curso').show() : $('.curso').hide())" type="checkbox" checked /> curso</label>&nbsp;&nbsp;&nbsp;
-      <label><input onchange="($(this).prop('checked') ? $('.banca').show() : $('.banca').hide())" type="checkbox" checked /> avaliadores</label>&nbsp;&nbsp;&nbsp;
-      <label><input onchange="($(this).prop('checked') ? $('.avaliacao').show() : $('.avaliacao').hide())" type="checkbox" checked /> link avaliação</label>&nbsp;&nbsp;&nbsp;
-      <label><input onchange="($(this).prop('checked') ? $('.agendamento').show() : $('.agendamento').hide())" type="checkbox" checked /> agendamento</label>&nbsp;&nbsp;&nbsp;
-      <label><input onchange="($(this).prop('checked') ? $('.email').show() : $('.email').hide())" type="checkbox" checked /> e-mail</label>&nbsp;&nbsp;&nbsp;
-      <label><input onchange="($(this).prop('checked') ? $('.editar').show() : $('.editar').hide())" type="checkbox" checked /> editar</label>&nbsp;&nbsp;&nbsp;
-      <label><input onchange="($(this).prop('checked') ? $('.sem_agendamento').show() : $('.sem_agendamento').hide())" type="checkbox" checked /> sem agendamento</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="local" onchange="($(this).prop('checked') ? $('.local').show() : $('.local').hide())" type="checkbox" checked /> local</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="link" onchange="($(this).prop('checked') ? $('.link').show() : $('.link').hide())" type="checkbox" checked /> video-conferência</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="grupo" onchange="($(this).prop('checked') ? $('.grupo').show() : $('.grupo').hide())" type="checkbox" checked /> grupo</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="orientacao" onchange="($(this).prop('checked') ? $('.orientacao').show() : $('.orientacao').hide())" type="checkbox" checked /> orientação</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="curso" onchange="($(this).prop('checked') ? $('.curso').show() : $('.curso').hide())" type="checkbox" checked /> curso</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="banca" onchange="($(this).prop('checked') ? $('.banca').show() : $('.banca').hide())" type="checkbox" checked /> avaliadores</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="avaliacao" onchange="($(this).prop('checked') ? $('.avaliacao').show() : $('.avaliacao').hide())" type="checkbox" checked /> link avaliação</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="agendamento" onchange="($(this).prop('checked') ? $('.agendamento').show() : $('.agendamento').hide())" type="checkbox" checked /> agendamento</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="email" onchange="($(this).prop('checked') ? $('.email').show() : $('.email').hide())" type="checkbox" checked /> e-mail</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="editar" onchange="($(this).prop('checked') ? $('.editar').show() : $('.editar').hide())" type="checkbox" checked /> editar</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="sem_agendamento" onchange="($(this).prop('checked') ? $('.sem_agendamento').show() : $('.sem_agendamento').hide())" type="checkbox" checked /> sem agendamento</label>&nbsp;&nbsp;&nbsp;
     </div>
-  </span>
+  </span>{% comment %} Mais elementos no carrega_pagina() {% endcomment %}
 
   {% if bancas %}
     <form method="get" id="editarbancasform" style="margin-top: 8px;">
@@ -324,5 +324,32 @@
       </ul>
     {% endif %}
   </div>
+
+  <script>
+    function carrega_pagina() {
+      ($("#local").prop('checked') ? $('.local').show() : $('.local').hide());
+      ($("#link").prop('checked') ? $('.link').show() : $('.link').hide());
+      ($("#grupo").prop('checked') ? $('.grupo').show() : $('.grupo').hide());
+      ($("#orientacao").prop('checked') ? $('.orientacao').show() : $('.orientacao').hide());
+      ($("#curso").prop('checked') ? $('.curso').show() : $('.curso').hide());
+      ($("#banca").prop('checked') ? $('.banca').show() : $('.banca').hide());
+      ($("#avaliacao").prop('checked') ? $('.avaliacao').show() : $('.avaliacao').hide());
+      ($("#agendamento").prop('checked') ? $('.agendamento').show() : $('.agendamento').hide());
+      ($("#email").prop('checked') ? $('.email').show() : $('.email').hide());
+      ($("#editar").prop('checked') ? $('.editar').show() : $('.editar').hide());
+      ($("#sem_agendamento").prop('checked') ? $('.sem_agendamento').show() : $('.sem_agendamento').hide());
+    };
+
+    function carrega_site() {
+      var filterEdicao = localStorage.getItem("filterEdicao");
+      if (filterEdicao !== null) {
+        $('#filterEdicao').val(filterEdicao).trigger('change');
+      }
+      carrega_pagina();
+    };
+
+    window.onload = carrega_site
+
+  </script>
 
 {% endblock %}

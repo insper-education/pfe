@@ -83,7 +83,7 @@
       <label><input id="emails" onchange="($(this).prop('checked') ? $('.emails').show() : $('.emails').hide())" type="checkbox" checked /> e-mails</label>&nbsp;&nbsp;&nbsp;
       <label><input id="avancado" onchange="($(this).prop('checked') ? $('.avancado').show() : $('.avancado').hide())" type="checkbox" checked /> Avancados</label>&nbsp;&nbsp;&nbsp;
     </div>
-  </span>
+  </span>{% comment %} Mais elementos no carrega_pagina() {% endcomment %}
 
   {% comment %} 
   <script>
@@ -408,13 +408,6 @@
 
       }
 
-      ($('#logo').prop('checked') ? $('.logo').show() : $('.logo').hide());
-      ($('#descricao').prop('checked') ? $('.descricao').show() : $('.descricao').hide());
-      ($('#organizacao').prop('checked') ? $('.organizacao').show() : $('.organizacao').hide());
-      ($('#orientador').prop('checked') ? $('.orientador').show() : $('.orientador').hide());
-      ($('#estudantes').prop('checked') ? $('.estudantes').show() : $('.estudantes').hide());
-      ($('#totais').prop('checked') ? $('.totais').show() : $('.totais').hide());
-
       {% comment %} // Só mostra informação de semestre se edição é todas {% endcomment %}
       ($("#filterEdicao option:selected").attr("value") == "todas" ? $('.semestre').show() : $('.semestre').hide());
 
@@ -427,7 +420,14 @@
     {% endif %}
 
     <script>
-      function carrega_pagina() {};
+      function carrega_pagina() {
+        ($('#logo').prop('checked') ? $('.logo').show() : $('.logo').hide());
+        ($('#descricao').prop('checked') ? $('.descricao').show() : $('.descricao').hide());
+        ($('#organizacao').prop('checked') ? $('.organizacao').show() : $('.organizacao').hide());
+        ($('#orientador').prop('checked') ? $('.orientador').show() : $('.orientador').hide());
+        ($('#estudantes').prop('checked') ? $('.estudantes').show() : $('.estudantes').hide());
+        ($('#totais').prop('checked') ? $('.totais').show() : $('.totais').hide());
+      }
       $(document).ready(carrega_pagina);
     </script>
     

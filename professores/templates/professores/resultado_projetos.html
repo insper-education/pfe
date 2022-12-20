@@ -60,7 +60,7 @@
       <label class="grupo"><input id="email" onchange="($(this).prop('checked') ? $('.email').show() : $('.email').hide())" type="checkbox" checked /> e-mail</label>&nbsp;&nbsp;&nbsp;
       <label class="grupo"><input id="curso" onchange="($(this).prop('checked') ? $('.curso').show() : $('.curso').hide())" type="checkbox" checked /> curso</label>&nbsp;&nbsp;&nbsp;
     </div>
-  </span>
+  </span>{% comment %} Mais elementos no carrega_pagina() {% endcomment %}
 
   <table  id="ProjetosTable" class="projetos">
 
@@ -259,13 +259,16 @@
   <script>
   
     var request_ajax_r = null;
+    var xhrCount = 0;  // Para contar as chamadas e usar somente a última
 
     function carrega_semestre(){
 
-      if (request_ajax_r != null){ 
+      var seqNumber = ++xhrCount;
+
+      {% comment %} if (request_ajax_r != null){ 
           request_ajax_r.abort();
           request_ajax_r = null;
-      }
+      } {% endcomment %}
 
       $("#spinner").css("visibility", "visible");
       var edicao = $(".filter option:selected").attr("value");
@@ -277,11 +280,13 @@
               'csrfmiddlewaretoken': '{{ csrf_token }}',
           },
           success: function(response){
+            if (seqNumber === xhrCount) { {% comment %} Processando resposta {% endcomment %}
               $("table.projetos").replaceWith($("table.projetos",response));
-              $("#organizacao").prop('checked') ? $('#ProjetosTable tr > *:nth-child(2)').show() : $('#ProjetosTable tr > *:nth-child(2)').hide()
-              $("#orientador").prop('checked') ? $('#ProjetosTable tr > *:nth-child(3)').show() : $('#ProjetosTable tr > *:nth-child(3)').hide()
+              //$("#organizacao").prop('checked') ? $('#ProjetosTable tr > *:nth-child(2)').show() : $('#ProjetosTable tr > *:nth-child(2)').hide()
+              //$("#orientador").prop('checked') ? $('#ProjetosTable tr > *:nth-child(3)').show() : $('#ProjetosTable tr > *:nth-child(3)').hide()
               {% include "tooltip.js" %}
               $("#spinner").css("visibility", "hidden");
+            } // else {% comment %} Ignorando resposta {% endcomment %}
           },
           error: function (request, status, error) {
             {% if user.tipo_de_usuario == 4 %} 
@@ -297,6 +302,25 @@
 
     $(".filter").change(carrega_semestre);    
     $(document).ready(carrega_semestre);
+
+    function carrega_pagina() {
+      ($("#periodo").prop('checked') ? $('#ProjetosTable tr > *:nth-child(2)').show() : $('#ProjetosTable tr > *:nth-child(2)').hide());
+      ($("#organizacao").prop('checked') ? $('#ProjetosTable tr > *:nth-child(3)').show() : $('#ProjetosTable tr > *:nth-child(3)').hide());
+      ($("#orientador").prop('checked') ? $('#ProjetosTable tr > *:nth-child(4)').show() : $('#ProjetosTable tr > *:nth-child(4)').hide());
+      ($("#grupo").prop('checked') ? $('.grupo').show() : $('.grupo').hide());
+      ($("#email").prop('checked') ? $('.email').show() : $('.email').hide());
+      ($("#curso").prop('checked') ? $('.curso').show() : $('.curso').hide());
+    };
+
+    function carrega_site() {
+      var filterEdicao = localStorage.getItem("filterEdicao");
+      if (filterEdicao !== null) {
+        $('#filterEdicao').val(filterEdicao).trigger('change');
+      }
+      carrega_pagina();
+    };
+
+    window.onload = carrega_site;
 
   </script>
 

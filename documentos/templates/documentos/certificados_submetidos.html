@@ -10,24 +10,24 @@
   {% load escape_emails %}
   {% load nospaces %}
   <style>
-  table, th, td {
-  }
-  table {
-    border: 0px;
-    border-collapse: separate;
-    border-spacing: 1em;
-    padding-left: 0px;
-    padding-right: 0px;
-  }
-  td {
-    padding: 1rem 1.2rem;
-    border-radius: 6px;
-    border: 1px solid red;
-  }
-  </style>
 
+    table, th, td {
+    }
 
-  <style>
+    table {
+      border: 0px;
+      border-collapse: separate;
+      border-spacing: 1em;
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+
+    td {
+      padding: 1rem 1.2rem;
+      border-radius: 6px;
+      border: 1px solid red;
+    }
+
     .arrow {
       border: solid black;
       border-width: 0px 2px 2px 0px;
@@ -72,7 +72,7 @@
       <label><input id="mentoria_tecnica" onchange="($(this).prop('checked') ? $('.mentoria_tecnica').show() : $('.mentoria_tecnica').hide())" type="checkbox" checked /> Mentorias Técnicas</label>&nbsp;&nbsp;&nbsp;
       <label><input id="mentoria_falconi" onchange="($(this).prop('checked') ? $('.mentoria_falconi').show() : $('.mentoria_falconi').hide())" type="checkbox" checked /> Mentorias Falconi</label>&nbsp;&nbsp;&nbsp;
     </div>
-  </span>
+  </span> {% comment %} Mais elementos no carrega_pagina() {% endcomment %}
   
   <table id="certificados">
 
@@ -193,24 +193,38 @@
   </table>
   <p>&nbsp;</p>
   
-
   <script>
+    function carrega_pagina() {
+      ($("#estudantes").prop('checked') ? $('.estudantes').show() : $('.estudantes').hide());
+      ($("#orientador").prop('checked') ? $('.orientador').show() : $('.orientador').hide());
+      ($("#coorientador").prop('checked') ? $('.coorientador').show() : $('.coorientador').hide());
+      ($("#banca").prop('checked') ? $('.banca').show() : $('.banca').hide());
+      ($("#mentoria_tecnica").prop('checked') ? $('.mentoria_tecnica').show() : $('.mentoria_tecnica').hide());
+      ($("#mentoria_falconi").prop('checked') ? $('.mentoria_falconi').show() : $('.mentoria_falconi').hide());
+    };
 
-    function atualizar_informacoes() {
-      ($('#estudantes').prop('checked') ? $('.estudantes').show() : $('.estudantes').hide());
-      ($('#orientador').prop('checked') ? $('.orientador').show() : $('.orientador').hide());
-      ($('#coorientador').prop('checked') ? $('.coorientador').show() : $('.coorientador').hide());
-      ($('#banca').prop('checked') ? $('.banca').show() : $('.banca').hide());
-    }
+    function carrega_site(){
+      var filterEdicao = localStorage.getItem("filterEdicao");
+      if (filterEdicao !== null) {
+        $('#filterEdicao').val(filterEdicao).trigger('change');
+      }
+      carrega_pagina();
+    };
+
+    window.onload = carrega_site
 
     var request_ajax_c = null;
-  
+
+    var xhrCount = 0;  // Para contar as chamadas e usar somente a última
+
     $(".filter").change(function(){
 
-      if (request_ajax_c != null){ 
+      var seqNumber = ++xhrCount;
+      
+      {% comment %} if (request_ajax_c != null){ 
           request_ajax_c.abort();
           request_ajax_c = null;
-      }
+      } {% endcomment %}
 
       $("#spinner").css("visibility", "visible");
       var edicao = $("#filterEdicao option:selected").attr("value");
@@ -222,9 +236,11 @@
             'csrfmiddlewaretoken': '{{ csrf_token }}',
         },
         success: function(response){
+          if (seqNumber === xhrCount) { {% comment %} Processando resposta {% endcomment %}
             $("#certificados").replaceWith($("#certificados",response));
-            atualizar_informacoes()
+            carrega_pagina()
             $("#spinner").css("visibility", "hidden");
+          } // else {% comment %} Ignorando resposta {% endcomment %}
         },
         error: function (request, status, error) {
           {% if user.tipo_de_usuario == 4 %} 

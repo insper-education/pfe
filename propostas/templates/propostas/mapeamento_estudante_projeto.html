@@ -205,7 +205,16 @@
       ($("#cr").prop('checked') ? $('#MapeamentoTable tr > *:nth-child(3)').show() : $('#MapeamentoTable tr > *:nth-child(3)').hide());
       {% include "tooltip.js" %}
     };
-    window.onload = carrega_pagina
+
+    function carrega_site() {
+      var filterEdicao = localStorage.getItem("filterEdicao");
+      if (filterEdicao !== null) {
+        $('#filterEdicao').val(filterEdicao).trigger('change');
+      }
+      carrega_pagina();
+    };
+
+    window.onload = carrega_site
   </script>
 
   {% include "edicoes_ajax.html" %}
