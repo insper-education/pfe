@@ -95,8 +95,6 @@ def certificados_submetidos(request):
     """Lista os Certificados Emitidos."""
     edicoes = []
 
-    
-
     if request.is_ajax():
         print(request.POST)
         if 'edicao' in request.POST:
@@ -290,10 +288,13 @@ def gerar_certificados(request):
                     certificados.append(certificado)
 
     if 'mentoria_falconi' in request.POST:
-        # (106, "Mentoria de Grupo"),  # mentor na Falconi
+        # (106, "Mentoria de Grupo"),  # mentor na Profissional (antiga Mentoria Falconi)
         membro_banca = recupera_mentorias(ano, semestre)
+
+        
         arquivo = "documentos/certificado_mentoria.html"
         for membro in membro_banca:
+            print(membro)
             for banca in membro[1]:
                 certificado = atualiza_certificado(membro[0],
                                                    banca.projeto,
