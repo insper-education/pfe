@@ -190,7 +190,7 @@
 
       function carrega_site() {
         var filterEdicao = localStorage.getItem("filterEdicao");
-        if (filterEdicao !== null) {
+        if (filterEdicao !== null && $("#filterEdicao option[value='"+filterEdicao+"']").length > 0 ) {
           $('#filterEdicao').val(filterEdicao).trigger('change');
         }
         carrega_pagina();

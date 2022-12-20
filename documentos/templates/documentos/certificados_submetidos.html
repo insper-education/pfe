@@ -194,6 +194,7 @@
   <p>&nbsp;</p>
   
   <script>
+
     function carrega_pagina() {
       ($("#estudantes").prop('checked') ? $('.estudantes').show() : $('.estudantes').hide());
       ($("#orientador").prop('checked') ? $('.orientador').show() : $('.orientador').hide());
@@ -205,7 +206,7 @@
 
     function carrega_site(){
       var filterEdicao = localStorage.getItem("filterEdicao");
-      if (filterEdicao !== null) {
+      if (filterEdicao !== null && $("#filterEdicao option[value='"+filterEdicao+"']").length > 0 ) {
         $('#filterEdicao').val(filterEdicao).trigger('change');
       }
       carrega_pagina();
@@ -228,6 +229,8 @@
 
       $("#spinner").css("visibility", "visible");
       var edicao = $("#filterEdicao option:selected").attr("value");
+
+      console.log(edicao);
       request_ajax_c = $.ajax({
         type: "POST",
         url: "{% url 'certificados_submetidos' %}",

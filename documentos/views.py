@@ -95,7 +95,10 @@ def certificados_submetidos(request):
     """Lista os Certificados Emitidos."""
     edicoes = []
 
+    
+
     if request.is_ajax():
+        print(request.POST)
         if 'edicao' in request.POST:
             edicao = request.POST['edicao']
             if edicao == 'todas':
