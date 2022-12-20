@@ -291,6 +291,8 @@ def gerar_certificados(request):
         # (106, "Mentoria de Grupo"),  # mentor na Profissional (antiga Mentoria Falconi)
         membro_banca = recupera_mentorias(ano, semestre)
 
+        print("recupera mentoria")
+        print(membro_banca)
         
         arquivo = "documentos/certificado_mentoria.html"
         for membro in membro_banca:
