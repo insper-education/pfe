@@ -287,13 +287,14 @@ def gerar_certificados(request):
                 if certificado:
                     certificados.append(certificado)
 
+    print("XXXXXXX")
     if 'mentoria_falconi' in request.POST:
         # (106, "Mentoria de Grupo"),  # mentor na Profissional (antiga Mentoria Falconi)
         membro_banca = recupera_mentorias(ano, semestre)
 
         print("recupera mentoria")
         print(membro_banca)
-        
+
         arquivo = "documentos/certificado_mentoria.html"
         for membro in membro_banca:
             print(membro)
