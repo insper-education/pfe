@@ -100,7 +100,23 @@
       window.onload = carrega_pagina
     </script>
 
-  </div>
+  </div> 
+
+  <script>
+
+    function carrega_pagina() {
+    };
+
+    function carrega_site() {
+      var filterEdicao = localStorage.getItem("filterEdicao");
+      if (filterEdicao !== null && $("#filterEdicao option[value='"+filterEdicao+"']").length > 0 ) {
+        $('#filterEdicao').val(filterEdicao).trigger('change');
+      }
+      carrega_pagina();
+    };
+
+    window.onload = carrega_site
+  </script>
 
   {% include "edicoes_ajax.html" %}
 
