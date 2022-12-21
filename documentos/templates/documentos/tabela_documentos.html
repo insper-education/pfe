@@ -199,19 +199,29 @@
                 {{documento}}
                 <a href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
                 <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
+                {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
+                  <sup>(Inglês)</sup>
+                {% endif %}
               </li>
             {% else %}
               {% if documento.documento %}
                 <li>
                   <a href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
+                  {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
+                    <sup>(Inglês)</sup>
+                  {% endif %}
                 </li>
               {% endif %}
               {% if documento.link %}
                 <li>
                   <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
+                  {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
+                    <sup>(Inglês)</sup>
+                  {% endif %}
                 </li>
               {% endif %}
             {% endif %}
+            
             {% if documento.confidencial %}
               </span>
             {% endif %}
@@ -219,117 +229,6 @@
         </ul>
 
               </small></td>
-
-              {% comment %} 
-                <td  style="text-align:center"> <!-- (0, 'contrato com empresa') -->
-                  {% if documento.contratos %}
-                    {% for doc in documento.contratos %}
-                      <a class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}"
-                      target="_blank" rel="noopener noreferrer" 
-                      data-toggle="tooltip" data-html="true" animation="true" 
-                      {% if doc.1 or doc.2%}
-                          title="
-                            {% if doc.1 %}anotação: {{doc.1}} <br>{% endif %}
-                            {% if doc.2 %}data: {{doc.2}} {% endif %}
-                          "
-                        {% endif %}
-                      >
-                      &#x2B24;</a>
-                    {% endfor %}
-                  {% else %}
-                    {% if projeto.organizacao.sigla == "INOVACAO" %}
-                      <a class="text-info" data-toggle="tooltip" data-html="true" animation="true" title="isento">&#x2B24;</a>
-                    {% elif projeto.semestre > configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre <= configuracao.semestre and projeto.ano > configuracao.ano %}
-                      <a class="text-warning" data-toggle="tooltip" data-html="true" animation="true" title="aguardando">&#x2B24;</a>
-                    {% else %}
-                      <a class="text-danger" data-toggle="tooltip" data-html="true" animation="true" title="pendente">&#x2B24;</a>
-                    {% endif %}
-                  {% endif %}
-                </td>
-
-                <td  style="text-align:center"> <!-- (1, 'contrato entre empresa e aluno') -->
-                  {% for doc in documento.contratos_alunos %}
-                    <a 
-                    {% if doc.0 %}
-                      class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
-                    {% else %}
-                      {% if projeto.semestre > configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre <= configuracao.semestre and projeto.ano > configuracao.ano %}
-                        class="text-warning" 
-                      {% else %}
-                        class="text-danger" 
-                      {% endif %}
-                    {% endif %}
-                    target="_blank" rel="noopener noreferrer"
-                    data-toggle="tooltip" data-html="true" animation="true" 
-                    title="{{doc.1}}">
-                    &#x2B24;</a>
-                  {% endfor %}
-                </td>
-
-                <td  style="text-align:center"> <!-- (3, 'relatório final') -->
-                  {% if documento.relatorio_final %}
-                    <a class="text-success" href="../..{{MEDIA_URL}}{{documento.relatorio_final}}" target="_blank" rel="noopener noreferrer">&#x2B24;</a>
-                  {% else %}
-                    {% if projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
-                      <a class="text-warning" data-toggle="tooltip" data-html="true" animation="true" title="aguardando">&#x2B24;</a>
-                    {% else %}
-                      <a class="text-danger" data-toggle="tooltip" data-html="true" animation="true" title="pendente">&#x2B24;</a>
-                    {% endif %}
-                  {% endif %}
-                </td>
-
-                <td  style="text-align:center"> <!-- (4, 'autorização de publicação empresa') -->
-                  {% if documento.autorizacao_publicacao_empresa %}
-                    <a class="text-success" href="../..{{MEDIA_URL}}{{documento.autorizacao_publicacao_empresa}}" target="_blank" rel="noopener noreferrer">&#x2B24;</a>
-                  {% else %}
-                    {% if projeto.organizacao.sigla == "INOVACAO" %}
-                      <a class="text-info" data-toggle="tooltip" data-html="true" animation="true" title="isento">&#x2B24;</a>
-                    {% elif projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
-                      <a class="text-warning" data-toggle="tooltip" data-html="true" animation="true" title="aguardando">&#x2B24;</a>
-                    {% else %}
-                      <a class="text-danger" data-toggle="tooltip" data-html="true" animation="true" title="pendente">&#x2B24;</a>
-                    {% endif %}
-                  {% endif %}
-                </td>
-
-                <td  style="text-align:center"> <!-- (5, 'autorização de publicação  aluno') -->
-                  {% for doc in documento.autorizacao_publicacao_aluno %}
-                    <a 
-                    {% if doc.0 %}
-                      class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
-                    {% else %}
-                      {% if projeto.semestre >= configuracao.semestre and projeto.ano >= configuracao.ano or projeto.semestre < configuracao.semestre and projeto.ano > configuracao.ano %}
-                        class="text-warning" 
-                      {% else %}
-                        class="text-danger" 
-                      {% endif %}
-                    {% endif %}
-                    target="_blank" rel="noopener noreferrer"
-                    data-toggle="tooltip" data-html="true" animation="true" 
-                    title="{{doc.1}}">
-                    &#x2B24;</a>
-                  {% endfor %}
-                </td> 
-                
-                <td style="text-align:center"> <!-- (14, 'outros') -->
-                  {% if documento.outros %}
-                    {% for doc in documento.outros %}
-                      <a class="text-success" href="../..{{MEDIA_URL}}{{doc.0}}" 
-                      target="_blank" rel="noopener noreferrer"
-                      data-toggle="tooltip" data-html="true" animation="true" 
-                      {% if doc.1 or doc.2%}
-                          title="
-                            {% if doc.1 %}anotação: {{doc.1}} <br>{% endif %}
-                            {% if doc.2 %}data: {{doc.2}} {% endif %}
-                          "
-                        {% endif %}
-                      >
-                      &#x2B24;</a>
-                    {% endfor %}
-                  {% endif %}
-                </td>
-              {% endcomment %}
-
             </tr>
           
         {% endfor %}

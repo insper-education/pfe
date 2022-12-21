@@ -129,6 +129,13 @@ def cria_documento(request, organizacao):
     if 'arquivo' in request.FILES and len(request.FILES['arquivo'].name) > max_length - 1:
             return "<h1>Erro: Nome do arquivo maior que " + str(max_length) + " caracteres.</h1>"
 
+    # (0, 'Português'),
+    # (1, 'Inglês'),
+    lingua_do_documento = 0 # Valor default
+    lingua = request.POST.get("lingua_do_documento", "portugues")
+    if lingua == "ingles":
+        lingua_do_documento = 1
+
     confidencial = "confidencial" in request.POST and request.POST["confidencial"] == "true"
 
     # Criando documento na base de dados
@@ -139,6 +146,7 @@ def cria_documento(request, organizacao):
     documento.tipo_de_documento = tipo_de_documento
     documento.data = data
     documento.link = link
+    documento.lingua_do_documento = lingua_do_documento
     documento.confidencial = confidencial
 
     # if tipo_de_documento == 25:  #(25, 'Relatório Publicado'),

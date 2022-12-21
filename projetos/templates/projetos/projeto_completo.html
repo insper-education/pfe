@@ -409,6 +409,9 @@
     {% if documento.anotacao %}
               [Obs: {{ documento.anotacao }} ]
     {% endif %}
+    {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
+      <sup>(Inglês)</sup>
+    {% endif %}
     <br>
   {% empty %}
     Ainda não existem documentos para esse projeto.
