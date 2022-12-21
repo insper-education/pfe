@@ -1578,7 +1578,7 @@ class Certificado(models.Model):
         (103, "Membro de Banca Intermediária"),
         (104, "Membro de Banca Final"),
         (105, "Membro da Banca Falconi"),
-        (106, "Mentoria Falconi"),  # mentor na Falconi
+        (106, "Mentoria Profissional"),  # antigo mentor na Falconi
         (107, "Mentoria Técnica"),  # mentor da empresa
     )
     tipo_de_certificado = models.PositiveSmallIntegerField(choices=TIPO_DE_CERTIFICADO, default=0)

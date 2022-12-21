@@ -70,7 +70,7 @@
       <label><input id="coorientador" onchange="($(this).prop('checked') ? $('.coorientador').show() : $('.coorientador').hide())" type="checkbox" checked /> Coorientadores</label>&nbsp;&nbsp;&nbsp;
       <label><input id="banca" onchange="($(this).prop('checked') ? $('.banca').show() : $('.banca').hide())" type="checkbox" checked /> Bancas</label>&nbsp;&nbsp;&nbsp;
       <label><input id="mentoria_tecnica" onchange="($(this).prop('checked') ? $('.mentoria_tecnica').show() : $('.mentoria_tecnica').hide())" type="checkbox" checked /> Mentorias Técnicas</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="mentoria_falconi" onchange="($(this).prop('checked') ? $('.mentoria_falconi').show() : $('.mentoria_falconi').hide())" type="checkbox" checked /> Mentorias Falconi</label>&nbsp;&nbsp;&nbsp;
+      <label><input id="mentoria_profissional" onchange="($(this).prop('checked') ? $('.mentoria_profissional').show() : $('.mentoria_profissional').hide())" type="checkbox" checked /> Mentorias Profissional (antiga Mentorial Falconi)</label>&nbsp;&nbsp;&nbsp;
     </div>
   </span> {% comment %} Mais elementos no carrega_pagina() {% endcomment %}
   
@@ -89,7 +89,7 @@
         {% elif certificado.tipo_de_certificado == 103 or certificado.tipo_de_certificado == 104 or certificado.tipo_de_certificado == 105 %}
           <tr class="banca">
         {% elif certificado.tipo_de_certificado == 106 %}
-          <tr class="mentoria_falconi">
+          <tr class="mentoria_profissional">
         {% elif certificado.tipo_de_certificado == 107 %}
           <tr class="mentoria_tecnica">
         {% endif %}
@@ -201,7 +201,7 @@
       ($("#coorientador").prop('checked') ? $('.coorientador').show() : $('.coorientador').hide());
       ($("#banca").prop('checked') ? $('.banca').show() : $('.banca').hide());
       ($("#mentoria_tecnica").prop('checked') ? $('.mentoria_tecnica').show() : $('.mentoria_tecnica').hide());
-      ($("#mentoria_falconi").prop('checked') ? $('.mentoria_falconi').show() : $('.mentoria_falconi').hide());
+      ($("#mentoria_profissional").prop('checked') ? $('.mentoria_profissional').show() : $('.mentoria_profissional').hide());
     };
 
     function carrega_site(){

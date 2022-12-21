@@ -96,7 +96,6 @@ def certificados_submetidos(request):
     edicoes = []
 
     if request.is_ajax():
-        print(request.POST)
         if 'edicao' in request.POST:
             edicao = request.POST['edicao']
             if edicao == 'todas':
@@ -158,7 +157,7 @@ def atualiza_certificado(usuario, projeto, tipo_cert, arquivo, banca=None):
         elif tipo_cert == 106:
             context['usuario'] = usuario
             context['dinamica'] = banca
-            tipo = "_mentoria_falconi"
+            tipo = "_mentoria_profissional"
         elif tipo_cert == 107:
             context['usuario'] = usuario
             context['count_projetos'] = banca
@@ -287,17 +286,12 @@ def gerar_certificados(request):
                 if certificado:
                     certificados.append(certificado)
 
-    print("XXXXXXX")
-    if 'mentoria_falconi' in request.POST:
+    if 'mentoria_profissional' in request.POST:
         # (106, "Mentoria de Grupo"),  # mentor na Profissional (antiga Mentoria Falconi)
         membro_banca = recupera_mentorias(ano, semestre)
-
-        print("recupera mentoria")
-        print(membro_banca)
-
+    
         arquivo = "documentos/certificado_mentoria.html"
         for membro in membro_banca:
-            print(membro)
             for banca in membro[1]:
                 certificado = atualiza_certificado(membro[0],
                                                    banca.projeto,

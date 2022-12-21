@@ -379,6 +379,7 @@ class EncontroAdmin(admin.ModelAdmin):
 
     list_display = ('startDate', 'hora_fim', 'projeto', 'facilitador', )
     actions = [dup_encontros, dup_encontros_4x, dup_encontros_8x]
+    search_fields = ['projeto__titulo', 'projeto__titulo_final', 'facilitador__username',]
 
 
 @admin.register(Avaliacao2)
