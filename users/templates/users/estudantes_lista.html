@@ -42,7 +42,6 @@
   
   <div class="atualizar">
 
-    
     <div class="table-responsive">
       <table id="EstudantesTable" class="table table-bordered table-hover table-sm" style="width: 100%;">
         <thead class="table-info">
@@ -54,6 +53,7 @@
               <th scope="col" class="text-center">Período</th>
               <th scope="col" class="text-center">Projeto</th>
               <th scope="col" class="text-center">Organização</th>
+              <th scope="col" class="text-center">Linkein</th>
           </tr>
           </thead>
           {% for aluno in alunos_list %} 
@@ -159,6 +159,13 @@
                 {% endfor %}
               {% endif %}
             </td>
+
+            <td>
+            {% if aluno.user.linkedin %}
+              <a href="{{ aluno.user.linkedin }}">{{ aluno.user.linkedin }}</a>
+            {% endif %}
+            </td>
+
           </tr>
           {% endfor %}
         </table>
@@ -373,7 +380,24 @@
     </script>
 
     <script>
+
+      var table = null;
+
       function carrega_pagina() {
+
+        table = $('#EstudantesTable').dataTable();
+
+        if(table) {
+          table.fnSetColumnVis( 0, true );  // esconde Nome
+          table.fnSetColumnVis( 1, false );  // esconde Matrícula
+          table.fnSetColumnVis( 2, true );  // esconde e-mail
+          table.fnSetColumnVis( 3, true );  // esconde Curso
+          table.fnSetColumnVis( 4, true );  // esconde Período
+          table.fnSetColumnVis( 5, true );  // esconde Projeto
+          table.fnSetColumnVis( 6, true );  // esconde Organização
+          table.fnSetColumnVis( 7, false );  // esconde Linkein
+        }
+
       };
       window.onload = carrega_pagina
     </script>
@@ -386,4 +410,5 @@
     {% endwith %}
   {% endwith %}
 
+  
 {% endblock %}
