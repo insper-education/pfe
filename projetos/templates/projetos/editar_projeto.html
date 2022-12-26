@@ -18,6 +18,11 @@
     textarea {
       max-width:100%;
     }
+
+    table, tr, td {
+      border: 0px solid black;
+    }
+
   </style>
 {% endblock %}
 
@@ -81,29 +86,61 @@
     <br><br>
 
     Grupo:<br>
-    {% for membro in '0123'|make_list %}
-      {% with alocacao=alocacoes|index:forloop.counter0 %}
-        &nbsp;&nbsp;<label for="estudante{{forloop.counter}}">Estudante <span style="width:1em;text-align:left;display:inline-block;">{{forloop.counter}}</span></label></b>:
-        <select class="selectpicker show-tick estudantes" name="estudante{{forloop.counter}}" id="estudante{{forloop.counter}}" title="Selecione estudante membro do projeto"
-        data-live-search="true" data-width="560px">
-            <option selected value> -- selecione um estudante -- </option>
-            <optgroup label="Semestre PFE">
-            {% for estudante in estudantes %}
-              {% if estudante %}
-                <option value="{{estudante.id}}" {% if estudante.id == alocacao.aluno.id %}selected{% endif %}>
-                {{estudante.user.get_full_name}}
-              </option>  
-              {% endif %}
-            {% endfor %}
-            </optgroup>
-        </select>
-        <br>
-      {% endwith %}
+    <table id="AlocacaoEstudantes" style="margin-left: 12px;">
+      <tr><td>#</td><td>Nome</td><td><span class='AddNew'>&#10753;</span></td></tr>
+
+      {% for alocacao in alocacoes %}
+        <tr>
+          <td>
+            <label for="estudante{{forloop.counter}}">Estudante <span style="width:1em;text-align:left;display:inline-block;">{{forloop.counter}}</span> </label></b>:
+          </td>
+          <td>
+            <select class="selectpicker show-tick estudantes" name="estudante" id="estudante{{forloop.counter}}" title="Selecione estudante membro do projeto"
+            data-live-search="true" data-width="560px">
+                <option selected value> -- selecione estudante -- </option>
+                <optgroup label="Semestre PFE">
+                {% for estudante in estudantes %}
+                  {% if estudante %}
+                    <option value="{{estudante.id}}" {% if estudante.id == alocacao.aluno.id %}selected{% endif %}>
+                    {{estudante.user.get_full_name}}
+                  </option>  
+                  {% endif %}
+                {% endfor %}
+                </optgroup>
+            </select>
+          </td>
+          <td>
+            <span class='RemoveRow'>&#8861;</span>
+          </td>
+      </tr>
     {% endfor %}
+    </table>
+
+    {% comment %} No usado para criar novas alocações {% endcomment %}
+    <table id="esconder">
+      <tr id="novo_no">
+        <td>Estudante 0: </td>
+        <td>
+          <select class="selectpicker show-tick estudantes" name="estudante" id="" title="Selecione estudante membro do projeto"
+          data-live-search="true" data-width="560px">
+              <option selected value> -- selecione estudante -- </option>
+              <optgroup label="Semestre PFE">
+              {% for estudante in estudantes %}
+                {% if estudante %}
+                  <option value="{{estudante.id}}">
+                  {{estudante.user.get_full_name}}
+                </option>  
+                {% endif %}
+              {% endfor %}
+              </optgroup>
+          </select>
+        </td>
+        <td><span class='RemoveRow'>&#8861;</span></td>
+    </table>
 
     <br>
     <input type="checkbox" id="time_misto" name="time_misto" value="True" {% if projeto.time_misto %}checked{% endif %}>
-    <label for="time_misto"> Time Misto (com estudantes de outra instituição)</label><br>  
+    <label for="time_misto"> Time Misto (com estudantes de outra instituição/intercâmbio)</label><br>  
 
     <br><br>
 
@@ -114,28 +151,60 @@
 
   <script>
 
-    $(".estudantes").change(function(){
-      var estudantes  = $('.estudantes > select')
-      var dic = {};
-      for(est in estudantes){
-        var chave = estudantes.eq(est).val()
-        if(typeof chave !== "undefined" && chave != "") {
-          if(chave in dic) {
-            $("#submit").prop("disabled",true);
-            $("#mensagem").html("Os estudantes devem ser diferentes");
-            return;
-          } else {
-            dic[chave] = true;
+    $("#esconder").css("display","none");
+
+    function renumera() {
+      $('tr').each(function(){
+        var position= $('#AlocacaoEstudantes tr').index($(this))
+        if(position!=0) {
+          texto = '<label for="estudante' + position + '">Estudante <span style="width:1em;text-align:left;display:inline-block;">' + position + '</span> </label></b>:';
+          $(this).children('td').first().html(texto);
+        }
+      })
+    }
+
+    $('.AddNew').click(function(){        
+      var $cloned = $('#novo_no').clone();
+      $cloned.find('.bootstrap-select').replaceWith(function() { return $('select', this); })    
+      $cloned.find('.selectpicker').selectpicker('render'); 
+      $('#AlocacaoEstudantes tr:last').after($cloned);
+      renumera();
+      check_duplicado();
+    });
+    
+    $('table').on('click', '.RemoveRow', function(){
+      $(this).closest('tr').remove();
+      renumera();
+      check_duplicado();
+    });
+
+    function check_duplicado() {
+      $(".estudantes").change(function(){
+        var estudantes  = $('.estudantes > select')
+        var dic = {};
+        for(est in estudantes){
+          var chave = estudantes.eq(est).val()
+
+          if(typeof chave !== "undefined" && chave != "") {
+            if(chave in dic) {
+              $("#submit").prop("disabled",true);
+              $("#mensagem").html("Os estudantes devem ser diferentes");
+              return;
+            } else {
+              dic[chave] = true;
+            }
           }
         }
-      }
-      $("#submit").prop("disabled",false);
-      $("#mensagem").html("");
-    });  
+        $("#submit").prop("disabled",false);
+        $("#mensagem").html("");
+      });  
+    }
+
+    check_duplicado();
 
   </script>
 
-
+  <p>&nbsp;</p>
   <p>&nbsp;</p>
 
 {% endblock %}
