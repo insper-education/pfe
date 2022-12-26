@@ -46,14 +46,14 @@
       <table id="EstudantesTable" class="table table-bordered table-hover table-sm" style="width: 100%;">
         <thead class="table-info">
           <tr>
-              <th scope="col" class="text-center">Nome</th>
-              <th scope="col" class="text-center">Matrícula</th>
-              <th scope="col" class="text-center">e-mail</th>
-              <th scope="col" class="text-center">Curso</th>
-              <th scope="col" class="text-center">Período</th>
-              <th scope="col" class="text-center">Projeto</th>
-              <th scope="col" class="text-center">Organização</th>
-              <th scope="col" class="text-center">Linkein</th>
+              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Nome</span></th>
+              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Matrícula</span></th>
+              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">e-mail</span></th>
+              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Curso</span></th>
+              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Período</span></th>
+              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Projeto</span></th>
+              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Organização</span></th>
+              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Linkedin</span></th>
           </tr>
           </thead>
           {% for aluno in alunos_list %} 
@@ -384,22 +384,26 @@
       var table = null;
 
       function carrega_pagina() {
-
         table = $('#EstudantesTable').dataTable();
 
         if(table) {
-          table.fnSetColumnVis( 0, true );  // esconde Nome
+          // Hide/Esconde certas colunas
+          //table.fnSetColumnVis( 0, true );  // esconde Nome
           table.fnSetColumnVis( 1, false );  // esconde Matrícula
-          table.fnSetColumnVis( 2, true );  // esconde e-mail
-          table.fnSetColumnVis( 3, true );  // esconde Curso
-          table.fnSetColumnVis( 4, true );  // esconde Período
-          table.fnSetColumnVis( 5, true );  // esconde Projeto
-          table.fnSetColumnVis( 6, true );  // esconde Organização
-          table.fnSetColumnVis( 7, false );  // esconde Linkein
+          //table.fnSetColumnVis( 2, true );  // esconde e-mail
+          //table.fnSetColumnVis( 3, true );  // esconde Curso
+          //table.fnSetColumnVis( 4, true );  // esconde Período
+          //table.fnSetColumnVis( 5, true );  // esconde Projeto
+          //table.fnSetColumnVis( 6, true );  // esconde Organização
+          table.fnSetColumnVis( 7, false );  // esconde Linkedin
         }
-
       };
-      window.onload = carrega_pagina
+
+      function carrega_site(){
+        carrega_pagina();
+      };
+
+      window.onload = carrega_site
     </script>
 
   </div>

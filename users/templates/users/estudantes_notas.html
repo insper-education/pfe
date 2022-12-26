@@ -28,17 +28,17 @@
       <table id="EstudantesTable" class="table table-bordered table-hover table-sm">
         <thead class="table-info">
           <tr>
-              <th scope="col" class="text-center">Nome</th>
-              <th scope="col" class="text-center">e-mail</th>
-              <th scope="col" class="text-center">Curso</th>
+              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Nome</span></th>
+              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">e-mail</span></th>
+              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Curso</span></th>
               {% comment %} <th scope="col" class="text-center">Período</th> {% endcomment %}
               <th scope="col" class="text-center">
                 <a data-toggle="tooltip" data-html="true" animation="true" title="<small>Projetos <u>sublinhados</u> são de PFE Avançado</small>">
-                  Projeto
+                  <span style="margin-right: 0.6ex;">Projeto</span>
                 </a>
               </th>
-              <th scope="col" class="text-center">Notas</th>
-              <th scope="col" class="text-center">Média</th>
+              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Notas</span></th>
+              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Média</span></th>
               {% comment %} <th scope="col" class="text-center">BI</th> {% endcomment %}
           </tr>
           </thead>
@@ -233,5 +233,8 @@
   {% with tabela='Estudantes' %}
     {% include "edicoes_ajax.html" %}
   {% endwith %}
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
   
 {% endblock %}

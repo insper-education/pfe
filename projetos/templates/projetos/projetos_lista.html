@@ -24,11 +24,11 @@
         <table id="ProjetosTable" class="table table-bordered table-hover table-sm" style="width: 100%;">
           <thead class="table-info">
             <tr>
-              <th scope="col" class="text-center">{% if lingua == "pt" %}Projeto{% else %}Project{% endif %}</th>
-              <th scope="col" class="text-center">{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}</th>
-              <th scope="col" class="text-center">{% if lingua == "pt" %}Período{% else %}Semester{% endif %}</th>
-              <th scope="col" class="text-center">{% if lingua == "pt" %}Orientador{% else %}Advisor{% endif %}</th>
-              <th scope="col" class="text-center">{% if lingua == "pt" %}Organização{% else %}Sponsor{% endif %}</th>
+              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">{% if lingua == "pt" %}Projeto{% else %}Project{% endif %}</span></th>
+              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}</span></th>
+              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">{% if lingua == "pt" %}Período{% else %}Semester{% endif %}</span></th>
+              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">{% if lingua == "pt" %}Orientador{% else %}Advisor{% endif %}</span></th>
+              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">{% if lingua == "pt" %}Organização{% else %}Sponsor{% endif %}</span></th>
             </tr>
           </thead>
           {% for projeto in projetos %}
