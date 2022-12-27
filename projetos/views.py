@@ -1393,7 +1393,11 @@ def evolucao_notas(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
-        cores = ["#00af00", "#d40000", "#cccc00", "#000000", "#0000af", "#d4af00", "#222222", "#123456",]
+        cores = []
+        cursos = Curso.objects.all()
+        for cor in cursos:
+            cores += [ "#"+cor.cor, ]
+        cores += ["#000000", "#0000af", "#d4af00", "#222222", "#123456", "#654321"]
 
         # Para armazenar todas as notas de todos os programas de engenharia
         notas_total = {}
@@ -1414,7 +1418,7 @@ def evolucao_notas(request):
             for edicao in edicoes:
                 periodo = edicao.split('.')
                 semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
-                notas_lista = [x.nota for x in semestre if (x.alocacao != None and x.alocacao.aluno.curso == t_curso[0])]
+                notas_lista = [x.nota for x in semestre if (x.alocacao != None and x.alocacao.aluno.curso2.sigla == t_curso[0])]
                 notas_total[edicao] += notas_lista
                 notas.append(media(notas_lista))
             if notas != [None] * len(notas):  # não está vazio

@@ -100,7 +100,7 @@
                 {{aluno.user.get_full_name}}
               </a>
             </td>
-            <td class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">
+            <td style="color:#{{ aluno.curso2.cor }};">
               {{ aluno.get_curso_display }}
             </td>
             <td>
@@ -139,9 +139,9 @@
               {{ num_alunos_mxt }},
             ],
             backgroundColor: [
-              'rgb(75, 192, 192)',
-              'rgb(255, 99, 132)',
-              'rgb(255, 205, 86)',
+              '#58508D',
+              '#28A39B',
+              '#BC5090',
             ],
             label: 'Proporção entre estudantes'
           }],
