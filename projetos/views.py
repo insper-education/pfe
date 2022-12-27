@@ -527,14 +527,22 @@ def projetos_lista(request):
                 projetos_filtrados = projetos_filtrados.filter(avancado__isnull=True)
 
             projetos = projetos_filtrados.order_by("ano", "semestre", "organizacao", "titulo",)
+
+            #cabecalhos = ["Projeto", "Estudantes", "Período", "Orientador", "Organização", ]
+            cabecalhos = ["Project" ,"Students", "Semester", "Advisor", "Sponsor",]
+            
             context = {
-                'projetos': projetos,
+                "projetos": projetos,
+                "cabecalhos": cabecalhos,
             }
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
         edicoes, _, _ = get_edicoes(Projeto)
+        #titulo = "Projetos"
+        titulo = "Projects"
         context = {
+            "titulo": titulo,
             'edicoes': edicoes,
         }
 
@@ -708,8 +716,13 @@ def comite(request):
     """Exibe os professores que estão no comitê do PFE."""
     professores = Professor.objects.filter(user__membro_comite=True)
 
+    cabecalhos = ["Nome", "e-mail", "Lattes", ]
+    titulo = "Comitê PFE"
+
     context = {
         'professores': professores,
+        "cabecalhos": cabecalhos,
+        "titulo": titulo,
         }
 
     return render(request, 'projetos/comite_pfe.html', context)

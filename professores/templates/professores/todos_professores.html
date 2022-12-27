@@ -6,75 +6,50 @@
 {% endcomment %}
 
 {% block head %}
-
   {% include "tabelas_includes.html" %}
-  
 {% endblock %}
 
 {% block content %}
-  
-  <span class="titulo">Professores
-    <a
-      href="{% url 'cadastrar_usuario' %}?tipo=professor"
-      >&#10133;</a>
+
+  <span class="titulo">{{titulo}}
+    <a href="{% url 'cadastrar_usuario' %}?tipo=professor">&#10133;</a>
   </span>
 
-
-
-
-  {% if professores %}
-  <div class="table-responsive">
-    <table id="ProfessoresTable" class="table table-bordered table-hover table-sm" style="width: 100%;">
-    <caption><small>usuários <u>sublinhados</u> são membros do comitê do PFE.</small> </caption>
-    <thead class="table-info">
-      <tr>
-        <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Nome</span></th>
-        <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">e-mail</span></th>
-        <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Bancas</span></th>
-        <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Orientações</span></th>
-        <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Lattes</span></th>
-      </tr>
-      </thead>
-      {% for professor in professores %} 
+  {% include "tabelas_top.html" with tabela="Professores" cabecalhos=cabecalhos %}
+    {% for professor in professores %} 
       <tr class="item">
-          <th scope="row">
-            {% if professor.user.membro_comite %} <u> {% endif %}
-              <a href="{% url 'professor_detail' professor.id %}">
-                {{professor.user.get_full_name}}
-              </a>
-            {% if professor.user.membro_comite %} <u> {% endif %}
-            
-          </th>
-          <td>
-            <a href="mailto:{{professor.user.email}}"> &lt;{{professor.user.email}}&gt;</a><br>
-          </td>
-          <td class="text-center">
-            {{professor.user.membro1.count|add:professor.user.membro2.count|add:professor.user.membro3.count|stringformat:"02d" }}
-          </td>
-          <td class="text-center">
-            {{professor.professor_orientador.count|stringformat:"02d"}}
-          </td>
-          <td >
-            {% if professor.lattes %}
-              <a rel="noopener noreferrer" target="_blank" href="{{professor.lattes}}"> {{professor.lattes}} </a>
-            {% endif %}
-          </td>
-        </tr>
-      {% endfor %}
-    </table>
-    </div>
-  {% else %}
-    <p>Não existem professores cadastradas.</p>
-  {% endif %}
+        <th scope="row">
+          {% if professor.user.membro_comite %}<u>{% endif %}
+            <a href="{% url 'professor_detail' professor.id %}">
+              {{professor.user.get_full_name}}
+            </a>
+          {% if professor.user.membro_comite %}</u>{% endif %}
+        </th>
+        <td>
+          <a href="mailto:{{professor.user.email}}"> &lt;{{professor.user.email}}&gt;</a>
+        </td>
+        <td class="text-center">
+          {{professor.user.membro1.count|add:professor.user.membro2.count|add:professor.user.membro3.count|stringformat:"02d" }}
+        </td>
+        <td class="text-center">
+          {{professor.professor_orientador.count|stringformat:"02d"}}
+        </td>
+        <td>
+          {% if professor.lattes %}
+            <a rel="noopener noreferrer" target="_blank" href="{{professor.lattes}}"> {{professor.lattes}} </a>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    <caption><small>usuários <u>sublinhados</u> são membros do comitê do PFE.</small></caption>
+  </table>
+  </div>
 
   <script>
-
     function carrega_pagina(){
-      {% include "tooltip.js" %}
       {% include "tabelas_scripts.html" with tabela='Professores' %}
     }
     window.onload = carrega_pagina
-
   </script>
 
 {% endblock %}

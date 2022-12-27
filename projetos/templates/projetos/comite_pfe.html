@@ -6,30 +6,16 @@
 {% endcomment %}
 
 {% block head %}
-
   {% include "tabelas_includes.html" %}
-
 {% endblock %}
 
 {% block content %}
 
-  {% comment %} {% with dados='projetos' %}
-      {% include "planilhas.html" %}
-  {% endwith %} {% endcomment %}
+  <span class="titulo">{{titulo}}</span>
 
-  <span class="titulo">Comitê PFE</span>
+  {% include "tabelas_top.html" with tabela="Membros" cabecalhos=cabecalhos %}
 
-  {% if professores %}
-    <div class="table-responsive">
-      <table id="MembrosTable" class="table table-bordered table-hover table-sm" style="width: 100%;">
-        <thead class="table-info">
-          <tr>
-            <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Nome</span></th>
-            <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">e-mail</span></th>
-            <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Lattes</span></th>
-          </tr>
-        </thead>
-        {% for professor in professores %} 
+    {% for professor in professores %} 
         <tr class="item">
             <th scope="row">
               <a href="{% url 'professor_detail' professor.id %}">
@@ -48,13 +34,9 @@
         {% endfor %}
       </table>
     </div>
-  {% else %}
-    <p>Não existem membros do comitê do PFE cadastrados.</p>
-  {% endif %}
 
   <script>
     function carrega_pagina(){
-      {% include "tooltip.js" %}
       {% include "tabelas_scripts.html" with tabela='Membros' %}
     }
     window.onload = carrega_pagina

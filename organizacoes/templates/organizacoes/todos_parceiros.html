@@ -6,115 +6,79 @@
 {% endcomment %}
 
 {% block head %}
-
   {% load static %}
-
   {% include "tabelas_includes.html" %}
-  
 {% endblock %}
 
 {% block content %}
 
-  <span class="titulo">Parceiros Profissionais<a
-      href="{% url 'cadastrar_usuario' %}?tipo=parceiro"
-      >&#10133;</a>
+  <span class="titulo">{{titulo}}
+    <a href="{% url 'cadastrar_usuario' %}?tipo=parceiro">&#10133;</a>
   </span>
 
-  {% if pareceiros %}
-    <div class="table-responsive">
-    <table id="ParceirosTable" class="table table-bordered table-hover table-sm" style="width: 100%;">
-      <caption style="text-align:right">
-        <small>GR: Gestor Responsável / MT: Mentoria Técnica / RH: Recursos Humanos</small>
-      </caption>
-      <thead class="table-info">
-        <tr>
-          <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Nome</span></th>
-          <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Cargo</span></th>
-          <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Organização</span></th>
-          <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">e-mail</span></th>
-          <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">telefone</span></th>
-          <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">papel</span></th>
-        </tr>
-      </thead>
-      {% for parceiro in pareceiros %} 
-        <tr class="item" {% if not parceiro.user.is_active %} style="color: lightgrey;" {% endif %}>
-          <th scope="row">
-            <a href="{% url 'parceiro_detail' parceiro.id %}"
-             {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}>
-              {{parceiro.user.get_full_name}} 
-            </a>
-          </th>
-          <td>
-            {{parceiro.cargo}} 
-          </td>
-          <td class="text-center">
-            {% if parceiro.organizacao %}
-            <a href="{% url 'organizacao_completo' parceiro.organizacao.id %}"
-             {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}>
-              {{parceiro.organizacao.sigla}}
-            </a>
-            {% else %}
-              Organização não identificada
-            {% endif %}
-          </td>
-          <td>
-            <a href="mailto:{{parceiro.user.email}}"
-             {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}>
-              &lt;{{parceiro.user.email}}&gt;
-            </a>
-          </td>
-          <td>
-            {% if parceiro.telefone %}
-              {{parceiro.telefone}}
-              {% if parceiro.celular %} 
-                &nbsp;/&nbsp;
-                {{parceiro.celular}}
-              {% endif %}
-            {% elif parceiro.celular %}
+  {% include "tabelas_top.html" with tabela="Parceiros" cabecalhos=cabecalhos %}
+    {% for parceiro in parceiros %} 
+      <tr class="item" {% if not parceiro.user.is_active %} style="color: lightgrey;" {% endif %}>
+        <th scope="row">
+          <a href="{% url 'parceiro_detail' parceiro.id %}"
+            {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}>
+            {{parceiro.user.get_full_name}} 
+          </a>
+        </th>
+        <td>
+          {{parceiro.cargo}} 
+        </td>
+        <td class="text-center">
+          {% if parceiro.organizacao %}
+          <a href="{% url 'organizacao_completo' parceiro.organizacao.id %}"
+            {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}>
+            {{parceiro.organizacao.sigla}}
+          </a>
+          {% else %}
+            Organização não identificada
+          {% endif %}
+        </td>
+        <td>
+          <a href="mailto:{{parceiro.user.email}}"
+            {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}>
+            &lt;{{parceiro.user.email}}&gt;
+          </a>
+        </td>
+        <td>
+          {% if parceiro.telefone %}
+            {{parceiro.telefone}}
+            {% if parceiro.celular %} 
+              &nbsp;/&nbsp;
               {{parceiro.celular}}
             {% endif %}
-          </td>
-          <td>
-            {% with conexoes=parceiro.conexao_set.all %}
-              {% for conexao in conexoes %}
+          {% elif parceiro.celular %}
+            {{parceiro.celular}}
+          {% endif %}
+        </td>
+        <td>
+          {% with conexoes=parceiro.conexao_set.all %}
+            {% for conexao in conexoes %}
+              {% if conexao.projeto %}
                 <a href="{% url 'projeto_completo' conexao.projeto.id %}">
-                  {% if conexao.gestor_responsavel %}                  
-                    GR
-                  {% endif %}
-                  {% if conexao.mentor_tecnico %}
-                    MT
-                  {% endif %}
-                  {% if conexao.recursos_humanos %}
-                    RH
-                  {% endif %}
+                  {% if conexao.gestor_responsavel %}GR{% endif %}
+                  {% if conexao.mentor_tecnico %}MT{% endif %}
+                  {% if conexao.recursos_humanos %}RH{% endif %}
                 </a>
-              {% endfor %}
-            {% endwith %}
-          </td>
-        </tr>
-      {% endfor %}
-    </table>
-    </div>
-  {% else %}
-    <p>Não existem parceiros cadastradas.</p>
-  {% endif %}
-  <p>&nbsp;</p>
-
+              {% endif %}
+            {% endfor %}
+          {% endwith %}
+        </td>
+      </tr>
+    {% endfor %}
+    <caption style="text-align:right"><small>GR: Gestor Responsável / MT: Mentoria Técnica / RH: Recursos Humanos</small></caption>
+  </table>
+  </div>
 
   <script>
-
     function carrega_pagina(){
-      {% include "tooltip.js" %}
-      {% with tabela='Parceiros' %}
-        {% include "tabelas_scripts.html" %}
-      {% endwith %}
-      {% comment %} 
-        //var table = $('#ProjetosTable').DataTable();
-        //table.search("Bioengenharia").draw();
-      {% endcomment %}
+      {% include "tabelas_scripts.html" with tabela='Parceiros' %}
     }
     window.onload = carrega_pagina
-
   </script>
 
 {% endblock %}

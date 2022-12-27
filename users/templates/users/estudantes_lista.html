@@ -22,10 +22,8 @@
 
 {% block content %}
   
-  <span class="titulo">Estudantes
-    <a
-      href="{% url 'cadastrar_usuario' %}?tipo=estudante"
-      >&#10133;</a>
+  <span class="titulo">{{titulo}}
+    <a href="{% url 'cadastrar_usuario' %}?tipo=estudante">&#10133;</a>
   </span>
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
@@ -40,116 +38,99 @@
   
   <div class="atualizar">
 
-    <div class="table-responsive">
-      <table id="EstudantesTable" class="table table-bordered table-hover table-sm" style="width: 100%;">
-        <thead class="table-info">
-          <tr>
-              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Nome</span></th>
-              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Matrícula</span></th>
-              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">e-mail</span></th>
-              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Curso</span></th>
-              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Período</span></th>
-              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Projeto</span></th>
-              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Organização</span></th>
-              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Linkedin</span></th>
-          </tr>
-          </thead>
-          {% for aluno in alunos_list %} 
-          <tr class="item">
-            <th scope="row" data-order="{{aluno.user.get_full_name}}">
-              <a href="{% url 'estudante_detail' aluno.id %}">
-                {{aluno.user.get_full_name}} {% if aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span>{% endif %}
-              </a>
-            </th>
-            <td style="text-align: right;">
-              {% if aluno.matricula %}
-                {{aluno.matricula}}
-              {% else %}
-                N/I
-              {% endif %}
-
-            </td>
-            <td>
-              <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a>
-            </td>
-            {% if aluno.curso %}
-              <td style="color:#{{ aluno.curso2.cor }};">
-                {{ aluno.get_curso_display }}
-              </td>
+    {% include "tabelas_top.html" with tabela="Estudantes" cabecalhos=cabecalhos %}
+        {% for aluno in alunos_list %} 
+        <tr class="item">
+          <th scope="row" data-order="{{aluno.user.get_full_name}}">
+            <a href="{% url 'estudante_detail' aluno.id %}">
+              {{aluno.user.get_full_name}} {% if aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span>{% endif %}
+            </a>
+          </th>
+          <td style="text-align: right;">
+            {% if aluno.matricula %}
+              {{aluno.matricula}}
             {% else %}
-              <td>Indefinido</td>
+              N/I
             {% endif %}
-            <td>
-              {% if aluno.alocacao_set.all %}
-                {% for alocacao in aluno.alocacao_set.all %}
-                  {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
-                    <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
-                      {% if alocacao.projeto.avancado %}<u>{% endif %}
-                      {{alocacao.projeto.ano}}.{{alocacao.projeto.semestre}}
-                      {% if alocacao.projeto.avancado %}</u>{% endif %}
-                      <br>
-                    </a>
-                  {% endif %}
-                {% endfor %}
-              {% else %}
-                {% if aluno.anoPFE and aluno.semestrePFE %}
-                  {{aluno.anoPFE}}.{{aluno.semestrePFE}}
-                {% else %}
-                  Indefinido
+          </td>
+          <td>
+            <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a>
+          </td>
+          {% if aluno.curso %}
+            <td style="color:#{{ aluno.curso2.cor }};">
+              {{ aluno.get_curso_display }}
+            </td>
+          {% else %}
+            <td>Indefinido</td>
+          {% endif %}
+          <td>
+            {% if aluno.alocacao_set.all %}
+              {% for alocacao in aluno.alocacao_set.all %}
+                {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
+                  <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
+                    {% if alocacao.projeto.avancado %}<u>{% endif %}
+                    {{alocacao.projeto.ano}}.{{alocacao.projeto.semestre}}
+                    {% if alocacao.projeto.avancado %}</u>{% endif %}
+                    <br>
+                  </a>
                 {% endif %}
+              {% endfor %}
+            {% else %}
+              {% if aluno.anoPFE and aluno.semestrePFE %}
+                {{aluno.anoPFE}}.{{aluno.semestrePFE}}
+              {% else %}
+                Indefinido
               {% endif %}
-            </td>
-            <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
-              {% if aluno.alocacao_set.all %}
-                {% for alocacao in aluno.alocacao_set.all %}
-                  {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
-                    <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
-                      {{alocacao.projeto.get_titulo}}
-                    </a>
-                    {% if alocacao.projeto.avancado %}
-                      <span style="color:red">[PFE Avançado]</span>
-                    {% endif %}
-                    {% if alocacao.projeto.proposta.internacional %}
-                      <span style="color:red">[Internacional]</span>
-                    {% endif %}
-                    {% if alocacao.projeto.proposta.intercambio %}
-                      <span style="color:red">[Intercâmbio]</span>
-                    {% endif %}
-                    {% if alocacao.projeto.time_misto %}
-                      <span style="color:red">[Time Misto]</span>
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
-              {% endif %}
-            </td>
-            <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
-              {% if aluno.alocacao_set.all %}
-                {% for alocacao in aluno.alocacao_set.all %}
-                  {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
-                    {% if alocacao.projeto and alocacao.projeto.organizacao %}
-                      <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
-                        {{alocacao.projeto.organizacao}}
-                      </a>
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
-              {% endif %}
-            </td>
-
-            <td>
-            {% if aluno.user.linkedin %}
-              <a href="{{ aluno.user.linkedin }}">{{ aluno.user.linkedin }}</a>
             {% endif %}
-            </td>
+          </td>
+          <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
+            {% if aluno.alocacao_set.all %}
+              {% for alocacao in aluno.alocacao_set.all %}
+                {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
+                  <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
+                    {{alocacao.projeto.get_titulo}}
+                  </a>
+                  {% if alocacao.projeto.avancado %}
+                    <span style="color:red">[PFE Avançado]</span>
+                  {% endif %}
+                  {% if alocacao.projeto.proposta.internacional %}
+                    <span style="color:red">[Internacional]</span>
+                  {% endif %}
+                  {% if alocacao.projeto.proposta.intercambio %}
+                    <span style="color:red">[Intercâmbio]</span>
+                  {% endif %}
+                  {% if alocacao.projeto.time_misto %}
+                    <span style="color:red">[Time Misto]</span>
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          </td>
+          <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
+            {% if aluno.alocacao_set.all %}
+              {% for alocacao in aluno.alocacao_set.all %}
+                {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
+                  {% if alocacao.projeto and alocacao.projeto.organizacao %}
+                    <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
+                      {{alocacao.projeto.organizacao}}
+                    </a>
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          </td>
+          <td>
+          {% if aluno.user.linkedin %}
+            <a href="{{ aluno.user.linkedin }}">{{ aluno.user.linkedin }}</a>
+          {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+        <caption style="text-align:right"><small>Projetos <u>sublinhados</u> são de PFE Avançado</small></caption>
+      </table>
+    </div>
+    <br>
 
-          </tr>
-          {% endfor %}
-        </table>
-        <p style="text-align:right;"><small>Projetos <u>sublinhados</u> são de PFE Avançado</small></p>
-      </div>
-      <br>
-
-    
     <strong>Número Total de Estudantes:</strong> {{ num_alunos }}
     <br>
 
@@ -338,7 +319,6 @@
         }
       };
 
-
       // Chart da proporção de estudantes por programas
       var chart_programas = document.getElementById('chart-programas').getContext('2d');
       window.myPie = new Chart(chart_programas, config_programas);
@@ -352,10 +332,6 @@
         var chart_totais = document.getElementById('total-estudantes').getContext('2d');
         window.myPie = new Chart(chart_totais, config_totais);
       {% endif %}
-
-    </script>
-
-    <script>
 
       var table = null;
 
@@ -378,12 +354,11 @@
       function carrega_site(){
         carrega_pagina();
       };
-
       window.onload = carrega_site
     </script>
 
   </div>
 
-  {% include "edicoes_ajax.html" with tabela='Estudantes' with com_cursos=True %}
+  {% include "edicoes_ajax.html" with tabela='Estudantes' com_cursos=True %}
   
 {% endblock %}

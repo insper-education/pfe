@@ -11,26 +11,15 @@
 
 {% block content %}
 
-  <span class="titulo">Projetos</span>
+  <span class="titulo">{{titulo}}</span>
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" with avancados=True %}
 
   <div class="atualizar">
-    {% if projetos %}
-      <div class="table-responsive">
-        <table id="ProjetosTable" class="table table-bordered table-hover table-sm" style="width: 100%;">
-          <thead class="table-info">
-            <tr>
-              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">{% if lingua == "pt" %}Projeto{% else %}Project{% endif %}</span></th>
-              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}</span></th>
-              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">{% if lingua == "pt" %}Período{% else %}Semester{% endif %}</span></th>
-              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">{% if lingua == "pt" %}Orientador{% else %}Advisor{% endif %}</span></th>
-              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">{% if lingua == "pt" %}Organização{% else %}Sponsor{% endif %}</span></th>
-            </tr>
-          </thead>
-          {% for projeto in projetos %}
-          {% with estudantes=projeto.alocacao_set.all %}
+    {% include "tabelas_top.html" with tabela="Projetos" cabecalhos=cabecalhos %}
+      {% for projeto in projetos %}
+        {% with estudantes=projeto.alocacao_set.all %}
           <tr class="item">
               <th scope="row" data-order="{{projeto.get_titulo}}"
               {% comment %} rowspan="{{estudantes.count}}" {% endcomment %}
@@ -91,25 +80,14 @@
                   <i>Organização não definida</i>
                 {% endif %}
               </td>
-
             </tr>
           
-            {% comment %}
-            {% for alocacao in estudantes|slice:"1:" %}
-              <tr><td>
-                {{alocacao.aluno.user.get_full_name}} [{{alocacao.aluno.get_curso_display}}]<br>
-              </td></tr>
-            {% endfor %}
-            {% endcomment %}
-          
-          {% endwith %}
+            {% endwith %}
           {% endfor %}
           
         </table>
       </div>
-      {% comment %} <strong>Número Total de Projetos:</strong> {{ projetos.count }} {% endcomment %}
-    {% endif %}
-
+    
     <script>
       function carrega_pagina() {
       };
@@ -118,6 +96,6 @@
 
   </div>
   
-  {% include "edicoes_ajax.html" with tabela='Projetos' with avancados=True %}
+  {% include "edicoes_ajax.html" with tabela='Projetos' avancados=True %}
 
 {% endblock %}

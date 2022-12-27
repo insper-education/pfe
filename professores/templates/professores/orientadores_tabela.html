@@ -14,22 +14,18 @@
 
   {% include "impressora.html" %}
 
-  <span class="titulo">Alocação de Orientadores</span>
+  <span class="titulo">{{titulo}}</span>
 
   {% include "edicoes.html" %}
 
   <div class="atualizar">
 
-    <div class="table-responsive">
-
-        <table id="OrientacoesTable" class="table table-bordered table-hover table-sm" style="width: auto;">
-          <thead class="table-info">
-            <tr>
-              <th scope="col" style="text-align: center;width:300px;"><span style="margin-right: 0.6ex;">Nome</span></th>
-              <th scope="col" style="text-align: center;width:70px;"><span style="margin-right: 0.6ex;">Grupos</span></th>
-              <th scope="col" style="text-align: center;width:auto;"><span style="margin-right: 0.6ex;">Projetos</span></th>
-            </tr>
-          </thead>
+    {% include "tabelas_top.html" with tabela="Orientacoes" cabecalhos=cabecalhos %}
+          {% comment %}
+          <th scope="col" style="text-align: center;width:300px;"><span style="margin-right: 0.6ex;">Nome</span></th>
+          <th scope="col" style="text-align: center;width:70px;"><span style="margin-right: 0.6ex;">Grupos</span></th>
+          <th scope="col" style="text-align: center;width:auto;"><span style="margin-right: 0.6ex;">Projetos</span></th>
+          {% endcomment %}
           {% for professor, grupos in orientacoes %} 
 
             <tr class="item">
@@ -43,10 +39,7 @@
             </tr>
           {% endfor %}
         </table>
-        <br>
-
     </div>
-
 
     <script>
       function carrega_pagina() {

@@ -14,7 +14,7 @@
 
 {% block content %}
 
-  <span class="titulo">Alocação de Orientadores</span>
+  <span class="titulo">{{titulo}}</span>
 
   <div class="table-responsive">
 
@@ -23,8 +23,8 @@
       <table id="professores" class="table table-bordered table-hover table-sm" style="width: auto;">
         <thead class="table-info">
           <tr>
-            <th scope="col" style="text-align: center;width:300px;"><span style="margin-right: 0.6ex;">Nome</span></th>
-            <th scope="col" style="text-align: center;width:70px;"><span style="margin-right: 0.6ex;">Grupos</span></th>
+            <th scope="col" style="text-align: center;width:300px;"><span style="margin-right: 0.6ex;">{{cabecalhos.0}}</span></th>
+            <th scope="col" style="text-align: center;width:70px;"><span style="margin-right: 0.6ex;">{{cabecalhos.1}}</span></th>
           </tr>
         </thead>
         {% for professor,grupos in professores %} 
@@ -51,9 +51,6 @@
     {% endfor %}
   
   </div>
-
-  <br>
-  <br>
 
   {% include "tabelas_simples_scripts.html" %}
 

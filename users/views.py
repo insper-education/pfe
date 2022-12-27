@@ -245,6 +245,8 @@ def estudantes_lista(request):
                                totais["mecânica"] +
                                totais["mecatrônica"])
 
+            cabecalhos = ["Nome", "Matrícula", "e-mail", "Curso", "Período", "Projeto", "Organização", "Linkedin", ]
+            
             context = {
                 'alunos_list': alunos_list,
                 'num_alunos': num_alunos,
@@ -260,14 +262,17 @@ def estudantes_lista(request):
                 'semestre': semestre,
                 'ano_semestre': str(ano)+"."+str(semestre),
                 'loop_anos': range(2018, configuracao.ano+1),
+                "cabecalhos": cabecalhos,   
             }
 
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
         edicoes, _, _ = get_edicoes(Aluno)
+        titulo = "Estudantes"
         context = {
             "edicoes": edicoes,
+            "titulo": titulo,
         }
 
     return render(request, 'users/estudantes_lista.html', context=context)

@@ -1298,8 +1298,14 @@ def orientadores_tabela_completa(request):
     """Alocação dos Orientadores por semestre."""
     configuracao = get_object_or_404(Configuracao)
     orientadores = recupera_orientadores_por_semestre(configuracao)
+
+    cabecalhos = ["Nome", "Grupos", ]
+    titulo = "Alocação de Orientadores"
+
     context = {
         'anos': orientadores,
+        "cabecalhos": cabecalhos,
+        "titulo": titulo,
     }
     return render(request, 'professores/orientadores_tabela_completa.html', context)
 
@@ -1350,14 +1356,19 @@ def orientadores_tabela(request):
 
             orientacoes = zip(professores, grupos)
 
+        cabecalhos = ["Nome", "Grupos", "Projetos", ]
+
         context = {
             "orientacoes": orientacoes,
+            "cabecalhos": cabecalhos,
         }
 
     else:
         edicoes, _, _ = get_edicoes(Projeto, anual=True)
+        titulo = "Alocação de Orientadores"
         context = {
             "edicoes": edicoes,
+            "titulo": titulo,
         }
 
     return render(request, 'professores/orientadores_tabela.html', context)
@@ -1368,8 +1379,14 @@ def coorientadores_tabela_completa(request):
     """Alocação dos Coorientadores por semestre."""
     configuracao = get_object_or_404(Configuracao)
     coorientadores = recupera_coorientadores_por_semestre(configuracao)
+
+    cabecalhos = ["Nome", "Grupos", ]
+    titulo = "Alocação de Coorientadores"
+
     context = {
         'anos': coorientadores,
+        "cabecalhos": cabecalhos,
+        "titulo": titulo,
     }
     return render(request, 'professores/coorientadores_tabela_completa.html', context)
 
@@ -1418,14 +1435,19 @@ def coorientadores_tabela(request):
 
             orientacoes = zip(professores, grupos)
 
+        cabecalhos = ["Nome", "Grupos", "Projetos", ]
+    
         context = {
             "orientacoes": orientacoes,
+            "cabecalhos": cabecalhos,
         }
 
     else:
         edicoes, _, _ = get_edicoes(Projeto, anual=True)
+        titulo = "Alocação de Coorientadores"
         context = {
             "edicoes": edicoes,
+            "titulo": titulo,
         }
 
     return render(request, 'professores/coorientadores_tabela.html', context)
@@ -1756,12 +1778,16 @@ def todos_professores(request):
     """Exibe todas os professores que estão cadastrados no PFE."""
     professores = Professor.objects.all()
 
+    cabecalhos = ["Nome", "e-mail", "Bancas", "Orientações", "Lattes", ]
+    titulo = "Professores"
+
     context = {
         'professores': professores,
+        "cabecalhos": cabecalhos,
+        "titulo": titulo,
         }
 
     return render(request, 'professores/todos_professores.html', context)
-
 
 
 @login_required

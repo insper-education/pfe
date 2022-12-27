@@ -14,24 +14,17 @@
 
   {% include "impressora.html" %}
 
-  <span class="titulo">Alocação de Coorientadores</span>
+  <span class="titulo">{{titulo}}</span>
 
   {% include "edicoes.html" %}
 
   <div class="atualizar">
 
-    <div class="table-responsive">
-
-        <table id="CoorientacoesTable" class="table table-bordered table-hover table-sm" style="width: auto;">
-          <thead class="table-info">
-            <tr>
-              <th scope="col" style="text-align: center;width:300px;"><span style="margin-right: 0.6ex;">Nome</span></th>
-              <th scope="col" style="text-align: center;width:70px;"><span style="margin-right: 0.6ex;">Grupos</span></th>
-              <th scope="col" style="text-align: center;width:auto;"><span style="margin-right: 0.6ex;">Projetos</span></th>
-            </tr>
-          </thead>
+    {% include "tabelas_top.html" with tabela="Coorientacoes" cabecalhos=cabecalhos %}          
+          {% comment %} <th scope="col" style="text-align: center;width:300px;"><span style="margin-right: 0.6ex;">Nome</span></th>
+          <th scope="col" style="text-align: center;width:70px;"><span style="margin-right: 0.6ex;">Grupos</span></th>
+          <th scope="col" style="text-align: center;width:auto;"><span style="margin-right: 0.6ex;">Projetos</span></th> {% endcomment %}
           {% for professor, grupos in orientacoes %} 
-
             <tr class="item">
               <td>
                 <a class="imprimir" href="{% url 'professor_detail' professor.id %}">{{professor.user.get_full_name}}</a> <a href="mailto:{{professor.user.email}}">&lt;{{professor.user.email}}&gt;</a>
@@ -43,12 +36,7 @@
             </tr>
           {% endfor %}
         </table>
-        <br>
-
     </div>
-
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
 
     <script>
       function carrega_pagina() {

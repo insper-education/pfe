@@ -12,24 +12,12 @@
 
 {% block content %}
 
-  <span class="titulo">{% if lingua == 'pt' %}Organizações Parceiras{% else %}Partnership Companies{% endif %}<a
+  <span class="titulo">{{titulo}}<a
       href="{% url 'cadastrar_organizacao' %}"
       >&#10133;</a>
   </span>
 
-  {% if organizacoes_list %}
-    <div class="table-responsive">
-      <table id="OrganizacoesTable" class="table table-bordered table-hover table-sm" style="width: 100%;">
-        <thead class="table-info">
-          <tr>
-            <th scope="col" class="text-center">{% if lingua == 'pt' %}Organização{% else %}Company{% endif %}</th>
-            <th scope="col" class="text-center">{% if lingua == 'pt' %}Último <br>Contato{% else %}Last <br>Contact{% endif %}</th>
-            <th scope="col" class="text-center">{% if lingua == 'pt' %}Parceira <br>Desde{% else %}Partner <br>Since{% endif %}</th>
-            <th scope="col" class="text-center">{% if lingua == 'pt' %}Propostas <br>Enviadas{% else %}Submitted <br>Proposals{% endif %}</th>
-            <th scope="col" class="text-center">{% if lingua == 'pt' %}Projetos <br>Fechados{% else %}Closed <br>Projects{% endif %}</th>
-            <th scope="col" class="text-center">{% if lingua == 'pt' %}Grupos de <br>Estudantes{% else %}Group of <br>Students{% endif %}</th>
-          </tr>
-        </thead>
+  {% include "tabelas_top.html" with tabela="Organizacoes" cabecalhos=cabecalhos %}
         {% for organizacao,fechados,desde,contato, grupos in organizacoes_list %} 
           <tr class="item">
 
@@ -67,22 +55,15 @@
         {% endfor %}
       </table>
     </div>
-    {% comment %} <strong>Total de Organizações Parceiras:</strong> {{ total_organizacoes }}<br> {% endcomment %}
+
     <strong>{% if lingua == 'pt' %}Total de Propostas Submetidas{% else %}Total of Submitted Proposals{% endif %}:</strong> {{ total_submetidos }}<br>
     <strong>{% if lingua == 'pt' %}Total de Projetos Fechados{% else %}Total of Closed Projects{% endif %}:</strong> {{ total_fechados }}<br>
-  {% else %}
-    <p>Não existem organizações cadastradas.</p>
-  {% endif %}
 
   <script>
-
     function carrega_pagina(){
-      {% include "tooltip.js" %}
       {% include "tabelas_scripts.html" with tabela='Organizacoes' %}
     }
-
     window.onload = carrega_pagina
-
   </script>
 
 {% endblock %}

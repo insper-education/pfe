@@ -592,6 +592,12 @@ def organizacoes_lista(request):
     total_fechados = Projeto.objects.filter(alocacao__isnull=False)\
         .distinct().count()
 
+    #cabecalhos = ["Organização", "Último <br>Contato", "Parceira <br>Desde", "Propostas <br>Enviadas", "Projetos <br>Fechados", "Grupos de <br>Estudantes", ]
+    cabecalhos = ["Company", "Last <br>Contact", "Partner <br>Since", "Submitted <br>Proposals", "Closed <br>Projects", "Group of <br>Students", ]
+
+    #titulo = "Organizações Parceiras"
+    titulo = "Partnership Companies"
+
     context = {
         'organizacoes_list': organizacoes_list,
         'total_organizacoes': total_organizacoes,
@@ -600,6 +606,8 @@ def organizacoes_lista(request):
         'meses3': datetime.date.today() - datetime.timedelta(days=100),
         'filtro': "todas",
         "grupos": grupos,
+        "cabecalhos": cabecalhos,
+        "titulo": titulo,
     }
 
     return render(request, 'organizacoes/organizacoes_lista.html', context)
@@ -717,10 +725,15 @@ def projeto_feedback(request):
 @permission_required("users.altera_professor", login_url='/')
 def todos_parceiros(request):
     """Exibe todas os parceiros de organizações que já submeteram projetos."""
-    pareceiros = Parceiro.objects.all()
+    parceiros = Parceiro.objects.all()
+
+    cabecalhos = ["Nome", "Cargo", "Organização", "e-mail", "telefone", "papel", ]
+    titulo = "Parceiros Profissionais"
 
     context = {
-        'pareceiros': pareceiros,
+        "parceiros": parceiros,
+        "cabecalhos": cabecalhos,
+        "titulo": titulo,
         }
 
     return render(request, 'organizacoes/todos_parceiros.html', context)
