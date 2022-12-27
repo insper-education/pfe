@@ -48,6 +48,7 @@ from .messages import email, message_reembolso
 
 from .support import get_areas_estudantes, get_areas_propostas, simple_upload, calcula_objetivos
 
+from operacional.models import Curso
 
 @login_required
 def index(request):
@@ -2074,5 +2075,21 @@ def conexoes_estabelecidas(request):
 @permission_required('users.altera_professor', login_url='/')
 def migracao(request):
     """temporário."""
-    message = "Nada Feito"
+
+    C = get_object_or_404(Curso, sigla="C")
+    X = get_object_or_404(Curso, sigla="X")
+    M = get_object_or_404(Curso, sigla="M")
+
+    alunos = Aluno.objects.all()
+
+    for aluno in alunos:
+        if aluno.curso == "X":
+            aluno.curso2 = X
+        elif aluno.curso == "M":
+            aluno.curso2 = M
+        elif aluno.curso == "C":
+            aluno.curso2 = C
+        aluno.save()
+
+    message = "Feito"
     return HttpResponse(message)

@@ -1,3 +1,17 @@
-from django.contrib import admin
+#!/usr/bin/env python
+"""
+Desenvolvido para o Projeto Final de Engenharia
+Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+Data: 27 de Dezembro de 2022
+"""
 
-# Register your models here.
+from django.contrib import admin
+from .models import Curso
+
+@admin.register(Curso)
+class CursoAdmin(admin.ModelAdmin):
+    """Definição de Curso do PFE."""
+    list_display = ('nome', 'sigla', 'cor', )
+    ordering = ('nome', )
+    search_fields = ['nome', ]
+

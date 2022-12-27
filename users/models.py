@@ -24,6 +24,8 @@ from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2
 from projetos.models import ObjetivosDeAprendizagem, Reprovacao, Evento
 from projetos.support import calcula_objetivos
 
+from operacional.models import Curso
+
 from estudantes.models import Relato
 
 class PFEUser(AbstractUser):
@@ -166,6 +168,7 @@ class Aluno(models.Model):
         ('T', 'Electrical and Electronics Engineering'),
         ('E', 'Electrical Engineering'),
     )
+
     user = models.OneToOneField(PFEUser, related_name='aluno',
                                 on_delete=models.CASCADE)
 
@@ -173,8 +176,12 @@ class Aluno(models.Model):
                                  blank=True,
                                  help_text='Número de matrícula')
 
+    # Remover o curso e só usar curso2
     curso = models.CharField(max_length=1, choices=TIPOS_CURSO,
                              help_text='Curso Matriculado',)
+
+    curso2 = models.ForeignKey(Curso, null=True, blank=True, on_delete=models.SET_NULL,
+                             help_text='Curso Matriculado',)    
 
     opcoes = models.ManyToManyField(Proposta, through='Opcao',
                                     help_text='Opcoes de projeto escolhidos')
@@ -241,6 +248,7 @@ class Aluno(models.Model):
             # And we add this method to the instance of the class.
             setattr(self, method_name, curried_method)
 
+    # Usar get_curso_display em vez disso
     def get_curso(self):
         """Retorna em string o nome do curso."""
         for entry in Aluno.TIPOS_CURSO:
@@ -248,6 +256,7 @@ class Aluno(models.Model):
                 return entry[1]
         return "Sem curso"
 
+    # Usar get_curso_display em vez disso
     def get_curso_completo(self):
         """Retorna em string com o nome completo do curso."""
         if self.curso == "C":
