@@ -6,17 +6,10 @@
 {% endcomment %}
 
 {% block content %}
-
     <form method="post">
-    {% csrf_token %}
-
-    <h2>Manutenção do Site</h2>
-
-    <input type="checkbox" name="selection" value="manutencao" {% if manutencao %}checked{% endif %}>
-
-    <button type="submit">Enviar</button>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
+        {% csrf_token %}
+        <h2>Manutenção do Site</h2>
+        <input type="checkbox" name="selection" value="manutencao" {% if manutencao %}checked{% endif %}>
+        <button type="submit">Enviar</button>
     </form>
-
 {% endblock %}

@@ -67,7 +67,6 @@
         {% endfor %}
       </table>
     </div>
-    <p>&nbsp;</p>
     {% comment %} <strong>Total de Organizações Parceiras:</strong> {{ total_organizacoes }}<br> {% endcomment %}
     <strong>{% if lingua == 'pt' %}Total de Propostas Submetidas{% else %}Total of Submitted Proposals{% endif %}:</strong> {{ total_submetidos }}<br>
     <strong>{% if lingua == 'pt' %}Total de Projetos Fechados{% else %}Total of Closed Projects{% endif %}:</strong> {{ total_fechados }}<br>
@@ -75,15 +74,11 @@
     <p>Não existem organizações cadastradas.</p>
   {% endif %}
 
-  <p>&nbsp;</p>
-
   <script>
 
     function carrega_pagina(){
       {% include "tooltip.js" %}
-      {% with tabela='Organizacoes' %}
-        {% include "tabelas_scripts.html" %}
-      {% endwith %}
+      {% include "tabelas_scripts.html" with tabela='Organizacoes' %}
     }
 
     window.onload = carrega_pagina

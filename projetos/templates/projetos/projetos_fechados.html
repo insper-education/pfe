@@ -432,10 +432,8 @@
     </script>
     
   </div>
-  <p>&nbsp;</p>
+  
+  {% include "edicoes_ajax.html" with com_cursos=True %}
 
-  {% with com_cursos=True %}
-      {% include "edicoes_ajax.html" %}
-  {% endwith %}
 
 {% endblock %}

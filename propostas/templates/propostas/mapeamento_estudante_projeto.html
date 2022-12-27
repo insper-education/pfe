@@ -80,9 +80,7 @@
   <span class="titulo">Mapeamento de Propostas de Projetos por Estudante</span>
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
-  {% with n_todas=True %}
-    {% include "edicoes.html" %}
-  {% endwith %}
+  {% include "edicoes.html" with n_todas=True %}
   
   <script>
     $(document).on('click','#informacoes_tag',function(){

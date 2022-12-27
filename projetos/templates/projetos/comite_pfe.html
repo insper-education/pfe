@@ -51,19 +51,13 @@
   {% else %}
     <p>Não existem membros do comitê do PFE cadastrados.</p>
   {% endif %}
-  <p>&nbsp;</p>
-
 
   <script>
-
     function carrega_pagina(){
       {% include "tooltip.js" %}
-      {% with tabela='Membros' %}
-        {% include "tabelas_scripts.html" %}
-      {% endwith %}
+      {% include "tabelas_scripts.html" with tabela='Membros' %}
     }
     window.onload = carrega_pagina
-
   </script>
 
 {% endblock %}

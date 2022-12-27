@@ -14,9 +14,7 @@
   <span class="titulo">Projetos</span>
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
-  {% with avancados=True %}
-    {% include "edicoes.html" %}
-  {% endwith %}
+  {% include "edicoes.html" with avancados=True %}
 
   <div class="atualizar">
     {% if projetos %}
@@ -119,12 +117,7 @@
     </script>
 
   </div>
-  <p>&nbsp;</p>
-
-  {% with tabela='Projetos' %}
-  {% with avancados=True %}
-    {% include "edicoes_ajax.html" %}
-  {% endwith %}
-  {% endwith %}
+  
+  {% include "edicoes_ajax.html" with tabela='Projetos' with avancados=True %}
 
 {% endblock %}

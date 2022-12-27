@@ -16,14 +16,9 @@
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" %}
 
-  {% with tudo_ligado=True %}
-  {% with titulo_areas=True %}
-  {% with not_outras=True %}
-      {% include "areas.html"%}
-  {% endwith %}
-  {% endwith %}
-  {% endwith %}
-
+  {% comment %} Seletor para áreas de interesse {% endcomment %}
+  {% include "areas.html" with tudo_ligado=True titulo_areas=True not_outras=True %}
+  
   <div class="atualizar">
     {% if projetos %}
     {{organizacao.proposta_set.count|stringformat:"03d"}}
@@ -134,15 +129,7 @@
               {% endwith %}
 
             </tr>
-          
-            {% comment %}
-            {% for alocacao in estudantes|slice:"1:" %}
-              <tr><td>
-                {{alocacao.aluno.user.get_full_name}} [{{alocacao.aluno.get_curso_display}}]<br>
-              </td></tr>
-            {% endfor %}
-            {% endcomment %}
-          
+
           {% endwith %}
           {% endwith %}
           {% endfor %}
@@ -186,7 +173,6 @@
         );
 
         table.draw();
-        //table.search("Bioengenharia").draw();
 
       };
       window.onload = carrega_pagina
@@ -199,35 +185,8 @@
       
     </script>
 
-{% comment %} 
-
-    <script type="text/javascript">
-
-      function filtra_area() {
-        filterList = $("input.filtra_area[type=checkbox]");         
-        var row = $('.item');
-        row.hide();
-        filterList.each(function(i, el) {
-            if($(el)[0].checked) {
-              var linha = $('.'+$(el)[0].id);
-              $(linha).show();
-            }
-        });
-      }
-  
-      $(".filtra_area").change(function(){
-        filtra_area();
-      });
-
-    </script>
- {% endcomment %}
-
-
   </div>
-  <p>&nbsp;</p>
 
-  {% with tabela='Projetos' %}
-    {% include "edicoes_ajax.html" %}
-  {% endwith %}
+  {% include "edicoes_ajax.html" with tabela='Projetos' %}
 
 {% endblock %}

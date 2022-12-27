@@ -14,14 +14,11 @@
     <span class="titulo">Áreas de Interesse</span>
 
     <form method="post">
-        {% csrf_token %}
-        {% with aa=estudante.user.areadeinteresse_set.all %}
-            {% include "areas.html"%}
-        {% endwith %}
-        <p>&nbsp;</p>
+        {% csrf_token %}    
+        {% include "areas.html" with aa=estudante.user.areadeinteresse_set.all %}
         {% if not vencido %}
             <button type="submit">Atualizar</button>
         {% endif %}
-        <p>&nbsp;</p>
     </form>
+
 {% endblock %}

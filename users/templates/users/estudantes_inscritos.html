@@ -40,9 +40,7 @@
   <span class="titulo">Estudantes Inscritos</span>
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
-  {% with n_todas=True %}
-    {% include "edicoes.html" %}
-  {% endwith %}
+  {% include "edicoes.html" with n_todas=True %}
 
   <script>
     $(document).on('click','#informacoes_tag',function(){
@@ -176,9 +174,6 @@
         ($('#cr').prop('checked') ? $('#AlunosTable tr > *:nth-child(4)').show() : $('#AlunosTable tr > *:nth-child(4)').hide());
       }
     
-    </script>
-
-    <script>
       function carrega_pagina() {
         ($("#curso").prop('checked') ? $('#AlunosTable tr > *:nth-child(3)').show() : $('#AlunosTable tr > *:nth-child(3)').hide());
         ($("#cr").prop('checked') ? $('#AlunosTable tr > *:nth-child(4)').show() : $('#AlunosTable tr > *:nth-child(4)').hide());
@@ -188,8 +183,6 @@
 
   </div>
 
-  {% with graficos=True %}
-    {% include "edicoes_ajax.html" %}
-  {% endwith %}
+  {% include "edicoes_ajax.html" with graficos=True %}
 
 {% endblock %}

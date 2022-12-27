@@ -20,9 +20,7 @@
   </span>
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
-  {% with n_todas=True %}
-      {% include "edicoes.html" %}
-  {% endwith %}
+  {% include "edicoes.html" with n_todas=True %}
   
   <div class="atualizar">
 
@@ -121,8 +119,6 @@
 
   </div>
 
-  {% with tabela='Estudantes' %}
-    {% include "edicoes_ajax.html" %}
-  {% endwith %}
+  {% include "edicoes_ajax.html" with tabela='Estudantes' %}
   
 {% endblock %}

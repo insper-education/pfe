@@ -16,9 +16,7 @@
   <span class="titulo">Procura pelas Propostas de Projetos</span>
 
   {% comment %} Seletor da edição e curso da pesquisa {% endcomment %}
-  {% with com_cursos=True %}
-    {% include "edicoes.html" %}
-  {% endwith %}
+  {% include "edicoes.html" with com_cursos=True %}
 
   <div class="2areas2">
 

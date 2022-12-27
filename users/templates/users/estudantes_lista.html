@@ -29,9 +29,7 @@
   </span>
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
-  {% with com_cursos=True %}
-    {% include "edicoes.html" %}
-  {% endwith %}
+  {% include "edicoes.html" with com_cursos=True %}
 
   <script>
     $('#filterEdicao').append($('<option>', {
@@ -386,11 +384,6 @@
 
   </div>
 
-  {% with tabela='Estudantes' %}
-    {% with com_cursos=True %}
-      {% include "edicoes_ajax.html" %}
-    {% endwith %}
-  {% endwith %}
-
+  {% include "edicoes_ajax.html" with tabela='Estudantes' with com_cursos=True %}
   
 {% endblock %}

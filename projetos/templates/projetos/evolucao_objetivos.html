@@ -58,15 +58,7 @@
             <span class="titulo">{% if lingua == "pt" %}Evolução em Objetivos de Aprendizado{% else %}Evolution in Learning Goals{% endif %}</span>
 
             {% comment %} Seletor da edição da pesquisa {% endcomment %}
-            {% with sem_edicao=True %}
-            {% with com_cursos=True %}
-            {% with ind_grup=True %}
-            {% with so_finais=True %}
-                {% include "edicoes.html" %}
-            {% endwith %}
-            {% endwith %}
-            {% endwith %}
-            {% endwith %}
+            {% include "edicoes.html" with sem_edicao=True com_cursos=True ind_grup=True so_finais=True %}
 
         </div>
     
@@ -404,17 +396,6 @@
     </div>
     </div>
 
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-
-    {% with sem_edicao=True %}
-    {% with com_cursos=True %}
-    {% with ind_grup=True %}
-    {% with so_finais=True %}
-        {% include "edicoes_ajax.html" %}
-    {% endwith %}
-    {% endwith %}
-    {% endwith %}
-    {% endwith %}
+    {% include "edicoes_ajax.html" with sem_edicao=True com_cursos=True ind_grup=True so_finais=True %}
 
 {% endblock %}

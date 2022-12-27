@@ -50,18 +50,7 @@
           </span>
 
           {% comment %} Seletor da edição da pesquisa {% endcomment %}
-          {% with sem_edicao=True %}
-          {% with com_cursos=True %}
-          {% with com_objetivos=True %}
-          {% with ind_grup=True %}
-          {% with so_finais=True %}
-              {% include "edicoes.html" %}
-          {% endwith %}
-          {% endwith %}
-          {% endwith %}
-          {% endwith %}
-          {% endwith %}
-
+          {% include "edicoes.html" with sem_edicao=True com_cursos=True com_objetivos=True ind_grup=True so_finais=True %}
         </div>
 
     <div class="atualizar">
@@ -165,16 +154,6 @@
     </div>
     </div>
 
-    {% with sem_edicao=True %}
-    {% with com_cursos=True %}
-    {% with com_objetivos=True %}
-    {% with ind_grup=True %}
-    {% with so_finais=True %}
-        {% include "edicoes_ajax.html" %}
-    {% endwith %}
-    {% endwith %}
-    {% endwith %}
-    {% endwith %}
-    {% endwith %}
+    {% include "edicoes_ajax.html" with sem_edicao=True com_cursos=True com_objetivos=True ind_grup=True so_finais=True %}
 
 {% endblock %}

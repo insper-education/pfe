@@ -201,10 +201,8 @@
     <span class="titulo">Análise dos Conceitos das Certificações Falconi</span>
 
     {% comment %} Seletor da edição da pesquisa {% endcomment %}
-    {% with n_todas=True %}
-        {% include "edicoes.html" %}
-    {% endwith %}
-    
+    {% include "edicoes.html" with n_todas=True %}
+
     <div class="atualizar">
         <div class="container">
 
@@ -541,6 +539,5 @@
     </div>
     
     {% include "edicoes_ajax.html" %}
-    
 
 {% endblock %}

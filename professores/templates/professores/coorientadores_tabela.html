@@ -58,8 +58,6 @@
 
   </div>
 
-  {% with tabela='Coorientacoes' %}
-      {% include "edicoes_ajax.html" %}
-  {% endwith %}
+  {% include "edicoes_ajax.html" with tabela='Coorientacoes' %}
 
 {% endblock %}

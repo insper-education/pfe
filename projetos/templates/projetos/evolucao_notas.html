@@ -48,12 +48,8 @@
             <span class="titulo">Evolução por Notas/Conceitos</span>
             
             {% comment %} Seletor da edição da pesquisa {% endcomment %}
-            {% with sem_edicao=True %}
-            {% with com_cursos=True %}
-                {% include "edicoes.html" %}
-            {% endwith %}
-            {% endwith %} 
-
+            {% include "edicoes.html" with sem_edicao=True com_cursos=True %}
+            
         </div>
 
     {% comment %} Seletor da edição da pesquisa {% endcomment %}
@@ -183,10 +179,6 @@
     </div>
     </div>
 
-    {% with sem_edicao=True %}
-    {% with com_cursos=True %}
-        {% include "edicoes_ajax.html" %}
-    {% endwith %}
-    {% endwith %} 
+    {% include "edicoes_ajax.html" with sem_edicao=True com_cursos=True %}
 
 {% endblock %}

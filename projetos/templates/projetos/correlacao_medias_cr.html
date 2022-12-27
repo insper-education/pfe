@@ -50,9 +50,7 @@
             <span class="titulo">Correlação entre Médias e CR</span>
 
             {% comment %} Seletor da edição da pesquisa {% endcomment %}
-            {% with com_cursos=True %}
-                {% include "edicoes.html" %}
-            {% endwith %}
+            {% include "edicoes.html" with com_cursos=True %}
 
             <div class="input-group input-group-sm mt-1">
                 <div class="form-check form-check-inline">
@@ -440,8 +438,6 @@
     </div>
     </div>
 
-    {% with com_cursos=True %}
-        {% include "edicoes_ajax.html" %}
-    {% endwith %}
+    {% include "edicoes_ajax.html" with com_cursos=True %}
 
 {% endblock %}

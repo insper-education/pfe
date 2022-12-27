@@ -51,9 +51,7 @@
             </span>
 
             {% comment %} Seletor da edição da pesquisa {% endcomment %}
-            {% with com_cursos=True %}
-                {% include "edicoes.html" %}
-            {% endwith %}
+            {% include "edicoes.html" with com_cursos=True %}
 
         </div>
         
@@ -768,8 +766,6 @@
     </div>
     </div>
 
-    {% with com_cursos=True %}
-        {% include "edicoes_ajax.html" %}
-    {% endwith %}
+    {% include "edicoes_ajax.html" with com_cursos=True %}
 
 {% endblock %}

@@ -360,7 +360,6 @@
       });
     };
 
-
     // Só atualiza e-mails da linha de projetos
     function carrega_projetos() {
       $("#projetos").hide();
@@ -397,15 +396,10 @@
       carrega_projetos();
     }
 
-  </script>
-
-  <p>&nbsp;</p>
-
-  <script>
     $("#filterEdicaoSemestre").change(carrega_semestre);
     $("#filterEdicaoProjetos").change(carrega_projetos);
     $(document).ready(carrega_pagina);
-  </script>
 
+  </script>
 
 {% endblock %}

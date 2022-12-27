@@ -43,9 +43,7 @@
   <span class="titulo">Documentação dos Projetos</span>
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
-  {% with com_cursos=True %}
-      {% include "edicoes.html" %}
-  {% endwith %}
+  {% include "edicoes.html" with com_cursos=True %}
 
   <script>
     $(document).on('click','#informacoes_tag',function(){
@@ -237,9 +235,6 @@
 
     </div>
 
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-
     <script>
       function carrega_pagina() {
         {% comment %} 
@@ -265,11 +260,7 @@
     </script>
 
   </div>
-
-  {% with tabela='Projetos' %}
-  {% with com_cursos=True %}
-      {% include "edicoes_ajax.html" %}
-  {% endwith %}
-  {% endwith %}
+  
+  {% include "edicoes_ajax.html" with tabela='Projetos' com_cursos=True %}
   
 {% endblock %}
