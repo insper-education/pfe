@@ -55,8 +55,7 @@
               <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
             </td>
             {% if aluno.curso %}
-              {% comment %} <td style="color:#{% if aluno.curso == 'C' %}{{configuracao.cor_C}}{% elif aluno.curso == 'M' %}{{configuracao.cor_M}}{% elif aluno.curso == 'X' %}{{configuracao.cor_X}}{% else %}{{configuracao.cor_O}}{% endif %};"> {% endcomment %}
-              <td style="color:#{{ aluno.get_curso_color }};">
+              <td style="color:#{{ aluno.curso2.cor }};">
                 {{ aluno.get_curso_display }}
               </td>
             {% else %}

@@ -18,4 +18,7 @@ def dict_key(d, k):
 
 @register.filter
 def get_value(dictionary, key):
-    return dictionary.get(key)
+    if dictionary and isinstance(dictionary, dict):
+        return dictionary.get(key)
+    return None
+    

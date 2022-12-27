@@ -59,28 +59,7 @@
           {% for aluno in alunos_list %} 
           <tr class="item">
             <th scope="row" data-order="{{aluno.user.get_full_name}}">
-              <a href="{% url 'estudante_detail' aluno.id %}" 
-                  {% comment %}               
-                  data-toggle="tooltip" data-html="true" animation="true" title="
-                  {% for opcao in aluno.opcao_set.all %}
-                    <b>#{{ opcao.prioridade }} :</b>
-                    {% with alocacoes=aluno.alocacao_set %}
-                      {% if alocacoes.count and opcao.proposta == alocacoes.last.projeto %}
-                        <u>
-                      {% endif %}
-                          {{opcao.proposta.titulo}}
-                        ({{opcao.proposta.organizacao.nome}})
-                      {% if alocacoes.count and opcao.proposta == alocacoes.last.projeto %}
-                        </u>
-                      {% endif %}
-                    {% endwith %}
-                    <br>
-                  {% empty %}
-                    Aluno(a) não escolheu opções de projetos
-                  {% endfor %}
-                  "
-                  {% endcomment %}
-              >
+              <a href="{% url 'estudante_detail' aluno.id %}">
                 {{aluno.user.get_full_name}} {% if aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span>{% endif %}
               </a>
             </th>
@@ -96,13 +75,12 @@
               <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a>
             </td>
             {% if aluno.curso %}
-              <td class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">
+              <td style="color:#{{ aluno.curso2.cor }};">
                 {{ aluno.get_curso_display }}
               </td>
             {% else %}
               <td>Indefinido</td>
             {% endif %}
-            {% comment %} <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}"> {% endcomment %}
             <td>
               {% if aluno.alocacao_set.all %}
                 {% for alocacao in aluno.alocacao_set.all %}

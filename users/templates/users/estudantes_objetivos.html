@@ -32,9 +32,9 @@
         <thead class="table-info">
           <tr>
               <th scope="col" class="text-center">Nome</th>
+
               <th scope="col" class="text-center">e-mail</th>
               <th scope="col" class="text-center">Curso</th>
-              {% comment %} <th scope="col" class="text-center">Período</th> {% endcomment %}
               <th scope="col" class="text-center">
                 <a data-toggle="tooltip" data-html="true" animation="true" title="<small>Projetos <u>sublinhados</u> são de PFE Avançado</small>">
                   Projeto
@@ -54,11 +54,12 @@
                 {% if aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span>{% endif %}
               </a>
             </th>
+ 
             <td>
               <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
             </td>
             {% if aluno.curso %}
-              <td class="{% if aluno.curso == 'C' %}text-success{% elif aluno.curso == 'M' %}text-danger{% else %}text-warning{% endif %}">
+              <td style="color:#{{ aluno.curso2.cor }};">
                 {{ aluno.get_curso_display }}
               </td>
             {% else %}
@@ -95,11 +96,10 @@
               {% endif %}
             </td>
             {% with alocacao=aluno.get_alocacoes|dict_key:ano_semestre %}
-              {% with medias_oo=alocacao.get_medias_oo %}
-                {% for key, value in medias_oo.media_individual.items %}
+              {% with medias_oo=alocacao.get_medias_oo.media_individual %}
+                {% for objetivo in objetivos %}
                   <td style="text-align:right;">
-                    {% comment %} {{key}}:  {% endcomment %}
-                    {{value.media|stringformat:".2f"}}
+                    {{ medias_oo|get_value:objetivo|get_value:"media"|stringformat:".2f" }}
                   </td>
                 {% endfor %}
               {% endwith %}  
