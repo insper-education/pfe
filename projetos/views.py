@@ -783,80 +783,90 @@ def lista_feedback(request):
 def lista_feedback_estudantes(request):
     """Lista todos os feedback das Organizações Parceiras."""
     configuracao = get_object_or_404(Configuracao)
+    edicoes, ano_atual, semestre_atual = get_edicoes(Projeto)
 
-    edicoes = range(2018, configuracao.ano+1)
+    if request.is_ajax():
 
-    todos_feedbacks = FeedbackEstudante.objects.all().order_by("-momento")
+        todos_feedbacks = FeedbackEstudante.objects.all().order_by("-momento")
 
-    num_feedbacks = []
-    num_estudantes = []
+        num_feedbacks = []
+        num_estudantes = []
 
-    for ano in edicoes:
+        for edicao in edicoes:
 
-        estudantes = Aluno.objects.filter(anoPFE=ano).\
-            filter(semestrePFE=2).\
-            count()
-        num_estudantes.append(estudantes)
+            ano, semestre = edicao.split('.')
 
-        estudantes = Aluno.objects.filter(anoPFE=ano+1).\
-            filter(semestrePFE=1).\
-            count()
-        num_estudantes.append(estudantes)
+            estudantes = Aluno.objects.filter(anoPFE=ano).\
+                filter(semestrePFE=semestre).\
+                count()
+            num_estudantes.append(estudantes)
 
-        numb_feedb = todos_feedbacks.filter(projeto__ano=ano).\
-            filter(projeto__semestre=2).\
-            values('estudante').distinct().\
-            count()
-        num_feedbacks.append(numb_feedb)
+            numb_feedb = todos_feedbacks.filter(projeto__ano=ano).\
+                filter(projeto__semestre=semestre).\
+                values('estudante').distinct().\
+                count()
+            num_feedbacks.append(numb_feedb)
 
-        numb_feedb = todos_feedbacks.filter(projeto__ano=ano+1).\
-            filter(projeto__semestre=1).\
-            values('estudante').distinct().\
-            count()
-        num_feedbacks.append(numb_feedb)
+        estudantes = Aluno.objects.all()
 
-    ano = 2021
-    semestre = 2
-    estudantes = Aluno.objects.filter(trancado=False, anoPFE=ano, semestrePFE=semestre)
+        if 'edicao' in request.POST:
+            edicao = request.POST['edicao']
+            if edicao != 'todas':
+                ano, semestre = request.POST['edicao'].split('.')
+                estudantes = estudantes.filter(trancado=False, anoPFE=ano, semestrePFE=semestre)
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
 
-    projetos = []
-    feedbacks = []
-    for estudante in estudantes:
+        projetos = []
+        feedbacks = []
+        for estudante in estudantes:
 
-        alocacao = Alocacao.objects.filter(projeto__ano=ano,
-                                           projeto__semestre=semestre,
-                                           aluno=estudante).last()
+            alocacao = Alocacao.objects.filter(projeto__ano=ano,
+                                            projeto__semestre=semestre,
+                                            aluno=estudante).last()
 
-        if alocacao:
-            projetos.append(alocacao.projeto)
+            if alocacao:
+                projetos.append(alocacao.projeto)
 
-            feedback = todos_feedbacks.filter(projeto=alocacao.projeto,
-                                              estudante=estudante).first()
+                feedback = todos_feedbacks.filter(projeto=alocacao.projeto,
+                                                estudante=estudante).first()
 
-            if feedback:
-                feedbacks.append(feedback)
+                if feedback:
+                    feedbacks.append(feedback)
+                else:
+                    feedbacks.append(None)
+
             else:
+                projetos.append(None)
                 feedbacks.append(None)
 
-        else:
-            projetos.append(None)
-            feedbacks.append(None)
 
+        alocacoes = zip(estudantes, projetos, feedbacks)
 
-    alocacoes = zip(estudantes, projetos, feedbacks)
+        configuracao = get_object_or_404(Configuracao)
+        coordenacao = configuracao.coordenacao
 
-    configuracao = get_object_or_404(Configuracao)
-    coordenacao = configuracao.coordenacao
+        cabecalhos = ["Nome", "Projeto", "Data", "Mensagem", ]
 
-    context = {
-        "SERVER_URL": settings.SERVER,
-        "loop_anos": edicoes,
-        "num_estudantes": num_estudantes,
-        "num_feedbacks": num_feedbacks,
-        "alocacoes": alocacoes,
-        "coordenacao": coordenacao,
+        context = {
+            "SERVER_URL": settings.SERVER,
+            "loop_anos": edicoes,
+            "num_estudantes": num_estudantes,
+            "num_feedbacks": num_feedbacks,
+            "alocacoes": alocacoes,
+            "coordenacao": coordenacao,
+            "edicoes": edicoes,
+            "cabecalhos": cabecalhos,
+        }
 
-    }
+    else:
+        
+        titulo = "Listagem de Feedbacks Finais dos Estudantes"
+        context = {
+            "edicoes": edicoes,
+            "titulo": titulo,
+        }
+
     return render(request, 'projetos/lista_feedback_estudantes.html', context)
 
 

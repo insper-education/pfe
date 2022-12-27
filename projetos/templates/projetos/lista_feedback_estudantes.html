@@ -12,7 +12,9 @@
     <script src="{% static 'js/Chart.min.js' %}"></script>
     {% comment %} <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script> {% endcomment %}
     <script src="{% static 'js/chartjs-plugin-labels.js' %}"></script>
-
+    
+    {% include "tabelas_includes.html" %}
+    
     {% comment %} Para chamar os Tooltips {% endcomment %}
     <script>{% include "tooltip.js" %}</script>
 {% endblock %}
@@ -21,11 +23,15 @@
 
   {% url 'estudante_feedback' as feedback_url%}
 
-  <span class="titulo">Listagem de Feedbacks Finais dos Estudantes</span>
+  <span class="titulo">{{titulo}}</span>
 
   Link para pesquisa: <a href="{{ feedback_url }}">{{ SERVER_URL }}{{ feedback_url }}</a><br><br>
   
   <!-- VER: https://stackoverflow.com/questions/53202862/trying-to-sort-tables-with-w3-js-but-its-not-sorting-numbers-properly -->
+
+  {% include "edicoes.html" %}
+
+  <div class="atualizar">
 
     <script>
       var recomendaria = [0, 0, 0];
@@ -35,14 +41,12 @@
       var comentarios = [];
     </script>
 
-    <table id="FeedbacksTable">
-      <tr>
-        <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome</th>
-        <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Projeto</th>
-        <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Data</th>
-        <th class="text-center">Mensagem</th>
-      </tr>      
-      {% for estudante, projeto, feedback in alocacoes %} 
+  {% include "tabelas_top.html" with tabela="Feedbacks" cabecalhos=cabecalhos %}
+      {% comment %} <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome</th>
+      <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Projeto</th>
+      <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Data</th>
+      <th class="text-center">Mensagem</th> {% endcomment %}
+      {% for estudante, projeto, feedback in alocacoes %}
         <tr class="item">
           <td style='font-size:80%'>
             {{estudante.user.get_full_name}}
@@ -73,15 +77,16 @@
             <script>comentarios.push("{{feedback.outros}}");</script>
           {% endif %}
 
-
           <td style='font-size:80%' class="text-center">
-            <a href="mailto:{{estudante.user.email}}?subject=Feedback%20Final%20PFE&amp;body={% include 'mensagem_feedback_final.html' %}">
+            {% comment %} <a href="mailto:{{estudante.user.email}}?subject=Feedback%20Final%20PFE&amp;body={% include 'mensagem_feedback_final.html' %}" target='_blank'> {% endcomment %}
+            <a href="mailto:{{estudante.user.email}}?subject=Feedback%20Final%20PFE&amp;body={% include 'mensagem_feedback_final.html' %}" target='_blank'>
               e-mail
             </a>
           </td>
         </tr>
       {% endfor %}
     </table>
+  </div>
   
 
   <p>&nbsp;</p>
@@ -99,6 +104,7 @@
 
   <p>&nbsp;</p>
   <p>&nbsp;</p>
+
   <table id="ComentariosTable"  style="background-color: #eee;" >
     <tr><td><b>Comentários:</b></td></tr>
   </table>
@@ -112,7 +118,7 @@
   <p>&nbsp;</p>
   <p>&nbsp;</p>
 
-  <div id="canvas-holder">
+  <div class="chart-container" style="position: relative; max-width:64vh">
       <canvas id="bar-feedbacks"></canvas>
   </div>
 
@@ -323,16 +329,12 @@
       };
 
 
-
-
-
     var config_feedbacks = {
         type: 'bar',
         data: {
         labels: [
             {% for loop in loop_anos %}
-            "{{loop}}.2",
-            "{{loop|add:1}}.1",
+              "{{loop}}",
             {% endfor %}
             ],
         datasets: [
@@ -393,8 +395,15 @@
 
     }
 
-    window.onload = carrega_grafico
+      function carrega_pagina() {
+        carrega_grafico();
+      };
+      window.onload = carrega_pagina
 
     </script>
+
+  </div>
+
+  {% include "edicoes_ajax.html" with tabela='Feedbacks' %}
 
 {% endblock %}
