@@ -70,8 +70,7 @@ var table = $('#{{tabela}}Table').DataTable( {
                 });
             }
         }
-    },          
-
+    },
     buttons: [ 
         
         $.extend( true, {}, buttonCommon, {
@@ -126,7 +125,10 @@ var table = $('#{{tabela}}Table').DataTable( {
         buttons: {
             colvis: 'Colunas'
         }
-    }
+    },
+    columnDefs: [  {% comment %} Para ordenar com os acentos {% endcomment %}
+        { type: 'chinese-string', targets: 0 }
+    ],
 } );
 
 table.buttons().container().appendTo( '#{{tabela}}Table_wrapper .col-md-6:eq(0)' );
