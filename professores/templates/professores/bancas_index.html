@@ -115,29 +115,33 @@
       max-width: 900px;
       margin: 0 auto;
     }
-  </style>
-  <style>
-  .wrap {
-    display: flex;
-  }
-
-  .one {
-    width: 20%;
-  }
-
-  .two {
-    width: 80%;
-  }
-
-  @media (max-width: 900px) {
+  
     .wrap {
-      flex-direction: column-reverse;
+      display: flex;
     }
-    .one,
+
+    .one {
+      width: 20%;
+    }
+
     .two {
-      width: auto;
+      width: 80%;
     }
-  }
+
+    .fc-center,
+    .fc-button {
+      font-size: min(2.1vw, 1em);
+    }
+
+    @media (max-width: 900px) {
+      .wrap {
+        flex-direction: column-reverse;
+      }
+      .one,
+      .two {
+        width: auto;
+      }
+    }
   </style>
 
 {% endblock %}
