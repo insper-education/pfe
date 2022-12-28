@@ -92,17 +92,21 @@
   {% endif %}
 
   <strong>Por semestre</strong>
-  <div class="row align-items-start mb-2">
+  <div class="row align-items-start mb-2 table-responsive">
     <div class="ml-3">
       <div class="input-group input-group-sm">
         <div class="input-group-prepend">
           <label class="input-group-text" for="filterEdicaoSemestre">Edição</label>
         </div>
-        <select class="custom-select" id="filterEdicaoSemestre">
-          {% for edicao in edicoes reversed %}
-              <option value="{{edicao}}" {% if edicao == atual %}selected{% endif %}>{{edicao}}</option>
-          {% endfor %}
-        </select>
+
+        <div class="input-group-sm">
+          <select class="custom-select" id="filterEdicaoSemestre">
+            {% for edicao in edicoes reversed %}
+                <option value="{{edicao}}" {% if edicao == atual %}selected{% endif %}>{{edicao}}</option>
+            {% endfor %}
+          </select>
+        </div>
+
         <div id="spinnerSemestre" class="ml-2 input-group-append" style="display:none">
           <div class="spinner-border text-secondary ml-auto" style="width: 1.8rem; height: 1.8rem;" role="status" aria-hidden="true">
             <span class="sr-only input-group-text">Carregando...</span>
@@ -155,17 +159,19 @@
   <label class="form-check-label">)</label>
 
 
-  <div class="row align-items-start mb-2">
+  <div class="row align-items-start mb-2 table-responsive">
     <div class="ml-3">
       <div class="input-group input-group-sm">
         <div class="input-group-prepend">
           <label class="input-group-text" for="filterEdicaoProjetos">Edição</label>
         </div>
-        <select class="custom-select" id="filterEdicaoProjetos">
-          {% for edicao in edicoes reversed %}
-              <option value="{{edicao}}" {% if edicao == atual %}selected{% endif %}>{{edicao}}</option>
-          {% endfor %}
-        </select>
+        <div class="input-group-sm">
+          <select class="custom-select" id="filterEdicaoProjetos">
+            {% for edicao in edicoes reversed %}
+                <option value="{{edicao}}" {% if edicao == atual %}selected{% endif %}>{{edicao}}</option>
+            {% endfor %}
+          </select>
+        </div>
         <div id="spinnerProjetos" class="ml-2 input-group-append" style="display:none">
           <div class="spinner-border text-secondary ml-auto" style="width: 1.8rem; height: 1.8rem;" role="status" aria-hidden="true">
             <span class="sr-only input-group-text">Carregando...</span>
