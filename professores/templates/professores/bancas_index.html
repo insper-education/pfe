@@ -45,6 +45,12 @@
         businessHours: true, // display business hours
         editable: true,
         height: "auto",
+        eventTimeFormat: {
+          hour: '2-digit', //2-digit, numeric
+          minute: '2-digit', //2-digit, numeric
+          meridiem: false, //lowercase, short, narrow, false (display of AM/PM)
+          hour12: false //true, false
+        },
         events: [
           {% for banca in bancas %} 
             {
