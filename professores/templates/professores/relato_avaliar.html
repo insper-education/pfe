@@ -84,169 +84,55 @@
 
 {% block content %}
 
-    <form method="post" id="avaliacaoform" enctype="multipart/form-data">
-      {% csrf_token %}
+  <form method="post" id="avaliacaoform" enctype="multipart/form-data">
+    {% csrf_token %}
 
-      <b>Projeto:</b> {{projeto.titulo}}<br>
-      {% if projeto.orientador %}
-        {% if projeto.proposta.intercambio %}
-          <b>Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
-        {% else %}
-          <b>Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
-        {% endif %}
-        {{projeto.orientador}}<br>
+    <b>Projeto:</b> {{projeto.titulo}}<br>
+    {% if projeto.orientador %}
+      {% if projeto.proposta.intercambio %}
+        <b>Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
       {% else %}
-        Orientador: Não definido
+        <b>Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
       {% endif %}
+      {{projeto.orientador}}<br>
+    {% else %}
+      Orientador: Não definido
+    {% endif %}
+    <br><br>
+
+    {% for alocacao, relato in alocacoes_relatos %}
+
+      <div class="panel panel-default border border-secondary" style="display: inline-block; padding: 12px; max-width: 100%;">
+
+      <b>Estudante:</b> {{alocacao.aluno}}<br>
+      <b>Data do relato:</b> 
+      {% if relato %}
+        {{relato.momento|date:"DATE_FORMAT"}}
+      {% else %}
+          Não entregue
+      {% endif %}  
+      <br>
+      <textarea id="relato" name="relato" rows="10" cols="160" maxlength="4096" disabled>{{relato.texto}}</textarea><br>
+
+      <label>Desempenho esperado</label>:&nbsp;&nbsp;&nbsp;&nbsp;
+      <div class="custom-control custom-radio custom-control-inline">
+        <input type="radio" id="customRadioInline0{{relato.id}}" name="op.{{relato.id}}" class="custom-control-input"
+                value="1" {% if relato.avaliacao > 0 %}checked="checked"{% endif %} {% if not relato or not editor %}disabled {% endif %}>
+        <label class="custom-control-label" for="customRadioInline0{{relato.id}}">Adequado</label>
+      </div>
+      <div class="custom-control custom-radio custom-control-inline">
+        <input type="radio" id="customRadioInline1{{relato.id}}" name="op.{{relato.id}}" class="custom-control-input"
+                value="0" {% if relato.avaliacao == 0 %}checked="checked"{% endif %} {% if not relato or not editor %}disabled {% endif %}>
+        <label class="custom-control-label" for="customRadioInline1{{relato.id}}">Inadequado</label>
+      </div>
+      </div>
       <br><br>
 
-      {% for alocacao, relato in alocacoes_relatos %}
-  
-        <div class="panel panel-default border border-secondary" style="display: inline-block; padding: 12px;">
+    {% endfor %}
 
-        <b>Estudante:</b> {{alocacao.aluno}}<br>
-        <b>Data do relato:</b> 
-        {% if relato %}
-          {{relato.momento|date:"DATE_FORMAT"}}
-        {% else %}
-           Não entregue
-        {% endif %}  
-        <br>
-        <textarea id="relato" name="relato" rows="10" cols="160" maxlength="4096" disabled>{{relato.texto}}</textarea><br>
-
-        <label>Desempenho esperado</label>:&nbsp;&nbsp;&nbsp;&nbsp;
-        <div class="custom-control custom-radio custom-control-inline">
-          <input type="radio" id="customRadioInline0{{relato.id}}" name="op.{{relato.id}}" class="custom-control-input"
-                 value="1" {% if relato.avaliacao > 0 %}checked="checked"{% endif %} {% if not relato or not editor %}disabled {% endif %}>
-          <label class="custom-control-label" for="customRadioInline0{{relato.id}}">Adequado</label>
-        </div>
-        <div class="custom-control custom-radio custom-control-inline">
-          <input type="radio" id="customRadioInline1{{relato.id}}" name="op.{{relato.id}}" class="custom-control-input"
-                 value="0" {% if relato.avaliacao == 0 %}checked="checked"{% endif %} {% if not relato or not editor %}disabled {% endif %}>
-          <label class="custom-control-label" for="customRadioInline1{{relato.id}}">Inadequado</label>
-        </div>
-
-        </div>
-
-        {% comment %} 
-        {% if objetivos %}
-          <br><h5>Ponderação por Objetivos de Aprendizagem</h5>
-          {% for objetivo in objetivos %}
-          
-          <label for="nps">
-            <div data-toggle="modal" data-target="#modal{{objetivo.id}}">
-              <b>{{objetivo.titulo}}</b>: {{objetivo.objetivo}}
-            </div>
-          </label>
-            
-                  
-        <!-- Modal -->
-                  
-        <div class="modal fade" id="modal{{objetivo.id}}" tabindex="-1" role="dialog" aria-labelledby="modalLabel{{objetivo.id}}" aria-hidden="true">
-          <div class="modal-dialog modal-xl" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h6 class="modal-title" id="modalLabel{{objetivo.id}}">
-                  <b>{{objetivo.titulo}}</b>: {{objetivo.objetivo}}</h6>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-
-                  <div class="table-responsive">
-                  <table style="width:100%">
-                    <tr>
-                      <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I">
-                      </th>
-                      <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I">
-                        <label style="white-space: nowrap;">
-                          <font size="2"><span class="nivel">Insatisfatório&nbsp;</span>(I)</font>
-                        </label>
-                      </th>
-                      <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}D">
-                        <label style="white-space: nowrap;">
-                          <font size="2"><span class="nivel">Em Desenvolvimento&nbsp;</span>(D)</font>
-                        </label>
-                      </th>
-                      <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX">
-                        <label style="white-space: nowrap; margin-right: 2em;">
-                          <font size="2"><span class="nivel">Essencial&nbsp;</span>(C)</font>
-                        </label>
-                      </th>
-                      <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX">
-                        <label style="white-space: nowrap; margin-right: 2em;">
-                          <font size="2"><span class="nivel">Proficiente&nbsp;</span>(B)</font>
-                        </label>
-                      </th>
-                      <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX">
-                        <label style="white-space: nowrap; margin-right: 2em;">
-                          <font size="2"><span class="nivel">Avançado&nbsp;</span>(A)</font>
-                        </label>
-                      </th>
-                    </tr>
-                    <tr>
-                      <!-- Fase Intermediária -->
-                        <td style="text-align:center; vertical-align: middle;"><label for="objetivo{{objetivo.id}}NA" class="reduzido"><b>fase intermediária</b></label></td>
-                        <td><label class="reduzido">{{objetivo.rubrica_intermediaria_I}}</label></td>
-                        <td><label class="reduzido">{{objetivo.rubrica_intermediaria_D}}</label></td>
-                        <td><label class="reduzido">{{objetivo.rubrica_intermediaria_C}}</label></td>
-                        <td><label class="reduzido">{{objetivo.rubrica_intermediaria_B}}</label></td>
-                        <td><label class="reduzido">{{objetivo.rubrica_intermediaria_A}}</label></td>
-                      </tr>  
-                      <tr>
-                        <!-- Fase Final -->
-                        <td style="text-align:center; vertical-align: middle;"><label for="objetivo{{objetivo.id}}NA" class="reduzido"><b>fase final</b></label></td>
-                        <td><label class="reduzido">{{objetivo.rubrica_final_I}}</label></td>
-                        <td><label class="reduzido">{{objetivo.rubrica_final_D}}</label></td>
-                        <td><label class="reduzido">{{objetivo.rubrica_final_C}}</label></td>
-                        <td><label class="reduzido">{{objetivo.rubrica_final_B}}</label></td>
-                        <td><label class="reduzido">{{objetivo.rubrica_final_A}}</label></td>
-                    </tr>
-                  </table>
-                  </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div style="position:relative; max-width: 860px;">
-          
-          <input type="range" id="objetivo.{{objetivo.id}}" class="form-range" name="objetivo.{{objetivo.id}}" min="0" max="10" step="1.0" list="ticks" value="0" style="width: 860px; max-width: 100%;">
-          <datalist id="ticks">
-              <option value="0" label="0">0</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5" label="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
-              <option value="10" label="10">10</option>
-          </datalist>
-        </div>
-
-
-        <br>
-            
-          {% endfor %}
-
-        {% else %}
-          <span class="red-bold">Não foram definidos Objetivos de Aprendizagem para essa Avaliação.</span><br>
-        {% endif %}
-
-
-         {% endcomment %}
-        
-        <br><br>
-
-  {% endfor %}
-
-  <label for="observacoes">Informe suas observações para a coordenação do PFE.</label><br>
-  <textarea id="observacoes" name="observacoes" rows="18" cols="164" maxlength="4096" {% if not editor %}disabled{% endif %}
-            placeholder="Caso identifique alguma dificuldade com algum aluno ou o grupo, descreva aqui que a coordenação do PFE irá lhe auxiliar.">{% if observacoes %}{{observacoes}}{% endif %}</textarea>
+    <label for="observacoes">Informe suas observações para a coordenação do PFE.</label><br>
+    <textarea id="observacoes" name="observacoes" rows="18" cols="164" maxlength="4096" {% if not editor %}disabled{% endif %}
+              placeholder="Caso identifique alguma dificuldade com algum aluno ou o grupo, descreva aqui que a coordenação do PFE irá lhe auxiliar.">{% if observacoes %}{{observacoes}}{% endif %}</textarea>
 
     <p>&nbsp;</p>
 
@@ -254,6 +140,6 @@
       <button type="submit">Enviar</button>
     {% endif %}
 
-    </form>
+  </form>
 
 {% endblock %}
