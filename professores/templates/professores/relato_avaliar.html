@@ -98,14 +98,14 @@
     {% else %}
       Orientador: Não definido
     {% endif %}
-    <br><br>
+    <br>
 
     {% for alocacao, relato in alocacoes_relatos %}
 
       <div class="panel panel-default border border-secondary" style="display: inline-block; padding: 12px; max-width: 100%;">
 
-        <b>Estudante:</b> {{alocacao.aluno}}<br>
-        <b>Data do relato:</b> 
+        <b>Estudante: </b><a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno}}</a><br>
+        <b>Data do relato: </b> 
         {% if relato %}
           {{relato.momento|date:"DATE_FORMAT"}}
         {% else %}
