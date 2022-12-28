@@ -104,27 +104,29 @@
 
       <div class="panel panel-default border border-secondary" style="display: inline-block; padding: 12px; max-width: 100%;">
 
-      <b>Estudante:</b> {{alocacao.aluno}}<br>
-      <b>Data do relato:</b> 
-      {% if relato %}
-        {{relato.momento|date:"DATE_FORMAT"}}
-      {% else %}
-          Não entregue
-      {% endif %}  
-      <br>
-      <textarea id="relato" name="relato" rows="10" cols="160" maxlength="4096" disabled>{{relato.texto}}</textarea><br>
+        <b>Estudante:</b> {{alocacao.aluno}}<br>
+        <b>Data do relato:</b> 
+        {% if relato %}
+          {{relato.momento|date:"DATE_FORMAT"}}
+        {% else %}
+            Não entregue
+        {% endif %}  
+        <br>
+        <textarea id="relato" name="relato" rows="10" cols="160" maxlength="4096" disabled>{{relato.texto}}</textarea><br>
 
-      <label>Desempenho esperado</label>:&nbsp;&nbsp;&nbsp;&nbsp;
-      <div class="custom-control custom-radio custom-control-inline">
-        <input type="radio" id="customRadioInline0{{relato.id}}" name="op.{{relato.id}}" class="custom-control-input"
-                value="1" {% if relato.avaliacao > 0 %}checked="checked"{% endif %} {% if not relato or not editor %}disabled {% endif %}>
-        <label class="custom-control-label" for="customRadioInline0{{relato.id}}">Adequado</label>
-      </div>
-      <div class="custom-control custom-radio custom-control-inline">
-        <input type="radio" id="customRadioInline1{{relato.id}}" name="op.{{relato.id}}" class="custom-control-input"
-                value="0" {% if relato.avaliacao == 0 %}checked="checked"{% endif %} {% if not relato or not editor %}disabled {% endif %}>
-        <label class="custom-control-label" for="customRadioInline1{{relato.id}}">Inadequado</label>
-      </div>
+        <label>Desempenho esperado</label>:&nbsp;&nbsp;&nbsp;&nbsp;
+        <div>
+          <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio" id="customRadioInline0{{relato.id}}" name="op.{{relato.id}}" class="custom-control-input"
+                    value="1" {% if relato.avaliacao > 0 %}checked="checked"{% endif %} {% if not relato or not editor %}disabled {% endif %}>
+            <label class="custom-control-label" for="customRadioInline0{{relato.id}}">Adequado</label>
+          </div>
+          <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio" id="customRadioInline1{{relato.id}}" name="op.{{relato.id}}" class="custom-control-input"
+                    value="0" {% if relato.avaliacao == 0 %}checked="checked"{% endif %} {% if not relato or not editor %}disabled {% endif %}>
+            <label class="custom-control-label" for="customRadioInline1{{relato.id}}">Inadequado</label>
+          </div>
+        </div>
       </div>
       <br><br>
 
