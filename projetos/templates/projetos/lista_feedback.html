@@ -25,7 +25,7 @@
   
   <!-- VER: https://stackoverflow.com/questions/53202862/trying-to-sort-tables-with-w3-js-but-its-not-sorting-numbers-properly -->
 
-  {% if feedbacks %}
+  <div class="table-responsive">
     <table id="FeedbacksTable">
       <tr>
         <th>ver</th>
@@ -74,19 +74,16 @@
         </tr>
       {% endfor %}
     </table>
-  {% else %}
-    <p>Não existem feedbacks disponíveis.</p>
-  {% endif %}
-
+  </div>
+  
   <p>&nbsp;</p>
 
   <div id="canvas-holder">
       <canvas id="bar-feedbacks"></canvas>
   </div>
 
-  <p>&nbsp;</p>
 
-<script>
+  <script>
     
     var config_feedbacks = {
         type: 'bar',
@@ -133,8 +130,15 @@
       window.projeto = new Chart(bar_feedbacks, config_feedbacks);
     }
 
-    window.onload = carrega_grafico
+    function carrega_pagina() {
+      carrega_grafico();
+    }
 
-    </script>
+    function carrega_site(){
+      carrega_pagina();
+    };
+    window.onload = carrega_site
+
+  </script>
 
 {% endblock %}
