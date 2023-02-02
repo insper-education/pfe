@@ -14,7 +14,7 @@
       {% else %}
         Prezad{% if certificado.usuario.genero == 'F' %}a{% else %}o{% endif %}
       {% endif %}
-      {{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}},      
+      {{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}},
       %0D%0A%0D%0A
 
   {% if certificado.tipo_de_certificado == 101 %} {% comment %} orientador {% endcomment %}
@@ -28,11 +28,11 @@
       %0D%0A
 
       -%20opção:%20{% if formatada %}%3Cb%3E{% endif %}Trabalho de conclusão de curso de graduação{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
-      -%20título:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.get_titulo}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20título:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.get_titulo|parse_quote}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
       -%20ano:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.ano}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
       -%20nome do orientando:%20{% if formatada %}%3Cb%3E{% endif %}
       {% for alocacao in certificado.projeto.alocacao_set.all %}
-        {{alocacao.aluno.user.get_full_name}}{% if not forloop.last %},{% endif %}
+        {{alocacao.aluno.user.get_full_name|parse_quote}}{% if not forloop.last %},{% endif %}
       {% endfor %}
       {% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
       -%20instituição:%20{% if formatada %}%3Cb%3E{% endif %}Insper Instituto de Ensino e Pesquisa{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
@@ -50,11 +50,11 @@
       %0D%0A
 
       -%20opção:%20{% if formatada %}%3Cb%3E{% endif %}Orientação de outra natureza{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
-      -%20título:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.get_titulo}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20título:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.get_titulo|parse_quote}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
       -%20ano:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.ano}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
       -%20nome do orientando:%20{% if formatada %}%3Cb%3E{% endif %}
       {% for alocacao in certificado.projeto.alocacao_set.all %}
-        {{alocacao.aluno.user.get_full_name}}{% if not forloop.last %},{% endif %}
+        {{alocacao.aluno.user.get_full_name|parse_quote}}{% if not forloop.last %},{% endif %}
       {% endfor %}
       {% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
       -%20instituição:%20{% if formatada %}%3Cb%3E{% endif %}Insper Instituto de Ensino e Pesquisa{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
@@ -73,11 +73,11 @@
       %0D%0A
 
       -%20natureza:%20{% if formatada %}%3Cb%3E{% endif %}Graduação{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
-      -%20título:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.get_titulo}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20título:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.get_titulo|parse_quote}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
       -%20ano:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.ano}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
       -%20nome do candidato:%20{% if formatada %}%3Cb%3E{% endif %}
       {% for alocacao in certificado.projeto.alocacao_set.all %}
-        {{alocacao.aluno.user.get_full_name}}{% if not forloop.last %},{% endif %}
+        {{alocacao.aluno.user.get_full_name|parse_quote}}{% if not forloop.last %},{% endif %}
       {% endfor %}
       {% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
       -%20instituição:%20{% if formatada %}%3Cb%3E{% endif %}Insper Instituto de Ensino e Pesquisa{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
@@ -97,11 +97,11 @@
       %0D%0A
 
       -%20natureza:%20{% if formatada %}%3Cb%3E{% endif %}Graduação{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
-      -%20título:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.get_titulo}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20título:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.get_titulo|parse_quote}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
       -%20ano:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.ano}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
       -%20nome do candidato:%20{% if formatada %}%3Cb%3E{% endif %}
       {% for alocacao in certificado.projeto.alocacao_set.all %}
-        {{alocacao.aluno.user.get_full_name}}{% if not forloop.last %},{% endif %}
+        {{alocacao.aluno.user.get_full_name|parse_quote}}{% if not forloop.last %},{% endif %}
       {% endfor %}
       {% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
       -%20instituição:%20{% if formatada %}%3Cb%3E{% endif %}Insper Instituto de Ensino e Pesquisa{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
@@ -134,7 +134,7 @@
       {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
       Primeiramente muito obrigado pela parceria com o Insper no Projeto Final de Engenharia. 
       Gostaríamos de agradecer sua participação como mentor{% if certificado.usuario.genero == 'F' %}a{% endif %} no Projeto Final de Engenharia do Insper.
-      Esperamos que tenha tido uma boa experiência com nossos estudantes e agradecemos muito por todo seu tempo dedicado, bem como todo o apoio da equipe da {{certificado.projeto.organizacao}}.%20{% if formatada %}%3Cb%3E{% endif %}%0D%0A
+      Esperamos que tenha tido uma boa experiência com nossos estudantes e agradecemos muito por todo seu tempo dedicado, bem como todo o apoio da equipe da {{certificado.projeto.organizacao|parse_quote}}.%20{% if formatada %}%3Cb%3E{% endif %}%0D%0A
       %0D%0A
 
       {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}

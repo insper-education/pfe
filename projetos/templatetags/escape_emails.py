@@ -13,4 +13,4 @@ register = template.Library()
 @register.filter
 def parse_quote(value):
     """Remove e-comercial e outros simbolos que podem comprometer a montagem da URL."""
-    return parse.quote(value)
+    return parse.quote(str(value))
