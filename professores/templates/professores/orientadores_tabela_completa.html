@@ -45,6 +45,11 @@
               {{grupos|length}}
             </td>
           </tr>
+          {% if forloop.last %}
+            <tr ><td style="border-bottom: none; border-right: none; border-left: none;" >
+              <b>Total de Orientadores: {{ forloop.counter }}</b>
+            </td></tr>
+          {% endif %}
         {% endfor %}
       </table>
       <br>
