@@ -46,9 +46,9 @@
             </td>
           </tr>
           {% if forloop.last %}
-            <tr ><td style="border-bottom: none; border-right: none; border-left: none;" >
+            <tr ><td style="border-right: none;">
               <b>Total de Orientadores: {{ forloop.counter }}</b>
-            </td></tr>
+            </td><td></td></tr>
           {% endif %}
         {% endfor %}
       </table>
