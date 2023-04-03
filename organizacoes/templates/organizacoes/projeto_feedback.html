@@ -6,6 +6,11 @@
 {% endcomment %}
 
 {% block head %}
+
+  {% load static %}
+
+  <link rel="stylesheet" href="{% static 'css/style_botao_lingua.css' %}">
+
   <style>
     
     datalist {
@@ -35,14 +40,26 @@
 
 {% block content %}
 
-  <span class="titulo">Formulário de Feedback de Organizações Parceiras</span>
+  <span class="titulo">
+    <span lang="pt">Formulário de Feedback de Organizações Parceiras</span>
+    <span lang="en">Organizations Feedback Form</span>
+  </span>
+
+
+  <div style="max-width: 850px;">
+  {% comment %} Botão para seletor de lingua (não esqueça do CSS) {% endcomment %}
+  {% include "botao_lingua.html" %}
+  </div>
 
   <form action="" method="post"> {% csrf_token %}  
 
     <div class="form-group mt-4">
 
       <div class="form-group row" style="max-width: 700px;">
-        <label for="nome" class="col-sm-2 col-form-label">Nome</label>
+        <label for="nome" class="col-sm-2 col-form-label">
+          <span lang="pt">Nome</span>
+          <span lang="en">Name</span>
+        </label>
         <div class="col-sm-10">
           <input type="text" class="form-control" id="nome" name="nome">
         </div>
@@ -54,36 +71,68 @@
         </div>
       </div>
       <div class="form-group row" style="max-width: 700px;">
-        <label for="empresa" class="col-sm-2 col-form-label">Empresa</label>
+        <label for="empresa" class="col-sm-2 col-form-label">
+          <span lang="pt">Empresa</span>
+          <span lang="en">Company</span>
+        </label>
         <div class="col-sm-10">
           <input type="text" class="form-control" id="empresa" name="empresa">
         </div>
       </div>
 
       
-      <p class="text-danger">O preenchimento das identificações acima é opcional.</p>
+      <p class="text-danger">
+        <span lang="pt">O preenchimento das identificações acima é opcional.</span>
+        <span lang="en">Completing the identifications above is optional.</span>
+      </p>
 
-      <label for="tecnico" class="mt-5" style="max-width: 860px;">O projeto avançou conforme o esperado? Se SIM, você sabe qual foi a fórmula do sucesso?
-      Se NÃO, consegue identificar os motivos? Por exemplo: demora em fechar o escopo, estudantes
-      pouco engajados, estudantes com dúvidas básicas em determinado assunto, equipe não entrosada, ...</label>
+      <label for="tecnico" class="mt-5" style="max-width: 860px;">
+        <span lang="pt">O projeto avançou conforme o esperado? Se SIM, você sabe qual foi a fórmula do sucesso?
+          Se NÃO, consegue identificar os motivos? Por exemplo: demora em fechar o escopo, estudantes
+          pouco engajados, estudantes com dúvidas básicas em determinado assunto, equipe não entrosada, ...</span>
+        <span lang="en">Did the project progress as expected? If YES, do you know what the success formula was?
+          If NO, can you identify the reasons? For example: delay in closing the scope,
+          students who are not very engaged, students with basic doubts about a certain subject,
+          a team that is not engaged, ...</span>
+      </label>
       <textarea name="tecnico" class="form-control" style="max-width: 860px;" rows="5" id="tecnico" maxlength="1000"></textarea>
 
-      <label for="comunicacao" class="mt-5" style="max-width: 860px;">Parte do esperado com essa atividade era que os estudantes entendessem melhor qual era o desafio
-      proposto e discutissem com vocês como prototipar e implementar o acordado. Os estudantes foram
-      ativos em se comunicar, entendendo o desejo de vocês (e de seus usuários finais se for o
-      caso) e discutir possíveis soluções? Você pode comentar brevemente como foram essas interações?</label>    
+      <label for="comunicacao" class="mt-5" style="max-width: 860px;">
+        <span lang="pt">Parte do esperado com essa atividade era que os estudantes entendessem melhor qual era o desafio
+          proposto e discutissem com vocês como prototipar e implementar o acordado. Os estudantes foram
+          ativos em se comunicar, entendendo o desejo de vocês (e de seus usuários finais se for o
+          caso) e discutir possíveis soluções? Você pode comentar brevemente como foram essas interações?</span>
+        <span lang="en">Part of what was expected with this activity was that students would better understand what
+          the proposed challenge was and discuss with you how to prototype and implement the agreed upon.
+          Were students active in communicating, understanding your (and your end-users', if applicable) wishes and discussing possible solutions?
+          Can you briefly comment on how these interactions were?</span>
+      </label>    
       <textarea name="comunicacao" class="form-control" style="max-width: 860px;" rows="5" id="comunicacao" maxlength="1000"></textarea>
     
-      <label for="organizacao" class="mt-5" style="max-width: 860px;">A equipe de estudantes alocada para o seu projeto estava devidamente organizada? Por exemplo:
-      os estudantes foram pontuais nos encontros, se portaram de forma adequada, todos se dedicaram
-      de acordo, apresentaram uma proposta de condução do projeto adequada?</label>
+      <label for="organizacao" class="mt-5" style="max-width: 860px;">
+        <span lang="pt">A equipe de estudantes alocada para o seu projeto estava devidamente organizada? Por exemplo:
+          os estudantes foram pontuais nos encontros, se portaram de forma adequada, todos se dedicaram
+          de acordo, apresentaram uma proposta de condução do projeto adequada?</span>
+        <span lang="en">Was the team of students allocated to your project properly organized?
+          For example: were the students punctual in the meetings, did they behave properly,
+          did they all dedicate themselves accordingly, did they present an adequate proposal
+          for conducting the project?</span>
+      </label>
       <textarea name="organizacao" class="form-control" style="max-width: 860px;" rows="5" id="organizacao" maxlength="1000"></textarea>
 
-      <label for="outros" class="mt-5" style="max-width: 860px;">Tem outras observações que gostaria de compartilhar conosco? Por exemplo o processo de
-      interação com o Insper, ou algo que o Insper devia ter previsto nesta proposta de parceria?</label>
+      <label for="outros" class="mt-5" style="max-width: 860px;">
+        <span lang="pt">Tem outras observações que gostaria de compartilhar conosco? Por exemplo o processo de
+          interação com o Insper, ou algo que o Insper devia ter previsto nesta proposta de parceria?</span>
+        <span lang="en">Do you have any other observations you'd like to share with us? For example,
+          the interaction process with Insper, or something that Insper should have foreseen in this
+          partnership proposal?</span>
+      </label>
       <textarea name="outros" class="form-control" style="max-width: 860px;" rows="5" id="outros" maxlength="1000"></textarea>
 
-      <label for="nps" class="mt-5" style="max-width: 860px;">Em uma escala de 0 a 10, o quanto você recomendaria o PFE (Projeto Final de Engenharia) para colegas ou parceiros de outras empresas?</label>
+      <label for="nps" class="mt-5" style="max-width: 860px;">
+        <span lang="pt">Em uma escala de 0 a 10, o quanto você recomendaria o PFE (Projeto Final de Engenharia) para colegas ou parceiros de outras empresas?</span>
+        <span lang="en">On a scale of 0 to 10, how much would you recommend the PFE (Final Engineering Project) to colleagues or partners from other companies?</span>        
+      </label>
       <div style="position:relative; max-width: 860px;">
         
         <span id="cor_texto" style="position:absolute; color:red; min-width:100px;">

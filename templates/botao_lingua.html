@@ -1,0 +1,19 @@
+<div class="df-switch">
+  <button id="toggle-event" type="button" class="btn btn-lg btn-toggle" data-toggle="button" aria-pressed="false" autocomplete="off">
+      <div class="inner-handle"></div>
+      <div class="handle"></div>
+  </button>
+</div>
+
+<script>
+  $('#toggle-event').click(function () {
+    if($(this).hasClass('active')){
+      $('[lang="pt"]').show();
+      $('[lang="en"]').hide();
+    } else {
+      $('[lang="pt"]').hide();
+      $('[lang="en"]').show();
+      $(":lang(en)").show();
+    }
+  });
+</script>
