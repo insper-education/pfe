@@ -176,6 +176,7 @@ FILE_UPLOAD_PERMISSIONS = 0o644
 
 # CELERY
 # CELERY_TIMEZONE = 'America/Sao_Paulo'
+# Tempo usado para os alarmes eh GMT
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost//'
 CELERY_BEAT_SCHEDULE = {
     'backup': {
@@ -188,7 +189,7 @@ CELERY_BEAT_SCHEDULE = {
     },
     'send-email-daily': {
         'task': 'projetos.tasks.envia_aviso',
-        'schedule': crontab(hour=6, minute=0),
+        'schedule': crontab(hour=10, minute=0),
     },
     'certbot-renew': {
         'task': 'projetos.tasks.certbot_renew',
