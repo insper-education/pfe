@@ -18,6 +18,22 @@ urlpatterns = [
          views.index_professor,
          name='index_professor'),
 
+    path('bancas_alocadas/',
+         views.bancas_alocadas,
+         name='bancas_alocadas'),
+
+     path('orientacoes_alocadas/',
+         views.orientacoes_alocadas,
+         name='orientacoes_alocadas'),
+
+     path('coorientacoes_alocadas/',
+         views.coorientacoes_alocadas,
+         name='coorientacoes_alocadas'),
+
+     path('mentorias_alocadas/',
+         views.mentorias_alocadas,
+         name='mentorias_alocadas'),
+
     path('bancas_criar/',
          views.bancas_criar,
          name='bancas_criar'),

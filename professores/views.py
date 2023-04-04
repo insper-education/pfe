@@ -62,6 +62,75 @@ def index_professor(request):
     }
     return render(request, 'professores/index_professor.html', context=context)
 
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def bancas_alocadas(request):
+    """Mostra detalhes sobre o professor."""
+    professor = get_object_or_404(Professor, pk=request.user.professor.pk)
+
+    bancas = (Banca.objects.filter(membro1=professor.user) |
+              Banca.objects.filter(membro2=professor.user) |
+              Banca.objects.filter(membro3=professor.user))
+
+    bancas = bancas.order_by("-startDate")
+
+    context = {
+        'professor': professor,
+        'bancas': bancas,
+    }
+
+    return render(request, 'professores/bancas_alocadas.html', context=context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def orientacoes_alocadas(request):
+    """Mostra detalhes sobre o professor."""
+    professor = get_object_or_404(Professor, pk=request.user.professor.pk)
+
+    projetos = Projeto.objects.filter(orientador=professor)\
+        .order_by("-ano", "-semestre", "titulo")
+
+    context = {
+        'professor': professor,
+        'projetos': projetos,
+    }
+
+    return render(request, 'professores/orientacoes_alocadas.html', context=context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def coorientacoes_alocadas(request):
+    """Mostra detalhes sobre o professor."""
+    professor = get_object_or_404(Professor, pk=request.user.professor.pk)
+
+    coorientacoes = Coorientador.objects.filter(usuario=professor.user)\
+        .order_by("-projeto__ano",
+                  "-projeto__semestre",
+                  "projeto__titulo")
+
+    context = {
+        'professor': professor,
+        'coorientacoes': coorientacoes,
+    }
+
+    return render(request, 'professores/coorientacoes_alocadas.html', context=context)
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def mentorias_alocadas(request):
+    """Mostra detalhes sobre o professor."""
+    professor = get_object_or_404(Professor, pk=request.user.professor.pk)
+
+    mentorias = Encontro.objects.filter(facilitador=professor.user)\
+        .order_by('startDate')
+
+    context = {
+        'professor': professor,
+        'mentorias': mentorias,
+    }
+
+    return render(request, 'professores/mentorias_alocadas.html', context=context)
+
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')

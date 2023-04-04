@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 3 de Abril de 2023
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load certificado_banca %}
+  <script>{% include "tooltip.js" %}</script>
+
+  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
+  {% include "reload.html" %}
+  
+{% endblock %}
+
+{% block content %}
+ 
+    <br>
+    <h4>Projeto(s) Coorientado(s)</h4>
+    <ol>
+    {% for coorientacao in coorientacoes %}
+      {% if coorientacao.projeto.alocacao_set.all.count > 0 %}
+        <li><a href="{% url 'projeto_completo' coorientacao.projeto.id %}">
+        [{{coorientacao.projeto.ano}}.{{coorientacao.projeto.semestre}}] -
+        {{coorientacao.projeto.get_titulo}}
+        ({{coorientacao.projeto.organizacao.nome}})
+        { {{ coorientacao.projeto.alocacao_set.all.count }} estudante(s) }
+        </a></li>
+      {% endif %}
+    {% empty %}
+      Projetos não encontrados
+    {% endfor %}
+    </ol>
+
+{% endblock %}

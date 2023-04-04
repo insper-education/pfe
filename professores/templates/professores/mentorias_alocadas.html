@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 3 de Abril de 2023
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load certificado_banca %}
+  <script>{% include "tooltip.js" %}</script>
+
+  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
+  {% include "reload.html" %}
+  
+{% endblock %}
+
+{% block content %}
+    
+    <br>
+    <h4>Mentorias em Projeto(s)</h4>
+    <ol>
+
+
+      <table>
+        {% for e in mentorias %} 
+          <tr>
+            <td>
+              <a class="imprimir" href="{% url 'dinamicas_editar' e.id %}">
+                <big><b>{{e.startDate}} - {{e.endDate|date:'H:i'}}</b></big><br>
+              </a>
+              {% if e.projeto %}
+                <b>Projeto:</b> <a class="imprimir" href="{% url 'projeto_completo' e.projeto.id %}">
+                  {{e.projeto.get_titulo}}
+                </a><br>
+                <b>Organização:</b> <a class="imprimir" href="{% url 'organizacao_completo' e.projeto.organizacao.id %}">{{ e.projeto.organizacao.nome }}</a><br>
+                <span class="orientador">
+                  {% if e.projeto.orientador %}
+                    {% if e.projeto.proposta.intercambio %}
+                      <b>Professor{% if e.projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
+                    {% else %}
+                      <b>Orientador{% if e.projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
+                    {% endif %}
+                    <a class="imprimir" href="{% url 'professor_detail' e.projeto.orientador.id %}">
+                      {{e.projeto.orientador.user.get_full_name}} 
+                    </a>
+                    <a class="email" href="mailto:{{e.projeto.orientador.user.email}}">&lt;{{e.projeto.orientador.user.email}}&gt;</a>
+                  {% endif %}
+                </span>
+                
+                {% if e.facilitador %}
+                  <div class="facilitador" style="margin-top: 8px;">
+                    <b>Facilitador:</b> <a class="imprimir" href="{% url 'user_detail' e.facilitador.id %}">{{ e.facilitador.get_full_name }}</a>
+                    <a class="email" href="mailto:{{e.facilitador.email}}">&lt;{{e.facilitador.email}}&gt;</a>&nbsp;
+                    <br>
+                  </div>
+                {% endif %}
+                {% if e.location %}
+                  <div class="local" style="margin-top: 8px;">
+                    <b>Local:</b> 
+                    {% if e.url_location %}
+                      <a href="{{e.location}}">
+                    {% endif %}
+                    {{e.location}}
+                    {% if e.url_location %}
+                      </a>
+                    {% endif %}
+                    <br>
+                  </div>
+                {% endif %}
+                <div class="grupo" style="margin-top: 8px;">
+                  <b>Grupo:</b>
+                  <ol>
+                    {% for alocacao in e.projeto.alocacao_set.all %} 
+                      <li><a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}
+                      <span class="curso">[{{ alocacao.aluno.get_curso_display }}]</span>
+                      <a class="email" href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>&nbsp;
+                      </a></li>
+                    {% endfor %}
+                  </ol>
+                </div>
+              {% else %}
+                Horário Livre<br><br>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          Mentorias não encontradas
+        {% endfor %}
+      </table>
+
+      <p>&nbsp;</p>
+    
+    {% comment %} {% for mentoria in mentorias %}
+        <li><a href="{% url 'projeto_completo' projeto.id %}">
+        {{projeto.ano}}.{{projeto.semestre}} -
+        {{projeto.get_titulo}}
+        ({{projeto.organizacao.nome}})
+        { {{ projeto.alocacao_set.all.count }} estudante(s) }
+        </a>
+        {% if projeto.certificado_orientador %}
+          <a href="{{ projeto.certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a>
+        {% endif %}
+        {% if projeto.proposta.intercambio %}
+          <sup data-toggle="tooltip" data-html="true" animation="true" title="Professor Responsável">PR</sup>
+        {% endif %}
+        </li>
+
+    {% empty %}
+      Mentorias não encontradas
+    {% endfor %}
+    </ol> {% endcomment %}
+
+  
+{% comment %}   
+
+  {% if bancas %}
+    <hr>
+    <h4>Participação em Banca(s)</h4>
+    <ol>
+    {% for banca in bancas %}
+        <li>
+          <a href="{% url 'banca_ver' banca.id %}">
+          {% if banca.tipo_de_banca == 0 %}
+            Final,
+          {% elif banca.tipo_de_banca == 1 %}
+            Intermediária,
+          {% endif %}
+          {% if banca.startDate %}
+            {{banca.startDate.date}},
+          {% endif %}
+          </a>
+          {% if banca.projeto %}
+            <a href="{% url 'projeto_completo' banca.projeto.id %}">
+              {% if banca.projeto.titulo_final %}
+                {{banca.projeto.titulo_final}}</a>,
+              {% else %}
+                {{banca.projeto.titulo}}</a>,
+              {% endif %}
+          {% endif %}
+          {% if banca.projeto.organizacao %}
+            <a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">
+              {{ banca.projeto.organizacao.nome }}
+            </a>
+          {% endif %}
+          {% with certificado=banca|certificado_banca:professor.user %}
+            {% if certificado %}
+              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a><br>
+            {% endif %}
+          {% endwith %}
+        </li>
+    {% empty %}
+      Bancas não encontrados
+    {% endfor %}
+    </ol>
+  {% endif %} {% endcomment %}
+
+{% endblock %}

@@ -12,10 +12,12 @@
 
 {% block content %}
     <br>
-    <h5>Agendamentos</h5>
+    <h5>Alocações</h5>
     <ul>
-        <li><a href="{% url 'bancas_index' %}">Bancas</a></li>
-        <li><a href="{% url 'dinamicas_index' %}">Mentorias</a></li>
+        <li><a href="{% url 'bancas_alocadas' %}">Bancas Alocadas</a></li>
+        <li><a href="{% url 'orientacoes_alocadas' %}">Orientações Alocadas</a></li>
+        <li><a href="{% url 'coorientacoes_alocadas' %}">Coorientações Alocadas</a></li>
+        <li><a href="{% url 'mentorias_alocadas' %}">Mentorias Alocadas</a></li>
     </ul>
 
     <h5>Relatos Quinzenais</h5>

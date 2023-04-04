@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 3 de Abril de 2023
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load certificado_banca %}
+  <script>{% include "tooltip.js" %}</script>
+
+  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
+  {% include "reload.html" %}
+  
+{% endblock %}
+
+{% block content %}
+  
+    <br>
+    <h4>Participação em Banca(s)</h4>
+    <ol>
+    {% for banca in bancas %}
+        <li>
+          <a href="{% url 'banca_ver' banca.id %}">
+          {% if banca.tipo_de_banca == 0 %}
+            Final,
+          {% elif banca.tipo_de_banca == 1 %}
+            Intermediária,
+          {% endif %}
+          {% if banca.startDate %}
+            {{banca.startDate.date}},
+          {% endif %}
+          </a>
+          {% if banca.projeto %}
+            <a href="{% url 'projeto_completo' banca.projeto.id %}">
+              {% if banca.projeto.titulo_final %}
+                {{banca.projeto.titulo_final}}</a>,
+              {% else %}
+                {{banca.projeto.titulo}}</a>,
+              {% endif %}
+          {% endif %}
+          {% if banca.projeto.organizacao %}
+            <a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">
+              {{ banca.projeto.organizacao.nome }}
+            </a>
+          {% endif %}
+          {% with certificado=banca|certificado_banca:professor.user %}
+            {% if certificado %}
+              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a><br>
+            {% endif %}
+          {% endwith %}
+        </li>
+    {% empty %}
+      Bancas não encontrados
+    {% endfor %}
+    </ol>
+
+{% endblock %}
