@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 5 de Abril de 2023
+{% endcomment %}
+
+{% block head %}
+  <style>
+    textarea {
+      max-width:100%;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+
+  {% if mensagem %}
+    <h2 class="red-bold">{{mensagem}}</h2>
+  {% endif %}
+
+  <span class="titulo">Avaliação de Pares {% if momento == "intermediaria" %}Intermediária{% else %}Final{% endif %}</span>
+
+  <form action="" method="post"> {% csrf_token %}  
+
+    <div style="max-width: 700px;">
+        Preencha este formulário de feedback de pares para seu orientador e cada um dos membros de sua equipe.
+      As mensagens para seus colegas de grupo, se forem usadas, serão compiladas anonimamente com as de todos
+      os outros membros de sua equipe. Escreva suas mensagens usando uma linguagem anônima se não desejar que
+      seu feedback o identifique. Esse processo visa tentar ajudar alguém a aprender, crescer ou mudar. O foco
+      está em ajudar a pessoa a melhorar, seja envolvendo uma habilidade, uma ideia, um conhecimento, uma
+      prática específica ou a aparência ou personalidade dessa pessoa.
+    </div>
+
+    <hr>
+
+    {% for colega in colegas %}
+
+      <br>
+      <div style="max-width: 700px;"><b>colega: {{colega.aluno}}</b></div>
+
+      <br>
+      <label for="aprecia">
+        O que você aprecia do colega?
+      </label><br>
+      <textarea id="aprecia" name="aprecia" rows="4" cols="80" maxlength="1000" {% if vencido %}disabled{% endif %}>{% if aprecia %}{{aprecia}}{% endif %}</textarea>
+      <br><br>
+
+      <label for="atrapalhando">
+        O que você vê o colega 1 fazendo, ou deixando de fazer, que está atrapalhando?
+      </label><br>
+      <textarea id="atrapalhando" name="atrapalhando" rows="4" cols="80" maxlength="1000" {% if vencido %}disabled{% endif %}>{% if atrapalhando %}{{atrapalhando}}{% endif %}</textarea>
+      <br><br>
+
+      <label for="mudar">
+        O que o colega 1 pode mudar, que faria diferença para você?
+      </label><br>
+      <textarea id="mudar" name="mudar" rows="4" cols="80" maxlength="1000" {% if vencido %}disabled{% endif %}>{% if mudar %}{{mudar}}{% endif %}</textarea>
+
+
+      <br><br>
+      <b>Entrega</b>
+      <div style="max-width: 700px;">
+        <label><input type="radio" name="entrega" value="0" required {% if entrega == "0"%}checked="checked"{% endif %} {% if vencido %}disabled{% endif %}>
+          Entregou muito abaixo de esperado, colocando a entrega em risco e obrigando outro(s) membro(s) a mudarem planejamentos pessoais para garanti-la.</label><br>
+
+        <label><input type="radio" name="entrega" value="1" required {% if entrega == "1"%}checked="checked"{% endif %} {% if vencido %}disabled{% endif %}>
+          Entregou abaixo do esperado.</label><br>
+
+        <label><input type="radio" name="entrega" value="2" required {% if entrega == "2"%}checked="checked"{% endif %} {% if vencido %}disabled{% endif %}>
+          Entregou precisamente o esperado.</label><br>
+
+        <label><input type="radio" name="entrega" value="3" required {% if entrega == "3"%}checked="checked"{% endif %} {% if vencido %}disabled{% endif %}>
+          Entregou acima do esperado.</label><br>
+
+        <label><input type="radio" name="entrega" value="4" required {% if entrega == "4"%}checked="checked"{% endif %} {% if vencido %}disabled{% endif %}>
+          Entregou muito acima do esperado, mudando planejamentos pessoais para garantir uma entrega que estava em risco.</label><br>
+      </div>
+
+
+      <br>
+      <b>Iniciativa</b>
+      <div style="max-width: 700px;">
+        <label><input type="radio" name="iniciativa" value="0" required {% if iniciativa == "0"%}checked="checked"{% endif %} {% if vencido %}disabled{% endif %}>
+          Mesmo quando lembrado, não cumpriu as tarefas designadas.</label><br>
+
+        <label><input type="radio" name="iniciativa" value="1" required {% if iniciativa == "1"%}checked="checked"{% endif %} {% if vencido %}disabled{% endif %}>
+          Precisou ser lembrado, mas cumpriu as tarefas designadas.</label><br>
+
+        <label><input type="radio" name="iniciativa" value="2" required {% if iniciativa == "2"%}checked="checked"{% endif %} {% if vencido %}disabled{% endif %}>
+          Autonomamente, cumpriu as tarefas designadas, nem mais nem menos.</label><br>
+
+        <label><input type="radio" name="iniciativa" value="3" required {% if iniciativa == "3"%}checked="checked"{% endif %} {% if vencido %}disabled{% endif %}>
+          Além de cumprir as tarefas designadas, ajudou outros(s) membro(s) que estavam tendo dificuldades.</label><br>
+
+        <label><input type="radio" name="iniciativa" value="4" required {% if iniciativa == "4"%}checked="checked"{% endif %} {% if vencido %}disabled{% endif %}>
+          Monopolizou parte das tarefas, assumindo tarefas de outro(s) membro(s) mesmo quando não havia evidência de dificuldades.</label><br>
+      </div>
+
+
+      <br>
+      <b>Comunicação</b>
+      <div style="max-width: 700px;">
+        <label><input type="radio" name="comunicacao" value="0" required {% if comunicacao == "0"%}checked="checked"{% endif %} {% if vencido %}disabled{% endif %}>
+          Teve dificuldades, nunca as comunicou e ao final elas impediram a entrega.</label><br>
+
+        <label><input type="radio" name="comunicacao" value="1" required {% if comunicacao == "1"%}checked="checked"{% endif %} {% if vencido %}disabled{% endif %}>
+          Teve dificuldades e nunca as comunicou, mas pelo menos não impediram a entrega.</label><br>
+
+        <label><input type="radio" name="comunicacao" value="2" required {% if comunicacao == "2"%}checked="checked"{% endif %} {% if vencido %}disabled{% endif %}>
+          Aparentemente não teve dificuldades, mas nunca reportou nada.</label><br>
+
+        <label><input type="radio" name="comunicacao" value="3" required {% if comunicacao == "3"%}checked="checked"{% endif %} {% if vencido %}disabled{% endif %}>
+          Comunicou dificuldades. Independente da entrega ter sido feita ou não, a equipe não foi surpreendida.</label><br>
+
+        <label><input type="radio" name="comunicacao" value="4" required {% if comunicacao == "4"%}checked="checked"{% endif %} {% if vencido %}disabled{% endif %}>
+          Apesar de não ter dificuldades, estava sempre reportando como estava indo.</label><br>
+      </div>
+      <br>
+      <hr>
+
+    {% endfor %}
+
+    <br>
+    <input {% if vencido %}disabled{% endif %} type="submit" value="Atualizar">
+
+  </form>
+
+{% endblock %}

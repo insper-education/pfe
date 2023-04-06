@@ -28,7 +28,7 @@ from projetos.messages import email, message_agendamento, create_message
 
 from users.models import PFEUser, Aluno, Professor, Alocacao, Opcao, OpcaoTemporaria
 
-from users.support import configuracao_estudante_vencida, adianta_semestre
+from users.support import configuracao_estudante_vencida, configuracao_pares_vencida, adianta_semestre
 
 from .models import Relato
 
@@ -291,6 +291,58 @@ def estudante_feedback_hashid(request, hashid):
 
     except (ValueError, TypeError, PFEUser.DoesNotExist):
         return HttpResponseNotFound('<h1>Usuário não encontrado!</h1>')
+
+
+@login_required
+@transaction.atomic
+def avaliacao_pares(request, momento):
+    """Permite realizar a avaliação de pares."""
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
+
+    if user.tipo_de_usuario == 3:
+        mensagem = "Você não está cadastrado como aluno!"
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
+
+    if user.tipo_de_usuario == 1:
+
+        estudante = Aluno.objects.get(pk=request.user.aluno.pk)
+
+        # Avaliações de Pares
+        # 31, 'Avaliação de Pares Intermediária'
+        # 32, 'Avaliação de Pares Final'
+        if momento=="intermediaria":
+            prazo = configuracao_pares_vencida(estudante, 31)
+        else:
+            prazo = configuracao_pares_vencida(estudante, 32)
+
+        projeto = Projeto.objects\
+            .filter(alocacao__aluno=estudante).order_by("ano", "semestre").last()
+        
+        alocacoes = Alocacao.objects.filter(projeto=projeto).exclude(aluno=estudante)
+
+        if (not prazo) and request.method == 'POST':
+            # estudante.trabalhou = request.POST.get("trabalhou", None)
+            # estudante.user.save()
+            # estudante.save()
+            return render(request, 'users/atualizado.html',)
+
+        context = {
+            'vencido': prazo,
+            "colegas": alocacoes,
+            'momento': momento,
+        }
+    else:  # Supostamente professores
+        context = {
+            'mensagem': "Você não está cadastrado como estudante.",
+            'vencido': False,
+            "colegas": Alocacao.objects.filter(projeto__id=96), # Exemplo
+            'momento': momento,
+        }
+    return render(request, 'estudantes/avaliacao_pares.html', context)
 
 
 @login_required

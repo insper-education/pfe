@@ -6,9 +6,10 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 2 de Outubro de 2020
 """
 
+import datetime
 from django.utils import timezone
 
-from projetos.models import Configuracao, Certificado, Avaliacao2
+from projetos.models import Configuracao, Certificado, Avaliacao2, Evento
 from .models import Aluno
 
 
@@ -44,6 +45,29 @@ def configuracao_estudante_vencida(estudante):
 
     return vencido
 
+# Para avaliação de pares
+def configuracao_pares_vencida(estudante, tipo):
+    """Retorna verdade se ainda em tempo de estudante fazer avaliação de pares."""
+    configuracao = Configuracao.objects.get()
+
+    ano = configuracao.ano
+    semestre = configuracao.semestre
+
+    prazo = 10
+    
+    if estudante.anoPFE < ano:
+        return True
+    elif estudante.anoPFE == ano and semestre == 2 and estudante.semestrePFE == 1:
+        return True
+    
+    hoje = datetime.date.today()
+    delta = datetime.timedelta(days=prazo)
+    eventos = Evento.objects.filter(tipo_de_evento=tipo, startDate__gt=hoje, startDate__lt=hoje+delta)
+    
+    if not eventos:
+        return True
+
+    return False
 
 def get_edicoes(tipo, anual=False):
     """Função usada para recuperar todas as edições de 2018.2 até hoje."""

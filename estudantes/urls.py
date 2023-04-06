@@ -22,6 +22,10 @@ urlpatterns = [
          views.areas_interesse,
          name='areas_interesse'),
 
+    path('avaliacao_pares/<str:momento>',
+         views.avaliacao_pares,
+         name='avaliacao_pares'),
+
     path('encontros_marcar/',
          views.encontros_marcar,
          name='encontros_marcar'),

@@ -140,6 +140,18 @@
         <h5>Formulário de Relato Quinzenal</h5>
     </a>
 
+    <hr>
+
+    {% comment %} Avaliação de Pares {% endcomment %}
+    {% comment %} <a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'avaliacao_pares' 'intermediaria' %}" {% endif %} >
+        <h5>Avaliação de Pares Intermediária</h5>
+    </a>
+    <a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'avaliacao_pares' 'final' %}" {% endif %} >
+        <h5>Avaliação de Pares Final</h5>
+    </a>
+
+    <hr> {% endcomment %}
+
     <a {% if not fase_final %} class="disabled" onclick="showMessage('final')" {% else %} href="{% url 'estudante_feedback' %}" {% endif %} >
         <h5>Enviar feedback final de projeto</h5>
     </a>
