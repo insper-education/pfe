@@ -37,29 +37,29 @@
     {% for colega in colegas %}
 
       <br>
-      <div style="max-width: 700px;"><b>colega: {{colega.aluno}}</b></div>
+      <div style="max-width: 700px;"><b>Colega: {{colega.aluno}}</b></div>
 
       <br>
       <label for="aprecia">
-        O que você aprecia do colega?
+        O que você aprecia n{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}?
       </label><br>
       <textarea id="aprecia" name="aprecia" rows="4" cols="80" maxlength="1000" {% if vencido %}disabled{% endif %}>{% if aprecia %}{{aprecia}}{% endif %}</textarea>
       <br><br>
 
       <label for="atrapalhando">
-        O que você vê o colega 1 fazendo, ou deixando de fazer, que está atrapalhando?
+        O que você vê {% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}} fazendo, ou deixando de fazer, que está atrapalhando?
       </label><br>
       <textarea id="atrapalhando" name="atrapalhando" rows="4" cols="80" maxlength="1000" {% if vencido %}disabled{% endif %}>{% if atrapalhando %}{{atrapalhando}}{% endif %}</textarea>
       <br><br>
 
       <label for="mudar">
-        O que o colega 1 pode mudar, que faria diferença para você?
+        O que {% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}} pode mudar, que faria diferença para você?
       </label><br>
       <textarea id="mudar" name="mudar" rows="4" cols="80" maxlength="1000" {% if vencido %}disabled{% endif %}>{% if mudar %}{{mudar}}{% endif %}</textarea>
 
 
       <br><br>
-      <b>Entrega</b>
+      <b>Entrega d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}</b>
       <div style="max-width: 700px;">
         <label><input type="radio" name="entrega" value="0" required {% if entrega == "0"%}checked="checked"{% endif %} {% if vencido %}disabled{% endif %}>
           Entregou muito abaixo de esperado, colocando a entrega em risco e obrigando outro(s) membro(s) a mudarem planejamentos pessoais para garanti-la.</label><br>
@@ -79,7 +79,7 @@
 
 
       <br>
-      <b>Iniciativa</b>
+      <b>Iniciativa d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}</b>
       <div style="max-width: 700px;">
         <label><input type="radio" name="iniciativa" value="0" required {% if iniciativa == "0"%}checked="checked"{% endif %} {% if vencido %}disabled{% endif %}>
           Mesmo quando lembrado, não cumpriu as tarefas designadas.</label><br>
@@ -99,7 +99,7 @@
 
 
       <br>
-      <b>Comunicação</b>
+      <b>Comunicação d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}</b>
       <div style="max-width: 700px;">
         <label><input type="radio" name="comunicacao" value="0" required {% if comunicacao == "0"%}checked="checked"{% endif %} {% if vencido %}disabled{% endif %}>
           Teve dificuldades, nunca as comunicou e ao final elas impediram a entrega.</label><br>
