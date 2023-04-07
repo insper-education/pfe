@@ -121,7 +121,7 @@
     {% endfor %}
 
     <br>
-    <input {% if vencido %}disabled{% endif %} type="submit" value="Enviar">
+    <input {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %} type="submit" value="Enviar">
 
   </form>
 
