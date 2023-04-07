@@ -18,6 +18,14 @@ urlpatterns = [
          views.index_professor,
          name='index_professor'),
 
+    path('avaliacoes_pares/',
+         views.avaliacoes_pares,
+         name='avaliacoes_pares'),
+
+    path('avaliacoes_pares_todas/',
+         views.avaliacoes_pares_todas,
+         name='avaliacoes_pares_todas'),
+
     path('bancas_alocadas/',
          views.bancas_alocadas,
          name='bancas_alocadas'),
@@ -137,5 +145,10 @@ urlpatterns = [
     path('todos_professores/',
          views.todos_professores,
          name='todos_professores'),
+
+    path('ver_pares/<int:alocacao_id>/<str:momento>',
+         views.ver_pares,
+         name='ver_pares'),
+
 
 ]

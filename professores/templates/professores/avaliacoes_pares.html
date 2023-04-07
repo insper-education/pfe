@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 6 de Abril de 2023
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load aval_pares %}
+
+  {% comment %} Para chamar os Tooltips {% endcomment %}
+  <script>{% include "tooltip.js" %}</script>
+  
+  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
+  {% include "reload.html" %}
+
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">Avaliações de Pares</span>
+
+  {% comment %} Seletor da edição da pesquisa {% endcomment %}
+  {% include "edicoes.html" %}
+  <br>
+
+  <div class="atualizar">
+
+    {% for projeto in projetos %}
+
+      <strong>Projeto:</strong> <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a><br>
+      <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
+      {% if administracao %}<strong>Orientador:</strong>
+        {% if projeto.orientador %}
+          <a href="{% url 'professor_detail' projeto.orientador.id %}">{{projeto.orientador}}</a>
+        {% else %}
+          ORIENTADOR NÃO DEFINIDO
+        {% endif %}
+      <br>
+      {% endif %}
+      {% if projeto.avancado or projeto.proposta.internacional or projeto.proposta.intercambio %}
+        <p><strong>Tipo</strong>:
+
+          {% if projeto.avancado %}
+            <font color="red">PFE Avançado</font>
+          {% endif %}
+
+          {% if projeto.avancado and projeto.proposta.internacional %}
+            /
+          {% endif %}
+
+          {% if projeto.proposta.internacional %}
+            <font color="red">Internacional</font>
+          {% endif %}
+
+          {% if projeto.avancado or projeto.proposta.internacional %}
+            {% if projeto.proposta.intercambio %}
+              /
+            {% endif %}
+          {% endif %}
+
+          {% if projeto.proposta.intercambio %}
+            <font color="red">Intercâmbio</font>
+          {% endif %}
+
+          {% if projeto.time_misto %}
+            <font color="red">Time Misto</font>
+          {% endif %}
+          
+        </p>
+      {% endif %}
+
+      <strong>Organização:</strong>
+      {% if projeto.organizacao %}
+        <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>
+      {% else %}
+        ORGANIZAÇAO NÃO DEFINIDA
+      {% endif %}
+      <br>
+
+      <div style="margin-top: 6px;">
+        <strong>Avaliações Intermediárias:</strong><br>
+        <ul>
+          {% for alocacao in projeto.alocacao_set.all %}
+            <li>
+              {% with feita=alocacao|aval_pares:"intermediaria" %}
+                {% if feita %}<a href="{% url 'ver_pares' alocacao.id 'intermediaria' %}">{% endif %}
+                  {{alocacao.aluno}}
+                {% if feita %}</a>{% endif %}
+              {% endwith %}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div style="margin-top: 6px;">
+      <strong>Avaliações Finais:</strong><br>
+        <ul>
+          {% for alocacao in projeto.alocacao_set.all %}
+            <li>
+              {% with feita=alocacao|aval_pares:"final" %}
+                {% if feita %}<a href="{% url 'ver_pares' alocacao.id 'final' %}">{% endif %}
+                  {{alocacao.aluno}}
+                {% if feita %}</a>{% endif %}
+              {% endwith %}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      {% if not forloop.last %}
+        <hr>
+      {% endif %}
+
+    {% empty %}
+
+      Você não está alocado em projetos esse semestre.
+
+    {% endfor %}
+
+    <script>
+      function carrega_pagina(){
+      };
+      window.onload = carrega_pagina
+    </script>
+
+  </div> 
+
+  <script>
+
+    function carrega_pagina() {
+    };
+
+    function carrega_site() {
+      var filterEdicao = localStorage.getItem("filterEdicao");
+      if (filterEdicao !== null && $("#filterEdicao option[value='"+filterEdicao+"']").length > 0 ) {
+        $('#filterEdicao').val(filterEdicao).trigger('change');
+      }
+      carrega_pagina();
+    };
+
+    window.onload = carrega_site
+  </script>
+
+  {% include "edicoes_ajax.html" %}
+
+{% endblock %}

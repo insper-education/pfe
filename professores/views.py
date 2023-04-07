@@ -34,7 +34,7 @@ from .support import editar_banca
 from .support import recupera_orientadores_por_semestre
 from .support import recupera_coorientadores_por_semestre
 
-from estudantes.models import Relato
+from estudantes.models import Relato, Pares
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
@@ -61,6 +61,62 @@ def index_professor(request):
         'professor_id': professor_id,
     }
     return render(request, 'professores/index_professor.html', context=context)
+
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def avaliacoes_pares(request):
+    """Formulários com os projetos e avaliações de pares."""
+
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
+
+    configuracao = get_object_or_404(Configuracao)
+
+    projetos = Projeto.objects.filter(orientador=user.professor, ano=configuracao.ano, semestre=configuracao.semestre)
+
+    context = {
+        "user": user,
+        "projetos": projetos,
+    }
+
+    return render(request, 'professores/avaliacoes_pares.html', context=context)
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def avaliacoes_pares_todas(request):
+    """Formulários com os projetos e relatos a avaliar do professor orientador."""
+
+    if request.is_ajax():
+
+        if 'edicao' in request.POST:
+
+            projetos = Projeto.objects.all()
+
+            edicao = request.POST['edicao']
+            if edicao != 'todas':
+                periodo = request.POST['edicao'].split('.')
+                ano = int(periodo[0])
+                semestre = int(periodo[1])
+                projetos = projetos.filter(ano=ano, semestre=semestre)
+                
+            context = {
+                "administracao": True,
+                "projetos": projetos,
+            }
+
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+
+    else:
+
+        edicoes, _, _ = get_edicoes(Projeto)
+        context = {
+                "administracao": True,
+                "edicoes": edicoes,
+            }
+
+    return render(request, 'professores/avaliacoes_pares.html', context=context)
+
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')
@@ -1522,7 +1578,6 @@ def coorientadores_tabela(request):
     return render(request, 'professores/coorientadores_tabela.html', context)
 
 
-
 @login_required
 @permission_required("users.altera_professor", login_url='/')
 def relatos_quinzenais(request):
@@ -1894,3 +1949,43 @@ def objetivos_rubricas(request):
     }
 
     return render(request, 'professores/objetivos_rubricas.html', context)
+
+
+@login_required
+@transaction.atomic
+def ver_pares(request, alocacao_id, momento):
+    """Permite visualizar a avaliação de pares."""
+
+    configuracao = get_object_or_404(Configuracao)
+
+    user = get_object_or_404(Alocacao, pk=alocacao_id)
+    estudante = Aluno.objects.get(pk=user.aluno.pk)
+
+    # Avaliações de Pares
+    # 31, 'Avaliação de Pares Intermediária'
+    # 32, 'Avaliação de Pares Final'
+    if momento=="intermediaria":
+        tipo=0
+    else:
+        tipo=1
+
+    projeto = Projeto.objects\
+        .filter(alocacao__aluno=estudante, ano=configuracao.ano, semestre=configuracao.semestre).first()
+    
+    alocacao_de = Alocacao.objects.get(projeto=projeto, aluno=estudante)
+    alocacoes = Alocacao.objects.filter(projeto=projeto).exclude(aluno=estudante)
+    
+    pares = []
+    for alocacao in alocacoes:
+        par = Pares.objects.filter(alocacao_de=alocacao_de, alocacao_para=alocacao, tipo=tipo).first()
+        pares.append(par)
+
+    colegas = zip(alocacoes, pares)
+
+    context = {
+        "estudante": estudante,
+        "colegas": colegas,
+        'momento': momento,
+    }
+
+    return render(request, 'professores/ver_pares.html', context)
