@@ -62,7 +62,7 @@ def configuracao_pares_vencida(estudante, tipo):
     
     hoje = datetime.date.today()
     delta = datetime.timedelta(days=prazo)
-    eventos = Evento.objects.filter(tipo_de_evento=tipo, startDate__gt=hoje, startDate__lt=hoje+delta)
+    eventos = Evento.objects.filter(tipo_de_evento=tipo, startDate__gte=hoje, startDate__lt=hoje+delta)
     
     if not eventos:
         return True

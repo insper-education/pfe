@@ -30,7 +30,7 @@ from users.models import PFEUser, Aluno, Professor, Alocacao, Opcao, OpcaoTempor
 
 from users.support import configuracao_estudante_vencida, configuracao_pares_vencida, adianta_semestre
 
-from .models import Relato
+from .models import Relato, Pares
 
 @login_required
 def index_estudantes(request):
@@ -75,6 +75,12 @@ def index_estudantes(request):
             if banca_final:
                 context['fase_final'] = hoje > banca_final.endDate
 
+        # Avaliações de Pares
+        # 31, 'Avaliação de Pares Intermediária'
+        # 32, 'Avaliação de Pares Final'
+        context["fora_fase_feedback_intermediario"] = configuracao_pares_vencida(estudante, 31)
+        context["fora_fase_feedback_final"] = configuracao_pares_vencida(estudante, 32)
+
     # Caso professor ou administrador
     elif usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4:
         context['professor_id'] = get_object_or_404(Professor, pk=request.user.professor.pk).id
@@ -86,7 +92,7 @@ def index_estudantes(request):
     context['ano'], context['semestre'] = adianta_semestre(ano, semestre)
 
 
-
+    
     return render(request, 'estudantes/index_estudantes.html', context=context)
 
 
@@ -298,6 +304,7 @@ def estudante_feedback_hashid(request, hashid):
 def avaliacao_pares(request, momento):
     """Permite realizar a avaliação de pares."""
     user = get_object_or_404(PFEUser, pk=request.user.pk)
+    configuracao = get_object_or_404(Configuracao)
 
     if user.tipo_de_usuario == 3:
         mensagem = "Você não está cadastrado como aluno!"
@@ -316,30 +323,75 @@ def avaliacao_pares(request, momento):
         # 32, 'Avaliação de Pares Final'
         if momento=="intermediaria":
             prazo = configuracao_pares_vencida(estudante, 31)
+            tipo=0
         else:
             prazo = configuracao_pares_vencida(estudante, 32)
+            tipo=1
 
         projeto = Projeto.objects\
-            .filter(alocacao__aluno=estudante).order_by("ano", "semestre").last()
+            .filter(alocacao__aluno=estudante, ano=configuracao.ano, semestre=configuracao.semestre).first()
         
+        if not projeto:
+            mensagem = "Você não está alocao em um projeto esse semestre!"
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, 'generic.html', context=context)
+
+        alocacao_de = Alocacao.objects.get(projeto=projeto, aluno=estudante)
         alocacoes = Alocacao.objects.filter(projeto=projeto).exclude(aluno=estudante)
 
         if (not prazo) and request.method == 'POST':
-            # estudante.trabalhou = request.POST.get("trabalhou", None)
-            # estudante.user.save()
-            # estudante.save()
+
+            for alocacao in alocacoes:
+
+                (pares, _created) = Pares.objects.get_or_create(alocacao_de=alocacao_de,
+                                                                alocacao_para=alocacao,
+                                                                tipo=tipo)
+
+                if _created:
+                    pares.alocacao_de = alocacao_de
+                    pares.alocacao_para = alocacao
+                    pares.tipo=tipo
+
+                pares.aprecia = request.POST.get("aprecia"+str(alocacao.id), None)
+                pares.atrapalhando = request.POST.get("atrapalhando"+str(alocacao.id), None)
+                pares.mudar = request.POST.get("mudar"+str(alocacao.id), None)
+
+                entrega = request.POST.get("entrega"+str(alocacao.id), None)
+                if entrega:
+                    pares.entrega = int(entrega)
+
+                iniciativa = request.POST.get("iniciativa"+str(alocacao.id), None)
+                if iniciativa:
+                    pares.iniciativa = int(iniciativa)
+
+                comunicacao = request.POST.get("comunicacao"+str(alocacao.id), None)
+                if comunicacao:
+                    pares.comunicacao = int(comunicacao)
+
+                pares.save()
+
             return render(request, 'users/atualizado.html',)
+        
+        pares = []
+        for alocacao in alocacoes:
+            par = Pares.objects.filter(alocacao_de=alocacao_de, alocacao_para=alocacao, tipo=tipo).first()
+            pares.append(par)
+
+        colegas = zip(alocacoes, pares)
 
         context = {
             'vencido': prazo,
-            "colegas": alocacoes,
+            "colegas": colegas,
             'momento': momento,
         }
     else:  # Supostamente professores
         context = {
             'mensagem': "Você não está cadastrado como estudante.",
             'vencido': False,
-            "colegas": Alocacao.objects.filter(projeto__id=96), # Exemplo
+            "colegas": None, # Exemplo
             'momento': momento,
         }
     return render(request, 'estudantes/avaliacao_pares.html', context)
