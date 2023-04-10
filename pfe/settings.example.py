@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'administracao.apps.AdministracaoConfig',
     'operacional.apps.OperacionalConfig',
     'calendario.apps.CalendarioConfig',
+    'academica.apps.AcademicaConfig',
     'django.contrib.sites',
     'dbbackup',
     #'debug_toolbar',
