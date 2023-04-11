@@ -19,6 +19,12 @@
     <h2 class="red-bold">{{mensagem}}</h2>
   {% endif %}
 
+  {% if vencido %}
+    <h2 class="red-bold">Fora do Período de Avaliação de pares
+      {% if momento == "intermediaria" %}Intermediária{% else %}Final{% endif %}
+    </h2>
+  {% endif %}
+
   <span class="titulo">Avaliação de Pares {% if momento == "intermediaria" %}Intermediária{% else %}Final{% endif %}</span>
 
   <form action="" method="post"> {% csrf_token %}  
