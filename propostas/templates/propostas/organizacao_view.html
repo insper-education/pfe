@@ -21,7 +21,13 @@
         <option disabled selected value> -- selecione tipo de contato -- </option>
       {% endif %}
       {% for organizacao in organizacoes %}
-        <option value="{{organizacao.id}}" {% if proposta.organizacao == organizacao %}selected{% endif %} >{{organizacao.sigla}}</option>
+        <option value="{{organizacao.id}}" 
+           {% if proposta.organizacao %}
+              {% if proposta.organizacao == organizacao %}selected{% endif %}
+           {% else %}
+               {% if nome_organizacao|lower|truncatechars:3 == organizacao.sigla|lower|truncatechars:3 %}selected{% endif %}
+           {% endif %}
+        > {{organizacao.sigla|lower}} [{{organizacao.nome}}]</option>
       {% endfor %}
     </select>
     <input type="submit" style="display:none;"/>

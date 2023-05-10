@@ -662,7 +662,7 @@ def validate_alunos(request):
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", login_url='/')
-def link_organizacao(request, proposta_id):
+def link_organizacao(request, proposta_id, nome_organizacao=""):
     """Cria um anotação para uma organização parceira."""
     proposta = get_object_or_404(Proposta, id=proposta_id)
 
@@ -687,8 +687,9 @@ def link_organizacao(request, proposta_id):
         return JsonResponse(data)
 
     context = {
-        'organizacoes': Organizacao.objects.all(),
-        'proposta': proposta,
+        "organizacoes": Organizacao.objects.all().order_by(Lower('sigla')),
+        "proposta": proposta,
+        "nome_organizacao": nome_organizacao,
     }
 
     return render(request,
