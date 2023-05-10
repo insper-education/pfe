@@ -77,6 +77,7 @@
             <th scope="col" style="text-align: center;width:auto;"><span style="margin-right: 0.6ex;">Orientador</span></th>
             <th scope="col" style="text-align: center;width:auto;"><span style="margin-right: 0.6ex;">Período</span></th>
             <th scope="col" style="text-align: center;width:auto;"><span style="margin-right: 0.6ex;">Organização</span></th>
+            <th scope="col" style="text-align: center;width:auto;"><span style="margin-right: 0.6ex;">Banca Final</span></th>
             <th scope="col" style="text-align: center;width:auto;"><span style="margin-right: 0.6ex;">Documentos</span></th>
           </tr>
         </thead>
@@ -84,7 +85,7 @@
         {% for projeto in projetos %} 
             <tr class="item">
               <td>
-                <a href="{% url 'projeto_completo' projeto.id %}"
+                <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}"
                   data-toggle="tooltip" data-html="true" animation="true" 
                   title="
                     {% for alocacao in projeto.alocacao_set.all %}
@@ -176,12 +177,39 @@
               <!-- Organização -->
               <td>
                 {% if projeto and projeto.organizacao %}
-                  <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
+                  <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">
                     {{ projeto.organizacao.nome }}
                   </a>
                 {% else %}
                   ORGANIZAÇÃO NÃO DEFINIDA
                 {% endif %}
+              </td>
+
+              <!-- Banca Final -->
+              <td>
+                <small>
+                <ul class="grupo" style="padding-left: 20px;margin-bottom: 0px;">
+                {% for banca in projeto.banca_set.all %}
+                  {% if banca.tipo_de_banca == 0 %}
+                    {% if banca.membro1 %}
+                      <li><a class="imprimir" href="{% url 'user_detail' banca.membro1.id %}">
+                        {{banca.membro1.get_full_name}} 
+                      </a></li>
+                    {% endif %}
+                    {% if banca.membro2 %}
+                      <li><a class="imprimir" href="{% url 'user_detail' banca.membro2.id %}">
+                        {{banca.membro2.get_full_name}} 
+                      </a></li>
+                    {% endif %}
+                    {% if banca.membro3 %}
+                    <li><a class="imprimir" href="{% url 'user_detail' banca.membro3.id %}">
+                      {{banca.membro3.get_full_name}} 
+                    </a></li>
+                    {% endif %}  
+                  {% endif %}
+                {% endfor %}
+                </ul>
+                </small>
               </td>
               
               <!-- Documentos -->
