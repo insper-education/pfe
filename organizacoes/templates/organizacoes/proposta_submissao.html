@@ -177,14 +177,15 @@
     
     <br><br>
     {% if not liberadas_propostas %}
-      {% if vencida %}
-        <span class="red-bold">Essa proposta foi submetida em um semestre anterior,
-        ao salvar, você gerará uma nova proposta para ser apresentada agora para os estudantes.<br></span>
-        <input type="submit" value="Nova Proposta de Projeto ">
-      {% elif edicao %}
-        <input type="submit" value="Atualizar Proposta de Projeto">
+      {% if edicao %}
+        <input type="submit" name="update" value="Atualizar Proposta de Projeto">
       {% else %}
-        <input type="submit" value="Enviar Proposta de Projeto">
+        <input type="submit" name="new" value="Enviar Proposta de Projeto">
+      {% endif %}
+      {% if vencida %}
+        <input type="submit" name="new" value="Nova Proposta de Projeto ">
+        <span class="red-bold">Essa proposta foi submetida em um semestre anterior,
+          ao clicar em Nova Proposta, você gerará uma nova proposta para ser apresentada agora para os estudantes.<br></span>  
       {% endif %}
     {% endif %}
   

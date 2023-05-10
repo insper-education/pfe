@@ -548,7 +548,7 @@ def proposta_editar(request, slug):
 
     if request.method == 'POST':
         if (not liberadas_propostas) or (user.tipo_de_usuario == 4):
-            if vencida:
+            if request.POST.get("new"):
                 proposta = preenche_proposta(request, None)
             else:
                 preenche_proposta(request, proposta)
