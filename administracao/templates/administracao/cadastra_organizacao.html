@@ -41,19 +41,19 @@
   <form method="post" id="organizacaoform" enctype="multipart/form-data"> {% csrf_token %}
   
     <label for="organizacao">Nome da Organização:<br></label><br>
-    <textarea id="nome" name="nome" rows="1" cols="80" maxlength="100" required>{% if organizacao.nome %}{{organizacao.nome}}{% endif %}</textarea>
+    <textarea id="nome" name="nome" rows="1" cols="80" maxlength="100" required>{% if organizacao.nome %}{{organizacao.nome}}{% elif proposta.nome_organizacao %}{{proposta.nome_organizacao}}{% endif %}</textarea>
     <br><br>
 
-    <label for="sigla">Sigla:</label> <input type="text" size="48" id="sigla" name="sigla" value="{% if organizacao.sigla %}{{organizacao.sigla}}{% endif %}" required><br><br>
+    <label for="sigla">Sigla:</label> <input type="text" size="48" id="sigla" name="sigla" value="{% if organizacao.sigla %}{{organizacao.sigla}}{% elif proposta.nome_organizacao %}{{proposta.nome_organizacao}}{% endif %}" required><br><br>
 
     <label for="endereco">Endereço:<br></label><br>
-    <textarea id="endereco" name="endereco" rows="3" cols="80" maxlength="1000">{% if organizacao.endereco %}{{organizacao.endereco}}{% endif %}</textarea>
+    <textarea id="endereco" name="endereco" rows="3" cols="80" maxlength="1000">{% if organizacao.endereco %}{{organizacao.endereco}}{% elif proposta.endereco %}{{proposta.endereco}}{% endif %}</textarea>
     <br><br>
 
-    <label for="website">website:</label><input type="text" size="73" id="website" name="website" value="{% if organizacao.website %}{{organizacao.website}}{% endif %}" placeholder="https://www.insper.edu.br"><br><br>
+    <label for="website">website:</label><input type="text" size="73" id="website" name="website" value="{% if organizacao.website %}{{organizacao.website}}{% elif proposta.website %}{{proposta.website}}{% endif %}" placeholder="https://www.insper.edu.br"><br><br>
 
     <label for="informacoes">Informações sobre a organização:</label><br>
-    <textarea id="informacoes" name="informacoes" rows="4" cols="80" maxlength="1000">{% if organizacao.informacoes %}{{organizacao.informacoes}}{% endif %}</textarea>
+    <textarea id="informacoes" name="informacoes" rows="4" cols="80" maxlength="1000">{% if organizacao.informacoes %}{{organizacao.informacoes}}{% elif proposta.descricao_organizacao %}{{proposta.descricao_organizacao}}{% endif %}</textarea>
     <br><br>
 
     <label for="logo">Logotipo da organização:</label>

@@ -682,19 +682,13 @@ def validate_alunos(request):
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", login_url='/')
-def link_organizacao(request, proposta_id, nome_organizacao=""):
+def link_organizacao(request, proposta_id):
     """Cria um anotação para uma organização parceira."""
     proposta = get_object_or_404(Proposta, id=proposta_id)
 
     if request.is_ajax() and 'organizacao_id' in request.POST:
 
-        
-        organizacao_id = request.POST['organizacao_id']
-        
-        if organizacao_id == "new":
-            return redirect('/administracao/cadastrar_organizacao/')
-
-        organizacao_id = int(organizacao_id)
+        organizacao_id = int(request.POST['organizacao_id'])
         organizacao = get_object_or_404(Organizacao, id=organizacao_id)
 
         proposta.organizacao = organizacao
@@ -715,7 +709,6 @@ def link_organizacao(request, proposta_id, nome_organizacao=""):
     context = {
         "organizacoes": Organizacao.objects.all().order_by(Lower('sigla')),
         "proposta": proposta,
-        "nome_organizacao": nome_organizacao,
     }
 
     return render(request,

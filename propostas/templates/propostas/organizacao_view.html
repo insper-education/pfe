@@ -23,7 +23,7 @@
             {% if proposta.organizacao %}
                 {% if proposta.organizacao == organizacao %}selected{% endif %}
             {% else %}
-                {% if nome_organizacao|lower|slice:3 == organizacao.sigla|lower|slice:3 %}selected{% endif %}
+                {% if proposta.nome_organizacao|lower|slice:3 == organizacao.sigla|lower|slice:3 %}selected{% endif %}
             {% endif %}
           > {{organizacao.sigla}} [{{organizacao.nome}}]</option>
         {% endfor %}
@@ -32,7 +32,7 @@
     <input type="submit" style="display:none;"/>
   </div>
   <div class="modal-footer">
-    <small><a href="{% url 'cadastrar_organizacao'%}">Cadastrar Nova Organizacao</a></small>
+    <small><a href="{% url 'cadastrar_organizacao' proposta.id %}">Cadastrar Nova Organizacao</a></small>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
     <button id="atualiza" type="button" class="btn btn-primary" data-dismiss="modal">Atualizar</button>

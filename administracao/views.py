@@ -241,7 +241,7 @@ def registra_organizacao(request, org=None):
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", login_url='/')
-def cadastrar_organizacao(request):
+def cadastrar_organizacao(request, proposta_id=None):
     """Cadastra Organização na base de dados do PFE."""
     if request.method == 'POST':
 
@@ -269,7 +269,16 @@ def cadastrar_organizacao(request):
 
         return render(request, 'generic.html', context=context)
 
-    return render(request, 'administracao/cadastra_organizacao.html')
+
+    proposta = None
+    if proposta_id:
+        proposta = get_object_or_404(Proposta, id=proposta_id)
+
+    context = {
+        "proposta": proposta,
+    }
+    
+    return render(request, 'administracao/cadastra_organizacao.html', context=context)
 
 
 @login_required

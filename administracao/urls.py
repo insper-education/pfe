@@ -26,6 +26,10 @@ urlpatterns = [
          views.cadastrar_organizacao,
          name='cadastrar_organizacao'),
 
+    path('cadastrar_organizacao/<int:proposta_id>',
+         views.cadastrar_organizacao,
+         name='cadastrar_organizacao'),
+
     path('edita_organizacao/<int:primarykey>',
          views.edita_organizacao,
          name='edita_organizacao'),
