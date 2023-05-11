@@ -668,7 +668,13 @@ def link_organizacao(request, proposta_id, nome_organizacao=""):
 
     if request.is_ajax() and 'organizacao_id' in request.POST:
 
-        organizacao_id = int(request.POST['organizacao_id'])
+        
+        organizacao_id = request.POST['organizacao_id']
+        
+        if organizacao_id == "new":
+            return redirect('/administracao/cadastrar_organizacao/')
+
+        organizacao_id = int(organizacao_id)
         organizacao = get_object_or_404(Organizacao, id=organizacao_id)
 
         proposta.organizacao = organizacao

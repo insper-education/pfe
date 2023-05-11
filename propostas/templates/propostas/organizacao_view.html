@@ -17,25 +17,28 @@
 
     <label for="organizacao">Organização:</label>
     <select id="organizacao" name="organizacao" class="form-control" required>
-      {% if not organizacoes %}
-        <option disabled selected value> -- selecione tipo de contato -- </option>
+      {% if organizacoes %}
+        {% for organizacao in organizacoes %}
+          <option value="{{organizacao.id}}" 
+            {% if proposta.organizacao %}
+                {% if proposta.organizacao == organizacao %}selected{% endif %}
+            {% else %}
+                {% if nome_organizacao|lower|slice:3 == organizacao.sigla|lower|slice:3 %}selected{% endif %}
+            {% endif %}
+          > {{organizacao.sigla}} [{{organizacao.nome}}]</option>
+        {% endfor %}
       {% endif %}
-      {% for organizacao in organizacoes %}
-        <option value="{{organizacao.id}}" 
-           {% if proposta.organizacao %}
-              {% if proposta.organizacao == organizacao %}selected{% endif %}
-           {% else %}
-               {% if nome_organizacao|lower|truncatechars:3 == organizacao.sigla|lower|truncatechars:3 %}selected{% endif %}
-           {% endif %}
-        > {{organizacao.sigla|lower}} [{{organizacao.nome}}]</option>
-      {% endfor %}
     </select>
     <input type="submit" style="display:none;"/>
   </div>
   <div class="modal-footer">
+    <small><a href="{% url 'cadastrar_organizacao'%}">Cadastrar Nova Organizacao</a></small>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
     <button id="atualiza" type="button" class="btn btn-primary" data-dismiss="modal">Atualizar</button>
   </div>
+  
+  
 
 </form>
 
