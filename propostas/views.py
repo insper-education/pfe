@@ -608,6 +608,26 @@ def proposta_editar(request, slug):
 
 
 @login_required
+@permission_required('users.altera_professor', login_url='/')
+def proposta_remover(request, slug):
+    """Remove Proposta do Sistema por slug."""
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
+
+    if user.tipo_de_usuario != 4:  # admin
+        return HttpResponse("Sem privilégios de Administrador.", status=401)
+
+    proposta = get_object_or_404(Proposta, slug=slug)
+    proposta.delete()
+
+    context = {
+        "voltar": True,
+        "mensagem": "Proposta removida!",
+    }
+    return render(request, 'generic.html', context=context)
+
+       
+
+@login_required
 @transaction.atomic
 @permission_required('users.altera_professor', login_url='/')
 def validate_alunos(request):

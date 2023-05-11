@@ -208,12 +208,14 @@
     <br><br>
     <a class="myButton" href="{% url 'proposta_editar' proposta.slug %}">Editar Proposta</a>
     <a class="myButton" href="{% url 'proposta_detalhes' proposta.id %}">Visão do Estudante</a>
-
+    
     {% for projeto in projetos %}
       <a class="myButton" href="{% url 'projeto_completo' projeto.id %}">Projeto {{projeto.ano}}.{{projeto.semestre}}</a>
+      <a class="myButton" onClick="return confirm('Proposta possui um projeto e não pode ser removida')" >Remove Proposta</a>
     {% empty %}
       <a class="myButton" data-toggle="tooltip" data-html="true" animation="true" title="criar projeto dessa proposta"
       onclick="cria_projeto()" style="color:white;">Criar Projeto</a>
+      <a class="myButton" href="{% url 'proposta_remover' proposta.slug %}" onClick="return confirm('Tem certeza que deseja remover proposta definitivamente?')" >Remove Proposta</a>
     {% endfor %}
     <br><br>
 

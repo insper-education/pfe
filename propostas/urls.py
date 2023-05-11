@@ -46,6 +46,10 @@ urlpatterns = [
          views.proposta_editar,
          name='proposta_editar'),
 
+    path('proposta_remover/<slug:slug>',
+         views.proposta_remover,
+         name='proposta_remover'),
+
     path('projeto_criar/<int:proposta_id>',
          views.projeto_criar,
          name='projeto_criar'),
