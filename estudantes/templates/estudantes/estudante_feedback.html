@@ -35,6 +35,10 @@
 
 {% block content %}
 
+  {% if mensagem %}
+  <h2 style="color:red">{{mensagem|safe}}</h2>
+  {% endif %}
+
   <span class="titulo">Formulário de Feedback dos Estudantes</span>
 
   <form action="" method="post"> {% csrf_token %}  
@@ -120,7 +124,7 @@
       <div class="form-check">
         <input class="form-check-input" type="radio" name="trabalhando" id="trabalhando1" value="option1" {% if feedback %}disabled  {% if feedback.trabalhando == 1 %}checked="checked"{% endif %} {% endif %}>
         <label class="form-check-label" for="trabalhando1">
-          {{projeto.organizacao}}
+          {% if projeto.organizacao %}{{projeto.organizacao}}{% else %}Empresa do projeto do PFE{% endif %}
         </label>
       </div>
       <div class="form-check">

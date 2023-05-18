@@ -84,6 +84,7 @@ def index_estudantes(request):
     # Caso professor ou administrador
     elif usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4:
         context['professor_id'] = get_object_or_404(Professor, pk=request.user.professor.pk).id
+        context['fase_final'] = True
 
     # Caso parceiro
     else:
@@ -237,6 +238,26 @@ def encontros_marcar(request):
 def estudante_feedback_geral(request, usuario):
     """Para Feedback finais dos Estudantes."""
     projeto = Projeto.objects.filter(alocacao__aluno=usuario.aluno).order_by("ano", "semestre").last()
+    hoje = datetime.date.today()
+
+    mensagem = ""
+    # Caso professor ou administrador
+    if usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4:
+        mensagem = "Você está acessando como administrador!<br>Esse formulário fica disponível para os estudantes após as bancas finais."
+
+    if usuario.tipo_de_usuario == 1: # Estudante
+        eventos = Evento.objects.filter(startDate__year=projeto.ano)
+        if projeto.semestre == 1:
+            banca_final = eventos.filter(tipo_de_evento=15, startDate__month__lt=7).last()
+        else:
+            banca_final = eventos.filter(tipo_de_evento=15, startDate__month__gt=6).last()
+
+        if not banca_final or (banca_final and hoje <= banca_final.endDate):
+            mensagem = "Fora do período de feedback do PFE!"
+            context = {
+                "mensagem": mensagem,
+            }
+            return render(request, 'generic.html', context=context)
 
     if request.method == 'POST':
         feedback = FeedbackEstudante.create()
@@ -272,6 +293,7 @@ def estudante_feedback_geral(request, usuario):
     context = {
         "usuario": usuario,
         "projeto": projeto,
+        "mensagem": mensagem,
     }
     return render(request, 'estudantes/estudante_feedback.html', context)
 
