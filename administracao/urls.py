@@ -22,6 +22,10 @@ urlpatterns = [
          views.backup,
          name='backup'),
 
+    path('cadastrar_disciplina/',
+         views.cadastrar_disciplina,
+         name='cadastrar_disciplina'),
+
     path('cadastrar_organizacao/',
          views.cadastrar_organizacao,
          name='cadastrar_organizacao'),
@@ -111,5 +115,9 @@ urlpatterns = [
     path('ajax/definir_orientador/',
          views.definir_orientador,
          name='definir_orientador'),
+
+    path('ajax/excluir_disciplina',
+         views.excluir_disciplina,
+         name='excluir_disciplina'),
 
 ]

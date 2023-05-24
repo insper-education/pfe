@@ -25,7 +25,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 from documentos.support import render_to_pdf
 
 from projetos.models import Configuracao, Organizacao, Proposta, Projeto, Banca
-from projetos.models import Avaliacao2, get_upload_path, Feedback
+from projetos.models import Avaliacao2, get_upload_path, Feedback, Disciplina
 
 from projetos.support import simple_upload
 
@@ -237,6 +237,46 @@ def registra_organizacao(request, org=None):
 
     return "", 200
 
+
+@login_required
+@transaction.atomic
+@permission_required("users.altera_professor", login_url='/')
+def cadastrar_disciplina(request, proposta_id=None):
+    """Cadastra Organização na base de dados do PFE."""
+    
+    mensagem = None
+    
+    if request.method == 'POST':
+
+        if 'nome' in request.POST:
+
+            (disciplina, _created) = Disciplina.objects.get_or_create(nome=request.POST.get('nome', None))
+        
+            if not _created:
+                return HttpResponse("Conflito: Disciplina já cadastrada", status=409)
+            
+            disciplina.save()
+            mensagem = "Disciplina cadastrada na base de dados."
+
+        else:
+
+            context = {
+                "voltar": True,
+                "area_principal": True,
+                "mensagem": "<h3 style='color:red'>Falha na inserção na base da dados.<h3>",
+            }
+
+
+    #disciplina_id = int(request.POST['disciplina_id'])
+    #disciplina = get_object_or_404(Disciplina, id=disciplina_id)
+
+    context = {
+        "mensagem": mensagem,
+        "disciplinas": Disciplina.objects.all().order_by("nome"),
+        "disciplina_length": Disciplina._meta.get_field('nome').max_length,
+    }
+    
+    return render(request, 'administracao/cadastra_disciplina.html', context=context)
 
 @login_required
 @transaction.atomic
@@ -1020,12 +1060,6 @@ def definir_orientador(request):
         projeto = get_object_or_404(Projeto, id=projeto_id)
         projeto.orientador = orientador
         projeto.save()
-        # try:
-        #     projeto = Projeto.objects.get(id=projeto_id)
-        #     projeto.orientador = orientador
-        #     projeto.save()
-        # except Projeto.DoesNotExist:
-        #     return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
 
         data = {
             'atualizado': True,
@@ -1042,6 +1076,29 @@ def definir_orientador(request):
         return HttpResponseNotFound('<h1>Usuário sem privilérios!</h1>')
 
     return JsonResponse(data)
+
+
+
+@login_required
+@transaction.atomic
+@permission_required("users.altera_professor", login_url='/')
+def excluir_disciplina(request):
+    """Remove Disciplina Recomendada."""
+    
+    if request.is_ajax() and 'disciplina_id' in request.POST:
+
+        disciplina_id = int(request.POST['disciplina_id'])
+
+        instance = Disciplina.objects.get(id=disciplina_id)
+        instance.delete()
+
+        data = {
+            'atualizado': True,
+        }
+
+        return JsonResponse(data)
+
+    return HttpResponseNotFound('Requisição errada')
 
 
 @login_required

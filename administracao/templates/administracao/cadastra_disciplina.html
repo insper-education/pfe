@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 24 de maio de 2023
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  <style>
+    textarea {
+      max-width:100%;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">Cadastro de Disciplina</span>
+  <br>
+
+  <form method="post" id="disciplinaform" enctype="multipart/form-data"> {% csrf_token %}
+  
+
+    <label for="nome">Nome da Disciplina:</label> <input type="text" size="48" maxlength="{{disciplina_length|add:-2}}" id="nome" name="nome" required>
+    <br><br>
+    <input type="submit" value="Cadastrar Disciplina">
+    
+    <br>
+    {% if mensagem %}
+      <span class="red-bold">{{mensagem|linebreaks}}</span>
+    {% endif %}
+    <br><br>
+
+    <table id="disciplinas" style="margin-top: 10px;">
+      <tr><th>Disciplinas Cadastradas</th></tr>
+      {% for disciplina in disciplinas %}
+        <tr id="disciplina{{disciplina.id}}"><td>
+            {{disciplina.nome}}
+              <div class="esconder" style="float:right;">
+                &nbsp;
+                <a onclick="event.preventDefault(); exclui_disciplina($(this));"
+                   data-disciplina='{{disciplina.id}}'>
+                  <i class="far fa-trash-alt"></i>
+                </a>
+              </div>
+        </td></tr>
+      {% endfor %}
+    </table>
+
+  </form>
+
+  <script>
+
+    function exclui_disciplina(aqui) {
+      disciplina = aqui.data('disciplina');
+
+      if (window.confirm("Deseja realmente remover a disciplina?")) {
+        $.ajax({
+            type: "POST",
+            url: '{% url "excluir_disciplina" %}',
+            data: {
+                'disciplina_id': disciplina,
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+            },
+            success: function(response){
+              $('#disciplina'+disciplina).remove();
+            },
+            error: function (request, status, error) {
+              {% if user.tipo_de_usuario == 4 %} 
+                alert(request.responseText);
+                jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
+                console.log('error'+request.responseText);
+              {% else %}
+                jQuery("body").html("Erro no servidor do PFE. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
+              {% endif %}
+            }
+        });
+      }
+
+    }
+  </script>
+
+{% endblock %}
