@@ -305,7 +305,6 @@ def bancas_editar(request, primarykey):
     """Edita uma banca de avaliação para o projeto."""
     banca = get_object_or_404(Banca, pk=primarykey)
 
-    print(request.POST)
     if request.method == 'POST':
 
         context = {"mensagem": "Algum problema ocorreu!",}
