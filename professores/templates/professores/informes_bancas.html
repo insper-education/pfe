@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 24 de Maio de 2023
+{% endcomment %}
+
+{% block head %}
+
+  {% load static %}
+  {% load l10n %}
+
+
+{% endblock %}
+
+
+{% block content %}
+
+  <span class="titulo">Informe de Bancas</span>
+
+  Enviar mensagem para orientadores com suas bancas e as avaliações já realizadas.<br>
+  Orientadores poderão coletar as notas das bancas para preencher no Blackboard.<br>
+  <br>
+  
+    <form method="post" id="informe_bancas" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      {% if bancas %}
+      <table>
+        <thead>
+          <tr>
+            <th scope="col" style="text-align:center;">
+              <b>Orientador</b>
+            </th>
+            <th scope="col" style="text-align:center;">
+              <b>Projeto</b>
+            </th>
+            <th scope="col" style="text-align:center;">
+              <b>Organização</b>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for banca in bancas %}
+            <tr>
+              <td>
+                {% if banca.projeto.orientador %}
+                  {{banca.projeto.orientador.user.get_full_name}} 
+                {% endif %}
+              </td>
+
+              <td>
+                {% if banca.projeto %}
+                <a href="{% url 'projeto_detalhes' banca.projeto.id %}">
+                  {% if banca.projeto.titulo_final %}
+                    {{banca.projeto.titulo_final}}</a>
+                  {% else %}
+                    {{banca.projeto.titulo}}</a>
+                  {% endif %}
+                {% endif %}
+              </td>
+
+              <td>
+                {% if banca.projeto.organizacao %}
+                  {{ banca.projeto.organizacao.nome }}
+                {% endif %}
+              </td>
+
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    
+      <br>
+      
+      <br><br>
+      <button id="submit" type="submit">Enviar mensagens</button>
+
+    </form>
+  {% else %}
+    <p>Erro ao recuperar bancas.</p>
+  {% endif %}
+
+{% endblock %}

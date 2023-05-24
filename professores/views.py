@@ -1071,34 +1071,41 @@ def informe_bancas(request, tipo):
             .filter(projeto__semestre=semestre)\
             .filter(tipo_de_banca=tipo)
 
-    for banca in bancas:
 
-        # Envio de mensagem para Orientador / Coordenação
-        message = mensagem_orientador(banca)
-        subject = 'Resultado da Avaliação de Banca PFE : {0}'.format(banca.projeto)
+    if request.method == 'POST':
 
-        recipient_list = [banca.projeto.orientador.user.email, ]
-        
-        check = email(subject, recipient_list, message)
-        if check != 1:
-            message_error = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
-            context = {"mensagem": message_error,}
-            return render(request, 'generic.html', context=context)
+        for banca in bancas:
 
-    resposta = "Avaliação submetida e enviada para:<br>"
-    
-    #for recipient in recipient_list:
-    for banca in bancas:
-        resposta += "&bull; {0} - banca do dia: {1}<br>".format(banca.projeto.orientador, banca.startDate)
+            # Envio de mensagem para Orientador / Coordenação
+            message = mensagem_orientador(banca)
+            subject = 'Resultado da Avaliação de Banca PFE : {0}'.format(banca.projeto)
 
-    resposta += "<br><a href='javascript:history.back(1)'>Voltar</a>"
+            recipient_list = [banca.projeto.orientador.user.email, ]
+            
+            check = email(subject, recipient_list, message)
+            if check != 1:
+                message_error = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+                context = {"mensagem": message_error,}
+                return render(request, 'generic.html', context=context)
+
+        resposta = "Informe enviado para:<br>"
+
+        for banca in bancas:
+            resposta += "&bull; {0} - banca do dia: {1}<br>".format(banca.projeto.orientador, banca.startDate)
+
+        resposta += "<br><a href='javascript:history.back(1)'>Voltar</a>"
+
+        context = {
+            "area_principal": True,
+            "mensagem": resposta,
+        }
+
+        return render(request, 'generic.html', context=context)
 
     context = {
-        "area_principal": True,
-        "mensagem": resposta,
+        'bancas': bancas,
     }
-
-    return render(request, 'generic.html', context=context)
+    return render(request, 'professores/informes_bancas.html', context=context)
 
 
 
