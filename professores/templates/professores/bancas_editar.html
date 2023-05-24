@@ -234,9 +234,9 @@
       </table>
 
       <br><br>
-      <button id="submit" type="submit">
-      {% if banca %}Atualizar{% else %}Agendar{% endif %}
-      </button>
+      <button id="submit" type="submit" name="atualizar" >{% if banca %}Atualizar{% else %}Agendar{% endif %}</button>
+      <button id="submit" type="submit" name="excluir" >Excluir Banca</button>
+
       <span id="mensagem"></span>
     </form>
   {% else %}

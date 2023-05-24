@@ -305,16 +305,25 @@ def bancas_editar(request, primarykey):
     """Edita uma banca de avaliação para o projeto."""
     banca = get_object_or_404(Banca, pk=primarykey)
 
+    print(request.POST)
     if request.method == 'POST':
-        if editar_banca(banca, request):
-            mensagem = "Banca editada."
-        else:
-            mensagem = "Erro ao Editar banca."
-        context = {
-            "area_principal": True,
-            "bancas_index": True,
-            "mensagem": mensagem,
-        }
+
+        context = {"mensagem": "Algum problema ocorreu!",}
+        if 'atualizar' in request.POST:
+            if editar_banca(banca, request):
+                mensagem = "Banca editada."
+            else:
+                mensagem = "Erro ao Editar banca."
+            context = {
+                "area_principal": True,
+                "bancas_index": True,
+                "mensagem": mensagem,
+            }
+        elif 'excluir' in request.POST:
+            context = {"mensagem": "Banca excluída!",}
+            if 'projeto' in request.POST:
+                banca.delete()
+
         return render(request, 'generic.html', context=context)
 
     projetos = Projeto.objects.exclude(orientador=None)\
