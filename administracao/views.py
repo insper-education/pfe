@@ -276,6 +276,11 @@ def cadastrar_organizacao(request, proposta_id=None):
 
     context = {
         "proposta": proposta,
+        "nome_length": Organizacao._meta.get_field('nome').max_length,
+        "sigla_length": Organizacao._meta.get_field('sigla').max_length,
+        "endereco_length": Organizacao._meta.get_field('endereco').max_length,
+        "website_length": Organizacao._meta.get_field('website').max_length,
+        "informacoes_length": Organizacao._meta.get_field('informacoes').max_length,
     }
     
     return render(request, 'administracao/cadastra_organizacao.html', context=context)
