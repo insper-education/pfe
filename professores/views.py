@@ -1103,7 +1103,8 @@ def informe_bancas(request, tipo):
         return render(request, 'generic.html', context=context)
 
     context = {
-        'bancas': bancas,
+        "bancas": bancas,
+        "tipo": "Finais" if tipo==0 else "Intermediárias",
     }
     return render(request, 'professores/informes_bancas.html', context=context)
 

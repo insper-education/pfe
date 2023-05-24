@@ -16,7 +16,7 @@
 
 {% block content %}
 
-  <span class="titulo">Informe de Bancas</span>
+  <span class="titulo">Informe de Bancas {{tipo}}</span>
 
   Enviar mensagem para orientadores com suas bancas e as avaliações já realizadas.<br>
   Orientadores poderão coletar as notas das bancas para preencher no Blackboard.<br>
@@ -45,7 +45,9 @@
             <tr>
               <td>
                 {% if banca.projeto.orientador %}
-                  {{banca.projeto.orientador.user.get_full_name}} 
+                  <a href="{% url 'professor_detail' banca.projeto.orientador.id %}">
+                    {{banca.projeto.orientador.user.get_full_name}} 
+                  </a>
                 {% endif %}
               </td>
 
@@ -62,7 +64,9 @@
 
               <td>
                 {% if banca.projeto.organizacao %}
-                  {{ banca.projeto.organizacao.nome }}
+                  <a class="imprimir" href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">
+                    {{ banca.projeto.organizacao.nome }}
+                  </a>
                 {% endif %}
               </td>
 
