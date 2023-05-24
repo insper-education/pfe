@@ -11,23 +11,24 @@
     <h4>
     <h4 style="margin-bottom: 0px;">
       Disciplina(s) Recomendada(s)
-      {% if editavel %}
-        <small>
-          <a
-            data-proposta='{{proposta.id}}'
-            class="link-disciplina"
-            href="{% url 'link_disciplina' proposta.id %}"
-            data-url="{% url 'link_disciplina' proposta.id %}"
-            >&#10133;</a>
-        </small>
-      {% endif %}
     </h4>
     <small>Disciplinas recomendadas que estudantes tenham ou estejam cursando para aplicar na proposta</small><br>
+    
     
     <table id="disciplinas_recomendadas" style="margin-top: 10px;">
       <tr>
         <th>
           Nome da Disciplina
+          {% if editavel %}
+            <small>
+              <a
+                data-proposta='{{proposta.id}}'
+                class="link-disciplina"
+                href="{% url 'link_disciplina' proposta.id %}"
+                data-url="{% url 'link_disciplina' proposta.id %}"
+                >&#10133;</a>
+            </small>
+          {% endif %}
         </th>
       </tr>
       {% for rec in proposta.recomendada_set.all %}
