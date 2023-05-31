@@ -31,5 +31,16 @@
 
   {% include "prioridades.html" %}
 
+  <hr>
+  <br><b><label for="autorizador">Membro do comitê do PFE responsável pela proposta</label></b>:
+  <span id="autorizador">
+    {{ proposta.autorizado.get_full_name }}
+    <a href="mailto:{{proposta.autorizado.email}}"> &lt;{{proposta.autorizado.email}}&gt;</a>
+  </span><br>
+  <small>Obs: O responsável da proposta não necessariamente será o orientador do projeto, e muitas vezes não é.
+         Use esse contato para tirar dúvidas da proposta. Perceba também que o responsável pode demorar para responder suas dúvidas.
+         Não espere respostas imediatas, pois não as terá.
+  </small>
+  
   <p>&nbsp;</p>
 {% endblock %}
