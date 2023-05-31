@@ -13,25 +13,35 @@
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
-    <span class="titulo">Datas:</span>
+    <span class="titulo">Configurar</span>
 
-    <label for="limite_propostas">Limite Seleção de Propostas:</label> <input id="limite_propostas" type = "datetime-local" name="limite_propostas" value="{{configuracao.prazo|date:'Y-m-d\TH:i:s'}}">
     <br>
-
+    
     Período Liberado&nbsp;&nbsp;&nbsp;
     &nbsp;&nbsp;&nbsp;<label for="periodo_ano">ano:</label> <input id="periodo_ano" name="periodo_ano" type="number" min="2018" max="9999" step="1" value="{{configuracao.ano}}"/>
     &nbsp;&nbsp;&nbsp;<label for="periodo_semestre">semestre:</label> <input id="periodo_semestre" name="periodo_semestre" type="number" min="1" max="2" step="1" value="{{configuracao.semestre}}"/>
+    <small><br>(Somente troque quando o semestre mudar oficialmente, em geral trocar um pouco antes do começo das aulas)</small>
+    <br>
+    <br>
+    <hr>
     <br>
 
+    <label for="limite_propostas">Prazo limite para seleção de propostas por estudantes:</label> <input id="limite_propostas" type = "datetime-local" name="limite_propostas" value="{{configuracao.prazo|date:'Y-m-d\TH:i:s'}}">
     <br>
-    <input type="checkbox" id="liberados_projetos" name="liberados_projetos" {% if configuracao.liberados_projetos %}checked{% endif %}>
-    <label for="liberados_projetos"> Projetos Liberados para Estudantes</label><br>  
-
     <input type="checkbox" id="liberadas_propostas" name="liberadas_propostas" {% if configuracao.liberadas_propostas %}checked{% endif %}>
-    <label for="liberadas_propostas"> Propostas Liberadas para Estudantes</label><br>  
-    
+    <label for="liberadas_propostas"> Propostas Liberadas para Estudantes</label>
+    <small>(Estudantes conseguirão ver as propostas para aplicar)</small>
     <br>
-    <label for="prazo_preencher_banca">Prazo para preencher avaliação de banca:</label> <input id="prazo_preencher_banca" name="prazo_preencher_banca" type="number" min="0" max="9999" step="1" value="{{configuracao.prazo_preencher_banca}}"/> dias
+    
+    <input type="checkbox" id="liberados_projetos" name="liberados_projetos" {% if configuracao.liberados_projetos %}checked{% endif %}>
+    <label for="liberados_projetos"> Projetos Liberados para Estudantes</label>
+    <small>(Estudantes conseguirão ver os projetos em que foram alocados)</small>
+
+    <br>
+    <br>
+    <hr>
+    <br>
+    <label for="prazo_preencher_banca">Prazo para avaliadores preencherem a avaliação de banca:</label> <input id="prazo_preencher_banca" name="prazo_preencher_banca" type="number" min="0" max="9999" step="1" value="{{configuracao.prazo_preencher_banca}}"/> dias
     
     <br>
 
