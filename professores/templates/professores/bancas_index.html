@@ -51,19 +51,35 @@
           meridiem: false, //lowercase, short, narrow, false (display of AM/PM)
           hour12: false //true, false
         },
+
+        eventRender: function(info) {
+          if (info.view.type === "dayGridMonth" || info.view.type === "timeGridWeek") {
+            let time = info.event.start.getHours() + ':' + info.event.start.getMinutes().toString().replace(/^(\d)$/, '0$1');
+            let nome_orientador = ""
+            if (info.event.extendedProps.orientador) {
+              let orientador = info.event.extendedProps.orientador.split(" ");
+              nome_orientador = orientador[0] + ' ' + orientador[orientador.length - 1];  
+            }
+            info.el.text = time + '\n' + info.event.extendedProps.organizacao + `\n` + nome_orientador;
+          }
+        },
+        
         events: [
           {% for banca in bancas %} 
             {
                 {% if banca.projeto %}
                   title: '{{banca.projeto.organizacao.sigla}} : ' + 
                         '{{banca.projeto.get_titulo}}' +
-                        '{% if banca.projeto.orientador %}\nOri.: {{banca.projeto.orientador}}{% endif %}' +
+                        '{% if banca.projeto.orientador %}\nOrientador: {{banca.projeto.orientador}}{% endif %}' +
                         '{% if banca.location %}\nLocal: {{banca.location}}{% endif %}' +
                         '\nBanca: {{banca.projeto.orientador.user.first_name}} {{banca.projeto.orientador.user.last_name}}(O){% if banca.membro1 %}; {{banca.membro1.first_name}} {{banca.membro1.last_name}}{% endif %}{% if banca.membro2 %}; {{banca.membro2.first_name}} {{banca.membro2.last_name}}{% endif %}{% if banca.membro3 %}; {{banca.membro3.first_name}} {{banca.membro3.last_name}}{% endif %}' +
                         ' ',
                 {% else %}
                   title: 'Projeto não identificado',
                 {% endif %}
+
+                organizacao: "{{banca.projeto.organizacao.sigla}}",
+                orientador: "{{banca.projeto.orientador}}",
 
                 start: '{{banca.startDate.year}}-{{banca.startDate.month|stringformat:"02d"}}-{{banca.startDate.day|stringformat:"02d"}}T{{banca.startDate.hour|stringformat:"02d"}}:{{banca.startDate.minute|stringformat:"02d"}}:00',
 
@@ -148,7 +164,14 @@
       .two {
         width: auto;
       }
+      .fc-event {
+        font-size: 9px !important;
+      }
     }
+
+
+
+
   </style>
 
 {% endblock %}
