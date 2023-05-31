@@ -53,14 +53,16 @@
         },
 
         eventRender: function(info) {
-          if (info.view.type === "dayGridMonth" || info.view.type === "timeGridWeek") {
-            let time = info.event.start.getHours() + ':' + info.event.start.getMinutes().toString().replace(/^(\d)$/, '0$1');
-            let nome_orientador = ""
-            if (info.event.extendedProps.orientador) {
-              let orientador = info.event.extendedProps.orientador.split(" ");
-              nome_orientador = orientador[0] + ' ' + orientador[orientador.length - 1];  
+          if (!info.event.allDay) {
+            if (info.view.type === "dayGridMonth" || info.view.type === "timeGridWeek") {
+              let time = info.event.start.getHours() + ':' + info.event.start.getMinutes().toString().replace(/^(\d)$/, '0$1');
+              let nome_orientador = ""
+              if (info.event.extendedProps.orientador) {
+                let orientador = info.event.extendedProps.orientador.split(" ");
+                nome_orientador = orientador[0] + ' ' + orientador[orientador.length - 1];  
+              }
+              info.el.innerHTML = "<b>" + time + "</b><br>" + info.event.extendedProps.organizacao + "<br>" + nome_orientador;
             }
-            info.el.text = time + '\n' + info.event.extendedProps.organizacao + `\n` + nome_orientador;
           }
         },
         
