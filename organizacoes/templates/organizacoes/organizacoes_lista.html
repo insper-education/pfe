@@ -12,9 +12,9 @@
 
 {% block content %}
 
-  <span class="titulo">{{titulo}}<a
+  <span class="titulo">{{titulo}}<small><a
       href="{% url 'cadastrar_organizacao' %}"
-      >&#10133;</a>
+      >&#10133;</a></small>
   </span>
 
   {% include "tabelas_top.html" with tabela="Organizacoes" cabecalhos=cabecalhos %}
