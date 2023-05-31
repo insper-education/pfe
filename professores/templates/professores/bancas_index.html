@@ -61,7 +61,7 @@
                 let orientador = info.event.extendedProps.orientador.split(" ");
                 nome_orientador = orientador[0] + ' ' + orientador[orientador.length - 1];  
               }
-              info.el.innerHTML = "<b>" + time + "</b><br>" + info.event.extendedProps.organizacao + "<br>" + nome_orientador;
+              info.el.innerHTML = "<b>" + time + "</b><br><nobr>" + info.event.extendedProps.organizacao + "</nobr><br><nobr style='color:#D8D8D8'>" + nome_orientador + "</nobr>";
             }
           }
         },
@@ -156,6 +156,10 @@
     .fc-center,
     .fc-button {
       font-size: min(2.1vw, 1em);
+    }
+
+    .fc-event {
+      overflow: hidden;
     }
 
     @media (max-width: 900px) {
