@@ -59,6 +59,63 @@
 			fill: #000000;
 		}
 
+    
+
+    @media screen and (max-width: 1200px) {
+      .estudante-icon:before {
+        content: "\1F9D1 \200D \1F393";
+        font-size: 14px;
+      }
+    }
+    
+    @media screen and (min-width: 1201px) {
+      .estudante-icon:before {
+        content: "Estudante";
+      }
+    }
+
+    @media screen and (max-width: 1200px) {
+      #autorizado-icon:before {
+        content: "\1F44D";
+        font-size: 16px;
+      }
+    }
+    
+    @media screen and (min-width: 1201px) {
+      #autorizado-icon:before {
+        content: "Autorizado";
+      }
+    }
+
+    @media screen and (max-width: 1200px) {
+      #disponivel-icon:before {
+        content: "\1F441";
+        font-size: 16px;
+      }
+    }
+    
+    @media screen and (min-width: 1201px) {
+      #disponivel-icon:before {
+        content: "Disponível";
+      }
+    }
+
+
+    @media screen and (max-width: 1200px) {
+      #fechado-icon:before {
+        content: "\1F91D";
+        font-size: 16px;
+      }
+    }
+    
+    @media screen and (min-width: 1201px) {
+      #fechado-icon:before {
+        content: "Fechado";
+      }
+    }
+
+    
+
 	</style>
 
   {% include "tabelas_includes.html" %}
@@ -71,6 +128,7 @@
     href="{% url 'proposta_submissao' %}"
     >&#10133;</a>
   </span>
+  
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" %}
@@ -108,18 +166,18 @@
         </caption>
         <thead class="table-info">
         <tr>
-          <th scope="col" class="estados text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Algum professor autorizou que o projeto seja publicado para os estudantes">Autorizado</th>
-          <th scope="col" class="estados text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="A proposta se encontra disponível para os alunos aplicarem">Disponível</th>
-          <th scope="col" class="estados text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Foi formado um grupo de estudantes para essa proposta de projeto">Fechado</th>
+          <th scope="col" class="estados text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Algum professor autorizou que o projeto seja publicado para os estudantes"><span id="autorizado-icon"></span></th>
+          <th scope="col" class="estados text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="A proposta se encontra disponível para os alunos aplicarem"><span id="disponivel-icon"></span></th>
+          <th scope="col" class="estados text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Foi formado um grupo de estudantes para essa proposta de projeto"><span id="fechado-icon"></span></th>
           <th scope="col" class="text-center">Proposta</th>
           {% if edicao == "todas" %}
             <th scope="col" class="periodo text-center">Período</th>
           {% endif %}
           <th scope="col" class="text-center organizacao">Organização</th>
-          <th scope="col" class="estudantes text-center" style="font-size: 12px;">Estudante1</th>
-          <th scope="col" class="estudantes text-center" style="font-size: 12px;">Estudante2</th>
-          <th scope="col" class="estudantes text-center" style="font-size: 12px;">Estudante3</th>
-          <th scope="col" class="estudantes text-center" style="font-size: 12px;">Estudante4</th>
+          <th scope="col" class="estudantes text-center" style="font-size: 12px;"><span class="estudante-icon"></span>1</th>
+          <th scope="col" class="estudantes text-center" style="font-size: 12px;"><span class="estudante-icon"></span>2</th>
+          <th scope="col" class="estudantes text-center" style="font-size: 12px;"><span class="estudante-icon"></span>3</th>
+          <th scope="col" class="estudantes text-center" style="font-size: 12px;"><span class="estudante-icon"></span>4</th>
           <th scope="col" class="text-center" style="font-size: 12px;">Disciplinas Recomendadas</th>
         </tr>
         </thead>
