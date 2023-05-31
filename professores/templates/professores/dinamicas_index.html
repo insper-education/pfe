@@ -53,6 +53,20 @@
           meridiem: false, //lowercase, short, narrow, false (display of AM/PM)
           hour12: false //true, false
         },
+        eventRender: function(info) {
+          if (!info.event.allDay) {
+            if (info.view.type === "dayGridMonth" || info.view.type === "timeGridWeek") {
+              let time = info.event.start.getHours() + ':' + info.event.start.getMinutes().toString().replace(/^(\d)$/, '0$1');
+              let nome_orientador = ""
+              if (info.event.extendedProps.orientador) {
+                let orientador = info.event.extendedProps.orientador.split(" ");
+                nome_orientador = orientador[0] + ' ' + orientador[orientador.length - 1];  
+              }
+              info.el.innerHTML = "<b>" + time + "</b><br><nobr>" + info.event.extendedProps.organizacao + "</nobr><br><nobr style='color:#566573'>" + info.event.extendedProps.local + "</nobr><br><nobr style='color:#E8E8E8'>" + nome_orientador + "</nobr>";
+
+            }
+          }
+        },
         events: [
           {% for encontro in encontros %} 
             {
@@ -65,6 +79,9 @@
                 {% else %}
                   {% if encontro.facilitador %}title: 'Facilitador: {{encontro.facilitador}}',{% else %}title: 'Livre',{% endif %}
                 {% endif %}
+                organizacao: "{{encontro.projeto.organizacao.sigla}}",
+                orientador: "{{encontro.projeto.orientador}}",
+                local: "{{encontro.location}}",
                 start: '{{encontro.startDate.year}}-{{encontro.startDate.month|stringformat:"02d"}}-{{encontro.startDate.day|stringformat:"02d"}}T{{encontro.startDate.hour|stringformat:"02d"}}:{{encontro.startDate.minute|stringformat:"02d"}}:00',
                 end: '{{encontro.endDate.year}}-{{encontro.endDate.month|stringformat:"02d"}}-{{encontro.endDate.day|stringformat:"02d"}}T{{encontro.endDate.hour|stringformat:"02d"}}:{{encontro.endDate.minute|stringformat:"02d"}}:00',
                 url: '../dinamicas_editar/{{encontro.id}}',
@@ -102,6 +119,10 @@
       font-size: min(2.1vw, 1em);
     }
 
+    .fc-event {
+      overflow: hidden;
+    }
+
     @media (max-width: 900px) {
       .wrap {
         flex-direction: column-reverse;
@@ -109,6 +130,9 @@
       .one,
       .two {
         width: auto;
+      }
+      .fc-event {
+        font-size: 9px !important;
       }
     }
   </style>
