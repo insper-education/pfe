@@ -8,6 +8,8 @@ Data: 2 de Outubro de 2020
 
 import datetime
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
+
 
 from projetos.models import Configuracao, Certificado, Avaliacao2, Evento
 from .models import Aluno
@@ -74,6 +76,10 @@ def get_edicoes(tipo, anual=False):
     edicoes = []
     semestre_tmp = 2
     ano_tmp = 2018
+
+    configuracao = get_object_or_404(Configuracao)
+    atual = configuracao.ano
+
     while True:
         existe = False
         if tipo == Certificado:
@@ -83,7 +89,6 @@ def get_edicoes(tipo, anual=False):
             if tipo.objects.filter(anoPFE=ano_tmp, semestrePFE=semestre_tmp).exists():
                 existe = True
         elif tipo == Avaliacao2:
-            # return (["2018.2", "2019.1", "2019.2", "2020.1", "2020.2", "2021.1", "2021.2", "2022.1"], 2020, 2) # temporário
             if tipo.objects.filter(projeto__ano=ano_tmp, projeto__semestre=semestre_tmp).exists():
                 existe = True
         else:
@@ -98,7 +103,9 @@ def get_edicoes(tipo, anual=False):
             semestre = semestre_tmp
             edicoes.append(str(ano)+"."+str(semestre))
         else:
-            break
+            if ano_tmp > atual:
+                break
+
         if semestre_tmp == 1:
             semestre_tmp += 1
         else:

@@ -150,8 +150,9 @@
                   <td style="text-align:center;
                       {% with alocacoes=estudante.alocacao_set %}
                         {% if alocacoes.count and opcao.proposta == alocacoes.last.projeto.proposta %}
-                          background-color:pink;
-                        {% elif opcao.proposta == estudante.pre_alocacao %}
+                          border: 2px solid #ff0000;
+                        {% endif %}
+                        {% if opcao.proposta == estudante.pre_alocacao %}
                           background-color:yellow;
                         {% elif opcao.prioridade == 1 and not estudante.pre_alocacao %}
                           background-color:yellow;
@@ -176,6 +177,16 @@
               {% endfor %}
             </tr>
           {% endfor %}
+          {% if media_cr %}
+            <tr>
+              <td style="text-align:right"><b>Quantidad de estudantes</b></td>
+              <td style="text-align:center"><b>&#8704;</b></td>
+              <td>{{media_cr|floatformat:4}}</td>
+              {% for s in qtd %}
+                <td style="text-align:center"><b>{{s}}</b></td>
+              {% endfor %}
+            </tr>
+          {% endif %}
         </table>
       {% endif %}
 
