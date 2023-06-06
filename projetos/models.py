@@ -1609,12 +1609,57 @@ class Observacao(models.Model):
         return observacao
 
     def __str__(self):
-        return "Avaliação tipo : " + str(self.tipo_de_avaliacao)
+        return "Observação tipo : " + str(self.tipo_de_avaliacao)
 
     class Meta:
         verbose_name = 'Observação'
         verbose_name_plural = 'Observações'
         #ordering = [,]
+
+
+
+class Observacao_Velha(models.Model):
+    """Quando Observações de banca são refeitas, as antigas vem para essa base de dados."""
+
+    tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
+
+    momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
+                                   help_text='Data e hora da comunicação') # hora ordena para dia
+
+    # Somente útil para Bancas
+    avaliador = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
+                                  help_text='avaliador do projeto')
+
+    # Para Bancas e Entregas em Grupo
+    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text='projeto que foi avaliado')
+
+    # Para Alocações dos estudantes (caso um aluno reprove ele teria duas alocações)
+    alocacao = models.ForeignKey('users.Alocacao', null=True, blank=True,
+                                 on_delete=models.SET_NULL, related_name='observacao_velha_alocado',
+                                 help_text='relacao de alocação entre projeto e estudante')
+
+    # Se houver, usando pois no Blackboard alguns estão dessa forma
+    objetivo = models.ForeignKey(ObjetivosDeAprendizagem, related_name='objetivo_observacao_velha',
+                                 on_delete=models.SET_NULL, null=True, blank=True,
+                                 help_text='Objetivo de Aprendizagem')
+
+    observacoes = models.TextField(max_length=2048, null=True, blank=True,
+                                   help_text='qualquer observação relevante')
+
+    @classmethod
+    def create(cls, projeto):
+        """Cria um objeto (entrada) em Observacao Velha."""
+        observacao = cls(projeto=projeto)
+        return observacao
+
+    def __str__(self):
+        return "Observação velha tipo : " + str(self.tipo_de_avaliacao)
+
+    class Meta:
+        verbose_name = 'Observação Velha'
+        verbose_name_plural = 'Observações Velhas'
+        
 
 
 class Certificado(models.Model):
