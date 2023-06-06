@@ -98,9 +98,15 @@
                 {{aluno.user.get_full_name}}
               </a>
             </td>
-            <td style="color:#{{ aluno.curso2.cor }};">
-              {{ aluno.curso2 }}
-            </td>
+            {% if aluno.curso2 %}
+              <td style="color:#{{ aluno.curso2.cor }};">
+                {{ aluno.curso2 }}
+              </td>
+            {% else %}
+              <td>
+                <b>CURSO NÃO DEFINIDO</b>
+              </td>
+            {% endif %}
             <td>
               {{ aluno.cr|floatformat:4 }}
             </td>
