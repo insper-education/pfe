@@ -1493,6 +1493,60 @@ class Avaliacao2(models.Model):
         ordering = ['momento',]
 
 
+class Avaliacao_Velha(models.Model):
+    """Quando avaliações de banca são refeitas, as antigas vem para essa base de dados."""
+
+    tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
+
+    momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
+                                   help_text='Data e hora da comunicação') # hora ordena para dia
+
+    peso = models.FloatField("Peso", validators=[MinValueValidator(0), MaxValueValidator(100)],
+                             help_text='Pesa da avaliação na média (bancas compartilham peso)',
+                             default=10) # 10% para as bancas
+
+    # A nota será convertida para rubricas se necessário
+    nota = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
+
+    # Somente útil para Bancas
+    avaliador = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
+                                  help_text='avaliador do projeto')
+
+    # Para Bancas e Entregas em Grupo (quando avaliando o grupo inteiro)
+    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text='projeto que foi avaliado')
+
+    # Para Alocações dos estudantes (caso um aluno reprove ele teria duas alocações)
+    alocacao = models.ForeignKey('users.Alocacao', null=True, blank=True,
+                                 on_delete=models.SET_NULL,
+                                 related_name='projeto_alocado_avaliacao_velha',
+                                 help_text='relacao de alocação entre projeto e estudante')
+
+    objetivo = models.ForeignKey(ObjetivosDeAprendizagem, related_name='objetivo_avaliacao_velha',
+                                 on_delete=models.SET_NULL, null=True, blank=True,
+                                 help_text='Objetivo de Aprendizagem')
+
+    na = models.BooleanField("Não Avaliado", default=False,
+                             help_text='Caso o avaliador não tenha avaliado esse quesito')
+
+    def __str__(self):
+        for i, j in TIPO_DE_AVALIACAO:
+            if self.tipo_de_avaliacao == i:
+                return j
+        return "Avaliação Não Definida"
+
+    @classmethod
+    def create(cls, projeto=None, alocacao=None):
+        """Cria um objeto (entrada) em Avaliação Velha."""
+        avaliacao = cls(projeto=projeto, alocacao=alocacao)
+        return avaliacao
+
+    class Meta:
+        verbose_name = 'Avaliação Velha'
+        verbose_name_plural = 'Avaliações Velhas'
+        ordering = ['momento',]
+
+
 class Reprovacao(models.Model):
     """Reprovações controladas por falha em Objetivos de Aprendizagem."""
 

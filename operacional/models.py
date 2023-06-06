@@ -22,6 +22,9 @@ class Curso(models.Model):
 
     cor = models.CharField(max_length=6, default="000000", help_text='Cor para curso')
 
+    curso_do_insper = models.BooleanField("Curso do Insper", default=True,
+                             help_text='Indicar caso seja um curso do Insper (outros são usados para estudantes de intercâmbio)')
+
     class Meta:
         ordering = ['nome']
         verbose_name = 'Curso'

@@ -31,7 +31,7 @@ from .models import Entidade
 # Das Organizações
 from .models import Feedback, Conexao, Acompanhamento
 from .models import ObjetivosDeAprendizagem, Certificado
-from .models import Avaliacao2, Observacao, Reprovacao
+from .models import Avaliacao2, Observacao, Reprovacao, Avaliacao_Velha
 from .models import Area, AreaDeInteresse
 
 
@@ -385,6 +385,18 @@ class EncontroAdmin(admin.ModelAdmin):
 @admin.register(Avaliacao2)
 class Avaliacao2Admin(admin.ModelAdmin):
     """Informações das Avaliações2."""
+
+    list_display = ('momento', 'nota', 'peso', 'objetivo',
+                    'tipo_de_avaliacao', 'avaliador', 'projeto', 'alocacao')
+    ordering = ('momento',)
+    list_filter = ('tipo_de_avaliacao', 'projeto__ano', 'projeto__semestre')
+    search_fields = ['projeto__titulo', 'projeto__titulo_final',
+                     'alocacao__aluno__user__username', 'projeto__organizacao__sigla']
+
+
+@admin.register(Avaliacao_Velha)
+class Avaliacao_VelhaAdmin(admin.ModelAdmin):
+    """Informações das Avaliações Velhas."""
 
     list_display = ('momento', 'nota', 'peso', 'objetivo',
                     'tipo_de_avaliacao', 'avaliador', 'projeto', 'alocacao')

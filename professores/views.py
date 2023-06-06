@@ -25,6 +25,7 @@ from users.support import get_edicoes
 from projetos.models import Coorientador, ObjetivosDeAprendizagem, Avaliacao2, Observacao
 from projetos.models import Banca, Evento, Encontro
 from projetos.models import Projeto, Configuracao, Organizacao
+from projetos.models import Avaliacao_Velha
 from projetos.support import converte_letra, converte_conceito
 from projetos.support import get_objetivos_atuais
 from projetos.messages import email
@@ -901,10 +902,12 @@ def banca_avaliar(request, slug):
                 tipo_de_avaliacao = 99  # (99, 'Falconi'),
 
             # Identifica que uma avaliação já foi realizada anteriormente
-            realizada = Avaliacao2.objects.filter(projeto=banca.projeto,
-                                                  avaliador=avaliador,
-                                                  tipo_de_avaliacao=tipo_de_avaliacao)\
-                .exists()
+            avaliacoes_anteriores = Avaliacao2.objects.filter(projeto=banca.projeto,
+                                                              avaliador=avaliador,
+                                                              tipo_de_avaliacao=tipo_de_avaliacao)
+
+            realizada = avaliacoes_anteriores.exists()
+            print("REALIZADA", realizada)
 
             objetivos_possiveis = len(objetivos)
             julgamento = [None]*objetivos_possiveis
@@ -967,6 +970,19 @@ def banca_avaliar(request, slug):
             check = email(subject, recipient_list, message)
             if check != 1:
                 message_error = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+
+            # Mover avaliação anterior para base de dados de Avaliações Velhas
+            ### Tinha evitado fazer isso, mas fatalmente vou esquecer de filtrar as avaliações antigas
+            ### Assim o melhor é tirar das avaliações definitivas
+            for avaliacao_velha in avaliacoes_anteriores:
+                copia_avaliacao = Avaliacao_Velha()
+                for field in avaliacao_velha.__dict__.keys():
+                    copia_avaliacao.__dict__[field] = avaliacao_velha.__dict__[field]
+                copia_avaliacao.id = None
+                copia_avaliacao.save()
+                avaliacao_velha.delete()
+                print("Movendo Avaliação Velha")
+
 
             resposta = "Avaliação submetida e enviada para:<br>"
             for recipient in recipient_list:
