@@ -12,7 +12,7 @@ from django.db import models
 class Curso(models.Model):
     """Classe para os cursos da escola."""
 
-    nome = models.CharField("Nome", max_length=32, null=True,
+    nome = models.CharField("Nome", max_length=50, null=True,
                                     blank=True,
                                     help_text='Nome do curso')
 

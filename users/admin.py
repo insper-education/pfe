@@ -65,9 +65,9 @@ class PFEUserAdmin(admin.ModelAdmin):
 @admin.register(Aluno)
 class AlunoAdmin(admin.ModelAdmin):
     """Definição de aluno do PFE."""
-    list_display = ('user', 'curso', 'anoPFE', 'semestrePFE')
+    list_display = ('user', 'curso2', 'anoPFE', 'semestrePFE')
     ordering = ('user__first_name', 'user__last_name', )
-    list_filter = (FirstLetterFilter, )
+    list_filter = ("curso2", FirstLetterFilter, )
     search_fields = ['user__first_name', 'user__last_name', ]
 
 
