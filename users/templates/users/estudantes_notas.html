@@ -52,9 +52,9 @@
             <td>
               <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
             </td>
-            {% if aluno.curso %}
+            {% if aluno.curso2 %}
               <td style="color:#{{ aluno.curso2.cor }};">
-                {{ aluno.get_curso_display }}
+                {{ aluno.curso2 }}
               </td>
             {% else %}
               <td>Indefinido</td>

@@ -240,7 +240,7 @@
     <a href="{% url 'estudante_detail' estudante.id %}"
       class="dark-green-bold">
         {{estudante.user.get_full_name}}
-        [{{ estudante.get_curso_display }}]
+        [{{ estudante.curso2 }}]
         &nbsp;=>&nbsp;SEM PRIORIDADE DEFINIDA
         &nbsp;|
         {% comment %} &nbsp;{ {{estudante.anoPFE}}.{{estudante.semestrePFE}} } {% endcomment %}
@@ -260,7 +260,7 @@
        {% endif %}
        ">
         {{opcao.aluno.user.get_full_name}}
-        [{{ opcao.aluno.get_curso_display }}]
+        [{{ opcao.aluno.curso2 }}]
         &nbsp;=>&nbsp;opção #{{opcao.prioridade}}
         &nbsp;|
         &nbsp;CR={{opcao.aluno.cr}}
@@ -275,7 +275,7 @@
     {% if proposta.ano != opcao.aluno.anoPFE or proposta.semestre != opcao.aluno.semestrePFE %}
     <a href="{% url 'estudante_detail' opcao.aluno.id %}" class="{% if opcao.aluno in estudantes %}red-bold{% else %}red-normal{% endif%}">
         {{opcao.aluno.user.get_full_name}}
-        [{{ opcao.aluno.get_curso_display }}]
+        [{{ opcao.aluno.curso2 }}]
         &nbsp;=>&nbsp;opção #{{opcao.prioridade}}
         &nbsp;|&nbsp;{ {{opcao.aluno.anoPFE}}.{{opcao.aluno.semestrePFE}} }
         &nbsp;CR={{opcao.aluno.cr}}
