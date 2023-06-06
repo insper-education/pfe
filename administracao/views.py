@@ -791,7 +791,11 @@ def propor(request):
     semestre = configuracao.semestre
     ano, semestre = adianta_semestre(ano, semestre)
 
-    lista_propostas = list(zip(*ordena_propostas(True, ano, semestre)))
+    otimizar = False
+    if request.method == 'POST':
+        otimizar = True
+
+    lista_propostas = list(zip(*ordena_propostas(otimizar, ano, semestre)))
     if lista_propostas:
         propostas = lista_propostas[0]
     else:
@@ -877,7 +881,7 @@ def propor(request):
     qtd, finish = calcula_qtd(opcoes, propostas, alunos)
 
     user = get_object_or_404(PFEUser, pk=request.user.pk)
-    if request.method == 'POST':
+    if otimizar:  # Quer dizer que é um POST
         if user.tipo_de_usuario != 4:  # admin
             return HttpResponse("Usuário sem privilégios de administrador.", status=401)
 
