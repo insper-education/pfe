@@ -233,9 +233,20 @@
         </tr>
       </table>
 
+      {% if banca %}
+        <br>
+        Formulário de Avaliação:
+        <a href="{% url 'banca_avaliar' banca.slug %}">
+          {% url 'banca_avaliar' banca.slug %}
+        </a>
+      {% endif %}
+
       <br><br>
       <button id="submit" type="submit" name="atualizar" >{% if banca %}Atualizar{% else %}Agendar{% endif %}</button>
       <button id="submit" type="submit" name="excluir" >Excluir Banca</button>
+      
+
+      
 
       <span id="mensagem"></span>
     </form>

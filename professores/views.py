@@ -559,6 +559,8 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
     # Relistar os Objetivos de Aprendizagem
     message += "<br><b>Objetivos de Aprendizagem</b>"
 
+    destaque = " background-color: #E0E0F4;'>"
+
     for julg in julgamento:
 
         if julg:
@@ -570,35 +572,35 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
 
             if (not julg.na) and converte_letra(julg.nota) == "I":
                 message += "<td style='border: 2px solid black; width:18%;"
-                message += " background-color: #F4F4F4;'>"
+                message += destaque
             else:
                 message += "<td style='border: 1px solid black; width:18%;'>"
             message += "Insatisfatório (I)</th>"
 
             if (not julg.na) and converte_letra(julg.nota) == "D":
                 message += "<td style='border: 2px solid black; width:18%;"
-                message += " background-color: #F4F4F4;'>"
+                message += destaque
             else:
                 message += "<td style='border: 1px solid black; width:18%;'>"
             message += "Em Desenvolvimento (D)</th>"
 
             if (not julg.na) and (converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+"):
                 message += "<td style='border: 2px solid black; width:18%;"
-                message += " background-color: #F4F4F4;'>"
+                message += destaque
             else:
                 message += "<td style='border: 1px solid black; width:18%;'>"
             message += "Essencial (C/C+)</th>"
 
             if (not julg.na) and (converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+"):
                 message += "<td style='border: 2px solid black; width:18%;"
-                message += " background-color: #F4F4F4;'>"
+                message += destaque
             else:
                 message += "<td style='border: 1px solid black; width:18%;'>"
             message += "Proficiente (B/B+)</th>"
 
             if (not julg.na) and (converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+"):
                 message += "<td style='border: 2px solid black; width:18%;"
-                message += " background-color: #F4F4F4;'>"
+                message += destaque
             else:
                 message += "<td style='border: 1px solid black; width:18%;'>"
             message += "Avançado (A/A+)</th>"
@@ -608,7 +610,7 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
 
             if (not julg.na) and converte_letra(julg.nota) == "I":
                 message += "<td style='border: 2px solid black;"
-                message += " background-color: #F4F4F4;'>"
+                message += destaque
             else:
                 message += "<td style='border: 1px solid black;'>"
             if banca.tipo_de_banca == 1:
@@ -619,7 +621,7 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
 
             if (not julg.na) and (converte_letra(julg.nota) == "D-" or converte_letra(julg.nota) == "D" or converte_letra(julg.nota) == "D+"):
                 message += "<td style='border: 2px solid black;"
-                message += " background-color: #F4F4F4;'>"
+                message += destaque
             else:
                 message += "<td style='border: 1px solid black;'>"
             if banca.tipo_de_banca == 1:
@@ -630,7 +632,7 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
 
             if (not julg.na) and (converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+"):
                 message += "<td style='border: 2px solid black;"
-                message += " background-color: #F4F4F4;'>"
+                message += destaque
             else:
                 message += "<td style='border: 1px solid black;'>"
             if banca.tipo_de_banca == 1:
@@ -641,7 +643,7 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
 
             if (not julg.na) and (converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+"):
                 message += "<td style='border: 2px solid black;"
-                message += " background-color: #F4F4F4;'>"
+                message += destaque
             else:
                 message += "<td style='border: 1px solid black;'>"
             if banca.tipo_de_banca == 1:
@@ -652,7 +654,7 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
 
             if (not julg.na) and (converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+"):
                 message += "<td style='border: 2px solid black;"
-                message += " background-color: #F4F4F4;'>"
+                message += destaque
             else:
                 message += "<td style='border: 1px solid black;'>"
             if banca.tipo_de_banca == 1:
