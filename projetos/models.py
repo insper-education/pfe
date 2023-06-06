@@ -618,14 +618,20 @@ class Cursada(models.Model):
 class Recomendada(models.Model):
     """Disciplinas recomendadas que um aluno ja tenha cursado para fazer o projeto."""
 
-    disciplina = models.ForeignKey(Disciplina, null=True, blank=True, on_delete=models.SET_NULL,
+    disciplina = models.ForeignKey(Disciplina, null=True, on_delete=models.SET_NULL,
                                    help_text='disciplina recomendada para o projeto')
-    proposta = models.ForeignKey(Proposta, null=True, blank=True, on_delete=models.SET_NULL,
+    proposta = models.ForeignKey(Proposta, null=True, on_delete=models.SET_NULL,
                                  help_text='proposta que recomenda a disciplina')
 
     def __str__(self):
         """Retorno padrão textual."""
-        return self.proposta.titulo+" >>> "+self.disciplina.nome
+        titulo = "???"
+        if self.proposta:
+            titulo = self.proposta.titulo
+        nome = "???"
+        if self.disciplina:
+            nome = self.disciplina.nome
+        return titulo + " >>> " + nome
 
     @classmethod
     def create(cls):

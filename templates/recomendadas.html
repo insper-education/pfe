@@ -32,19 +32,23 @@
         </th>
       </tr>
       {% for rec in proposta.recomendada_set.all %}
-        <tr id="disciplina{{rec.disciplina.id}}"><td>
-            {{rec.disciplina.nome}}
-            {% if editavel %}
-              <div class="esconder" style="float:right;">
-                &nbsp;
-                <a onclick="event.preventDefault(); remove_disciplina($(this));"
-                   data-disciplina='{{rec.disciplina.id}}'
-                   data-proposta='{{proposta.id}}'>
-                  <i class="far fa-trash-alt"></i>
-                </a>
-              </div>
-            {% endif %}
-        </td></tr>
+          <tr id="disciplina{{rec.disciplina.id}}"><td>
+              {% if rec.disciplina %}
+                {{rec.disciplina.nome}}
+              {% else %}
+                <span style="color:red">ERRO: NOME DA DISCINPLINA NÃO DEFINIDO</span>
+              {% endif %}
+              {% if editavel %}
+                <div class="esconder" style="float:right;">
+                  &nbsp;
+                  <a onclick="event.preventDefault(); remove_disciplina($(this));"
+                    data-disciplina='{{rec.disciplina.id}}'
+                    data-proposta='{{proposta.id}}'>
+                    <i class="far fa-trash-alt"></i>
+                  </a>
+                </div>
+              {% endif %}
+          </td></tr>
       {% endfor %}
     </table>
 
