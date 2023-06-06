@@ -142,10 +142,19 @@
           </tbody>
         </table>
         </div>
-        <br>
+        
 
-        <b>Média no semestre = <span id="media"></span></b><br>
-        <b>Desvio padrão no semestre = <span id="desvio"></span></b><br>
+        <div style="display: table;">
+          <div style="display: table-row;">
+              <div style="display: table-cell; padding: 4px;">
+                <b>Média no semestre = <span id="media"></span></b><br>
+                <b>Desvio padrão no semestre = <span id="desvio"></span></b><br>
+              </div>
+              <div style="display: table-cell; padding-left: 46px"> 
+                <a href="{% url 'blackboard_notas' ano_semestre %}">Tabela para Blackboard (BI e BF)</a>
+              </div>
+          </div>
+        </div>
 
         <script>
 

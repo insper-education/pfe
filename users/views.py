@@ -9,6 +9,7 @@ Data: 15 de Maio de 2019
 import string
 import random
 import datetime
+import tablib
 
 
 from django.contrib.auth.decorators import login_required, permission_required
@@ -325,6 +326,47 @@ def estudantes_notas(request):
 
     return render(request, 'users/estudantes_notas.html', context=context)
 
+
+@login_required
+@permission_required("users.altera_professor", login_url='/')
+def blackboard_notas(request, anosemestre=None):
+    """Gera notas para o blackboard."""
+    ano = int(anosemestre.split(".")[0])
+    semestre = int(anosemestre.split(".")[1])
+
+    dataset = tablib.Dataset()
+
+    headers=['Nome', 'Sobrenome', 'Nome do usuário', 'BI [Total de pontos: 10 Pontuação]', 'BF [Total de pontos: 10 Pontuação]']
+    dataset.headers = headers
+
+    alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
+    for alocacao in alocacoes:
+        notas = alocacao.get_notas
+        linha = [alocacao.aluno.user.first_name]
+        linha += [alocacao.aluno.user.last_name]
+        linha += [alocacao.aluno.user.username]
+        BI = None
+        BF = None
+        for nota in notas:
+            if nota[0]=="BI":
+                BI = f'{nota[1]:.4f}'.replace('.',',')
+            elif nota[0]=="BF":
+                BF = f'{nota[1]:.4f}'.replace('.',',')
+        linha += [BI, BF]
+        dataset.append(linha)
+    
+
+    #response = HttpResponse(dataset.xlsx, content_type='application/ms-excel')
+    
+    response = HttpResponse(dataset.export('csv', quotechar='"', dialect='excel'), content_type='text/csv')
+    response.write(u'\ufeff'.encode('utf-8-sig'))
+    # response = HttpResponse(dataset.csv, content_type='text/csv')
+
+    #response['Content-Disposition'] = 'attachment; filename=notas_'+ano+'_'+semestre+'.xlsx'
+    response['Content-Disposition'] = 'attachment; filename=notas_'+str(ano)+'_'+str(semestre)+'.csv'
+    
+    return response
+    
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')

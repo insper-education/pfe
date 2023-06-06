@@ -17,7 +17,6 @@ from .models import Area, AreaDeInteresse
 from operacional.models import Curso
 
 from .support import converte_conceito
-# from .support import converte_letra
 
 
 class ProjetosResource(resources.ModelResource):
