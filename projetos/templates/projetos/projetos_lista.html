@@ -49,7 +49,7 @@
               </th>
               <td>
                 {% comment %} {% with alocacao=estudantes|first %} {% endcomment %}
-                {% for alocacao in estudantes %}&bull; {{alocacao.aluno.user.get_full_name}} [{{alocacao.aluno.get_curso_display}}]{% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}<br>{% empty %}
+                {% for alocacao in estudantes %}&bull; {{alocacao.aluno.user.get_full_name}} [{{alocacao.aluno.curso2}}]{% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}<br>{% empty %}
                   Nenhum aluno alocado nesse projeto
                 {% endfor %}
               </td>

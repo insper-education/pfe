@@ -224,7 +224,7 @@
                 opção #{{prioridade}}
               {% endif %}">
                 {{aluno.user.get_full_name}}
-                <span class="curso">[{{ aluno.get_curso_display }}]</span>
+                <span class="curso">[{{ aluno.curso2 }}]</span>
               </a>
               <span class="emails"><a href="mailto:{{aluno.user.email}}">&lt;{{aluno.user.email}}&gt;</a></span>
               <div class="prioridade" style="display: none;">{{prioridade}}</div> <!-- para mostrar no gráfico -->

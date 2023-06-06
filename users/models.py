@@ -251,20 +251,24 @@ class Aluno(models.Model):
     # Usar get_curso_display em vez disso
     def get_curso(self):
         """Retorna em string o nome do curso."""
-        for entry in Aluno.TIPOS_CURSO:
-            if self.curso == entry[0]:
-                return entry[1]
+        # for entry in Aluno.TIPOS_CURSO:
+        #     if self.curso == entry[0]:
+        #         return entry[1]
+        if self.curso2:
+            return str(self.curso2)
         return "Sem curso"
 
     # Usar get_curso_display em vez disso
     def get_curso_completo(self):
         """Retorna em string com o nome completo do curso."""
-        if self.curso == "C":
-            return "Engenharia de Computação"
-        if self.curso == "M":
-            return "Engenharia Mecânica"
-        if self.curso == "X":
-            return "Engenharia Mecatrônica"
+        # if self.curso == "C":
+        #     return "Engenharia de Computação"
+        # if self.curso == "M":
+        #     return "Engenharia Mecânica"
+        # if self.curso == "X":
+        #     return "Engenharia Mecatrônica"
+        if self.curso2:
+            return str(self.curso2)
         return "Sem curso"
 
     def get_objetivos(self, avaliacoes, eh_banca=False):

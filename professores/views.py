@@ -262,7 +262,7 @@ def bancas_criar(request):
             # estudantes
             for alocacao in banca.projeto.alocacao_set.all():
                 mensagem += "<li>" + alocacao.aluno.user.get_full_name()
-                mensagem += "[" + alocacao.aluno.get_curso_display() + "] "
+                mensagem += "[" + str(alocacao.aluno.curso2) + "] "
                 mensagem += '<a href="mailto:' + alocacao.aluno.user.email + '">&lt;' + alocacao.aluno.user.email + "&gt;</a></li>"
             
             mensagem += "</ul>"

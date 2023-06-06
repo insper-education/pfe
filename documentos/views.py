@@ -361,7 +361,7 @@ def tabela_documentos(request):
                 return HttpResponse("Algum erro não identificado.", status=401)
 
             if curso != 'T':
-                projetos = projetos.filter(alocacao__aluno__curso=curso).distinct()
+                projetos = projetos.filter(alocacao__aluno__curso2__sigla=curso).distinct()
 
 
         context = {

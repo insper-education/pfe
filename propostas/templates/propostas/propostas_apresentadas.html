@@ -232,19 +232,19 @@
                       {% if opcaop.proposta == alocacoes.last.proposta %}
                         <u>
                         {% if opcaop.aluno %}
-                          {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.get_curso_display}}]
+                          {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.curso2}}]
                         {% endif %}
                         #{{ opcaop.prioridade }}
                         </u>
                       {% else %}
                         {% if opcaop.aluno %}
-                          {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.get_curso_display}}]
+                          {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.curso2}}]
                         {% endif %}
                         #{{ opcaop.prioridade }}
                       {% endif %}
                     {% else %}
                       {% if opcaop.aluno %}
-                        {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.get_curso_display}}]
+                        {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.curso2}}]
                       {% endif %}
                       #{{ opcaop.prioridade }}
                     {% endif %}

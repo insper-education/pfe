@@ -16,7 +16,7 @@
 
   <strong>Usuário:</strong> {{ user.username }}<br>
   {% if aluno %}
-    <strong>Curso:</strong> {{user.aluno.get_curso_display}}<br>
+    <strong>Curso:</strong> {{user.aluno.curso2}}<br>
     <strong>Ano e Semestre de PFE:</strong> {{user.aluno.anoPFE}}.{{user.aluno.semestrePFE}} <small>(ou posterior)</small><br>
   {% elif professor %}
     <strong>Perfil:</strong> professor<br>

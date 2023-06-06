@@ -90,7 +90,7 @@
                   title="
                     {% for alocacao in projeto.alocacao_set.all %}
                         &bull; {{alocacao.aluno.user.get_full_name}}
-                        ({{alocacao.aluno.get_curso_completo}}){% if not forloop.last %}<br>{% endif %}
+                        ({{alocacao.aluno.curso2}}){% if not forloop.last %}<br>{% endif %}
                     {% endfor %}
                   "
                 >
@@ -131,7 +131,7 @@
                         {{alocacao.aluno}}
                       </a>
                       <span class="curso">
-                        [{{ alocacao.aluno.get_curso_display }}]
+                        [{{ alocacao.aluno.curso2 }}]
                       </span>
                     </li>
                   {% endfor %}

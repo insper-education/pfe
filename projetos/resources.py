@@ -14,6 +14,8 @@ from .models import Projeto, Proposta, Organizacao, Configuracao, Disciplina
 from .models import Feedback, Avaliacao2, ObjetivosDeAprendizagem, Observacao
 from .models import Area, AreaDeInteresse
 
+from operacional.models import Curso
+
 from .support import converte_conceito
 # from .support import converte_letra
 
@@ -418,12 +420,16 @@ class EstudantesResource(resources.ModelResource):
             user.save()
 
             (aluno, _created) = Aluno.objects.get_or_create(user=user)
+            # Remover o curso e só usar curso2
             if row.get('curso') == "GRENGCOMP":
                 aluno.curso = 'C'
+                aluno.curso2 = Curso.objects.get(nome="Engenharia de Computação")
             elif row.get('curso') == "GRENGMECAT":
                 aluno.curso = 'X'
+                aluno.curso2 = Curso.objects.get(nome="Engenharia Mecatrônica")
             elif row.get('curso') == "GRENGMECA":
                 aluno.curso = 'M'
+                aluno.curso2 = Curso.objects.get(nome="Engenharia Mecânica")
             else:
                 pass  # erro
 

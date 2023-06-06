@@ -283,7 +283,7 @@ def projetos_fechados(request):
 
                 estudantes_pfe = Aluno.objects.filter(alocacao__projeto=projeto)
                 if curso != 'T':
-                    estudantes_pfe = estudantes_pfe.filter(alocacao__aluno__curso=curso)
+                    estudantes_pfe = estudantes_pfe.filter(alocacao__aluno__curso2__sigla=curso)
 
                 if estudantes_pfe:  # len(estudantes_pfe) > 0:
                     projetos_selecionados.append(projeto)
@@ -1063,7 +1063,7 @@ def analise_notas(request):
         if 'curso' in request.POST:
             curso = request.POST['curso']
             if curso != 'T':
-                medias_semestre = medias_semestre.filter(aluno__curso=curso)
+                medias_semestre = medias_semestre.filter(aluno__curso2__sigla=curso)
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
@@ -1230,7 +1230,7 @@ def certificacao_falconi(request):
         # if 'curso' in request.POST:
         #     curso = request.POST['curso']
         #     if curso != 'T':
-        #         medias_semestre = medias_semestre.filter(aluno__curso=curso)
+        #         medias_semestre = medias_semestre.filter(aluno__curso2__sigla=curso)
         # else:
         #     return HttpResponse("Algum erro não identificado.", status=401)
 
@@ -1379,7 +1379,7 @@ def analise_objetivos(request):
         if 'curso' in request.POST:
             curso = request.POST['curso']
             if curso != 'T':
-                alocacoes = alocacoes.filter(aluno__curso=curso)
+                alocacoes = alocacoes.filter(aluno__curso2__sigla=curso)
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
@@ -1411,8 +1411,8 @@ def evolucao_notas(request):
         if 'curso' in request.POST:
             curso = request.POST['curso']
             if curso != 'T':
-                avaliacoes = avaliacoes.filter(alocacao__aluno__curso=curso)
-                alocacoes = alocacoes.filter(aluno__curso=curso)
+                avaliacoes = avaliacoes.filter(alocacao__aluno__curso2__sigla=curso)
+                alocacoes = alocacoes.filter(aluno__curso2__sigla=curso)
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
@@ -1472,7 +1472,7 @@ def evolucao_notas(request):
                 periodo = edicao.split('.')
                 alocacoes_tmp = alocacoes.filter(projeto__ano=periodo[0],
                                                  projeto__semestre=periodo[1],
-                                                 aluno__curso=t_curso[0])
+                                                 aluno__curso2__sigla=t_curso[0])
                 notas_lista = []
                 for alocacao in alocacoes_tmp:
                     media_loc = alocacao.get_media
@@ -1548,7 +1548,7 @@ def evolucao_objetivos(request):
 
                 # Avaliações Individuais
                 if (individuais):
-                    avaliacoes_ind = avaliacoes_sep.filter(alocacao__aluno__curso=curso)
+                    avaliacoes_ind = avaliacoes_sep.filter(alocacao__aluno__curso2__sigla=curso)
                 else:
                     avaliacoes_ind = avaliacoes_sep.none()
 
@@ -1560,7 +1560,7 @@ def evolucao_objetivos(request):
                     for projeto in projetos:
                         alocacoes = Alocacao.objects.filter(projeto=projeto)
                         for alocacao in alocacoes:
-                            if alocacao.aluno.curso == curso:
+                            if alocacao.aluno.curso2.sigla == curso:
                                 projetos_selecionados.append(projeto)
                                 break
                             
@@ -1713,7 +1713,7 @@ def evolucao_por_objetivo(request):
 
                 # Avaliações Individuais
                 if (individuais):
-                    avaliacoes_ind = avaliacoes_sep.filter(alocacao__aluno__curso=curso)
+                    avaliacoes_ind = avaliacoes_sep.filter(alocacao__aluno__curso2__sigla=curso)
                 else:
                     avaliacoes_ind = avaliacoes_sep.none()
 
@@ -1725,7 +1725,7 @@ def evolucao_por_objetivo(request):
                     for projeto in projetos:
                         alocacoes = Alocacao.objects.filter(projeto=projeto)
                         for alocacao in alocacoes:
-                            if alocacao.aluno.curso == curso:
+                            if alocacao.aluno.curso2.sigla == curso:
                                 projetos_selecionados.append(projeto)
                                 break
                             
@@ -1770,7 +1770,7 @@ def evolucao_por_objetivo(request):
                                                     projeto__semestre=periodo[1])
 
             if curso != 'T':
-                alocacoes_tmp = alocacoes_tmp.filter(aluno__curso=curso)
+                alocacoes_tmp = alocacoes_tmp.filter(aluno__curso2__sigla=curso)
 
             alocacoes.append(alocacoes_tmp.count())
 
@@ -1826,15 +1826,15 @@ def correlacao_medias_cr(request):
                                                         projeto__semestre=periodo[1])
 
                 if curso == 'C':
-                    estudantes_computacao = alocacoes_tmp.filter(aluno__curso="C")
+                    estudantes_computacao = alocacoes_tmp.filter(aluno_curso2__sigla="C")
                 elif curso == 'M':
-                    estudantes_mecanica = alocacoes_tmp.filter(aluno__curso="M")
+                    estudantes_mecanica = alocacoes_tmp.filter(aluno_curso2__sigla="M")
                 elif curso == 'X':
-                    estudantes_mecatronica = alocacoes_tmp.filter(aluno__curso="X")
+                    estudantes_mecatronica = alocacoes_tmp.filter(aluno_curso2__sigla="X")
                 else:
-                    estudantes_computacao = alocacoes_tmp.filter(aluno__curso="C")
-                    estudantes_mecanica = alocacoes_tmp.filter(aluno__curso="M")
-                    estudantes_mecatronica = alocacoes_tmp.filter(aluno__curso="X")
+                    estudantes_computacao = alocacoes_tmp.filter(aluno_curso2__sigla="C")
+                    estudantes_mecanica = alocacoes_tmp.filter(aluno_curso2__sigla="M")
+                    estudantes_mecatronica = alocacoes_tmp.filter(aluno_curso2__sigla="X")
 
             else:
                 alocacoes = {}
@@ -1853,9 +1853,9 @@ def correlacao_medias_cr(request):
             return HttpResponse("Algum erro não identificado.", status=401)
         # else:
         #     alocacoes_tmp = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
-        #     estudantes_computacao = alocacoes_tmp.filter(aluno__curso="C")
-        #     estudantes_mecanica = alocacoes_tmp.filter(aluno__curso="M")
-        #     estudantes_mecatronica = alocacoes_tm`p.filter(aluno__curso="X")
+        #     estudantes_computacao = alocacoes_tmp.filter(aluno_curso2__sigla="C")
+        #     estudantes_mecanica = alocacoes_tmp.filter(aluno_curso2__sigla="M")
+        #     estudantes_mecatronica = alocacoes_tm`p.filter(aluno_curso2__sigla="X")
 
         context = {
             "alocacoes": alocacoes,

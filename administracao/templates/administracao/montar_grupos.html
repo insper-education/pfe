@@ -123,19 +123,19 @@
                         {% if opcaop.proposta == alocacoes.last.proposta %}
                           <u>
                           {% if opcaop.aluno %}
-                            {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.get_curso_display}}]
+                            {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.curso2}}]
                           {% endif %}
                           #{{ opcaop.prioridade }}
                           </u>
                         {% else %}
                           {% if opcaop.aluno %}
-                            {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.get_curso_display}}]
+                            {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.curso2}}]
                           {% endif %}
                           #{{ opcaop.prioridade }}
                         {% endif %}
                       {% else %}
                         {% if opcaop.aluno %}
-                          {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.get_curso_display}}]
+                          {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.curso2}}]
                         {% endif %}
                         #{{ opcaop.prioridade }}
                       {% endif %}
@@ -297,7 +297,7 @@
         ">
         <span id="nome{{estudante.id}}">{{estudante.user.get_full_name}}</span></a>
         <span class="opcao" style="float: right;">opção #<span>1</span></span><br>
-      [{{estudante.get_curso}}]&nbsp;&nbsp;&nbsp;CR:&nbsp;{{estudante.cr}}
+      [{{estudante.curso2.sigla}}]&nbsp;&nbsp;&nbsp;CR:&nbsp;{{estudante.cr}}
       </div>
       `);
       {% if estudante.pre_alocacao %}

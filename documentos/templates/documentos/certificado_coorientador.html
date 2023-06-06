@@ -116,7 +116,7 @@
     
     {% for alocacao in projeto.alocacao_set.all %}
       {{alocacao.aluno.user.get_full_name}}
-      ({{alocacao.aluno.get_curso_completo}}){% if forloop.last %}.{% else %},{% endif %}
+      ({{alocacao.aluno.curso2}}){% if forloop.last %}.{% else %},{% endif %}
     {% empty %}
       SEM ESTUDANTES
     {% endfor %}

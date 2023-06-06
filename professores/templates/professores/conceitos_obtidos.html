@@ -224,7 +224,7 @@
     <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
       <li>
         {{alocacao.aluno.user.get_full_name}} 
-        [{{ alocacao.aluno.get_curso_display }}]
+        [{{ alocacao.aluno.curso2 }}]
         &lt;{{alocacao.aluno.user.email}}&gt; 
       </li>
     </a>

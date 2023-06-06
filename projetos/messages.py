@@ -119,12 +119,13 @@ def message_reembolso(usuario, projeto, reembolso, cpf):
     message += '&nbsp;&nbsp;Por favor, encaminhem o pedido de reembolso de: '
     message += usuario.first_name+" "+usuario.last_name+" ("+usuario.username+')<br>\n'
     message += '&nbsp;&nbsp;CPF: '+cpf[:3]+'.'+cpf[3:6]+'.'+cpf[6:9]+'-'+cpf[9:11]+'<br>\n'
-    if usuario.aluno.curso == "C":
-        curso = "Computação"
-    elif usuario.aluno.curso == "M":
-        curso = "Mecânica"
-    else:
-        curso = "Mecatrônica"
+    # if usuario.aluno.curso == "C":
+    #     curso = "Computação"
+    # elif usuario.aluno.curso == "M":
+    #     curso = "Mecânica"
+    # else:
+    #     curso = "Mecatrônica"
+    curso = str(usuario.aluno.curso2)
     message += '&nbsp;&nbsp;Curso: '+curso+'<br>\n'
     if projeto:
         message += '<br>\n'

@@ -88,7 +88,7 @@
     O projeto intitulado: <b>{{projeto.get_titulo}}</b>, contou com o grupo de estudantes:
     {% for alocacao in projeto.alocacao_set.all %}
       <b>{{alocacao.aluno.user.get_full_name}}
-      ({{alocacao.aluno.get_curso_completo}})</b>,
+      ({{alocacao.aluno.curso2}})</b>,
     {% empty %}
       SEM ESTUDANTES
     {% endfor %}

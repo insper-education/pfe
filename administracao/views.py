@@ -44,6 +44,8 @@ from projetos.resources import UsuariosResource
 from users.models import PFEUser, Aluno, Professor, Administrador, Parceiro
 from users.models import Opcao, Alocacao
 
+from operacional.models import Curso
+
 from users.support import get_edicoes
 from users.support import adianta_semestre
 
@@ -453,14 +455,20 @@ def registro_usuario(request, user=None):
         estudante.matricula = request.POST.get('matricula', None)
 
         curso = request.POST.get('curso', None)
+
+        # Remover o curso e só usar curso2
         if curso == "computacao":
             estudante.curso = 'C'   # ('C', 'Computação'),
+            estudante.curso2 = Curso.objects.get(nome="Engenharia de Computação")
         elif curso == "mecanica":
             estudante.curso = 'M'   # ('M', 'Mecânica'),
+            estudante.curso2 = Curso.objects.get(nome="Engenharia Mecânica")
         elif curso == "mecatronica":
             estudante.curso = 'X'   # ('X', 'Mecatrônica'),
+            estudante.curso2 = Curso.objects.get(nome="Engenharia Mecatrônica")
         else:
             estudante.curso = None
+            estudante.curso2 = None
             mensagem += "Algum erro não identificado.<br>"
 
         try:

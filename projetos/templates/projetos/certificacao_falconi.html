@@ -443,7 +443,7 @@
       <p>
         {{alocacao.aluno.user.get_full_name}} 
         {% comment %} &lt;{{alocacao.aluno.user.email}}&gt;  {% endcomment %}
-        [{{ alocacao.aluno.get_curso_display }}]
+        [{{ alocacao.aluno.curso2 }}]
         {% for opcao in alocacao.aluno.opcao_set.all %}
           {% if opcao.projeto == projeto %}
             (opção #{{opcao.prioridade}})

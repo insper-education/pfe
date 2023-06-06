@@ -34,5 +34,5 @@ Banca:%0D%0A
 %0D%0A
 Grupo
 %0D%0A
-{% for alocacao in banca.projeto.alocacao_set.all %} - {{alocacao.aluno.user.first_name|parse_quote}} {{alocacao.aluno.user.last_name|parse_quote}} [{{ alocacao.aluno.get_curso_display|parse_quote }}]%0D%0A{% endfor %}
+{% for alocacao in banca.projeto.alocacao_set.all %} - {{alocacao.aluno.user.first_name|parse_quote}} {{alocacao.aluno.user.last_name|parse_quote}} [{{ alocacao.aluno.curso2|parse_quote }}]%0D%0A{% endfor %}
 %0D%0A%0D%0A

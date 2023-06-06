@@ -146,7 +146,7 @@ def ordena_propostas_novo(disponivel=True, ano=2018, semestre=2, curso='T'):
             filter(aluno__semestrePFE=proposta.semestre)
 
         if curso != 'T':
-            opcoes = opcoes.filter(aluno__curso=curso)
+            opcoes = opcoes.filter(aluno__curso2__sigla=curso)
 
         count = [0, 0, 0, 0, 0]
         estudantes_tmp = ["", "", "", "", ""]
