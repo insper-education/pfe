@@ -25,7 +25,6 @@ from users.support import get_edicoes
 from projetos.models import Coorientador, ObjetivosDeAprendizagem, Avaliacao2, Observacao
 from projetos.models import Banca, Evento, Encontro
 from projetos.models import Projeto, Configuracao, Organizacao
-from projetos.models import Avaliacao_Velha, Observacao_Velha
 from projetos.support import converte_letra, converte_conceito
 from projetos.support import get_objetivos_atuais
 from projetos.messages import email
@@ -34,6 +33,7 @@ from .support import professores_membros_bancas, falconi_membros_banca
 from .support import editar_banca
 from .support import recupera_orientadores_por_semestre
 from .support import recupera_coorientadores_por_semestre
+from .support import move_avaliacoes
 
 from estudantes.models import Relato, Pares
 
@@ -902,31 +902,19 @@ def banca_avaliar(request, slug):
             elif banca.tipo_de_banca == 2:  # (2, 'falconi'),
                 tipo_de_avaliacao = 99  # (99, 'Falconi'),
 
-            # Identifica que uma avaliação já foi realizada anteriormente
+            # Identifica que uma avaliação/observação já foi realizada anteriormente
             avaliacoes_anteriores = Avaliacao2.objects.filter(projeto=banca.projeto,
                                                               avaliador=avaliador,
                                                               tipo_de_avaliacao=tipo_de_avaliacao)
-
+            observacoes_anteriores = Observacao.objects.filter(projeto=banca.projeto, 
+                                                               avaliador=avaliador, 
+                                                               tipo_de_avaliacao=tipo_de_avaliacao)
             realizada = avaliacoes_anteriores.exists()
 
             # Mover avaliação anterior para base de dados de Avaliações Velhas
             ### Tinha evitado fazer isso, mas fatalmente vou esquecer de filtrar as avaliações antigas
             ### Assim o melhor é tirar das avaliações definitivas
-            for avaliacao_velha in avaliacoes_anteriores:
-                copia_avaliacao = Avaliacao_Velha()
-                for field in avaliacao_velha.__dict__.keys():
-                    copia_avaliacao.__dict__[field] = avaliacao_velha.__dict__[field]
-                copia_avaliacao.id = None
-                copia_avaliacao.save()
-                avaliacao_velha.delete()
-            observacoes_anteriores = Observacao.objects.filter(projeto=banca.projeto, avaliador=avaliador, tipo_de_avaliacao=tipo_de_avaliacao)
-            for observacao_velha in observacoes_anteriores:
-                copia_observacao = Observacao_Velha()
-                for field in observacao_velha.__dict__.keys():
-                    copia_observacao.__dict__[field] = observacao_velha.__dict__[field]
-                copia_observacao.id = None
-                copia_observacao.save()
-                observacao_velha.delete()
+            move_avaliacoes(avaliacoes_anteriores, observacoes_anteriores)
 
             objetivos_possiveis = len(objetivos)
             julgamento = [None]*objetivos_possiveis

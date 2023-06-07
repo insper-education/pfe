@@ -16,7 +16,7 @@ from users.models import PFEUser, Professor, Aluno, Parceiro
 from users.support import adianta_semestre
 
 from projetos.models import Organizacao, Projeto, Banca, Encontro, Conexao
-
+from projetos.models import Avaliacao_Velha, Observacao_Velha
 
 def editar_banca(banca, request):
     """Edita os valores de uma banca por um request Http."""
@@ -398,3 +398,21 @@ def recupera_mentorias_técnica(ano, semestre):
                 grupos.append(count_conexoes)
 
     return zip(membros, grupos)
+
+
+def move_avaliacoes(avaliacoes_anteriores=[], observacoes_anteriores=[]):
+    """Move avaliações anteriores para base de dados de Avaliações Velhas."""
+    for avaliacao_velha in avaliacoes_anteriores:
+        copia_avaliacao = Avaliacao_Velha()
+        for field in avaliacao_velha.__dict__.keys():
+            copia_avaliacao.__dict__[field] = avaliacao_velha.__dict__[field]
+        copia_avaliacao.id = None
+        copia_avaliacao.save()
+        avaliacao_velha.delete()
+    for observacao_velha in observacoes_anteriores:
+        copia_observacao = Observacao_Velha()
+        for field in observacao_velha.__dict__.keys():
+            copia_observacao.__dict__[field] = observacao_velha.__dict__[field]
+        copia_observacao.id = None
+        copia_observacao.save()
+        observacao_velha.delete()
