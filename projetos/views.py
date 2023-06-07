@@ -2097,9 +2097,6 @@ def conexoes_estabelecidas(request):
         return HttpResponse(message)
     return HttpResponse("Você não tem privilégios")
 
-
-from professores.support import move_avaliacoes
-
 @login_required
 @permission_required('users.altera_professor', login_url='/')
 def migracao(request):
