@@ -70,9 +70,9 @@
               <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Curso</th>
               <th onclick="w3.sortHTML('#AlunosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">CR</th>
           </tr>
-          {% for aluno,opcoes in alunos_list %} 
+          {% for aluno,opcoes,opcoestemp in alunos_list %} 
           <tr class="item">
-            <td class="{% if opcoes.count >= 5 %}text-success{% else %}text-danger{% endif %}"> &#x2B24; </td>
+            <td class="{% if opcoes.count >= 5 %}text-success{% elif opcoestemp.count >= 5 %}text-warning{% else %}text-danger{% endif %}"> &#x2B24; </td>
             <td>
               <a href="{% url 'estudante_detail' aluno.id %}"
                   data-toggle="tooltip" data-html="true" animation="true" title="
@@ -119,6 +119,7 @@
     {% endif %}
     
     <text class="text-success">&#x2B24;</text> Estudante já selecionou propostas ({{inscritos}}) [{% widthratio inscritos num_alunos 100 %}%]<br>
+    <text class="text-warning">&#x2B24;</text> Estudante realizou seleção provisória ({{tmpinscritos}}) [{% widthratio tmpinscritos num_alunos 100 %}%]<br>
     <text class="text-danger">&#x2B24;</text> Estudante ainda precisa selecionar propostas ({{ninscritos}}) [{% widthratio ninscritos num_alunos 100 %}%]<br>
     <br>
 

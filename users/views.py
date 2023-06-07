@@ -30,7 +30,7 @@ from projetos.support import get_objetivos_alocacao, calcula_objetivos
 
 from .forms import PFEUserCreationForm
 from .models import PFEUser, Aluno, Professor, Parceiro, Opcao, Administrador
-from .models import Alocacao
+from .models import Alocacao, OpcaoTemporaria
 from .support import get_edicoes, adianta_semestre
 
 
@@ -465,16 +465,24 @@ def estudantes_inscritos(request):
 
             inscritos = 0
             ninscritos = 0
+            tmpinscritos = 0
             opcoes = []
+            opcoestemp = []
+            
             for aluno in alunos:
                 opcao = Opcao.objects.filter(aluno=aluno)\
                     .filter(proposta__ano=ano, proposta__semestre=semestre)
                 opcoes.append(opcao)
+                opcaotmp = OpcaoTemporaria.objects.filter(aluno=aluno)\
+                    .filter(proposta__ano=ano, proposta__semestre=semestre)
+                opcoestemp.append(opcaotmp)
                 if opcao.count() >= 5:
                     inscritos += 1
+                elif opcaotmp.count() >= 5:
+                    tmpinscritos += 1
                 else:
                     ninscritos += 1
-            alunos_list = zip(alunos, opcoes)
+            alunos_list = zip(alunos, opcoes, opcoestemp)
 
             context = {
                 'alunos_list': alunos_list,
@@ -484,6 +492,7 @@ def estudantes_inscritos(request):
                 'num_alunos_mec': num_alunos_mec,
                 'inscritos': inscritos,
                 'ninscritos': ninscritos,
+                'tmpinscritos': tmpinscritos,
             }
 
         else:
