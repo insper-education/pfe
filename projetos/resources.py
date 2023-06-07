@@ -360,14 +360,8 @@ class UsuariosResource(resources.ModelResource):
 def atualizar_campo(registro, campo, valor):
     """Atualiza o campo."""
     if (valor is not None) and (valor != ""):
-        # tmp = getattr(registro, campo)
-        # if (tmp is not None) and (tmp != "") and (tmp != valor):
-        #     pass  # ("Dado atualizado de {0} para {1}".format(tmp, valor))
-        # else:
-        #     pass  # ("Dados iguais em {0} : {0}".format(campo, tmp))
         setattr(registro, campo, valor)
-    else:
-        pass  # ("Não houve atualização de {0}".format(campo))
+    # else: # ("Não houve atualização de {0}".format(campo))
 
 
 class EstudantesResource(resources.ModelResource):
