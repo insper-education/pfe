@@ -6,7 +6,8 @@
 {% endcomment %}
 
 {% block head %}
-
+{% comment %} <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> {% endcomment %}
   {% load static %}
   {% load aderencia_aluno %}
 
@@ -111,44 +112,46 @@
 
         </div>
 
-        <div id="proposta{{proposta.id}}" class="proposta" data-propostaid="{{proposta.id}}">
+        <div id="proposta{{proposta.id}}" class="proposta" data-propostaid="{{proposta.id}}" data-titulo="{{proposta.titulo|truncatechars:32}} ({{ proposta.organizacao.sigla }})" >
 
           <div id="titulo{{proposta.id}}" class="etiqueta_proposta">
 
-            <a target="_blank" rel="noopener noreferrer" class="ancora" href="{% url 'proposta_completa' proposta.id %}" style="color: #000062;"
-            data-toggle="tooltip" data-html="true" animation="true" title="
+            <a target="_blank" rel="noopener noreferrer" class="ancora tip" data-tip="tip{{proposta.id}}" href="{% url 'proposta_completa' proposta.id %}" style="color: #000062;">
+            <div id="tip{{proposta.id}}" hidden="hidden">
                   {% for opcaop in proposta.opcao_set.all %}
                     {% with alocacoes=opcaop.aluno.alocacao_set %}
                       {% if alocacoes.count %}
                         {% if opcaop.proposta == alocacoes.last.proposta %}
                           <u>
                           {% if opcaop.aluno %}
-                            {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.curso2}}]
+                            {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.curso2.sigla}}]
                           {% endif %}
                           #{{ opcaop.prioridade }}
                           </u>
                         {% else %}
                           {% if opcaop.aluno %}
-                            {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.curso2}}]
+                            {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.curso2.sigla}}]
                           {% endif %}
                           #{{ opcaop.prioridade }}
                         {% endif %}
                       {% else %}
                         {% if opcaop.aluno %}
-                          {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.curso2}}]
+                          {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.curso2.sigla}}]
                         {% endif %}
                         #{{ opcaop.prioridade }}
                       {% endif %}
-                      |{% mede_aderencia opcaop.aluno proposta %}%|<br>
+                      |{% mede_aderencia opcaop.aluno proposta %}%|
+                      =&gt; <span class='atual{{opcaop.aluno.id}}'></span>
+                      <br>
                     {% endwith %}
                   {% empty %}
                     Nenhum aluno escolheu essa proposta
                   {% endfor %}
-                  "            
-                >
+                </div>
             
             {{proposta.titulo}}
             </a>&nbsp;
+
             {% if proposta.organizacao and proposta.organizacao.nome %}
               <a class="ancora" href="{% url 'organizacao_completo' proposta.organizacao.id %}" style="color: darkblue;">
                 ({{ proposta.organizacao.nome }})
@@ -193,16 +196,18 @@
   </form>
 
   <br><br>
-
+  <div>
+  Visualizar:<br>
   <input id="balanceada" type="checkbox" name="balanceada" checked onchange="escondePropostas()"/>
-  <label for="balanceada">Propostas Balanceadas: <span id="balanceadas">-</span></label><br>
+  <label for="balanceada" style="margin-bottom: 0px;">Propostas Balanceadas: <span id="balanceadas">-</span></label><br>
   
   <input id="desbalanceada" type="checkbox" name="desbalanceada" checked onchange="escondePropostas()"/>
-  <label for="desbalanceada">Propostas Desbalanceadas: <span id="desbalanceadas">-</span></label><br>
+  <label for="desbalanceada" style="margin-bottom: 0px;">Propostas Desbalanceadas: <span id="desbalanceadas">-</span></label><br>
 
   <input id="vazia" type="checkbox" name="vazia" checked onchange="escondePropostas()"/>
-  <label for="vazia">Propostas Vazias: <span id="vazias">-</span></label><br>
-  
+  <label for="vazia" style="margin-bottom: 0px;">Propostas Vazias: <span id="vazias">-</span></label><br>
+  </div>
+
   <br><br>
   <div class="grafico" id="canvas-holder">
     <canvas id="chart-area"></canvas>
@@ -293,7 +298,16 @@
           <br>
         {% empty %}
           Estudante não escolheu opções de proposta de projetos
-        {% endfor %}  
+        {% endfor %}
+        --------------------------------------------------------------------------<br>
+        <b>Você já trabalhou/trabalha ou estagiou/estagia em alguma empresa de engenharia?</b><br>
+        {{estudante.trabalhou|linebreaks}}<br>
+        <b>Você já participou de atividades sociais? Por exemplo trabalhos voluntários ou ações em comunidades.</b><br>
+        {{estudante.social|linebreaks}}<br>
+        <b>Você já participou de alguma entidade estudantil do Insper?</b><br>
+        {{estudante.entidade|linebreaks}}<br>
+        <b>Você possui familiares em alguma empresa que está aplicando? Ou empresa concorrente direta?</b><br>
+        {{estudante.familia|linebreaks}}<br>
         ">
         <span id="nome{{estudante.id}}">{{estudante.user.get_full_name}}</span></a>
         <span class="opcao" style="float: right;">opção #<span>1</span></span><br>
@@ -314,6 +328,11 @@
         else if(opcao[1] == 5) prioridade5 += 1;
         else prioridade6m += 1;
 
+        proposta = $("#proposta{{estudante.pre_alocacao.id}}").data('titulo');
+        //proposta = "XXXXXX";
+        $(".atual{{estudante.id}}").html(proposta);
+        //update_tips();
+
       {% else %}
         // Se não pre alocado, vai para opcao 1.
         prioridade1 += 1;
@@ -328,8 +347,18 @@
 
     {% comment %} Mostra gráfico de proporção de prioridades {% endcomment %}
     {% include "grafico_prioridades.html" %}
+    <small>Atualiza automaticamente, não precisa de refresh</small>
     
     <script>
+
+      function update_tips() {
+        $('.tip').each(function () {
+            $(this).tooltip(
+            {html: true}).attr('data-original-title', $('#' + $(this).data('tip')).html());
+        });
+      }
+    
+
     /* ------- */
     var $draggedItem;
 
@@ -348,6 +377,8 @@
         });
 
         mostra_grafico();
+
+        update_tips();
 
     });
 
@@ -408,7 +439,6 @@
         });    
     });
 
-    // Configuration of the observer:
     var config = { 
         childList: true
     };
@@ -451,6 +481,8 @@
       });
     }
 
+  
+    // Caso estudante seja movido para proposta
     function dropAluno(e) {
       
       if($draggedItem) {
@@ -513,6 +545,11 @@
           window.myPie.data.datasets[0].data = dados;
           window.myPie.data.datasets[0].labels = labels;
           window.myPie.update();
+
+          atual = "atual" + $draggedItem[0].id.slice(9)
+          proposta = final_target.data("titulo");          
+          $("."+atual).html(proposta);
+          update_tips();
 
         }
 
