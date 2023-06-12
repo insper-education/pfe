@@ -119,6 +119,7 @@ def certificados_submetidos(request):
         "certificados": certificados,
         "edicoes": edicoes,
         "coordenacao": coordenacao,
+        "configuracao": configuracao,
         #"coordenacoes": coordenacoes,
     }
 
@@ -209,10 +210,9 @@ def selecao_geracao_certificados(request):
 @permission_required('users.altera_professor', login_url='/')
 def gerar_certificados(request):
     """Recupera um certificado pelos dados."""
-
     configuracao = get_object_or_404(Configuracao)
 
-    if not os.path.exists(configuracao.assinatura.url):
+    if not os.path.exists("arquivos/"+str(configuracao.assinatura)):
         return HttpResponse("Arquivo de assinatura não encontrado.", status=401)
     if not os.path.exists("arquivos/papel_timbrado.pdf"):
         return HttpResponse("Papel timbrado não encontrado.", status=401)
@@ -292,7 +292,7 @@ def gerar_certificados(request):
                     certificados.append(certificado)
 
     if 'mentoria_profissional' in request.POST:
-        # (106, "Mentoria de Grupo"),  # mentor na Profissional (antiga Mentoria Falconi)
+        # (106, "Mentoria de Grupo"),  # mentor Profissional (antiga Mentoria Falconi)
         membro_banca = recupera_mentorias(ano, semestre)
     
         arquivo = "documentos/certificado_mentoria.html"
@@ -326,6 +326,7 @@ def gerar_certificados(request):
     context = {
         "certificados": certificados,
         "coordenacao": coordenacao,
+        "configuracao": configuracao,
     }
 
     return render(request, 'documentos/gerar_certificados.html', context)
