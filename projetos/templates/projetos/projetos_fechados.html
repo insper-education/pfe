@@ -220,7 +220,7 @@
         {% endwith %}
 
         <p class="estudantes" style="margin-left:1em;"><b>Estudantes:</b>
-          <span class="emails esconder"><a href="mailto:{% for alocacao in projeto.alocacao_set.all %}&lt;{{alocacao.aluno.user.email}}&gt;{% if not forloop.last %},{% endif %}{% endfor %}?subject=PFE%20Insper%20-%20Projeto:%20{{projeto}}&body=Caros%20{% for alocacao in projeto.alocacao_set.all %}%20{{alocacao.aluno.user.first_name}},{% endfor %}%0D%0A%0D%0Aatenciosamente,%20Luciano%20P%20Soares%20(coordenação%20PFE)" target="_blank">&#x2709;</a></span>
+          <span class="emails esconder"><a href="mailto:{% for alocacao in projeto.alocacao_set.all %}&lt;{{alocacao.aluno.user.email}}&gt;{% if not forloop.last %},{% endif %}{% endfor %}?subject=PFE%20Insper%20-%20Projeto:%20{{projeto}}&body=Caros%20{% for alocacao in projeto.alocacao_set.all %}%20{{alocacao.aluno.user.first_name}},{% endfor %}%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenador_email}}%20(coordenação%20PFE)" target="_blank">&#x2709;</a></span>
         </p>
         <ol class="estudantes" style="margin-bottom:5px;">
         {% for aluno,prioridade in prioridades %}
@@ -270,7 +270,7 @@
           {% endif %}
 
           <span class="emails esconder"><a 
-            href="mailto:{% for conexao in conexoes %}&lt;{{conexao.parceiro.user.email}}&gt;{% if not forloop.last %},{% endif %}{% endfor %}?subject=PFE%20Insper%20-%20Projeto:%20{{projeto}}&body=Caros%20{% for conexao in conexoes %}%20{{conexao.parceiro.user.first_name}},{% endfor %}%0D%0A%0D%0Aatenciosamente,%20Luciano%20P%20Soares%20(coordenação%20PFE)" target="_blank">&#x2709;</a></span>
+            href="mailto:{% for conexao in conexoes %}&lt;{{conexao.parceiro.user.email}}&gt;{% if not forloop.last %},{% endif %}{% endfor %}?subject=PFE%20Insper%20-%20Projeto:%20{{projeto}}&body=Caros%20{% for conexao in conexoes %}%20{{conexao.parceiro.user.first_name}},{% endfor %}%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenador_email}}%20(coordenação%20PFE)" target="_blank">&#x2709;</a></span>
         </p>
 
         <ol class="conexoes" style="margin-bottom:0px;">

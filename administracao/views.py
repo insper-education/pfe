@@ -775,7 +775,8 @@ def configurar(request):
             return HttpResponse("Algum erro não identificado.", status=401)
 
     context = {
-        'configuracao': configuracao,
+        "configuracao": configuracao,
+        "coord_length": Configuracao._meta.get_field('coordenador').max_length,
     }
 
     return render(request, 'administracao/configurar.html', context)

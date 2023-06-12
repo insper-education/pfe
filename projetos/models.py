@@ -11,6 +11,8 @@ import string
 import random
 import re
 
+from urllib.parse import quote, unquote
+
 from django.db import models
 from django.urls import reverse  # To generate URLS by reversing URL patterns
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -581,6 +583,8 @@ class Configuracao(models.Model):
         verbose_name = 'Configuração'
         verbose_name_plural = 'Configurações'
 
+    def coordenador_email(self):
+        return quote(self.coordenador)
 
 class ConfiguracaoAdmin(admin.ModelAdmin):
     """Usado para configurar a classe Configuracao."""

@@ -27,11 +27,8 @@
     &nbsp;&nbsp;&nbsp;<label for="periodo_ano">ano:</label> <input id="periodo_ano" name="periodo_ano" type="number" min="2018" max="9999" step="1" value="{{configuracao.ano}}"/>
     &nbsp;&nbsp;&nbsp;<label for="periodo_semestre">semestre:</label> <input id="periodo_semestre" name="periodo_semestre" type="number" min="1" max="2" step="1" value="{{configuracao.semestre}}"/>
     <small><br>(Somente troque quando o semestre mudar oficialmente, em geral trocar um pouco antes do começo das aulas)</small>
-    <br>
-    <br>
-    <hr>
-    <br>
-
+    
+    <br><br><hr><br>
     <label for="limite_propostas">Prazo limite para seleção de propostas por estudantes:</label> <input id="limite_propostas" type = "datetime-local" name="limite_propostas" value="{{configuracao.prazo|date:'Y-m-d\TH:i:s'}}">
     <br>
     <input type="checkbox" id="liberadas_propostas" name="liberadas_propostas" {% if configuracao.liberadas_propostas %}checked{% endif %}>
@@ -43,18 +40,12 @@
     <label for="liberados_projetos"> Projetos Liberados para Estudantes</label>
     <small>(Estudantes conseguirão ver os projetos em que foram alocados)</small>
 
-    <br>
-    <br>
-    <hr>
-    <br>
-    <label for="prazo_preencher_banca">Prazo para avaliadores preencherem a avaliação de banca:</label> <input id="prazo_preencher_banca" name="prazo_preencher_banca" type="number" min="0" max="9999" step="1" value="{{configuracao.prazo_preencher_banca}}"/> dias
+    <br><br><hr><br>
+    <label for="prazo_preencher_banca">Prazo para avaliadores preencherem a avaliação de banca:</label> <input id="prazo_preencher_banca" name="prazo_preencher_banca" style="text-align:right;" type="number" min="0" max="9999" step="1" value="{{configuracao.prazo_preencher_banca}}"/> dias
     
-    <br>
-    <br>
-    <hr>
-    <br>
-    <label for="coordenador">Nome do coordenador:</label> <input id="coordenador" name="coordenador" value="{{configuracao.coordenador}}"/><br>
-    <label for="assinatura">Assinatura:</label>
+    <br><br><hr><br>
+    <label for="coordenador">Nome do coordenador:</label> <input id="coordenador" name="coordenador" type="text" size="36" maxlength="{{coord_length|add:-2}}" value="{{configuracao.coordenador}}"/><br>
+    <label for="assinatura">Assinatura (proporção ~250x70):</label>
     <input id="assinatura" type="file" name="assinatura" accept="image/*">
     {% if configuracao.assinatura %}
       <br><a href="http://{{request.get_host}}{{configuracao.assinatura.url}}">
@@ -63,10 +54,7 @@
       </a>
     {% endif %}
     
-
-    <br>
-    <br>
-    <br><br>
+    <br><br><br><br>
     <button type="submit">Confirmar</button>
   </form>
 {% endblock %}

@@ -127,13 +127,15 @@ def certificados_submetidos(request):
 
 def atualiza_certificado(usuario, projeto, tipo_cert, arquivo, banca=None):
     """Atualiza os certificados."""
+    configuracao = get_object_or_404(Configuracao)
     (certificado, _created) = \
         Certificado.objects.get_or_create(usuario=usuario,
                                           projeto=projeto,
                                           tipo_de_certificado=tipo_cert)
 
     context = {
-        'projeto': projeto,
+        "projeto": projeto,
+        "configuracao": configuracao,
     }
 
     if projeto and not certificado.documento:
@@ -322,7 +324,7 @@ def gerar_certificados(request):
     coordenacao = configuracao.coordenacao
 
     context = {
-        'certificados': certificados,
+        "certificados": certificados,
         "coordenacao": coordenacao,
     }
 
