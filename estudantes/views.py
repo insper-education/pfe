@@ -78,8 +78,8 @@ def index_estudantes(request):
         # Avaliações de Pares
         # 31, 'Avaliação de Pares Intermediária'
         # 32, 'Avaliação de Pares Final'
-        context["fora_fase_feedback_intermediario"] = configuracao_pares_vencida(estudante, 31)
-        context["fora_fase_feedback_final"] = configuracao_pares_vencida(estudante, 32)
+        context["fora_fase_feedback_intermediario"],_ ,_ = configuracao_pares_vencida(estudante, 31)
+        context["fora_fase_feedback_final"],_ ,_ = configuracao_pares_vencida(estudante, 32)
 
     # Caso professor ou administrador
     elif usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4:
@@ -329,27 +329,28 @@ def avaliacao_pares(request, momento):
     configuracao = get_object_or_404(Configuracao)
 
     if user.tipo_de_usuario == 3:
-        mensagem = "Você não está cadastrado como aluno!"
+        mensagem = "Você não está cadastrado como estudante!"
         context = {
             "area_principal": True,
             "mensagem": mensagem,
         }
         return render(request, 'generic.html', context=context)
 
+    estudante = None
     if user.tipo_de_usuario == 1:
-
         estudante = Aluno.objects.get(pk=request.user.aluno.pk)
 
-        # Avaliações de Pares
-        # 31, 'Avaliação de Pares Intermediária'
-        # 32, 'Avaliação de Pares Final'
-        if momento=="intermediaria":
-            prazo = configuracao_pares_vencida(estudante, 31)
-            tipo=0
-        else:
-            prazo = configuracao_pares_vencida(estudante, 32)
-            tipo=1
+    # Avaliações de Pares
+    # 31, 'Avaliação de Pares Intermediária'
+    # 32, 'Avaliação de Pares Final'
+    if momento=="intermediaria":
+        prazo, inicio, fim = configuracao_pares_vencida(estudante, 31)
+        tipo=0
+    else:
+        prazo, inicio, fim = configuracao_pares_vencida(estudante, 32)
+        tipo=1
 
+    if user.tipo_de_usuario == 1:
         projeto = Projeto.objects\
             .filter(alocacao__aluno=estudante, ano=configuracao.ano, semestre=configuracao.semestre).first()
         
@@ -407,14 +408,19 @@ def avaliacao_pares(request, momento):
         context = {
             'vencido': prazo,
             "colegas": colegas,
-            'momento': momento,
+            "momento": momento,
+            "inicio": inicio,
+            "fim": fim,
+
         }
     else:  # Supostamente professores
         context = {
             'mensagem': "Você não está cadastrado como estudante.",
-            'vencido': False,
-            "colegas": None, # Exemplo
-            'momento': momento,
+            'vencido': prazo,
+            "colegas": [[{"aluno":"Fulano (exemplo)",id:0},None],[{"aluno":"Beltrano (exemplo)",id:0},None]],
+            "momento": momento,
+            "inicio": inicio,
+            "fim": fim,
         }
     return render(request, 'estudantes/avaliacao_pares.html', context)
 

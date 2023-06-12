@@ -48,28 +48,31 @@ def configuracao_estudante_vencida(estudante):
     return vencido
 
 # Para avaliação de pares
-def configuracao_pares_vencida(estudante, tipo):
+def configuracao_pares_vencida(estudante, tipo, prazo=10):
     """Retorna verdade se ainda em tempo de estudante fazer avaliação de pares."""
     configuracao = Configuracao.objects.get()
 
     ano = configuracao.ano
     semestre = configuracao.semestre
 
-    prazo = 10
+    #prazo = 10
     
-    if estudante.anoPFE < ano:
-        return True
-    elif estudante.anoPFE == ano and semestre == 2 and estudante.semestrePFE == 1:
-        return True
+    if estudante is not None:
+        if estudante.anoPFE < ano:
+            return True, None, None
+        elif estudante.anoPFE == ano and semestre == 2 and estudante.semestrePFE == 1:
+            return True, None, None
     
     hoje = datetime.date.today()
     delta = datetime.timedelta(days=prazo)
-    eventos = Evento.objects.filter(tipo_de_evento=tipo, startDate__gte=hoje, startDate__lt=hoje+delta)
-    
-    if not eventos:
-        return True
+    evento = Evento.objects.filter(tipo_de_evento=tipo, startDate__gte=hoje, startDate__lt=hoje+delta).last()
 
-    return False
+    if not evento:
+        return True, None, None
+    
+    inicio = evento.startDate-delta
+    fim = evento.startDate
+    return False, inicio, fim
 
 def get_edicoes(tipo, anual=False):
     """Função usada para recuperar todas as edições de 2018.2 até hoje."""
