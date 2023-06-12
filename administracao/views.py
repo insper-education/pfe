@@ -757,10 +757,16 @@ def configurar(request):
 
                 configuracao.prazo_preencher_banca = int(request.POST['prazo_preencher_banca'])
 
+                configuracao.coordenador = request.POST['coordenador']
+                if 'assinatura' in request.FILES:
+                    assinatura = simple_upload(request.FILES['assinatura'],
+                                                path=get_upload_path(configuracao, ""))
+                    configuracao.assinatura = assinatura[len(settings.MEDIA_URL):]
+
                 configuracao.save()
                 context = {
                     "area_principal": True,
-                    "mensagem": "Datas atualizadas.",
+                    "mensagem": "Dados atualizados.",
                 }
                 return render(request, 'generic.html', context=context)
             except (ValueError, OverflowError, MultiValueDictKeyError):

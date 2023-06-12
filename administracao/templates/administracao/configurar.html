@@ -6,6 +6,12 @@
 {% endcomment %}
 
 {% block head %}
+  <style>
+    .signature {
+      width: 250px;
+      border-bottom: 2px solid #000;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
@@ -44,7 +50,22 @@
     <label for="prazo_preencher_banca">Prazo para avaliadores preencherem a avaliação de banca:</label> <input id="prazo_preencher_banca" name="prazo_preencher_banca" type="number" min="0" max="9999" step="1" value="{{configuracao.prazo_preencher_banca}}"/> dias
     
     <br>
+    <br>
+    <hr>
+    <br>
+    <label for="coordenador">Nome do coordenador:</label> <input id="coordenador" name="coordenador" value="{{configuracao.coordenador}}"/><br>
+    <label for="assinatura">Assinatura:</label>
+    <input id="assinatura" type="file" name="assinatura" accept="image/*">
+    {% if configuracao.assinatura %}
+      <br><a href="http://{{request.get_host}}{{configuracao.assinatura.url}}">
+        <span class="full-text">http://{{request.get_host}}{{configuracao.assinatura.url}}</span><br>
+        <img class="signature" src="{{configuracao.assinatura.url}}">
+      </a>
+    {% endif %}
+    
 
+    <br>
+    <br>
     <br><br>
     <button type="submit">Confirmar</button>
   </form>

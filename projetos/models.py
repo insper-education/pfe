@@ -44,6 +44,8 @@ def get_upload_path(instance, filename):
             caminho += "projeto" + str(instance.projeto.pk) + "/"
         if instance.usuario:
             caminho += slugify(instance.usuario.username) + "/"
+    elif isinstance(instance, Configuracao):
+        caminho += "configuracao/"
     else:  # Arquivo Temporário
         caminho += "tmp/"
 
@@ -568,6 +570,12 @@ class Configuracao(models.Model):
 
     prazo_preencher_banca = models.PositiveIntegerField("Prazo para banca", default=30,
                                            help_text='Prazo máximo para membros de uma banca colocarem suas avaliações')
+
+    coordenador = models.CharField(max_length=64, null=True, blank=True,
+                                           help_text='Nome para assinatura do coordenador do PFE')
+
+    assinatura = models.ImageField("Assinatura", upload_to=get_upload_path, null=True, blank=True,
+                                   help_text='Assinatura do coordenador do PFE')
 
     class Meta:
         verbose_name = 'Configuração'

@@ -207,7 +207,10 @@ def selecao_geracao_certificados(request):
 @permission_required('users.altera_professor', login_url='/')
 def gerar_certificados(request):
     """Recupera um certificado pelos dados."""
-    if not os.path.exists("arquivos/signature.png"):
+
+    configuracao = get_object_or_404(Configuracao)
+
+    if not os.path.exists(configuracao.assinatura.url):
         return HttpResponse("Arquivo de assinatura não encontrado.", status=401)
     if not os.path.exists("arquivos/papel_timbrado.pdf"):
         return HttpResponse("Papel timbrado não encontrado.", status=401)
