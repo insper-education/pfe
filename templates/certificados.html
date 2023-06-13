@@ -1,0 +1,50 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 13 de Junho de 2023
+{% endcomment %}
+
+
+{% if certificados %}
+  {% for documento in certificados %}
+    {% if documento.confidencial %} {% comment %} Para certificados nunca está confidencial. {% endcomment %}
+      <i data-toggle="tooltip" data-html="true" animation="true" title="confidencial" class="fa fa-lock"></i>
+    {% else %}
+      <i data-toggle="tooltip" data-html="true" animation="true" title="público" class="fa fa-unlock"></i>
+    {% endif %}
+    {% if documento.documento and documento.link %}
+        <a href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+        <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
+    {% else %}
+      {% if documento.documento %}
+        <a href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">{{documento.get_tipo_de_certificado_display}}</a>
+      {% endif %}
+      {% if documento.link %}
+        <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
+      {% endif %}
+    {% endif %}
+
+    {% if not projeto %}
+      {% if documento.projeto %}
+        - {{documento.projeto.get_titulo}}
+      {% endif %}
+    {% endif %}  
+    {% if documento.usuario %}
+      - {{ documento.usuario.get_full_name }} 
+    {% endif %}
+
+    {% if documento.data %}
+              : {{ documento.data }}
+    {% endif %}
+    {% if documento.anotacao %}
+              [Obs: {{ documento.anotacao }} ]
+    {% endif %}
+    {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
+      <sup>(Inglês)</sup>
+    {% endif %}
+    <br>
+  {% empty %}
+    Ainda não existem documentos associados.
+  {% endfor %}
+{% endif %}
+

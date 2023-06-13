@@ -730,6 +730,7 @@ class Evento(models.Model):
     observacao = models.CharField(max_length=64, blank=True,
                                   help_text='Qualquer observação relavante')
 
+    # Usar get_tipo_de_evento_display em vez disso
     def get_title(self):
         """Retorna em string o nome do evento."""
         for entry in Evento.TIPO_EVENTO:
@@ -1084,6 +1085,7 @@ class Aviso(models.Model):
 
     #     return configuracao.t0 + delta_days
 
+    # Usar get_tipo_de_evento_display em vez disso
     def get_evento(self):
         """Retorna em string o nome do evento."""
         for entry in Evento.TIPO_EVENTO:
@@ -1712,6 +1714,7 @@ class Certificado(models.Model):
     documento = models.FileField("Documento", upload_to=get_upload_path, null=True, blank=True,
                                  help_text='Documento Digital')
 
+    # Usar get_tipo_de_certificado_display
     def get_certificado(self):
         """Retorna em string o nome do certificado."""
         for entry in Certificado.TIPO_DE_CERTIFICADO:

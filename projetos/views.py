@@ -37,7 +37,7 @@ from users.support import get_edicoes
 
 from .models import Projeto, Proposta, Configuracao, Observacao
 from .models import Coorientador, Avaliacao2, ObjetivosDeAprendizagem
-# from .models import Evento
+from .models import Certificado
 
 from .models import Feedback, AreaDeInteresse, Acompanhamento, Anotacao, Organizacao
 from .models import Documento, FeedbackEstudante, Area
@@ -134,6 +134,8 @@ def projeto_completo(request, primarykey):
 
     cooperacoes = Conexao.objects.filter(projeto=projeto, colaboracao=True)
 
+    #certificados = Certificado.objects.filter(projeto=projeto)
+
     context = {
         "configuracao": configuracao,
         "projeto": projeto,
@@ -142,7 +144,8 @@ def projeto_completo(request, primarykey):
         "opcoes": opcoes,
         "conexoes": conexoes,
         "coorientadores": coorientadores,
-        "documentos": documentos,
+        "documentos": documentos,  # checar se necessário
+        #"certificados": certificados,
         "projetos_avancados": projetos_avancados,
         "cooperacoes": cooperacoes,
         "MEDIA_URL": settings.MEDIA_URL,

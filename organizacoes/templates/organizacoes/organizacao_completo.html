@@ -173,44 +173,21 @@
       >
     </small>
   </h3>
-  {% for documento in organizacao.documento_set.all %}
-    {% if documento.confidencial %}
-      <i data-toggle="tooltip" data-html="true" animation="true" title="confidencial" class="fa fa-lock"></i>
-    {% else %}
-      <i data-toggle="tooltip" data-html="true" animation="true" title="público" class="fa fa-unlock"></i>
-    {% endif %}
-    {% if documento.documento and documento.link %}
-        {{documento}}
-        <a href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
-        <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
-    {% else %}
-      {% if documento.documento %}
-        <a href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
-      {% endif %}
-      {% if documento.link %}
-        <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
-      {% endif %}
-    {% endif %}
-    {% if documento.projeto %}
-      - {{documento.projeto.get_titulo}}
-    {% endif %}
-    {% if documento.usuario %}
-      - {{ documento.usuario.get_full_name }} 
-    {% endif %}
-    {% if documento.data %}
-              : {{ documento.data }} 
-    {% endif %}
-    {% if documento.anotacao %}
-              [Obs: {{ documento.anotacao }} ]
-    {% endif %}
-    <br>
-  {% empty %}
+  {% include "documentos.html" with documentos=organizacao.documento_set.all %}
 
-  {% comment %} {% if not organizacao.documento_set.all %} {% endcomment %}
-    Ainda não existem documentos para essa organização.
+  <hr>
+  <h3>Certificados
+    <small>
+      <a href="{% url 'carregar_certificado' %}"
+        >&#10133;</a
+      >
+    </small>
+  </h3>
+  {% for entrada in organizacao.projeto_set.all %}
+    {% include "certificados.html" with certificados=entrada.certificado_set.all %}
   {% endfor %}
 
-
+  
   {% if organizacao.proposta_set.all %}
     <hr>
     <h3>Propostas <small><a href="{% url 'proposta_submissao' %}?organizacao={{organizacao.id}}">&#10133;</a></small></h3>

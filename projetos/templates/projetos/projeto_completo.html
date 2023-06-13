@@ -387,37 +387,17 @@
       >
     </small>
   </h3>
-  {% for documento in projeto.documento_set.all %}
-    {% if documento.confidencial %}
-      <i data-toggle="tooltip" data-html="true" animation="true" title="confidencial" class="fa fa-lock"></i>
-    {% else %}
-      <i data-toggle="tooltip" data-html="true" animation="true" title="público" class="fa fa-unlock"></i>
-    {% endif %}
-    {% if documento.documento and documento.link %}
-        {{documento}}
-        <a href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
-        <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
-    {% else %}
-      {% if documento.documento %}
-        <a href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
-      {% endif %}
-      {% if documento.link %}
-        <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
-      {% endif %}
-    {% endif %}
-    {% if documento.data %}
-              : {{ documento.data }}
-    {% endif %}
-    {% if documento.anotacao %}
-              [Obs: {{ documento.anotacao }} ]
-    {% endif %}
-    {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
-      <sup>(Inglês)</sup>
-    {% endif %}
-    <br>
-  {% empty %}
-    Ainda não existem documentos para esse projeto.
-  {% endfor %}
+  {% include "documentos.html" with documentos=projeto.documento_set.all %}
+
+  <hr>
+  <h3>Certificados
+    <small>
+      <a href="{% url 'carregar_certificado' %}"
+        >&#10133;</a
+      >
+    </small>
+  </h3>
+  {% include "certificados.html" with certificados=projeto.certificado_set.all %}
 
   {% if projeto.encontro_set.all %}
       <hr>

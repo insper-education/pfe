@@ -248,12 +248,8 @@ class Aluno(models.Model):
             # And we add this method to the instance of the class.
             setattr(self, method_name, curried_method)
 
-    # Usar get_curso_display em vez disso
     def get_curso(self):
         """Retorna em string o nome do curso."""
-        # for entry in Aluno.TIPOS_CURSO:
-        #     if self.curso == entry[0]:
-        #         return entry[1]
         if self.curso2:
             return str(self.curso2)
         return "Sem curso"
