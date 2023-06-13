@@ -52,6 +52,8 @@
         <span class="full-text">http://{{request.get_host}}{{configuracao.assinatura.url}}</span><br>
         <img class="signature" src="{{configuracao.assinatura.url}}">
       </a>
+      {{configuracao.assinatura.url|slice:"1:"}}<br>
+
     {% endif %}
     
     <br><br><br><br>

@@ -154,6 +154,7 @@
     
   {% else %}
     <p>Não foram gerados certificados.</p>
+    <a href="{% url 'certificados_submetidos' %}">Verificar Certificados já criados.</a>
   {% endif %}
 
 {% endblock %}
