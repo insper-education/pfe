@@ -15,11 +15,11 @@
 
 {% block content %}
 
-  {% if mensagem %}
-    <h2 class="red-bold">{{mensagem}}</h2>
-  {% endif %}
-
   <span class="titulo">Avaliação de Pares {% if momento == "intermediaria" %}Intermediária{% else %}Final{% endif %}</span>
+
+  {% if mensagem %}
+    <h5 class="red-bold">{{mensagem}}</h5>
+  {% endif %}
 
   {% if vencido %}
     <h5 class="red-bold">Fora do Período de Avaliação de Pares

@@ -15,12 +15,12 @@ textarea {
 
 {% block content %}
 
-  {% if mensagem %}
-    <h2 class="red-bold">{{mensagem}}</h2>
-  {% endif %}
-
   <span class="titulo">Formulário de Relato Quinzenal</span>
   <br>
+
+  {% if mensagem %}
+    <h5 class="red-bold">{{mensagem}}</h5>
+  {% endif %}
 
   <form action="" method="post"> {% csrf_token %}
 

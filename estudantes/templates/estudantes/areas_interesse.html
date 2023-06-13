@@ -7,11 +7,11 @@
 
 {% block content %}
 
-    {% if mensagem %}
-        <h2 class="red-bold">{{mensagem}}</h2>
-    {% endif %}
-
     <span class="titulo">Áreas de Interesse</span>
+
+    {% if mensagem %}
+        <h5 class="red-bold">{{mensagem}}</h5>
+    {% endif %}
 
     <form method="post">
         {% csrf_token %}    
