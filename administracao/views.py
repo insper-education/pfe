@@ -1132,17 +1132,17 @@ def selecionar_orientadores(request):
     configuracao = get_object_or_404(Configuracao)
     ano = configuracao.ano
     semestre = configuracao.semestre
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    #     ano = configuracao.ano
-    #     semestre = configuracao.semestre
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
 
     mensagem = ""
 
+    # Bloqueando visualização de projetos para estudantes
+    configuracao.liberados_projetos = False
+    configuracao.save()
+    mensagem += "A visualização de projetos pelos novos alunos está bloqueada.<br>"
+    mensagem += "Para desbloquear acesse: Área Administrativa > Configurar.<br>"
+
     if 'mensagem' in request.session:
-        mensagem = request.session['mensagem']
+        mensagem += request.session['mensagem']
 
     # Vai para próximo semestre
     ano, semestre = adianta_semestre(ano, semestre)
