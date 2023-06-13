@@ -111,10 +111,10 @@
 
     {% if ano == user.aluno.anoPFE and semestre == user.aluno.semestrePFE %}
         &nbsp;&nbsp;
-        <font color="red">Prazo para a seleção dos projetos {{ano}}.{{semestre}}:
+        <font color="red">Prazo para a seleção dos propostas {{ano}}.{{semestre}}:
             <b>
             {% if configuracao.liberadas_propostas %}
-                {{configuracao.prazo}}
+                {{limite_propostas}}
             {% else %}
                 ainda não liberado
             {% endif %}
@@ -164,7 +164,7 @@
     {% comment %} <a href=" reembolso " > <h5> Pedido de Reembolso </h5> </a> {% endcomment %}
 
     <div class="mensagem" id="projeto">Você não está alocado em um projeto.</div>
-    <div class="mensagem" id="vencido">Prazo para a seleção dos projetos vencido.</div>
+    <div class="mensagem" id="vencido">Prazo para a seleção dos propostas vencido.</div>
     <div class="mensagem" id="liberado">Propostas ainda não liberadas.</div>
     <div class="mensagem" id="final">Você ainda não está na fase final de projeto.</div>
     <div class="mensagem" id="feedback">Fora do período para o feedback.</div>

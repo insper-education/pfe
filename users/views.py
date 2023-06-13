@@ -28,6 +28,8 @@ from projetos.models import ObjetivosDeAprendizagem
 from projetos.messages import email
 from projetos.support import get_objetivos_alocacao, calcula_objetivos
 
+from administracao.support import get_limite_propostas
+
 from .forms import PFEUserCreationForm
 from .models import PFEUser, Aluno, Professor, Parceiro, Opcao, Administrador
 from .models import Alocacao, OpcaoTemporaria
@@ -1204,18 +1206,22 @@ def contas_senhas(request, anosemestre=None):
             message_email += "Faça sua seleção de propostas de projetos "
             message_email += "conforme sua ordem de interesse.\n"
             message_email += "\n"
-            message_email += "O prazo para a escolha de projetos é: "
-            message_email += configuracao.prazo.strftime("%d/%m/%Y %H:%M") + "\n"
-            message_email += "Você pode alterar quantas vezes desejar suas escolhas "
-            message_email += "até a data limite.\n"
-            message_email += "\n\n"
+
+            limite_propostas = get_limite_propostas(configuracao)
+            if limite_propostas is not None:
+                message_email += "O prazo para a escolha de projetos é: "
+                message_email += limite_propostas.strftime("%d/%m/%Y") + "\n"
+                message_email += "Você pode alterar quantas vezes desejar suas escolhas "
+                message_email += "até a data limite.\n"
+                message_email += "\n\n"
+
             message_email += "Sua conta é: <b>" + estudante.user.username + "</b>\n"
             message_email += "Sua senha é: <b>" + senha + "</b>\n"
             message_email += "\n\n"
             message_email += "Qualquer dúvida, envie e-mail para: "
-            message_email += coordenacao.user.get_full_name() + "<a href='mailto:" + coordenacao.user.email + "'>" + coordenacao.user.email + "</a>"
+            message_email += coordenacao.user.get_full_name() + " <a href='mailto:" + coordenacao.user.email + "'>&lt;" + coordenacao.user.email + "&gt;</a>"
             message_email += "\n\n"
-            message_email += "Nos próximos dias o departamento de carreiras entrará em contato "
+            message_email += "Nos próximos dias entraremos em contato "
             message_email += "com datas de reuniões para maiores esclarecimentos dos projetos."
             message_email += "\n\n"
             message_email += "&nbsp;&nbsp;&nbsp;&nbsp;atenciosamente, coordenação do PFE\n"

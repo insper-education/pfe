@@ -14,6 +14,8 @@ from django.shortcuts import get_object_or_404
 from projetos.models import Configuracao, Certificado, Avaliacao2, Evento
 from .models import Aluno
 
+from administracao.support import get_limite_propostas
+
 
 def adianta_semestre(ano, semestre):
     """Adiciona um semestre no par ano, semestre."""
@@ -38,12 +40,12 @@ def configuracao_estudante_vencida(estudante):
         vencido = True
     elif estudante.anoPFE == ano and semestre == 1:
         if estudante.semestrePFE == 2:
-            vencido = timezone.now() > configuracao.prazo
+            vencido = timezone.now().date() > get_limite_propostas(configuracao)
     elif estudante.anoPFE == ano and semestre == 2:
         vencido = True
     elif estudante.anoPFE == ano+1:
         if estudante.semestrePFE == 1:
-            vencido = timezone.now() > configuracao.prazo
+            vencido = timezone.now().date() > get_limite_propostas(configuracao)
 
     return vencido
 

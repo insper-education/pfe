@@ -29,7 +29,13 @@
     <small><br>(Somente troque quando o semestre mudar oficialmente, em geral trocar um pouco antes do começo das aulas)</small>
     
     <br><br><hr><br>
-    <label for="limite_propostas">Prazo limite para seleção de propostas por estudantes:</label> <input id="limite_propostas" type = "datetime-local" name="limite_propostas" value="{{configuracao.prazo|date:'Y-m-d\TH:i:s'}}">
+    <label for="limite_propostas">Prazo limite para seleção de propostas por estudantes: </label>
+    {% if limite_propostas %}
+      <span id="limite_propostas">{{limite_propostas}}</span>
+    {% else %}
+      <span id="limite_propostas">Data para indicação de interesse nos projetos do próximo semestre pelos estudante não foi definida na agenda.</span>
+    {% endif %}
+    {% comment %} <input id="limite_propostas" type = "datetime-local" name="limite_propostas" value="{{configuracao.prazo|date:'Y-m-d\TH:i:s'}}"> {% endcomment %}
     <br>
     <input type="checkbox" id="liberadas_propostas" name="liberadas_propostas" {% if configuracao.liberadas_propostas %}checked{% endif %}>
     <label for="liberadas_propostas"> Propostas Liberadas para Estudantes</label>

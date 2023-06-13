@@ -27,6 +27,8 @@ from documentos.support import render_to_pdf
 from projetos.models import Configuracao, Organizacao, Proposta, Projeto, Banca
 from projetos.models import Avaliacao2, get_upload_path, Feedback, Disciplina
 
+from .support import get_limite_propostas
+
 from projetos.support import simple_upload
 
 from projetos.resources import DisciplinasResource
@@ -746,9 +748,11 @@ def configurar(request):
 
     if request.method == 'POST':
 
-        if "limite_propostas" and "periodo_ano" and "periodo_semestre" in request.POST:
+        if "periodo_ano" and "periodo_semestre" in request.POST:
             try:
-                configuracao.prazo = dateutil.parser.parse(request.POST['limite_propostas'])
+                
+                #configuracao.prazo = dateutil.parser.parse(request.POST['limite_propostas'])
+                
                 configuracao.ano = int(request.POST['periodo_ano'])
                 configuracao.semestre = int(request.POST['periodo_semestre'])
 
@@ -772,10 +776,11 @@ def configurar(request):
             except (ValueError, OverflowError, MultiValueDictKeyError):
                 return HttpResponse("Algum erro não identificado.", status=401)
         else:
-            return HttpResponse("Algum erro não identificado.", status=401)
-
+            return HttpResponse("Algum erro ao passar parâmetros.", status=401)
+    
     context = {
         "configuracao": configuracao,
+        "limite_propostas": get_limite_propostas(configuracao),
         "coord_length": Configuracao._meta.get_field('coordenador').max_length,
     }
 

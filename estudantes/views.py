@@ -32,6 +32,8 @@ from users.support import configuracao_estudante_vencida, configuracao_pares_ven
 
 from .models import Relato, Pares
 
+from administracao.support import get_limite_propostas
+
 @login_required
 def index_estudantes(request):
     """Mostra página principal do usuário estudante."""
@@ -40,7 +42,7 @@ def index_estudantes(request):
 
     context = {
         'configuracao': configuracao,
-        'vencido': timezone.now() > configuracao.prazo
+        'vencido': timezone.now().date() > get_limite_propostas(configuracao)
     }
 
     ano = configuracao.ano
@@ -90,8 +92,8 @@ def index_estudantes(request):
     else:
         return HttpResponse("Usuário sem acesso.", status=401)
 
-    context['ano'], context['semestre'] = adianta_semestre(ano, semestre)
-
+    context["ano"], context["semestre"] = adianta_semestre(ano, semestre)
+    context["limite_propostas"] = get_limite_propostas(configuracao)
 
     
     return render(request, 'estudantes/index_estudantes.html', context=context)
@@ -631,7 +633,7 @@ def selecao_propostas(request):
 
     if user.tipo_de_usuario == 1:
 
-        vencido = timezone.now() > configuracao.prazo
+        vencido = timezone.now().date() > get_limite_propostas(configuracao)
 
         aluno = get_object_or_404(Aluno, pk=request.user.aluno.pk)
 
@@ -701,10 +703,15 @@ def selecao_propostas(request):
                 if check != 1:
                     message = "Erro no envio contacte:lpsoares@insper.edu.br"
 
-                context = {'message': message, }
+                context = {
+                    'message': message,
+                    "prazo": get_limite_propostas(configuracao),
+                }
                 return render(request, 'projetos/confirmacao.html', context)
 
-            context = {'warnings': warnings, }
+            context = {
+                'warnings': warnings,
+            }
             return render(request, 'projetos/projetosincompleto.html', context)
 
         opcoes_temporarias = OpcaoTemporaria.objects.filter(aluno=aluno)
@@ -727,9 +734,10 @@ def selecao_propostas(request):
         'opcoes_temporarias': opcoes_temporarias,
         'ano': ano,
         'semestre': semestre,
-        "prazo": configuracao.prazo,
+        "prazo": get_limite_propostas(configuracao),
         "areas": areas,
         'warnings': warnings,
+        "limite_propostas": get_limite_propostas(configuracao),
     }
     return render(request, 'estudantes/selecao_propostas.html', context)
 

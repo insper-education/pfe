@@ -550,8 +550,8 @@ class Configuracao(models.Model):
                                            help_text='Semestre que o projeto comeca')
     manutencao = models.BooleanField("Manutenção", default=False,
                                      help_text='Mostra mensagem de site em manutencao na entrada')
-    prazo = models.DateTimeField("Prazo", default=datetime.datetime.now, blank=True,
-                                 help_text='Prazo para os estudantes se inscreverem nos projetos')
+    #prazo = models.DateTimeField("Prazo", default=datetime.datetime.now, blank=True,
+    #                             help_text='Prazo para os estudantes se inscreverem nos projetos')
     t0 = models.DateField(default=datetime.date.today, blank=True,
                           help_text='Inicio do Semestre Letivo')
     recipient_reembolso = models.CharField(max_length=127, blank=True,
@@ -702,7 +702,7 @@ class Evento(models.Model):
         (120, 'Limite para submissão de propostas de projetos pelas organizações', 'lime'),
         (121, 'Pré seleção de propostas de projetos', 'chartreuse'),
 
-        (123, 'Indicação de interesse nos projetos do próximo semestre pelos estudante', 'pink'),
+        (123, 'Indicação de interesse nos projetos do próximo semestre pelos estudante', 'hotpink '),
         (124, 'Notificação para estudantes dos grupos formados', 'paleturquoise'),
         (125, 'Notificação para organizações dos projetos fechados', 'moccasin'),
         (126, 'Professores tiram dúvidas sobre projetos para estudantes', 'lightsalmon'),
