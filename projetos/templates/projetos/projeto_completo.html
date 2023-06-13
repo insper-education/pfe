@@ -370,9 +370,11 @@
 
   {% endif %}
 
-  <hr>
-  <h3>Relatos Quinzenais</h3>
-  {% include "relatos.html" %}
+  {% if projeto.has_relatos %}  
+    <hr>
+    <h3>Relatos Quinzenais</h3>
+    {% include "relatos.html" %}
+  {% endif %}
 
   <hr>
   <h3>Documentos

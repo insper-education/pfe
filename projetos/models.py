@@ -241,6 +241,11 @@ class Projeto(models.Model):
         return zip(eventos, relatos, avaliados)
 
     @property
+    def has_relatos(self):
+        """Retorna se houver algum relato quinzenal para o projeto."""            
+        return Relato.objects.filter(alocacao__projeto=self).exists()
+
+    @property
     def media_falconi(self):
         aval_banc_falconi = Avaliacao2.objects.filter(projeto=self, tipo_de_avaliacao=99)  # Falc.
         nota_banca_falconi, _, _ = users.models.Aluno.get_banca(None, aval_banc_falconi)
