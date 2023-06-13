@@ -552,8 +552,8 @@ class Configuracao(models.Model):
                                      help_text='Mostra mensagem de site em manutencao na entrada')
     #prazo = models.DateTimeField("Prazo", default=datetime.datetime.now, blank=True,
     #                             help_text='Prazo para os estudantes se inscreverem nos projetos')
-    t0 = models.DateField(default=datetime.date.today, blank=True,
-                          help_text='Inicio do Semestre Letivo')
+    #t0 = models.DateField(default=datetime.date.today, blank=True,
+    #                      help_text='Inicio do Semestre Letivo')
     recipient_reembolso = models.CharField(max_length=127, blank=True,
                                            help_text='Separar lista por ponto e virgula')
     liberados_projetos = models.BooleanField(default=False,
@@ -1061,22 +1061,23 @@ class Aviso(models.Model):
     contatos_nas_organizacoes = \
         models.BooleanField(default=False, help_text='Para contatos nas organizações parceiras')
 
-    def get_data(self):
-        """Retorna a data do aviso do semestre."""
-        configuracao = Configuracao.objects.get()
-        delta_days = datetime.timedelta(days=self.delta)
-        if self.tipo_de_evento:
-            eventos = Evento.objects.filter(tipo_de_evento=self.tipo_de_evento).\
-                                     filter(startDate__year=configuracao.ano)
-            if configuracao.semestre == 1:
-                evento = eventos.filter(startDate__month__lt=7).last()
-            else:
-                evento = eventos.filter(startDate__month__gt=6).last()
+    #### NÃO ESTÁ MAIS SENDO USADO ####
+    # def get_data(self):
+    #     """Retorna a data do aviso do semestre."""
+    #     configuracao = Configuracao.objects.get()
+    #     delta_days = datetime.timedelta(days=self.delta)
+    #     if self.tipo_de_evento:
+    #         eventos = Evento.objects.filter(tipo_de_evento=self.tipo_de_evento).\
+    #                                  filter(startDate__year=configuracao.ano)
+    #         if configuracao.semestre == 1:
+    #             evento = eventos.filter(startDate__month__lt=7).last()
+    #         else:
+    #             evento = eventos.filter(startDate__month__gt=6).last()
 
-            if evento:
-                return evento.startDate + delta_days
+    #         if evento:
+    #             return evento.startDate + delta_days
 
-        return configuracao.t0 + delta_days
+    #     return configuracao.t0 + delta_days
 
     def get_evento(self):
         """Retorna em string o nome do evento."""

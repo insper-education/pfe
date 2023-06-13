@@ -645,7 +645,7 @@ def selecao_propostas(request):
             vencido |= aluno.anoPFE <= configuracao.ano
 
         if vencido:
-            mensagem = "Prazo vencido para seleção de propostas de propostas!"
+            mensagem = "Prazo vencido para seleção de propostas de projetos!"
             context = {
                 "area_aluno": True,
                 "mensagem": mensagem,
