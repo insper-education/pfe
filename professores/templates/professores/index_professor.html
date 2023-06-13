@@ -25,9 +25,13 @@
         <li><a href="{% url 'relatos_quinzenais' %}">Verificar Relatos Quinzenais</a></li>
     </ul>
 
-    <h5>Avaliação de Pares</h5>
+    <h5>Avaliações</h5>
     <ul>
+        <li><a href="{% url 'estudantes_notas' "meus_projetos" %}">Notas Individuais de Estudantes</a></li>
+        <li><a href="{% url 'resultado_meus_projetos' %}">Notas de Grupo dos Projetos</a></li>
         <li><a href="{% url 'avaliacoes_pares' %}">Ver Avaliação de Pares</a></li>
     </ul>
+
+    
     
 {% endblock %}

@@ -20,6 +20,10 @@ urlpatterns = [
          views.estudantes_notas,
          name='estudantes_notas'),
 
+    path('estudantes_notas/<str:professor>',
+         views.estudantes_notas,
+         name='estudantes_notas'),
+
     path('blackboard_notas/<str:anosemestre>',
          views.blackboard_notas,
          name='blackboard_notas'),

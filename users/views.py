@@ -283,7 +283,7 @@ def estudantes_lista(request):
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
-def estudantes_notas(request):
+def estudantes_notas(request, professor=None):
     """Gera lista com todos os alunos já registrados."""
     configuracao = get_object_or_404(Configuracao)
 
@@ -301,11 +301,30 @@ def estudantes_notas(request):
 
             alunos_list = alunos_list.filter(trancado=False)
 
+
+            if professor is not None:
+                user = get_object_or_404(PFEUser, pk=request.user.pk)
+                if user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
+                    mensagem = "Você não está cadastrado como professor!"
+                    context = {
+                        "area_principal": True,
+                        "mensagem": mensagem,
+                    }
+                    return render(request, 'generic.html', context=context)
+                
+                # Incluindo também se coorientação
+                projetos = Projeto.objects.all()
+                coorientacoes = Coorientador.objects.filter(usuario=user).values_list('projeto', flat=True)
+                projetos = projetos.filter(orientador=user.professor) | projetos.filter(id__in=coorientacoes)
+                alunos_list = alunos_list.filter(alocacao__projeto__in=projetos)
+
+            # Caso o aluno tenha repetido e esteja fazendo de novo o PFE
             alunos_semestre = alunos_list\
                 .filter(alocacao__projeto__ano=ano,
                         alocacao__projeto__semestre=semestre)\
                 .distinct()
 
+            # Caso o aluno tenha repetido e esteja fazendo de novo o PFE
             alunos_list = alunos_semestre |\
                 alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
 

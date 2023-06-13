@@ -134,6 +134,10 @@ urlpatterns = [
          views.relatos_quinzenais,
          name='relatos_quinzenais'),
 
+    path('resultado_meus_projetos/',
+         views.resultado_meus_projetos,
+         name='resultado_meus_projetos'),
+
     path('resultado_projetos/',
          views.resultado_projetos,
          name='resultado_projetos'),

@@ -1796,15 +1796,21 @@ def relato_avaliar(request, projeto_id, evento_id):
 
 
 # Criei esse função temporária para tratar caso a edição seja passada diretamente na URL
-def resultado_projetos_intern(request, ano=None, semestre=None):
+def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
     if request.is_ajax():
         if 'edicao' in request.POST:
             edicao = request.POST['edicao']
-            if edicao == 'todas':
-                projetos = Projeto.objects.all()
-            else:
+
+            projetos = Projeto.objects.all()
+
+            if professor is not None:
+                # Incluindo também se coorientação
+                coorientacoes = Coorientador.objects.filter(usuario=professor.user).values_list('projeto', flat=True)
+                projetos = projetos.filter(orientador=professor) | projetos.filter(id__in=coorientacoes)
+
+            if edicao != 'todas':
                 ano, semestre = request.POST['edicao'].split('.')
-                projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
+                projetos = projetos.filter(ano=ano, semestre=semestre)
 
             relatorio_intermediario = []
             relatorio_final = []
@@ -1923,6 +1929,25 @@ def resultado_projetos(request):
     """Mostra os resultados das avaliações (Bancas)."""
     return resultado_projetos_intern(request)
 
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def resultado_meus_projetos(request):
+    """Mostra os resultados das avaliações somente do professor (Bancas)."""
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
+    if user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
+        mensagem = "Você não está cadastrado como professor!"
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
+    professor = None
+    try:
+        professor = Professor.objects.get(pk=request.user.professor.pk)
+    except Professor.DoesNotExist:
+        pass
+        # Administrador não possui também conta de professor
+    return resultado_projetos_intern(request, professor=professor)
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
