@@ -728,13 +728,13 @@ def todos_parceiros(request):
     cabecalhos = ["Nome", "Cargo", "Organização", "e-mail", "telefone", "papel", ]
 
     parceiros = None
-
+    edicao = "todas"
     if request.is_ajax():
         if 'edicao' in request.POST:
             edicao = request.POST['edicao']
             parceiros = Parceiro.objects.all()
 
-            if edicao not in ("todos",):
+            if edicao not in ("todas",):
                 ano = int(edicao.split(".")[0])
                 semestre = int(edicao.split(".")[1])
                 conexoes = Conexao.objects.filter(projeto__ano=ano,
@@ -747,6 +747,7 @@ def todos_parceiros(request):
         "cabecalhos": cabecalhos,
         "titulo": "Parceiros Profissionais",
         "edicoes": edicoes,
+        "edicao": edicao,
         }
 
     return render(request, 'organizacoes/todos_parceiros.html', context)

@@ -63,12 +63,20 @@
           <td>
             {% with conexoes=parceiro.conexao_set.all %}
               {% for conexao in conexoes %}
-                {% if conexao.projeto %}
-                  <a href="{% url 'projeto_completo' conexao.projeto.id %}">
-                    {% if conexao.gestor_responsavel %}GR{% endif %}
-                    {% if conexao.mentor_tecnico %}MT{% endif %}
-                    {% if conexao.recursos_humanos %}RH{% endif %}
-                  </a>
+                {% if edicao == "todas" %}
+                  {% if conexao.projeto %}
+                    <a href="{% url 'projeto_completo' conexao.projeto.id %}">
+                      {% if conexao.gestor_responsavel %}GR{% endif %}
+                      {% if conexao.mentor_tecnico %}MT{% endif %}
+                      {% if conexao.recursos_humanos %}RH{% endif %}
+                    </a>
+                  {% endif %}
+                {% else %}
+                  {% if conexao.projeto and conexao.projeto.get_edicao == edicao %}
+                      {% if conexao.gestor_responsavel %}GR{% endif %}
+                      {% if conexao.mentor_tecnico %}MT{% endif %}
+                      {% if conexao.recursos_humanos %}RH{% endif %}
+                  {% endif %}
                 {% endif %}
               {% endfor %}
             {% endwith %}

@@ -296,6 +296,10 @@ class Projeto(models.Model):
         """Cria um Projeto (entrada) na Banca."""
         projeto = cls(proposta=proposta)
         return projeto
+    
+    @property
+    def get_edicao(self):
+        return str(self.ano)+"."+str(self.semestre)
 
 
 class Proposta(models.Model):
