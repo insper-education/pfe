@@ -14,10 +14,16 @@ from django.utils import html
 
 from users.models import Opcao
 from .models import AreaDeInteresse
-#from .models import Area
 
 from administracao.models import Carta
 
+def render_message(template, context):
+    """Recebe o nome da Carta a renderizar como texto."""
+    carta = get_object_or_404(Carta, template=template)
+    t = Template(carta.texto)
+    message = t.render(Context(context))
+    message = html.urlize(message) # Faz links de e-mail e outros links funcionarem
+    return message
 
 def htmlizar(text):
     """Coloca <br> nas quebras de linha."""
@@ -40,77 +46,22 @@ def create_message(estudante, ano, semestre):
             "areas": AreaDeInteresse.objects.filter(area__ativa=True, area__isnull=False, usuario=estudante.user),
             "outras": AreaDeInteresse.objects.filter(area__isnull=True, usuario=estudante.user).last()
         }
-    carta = get_object_or_404(Carta, template="Confirma Propostas")
-    t = Template(carta.texto)
-    message = t.render(Context(context_carta))
-    message = html.urlize(message) # Faz links de e-mail, outros sites funcionarem
-    return message
+    return render_message("Confirma Propostas", context_carta)
 
 def message_reembolso(usuario, projeto, reembolso, cpf):
-    """Emite menssagem de reembolso."""
-    message = '<br>\n'
-    message += '&nbsp;&nbsp;Caro <b>Dept. de Carreiras</b>\n\n'
-    message += '<br><br>\n\n'
-    message += '&nbsp;&nbsp;Por favor, encaminhem o pedido de reembolso de: '
-    message += usuario.first_name+" "+usuario.last_name+" ("+usuario.username+')<br>\n'
-    message += '&nbsp;&nbsp;CPF: '+cpf[:3]+'.'+cpf[3:6]+'.'+cpf[6:9]+'-'+cpf[9:11]+'<br>\n'
-    # if usuario.aluno.curso == "C":
-    #     curso = "Computação"
-    # elif usuario.aluno.curso == "M":
-    #     curso = "Mecânica"
-    # else:
-    #     curso = "Mecatrônica"
-    curso = str(usuario.aluno.curso2)
-    message += '&nbsp;&nbsp;Curso: '+curso+'<br>\n'
-    if projeto:
-        message += '<br>\n'
-        message += '&nbsp;&nbsp;Participante do projeto: '+projeto.titulo+'<br>\n'
-    message += '<br>\n'
-    message += '&nbsp;&nbsp;Descrição: '+reembolso.descricao+'<br>\n'
-    message += '<br>\n'
-    message += '&nbsp;&nbsp;Banco: '
-    message += reembolso.banco.nome+' ('+str(reembolso.banco.codigo)+')'+'<br>\n'
-    message += '&nbsp;&nbsp;Conta: ' + reembolso.conta+'<br>\n'
-    message += '&nbsp;&nbsp;Agência: ' + reembolso.agencia+'<br>\n'
-    message += '<br>\n'
-    message += '&nbsp;&nbsp;Valor do reembolso: ' + reembolso.valor+'<br>\n'
-    message += '<br>\n'
-    message += '<br>\n'
-    message += '&nbsp;&nbsp;Para isso use o Centro de Custo: '
-    message += '200048 - PROJETO FINAL DE ENGENHARIA<br>\n'
-    message += '&nbsp;&nbsp;Com a conta contábil: '
-    message += '400339 - INSUMOS PARA EQUIPAMENTOS DOS LABORATÓRIOS<br>\n'
-    message += '<br>\n'+("&nbsp;"*12)+"atenciosamente, coordenação do PFE"
-    message += '&nbsp;<br>\n'
-    message += '&nbsp;<br>\n'
-    message += '&nbsp;&nbsp;&nbsp;Obs: você deverá entregar todas as notas fiscais originais, '
-    message += 'ou senão imprimir, diretamente no departamento de carreiras,'
-    message += 'sem isso o processo não avançará.<br>\n'
-
-    return message
+    """Emite mensagem de reembolso."""
+    context_carta = {
+        "usuario": usuario,
+        "projeto": projeto,
+        "reembolso": reembolso,
+        "cpf": cpf,
+    }
+    return render_message("Mensagem de Reembolso", context_carta)
 
 def message_agendamento(encontro, cancelado):
     """Emite menssagem de agendamento de dinâmica."""
-    message = '<br>\n'
-    message += '&nbsp;&nbsp;Grupo do Projeto <b>'
-    message += str(encontro.projeto)
-    message += '</b>\n\n'
-    message += '<br><br>\n\n'
-    message += '&nbsp;&nbsp;Marcada dinâmica do PFE: '
-    message += 'dia ' + str(encontro.startDate.strftime("%d/%m/%Y")) + ' das ' + str(encontro.startDate.strftime("%H:%M")) + ' às ' + str(encontro.endDate.strftime("%H:%M"))
-    message += '<br>\n'
-    if encontro.location:
-        message += '&nbsp;&nbsp;Local: '
-        message += str(encontro.location)
-        message += '<br>\n'
-    if encontro.facilitador:
-        message += '&nbsp;&nbsp;Com: '
-        message += str(encontro.facilitador)
-        message += '<br>\n'
-
-    if cancelado:
-        message += '<br>\n'
-        message += '&nbsp;&nbsp;<font color="red">Obs: horário previamente agendado ' + cancelado + ' foi cancelado.</font><br>\n'
-        message += '<br>\n'
-
-    return message
+    context_carta = {
+        "encontro": encontro,
+        "cancelado": cancelado,
+    }
+    return render_message("Agendamento de Dinâmica", context_carta)
