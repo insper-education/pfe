@@ -17,7 +17,7 @@
 
     {% for professor in professores %} 
         <tr class="item">
-            <th scope="row">
+            <th scope="row" data-sort="{{professor.user.get_full_name}}">
               <a href="{% url 'professor_detail' professor.id %}">
                 {{professor.user.get_full_name}}
               </a>

@@ -48,11 +48,17 @@
       <th class="text-center">Mensagem</th> {% endcomment %}
       {% for estudante, projeto, feedback in alocacoes %}
         <tr class="item">
-          <td style='font-size:80%'>
-            {{estudante.user.get_full_name}}
+          <td style='font-size:80%' data-sort="{{estudante.user.get_full_name}}">
+            <a href="{% url 'estudante_detail' estudante.id %}">
+              {{estudante.user.get_full_name}} {% if estudante.externo %}<span style="color:red">[{{estudante.externo}}]</span>{% endif %}
+            </a>
           </td>
           <td style='font-size:80%'>
-            {{projeto}}
+            {% if projeto %}
+              <a href="{% url 'projeto_completo' projeto.id %}">
+                {{projeto}}
+              </a>
+            {% endif %}
           </td>
           <td style='font-size:80%'>
             {% if feedback %}

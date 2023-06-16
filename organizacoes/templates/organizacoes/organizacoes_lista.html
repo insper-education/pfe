@@ -21,7 +21,7 @@
         {% for organizacao,fechados,desde,contato, grupos in organizacoes_list %} 
           <tr class="item">
 
-          <th scope="row">
+          <th scope="row" data-sort="{{organizacao.nome}}">
             <a href="{% url 'organizacao_completo' organizacao.id %}">
               {{organizacao.nome}}
             </a>

@@ -26,7 +26,7 @@
           <th scope="col" style="text-align: center;width:auto;"><span style="margin-right: 0.6ex;">Projetos</span></th> {% endcomment %}
           {% for professor, grupos in orientacoes %} 
             <tr class="item">
-              <td>
+              <td data-sort="{{professor.user.get_full_name}}">
                 <a class="imprimir" href="{% url 'professor_detail' professor.id %}">{{professor.user.get_full_name}}</a> <a href="mailto:{{professor.user.email}}">&lt;{{professor.user.email}}&gt;</a>
               </td>
               <td style="text-align: center;"> 

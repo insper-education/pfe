@@ -18,7 +18,7 @@
   {% include "tabelas_top.html" with tabela="Professores" cabecalhos=cabecalhos %}
     {% for professor in professores %} 
       <tr class="item">
-        <th scope="row">
+        <th scope="row" data-sort="{{professor.user.get_full_name}}">
           {% if professor.user.membro_comite %}<u>{% endif %}
             <a href="{% url 'professor_detail' professor.id %}">
               {{professor.user.get_full_name}}
