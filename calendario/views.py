@@ -39,9 +39,12 @@ def get_calendario_context(primarykey=None):
 
     # Se usuário não for Professor nem Admin
     if user and user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
-        eventos = eventos.filter(startDate__year__lte=configuracao.ano)
         if configuracao.semestre == 1:
-            eventos = eventos.filter(startDate__month__lte=7)
+            eventos_ano = eventos.filter(startDate__year__lt=configuracao.ano)
+            eventos_semestre = eventos.filter(startDate__month__lte=7, startDate__year=configuracao.ano)
+            eventos = eventos_ano | eventos_semestre
+        else:
+            eventos = eventos.filter(startDate__year__lte=configuracao.ano)
 
     eventos_gerais = eventos.exclude(tipo_de_evento=12).\
         exclude(tipo_de_evento=40).\
