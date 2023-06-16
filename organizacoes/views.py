@@ -18,7 +18,7 @@ from django.db import transaction
 from django.http import HttpResponseNotFound, JsonResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect, get_object_or_404
 
-from users.support import adianta_semestre
+from users.support import adianta_semestre, get_edicoes
 from users.models import PFEUser, Administrador, Parceiro, Professor, Aluno
 
 from projetos.models import Area, Proposta, Organizacao
@@ -725,15 +725,28 @@ def projeto_feedback(request):
 @permission_required("users.altera_professor", login_url='/')
 def todos_parceiros(request):
     """Exibe todas os parceiros de organizações que já submeteram projetos."""
-    parceiros = Parceiro.objects.all()
-
     cabecalhos = ["Nome", "Cargo", "Organização", "e-mail", "telefone", "papel", ]
-    titulo = "Parceiros Profissionais"
 
+    parceiros = None
+
+    if request.is_ajax():
+        if 'edicao' in request.POST:
+            edicao = request.POST['edicao']
+            parceiros = Parceiro.objects.all()
+
+            if edicao not in ("todos",):
+                ano = int(edicao.split(".")[0])
+                semestre = int(edicao.split(".")[1])
+                conexoes = Conexao.objects.filter(projeto__ano=ano,
+                    projeto__semestre=semestre).values_list("parceiro", flat=True)
+                parceiros = parceiros.filter(id__in=conexoes)
+
+    edicoes, _, _ = get_edicoes(Projeto)    
     context = {
         "parceiros": parceiros,
         "cabecalhos": cabecalhos,
-        "titulo": titulo,
+        "titulo": "Parceiros Profissionais",
+        "edicoes": edicoes,
         }
 
     return render(request, 'organizacoes/todos_parceiros.html', context)

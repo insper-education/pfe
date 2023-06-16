@@ -16,69 +16,79 @@
     <a href="{% url 'cadastrar_usuario' %}?tipo=parceiro">&#10133;</a>
   </span>
 
-  {% include "tabelas_top.html" with tabela="Parceiros" cabecalhos=cabecalhos %}
-    {% for parceiro in parceiros %} 
-      <tr class="item" {% if not parceiro.user.is_active %} style="color: lightgrey;" {% endif %}>
-        <th scope="row">
-          <a href="{% url 'parceiro_detail' parceiro.id %}"
-            {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}>
-            {{parceiro.user.get_full_name}} 
-          </a>
-        </th>
-        <td>
-          {{parceiro.cargo}} 
-        </td>
-        <td class="text-center">
-          {% if parceiro.organizacao %}
-          <a href="{% url 'organizacao_completo' parceiro.organizacao.id %}"
-            {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}>
-            {{parceiro.organizacao.sigla}}
-          </a>
-          {% else %}
-            Organização não identificada
-          {% endif %}
-        </td>
-        <td>
-          <a href="mailto:{{parceiro.user.email}}"
-            {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}>
-            &lt;{{parceiro.user.email}}&gt;
-          </a>
-        </td>
-        <td>
-          {% if parceiro.telefone %}
-            {{parceiro.telefone}}
-            {% if parceiro.celular %} 
-              &nbsp;/&nbsp;
+  {% comment %} Seletor da edição da pesquisa {% endcomment %}
+  {% include "edicoes.html" %}
+
+  <div class="atualizar">
+
+    {% include "tabelas_top.html" with tabela="Parceiros" cabecalhos=cabecalhos %}
+      {% for parceiro in parceiros %} 
+        <tr class="item" {% if not parceiro.user.is_active %} style="color: lightgrey;" {% endif %}>
+          <th scope="row">
+            <a href="{% url 'parceiro_detail' parceiro.id %}"
+              {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}>
+              {{parceiro.user.get_full_name}} 
+            </a>
+          </th>
+          <td>
+            {{parceiro.cargo}} 
+          </td>
+          <td class="text-center">
+            {% if parceiro.organizacao %}
+            <a href="{% url 'organizacao_completo' parceiro.organizacao.id %}"
+              {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}>
+              {{parceiro.organizacao.sigla}}
+            </a>
+            {% else %}
+              Organização não identificada
+            {% endif %}
+          </td>
+          <td>
+            <a href="mailto:{{parceiro.user.email}}"
+              {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}>
+              &lt;{{parceiro.user.email}}&gt;
+            </a>
+          </td>
+          <td>
+            {% if parceiro.telefone %}
+              {{parceiro.telefone}}
+              {% if parceiro.celular %} 
+                &nbsp;/&nbsp;
+                {{parceiro.celular}}
+              {% endif %}
+            {% elif parceiro.celular %}
               {{parceiro.celular}}
             {% endif %}
-          {% elif parceiro.celular %}
-            {{parceiro.celular}}
-          {% endif %}
-        </td>
-        <td>
-          {% with conexoes=parceiro.conexao_set.all %}
-            {% for conexao in conexoes %}
-              {% if conexao.projeto %}
-                <a href="{% url 'projeto_completo' conexao.projeto.id %}">
-                  {% if conexao.gestor_responsavel %}GR{% endif %}
-                  {% if conexao.mentor_tecnico %}MT{% endif %}
-                  {% if conexao.recursos_humanos %}RH{% endif %}
-                </a>
-              {% endif %}
-            {% endfor %}
-          {% endwith %}
-        </td>
-      </tr>
-    {% endfor %}
-    <caption style="text-align:right"><small>GR: Gestor Responsável / MT: Mentoria Técnica / RH: Recursos Humanos</small></caption>
-  </table>
+          </td>
+          <td>
+            {% with conexoes=parceiro.conexao_set.all %}
+              {% for conexao in conexoes %}
+                {% if conexao.projeto %}
+                  <a href="{% url 'projeto_completo' conexao.projeto.id %}">
+                    {% if conexao.gestor_responsavel %}GR{% endif %}
+                    {% if conexao.mentor_tecnico %}MT{% endif %}
+                    {% if conexao.recursos_humanos %}RH{% endif %}
+                  </a>
+                {% endif %}
+              {% endfor %}
+            {% endwith %}
+          </td>
+        </tr>
+      {% endfor %}
+      <caption style="text-align:right"><small>GR: Gestor Responsável / MT: Mentoria Técnica / RH: Recursos Humanos</small></caption>
+    </table> 
+    </div> {% comment %} do "tabelas_top.html" {% endcomment %}
+
+    <script>
+      function carrega_pagina() {};
+      function carrega_site(){
+        carrega_pagina();
+      };
+      window.onload = carrega_site
+    </script>
+
   </div>
 
-  <script>
-    function carrega_pagina(){
-      {% include "tabelas_scripts.html" with tabela='Parceiros' %}
-    }
-    window.onload = carrega_pagina
-  </script>
+  {% include "edicoes_ajax.html" with tabela='Parceiros' %}
 
 {% endblock %}
