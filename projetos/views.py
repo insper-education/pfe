@@ -68,6 +68,7 @@ def index(request):
 
 
 @login_required
+@permission_required("users.altera_professor", login_url='/')
 def index_projetos(request):
     """Página principal dos Projetos."""
     configuracao = get_object_or_404(Configuracao)
@@ -86,7 +87,30 @@ def index_projetos(request):
 @login_required
 def projeto_detalhes(request, primarykey):
     """Exibe proposta de projeto com seus detalhes para estudantes."""
+    configuracao = get_object_or_404(Configuracao)
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
     projeto = get_object_or_404(Projeto, pk=primarykey)
+
+    # Se usuário não for Professor nem Admin
+    if user and user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
+
+        alocacoes = Alocacao.objects.filter(aluno=user.aluno, projeto=projeto)
+        
+        liberado = True
+        if configuracao.semestre == 1:
+            liberado1 = projeto.ano < configuracao.ano
+            liberado2 = (projeto.ano == configuracao.ano) and (projeto.semestre == configuracao.semestre)
+            liberado = liberado1 or liberado2
+        else:
+            liberado = projeto.ano <= configuracao.ano
+
+        if (not alocacoes) or (not liberado):
+            mensagem = "Você não tem autorização para visualizar projeto"
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, 'generic.html', context=context)
 
     context = {
         'projeto': projeto,
@@ -654,15 +678,14 @@ def reembolso_pedir(request):
     if usuario.tipo_de_usuario == 1:
         aluno = get_object_or_404(Aluno, pk=request.user.aluno.pk)
 
-        if not configuracao.liberados_projetos:
-            if aluno.anoPFE > configuracao.ano or\
-              (aluno.anoPFE == configuracao.ano and aluno.semestrePFE > configuracao.semestre):
-                mensagem = "Projetos ainda não disponíveis para o seu período de PFE."
-                context = {
-                    "area_principal": True,
-                    "mensagem": mensagem,
-                }
-                return render(request, 'generic.html', context=context)
+        if aluno.anoPFE > configuracao.ano or\
+            (aluno.anoPFE == configuracao.ano and aluno.semestrePFE > configuracao.semestre):
+            mensagem = "Projetos ainda não disponíveis para o seu período de PFE."
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, 'generic.html', context=context)
 
         projeto = Projeto.objects.filter(alocacao__aluno=aluno).last()
     else:

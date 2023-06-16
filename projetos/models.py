@@ -559,14 +559,10 @@ class Configuracao(models.Model):
                                            help_text='Semestre que o projeto comeca')
     manutencao = models.BooleanField("Manutenção", default=False,
                                      help_text='Mostra mensagem de site em manutencao na entrada')
-    #prazo = models.DateTimeField("Prazo", default=datetime.datetime.now, blank=True,
-    #                             help_text='Prazo para os estudantes se inscreverem nos projetos')
-    #t0 = models.DateField(default=datetime.date.today, blank=True,
-    #                      help_text='Inicio do Semestre Letivo')
+
     recipient_reembolso = models.CharField(max_length=127, blank=True,
                                            help_text='Separar lista por ponto e virgula')
-    liberados_projetos = models.BooleanField(default=False,
-                                             help_text='Para estudantes verem projetos alocados')
+
     liberadas_propostas = models.BooleanField(default=False,
                                               help_text='Para estudantes visualizarem propostas')
 

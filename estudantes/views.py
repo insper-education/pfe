@@ -489,16 +489,16 @@ def minhas_bancas(request):
     aluno = get_object_or_404(Aluno, pk=request.user.aluno.pk)
 
     configuracao = Configuracao.objects.get()
-    if not configuracao.liberados_projetos:
-        if aluno.anoPFE > configuracao.ano or\
-          (aluno.anoPFE == configuracao.ano and
-           aluno.semestrePFE > configuracao.semestre):
-            mensagem = "Projetos ainda não disponíveis para seu período PFE."
-            context = {
-                "area_principal": True,
-                "mensagem": mensagem,
-            }
-            return render(request, 'generic.html', context=context)
+    
+    if (aluno.anoPFE > configuracao.ano) or\
+        (aluno.anoPFE == configuracao.ano and
+        aluno.semestrePFE > configuracao.semestre):
+        mensagem = "Projetos ainda não disponíveis para seu período PFE."
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
 
     projetos = Projeto.objects.filter(alocacao__aluno=aluno)
     bancas = Banca.objects.filter(projeto__in=projetos).order_by("-startDate")

@@ -5,6 +5,7 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 13 de Junho de 2023
 """
 
+import dateutil.parser
 from projetos.models import Evento
 
 def get_limite_propostas(configuracao):
@@ -17,4 +18,5 @@ def get_limite_propostas(configuracao):
     if evento is not None:
         return evento.endDate
     
-    return None
+    inicio_pfe = dateutil.parser.parse("07/06/2018").date()
+    return inicio_pfe

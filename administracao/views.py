@@ -751,12 +751,9 @@ def configurar(request):
         if "periodo_ano" and "periodo_semestre" in request.POST:
             try:
                 
-                #configuracao.prazo = dateutil.parser.parse(request.POST['limite_propostas'])
-                
                 configuracao.ano = int(request.POST['periodo_ano'])
                 configuracao.semestre = int(request.POST['periodo_semestre'])
 
-                configuracao.liberados_projetos = 'liberados_projetos' in request.POST
                 configuracao.liberadas_propostas = 'liberadas_propostas' in request.POST
                 configuracao.min_props = int(request.POST['min_props'])
 
@@ -1146,10 +1143,9 @@ def selecionar_orientadores(request):
     mensagem = ""
 
     # Bloqueando visualização de projetos para estudantes
-    configuracao.liberados_projetos = False
-    configuracao.save()
     mensagem += "A visualização de projetos pelos novos alunos está bloqueada.<br>"
-    mensagem += "Para desbloquear acesse: Área Administrativa > Configurar.<br>"
+    mensagem += "Para desbloquear mova para o próximo semestre na área de Configuração do PFE.<br>"
+    mensagem += "[Área Administrativa > Configurar.]<br>"
 
     if 'mensagem' in request.session:
         mensagem += request.session['mensagem']

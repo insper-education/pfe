@@ -26,9 +26,13 @@
     Período Liberado&nbsp;&nbsp;&nbsp;
     &nbsp;&nbsp;&nbsp;<label for="periodo_ano">ano:</label> <input id="periodo_ano" name="periodo_ano" type="number" min="2018" max="9999" step="1" value="{{configuracao.ano}}"/>
     &nbsp;&nbsp;&nbsp;<label for="periodo_semestre">semestre:</label> <input id="periodo_semestre" name="periodo_semestre" type="number" min="1" max="2" step="1" value="{{configuracao.semestre}}"/>
-    <small><br>(Somente troque quando o semestre mudar oficialmente, em geral trocar um pouco antes do começo das aulas)</small>
+    <small>
+      <br>(Somente troque quando o semestre mudar oficialmente, em geral trocar um pouco antes do começo das aulas)
+      <br>(Estudantes conseguirão ver os projetos em que foram alocados a partir da data liberada e do projeto)
+      <br>
+    </small>
     
-    <br><br><hr><br>
+    <br><hr><br>
     <label for="limite_propostas">Prazo limite para seleção de propostas por estudantes: </label>
     {% if limite_propostas %}
       <span id="limite_propostas">{{limite_propostas}}</span>
@@ -40,11 +44,6 @@
     <input type="checkbox" id="liberadas_propostas" name="liberadas_propostas" {% if configuracao.liberadas_propostas %}checked{% endif %}>
     <label for="liberadas_propostas"> Propostas Liberadas para Estudantes</label>
     <small>(Estudantes conseguirão ver as propostas para aplicar)</small>
-    <br>
-    
-    <input type="checkbox" id="liberados_projetos" name="liberados_projetos" {% if configuracao.liberados_projetos %}checked{% endif %}>
-    <label for="liberados_projetos"> Projetos Liberados para Estudantes</label>
-    <small>(Estudantes conseguirão ver os projetos em que foram alocados)</small>
     <br>
 
     <label for="min_props">Mínimo de Propostas para Estudantes Selecionarem:</label>
