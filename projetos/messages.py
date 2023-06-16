@@ -14,7 +14,7 @@ from django.utils import html
 
 from users.models import Opcao
 from .models import AreaDeInteresse
-from .models import Area
+#from .models import Area
 
 from administracao.models import Carta
 
