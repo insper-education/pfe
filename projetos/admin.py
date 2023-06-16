@@ -482,8 +482,8 @@ class AreaDeInteresseAdmin(admin.ModelAdmin):
 
     list_display = ("area", "usuario", "proposta",)
     list_filter = ('area',)
-    search_fields = ['usuario__username', 'projeto__organizacao__sigla',
-                     'projeto__titulo', 'projeto__titulo_final',]
+    search_fields = ['usuario__username', 'proposta__organizacao__sigla',
+                     'proposta__titulo',]
 
 
 admin.site.register(Entidade)       # Para ser preenchido com as entidades estudantis

@@ -8,9 +8,16 @@ Data: 18 de Outubro de 2019
 
 from django.conf import settings
 from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404
+from django.template import Context, Template
+from django.utils import html
+
 from users.models import Opcao
 from .models import AreaDeInteresse
 from .models import Area
+
+from administracao.models import Carta
+
 
 def htmlizar(text):
     """Coloca <br> nas quebras de linha."""
@@ -25,90 +32,18 @@ def email(subject, recipient_list, message):
 
 def create_message(estudante, ano, semestre):
     """Cria mensagem quando o estudante termina de preencher o formulário de seleção de propostas"""
-    message = '<br>\n'
-    message += '&nbsp;&nbsp;Estudante: <b>'+estudante.user.first_name+" "+estudante.user.last_name
-    message += " ("+estudante.user.username+')</b>\n\n'
-    message += '&nbsp;<br><br>\n\n'
-    message += '&nbsp;&nbsp;Suas opções de propostas de projetos foram:<br>\n'
-    message += '<ul>'
-    opcoes = Opcao.objects.filter(aluno=estudante)
-    if not opcoes:
-        message += "NÃO FORAM ENCONTRADAS OPÇÕES DE ESCOLHA DE PROPOSTAS DE PROJETOS!"
-    for opcao in opcoes:
-        if opcao.proposta.disponivel:
-            # Mostra somente as propostas do próximo ano, não outras em caso de estudante DP
-            if opcao.proposta.ano == ano and\
-               opcao.proposta.semestre == semestre:
-                message += "<p>"+str(opcao.prioridade)+" - "
-                message += opcao.proposta.titulo+" ("
-                if opcao.proposta.nome_organizacao:
-                    message += opcao.proposta.nome_organizacao
-                elif opcao.proposta.organizacao and opcao.proposta.organizacao.nome:
-                    message += opcao.proposta.organizacao.nome
-                else:
-                    message += "ORGANIZAÇÃO INDEFINIDA"
-                message += ")</p>\n"
-    message += '</ul>'
-    message += '<br>\n'
-
-    message += '&nbsp;&nbsp;Suas áreas de interesse são:<br>\n'
-    message += '<ul>'
-
-    todas_areas = Area.objects.filter(ativa=True)
-    alguma = False
-    for area in todas_areas:
-        if AreaDeInteresse.objects.filter(usuario=estudante.user, area=area):
-            message += "<li>"+area.titulo+"</li>\n"
-            alguma = True
-    if not alguma:
-        message += "<br>\nNENHUMA ÁREA DE INTERESSE SELECIONADA!<br>\n<br>\n"
-
-    if AreaDeInteresse.objects.filter(area=None, usuario=estudante.user).exists():
-        outras = AreaDeInteresse.objects.get(area=None, usuario=estudante.user).outras
-        message += "Outras: <u>"+outras+"</u><br>\n"
-
-    message += '</ul>'
-    message += '<br>\n'
-    message += '&nbsp;&nbsp;Suas informações adicionais são:<br>\n'
-    message += '<br>\n'
-    message += ("&nbsp;" * 4)
-    message += 'Você já trabalhou/trabalha ou estagiou/estagia em alguma empresa de engenharia?<br>\n'
-    message += ("&nbsp;" * 4)
-    message += 'Se sim, qual/quais?<br>\n'
-    if estudante.trabalhou:
-        message += ("&nbsp;" * 4) + '<i>'+estudante.trabalhou+'</i>'
-    else:
-        message += ("&nbsp;" * 4) + '<i>'+'CAMPO NÃO DEFINIDO'+'</i>'
-    message += '<br><br>\n\n'
-    message += ("&nbsp;" * 4) + 'Você já participou de atividades sociais?<br>\n'
-    message += ("&nbsp;" * 4) + 'Se sim, qual/quais?<br>\n'
-    if estudante.social:
-        message += ("&nbsp;"*4)+'<i>'+estudante.social+'</i>'
-    else:
-        message += ("&nbsp;"*4)+'<i>'+'CAMPO NÃO DEFINIDO'+'</i>'
-    message += '<br><br>\n\n'
-    message += ("&nbsp;"*4)+'Você já participou de alguma entidade estudantil do Insper?<br>\n'
-    message += ("&nbsp;"*4)+'Liste as que você já participou?<br>\n'
-    if estudante.entidade:
-        message += ("&nbsp;"*4)+'<i>'+estudante.entidade+'</i>'
-    else:
-        message += ("&nbsp;"*4)+'<i>'+'CAMPO NÃO DEFINIDO'+'</i>'
-    message += '<br><br>\n\n'
-    message += ("&nbsp;"*4)+'Você possui familiares em algum empresa que está aplicando?'
-    message += 'Ou empresa concorrente direta?<br>\n'
-    message += ("&nbsp;"*4)+'Se sim, qual/quais? Qual seu grau de relacionamento.<br>\n'
-    if estudante.familia:
-        message += ("&nbsp;"*4)+'<i>'+estudante.familia+'</i>'
-    else:
-        message += ("&nbsp;"*4)+'<i>'+'CAMPO NÃO DEFINIDO'+'</i>'
-    message += '<br><br>\n\n'
-    if estudante.user.linkedin:
-        message += ("&nbsp;"*4)+'<i>LinkedIn:</i> <a href='+estudante.user.linkedin+'>'
-        message += estudante.user.linkedin+'</a>'
-        message += '<br><br>\n\n'
-    message += '<br>\n'+("&nbsp;"*12)+"atenciosamente, comitê PFE"
-    message += '&nbsp;<br>\n'
-    message += '&nbsp;<br>\n'
+    context_carta = {
+            "estudante": estudante,
+            "ano": ano,
+            "semestre": semestre,
+            "opcoes": Opcao.objects.filter(aluno=estudante, proposta__disponivel=True),
+            "areas": AreaDeInteresse.objects.filter(area__ativa=True, area__isnull=False, usuario=estudante.user),
+            "outras": AreaDeInteresse.objects.filter(area__isnull=True, usuario=estudante.user).last()
+        }
+    carta = get_object_or_404(Carta, template="Confirma Propostas")
+    t = Template(carta.texto)
+    message = t.render(Context(context_carta))
+    message = html.urlize(message) # Faz links de e-mail, outros sites funcionarem
     return message
 
 def message_reembolso(usuario, projeto, reembolso, cpf):
