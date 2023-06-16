@@ -171,6 +171,7 @@
         (4, 'administrador'),
     {% endcomment %}
 
+    <div id="info_semestre">
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
       <br>
       <input type="checkbox" id="operacao" checked>
@@ -207,6 +208,11 @@
       <input type="checkbox" id="academico" checked>
       <span id="titulo_academico" style="font-size:20px">
         Acadêmico:
+      </span>
+      {% else %}
+      <br>
+      <span id="titulo_academico" style="font-size:20px">
+        Eventos:
       </span>
     {% endif %}
 
@@ -361,6 +367,11 @@
       <span id="titulo_aulas" style="font-size:20px">
         Aulas:
       </span>
+    {% else %}
+      <br>
+      <span id="titulo_aulas" style="font-size:20px">
+        Aulas:
+      </span>
     {% endif %}
 
     <span id="lista_aulas" class="lista_aulas">
@@ -391,7 +402,7 @@
       {% endif %}
 
     </span>
-
+    </div> <!--id="info_semestre"-->
     <br>
     <br>
 
@@ -942,6 +953,9 @@
      })
 
     function primeiro(e) {
+      
+      var fim_semestre = 7;
+
       document.getElementById("primeiro_semestre").style.fontWeight = "bold";
       document.getElementById("primeiro_semestre").style.color = "black";
       document.getElementById("primeiro_semestre").style.background = "#10F010";
@@ -955,7 +969,7 @@
       $('#linha_lab').hide()
       $('#linha_lab_br').hide()
       $('#linha_provas').hide()
-      var els = Array.from(document.querySelectorAll(".semestre[data-mes]")).filter(el => Number(el.dataset.mes) < 7);
+      var els = Array.from(document.querySelectorAll(".semestre[data-mes]")).filter(el => Number(el.dataset.mes) < fim_semestre);
       [].forEach.call(els, function (el) {
         el.style.display = 'inline';
         if(el.parentNode.classList.contains('ano'+currentYear)) {
@@ -968,22 +982,39 @@
           }
         }
       });
+      
 
       {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
         [].forEach.call(document.querySelectorAll('.coordenacao'), function (el) {
           el.style.display = 'none';
         });
-        var els = Array.from(document.querySelectorAll(".coordenacao[data-mes]")).filter(el => Number(el.dataset.mes) <= 7);
+        var els = Array.from(document.querySelectorAll(".coordenacao[data-mes]")).filter(el => Number(el.dataset.mes) <= fim_semestre);
         var els = els.filter(el => Number(el.dataset.mes) >= 2);
         var els = els.filter(el => Number(el.dataset.ano) == currentYear);
         [].forEach.call(els, function (el) {
           el.style.display = 'inline';
         });
       {% endif %}
+
+      // Esconde informações
+      filtragem = $(".semestre[data-mes]").filter(function(){
+        no_semestre = $(this).attr("data-mes") <= fim_semestre;
+        no_ano = $(this).parents('.ano'+currentYear).length > 0;
+        return no_semestre && no_ano;
+      });
+      if (filtragem.length > 0) {
+        $("#info_semestre").show();
+      } else {
+        $("#info_semestre").hide();
+      }
+      
     }
     document.querySelector('#primeiro_semestre').addEventListener('click', primeiro)
 
     function segundo(e) {
+
+      var inicio_semestre = 7;
+
       document.getElementById("primeiro_semestre").style.fontWeight = "normal";
       document.getElementById("primeiro_semestre").style.color = "grey";
       document.getElementById("primeiro_semestre").style.background = "#D0EED0";
@@ -997,7 +1028,7 @@
       $('#linha_lab').hide()
       $('#linha_lab_br').hide()
       $('#linha_provas').hide()
-      var els = Array.from(document.querySelectorAll(".semestre[data-mes]")).filter(el => Number(el.dataset.mes) > 7);
+      var els = Array.from(document.querySelectorAll(".semestre[data-mes]")).filter(el => Number(el.dataset.mes) > inicio_semestre);
       [].forEach.call(els, function (el) {
         el.style.display = 'inline';
         if(el.parentNode.classList.contains('ano'+currentYear)) {
@@ -1017,7 +1048,7 @@
           el.style.display = 'none';
         });
         
-        var els = Array.from(document.querySelectorAll(".coordenacao[data-mes]")).filter(el => Number(el.dataset.mes) > 7);
+        var els = Array.from(document.querySelectorAll(".coordenacao[data-mes]")).filter(el => Number(el.dataset.mes) > inicio_semestre);
         var els = els.filter(el => Number(el.dataset.ano) == currentYear);
         [].forEach.call(els, function (el) {
           el.style.display = 'inline';
@@ -1030,6 +1061,18 @@
         });
       {% endif %}
 
+      // Esconde informações
+      filtragem = $(".semestre[data-mes]").filter(function(){
+        no_semestre = $(this).attr("data-mes") > inicio_semestre;
+        no_ano = $(this).parents('.ano'+currentYear).length > 0;
+        return no_semestre && no_ano;
+      });
+      if (filtragem.length > 0) {
+        $("#info_semestre").show();
+      } else {
+        $("#info_semestre").hide();
+      }
+
     }
     document.querySelector('#segundo_semestre').addEventListener('click',segundo)
 
@@ -1041,6 +1084,7 @@
       {% else %}
         segundo()
       {% endif %}
+
     }
 
   </script>
