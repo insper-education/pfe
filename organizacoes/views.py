@@ -463,7 +463,7 @@ def carrega_proposta(request):
 
             if enviar:
                 resposta += "Você deve receber um e-mail de confirmação "
-                resposta += "nos próximos instantes.<br>"
+                resposta += "nos próximos instantes.<br><br>"
 
         else:
             mensagem = "Arquivo não identificado"

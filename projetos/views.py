@@ -35,6 +35,8 @@ from users.models import Parceiro
 from users.support import adianta_semestre
 from users.support import get_edicoes
 
+from administracao.models import Carta
+
 from .models import Projeto, Proposta, Configuracao, Observacao
 from .models import Coorientador, Avaliacao2, ObjetivosDeAprendizagem
 from .models import Certificado
@@ -2122,6 +2124,9 @@ def conexoes_estabelecidas(request):
                 message += "<br>"
         return HttpResponse(message)
     return HttpResponse("Você não tem privilégios")
+
+
+from django.template import Context, Template
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')

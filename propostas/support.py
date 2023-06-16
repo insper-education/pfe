@@ -11,6 +11,8 @@ import PyPDF2
 
 from django.conf import settings
 from django.utils import html
+from django.shortcuts import get_object_or_404
+from django.template import Context, Template
 
 from projetos.models import Proposta, Configuracao
 from projetos.models import Area, AreaDeInteresse
@@ -18,7 +20,7 @@ from projetos.messages import email
 from users.models import Opcao
 from users.models import PFEUser
 from users.support import adianta_semestre
-
+from administracao.models import Carta
 
 def decodificar(campo, campos):
     """Recupera um campo de um documento PDF."""
@@ -320,63 +322,8 @@ def preenche_proposta_pdf(campos, proposta):
 
     return proposta, mensagem
 
-
-def envia_proposta(proposta, enviar=True):
-    """Envia Proposta por email."""
-    # Isso tinha que ser feito por template, arrumar qualquer hora.
-    message = "<h3>Proposta de Projeto para o PFE {0}.{1}</h3>\n\n".\
-        format(proposta.ano, proposta.semestre)
-
-    message += "A sua proposta de Projeto Final de Engenharia foi registrada.\n"
-    message += "Para editar essa proposta acesse:</b>\n <a href='{0}'>{0}</a>\n\n".\
-        format(settings.SERVER+proposta.get_absolute_url())
-
-    message += "<b>Título da Proposta de Projeto:</b> {0}\n\n".format(proposta.titulo)
-    message += "<b>Proposta submetida por:</b> {0} \n".format(proposta.nome)
-    message += "<b>e-mail:</b> "
-    for each in list(map(str.strip, re.split(",|;", proposta.email))):
-        message += "&lt;{0}&gt; ".format(each)
-    message += "\n\n"
-
-    message += "<b>Nome da Organização:</b> {0}\n".\
-        format(proposta.nome_organizacao)
-    message += "<b>Website:</b> {0}\n".format("" if proposta.website is None else proposta.website)
-    message += "<b>Endereco:</b> {0}\n".format("" if proposta.website is None else proposta.endereco)
-
-    message += "\n\n"
-
-    message += "<b>Contatos Técnicos:</b>\n {0}\n\n".\
-        format("--" if proposta.contatos_tecnicos is None else proposta.contatos_tecnicos)
-
-    message += "<b>Contatos Administrativos:</b>\n {0}\n\n".\
-        format("--" if proposta.contatos_administrativos is None else proposta.contatos_administrativos)
-
-    message += "<b>Informações sobre a instituição/empresa:</b>\n {0}\n\n".\
-        format("--" if proposta.descricao_organizacao is None else proposta.descricao_organizacao)
-
-    message += "<b>Informações sobre a departamento:</b>\n {0}\n\n".\
-        format("--" if proposta.departamento is None else proposta.departamento)
-
-    message += "\n\n"
-
-    message += "<b>Descrição do Projeto:</b>\n {0}\n\n".format(proposta.descricao)
-    message += "<b>Expectativas de resultados/entregas:</b>\n {0}\n\n".\
-        format("--" if proposta.expectativas is None else proposta.expectativas)
-        
-
-    message += "\n"
-
-    message += "<b>Áreas/Habilidades envolvidas no projeto:</b>\n"
-    message += lista_areas(proposta)
-
-    message += "\n\n"
-    message += "<b>Recursos a serem disponibilizados aos alunos:</b>\n {0}\n\n".\
-        format("--" if proposta.recursos is None else proposta.recursos)
-
-    message += "<b>Outras observações para os alunos:</b>\n {0}\n\n".\
-        format("--" if proposta.observacoes is None else proposta.observacoes)
-
-    message += "<b>O principal interesse com o projeto é:</b>\n"
+def lista_interesses(proposta):
+    message = ""
     if proposta.aprimorar:
         message += "- {0}<br>".format(Proposta.TIPO_INTERESSE[0][1])
     if proposta.realizar:
@@ -387,30 +334,22 @@ def envia_proposta(proposta, enviar=True):
         message += "- {0}<br>".format(Proposta.TIPO_INTERESSE[3][1])
     if proposta.mentorar:
         message += "- {0}<br>".format(Proposta.TIPO_INTERESSE[4][1])
+    return message
 
-    message += "\n\n"
+def envia_proposta(proposta, enviar=True):
+    """Envia Proposta por email."""
 
-
-    message += "\n\n"
-    message += "<b>Data da proposta:</b> {0}\n\n\n".\
-        format(proposta.data.strftime("%d/%m/%Y %H:%M"))
-
-    message += "\n\n"
-    message += """
-    <b>Obs.:</b> Ao submeter o projeto, deve ficar claro que a intenção do Projeto Final de Engenharia é 
-    que os alunos tenham um contato próximo com as pessoas responsáveis nas instituições parceiras 
-    para o desenvolvimento de uma solução em engenharia. Em geral os alunos se deslocam uma vez 
-    por semana para entender melhor o desafio, demonstrar resultados preliminares, fazerem 
-    planejamentos em conjunto, dentre de outros pontos que podem variar de projeto para projeto. 
-    Também deve ficar claro que embora não exista um custo direto para as instituições parceiras, 
-    essas terão de levar em conta que pelo menos um profissional deverá dedicar algumas horas 
-    semanalmente para acompanhar os alunos. Além disso se a proposta contemplar gastos, como por 
-    exemplo servidores, matéria prima de alguma forma, o Insper não terá condição de bancar tais 
-    gastos e isso terá de ficar a cargo da empresa, contudo os alunos terão acesso aos 
-    laboratórios do Insper para o desenvolvimento do projeto em horários agendados.<b>\n"""
-
-    message = html.urlize(message)
-    message = message.replace('\n', '<br>\n')
+    context_carta = {
+            "proposta": proposta,
+            "settings": settings,
+            "emails": list(map(str.strip, re.split(",|;", proposta.email))),
+            "lista_areas": lista_areas(proposta),
+            "lista_interesses": lista_interesses(proposta),
+        }
+    carta = get_object_or_404(Carta, template="Proposta de Projeto")
+    t = Template(carta.texto)
+    message = t.render(Context(context_carta))
+    message = html.urlize(message) # Faz links de e-mail, outros sites funcionarem
 
     subject = 'Proposta PFE : ({0}.{1} - {2})'.format(proposta.ano,
                                                       proposta.semestre,
@@ -418,12 +357,9 @@ def envia_proposta(proposta, enviar=True):
 
     if enviar:
         recipient_list = list(map(str.strip, re.split(",|;", proposta.email)))
-        
         coordenacoes = PFEUser.objects.filter(coordenacao=True)
         for coordenador in coordenacoes:
             recipient_list.append(str(coordenador.email))
-        #recipient_list += ["lucianops@insper.edu.br",]
-
         check = email(subject, recipient_list, message)
         if check != 1:
             message = "<b>Algum problema de conexão, contacte: lpsoares@insper.edu.br</b>"
