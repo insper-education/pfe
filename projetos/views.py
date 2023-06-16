@@ -1944,17 +1944,11 @@ def editar_projeto(request, primarykey):
 
         # Realoca estudantes
         estudantes_ids = []
-        print(request.POST)
-        print("AAAA")
         # estudantes = request.POST.get('estudante', None)
         estudantes = request.POST.getlist('estudante')
         for estudante_id in estudantes:
             if estudante_id:
-                print(estudante_id)
                 estudantes_ids.append(int(estudante_id))
-
-        print(estudantes)
-        print("ZZZZ")
 
         # Apaga os estudantes que não estão mais no projeto
         Alocacao.objects.filter(projeto=projeto).exclude(aluno__id__in=estudantes_ids).delete()
