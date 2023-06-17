@@ -27,13 +27,14 @@ from projetos.models import Banca, Evento, Encontro
 from projetos.models import Projeto, Configuracao, Organizacao
 from projetos.support import converte_letra, converte_conceito
 from projetos.support import get_objetivos_atuais
-from projetos.messages import email
+from projetos.messages import email, render_message
 
 from .support import professores_membros_bancas, falconi_membros_banca
 from .support import editar_banca
 from .support import recupera_orientadores_por_semestre
 from .support import recupera_coorientadores_por_semestre
 from .support import move_avaliacoes
+from .support import converte_conceitos, arredonda_conceitos
 
 from estudantes.models import Relato, Pares
 
@@ -669,56 +670,9 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
 
     return message
 
-def converte_conceitos(nota):
-    if( nota >= 9.5 ): return ("A+")
-    if( nota >= 8.5 ): return ("A")
-    if( nota >= 7.5 ): return ("B+")
-    if( nota >= 6.5 ): return ("B")
-    if( nota >= 5.5 ): return ("C+")
-    if( nota >= 4.5 ): return ("C")
-    if( nota >= 3.5 ): return ("D+")
-    if( nota >= 2.5 ): return ("D")
-    if( nota >= 1.5 ): return ("D-")
-    return ("I")
-
-def arredonda_conceitos(nota):
-    if( nota >= 9.5 ): return 10
-    if( nota >= 8.5 ): return 9
-    if( nota >= 7.5 ): return 8
-    if( nota >= 6.5 ): return 7
-    if( nota >= 5.5 ): return 6
-    if( nota >= 4.5 ): return 5
-    if( nota >= 3.5 ): return 4
-    if( nota >= 2.5 ): return 3
-    if( nota >= 1.5 ): return 2
-    return 0
 
 # Mensagem preparada para o orientador/coordenador
 def mensagem_orientador(banca):
-    message = "<h3>Informe de Avaliação de Banca PFE</h3><br>\n"
-
-    message += "<b>Título do Projeto:</b> {0}<br>\n".format(banca.projeto.get_titulo())
-    message += "<b>Organização:</b> {0}<br>\n".format(banca.projeto.organizacao)
-    message += "<b>Orientador:</b> {0}<br>\n".format(banca.projeto.orientador)
-    message += "<b>Data:</b> {0}<br>\n".format(banca.startDate.strftime("%d/%m/%Y %H:%M"))
-
-    message += "<b>Banca:</b> "
-    tipos = dict(Banca.TIPO_DE_BANCA)
-    if banca.tipo_de_banca in tipos:
-        message += tipos[banca.tipo_de_banca]
-    else:
-        message += "Tipo de banca não definido"
-
-    message += "<br><br><b style='color: bloodred; font-size: 1.5em;'>"
-    message += "AGUARDE TODOS OS MEMBROS DA BANCA FAZEREM SUAS AVALIAÇÕES.<br>"
-    message += "INSIRA AS MÉDIAS CALCULADAS DOS CONCEITOS NO CAMPO DA BANCA NO BLACKBOARD.<br>"
-    message += "NÃO ALTERE A NOTA FINAL NO BLACKBOARD MANUALMENTE!<br>"
-    message += "</b>"
-
-    message += "Em caso de dúvia nas avaliações mais recentes, consulte: "
-    message += "<a href='http://pfe.insper.edu.br/professores/conceitos_obtidos/" + str(banca.projeto.id) + "'>"
-    message += "http://pfe.insper.edu.br/professores/conceitos_obtidos/" + str(banca.projeto.id) + "</a>"
-
     objetivos = ObjetivosDeAprendizagem.objects.all()
 
     avaliadores = {}
@@ -731,7 +685,7 @@ def mensagem_orientador(banca):
         tipo_de_avaliacao = 99 #Falconi
     else:
         tipo_de_avaliacao = 200 #Erro
-    
+
     for objetivo in objetivos:
 
         avaliacoes = Avaliacao2.objects.filter(projeto=banca.projeto,
@@ -754,11 +708,8 @@ def mensagem_orientador(banca):
         if "observacoes" not in avaliadores[observacao.avaliador]:
             avaliadores[observacao.avaliador]["observacoes"] = observacao.observacoes
 
-    message += "<br><br>"
-
     obj_avaliados = {}
 
-    message += "<table>"
 
     message2 = ""  # Para inverter a ordem de apresentação
 
@@ -804,13 +755,17 @@ def mensagem_orientador(banca):
         message2 += "</ul>"
         message2 += "</td></tr>"
     
+    message2 += "</table>"
 
-    message += "<tr style='color:red;'>"
-    message += "<td style='padding-bottom: 40px;'>"
-    message += "<div style='border-width:3px; border-style:solid; border-color:#ff0000; display: inline-block; padding: 10px;'>"
-    message += "<b>" + "Média das avaliações: "
-    message += "<ul>"
-    
+
+
+    context_carta = {
+        "banca": banca,
+        "objetivos": objetivos,
+    }
+    message = render_message("Informe de Avaliação de Banca", context_carta)
+
+ 
 
     medias = 0
     for txt, obj in obj_avaliados.items():
@@ -843,12 +798,9 @@ def mensagem_orientador(banca):
 
     message += message2
 
-    message += "</table>"
-
     return message
 
-# @login_required
-# @permission_required("users.altera_professor", login_url='/')
+
 @transaction.atomic
 def banca_avaliar(request, slug):
     """Cria uma tela para preencher avaliações de bancas."""

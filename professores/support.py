@@ -416,3 +416,27 @@ def move_avaliacoes(avaliacoes_anteriores=[], observacoes_anteriores=[]):
         copia_observacao.id = None
         copia_observacao.save()
         observacao_velha.delete()
+
+def converte_conceitos(nota):
+    if( nota >= 9.5 ): return ("A+")
+    if( nota >= 8.5 ): return ("A")
+    if( nota >= 7.5 ): return ("B+")
+    if( nota >= 6.5 ): return ("B")
+    if( nota >= 5.5 ): return ("C+")
+    if( nota >= 4.5 ): return ("C")
+    if( nota >= 3.5 ): return ("D+")
+    if( nota >= 2.5 ): return ("D")
+    if( nota >= 1.5 ): return ("D-")
+    return ("I")
+
+def arredonda_conceitos(nota):
+    if( nota >= 9.5 ): return 10
+    if( nota >= 8.5 ): return 9
+    if( nota >= 7.5 ): return 8
+    if( nota >= 6.5 ): return 7
+    if( nota >= 5.5 ): return 6
+    if( nota >= 4.5 ): return 5
+    if( nota >= 3.5 ): return 4
+    if( nota >= 2.5 ): return 3
+    if( nota >= 1.5 ): return 2
+    return 0
