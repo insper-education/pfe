@@ -10,7 +10,7 @@ class MaintenanceModeMiddleware:
 
     def __call__(self, request):
         path = request.META.get('PATH_INFO', "")
-        if request.user.tipo_de_usuario!=4 and settings.MAINTENANCE_MODE and path!=reverse("manutencao"):
+        if (request.user.is_authenticated and request.user.tipo_de_usuario!=4) and settings.MAINTENANCE_MODE and path!=reverse("manutencao"):
             response = redirect(reverse("manutencao"))
             return response
         response = self.get_response(request)
