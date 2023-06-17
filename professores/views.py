@@ -671,55 +671,16 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
     return message
 
 
-# Mensagem preparada para o orientador/coordenador
-def mensagem_orientador(banca):
-    objetivos = ObjetivosDeAprendizagem.objects.all()
-
-    avaliadores = {}
-
-    if banca.tipo_de_banca == 0: #Final
-        tipo_de_avaliacao = 2 #Final
-    elif banca.tipo_de_banca == 1: #Iterm
-        tipo_de_avaliacao = 1 #Iterm
-    elif banca.tipo_de_banca == 2: #Falconi
-        tipo_de_avaliacao = 99 #Falconi
-    else:
-        tipo_de_avaliacao = 200 #Erro
-
-    for objetivo in objetivos:
-
-        avaliacoes = Avaliacao2.objects.filter(projeto=banca.projeto,
-                                                 objetivo=objetivo,
-                                                 tipo_de_avaliacao=tipo_de_avaliacao)\
-            .order_by('avaliador', '-momento')
-
-        for avaliacao in avaliacoes:
-            if avaliacao.avaliador not in avaliadores:
-                avaliadores[avaliacao.avaliador] = {}
-            if objetivo not in avaliadores[avaliacao.avaliador]:
-                avaliadores[avaliacao.avaliador][objetivo] = avaliacao
-                avaliadores[avaliacao.avaliador]["momento"] = avaliacao.momento
-
-    observacoes = Observacao.objects.filter(projeto=banca.projeto, tipo_de_avaliacao=tipo_de_avaliacao).\
-        order_by('avaliador', '-momento')
-    for observacao in observacoes:
-        if observacao.avaliador not in avaliadores:
-            avaliadores[observacao.avaliador] = {}  # Não devia acontecer isso
-        if "observacoes" not in avaliadores[observacao.avaliador]:
-            avaliadores[observacao.avaliador]["observacoes"] = observacao.observacoes
-
+def calcula_notas_bancas(avaliadores):
     obj_avaliados = {}
-
-
-    message2 = ""  # Para inverter a ordem de apresentação
-
+    
+    message2 = "<table>"
     for avaliador, objs in avaliadores.items():
-          
+        
         message2 += "<tr><td>"
-
         message2 += "<strong>Avaliador"
         if avaliador.genero == "F":
-             message2 += "a"
+            message2 += "a"
         message2 += ": </strong>"
         message2 += avaliador.get_full_name() + "<br>"
 
@@ -754,19 +715,18 @@ def mensagem_orientador(banca):
 
         message2 += "</ul>"
         message2 += "</td></tr>"
-    
+
+
+    message2 += "</td></tr>"
     message2 += "</table>"
 
+    return message2, obj_avaliados
 
-
-    context_carta = {
-        "banca": banca,
-        "objetivos": objetivos,
-    }
-    message = render_message("Informe de Avaliação de Banca", context_carta)
-
- 
-
+def calcula_media_notas_bancas(obj_avaliados):
+    message = ""
+    message += "<div style='color: red; border-width:3px; border-style:solid; border-color:#ff0000; display: inline-block; padding: 10px;'>"
+    message += "<b> Média das avaliações: "
+    message += "<ul>"
     medias = 0
     for txt, obj in obj_avaliados.items():
         if obj["qtd"] > 0.0:
@@ -792,13 +752,58 @@ def mensagem_orientador(banca):
     else:
         message += '<span>N/A</span>'
 
-    message += "</b></div>"
-
-    message += "</td></tr>"
-
-    message += message2
+    message += "</b></div><br><br>"
 
     return message
+
+
+# Mensagem preparada para o orientador/coordenador
+def mensagem_orientador(banca):
+    objetivos = ObjetivosDeAprendizagem.objects.all()
+
+    # Trocando tipo de banca para tipo de avaliação
+    if banca.tipo_de_banca == 0: #Final
+        tipo_de_avaliacao = 2 #Final
+    elif banca.tipo_de_banca == 1: #Iterm
+        tipo_de_avaliacao = 1 #Iterm
+    elif banca.tipo_de_banca == 2: #Falconi
+        tipo_de_avaliacao = 99 #Falconi
+    else:
+        tipo_de_avaliacao = 200 #Erro
+    
+    # Buscando Avaliadores e Avaliações
+    avaliadores = {}
+    for objetivo in objetivos:
+        avaliacoes = Avaliacao2.objects.filter(projeto=banca.projeto,
+                                                 objetivo=objetivo,
+                                                 tipo_de_avaliacao=tipo_de_avaliacao)\
+            .order_by('avaliador', '-momento')
+        for avaliacao in avaliacoes:
+            if avaliacao.avaliador not in avaliadores:
+                avaliadores[avaliacao.avaliador] = {}
+            if objetivo not in avaliadores[avaliacao.avaliador]:
+                avaliadores[avaliacao.avaliador][objetivo] = avaliacao
+                avaliadores[avaliacao.avaliador]["momento"] = avaliacao.momento
+
+    # Buscando Observações de Avaliações
+    observacoes = Observacao.objects.filter(projeto=banca.projeto, tipo_de_avaliacao=tipo_de_avaliacao).\
+        order_by('avaliador', '-momento')
+    for observacao in observacoes:
+        if observacao.avaliador not in avaliadores:
+            avaliadores[observacao.avaliador] = {}  # Não devia acontecer isso
+        if "observacoes" not in avaliadores[observacao.avaliador]:
+            avaliadores[observacao.avaliador]["observacoes"] = observacao.observacoes
+
+    message3, obj_avaliados = calcula_notas_bancas(avaliadores)
+    message2 = calcula_media_notas_bancas(obj_avaliados)
+
+    context_carta = {
+        "banca": banca,
+        "objetivos": objetivos,
+    }
+    message = render_message("Informe de Avaliação de Banca", context_carta)
+    
+    return message+message2+message3
 
 
 @transaction.atomic

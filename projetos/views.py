@@ -6,25 +6,16 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Maio de 2019
 """
 
-# import os
-# import re
 import datetime
 import csv
-# import mimetypes
-
-#from wsgiref.util import FileWrapper
 import dateutil.parser
-
-# from django.http.response import StreamingHttpResponse
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.admin.models import LogEntry
 from django.contrib.sessions.models import Session
-#from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models.functions import Lower
-#from django.http import Http404
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
@@ -33,6 +24,8 @@ from users.models import PFEUser, Aluno, Professor, Opcao, Alocacao
 from users.models import Parceiro
 from users.support import adianta_semestre
 from users.support import get_edicoes
+
+from operacional.models import Curso
 
 from .models import Projeto, Proposta, Configuracao, Observacao
 from .models import Coorientador, Avaliacao2, ObjetivosDeAprendizagem
@@ -45,36 +38,31 @@ from .messages import email, message_reembolso
 
 from .support import get_areas_estudantes, get_areas_propostas, simple_upload, calcula_objetivos
 
-from operacional.models import Curso
 
 @login_required
 def index(request):
     """Página principal do sistema do Projeto Final de Engenharia."""
     # num_visits = request.session.get('num_visits', 0) # Visitas a página.
     # request.session['num_visits'] = num_visits + 1
-    context = {'configuracao': get_object_or_404(Configuracao),}
-    return render(request, 'index.html', context=context)
+    return render(request, 'index.html')
 
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
 def index_projetos(request):
     """Página principal dos Projetos."""
-    context = {'configuracao': get_object_or_404(Configuracao),}
-    return render(request, 'index_projetos.html', context=context)
+    return render(request, 'index_projetos.html')
 
 
 @login_required
 def projeto_detalhes(request, primarykey):
     """Exibe proposta de projeto com seus detalhes para estudantes."""
-    configuracao = get_object_or_404(Configuracao)
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
     projeto = get_object_or_404(Projeto, pk=primarykey)
 
     # Se usuário não for Professor nem Admin
-    if user and user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
-
-        alocacoes = Alocacao.objects.filter(aluno=user.aluno, projeto=projeto)
+    if request.user and request.user.tipo_de_usuario != 2 and request.user.tipo_de_usuario != 4:
+        configuracao = get_object_or_404(Configuracao)
+        alocacoes = Alocacao.objects.filter(aluno=request.user.aluno, projeto=projeto)
         
         liberado = True
         if configuracao.semestre == 1:
@@ -104,12 +92,8 @@ def projeto_detalhes(request, primarykey):
 @permission_required("users.altera_professor", login_url='/')
 def projeto_completo(request, primarykey):
     """Mostra um projeto por completo."""
-    configuracao = get_object_or_404(Configuracao)
-
     projeto = get_object_or_404(Projeto, pk=primarykey)
-
     alocacoes = Alocacao.objects.filter(projeto=projeto)
-
     opcoes = Opcao.objects.filter(proposta=projeto.proposta)
     conexoes = Conexao.objects.filter(projeto=projeto)
     coorientadores = Coorientador.objects.filter(projeto=projeto)
@@ -122,15 +106,6 @@ def projeto_completo(request, primarykey):
         if not (medias_oo['medias_apg'] or medias_oo['medias_afg'] or medias_oo['medias_rig'] or medias_oo['medias_bi'] or medias_oo['medias_rfg'] or medias_oo['medias_bf']):
             medias_oo = None
 
-    # TIPO_DE_DOCUMENTO = ( # não mudar a ordem dos números
-    # (3, 'Relatório Final'),
-    # (18, 'Vídeo do Projeto'),
-    # (19, 'Slides da Apresentação Final'),
-    # (20, 'Banner'),
-    # (25, 'Relatório Publicado'),
-    # (27, 'Apresentação da Banca Final'),
-    # )
-
     documentos = Documento.objects.filter(projeto=projeto,
                                           tipo_de_documento__in=(3, 18, 19, 20, 25, 27))
 
@@ -139,7 +114,6 @@ def projeto_completo(request, primarykey):
     cooperacoes = Conexao.objects.filter(projeto=projeto, colaboracao=True)
 
     context = {
-        "configuracao": configuracao,
         "projeto": projeto,
         "alocacoes": alocacoes,
         "medias_oo": medias_oo,
@@ -151,7 +125,6 @@ def projeto_completo(request, primarykey):
         "cooperacoes": cooperacoes,
         "MEDIA_URL": settings.MEDIA_URL,
     }
-
     return render(request, 'projetos/projeto_completo.html', context=context)
 
 
@@ -769,12 +742,7 @@ def validate_aviso(request):
         aviso.data_realizado = dateutil.parser.parse(value) - datetime.timedelta(days=1)
 
     aviso.save()
-
-    data = {
-        'atualizado': True,
-    }
-
-    return JsonResponse(data)
+    return JsonResponse({'atualizado': True,})
 
 
 @login_required
@@ -782,9 +750,7 @@ def validate_aviso(request):
 def projetos_vs_propostas(request):
     """Mostra graficos das evoluções do PFE."""
     configuracao = get_object_or_404(Configuracao)
-
     edicoes = range(2018, configuracao.ano+1)
-
     edicoes2, _, _ = get_edicoes(Proposta)
 
     total_org_propostas = {}
@@ -852,7 +818,6 @@ def projetos_vs_propostas(request):
                                        momento__month__gt=6).exists():
                 count_organizacoes += 1
         org_prospectadas.append(count_organizacoes)
-
 
     context = {
         "num_propostas": num_propostas,
