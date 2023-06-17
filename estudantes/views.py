@@ -32,7 +32,8 @@ from users.support import configuracao_estudante_vencida, configuracao_pares_ven
 
 from .models import Relato, Pares
 
-from administracao.support import get_limite_propostas
+from administracao.support import get_limite_propostas, usuario_sem_acesso
+
 
 @login_required
 def index_estudantes(request):
@@ -102,38 +103,24 @@ def index_estudantes(request):
 @login_required
 def areas_interesse(request):
     """Para estudantes definirem suas áreas de interesse."""
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
-
-    areas = Area.objects.filter(ativa=True)
-    context = {
-        'areast': areas,
-    }
+    context = {'areast': Area.objects.filter(ativa=True),}
 
     # Caso seja estudante
-    if user.tipo_de_usuario == 1:  # Estudante
-        estudante = get_object_or_404(Aluno, pk=request.user.aluno.pk)
-        vencido = configuracao_estudante_vencida(estudante)
-
+    if request.user.tipo_de_usuario == 1:  # Estudante
+        vencido = configuracao_estudante_vencida(request.user.aluno)
         if (not vencido) and request.method == 'POST':
-            cria_area_estudante(request, estudante)
+            cria_area_estudante(request, request.user.aluno)
             return render(request, 'users/atualizado.html',)
-
         context['vencido'] = vencido
-        context['estudante'] = estudante
+        context['estudante'] = request.user.aluno
 
     # caso Professores ou Administrador
-    elif user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4:
+    elif request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:
         context['mensagem'] = "Você não está cadastrado como estudante."
         context['vencido'] = True
 
     # caso não seja Estudante, Professor ou Administrador (ou seja Parceiro)
-    else:
-        mensagem = "Você não está cadastrado como estudante!"
-        context = {
-            "area_principal": True,
-            "mensagem": mensagem,
-        }
-        return render(request, 'generic.html', context=context)
+    if (v := usuario_sem_acesso(request, (1, 2, 4,))): return v  # Est, Prof, Adm
 
     return render(request, 'estudantes/areas_interesse.html', context=context)
 
@@ -327,20 +314,13 @@ def estudante_feedback_hashid(request, hashid):
 @transaction.atomic
 def avaliacao_pares(request, momento):
     """Permite realizar a avaliação de pares."""
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
     configuracao = get_object_or_404(Configuracao)
 
-    if user.tipo_de_usuario == 3:
-        mensagem = "Você não está cadastrado como estudante!"
-        context = {
-            "area_principal": True,
-            "mensagem": mensagem,
-        }
-        return render(request, 'generic.html', context=context)
+    if (v := usuario_sem_acesso(request, (1, 2, 4,))): return v  # Est, Prof, Adm
 
     estudante = None
-    if user.tipo_de_usuario == 1:
-        estudante = Aluno.objects.get(pk=request.user.aluno.pk)
+    if request.user.tipo_de_usuario == 1:
+        estudante = request.user.aluno
 
     # Avaliações de Pares
     # 31, 'Avaliação de Pares Intermediária'
@@ -348,11 +328,11 @@ def avaliacao_pares(request, momento):
     if momento=="intermediaria":
         prazo, inicio, fim = configuracao_pares_vencida(estudante, 31)
         tipo=0
-    else:
+    else:  # Final
         prazo, inicio, fim = configuracao_pares_vencida(estudante, 32)
         tipo=1
 
-    if user.tipo_de_usuario == 1:
+    if request.user.tipo_de_usuario == 1:
         projeto = Projeto.objects\
             .filter(alocacao__aluno=estudante, ano=configuracao.ano, semestre=configuracao.semestre).first()
         
@@ -431,19 +411,11 @@ def avaliacao_pares(request, momento):
 @transaction.atomic
 def informacoes_adicionais(request):
     """Perguntas aos estudantes de trabalho/entidades/social/familia."""
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
+    if (v := usuario_sem_acesso(request, (1, 2, 4,))): return v  # Est, Prof, Adm
 
-    if user.tipo_de_usuario == 3:
-        mensagem = "Você não está cadastrado como aluno!"
-        context = {
-            "area_principal": True,
-            "mensagem": mensagem,
-        }
-        return render(request, 'generic.html', context=context)
+    if request.user.tipo_de_usuario == 1:
 
-    if user.tipo_de_usuario == 1:
-
-        estudante = Aluno.objects.get(pk=request.user.aluno.pk)
+        estudante = request.user.aluno
 
         vencido = configuracao_estudante_vencida(estudante)
 
@@ -461,51 +433,40 @@ def informacoes_adicionais(request):
             return render(request, 'users/atualizado.html',)
 
         context = {
-            'vencido': vencido,
-            'trabalhou': estudante.trabalhou,
-            'social': estudante.social,
-            'entidade': estudante.entidade,
-            'familia': estudante.familia,
-            'linkedin': estudante.user.linkedin,
+            "vencido": vencido,
+            "estudante": estudante,
             'entidades': Entidade.objects.all(),
         }
     else:  # Supostamente professores
         context = {
             'mensagem': "Você não está cadastrado como estudante.",
             'vencido': True,
-            'trabalhou': "",
-            'social': "",
-            'entidade': "",
-            'familia': "",
-            'linkedin': user.linkedin,
             'entidades': Entidade.objects.all(),
         }
+
     return render(request, 'estudantes/informacoes_adicionais.html', context)
 
 
 @login_required
 def minhas_bancas(request):
     """Lista as bancas agendadas para um aluno."""
-    aluno = get_object_or_404(Aluno, pk=request.user.aluno.pk)
-
     configuracao = Configuracao.objects.get()
-    
-    if (aluno.anoPFE > configuracao.ano) or\
-        (aluno.anoPFE == configuracao.ano and
-        aluno.semestrePFE > configuracao.semestre):
-        mensagem = "Projetos ainda não disponíveis para seu período PFE."
-        context = {
-            "area_principal": True,
-            "mensagem": mensagem,
-        }
-        return render(request, 'generic.html', context=context)
+    if request.user.tipo_de_usuario == 1:
+        if (request.user.aluno.anoPFE > configuracao.ano) or\
+            (request.user.aluno.anoPFE == configuracao.ano and
+            request.user.aluno.semestrePFE > configuracao.semestre):
+            mensagem = "Projetos ainda não disponíveis para seu período PFE."
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, 'generic.html', context=context)
 
-    projetos = Projeto.objects.filter(alocacao__aluno=aluno)
-    bancas = Banca.objects.filter(projeto__in=projetos).order_by("-startDate")
-
-    context = {
-        'bancas': bancas,
-    }
+        projetos = Projeto.objects.filter(alocacao__aluno=request.user.aluno)
+        bancas = Banca.objects.filter(projeto__in=projetos).order_by("-startDate")
+        context = {'bancas': bancas,}
+    else:
+        context = {'mensagem': "Você não está cadastrado como estudante.",}
     return render(request, 'estudantes/minhas_bancas.html', context)
 
 
@@ -513,7 +474,7 @@ def minhas_bancas(request):
 @transaction.atomic
 def relato_quinzenal(request):
     """Perguntas aos estudantes de trabalho/entidades/social/familia."""
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
+    if (v := usuario_sem_acesso(request, (1, 2, 4,))): return v  # Est, Prof, Adm
 
     hoje = datetime.date.today()
 
@@ -525,42 +486,24 @@ def relato_quinzenal(request):
         "max_length": Relato._meta.get_field('texto').max_length,
     }
 
-    if user.tipo_de_usuario == 3:
-        mensagem = "Você não está cadastrado como estudante!"
-        context = {
-            "area_principal": True,
-            "mensagem": mensagem,
-        }
-        return render(request, 'generic.html', context=context)
-
-    if user.tipo_de_usuario == 1:
+    if request.user.tipo_de_usuario == 1:
 
         configuracao = get_object_or_404(Configuracao)
-        ano = configuracao.ano
-        semestre = configuracao.semestre
 
-        estudante = Aluno.objects.get(pk=request.user.aluno.pk)
-
-        alocacao = Alocacao.objects.filter(aluno=estudante,
-                                           projeto__ano=ano,
-                                           projeto__semestre=semestre).last()
+        alocacao = Alocacao.objects.filter(aluno=request.user.aluno,
+                                           projeto__ano=configuracao.ano,
+                                           projeto__semestre=configuracao.semestre).last()
 
         if not alocacao:
-            context = {
-                "prazo": None,
-                "mensagem": "Você não está alocado em um projeto esse semestre.",
-                "relato": None,
-            }
+            context["prazo"] = None
+            context["mensagem"] = "Você não está alocado em um projeto esse semestre."
             return render(request, 'estudantes/relato_quinzenal.html', context)
 
         if request.method == 'POST':
-            
             texto_relato = request.POST.get("relato", None)
             relato = Relato.objects.create(alocacao=alocacao)
-
             relato.texto = texto_relato
             relato.save()
-
             return render(request, 'users/atualizado.html',)
 
         relato_anterior = Evento.objects.filter(tipo_de_evento=20, endDate__lt=hoje).order_by('endDate').last()
@@ -587,18 +530,11 @@ def relato_quinzenal(request):
     return render(request, 'estudantes/relato_quinzenal.html', context)
 
 
-
 @login_required
 @permission_required("users.altera_professor", login_url='/')
 def relato_visualizar(request, id):
     """Perguntas aos estudantes de trabalho/entidades/social/familia."""
-    
-    relato = get_object_or_404(Relato, pk=id)
-
-    context = {
-        "relato": relato,
-    }
-    
+    context = {"relato": get_object_or_404(Relato, pk=id),}
     return render(request, 'estudantes/relato_visualizar.html', context)
 
 
@@ -606,7 +542,6 @@ def relato_visualizar(request, id):
 @transaction.atomic
 def selecao_propostas(request):
     """Exibe todos os projetos para os estudantes aplicarem."""
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
     configuracao = get_object_or_404(Configuracao)
     ano = configuracao.ano
     semestre = configuracao.semestre
@@ -616,11 +551,7 @@ def selecao_propostas(request):
     liberadas_propostas = configuracao.liberadas_propostas
 
     # Vai para próximo semestre
-    if semestre == 1:
-        semestre = 2
-    else:
-        ano += 1
-        semestre = 1
+    ano, semestre = adianta_semestre(ano, semestre)
 
     propostas = Proposta.objects\
         .filter(ano=ano)\
@@ -631,11 +562,11 @@ def selecao_propostas(request):
 
     vencido = True
 
-    if user.tipo_de_usuario == 1:
+    if request.user.tipo_de_usuario == 1:
 
         vencido = timezone.now().date() > get_limite_propostas(configuracao)
 
-        aluno = get_object_or_404(Aluno, pk=request.user.aluno.pk)
+        aluno = request.user.aluno
 
         if configuracao.semestre == 1:
             vencido |= aluno.anoPFE < configuracao.ano
@@ -716,14 +647,13 @@ def selecao_propostas(request):
 
         opcoes_temporarias = OpcaoTemporaria.objects.filter(aluno=aluno)
 
-    elif user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4:
+    elif request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:
         opcoes_temporarias = []
 
-    else:
-        return HttpResponse("Acesso irregular.", status=401)
+    if (v := usuario_sem_acesso(request, (1, 2, 4,))): return v  # Est, Prof, Adm
 
-    areas_normais = AreaDeInteresse.objects.filter(usuario=user, area__ativa=True).exists()
-    areas_outras = AreaDeInteresse.objects.filter(usuario=user, area=None).exists()
+    areas_normais = AreaDeInteresse.objects.filter(usuario=request.user, area__ativa=True).exists()
+    areas_outras = AreaDeInteresse.objects.filter(usuario=request.user, area=None).exists()
     areas = areas_normais or areas_outras
 
     context = {
@@ -744,27 +674,17 @@ def selecao_propostas(request):
 @login_required
 @transaction.atomic
 def opcao_temporaria(request):
-    """Ajax para definir opção temporária."""
+    """Ajax para definir opção temporária de seleção de proposta de projeto."""
     try:
+        assert request.user.tipo_de_usuario == 1
         proposta_id = int(request.POST.get('proposta_id', None))
         prioridade = int(request.POST.get('prioridade', None))
-    except (ValueError, TypeError):
-        # erro na conversao
+        proposta = get_object_or_404(Proposta, id=proposta_id)
+    except:
         return JsonResponse({'atualizado': False}, status=500)
 
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
-    if user.tipo_de_usuario != 1:
-        return JsonResponse({'atualizado': False}, status=500)
-
-    proposta = get_object_or_404(Proposta, id=proposta_id)
-
-    (reg, _created) = OpcaoTemporaria.objects.get_or_create(proposta=proposta, aluno=user.aluno)
-
+    reg, _ = OpcaoTemporaria.objects.get_or_create(proposta=proposta, aluno=request.user.aluno)
     reg.prioridade = prioridade
     reg.save()
 
-    data = {
-        'atualizado': True,
-    }
-
-    return JsonResponse(data)
+    return JsonResponse({'atualizado': True,})

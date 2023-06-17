@@ -12,13 +12,10 @@ import dateutil.parser
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.admin.models import LogEntry
-from django.contrib.sessions.models import Session
 from django.db import transaction
 from django.db.models.functions import Lower
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.utils import timezone
 
 from users.models import PFEUser, Aluno, Professor, Opcao, Alocacao
 from users.models import Parceiro
@@ -40,18 +37,10 @@ from .support import get_areas_estudantes, get_areas_propostas, simple_upload, c
 
 
 @login_required
-def index(request):
-    """Página principal do sistema do Projeto Final de Engenharia."""
-    # num_visits = request.session.get('num_visits', 0) # Visitas a página.
-    # request.session['num_visits'] = num_visits + 1
-    return render(request, 'index.html')
-
-
-@login_required
 @permission_required("users.altera_professor", login_url='/')
 def index_projetos(request):
     """Página principal dos Projetos."""
-    return render(request, 'index_projetos.html')
+    return render(request, 'projetos/index_projetos.html')
 
 
 @login_required
@@ -1842,63 +1831,3 @@ def acompanhamento_view(request):
     return render(request,
                   'projetos/acompanhamento_view.html',
                   context=context)
-
-
-@login_required
-@permission_required('users.altera_professor', login_url='/')
-def logs(request):
-    """Alguns logs de Admin."""
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
-
-    # Caso não seja Administrador
-    if user.tipo_de_usuario != 4:
-        mensagem = "Você não está cadastrado como administador"
-        context = {
-            "area_principal": True,
-            "mensagem": mensagem,
-        }
-        return render(request, 'generic.html', context=context)
-
-    message = ""
-    mensagens = LogEntry.objects.all()
-    for log in mensagens:
-        message += str(log)+"<br>\n"
-    return HttpResponse(message)
-
-
-@login_required
-@permission_required('users.altera_professor', login_url='/')
-def conexoes_estabelecidas(request):
-    """Mostra usuários conectados."""
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
-    if user.tipo_de_usuario == 4:
-        message = "<h3>Usuários Conectados</h3><br>"
-        sessions = Session.objects.filter(expire_date__gte=timezone.now())
-        for session in sessions:
-            data = session.get_decoded()
-            user_id = data.get('_auth_user_id', None)
-            try:
-                user = PFEUser.objects.get(id=user_id)
-                message += "- " + str(user)
-                message += "; autenticado: " + str(user.is_authenticated)
-                message += "; conectado desde: " + str(user.last_login)
-                message += "; permissões: " + str(user.get_all_permissions())[:120]
-                message += "<br>"
-            except PFEUser.DoesNotExist:
-                message += "PROBLEMA COM USER ID = " + str(user_id)
-                message += "; Data = " + str(data)
-                message += "<br>"
-        return HttpResponse(message)
-    return HttpResponse("Você não tem privilégios")
-
-def manutencao(request):
-    """Página de Manutenção do Projeto Final de Engenharia."""
-    return render(request, 'projetos/manutencao.html')
-
-
-@login_required
-@permission_required('users.altera_professor', login_url='/')
-def migracao(request):
-    """temporário."""
-    message = "Nada Feito"
-    return HttpResponse(message)

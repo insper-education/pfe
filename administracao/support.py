@@ -6,7 +6,11 @@ Data: 13 de Junho de 2023
 """
 
 import dateutil.parser
+
+from django.shortcuts import render
+
 from projetos.models import Evento
+
 
 def get_limite_propostas(configuracao):
     if configuracao.semestre == 1:
@@ -20,3 +24,21 @@ def get_limite_propostas(configuracao):
     
     inicio_pfe = dateutil.parser.parse("07/06/2018").date()
     return inicio_pfe
+
+def usuario_sem_acesso(request, acessos):
+    
+    if (not request.user.is_authenticated) or (request.user is None):
+        mensagem = "Você não está autenticado!"
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
+
+    if request.user.tipo_de_usuario not in acessos:
+        mensagem = "Você não tem privilégios de acesso a essa área!"
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)

@@ -12,6 +12,10 @@
 
   <span class="titulo">Minhas Bancas</span>
 
+  {% if mensagem %}
+    <h5 class="red-bold">{{mensagem}}</h5>
+  {% endif %}
+
   {% if bancas %}
     <table id="MinhasBancasTable">
       {% for banca in bancas %} 

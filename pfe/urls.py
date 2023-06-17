@@ -12,12 +12,14 @@ from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 
-from projetos import views, arquivos
+from projetos import arquivos
+
+from .views import *
 
 urlpatterns = [
     path('favicon.ico', RedirectView.as_view(url='/static/favicon.ico')),
 
-    path('', views.index, name='index'),
+    path('', index, name='index'),
 
     path('estudantes/', include('estudantes.urls')),
     path('organizacoes/', include('organizacoes.urls')),
@@ -36,7 +38,8 @@ urlpatterns = [
     path('arquivos/<str:documentos>/<str:path>', arquivos.arquivos, name='arquivos'),
     path('arquivos/<str:organizacao>/<str:usuario>/<str:path>', arquivos.arquivos2, name='arquivos2'),
     path('arquivos/<str:organizacao>/<str:projeto>/<str:usuario>/<str:path>', arquivos.arquivos3, name='arquivos3'),
-    path('manutencao/', views.manutencao, name='manutencao'),
+    path('manutencao/', manutencao, name='manutencao'),
+    path('migracao/', migracao, name='migracao'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

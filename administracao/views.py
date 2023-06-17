@@ -8,19 +8,22 @@ Data: 17 de Dezembro de 2020
 
 import re           # regular expression (para o import)
 import tablib
-import dateutil.parser
+#import dateutil.parser
 
 from django.conf import settings
-# from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.admin.models import LogEntry
+from django.contrib.sessions.models import Session
+
 from django.core.mail import EmailMessage
 from django.db import transaction
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.datastructures import MultiValueDictKeyError
+from django.utils import timezone
 
 from documentos.support import render_to_pdf
 
@@ -53,6 +56,8 @@ from users.support import adianta_semestre
 
 from propostas.support import ordena_propostas
 
+from .support import usuario_sem_acesso
+
 
 @login_required
 @permission_required("users.altera_professor", login_url='/')
@@ -65,17 +70,7 @@ def index_administracao(request):
 @permission_required('users.altera_professor', login_url='/')
 def index_carregar(request):
     """Para carregar dados de arquivos para o servidor."""
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
-
-    if user:
-        if user.tipo_de_usuario != 4:  # não é admin
-            mensagem = "Você não tem privilégios de administrador!"
-            context = {
-                "area_principal": True,
-                "mensagem": mensagem,
-            }
-            return render(request, 'generic.html', context=context)
-
+    if (v := usuario_sem_acesso(request, (4,))): return v  # Soh Adm
     return render(request, 'administracao/carregar.html')
 
 
@@ -109,7 +104,6 @@ def emails(request):
     }
 
     return render(request, 'administracao/emails.html', context=context)
-
 
 
 @login_required
@@ -201,7 +195,6 @@ def emails_projetos(request):
 
 def registra_organizacao(request, org=None):
     """Rotina para cadastrar organizacao no sistema."""
-
     if not org:
         organizacao = Organizacao.create()
     else:
@@ -249,9 +242,8 @@ def registra_organizacao(request, org=None):
 @permission_required("users.altera_professor", login_url='/')
 def cadastrar_disciplina(request, proposta_id=None):
     """Cadastra Organização na base de dados do PFE."""
-    
     mensagem = None
-    
+
     if request.method == 'POST':
 
         if 'nome' in request.POST:
@@ -272,10 +264,6 @@ def cadastrar_disciplina(request, proposta_id=None):
                 "mensagem": "<h3 style='color:red'>Falha na inserção na base da dados.<h3>",
             }
 
-
-    #disciplina_id = int(request.POST['disciplina_id'])
-    #disciplina = get_object_or_404(Disciplina, id=disciplina_id)
-
     context = {
         "mensagem": mensagem,
         "disciplinas": Disciplina.objects.all().order_by("nome"),
@@ -283,6 +271,7 @@ def cadastrar_disciplina(request, proposta_id=None):
     }
     
     return render(request, 'administracao/cadastra_disciplina.html', context=context)
+
 
 @login_required
 @transaction.atomic
@@ -1011,6 +1000,8 @@ def propor(request):
                   context)
 
 
+
+
 @login_required
 @transaction.atomic
 @permission_required('users.altera_professor', login_url='/')
@@ -1545,3 +1536,41 @@ def relatorio_backup(request):
     }
 
     return render(request, 'generic.html', context=context)
+
+
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def logs(request):
+    """Alguns logs de Admin."""
+    if (v := usuario_sem_acesso(request, (4,))): return v # Soh Adm
+    message = ""
+    for log in LogEntry.objects.all():
+        message += str(log)+"<br>\n"
+    return HttpResponse(message)
+
+
+@login_required
+@permission_required('users.altera_professor', login_url='/')
+def conexoes_estabelecidas(request):
+    """Mostra usuários conectados."""
+    user = get_object_or_404(PFEUser, pk=request.user.pk)
+    if user.tipo_de_usuario == 4:
+        message = "<h3>Usuários Conectados</h3><br>"
+        sessions = Session.objects.filter(expire_date__gte=timezone.now())
+        for session in sessions:
+            data = session.get_decoded()
+            user_id = data.get('_auth_user_id', None)
+            try:
+                user = PFEUser.objects.get(id=user_id)
+                message += "- " + str(user)
+                message += "; autenticado: " + str(user.is_authenticated)
+                message += "; conectado desde: " + str(user.last_login)
+                message += "; permissões: " + str(user.get_all_permissions())[:120]
+                message += "<br>"
+            except PFEUser.DoesNotExist:
+                message += "PROBLEMA COM USER ID = " + str(user_id)
+                message += "; Data = " + str(data)
+                message += "<br>"
+        return HttpResponse(message)
+    return HttpResponse("Você não tem privilégios")

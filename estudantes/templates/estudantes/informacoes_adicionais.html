@@ -36,21 +36,21 @@ textarea {
     Você já trabalhou/trabalha ou estagiou/estagia em alguma empresa de engenharia?<br>
     Se sim, qual/quais?
     </label><br>
-    <textarea id="trabalhou" name="trabalhou" rows="4" cols="80" maxlength="1000" {% if vencido %}disabled{% endif %}>{% if trabalhou %}{{trabalhou}}{% endif %}</textarea>
+    <textarea id="trabalhou" name="trabalhou" rows="4" cols="80" maxlength="1000" {% if vencido %}disabled{% endif %}>{% if estudante.trabalhou %}{{estudante.trabalhou}}{% endif %}</textarea>
     <br><br>
 
     <label for="social">
     Você já participou de atividades sociais? Por exemplo trabalhos voluntários ou ações em comunidades.<br>
     Se sim, qual/quais? [Esse campo é importante se você está aplicando para um projeto de Inovação Social]
     </label><br>
-    <textarea id="social" name="social" rows="4" cols="80" maxlength="1000" {% if vencido %}disabled{% endif %}>{% if social %}{{social}}{% endif %}</textarea>
+    <textarea id="social" name="social" rows="4" cols="80" maxlength="1000" {% if vencido %}disabled{% endif %}>{% if estudante.social %}{{estudante.social}}{% endif %}</textarea>
     <br><br>
 
     <label for="entidade">
     Você já participou de alguma entidade estudantil do Insper?<br>
     Liste as que você já participou?
     </label><br>
-    <textarea id="entidade" name="entidade" rows="4" cols="80" maxlength="1000" {% if vencido %}disabled{% endif %}>{% if entidade %}{{entidade}}{% endif %}</textarea>
+    <textarea id="entidade" name="entidade" rows="4" cols="80" maxlength="1000" {% if vencido %}disabled{% endif %}>{% if estudante.entidade %}{{estudante.entidade}}{% endif %}</textarea>
     <br>
     <small><u>Lista de Entidades.</u></small>
     <!-- Pega Script para preencher entidades automaticamente -->
@@ -60,11 +60,11 @@ textarea {
     Você possui familiares em alguma empresa que está aplicando? Ou empresa concorrente direta?<br>
     Se sim, qual/quais? Qual seu grau de relacionamento.
     </label><br>
-    <textarea id="familia" name="familia" rows="4" cols="80" maxlength="1000" {% if vencido %}disabled{% endif %}>{% if familia %}{{familia}}{% endif %}</textarea>
+    <textarea id="familia" name="familia" rows="4" cols="80" maxlength="1000" {% if vencido %}disabled{% endif %}>{% if estudante.familia %}{{estudante.familia}}{% endif %}</textarea>
     <br><br>
 
     <label for="linkedin">Caso desejar, você pode informar seu LinkedIn: (opcional)</label><br>
-    <input type="text" size="80" id="linkedin" name="linkedin" {% if linkedin %}value="{{linkedin}}"{% endif %} placeholder="https://www.linkedin.com/" {% if vencido %}disabled{% endif %}><br>
+    <input type="text" size="80" id="linkedin" name="linkedin" {% if estudante.user.linkedin %}value="{{estudante.user.linkedin}}"{% endif %} placeholder="https://www.linkedin.com/" {% if vencido %}disabled{% endif %}><br>
 
     <br><br>
     <input {% if vencido %}disabled{% endif %} type="submit" value="Atualizar">

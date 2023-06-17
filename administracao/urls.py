@@ -120,4 +120,12 @@ urlpatterns = [
          views.excluir_disciplina,
          name='excluir_disciplina'),
 
+    path('logs/',
+         views.logs,
+         name='logs'),
+
+    path('conexoes_estabelecidas/',
+         views.conexoes_estabelecidas,
+         name='conexoes_estabelecidas'),
+
 ]

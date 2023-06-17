@@ -16,29 +16,18 @@ from . import views
 
 urlpatterns = [
 
-    # link antigo (remover em breve)
     path('',
-         views.index,
-         name='index_antigo'),
+         views.index_projetos,
+         name='index_projetos'),
 
-    # pagina inicial de projs.
+    # link antigo (remover)
     path('index_projetos/',
         views.index_projetos,
-        name='index_projetos'),
-        
-
-    # simplificação atual
-    #     path('index_projetos/',
-    #          views.projetos_fechados,
-    #          name='index_projetos'),
+        name='index_antigo'),
 
     path('analise_notas/',
          views.analise_notas,
          name='analise_notas'),
-
-    path('conexoes_estabelecidas/',
-         views.conexoes_estabelecidas,
-         name='conexoes_estabelecidas'),
 
     path('evolucao_notas/',
          views.evolucao_notas,
@@ -52,9 +41,9 @@ urlpatterns = [
          views.comite,
          name='comite'),
 
-    path('completo/<int:primarykey>',
-         views.projeto_completo,
-         name='completo'),  # REMOVER
+#     path('completo/<int:primarykey>',
+#          views.projeto_completo,
+#          name='completo'),  # REMOVER
 
     path('distribuicao_areas/',
          views.distribuicao_areas,
@@ -104,17 +93,9 @@ urlpatterns = [
         views.lista_feedback_estudantes,
         name='lista_feedback_estudantes'),
 
-    path('logs/',
-         views.logs,
-         name='logs'),
-
     path('meuprojeto/',
          views.meuprojeto,
          name='meuprojeto'),
-
-    path('migracao/',
-         views.migracao,
-         name='migracao'),
 
     path('mostra_feedback/<int:feedback_id>',
          views.mostra_feedback,
@@ -140,10 +121,10 @@ urlpatterns = [
          views.projeto_detalhes,
          name='projeto_detalhes'),
 
-    # Antigo, remover
-    path('projeto_feedback',
-         projeto_feedback,
-         name='projeto_feedback_old'),
+#     # Antigo, remover
+#     path('projeto_feedback',
+#          projeto_feedback,
+#          name='projeto_feedback_old'),
 
     path('projetos_fechados/',
          views.projetos_fechados,
