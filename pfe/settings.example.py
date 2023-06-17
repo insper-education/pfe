@@ -63,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'pfe.middleware.MaintenanceModeMiddleware',
     #'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
@@ -231,3 +232,5 @@ DEBUG_TOOLBAR_CONFIG = {
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 SALT = "pfe"
+
+MAINTENANCE_MODE = int(os.environ.get("MAINTENANCE_MODE", 0))

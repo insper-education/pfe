@@ -130,7 +130,6 @@ def le_arquivo(request, local_path, path):
 
         doc = Documento.objects.filter(documento=documento).last()
         if doc:
-
             mensagem = "Documento Confidencial"
             context = {"mensagem": mensagem,}
 
@@ -146,9 +145,7 @@ def le_arquivo(request, local_path, path):
 
         if documento[:3] == "tmp":
             mensagem = "Documento não acessível"
-            context = {
-                "mensagem": mensagem,
-            }
+            context = {"mensagem": mensagem,}
             return render(request, 'generic.html', context=context)
 
         with open(file_path, 'rb') as file:
@@ -172,7 +169,6 @@ def arquivos(request, documentos, path):
     """Permite acessar arquivos do servidor."""
     local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}".\
         format(documentos, path))
-
     return le_arquivo(request, local_path, path)
 
 
@@ -182,7 +178,6 @@ def arquivos2(request, organizacao, usuario, path):
     """Permite acessar arquivos do servidor."""
     local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}/{2}".\
         format(organizacao, usuario, path))
-
     return le_arquivo(request, local_path, path)
 
 
@@ -192,6 +187,5 @@ def arquivos3(request, organizacao, projeto, usuario, path):
     """Permite acessar arquivos do servidor."""
     local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}/{2}/{3}".\
         format(organizacao, projeto, usuario, path))
-
     return le_arquivo(request, local_path, path)
 

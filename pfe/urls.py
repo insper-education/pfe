@@ -36,6 +36,7 @@ urlpatterns = [
     path('arquivos/<str:documentos>/<str:path>', arquivos.arquivos, name='arquivos'),
     path('arquivos/<str:organizacao>/<str:usuario>/<str:path>', arquivos.arquivos2, name='arquivos2'),
     path('arquivos/<str:organizacao>/<str:projeto>/<str:usuario>/<str:path>', arquivos.arquivos3, name='arquivos3'),
+    path('manutencao/', views.manutencao, name='manutencao'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

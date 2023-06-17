@@ -557,8 +557,8 @@ class Configuracao(models.Model):
     semestre = models.PositiveIntegerField("Semestre",
                                            validators=[MinValueValidator(1), MaxValueValidator(2)],
                                            help_text='Semestre que o projeto comeca')
-    manutencao = models.BooleanField("Manutenção", default=False,
-                                     help_text='Mostra mensagem de site em manutencao na entrada')
+    # manutencao = models.BooleanField("Manutenção", default=False,
+    #                                  help_text='Mostra mensagem de site em manutencao na entrada')
 
     recipient_reembolso = models.CharField(max_length=127, blank=True,
                                            help_text='Separar lista por ponto e virgula')

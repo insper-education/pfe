@@ -1184,20 +1184,15 @@ def selecionar_orientadores(request):
 @permission_required("users.altera_professor", login_url='/')
 def servico(request):
     """Caso servidor esteja em manutenção."""
-    configuracao = get_object_or_404(Configuracao)
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
-
     if request.method == 'POST':
         check_values = request.POST.getlist('selection')
-        configuracao.manutencao = 'manutencao' in check_values
-        configuracao.save()
+        if 'manutencao' in check_values:
+            settings.MAINTENANCE_MODE = 1
+        else:
+            settings.MAINTENANCE_MODE = 0
         return redirect('/administracao')
 
-    context = {'manutencao': configuracao.manutencao, }
-
+    context = {'manutencao': settings.MAINTENANCE_MODE, }
     return render(request, 'administracao/servico.html', context)
 
 

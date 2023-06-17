@@ -50,15 +50,9 @@ from operacional.models import Curso
 @login_required
 def index(request):
     """Página principal do sistema do Projeto Final de Engenharia."""
-    configuracao = get_object_or_404(Configuracao)
-    if configuracao and configuracao.manutencao:
-        return render(request, 'projetos/manutencao.html')
     # num_visits = request.session.get('num_visits', 0) # Visitas a página.
     # request.session['num_visits'] = num_visits + 1
-
-    context = {
-        'configuracao': configuracao,
-    }
+    context = {'configuracao': get_object_or_404(Configuracao),}
     return render(request, 'index.html', context=context)
 
 
@@ -66,14 +60,7 @@ def index(request):
 @permission_required("users.altera_professor", login_url='/')
 def index_projetos(request):
     """Página principal dos Projetos."""
-    configuracao = get_object_or_404(Configuracao)
-
-    if configuracao and configuracao.manutencao:
-        return render(request, 'projetos/manutencao.html')
-
-    context = {
-        'configuracao': configuracao,
-    }
+    context = {'configuracao': get_object_or_404(Configuracao),}
     return render(request, 'index_projetos.html', context=context)
 
 
@@ -1938,6 +1925,11 @@ def conexoes_estabelecidas(request):
                 message += "<br>"
         return HttpResponse(message)
     return HttpResponse("Você não tem privilégios")
+
+def manutencao(request):
+    """Página de Manutenção do Projeto Final de Engenharia."""
+    return render(request, 'projetos/manutencao.html')
+
 
 @login_required
 @permission_required('users.altera_professor', login_url='/')
