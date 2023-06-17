@@ -15,5 +15,6 @@ from administracao.support import usuario_sem_acesso
 @permission_required("users.altera_professor", login_url='/')
 def index_academica(request):
     """Mostra página principal do usuário professor."""   
-    if (v := usuario_sem_acesso(request, (2, 4,))): return v  # Prof, Adm
+    v = usuario_sem_acesso(request, (2, 4,))
+    if v: return v  # Prof, Adm
     return render(request, 'academica/index_academica.html')

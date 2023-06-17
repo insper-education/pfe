@@ -70,7 +70,8 @@ def index_administracao(request):
 @permission_required('users.altera_professor', login_url='/')
 def index_carregar(request):
     """Para carregar dados de arquivos para o servidor."""
-    if (v := usuario_sem_acesso(request, (4,))): return v  # Soh Adm
+    v = usuario_sem_acesso(request, (4,)) # Soh Adm
+    if v: return v  # Prof, Adm
     return render(request, 'administracao/carregar.html')
 
 
@@ -1543,7 +1544,9 @@ def relatorio_backup(request):
 @permission_required('users.altera_professor', login_url='/')
 def logs(request):
     """Alguns logs de Admin."""
-    if (v := usuario_sem_acesso(request, (4,))): return v # Soh Adm
+    v = usuario_sem_acesso(request, (4,)) # Soh Adm
+    if v: return v  # Prof, Adm
+
     message = ""
     for log in LogEntry.objects.all():
         message += str(log)+"<br>\n"

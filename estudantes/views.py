@@ -120,7 +120,8 @@ def areas_interesse(request):
         context['vencido'] = True
 
     # caso não seja Estudante, Professor ou Administrador (ou seja Parceiro)
-    if (v := usuario_sem_acesso(request, (1, 2, 4,))): return v  # Est, Prof, Adm
+    v = usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
+    if v: return v  # Prof, Adm
 
     return render(request, 'estudantes/areas_interesse.html', context=context)
 
@@ -316,7 +317,8 @@ def avaliacao_pares(request, momento):
     """Permite realizar a avaliação de pares."""
     configuracao = get_object_or_404(Configuracao)
 
-    if (v := usuario_sem_acesso(request, (1, 2, 4,))): return v  # Est, Prof, Adm
+    v = usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
+    if v: return v  # Prof, Adm
 
     estudante = None
     if request.user.tipo_de_usuario == 1:
@@ -411,7 +413,8 @@ def avaliacao_pares(request, momento):
 @transaction.atomic
 def informacoes_adicionais(request):
     """Perguntas aos estudantes de trabalho/entidades/social/familia."""
-    if (v := usuario_sem_acesso(request, (1, 2, 4,))): return v  # Est, Prof, Adm
+    v = usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
+    if v: return v  # Prof, Adm
 
     if request.user.tipo_de_usuario == 1:
 
@@ -474,7 +477,8 @@ def minhas_bancas(request):
 @transaction.atomic
 def relato_quinzenal(request):
     """Perguntas aos estudantes de trabalho/entidades/social/familia."""
-    if (v := usuario_sem_acesso(request, (1, 2, 4,))): return v  # Est, Prof, Adm
+    v = usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
+    if v: return v  # Prof, Adm
 
     hoje = datetime.date.today()
 
@@ -650,7 +654,8 @@ def selecao_propostas(request):
     elif request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:
         opcoes_temporarias = []
 
-    if (v := usuario_sem_acesso(request, (1, 2, 4,))): return v  # Est, Prof, Adm
+    v = usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
+    if v: return v  # Prof, Adm
 
     areas_normais = AreaDeInteresse.objects.filter(usuario=request.user, area__ativa=True).exists()
     areas_outras = AreaDeInteresse.objects.filter(usuario=request.user, area=None).exists()
