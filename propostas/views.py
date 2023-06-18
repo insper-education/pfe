@@ -28,7 +28,7 @@ from .support import envia_proposta, preenche_proposta
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def index_propostas(request):
     """Mostra página principal de Propostas."""
     context = {}
@@ -37,7 +37,7 @@ def index_propostas(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def mapeamento_estudantes_propostas(request):
     """Faz o mapeamento entre estudantes e propostas do próximo semestre."""
     configuracao = get_object_or_404(Configuracao)
@@ -145,7 +145,7 @@ def mapeamento_estudantes_propostas(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def procura_grupos(request):
     """Lista todos os projetos e grupos."""
     edicoes = []
@@ -236,7 +236,7 @@ def procura_grupos(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def procura_propostas(request):
     """Exibe um histograma com a procura das propostas pelos estudantes."""
     configuracao = get_object_or_404(Configuracao)
@@ -339,7 +339,7 @@ def procura_propostas(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def propostas_apresentadas(request):
     """Lista todas as propostas de projetos."""
     configuracao = get_object_or_404(Configuracao)
@@ -397,7 +397,7 @@ def propostas_apresentadas(request):
 
 @login_required
 @transaction.atomic
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def proposta_completa(request, primarykey):
     """Mostra uma proposta por completo."""
     proposta = get_object_or_404(Proposta, pk=primarykey)
@@ -608,7 +608,7 @@ def proposta_editar(request, slug):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def proposta_remover(request, slug):
     """Remove Proposta do Sistema por slug."""
     user = get_object_or_404(PFEUser, pk=request.user.pk)
@@ -629,7 +629,7 @@ def proposta_remover(request, slug):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def validate_alunos(request):
     """Ajax para validar vaga de estudantes em propostas."""
     proposta_id = int(request.GET.get('proposta', None))
@@ -681,7 +681,7 @@ def validate_alunos(request):
 
 @login_required
 @transaction.atomic
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def link_organizacao(request, proposta_id):
     """Cria um anotação para uma organização parceira."""
     proposta = get_object_or_404(Proposta, id=proposta_id)
@@ -718,7 +718,7 @@ def link_organizacao(request, proposta_id):
 
 @login_required
 @transaction.atomic
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def link_disciplina(request, proposta_id):
     """Adicionar Disciplina Recomendada."""
     proposta = get_object_or_404(Proposta, id=proposta_id)
@@ -758,7 +758,7 @@ def link_disciplina(request, proposta_id):
 
 @login_required
 @transaction.atomic
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def remover_disciplina(request):
     """Remove Disciplina Recomendada."""
     if request.is_ajax() and 'disciplina_id' in request.POST and 'proposta_id' in request.POST:
@@ -781,7 +781,7 @@ def remover_disciplina(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def projeto_criar(request, proposta_id):
     """Criar projeto de proposta."""
     proposta = get_object_or_404(Proposta, id=proposta_id)

@@ -90,7 +90,7 @@ def index_documentos(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def certificados_submetidos(request):
     """Lista os Certificados Emitidos."""
     edicoes = []
@@ -190,7 +190,7 @@ def atualiza_certificado(usuario, projeto, tipo_cert, arquivo, banca=None):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def selecao_geracao_certificados(request):
     """Recupera um certificado pelos dados."""
 
@@ -207,7 +207,7 @@ def selecao_geracao_certificados(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def gerar_certificados(request):
     """Recupera um certificado pelos dados."""
     configuracao = get_object_or_404(Configuracao)
@@ -346,7 +346,7 @@ def relatorios_publicos(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def tabela_documentos(request):
     """Exibe tabela com todos os documentos armazenados."""
 
@@ -387,7 +387,7 @@ def tabela_documentos(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def tabela_seguros(request):
     """Exibe tabela com todos os seguros armazenados."""
     seguros = Documento.objects.filter(tipo_de_documento=15)
@@ -398,7 +398,7 @@ def tabela_seguros(request):
     return render(request, 'documentos/tabela_seguros.html', context)
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def tabela_atas(request):
     """Exibe tabela com todos os seguros armazenados."""
     atas = Documento.objects.filter(tipo_de_documento=21).order_by("-data")

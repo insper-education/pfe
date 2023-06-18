@@ -39,7 +39,7 @@ from .support import converte_conceitos, arredonda_conceitos
 from estudantes.models import Relato, Pares
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def index_professor(request):
     """Mostra página principal do usuário professor."""
     user = get_object_or_404(PFEUser, pk=request.user.pk)
@@ -66,7 +66,7 @@ def index_professor(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def avaliacoes_pares(request):
     """Formulários com os projetos e avaliações de pares."""
 
@@ -84,7 +84,7 @@ def avaliacoes_pares(request):
     return render(request, 'professores/avaliacoes_pares.html', context=context)
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def avaliacoes_pares_todas(request):
     """Formulários com os projetos e relatos a avaliar do professor orientador."""
 
@@ -121,7 +121,7 @@ def avaliacoes_pares_todas(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def bancas_alocadas(request):
     """Mostra detalhes sobre o professor."""
     professor = get_object_or_404(Professor, pk=request.user.professor.pk)
@@ -140,7 +140,7 @@ def bancas_alocadas(request):
     return render(request, 'professores/bancas_alocadas.html', context=context)
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def orientacoes_alocadas(request):
     """Mostra detalhes sobre o professor."""
     professor = get_object_or_404(Professor, pk=request.user.professor.pk)
@@ -156,7 +156,7 @@ def orientacoes_alocadas(request):
     return render(request, 'professores/orientacoes_alocadas.html', context=context)
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def coorientacoes_alocadas(request):
     """Mostra detalhes sobre o professor."""
     professor = get_object_or_404(Professor, pk=request.user.professor.pk)
@@ -174,7 +174,7 @@ def coorientacoes_alocadas(request):
     return render(request, 'professores/coorientacoes_alocadas.html', context=context)
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def mentorias_alocadas(request):
     """Mostra detalhes sobre o professor."""
     professor = get_object_or_404(Professor, pk=request.user.professor.pk)
@@ -191,7 +191,7 @@ def mentorias_alocadas(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def bancas_index(request):
     """Menus de bancas e calendario de bancas."""
     bancas = Banca.objects.all()
@@ -218,7 +218,7 @@ def bancas_index(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def bancas_criar(request):
     """Cria uma banca de avaliação para o projeto."""
     configuracao = get_object_or_404(Configuracao)
@@ -302,7 +302,7 @@ def bancas_criar(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def bancas_editar(request, primarykey):
     """Edita uma banca de avaliação para o projeto."""
     banca = get_object_or_404(Banca, pk=primarykey)
@@ -344,7 +344,7 @@ def bancas_editar(request, primarykey):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def bancas_lista(request, periodo_projeto):
     """Lista as bancas agendadas, conforme periodo ou projeto pedido."""
     context = {'periodo': periodo_projeto}
@@ -391,7 +391,7 @@ def bancas_lista(request, periodo_projeto):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def bancas_tabela(request):
     """Lista todas as bancas agendadas, conforme periodo pedido."""
     configuracao = get_object_or_404(Configuracao)
@@ -436,7 +436,7 @@ def bancas_tabela(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def bancas_tabela_completa(request):
     """Lista todas as bancas agendadas, conforme periodo pedido."""
     configuracao = get_object_or_404(Configuracao)
@@ -484,7 +484,7 @@ def bancas_tabela_completa(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def banca_ver(request, primarykey):
     """Retorna banca pedida."""
     banca = get_object_or_404(Banca, id=primarykey)
@@ -1025,7 +1025,7 @@ def banca_avaliar(request, slug):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def informe_bancas(request, tipo):
     """Avisa todos os orientadores dos resultados das Bancas Intermediárias."""
 
@@ -1080,7 +1080,7 @@ def informe_bancas(request, tipo):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def conceitos_obtidos(request, primarykey):  # acertar isso para pk
     """Visualiza os conceitos obtidos pelos alunos no projeto."""
     projeto = get_object_or_404(Projeto, pk=primarykey)
@@ -1177,7 +1177,7 @@ def conceitos_obtidos(request, primarykey):  # acertar isso para pk
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def dinamicas_index(request):
     """Menus de encontros."""
     encontros = Encontro.objects.all().order_by('startDate')
@@ -1191,7 +1191,7 @@ def dinamicas_index(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def dinamicas_criar(request):
     """Cria um encontro."""
     configuracao = get_object_or_404(Configuracao)
@@ -1272,7 +1272,7 @@ def dinamicas_criar(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def dinamicas_editar(request, primarykey):
     """Edita um encontro."""
     encontro = get_object_or_404(Encontro, pk=primarykey)
@@ -1351,7 +1351,7 @@ def dinamicas_editar(request, primarykey):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def dinamicas_lista(request):
     """Mostra os horários de dinâmicas."""
 
@@ -1403,7 +1403,7 @@ def dinamicas_lista(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def orientadores_tabela_completa(request):
     """Alocação dos Orientadores por semestre."""
     configuracao = get_object_or_404(Configuracao)
@@ -1422,7 +1422,7 @@ def orientadores_tabela_completa(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def orientadores_tabela(request):
     """Alocação dos Orientadores por semestre."""
     configuracao = get_object_or_404(Configuracao)
@@ -1484,7 +1484,7 @@ def orientadores_tabela(request):
     return render(request, 'professores/orientadores_tabela.html', context)
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def coorientadores_tabela_completa(request):
     """Alocação dos Coorientadores por semestre."""
     configuracao = get_object_or_404(Configuracao)
@@ -1502,7 +1502,7 @@ def coorientadores_tabela_completa(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def coorientadores_tabela(request):
     """Alocação dos Coorientadores por semestre."""
     configuracao = get_object_or_404(Configuracao)
@@ -1564,7 +1564,7 @@ def coorientadores_tabela(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def relatos_quinzenais(request):
     """Formulários com os projetos e relatos a avaliar do professor orientador."""
 
@@ -1583,7 +1583,7 @@ def relatos_quinzenais(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def relatos_quinzenais_todos(request):
     """Formulários com os projetos e relatos a avaliar do professor orientador."""
 
@@ -1620,7 +1620,7 @@ def relatos_quinzenais_todos(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 @transaction.atomic
 def relato_avaliar(request, projeto_id, evento_id):
     """Cria uma tela para preencher avaliações dos relatos quinzenais."""
@@ -1869,7 +1869,7 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
     return render(request, 'professores/resultado_projetos.html', context)
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def resultado_projetos_edicao(request, edicao):
     """Mostra os resultados das avaliações (Bancas) para uma edição."""
     edicao = edicao.split('.')
@@ -1881,13 +1881,13 @@ def resultado_projetos_edicao(request, edicao):
     return resultado_projetos_intern(request, ano, semestre)
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def resultado_projetos(request):
     """Mostra os resultados das avaliações (Bancas)."""
     return resultado_projetos_intern(request)
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def resultado_meus_projetos(request):
     """Mostra os resultados das avaliações somente do professor (Bancas)."""
     user = get_object_or_404(PFEUser, pk=request.user.pk)
@@ -1907,7 +1907,7 @@ def resultado_meus_projetos(request):
     return resultado_projetos_intern(request, professor=professor)
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def todos_professores(request):
     """Exibe todas os professores que estão cadastrados no PFE."""
     professores = Professor.objects.all()
@@ -1925,7 +1925,7 @@ def todos_professores(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def objetivo_editar(request, primarykey):
     """Edita um objetivo de aprendizado."""
     objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=primarykey)
@@ -1949,7 +1949,7 @@ def objetivo_editar(request, primarykey):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def objetivos_rubricas(request):
     """Exibe os objetivos e rubricas."""
     objetivos = get_objetivos_atuais()

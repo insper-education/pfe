@@ -146,7 +146,7 @@ def gera_descricao_banca(banca, alunos):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def export_calendar(request, event_id):
     """Gera evento de calendário."""
     # ATUALMENTE PARA BANCA
@@ -216,7 +216,7 @@ def export_calendar(request, event_id):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def atualiza_evento(request):
     """Ajax para atualizar eventos."""
     try:
@@ -258,7 +258,7 @@ def atualiza_evento(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def remove_evento(request):
     """Ajax para remover eventos."""
     event_id = int(request.POST.get('id', None))

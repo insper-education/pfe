@@ -19,26 +19,38 @@
 
     <br>
     <a href="{% url 'calendario' %}"><h5>Calendário Geral</h5></a>
-    <hr>
-    {% if user.tipo_de_usuario == 1 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+    <hr>    
+    {% if perms.estudantes %}
         <a href="{% url 'index_estudantes' %}"><h5>Área dos Estudantes</h5></a>
     {% endif %}
-    {% if user.tipo_de_usuario == 3 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+    {% if perms.projetos.add_proposta %}
         <a href="{% url 'index_organizacoes' %}"><h5>Área dos Parceiros</h5></a>
     {% endif %}
-    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+    {% if perms.users.change_professor %}
         <a href="{% url 'index_professor' %}"><h5>Área dos Professores</h5></a>
+    {% endif %}
+    {% if perms.users.change_professor %}
         <hr>
         <a href="{% url 'index_academica' %}"><h5>Área Acadêmica</h5></a>
         <a href="{% url 'index_operacional' %}"><h5>Área Operacional</h5></a>
-        <a href="{% url 'index_administracao' %}"><h5>Área Administrativa</h5></a>
+        {% if perms.users.view_administrador %}
+            <a href="{% url 'index_administracao' %}"><h5>Área Administrativa</h5></a>
+        {% endif %}
     {% endif %}
-    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+
+    {% if perms.projetos.view_proposta or perms.projetos.view_projeto%}
         <hr>
-        <a href="{% url 'index_propostas' %}"><h5>Propostas</h5></a>
-        <a href="{% url 'index_projetos' %}"><h5>Projetos</h5></a>
+        {% if perms.projetos.view_proposta %}
+            <a href="{% url 'index_propostas' %}"><h5>Propostas</h5></a>
+        {% endif %}
+        {% if perms.projetos.view_projeto %}
+            <a href="{% url 'index_projetos' %}"><h5>Projetos</h5></a>
+        {% endif %}
     {% endif %}
-    <hr>
-    <a href="{% url 'index_documentos' %}"><h5>Documentações</h5></a>
+
+    {% if perms.projetos.view_documento %}
+        <hr>
+        <a href="{% url 'index_documentos' %}"><h5>Documentações</h5></a>
+    {% endif %}
 
 {% endblock %}

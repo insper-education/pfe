@@ -23,14 +23,14 @@ from users.models import PFEUser
 # from users.models import Aluno, Professor, Administrador, Parceiro
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def index_operacional(request):
     """Mostra página principal para equipe operacional."""
     return render(request, 'operacional/index_operacional.html')
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def avisos_listar(request):
     """Mostra toda a tabela de avisos da coordenação do PFE."""
     configuracao = get_object_or_404(Configuracao)
@@ -129,7 +129,7 @@ def trata_aviso(aviso, request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def edita_aviso(request, primarykey):
     """Edita aviso."""
     aviso = get_object_or_404(Aviso, pk=primarykey)
@@ -153,7 +153,7 @@ def edita_aviso(request, primarykey):
 
 @login_required
 @transaction.atomic
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def carregar_certificado(request):
     """Carrega certificado na base de dados do PFE."""
     if request.method == 'POST':
@@ -223,7 +223,7 @@ def carregar_certificado(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def cria_aviso(request):
     """Cria aviso."""
     if request.method == 'POST':
@@ -249,7 +249,7 @@ def cria_aviso(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def deleta_aviso(request, primarykey):
     """Apaga aviso."""
     Aviso.objects.filter(id=primarykey).delete()

@@ -37,7 +37,7 @@ from .support import get_areas_estudantes, get_areas_propostas, simple_upload, c
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def index_projetos(request):
     """Página principal dos Projetos."""
     return render(request, 'projetos/index_projetos.html')
@@ -78,7 +78,7 @@ def projeto_detalhes(request, primarykey):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def projeto_completo(request, primarykey):
     """Mostra um projeto por completo."""
     projeto = get_object_or_404(Projeto, pk=primarykey)
@@ -118,7 +118,7 @@ def projeto_completo(request, primarykey):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def distribuicao_areas(request):
     """Distribuição por área de interesse dos alunos/propostas/projetos."""
     configuracao = get_object_or_404(Configuracao)
@@ -210,7 +210,7 @@ def distribuicao_areas(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def projetos_fechados(request):
     """Lista todos os projetos fechados."""
     edicoes = []
@@ -305,7 +305,7 @@ def projetos_fechados(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def projetos_lista(request):
     """Lista todos os projetos."""
     edicoes = []
@@ -348,7 +348,7 @@ def projetos_lista(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def relatorios(request):
     """Página para recuperar alguns relatórios."""
     return render(request, 'projetos/relatorios.html')
@@ -387,7 +387,7 @@ def meuprojeto(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def projeto_avancado(request, primarykey):
     """cria projeto avançado e avança para ele."""
     projeto = Projeto.objects.get(id=primarykey)
@@ -417,7 +417,7 @@ def projeto_avancado(request, primarykey):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def carrega_bancos(request):
     """Rotina que carrega arquivo CSV de bancos para base de dados do servidor."""
     with open('projetos/bancos.csv') as csv_file:
@@ -508,7 +508,7 @@ def reembolso_pedir(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def comite(request):
     """Exibe os professores que estão no comitê do PFE."""
     professores = Professor.objects.filter(user__membro_comite=True)
@@ -526,7 +526,7 @@ def comite(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def lista_feedback(request):
     """Lista todos os feedback das Organizações Parceiras."""
     configuracao = get_object_or_404(Configuracao)
@@ -576,7 +576,7 @@ def lista_feedback(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def lista_feedback_estudantes(request):
     """Lista todos os feedback das Organizações Parceiras."""
     configuracao = get_object_or_404(Configuracao)
@@ -669,7 +669,7 @@ def lista_feedback_estudantes(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def lista_acompanhamento(request):
     """Lista todos os acompanhamentos das Organizações Parceiras."""
     acompanhamentos = Acompanhamento.objects.all().order_by("-data")
@@ -681,7 +681,7 @@ def lista_acompanhamento(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def mostra_feedback(request, feedback_id):
     """Detalha os feedbacks das Organizações Parceiras."""
     feedback = get_object_or_404(Feedback, id=feedback_id)
@@ -694,7 +694,7 @@ def mostra_feedback(request, feedback_id):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def mostra_feedback_estudante(request, feedback_id):
     """Detalha os feedbacks das Organizações Parceiras."""
     feedback = get_object_or_404(FeedbackEstudante, id=feedback_id)
@@ -713,7 +713,7 @@ def mostra_feedback_estudante(request, feedback_id):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def validate_aviso(request):
     """Ajax para validar avisos."""
     aviso_id = int(request.GET.get('aviso', None)[len("aviso"):])
@@ -735,7 +735,7 @@ def validate_aviso(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def projetos_vs_propostas(request):
     """Mostra graficos das evoluções do PFE."""
     configuracao = get_object_or_404(Configuracao)
@@ -829,7 +829,7 @@ def projetos_vs_propostas(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def analise_notas(request):
     """Mostra graficos das evoluções do PFE."""
     configuracao = get_object_or_404(Configuracao)
@@ -995,7 +995,7 @@ def analise_notas(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def certificacao_falconi(request):
     """Mostra graficos das certificacões Falconi."""
     configuracao = get_object_or_404(Configuracao)
@@ -1147,7 +1147,7 @@ def divide57(notas_lista):
         return [0, 0, 0]
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def analise_objetivos(request):
     """Mostra graficos das evoluções do PFE."""
     edicoes, _, _ = get_edicoes(Avaliacao2)
@@ -1187,7 +1187,7 @@ def analise_objetivos(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def evolucao_notas(request):
     """Mostra graficos das evoluções do PFE."""
     edicoes, _, _ = get_edicoes(Avaliacao2)
@@ -1296,7 +1296,7 @@ def evolucao_notas(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def evolucao_objetivos(request):
     """Mostra graficos das evoluções do PFE."""
     configuracao = get_object_or_404(Configuracao)
@@ -1425,7 +1425,7 @@ def evolucao_objetivos(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def filtro_projetos(request):
     """Filtra os projetos."""
     edicoes = []
@@ -1458,7 +1458,7 @@ def filtro_projetos(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def evolucao_por_objetivo(request):
     """Mostra graficos das evoluções do PFE."""
     configuracao = get_object_or_404(Configuracao)
@@ -1590,7 +1590,7 @@ def evolucao_por_objetivo(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def correlacao_medias_cr(request):
     """Mostra graficos da correlação entre notas e o CR dos estudantes."""
     configuracao = get_object_or_404(Configuracao)
@@ -1666,7 +1666,7 @@ def correlacao_medias_cr(request):
     return render(request, 'projetos/correlacao_medias_cr.html', context)
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def editar_projeto(request, primarykey):
     """Editar Projeto."""
 
@@ -1761,7 +1761,7 @@ def cap_name(name):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def nomes(request):
     """Acerta maiúsculas de nomes."""
     alunos = Aluno.objects.all()
@@ -1790,7 +1790,7 @@ def nomes(request):
 
 @login_required
 @transaction.atomic
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def acompanhamento_view(request):
     """Cria um anotação para uma organização parceira."""
     # acompanhamentos = Acompanhamento.objects.all().order_by("-data")

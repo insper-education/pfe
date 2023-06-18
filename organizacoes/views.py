@@ -31,7 +31,7 @@ from propostas.support import envia_proposta, preenche_proposta, preenche_propos
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def index_organizacoes(request):
     """Mostra página principal do parceiro de uma organização."""
     return render(request, 'organizacoes/index_organizacoes.html')
@@ -39,7 +39,7 @@ def index_organizacoes(request):
 
 @login_required
 @transaction.atomic
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def anotacao(request, organizacao_id, anotacao_id=None):  # acertar isso para pk
     """Cria um anotação para uma organização parceira."""
     organizacao = get_object_or_404(Organizacao, id=organizacao_id)
@@ -166,7 +166,7 @@ def cria_documento(request, organizacao):
 
 @login_required
 @transaction.atomic
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def adiciona_documento_org(request, organizacao_id):
     """Cria um anotação para uma organização parceira."""
     organizacao = get_object_or_404(Organizacao, id=organizacao_id)
@@ -194,7 +194,7 @@ def adiciona_documento_org(request, organizacao_id):
 
 @login_required
 @transaction.atomic
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def adiciona_documento_proj(request, projeto_id):
     """Cria um anotação para um projeto."""
     projeto = get_object_or_404(Projeto, id=projeto_id)
@@ -224,7 +224,7 @@ def adiciona_documento_proj(request, projeto_id):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def parceiro_propostas(request):
     """Lista todas as propostas de projetos."""
     user = PFEUser.objects.get(pk=request.user.pk)
@@ -484,7 +484,7 @@ def carrega_proposta(request):
     return render(request, 'organizacoes/carrega_proposta.html', context)
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def organizacoes_prospect(request):
     """Exibe as organizações prospectadas e a última comunicação."""
     todas_organizacoes = Organizacao.objects.all()
@@ -549,7 +549,7 @@ def organizacoes_prospect(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def organizacoes_lista(request):
     """Exibe todas as organizações que já submeteram propostas de projetos."""
     organizacoes = Organizacao.objects.all()
@@ -614,7 +614,7 @@ def organizacoes_lista(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def organizacao_completo(request, org):  # acertar isso para pk
     """Exibe detalhes das organizações parceiras."""
     organizacao = get_object_or_404(Organizacao, id=org)
@@ -630,7 +630,7 @@ def organizacao_completo(request, org):  # acertar isso para pk
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def organizacoes_tabela(request):
     """Alocação das Organizações por semestre."""
     configuracao = get_object_or_404(Configuracao)
@@ -722,7 +722,7 @@ def projeto_feedback(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def todos_parceiros(request):
     """Exibe todas os parceiros de organizações que já submeteram projetos."""
     cabecalhos = ["Nome", "Cargo", "Organização", "e-mail", "telefone", "papel", ]
@@ -755,7 +755,7 @@ def todos_parceiros(request):
 
 @login_required
 @transaction.atomic
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def seleciona_conexoes(request):
     """Exibe todas os parceiros de uma organização específica."""
     # Passado o id do projeto
@@ -827,7 +827,7 @@ def seleciona_conexoes(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def estrelas(request):
     """Ajax para validar estrelas de interesse."""
     organizacao_id = int(request.GET.get('organizacao', None))
@@ -845,7 +845,7 @@ def estrelas(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def areas(request):
     """Ajax para validar area da organização."""
     organizacao_id = int(request.GET.get('organizacao', None))

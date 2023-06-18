@@ -535,7 +535,7 @@ def relato_quinzenal(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def relato_visualizar(request, id):
     """Perguntas aos estudantes de trabalho/entidades/social/familia."""
     context = {"relato": get_object_or_404(Relato, pk=id),}

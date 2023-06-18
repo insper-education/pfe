@@ -60,14 +60,14 @@ from .support import usuario_sem_acesso
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.view_administrador", raise_exception=True)
 def index_administracao(request):
     """Mostra página principal para administração do sistema."""
     return render(request, 'administracao/index_admin.html')
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def index_carregar(request):
     """Para carregar dados de arquivos para o servidor."""
     v = usuario_sem_acesso(request, (4,)) # Soh Adm
@@ -76,7 +76,7 @@ def index_carregar(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def emails(request):
     """Gera listas de emails, com alunos, professores, parceiros, etc."""
     membros_comite = PFEUser.objects.filter(membro_comite=True)
@@ -108,7 +108,7 @@ def emails(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def emails_semestre(request):
     """Gera listas de emails por semestre."""
     if request.is_ajax():
@@ -180,7 +180,7 @@ def emails_semestre(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def emails_projetos(request):
     """Gera listas de emails, com alunos, professores, parceiros, etc."""
     if request.is_ajax():
@@ -240,7 +240,7 @@ def registra_organizacao(request, org=None):
 
 @login_required
 @transaction.atomic
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def cadastrar_disciplina(request, proposta_id=None):
     """Cadastra Organização na base de dados do PFE."""
     mensagem = None
@@ -276,7 +276,7 @@ def cadastrar_disciplina(request, proposta_id=None):
 
 @login_required
 @transaction.atomic
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def cadastrar_organizacao(request, proposta_id=None):
     """Cadastra Organização na base de dados do PFE."""
     if request.method == 'POST':
@@ -324,7 +324,7 @@ def cadastrar_organizacao(request, proposta_id=None):
 
 @login_required
 @transaction.atomic
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def edita_organizacao(request, primarykey):
     """Edita Organização na base de dados do PFE."""
 
@@ -566,7 +566,7 @@ def registro_usuario(request, user=None):
 
 @login_required
 @transaction.atomic
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def cadastrar_usuario(request):
     """Cadastra usuário na base de dados do PFE."""
     if request.method == 'POST':
@@ -620,7 +620,7 @@ def cadastrar_usuario(request):
 
 @login_required
 @transaction.atomic
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def edita_usuario(request, primarykey):
     """Edita cadastro de usuário na base de dados do PFE."""
     user = get_object_or_404(PFEUser, id=primarykey)
@@ -665,7 +665,7 @@ def edita_usuario(request, primarykey):
     return render(request, 'administracao/cadastra_usuario.html', context)
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def carrega_arquivo(request, dado):
     """Faz o upload de arquivos CSV para o servidor."""
     if dado == "disciplinas":
@@ -731,7 +731,7 @@ def carrega_arquivo(request, dado):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def configurar(request):
     """Definir datas do PFE."""
     configuracao = get_object_or_404(Configuracao)
@@ -780,14 +780,14 @@ def configurar(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def exportar(request):
     """Exporta dados."""
     return render(request, 'administracao/exportar.html')
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def propor(request):
     """Monta grupos de PFE."""
     configuracao = get_object_or_404(Configuracao)
@@ -1005,7 +1005,7 @@ def propor(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def montar_grupos(request):
     """Montar grupos para projetos."""
     configuracao = get_object_or_404(Configuracao)
@@ -1125,7 +1125,7 @@ def montar_grupos(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def selecionar_orientadores(request):
     """Selecionar Orientadores para os Projetos."""
     configuracao = get_object_or_404(Configuracao)
@@ -1173,7 +1173,7 @@ def selecionar_orientadores(request):
 
 @login_required
 @transaction.atomic
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def servico(request):
     """Caso servidor esteja em manutenção."""
     if request.method == 'POST':
@@ -1190,7 +1190,7 @@ def servico(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def pre_alocar_estudante(request):
     """Ajax para pre-alocar estudates em propostas."""
     user = get_object_or_404(PFEUser, pk=request.user.pk)
@@ -1242,7 +1242,7 @@ def pre_alocar_estudante(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def definir_orientador(request):
     """Ajax para definir orientadores de projetos."""
     user = get_object_or_404(PFEUser, pk=request.user.pk)
@@ -1298,7 +1298,7 @@ def definir_orientador(request):
 
 @login_required
 @transaction.atomic
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def excluir_disciplina(request):
     """Remove Disciplina Recomendada."""
     
@@ -1319,7 +1319,7 @@ def excluir_disciplina(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def export(request, modelo, formato):
     """Exporta dados direto para o navegador nos formatos CSV, XLS e JSON."""
     if modelo == "projetos":
@@ -1418,7 +1418,7 @@ def create_backup():
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def backup(request, formato):
     """Gera um backup de tudo."""
     databook = create_backup()
@@ -1441,7 +1441,7 @@ def backup(request, formato):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def email_backup(request):
     """Envia um e-mail com os backups."""
     subject = 'BACKUP PFE'
@@ -1464,7 +1464,7 @@ def email_backup(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def relatorio(request, modelo, formato):
     """Gera relatorios em html e PDF."""
     configuracao = get_object_or_404(Configuracao)
@@ -1506,7 +1506,7 @@ def relatorio(request, modelo, formato):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def relatorio_backup(request):
     """Gera um relatório de backup de segurança."""
     subject = 'RELATÓRIOS PFE'
@@ -1541,7 +1541,7 @@ def relatorio_backup(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def logs(request):
     """Alguns logs de Admin."""
     v = usuario_sem_acesso(request, (4,)) # Soh Adm
@@ -1554,7 +1554,7 @@ def logs(request):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def conexoes_estabelecidas(request):
     """Mostra usuários conectados."""
     user = get_object_or_404(PFEUser, pk=request.user.pk)

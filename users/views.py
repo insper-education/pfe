@@ -107,7 +107,7 @@ class Usuario(generic.DetailView):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def estudantes_lista(request):
     """Gera lista com todos os alunos já registrados."""
     configuracao = get_object_or_404(Configuracao)
@@ -282,7 +282,7 @@ def estudantes_lista(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def estudantes_notas(request, professor=None):
     """Gera lista com todos os alunos já registrados."""
     configuracao = get_object_or_404(Configuracao)
@@ -349,7 +349,7 @@ def estudantes_notas(request, professor=None):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def blackboard_notas(request, anosemestre=None):
     """Gera notas para o blackboard."""
     ano = int(anosemestre.split(".")[0])
@@ -390,7 +390,7 @@ def blackboard_notas(request, anosemestre=None):
     
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def estudantes_objetivos(request):
     """Gera lista com todos os alunos já registrados."""
     configuracao = get_object_or_404(Configuracao)
@@ -455,7 +455,7 @@ def estudantes_objetivos(request):
 
 
 @login_required
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def estudantes_inscritos(request):
     """Mostra todos os alunos que estão se inscrevendo em projetos."""
     if request.is_ajax():
@@ -536,7 +536,7 @@ def estudantes_inscritos(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def edita_notas(request, primarykey):
     """Edita as notas do estudante."""
     alocacao = get_object_or_404(Alocacao, pk=primarykey)
@@ -1091,7 +1091,7 @@ def edita_notas(request, primarykey):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def estudante_detail(request, primarykey):
     """Mostra detalhes sobre o estudante."""
     aluno = Aluno.objects.filter(pk=primarykey).first()
@@ -1112,7 +1112,7 @@ def estudante_detail(request, primarykey):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def professor_detail(request, primarykey):
     """Mostra detalhes sobre o professor."""
     professor = get_object_or_404(Professor, pk=primarykey)
@@ -1142,7 +1142,7 @@ def professor_detail(request, primarykey):
 
 
 @login_required
-@permission_required('users.altera_professor', login_url='/')
+@permission_required('users.altera_professor', raise_exception=True)
 def parceiro_detail(request, primarykey):
     """Mostra detalhes sobre o parceiro."""
     parceiro = get_object_or_404(Parceiro, pk=primarykey)
@@ -1168,7 +1168,7 @@ def parceiro_detail(request, primarykey):
 
 @login_required
 @transaction.atomic
-@permission_required("users.altera_professor", login_url='/')
+@permission_required("users.altera_professor", raise_exception=True)
 def contas_senhas(request, anosemestre=None):
     """Envia conta e senha para todos os estudantes que estão no semestre."""
     user = get_object_or_404(PFEUser, pk=request.user.pk)

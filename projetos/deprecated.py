@@ -139,7 +139,7 @@
 #                     # " (DE): "+remove_projeto.titulo+" (PARA):"+op2.projeto.titulo)
 
 # @login_required
-# @permission_required('users.altera_professor', login_url='/')
+# @permission_required('users.altera_professor', raise_exception=True)
 # def propor(request):
 #     """Monta grupos de PFE."""
     ############################################
