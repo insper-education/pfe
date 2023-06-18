@@ -121,8 +121,6 @@ def registra_organizacao(request, org=None):
 def cadastrar_disciplina(request, proposta_id=None):
     """Cadastra Organização na base de dados do PFE."""
     mensagem = None
-
-    x = 10/0
     if request.method == 'POST':
         if 'nome' in request.POST:
             (disciplina, _created) = Disciplina.objects.get_or_create(nome=request.POST.get('nome', None))
