@@ -27,7 +27,7 @@ from django.utils import timezone
 
 from documentos.support import render_to_pdf
 
-from projetos.models import Configuracao, Organizacao, Proposta, Projeto, Banca
+from projetos.models import Configuracao, Organizacao, Proposta, Projeto
 from projetos.models import Avaliacao2, get_upload_path, Feedback, Disciplina
 
 from .support import get_limite_propostas
@@ -51,7 +51,6 @@ from users.models import Opcao, Alocacao
 
 from operacional.models import Curso
 
-from users.support import get_edicoes
 from users.support import adianta_semestre
 
 from propostas.support import ordena_propostas
@@ -67,131 +66,10 @@ def index_administracao(request):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.view_administrador", raise_exception=True)
 def index_carregar(request):
     """Para carregar dados de arquivos para o servidor."""
-    v = usuario_sem_acesso(request, (4,)) # Soh Adm
-    if v: return v  # Prof, Adm
     return render(request, 'administracao/carregar.html')
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def emails(request):
-    """Gera listas de emails, com alunos, professores, parceiros, etc."""
-    membros_comite = PFEUser.objects.filter(membro_comite=True)
-    lista_todos_alunos = Aluno.objects.filter(trancado=False).\
-        filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
-    lista_todos_professores = Professor.objects.all()
-    lista_todos_parceiros = Parceiro.objects.all()
- 
-    edicoes, _, _ = get_edicoes(Aluno)
-
-    configuracao = get_object_or_404(Configuracao)
-    atual = str(configuracao.ano)+"."+str(configuracao.semestre)
-
-    coordenacao = configuracao.coordenacao
-    coordenacoes = PFEUser.objects.filter(coordenacao=True)
-
-    context = {
-        "membros_comite": membros_comite,
-        "todos_alunos": lista_todos_alunos,
-        "todos_professores": lista_todos_professores,
-        "todos_parceiros": lista_todos_parceiros,
-        "edicoes": edicoes,
-        "atual": atual,
-        "coordenacao": coordenacao,
-        "coordenacoes": coordenacoes,
-    }
-
-    return render(request, 'administracao/emails.html', context=context)
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def emails_semestre(request):
-    """Gera listas de emails por semestre."""
-    if request.is_ajax():
-        if 'edicao' in request.POST:
-            ano, semestre = request.POST['edicao'].split('.')
-
-            estudantes = []  # Alunos do semestre
-            orientadores = []  # Orientadores por semestre
-            organizacoes = []  # Controla as organizações participantes p/semestre
-            parceiros = []
-            membros_bancas = []  # Membros das bancas
-
-            for projeto in Projeto.objects.filter(ano=ano).filter(semestre=semestre):
-                if Aluno.objects.filter(alocacao__projeto=projeto):  # checa se há alunos
-                    estudantes += Aluno.objects.filter(trancado=False).\
-                        filter(alocacao__projeto=projeto).\
-                        filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
-
-                if projeto.orientador and (projeto.orientador not in orientadores):
-                    orientadores.append(projeto.orientador)  # Junta orientadores do semestre
-
-                if projeto.organizacao not in organizacoes:
-                    organizacoes.append(projeto.organizacao)  # Junta organizações do semestre
-
-                # Parceiros de todas as organizações parceiras
-                parceiros = Parceiro.objects.filter(organizacao__in=organizacoes,
-                                                    user__is_active=True)
-                # IDEAL = conexoes = Conexao.objects.filter(projeto=projeto)
-
-                bancas = Banca.objects.filter(projeto=projeto)
-                for banca in bancas:
-                    if banca.membro1 and (banca.membro1 not in membros_bancas):
-                        membros_bancas.append(banca.membro1)
-                    if banca.membro2 and (banca.membro2 not in membros_bancas):
-                        membros_bancas.append(banca.membro2)
-                    if banca.membro3 and (banca.membro3 not in membros_bancas):
-                        membros_bancas.append(banca.membro3)
-
-            # Cria listas para estudantes que ainda não estão em projetos
-            estudantes_sem_projeto = Aluno.objects.filter(trancado=False).\
-                filter(anoPFE=ano).\
-                filter(semestrePFE=semestre).\
-                filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
-            for estudante in estudantes_sem_projeto:
-                if estudante not in estudantes:
-                    estudantes.append(estudante)
-
-
-            data = {}  # Dicionario com as pessoas do projeto
-            data["Estudantes"] = []
-            for i in estudantes:
-                data["Estudantes"].append([i.user.first_name, i.user.last_name, i.user.email])
-
-            data["Orientadores"] = []
-            for i in orientadores:
-                data["Orientadores"].append([i.user.first_name, i.user.last_name, i.user.email])
-
-            data["Parceiros"] = []
-            for i in parceiros:
-                data["Parceiros"].append([i.user.first_name, i.user.last_name, i.user.email])
-
-            data["Bancas"] = []
-            for i in membros_bancas:
-                data["Bancas"].append([i.first_name, i.last_name, i.email])
-
-            return JsonResponse(data)
-
-    return HttpResponse("Algum erro não identificado.", status=401)
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def emails_projetos(request):
-    """Gera listas de emails, com alunos, professores, parceiros, etc."""
-    if request.is_ajax():
-        if 'edicao' in request.POST:
-            ano, semestre = request.POST['edicao'].split('.')
-            projetos = Projeto.objects.filter(ano=ano).filter(semestre=semestre)
-            context = {
-                'projetos': projetos,
-            }
-            return render(request, 'administracao/emails_projetos.html', context=context)
-    return HttpResponse("Algum erro não identificado.", status=401)
 
 
 def registra_organizacao(request, org=None):

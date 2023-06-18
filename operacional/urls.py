@@ -38,5 +38,18 @@ urlpatterns = [
          views.deleta_aviso,
          name='deleta_aviso'),
 
+    path('emails/',
+         views.emails,
+         name='emails'),
+
+    # para Ajax somente
+    path('emails_semestre/',
+         views.emails_semestre,
+         name='emails_semestre'),
+
+    # para Ajax somente
+    path('emails_projetos/',
+         views.emails_projetos,
+         name='emails_projetos'),
 
 ]

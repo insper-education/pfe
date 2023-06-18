@@ -66,20 +66,6 @@ urlpatterns = [
          views.email_backup,
          name='email_backup'),
 
-    path('emails/',
-         views.emails,
-         name='emails'),
-
-    # para Ajax somente
-    path('emails_semestre/',
-         views.emails_semestre,
-         name='emails_semestre'),
-
-    # para Ajax somente
-    path('emails_projetos/',
-         views.emails_projetos,
-         name='emails_projetos'),
-
     path('export/<str:modelo>/<str:formato>',
          views.export,
          name='export'),
