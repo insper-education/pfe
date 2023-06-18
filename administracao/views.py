@@ -8,7 +8,6 @@ Data: 17 de Dezembro de 2020
 
 import re           # regular expression (para o import)
 import tablib
-#import dateutil.parser
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
@@ -118,30 +117,26 @@ def registra_organizacao(request, org=None):
 
 @login_required
 @transaction.atomic
-@permission_required("users.altera_professor", raise_exception=True)
+@permission_required("projetos.add_disciplina", raise_exception=True)
 def cadastrar_disciplina(request, proposta_id=None):
     """Cadastra Organização na base de dados do PFE."""
     mensagem = None
 
+    x = 10/0
     if request.method == 'POST':
-
         if 'nome' in request.POST:
-
             (disciplina, _created) = Disciplina.objects.get_or_create(nome=request.POST.get('nome', None))
-        
             if not _created:
                 return HttpResponse("Conflito: Disciplina já cadastrada", status=409)
-            
             disciplina.save()
             mensagem = "Disciplina cadastrada na base de dados."
-
         else:
-
             context = {
                 "voltar": True,
                 "area_principal": True,
                 "mensagem": "<h3 style='color:red'>Falha na inserção na base da dados.<h3>",
             }
+            return render(request, 'generic.html', context=context)
 
     context = {
         "mensagem": mensagem,
