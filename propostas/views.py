@@ -185,7 +185,7 @@ def procura_grupos(request):
 
                 estudantes_pfe = Aluno.objects.filter(alocacao__projeto=projeto)
                 if curso != 'T':
-                    estudantes_pfe = estudantes_pfe.filter(alocacao__aluno__curso2__sigla=curso)
+                    estudantes_pfe = estudantes_pfe.filter(alocacao__aluno__curso2__sigla_curta=curso)
 
                 if estudantes_pfe:  # len(estudantes_pfe) > 0:
                     projetos_selecionados.append(projeto)
@@ -302,7 +302,7 @@ def procura_propostas(request):
 
     # Caso não se deseje todos os cursos, se filtra qual se deseja
     if curso != "T":
-        opcoes = opcoes.filter(aluno__curso2__sigla=curso)
+        opcoes = opcoes.filter(aluno__curso2__sigla_curta=curso)
 
     areaspfe = {}
     areas = Area.objects.filter(ativa=True)

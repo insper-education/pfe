@@ -152,7 +152,7 @@ def distribuicao_areas(request):
     if tipo == "estudantes":
         alunos = Aluno.objects.filter(user__tipo_de_usuario=1)
         if curso != "todos":
-            alunos = alunos.filter(curso2=curso)
+            alunos = alunos.filter(curso2__sigla_curta=curso)
         if not todas:
             alunos = alunos.filter(anoPFE=ano, semestrePFE=semestre)
         total_preenchido = 0
@@ -249,7 +249,7 @@ def projetos_fechados(request):
 
                 estudantes_pfe = Aluno.objects.filter(alocacao__projeto=projeto)
                 if curso != 'T':
-                    estudantes_pfe = estudantes_pfe.filter(alocacao__aluno__curso2__sigla=curso)
+                    estudantes_pfe = estudantes_pfe.filter(alocacao__aluno__curso2__sigla_curta=curso)
 
                 if estudantes_pfe:  # len(estudantes_pfe) > 0:
                     projetos_selecionados.append(projeto)
@@ -852,7 +852,7 @@ def analise_notas(request):
         if 'curso' in request.POST:
             curso = request.POST['curso']
             if curso != 'T':
-                medias_semestre = medias_semestre.filter(aluno__curso2__sigla=curso)
+                medias_semestre = medias_semestre.filter(aluno__curso2__sigla_curta=curso)
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
@@ -1019,7 +1019,7 @@ def certificacao_falconi(request):
         # if 'curso' in request.POST:
         #     curso = request.POST['curso']
         #     if curso != 'T':
-        #         medias_semestre = medias_semestre.filter(aluno__curso2__sigla=curso)
+        #         medias_semestre = medias_semestre.filter(aluno__curso2__sigla_curta=curso)
         # else:
         #     return HttpResponse("Algum erro não identificado.", status=401)
 
@@ -1168,7 +1168,7 @@ def analise_objetivos(request):
         if 'curso' in request.POST:
             curso = request.POST['curso']
             if curso != 'T':
-                alocacoes = alocacoes.filter(aluno__curso2__sigla=curso)
+                alocacoes = alocacoes.filter(aluno__curso2__sigla_curta=curso)
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
@@ -1200,8 +1200,8 @@ def evolucao_notas(request):
         if 'curso' in request.POST:
             curso = request.POST['curso']
             if curso != 'T':
-                avaliacoes = avaliacoes.filter(alocacao__aluno__curso2__sigla=curso)
-                alocacoes = alocacoes.filter(aluno__curso2__sigla=curso)
+                avaliacoes = avaliacoes.filter(alocacao__aluno__curso2__sigla_curta=curso)
+                alocacoes = alocacoes.filter(aluno__curso2__sigla_curta=curso)
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
@@ -1261,7 +1261,7 @@ def evolucao_notas(request):
                 periodo = edicao.split('.')
                 alocacoes_tmp = alocacoes.filter(projeto__ano=periodo[0],
                                                  projeto__semestre=periodo[1],
-                                                 aluno__curso2__sigla=t_curso[0])
+                                                 aluno__curso2__sigla_curta=t_curso[0])
                 notas_lista = []
                 for alocacao in alocacoes_tmp:
                     media_loc = alocacao.get_media
@@ -1337,7 +1337,7 @@ def evolucao_objetivos(request):
 
                 # Avaliações Individuais
                 if (individuais):
-                    avaliacoes_ind = avaliacoes_sep.filter(alocacao__aluno__curso2__sigla=curso)
+                    avaliacoes_ind = avaliacoes_sep.filter(alocacao__aluno__curso2__sigla_curta=curso)
                 else:
                     avaliacoes_ind = avaliacoes_sep.none()
 
@@ -1502,7 +1502,7 @@ def evolucao_por_objetivo(request):
 
                 # Avaliações Individuais
                 if (individuais):
-                    avaliacoes_ind = avaliacoes_sep.filter(alocacao__aluno__curso2__sigla=curso)
+                    avaliacoes_ind = avaliacoes_sep.filter(alocacao__aluno__curso2__sigla_curta=curso)
                 else:
                     avaliacoes_ind = avaliacoes_sep.none()
 
@@ -1559,7 +1559,7 @@ def evolucao_por_objetivo(request):
                                                     projeto__semestre=periodo[1])
 
             if curso != 'T':
-                alocacoes_tmp = alocacoes_tmp.filter(aluno__curso2__sigla=curso)
+                alocacoes_tmp = alocacoes_tmp.filter(aluno__curso2__sigla_curta=curso)
 
             alocacoes.append(alocacoes_tmp.count())
 
@@ -1615,15 +1615,15 @@ def correlacao_medias_cr(request):
                                                         projeto__semestre=periodo[1])
 
                 if curso == 'C':
-                    estudantes_computacao = alocacoes_tmp.filter(aluno_curso2__sigla="C")
+                    estudantes_computacao = alocacoes_tmp.filter(aluno__curso2__sigla_curta="C")
                 elif curso == 'M':
-                    estudantes_mecanica = alocacoes_tmp.filter(aluno_curso2__sigla="M")
+                    estudantes_mecanica = alocacoes_tmp.filter(aluno__curso2__sigla_curta="M")
                 elif curso == 'X':
-                    estudantes_mecatronica = alocacoes_tmp.filter(aluno_curso2__sigla="X")
+                    estudantes_mecatronica = alocacoes_tmp.filter(aluno__curso2__sigla_curta="X")
                 else:
-                    estudantes_computacao = alocacoes_tmp.filter(aluno_curso2__sigla="C")
-                    estudantes_mecanica = alocacoes_tmp.filter(aluno_curso2__sigla="M")
-                    estudantes_mecatronica = alocacoes_tmp.filter(aluno_curso2__sigla="X")
+                    estudantes_computacao = alocacoes_tmp.filter(aluno__curso2__sigla_curta="C")
+                    estudantes_mecanica = alocacoes_tmp.filter(aluno__curso2__sigla_curta="M")
+                    estudantes_mecatronica = alocacoes_tmp.filter(aluno__curso2__sigla_curta="X")
 
             else:
                 alocacoes = {}
@@ -1634,7 +1634,7 @@ def correlacao_medias_cr(request):
                     if curso == 'T':
                         alocacoes[periodo[0]+"_"+periodo[1]] = semestre
                     else:
-                        semestre = semestre.filter(aluno__curso2=curso)
+                        semestre = semestre.filter(aluno__curso2__sigla_curta=curso)
                         alocacoes[periodo[0]+"_"+periodo[1]] = semestre
                 periodo = ["todo", "periodo"]
 
