@@ -163,13 +163,13 @@ def estudantes_lista(request):
                 tabela_alunos[ano][semestre] = {}
 
                 tabela_alunos[ano][semestre]["computação"] =\
-                    alunos_semestre.filter(curso__exact='C').count()
+                    alunos_semestre.filter(curso2__sigla_curta__exact='C').count()
                 totais["computação"] += tabela_alunos[ano][semestre]["computação"]
                 tabela_alunos[ano][semestre]["mecânica"] =\
-                    alunos_semestre.filter(curso__exact='M').count()
+                    alunos_semestre.filter(curso2__sigla_curta__exact='M').count()
                 totais["mecânica"] += tabela_alunos[ano][semestre]["mecânica"]
                 tabela_alunos[ano][semestre]["mecatrônica"] =\
-                    alunos_semestre.filter(curso__exact='X').count()
+                    alunos_semestre.filter(curso2__sigla_curta__exact='X').count()
                 totais["mecatrônica"] += tabela_alunos[ano][semestre]["mecatrônica"]
                 tabela_alunos[ano][semestre]["total"] =\
                     alunos_semestre.count()
@@ -203,15 +203,15 @@ def estudantes_lista(request):
                         tabela_alunos[ano_tmp][semestre_tmp] = {}
 
                     tabela_alunos[ano_tmp][semestre_tmp]["computação"] =\
-                        alunos_semestre.filter(curso__exact='C').count()
+                        alunos_semestre.filter(curso2__sigla_curta__exact='C').count()
                     totais["computação"] += \
                         tabela_alunos[ano_tmp][semestre_tmp]["computação"]
                     tabela_alunos[ano_tmp][semestre_tmp]["mecânica"] =\
-                        alunos_semestre.filter(curso__exact='M').count()
+                        alunos_semestre.filter(curso2__sigla_curta__exact='M').count()
                     totais["mecânica"] += \
                         tabela_alunos[ano_tmp][semestre_tmp]["mecânica"]
                     tabela_alunos[ano_tmp][semestre_tmp]["mecatrônica"] =\
-                        alunos_semestre.filter(curso__exact='X').count()
+                        alunos_semestre.filter(curso2__sigla_curta__exact='X').count()
                     totais["mecatrônica"] += \
                         tabela_alunos[ano_tmp][semestre_tmp]["mecatrônica"]
                     tabela_alunos[ano_tmp][semestre_tmp]["total"] =\
@@ -230,13 +230,13 @@ def estudantes_lista(request):
             num_alunos = alunos_list.count()
 
             # Conta alunos computacao
-            num_alunos_comp = alunos_list.filter(curso__exact='C').count()
+            num_alunos_comp = alunos_list.filter(curso2__sigla_curta__exact='C').count()
 
             # Conta alunos mecatrônica
-            num_alunos_mxt = alunos_list.filter(curso__exact='X').count()
+            num_alunos_mxt = alunos_list.filter(curso2__sigla_curta__exact='X').count()
 
             # Conta alunos mecânica
-            num_alunos_mec = alunos_list.filter(curso__exact='M').count()
+            num_alunos_mec = alunos_list.filter(curso2__sigla_curta__exact='M').count()
 
             # Estudantes masculino
             num_alunos_masculino = alunos_list.filter(user__genero='M').count()
@@ -476,13 +476,13 @@ def estudantes_inscritos(request):
             num_alunos = alunos.count()
 
             # Conta alunos computacao
-            num_alunos_comp = alunos.filter(curso__exact='C').count()
+            num_alunos_comp = alunos.filter(curso2__sigla_curta__exact='C').count()
 
             # Conta alunos mecatrônica
-            num_alunos_mxt = alunos.filter(curso__exact='X').count()
+            num_alunos_mxt = alunos.filter(curso2__sigla_curta__exact='X').count()
 
             # Conta alunos mecânica
-            num_alunos_mec = alunos.filter(curso__exact='M').count()
+            num_alunos_mec = alunos.filter(curso2__sigla_curta__exact='M').count()
 
             inscritos = 0
             ninscritos = 0
