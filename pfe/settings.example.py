@@ -234,3 +234,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 SALT = "pfe"
 
 MAINTENANCE_MODE = int(os.environ.get("MAINTENANCE_MODE", 0))
+
+CONTATO = "Por favor contactar: <a href='mailto:xxxx@insper.edu.br'>xxxx@insper.edu.br</a>"
