@@ -16,7 +16,7 @@ class Curso(models.Model):
                                     blank=True,
                                     help_text='Nome do curso')
 
-    sigla = models.CharField("Sigla", max_length=3, null=True,
+    sigla_curta = models.CharField("Sigla", max_length=3, null=True,
                                       blank=True,
                                       help_text='Sigla do curso')
 

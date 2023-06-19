@@ -581,7 +581,7 @@ def organizacoes_lista(request):
             estudantes = Aluno.objects.filter(alocacao__projeto=projeto)
             tipos = ""
             for estudante in estudantes:
-                tipos += estudante.curso2.sigla
+                tipos += estudante.curso2.sigla_curta
             tipo_estudantes += "["+tipos+"]"
         grupos.append(tipo_estudantes)
 

@@ -103,7 +103,7 @@
                     <span class="bar" data-number="{{value.0.count}}"></span>
                     <span data-toggle="tooltip" data-html="true" animation="true"
                     {% if tipo == "estudantes" %}
-                        title="{% for user in value.0 %}[{{user.usuario.aluno2.sigla}}] - {{user.usuario.get_full_name}}{% comment %}&amp;lt;{{user.usuario.email}}&amp;gt;{% endcomment %}&lt;br&gt;{% endfor %}"
+                        title="{% for user in value.0 %}[{{user.usuario.aluno2.sigla_curta}}] - {{user.usuario.get_full_name}}{% comment %}&amp;lt;{{user.usuario.email}}&amp;gt;{% endcomment %}&lt;br&gt;{% endfor %}"
                     {% elif tipo == "propostas" %}
                         title="{% for proposta in value.0 %}{{proposta}}&lt;br&gt;{% endfor %}"
                     {% elif tipo == "projetos" %}

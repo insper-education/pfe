@@ -1230,7 +1230,7 @@ def evolucao_notas(request):
             for edicao in edicoes:
                 periodo = edicao.split('.')
                 semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
-                notas_lista = [x.nota for x in semestre if (x.alocacao != None and x.alocacao.aluno.curso2.sigla == t_curso[0])]
+                notas_lista = [x.nota for x in semestre if (x.alocacao != None and x.alocacao.aluno.curso2.sigla_curta == t_curso[0])]
                 notas_total[edicao] += notas_lista
                 notas.append(media(notas_lista))
             if notas != [None] * len(notas):  # não está vazio
@@ -1349,7 +1349,7 @@ def evolucao_objetivos(request):
                     for projeto in projetos:
                         alocacoes = Alocacao.objects.filter(projeto=projeto)
                         for alocacao in alocacoes:
-                            if alocacao.aluno.curso2.sigla == curso:
+                            if alocacao.aluno.curso2.sigla_curta == curso:
                                 projetos_selecionados.append(projeto)
                                 break
                             
@@ -1514,7 +1514,7 @@ def evolucao_por_objetivo(request):
                     for projeto in projetos:
                         alocacoes = Alocacao.objects.filter(projeto=projeto)
                         for alocacao in alocacoes:
-                            if alocacao.aluno.curso2.sigla == curso:
+                            if alocacao.aluno.curso2.sigla_curta == curso:
                                 projetos_selecionados.append(projeto)
                                 break
                             
