@@ -49,4 +49,4 @@ class AlunoForm(forms.ModelForm):
         """Meta para AlunoForm."""
 
         model = Aluno
-        fields = ('curso',)
+        fields = ('matricula',)

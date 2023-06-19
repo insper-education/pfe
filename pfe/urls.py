@@ -48,6 +48,9 @@ if settings.DEBUG:
         path('__debug__/', include(debug_toolbar.urls)),
     ] + urlpatterns
 
+handler400 = 'pfe.views.custom_400'
+
+
 #The URLs provided by auth are:
 # accounts/login/ [name='login']
 # accounts/logout/ [name='logout']

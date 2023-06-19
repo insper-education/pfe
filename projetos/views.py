@@ -152,7 +152,7 @@ def distribuicao_areas(request):
     if tipo == "estudantes":
         alunos = Aluno.objects.filter(user__tipo_de_usuario=1)
         if curso != "todos":
-            alunos = alunos.filter(curso=curso)
+            alunos = alunos.filter(curso2=curso)
         if not todas:
             alunos = alunos.filter(anoPFE=ano, semestrePFE=semestre)
         total_preenchido = 0
@@ -1634,7 +1634,7 @@ def correlacao_medias_cr(request):
                     if curso == 'T':
                         alocacoes[periodo[0]+"_"+periodo[1]] = semestre
                     else:
-                        semestre = semestre.filter(aluno__curso=curso)
+                        semestre = semestre.filter(aluno__curso2=curso)
                         alocacoes[periodo[0]+"_"+periodo[1]] = semestre
                 periodo = ["todo", "periodo"]
 

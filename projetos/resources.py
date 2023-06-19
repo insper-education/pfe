@@ -8,6 +8,8 @@ Data: 15 de Maio de 2019
 
 import datetime
 from import_export import resources, fields
+from django.core.exceptions import SuspiciousOperation  # Para erro 400
+from django.contrib.auth.models import Group
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao, Alocacao
 from .models import Projeto, Proposta, Organizacao, Configuracao, Disciplina
@@ -360,6 +362,10 @@ class UsuariosResource(resources.ModelResource):
 def atualizar_campo(registro, campo, valor):
     """Atualiza o campo."""
     if (valor is not None) and (valor != ""):
+        max_length = registro.__class__._meta.get_field(campo).max_length
+        if max_length is not None:
+            if len(valor) > max_length:
+                raise SuspiciousOperation(f"Tamanho do campo '{campo}', maior que o permitido pelo registro ({max_length}).")
         setattr(registro, campo, valor)
     # else: # ("Não houve atualização de {0}".format(campo))
 
@@ -412,16 +418,15 @@ class EstudantesResource(resources.ModelResource):
 
             user.save()
 
+            user.groups.add(Group.objects.get(name="Estudante"))  # Grupo de permissões
+
+
             (aluno, _created) = Aluno.objects.get_or_create(user=user)
-            # Remover o curso e só usar curso2
             if row.get('curso') == "GRENGCOMP":
-                aluno.curso = 'C'
                 aluno.curso2 = Curso.objects.get(nome="Engenharia de Computação")
             elif row.get('curso') == "GRENGMECAT":
-                aluno.curso = 'X'
                 aluno.curso2 = Curso.objects.get(nome="Engenharia Mecatrônica")
             elif row.get('curso') == "GRENGMECA":
-                aluno.curso = 'M'
                 aluno.curso2 = Curso.objects.get(nome="Engenharia Mecânica")
             else:
                 pass  # erro

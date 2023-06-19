@@ -8,7 +8,7 @@ Data: 13 de Junho de 2023
 import dateutil.parser
 
 from django.conf import settings
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, Group
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
@@ -102,7 +102,7 @@ def registra_organizacao(request, org=None):
 def registro_usuario(request, user=None):
     """Rotina para cadastrar usuário no sistema."""
     if not user:
-        usuario = PFEUser.create()
+        usuario = PFEUser.create()  # Serve para diferenciar um usuário novo
     else:
         usuario = user
 
@@ -111,15 +111,15 @@ def registro_usuario(request, user=None):
         usuario.email = email.strip()
 
     tipo_de_usuario = request.POST.get('tipo_de_usuario', None)
-    if tipo_de_usuario == "estudante":  # (1, 'aluno')
-        usuario.tipo_de_usuario = 1
-    elif tipo_de_usuario == "professor":  # (2, 'professor')
-        usuario.tipo_de_usuario = 2
-    elif tipo_de_usuario == "parceiro":  # (3, 'parceiro')
-        usuario.tipo_de_usuario = 3
+    if tipo_de_usuario == "estudante":
+        usuario.tipo_de_usuario = 1  # (1, 'aluno') 
+    elif tipo_de_usuario == "professor":
+        usuario.tipo_de_usuario = 2  # (2, 'professor')
+    elif tipo_de_usuario == "parceiro":
+        usuario.tipo_de_usuario = 3  # (3, 'parceiro')
     else:
-        # (4, 'administrador')
-        return ("Algum erro não identificado.", 401)
+        # usuario.tipo_de_usuario = 3  # (4, 'administrador')
+        return ("Erro na identificação do tipo de usuário.", 401)
 
     # se for um usuário novo
     if not user:
@@ -129,7 +129,7 @@ def registro_usuario(request, user=None):
             username = request.POST['email'].split("@")[0] + "." + \
                 request.POST['email'].split("@")[1].split(".")[0]
         else:
-            return ("Algum erro não identificado.", 401)
+            return ("Erro na recuperação do e-mail.", 401)
 
         if PFEUser.objects.exclude(pk=usuario.pk).filter(username=username).exists():
             return ('Username "%s" já está sendo usado.' % username, 401)
@@ -152,7 +152,6 @@ def registro_usuario(request, user=None):
 
     usuario.linkedin = request.POST.get('linkedin', None)
     usuario.tipo_lingua = request.POST.get('lingua', None)
-
     usuario.observacoes = request.POST.get('observacao', None)
 
     if 'ativo' in request.POST:
@@ -185,18 +184,19 @@ def registro_usuario(request, user=None):
 
         # Remover o curso e só usar curso2
         if curso == "computacao":
-            estudante.curso = 'C'   # ('C', 'Computação'),
+            #estudante.curso = 'C'   # ('C', 'Computação'), #Obsoleto
             estudante.curso2 = Curso.objects.get(nome="Engenharia de Computação")
         elif curso == "mecanica":
-            estudante.curso = 'M'   # ('M', 'Mecânica'),
+            #estudante.curso = 'M'   # ('M', 'Mecânica'), #Obsoleto
             estudante.curso2 = Curso.objects.get(nome="Engenharia Mecânica")
         elif curso == "mecatronica":
-            estudante.curso = 'X'   # ('X', 'Mecatrônica'),
+            #estudante.curso = 'X'   # ('X', 'Mecatrônica'), #Obsoleto
             estudante.curso2 = Curso.objects.get(nome="Engenharia Mecatrônica")
         else:
-            estudante.curso = None
+            #estudante.curso = None
             estudante.curso2 = None
-            mensagem += "Algum erro não identificado.<br>"
+            mensagem += "Erro na associação de curso ao estudante.<br>"
+        ##################### ^^^^  REMOVER ^^^^ #################
 
         try:
             estudante.anoPFE = int(request.POST['ano'])
@@ -215,6 +215,9 @@ def registro_usuario(request, user=None):
         estudante.trancado = 'estudante_trancado' in request.POST
 
         estudante.save()
+        
+        usuario.groups.add(Group.objects.get(name="Estudante"))  # Grupo de permissões
+
 
     elif usuario.tipo_de_usuario == 2:  # professor
 
@@ -230,7 +233,7 @@ def registro_usuario(request, user=None):
             professor.dedicacao = 'TP'
         else:
             professor.dedicacao = None
-            mensagem += "Algum erro não identificado.<br>"
+            mensagem += "Erro na identificação de tipo de dedicação do professor.<br>"
 
         professor.areas = request.POST.get('areas', None)
         professor.website = request.POST.get('website', None)
@@ -238,8 +241,8 @@ def registro_usuario(request, user=None):
 
         professor.save()
 
+        # Tipos individuais estão obsoletos, usar somente grupos !
         content_type = ContentType.objects.get_for_model(Professor)
-
         try:
             permission = Permission.objects.get(
                 codename='change_professor',
@@ -248,7 +251,6 @@ def registro_usuario(request, user=None):
             usuario.user_permissions.add(permission)
         except Permission.DoesNotExist:
             pass  # não encontrada a permissão
-
         try:  # <Permission: users | Professor | Professor altera valores>
             permission = Permission.objects.get(
                 codename='altera_professor',
@@ -257,8 +259,11 @@ def registro_usuario(request, user=None):
             usuario.user_permissions.add(permission)
         except Permission.DoesNotExist:
             pass  # não encontrada a permissão
-
         usuario.save()
+        ##################### ^^^^  REMOVER ^^^^ #################
+
+        usuario.groups.add(Group.objects.get(name="Professor"))  # Grupo de permissões
+
 
     elif usuario.tipo_de_usuario == 3:  # Parceiro
 
@@ -283,6 +288,7 @@ def registro_usuario(request, user=None):
 
         parceiro.save()
 
+        # Tipos individuais estão obsoletos, usar somente grupos !
         content_type = ContentType.objects.get_for_model(Parceiro)
         permission = Permission.objects.get(
             codename='change_parceiro',
@@ -290,6 +296,12 @@ def registro_usuario(request, user=None):
         )
         usuario.user_permissions.add(permission)
         usuario.save()
+        ##################### ^^^^  REMOVER ^^^^ #################
+
+        usuario.groups.add(Group.objects.get(name="Parceiro"))  # Grupo de permissões
+
+    # elif usuario.tipo_de_usuario == 4:  # Administrador
+        # user.groups.add(Group.objects.get(name="Administrador"))  # Grupo de permissões
 
     if mensagem != "":
         return (mensagem, 401)
