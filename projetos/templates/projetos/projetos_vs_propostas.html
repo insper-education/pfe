@@ -122,7 +122,20 @@
                 }, 
                 plugins: {
                     datalabels: {
-                        color: '#000000'
+                        color: '#000000',
+                        font: function(context) {
+
+                            var dataset_visibeis = context.chart.getVisibleDatasetCount()
+                            var width = context.chart.width;
+                            var size = 1.0;
+                            if(dataset_visibeis>0) {
+                                size = Math.round(width / (2 * dataset_visibeis * {{ edicoes|length }}));
+                            }
+                            
+                            return {
+                                size: size
+                            };
+                        }
                     },
                 },
                 tooltips: {
@@ -130,12 +143,10 @@
                     callbacks: {
                       footer: function(tooltipItem, data) {
                         let value = data.datasets[tooltipItem[0].datasetIndex].projetos[tooltipItem[0].index];
-                        console.log (value);
                         return value
                       }
                     }
-                },
-
+                }
             }
         };
 
@@ -187,9 +198,12 @@
                     datalabels: {
                         color: '#000000',
                         font: function(context) {
+                            var dataset_visibeis = context.chart.getVisibleDatasetCount()
                             var width = context.chart.width;
-                            var size = Math.round(width / 45);
-
+                            var size = 1.0;
+                            if(dataset_visibeis>0) {
+                                size = Math.round(width / (2 * dataset_visibeis * {{ edicoes|length }}));
+                            }
                             return {
                                 size: size
                             };
