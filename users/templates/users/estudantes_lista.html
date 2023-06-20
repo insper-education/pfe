@@ -12,6 +12,7 @@
 
   <script src="{% static 'js/Chart.min.js' %}"></script>
   
+  {% comment %} Melhor não usar números absolutos de gênero visto que os estudantes não foram consultados sobre isso. {% endcomment %}
   {% comment %} <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script> {% endcomment %}
 
   {% include "tabelas_includes.html" %}
@@ -306,7 +307,7 @@
           },
           tooltips: {
 						mode: 'index',
-						intersect: false
+						intersect: true
 					},
 					responsive: true,
 					scales: {
@@ -322,17 +323,17 @@
 
       // Chart da proporção de estudantes por programas
       var chart_programas = document.getElementById('chart-programas').getContext('2d');
-      window.myPie = new Chart(chart_programas, config_programas);
+      window.myPie_programas = new Chart(chart_programas, config_programas);
 
       // Chart da proporção de estudantes por gênero
       var chart_generos = document.getElementById('chart-generos').getContext('2d');
-      window.myPie = new Chart(chart_generos, config_generos);
+      window.myPie_genero = new Chart(chart_generos, config_generos);
 
-      {% if ano == 0 or semestre == 0 %}
-        // Chart da proporção de estudantes por gênero
+      {% comment %} {% if ano == 0 or semestre == 0 %} {% endcomment %}
+        // Chart do totais de estudantes por programa
         var chart_totais = document.getElementById('total-estudantes').getContext('2d');
-        window.myPie = new Chart(chart_totais, config_totais);
-      {% endif %}
+        window.myPie_totais = new Chart(chart_totais, config_totais);
+      {% comment %} {% endif %} {% endcomment %}
 
       var table = null;
 
