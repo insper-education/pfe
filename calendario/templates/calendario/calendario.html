@@ -107,6 +107,13 @@
       margin-top:-14px;
     }
 
+    tab_aulas {
+      border-collapse: separate;
+      border-spacing: 8px 1px;
+      margin-left: -8px;
+      margin-right: -8px;
+    }
+
   </style>
 
 
@@ -378,26 +385,24 @@
 
       {% if aulas %}
         {% nospaces %}
-        <div class="div-table">
-          <div class="div-table-row">
-             <div class="div-table-col" style="flex-basis: 95px; flex-grow: 0; flex-shrink: 0;"><b>Data</b></div>
-             <div class="div-table-col" style="max-width: 480px; flex-basis: 480px;"><b>Aula</b></div>
-             <div class="div-table-col" style="flex-basis: 500px;"><b>Local</b></div>
-          </div>
-          {% for aula in aulas|dictsort:"endDate" %}
-          
-              <span class="ano{{aula.endDate.year}} ano">
-                <span class="semestre" data-mes="{{aula.endDate.month}}">
-                  <div class="div-table-row">       
-                    <div class="div-table-col" style="flex-basis: 95px; flex-grow: 0; flex-shrink: 0;">{{aula.endDate|date:"d/m/Y"}}</div>
-                    <div class="div-table-col" style="max-width: 480px; flex-basis: 480px;">{{aula.observacao}}</div> 
-                    <div class="div-table-col" style="flex-basis: 500px;">{{aula.location}}</div>
-                  </div>
-                </span>
-              </span>
-
-          {% endfor %}
-            </div>
+        <table class="tab_aulas">
+          <thead>
+              <tr>
+                  <th scope="col">Data</th>
+                  <th scope="col">Aula</th>
+                  <th scope="col">Local</th>
+              </tr>
+          </thead>
+          <tbody>
+            {% for aula in aulas|dictsort:"endDate" %}
+              <tr class="lin_aulas ano{{aula.endDate.year}} semestre" data-mes="{{aula.endDate.month}}">
+                  <th scope="row" style="font-weight: normal;">{{aula.endDate|date:"d/m/Y"}}</th>
+                  <td>{{aula.observacao}}</td>
+                  <td>{{aula.location}}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
         {% endnospaces %}
       {% endif %}
 
@@ -943,11 +948,20 @@
 
     document.querySelector('#calendar').addEventListener('yearChanged', function(e) {
       currentYear = e.currentYear;
+
+      // Esconde todos os elementos por ano
       [].forEach.call(document.querySelectorAll('.ano'), function (el) {
         el.style.display = 'none';
       });
+
+      // Mostra só os elementos do ano
       [].forEach.call(document.querySelectorAll('.ano'+e.currentYear), function (el) {
-        el.style.display = 'inline';
+        if(el.classList.contains("lin_aulas")) { // Preciso fazer isso para a tabela de aulas no final da página
+          el.style.display = 'table-row';
+        } else {
+          el.style.display = 'inline';
+        }
+        
       });
       carrega_semestre()
      })
@@ -971,7 +985,15 @@
       $('#linha_provas').hide()
       var els = Array.from(document.querySelectorAll(".semestre[data-mes]")).filter(el => Number(el.dataset.mes) < fim_semestre);
       [].forEach.call(els, function (el) {
-        el.style.display = 'inline';
+        //el.style.display = 'inline';
+        if(el.classList.contains("lin_aulas")) { // Preciso fazer isso para a tabela de aulas no final da página
+          el.style.display = 'table-row';
+          if(!el.classList.contains('ano'+currentYear)) {
+            el.style.display = 'none';
+          }
+        } else {
+          el.style.display = 'inline';
+        }
         if(el.parentNode.classList.contains('ano'+currentYear)) {
           if(el.classList.contains('lab')) {
             $('#linha_lab_br').show()
@@ -983,7 +1005,6 @@
         }
       });
       
-
       {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
         [].forEach.call(document.querySelectorAll('.coordenacao'), function (el) {
           el.style.display = 'none';
@@ -1030,7 +1051,15 @@
       $('#linha_provas').hide()
       var els = Array.from(document.querySelectorAll(".semestre[data-mes]")).filter(el => Number(el.dataset.mes) > inicio_semestre);
       [].forEach.call(els, function (el) {
-        el.style.display = 'inline';
+        //el.style.display = 'inline';
+        if(el.classList.contains("lin_aulas")) { // Preciso fazer isso para a tabela de aulas no final da página
+          el.style.display = 'table-row';
+          if(!el.classList.contains('ano'+currentYear)) {
+            el.style.display = 'none';
+          }
+        } else {
+          el.style.display = 'inline';
+        }
         if(el.parentNode.classList.contains('ano'+currentYear)) {
           if(el.classList.contains('lab')) {
             $('#linha_lab_br').show()
