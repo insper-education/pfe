@@ -122,6 +122,7 @@
             </option>  
           {% endfor %}
       </select>
+      <a href="{% url 'cadastrar_organizacao' %}">&#10133;</a>
       <br>
       
       <label style="margin-top: 10px;" for="cargo">cargo:</label><input type="text" size="50" maxlength="90" id="cargo" name="cargo" value="{{usuario.parceiro.cargo}}"><br>
