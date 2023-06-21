@@ -660,7 +660,7 @@ class Recomendada(models.Model):
 class Evento(models.Model):
     """Eventos para a agenda do PFE."""
 
-    location = models.CharField(blank=True, max_length=64,
+    location = models.CharField(blank=True, max_length=80,
                                 help_text='Onde Ocorrerá o Evento')
     startDate = models.DateField(default=datetime.date.today, blank=True,
                                  help_text='Inicio do Evento')
@@ -727,7 +727,7 @@ class Evento(models.Model):
     descricao = models.CharField(max_length=500, blank=True,
                                  help_text='Descrição do evento')
 
-    observacao = models.CharField(max_length=64, blank=True,
+    observacao = models.CharField(max_length=80, blank=True,
                                   help_text='Qualquer observação relavante')
 
     # Usar get_tipo_de_evento_display em vez disso

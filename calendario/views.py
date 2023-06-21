@@ -85,6 +85,8 @@ def get_calendario_context(primarykey=None):
         'coordenacao': coordenacao,
         'semestre': configuracao.semestre,
         'tipos_eventos': Evento.TIPO_EVENTO,
+        "obs_length": Evento._meta.get_field('observacao').max_length,
+        "loc_length": Evento._meta.get_field('location').max_length,
     }
 
     return context
