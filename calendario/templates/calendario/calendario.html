@@ -27,24 +27,30 @@
       border: 0px;
     }
 
-    .div-table {
-      font-size: 16px;
+    #info_semestre {
+      font-size:16px;
     }
 
-    @media (max-width: 740px) {
-      .div-table {
-          font-size: 14px;
+    .tit_agenda {
+      font-size:20px;
+    }
+    
+    @media only screen and (max-width: 740px) {
+      #info_semestre {
+        font-size:13px;
+      }
+      .tit_agenda {
+        font-size:16px;
       }
     }
-      
-    .div-table-row {
-      display: flex;
-    }
 
-    .div-table-col {
-      /* border: 1px solid grey; */
-      padding-right: 5px;
-      flex: 1; 
+    @media only screen and (max-width: 480px) {
+      #info_semestre {
+        font-size:12px;
+      }
+      .tit_agenda {
+        font-size:14px;
+      }
     }
 
   </style>
@@ -182,7 +188,7 @@
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
       <br>
       <input type="checkbox" id="operacao" checked>
-      <span id="titulo_operacao" style="font-size:20px" data-toggle="tooltip" data-html="true" animation="true" title=
+      <span class="tit_agenda" id="titulo_operacao" data-toggle="tooltip" data-html="true" animation="true" title=
       "O semestre da coordenação vai de Fevereiro à Julho e de Agosto a Janeiro">
         Operação:
       </span>
@@ -213,12 +219,12 @@
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
       <br>
       <input type="checkbox" id="academico" checked>
-      <span id="titulo_academico" style="font-size:20px">
+      <span class="tit_agenda" id="titulo_academico">
         Acadêmico:
       </span>
       {% else %}
       <br>
-      <span id="titulo_academico" style="font-size:20px">
+      <span class="tit_agenda" id="titulo_academico">
         Eventos:
       </span>
     {% endif %}
@@ -371,12 +377,12 @@
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
       <br>
       <input type="checkbox" id="aulas" checked>
-      <span id="titulo_aulas" style="font-size:20px">
+      <span class="tit_agenda" id="titulo_aulas">
         Aulas:
       </span>
     {% else %}
       <br>
-      <span id="titulo_aulas" style="font-size:20px">
+      <span class="tit_agenda" id="titulo_aulas">
         Aulas:
       </span>
     {% endif %}
