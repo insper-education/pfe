@@ -109,7 +109,7 @@
               {% elif contato.tipo_de_retorno == 5 %}
                 "background-color:#e289df" {% comment %} (5, 'Notificamos que não conseguimos montar projeto'),
               {% elif contato.tipo_de_retorno == 6 %}
-                "background-color:green" {% comment %} (6, 'Documentação fechada para projeto'), {% endcomment %}
+                "background-color:green" {% comment %} (6, 'Contrato fechado para projeto'), {% endcomment %}
               {% elif contato.tipo_de_retorno == 7 %}
                 "background-color:lightyellow" {% comment %} (7, 'Envio de Relatório Final'), {% endcomment %}
               {% endif %}
@@ -224,7 +224,7 @@
       &nbsp;<span style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;&nbsp;</span> Confirmada <span id="confirmados"></span><br>
 
       &nbsp;<span style="background-color:yellow">&nbsp;&nbsp;&nbsp;&nbsp;</span> Notificada de Grupo Fechado <span id="notificada"></span><br>
-      &nbsp;<span style="background-color:green">&nbsp;&nbsp;&nbsp;&nbsp;</span> Documentação Fechada para Projeto <span id="documentada"></span><br>
+      &nbsp;<span style="background-color:green">&nbsp;&nbsp;&nbsp;&nbsp;</span> Contrato Fechado para Projeto <span id="documentada"></span><br>
       &nbsp;<span style="background-color:#e289df">&nbsp;&nbsp;&nbsp;&nbsp;</span> Avisada que não fechou grupo <span id="sem_grupo"></span><br>
   
       <script>
