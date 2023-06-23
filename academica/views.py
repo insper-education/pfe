@@ -9,12 +9,8 @@ Data: 10 de Abril de 2023
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render
 
-from administracao.support import usuario_sem_acesso
-
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def index_academica(request):
-    """Mostra página principal do usuário professor."""   
-    v = usuario_sem_acesso(request, (2, 4,))
-    if v: return v  # Prof, Adm
+    """Mostra página principal da área acadêmica do sistema do PFE."""   
     return render(request, 'academica/index_academica.html')

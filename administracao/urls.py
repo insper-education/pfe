@@ -58,7 +58,7 @@ urlpatterns = [
          views.configurar,
          name='configurar'),
 
-    path('exportar/',
+    path('exportar/<str:modo>',
          views.exportar,
          name='exportar'),
 

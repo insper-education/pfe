@@ -6,7 +6,7 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 17 de Dezembro de 2020
 """
 
-import re           # regular expression (para o import)
+import re
 import tablib
 
 from django.conf import settings
@@ -398,9 +398,12 @@ def configurar(request):
 
 @login_required
 @permission_required('users.altera_professor', raise_exception=True)
-def exportar(request):
+def exportar(request, modo):
     """Exporta dados."""
-    return render(request, 'administracao/exportar.html')
+    context = {
+        "modo": modo,
+    }
+    return render(request, 'administracao/exportar.html', context)
 
 
 @login_required
