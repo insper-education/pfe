@@ -13,7 +13,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.admin.models import LogEntry
 from django.contrib.sessions.models import Session
-
+from django.core.exceptions import SuspiciousOperation  # Para erro 400
 from django.core.mail import EmailMessage
 from django.db import transaction
 from django.db.models.functions import Lower
@@ -397,7 +397,7 @@ def configurar(request):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.view_administrador", raise_exception=True)
 def exportar(request, modo):
     """Exporta dados."""
     context = {
@@ -965,7 +965,7 @@ def export(request, modelo, formato):
     # elif modelo == "comite":
     #     resource = ComiteResource()
     else:
-        mensagem = "Chamada irregular : Base de dados desconhecida = " + modelo
+        mensagem = "Chamada irregular: Base de dados desconhecida = " + modelo
         context = {
             "area_principal": True,
             "mensagem": mensagem,
@@ -1062,29 +1062,6 @@ def backup(request, formato):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def email_backup(request):
-    """Envia um e-mail com os backups."""
-    subject = 'BACKUP PFE'
-    message = "Backup PFE"
-    email_from = settings.EMAIL_HOST_USER
-    recipient_list = ['pfeinsper@gmail.com', 'lpsoares@gmail.com', ]
-    mail = EmailMessage(subject, message, email_from, recipient_list)
-    databook = create_backup()
-    mail.attach("backup.xlsx", databook.xlsx, 'application/ms-excel')
-    mail.attach("backup.json", databook.json, 'application/json')
-    mail.send()
-    mensagem = "E-mail enviado."
-
-    context = {
-        "area_principal": True,
-        "mensagem": mensagem,
-    }
-
-    return render(request, 'generic.html', context=context)
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
 def relatorio(request, modelo, formato):
     """Gera relatorios em html e PDF."""
     configuracao = get_object_or_404(Configuracao)
@@ -1098,10 +1075,9 @@ def relatorio(request, modelo, formato):
         context['projetos'] = Projeto.objects.all()
         arquivo = "administracao/relatorio_projetos.html"
 
-    elif modelo == "alunos":
-        context['alunos'] = Aluno.objects.all().filter(user__tipo_de_usuario=1).\
-                                                filter(anoPFE=configuracao.ano).\
-                                                filter(semestrePFE=configuracao.semestre)
+    elif modelo == "estudantes" or modelo == "alunos":
+        context['alunos'] = Aluno.objects.all().filter(anoPFE=configuracao.ano,
+                                                       semestrePFE=configuracao.semestre)
         arquivo = "administracao/relatorio_alunos.html"
 
     elif modelo == "feedbacks":
@@ -1111,7 +1087,7 @@ def relatorio(request, modelo, formato):
     else:
         context = {
             "area_principal": True,
-            "mensagem": "Chamada irregular : Base de dados desconhecida = " + modelo,
+            "mensagem": "Chamada irregular: Base de dados desconhecida = " + modelo,
         }
         return render(request, 'generic.html', context=context)
 
@@ -1127,37 +1103,45 @@ def relatorio(request, modelo, formato):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def relatorio_backup(request):
-    """Gera um relatório de backup de segurança."""
-    subject = 'RELATÓRIOS PFE'
-    message = "Relatórios PFE"
-    email_from = settings.EMAIL_HOST_USER
-    recipient_list = ['pfeinsper@gmail.com', 'lpsoares@gmail.com', ]
-    mail = EmailMessage(subject, message, email_from, recipient_list)
+def dados_backup(request, modo):
+    """Envia e-mails de backup de segurança."""
+    
+    if request.method == 'POST' and 'email' in request.POST and 'sigla' in request.POST:
 
-    configuracao = get_object_or_404(Configuracao)
+        subject = 'RELATÓRIOS PFE'
+        message = "Relatórios PFE"
+        email_from = settings.EMAIL_HOST_USER
+        recipient_list = [request.POST["email"],]
+        mail = EmailMessage(subject, message, email_from, recipient_list)
+        
+        if modo == "relatorios":
+            configuracao = get_object_or_404(Configuracao)
+            context = {
+                'projetos': Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre),
+                'alunos': Aluno.objects.filter(anoPFE=configuracao.ano, semestrePFE=configuracao.semestre),
+                'configuracao': configuracao,
+            }
+            pdf_proj = render_to_pdf('administracao/relatorio_projetos.html', context)
+            pdf_alun = render_to_pdf('administracao/relatorio_alunos.html', context)
+            mail.attach("projetos.pdf", pdf_proj.getvalue(), 'application/pdf')
+            mail.attach("alunos.pdf", pdf_alun.getvalue(), 'application/pdf')
 
-    context = {
-        'projetos': Projeto.objects.all(),
-        'alunos': Aluno.objects.filter(user__tipo_de_usuario=1).\
-          filter(anoPFE=configuracao.ano).\
-          filter(semestrePFE=configuracao.semestre),
-        'configuracao': configuracao,
-    }
+        elif modo=="dados":
+            databook = create_backup()
+            mail.attach("backup.xlsx", databook.xlsx, 'application/ms-excel')
+            mail.attach("backup.json", databook.json, 'application/json')
+            
+        mail.send()
+        
+        context = {
+            "area_principal": True,
+            "mensagem": "E-mail enviado.",
+        }
 
-    pdf_proj = render_to_pdf('administracao/relatorio_projetos.html', context)
-    pdf_alun = render_to_pdf('administracao/relatorio_alunos.html', context)
-    mail.attach("projetos.pdf", pdf_proj.getvalue(), 'application/pdf')
-    mail.attach("alunos.pdf", pdf_alun.getvalue(), 'application/pdf')
-    mail.send()
-
-    context = {
-        "area_principal": True,
-        "mensagem": "E-mail enviado.",
-    }
-
-    return render(request, 'generic.html', context=context)
-
+        return render(request, 'generic.html', context=context)
+    
+    else:
+        raise SuspiciousOperation(f"Chamada irregular.")
 
 
 @login_required

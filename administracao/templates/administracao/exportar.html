@@ -5,7 +5,18 @@
     Data: 4 de Agosto de 2019
 {% endcomment %}
 
+{% block head %}
+<style>
+    td {
+        padding-right: 6px;
+        padding-left: 6px;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
+
+  <form method="post" action="{% url 'dados_backup' modo %}"> {% csrf_token %}
 
   {% if modo == "relatorios" %}
     <span class="titulo">Exportar Relatórios</span>
@@ -31,9 +42,6 @@
             <td><a href="{% url 'relatorio' 'feedbacks' 'PDF'%}">PDF</a></td>
         </tr>
     </table>
-    {% if user.tipo_de_usuario == 4 %}
-        <a href="{% url 'relatorio_backup'%}">Envia e-mail com todos os relatórios</a>
-    {% endif %}
     <br>
     <br>
   {% endif %}
@@ -110,11 +118,14 @@
         </tr>
 
     </table>
-    {% if user.tipo_de_usuario == 4 %}
-        <a href="{% url 'email_backup'%}">Envia e-mail com todos os backups</a>
-    {% endif %}
     <br>
     <br>
   {% endif %}
+
+  Envia mensagem com dados<br>
+  <label for="email">e-mail:</label> <input type="email" size="40" id="email" name="email" value="{{user.email}}" oninvalid="this.setCustomValidity('Digite um e-mail válido')" oninput="this.setCustomValidity('')" required><br>
+  <input type="submit" value="Enviar">
+
+  </form>
 
 {% endblock %}

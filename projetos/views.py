@@ -346,14 +346,6 @@ def projetos_lista(request):
 
     return render(request, 'projetos/projetos_lista.html', context)
 
-
-@login_required
-@permission_required('users.altera_professor', raise_exception=True)
-def relatorios(request):
-    """Página para recuperar alguns relatórios."""
-    return render(request, 'projetos/relatorios.html')
-
-
 @login_required
 def meuprojeto(request):
     """Mostra o projeto do próprio aluno, se for aluno."""

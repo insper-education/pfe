@@ -121,11 +121,6 @@ urlpatterns = [
          views.projeto_detalhes,
          name='projeto_detalhes'),
 
-#     # Antigo, remover
-#     path('projeto_feedback',
-#          projeto_feedback,
-#          name='projeto_feedback_old'),
-
     path('projetos_fechados/',
          views.projetos_fechados,
          name='projetos_fechados'),
@@ -141,10 +136,6 @@ urlpatterns = [
     path('reembolso_pedir/',
          views.reembolso_pedir,
          name='reembolso_pedir'),
-
-    path('relatorios/',
-         views.relatorios,
-         name='relatorios'),
 
     path('ajax/validate_aviso/',
          views.validate_aviso,

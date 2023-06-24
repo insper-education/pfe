@@ -62,9 +62,9 @@ urlpatterns = [
          views.exportar,
          name='exportar'),
 
-    path('email_backup/',
-         views.email_backup,
-         name='email_backup'),
+    path('dados_backup/<str:modo>',
+         views.dados_backup,
+         name='dados_backup'),
 
     path('export/<str:modelo>/<str:formato>',
          views.export,
@@ -81,10 +81,6 @@ urlpatterns = [
     path('relatorio/<str:modelo>/<str:formato>',
          views.relatorio,
          name='relatorio'),
-
-    path('relatorio_backup/',
-         views.relatorio_backup,
-         name='relatorio_backup'),
 
     path('selecionar_orientadores/',
          views.selecionar_orientadores,
