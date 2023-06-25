@@ -6,7 +6,6 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Dezembro de 2020
 """
 
-
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
@@ -14,7 +13,6 @@ from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.shortcuts import redirect
-
 
 from users.support import get_edicoes, adianta_semestre
 from users.models import Opcao, Aluno, Alocacao, PFEUser
@@ -31,9 +29,7 @@ from .support import envia_proposta, preenche_proposta
 @permission_required("users.altera_professor", raise_exception=True)
 def index_propostas(request):
     """Mostra página principal de Propostas."""
-    context = {}
-
-    return render(request, 'propostas/index_propostas.html', context=context)
+    return render(request, 'propostas/index_propostas.html')
 
 
 @login_required
@@ -240,18 +236,8 @@ def procura_grupos(request):
 def procura_propostas(request):
     """Exibe um histograma com a procura das propostas pelos estudantes."""
     configuracao = get_object_or_404(Configuracao)
-    ano = configuracao.ano
-    semestre = configuracao.semestre
-    # try:
-    #     configuracao = Configuracao.objects.get()
-    #     ano = configuracao.ano
-    #     semestre = configuracao.semestre
-    # except Configuracao.DoesNotExist:
-    #     return HttpResponse("Falha na configuracao do sistema.", status=401)
-
     curso = "T"  # por padrão todos os cursos
-
-    ano, semestre = adianta_semestre(ano, semestre)
+    ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
 
     if request.is_ajax():
 
@@ -477,18 +463,17 @@ def proposta_completa(request, primarykey):
 def proposta_detalhes(request, primarykey):
     """Exibe proposta de projeto com seus detalhes para estudante aplicar."""
     proposta = get_object_or_404(Proposta, pk=primarykey)
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
-
-    if user.tipo_de_usuario == 1:  # (1, 'aluno')
-        if not (user.aluno.anoPFE == proposta.ano and
-                user.aluno.semestrePFE == proposta.semestre):
+    
+    if request.user.tipo_de_usuario == 1:  # (1, 'aluno')
+        if not (request.user.aluno.anoPFE == proposta.ano and
+                request.user.aluno.semestrePFE == proposta.semestre):
             return HttpResponse("Usuário não tem permissão de acesso.",
                                 status=401)
         if not proposta.disponivel:
             return HttpResponse("Usuário não tem permissão de acesso.",
                                 status=401)
 
-    if user.tipo_de_usuario == 3:  # (3, 'parceiro')
+    if request.user.tipo_de_usuario == 3:  # (3, 'parceiro')
         return HttpResponse("Usuário não tem permissão de acesso.", status=401)
 
     opcoes = Opcao.objects.filter(proposta=proposta)
@@ -581,26 +566,13 @@ def proposta_editar(request, slug):
         'liberadas_propostas': liberadas_propostas,
         'full_name': proposta.nome,
         'email': proposta.email,
-        'organizacao': proposta.nome_organizacao,
-        'website': proposta.website,
-        'endereco': proposta.endereco,
-        'descricao_organizacao': proposta.descricao_organizacao,
         'parceiro': parceiro,
         'professor': professor,
         'administrador': administrador,
-        'contatos_tecnicos': proposta.contatos_tecnicos,
-        'contatos_adm': proposta.contatos_administrativos,
-        'info_departamento': proposta.departamento,
-        'titulo': proposta.titulo,
-        'desc_projeto': proposta.descricao,
-        'expectativas': proposta.expectativas,
         'areast': areas,
-        'recursos': proposta.recursos,
-        'observacoes': proposta.observacoes,
         'proposta': proposta,
         'edicao': True,
         'interesses': interesses,
-        'tipo_de_interesse': proposta.tipo_de_interesse,
         'ano_semestre': str(proposta.ano)+"."+str(proposta.semestre),
         'vencida': vencida,
     }
@@ -611,9 +583,7 @@ def proposta_editar(request, slug):
 @permission_required('users.altera_professor', raise_exception=True)
 def proposta_remover(request, slug):
     """Remove Proposta do Sistema por slug."""
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
-
-    if user.tipo_de_usuario != 4:  # admin
+    if request.user.tipo_de_usuario != 4:  # admin
         return HttpResponse("Sem privilégios de Administrador.", status=401)
 
     proposta = get_object_or_404(Proposta, slug=slug)
@@ -625,7 +595,6 @@ def proposta_remover(request, slug):
     }
     return render(request, 'generic.html', context=context)
 
-       
 
 @login_required
 @transaction.atomic
@@ -673,11 +642,7 @@ def validate_alunos(request):
     except Proposta.DoesNotExist:
         return HttpResponseNotFound('<h1>Proposta não encontrada!</h1>')
 
-    data = {
-        'atualizado': True,
-    }
-
-    return JsonResponse(data)
+    return JsonResponse({'atualizado': True,})
 
 @login_required
 @transaction.atomic
@@ -763,18 +728,17 @@ def remover_disciplina(request):
     """Remove Disciplina Recomendada."""
     if request.is_ajax() and 'disciplina_id' in request.POST and 'proposta_id' in request.POST:
 
-        proposta_id = int(request.POST['proposta_id'])
-        disciplina_id = int(request.POST['disciplina_id'])
+        try:
+            proposta_id = int(request.POST['proposta_id'])
+            disciplina_id = int(request.POST['disciplina_id'])
+        except:
+            return HttpResponse("Erro ao recuperar proposta e disciplinas.", status=401)
 
         instances = Recomendada.objects.filter(proposta__id=proposta_id, disciplina__id=disciplina_id)
         for instance in instances:
             instance.delete()
 
-        data = {
-            'atualizado': True,
-        }
-
-        return JsonResponse(data)
+        return JsonResponse({"atualizado": True},)
 
     return HttpResponseNotFound('Requisição errada')
 

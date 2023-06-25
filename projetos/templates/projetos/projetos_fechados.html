@@ -280,18 +280,7 @@
             <a class="imprimir" href="{% url 'parceiro_detail' conexao.parceiro.id %}">
               {{ conexao.parceiro.user.get_full_name }}
               <span class="papeis">
-                {% if conexao.gestor_responsavel %}
-                  [gestor responsável]
-                {% endif %}
-                {% if conexao.mentor_tecnico %}
-                  [mentoria técnica]
-                {% endif %}
-                {% if conexao.recursos_humanos %}
-                  [recursos humanos]
-                {% endif %}
-                {% if conexao.colaboracao %}
-                  [colaboração]
-                {% endif %}
+                {% for papel in conexao.get_papeis_completo %}[{{papel}}]{% endfor %}
                 {% if conexao.observacao %}
                   &nbsp;&nbsp;obs: {{conexao.observacao}}
                 {% endif %}
@@ -302,18 +291,7 @@
             <a class="imprimir" href="{% url 'parceiro_detail' conexao.parceiro.id %}" style="color: LightBlue;">
               {{ conexao.parceiro.user.get_full_name }}
               <span style="color: lightgrey;">
-              {% if conexao.gestor_responsavel %}
-                [gestor responsável]
-              {% endif %}
-              {% if conexao.mentor_tecnico %}
-                [mentoria técnica]
-              {% endif %}
-              {% if conexao.recursos_humanos %}
-                [recursos humanos]
-              {% endif %}
-              {% if conexao.colaboracao %}
-                [colaboração]
-              {% endif %}
+              {% for papel in conexao.get_papeis_completo %}[{{papel}}]{% endfor %}
               {% if conexao.observacao %}
                 &nbsp;&nbsp;obs: {{conexao.observacao}}
               {% endif %}

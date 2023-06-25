@@ -37,7 +37,7 @@ from .support import get_areas_estudantes, get_areas_propostas, simple_upload, c
 
 
 @login_required
-@permission_required("users.altera_professor", raise_exception=True)
+@permission_required("projetos.view_projeto", raise_exception=True)
 def index_projetos(request):
     """Página principal dos Projetos."""
     return render(request, 'projetos/index_projetos.html')

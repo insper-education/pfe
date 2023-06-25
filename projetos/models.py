@@ -1240,11 +1240,32 @@ class Conexao(models.Model):
                                 help_text='projeto que possui vínculo da conexão')
     observacao = models.TextField(max_length=256, null=True, blank=True,
                                   help_text='qualquer observação relevante')
-    gestor_responsavel = models.BooleanField("Gestor Responsável", default=False)
-    mentor_tecnico = models.BooleanField("Mentoria Técnica", default=False)
-    recursos_humanos = models.BooleanField("Recursos Humanos", default=False)
-    colaboracao = models.BooleanField("Colaboração", default=False)
+    
+    papel = {
+       "gestor_responsavel": ["Gestor Responsável", "GR"],
+       "mentor_tecnico": ["Mentoria Técnica", "MT"],
+       "recursos_humanos" : ["Área Administrativa", "AA"],
+       "colaboracao" : ["Colaboração", "CO"],
+    }
+    gestor_responsavel = models.BooleanField(papel["gestor_responsavel"], default=False)
+    mentor_tecnico = models.BooleanField(papel["mentor_tecnico"], default=False)
+    recursos_humanos = models.BooleanField(papel["recursos_humanos"], default=False)
+    colaboracao = models.BooleanField(papel["colaboracao"], default=False)
 
+    def get_papeis(self):
+        texto = ""
+        for field in Conexao.papel:
+            if getattr(self, field):
+                texto += "[" + Conexao.papel[field][1] + "]"
+        return texto
+    
+    def get_papeis_completo(self):
+        texto = []
+        for field in Conexao.papel:
+            if getattr(self, field):
+                texto += [Conexao.papel[field][0]]
+        return texto
+    
     def __str__(self):
         return self.parceiro.user.get_full_name()+" >>> "+\
                self.projeto.organizacao.sigla+" - "+self.projeto.get_titulo()+\
@@ -1253,6 +1274,7 @@ class Conexao(models.Model):
     class Meta:
         verbose_name = 'Conexão'
         verbose_name_plural = 'Conexões'
+
 
 class Coorientador(models.Model):
     """Controla lista de coorientadores por projeto."""

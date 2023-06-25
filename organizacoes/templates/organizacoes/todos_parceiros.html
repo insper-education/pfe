@@ -68,14 +68,14 @@
                     <a href="{% url 'projeto_completo' conexao.projeto.id %}">
                       {% if conexao.gestor_responsavel %}GR{% endif %}
                       {% if conexao.mentor_tecnico %}MT{% endif %}
-                      {% if conexao.recursos_humanos %}RH{% endif %}
+                      {% if conexao.recursos_humanos %}AA{% endif %}
                     </a>
                   {% endif %}
                 {% else %}
                   {% if conexao.projeto and conexao.projeto.get_edicao == edicao %}
                       {% if conexao.gestor_responsavel %}GR{% endif %}
                       {% if conexao.mentor_tecnico %}MT{% endif %}
-                      {% if conexao.recursos_humanos %}RH{% endif %}
+                      {% if conexao.recursos_humanos %}AA{% endif %}
                   {% endif %}
                 {% endif %}
               {% endfor %}
@@ -83,7 +83,7 @@
           </td>
         </tr>
       {% endfor %}
-      <caption style="text-align:right"><small>GR: Gestor Responsável / MT: Mentoria Técnica / RH: Recursos Humanos</small></caption>
+      <caption style="text-align:right"><small>GR: Gestor Responsável / MT: Mentoria Técnica / AA: Área Administrativa</small></caption>
     </table> 
     </div> {% comment %} do "tabelas_top.html" {% endcomment %}
 

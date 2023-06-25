@@ -95,21 +95,19 @@
     <hr>
     <h3>Conexões com Projetos</h3>
     <ol>
+
     {% for conexao in conexoes %}
-      <li><a href="{% url 'projeto_completo' conexao.projeto.id %}">
-      {{conexao.projeto.get_titulo}}
-      [{{conexao.projeto.ano}}.{{conexao.projeto.semestre}}]
-      {% if conexao.gestor_responsavel %}                  
-        {Gestor Responsável}
+      {% if conexao.projeto %}
+        <li><a href="{% url 'projeto_completo' conexao.projeto.id %}">
+        {{conexao.projeto.get_titulo}}
+        [{{conexao.projeto.ano}}.{{conexao.projeto.semestre}}] -&gt;
+        {% for papel in conexao.get_papeis_completo %}[{{papel}}]{% endfor %}
+        </a></li>
+      {% else %}
+        PROBLEMA AO RECUPERAR PROJETO!
       {% endif %}
-      {% if conexao.mentor_tecnico %}
-        {Mentoria Técnica}
-      {% endif %}
-      {% if conexao.recursos_humanos %}
-        {Recursos Humanos}
-      {% endif %}
-      </a></li>
     {% endfor %}
+    
     </ol>
   {% endif %}
 

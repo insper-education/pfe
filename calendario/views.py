@@ -151,12 +151,7 @@ def gera_descricao_banca(banca, alunos):
 @permission_required("users.altera_professor", raise_exception=True)
 def export_calendar(request, event_id):
     """Gera evento de calendário."""
-    # ATUALMENTE PARA BANCA
     banca = get_object_or_404(Banca, pk=event_id)
-    # try:
-    #     banca = Banca.objects.all().get(pk=event_id)
-    # except Banca.DoesNotExist:
-    #     return HttpResponse("Banca não encontrada.", status=401)
 
     cal = Calendar()
     site = Site.objects.get_current()

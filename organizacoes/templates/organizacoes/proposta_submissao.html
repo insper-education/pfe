@@ -59,58 +59,58 @@
     <label for="organizacao">Nome da Instituição/Empresa<br>
     <small>sigla e nome comercial/fantasia se houver (aqui não é necessário indicar a Razão Social)</small>
     </label><br>
-    <textarea id="organizacao" name="organizacao" rows="1" cols="80" maxlength="120" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{ organizacao }}</textarea>
+    <textarea id="organizacao" name="organizacao" rows="1" cols="80" maxlength="120" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{ proposta.nome_organizacao }}</textarea>
     <br><br>
 
-    <label for="website">website:</label> <input type="text" size="73"  maxlength="250" id="website" name="website" value="{{website}}" placeholder="https://www.insper.edu.br" required {% if edicao and liberadas_propostas %}disabled{% endif %}><br><br>
+    <label for="website">website:</label> <input type="text" size="73"  maxlength="250" id="website" name="website" value="{{proposta.website}}" placeholder="https://www.insper.edu.br" required {% if edicao and liberadas_propostas %}disabled{% endif %}><br><br>
 
     <label for="endereco">Endereço<br>
     <small>onde os alunos deverão ir para desenvolver o projeto</small>
     </label><br>
-    <textarea id="endereco" name="endereco" rows="3" cols="80" maxlength="400" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{endereco}}</textarea>
+    <textarea id="endereco" name="endereco" rows="3" cols="80" maxlength="400" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.endereco}}</textarea>
     <br><br>
 
     <label for="contatos_tecnicos">Contatos Técnicos<br>  
     <small>nome/e-mail/telefone de quem os alunos e professores orientadores irão tratar do desenvolvimento do projeto</small>
     </label><br>
-    <textarea id="contatos_tecnicos" name="contatos_tecnicos" rows="3" cols="80" maxlength="400" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{contatos_tecnicos}}</textarea>
+    <textarea id="contatos_tecnicos" name="contatos_tecnicos" rows="3" cols="80" maxlength="400" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.contatos_tecnicos}}</textarea>
     <br><br>
 
     <label for="contatos_adm">Contatos Administrativos<br>     
     <small>nome/e-mail/telefone, com quem devemos resolver questões contratuais e RH</small>
     </label><br>
-    <textarea id="contatos_adm" name="contatos_adm" rows="3" cols="80" maxlength="400" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{contatos_adm}}</textarea>
+    <textarea id="contatos_adm" name="contatos_adm" rows="3" cols="80" maxlength="400" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.contatos_administrativos}}</textarea>
     <br><br>
 
     <label for="descricao_organizacao">Informações sobre a instituição/empresa<br>
     <small>descreva a instituição/empresa para os alunos entenderem o que ela faz (opcional)</small>
     </label><br>
-    <textarea id="descricao_organizacao" name="descricao_organizacao" rows="8" cols="80" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{descricao_organizacao}}</textarea>
+    <textarea id="descricao_organizacao" name="descricao_organizacao" rows="8" cols="80" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.descricao_organizacao}}</textarea>
     <br><br>
 
     <label for="info_departamento">Informações sobre a departamento<br>
     <small>descreva o departamento/área para os alunos entenderem o que ele faz (opcional)</small>
     </label><br>
-    <textarea id="info_departamento" name="info_departamento" rows="8" cols="80" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{info_departamento}}</textarea>
+    <textarea id="info_departamento" name="info_departamento" rows="8" cols="80" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.departamento}}</textarea>
     <br>
     <hr>
 
     <label for="titulo">Título provisório do projeto<br>
     <small>um título para ser apresentado aos alunos</small>
     </label><br>
-    <input type="text" size="80" maxlength="160" id="titulo" name="titulo" value="{{titulo}}" required {% if edicao and liberadas_propostas %}disabled{% endif %}>
+    <input type="text" size="80" maxlength="160" id="titulo" name="titulo" value="{{proposta.titulo}}" required {% if edicao and liberadas_propostas %}disabled{% endif %}>
     <br><br>
 
     <label for="desc_projeto">Descrição do Projeto<br>
     <small>para discussão entre professores e que será passada para os alunos</small>
     </label><br>
-    <textarea id="desc_projeto" name="desc_projeto" rows="10" cols="80" maxlength="3000" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{desc_projeto}}</textarea>
+    <textarea id="desc_projeto" name="desc_projeto" rows="10" cols="80" maxlength="3000" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.descricao}}</textarea>
     <br><br>
 
     <label for="expectativas">Expectativas de resultados/entregas<br>
     <small>exemplo: estudos, validações, relatórios, protótipos, testes</small>
     </label><br>
-    <textarea id="expectativas" name="expectativas" rows="8" cols="80" maxlength="3000" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{expectativas}}</textarea>
+    <textarea id="expectativas" name="expectativas" rows="8" cols="80" maxlength="3000" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.expectativas}}</textarea>
     <br><br>
 
     Áreas/Habilidades envolvidas no projeto<br>
@@ -139,13 +139,13 @@
     <label for="recursos">Recursos a serem disponibilizados aos alunos<br>
     <small>algo será fornecido para os alunos? ex: kits de desenvolvimento, matérias primas, acesso a infra de cloud. (opcional)</small>
     </label><br>
-    <textarea id="recursos" name="recursos" rows="5" cols="80" maxlength="1000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if recursos and recursos != None and recursos != "None" %}{{recursos}}{% endif %}</textarea>
+    <textarea id="recursos" name="recursos" rows="5" cols="80" maxlength="1000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.recursos and proposta.recursos != None and proposta.recursos != "None" %}{{proposta.recursos}}{% endif %}</textarea>
     <br><br>
 
     <label for="observacoes">Outras observações que considere relevante para os alunos<br>
     <small>caso desejar apresentar alguma informação adicional aos alunos (opcional)</small>
     </label><br>
-    <textarea id="observacoes" name="observacoes" rows="5" cols="80" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if observacoes and observacoes != None and observacoes != "None" %}{{observacoes}}{% endif %}</textarea>
+    <textarea id="observacoes" name="observacoes" rows="5" cols="80" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.observacoes and proposta.observacoes != None and proposta.observacoes != "None" %}{{proposta.observacoes}}{% endif %}</textarea>
     <br>
 
     <label for="interesses">O principal interesse com o projeto é:<br>

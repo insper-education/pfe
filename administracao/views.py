@@ -773,10 +773,6 @@ def selecionar_orientadores(request):
 
     # Checa se usuário é administrador ou professor
     user = get_object_or_404(PFEUser, pk=request.user.pk)
-    # try:
-    #     user = PFEUser.objects.get(pk=request.user.pk)
-    # except PFEUser.DoesNotExist:
-    #     return HttpResponse("Usuário não encontrado.", status=401)
 
     if user and user.tipo_de_usuario != 4:  # admin
         mensagem = "Sua conta não é de administrador, "
@@ -813,9 +809,9 @@ def servico(request):
 @permission_required('users.altera_professor', raise_exception=True)
 def pre_alocar_estudante(request):
     """Ajax para pre-alocar estudates em propostas."""
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
+    #user = get_object_or_404(PFEUser, pk=request.user.pk)
 
-    if user.tipo_de_usuario == 4:  # admin
+    if request.user.tipo_de_usuario == 4:  # admin
 
         # Código a seguir não estritamente necessário mas pode deixar mais seguro
         administrador = get_object_or_404(Administrador, pk=request.user.administrador.pk)
@@ -842,22 +838,14 @@ def pre_alocar_estudante(request):
         estudante.pre_alocacao = proposta
         estudante.save()
 
-        data = {
-            'atualizado': True,
-        }
-
-    elif user.tipo_de_usuario == 2:  # professor
-
+    elif request.user.tipo_de_usuario == 2:  # professor
         # atualizações não serão salvas
-
-        data = {
-            'atualizado': False,
-        }
+        pass
 
     else:
         return HttpResponseNotFound('<h1>Usuário sem privilérios!</h1>')
 
-    return JsonResponse(data)
+    return JsonResponse({'atualizado': False,})
 
 
 @login_required
@@ -865,14 +853,8 @@ def pre_alocar_estudante(request):
 @permission_required('users.altera_professor', raise_exception=True)
 def definir_orientador(request):
     """Ajax para definir orientadores de projetos."""
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
-    # try:
-    #     user = PFEUser.objects.get(pk=request.user.pk)
-    # except PFEUser.DoesNotExist:
-    #     return HttpResponse("Usuário não encontrado.", status=401)
-
-    if user.tipo_de_usuario == 4:  # admin
-
+    
+    if request.user.tipo_de_usuario == 4:  # admin
         # Código a se usuário é administrador
 
         orientador_get = request.GET.get('orientador', None)
@@ -887,10 +869,6 @@ def definir_orientador(request):
 
         if orientador_id:
             orientador = get_object_or_404(Professor, user_id=orientador_id)
-            # try:
-            #     orientador = Professor.objects.get(user_id=orientador_id)
-            # except Professor.DoesNotExist:
-            #     return HttpResponseNotFound('<h1>Orientador não encontrado!</h1>')
         else:
             orientador = None
 
@@ -898,22 +876,13 @@ def definir_orientador(request):
         projeto.orientador = orientador
         projeto.save()
 
-        data = {
-            'atualizado': True,
-        }
-
-    elif user.tipo_de_usuario == 2:  # professor
-
-        # atualizações não serão salvas
-        data = {
-            'atualizado': False,
-        }
+    elif request.user.tipo_de_usuario == 2:  # professor
+        pass
 
     else:
         return HttpResponseNotFound('<h1>Usuário sem privilérios!</h1>')
 
-    return JsonResponse(data)
-
+    return JsonResponse({'atualizado': False,})
 
 
 @login_required
