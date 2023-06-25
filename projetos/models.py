@@ -1245,7 +1245,7 @@ class Conexao(models.Model):
        "gestor_responsavel": ["Gestor Responsável", "GR"],
        "mentor_tecnico": ["Mentoria Técnica", "MT"],
        "recursos_humanos" : ["Área Administrativa", "AA"],
-       "colaboracao" : ["Colaboração", "CO"],
+       "colaboracao" : ["Colaboração Externa", "CE"],
     }
     gestor_responsavel = models.BooleanField(papel["gestor_responsavel"], default=False)
     mentor_tecnico = models.BooleanField(papel["mentor_tecnico"], default=False)
@@ -1253,10 +1253,10 @@ class Conexao(models.Model):
     colaboracao = models.BooleanField(papel["colaboracao"], default=False)
 
     def get_papeis(self):
-        texto = ""
+        texto = []
         for field in Conexao.papel:
             if getattr(self, field):
-                texto += "[" + Conexao.papel[field][1] + "]"
+                texto += [Conexao.papel[field][1]]
         return texto
     
     def get_papeis_completo(self):
@@ -1267,9 +1267,14 @@ class Conexao(models.Model):
         return texto
     
     def __str__(self):
-        return self.parceiro.user.get_full_name()+" >>> "+\
-               self.projeto.organizacao.sigla+" - "+self.projeto.get_titulo()+\
-               " ("+str(self.projeto.ano)+"."+str(self.projeto.semestre)+")"
+        texto = ""
+        if self.parceiro:
+            texto += self.parceiro.user.get_full_name()
+        texto += " >>> "
+        if self.projeto and self.projeto.organizacao:
+            texto += self.projeto.organizacao.sigla+" - "+self.projeto.get_titulo()+\
+                " ("+str(self.projeto.ano)+"."+str(self.projeto.semestre)+")"
+        return texto
 
     class Meta:
         verbose_name = 'Conexão'

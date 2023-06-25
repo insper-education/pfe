@@ -748,6 +748,7 @@ def todos_parceiros(request):
         "titulo": "Parceiros Profissionais",
         "edicoes": edicoes,
         "edicao": edicao,
+        "Conexao": Conexao,
         }
 
     return render(request, 'organizacoes/todos_parceiros.html', context)
@@ -821,6 +822,7 @@ def seleciona_conexoes(request):
         "parceiros": parceiros,
         "todos_parceiros": todos_parceiros,
         "colaboradores": colaboradores,
+        "Conexao": Conexao,
         }
 
     return render(request, 'organizacoes/seleciona_conexoes.html', context)

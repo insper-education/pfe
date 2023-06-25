@@ -28,7 +28,10 @@
       <div class="table-responsive">
       <table id="ParceirosTable" class="table table-bordered table-hover table-sm">
         <caption style="text-align:right">
-          <small>GR: Gestor Responsável / MT: Mentoria Técnica / AA: Área Administrativa</small>
+          {% for _,captions  in Conexao.papel.items %}
+            {{captions.1}}: {{captions.0}}
+            {% if not forloop.last %}/{% endif %}
+          {% endfor %}
         </caption>
         <thead class="table">
           <tr>
@@ -114,14 +117,14 @@
       <p>Não existem parceiros cadastradas para essa organização.</p>
     {% endif %}
 
-    <label for="colaboracao">Colaboração externa</label></b>:
+    <label for="colaboracao">Colaboração Externa (CE)</label></b>:
     <select class="selectpicker" name="colaboracao" id="colaboracao" title="Selecione quem está colaborando com o projeto"
     data-live-search="true" data-width="560px">
         <option selected value> -- selecione um colaborador(a) -- </option>
         <optgroup label="Organização">
         {% for colaborador in todos_parceiros %}  
           <option value="{{colaborador.id}}" {% if colaborador.id == colaboradores.id %}selected{% endif %}>
-            {{colaborador.user.get_full_name}}
+            {{colaborador.user.get_full_name}} [{{colaborador.organizacao}}]
           </option>
         {% endfor %}
         </optgroup>

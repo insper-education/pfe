@@ -66,16 +66,12 @@
                 {% if edicao == "todas" %}
                   {% if conexao.projeto %}
                     <a href="{% url 'projeto_completo' conexao.projeto.id %}">
-                      {% if conexao.gestor_responsavel %}GR{% endif %}
-                      {% if conexao.mentor_tecnico %}MT{% endif %}
-                      {% if conexao.recursos_humanos %}AA{% endif %}
+                      [{% for papel in conexao.get_papeis %}{{papel}}{% if not forloop.last %}&nbsp;{% endif %}{% endfor %}]
                     </a>
                   {% endif %}
                 {% else %}
                   {% if conexao.projeto and conexao.projeto.get_edicao == edicao %}
-                      {% if conexao.gestor_responsavel %}GR{% endif %}
-                      {% if conexao.mentor_tecnico %}MT{% endif %}
-                      {% if conexao.recursos_humanos %}AA{% endif %}
+                    {% for papel in conexao.get_papeis %}{{papel}}{% if not forloop.last %}&nbsp;{% endif %}{% endfor %}
                   {% endif %}
                 {% endif %}
               {% endfor %}
@@ -83,7 +79,12 @@
           </td>
         </tr>
       {% endfor %}
-      <caption style="text-align:right"><small>GR: Gestor Responsável / MT: Mentoria Técnica / AA: Área Administrativa</small></caption>
+      <caption style="text-align:right"><small>
+        {% for _,captions  in Conexao.papel.items %}
+          {{captions.1}}: {{captions.0}}
+          {% if not forloop.last %}/{% endif %}
+        {% endfor %}
+      </small></caption>
     </table> 
     </div> {% comment %} do "tabelas_top.html" {% endcomment %}
 
