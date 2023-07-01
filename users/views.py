@@ -142,11 +142,11 @@ def estudantes_lista(request):
                 curso = request.POST['curso']
 
                 if curso == 'C':
-                    alunos_todos = alunos_todos.filter(curso="C")
+                    alunos_todos = alunos_todos.filter(curso2__sigla_curta="C")
                 elif curso == 'M':
-                    alunos_todos = alunos_todos.filter(curso="M")
+                    alunos_todos = alunos_todos.filter(curso2__sigla_curta="M")
                 elif curso == 'X':
-                    alunos_todos = alunos_todos.filter(curso="X")
+                    alunos_todos = alunos_todos.filter(curso2__sigla_curta="X")
 
             if anosemestre not in ("todos", "trancou"):
                 ano = int(anosemestre.split(".")[0])

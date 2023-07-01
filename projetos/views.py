@@ -1393,7 +1393,7 @@ def evolucao_objetivos(request):
         if curso == 'T':
             alunos = Aluno.objects.all()
         else:
-            alunos = Aluno.objects.filter(curso=curso)
+            alunos = Aluno.objects.filter(curso2__sigla_curta=curso)
         for edicao in edicoes:
             periodo = edicao.split('.')
             students.append(alunos.filter(anoPFE=periodo[0], semestrePFE=periodo[1]).count())
