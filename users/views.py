@@ -124,7 +124,6 @@ def estudantes_lista(request):
 
             # Conta soh alunos
             alunos_todos = Aluno.objects\
-                .filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])\
                 .order_by(Lower("user__first_name"), Lower("user__last_name"))
 
             ano = 0
@@ -141,12 +140,14 @@ def estudantes_lista(request):
 
                 curso = request.POST['curso']
 
-                if curso == 'C':
-                    alunos_todos = alunos_todos.filter(curso2__sigla_curta="C")
-                elif curso == 'M':
-                    alunos_todos = alunos_todos.filter(curso2__sigla_curta="M")
-                elif curso == 'X':
-                    alunos_todos = alunos_todos.filter(curso2__sigla_curta="X")
+                # if curso == 'C':
+                #     alunos_todos = alunos_todos.filter(curso2__sigla_curta="C")
+                # elif curso == 'M':
+                #     alunos_todos = alunos_todos.filter(curso2__sigla_curta="M")
+                # elif curso == 'X':
+                #     alunos_todos = alunos_todos.filter(curso2__sigla_curta="X")
+                if curso != 'T':
+                    alunos_todos = alunos_todos.filter(curso2__sigla_curta=curso)
 
             if anosemestre not in ("todos", "trancou"):
                 ano = int(anosemestre.split(".")[0])
@@ -223,9 +224,9 @@ def estudantes_lista(request):
                         ano_tmp += 1
                         semestre_tmp = 1
 
-                # Só alunos já alocados
-                if anosemestre == "todos":
-                    alunos_list = alunos_list.filter(alocacao__projeto__isnull=False).distinct()
+                # Só alunos já alocados (NÃO SEI POR QUE FIZ ISSO)
+                # if anosemestre == "todos":
+                #     alunos_list = alunos_list.filter(alocacao__projeto__isnull=False).distinct()
 
             num_alunos = alunos_list.count()
 
