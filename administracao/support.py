@@ -119,7 +119,7 @@ def registro_usuario(request, user=None):
         usuario.tipo_de_usuario = 3  # (3, 'parceiro')
     else:
         # usuario.tipo_de_usuario = 3  # (4, 'administrador')
-        return ("Erro na identificação do tipo de usuário.", 401)
+        return ("Erro na identificação do tipo de usuário.", 401, None)
 
     # se for um usuário novo
     if not user:
@@ -129,10 +129,10 @@ def registro_usuario(request, user=None):
             username = request.POST['email'].split("@")[0] + "." + \
                 request.POST['email'].split("@")[1].split(".")[0]
         else:
-            return ("Erro na recuperação do e-mail.", 401)
+            return ("Erro na recuperação do e-mail.", 401, None)
 
         if PFEUser.objects.exclude(pk=usuario.pk).filter(username=username).exists():
-            return ('Username "%s" já está sendo usado.' % username, 401)
+            return ('Username "%s" já está sendo usado.' % username, 401, None)
 
         usuario.username = username
 
@@ -140,7 +140,7 @@ def registro_usuario(request, user=None):
         usuario.first_name = request.POST['nome'].split()[0]
         usuario.last_name = " ".join(request.POST['nome'].split()[1:])
     else:
-        return ("Erro: Não inserido nome completo no formulário.", 401)
+        return ("Erro: Não inserido nome completo no formulário.", 401, None)
 
     if 'genero' in request.POST:
         if request.POST['genero'] == "masculino":
@@ -304,9 +304,9 @@ def registro_usuario(request, user=None):
         # user.groups.add(Group.objects.get(name="Administrador"))  # Grupo de permissões
 
     if mensagem != "":
-        return (mensagem, 401)
+        return (mensagem, 401, None)
     elif user:
-        return ("Usuário atualizado na base de dados.", 200)
+        return ("Usuário atualizado na base de dados.", 200, usuario)
     else:
-        return ("Usuário inserido na base de dados.", 200)
+        return ("Usuário inserido na base de dados.", 200, usuario)
     

@@ -7,6 +7,8 @@ Data: 17 de Dezembro de 2020
 """
 
 import re
+import string
+import random
 import tablib
 
 from django.conf import settings
@@ -26,6 +28,7 @@ from documentos.support import render_to_pdf
 
 from projetos.models import Configuracao, Organizacao, Proposta, Projeto
 from projetos.models import Avaliacao2, get_upload_path, Feedback, Disciplina
+from projetos.messages import email
 
 from .support import get_limite_propostas, registra_organizacao, registro_usuario
 
@@ -189,7 +192,51 @@ def cadastrar_usuario(request):
     if request.method == 'POST':
 
         if 'email' in request.POST:
-            mensagem, codigo = registro_usuario(request)
+            mensagem, codigo, user = registro_usuario(request)
+
+            if user is not None and 'envia' in request.POST: 
+
+                # Atualizando senha do usuário.
+                senha = ''.join(random.SystemRandom().
+                                choice(string.ascii_lowercase + string.digits)
+                                for _ in range(6))
+                user.set_password(senha)
+                user.save()
+
+                configuracao = get_object_or_404(Configuracao)
+                coordenacao = configuracao.coordenacao
+
+                # Preparando mensagem para enviar para usuário.
+                message_email = user.get_full_name() + ",\n\n"
+                message_email += "\tVocê está recebendo sua conta e senha para acessar o sistema do "
+                message_email += "Projeto Final de Engenharia (PFE)."
+                message_email += "\n\n"
+                message_email += "\tO endereço do servidor é: "
+                message_email += "<a href='http://pfe.insper.edu.br/'>http://pfe.insper.edu.br/</a>"
+                message_email += "\n\n"
+
+                message_email += "\tSua conta é: <b>" + user.username + "</b>\n"
+                message_email += "\tSua senha é: <b>" + senha + "</b>\n"
+                message_email += "\n"
+                message_email += "\tQualquer dúvida, envie e-mail para: "
+                message_email += coordenacao.user.get_full_name() + " <a href='mailto:" + coordenacao.user.email + "'>&lt;" + coordenacao.user.email + "&gt;</a>"
+                message_email += "\n\n"
+                message_email += "\t\tatenciosamente, coordenação do PFE\n"
+                message_email = message_email.replace('\n', '<br>\n')
+                message_email = message_email.replace('\t', '&nbsp;&nbsp;&nbsp;&nbsp;\t')
+
+                # Enviando e-mail com mensagem para usuário.
+                subject = 'Conta PFE : ' + user.get_full_name()
+                recipient_list = [user.email,]
+                check = email(subject, recipient_list, message_email)
+                if check != 1:
+                    mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
+                    codigo = 400
+
+                mensagem += "<br><br>Enviado mensagem com senha para: "
+                mensagem += user.get_full_name() + " " +\
+                            "&lt;" + user.email + "&gt;<br>\n"
+
             if codigo != 200:
                 return HttpResponse(mensagem, status=codigo)
 
@@ -211,7 +258,7 @@ def cadastrar_usuario(request):
         "email_length": PFEUser._meta.get_field('email').max_length,
     }
 
-    # Passado o nome da organização do parceiro a ser cadastrado
+    # Passado o tipo e nome da organização do parceiro (se o caso) a ser cadastrado
     tipo = request.GET.get('tipo', None)
     if tipo:
         if tipo == "parceiro":
@@ -245,7 +292,7 @@ def edita_usuario(request, primarykey):
     if request.method == 'POST':
 
         if 'email' in request.POST:
-            mensagem, codigo = registro_usuario(request, user)
+            mensagem, codigo, _ = registro_usuario(request, user)
             if codigo != 200:
                 return HttpResponse(mensagem, status=codigo)
 

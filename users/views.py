@@ -1171,7 +1171,7 @@ def parceiro_detail(request, primarykey):
 @permission_required("users.altera_professor", raise_exception=True)
 def contas_senhas(request, anosemestre=None):
     """Envia conta e senha para todos os estudantes que estão no semestre."""
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
+    user = request.user
 
     if user:
         if user.tipo_de_usuario != 4:  # não é admin
