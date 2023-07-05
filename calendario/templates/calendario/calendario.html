@@ -52,20 +52,7 @@
         font-size:14px;
       }
     }
-
-  </style>
-
-  <script>
-    window.console = window.console || function(t) {};
-    if (document.location.search.match(/type=embed/gi)) {
-      window.parent.postMessage("resize", "*");
-    }
-  </script>
-
-  <script>{% include "tooltip.js" %}</script>
-
-  <style>
-
+    
     .event-name {
       font-weight: bold;
       padding-top: 3px;
@@ -92,17 +79,14 @@
       color:darkblue;
     }
 
-
     .semestre1 {
       border-radius: 5px 0px 0px 5px;
-      #padding: 4px 9px;
       background: #D0EED0;
       cursor: pointer;
     }
 
     .semestre2 {
       border-radius: 0px 5px 5px 0px;
-      #padding: 4px 9px; 
       background: #D0EED0;
       cursor: pointer;
     }
@@ -113,7 +97,7 @@
       margin-top:-14px;
     }
 
-    tab_aulas {
+    .tab_aulas {
       border-collapse: separate;
       border-spacing: 10px 1px;
       margin-left: -8px;
@@ -122,6 +106,14 @@
 
   </style>
 
+  <script>
+    window.console = window.console || function(t) {};
+    if (document.location.search.match(/type=embed/gi)) {
+      window.parent.postMessage("resize", "*");
+    }
+  </script>
+
+  <script>{% include "tooltip.js" %}</script>
 
 {% endblock %}
 

@@ -42,80 +42,41 @@ from estudantes.models import Relato, Pares
 @permission_required("users.altera_professor", raise_exception=True)
 def index_professor(request):
     """Mostra página principal do usuário professor."""
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
-
-    if user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
-        mensagem = "Você não está cadastrado como professor!"
-        context = {
-            "area_principal": True,
-            "mensagem": mensagem,
-        }
-        return render(request, 'generic.html', context=context)
-
-    professor_id = 0
-    try:
-        professor_id = Professor.objects.get(pk=request.user.professor.pk).id
-    except Professor.DoesNotExist:
-        pass
-        # Administrador não possui também conta de professor
-
-    context = {
-        'professor_id': professor_id,
-    }
-    return render(request, 'professores/index_professor.html', context=context)
+    return render(request, 'professores/index_professor.html')
 
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def avaliacoes_pares(request):
     """Formulários com os projetos e avaliações de pares."""
-
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
-
     configuracao = get_object_or_404(Configuracao)
-
-    projetos = Projeto.objects.filter(orientador=user.professor, ano=configuracao.ano, semestre=configuracao.semestre)
-
+    projetos = Projeto.objects.filter(orientador=request.user.professor, ano=configuracao.ano, semestre=configuracao.semestre)
     context = {
-        "user": user,
         "projetos": projetos,
     }
-
     return render(request, 'professores/avaliacoes_pares.html', context=context)
+
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def avaliacoes_pares_todas(request):
     """Formulários com os projetos e relatos a avaliar do professor orientador."""
-
+    context = {"administracao": True,}
     if request.is_ajax():
-
         if 'edicao' in request.POST:
-
             projetos = Projeto.objects.all()
-
             edicao = request.POST['edicao']
             if edicao != 'todas':
                 periodo = request.POST['edicao'].split('.')
                 ano = int(periodo[0])
                 semestre = int(periodo[1])
                 projetos = projetos.filter(ano=ano, semestre=semestre)
-                
-            context = {
-                "administracao": True,
-                "projetos": projetos,
-            }
-
+            context["projetos"] = projetos
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
-
     else:
-
         edicoes, _, _ = get_edicoes(Projeto)
-        context = {
-                "administracao": True,
-                "edicoes": edicoes,
-            }
+        context["edicoes"] = edicoes
 
     return render(request, 'professores/avaliacoes_pares.html', context=context)
 
@@ -124,69 +85,41 @@ def avaliacoes_pares_todas(request):
 @permission_required('users.altera_professor', raise_exception=True)
 def bancas_alocadas(request):
     """Mostra detalhes sobre o professor."""
-    professor = get_object_or_404(Professor, pk=request.user.professor.pk)
-
-    bancas = (Banca.objects.filter(membro1=professor.user) |
-              Banca.objects.filter(membro2=professor.user) |
-              Banca.objects.filter(membro3=professor.user))
-
-    bancas = bancas.order_by("-startDate")
-
-    context = {
-        'professor': professor,
-        'bancas': bancas,
-    }
-
+    bancas = (Banca.objects.filter(membro1=request.user) |
+              Banca.objects.filter(membro2=request.user) |
+              Banca.objects.filter(membro3=request.user))
+    context = {"bancas": bancas.order_by("-startDate"),}
     return render(request, 'professores/bancas_alocadas.html', context=context)
+
 
 @login_required
 @permission_required('users.altera_professor', raise_exception=True)
 def orientacoes_alocadas(request):
     """Mostra detalhes sobre o professor."""
-    professor = get_object_or_404(Professor, pk=request.user.professor.pk)
-
-    projetos = Projeto.objects.filter(orientador=professor)\
+    projetos = Projeto.objects.filter(orientador=request.user.professor)\
         .order_by("-ano", "-semestre", "titulo")
-
-    context = {
-        'professor': professor,
-        'projetos': projetos,
-    }
-
+    context = {"projetos": projetos,}
     return render(request, 'professores/orientacoes_alocadas.html', context=context)
+
 
 @login_required
 @permission_required('users.altera_professor', raise_exception=True)
 def coorientacoes_alocadas(request):
     """Mostra detalhes sobre o professor."""
-    professor = get_object_or_404(Professor, pk=request.user.professor.pk)
-
-    coorientacoes = Coorientador.objects.filter(usuario=professor.user)\
+    coorientacoes = Coorientador.objects.filter(usuario=user)\
         .order_by("-projeto__ano",
                   "-projeto__semestre",
                   "projeto__titulo")
-
-    context = {
-        'professor': professor,
-        'coorientacoes': coorientacoes,
-    }
-
+    context = {"coorientacoes": coorientacoes,}
     return render(request, 'professores/coorientacoes_alocadas.html', context=context)
+
 
 @login_required
 @permission_required('users.altera_professor', raise_exception=True)
 def mentorias_alocadas(request):
     """Mostra detalhes sobre o professor."""
-    professor = get_object_or_404(Professor, pk=request.user.professor.pk)
-
-    mentorias = Encontro.objects.filter(facilitador=professor.user)\
-        .order_by('startDate')
-
-    context = {
-        'professor': professor,
-        'mentorias': mentorias,
-    }
-
+    mentorias = Encontro.objects.filter(facilitador=request.user).order_by('startDate')
+    context = {"mentorias": mentorias,}
     return render(request, 'professores/mentorias_alocadas.html', context=context)
 
 
@@ -196,22 +129,12 @@ def bancas_index(request):
     """Menus de bancas e calendario de bancas."""
     bancas = Banca.objects.all()
 
-    # (14, 'Banca intermediária'
-    dias_bancas_interm = Evento.objects.filter(tipo_de_evento=14)
-
-    # (15, 'Bancas finais'
-    dias_bancas_finais = Evento.objects.filter(tipo_de_evento=15)
-
-    # (50, 'Certificação Falconi'
-    dias_bancas_falcon = Evento.objects.filter(tipo_de_evento=50)
-
-    dias_bancas = (dias_bancas_interm |
-                   dias_bancas_finais |
-                   dias_bancas_falcon)
+    # 14, 'Banca intermediária' / 15, 'Bancas finais' / 50, 'Certificação Profissional (antiga Falconi)'
+    dias_bancas = Evento.objects.filter(tipo_de_evento__in=(14, 15, 50))
 
     context = {
-        'bancas': bancas,
-        'dias_bancas': dias_bancas,
+        "bancas": bancas,
+        "dias_bancas": dias_bancas,
     }
 
     return render(request, 'professores/bancas_index.html', context)
@@ -1567,18 +1490,9 @@ def coorientadores_tabela(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def relatos_quinzenais(request):
     """Formulários com os projetos e relatos a avaliar do professor orientador."""
-
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
-
     configuracao = get_object_or_404(Configuracao)
-
-    projetos = Projeto.objects.filter(orientador=user.professor, ano=configuracao.ano, semestre=configuracao.semestre)
-
-    context = {
-        "user": user,
-        "projetos": projetos,
-    }
-
+    projetos = Projeto.objects.filter(orientador=request.user.professor, ano=configuracao.ano, semestre=configuracao.semestre)
+    context = {"projetos": projetos,}
     return render(request, 'professores/relatos_quinzenais.html', context=context)
 
 
@@ -1645,10 +1559,8 @@ def relato_avaliar(request, projeto_id, evento_id):
     # avaliador = projeto.orientador.user
     # tipo_de_avaliacao = 200 + ordenacao  # (200, "Relato Quinzenal 1"),
 
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
-
     # Só o próprio orientador pode editar uma avaliação
-    if user == projeto.orientador.user:
+    if request.user == projeto.orientador.user:
         editor = True
     else:
         editor = False
@@ -1674,10 +1586,8 @@ def relato_avaliar(request, projeto_id, evento_id):
 
             if observacoes != "":
 
-                user = get_object_or_404(PFEUser, pk=request.user.pk)
-
                 (obs, _created) = Observacao.objects.get_or_create(projeto=projeto,
-                                                                avaliador=user,
+                                                                avaliador=request.user,
                                                                 momento=evento.endDate,  # data marcada do fim do evento
                                                                 tipo_de_avaliacao=200)  # (200, "Relato Quinzenal"),
                 obs.observacoes = observacoes
@@ -1689,7 +1599,7 @@ def relato_avaliar(request, projeto_id, evento_id):
                     email_coordenacoes.append(str(coordenador.email))
 
                 # Manda mensagem para coordenadores
-                email("Anotação Quinzenal", email_coordenacoes, observacoes+"<br><br>"+str(user))
+                email("Anotação Quinzenal", email_coordenacoes, observacoes+"<br><br>"+str(request.user))
 
             # objetivos_possiveis = len(objetivos)
             # julgamento = [None]*objetivos_possiveis
@@ -1868,6 +1778,7 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
 
     return render(request, 'professores/resultado_projetos.html', context)
 
+
 @login_required
 @permission_required('users.altera_professor', raise_exception=True)
 def resultado_projetos_edicao(request, edicao):
@@ -1880,24 +1791,18 @@ def resultado_projetos_edicao(request, edicao):
         return HttpResponseNotFound('<h1>Erro em!</h1>')
     return resultado_projetos_intern(request, ano, semestre)
 
+
 @login_required
 @permission_required('users.altera_professor', raise_exception=True)
 def resultado_projetos(request):
     """Mostra os resultados das avaliações (Bancas)."""
     return resultado_projetos_intern(request)
 
+
 @login_required
 @permission_required('users.altera_professor', raise_exception=True)
 def resultado_meus_projetos(request):
     """Mostra os resultados das avaliações somente do professor (Bancas)."""
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
-    if user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
-        mensagem = "Você não está cadastrado como professor!"
-        context = {
-            "area_principal": True,
-            "mensagem": mensagem,
-        }
-        return render(request, 'generic.html', context=context)
     professor = None
     try:
         professor = Professor.objects.get(pk=request.user.professor.pk)
@@ -1905,6 +1810,7 @@ def resultado_meus_projetos(request):
         pass
         # Administrador não possui também conta de professor
     return resultado_projetos_intern(request, professor=professor)
+
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)

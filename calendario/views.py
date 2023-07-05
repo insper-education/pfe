@@ -22,16 +22,8 @@ from users.models import PFEUser, Aluno
 from projetos.models import Banca, Configuracao, Evento
 
 
-def get_calendario_context(primarykey=None):
+def get_calendario_context(user=None):
     """Contexto para gerar calendário."""
-    if primarykey:
-        try:
-            user = PFEUser.objects.get(pk=primarykey)
-        except PFEUser.DoesNotExist:
-            return None
-    else:
-        user = None
-
     eventos = Evento.objects.all()
 
     # Estudantes e parceiros só conseguem ver os eventos até o semestre atual
@@ -95,7 +87,7 @@ def get_calendario_context(primarykey=None):
 @login_required
 def calendario(request):
     """Para exibir um calendário de eventos."""
-    context = get_calendario_context(request.user.pk)
+    context = get_calendario_context(request.user)
     if context:
         return render(request, 'calendario/calendario.html', context)
 
@@ -225,24 +217,12 @@ def atualiza_evento(request):
     except Evento.DoesNotExist:
         return HttpResponseNotFound('<h1>Evento não encontrado!</h1>')
 
-    tipo_de_evento = int(request.POST.get('type', None))
-
-    start_date = request.POST.get('startDate', None)
-    end_date = request.POST.get('endDate', None)
-
-    location = request.POST.get('location', "")[:Evento._meta.get_field('location').max_length]
-    observation = request.POST.get('observation', "")[:Evento._meta.get_field('observacao').max_length]
-    descricao = request.POST.get('descricao', "")[:Evento._meta.get_field('descricao').max_length]
-
-    evento.tipo_de_evento = tipo_de_evento
-
-    evento.startDate = dateutil.parser.parse(start_date)
-    evento.endDate = dateutil.parser.parse(end_date)
-
-    evento.location = location
-    evento.observacao = observation
-    evento.descricao = descricao
-
+    evento.tipo_de_evento = int(request.POST.get('type', None))
+    evento.startDate = dateutil.parser.parse(request.POST.get('startDate', None))
+    evento.endDate = dateutil.parser.parse(request.POST.get('endDate', None))
+    evento.location = request.POST.get('location', "")[:Evento._meta.get_field('location').max_length]
+    evento.observacao = request.POST.get('observation', "")[:Evento._meta.get_field('observacao').max_length]
+    evento.descricao = request.POST.get('descricao', "")[:Evento._meta.get_field('descricao').max_length]
     evento.save()
 
     data = {
@@ -259,12 +239,7 @@ def atualiza_evento(request):
 def remove_evento(request):
     """Ajax para remover eventos."""
     event_id = int(request.POST.get('id', None))
-    evento = get_object_or_404(Evento, id=event_id)
-    
+    evento = get_object_or_404(Evento, id=event_id)    
     evento.delete()
 
-    data = {
-        'atualizado': True,
-    }
-
-    return JsonResponse(data)
+    return JsonResponse({"atualizado": True,})

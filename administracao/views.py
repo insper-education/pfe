@@ -551,7 +551,7 @@ def propor(request):
 
     qtd, finish = calcula_qtd(opcoes, propostas, alunos)
 
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
+    user = request.user
     if otimizar:  # Quer dizer que é um POST
         if user.tipo_de_usuario != 4:  # admin
             return HttpResponse("Usuário sem privilégios de administrador.", status=401)
@@ -701,11 +701,11 @@ def montar_grupos(request):
     estudantes_opcoes = zip(estudantes, opcoes)
 
     # Checa se usuário é administrador ou professor
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
+    user = request.user
 
     mensagem = ""
 
-    if request.method == 'POST' and user and user.tipo_de_usuario == 4:  # admin
+    if request.method == 'POST' and user and request.user.tipo_de_usuario == 4:  # admin
 
         if 'limpar' in request.POST:
             for estudante in estudantes:
@@ -819,9 +819,7 @@ def selecionar_orientadores(request):
     orientadores = (professores | administradores).order_by(Lower("first_name"), Lower("last_name"))
 
     # Checa se usuário é administrador ou professor
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
-
-    if user and user.tipo_de_usuario != 4:  # admin
+    if request.user.tipo_de_usuario != 4:  # admin
         mensagem = "Sua conta não é de administrador, "
         mensagem += "você pode mexer na tela, contudo suas modificações não serão salvas."
 
@@ -856,8 +854,6 @@ def servico(request):
 @permission_required('users.altera_professor', raise_exception=True)
 def pre_alocar_estudante(request):
     """Ajax para pre-alocar estudates em propostas."""
-    #user = get_object_or_404(PFEUser, pk=request.user.pk)
-
     if request.user.tipo_de_usuario == 4:  # admin
 
         # Código a seguir não estritamente necessário mas pode deixar mais seguro
@@ -1177,7 +1173,7 @@ def logs(request):
 @permission_required('users.altera_professor', raise_exception=True)
 def conexoes_estabelecidas(request):
     """Mostra usuários conectados."""
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
+    user = request.user
     if user.tipo_de_usuario == 4:
         message = "<h3>Usuários Conectados</h3><br>"
         sessions = Session.objects.filter(expire_date__gte=timezone.now())

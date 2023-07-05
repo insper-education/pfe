@@ -56,45 +56,11 @@ def user_detail(request, primarykey):
 @login_required
 def perfil(request):
     """Retorna a página conforme o perfil do usuário."""
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
-
-    context = {
-        'aluno': False,
-        'professor': False,
-        'parceiro': False,
-        'administrador': False,
-    }
-
-    if user.tipo_de_usuario == 1:  # aluno
-        context['aluno'] = get_object_or_404(Aluno,
-                                             pk=request.user.aluno.pk)
-
-    elif user.tipo_de_usuario == 2:  # professor
-        context['professor'] = get_object_or_404(Professor,
-                                                 pk=request.user.professor.pk)
-
-    elif user.tipo_de_usuario == 3:  # parceiro
-        context['parceiro'] = get_object_or_404(Parceiro,
-                                                pk=request.user.parceiro.pk)
-
-    elif user.tipo_de_usuario == 4:  # administrador
-        context['administrador'] = get_object_or_404(Administrador,
-                                                     pk=request.user.administrador.pk)
-
-    else:
-        mensagem = "Seu perfil não foi encontrado!"
-        context = {
-            "area_principal": True,
-            "mensagem": mensagem,
-        }
-        return render(request, 'generic.html', context=context)
-
-    return render(request, 'users/profile_detail.html', context=context)
+    return render(request, 'users/profile_detail.html')
 
 
 class SignUp(generic.CreateView):
     """Rotina para fazer o login."""
-
     form_class = PFEUserCreationForm
     success_url = reverse_lazy('login')
     template_name = 'signup.html'
@@ -102,7 +68,6 @@ class SignUp(generic.CreateView):
 
 class Usuario(generic.DetailView):
     """Usuário."""
-
     model = Aluno
 
 
@@ -137,15 +102,7 @@ def estudantes_lista(request):
             totais["mecatrônica"] = 0
 
             if 'curso' in request.POST:
-
                 curso = request.POST['curso']
-
-                # if curso == 'C':
-                #     alunos_todos = alunos_todos.filter(curso2__sigla_curta="C")
-                # elif curso == 'M':
-                #     alunos_todos = alunos_todos.filter(curso2__sigla_curta="M")
-                # elif curso == 'X':
-                #     alunos_todos = alunos_todos.filter(curso2__sigla_curta="X")
                 if curso != 'T':
                     alunos_todos = alunos_todos.filter(curso2__sigla_curta=curso)
 
@@ -297,7 +254,6 @@ def estudantes_notas(request, professor=None):
 
             # Conta soh alunos
             alunos_list = Aluno.objects\
-                .filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])\
                 .order_by(Lower("user__first_name"), Lower("user__last_name"))
 
             alunos_list = alunos_list.filter(trancado=False)
@@ -1172,10 +1128,8 @@ def parceiro_detail(request, primarykey):
 @permission_required("users.altera_professor", raise_exception=True)
 def contas_senhas(request, anosemestre=None):
     """Envia conta e senha para todos os estudantes que estão no semestre."""
-    user = request.user
-
-    if user:
-        if user.tipo_de_usuario != 4:  # não é admin
+    if request.user:
+        if request.user.tipo_de_usuario != 4:  # não é admin
             mensagem = "Você não tem privilégios de administrador!"
             context = {
                 "area_principal": True,
@@ -1263,7 +1217,6 @@ def contas_senhas(request, anosemestre=None):
 
     estudantes = Aluno.objects.filter(trancado=False)\
         .filter(anoPFE=ano, semestrePFE=semestre)\
-        .filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])\
         .order_by(Lower("user__first_name"), Lower("user__last_name"))
 
     context = {

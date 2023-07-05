@@ -216,7 +216,7 @@ def projetos_fechados(request):
     edicoes = []
 
     if request.is_ajax():
-        if 'edicao' in request.POST:
+        if 'edicao' in request.POST and 'curso' in request.POST:
             edicao = request.POST['edicao']
             if edicao == 'todas':
                 projetos_filtrados = Projeto.objects.all()
@@ -225,11 +225,9 @@ def projetos_fechados(request):
                 projetos_filtrados = Projeto.objects.filter(ano=ano,
                                                             semestre=semestre)
 
-            if 'curso' in request.POST:
-                curso = request.POST['curso']    
-            else:
-                return HttpResponse("Algum erro não identificado.", status=401)
-
+            
+            curso = request.POST['curso']    
+            
             projetos_filtrados = projetos_filtrados.order_by("-avancado", "organizacao")
 
             projetos_selecionados = []
@@ -349,10 +347,9 @@ def projetos_lista(request):
 @login_required
 def meuprojeto(request):
     """Mostra o projeto do próprio aluno, se for aluno."""
-    user = get_object_or_404(PFEUser, pk=request.user.pk)
 
     # Caso não seja Aluno, Professor ou Administrador (ou seja Parceiro)
-    if user.tipo_de_usuario != 1 and user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
+    if request.user.tipo_de_usuario != 1 and request.user.tipo_de_usuario != 2 and request.user.tipo_de_usuario != 4:
         mensagem = "Você não está cadastrado como aluno ou professor!"
         context = {
             "area_principal": True,
@@ -361,18 +358,13 @@ def meuprojeto(request):
         return render(request, 'generic.html', context=context)
 
     # Caso seja Professor ou Administrador
-    if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4:
-        professor = get_object_or_404(Professor, pk=request.user.professor.pk)
-        return redirect('professor_detail', primarykey=professor.pk)
+    if request.user.tipo_de_usuario in (2, 4):
+        return redirect('professor_detail', primarykey=request.user.professor.pk)
 
-    # vvvv Caso seja um aluno  vvv
-    aluno = get_object_or_404(Aluno, pk=request.user.aluno.pk)
-
-    configuracao = get_object_or_404(Configuracao)
-
+    # Caso seja um aluno
     context = {
-        'aluno': aluno,
-        'configuracao': configuracao,
+        'aluno': request.user.aluno,
+        "configuracao": get_object_or_404(Configuracao),
     }
 
     return render(request, 'projetos/meuprojeto_aluno.html', context=context)
@@ -438,7 +430,7 @@ def reembolso_pedir(request):
     configuracao = get_object_or_404(Configuracao)
     usuario = get_object_or_404(PFEUser, pk=request.user.pk)
 
-    if usuario.tipo_de_usuario == 1:
+    if request.user.tipo_de_usuario == 1:
         aluno = get_object_or_404(Aluno, pk=request.user.aluno.pk)
 
         if aluno.anoPFE > configuracao.ano or\
@@ -503,17 +495,11 @@ def reembolso_pedir(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def comite(request):
     """Exibe os professores que estão no comitê do PFE."""
-    professores = Professor.objects.filter(user__membro_comite=True)
-
-    cabecalhos = ["Nome", "e-mail", "Lattes", ]
-    titulo = "Comitê PFE"
-
     context = {
-        'professores': professores,
-        "cabecalhos": cabecalhos,
-        "titulo": titulo,
+        "professores": Professor.objects.filter(user__membro_comite=True),
+        "cabecalhos": ["Nome", "e-mail", "Lattes", ],
+        "titulo": "Comitê PFE",
         }
-
     return render(request, 'projetos/comite_pfe.html', context)
 
 
@@ -649,11 +635,9 @@ def lista_feedback_estudantes(request):
         }
 
     else:
-        
-        titulo = "Listagem de Feedbacks Finais dos Estudantes"
         context = {
             "edicoes": edicoes,
-            "titulo": titulo,
+            "titulo": "Listagem de Feedbacks Finais dos Estudantes",
         }
 
     return render(request, 'projetos/lista_feedback_estudantes.html', context)
@@ -664,10 +648,8 @@ def lista_feedback_estudantes(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def lista_acompanhamento(request):
     """Lista todos os acompanhamentos das Organizações Parceiras."""
-    acompanhamentos = Acompanhamento.objects.all().order_by("-data")
-
     context = {
-        'acompanhamentos': acompanhamentos,
+        "acompanhamentos": Acompanhamento.objects.all().order_by("-data"),
     }
     return render(request, 'projetos/lista_acompanhamento.html', context)
 
@@ -676,12 +658,9 @@ def lista_acompanhamento(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def mostra_feedback(request, feedback_id):
     """Detalha os feedbacks das Organizações Parceiras."""
-    feedback = get_object_or_404(Feedback, id=feedback_id)
-
     context = {
-        'feedback': feedback,
+        "feedback": get_object_or_404(Feedback, id=feedback_id),
     }
-
     return render(request, 'projetos/mostra_feedback.html', context)
 
 
@@ -689,17 +668,9 @@ def mostra_feedback(request, feedback_id):
 @permission_required("users.altera_professor", raise_exception=True)
 def mostra_feedback_estudante(request, feedback_id):
     """Detalha os feedbacks das Organizações Parceiras."""
-    feedback = get_object_or_404(FeedbackEstudante, id=feedback_id)
-
-    usuario = feedback.estudante.user
-    projeto = feedback.projeto
-
     context = {
-        "usuario": usuario,
-        "projeto": projeto,
-        "feedback": feedback,
+        "feedback": get_object_or_404(FeedbackEstudante, id=feedback_id),
     }
-
     return render(request, 'estudantes/estudante_feedback.html', context)
 
 
@@ -723,7 +694,7 @@ def validate_aviso(request):
         aviso.data_realizado = dateutil.parser.parse(value) - datetime.timedelta(days=1)
 
     aviso.save()
-    return JsonResponse({'atualizado': True,})
+    return JsonResponse({"atualizado": True,})
 
 
 @login_required
@@ -833,15 +804,11 @@ def analise_notas(request):
         
         medias_semestre = Alocacao.objects.all()
 
-        if 'edicao' in request.POST:
+        if 'edicao' in request.POST and 'curso' in request.POST:
             if request.POST['edicao'] != 'todas':
                 periodo = request.POST['edicao'].split('.')
                 medias_semestre = medias_semestre.filter(projeto__ano=periodo[0],
                                                          projeto__semestre=periodo[1])
-        else:
-            return HttpResponse("Algum erro não identificado.", status=401)
-
-        if 'curso' in request.POST:
             curso = request.POST['curso']
             if curso != 'T':
                 medias_semestre = medias_semestre.filter(aluno__curso2__sigla_curta=curso)
@@ -981,7 +948,6 @@ def analise_notas(request):
         context = {
             "edicoes": edicoes,
         }
-
 
     return render(request, 'projetos/analise_notas.html', context)
 
@@ -1785,7 +1751,6 @@ def nomes(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def acompanhamento_view(request):
     """Cria um anotação para uma organização parceira."""
-    # acompanhamentos = Acompanhamento.objects.all().order_by("-data")
     if request.is_ajax() and 'texto' in request.POST:
         acompanhamento = Acompanhamento.create()
 
@@ -1813,11 +1778,9 @@ def acompanhamento_view(request):
 
         return JsonResponse(data)
 
-    parceiros = Parceiro.objects.all()
-
     context = {
-        'parceiros': parceiros,
-        'data_hora': datetime.datetime.now(),
+        "parceiros": Parceiro.objects.all(),
+        "data_hora": datetime.datetime.now(),
     }
 
     return render(request,

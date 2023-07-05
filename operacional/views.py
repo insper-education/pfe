@@ -110,30 +110,21 @@ def avisos_listar(request):
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def emails(request):
-    """Gera listas de emails, com alunos, professores, parceiros, etc."""
-    membros_comite = PFEUser.objects.filter(membro_comite=True)
-    lista_todos_alunos = Aluno.objects.filter(trancado=False).\
-        filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
-    lista_todos_professores = Professor.objects.all()
-    lista_todos_parceiros = Parceiro.objects.all()
- 
+    """Gera listas de emails, com alunos, professores, parceiros, etc.""" 
     edicoes, _, _ = get_edicoes(Aluno)
 
     configuracao = get_object_or_404(Configuracao)
     atual = str(configuracao.ano)+"."+str(configuracao.semestre)
 
-    coordenacao = configuracao.coordenacao
-    coordenacoes = PFEUser.objects.filter(coordenacao=True)
-
     context = {
-        "membros_comite": membros_comite,
-        "todos_alunos": lista_todos_alunos,
-        "todos_professores": lista_todos_professores,
-        "todos_parceiros": lista_todos_parceiros,
+        "membros_comite": PFEUser.objects.filter(membro_comite=True),
+        "todos_alunos": Aluno.objects.filter(trancado=False),
+        "todos_professores": Professor.objects.all(),
+        "todos_parceiros": Parceiro.objects.all(),
         "edicoes": edicoes,
         "atual": atual,
-        "coordenacao": coordenacao,
-        "coordenacoes": coordenacoes,
+        "coordenacao": configuracao.coordenacao,
+        "coordenacoes": PFEUser.objects.filter(coordenacao=True),
     }
 
     return render(request, 'operacional/emails.html', context=context)

@@ -20,8 +20,6 @@
     <br>
     <h4>Mentorias em Projeto(s)</h4>
     <ol>
-
-
       <table>
         {% for e in mentorias %} 
           <tr>
@@ -88,71 +86,7 @@
           Mentorias não encontradas
         {% endfor %}
       </table>
-
-      <p>&nbsp;</p>
-    
-    {% comment %} {% for mentoria in mentorias %}
-        <li><a href="{% url 'projeto_completo' projeto.id %}">
-        {{projeto.ano}}.{{projeto.semestre}} -
-        {{projeto.get_titulo}}
-        ({{projeto.organizacao.nome}})
-        { {{ projeto.alocacao_set.all.count }} estudante(s) }
-        </a>
-        {% if projeto.certificado_orientador %}
-          <a href="{{ projeto.certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a>
-        {% endif %}
-        {% if projeto.proposta.intercambio %}
-          <sup data-toggle="tooltip" data-html="true" animation="true" title="Professor Responsável">PR</sup>
-        {% endif %}
-        </li>
-
-    {% empty %}
-      Mentorias não encontradas
-    {% endfor %}
-    </ol> {% endcomment %}
-
-  
-{% comment %}   
-
-  {% if bancas %}
-    <hr>
-    <h4>Participação em Banca(s)</h4>
-    <ol>
-    {% for banca in bancas %}
-        <li>
-          <a href="{% url 'banca_ver' banca.id %}">
-          {% if banca.tipo_de_banca == 0 %}
-            Final,
-          {% elif banca.tipo_de_banca == 1 %}
-            Intermediária,
-          {% endif %}
-          {% if banca.startDate %}
-            {{banca.startDate.date}},
-          {% endif %}
-          </a>
-          {% if banca.projeto %}
-            <a href="{% url 'projeto_completo' banca.projeto.id %}">
-              {% if banca.projeto.titulo_final %}
-                {{banca.projeto.titulo_final}}</a>,
-              {% else %}
-                {{banca.projeto.titulo}}</a>,
-              {% endif %}
-          {% endif %}
-          {% if banca.projeto.organizacao %}
-            <a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">
-              {{ banca.projeto.organizacao.nome }}
-            </a>
-          {% endif %}
-          {% with certificado=banca|certificado_banca:professor.user %}
-            {% if certificado %}
-              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a><br>
-            {% endif %}
-          {% endwith %}
-        </li>
-    {% empty %}
-      Bancas não encontrados
-    {% endfor %}
-    </ol>
-  {% endif %} {% endcomment %}
+    </ol> 
+    <p>&nbsp;</p>
 
 {% endblock %}

@@ -45,7 +45,7 @@
               {{ banca.projeto.organizacao.nome }}
             </a>
           {% endif %}
-          {% with certificado=banca|certificado_banca:professor.user %}
+          {% with certificado=banca|certificado_banca:user %}
             {% if certificado %}
               <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a><br>
             {% endif %}

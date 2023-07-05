@@ -15,15 +15,17 @@
   <span class="titulo">{{ user.get_full_name }}</span>
 
   <strong>Usuário:</strong> {{ user.username }}<br>
-  {% if aluno %}
+  {% if user.tipo_de_usuario == 1 %} {% comment %} aluno {% endcomment %}
     <strong>Curso:</strong> {{user.aluno.curso2}}<br>
     <strong>Ano e Semestre de PFE:</strong> {{user.aluno.anoPFE}}.{{user.aluno.semestrePFE}} <small>(ou posterior)</small><br>
-  {% elif professor %}
+  {% elif user.tipo_de_usuario == 2 %} {% comment %} professor {% endcomment %}
     <strong>Perfil:</strong> professor<br>
-  {% elif parceiro %}
+  {% elif user.tipo_de_usuario == 3 %} {% comment %} parceiro {% endcomment %}
     <strong>Perfil:</strong> parceiro<br>
-  {% elif administrador %}
+  {% elif user.tipo_de_usuario == 4 %} {% comment %} administrador {% endcomment %}
     <strong>Perfil:</strong> administrador<br>
+  {% else %}
+    Seu perfil não foi encontrado!
   {% endif %}
   <br>
   {% if user.linkedin %}

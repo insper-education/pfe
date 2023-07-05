@@ -38,7 +38,6 @@ from administracao.support import get_limite_propostas, usuario_sem_acesso
 @login_required
 def index_estudantes(request):
     """Mostra página principal do usuário estudante."""
-    usuario = get_object_or_404(PFEUser, pk=request.user.pk)
     configuracao = get_object_or_404(Configuracao)
 
     context = {
@@ -50,21 +49,20 @@ def index_estudantes(request):
     semestre = configuracao.semestre
 
     # Caso estudante
-    if usuario.tipo_de_usuario == 1:
-        estudante = get_object_or_404(Aluno, pk=request.user.aluno.pk)
+    if request.user.tipo_de_usuario == 1:
 
         projeto = Projeto.objects\
-            .filter(alocacao__aluno=estudante).order_by("ano", "semestre").last()
+            .filter(alocacao__aluno=request.user.aluno).order_by("ano", "semestre").last()
 
         context['projeto'] = projeto
 
         # Estudantes de processos passados sempre terrão seleção vencida
         if semestre == 1:
-            context['vencido'] |= estudante.anoPFE < ano
-            context['vencido'] |= estudante.anoPFE == ano and \
-                estudante.semestrePFE == 1
+            context['vencido'] |= request.user.aluno.anoPFE < ano
+            context['vencido'] |= request.user.aluno.anoPFE == ano and \
+                request.user.aluno.semestrePFE == 1
         else:
-            context['vencido'] |= (estudante.anoPFE <= ano)
+            context['vencido'] |= (request.user.aluno.anoPFE <= ano)
 
         if projeto:
             hoje = datetime.date.today()
@@ -79,14 +77,11 @@ def index_estudantes(request):
                 context['fase_final'] = hoje > banca_final.endDate
 
         # Avaliações de Pares
-        # 31, 'Avaliação de Pares Intermediária'
-        # 32, 'Avaliação de Pares Final'
-        context["fora_fase_feedback_intermediario"],_ ,_ = configuracao_pares_vencida(estudante, 31)
-        context["fora_fase_feedback_final"],_ ,_ = configuracao_pares_vencida(estudante, 32)
+        context["fora_fase_feedback_intermediario"], _, _ = configuracao_pares_vencida(request.user.aluno, 31) # 31, 'Avaliação de Pares Intermediária'
+        context["fora_fase_feedback_final"], _, _ = configuracao_pares_vencida(request.user.aluno, 32) # 32, 'Avaliação de Pares Final'
 
     # Caso professor ou administrador
-    elif usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4:
-        context['professor_id'] = get_object_or_404(Professor, pk=request.user.professor.pk).id
+    elif request.user.tipo_de_usuario in (2, 4):
         context['fase_final'] = True
 
     # Caso parceiro
@@ -96,7 +91,6 @@ def index_estudantes(request):
     context["ano"], context["semestre"] = adianta_semestre(ano, semestre)
     context["limite_propostas"] = get_limite_propostas(configuracao)
 
-    
     return render(request, 'estudantes/index_estudantes.html', context=context)
 
 
@@ -115,7 +109,7 @@ def areas_interesse(request):
         context['estudante'] = request.user.aluno
 
     # caso Professores ou Administrador
-    elif request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:
+    elif request.user.tipo_de_usuario in (2, 4):
         context['mensagem'] = "Você não está cadastrado como estudante."
         context['vencido'] = True
 
@@ -140,18 +134,14 @@ def encontros_marcar(request):
     encontros = Encontro.objects.filter(startDate__gt=hoje)\
         .order_by('startDate')
 
-    usuario = get_object_or_404(PFEUser, pk=request.user.pk)
-
-    if usuario.tipo_de_usuario == 1:  # Estudante
-        estudante = get_object_or_404(Aluno, pk=request.user.aluno.pk)
-
-        projeto = Projeto.objects.filter(alocacao__aluno=estudante).\
+    if request.user.tipo_de_usuario == 1:  # Estudante
+        projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno).\
             distinct().\
             filter(ano=ano).\
             filter(semestre=semestre).last()
 
     # caso Professor ou Administrador
-    elif usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4:
+    elif request.user.tipo_de_usuario in (2, 4):
         projeto = None
     else:
         return HttpResponse("Você não possui conta de estudante.", status=401)
@@ -227,15 +217,15 @@ def encontros_marcar(request):
 
 def estudante_feedback_geral(request, usuario):
     """Para Feedback finais dos Estudantes."""
-    projeto = Projeto.objects.filter(alocacao__aluno=usuario.aluno).order_by("ano", "semestre").last()
-    hoje = datetime.date.today()
-
     mensagem = ""
-    # Caso professor ou administrador
-    if usuario.tipo_de_usuario == 2 or usuario.tipo_de_usuario == 4:
+    
+    if usuario.tipo_de_usuario in (2, 4): # Caso professor ou administrador
         mensagem = "Você está acessando como administrador!<br>Esse formulário fica disponível para os estudantes após as bancas finais."
+        projeto = None
 
-    if usuario.tipo_de_usuario == 1: # Estudante
+    elif usuario.tipo_de_usuario == 1: # Estudante
+        hoje = datetime.date.today()
+        projeto = Projeto.objects.filter(alocacao__aluno=usuario.aluno).order_by("ano", "semestre").last()
         eventos = Evento.objects.filter(startDate__year=projeto.ano)
         if projeto.semestre == 1:
             banca_final = eventos.filter(tipo_de_evento=15, startDate__month__lt=7).last()
@@ -244,9 +234,7 @@ def estudante_feedback_geral(request, usuario):
 
         if not banca_final or (banca_final and hoje <= banca_final.endDate):
             mensagem = "Fora do período de feedback do PFE!"
-            context = {
-                "mensagem": mensagem,
-            }
+            context = {"mensagem": mensagem,}
             return render(request, 'generic.html', context=context)
 
     if request.method == 'POST':
@@ -293,8 +281,7 @@ def estudante_feedback_geral(request, usuario):
 @transaction.atomic
 def estudante_feedback(request):
     """Para Feedback finais dos Estudantes."""
-    usuario = get_object_or_404(PFEUser, pk=request.user.pk)
-    return estudante_feedback_geral(request, usuario)
+    return estudante_feedback_geral(request, request.user)
 
 
 @transaction.atomic
@@ -390,7 +377,7 @@ def avaliacao_pares(request, momento):
         colegas = zip(alocacoes, pares)
 
         context = {
-            'vencido': prazo,
+            "vencido": prazo,
             "colegas": colegas,
             "momento": momento,
             "inicio": inicio,
@@ -399,8 +386,8 @@ def avaliacao_pares(request, momento):
         }
     else:  # Supostamente professores
         context = {
-            'mensagem': "Você não está cadastrado como estudante.",
-            'vencido': prazo,
+            "mensagem": "Você não está cadastrado como estudante.",
+            "vencido": prazo,
             "colegas": [[{"aluno":"Fulano (exemplo)",id:0},None],[{"aluno":"Beltrano (exemplo)",id:0},None]],
             "momento": momento,
             "inicio": inicio,

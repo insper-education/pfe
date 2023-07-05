@@ -51,7 +51,7 @@ def anotacao(request, organizacao_id, anotacao_id=None):  # acertar isso para pk
         else:
             anotacao_obj = Anotacao.create(organizacao)
 
-        anotacao_obj.autor = get_object_or_404(PFEUser, pk=request.user.pk)
+        anotacao_obj.autor = request.user
 
         anotacao_obj.texto = request.POST['texto']
         anotacao_obj.tipo_de_retorno = int(request.POST['tipo_de_retorno'])
@@ -227,7 +227,7 @@ def adiciona_documento_proj(request, projeto_id):
 @permission_required('users.altera_professor', raise_exception=True)
 def parceiro_propostas(request):
     """Lista todas as propostas de projetos."""
-    user = PFEUser.objects.get(pk=request.user.pk)
+    user = request.user
     if user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
         mensagem = "Você não está cadastrado como parceiro de uma organização!"
         context = {
@@ -244,7 +244,7 @@ def parceiro_propostas(request):
         propostas = None
 
     context = {
-        'propostas': propostas,
+        "propostas": propostas,
     }
     return render(request, 'organizacoes/parceiro_propostas.html', context)
 
