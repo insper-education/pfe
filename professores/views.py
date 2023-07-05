@@ -106,7 +106,7 @@ def orientacoes_alocadas(request):
 @permission_required('users.altera_professor', raise_exception=True)
 def coorientacoes_alocadas(request):
     """Mostra detalhes sobre o professor."""
-    coorientacoes = Coorientador.objects.filter(usuario=user)\
+    coorientacoes = Coorientador.objects.filter(usuario=request.user)\
         .order_by("-projeto__ano",
                   "-projeto__semestre",
                   "projeto__titulo")
