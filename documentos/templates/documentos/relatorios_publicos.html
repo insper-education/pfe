@@ -40,11 +40,11 @@
     <table id="RelatoriosTable" class="table table-bordered table-hover table-sm" style="width: auto;">
       <thead class="table-info">
         <tr>
-          <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Projeto</th>
+          <th onclick="w3.sortHTML('#RelatoriosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Projeto</th>
           <th class="text-center">Estudantes</th>
-          <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Orientador</th>
-          <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Organização</th>
-          <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">Período</th>
+          <th onclick="w3.sortHTML('#RelatoriosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Orientador</th>
+          <th onclick="w3.sortHTML('#RelatoriosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Organização</th>
+          <th onclick="w3.sortHTML('#RelatoriosTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">Período</th>
           <th class="text-center">Documento</th>
         </tr>
       </thead>
@@ -55,48 +55,14 @@
 
           <tr class="item">
             <td>
-              {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-                <a href="{% url 'projeto_completo' relatorio.projeto.id %}">
-              {% endif %}
+              {% if relatorio.projeto %}
+                {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                  <a href="{% url 'projeto_completo' relatorio.projeto.id %}">
+                {% endif %}
                 {{relatorio.projeto.get_titulo}}
-                <u><strong style="color:red">
-                {% if relatorio.projeto.avancado %}
-                  [Avançado]
-                {% endif %}
-                {% if relatorio.projeto.proposta.internacional %}
-                  [Internacional]
-                {% endif %}
-                {% if relatorio.projeto.proposta.intercambio %}
-                  [Intercâmbio]
-                {% endif %}
-                {% if relatorio.projeto.time_misto %}
-                  [Time Misto]
-                {% endif %}
-                </strong></u><br>
-              {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-                </a>
-              {% endif %}
-            </td>
-
-            <td>
-              {% for alocacao in relatorio.projeto.alocacao_set.all %}
-                {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-                  <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
-                {% endif %}
-                    &bull; {{alocacao.aluno.user.get_full_name}}
-                {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-                  </a>
-                {% endif %}
-                {% if not forloop.last %}<br>{% endif %}
-              {% endfor %}
-            </td>
-
-            <td>
-              {% if relatorio.projeto.orientador %}
-                {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-                  <a href="{% url 'professor_detail' relatorio.projeto.orientador.id %}">
-                {% endif %}
-                  {{relatorio.projeto.orientador}}
+                {% with projeto=relatorio.projeto %}
+                  {% include "tipo_projeto.html" %}<br>
+                {% endwith %}
                 {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
                   </a>
                 {% endif %}
@@ -104,17 +70,50 @@
             </td>
 
             <td>
-              {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-                <a href="{% url 'organizacao_completo' relatorio.projeto.organizacao.id %}">
+              {% if relatorio.projeto %}
+                {% for alocacao in relatorio.projeto.alocacao_set.all %}
+                  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                    <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
+                  {% endif %}
+                      &bull; {{alocacao.aluno.user.get_full_name}}
+                  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                    </a>
+                  {% endif %}
+                  {% if not forloop.last %}<br>{% endif %}
+                {% endfor %}
               {% endif %}
-                {{ relatorio.projeto.organizacao.nome }}
-              {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-                </a>
+            </td>
+
+            <td>
+              {% if relatorio.projeto and relatorio.projeto.orientador %}
+                {% if relatorio.projeto.orientador %}
+                  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                    <a href="{% url 'professor_detail' relatorio.projeto.orientador.id %}">
+                  {% endif %}
+                    {{relatorio.projeto.orientador}}
+                  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                    </a>
+                  {% endif %}
+                {% endif %}
+              {% endif %}
+            </td>
+
+            <td>
+              {% if relatorio.projeto and relatorio.projeto.organizacao %}
+                {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                  <a href="{% url 'organizacao_completo' relatorio.projeto.organizacao.id %}">
+                {% endif %}
+                  {{ relatorio.projeto.organizacao.nome }}
+                {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                  </a>
+                {% endif %}
               {% endif %}
             </td>
 
             <td style="text-align:center">
+              {% if relatorio.projeto %}
                 {{relatorio.projeto.ano}}.{{relatorio.projeto.semestre}}
+              {% endif %}
             </td>
 
             <td>

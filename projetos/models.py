@@ -962,6 +962,7 @@ class Documento(models.Model):
         (26, 'Notificação de Relatório'),
         (27, 'Apresentação da Banca Final'),
         (28, 'Plano de Orientação'),
+        (128, 'Matéria na Mídia'),
         (255, 'Outros'),
     )
     tipo_de_documento = models.PositiveSmallIntegerField(choices=TIPO_DE_DOCUMENTO, default=0)
@@ -976,9 +977,7 @@ class Documento(models.Model):
     lingua_do_documento = models.PositiveSmallIntegerField(choices=LINGUA_DO_DOCUMENTO, default=0)
 
     def __str__(self):
-        if self.tipo_de_documento == 255:
-            return self.TIPO_DE_DOCUMENTO[-1][1]
-        return str(self.TIPO_DE_DOCUMENTO[self.tipo_de_documento][1])
+        return self.get_tipo_de_documento_display()
 
     @classmethod
     def create(cls):

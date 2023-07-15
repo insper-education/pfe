@@ -332,6 +332,17 @@ def gerar_certificados(request):
     return render(request, 'documentos/gerar_certificados.html', context)
 
 
+
+def materias_midia(request):
+    """Exibe Matérias que houveram na mídia."""
+    relatorios = Documento.objects.filter(tipo_de_documento=128, confidencial=False)
+    context = {
+        'relatorios': relatorios,
+        'MEDIA_URL': settings.MEDIA_URL,
+    }
+    return render(request, 'documentos/materias_midia.html', context)
+
+
 # @login_required
 def relatorios_publicos(request):
     """Exibe relatórios públicos."""

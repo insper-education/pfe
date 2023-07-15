@@ -1,0 +1,20 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 15 de Julho de 2023
+{% endcomment %}
+
+<u><strong style="color:red">
+  {% if projeto.avancado %}
+    [Avançado]
+  {% endif %}
+  {% if projeto.proposta.internacional %}
+    [Internacional]
+  {% endif %}
+  {% if projeto.proposta.intercambio %}
+    [Intercâmbio]
+  {% endif %}
+  {% if projeto.time_misto %}
+    [Time Misto]
+  {% endif %}
+  </strong></u>

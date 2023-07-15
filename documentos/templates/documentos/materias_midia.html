@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 15 de Julho de 2023
+{% endcomment %}
+
+{% block head %}
+
+  {% load static %}
+
+  <style>
+    td {
+      padding: 8px;
+    }
+
+    .short-text { display: none; white-space: nowrap; }
+    .full-text { white-space: nowrap; }
+
+    @media (max-width: 1200px) {
+        .short-text { display: inline-block; }
+        .full-text { display: none; }
+    }
+  </style>
+
+  <script src="{% static 'js/w3.js' %}"></script>
+
+  {% comment %} Para chamar os Tooltips {% endcomment %}
+  <script>{% include "tooltip.js" %}</script>
+
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">Matérias na Mídia</span>
+
+  {% if relatorios %}
+  <div class="table-responsive">
+
+    <table id="RelatoriosTable" class="table table-bordered table-hover table-sm" style="width: auto;">
+      <thead class="table-info">
+        <tr>
+          <th onclick="w3.sortHTML('#RelatoriosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Anotações</th>
+          <th onclick="w3.sortHTML('#RelatoriosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Projeto</th>
+          <th class="text-center">Documento</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for relatorio in relatorios %}
+
+        {% if relatorio.link %}
+
+          <tr class="item">
+
+            <td>
+              {% if relatorio.anotacao %}
+                {{relatorio.anotacao}}
+              {% endif %}
+            </td>
+
+            <td>
+              {% if relatorio.projeto %}
+                {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                  <a href="{% url 'projeto_completo' relatorio.projeto.id %}">
+                {% endif %}
+                {{relatorio.projeto.get_titulo}}
+                {% with projeto=relatorio.projeto %}
+                  {% include "tipo_projeto.html" %}<br>
+                {% endwith %}
+                {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                  </a>
+                {% endif %}
+              {% endif %}
+            </td>
+
+            <td>
+                {% if relatorio.link%}
+                  <a href="{{relatorio.link}}" target="_blank" rel="noopener noreferrer">
+                    <span class="full-text">{{relatorio.link}}</span>
+                    <span class="short-text">Link DSpace</span>
+                  </a><br>
+                {% endif %}
+                {% if relatorio.documento%}
+                  <a href="http://{{request.get_host}}{{MEDIA_URL}}{{relatorio.documento}}" target="_blank" rel="noopener noreferrer">
+                    <span class="full-text">http://{{request.get_host}}{{MEDIA_URL}}{{relatorio.documento}}</span>
+                    <span class="short-text">Link PFE</span>
+                  </a>
+                {% endif %}
+            </td>
+
+          </tr>
+
+          {% endif %}
+
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <p>Não existem documentos disponíveis.</p>
+  {% endif %}
+
+  <br>
+  
+{% endblock %}
