@@ -928,7 +928,7 @@ class Documento(models.Model):
                                  help_text='Documento PDF')
     link = models.URLField("link", max_length=250, null=True, blank=True,
                            help_text='website da organização parceira')
-    anotacao = models.CharField(null=True, blank=True, max_length=50,
+    anotacao = models.CharField(null=True, blank=True, max_length=64,
                                 help_text='qualquer anotação sobre o documento em questão')
     data = models.DateField(null=True, blank=True,
                             help_text='Data do documento')
