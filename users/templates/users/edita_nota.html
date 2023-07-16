@@ -6,9 +6,7 @@
 {% endcomment %}
 
 {% block head %}
-  
   {% load static %}
-  
   {% load l10n %}
   {% load dictionary %}
 
@@ -101,7 +99,7 @@
 {% endblock %}
 
 {% block content %}
-{% localize off %}
+  {% localize off %}
 
   <span class="titulo">
       Edição de Notas
@@ -133,7 +131,6 @@
       <span style="margin-left: 10px;">Observações:</span><br>
       <textarea id="ppf_obs" name="ppf_obs" rows="4" cols="72" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>{% if ppf_obs %}{{ppf_obs.observacoes}}{% endif %}</textarea>
       <br>
-
 
       <b>Avaliação Parcial Individual: <span id="api_media"></span></b>
       <ul>
@@ -342,8 +339,7 @@
           </span>
 
           <script>
-            $(function()
-            {
+            $(function(){
                 $("#afg_conc_{{objetivo|truncatechars:7}}").on("change",function() {
                   $("#afg_nota_{{objetivo|truncatechars:7}}").val(converteC($(this).val()));
                 });
