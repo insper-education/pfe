@@ -92,18 +92,7 @@
                   <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
                     {{alocacao.projeto.get_titulo}}
                   </a>
-                  {% if alocacao.projeto.avancado %}
-                    <span style="color:red">[PFE Avançado]</span>
-                  {% endif %}
-                  {% if alocacao.projeto.proposta.internacional %}
-                    <span style="color:red">[Internacional]</span>
-                  {% endif %}
-                  {% if alocacao.projeto.proposta.intercambio %}
-                    <span style="color:red">[Intercâmbio]</span>
-                  {% endif %}
-                  {% if alocacao.projeto.time_misto %}
-                    <span style="color:red">[Time Misto]</span>
-                  {% endif %}
+                  {% include "tipo_projeto.html" with projeto=alocacao.projeto %}
                 {% endif %}
               {% endfor %}
             {% endif %}

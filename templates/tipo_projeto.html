@@ -4,7 +4,13 @@
     Data: 15 de Julho de 2023
 {% endcomment %}
 
-<u><strong style="color:red">
+{% if projeto.avancado or projeto.proposta.internacional or projeto.proposta.intercambio or projeto.time_misto %}
+
+  {% if com_tipo %}
+    <p><strong>Tipo</strong>: 
+  {% endif %}
+
+  <u><strong style="color:red">
   {% if projeto.avancado %}
     [Avançado]
   {% endif %}
@@ -18,3 +24,9 @@
     [Time Misto]
   {% endif %}
   </strong></u>
+
+  {% if com_tipo %}
+    </p>
+  {% endif %}
+
+{% endif %}

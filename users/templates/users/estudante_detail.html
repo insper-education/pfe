@@ -146,19 +146,7 @@
                 {{alocado.projeto.get_titulo}}
                 ({{alocado.projeto.organizacao.nome}})
                 { {{alocado.projeto.ano}}.{{alocado.projeto.semestre}} }
-                {% if alocado.projeto.avancado %}
-                    <font color="red">[PFE Avançado]</font>
-                {% endif %}
-                {% if alocado.projeto.proposta.internacional %}
-                    <font color="red">[Internacional]</font>
-                {% endif %}
-                {% if alocado.projeto.proposta.intercambio %}
-                    <font color="red">[Intercâmbio]</font>
-                {% endif %}
-                {% if alocado.projeto.time_misto %}
-                    <font color="red">[Time Misto]</font>
-                {% endif %}
-
+                {% include "tipo_projeto.html" with projeto=alocado.projeto %}
             </a>
             <br>
             

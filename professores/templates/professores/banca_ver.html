@@ -35,6 +35,7 @@
       {% else %}
         {{banca.projeto.titulo}}</a>
       {% endif %}
+      {% include "tipo_projeto.html" with projeto=banca.projeto %}
   {% endif %}
   <br>
   {% if banca.projeto.organizacao %}

@@ -296,22 +296,7 @@
           {% endif %}
 
           <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
-
-          <u><strong style="color:red">
-            {% if projeto.avancado %}
-              [Avançado]
-            {% endif %}
-            {% if projeto.proposta.internacional %}
-              [Internacional]
-            {% endif %}
-            {% if projeto.proposta.intercambio %}
-              [Intercâmbio]
-            {% endif %}
-            {% if projeto.time_misto %}
-              [Time Misto]
-            {% endif %}
-          </strong></u><br>
-          
+          {% include "tipo_projeto.html" %}<br>
 
           {% if projeto.organizacao %}
             [<a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}"

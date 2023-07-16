@@ -37,7 +37,8 @@
       <option selected value> -- nenhum projeto -- </option>
       {% for proj in projetos %}
         <option value="{{proj.id}}" {% if proj.id == projeto.id %}selected="selected"{% endif %}>
-          {{proj.get_titulo|slice:":90"}} [{{proj.ano}}.{{proj.semestre}}]{% if proj.avancado %} {Avançado}{% endif %}
+          {{proj.get_titulo|slice:":90"}} ({{proj.ano}}.{{proj.semestre}})
+          {% include "tipo_projeto.html" with projeto=proj %}
         </option>
       {% endfor %}
     </select>

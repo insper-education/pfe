@@ -76,10 +76,7 @@
           {% if projeto.id in projetos_agendados %}data-mensagem="Banca já agendada"{% endif %}
           >
             {{projeto.ano}}.{{projeto.semestre}} ({{projeto.organizacao}}) {{projeto.titulo}}
-            {% if projeto.avancado %}[Avançado]{% endif %}
-            {% if projeto.proposta.internacional %}[Internacional]{% endif %}
-            {% if projeto.proposta.intercambio %}[Intercâmbio]{% endif %}
-            
+            {% include "tipo_projeto.html" %}
           </option>  
         {% endfor %}
       </select><br><br>
@@ -89,6 +86,7 @@
         <label id="titulo" name="titulo">
           {% if banca and banca.projeto %}
             {{banca.projeto.get_titulo}}
+            {% include "tipo_projeto.html" with projeto=banca.projeto %}
           {% else %}
             Titulo de Projeto não definido
           {% endif %}

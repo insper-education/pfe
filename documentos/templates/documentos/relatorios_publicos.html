@@ -60,9 +60,7 @@
                   <a href="{% url 'projeto_completo' relatorio.projeto.id %}">
                 {% endif %}
                 {{relatorio.projeto.get_titulo}}
-                {% with projeto=relatorio.projeto %}
-                  {% include "tipo_projeto.html" %}<br>
-                {% endwith %}
+                {% include "tipo_projeto.html" with projeto=relatorio.projeto %}
                 {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
                   </a>
                 {% endif %}

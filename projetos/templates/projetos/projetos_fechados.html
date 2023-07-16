@@ -156,37 +156,7 @@
           {% endif %}
         </p>
 
-        {% if projeto.avancado or projeto.proposta.internacional or projeto.proposta.intercambio %}
-          <p style="margin-left:1em;">Tipo:
-
-            {% if projeto.avancado %}
-              <font color="red">PFE Avançado</font>
-            {% endif %}
-
-            {% if projeto.avancado and projeto.proposta.internacional %}
-              /
-            {% endif %}
-
-            {% if projeto.proposta.internacional %}
-              <font color="red">Internacional</font>
-            {% endif %}
-            
-            {% if projeto.avancado or projeto.proposta.internacional %}
-              {% if projeto.proposta.intercambio %}
-                /
-              {% endif %}
-            {% endif %}
-
-            {% if projeto.proposta.intercambio %}
-              <font color="red">Intercâmbio</font>
-            {% endif %}
-
-            {% if projeto.time_misto %}
-              <font color="red">Time Misto</font>
-            {% endif %}
-      
-          </p>
-        {% endif %}
+        {% include "tipo_projeto.html" with com_tipo=True %}<br>
 
         <p class="semestre" style="margin-left:1em; display: none;"><b>Semestre:</b>
           {{projeto.ano}}.{{projeto.semestre}}

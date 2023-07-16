@@ -137,9 +137,6 @@ class Projeto(models.Model):
     organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text='Organização parceira que propôs projeto')
 
-    # avancado = models.BooleanField("Avançado", default=False,
-    #                                help_text='Se for um projeto de PFE Avançado')
-
     avancado = models.ForeignKey("self", null=True, blank=True, on_delete=models.SET_NULL,
                                  help_text='projeto original em caso de avançado')
 

@@ -203,21 +203,8 @@
       {{projeto.organizacao}}
     </a><br>
   
-  <u><strong style="color:red">
-    {% if projeto.avancado %}
-      [Avançado]
-    {% endif %}
-    {% if projeto.proposta.internacional %}
-      [Internacional]
-    {% endif %}
-    {% if projeto.proposta.intercambio %}
-      [Intercâmbio]
-    {% endif %}
-    {% if projeto.time_misto %}
-      [Time Misto]
-    {% endif %}
-  </strong></u><br>
-
+  {% include "tipo_projeto.html" with com_tipo=True %}<br>
+  
   <strong>Grupo:</strong>
   <ul>
   {% for alocacao in projeto.alocacao_set.all %}

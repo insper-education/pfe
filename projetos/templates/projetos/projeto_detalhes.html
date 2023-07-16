@@ -46,39 +46,7 @@
 
   <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
 
-  {% if projeto.avancado or projeto.proposta.internacional %}
-    <p><strong>Tipo</strong>:
-
-      {% if projeto.avancado %}
-        <font color="red">PFE Avançado</font>
-      {% endif %}
-
-      {% if projeto.avancado and projeto.proposta.internacional %}
-      /
-      {% endif %}
-
-      {% if projeto.proposta.internacional %}
-        <font color="red">Internacional</font>
-      {% endif %}
-
-      {% if projeto.avancado or projeto.proposta.internacional %}
-        {% if projeto.proposta.intercambio %}
-          /
-        {% endif %}
-      {% endif %}
-
-      {% if projeto.proposta.intercambio %}
-        <font color="red">Intercâmbio</font>
-      {% endif %}
-
-      {% if projeto.time_misto %}
-        <font color="red">Time Misto</font>
-      {% endif %}
-      
-    </p>
-  {% endif %}
-  
-  <br>
+  {% include "tipo_projeto.html" with com_tipo=True %}<br>
 
   {% if projeto.proposta.descricao %}
     <p>
