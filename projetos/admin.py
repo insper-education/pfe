@@ -156,7 +156,7 @@ class EventoFilter(SimpleListFilter):
             ('academicos', 'Acadêmicos'),
             ('coordenacao', 'Coordenação'),
         ]
-        for ano in range(2018, Configuracao.objects.get().ano+1):
+        for ano in range(2018, Configuracao.objects.get().ano+2):
             for semestre in range(1, 3):
                 opcoes.append(("{0}.{1}".format(ano, semestre), "{0}.{1}".format(ano, semestre)))
         return opcoes

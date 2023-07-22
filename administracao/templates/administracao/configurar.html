@@ -20,9 +20,13 @@
     {% csrf_token %}
 
     <span class="titulo">Configurar</span>
-
     <br>
     
+    Copia calendário: 
+    
+    <a class="btn btn-primary" href="{% url 'copia_calendario' %}" onClick="return confirm('Tem certeza que deseja dupplicar todos os eventos de um semestre para o outro?')" >{{configuracao.periodo}} =&gt; {{configuracao.proximo_periodo}}</a>
+    <br><br>
+
     Período Liberado&nbsp;&nbsp;&nbsp;
     &nbsp;&nbsp;&nbsp;<label for="periodo_ano">ano:</label> <input id="periodo_ano" name="periodo_ano" type="number" min="2018" max="9999" step="1" value="{{configuracao.ano}}"/>
     &nbsp;&nbsp;&nbsp;<label for="periodo_semestre">semestre:</label> <input id="periodo_semestre" name="periodo_semestre" type="number" min="1" max="2" step="1" value="{{configuracao.semestre}}"/>
@@ -31,6 +35,7 @@
       <br>(Estudantes conseguirão ver os projetos em que foram alocados a partir da data liberada e do projeto)
       <br>
     </small>
+
     
     <br><hr><br>
     <label for="limite_propostas">Prazo limite para seleção de propostas por estudantes: </label>
@@ -39,7 +44,6 @@
     {% else %}
       <span id="limite_propostas">Data para indicação de interesse nos projetos do próximo semestre pelos estudante não foi definida na agenda.</span>
     {% endif %}
-    {% comment %} <input id="limite_propostas" type = "datetime-local" name="limite_propostas" value="{{configuracao.prazo|date:'Y-m-d\TH:i:s'}}"> {% endcomment %}
     <br>
     <input type="checkbox" id="liberadas_propostas" name="liberadas_propostas" {% if configuracao.liberadas_propostas %}checked{% endif %}>
     <label for="liberadas_propostas"> Propostas Liberadas para Estudantes</label>

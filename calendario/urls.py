@@ -22,6 +22,10 @@ urlpatterns = [
          views.calendario_limpo,
          name='calendario_limpo'),
 
+     path('copia_calendario/',
+         views.copia_calendario,
+         name='copia_calendario'),
+
     path('events/<int:event_id>',
          views.export_calendar,
          name="event_ics_export"),

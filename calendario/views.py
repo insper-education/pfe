@@ -15,7 +15,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.sites.models import Site
 from django.db import transaction
 from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 
 from users.models import PFEUser, Aluno
 
@@ -243,3 +243,30 @@ def remove_evento(request):
     evento.delete()
 
     return JsonResponse({"atualizado": True,})
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def copia_calendario(request):
+    """Copia eventos de um semestre para o outro."""
+    configuracao = get_object_or_404(Configuracao)
+
+    if configuracao.semestre == 1:
+        eventos = Evento.objects.filter(startDate__month__lte=7, startDate__year=configuracao.ano)
+    else:
+        eventos_ano = Evento.objects.filter(startDate__month__gt=7, startDate__year=configuracao.ano)
+        eventos_prox_ano = Evento.objects.filter(startDate__month=1, startDate__year=configuracao.ano+1)
+        eventos = eventos_ano | eventos_prox_ano
+
+    for evento in eventos:
+        evento.pk = None
+        evento.startDate += datetime.timedelta(days=182)
+        evento.endDate += datetime.timedelta(days=182)
+
+        # Verifica se não está criando outra duplicata
+        if not Evento.objects.filter(startDate=evento.startDate, endDate=evento.endDate,
+                                     location=evento.location, tipo_de_evento=evento.tipo_de_evento,
+                                     descricao=evento.descricao, observacao=evento.observacao).exists():
+            evento.save()
+
+    return redirect('calendario')

@@ -587,6 +587,19 @@ class Configuracao(models.Model):
 
     def coordenador_email(self):
         return quote(self.coordenador)
+    
+    def periodo(self):
+        return str(self.ano) + '.' + str(self.semestre)
+    
+    def proximo_periodo(self):
+        if self.semestre == 1:
+            semestre = 2
+            ano = self.ano
+        else:
+            ano = self.ano + 1
+            semestre = 1
+
+        return str(ano) + '.' + str(semestre)
 
 class ConfiguracaoAdmin(admin.ModelAdmin):
     """Usado para configurar a classe Configuracao."""
