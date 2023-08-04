@@ -121,10 +121,11 @@ def get_response(file, path, request):
 def le_arquivo(request, local_path, path):
     """Lê os arquivos pela URL."""
     file_path = os.path.abspath(local_path)
+    print(file_path)
     if ".." in file_path:
         raise PermissionDenied
-    if "\\" in file_path:
-        raise PermissionDenied
+    # if "\\" in file_path:   # Protecao, porem nao funciona no windows
+    #     raise PermissionDenied
     if os.path.exists(file_path):
         documento = local_path[len(settings.BASE_DIR) + len(settings.MEDIA_URL):]
 

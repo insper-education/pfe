@@ -1,10 +1,16 @@
-#Instalar postgres
+#Instalar postgres (Mac)
 brew install postgresql@10
 Se necessário:  initdb --locale=C -E UTF-8 /usr/local/var/postgres
 
+#Instalar postgres (Windows)
+https://www.postgresql.org/download/windows/
+set path para : "C:\Program Files\PostgreSQL\10\bin"
+
 #criar
 createuser pfe
+  createuser -U postgres -P -s -e pfe (windows)
 createdb pfe 
+  createdb -U postgres pfe (windows)
 
 #starta servidor
 brew services start postgresql@10
@@ -35,7 +41,7 @@ dropdb pfe
 createdb pfe 
 psql -U pfe -h localhost < backup.sql
 
-# Backup pelo Django
+# Backup pelo Django (para windows soh consegui assim)
 python3 manage.py dumpdata --natural-primary --natural-foreign > dump.json
 python3 manage.py loaddata out.json
 
