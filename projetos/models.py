@@ -690,6 +690,7 @@ class Evento(models.Model):
         (15, 'Bancas Finais', 'yellow'),
         (16, 'Apresentação formal final na organização', 'burlywood'),
         (17, 'Apresentação opcional intermediária na organização', 'Khaki'),
+        (18, 'Probation', 'LightSteelBlue'),
 
         (20, 'Relato quinzenal (Individual)', 'aquamarine'),
         (21, 'Entrega de Relatório Preliminar (Grupo)', 'lightblue'),  # antigo relat. de planej.
