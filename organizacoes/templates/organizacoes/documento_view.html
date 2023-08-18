@@ -5,17 +5,21 @@
 {% endcomment %}
 
 <form id="meuForm" method="post"
-      {% if projeto %}
-        action="{% url 'adiciona_documento_proj' projeto.id %}"
+      {% if documento_id %}
+        action="{% url 'adiciona_documento' organizacao.id projeto.id tipo documento_id %}"
+      {% elif tipo %}
+        action="{% url 'adiciona_documento' organizacao.id projeto.id tipo %}"
+      {% elif projeto %}
+        action="{% url 'adiciona_documento' organizacao.id projeto.id %}"
       {% else %}
-        action="{% url 'adiciona_documento_org' organizacao.id %}"
+        action="{% url 'adiciona_documento' organizacao.id %}"
       {% endif %}
       enctype="multipart/form-data">
 
   {% csrf_token %}
 
   <div class="modal-header">
-    <h5 id="documentacao" class="modal-title">Documento em: {{ organizacao.nome }}</h5>    
+    <h5 id="documentacao" class="modal-title">{% if documentos %}Editar{% else %}Adicionar{% endif %} Documento</h5>    
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -26,31 +30,77 @@
     <label for="data">Data: </label> <input id="data" class="form-control" type="date" name="data" value="{{data|date:'Y-m-d'}}"><br>
     
     <label for="arquivo">Documento:</label> 
-    <input required id="arquivo" type="file" name="arquivo" accept="text/plain, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation, image/*, video/mp4, video/x-m4v, video/webm, video/x-matroska, video/*, .mkv">
-    <br><br>
+    <input required id="arquivo" type="file" name="arquivo" 
+    accept="text/plain, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation, image/*, video/mp4, video/x-m4v, video/webm, video/x-matroska, video/*, .mkv">
+    {% if documentos %}
+      <input type="hidden" id="documentos" name="documentos" value="{{documento_id}}"/>
+      <br><small>Arquivo atual: {% include "documentos.html" %}</small>
+    {% else %}<br>
+    {% endif %}
+    <br>
     
     <label for="link">Link:</label> <input required type="text" size="73" maxlength="73" id="link" name="link" placeholder="https://"><br>
     <br>
 
     <label for="projeto">Projeto:</label>
-    <select id="projeto" name="projeto" class="form-control">
-      <option selected value> -- nenhum projeto -- </option>
-      {% for proj in projetos %}
-        <option value="{{proj.id}}" {% if proj.id == projeto.id %}selected="selected"{% endif %}>
-          {{proj.get_titulo|slice:":90"}} ({{proj.ano}}.{{proj.semestre}})
-          {% include "tipo_projeto.html" with projeto=proj %}
-        </option>
-      {% endfor %}
-    </select>
+    {% if projeto %}
+      <input type="hidden" id="projeto" name="projeto" value="{{projeto.id}}"/>
+      <a href="{% url 'projeto_completo' projeto.id %}">
+        {{projeto.get_titulo}} ({{projeto.ano}}.{{projeto.semestre}})
+      </a><br>
+    {% else %}
+      <select id="projeto" name="projeto" class="form-control">
+        <option selected value> -- nenhum projeto -- </option>
+        {% for proj in projetos %}
+          <option value="{{proj.id}}" {% if proj.id == projeto.id %}selected="selected"{% endif %}>
+            {{proj.get_titulo|slice:":90"}} ({{proj.ano}}.{{proj.semestre}})
+            {% include "tipo_projeto.html" with projeto=proj %}
+          </option>
+        {% endfor %}
+      </select>
+    {% endif %}
+
+    <br>
+    <label for="organizacao">Organização:</label>
+    {% if projeto %}
+      <input type="hidden" id="organizacao" name="organizacao" value="{{projeto.organizacao.id}}"/>
+      <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
+      {{projeto.organizacao.nome}}
+      </a><br>
+    {% elif organizacao %}
+      <input type="hidden" id="organizacao" name="organizacao" value="{{organizacao.id}}"/>
+      <a href="{% url 'organizacao_completo' organizacao.id %}">
+        {{organizacao.nome}}
+      </a><br>
+    {% else %}
+      <select id="organizacao" name="organizacao" class="form-control">
+        <option selected value> -- nenhuma organização -- </option>
+        {% for org in organizacoes %}
+          <option value="{{org.id}}" {% if org.id == organizacao.id %}selected="selected"{% endif %}>
+            {{org.nome|slice:":90"}}
+          </option>
+        {% endfor %}
+      </select>
+    {% endif %}
 
     <br>
     <label for="tipo_de_documento">Tipo de documento:</label>
-    <select id="tipo_de_documento" name="tipo_de_documento" class="form-control" required="required" >
-      <option disabled selected value> -- selecione tipo de documento -- </option>
+    {% if tipo %}
+      <input type="hidden" id="tipo_de_documento" name="tipo_de_documento" value="{{tipo}}"/>
       {% for retorno in TIPO_DE_DOCUMENTO %}
-        <option value="{{retorno.0}}">{{retorno.1}}</option>
-      {% endfor %}
-    </select>
+          {% if retorno.0|slugify == tipo %}{{retorno.1}}{% endif %}
+        {% endfor %}
+      <br>
+    {% else %}
+      <select id="tipo_de_documento" name="tipo_de_documento" class="form-control" required="required" >
+        <option disabled selected value> -- selecione tipo de documento -- </option>
+        {% for retorno in TIPO_DE_DOCUMENTO %}
+          <option value="{{retorno.0}}" {% if retorno.0 == tipo %}selected="selected"{% endif %}>
+            {{retorno.1}}
+          </option>
+        {% endfor %}
+      </select>
+    {% endif %}
 
     <br>
     <label for="lingua_do_documento">Língua do documento:</label>

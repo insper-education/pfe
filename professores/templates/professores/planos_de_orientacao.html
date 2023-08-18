@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 18 de Agosto de 2023
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load certificado_banca %}
+  <script>{% include "tooltip.js" %}</script>
+
+  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
+  {% include "reload.html" %}
+  
+{% endblock %}
+
+{% block content %}
+
+    <br>
+    <h4>Planos de Orientação</h4>
+    <ul>
+    {% for projeto in projetos %}
+
+      <p>
+
+        {% for documento in projeto.get_planos_de_orientacao %}
+          <a {% if projeto.ano != configuracao.ano %}style="color:lightgray"
+             {% else %}style="color:green"
+             {% endif %}
+          data-toggle="tooltip" data-html="true" animation="true" title="Entregue">&#128463;</a>
+
+          {% comment %} (28, 'Plano de Orientação'), {% endcomment %}
+          <a {% if projeto.ano != configuracao.ano %}style="color:lightgray"{% endif %} 
+           class="open-documento"
+           href="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 documento.id %}"
+           data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 documento.id %}">
+            {{projeto.ano}}.{{projeto.semestre}} -
+            {{projeto.get_titulo}}
+            ({{projeto.organizacao.nome}})
+          </a>
+        {% empty %}
+          <a {% if projeto.ano != configuracao.ano %}style="color:lightgray"
+             {% else %}style="color:red"
+             {% endif %}
+          data-toggle="tooltip" data-html="true" animation="true" title="Não entregue">&#128460;</a>
+
+          {% comment %} (28, 'Plano de Orientação'), {% endcomment %}
+          <a {% if projeto.ano != configuracao.ano %}style="color:lightgray"{% endif %} 
+           class="open-documento"
+           href="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 %}"
+           data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 %}">
+            {{projeto.ano}}.{{projeto.semestre}} -
+            {{projeto.get_titulo}}
+            ({{projeto.organizacao.nome}})
+          </a>
+        {% endfor %}
+
+
+      </p>
+
+    {% empty %}
+      Orientações não encontradas
+    {% endfor %}
+    </ul>
+
+    {% include "documento-modal.html" %}
+
+{% endblock %}

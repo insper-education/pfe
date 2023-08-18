@@ -95,7 +95,7 @@ def anotacao(request, organizacao_id, anotacao_id=None):  # acertar isso para pk
 
 
 # Adiciona um novo documento na base de dados
-def cria_documento(request, organizacao):
+def cria_documento(request):
 
     projeto = None
     projeto_id = request.POST.get("projeto", "")
@@ -103,7 +103,7 @@ def cria_documento(request, organizacao):
         projeto = Projeto.objects.get(id=projeto_id)
 
     data = datetime.date.today()
-    if 'data' in request.POST:
+    if "data" in request.POST:
         try:
             data = dateutil.parser\
                 .parse(request.POST['data'])
@@ -138,10 +138,15 @@ def cria_documento(request, organizacao):
 
     confidencial = "confidencial" in request.POST and request.POST["confidencial"] == "true"
 
-    # Criando documento na base de dados
-    documento = Documento.create()
+    if "documentos" in request.POST and len(request.POST["documentos"])>0:
+        # Buscando documento na base de dados
+        documento = get_object_or_404(Documento, id=request.POST["documentos"])
+    else:
+        # Criando documento na base de dados
+        documento = Documento.create()
 
-    documento.organizacao = organizacao
+    if "organizacao" in request.POST:
+        documento.organizacao = get_object_or_404(Organizacao, id=request.POST["organizacao"])
     documento.projeto = projeto
     documento.tipo_de_documento = tipo_de_documento
     documento.data = data
@@ -167,55 +172,35 @@ def cria_documento(request, organizacao):
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
-def adiciona_documento_org(request, organizacao_id):
-    """Cria um anotação para uma organização parceira."""
+def adiciona_documento(request, organizacao_id, projeto_id=None, tipo_id=None, documento_id=None):
+    """Cria um documento."""
     organizacao = get_object_or_404(Organizacao, id=organizacao_id)
+    projeto = Projeto.objects.filter(id=projeto_id).last()
 
     if request.method == 'POST':
-        erro = cria_documento(request, organizacao)
+        erro = cria_documento(request)
         if erro:
             return HttpResponseBadRequest(erro)
+        if documento_id:
+            return redirect('planos_de_orientacao')
+        elif projeto:
+            return redirect('projeto_completo', projeto_id)
         return redirect('organizacao_completo', org=organizacao.id)
-
-    documento = None
-    projetos = Projeto.objects.filter(organizacao=organizacao)
-
-    context = {
-        'organizacao': organizacao,
-        'TIPO_DE_DOCUMENTO': Documento.TIPO_DE_DOCUMENTO,
-        'data': datetime.date.today(),
-        'documento': documento,
-        "projetos": projetos,
-    }
-
-    return render(request,
-                  'organizacoes/documento_view.html',
-                  context=context)
-
-@login_required
-@transaction.atomic
-@permission_required("users.altera_professor", raise_exception=True)
-def adiciona_documento_proj(request, projeto_id):
-    """Cria um anotação para um projeto."""
-    projeto = get_object_or_404(Projeto, id=projeto_id)
-    organizacao = projeto.organizacao
-
-    if request.method == 'POST':
-        erro = cria_documento(request, organizacao)
-        if erro:
-            return HttpResponseBadRequest(erro)
-        return redirect('projeto_completo', projeto_id)
-
-    documento = None
-    projetos = Projeto.objects.filter(organizacao=organizacao)
+        
 
     context = {
         "organizacao": organizacao,
         "TIPO_DE_DOCUMENTO": Documento.TIPO_DE_DOCUMENTO,
         "data": datetime.date.today(),
-        "documento": documento,
-        "projetos": projetos,
+        "documento": None,
+        "projetos": Projeto.objects.filter(organizacao=organizacao),
         "projeto": projeto,
+        "tipo": tipo_id,
+        "organizacoes": Organizacao.objects.all(),
+        "documentos": Documento.objects.filter(id=documento_id),
+        "documento_id": documento_id,
+        "MEDIA_URL": settings.MEDIA_URL,
+
     }
 
     return render(request,

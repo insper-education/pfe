@@ -238,6 +238,13 @@ class Projeto(models.Model):
         return zip(eventos, relatos, avaliados)
 
     @property
+    def get_planos_de_orientacao(self):
+        """Retorna todos os planos de orientação do projeto."""
+        # (28, 'Plano de Orientação'),
+        documentos = Documento.objects.filter(tipo_de_documento=28, projeto=self)
+        return documentos
+
+    @property
     def has_relatos(self):
         """Retorna se houver algum relato quinzenal para o projeto."""            
         return Relato.objects.filter(alocacao__projeto=self).exists()

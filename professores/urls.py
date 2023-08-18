@@ -130,9 +130,13 @@ urlpatterns = [
          views.relatos_quinzenais_todos,
          name='relatos_quinzenais_todos'),
 
-    path('relatos_quinzenais/',
+    path("relatos_quinzenais/",
          views.relatos_quinzenais,
          name='relatos_quinzenais'),
+
+     path("planos_de_orientacao/",
+         views.planos_de_orientacao,
+         name='planos_de_orientacao'),
 
     path('resultado_meus_projetos/',
          views.resultado_meus_projetos,
@@ -142,15 +146,15 @@ urlpatterns = [
          views.resultado_projetos,
          name='resultado_projetos'),
 
-    path('resultado_projetos/<str:edicao>',
+    path("resultado_projetos/<str:edicao>",
          views.resultado_projetos_edicao,
          name='resultado_projetos_edicao'),
 
-    path('todos_professores/',
+    path("todos_professores/",
          views.todos_professores,
          name='todos_professores'),
 
-    path('ver_pares/<int:alocacao_id>/<str:momento>',
+    path("ver_pares/<int:alocacao_id>/<str:momento>",
          views.ver_pares,
          name='ver_pares'),
 

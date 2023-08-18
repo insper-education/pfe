@@ -1905,3 +1905,18 @@ def ver_pares(request, alocacao_id, momento):
     }
 
     return render(request, 'professores/ver_pares.html', context)
+
+
+@login_required
+@permission_required('users.altera_professor', raise_exception=True)
+def planos_de_orientacao(request):
+    """Mostra os planos de orientação do professor."""
+    projetos = Projeto.objects.filter(orientador=request.user.professor)\
+        .order_by("-ano", "-semestre", "titulo")
+    context = {
+        "projetos": projetos,
+        "configuracao": get_object_or_404(Configuracao),
+    }
+    return render(request, 'professores/planos_de_orientacao.html', context=context)
+
+
