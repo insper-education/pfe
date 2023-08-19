@@ -34,31 +34,56 @@
   <div class="atualizar">
 
     <table>
-      
+
       {% for projeto in projetos %}
         <tr>
-          <th>
+          <th style="text-align: center">
             {% for documento in projeto.get_planos_de_orientacao %}
               
               {% if documento.documento and documento.link %}
                 <a style="color:green"
-                data-toggle="tooltip" data-html="true" animation="true" title="Entregue" href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer"><font size="6">&#128463;</font></a>
+                 data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
+                 class="open-documento"
+                 href="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 documento.id %}"
+                 data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 documento.id %}">
+                  <font size="6">&#128463;</font>
+                </a>
                 <a style="color:green"
-                data-toggle="tooltip" data-html="true" animation="true" title="Entregue" href="{{documento.link}}" target="_blank" rel="noopener noreferrer"><font size="6">&#128279;</font></a>
+                 data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
+                 class="open-documento"
+                 href="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 documento.id %}"
+                 data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 documento.id %}">
+                  <font size="6">&#128279;</font>
+                </a>
               {% else %}
                 {% if documento.documento %}
                   <a style="color:green"
-                  data-toggle="tooltip" data-html="true" animation="true" title="Entregue" href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer"><font size="6">&#128463;</font></a>
+                   data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
+                   class="open-documento"
+                   href="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 documento.id %}"
+                   data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 documento.id %}">
+                    <font size="6">&#128463;</font>
+                  </a>
                 {% endif %}
                 {% if documento.link %}
                   <a style="color:green"
-                  data-toggle="tooltip" data-html="true" animation="true" title="Entregue" href="{{documento.link}}" target="_blank" rel="noopener noreferrer"><font size="6">&#128279;</font></a>
+                   data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
+                   class="open-documento"
+                   href="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 documento.id %}"
+                   data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 documento.id %}">
+                    <font size="6">&#128279;</font>
+                  </a>
                 {% endif %}
               {% endif %}
 
             {% empty %}
               <a style="color:red"
-              data-toggle="tooltip" data-html="true" animation="true" title="Não entregue"><font size="6">&#128460;</font></a>
+               data-toggle="tooltip" data-html="true" animation="true" title="Não entregue"
+               class="open-documento"
+               href="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 %}"
+               data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 %}">
+                <font size="6">&#128460;</font>
+              </a>
             {% endfor %}
 
 
@@ -105,6 +130,8 @@
 
     window.onload = carrega_site
   </script>
+
+  {% include "documento-modal.html" %}
 
   {% include "edicoes_ajax.html" %}
 
