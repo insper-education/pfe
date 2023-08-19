@@ -1872,24 +1872,14 @@ def objetivos_rubricas(request):
 def ver_pares(request, alocacao_id, momento):
     """Permite visualizar a avaliação de pares."""
 
-    configuracao = get_object_or_404(Configuracao)
+    alocacao_de = get_object_or_404(Alocacao, pk=alocacao_id)
 
-    user = get_object_or_404(Alocacao, pk=alocacao_id)
-    estudante = Aluno.objects.get(pk=user.aluno.pk)
-
-    # Avaliações de Pares
-    # 31, 'Avaliação de Pares Intermediária'
-    # 32, 'Avaliação de Pares Final'
     if momento=="intermediaria":
         tipo=0
     else:
         tipo=1
 
-    projeto = Projeto.objects\
-        .filter(alocacao__aluno=estudante, ano=configuracao.ano, semestre=configuracao.semestre).first()
-    
-    alocacao_de = Alocacao.objects.get(projeto=projeto, aluno=estudante)
-    alocacoes = Alocacao.objects.filter(projeto=projeto).exclude(aluno=estudante)
+    alocacoes = Alocacao.objects.filter(projeto=alocacao_de.projeto).exclude(aluno=alocacao_de.aluno)
     
     pares = []
     for alocacao in alocacoes:
@@ -1899,12 +1889,12 @@ def ver_pares(request, alocacao_id, momento):
     colegas = zip(alocacoes, pares)
 
     context = {
-        "estudante": estudante,
+        "estudante": alocacao_de.aluno,
         "colegas": colegas,
-        'momento': momento,
+        "momento": momento,
     }
 
-    return render(request, 'professores/ver_pares.html', context)
+    return render(request, "professores/ver_pares.html", context)
 
 
 @login_required
