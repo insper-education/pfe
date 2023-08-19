@@ -9,8 +9,6 @@
     <br>
     <a href="{% url 'avisos_listar' %}"><h5>Agenda do PFE</h5></a>
     <a href="{% url 'emails' %}"><h5>Listas de e-mails</h5></a>
-    <a href="{% url 'relatos_quinzenais_todos' %}"><h5>Relatos Quinzenais</h5></a>
-    <a href="{% url 'avaliacoes_pares_todas' %}"><h5>Avaliações de Pares</h5></a>
 
     <hr>
     <h5>Agendamentos</h5>
@@ -22,6 +20,9 @@
     <hr>
     <h5>Informes</h5>
     <ul>
+        <li><a href="{% url 'planos_de_orientacao_todos' %}">Planos de Orientação</a></li>
+        <li><a href="{% url 'relatos_quinzenais_todos' %}">Relatos Quinzenais</a></li>
+        <li><a href="{% url 'avaliacoes_pares_todas' %}">Avaliações de Pares</a></li>
         <li><a href="{% url 'informe_bancas' 1 %}">Bancas Intermediárias</a></li>
         <li><a href="{% url 'informe_bancas' 0 %}">Bancas Finais</a></li>
     </ul>

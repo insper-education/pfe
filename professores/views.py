@@ -1920,3 +1920,43 @@ def planos_de_orientacao(request):
     return render(request, 'professores/planos_de_orientacao.html', context=context)
 
 
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def planos_de_orientacao_todos(request):
+    """Formulários com os projetos e planos de orientação dos professores orientadores."""
+
+    if request.is_ajax():
+
+        if 'edicao' in request.POST:
+
+            projetos = Projeto.objects.all()
+
+            edicao = request.POST['edicao']
+            if edicao != 'todas':
+                periodo = request.POST['edicao'].split('.')
+                ano = int(periodo[0])
+                semestre = int(periodo[1])
+                projetos = projetos.filter(ano=ano, semestre=semestre)
+                
+            context = {
+                "administracao": True,
+                "projetos": projetos,
+                "MEDIA_URL": settings.MEDIA_URL,
+
+            }
+
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+
+    else:
+
+        edicoes, _, _ = get_edicoes(Projeto)
+        context = {
+                "administracao": True,
+                "edicoes": edicoes,
+                "MEDIA_URL": settings.MEDIA_URL,
+
+            }
+
+    return render(request, 'professores/planos_de_orientacao_todos.html', context=context)
