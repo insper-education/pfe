@@ -33,6 +33,11 @@
 
   <div class="atualizar">
 
+    <script>
+      var submetidos = {};
+      var ausentes = {};
+    </script>
+
     <table>
 
       {% for projeto in projetos %}
@@ -40,6 +45,10 @@
           <th style="text-align: center">
             {% for documento in projeto.get_planos_de_orientacao %}
               
+              <script>
+                submetidos[{{projeto.id}}] = true;
+              </script>
+
               {% if documento.documento and documento.link %}
                 <a style="color:green"
                  data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
@@ -77,6 +86,11 @@
               {% endif %}
 
             {% empty %}
+
+              <script>
+                ausentes[{{projeto.id}}] = true;
+              </script>
+
               <a style="color:red"
                data-toggle="tooltip" data-html="true" animation="true" title="Não entregue"
                class="open-documento"
@@ -85,8 +99,6 @@
                 <font size="6">&#128460;</font>
               </a>
             {% endfor %}
-
-
             
           </th>
 
@@ -107,6 +119,18 @@
       {% endfor %}
     </table>
 
+
+    <p>&nbsp;</p>
+    <strong>Número de Planos de Orientação:</strong><br>
+    Submetidos: <span id="submetidos"></span><br>
+    Ausentes: <span id="ausentes"></span><br>
+    <script>
+      tsubmetidos = Object.keys(submetidos).length;
+      tausentes = Object.keys(ausentes).length
+      $("#submetidos").html(tsubmetidos.toString()+" ("+(100*(tsubmetidos/(tsubmetidos+tausentes))).toFixed(2)+"%)");
+      $("#ausentes").html(tausentes.toString()+" ("+(100*(tausentes/(tsubmetidos+tausentes))).toFixed(2)+"%)");
+    </script>
+    
     <script>
       function carrega_pagina(){
       };
