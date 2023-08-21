@@ -131,8 +131,10 @@ def registro_usuario(request, user=None):
         else:
             return ("Erro na recuperação do e-mail.", 401, None)
 
-        if PFEUser.objects.exclude(pk=usuario.pk).filter(username=username).exists():
-            return ('Username "%s" já está sendo usado.' % username, 401, None)
+        #if PFEUser.objects.exclude(pk=usuario.pk).filter(username=username).exists():
+        already_exist = PFEUser.objects.filter(username__iexact=username)
+        if already_exist.exists():
+            return ('Username "%s" já está sendo usado.' % already_exist.last().username, 401, None)
 
         usuario.username = username
 
