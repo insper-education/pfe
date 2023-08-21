@@ -22,7 +22,7 @@
   <div class="atualizar">
 
     {% include "tabelas_top.html" with tabela="Parceiros" cabecalhos=cabecalhos %}
-      {% for parceiro in parceiros %} 
+      {% for parceiro in parceiros %}
         <tr class="item" {% if not parceiro.user.is_active %} style="color: lightgrey;" {% endif %}>
           <th scope="row" data-sort="{{parceiro.user.get_full_name}}">
             <a href="{% url 'parceiro_detail' parceiro.id %}"

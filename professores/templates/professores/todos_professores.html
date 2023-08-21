@@ -17,16 +17,20 @@
 
   {% include "tabelas_top.html" with tabela="Professores" cabecalhos=cabecalhos %}
     {% for professor in professores %} 
-      <tr class="item">
+      <tr class="item" {% if not professor.user.is_active %} style="color: lightgrey;" {% endif %}>
         <th scope="row" data-sort="{{professor.user.get_full_name}}">
           {% if professor.user.membro_comite %}<u>{% endif %}
-            <a href="{% url 'professor_detail' professor.id %}">
+            <a href="{% url 'professor_detail' professor.id %}"
+            {% if not professor.user.is_active %} style="color: LightBlue;" {% endif %}>
               {{professor.user.get_full_name}}
             </a>
           {% if professor.user.membro_comite %}</u>{% endif %}
         </th>
         <td>
-          <a href="mailto:{{professor.user.email}}"> &lt;{{professor.user.email}}&gt;</a>
+          <a href="mailto:{{professor.user.email}}"
+          {% if not professor.user.is_active %} style="color: LightBlue;" {% endif %}>
+            &lt;{{professor.user.email}}&gt;
+          </a>
         </td>
         <td class="text-center">
           {{professor.user.membro1.count|add:professor.user.membro2.count|add:professor.user.membro3.count|stringformat:"02d" }}
@@ -36,7 +40,10 @@
         </td>
         <td>
           {% if professor.lattes %}
-            <a rel="noopener noreferrer" target="_blank" href="{{professor.lattes}}"> {{professor.lattes}} </a>
+            <a rel="noopener noreferrer" target="_blank" href="{{professor.lattes}}"
+            {% if not professor.user.is_active %} style="color: LightBlue;" {% endif %}>
+              {{professor.lattes}}
+            </a>
           {% endif %}
         </td>
       </tr>
