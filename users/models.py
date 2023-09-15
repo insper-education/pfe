@@ -35,6 +35,7 @@ class PFEUser(AbstractUser):
     # username
     # first_name
     # last_name
+    # Tambem tem: get_full_name()
     # email
     # is_active
     # add additional fields in here
@@ -257,12 +258,6 @@ class Aluno(models.Model):
     # Usar get_curso_display em vez disso
     def get_curso_completo(self):
         """Retorna em string com o nome completo do curso."""
-        # if self.curso == "C":
-        #     return "Engenharia de Computação"
-        # if self.curso == "M":
-        #     return "Engenharia Mecânica"
-        # if self.curso == "X":
-        #     return "Engenharia Mecatrônica"
         if self.curso2:
             return str(self.curso2)
         return "Sem curso"

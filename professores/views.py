@@ -27,7 +27,7 @@ from projetos.models import Banca, Evento, Encontro
 from projetos.models import Projeto, Configuracao, Organizacao
 from projetos.support import converte_letra, converte_conceito
 from projetos.support import get_objetivos_atuais
-from projetos.messages import email, render_message
+from projetos.messages import email, render_message, htmlizar
 
 from .support import professores_membros_bancas, falconi_membros_banca
 from .support import editar_banca
@@ -1553,12 +1553,6 @@ def relato_avaliar(request, projeto_id, evento_id):
                                     momento__lte=evento.endDate + datetime.timedelta(days=1)).order_by('momento').last() )
                                     # O datetime.timedelta(days=1) é necessário pois temos de checar passadas 24 horas, senão valo começo do dia
 
-    # SE UM DIA DECIDIR AVALIAR OS RELATOS POR OBJETIVOS DE APRENDIZAGEM
-    # objetivos = get_objetivos_atuais()
-    # objetivos = objetivos.filter(avaliacao_aluno=True)
-    # avaliador = projeto.orientador.user
-    # tipo_de_avaliacao = 200 + ordenacao  # (200, "Relato Quinzenal 1"),
-
     # Só o próprio orientador pode editar uma avaliação
     if request.user == projeto.orientador.user:
         editor = True
@@ -1572,58 +1566,62 @@ def relato_avaliar(request, projeto_id, evento_id):
             # edicao = request.POST['op']
             avaliacoes = dict(filter(lambda elem: elem[0][:3] == "op.", request.POST.items()))
 
-            for i, aval in enumerate(avaliacoes):
+            avaliacao_negativa = False
+            for aval in avaliacoes:
 
                 relato_id = int(aval.split('.')[1])
                 relato = get_object_or_404(Relato, pk=relato_id)
 
-                obj_nota = request.POST[aval]
+                obj_nota = float(request.POST[aval])  # Seria melhor decimal.
                 
-                relato.avaliacao = float(obj_nota)  # Seria melhor decimal.
+                relato.avaliacao = obj_nota
+
+                if( -0.5 < obj_nota < 0.5 ): # Para testar se zero (preciso melhorar isso)
+                    avaliacao_negativa = True
+
                 relato.save()
 
             observacoes = request.POST["observacoes"]
 
             if observacoes != "":
 
-                (obs, _created) = Observacao.objects.get_or_create(projeto=projeto,
+                (obs, _) = Observacao.objects.get_or_create(projeto=projeto,
                                                                 avaliador=request.user,
                                                                 momento=evento.endDate,  # data marcada do fim do evento
                                                                 tipo_de_avaliacao=200)  # (200, "Relato Quinzenal"),
                 obs.observacoes = observacoes
                 obs.save()
 
+            # Dispara aviso a coordenação caso alguma observação ou estudante com dificuldade
+            if avaliacao_negativa and (observacoes != ""):
+
                 coordenacoes = PFEUser.objects.filter(coordenacao=True)
-                email_coordenacoes = []
+                email_dest = []
                 for coordenador in coordenacoes:
-                    email_coordenacoes.append(str(coordenador.email))
+                    email_dest.append(str(coordenador.email))
+                email_dest.append(str(projeto.orientador.user.email))
 
                 # Manda mensagem para coordenadores
-                email("Anotação Quinzenal", email_coordenacoes, observacoes+"<br><br>"+str(request.user))
-
-            # objetivos_possiveis = len(objetivos)
-            # julgamento = [None]*objetivos_possiveis
-            
-            # avaliacoes = dict(filter(lambda elem: elem[0][:9] == "objetivo.", request.POST.items()))
-
-            # for i, aval in enumerate(avaliacoes):
-
-            #     pk_objetivo = int(aval.split('.')[1])
-            #     objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=pk_objetivo)
-
-            #     (julgamento[i], _created) = Avaliacao2.objects.get_or_create(alocacao=relato.alocacao,
-            #                                                                  tipo_de_avaliacao=tipo_de_avaliacao,
-            #                                                                  objetivo=objetivo)
-
-            #     julgamento[i].projeto = relato.alocacao.projeto
-            #     julgamento[i].avaliador = avaliador
-
-            #     obj_nota = request.POST[aval]
-            #     julgamento[i].nota = obj_nota
-
-            #     julgamento[i].peso = 0.0
-                
-            #     julgamento[i].save()
+                corpo_email = "<b>-- OBSERVAÇÕES DE ANOTAÇÃO QUINZENAL REALIZADA PELO PROFESSOR --</b><br>\n<br>\n"
+                corpo_email += "<b>Projeto:</b> " + projeto.get_titulo() + "<br>\n"
+                corpo_email += "<b>Orientador/Coorientador:</b> " + str(request.user) + "<br>\n"
+                corpo_email += "<b>Grupo:</b><br>"
+                for alocacao, relato in zip(alocacoes, relatos):
+                    corpo_email += "&nbsp;&nbsp;&nbsp;&nbsp;\t- " + alocacao.aluno.user.get_full_name() + " (" + alocacao.aluno.get_curso_completo() + ") "
+                    if relato:
+                        if relato.avaliacao > 0:
+                            corpo_email += "[&#x1F44D; Adequado]"
+                        elif relato.avaliacao < 0:
+                            corpo_email += "[&#8987; AGUARDANDO ORIENTADOR]"
+                        else:
+                            corpo_email += "[&#x1F44E; Inadequado]"
+                    else:
+                        corpo_email += "[&#10060; NÃO ENTREGUE POR ESTUDANTE]"
+                    corpo_email += "<br>"
+                corpo_email += "<hr>"
+                corpo_email += "<b>Observações:</b><br>\n" 
+                corpo_email += "<div style='padding: 10px; border: 2px solid #DDDDDD;'>" + htmlizar(observacoes) + "</div><br>\n"
+                email("Observações de Anotação Quinzenal Realizada pelo professor", email_dest, corpo_email)
 
             context = {
                 "area_principal": True,
@@ -1637,9 +1635,6 @@ def relato_avaliar(request, projeto_id, evento_id):
     else:  # GET
         
         # Identifica que uma avaliação já foi realizada anteriormente
-        # avaliacoes = Avaliacao2.objects.filter(alocacao=relato.alocacao,
-        #                                         avaliador=avaliador,
-        #                                         tipo_de_avaliacao=tipo_de_avaliacao)
 
         obs = Observacao.objects.filter(projeto=projeto,
                                         momento__gt=evento_anterior.endDate + datetime.timedelta(days=1),
