@@ -68,6 +68,8 @@
               $('#organizacao_website').html(response.organizacao_website) // Para organizacao completo
               $('#organizacao_website').attr("href", response.organizacao_website) // Para organizacao completo
 
+              $('.pulsar').css("animation-play-state", "paused"); // Stop pulsar animation
+
             }
             //else {
             //  console.log("Valor não atualizado.");

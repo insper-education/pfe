@@ -4,7 +4,7 @@
     Data: 12 de Novembro de 2020
 {% endcomment %}
 
-{% if proposta.nome_organizacao or proposta.organizacao %}
+{% if proposta.nome_organizacao or proposta.organizacao or proposta.website %}
   <hr>
 
   <style>
@@ -15,6 +15,21 @@
       width:auto;
       float: right;
     }
+
+    .pulsar {
+      display: inline-block;
+      line-height: 1.1em;
+      font-size: 1.1em;
+      animation: pulse-text ease-in-out infinite;
+      animation-duration: 2s;
+    }
+    
+    @keyframes pulse-text {
+      0% {font-size: 1em;}
+      50% {font-size: 1.1em;}
+      100% {font-size: 1em;}
+    }
+
   </style>
   
   {% if proposta.organizacao.logotipo %}
@@ -36,22 +51,30 @@
         {% endif %}
     {% elif proposta.nome_organizacao %}
       <a id="organizacao_link">
-        <span data-toggle="tooltip" data-html="true" animation="true" title="Nome da organização/empresa que está propondo o projeto.">
-          {{proposta.nome_organizacao}}
+        <span data-toggle="tooltip" data-html="true" animation="true" title="<b>Organização/empresa não linkada.</b>">
+          <span style="color:gray">{{proposta.nome_organizacao}}</span>
         </span>
       </a>
     {% else %}
-      <u>Organização não definida.</u>
+      <a id="organizacao_link">
+        <u>Organização não definida.</u>
+      </a>
     {% endif %}
     {% if completo %}
       <span class="esconder">
-        <a
-          data-proposta='{{proposta.id}}'
-          class="link-organizacao"
-          href="{% url 'link_organizacao' proposta.id %}"
-          data-url="{% url 'link_organizacao' proposta.id %}"
-          ><small>&#128279;</small></a
-        >
+        {% if not proposta.organizacao %}
+        <div class="pulsar">
+        {% endif %}
+          <a
+            data-proposta='{{proposta.id}}'
+            class="link-organizacao"
+            href="{% url 'link_organizacao' proposta.id %}"
+            data-url="{% url 'link_organizacao' proposta.id %}"
+            ><small>&#128279;</small></a
+          >
+        {% if not proposta.organizacao %}
+        </div>
+        {% endif %}
       </span>
     {% endif %}
     <br>
