@@ -38,9 +38,26 @@
           </div>
           <select class="filter custom-select w-auto" id="filterCurso" name="curso">
               <option value="T">todos</option>
-              <option value="C" {% if curso == "computação" %}selected{% endif %}>computação</option>
-              <option value="X" {% if curso == "mecatrônica" %}selected{% endif %}>mecatrônica</option>
-              <option value="M" {% if curso == "mecânica" %}selected{% endif %}>mecânica</option>
+              {% if cursos %}
+                {% for c in cursos %}
+                  {% if c.curso_do_insper %}
+                    <option value="{{c.sigla_curta}}" {% if curso == c.sigla_curta %}selected{% endif %}>{{c.nome}}</option>
+                  {% endif %}
+                {% endfor %}
+                {% for c in cursos %}
+                  {% if not c.curso_do_insper %}
+                    <option class="text-info" value="{{c.sigla_curta}}" {% if curso == c.sigla_curta %}selected{% endif %}>{{c.nome}}</option>
+                  {% endif %}
+                {% endfor %}
+                {% comment %} <optgroup label="Comitê PFE">
+                  <option value="xxx">XXXX</option>
+                </optgroup> {% endcomment %}
+              {% else %}
+                <option value="C" {% if curso == "computação" %}selected{% endif %}>computação</option>
+                <option value="X" {% if curso == "mecatrônica" %}selected{% endif %}>mecatrônica</option>
+                <option value="M" {% if curso == "mecânica" %}selected{% endif %}>mecânica</option>
+                <option value="B" {% if curso == "ciencia" %}selected{% endif %}>ciência da computação</option>
+              {% endif %}
           </select>
         {% endif %}
 

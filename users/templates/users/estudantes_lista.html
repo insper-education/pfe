@@ -65,9 +65,9 @@
           {% else %}
             <td>Indefinido</td>
           {% endif %}
-          <td>
-            {% if aluno.alocacao_set.all %}
-              {% for alocacao in aluno.alocacao_set.all %}
+          {% with alocacoes=aluno.alocacao_set.all %}
+            <td>
+              {% for alocacao in alocacoes %}
                 {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
                   <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
                     {% if alocacao.projeto.avancado %}<u>{% endif %}
@@ -76,30 +76,26 @@
                     <br>
                   </a>
                 {% endif %}
+              {% empty %}
+                {% if aluno.anoPFE and aluno.semestrePFE %}
+                  {{aluno.anoPFE}}.{{aluno.semestrePFE}}
+                {% else %}
+                  Indefinido
+                {% endif %}
               {% endfor %}
-            {% else %}
-              {% if aluno.anoPFE and aluno.semestrePFE %}
-                {{aluno.anoPFE}}.{{aluno.semestrePFE}}
-              {% else %}
-                Indefinido
-              {% endif %}
-            {% endif %}
-          </td>
-          <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
-            {% if aluno.alocacao_set.all %}
-              {% for alocacao in aluno.alocacao_set.all %}
+            </td>
+            <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
+              {% for alocacao in alocacoes %}
                 {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
                   <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
                     {{alocacao.projeto.get_titulo}}
                   </a>
-                  {% include "tipo_projeto.html" with projeto=alocacao.projeto %}
+                  {% include "tipo_projeto.html" with projeto=alocacao.projeto %}<br>
                 {% endif %}
               {% endfor %}
-            {% endif %}
-          </td>
-          <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
-            {% if aluno.alocacao_set.all %}
-              {% for alocacao in aluno.alocacao_set.all %}
+            </td>
+            <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
+              {% for alocacao in alocacoes %}
                 {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
                   {% if alocacao.projeto and alocacao.projeto.organizacao %}
                     <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
@@ -108,8 +104,9 @@
                   {% endif %}
                 {% endif %}
               {% endfor %}
-            {% endif %}
-          </td>
+            </td>
+          {% endwith %}
+
           <td>
           {% if aluno.user.linkedin %}
             <a href="{{ aluno.user.linkedin }}">{{ aluno.user.linkedin }}</a>
@@ -122,56 +119,70 @@
     </div>
     <br>
 
-    <strong>Número Total de Estudantes:</strong> {{ num_alunos }}
-    <br>
-
-    <div id="canvas-holder">
-      <canvas id="chart-programas"></canvas>
+    {% if totais.total > 0 %}
       <br><br>
-      <canvas id="chart-generos"></canvas>
+      <h5>Quantidade de estudantes alocados em projetos</h5>
+      <table id="AlunosTable">
+        <tr>
+            <th class="text-center" style="border-right: solid 3px;">Periodo</th>
+            {% for curso in cursos %}
+              <th class="text-center">{{curso.sigla}}</th>
+            {% endfor %}
+            <th class="text-center" style="border-left: solid 3px;">TOTAL</th>
+        </tr>
+        {% for ano,tabela_ano in tabela_alunos.items %}
+          {% for semestre,tabela_semetre in tabela_ano.items %}
+            <tr>
+                <td class="text-center" style="border-right: solid 3px;"> {{ano}}.{{semestre}} </td>
+                {% for curso in cursos %}
+                  <td class="text-center">
+                    {% with qtd=tabela_semetre|dict_key:curso.sigla %}
+                      {% if qtd %}{{qtd}}{% else %}0{% endif %}
+                    {% endwith %}
+                  </td>
+                {% endfor %}
+                <td class="text-center" style="border-left: solid 3px;"><b> {{tabela_semetre.total}} </b></td>
+            </tr>
+          {% endfor %}
+        {% endfor %}
+        {% if ano == 0 or semestre == 0 %}
+          <tr>
+            <td class="text-center" style="border-right: solid 3px; border-top: double;"> Totais </td>
+              {% for curso in cursos %}
+                <td class="text-center" style="border-top: double;">
+                  {% with qtd=totais|dict_key:curso.sigla %}
+                    {% if qtd %}{{qtd}}{% else %}0{% endif %}
+                  {% endwith %}
+                </td>
+              {% endfor %}
+
+            <td class="text-center" style="border-left: solid 3px; border-top: double;"><b> {{totais.total}} </b></td>
+          </tr>
+        {% endif %}
+      </table>
+      {% if ano == 0 or semestre == 0 %}
+        <small>estudantes reprovados e do PFE avançado contam mais de uma vez</small>
+      {% endif %}
+      <br>
+    {% endif %}
+
+    <br><br>
+
+    <div class="container">
+      <div class="row justify-content-start">
+        <div class="col-lg-6"><canvas id="chart-programas"></canvas></div>
+        <div class="col-lg-6"><canvas id="chart-generos"></canvas></div>
+      </div>
     </div>
 
     <br><br>
 
-    <h5>Quantidade de estudantes alocados em projetos</h5>
-    <table id="AlunosTable">
-      <tr>
-          <th class="text-center" style="border-right: solid 3px;">Periodo</th>
-          <th class="text-center">Computação</th>
-          <th class="text-center">Mecânica</th>
-          <th class="text-center">Mecatrônica</th>
-          <th class="text-center" style="border-left: solid 3px;">TOTAL</th>
-      </tr>
-      {% for ano,tabela_ano in tabela_alunos.items %}
-        {% for semestre,tabela_semetre in tabela_ano.items %}
-          <tr>
-              <td class="text-center" style="border-right: solid 3px;"> {{ano}}.{{semestre}} </td>
-              <td class="text-center"> {{tabela_semetre.computação}} </td>
-              <td class="text-center"> {{tabela_semetre.mecânica}} </td>
-              <td class="text-center"> {{tabela_semetre.mecatrônica}} </td>
-              <td class="text-center" style="border-left: solid 3px;"><b> {{tabela_semetre.total}} </b></td>
-          </tr>
-        {% endfor %}
-      {% endfor %}
-      {% if ano == 0 or semestre == 0 %}
-        <tr>
-          <td class="text-center" style="border-right: solid 3px; border-top: double;"> Totais </td>
-          <td class="text-center" style="border-top: double;"> {{totais.computação}} </td>
-          <td class="text-center" style="border-top: double;"> {{totais.mecânica}} </td>
-          <td class="text-center" style="border-top: double;"> {{totais.mecatrônica}} </td>
-          <td class="text-center" style="border-left: solid 3px; border-top: double;"><b> {{totais.total}} </b></td>
-        </tr>
-      {% endif %}
-    </table>
     {% if ano == 0 or semestre == 0 %}
-      <small>estudantes reprovados e do PFE avançado contam mais de uma vez</small>
-    {% endif %}
-    <br>
-
-    {% if ano == 0 or semestre == 0 %}
-      <div id="canvas-holder">
-        <canvas id="total-estudantes"></canvas>
+    <div class="container">
+      <div class="row justify-content-start">
+        <div class="col-lg-10"><canvas id="total-estudantes"></canvas></div>
       </div>
+    </div>
     {% endif %}
 
 
@@ -180,23 +191,11 @@
         type: 'pie',
         data: {
           datasets: [{
-            data: [
-              {{ num_alunos_comp }},
-              {{ num_alunos_mec }},
-              {{ num_alunos_mxt }},
-            ],
-            backgroundColor: [
-              'rgb(75, 192, 192)',
-              'rgb(255, 99, 132)',
-              'rgb(255, 205, 86)',
-            ],
+            data: [{% for num in num_estudantes.values %}{{num}},{% endfor %}],
+            backgroundColor: [{% for curso, num in num_estudantes.items %}'#{{curso.cor}}',{% endfor %}],
             label: 'Proporção de cursos entre estudantes'
           }],
-          labels: [
-            'Computação [{% widthratio num_alunos_comp num_alunos 100 %}%]',
-            'Mecânica [{% widthratio num_alunos_mec num_alunos 100 %}%]',
-            'Mecatrônica [{% widthratio num_alunos_mxt num_alunos 100 %}%]',
-          ]
+          labels: [{% for curso, num in num_estudantes.items %}'{{curso.nome}} [{% widthratio num total_estudantes 100 %}%]',{% endfor %}]
         },
         options: {
           responsive: true,
@@ -246,18 +245,20 @@
         }
       };
 
-           
-      var labels = []
-      var est_computacao = []
-      var est_mecatronica = []
-      var est_mecanica = []
+      var cursos = [];
+      var labels = [];
+      var est = {};
+
+      {% for curso in cursos %}
+        est['{{curso.sigla}}']=[];
+      {% endfor %}
 
       {% for ano,tabela_ano in tabela_alunos.items %}
         {% for semestre,tabela_semetre in tabela_ano.items %}
           labels.push("{{ano}}.{{semestre}}");
-          est_computacao.push({{tabela_semetre.computação}});
-          est_mecatronica.push({{tabela_semetre.mecatrônica}});
-          est_mecanica.push({{tabela_semetre.mecânica}});
+          {% for curso in cursos %}
+            est['{{curso.sigla}}'].push({% with qtd=tabela_semetre|dict_key:curso.sigla %}{% if qtd %}{{qtd}}{% else %}0{% endif %}{% endwith %});
+          {% endfor %}
         {% endfor %}
       {% endfor %}
     
@@ -266,21 +267,13 @@
         data: {
           labels: labels,
           datasets: [
-            {
-              data: est_computacao,
-              backgroundColor: 'rgb(75, 192, 192)',
-              label: 'Computação'
-            },
-            {
-              data: est_mecatronica,
-              backgroundColor: 'rgb(255, 205, 86)',
-              label: 'Mecatrônica'
-            },
-            {
-              data: est_mecanica,
-              backgroundColor: 'rgb(255, 99, 132)',
-              label: 'Mecânica'
-            },
+            {% for curso in cursos %}
+              {
+                data: est["{{curso.sigla}}"],
+                backgroundColor: "#{{curso.cor}}",
+                label: '{{curso.sigla}}'
+              },
+            {% endfor %}
           ],
         },
         options: {
@@ -308,8 +301,8 @@
 						}]
 					}
         }
-      };
-
+      }; 
+      
       // Chart da proporção de estudantes por programas
       var chart_programas = document.getElementById('chart-programas').getContext('2d');
       window.myPie_programas = new Chart(chart_programas, config_programas);
@@ -333,11 +326,13 @@
           // Hide/Esconde certas colunas
           //table.fnSetColumnVis( 0, true );  // esconde Nome
           table.fnSetColumnVis( 1, false );  // esconde Matrícula
+          {% comment %} 
           //table.fnSetColumnVis( 2, true );  // esconde e-mail
           //table.fnSetColumnVis( 3, true );  // esconde Curso
           //table.fnSetColumnVis( 4, true );  // esconde Período
           //table.fnSetColumnVis( 5, true );  // esconde Projeto
           //table.fnSetColumnVis( 6, true );  // esconde Organização
+          {% endcomment %}
           table.fnSetColumnVis( 7, false );  // esconde Linkedin
         }
       };

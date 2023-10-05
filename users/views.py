@@ -30,6 +30,8 @@ from projetos.support import get_objetivos_alocacao, calcula_objetivos
 
 from administracao.support import get_limite_propostas
 
+from operacional.models import Curso
+
 from .forms import PFEUserCreationForm
 from .models import PFEUser, Aluno, Professor, Parceiro, Opcao, Administrador
 from .models import Alocacao, OpcaoTemporaria
@@ -87,7 +89,7 @@ def estudantes_lista(request):
             else:
                 anosemestre = edicao
 
-            # Conta soh alunos
+            # Conta soh estudantes
             alunos_todos = Aluno.objects\
                 .order_by(Lower("user__first_name"), Lower("user__last_name"))
 
@@ -95,20 +97,21 @@ def estudantes_lista(request):
             semestre = 0
 
             tabela_alunos = {}
-
+            cursos = []
             totais = {}
-            totais["computação"] = 0
-            totais["mecânica"] = 0
-            totais["mecatrônica"] = 0
+            totais["total"] = 0
 
+            # Filtra para alunos de um curso específico
             if 'curso' in request.POST:
                 curso = request.POST['curso']
                 if curso != 'T':
                     alunos_todos = alunos_todos.filter(curso2__sigla_curta=curso)
-
+        
+            
             if anosemestre not in ("todos", "trancou"):
-                ano = int(anosemestre.split(".")[0])
-                semestre = int(anosemestre.split(".")[1])
+                # Estudantes de um semestre em particular
+
+                ano, semestre  = [int(i) for i in anosemestre.split(".")]
 
                 alunos_list = alunos_todos.filter(trancado=False)
 
@@ -116,34 +119,37 @@ def estudantes_lista(request):
                     .filter(alocacao__projeto__ano=ano,
                             alocacao__projeto__semestre=semestre)\
                     .distinct()
-
+                
                 tabela_alunos[ano] = {}
                 tabela_alunos[ano][semestre] = {}
 
-                tabela_alunos[ano][semestre]["computação"] =\
-                    alunos_semestre.filter(curso2__sigla_curta__exact='C').count()
-                totais["computação"] += tabela_alunos[ano][semestre]["computação"]
-                tabela_alunos[ano][semestre]["mecânica"] =\
-                    alunos_semestre.filter(curso2__sigla_curta__exact='M').count()
-                totais["mecânica"] += tabela_alunos[ano][semestre]["mecânica"]
-                tabela_alunos[ano][semestre]["mecatrônica"] =\
-                    alunos_semestre.filter(curso2__sigla_curta__exact='X').count()
-                totais["mecatrônica"] += tabela_alunos[ano][semestre]["mecatrônica"]
+                for curso in Curso.objects.all().order_by("id"):
+                    count_estud = alunos_semestre.filter(curso2__sigla__exact=curso.sigla).count()
+                    if count_estud > 0:
+                        if curso not in cursos:
+                            cursos.append(curso)
+                        tabela_alunos[ano][semestre][curso.sigla] =\
+                            alunos_semestre.filter(curso2__sigla__exact=curso.sigla).count()
+                        totais[curso.sigla] = tabela_alunos[ano][semestre][curso.sigla]
+                        totais["total"] += tabela_alunos[ano][semestre][curso.sigla]
+
+
                 tabela_alunos[ano][semestre]["total"] =\
                     alunos_semestre.count()
-
+                
                 alunos_list = alunos_semestre |\
                     alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
 
             else:
-
+                
+                # Essa parte está em loop para pegar todos os alunos de todos os semestres
                 if anosemestre == "todos":
                     alunos_list = alunos_todos.filter(trancado=False)
                 else:
                     alunos_list = alunos_todos.filter(trancado=True)
                     ano = "trancou"
 
-                # Rotina para contar quantidad de alunos
+                # Rotina para contar quantidade de alunos
                 ano_tmp = 2018
                 semestre_tmp = 2
                 while True:
@@ -152,28 +158,36 @@ def estudantes_lista(request):
                                 alocacao__projeto__semestre=semestre_tmp)\
                         .distinct()
 
-                    if not alunos_semestre:
+                    if ano_tmp > configuracao.ano + 6:
                         break
+
+                    if not alunos_semestre:
+                        if semestre_tmp == 1:
+                            semestre_tmp = 2
+                        else:
+                            ano_tmp += 1
+                            semestre_tmp = 1
+                        continue
 
                     if ano_tmp not in tabela_alunos:
                         tabela_alunos[ano_tmp] = {}
                     if semestre_tmp not in tabela_alunos[ano_tmp]:
                         tabela_alunos[ano_tmp][semestre_tmp] = {}
 
-                    tabela_alunos[ano_tmp][semestre_tmp]["computação"] =\
-                        alunos_semestre.filter(curso2__sigla_curta__exact='C').count()
-                    totais["computação"] += \
-                        tabela_alunos[ano_tmp][semestre_tmp]["computação"]
-                    tabela_alunos[ano_tmp][semestre_tmp]["mecânica"] =\
-                        alunos_semestre.filter(curso2__sigla_curta__exact='M').count()
-                    totais["mecânica"] += \
-                        tabela_alunos[ano_tmp][semestre_tmp]["mecânica"]
-                    tabela_alunos[ano_tmp][semestre_tmp]["mecatrônica"] =\
-                        alunos_semestre.filter(curso2__sigla_curta__exact='X').count()
-                    totais["mecatrônica"] += \
-                        tabela_alunos[ano_tmp][semestre_tmp]["mecatrônica"]
-                    tabela_alunos[ano_tmp][semestre_tmp]["total"] =\
-                        alunos_semestre.count()
+                    tabela_alunos[ano_tmp][semestre_tmp]["total"] = 0
+                    for curso in Curso.objects.all().order_by("id"):
+                        count_estud = alunos_semestre.filter(curso2__sigla__exact=curso.sigla).count()
+                        if count_estud > 0:
+                            if curso not in cursos:
+                                cursos.append(curso)
+                            tabela_alunos[ano_tmp][semestre_tmp][curso.sigla] =\
+                                alunos_semestre.filter(curso2__sigla__exact=curso.sigla).count()
+                            if curso.sigla in totais:
+                                totais[curso.sigla] += tabela_alunos[ano_tmp][semestre_tmp][curso.sigla]
+                            else:
+                                totais[curso.sigla] = tabela_alunos[ano_tmp][semestre_tmp][curso.sigla]
+                            tabela_alunos[ano_tmp][semestre_tmp]["total"] += tabela_alunos[ano_tmp][semestre_tmp][curso.sigla]
+                            totais["total"] += tabela_alunos[ano_tmp][semestre_tmp][curso.sigla]
 
                     if semestre_tmp == 1:
                         semestre_tmp = 2
@@ -181,43 +195,32 @@ def estudantes_lista(request):
                         ano_tmp += 1
                         semestre_tmp = 1
 
-                # Só alunos já alocados (NÃO SEI POR QUE FIZ ISSO)
-                # if anosemestre == "todos":
-                #     alunos_list = alunos_list.filter(alocacao__projeto__isnull=False).distinct()
 
-            num_alunos = alunos_list.count()
+            total_estudantes = alunos_list.count()
+            num_estudantes = {}
+            for curso in Curso.objects.all().order_by("id"):
+                count_estud = alunos_list.filter(curso2__sigla__exact=curso.sigla).count()
+                if count_estud > 0:
+                    num_estudantes[curso] = count_estud
 
-            # Conta alunos computacao
-            num_alunos_comp = alunos_list.filter(curso2__sigla_curta__exact='C').count()
-
-            # Conta alunos mecatrônica
-            num_alunos_mxt = alunos_list.filter(curso2__sigla_curta__exact='X').count()
-
-            # Conta alunos mecânica
-            num_alunos_mec = alunos_list.filter(curso2__sigla_curta__exact='M').count()
-
-            # Estudantes masculino
+            # Estudantes por genero
             num_alunos_masculino = alunos_list.filter(user__genero='M').count()
-
-            # Estudantes feminino
             num_alunos_feminino = alunos_list.filter(user__genero='F').count()
-
-            totais["total"] = (totais["computação"] +
-                               totais["mecânica"] +
-                               totais["mecatrônica"])
 
             cabecalhos = ["Nome", "Matrícula", "e-mail", "Curso", "Período", "Projeto", "Organização", "Linkedin", ]
             
             context = {
                 'alunos_list': alunos_list,
-                'num_alunos': num_alunos,
-                'num_alunos_comp': num_alunos_comp,
-                'num_alunos_mxt': num_alunos_mxt,
-                'num_alunos_mec': num_alunos_mec,
+                'total_estudantes': total_estudantes,
+                "num_estudantes": num_estudantes,
+
                 'num_alunos_masculino': num_alunos_masculino,
                 'num_alunos_feminino': num_alunos_feminino,
+
                 'configuracao': configuracao,
+                "cursos": cursos,
                 'tabela_alunos': tabela_alunos,
+
                 'totais': totais,
                 'ano': ano,
                 'semestre': semestre,
@@ -234,6 +237,7 @@ def estudantes_lista(request):
         context = {
             "edicoes": edicoes,
             "titulo": titulo,
+            "cursos": Curso.objects.all().order_by("id"),
         }
 
     return render(request, 'users/estudantes_lista.html', context=context)

@@ -76,10 +76,13 @@
 
       <label for="matricula">Matrícula: </label> <input type="text" size="8" maxlength="8" id="matricula" name="matricula" {% if usuario and usuario.aluno and usuario.aluno.matricula %}value="{{usuario.aluno.matricula}}"{% endif %}><br>
  
-      Curso: 
-      <input type="radio" name="curso" id="computacao" value="computacao" {% if usuario.aluno.curso2.sigla_curta == 'C' %}checked{% endif %}> <label for="computacao"> Computação</label>&nbsp;&nbsp;&nbsp;
-      <input type="radio" name="curso" id="mecanica" value="mecanica" {% if usuario.aluno.curso2.sigla_curta == 'M' %}checked{% endif %}> <label for="mecanica"> Mecânica</label>&nbsp;&nbsp;&nbsp;
-      <input type="radio" name="curso" id="mecatronica" value="mecatronica" {% if usuario.aluno.curso2.sigla_curta == 'X' %}checked{% endif %}> <label for="mecatronica"> Mecatrônica</label>
+      <label for="lingua">Curso</label>:
+      <select name="curso" title="Curso">
+        {% for curso in cursos %}
+          <option value="{{curso.sigla}}" {% if usuario.aluno.curso2.sigla == curso.sigla %}selected{% endif %}>{{curso.nome}}</option>  
+        {% endfor %}
+      </select>
+
       <br>
       <label for="ano">Ano PFE: </label> 
       <input type="number" id="ano" name="ano" min="2018" max="3018" value="{{usuario.aluno.anoPFE}}">&nbsp;&nbsp;&nbsp;

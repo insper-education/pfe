@@ -184,22 +184,8 @@ def registro_usuario(request, user=None):
 
         curso = request.POST.get('curso', None)
 
-        # Remover o curso e só usar curso2
-        if curso == "computacao":
-            #estudante.curso = 'C'   # ('C', 'Computação'), #Obsoleto
-            estudante.curso2 = Curso.objects.get(nome="Engenharia de Computação")
-        elif curso == "mecanica":
-            #estudante.curso = 'M'   # ('M', 'Mecânica'), #Obsoleto
-            estudante.curso2 = Curso.objects.get(nome="Engenharia Mecânica")
-        elif curso == "mecatronica":
-            #estudante.curso = 'X'   # ('X', 'Mecatrônica'), #Obsoleto
-            estudante.curso2 = Curso.objects.get(nome="Engenharia Mecatrônica")
-        else:
-            #estudante.curso = None
-            estudante.curso2 = None
-            mensagem += "Erro na associação de curso ao estudante.<br>"
-        ##################### ^^^^  REMOVER ^^^^ #################
-
+        estudante.curso2 = Curso.objects.get(sigla=curso)
+        
         try:
             estudante.anoPFE = int(request.POST['ano'])
             estudante.semestrePFE = int(request.POST['semestre'])

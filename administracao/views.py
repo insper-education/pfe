@@ -53,6 +53,8 @@ from users.support import adianta_semestre
 
 from propostas.support import ordena_propostas
 
+from operacional.models import Curso
+
 from .support import usuario_sem_acesso
 
 
@@ -308,9 +310,11 @@ def edita_usuario(request, primarykey):
 
         return render(request, 'generic.html', context=context)
 
+
     context = {
         "usuario": user,
         "organizacoes": Organizacao.objects.all(),
+        "cursos": Curso.objects.all().order_by("id"),
         "linkedin_length": PFEUser._meta.get_field('linkedin').max_length,
         "email_length": PFEUser._meta.get_field('email').max_length,
     }
