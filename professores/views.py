@@ -157,7 +157,7 @@ def bancas_criar(request):
 
             mensagem += "Data: " + banca.startDate.strftime("%d/%m/%Y - %H:%M:%S") + "<br><br>"
 
-            mensagem += "Envolvidos:<br><ul>"
+            mensagem += "Envolvidos (nenhuma mensagem está sendo enviada agora):<br><ul>"
 
             # Orientador
             if banca.projeto.orientador:
@@ -943,6 +943,7 @@ def banca_avaliar(request, slug):
             "avaliador": avaliador,
             "conceitos": conceitos,
             "observacoes": observacoes,
+            "today": datetime.datetime.now(),
         }
         return render(request, 'professores/banca_avaliar.html', context=context)
 

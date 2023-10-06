@@ -7,6 +7,8 @@
 
 {% block head %}
 
+  {% load tz %}
+
   {% load banca_tipo %}
 
   <script>{% include "tooltip.js" %}</script>
@@ -24,6 +26,11 @@
         vertical-align: top;
     }
 
+    .labels {
+      white-space: nowrap;
+      margin-right: 2em;
+    }
+
     @media only screen and (max-width: 1100px) {
       table, th, td {
         font-size: 14px;
@@ -32,16 +39,16 @@
 
     @media only screen and (max-width: 1000px) {
       table, th, td {
-        font-size: 12px;
+        font-size: 13px;
       }
       .nivel {
-        display:none;
+        display:none !important;
       }
     } 
 
     @media only screen and (max-width: 800px) {
       table, th, td {
-        font-size: 14px;
+        font-size: 15px;
       }
 
       tbody {
@@ -58,12 +65,39 @@
         min-height: calc(130px - 5vw);;
       }
 
+      .labels {
+        margin-right: 0em;
+      }
+      
+      .nav-side-wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+      }
+      
+      .nav-side {
+        display: flex;
+        -webkit-flex: 1;
+        -ms-flex: 1;
+        flex: 1;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        
+      }
+      
+
     }
 
     @media only screen and (max-width: 500px) {
       table, th, td {
-        font-size: 12px;
+        font-size: 13px;
       }
+    }
+
+    {% comment %} THIS MAKE RADIO BUTTONS APPEAR IN A BETTER PLACE {% endcomment %}
+    input[type="radio"] {
+      vertical-align:-0.1rem;
     }
 
   </style>
@@ -137,7 +171,6 @@
         <br>
       {% endif %}
       
-
       <br><b><label style="margin: 0px;" for="avaliador"><span lang="pt">Avaliador(a)</span><span lang="en">Evaluator</span>:</label></b
       ><select name="avaliador" id="avaliador" title="Selecione avaliador da banca" required
         oninvalid="this.setCustomValidity('Selecione seu nome para o controle das avaliações')"
@@ -146,7 +179,7 @@
           
           <option disabled selected value id="selecione_avaliador"> -- selecione um avaliador -- </option>
 
-          <optgroup label="Membros da Banca">
+          <optgroup id="MembBanca" label="Membros da Banca">
             {% for pessoa in membros %}
               <option value="{{pessoa.id}}" {% if pessoa.id == avaliador %}selected{% endif %}>
                 {{pessoa.get_full_name}}
@@ -154,7 +187,7 @@
             {% endfor %}
           </optgroup>
 
-          <optgroup label="Lista Completa">
+          <optgroup id="ListaComp" label="Lista Completa">
             {% for pessoa in pessoas %}
               <option value="{{pessoa.id}}" {% if pessoa.id == avaliador %}selected{% endif %}>
                 {{pessoa.get_full_name}}
@@ -180,53 +213,75 @@
           <div class="table-responsive">
           <table style="width:100%">
             <tr>
-              <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}NA" style="width:10%;">
-                <label for="objetivo{{objetivo.id}}NA" style="white-space: nowrap;">
+              <th class="nav-side-wrapper th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}NA" style="width:10%;">
+                <div class="nav-side">
+                <label class="labels" for="objetivo{{objetivo.id}}NA">
                   N/A
-                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA" id="objetivo{{objetivo.id}}NA" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.NA" required> 
+                  <input style="padding-bottom:2px;" type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA" id="objetivo{{objetivo.id}}NA" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.NA" required /> 
                 </label>
+              </div>
               </th>
-              <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I" style="width:18%">
-                <label for="objetivo{{objetivo.id}}I" style="white-space: nowrap;">
-                  <span class="nivel" lang="pt">Insatisfatório&nbsp;</span><span class="nivel" lang="en">Unsatisfactory&nbsp;</span>(I)
-                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" id="objetivo{{objetivo.id}}I" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.I" required>
+              <th class="nav-side-wrapper th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I" style="width:18%">
+                <div class="nav-side">
+                <label class="labels" for="objetivo{{objetivo.id}}I">
+                  <span class="nivel">
+                    <span lang="pt">Insatisfatório&nbsp;</span><span class="nivel" lang="en">Unsatisfactory&nbsp;</span>
+                  </span>(I)
+                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" id="objetivo{{objetivo.id}}I" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.I" required />
                 </label>
+              </div>
               </th>
-              <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}D" style="width:18%">
-                <label for="objetivo{{objetivo.id}}D" style="white-space: nowrap;">
-                  <span class="nivel" lang="pt">Em Desenvolvimento&nbsp;</span><span class="nivel" lang="en">under Development&nbsp;</span>(D)
-                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" id="objetivo{{objetivo.id}}D" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.D " required>
+              <th class="nav-side-wrapper th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}D" style="width:18%">
+                <div class="nav-side">
+                <label class="labels" for="objetivo{{objetivo.id}}D">
+                  <span class="nivel">
+                    <span lang="pt">Em Desenvolvimento&nbsp;</span><span class="nivel" lang="en">under Development&nbsp;</span>
+                  </span>(D)
+                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" id="objetivo{{objetivo.id}}D" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.D " required />
                 </label>
+              </div>
               </th>
-              <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" style="width:18%">
-                <label for="objetivo{{objetivo.id}}C" style="white-space: nowrap; margin-right: 2em;">
-                  <span class="nivel" lang="pt">Essencial&nbsp;</span><span class="nivel" lang="en">Fundamental&nbsp;</span>(C)
-                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C" id="objetivo{{objetivo.id}}C" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.C" required>
+              <th class="nav-side-wrapper th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" style="width:18%">
+                <div class="nav-side">
+                <label class="labels" for="objetivo{{objetivo.id}}C">
+                  <span class="nivel">
+                    <span lang="pt">Essencial&nbsp;</span><span class="nivel" lang="en">Fundamental&nbsp;</span>
+                  </span>(C)
+                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C" id="objetivo{{objetivo.id}}C" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.C" required />
                 </label>
-                <label for="objetivo{{objetivo.id}}CX" style="white-space: nowrap;">
+                <label  class="labels" for="objetivo{{objetivo.id}}CX">
                   (C+)
-                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" id="objetivo{{objetivo.id}}CX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.C+" required>
+                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" id="objetivo{{objetivo.id}}CX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.C+" required />
                 </label>
+              </div>
               </th>
-              <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" style="width:18%">
-                <label for="objetivo{{objetivo.id}}B" style="white-space: nowrap; margin-right: 2em;">
-                  <span class="nivel" lang="pt">Proficiente&nbsp;</span><span class="nivel" lang="en">Proficient&nbsp;</span>(B)
-                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B" id="objetivo{{objetivo.id}}B" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.B" required>
+              <th class="nav-side-wrapper th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" style="width:18%">
+                <div class="nav-side">
+                <label class="labels" for="objetivo{{objetivo.id}}B">
+                  <span class="nivel">
+                    <span lang="pt">Proficiente&nbsp;</span><span class="nivel" lang="en">Proficient&nbsp;</span>
+                  </span>(B)
+                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B" id="objetivo{{objetivo.id}}B" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.B" required />
                 </label>
-                <label for="objetivo{{objetivo.id}}BX" style="white-space: nowrap;">
+                <label class="labels" for="objetivo{{objetivo.id}}BX">
                   (B+)
-                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" id="objetivo{{objetivo.id}}BX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.B+" required>
+                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" id="objetivo{{objetivo.id}}BX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.B+" required />
                 </label>
+              </div>
               </th>
-              <th class="th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" style="width:18%">
-                <label for="objetivo{{objetivo.id}}A" style="white-space: nowrap; margin-right: 2em;">
-                  <span class="nivel" lang="pt">Avançado&nbsp;</span><span class="nivel" lang="en">Advanced&nbsp;</span>(A)
-                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A" id="objetivo{{objetivo.id}}A" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.A" required>
+              <th class="nav-side-wrapper th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" style="width:18%">
+                <div class="nav-side">
+                <label class="labels" for="objetivo{{objetivo.id}}A">
+                  <span class="nivel">
+                    <span lang="pt">Avançado&nbsp;</span><span class="nivel" lang="en">Advanced&nbsp;</span>
+                  </span>(A)
+                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A" id="objetivo{{objetivo.id}}A" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.A" required />
                 </label>
-                <label for="objetivo{{objetivo.id}}AX" style="white-space: nowrap;">
+                <label class="labels" for="objetivo{{objetivo.id}}AX">
                   (A+)
-                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" id="objetivo{{objetivo.id}}AX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.A+" required>
+                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" id="objetivo{{objetivo.id}}AX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.A+" required />
                 </label>
+              </div>
               </th>
             </tr>
             <tr>
@@ -252,7 +307,8 @@
         {% endfor %}
 
       {% else %}
-        <span class="red-bold">Não foram definidos Objetivos de Aprendizagem para essa Avaliação.</span><br>
+        <span lang="pt" class="red-bold">Não foram definidos Objetivos de Aprendizagem para essa Avaliação.</span><br>
+        <span lang="en" class="red-bold">No Learning Goals were defined for this Assessment.</span><br>
       {% endif %}
       
       <br><b data-toggle="tooltip" data-html="true" animation="true"
@@ -262,8 +318,21 @@
       <textarea name="observacoes" rows="8" cols="80" maxlength="2048">{{observacoes}}</textarea>
       
       <br><br>
+      
+      {% if banca.startDate.date > today.date %}
+        <div style="display: inline-block; border:2px solid red; margin-bottom: 4px; padding: 4px;">
+          <span lang="pt" class="red-bold">Você está acessado o formulário antes da data agendada da banca.</span>
+          <span lang="en" class="red-bold">You have accessed the form before the scheduled evaluation date.</span>
+          <br>
+          <span lang="pt" class="red-bold">Tem certeza que deseja enviar a avaliação agora!!</span>
+          <span lang="en" class="red-bold">Are you sure you want to submit your evaluation now!!</span>
+          <br>
+        </div><br>
+      {% endif %}
+
       <button type="submit"><span lang="pt">Enviar Avaliação</span><span lang="en">Submit Evaluation</span></button>
       <p>&nbsp;</p>
+
     </form>
   {% else %}
     <p lang="pt">Não existe projeto disponível para avaliar.</p>
@@ -294,8 +363,16 @@
   {% include "linguas.html" %}
   <script>
     $("body").on("click", "#language_button", function(e) {
-      if($('[lang="en"]').is(":visible")) $("#selecione_avaliador").text(" -- select evaluator -- ");  
-      else $("#selecione_avaliador").text(" -- selecione um avaliador -- ");
+      if($('[lang="en"]').is(":visible")) {
+        $("#selecione_avaliador").text(" -- select evaluator -- ");
+        $("#MembBanca").attr("label", "Board Members");
+        $("#ListaComp").attr("label", "Complete List");
+      } else {
+        $("#selecione_avaliador").text(" -- selecione um avaliador -- ");
+        $("#MembBanca").attr("label", "Membros da Banca");
+        $("#ListaComp").attr("label", "Lista Completa");
+      }
+
     });
   </script>
 

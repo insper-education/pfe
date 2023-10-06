@@ -837,7 +837,8 @@ class Banca(models.Model):
                                    choice(string.ascii_uppercase + string.digits) for _ in range(6))
 
             ano = self.startDate.strftime("%y")
-            mes = int(self.startDate.strftime("%-m"))
+            mes = int(self.startDate.strftime("%m"))
+
             if mes > 7:
                 semestre = "2"
             else:
