@@ -42,44 +42,5 @@ from operacional.models import Curso
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
-    message = "Feito"
-
-    propostas = Proposta.objects.all()
-
-    comp = Curso.objects.get(sigla_curta="C")
-    mec = Curso.objects.get(sigla_curta="M")
-    mxt = Curso.objects.get(sigla_curta="X")
-
-    for proposta in propostas:
-    
-        if proposta.perfil_aluno1_computacao:
-            proposta.perfil1.add(comp)
-        if proposta.perfil_aluno1_mecanica:
-            proposta.perfil1.add(mec)
-        if proposta.perfil_aluno1_mecatronica:
-            proposta.perfil1.add(mxt)
-
-        if proposta.perfil_aluno2_computacao:
-            proposta.perfil2.add(comp)
-        if proposta.perfil_aluno2_mecanica:
-            proposta.perfil2.add(mec)
-        if proposta.perfil_aluno2_mecatronica:
-            proposta.perfil2.add(mxt)
-
-        if proposta.perfil_aluno3_computacao:
-            proposta.perfil3.add(comp)
-        if proposta.perfil_aluno3_mecanica:
-            proposta.perfil3.add(mec)
-        if proposta.perfil_aluno3_mecatronica:
-            proposta.perfil3.add(mxt)
-
-        if proposta.perfil_aluno4_computacao:
-            proposta.perfil4.add(comp)
-        if proposta.perfil_aluno4_mecanica:
-            proposta.perfil4.add(mec)
-        if proposta.perfil_aluno4_mecatronica:
-            proposta.perfil4.add(mxt)
-
-        proposta.save()
-
+    message = "Nada Feito"
     return HttpResponse(message)
