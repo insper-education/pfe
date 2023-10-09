@@ -8,147 +8,81 @@
   <h5>Perfil de Estudantes Esperados</h5>
   <table>
     <tr>
-        <th style="text-align:center; width:112px" >
-            Estudante
-        </th>
-        <th style="text-align:center; width:138px" >
-            Computação
-            {% if editavel %}<input type="checkbox" id="alunosC">{% endif %}
-        </th>
-        <th style="text-align:center; width:138px" >
-            Mecânica
-            {% if editavel %}<input type="checkbox" id="alunosM">{% endif %}
-        </th>
-        <th style="text-align:center; width:138px" >
-            Mecatrônica
-            {% if editavel %}<input type="checkbox" id="alunosX">{% endif %}
-        </th>
+      <th style="text-align:center; width:112px" >
+        Estudante
+      </th>
+      {% for curso in cursos %}
+        {% if curso.curso_do_insper %}
+          <th style="text-align:center; width:138px;">
+            {{curso.nome}}
+            {% if editavel %}<input type="checkbox" id="alunos{{curso.sigla_curta}}">{% endif %}
+          </th>
+        {% endif %}
+      {% endfor %}
     </tr>
     <tr> {% comment %} NAO EH A FORMA MAIS ELEGANTE MAS FUNCIONA POR ENQUANTO {% endcomment %}
       <td>Estudante&nbsp;1</td>
-
-      <td style="text-align:center;">
-      {% if editavel %}
-        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosC1" name="alunosC1" value="C1" 
-        {% if proposta.perfil_aluno1_computacao %}checked{% endif %}></label>
-      {% else %}
-        {% if proposta.perfil_aluno1_computacao %}&#x2713;{% endif %}
-      {% endif %}
-      </td>
-      
-      <td style="text-align:center;">
-      {% if editavel %}
-        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosM1" name="alunosM1" value="M1" 
-        {% if proposta.perfil_aluno1_mecanica %}checked{% endif %}></label>
-      {% else %}
-        {% if proposta.perfil_aluno1_mecanica %}&#x2713;{% endif %}
-      {% endif %}
-      </td>
-      
-      <td style="text-align:center;">
-      {% if editavel %}
-        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosX1" name="alunosX1" value="X1" 
-        {% if proposta.perfil_aluno1_mecatronica %}checked{% endif %}></label>
-      {% else %}
-        {% if proposta.perfil_aluno1_mecatronica %}&#x2713;{% endif %}
-      {% endif %}
-      </td>
-      
+      {% for curso in cursos %}
+        {% if curso.curso_do_insper %}
+        <td style="text-align:center;">
+          {% if editavel %}
+              <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}1" name="alunos{{curso.sigla_curta}}1" value="{{curso.sigla_curta}}1" 
+              {% if curso in proposta.perfil1.all %}checked{% endif %}></label>
+          {% else %}
+            {% if  curso in proposta.perfil1.all %}&#x2713;{% endif %}
+          {% endif %}
+        </td>
+        {% endif %}
+      {% endfor %}
     </tr>
 
     <tr>
-
       <td>Estudante&nbsp;2</td>
-
-      <td style="text-align:center;">
-      {% if editavel %}
-        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosC2" name="alunosC2" value="C2" 
-        {% if proposta.perfil_aluno2_computacao %}checked{% endif %}></label>
-      {% else %}
-        {% if proposta.perfil_aluno2_computacao %}&#x2713;{% endif %}
-      {% endif %}
-      </td>
-
-      <td style="text-align:center;">
-      {% if editavel %}
-        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosM2" name="alunosM2" value="M2" 
-        {% if proposta.perfil_aluno2_mecanica %}checked{% endif %}></label></td>
-      {% else %}
-        {% if proposta.perfil_aluno2_mecanica %}&#x2713;{% endif %}
-      {% endif %}
-      </td>
-
-      <td style="text-align:center;">
-      {% if editavel %}
-        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosX2" name="alunosX2" value="X2" 
-        {% if proposta.perfil_aluno2_mecatronica %}checked{% endif %}></label>
-      {% else %}
-        {% if proposta.perfil_aluno2_mecatronica %}&#x2713;{% endif %}
-      {% endif %}
-      </td>
+      {% for curso in cursos %}
+        {% if curso.curso_do_insper %}
+        <td style="text-align:center;">
+          {% if editavel %}
+              <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}2" name="alunos{{curso.sigla_curta}}2" value="{{curso.sigla_curta}}2" 
+              {% if curso in proposta.perfil2.all %}checked{% endif %}></label>
+          {% else %}
+            {% if  curso in proposta.perfil2.all %}&#x2713;{% endif %}
+          {% endif %}
+        </td>
+        {% endif %}
+      {% endfor %}
 
     </tr>
 
     <tr>
       <td>Estudante&nbsp;3</td>
-
-      <td style="text-align:center;">
-      {% if editavel %}
-        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosC3" name="alunosC3" value="C3"
-        {% if proposta.perfil_aluno3_computacao %}checked{% endif %}></label>
-      {% else %}
-        {% if proposta.perfil_aluno3_computacao %}&#x2713;{% endif %}
-      {% endif %}
-      </td>
-
-      <td style="text-align:center;">
-      {% if editavel %}
-        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosM3" name="alunosM3" value="M3"
-        {% if proposta.perfil_aluno3_mecanica %}checked{% endif %}></label>
-      {% else %}
-        {% if proposta.perfil_aluno3_mecanica %}&#x2713;{% endif %}
-      {% endif %}
-      </td>
-
-      <td style="text-align:center;">
-      {% if editavel %}
-        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosX3" name="alunosX3" value="X3"
-        {% if proposta.perfil_aluno3_mecatronica %}checked{% endif %}></label>
-      {% else %}
-        {% if proposta.perfil_aluno3_mecatronica %}&#x2713;{% endif %}
-      {% endif %}
-      </td>
+      {% for curso in cursos %}
+        {% if curso.curso_do_insper %}
+        <td style="text-align:center;">
+          {% if editavel %}
+              <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}3" name="alunos{{curso.sigla_curta}}3" value="{{curso.sigla_curta}}3" 
+              {% if curso in proposta.perfil3.all %}checked{% endif %}></label>
+          {% else %}
+            {% if  curso in proposta.perfil3.all %}&#x2713;{% endif %}
+          {% endif %}
+        </td>
+        {% endif %}
+      {% endfor %}
 
     </tr>
     <tr>
       <td>Estudante&nbsp;4</td>
-
+      {% for curso in cursos %}
+      {% if curso.curso_do_insper %}
       <td style="text-align:center;">
-      {% if editavel %}
-        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosC4" name="alunosC4" value="C4"
-        {% if proposta.perfil_aluno4_computacao %}checked{% endif %}></label>
-      {% else %}
-        {% if proposta.perfil_aluno4_computacao %}&#x2713;{% endif %}
-      {% endif %}
+        {% if editavel %}
+            <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}4" name="alunos{{curso.sigla_curta}}4" value="{{curso.sigla_curta}}4" 
+            {% if curso in proposta.perfil4.all %}checked{% endif %}></label>
+        {% else %}
+          {% if  curso in proposta.perfil4.all %}&#x2713;{% endif %}
+        {% endif %}
       </td>
-
-      <td style="text-align:center;">
-      {% if editavel %}
-        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosM4" name="alunosM4" value="M4" 
-        {% if proposta.perfil_aluno4_mecanica %}checked{% endif %}></label>
-      {% else %}
-        {% if proposta.perfil_aluno4_mecanica %}&#x2713;{% endif %}
       {% endif %}
-      </td>
-
-      <td style="text-align:center;">
-      {% if editavel %}
-        <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunosX4" name="alunosX4" value="X4" 
-        {% if proposta.perfil_aluno4_mecatronica %}checked{% endif %}></label>
-      {% else %}
-        {% if proposta.perfil_aluno4_mecatronica %}&#x2713;{% endif %}
-      {% endif %}
-      </td>
+    {% endfor %}
 
     </tr>
   </table>
@@ -186,6 +120,16 @@
           $("#alunosX").prop("indeterminate", false);
         } else {
           $("#alunosX").prop("indeterminate", true);
+        }
+
+        if( $("#alunosB1").is(':checked') && $("#alunosB2").is(':checked') && $("#alunosB3").is(':checked') && $("#alunosB4").is(':checked') ) {
+          $("#alunosB").prop("checked", true); 
+          $("#alunosB").prop("indeterminate", false);
+        } else if( (! $("#alunosB1").is(':checked')) && (! $("#alunosB2").is(':checked')) && (! $("#alunosB3").is(':checked')) && (! $("#alunosB4").is(':checked')) ) {
+          $("#alunosB").prop("checked", false);
+          $("#alunosB").prop("indeterminate", false);
+        } else {
+          $("#alunosB").prop("indeterminate", true);
         }
 
       }
@@ -235,6 +179,20 @@
           $("#alunosX2").prop("checked", false).change();;
           $("#alunosX3").prop("checked", false).change();;
           $("#alunosX4").prop("checked", false).change();;
+        }
+      });
+
+      $('#alunosB').change(function() {
+        if( $("#alunosB").is(':checked') ) {
+          $("#alunosB1").prop("checked", true).change();;
+          $("#alunosB2").prop("checked", true).change();;
+          $("#alunosB3").prop("checked", true).change();;
+          $("#alunosB4").prop("checked", true).change();;
+        } else {
+          $("#alunosB1").prop("checked", false).change();;
+          $("#alunosB2").prop("checked", false).change();;
+          $("#alunosB3").prop("checked", false).change();;
+          $("#alunosB4").prop("checked", false).change();;
         }
       });
 

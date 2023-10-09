@@ -791,6 +791,8 @@ def montar_grupos(request):
         'configuracao': configuracao,
         'propostas': propostas,
         'estudantes_opcoes': estudantes_opcoes,
+        "cursos": Curso.objects.all().order_by("id"),
+
     }
 
     return render(request, 'administracao/montar_grupos.html', context=context)

@@ -20,14 +20,13 @@
             {% if projeto.titulo_final %}{{projeto.titulo_final}}{% else %}{{projeto.titulo}}{% endif %}
             ({{ projeto.organizacao.nome }})
             &nbsp;&nbsp;
+            {% for curso in cursos %}{% if curso.curso_do_insper %}{% if curso in proposta.perfil1.all %}{{curso.sigla_curta}}{% else %}&nbsp;{% endif %}{% endif %}{% endfor %}<br>
             |
-            {% if projeto.perfil_aluno1_computacao %}C{% endif %}{% if projeto.perfil_aluno1_mecatronica %}X{% endif %}{% if projeto.perfil_aluno1_mecanica %}M{% endif %}
+            {% for curso in cursos %}{% if curso.curso_do_insper %}{% if curso in proposta.perfil2.all %}{{curso.sigla_curta}}{% else %}&nbsp;{% endif %}{% endif %}{% endfor %}<br>
             |
-            {% if projeto.perfil_aluno2_computacao %}C{% endif %}{% if projeto.perfil_aluno2_mecatronica %}X{% endif %}{% if projeto.perfil_aluno2_mecanica %}M{% endif %}
+            {% for curso in cursos %}{% if curso.curso_do_insper %}{% if curso in proposta.perfil3.all %}{{curso.sigla_curta}}{% else %}&nbsp;{% endif %}{% endif %}{% endfor %}<br>
             |
-            {% if projeto.perfil_aluno3_computacao %}C{% endif %}{% if projeto.perfil_aluno3_mecatronica %}X{% endif %}{% if projeto.perfil_aluno3_mecanica %}M{% endif %}
-            |
-            {% if projeto.perfil_aluno4_computacao %}C{% endif %}{% if projeto.perfil_aluno4_mecatronica %}X{% endif %}{% if projeto.perfil_aluno4_mecanica %}M{% endif %}
+            {% for curso in cursos %}{% if curso.curso_do_insper %}{% if curso in proposta.perfil4.all %}{{curso.sigla_curta}}{% else %}&nbsp;{% endif %}{% endif %}{% endfor %}<br>
             |
           </a>
           {% for opcao in opcoes %} 

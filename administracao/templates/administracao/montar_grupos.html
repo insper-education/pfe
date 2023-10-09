@@ -169,10 +169,10 @@
             {{rec.disciplina.nome}}<br>
           {% endfor %}">
             <tt style="display: block; font-size: smaller;">
-              {% if proposta.perfil_aluno1_computacao %}C{% else %}&nbsp;{% endif %}{% if proposta.perfil_aluno1_mecanica %}M{% else %}&nbsp;{% endif %}{% if proposta.perfil_aluno1_mecatronica %}X{% else %}&nbsp;{% endif %}<br>
-              {% if proposta.perfil_aluno2_computacao %}C{% else %}&nbsp;{% endif %}{% if proposta.perfil_aluno2_mecanica %}M{% else %}&nbsp;{% endif %}{% if proposta.perfil_aluno2_mecatronica %}X{% else %}&nbsp;{% endif %}<br>
-              {% if proposta.perfil_aluno3_computacao %}C{% else %}&nbsp;{% endif %}{% if proposta.perfil_aluno3_mecanica %}M{% else %}&nbsp;{% endif %}{% if proposta.perfil_aluno3_mecatronica %}X{% else %}&nbsp;{% endif %}<br>
-              {% if proposta.perfil_aluno4_computacao %}C{% else %}&nbsp;{% endif %}{% if proposta.perfil_aluno4_mecanica %}M{% else %}&nbsp;{% endif %}{% if proposta.perfil_aluno4_mecatronica %}X{% else %}&nbsp;{% endif %}<br>
+              {% for curso in cursos %}{% if curso.curso_do_insper %}{% if curso in proposta.perfil1.all %}{{curso.sigla_curta}}{% else %}&nbsp;{% endif %}{% endif %}{% endfor %}<br>
+              {% for curso in cursos %}{% if curso.curso_do_insper %}{% if curso in proposta.perfil2.all %}{{curso.sigla_curta}}{% else %}&nbsp;{% endif %}{% endif %}{% endfor %}<br>
+              {% for curso in cursos %}{% if curso.curso_do_insper %}{% if curso in proposta.perfil3.all %}{{curso.sigla_curta}}{% else %}&nbsp;{% endif %}{% endif %}{% endfor %}<br>
+              {% for curso in cursos %}{% if curso.curso_do_insper %}{% if curso in proposta.perfil4.all %}{{curso.sigla_curta}}{% else %}&nbsp;{% endif %}{% endif %}{% endfor %}<br>
             </tt>
           </a>
         </div>

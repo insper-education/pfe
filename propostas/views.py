@@ -21,6 +21,8 @@ from users.models import Professor, Parceiro, Administrador
 from projetos.models import Proposta, Projeto, Organizacao, Disciplina, Conexao
 from projetos.models import Configuracao, Area, AreaDeInteresse, Recomendada
 
+from operacional.models import Curso
+
 from .support import retorna_ternario, ordena_propostas_novo, ordena_propostas
 from .support import envia_proposta, preenche_proposta
 
@@ -368,6 +370,7 @@ def propostas_apresentadas(request):
                 'ternario_pendentes': ternario_pendentes,
                 'configuracao': configuracao,
                 "edicao": edicao,
+                "cursos": Curso.objects.all().order_by("id"),
             }
 
         else:
@@ -455,6 +458,7 @@ def proposta_completa(request, primarykey):
         "sem_opcao": sem_opcao,
         'areast': areas,
         "procura": procura,
+        "cursos": Curso.objects.all().order_by("id"),
     }
     return render(request, 'propostas/proposta_completa.html', context=context)
 
@@ -608,35 +612,27 @@ def validate_alunos(request):
     try:
         proposta = Proposta.objects.select_for_update().get(id=proposta_id)
 
-        if vaga[0] == 'C':
-            if vaga[1] == '1':
-                proposta.perfil_aluno1_computacao = checked
-            elif vaga[1] == '2':
-                proposta.perfil_aluno2_computacao = checked
-            elif vaga[1] == '3':
-                proposta.perfil_aluno3_computacao = checked
-            elif vaga[1] == '4':
-                proposta.perfil_aluno4_computacao = checked
-
-        if vaga[0] == 'M':
-            if vaga[1] == '1':
-                proposta.perfil_aluno1_mecanica = checked
-            elif vaga[1] == '2':
-                proposta.perfil_aluno2_mecanica = checked
-            elif vaga[1] == '3':
-                proposta.perfil_aluno3_mecanica = checked
-            elif vaga[1] == '4':
-                proposta.perfil_aluno4_mecanica = checked
-
-        if vaga[0] == 'X':
-            if vaga[1] == '1':
-                proposta.perfil_aluno1_mecatronica = checked
-            elif vaga[1] == '2':
-                proposta.perfil_aluno2_mecatronica = checked
-            elif vaga[1] == '3':
-                proposta.perfil_aluno3_mecatronica = checked
-            elif vaga[1] == '4':
-                proposta.perfil_aluno4_mecatronica = checked
+        curso_selecionado = Curso.objects.get(sigla_curta=vaga[0])
+        if vaga[1] == '1':
+            if checked:
+                proposta.perfil1.add(curso_selecionado)
+            else:
+                proposta.perfil1.remove(curso_selecionado)
+        elif vaga[1] == '2':
+            if checked:
+                proposta.perfil2.add(curso_selecionado)
+            else:
+                proposta.perfil2.remove(curso_selecionado)
+        elif vaga[1] == '3':
+            if checked:
+                proposta.perfil3.add(curso_selecionado)
+            else:
+                proposta.perfil3.remove(curso_selecionado)
+        elif vaga[1] == '4':
+            if checked:
+                proposta.perfil4.add(curso_selecionado)
+            else:
+                proposta.perfil4.remove(curso_selecionado)
 
         proposta.save()
     except Proposta.DoesNotExist:

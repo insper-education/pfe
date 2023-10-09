@@ -21,6 +21,7 @@ from django.template.defaultfilters import slugify
 from django.utils.encoding import force_text
 
 from estudantes.models import Relato
+from operacional.models import Curso
 import users.models
 
 def get_upload_path(instance, filename):
@@ -427,6 +428,11 @@ class Proposta(models.Model):
     perfil_aluno4_mecanica = \
         models.BooleanField(default=False, help_text='Perfil desejado de mecânica para aluno 4')
 
+    perfil1 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil1")
+    perfil2 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil2")
+    perfil3 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil3")
+    perfil4 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil4")
+
     data = models.DateTimeField(default=datetime.datetime.now,
                                 help_text='data e hora da criação da proposta de projeto')
 
@@ -513,30 +519,38 @@ class Proposta(models.Model):
         tmp_computacao = 0
         tmp_mecanica = 0
         tmp_mecatronica = 0
+        #tmp_bcc = 0
 
-        if self.perfil_aluno1_computacao:
+        comp = Curso.objects.get(sigla_curta="C")
+        mec = Curso.objects.get(sigla_curta="M")
+        mxt = Curso.objects.get(sigla_curta="X")
+
+        if comp in self.perfil1.all(): 
             tmp_computacao += 1
-        if self.perfil_aluno1_mecatronica:
+        if mxt in self.perfil1.all():
             tmp_mecatronica += 1
-        if self.perfil_aluno1_mecanica:
+        if mec in self.perfil1.all():
             tmp_mecanica += 1
-        if self.perfil_aluno2_computacao:
+        
+        if comp in self.perfil2.all():
             tmp_computacao += 1
-        if self.perfil_aluno2_mecatronica:
+        if mxt in self.perfil2.all():
             tmp_mecatronica += 1
-        if self.perfil_aluno2_mecanica:
+        if mec in self.perfil2.all():
             tmp_mecanica += 1
-        if self.perfil_aluno3_computacao:
+
+        if comp in self.perfil3.all():
             tmp_computacao += 1
-        if self.perfil_aluno3_mecatronica:
+        if mxt in self.perfil3.all():
             tmp_mecatronica += 1
-        if self.perfil_aluno3_mecanica:
+        if mec in self.perfil3.all():
             tmp_mecanica += 1
-        if self.perfil_aluno4_computacao:
+
+        if comp in self.perfil4.all():
             tmp_computacao += 1
-        if self.perfil_aluno4_mecatronica:
+        if mxt in self.perfil4.all():
             tmp_mecatronica += 1
-        if self.perfil_aluno4_mecanica:
+        if mec in self.perfil4.all():
             tmp_mecanica += 1
 
         # Regras para definir seu um projeto é nativamente de um curso

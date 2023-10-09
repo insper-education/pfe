@@ -22,6 +22,8 @@ from users.models import PFEUser
 from users.support import adianta_semestre
 from administracao.models import Carta
 
+from operacional.models import Curso
+
 def decodificar(campo, campos):
     """Recupera um campo de um documento PDF."""
     if campo in campos and "/V" in campos[campo]:
@@ -371,23 +373,42 @@ def retorna_ternario(propostas):
     """Função retorna dados para gráfico ternário."""
     ternario = []
     for proposta in propostas:
+        
+        ccomp = Curso.objects.get(sigla_curta="C")
+        cmec = Curso.objects.get(sigla_curta="M")
+        cmxt = Curso.objects.get(sigla_curta="X")
+
         comp = 0
-        comp += 1 if proposta.perfil_aluno1_computacao else 0
-        comp += 1 if proposta.perfil_aluno2_computacao else 0
-        comp += 1 if proposta.perfil_aluno3_computacao else 0
-        comp += 1 if proposta.perfil_aluno4_computacao else 0
-
         mecat = 0
-        mecat += 1 if proposta.perfil_aluno1_mecatronica else 0
-        mecat += 1 if proposta.perfil_aluno2_mecatronica else 0
-        mecat += 1 if proposta.perfil_aluno3_mecatronica else 0
-        mecat += 1 if proposta.perfil_aluno4_mecatronica else 0
-
         meca = 0
-        meca += 1 if proposta.perfil_aluno1_mecanica else 0
-        meca += 1 if proposta.perfil_aluno2_mecanica else 0
-        meca += 1 if proposta.perfil_aluno3_mecanica else 0
-        meca += 1 if proposta.perfil_aluno4_mecanica else 0
+
+        if ccomp in proposta.perfil1.all(): 
+            comp += 1
+        if cmxt in proposta.perfil1.all():
+            mecat += 1
+        if cmec in proposta.perfil1.all():
+            meca += 1
+        
+        if ccomp in proposta.perfil2.all():
+            comp += 1
+        if cmxt in proposta.perfil2.all():
+            mecat += 1
+        if cmec in proposta.perfil2.all():
+            meca += 1
+
+        if ccomp in proposta.perfil3.all():
+            comp += 1
+        if cmxt in proposta.perfil3.all():
+            mecat += 1
+        if cmec in proposta.perfil3.all():
+            meca += 1
+
+        if ccomp in proposta.perfil4.all():
+            comp += 1
+        if cmxt in proposta.perfil4.all():
+            mecat += 1
+        if cmec in proposta.perfil4.all():
+            meca += 1
 
         if proposta.organizacao:
             sigla = proposta.organizacao.sigla

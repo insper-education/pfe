@@ -289,27 +289,25 @@
 
             {% spaceless %}
             <td class="text-center estudantes">
-              {% if proposta.perfil_aluno1_computacao %}
-                {% if proposta.get_nativamente == "C" %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de computação">{% endif %}
-                  <span>C</span>
-                {% if proposta.get_nativamente == "C" %}</b>{% endif %}
-                <script>tmp_computacao += 1</script>
-              {% endif %}
-              {% if proposta.perfil_aluno1_mecatronica %}
-                {% if proposta.get_nativamente == "X" %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de mecatrônica">{% endif %}
-                  <span>X</span>
-                {% if proposta.get_nativamente == "X" %}</b>{% endif %}
-                <script>tmp_mecatronica += 1</script>
-              {% endif %}
-              {% if proposta.perfil_aluno1_mecanica %}
-                {% if proposta.get_nativamente == "M" %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de mecânica">{% endif %}
-                  <span>M</span>
-                {% if proposta.get_nativamente == "M" %}</b>{% endif %}
-                <script>tmp_mecanica += 1</script>
-              {% endif %}
+
+              {% for curso in cursos %}
+                {% if curso.curso_do_insper %}
+                  {% if curso in proposta.perfil1.all %}
+                  {% if proposta.get_nativamente == curso.sigla_curta %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de {{curso.nome}}">{% endif %}
+                    <span>{{curso.sigla_curta}}</span>
+                  {% if proposta.get_nativamente == curso.sigla_curta %}</b>{% endif %}
+                  <script>
+                    {% if curso.sigla_curta == "C" %}tmp_computacao += 1;{% endif %}
+                    {% if curso.sigla_curta == "X" %}tmp_mecatronica += 1;{% endif %}
+                    {% if curso.sigla_curta == "M" %}tmp_mecanica += 1;{% endif %}
+                  </script>
+                  {% else %}
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
               
               <!-- Se não defido conta para os 3 cursos -->
-              {% if not proposta.perfil_aluno1_computacao and not proposta.perfil_aluno1_mecatronica and not proposta.perfil_aluno1_mecanica %}
+              {% if not proposta.perfil1.all %}
                 <script>tmp_computacao += 1</script>
                 <script>tmp_mecatronica += 1</script>
                 <script>tmp_mecanica += 1</script>
@@ -321,26 +319,25 @@
               {% endif %}
             </td>
             <td class="text-center estudantes">
-              {% if proposta.perfil_aluno2_computacao %}
-                {% if proposta.get_nativamente == "C" %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de computação">{% endif %}
-                  <span>C</span>
-                {% if proposta.get_nativamente == "C" %}</b>{% endif %}
-                <script>tmp_computacao += 1</script>
+
+              {% for curso in cursos %}
+              {% if curso.curso_do_insper %}
+                {% if curso in proposta.perfil2.all %}
+                {% if proposta.get_nativamente == curso.sigla_curta %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de {{curso.nome}}">{% endif %}
+                  <span>{{curso.sigla_curta}}</span>
+                {% if proposta.get_nativamente == curso.sigla_curta %}</b>{% endif %}
+                <script>
+                  {% if curso.sigla_curta == "C" %}tmp_computacao += 1;{% endif %}
+                  {% if curso.sigla_curta == "X" %}tmp_mecatronica += 1;{% endif %}
+                  {% if curso.sigla_curta == "M" %}tmp_mecanica += 1;{% endif %}
+                </script>
+                {% else %}
+                {% endif %}
               {% endif %}
-              {% if proposta.perfil_aluno2_mecatronica %}
-                {% if proposta.get_nativamente == "X" %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de mecatrônica">{% endif %}
-                  <span>X</span>
-                {% if proposta.get_nativamente == "X" %}</b>{% endif %}
-                <script>tmp_mecatronica += 1</script>
-              {% endif %}
-              {% if proposta.perfil_aluno2_mecanica %}
-                {% if proposta.get_nativamente == "M" %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de mecânica">{% endif %}
-                  <span>M</span>
-                {% if proposta.get_nativamente == "M" %}</b>{% endif %}
-                <script>tmp_mecanica += 1</script>
-              {% endif %}
+              {% endfor %}
+
               <!-- Se não defido conta para os 3 cursos -->
-              {% if not proposta.perfil_aluno2_computacao and not proposta.perfil_aluno2_mecatronica and not proposta.perfil_aluno2_mecanica %}
+              {% if not proposta.perfil2.all %}
                 <script>tmp_computacao += 1</script>
                 <script>tmp_mecatronica += 1</script>
                 <script>tmp_mecanica += 1</script>
@@ -352,26 +349,25 @@
               {% endif %}
             </td>
             <td class="text-center estudantes">
-              {% if proposta.perfil_aluno3_computacao %}
-                {% if proposta.get_nativamente == "C" %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de computação">{% endif %}
-                  <span>C</span>
-                {% if proposta.get_nativamente == "C" %}</b>{% endif %}
-                <script>tmp_computacao += 1</script>
+
+              {% for curso in cursos %}
+              {% if curso.curso_do_insper %}
+                {% if curso in proposta.perfil3.all %}
+                {% if proposta.get_nativamente == curso.sigla_curta %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de {{curso.nome}}">{% endif %}
+                  <span>{{curso.sigla_curta}}</span>
+                {% if proposta.get_nativamente == curso.sigla_curta %}</b>{% endif %}
+                <script>
+                  {% if curso.sigla_curta == "C" %}tmp_computacao += 1;{% endif %}
+                  {% if curso.sigla_curta == "X" %}tmp_mecatronica += 1;{% endif %}
+                  {% if curso.sigla_curta == "M" %}tmp_mecanica += 1;{% endif %}
+                </script>
+                {% else %}
+                {% endif %}
               {% endif %}
-              {% if proposta.perfil_aluno3_mecatronica %}
-                {% if proposta.get_nativamente == "X" %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de mecatrônica">{% endif %}
-                  <span>X</span>
-                {% if proposta.get_nativamente == "X" %}</b>{% endif %}
-                <script>tmp_mecatronica += 1</script>
-              {% endif %}
-              {% if proposta.perfil_aluno3_mecanica %}
-                {% if proposta.get_nativamente == "M" %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de mecânica">{% endif %}
-                  <span>M</span>
-                {% if proposta.get_nativamente == "M" %}</b>{% endif %}
-                <script>tmp_mecanica += 1</script>
-              {% endif %}
+              {% endfor %}
+
               <!-- Se não defido conta para os 3 cursos -->
-              {% if not proposta.perfil_aluno3_computacao and not proposta.perfil_aluno3_mecatronica and not proposta.perfil_aluno3_mecanica %}
+              {% if not proposta.perfil3.all %}
                 <script>tmp_computacao += 1</script>
                 <script>tmp_mecatronica += 1</script>
                 <script>tmp_mecanica += 1</script>
@@ -383,25 +379,25 @@
               {% endif %}
             </td>
             <td class="text-center estudantes">
-              {% if proposta.perfil_aluno4_computacao %}
-                {% if proposta.get_nativamente == "C" %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de computação">{% endif %}
-                  <span>C</span>
-                {% if proposta.get_nativamente == "C" %}</b>{% endif %}
-                <script>tmp_computacao += 1</script>
+
+              {% for curso in cursos %}
+              {% if curso.curso_do_insper %}
+                {% if curso in proposta.perfil4.all %}
+                {% if proposta.get_nativamente == curso.sigla_curta %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de {{curso.nome}}">{% endif %}
+                  <span>{{curso.sigla_curta}}</span>
+                {% if proposta.get_nativamente == curso.sigla_curta %}</b>{% endif %}
+                <script>
+                  {% if curso.sigla_curta == "C" %}tmp_computacao += 1;{% endif %}
+                  {% if curso.sigla_curta == "X" %}tmp_mecatronica += 1;{% endif %}
+                  {% if curso.sigla_curta == "M" %}tmp_mecanica += 1;{% endif %}
+                </script>
+                {% else %}
+                {% endif %}
               {% endif %}
-              {% if proposta.perfil_aluno4_mecatronica %}
-                {% if proposta.get_nativamente == "X" %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de mecatrônica">{% endif %}
-                  <span>X</span>
-                {% if proposta.get_nativamente == "X" %}</b>{% endif %}
-                <script>tmp_mecatronica += 1</script>
-              {% endif %}
-              {% if proposta.perfil_aluno4_mecanica %}
-                {% if proposta.get_nativamente == "M" %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de mecânica">{% endif %}
-                  <span>M</span>
-                {% if proposta.get_nativamente == "M" %}</b>{% endif %}
-                <script>tmp_mecanica += 1</script>
-              {% endif %}
-              {% if not proposta.perfil_aluno4_computacao and not proposta.perfil_aluno4_mecatronica and not proposta.perfil_aluno4_mecanica %}
+              {% endfor %}
+
+              <!-- Se não defido conta para os 3 cursos -->
+              {% if not proposta.perfil4.all %}
                 <script>tmp_computacao += 1</script>
                 <script>tmp_mecatronica += 1</script>
                 <script>tmp_mecanica += 1</script>
