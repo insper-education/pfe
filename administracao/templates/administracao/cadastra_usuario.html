@@ -77,7 +77,8 @@
       <label for="matricula">Matrícula: </label> <input type="text" size="8" maxlength="8" id="matricula" name="matricula" {% if usuario and usuario.aluno and usuario.aluno.matricula %}value="{{usuario.aluno.matricula}}"{% endif %}><br>
  
       <label for="lingua">Curso</label>:
-      <select name="curso" title="Curso">
+      <select id="curso" name="curso" title="Curso">
+        <option disabled selected value> -- selecione curso -- </option>
         {% for curso in cursos %}
           <option value="{{curso.sigla}}" {% if usuario.aluno.curso2.sigla == curso.sigla %}selected{% endif %}>{{curso.nome}}</option>  
         {% endfor %}
@@ -189,9 +190,7 @@
       });
 
       // Estudante
-      $("#computacao").prop('required',false);
-      $("#mecanica").prop('required',false);
-      $("#mecatronica").prop('required',false);
+      $("#curso").prop('required',false);
       $("#ano").prop('required',false);
       $("#semestre").prop('required',false);
 
@@ -212,13 +211,10 @@
       }
 
       if(filterValue=="estudante") {
-        $("#computacao").prop('required',true);
-        $("#mecanica").prop('required',true);
-        $("#mecatronica").prop('required',true);
+        $("#curso").prop('required',true);
         $("#ano").prop('required',true);
         $("#semestre").prop('required',true);
       }
-
 
       // Para não validar o que está escondido
       $("div:hidden").children('input').attr("disabled", true);

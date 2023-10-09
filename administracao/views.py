@@ -256,6 +256,7 @@ def cadastrar_usuario(request):
 
     context = {
         "organizacoes": Organizacao.objects.all().order_by("nome"),
+        "cursos": Curso.objects.all().order_by("id"),
         "linkedin_length": PFEUser._meta.get_field('linkedin').max_length,
         "email_length": PFEUser._meta.get_field('email').max_length,
     }
