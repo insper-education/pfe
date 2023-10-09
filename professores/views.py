@@ -1865,10 +1865,14 @@ def objetivos_rubricas(request):
 
 @login_required
 @transaction.atomic
+@permission_required("users.altera_professor", raise_exception=True)
 def ver_pares(request, alocacao_id, momento):
     """Permite visualizar a avaliação de pares."""
 
     alocacao_de = get_object_or_404(Alocacao, pk=alocacao_id)
+
+    if request.user != alocacao_de.projeto.orientador.user and request.user.tipo_de_usuario != 4:
+        return HttpResponse("Acesso restrito.", status=401)
 
     if momento=="intermediaria":
         tipo=0
@@ -1888,6 +1892,7 @@ def ver_pares(request, alocacao_id, momento):
         "estudante": alocacao_de.aluno,
         "colegas": colegas,
         "momento": momento,
+        "projeto": alocacao_de.projeto,
     }
 
     return render(request, "professores/ver_pares.html", context)

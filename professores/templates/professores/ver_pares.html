@@ -17,6 +17,27 @@
 
   <span class="titulo">Avaliação de Pares {% if momento == "intermediaria" %}Intermediária{% else %}Final{% endif %}</span>
 
+    <b>Projeto:</b>
+    <a href="{% url 'projeto_completo' projeto.id %}">
+      {{projeto.get_titulo}}
+      {% include "tipo_projeto.html" %}<br>
+    </a>
+
+    {% if projeto.orientador %}
+      {% if projeto.proposta.intercambio %}
+        <b>Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
+      {% else %}
+        <b>Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
+      {% endif %}
+      <a href="{% url 'professor_detail' projeto.orientador.id %}">
+        {{projeto.orientador.user.get_full_name}}
+      </a>
+      <a href="mailto:{{projeto.orientador.user.email}}"> &lt;{{projeto.orientador.user.email}}&gt;</a>
+    {% else %}
+      <h3>Orientador: Não definido</h3>
+    {% endif %}
+    <br><br>
+
     <div style="max-width: 700px;">
         Preencha este formulário de feedback de pares para seu orientador e cada um dos membros de sua equipe.
       As mensagens para seus colegas de grupo, se forem usadas, serão compiladas anonimamente com as de todos
