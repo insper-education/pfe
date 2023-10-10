@@ -6,14 +6,36 @@
 
 {% comment %} Seletor da edição da pesquisa {% endcomment %}
 {% if edicoes %}
+<style>
+.separador {
+  margin-right: 16px;
+}
+
+@media only screen and (max-width: 500px) {
+  .to_hide {
+    font-size: 0.7rem;
+  }
+  .to_label {
+    padding: 4px !important;
+  }
+  .separador {
+    margin-right: 6px;
+  }
+  #filterEdicao {
+    padding-right: 22px;
+    padding-left: 2px;
+  }
+}
+</style>
+
   <div class="row align-items-start mb-2" style="display: inline-block;">
     <div class="ml-3">
       <div class="input-group input-group-sm">
         {% if not sem_edicao %}
           <div class="input-group-prepend">
-            <label class="input-group-text" for="filterEdicao" onClick="recarregar_pagina()">Edição</label>
+            <label class="to_label input-group-text" for="filterEdicao" onClick="recarregar_pagina()"><span class="to_hide">Edição</span></label>
           </div>
-          <select class="filter custom-select w-auto" id="filterEdicao" name="edicao">
+          <select class="to_hide filter custom-select w-auto" id="filterEdicao" name="edicao">
             {% comment %} Se não quiser que aparece a opção todas crie uma variavel n_todas com True {% endcomment %}
             {% if not n_todas %}
               <option value="todas">todas</option>
@@ -31,10 +53,10 @@
         {% endif %}
         {% if com_cursos %}
           {% if not sem_edicao %}
-            <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span class="separador input-group-addon"></span>
           {% endif %}
           <div class="input-group-prepend">
-            <label class="input-group-text" for="filterCurso" onClick="recarregar_pagina()">Curso</label>
+            <label class="to_label input-group-text" for="filterCurso" onClick="recarregar_pagina()"><span class="to_hide">Curso</span></label>
           </div>
           <select class="filter custom-select w-auto" id="filterCurso" name="curso">
               <option value="T">todos</option>
@@ -66,7 +88,7 @@
           <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
           
           <div class="input-group-prepend">
-            <label class="input-group-text" for="filterObjetivo" onClick="recarregar_pagina()">Objetivo de Aprendizagem</label>
+            <label class="input-group-text" for="filterObjetivo" onClick="recarregar_pagina()"><span class="to_hide">Objetivo de Aprendizagem</span></label>
           </div>
           <select class="filter custom-select w-auto" id="filterObjetivo" name="objetivo">
 

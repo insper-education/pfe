@@ -22,10 +22,6 @@
       width:auto;
     }
     
-  </style>
-
-
-  <style>
     .arrow {
       border: solid black;
       border-width: 0px 2px 2px 0px;
@@ -41,6 +37,15 @@
 
     #toggle {
       display:inline-block; 
+    }
+
+    .projline {
+      margin-bottom:2em;
+      border-width: 1px;
+      padding:8px;
+      border-radius: 18px;
+      border-style: solid;
+      border-color: LightGray;
     }
 
   </style>
@@ -85,12 +90,6 @@
     </div>
   </span>{% comment %} Mais elementos no carrega_pagina() {% endcomment %}
 
-  {% comment %} 
-  <script>
-    $("#informacoes").detach().appendTo("#lateral");
-  </script>
-  {% endcomment %}
-
   <br>
   
   {% comment %} Tabela com todos os projetos selecionados pelo filtro {% endcomment %}
@@ -99,11 +98,8 @@
     {% if projetos %}
       <table id="projetos">
       {% for projeto, prioridades, cooperacoes, conexoes in projetos %}
-        <tr id="two" class="row {% if projeto.avancado %}avancado{% endif %}" data-type="{{projeto.ano}}.{{projeto.semestre}}">
-        <td id="ptd" style="margin-bottom:3em;">
-        {% if projeto.avancado %}
-          <br><br>
-        {% endif %}
+        <tr class="row {% if projeto.avancado %}avancado{% endif %}" data-type="{{projeto.ano}}.{{projeto.semestre}}">
+        <td class="projline">
         {% if projeto.organizacao %}
           <span class="logo">
             {% if projeto.organizacao.logotipo %}
