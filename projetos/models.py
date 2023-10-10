@@ -398,31 +398,6 @@ class Proposta(models.Model):
 
     fechada = models.BooleanField(default=False, help_text='Se a proposta virou um projeto')
 
-    perfil_aluno1_computacao = \
-        models.BooleanField(default=False, help_text='Perfil desejado de computação para aluno 1')
-    perfil_aluno1_mecatronica = \
-        models.BooleanField(default=False, help_text='Perfil desejado de mecatrônica para aluno 1')
-    perfil_aluno1_mecanica = \
-        models.BooleanField(default=False, help_text='Perfil desejado de mecânica para aluno 1')
-    perfil_aluno2_computacao = \
-        models.BooleanField(default=False, help_text='Perfil desejado de computação para aluno 2')
-    perfil_aluno2_mecatronica = \
-        models.BooleanField(default=False, help_text='Perfil desejado de mecatrônica para aluno 2')
-    perfil_aluno2_mecanica = \
-        models.BooleanField(default=False, help_text='Perfil desejado de mecânica para aluno 2')
-    perfil_aluno3_computacao = \
-        models.BooleanField(default=False, help_text='Perfil desejado de computação para aluno 3')
-    perfil_aluno3_mecatronica = \
-        models.BooleanField(default=False, help_text='Perfil desejado de mecatrônica para aluno 3')
-    perfil_aluno3_mecanica = \
-        models.BooleanField(default=False, help_text='Perfil desejado de mecânica para aluno 3')
-    perfil_aluno4_computacao = \
-        models.BooleanField(default=False, help_text='Perfil desejado de computação para aluno 4')
-    perfil_aluno4_mecatronica = \
-        models.BooleanField(default=False, help_text='Perfil desejado de mecatrônica para aluno 4')
-    perfil_aluno4_mecanica = \
-        models.BooleanField(default=False, help_text='Perfil desejado de mecânica para aluno 4')
-
     perfil1 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil1")
     perfil2 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil2")
     perfil3 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil3")
