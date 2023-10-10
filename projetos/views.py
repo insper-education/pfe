@@ -296,7 +296,8 @@ def projetos_fechados(request):
     else:
         edicoes, ano, semestre = get_edicoes(Projeto)
         context = {
-            'edicoes': edicoes,
+            "edicoes": edicoes,
+            "cursos": Curso.objects.all().order_by("id"),
         }
 
     return render(request, 'projetos/projetos_fechados.html', context)

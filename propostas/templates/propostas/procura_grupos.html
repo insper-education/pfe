@@ -58,13 +58,15 @@
 
   <script>
     $(document).on('click','#informacoes_tag',function(){
-      $( "#toggle" ).toggle( "slide" );
+      if($("#toggle").is(':visible')) $("#informacoes").css("display", "inline");
+      else $("#informacoes").css("display", "block");
+      $("#toggle").toggle( "slide" );
     });
   </script>
 
-  <span id="informacoes" style="border: 1px solid gray; border-radius: 2px; padding: 1px; margin-left: 20px;">
-    <span id="informacoes_tag">&nbsp;Informações <i class="arrow right"></i>&nbsp;</span>
-    <div id="toggle" style="display: none; height: 1em;">
+  <div id="informacoes" style="font-size:0.8rem; display: inline; border: 1px solid lightgray; padding: 1px;">
+    <span id="informacoes_tag" style="cursor: pointer; color:gray;"><b>Informações <i class="arrow right"></i>&nbsp;</b></span>
+    <div id="toggle" style="padding-top: 10px;display: none;"> 
       <label><input id="logo" onchange="($(this).prop('checked') ? $('.logo').show() : $('.logo').hide())" type="checkbox" checked /> Logo</label>&nbsp;&nbsp;&nbsp;
       <label><input id="descricao" onchange="($(this).prop('checked') ? $('.descricao').show() : $('.descricao').hide())" type="checkbox" checked /> Descrição</label>&nbsp;&nbsp;&nbsp;
       <label><input id="apresentacoes" onchange="($(this).prop('checked') ? $('.apresentacao').show() : $('.apresentacao').hide())" type="checkbox" checked /> Apresentações</label>&nbsp;&nbsp;&nbsp;
@@ -80,7 +82,7 @@
       <label><input id="emails" onchange="($(this).prop('checked') ? $('.emails').show() : $('.emails').hide())" type="checkbox" checked /> e-mails</label>&nbsp;&nbsp;&nbsp;
       <label><input id="emails" onchange="($(this).prop('checked') ? $('.avancado').show() : $('.avancado').hide())" type="checkbox" checked /> Avancados</label>&nbsp;&nbsp;&nbsp;
     </div>
-  </span>{% comment %} Mais elementos no carrega_pagina() {% endcomment %}
+  </div>{% comment %} Mais elementos no carrega_pagina() {% endcomment %}
 
   {% comment %} 
   <script>
