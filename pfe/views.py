@@ -34,9 +34,31 @@ def custom_400(request, exception):
     #t.render(Context({'exception_value': value,})
     return HttpResponse(mensagem)
 
+
+from projetos.models import Organizacao
+from operacional.models import Curso
+
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
-    message = "Nada Feito"
+    message = "Feito"
+
+    comp = Curso.objects.get(sigla_curta="C")
+    mec = Curso.objects.get(sigla_curta="M")
+    mxt = Curso.objects.get(sigla_curta="X")
+       
+    for organizacao in Organizacao.objects.all():
+    
+        if organizacao.area_computacao:
+            organizacao.area_curso.add(comp)
+
+        if organizacao.area_mecatronica:
+            organizacao.area_curso.add(mxt)
+        
+        if organizacao.area_mecanica:
+            organizacao.area_curso.add(mec)
+        
+        organizacao.save()
+
     return HttpResponse(message)

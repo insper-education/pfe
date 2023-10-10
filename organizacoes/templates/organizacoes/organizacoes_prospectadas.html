@@ -14,6 +14,12 @@
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
 
+  <style>
+    .cursor_pointer{
+      cursor: pointer;
+    }
+  </style>
+
 {% endblock %}
 
 {% block content %}
@@ -56,7 +62,7 @@
   <div id="tabela">
 
     <script>
-        var lista_organizacoes = [];
+        var cursos_organizacoes = {};
     </script>
 
     {% if organizacoes_list %}
@@ -123,11 +129,8 @@
             </td>
 
             <td style="text-align:center">
-              <small >
-                 <span id="{{organizacao.id}}C" onclick="areas('{{organizacao.id}}','C')" {% if not organizacao.area_computacao %}style="color:lightgray"{% endif %}>C</span
-                ><span id="{{organizacao.id}}M" onclick="areas('{{organizacao.id}}','M')" {% if not organizacao.area_mecanica %}style="color:lightgray"{% endif %}>M</span
-                ><span id="{{organizacao.id}}X" onclick="areas('{{organizacao.id}}','X')" {% if not organizacao.area_mecatronica %}style="color:lightgray"{% endif %}>X</span>
-              </small>
+              <small>{% for curso in cursos %}{% if curso.curso_do_insper %}<span class="cursor_pointer" id="{{organizacao.id}}{{curso.sigla_curta}}"
+                 onclick="areas('{{organizacao.id}}','{{curso.sigla_curta}}')" {% if not curso in organizacao.area_curso.all %}style="color:lightgray"{% endif %}>{{curso.sigla_curta}}</span>{% endif %}{% endfor %}</small>
             </td>
 
             <td style="text-align:center">
@@ -204,12 +207,9 @@
           {% if contato != '---------' %}
             {% if contato.momento|date:'Ymd' > meses3|date:'Ymd' %}
               <script>
-                lista_organizacoes.push(
-                  [ {{contato.tipo_de_retorno}},
-                    {{organizacao.area_computacao|yesno:"true,false"}}, 
-                    {{organizacao.area_mecatronica|yesno:"true,false"}}, 
-                    {{organizacao.area_mecanica|yesno:"true,false"}} ]
-                );
+                tipo = "{% for curso in organizacao.area_curso.all %}{{curso.sigla_curta}}{% endfor %}";
+                if (!('{{contato.tipo_de_retorno}}' in cursos_organizacoes)) {cursos_organizacoes['{{contato.tipo_de_retorno}}'] = {};}
+                cursos_organizacoes['{{contato.tipo_de_retorno}}'][tipo] = (cursos_organizacoes['{{contato.tipo_de_retorno}}'][tipo] || 0) + 1;
               </script>
             {% endif %}
           {% endif %}
@@ -232,64 +232,26 @@
         function preenche_cursos(tipo_de_retorno) {
 
           mensagem = "";
-          C = 0; M = 0; X = 0; CM = 0; CX = 0; MX = 0; CMX = 0;
-          total = 0
-
-          for (var cursos in lista_organizacoes) {
-            if(lista_organizacoes[cursos][0] == tipo_de_retorno) {
-              if(lista_organizacoes[cursos][1] && lista_organizacoes[cursos][2] && lista_organizacoes[cursos][3]) CMX += 1;
-              else if(lista_organizacoes[cursos][1] && lista_organizacoes[cursos][2]) CX += 1;
-              else if(lista_organizacoes[cursos][1] && lista_organizacoes[cursos][3]) CM += 1;
-              else if(lista_organizacoes[cursos][2] && lista_organizacoes[cursos][3]) MX += 1;
-              else if(lista_organizacoes[cursos][1]) C += 1;
-              else if(lista_organizacoes[cursos][2]) X += 1;
-              else if(lista_organizacoes[cursos][3]) M += 1;
-              total += 1;
-            }
-          }
-
+          mensagem2 = "";
+          
           primeiro = true;
-          if(total > 0) {
+          if (cursos_organizacoes[tipo_de_retorno]) {
+            total=0;
+            for (var key in cursos_organizacoes[tipo_de_retorno]){
+              if(primeiro) primeiro = false; else mensagem2 += ","; 
+              mensagem2 += " "+key+":"+cursos_organizacoes[tipo_de_retorno][key];
+              total += cursos_organizacoes[tipo_de_retorno][key];
+            }
             mensagem += " = ";
             mensagem += total;
             mensagem += " [" + Math.round((total/{{total_organizacoes}})*100) + "%]";
-            mensagem += " (";
-            if(C>0) {
-              if(primeiro) primeiro = false; else mensagem += ","; 
-              mensagem += " C:"+C;
-            }
-            if(M>0) {
-              if(primeiro) primeiro = false; else mensagem += ","; 
-              mensagem += " M:"+M;
-            }
-            if(X>0) {
-              if(primeiro) primeiro = false; else mensagem += ","; 
-              mensagem += " X:"+X;
-            }
-            if(CM>0) {
-              if(primeiro) primeiro = false; else mensagem += ","; 
-              mensagem += " CM:"+CM;
-            }
-            if(CX>0) {
-              if(primeiro) primeiro = false; else mensagem += ","; 
-              mensagem += " CX:"+CX;
-            }
-            if(MX>0) {
-              if(primeiro) primeiro = false; else mensagem += ","; 
-              mensagem += " MX:"+MX;
-            }
-            if(CMX>0) {
-              if(primeiro) primeiro = false; else mensagem += ","; 
-              mensagem += " CMX:"+CMX;
-            }
-            mensagem += " )";
+            mensagem += " (" + mensagem2 + " )";
           }
           else {
-            mensagem += " = 0 [0%]";
+            return("");
           }
 
           return(mensagem);
-
         }
 
         function atualiza_situacoes() {

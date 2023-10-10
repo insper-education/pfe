@@ -29,6 +29,7 @@ from projetos.support import simple_upload
 
 from propostas.support import envia_proposta, preenche_proposta, preenche_proposta_pdf
 
+from operacional.models import Curso
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
@@ -520,13 +521,14 @@ def organizacoes_prospect(request):
     total_submetidas = sum(submetidas)
 
     context = {
-        'organizacoes_list': organizacoes_list,
-        'total_organizacoes': total_organizacoes,
-        'total_disponiveis': total_disponiveis,
-        'total_submetidas': total_submetidas,
-        'ano': ano,
-        'semestre': semestre,
-        'filtro': "todas",
+        "organizacoes_list": organizacoes_list,
+        "total_organizacoes": total_organizacoes,
+        "total_disponiveis": total_disponiveis,
+        "total_submetidas": total_submetidas,
+        "ano": ano,
+        "semestre": semestre,
+        "filtro": "todas",
+        "cursos": Curso.objects.all().order_by("id"),
         }
     return render(request,
                   'organizacoes/organizacoes_prospectadas.html',
@@ -605,8 +607,9 @@ def organizacao_completo(request, org):  # acertar isso para pk
     organizacao = get_object_or_404(Organizacao, id=org)
 
     context = {
-        'organizacao': organizacao,
-        'MEDIA_URL': settings.MEDIA_URL,
+        "organizacao": organizacao,
+        "cursos": Curso.objects.all().order_by("id"),
+        "MEDIA_URL": settings.MEDIA_URL,
     }
 
     return render(request,
@@ -840,17 +843,11 @@ def areas(request):
     situacao = True if (request.GET.get('situacao', "") == "true") else False
     organizacao = get_object_or_404(Organizacao, id=organizacao_id)
 
-    if curso == "C":
-        organizacao.area_computacao = situacao
-    elif curso == "X":
-        organizacao.area_mecatronica = situacao
-    elif curso == "M":
-        organizacao.area_mecanica = situacao
-
+    if situacao:
+        organizacao.area_curso.add(Curso.objects.get(sigla_curta=curso))
+    else:
+        organizacao.area_curso.remove(Curso.objects.get(sigla_curta=curso))
+    
     organizacao.save()
 
-    data = {
-        'atualizado': True,
-    }
-
-    return JsonResponse(data)
+    return JsonResponse({'atualizado': True,})

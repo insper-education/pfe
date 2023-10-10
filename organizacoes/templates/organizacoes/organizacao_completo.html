@@ -41,12 +41,9 @@
     <strong>Informações sobre a empresa :</strong> {{ organizacao.informacoes|linebreaks }}
   {% endif %}
 
-  {% if organizacao.area_computacao or organizacao.area_mecatronica or organizacao.area_mecanica %}
-     <strong>Áreas de projetos :</strong>
-    {% if organizacao.area_computacao %}Computação{% if organizacao.area_mecatronica or organizacao.area_mecanica %}, {% endif %}{% endif %}
-    {% if organizacao.area_mecatronica %}Mecatrônica{% if organizacao.area_mecanica %}, {% endif %}{% endif %}
-    {% if organizacao.area_mecanica %}Mecânica {% endif %}
-    <br>
+  {% if organizacao.area_curso.all %}
+    <strong>Áreas de projetos :</strong>
+    {% for curso in organizacao.area_curso.all %}{% if not forloop.first %}, {% endif %}{{curso.nome}}{% endfor %}.<br>
   {% endif %}
 
   <br><strong>contato(s):</strong>

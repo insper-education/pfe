@@ -96,6 +96,10 @@ class Organizacao(models.Model):
     area_mecanica = models.BooleanField("Área Mecânica", default=False,
                                         help_text='Se for uma organização típica de projeto de mecânica')
 
+    area_curso = models.ManyToManyField("operacional.Curso", 
+                                        help_text="Curso que mais se identifica com a área da organização")
+
+
     class Meta:
         ordering = ['sigla']
         verbose_name = 'Organização'
