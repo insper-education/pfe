@@ -486,53 +486,24 @@ class Proposta(models.Model):
 
     def get_nativamente(self):
         """Retorna em string com curso mais nativo da proposta."""
-        tmp_computacao = 0
-        tmp_mecanica = 0
-        tmp_mecatronica = 0
-        #tmp_bcc = 0
 
-        comp = Curso.objects.get(sigla_curta="C")
-        mec = Curso.objects.get(sigla_curta="M")
-        mxt = Curso.objects.get(sigla_curta="X")
+        count = {}
+        total = 0
 
-        if comp in self.perfil1.all(): 
-            tmp_computacao += 1
-        if mxt in self.perfil1.all():
-            tmp_mecatronica += 1
-        if mec in self.perfil1.all():
-            tmp_mecanica += 1
-        
-        if comp in self.perfil2.all():
-            tmp_computacao += 1
-        if mxt in self.perfil2.all():
-            tmp_mecatronica += 1
-        if mec in self.perfil2.all():
-            tmp_mecanica += 1
+        for curso in Curso.objects.all():
+            count[curso.sigla_curta] = 0
 
-        if comp in self.perfil3.all():
-            tmp_computacao += 1
-        if mxt in self.perfil3.all():
-            tmp_mecatronica += 1
-        if mec in self.perfil3.all():
-            tmp_mecanica += 1
+        for ferfil in [self.perfil1, self.perfil3, self.perfil3, self.perfil4]:
+            for curso in ferfil.all(): 
+                count[curso.sigla_curta] += 1
+                total += 1
 
-        if comp in self.perfil4.all():
-            tmp_computacao += 1
-        if mxt in self.perfil4.all():
-            tmp_mecatronica += 1
-        if mec in self.perfil4.all():
-            tmp_mecanica += 1
-
-        # Regras para definir seu um projeto é nativamente de um curso
-        if tmp_computacao == 0 and tmp_mecatronica == 0 and tmp_mecanica == 0:
+        if total == 0:
             return " "
 
-        if (tmp_computacao >= 3) and (tmp_computacao > tmp_mecatronica + tmp_mecanica):
-            return "C"
-        elif (tmp_mecatronica >= 3) and (tmp_mecatronica > tmp_computacao + tmp_mecanica):
-            return "X"
-        elif (tmp_mecanica >= 3) and (tmp_mecanica > tmp_mecatronica + tmp_computacao):
-            return "M"
+        keymax = max(count, key= lambda x: count[x])
+        if count[keymax] > total//2:
+            return keymax
         return "?"
 
 
