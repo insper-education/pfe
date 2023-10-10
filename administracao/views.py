@@ -666,6 +666,7 @@ def propor(request):
         'proposta_indice': proposta_indice,
         "qtd": qtd,
         "media_cr": media_cr,
+        "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
     }
 
     return render(request,
