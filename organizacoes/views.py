@@ -516,6 +516,9 @@ def organizacoes_prospect(request):
                                                    .count())
 
     organizacoes_list = zip(organizacoes, disponiveis, submetidas, contato)
+
+    organizacoes_list = sorted(organizacoes_list, key=lambda x: x[3].tipo_de_retorno)
+
     total_organizacoes = len(organizacoes)
     total_disponiveis = sum(disponiveis)
     total_submetidas = sum(submetidas)

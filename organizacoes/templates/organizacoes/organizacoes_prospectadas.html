@@ -105,9 +105,9 @@
               {% if contato.tipo_de_retorno == 0 %}
                 "background-color:lightblue" {% comment %} (0, 'Contactada para enviar proposta'), {% endcomment %}
               {% elif contato.tipo_de_retorno == 1 %}
-                "background-color:lightgreen" {% comment %} (1, 'Enviou proposta de projeto'), {% endcomment %}
+                "background-color:lemonchiffon" {% comment %} (1, 'Enviou proposta de projeto'), {% endcomment %}
               {% elif contato.tipo_de_retorno == 2 %}
-                "background-color:lemonchiffon" {% comment %} (2, 'Interessada em enviar proposta'), {% endcomment %}
+                "background-color:lightgreen" {% comment %} (2, 'Interessada em enviar proposta'), {% endcomment %}
               {% elif contato.tipo_de_retorno == 3 %}
                 "background-color:pink" {% comment %} (3, 'Não vai enviar proposta de projeto'), {% endcomment %}
               {% elif contato.tipo_de_retorno == 4 %}
@@ -153,7 +153,7 @@
             </td>
             <td>
               {% if not contato %}
-                <div style="float:left;width: 95%;">
+                <div style="float:left;width: 92%;">
                   <a
                     id='organizacao{{organizacao.id}}'
                     data-organizacao='{{organizacao.id}}'
@@ -172,7 +172,7 @@
                 </div>
               {% else %}
                 {% comment %} {{contato.texto}} {% endcomment %}
-                  <div style="float:left;width: 95%;">
+                  <div style="float:left;width: 92%;">
                     <span>
                       {{contato.autor.first_name}}:
                     </span>
@@ -219,9 +219,9 @@
       Organizações contactadas recentemente ({{total_organizacoes}}):<br>
 
       &nbsp;<span style="background-color:lightblue">&nbsp;&nbsp;&nbsp;&nbsp;</span> Sondada <span id="so_contactados"></span><br>
-      &nbsp;<span style="background-color:pink">&nbsp;&nbsp;&nbsp;&nbsp;</span> Declinou <span id="recusados"></span><br>
       &nbsp;<span style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;&nbsp;</span> Interessada <span id="interessados"></span><br>
       &nbsp;<span style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;&nbsp;</span> Confirmada <span id="confirmados"></span><br>
+      &nbsp;<span style="background-color:pink">&nbsp;&nbsp;&nbsp;&nbsp;</span> Declinou <span id="recusados"></span><br>
 
       &nbsp;<span style="background-color:yellow">&nbsp;&nbsp;&nbsp;&nbsp;</span> Notificada de Grupo Fechado <span id="notificada"></span><br>
       &nbsp;<span style="background-color:green">&nbsp;&nbsp;&nbsp;&nbsp;</span> Contrato Fechado para Projeto <span id="documentada"></span><br>

@@ -860,8 +860,8 @@ class Anotacao(models.Model):
 
     TIPO_DE_RETORNO = ( # não mudar a ordem dos números
         (0, 'Contactada para enviar proposta'),
-        (1, 'Enviou proposta de projeto'),
-        (2, 'Interessada em enviar proposta'),
+        (1, 'Interessada em enviar proposta'),
+        (2, 'Enviou proposta de projeto'),
         (3, 'Não vai enviar proposta de projeto'),
         (4, 'Confirmamos um grupo de estudantes para o projeto'),
         (5, 'Notificamos que não conseguimos montar projeto'),
