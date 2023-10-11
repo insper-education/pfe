@@ -35,19 +35,9 @@ def custom_400(request, exception):
     return HttpResponse(mensagem)
 
 
-from projetos.models import Anotacao
-
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
-    message = "Feito"
-
-    for a in Anotacao.objects.all():
-        if a.tipo_de_retorno==2:
-            a.tipo_de_retorno=1
-        elif a.tipo_de_retorno==1:
-            a.tipo_de_retorno=2
-        a.save()
-
+    message = "Nada Feito"
     return HttpResponse(message)
