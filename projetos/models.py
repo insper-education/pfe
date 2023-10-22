@@ -516,8 +516,6 @@ class Configuracao(models.Model):
     semestre = models.PositiveIntegerField("Semestre",
                                            validators=[MinValueValidator(1), MaxValueValidator(2)],
                                            help_text='Semestre que o projeto comeca')
-    # manutencao = models.BooleanField("Manutenção", default=False,
-    #                                  help_text='Mostra mensagem de site em manutencao na entrada')
 
     recipient_reembolso = models.CharField(max_length=127, blank=True,
                                            help_text='Separar lista por ponto e virgula')
@@ -548,6 +546,8 @@ class Configuracao(models.Model):
     msg_aval_pares = models.TextField("Mensagem Avaliação de Pares", max_length=1000, null=True, blank=True,
                                    help_text='Mensagem que descreve como será a Avaliação de Pares')
 
+    msg_email_automatico = models.TextField("Mensagem de Envio Automático", max_length=1000, null=True, blank=True,
+                                   help_text='Mensagem de Envio Automático de e-mail')
 
     ###-----------------------------------------------------###
 

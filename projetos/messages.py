@@ -13,6 +13,7 @@ from django.template import Context, Template
 from django.utils import html
 
 from users.models import Opcao
+from projetos.models import Configuracao
 from .models import AreaDeInteresse
 
 from administracao.models import Carta
@@ -29,10 +30,17 @@ def htmlizar(text):
     """Coloca <br> nas quebras de linha."""
     return text.replace('\n', '<br>\n')
 
-def email(subject, recipient_list, message):
-    """Envia um e-mail para o HOST_USER."""
+def email(subject, recipient_list, message, aviso_automatica=True):
+    """Envia e-mail automaticamente."""
     email_from = settings.EMAIL_USER + " <" + settings.EMAIL_HOST_USER + ">"
     auth_user = settings.EMAIL_HOST_USER
+
+    if aviso_automatica:
+        configuracao = get_object_or_404(Configuracao)
+        message += "<br>\n<br>\n<small style='color: gray'>"
+        message += configuracao.msg_email_automatico
+        message += "</small>"
+
     return send_mail(subject, message, email_from, recipient_list,
                      fail_silently=True, auth_user=auth_user, html_message=message)
 
