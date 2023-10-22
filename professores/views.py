@@ -1888,11 +1888,14 @@ def ver_pares(request, alocacao_id, momento):
 
     colegas = zip(alocacoes, pares)
 
+    configuracao = get_object_or_404(Configuracao)
+
     context = {
         "estudante": alocacao_de.aluno,
         "colegas": colegas,
         "momento": momento,
         "projeto": alocacao_de.projeto,
+        "configuracao": configuracao,
     }
 
     return render(request, "professores/ver_pares.html", context)

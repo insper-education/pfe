@@ -382,7 +382,7 @@ def avaliacao_pares(request, momento):
             "momento": momento,
             "inicio": inicio,
             "fim": fim,
-
+            "configuracao": configuracao,
         }
     else:  # Supostamente professores
         context = {
@@ -392,6 +392,7 @@ def avaliacao_pares(request, momento):
             "momento": momento,
             "inicio": inicio,
             "fim": fim,
+            "configuracao": configuracao,
         }
     return render(request, 'estudantes/avaliacao_pares.html', context)
 

@@ -35,16 +35,9 @@
 
   <form action="" method="post"> {% csrf_token %}  
 
-    <div style="max-width: 700px;">
-        Preencha este formulário de feedback de pares para seu orientador e cada um dos membros de sua equipe.
-      As mensagens para seus colegas de grupo, se forem usadas, serão compiladas anonimamente com as de todos
-      os outros membros de sua equipe. Escreva suas mensagens usando uma linguagem anônima se não desejar que
-      seu feedback o identifique. Esse processo visa tentar ajudar alguém a aprender, crescer ou mudar. O foco
-      está em ajudar a pessoa a melhorar, seja envolvendo uma habilidade, uma ideia, um conhecimento, uma
-      prática específica ou a aparência ou personalidade dessa pessoa.
-    </div>
-
+    <div style="max-width: 700px;">{{configuracao.msg_aval_pares}}</div>
     <hr>
+    
     {% for colega, par in colegas %}
 
       <br>

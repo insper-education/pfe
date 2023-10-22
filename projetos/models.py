@@ -543,6 +543,14 @@ class Configuracao(models.Model):
     assinatura = models.ImageField("Assinatura", upload_to=get_upload_path, null=True, blank=True,
                                    help_text='Assinatura do coordenador do PFE')
 
+    ###----------------------Mensagens----------------------###
+
+    msg_aval_pares = models.TextField("Mensagem Avaliação de Pares", max_length=1000, null=True, blank=True,
+                                   help_text='Mensagem que descreve como será a Avaliação de Pares')
+
+
+    ###-----------------------------------------------------###
+
     class Meta:
         verbose_name = 'Configuração'
         verbose_name_plural = 'Configurações'
