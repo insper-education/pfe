@@ -15,26 +15,6 @@
     <link rel="stylesheet" href="{% static 'css/impressoras.css' %}">
   {% endcomment %}
 
-  <style>
-    .arrow {
-      border: solid black;
-      border-width: 0px 2px 2px 0px;
-      display: inline-block;
-      padding: 2px;
-      vertical-align: middle;
-    }
-
-    .right {
-      transform: rotate(-45deg);
-      -webkit-transform: rotate(-45deg);
-    }
-
-    #toggle {
-      display:inline-block; 
-    }
-
-  </style>
-
 {% endblock %}
 
 {% block content %}
@@ -77,30 +57,7 @@
     <option value="Falconi" {% if tipo == "Falconi" %}selected{% endif %}>falconi</option>
   </select>
 
-  <script>
-    $(document).on('click','#informacoes_tag',function(){
-      if($("#toggle").is(':visible')) $("#informacoes").css("display", "inline");
-      else $("#informacoes").css("display", "block");
-      $("#toggle").toggle( "slide" );
-    });
-  </script>
-
-  <div id="informacoes" style="width:fit-content; margin-bottom: 6px; font-size:0.8rem; display: inline; border: 1px solid lightgray; padding: 1px;">
-    <span id="informacoes_tag" style="cursor: pointer; color:gray;"><b>Informações <i class="arrow right"></i>&nbsp;</b></span>
-    <div id="toggle" style="padding-top: 10px;display: none;"> 
-      <label><input id="local" onchange="($(this).prop('checked') ? $('.local').show() : $('.local').hide())" type="checkbox" checked /> local</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="link" onchange="($(this).prop('checked') ? $('.link').show() : $('.link').hide())" type="checkbox" checked /> video-conferência</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="grupo" onchange="($(this).prop('checked') ? $('.grupo').show() : $('.grupo').hide())" type="checkbox" checked /> grupo</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="orientacao" onchange="($(this).prop('checked') ? $('.orientacao').show() : $('.orientacao').hide())" type="checkbox" checked /> orientação</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="curso" onchange="($(this).prop('checked') ? $('.curso').show() : $('.curso').hide())" type="checkbox" checked /> curso</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="banca" onchange="($(this).prop('checked') ? $('.banca').show() : $('.banca').hide())" type="checkbox" checked /> avaliadores</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="avaliacao" onchange="($(this).prop('checked') ? $('.avaliacao').show() : $('.avaliacao').hide())" type="checkbox" checked /> link avaliação</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="agendamento" onchange="($(this).prop('checked') ? $('.agendamento').show() : $('.agendamento').hide())" type="checkbox" checked /> agendamento</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="email" onchange="($(this).prop('checked') ? $('.email').show() : $('.email').hide())" type="checkbox" checked /> e-mail</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="editar" onchange="($(this).prop('checked') ? $('.editar').show() : $('.editar').hide())" type="checkbox" checked /> editar</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="sem_agendamento" onchange="($(this).prop('checked') ? $('.sem_agendamento').show() : $('.sem_agendamento').hide())" type="checkbox" checked /> sem agendamento</label>&nbsp;&nbsp;&nbsp;
-    </div>
-  </div>{% comment %} Mais elementos no carrega_pagina() {% endcomment %}
+  {% include "informacoes.html" %}
 
   {% if bancas %}
     <form method="get" id="editarbancasform" style="margin-top: 8px;">
@@ -313,20 +270,7 @@
   </div>
 
   <script>
-    function carrega_pagina() {
-      ($("#local").prop('checked') ? $('.local').show() : $('.local').hide());
-      ($("#link").prop('checked') ? $('.link').show() : $('.link').hide());
-      ($("#grupo").prop('checked') ? $('.grupo').show() : $('.grupo').hide());
-      ($("#orientacao").prop('checked') ? $('.orientacao').show() : $('.orientacao').hide());
-      ($("#curso").prop('checked') ? $('.curso').show() : $('.curso').hide());
-      ($("#banca").prop('checked') ? $('.banca').show() : $('.banca').hide());
-      ($("#avaliacao").prop('checked') ? $('.avaliacao').show() : $('.avaliacao').hide());
-      ($("#agendamento").prop('checked') ? $('.agendamento').show() : $('.agendamento').hide());
-      ($("#email").prop('checked') ? $('.email').show() : $('.email').hide());
-      ($("#editar").prop('checked') ? $('.editar').show() : $('.editar').hide());
-      ($("#sem_agendamento").prop('checked') ? $('.sem_agendamento').show() : $('.sem_agendamento').hide());
-    };
-
+    function carrega_pagina() {};
     function carrega_site() {
       var filterEdicao = localStorage.getItem("filterEdicao");
       if (filterEdicao !== null && $("#filterEdicao option[value='"+filterEdicao+"']").length > 0 ) {

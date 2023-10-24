@@ -487,9 +487,15 @@ def estudantes_inscritos(request):
         ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
         selecionada = str(ano) + "." + str(semestre)
 
+        informacoes = [
+            ("#AlunosTable tr > *:nth-child(3)", "Curso"),
+            ("#AlunosTable tr > *:nth-child(4)", "CR", False),
+        ]
+
         context = {
             'edicoes': edicoes,
             "selecionada": selecionada,
+            "informacoes": informacoes,
         }
 
     return render(request, 'users/estudantes_inscritos.html', context=context)

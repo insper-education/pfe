@@ -13,27 +13,6 @@
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
 
-  <style>
-    .arrow {
-      border: solid black;
-      border-width: 0px 2px 2px 0px;
-      display: inline-block;
-      padding: 2px;
-      vertical-align: middle;
-    }
-
-    .right {
-      transform: rotate(-45deg);
-      -webkit-transform: rotate(-45deg);
-    }
-
-    #toggle {
-      display:inline-block; 
-    }
-
-  </style>
-
-
 {% endblock %}
 
 {% block content %}
@@ -45,25 +24,7 @@
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" with com_cursos=True %}
 
-  <script>
-    $(document).on('click','#informacoes_tag',function(){
-      if($("#toggle").is(':visible')) $("#informacoes").css("display", "inline");
-      else $("#informacoes").css("display", "block");
-      $("#toggle").toggle( "slide" );
-    });
-  </script>
-  
-
-  <div id="informacoes" style="width:fit-content; margin-bottom: 6px; font-size:0.8rem; display: inline; border: 1px solid lightgray; padding: 1px;">
-    <span id="informacoes_tag" style="cursor: pointer; color:gray;"><b>Informações <i class="arrow right"></i>&nbsp;</b></span>
-    <div id="toggle" style="padding-top: 10px;display: none;"> 
-      <label><input id="tit_ori" onchange="($(this).prop('checked') ? $('.tit_ori').show() : $('.tit_ori').hide())" type="checkbox" checked /> Título Original</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="curso" onchange="($(this).prop('checked') ? $('.curso').show() : $('.curso').hide())" type="checkbox" checked /> Curso</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="coorientadores" onchange="($(this).prop('checked') ? $('.coorientadores').show() : $('.coorientadores').hide())" type="checkbox" checked /> Coorientadores</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="confidencial" onchange="($(this).prop('checked') ? $('.confidencial').show() : $('.confidencial').hide())" type="checkbox" checked /> Confidenciais</label>&nbsp;&nbsp;&nbsp;
-    </div>
-  </div>{% comment %} Mais elementos no carrega_pagina() {% endcomment %}
-
+  {% include "informacoes.html" %}
 
   <br><br>
   
@@ -255,14 +216,6 @@
 
     <script>
       function carrega_pagina() {
-        {% comment %} 
-          //var table = $('#ProjetosTable').DataTable();
-          //table.search("Bioengenharia").draw();
-        {% endcomment %}
-        ($("#tit_ori").prop('checked') ? $('.tit_ori').show() : $('.tit_ori').hide());
-        ($("#curso").prop('checked') ? $('.curso').show() : $('.curso').hide());
-        ($("#coorientadores").prop('checked') ? $('.coorientadores').show() : $('.coorientadores').hide());
-        ($("#confidencial").prop('checked') ? $('.confidencial').show() : $('.confidencial').hide());
       };
       
       function carrega_site() {

@@ -389,9 +389,17 @@ def tabela_documentos(request):
 
     else:
     
+        informacoes = [
+            (".tit_ori", "Título Original"),
+            (".curso", "Curso"),
+            (".coorientadores", "Coorientadores"),
+            (".confidencial", "Confidenciais"),
+        ]
         edicoes, _, _ = get_edicoes(Projeto)
         context = {
             "edicoes": edicoes,
+            "informacoes": informacoes,
+
         }
 
     return render(request, 'documentos/tabela_documentos.html', context)

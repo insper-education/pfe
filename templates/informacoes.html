@@ -1,0 +1,49 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 24 de Outubro de 2023
+{% endcomment %}
+
+{% if informacoes %}
+
+  <style>
+    .arrow {
+      border: solid black;
+      border-width: 0px 2px 2px 0px;
+      display: inline-block;
+      padding: 2px;
+      vertical-align: middle;
+    }
+
+    .right {
+      transform: rotate(-45deg);
+      -webkit-transform: rotate(-45deg);
+    }
+
+    #toggle {
+      display:inline-block; 
+    }
+  </style>
+
+  <script>
+    $(document).on('click','#informacoes_tag',function(){
+      if($("#toggle").is(':visible')) $("#informacoes").css("display", "inline");
+      else $("#informacoes").css("display", "block");
+      $("#toggle").toggle( "slide" );
+    });
+  </script>
+ 
+  <div id="informacoes" style="width:fit-content; margin-bottom: 6px; font-size:0.8rem; display: inline; border: 1px solid lightgray; padding: 1px;">
+    <span id="informacoes_tag" style="cursor: pointer; color:gray;"><b>Informações <i class="arrow right"></i>&nbsp;</b></span>
+    <div id="toggle" style="padding-top: 10px;display: none;">
+      {% for inf in informacoes %}
+        {% comment %} O terceiro campo é o nome da classe, mas se for False desliga o botao {% endcomment %}
+        <label {% if inf.2 is not None and inf.2 != False %}class="{{inf.2}}"{% endif %}>
+          <input onchange="($(this).prop('checked') ? $('{{inf.0}}').show() : $('{{inf.0}}').hide())" type="checkbox" {% if inf.2 is None or inf.2 != False %}checked{% endif %} /> 
+          {{inf.1}}
+        </label>&nbsp;&nbsp;&nbsp;
+      {% endfor %}
+    </div>
+  </div>
+
+{% endif %}

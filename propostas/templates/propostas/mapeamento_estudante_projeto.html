@@ -53,26 +53,6 @@
 
   </style>
 
-<style>
-    .arrow {
-      border: solid black;
-      border-width: 0px 2px 2px 0px;
-      display: inline-block;
-      padding: 2px;
-      vertical-align: middle;
-    }
-
-    .right {
-      transform: rotate(-45deg);
-      -webkit-transform: rotate(-45deg);
-    }
-
-    #toggle {
-      display:inline-block; 
-    }
-
-  </style>
-
 {% endblock %}
 
 {% block content %}
@@ -82,21 +62,7 @@
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" with n_todas=True %}
   
-  <script>
-    $(document).on('click','#informacoes_tag',function(){
-      if($("#toggle").is(':visible')) $("#informacoes").css("display", "inline");
-      else $("#informacoes").css("display", "block");
-      $("#toggle").toggle( "slide" );
-    });
-  </script>
-  
-  <div id="informacoes" style="width:fit-content; margin-bottom: 6px; font-size:0.8rem; display: inline; border: 1px solid lightgray; padding: 1px;">
-    <span id="informacoes_tag" style="cursor: pointer; color:gray;"><b>Informações <i class="arrow right"></i>&nbsp;</b></span>
-    <div id="toggle" style="padding-top: 10px;display: none;"> 
-       <label><input id="curso" onchange="($(this).prop('checked') ? $('#MapeamentoTable tr > *:nth-child(2)').show() : $('#MapeamentoTable tr > *:nth-child(2)').hide())" type="checkbox" checked /> Curso</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="cr" onchange="($(this).prop('checked') ? $('#MapeamentoTable tr > *:nth-child(3)').show() : $('#MapeamentoTable tr > *:nth-child(3)').hide())" type="checkbox"         /> CR</label>&nbsp;&nbsp;&nbsp;
-    </div>
-  </div>
+  {% include "informacoes.html" %}
 
   <div class="atualizar">
     
@@ -214,8 +180,6 @@
 
   <script>
     function carrega_pagina(){
-      ($("#curso").prop('checked') ? $('#MapeamentoTable tr > *:nth-child(2)').show() : $('#MapeamentoTable tr > *:nth-child(2)').hide());
-      ($("#cr").prop('checked') ? $('#MapeamentoTable tr > *:nth-child(3)').show() : $('#MapeamentoTable tr > *:nth-child(3)').hide());
       {% include "tooltip.js" %}
     };
 

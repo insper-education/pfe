@@ -308,6 +308,20 @@ def bancas_lista(request, periodo_projeto):
 
     edicoes, _, _ = get_edicoes(Projeto)
     context["edicoes"] = edicoes
+
+    context["informacoes"] = [
+            (".local", "local"),
+            (".link", "video-conferência"),
+            (".grupo", "grupo"),
+            (".orientacao", "orientação"),
+            (".curso", "curso"),
+            (".banca", "avaliadores"),
+            (".avaliacao", "link avaliação"),
+            (".agendamento", "agendamento"),
+            (".email", "e-mail"),
+            (".editar", "editar"),
+            (".sem_agendamento", "sem agendamento"),
+        ]
     
     return render(request, 'professores/bancas_lista.html', context)
 
@@ -399,8 +413,15 @@ def bancas_tabela_completa(request):
     # inverti lista deixando os mais novos primeiro
     anos = zip(membros_pfe[::-1], periodo[::-1])
 
+    informacoes = [
+        ("#MembrosTable tr > *:nth-child(2)", "e-mail"),
+        ("#MembrosTable tr > *:nth-child(3)", "Quantidade"),
+        ("#MembrosTable tr > *:nth-child(4)", "Projetos"),
+    ]
+
     context = {
-        'anos': anos,
+        "anos": anos,
+        "informacoes": informacoes,
     }
 
     return render(request, 'professores/bancas_tabela_completa.html', context)
@@ -1318,9 +1339,19 @@ def dinamicas_lista(request):
 
     else:
 
+        informacoes = [
+            (".orientador", "orientador"),
+            (".local", "local"),
+            (".grupo", "grupo"),
+            (".curso", "curso"),
+            (".facilitador", "facilitador"),
+            (".sem_agendamento", "sem agendamento"),
+        ]
+
         edicoes, _, _ = get_edicoes(Projeto)
         context = {
                 "edicoes": edicoes,
+                "informacoes": informacoes,
             }
 
     return render(request, 'professores/dinamicas_lista.html', context)
@@ -1767,9 +1798,19 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
         else:
             selecionada = None
 
+        informacoes = [
+            ("#ProjetosTable tr > *:nth-child(2)", "Período"),
+            ("#ProjetosTable tr > *:nth-child(3)", "Organização"),
+            ("#ProjetosTable tr > *:nth-child(4)", "Orientador"),
+            (".grupo", "Grupo"),
+            (".email", "e-mail", "grupo"),
+            (".curso", "curso", "grupo"),
+        ]
+
         context = {
             "edicoes": edicoes,
             "selecionada": selecionada,
+            "informacoes": informacoes,
         }
 
     return render(request, 'professores/resultado_projetos.html', context)

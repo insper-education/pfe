@@ -132,8 +132,15 @@ def mapeamento_estudantes_propostas(request):
         }
 
     else:
+
+        informacoes = [
+            ("#MapeamentoTable tr > *:nth-child(2)", "Curso"),
+            ("#MapeamentoTable tr > *:nth-child(3)", "CR", False),
+        ]
+
         context = {
             "edicoes": edicoes,
+            "informacoes": informacoes,
         }
 
     return render(request,
@@ -225,8 +232,29 @@ def procura_grupos(request):
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
         edicoes, ano, semestre = get_edicoes(Projeto)
+
+        informacoes = [
+            (".logo", "Logo"),
+            (".descricao", "Descrição"),
+            (".titulo_original", "Título original"),
+            (".apresentacao", "Apresentações"),
+            (".orientador", "Orientador"),
+            (".coorientador", "Coorientador"),
+            (".estudantes", "Estudantes"),
+            (".curso", "Cursos"),
+            (".organizacao", "Organização"),
+            (".website", "Website"),
+            (".conexoes", "Conexões"),
+            (".papeis", "Papéis"),
+            (".totais", "Totais"),
+            (".emails", "e-mails"),
+            (".grafico", "Gráfico"),
+            (".avancado", "Avancados")
+        ]
+
         context = {
-            'edicoes': edicoes,
+            "edicoes": edicoes,
+            "informacoes": informacoes,
         }
 
     return render(request, 'propostas/procura_grupos.html', context)

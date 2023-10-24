@@ -667,11 +667,11 @@ def propor(request):
         "qtd": qtd,
         "media_cr": media_cr,
         "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
+        "informacoes": [("#MapeamentoTable tr > *:nth-child(2)", "Curso"),
+                        ("#MapeamentoTable tr > *:nth-child(3)", "CR", False)],
     }
 
-    return render(request,
-                  'administracao/propor.html',
-                  context)
+    return render(request, "administracao/propor.html", context)
 
 
 

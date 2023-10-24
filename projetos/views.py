@@ -295,10 +295,33 @@ def projetos_fechados(request):
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
         edicoes, ano, semestre = get_edicoes(Projeto)
+        informacoes = [
+            (".logo", "Logo"),
+            (".descricao", "Descrição"),
+            (".titulo_original", "Título original"),
+            (".apresentacao", "Apresentações"),
+            (".orientador", "Orientador"),
+            (".coorientador", "Coorientador"),
+            (".estudantes", "Estudantes"),
+            (".curso", "Cursos"),
+            (".organizacao", "Organização"),
+            (".website", "Website"),
+            (".conexoes", "Conexões"),
+            (".papeis", "Papéis"),
+            (".totais", "Totais"),
+            (".emails", "e-mails"),
+            (".avancado", "Avancados")
+        ]
+
         context = {
             "edicoes": edicoes,
             "cursos": Curso.objects.all().order_by("id"),
+            "informacoes": informacoes,
         }
+
+    
+      
+
 
     return render(request, 'projetos/projetos_fechados.html', context)
 

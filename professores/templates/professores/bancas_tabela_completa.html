@@ -17,11 +17,9 @@
 
   <span class="titulo">Alocações em Bancas</span>
 
-  <b>Informações: </b>&nbsp;
-  <label><input onchange="($(this).prop('checked') ? $('#MembrosTable tr > *:nth-child(2)').show() : $('#MembrosTable tr > *:nth-child(2)').hide())" type="checkbox" checked /> e-mail</label>&nbsp;&nbsp;&nbsp;
-  <label><input onchange="($(this).prop('checked') ? $('#MembrosTable tr > *:nth-child(3)').show() : $('#MembrosTable tr > *:nth-child(3)').hide())" type="checkbox" checked /> Quantidade</label>&nbsp;&nbsp;&nbsp;
-  <label><input onchange="($(this).prop('checked') ? $('#MembrosTable tr > *:nth-child(4)').show() : $('#MembrosTable tr > *:nth-child(4)').hide())" type="checkbox" checked /> Projetos</label>&nbsp;&nbsp;&nbsp;  
-  <br><br>
+  {% include "informacoes.html" %}
+  
+  <br>
 
   <div class="table-responsive">
   

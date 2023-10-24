@@ -13,29 +13,11 @@
   <script src="{% static 'js/w3.js' %}"></script>
   <script src="{% static 'js/Chart.min.js' %}"></script>
 
-<style>
-    .arrow {
-      border: solid black;
-      border-width: 0px 2px 2px 0px;
-      display: inline-block;
-      padding: 2px;
-      vertical-align: middle;
-    }
-
-    .right {
-      transform: rotate(-45deg);
-      -webkit-transform: rotate(-45deg);
-    }
-
-    #toggle {
-      display:inline-block; 
-    }
-
+  <style>
     th, td {
       padding-left: 4px;
       padding-right: 4px;
     }
-
   </style>
 
 {% endblock %}
@@ -47,21 +29,7 @@
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" with n_todas=True %}
 
-  <script>
-    $(document).on('click','#informacoes_tag',function(){
-      if($("#toggle").is(':visible')) $("#informacoes").css("display", "inline");
-      else $("#informacoes").css("display", "block");
-      $("#toggle").toggle( "slide" );
-    });
-  </script>
-  
-  <div id="informacoes" style="width:fit-content; margin-bottom: 6px; font-size:0.8rem; display: inline; border: 1px solid lightgray; padding: 1px;">
-    <span id="informacoes_tag" style="cursor: pointer; color:gray;"><b>Informações <i class="arrow right"></i>&nbsp;</b></span>
-    <div id="toggle" style="padding-top: 10px;display: none;"> 
-       <label><input id="curso" onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(3)').show() : $('#AlunosTable tr > *:nth-child(3)').hide())" type="checkbox" checked /> Curso</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="cr" onchange="($(this).prop('checked') ? $('#AlunosTable tr > *:nth-child(4)').show() : $('#AlunosTable tr > *:nth-child(4)').hide())" type="checkbox" /> CR</label>&nbsp;&nbsp;&nbsp;
-    </div>
-  </div> {% comment %} Mais elementos no carrega_pagina() {% endcomment %}
+  {% include "informacoes.html" %}
 
   {% comment %} <script>
     $("#informacoes").detach().appendTo("#lateral");
@@ -184,14 +152,10 @@
       function carrega_graficos() {
         var ctx = document.getElementById('chart-area').getContext('2d');
         window.myPie = new Chart(ctx, config);
-        ($('#curso').prop('checked') ? $('#AlunosTable tr > *:nth-child(3)').show() : $('#AlunosTable tr > *:nth-child(3)').hide());
-        ($('#cr').prop('checked') ? $('#AlunosTable tr > *:nth-child(4)').show() : $('#AlunosTable tr > *:nth-child(4)').hide());
+        $('#AlunosTable tr > *:nth-child(4)').hide();  
       }
     
-      function carrega_pagina() {
-        ($("#curso").prop('checked') ? $('#AlunosTable tr > *:nth-child(3)').show() : $('#AlunosTable tr > *:nth-child(3)').hide());
-        ($("#cr").prop('checked') ? $('#AlunosTable tr > *:nth-child(4)').show() : $('#AlunosTable tr > *:nth-child(4)').hide());
-      };
+      function carrega_pagina() {};
       window.onload = carrega_pagina
     </script>
 
