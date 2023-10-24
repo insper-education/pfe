@@ -165,27 +165,16 @@ def le_arquivo(request, local_path, path):
 
 
 #@login_required
-def arquivos(request, documentos, path):
+# Existe um controle de documentos confidenciais nos campos dos arquivos
+def arquivos(request, path, documentos=None, organizacao=None, projeto=None, usuario=None):
     """Permite acessar arquivos do servidor."""
-    local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}".\
-        format(documentos, path))
+    if documentos is not None:
+        local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}".format(documentos, path))
+    elif organizacao is not None and projeto is not None and usuario is not None:
+        local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}/{2}/{3}".format(organizacao, projeto, usuario, path))
+    elif organizacao is not None and usuario is not None:
+        local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}/{2}".format(organizacao, usuario, path))
+    else:
+        raise Http404
     return le_arquivo(request, local_path, path)
-
-
-# @login_required
-# Para pegar os relatórios publicos
-def arquivos2(request, organizacao, usuario, path):
-    """Permite acessar arquivos do servidor."""
-    local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}/{2}".\
-        format(organizacao, usuario, path))
-    return le_arquivo(request, local_path, path)
-
-
-# @login_required
-# Para pegar certificados não pode ter o login required
-def arquivos3(request, organizacao, projeto, usuario, path):
-    """Permite acessar arquivos do servidor."""
-    local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}/{2}/{3}".\
-        format(organizacao, projeto, usuario, path))
-    return le_arquivo(request, local_path, path)
-
+    

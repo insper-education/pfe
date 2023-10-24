@@ -116,38 +116,6 @@ def get_areas_propostas(propostas):
     return areaspfe, outras
 
 
-# ISSO TEM DE VIRAR UM PARÂMETRO DE INTERFACE NO FUTURO ####
-# def get_peso(banca, objetivo):
-#     """Calcula peso nas notas da banca em função do objetivo de aprendizado."""
-#     if banca == 1:  # (1, 'intermediaria')
-#         if objetivo.titulo == "Execução Técnica":
-#             return 4.8
-#         if objetivo.titulo == "Organização":
-#             return 3.6
-#         if objetivo.titulo == "Design/Empreendedorismo":
-#             return 3.6
-#     elif banca == 2:  # ( 2, 'Banca Final'),
-#         if objetivo.titulo == "Execução Técnica":
-#             return 7.2
-#         if objetivo.titulo == "Organização":
-#             return 5.4
-#         if objetivo.titulo == "Design/Empreendedorismo":
-#             return 5.4
-#     elif banca == 99:  # ( 99, 'Banca Falconi'),
-#         return 0
-
-#     return 0  # Algum erro aconteceu
-
-# Substituir por:
-# if tipo_de_avaliacao == 1:  # (1, 'intermediaria')        
-#                         julgamento[i].peso = julgamento[i].objetivo.peso_banca_intermediaria
-#                     elif tipo_de_avaliacao == 2:  # ( 2, 'Banca Final'),
-#                         julgamento[i].peso = julgamento[i].objetivo.peso_banca_intermediaria
-#                     elif tipo_de_avaliacao == 99:  # ( 99, 'Banca Falconi'),
-#                         julgamento[i].peso = julgamento[i].objetivo.peso_banca_falconi
-
-
-# Faz o upload de arquivos
 def simple_upload(myfile, path="", prefix=""):
     """Faz uploads para o servidor."""
     file_system_storage = FileSystemStorage()
@@ -168,6 +136,7 @@ def get_objetivos_atuais():
     objetivos = objetivos.order_by("ordem")
 
     return objetivos
+
 
 def get_objetivos_alocacao(alocacao):
     """Retorna todos objetivos de aprendizado da época de uma alocação."""

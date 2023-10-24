@@ -36,8 +36,8 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
     path('arquivos/<str:documentos>/<str:path>', arquivos.arquivos, name='arquivos'),
-    path('arquivos/<str:organizacao>/<str:usuario>/<str:path>', arquivos.arquivos2, name='arquivos2'),
-    path('arquivos/<str:organizacao>/<str:projeto>/<str:usuario>/<str:path>', arquivos.arquivos3, name='arquivos3'),
+    path('arquivos/<str:organizacao>/<str:usuario>/<str:path>', arquivos.arquivos, name='arquivos'),
+    path('arquivos/<str:organizacao>/<str:projeto>/<str:usuario>/<str:path>', arquivos.arquivos, name='arquivos'),
     path('manutencao/', manutencao, name='manutencao'),
     path('migracao/', migracao, name='migracao'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
