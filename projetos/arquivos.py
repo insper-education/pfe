@@ -164,7 +164,7 @@ def le_arquivo(request, local_path, path):
     raise Http404
 
 
-@login_required
+#@login_required
 def arquivos(request, documentos, path):
     """Permite acessar arquivos do servidor."""
     local_path = os.path.join(settings.MEDIA_ROOT, "{0}/{1}".\

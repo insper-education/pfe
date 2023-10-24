@@ -32,7 +32,7 @@ from users.support import get_edicoes
 from .support import render_pdf_file
 
 
-@login_required
+#@login_required
 def index_documentos(request):
     """Lista os documentos armazenados no servidor."""
     # Regulamento PFE
