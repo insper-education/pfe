@@ -6,7 +6,6 @@
 {% endcomment %}
 
 {% block head %}
-
   {% load static %}
   {% load addstr %}
   {% load l10n %}
@@ -14,7 +13,6 @@
   <script src="{% static 'js/w3.js' %}"></script>
   <script src="{% static 'js/Chart.min.js' %}"></script>
   <script src="{% static 'js/chartjs-plugin-colorschemes.min.js' %}"></script>
-  {% comment %} <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script> {% endcomment %}
   <script src="{% static 'js/chartjs-plugin-trendline.min.js' %}"></script>
   
   {% comment %} Para chamar os Tooltips {% endcomment %}
@@ -75,21 +73,18 @@
 
         <div><br><br><br></div>{% comment %} Solução pouco elegante, mas funciona. {% endcomment %}
 
-
         <div class="container">
 
-            {% if True %}
-                <div class="chart-container" style="position: relative; max-width:80vh">
-                    <canvas id="correlacao"></canvas>
-                </div>
-            {% endif %}
+            <div class="chart-container" style="position: relative; max-width:80vh">
+                <canvas id="correlacao"></canvas>
+            </div>
             
             <br>
             <small>
                 <div id="semestres"></div>
-                <div id="computacao"></div>
-                <div id="mecanica"></div>
-                <div id="mecatronica"></div>
+                {% for curs, estud in estudantes.items %}
+                    <div id="{{curs.sigla}}"></div>
+                {% endfor %}
             </small>
 
             <script>
@@ -98,7 +93,7 @@
                     {% for key, alocacoes_tmp in alocacoes.items %}
                         var data{{key}} = [{% for alocacao in alocacoes_tmp %}{% with media=alocacao.get_media %}{% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
                                     {  x: {{media.media|unlocalize}}, y: {{alocacao.aluno.cr|unlocalize}},
-                                       i: {{media.individual|unlocalize}},
+                                       {% if media.individual %}i: {{media.individual|unlocalize}},{% endif %}
                                        name: "{{alocacao.aluno.user.get_full_name}}"},
                         {% endif %}{% endwith %}{% endfor %}];
                         semestres += "Quantidade de estudantes em {{key}} = " + data{{key}}.length + "<br>"
@@ -118,81 +113,28 @@
                         }
                     {% endfor %}
                 {% endif %}
-            </script>
 
-            <script>
-                {% if estudantes_computacao %}
-                    var data_estudantes_computacao = [{% for alocacao in estudantes_computacao %}{% with media=alocacao.get_media %}{% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
+                {% for curs, estud in estudantes.items %}
+                    var data_estudantes_{{curs.sigla}} = [{% for alocacao in estud %}{% with media=alocacao.get_media %}{% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
                                 {  x: {{media.media|unlocalize}}, y: {{alocacao.aluno.cr|unlocalize}},
                                 {% if media.individual %}i: {{media.individual|unlocalize}},{% endif %}
                                    name: "{{alocacao.aluno.user.get_full_name}}"
                                 }{% if not forloop.last %},{% endif %}{% endif %}{% endwith %}{% endfor %}];
-                    if (data_estudantes_computacao.length > 0) {
-                        $("#computacao").html("Quantidade de estudantes de Computação = " + data_estudantes_computacao.length);
+                    if (data_estudantes_{{curs.sigla}}.length > 0) {
+                        $("#{{curs.sigla}}").html("Quantidade de estudantes {{curs.sigla}} = " + data_estudantes_{{curs.sigla}}.length);
                     }
                     
-                    var data_estudantes_computacao_i = [];
-                    for (var est in data_estudantes_computacao) {
-                        data_estudantes_computacao_i.push(
+                    var data_estudantes_{{curs.sigla}}_i = [];
+                    for (var est in data_estudantes_{{curs.sigla}}) {
+                        data_estudantes_{{curs.sigla}}_i.push(
                             {
-                                x: data_estudantes_computacao[est].i,
-                                y: data_estudantes_computacao[est].y,
-                                name: data_estudantes_computacao[est].name
+                                x: data_estudantes_{{curs.sigla}}[est].i,
+                                y: data_estudantes_{{curs.sigla}}[est].y,
+                                name: data_estudantes_{{curs.sigla}}[est].name
                             }
                         );
                     }
-                {% endif %}
-            </script>
-
-            <script>
-                {% if estudantes_mecanica %}
-                    var data_estudantes_mecanica = [{% for alocacao in estudantes_mecanica %}{% with media=alocacao.get_media %}{% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
-                                {  x: {{media.media|unlocalize}}, y: {{alocacao.aluno.cr|unlocalize}},
-                                   {% if media.individual %}i: {{media.individual|unlocalize}},{% endif %}
-                                   name: "{{alocacao.aluno.user.get_full_name}}"
-                                }{% if not forloop.last %},{% endif %}{% endif %}{% endwith %}{% endfor %}];
-                    if (data_estudantes_mecanica.length > 0) {
-                        $("#mecanica").html("Quantidade de estudantes de Mecânica = " + data_estudantes_mecanica.length);
-                    }
-                    
-                    var data_estudantes_mecanica_i = [];
-                    for (var est in data_estudantes_mecanica) {
-                        data_estudantes_mecanica_i.push(
-                            {
-                                x: data_estudantes_mecanica[est].i,
-                                y: data_estudantes_mecanica[est].y,
-                                name: data_estudantes_mecanica[est].name
-                            }
-                        );
-                    }
-                {% endif %}
-            </script>
-
-            <script>
-                {% if estudantes_mecatronica %}
-                    var data_estudantes_mecatronica = [{% for alocacao in estudantes_mecatronica %}{% with media=alocacao.get_media %}{% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
-                                {  x: {{media.media|unlocalize}}, y: {{alocacao.aluno.cr|unlocalize}},
-                                {% if media.individual %}i: {{media.individual|unlocalize}},{% endif %}
-                                   name: "{{alocacao.aluno.user.get_full_name}}"
-                                }{% if not forloop.last %},{% endif %}{% endif %}{% endwith %}{% endfor %}];
-                    if (data_estudantes_mecatronica.length > 0) {
-                        $("#mecatronica").html("Quantidade de estudantes de Mecatrônica = " + data_estudantes_mecatronica.length);
-                    }
-                    
-                    var data_estudantes_mecatronica_i = [];
-                    for (var est in data_estudantes_mecatronica) {
-                        data_estudantes_mecatronica_i.push(
-                            {
-                                x: data_estudantes_mecatronica[est].i,
-                                y: data_estudantes_mecatronica[est].y,
-                                name: data_estudantes_mecatronica[est].name
-                            }
-                        );
-                    }
-                {% endif %}
-            </script>
-
-            <script>
+                {% endfor %}
 
                 var options = {
                     aspectRatio: 1,
@@ -209,11 +151,8 @@
                     
                     plugins: {
                         colorschemes: {
-                            {% if estudantes_computacao and estudantes_mecanica and estudantes_mecatronica %}
-                                scheme: 'office.Berlin6',
-                            {% else %}
-                                scheme: 'office.Angles6',
-                            {% endif %}
+                            //scheme: 'tableau.HueCircle19',
+                            scheme: 'tableau.Tableau20',
                         }
                     },
                     scales: {
@@ -255,12 +194,9 @@
                     
                     plugins: {
                         colorschemes: {
-                            {% if estudantes_computacao and estudantes_mecanica and estudantes_mecatronica %}
-                                scheme: 'office.Berlin6',
-                            {% else %}
-                                scheme: 'office.Angles6',
-                            {% endif %}
-                        }
+                            //scheme: 'tableau.HueCircle19',
+                            scheme: 'tableau.Tableau20',
+                        } 
                     },
                     scales: {
                         yAxes: [{
@@ -287,6 +223,10 @@
 
                 };
 
+                function adjust(color, amount) {
+                    return '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+                }
+
                 var datasets_media = [
                     {% for key, alocacao_tmp in alocacoes.items %}
                         {
@@ -300,39 +240,21 @@
                         },
                     {% endfor %}
 
-                    {% if estudantes_computacao %}
+                    {% for curs, estud in estudantes.items %}
                         {
-                            label: 'Computação',
-                            data: data_estudantes_computacao,
+                            label: "{{curs.sigla}}",
+                            pointBackgroundColor: '#{{curs.cor}}',
+                            pointBorderColor: adjust("#{{curs.cor}}",-20),
+                            backgroundColor: "#{{curs.cor}}",
+                            borderColor: adjust("#{{curs.cor}}",-20),
+                            data: data_estudantes_{{curs.sigla}},
                             trendlineLinear: {
-                                style: "rgb(23 ,155 , 23, 0.4)",
+                                style: "#{{curs.cor}}",
                                 lineStyle: "dotted",
                                 width: 2
                             }
                         },
-                    {% endif %}
-                    {% if estudantes_mecanica %}
-                        {
-                            label: 'Mecânica',
-                            data: data_estudantes_mecanica,
-                            trendlineLinear: {
-                                style: "rgb(155, 23, 23, 0.4)",
-                                lineStyle: "dotted",
-                                width: 2
-                            }
-                        },
-                    {% endif %}
-                    {% if estudantes_mecatronica %}
-                        {
-                            label: 'Mecatrônica',
-                            data: data_estudantes_mecatronica,
-                            trendlineLinear: {
-                                style: "rgb(155, 155, 23, 0.4)",
-                                lineStyle: "dotted",
-                                width: 2
-                            }
-                        },
-                    {% endif %}
+                    {% endfor %}
                     ]
 
                 var datasets_i = [
@@ -348,41 +270,22 @@
                         },
                     {% endfor %}
 
-                    {% if estudantes_computacao %}
+                    {% for curs, estud in estudantes.items %}
                         {
-                            label: 'Computação',
-                            data: data_estudantes_computacao_i,
+                            label: "{{curs.sigla}}",
+                            pointBackgroundColor: '#{{curs.cor}}',
+                            pointBorderColor: adjust("#{{curs.cor}}",-20),
+                            backgroundColor: "#{{curs.cor}}",
+                            borderColor: adjust("#{{curs.cor}}",-20),
+                            data: data_estudantes_{{curs.sigla}}_i,
                             trendlineLinear: {
-                                style: "rgb(23 ,155 , 23, 0.4)",
+                                style: "#{{curs.cor}}",
                                 lineStyle: "dotted",
                                 width: 2
                             }
                         },
-                    {% endif %}
-                    {% if estudantes_mecanica %}
-                        {
-                            label: 'Mecânica',
-                            data: data_estudantes_mecanica_i,
-                            trendlineLinear: {
-                                style: "rgb(155, 23, 23, 0.4)",
-                                lineStyle: "dotted",
-                                width: 2
-                            }
-                        },
-                    {% endif %}
-                    {% if estudantes_mecatronica %}
-                        {
-                            label: 'Mecatrônica',
-                            data: data_estudantes_mecatronica_i,
-                            trendlineLinear: {
-                                style: "rgb(155, 155, 23, 0.4)",
-                                lineStyle: "dotted",
-                                width: 2
-                            }
-                        },
-                    {% endif %}
+                    {% endfor %}
                     ]
-
 
                 function carrega_pagina() {  
 
@@ -391,46 +294,27 @@
                     if (valor_individual == "media") {
                         var config_corelacao = {
                             type: 'scatter',
-                            data: {
-                                datasets: datasets_media,
-                            },
+                            data: {datasets: datasets_media,},
                             options: options
                         }
                     } else {
                         var config_corelacao = {
                             type: 'scatter',
-                            data: {
-                                datasets: datasets_i,
-                            },
+                            data: {datasets: datasets_i,},
                             options: options_i
                         }
-
                     }
                     
-                    if( window.corr!==undefined)
-                        window.corr.destroy();
+                    if( window.corr!==undefined) window.corr.destroy();
                     var corr = document.getElementById('correlacao').getContext('2d');
                     window.corr = new Chart(corr, config_corelacao);
-
 
                 }
 
                 window.onload = carrega_pagina
-            
-            </script>
 
-            <script>
                 $('input[type=radio][name=individual]').change(function() {
-                    
                     carrega_pagina();
-
-                    {% comment %} if (this.value == 'media') {
-                        alert("Media");
-                    }
-                    else if (this.value == 'individual') {
-                        alert("Individual");
-                    }
-                     {% endcomment %}
                 });
             </script>
 

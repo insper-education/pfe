@@ -1581,11 +1581,8 @@ def correlacao_medias_cr(request):
     if request.is_ajax():
 
         periodo = ["todo", "periodo"]
-
         alocacoes = None
-        estudantes_computacao = None
-        estudantes_mecanica = None
-        estudantes_mecatronica = None
+        estudantes = {}
 
         if 'edicao' in request.POST:
 
@@ -1596,16 +1593,14 @@ def correlacao_medias_cr(request):
                 alocacoes_tmp = Alocacao.objects.filter(projeto__ano=periodo[0],
                                                         projeto__semestre=periodo[1])
 
-                if curso == 'C':
-                    estudantes_computacao = alocacoes_tmp.filter(aluno__curso2__sigla_curta="C")
-                elif curso == 'M':
-                    estudantes_mecanica = alocacoes_tmp.filter(aluno__curso2__sigla_curta="M")
-                elif curso == 'X':
-                    estudantes_mecatronica = alocacoes_tmp.filter(aluno__curso2__sigla_curta="X")
+                if curso != 'T':
+                    curso_sel = Curso.objects.get(sigla_curta=curso)
+                    estudantes[curso_sel] = alocacoes_tmp.filter(aluno__curso2__sigla_curta=curso)
                 else:
-                    estudantes_computacao = alocacoes_tmp.filter(aluno__curso2__sigla_curta="C")
-                    estudantes_mecanica = alocacoes_tmp.filter(aluno__curso2__sigla_curta="M")
-                    estudantes_mecatronica = alocacoes_tmp.filter(aluno__curso2__sigla_curta="X")
+                    for curso_sel in Curso.objects.filter(curso_do_insper=True):
+                        aloc = alocacoes_tmp.filter(aluno__curso2__sigla_curta=curso_sel.sigla_curta)
+                        if aloc:
+                            estudantes[curso_sel] = aloc
 
             else:
                 alocacoes = {}
@@ -1622,30 +1617,26 @@ def correlacao_medias_cr(request):
 
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
-        # else:
-        #     alocacoes_tmp = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
-        #     estudantes_computacao = alocacoes_tmp.filter(aluno_curso2__sigla="C")
-        #     estudantes_mecanica = alocacoes_tmp.filter(aluno_curso2__sigla="M")
-        #     estudantes_mecatronica = alocacoes_tm`p.filter(aluno_curso2__sigla="X")
+
 
         context = {
             "alocacoes": alocacoes,
-            "estudantes_computacao": estudantes_computacao,
-            "estudantes_mecanica": estudantes_mecanica,
-            "estudantes_mecatronica": estudantes_mecatronica,
+            "estudantes": estudantes,
             'periodo': periodo,
             'ano': configuracao.ano,
             'semestre': configuracao.semestre,
             'edicoes': edicoes,
             "curso": curso,
+            "cursos": Curso.objects.filter(curso_do_insper=True),
         }
 
     else:
         context = {
-            'edicoes': edicoes,
+            "edicoes": edicoes,
         }
 
     return render(request, 'projetos/correlacao_medias_cr.html', context)
+
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
