@@ -93,7 +93,7 @@
                     {% for key, alocacoes_tmp in alocacoes.items %}
                         var data{{key}} = [{% for alocacao in alocacoes_tmp %}{% with media=alocacao.get_media %}{% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
                                     {  x: {{media.media|unlocalize}}, y: {{alocacao.aluno.cr|unlocalize}},
-                                       {% if media.individual %}i: {{media.individual|unlocalize}},{% endif %}
+                                       i:{% if media.individual %}{{media.individual|unlocalize}}{% else%}0{% endif %},
                                        name: "{{alocacao.aluno.user.get_full_name}}"},
                         {% endif %}{% endwith %}{% endfor %}];
                         semestres += "Quantidade de estudantes em {{key}} = " + data{{key}}.length + "<br>"
@@ -117,8 +117,8 @@
                 {% for curs, estud in estudantes.items %}
                     var data_estudantes_{{curs.sigla}} = [{% for alocacao in estud %}{% with media=alocacao.get_media %}{% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
                                 {  x: {{media.media|unlocalize}}, y: {{alocacao.aluno.cr|unlocalize}},
-                                {% if media.individual %}i: {{media.individual|unlocalize}},{% endif %}
-                                   name: "{{alocacao.aluno.user.get_full_name}}"
+                                i:{% if media.individual %}{{media.individual|unlocalize}}{% else%}0{% endif %},
+                                name: "{{alocacao.aluno.user.get_full_name}}"
                                 }{% if not forloop.last %},{% endif %}{% endif %}{% endwith %}{% endfor %}];
                     if (data_estudantes_{{curs.sigla}}.length > 0) {
                         $("#{{curs.sigla}}").html("Quantidade de estudantes {{curs.sigla}} = " + data_estudantes_{{curs.sigla}}.length);
@@ -233,7 +233,6 @@
                             label: '{{key}}',
                             data: data{{key}},
                             trendlineLinear: {
-                                style: "rgb(100 ,100 ,100, 0.4)",
                                 lineStyle: "dotted",
                                 width: 2
                             }
@@ -263,7 +262,6 @@
                             label: '{{key}}',
                             data: data{{key}}_i,
                             trendlineLinear: {
-                                style: "rgb(100 ,100 , 100, 0.4)",
                                 lineStyle: "dotted",
                                 width: 2
                             }
