@@ -92,9 +92,11 @@
                     semestres = ""
                     {% for key, alocacoes_tmp in alocacoes.items %}
                         var data{{key}} = [{% for alocacao in alocacoes_tmp %}{% with media=alocacao.get_media %}{% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
-                                    {  x: {{media.media|unlocalize}}, y: {{alocacao.aluno.cr|unlocalize}},
+                                    {  x:{% if media.media %}{{media.media|unlocalize}}{% else%}0{% endif %},
+                                       y:{% if alocacao.aluno.cr %}{{alocacao.aluno.cr|unlocalize}}{% else%}0{% endif %},
                                        i:{% if media.individual %}{{media.individual|unlocalize}}{% else%}0{% endif %},
-                                       name: "{{alocacao.aluno.user.get_full_name}}"},
+                                       name: "{{alocacao.aluno.user.get_full_name}}"
+                                    }{% if not forloop.last %},{% endif %}
                         {% endif %}{% endwith %}{% endfor %}];
                         semestres += "Quantidade de estudantes em {{key}} = " + data{{key}}.length + "<br>"
                     {% endfor %}
@@ -116,10 +118,12 @@
 
                 {% for curs, estud in estudantes.items %}
                     var data_estudantes_{{curs.sigla}} = [{% for alocacao in estud %}{% with media=alocacao.get_media %}{% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
-                                {  x: {{media.media|unlocalize}}, y: {{alocacao.aluno.cr|unlocalize}},
-                                i:{% if media.individual %}{{media.individual|unlocalize}}{% else%}0{% endif %},
-                                name: "{{alocacao.aluno.user.get_full_name}}"
-                                }{% if not forloop.last %},{% endif %}{% endif %}{% endwith %}{% endfor %}];
+                                {   x:{% if media.media %}{{media.media|unlocalize}}{% else%}0{% endif %},
+                                    y:{% if alocacao.aluno.cr %}{{alocacao.aluno.cr|unlocalize}}{% else%}0{% endif %},
+                                    i:{% if media.individual %}{{media.individual|unlocalize}}{% else%}0{% endif %},
+                                   name: "{{alocacao.aluno.user.get_full_name}}"
+                                }{% if not forloop.last %},{% endif %}
+                                {% endif %}{% endwith %}{% endfor %}];
                     if (data_estudantes_{{curs.sigla}}.length > 0) {
                         $("#{{curs.sigla}}").html("Quantidade de estudantes {{curs.sigla}} = " + data_estudantes_{{curs.sigla}}.length);
                     }
