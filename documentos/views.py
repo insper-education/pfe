@@ -62,8 +62,9 @@ def index_documentos(request):
     # template de relat.
     template_relatorio = Documento.objects.filter(tipo_de_documento=17).last()
 
-    # termo de parceria
-    termo_parceria = Documento.objects.filter(tipo_de_documento=14).last()
+    # termos de parceria
+    termo_parceria_pdf = Documento.objects.filter(tipo_de_documento=32).last()
+    termo_parceria_doc = Documento.objects.filter(tipo_de_documento=33).last()
 
     # manual para apresentação na banca
     manual_apresentacao = Documento.objects.filter(tipo_de_documento=22).last()
@@ -78,7 +79,8 @@ def index_documentos(request):
         "manual_aluno": manual_aluno,
         "manual_planejamento": manual_planejamento,
         "manual_relatorio": manual_relatorio,
-        "termo_parceria": termo_parceria,
+        "termo_parceria_pdf": termo_parceria_pdf,
+        "termo_parceria_doc": termo_parceria_doc,
         "template_relatorio": template_relatorio,
         "manual_apresentacao": manual_apresentacao,
         "manual_bancas": manual_bancas,

@@ -5,6 +5,11 @@
     Data: 15 de Maio de 2019
 {% endcomment %}
 
+{% block head %}  
+  {% comment %} Para chamar os Tooltips {% endcomment %}
+  <script>{% include "tooltip.js" %}</script>
+{% endblock %}
+
 {% block content %}
 
     {% comment %}
@@ -16,55 +21,60 @@
     <br>
     <h5>Área Geral</h5>
     {% if regulamento %}
-        <a href="../..{{MEDIA_URL}}{{regulamento.documento}}"><h5>Regulamento do PFE</h5></a>
+        <a data-toggle="tooltip" data-html="true" animation="true" title="Data: {{regulamento.data}}" 
+           href="../..{{MEDIA_URL}}{{regulamento.documento}}"><b>Regulamento do PFE</b></a><br>
     {% endif %}
     {% if plano_de_aprendizagem %}
-        <a href="../..{{MEDIA_URL}}{{plano_de_aprendizagem.documento}}"><h5>Plano de Aprendizagem</h5></a>
+        <a data-toggle="tooltip" data-html="true" animation="true" title="Data: {{plano_de_aprendizagem.data}}"
+           href="../..{{MEDIA_URL}}{{plano_de_aprendizagem.documento}}"><b>Plano de Aprendizagem</b></a><br>
     {% endif %}
-    <a href="{% url 'relatorios_publicos' %}"><h5>Relatórios Públicos</h5></a>
-    <a href="{% url 'materias_midia' %}"><h5>Matérias na Mídia</h5></a>
+    <a href="{% url 'relatorios_publicos' %}"><b>Relatórios Públicos</b></a><br>
+    <a href="{% url 'materias_midia' %}"><b>Matérias na Mídia</b></a><br>
 
     {% if user.tipo_de_usuario == 1 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Estudante ou Professor ou Adm -->
         <hr>
         <h5>Área dos Estudantes</h5> <!-- Estudante -->
         {% if manual_aluno %}
-            <a href="../..{{MEDIA_URL}}{{manual_aluno.documento}}"><h5>Manual para os Estudantes</h5></a>
+            <a href="../..{{MEDIA_URL}}{{manual_aluno.documento}}"><b>Manual para os Estudantes</b></a><br>
         {% endif %}
         {% if manual_planejamento %}
-            <a href="../..{{MEDIA_URL}}{{manual_planejamento.documento}}"><h5>Manual para Confecção de Relatórios de Planejamento</h5></a>
+            <a href="../..{{MEDIA_URL}}{{manual_planejamento.documento}}"><b>Manual para Confecção de Relatórios de Planejamento</b></a><br>
         {% endif %}
         {% if manual_relatorio %}
-            <a href="../..{{MEDIA_URL}}{{manual_relatorio.documento}}"><h5>Manual para Confecção de Relatórios</h5></a>
+            <a href="../..{{MEDIA_URL}}{{manual_relatorio.documento}}"><b>Manual para Confecção de Relatórios</b></a><br>
         {% endif %}
         {% if template_relatorio %}
-            <a href="../..{{MEDIA_URL}}{{template_relatorio.documento}}"><h5 style="margin-left: 20px;">Template para Relatórios</h5></a>
+            <a href="../..{{MEDIA_URL}}{{template_relatorio.documento}}">&#x21B3;<b style="margin-left: 2px;">Template para Relatórios</b></a><br>
         {% endif %}
         {% if manual_apresentacao %}
-            <a href="../..{{MEDIA_URL}}{{manual_apresentacao.documento}}"><h5>Manual de Apresentação para Banca</h5></a>
+            <a href="../..{{MEDIA_URL}}{{manual_apresentacao.documento}}"><b>Manual de Apresentação para Banca</b></a><br>
         {% endif %}
     {% endif %}
 
     {% if user.tipo_de_usuario == 3 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Parceiro ou Professor ou Adm -->
         <hr>
         <h5>Área dos Parceiros</h5>
-        {% if termo_parceria %}
-            <a href="../..{{MEDIA_URL}}{{termo_parceria.documento}}"><h5>Termo de Parceria</h5></a>
+        {% if termo_parceria_pdf %}
+            <a data-toggle="tooltip" data-html="true" animation="true" title="Data: {{termo_parceria_pdf.data}}" href="../..{{MEDIA_URL}}{{termo_parceria_pdf.documento}}"><b>Termo de Parceria - PDF</b></a><br>
+        {% endif %}
+        {% if termo_parceria_doc %}
+            <a data-toggle="tooltip" data-html="true" animation="true" title="Data: {{termo_parceria_doc.data}}" href="../..{{MEDIA_URL}}{{termo_parceria_doc.documento}}"><b>Termo de Parceria - DOC</b></a><br>
         {% endif %}
     {% endif %}
 
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Professor ou Adm -->
         <hr>
         <h5>Área do Professor</h5>
-        <a href="{% url 'tabela_documentos' %}"><h5>Tabelas de Documentação dos Projetos</h5></a>
-        <a href="{% url 'tabela_atas' %}"><h5>Atas do Comitê</h5></a>
+        <a href="{% url 'tabela_documentos' %}"><b>Tabelas de Documentação dos Projetos</b></a><br>
+        <a href="{% url 'tabela_atas' %}"><b>Atas do Comitê</b></a><br>
         {% if manual_bancas %}
-            <a href="../..{{MEDIA_URL}}{{manual_bancas.documento}}"><h5>Manual de Participação em Bancas</h5></a>
+            <a href="../..{{MEDIA_URL}}{{manual_bancas.documento}}"><b>Manual de Participação em Bancas</b></a><br>
         {% endif %}
         {% if manual_orientador %}
-            <a href="../..{{MEDIA_URL}}{{manual_orientador.documento}}"><h5>Manual do Orientador</h5></a>
+            <a href="../..{{MEDIA_URL}}{{manual_orientador.documento}}"><b>Manual do Orientador</b></a><br>
         {% endif %}
         {% if manual_avaliacoes %}
-            <a href="../..{{MEDIA_URL}}{{manual_avaliacoes.documento}}"><h5>Manual de Avaliações</h5></a>
+            <a href="../..{{MEDIA_URL}}{{manual_avaliacoes.documento}}"><b>Manual de Avaliações</b></a><br>
         {% endif %}
 
     {% endif %}
@@ -72,8 +82,7 @@
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Professor ou Adm -->
         <hr>
         <h5>Área do Operacional</h5>
-        <a href="{% url 'tabela_seguros' %}"><h5>Seguros Emitidos</h5></a>
+        <a href="{% url 'tabela_seguros' %}"><b>Seguros Emitidos</b></a><br>
     {% endif %}
-
 
 {% endblock %}
