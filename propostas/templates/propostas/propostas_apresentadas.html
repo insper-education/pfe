@@ -144,15 +144,6 @@
       var alunos_mecatronica_disponivel = 0
       var alunos_mecanica_disponivel = 0
 
-      var proposta_computacao = 0
-      var proposta_mecatronica = 0
-      var proposta_mecanica = 0
-
-      var proposta_multidisciplinar = 0
-      var proposta_computacao_disponivel = 0
-      var proposta_mecatronica_disponivel = 0
-      var proposta_mecanica_disponivel = 0
-      var proposta_multidisciplinar_disponivel = 0
     </script>
 
     {% if propostas %}
@@ -296,9 +287,9 @@
             <td class="text-center estudantes">
 
               {% for curso in proposta.perfil1.all %}
-                {% if proposta.get_nativamente == curso.sigla_curta %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de {{curso.nome}}">{% endif %}
+                {% if proposta.get_nativamente == curso %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de {{curso.nome}}">{% endif %}
                   <span>{{curso.sigla_curta}}</span>
-                {% if proposta.get_nativamente == curso.sigla_curta %}</b>{% endif %}
+                {% if proposta.get_nativamente == curso %}</b>{% endif %}
                 <script>
                   {% if curso.sigla_curta == "C" %}tmp_computacao += 1;{% endif %}
                   {% if curso.sigla_curta == "X" %}tmp_mecatronica += 1;{% endif %}
@@ -321,9 +312,9 @@
             <td class="text-center estudantes">
 
               {% for curso in proposta.perfil2.all %}
-                {% if proposta.get_nativamente == curso.sigla_curta %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de {{curso.nome}}">{% endif %}
+                {% if proposta.get_nativamente == curso %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de {{curso.nome}}">{% endif %}
                   <span>{{curso.sigla_curta}}</span>
-                {% if proposta.get_nativamente == curso.sigla_curta %}</b>{% endif %}
+                {% if proposta.get_nativamente == curso %}</b>{% endif %}
                 <script>
                   {% if curso.sigla_curta == "C" %}tmp_computacao += 1;{% endif %}
                   {% if curso.sigla_curta == "X" %}tmp_mecatronica += 1;{% endif %}
@@ -346,9 +337,9 @@
             <td class="text-center estudantes">
 
               {% for curso in proposta.perfil3.all %}
-                {% if proposta.get_nativamente == curso.sigla_curta %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de {{curso.nome}}">{% endif %}
+                {% if proposta.get_nativamente == curso %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de {{curso.nome}}">{% endif %}
                   <span>{{curso.sigla_curta}}</span>
-                {% if proposta.get_nativamente == curso.sigla_curta %}</b>{% endif %}
+                {% if proposta.get_nativamente == curso %}</b>{% endif %}
                 <script>
                   {% if curso.sigla_curta == "C" %}tmp_computacao += 1;{% endif %}
                   {% if curso.sigla_curta == "X" %}tmp_mecatronica += 1;{% endif %}
@@ -371,9 +362,9 @@
             <td class="text-center estudantes">
 
               {% for curso in proposta.perfil4.all %}
-                {% if proposta.get_nativamente == curso.sigla_curta %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de {{curso.nome}}">{% endif %}
+                {% if proposta.get_nativamente == curso %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de {{curso.nome}}">{% endif %}
                   <span>{{curso.sigla_curta}}</span>
-                {% if proposta.get_nativamente == curso.sigla_curta %}</b>{% endif %}
+                {% if proposta.get_nativamente == curso %}</b>{% endif %}
                 <script>
                   {% if curso.sigla_curta == "C" %}tmp_computacao += 1;{% endif %}
                   {% if curso.sigla_curta == "X" %}tmp_mecatronica += 1;{% endif %}
@@ -410,20 +401,6 @@
           </tr>
 
           <script>
-            {% if proposta.get_nativamente  == "C" %} 
-              proposta_computacao += 1
-              {% if disponivel %}proposta_computacao_disponivel += 1;{% endif %}  
-            {% elif proposta.get_nativamente  == "X" %} 
-              proposta_mecatronica += 1
-              {% if disponivel %}proposta_mecatronica_disponivel += 1;{% endif %}
-            {% elif proposta.get_nativamente  == "M" %} 
-              proposta_mecanica += 1
-                {% if disponivel %}proposta_mecanica_disponivel += 1;{% endif %}
-            {% else %} 
-              proposta_multidisciplinar += 1
-              {% if disponivel %}proposta_multidisciplinar_disponivel += 1;{% endif %}
-            {% endif %}
-            
             alunos_computacao += tmp_computacao;
             alunos_mecatronica += tmp_mecatronica;
             alunos_mecanica += tmp_mecanica;

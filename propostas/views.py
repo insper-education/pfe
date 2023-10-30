@@ -337,18 +337,49 @@ def procura_propostas(request):
     else:
         tamanho *= 5
 
+    # Contando propostas disponíveis e escolhas
+    cursos = Curso.objects.all().order_by("id")
+    disponivel_propostas = {}
+    aplicando_opcoes = {}
+    for curso in cursos:
+        disponivel_propostas[curso] = [0, 0]
+        aplicando_opcoes[curso] = 0
+    disponivel_multidisciplinar = [0, 0]
+    aplicando_multidisciplinar = 0
+    for proposta in propostas:
+        p = proposta.get_nativamente()
+        if isinstance(p, Curso):
+            if proposta.disponivel:
+                disponivel_propostas[p][0] += 1
+            disponivel_propostas[p][1] += 1
+        else:
+            if proposta.disponivel:
+                disponivel_multidisciplinar[0] += 1
+            disponivel_multidisciplinar[1] += 1
+    for opcao in opcoes:
+        p = opcao.proposta.get_nativamente()
+        if isinstance(p, Curso):
+            aplicando_opcoes[p] += 1
+        else:                
+            aplicando_multidisciplinar += 1
+
     edicoes, _, _ = get_edicoes(Proposta)
 
     context = {
-        'tamanho': tamanho,
-        'propostas': propostas,
-        'prioridades': prioridades,
-        'estudantes': estudantes,
-        'ano': ano,
-        'semestre': semestre,
-        'areaspfe': areaspfe,
-        'opcoes': opcoes,
+        "tamanho": tamanho,
+        "propostas": propostas,
+        "prioridades": prioridades,
+        "estudantes": estudantes,
+        "ano": ano,
+        "semestre": semestre,
+        "areaspfe": areaspfe,
+        "opcoes": opcoes,
         "edicoes": edicoes,
+        "cursos": cursos,
+        "disponivel_propostas": disponivel_propostas,
+        "disponivel_multidisciplinar": disponivel_multidisciplinar,
+        "aplicando_opcoes": aplicando_opcoes,
+        "aplicando_multidisciplinar": aplicando_multidisciplinar,
     }
 
     return render(request, 'propostas/procura_propostas.html', context)
@@ -391,6 +422,24 @@ def propostas_apresentadas(request):
                   proposta.organizacao not in dic_organizacoes:
                     dic_organizacoes[proposta.organizacao] = 0
             num_organizacoes = len(dic_organizacoes)
+
+            # Contando propostas disponíveis e escolhas
+            cursos = Curso.objects.all().order_by("id")
+            disponivel_propostas = {}
+            for curso in cursos:
+                disponivel_propostas[curso] = [0, 0]
+            disponivel_multidisciplinar = [0, 0]
+            for proposta in propostas_filtradas:
+                p = proposta.get_nativamente()
+                if isinstance(p, Curso):
+                    if proposta.disponivel:
+                        disponivel_propostas[p][0] += 1
+                    disponivel_propostas[p][1] += 1
+                else:
+                    if proposta.disponivel:
+                        disponivel_multidisciplinar[0] += 1
+                    disponivel_multidisciplinar[1] += 1
+
             context = {
                 'propostas': propostas_filtradas,
                 'num_organizacoes': num_organizacoes,
@@ -398,7 +447,9 @@ def propostas_apresentadas(request):
                 'ternario_pendentes': ternario_pendentes,
                 'configuracao': configuracao,
                 "edicao": edicao,
-                "cursos": Curso.objects.all().order_by("id"),
+                "cursos": cursos,
+                "disponivel_propostas": disponivel_propostas,
+                "disponivel_multidisciplinar": disponivel_multidisciplinar,
             }
 
         else:

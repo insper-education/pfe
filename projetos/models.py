@@ -491,11 +491,11 @@ class Proposta(models.Model):
         total = 0
 
         for curso in Curso.objects.all():
-            count[curso.sigla_curta] = 0
+            count[curso] = 0
 
         for ferfil in [self.perfil1, self.perfil3, self.perfil3, self.perfil4]:
             for curso in ferfil.all(): 
-                count[curso.sigla_curta] += 1
+                count[curso] += 1
                 total += 1
 
         if total == 0:

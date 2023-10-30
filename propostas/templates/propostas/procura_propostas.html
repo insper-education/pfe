@@ -338,54 +338,17 @@
     </script>
     <br>
 
-    <script>
-      var proposta_computacao_disponivel = 0
-      var proposta_mecatronica_disponivel = 0
-      var proposta_mecanica_disponivel = 0
-      var proposta_multidisciplinar_disponivel = 0
-      {% for proposta in propostas %} 
-        {% with disponivel=proposta.disponivel %}
-          {% if proposta.get_nativamente == "C" %} 
-            {% if disponivel %}proposta_computacao_disponivel += 1;{% endif %}  
-          {% elif proposta.get_nativamente  == "X" %} 
-            {% if disponivel %}proposta_mecatronica_disponivel += 1;{% endif %}
-          {% elif proposta.get_nativamente  == "M" %} 
-              {% if disponivel %}proposta_mecanica_disponivel += 1;{% endif %}
-          {% else %} 
-            {% if disponivel %}proposta_multidisciplinar_disponivel += 1;{% endif %}
-          {% endif %}
-        {% endwith %}
-      {% endfor %}
-    </script>
-
     <b>Disponibilidade de Propostas:</b><br>
     {% with nao_disponivel=False %}
       {% include "propostas_nativamente.html" %}
     {% endwith %}
     <br>
 
-    <script>
-      var aplicando_multidisciplinar = 0
-      var aplicando_computacao = 0
-      var aplicando_mecatronica = 0
-      var aplicando_mecanica = 0
-      {% for opcao in opcoes %}
-          {% if opcao.proposta.get_nativamente == "C" %} 
-            aplicando_computacao += 1;
-          {% elif opcao.proposta.get_nativamente  == "X" %}
-            aplicando_mecatronica += 1;
-          {% elif opcao.proposta.get_nativamente  == "M" %} 
-            aplicando_mecanica += 1;
-          {% else %} 
-            aplicando_multidisciplinar += 1;
-          {% endif %}
-      {% endfor %}
-    </script>
-
-    <b>Estudante Aplicando como Primeira Opção:</b><br>
-    {% with nao_disponivel=False %}
-      {% include "aplicando_primeira_opcao.html" %}
-    {% endwith %}
+    <b>Estudantes Aplicando como Primeira Opção:</b><br>
+    &nbsp;&nbsp;nativamente multidisciplinar: {{aplicando_multidisciplinar}}<br>
+    {% for key, value in aplicando_opcoes.items %} {% if value > 0 %}
+      &nbsp;&nbsp;nativamente de {{key.nome}}: {{value}}<br>
+      {% endif %} {% endfor %} 
     <br>
 
     <b>Áreas mais frequente em relação a busca e projetos:</b><br>
