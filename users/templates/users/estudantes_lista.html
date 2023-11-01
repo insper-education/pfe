@@ -311,29 +311,33 @@
       var chart_generos = document.getElementById('chart-generos').getContext('2d');
       window.myPie_genero = new Chart(chart_generos, config_generos);
 
-      {% comment %} {% if ano == 0 or semestre == 0 %} {% endcomment %}
+      {% if ano == 0 or semestre == 0 %}
         // Chart do totais de estudantes por programa
         var chart_totais = document.getElementById('total-estudantes').getContext('2d');
         window.myPie_totais = new Chart(chart_totais, config_totais);
-      {% comment %} {% endif %} {% endcomment %}
+      {% endif %}
 
       var table = null;
 
       function carrega_pagina() {
-        table = $('#EstudantesTable').dataTable();
 
-        if(table) {
-          // Hide/Esconde certas colunas
-          //table.fnSetColumnVis( 0, true );  // esconde Nome
-          table.fnSetColumnVis( 1, false );  // esconde Matrícula
-          {% comment %} 
-          //table.fnSetColumnVis( 2, true );  // esconde e-mail
-          //table.fnSetColumnVis( 3, true );  // esconde Curso
-          //table.fnSetColumnVis( 4, true );  // esconde Período
-          //table.fnSetColumnVis( 5, true );  // esconde Projeto
-          //table.fnSetColumnVis( 6, true );  // esconde Organização
-          {% endcomment %}
-          table.fnSetColumnVis( 7, false );  // esconde Linkedin
+        if($('#EstudantesTable th').length > 0) {   // Verifica se os THs foram registrados primeiro
+
+          table = $('#EstudantesTable').dataTable();
+
+          if(table) {
+            // Hide/Esconde certas colunas
+            //table.fnSetColumnVis( 0, true );  // esconde Nome
+            table.fnSetColumnVis( 1, false );  // esconde Matrícula
+            {% comment %} 
+            //table.fnSetColumnVis( 2, true );  // esconde e-mail
+            //table.fnSetColumnVis( 3, true );  // esconde Curso
+            //table.fnSetColumnVis( 4, true );  // esconde Período
+            //table.fnSetColumnVis( 5, true );  // esconde Projeto
+            //table.fnSetColumnVis( 6, true );  // esconde Organização
+            {% endcomment %}
+            table.fnSetColumnVis( 7, false );  // esconde Linkedin
+          }
         }
       };
 
