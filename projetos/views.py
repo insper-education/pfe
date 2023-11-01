@@ -1205,18 +1205,19 @@ def evolucao_notas(request):
 
         medias_individuais = []
         count = 0
-        for t_curso in Aluno.TIPOS_CURSO:
+        
+        for t_curso in Curso.objects.filter(curso_do_insper=True):
             notas = []
             if count > len(cores):
                 return HttpResponse("Erro, limite de cores por linha atingido.", status=401)
             for edicao in edicoes:
                 periodo = edicao.split('.')
                 semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
-                notas_lista = [x.nota for x in semestre if (x.alocacao != None and x.alocacao.aluno.curso2.sigla_curta == t_curso[0])]
+                notas_lista = [x.nota for x in semestre if (x.alocacao != None and x.alocacao.aluno.curso2 == t_curso)]
                 notas_total[edicao] += notas_lista
                 notas.append(media(notas_lista))
             if notas != [None] * len(notas):  # não está vazio
-                medias_individuais.append({"curso": t_curso[1], "media": notas, "cor": cores[count]})
+                medias_individuais.append({"curso": t_curso.sigla, "media": notas, "cor": cores[count]})
             count += 1
             
         if len(medias_individuais) > 1:
@@ -1237,13 +1238,13 @@ def evolucao_notas(request):
         # médias gerais totais
         medias_gerais = []
         count = 0
-        for t_curso in Aluno.TIPOS_CURSO:
+        for t_curso in Curso.objects.filter(curso_do_insper=True):
             notas = []
             for edicao in edicoes:
                 periodo = edicao.split('.')
                 alocacoes_tmp = alocacoes.filter(projeto__ano=periodo[0],
                                                  projeto__semestre=periodo[1],
-                                                 aluno__curso2__sigla_curta=t_curso[0])
+                                                 aluno__curso2=t_curso)
                 notas_lista = []
                 for alocacao in alocacoes_tmp:
                     media_loc = alocacao.get_media
@@ -1253,7 +1254,7 @@ def evolucao_notas(request):
                 notas_total[edicao] += notas_lista
                 notas.append(media(notas_lista))
             if notas != [None] * len(notas):  # não está vazio
-                medias_gerais.append({"curso": t_curso[1], "media": notas, "cor": cores[count]})
+                medias_gerais.append({"curso": t_curso.sigla, "media": notas, "cor": cores[count]})
             count += 1
 
         if len(medias_gerais) > 1:
