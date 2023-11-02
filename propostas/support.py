@@ -369,77 +369,56 @@ def envia_proposta(proposta, enviar=True):
     return message
 
 
-def retorna_ternario(propostas):
+def retorna_ternario(propostas, cursos):
     """Função retorna dados para gráfico ternário."""
-    ternario = []
+    ternario = [] # Lista com todas as propostas
+    count = {}
+    vagas = {}
+    for curso in cursos: # para total de vagas
+        vagas[curso] = 0
+
     for proposta in propostas:
-        
-        ccomp = Curso.objects.get(sigla_curta="C")
-        cmec = Curso.objects.get(sigla_curta="M")
-        cmxt = Curso.objects.get(sigla_curta="X")
 
-        comp = 0
-        mecat = 0
-        meca = 0
-
-        if ccomp in proposta.perfil1.all(): 
-            comp += 1
-        if cmxt in proposta.perfil1.all():
-            mecat += 1
-        if cmec in proposta.perfil1.all():
-            meca += 1
-        
-        if ccomp in proposta.perfil2.all():
-            comp += 1
-        if cmxt in proposta.perfil2.all():
-            mecat += 1
-        if cmec in proposta.perfil2.all():
-            meca += 1
-
-        if ccomp in proposta.perfil3.all():
-            comp += 1
-        if cmxt in proposta.perfil3.all():
-            mecat += 1
-        if cmec in proposta.perfil3.all():
-            meca += 1
-
-        if ccomp in proposta.perfil4.all():
-            comp += 1
-        if cmxt in proposta.perfil4.all():
-            mecat += 1
-        if cmec in proposta.perfil4.all():
-            meca += 1
+        for curso in cursos:
+            count[curso] = 0
+            for i in range(1,5):
+                if curso in getattr(proposta, "perfil"+str(i)).all(): 
+                    count[curso] += 1
+            vagas[curso] += count[curso]
 
         if proposta.organizacao:
             sigla = proposta.organizacao.sigla
         elif proposta.nome_organizacao:
             sigla = proposta.nome_organizacao
         else:
-            sigla = ""
+            sigla = "IND"
 
-        total = (comp + mecat + meca) * 0.01
-        if total:
+        # Porcentagem do total
+        total = sum(count.values()) * 0.01
+
+        # ternario [0, 1 e 2] São as posicoes no gráfico
+        # ternario [3] é o peso, se só tiver um projeto é 5, ao repetir ganha +3
+        # ternario [4] nome das empresas das propostas
+
+        if total: # Não estão vazias as definições de perfis
             found = False
-            for tern in ternario:
-                if int(comp/total) == tern[0] and \
-                   int(mecat/total) == tern[1] and \
-                   int(meca/total) == tern[2]:
+            med = [int(count[cursos[0]]/total), int(count[cursos[1]]/total), int(count[cursos[2]]/total)]
+            for tern in ternario: # Procura se alguem já na posição do plot
+                if med[0] == tern[0] and med[1] == tern[1] and med[2] == tern[2]:
                     tern[3] += 3
-                    if sigla:
-                        tern[4] += ", " + sigla
+                    tern[4] += ", " + sigla
                     found = True
                     break
             if not found:
-                ternario.append([int(comp/total), int(mecat/total), int(meca/total), 5, sigla])
-        else:
+                ternario.append(med + [5, sigla])
+        else:  # Estão vazias as definições de perfis
             found = False
             for tern in ternario:
                 if tern[0] == 33 and tern[1] == 33 and tern[2] == 33:
                     tern[3] += 3
-                    if sigla:
-                        tern[4] += ", " + sigla
+                    tern[4] += ", " + sigla
                     found = True
                     break
             if not found:
                 ternario.append([33, 33, 33, 5, sigla])
-    return ternario
+    return vagas, ternario

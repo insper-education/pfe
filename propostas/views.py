@@ -411,10 +411,10 @@ def propostas_apresentadas(request):
                                                                "organizacao",
                                                                "titulo", )
 
-            ternario_aprovados = retorna_ternario(propostas_filtradas
-                                                  .filter(disponivel=True))
-            ternario_pendentes = retorna_ternario(propostas_filtradas
-                                                  .filter(disponivel=False))
+            cursos = Curso.objects.filter(curso_do_insper=True).order_by("id")
+
+            vagas, ternario_aprovados = retorna_ternario(propostas_filtradas.filter(disponivel=True), cursos)
+            _, ternario_pendentes = retorna_ternario(propostas_filtradas.filter(disponivel=False), cursos)
 
             dic_organizacoes = {}
             for proposta in propostas_filtradas:
@@ -424,7 +424,6 @@ def propostas_apresentadas(request):
             num_organizacoes = len(dic_organizacoes)
 
             # Contando propostas disponíveis e escolhas
-            cursos = Curso.objects.all().order_by("id")
             disponivel_propostas = {}
             for curso in cursos:
                 disponivel_propostas[curso] = [0, 0]
@@ -439,7 +438,7 @@ def propostas_apresentadas(request):
                     if proposta.disponivel:
                         disponivel_multidisciplinar[0] += 1
                     disponivel_multidisciplinar[1] += 1
-
+        
             context = {
                 'propostas': propostas_filtradas,
                 'num_organizacoes': num_organizacoes,
@@ -450,6 +449,7 @@ def propostas_apresentadas(request):
                 "cursos": cursos,
                 "disponivel_propostas": disponivel_propostas,
                 "disponivel_multidisciplinar": disponivel_multidisciplinar,
+                "vagas": vagas,
             }
 
         else:

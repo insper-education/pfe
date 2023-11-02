@@ -1,0 +1,251 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 2 de Outubro de 2023
+{% endcomment %}
+
+{% load static %}
+<script charset="UTF-8" src="{% static 'd3/d3.min.js' %}"></script>
+
+
+<style>
+    line.axis {
+        stroke-width: 2;
+        stroke: #c3c3c3;
+    }
+    line.tick {
+        stroke-width: 1;
+        stroke: #c3c3c3;
+    }
+
+    line.tick-a, text.tick-a {
+        stroke: #c30000;
+    }
+
+    line.tick-b, text.tick-b {
+        stroke: #0000c3;
+    }
+
+    line.tick-c, text.tick-c {
+        stroke: #008000;
+    }
+
+    line.tick-p, text.tick-p {
+        stroke: #00A0A0;
+    }
+
+    line.tick-y, text.tick-y {
+        stroke: brown;
+    }
+
+    text.tick-text {
+        font-family: "arial";
+        font-size: 10px;
+        fill-opacity:1;
+        stroke-width:1px;
+        stroke-linecap:butt;
+        stroke-linejoin:miter;
+        stroke-opacity:1;
+        font-weight: 800;
+    }
+
+    text.tick-text2 {
+        font-family: "arial";
+        font-size: 14px;
+        fill: #000000;
+    }
+
+</style>
+
+
+
+
+<!-- https://gist.github.com/widged/5780720 -->
+<script>
+(function() {
+
+  let width = screen.width-20;
+  if(width>800) { // Nao quero graficos maior que 800
+    width=800
+  }
+
+  var svg = d3.select('#plot').append('svg')
+              .attr("width", width)
+              .attr("height", width);
+
+    var w = width*0.8;
+    var h = w*0.9;
+    
+    var m = 20;
+
+    svg.append("text")
+        .attr("x", 10)
+        .attr("y", h )
+        .attr("transform", "rotate(-60 10 "+h+")")
+        .text("{{cursos.0}}")
+        .classed('tick-text tick-a', true);
+
+    svg.append("text")
+        .attr("x", w-20)
+        .attr("y", h+40 )
+        .text("{{cursos.1}}")
+        .classed('tick-text tick-b', true);
+
+    svg.append("text")
+        .attr("x", ((w/2)+50))
+        .attr("y", 20 )
+        .attr("transform", "rotate(60 "+((w/2)+50)+" 20)")
+        .text("{{cursos.2}}")
+        .classed('tick-text tick-c', true);
+
+  svg.append("circle")
+    .attr("cx", (w/2)-80)
+    .attr("cy", h+55)
+    .attr("r", 7)
+    .attr("fill", "teal");
+    
+  svg.append("text")
+    .attr("x", (w/2)-70)
+    .attr("y", h+60)
+    .text("autorizado")
+    .classed('tick-text2 tick-p', true);
+
+  svg.append("circle")
+    .attr("cx", (w/2)+60)
+    .attr("cy", h+55)
+    .attr("r", 7)
+    .attr("fill", "brown");
+    
+  svg.append("text")
+    .attr("x", (w/2)+70)
+    .attr("y", h+60)
+    .text("pendente")
+    .classed('tick-text2 tick-y', true);
+
+
+  var corners = [[m,h+m], [w+m,h+m], [(w/2)+m,m]]
+
+  corners.forEach(function(corner, idx) { 
+    var c1 = idx, c2 = idx + 1; if(c2 >= corners.length) { c2 = 0;}
+    svg.append("line")
+      .attr("x1", corners[c1][0])
+      .attr("y1", corners[c1][1])
+      .attr("x2", corners[c2][0])
+      .attr("y2", corners[c2][1])
+      .classed('axis', true);	
+  })
+
+  var ticks = [0,20,40,60,80,100], n = ticks.length;
+  ticks.forEach(function(v) {
+    
+    var coord1 = coord(v, 0, 100-v);
+    var coord2 = coord(v, 100-v, 0);
+    var coord3 = coord(0, 100-v, v);
+    var coord4 = coord(100-v, 0, v);
+
+    if(v !== 0 && v !== 100) {
+
+      svg.append("line")
+        .attr("x1", coord1[0])
+        .attr("y1", coord1[1])
+        .attr("x2", coord2[0])
+        .attr("y2", coord2[1])
+        .classed('tick tick-a', true);	
+
+      svg.append("line")
+        .attr("x1", coord2[0])
+        .attr("y1", coord2[1])
+        .attr("x2", coord3[0])
+        .attr("y2", coord3[1])
+        .classed('tick tick-b', true);	
+
+      svg.append("line")
+        .attr("x1", coord3[0])
+        .attr("y1", coord3[1])
+        .attr("x2", coord4[0])
+        .attr("y2", coord4[1])
+        .classed('tick tick-c', true);	
+
+    }
+    svg.append("text")
+      .attr("x", coord1[0] - 15)
+            .attr("y", coord1[1]  )
+            .text( function (d) { return v; })
+            .classed('tick-text tick-a', true);
+
+    svg.append("text")
+      .attr("x", coord2[0] - 6)
+            .attr("y", coord2[1] + 10 )
+            .text( function (d) { return (100- v); })
+            .classed('tick-text tick-b', true);
+
+    svg.append("text")
+      .attr("x", coord3[0] + 6)
+            .attr("y", coord3[1] )
+            .text( function (d) { return v; })
+            .classed('tick-text tick-c', true);
+
+    })
+
+    dados_aprovados = [
+      {% for ter in ternario_aprovados %}
+        coord({{ter.0}}, {{ter.1}}, {{ter.2}}, {{ter.3}}, "{{ter.4}}"),
+      {% endfor %} 
+    ]
+
+    dados_pendentes = [
+      {% for ter in ternario_pendentes %}
+        coord({{ter.0}}, {{ter.1}}, {{ter.2}}, {{ter.3}}, "{{ter.4}}"),
+      {% endfor %} 
+    ]
+
+    var circles_aprovados = svg.selectAll("circle_a").data(dados_aprovados);
+
+    circles_aprovados.enter().append("circle")
+      .attr("cx", function (d) { return d[0]; })
+      .attr("cy", function (d) { return d[1]; })
+      .attr("r", function (d) { return d[2]; })
+      .attr("fill", "teal");
+      
+    circles_aprovados.enter().append("text")
+      .attr("x", function (d) { return d[0]+d[2]; })
+      .attr("y", function (d) { return d[1]-d[2]; })
+      .text( function (d) { return d[3]; })
+      .classed('tick-text tick-p', true);
+
+    var circles_pendentes = svg.selectAll("circle_p").data(dados_pendentes);
+
+    circles_pendentes.enter().append("circle")
+      .attr("cx", function (d) { return d[0]; })
+      .attr("cy", function (d) { return d[1]; })
+      .attr("r", function (d) { return d[2]; })
+      .attr("fill", "brown");
+      
+    circles_pendentes.enter().append("text")
+      .attr("x", function (d) { return d[0]+d[2]; })
+      .attr("y", function (d) { return d[1]+7+(d[2]/2); })
+      .text( function (d) { return d[3]; })
+      .classed('tick-text tick-y', true);
+
+
+    function coord(a, b, c, r, t){
+      var sum, pos = [0,0];
+        sum = a + b + c;
+        if(sum !== 0) {
+          a /= sum;
+          b /= sum;
+          c /= sum;
+
+        pos[0] =  corners[0][0]  * a + corners[1][0]  * b + corners[2][0]  * c;
+        pos[1] =  corners[0][1]  * a + corners[1][1]  * b + corners[2][1]  * c;
+        pos[2] = r;
+        pos[3] = t;
+      }
+        return pos;
+    }
+    function scale(/* point */ p, factor) {
+        return [p[0] * factor, p[1] * factor];
+    }
+  })()
+
+  </script>
