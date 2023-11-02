@@ -12,8 +12,10 @@
 
   <span class="titulo">Carregamento de CSV (Comma Separated Values)</span>
 
-  <strong>(realmente separado por vírgula, não funciona com ponto e vírgula)</strong><br>
-  <strong>(não mudar o maiúscula e minúscula dos nomes das colunas)</strong><br>
+  <strong>- realmente separado por vírgula, não funciona com ponto e vírgula</strong><br>
+  <strong>- não mudar o maiúscula e minúscula dos nomes das colunas</strong><br>
+  <strong>- se o campo já existir (ex: já tem o estudante), não será criada uma cópia, porém os dados atualizados</strong><br>
+
 
   <br>
   <h6>Campos Permitidos:</h6>
@@ -26,6 +28,7 @@
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <input type="file" name="arquivo" accept=".csv">
+    <br><br>
     <button type="submit">Enviar Arquivo</button>
   </form>
 {% endblock %}

@@ -18,7 +18,7 @@ class Curso(models.Model):
 
     sigla = models.CharField("Sigla", max_length=10, null=True,
                                       blank=True,
-                                      help_text='Sigla do curso, ex: GRENGCOMP, GRENGMECAT, GRENGMECA')
+                                      help_text="Sigla do curso, ex: GRENGCOMP, GRENGMECAT, GRENGMECA, GRCIECOMP")
 
     sigla_curta = models.CharField("Sigla Curta", max_length=3, null=True,
                                       blank=True,

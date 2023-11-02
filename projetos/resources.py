@@ -379,7 +379,7 @@ class EstudantesResource(resources.ModelResource):
         'sobrenome',
         'nome_compl (somente usado se nome e sobrenome não presentes)',
         'gênero (M|F)',
-        'curso [GRENGCOMP|GRENGMECAT|GRENGMECA]',
+        'curso [GRENGCOMP|GRENGMECAT|GRENGMECA|GRCIECOMP]',
         'matrícula (número)',
         'cr (ponto como separador decimal)',
         'anoPFE',
@@ -422,14 +422,11 @@ class EstudantesResource(resources.ModelResource):
 
 
             (aluno, _created) = Aluno.objects.get_or_create(user=user)
-            if row.get('curso') == "GRENGCOMP":
-                aluno.curso2 = Curso.objects.get(nome="Engenharia de Computação")
-            elif row.get('curso') == "GRENGMECAT":
-                aluno.curso2 = Curso.objects.get(nome="Engenharia Mecatrônica")
-            elif row.get('curso') == "GRENGMECA":
-                aluno.curso2 = Curso.objects.get(nome="Engenharia Mecânica")
-            else:
-                pass  # erro
+
+            try:
+                aluno.curso2 = Curso.objects.get(sigla=row.get('curso'))
+            except Curso.DoesNotExist: # Não encontrou o curso, deixa vazio
+                aluno.curso2 = None
 
             atualizar_campo(aluno, 'matricula', row.get('matrícula'))
             atualizar_campo(aluno, 'cr', row.get('cr'))
