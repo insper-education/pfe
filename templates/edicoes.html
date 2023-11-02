@@ -137,6 +137,18 @@
           </div>
         {% endif %}
 
+        {% if com_tipos %}
+          <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          <div class="input-group-prepend">
+            <label class="input-group-text" for="filterTipo" onClick="recarregar_pagina()"><span class="to_hide">Tipo</span></label>
+          </div>
+          <select class="filter custom-select w-auto" id="filterTipo" name="tipo">
+            <option value="estudantes">Estudantes</option>
+            <option value="propostas">Propostas</option>
+            <option value="projetos">Projetos</option>
+          </select>
+        {% endif %}
+
         <div id="spinner" class="ml-2 input-group-prepend" style="visibility: hidden">
           <div class="spinner-border text-secondary ml-auto" style="width: 1.8rem; height: 1.8rem;" role="status" aria-hidden="true">
             <span class="sr-only input-group-text">Carregando...</span>

@@ -47,7 +47,9 @@
       {% if avancados %}
         var avancados = $("#avancados").is(':checked');
       {% endif %}
-      
+      {% if com_tipo %}
+        var tipo = $("#filterTipo option:selected").attr("value");
+      {% endif %}
 
       request_ajax = $.ajax({
           type: "POST",
@@ -71,6 +73,9 @@
               {% endif %}
               {% if avancados %}
                 avancados: avancados,
+              {% endif %}
+              {% if com_tipo %}
+                tipo: tipo,
               {% endif %}
               'csrfmiddlewaretoken': '{{ csrf_token }}',
           },

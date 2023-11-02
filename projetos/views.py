@@ -130,7 +130,6 @@ def distribuicao_areas(request):
     curso = "todos"
 
     if request.is_ajax():
-
         if 'tipo' in request.POST and 'edicao' in request.POST:
 
             tipo = request.POST['tipo']
@@ -149,62 +148,64 @@ def distribuicao_areas(request):
             return HttpResponse("Erro não identificado (POST incompleto).",
                                 status=401)
 
-    if tipo == "estudantes":
-        alunos = Aluno.objects.filter(user__tipo_de_usuario=1)
-        if curso != "todos":
-            alunos = alunos.filter(curso2__sigla_curta=curso)
-        if not todas:
-            alunos = alunos.filter(anoPFE=ano, semestrePFE=semestre)
-        total_preenchido = 0
-        for aluno in alunos:
-            if AreaDeInteresse.objects.filter(usuario=aluno.user).count() > 0:
-                total_preenchido += 1
-        areaspfe, outras = get_areas_estudantes(alunos)
-        context = {
-            'total': alunos.count(),
-            'total_preenchido': total_preenchido,
-            'areaspfe': areaspfe,
-            'outras': outras,
-        }
+        if tipo == "estudantes":
+            alunos = Aluno.objects.all()
+            if curso != "T":
+                alunos = alunos.filter(curso2__sigla_curta=curso)
+            if not todas:
+                alunos = alunos.filter(anoPFE=ano, semestrePFE=semestre)
+            total_preenchido = 0
+            for aluno in alunos:
+                if AreaDeInteresse.objects.filter(usuario=aluno.user).count() > 0:
+                    total_preenchido += 1
+            areaspfe, outras = get_areas_estudantes(alunos)
+            context = {
+                'total': alunos.count(),
+                'total_preenchido': total_preenchido,
+                'areaspfe': areaspfe,
+                'outras': outras,
+            }
 
-    elif tipo == "propostas":
-        propostas = Proposta.objects.all()
-        if not todas:
-            propostas = propostas.filter(ano=ano, semestre=semestre)
-        areaspfe, outras = get_areas_propostas(propostas)
-        context = {
-            'total': propostas.count(),
-            'areaspfe': areaspfe,
-            'outras': outras,
-        }
+        elif tipo == "propostas":
+            propostas = Proposta.objects.all()
+            if not todas:
+                propostas = propostas.filter(ano=ano, semestre=semestre)
+            areaspfe, outras = get_areas_propostas(propostas)
+            context = {
+                'total': propostas.count(),
+                'areaspfe': areaspfe,
+                'outras': outras,
+            }
 
-    elif tipo == "projetos":
+        elif tipo == "projetos":
 
-        projetos = Projeto.objects.all()
-        if not todas:
-            projetos = projetos.filter(ano=ano, semestre=semestre)
+            projetos = Projeto.objects.all()
+            if not todas:
+                projetos = projetos.filter(ano=ano, semestre=semestre)
 
-        # Estudar forma melhor de fazer isso
-        propostas = [p.proposta.id for p in projetos]
-        propostas_projetos = Proposta.objects.filter(id__in=propostas)
+            # Estudar forma melhor de fazer isso
+            propostas = [p.proposta.id for p in projetos]
+            propostas_projetos = Proposta.objects.filter(id__in=propostas)
 
-        areaspfe, outras = get_areas_propostas(propostas_projetos)
+            areaspfe, outras = get_areas_propostas(propostas_projetos)
 
-        context = {
-            'total': propostas_projetos.count(),
-            'areaspfe': areaspfe,
-            'outras': outras,
-        }
+            context = {
+                'total': propostas_projetos.count(),
+                'areaspfe': areaspfe,
+                'outras': outras,
+            }
 
-    else:
-        return HttpResponse("Erro não identificado (não encontrado tipo).",
+        else:
+            return HttpResponse("Erro não identificado (não encontrado tipo).",
                             status=401)
 
-    context['tipo'] = tipo
-    context['periodo'] = str(ano)+"."+str(semestre)
-    context['ano'] = ano
-    context['semestre'] = semestre
-    context['loop_anos'] = range(2018, ano+1)
+        return render(request, 'projetos/distribuicao_areas.html', context)
+
+    edicoes, _, _ = get_edicoes(Aluno)
+    context = {
+        "edicoes": edicoes,
+        "cursos": Curso.objects.filter(curso_do_insper=True),
+    }
 
     return render(request, 'projetos/distribuicao_areas.html', context)
 
