@@ -141,12 +141,12 @@ def mapeamento_estudantes_propostas(request):
         context = {
             "edicoes": edicoes,
             "informacoes": informacoes,
+            "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
         }
 
     return render(request,
                   'propostas/mapeamento_estudante_projeto.html',
                   context)
-
 
 
 @login_required

@@ -174,8 +174,13 @@
 
   </div>
   </div>
-
-  <small style="font-size:12px"><b>C</b>: Computação | <b>X</b>: Mecatrônica | <b>M</b>: Mecânica</small>
+  
+  <small style="font-size:12px">
+    {% for curso in cursos %}
+      <b>{{curso.sigla_curta}}</b>: {{curso.nome}}
+      {% if not forloop.last %}|{% endif %}
+    {% endfor %}
+  </small>
   <p>&nbsp;</p>
 
   <script>
