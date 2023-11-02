@@ -161,25 +161,12 @@ class Professor(models.Model):
 class Aluno(models.Model):
     """Classe de usuários com estatus de Aluno."""
 
-    # TIPOS_CURSO = (
-    #     ('C', 'Engenharia de Computação'),
-    #     ('M', 'Engenharia Mecânica'),
-    #     ('X', 'Engenharia Mecatrônica'),
-    #     ('B', 'Ciência da Computação'),
-    #     ('T', 'Electrical and Electronics Engineering'),
-    #     ('E', 'Electrical Engineering'),
-    # )
-
     user = models.OneToOneField(PFEUser, related_name='aluno',
                                 on_delete=models.CASCADE)
 
     matricula = models.CharField("Matrícula", max_length=8, null=True,
                                  blank=True,
                                  help_text='Número de matrícula')
-
-    # Remover o curso e só usar curso2
-    # curso = models.CharField(max_length=1, null=True, blank=True, choices=TIPOS_CURSO,
-    #                          help_text='Curso Matriculado',)
 
     curso2 = models.ForeignKey(Curso, null=True, blank=True, on_delete=models.SET_NULL,
                              help_text='Curso Matriculado',)    
