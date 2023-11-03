@@ -15,7 +15,7 @@
   <span class="titulo">{{ user.get_full_name }}</span>
 
   <strong>Usuário:</strong> {{ user.username }}<br>
-  {% if user.tipo_de_usuario == 1 %} {% comment %} aluno {% endcomment %}
+  {% if user.tipo_de_usuario == 1 %} {% comment %} estudante {% endcomment %}
     <strong>Curso:</strong> {{user.aluno.curso2}}<br>
     <strong>Ano e Semestre de PFE:</strong> {{user.aluno.anoPFE}}.{{user.aluno.semestrePFE}} <small>(ou posterior)</small><br>
   {% elif user.tipo_de_usuario == 2 %} {% comment %} professor {% endcomment %}

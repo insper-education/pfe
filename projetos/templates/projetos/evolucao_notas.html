@@ -46,136 +46,105 @@
         <div class="cabecalho">
 
             <span class="titulo">Evolução por Notas/Conceitos</span>
+            <small>(esta janela está muito lenta pela grande quantidade de cálculos)</small><br><br>
             
             {% comment %} Seletor da edição da pesquisa {% endcomment %}
             {% include "edicoes.html" with sem_edicao=True com_cursos=True %}
             
         </div>
-
-    {% comment %} Seletor da edição da pesquisa {% endcomment %}
     
     <div class="atualizar">
 
-    {% if curso %}
-        {% with file_name="evolucao_notas_"|addstr:curso %}
-            {% include "save_image.html" %}
-        {% endwith %}
-    {% endif %}
+        {% if curso %}
+            {% with file_name="evolucao_notas_"|addstr:curso %}
+                {% include "save_image.html" %}
+            {% endwith %}
+        {% endif %}
 
-    <div><br><br><br></div>{% comment %} Solução pouco elegante, mas funciona. {% endcomment %}
+        <div><br><br><br></div>{% comment %} Solução pouco elegante, mas funciona. {% endcomment %}
 
-    <div class="container">
+        <div class="container">
 
-        <div style="width:860px;"> 
-            <canvas id="chart-medias-individuais"></canvas>
-            <br>
-            <canvas id="chart-medias-gerais"></canvas>
-        </div>
+            <div style="width:860px;"> 
+                <canvas id="chart-medias-individuais"></canvas>
+                <br>
+                <canvas id="chart-medias-gerais"></canvas>
+            </div>
 
-        <script>
-    
-            var config_medias_individuais = {
-                type: 'line',
-                data: {
-                    labels: [
-                        {% for edicao in edicoes %}
-                            "{{edicao}}",
-                        {% endfor %}
-                    ],
-                    datasets: [
-                        {% for media in medias_individuais %}
-                            { 
-                                data: [
-                                    {% for nota in media.media %}
-                                        {{nota|stringformat:".2f"|unlocalize}},
-                                    {% endfor %}
-                                ],
-                                label: "{{media.curso2.sigla_curta}}",
-                                borderColor: "{{media.cor}}",
-                                fill: false,
-                                spanGaps: true,
-                            },
-                        {% endfor %}
-                    ]
-                },
-                options: {
-                    title: {
-                        display: true,
-                        text: 'Evolução de notas individuais'
-                    }, 
-                    {% comment %} scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                                max: 10
-                            }
-                        }]
-                    } {% endcomment %}
-
-                }
-            }
-
-    
-            var config_medias_gerais = {
-                type: 'line',
-                data: {
-                    labels: [
-                        {% for edicao in edicoes %}
-                            "{{edicao}}",
-                        {% endfor %}
-                    ],
-                    datasets: [
-                        {% for media in medias_gerais %}
-                            { 
-                                data: [
-                                    {% for nota in media.media %}
-                                        {{nota|stringformat:".2f"|unlocalize}},
-                                    {% endfor %}
-                                ],
-                                label: "{{media.curso2.sigla_curta}}",
-                                borderColor: "{{media.cor}}",
-                                fill: false,
-                                spanGaps: true,
-                            },
-                        {% endfor %}
-                    ]
-                },
-                options: {
-                    title: {
-                        display: true,
-                        text: 'Evolução médias gerais'
-                    }, 
-                    {% comment %} scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                                max: 10
-                            }
-                        }]
-                    } {% endcomment %}
-
-                }
-            }
-
-
-            function carrega_pagina() {  
-
-                // Chart do média individuais
-                var chart_medias_individuais = document.getElementById('chart-medias-individuais').getContext('2d');
-                window.medias = new Chart(chart_medias_individuais, config_medias_individuais);
-
-                // Chart do média gerais
-                var chart_medias_gerais = document.getElementById('chart-medias-gerais').getContext('2d');
-                window.medias = new Chart(chart_medias_gerais, config_medias_gerais);
-
-            }
-
-            window.onload = carrega_pagina
+            <script>
         
-        </script>
+                var config_medias_individuais = {
+                    type: 'line',
+                    data: {
+                        labels: [
+                            {% for edicao in edicoes %}"{{edicao}}",{% endfor %}
+                        ],
+                        datasets: [
+                            {% for media in medias_individuais %}
+                                { 
+                                    data: [
+                                        {% for nota in media.media %}
+                                            {{nota|stringformat:".2f"|unlocalize}},
+                                        {% endfor %}
+                                    ],
+                                    label: "{{media.curso.sigla}}",
+                                    borderColor: "#{{media.curso.cor}}",
+                                    fill: false,
+                                    spanGaps: true,
+                                },
+                            {% endfor %}
+                        ]
+                    },
+                    options: {
+                        title: { display: true,
+                                 text: 'Evolução de notas individuais'}, 
+                    }
+                }
 
+        
+                var config_medias_gerais = {
+                    type: 'line',
+                    data: {
+                        labels: [{% for edicao in edicoes %}"{{edicao}}",{% endfor %}],
+                        datasets: [
+                            {% for media in medias_gerais %}
+                                { 
+                                    data: [
+                                        {% for nota in media.media %}
+                                            {{nota|stringformat:".2f"|unlocalize}},
+                                        {% endfor %}
+                                    ],
+                                    label: "{{media.curso.sigla}}",
+                                    borderColor: "#{{media.curso.cor}}",
+                                    fill: false,
+                                    spanGaps: true,
+                                },
+                            {% endfor %}
+                        ]
+                    },
+                    options: {
+                        title: { display: true,
+                                 text: 'Evolução médias gerais'}, 
+                    }
+                }
 
-    </div>
+                function carrega_pagina() {  
+
+                    // Chart do média individuais
+                    var chart_medias_individuais = document.getElementById('chart-medias-individuais').getContext('2d');
+                    window.medias = new Chart(chart_medias_individuais, config_medias_individuais);
+
+                    // Chart do média gerais
+                    var chart_medias_gerais = document.getElementById('chart-medias-gerais').getContext('2d');
+                    window.medias = new Chart(chart_medias_gerais, config_medias_gerais);
+
+                }
+
+                window.onload = carrega_pagina
+            
+            </script>
+
+        </div>
     </div>
     </div>
 

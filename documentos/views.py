@@ -25,11 +25,13 @@ from professores.support import recupera_mentorias_técnica
 from projetos.models import Documento, Configuracao, Projeto, Certificado
 from projetos.models import get_upload_path
 
-# from users.models import Aluno
-from users.models import PFEUser
+# from users.models import PFEUser
 from users.support import get_edicoes
 
+from operacional.models import Curso
+
 from .support import render_pdf_file
+
 
 
 #@login_required
@@ -115,14 +117,12 @@ def certificados_submetidos(request):
 
     configuracao = get_object_or_404(Configuracao)
     coordenacao = configuracao.coordenacao
-    #coordenacoes = PFEUser.objects.filter(coordenacao=True)
 
     context = {
         "certificados": certificados,
         "edicoes": edicoes,
         "coordenacao": coordenacao,
         "configuracao": configuracao,
-        #"coordenacoes": coordenacoes,
     }
 
     return render(request, 'documentos/certificados_submetidos.html', context)
@@ -204,7 +204,6 @@ def selecao_geracao_certificados(request):
     }
 
     return render(request, 'documentos/selecao_geracao_certificados.html', context)
-
 
 
 @login_required
@@ -334,7 +333,6 @@ def gerar_certificados(request):
     return render(request, 'documentos/gerar_certificados.html', context)
 
 
-
 def materias_midia(request):
     """Exibe Matérias que houveram na mídia."""
     relatorios = Documento.objects.filter(tipo_de_documento=128, confidencial=False)
@@ -373,15 +371,13 @@ def tabela_documentos(request):
                 ano, semestre = request.POST['edicao'].split('.')
                 projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
 
-
             if 'curso' in request.POST:
                 curso = request.POST['curso']    
             else:
                 return HttpResponse("Algum erro não identificado.", status=401)
 
             if curso != 'T':
-                projetos = projetos.filter(alocacao__aluno__curso2__sigla=curso).distinct()
-
+                projetos = projetos.filter(alocacao__aluno__curso2__sigla_curta=curso).distinct()
 
         context = {
             "projetos": projetos,
@@ -401,7 +397,7 @@ def tabela_documentos(request):
         context = {
             "edicoes": edicoes,
             "informacoes": informacoes,
-
+            "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
         }
 
     return render(request, 'documentos/tabela_documentos.html', context)

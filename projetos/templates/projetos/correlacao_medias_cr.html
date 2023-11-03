@@ -125,7 +125,7 @@
                                 }{% if not forloop.last %},{% endif %}
                                 {% endif %}{% endwith %}{% endfor %}];
                     if (data_estudantes_{{curs.sigla}}.length > 0) {
-                        $("#{{curs.sigla}}").html("Quantidade de estudantes {{curs.sigla}} = " + data_estudantes_{{curs.sigla}}.length);
+                        $("#{{curs.sigla}}").html("Quantidade de estudantes de {{curs.nome}} = " + data_estudantes_{{curs.sigla}}.length);
                     }
                     
                     var data_estudantes_{{curs.sigla}}_i = [];
@@ -245,7 +245,7 @@
 
                     {% for curs, estud in estudantes.items %}
                         {
-                            label: "{{curs.sigla}}",
+                            label: "{{curs.nome}}",
                             pointBackgroundColor: '#{{curs.cor}}',
                             pointBorderColor: adjust("#{{curs.cor}}",-20),
                             backgroundColor: "#{{curs.cor}}",

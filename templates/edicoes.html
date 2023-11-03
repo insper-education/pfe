@@ -6,32 +6,32 @@
 
 {% comment %} Seletor da edição da pesquisa {% endcomment %}
 {% if edicoes %}
-<style>
-.separador {
-  margin-right: 16px;
-}
+  <style>
+    .separador {
+      margin-right: 16px;
+    }
 
-@media only screen and (max-width: 520px) {
-  .to_hide {
-    font-size: 0.7rem;
-    min-width:22%;
-    max-width:32%;
-    width:2rem;
-  }
-  .to_hide2 {
-    font-size: 0.7rem;
-    min-width:60%;
-    max-width:70%;
-  }
-  .to_label {
-    padding: 4px !important;
-  }
-  .separador {
-    margin-right: 6px;
-    width: 92vw;
-  }
-}
-</style>
+    @media only screen and (max-width: 520px) {
+      .to_hide {
+        font-size: 0.7rem;
+        min-width:22%;
+        max-width:32%;
+        width:2rem;
+      }
+      .to_hide2 {
+        font-size: 0.7rem;
+        min-width:60%;
+        max-width:70%;
+      }
+      .to_label {
+        padding: 4px !important;
+      }
+      .separador {
+        margin-right: 6px;
+        width: 92vw;
+      }
+    }
+  </style>
 
   <div class="row align-items-start mb-2" style="display: inline-block; margin-right: 3px;">
     <div class="ml-3">
@@ -76,69 +76,55 @@
                     <option class="text-info" value="{{c.sigla_curta}}" {% if curso == c.sigla_curta %}selected{% endif %}>{{c.nome}}</option>
                   {% endif %}
                 {% endfor %}
-                {% comment %} <optgroup label="Comitê PFE">
-                  <option value="xxx">XXXX</option>
-                </optgroup> {% endcomment %}
               {% else %}
-                <option value="C" {% if curso == "computação" %}selected{% endif %}>computação</option>
-                <option value="X" {% if curso == "mecatrônica" %}selected{% endif %}>mecatrônica</option>
-                <option value="M" {% if curso == "mecânica" %}selected{% endif %}>mecânica</option>
-                {% comment %} <option value="B" {% if curso == "ciencia" %}selected{% endif %}>c. computação</option> {% endcomment %}
+                <option selected>ERRO / ERROR</option>
               {% endif %}
           </select>
         {% endif %}
 
         {% if com_objetivos %}
-          
-          <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-          
+          <div class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</div>
           <div class="input-group-prepend">
             <label class="input-group-text" for="filterObjetivo" onClick="recarregar_pagina()"><span class="to_hide">Objetivo de Aprendizagem</span></label>
           </div>
           <select class="filter custom-select w-auto" id="filterObjetivo" name="objetivo">
-
-                {% for objetivo in objetivos %}
-                  <option value="{{objetivo.id}}" 
-                  {% if objetivo.id == obj_selecionado %}selected{% endif %}>{{objetivo}} - {{objetivo.data_inicial}}</option>
-                {% endfor %}
-
+            {% for objetivo in objetivos %}
+              <option value="{{objetivo.id}}" 
+              {% if objetivo.id == obj_selecionado %}selected{% endif %}>{{objetivo}} - {{objetivo.data_inicial}}</option>
+            {% endfor %}
           </select>
         {% endif %}
 
         {% if ind_grup %}
-
-          <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-
-          <div class="form-check mb-2 mr-sm-2">
+          <div class="separador input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</div>
+          <div class="input-group-prepend form-check mb-2 mr-sm-2">
             <input class="filter form-check-input" type="checkbox" id="individuais" checked >
-            <label class="form-check-label" for="individuais">Individuais</label>
+            <label class="to_label form-check-label" style="line-height: 1.0;" for="individuais"><span class="to_hide">Individuais</span></label>
           </div>
-
-          <div class="form-check mb-2 mr-sm-2">
+          <div class="input-group-prepend form-check mb-2 mr-sm-2">
             <input class="filter form-check-input" type="checkbox" id="grupo" checked >
-            <label class="form-check-label" for="grupo">Grupo</label>
+            <label class="to_label form-check-label" style="line-height: 1.0;" for="grupo"><span class="to_hide">Grupo</span></label>
           </div>
-
         {% endif %}
 
         {% if so_finais %}
-          <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-          <div class="form-check mb-2 mr-sm-2">
+          <div class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</div>
+          <div class="input-group-prepend form-check mb-2 mr-sm-2">
             <input class="filter form-check-input" type="checkbox" id="so_finais" checked >
-            <label class="form-check-label" for="so_finais">Só avaliações finais</label>
+            <label class="to_label form-check-label" style="line-height: 1.0;" for="so_finais"><span class="to_hide">Só avaliações finais</span></label>
           </div>
         {% endif %}
 
         {% if avancados %}
-          <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-          <div class="form-check mb-2 mr-sm-2">
+          <div class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</div>
+          <div class="input-group-prepend form-check mb-2 mr-sm-2">
             <input class="filter form-check-input" type="checkbox" id="avancados" checked >
-            <label class="form-check-label" for="avancados">Avancados</label>
+            <label class="to_label form-check-label" for="avancados"><span class="to_hide">Avancados</span></label>
           </div>
         {% endif %}
 
         {% if com_tipos %}
-          <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          <div class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</div>
           <div class="input-group-prepend">
             <label class="input-group-text" for="filterTipo" onClick="recarregar_pagina()"><span class="to_hide">Tipo</span></label>
           </div>

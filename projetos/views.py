@@ -226,7 +226,6 @@ def projetos_fechados(request):
                 projetos_filtrados = Projeto.objects.filter(ano=ano,
                                                             semestre=semestre)
 
-            
             curso = request.POST['curso']    
             
             projetos_filtrados = projetos_filtrados.order_by("-avancado", "organizacao")
@@ -972,6 +971,7 @@ def analise_notas(request):
     else:
         context = {
             "edicoes": edicoes,
+            "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
         }
 
     return render(request, 'projetos/analise_notas.html', context)
@@ -1164,6 +1164,7 @@ def analise_objetivos(request):
     else:
         context = {
             "edicoes": edicoes,
+            "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
         }
 
     return render(request, 'projetos/analise_objetivos.html', context)
@@ -1174,6 +1175,7 @@ def analise_objetivos(request):
 def evolucao_notas(request):
     """Mostra graficos das evoluções do PFE."""
     edicoes, _, _ = get_edicoes(Avaliacao2)
+    cursos = Curso.objects.filter(curso_do_insper=True).order_by("id")
 
     if request.is_ajax():
 
@@ -1188,12 +1190,6 @@ def evolucao_notas(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
-        cores = []
-        cursos = Curso.objects.all()
-        for cor in cursos:
-            cores += [ "#"+cor.cor, ]
-        cores += ["#000000", "#0000af", "#d4af00", "#222222", "#123456", "#654321"]
-
         # Para armazenar todas as notas de todos os programas de engenharia
         notas_total = {}
         for edicao in edicoes:
@@ -1207,10 +1203,8 @@ def evolucao_notas(request):
         medias_individuais = []
         count = 0
         
-        for t_curso in Curso.objects.filter(curso_do_insper=True):
+        for t_curso in cursos:
             notas = []
-            if count > len(cores):
-                return HttpResponse("Erro, limite de cores por linha atingido.", status=401)
             for edicao in edicoes:
                 periodo = edicao.split('.')
                 semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
@@ -1218,14 +1212,14 @@ def evolucao_notas(request):
                 notas_total[edicao] += notas_lista
                 notas.append(media(notas_lista))
             if notas != [None] * len(notas):  # não está vazio
-                medias_individuais.append({"curso": t_curso.sigla, "media": notas, "cor": cores[count]})
+                medias_individuais.append({"curso": t_curso, "media": notas})
             count += 1
             
         if len(medias_individuais) > 1:
             notas = []
             for edicao in edicoes:
                 notas.append(media(notas_total[edicao]))
-            medias_individuais.append({"curso": "engenharia", "media": notas, "cor": cores[count]})
+            medias_individuais.append({"curso": {"sigla": "média engenharia", "cor": "000000"}, "media": notas})
 
 
         ################################
@@ -1239,7 +1233,7 @@ def evolucao_notas(request):
         # médias gerais totais
         medias_gerais = []
         count = 0
-        for t_curso in Curso.objects.filter(curso_do_insper=True):
+        for t_curso in cursos:
             notas = []
             for edicao in edicoes:
                 periodo = edicao.split('.')
@@ -1255,14 +1249,14 @@ def evolucao_notas(request):
                 notas_total[edicao] += notas_lista
                 notas.append(media(notas_lista))
             if notas != [None] * len(notas):  # não está vazio
-                medias_gerais.append({"curso": t_curso.sigla, "media": notas, "cor": cores[count]})
+                medias_gerais.append({"curso": t_curso, "media": notas})
             count += 1
 
         if len(medias_gerais) > 1:
             notas = []
             for edicao in edicoes:
                 notas.append(media(notas_total[edicao]))
-            medias_gerais.append({"curso": "engenharia", "media": notas, "cor": cores[count]})
+            medias_gerais.append({"curso": {"sigla": "média engenharia", "cor": "000000"}, "media": notas})
 
         context = {
             "medias_individuais": medias_individuais,
@@ -1274,6 +1268,7 @@ def evolucao_notas(request):
     else:
         context = {
             "edicoes": edicoes,
+            "cursos": cursos,
         }
 
     return render(request, 'projetos/evolucao_notas.html', context)
@@ -1375,7 +1370,6 @@ def evolucao_objetivos(request):
             else:
                 titulo = objetivo.titulo_en
 
-            
             medias.append({"objetivo": titulo, "media": notas, "cor": cores[count], "faixas": faixas})
 
             count += 1
@@ -1403,6 +1397,7 @@ def evolucao_objetivos(request):
 
         context = {
             "edicoes": edicoes,
+            "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
         }
 
     return render(request, 'projetos/evolucao_objetivos.html', context)
@@ -1512,7 +1507,7 @@ def evolucao_por_objetivo(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
-        cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9", "#7cfa9f", "#e8c3b9", "#c45890", "#375330", "#a48577"]
+        # cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9", "#7cfa9f", "#e8c3b9", "#c45890", "#375330", "#a48577"]
 
         low = []
         mid = []
@@ -1568,6 +1563,7 @@ def evolucao_por_objetivo(request):
         context = {
             "edicoes": edicoes,
             "objetivos": objetivos,
+            "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
         }
 
     return render(request, 'projetos/evolucao_por_objetivo.html', context)
@@ -1629,12 +1625,12 @@ def correlacao_medias_cr(request):
             'semestre': configuracao.semestre,
             'edicoes': edicoes,
             "curso": curso,
-            "cursos": Curso.objects.filter(curso_do_insper=True),
         }
 
     else:
         context = {
             "edicoes": edicoes,
+            "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
         }
 
     return render(request, 'projetos/correlacao_medias_cr.html', context)
