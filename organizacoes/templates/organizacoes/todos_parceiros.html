@@ -50,14 +50,14 @@
             </a>
           </td>
           <td>
-            {% if parceiro.telefone %}
-              {{parceiro.telefone}}
-              {% if parceiro.celular %} 
+            {% if parceiro.user.telefone %}
+              {{parceiro.user.telefone}}
+              {% if parceiro.user.celular %} 
                 &nbsp;/&nbsp;
-                {{parceiro.celular}}
+                {{parceiro.user.celular}}
               {% endif %}
-            {% elif parceiro.celular %}
-              {{parceiro.celular}}
+            {% elif parceiro.user.celular %}
+              {{parceiro.user.celular}}
             {% endif %}
           </td>
           <td>

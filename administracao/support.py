@@ -152,6 +152,9 @@ def registro_usuario(request, user=None):
     else:
         usuario.genero = "X"
 
+    usuario.telefone = request.POST.get('telefone', None)
+    usuario.celular = request.POST.get('celular', None)
+    usuario.instant_messaging = request.POST.get('instant_messaging', None)
     usuario.linkedin = request.POST.get('linkedin', None)
     usuario.tipo_lingua = request.POST.get('lingua', None)
     usuario.observacoes = request.POST.get('observacao', None)
@@ -261,9 +264,6 @@ def registro_usuario(request, user=None):
             parceiro = user.parceiro
 
         parceiro.cargo = request.POST.get('cargo', None)
-        parceiro.telefone = request.POST.get('telefone', None)
-        parceiro.celular = request.POST.get('celular', None)
-        parceiro.instant_messaging = request.POST.get('instant_messaging', None)
         
         try:
             tmp_pk = int(request.POST['organizacao'])

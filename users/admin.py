@@ -54,7 +54,8 @@ class PFEUserAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('username', 'first_name', 'last_name', 'email', 'tipo_de_usuario',)}),
         ('Personal info',
-         {'fields': ('groups', 'user_permissions', 'linkedin', 'membro_comite', 'genero', 'tipo_lingua', 'coordenacao')}),
+         {'fields': ("groups", "user_permissions", "telefone", "celular", "instant_messaging",
+                     "linkedin", "membro_comite", "genero", "tipo_lingua", "coordenacao")}),
         ('Permissions',
          {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
     )
@@ -82,9 +83,8 @@ class AlocacaoAdmin(admin.ModelAdmin):
 @admin.register(Parceiro)
 class ParceiroAdmin(admin.ModelAdmin):
     """Definição de Parceiro do PFE."""
-    list_display = ('get_full_name', 'get_sigla', 'email', 'telefone',
-                    'celular', 'principal_contato')
-    ordering = ('user__first_name', 'user__last_name', )
+    list_display = ('get_full_name', 'get_sigla', 'email')
+    ordering = ('user__first_name', 'user__last_name')
     list_filter = (FirstLetterFilter, )
     search_fields = ['user__first_name', 'user__last_name', ]
 

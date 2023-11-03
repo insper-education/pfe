@@ -35,9 +35,18 @@ def custom_400(request, exception):
     return HttpResponse(mensagem)
 
 
+from users.models import PFEUser, Parceiro
+
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
-    message = "Nada Feito"
+    message = "Feito"
+
+    for p in Parceiro.objects.all():
+        p.user.telefone = p.telefone
+        p.user.celular = p.celular
+        p.user.instant_messaging = p.instant_messaging
+        p.user.save()
+
     return HttpResponse(message)

@@ -64,18 +64,18 @@
       {% if parceiro.cargo %} <p style="margin-top: -4px; font-size:13px; line-height:1.3;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{parceiro.cargo}}</p>{% endif %}
       <p style="line-height:0.95;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x2709; <a href="mailto:{{parceiro.user.email}}">&nbsp;{{parceiro.user.email}}</a></p>
 
-      {% if parceiro.telefone %}&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; 
-        <a href="tel:{{parceiro.telefone}}">{{parceiro.telefone}}</a>&nbsp;<br>
+      {% if parceiro.user.telefone %}&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; 
+        <a href="tel:{{parceiro.user.telefone}}">{{parceiro.user.telefone}}</a>&nbsp;<br>
       {% endif %}
 
-      {% if parceiro.celular %}&nbsp;&nbsp;&nbsp;&nbsp;&#x1F4F1;
-        <a href="tel:{{parceiro.celular}}">{{parceiro.celular}}</a>&nbsp;
-        <a href="https://wa.me/{{parceiro.celular|cut:' '}}"><img src="{% static 'images/whatsapp.svg' %}" alt="whatsapp" style="width:16px;height:16px;"></a>
+      {% if parceiro.user.celular %}&nbsp;&nbsp;&nbsp;&nbsp;&#x1F4F1;
+        <a href="tel:{{parceiro.user.celular}}">{{parceiro.user.celular}}</a>&nbsp;
+        <a href="https://wa.me/{{parceiro.user.celular|cut:' '}}"><img src="{% static 'images/whatsapp.svg' %}" alt="whatsapp" style="width:16px;height:16px;"></a>
         <br>
       {% endif %}
       
-      {% if parceiro.instant_messaging %}&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="instant_messaging" style="width:16px;height:16px;">
-        {% comment %} <a href="instant_messaging:{{parceiro.instant_messaging}}">{% endcomment %}{{parceiro.instant_messaging}}{% comment %}</a>{% endcomment %}&nbsp;<br> 
+      {% if parceiro.user.instant_messaging %}&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="instant_messaging" style="width:16px;height:16px;">
+        {% comment %} <a href="instant_messaging:{{parceiro.instant_messaging}}">{% endcomment %}{{parceiro.user.instant_messaging}}{% comment %}</a>{% endcomment %}&nbsp;<br> 
       {% endif %}
 
     </li>
@@ -96,16 +96,16 @@
       &nbsp;
       {% if parceiro.cargo %} <p style="margin-top: -4px; font-size:13px; line-height:1.3;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{parceiro.cargo}}</p>{% endif %}
       <p style="color: transparent; text-shadow: 0 0 0 lightgrey;line-height:0.95;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x2709; <a href="mailto:{{parceiro.user.email}}" style="color: LightBlue; pointer-events: none; cursor: default;">&nbsp;{{parceiro.user.email}}</a></p>
-      {% if parceiro.telefone %} <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; {{parceiro.telefone}} &nbsp;</p>{% endif %}
-      {% if parceiro.celular %} 
+      {% if parceiro.user.telefone %} <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; {{parceiro.user.telefone}} &nbsp;</p>{% endif %}
+      {% if parceiro.user.celular %} 
         <p style="color: transparent; text-shadow: 0 0 0 lightgrey;">
-          &nbsp;&nbsp;&nbsp; &#x1F4F1; {{parceiro.celular}}
-          <a href="https://wa.me/{{parceiro.celular|cut:' '}}" style="pointer-events: none; cursor: default;"><img src="{% static 'images/whatsapp.svg' %}" alt="whatsapp" style="width:16px;height:16px;opacity: 0.4;filter: alpha(opacity=40);"></a>
+          &nbsp;&nbsp;&nbsp; &#x1F4F1; {{parceiro.user.celular}}
+          <a href="https://wa.me/{{parceiro.user.celular|cut:' '}}" style="pointer-events: none; cursor: default;"><img src="{% static 'images/whatsapp.svg' %}" alt="whatsapp" style="width:16px;height:16px;opacity: 0.4;filter: alpha(opacity=40);"></a>
         </p>
       {% endif %}
-      {% if parceiro.instant_messaging %} <p style="color: transparent; text-shadow: 0 0 0 lightgrey;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="instant_messaging" style="width:16px;height:16px;opacity: 0.4;filter: alpha(opacity=40);">
+      {% if parceiro.user.instant_messaging %} <p style="color: transparent; text-shadow: 0 0 0 lightgrey;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="instant_messaging" style="width:16px;height:16px;opacity: 0.4;filter: alpha(opacity=40);">
       {% comment %} <a href="instant_messaging:{{parceiro.instant_messaging}}" style="color: LightBlue;"> {% endcomment %}
-      {{parceiro.instant_messaging}}
+      {{parceiro.user.instant_messaging}}
       {% comment %} </a> {% endcomment %}
       &nbsp;</p>{% endif %}
 
