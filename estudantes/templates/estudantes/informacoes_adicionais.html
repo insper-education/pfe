@@ -6,29 +6,26 @@
 {% endcomment %}
 
 {% block head %}
-<style>
-textarea {
-  max-width:100%;
-}
-</style>
-<script>
-  //var popUpList = $('<div><input type="radio">A<br><input type="radio">B<br><input type="radio">C</div>');
-  $(document).ready(function(){
-    $("small").click(function(){
-      alert("{% for e in entidades %}• {{e.nome}}\n{% endfor %}");
-      //popUpList.dialog();
+  <style>
+    textarea {
+      max-width:100%;
+    }
+  </style>
+  <script>
+    //var popUpList = $('<div><input type="radio">A<br><input type="radio">B<br><input type="radio">C</div>');
+    $(document).ready(function(){
+      $("small").click(function(){
+        alert("{% for e in entidades %}• {{e.nome}}\n{% endfor %}");
+        //popUpList.dialog();
+      });
     });
-  });
-</script>
+  </script>
 {% endblock %}
 
 {% block content %}
 
   <span class="titulo">Formulário de Informações Adicionais</span>
-
-  {% if mensagem %}
-    <h5 class="red-bold">{{mensagem}}</h5>
-  {% endif %}
+  {% if mensagem %}<h5 class="red-bold">{{mensagem}}</h5>{% endif %}
 
   <form action="" method="post"> {% csrf_token %}  
 
@@ -65,6 +62,16 @@ textarea {
 
     <label for="linkedin">Caso desejar, você pode informar seu LinkedIn: (opcional)</label><br>
     <input type="text" size="80" id="linkedin" name="linkedin" {% if estudante.user.linkedin %}value="{{estudante.user.linkedin}}"{% endif %} placeholder="https://www.linkedin.com/" {% if vencido %}disabled{% endif %}><br>
+    
+    {% comment %}
+    <br>
+    <label for="celular">
+      Caso desejar, você pode informar seu telefone celular: (opcional)<br>
+      Iramos usar esse número para enviar avisos de forma não oficial pelo WhatsApp.<br>
+      <b class="text-danger">A comunicação oficial é pelo Blackboard e/ou seu e-mail de estudante!</b>
+    </label><br>
+    <input type="text" size="20" maxlength="20" id="celular" name="celular" {% if estudante.user.celular %}value="{{estudante.user.celular}}"{% endif %} placeholder="(XX)XXXX-XXXX" {% if vencido %}disabled{% endif %}>
+    {% endcomment %}
 
     <br><br>
     <input {% if vencido %}disabled{% endif %} type="submit" value="Atualizar">

@@ -55,7 +55,7 @@ class PFEUserAdmin(admin.ModelAdmin):
         (None, {'fields': ('username', 'first_name', 'last_name', 'email', 'tipo_de_usuario',)}),
         ('Personal info',
          {'fields': ("groups", "user_permissions", "telefone", "celular", "instant_messaging",
-                     "linkedin", "membro_comite", "genero", "tipo_lingua", "coordenacao")}),
+                     "linkedin", "membro_comite", "genero", "tipo_lingua", "coordenacao", "observacoes")}),
         ('Permissions',
          {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
     )
