@@ -829,12 +829,12 @@ class Parceiro(models.Model):  # da empresa (não do Insper)
                                     help_text='Organização Parceira')
     cargo = models.CharField("Cargo", max_length=90, blank=True,
                              help_text='Cargo Funcional')
-    telefone = models.CharField(max_length=20, blank=True,
-                                help_text='Telefone Fixo')
-    celular = models.CharField(max_length=20, blank=True,
-                               help_text='Telefone Celular')
-    instant_messaging = models.CharField(max_length=32, blank=True,
-                             help_text='Identificação Skype')
+    # telefone = models.CharField(max_length=20, blank=True,
+    #                             help_text='Telefone Fixo')
+    # celular = models.CharField(max_length=20, blank=True,
+    #                            help_text='Telefone Celular')
+    # instant_messaging = models.CharField(max_length=32, blank=True,
+    #                          help_text='Identificação Skype')
 
     principal_contato = models.BooleanField("Principal Contato", default=False)
 
