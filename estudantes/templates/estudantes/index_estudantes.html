@@ -122,37 +122,39 @@
         </font>
     {% endif %}
 
+    {% comment %} Verificar Horário das Bancas {% endcomment %}
     <hr>
-    
     <a {% if not projeto %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'minhas_bancas' %}" {% endif %} >
         <h5>Horário das bancas</h5>
     </a>
     
     {% comment %} tipo_de_usuario == 1 é aluno {% endcomment %}
+    <hr>
     <a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'encontros_marcar' %}" {% endif %} >
         <h5>Agendar horário das mentorias</h5>
     </a>
 
-    <hr>
-
     {% comment %} Relato Quinzenal {% endcomment %}
+    <hr> 
     <a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'relato_quinzenal' %}" {% endif %} >
         <h5>Formulário de Relato Quinzenal</h5>
     </a>
 
-    <hr>
-
     {% comment %} Avaliação de Pares {% endcomment %}
-    <a {% if fora_fase_feedback_intermediario %} class="disabled" onclick="showMessage('feedback')" {% else %}
-        {% if not projeto and user.tipo_de_usuario == 1%} class="disabled" onclick="showMessage('projeto')" {% else %}
-        href="{% url 'avaliacao_pares' 'intermediaria' %}" {% endif %}{% endif %} >
-        <h5>Avaliação de Pares Intermediária</h5>
-    </a>
-    <a {% if fora_fase_feedback_final %} class="disabled" onclick="showMessage('feedback')" {% else %}
-        {% if not projeto and user.tipo_de_usuario == 1%} class="disabled" onclick="showMessage('projeto')" {% else %}
-        href="{% url 'avaliacao_pares' 'final' %}" {% endif %}{% endif %} >
-        <h5>Avaliação de Pares Final</h5>
-    </a>
+    <hr>
+    <h5>Avaliação de Pares</h5>
+    <ul>
+        <a {% if fora_fase_feedback_intermediario %} class="disabled" onclick="showMessage('feedback')" {% else %}
+            {% if not projeto and user.tipo_de_usuario == 1%} class="disabled" onclick="showMessage('projeto')" {% else %}
+            href="{% url 'avaliacao_pares' 'intermediaria' %}" {% endif %}{% endif %} >
+            <li>Intermediária</li>
+        </a>
+        <a {% if fora_fase_feedback_final %} class="disabled" onclick="showMessage('feedback')" {% else %}
+            {% if not projeto and user.tipo_de_usuario == 1%} class="disabled" onclick="showMessage('projeto')" {% else %}
+            href="{% url 'avaliacao_pares' 'final' %}" {% endif %}{% endif %} >
+            <li>Final</li>
+        </a>
+    </ul>
 
     <hr>
 
