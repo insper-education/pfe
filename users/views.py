@@ -426,24 +426,19 @@ def estudantes_inscritos(request):
             ano = int(edicao.split(".")[0])
             semestre = int(edicao.split(".")[1])
 
-            alunos_se_inscrevendo = Aluno.objects.filter(trancado=False)\
+            alunos = Aluno.objects.filter(trancado=False)\
                 .filter(anoPFE=ano, semestrePFE=semestre)\
                 .order_by(Lower("user__first_name"), Lower("user__last_name"))
 
             # Conta soh alunos
-            alunos = alunos_se_inscrevendo\
-                .filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
-
             num_alunos = alunos.count()
 
-            # Conta alunos computacao
-            num_alunos_comp = alunos.filter(curso2__sigla_curta__exact='C').count()
-
-            # Conta alunos mecatrônica
-            num_alunos_mxt = alunos.filter(curso2__sigla_curta__exact='X').count()
-
-            # Conta alunos mecânica
-            num_alunos_mec = alunos.filter(curso2__sigla_curta__exact='M').count()
+            # Conta alunos de cada curso
+            cursos = Curso.objects.filter(curso_do_insper=True).order_by("id")
+            num_estudantes_curso = {}
+            for curso in cursos:
+                qtd = alunos.filter(curso2__sigla__exact=curso.sigla).count()
+                if qtd: num_estudantes_curso[curso] = qtd
 
             inscritos = 0
             ninscritos = 0
@@ -467,14 +462,13 @@ def estudantes_inscritos(request):
             alunos_list = zip(alunos, opcoes, opcoestemp)
 
             context = {
-                'alunos_list': alunos_list,
-                'num_alunos': num_alunos,
-                'num_alunos_comp': num_alunos_comp,
-                'num_alunos_mxt': num_alunos_mxt,
-                'num_alunos_mec': num_alunos_mec,
-                'inscritos': inscritos,
-                'ninscritos': ninscritos,
-                'tmpinscritos': tmpinscritos,
+                "alunos_list": alunos_list,
+                "num_alunos": num_alunos,
+                "inscritos": inscritos,
+                "ninscritos": ninscritos,
+                "tmpinscritos": tmpinscritos,
+                "cursos": cursos,
+                "num_estudantes_curso": num_estudantes_curso,
             }
 
         else:
