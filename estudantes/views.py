@@ -20,7 +20,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 
 from projetos.models import Projeto, Proposta, Configuracao, Area, AreaDeInteresse
-from projetos.models import Encontro, Banca, Entidade, FeedbackEstudante, Evento
+from projetos.models import Encontro, Banca, Entidade, FeedbackEstudante, Evento, Documento
 
 from projetos.support import cria_area_estudante
 
@@ -33,6 +33,8 @@ from users.support import configuracao_estudante_vencida, configuracao_pares_ven
 from .models import Relato, Pares
 
 from administracao.support import get_limite_propostas, usuario_sem_acesso
+
+
 
 
 @login_required
@@ -528,6 +530,33 @@ def relato_visualizar(request, id):
     """Perguntas aos estudantes de trabalho/entidades/social/familia."""
     context = {"relato": get_object_or_404(Relato, pk=id),}
     return render(request, 'estudantes/relato_visualizar.html', context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def submissao_documento(request):
+    """Submissão de documentos pelos estudantes."""
+
+    projeto = Projeto.objects.all().last()
+
+    #   (3, "Relatório Final Revisado"),
+    #   (18, "Vídeo do Projeto"),
+    #   (19, "Slides da Apresentação Final"),
+    #   (20, "Banner"),
+    #   (25, "Relatório Publicado"),
+    #   (27, "Apresentação da Banca Final"),
+    #   (44, "Relatório Final Individual"),
+
+    documentos = [40, 41, 42, 43, 44]
+    tipos = dict(Documento.TIPO_DE_DOCUMENTO)
+    # Cria estrutura com o título do documento, tipo de documento, filtro dos documentos do tipo
+    itens = [ [tipos[d], d, Documento.objects.filter(tipo_de_documento=d, projeto=projeto) ] for d in documentos ]
+
+    context = {
+        "projeto": projeto,
+        "itens": itens,
+    }
+    return render(request, 'estudantes/submissao_documento.html', context)
 
 
 @login_required

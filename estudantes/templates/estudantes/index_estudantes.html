@@ -122,6 +122,22 @@
         </font>
     {% endif %}
 
+    {% comment %} Submissão de Documentos {% endcomment %}
+    {% comment %} <hr>
+    <a
+        {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+            href="{% url 'submissao_documento' %}"
+        {% else %}
+            {% if not projeto %} 
+                class="disabled" onclick="showMessage('projeto')"
+            {% else %}
+                href="{% url 'submissao_documento' %}"
+            {% endif %}
+        {% endif %}
+    >
+        <h5>Submissão de Documentos</h5>
+    </a> {% endcomment %}
+
     {% comment %} Verificar Horário das Bancas {% endcomment %}
     <hr>
     <a {% if not projeto %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'minhas_bancas' %}" {% endif %} >

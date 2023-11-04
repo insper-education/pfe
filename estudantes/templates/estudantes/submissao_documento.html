@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 3 de Novembro de 2023
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load certificado_banca %}
+  <script>{% include "tooltip.js" %}</script>
+
+  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
+  {% include "reload.html" %}
+  
+{% endblock %}
+
+{% block content %}
+
+    <br>
+    <h4>Submissão de Documentos</h4>
+
+    Projeto: {{projeto.get_titulo}}<br><br>
+
+        {% for item in itens %}
+          <b>{{item.0}}</b>: <a 
+            data-toggle="tooltip" data-html="true" animation="true" title="Adicionar documento"
+            class="open-documento"
+            href="{% url 'adiciona_documento' projeto.organizacao.id projeto.id item.1 %}"
+            data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id item.1 %}"><b>&#10133;</b>
+          </a><br><ul>
+          {% for documento in item.2 %}
+            <a data-toggle="tooltip" data-html="true" animation="true" title="Entregue">
+              <li style="list-style-type:'&#128463; ';"> {{documento}} [{{documento.data}}]</li>
+            </a>
+          {% empty %}
+            Não entregue
+          {% endfor %} 
+          </ul>
+          <br>
+        {% endfor %} 
+
+
+
+    {% include "documento-modal.html" %}
+
+{% endblock %}
