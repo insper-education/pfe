@@ -934,7 +934,7 @@ class Documento(models.Model):
         (16, "FREE"),
         (17, "Template de Relatórios"),
         (18, "Vídeo do Projeto"),
-        (19, "Slides da Apresentação Final"),
+        (19, "FREE"),
         (20, "Banner"),
         (21, "Ata do Comitê do PFE"),
         (22, "Manual de Apresentação"),
