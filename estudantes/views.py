@@ -541,12 +541,17 @@ def submissao_documento(request):
 
     #   (3, "Relatório Final Revisado"),
     #   (18, "Vídeo do Projeto"),
+    #   (19, "Slides da Apresentação Final"),
     #   (20, "Banner"),
     #   (25, "Relatório Publicado"),
     #   (27, "Apresentação da Banca Final"),
+    #   (40, "Relatório Preliminar"),
+    #   (41, "Relatório Intermediário de Grupo"),
+    #   (42, "Relatório Intermediário Individual"),
+    #   (43, "Relatório Final de Grupo"),
     #   (44, "Relatório Final Individual"),
 
-    documentos = [40, 41, 42, 43, 44]
+    documentos = [40, 41, 42, 18, 20, 43, 44, 27, 3, 25]
     tipos = dict(Documento.TIPO_DE_DOCUMENTO)
     # Cria estrutura com o título do documento, tipo de documento, filtro dos documentos do tipo
     itens = [ [tipos[d], d, Documento.objects.filter(tipo_de_documento=d, projeto=projeto) ] for d in documentos ]
@@ -554,6 +559,7 @@ def submissao_documento(request):
     context = {
         "projeto": projeto,
         "itens": itens,
+        "MEDIA_URL": settings.MEDIA_URL,
     }
     return render(request, 'estudantes/submissao_documento.html', context)
 

@@ -39,16 +39,17 @@
     {% endif %}
     <br>
     
-    <label for="link">Link:</label> <input required type="text" size="73" maxlength="73" id="link" name="link" placeholder="https://"><br>
+    <label for="link">Link:</label> <input required type="text" style="max-width:100%;display:block" size="73" maxlength="73" id="link" name="link" placeholder="https://"><br>
     <br>
 
-    <label for="projeto">Projeto:</label>
     {% if projeto %}
+      <span>Projeto:</span>
       <input type="hidden" id="projeto" name="projeto" value="{{projeto.id}}"/>
       <a href="{% url 'projeto_completo' projeto.id %}">
         {{projeto.get_titulo}} ({{projeto.ano}}.{{projeto.semestre}})
       </a><br>
     {% else %}
+      <label for="projeto">Projeto:</label>
       <select id="projeto" name="projeto" class="form-control">
         <option selected value> -- nenhum projeto -- </option>
         {% for proj in projetos %}
@@ -61,18 +62,20 @@
     {% endif %}
 
     <br>
-    <label for="organizacao">Organização:</label>
     {% if projeto %}
+      <span for="organizacao">Organização:</span>
       <input type="hidden" id="organizacao" name="organizacao" value="{{projeto.organizacao.id}}"/>
       <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
       {{projeto.organizacao.nome}}
       </a><br>
     {% elif organizacao %}
+      <span for="organizacao">Organização:</span>
       <input type="hidden" id="organizacao" name="organizacao" value="{{organizacao.id}}"/>
       <a href="{% url 'organizacao_completo' organizacao.id %}">
         {{organizacao.nome}}
       </a><br>
     {% else %}
+      <label for="organizacao">Organização:</label>
       <select id="organizacao" name="organizacao" class="form-control">
         <option selected value> -- nenhuma organização -- </option>
         {% for org in organizacoes %}
@@ -84,14 +87,15 @@
     {% endif %}
 
     <br>
-    <label for="tipo_de_documento">Tipo de documento:</label>
     {% if tipo %}
+      <span for="tipo_de_documento">Tipo de documento:</span>
       <input type="hidden" id="tipo_de_documento" name="tipo_de_documento" value="{{tipo}}"/>
       {% for retorno in TIPO_DE_DOCUMENTO %}
           {% if retorno.0|slugify == tipo %}{{retorno.1}}{% endif %}
         {% endfor %}
       <br>
     {% else %}
+      <label for="tipo_de_documento">Tipo de documento:</label>
       <select id="tipo_de_documento" name="tipo_de_documento" class="form-control" required="required" >
         <option disabled selected value> -- selecione tipo de documento -- </option>
         {% for retorno in TIPO_DE_DOCUMENTO %}
