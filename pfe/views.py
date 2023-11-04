@@ -34,16 +34,11 @@ def custom_400(request, exception):
     #t.render(Context({'exception_value': value,})
     return HttpResponse(mensagem)
 
-from projetos.models import Documento
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
-    message = "Feito"
-
-    for d in Documento.objects.filter(tipo_de_documento=19):
-        d.tipo_de_documento = 27
-        d.save()
+    message = "Nada Feito"
 
     return HttpResponse(message)

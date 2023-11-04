@@ -541,7 +541,6 @@ def submissao_documento(request):
 
     #   (3, "Relatório Final Revisado"),
     #   (18, "Vídeo do Projeto"),
-    #   (19, "Slides da Apresentação Final"),
     #   (20, "Banner"),
     #   (25, "Relatório Publicado"),
     #   (27, "Apresentação da Banca Final"),
