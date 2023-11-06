@@ -29,6 +29,8 @@ from projetos.support import converte_letra, converte_conceito
 from projetos.support import get_objetivos_atuais
 from projetos.messages import email, render_message, htmlizar
 
+from academica.models import Exame
+
 from .support import professores_membros_bancas, falconi_membros_banca
 from .support import editar_banca
 from .support import recupera_orientadores_por_semestre
@@ -706,22 +708,22 @@ def mensagem_orientador(banca):
     objetivos = ObjetivosDeAprendizagem.objects.all()
 
     # Trocando tipo de banca para tipo de avaliação
-    if banca.tipo_de_banca == 0: #Final
-        tipo_de_avaliacao = 2 #Final
-    elif banca.tipo_de_banca == 1: #Iterm
-        tipo_de_avaliacao = 1 #Iterm
-    elif banca.tipo_de_banca == 2: #Falconi
-        tipo_de_avaliacao = 99 #Falconi
-    else:
-        tipo_de_avaliacao = 200 #Erro
+    if banca.tipo_de_banca == 0: #Banca Final
+        exame = Exame.objects.get(titulo="Banca Final")
+    elif banca.tipo_de_banca == 1: #Banca Itermediária
+        exame = Exame.objects.get(titulo="Banca Intermediária")
+    elif banca.tipo_de_banca == 2: #Banca Falconi
+        exame = Exame.objects.get(titulo="Falconi")
+
     
     # Buscando Avaliadores e Avaliações
     avaliadores = {}
     for objetivo in objetivos:
         avaliacoes = Avaliacao2.objects.filter(projeto=banca.projeto,
-                                                 objetivo=objetivo,
-                                                 tipo_de_avaliacao=tipo_de_avaliacao)\
-            .order_by('avaliador', '-momento')
+                                                objetivo=objetivo,
+                                                exame=exame)\
+                .order_by('avaliador', '-momento')
+
         for avaliacao in avaliacoes:
             if avaliacao.avaliador not in avaliadores:
                 avaliadores[avaliacao.avaliador] = {}
@@ -729,9 +731,9 @@ def mensagem_orientador(banca):
                 avaliadores[avaliacao.avaliador][objetivo] = avaliacao
                 avaliadores[avaliacao.avaliador]["momento"] = avaliacao.momento
 
-    # Buscando Observações de Avaliações
-    observacoes = Observacao.objects.filter(projeto=banca.projeto, tipo_de_avaliacao=tipo_de_avaliacao).\
+    observacoes = Observacao.objects.filter(projeto=banca.projeto, exame=exame).\
         order_by('avaliador', '-momento')
+
     for observacao in observacoes:
         if observacao.avaliador not in avaliadores:
             avaliadores[observacao.avaliador] = {}  # Não devia acontecer isso
@@ -755,7 +757,7 @@ def banca_avaliar(request, slug):
     """Cria uma tela para preencher avaliações de bancas."""
     configuracao = get_object_or_404(Configuracao)
     coordenacao = configuracao.coordenacao
-
+    
     prazo_preencher_banca = configuracao.prazo_preencher_banca
 
     try:
@@ -797,19 +799,20 @@ def banca_avaliar(request, slug):
                                           pk=int(request.POST['avaliador']))
 
             if banca.tipo_de_banca == 1:  # (1, 'intermediaria'),
-                tipo_de_avaliacao = 1  # ( 1, 'Banca Intermediária'),
+                exame = Exame.objects.get(titulo="Banca Intermediária")
             elif banca.tipo_de_banca == 0:  # (0, 'final'),
-                tipo_de_avaliacao = 2  # ( 2, 'Banca Final'),
+                exame = Exame.objects.get(titulo="Banca Final")
             elif banca.tipo_de_banca == 2:  # (2, 'falconi'),
-                tipo_de_avaliacao = 99  # (99, 'Falconi'),
+                exame = Exame.objects.get(titulo="Falconi")
 
             # Identifica que uma avaliação/observação já foi realizada anteriormente
             avaliacoes_anteriores = Avaliacao2.objects.filter(projeto=banca.projeto,
                                                               avaliador=avaliador,
-                                                              tipo_de_avaliacao=tipo_de_avaliacao)
+                                                              exame=exame)
             observacoes_anteriores = Observacao.objects.filter(projeto=banca.projeto, 
                                                                avaliador=avaliador, 
-                                                               tipo_de_avaliacao=tipo_de_avaliacao)
+                                                               exame=exame)
+            
             realizada = avaliacoes_anteriores.exists()
 
             # Mover avaliação anterior para base de dados de Avaliações Velhas
@@ -833,17 +836,18 @@ def banca_avaliar(request, slug):
                 julgamento[i].objetivo = get_object_or_404(ObjetivosDeAprendizagem,
                                                             pk=pk_objetivo)
 
-                julgamento[i].tipo_de_avaliacao = tipo_de_avaliacao
+                julgamento[i].exame = exame
+
                 if conceito == "NA":
                     julgamento[i].na = True
                 else:
                     julgamento[i].nota = converte_conceito(conceito)
 
-                    if tipo_de_avaliacao == 1:  # (1, 'intermediaria')        
+                    if exame.titulo == "Banca Intermediária":    
                         julgamento[i].peso = julgamento[i].objetivo.peso_banca_intermediaria
-                    elif tipo_de_avaliacao == 2:  # ( 2, 'Banca Final'),
+                    elif exame.titulo == "Banca Final":
                         julgamento[i].peso = julgamento[i].objetivo.peso_banca_final
-                    elif tipo_de_avaliacao == 99:  # ( 99, 'Banca Falconi'),
+                    elif exame.titulo == "Falconi":
                         julgamento[i].peso = julgamento[i].objetivo.peso_banca_falconi
 
                     julgamento[i].na = False
@@ -854,7 +858,7 @@ def banca_avaliar(request, slug):
                 julgamento_observacoes = Observacao.create(projeto=banca.projeto)
                 julgamento_observacoes.avaliador = avaliador
                 julgamento_observacoes.observacoes = request.POST['observacoes']
-                julgamento_observacoes.tipo_de_avaliacao = tipo_de_avaliacao
+                julgamento_observacoes.exame = exame
                 julgamento_observacoes.save()
 
 
@@ -1039,9 +1043,10 @@ def conceitos_obtidos(request, primarykey):  # acertar isso para pk
     for objetivo in objetivos:
 
         # Bancas Intermediárias
+        exame = Exame.objects.get(titulo="Banca Intermediária")
         bancas_inter = Avaliacao2.objects.filter(projeto=projeto,
                                                  objetivo=objetivo,
-                                                 tipo_de_avaliacao=1)\
+                                                 exame=exame)\
             .order_by('avaliador', '-momento')
 
         for banca in bancas_inter:
@@ -1053,9 +1058,10 @@ def conceitos_obtidos(request, primarykey):  # acertar isso para pk
             # Senão é só uma avaliação de objetivo mais antiga
 
         # Bancas Finais
+        exame = Exame.objects.get(titulo="Banca Final")
         bancas_final = Avaliacao2.objects.filter(projeto=projeto,
                                                  objetivo=objetivo,
-                                                 tipo_de_avaliacao=2)\
+                                                 exame=exame)\
             .order_by('avaliador', '-momento')
 
         for banca in bancas_final:
@@ -1067,9 +1073,10 @@ def conceitos_obtidos(request, primarykey):  # acertar isso para pk
             # Senão é só uma avaliação de objetivo mais antiga
 
         # Bancas Falconi
+        exame = Exame.objects.get(titulo="Falconi")
         bancas_falconi = Avaliacao2.objects.filter(projeto=projeto,
                                                    objetivo=objetivo,
-                                                   tipo_de_avaliacao=99)\
+                                                   exame=exame)\
             .order_by('avaliador', '-momento')
 
         for banca in bancas_falconi:
@@ -1081,7 +1088,8 @@ def conceitos_obtidos(request, primarykey):  # acertar isso para pk
             # Senão é só uma avaliação de objetivo mais antiga
 
     # Bancas Intermediárias
-    observacoes = Observacao.objects.filter(projeto=projeto, tipo_de_avaliacao=1).\
+    exame = Exame.objects.get(titulo="Banca Intermediária")
+    observacoes = Observacao.objects.filter(projeto=projeto, exame=exame).\
         order_by('avaliador', '-momento')
     for observacao in observacoes:
         if observacao.avaliador not in avaliadores_inter:
@@ -1091,7 +1099,8 @@ def conceitos_obtidos(request, primarykey):  # acertar isso para pk
         # Senão é só uma avaliação de objetivo mais antiga
 
     # Bancas Finais
-    observacoes = Observacao.objects.filter(projeto=projeto, tipo_de_avaliacao=2).\
+    exame = Exame.objects.get(titulo="Banca Final")
+    observacoes = Observacao.objects.filter(projeto=projeto, exame=exame).\
         order_by('avaliador', '-momento')
     for observacao in observacoes:
         if observacao.avaliador not in avaliadores_final:
@@ -1101,7 +1110,8 @@ def conceitos_obtidos(request, primarykey):  # acertar isso para pk
         # Senão é só uma avaliação de objetivo mais antiga
 
     # Bancas Falconi
-    observacoes = Observacao.objects.filter(projeto=projeto, tipo_de_avaliacao=99).\
+    exame = Exame.objects.get(titulo="Falconi")
+    observacoes = Observacao.objects.filter(projeto=projeto, exame=exame).\
         order_by('avaliador', '-momento')
     for observacao in observacoes:
         if observacao.avaliador not in avaliadores_falconi:
@@ -1591,6 +1601,8 @@ def relato_avaliar(request, projeto_id, evento_id):
     else:
         editor = False
 
+    exame = Exame.objects.get(titulo="Relato Quinzenal")
+
     if request.method == 'POST':
 
         if editor:
@@ -1616,11 +1628,10 @@ def relato_avaliar(request, projeto_id, evento_id):
             observacoes = request.POST["observacoes"]
 
             if observacoes != "":
-
                 (obs, _) = Observacao.objects.get_or_create(projeto=projeto,
                                                                 avaliador=request.user,
                                                                 momento=evento.endDate,  # data marcada do fim do evento
-                                                                tipo_de_avaliacao=200)  # (200, "Relato Quinzenal"),
+                                                                exame=exame)  # (200, "Relato Quinzenal"),
                 obs.observacoes = observacoes
                 obs.save()
 
@@ -1671,7 +1682,7 @@ def relato_avaliar(request, projeto_id, evento_id):
         obs = Observacao.objects.filter(projeto=projeto,
                                         momento__gt=evento_anterior.endDate + datetime.timedelta(days=1),
                                         momento__lte=evento.endDate + datetime.timedelta(days=1),
-                                        tipo_de_avaliacao=200).last()  # (200, "Relato Quinzenal"),
+                                        exame=exame).last()  # (200, "Relato Quinzenal"),
                                         # O datetime.timedelta(days=1) é necessário pois temos de checar passadas 24 horas, senão valo começo do dia
         if obs:
             observacoes = obs.observacoes
@@ -1679,7 +1690,6 @@ def relato_avaliar(request, projeto_id, evento_id):
             observacoes = None
 
         context = {
-            # "objetivos": objetivos,
             "editor": editor,
             "projeto": projeto,
             "observacoes": observacoes,
@@ -1714,10 +1724,6 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
 
             for projeto in projetos:
 
-                # Aparentemente código repetido por erro
-                # aval_banc_final = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=2)  # (2, 'Banca Final'),
-                # nota_banca_final, peso = Aluno.get_banca(None, aval_banc_final, eh_banca=True)
-
                 alocacoes = Alocacao.objects.filter(projeto=projeto)
                 
                 if alocacoes:
@@ -1745,8 +1751,8 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                     relatorio_intermediario.append(("&nbsp;-&nbsp;", None, 0))
                     relatorio_final.append(("&nbsp;-&nbsp;", None, 0))
 
-
-                aval_banc_final = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=2)  # B. Final
+                exame = Exame.objects.get(titulo="Banca Final")
+                aval_banc_final = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # B. Final
                 nota_banca_final, peso, avaliadores = Aluno.get_banca(None, aval_banc_final, eh_banca=True)
 
                 if peso is not None:
@@ -1756,7 +1762,8 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                 else:
                     banca_final.append(("&nbsp;-&nbsp;", None, 0))
 
-                aval_banc_interm = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=1)  # B. Int.
+                exame = Exame.objects.get(titulo="Banca Intermediária")
+                aval_banc_interm = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # B. Int.
                 nota_banca_intermediaria, peso, avaliadores = Aluno.get_banca(None, aval_banc_interm, eh_banca=True)
                 if peso is not None:
                     banca_intermediaria.append(("{0}".format(converte_letra(nota_banca_intermediaria,
@@ -1766,7 +1773,8 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                 else:
                     banca_intermediaria.append(("&nbsp;-&nbsp;", None, 0))
 
-                aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto, tipo_de_avaliacao=99)  # Falc.
+                exame = Exame.objects.get(titulo="Falconi")
+                aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # Falc.
                 nota_banca_falconi, peso, avaliadores = Aluno.get_banca(None, aval_banc_falconi)
                 if peso is not None:
                     nomes = ""

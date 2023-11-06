@@ -21,6 +21,9 @@ from users.models import PFEUser, Aluno
 
 from projetos.models import Banca, Configuracao, Evento
 
+from projetos.tipos import TIPO_EVENTO
+
+
 
 def get_calendario_context(user=None):
     """Contexto para gerar calendário."""
@@ -76,7 +79,7 @@ def get_calendario_context(user=None):
         'feedbacks': feedbacks,
         'coordenacao': coordenacao,
         'semestre': configuracao.semestre,
-        'tipos_eventos': Evento.TIPO_EVENTO,
+        'tipos_eventos': TIPO_EVENTO,
         "obs_length": Evento._meta.get_field('observacao').max_length,
         "loc_length": Evento._meta.get_field('location').max_length,
     }

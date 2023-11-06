@@ -90,7 +90,7 @@
           <select class="filter custom-select w-auto" id="filterObjetivo" name="objetivo">
             {% for objetivo in objetivos %}
               <option value="{{objetivo.id}}" 
-              {% if objetivo.id == obj_selecionado %}selected{% endif %}>{{objetivo}} - {{objetivo.data_inicial}}</option>
+              {% if objetivo.id == obj_selecionado %}selected{% endif %}>{{objetivo.titulo}} - {{objetivo.data_inicial}}</option>
             {% endfor %}
           </select>
         {% endif %}

@@ -35,10 +35,37 @@ def custom_400(request, exception):
     return HttpResponse(mensagem)
 
 
+from projetos.models import TIPO_DE_AVALIACAO, Avaliacao2, Avaliacao_Velha, Observacao, Observacao_Velha
+from academica.models import Exame
+
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
-    message = "Nada Feito"
+    message = "Feito"
+
+
+    de_para = {}
+
+    for t in TIPO_DE_AVALIACAO:
+        exame, _created = Exame.objects.get_or_create(titulo=t[1])
+        exame.save()
+        de_para[t[0]] = exame
+
+    for a in Avaliacao2.objects.all():
+        a.exame = de_para[a.tipo_de_avaliacao]
+        a.save()
+
+    for a in Avaliacao_Velha.objects.all():
+        a.exame = de_para[a.tipo_de_avaliacao]
+        a.save()
+
+    for a in Observacao.objects.all():
+        a.exame = de_para[a.tipo_de_avaliacao]
+        a.save()
+
+    for a in Observacao_Velha.objects.all():
+        a.exame = de_para[a.tipo_de_avaliacao]
+        a.save()
 
     return HttpResponse(message)

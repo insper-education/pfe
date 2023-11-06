@@ -23,7 +23,7 @@
     Projeto: {{projeto.get_titulo}}<br><br>
 
     {% for item in itens %}
-      <b>{{item.0}}</b>: <a 
+      <b>{{item.0}}</b> [prazo {{item.3.endDate}}]: <a 
         data-toggle="tooltip" data-html="true" animation="true" title="Adicionar documento"
         class="open-documento"
         href="{% url 'adiciona_documento' projeto.organizacao.id projeto.id item.1 %}"

@@ -30,12 +30,13 @@ from users.models import PFEUser, Aluno, Professor, Alocacao, Opcao, OpcaoTempor
 
 from users.support import configuracao_estudante_vencida, configuracao_pares_vencida, adianta_semestre
 
+from academica.models import Composicao, Peso
+
 from .models import Relato, Pares
 
 from administracao.support import get_limite_propostas, usuario_sem_acesso
 
-
-
+from projetos.tipos import TIPO_DE_DOCUMENTO
 
 @login_required
 def index_estudantes(request):
@@ -539,22 +540,17 @@ def submissao_documento(request):
 
     projeto = Projeto.objects.all().last()
 
-    #   (3, "Relatório Final Revisado"),
-    #   (18, "Vídeo do Projeto"),
-    #   (19, "Slides da Apresentação Final"),
-    #   (20, "Banner"),
-    #   (25, "Relatório Publicado"),
-    #   (27, "Apresentação da Banca Final"),
-    #   (40, "Relatório Preliminar"),
-    #   (41, "Relatório Intermediário de Grupo"),
-    #   (42, "Relatório Intermediário Individual"),
-    #   (43, "Relatório Final de Grupo"),
-    #   (44, "Relatório Final Individual"),
-
-    documentos = [40, 41, 42, 18, 20, 43, 44, 27, 3, 25]
-    tipos = dict(Documento.TIPO_DE_DOCUMENTO)
-    # Cria estrutura com o título do documento, tipo de documento, filtro dos documentos do tipo
-    itens = [ [tipos[d], d, Documento.objects.filter(tipo_de_documento=d, projeto=projeto) ] for d in documentos ]
+    tipos = dict(TIPO_DE_DOCUMENTO)
+    itens = []
+    for comp in Composicao.objects.filter(entregavel=True):
+        itens.append([tipos[comp.documento],  ## AGORA DA PARA USAR DISPLAY 
+                      comp.documento, 
+                      Documento.objects.filter(tipo_de_documento=comp.documento, projeto=projeto),
+                      Evento.objects.filter(tipo_de_evento=comp.evento, 
+                                            endDate__year=projeto.ano, endDate__month__lt=7).last()\
+                      if projeto.semestre == 1 else \
+                      Evento.objects.filter(tipo_de_evento=comp.evento, 
+                                            endDate__year=projeto.ano, endDate__month__gt=6).last()])
 
     context = {
         "projeto": projeto,

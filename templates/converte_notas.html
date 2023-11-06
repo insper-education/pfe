@@ -1,0 +1,68 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 11 de Novembro de 2023
+{% endcomment %}
+
+<script>
+    function converteN(nota) {
+      if(nota=="")
+        return "invalid"
+      if(nota>=9.5)
+        return "A+"
+      if(nota>=9.0)
+        return "A"
+      if(nota>=8.0)
+        return "B+"
+      if(nota>=7.0)
+        return "B"
+      if(nota>=6.0)
+        return "C+"
+      if(nota>=5.0)
+        return "C"
+      if(nota>=4.0)
+        return "D+"
+      if(nota>=3.0)
+        return "D"
+      if(nota>=2.0)
+        return "D-"
+      if(nota>=0.0)
+        return "I"
+    }
+
+    function converteC(conceito) {
+      switch (conceito) {
+        case "A+":
+          nota = 10.00;
+          break;
+        case "A":
+          nota = 9.00;
+          break;
+        case "B+":
+          nota = 8.00;
+          break;
+        case "B":
+          nota = 7.00;
+          break;
+        case "C+":
+          nota = 6.00;
+          break;
+        case "C":
+          nota = 5.00;
+          break;
+        case "D+":
+          nota = 4.00;
+          break;
+        case "D":
+          nota = 3.00;
+          break;
+        case "D-":
+          nota = 2.00;
+          break;
+        case "I":
+          nota = 0.50;
+          break;
+      }
+      return nota;
+    }
+  </script>

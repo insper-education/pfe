@@ -22,7 +22,10 @@ from django.utils.encoding import force_text
 
 from estudantes.models import Relato
 from operacional.models import Curso
+from academica.models import Exame
 import users.models
+
+from .tipos import TIPO_EVENTO, TIPO_DE_DOCUMENTO
 
 def get_upload_path(instance, filename):
     """Caminhos para armazenar os arquivos."""
@@ -247,13 +250,15 @@ class Projeto(models.Model):
 
     @property
     def media_falconi(self):
-        aval_banc_falconi = Avaliacao2.objects.filter(projeto=self, tipo_de_avaliacao=99)  # Falc.
+        exame = Exame.objects.get(titulo="Falconi")
+        aval_banc_falconi = Avaliacao2.objects.filter(projeto=self, exame=exame)  # Falc.
         nota_banca_falconi, _, _ = users.models.Aluno.get_banca(None, aval_banc_falconi)
         return nota_banca_falconi
 
     @property
     def media_bancas(self):
-        aval_bancas = Avaliacao2.objects.filter(projeto=self, tipo_de_avaliacao__in=[1, 2])  # Bancas.
+        exames = Exame.objects.filter(titulo="Banca Final") | Exame.objects.filter(titulo="Banca Intermediária")
+        aval_bancas = Avaliacao2.objects.filter(projeto=self, exame__in=exames)  # Bancas.
         nota_bancas, _, _ = users.models.Aluno.get_banca(None, aval_bancas)
         return nota_bancas
 
@@ -647,60 +652,6 @@ class Evento(models.Model):
     endDate = models.DateField(default=datetime.date.today, blank=True,
                                help_text='Fim do Evento')
 
-    TIPO_EVENTO = (
-        (0, 'Feriado', 'lightgrey'),
-        (1, 'Aula cancelada', 'lightgrey'),
-
-        (9, 'Alinhamentos iniciais entre Estudantes/Orientadores/Organizações', 'orange'),
-        (10, 'Início das aulas', 'red'),
-        (11, 'Evento de abertura do PFE', 'orange'),  # Obsoleto
-        (12, 'Aula PFE', 'lightgreen'),
-        (13, 'Evento de encerramento do PFE', 'brown'),
-        (14, 'Bancas Intermediárias', 'violet'),
-        (15, 'Bancas Finais', 'yellow'),
-        (16, 'Apresentação formal final na organização', 'burlywood'),
-        (17, 'Apresentação opcional intermediária na organização', 'Khaki'),
-        (18, 'Probation', 'LightSteelBlue'),
-
-        (20, 'Relato quinzenal (Individual)', 'aquamarine'),
-        (21, 'Entrega de Relatório Preliminar (Grupo)', 'lightblue'),  # antigo relat. de planej.
-        (22, 'Entrega do Relatório Intermediário (Grupo e Individual)', 'teal'),
-        (23, 'Entrega do Relatório Final (Grupo e Individual)', 'aqua'),
-        (24, 'Entrega do Relatório Revisado (Grupo)', 'deepskyblue'),
-        (25, 'Entrega do Banner (Grupo)', 'chocolate'),
-        (26, 'Entrega do Vídeo (Grupo)', 'lavender'),
-
-        (30, 'Feedback dos estudantes sobre PFE', 'orange'),
-        (31, 'Avaliação de Pares Intermediária', 'pink'),
-        (32, 'Avaliação de Pares Final', 'pink'),
-
-        (40, 'Laboratório', 'orange'),
-        (41, 'Semana de provas', 'red'),
-
-        (50, 'Apresentação para Certificação Falconi', 'darkorange'),
-
-        (101, 'Apólice Seguro Acidentes Pessoais', 'aquamarine'),
-
-        (111, 'Bate-papo com estudante que farão PFE no próximo semestre', 'lightcyan'),
-        (112, 'Estudantes demonstrarem interesse em adiar PFE para 9º semestre', 'limegreen'),
-        (113, 'Apresentação dos projetos disponíveis para estudantes', 'darkslategray'),
-
-        (120, 'Limite para submissão de propostas de projetos pelas organizações', 'lime'),
-        (121, 'Pré seleção de propostas de projetos', 'chartreuse'),
-
-        (123, 'Indicação de interesse nos projetos do próximo semestre pelos estudante', 'hotpink '),
-        (124, 'Notificação para estudantes dos grupos formados', 'paleturquoise'),
-        (125, 'Notificação para organizações dos projetos fechados', 'moccasin'),
-        (126, 'Professores tiram dúvidas sobre projetos para estudantes', 'lightsalmon'),
-        (127, 'Reunião do comitê para montar grupos para o próximo semestre', 'powderblue'),
-
-        (129, 'Limite para contrato pronto para assinatura pelos estudantes', 'coral'),
-
-        (130, 'Validação dos projetos pelo comitê', 'peru'),
-
-        (140, 'Reunião de orientações aos orientadores', 'maroon'),
-    )
-
     tipo_de_evento = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_EVENTO],
                                                       null=True, blank=True,
                                                       help_text='Define o tipo do evento a ocorrer')
@@ -714,14 +665,14 @@ class Evento(models.Model):
     # Usar get_tipo_de_evento_display em vez disso
     def get_title(self):
         """Retorna em string o nome do evento."""
-        for entry in Evento.TIPO_EVENTO:
+        for entry in TIPO_EVENTO:
             if self.tipo_de_evento == entry[0]:
                 return entry[1]
         return "Tipo não definido"
 
     def get_color(self):
         """Retorna uma cor característica do evento para desenhar no calendário."""
-        for entry in Evento.TIPO_EVENTO:
+        for entry in TIPO_EVENTO:
             if self.tipo_de_evento == entry[0]:
                 return entry[2]
         return None
@@ -914,46 +865,7 @@ class Documento(models.Model):
                                 help_text='qualquer anotação sobre o documento em questão')
     data = models.DateField(null=True, blank=True,
                             help_text="Data do documento")
-    TIPO_DE_DOCUMENTO = ( # não mudar a ordem dos números
-        (0, "Contrato com Organização Parceira"),
-        (1, "Contrato entre Organização e Estudante"),
-        (2, "Contrado de Confidencialidade"),
-        (3, "Relatório Final Revisado"),
-        (4, "Autorização de Publicação Empresa"),
-        (5, "Autorização de Publicação Estudante"),
-        (6, "Regulamento PFE"),
-        (7, "Plano de Aprendizado"),
-        (8, "Manual do Estudante"),
-        (9, "Manual do Orientador"),
-        (10, "Manual da Organização Parceira"),
-        (11, "Manual do Carreiras"),
-        (12, "Manual de Relatórios"),
-        (13, "Manual de Planejamentos"),
-        (14, "FREE"),
-        (15, "Seguros"),
-        (16, "FREE"),
-        (17, "Template de Relatórios"),
-        (18, "Vídeo do Projeto"),
-        (19, "FREE"),
-        (20, "Banner"),
-        (21, "Ata do Comitê do PFE"),
-        (22, "Manual de Apresentação"),
-        (23, "Manual de Bancas"),
-        (24, "Manual de Avaliações"),
-        (25, "Relatório Publicado"),
-        (26, "Notificação de Relatório"),
-        (27, "Apresentação da Banca Final"),
-        (28, "Plano de Orientação"),
-        (32, "Termo de Parceria - PDF"),
-        (33, "Termo de Parceria - DOC"),
-        (40, "Relatório Preliminar"),
-        (41, "Relatório Intermediário de Grupo"),
-        (42, "Relatório Intermediário Individual"),
-        (43, "Relatório Final de Grupo"),
-        (44, "Relatório Final Individual"),
-        (128, "Matéria na Mídia"),
-        (255, "Outros"),
-    )
+    
     tipo_de_documento = models.PositiveSmallIntegerField(choices=TIPO_DE_DOCUMENTO, default=0)
 
     confidencial = models.BooleanField(default=True, help_text='Documento confidêncial')
@@ -1030,7 +942,7 @@ class Aviso(models.Model):
                               help_text='Título do Aviso')
 
     tipo_de_evento = models.\
-        PositiveSmallIntegerField(choices=[subl[:2] for subl in Evento.TIPO_EVENTO],
+        PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_EVENTO],
                                   null=True, blank=True,
                                   help_text='Define o tipo do evento de referência')
 
@@ -1055,28 +967,10 @@ class Aviso(models.Model):
     contatos_nas_organizacoes = \
         models.BooleanField(default=False, help_text='Para contatos nas organizações parceiras')
 
-    #### NÃO ESTÁ MAIS SENDO USADO ####
-    # def get_data(self):
-    #     """Retorna a data do aviso do semestre."""
-    #     configuracao = Configuracao.objects.get()
-    #     delta_days = datetime.timedelta(days=self.delta)
-    #     if self.tipo_de_evento:
-    #         eventos = Evento.objects.filter(tipo_de_evento=self.tipo_de_evento).\
-    #                                  filter(startDate__year=configuracao.ano)
-    #         if configuracao.semestre == 1:
-    #             evento = eventos.filter(startDate__month__lt=7).last()
-    #         else:
-    #             evento = eventos.filter(startDate__month__gt=6).last()
-
-    #         if evento:
-    #             return evento.startDate + delta_days
-
-    #     return configuracao.t0 + delta_days
-
     # Usar get_tipo_de_evento_display em vez disso
     def get_evento(self):
         """Retorna em string o nome do evento."""
-        for entry in Evento.TIPO_EVENTO:
+        for entry in TIPO_EVENTO:
             if self.tipo_de_evento == entry[0]:
                 return entry[1]
         return "Sem evento"
@@ -1124,10 +1018,6 @@ class Feedback(models.Model):
 
     data = models.DateField(default=datetime.date.today, blank=True,
                             help_text='Data do Feedback')
-    #organizacao_parceira=models.ForeignKey(Empresa,null=True,blank=True,on_delete=models.SET_NULL,
-    #                                help_text='Organização parceira')
-    #autor = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
-    #                          related_name='professor_orientador', help_text='quem fez a anotação')
     nome = models.CharField(max_length=120, null=True, blank=True,
                             help_text='Nome de quem está dando o Feedback')
     email = models.EmailField(max_length=80, null=True, blank=True,
@@ -1447,18 +1337,29 @@ class ObjetivosDeAprendizagem(models.Model):
 
 
     def __str__(self):
-        return str(self.titulo)
+        texto = str(self.titulo) + "  [ "
+        if self.data_inicial:
+            texto += str(self.data_inicial)
+        texto += " -> "
+        if self.data_final:
+            texto += str(self.data_final)
+        else:
+            texto += "hoje"
+        texto += " ]"
+        return texto
 
     class Meta:
         verbose_name = 'ObjetivosDeAprendizagem'
         verbose_name_plural = 'ObjetivosDeAprendizagem'
 
+
+# NAO USAR MAIS, ESTA OBSOLETO, REMOVER !!!!
 # Usado em Avaliacao e Observacao
 TIPO_DE_AVALIACAO = ( # não mudar a ordem dos números
     (0, 'Não definido'),
     (1, 'Banca Intermediária'),
     (2, 'Banca Final'),
-    (10, 'Relatório de Planejamento'),      # usado até 2020.1
+    (10, 'Relatório de Planejamento'),      # avaliado até 2020.1
     (11, 'Relatório Intermediário de Grupo'),
     (12, 'Relatório Final de Grupo'),
     (21, 'Relatório Intermediário Individual'),
@@ -1474,17 +1375,22 @@ TIPO_DE_AVALIACAO = ( # não mudar a ordem dos números
 )
 
 
+
 class Avaliacao2(models.Model):
     """Avaliações realizadas durante o projeto."""
 
+    # NÃO USAR MAIS TIPO DE AVALIAÇÃO, USAR EXAME
     tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
+
+    # DEFINE O TIPO DE AVALIAÇÃO
+    exame = models.ForeignKey("academica.Exame", null=True, blank=True, on_delete=models.SET_NULL,
+                                 help_text="Tipo de avaliação")
 
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
                                    help_text='Data e hora da comunicação') # hora ordena para dia
 
     peso = models.FloatField("Peso", validators=[MinValueValidator(0), MaxValueValidator(100)],
-                             help_text='Pesa da avaliação na média (bancas compartilham peso)',
-                             default=10) # 10% para as bancas
+                             help_text='Pesa da avaliação na média em % (varia de 0 a 100)')
 
     # A nota será convertida para rubricas se necessário
     nota = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
@@ -1511,9 +1417,14 @@ class Avaliacao2(models.Model):
                              help_text='Caso o avaliador não tenha avaliado esse quesito')
 
     def __str__(self):
-        for i, j in TIPO_DE_AVALIACAO:
-            if self.tipo_de_avaliacao == i:
-                return j
+        texto = ""
+        texto += str(self.exame.titulo)[0:8]
+        texto += " > "
+        texto += str(self.projeto)[0:12]
+        texto += " > "
+        texto += str(self.avaliador)
+        
+        return texto
         return "Avaliação Não Definida"
 
     @classmethod
@@ -1531,7 +1442,12 @@ class Avaliacao2(models.Model):
 class Avaliacao_Velha(models.Model):
     """Quando avaliações de banca são refeitas, as antigas vem para essa base de dados."""
 
+    # NÃO USAR MAIS TIPO DE AVALIAÇÃO, USAR EXAME
     tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
+
+    # DEFINE O TIPO DE AVALIAÇÃO
+    exame = models.ForeignKey("academica.Exame", null=True, blank=True, on_delete=models.SET_NULL,
+                                 help_text="Tipo de avaliação")
 
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
                                    help_text='Data e hora da comunicação') # hora ordena para dia
@@ -1565,9 +1481,13 @@ class Avaliacao_Velha(models.Model):
                              help_text='Caso o avaliador não tenha avaliado esse quesito')
 
     def __str__(self):
-        for i, j in TIPO_DE_AVALIACAO:
-            if self.tipo_de_avaliacao == i:
-                return j
+        texto = ""
+        texto += str(self.exame.titulo)[0:8]
+        texto += " > "
+        texto += str(self.projeto)[0:12]
+        texto += " > "
+        texto += str(self.avaliador)
+        return texto
         return "Avaliação Não Definida"
 
     @classmethod
@@ -1611,8 +1531,13 @@ class Reprovacao(models.Model):
 class Observacao(models.Model):
     """Observações realizadas durante avaliações."""
 
+    # NÃO USAR MAIS TIPO DE AVALIAÇÃO, USAR EXAME
     tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
 
+    # DEFINE O TIPO DE AVALIAÇÃO
+    exame = models.ForeignKey("academica.Exame", null=True, blank=True, on_delete=models.SET_NULL,
+                                 help_text="Tipo de avaliação")
+    
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
                                    help_text='Data e hora da comunicação') # hora ordena para dia
 
@@ -1644,7 +1569,7 @@ class Observacao(models.Model):
         return observacao
 
     def __str__(self):
-        return "Observação tipo : " + str(self.tipo_de_avaliacao)
+        return "Obs. tipo: " + str(self.exame) + " = " + str(self.observacoes)[:6] + "..."
 
     class Meta:
         verbose_name = 'Observação'
@@ -1652,12 +1577,16 @@ class Observacao(models.Model):
         #ordering = [,]
 
 
-
 class Observacao_Velha(models.Model):
     """Quando Observações de banca são refeitas, as antigas vem para essa base de dados."""
 
+    # NÃO USAR MAIS TIPO DE AVALIAÇÃO, USAR EXAME
     tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
 
+    # DEFINE O TIPO DE AVALIAÇÃO
+    exame = models.ForeignKey("academica.Exame", null=True, blank=True, on_delete=models.SET_NULL,
+                                 help_text="Tipo de avaliação")
+    
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
                                    help_text='Data e hora da comunicação') # hora ordena para dia
 
@@ -1689,7 +1618,7 @@ class Observacao_Velha(models.Model):
         return observacao
 
     def __str__(self):
-        return "Observação velha tipo : " + str(self.tipo_de_avaliacao)
+        return "Observação velha tipo : " + str(self.exame)
 
     class Meta:
         verbose_name = 'Observação Velha'

@@ -20,6 +20,7 @@ from operacional.models import Curso
 
 from .support import converte_conceito
 
+from academica.models import Exame
 
 class ProjetosResource(resources.ModelResource):
     """Model Resource para tratar dados de Projetos."""
@@ -174,7 +175,7 @@ class Avaliacoes2Resource(resources.ModelResource):
             else:
                 momento = datetime.datetime.now()
 
-            tipo = 0  # tipo de avaliação padrão, mas que não deve acontecer
+            exame = None  # tipo de avaliação padrão, mas que não deve acontecer
 
             avaliador = projeto.orientador.user  # por padrão o avaliador é o orientador
 
@@ -189,107 +190,107 @@ class Avaliacoes2Resource(resources.ModelResource):
             if avaliacao in ("RP",
                              "Relatório de Planejamento",
                              "Relatorio de Planejamento"):
-                tipo = 10  # (10, 'Relatório de Planejamento'),
+                exame = Exame.objects.get(titulo="Relatório de Planejamento")
                 (aval, _created) = Avaliacao2.objects.get_or_create(projeto=projeto,
                                                                     avaliador=avaliador,
                                                                     momento=momento,
-                                                                    tipo_de_avaliacao=tipo)
+                                                                    exame=exame)
 
             elif avaliacao in ("RIG",
                                "Relatório Intermediário Grupo",
                                "Relatorio Intermediario Grupo"):
-                tipo = 11  # (11, 'Relatório Intermediário de Grupo'),
+                exame = Exame.objects.get(titulo="Relatório Intermediário de Grupo")
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo,
                                                                     projeto=projeto,
                                                                     avaliador=avaliador,
                                                                     momento=momento,
-                                                                    tipo_de_avaliacao=tipo)
+                                                                    exame=exame)
 
             elif avaliacao in ("RFG",
                                "Relatório Final Grupo",
                                "Relatório Final de Grupo",
                                "Relatorio Final Grupo",
                                "Relatorio Final de Grupo"):
-                tipo = 12  # (12, 'Relatório Final de Grupo'),
+                exame = Exame.objects.get(titulo="Relatório Final de Grupo")
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo,
                                                                     projeto=projeto,
                                                                     avaliador=avaliador,
                                                                     momento=momento,
-                                                                    tipo_de_avaliacao=tipo)
+                                                                    exame=exame)
 
             elif avaliacao in ("RII",
                                "Relatório Intermediário Individual",
                                "Relatorio Intermediario Individual",
                                "Relatório Parcial Individual",
                                "Relatorio Parcial Individual"):
-                tipo = 21  # (21, 'Relatório Intermediário Individual'),
+                exame = Exame.objects.get(titulo="Relatório Intermediário Individual")
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo,
                                                                     projeto=projeto,
                                                                     alocacao=alocacao,
                                                                     avaliador=avaliador,
                                                                     momento=momento,
-                                                                    tipo_de_avaliacao=tipo)
+                                                                    exame=exame)
 
             elif avaliacao in ("RFI",
                                "Relatório Final Individual",
                                "Relatorio Final Individual"):
-                tipo = 22  # (22, 'Relatório Final Individual'),
+                exame = Exame.objects.get(titulo="Relatório Final Individual")
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo,
                                                                     projeto=projeto,
                                                                     alocacao=alocacao,
                                                                     avaliador=avaliador,
                                                                     momento=momento,
-                                                                    tipo_de_avaliacao=tipo)
+                                                                    exame=exame)
 
             elif avaliacao in ("BI",
                                "Banca Intermediária",
                                "Banca Intermediaria"):
-                tipo = 1  # ( 1, 'Banca Intermediária'),
+                exame = Exame.objects.get(titulo="Banca Intermediária")
                 # o certo seria procurar avaliador
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo,
                                                                     projeto=projeto,
                                                                     avaliador=avaliador,
                                                                     momento=momento,
-                                                                    tipo_de_avaliacao=tipo)
+                                                                    exame=exame)
 
             elif avaliacao in ("BF",
                                "Banca Final"):
-                tipo = 2  # ( 2, 'Banca Final'),
+                exame = Exame.objects.get(titulo="Banca Final")
                 # o certo seria procurar avaliador
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo,
                                                                     projeto=projeto,
                                                                     avaliador=avaliador,
                                                                     momento=momento,
-                                                                    tipo_de_avaliacao=tipo)
+                                                                    exame=exame)
 
             # NÃO MAIS USADAS, FORAM USADAS QUANDO O PFE ERA AINDA EM DOIS SEMESTRES
             elif avaliacao in ("PPF",
                                "Planejamento Primeira Fase"):
-                tipo = 50  # (50, 'Planejamento Primeira Fase'),
+                exame = Exame.objects.get(titulo="Planejamento Primeira Fase")
                 (aval, _created) = Avaliacao2.objects.get_or_create(projeto=projeto,
                                                                     avaliador=avaliador,
                                                                     momento=momento,
-                                                                    tipo_de_avaliacao=tipo)
+                                                                    exame=exame)
 
             elif avaliacao in ("API",
                                "Avaliação Parcial Individual"):
-                tipo = 51  # (51, 'Avaliação Parcial Individual'),
+                exame = Exame.objects.get(titulo="Avaliação Parcial Individual")
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo,
                                                                     projeto=projeto,
                                                                     alocacao=alocacao,
                                                                     avaliador=avaliador,
                                                                     momento=momento,
-                                                                    tipo_de_avaliacao=tipo)
+                                                                    exame=exame)
 
             elif avaliacao in ("AFI",
                                "Avaliação Final Individual"):
-                tipo = 52  # (52, 'Avaliação Final Individual'),
+                exame = Exame.objects.get(titulo="Avaliação Final Individual")
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo,
                                                                     projeto=projeto,
                                                                     alocacao=alocacao,
                                                                     avaliador=avaliador,
                                                                     momento=momento,
-                                                                    tipo_de_avaliacao=tipo)
+                                                                    exame=exame)
 
             else:
                 pass
@@ -310,7 +311,7 @@ class Avaliacoes2Resource(resources.ModelResource):
                                                                    avaliador=avaliador,
                                                                    alocacao=alocacao,
                                                                    momento=momento,
-                                                                   tipo_de_avaliacao=tipo)
+                                                                   exame=exame)
                 obs.observacoes = obs_str
                 obs.save()
 

@@ -10,100 +10,36 @@
   {% load l10n %}
   {% load dictionary %}
 
-  <style>
+  {% load pega_avaliacao %}
 
+  
+
+  <style>
     textarea {
       max-width:100%;
       margin-left: 10px;
       margin-bottom: 18px;
     }
-
     ul {
       list-style-type: none;
       padding-left: 10px;
       margin-bottom: 2px;
       margin-top: 6px;
     }
-
     ul li span {
       display: inline-block;
       min-width: 13em;
     }
-
   </style>
 
-  <script>
-    function converteN(nota) {
-      if(nota=="")
-        return "invalid"
-      if(nota>=9.5)
-        return "A+"
-      if(nota>=9.0)
-        return "A"
-      if(nota>=8.0)
-        return "B+"
-      if(nota>=7.0)
-        return "B"
-      if(nota>=6.0)
-        return "C+"
-      if(nota>=5.0)
-        return "C"
-      if(nota>=4.0)
-        return "D+"
-      if(nota>=3.0)
-        return "D"
-      if(nota>=2.0)
-        return "D-"
-      if(nota>=0.0)
-        return "I"
-    }
-
-    function converteC(conceito) {
-      switch (conceito) {
-        case "A+":
-          nota = 10.00;
-          break;
-        case "A":
-          nota = 9.00;
-          break;
-        case "B+":
-          nota = 8.00;
-          break;
-        case "B":
-          nota = 7.00;
-          break;
-        case "C+":
-          nota = 6.00;
-          break;
-        case "C":
-          nota = 5.00;
-          break;
-        case "D+":
-          nota = 4.00;
-          break;
-        case "D":
-          nota = 3.00;
-          break;
-        case "D-":
-          nota = 2.00;
-          break;
-        case "I":
-          nota = 0.50;
-          break;
-      }
-      return nota;
-    }
-
-  </script>
+  {% include "converte_notas.html" %}
 
 {% endblock %}
 
 {% block content %}
   {% localize off %}
 
-  <span class="titulo">
-      Edição de Notas
-  </span>
+  <span class="titulo">Edição de Notas</span>
 
   <b><label for="nome">Nome: </label></b> {{alocacao.aluno}}<br>
   <b><label for="projeto">Projeto: </label></b> {{alocacao.projeto}}<br>
@@ -111,6 +47,114 @@
   <br>
 
   <form method="post"> {% csrf_token %}
+
+    <h1>PARTE NOVA</h1>
+
+    
+    {% for composicao in composicoes %}
+      {% if composicao.exame %}
+        <b>{{composicao.exame.titulo}}: <span id="a{{composicao.exame.id}}_media"></span></b>
+        <ul>
+          {% with avaliacoes=avaliacoes_grupo|pega_tipo:composicao.exame %}
+          {% for peso in composicao.peso_set.all %}
+            <li>
+              <span>{{peso.objetivo.titulo}}</span>
+              {% with objetivo=avaliacoes|pega_objetivo:peso.objetivo %}
+                <span>
+                    peso: 
+                    <input class="peso" id="a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}"
+                          name="a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}" type="number"
+                          min="0" max="100" step="any" style="width: 7em;"
+                          value="{% if objetivo.peso %}{{objetivo.peso}}{% else %}{{peso.peso}}{% endif %}"
+                          {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
+                  
+                    &nbsp;&nbsp;nota: 
+                    <input class="nota" id="a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}"
+                          name="a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}" type="number"
+                          min="0" max="10" step="any" style="width: 4em;"
+                          value="{% if objetivo.nota != None %}{{objetivo.nota}}{% endif %}"
+                          {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
+                  
+                    &nbsp;&nbsp;conceito:
+                    <select class="conc" id="a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}"
+                            name="a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}"
+                            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+                          {% with 'A+ A B+ B C+ C D+ D D- I' as conceitos %}{% for x in conceitos.split %}
+                            <option value="{{x}}">{{x}}</option>
+                          {% endfor %}{% endwith %}
+                    </select>
+                </span>
+
+                <script>
+                  $(function() {
+                      $("#a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}").on("change",function() {
+                        $("#a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}").val(converteC($(this).val()));
+                      });
+                      $("#a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}").on("change",function() {
+                        $("#a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}").val(converteN($(this).val()));
+                      });
+                  })
+                  $("#a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}").val(converteN($("#a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}").val()));
+                </script>
+
+              {% endwith %}
+            <br>
+            </li>
+          {% endfor %}
+          {% endwith %}
+        </ul>
+        {% with observacoes=observacoes_grupo|pega_tipo:composicao.exame %}
+          <span style="margin-left: 10px;">Observações:</span><br>
+          <textarea id="a{{composicao.exame.id}}_obs" name="a{{composicao.exame.id}}_obs"
+                    rows="4" cols="80" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
+            >{% if observacoes %}{{observacoes.last.observacoes}}{% endif %}</textarea>
+          <br>
+        {% endwith %}
+      {% endif %}
+    {% endfor %}
+    <br><br>
+
+    <script>
+      {% comment %} Calcula as médias para cada avaliação {% endcomment %}
+      function calculateAvarage() {
+        {% for composicao in composicoes %}
+          {% if composicao.exame %}
+            {% with avaliacoes=avaliacoes_grupo|pega_tipo:composicao.exame %}
+
+              soma = 0.0;
+              total = 0.0;
+              {% for peso in composicao.peso_set.all %}
+                {% with objetivo=avaliacoes|pega_objetivo:peso.objetivo %}
+                  nota = parseFloat($("#a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}").val());
+                  peso = parseFloat($("#a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}").val());
+                  if( !isNaN(peso)) {
+                    if( !isNaN(nota) ) {soma += ( peso * nota );}
+                    total += peso;
+                  }
+                {% endwith %}
+              {% endfor %}
+
+              if(total > 0) { media = soma/total; }
+              else { media = 0; }
+              $("#a{{composicao.exame.id}}_media").text(media.toFixed(2));
+      
+            {% endwith %}
+          {% endif %}
+        {% endfor %}
+      }
+        
+      $(function() { {% comment %} Senão fizer assim o primeiro clique falha {% endcomment %}
+          $(".nota,.peso,.conc").on("change keyup",calculateAvarage);
+      })
+
+      $(document).ready(calculateAvarage);
+
+    </script>
+
+
+<hr>
+<h1>PARTE Velha</h1>
+
 
     {% if aval %}
       <b>Planejamento Primeira Fase: <span id="ppf_media"></span></b>
@@ -385,12 +429,14 @@
 
     {% comment %}  ----------------------------  PARTE ATUAL ----------------------------  {% endcomment %}
 
+
+
     <b>Relatório Intermediário Individual: <span id="rii_media"></span></b>
     <ul>
     {% for objetivo in objetivos %}
       <li>
       {% if objetivo.avaliacao_aluno %}
-        <span>{{objetivo}}</span>
+        <span>{{objetivo.titulo}}</span>
         <span>
           {% with peso=rii_peso|dict_key:objetivo %}
             peso: <input class="peso" id="rii_peso_{{objetivo|truncatechars:7}}" name="rii_peso_{{objetivo}}" type="number"  min="0" max="100" step="any" style="width: 7em"
@@ -448,7 +494,7 @@
     {% for objetivo in objetivos %}
       <li>
       {% if objetivo.avaliacao_grupo %}
-        <span>{{objetivo}}</span>
+        <span>{{objetivo.titulo}}</span>
         <span>
           {% with peso=rig_peso|dict_key:objetivo %}
             peso: <input class="peso" id="rig_peso_{{objetivo|truncatechars:7}}" name="rig_peso_{{objetivo}}" type="number"  min="0" max="100" step="any" style="width: 7em"
@@ -505,7 +551,7 @@
     {% for objetivo in objetivos %}
       <li>
       {% if objetivo.avaliacao_aluno %}
-        <span>{{objetivo}}</span>
+        <span>{{objetivo.titulo}}</span>
         <span>
           {% with peso=rfi_peso|dict_key:objetivo %}
             peso: <input class="peso" id="rfi_peso_{{objetivo|truncatechars:7}}" name="rfi_peso_{{objetivo}}" type="number"  min="0" max="100" step="any" style="width: 7em"
@@ -561,7 +607,7 @@
     {% for objetivo in objetivos %}
       <li>
       {% if objetivo.avaliacao_grupo %}
-        <span>{{objetivo}}</span>
+        <span>{{objetivo.titulo}}</span>
         <span>
           {% with peso=rfg_peso|dict_key:objetivo %}
             peso: <input class="peso" id="rfg_peso_{{objetivo|truncatechars:7}}" name="rfg_peso_{{objetivo}}" type="number"  min="0" max="100" step="any" style="width: 7em"
@@ -647,7 +693,7 @@
     }
   });
 
-    function calculateAvarage()
+    function calculateAvarageOld()
     {
 
       soma = 0.0;
@@ -822,12 +868,12 @@
 
     $(function()
     {
-        $(".nota").on("change keyup",calculateAvarage)
-        $(".peso").on("change keyup",calculateAvarage)
-        $(".conc").on("change keyup",calculateAvarage)
+        $(".nota").on("change keyup",calculateAvarageOld);
+        $(".peso").on("change keyup",calculateAvarageOld);
+        $(".conc").on("change keyup",calculateAvarageOld);
     })
 
-    $(document).ready(calculateAvarage);
+    $(document).ready(calculateAvarageOld);
 
   </script>
 

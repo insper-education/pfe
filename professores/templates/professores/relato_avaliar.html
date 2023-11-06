@@ -94,12 +94,13 @@
       {% else %}
         <b>Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
       {% endif %}
-      {{projeto.orientador}}<br>
+      {{projeto.orientador}}
     {% else %}
       Orientador: Não definido
-    {% endif %}
+    {% endif %}<br>
+    <b>Data limite do relato:</b> {{evento.endDate}}<br>
+    
     <br>
-
     {% for alocacao, relato in alocacoes_relatos %}
 
       <div class="panel panel-default border border-secondary" style="display: inline-block; padding: 12px; max-width: 100%;">

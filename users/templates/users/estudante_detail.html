@@ -190,190 +190,191 @@
                     </div>
                 </div>
                 <small>Exibição radar supõe mesmo peso para todas as avaliações</small><br><br>
-            {% endif %}
+            
+                {% with medias_oo=alocado.get_medias_oo %}
+                    <script>
+                        var config_radial_individual{{alocado.id}} = {
+                            type: 'radar',
+                            data: {
+                                labels: [
+                                        {% for key, value  in medias_oo.media_individual.items %}
+                                            {% if value.media >= 0 %}
+                                                "{{key.titulo}}",
+                                            {% else %}
+                                                "",
+                                            {% endif %}
+                                        {% endfor %}
+                                    ],
+                                datasets: [
+                                    {
+                                    label: "Objetivos de Aprendizagem",
+                                    pointBackgroundColor: [
+                                        {% for key, value in medias_oo.media_individual.items %}
+                                            {% comment %} {% if value.media >= 0 %} {% endcomment %}
+                                                "{{value.cor}}",
+                                            {% comment %} {% endif %} {% endcomment %}
+                                        {% endfor %}
+                                        ],
+                                    data: [
+                                        {% for key, value in medias_oo.media_individual.items %}
+                                            {% if value.media >= 0 %}
+                                                {{value.media|stringformat:".2f"|unlocalize}},
+                                            {% else %}
+                                                null,
+                                            {% endif %}
+                                        {% endfor %}
+                                        ],
+                                    scaleOverride: true,
+                                    pointRadius: 5,
+                                    backgroundColor: "rgba(0,0,240,0.1)",
+                                    },
+                                ]
+                            },
+                            options: {
+                                legend: { display: false },
+                                title: {
+                                    display: true,
+                                    text: 'Avaliação Individual'
+                                },
+                                scale: {
+                                    angleLines: {
+                                        display: false
+                                    },
+                                    ticks: {
+                                        beginAtZero: true,
+                                        suggestedMin: 0,
+                                        suggestedMax: 10
+                                    }
+                                },
+                            }
+                        }
 
-            {% with medias_oo=alocado.get_medias_oo %}
-                <script>
-                    var config_radial_individual{{alocado.id}} = {
-                        type: 'radar',
-                        data: {
-                            labels: [
-                                    {% for key, value  in medias_oo.media_individual.items %}
+                        var config_radial_grupo{{alocado.id}} = {
+                            type: 'radar',
+                            data: {
+                                labels: [
+                                    {% for key, value in medias_oo.media_grupo.items %}
                                         {% if value.media >= 0 %}
-                                            "{{key}}",
+                                            "{{key.titulo}}",
                                         {% else %}
                                             "",
                                         {% endif %}
                                     {% endfor %}
-                                ],
-                            datasets: [
-                                {
-                                label: "Objetivos de Aprendizagem",
-                                pointBackgroundColor: [
-                                    {% for key, value in medias_oo.media_individual.items %}
-                                        {% comment %} {% if value.media >= 0 %} {% endcomment %}
-                                            "{{value.cor}}",
-                                        {% comment %} {% endif %} {% endcomment %}
-                                    {% endfor %}
                                     ],
-                                data: [
-                                    {% for key, value in medias_oo.media_individual.items %}
-                                        {% if value.media >= 0 %}
-                                            {{value.media|stringformat:".2f"|unlocalize}},
-                                        {% else %}
-                                            null,
-                                        {% endif %}
-                                    {% endfor %}
-                                    ],
-                                scaleOverride: true,
-                                pointRadius: 5,
-                                backgroundColor: "rgba(0,0,240,0.1)",
-                                },
-                            ]
-                        },
-                        options: {
-                            legend: { display: false },
-                            title: {
-                                display: true,
-                                text: 'Avaliação Individual'
+                                datasets: [
+                                    {
+                                    label: "Objetivos de Aprendizagem",
+                                    pointBackgroundColor: [
+                                        {% for key, value in medias_oo.media_grupo.items %}
+                                            {% comment %} {% if value.media >= 0 %} {% endcomment %}
+                                                "{{value.cor}}",
+                                            {% comment %} {% endif %} {% endcomment %}
+                                        {% endfor %}
+                                        ],
+                                    data: [
+                                        {% for key, value in medias_oo.media_grupo.items %}
+                                            {% if value.media >= 0 %}
+                                                {{value.media|stringformat:".2f"|unlocalize}},
+                                            {% else %}
+                                                null,
+                                            {% endif %}
+                                        {% endfor %}
+                                        ],
+                                    scaleOverride: true,
+                                    pointRadius: 5,
+                                    backgroundColor: "rgba(0,0,240,0.1)",
+                                    },
+                                ]
                             },
-                            scale: {
-                                angleLines: {
-                                    display: false
+                            options: {
+                                legend: { display: false },
+                                title: {
+                                    display: true,
+                                    text: 'Avaliação Grupo'
                                 },
-                                ticks: {
-                                    beginAtZero: true,
-                                    suggestedMin: 0,
-                                    suggestedMax: 10
-                                }
-                            },
+                                scale: {
+                                    angleLines: {
+                                        display: false
+                                    },
+                                    ticks: {
+                                        beginAtZero: true,
+                                        suggestedMin: 0,
+                                        suggestedMax: 10
+                                    }
+                                },
+                            }
                         }
-                    }
 
-                    var config_radial_grupo{{alocado.id}} = {
-                        type: 'radar',
-                        data: {
-                            labels: [
-                                {% for key, value in medias_oo.media_grupo.items %}
-                                    {% if value.media >= 0 %}
-                                        "{{key}}",
-                                    {% else %}
-                                        "",
-                                    {% endif %}
-                                {% endfor %}
-                                ],
-                            datasets: [
-                                {
-                                label: "Objetivos de Aprendizagem",
-                                pointBackgroundColor: [
-                                    {% for key, value in medias_oo.media_grupo.items %}
-                                        {% comment %} {% if value.media >= 0 %} {% endcomment %}
-                                            "{{value.cor}}",
-                                        {% comment %} {% endif %} {% endcomment %}
-                                    {% endfor %}
-                                    ],
-                                data: [
-                                    {% for key, value in medias_oo.media_grupo.items %}
-                                        {% if value.media >= 0 %}
-                                            {{value.media|stringformat:".2f"|unlocalize}},
-                                        {% else %}
-                                            null,
-                                        {% endif %}
-                                    {% endfor %}
-                                    ],
-                                scaleOverride: true,
-                                pointRadius: 5,
-                                backgroundColor: "rgba(0,0,240,0.1)",
-                                },
-                            ]
-                        },
-                        options: {
-                            legend: { display: false },
-                            title: {
-                                display: true,
-                                text: 'Avaliação Grupo'
-                            },
-                            scale: {
-                                angleLines: {
-                                    display: false
-                                },
-                                ticks: {
-                                    beginAtZero: true,
-                                    suggestedMin: 0,
-                                    suggestedMax: 10
-                                }
-                            },
-                        }
-                    }
-
-                    var config_radial_geral{{alocado.id}} = {
-                        type: 'radar',
-                        data: {
-                            labels: [
-                                {% for key, value in medias_oo.medias_geral.items %}
-                                    {% if value.media >= 0 %}
-                                        "{{key}}",
-                                    {% else %}
-                                        "",
-                                    {% endif %}
-                                {% endfor %}
-                                ],
-                            datasets: [
-                                {
-                                label: "Objetivos de Aprendizagem",
-                                pointBackgroundColor: [
-                                    {% for key, value in medias_oo.medias_geral.items %}
-                                        {% comment %} {% if value.media >= 0 %} {% endcomment %}
-                                            "{{value.cor}}",
-                                        {% comment %} {% endif %} {% endcomment %}
-                                    {% endfor %}
-                                    ],
-                                data: [
+                        var config_radial_geral{{alocado.id}} = {
+                            type: 'radar',
+                            data: {
+                                labels: [
                                     {% for key, value in medias_oo.medias_geral.items %}
                                         {% if value.media >= 0 %}
-                                            {{value.media|stringformat:".2f"|unlocalize}},
+                                            "{{key.titulo}}",
                                         {% else %}
-                                            null,
+                                            "",
                                         {% endif %}
                                     {% endfor %}
                                     ],
-                                scaleOverride: true,
-                                pointRadius: 5,
-                                backgroundColor: "rgba(0,0,240,0.1)",
-                                },
-                            ]
-                        },
-                        options: {
-                            legend: { display: false },
-                            title: {
-                                display: true,
-                                text: 'Avaliação Geral'
+                                datasets: [
+                                    {
+                                    label: "Objetivos de Aprendizagem",
+                                    pointBackgroundColor: [
+                                        {% for key, value in medias_oo.medias_geral.items %}
+                                            {% comment %} {% if value.media >= 0 %} {% endcomment %}
+                                                "{{value.cor}}",
+                                            {% comment %} {% endif %} {% endcomment %}
+                                        {% endfor %}
+                                        ],
+                                    data: [
+                                        {% for key, value in medias_oo.medias_geral.items %}
+                                            {% if value.media >= 0 %}
+                                                {{value.media|stringformat:".2f"|unlocalize}},
+                                            {% else %}
+                                                null,
+                                            {% endif %}
+                                        {% endfor %}
+                                        ],
+                                    scaleOverride: true,
+                                    pointRadius: 5,
+                                    backgroundColor: "rgba(0,0,240,0.1)",
+                                    },
+                                ]
                             },
-                            scale: {
-                                angleLines: {
-                                    display: false
+                            options: {
+                                legend: { display: false },
+                                title: {
+                                    display: true,
+                                    text: 'Avaliação Geral'
                                 },
-                                ticks: {
-                                    beginAtZero: true,
-                                    suggestedMin: 0,
-                                    suggestedMax: 10
-                                }
-                            },
+                                scale: {
+                                    angleLines: {
+                                        display: false
+                                    },
+                                    ticks: {
+                                        beginAtZero: true,
+                                        suggestedMin: 0,
+                                        suggestedMax: 10
+                                    }
+                                },
+                            }
                         }
-                    }
 
-                    // Chart radial do nível nos objetivos de aprendizagem
-                    var radial_geral{{alocado.id}} = document.getElementById('radial-geral{{alocado.id}}').getContext('2d');
-                    new Chart(radial_geral{{alocado.id}}, config_radial_geral{{alocado.id}});
+                        // Chart radial do nível nos objetivos de aprendizagem
+                        var radial_geral{{alocado.id}} = document.getElementById("radial-geral{{alocado.id}}").getContext("2d");
+                        new Chart(radial_geral{{alocado.id}}, config_radial_geral{{alocado.id}});
 
-                    var radial_individual{{alocado.id}} = document.getElementById('radial-individual{{alocado.id}}').getContext('2d');
-                    new Chart(radial_individual{{alocado.id}}, config_radial_individual{{alocado.id}});
+                        var radial_individual{{alocado.id}} = document.getElementById("radial-individual{{alocado.id}}").getContext("2d");
+                        new Chart(radial_individual{{alocado.id}}, config_radial_individual{{alocado.id}});
 
-                    var radial_grupo{{alocado.id}} = document.getElementById('radial-grupo{{alocado.id}}').getContext('2d');
-                    new Chart(radial_grupo{{alocado.id}}, config_radial_grupo{{alocado.id}});
+                        var radial_grupo{{alocado.id}} = document.getElementById("radial-grupo{{alocado.id}}").getContext("2d");
+                        new Chart(radial_grupo{{alocado.id}}, config_radial_grupo{{alocado.id}});
 
-                </script>
-            {% endwith %}
+                    </script>
+                {% endwith %}
+            {% endif %}
+            
 
             <br><br>
             &nbsp;&nbsp;Relatos Quinzenais:<br>

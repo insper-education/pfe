@@ -85,11 +85,6 @@
       <strong>Expectativas de resultados/entregas :</strong> {{ projeto.proposta.expectativas|linebreaks }}
     </div>
   {% endif %}
-  {% comment %}
-    {% if projeto.areas %}
-      <br><strong>Áreas da engenharia envolvidas no projeto (habilidade necessárias):</strong> {{ projeto.areas|linebreaks }}
-    {% endif %}
-  {% endcomment %}
   {% if projeto.proposta.recursos %}
     <div class="recusos" style="margin-top: 8px;">
       <strong>Recursos a serem disponibilizados aos Estudantes :</strong> {{ projeto.proposta.recursos|linebreaks }}
@@ -99,7 +94,7 @@
     <br><strong>Anexo :</strong>
     <a class="text-success" href="../..{{MEDIA_URL}}{{projeto.anexo}}">{{projeto.proposta.anexo}}</a>
   {% endif %}
-  
+
   <hr>
 
   {% for conexao in cooperacoes %}
@@ -276,14 +271,13 @@
             labels: [
                 {% for key, value in medias_oo.media_grupo.items %}
                     {% if value.media >= 0 %}
-                        "{{key}}",
+                        "{{key.titulo}}",
                     {% else %}
                         "",
                     {% endif %}
                 {% endfor %}
                 ],
-            datasets: [
-                {
+            datasets: [{
                 label: "Objetivos de Aprendizagem",
                 pointBackgroundColor: [
                     {% for key, value in medias_oo.media_grupo.items %}

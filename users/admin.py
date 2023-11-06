@@ -70,6 +70,19 @@ class AlunoAdmin(admin.ModelAdmin):
     ordering = ('user__first_name', 'user__last_name', )
     list_filter = ("curso2", FirstLetterFilter, )
     search_fields = ['user__first_name', 'user__last_name', ]
+    fieldsets = \
+        ((None,
+          {"fields":
+           ("user",)
+          }),
+         ("Pessoais", {
+             "fields": ("matricula", "curso2", 
+                        #"opcoes", 
+                        "email_pessoal", "anoPFE", 
+                        "semestrePFE", "trancado", "cr", "pre_alocacao", 
+                        "trabalhou", "social", "entidade", "familia", "externo",)
+         }),
+        )
 
 
 @admin.register(Alocacao)

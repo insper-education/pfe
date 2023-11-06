@@ -30,6 +30,8 @@ from projetos.support import simple_upload
 from propostas.support import envia_proposta, preenche_proposta, preenche_proposta_pdf
 
 from operacional.models import Curso
+from projetos.tipos import TIPO_DE_DOCUMENTO
+
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
@@ -191,7 +193,7 @@ def adiciona_documento(request, organizacao_id, projeto_id=None, tipo_id=None, d
 
     context = {
         "organizacao": organizacao,
-        "TIPO_DE_DOCUMENTO": Documento.TIPO_DE_DOCUMENTO,
+        "TIPO_DE_DOCUMENTO": TIPO_DE_DOCUMENTO,
         "data": datetime.date.today(),
         "documento": None,
         "projetos": Projeto.objects.filter(organizacao=organizacao),

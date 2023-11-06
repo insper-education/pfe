@@ -35,6 +35,7 @@ from .messages import email, message_reembolso
 
 from .support import get_areas_estudantes, get_areas_propostas, simple_upload, calcula_objetivos
 
+from academica.models import Exame
 
 @login_required
 @permission_required("projetos.view_projeto", raise_exception=True)
@@ -1012,8 +1013,9 @@ def certificacao_falconi(request):
         selecionados = 0
         projetos_selecionados = []
         for projeto in projetos:
+            exame = Exame.objects.get(titulo="Falconi")
             aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto,
-                                                          tipo_de_avaliacao=99)  # Falc.
+                                                          exame=exame)  # Falc.
 
             if aval_banc_falconi:
                 projetos_selecionados.append(projeto)
@@ -1055,9 +1057,10 @@ def certificacao_falconi(request):
             for objetivo in objetivos:
 
                 # Bancas Falconi
+                exame = Exame.objects.get(titulo="Falconi")
                 bancas_falconi = Avaliacao2.objects.filter(projeto=projeto,
                                                         objetivo=objetivo,
-                                                        tipo_de_avaliacao=99)\
+                                                        exame=exame)\
                     .order_by('avaliador', '-momento')
 
                 for banca in bancas_falconi:
@@ -1069,7 +1072,8 @@ def certificacao_falconi(request):
                     # Senão é só uma avaliação de objetivo mais antiga
 
             # Bancas Falconi
-            observacoes = Observacao.objects.filter(projeto=projeto, tipo_de_avaliacao=99).\
+            exame = Exame.objects.get(titulo="Falconi")
+            observacoes = Observacao.objects.filter(projeto=projeto, exame=exame).\
                 order_by('avaliador', '-momento')
             for observacao in observacoes:
                 if observacao.avaliador not in avaliadores_falconi:
@@ -1195,10 +1199,7 @@ def evolucao_notas(request):
         for edicao in edicoes:
             notas_total[edicao] = []
 
-        # médias gerais individuais
-        # (21, 'Relatório Intermediário Individual'),
-        # (22, 'Relatório Final Individual'),
-        avaliacoes = avaliacoes.filter(tipo_de_avaliacao=21) | avaliacoes.filter(tipo_de_avaliacao=22)
+        avaliacoes = avaliacoes.filter(exame=Exame.objects.get(titulo="Relatório Intermediário Individual")) | avaliacoes.filter(exame=Exame.objects.get(titulo="Relatório Final Individual"))
 
         medias_individuais = []
         count = 0
@@ -1291,8 +1292,13 @@ def evolucao_objetivos(request):
 
             if so_finais:
                 # Somenete avaliações finais do PFE
-                tipos = [2, 12, 22, 52, 54]
-                avaliacoes_sep = Avaliacao2.objects.filter(tipo_de_avaliacao__in=tipos)
+                # tipos = [2, 12, 22, 52, 54]
+                exames = Exame.objects.filter(titulo="Banca Final") |\
+                         Exame.objects.filter(titulo="Relatório Final de Grupo") |\
+                         Exame.objects.filter(titulo="Relatório Final Individual") |\
+                         Exame.objects.filter(titulo="Avaliação Final Individual") |\
+                         Exame.objects.filter(titulo="Avaliação Final de Grupo")
+                avaliacoes_sep = Avaliacao2.objects.filter(exame__in=exames)
             else:
                 avaliacoes_sep = Avaliacao2.objects.all()
 
@@ -1456,8 +1462,13 @@ def evolucao_por_objetivo(request):
 
             if so_finais:
                 # Somenete avaliações finais do PFE
-                tipos = [2, 12, 22, 52, 54]
-                avaliacoes_sep = Avaliacao2.objects.filter(tipo_de_avaliacao__in=tipos)
+                # tipos = [2, 12, 22, 52, 54]
+                exames = Exame.objects.filter(titulo="Banca Final") |\
+                         Exame.objects.filter(titulo="Relatório Final de Grupo") |\
+                         Exame.objects.filter(titulo="Relatório Final Individual") |\
+                         Exame.objects.filter(titulo="Avaliação Final Individual") |\
+                         Exame.objects.filter(titulo="Avaliação Final de Grupo")
+                avaliacoes_sep = Avaliacao2.objects.filter(exame__in=exames)
             else:
                 avaliacoes_sep = Avaliacao2.objects.all()
 

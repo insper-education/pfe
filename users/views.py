@@ -30,6 +30,8 @@ from projetos.support import get_objetivos_alocacao, calcula_objetivos
 
 from administracao.support import get_limite_propostas
 
+from academica.models import Composicao
+
 from operacional.models import Curso
 
 from .forms import PFEUserCreationForm
@@ -37,6 +39,7 @@ from .models import PFEUser, Aluno, Professor, Parceiro, Opcao, Administrador
 from .models import Alocacao, OpcaoTemporaria
 from .support import get_edicoes, adianta_semestre
 
+from academica.models import Exame
 
 @login_required
 def user_detail(request, primarykey):
@@ -505,92 +508,92 @@ def edita_notas(request, primarykey):
     objetivos = get_objetivos_alocacao(alocacao)
 
     # (10, 'Relatório de Planejamento'),
-    rpl = Avaliacao2.objects.filter(tipo_de_avaliacao=10,
+    rpl = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Relatório de Planejamento"),
                                     projeto=alocacao.projeto)
 
     # (10, 'Relatório de Planejamento'),
-    rpl_obs = Observacao.objects.filter(tipo_de_avaliacao=10,
+    rpl_obs = Observacao.objects.filter(exame = Exame.objects.get(titulo="Relatório de Planejamento"),
                                         projeto=alocacao.projeto)
 
     # (21, 'Relatório Intermediário Individual'),
-    rii = Avaliacao2.objects.filter(tipo_de_avaliacao=21,
+    rii = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Relatório Intermediário Individual"),
                                     alocacao=alocacao)
 
     # (21, 'Relatório Intermediário Individual'),
-    rii_obs = Observacao.objects.filter(tipo_de_avaliacao=21,
+    rii_obs = Observacao.objects.filter(exame = Exame.objects.get(titulo="Relatório Intermediário Individual"),
                                         alocacao=alocacao)
 
     # (11, 'Relatório Intermediário de Grupo'),
-    rig = Avaliacao2.objects.filter(tipo_de_avaliacao=11,
+    rig = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Relatório Intermediário de Grupo"),
                                     projeto=alocacao.projeto)
 
     # (11, 'Relatório Intermediário de Grupo'),
-    rig_obs = Observacao.objects.filter(tipo_de_avaliacao=11,
+    rig_obs = Observacao.objects.filter(exame = Exame.objects.get(titulo="Relatório Intermediário de Grupo"),
                                         projeto=alocacao.projeto)
 
     # (22, 'Relatório Final Individual'),
-    rfi = Avaliacao2.objects.filter(tipo_de_avaliacao=22,
+    rfi = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Relatório Final Individual"),
                                     alocacao=alocacao)
 
     # (22, 'Relatório Final Individual'),
-    rfi_obs = Observacao.objects.filter(tipo_de_avaliacao=22,
+    rfi_obs = Observacao.objects.filter(exame = Exame.objects.get(titulo="Relatório Final Individual"),
                                         alocacao=alocacao)
 
     # (12, 'Relatório Final de Grupo'),
-    rfg = Avaliacao2.objects.filter(tipo_de_avaliacao=12,
+    rfg = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Relatório Final de Grupo"),
                                     projeto=alocacao.projeto)
 
     # (12, 'Relatório Final de Grupo'),
-    rfg_obs = Observacao.objects.filter(tipo_de_avaliacao=12,
+    rfg_obs = Observacao.objects.filter(exame = Exame.objects.get(titulo="Relatório Final de Grupo"),
                                         projeto=alocacao.projeto)
 
     # ( 1, 'Banca Intermediária'),
-    bai = Avaliacao2.objects.filter(tipo_de_avaliacao=1,
+    bai = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Banca Intermediária"),
                                     projeto=alocacao.projeto)
 
     # ( 2, 'Banca Final'),
-    baf = Avaliacao2.objects.filter(tipo_de_avaliacao=2,
+    baf = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Banca Final"),
                                     projeto=alocacao.projeto)
 
     # Antigo (até 2019.1)
     # (50, 'Planejamento Primeira Fase'),
-    ppf = Avaliacao2.objects.filter(tipo_de_avaliacao=50,
+    ppf = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Planejamento Primeira Fase"),
                                     projeto=alocacao.projeto)
 
     # (50, 'Planejamento Primeira Fase'),
-    ppf_obs = Observacao.objects.filter(tipo_de_avaliacao=50,
+    ppf_obs = Observacao.objects.filter(exame = Exame.objects.get(titulo="Planejamento Primeira Fase"),
                                         projeto=alocacao.projeto)
 
     # (51, 'Avaliação Parcial Individual'),
-    api = Avaliacao2.objects.filter(tipo_de_avaliacao=51,
+    api = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Avaliação Parcial Individual"),
                                     alocacao=alocacao)
 
     # (51, 'Avaliação Parcial Individual'),
-    api_obs = Observacao.objects.filter(tipo_de_avaliacao=51,
+    api_obs = Observacao.objects.filter(exame = Exame.objects.get(titulo="Avaliação Parcial Individual"),
                                         alocacao=alocacao)
 
     # (52, 'Avaliação Final Individual'),
-    afi = Avaliacao2.objects.filter(tipo_de_avaliacao=52,
+    afi = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Avaliação Final Individual"),
                                     alocacao=alocacao)
 
     # (52, 'Avaliação Final Individual'),
-    afi_obs = Observacao.objects.filter(tipo_de_avaliacao=52,
+    afi_obs = Observacao.objects.filter(exame = Exame.objects.get(titulo="Avaliação Final Individual"),
                                         alocacao=alocacao)
 
     # (53, 'Avaliação Parcial de Grupo'),
-    apg = Avaliacao2.objects.filter(tipo_de_avaliacao=53,
+    apg = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Avaliação Parcial de Grupo"),
                                     projeto=alocacao.projeto)
 
     # (53, 'Avaliação Parcial de Grupo'),
-    apg_obs = Observacao.objects.filter(tipo_de_avaliacao=53,
+    apg_obs = Observacao.objects.filter(exame = Exame.objects.get(titulo="Avaliação Parcial de Grupo"),
                                         projeto=alocacao.projeto)
 
     # (54, 'Avaliação Final de Grupo'),
-    afg = Avaliacao2.objects.filter(tipo_de_avaliacao=54,
+    afg = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Avaliação Final de Grupo"),
                                     projeto=alocacao.projeto)
 
     # (54, 'Avaliação Final de Grupo'),
-    afg_obs = Observacao.objects.filter(tipo_de_avaliacao=54,
+    afg_obs = Observacao.objects.filter(exame = Exame.objects.get(titulo="Avaliação Final de Grupo"),
                                         projeto=alocacao.projeto)
 
     # Reprovação
@@ -615,7 +618,7 @@ def edita_notas(request, primarykey):
         if nota != "":
             (reg, _created) = rpl.get_or_create(projeto=alocacao.projeto)
             if _created:
-                reg.tipo_de_avaliacao = 10
+                reg.exame = Exame.objects.get(titulo="Relatório de Planejamento")
                 if alocacao.projeto.orientador:
                     reg.avaliador = alocacao.projeto.orientador.user
             reg.peso = float(peso)
@@ -628,7 +631,7 @@ def edita_notas(request, primarykey):
         if nota != "":
             (reg, _created) = ppf.get_or_create(projeto=alocacao.projeto)
             if _created:
-                reg.tipo_de_avaliacao = 50
+                reg.exame = Exame.objects.get(titulo="Planejamento Primeira Fase")
                 if alocacao.projeto.orientador:
                     reg.avaliador = alocacao.projeto.orientador.user
             reg.peso = float(peso)
@@ -644,7 +647,7 @@ def edita_notas(request, primarykey):
                 if nota != "":
                     (reg, _created) = rii.get_or_create(objetivo=objetivo)
                     if _created:
-                        reg.tipo_de_avaliacao = 21
+                        reg.exame = Exame.objects.get(titulo="Relatório Intermediário Individual")
                         reg.alocacao = alocacao
                         if alocacao.projeto.orientador:
                             reg.avaliador = alocacao.projeto.orientador.user
@@ -660,7 +663,7 @@ def edita_notas(request, primarykey):
                 if nota != "":
                     (reg, _created) = rig.get_or_create(objetivo=objetivo)
                     if _created:
-                        reg.tipo_de_avaliacao = 11
+                        reg.exame = Exame.objects.get(titulo="Relatório Intermediário de Grupo")
                         if alocacao.projeto.orientador:
                             reg.avaliador = alocacao.projeto.orientador.user
                         reg.projeto = alocacao.projeto
@@ -675,7 +678,7 @@ def edita_notas(request, primarykey):
                 if nota != "":
                     (reg, _created) = rfi.get_or_create(objetivo=objetivo)
                     if _created:
-                        reg.tipo_de_avaliacao = 22
+                        reg.exame = Exame.objects.get(titulo="Relatório Final Individual")
                         reg.alocacao = alocacao
                         if alocacao.projeto.orientador:
                             reg.avaliador = alocacao.projeto.orientador.user
@@ -691,7 +694,7 @@ def edita_notas(request, primarykey):
                 if nota != "":
                     (reg, _created) = rfg.get_or_create(objetivo=objetivo)
                     if _created:
-                        reg.tipo_de_avaliacao = 12
+                        reg.exame = Exame.objects.get(titulo="Relatório Final de Grupo")
                         if alocacao.projeto.orientador:
                             reg.avaliador = alocacao.projeto.orientador.user
                         reg.projeto = alocacao.projeto
@@ -708,7 +711,7 @@ def edita_notas(request, primarykey):
                 if nota != "":
                     (reg, _created) = apg.get_or_create(objetivo=objetivo)
                     if _created:
-                        reg.tipo_de_avaliacao = 53
+                        reg.exame = Exame.objects.get(titulo="Avaliação Parcial de Grupo")
                         if alocacao.projeto.orientador:
                             reg.avaliador = alocacao.projeto.orientador.user
                         reg.projeto = alocacao.projeto
@@ -723,7 +726,7 @@ def edita_notas(request, primarykey):
                 if nota != "":
                     (reg, _created) = api.get_or_create(objetivo=objetivo)
                     if _created:
-                        reg.tipo_de_avaliacao = 51
+                        reg.exame = Exame.objects.get(titulo="Avaliação Parcial Individual")
                         reg.alocacao = alocacao
                         if alocacao.projeto.orientador:
                             reg.avaliador = alocacao.projeto.orientador.user
@@ -739,7 +742,7 @@ def edita_notas(request, primarykey):
                 if nota != "":
                     (reg, _created) = afg.get_or_create(objetivo=objetivo)
                     if _created:
-                        reg.tipo_de_avaliacao = 54
+                        reg.exame = Exame.objects.get(titulo="Avaliação Final de Grupo")
                         if alocacao.projeto.orientador:
                             reg.avaliador = alocacao.projeto.orientador.user
                         reg.projeto = alocacao.projeto
@@ -754,7 +757,7 @@ def edita_notas(request, primarykey):
                 if nota != "":
                     (reg, _created) = afi.get_or_create(objetivo=objetivo)
                     if _created:
-                        reg.tipo_de_avaliacao = 52
+                        reg.exame = Exame.objects.get(titulo="Avaliação Final Individual")
                         reg.alocacao = alocacao
                         if alocacao.projeto.orientador:
                             reg.avaliador = alocacao.projeto.orientador.user
@@ -769,7 +772,7 @@ def edita_notas(request, primarykey):
             reg = rpl_obs.last()
             if not reg:
                 reg = Observacao.create(projeto=alocacao.projeto)
-                reg.tipo_de_avaliacao = 10
+                reg.exame = Exame.objects.get(titulo="Relatório de Planejamento")
                 if alocacao.projeto.orientador:
                     reg.avaliador = alocacao.projeto.orientador.user
             reg.observacoes = obs
@@ -781,7 +784,7 @@ def edita_notas(request, primarykey):
             reg = rii_obs.last()
             if not reg:
                 reg = Observacao.create(projeto=alocacao.projeto)
-                reg.tipo_de_avaliacao = 21
+                reg.exame = Exame.objects.get(titulo="Relatório Intermediário Individual")
                 reg.alocacao = alocacao
                 if alocacao.projeto.orientador:
                     reg.avaliador = alocacao.projeto.orientador.user
@@ -794,7 +797,7 @@ def edita_notas(request, primarykey):
             reg = rig_obs.last()
             if not reg:
                 reg = Observacao.create(projeto=alocacao.projeto)
-                reg.tipo_de_avaliacao = 11
+                reg.exame = Exame.objects.get(titulo="Relatório Intermediário de Grupo")
                 if alocacao.projeto.orientador:
                     reg.avaliador = alocacao.projeto.orientador.user
             reg.observacoes = obs
@@ -806,7 +809,7 @@ def edita_notas(request, primarykey):
             reg = rfi_obs.last()
             if not reg:
                 reg = Observacao.create(projeto=alocacao.projeto)
-                reg.tipo_de_avaliacao = 22
+                reg.exame = Exame.objects.get(titulo="Relatório Final Individual")
                 reg.alocacao = alocacao
                 if alocacao.projeto.orientador:
                     reg.avaliador = alocacao.projeto.orientador.user
@@ -819,7 +822,7 @@ def edita_notas(request, primarykey):
             reg = rfg_obs.last()
             if not reg:
                 reg = Observacao.create(projeto=alocacao.projeto)
-                reg.tipo_de_avaliacao = 12
+                reg.exame = Exame.objects.get(titulo="Relatório Final de Grupo")
                 if alocacao.projeto.orientador:
                     reg.avaliador = alocacao.projeto.orientador.user
             reg.observacoes = obs
@@ -831,7 +834,7 @@ def edita_notas(request, primarykey):
             reg = ppf_obs.last()
             if not reg:
                 reg = Observacao.create(projeto=alocacao.projeto)
-                reg.tipo_de_avaliacao = 50
+                reg.exame = Exame.objects.get(titulo="Planejamento Primeira Fase")
                 if alocacao.projeto.orientador:
                     reg.avaliador = alocacao.projeto.orientador.user
             reg.observacoes = obs
@@ -843,7 +846,7 @@ def edita_notas(request, primarykey):
             reg = apg_obs.last()
             if not reg:
                 reg = Observacao.create(projeto=alocacao.projeto)
-                reg.tipo_de_avaliacao = 53
+                reg.exame = Exame.objects.get(titulo="Avaliação Parcial de Grupo")
                 if alocacao.projeto.orientador:
                     reg.avaliador = alocacao.projeto.orientador.user
             reg.observacoes = obs
@@ -855,7 +858,7 @@ def edita_notas(request, primarykey):
             reg = api_obs.last()
             if not reg:
                 reg = Observacao.create(projeto=alocacao.projeto)
-                reg.tipo_de_avaliacao = 51
+                reg.exame = Exame.objects.get(titulo="Avaliação Parcial Individual")
                 reg.alocacao = alocacao
                 if alocacao.projeto.orientador:
                     reg.avaliador = alocacao.projeto.orientador.user
@@ -868,7 +871,7 @@ def edita_notas(request, primarykey):
             reg = afg_obs.last()
             if not reg:
                 reg = Observacao.create(projeto=alocacao.projeto)
-                reg.tipo_de_avaliacao = 54
+                reg.exame = Exame.objects.get(titulo="Avaliação Final de Grupo")
                 if alocacao.projeto.orientador:
                     reg.avaliador = alocacao.projeto.orientador.user
             reg.observacoes = obs
@@ -880,7 +883,7 @@ def edita_notas(request, primarykey):
             reg = afi_obs.last()
             if not reg:
                 reg = Observacao.create(projeto=alocacao.projeto)
-                reg.tipo_de_avaliacao = 52
+                reg.exame = Exame.objects.get(titulo="Avaliação Final Individual")
                 reg.alocacao = alocacao
                 if alocacao.projeto.orientador:
                     reg.avaliador = alocacao.projeto.orientador.user
@@ -1004,6 +1007,16 @@ def edita_notas(request, primarykey):
     else:
         reprovacao = None
 
+
+    ### PARTE NOVA  ### PARA SUBSTITUIR TUDO QUE TEM ACIMA
+
+    composicoes = Composicao.objects.all()
+    avaliacoes_indiv = Avaliacao2.objects.filter(alocacao=alocacao)
+    avaliacoes_grupo = Avaliacao2.objects.filter(projeto=alocacao.projeto)
+    observacoes_indiv = Observacao.objects.filter(alocacao=alocacao)
+    observacoes_grupo = Observacao.objects.filter(projeto=alocacao.projeto)
+
+
     context = {
         'alocacao': alocacao,
         'objetivos': objetivos,
@@ -1046,6 +1059,12 @@ def edita_notas(request, primarykey):
         "afg_peso": afg_peso,
         "afg_obs": afg_obs.last(),
         "reprovacao": reprovacao,
+
+        "composicoes": composicoes,
+        "avaliacoes_indiv": avaliacoes_indiv,
+        "avaliacoes_grupo": avaliacoes_grupo,
+        "observacoes_indiv": observacoes_indiv,
+        "observacoes_grupo": observacoes_grupo,
     }
 
     return render(request, 'users/edita_nota.html', context=context)

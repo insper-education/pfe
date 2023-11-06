@@ -23,6 +23,9 @@ from projetos.models import Aviso, Certificado, Evento, Configuracao, Projeto, B
 from users.models import PFEUser, Aluno, Professor, Parceiro
 from users.support import get_edicoes
 
+from projetos.tipos import TIPO_EVENTO
+
+
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def index_operacional(request):
@@ -258,7 +261,7 @@ def edita_aviso(request, primarykey):
 
     context = {
         "aviso": aviso,
-        "eventos": Evento.TIPO_EVENTO,
+        "eventos": TIPO_EVENTO,
     }
 
     return render(request, 'operacional/edita_aviso.html', context)
@@ -354,7 +357,7 @@ def cria_aviso(request):
         return HttpResponse("Problema com atualização de mensagem.", status=401)
 
     context = {
-        "eventos": Evento.TIPO_EVENTO,
+        "eventos": TIPO_EVENTO,
     }
 
     return render(request, 'operacional/edita_aviso.html', context)

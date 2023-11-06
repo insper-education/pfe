@@ -80,7 +80,7 @@
             <script>trabalhando[{{feedback.trabalhando}}-1] += 1;</script>
           {% endif %}
           {% if feedback.outros %}
-            <script>comentarios.push("{{feedback.outros}}");</script>
+            <script>comentarios.push(`{{feedback.outros}}`);</script>
           {% endif %}
 
           <td style='font-size:80%' class="text-center">

@@ -385,9 +385,9 @@ class Avaliacao2Admin(admin.ModelAdmin):
     """Informações das Avaliações2."""
 
     list_display = ('momento', 'nota', 'peso', 'objetivo',
-                    'tipo_de_avaliacao', 'avaliador', 'projeto', 'alocacao')
+                    'exame', 'avaliador', 'projeto', 'alocacao')
     ordering = ('momento',)
-    list_filter = ('tipo_de_avaliacao', 'projeto__ano', 'projeto__semestre')
+    list_filter = ('exame', 'projeto__ano', 'projeto__semestre')
     search_fields = ['projeto__titulo', 'projeto__titulo_final',
                      'alocacao__aluno__user__username', 'projeto__organizacao__sigla']
 
@@ -397,9 +397,9 @@ class Avaliacao_VelhaAdmin(admin.ModelAdmin):
     """Informações das Avaliações Velhas."""
 
     list_display = ('momento', 'nota', 'peso', 'objetivo',
-                    'tipo_de_avaliacao', 'avaliador', 'projeto', 'alocacao')
+                    'exame', 'avaliador', 'projeto', 'alocacao')
     ordering = ('momento',)
-    list_filter = ('tipo_de_avaliacao', 'projeto__ano', 'projeto__semestre')
+    list_filter = ('exame', 'projeto__ano', 'projeto__semestre')
     search_fields = ['projeto__titulo', 'projeto__titulo_final',
                      'alocacao__aluno__user__username', 'projeto__organizacao__sigla']
 
@@ -416,9 +416,9 @@ class ReprovacaoAdmin(admin.ModelAdmin):
 class ObservacaoAdmin(admin.ModelAdmin):
     """Informações das Observações."""
 
-    list_display = ('momento', 'tipo_de_avaliacao', 'avaliador', 'projeto', 'alocacao')
+    list_display = ('momento', 'exame', 'avaliador', 'projeto', 'alocacao')
     ordering = ('momento',)
-    list_filter = ('tipo_de_avaliacao', )
+    list_filter = ('exame', )
     search_fields = ['projeto__titulo', 'projeto__titulo_final', 'alocacao__aluno__user__username']
 
 
@@ -426,9 +426,9 @@ class ObservacaoAdmin(admin.ModelAdmin):
 class Observacao_VelhaAdmin(admin.ModelAdmin):
     """Informações das Observações Velhas."""
 
-    list_display = ('momento', 'tipo_de_avaliacao', 'avaliador', 'projeto', 'alocacao')
+    list_display = ('momento', 'exame', 'avaliador', 'projeto', 'alocacao')
     ordering = ('momento',)
-    list_filter = ('tipo_de_avaliacao', )
+    list_filter = ('exame', )
     search_fields = ['projeto__titulo', 'projeto__titulo_final', 'alocacao__aluno__user__username']
 
 @admin.register(Recomendada)
