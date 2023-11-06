@@ -115,7 +115,7 @@
         <textarea id="relato" name="relato" rows="10" cols="160" maxlength="4096" disabled>{{relato.texto}}</textarea><br>
 
         <label>Desempenho esperado</label>:&nbsp;&nbsp;&nbsp;&nbsp;
-        <div>
+        <div style="width: fit-content;" {% if not relato %}data-toggle="tooltip" data-html="true" animation="true" title="Estudante não entregou relato"{% endif %}>
           <div class="custom-control custom-radio custom-control-inline">
             <input type="radio" id="customRadioInline0{{relato.id}}" name="op.{{relato.id}}" class="custom-control-input"
                     value="1" {% if relato.avaliacao > 0 %}checked="checked"{% endif %} {% if not relato or not editor %}disabled {% endif %}>
