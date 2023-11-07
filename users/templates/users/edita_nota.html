@@ -58,7 +58,7 @@
           {% with avaliacoes=avaliacoes_grupo|pega_tipo:composicao.exame %}
           {% for peso in composicao.peso_set.all %}
             <li>
-              <span>{{peso.objetivo.titulo}}</span>
+              <span>{% if peso.objetivo %}{{peso.objetivo.titulo}}{% else %}Avaliação Única{% endif %}</span>
               {% with objetivo=avaliacoes|pega_objetivo:peso.objetivo %}
                 <span>
                     peso: 

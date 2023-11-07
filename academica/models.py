@@ -62,8 +62,11 @@ class Composicao(models.Model):
     pesos = models.ManyToManyField("projetos.ObjetivosDeAprendizagem", through='Peso',
                                     help_text="Pesos dos Objetivos de Aprendizado por Avaliação")
 
-    ano = models.PositiveIntegerField("Ano", help_text="Ano que esquema começou a ser usado")
-    semestre = models.PositiveIntegerField("Semestre", help_text="Semestre que esquema começou a ser usado")
+    data_inicial = models.DateField("Data Inicial", null=True, blank=True,
+                                    help_text='Data Inicial de Uso')
+
+    data_final = models.DateField("Data Final", null=True, blank=True,
+                                  help_text='Data Final de Uso')
 
     def __str__(self):
         return str(self.exame)

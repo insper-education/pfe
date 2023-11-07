@@ -472,7 +472,7 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
     for i in range(objetivos_possiveis):
         if julgamento[i] and not julgamento[i].na:
             message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
-                format(julgamento[i].objetivo)
+                format(julgamento[i].objetivo.titulo)
             message += "<td style='border: 1px solid black; text-align:center'>"
             message += "&nbsp;{0}&nbsp;</td>\n".\
                 format(converte_letra(julgamento[i].nota))
