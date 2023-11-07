@@ -17,10 +17,10 @@ from projetos.tipos import TIPO_EVENTO, TIPO_DE_DOCUMENTO
 class Exame(models.Model):
     """Exames que são realizados durante o semestre."""
 
-    titulo = models.TextField("Título", max_length=128, null=True, blank=True,
+    titulo = models.TextField("Título", max_length=128, null=True, blank=True, unique=True,
                               help_text="Título do Exame")
     
-    sigla = models.TextField("Sigla", max_length=3, null=True, blank=True,
+    sigla = models.TextField("Sigla", max_length=3, null=True, blank=True, unique=True,
                               help_text="Sigla do Exame")
 
     grupo = models.BooleanField("Grupo", default=False,
