@@ -9,10 +9,7 @@
   {% load static %}
   {% load l10n %}
   {% load dictionary %}
-
   {% load pega_avaliacao %}
-
-  
 
   <style>
     textarea {
@@ -41,26 +38,27 @@
 
   <span class="titulo">Edição de Notas</span>
 
-  <b><label for="nome">Nome: </label></b> {{alocacao.aluno}}<br>
-  <b><label for="projeto">Projeto: </label></b> {{alocacao.projeto}}<br>
-  <b><label for="orientador">Orientador{% if alocacao.projeto.orientador.user.genero == 'F' %}a{% endif %}: </label></b> {{alocacao.projeto.orientador}}<br>
+  <b>Nome:</b> <a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}</a><br>
+  <b>Projeto:</b> <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
+                {{alocacao.projeto.get_titulo}}
+                ({{alocacao.projeto.organizacao.nome}})
+                { {{alocacao.projeto.ano}}.{{alocacao.projeto.semestre}} }
+                {% include "tipo_projeto.html" with projeto=alocacao.projeto %}
+            </a><br>
+  <b>Orientador{% if alocacao.projeto.orientador.user.genero == 'F' %}a{% endif %}:</b> <a href="{% url 'professor_detail' alocacao.projeto.orientador.id %}">{{alocacao.projeto.orientador.user.get_full_name}}</a><br>
   <br>
 
   <form method="post"> {% csrf_token %}
 
-    <h1>PARTE NOVA</h1>
-
-    
     {% for composicao in composicoes %}
       {% if composicao.exame %}
         <b>{{composicao.exame.titulo}}: <span id="a{{composicao.exame.id}}_media"></span></b>
         <ul>
-          {% with avaliacoes=avaliacoes_grupo|pega_tipo:composicao.exame %}
+          {% with avaliacoes=avaliacoes|pega_tipo:composicao.exame %}
           {% for peso in composicao.peso_set.all %}
             <li>
               <span>{% if peso.objetivo %}{{peso.objetivo.titulo}}{% else %}Avaliação Única{% endif %}</span>
               {% with objetivo=avaliacoes|pega_objetivo:peso.objetivo %}
-                <span>
                     peso: 
                     <input class="peso" id="a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}"
                           name="a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}" type="number"
@@ -83,7 +81,6 @@
                             <option value="{{x}}">{{x}}</option>
                           {% endfor %}{% endwith %}
                     </select>
-                </span>
 
                 <script>
                   $(function() {
@@ -103,7 +100,7 @@
           {% endfor %}
           {% endwith %}
         </ul>
-        {% with observacoes=observacoes_grupo|pega_tipo:composicao.exame %}
+        {% with observacoes=observacoes|pega_tipo:composicao.exame %}
           <span style="margin-left: 10px;">Observações:</span><br>
           <textarea id="a{{composicao.exame.id}}_obs" name="a{{composicao.exame.id}}_obs"
                     rows="4" cols="80" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
@@ -119,8 +116,7 @@
       function calculateAvarage() {
         {% for composicao in composicoes %}
           {% if composicao.exame %}
-            {% with avaliacoes=avaliacoes_grupo|pega_tipo:composicao.exame %}
-
+            {% with avaliacoes=avaliacoes|pega_tipo:composicao.exame %}
               soma = 0.0;
               total = 0.0;
               {% for peso in composicao.peso_set.all %}
@@ -133,11 +129,9 @@
                   }
                 {% endwith %}
               {% endfor %}
-
               if(total > 0) { media = soma/total; }
               else { media = 0; }
               $("#a{{composicao.exame.id}}_media").text(media.toFixed(2));
-      
             {% endwith %}
           {% endif %}
         {% endfor %}
@@ -427,8 +421,7 @@
     {% endif %}
 
 
-    {% comment %}  ----------------------------  PARTE ATUAL ----------------------------  {% endcomment %}
-
+    <!-- ----------------------------  PARTE ATUAL ---------------------------- -->
 
 
     <b>Relatório Intermediário Individual: <span id="rii_media"></span></b>

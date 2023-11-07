@@ -424,21 +424,21 @@ def informacoes_adicionais(request):
             estudante.user.save()
 
             estudante.save()
-            return render(request, 'users/atualizado.html',)
+            return render(request, "users/atualizado.html",)
 
         context = {
             "vencido": vencido,
             "estudante": estudante,
-            'entidades': Entidade.objects.all(),
+            "entidades": Entidade.objects.all(),
         }
     else:  # Supostamente professores
         context = {
-            'mensagem': "Você não está cadastrado como estudante.",
-            'vencido': True,
-            'entidades': Entidade.objects.all(),
+            "mensagem": "Você não está cadastrado como estudante.",
+            "vencido": True,
+            "entidades": Entidade.objects.all(),
         }
 
-    return render(request, 'estudantes/informacoes_adicionais.html', context)
+    return render(request, "estudantes/informacoes_adicionais.html", context)
 
 
 @login_required

@@ -36,6 +36,22 @@
     <strong>CR:</strong> {{aluno.cr}}<br>
   {% endif %}
 
+  {% if aluno.user.telefone or aluno.user.celular or aluno.user.instant_messaging %}
+  <strong>Telefones:</strong><br> 
+    {% if aluno.user.telefone %}&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; 
+        <a href="tel:{{aluno.user.telefone}}">{{aluno.user.telefone}}</a>&nbsp;<br>
+    {% endif %}
+    {% if aluno.user.celular %}&nbsp;&nbsp;&nbsp;&#x1F4F1;
+        <a href="tel:{{aluno.user.celular}}">{{aluno.user.celular}}</a>&nbsp;
+        <a href="https://wa.me/{{aluno.user.celular|cut:' '}}"><img src="{% static 'images/whatsapp.svg' %}" alt="whatsapp" style="width:16px;height:16px;"></a>
+        <br>
+    {% endif %}
+    {% if aluno.user.instant_messaging %}&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="instant_messaging" style="width:16px;height:16px;">
+        {% comment %} <a href="instant_messaging:{{aluno.instant_messaging}}">{% endcomment %}{{aluno.user.instant_messaging}}{% comment %}</a>{% endcomment %}&nbsp;<br> 
+    {% endif %}
+  {% endif %}
+  <p>&nbsp;</p>
+
   <strong>Situação Acadêmica:</strong> {% if aluno.trancado %}Trancamento{% else %}Normal{% endif %}<br>
 
   {% if aluno.user.observacoes %}
