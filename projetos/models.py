@@ -1355,24 +1355,24 @@ class ObjetivosDeAprendizagem(models.Model):
 
 # NAO USAR MAIS, ESTA OBSOLETO, REMOVER !!!!
 # Usado em Avaliacao e Observacao
-TIPO_DE_AVALIACAO = ( # não mudar a ordem dos números
-    (0, 'Não definido'),
-    (1, 'Banca Intermediária'),
-    (2, 'Banca Final'),
-    (10, 'Relatório de Planejamento'),      # avaliado até 2020.1
-    (11, 'Relatório Intermediário de Grupo'),
-    (12, 'Relatório Final de Grupo'),
-    (21, 'Relatório Intermediário Individual'),
-    (22, 'Relatório Final Individual'),
+# TIPO_DE_AVALIACAO = ( # não mudar a ordem dos números
+#     (0, 'Não definido'),
+#     (1, 'Banca Intermediária'),
+#     (2, 'Banca Final'),
+#     (10, 'Relatório de Planejamento'),      # avaliado até 2020.1
+#     (11, 'Relatório Intermediário de Grupo'),
+#     (12, 'Relatório Final de Grupo'),
+#     (21, 'Relatório Intermediário Individual'),
+#     (22, 'Relatório Final Individual'),
 
-    (50, 'Planejamento Primeira Fase'),     # usado até 2019.1
-    (51, 'Avaliação Parcial Individual'),   # usado até 2019.1
-    (52, 'Avaliação Final Individual'),     # usado até 2019.1
-    (53, 'Avaliação Parcial de Grupo'),     # usado até 2019.1
-    (54, 'Avaliação Final de Grupo'),       # usado até 2019.1
-    (99, 'Falconi'),
-    (200, "Relato Quinzenal"),
-)
+#     (50, 'Planejamento Primeira Fase'),     # usado até 2019.1
+#     (51, 'Avaliação Parcial Individual'),   # usado até 2019.1
+#     (52, 'Avaliação Final Individual'),     # usado até 2019.1
+#     (53, 'Avaliação Parcial de Grupo'),     # usado até 2019.1
+#     (54, 'Avaliação Final de Grupo'),       # usado até 2019.1
+#     (99, 'Falconi'),
+#     (200, "Relato Quinzenal"),
+# )
 
 
 
@@ -1380,7 +1380,7 @@ class Avaliacao2(models.Model):
     """Avaliações realizadas durante o projeto."""
 
     # NÃO USAR MAIS TIPO DE AVALIAÇÃO, USAR EXAME
-    tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
+    # tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
 
     # DEFINE O TIPO DE AVALIAÇÃO
     exame = models.ForeignKey("academica.Exame", null=True, blank=True, on_delete=models.SET_NULL,
@@ -1443,7 +1443,7 @@ class Avaliacao_Velha(models.Model):
     """Quando avaliações de banca são refeitas, as antigas vem para essa base de dados."""
 
     # NÃO USAR MAIS TIPO DE AVALIAÇÃO, USAR EXAME
-    tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
+    # tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
 
     # DEFINE O TIPO DE AVALIAÇÃO
     exame = models.ForeignKey("academica.Exame", null=True, blank=True, on_delete=models.SET_NULL,
@@ -1532,7 +1532,7 @@ class Observacao(models.Model):
     """Observações realizadas durante avaliações."""
 
     # NÃO USAR MAIS TIPO DE AVALIAÇÃO, USAR EXAME
-    tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
+    # tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
 
     # DEFINE O TIPO DE AVALIAÇÃO
     exame = models.ForeignKey("academica.Exame", null=True, blank=True, on_delete=models.SET_NULL,
@@ -1581,7 +1581,7 @@ class Observacao_Velha(models.Model):
     """Quando Observações de banca são refeitas, as antigas vem para essa base de dados."""
 
     # NÃO USAR MAIS TIPO DE AVALIAÇÃO, USAR EXAME
-    tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
+    # tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
 
     # DEFINE O TIPO DE AVALIAÇÃO
     exame = models.ForeignKey("academica.Exame", null=True, blank=True, on_delete=models.SET_NULL,
