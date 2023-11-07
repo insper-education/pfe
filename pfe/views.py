@@ -42,30 +42,6 @@ from academica.models import Exame
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
-    message = "Feito"
-
-
-    de_para = {}
-
-    for t in TIPO_DE_AVALIACAO:
-        exame, _created = Exame.objects.get_or_create(titulo=t[1])
-        exame.save()
-        de_para[t[0]] = exame
-
-    for a in Avaliacao2.objects.all():
-        a.exame = de_para[a.tipo_de_avaliacao]
-        a.save()
-
-    for a in Avaliacao_Velha.objects.all():
-        a.exame = de_para[a.tipo_de_avaliacao]
-        a.save()
-
-    for a in Observacao.objects.all():
-        a.exame = de_para[a.tipo_de_avaliacao]
-        a.save()
-
-    for a in Observacao_Velha.objects.all():
-        a.exame = de_para[a.tipo_de_avaliacao]
-        a.save()
+    message = "Nada Feito"
 
     return HttpResponse(message)
