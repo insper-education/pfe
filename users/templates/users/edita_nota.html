@@ -72,8 +72,8 @@
                           min="0" max="10" step="any" style="width: 4em;"
                           {% if objetivo.nota != None %}value="{{objetivo.nota}}"{% endif %}
                           {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
-                  
-                    &nbsp;&nbsp;conceito:
+
+                          &nbsp;&nbsp;conceito:
                     <select class="conc" id="a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}"
                             name="a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}"
                             {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>

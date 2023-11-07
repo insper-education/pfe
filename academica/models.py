@@ -30,7 +30,7 @@ class Exame(models.Model):
                                 help_text='qualquer observação relevante')
 
     def __str__(self):
-        return str(self.titulo)
+        return str(self.titulo) 
 
     @classmethod
     def create(cls, titulo):
@@ -69,7 +69,16 @@ class Composicao(models.Model):
                                   help_text='Data Final de Uso')
 
     def __str__(self):
-        return str(self.exame)
+        texto = str(self.exame) + "  [ "
+        if self.data_inicial:
+            texto += str(self.data_inicial)
+        texto += " -> "
+        if self.data_final:
+            texto += str(self.data_final)
+        else:
+            texto += "hoje"
+        texto += " ]"
+        return texto
 
     @classmethod
     def create(cls, organizacao):
