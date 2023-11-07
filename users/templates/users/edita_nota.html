@@ -70,7 +70,7 @@
                     <input class="nota" id="a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}"
                           name="a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}" type="number"
                           min="0" max="10" step="any" style="width: 4em;"
-                          value="{% if objetivo.nota != None %}{{objetivo.nota}}{% endif %}"
+                          {% if objetivo.nota != None %}value="{{objetivo.nota}}"{% endif %}
                           {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
                   
                     &nbsp;&nbsp;conceito:
