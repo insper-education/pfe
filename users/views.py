@@ -521,7 +521,6 @@ def edita_notas(request, primarykey):
     else:
         reprovacao = None
 
-    
     if request.method == 'POST':
 
         if request.user:
@@ -533,576 +532,89 @@ def edita_notas(request, primarykey):
                 }
                 return render(request, 'generic.html', context=context)
 
-        # RPL
-
-        print(request.POST)
-        nota = request.POST.get('rpl_nota', "")
-        peso = request.POST.get('rpl_peso', "")
-        # if nota != "":
-        #     (reg, _created) = rpl.get_or_create(projeto=alocacao.projeto)
-        #     if _created:
-        #         reg.exame = Exame.objects.get(titulo="Relatório de Planejamento")
-        #         if alocacao.projeto.orientador:
-        #             reg.avaliador = alocacao.projeto.orientador.user
-        #     reg.peso = float(peso)
-        #     reg.nota = float(nota)
-        #     reg.save()
-
-        # for objetivo in objetivos:
-
-        #     # RII
-        #     if objetivo.avaliacao_aluno:
-        #         nota = request.POST.get('rii_nota_'+str(objetivo), "")
-        #         peso = request.POST.get('rii_peso_'+str(objetivo), "")
-        #         if nota != "":
-        #             (reg, _created) = rii.get_or_create(objetivo=objetivo)
-        #             if _created:
-        #                 reg.exame = Exame.objects.get(titulo="Relatório Intermediário Individual")
-        #                 reg.alocacao = alocacao
-        #                 if alocacao.projeto.orientador:
-        #                     reg.avaliador = alocacao.projeto.orientador.user
-        #                 reg.projeto = alocacao.projeto
-        #             reg.peso = float(peso)
-        #             reg.nota = float(nota)
-        #             reg.save()
-
-        # obs = request.POST.get('rpl_obs', "")
-        # if obs:
-        #     reg = rpl_obs.last()
-        #     if not reg:
-        #         reg = Observacao.create(projeto=alocacao.projeto)
-        #         reg.exame = Exame.objects.get(titulo="Relatório de Planejamento")
-        #         if alocacao.projeto.orientador:
-        #             reg.avaliador = alocacao.projeto.orientador.user
-        #     reg.observacoes = obs
-        #     reg.save()
-
-        # # Reprovacao
-        # rep = request.POST.get('reprovacao', "")
-        # if rep:
-        #     reg = falha.last()
-        #     if not reg:
-        #         reg = Reprovacao.create(alocacao=alocacao)
-        #     reg.nota = rep
-        #     reg.save()
-
-        # mensagem = "Notas de <b>" + alocacao.aluno.user.get_full_name()
-        # mensagem += "</b> atualizadas:<br>\n"
-
-        # mensagem += "&nbsp;&nbsp;Peso Final = "
-        # mensagem += str(round(alocacao.get_media["pesos"]*100, 2)) + "% <br>\n"
-
-        # mensagem += "&nbsp;&nbsp;Média Final= "
-        # mensagem += str(round(alocacao.get_media["media"], 2)) + "<br>\n"
-
-        # mensagem = html.urlize(mensagem)
-        # context = {
-        #     "area_principal": True,
-        #     "mensagem": mensagem,
-        # }
-        # return render(request, 'generic.html', context=context)
-
-    ### PARTE NOVA  ### PARA SUBSTITUIR TUDO QUE TEM ABAIXO
-
-
-    objetivos = get_objetivos_alocacao(alocacao)
-
-    # (10, 'Relatório de Planejamento'),
-    rpl = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Relatório de Planejamento"),
-                                    projeto=alocacao.projeto)
-
-    # (10, 'Relatório de Planejamento'),
-    rpl_obs = Observacao.objects.filter(exame = Exame.objects.get(titulo="Relatório de Planejamento"),
-                                        projeto=alocacao.projeto)
-
-    # (21, 'Relatório Intermediário Individual'),
-    rii = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Relatório Intermediário Individual"),
-                                    alocacao=alocacao)
-
-    # (21, 'Relatório Intermediário Individual'),
-    rii_obs = Observacao.objects.filter(exame = Exame.objects.get(titulo="Relatório Intermediário Individual"),
-                                        alocacao=alocacao)
-
-    # (11, 'Relatório Intermediário de Grupo'),
-    rig = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Relatório Intermediário de Grupo"),
-                                    projeto=alocacao.projeto)
-
-    # (11, 'Relatório Intermediário de Grupo'),
-    rig_obs = Observacao.objects.filter(exame = Exame.objects.get(titulo="Relatório Intermediário de Grupo"),
-                                        projeto=alocacao.projeto)
-
-    # (22, 'Relatório Final Individual'),
-    rfi = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Relatório Final Individual"),
-                                    alocacao=alocacao)
-
-    # (22, 'Relatório Final Individual'),
-    rfi_obs = Observacao.objects.filter(exame = Exame.objects.get(titulo="Relatório Final Individual"),
-                                        alocacao=alocacao)
-
-    # (12, 'Relatório Final de Grupo'),
-    rfg = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Relatório Final de Grupo"),
-                                    projeto=alocacao.projeto)
-
-    # (12, 'Relatório Final de Grupo'),
-    rfg_obs = Observacao.objects.filter(exame = Exame.objects.get(titulo="Relatório Final de Grupo"),
-                                        projeto=alocacao.projeto)
-
-    # ( 1, 'Banca Intermediária'),
-    bai = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Banca Intermediária"),
-                                    projeto=alocacao.projeto)
-
-    # ( 2, 'Banca Final'),
-    baf = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Banca Final"),
-                                    projeto=alocacao.projeto)
-
-    # Antigo (até 2019.1)
-    # (50, 'Planejamento Primeira Fase'),
-    ppf = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Planejamento Primeira Fase"),
-                                    projeto=alocacao.projeto)
-
-    # (50, 'Planejamento Primeira Fase'),
-    ppf_obs = Observacao.objects.filter(exame = Exame.objects.get(titulo="Planejamento Primeira Fase"),
-                                        projeto=alocacao.projeto)
-
-    # (51, 'Avaliação Parcial Individual'),
-    api = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Avaliação Parcial Individual"),
-                                    alocacao=alocacao)
-
-    # (51, 'Avaliação Parcial Individual'),
-    api_obs = Observacao.objects.filter(exame = Exame.objects.get(titulo="Avaliação Parcial Individual"),
-                                        alocacao=alocacao)
-
-    # (52, 'Avaliação Final Individual'),
-    afi = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Avaliação Final Individual"),
-                                    alocacao=alocacao)
-
-    # (52, 'Avaliação Final Individual'),
-    afi_obs = Observacao.objects.filter(exame = Exame.objects.get(titulo="Avaliação Final Individual"),
-                                        alocacao=alocacao)
-
-    # (53, 'Avaliação Parcial de Grupo'),
-    apg = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Avaliação Parcial de Grupo"),
-                                    projeto=alocacao.projeto)
-
-    # (53, 'Avaliação Parcial de Grupo'),
-    apg_obs = Observacao.objects.filter(exame = Exame.objects.get(titulo="Avaliação Parcial de Grupo"),
-                                        projeto=alocacao.projeto)
-
-    # (54, 'Avaliação Final de Grupo'),
-    afg = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Avaliação Final de Grupo"),
-                                    projeto=alocacao.projeto)
-
-    # (54, 'Avaliação Final de Grupo'),
-    afg_obs = Observacao.objects.filter(exame = Exame.objects.get(titulo="Avaliação Final de Grupo"),
-                                        projeto=alocacao.projeto)
-
-    
-
-    if request.method == 'POST':
-
-        user = get_object_or_404(PFEUser, pk=request.user.pk)
-
-        if user:
-            if user.tipo_de_usuario != 4:  # não é admin
-                mensagem = "Você não tem autorização de modificar notas!"
-                context = {
-                    "area_principal": True,
-                    "mensagem": mensagem,
-                }
-                return render(request, 'generic.html', context=context)
-
-
-        # # RPL
-        # nota = request.POST.get('rpl_nota', "")
-        # peso = request.POST.get('rpl_peso', "")
-        # if nota != "":
-        #     (reg, _created) = rpl.get_or_create(projeto=alocacao.projeto)
-        #     if _created:
-        #         reg.exame = Exame.objects.get(titulo="Relatório de Planejamento")
-        #         if alocacao.projeto.orientador:
-        #             reg.avaliador = alocacao.projeto.orientador.user
-        #     reg.peso = float(peso)
-        #     reg.nota = float(nota)
-        #     reg.save()
-
-        # # PPF
-        # nota = request.POST.get('ppf_nota', "")
-        # peso = request.POST.get('ppf_peso', "")
-        # if nota != "":
-        #     (reg, _created) = ppf.get_or_create(projeto=alocacao.projeto)
-        #     if _created:
-        #         reg.exame = Exame.objects.get(titulo="Planejamento Primeira Fase")
-        #         if alocacao.projeto.orientador:
-        #             reg.avaliador = alocacao.projeto.orientador.user
-        #     reg.peso = float(peso)
-        #     reg.nota = float(nota)
-        #     reg.save()
-
-        # for objetivo in objetivos:
-
-        #     # RII
-        #     if objetivo.avaliacao_aluno:
-        #         nota = request.POST.get('rii_nota_'+str(objetivo), "")
-        #         peso = request.POST.get('rii_peso_'+str(objetivo), "")
-        #         if nota != "":
-        #             (reg, _created) = rii.get_or_create(objetivo=objetivo)
-        #             if _created:
-        #                 reg.exame = Exame.objects.get(titulo="Relatório Intermediário Individual")
-        #                 reg.alocacao = alocacao
-        #                 if alocacao.projeto.orientador:
-        #                     reg.avaliador = alocacao.projeto.orientador.user
-        #                 reg.projeto = alocacao.projeto
-        #             reg.peso = float(peso)
-        #             reg.nota = float(nota)
-        #             reg.save()
-
-        #     # RIG
-        #     if objetivo.avaliacao_grupo:
-        #         nota = request.POST.get('rig_nota_'+str(objetivo), "")
-        #         peso = request.POST.get('rig_peso_'+str(objetivo), "")
-        #         if nota != "":
-        #             (reg, _created) = rig.get_or_create(objetivo=objetivo)
-        #             if _created:
-        #                 reg.exame = Exame.objects.get(titulo="Relatório Intermediário de Grupo")
-        #                 if alocacao.projeto.orientador:
-        #                     reg.avaliador = alocacao.projeto.orientador.user
-        #                 reg.projeto = alocacao.projeto
-        #             reg.peso = float(peso)
-        #             reg.nota = float(nota)
-        #             reg.save()
-
-        #     # RFI
-        #     if objetivo.avaliacao_aluno:
-        #         nota = request.POST.get('rfi_nota_'+str(objetivo), "")
-        #         peso = request.POST.get('rfi_peso_'+str(objetivo), "")
-        #         if nota != "":
-        #             (reg, _created) = rfi.get_or_create(objetivo=objetivo)
-        #             if _created:
-        #                 reg.exame = Exame.objects.get(titulo="Relatório Final Individual")
-        #                 reg.alocacao = alocacao
-        #                 if alocacao.projeto.orientador:
-        #                     reg.avaliador = alocacao.projeto.orientador.user
-        #                 reg.projeto = alocacao.projeto
-        #             reg.peso = float(peso)
-        #             reg.nota = float(nota)
-        #             reg.save()
-
-        #     # RFG
-        #     if objetivo.avaliacao_grupo:
-        #         nota = request.POST.get('rfg_nota_'+str(objetivo), "")
-        #         peso = request.POST.get('rfg_peso_'+str(objetivo), "")
-        #         if nota != "":
-        #             (reg, _created) = rfg.get_or_create(objetivo=objetivo)
-        #             if _created:
-        #                 reg.exame = Exame.objects.get(titulo="Relatório Final de Grupo")
-        #                 if alocacao.projeto.orientador:
-        #                     reg.avaliador = alocacao.projeto.orientador.user
-        #                 reg.projeto = alocacao.projeto
-        #             reg.peso = float(peso)
-        #             reg.nota = float(nota)
-        #             reg.save()
-
-        #     # ANTIGO
-
-        #     # APG
-        #     if objetivo.avaliacao_grupo:
-        #         nota = request.POST.get('apg_nota_'+str(objetivo), "")
-        #         peso = request.POST.get('apg_peso_'+str(objetivo), "")
-        #         if nota != "":
-        #             (reg, _created) = apg.get_or_create(objetivo=objetivo)
-        #             if _created:
-        #                 reg.exame = Exame.objects.get(titulo="Avaliação Parcial de Grupo")
-        #                 if alocacao.projeto.orientador:
-        #                     reg.avaliador = alocacao.projeto.orientador.user
-        #                 reg.projeto = alocacao.projeto
-        #             reg.peso = float(peso)
-        #             reg.nota = float(nota)
-        #             reg.save()
-
-        #     # API
-        #     if objetivo.avaliacao_aluno:
-        #         nota = request.POST.get('api_nota_'+str(objetivo), "")
-        #         peso = request.POST.get('api_peso_'+str(objetivo), "")
-        #         if nota != "":
-        #             (reg, _created) = api.get_or_create(objetivo=objetivo)
-        #             if _created:
-        #                 reg.exame = Exame.objects.get(titulo="Avaliação Parcial Individual")
-        #                 reg.alocacao = alocacao
-        #                 if alocacao.projeto.orientador:
-        #                     reg.avaliador = alocacao.projeto.orientador.user
-        #                 reg.projeto = alocacao.projeto
-        #             reg.peso = float(peso)
-        #             reg.nota = float(nota)
-        #             reg.save()
-
-        #     # AFG
-        #     if objetivo.avaliacao_grupo:
-        #         nota = request.POST.get('afg_nota_'+str(objetivo), "")
-        #         peso = request.POST.get('afg_peso_'+str(objetivo), "")
-        #         if nota != "":
-        #             (reg, _created) = afg.get_or_create(objetivo=objetivo)
-        #             if _created:
-        #                 reg.exame = Exame.objects.get(titulo="Avaliação Final de Grupo")
-        #                 if alocacao.projeto.orientador:
-        #                     reg.avaliador = alocacao.projeto.orientador.user
-        #                 reg.projeto = alocacao.projeto
-        #             reg.peso = float(peso)
-        #             reg.nota = float(nota)
-        #             reg.save()
-
-        #     # AFI
-        #     if objetivo.avaliacao_aluno:
-        #         nota = request.POST.get('afi_nota_'+str(objetivo), "")
-        #         peso = request.POST.get('afi_peso_'+str(objetivo), "")
-        #         if nota != "":
-        #             (reg, _created) = afi.get_or_create(objetivo=objetivo)
-        #             if _created:
-        #                 reg.exame = Exame.objects.get(titulo="Avaliação Final Individual")
-        #                 reg.alocacao = alocacao
-        #                 if alocacao.projeto.orientador:
-        #                     reg.avaliador = alocacao.projeto.orientador.user
-        #                 reg.projeto = alocacao.projeto
-        #             reg.peso = float(peso)
-        #             reg.nota = float(nota)
-        #             reg.save()
-
-        # # RPL
-        # obs = request.POST.get('rpl_obs', "")
-        # if obs:
-        #     reg = rpl_obs.last()
-        #     if not reg:
-        #         reg = Observacao.create(projeto=alocacao.projeto)
-        #         reg.exame = Exame.objects.get(titulo="Relatório de Planejamento")
-        #         if alocacao.projeto.orientador:
-        #             reg.avaliador = alocacao.projeto.orientador.user
-        #     reg.observacoes = obs
-        #     reg.save()
-
-        # # RII
-        # obs = request.POST.get('rii_obs', "")
-        # if obs:
-        #     reg = rii_obs.last()
-        #     if not reg:
-        #         reg = Observacao.create(projeto=alocacao.projeto)
-        #         reg.exame = Exame.objects.get(titulo="Relatório Intermediário Individual")
-        #         reg.alocacao = alocacao
-        #         if alocacao.projeto.orientador:
-        #             reg.avaliador = alocacao.projeto.orientador.user
-        #     reg.observacoes = obs
-        #     reg.save()
-
-        # # RIG
-        # obs = request.POST.get('rig_obs', "")
-        # if obs:
-        #     reg = rig_obs.last()
-        #     if not reg:
-        #         reg = Observacao.create(projeto=alocacao.projeto)
-        #         reg.exame = Exame.objects.get(titulo="Relatório Intermediário de Grupo")
-        #         if alocacao.projeto.orientador:
-        #             reg.avaliador = alocacao.projeto.orientador.user
-        #     reg.observacoes = obs
-        #     reg.save()
-
-        # # RFI
-        # obs = request.POST.get('rfi_obs', "")
-        # if obs:
-        #     reg = rfi_obs.last()
-        #     if not reg:
-        #         reg = Observacao.create(projeto=alocacao.projeto)
-        #         reg.exame = Exame.objects.get(titulo="Relatório Final Individual")
-        #         reg.alocacao = alocacao
-        #         if alocacao.projeto.orientador:
-        #             reg.avaliador = alocacao.projeto.orientador.user
-        #     reg.observacoes = obs
-        #     reg.save()
-
-        # # RFG
-        # obs = request.POST.get('rfg_obs', "")
-        # if obs:
-        #     reg = rfg_obs.last()
-        #     if not reg:
-        #         reg = Observacao.create(projeto=alocacao.projeto)
-        #         reg.exame = Exame.objects.get(titulo="Relatório Final de Grupo")
-        #         if alocacao.projeto.orientador:
-        #             reg.avaliador = alocacao.projeto.orientador.user
-        #     reg.observacoes = obs
-        #     reg.save()
-
-        # # PPF
-        # obs = request.POST.get('ppf_obs', "")
-        # if obs:
-        #     reg = ppf_obs.last()
-        #     if not reg:
-        #         reg = Observacao.create(projeto=alocacao.projeto)
-        #         reg.exame = Exame.objects.get(titulo="Planejamento Primeira Fase")
-        #         if alocacao.projeto.orientador:
-        #             reg.avaliador = alocacao.projeto.orientador.user
-        #     reg.observacoes = obs
-        #     reg.save()
-
-        # # APG
-        # obs = request.POST.get('apg_obs', "")
-        # if obs:
-        #     reg = apg_obs.last()
-        #     if not reg:
-        #         reg = Observacao.create(projeto=alocacao.projeto)
-        #         reg.exame = Exame.objects.get(titulo="Avaliação Parcial de Grupo")
-        #         if alocacao.projeto.orientador:
-        #             reg.avaliador = alocacao.projeto.orientador.user
-        #     reg.observacoes = obs
-        #     reg.save()
-
-        # # API
-        # obs = request.POST.get('api_obs', "")
-        # if obs:
-        #     reg = api_obs.last()
-        #     if not reg:
-        #         reg = Observacao.create(projeto=alocacao.projeto)
-        #         reg.exame = Exame.objects.get(titulo="Avaliação Parcial Individual")
-        #         reg.alocacao = alocacao
-        #         if alocacao.projeto.orientador:
-        #             reg.avaliador = alocacao.projeto.orientador.user
-        #     reg.observacoes = obs
-        #     reg.save()
-
-        # # AFG
-        # obs = request.POST.get('afg_obs', "")
-        # if obs:
-        #     reg = afg_obs.last()
-        #     if not reg:
-        #         reg = Observacao.create(projeto=alocacao.projeto)
-        #         reg.exame = Exame.objects.get(titulo="Avaliação Final de Grupo")
-        #         if alocacao.projeto.orientador:
-        #             reg.avaliador = alocacao.projeto.orientador.user
-        #     reg.observacoes = obs
-        #     reg.save()
-
-        # # AFI
-        # obs = request.POST.get('afi_obs', "")
-        # if obs:
-        #     reg = afi_obs.last()
-        #     if not reg:
-        #         reg = Observacao.create(projeto=alocacao.projeto)
-        #         reg.exame = Exame.objects.get(titulo="Avaliação Final Individual")
-        #         reg.alocacao = alocacao
-        #         if alocacao.projeto.orientador:
-        #             reg.avaliador = alocacao.projeto.orientador.user
-        #     reg.observacoes = obs
-        #     reg.save()
-
-        # # Reprovacao
-        # rep = request.POST.get('reprovacao', "")
-        # if rep:
-        #     reg = falha.last()
-        #     if not reg:
-        #         reg = Reprovacao.create(alocacao=alocacao)
-        #     reg.nota = rep
-        #     reg.save()
-
-        # mensagem = "Notas de <b>" + alocacao.aluno.user.get_full_name()
-        # mensagem += "</b> atualizadas:<br>\n"
-
-        # mensagem += "&nbsp;&nbsp;Peso Final = "
-        # mensagem += str(round(alocacao.get_media["pesos"]*100, 2)) + "% <br>\n"
-
-        # mensagem += "&nbsp;&nbsp;Média Final= "
-        # mensagem += str(round(alocacao.get_media["media"], 2)) + "<br>\n"
-
-        # mensagem = html.urlize(mensagem)
-        # context = {
-        #     "area_principal": True,
-        #     "mensagem": mensagem,
-        # }
-        # return render(request, 'generic.html', context=context)
-
-    # Para projetos antigos
-    rpl_nota = None
-    rpl_peso = None
-    rpl_existe = False
-
-    if (alocacao.projeto.ano < 2020) or\
-       (alocacao.projeto.ano == 2020 and alocacao.projeto.semestre == 1):
-        rpl_existe = True
-        if rpl:
-            rpl_nota = rpl.last().nota
-            rpl_peso = rpl.last().peso
-
-    # Para projetos bem antigos
-    ppf_nota = None
-    ppf_peso = None
-    api_peso = {}
-    api_nota = {}
-    afi_peso = {}
-    afi_nota = {}
-    apg_peso = {}
-    apg_nota = {}
-    afg_peso = {}
-    afg_nota = {}
-    aval_existe = False
-    if (alocacao.projeto.ano == 2018) or \
-       (alocacao.projeto.ano == 2019 and alocacao.projeto.semestre == 1):
-        aval_existe = True
-        if ppf:
-            ppf_nota = ppf.last().nota
-            ppf_peso = ppf.last().peso
-        for registro in api:
-            api_nota[registro.objetivo] = registro.nota
-            api_peso[registro.objetivo] = registro.peso
-        for registro in afi:
-            afi_nota[registro.objetivo] = registro.nota
-            afi_peso[registro.objetivo] = registro.peso
-        for registro in apg:
-            apg_nota[registro.objetivo] = registro.nota
-            apg_peso[registro.objetivo] = registro.peso
-        for registro in afg:
-            afg_nota[registro.objetivo] = registro.nota
-            afg_peso[registro.objetivo] = registro.peso
-
-    rii_peso = {}
-    rii_nota = {}
-    for registro in rii:
-        rii_nota[registro.objetivo] = registro.nota
-        rii_peso[registro.objetivo] = registro.peso
-    
-    # Peso padrão da nota do conceito do objetivo na avaliação
-    rii_peso_padrao = {}
-    for objetivo in objetivos:
-        rii_peso_padrao[objetivo] = objetivo.peso_intermediario_individual
-
-    rig_peso = {}
-    rig_nota = {}
-    for registro in rig:
-        rig_nota[registro.objetivo] = registro.nota
-        rig_peso[registro.objetivo] = registro.peso
-
-    # Peso padrão da nota do conceito do objetivo na avaliação
-    rig_peso_padrao = {}
-    for objetivo in objetivos:
-        rig_peso_padrao[objetivo] = objetivo.peso_intermediario_grupo
-
-    rfi_peso = {}
-    rfi_nota = {}
-    for registro in rfi:
-        rfi_nota[registro.objetivo] = registro.nota
-        rfi_peso[registro.objetivo] = registro.peso
-
-    # Peso padrão da nota do conceito do objetivo na avaliação
-    rfi_peso_padrao = {}
-    for objetivo in objetivos:
-        rfi_peso_padrao[objetivo] = objetivo.peso_final_individual
-
-    rfg_peso = {}
-    rfg_nota = {}
-    for registro in rfg:
-        rfg_nota[registro.objetivo] = registro.nota
-        rfg_peso[registro.objetivo] = registro.peso
-
-    # Peso padrão da nota do conceito do objetivo na avaliação
-    rfg_peso_padrao = {}
-    for objetivo in objetivos:
-        rfg_peso_padrao[objetivo] = objetivo.peso_final_grupo
-
-
+        for composicao in composicoes:
+            if composicao.exame:
+                for peso in composicao.peso_set.all():
+                    peso_name = "a" + str(composicao.exame.id) + "_peso_" + str(peso.objetivo.id)
+                    nota_name = "a" + str(composicao.exame.id) + "_nota_" + str(peso.objetivo.id)
+                    peso_value = request.POST.get(peso_name, "")
+                    nota_value = request.POST.get(nota_name, "")
+                    
+                    if nota_value != "":
+                        if composicao.exame.grupo:
+                            (reg, _created) = avaliacoes.get_or_create(projeto=alocacao.projeto,
+                                                                       exame=composicao.exame,
+                                                                       objetivo=peso.objetivo,
+                                                                       avaliador = alocacao.projeto.orientador.user)
+                        else:
+                            (reg, _created) = avaliacoes.get_or_create(projeto=alocacao.projeto,
+                                                                       exame=composicao.exame,
+                                                                       objetivo=peso.objetivo,
+                                                                       alocacao=alocacao,
+                                                                       avaliador = alocacao.projeto.orientador.user)
+                        reg.peso = float(peso_value)
+                        reg.nota = float(nota_value)
+                        
+                        if _created:
+                            if alocacao.projeto.orientador:
+                                reg.avaliador = alocacao.projeto.orientador.user
+
+                        reg.save()
+
+            obs_name = "a" + str(composicao.exame.id) + "_obs"
+            obs_value = request.POST.get(obs_name, "")
+            if obs_value != "":
+                        if composicao.exame.grupo:
+                            (reg, _created) = observacoes.get_or_create(projeto=alocacao.projeto,
+                                                                       exame=composicao.exame,
+                                                                       avaliador = alocacao.projeto.orientador.user)
+                        else:
+                            (reg, _created) = observacoes.get_or_create(projeto=alocacao.projeto,
+                                                                       exame=composicao.exame,
+                                                                       alocacao=alocacao,
+                                                                       avaliador = alocacao.projeto.orientador.user)
+                        reg.observacoes = obs_value
+
+                        if _created:
+                            if alocacao.projeto.orientador:
+                                reg.avaliador = alocacao.projeto.orientador.user
+
+                        reg.save()
+
+        # Reprovacao
+        rep = request.POST.get("reprovacao", "")
+        if rep:
+            reg = falha.last()
+            if not reg:
+                reg = Reprovacao.create(alocacao=alocacao)
+            reg.nota = rep
+            reg.save()
+
+        mensagem = "Notas de <b>" + alocacao.aluno.user.get_full_name()
+        mensagem += "</b> atualizadas:<br>\n"
+
+        mensagem += "&nbsp;&nbsp;Peso Final = "
+        mensagem += str(round(alocacao.get_media["pesos"]*100, 2)) + "% <br>\n"
+
+        mensagem += "&nbsp;&nbsp;Média Final= "
+        mensagem += str(round(alocacao.get_media["media"], 2)) + "<br>\n"
+        mensagem += "<br>\n"
+
+        for avaliacao in avaliacoes:
+            mensagem += str(avaliacao.exame)
+            mensagem += " [" + str(avaliacao.avaliador) + "]"
+            if(avaliacao.objetivo):
+                mensagem += "  obj: " + str(avaliacao.objetivo.titulo) + ", "
+            mensagem += " peso: " + str(avaliacao.peso) + ", "
+            mensagem += " nota: " +str(avaliacao.nota)
+            mensagem += "<br>\n"
+
+        mensagem = html.urlize(mensagem)
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, 'generic.html', context=context)
 
     context = {
         'alocacao': alocacao,
@@ -1110,48 +622,6 @@ def edita_notas(request, primarykey):
         "avaliacoes": avaliacoes,
         "observacoes": observacoes,
         "reprovacao": reprovacao,
-
-        'objetivos': objetivos,
-        'rpl': rpl_existe,
-        "aval": aval_existe,
-        'rpl_nota': rpl_nota,
-        'rpl_peso': rpl_peso,
-        'rpl_obs': rpl_obs.last(),
-        'rii_nota': rii_nota,
-        'rii_peso': rii_peso,
-        'rii_obs': rii_obs.last(),
-        "rii_peso_padrao": rii_peso_padrao,
-        'rig_nota': rig_nota,
-        'rig_peso': rig_peso,
-        'rig_obs': rig_obs.last(),
-        "rig_peso_padrao": rig_peso_padrao,
-        'rfi_nota': rfi_nota,
-        'rfi_peso': rfi_peso,
-        'rfi_obs': rfi_obs.last(),
-        "rfi_peso_padrao": rfi_peso_padrao,
-        'rfg_nota': rfg_nota,
-        'rfg_peso': rfg_peso,
-        'rfg_obs': rfg_obs.last(),
-        "rfg_peso_padrao": rfg_peso_padrao,
-        'bi': bai,
-        'bf': baf,
-        "ppf_nota": ppf_nota,
-        "ppf_peso": ppf_peso,
-        "ppf_obs": ppf_obs.last(),
-        "api_nota": api_nota,
-        "api_peso": api_peso,
-        "api_obs": api_obs.last(),
-        "afi_nota": afi_nota,
-        "afi_peso": afi_peso,
-        "afi_obs": afi_obs.last(),
-        "apg_nota": apg_nota,
-        "apg_peso": apg_peso,
-        "apg_obs": apg_obs.last(),
-        "afg_nota": afg_nota,
-        "afg_peso": afg_peso,
-        "afg_obs": afg_obs.last(),
-
-
     }
 
     return render(request, 'users/edita_nota.html', context=context)

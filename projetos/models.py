@@ -1389,7 +1389,7 @@ class Avaliacao2(models.Model):
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
                                    help_text='Data e hora da comunicação') # hora ordena para dia
 
-    peso = models.FloatField("Peso", validators=[MinValueValidator(0), MaxValueValidator(100)],
+    peso = models.FloatField("Peso", validators=[MinValueValidator(0), MaxValueValidator(100)], null=True, blank=True,
                              help_text='Pesa da avaliação na média em % (varia de 0 a 100)')
 
     # A nota será convertida para rubricas se necessário
@@ -1397,6 +1397,7 @@ class Avaliacao2(models.Model):
 
     # Somente útil para Bancas
     avaliador = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
+                                  related_name='avaliador',
                                   help_text='avaliador do projeto')
 
     # Para Bancas e Entregas em Grupo (quando avaliando o grupo inteiro)
