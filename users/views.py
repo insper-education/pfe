@@ -535,8 +535,8 @@ def edita_notas(request, primarykey):
         for composicao in composicoes:
             if composicao.exame:
                 for peso in composicao.peso_set.all():
-                    peso_name = "a" + str(composicao.exame.id) + "_peso_" + str(peso.objetivo.id)
-                    nota_name = "a" + str(composicao.exame.id) + "_nota_" + str(peso.objetivo.id)
+                    peso_name = "a" + str(composicao.exame.id) + "_peso_" + (str(peso.objetivo.id) if peso.objetivo else "")
+                    nota_name = "a" + str(composicao.exame.id) + "_nota_" + (str(peso.objetivo.id) if peso.objetivo else "")
                     peso_value = request.POST.get(peso_name, "")
                     nota_value = request.POST.get(nota_name, "")
                     
