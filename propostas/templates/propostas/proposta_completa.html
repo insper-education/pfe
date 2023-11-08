@@ -23,10 +23,6 @@
   <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
   <link rel="stylesheet" type="text/css" href="{% static 'css/Chart.min.css' %}">
 
-  {% comment %} REMOVER ISSO POIS ESTA EM DUPLICATA {% endcomment %}
-  {% comment %} <script type="text/javascript" src="{% static 'js/pfe.js' %}"></script> {% endcomment %}
-
-
 {% endblock %}
 
 {% block content %}
@@ -192,7 +188,9 @@
       </tbody>
     </table>
 
-    <br><b><label for="autorizador">Autorizado por</label></b>:
+    <br><b><label for="autorizador" data-toggle="tooltip" data-html="true" animation="true" 
+      title="Mesmo ao autorizar uma proposta, esta só será visivel para os estudantes<br>depois que a liberação de visualização for habilitada.">
+      Autorizado por</label></b>:
     <select class="fechar_proposta" name="autorizador" id="autorizador" title="Selecione quem autorizou proposta" required>
         <option value='0'> ---- </option>
         {% for pessoa in comite %}
@@ -202,13 +200,17 @@
         {% endfor %}
     </select>
 
-    <br><b>Disponibilizar: </b>
+    <br><b data-toggle="tooltip" data-html="true" animation="true" 
+           title="Mesmo ao disponibilizar uma proposta, esta só será visivel para os estudantes<br>depois que a liberação de visualização for habilitada.">
+      Disponibilizar:
+    </b>
     <label><input class="fechar_proposta" type="radio" name="disponibilizar" value="sim"
       {% if proposta.disponivel %}checked{% endif %}
     > Sim</label>
     <label><input class="fechar_proposta" type="radio" name="disponibilizar" value="nao"
       {% if not proposta.disponivel %}checked{% endif %}
     > Não</label>
+    &nbsp;&nbsp;<small>Previsão para liberar visualização de propostas para estudantes em: {{liberacao_visualizacao.startDate}}</small> 
 
     <div id="valor_atualizado" style="display: none; width: fit-content;padding-left: 8px;padding-right: 8px;"></div>
 

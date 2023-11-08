@@ -20,8 +20,12 @@ from users.models import Professor, Parceiro, Administrador
 
 from projetos.models import Proposta, Projeto, Organizacao, Disciplina, Conexao
 from projetos.models import Configuracao, Area, AreaDeInteresse, Recomendada
+from projetos.models import Evento
 
 from operacional.models import Curso
+
+from administracao.support import get_limite_propostas
+
 
 from .support import retorna_ternario, ordena_propostas_novo, ordena_propostas
 from .support import envia_proposta, preenche_proposta
@@ -450,6 +454,7 @@ def propostas_apresentadas(request):
                 "disponivel_propostas": disponivel_propostas,
                 "disponivel_multidisciplinar": disponivel_multidisciplinar,
                 "vagas": vagas,
+                "limite_propostas": get_limite_propostas(configuracao),
             }
 
         else:
@@ -526,6 +531,8 @@ def proposta_completa(request, primarykey):
 
     areas = Area.objects.filter(ativa=True)
 
+    liberacao_visualizacao = Evento.objects.filter(tipo_de_evento=113).last()
+
     context = {
         "configuracao": configuracao,
         "proposta": proposta,
@@ -538,6 +545,7 @@ def proposta_completa(request, primarykey):
         'areast': areas,
         "procura": procura,
         "cursos": Curso.objects.all().order_by("id"),
+        "liberacao_visualizacao": liberacao_visualizacao,
     }
     return render(request, 'propostas/proposta_completa.html', context=context)
 

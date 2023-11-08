@@ -41,12 +41,10 @@
     text.tick-text {
         font-family: "arial";
         font-size: 10px;
-        fill-opacity:1;
         stroke-width:1px;
         stroke-linecap:butt;
         stroke-linejoin:miter;
         stroke-opacity:1;
-        font-weight: 800;
     }
 
     text.tick-text2 {
@@ -54,6 +52,11 @@
         font-size: 14px;
         fill: #000000;
     }
+
+    text.tick-text3 {
+      font-family: "arial";
+      font-size: 12px;
+  }
 
 </style>
 
@@ -78,25 +81,28 @@
     
     var m = 20;
 
+    // Esquerda abaixo
     svg.append("text")
-        .attr("x", 10)
-        .attr("y", h )
+        .attr("x", 14)
+        .attr("y", h-3 )
         .attr("transform", "rotate(-60 10 "+h+")")
         .text("{{cursos.0}}")
-        .classed('tick-text tick-a', true);
+        .classed('tick-a', true);  
 
+    // Direita abaixo
     svg.append("text")
-        .attr("x", w-20)
-        .attr("y", h+40 )
+        .attr("x", w-120)
+        .attr("y", h+48 )
         .text("{{cursos.1}}")
-        .classed('tick-text tick-b', true);
+        .classed('tick-b', true);
 
+    // Acima
     svg.append("text")
-        .attr("x", ((w/2)+50))
-        .attr("y", 20 )
+        .attr("x", ((w/2)+58))
+        .attr("y", 24 )
         .attr("transform", "rotate(60 "+((w/2)+50)+" 20)")
         .text("{{cursos.2}}")
-        .classed('tick-text tick-c', true);
+        .classed('tick-c', true);
 
   svg.append("circle")
     .attr("cx", (w/2)-80)
@@ -107,7 +113,7 @@
   svg.append("text")
     .attr("x", (w/2)-70)
     .attr("y", h+60)
-    .text("autorizado")
+    .text("Disponível")
     .classed('tick-text2 tick-p', true);
 
   svg.append("circle")
@@ -119,7 +125,7 @@
   svg.append("text")
     .attr("x", (w/2)+70)
     .attr("y", h+60)
-    .text("pendente")
+    .text("Pendente")
     .classed('tick-text2 tick-y', true);
 
 
@@ -211,7 +217,7 @@
       .attr("x", function (d) { return d[0]+d[2]; })
       .attr("y", function (d) { return d[1]-d[2]; })
       .text( function (d) { return d[3]; })
-      .classed('tick-text tick-p', true);
+      .classed('tick-text3 tick-p', true);
 
     var circles_pendentes = svg.selectAll("circle_p").data(dados_pendentes);
 
@@ -225,7 +231,7 @@
       .attr("x", function (d) { return d[0]+d[2]; })
       .attr("y", function (d) { return d[1]+7+(d[2]/2); })
       .text( function (d) { return d[3]; })
-      .classed('tick-text tick-y', true);
+      .classed('tick-text3 tick-y', true);
 
 
     function coord(a, b, c, r, t){
