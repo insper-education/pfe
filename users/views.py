@@ -521,15 +521,6 @@ def edita_notas(request, primarykey):
     else:
         reprovacao = None
 
-    # ( 1, 'Banca Intermediária'),
-    bai = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Banca Intermediária"),
-                                    projeto=alocacao.projeto)
-
-    # ( 2, 'Banca Final'),
-    baf = Avaliacao2.objects.filter(exame = Exame.objects.get(titulo="Banca Final"),
-                                    projeto=alocacao.projeto)
-
-    
     if request.method == 'POST':
 
         if request.user:
@@ -631,8 +622,6 @@ def edita_notas(request, primarykey):
         "avaliacoes": avaliacoes,
         "observacoes": observacoes,
         "reprovacao": reprovacao,
-        "bi": bai,
-        "bf": baf,
     }
 
     return render(request, 'users/edita_nota.html', context=context)
