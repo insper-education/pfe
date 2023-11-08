@@ -21,6 +21,10 @@
   <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
   <link rel="stylesheet" type="text/css" href="{% static 'css/Chart.min.css' %}">
 
+  {% comment %} REMOVER ISSO POIS ESTA EM DUPLICATA {% endcomment %}
+  {% comment %} <script type="text/javascript" src="{% static 'js/pfe.js' %}"></script> {% endcomment %}
+
+
 {% endblock %}
 
 {% block content %}
@@ -204,6 +208,7 @@
       {% if not proposta.disponivel %}checked{% endif %}
     > Não</label>
 
+    <div id="valor_atualizado" style="display: none; width: fit-content;padding-left: 8px;padding-right: 8px;"></div>
 
     <br><br>
     <a class="myButton" href="{% url 'proposta_editar' proposta.slug %}">Editar Proposta</a>
@@ -284,8 +289,8 @@
     {% endif %}
   {% endfor %}
 
-<script>
-
+  <script>
+      
      function fechar_proposta() {
       var autorizador = $("#autorizador option:selected").attr("value");
       var disponibilizar = $('input[name=disponibilizar]:checked', '#disponibilizacaoform').val();
@@ -304,9 +309,11 @@
               'csrfmiddlewaretoken': '{{ csrf_token }}',
           },
           success: function(response){
-            if (response.atualizado) {
-              console.log("Valor atualizado.");
-            }
+            //if (response.atualizado) {
+            // ------- RECURSO PARA ALGUM FEEDBACK   -------/////
+            pulsa_texto(response.atualizado, "valor_atualizado");
+            // ---------------------------------------------////
+            //}
           },
           error: function (request, status, error) {
             {% if user.tipo_de_usuario == 4 %} 
