@@ -966,6 +966,10 @@
 
     function primeiro(e) {
       
+      // Esconde e mostra meses do semestre
+      $('*[data-month-id="6"]').prevAll().show();
+      $('*[data-month-id="5"]').nextAll().hide();
+      
       var fim_semestre = 7;
 
       document.getElementById("primeiro_semestre").style.fontWeight = "bold";
@@ -1032,6 +1036,10 @@
 
     function segundo(e) {
 
+      // Esconde e mostra meses do semestre
+      $('*[data-month-id="6"]').prevAll().hide();
+      $('*[data-month-id="5"]').nextAll().show();
+      
       var inicio_semestre = 7;
 
       document.getElementById("primeiro_semestre").style.fontWeight = "normal";
@@ -1111,7 +1119,6 @@
       {% else %}
         segundo()
       {% endif %}
-
     }
 
   </script>
