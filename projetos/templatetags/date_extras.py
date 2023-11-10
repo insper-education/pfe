@@ -16,3 +16,9 @@ register = template.Library()
 def plus_days(value, days):
     """Permite adicionar uma quantidade de dias em uma data nos arquivos de template."""
     return value + datetime.timedelta(days=days)
+
+@register.filter
+def dif_dias_hoje(value):
+    """Calcula a diferença de uma data para hoje."""
+    diferenca = (value - datetime.date.today()).days
+    return int(diferenca)

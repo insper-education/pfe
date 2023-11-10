@@ -71,15 +71,15 @@ def get_calendario_context(user=None):
     # TAMBÉM ESTOU USANDO NO CELERY PARA AVISAR DOS EVENTOS
 
     context = {
-        'eventos': eventos_gerais,
-        'aulas': aulas,
-        'laboratorios': laboratorios,
-        'provas': provas,
-        'quinzenais': quinzenais,
-        'feedbacks': feedbacks,
-        'coordenacao': coordenacao,
-        'semestre': configuracao.semestre,
-        'tipos_eventos': TIPO_EVENTO,
+        "eventos": eventos_gerais,
+        "aulas": aulas,
+        "laboratorios": laboratorios,
+        "provas": provas,
+        "quinzenais": quinzenais,
+        "feedbacks": feedbacks,
+        "coordenacao": coordenacao,
+        "semestre": configuracao.semestre,
+        "tipos_eventos": TIPO_EVENTO,
         "obs_length": Evento._meta.get_field('observacao').max_length,
         "loc_length": Evento._meta.get_field('location').max_length,
     }

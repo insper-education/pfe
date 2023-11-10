@@ -9,6 +9,7 @@
   {% load static %}
 
   {% load nospaces %}
+  {% load date_extras %}
 
   {% comment %} REFERENCIA: https://github.com/year-calendar/js-year-calendar {% endcomment %}
   <script src="{% static 'js-year-calendar/dist/js-year-calendar.min.js' %}"></script>
@@ -433,7 +434,8 @@
                 </tr></thead>
                 <tbody>
                   {% for aula in aulas|dictsort:"endDate" %}
-                    <tr class="lin_aulas ano{{aula.endDate.year}} semestre" data-mes="{{aula.endDate.month}}">
+                    <tr class="lin_aulas ano{{aula.endDate.year}} semestre" data-mes="{{aula.endDate.month}}"
+                        {% if aula.startDate|dif_dias_hoje == 0 %}style="background-color: #F0FFFF;"{% endif %}>
                         <th class="colu" scope="row">{{aula.endDate|date:"d/m/Y"}}</th>
                         <td class="colu">{{aula.observacao}}</td><td class="colu">{{aula.location}}</td>
                     </tr>
