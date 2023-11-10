@@ -508,17 +508,16 @@
                                   <div class="input-group-prepend input-group-append">
                                       <div class="input-group-text">até</div>
                                   </div>
-                                  <input name="event-end-date" type="text" class="form-control">
+                                  <input id="max-date" name="event-end-date" type="text" class="form-control">
                               </div>
                           </div>
                       </div>
                   </form>
               </div>
               <div class="modal-footer">
+                  <div id="warning-footer" style="color: red;"></div>
                   <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                  <button type="button" class="btn btn-primary" id="save-event">
-                      Save
-                  </button>
+                  <button type="button" class="btn btn-primary" id="save-event">Save</button>
               </div>
           </div>
       </div>
@@ -626,6 +625,37 @@
         color: $('#event-modal select[name="event-type"] option:selected').data("color"),
       };
 
+      $("#event-type").css({"border-color":''});
+      $("#min-date").css({"border-color":''});
+      $("#max-date").css({"border-color":''});
+
+      if(event.type == null) {
+        $("#warning-footer").html("Tipo de evento é obrigatório.");
+        $("#event-type").css({"border-color":"red"});
+        return;
+      }
+
+      if(event.startDate == null) {
+        $("#warning-footer").html("Data de inicio é obrigatória.");
+        $("#min-date").css({"border-color":"red"});
+        return;
+      }
+
+      if(event.endDate == null) {
+        $("#warning-footer").html("Data de término é obrigatória.");
+        $("#max-date").css({"border-color":"red"});
+        return;
+      }
+
+      if(event.endDate - event.startDate < 0) {
+        $("#warning-footer").html("Término não pode ser anterior ao início.");
+        $("#min-date").css({"border-color":"red"});
+        $("#max-date").css({"border-color":"red"});
+        return;
+      }
+
+        //if(event.type == null) if(event.type == null)
+
       if (!event.id) {id = 0;}
       else {id = event.id;}
 
@@ -655,7 +685,7 @@
         dataType: 'json',
         success: function (data) {
           if (data.atualizado) {
-            console.log("Evento atualizado.");
+            //console.log("Evento atualizado.");
 
             if (event.id) {
               for (var i in dataSource) {
