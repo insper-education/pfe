@@ -35,6 +35,9 @@
       font-size:20px;
       font-weight: bold;
       margin-left: 12px;
+      {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+      cursor: pointer;
+      {% endif %}
     }
     
     @media only screen and (max-width: 740px) {
@@ -418,7 +421,7 @@
         <div id="bloco_aulas" class="col-xl-auto">
 
           <br>
-          <span class="tit_agenda" id="titulo_aulas">Aulas</span>
+          <span class="tit_agenda" id="titulo_aulas">Aulas</span><br>
 
           <span id="lista_aulas" class="lista_aulas">
 
@@ -964,16 +967,17 @@
           }
           calendar.setDataSource(dataEventos);  // Variavel global calendar
         }
+
         $('#titulo_operacao').click(function() {
-          $('.lista_operacao')[$('.lista_operacao').is(":hidden") ? "show" : "hide"]();
+          $(".lista_operacao").toggle( "slide" );
           atualiza_visualizacao()
         });
         $('#titulo_academico').click(function() {
-          $('.lista_academico')[$('.lista_academico').is(":hidden") ? "show" : "hide"]();
+          $(".lista_academico").toggle( "slide" );
           atualiza_visualizacao()
         });
         $('#titulo_aulas').click(function() {
-          $('.lista_aulas')[$('.lista_aulas').is(":hidden")  ? "show" : "hide"]();
+          $(".lista_aulas").toggle( "slide" );
           atualiza_visualizacao()
         });
     {% endif %}
