@@ -15,11 +15,24 @@
         cursor: default;
     }
     
+    .logo_impressoras {
+        float: right;
+        margin-top: 4px;
+        margin-left: 8px;
+    }
+
+    @media only screen and (max-width: 740px) {
+        .img_impressora {
+            -moz-transform:scale(0.8);
+            -webkit-transform:scale(0.8);
+            transform:scale(0.8);
+        }  
+    }
 
 </style>
 
-<div class="logo_impressoras" style="float: right; margin-top: 4px; margin-left: 8px">
-    <img class="logo_impressora" id="impressora" src="{% static 'images/icone_Printer.png' %}" alt="impressora" style="cursor: pointer;">
+<div class="logo_impressoras">
+    <img class="img_impressora" id="impressora" src="{% static 'images/icone_Printer.png' %}" alt="impressora" style="cursor: pointer;">
 </div>
 
 <script>
