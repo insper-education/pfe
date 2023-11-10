@@ -107,7 +107,8 @@
       border-spacing: 0px;
       border: solid black 2px;
       border-radius: 8px;
-      padding: 4px
+      padding: 4px;
+      margin-bottom: 18px;
     }
 
     .quad_pfe br {
@@ -240,7 +241,7 @@
             <span class="tit_agenda" id="titulo_operacao" data-toggle="tooltip" data-html="true" animation="true" title=
             "O semestre da coordenação vai de Fevereiro à Julho e de Agosto a Janeiro">
               Operação
-            </span>
+            </span><br>
 
             <div id="lista_operacao" class="lista_operacao quad_pfe">
               {% if coordenacao %}
@@ -264,8 +265,6 @@
             <br>
             </div>
           {% endif %}
-
-          <br>
           
           <span class="tit_agenda" id="titulo_academico">
             {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
@@ -273,7 +272,7 @@
             {% else %}
               Eventos
             {% endif %}
-          </span>
+          </span><br>
           
           <div id="lista_academico" class="lista_academico quad_pfe">
             {% if eventos %}
@@ -419,6 +418,7 @@
         </div> <!--id="bloco_eventos"-->
 
         <div id="bloco_aulas" class="col-xl-auto">
+
           <span class="tit_agenda" id="titulo_aulas">Aulas</span><br>
 
           <span id="lista_aulas" class="lista_aulas">
