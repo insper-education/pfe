@@ -229,6 +229,7 @@
     <div style="margin-top: 10px; margin-left: 3vw;">Semestre:
       <span class="semestre1" id="primeiro_semestre">1</span><span class="semestre2" id="segundo_semestre">2</span>
     </div>   
+    <br>
 
     <div id="info_semestre" class="container-fluid" style="padding-left: 6px; padding-right: 6px;">
       <div class="row justify-content-around">
@@ -236,7 +237,6 @@
         <div id="bloco_eventos" class="col-xl-auto ">
 
           {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-            <br>
             <span class="tit_agenda" id="titulo_operacao" data-toggle="tooltip" data-html="true" animation="true" title=
             "O semestre da coordenação vai de Fevereiro à Julho e de Agosto a Janeiro">
               Operação
@@ -419,8 +419,6 @@
         </div> <!--id="bloco_eventos"-->
 
         <div id="bloco_aulas" class="col-xl-auto">
-
-          <br>
           <span class="tit_agenda" id="titulo_aulas">Aulas</span><br>
 
           <span id="lista_aulas" class="lista_aulas">
