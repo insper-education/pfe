@@ -36,38 +36,6 @@
 
 <script>
 
-  function ajusta() {
-    document.querySelector('#tudo').style.width = "1200px";  
-    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-      // Escondendo informações
-      if($('#operacao').is(":not(:checked)")) {
-        $('#titulo_operacao').hide()
-      }          
-      if($('#academico').is(":not(:checked)")) {
-        $('#titulo_academico').hide()
-      }
-      $('.image').hide()
-      $('#operacao').hide()
-      $('#academico').hide()
-    {% endif %}
-  }
-
-  function reajusta() {
-      // Reajustando tela para visualização no browser
-      document.querySelector('#tudo').style.width = "100%";
-      {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-        if($('#operacao').is(":not(:checked)")) {
-          $('#titulo_operacao').show()
-        }          
-        if($('#academico').is(":not(:checked)")) {
-          $('#titulo_academico').show()
-        }
-        $('.image').show()
-        $('#operacao').show()
-        $('#academico').show()
-      {% endif %}
-  }
-
   function get_image(tipo) {
 
     ajusta();
