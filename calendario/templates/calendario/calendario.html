@@ -625,6 +625,7 @@
         color: $('#event-modal select[name="event-type"] option:selected').data("color"),
       };
 
+      // Métodos de segurança para evitar que usuário coloque campos inválidos
       $("#event-type").css({"border-color":''});
       $("#min-date").css({"border-color":''});
       $("#max-date").css({"border-color":''});
