@@ -6,6 +6,10 @@
 {% endcomment %}
 
 {% block head %}
+
+  {% load static %}
+  <script>{% include "tooltip.js" %}</script>
+  
   <style>
     #liberadas {
       padding: 30px;
@@ -44,13 +48,17 @@
 
   <br>
   
-  <input class="liberar" type="checkbox" id="liberadas_propostas" name="liberadas_propostas" {% if configuracao.liberadas_propostas %}checked{% endif %}>
+  <input class="liberar" type="checkbox" id="liberadas_propostas" name="liberadas_propostas"
+         {% if user.tipo_de_usuario != 4 %}disabled data-toggle="tooltip" data-placement="bottom" title="Somente coordenadores podem alterar valor!"{% endif %}
+         {% if configuracao.liberadas_propostas %}checked{% endif %}>
   <label for="liberadas_propostas"> Propostas Liberadas para Estudantes</label>
   <small>(Estudantes conseguirão ver as propostas disponíveis para aplicar)</small>
   <br>
 
   <label for="min_props">Mínimo de Propostas para Estudantes Selecionarem:</label>
-  <input class="liberar" id="min_props" name="min_props" type="number" min="0" max="99" step="1" style="text-align:right;" value="{{configuracao.min_props}}"/>
+  <input class="liberar" id="min_props" name="min_props" type="number" min="0" max="99" step="1" style="text-align:right;"
+         {% if user.tipo_de_usuario != 4 %}disabled data-toggle="tooltip" data-placement="bottom" title="Somente coordenadores podem alterar valor!"{% endif %}
+         value="{{configuracao.min_props}}"/>
   <span id="mess_atual" style="display: None;"> atualizado!</span>
   <br><br>
 

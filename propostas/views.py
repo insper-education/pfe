@@ -698,6 +698,8 @@ def publicar_propostas(request):
 
     #if request.method == "POST":
     if request.is_ajax():
+        if request.user.tipo_de_usuario != 4:  # Administrador
+            return HttpResponse("Somenter coordenadores podem alterar valores de publicação de propostas.", status=401)
         if "liberadas_propostas" and "min_props" in request.POST:
             data = {"atualizado": True,}
             try:
