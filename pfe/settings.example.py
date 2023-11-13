@@ -52,7 +52,13 @@ INSTALLED_APPS = [
     'academica.apps.AcademicaConfig',
     'django.contrib.sites',
     'dbbackup',
+    'axes',
     #'debug_toolbar',
+]
+
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesBackend',
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 MIDDLEWARE = [
@@ -64,8 +70,14 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'pfe.middleware.MaintenanceModeMiddleware',
+    'axes.middleware.AxesMiddleware',
     #'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
+
+# Sistema de bloqueio de acesso
+AXES_ENABLED = True
+# Libera usuário depois de uma hora
+AXES_COOLOFF_TIME = 1 # 1 hour
 
 ROOT_URLCONF = 'pfe.urls'
 

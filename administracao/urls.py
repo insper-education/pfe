@@ -42,6 +42,10 @@ urlpatterns = [
          views.cadastrar_usuario,
          name='cadastrar_usuario'),
 
+    path('desbloquear_usuarios/',
+         views.desbloquear_usuarios,
+         name='desbloquear_usuarios'),
+
     path('edita_usuario/<int:primarykey>',
          views.edita_usuario,
          name='edita_usuario'),

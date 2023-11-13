@@ -10,6 +10,7 @@ import re
 import string
 import random
 import tablib
+import axes.utils
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
@@ -446,11 +447,17 @@ def configurar(request):
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
+def desbloquear_usuarios(request):
+    """Desbloqueia todos os usuários."""
+    axes.utils.reset()
+    return HttpResponse("Todos os usuários desbloqueados.", status=200)
+
+
+@login_required
+@permission_required("users.view_administrador", raise_exception=True)
 def exportar(request, modo):
     """Exporta dados."""
-    context = {
-        "modo": modo,
-    }
+    context = {"modo": modo,}
     return render(request, 'administracao/exportar.html', context)
 
 
