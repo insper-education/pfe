@@ -687,6 +687,10 @@ class Evento(models.Model):
         """Retorna a data do evento."""
         return self.startDate
 
+    def em_prazo(self):
+        """Se ainda em prazo."""
+        return datetime.date.today() <= self.endDate
+
     @classmethod
     def create(cls):
         """Cria um objeto (entrada) em Evento."""

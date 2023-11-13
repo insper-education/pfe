@@ -20,17 +20,25 @@
               </span>
           </small>
         {% endfor %}
-      &nbsp;-
-      {% if avaliados %}
-          <span style="color:green">Avaliado pelo Orientador</span>
-          {% for avaliado in avaliados %}
-            <span data-toggle="tooltip" data-html="true" animation="true" title="{{avaliado.1}}">
-            {% if avaliado.0 %}&#x1F44D;{% else %}&#x1F44E;{% endif %}
-            </span>
-          {% endfor %}
-      {% else %}
-          <span style="color:brown">Sem avaliação do Orientador</span>
-      {% endif %}
+        -
+        {% if evento.em_prazo %}
+          <span style="color:#edc300">Aguardando relatos</span>
+        {% else %}
+          {% if relatos %}
+            {% if avaliados %}
+                <span style="color:green">Avaliado pelo orientador</span>
+                {% for avaliado in avaliados %}
+                  <span data-toggle="tooltip" data-html="true" animation="true" title="{{avaliado.1}}">
+                  {% if avaliado.0 %}&#x1F44D;{% else %}&#x1F44E;{% endif %}
+                  </span>
+                {% endfor %}
+            {% else %}
+                <span style="color:brown">Aguardando avaliação do orientador</span>
+            {% endif %}
+          {% else %}
+            <span style="color:red">Sem relatos dos estudantes</span>
+          {% endif %}          
+        {% endif %}
       <a>
     </p>
   {% endfor %}
