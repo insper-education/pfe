@@ -1545,7 +1545,7 @@ def relatos_quinzenais_todos(request):
 
     if request.is_ajax():
 
-        if 'edicao' in request.POST:
+        if "edicao" in request.POST:
 
             projetos = Projeto.objects.all()
 
@@ -1559,6 +1559,7 @@ def relatos_quinzenais_todos(request):
             context = {
                 "administracao": True,
                 "projetos": projetos,
+                "edicao": edicao,
             }
 
         else:

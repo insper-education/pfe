@@ -28,19 +28,8 @@
 
     {% for projeto in projetos %}
 
-      <strong>Projeto:</strong> <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a><br>
-      <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
-      {% if administracao %}<strong>Orientador:</strong>
-        {% if projeto.orientador %}
-          <a href="{% url 'professor_detail' projeto.orientador.id %}">{{projeto.orientador}}</a>
-        {% else %}
-          ORIENTADOR NÃO DEFINIDO
-        {% endif %}
-      <br>
-      {% endif %}
- 
-      {% include "tipo_projeto.html" with com_tipo=True %}<br>
-
+      <strong>Projeto:</strong> <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
+      {% include "tipo_projeto.html" with com_tipo=False %}<br>
       <strong>Organização:</strong>
       {% if projeto.organizacao %}
         <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>
@@ -48,8 +37,18 @@
         ORGANIZAÇAO NÃO DEFINIDA
       {% endif %}
       <br>
+      {% if edicao == "todas" %}
+        <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
+      {% endif %}
+      {% if administracao %}<strong>Orientador:</strong>
+        {% if projeto.orientador %}
+          <a href="{% url 'professor_detail' projeto.orientador.id %}">{{projeto.orientador}}</a>
+        {% else %}
+          ORIENTADOR NÃO DEFINIDO
+        {% endif %}
+      {% endif %}
 
-      <strong>Relatos (prazos para estudantes):</strong><br>
+      <div style="margin-top:8px;"><strong>Relatos (prazos para estudantes):</strong></div>
 
       {% with alocacoes=projeto.alocacao_set.all %}
         {% include "relatos.html" %}
