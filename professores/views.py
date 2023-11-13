@@ -1645,6 +1645,15 @@ def relato_avaliar(request, projeto_id, evento_id):
                     email_dest.append(str(coordenador.email))
                 email_dest.append(str(projeto.orientador.user.email))
 
+                # Necessário refazer tabela de relatos e alocacoes para mensagens irem corretas
+                relatos = []
+                for alocacao in alocacoes:
+                    relatos.append(Relato.objects.filter(alocacao=alocacao,
+                                                momento__gt=evento_anterior.endDate + datetime.timedelta(days=1),
+                                                momento__lte=evento.endDate + datetime.timedelta(days=1)).order_by('momento').last() )
+                                                # O datetime.timedelta(days=1) é necessário pois temos de checar passadas 24 horas, senão valo começo do dia
+
+
                 # Manda mensagem para coordenadores
                 corpo_email = "<b>-- OBSERVAÇÕES DE ANOTAÇÃO QUINZENAL REALIZADA PELO PROFESSOR --</b><br>\n<br>\n"
                 corpo_email += "<b>Projeto:</b> " + projeto.get_titulo() + "<br>\n"
@@ -1656,11 +1665,11 @@ def relato_avaliar(request, projeto_id, evento_id):
                         if relato.avaliacao > 0:
                             corpo_email += "[&#x1F44D; Adequado]"
                         elif relato.avaliacao < 0:
-                            corpo_email += "[&#8987; AGUARDANDO ORIENTADOR]"
+                            corpo_email += "[<small>&#8987;</small> AGUARDANDO ORIENTADOR]"
                         else:
                             corpo_email += "[&#x1F44E; Inadequado]"
                     else:
-                        corpo_email += "[&#10060; NÃO ENTREGUE POR ESTUDANTE]"
+                        corpo_email += "[<small>&#10060;</small> NÃO ENTREGUE POR ESTUDANTE]"
                     corpo_email += "<br>"
                 corpo_email += "<hr>"
                 corpo_email += "<b>Observações:</b><br>\n" 
