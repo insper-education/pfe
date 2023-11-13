@@ -36,22 +36,8 @@
       <br>
     </small>
 
-    
     <br><hr><br>
-    <label for="limite_propostas">Prazo limite para seleção de propostas por estudantes: </label>
-    {% if limite_propostas %}
-      <span id="limite_propostas">{{limite_propostas}}</span>
-    {% else %}
-      <span id="limite_propostas">Data para indicação de interesse nos projetos do próximo semestre pelos estudante não foi definida na agenda.</span>
-    {% endif %}
-    <br>
-    <input type="checkbox" id="liberadas_propostas" name="liberadas_propostas" {% if configuracao.liberadas_propostas %}checked{% endif %}>
-    <label for="liberadas_propostas"> Propostas Liberadas para Estudantes</label>
-    <small>(Estudantes conseguirão ver as propostas para aplicar)</small>
-    <br>
-
-    <label for="min_props">Mínimo de Propostas para Estudantes Selecionarem:</label>
-    <input id="min_props" name="min_props" type="number" min="0" max="99" step="1" style="text-align:right;" value="{{configuracao.min_props}}"/>
+    <a href="{% url 'publicar_propostas' %}">Para publicar Propostas, visite o link</a>
 
     <br><br><hr><br>
     <label for="prazo_preencher_banca">Prazo para avaliadores preencherem a avaliação de banca:</label> <input id="prazo_preencher_banca" name="prazo_preencher_banca" style="text-align:right;" type="number" min="0" max="9999" step="1" value="{{configuracao.prazo_preencher_banca}}"/> dias

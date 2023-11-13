@@ -13,6 +13,7 @@ from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.shortcuts import redirect
+from django.utils.datastructures import MultiValueDictKeyError
 
 from users.support import get_edicoes, adianta_semestre
 from users.models import Opcao, Aluno, Alocacao, PFEUser
@@ -24,7 +25,7 @@ from projetos.models import Evento
 
 from operacional.models import Curso
 
-from administracao.support import get_limite_propostas
+from administracao.support import get_limite_propostas, get_data_planejada
 
 
 from .support import retorna_ternario, ordena_propostas_novo, ordena_propostas
@@ -684,7 +685,43 @@ def proposta_remover(request, slug):
         "voltar": True,
         "mensagem": "Proposta removida!",
     }
-    return render(request, 'generic.html', context=context)
+    return render(request, "generic.html", context=context)
+
+
+
+@login_required
+@transaction.atomic
+@permission_required("users.altera_professor", raise_exception=True)
+def publicar_propostas(request):
+    """Definir datas do PFE."""
+    configuracao = get_object_or_404(Configuracao)
+
+    #if request.method == "POST":
+    if request.is_ajax():
+        if "liberadas_propostas" and "min_props" in request.POST:
+            data = {"atualizado": True,}
+            try:
+                configuracao.liberadas_propostas = request.POST["liberadas_propostas"] == "true"
+                data["liberadas_propostas"] = configuracao.liberadas_propostas
+                if int(request.POST["min_props"]) != configuracao.min_props:
+                    configuracao.min_props = int(request.POST["min_props"])
+                    data["min_props"] = configuracao.min_props
+                configuracao.save()
+            except (ValueError, OverflowError, MultiValueDictKeyError):
+                return HttpResponse("Algum erro não identificado.", status=401)
+             
+            return JsonResponse(data)
+        
+        else:
+            return HttpResponse("Algum erro ao passar parâmetros.", status=401)
+    
+    context = {
+        "configuracao": configuracao,
+        "limite_propostas": get_limite_propostas(configuracao),
+        "data_planejada": get_data_planejada(configuracao),
+    }
+
+    return render(request, "propostas/publicar_propostas.html", context)
 
 
 @login_required

@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 30 de Maio de 2020
+{% endcomment %}
+
+{% block head %}
+  <style>
+    #liberadas {
+      padding: 30px;
+      border-radius: 5px;
+      width: fit-content;
+      margin-left: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      border: 1px solid black; 
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+
+  {% csrf_token %}
+
+  <span class="titulo">Publicar Propostas</span>
+  <br>
+  
+  <label for="data_planejada">Data planejada para liberar propostas de projetos para estudantes:</label>
+  {% if data_planejada %}
+    <span id="data_planejada">{{data_planejada}}.</span>
+  {% else %}
+    <span id="data_planejada">Data para liberar propostas de projetos ainda não foi definida na agenda.</span>
+  {% endif %}
+  <br>
+  
+  <label for="limite_propostas">Prazo limite para seleção de propostas por estudantes: </label>
+  {% if limite_propostas %}
+    <span id="limite_propostas">{{limite_propostas}}</span>
+  {% else %}
+    <span id="limite_propostas">Data para indicação de interesse nos projetos do próximo semestre pelos estudante não foi definida na agenda.</span>
+  {% endif %}
+  <br>
+
+  <br>
+  
+  <input class="liberar" type="checkbox" id="liberadas_propostas" name="liberadas_propostas" {% if configuracao.liberadas_propostas %}checked{% endif %}>
+  <label for="liberadas_propostas"> Propostas Liberadas para Estudantes</label>
+  <small>(Estudantes conseguirão ver as propostas disponíveis para aplicar)</small>
+  <br>
+
+  <label for="min_props">Mínimo de Propostas para Estudantes Selecionarem:</label>
+  <input class="liberar" id="min_props" name="min_props" type="number" min="0" max="99" step="1" style="text-align:right;" value="{{configuracao.min_props}}"/>
+  <span id="mess_atual" style="display: None;"> atualizado!</span>
+  <br><br>
+
+  <div id="liberadas"></div>
+
+  <script>
+
+  function mess_liberadas(valor) {
+    if (valor) {
+      $("#liberadas").css("background-color", "green");
+      $("#liberadas").html("Propostas Liberadas");
+    } else {
+      $("#liberadas").css("background-color", "yellow");
+      $("#liberadas").html("Propostas Não Liberadas");
+    }
+  }
+  
+  mess_liberadas({{configuracao.liberadas_propostas|lower}})
+
+  $(".liberar").change(function(evt){
+
+    $.ajax({
+      type: "POST",
+      data: {
+        "liberadas_propostas": $("#liberadas_propostas").prop('checked'),
+        "min_props": $("#min_props").val(),
+        "csrfmiddlewaretoken": "{{ csrf_token }}",
+      },
+      dataType: 'json',
+      success: function (data) {
+        if (data.atualizado) {
+          mess_liberadas(data.liberadas_propostas);
+          if(data.hasOwnProperty("min_props")) {
+            $("#min_props").val(data.min_props);
+            $("#mess_atual").show();
+            $("#mess_atual").fadeOut(2000);
+          }
+        } else {
+          $("#liberadas").css("background-color", "red");
+          $("#liberadas").html("Erro de Atualização");
+        }
+      },
+      error: function (request, status, error) {
+        {% if user.tipo_de_usuario == 4 %} 
+          alert(request.responseText);
+          jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
+          console.log('error'+request.responseText);
+        {% else %}
+          jQuery("body").html("Erro no servidor do PFE. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
+        {% endif %}
+      }
+    });
+  
+  });
+
+  </script>
+
+{% endblock %}

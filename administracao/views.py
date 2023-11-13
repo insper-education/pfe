@@ -413,9 +413,6 @@ def configurar(request):
                 configuracao.ano = int(request.POST['periodo_ano'])
                 configuracao.semestre = int(request.POST['periodo_semestre'])
 
-                configuracao.liberadas_propostas = 'liberadas_propostas' in request.POST
-                configuracao.min_props = int(request.POST['min_props'])
-
                 configuracao.prazo_preencher_banca = int(request.POST['prazo_preencher_banca'])
 
                 configuracao.coordenacao = get_object_or_404(Administrador,
@@ -440,7 +437,6 @@ def configurar(request):
     
     context = {
         "configuracao": configuracao,
-        "limite_propostas": get_limite_propostas(configuracao),
         "coord_length": Configuracao._meta.get_field('coordenador').max_length,
         "administradores": Administrador.objects.all(),
     }

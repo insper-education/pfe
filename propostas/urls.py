@@ -54,6 +54,10 @@ urlpatterns = [
          views.projeto_criar,
          name='projeto_criar'),
 
+    path('publicar_propostas/',
+         views.publicar_propostas,
+         name='publicar_propostas'),
+
     path('ajax/validate_alunos/',
          views.validate_alunos,
          name='validate_alunos'),

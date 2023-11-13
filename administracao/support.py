@@ -35,6 +35,20 @@ def get_limite_propostas(configuracao):
     inicio_pfe = dateutil.parser.parse("07/06/2018").date()
     return inicio_pfe
 
+def get_data_planejada(configuracao):
+    if configuracao.semestre == 1:
+        evento = Evento.objects.filter(tipo_de_evento=113, endDate__year=configuracao.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
+    else:
+        evento = Evento.objects.filter(tipo_de_evento=113, endDate__year=configuracao.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
+    # (113, 'Apresentação das propostas de projetos disponíveis para estudantes', 'darkslategray'),
+
+    if evento is not None:
+        return evento.endDate
+
+    return None
+
+
+
 def usuario_sem_acesso(request, acessos):
     
     if (not request.user.is_authenticated) or (request.user is None):
