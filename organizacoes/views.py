@@ -503,8 +503,8 @@ def organizacoes_prospect(request):
                      datetime.timedelta(days=periodo))):
 
             organizacoes.append(organizacao)
-            contato.append(ant)
-
+            contato.append(ant) # None se não houver anotação
+            
             if configuracao.semestre == 1:
                 propostas_submetidas = propostas\
                     .filter(ano__gte=configuracao.ano)\
@@ -519,7 +519,7 @@ def organizacoes_prospect(request):
 
     organizacoes_list = zip(organizacoes, disponiveis, submetidas, contato)
 
-    organizacoes_list = sorted(organizacoes_list, key=lambda x: x[3].tipo_de_retorno)
+    organizacoes_list = sorted(organizacoes_list, key=lambda x: (255 if x[3] is None else x[3].tipo_de_retorno))
 
     total_organizacoes = len(organizacoes)
     total_disponiveis = sum(disponiveis)
