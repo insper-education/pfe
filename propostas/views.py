@@ -578,9 +578,11 @@ def proposta_detalhes(request, primarykey):
     procura["5"] = opcoes.filter(prioridade=5).count()
 
     context = {
-        'proposta': proposta,
-        'MEDIA_URL': settings.MEDIA_URL,
+        "proposta": proposta,
+        "MEDIA_URL": settings.MEDIA_URL,
         "procura": procura,
+        "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
+
     }
     return render(request, 'propostas/proposta_detalhes.html', context=context)
 
