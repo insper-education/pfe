@@ -87,14 +87,16 @@
   <form method="post" id="avaliacaoform" enctype="multipart/form-data">
     {% csrf_token %}
 
-    <b>Projeto:</b> {{projeto.titulo}}<br>
+    <b>Projeto:</b> <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a><br>
     {% if projeto.orientador %}
       {% if projeto.proposta.intercambio %}
         <b>Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
       {% else %}
         <b>Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
       {% endif %}
+      <a href="{% url 'professor_detail' projeto.orientador.id %}">
       {{projeto.orientador}}
+      </a>
     {% else %}
       Orientador: Não definido
     {% endif %}<br>
