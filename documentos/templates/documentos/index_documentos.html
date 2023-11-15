@@ -20,13 +20,15 @@
     {% endcomment %}
     <br>
     <h5>Área Geral</h5>
-    <ul>
+    <ul style="width: fit-content;">
     {% if regulamento %}
-        <a data-toggle="tooltip" data-html="true" animation="true" title="Data: {{regulamento.data}}" 
+        <a {% if regulamento.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{regulamento.data}}"{% endif %}
+           target="_blank" rel="noopener noreferrer" 
            href="../..{{MEDIA_URL}}{{regulamento.documento}}"><li>Regulamento do PFE</li></a>
     {% endif %}
     {% if plano_de_aprendizagem %}
-        <a data-toggle="tooltip" data-html="true" animation="true" title="Data: {{plano_de_aprendizagem.data}}"
+        <a {% if plano_de_aprendizagem.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{plano_de_aprendizagem.data}}"{% endif %}
+           target="_blank" rel="noopener noreferrer"
            href="../..{{MEDIA_URL}}{{plano_de_aprendizagem.documento}}"><li>Plano de Aprendizagem</li></a>
     {% endif %}
     <a href="{% url 'relatorios_publicos' %}"><li>Relatórios Públicos</li></a>
@@ -36,15 +38,15 @@
     {% if user.tipo_de_usuario == 1 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Estudante ou Professor ou Adm -->
         <hr>
         <h5>Área dos Estudantes</h5> <!-- Estudante -->
-        <ul>
+        <ul style="width: fit-content;">
         {% if manual_aluno %}
-            <a href="../..{{MEDIA_URL}}{{manual_aluno.documento}}"><li>Manual para os Estudantes</li></a>
+            <a target="_blank" rel="noopener noreferrer" href="../..{{MEDIA_URL}}{{manual_aluno.documento}}"><li>Manual para os Estudantes</li></a>
         {% endif %}
         {% if manual_planejamento %}
-            <a href="../..{{MEDIA_URL}}{{manual_planejamento.documento}}"><li>Manual para Confecção de Relatórios de Planejamento</li></a>
+            <a target="_blank" rel="noopener noreferrer" href="../..{{MEDIA_URL}}{{manual_planejamento.documento}}"><li>Manual para Confecção de Relatórios de Planejamento</li></a>
         {% endif %}
         {% if manual_relatorio %}
-            <a href="../..{{MEDIA_URL}}{{manual_relatorio.documento}}"><li>Manual para Confecção de Relatórios</li></a>
+            <a target="_blank" rel="noopener noreferrer" href="../..{{MEDIA_URL}}{{manual_relatorio.documento}}"><li>Manual para Confecção de Relatórios</li></a>
             {% if template_relatorio %}
                 <ul>
                     <a href="../..{{MEDIA_URL}}{{template_relatorio.documento}}"><li style="margin-left: -2em;list-style-type: '&#x21B3;';"> Template para Relatórios</li></a>
@@ -52,7 +54,7 @@
             {% endif %}
         {% endif %}
         {% if manual_apresentacao %}
-            <a href="../..{{MEDIA_URL}}{{manual_apresentacao.documento}}"><li>Manual de Apresentação para Banca</li></a>
+            <a target="_blank" rel="noopener noreferrer" href="../..{{MEDIA_URL}}{{manual_apresentacao.documento}}"><li>Manual de Apresentação para Banca</li></a>
         {% endif %}
         </ul>
     {% endif %}
@@ -60,12 +62,14 @@
     {% if user.tipo_de_usuario == 3 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Parceiro ou Professor ou Adm -->
         <hr>
         <h5>Área dos Parceiros</h5>
-        <ul>
+        <ul style="width: fit-content;">
         {% if termo_parceria_pdf %}
-            <a data-toggle="tooltip" data-html="true" animation="true" title="Data: {{termo_parceria_pdf.data}}" href="../..{{MEDIA_URL}}{{termo_parceria_pdf.documento}}"><li>Termo de Parceria - PDF</li></a>
+            <a {% if termo_parceria_pdf.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{termo_parceria_pdf.data}}"{% endif %}
+               href="../..{{MEDIA_URL}}{{termo_parceria_pdf.documento}}"><li>Termo de Parceria - PDF</li></a>
         {% endif %}
         {% if termo_parceria_doc %}
-            <a data-toggle="tooltip" data-html="true" animation="true" title="Data: {{termo_parceria_doc.data}}" href="../..{{MEDIA_URL}}{{termo_parceria_doc.documento}}"><li>Termo de Parceria - DOC</li></a>
+            <a {% if termo_parceria_doc.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{termo_parceria_doc.data}}"{% endif %}
+               href="../..{{MEDIA_URL}}{{termo_parceria_doc.documento}}"><li>Termo de Parceria - DOC</li></a>
         {% endif %}
         </ul>
     {% endif %}
@@ -73,17 +77,17 @@
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Professor ou Adm -->
         <hr>
         <h5>Área do Professor</h5>
-        <ul>
+        <ul style="width: fit-content;">
         <a href="{% url 'tabela_documentos' %}"><li>Tabelas de Documentação dos Projetos</li></a>
         <a href="{% url 'tabela_atas' %}"><li>Atas do Comitê</li></a>
         {% if manual_bancas %}
-            <a href="../..{{MEDIA_URL}}{{manual_bancas.documento}}"><li>Manual de Participação em Bancas</li></a>
+            <a target="_blank" rel="noopener noreferrer" href="../..{{MEDIA_URL}}{{manual_bancas.documento}}"><li>Manual de Participação em Bancas</li></a>
         {% endif %}
         {% if manual_orientador %}
-            <a href="../..{{MEDIA_URL}}{{manual_orientador.documento}}"><li>Manual do Orientador</li></a>
+            <a target="_blank" rel="noopener noreferrer" href="../..{{MEDIA_URL}}{{manual_orientador.documento}}"><li>Manual do Orientador</li></a>
         {% endif %}
         {% if manual_avaliacoes %}
-            <a href="../..{{MEDIA_URL}}{{manual_avaliacoes.documento}}"><li>Manual de Avaliações</li></a>
+            <a target="_blank" rel="noopener noreferrer" href="../..{{MEDIA_URL}}{{manual_avaliacoes.documento}}"><li>Manual de Avaliações</li></a>
         {% endif %}
         </ul>
     {% endif %}
@@ -91,7 +95,7 @@
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Professor ou Adm -->
         <hr>
         <h5>Área do Operacional</h5>
-        <ul>
+        <ul style="width: fit-content;">
         <a href="{% url 'tabela_seguros' %}"><li>Seguros Emitidos</li></a>
         </ul>
     {% endif %}
