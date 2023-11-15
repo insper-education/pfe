@@ -340,9 +340,16 @@ def gerar_certificados(request):
 def materias_midia(request):
     """Exibe Matérias que houveram na mídia."""
     relatorios = Documento.objects.filter(tipo_de_documento=128, confidencial=False)
+
+    informacoes = [
+            ("#RelatoriosTable tr > *:nth-child(3)", "Documentos"),
+            ("#RelatoriosTable tr > *:nth-child(4)", "URLs", False),
+        ]
+    
     context = {
-        'relatorios': relatorios,
-        'MEDIA_URL': settings.MEDIA_URL,
+        "relatorios": relatorios,
+        "MEDIA_URL": settings.MEDIA_URL,
+        "informacoes": informacoes,
     }
     return render(request, 'documentos/materias_midia.html', context)
 
@@ -353,9 +360,15 @@ def relatorios_publicos(request):
     relatorios = Documento.objects.filter(tipo_de_documento=25, confidencial=False)\
         .order_by("-projeto__ano", "-projeto__semestre")
 
+    informacoes = [
+            ("#RelatoriosTable tr > *:nth-child(6)", "Documentos"),
+            ("#RelatoriosTable tr > *:nth-child(7)", "URLs", False),
+        ]
+    
     context = {
-        'relatorios': relatorios,
-        'MEDIA_URL': settings.MEDIA_URL,
+        "relatorios": relatorios,
+        "MEDIA_URL": settings.MEDIA_URL,
+        "informacoes": informacoes,
     }
     return render(request, 'documentos/relatorios_publicos.html', context)
 

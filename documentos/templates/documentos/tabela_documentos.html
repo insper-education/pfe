@@ -129,7 +129,7 @@
               <td>
                 {% if projeto and projeto.organizacao %}
                   <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-                    {{ projeto.organizacao.nome }}
+                    {{ projeto.organizacao.sigla }}
                   </a>
                 {% else %}
                   ORGANIZAÇÃO NÃO DEFINIDA

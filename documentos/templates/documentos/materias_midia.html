@@ -15,11 +15,15 @@
     }
 
     .short-text { display: none; white-space: nowrap; }
-    .full-text { white-space: nowrap; }
+    .full-text { display: inline-block; white-space: nowrap; }
 
-    @media (max-width: 1200px) {
+    @media (max-width: 1400px) {
         .short-text { display: inline-block; }
         .full-text { display: none; }
+    }
+
+    @media (max-width: 480px) {
+      .short-text { font-size: x-small; }
     }
   </style>
 
@@ -32,7 +36,7 @@
 
 {% block content %}
 
-  <span class="titulo">Matérias na Mídia</span>
+  <span class="titulo">Matérias na Mídia {% include "informacoes.html" %}</span>
 
   {% if relatorios %}
   <div class="table-responsive">
@@ -43,6 +47,7 @@
           <th onclick="w3.sortHTML('#RelatoriosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Anotações</th>
           <th onclick="w3.sortHTML('#RelatoriosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Projeto</th>
           <th class="text-center">Documento</th>
+          <th class="text-center">URLs</th>
         </tr>
       </thead>
       <tbody>
@@ -73,20 +78,35 @@
               {% endif %}
             </td>
 
-            <td>
+            <td class="text-center">
                 {% if relatorio.link%}
-                  <a href="{{relatorio.link}}" target="_blank" rel="noopener noreferrer">
-                    <span class="full-text">{{relatorio.link}}</span>
-                    <span class="short-text">Link DSpace</span>
+                  <a class="btn btn-light btn-outline-info btn-sm" style="margin-bottom: 5px;"
+                     href="{{relatorio.link}}" target="_blank" rel="noopener noreferrer">
+                    <span class="full-text" style="width: 8em;">Link da Matéria</span>
+                    <span class="short-text" style="width: 3em;">Link</span>
                   </a><br>
                 {% endif %}
                 {% if relatorio.documento%}
-                  <a href="http://{{request.get_host}}{{MEDIA_URL}}{{relatorio.documento}}" target="_blank" rel="noopener noreferrer">
-                    <span class="full-text">http://{{request.get_host}}{{MEDIA_URL}}{{relatorio.documento}}</span>
-                    <span class="short-text">Link PFE</span>
+                  <a class="btn btn-light btn-outline-info btn-sm" 
+                     href="http://{{request.get_host}}{{MEDIA_URL}}{{relatorio.documento}}" target="_blank" rel="noopener noreferrer">
+                    <span class="full-text" style="width: 8em;">Cópia no Serv. PFE</span>
+                    <span class="short-text" style="width: 3em;">Cópia</span>
                   </a>
                 {% endif %}
             </td>
+
+            <td>
+              {% if relatorio.link%}
+                <a href="{{relatorio.link}}" target="_blank" rel="noopener noreferrer">
+                  <span>{{relatorio.link}}</span>
+                </a><br>
+              {% endif %}
+              {% if relatorio.documento%}
+                <a href="http://{{request.get_host}}{{MEDIA_URL}}{{relatorio.documento}}" target="_blank" rel="noopener noreferrer">
+                  <span>http://{{request.get_host}}{{MEDIA_URL}}{{relatorio.documento}}</span>
+                </a>
+              {% endif %}
+          </td>
 
           </tr>
 
@@ -101,5 +121,12 @@
   {% endif %}
 
   <br>
+
+  <script>
+    function carrega_pagina() {
+      $('#RelatoriosTable tr > *:nth-child(4)').hide();  
+    };
+    window.onload = carrega_pagina
+  </script>
   
 {% endblock %}
