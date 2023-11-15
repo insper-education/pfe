@@ -61,8 +61,10 @@ def index_documentos(request):
     # manual de relatórios
     manual_relatorio = Documento.objects.filter(tipo_de_documento=12).last()
 
-    # template de relat.
-    template_relatorio = Documento.objects.filter(tipo_de_documento=17).last()
+    # template de relat. grupo e individual
+    template_relatorio_individual = Documento.objects.filter(tipo_de_documento=16).last()
+    template_relatorio_grupo = Documento.objects.filter(tipo_de_documento=17).last()
+    template_banner = Documento.objects.filter(tipo_de_documento=19).last()
 
     # termos de parceria
     termo_parceria_pdf = Documento.objects.filter(tipo_de_documento=32).last()
@@ -83,11 +85,13 @@ def index_documentos(request):
         "manual_relatorio": manual_relatorio,
         "termo_parceria_pdf": termo_parceria_pdf,
         "termo_parceria_doc": termo_parceria_doc,
-        "template_relatorio": template_relatorio,
+        "template_relatorio_grupo": template_relatorio_grupo,
+        "template_relatorio_individual": template_relatorio_individual,
         "manual_apresentacao": manual_apresentacao,
         "manual_bancas": manual_bancas,
         "manual_orientador": manual_orientador,
         "manual_avaliacoes": manual_avaliacoes,
+        "template_banner": template_banner,	
     }
 
     return render(request, "documentos/index_documentos.html", context)

@@ -47,10 +47,20 @@
         {% endif %}
         {% if manual_relatorio %}
             <a target="_blank" rel="noopener noreferrer" href="../..{{MEDIA_URL}}{{manual_relatorio.documento}}"><li>Manual para Confecção de Relatórios</li></a>
-            {% if template_relatorio %}
+            {% if template_relatorio_individual %}
                 <ul>
-                    <a href="../..{{MEDIA_URL}}{{template_relatorio.documento}}"><li style="margin-left: -2em;list-style-type: '&#x21B3;';"> Template para Relatórios</li></a>
+                    <a href="../..{{MEDIA_URL}}{{template_relatorio_individual.documento}}"><li style="margin-left: -2em;list-style-type: '&#x21B3;';"> Template para Relatório Individual</li></a>
                 </ul>
+            {% endif %}
+            {% if template_relatorio_grupo %}
+                <ul>
+                    <a href="../..{{MEDIA_URL}}{{template_relatorio_grupo.documento}}"><li style="margin-left: -2em;list-style-type: '&#x21B3;';"> Template para Relatório de Grupo</li></a>
+                </ul>
+            {% endif %}
+            {% if template_banner %}
+            <ul>
+                <a href="../..{{MEDIA_URL}}{{template_banner.documento}}"><li style="margin-left: -2em;list-style-type: '&#x21B3;';"> Template para Banner</li></a>
+            </ul>
             {% endif %}
         {% endif %}
         {% if manual_apresentacao %}
