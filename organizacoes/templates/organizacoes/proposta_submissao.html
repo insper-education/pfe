@@ -11,12 +11,34 @@
     textarea {
       max-width:100%;
     }
+
+    .quad_pfe {
+      border: solid black 2px;
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .topico {
+      font-weight: bold;
+    }
+
+    .obs {
+      font-size: 12px;
+      Display: block;
+    }
+
   </style>
 {% endblock %}
 
 {% block content %}
 
-  {% if edicao and liberadas_propostas %}
+{% comment %}  {% endcomment %}
+
+  <div class="container-fluid" style="max-width:720px; padding-left: 6px; padding-right: 6px;">
+    <div class="row justify-content-around">
+
+      <div class="col-xl-auto" style="margin-bottom: 18px;">
+   {% if edicao and liberadas_propostas %}
     <h3 class="red-bold">Propostas de Projetos já liberadas para estudantes, edição desabilitada.</h3>
     {% if user.tipo_de_usuario == 4 %} {% comment %} tipo_de_usuario == 4 >>> Administrador {% endcomment %}
       <h5 class="red-bold">Você está logado como administrador e pode editar a proposta.</h3>
@@ -45,75 +67,83 @@
     <strong>Seu Perfil é de Administrador, você está preenchendo para alguma organização.</strong><br>
   {% endif %}
   
-  <strong>Após preencher o documento, você receberá um e-mail com o link para, se desejar, editar essa proposta.</strong><br>
+  </div>
 
-  <br>
-
-  <form action="" method="post"> {% csrf_token %}  
-
-    <label for="nome">Nome:</label> <input type="text" size="75" maxlength="127" id="nome" name="nome" value="{% if parceiro %}{{full_name}}{% endif %}" 
-      pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')"  required {% if edicao and liberadas_propostas %}disabled{% endif %}><br><br>
-    <label for="email">e-mail:</label> <input type="text" size="75"  maxlength="80" id="email" name="email" value="{% if parceiro %}{{email}}{% endif %}" 
-      pattern="^[\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,99}[\s]*([;,][\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})*[\s]*$" oninvalid="this.setCustomValidity('Digite um ou mais endereços de e-mail (e-mails separados por ponto e vírgula)')" oninput="this.setCustomValidity('')" required {% if edicao and liberadas_propostas %}disabled{% endif %}><br><br>
+  <div class="col-xl-auto ">
+  <form action="" method="post"> {% csrf_token %} 
     
-    <label for="organizacao">Nome da Instituição/Empresa<br>
-    <small>sigla e nome comercial/fantasia se houver (aqui não é necessário indicar a Razão Social)</small>
+    <div class="quad_pfe">
+
+    <label style="width: 3.25em;" class="topico" for="nome">Nome:</label> <input style="max-width: 100%;" type="text" size="75" maxlength="127" id="nome" name="nome" value="{% if parceiro %}{{full_name}}{% endif %}" 
+      pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')"  required {% if edicao and liberadas_propostas %}disabled{% endif %}><br>
+    <label style="width: 3.25em;" class="topico" for="email">e-mail:</label> <input style="max-width: 100%;" type="text" size="75"  maxlength="80" id="email" name="email" value="{% if parceiro %}{{email}}{% endif %}" 
+      pattern="^[\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,99}[\s]*([;,][\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})*[\s]*$" oninvalid="this.setCustomValidity('Digite um ou mais endereços de e-mail (e-mails separados por ponto e vírgula)')" oninput="this.setCustomValidity('')" required {% if edicao and liberadas_propostas %}disabled{% endif %}>
+    <small class="obs">Identifique quem está submetendo ou atualizando a proposta</small><br>
+
+    <label class="topico" for="organizacao">Nome da Instituição/Empresa
+    <small class="obs">sigla e nome comercial/fantasia se houver (não é necessário indicar a Razão Social)</small>
     </label><br>
-    <textarea id="organizacao" name="organizacao" rows="1" cols="80" maxlength="120" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{ proposta.nome_organizacao }}</textarea>
+    <textarea id="organizacao" name="organizacao" rows="1" cols="120" maxlength="120" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{ proposta.nome_organizacao }}</textarea>
     <br><br>
 
-    <label for="website">website:</label> <input type="text" size="73"  maxlength="250" id="website" name="website" value="{{proposta.website}}" placeholder="https://www.insper.edu.br" required {% if edicao and liberadas_propostas %}disabled{% endif %}><br><br>
+    <label class="topico" for="website">website:</label> <input style="max-width: 100%;" type="text" size="75"  maxlength="250" id="website" name="website" value="{{proposta.website}}" placeholder="https://www.insper.edu.br" required {% if edicao and liberadas_propostas %}disabled{% endif %}><br><br>
 
-    <label for="endereco">Endereço<br>
-    <small>onde os alunos deverão ir para desenvolver o projeto</small>
+    <label class="topico" for="endereco">Endereço<br>
+    <small class="obs">Local de possíveis reuniões, visitas técnicas ou apresentações de resultados</small>
     </label><br>
-    <textarea id="endereco" name="endereco" rows="3" cols="80" maxlength="400" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.endereco}}</textarea>
+    <textarea id="endereco" name="endereco" rows="3" cols="120" maxlength="400" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.endereco}}</textarea>
     <br><br>
 
-    <label for="contatos_tecnicos">Contatos Técnicos<br>  
-    <small>nome/e-mail/telefone de quem os alunos e professores orientadores irão tratar do desenvolvimento do projeto</small>
+    <label class="topico" for="contatos_tecnicos">Contatos Técnicos<br>  
+    <small class="obs">nome/e-mail/telefone de quem os alunos e professores orientadores irão tratar do desenvolvimento do projeto</small>
     </label><br>
-    <textarea id="contatos_tecnicos" name="contatos_tecnicos" rows="3" cols="80" maxlength="400" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.contatos_tecnicos}}</textarea>
+    <textarea id="contatos_tecnicos" name="contatos_tecnicos" rows="3" cols="120" maxlength="400" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.contatos_tecnicos}}</textarea>
     <br><br>
 
-    <label for="contatos_adm">Contatos Administrativos<br>     
-    <small>nome/e-mail/telefone, com quem devemos resolver questões contratuais ou RH</small>
+    <label class="topico" for="contatos_adm">Contatos Administrativos<br>     
+    <small class="obs">nome/e-mail/telefone, com quem devemos resolver questões contratuais ou RH</small>
     </label><br>
-    <textarea id="contatos_adm" name="contatos_adm" rows="3" cols="80" maxlength="400" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.contatos_administrativos}}</textarea>
+    <textarea id="contatos_adm" name="contatos_adm" rows="3" cols="120" maxlength="400" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.contatos_administrativos}}</textarea>
     <br><br>
 
-    <label for="descricao_organizacao">Informações sobre a instituição/empresa<br>
-    <small>descreva a instituição/empresa para os alunos entenderem o que ela faz (opcional)</small>
+    <label class="topico" for="descricao_organizacao">Informações sobre a instituição/empresa<br>
+    <small class="obs">descreva a instituição/empresa para os alunos entenderem o que ela faz (opcional)</small>
     </label><br>
-    <textarea id="descricao_organizacao" name="descricao_organizacao" rows="8" cols="80" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.descricao_organizacao}}</textarea>
+    <textarea id="descricao_organizacao" name="descricao_organizacao" rows="8" cols="120" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.descricao_organizacao}}</textarea>
     <br><br>
 
-    <label for="info_departamento">Informações sobre a departamento<br>
-    <small>descreva o departamento/área para os alunos entenderem o que ele faz (opcional)</small>
+    <label class="topico" for="info_departamento">Informações sobre a departamento<br>
+    <small class="obs">descreva o departamento/área para os alunos entenderem o que ele faz (opcional)</small>
     </label><br>
-    <textarea id="info_departamento" name="info_departamento" rows="8" cols="80" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.departamento}}</textarea>
+    <textarea id="info_departamento" name="info_departamento" rows="8" cols="120" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.departamento}}</textarea>
     <br>
     <hr>
 
-    <label for="titulo">Título provisório do projeto<br>
-    <small>um título para ser apresentado aos alunos</small>
+    <label class="topico" for="titulo">Título provisório do projeto<br>
+    <small class="obs">um título para ser apresentado aos alunos</small>
     </label><br>
     <input type="text" size="80" maxlength="160" id="titulo" name="titulo" value="{{proposta.titulo}}" required {% if edicao and liberadas_propostas %}disabled{% endif %}>
     <br><br>
 
-    <label for="desc_projeto">Descrição do Projeto<br>
-    <small>para discussão entre professores e que será passada para os alunos</small>
+    <label class="topico" for="desc_projeto">Descrição do Projeto<br>
+    <small class="obs">para discussão entre professores e que será passada para os alunos</small>
     </label><br>
-    <textarea id="desc_projeto" name="desc_projeto" rows="10" cols="80" maxlength="3000" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.descricao}}</textarea>
+    <textarea id="desc_projeto" name="desc_projeto" rows="10" cols="120" maxlength="3000" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.descricao}}</textarea>
     <br><br>
 
-    <label for="expectativas">Expectativas de resultados/entregas<br>
-    <small>exemplo: estudos, validações, relatórios, protótipos, testes</small>
+    <label class="topico" for="expectativas">Expectativas de resultados/entregas<br>
+    <small class="obs">exemplo: estudos, validações, relatórios, protótipos, testes</small>
     </label><br>
-    <textarea id="expectativas" name="expectativas" rows="8" cols="80" maxlength="3000" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.expectativas}}</textarea>
+    <textarea id="expectativas" name="expectativas" rows="8" cols="120" maxlength="3000" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.expectativas}}</textarea>
     <br><br>
 
-    Áreas/Habilidades envolvidas no projeto<br>
+    <style>
+      table,td,tr,th {
+        border: none;
+        font-size: 14px;
+      }
+    </style>
+    <span class="topico"> Áreas/Habilidades envolvidas no projeto</span><br>
     {% if proposta %}
       {% with aa=proposta.areadeinteresse_set.all %}
         {% if edicao and liberadas_propostas %}
@@ -136,24 +166,24 @@
     <br>
     <br>
 
-    <label for="recursos">Recursos a serem disponibilizados aos alunos<br>
-    <small>algo será fornecido para os alunos? ex: kits de desenvolvimento, matérias primas, acesso a infra de cloud. (opcional)</small>
+    <label class="topico" for="recursos">Recursos a serem disponibilizados aos alunos<br>
+    <small class="obs">algo será fornecido para os alunos? ex: kits de desenvolvimento, matérias primas, acesso a infra de cloud. (opcional)</small>
     </label><br>
-    <textarea id="recursos" name="recursos" rows="5" cols="80" maxlength="1000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.recursos and proposta.recursos != None and proposta.recursos != "None" %}{{proposta.recursos}}{% endif %}</textarea>
+    <textarea id="recursos" name="recursos" rows="5" cols="120" maxlength="1000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.recursos and proposta.recursos != None and proposta.recursos != "None" %}{{proposta.recursos}}{% endif %}</textarea>
     <br><br>
 
-    <label for="observacoes">Outras observações que considere relevante para os alunos<br>
-    <small>caso desejar apresentar alguma informação adicional aos alunos (opcional)</small>
+    <label class="topico" for="observacoes">Outras observações que considere relevante para os alunos<br>
+    <small class="obs">caso desejar apresentar alguma informação adicional aos alunos (opcional)</small>
     </label><br>
-    <textarea id="observacoes" name="observacoes" rows="5" cols="80" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.observacoes and proposta.observacoes != None and proposta.observacoes != "None" %}{{proposta.observacoes}}{% endif %}</textarea>
-    <br>
+    <textarea id="observacoes" name="observacoes" rows="5" cols="120" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.observacoes and proposta.observacoes != None and proposta.observacoes != "None" %}{{proposta.observacoes}}{% endif %}</textarea>
+    <br><br>
 
-    <label for="interesses">O principal interesse com o projeto é:<br>
-    <small>não será apresentado aos alunos (opcional)</small>
+    <label class="topico" for="interesses">O principal interesse com o projeto é:<br>
+    <small class="obs">não será apresentado aos alunos (opcional)</small>
     </label><br>
     {% for interesse in interesses %}
-      <label for="{{interesse.0}}">
-        &nbsp;<input type="checkbox" name="{{interesse.0}}" id="{{interesse.0}}"
+      <label style="font-size: 13px;" for="{{interesse.0}}">
+        &nbsp;<input style="position: relative; top: 2px;" type="checkbox" name="{{interesse.0}}" id="{{interesse.0}}"
         {% if interesse.2 %}checked{% endif %}
         {% if vencido %}disabled{% endif %}
         {% if edicao and liberadas_propostas %}disabled{% endif %}
@@ -161,40 +191,58 @@
         {{ interesse.1 }}
       </label><br>
     {% endfor %}
-    <br><br>
-
+    <br>
+    <hr>
+    <small style="display: block; line-height: 1.2;">
     Obs.: Ao submeter o projeto, deve ficar claro que a intenção do Projeto Final de Engenharia é 
-    que os alunos tenham um contato próximo com as pessoas responsáveis nas instituições parceiras 
-    para o desenvolvimento de uma solução em engenharia. Em geral os alunos se deslocam uma vez 
+    que os estudantes tenham um contato próximo com as pessoas responsáveis nas instituições parceiras 
+    para o desenvolvimento de uma solução em engenharia. Em geral os estudantes se comunicam uma vez 
     por semana para entender melhor o desafio, demonstrar resultados preliminares, fazerem 
     planejamentos em conjunto, dentre de outros pontos que podem variar de projeto para projeto. 
     Também deve ficar claro que embora não exista um custo direto para as instituições parceiras, 
     essas terão de levar em conta que pelo menos um profissional deverá dedicar algumas horas 
-    semanalmente para acompanhar os alunos. Além disso se a proposta contemplar gastos, como por 
+    semanalmente para acompanhar os estudantes. Além disso se a proposta contemplar gastos, como por 
     exemplo servidores, matéria prima de alguma forma, o Insper não terá condição de bancar tais 
-    gastos e isso terá de ficar a cargo da empresa, contudo os alunos terão acesso aos 
+    gastos e isso terá de ficar a cargo da empresa, contudo os estudantes terão acesso aos 
     laboratórios do Insper para o desenvolvimento do projeto em horários agendados.
-    
-    <br><br>
-    {% if not liberadas_propostas %}
-      {% if edicao %}
-        <input type="submit" name="update" value="Atualizar Proposta de Projeto">
-      {% else %}
-        <input type="submit" name="new" value="Enviar Proposta de Projeto">
-      {% endif %}
-      {% if vencida %}
-        <input type="submit" name="new" value="Nova Proposta de Projeto ">
-        <span class="red-bold">Essa proposta foi submetida em um semestre anterior,
-          ao clicar em Nova Proposta, você gerará uma nova proposta para ser apresentada agora para os estudantes.<br></span>  
-      {% endif %}
-    {% endif %}
+    </small>
   
-    {% if not liberadas_propostas %}
-      &nbsp;&nbsp;&nbsp;
-      <input type="checkbox" name="mensagem" value="enviar" checked>
-      <label for="mensagem">enviar mensagem (e-mail) de confirmação</label>
-    {% endif %}
-    
+    </div>
+
+    <div class="col-xl-auto" style="margin-top: 20px;">
+      <div class="container">
+        <div class="row justify-content-center">
+      <div class="form-check" style="margin: 0px 12px 0px 12px;">
+      {% if not liberadas_propostas %}
+        <input type="submit" class="btn btn-secondary"
+        {% if edicao %}
+          name="update" value="Atualizar Proposta de Projeto">
+        {% else %}
+          name="new" value="Enviar Proposta de Projeto">
+        {% endif %}
+        {% if vencida %}
+          name="new" value="Nova Proposta de Projeto ">
+          <span class="red-bold">Essa proposta foi submetida em um semestre anterior,
+            ao clicar em Nova Proposta, você gerará uma nova proposta para ser apresentada agora para os estudantes.<br></span>  
+        {% endif %}
+      {% endif %}
+      </div>
+
+      {% if not liberadas_propostas %}
+        <div class="form-check" style="margin: 0px 12px 0px 12px;">
+          &nbsp;
+          <input style="position: relative; top: 2px;" class="form-check-input" type="checkbox" id="mensagem" name="mensagem" value="enviar" checked>
+          <label data-toggle="tooltip" data-html="true" animation="true" 
+                 title="Após preencher o documento, você receberá um e-mail com o link para, se desejar, editar essa proposta." 
+                 class="form-check-label" for="mensagem">enviar mensagem (e-mail) de confirmação</label>
+        </div>
+      {% endif %}
+
+      </div></div>
+    </div>
   </form>
+</div>
+</div>
+</div>
 
 {% endblock %}
