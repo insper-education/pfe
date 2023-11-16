@@ -7,13 +7,20 @@
 
 {% block head %}
   {% load static %}
-  {% load certificado_banca %}
+  {% load date_extras %}
   <script>{% include "tooltip.js" %}</script>
-
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
-  
+  <style>
+    .lightgrey,
+    .lightgrey:link,
+    .lightgrey:visited,
+    .lightgrey:hover,
+    .lightgrey:active
+      {color:lightgrey;}
+  </style>
 {% endblock %}
+
 
 {% block content %}
 
@@ -23,35 +30,48 @@
     Projeto: {{projeto.get_titulo}}<br><br>
 
     {% for item in itens %}
-      <b>{{item.0}}</b> [prazo {{item.3.endDate}}]: <a 
-        data-toggle="tooltip" data-html="true" animation="true" title="Adicionar documento"
-        class="open-documento"
-        href="{% url 'adiciona_documento' projeto.organizacao.id projeto.id item.1 %}"
-        data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id item.1 %}"><b>&#10133;</b>
-      </a><br><ul style="padding-left: 22px; width: fit-content;">
-      {% for documento in item.2 %}
-        <li style="list-style-type:'&#128463; ';">
-        {% if documento.documento and documento.link %}
-          {{documento.data}} - {{documento}}
-          <a data-toggle="tooltip" data-html="true" animation="true" title="Entregue" 
-             href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
-          <a data-toggle="tooltip" data-html="true" animation="true" title="Entregue" 
-             href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
-        {% else %}
-          {% if documento.documento %}
-            <a data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
-               href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">{{documento.data}} - {{documento}}</a>
-          {% endif %}
-          {% if documento.link %}
-            <a data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
-               href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento.data}} - {{documento}}</a>
-          {% endif %}
-        {% endif %}
-        </li>
-      {% empty %}
-        Não entregue
-      {% endfor %} 
-      </ul><br>
+
+      {% with dias_ate=item.3.endDate|dif_dias_hoje dias=14 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
+      
+        <div {% if dias_ate > dias and user.tipo_de_usuario == 1 %}style="display:none;"{% endif %}>
+          <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
+          <b>{{item.0}}</b> [prazo {{item.3.endDate}}]: </span><a 
+            data-toggle="tooltip" data-html="true" animation="true" title="Adicionar documento"
+            class="open-documento {% if dias_ate > dias %}lightgrey{% endif %}"
+            href="{% url 'adiciona_documento' projeto.organizacao.id projeto.id item.1 %}"
+            data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id item.1 %}">
+            {% if dias_ate > dias %}+{% else %}&#10133;{% endif %}	
+          </a><br>
+          <ul style="padding-left: 22px; width: fit-content;">
+          {% for documento in item.2 %}
+            <li style="list-style-type:'&#128463; ';">
+            {% if documento.documento and documento.link %}
+              {{documento.data}} - {{documento}}
+              <a data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
+                 class="{% if dias_ate > dias %}lightgrey{% endif %}"
+                 href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+              <a data-toggle="tooltip" data-html="true" animation="true" title="Entregue" 
+                 class="{% if dias_ate > dias %}lightgrey{% endif %}"
+                 href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
+            {% else %}
+              {% if documento.documento %}
+                <a data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
+                   class="{% if dias_ate > dias %}lightgrey{% endif %}"
+                   href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">{{documento.data}} - {{documento}}</a>
+              {% endif %}
+              {% if documento.link %}
+                <a data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
+                   class="{% if dias_ate > dias %}lightgrey{% endif %}"
+                   href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento.data}} - {{documento}}</a>
+              {% endif %}
+            {% endif %}
+            </li>
+          {% empty %}
+            Não entregue
+          {% endfor %} 
+          </ul><br>
+        </div>
+      {% endwith %}
     {% endfor %} 
 
     {% include "documento-modal.html" %}

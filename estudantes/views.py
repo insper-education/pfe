@@ -538,7 +538,7 @@ def relato_visualizar(request, id):
 def submissao_documento(request):
     """Submissão de documentos pelos estudantes."""
 
-    projeto = Projeto.objects.all().last()
+    projeto = Projeto.objects.get(id=167)
 
     tipos = dict(TIPO_DE_DOCUMENTO)
     itens = []
@@ -551,6 +551,8 @@ def submissao_documento(request):
                       if projeto.semestre == 1 else \
                       Evento.objects.filter(tipo_de_evento=comp.evento, 
                                             endDate__year=projeto.ano, endDate__month__gt=6).last()])
+
+    itens = sorted(itens, key=lambda t: (None if t[3] is None else t[3].endDate))
 
     context = {
         "projeto": projeto,
