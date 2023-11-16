@@ -9,6 +9,12 @@
 
   {% load static %}
 
+  <style>
+    td,th {
+      padding: 0px 6px 0px 6px;
+    }
+  </style>
+
   <script src="{% static 'js/w3.js' %}"></script>
 
   {% comment %} Para chamar os Tooltips {% endcomment %}
@@ -21,30 +27,34 @@
   <span class="titulo">Seguros Emitidos</span>
 
   {% if seguros %}
-    <table id="SegurosTable">
+  <div class="table-responsive">
+    <table id="SegurosTable" class="table table-bordered table-sm" style="width: auto;">
+      <thead class="table-info">
       <tr>
         <th onclick="w3.sortHTML('#SegurosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Data</th>
         <th class="text-center">Documento</th>
-      </tr>      
+      </tr>
+    </thead>
     {% for seguro in seguros %} 
       <tr class="item">
-        <td style="text-align:center">
+        <td style="vertical-align:middle">
             {{seguro.data}}
         </td>
         <td style="text-align:center">
-          <a class="text-success" href="../..{{MEDIA_URL}}{{seguro.documento}}" 
+          <a class="btn btn-light btn-outline-info btn-sm" style="width: 6em; padding:0px 4px 0px 4px;"
+             href="../..{{MEDIA_URL}}{{seguro.documento}}" 
           target="_blank" rel="noopener noreferrer"
-          data-toggle="tooltip" data-html="true" animation="true" 
           {% if seguro.anotacao %}
-            title="anotação: {{seguro.anotacao}}"
+            data-toggle="tooltip" data-html="true" animation="true" title="anotação: {{seguro.anotacao}}"
           {% endif %}
           >
-            &#x2B24;
+            pdf
           </a>
         </td>
       </tr>
     {% endfor %}
     </table>
+  </div>
   {% else %}
     <p>Não existem documentos de seguros disponíveis.</p>
   {% endif %}
