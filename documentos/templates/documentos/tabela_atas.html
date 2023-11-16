@@ -16,11 +16,9 @@
   <script>{% include "tooltip.js" %}</script>
 
   <style>
-    
-    td {
-      padding: 6px;
+    td,th {
+      padding: 0px 6px 0px 6px;
     }
-
   </style>
 
 {% endblock %}
@@ -30,8 +28,9 @@
   <span class="titulo">Atas do Comitê do PFE</span>
 
   {% if atas %}
-    <table id="AtasTable">
-      <thead>
+  <div class="table-responsive">
+    <table id="AtasTable" class="table table-bordered table-sm" style="width: auto;">
+      <thead class="table-info">
         <tr>
           <th onclick="w3.sortHTML('#AtasTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Data</th>
           <th class="text-center">Documento</th>
@@ -42,9 +41,11 @@
         {% for group in grouped %}
           {% for obj in group.list %}
             <tr class="item">
-              {% ifchanged %}<td rowspan="{{ group.list|length }}">{{ obj.data }}</td>{% endifchanged %}
-              <td style="text-align:center">
-                <a href="../..{{MEDIA_URL}}{{obj.documento}}" 
+              {% ifchanged %}<td style="vertical-align:middle" rowspan="{{ group.list|length }}">{{ obj.data }}</td>{% endifchanged %}
+
+              <td style="text-align:center; padding: 2px; border-top-style: dotted;{% if not forloop.last %}border-bottom-style: dotted;{% endif %}">
+                <a class="btn btn-light btn-outline-info btn-sm" style="width: 6em; padding:0px 4px 0px 4px;"
+                   href="../..{{MEDIA_URL}}{{obj.documento}}" 
                   target="_blank" rel="noopener noreferrer"
                   data-toggle="tooltip" data-html="true" animation="true" 
                   {% if obj.anotacao %}
@@ -54,12 +55,13 @@
                   {{obj.documento|get_tipo}}
                 </a>
               </td>
+              
             </tr>
           {% endfor %}
         {% endfor %}
       </tbody>
     </table>
-
+  </div>
   {% else %}
     <p>Não existem documentos disponíveis.</p>
   {% endif %}
