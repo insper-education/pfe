@@ -7,10 +7,8 @@
 {% if proposta %}
   <h5>Perfil de Estudantes Esperados</h5>
   <table>
-    <tr>
-      <th style="text-align:center; width:112px" >
-        Estudante
-      </th>
+    <tr style="background-color: #EEEEEE;">
+      <th style="text-align:center;"></th>
       {% for curso in cursos %}
         {% if curso.curso_do_insper %}
           <th style="text-align:center; width:138px;">
@@ -21,7 +19,7 @@
       {% endfor %}
     </tr>
     <tr> {% comment %} NAO EH A FORMA MAIS ELEGANTE MAS FUNCIONA POR ENQUANTO {% endcomment %}
-      <td>Estudante&nbsp;1</td>
+      <td style="background-color: #EEEEEE; text-align:center; writing-mode: vertical-lr;" rowspan="4">Estudantes</td>
       {% for curso in cursos %}
         {% if curso.curso_do_insper %}
         <td style="text-align:center;">
@@ -37,7 +35,6 @@
     </tr>
 
     <tr>
-      <td>Estudante&nbsp;2</td>
       {% for curso in cursos %}
         {% if curso.curso_do_insper %}
         <td style="text-align:center;">
@@ -54,7 +51,6 @@
     </tr>
 
     <tr>
-      <td>Estudante&nbsp;3</td>
       {% for curso in cursos %}
         {% if curso.curso_do_insper %}
         <td style="text-align:center;">
@@ -70,7 +66,6 @@
 
     </tr>
     <tr>
-      <td>Estudante&nbsp;4</td>
       {% for curso in cursos %}
       {% if curso.curso_do_insper %}
       <td style="text-align:center;">

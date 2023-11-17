@@ -14,10 +14,9 @@
     </h4>
     <small>Disciplinas recomendadas que estudantes tenham ou estejam cursando para aplicar na proposta</small><br>
     
-    
-    <table id="disciplinas_recomendadas" style="margin-top: 10px;">
+    <table id="disciplinas_recomendadas" style="margin-top: 10px; border: 0px;">
       <tr>
-        <th>
+        <th style="border: 0px;">
           Nome da Disciplina
           {% if editavel %}
             <small>
@@ -32,7 +31,7 @@
         </th>
       </tr>
       {% for rec in proposta.recomendada_set.all %}
-          <tr id="disciplina{{rec.disciplina.id}}"><td>
+          <tr id="disciplina{{rec.disciplina.id}}"><td style="border: 0px;">
               {% if rec.disciplina %}
                 {{rec.disciplina.nome}}
               {% else %}
