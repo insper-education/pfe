@@ -166,20 +166,20 @@
     <br>
     <br>
 
-    <label class="topico" for="recursos">Recursos a serem disponibilizados aos alunos<br>
-    <small class="obs">algo será fornecido para os alunos? ex: kits de desenvolvimento, matérias primas, acesso a infra de cloud. (opcional)</small>
+    <label class="topico" for="recursos">Recursos a serem disponibilizados ao grupo de estudantes<br>
+    <small class="obs">algo será fornecido para os estudantes? ex: kits de desenvolvimento, matérias primas, acesso a infra de cloud. (opcional)</small>
     </label><br>
     <textarea id="recursos" name="recursos" rows="5" cols="120" maxlength="1000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.recursos and proposta.recursos != None and proposta.recursos != "None" %}{{proposta.recursos}}{% endif %}</textarea>
     <br><br>
 
-    <label class="topico" for="observacoes">Outras observações que considere relevante para os alunos<br>
-    <small class="obs">caso desejar apresentar alguma informação adicional aos alunos (opcional)</small>
+    <label class="topico" for="observacoes">Outras observações que considere relevante para os estudantes<br>
+    <small class="obs">caso desejar apresentar alguma informação adicional aos estudantes (opcional)</small>
     </label><br>
     <textarea id="observacoes" name="observacoes" rows="5" cols="120" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.observacoes and proposta.observacoes != None and proposta.observacoes != "None" %}{{proposta.observacoes}}{% endif %}</textarea>
     <br><br>
 
-    <label class="topico" for="interesses">O principal interesse com o projeto é:<br>
-    <small class="obs">não será apresentado aos alunos (opcional)</small>
+    <label class="topico" for="interesses">Os principais interesses com o projeto são:<br>
+    <small class="obs">não será apresentado aos estudantes (opcional)</small>
     </label><br>
     {% for interesse in interesses %}
       <label style="font-size: 13px;" for="{{interesse.0}}">
