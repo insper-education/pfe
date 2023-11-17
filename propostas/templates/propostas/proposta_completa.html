@@ -9,13 +9,6 @@
   
   {% load static %}
 
-  {% comment %} <style>
-    td label { 
-       display: block;
-       text-align: center;
-    }
-  </style> {% endcomment %}
-
   <script type="text/javascript" src="{% static 'js/pfe_pulsa_texto.js' %}"></script>
 
   {% comment %} Para o gráfico no final da página {% endcomment %}
@@ -50,7 +43,7 @@
     <br><br>
   {% endif %}
 
-  <h4>Áreas de Interesse</h4>
+  <h5 style="margin-bottom: 4px;">Áreas de Interesse</h5>
   {% with aa=proposta.areadeinteresse_set.all %}
     {% with vencido=True %}
       {% include "areas.html" %}
@@ -76,7 +69,7 @@
 
     <br><b><label for="autorizador" data-toggle="tooltip" data-html="true" animation="true" 
       title="Mesmo ao autorizar uma proposta, esta só será visivel para os estudantes<br>depois que a liberação de visualização for habilitada.">
-      Autorizado por</label></b>:
+      Autorizada por</label></b>:
     <select class="fechar_proposta" name="autorizador" id="autorizador" title="Selecione quem autorizou proposta" required>
         <option value='0'> ---- </option>
         {% for pessoa in comite %}
@@ -101,18 +94,20 @@
     <div id="valor_atualizado" style="display: none; width: fit-content;padding-left: 8px;padding-right: 8px;"></div>
 
     <br><br>
-    <a class="myButton" href="{% url 'proposta_editar' proposta.slug %}">Editar Proposta</a>
-    <a class="myButton" href="{% url 'proposta_detalhes' proposta.id %}">Visão do Estudante</a>
+    <div style="max-width: 56em; text-align: center;">
+    <a class="myButton" style="width: 13em;" href="{% url 'proposta_editar' proposta.slug %}">Editar Proposta</a>
+    <a class="myButton" style="width: 13em;" href="{% url 'proposta_detalhes' proposta.id %}">Visão do Estudante</a>
     
     {% for projeto in projetos %}
-      <a class="myButton" href="{% url 'projeto_completo' projeto.id %}">Projeto {{projeto.ano}}.{{projeto.semestre}}</a>
-      <a class="myButton" onClick="return confirm('Proposta possui um projeto e não pode ser removida')" >Remove Proposta</a>
+      <a class="myButton" style="width: 13em;" href="{% url 'projeto_completo' projeto.id %}">Projeto {{projeto.ano}}.{{projeto.semestre}}</a>
+      <a class="myButton" style="width: 13em; color:white;" onClick="return confirm('Proposta possui um projeto e não pode ser removida')" >Remove Proposta</a>
     {% empty %}
       <a class="myButton" data-toggle="tooltip" data-html="true" animation="true" title="criar projeto dessa proposta"
-      onclick="cria_projeto()" style="color:white;">Criar Projeto</a>
-      <a class="myButton" href="{% url 'proposta_remover' proposta.slug %}" onClick="return confirm('Tem certeza que deseja remover proposta definitivamente?')" >Remove Proposta</a>
+      onclick="cria_projeto()" style="width: 13em; color:white;">Criar Projeto</a>
+      <a class="myButton" style="width: 13em;" href="{% url 'proposta_remover' proposta.slug %}" onClick="return confirm('Tem certeza que deseja remover proposta definitivamente?')" >Remove Proposta</a>
     {% endfor %}
-    <br><br>
+    </div>
+    <br>
 
   {% if not projetos %}
     <script>

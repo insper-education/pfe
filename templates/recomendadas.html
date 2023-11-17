@@ -4,15 +4,22 @@
     Data: 12 de Novembro de 2020
 {% endcomment %}
 
+<style>
+  .obs {
+    font-size: 12px;
+    display: block;
+  }
+</style>
+
 {% if proposta %}
 
   {% if proposta.recomendada_set.all or editavel %}
     <hr>
     <h4>
-    <h4 style="margin-bottom: 0px;">
+    <h5 style="margin-bottom: 0px;">
       Disciplina(s) Recomendada(s)
-    </h4>
-    <small>Disciplinas recomendadas que estudantes tenham ou estejam cursando para aplicar na proposta</small><br>
+    </h5>
+    <small class="obs">Disciplinas recomendadas que estudantes tenham ou estejam cursando para aplicar na proposta</small>
     
     <table id="disciplinas_recomendadas" style="margin-top: 10px; border: 0px;">
       <tr>
