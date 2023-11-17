@@ -37,63 +37,10 @@ from .support import render_pdf_file
 #@login_required
 def index_documentos(request):
     """Lista os documentos armazenados no servidor."""
-    # Regulamento PFE
-    regulamento = Documento.objects.filter(tipo_de_documento=6).last()
-
-    # Plano de Aprendizado
-    plano_de_aprend = Documento.objects.filter(tipo_de_documento=7).last()
-
-    # manual do aluno
-    manual_aluno = Documento.objects.filter(tipo_de_documento=8).last()
-
-    # manual do orientador
-    manual_orientador = Documento.objects.filter(tipo_de_documento=9).last()
-
-    # manual de avaliações
-    manual_avaliacoes = Documento.objects.filter(tipo_de_documento=24).last()
-
-    # manual da organização parceira
-    # = Documento.objects.filter(tipo_de_documento=10).last()
-
-    # manual de planej
-    manual_planejamento = Documento.objects.filter(tipo_de_documento=13).last()
-
-    # manual de relatórios
-    manual_relatorio = Documento.objects.filter(tipo_de_documento=12).last()
-
-    # template de relat. grupo e individual
-    template_relatorio_individual = Documento.objects.filter(tipo_de_documento=16).last()
-    template_relatorio_grupo = Documento.objects.filter(tipo_de_documento=17).last()
-    template_banner = Documento.objects.filter(tipo_de_documento=19).last()
-
-    # termos de parceria
-    termo_parceria_pdf = Documento.objects.filter(tipo_de_documento=32).last()
-    termo_parceria_doc = Documento.objects.filter(tipo_de_documento=33).last()
-
-    # manual para apresentação na banca
-    manual_apresentacao = Documento.objects.filter(tipo_de_documento=22).last()
-
-    # manual de participação em bancas
-    manual_bancas = Documento.objects.filter(tipo_de_documento=23).last()
-
     context = {
+        "documentos": Documento.objects.all(),
         "MEDIA_URL": settings.MEDIA_URL,
-        "regulamento": regulamento,
-        "plano_de_aprendizagem": plano_de_aprend,
-        "manual_aluno": manual_aluno,
-        "manual_planejamento": manual_planejamento,
-        "manual_relatorio": manual_relatorio,
-        "termo_parceria_pdf": termo_parceria_pdf,
-        "termo_parceria_doc": termo_parceria_doc,
-        "template_relatorio_grupo": template_relatorio_grupo,
-        "template_relatorio_individual": template_relatorio_individual,
-        "manual_apresentacao": manual_apresentacao,
-        "manual_bancas": manual_bancas,
-        "manual_orientador": manual_orientador,
-        "manual_avaliacoes": manual_avaliacoes,
-        "template_banner": template_banner,	
     }
-
     return render(request, "documentos/index_documentos.html", context)
 
 

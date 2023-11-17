@@ -5,109 +5,77 @@
     Data: 15 de Maio de 2019
 {% endcomment %}
 
-{% block head %}  
+{% block head %}
+  {% load static %}
+  {% load tipo_documento %}
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
+  <style>
+    ul {
+      width: fit-content;
+      margin: 0px;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
 
-    {% comment %}
-        (1, 'aluno'),
-        (2, 'professor'),
-        (3, 'parceiro'),
-        (4, 'administrador'),
-    {% endcomment %}
-    <br>
-    <h5>Área Geral</h5>
-    <ul style="width: fit-content;">
-    {% if regulamento %}
-        <a {% if regulamento.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{regulamento.data}}"{% endif %}
-           target="_blank" rel="noopener noreferrer" 
-           href="../..{{MEDIA_URL}}{{regulamento.documento}}"><li>Regulamento do PFE</li></a>
-    {% endif %}
-    {% if plano_de_aprendizagem %}
-        <a {% if plano_de_aprendizagem.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{plano_de_aprendizagem.data}}"{% endif %}
-           target="_blank" rel="noopener noreferrer"
-           href="../..{{MEDIA_URL}}{{plano_de_aprendizagem.documento}}"><li>Plano de Aprendizagem</li></a>
-    {% endif %}
+  <br>
+  <h5>Área Geral</h5>
+  <ul>
+    {% include "documento.html" with documento=documentos|tipo_documento:6 %}
+    {% include "documento.html" with documento=documentos|tipo_documento:7 %}
     <a href="{% url 'relatorios_publicos' %}"><li>Relatórios Públicos</li></a>
     <a href="{% url 'materias_midia' %}"><li>Matérias na Mídia</li></a>
+  </ul>
+
+  {% if user.tipo_de_usuario == 1 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Estudante ou Professor ou Adm -->
+    <hr>
+    <h5>Área dos Estudantes</h5> <!-- Estudante -->
+    <ul>
+      {% include "documento.html" with documento=documentos|tipo_documento:8 %}
+      {% include "documento.html" with documento=documentos|tipo_documento:12 %}
+
+        {% include "documento.html" with documento=documentos|tipo_documento:16 nivel=2 %}
+        {% include "documento.html" with documento=documentos|tipo_documento:17 nivel=2 %}
+        {% include "documento.html" with documento=documentos|tipo_documento:19 nivel=2 %}
+
+      {% include "documento.html" with documento=documentos|tipo_documento:22 %}
     </ul>
+  {% endif %}
 
-    {% if user.tipo_de_usuario == 1 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Estudante ou Professor ou Adm -->
-        <hr>
-        <h5>Área dos Estudantes</h5> <!-- Estudante -->
-        <ul style="width: fit-content;">
-        {% if manual_aluno %}
-            <a target="_blank" rel="noopener noreferrer" href="../..{{MEDIA_URL}}{{manual_aluno.documento}}"><li>Manual para os Estudantes</li></a>
-        {% endif %}
-        {% if manual_planejamento %}
-            <a target="_blank" rel="noopener noreferrer" href="../..{{MEDIA_URL}}{{manual_planejamento.documento}}"><li>Manual para Confecção de Relatórios de Planejamento</li></a>
-        {% endif %}
-        {% if manual_relatorio %}
-            <a target="_blank" rel="noopener noreferrer" href="../..{{MEDIA_URL}}{{manual_relatorio.documento}}"><li>Manual para Confecção de Relatórios</li></a>
-            {% if template_relatorio_individual %}
-                <ul>
-                    <a href="../..{{MEDIA_URL}}{{template_relatorio_individual.documento}}"><li style="margin-left: -2em;list-style-type: '&#x21B3;';"> Template para Relatório Individual</li></a>
-                </ul>
-            {% endif %}
-            {% if template_relatorio_grupo %}
-                <ul>
-                    <a href="../..{{MEDIA_URL}}{{template_relatorio_grupo.documento}}"><li style="margin-left: -2em;list-style-type: '&#x21B3;';"> Template para Relatório de Grupo</li></a>
-                </ul>
-            {% endif %}
-            {% if template_banner %}
-            <ul>
-                <a href="../..{{MEDIA_URL}}{{template_banner.documento}}"><li style="margin-left: -2em;list-style-type: '&#x21B3;';"> Template para Banner</li></a>
-            </ul>
-            {% endif %}
-        {% endif %}
-        {% if manual_apresentacao %}
-            <a target="_blank" rel="noopener noreferrer" href="../..{{MEDIA_URL}}{{manual_apresentacao.documento}}"><li>Manual de Apresentação para Banca</li></a>
-        {% endif %}
-        </ul>
-    {% endif %}
+  {% if user.tipo_de_usuario == 3 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Parceiro ou Professor ou Adm -->
+    <hr>
+    <h5>Área dos Parceiros</h5>
+    <ul>
+      {% include "documento.html" with documento=documentos|tipo_documento:32 %}
+      {% include "documento.html" with documento=documentos|tipo_documento:33 %}
+    </ul>
+  {% endif %}
+  {% comment %} Está região é para os parceiros, mas está aberta para todos os usuários {% endcomment %}
+    <ul>
+      {% include "documento.html" with documento=documentos|tipo_documento:13 %}
+    </ul>
+  {% comment %} Fim da região {% endcomment %}
 
-    {% if user.tipo_de_usuario == 3 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Parceiro ou Professor ou Adm -->
-        <hr>
-        <h5>Área dos Parceiros</h5>
-        <ul style="width: fit-content;">
-        {% if termo_parceria_pdf %}
-            <a {% if termo_parceria_pdf.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{termo_parceria_pdf.data}}"{% endif %}
-               href="../..{{MEDIA_URL}}{{termo_parceria_pdf.documento}}"><li>Termo de Parceria - PDF</li></a>
-        {% endif %}
-        {% if termo_parceria_doc %}
-            <a {% if termo_parceria_doc.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{termo_parceria_doc.data}}"{% endif %}
-               href="../..{{MEDIA_URL}}{{termo_parceria_doc.documento}}"><li>Termo de Parceria - DOC</li></a>
-        {% endif %}
-        </ul>
-    {% endif %}
+  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Professor ou Adm -->
+    <hr>
+    <h5>Área do Professor</h5>
+    <ul>
+      <a href="{% url 'tabela_documentos' %}"><li>Tabelas de Documentação dos Projetos</li></a>
+      <a href="{% url 'tabela_atas' %}"><li>Atas do Comitê</li></a>
+      {% include "documento.html" with documento=documentos|tipo_documento:23 %}
+      {% include "documento.html" with documento=documentos|tipo_documento:9 %}
+      {% include "documento.html" with documento=documentos|tipo_documento:24 %}
+    </ul>
+  {% endif %}
 
-    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Professor ou Adm -->
-        <hr>
-        <h5>Área do Professor</h5>
-        <ul style="width: fit-content;">
-        <a href="{% url 'tabela_documentos' %}"><li>Tabelas de Documentação dos Projetos</li></a>
-        <a href="{% url 'tabela_atas' %}"><li>Atas do Comitê</li></a>
-        {% if manual_bancas %}
-            <a target="_blank" rel="noopener noreferrer" href="../..{{MEDIA_URL}}{{manual_bancas.documento}}"><li>Manual de Participação em Bancas</li></a>
-        {% endif %}
-        {% if manual_orientador %}
-            <a target="_blank" rel="noopener noreferrer" href="../..{{MEDIA_URL}}{{manual_orientador.documento}}"><li>Manual do Orientador</li></a>
-        {% endif %}
-        {% if manual_avaliacoes %}
-            <a target="_blank" rel="noopener noreferrer" href="../..{{MEDIA_URL}}{{manual_avaliacoes.documento}}"><li>Manual de Avaliações</li></a>
-        {% endif %}
-        </ul>
-    {% endif %}
-
-    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Professor ou Adm -->
-        <hr>
-        <h5>Área do Operacional</h5>
-        <ul style="width: fit-content;">
-        <a href="{% url 'tabela_seguros' %}"><li>Seguros Emitidos</li></a>
-        </ul>
-    {% endif %}
+  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Professor ou Adm -->
+    <hr>
+    <h5>Área do Operacional</h5>
+    <ul>
+      <a href="{% url 'tabela_seguros' %}"><li>Seguros Emitidos</li></a>
+    </ul>
+  {% endif %}
 
 {% endblock %}
