@@ -6,11 +6,9 @@
 
 {% if documento %}
   {% if nivel == 2 %}
-    {% if template_relatorio_individual %}
     <ul>
       <a href="../..{{MEDIA_URL}}{{documento.documento}}"><li style="margin-left: -2em;list-style-type: '&#x21B3;';"> {{documento.get_tipo_de_documento_display}}</li></a>
     </ul>
-    {% endif %}
   {% else %}
     <a {% if documento.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{documento.data}}"{% endif %}
        target="_blank" rel="noopener noreferrer" 
