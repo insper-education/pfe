@@ -10,12 +10,18 @@
   {% load aderencia_aluno %}
 
   <script src="{% static 'js/Chart.min.js' %}"/></script>
-  
+
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
   
   <style>
 
+    @media (max-width: 800px) {
+      .ancora {
+        font-size: 0.7em;
+      }
+    }
+    
     body {
       line-height: normal;
     }
@@ -74,7 +80,7 @@
       padding-right: 2px;
     }
 
-    #logotipo {
+    .logotipo {
       max-height:64px;
       max-width:64px;
       height:auto;
@@ -87,7 +93,7 @@
 
 {% block content %}
 
-  <span class="titulo">Montar Grupos</span>
+  <span class="titulo">Montar Grupos</span><br>
 
   {% if mensagem %}
     <h5 class="red-bold">{{mensagem|linebreaks}}</h5>
@@ -104,10 +110,11 @@
         
         <div style="width: 68px; vertical-align:middle; margin-right: 8px;">
 
+          <div style="width: 64px; text-align: center;">
             {% if proposta.organizacao.logotipo %}
-              <img id="logotipo" src="{{ proposta.organizacao.logotipo.url }}" alt="{{ proposta.organizacao.sigla }}">
+              <img class="logotipo" src="{{ proposta.organizacao.logotipo.url }}" alt="{{ proposta.organizacao.sigla }}">
             {% endif %}
-
+          </div>
         </div>
 
         <div id="proposta{{proposta.id}}" class="proposta" data-propostaid="{{proposta.id}}" data-titulo="{{proposta.titulo|truncatechars:32}} ({{ proposta.organizacao.sigla }})" >
@@ -186,24 +193,37 @@
   {% else %}
     <p>Não existem propostas de projetos disponíveis.</p>
   {% endif %}
+  <small style="font-size:12px; float: right;">
+    {% for curso in cursos %}
+      <b>{{curso.sigla_curta}}</b>: {{curso.nome}} {% if not forloop.last %}|{% endif %}
+    {% endfor %}
+  </small><br>
 
   <hr>
   <form action="" method="post"> {% csrf_token %}  
-    <input type="submit" name="limpar" value="Resetar Pré Alocações" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
-    <input type="submit" name="fechar" value="Fechar Projetos" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+    <input type="submit" class="btn btn-secondary" name="limpar" value="Resetar Pré Alocações" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+    <input type="submit" class="btn btn-secondary" name="fechar" value="Fechar Projetos" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
   </form>
 
   <br><br>
   <div>
-  Visualizar:<br>
-  <input id="balanceada" type="checkbox" name="balanceada" checked onchange="escondePropostas()"/>
-  <label for="balanceada" style="margin-bottom: 0px;">Propostas Balanceadas: <span id="balanceadas">-</span></label><br>
-  
-  <input id="desbalanceada" type="checkbox" name="desbalanceada" checked onchange="escondePropostas()"/>
-  <label for="desbalanceada" style="margin-bottom: 0px;">Propostas Desbalanceadas: <span id="desbalanceadas">-</span></label><br>
+    <b style="font-size: 18px;">Visualizar:</b><br>
 
-  <input id="vazia" type="checkbox" name="vazia" checked onchange="escondePropostas()"/>
-  <label for="vazia" style="margin-bottom: 0px;">Propostas Vazias: <span id="vazias">-</span></label><br>
+    <div class="custom-control custom-switch">
+      <input type="checkbox" class="custom-control-input" id="balanceada" name="balanceada" checked onchange="escondePropostas()" />
+      <label class="custom-control-label" for="balanceada">Propostas Balanceadas: <span id="balanceadas">-</span></label>
+    </div>
+
+    <div class="custom-control custom-switch">
+      <input type="checkbox" class="custom-control-input" id="desbalanceada" name="desbalanceada" checked onchange="escondePropostas()" />
+      <label class="custom-control-label" for="desbalanceada">Propostas Desbalanceadas: <span id="desbalanceadas">-</span></label>
+    </div>
+
+    <div class="custom-control custom-switch">
+      <input type="checkbox" class="custom-control-input" id="vazia" name="vazia" checked onchange="escondePropostas()" />
+      <label class="custom-control-label" for="vazia">Propostas Vazias: <span id="vazias">-</span></label>
+    </div>
+      
   </div>
 
   <br><br>
@@ -345,7 +365,7 @@
 
     {% comment %} Mostra gráfico de proporção de prioridades {% endcomment %}
     {% include "grafico_prioridades.html" %}
-    <small>Atualiza automaticamente, não precisa de refresh</small>
+    <small>Obs: Atualiza automaticamente, não precisa de refresh</small>
     
     <script>
 
