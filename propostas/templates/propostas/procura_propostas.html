@@ -29,7 +29,7 @@
       var barChartData = {
         labels: [
           {% for proposta in propostas %} 
-            "{{proposta.titulo}} ({{proposta.organizacao|escapejs}})",
+            "[{{proposta.organizacao.sigla|escapejs}}] {{proposta.titulo}}",
           {% endfor %}
           ],
         datasets: [
@@ -110,13 +110,13 @@
           ctx.textAlign = 'left'
           ctx.fillStyle = '#000000'
           ctx.font = "12px Open Sans"
-          var espaco = 19
+          var espaco = 15
           if(counter>9) {
-            espaco = 25
+            espaco = 20
           }
           label_limpo = label.replace("&amp;", "&")
           ctx.fillText(label_limpo, labelPositionX+espaco, labelPositionY)
-          ctx.fillText(counter.toString()+"º : ", labelPositionX, labelPositionY)
+          ctx.fillText(counter.toString()+"º", labelPositionX, labelPositionY)
           counter = counter + 1
 
           var campo = {
@@ -157,34 +157,6 @@
                 }
             }),this)
         }),this);
-
-
-        {% comment %} 
-        // Label
-        counter = 1
-        Chart.helpers.each(meta.data.forEach((bar, index) => {
-
-          const label = this.data.labels[index];
-          const labelPositionX = 9;
-          const labelPositionY = bar._model.y-(bar._model.height/2)
-          const labelWidth = ctx.measureText(label).width
-
-          ctx.textBaseline = 'bottom';
-          ctx.textAlign = 'left';
-          ctx.fillStyle = '#000000';
-          ctx.font = "12px Open Sans";
-          var espaco = 19
-          if(counter>9) {
-            espaco = 25
-          }
-          label_limpo = label.replace("&amp;", "&")
-          ctx.fillText(label_limpo, labelPositionX+espaco, labelPositionY)
-          ctx.fillText(counter.toString()+"º : ", labelPositionX, labelPositionY)
-          counter = counter + 1
-
-        }));
-        {% endcomment %}
-
       }
 
       var config = {
