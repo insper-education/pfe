@@ -15,7 +15,7 @@
       .to_hide {
         font-size: 0.7rem;
         min-width:22%;
-        max-width:32%;
+        max-width:fit-content;
         width:2rem;
       }
       .to_hide2 {
@@ -30,7 +30,9 @@
         margin-right: 6px;
         width: 92vw;
       }
+      .opt_edi {} 
     }
+    
   </style>
 
   <div class="row align-items-start mb-2" style="display: inline-block; margin-right: 3px;">
@@ -41,12 +43,13 @@
             <label class="to_label input-group-text" for="filterEdicao" onClick="recarregar_pagina()"><span class="to_hide">Edição</span></label>
           </div>
           <select class="to_hide filter custom-select w-auto" id="filterEdicao" name="edicao">
+            <optgroup class="opt_edi">
             {% comment %} Se não quiser que aparece a opção todas crie uma variavel n_todas com True {% endcomment %}
             {% if not n_todas %}
-              <option value="todas">todas</option>
+              <option class="opt_edi" value="todas">todas</option>
             {% endif %}
             {% for edicao in edicoes %}
-                <option value="{{edicao}}" 
+                <option class="opt_edi" value="{{edicao}}" 
                     {% if selecionada %}
                       {% if selecionada == edicao %}selected{% endif %}
                     {% else %}
@@ -54,6 +57,7 @@
                     {% endif %}
                 >{{edicao}}</option>
             {% endfor %}
+            </optgroup>
           </select>
         {% endif %}
         {% if com_cursos %}
@@ -64,20 +68,20 @@
             <label class="to_label input-group-text" for="filterCurso" onClick="recarregar_pagina()"><span class="to_hide">Curso</span></label>
           </div>
           <select class="to_hide2 filter custom-select w-auto" id="filterCurso" name="curso">
-              <option value="T">todos</option>
+              <option class="opt_edi" value="T">todos</option>
               {% if cursos %}
                 {% for c in cursos %}
                   {% if c.curso_do_insper %}
-                    <option value="{{c.sigla_curta}}" {% if curso == c.sigla_curta %}selected{% endif %}>{{c.nome}}</option>
+                    <option class="opt_edi" value="{{c.sigla_curta}}" {% if curso == c.sigla_curta %}selected{% endif %}>{{c.nome}}</option>
                   {% endif %}
                 {% endfor %}
                 {% for c in cursos %}
                   {% if not c.curso_do_insper %}
-                    <option class="text-info" value="{{c.sigla_curta}}" {% if curso == c.sigla_curta %}selected{% endif %}>{{c.nome}}</option>
+                    <option class="opt_edi text-info" value="{{c.sigla_curta}}" {% if curso == c.sigla_curta %}selected{% endif %}>{{c.nome}}</option>
                   {% endif %}
                 {% endfor %}
               {% else %}
-                <option selected>ERRO / ERROR</option>
+                <option class="opt_edi" selected>ERRO / ERROR</option>
               {% endif %}
           </select>
         {% endif %}
@@ -89,7 +93,7 @@
           </div>
           <select class="filter custom-select w-auto" id="filterObjetivo" name="objetivo">
             {% for objetivo in objetivos %}
-              <option value="{{objetivo.id}}" 
+              <option class="opt_edi" value="{{objetivo.id}}" 
               {% if objetivo.id == obj_selecionado %}selected{% endif %}>{{objetivo.titulo}} - {{objetivo.data_inicial}}</option>
             {% endfor %}
           </select>
@@ -129,9 +133,9 @@
             <label class="input-group-text" for="filterTipo" onClick="recarregar_pagina()"><span class="to_hide">Tipo</span></label>
           </div>
           <select class="filter custom-select w-auto" id="filterTipo" name="tipo">
-            <option value="estudantes">Estudantes</option>
-            <option value="propostas">Propostas</option>
-            <option value="projetos">Projetos</option>
+            <option class="opt_edi" value="estudantes">Estudantes</option>
+            <option class="opt_edi" value="propostas">Propostas</option>
+            <option class="opt_edi" value="projetos">Projetos</option>
           </select>
         {% endif %}
 

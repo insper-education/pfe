@@ -66,7 +66,7 @@
     </script>
 
     {% if organizacoes_list %}
-
+      <div class="table-responsive">
       <table id="OrganizacoesTable" style="width:100%">
         <tr>
           <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">
@@ -215,6 +215,7 @@
           {% endif %}
         {% endfor %}
       </table>
+      </div>
 
       Organizações contactadas recentemente ({{total_organizacoes}}):<br>
 
