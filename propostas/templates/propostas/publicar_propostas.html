@@ -12,13 +12,17 @@
   
   <style>
     #liberadas {
-      padding: 30px;
+      padding: 16px;
       border-radius: 5px;
       width: fit-content;
       margin-left: 20px;
       font-size: 20px;
       font-weight: bold;
       border: 1px solid black; 
+    }
+    .obs {
+      font-size: 12px;
+      display: block;
     }
   </style>
 {% endblock %}
@@ -30,29 +34,31 @@
   <span class="titulo">Publicar Propostas</span>
   <br>
   
-  <label for="data_planejada">Data planejada para liberar propostas de projetos para estudantes:</label>
-  {% if data_planejada %}
-    <span id="data_planejada">{{data_planejada}}.</span>
-  {% else %}
-    <span id="data_planejada">Data para liberar propostas de projetos ainda não foi definida na agenda.</span>
-  {% endif %}
-  <br>
+  <div>
+    <span>Data planejada para liberar propostas de projetos para estudantes:</span>
+    {% if data_planejada %}
+      <span style="font-weight:bold;" id="data_planejada">{{data_planejada}}.</span>
+    {% else %}
+      <span style="font-weight:bold;" id="data_planejada">Data para liberar propostas de projetos ainda não foi definida na agenda.</span>
+    {% endif %}
+  </div>
   
-  <label for="limite_propostas">Prazo limite para seleção de propostas por estudantes: </label>
-  {% if limite_propostas %}
-    <span id="limite_propostas">{{limite_propostas}}</span>
-  {% else %}
-    <span id="limite_propostas">Data para indicação de interesse nos projetos do próximo semestre pelos estudante não foi definida na agenda.</span>
-  {% endif %}
-  <br>
+  <div style="margin-top: 6px;">
+    <span>Prazo limite para seleção de propostas por estudantes: </span>
+    {% if limite_propostas %}
+      <span style="font-weight:bold;" id="limite_propostas">{{limite_propostas}}</span>
+    {% else %}
+      <span style="font-weight:bold;" id="limite_propostas">Data para indicação de interesse nos projetos do próximo semestre pelos estudante não foi definida na agenda.</span>
+    {% endif %}
+  </div>
 
   <br>
   
   <input class="liberar" type="checkbox" id="liberadas_propostas" name="liberadas_propostas"
          {% if user.tipo_de_usuario != 4 %}disabled data-toggle="tooltip" data-placement="bottom" title="Somente coordenadores podem alterar valor!"{% endif %}
          {% if configuracao.liberadas_propostas %}checked{% endif %}>
-  <label for="liberadas_propostas"> Propostas Liberadas para Estudantes</label>
-  <small>(Estudantes conseguirão ver as propostas disponíveis para aplicar)</small>
+  <label style="margin-bottom: 0px;"for="liberadas_propostas"> Propostas Liberadas para Estudantes</label>
+  <small class="obs">(Estudantes conseguirão ver as propostas disponíveis para aplicar)</small>
   <br>
 
   <label for="min_props">Mínimo de Propostas para Estudantes Selecionarem:</label>
