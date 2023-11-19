@@ -791,10 +791,10 @@ def montar_grupos(request):
         mensagem += "você pode mexer na tela, contudo suas modificações não serão salvas."
 
     context = {
-        'mensagem': mensagem,
-        'configuracao': configuracao,
-        'propostas': propostas,
-        'estudantes_opcoes': estudantes_opcoes,
+        "mensagem": mensagem,
+        "configuracao": configuracao,
+        "propostas": propostas,
+        "estudantes_opcoes": estudantes_opcoes,
         "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"), 
     }
 

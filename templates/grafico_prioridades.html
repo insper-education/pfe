@@ -6,36 +6,42 @@
 
 <script>
 
+  var texto_a_ser_exibido = ""; // Texto a ser exibido
+
+  // Texto para emitir mensagem de erro, caso necessário
+  function addText(chart) {
+    const ctx = chart.chart.ctx; 
+    const text = texto_a_ser_exibido;
+    ctx.save();
+    ctx.font = `20px "'Helvetica Neue', 'Helvetica', Arial', sans-serif"`;
+    ctx.fillStyle = "red";
+    ctx.fillText(text, 80,80);
+    ctx.restore();
+  }
+
   function mostra_grafico() { // REFERENTE AO PIE CHART
+
+    var diff = (count_alunos - nao_definido)*0.01;
+    if(diff == 0) {diff=1.0;} // Evita divisão por zero
+
     var config = {     // REFERENTE AO PIE CHART
       type: 'pie',
       data: {
         datasets: [{
           data: [
-            prioridade1,
-            prioridade2,
-            prioridade3,
-            prioridade4,
-            prioridade5,
-            prioridade6m,
+            prioridade1, prioridade2, prioridade3, prioridade4, prioridade5, prioridade6m,
           ],
           backgroundColor: [
-            "#2ecc71",
-            "#3498db",
-            "#95a5a6",
-            "#9b59b6",
-            "#f1c40f",
-            "#e74c3c",
-            "#34495e"
+            "#2ecc71", "#3498db", "#95a5a6", "#9b59b6", "#f1c40f", "#e74c3c", "#34495e"
           ],
         }],
         labels: [
-          '#1 ['+parseInt(100*prioridade1/(count_alunos-nao_definido))+'%]',
-          '#2 ['+parseInt(100*prioridade2/(count_alunos-nao_definido))+'%]',
-          '#3 ['+parseInt(100*prioridade3/(count_alunos-nao_definido))+'%]',
-          '#4 ['+parseInt(100*prioridade4/(count_alunos-nao_definido))+'%]',
-          '#5 ['+parseInt(100*prioridade5/(count_alunos-nao_definido))+'%]',
-          '#>=6 ['+parseInt(100*prioridade6m/(count_alunos-nao_definido))+'%]',
+          '#1 ['+parseInt(prioridade1/diff)+'%]',
+          '#2 ['+parseInt(prioridade2/diff)+'%]',
+          '#3 ['+parseInt(prioridade3/diff)+'%]',
+          '#4 ['+parseInt(prioridade4/diff)+'%]',
+          '#5 ['+parseInt(prioridade5/diff)+'%]',
+          '#>=6 ['+parseInt(prioridade6m/diff)+'%]'
         ]
       },
       options: {
@@ -56,8 +62,19 @@
       }
     };
 
+    // Para mensagens no gráfico
+    Chart.plugins.register({
+      afterDraw: addText
+    });
+
     var context = $("#chart-area").get(0).getContext('2d'); // REFERENTE AO PIE CHART
     window.myPie = new Chart(context, config); // REFERENTE AO PIE CHART
+
+    // Deve sempre haver mais estudantes válidos que inválidos
+    if(count_alunos <= nao_definido){
+      texto_a_ser_exibido = "Sem estudantes com opções válidas!";
+    }
+
   }
 
 </script>
