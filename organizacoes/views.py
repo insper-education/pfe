@@ -203,7 +203,7 @@ def adiciona_documento(request, organizacao_id, projeto_id=None, tipo_id=None, d
         "documentos": Documento.objects.filter(id=documento_id),
         "documento_id": documento_id,
         "MEDIA_URL": settings.MEDIA_URL,
-
+        "configuracao": get_object_or_404(Configuracao),
     }
 
     return render(request,
