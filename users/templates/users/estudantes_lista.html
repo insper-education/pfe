@@ -20,6 +20,12 @@
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
 
+  <style>
+    th {
+      padding: 1px 4px 1px 4px;
+    }
+  </style>
+
 {% endblock %}
 
 {% block content %}
@@ -118,17 +124,19 @@
       </table>
     </div>
     <br>
-
+    {{curso}}
     {% if totais.total > 0 %}
       <br><br>
       <h5>Quantidade de estudantes alocados em projetos</h5>
       <table id="AlunosTable">
         <tr>
-            <th class="text-center" style="border-right: solid 3px;">Periodo</th>
+            <th class="text-center" style="border-right: solid 3px;">Período</th>
             {% for curso in cursos %}
               <th class="text-center">{{curso.sigla}}</th>
             {% endfor %}
-            <th class="text-center" style="border-left: solid 3px;">TOTAL</th>
+            {% if curso_sel == 'T' %}
+              <th class="text-center" style="border-left: solid 3px;">TOTAL</th>
+            {% endif %}
         </tr>
         {% for ano,tabela_ano in tabela_alunos.items %}
           {% for semestre,tabela_semetre in tabela_ano.items %}
@@ -141,7 +149,9 @@
                     {% endwith %}
                   </td>
                 {% endfor %}
-                <td class="text-center" style="border-left: solid 3px;"><b> {{tabela_semetre.total}} </b></td>
+                {% if curso_sel == 'T' %}
+                  <td class="text-center" style="border-left: solid 3px;"><b> {{tabela_semetre.total}} </b></td>
+                {% endif %}
             </tr>
           {% endfor %}
         {% endfor %}
@@ -155,9 +165,10 @@
                   {% endwith %}
                 </td>
               {% endfor %}
-
-            <td class="text-center" style="border-left: solid 3px; border-top: double;"><b> {{totais.total}} </b></td>
-          </tr>
+            {% if curso_sel == 'T' %}
+              <td class="text-center" style="border-left: solid 3px; border-top: double;"><b> {{totais.total}} </b></td>
+            {% endif %}
+            </tr>
         {% endif %}
       </table>
       {% if ano == 0 or semestre == 0 %}

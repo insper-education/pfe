@@ -105,10 +105,10 @@ def estudantes_lista(request):
             totais["total"] = 0
 
             # Filtra para alunos de um curso específico
-            if 'curso' in request.POST:
-                curso = request.POST['curso']
-                if curso != 'T':
-                    alunos_todos = alunos_todos.filter(curso2__sigla_curta=curso)
+            if "curso" in request.POST:
+                curso_sel = request.POST["curso"]
+                if curso_sel != 'T':
+                    alunos_todos = alunos_todos.filter(curso2__sigla_curta=curso_sel)
         
             
             if anosemestre not in ("todos", "trancou"):
@@ -213,23 +213,24 @@ def estudantes_lista(request):
             cabecalhos = ["Nome", "Matrícula", "e-mail", "Curso", "Período", "Projeto", "Organização", "Linkedin", ]
             
             context = {
-                'alunos_list': alunos_list,
-                'total_estudantes': total_estudantes,
+                "alunos_list": alunos_list,
+                "total_estudantes": total_estudantes,
                 "num_estudantes": num_estudantes,
 
-                'num_alunos_masculino': num_alunos_masculino,
-                'num_alunos_feminino': num_alunos_feminino,
+                "num_alunos_masculino": num_alunos_masculino,
+                "num_alunos_feminino": num_alunos_feminino,
 
-                'configuracao': configuracao,
+                "configuracao": configuracao,
                 "cursos": cursos,
-                'tabela_alunos': tabela_alunos,
+                "tabela_alunos": tabela_alunos,
 
-                'totais': totais,
-                'ano': ano,
-                'semestre': semestre,
-                'ano_semestre': str(ano)+"."+str(semestre),
-                'loop_anos': range(2018, configuracao.ano+1),
-                "cabecalhos": cabecalhos,   
+                "totais": totais,
+                "ano": ano,
+                "semestre": semestre,
+                "ano_semestre": str(ano)+"."+str(semestre),
+                "loop_anos": range(2018, configuracao.ano+1),
+                "cabecalhos": cabecalhos,
+                "curso_sel": curso_sel,
             }
 
         else:
