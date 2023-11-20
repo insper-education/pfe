@@ -26,9 +26,6 @@
             Organizations, Projects e Proposals
         {% endif %}
     </span>
-    
-
-    
 
     <div class="2areas2">
 
@@ -64,7 +61,6 @@
                     <br><p>Obs: Information about prospection until 2019.2 is incomplete.</p>
                 {% endif %}
 
-                
             </small>
             <br><br>
 
@@ -77,12 +73,12 @@
         var config_projetos = {
             type: 'bar',
             data: {
-            labels: [
+              labels: [
                 {% for edicao in edicoes %}
                     "{{edicao}}",
                 {% endfor %}
                 ],
-            datasets: [
+              datasets: [
                 {
                     label: "{% if lingua == 'pt' %}propostas{% else %}proposals{% endif %}",
                     backgroundColor: "#8ebed2",
@@ -111,14 +107,13 @@
                         {% endfor %}
                     ],
                 }, 
-            ]
+              ]
             },
             options: {
                 legend: { display: true },
                 title: {
                     display: true,
                     text: "{% if lingua == 'pt' %}Propostas e Projetos{% else %}Proposals and Projects{% endif %}",
-
                 }, 
                 plugins: {
                     datalabels: {
@@ -132,9 +127,7 @@
                                 size = Math.round(width / (2 * dataset_visibeis * {{ edicoes|length }}));
                             }
                             
-                            return {
-                                size: size
-                            };
+                            return {size: size};
                         }
                     },
                 },
