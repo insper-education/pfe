@@ -227,7 +227,6 @@ table, th, td {
   }
   .titulo {
     font-size: 21px;
-    display: block;
     padding-bottom: 0.15em;  
   }
   h3 {
@@ -244,7 +243,6 @@ table, th, td {
   }
   .titulo {
     font-size: 18px;
-    display: block;
     padding-bottom: 0.05em;  
   }
 } 

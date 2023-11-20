@@ -15,79 +15,78 @@
   <h5 style="margin-bottom: 0px;">Perfil de Estudantes Esperados</h5>
   <small class="obs">Cada linha representa uma vaga que idealmente deve ser preenchida por um estudante dos cursos marcados</small>
   <table>
-    <tr style="background-color: #EEEEEE;">
-      <th style="text-align:center;"></th>
-      {% for curso in cursos %}
-        {% if curso.curso_do_insper %}
-          <th style="text-align:center; width:138px;">
-            {{curso.nome}}
-            {% if editavel %}<input type="checkbox" id="alunos{{curso.sigla_curta}}">{% endif %}
-          </th>
-        {% endif %}
-      {% endfor %}
-    </tr>
-    <tr> {% comment %} NAO EH A FORMA MAIS ELEGANTE MAS FUNCIONA POR ENQUANTO {% endcomment %}
-      <td style="background-color: #EEEEEE; text-align:center; writing-mode: vertical-lr;" rowspan="4">Estudantes</td>
-      {% for curso in cursos %}
+    <thead>
+      <tr style="background-color: #EEEEEE;">
+        <th style="text-align:center;"></th>
+        {% for curso in cursos %}
+          {% if curso.curso_do_insper %}
+            <th style="text-align:center; width:138px;">
+              {{curso.nome}}
+              {% if editavel %}<input type="checkbox" id="alunos{{curso.sigla_curta}}">{% endif %}
+            </th>
+          {% endif %}
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      <tr> {% comment %} NAO EH A FORMA MAIS ELEGANTE MAS FUNCIONA POR ENQUANTO {% endcomment %}
+        <td style="background-color: #EEEEEE; text-align:center; writing-mode: vertical-lr;" rowspan="4">Estudantes</td>
+        {% for curso in cursos %}
+          {% if curso.curso_do_insper %}
+          <td style="text-align:center;">
+            {% if editavel %}
+                <label style="line-height:0.6em; "><input style="vertical-align: middle;" class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}1" name="alunos{{curso.sigla_curta}}1" value="{{curso.sigla_curta}}1" 
+                {% if curso in proposta.perfil1.all %}checked{% endif %}></label>
+            {% else %}
+              {% if  curso in proposta.perfil1.all %}&#x2713;{% endif %}
+            {% endif %}
+          </td>
+          {% endif %}
+        {% endfor %}
+      </tr>
+      <tr>
+        {% for curso in cursos %}
+          {% if curso.curso_do_insper %}
+          <td style="text-align:center;">
+            {% if editavel %}
+                <label style="line-height:0.6em;"><input style="vertical-align: middle;" class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}2" name="alunos{{curso.sigla_curta}}2" value="{{curso.sigla_curta}}2" 
+                {% if curso in proposta.perfil2.all %}checked{% endif %}></label>
+            {% else %}
+              {% if  curso in proposta.perfil2.all %}&#x2713;{% endif %}
+            {% endif %}
+          </td>
+          {% endif %}
+        {% endfor %}
+      </tr>
+      <tr>
+        {% for curso in cursos %}
+          {% if curso.curso_do_insper %}
+          <td style="text-align:center;">
+            {% if editavel %}
+                <label style="line-height:0.6em;"><input style="vertical-align: middle;" class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}3" name="alunos{{curso.sigla_curta}}3" value="{{curso.sigla_curta}}3" 
+                {% if curso in proposta.perfil3.all %}checked{% endif %}></label>
+            {% else %}
+              {% if  curso in proposta.perfil3.all %}&#x2713;{% endif %}
+            {% endif %}
+          </td>
+          {% endif %}
+        {% endfor %}
+      </tr>
+      <tr>
+        {% for curso in cursos %}
         {% if curso.curso_do_insper %}
         <td style="text-align:center;">
           {% if editavel %}
-              <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}1" name="alunos{{curso.sigla_curta}}1" value="{{curso.sigla_curta}}1" 
-              {% if curso in proposta.perfil1.all %}checked{% endif %}></label>
+              <label style="line-height:0.6em;"><input style="vertical-align: middle;" class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}4" name="alunos{{curso.sigla_curta}}4" value="{{curso.sigla_curta}}4" 
+              {% if curso in proposta.perfil4.all %}checked{% endif %}></label>
           {% else %}
-            {% if  curso in proposta.perfil1.all %}&#x2713;{% endif %}
+            {% if  curso in proposta.perfil4.all %}&#x2713;{% endif %}
           {% endif %}
         </td>
         {% endif %}
       {% endfor %}
-    </tr>
-
-    <tr>
-      {% for curso in cursos %}
-        {% if curso.curso_do_insper %}
-        <td style="text-align:center;">
-          {% if editavel %}
-              <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}2" name="alunos{{curso.sigla_curta}}2" value="{{curso.sigla_curta}}2" 
-              {% if curso in proposta.perfil2.all %}checked{% endif %}></label>
-          {% else %}
-            {% if  curso in proposta.perfil2.all %}&#x2713;{% endif %}
-          {% endif %}
-        </td>
-        {% endif %}
-      {% endfor %}
-
-    </tr>
-
-    <tr>
-      {% for curso in cursos %}
-        {% if curso.curso_do_insper %}
-        <td style="text-align:center;">
-          {% if editavel %}
-              <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}3" name="alunos{{curso.sigla_curta}}3" value="{{curso.sigla_curta}}3" 
-              {% if curso in proposta.perfil3.all %}checked{% endif %}></label>
-          {% else %}
-            {% if  curso in proposta.perfil3.all %}&#x2713;{% endif %}
-          {% endif %}
-        </td>
-        {% endif %}
-      {% endfor %}
-
-    </tr>
-    <tr>
-      {% for curso in cursos %}
-      {% if curso.curso_do_insper %}
-      <td style="text-align:center;">
-        {% if editavel %}
-            <label style="line-height:0.6em;"><input class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}4" name="alunos{{curso.sigla_curta}}4" value="{{curso.sigla_curta}}4" 
-            {% if curso in proposta.perfil4.all %}checked{% endif %}></label>
-        {% else %}
-          {% if  curso in proposta.perfil4.all %}&#x2713;{% endif %}
-        {% endif %}
-      </td>
-      {% endif %}
-    {% endfor %}
-
-    </tr>
+      </tr>
+    </tbody>
   </table>
 
   {% if editavel %}

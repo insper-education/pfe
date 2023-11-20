@@ -393,28 +393,28 @@
   <hr>
   <div style="max-width: 56em; text-align: center;">
 
-    <a class="myButton" style="width: 11em;"
+    <a class="myButton" style="width: 11em; padding-bottom: 3px;"
     data-toggle="tooltip" data-html="true" animation="true" title="Acessa a poposta do projeto"
     href="{% url 'proposta_completa' projeto.proposta.id %}">Proposta</a>
 
-    <a class="myButton" style="width: 11em;"
+    <a class="myButton" style="width: 11em; padding-bottom: 3px;"
     data-toggle="tooltip" data-html="true" animation="true" title="Acessa as avaliações das bancas"
     href="{% url 'conceitos_obtidos' projeto.id %}">Avaliações</a>
 
-    <a class="myButton" style="width: 11em;"
+    <a class="myButton" style="width: 11em; padding-bottom: 3px;"
     data-toggle="tooltip" data-html="true" animation="true" title="Acessa os agendamentos das bancas"
     href="{% url 'bancas_lista' projeto.id %}">Agendamentos</a>
 
     <a class="myButton" 
     data-toggle="tooltip" data-html="true" animation="true" title="Acessa a versão avançada desse projeto"
       {% if projetos_avancados %}
-        href="{% url 'projeto_avancado' projeto.id %}" style="width: 11em;"
+        href="{% url 'projeto_avancado' projeto.id %}" style="width: 11em; padding-bottom: 3px;"
       {% else %}
-        onclick="cria_avancado()" style="color:white; width: 11em;"
+        onclick="cria_avancado()" style="color:white; width: 11em; padding-bottom: 3px;"
       {% endif %}
     >Avançado</a>
     
-    <a class="myButton" style="width: 11em;"
+    <a class="myButton" style="width: 11em; padding-bottom: 3px;"
     data-toggle="tooltip" data-html="true" animation="true" title="Permite editar alguns campos do projeto"
     href="{% url 'editar_projeto' projeto.id %}">Editar</a>
   </div>

@@ -785,12 +785,14 @@ def link_organizacao(request, proposta_id):
         proposta.save()
 
         data = {
-            'organizacao': str(organizacao),
-            'organizacao_id': organizacao.id,
-            'organizacao_endereco': organizacao.endereco,
-            'organizacao_website': organizacao.website,
-            'proposta': proposta_id,
-            'atualizado': True,
+            "organizacao": str(organizacao),
+            "organizacao_id": organizacao.id,
+            "organizacao_sigla": organizacao.sigla,
+            "organizacao_endereco": organizacao.endereco,
+            "organizacao_logotipo_url": (organizacao.logotipo.url if organizacao.logotipo else None),
+            "organizacao_website": organizacao.website,
+            "proposta": proposta_id,
+            "atualizado": True,
         }
 
         return JsonResponse(data)

@@ -16,6 +16,24 @@
   <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
   <link rel="stylesheet" type="text/css" href="{% static 'css/Chart.min.css' %}">
 
+  <style>
+    .t_f {
+      display: inline;
+    }
+    .t_s {
+      display: none;
+    }
+    
+    @media only screen and (max-width: 700px) {
+      .t_f { 
+        display: none;
+      }
+      .t_s {
+        display: inline;
+      }
+    }
+  </style>
+
 {% endblock %}
 
 {% block content %}
@@ -95,16 +113,16 @@
 
     <br><br>
     <div style="max-width: 56em; text-align: center;">
-    <a class="myButton" style="width: 13em;" href="{% url 'proposta_editar' proposta.slug %}">Editar Proposta</a>
+    <a class="myButton" style="width: 13em; " href="{% url 'proposta_editar' proposta.slug %}">Editar Proposta</a>
     <a class="myButton" style="width: 13em;" href="{% url 'proposta_detalhes' proposta.id %}">Visão do Estudante</a>
     
     {% for projeto in projetos %}
-      <a class="myButton" style="width: 13em;" href="{% url 'projeto_completo' projeto.id %}">Projeto {{projeto.ano}}.{{projeto.semestre}}</a>
-      <a class="myButton" style="width: 13em; color:white;" onClick="return confirm('Proposta possui um projeto e não pode ser removida')" >Remove Proposta</a>
+      <a class="myButton" style="width: 13em; padding-bottom: 3px;" href="{% url 'projeto_completo' projeto.id %}">Projeto {{projeto.ano}}.{{projeto.semestre}}</a>
+      <a class="myButton" style="width: 13em; padding-bottom: 3px;color:white;" onClick="return confirm('Proposta possui um projeto e não pode ser removida')" >Remove Proposta</a>
     {% empty %}
       <a class="myButton" data-toggle="tooltip" data-html="true" animation="true" title="criar projeto dessa proposta"
-      onclick="cria_projeto()" style="width: 13em; color:white;">Criar Projeto</a>
-      <a class="myButton" style="width: 13em;" href="{% url 'proposta_remover' proposta.slug %}" onClick="return confirm('Tem certeza que deseja remover proposta definitivamente?')" >Remove Proposta</a>
+      onclick="cria_projeto()" style="width: 13em; padding-bottom: 3px; color:white;">Criar Projeto</a>
+      <a class="myButton" style="width: 13em; padding-bottom: 3px;" href="{% url 'proposta_remover' proposta.slug %}" onClick="return confirm('Tem certeza que deseja remover proposta definitivamente?')" >Remove Proposta</a>
     {% endfor %}
     </div>
     <br>
@@ -150,17 +168,20 @@
        {% endif %}
        ">
         {{opcao.aluno.user.get_full_name}}
-        [{{ opcao.aluno.curso2 }}]
-        &nbsp;=>&nbsp;opção #{{opcao.prioridade}}
-        &nbsp;|
-        &nbsp;CR={{opcao.aluno.cr}}
+        <span class="t_f">
+          [{{ opcao.aluno.curso2 }}]
+          &#10140; opção 
+        </span>
+        <span class="t_s">
+          [{{ opcao.aluno.curso2.sigla_curta }}]
+          &#10140; op
+        </span>
+          #{{opcao.prioridade}} | CR={{opcao.aluno.cr|floatformat:2}}
       <br>
     </a>
     {% endif %}
   {% endfor %}
-  <p style="line-height:2px">
-    --------------------------------------------------------------------------------------
-  </p>
+  <hr style="line-height:2px"/>
   {% for opcao in proposta.opcao_set.all %}
     {% if proposta.ano != opcao.aluno.anoPFE or proposta.semestre != opcao.aluno.semestrePFE %}
     <a href="{% url 'estudante_detail' opcao.aluno.id %}" class="{% if opcao.aluno in estudantes %}red-bold{% else %}red-normal{% endif%}">

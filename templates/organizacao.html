@@ -24,6 +24,27 @@
       animation-duration: 2s;
     }
     
+    .entrada_pri {
+      font-size: 30px;
+      display: inline-block;
+      padding-bottom: 0.25em;
+      padding-top: 10px;
+    }
+
+    @media only screen and (max-width: 740px) {
+      .entrada_pri {
+        font-size: 21px;
+        padding-bottom: 0.15em;  
+      }
+    }
+    
+    @media only screen and (max-width: 480px) {
+      .entrada_pri {
+        font-size: 18px;
+        padding-bottom: 0.05em;  
+      }
+    } 
+
     @keyframes pulse-text {
       0% {font-size: 1em;}
       50% {font-size: 1.1em;}
@@ -36,7 +57,7 @@
     <img id="logotipo" src="{{ proposta.organizacao.logotipo.url }}" alt="{{ proposta.organizacao.sigla }}">
   {% endif %}
 
-  <span class="titulo">
+  <span class="entrada_pri">
     <b>Organização:</b>
     {% if proposta.organizacao and proposta.organizacao.nome %}
         {% if completo %}
