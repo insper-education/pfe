@@ -10,7 +10,7 @@ TIPO_EVENTO = (
     (0, 'Feriado', 'lightgrey'),
     (1, 'Aula cancelada', 'lightgrey'),
 
-    (9, 'Conversas iniciais entre Estudantes/Orientador/Organização', 'orange'),
+    (9, 'Conversas iniciais entre Grupo/Orientador/Organização', 'orange'),
 
     (10, 'Início das aulas', 'red'),
     (11, 'Evento de abertura do PFE', 'orange'),  # Obsoleto

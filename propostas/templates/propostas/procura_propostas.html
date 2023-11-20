@@ -20,7 +20,7 @@
 
   <div class="2areas2">
 
-    <div id="chart-container" style="position: relative; height:{{tamanho}}vh; width:100%">
+    <div id="chart-container" style="position: relative; height:{{tamanho}}vh; width:100%;position: relative; left: 0px;">
       <canvas id="chart-area"></canvas>
     </div>
   
@@ -114,7 +114,7 @@
           ctx.font = "12px Open Sans"
           var espaco = 13
           if(counter>9) {
-            espaco = 18
+            espaco = 19
           }
           label_limpo = label.replace("&amp;", "&")
           ctx.fillText(label_limpo, labelPositionX+espaco, labelPositionY)
