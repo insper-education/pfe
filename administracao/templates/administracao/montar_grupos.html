@@ -377,14 +377,18 @@
           Estudante não escolheu opções de proposta de projetos<br>
         {% endfor %}
         --------------------------------------------------------------------------<br>
+        {% if estudante.trabalhou %}
         <b>Você já trabalhou/trabalha ou estagiou/estagia em alguma empresa de engenharia?</b><br>
-        {{estudante.trabalhou|linebreaks}}<br>
+        {{estudante.trabalhou|linebreaks}}<br>{% endif %}
+        {% if estudante.social %}
         <b>Você já participou de atividades sociais? Por exemplo trabalhos voluntários ou ações em comunidades.</b><br>
-        {{estudante.social|linebreaks}}<br>
+        {{estudante.social|linebreaks}}<br>{% endif %}
+        {% if estudante.entidade %}
         <b>Você já participou de alguma entidade estudantil do Insper?</b><br>
-        {{estudante.entidade|linebreaks}}<br>
+        {{estudante.entidade|linebreaks}}<br>{% endif %}
+        {% if estudante.familia %}
         <b>Você possui familiares em alguma empresa que está aplicando? Ou empresa concorrente direta?</b><br>
-        {{estudante.familia|linebreaks}}<br>
+        {{estudante.familia|linebreaks}}<br>{% endif %}
         ">
         <span id="nome{{estudante.id}}">{{estudante.user.get_full_name}}</span></a>
         <span class="opcao" style="float: right;"><div class="opt_full">opção </div><div class="opt_short">op</div>#<span>{% if opcoes %}1{% else %}?{% endif %}</span></span><br>
