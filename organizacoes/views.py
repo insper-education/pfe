@@ -283,7 +283,15 @@ def proposta_submissao(request):
             administrador = get_object_or_404(Administrador, pk=request.user.administrador.pk)
 
     if request.method == 'POST':
+
         proposta = preenche_proposta(request, None)
+
+        if "arquivo" in request.FILES:
+            arquivo = simple_upload(request.FILES['arquivo'],
+                                    path=get_upload_path(proposta, ""))
+            proposta.anexo = arquivo[len(settings.MEDIA_URL):]
+            proposta.save()
+
         enviar = "mensagem" in request.POST  # Por e-mail se enviar
         mensagem = envia_proposta(proposta, enviar)
 
@@ -320,27 +328,28 @@ def proposta_submissao(request):
     ]
 
     context = {
-        'full_name': full_name,
-        'email': email_sub,
-        'organizacao': organizacao,
-        'website': website,
-        'endereco': endereco,
-        'descricao_organizacao': descricao_organizacao,
-        'parceiro': parceiro,
-        'professor': professor,
-        'administrador': administrador,
-        'contatos_tecnicos': "",
-        'contatos_adm': "",
-        'info_departamento': "",
-        'titulo': "",
-        'desc_projeto': "",
-        'expectativas': "",
-        'areast': areas,
-        'recursos': "",
-        'observacoes': "",
-        'edicao': False,
-        'interesses': interesses,
-        'ano_semestre': str(ano)+"."+str(semestre),
+        "full_name": full_name,
+        "email": email_sub,
+        "organizacao": organizacao,
+        "website": website,
+        "endereco": endereco,
+        "descricao_organizacao": descricao_organizacao,
+        "parceiro": parceiro,
+        "professor": professor,
+        "administrador": administrador,
+        "contatos_tecnicos": "",
+        "contatos_adm": "",
+        "info_departamento": "",
+        "titulo": "",
+        "desc_projeto": "",
+        "expectativas": "",
+        "areast": areas,
+        "recursos": "",
+        "observacoes": "",
+        "edicao": False,
+        "interesses": interesses,
+        "ano_semestre": str(ano)+"."+str(semestre),
+        "configuracao": configuracao,
     }
     return render(request, 'organizacoes/proposta_submissao.html', context)
 
@@ -387,6 +396,7 @@ def _getFields(obj, tree=None, retval=None, fileobj=None):
     return retval
 
 
+# Para pegar os campos do PDF
 def get_form_fields(infile):
     infile = PdfFileReader(open(infile, 'rb'))
     fields = _getFields(infile)
@@ -427,7 +437,7 @@ def carrega_proposta(request):
 
         resposta = ""
 
-        if 'arquivo' in request.FILES:
+        if "arquivo" in request.FILES:
             arquivo = simple_upload(request.FILES['arquivo'],
                                     path=get_upload_path(None, ""))
 
@@ -464,10 +474,10 @@ def carrega_proposta(request):
         return render(request, 'generic.html', context=context)
 
     context = {
-        'full_name': full_name,
-        'email': email_sub,
+        "full_name": full_name,
+        "email": email_sub,
         "parceiro": parceiro,
-        'ano_semestre': str(ano)+"."+str(semestre),
+        "ano_semestre": str(ano)+'.'+str(semestre),
     }
     return render(request, 'organizacoes/carrega_proposta.html', context)
 

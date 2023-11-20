@@ -21,7 +21,8 @@ from users.models import Professor, Parceiro, Administrador
 
 from projetos.models import Proposta, Projeto, Organizacao, Disciplina, Conexao
 from projetos.models import Configuracao, Area, AreaDeInteresse, Recomendada
-from projetos.models import Evento
+from projetos.models import Evento, get_upload_path
+from projetos.support import simple_upload
 
 from operacional.models import Curso
 
@@ -632,6 +633,12 @@ def proposta_editar(request, slug):
             else:
                 preenche_proposta(request, proposta)
 
+            if "arquivo" in request.FILES:
+                arquivo = simple_upload(request.FILES['arquivo'],
+                                        path=get_upload_path(proposta, ""))
+                proposta.anexo = arquivo[len(settings.MEDIA_URL):]
+                proposta.save()
+
             enviar = "mensagem" in request.POST  # Por e-mail se enviar
             mensagem = envia_proposta(proposta, enviar)
             resposta = "Submissão de proposta de projeto "
@@ -657,18 +664,20 @@ def proposta_editar(request, slug):
     interesses = proposta.get_interesses()
 
     context = {
-        'liberadas_propostas': liberadas_propostas,
-        'full_name': proposta.nome,
-        'email': proposta.email,
-        'parceiro': parceiro,
-        'professor': professor,
-        'administrador': administrador,
-        'areast': areas,
-        'proposta': proposta,
-        'edicao': True,
-        'interesses': interesses,
-        'ano_semestre': str(proposta.ano)+"."+str(proposta.semestre),
-        'vencida': vencida,
+        "liberadas_propostas": liberadas_propostas,
+        "full_name": proposta.nome,
+        "email": proposta.email,
+        "parceiro": parceiro,
+        "professor": professor,
+        "administrador": administrador,
+        "areast": areas,
+        "proposta": proposta,
+        "edicao": True,
+        "interesses": interesses,
+        "ano_semestre": str(proposta.ano)+"."+str(proposta.semestre),
+        "vencida": vencida,
+        "configuracao": configuracao,
+        "MEDIA_URL": settings.MEDIA_URL,
     }
     return render(request, 'organizacoes/proposta_submissao.html', context)
 

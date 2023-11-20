@@ -115,6 +115,8 @@ def get_response(file, path, request):
         return stream_video(request, file.name)
     elif path[-3:].lower() == "mkv":
         return HttpResponse(file.read(), content_type="video/webm")
+    elif path[-3:].lower() == "zip" or path[-3:].lower() == "rar" or path[-4:].lower() == "7zip":
+        return HttpResponse(file.read(), content_type="application/octet-stream")
     else:
         return None
 

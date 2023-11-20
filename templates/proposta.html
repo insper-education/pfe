@@ -89,8 +89,8 @@
   
     {% if proposta.anexo %}
         <p>
-            <strong>Anexo :</strong>
-            <a class="text-success" href="../..{{MEDIA_URL}}{{proposta.anexo}}">{{proposta.anexo}}</a>
+            <strong>Anexo:</strong>
+            <a class="text-success" href="../..{{MEDIA_URL}}{{proposta.anexo}}">{{proposta.get_anexo}}</a>
         </p>
     {% endif %}
 

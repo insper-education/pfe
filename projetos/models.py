@@ -34,24 +34,26 @@ def get_upload_path(instance, filename):
         if instance.organizacao:
             caminho += slugify(instance.organizacao.sigla_limpa()) + "/"
         if instance.projeto:
-            caminho += "projeto" + str(instance.projeto.pk) + "/"
+            caminho += "projeto" + str(instance.projeto.pk) + '/'
         if instance.usuario:
-            caminho += slugify(instance.usuario.username) + "/"
+            caminho += slugify(instance.usuario.username) + '/'
         if caminho == "":
             caminho = "documentos/"
     elif isinstance(instance, Projeto):
-        caminho += slugify(instance.organizacao.sigla_limpa()) + "/"
-        caminho += "projeto" + str(instance.pk) + "/"
+        caminho += slugify(instance.organizacao.sigla_limpa()) + '/'
+        caminho += "projeto" + str(instance.pk) + '/'
     elif isinstance(instance, Organizacao):
         caminho += slugify(instance.sigla_limpa()) + "/logotipo/"
     elif isinstance(instance, Certificado):
         if instance.projeto and instance.projeto.organizacao:
-            caminho += slugify(instance.projeto.organizacao.sigla_limpa()) + "/"
-            caminho += "projeto" + str(instance.projeto.pk) + "/"
+            caminho += slugify(instance.projeto.organizacao.sigla_limpa()) + '/'
+            caminho += "projeto" + str(instance.projeto.pk) + '/'
         if instance.usuario:
-            caminho += slugify(instance.usuario.username) + "/"
+            caminho += slugify(instance.usuario.username) + '/'
     elif isinstance(instance, Configuracao):
         caminho += "configuracao/"
+    elif isinstance(instance, Proposta):
+        caminho += "propostas/proposta"+ str(instance.pk) + '/'
     else:  # Arquivo Temporário
         caminho += "tmp/"
 
@@ -356,7 +358,7 @@ class Proposta(models.Model):
                                    help_text='Outras Observações')
 
     anexo = models.FileField("Anexo", upload_to=get_upload_path, null=True, blank=True,
-                             help_text='Documento PDF')
+                             help_text='Documento Anexo')
 
     TIPO_INTERESSE = (
         (10, 'aprimorar o entendimento de uma tecnologia/solução com foco no médio prazo, sem interesse a curto prazo.'),
@@ -511,6 +513,9 @@ class Proposta(models.Model):
             return keymax
         return "?"
 
+    def get_anexo(self):
+        """Nome do arquivo do anexo."""
+        return self.anexo.name.split('/')[-1]
 
 class Configuracao(models.Model):
     """Armazena os dados básicos de funcionamento do sistema."""
@@ -530,6 +535,9 @@ class Configuracao(models.Model):
 
     min_props = models.PositiveIntegerField("Mínimo de Propostas para Estudantes Selecionarem", default=5,
         help_text='Quantidade mínima de propostas a serem selecionas pelos estudantes')
+    
+    maxMB_filesize = models.PositiveIntegerField("Tamanho máximo de arquivo", default=2000,
+        help_text='Tamanho máximo de arquivo em MB')
 
     coordenacao = models.ForeignKey('users.Administrador', null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text='responsável pela coordenação do PFE')

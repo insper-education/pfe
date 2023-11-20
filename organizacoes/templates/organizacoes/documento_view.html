@@ -38,6 +38,18 @@
     {% else %}<br>
     {% endif %}
     <br>
+
+    {% comment %} TESTAR ISSO
+    <script>
+      var size = {{configuracao.maxMB_filesize}}*1048576;
+      const uploadField = document.getElementById("arquivo");
+      uploadField.onchange = function() {
+          if(this.files && this.files[0] && this.files[0].size > size){
+            alert("Tamanho do arquivo maior que o permitido de {{configuracao.maxMB_filesize}}Mb");
+            this.value = "";
+          }
+      }
+    </script> {% endcomment %}
     
     <label for="link">Link:</label> <input required type="text" style="max-width:100%;display:block" size="73" maxlength="73" id="link" name="link" placeholder="https://"><br>
     <br>

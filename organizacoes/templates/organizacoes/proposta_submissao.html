@@ -70,7 +70,7 @@
       </div>
 
       <div class="col-xl-auto ">
-        <form method="post"> {% csrf_token %} 
+        <form method="post" enctype="multipart/form-data"> {% csrf_token %} 
           <div class="quad_pfe">
 
             <label style="width: 3.25em;" class="topico" for="nome">Nome:</label> <input style="max-width: 100%;" type="text" size="75" maxlength="127" id="nome" name="nome" value="{% if parceiro %}{{full_name}}{% endif %}" 
@@ -129,6 +129,40 @@
             </label><br>
             <textarea id="expectativas" name="expectativas" rows="8" cols="120" maxlength="3000" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.expectativas}}</textarea>
 
+            <label class="topico" for="recursos">Recursos a serem disponibilizados ao grupo de estudantes<br>
+            <small class="obs">algo será fornecido para os estudantes? ex: kits de desenvolvimento, matérias primas, acesso a infra de cloud. (opcional)</small>
+            </label><br>
+            <textarea id="recursos" name="recursos" rows="5" cols="120" maxlength="1000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.recursos and proposta.recursos != None and proposta.recursos != "None" %}{{proposta.recursos}}{% endif %}</textarea>
+
+            <label class="topico" for="observacoes">Outras observações que considere relevante para os estudantes<br>
+            <small class="obs">caso desejar apresentar alguma informação adicional aos estudantes (opcional)</small>
+            </label><br>
+            <textarea id="observacoes" name="observacoes" rows="5" cols="120" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.observacoes and proposta.observacoes != None and proposta.observacoes != "None" %}{{proposta.observacoes}}{% endif %}</textarea>
+
+            <label class="topico" for="arquivo">Anexos
+            <input id="arquivo" name="arquivo" 
+            accept="application/zip, application/x-zip, application/x-zip-compressed, .zip, .rar, .7zip, text/plain, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation, image/*, video/mp4, video/x-m4v, video/webm, video/x-matroska, video/*, .mkv"
+            type="file">
+            <small class="obs">arquivo que contenha informações adicionais relevantes para os estudantes sobre o projeto (opcional)</small>
+            </label>
+            {% if proposta.anexo %}
+              <br><small>Arquivo atual:
+                <a href="../..{{MEDIA_URL}}{{proposta.anexo}}">{{proposta.get_anexo}}</a>
+              </small>
+            {% endif %}
+            <br><br>
+
+            <script>
+              var size = {{configuracao.maxMB_filesize}}*1048576;
+              const uploadField = document.getElementById("arquivo");
+              uploadField.onchange = function() {
+                  if(this.files && this.files[0] && this.files[0].size > size){
+                    alert("Tamanho do arquivo maior que o permitido de {{configuracao.maxMB_filesize}}Mb");
+                    this.value = "";
+                  }
+              }
+            </script>
+
             <span class="topico">Áreas/Habilidades envolvidas no projeto</span><br>
             {% if proposta %}
               {% with aa=proposta.areadeinteresse_set.all %}
@@ -150,16 +184,6 @@
               {% endif %}
             {% endif %}
             <br>
-
-            <label class="topico" for="recursos">Recursos a serem disponibilizados ao grupo de estudantes<br>
-            <small class="obs">algo será fornecido para os estudantes? ex: kits de desenvolvimento, matérias primas, acesso a infra de cloud. (opcional)</small>
-            </label><br>
-            <textarea id="recursos" name="recursos" rows="5" cols="120" maxlength="1000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.recursos and proposta.recursos != None and proposta.recursos != "None" %}{{proposta.recursos}}{% endif %}</textarea>
-
-            <label class="topico" for="observacoes">Outras observações que considere relevante para os estudantes<br>
-            <small class="obs">caso desejar apresentar alguma informação adicional aos estudantes (opcional)</small>
-            </label><br>
-            <textarea id="observacoes" name="observacoes" rows="5" cols="120" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.observacoes and proposta.observacoes != None and proposta.observacoes != "None" %}{{proposta.observacoes}}{% endif %}</textarea>
 
             <div class="topico" for="interesses">Os principais interesses com o projeto são:<br>
               <small class="obs">não será apresentado aos estudantes (opcional)</small>
