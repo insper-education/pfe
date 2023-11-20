@@ -42,7 +42,7 @@
               {{prioridade}},
             {% endfor %}
           ],
-          estudantes: [{% for estudante in estudantes.0 %} '{{estudante}}',{% endfor %}]
+          estudantes: [{% for estudante in estudantes.0 %} "{{estudante}}",{% endfor %}]
         },
         {
           label: 'Opção #2',
@@ -53,7 +53,7 @@
               {{prioridade}},
             {% endfor %}
           ],
-          estudantes: [{% for estudante in estudantes.1 %} '{{estudante}}',{% endfor %}]
+          estudantes: [{% for estudante in estudantes.1 %} "{{estudante}}",{% endfor %}]
         }, 
         {
           label: 'Opção #3',
@@ -64,7 +64,7 @@
               {{prioridade}},
             {% endfor %}
           ],
-          estudantes: [{% for estudante in estudantes.2 %} '{{estudante}}',{% endfor %}]
+          estudantes: [{% for estudante in estudantes.2 %} "{{estudante}}",{% endfor %}]
         },
         {
           label: 'Opção #4',
@@ -75,7 +75,7 @@
               {{prioridade}},
             {% endfor %}
           ],
-          estudantes: [{% for estudante in estudantes.3 %} '{{estudante}}',{% endfor %}]
+          estudantes: [{% for estudante in estudantes.3 %} "{{estudante}}",{% endfor %}]
         },
         {
           label: 'Opção #5',
@@ -86,7 +86,7 @@
               {{prioridade}},
             {% endfor %}
           ],
-          estudantes: [{% for estudante in estudantes.4 %} '{{estudante}}',{% endfor %}]
+          estudantes: [{% for estudante in estudantes.4 %} "{{estudante}}",{% endfor %}]
         }
         ]
       };
@@ -177,7 +177,7 @@
             tooltips: {
               enabled: false,
               itemSort: function(a, b) {
-                return b.datasetIndex - a.datasetIndex
+                return a.datasetIndex - b.datasetIndex
               },
               callbacks: {
                 label: function (tooltipItems, data) {
@@ -299,7 +299,7 @@
           
           switch (label) {
             {% for proposta in propostas %} 
-              case '{{proposta.titulo}} ({{proposta.organizacao}})':
+              case "[{{proposta.organizacao.sigla|escapejs}}] {{proposta.titulo}}":
                 location.href = "{% url 'proposta_completa' proposta.id %}";
                 break;
             {% endfor %}

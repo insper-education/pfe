@@ -158,28 +158,28 @@ def ordena_propostas_novo(disponivel=True, ano=2018, semestre=2, curso='T'):
             if opcao.prioridade == 1:
                 count[0] += 1
                 if estudantes_tmp[0] != "":
-                    estudantes_tmp[0] += ", "
-                estudantes_tmp[0] += opcao.aluno.user.get_full_name()
+                    estudantes_tmp[0] += "; "
+                estudantes_tmp[0] += opcao.aluno.user.get_full_name() + ' [' + opcao.aluno.curso2.sigla_curta + ']'
             elif opcao.prioridade == 2:
                 count[1] += 1
                 if estudantes_tmp[1] != "":
-                    estudantes_tmp[1] += ", "
-                estudantes_tmp[1] += opcao.aluno.user.get_full_name()
+                    estudantes_tmp[1] += "; "
+                estudantes_tmp[1] += opcao.aluno.user.get_full_name() + ' [' + opcao.aluno.curso2.sigla_curta + ']'
             elif opcao.prioridade == 3:
                 count[2] += 1
                 if estudantes_tmp[2] != "":
-                    estudantes_tmp[2] += ", "
-                estudantes_tmp[2] += opcao.aluno.user.get_full_name()
+                    estudantes_tmp[2] += "; "
+                estudantes_tmp[2] += opcao.aluno.user.get_full_name() + ' [' + opcao.aluno.curso2.sigla_curta + ']'
             elif opcao.prioridade == 4:
                 count[3] += 1
                 if estudantes_tmp[3] != "":
-                    estudantes_tmp[3] += ", "
-                estudantes_tmp[3] += opcao.aluno.user.get_full_name()
+                    estudantes_tmp[3] += "; "
+                estudantes_tmp[3] += opcao.aluno.user.get_full_name() + ' [' + opcao.aluno.curso2.sigla_curta + ']'
             elif opcao.prioridade == 5:
                 count[4] += 1
                 if estudantes_tmp[4] != "":
-                    estudantes_tmp[4] += ", "
-                estudantes_tmp[4] += opcao.aluno.user.get_full_name()
+                    estudantes_tmp[4] += "; "
+                estudantes_tmp[4] += opcao.aluno.user.get_full_name() + ' [' + opcao.aluno.curso2.sigla_curta + ']'
 
         prioridades[0].append(count[0])
         prioridades[1].append(count[1])
