@@ -41,12 +41,35 @@
       {% endif %}
     }
     
+    .t_f {
+      display: inline;
+    }
+    .t_s {
+      display: none;
+    }
+    
+    @media only screen and (max-width: 1800px) {
+      .t_f { 
+        display: none;
+      }
+      .t_s {
+        display: inline;
+      }
+    }
+
+
     @media only screen and (max-width: 740px) {
       #info_semestre {
         font-size:13px;
       }
       .tit_agenda {
         font-size:16px;
+      }
+      .t_f {
+        display: none;
+      }
+      .t_s {
+        display: none;
       }
     }
 
@@ -104,18 +127,16 @@
     }
 
     .quad_pfe {
-      //width: fit-content;
       border-spacing: 0px;
       border: solid black 2px;
       border-radius: 8px;
-      padding: 4px;
+      padding: 4px 2px 4px 4px;
       margin-bottom: 18px;
     }
 
     .quad_pfe br {
       content: "";
       display: block;
-      /*font-size: 0%;*/
     }
 
     table.tab_pfe {
@@ -252,12 +273,12 @@
                       {% ifchanged evento.get_title evento.get_semester evento.endDate.year %}   
                         <br><font style="color:{{evento.get_color}}">&#9608;</font>&nbsp;{{evento.get_title}}:
                         {% if evento.startDate == evento.endDate %} 
-                          {{evento.endDate.day}}/{{evento.endDate.month}}/{{evento.endDate.year}}
+                          {{evento.endDate.day}}/{{evento.endDate.month}}
                         {% else %}
-                          {{evento.startDate.day}}/{{evento.startDate.month}}/{{evento.endDate.year}} à {{evento.endDate.day}}/{{evento.endDate.month}}/{{evento.endDate.year}}
+                          {{evento.startDate.day}}/{{evento.startDate.month}} à {{evento.endDate.day}}/{{evento.endDate.month}}
                         {% endif %}
                       {% else %}
-                        ; {{evento.endDate.day}}/{{evento.endDate.month}}/{{evento.endDate.year}}
+                        ; {{evento.endDate.day}}/{{evento.endDate.month}}
                       {% endifchanged %}
                     </span>
                   {% endfor %}
@@ -436,7 +457,7 @@
                   {% for aula in aulas|dictsort:"endDate" %}
                     <tr class="lin_aulas ano{{aula.endDate.year}} semestre" data-mes="{{aula.endDate.month}}"
                         {% if aula.startDate|dif_dias_hoje == 0 %}style="background-color: #F0FFFF;"{% endif %}>
-                        <th class="colu" scope="row">{{aula.endDate|date:"d/m/y"}}</th>
+                        <th class="colu" scope="row">{{aula.endDate|date:"d/m"}}<span class="t_f">/{{aula.endDate.year}}</span><span class="t_s">/{{aula.endDate|date:"y"}}</span></th>
                         <td class="colu">{{aula.observacao}}</td><td class="colu">{{aula.location}}</td>
                     </tr>
                   {% endfor %}

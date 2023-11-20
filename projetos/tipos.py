@@ -10,7 +10,8 @@ TIPO_EVENTO = (
     (0, 'Feriado', 'lightgrey'),
     (1, 'Aula cancelada', 'lightgrey'),
 
-    (9, 'Alinhamentos iniciais entre Estudantes/Orientadores/Organizações', 'orange'),
+    (9, 'Conversas iniciais entre Estudantes/Orientador/Organização', 'orange'),
+
     (10, 'Início das aulas', 'red'),
     (11, 'Evento de abertura do PFE', 'orange'),  # Obsoleto
     (12, 'Aula PFE', 'lightgreen'),
@@ -40,20 +41,22 @@ TIPO_EVENTO = (
 
     (101, 'Apólice Seguro Acidentes Pessoais', 'aquamarine'),
 
-    (111, 'Bate-papo com estudante que farão PFE no próximo semestre', 'lightcyan'),
-    (112, 'Estudantes demonstrarem interesse em adiar PFE para 9º semestre', 'limegreen'),
-    (113, 'Apresentação das propostas de projetos disponíveis para estudantes', 'darkslategray'),
+    (111, 'Bate-papo com estudantes que farão PFE', 'lightcyan'),
 
-    (120, 'Limite para submissão de propostas de projetos pelas organizações', 'lime'),
+    (112, 'Estudantes informarem que adiarão PFE', 'limegreen'),
+
+    (113, 'Apresentação das propostas disponíveis para estudantes', 'darkslategray'),
+
+    (120, 'Limite para submissão de propostas pelas organizações', 'lime'),
     (121, 'Pré seleção de propostas de projetos', 'chartreuse'),
 
-    (123, 'Indicação de interesse nos projetos do próximo semestre pelos estudante', 'hotpink '),
+    (123, 'Indicação de interesse nas propostas pelos estudante', 'hotpink '),
     (124, 'Notificação para estudantes dos grupos formados', 'paleturquoise'),
     (125, 'Notificação para organizações dos projetos fechados', 'moccasin'),
-    (126, 'Professores tiram dúvidas sobre projetos para estudantes', 'lightsalmon'),
-    (127, 'Reunião do comitê para montar grupos para o próximo semestre', 'powderblue'),
+    (126, 'Professores tiram dúvidas das proposta para estudantes', 'lightsalmon'),
+    (127, 'Reunião do comitê para montar grupos de projetos', 'powderblue'),
 
-    (129, 'Limite para contrato pronto para assinatura pelos estudantes', 'coral'),
+    (129, 'Limite para contrato pronto para assinaturas', 'coral'),
 
     (130, 'Validação dos projetos pelo comitê', 'peru'),
 

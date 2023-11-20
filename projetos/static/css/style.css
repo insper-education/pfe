@@ -249,6 +249,13 @@ table, th, td {
   }
 } 
 
+
+@media (max-width: 800px) {
+  .container-fluid {
+    padding-right: 8px;padding-left: 8px;
+  }
+}
+
 @page {
   size: auto;
 }

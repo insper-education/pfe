@@ -77,7 +77,7 @@
               pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')"  required {% if edicao and liberadas_propostas %}disabled{% endif %}><br>
             <label style="width: 3.25em;" class="topico" for="email">e-mail:</label> <input autocomplete="on" style="max-width: 100%;" type="text" size="75"  maxlength="80" id="email" name="email" value="{% if parceiro %}{{email}}{% endif %}" 
               pattern="^[\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,99}[\s]*([;,][\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})*[\s]*$" oninvalid="this.setCustomValidity('Digite um ou mais endereços de e-mail (e-mails separados por ponto e vírgula)')" oninput="this.setCustomValidity('')" required {% if edicao and liberadas_propostas %}disabled{% endif %}>
-            <small class="obs">Identifique quem está submetendo ou atualizando a proposta</small>
+            <small class="obs">Identifique quem está enviando ou atualizando a proposta</small>
             <hr>
 
             <label class="topico" for="organizacao">Nome da Instituição/Empresa
