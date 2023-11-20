@@ -125,7 +125,7 @@
         },
         success: function(response){
             if (response.atualizado) {
-              console.log("Valor atualizado.");
+              //console.log("Valor atualizado.");
               $("#data"+organizacao).text(response.data);
               $("#organizacao"+organizacao).data("anotacao", response.anotacao_id);
               $("#organizacao"+organizacao).text(texto);
@@ -147,7 +147,7 @@
                 $("#tr"+organizacao).css("background-color", "lightyellow");
 
             } else {
-              console.log("Valor não atualizado.");
+              console.log("Erro: Valor não atualizado.");
             }
 
         },

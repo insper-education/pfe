@@ -52,7 +52,7 @@
         },
         success: function(response){
             if (response.atualizado) {
-              console.log("Valor atualizado.");
+              //console.log("Valor atualizado.");
 
               nova_disc = '<tr id="disciplina'+response.disciplina_id+'"><td>'
               nova_disc += response.disciplina
@@ -63,7 +63,7 @@
 
               $('#disciplinas_recomendadas > tbody:last-child').append(nova_disc);
             } else {
-              console.log("Valor não atualizado.");
+              console.log("Erro: Valor não atualizado.");
             }
         },
         error: function (request, status, error) {

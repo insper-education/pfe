@@ -228,13 +228,12 @@
       $("#spinner").css("visibility", "visible");
       var edicao = $("#filterEdicao option:selected").attr("value");
 
-      console.log(edicao);
       request_ajax_c = $.ajax({
         type: "POST",
         url: "{% url 'certificados_submetidos' %}",
         data: {
             edicao: edicao,
-            'csrfmiddlewaretoken': '{{ csrf_token }}',
+            "csrfmiddlewaretoken": "{{ csrf_token }}",
         },
         success: function(response){
           if (seqNumber === xhrCount) { {% comment %} Processando resposta {% endcomment %}

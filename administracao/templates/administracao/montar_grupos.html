@@ -578,7 +578,7 @@
         success: function (data) {
           {% comment %}
             if (data.atualizado) {
-              console.log("Valor atualizado.");
+              //console.log("Valor atualizado.");
             } else {
               console.log("Valor não atualizado.");
             }
@@ -588,7 +588,7 @@
           {% if user.tipo_de_usuario == 4 %} 
             alert(request.responseText);
             jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-            console.log('error'+request.responseText);
+            console.log("error"+request.responseText);
           {% else %}
             jQuery("body").html("Erro no servidor do PFE. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
           {% endif %}

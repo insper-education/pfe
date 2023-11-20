@@ -42,8 +42,6 @@
     }
 
     var organizacao_id = $('#organizacao').val();
-    
-    console.log(url)
 
     $.ajax({
         type: "POST",
@@ -73,9 +71,9 @@
               $('.pulsar').css("animation-play-state", "paused"); // Stop pulsar animation
 
             }
-            //else {
-            //  console.log("Valor não atualizado.");
-            //}
+            else {
+              console.log("Erro: Valor não atualizado.");
+            }
         },
         error: function (request, status, error) {
           {% if user.tipo_de_usuario == 4 %} 

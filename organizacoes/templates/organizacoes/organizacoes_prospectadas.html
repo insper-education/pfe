@@ -352,7 +352,9 @@
         dataType: 'json',
         success: function (data) {
           if (data.atualizado) {
-            console.log("Valor atualizado.");
+            //console.log("Valor atualizado.");
+          } else {
+            console.log("Erro: Valor não atualizado.");
           }
         },
         error: function (request, status, error) {
@@ -391,7 +393,9 @@
         dataType: 'json',
         success: function (data) {
           if (data.atualizado) {
-            console.log("Valor atualizado.");
+            //console.log("Valor atualizado.");
+          } else {
+            console.log("Erro: Valor não atualizado.");
           }
         },
         error: function (request, status, error) {
