@@ -7,6 +7,7 @@
 
 {% block head %}
   {% load static %}
+  {% load nospaces %}
   {% load aderencia_aluno %}
 
   <script src="{% static 'js/Chart.min.js' %}"/></script>
@@ -187,7 +188,7 @@
           <div id="titulo{{proposta.id}}" class="etiqueta_proposta">
 
             <a target="_blank" rel="noopener noreferrer" class="ancora tip" data-tip="tip{{proposta.id}}" href="{% url 'proposta_completa' proposta.id %}" style="font-weight: 500; color: #000062;">
-            <div id="tip{{proposta.id}}" hidden="hidden">
+            <div id="tip{{proposta.id}}" hidden="hidden">{% nospaces %}
                   {% for opcaop in proposta.opcao_set.all %}
                     {% with alocacoes=opcaop.aluno.alocacao_set %}
                       {% if alocacoes.count %}
@@ -211,17 +212,18 @@
                         #{{ opcaop.prioridade }}
                       {% endif %}
                       |{% mede_aderencia opcaop.aluno proposta %}%|
-                      =&gt; <span class='atual{{opcaop.aluno.id}}'></span>
+                      &#10140;&nbsp;<span class='atual{{opcaop.aluno.id}}'></span>
                       <br>
                     {% endwith %}
                   {% empty %}
                     Nenhum aluno escolheu essa proposta
                   {% endfor %}
+                  {% endnospaces %}
                 </div>
             
             <span class="titulo_proposta">{{proposta.titulo}}</span>
             </a>
-            <p>&nbsp;</p>
+            
             {% if proposta.organizacao and proposta.organizacao.nome %}
               <a class="ancora" href="{% url 'organizacao_completo' proposta.organizacao.id %}" style="font-weight: bold; color: darkblue; margin-left: auto; text-align: center; min-width: 21%;">  
                 {{ proposta.organizacao.nome }}
@@ -411,10 +413,11 @@
           $("#proposta_vazia").append(tmp_node);
           $("#sem_proposta").show();
         } else {
-          $("#proposta{{opcoes.0.proposta.id}}").append(tmp_node);
+          $("#proposta{{opcoes.0.proposta.id}}").append(tmp_node); // primeira opção, que se torna padrão
         }
       {% endif %}
 
+      var proposta = "";
       {% if estudante.pre_alocacao %}
         
         opcao = cor_estudante($("#estudante{{estudante.id}}"), {{estudante.pre_alocacao.id}})
@@ -428,12 +431,32 @@
         else if(opcao[1] == 5) prioridade5 += 1;
         else prioridade6m += 1;
 
-        proposta = $("#proposta{{estudante.pre_alocacao.id}}").data('titulo');
-        $(".atual{{estudante.id}}").html(proposta);
+        proposta = $("#proposta{{estudante.pre_alocacao.id}}").data("titulo");
+        $(".atual{{estudante.id}}").each(function(i, obj) {
+          if($(this).parent().closest('div').attr('id').slice(3) == "{{estudante.pre_alocacao.id}}"){
+            $(this).html("<u>"+proposta+"</u>");
+          } else {
+            $(this).html(proposta);
+          }
+        });
 
       {% else %}
         // Se não pre alocado, vai para opcao 1.
         prioridade1 += 1;
+
+        if($("#proposta{{opcoes.0.proposta.id}}").length == 0) { // proposta nao existe
+          $(".atual{{estudante.id}}").html("proposta não esta disponível!");
+        } else {
+          proposta = $("#proposta{{opcoes.0.proposta.id}}").data("titulo");
+          $(".atual{{estudante.id}}").each(function(i, obj) {
+            if($(this).parent().closest('div').attr('id').slice(3) == "{{opcoes.0.proposta.id}}"){
+              $(this).html("<u>"+proposta+"</u>");
+            } else {
+              $(this).html(proposta);
+            }
+          });
+        }
+
       {% endif %}
       
       count_alunos += 1;
@@ -651,8 +674,15 @@
           window.myPie.update();
 
           atual = "atual" + $draggedItem[0].id.slice(9)
-          proposta = final_target.data("titulo");          
-          $("."+atual).html(proposta);
+          proposta = final_target.data("titulo");
+
+          $("."+atual).each(function(i, obj) {
+            if($(this).parent().closest('div').attr('id').slice(3) == final_target.attr('id').slice(8)){
+              $(this).html("<u>"+proposta+"</u>");
+            } else {
+              $(this).html(proposta);
+            }
+          });
           update_tips();
 
         }
