@@ -34,15 +34,37 @@
           ],
         datasets: [
         {
-          label: 'Opção #5',
-          backgroundColor: 'rgb(180, 200, 160)',
+          label: 'Opção #1',
+          backgroundColor: 'rgb(0, 250, 0)',
           barPercentage: 0.5,
           data: [
-            {% for prioridade in prioridades.4 %} 
+            {% for prioridade in prioridades.0 %} 
               {{prioridade}},
             {% endfor %}
           ],
-          estudantes: [{% for estudante in estudantes.4 %} '{{estudante}}',{% endfor %}]
+          estudantes: [{% for estudante in estudantes.0 %} '{{estudante}}',{% endfor %}]
+        },
+        {
+          label: 'Opção #2',
+          backgroundColor: 'rgb(210, 230, 30)',
+          barPercentage: 0.5,
+          data: [
+            {% for prioridade in prioridades.1 %} 
+              {{prioridade}},
+            {% endfor %}
+          ],
+          estudantes: [{% for estudante in estudantes.1 %} '{{estudante}}',{% endfor %}]
+        }, 
+        {
+          label: 'Opção #3',
+          backgroundColor: 'rgb(210, 190, 35)',
+          barPercentage: 0.5,
+          data: [
+            {% for prioridade in prioridades.2 %} 
+              {{prioridade}},
+            {% endfor %}
+          ],
+          estudantes: [{% for estudante in estudantes.2 %} '{{estudante}}',{% endfor %}]
         },
         {
           label: 'Opção #4',
@@ -56,37 +78,17 @@
           estudantes: [{% for estudante in estudantes.3 %} '{{estudante}}',{% endfor %}]
         },
         {
-          label: 'Opção #3',
-          backgroundColor: 'rgb(210, 190, 35)',
+          label: 'Opção #5',
+          backgroundColor: 'rgb(180, 200, 160)',
           barPercentage: 0.5,
           data: [
-            {% for prioridade in prioridades.2 %} 
+            {% for prioridade in prioridades.4 %} 
               {{prioridade}},
             {% endfor %}
           ],
-          estudantes: [{% for estudante in estudantes.2 %} '{{estudante}}',{% endfor %}]
-        },
-        {
-          label: 'Opção #2',
-          backgroundColor: 'rgb(210, 230, 30)',
-          barPercentage: 0.5,
-          data: [
-            {% for prioridade in prioridades.1 %} 
-              {{prioridade}},
-            {% endfor %}
-          ],
-          estudantes: [{% for estudante in estudantes.1 %} '{{estudante}}',{% endfor %}]
-        }, {
-          label: 'Opção #1',
-          backgroundColor: 'rgb(0, 250, 0)',
-          barPercentage: 0.5,
-          data: [
-            {% for prioridade in prioridades.0 %} 
-              {{prioridade}},
-            {% endfor %}
-          ],
-          estudantes: [{% for estudante in estudantes.0 %} '{{estudante}}',{% endfor %}]
-        }]
+          estudantes: [{% for estudante in estudantes.4 %} '{{estudante}}',{% endfor %}]
+        }
+        ]
       };
 
       var textos = []
@@ -102,7 +104,7 @@
         counter = 1
         Chart.helpers.each(meta.data.forEach((bar, index) => {
           const label = this.data.labels[index]
-          const labelPositionX = 9
+          const labelPositionX = bar._model.base + 2
           const labelPositionY = bar._model.y-(bar._model.height/2)
           const labelWidth = ctx.measureText(label).width
 
@@ -110,9 +112,9 @@
           ctx.textAlign = 'left'
           ctx.fillStyle = '#000000'
           ctx.font = "12px Open Sans"
-          var espaco = 15
+          var espaco = 13
           if(counter>9) {
-            espaco = 20
+            espaco = 18
           }
           label_limpo = label.replace("&amp;", "&")
           ctx.fillText(label_limpo, labelPositionX+espaco, labelPositionY)
@@ -160,12 +162,12 @@
       }
 
       var config = {
-        type: 'horizontalBar',
+        type: "horizontalBar",
           data: barChartData,
           options: {
             title: {
               display: false,
-              text: 'Procuta de Propostas de Projetos'
+              text: "Procura de Propostas de Projetos"
             },
             layout: {
               padding: {
