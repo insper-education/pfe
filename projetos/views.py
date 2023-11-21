@@ -388,7 +388,7 @@ def meuprojeto(request):
 
     # Caso seja um aluno
     context = {
-        'aluno': request.user.aluno,
+        "aluno": request.user.aluno,
         "configuracao": get_object_or_404(Configuracao),
     }
 

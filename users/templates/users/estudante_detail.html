@@ -9,6 +9,7 @@
   {% load static %}
   {% load aderencia_aluno %}
   {% load dictionary %}
+  {% load zip_data %}
   {% load l10n %}
 
   <script src="{% static 'js/Chart.min.js' %}"></script>
@@ -402,39 +403,43 @@
                     </script>
                 {% endwith %}
             {% endif %}
-            
+            <br>
 
-            <br><br>
-            &nbsp;&nbsp;<span class="tit_rel">Relatos Quinzenais:</span><br>
-            {% for evento, relato, ordem in alocado.get_relatos %}
-                <p style="padding-left: 18px;">
-                {% if relato %}
-                    <a href="{% url 'relato_visualizar' relato.id %}">
-                        {{ordem|add:1}} - Relato {{evento.endDate}} : Preenchido pelo estudante em {{relato.momento}}
-                    </a>
-                    {% if relato.avaliacao >= 0 %}
-                        {% if relato.avaliacao > 0 %}
-                            <span style="background-color:#eef;" data-toggle="tooltip" data-html="true" animation="true" title="Acima do desempenho esperado">
-                                &#128077;
-                            </span> 
+            {% if not alocado.get_relatos|empty_zip %}
+                &nbsp;&nbsp;<span class="tit_rel">Relatos Quinzenais:</span><br>
+                {% for evento, relato, ordem in alocado.get_relatos %}
+                    <p style="padding-left: 18px;">
+                    {% if relato %}
+                        <a href="{% url 'relato_visualizar' relato.id %}">
+                            {{ordem|add:1}} - Relato {{evento.endDate}} : Preenchido pelo estudante em {{relato.momento}}
+                        </a>
+                        {% if relato.avaliacao >= 0 %}
+                            {% if relato.avaliacao > 0 %}
+                                <span style="background-color:#eef;" data-toggle="tooltip" data-html="true" animation="true" title="Acima do desempenho esperado">
+                                    &#128077;
+                                </span> 
+                            {% else %}
+                                <span style="background-color:#eef;" data-toggle="tooltip" data-html="true" animation="true" title="Abaixo do desempenho esperado">
+                                    &#128078;
+                                </span>
+                            {% endif %}
                         {% else %}
-                            <span style="background-color:#eef;" data-toggle="tooltip" data-html="true" animation="true" title="Abaixo do desempenho esperado">
-                                &#128078;
+                            <span style="background-color:#eef;" data-toggle="tooltip" data-html="true" animation="true" title="Não conferido pelo orientador">
+                                &#10060;
                             </span>
+                            
                         {% endif %}
                     {% else %}
-                        <span style="background-color:#eef;" data-toggle="tooltip" data-html="true" animation="true" title="Não conferido pelo orientador">
-                            &#10060;
-                        </span>
-                        
+                        {{ordem|add:1}} - Relato {{evento.endDate}} : Relato não preenchido pelo estudante
                     {% endif %}
-                {% else %}
-                    {{ordem|add:1}} - Relato {{evento.endDate}} : Relato não preenchido pelo estudante
-                {% endif %}
-                </p>
-                
-            {% endfor %}
-
+                    </p>
+                {% endfor %}
+                <br>
+            {% endif %}
+            {% if not forloop.last %}
+                <hr style="border-top: 3px dotted #8c8b8b;"><br><br>
+            {% endif %}
+        
         {% endfor %}
     {% endif %}
 

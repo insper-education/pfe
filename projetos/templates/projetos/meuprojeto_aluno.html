@@ -23,25 +23,28 @@
 
 {% block content %}
 
-  <span class="titulo">Projeto(s) Alocado(s)</span>
-  <br>
+  {% with alocados=aluno.alocacao_set.all.reverse %}
+    <span class="titulo">Projeto(s) Alocado(s)</span>
+    <br>
+    {% if alocados.lengh > 1 %}TESTE{% else %}UMSO{% endif %}
 
-  {% for alocado in aluno.alocacao_set.all.reverse %}
+    {% for alocado in aluno.alocacao_set.all.reverse %}
 
-    <h4>[{{alocado.projeto.ano}}.{{alocado.projeto.semestre}}]</h4>
-    
-    {% if alocado.projeto.ano > configuracao.ano or alocado.projeto.ano == configuracao.ano and alocado.projeto.semestre > configuracao.semestre %}
-      Projetos {{configuracao.ano}}.{{configuracao.semestre}} em fase de alocação.<br>
-    {% else %}
-      {% include "projeto.html" %}
-    {% endif %}
+      <h4>[{{alocado.projeto.ano}}.{{alocado.projeto.semestre}}]</h4>
+      
+      {% if alocado.projeto.ano > configuracao.ano or alocado.projeto.ano == configuracao.ano and alocado.projeto.semestre > configuracao.semestre %}
+        Projetos {{configuracao.ano}}.{{configuracao.semestre}} em fase de alocação.<br>
+      {% else %}
+        {% include "projeto.html" %}
+      {% endif %}
 
-    <p>&nbsp;</p>
-    {% if not forloop.last %} <hr class="style-five"> {% endif %}
-    <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      {% if not forloop.last %} <hr class="style-five"> {% endif %}
+      <p>&nbsp;</p>
 
-  {% empty %}
-     Você não está alocado em nenhum projeto.
-  {% endfor %}
+    {% empty %}
+      Você não está alocado em nenhum projeto.
+    {% endfor %}
+  {% endwith %}
 
 {% endblock %}

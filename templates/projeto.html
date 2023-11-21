@@ -28,6 +28,20 @@
 
 <hr>
 
+<style>
+  #logotipo {
+    max-height:128px;
+    max-width:128px;
+    height:auto;
+    width:auto;
+    float: right;
+  }
+</style>
+
+{% if alocado.projeto.organizacao.logotipo %}
+  <img id="logotipo" src="{{ alocado.projeto.organizacao.logotipo.url }}" alt="{{ alocado.projeto.organizacao.sigla }}">
+{% endif %}
+
 <h4>Organização: {{ alocado.projeto.organizacao.nome }}<br></h4><br>
 <strong>endereço:</strong> {{ alocado.projeto.organizacao.endereco|linebreaks }}<br>
 <strong>website:</strong> <a href="{{ projeto.organizacao.website }}">{{ alocado.projeto.organizacao.website }}</a><br>
