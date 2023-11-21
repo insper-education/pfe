@@ -274,22 +274,21 @@
 
 
   <hr>
-  <form action="" method="post"> {% csrf_token %}  
+  <form action="" method="post"> {% csrf_token %}
     <input type="submit" class="btn btn-secondary" name="limpar"
            data-toggle="tooltip" data-html="true" animation="true"
-           title="Remove todos os movimentos de estudantes já realizadas e coloca todos de volta em suas primeiras opções."
+           title="Remove todos os movimentos de estudantes já realizadas e coloca todos de volta em suas primeiras opções.{% if user.tipo_de_usuario != 4 %}<p><b>Você não tem privilégios suficientes.</b></p>{% endif %}"
            value="Resetar Pré Alocações" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
 
     <input type="button" class="btn btn-secondary" id="propor" name="propor"
            data-toggle="tooltip" data-html="true" animation="true"
-           title="Sistema propõe uma montagem de grupos em função das opções, cursos, CR e interesses."
+           title="Sistema propõe uma montagem de grupos em função das opções, cursos, CR e interesses.{% if user.tipo_de_usuario != 4 %}<p><b>Você não tem privilégios suficientes.</b></p>{% endif %}"
            value="Montar Grupos Automaticamente" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
 
     <input type="submit" class="btn btn-secondary" name="fechar" 
            data-toggle="tooltip" data-html="true" animation="true"
-           title="Cria efetivamente os projetos na base de dados e avança para a seleção de orientadores."
+           title="Cria efetivamente os projetos na base de dados e avança para a seleção de orientadores.{% if user.tipo_de_usuario != 4 %}<p><b>Você não tem privilégios suficientes.</b></p>{% endif %}"
            value="Fechar Projetos" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
-  
   </form>
 
   <br><br>

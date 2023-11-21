@@ -423,9 +423,13 @@
   {% if not projetos_avancados %}
     <script>
       function cria_avancado() {
-        if (confirm('Não existe uma versão avançada desse projeto, deseja criar?')) {
-          window.open("{% url 'projeto_avancado' projeto.id %}");
-        }
+        {% if user.tipo_de_usuario == 4 %} 
+          if (confirm('Não existe uma versão avançada desse projeto, deseja criar?')) {
+            window.open("{% url 'projeto_avancado' projeto.id %}");
+          }
+        {% else %}
+          alert('Você não tem permissão para criar uma versão avançada desse projeto.');
+        {% endif %}
       }
     </script>
   {% endif %}

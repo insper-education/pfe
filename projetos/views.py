@@ -250,35 +250,35 @@ def projetos_fechados(request):
                 if curso != 'T':
                     estudantes_pfe = estudantes_pfe.filter(alocacao__aluno__curso2__sigla_curta=curso)
 
-                if estudantes_pfe:  # len(estudantes_pfe) > 0:
-                    projetos_selecionados.append(projeto)
-                    if projeto.avancado:
-                        numero_estudantes_avancado += len(estudantes_pfe)
-                        numero_projetos_avancado += 1
-                    else:
-                        numero_estudantes += len(estudantes_pfe)
-                        numero_projetos += 1
-                    if projeto.time_misto:
-                        projetos_time_misto += 1
+                #if estudantes_pfe:  # len(estudantes_pfe) > 0:
+                projetos_selecionados.append(projeto)
+                if projeto.avancado:
+                    numero_estudantes_avancado += len(estudantes_pfe)
+                    numero_projetos_avancado += 1
+                else:
+                    numero_estudantes += len(estudantes_pfe)
+                    numero_projetos += 1
+                if projeto.time_misto:
+                    projetos_time_misto += 1
 
-                    prioridades = []
-                    for estudante in estudantes_pfe:
-                        opcoes = Opcao.objects.filter(proposta=projeto.proposta)
-                        opcoes = opcoes.filter(aluno__user__tipo_de_usuario=1)
-                        opcoes = opcoes.filter(aluno__alocacao__projeto=projeto)
-                        opcoes = opcoes.filter(aluno=estudante)
-                        if opcoes:
-                            prioridade = opcoes.first().prioridade
-                            prioridades.append(prioridade)
-                        else:
-                            prioridades.append(0)
-                        if estudante.externo:
-                            numero_estudantes_externos += 1
-                    prioridade_list.append(zip(estudantes_pfe, prioridades))
-                    cooperacoes.append(Conexao.objects.filter(projeto=projeto,
-                                                              colaboracao=True))
-                    conexoes.append(Conexao.objects.filter(projeto=projeto,
-                                                           colaboracao=False))
+                prioridades = []
+                for estudante in estudantes_pfe:
+                    opcoes = Opcao.objects.filter(proposta=projeto.proposta)
+                    opcoes = opcoes.filter(aluno__user__tipo_de_usuario=1)
+                    opcoes = opcoes.filter(aluno__alocacao__projeto=projeto)
+                    opcoes = opcoes.filter(aluno=estudante)
+                    if opcoes:
+                        prioridade = opcoes.first().prioridade
+                        prioridades.append(prioridade)
+                    else:
+                        prioridades.append(0)
+                    if estudante.externo:
+                        numero_estudantes_externos += 1
+                prioridade_list.append(zip(estudantes_pfe, prioridades))
+                cooperacoes.append(Conexao.objects.filter(projeto=projeto,
+                                                            colaboracao=True))
+                conexoes.append(Conexao.objects.filter(projeto=projeto,
+                                                        colaboracao=False))
 
             projetos = zip(projetos_selecionados, prioridade_list, cooperacoes, conexoes)
 
@@ -320,10 +320,6 @@ def projetos_fechados(request):
             "cursos": Curso.objects.all().order_by("id"),
             "informacoes": informacoes,
         }
-
-    
-      
-
 
     return render(request, 'projetos/projetos_fechados.html', context)
 

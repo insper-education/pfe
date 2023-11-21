@@ -57,7 +57,8 @@
     {% if projetos %}
       <table id="projetos">
       {% for projeto, prioridades, cooperacoes, conexoes in projetos %}
-        <tr class="row {% if projeto.avancado %}avancado{% endif %}" data-type="{{projeto.ano}}.{{projeto.semestre}}">
+        <tr class="row {% if projeto.avancado %}avancado{% endif %}" data-type="{{projeto.ano}}.{{projeto.semestre}}"
+            {% if prioridades|length == 0 %}style="opacity: 0.3;" data-toggle="tooltip" data-html="true" animation="true" title="Projeto sem alocações"{% endif %} >
         <td class="projline">
         {% if projeto.organizacao %}
           <span class="logo">
@@ -90,7 +91,6 @@
             {{projeto.titulo}}</a><br>
           {% endif %}
         
-
         <p class="descricao">
           {% if projeto.descricao %}
             <small><b>Descrição projeto:</b> {{projeto.descricao}}</small><br>
