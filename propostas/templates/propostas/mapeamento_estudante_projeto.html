@@ -27,15 +27,20 @@
     th.rotate > div {
       transform: 
         /* Magic Numbers */
-        translate(13px, 55px)
+        translate(10.75px, 53.25px)
         /* 45 is really 360 - 45 */
         rotate(300deg);
       width: 26px;
+      max-width: 26px;
+      min-width: 26px;
     }
 
     th.rotate > div > span {
-      border-bottom: 1px  solid black;
-      padding: 1px 0px;
+      border-bottom: 1px solid black;
+      padding: 0px 2px;
+      min-width: 2em;
+      display: inline-block;
+      text-align: left;
     }
 
     table, th {
@@ -45,6 +50,11 @@
       padding-right: 2px;
       text-align: center;
       font-size: 16px;
+    }
+
+    td {
+      padding-left: 5px;
+      padding-right: 5px;
     }
 
     a.prioridade {
