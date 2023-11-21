@@ -490,6 +490,15 @@ class Proposta(models.Model):
             ["mentorar", Proposta.TIPO_INTERESSE[4][1], self.mentorar],
         ]
         return interesses
+    
+    def get_interesses_selecionados(self):
+        interesses = []
+        if self.aprimorar: interesses += [["aprimorar", Proposta.TIPO_INTERESSE[0][1], self.aprimorar]]
+        if self.realizar: interesses += [["realizar", Proposta.TIPO_INTERESSE[1][1], self.realizar]]
+        if self.iniciar: interesses += [["iniciar", Proposta.TIPO_INTERESSE[2][1], self.iniciar]]
+        if self.identificar: interesses += [["identificar", Proposta.TIPO_INTERESSE[3][1], self.identificar]]
+        if self.mentorar: interesses += [["mentorar", Proposta.TIPO_INTERESSE[4][1], self.mentorar]]
+        return interesses
 
     def get_nativamente(self):
         """Retorna em string com curso mais nativo da proposta."""

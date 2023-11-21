@@ -96,12 +96,13 @@
 
     {% if completo %}
         <br><strong>O principal interesse com o projeto é:</strong><br>
-        {% for interesse in proposta.get_interesses %}
-            {% if interesse.2 %}
-                - {{ interesse.1 }}<br>
-            {% endif %}
+        <ul>
+        {% for interesse in proposta.get_interesses_selecionados %}
+            <li>{{ interesse.1 }}</li>
+        {% empty %}
+            Nenhuma opção de interesses foi selecionada
         {% endfor %}
-        <br>
+        </ul>
     {% endif %}
 
 {% else %}
