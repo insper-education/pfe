@@ -29,6 +29,15 @@
       font-size: 12px;
       display: block;
     }
+    body {
+      background-color: #ffffff !important;
+    }
+
+    .requiredField {
+      border-radius: 2px;
+      border-width: thin;
+      border-color: #CC0000; 
+    }
 
   </style>
 {% endblock %}
@@ -73,9 +82,9 @@
         <form method="post" enctype="multipart/form-data"> {% csrf_token %} 
           <div class="quad_pfe">
 
-            <label style="width: 3.25em;" class="topico" for="nome">Nome:</label> <input style="max-width: 100%;" type="text" size="75" maxlength="127" id="nome" name="nome" value="{% if parceiro %}{{full_name}}{% endif %}" 
-              pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')"  required {% if edicao and liberadas_propostas %}disabled{% endif %}><br>
-            <label style="width: 3.25em;" class="topico" for="email">e-mail:</label> <input autocomplete="on" style="max-width: 100%;" type="text" size="75"  maxlength="80" id="email" name="email" value="{% if parceiro %}{{email}}{% endif %}" 
+            <label style="width: 3.25em;" class="topico" for="nome">Nome:</label> <input class="requiredField" style="max-width: 100%;" type="text" size="75" maxlength="127" id="nome" name="nome" value="{% if parceiro %}{{full_name}}{% endif %}" 
+              pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')" required {% if edicao and liberadas_propostas %}disabled{% endif %}><br>
+            <label style="width: 3.25em;" class="topico" for="email">e-mail:</label> <input class="requiredField" autocomplete="on" style="max-width: 100%;" type="text" size="75"  maxlength="80" id="email" name="email" value="{% if parceiro %}{{email}}{% endif %}" 
               pattern="^[\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,99}[\s]*([;,][\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})*[\s]*$" oninvalid="this.setCustomValidity('Digite um ou mais endereços de e-mail (e-mails separados por ponto e vírgula)')" oninput="this.setCustomValidity('')" required {% if edicao and liberadas_propostas %}disabled{% endif %}>
             <small class="obs">Identifique quem está enviando ou atualizando a proposta</small>
             <hr>
@@ -83,9 +92,9 @@
             <label class="topico" for="organizacao">Nome da Instituição/Empresa
             <small class="obs">sigla e nome comercial/fantasia se houver (não é necessário indicar a Razão Social)</small>
             </label><br>
-            <textarea id="organizacao" name="organizacao" rows="1" cols="120" maxlength="120" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{ proposta.nome_organizacao }}</textarea>
+            <textarea class="requiredField" id="organizacao" name="organizacao" rows="1" cols="120" maxlength="120" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{ proposta.nome_organizacao }}</textarea>
 
-            <label class="topico" for="website">website:</label> <input style="max-width: 100%;" type="text" size="75"  maxlength="250" id="website" name="website" value="{{proposta.website}}" placeholder="https://www.insper.edu.br" required {% if edicao and liberadas_propostas %}disabled{% endif %}><br><br>
+            <label class="topico" for="website">website:</label> <input class="requiredField" style="max-width: 100%;" type="text" size="75"  maxlength="250" id="website" name="website" value="{{proposta.website}}" placeholder="https://www.insper.edu.br" required {% if edicao and liberadas_propostas %}disabled{% endif %}><br><br>
 
             <label class="topico" for="endereco">Endereço<br>
             <small class="obs">Local de possíveis reuniões, visitas técnicas ou apresentações de resultados</small>
@@ -95,7 +104,7 @@
             <label class="topico" for="contatos_tecnicos">Contatos Técnicos<br>  
             <small class="obs">nome/e-mail/telefone de quem os alunos e professores orientadores irão tratar do desenvolvimento do projeto</small>
             </label><br>
-            <textarea id="contatos_tecnicos" name="contatos_tecnicos" rows="3" cols="120" maxlength="400" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.contatos_tecnicos}}</textarea>
+            <textarea id="contatos_tecnicos" class="requiredField" name="contatos_tecnicos" rows="3" cols="120" maxlength="400" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.contatos_tecnicos}}</textarea>
         
             <label class="topico" for="contatos_adm">Contatos Administrativos<br>     
             <small class="obs">nome/e-mail/telefone, com quem devemos resolver questões contratuais ou RH</small>
@@ -116,18 +125,18 @@
             <label class="topico" for="titulo">Título provisório do projeto<br>
             <small class="obs">um título para ser apresentado aos alunos</small>
             </label><br>
-            <input type="text" size="80" maxlength="160" style="max-width: 100%;" id="titulo" name="titulo" value="{{proposta.titulo}}" required {% if edicao and liberadas_propostas %}disabled{% endif %}>
+            <input class="requiredField" type="text" size="80" maxlength="160" style="max-width: 100%;" id="titulo" name="titulo" value="{{proposta.titulo}}" required {% if edicao and liberadas_propostas %}disabled{% endif %}>
             <br><br>
 
             <label class="topico" for="desc_projeto">Descrição do Projeto<br>
             <small class="obs">para discussão entre professores e que será passada para os alunos</small>
             </label><br>
-            <textarea id="desc_projeto" name="desc_projeto" rows="10" cols="120" maxlength="3000" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.descricao}}</textarea>
+            <textarea id="desc_projeto" class="requiredField" name="desc_projeto" rows="10" cols="120" maxlength="3000" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.descricao}}</textarea>
 
             <label class="topico" for="expectativas">Expectativas de resultados/entregas<br>
             <small class="obs">exemplo: estudos, validações, relatórios, protótipos, testes</small>
             </label><br>
-            <textarea id="expectativas" name="expectativas" rows="8" cols="120" maxlength="3000" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.expectativas}}</textarea>
+            <textarea id="expectativas" class="requiredField" name="expectativas" rows="8" cols="120" maxlength="3000" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.expectativas}}</textarea>
 
             <label class="topico" for="recursos">Recursos a serem disponibilizados ao grupo de estudantes<br>
             <small class="obs">algo será fornecido para os estudantes? ex: kits de desenvolvimento, matérias primas, acesso a infra de cloud. (opcional)</small>
