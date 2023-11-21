@@ -24,6 +24,7 @@ from django.http import HttpResponse, HttpResponseNotFound, JsonResponse, HttpRe
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils import timezone
+from django.urls import reverse
 
 from documentos.support import render_to_pdf
 
@@ -798,11 +799,10 @@ def selecionar_orientadores(request):
     semestre = configuracao.semestre
 
     mensagem = ""
-
-    # Bloqueando visualização de projetos para estudantes
-    mensagem += "A visualização de projetos pelos novos alunos está bloqueada.<br>"
-    mensagem += "Para desbloquear mova para o próximo semestre na área de Configuração do PFE.<br>"
-    mensagem += "[Área Administrativa > Configurar.]<br>"
+    mensagem += "A visualização de novos projetos pelos estudantes só ocorre quando se<br>"
+    mensagem += "avança o semestre corrente na área de Configuração do PFE.<br>"
+    href = reverse("configurar")
+    mensagem += "<a href='"+href+"'>[Área Administrativa > Configurar]</a><br>"
 
     if 'mensagem' in request.session:
         mensagem += request.session['mensagem']
