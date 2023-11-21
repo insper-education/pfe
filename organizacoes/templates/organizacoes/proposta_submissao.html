@@ -97,39 +97,39 @@
             <label class="topico" for="website">website:</label> <input class="requiredField" style="max-width: 100%;" type="text" size="75"  maxlength="250" id="website" name="website" value="{{proposta.website}}" placeholder="https://www.insper.edu.br" required {% if edicao and liberadas_propostas %}disabled{% endif %}><br><br>
 
             <label class="topico" for="endereco">Endereço<br>
-            <small class="obs">Local de possíveis reuniões, visitas técnicas ou apresentações de resultados</small>
+            <small class="obs">Local de possíveis reuniões, visitas técnicas ou apresentações de resultados (opcional)</small>
             </label><br>
             <textarea id="endereco" name="endereco" rows="3" cols="120" maxlength="400" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.endereco}}</textarea>
             
             <label class="topico" for="contatos_tecnicos">Contatos Técnicos<br>  
-            <small class="obs">nome/e-mail/telefone de quem os alunos e professores orientadores irão tratar do desenvolvimento do projeto</small>
+            <small class="obs">nome/e-mail/telefone para quem estudantes e professores orientadores irão tratar do desenvolvimento do projeto</small>
             </label><br>
             <textarea id="contatos_tecnicos" class="requiredField" name="contatos_tecnicos" rows="3" cols="120" maxlength="400" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.contatos_tecnicos}}</textarea>
         
             <label class="topico" for="contatos_adm">Contatos Administrativos<br>     
-            <small class="obs">nome/e-mail/telefone, com quem devemos resolver questões contratuais ou RH</small>
+            <small class="obs">nome/e-mail/telefone, com quem devemos resolver questões contratuais ou RH (opcional)</small>
             </label><br>
             <textarea id="contatos_adm" name="contatos_adm" rows="3" cols="120" maxlength="400" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.contatos_administrativos}}</textarea>
 
             <label class="topico" for="descricao_organizacao">Informações sobre a instituição/empresa<br>
-            <small class="obs">descreva a instituição/empresa para os alunos entenderem o que ela faz (opcional)</small>
+            <small class="obs">descreva a instituição/empresa para estudantes entenderem o que ela faz (opcional)</small>
             </label><br>
             <textarea id="descricao_organizacao" name="descricao_organizacao" rows="8" cols="120" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.descricao_organizacao}}</textarea>
 
             <label class="topico" for="info_departamento">Informações sobre a departamento<br>
-            <small class="obs">descreva o departamento/área para os alunos entenderem o que ele faz (opcional)</small>
+            <small class="obs">descreva o departamento/área para estudantes entenderem o que ele faz (opcional)</small>
             </label><br>
             <textarea id="info_departamento" name="info_departamento" rows="8" cols="120" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.departamento}}</textarea>
             <hr>
 
             <label class="topico" for="titulo">Título provisório do projeto<br>
-            <small class="obs">um título para ser apresentado aos alunos</small>
+            <small class="obs">um título para ser apresentado aos estudantes</small>
             </label><br>
             <input class="requiredField" type="text" size="80" maxlength="160" style="max-width: 100%;" id="titulo" name="titulo" value="{{proposta.titulo}}" required {% if edicao and liberadas_propostas %}disabled{% endif %}>
             <br><br>
 
             <label class="topico" for="desc_projeto">Descrição do Projeto<br>
-            <small class="obs">para discussão entre professores e que será passada para os alunos</small>
+            <small class="obs">para discussão entre professores e que será visualizada pelos estudantes</small>
             </label><br>
             <textarea id="desc_projeto" class="requiredField" name="desc_projeto" rows="10" cols="120" maxlength="3000" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.descricao}}</textarea>
 
@@ -152,7 +152,7 @@
             <input id="arquivo" name="arquivo" 
             accept="application/zip, application/x-zip, application/x-zip-compressed, .zip, .rar, .7zip, text/plain, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation, image/*, video/mp4, video/x-m4v, video/webm, video/x-matroska, video/*, .mkv"
             type="file">
-            <small class="obs">arquivo que contenha informações adicionais relevantes para os estudantes sobre o projeto (opcional)</small>
+            <small class="obs">arquivo que contenha informações adicionais para os estudantes analisarem sobre o projeto (opcional)</small>
             </label>
             {% if proposta.anexo %}
               <br><small>Arquivo atual:
