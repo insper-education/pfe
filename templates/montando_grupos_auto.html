@@ -1,0 +1,82 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 20 de Novembro de 2023
+{% endcomment %}
+
+{% comment %} Para o propor grupos automaticamente {% endcomment %}
+
+<style>
+  body.disabled:before {
+    content: "";
+    position: fixed;
+    z-index: 1;
+    min-height: 100vh;
+    width: 100%;
+    left: 0;
+    top: 0;
+    background: rgba(0,0,0, .5);  
+  }
+   
+  .popup {
+    position: fixed;
+    z-index: 2;
+    background: #fff;
+    border: 2px #ccc solid;
+    padding: 30px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    visibility: hidden;
+  }
+
+  .t_popup {
+    color: red;
+    font-size: 1.5em;
+    font-weight: bold;
+    animation: blinker 2s linear infinite;
+  }
+  
+  @keyframes blinker {
+    50% {
+      opacity: 0;
+    }
+  }
+</style>
+  
+<div class="popup"><span class="t_popup">Montando Grupos para os Projetos</span></div> 
+  
+<script>
+  $(document).ready(function(){
+    $('#propor').click(function() {
+
+      certeza = confirm("Tem certeza que montar os grupos automaticamente, isso pode demorar bastante?");
+      
+      if(certeza) {
+        $("body").addClass("disabled");
+        $(".popup").css("visibility", "visible");
+        $.ajax({
+          url: '{% url "propor" %}',
+          dataType: 'json',
+          success: function (data) {
+              if (data.atualizado) {
+                location.reload();
+              } else {
+                console.log("Erro: Valor não atualizado.");
+              }
+          },
+          error: function (request, status, error) {
+            {% if user.tipo_de_usuario == 4 %} 
+              alert(request.responseText);
+              jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
+              console.log("error"+request.responseText);
+            {% else %}
+              jQuery("body").html("Erro no servidor do PFE. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
+            {% endif %}
+          }
+        });
+      }
+    });
+  });
+
+</script>

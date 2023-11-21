@@ -82,9 +82,9 @@
       {% if propostas %}
         <table id="MapeamentoTable">
           <tr>
-            <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="bottom">Estudante</th>
-            <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="bottom">Eng</th>
-            <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="bottom">CR</th>
+            <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(1)')" style="cursor:pointer; min-width: 8em;" class="bottom">Estudante</th>
+            <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(2)')" style="cursor:pointer;" class="bottom"><small style="font-size: 10px; font-weight: bold;">Curso</small></th>
+            <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(3)')" style="cursor:pointer;" class="bottom"><small style="font-size: 10px; font-weight: bold;">CR</span></th>
             {% for proposta in propostas %}   
               <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child({{ forloop.counter|add:"3" }})')" style="cursor:pointer;
               {% if not proposta.disponivel %}color:lightgray;{% endif %}"
@@ -109,19 +109,19 @@
           </tr>      
           {% for estudante,opcoes in estudantes %} 
             <tr class="item">
-              <td style="text-align:right">
+              <td style="text-align:right; white-space: nowrap;">
                 <a href="{% url 'estudante_detail' estudante.id %}">
                   {{estudante.user.get_full_name}}
                 </a>
               </td>
-              <td style="text-align:center">
+              <td style="text-align:center;">
                 <a href="{% url 'estudante_detail' estudante.id %}">
                   {{estudante.curso2.sigla_curta}}
                 </a>
               </td>
-              <td style="text-align:left;border-right: 2px solid black;">
+              <td style="text-align:left; border-right: 2px solid black;">
                 <a href="{% url 'estudante_detail' estudante.id %}">
-                  {{estudante.cr|floatformat:4}}
+                  {{estudante.cr|floatformat:2}}
                 </a>
               </td>
               {% for opcao in opcoes %}
@@ -134,7 +134,7 @@
                         {% if opcao.proposta == estudante.pre_alocacao %}
                           background-color:yellow;
                         {% elif opcao.prioridade == 1 and not estudante.pre_alocacao %}
-                          background-color:yellow;
+                          background-color:lightgreen;
                         {% endif %}
                       {% endwith %}"
                       class="{% if opcao.prioridade == 0 %}red-bold{% elif opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}">
@@ -191,6 +191,7 @@
       {% if not forloop.last %}|{% endif %}
     {% endfor %}
   </small>
+
   <p>&nbsp;</p>
 
   <script>

@@ -465,217 +465,205 @@ def exportar(request, modo):
 @permission_required('users.altera_professor', raise_exception=True)
 def propor(request):
     """Monta grupos de PFE."""
-    configuracao = get_object_or_404(Configuracao)
-    ano = configuracao.ano
-    semestre = configuracao.semestre
-    ano, semestre = adianta_semestre(ano, semestre)
 
-    otimizar = False
-    if request.method == 'POST':
+    if request.is_ajax():
         otimizar = True
 
-    lista_propostas = list(zip(*ordena_propostas(otimizar, ano, semestre)))
-    if lista_propostas:
-        propostas = lista_propostas[0]
-    else:
-        propostas = []
+        configuracao = get_object_or_404(Configuracao)
+        ano = configuracao.ano
+        semestre = configuracao.semestre
+        ano, semestre = adianta_semestre(ano, semestre)
 
-    alunos = Aluno.objects.filter(user__tipo_de_usuario=1).\
-        filter(anoPFE=ano).\
-        filter(semestrePFE=semestre).\
-        filter(trancado=False).\
-        order_by(Lower("user__first_name"), Lower("user__last_name"))
-    
-    # Calcula média dos CRs
-    media_cr = 0
-    for aluno in alunos:
-        media_cr += aluno.cr
-    media_cr /= len(alunos)
-
-    # checa para empresas repetidas, para colocar um número para cada uma
-    repetidas = {}
-    for proposta in propostas:
-        if proposta.organizacao:
-            if proposta.organizacao.sigla in repetidas:
-                repetidas[proposta.organizacao.sigla] += 1
-            else:
-                repetidas[proposta.organizacao.sigla] = 0
+        lista_propostas = list(zip(*ordena_propostas(otimizar, ano, semestre)))
+        if lista_propostas:
+            propostas = lista_propostas[0]
         else:
-            if proposta.nome_organizacao in repetidas:
-                repetidas[proposta.nome_organizacao] += 1
-            else:
-                repetidas[proposta.nome_organizacao] = 0
-    repetidas_limpa = {}
-    for repetida in repetidas:
-        if repetidas[repetida] != 0:  # tira zerados
-            repetidas_limpa[repetida] = repetidas[repetida]
-    proposta_indice = {}
-    for proposta in reversed(propostas):
-        if proposta.organizacao:
-            if proposta.organizacao.sigla in repetidas_limpa:
-                proposta_indice[proposta.id] = \
-                    repetidas_limpa[proposta.organizacao.sigla] + 1
-                repetidas_limpa[proposta.organizacao.sigla] -= 1
-        else:
-            if proposta.nome_organizacao in repetidas_limpa:
-                proposta_indice[proposta.id] = \
-                    repetidas_limpa[proposta.nome_organizacao] + 1
-                repetidas_limpa[proposta.nome_organizacao] -= 1
+            propostas = []
 
-    def pega_opcoes(alunos, propostas):
-        opcoes = []
+        alunos = Aluno.objects.filter(user__tipo_de_usuario=1).\
+            filter(anoPFE=ano).\
+            filter(semestrePFE=semestre).\
+            filter(trancado=False).\
+            order_by(Lower("user__first_name"), Lower("user__last_name"))
+        
+        # Calcula média dos CRs
+        media_cr = 0
         for aluno in alunos:
-            opcoes_aluno = []
-            for proposta in propostas:
-                opcao = Opcao.objects.filter(aluno=aluno, proposta=proposta).last()
-                if opcao:
-                    opcoes_aluno.append(opcao)
-                else:
-                    opcoes_aluno.append(None)
-            opcoes.append(opcoes_aluno)
-        return opcoes
+            media_cr += aluno.cr
+        media_cr /= len(alunos)
 
-    opcoes = pega_opcoes(alunos, propostas)
-
-    def calcula_qtd(opcoes, propostas, alunos):
-        finish = True
-        qtd = []
-        for count, proposta in enumerate(propostas):
-            tmp = 0
-            for linha in range(len(alunos)):
-                pre = alunos[linha].pre_alocacao
-                if pre:
-                    if pre == proposta:
-                        tmp += 1
-                else:
-                    optmp = Opcao.objects.filter(aluno=alunos[linha], prioridade=1).last()
-                    if optmp and optmp.proposta == proposta:
-                        tmp += 1
-            # Somente grupos de 3 ou 4 ou proposta sem ninguem
-            if tmp != 4 or tmp != 3 or tmp != 0:
-                finish = False
-            qtd.append(tmp)
-        return qtd, finish
-
-    qtd, finish = calcula_qtd(opcoes, propostas, alunos)
-
-    user = request.user
-    if otimizar:  # Quer dizer que é um POST
-        if user.tipo_de_usuario != 4:  # admin
-            return HttpResponse("Usuário sem privilégios de administrador.", status=401)
-
-        ordem_propostas = {}
-        contador = 0
+        # checa para empresas repetidas, para colocar um número para cada uma
+        repetidas = {}
         for proposta in propostas:
-            ordem_propostas[proposta.id] = contador
-            contador += 1
-
-        # Removendo propostas com menos de 3 estudantes (prioridade <= 5)
-        soma = []
-        for count, proposta in enumerate(propostas):
-            tmp = 0
-            for linha in range(len(alunos)):
-                opcao = opcoes[linha][count] 
-                if opcao and opcao.prioridade <= 5:
-                    tmp += 1
-            soma.append(tmp)
-        idx = None
-        for count, proposta in enumerate(propostas):
-            if soma[count] < 3:
-                idx = count
-                break
-        propostas = propostas[:idx]
-        for linha in range(len(alunos)):
-            opcoes[linha] = opcoes[linha][:idx] 
-        soma = soma[:idx]
-    
-        # Se estudante foi e voltou em um grupo, não mudar mais
-        pula_estudante = {}
-
-        # Pre alocando todos nas suas primeiras opções
-        for aluno in alunos:
-            tmp_prioridade = 9999
-            tmp_proposta = None
-            for proposta in propostas:
-                opcao = Opcao.objects.filter(aluno=aluno, proposta=proposta).last()
-                if opcao and opcao.prioridade < tmp_prioridade:
-                    tmp_proposta = proposta
-                    tmp_prioridade = opcao.prioridade
-            if tmp_prioridade < 9999:
-                aluno.pre_alocacao = tmp_proposta
-                aluno.save()
+            if proposta.organizacao:
+                if proposta.organizacao.sigla in repetidas:
+                    repetidas[proposta.organizacao.sigla] += 1
+                else:
+                    repetidas[proposta.organizacao.sigla] = 0
             else:
-                pula_estudante[aluno]=0  # Todas as opções de {aluno} são inviáveis.
+                if proposta.nome_organizacao in repetidas:
+                    repetidas[proposta.nome_organizacao] += 1
+                else:
+                    repetidas[proposta.nome_organizacao] = 0
+        repetidas_limpa = {}
+        for repetida in repetidas:
+            if repetidas[repetida] != 0:  # tira zerados
+                repetidas_limpa[repetida] = repetidas[repetida]
+        proposta_indice = {}
+        for proposta in reversed(propostas):
+            if proposta.organizacao:
+                if proposta.organizacao.sigla in repetidas_limpa:
+                    proposta_indice[proposta.id] = \
+                        repetidas_limpa[proposta.organizacao.sigla] + 1
+                    repetidas_limpa[proposta.organizacao.sigla] -= 1
+            else:
+                if proposta.nome_organizacao in repetidas_limpa:
+                    proposta_indice[proposta.id] = \
+                        repetidas_limpa[proposta.nome_organizacao] + 1
+                    repetidas_limpa[proposta.nome_organizacao] -= 1
 
-        reduz = 1
-        contador = 0
-        while not finish:
-            
-            trocou = False
+        def pega_opcoes(alunos, propostas):
+            opcoes = []
+            for aluno in alunos:
+                opcoes_aluno = []
+                for proposta in propostas:
+                    opcao = Opcao.objects.filter(aluno=aluno, proposta=proposta).last()
+                    if opcao:
+                        opcoes_aluno.append(opcao)
+                    else:
+                        opcoes_aluno.append(None)
+                opcoes.append(opcoes_aluno)
+            return opcoes
 
+        opcoes = pega_opcoes(alunos, propostas)
+
+        def calcula_qtd(opcoes, propostas, alunos):
+            finish = True
+            qtd = []
             for count, proposta in enumerate(propostas):
-                if qtd[count] == reduz:
-                    troca = None
-                    for linha in range(len(alunos)):
-                        opcao = opcoes[linha][count]
-                        if opcao and (opcao.prioridade <= 10) and (opcao.aluno.pre_alocacao != proposta):
-                            op_qtd = qtd[ordem_propostas[opcao.aluno.pre_alocacao.id]]
-                            if (opcao.aluno not in pula_estudante) or (opcao.prioridade < pula_estudante[opcao.aluno]):
-                                if (3 > op_qtd) or (4 < op_qtd):
-                                    if (not troca):
-                                        troca = opcao
-                                    elif (opcao.prioridade < troca.prioridade):
-                                        troca = opcao
-                                    elif (opcao.prioridade == troca.prioridade) and (opcao.aluno.cr < troca.aluno.cr):
-                                        troca = opcao
-                    if troca:
-                        trocou = True
-                        aluno = Aluno.objects.get(pk=troca.aluno.pk)
-                        antiga_opcao = Opcao.objects.filter(aluno=aluno, proposta=aluno.pre_alocacao).last()
-                        if troca.prioridade < antiga_opcao.prioridade:
-                            pula_estudante[aluno]=troca.prioridade
-                        Aluno.objects.filter(pk=troca.aluno.pk).update(pre_alocacao=troca.proposta)
-                        reduz = 1 # Volta a busca do começo sempre que há alguma troca
+                tmp = 0
+                for linha in range(len(alunos)):
+                    pre = alunos[linha].pre_alocacao
+                    if pre:
+                        if pre == proposta:
+                            tmp += 1
+                    else:
+                        optmp = Opcao.objects.filter(aluno=alunos[linha], prioridade=1).last()
+                        if optmp and optmp.proposta == proposta:
+                            tmp += 1
+                # Somente grupos de 3 ou 4 ou proposta sem ninguem
+                if tmp != 4 or tmp != 3 or tmp != 0:
+                    finish = False
+                qtd.append(tmp)
+            return qtd, finish
+
+        qtd, finish = calcula_qtd(opcoes, propostas, alunos)
+
+        user = request.user
+        if otimizar:  # Quer dizer que é um POST
+            if user.tipo_de_usuario != 4:  # admin
+                return HttpResponse("Usuário sem privilégios de administrador.", status=401)
+
+            ordem_propostas = {}
+            contador = 0
+            for proposta in propostas:
+                ordem_propostas[proposta.id] = contador
+                contador += 1
+
+            # Removendo propostas com menos de 3 estudantes (prioridade <= 5)
+            soma = []
+            for count, proposta in enumerate(propostas):
+                tmp = 0
+                for linha in range(len(alunos)):
+                    opcao = opcoes[linha][count] 
+                    if opcao and opcao.prioridade <= 5:
+                        tmp += 1
+                soma.append(tmp)
+            idx = None
+            for count, proposta in enumerate(propostas):
+                if soma[count] < 3:
+                    idx = count
+                    break
+            propostas = propostas[:idx]
+            for linha in range(len(alunos)):
+                opcoes[linha] = opcoes[linha][:idx] 
+            soma = soma[:idx]
+        
+            # Se estudante foi e voltou em um grupo, não mudar mais
+            pula_estudante = {}
+
+            # Pre alocando todos nas suas primeiras opções
+            for aluno in alunos:
+                tmp_prioridade = 9999
+                tmp_proposta = None
+                for proposta in propostas:
+                    opcao = Opcao.objects.filter(aluno=aluno, proposta=proposta).last()
+                    if opcao and opcao.prioridade < tmp_prioridade:
+                        tmp_proposta = proposta
+                        tmp_prioridade = opcao.prioridade
+                if tmp_prioridade < 9999:
+                    aluno.pre_alocacao = tmp_proposta
+                    aluno.save()
+                else:
+                    pula_estudante[aluno]=0  # Todas as opções de {aluno} são inviáveis.
+
+            reduz = 1
+            contador = 0
+            while not finish:
+                
+                trocou = False
+
+                for count, proposta in enumerate(propostas):
+                    if qtd[count] == reduz:
+                        troca = None
+                        for linha in range(len(alunos)):
+                            opcao = opcoes[linha][count]
+                            if opcao and (opcao.prioridade <= 10) and (opcao.aluno.pre_alocacao != proposta):
+                                op_qtd = qtd[ordem_propostas[opcao.aluno.pre_alocacao.id]]
+                                if (opcao.aluno not in pula_estudante) or (opcao.prioridade < pula_estudante[opcao.aluno]):
+                                    if (3 > op_qtd) or (4 < op_qtd):
+                                        if (not troca):
+                                            troca = opcao
+                                        elif (opcao.prioridade < troca.prioridade):
+                                            troca = opcao
+                                        elif (opcao.prioridade == troca.prioridade) and (opcao.aluno.cr < troca.aluno.cr):
+                                            troca = opcao
+                        if troca:
+                            trocou = True
+                            aluno = Aluno.objects.get(pk=troca.aluno.pk)
+                            antiga_opcao = Opcao.objects.filter(aluno=aluno, proposta=aluno.pre_alocacao).last()
+                            if troca.prioridade < antiga_opcao.prioridade:
+                                pula_estudante[aluno]=troca.prioridade
+                            Aluno.objects.filter(pk=troca.aluno.pk).update(pre_alocacao=troca.proposta)
+                            reduz = 1 # Volta a busca do começo sempre que há alguma troca
+                            break
+
+                alunos = Aluno.objects.filter(user__tipo_de_usuario=1).\
+                    filter(anoPFE=ano).\
+                    filter(semestrePFE=semestre).\
+                    filter(trancado=False).\
+                    order_by(Lower("user__first_name"), Lower("user__last_name"))
+
+                opcoes = pega_opcoes(alunos, propostas)
+                qtd, finish = calcula_qtd(opcoes, propostas, alunos)
+
+                if not trocou:
+                    reduz += 1
+                    if reduz == 4:
                         break
 
-            alunos = Aluno.objects.filter(user__tipo_de_usuario=1).\
-                filter(anoPFE=ano).\
-                filter(semestrePFE=semestre).\
-                filter(trancado=False).\
-                order_by(Lower("user__first_name"), Lower("user__last_name"))
-
-            opcoes = pega_opcoes(alunos, propostas)
-            qtd, finish = calcula_qtd(opcoes, propostas, alunos)
-
-            if not trocou:
-                reduz += 1
-                if reduz == 4:
+                # Para evitar travar totalmente
+                contador += 1
+                if contador > 50:
+                    #"ESTOUROU"
                     break
 
-            # Para evitar travar totalmente
-            contador += 1
-            if contador > 50:
-                #"ESTOUROU"
-                break
+        data = {
+            "atualizado": True,
+        }
+        return JsonResponse(data)
 
-    estudantes = zip(alunos, opcoes)
-    context = {
-        'estudantes': estudantes,
-        'propostas': propostas,
-        'configuracao': configuracao,
-        'ano': ano,
-        'semestre': semestre,
-        'loop_anos': range(2018, configuracao.ano+1),
-        'proposta_indice': proposta_indice,
-        "qtd": qtd,
-        "media_cr": media_cr,
-        "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
-        "informacoes": [("#MapeamentoTable tr > *:nth-child(2)", "Curso"),
-                        ("#MapeamentoTable tr > *:nth-child(3)", "CR", False)],
-    }
-
-    return render(request, "administracao/propor.html", context)
-
+    return HttpResponseNotFound('Requisição errada')
 
 
 
