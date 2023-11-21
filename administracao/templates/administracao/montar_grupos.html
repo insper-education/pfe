@@ -177,9 +177,15 @@
         <div style="width: 68px; vertical-align:middle; margin-right: 8px;">
 
           <div style="width: 64px; text-align: center;">
-            {% if proposta.organizacao.logotipo %}
-              <img class="logotipo" src="{{ proposta.organizacao.logotipo.url }}" alt="{{ proposta.organizacao.sigla }}">
-            {% endif %}
+            <img class="logotipo" 
+              {% if proposta.organizacao.logotipo %}
+                src="{{ proposta.organizacao.logotipo.url }}" alt="{{ proposta.organizacao.sigla }}"
+              {% elif proposta.organizacao %}
+                alt="{{ proposta.organizacao.sigla }}"
+              {% elif proposta.nome_organizacao %}
+                alt="{{ proposta.nome_organizacao }}"
+              {% endif %}
+            >
           </div>
         </div>
 
@@ -268,8 +274,14 @@
 
   <hr>
   <form action="" method="post"> {% csrf_token %}  
-    <input type="submit" class="btn btn-secondary" name="limpar" value="Resetar Pré Alocações" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
-    <input type="submit" class="btn btn-secondary" name="fechar" value="Fechar Projetos" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+    <input type="submit" class="btn btn-secondary" name="limpar"
+           data-toggle="tooltip" data-html="true" animation="true"
+           title="Remove todos os movimentos de estudantes já realizadas e coloca todos de volta em suas primeiras opções."
+           value="Resetar Pré Alocações" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+    <input type="submit" class="btn btn-secondary" name="fechar" 
+           data-toggle="tooltip" data-html="true" animation="true"
+           title="Cria efetivamente os projetos na base de dados e avança para a seleção de orientadores."
+           value="Fechar Projetos" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
   </form>
 
   <br><br>
