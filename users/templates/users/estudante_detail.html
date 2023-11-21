@@ -16,6 +16,18 @@
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
 
+  <style>
+    .tit_rel {
+        font-weight: bold;
+        font-size: 20px;
+    }
+    @media (max-width: 740px) {
+        .tit_rel {
+          font-size: 17px;
+        }
+    }
+  </style>
+
 {% endblock %}
 
 {% block content %}
@@ -393,7 +405,7 @@
             
 
             <br><br>
-            &nbsp;&nbsp;Relatos Quinzenais:<br>
+            &nbsp;&nbsp;<span class="tit_rel">Relatos Quinzenais:</span><br>
             {% for evento, relato, ordem in alocado.get_relatos %}
                 <p style="padding-left: 18px;">
                 {% if relato %}
