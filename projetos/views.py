@@ -311,7 +311,8 @@ def projetos_fechados(request):
             (".papeis", "Papéis"),
             (".totais", "Totais"),
             (".emails", "e-mails"),
-            (".avancado", "Avancados")
+            (".avancado", "Avancados"),
+            (".grafico", "Gráfico", False),
         ]
 
         context = {

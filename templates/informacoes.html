@@ -34,12 +34,12 @@
   </script>
  
   <div id="informacoes" style="width:fit-content; margin-bottom: 6px; font-size:0.8rem; display: inline; border: 1px solid lightgray; padding: 1px;">
-    <span id="informacoes_tag" style="cursor: pointer; color:gray;"><b>Informações <i class="arrow right"></i>&nbsp;</b></span>
+    <span id="informacoes_tag" style="padding: 2px 4px 2px 4px; cursor: pointer; color:gray;"><b>Informações <i class="arrow right"></i>&nbsp;</b></span>
     <div id="toggle" style="padding-top: 10px;display: none;">
       {% for inf in informacoes %}
         {% comment %} O terceiro campo é o nome da classe, mas se for False desliga o botao {% endcomment %}
         <label {% if inf.2 is not None and inf.2 != False %}class="{{inf.2}}"{% endif %}>
-          <input onchange="($(this).prop('checked') ? $('{{inf.0}}').show() : $('{{inf.0}}').hide())" type="checkbox" {% if inf.2 is None or inf.2 != False %}checked{% endif %} /> 
+          <input style="vertical-align: -3px;" onchange="($(this).prop('checked') ? $('{{inf.0}}').show() : $('{{inf.0}}').hide())" type="checkbox" {% if inf.2 is None or inf.2 != False %}checked{% endif %} /> 
           {{inf.1}}
         </label>&nbsp;&nbsp;&nbsp;
       {% endfor %}

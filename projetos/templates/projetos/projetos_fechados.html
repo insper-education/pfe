@@ -259,6 +259,9 @@
       </div>
 
       <br>
+      <div style="display: none;" class="grafico" id="canvas-holder">
+        <canvas id="chart-area"></canvas>
+      </div>
 
     <br><br>
     
@@ -272,9 +275,6 @@
       var prioridade5 = 0;
       var prioridade6m = 0;
       var nao_definido = 0;
-    </script>
-
-    <script>
 
       function filtra_data() {  // REFERENTE AO SELETOR DE DATAS
 
@@ -314,11 +314,20 @@
       {% comment %} // Só mostra informação de semestre se edição é todas {% endcomment %}
       ($("#filterEdicao option:selected").attr("value") == "todas" ? $('.semestre').show() : $('.semestre').hide());
 
+
     </script>
+    
+    {% comment %} Mostra gráfico de proporção de prioridades {% endcomment %}
+    {% include "grafico_prioridades.html" %}
 
     <script>
       filtra_data();
+
+      mostra_grafico();
+
     </script>
+    
+
 
     {% endif %}
 
@@ -326,7 +335,7 @@
       function carrega_pagina() {}
       $(document).ready(carrega_pagina);
     </script>
-    
+  
   </div>
   
   {% include "edicoes_ajax.html" with com_cursos=True %}
