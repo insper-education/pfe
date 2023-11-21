@@ -10,6 +10,6 @@ register = template.Library()
 
 @register.filter
 def empty_zip(value):
-    if len(list(value)) > 0:
+    if len(list(value)) > 0: # Isso destroi o zip
         return False
     return True

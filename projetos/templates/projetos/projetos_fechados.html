@@ -7,6 +7,7 @@
 
 {% block head %}
   {% load static %}
+  {% load zip_data %}
   {% comment %} Para desenhar gráficos na página {% endcomment %}
   <script src="{% static 'js/Chart.min.js' %}"/></script>
 
@@ -56,9 +57,9 @@
     
     {% if projetos %}
       <table id="projetos">
-      {% for projeto, prioridades, cooperacoes, conexoes in projetos %}
+      {% for projeto, prioridades, cooperacoes, conexoes, qtd_est in projetos %}
         <tr class="row {% if projeto.avancado %}avancado{% endif %}" data-type="{{projeto.ano}}.{{projeto.semestre}}"
-            {% if prioridades|length == 0 %}style="opacity: 0.3;" data-toggle="tooltip" data-html="true" animation="true" title="Projeto sem alocações"{% endif %} >
+            {% if qtd_est == 0 %}style="opacity: 0.3;"{% endif %} >
         <td class="projline">
         {% if projeto.organizacao %}
           <span class="logo">

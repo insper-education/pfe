@@ -235,6 +235,7 @@ def projetos_fechados(request):
             prioridade_list = []
             cooperacoes = []
             conexoes = []
+            qtd_est = []
 
             numero_estudantes = 0
             numero_estudantes_avancado = 0
@@ -250,7 +251,8 @@ def projetos_fechados(request):
                 if curso != 'T':
                     estudantes_pfe = estudantes_pfe.filter(alocacao__aluno__curso2__sigla_curta=curso)
 
-                #if estudantes_pfe:  # len(estudantes_pfe) > 0:
+                qtd_est.append(len(estudantes_pfe))
+
                 projetos_selecionados.append(projeto)
                 if projeto.avancado:
                     numero_estudantes_avancado += len(estudantes_pfe)
@@ -280,7 +282,7 @@ def projetos_fechados(request):
                 conexoes.append(Conexao.objects.filter(projeto=projeto,
                                                         colaboracao=False))
 
-            projetos = zip(projetos_selecionados, prioridade_list, cooperacoes, conexoes)
+            projetos = zip(projetos_selecionados, prioridade_list, cooperacoes, conexoes, qtd_est)
 
             context = {
                 'projetos': projetos,
