@@ -18,6 +18,10 @@ urlpatterns = [
         views.index_organizacoes,
         name='index_organizacoes'),
 
+    path('anotacao/',
+        views.anotacao,
+        name='anotacao'),
+
     path('anotacao/<str:organizacao_id>',
         views.anotacao,
         name='anotacao'),

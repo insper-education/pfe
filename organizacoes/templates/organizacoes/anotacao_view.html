@@ -13,13 +13,28 @@
   {% csrf_token %}
 
   <div class="modal-header">
-    <h5 id="anotacao" class="modal-title">Anotação: {{ organizacao.nome }}</h5>    
+    <h5 id="anotacao" class="modal-title">Anotação{% if organizacao %}: {{ organizacao.nome }}{% endif %}</h5>    
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
 
   <div class="modal-body">
+
+
+    {% if organizacoes and not organizacao %}
+      <label for="organizacao_id">Organizacao:</label>
+      <select id="organizacao_id" name="organizacao_id" class="form-control" required>
+        <option disabled selected value> -- selecione uma organização -- </option>
+        {% for organizacao in organizacoes %}
+          <option value="{{organizacao.id}}" {% if anotacao and anotacao.organizacao_id == organizacao.id %}selected{% endif %} >{{organizacao.nome}}</option>
+        {% endfor %}
+      </select>
+      <br>
+    {% endif %}
+
+
+
 
     <label for="data_hora">Data e Hora: </label> <input id="data_hora" class="form-control" type="datetime-local" name="data_hora" value="{{data_hora|date:'Y-m-d\TH:i'}}"><br>
     

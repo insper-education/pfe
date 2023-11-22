@@ -26,8 +26,13 @@
 
   {% include "impressora.html" %}
 
-  <span class="titulo">Prospecção de Organizações para propostas a partir de {{ano}}.{{semestre}}</span>
+  <span class="titulo">Prospecção de Organizações para propostas a partir de {{ano}}.{{semestre}}
+    <a class="create-annotation"
+       href="{% url 'anotacao' %}"
+       data-url="{% url 'anotacao' %}">&#10133;</a>
+  </span>
 
+  <br>
   <label for="periodo">Período:</label>
   <select id="periodo" class="periodo" data-tableId="OrganizacoesTable">
     <option value="1">1 mês</option>
@@ -57,7 +62,7 @@
     <option value="6" {% if filtro == "documentada" %}selected="selected"{% endif %}>documentada</option>
   </select>
 
-  <br><br>
+  <br>
 
   <div id="tabela">
 
@@ -217,7 +222,7 @@
       </table>
       </div>
 
-      Organizações contactadas recentemente ({{total_organizacoes}}):<br>
+      <b style="display: inline-block; margin-top: 16px;">Organizações contactadas recentemente ({{total_organizacoes}}):</b><br>
 
       <style>
         .show-hide {
@@ -369,7 +374,6 @@
       });
 
     }
-
 
 
     function areas(id, curso) {

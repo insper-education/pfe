@@ -43,15 +43,21 @@ def index_organizacoes(request):
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
-def anotacao(request, organizacao_id, anotacao_id=None):  # acertar isso para pk
+def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso para pk
     """Cria um anotação para uma organização parceira."""
-    organizacao = get_object_or_404(Organizacao, id=organizacao_id)
+    if organizacao_id:
+        organizacao = get_object_or_404(Organizacao, id=organizacao_id)
+    else:
+        organizacao = None
 
     if request.is_ajax() and 'texto' in request.POST:
 
         if anotacao_id:
             anotacao_obj = get_object_or_404(Anotacao, id=anotacao_id)
         else:
+            if not organizacao_id and "organizacao_id" in request.POST:
+                organizacao_id = request.POST["organizacao_id"]
+                organizacao = get_object_or_404(Organizacao, id=organizacao_id)
             anotacao_obj = Anotacao.create(organizacao)
 
         anotacao_obj.autor = request.user
@@ -86,10 +92,11 @@ def anotacao(request, organizacao_id, anotacao_id=None):  # acertar isso para pk
         data_hora = datetime.datetime.now()
 
     context = {
-        'organizacao': organizacao,
-        'TIPO_DE_RETORNO': Anotacao.TIPO_DE_RETORNO,
-        'data_hora': data_hora,
-        'anotacao': anotacao_obj,
+        "organizacao": organizacao,
+        "TIPO_DE_RETORNO": Anotacao.TIPO_DE_RETORNO,
+        "data_hora": data_hora,
+        "anotacao": anotacao_obj,
+        "organizacoes": Organizacao.objects.all(),
     }
 
     return render(request,

@@ -46,7 +46,7 @@
     e.preventDefault();
     var $popup = $("#popup");
     anotacao = $(this).data("anotacao");
-    organizacao = $(this).data("organizacao");
+    organizacao = $(this).data("organizacao"); //pode não existir
     url = $(this).data("url");
 
     var address = url
@@ -107,7 +107,9 @@
 
     var texto = $('#texto').val();
     var data_hora = $('#data_hora').val();
-    var tipo_de_retorno = $('#tipo_de_retorno').val();
+    var tipo_de_retorno = $("#tipo_de_retorno").val();
+
+    var organizacao_id = $("#organizacao_id").val();
 
     var address = url
     if(anotacao) {
@@ -118,10 +120,11 @@
         type: "POST",
         url: address,
         data: {
-            'texto': texto,
-            'data_hora': data_hora,
-            'tipo_de_retorno': tipo_de_retorno,
-            'csrfmiddlewaretoken': '{{ csrf_token }}',
+            "texto": texto,
+            "data_hora": data_hora,
+            "tipo_de_retorno": tipo_de_retorno,
+            "organizacao_id": organizacao_id,
+            "csrfmiddlewaretoken": '{{ csrf_token }}',
         },
         success: function(response){
             if (response.atualizado) {
