@@ -141,19 +141,21 @@
       <label for="principal_contato"> Principal Contato</label><br>
 
     </div>
+    <br>
+
+    <div id="ativo_div">
+      {% if usuario %}
+        <br>
+        <input type='hidden' value='0' name='ativo'>
+        <input type="checkbox" id="ativo" value='1' name="ativo" {% if usuario.is_active %}checked="checked"{% endif %}>
+        <label for="ativo">Ativo (ainda está trabalhando <span id="org_text">na organização</span>)</label>
+      {% endif %}
+    </div>
 
     {% if usuario %}
-      
-      <br>
-      <input type='hidden' value='0' name='ativo'>
-      <input type="checkbox" id="ativo" value='1' name="ativo" {% if usuario.is_active %}checked="checked"{% endif %}>
-      <label for="ativo">Ativo (está ainda trabalhando na organização)</label>
-
-      <br>
       <input type='hidden' value='0' name='comite'>
       <input type="checkbox" id="comite" value='1' name="comite" {% if usuario.membro_comite %}checked="checked"{% endif %}>
       <label for="comite">Membro Comitê PFE</label>
-
     {% endif %}
 
     <br><br>
@@ -206,16 +208,21 @@
       if(filterValue=="professor") {
         $("#ti").prop('required',true);
         $("#tp").prop('required',true);
+        $("#ativo_div").show();
+        $("#org_text").html("no Insper");
       }
 
       if(filterValue=="parceiro") {
         $("#organizacao").prop('required',true);
+        $("#ativo_div").show();
+        $("#org_text").html("na organização");
       }
 
       if(filterValue=="estudante") {
         $("#curso").prop('required',true);
         $("#ano").prop('required',true);
         $("#semestre").prop('required',true);
+        $("#ativo_div").hide();
       }
 
       // Para não validar o que está escondido
