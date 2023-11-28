@@ -156,9 +156,14 @@
                 {{contato.momento|date:"d/m/Y"}}
               {% endif %}
             </td>
+
+            {% comment %} Anotação {% endcomment %}
             <td>
               {% if not contato %}
                 <div style="float:left;width: 92%;">
+                  <span id="contato_autor{{organizacao.id}}">
+                    ---:
+                  </span>
                   <a
                     id='organizacao{{organizacao.id}}'
                     data-organizacao='{{organizacao.id}}'
@@ -178,7 +183,7 @@
               {% else %}
                 {% comment %} {{contato.texto}} {% endcomment %}
                   <div style="float:left;width: 92%;">
-                    <span>
+                    <span id="contato_autor{{organizacao.id}}">
                       {{contato.autor.first_name}}:
                     </span>
                     <a
@@ -202,12 +207,17 @@
                   </div>
               {% endif %}
             </td>
+
+            {% comment %} Propostas Disponíveis {% endcomment %}
             <td class="text-center">
               {{disponiveis|stringformat:"03d"}}
             </td>
+
+            {% comment %} Propostas Enviadas {% endcomment %}
             <td class="text-center">
               {{submetidas|stringformat:"03d"}}
             </td>
+
           </tr>
           {% if contato != '---------' %}
             {% if contato.momento|date:'Ymd' > meses3|date:'Ymd' %}
@@ -349,12 +359,12 @@
       }
 
       $.ajax({
-        url: '{% url "estrelas" %}',
+        url: "{% url "estrelas" %}",
         data: {
-          'organizacao': id,
-          'estrelas': pos,
+          "organizacao": id,
+          "estrelas": pos,
         },
-        dataType: 'json',
+        dataType: "json",
         success: function (data) {
           if (data.atualizado) {
             //console.log("Valor atualizado.");

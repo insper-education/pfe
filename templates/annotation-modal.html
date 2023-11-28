@@ -129,7 +129,11 @@
         success: function(response){
             if (response.atualizado) {
               //console.log("Valor atualizado.");
+              if (organizacao=== undefined) { // Faz um refresh na página
+                setTimeout(function() {location.reload();}, 0.001); // No futuro incluir a linha e evitar reload
+              }
               $("#data"+organizacao).text(response.data);
+              $("#contato_autor"+organizacao).text(response.autor+": ");
               $("#organizacao"+organizacao).data("anotacao", response.anotacao_id);
               $("#organizacao"+organizacao).text(texto);
               if(tipo_de_retorno == 0)

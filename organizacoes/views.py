@@ -74,10 +74,10 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
         anotacao_obj.save()
 
         data = {
-            'data': anotacao_obj.momento.strftime("%d/%m/%Y"),
-            'autor': str(anotacao_obj.autor.get_full_name()),
-            'anotacao_id': anotacao_obj.id,
-            'atualizado': True,
+            "data": anotacao_obj.momento.strftime("%d/%m/%Y"),
+            "autor": str(anotacao_obj.autor.first_name),
+            "anotacao_id": anotacao_obj.id,
+            "atualizado": True,
         }
 
         return JsonResponse(data)
