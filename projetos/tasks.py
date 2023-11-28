@@ -127,11 +127,11 @@ def envia_aviso():
         if context[event] and isinstance(context[event], django.db.models.query.QuerySet) and context[event].model is Evento:
             for acao in context[event]:
                 if acao.startDate == datetime.date.today():
-                    subject = "Evento PFE: {1}".format(event, acao.get_title())
-                    message = "<b>Evento:</b> {1}".format(event, acao.get_title())
+                    subject = "Evento PFE: {0}".format(acao.get_title())
+                    message = "<b>Evento:</b> {0}".format(acao.get_title())
                     if acao.location:
                         message += "<br>\n<b>Local:</b> {0}".format(acao.location)
-                    if acao.startDate == acao.endDate:
+                    if acao.startDate and (acao.startDate == acao.endDate or (not acao.endDate)):
                         message += "<br>\n<b>Data:</b> {0}".format(acao.startDate)
                     else:
                         message += "<br>\n<b>Data inicial:</b> {0}".format(acao.startDate)
