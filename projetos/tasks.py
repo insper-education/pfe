@@ -132,10 +132,10 @@ def envia_aviso():
                     if acao.location:
                         message += "<br>\n<b>Local:</b> {0}".format(acao.location)
                     if acao.startDate and (acao.startDate == acao.endDate or (not acao.endDate)):
-                        message += "<br>\n<b>Data:</b> {0}".format(acao.startDate)
+                        message += "<br>\n<b>Data:</b> {0}".format(acao.startDate.strftime("%d/%m/%Y"))
                     else:
-                        message += "<br>\n<b>Data inicial:</b> {0}".format(acao.startDate)
-                        message += "<br>\n<b>Data final:</b> {0}".format(acao.endDate)
+                        message += "<br>\n<b>Data inicial:</b> {0}".format(acao.startDate.strftime("%d/%m/%Y"))
+                        message += "<br>\n<b>Data final:</b> {0}".format(acao.endDate.strftime("%d/%m/%Y"))
                     verify = email(subject, recipient_list, message)
                     if verify != 1:
                         # Algum problema de conexão, contacte: lpsoares@insper.edu.br
