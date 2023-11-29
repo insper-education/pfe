@@ -394,7 +394,7 @@
       tmp_node = `
       <div id="estudante{{estudante.id}}" draggable="true" class="estudante imprimir_div" data-cr="{{estudante.cr}}"
       data-prioridades="[{% for opcao in opcoes %}{{opcao.proposta.id}}{%if not forloop.last%},{%endif%}{% endfor %}]">
-      <a target="_blank" rel="noopener noreferrer" style="white-space: nowrap;"
+      <a target="_blank" rel="noopener noreferrer" style="display: inline; white-space: nowrap;"
        class="ancora imprimir" href="{% url 'estudante_detail' estudante.id %}"
        data-toggle="tooltip" data-html="true" animation="true"
         title="
@@ -420,7 +420,8 @@
         {{estudante.familia|linebreaks}}<br>{% endif %}
         ">
         <span id="nome{{estudante.id}}">{{estudante.user.get_full_name}}</span></a>
-        <span class="l_curso">{{estudante.curso2.sigla_curta}}</span>&nbsp;<span class="opt_full esconder">CR: </span><span class="opt_short esconder"></span><span class="esconder">{{estudante.cr|floatformat:2}}</span>
+        <span class="l_curso">{{estudante.curso2.sigla_curta}}</span>
+        <span class="opt_full esconder">CR:&nbsp;</span><span class="opt_short esconder"></span><span class="esconder">{{estudante.cr|floatformat:2}}</span>
         <div class="opcao imprimir_div" style="float: right;"><div class="opt_full">opção </div><div class="opt_short">op</div>#<span>{% if opcoes %}1{% else %}?{% endif %}</span></div>
         <br></div>
       `
