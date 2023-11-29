@@ -665,8 +665,20 @@
         return;
       }
 
+      if(event.startDate.getFullYear() < 2018 || event.startDate.getFullYear() > 2218) {
+        $("#warning-footer").html("Data de inicio irregular.");
+        $("#min-date").css({"border-color":"red"});
+        return;
+      }
+  
       if(event.endDate == null) {
         $("#warning-footer").html("Data de término é obrigatória.");
+        $("#max-date").css({"border-color":"red"});
+        return;
+      }
+
+      if(event.endDate.getFullYear() < 2018 || event.endDate.getFullYear() > 2218) {
+        $("#warning-footer").html("Data de término irregular.");
         $("#max-date").css({"border-color":"red"});
         return;
       }
@@ -677,8 +689,6 @@
         $("#max-date").css({"border-color":"red"});
         return;
       }
-
-        //if(event.type == null) if(event.type == null)
 
       if (!event.id) {id = 0;}
       else {id = event.id;}

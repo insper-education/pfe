@@ -872,24 +872,24 @@ class Documento(models.Model):
     """Documentos, em geral PDFs, e seus relacionamentos com o PFE."""
 
     organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
-                                    help_text='Organização referente o documento')
-    usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='Usuário do documento')
+                                    help_text="Organização referente o documento")
+    usuario = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text="Usuário do documento")
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='Documento do Projeto')
+                                help_text="Documento do Projeto")
     documento = models.FileField(null=True, blank=True, max_length=160,
                                  upload_to=get_upload_path,
-                                 help_text='Documento PDF')
+                                 help_text="Documento PDF")
     link = models.URLField("link", max_length=250, null=True, blank=True,
-                           help_text='website da organização parceira')
+                           help_text="website da organização parceira")
     anotacao = models.CharField(null=True, blank=True, max_length=64,
-                                help_text='qualquer anotação sobre o documento em questão')
+                                help_text="qualquer anotação sobre o documento em questão")
     data = models.DateField(null=True, blank=True,
                             help_text="Data do documento")
     
     tipo_de_documento = models.PositiveSmallIntegerField(choices=TIPO_DE_DOCUMENTO, default=0)
 
-    confidencial = models.BooleanField(default=True, help_text='Documento confidêncial')
+    confidencial = models.BooleanField(default=True, help_text="Documento confidêncial")
 
     LINGUA_DO_DOCUMENTO = ( # não mudar a ordem dos números
         (0, 'Português'),

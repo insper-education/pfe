@@ -1542,7 +1542,6 @@ def evolucao_por_objetivo(request):
                 low.append(0)
                 mid.append(0)
                 high.append(0)
-            # medias.append({"objetivo": objetivo.titulo, "media": notas, "cor": cores[count]})
 
             alocacoes_tmp = Alocacao.objects.filter(projeto__ano=periodo[0],
                                                     projeto__semestre=periodo[1])

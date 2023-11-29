@@ -1341,7 +1341,7 @@ def dinamicas_lista(request):
 
             context = {
                 "sem_dinamicas": sem_dinamicas,
-                'encontros': encontros,
+                "encontros": encontros,
             }
 
         else:
