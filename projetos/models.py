@@ -1191,9 +1191,18 @@ class Coorientador(models.Model):
                                   help_text='qualquer observação relevante')
 
     def __str__(self):
-        return self.usuario.get_full_name()+" >>> "+\
-               self.projeto.get_titulo()+\
-               " ("+str(self.projeto.ano)+"."+str(self.projeto.semestre)+")"
+        mensagem = ""
+        if self.usuario:
+            mensagem += self.usuario.user.get_full_name()
+        else:
+            mensagem += "USUÁRIO NÃO DEFINIDO"
+        mensagem += " >>> "
+        if self.projeto:
+            mensagem += self.projeto.get_titulo()+\
+                " ("+str(self.projeto.ano)+"."+str(self.projeto.semestre)+")"
+        else:
+            mensagem += "PROJETO NÃO DEFINIDO"
+        return mensagem
 
     class Meta:
         verbose_name = 'Coorientador'
