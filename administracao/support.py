@@ -22,6 +22,13 @@ from projetos.support import simple_upload
 from operacional.models import Curso
 
 
+def limpa_texto(texto):
+    """Remove caracteres especiais do texto."""
+    if texto is None:
+        return None
+    return texto.replace("\x00", "\uFFFD")
+
+
 def get_limite_propostas(configuracao):
     if configuracao.semestre == 1:
         evento = Evento.objects.filter(tipo_de_evento=123, endDate__year=configuracao.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
@@ -138,10 +145,10 @@ def registro_usuario(request, user=None):
     # se for um usuário novo
     if not user:
         if usuario.tipo_de_usuario == 1 or usuario.tipo_de_usuario == 2:
-            username = request.POST['email'].split("@")[0]
+            username = request.POST["email"].split('@')[0]
         elif usuario.tipo_de_usuario == 3:
-            username = request.POST['email'].split("@")[0] + "." + \
-                request.POST['email'].split("@")[1].split(".")[0]
+            username = request.POST["email"].split('@')[0] + '.' + \
+                request.POST["email"].split('@')[1].split('.')[0]
         else:
             return ("Erro na recuperação do e-mail.", 401, None)
 
@@ -152,35 +159,36 @@ def registro_usuario(request, user=None):
 
         usuario.username = username
 
-    if 'nome' in request.POST and len(request.POST['nome'].split()) > 1:
-        usuario.first_name = request.POST['nome'].split()[0]
-        usuario.last_name = " ".join(request.POST['nome'].split()[1:])
+    if "nome" in request.POST and len(request.POST["nome"].split()) > 1:
+        usuario.first_name = limpa_texto(request.POST["nome"].split()[0])
+        usuario.last_name = limpa_texto(' '.join(request.POST["nome"].split()[1:]))
+
     else:
         return ("Erro: Não inserido nome completo no formulário.", 401, None)
 
-    if 'genero' in request.POST:
+    if "genero" in request.POST:
         if request.POST['genero'] == "masculino":
-            usuario.genero = "M"
+            usuario.genero = 'M'
         elif request.POST['genero'] == "feminino":
-            usuario.genero = "F"
+            usuario.genero = 'F'
     else:
-        usuario.genero = "X"
+        usuario.genero = 'X'
 
-    usuario.telefone = request.POST.get('telefone', None)
-    usuario.celular = request.POST.get('celular', None)
-    usuario.instant_messaging = request.POST.get('instant_messaging', None)
-    usuario.linkedin = request.POST.get('linkedin', None)
-    usuario.tipo_lingua = request.POST.get('lingua', None)
-    usuario.observacoes = request.POST.get('observacao', None)
+    usuario.telefone = limpa_texto(request.POST.get('telefone', None))
+    usuario.celular = limpa_texto(request.POST.get('celular', None))
+    usuario.instant_messaging = limpa_texto(request.POST.get('instant_messaging', None))
+    usuario.linkedin = limpa_texto(request.POST.get('linkedin', None))
+    usuario.tipo_lingua = limpa_texto(request.POST.get('lingua', None))
+    usuario.observacoes = limpa_texto(request.POST.get('observacao', None))
 
-    if 'ativo' in request.POST:
-        if request.POST['ativo'] == "1":
+    if "ativo" in request.POST:
+        if request.POST["ativo"] == '1':
             usuario.is_active = True
         else:
             usuario.is_active = False
 
     if 'comite' in request.POST:
-        if request.POST['comite'] == "1":
+        if request.POST["comite"] == '1':
             usuario.membro_comite = True
         else:
             usuario.membro_comite = False
@@ -192,7 +200,7 @@ def registro_usuario(request, user=None):
 
     if usuario.tipo_de_usuario == 1:  # estudante
 
-        if not hasattr(user, 'aluno'):
+        if not hasattr(user, "aluno"):
             estudante = Aluno.create(usuario)
         else:
             estudante = user.aluno
@@ -217,7 +225,7 @@ def registro_usuario(request, user=None):
             pass
             #estudante.cr = 0
 
-        estudante.trancado = 'estudante_trancado' in request.POST
+        estudante.trancado = "estudante_trancado" in request.POST
 
         estudante.save()
         
@@ -226,7 +234,7 @@ def registro_usuario(request, user=None):
 
     elif usuario.tipo_de_usuario == 2:  # professor
 
-        if not hasattr(user, 'professor'):
+        if not hasattr(user, "professor"):
             professor = Professor.create(usuario)
         else:
             professor = user.professor
@@ -240,9 +248,9 @@ def registro_usuario(request, user=None):
             professor.dedicacao = None
             mensagem += "Erro na identificação de tipo de dedicação do professor.<br>"
 
-        professor.areas = request.POST.get('areas', None)
-        professor.website = request.POST.get('website', None)
-        professor.lattes = request.POST.get('lattes', None)
+        professor.areas = limpa_texto(request.POST.get('areas', None))
+        professor.website = limpa_texto(request.POST.get('website', None))
+        professor.lattes = limpa_texto(request.POST.get('lattes', None))
 
         professor.save()
 
@@ -250,7 +258,7 @@ def registro_usuario(request, user=None):
         content_type = ContentType.objects.get_for_model(Professor)
         try:
             permission = Permission.objects.get(
-                codename='change_professor',
+                codename="change_professor",
                 content_type=content_type,
             )
             usuario.user_permissions.add(permission)
@@ -258,7 +266,7 @@ def registro_usuario(request, user=None):
             pass  # não encontrada a permissão
         try:  # <Permission: users | Professor | Professor altera valores>
             permission = Permission.objects.get(
-                codename='altera_professor',
+                codename="altera_professor",
                 content_type=content_type,
             )
             usuario.user_permissions.add(permission)

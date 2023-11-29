@@ -105,7 +105,7 @@ def cadastrar_organizacao(request, proposta_id=None):
     """Cadastra Organização na base de dados do PFE."""
     if request.method == 'POST':
 
-        if 'nome' in request.POST and 'sigla' in request.POST:
+        if "nome" in request.POST and "sigla" in request.POST:
 
             mensagem, codigo = registra_organizacao(request)
             if codigo != 200:
@@ -136,11 +136,11 @@ def cadastrar_organizacao(request, proposta_id=None):
 
     context = {
         "proposta": proposta,
-        "nome_length": Organizacao._meta.get_field('nome').max_length,
-        "sigla_length": Organizacao._meta.get_field('sigla').max_length,
-        "endereco_length": Organizacao._meta.get_field('endereco').max_length,
-        "website_length": Organizacao._meta.get_field('website').max_length,
-        "informacoes_length": Organizacao._meta.get_field('informacoes').max_length,
+        "nome_length": Organizacao._meta.get_field('nome').max_length-2,
+        "sigla_length": Organizacao._meta.get_field('sigla').max_length-2,
+        "endereco_length": Organizacao._meta.get_field('endereco').max_length-2,
+        "website_length": Organizacao._meta.get_field('website').max_length-2,
+        "informacoes_length": Organizacao._meta.get_field('informacoes').max_length-2,
     }
     
     return render(request, 'administracao/cadastra_organizacao.html', context=context)
@@ -193,12 +193,12 @@ def edita_organizacao(request, primarykey):
 @permission_required("users.altera_professor", raise_exception=True)
 def cadastrar_usuario(request):
     """Cadastra usuário na base de dados do PFE."""
-    if request.method == 'POST':
+    if request.method == "POST":
 
-        if 'email' in request.POST:
+        if "email" in request.POST:
             mensagem, codigo, user = registro_usuario(request)
 
-            if user is not None and 'envia' in request.POST: 
+            if user is not None and "envia" in request.POST:
 
                 # Atualizando senha do usuário.
                 senha = ''.join(random.SystemRandom().

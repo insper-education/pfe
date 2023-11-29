@@ -18,6 +18,8 @@ from django.db import transaction
 from django.http import HttpResponseNotFound, JsonResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect, get_object_or_404
 
+from administracao.support import limpa_texto
+
 from users.support import adianta_semestre, get_edicoes
 from users.models import PFEUser, Administrador, Parceiro, Professor, Aluno
 
@@ -449,9 +451,16 @@ def carrega_proposta(request):
                                     path=get_upload_path(None, ""))
 
             fields = get_form_fields(arquivo[1:])
+            if fields is None:
+                mensagem = "<b>ERRO:</b> Arquivo formulário não reconhecido"
+                context = {
+                    "voltar": True,
+                    "mensagem": mensagem,
+                }
+                return render(request, 'generic.html', context=context)
 
-            fields["nome"] = request.POST.get("nome", "").strip()
-            fields["email"] = request.POST.get("email", "").strip()
+            fields["nome"] = limpa_texto(request.POST.get("nome", "").strip())
+            fields["email"] = limpa_texto(request.POST.get("email", "").strip())
 
             proposta, erros = preenche_proposta_pdf(fields, None)
 
