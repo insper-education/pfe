@@ -18,6 +18,21 @@
     .cursor_pointer{
       cursor: pointer;
     }
+
+    td {
+      padding: 0px 4px 0px 4px;
+    }
+
+    th {
+      padding: 2px 4px 2px 4px;
+    }
+
+    .tit_peq {
+      display: block;
+      font-weight: bold;
+      line-height: 1.2 !important;
+    }
+
   </style>
 
 {% endblock %}
@@ -73,6 +88,7 @@
     {% if organizacoes_list %}
       <div class="table-responsive">
       <table id="OrganizacoesTable" style="width:100%">
+        <thead>
         <tr>
           <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">
             Organização
@@ -87,7 +103,7 @@
           </th>
 
           <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" width="97em" class="text-center">
-            Último<br>Contato
+            <small class="tit_peq">Último<br>Contato</small>
           </th>
           
           <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">
@@ -95,14 +111,16 @@
           </th>
           
           <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(6)')" style="cursor:pointer" width="81em" class="text-center">
-            <a data-toggle="tooltip" data-html="true" animation="true" title="Contando somente as propostas já autorizadas e disponibilizadas para os estudantes aplicarem"><small>Propostas<br>Disponíveis</small>
+            <a data-toggle="tooltip" data-html="true" animation="true" title="Contando somente as propostas já autorizadas e disponibilizadas para os estudantes aplicarem"><small class="tit_peq">Propostas<br>Disponíveis</small>
           </th>
 
           <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(7)')" style="cursor:pointer" width="81em" class="text-center">
-            <a data-toggle="tooltip" data-html="true" animation="true" title="Contando todas as propostas submetidas pela organização, mesmo aquelas que não estão disponibilizadas para os estudantes aplicarem"><small>Propostas<br>Enviadas</small>
+            <a data-toggle="tooltip" data-html="true" animation="true" title="Contando todas as propostas submetidas pela organização, mesmo aquelas que não estão disponibilizadas para os estudantes aplicarem"><small class="tit_peq">Propostas<br>Enviadas</small>
           </th>
         </tr>
+        </thead>
 
+        <tbody>
         {% for organizacao,disponiveis,submetidas,contato in organizacoes_list %} 
           <tr id="tr{{organizacao.id}}" class="item" 
           {% if contato %}
@@ -228,6 +246,9 @@
               </script>
             {% endif %}
           {% endif %}
+
+            </tbody>
+
         {% endfor %}
       </table>
       </div>
