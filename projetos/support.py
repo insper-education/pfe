@@ -226,13 +226,15 @@ def calcula_objetivos(alocacoes):
                             pesos[avaliacao[1]][k] = val[1]
                             objetivos_avaliados.add(k)
 
-    # Ordena os obejtivos pelo indice de ordem deles
+    # Ordena os objetivos pelo indice de ordem deles
     objetivos_avaliados = sorted(objetivos_avaliados, key=lambda oo: oo.ordem)
 
     cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9", "#7cfa9f", "#e8c3b9", "#c45890", "#375330", "#a48577"]
     count = 0
     cores_obj = {}
     for objetivo in objetivos_avaliados:
+        if count >= len(cores):
+            count = 0
         cores_obj[objetivo] = cores[count]
         count += 1
 

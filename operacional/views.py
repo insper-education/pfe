@@ -298,12 +298,12 @@ def carregar_certificado(request):
             if tipo:
                 certificado.tipo_de_certificado = int(tipo)
 
-            certificado.observacao = request.POST.get('observacao', None)
+            certificado.observacao = request.POST.get("observacao", None)
 
             certificado.save()
 
-            if 'documento' in request.FILES:
-                documento = simple_upload(request.FILES['documento'],
+            if "documento" in request.FILES:
+                documento = simple_upload(request.FILES["documento"],
                                           path=get_upload_path(certificado, ""))
                 certificado.documento = documento[len(settings.MEDIA_URL):]
 

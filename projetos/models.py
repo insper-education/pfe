@@ -92,7 +92,7 @@ class Organizacao(models.Model):
 
     estrelas = models.PositiveSmallIntegerField(default=0, help_text='Interesse para o semestre')
 
-    area_curso = models.ManyToManyField("operacional.Curso", 
+    area_curso = models.ManyToManyField("operacional.Curso", blank=True,
                                         help_text="Curso que mais se identifica com a área da organização")
 
 
