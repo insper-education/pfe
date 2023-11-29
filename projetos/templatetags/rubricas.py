@@ -11,11 +11,15 @@ register = template.Library()
 @register.filter
 def get_rubrica(objetivos, objetivo):
     """Permite buscar uma rubrica."""
+    if not objetivos:
+        return None
     return objetivos.get(id=objetivo)
 
 @register.filter
 def get_texto_conceito(objetivo, conceito):
     """Permite buscar o texto de uma rubrica."""
+    if (not conceito) or (not objetivo):
+        return ""
     if conceito == "A " or conceito == "A+":
         return objetivo.rubrica_intermediaria_A
     if conceito == "B " or conceito == "B+":
@@ -31,7 +35,7 @@ def get_texto_conceito(objetivo, conceito):
 @register.filter
 def get_texto_nota(objetivo, nota):
     """Permite buscar o texto de uma rubrica."""
-    if not nota:
+    if (not nota) or (not objetivo):
         return ""
     if nota >= 9:
         return objetivo.rubrica_intermediaria_A
@@ -48,7 +52,7 @@ def get_texto_nota(objetivo, nota):
 @register.filter
 def get_texto_intermediaria_nota(objetivo, nota):
     """Permite buscar o texto de uma rubrica."""
-    if not nota:
+    if (not nota) or (not objetivo):
         return ""
     if nota >= 9:
         return objetivo.rubrica_intermediaria_A
@@ -65,7 +69,7 @@ def get_texto_intermediaria_nota(objetivo, nota):
 @register.filter
 def get_texto_final_nota(objetivo, nota):
     """Permite buscar o texto de uma rubrica."""
-    if not nota:
+    if (not nota) or (not objetivo):
         return ""
     if nota >= 9:
         return objetivo.rubrica_final_A
