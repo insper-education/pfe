@@ -41,13 +41,11 @@
     
     {% if configuracao.maxMB_filesize %}
       <script>
-        var size = {{configuracao.maxMB_filesize}}*1048576;
-        const uploadField = document.getElementById("arquivo");
-        uploadField.onchange = function() {
-            if(this.files && this.files[0] && this.files[0].size > size){
-              alert("Tamanho do arquivo maior que o permitido de {{configuracao.maxMB_filesize}}Mb");
-              this.value = "";
-            }
+        document.getElementById("arquivo").onchange = function() {
+          if(this.files && this.files[0] && this.files[0].size > {{configuracao.maxMB_filesize}}*1048576){
+            alert("Tamanho do arquivo maior que o permitido de {{configuracao.maxMB_filesize}}Mb");
+            this.value = "";
+          }
         }
       </script>
     {% endif %}
