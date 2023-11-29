@@ -14,6 +14,16 @@
         pointer-events: none !important;
         cursor: default;
     }
+
+    div.desligado {
+        border: none !important;
+        background-color: transparent !important;
+        display: inline !important;
+        //margin-left: 18px !important;
+        width: fit-content;
+        max-width: fit-content;
+        float: none !important;
+    }
     
     .logo_impressoras {
         float: right;
@@ -39,16 +49,17 @@
 
     {% comment %} Esconde informações para impressão {% endcomment %}
     document.getElementById("impressora").addEventListener("click", function() {
-        $('#informacoes').hide()
-        $('.logo_impressoras').hide()
-        $('.topnav').hide()
-        $(".imprimir").addClass('desligado');
-        $('.esconder').hide()
-        $('.email').hide()
-        $('.images').hide()
+        $("#informacoes").hide();
+        $(".logo_impressoras").hide();
+        $(".topnav").hide();
+        $(".imprimir").addClass("desligado");
+        $(".imprimir_div").addClass("desligado");
+        $(".esconder").hide();
+        $(".email").hide();
+        $(".images").hide();
 
         {% comment %} Renomeia temporariamente a tag href para evitar ser pega no Compy&Paste {% endcomment %}
-        $('a.imprimir[href]').each(function() {
+        $("a.imprimir[href]").each(function() {
             var $tag = $(this);
             $tag.attr({tmp: $tag.attr('href')})
                 .removeAttr('href');
@@ -60,13 +71,14 @@
         
         if (e.key === "Escape") {
             
-            $('#informacoes').show()
-            $('.logo_impressoras').show()
-            $('.topnav').show()
-            $(".imprimir").removeClass('desligado');
-            $('.esconder').show()
-            $('.email').show()
-            $('.images').show()
+            $("#informacoes").show();
+            $(".logo_impressoras").show();
+            $(".topnav").show();
+            $(".imprimir").removeClass("desligado");
+            $(".imprimir_div").removeClass("desligado");
+            $(".esconder").show();
+            $(".email").show();
+            $(".images").show();
 
             {% comment %} Recupera a tag href para evitar ser pega no Compy&Paste {% endcomment %}
             $('a.imprimir[tmp]').each(function() {

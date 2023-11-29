@@ -24,7 +24,6 @@
       display: inline;
     }
     
-    
     body {
       line-height: normal;
     }
@@ -38,12 +37,12 @@
         display: -ms-flexbox;
         display: flex;
         -ms-flex-wrap: wrap;
-            flex-wrap: wrap;
+          flex-wrap: wrap;
         -ms-flex-pack: distribute;
-            justify-content: space-around;
+          justify-content: space-around;
         border-radius: 3px;
     }
-
+    
     .sem_propostas {
       border: thin dotted #333333;
       background-color: #E0E0E0;
@@ -74,9 +73,9 @@
     .estudante {
         font-size: 12px;
         font-family: Arial, Helvetica, sans-serif;
-        padding: 2px;
+        font-weight: 600;
+        padding: 4px;
         width: 24rem;
-        height: 36px;
         background-color: #F0F0F0;
         border: 2px blue solid;
         color: #000;
@@ -86,7 +85,6 @@
         -ms-user-select: none;
         user-select: none;
         margin-bottom: 2px;
-        white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
         border-radius: 5px;
@@ -114,7 +112,11 @@
       color: #FFFFFF;
     }
     
-    @media (max-width: 800px) {
+    .titulo_proposta {
+      display: inline;
+    }
+
+    @media screen and (max-width: 800px) {
       .ancora {
         font-size: 0.7em;
       }
@@ -133,11 +135,12 @@
       
     }
 
-    @media (max-width: 600px) {
+    @media screen and (max-width: 600px) {
       .estudante {
         width: 8rem;
       }
     }
+
 
 
   </style>
@@ -146,7 +149,9 @@
 
 {% block content %}
 
-  <span class="titulo">Montar Grupos</span><br>
+  {% include "impressora.html" %}
+
+  <span class="titulo">Planejamento de Grupos por Proposta</span><br>
 
   {% if mensagem %}
     <h5 class="red-bold">{{mensagem|linebreaks}}</h5>
@@ -157,7 +162,7 @@
 
     {% comment %} Estudantes sem escolhas de propostas de projetos{% endcomment %}
     <div id="sem_proposta" style="display:none;">
-      <div id="proposta_vazia" class="sem_propostas" data-propostaid="-1" data-titulo="Estudantes sem escolhas de propostas de projetos" >
+      <div id="proposta_vazia" class="sem_propostas imprimir_div" data-propostaid="-1" data-titulo="Estudantes sem escolhas de propostas de projetos" >
         <div id="titulo-1" class="etiqueta_proposta">
           <a target="_blank" rel="noopener noreferrer" class="ancora tip" data-tip="tip-1" style="color: #000062;">
             <span class="titulo_proposta">Estudantes sem escolhas de propostas de projetos</span>
@@ -165,7 +170,7 @@
           <a class="ancora" style="color: darkblue;"></a>
         </div>
       </div>
-      <br><br>
+      <br>
     </div>
 
     {% for proposta in propostas %}   
@@ -189,11 +194,11 @@
           </div>
         </div>
 
-        <div id="proposta{{proposta.id}}" class="proposta" data-propostaid="{{proposta.id}}" data-titulo="{{proposta.titulo|truncatechars:32}} ({{ proposta.organizacao.sigla }})" >
+        <div id="proposta{{proposta.id}}" class="proposta imprimir_div" data-propostaid="{{proposta.id}}" data-titulo="{{proposta.titulo|truncatechars:32}} ({{ proposta.organizacao.sigla }})" >
 
-          <div id="titulo{{proposta.id}}" class="etiqueta_proposta">
+          <div id="titulo{{proposta.id}}" class="etiqueta_proposta imprimir_div">
 
-            <a target="_blank" rel="noopener noreferrer" class="ancora tip" data-tip="tip{{proposta.id}}" href="{% url 'proposta_completa' proposta.id %}" style="font-weight: 500; color: #000062;">
+            <a target="_blank" rel="noopener noreferrer" class="ancora tip imprimir" data-tip="tip{{proposta.id}}" href="{% url 'proposta_completa' proposta.id %}" style="font-weight: 500; color: #000062;">
             <div id="tip{{proposta.id}}" hidden="hidden">{% nospaces %}
                   {% for opcaop in proposta.opcao_set.all %}
                     {% with alocacoes=opcaop.aluno.alocacao_set %}
@@ -231,19 +236,20 @@
             </a>
             
             {% if proposta.organizacao and proposta.organizacao.nome %}
-              <a class="ancora" href="{% url 'organizacao_completo' proposta.organizacao.id %}" style="font-weight: bold; color: darkblue; margin-left: auto; text-align: center; min-width: 21%;">  
+              <a class="ancora imprimir" href="{% url 'organizacao_completo' proposta.organizacao.id %}" style="font-weight: bold; color: darkblue;margin-left: auto; text-align: center; min-width: 21%;">  
                 {{ proposta.organizacao.nome }}
               </a>
             {% elif proposta.nome_organizacao %}
-              <a  class="ancora" style="color: darkblue;">{{ proposta.nome_organizacao }}</a>
+              <a  class="ancora imprimir" style="color: darkblue;">{{ proposta.nome_organizacao }}</a>
             {% else %}
               PROBLEMA EM RECUPERAR ORGANIZAÇÃO DA PROPOSTA
             {% endif %}
+            <br>
           </div>
 
         </div>
 
-        <div style="width: 1.0em; vertical-align:middle; margin-right: 6px; margin-left: 4px;">
+        <div class="esconder" style="width: 1.0em; vertical-align:middle; margin-right: 6px; margin-left: 4px;">
           <a class="ancora" style="color: #000062;" data-toggle="tooltip" data-html="true" animation="true" title=
           "{% for rec in proposta.recomendada_set.all %}
             {{rec.disciplina.nome}}<br>
@@ -266,41 +272,44 @@
   {% else %}
     <p>Não existem propostas de projetos disponíveis.</p>
   {% endif %}
-  <small style="font-size:12px; float: right;">
-    {% for curso in cursos %}
-      <b>{{curso.sigla_curta}}</b>: {{curso.nome}} {% if not forloop.last %}|{% endif %}
-    {% endfor %}
-  </small><br>
-
-  <hr>
-  <form action="" method="post"> {% csrf_token %}
-    <input type="submit" class="btn btn-secondary" name="limpar"
+  <div style="width: 100%; text-align: right;">
+    <small style="font-size:12px;">
+      {% for curso in cursos %}
+        <b>{{curso.sigla_curta}}</b>: {{curso.nome}} {% if not forloop.last %}|{% endif %}
+      {% endfor %}
+    </small>
+  </div>
+  <hr style="margin-top: 2px;">
+  
+  <form action="" method="post" class="esconder"> {% csrf_token %}
+    <input type="submit" class="btn btn-primary" name="limpar"
            data-toggle="tooltip" data-html="true" animation="true"
            title="Remove todos os movimentos de estudantes já realizadas e coloca todos de volta em suas primeiras opções.{% if user.tipo_de_usuario != 4 %}<p><b>Você não tem privilégios suficientes.</b></p>{% endif %}"
            value="Resetar Pré Alocações" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
 
-    <input type="button" class="btn btn-secondary" id="propor" name="propor"
+    <input type="button" class="btn btn-primary" id="propor" name="propor"
            data-toggle="tooltip" data-html="true" animation="true"
            title="Sistema propõe uma montagem de grupos em função das opções, cursos, CR e interesses.{% if user.tipo_de_usuario != 4 %}<p><b>Você não tem privilégios suficientes.</b></p>{% endif %}"
            value="Montar Grupos Automaticamente" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
 
-    <input type="submit" class="btn btn-secondary" name="fechar" 
+    <input type="submit" class="btn btn-primary" name="fechar" 
            data-toggle="tooltip" data-html="true" animation="true"
            title="Cria efetivamente os projetos na base de dados e avança para a seleção de orientadores.{% if user.tipo_de_usuario != 4 %}<p><b>Você não tem privilégios suficientes.</b></p>{% endif %}"
            value="Fechar Projetos" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+    <br><br>
   </form>
 
-  <br><br>
+  
   <div>
-    <b style="font-size: 18px;">Visualizar:</b><br>
+    <b class="esconder" style="font-size: 18px;">Visualizar:</b><br>
 
     <div class="custom-control custom-switch">
-      <input type="checkbox" class="custom-control-input" id="balanceada" name="balanceada" checked onchange="escondePropostas()" />
+      <input type="checkbox" class="custom-control-input esconder" id="balanceada" name="balanceada" checked onchange="escondePropostas()" />
       <label class="custom-control-label" for="balanceada">Propostas Balanceadas: <span id="balanceadas">-</span></label>
     </div>
 
     <div class="custom-control custom-switch">
-      <input type="checkbox" class="custom-control-input" id="desbalanceada" name="desbalanceada" checked onchange="escondePropostas()" />
+      <input type="checkbox" class="custom-control-input esconder" id="desbalanceada" name="desbalanceada" checked onchange="escondePropostas()" />
       <label class="custom-control-label" for="desbalanceada">Propostas Desbalanceadas: <span id="desbalanceadas">-</span></label>
     </div>
 
@@ -383,10 +392,10 @@
 
     {% for estudante, opcoes in estudantes_opcoes %}
       tmp_node = `
-      <div id="estudante{{estudante.id}}" draggable="true" class="estudante" data-cr="{{estudante.cr}}"
+      <div id="estudante{{estudante.id}}" draggable="true" class="estudante imprimir_div" data-cr="{{estudante.cr}}"
       data-prioridades="[{% for opcao in opcoes %}{{opcao.proposta.id}}{%if not forloop.last%},{%endif%}{% endfor %}]">
-      <a target="_blank" rel="noopener noreferrer" 
-       class="ancora" href="{% url 'estudante_detail' estudante.id %}"
+      <a target="_blank" rel="noopener noreferrer" style="white-space: nowrap;"
+       class="ancora imprimir" href="{% url 'estudante_detail' estudante.id %}"
        data-toggle="tooltip" data-html="true" animation="true"
         title="
         {% for opcao in opcoes %}
@@ -411,9 +420,9 @@
         {{estudante.familia|linebreaks}}<br>{% endif %}
         ">
         <span id="nome{{estudante.id}}">{{estudante.user.get_full_name}}</span></a>
-        <span class="opcao" style="float: right;"><div class="opt_full">opção </div><div class="opt_short">op</div>#<span>{% if opcoes %}1{% else %}?{% endif %}</span></span><br>
-        <span class="l_curso">{{estudante.curso2.sigla_curta}}</span>&nbsp;<span class="opt_full">CR: </span><span class="opt_short"></span>{{estudante.cr|floatformat:2}}
-      </div>
+        <span class="l_curso">{{estudante.curso2.sigla_curta}}</span>&nbsp;<span class="opt_full esconder">CR: </span><span class="opt_short esconder"></span><span class="esconder">{{estudante.cr|floatformat:2}}</span>
+        <div class="opcao imprimir_div" style="float: right;"><div class="opt_full">opção </div><div class="opt_short">op</div>#<span>{% if opcoes %}1{% else %}?{% endif %}</span></div>
+        <br></div>
       `
       
       {% if estudante.pre_alocacao %}
@@ -486,7 +495,6 @@
 
     {% comment %} Mostra gráfico de proporção de prioridades {% endcomment %}
     {% include "grafico_prioridades.html" %}
-    <small>Obs: Atualiza automaticamente, não precisa de refresh</small>
     
     <script>
 
@@ -744,10 +752,12 @@
 
     function dragging(e) {
       var target = $(e.target);
-      if (target.attr('class')=="estudante") {
+      if (target.hasClass("estudante")) {
+      //if (target.attr('class')=="estudante") {
         $draggedItem = target;
         $draggedItem.addClass('dragging');
-      } else if (target.parent().attr('class')=="estudante") {
+      //} else if (target.parent().attr('class')=="estudante") {
+      } else if (target.parent().hasClass("estudante")) {
         $draggedItem = target.parent();
         $draggedItem.addClass('dragging');
       }
