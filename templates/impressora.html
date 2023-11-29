@@ -19,10 +19,17 @@
         border: none !important;
         background-color: transparent !important;
         display: inline !important;
-        //margin-left: 18px !important;
+        margin-top: 8px !important;
+        margin-bottom: 8px !important;
         width: fit-content;
         max-width: fit-content;
         float: none !important;
+        line-height: 1.0;
+    }
+
+    {% comment %} Isso precisa ser mais generico no futuro {% endcomment %}
+    div.desligado > .estudante:before {
+        content:"• ";
     }
     
     .logo_impressoras {
