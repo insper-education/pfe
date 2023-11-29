@@ -185,12 +185,43 @@
   </div>
   </div>
   
-  <small style="font-size:12px">
-    {% for curso in cursos %}
-      <b>{{curso.sigla_curta}}</b>: {{curso.nome}}
-      {% if not forloop.last %}|{% endif %}
-    {% endfor %}
-  </small>
+  <div style="width: 100%;">
+    <style>
+      .legenda_info {
+        display: inline-block;
+        border: 1px solid black;
+        height: 1.5em;
+        width: 1.5em;
+        text-align: center;
+        color: red;
+        padding: 0px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+    </style>
+
+    <div style="float: left;">
+      <small style="font-size:12px; margin-left: 0.5em;">
+        <b>Legendas</b>: 
+          <span style="white-space: nowrap;"><span class="legenda_info" style="background-color:lightgreen;">&nbsp;</span> Sem pré-alocação (padrão 1&ordf; opção) |</span>
+          <span style="white-space: nowrap;"><span class="legenda_info" style="background-color:yellow;">&nbsp;</span> Pré-alocado em Proposta |</span>
+          <span style="white-space: nowrap;"><span class="legenda_info" style="border: 2px solid red;">&nbsp;</span> Alocado em Proposta |</span>
+          <span style="white-space: nowrap;"><span class="legenda_info" style="border: 2px solid red;">X</span> Alocado fora de opções |</span>
+          <span style="white-space: nowrap;"><span class="legenda_info" style="border: dotted 2px gray;">&nbsp;</span> Proposta não disponibilizada</span>
+      </small>
+    </div>
+
+    <div style="float: right;">
+      <small style="font-size:12px; margin-right: 2em;">
+        {% for curso in cursos %}
+          <b>{{curso.sigla_curta}}</b>: {{curso.nome}}
+          {% if not forloop.last %}|{% endif %}
+        {% endfor %}
+      </small>
+    </div>
+  </div>
 
   <p>&nbsp;</p>
 
