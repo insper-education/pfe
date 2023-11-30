@@ -478,7 +478,7 @@ def relato_quinzenal(request):
 
     context = {
         "prazo": prazo,
-        "max_length": Relato._meta.get_field('texto').max_length,
+        "max_length": Relato._meta.get_field('texto').max_length, #Substituir por get_field olhar cadastrar_organizacao
     }
 
     if request.user.tipo_de_usuario == 1:

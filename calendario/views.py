@@ -80,8 +80,8 @@ def get_calendario_context(user=None):
         "coordenacao": coordenacao,
         "semestre": configuracao.semestre,
         "tipos_eventos": TIPO_EVENTO,
-        "obs_length": Evento._meta.get_field('observacao').max_length,
-        "loc_length": Evento._meta.get_field('location').max_length,
+        "obs_length": Evento._meta.get_field('observacao').max_length, #Substituir por get_field olhar cadastrar_organizacao
+        "loc_length": Evento._meta.get_field('location').max_length, #Substituir por get_field olhar cadastrar_organizacao
     }
 
     return context
@@ -223,7 +223,7 @@ def atualiza_evento(request):
     evento.tipo_de_evento = int(request.POST.get('type', None))
     evento.startDate = dateutil.parser.parse(request.POST.get('startDate', None))
     evento.endDate = dateutil.parser.parse(request.POST.get('endDate', None))
-    evento.location = request.POST.get('location', "")[:Evento._meta.get_field('location').max_length]
+    evento.location = request.POST.get('location', "")[:Evento._meta.get_field('location').max_length] #Substituir por get_field olhar cadastrar_organizacao
     evento.observacao = request.POST.get('observation', "")[:Evento._meta.get_field('observacao').max_length]
     evento.descricao = request.POST.get('descricao', "")[:Evento._meta.get_field('descricao').max_length]
     evento.save()

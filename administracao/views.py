@@ -129,18 +129,19 @@ def cadastrar_organizacao(request, proposta_id=None):
 
         return render(request, 'generic.html', context=context)
 
-
     proposta = None
     if proposta_id:
         proposta = get_object_or_404(Proposta, id=proposta_id)
 
     context = {
         "proposta": proposta,
-        "nome_length": Organizacao._meta.get_field('nome').max_length-2,
-        "sigla_length": Organizacao._meta.get_field('sigla').max_length-2,
-        "endereco_length": Organizacao._meta.get_field('endereco').max_length-2,
-        "website_length": Organizacao._meta.get_field('website').max_length-2,
-        "informacoes_length": Organizacao._meta.get_field('informacoes').max_length-2,
+        "organizacao": Organizacao,
+        # "nome_length": Organizacao._meta.get_field("nome").max_length-2,
+        # "sigla_length": Organizacao._meta.get_field("sigla").max_length-2,
+        # "endereco_length": Organizacao._meta.get_field("endereco").max_length-2,
+        # "website_length": Organizacao._meta.get_field("website").max_length-2,
+        # "informacoes_length": Organizacao._meta.get_field("informacoes").max_length-2,
+        # "fields": fields,
     }
     
     return render(request, 'administracao/cadastra_organizacao.html', context=context)
@@ -259,7 +260,7 @@ def cadastrar_usuario(request):
     context = {
         "organizacoes": Organizacao.objects.all().order_by("nome"),
         "cursos": Curso.objects.all().order_by("id"),
-        "linkedin_length": PFEUser._meta.get_field('linkedin').max_length,
+        "linkedin_length": PFEUser._meta.get_field('linkedin').max_length,  #Substituir por get_field olhar cadastrar_organizacao
         "email_length": PFEUser._meta.get_field('email').max_length,
     }
 
@@ -318,7 +319,7 @@ def edita_usuario(request, primarykey):
         "usuario": user,
         "organizacoes": Organizacao.objects.all(),
         "cursos": Curso.objects.all().order_by("id"),
-        "linkedin_length": PFEUser._meta.get_field('linkedin').max_length,
+        "linkedin_length": PFEUser._meta.get_field('linkedin').max_length, #Substituir por get_field olhar cadastrar_organizacao
         "email_length": PFEUser._meta.get_field('email').max_length,
     }
 
@@ -439,7 +440,7 @@ def configurar(request):
     
     context = {
         "configuracao": configuracao,
-        "coord_length": Configuracao._meta.get_field('coordenador').max_length,
+        "coord_length": Configuracao._meta.get_field('coordenador').max_length, #Substituir por get_field olhar cadastrar_organizacao
         "administradores": Administrador.objects.all(),
     }
 
