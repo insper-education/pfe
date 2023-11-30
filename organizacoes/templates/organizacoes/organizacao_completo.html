@@ -158,13 +158,12 @@
     <i style="color:red">Não disponível</i>
   {% endif %}
 
-  
   <hr>
   <h3>Documentos
     <small>
       <a
-        class="open-documento"
-        href="{% url 'adiciona_documento' organizacao.id %}"
+        class="open-documento" style="cursor:pointer;"
+        {% comment %} href="{% url 'adiciona_documento' organizacao.id %}" {% endcomment %}
         data-url="{% url 'adiciona_documento' organizacao.id %}"
         >&#10133;</a
       >

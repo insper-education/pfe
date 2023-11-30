@@ -1773,29 +1773,29 @@ def nomes(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def acompanhamento_view(request):
     """Cria um anotação para uma organização parceira."""
-    if request.is_ajax() and 'texto' in request.POST:
+    if request.is_ajax() and "texto" in request.POST:
         acompanhamento = Acompanhamento.create()
 
-        parceiro_id = int(request.POST['parceiro'])
+        parceiro_id = int(request.POST["parceiro"])
         parceiro = get_object_or_404(Parceiro, id=parceiro_id)
         acompanhamento.autor = parceiro.user
 
-        acompanhamento.texto = request.POST['texto']
+        acompanhamento.texto = request.POST["texto"]
 
-        if 'data_hora' in request.POST:
+        if "data_hora" in request.POST:
             try:
                 acompanhamento.data = dateutil.parser\
-                    .parse(request.POST['data_hora'])
+                    .parse(request.POST["data_hora"])
             except (ValueError, OverflowError):
                 acompanhamento.data = datetime.datetime.now()
 
         acompanhamento.save()
 
         data = {
-            'data': acompanhamento.data.strftime("%Y.%m.%d"),
-            'autor': str(acompanhamento.autor.get_full_name()),
-            'org': str(parceiro.organizacao),
-            'atualizado': True,
+            "data": acompanhamento.data.strftime("%Y.%m.%d"),
+            "autor": str(acompanhamento.autor.get_full_name()),
+            "org": str(parceiro.organizacao),
+            "atualizado": True,
         }
 
         return JsonResponse(data)

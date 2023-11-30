@@ -14,3 +14,9 @@ def tipo_documento(documentos, tipo):
     """Retorna um documento por tipo."""
     return documentos.filter(tipo_de_documento=tipo).last()
     
+@register.filter
+def tipo_documentos(documentos, tipo):
+    """Retorna um documento por tipo."""
+    return documentos.filter(tipo_de_documento=tipo)
+    
+    

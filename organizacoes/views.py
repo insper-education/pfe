@@ -129,7 +129,9 @@ def cria_documento(request):
         pass
 
     link = request.POST.get("link", None)
-    if link:
+    if not (link and link.strip()):
+        link = None
+    if link:    
         if link[:4] != "http":
             link = "http://" + link
 
@@ -138,7 +140,7 @@ def cria_documento(request):
             return "<h1>Erro: Nome do link maior que " + str(max_length) + " caracteres.</h1>"
 
     max_length = Documento._meta.get_field('documento').max_length
-    if 'arquivo' in request.FILES and len(request.FILES['arquivo'].name) > max_length - 1:
+    if "arquivo" in request.FILES and len(request.FILES["arquivo"].name) > max_length - 1:
             return "<h1>Erro: Nome do arquivo maior que " + str(max_length) + " caracteres.</h1>"
 
     # (0, 'Português'),
@@ -171,11 +173,13 @@ def cria_documento(request):
     # else:
     #     documento.confidencial = True
 
-    if 'arquivo' in request.FILES:
-        arquivo = simple_upload(request.FILES['arquivo'],
-                                path=get_upload_path(documento, ""))
-
+    if "arquivo" in request.FILES:
+        arquivo = simple_upload(request.FILES["arquivo"],
+                                path=get_upload_path(documento, ''))
         documento.documento = arquivo[len(settings.MEDIA_URL):]
+
+    if ("arquivo" not in request.FILES) and (link is None):
+        return "<h1>Erro: Arquivo ou link não informado corretamente.</h1>"
 
     documento.save()
 
@@ -189,16 +193,11 @@ def adiciona_documento(request, organizacao_id, projeto_id=None, tipo_id=None, d
     organizacao = get_object_or_404(Organizacao, id=organizacao_id)
     projeto = Projeto.objects.filter(id=projeto_id).last()
 
-    if request.method == 'POST':
+    if request.is_ajax() and request.method == "POST":
         erro = cria_documento(request)
         if erro:
-            return HttpResponseBadRequest(erro)
-        if documento_id:
-            return redirect('planos_de_orientacao')
-        elif projeto:
-            return redirect('projeto_completo', projeto_id)
-        return redirect('organizacao_completo', org=organizacao.id)
-        
+           return HttpResponseBadRequest(erro)
+        return JsonResponse({"atualizado": True,})
 
     context = {
         "organizacao": organizacao,

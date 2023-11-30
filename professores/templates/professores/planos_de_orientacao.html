@@ -30,7 +30,6 @@
              {% endif %}
            data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
            class="open-documento"
-           href="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 documento.id %}"
            data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 documento.id %}">
             <b>&#128463;</b>
           </a>
@@ -38,7 +37,6 @@
           {% comment %} (28, 'Plano de Orientação'), {% endcomment %}
           <a {% if projeto.ano != configuracao.ano %}style="color:lightgray"{% endif %} 
            class="open-documento"
-           href="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 documento.id %}"
            data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 documento.id %}">
             {{projeto.ano}}.{{projeto.semestre}} -
             {{projeto.get_titulo}}
@@ -50,13 +48,11 @@
              {% endif %}
            data-toggle="tooltip" data-html="true" animation="true" title="Não entregue"
            class="open-documento"
-           href="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 %}"
            data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 %}"><b>&#128460;</b>
           </a>
           {% comment %} (28, 'Plano de Orientação'), {% endcomment %}
           <a {% if projeto.ano != configuracao.ano %}style="color:lightgray"{% endif %} 
            class="open-documento"
-           href="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 %}"
            data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 %}">
             {{projeto.ano}}.{{projeto.semestre}} -
             {{projeto.get_titulo}}

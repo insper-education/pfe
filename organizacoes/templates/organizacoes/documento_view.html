@@ -4,17 +4,7 @@
     Data: 1 de Junho de 2021
 {% endcomment %}
 
-<form id="meuForm" method="post"
-      {% if documento_id %}
-        action="{% url 'adiciona_documento' organizacao.id projeto.id tipo documento_id %}"
-      {% elif tipo %}
-        action="{% url 'adiciona_documento' organizacao.id projeto.id tipo %}"
-      {% elif projeto %}
-        action="{% url 'adiciona_documento' organizacao.id projeto.id %}"
-      {% else %}
-        action="{% url 'adiciona_documento' organizacao.id %}"
-      {% endif %}
-      enctype="multipart/form-data">
+<form id="meuForm" method="post" enctype="multipart/form-data">
 
   {% csrf_token %}
 
@@ -167,9 +157,49 @@
 </form>
 
 <script>
-  $('#atualiza').on('submit', function(e) {
+  
+  $("form#meuForm").submit(function(e){
+      e.preventDefault();
+
       $('#popup').modal('hide');
-      $('form#meuForm').submit();
-      return false;
+      
+      $.ajaxSetup({
+        headers: { "X-CSRFToken": '{{csrf_token}}' }
+      });
+
+      var form = $("form#meuForm").closest("form");
+      var formData = new FormData(form[0]);
+
+      $.ajax({
+        type: "POST",
+        {% if documento_id %}
+          url: "{% url 'adiciona_documento' organizacao.id projeto.id tipo documento_id %}",
+        {% elif tipo %}
+          url: "{% url 'adiciona_documento' organizacao.id projeto.id tipo %}",
+        {% elif projeto %}
+          url: "{% url 'adiciona_documento' organizacao.id projeto.id %}",
+        {% else %}
+          url: "{% url 'adiciona_documento' organizacao.id %}",
+        {% endif %}
+        data: formData,
+        //data: $("form#meuForm").serialize(),
+        processData: false,
+        contentType: false,
+        success: function(response){
+          //console.log("sucesso");
+          //$('#disciplina'+disciplina).remove();
+        },
+        error: function (request, status, error) {
+          {% if user.tipo_de_usuario == 4 %} 
+            alert(request.responseText);
+            jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
+            console.log('error'+request.responseText);
+          {% else %}
+            jQuery("body").html("Erro no servidor do PFE. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
+          {% endif %}
+        }
+    });
+    location.reload();
+    return false;
   });
 </script> 

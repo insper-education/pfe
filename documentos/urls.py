@@ -46,7 +46,11 @@ urlpatterns = [
          views.tabela_documentos,
          name='tabela_documentos'),
 
-    path('tabela_seguros/',
+    path('contratos_assinados/',
+         views.contratos_assinados,
+         name='contratos_assinados'),
+
+   path('tabela_seguros/',
          views.tabela_seguros,
          name='tabela_seguros'),
 

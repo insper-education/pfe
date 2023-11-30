@@ -368,23 +368,53 @@ def tabela_documentos(request):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def tabela_seguros(request):
     """Exibe tabela com todos os seguros armazenados."""
     seguros = Documento.objects.filter(tipo_de_documento=15)
     context = {
-        'seguros': seguros,
-        'MEDIA_URL': settings.MEDIA_URL,
+        "seguros": seguros,
+        "MEDIA_URL": settings.MEDIA_URL,
     }
-    return render(request, 'documentos/tabela_seguros.html', context)
+    return render(request, "documentos/tabela_seguros.html", context)
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def tabela_atas(request):
     """Exibe tabela com todos os seguros armazenados."""
     atas = Documento.objects.filter(tipo_de_documento=21).order_by("-data")
     context = {
-        'atas': atas,
-        'MEDIA_URL': settings.MEDIA_URL,
+        "atas": atas,
+        "MEDIA_URL": settings.MEDIA_URL,
     }
-    return render(request, 'documentos/tabela_atas.html', context)
+    return render(request, "documentos/tabela_atas.html", context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def contratos_assinados(request):
+    """Exibe tabela com todos os documentos armazenados."""
+
+    if request.is_ajax():
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
+
+            if edicao == "todas":
+                projetos = Projeto.objects.all()
+            else:
+                ano, semestre = request.POST["edicao"].split('.')
+                projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
+
+        context = {
+            "projetos": projetos,
+            "edicao": edicao,
+            "MEDIA_URL": settings.MEDIA_URL,
+        }
+
+    else:
+        edicoes, _, _ = get_edicoes(Projeto)
+        context = {
+            "edicoes": edicoes,
+        }
+
+    return render(request, "documentos/contratos_assinados.html", context)

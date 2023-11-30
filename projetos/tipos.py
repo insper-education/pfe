@@ -67,7 +67,7 @@ TIPO_EVENTO = (
 TIPO_DE_DOCUMENTO = ( # não mudar a ordem dos números
     (0, "Contrato com Organização Parceira"),
     (1, "Contrato entre Organização e Estudante"),
-    (2, "Contrado de Confidencialidade"),
+    (2, "Contrato de Confidencialidade"),
     (3, "Relatório Final Revisado"),
     (4, "Autorização de Publicação Empresa"),
     (5, "Autorização de Publicação Estudante"),

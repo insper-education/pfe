@@ -38,7 +38,7 @@
           <b>{{item.0}}</b> [prazo {{item.3.endDate}}]: </span><a 
             data-toggle="tooltip" data-html="true" animation="true" title="Adicionar documento"
             class="open-documento {% if dias_ate > dias %}lightgrey{% endif %}"
-            href="{% url 'adiciona_documento' projeto.organizacao.id projeto.id item.1 %}"
+            {% comment %} href="{% url 'adiciona_documento' projeto.organizacao.id projeto.id item.1 %}" {% endcomment %}
             data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id item.1 %}">
             {% if dias_ate > dias %}+{% else %}&#10133;{% endif %}	
           </a><br>
