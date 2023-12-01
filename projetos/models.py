@@ -27,7 +27,10 @@ from operacional.models import Curso
 from academica.models import Exame
 import users.models
 
-from .tipos import TIPO_EVENTO, TIPO_DE_DOCUMENTO
+from .tipos import TIPO_EVENTO
+
+# REMOVER
+from .tipos import TIPO_DE_DOCUMENTO
 
 from documentos.models import TipoDocumento
 
@@ -854,7 +857,9 @@ class Documento(models.Model):
     data = models.DateTimeField(null=True, blank=True,
                             help_text="Data e hora do documento")
     
+    ### REMOVER  ##############################################
     tipo_de_documento = models.PositiveSmallIntegerField(choices=TIPO_DE_DOCUMENTO, default=0)
+    ### ######################################################
 
     tipo_documento = models.ForeignKey("documentos.TipoDocumento", null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text="Tipo de documento")

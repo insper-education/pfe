@@ -64,6 +64,7 @@ TIPO_EVENTO = (
 )
 
 
+### REMOVER  ##############################################
 TIPO_DE_DOCUMENTO = ( # não mudar a ordem dos números
     (0, "Contrato com Organização Parceira"),
     (1, "Contrato entre Organização e Estudante"),

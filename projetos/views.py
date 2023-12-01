@@ -30,13 +30,13 @@ from .models import Coorientador, Avaliacao2, ObjetivosDeAprendizagem
 from .models import Feedback, Acompanhamento, Anotacao, Organizacao
 from .models import Documento, FeedbackEstudante
 from .models import Banco, Reembolso, Aviso, Conexao
+from .models import Area, AreaDeInteresse
 
 from .messages import email, message_reembolso
 
 from academica.models import Exame
 
-from .support import simple_upload, calcula_objetivos
-from .models import Area, AreaDeInteresse
+from .support import simple_upload, calcula_objetivos, cap_name
 
 
 
@@ -132,7 +132,6 @@ def projeto_completo(request, primarykey):
             medias_oo = None
 
     documentos = Documento.objects.filter(projeto=projeto, tipo_documento__projeto=True)
-    #### ^ ^ COLOCAR COMO UM CAMPO DO TIPO DOCUMENTO ^ ^ #### (4, 19, 20, 21, 26, 28)
 
     projetos_avancados = Projeto.objects.filter(avancado=projeto)
 
@@ -166,19 +165,19 @@ def distribuicao_areas(request):
     curso = "todos"
 
     if request.is_ajax():
-        if 'tipo' in request.POST and 'edicao' in request.POST:
+        if "tipo" in request.POST and "edicao" in request.POST:
 
-            tipo = request.POST['tipo']
+            tipo = request.POST["tipo"]
 
-            if request.POST['edicao'] == 'todas':
+            if request.POST["edicao"] == "todas":
                 todas = True
             else:
-                periodo = request.POST['edicao'].split('.')
+                periodo = request.POST["edicao"].split('.')
                 ano = int(periodo[0])
                 semestre = int(periodo[1])
 
-            if tipo == "estudantes" and 'curso' in request.POST:
-                curso = request.POST['curso']
+            if tipo == "estudantes" and "curso" in request.POST:
+                curso = request.POST["curso"]
 
         else:
             return HttpResponse("Erro não identificado (POST incompleto).",
@@ -196,10 +195,10 @@ def distribuicao_areas(request):
                     total_preenchido += 1
             areaspfe, outras = get_areas_estudantes(alunos)
             context = {
-                'total': alunos.count(),
-                'total_preenchido': total_preenchido,
-                'areaspfe': areaspfe,
-                'outras': outras,
+                "total": alunos.count(),
+                "total_preenchido": total_preenchido,
+                "areaspfe": areaspfe,
+                "outras": outras,
             }
 
         elif tipo == "propostas":
@@ -208,9 +207,9 @@ def distribuicao_areas(request):
                 propostas = propostas.filter(ano=ano, semestre=semestre)
             areaspfe, outras = get_areas_propostas(propostas)
             context = {
-                'total': propostas.count(),
-                'areaspfe': areaspfe,
-                'outras': outras,
+                "total": propostas.count(),
+                "areaspfe": areaspfe,
+                "outras": outras,
             }
 
         elif tipo == "projetos":
@@ -243,26 +242,26 @@ def distribuicao_areas(request):
         "cursos": Curso.objects.filter(curso_do_insper=True),
     }
 
-    return render(request, 'projetos/distribuicao_areas.html', context)
+    return render(request, "projetos/distribuicao_areas.html", context)
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def projetos_fechados(request):
     """Lista todos os projetos fechados."""
     edicoes = []
 
     if request.is_ajax():
-        if 'edicao' in request.POST and 'curso' in request.POST:
-            edicao = request.POST['edicao']
-            if edicao == 'todas':
+        if "edicao" in request.POST and "curso" in request.POST:
+            edicao = request.POST["edicao"]
+            if edicao == "todas":
                 projetos_filtrados = Projeto.objects.all()
             else:
                 ano, semestre = request.POST['edicao'].split('.')
                 projetos_filtrados = Projeto.objects.filter(ano=ano,
                                                             semestre=semestre)
 
-            curso = request.POST['curso']    
+            curso = request.POST["curso"]    
             
             projetos_filtrados = projetos_filtrados.order_by("-avancado", "organizacao")
 
@@ -1121,8 +1120,8 @@ def certificacao_falconi(request):
         bancas = zip(projetos_selecionados, avaliadores)
 
         context = {
-            'ano': configuracao.ano,
-            'semestre': configuracao.semestre,
+            "ano": configuracao.ano,
+            "semestre": configuracao.semestre,
             "edicoes": edicoes,
             "selecionados": selecionados,
             "nao_selecionados": total - selecionados,
@@ -1179,15 +1178,15 @@ def analise_objetivos(request):
 
         periodo = ["todo", "periodo"]
 
-        if 'edicao' in request.POST:
-            if request.POST['edicao'] != 'todas':
-                periodo = request.POST['edicao'].split('.')
+        if "edicao" in request.POST:
+            if request.POST["edicao"] != "todas":
+                periodo = request.POST["edicao"].split('.')
                 alocacoes = alocacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
-        if 'curso' in request.POST:
-            curso = request.POST['curso']
+        if "curso" in request.POST:
+            curso = request.POST["curso"]
             if curso != 'T':
                 alocacoes = alocacoes.filter(aluno__curso2__sigla_curta=curso)
         else:
@@ -1762,18 +1761,6 @@ def editar_projeto(request, primarykey):
     return render(request, 'projetos/editar_projeto.html', context)
 
 
-def cap_name(name):
-    """Capitaliza palavras."""
-    excecoes = ['e', 'da', 'de', 'di', 'do', 'du', 'das', 'dos']
-    items = []
-    for item in name.split():
-        if item.lower() in excecoes:
-            items.append(item.lower())
-        else:
-            items.append(item.capitalize())
-    return ' '.join(items)
-
-
 @login_required
 @transaction.atomic
 @permission_required('users.altera_professor', raise_exception=True)
@@ -1841,5 +1828,5 @@ def acompanhamento_view(request):
     }
 
     return render(request,
-                  'projetos/acompanhamento_view.html',
+                  "projetos/acompanhamento_view.html",
                   context=context)

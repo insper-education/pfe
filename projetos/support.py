@@ -311,3 +311,16 @@ def calcula_objetivos(alocacoes):
     }
 
     return context
+
+
+def cap_name(name):
+    """Capitaliza palavras."""
+    excecoes = ['e', 'da', 'de', 'di', 'do', 'du', 'das', 'dos']
+    items = []
+    for item in name.split():
+        if item.lower() in excecoes:
+            items.append(item.lower())
+        else:
+            items.append(item.capitalize())
+    return ' '.join(items)
+

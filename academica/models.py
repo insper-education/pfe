@@ -9,7 +9,10 @@ Data: 4 de Novembro de 2023
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from projetos.tipos import TIPO_EVENTO, TIPO_DE_DOCUMENTO
+from projetos.tipos import TIPO_EVENTO
+
+# REMOVER  ##############################################
+from projetos.tipos import TIPO_DE_DOCUMENTO
 
 
 class Exame(models.Model):
@@ -47,9 +50,11 @@ class Composicao(models.Model):
     exame = models.ForeignKey("academica.Exame", null=True, blank=True, on_delete=models.SET_NULL,
                                  help_text="Tipo de avaliação")
 
+    ### REMOVER  ##############################################
     documento = models.PositiveSmallIntegerField(choices=TIPO_DE_DOCUMENTO, 
                                                          null=True, blank=True,
                                                          help_text="Tipo de entregável para uma avaliação")
+    ###########################################################
     
     tipo_documento = models.ForeignKey("documentos.TipoDocumento", null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text="Tipo de documento")
