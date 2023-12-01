@@ -4,6 +4,9 @@
     Data: 1 de Junho de 2021
 {% endcomment %}
 
+{% load static %}
+{% load get_field %}
+
 <form id="meuForm" method="post" enctype="multipart/form-data">
 
   {% csrf_token %}
@@ -17,17 +20,120 @@
 
   <div class="modal-body">
 
-    <label for="data">Data: </label> <input id="data" class="form-control" type="datetime-local" name="data" value="{{data|date:'Y-m-d\TH:i'}}"><br>
-    
-    <label for="arquivo">Documento:</label> 
-    <input required id="arquivo" type="file" name="arquivo" 
-    accept="text/plain, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation, image/*, video/mp4, video/x-m4v, video/webm, video/x-matroska, video/*, .mkv">
-    {% if documentos %}
-      <input type="hidden" id="documentos" name="documentos" value="{{documento_id}}"/>
-      <br><small>Arquivo atual: {% include "documentos.html" %}</small>
-    {% else %}<br>
-    {% endif %}
-    <br>
+    <div class="mb-3 row">
+      {% if projeto %}
+        <div class="col-sm form-label">
+          <span for="organizacao">Organização:</span>
+          <input type="hidden" id="organizacao" name="organizacao" value="{{projeto.organizacao.id}}"/>
+          <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
+          {{projeto.organizacao.nome}}
+          </a>
+        </div>
+      {% elif organizacao %}
+      <div class="col-sm form-label">
+        <span for="organizacao">Organização:</span>
+        <input type="hidden" id="organizacao" name="organizacao" value="{{organizacao.id}}"/>
+        <a href="{% url 'organizacao_completo' organizacao.id %}">
+          {{organizacao.nome}}
+        </a>
+      </div>
+      {% else %}
+        <label for="organizacao" class="col-sm-1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.1em;">Organização</label>
+        <div class="col-sm-11">
+          <select id="organizacao" name="organizacao" class="form-control">
+            <option selected value> -- selecione uma organização -- </option>
+            {% for org in organizacoes %}
+              <option value="{{org.id}}" {% if org.id == organizacao.id %}selected="selected"{% endif %}>
+                {{org.nome|slice:":90"}}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3 row">
+      {% if projeto %}
+        <div class="col-sm form-label">
+          <span for="projeto">Projeto:</span>
+          <input type="hidden" id="projeto" name="projeto" value="{{projeto.id}}"/>
+          <a href="{% url 'projeto_completo' projeto.id %}">
+            {{projeto.get_titulo}} ({{projeto.ano}}.{{projeto.semestre}})
+          </a>
+        </div>
+      {% else %}
+        <label for="projeto" class="col-sm-1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.1em;">Projeto</label>
+        <div class="col-sm-11">
+        <select id="projeto" name="projeto" class="form-control">
+          <option selected value> -- selecione um projeto -- </option>
+          {% for proj in projetos %}
+            <option value="{{proj.id}}" {% if proj.id == projeto.id %}selected="selected"{% endif %}>
+              {{proj.get_titulo|slice:":90"}} ({{proj.ano}}.{{proj.semestre}})
+              {% include "tipo_projeto.html" with projeto=proj %}
+            </option>
+          {% endfor %}
+        </select>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3 row">
+      {% if tipo %}
+        <div class="col-sm form-label">
+          <span for="tipo_de_documento">Tipo:</span>
+          <input type="hidden" id="tipo_de_documento" name="tipo_de_documento" value="{{tipo}}"/>
+          {% for retorno in TIPO_DE_DOCUMENTO %}
+            {% if retorno.0|slugify == tipo %}{{retorno.1}}{% endif %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <label for="tipo_de_documento" class="col-sm-1 col-form-label">Tipo</label>
+        <div class="col-sm-11">
+        <select id="tipo_de_documento" name="tipo_de_documento" class="form-control" required="required" >
+          <option disabled selected value> -- selecione tipo de documento -- </option>
+          {% for retorno in TIPO_DE_DOCUMENTO %}
+            <option value="{{retorno.0}}" {% if retorno.0 == tipo %}selected="selected"{% endif %}>
+              {{retorno.1}}
+            </option>
+          {% endfor %}
+        </select>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3 row">
+      {% if travado %}
+        <div class="col-sm form-label">
+          <label>Data:</label> <span id="datetime"></span>
+        </div>
+        <script>
+          function updateDateTime() {
+            const now = new Date();
+            const currentDateTime = now.toLocaleString();
+            document.querySelector('#datetime').textContent = currentDateTime;
+          }
+          updateDateTime();
+          setInterval(updateDateTime, 1000);
+        </script>
+      {% else %}
+        <label for="data" class="col-sm-1 col-form-label">Data</label>
+        <div class="col-sm-11">
+          <input id="data" class="form-control" type="datetime-local" name="data" value="{{data|date:'Y-m-d\TH:i'}}">
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3 row">
+      <label for="arquivo" class="col-sm-1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.5em;">Arquivo</label>
+      <div class="col-sm-11">
+        <input required id="arquivo" type="file" name="arquivo" class="form-control" style="border: 0px; padding-left: 0px;"
+               accept="text/plain, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation, image/*, video/mp4, video/x-m4v, video/webm, video/x-matroska, video/*, .mkv">
+        {% if documentos %}
+          <input type="hidden" id="documentos" name="documentos" value="{{documento_id}}"/>
+          <small>Arquivo atual: {% include "documentos.html" %}</small>
+        {% endif %}
+      </div>
+    </div>
     
     {% if configuracao.maxMB_filesize %}
       <script>
@@ -40,83 +146,29 @@
       </script>
     {% endif %}
     
-    <label for="link">Link:</label> <input required type="text" style="max-width:100%;display:block" size="73" maxlength="73" id="link" name="link" placeholder="https://"><br>
-    <br>
+    <div class="mb-3 row">
+      <label for="link" class="col-sm-1 col-form-label">Link</label>
+      <div class="col-sm-11">
+        <input class="form-control" type="text" style="max-width:100%;display:block" size="73" maxlength="{% max_length Documento "link" %}" id="link" name="link" placeholder="https://">
+      </div>
+    </div>
 
-    {% if projeto %}
-      <span>Projeto:</span>
-      <input type="hidden" id="projeto" name="projeto" value="{{projeto.id}}"/>
-      <a href="{% url 'projeto_completo' projeto.id %}">
-        {{projeto.get_titulo}} ({{projeto.ano}}.{{projeto.semestre}})
-      </a><br>
-    {% else %}
-      <label for="projeto">Projeto:</label>
-      <select id="projeto" name="projeto" class="form-control">
-        <option selected value> -- nenhum projeto -- </option>
-        {% for proj in projetos %}
-          <option value="{{proj.id}}" {% if proj.id == projeto.id %}selected="selected"{% endif %}>
-            {{proj.get_titulo|slice:":90"}} ({{proj.ano}}.{{proj.semestre}})
-            {% include "tipo_projeto.html" with projeto=proj %}
-          </option>
-        {% endfor %}
-      </select>
+    <div class="mb-3 row">
+      <label for="lingua_do_documento" class="col-sm-1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.2em;">Língua</label>
+      <div class="col-sm-11">
+        <select id="lingua_do_documento" name="lingua_do_documento" class="form-control" required="required" >
+          <option value="portugues" selected="selected">Português</option>
+          <option value="ingles">Inglês</option>
+        </select>
+      </div>
+    </div>
+
+    {% if not travado %}
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="confidencial" name="confidencial" value="true" checked>
+        <label class="form-check-label" for="confidencial">Confidencial</label>
+      </div>
     {% endif %}
-
-    <br>
-    {% if projeto %}
-      <span for="organizacao">Organização:</span>
-      <input type="hidden" id="organizacao" name="organizacao" value="{{projeto.organizacao.id}}"/>
-      <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-      {{projeto.organizacao.nome}}
-      </a><br>
-    {% elif organizacao %}
-      <span for="organizacao">Organização:</span>
-      <input type="hidden" id="organizacao" name="organizacao" value="{{organizacao.id}}"/>
-      <a href="{% url 'organizacao_completo' organizacao.id %}">
-        {{organizacao.nome}}
-      </a><br>
-    {% else %}
-      <label for="organizacao">Organização:</label>
-      <select id="organizacao" name="organizacao" class="form-control">
-        <option selected value> -- nenhuma organização -- </option>
-        {% for org in organizacoes %}
-          <option value="{{org.id}}" {% if org.id == organizacao.id %}selected="selected"{% endif %}>
-            {{org.nome|slice:":90"}}
-          </option>
-        {% endfor %}
-      </select>
-    {% endif %}
-
-    <br>
-    {% if tipo %}
-      <span for="tipo_de_documento">Tipo de documento:</span>
-      <input type="hidden" id="tipo_de_documento" name="tipo_de_documento" value="{{tipo}}"/>
-      {% for retorno in TIPO_DE_DOCUMENTO %}
-          {% if retorno.0|slugify == tipo %}{{retorno.1}}{% endif %}
-        {% endfor %}
-      <br>
-    {% else %}
-      <label for="tipo_de_documento">Tipo de documento:</label>
-      <select id="tipo_de_documento" name="tipo_de_documento" class="form-control" required="required" >
-        <option disabled selected value> -- selecione tipo de documento -- </option>
-        {% for retorno in TIPO_DE_DOCUMENTO %}
-          <option value="{{retorno.0}}" {% if retorno.0 == tipo %}selected="selected"{% endif %}>
-            {{retorno.1}}
-          </option>
-        {% endfor %}
-      </select>
-    {% endif %}
-
-    <br>
-    <label for="lingua_do_documento">Língua do documento:</label>
-    <select id="lingua_do_documento" name="lingua_do_documento" class="form-control" required="required" >
-      <option value="portugues" selected="selected">Português</option>
-      <option value="ingles">Inglês</option>
-    </select>
-
-    <br>
-    <input type="checkbox" id="confidencial" name="confidencial" value="true" checked>
-    <label for="confidencial"> Confidencial</label><br>
 
   </div>
 
@@ -178,8 +230,10 @@
           url: "{% url 'adiciona_documento' organizacao.id projeto.id tipo %}",
         {% elif projeto %}
           url: "{% url 'adiciona_documento' organizacao.id projeto.id %}",
-        {% else %}
+        {% elif organizacao %}
           url: "{% url 'adiciona_documento' organizacao.id %}",
+        {% else %}
+          url: "{% url 'adiciona_documento' %}",
         {% endif %}
         data: formData,
         //data: $("form#meuForm").serialize(),

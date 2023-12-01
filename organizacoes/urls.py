@@ -30,6 +30,10 @@ urlpatterns = [
         views.anotacao,
         name='anotacao'),
 
+    path('adiciona_documento/',
+        views.adiciona_documento,
+        name='adiciona_documento'),
+
     path('adiciona_documento/<str:organizacao_id>',
         views.adiciona_documento,
         name='adiciona_documento'),

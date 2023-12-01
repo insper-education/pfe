@@ -5,18 +5,16 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 14 de Dezembro de 2020
 """
 
-from collections import OrderedDict
-
 import datetime
 import dateutil.parser
-
-from PyPDF2 import PdfFileReader
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.http import HttpResponseNotFound, JsonResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect, get_object_or_404
+
+from organizacoes.support import get_form_fields, cria_documento
 
 from administracao.support import limpa_texto
 
@@ -64,13 +62,13 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
 
         anotacao_obj.autor = request.user
 
-        anotacao_obj.texto = request.POST['texto']
-        anotacao_obj.tipo_de_retorno = int(request.POST['tipo_de_retorno'])
+        anotacao_obj.texto = request.POST["texto"]
+        anotacao_obj.tipo_de_retorno = int(request.POST["tipo_de_retorno"])
         anotacao_obj.save()
-        if 'data_hora' in request.POST:
+        if "data_hora" in request.POST:
             try:
                 anotacao_obj.momento = dateutil.parser\
-                    .parse(request.POST['data_hora'])
+                    .parse(request.POST["data_hora"])
             except (ValueError, OverflowError):
                 anotacao_obj.momento = datetime.datetime.now()
         anotacao_obj.save()
@@ -102,95 +100,16 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
     }
 
     return render(request,
-                  'organizacoes/anotacao_view.html',
+                  "organizacoes/anotacao_view.html",
                   context=context)
 
-
-# Adiciona um novo documento na base de dados
-def cria_documento(request):
-
-    projeto = None
-    projeto_id = request.POST.get("projeto", "")
-    if projeto_id:
-        projeto = Projeto.objects.get(id=projeto_id)
-
-    data = datetime.date.today()
-    if "data" in request.POST:
-        try:
-            data = dateutil.parser\
-                .parse(request.POST["data"])
-        except (ValueError, OverflowError):
-            pass
-
-    tipo_de_documento = 255
-    try:
-        tipo_de_documento = request.POST.get("tipo_de_documento", "")
-    except (ValueError, OverflowError):
-        pass
-
-    link = request.POST.get("link", None)
-    if not (link and link.strip()):
-        link = None
-    if link:    
-        if link[:4] != "http":
-            link = "http://" + link
-
-        max_length = Documento._meta.get_field('link').max_length
-        if len(link) > max_length - 1:
-            return "<h1>Erro: Nome do link maior que " + str(max_length) + " caracteres.</h1>"
-
-    max_length = Documento._meta.get_field('documento').max_length
-    if "arquivo" in request.FILES and len(request.FILES["arquivo"].name) > max_length - 1:
-            return "<h1>Erro: Nome do arquivo maior que " + str(max_length) + " caracteres.</h1>"
-
-    # (0, 'Português'),
-    # (1, 'Inglês'),
-    lingua_do_documento = 0 # Valor default
-    lingua = request.POST.get("lingua_do_documento", "portugues")
-    if lingua == "ingles":
-        lingua_do_documento = 1
-
-    confidencial = "confidencial" in request.POST and request.POST["confidencial"] == "true"
-
-    if "documentos" in request.POST and len(request.POST["documentos"])>0:
-        # Buscando documento na base de dados
-        documento = get_object_or_404(Documento, id=request.POST["documentos"])
-    else:
-        # Criando documento na base de dados
-        documento = Documento.create()
-
-    if "organizacao" in request.POST:
-        documento.organizacao = get_object_or_404(Organizacao, id=request.POST["organizacao"])
-    documento.projeto = projeto
-    documento.tipo_de_documento = tipo_de_documento
-    documento.data = data
-    documento.link = link
-    documento.lingua_do_documento = lingua_do_documento
-    documento.confidencial = confidencial
-
-    # if tipo_de_documento == 25:  #(25, 'Relatório Publicado'),
-    #     documento.confidencial = False
-    # else:
-    #     documento.confidencial = True
-
-    if "arquivo" in request.FILES:
-        arquivo = simple_upload(request.FILES["arquivo"],
-                                path=get_upload_path(documento, ''))
-        documento.documento = arquivo[len(settings.MEDIA_URL):]
-
-    if ("arquivo" not in request.FILES) and (link is None):
-        return "<h1>Erro: Arquivo ou link não informado corretamente.</h1>"
-
-    documento.save()
-
-    return None
 
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
-def adiciona_documento(request, organizacao_id, projeto_id=None, tipo_id=None, documento_id=None):
+def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_id=None, documento_id=None):
     """Cria um documento."""
-    organizacao = get_object_or_404(Organizacao, id=organizacao_id)
+    organizacao = Organizacao.objects.filter(id=organizacao_id).last()
     projeto = Projeto.objects.filter(id=projeto_id).last()
 
     if request.is_ajax() and request.method == "POST":
@@ -203,7 +122,7 @@ def adiciona_documento(request, organizacao_id, projeto_id=None, tipo_id=None, d
         "organizacao": organizacao,
         "TIPO_DE_DOCUMENTO": TIPO_DE_DOCUMENTO,
         "data": datetime.datetime.now(), # Meio inútil pois o datepicker já preenche
-        "documento": None,
+        "Documento": Documento,
         "projetos": Projeto.objects.filter(organizacao=organizacao),
         "projeto": projeto,
         "tipo": tipo_id,
@@ -212,10 +131,11 @@ def adiciona_documento(request, organizacao_id, projeto_id=None, tipo_id=None, d
         "documento_id": documento_id,
         "MEDIA_URL": settings.MEDIA_URL,
         "configuracao": get_object_or_404(Configuracao),
+        "travado": False,
     }
 
     return render(request,
-                  'organizacoes/documento_view.html',
+                  "organizacoes/documento_view.html",
                   context=context)
 
 
@@ -242,7 +162,7 @@ def parceiro_propostas(request):
     context = {
         "propostas": propostas,
     }
-    return render(request, 'organizacoes/parceiro_propostas.html', context)
+    return render(request, "organizacoes/parceiro_propostas.html", context)
 
 
 # @login_required
@@ -274,7 +194,7 @@ def proposta_submissao(request):
                 "area_principal": True,
                 "mensagem": mensagem,
             }
-            return render(request, 'generic.html', context=context)
+            return render(request, "generic.html", context=context)
 
         full_name = user.get_full_name()
         email_sub = user.email
@@ -290,12 +210,12 @@ def proposta_submissao(request):
         elif user.tipo_de_usuario == 4:  # admin
             administrador = get_object_or_404(Administrador, pk=request.user.administrador.pk)
 
-    if request.method == 'POST':
+    if request.method == "POST":
 
         proposta = preenche_proposta(request, None)
 
         if "arquivo" in request.FILES:
-            arquivo = simple_upload(request.FILES['arquivo'],
+            arquivo = simple_upload(request.FILES["arquivo"],
                                     path=get_upload_path(proposta, ""))
             proposta.anexo = arquivo[len(settings.MEDIA_URL):]
             proposta.save()
@@ -315,17 +235,17 @@ def proposta_submissao(request):
             "voltar": True,
             "mensagem": resposta,
         }
-        return render(request, 'generic.html', context=context)
+        return render(request, "generic.html", context=context)
 
     areas = Area.objects.filter(ativa=True)
 
-    organizacao_str = request.GET.get('organizacao', None)
+    organizacao_str = request.GET.get("organizacao", None)
     if organizacao_str:
         try:
             organizacao_id = int(organizacao_str)
             organizacao = Organizacao.objects.get(id=organizacao_id)
         except (ValueError, Organizacao.DoesNotExist):
-            return HttpResponseNotFound('<h1>Organização não encontrado!</h1>')
+            return HttpResponseNotFound("<h1>Organização não encontrado!</h1>")
 
     interesses = [
         ["aprimorar", Proposta.TIPO_INTERESSE[0][1], False],
@@ -360,55 +280,6 @@ def proposta_submissao(request):
         "configuracao": configuracao,
     }
     return render(request, 'organizacoes/proposta_submissao.html', context)
-
-
-def _getFields(obj, tree=None, retval=None, fileobj=None):
-    """
-    Extracts field data if this PDF contains interactive form fields.
-
-    The *tree* and *retval* parameters are for recursive use.
-
-    :param fileobj: A file object (usually a text file) to write
-        a report to on all interactive form fields found.
-    :return: A dictionary where each key is a field name, and each
-        value is a :class:`Field<PyPDF2.generic.Field>` object. By
-        default, the mapping name is used for keys.
-    :rtype: dict, or ``None`` if form data could not be located.
-    """
-    fieldAttributes = {'/FT': 'Field Type', '/Parent': 'Parent', '/T': 'Field Name', '/TU': 'Alternate Field Name',
-                       '/TM': 'Mapping Name', '/Ff': 'Field Flags', '/V': 'Value', '/DV': 'Default Value'}
-    if retval is None:
-        retval = OrderedDict()
-        catalog = obj.trailer["/Root"]
-        # get the AcroForm tree
-        if "/AcroForm" in catalog:
-            tree = catalog["/AcroForm"]
-        else:
-            return None
-    if tree is None:
-        return retval
-
-    obj._checkKids(tree, retval, fileobj)
-    for attr in fieldAttributes:
-        if attr in tree:
-            # Tree is a field
-            obj._buildField(tree, retval, fileobj, fieldAttributes)
-            break
-
-    if "/Fields" in tree:
-        fields = tree["/Fields"]
-        for f in fields:
-            field = f.getObject()
-            obj._buildField(field, retval, fileobj, fieldAttributes)
-
-    return retval
-
-
-# Para pegar os campos do PDF
-def get_form_fields(infile):
-    infile = PdfFileReader(open(infile, 'rb'))
-    fields = _getFields(infile)
-    return fields
 
 
 # @login_required
