@@ -561,21 +561,21 @@ class Configuracao(models.Model):
                                            help_text='Nome para assinatura do coordenador do PFE')
 
     assinatura = models.ImageField("Assinatura", upload_to=get_upload_path, null=True, blank=True,
-                                   help_text='Assinatura do coordenador do PFE')
+                                   help_text="Assinatura do coordenador do PFE")
 
     ###----------------------Mensagens----------------------###
 
     msg_aval_pares = models.TextField("Mensagem Avaliação de Pares", max_length=1000, null=True, blank=True,
-                                   help_text='Mensagem que descreve como será a Avaliação de Pares')
+                                   help_text="Mensagem que descreve como será a Avaliação de Pares")
 
     msg_email_automatico = models.TextField("Mensagem de Envio Automático", max_length=1000, null=True, blank=True,
-                                   help_text='Mensagem de Envio Automático de e-mail')
-
+                                   help_text="Mensagem de Envio Automático de e-mail")
+    
     ###-----------------------------------------------------###
 
     class Meta:
-        verbose_name = 'Configuração'
-        verbose_name_plural = 'Configurações'
+        verbose_name = "Configuração"
+        verbose_name_plural = "Configurações"
 
     def coordenador_email(self):
         return quote(self.coordenador)

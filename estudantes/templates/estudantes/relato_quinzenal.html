@@ -6,11 +6,13 @@
 {% endcomment %}
 
 {% block head %}
-<style>
-textarea {
-  max-width:100%;
-}
-</style>
+  {% load static %}
+  {% load get_field %}
+  <style>
+    textarea {
+      max-width:100%;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
@@ -22,7 +24,7 @@ textarea {
     <h5 class="red-bold">{{mensagem}}</h5>
   {% endif %}
 
-  <form action="" method="post"> {% csrf_token %}
+  <form method="post"> {% csrf_token %}
 
     Prazo para a submissão do relato: <b style='color:red;'>
     {% if prazo %}
@@ -33,13 +35,13 @@ textarea {
     </b>
     <br><br>
 
-    <label for="relato">Informe seu relato quinzenal (máximo {{ max_length|add:"-100" }} caracteres).</label><br>
-    <textarea id="relato" name="relato" rows="18" cols="160" maxlength="{{ max_length|add:"-10" }}" {% if not prazo %}disabled{% endif %} 
-              placeholder="Descreva brevemente as SUAS contribuições para o projeto, quais foram os SEUS aprendizados, quais competências VOCÊ desenvolveu nesse último período. Se quiser você também pode fazer um breve reflexão em como poderiam contribuir de forma mais eficiente para o projeto nas próximas semanas. Indique a quantidade de horas aproximada que você dedicou ao projeto desde o último relato quinzenal."
-      >{% if relato %}{{relato}}{% endif %}</textarea>
+    <label for="relato">Informe seu relato quinzenal (máximo {% max_length relato "texto" %} caracteres).</label><br>
+    <textarea id="relato" name="relato" rows="18" cols="160" maxlength="{% max_length relato "texto" %}" {% if not prazo %}disabled{% endif %} 
+              placeholder="{{msg_relato_quinzenal}}"
+      >{% if relato and relato.texto %}{{relato.texto}}{% endif %}</textarea>
     
     <br><br>
-    <input  {% if not prazo %}disabled{% endif %} type="submit" value="Enviar">
+    <input {% if not prazo %}disabled{% endif %} type="submit" value="Enviar">
 
   </form>
 

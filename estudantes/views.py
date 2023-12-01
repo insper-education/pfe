@@ -38,6 +38,8 @@ from administracao.support import get_limite_propostas, usuario_sem_acesso
 
 from projetos.tipos import TIPO_DE_DOCUMENTO
 
+from administracao.models import Carta
+
 @login_required
 def index_estudantes(request):
     """Mostra página principal do usuário estudante."""
@@ -478,7 +480,7 @@ def relato_quinzenal(request):
 
     context = {
         "prazo": prazo,
-        "max_length": Relato._meta.get_field('texto').max_length, #Substituir por get_field olhar cadastrar_organizacao
+        "msg_relato_quinzenal": get_object_or_404(Carta, template="Mensagem de Relato Quinzenal").texto,
     }
 
     if request.user.tipo_de_usuario == 1:
@@ -492,37 +494,33 @@ def relato_quinzenal(request):
         if not alocacao:
             context["prazo"] = None
             context["mensagem"] = "Você não está alocado em um projeto esse semestre."
-            return render(request, 'estudantes/relato_quinzenal.html', context)
+            return render(request, "estudantes/relato_quinzenal.html", context)
 
-        if request.method == 'POST':
+        if request.method == "POST":
             texto_relato = request.POST.get("relato", None)
             relato = Relato.objects.create(alocacao=alocacao)
             relato.texto = texto_relato
             relato.save()
-            return render(request, 'users/atualizado.html',)
+            return render(request, "users/atualizado.html",)
 
-        relato_anterior = Evento.objects.filter(tipo_de_evento=20, endDate__lt=hoje).order_by('endDate').last()
+        relato_anterior = Evento.objects.filter(tipo_de_evento=20, endDate__lt=hoje).order_by("endDate").last()
         if not relato_anterior:
-            return HttpResponseNotFound('<h1>Erro ao buscar prazos!</h1>')
+            return HttpResponseNotFound("<h1>Erro ao buscar prazos!</h1>")
 
         prazo_anterior = relato_anterior.endDate + datetime.timedelta(days=1)
         
-        relato = Relato.objects.filter(alocacao=alocacao, momento__gt=prazo_anterior).order_by('momento').last()
+        relato = Relato.objects.filter(alocacao=alocacao, momento__gt=prazo_anterior).order_by("momento").last()
         
-        texto = ''
-        if relato:
-            texto = relato.texto
-
-        relatos = Relato.objects.filter(alocacao=alocacao).order_by('momento')
+        relatos = Relato.objects.filter(alocacao=alocacao).order_by("momento")
         context["relatos"] = relatos
         context["alocacao"] = alocacao
-        context["relato"] = texto
+        context["relato"] = relato if relato else Relato
 
     else:  # Supostamente professores
         context["mensagem"] = "Você não está cadastrado como estudante."
-        context["relato"] = None
+        context["relato"] = Relato
 
-    return render(request, 'estudantes/relato_quinzenal.html', context)
+    return render(request, "estudantes/relato_quinzenal.html", context)
 
 
 @login_required
@@ -530,7 +528,7 @@ def relato_quinzenal(request):
 def relato_visualizar(request, id):
     """Perguntas aos estudantes de trabalho/entidades/social/familia."""
     context = {"relato": get_object_or_404(Relato, pk=id),}
-    return render(request, 'estudantes/relato_visualizar.html', context)
+    return render(request, "estudantes/relato_visualizar.html", context)
 
 
 @login_required
