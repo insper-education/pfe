@@ -92,20 +92,18 @@
     <div class="mb-3 row">
       {% if tipo %}
         <div class="col-sm form-label">
-          <span for="tipo_de_documento">Tipo:</span>
-          <input type="hidden" id="tipo_de_documento" name="tipo_de_documento" value="{{tipo}}"/>
-          {% for retorno in TIPO_DE_DOCUMENTO %}
-            {% if retorno.0|slugify == tipo %}{{retorno.1}}{% endif %}
-          {% endfor %}
+          <span for="tipo_documento">Tipo:</span>
+          <input type="hidden" id="tipo_documento" name="tipo_documento" value="{{tipo}}"/>
+          {{tipo_documento}}
         </div>
       {% else %}
-        <label for="tipo_de_documento" class="col-sm-1 col-form-label">Tipo</label>
+        <label for="tipo_documento" class="col-sm-1 col-form-label">Tipo</label>
         <div class="col-sm-11">
-        <select id="tipo_de_documento" name="tipo_de_documento" class="form-control" required="required" >
+        <select id="tipo_documento" name="tipo_documento" class="form-control" required="required" >
           <option disabled selected value> -- selecione tipo de documento -- </option>
-          {% for retorno in TIPO_DE_DOCUMENTO %}
-            <option value="{{retorno.0}}" {% if retorno.0 == tipo %}selected="selected"{% endif %}>
-              {{retorno.1}}
+          {% for retorno in tipos_documentos %}
+            <option value="{{retorno.id}}" {% if retorno.id == tipo %}selected="selected"{% endif %}>
+              {{retorno.nome}}
             </option>
           {% endfor %}
         </select>
@@ -190,8 +188,8 @@
   </div>
 
   <script>
-    $('#tipo_de_documento').change(function() {
-      if($(this).val()==25) { //  (25, 'Relatório Publicado'),
+    $('#tipo_documento').change(function() {
+      if($(this).val()==26) { //  (26, 'Relatório Publicado'),
         $('#confidencial').prop("checked", false);
       } else {
         $('#confidencial').prop("checked", true);

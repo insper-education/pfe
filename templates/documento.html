@@ -7,11 +7,11 @@
 {% if documento %}
   {% if nivel == 2 %}
     <ul>
-      <a href="../..{{MEDIA_URL}}{{documento.documento}}"><li style="margin-left: -2em;list-style-type: '&#x21B3;';"> {{documento.get_tipo_de_documento_display}}</li></a>
+      <a href="../..{{MEDIA_URL}}{{documento.documento}}"><li style="margin-left: -2em;list-style-type: '&#x21B3;';"> {{documento.tipo_documento}}</li></a>
     </ul>
   {% else %}
     <a {% if documento.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{documento.data}}"{% endif %}
        target="_blank" rel="noopener noreferrer" 
-       href="../..{{MEDIA_URL}}{{documento.documento}}"><li>{{documento.get_tipo_de_documento_display}}</li></a>
+       href="../..{{MEDIA_URL}}{{documento.documento}}"><li>{{documento.tipo_documento}}</li></a>
   {% endif %}
 {% endif %}

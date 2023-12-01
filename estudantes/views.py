@@ -36,8 +36,6 @@ from .models import Relato, Pares
 
 from administracao.support import get_limite_propostas, usuario_sem_acesso
 
-from projetos.tipos import TIPO_DE_DOCUMENTO
-
 from administracao.models import Carta
 
 @login_required
@@ -538,12 +536,11 @@ def submissao_documento(request):
 
     projeto = Projeto.objects.get(id=167)
 
-    tipos = dict(TIPO_DE_DOCUMENTO)
     itens = []
     for comp in Composicao.objects.filter(entregavel=True):
-        itens.append([tipos[comp.documento],  ## AGORA DA PARA USAR DISPLAY 
+        itens.append([comp.tipo_documento,
                       comp.documento, 
-                      Documento.objects.filter(tipo_de_documento=comp.documento, projeto=projeto),
+                      Documento.objects.filter(tipo_documento=comp.tipo_documento, projeto=projeto),
                       Evento.objects.filter(tipo_de_evento=comp.evento, 
                                             endDate__year=projeto.ano, endDate__month__lt=7).last()\
                       if projeto.semestre == 1 else \

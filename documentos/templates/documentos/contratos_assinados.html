@@ -152,7 +152,7 @@
                     >&#10133;</a>
                 </small>
 
-                {% for documento in projeto.documento_set.all|tipo_documentos:0 %}
+                {% for documento in projeto.documento_set.all|tipo_documentos:1 %}
 
                   {% if documento.documento and documento.link %}
                     <div class="btn btn-light btn-outline-info btn-sm" style="width: 7em; padding:0px 4px 0px 4px;">

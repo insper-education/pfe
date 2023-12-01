@@ -283,10 +283,12 @@ def gerar_certificados(request):
 
     return render(request, 'documentos/gerar_certificados.html', context)
 
+from documentos.models import TipoDocumento
 
 def materias_midia(request):
     """Exibe Matérias que houveram na mídia."""
-    relatorios = Documento.objects.filter(tipo_de_documento=128, confidencial=False)
+    tipo_documento = TipoDocumento.objects.get(nome="Matéria na Mídia")
+    relatorios = Documento.objects.filter(tipo_documento=tipo_documento, confidencial=False)
 
     informacoes = [
             ("#RelatoriosTable tr > *:nth-child(3)", "Documentos"),
@@ -304,7 +306,8 @@ def materias_midia(request):
 # @login_required
 def relatorios_publicos(request):
     """Exibe relatórios públicos."""
-    relatorios = Documento.objects.filter(tipo_de_documento=25, confidencial=False)\
+    tipo_documento = TipoDocumento.objects.get(nome="Relatório Publicado")
+    relatorios = Documento.objects.filter(tipo_documento=tipo_documento, confidencial=False)\
         .order_by("-projeto__ano", "-projeto__semestre")
 
     informacoes = [
@@ -371,7 +374,8 @@ def tabela_documentos(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def tabela_seguros(request):
     """Exibe tabela com todos os seguros armazenados."""
-    seguros = Documento.objects.filter(tipo_de_documento=15)
+    tipo_documento = TipoDocumento.objects.get(nome="Seguros")
+    seguros = Documento.objects.filter(tipo_documento=tipo_documento)
     context = {
         "seguros": seguros,
         "MEDIA_URL": settings.MEDIA_URL,
@@ -382,7 +386,8 @@ def tabela_seguros(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def tabela_atas(request):
     """Exibe tabela com todos os seguros armazenados."""
-    atas = Documento.objects.filter(tipo_de_documento=21).order_by("-data")
+    tipo_documento = TipoDocumento.objects.get(nome="Ata do Comitê do PFE")
+    atas = Documento.objects.filter(tipo_documento=tipo_documento).order_by("-data")
     context = {
         "atas": atas,
         "MEDIA_URL": settings.MEDIA_URL,

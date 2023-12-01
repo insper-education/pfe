@@ -131,8 +131,8 @@ def projeto_completo(request, primarykey):
         if not (medias_oo['medias_apg'] or medias_oo['medias_afg'] or medias_oo['medias_rig'] or medias_oo['medias_bi'] or medias_oo['medias_rfg'] or medias_oo['medias_bf']):
             medias_oo = None
 
-    documentos = Documento.objects.filter(projeto=projeto,
-                                          tipo_de_documento__in=(3, 18, 19, 20, 25, 27))
+    documentos = Documento.objects.filter(projeto=projeto, tipo_documento__projeto=True)
+    #### ^ ^ COLOCAR COMO UM CAMPO DO TIPO DOCUMENTO ^ ^ #### (4, 19, 20, 21, 26, 28)
 
     projetos_avancados = Projeto.objects.filter(avancado=projeto)
 

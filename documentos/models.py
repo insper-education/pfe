@@ -15,6 +15,8 @@ class TipoDocumento(models.Model):
     nome = models.TextField("Nome", max_length=128, null=True, blank=True, unique=True,
                               help_text="Título do Exame")
 
+    projeto = models.BooleanField(default=False, help_text="Relevante para projetos")
+
     # Temporario, soh para fazer a migracao    
     tmp_id = models.PositiveSmallIntegerField(default=0)
 

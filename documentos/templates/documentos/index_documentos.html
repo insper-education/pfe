@@ -23,8 +23,8 @@
   <br>
   <h5>Área Geral</h5>
   <ul>
-    {% include "documento.html" with documento=documentos|tipo_documento:6 %}
     {% include "documento.html" with documento=documentos|tipo_documento:7 %}
+    {% include "documento.html" with documento=documentos|tipo_documento:8 %}
     <a href="{% url 'relatorios_publicos' %}"><li>Relatórios Públicos</li></a>
     <a href="{% url 'materias_midia' %}"><li>Matérias na Mídia</li></a>
   </ul>
@@ -33,14 +33,14 @@
     <hr>
     <h5>Área dos Estudantes</h5> <!-- Estudante -->
     <ul>
-      {% include "documento.html" with documento=documentos|tipo_documento:8 %}
-      {% include "documento.html" with documento=documentos|tipo_documento:12 %}
+      {% include "documento.html" with documento=documentos|tipo_documento:9 %}
+      {% include "documento.html" with documento=documentos|tipo_documento:13 %}
 
-        {% include "documento.html" with documento=documentos|tipo_documento:16 nivel=2 %}
         {% include "documento.html" with documento=documentos|tipo_documento:17 nivel=2 %}
-        {% include "documento.html" with documento=documentos|tipo_documento:19 nivel=2 %}
+        {% include "documento.html" with documento=documentos|tipo_documento:18 nivel=2 %}
+        {% include "documento.html" with documento=documentos|tipo_documento:20 nivel=2 %}
 
-      {% include "documento.html" with documento=documentos|tipo_documento:22 %}
+      {% include "documento.html" with documento=documentos|tipo_documento:23 %}
     </ul>
   {% endif %}
 
@@ -48,13 +48,13 @@
     <hr>
     <h5>Área dos Parceiros</h5>
     <ul>
-      {% include "documento.html" with documento=documentos|tipo_documento:32 %}
       {% include "documento.html" with documento=documentos|tipo_documento:33 %}
+      {% include "documento.html" with documento=documentos|tipo_documento:34 %}
     </ul>
   {% endif %}
   {% comment %} Está região é para os parceiros, mas está aberta para todos os usuários {% endcomment %}
     <ul>
-      {% include "documento.html" with documento=documentos|tipo_documento:13 %}
+      {% include "documento.html" with documento=documentos|tipo_documento:14 %}
     </ul>
   {% comment %} Fim da região {% endcomment %}
 
@@ -64,9 +64,9 @@
     <ul>
       <a href="{% url 'tabela_documentos' %}"><li>Tabelas de Documentação dos Projetos</li></a>
       <a href="{% url 'tabela_atas' %}"><li>Atas do Comitê</li></a>
-      {% include "documento.html" with documento=documentos|tipo_documento:23 %}
-      {% include "documento.html" with documento=documentos|tipo_documento:9 %}
       {% include "documento.html" with documento=documentos|tipo_documento:24 %}
+      {% include "documento.html" with documento=documentos|tipo_documento:10 %}
+      {% include "documento.html" with documento=documentos|tipo_documento:25 %}
     </ul>
   {% endif %}
 

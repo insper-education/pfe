@@ -20,6 +20,9 @@ from django.conf import settings
 from projetos.models import Projeto, Organizacao, Documento
 from projetos.support import get_upload_path, simple_upload
 
+from documentos.models import TipoDocumento
+
+
 def _getFields(obj, tree=None, retval=None, fileobj=None):
     """
     Extracts field data if this PDF contains interactive form fields.
@@ -85,9 +88,9 @@ def cria_documento(request):
         except (ValueError, OverflowError):
             pass
 
-    tipo_de_documento = 255
+    tipo_documento = 255
     try:
-        tipo_de_documento = request.POST.get("tipo_de_documento", "")
+        tipo_documento = request.POST.get("tipo_documento", "")
     except (ValueError, OverflowError):
         pass
 
@@ -125,16 +128,13 @@ def cria_documento(request):
     if "organizacao" in request.POST:
         documento.organizacao = get_object_or_404(Organizacao, id=request.POST["organizacao"])
     documento.projeto = projeto
-    documento.tipo_de_documento = tipo_de_documento
+    
+    documento.tipo_documento = get_object_or_404(TipoDocumento, id=tipo_documento)
+    
     documento.data = data
     documento.link = link
     documento.lingua_do_documento = lingua_do_documento
     documento.confidencial = confidencial
-
-    # if tipo_de_documento == 25:  #(25, 'Relatório Publicado'),
-    #     documento.confidencial = False
-    # else:
-    #     documento.confidencial = True
 
     if "arquivo" in request.FILES:
         arquivo = simple_upload(request.FILES["arquivo"],

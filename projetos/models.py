@@ -29,6 +29,7 @@ import users.models
 
 from .tipos import TIPO_EVENTO, TIPO_DE_DOCUMENTO
 
+from documentos.models import TipoDocumento
 
 class Organizacao(models.Model):
     """Dados das organizações que propõe projetos para o PFE."""
@@ -207,7 +208,8 @@ class Projeto(models.Model):
     def get_planos_de_orientacao(self):
         """Retorna todos os planos de orientação do projeto."""
         # (28, 'Plano de Orientação'),
-        documentos = Documento.objects.filter(tipo_de_documento=28, projeto=self)
+        tipo_documento = TipoDocumento.objects.get(nome="Plano de Orientação")
+        documentos = Documento.objects.filter(tipo_documento=tipo_documento, projeto=self)
         return documentos
 
     @property
@@ -860,8 +862,8 @@ class Documento(models.Model):
     confidencial = models.BooleanField(default=True, help_text="Documento confidêncial")
 
     LINGUA_DO_DOCUMENTO = ( # não mudar a ordem dos números
-        (0, 'Português'),
-        (1, 'Inglês'),
+        (0, "Português"),
+        (1, "Inglês"),
     )
 
     lingua_do_documento = models.PositiveSmallIntegerField(choices=LINGUA_DO_DOCUMENTO, default=0)

@@ -29,8 +29,7 @@ from projetos.support import get_upload_path, simple_upload
 from propostas.support import envia_proposta, preenche_proposta, preenche_proposta_pdf
 
 from operacional.models import Curso
-from projetos.tipos import TIPO_DE_DOCUMENTO
-
+from documentos.models import TipoDocumento
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
@@ -119,12 +118,13 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_id=No
 
     context = {
         "organizacao": organizacao,
-        "TIPO_DE_DOCUMENTO": TIPO_DE_DOCUMENTO,
+        "tipos_documentos": TipoDocumento.objects.all(),
         "data": datetime.datetime.now(), # Meio inútil pois o datepicker já preenche
         "Documento": Documento,
         "projetos": Projeto.objects.filter(organizacao=organizacao),
         "projeto": projeto,
         "tipo": tipo_id,
+        "tipo_documento": TipoDocumento.objects.filter(id=tipo_id).last(),
         "organizacoes": Organizacao.objects.all(),
         "documentos": Documento.objects.filter(id=documento_id),
         "documento_id": documento_id,
