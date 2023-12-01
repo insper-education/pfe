@@ -34,11 +34,19 @@ def custom_400(request, exception):
     #t.render(Context({'exception_value': value,})
     return HttpResponse(mensagem)
 
+from documentos.models import TipoDocumento
+from academica.models import Composicao
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
-    message = "Nada Feito"
+    message = "Feito"
+
+    # Criar os documentos
+    for d in Composicao.objects.all():
+        d.tipo_documento = TipoDocumento.objects.filter(tmp_id=d.documento).last()
+        d.save()
+
 
     return HttpResponse(message)

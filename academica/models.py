@@ -50,6 +50,9 @@ class Composicao(models.Model):
     documento = models.PositiveSmallIntegerField(choices=TIPO_DE_DOCUMENTO, 
                                                          null=True, blank=True,
                                                          help_text="Tipo de entregável para uma avaliação")
+    
+    tipo_documento = models.ForeignKey("documentos.TipoDocumento", null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text="Tipo de documento")
 
     evento = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_EVENTO],
                                                       null=True, blank=True,

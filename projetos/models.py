@@ -867,7 +867,7 @@ class Documento(models.Model):
     lingua_do_documento = models.PositiveSmallIntegerField(choices=LINGUA_DO_DOCUMENTO, default=0)
 
     def __str__(self):
-        return self.get_tipo_de_documento_display()
+        return str(self.tipo_documento)
 
     @classmethod
     def create(cls):
