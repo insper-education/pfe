@@ -884,8 +884,8 @@ class Documento(models.Model):
                            help_text="website da organização parceira")
     anotacao = models.CharField(null=True, blank=True, max_length=64,
                                 help_text="qualquer anotação sobre o documento em questão")
-    data = models.DateField(null=True, blank=True,
-                            help_text="Data do documento")
+    data = models.DateTimeField(null=True, blank=True,
+                            help_text="Data e hora do documento")
     
     tipo_de_documento = models.PositiveSmallIntegerField(choices=TIPO_DE_DOCUMENTO, default=0)
 

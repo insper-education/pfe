@@ -118,7 +118,7 @@ def cria_documento(request):
     if "data" in request.POST:
         try:
             data = dateutil.parser\
-                .parse(request.POST['data'])
+                .parse(request.POST["data"])
         except (ValueError, OverflowError):
             pass
 
@@ -202,7 +202,7 @@ def adiciona_documento(request, organizacao_id, projeto_id=None, tipo_id=None, d
     context = {
         "organizacao": organizacao,
         "TIPO_DE_DOCUMENTO": TIPO_DE_DOCUMENTO,
-        "data": datetime.date.today(),
+        "data": datetime.datetime.now(), # Meio inútil pois o datepicker já preenche
         "documento": None,
         "projetos": Projeto.objects.filter(organizacao=organizacao),
         "projeto": projeto,

@@ -17,7 +17,7 @@
 
   <div class="modal-body">
 
-    <label for="data">Data: </label> <input id="data" class="form-control" type="date" name="data" value="{{data|date:'Y-m-d'}}"><br>
+    <label for="data">Data: </label> <input id="data" class="form-control" type="datetime-local" name="data" value="{{data|date:'Y-m-d\TH:i'}}"><br>
     
     <label for="arquivo">Documento:</label> 
     <input required id="arquivo" type="file" name="arquivo" 
