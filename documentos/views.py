@@ -23,7 +23,7 @@ from professores.support import recupera_mentorias
 from professores.support import recupera_mentorias_técnica
 
 from projetos.models import Documento, Configuracao, Projeto, Certificado
-from projetos.models import get_upload_path
+from projetos.support import get_upload_path
 
 # from users.models import PFEUser
 from users.support import get_edicoes

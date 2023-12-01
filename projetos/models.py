@@ -11,7 +11,7 @@ import string
 import random
 import re
 
-from urllib.parse import quote, unquote
+from urllib.parse import quote
 
 from django.db import models
 from django.urls import reverse  # To generate URLS by reversing URL patterns
@@ -20,49 +20,14 @@ from django.contrib import admin
 from django.template.defaultfilters import slugify
 from django.utils.encoding import force_text
 
+from .support import get_upload_path
+
 from estudantes.models import Relato
 from operacional.models import Curso
 from academica.models import Exame
 import users.models
 
 from .tipos import TIPO_EVENTO, TIPO_DE_DOCUMENTO
-
-def get_upload_path(instance, filename):
-    """Caminhos para armazenar os arquivos."""
-    caminho = ""
-    if isinstance(instance, Documento):
-        if instance.organizacao:
-            caminho += slugify(instance.organizacao.sigla_limpa()) + "/"
-        if instance.projeto:
-            caminho += "projeto" + str(instance.projeto.pk) + '/'
-        if instance.usuario:
-            caminho += slugify(instance.usuario.username) + '/'
-        if caminho == "":
-            caminho = "documentos/"
-    elif isinstance(instance, Projeto):
-        caminho += slugify(instance.organizacao.sigla_limpa()) + '/'
-        caminho += "projeto" + str(instance.pk) + '/'
-    elif isinstance(instance, Organizacao):
-        caminho += slugify(instance.sigla_limpa()) + "/logotipo/"
-    elif isinstance(instance, Certificado):
-        if instance.projeto and instance.projeto.organizacao:
-            caminho += slugify(instance.projeto.organizacao.sigla_limpa()) + '/'
-            caminho += "projeto" + str(instance.projeto.pk) + '/'
-        if instance.usuario:
-            caminho += slugify(instance.usuario.username) + '/'
-    elif isinstance(instance, Configuracao):
-        caminho += "configuracao/"
-    elif isinstance(instance, Proposta):
-        caminho += "propostas/proposta"+ str(instance.pk) + '/'
-    else:  # Arquivo Temporário
-        caminho += "tmp/"
-
-    if filename:
-        filename = force_text(filename).strip().replace(' ', '_')
-        filename = re.sub(r'(?u)[^-\w.]', '', filename)
-        return "{0}/{1}".format(caminho, filename)
-
-    return "{0}".format(caminho)
 
 
 class Organizacao(models.Model):

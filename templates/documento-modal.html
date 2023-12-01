@@ -26,8 +26,12 @@
         address += '/'+documento+'/'
     }
 
-    $(".modal-content", $popup).load(address, function () {
-      $popup.modal("show");
+    $(".modal-content", $popup).load(address, function(response, status, xhr) {
+      if(status == "error") {
+        alert("Erro ao tentar abrir a janela de arquivos: " + xhr.status + " " + xhr.statusText );
+      } else {
+        $popup.modal("show");
+      }
     });
   });
 

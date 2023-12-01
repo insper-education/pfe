@@ -26,7 +26,7 @@ from projetos.models import Banca, Area, Coorientador, Avaliacao2, Observacao, R
 from projetos.models import ObjetivosDeAprendizagem
 
 from projetos.messages import email
-from projetos.support import get_objetivos_alocacao, calcula_objetivos
+from projetos.support import calcula_objetivos
 
 from administracao.support import get_limite_propostas
 

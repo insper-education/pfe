@@ -24,8 +24,7 @@ from users.models import PFEUser, Administrador, Parceiro, Professor, Aluno
 from projetos.models import Area, Proposta, Organizacao
 from projetos.models import Projeto, Configuracao, Feedback
 from projetos.models import Anotacao, Conexao, Documento
-from projetos.models import get_upload_path
-from projetos.support import simple_upload
+from projetos.support import get_upload_path, simple_upload
 
 from propostas.support import envia_proposta, preenche_proposta, preenche_proposta_pdf
 

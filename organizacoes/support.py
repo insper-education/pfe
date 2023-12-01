@@ -18,8 +18,7 @@ from django.shortcuts import get_object_or_404
 from django.conf import settings
 
 from projetos.models import Projeto, Organizacao, Documento
-from projetos.models import get_upload_path
-from projetos.support import simple_upload
+from projetos.support import get_upload_path, simple_upload
 
 def _getFields(obj, tree=None, retval=None, fileobj=None):
     """

@@ -16,8 +16,7 @@ from django.http import HttpResponse, JsonResponse
 
 from django.shortcuts import render, redirect, get_object_or_404
 
-from projetos.support import simple_upload
-from projetos.models import get_upload_path
+from projetos.support import get_upload_path, simple_upload
 
 from projetos.models import Aviso, Certificado, Evento, Configuracao, Projeto, Banca
 from users.models import PFEUser, Aluno, Professor, Parceiro

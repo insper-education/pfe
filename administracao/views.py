@@ -29,10 +29,10 @@ from django.urls import reverse
 from documentos.support import render_to_pdf
 
 from projetos.models import Configuracao, Organizacao, Proposta, Projeto
-from projetos.models import Avaliacao2, get_upload_path, Feedback, Disciplina
+from projetos.models import Avaliacao2, Feedback, Disciplina
 from projetos.messages import email
 
-from .support import get_limite_propostas, registra_organizacao, registro_usuario
+from .support import get_upload_path, registra_organizacao, registro_usuario
 
 from projetos.support import simple_upload
 

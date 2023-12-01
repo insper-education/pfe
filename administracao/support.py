@@ -16,8 +16,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 from users.models import PFEUser, Aluno, Professor, Parceiro
 
 from projetos.models import Organizacao, Evento
-from projetos.models import get_upload_path
-from projetos.support import simple_upload
+from projetos.support import get_upload_path, simple_upload
 
 from operacional.models import Curso
 

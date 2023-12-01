@@ -22,15 +22,15 @@ from django.utils import timezone
 from projetos.models import Projeto, Proposta, Configuracao, Area, AreaDeInteresse
 from projetos.models import Encontro, Banca, Entidade, FeedbackEstudante, Evento, Documento
 
-from projetos.support import cria_area_estudante
+from .support import cria_area_estudante
 
 from projetos.messages import email, message_agendamento, create_message
 
-from users.models import PFEUser, Aluno, Professor, Alocacao, Opcao, OpcaoTemporaria
+from users.models import PFEUser, Alocacao, Opcao, OpcaoTemporaria
 
 from users.support import configuracao_estudante_vencida, configuracao_pares_vencida, adianta_semestre
 
-from academica.models import Composicao, Peso
+from academica.models import Composicao
 
 from .models import Relato, Pares
 
@@ -46,8 +46,8 @@ def index_estudantes(request):
     configuracao = get_object_or_404(Configuracao)
 
     context = {
-        'configuracao': configuracao,
-        'vencido': timezone.now().date() > get_limite_propostas(configuracao)
+        "configuracao": configuracao,
+        "vencido": timezone.now().date() > get_limite_propostas(configuracao)
     }
 
     ano = configuracao.ano
@@ -59,15 +59,15 @@ def index_estudantes(request):
         projeto = Projeto.objects\
             .filter(alocacao__aluno=request.user.aluno).order_by("ano", "semestre").last()
 
-        context['projeto'] = projeto
+        context["projeto"] = projeto
 
         # Estudantes de processos passados sempre terrão seleção vencida
         if semestre == 1:
-            context['vencido'] |= request.user.aluno.anoPFE < ano
-            context['vencido'] |= request.user.aluno.anoPFE == ano and \
+            context["vencido"] |= request.user.aluno.anoPFE < ano
+            context["vencido"] |= request.user.aluno.anoPFE == ano and \
                 request.user.aluno.semestrePFE == 1
         else:
-            context['vencido'] |= (request.user.aluno.anoPFE <= ano)
+            context["vencido"] |= (request.user.aluno.anoPFE <= ano)
 
         if projeto:
             hoje = datetime.date.today()

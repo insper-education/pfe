@@ -7,12 +7,52 @@ Data: 15 de Dezembro de 2020
 """
 
 import datetime
+import re
 
 from django.core.files.storage import FileSystemStorage
 from django.utils import text
-from .models import Avaliacao2, ObjetivosDeAprendizagem
 
-from .models import Area, AreaDeInteresse
+from django.template.defaultfilters import slugify
+from django.utils.encoding import force_text
+
+
+def get_upload_path(instance, filename):
+    """Caminhos para armazenar os arquivos."""
+    caminho = ""
+    #if isinstance(instance, Documento):
+    if instance.__class__.__name__ == "Documento":
+        if instance.organizacao:
+            caminho += slugify(instance.organizacao.sigla_limpa()) + "/"
+        if instance.projeto:
+            caminho += "projeto" + str(instance.projeto.pk) + '/'
+        if instance.usuario:
+            caminho += slugify(instance.usuario.username) + '/'
+        if caminho == "":
+            caminho = "documentos/"
+    elif instance.__class__.__name__ == "Projeto":
+        caminho += slugify(instance.organizacao.sigla_limpa()) + '/'
+        caminho += "projeto" + str(instance.pk) + '/'
+    elif instance.__class__.__name__ == "Organizacao":
+        caminho += slugify(instance.sigla_limpa()) + "/logotipo/"
+    elif instance.__class__.__name__ == "Certificado":
+        if instance.projeto and instance.projeto.organizacao:
+            caminho += slugify(instance.projeto.organizacao.sigla_limpa()) + '/'
+            caminho += "projeto" + str(instance.projeto.pk) + '/'
+        if instance.usuario:
+            caminho += slugify(instance.usuario.username) + '/'
+    elif instance.__class__.__name__ == "Configuracao":
+        caminho += "configuracao/"
+    elif instance.__class__.__name__ == "Proposta":
+        caminho += "propostas/proposta"+ str(instance.pk) + '/'
+    else:  # Arquivo Temporário
+        caminho += "tmp/"
+
+    if filename:
+        filename = force_text(filename).strip().replace(' ', '_')
+        filename = re.sub(r'(?u)[^-\w.]', '', filename)
+        return "{0}/{1}".format(caminho, filename)
+
+    return "{0}".format(caminho)
 
 
 def converte_conceito(conceito):
@@ -60,61 +100,6 @@ def converte_letra(nota, mais="+", espaco=""):
         return "D"+"-"
     return "I"+espaco
 
-def cria_area_estudante(request, estudante):
-    """Cria um objeto Areas e preenche ele."""
-    check_values = request.POST.getlist('selection')
-
-    todas_areas = Area.objects.filter(ativa=True)
-    for area in todas_areas:
-        if area.titulo in check_values:
-            if not AreaDeInteresse.objects.filter(area=area, usuario=estudante.user).exists():
-                AreaDeInteresse.create_estudante_area(estudante, area).save()
-        else:
-            if AreaDeInteresse.objects.filter(area=area, usuario=estudante.user).exists():
-                AreaDeInteresse.objects.get(area=area, usuario=estudante.user).delete()
-
-    outras = request.POST.get("outras", "").strip()
-    if outras != "":
-        (outra, _created) = AreaDeInteresse.objects.get_or_create(area=None, usuario=estudante.user)
-        outra.ativa = True
-        outra.outras = request.POST.get("outras", "")
-        outra.save()
-    else:
-        if AreaDeInteresse.objects.filter(area=None, usuario=estudante.user).exists():
-            AreaDeInteresse.objects.get(area=None, usuario=estudante.user).delete()
-
-
-def get_areas_estudantes(alunos):
-    """Retorna dicionário com as áreas de interesse da lista de entrada."""
-    areaspfe = {}
-
-    usuarios = []
-    for aluno in alunos:
-        usuarios.append(aluno.user)
-
-    todas_areas = Area.objects.filter(ativa=True)
-    for area in todas_areas:
-        areas = AreaDeInteresse.objects.filter(usuario__in=usuarios, area=area)
-        areaspfe[area.titulo] = (areas, area.descricao)
-
-    outras = AreaDeInteresse.objects.filter(usuario__in=usuarios, area__isnull=True)
-
-    return areaspfe, outras
-
-
-def get_areas_propostas(propostas):
-    """Retorna dicionário com as áreas de interesse da lista de entrada."""
-    areaspfe = {}
-
-    areas = Area.objects.filter(ativa=True)
-    for area in areas:
-        areas = AreaDeInteresse.objects.filter(proposta__in=propostas, area=area)
-        areaspfe[area.titulo] = (areas, area.descricao)
-
-    outras = AreaDeInteresse.objects.filter(proposta__in=propostas, area__isnull=True)
-
-    return areaspfe, outras
-
 
 def simple_upload(myfile, path="", prefix=""):
     """Faz uploads para o servidor."""
@@ -126,9 +111,8 @@ def simple_upload(myfile, path="", prefix=""):
     return uploaded_file_url
 
 
-def get_objetivos_atuais():
-    objetivos = ObjetivosDeAprendizagem.objects.all()
-
+def get_objetivos_atuais(objetivos):
+    
     # Só os objetivos atualmente em uso
     hoje = datetime.date.today()
     objetivos = objetivos.filter(data_final__gt=hoje) | objetivos.filter(data_final__isnull=True)
@@ -138,43 +122,34 @@ def get_objetivos_atuais():
     return objetivos
 
 
-def get_objetivos_alocacao(alocacao):
-    """Retorna todos objetivos de aprendizado da época de uma alocação."""
-    objetivos = ObjetivosDeAprendizagem.objects.all()
+# NAO MAIS USADO
+# def get_objetivos_alocacao(objetivos, alocacao):
+#     """Retorna todos objetivos de aprendizado da época de uma alocação."""
+#     if alocacao.projeto.semestre == 1:
+#         mes = 3
+#     else:
+#         mes = 9
+#     data_projeto = datetime.datetime(alocacao.projeto.ano, mes, 1)
+#     objetivos = objetivos.filter(data_inicial__lt=data_projeto)
+#     objetivos = objetivos.filter(data_final__gt=data_projeto) | objetivos.filter(data_final__isnull=True)
+#     objetivos = objetivos.order_by("ordem")
+#     return objetivos
 
-    if alocacao.projeto.semestre == 1:
-        mes = 3
-    else:
-        mes = 9
-
-    data_projeto = datetime.datetime(alocacao.projeto.ano, mes, 1)
-
-    objetivos = objetivos.filter(data_inicial__lt=data_projeto)
-    objetivos = objetivos.filter(data_final__gt=data_projeto) | objetivos.filter(data_final__isnull=True)
-
-    objetivos = objetivos.order_by("ordem")
-
-    return objetivos
-
-
-def get_objetivos_alocacoes(alocacoes):
-    """Verifica todos os objetivos de aprendizado de várias alocações."""
-    objetivos = None
-
-    if len(alocacoes) > 0:
-        objetivos = get_objetivos_alocacao(alocacoes[0])
-
-        for alocacao in alocacoes[1:]:
-            objetivos = objetivos | get_objetivos_alocacao(alocacao)
-
-        objetivos = objetivos.order_by("ordem")
-
-    return objetivos
+# NAO MAIS USADO
+# def get_objetivos_alocacoes(todos_objetivos, alocacoes):
+#     """Verifica todos os objetivos de aprendizado de várias alocações."""
+#     objetivos = None
+#     if len(alocacoes) > 0:
+#         objetivos = get_objetivos_alocacao(todos_objetivos, alocacoes[0])
+#         for alocacao in alocacoes[1:]:
+#             objetivos = objetivos | get_objetivos_alocacao(todos_objetivos, alocacao)
+#         objetivos = objetivos.order_by("ordem")
+#     return objetivos
 
 
 def calcula_objetivos(alocacoes):
     """Calcula notas/conceitos por Objetivo de Aprendizagem."""
-    #objetivos = get_objetivos_alocacoes(alocacoes)
+    #objetivos = get_objetivos_alocacoes(ObjetivosDeAprendizagem.objects.all(), alocacoes)
 
     valor = {}
     valor["ideal"] = 7.0

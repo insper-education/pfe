@@ -27,21 +27,56 @@ from operacional.models import Curso
 from .models import Projeto, Proposta, Configuracao, Observacao
 from .models import Coorientador, Avaliacao2, ObjetivosDeAprendizagem
 
-from .models import Feedback, AreaDeInteresse, Acompanhamento, Anotacao, Organizacao
-from .models import Documento, FeedbackEstudante, Area
+from .models import Feedback, Acompanhamento, Anotacao, Organizacao
+from .models import Documento, FeedbackEstudante
 from .models import Banco, Reembolso, Aviso, Conexao
 
 from .messages import email, message_reembolso
 
-from .support import get_areas_estudantes, get_areas_propostas, simple_upload, calcula_objetivos
-
 from academica.models import Exame
+
+from .support import simple_upload, calcula_objetivos
+from .models import Area, AreaDeInteresse
+
+
+
+def get_areas_estudantes(alunos):
+    """Retorna dicionário com as áreas de interesse da lista de entrada."""
+    areaspfe = {}
+
+    usuarios = []
+    for aluno in alunos:
+        usuarios.append(aluno.user)
+
+    todas_areas = Area.objects.filter(ativa=True)
+    for area in todas_areas:
+        areas = AreaDeInteresse.objects.filter(usuario__in=usuarios, area=area)
+        areaspfe[area.titulo] = (areas, area.descricao)
+
+    outras = AreaDeInteresse.objects.filter(usuario__in=usuarios, area__isnull=True)
+
+    return areaspfe, outras
+
+
+def get_areas_propostas(propostas):
+    """Retorna dicionário com as áreas de interesse da lista de entrada."""
+    areaspfe = {}
+
+    areas = Area.objects.filter(ativa=True)
+    for area in areas:
+        areas = AreaDeInteresse.objects.filter(proposta__in=propostas, area=area)
+        areaspfe[area.titulo] = (areas, area.descricao)
+
+    outras = AreaDeInteresse.objects.filter(proposta__in=propostas, area__isnull=True)
+
+    return areaspfe, outras
+
 
 @login_required
 @permission_required("projetos.view_projeto", raise_exception=True)
 def index_projetos(request):
     """Página principal dos Projetos."""
-    return render(request, 'projetos/index_projetos.html')
+    return render(request, "projetos/index_projetos.html")
 
 
 @login_required
@@ -68,11 +103,11 @@ def projeto_detalhes(request, primarykey):
                 "area_principal": True,
                 "mensagem": mensagem,
             }
-            return render(request, 'generic.html', context=context)
+            return render(request, "generic.html", context=context)
 
     context = {
-        'projeto': projeto,
-        'MEDIA_URL': settings.MEDIA_URL,
+        "projeto": projeto,
+        "MEDIA_URL": settings.MEDIA_URL,
     }
 
     return render(request, 'projetos/projeto_detalhes.html', context=context)

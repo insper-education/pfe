@@ -25,17 +25,25 @@
         <div class="col-sm form-label">
           <span for="organizacao">Organização:</span>
           <input type="hidden" id="organizacao" name="organizacao" value="{{projeto.organizacao.id}}"/>
+          {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
           <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-          {{projeto.organizacao.nome}}
+          {% endif %}
+            {{projeto.organizacao.nome}}
+          {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
           </a>
+          {% endif %}
         </div>
       {% elif organizacao %}
       <div class="col-sm form-label">
         <span for="organizacao">Organização:</span>
         <input type="hidden" id="organizacao" name="organizacao" value="{{organizacao.id}}"/>
-        <a href="{% url 'organizacao_completo' organizacao.id %}">
+        {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+          <a href="{% url 'organizacao_completo' organizacao.id %}">
+        {% endif %}
           {{organizacao.nome}}
-        </a>
+        {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+          </a>
+        {% endif %}
       </div>
       {% else %}
         <label for="organizacao" class="col-sm-1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.1em;">Organização</label>
@@ -57,9 +65,13 @@
         <div class="col-sm form-label">
           <span for="projeto">Projeto:</span>
           <input type="hidden" id="projeto" name="projeto" value="{{projeto.id}}"/>
-          <a href="{% url 'projeto_completo' projeto.id %}">
+          {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+            <a href="{% url 'projeto_completo' projeto.id %}">
+          {% endif %}
             {{projeto.get_titulo}} ({{projeto.ano}}.{{projeto.semestre}})
-          </a>
+          {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+            </a>  
+          {% endif %}
         </div>
       {% else %}
         <label for="projeto" class="col-sm-1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.1em;">Projeto</label>

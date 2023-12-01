@@ -21,8 +21,8 @@ from users.models import Professor, Parceiro, Administrador
 
 from projetos.models import Proposta, Projeto, Organizacao, Disciplina, Conexao
 from projetos.models import Configuracao, Area, AreaDeInteresse, Recomendada
-from projetos.models import Evento, get_upload_path
-from projetos.support import simple_upload
+from projetos.models import Evento
+from projetos.support import get_upload_path, simple_upload
 
 from operacional.models import Curso
 

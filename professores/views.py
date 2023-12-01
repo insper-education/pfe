@@ -782,7 +782,7 @@ def banca_avaliar(request, slug):
     except Banca.DoesNotExist:
         return HttpResponseNotFound('<h1>Banca não encontrada!</h1>')
 
-    objetivos = get_objetivos_atuais()
+    objetivos = get_objetivos_atuais(ObjetivosDeAprendizagem.objects.all())
     
     # Banca(Intermediária, Final) ou Falconi
     if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
@@ -1901,25 +1901,25 @@ def objetivo_editar(request, primarykey):
             "bancas_index": True,
             "mensagem": mensagem,
         }
-        return render(request, 'generic.html', context=context)
+        return render(request, "generic.html", context=context)
 
     context = {
         'objetivo': objetivo,
     }
-    return render(request, 'professores/objetivo_editar.html', context)
+    return render(request, "professores/objetivo_editar.html", context)
 
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def objetivos_rubricas(request):
     """Exibe os objetivos e rubricas."""
-    objetivos = get_objetivos_atuais()
+    objetivos = get_objetivos_atuais(ObjetivosDeAprendizagem.objects.all())
 
     context = {
-        'objetivos': objetivos, 
+        "objetivos": objetivos, 
     }
 
-    return render(request, 'professores/objetivos_rubricas.html', context)
+    return render(request, "professores/objetivos_rubricas.html", context)
 
 
 @login_required
