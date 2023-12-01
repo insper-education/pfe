@@ -7,15 +7,19 @@
 
 {% block content %}
 
-    Data: {% now "j F Y H:i" %}
+    <br>
+    <b>Data e Hora do Sistema:</b> {% now "j F Y H:i" %}
     <hr>
     <a href="{% url 'servico' %}"><h5>Habilitar Aviso de Manutenção</h5></a>
     <a href="{% url 'configurar' %}"><h5>Configurar Sistema</h5></a>
 
     <hr>
-    <a href="{% url 'cadastrar_organizacao' %}"><h5>Cadastrar Organização</h5></a>
-    <a href="{% url 'cadastrar_usuario' %}"><h5>Cadastrar Usuário</h5></a>
-    <a href="{% url 'cadastrar_disciplina' %}"><h5>Cadastrar Disciplina</h5></a>
+    <h5>Cadastrar</h5>
+    <ul>
+        <li><a href="{% url 'cadastrar_organizacao' %}">Organização</a></li>
+        <li><a href="{% url 'cadastrar_usuario' %}">Usuário</a></li>
+        <li><a href="{% url 'cadastrar_disciplina' %}">Disciplina</a></li>
+    </ul>
 
     <hr>
     <a href="{% url 'contas_senhas' %}"><h5>Envia Contas e Senhas</h5></a>
@@ -27,7 +31,10 @@
     <a href="{% url 'exportar' 'relatorios' %}"><h5>Exportar Relatórios</h5></a>
 
     <hr>
-    <a href="{% url 'conexoes_estabelecidas' %}"><h5>Usuários Conectados</h5></a>
-    <a href="{% url 'logs' %}"><h5>Logs de Sistema</h5></a>
+    <h5>Supervisão de Sistema</h5>
+    <ul>
+        <li><a href="{% url 'conexoes_estabelecidas' %}">Usuários Conectados</a></li>
+        <li><a href="{% url 'logs' %}">Logs de Sistema</a></li>
+    </ul>
 
 {% endblock %}

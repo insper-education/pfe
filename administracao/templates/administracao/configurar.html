@@ -6,6 +6,8 @@
 {% endcomment %}
 
 {% block head %}
+  {% load static %}
+  {% load get_field %}
   <style>
     .signature {
       width: 250px;
@@ -22,7 +24,7 @@
     <span class="titulo">Configurar</span>
     <br>
     
-    Copia calendário: 
+    Copia calendário:
     
     <a class="btn btn-primary" href="{% url 'copia_calendario' %}" onClick="return confirm('Tem certeza que deseja dupplicar todos os eventos de um semestre para o outro?')" >{{configuracao.periodo}} =&gt; {{configuracao.proximo_periodo}}</a>
     <br><br>
@@ -35,9 +37,6 @@
       <br>(Estudantes conseguirão ver os projetos em que foram alocados a partir da data liberada e do projeto)
       <br>
     </small>
-
-    <br><hr><br>
-    <a href="{% url 'publicar_propostas' %}">Para publicar Propostas, visite o link</a>
 
     <br><br><hr><br>
     <label for="prazo_preencher_banca">Prazo para avaliadores preencherem a avaliação de banca:</label> <input id="prazo_preencher_banca" name="prazo_preencher_banca" style="text-align:right;" type="number" min="0" max="9999" step="1" value="{{configuracao.prazo_preencher_banca}}"/> dias
@@ -58,7 +57,7 @@
       {% endfor %}
     </select>
     <br>
-    <label for="coordenador">Nome para certificados:</label> <input id="coordenador" name="coordenador" type="text" size="36" maxlength="{{coord_length|add:-2}}" value="{{configuracao.coordenador}}"/><br>
+    <label for="coordenador">Nome para certificados:</label> <input id="coordenador" name="coordenador" type="text" size="36" maxlength="{% max_length configuracao "coordenador" %}" value="{{configuracao.coordenador}}"/><br>
     <label for="assinatura">Assinatura (proporção ~250x70):</label>
     <input id="assinatura" type="file" name="assinatura" accept="image/*">
     {% if configuracao.assinatura %}

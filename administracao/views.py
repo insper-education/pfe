@@ -81,11 +81,11 @@ def cadastrar_disciplina(request, proposta_id=None):
     """Cadastra Organização na base de dados do PFE."""
     context = {
         "disciplinas": Disciplina.objects.all().order_by("nome"),
-        "disciplina_length": Disciplina._meta.get_field('nome').max_length,
+        "disciplina": Disciplina,
     }
     if request.method == 'POST':
         try:
-            assert 'nome' not in request.POST
+            assert "nome" not in request.POST
             disciplina, _created = Disciplina.objects.get_or_create(nome=request.POST["nome"])
             if not _created:
                 context["mensagem"] = "Conflito: Disciplina já cadastrada"
@@ -136,12 +136,6 @@ def cadastrar_organizacao(request, proposta_id=None):
     context = {
         "proposta": proposta,
         "organizacao": Organizacao,
-        # "nome_length": Organizacao._meta.get_field("nome").max_length-2,
-        # "sigla_length": Organizacao._meta.get_field("sigla").max_length-2,
-        # "endereco_length": Organizacao._meta.get_field("endereco").max_length-2,
-        # "website_length": Organizacao._meta.get_field("website").max_length-2,
-        # "informacoes_length": Organizacao._meta.get_field("informacoes").max_length-2,
-        # "fields": fields,
     }
     
     return render(request, 'administracao/cadastra_organizacao.html', context=context)
@@ -260,8 +254,7 @@ def cadastrar_usuario(request):
     context = {
         "organizacoes": Organizacao.objects.all().order_by("nome"),
         "cursos": Curso.objects.all().order_by("id"),
-        "linkedin_length": PFEUser._meta.get_field('linkedin').max_length,  #Substituir por get_field olhar cadastrar_organizacao
-        "email_length": PFEUser._meta.get_field('email').max_length,
+        "PFEUser": PFEUser,
     }
 
     # Passado o tipo e nome da organização do parceiro (se o caso) a ser cadastrado
@@ -297,7 +290,7 @@ def edita_usuario(request, primarykey):
 
     if request.method == 'POST':
 
-        if 'email' in request.POST:
+        if "email" in request.POST:
             mensagem, codigo, _ = registro_usuario(request, user)
             if codigo != 200:
                 return HttpResponse(mensagem, status=codigo)
@@ -319,8 +312,7 @@ def edita_usuario(request, primarykey):
         "usuario": user,
         "organizacoes": Organizacao.objects.all(),
         "cursos": Curso.objects.all().order_by("id"),
-        "linkedin_length": PFEUser._meta.get_field('linkedin').max_length, #Substituir por get_field olhar cadastrar_organizacao
-        "email_length": PFEUser._meta.get_field('email').max_length,
+        "PFEUser": PFEUser,
     }
 
     if user.tipo_de_usuario == 1:
@@ -440,7 +432,6 @@ def configurar(request):
     
     context = {
         "configuracao": configuracao,
-        "coord_length": Configuracao._meta.get_field('coordenador').max_length, #Substituir por get_field olhar cadastrar_organizacao
         "administradores": Administrador.objects.all(),
     }
 
