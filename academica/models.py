@@ -6,8 +6,6 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 4 de Novembro de 2023
 """
 
-#import datetime
-
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
@@ -27,7 +25,7 @@ class Exame(models.Model):
                              help_text="Caso Verdadeiro é em Grupo, se Falso é individual")
     
     comentario = models.TextField(max_length=256, null=True, blank=True,
-                                help_text='qualquer observação relevante')
+                                help_text="qualquer observação relevante")
 
     def __str__(self):
         return str(self.titulo) 
@@ -39,8 +37,8 @@ class Exame(models.Model):
         return exame
     
     class Meta:
-        verbose_name = 'Exame'
-        verbose_name_plural = 'Exames'
+        verbose_name = "Exame"
+        verbose_name_plural = "Exames"
 
 
 class Composicao(models.Model):

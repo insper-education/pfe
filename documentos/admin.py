@@ -1,3 +1,9 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import TipoDocumento
+
+
+@admin.register(TipoDocumento)
+class TipoDocumentoAdmin(admin.ModelAdmin):
+    """Tipo Documento."""
+    list_display = ("nome",)

@@ -854,6 +854,9 @@ class Documento(models.Model):
     
     tipo_de_documento = models.PositiveSmallIntegerField(choices=TIPO_DE_DOCUMENTO, default=0)
 
+    tipo_documento = models.ForeignKey("documentos.TipoDocumento", null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text="Tipo de documento")
+
     confidencial = models.BooleanField(default=True, help_text="Documento confidêncial")
 
     LINGUA_DO_DOCUMENTO = ( # não mudar a ordem dos números
