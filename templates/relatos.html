@@ -13,6 +13,12 @@
     padding: 0px 6px 0px 6px;
     border: 0px;
   }
+  .opt_short {display: none;}
+  .opt_full {display: inline;}
+  @media screen and (max-width: 800px) {
+    .opt_short {display: inline;}
+    .opt_full {display: none;}
+  }
 </style>
 
 {% if projeto %}
@@ -21,15 +27,15 @@
     <tr style="padding-left: 18px;">
       
         <td><a href="{% url 'relato_avaliar' projeto.id evento.id %}">{{ forloop.counter }}&ordm;</a></td>
-        <td><a href="{% url 'relato_avaliar' projeto.id evento.id %}">{{evento.endDate}}</a></td>
+        <td><a href="{% url 'relato_avaliar' projeto.id evento.id %}">
+          <span class="opt_full">{{ evento.endDate|date:"DATE_FORMAT" }}</span>
+          <span class="opt_short">{{ evento.endDate|date:"d/m/Y" }}</span>
+        </a></td>
           <td>
-          {% for alocacao in alocacoes %}
-          <small>
-              <span style="width:20em;" id="s{{alocacao.aluno.id}}_e{{evento.id}}" data-toggle="tooltip" data-html="true" animation="true" title="{{alocacao.aluno}}">
-                {% if alocacao.id in relatos %}&#9989;{% else %}&#10060;{% endif %}
-              </span>
-            </small>
-        {% endfor %}
+          {% for alocacao in alocacoes %}<small
+          ><span style="width:20em;" id="s{{alocacao.aluno.id}}_e{{evento.id}}" data-toggle="tooltip" data-html="true" animation="true" title="{{alocacao.aluno}}"
+               >{% if alocacao.id in relatos %}&#9989;{% else %}&#10060;{% endif %}</span></small
+           >{% endfor %}
         </td>
         <td>
         {% if evento.em_prazo %}
