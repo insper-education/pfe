@@ -33,6 +33,21 @@
       border-color: LightGray;
       width: 100%;
     }
+
+    .appres_projeto {
+      font-size: 0.9em;
+      line-height: 1.2;
+      margin-bottom: 0.3em;
+    }
+
+    .pess_proj {
+      margin-left:0.5em;
+    }
+
+    ol {
+      padding-left: 28px;
+    }
+
   </style>
 
 {% endblock %}
@@ -53,12 +68,12 @@
   <br>
   
   {% comment %} Tabela com todos os projetos selecionados pelo filtro {% endcomment %}
-  <div class="atualizar m-2">
+  <div class="atualizar">
     
     {% if projetos %}
       <table id="projetos">
       {% for projeto, prioridades, cooperacoes, conexoes, qtd_est in projetos %}
-        <tr class="row {% if projeto.avancado %}avancado{% endif %}" data-type="{{projeto.ano}}.{{projeto.semestre}}"
+        <tr class="row no-gutters {% if projeto.avancado %}avancado{% endif %}" data-type="{{projeto.ano}}.{{projeto.semestre}}"
             {% if qtd_est == 0 %}style="opacity: 0.3;"{% endif %} >
         <td class="projline">
         {% if projeto.organizacao %}
@@ -94,32 +109,31 @@
         
         <p class="descricao">
           {% if projeto.descricao %}
-            <small><b>Descrição projeto:</b> {{projeto.descricao}}</small><br>
+            <div class="appres_projeto"><b>Descrição projeto:</b> {{projeto.descricao}}</div>
           {% else %}
-            <small><b>Descrição proposta:</b> {{projeto.proposta.descricao}}</small><br>
+            <div class="appres_projeto"><b>Descrição proposta:</b> {{projeto.proposta.descricao}}</div>
           {% endif %}
         </p>
 
         <p class="apresentacao_organizacao apresentacao">
           {% if projeto.proposta.descricao_organizacao %}
-            <small><b>Apresentação da Organizaçã Parceira:</b> {{projeto.proposta.descricao_organizacao}}</small><br>
+            <div class="appres_projeto"><b>Apresentação da Organizaçã Parceira:</b> {{projeto.proposta.descricao_organizacao}}</div>
           {% endif %}
         </p>
 
         <p class="apresentacao_departamento apresentacao">
           {% if projeto.proposta.departamento %}
-            <small><b>Apresentação do Departamento:</b> {{projeto.proposta.departamento}}</small><br>
+            <div class="appres_projeto"><b>Apresentação do Departamento:</b> {{projeto.proposta.departamento}}</div>
           {% endif %}
         </p>
 
-        {% include "tipo_projeto.html" with com_tipo=True %}<br>
+        {% include "tipo_projeto.html" with com_tipo=True %}
 
-        <p class="semestre" style="margin-left:1em; display: none;"><b>Semestre:</b>
+        <p class="semestre pess_proj" style="display: none;"><b>Semestre:</b>
           {{projeto.ano}}.{{projeto.semestre}}
         </p>
 
-        <!-- <p style="margin-left:1em;">Edição: {{projeto.ano}}.{{projeto.semestre}}</p> -->
-        <p class="orientador" style="margin-left:1em;">
+        <p class="orientador pess_proj">
           {% if projeto.orientador %}
             {% if projeto.proposta.intercambio %}
               <b>Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
@@ -136,7 +150,7 @@
         {% with coorientadores=projeto.coorientador_set.all %}
           {% if coorientadores %}
             {% for coorientador in coorientadores %}
-              <p class="coorientador" style="margin-left:1em;"><b>Coorientador{% if coorientador.usuario.genero == 'F' %}a{% endif %}:</b>
+              <p class="coorientador pess_proj"><b>Coorientador{% if coorientador.usuario.genero == 'F' %}a{% endif %}:</b>
               <a class="imprimir" href="{% url 'professor_detail' coorientador.usuario.professor.id %}">
                 {{ coorientador.usuario.get_full_name }}
               </a>
@@ -145,7 +159,7 @@
           {% endif %}
         {% endwith %}
 
-        <p class="estudantes" style="margin-left:1em;"><b>Estudantes:</b>
+        <p class="estudantes pess_proj"><b>Estudantes:</b>
           <span class="emails esconder"><a href="mailto:{% for alocacao in projeto.alocacao_set.all %}&lt;{{alocacao.aluno.user.email}}&gt;{% if not forloop.last %},{% endif %}{% endfor %}?subject=PFE%20Insper%20-%20Projeto:%20{{projeto}}&body=Caros%20{% for alocacao in projeto.alocacao_set.all %}%20{{alocacao.aluno.user.first_name}},{% endfor %}%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenador_email}}%20(coordenação%20PFE)" target="_blank">&#x2709;</a></span>
         </p>
         <ol class="estudantes" style="margin-bottom:5px;">
@@ -168,7 +182,7 @@
         {% endfor %}
         </ol>
 
-        <p class="organizacao" style="margin-left:1em;"><b>Organização:</b>
+        <p class="organizacao pess_proj"><b>Organização:</b>
           {% if projeto.organizacao %}
             <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">
               {{ projeto.organizacao.nome }}
@@ -233,7 +247,6 @@
       {% endfor %}
       </table>
 
-      <hr>
       <div class="totais">
         <b>Total de projetos = 
         <span>{{ numero_projetos }}</span>
