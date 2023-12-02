@@ -21,27 +21,56 @@
     }
 
     #toggle {
-      display:inline-block; 
+      display:inline-block;
+      padding-top: 10px;
+      display: none;
     }
+
+    #toggle > label {
+      margin-left: 10px;
+    }
+
+    #toggle > label > input {
+      vertical-align: -3px;
+    }
+
+    #informacoes_tag {
+      padding: 2px 4px 2px 4px;
+      cursor: pointer;
+      color:gray;
+      display: block;
+      line-height: 1.0em;
+    }
+
+    #informacoes_gerais {
+      width:fit-content;
+      margin-bottom: 6px;
+      font-size:0.8rem;
+      display: inline-block;
+      border: 1px solid lightgray;
+      padding: 1px;
+    }
+
   </style>
 
   <script>
     $(document).on('click','#informacoes_tag',function(){
-      if($("#toggle").is(':visible')) $("#informacoes").css("display", "inline");
-      else $("#informacoes").css("display", "block");
+      if($("#toggle").is(':visible')) $("#informacoes_gerais").css("display", "inline-block");
+      else $("#informacoes_gerais").css("display", "block");
       $("#toggle").toggle( "slide" );
     });
   </script>
  
-  <div id="informacoes" style="width:fit-content; margin-bottom: 6px; font-size:0.8rem; display: inline; border: 1px solid lightgray; padding: 1px;">
-    <span id="informacoes_tag" style="padding: 2px 4px 2px 4px; cursor: pointer; color:gray;"><b>Informações <i class="arrow right"></i>&nbsp;</b></span>
-    <div id="toggle" style="padding-top: 10px;display: none;">
+  <div id="informacoes_gerais">
+    <span id="informacoes_tag"><b>Informações <i class="arrow right"></i>&nbsp;</b></span>
+    <div id="toggle">
       {% for inf in informacoes %}
         {% comment %} O terceiro campo é o nome da classe, mas se for False desliga o botao {% endcomment %}
         <label {% if inf.2 is not None and inf.2 != False %}class="{{inf.2}}"{% endif %}>
-          <input style="vertical-align: -3px;" onchange="($(this).prop('checked') ? $('{{inf.0}}').show() : $('{{inf.0}}').hide())" type="checkbox" {% if inf.2 is None or inf.2 != False %}checked{% endif %} /> 
+          <input onchange="($(this).prop('checked') ? $('{{inf.0}}').show() : $('{{inf.0}}').hide())"
+                 type="checkbox" {% if inf.2 is None or inf.2 != False %}checked{% endif %} /> 
           {{inf.1}}
-        </label>&nbsp;&nbsp;&nbsp;
+        </label>
       {% endfor %}
     </div>
   </div>
