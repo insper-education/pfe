@@ -83,7 +83,7 @@
                       <a class="imprimir" href="{% url 'parceiro_detail' conexao.parceiro.id %}">
                         {{ conexao.parceiro.user.get_full_name }}
                       </a>
-                      {% for papel in conexao.get_papeis_completo %}[{{papel}}]{% endfor %}
+                      {% for papel in conexao.get_papeis %}[{{papel.0}}] {% endfor %}
                     </li>
                   {% endfor %}
                 </ul>

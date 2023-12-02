@@ -20,8 +20,8 @@
   {% for evento, relatos, avaliados in projeto.get_relatos %}
     <tr style="padding-left: 18px;">
       
-        <td><a href="{% url 'relato_avaliar' projeto.id evento.id %}">{{ forloop.counter }}</a></td>
-        <td><a href="{% url 'relato_avaliar' projeto.id evento.id %}">Relatos {{evento.endDate}}</a></td>
+        <td><a href="{% url 'relato_avaliar' projeto.id evento.id %}">{{ forloop.counter }}&ordm;</a></td>
+        <td><a href="{% url 'relato_avaliar' projeto.id evento.id %}">{{evento.endDate}}</a></td>
           <td>
           {% for alocacao in alocacoes %}
           <small>

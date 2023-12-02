@@ -101,7 +101,7 @@
         <li><a href="{% url 'projeto_completo' conexao.projeto.id %}">
         {{conexao.projeto.get_titulo}}
         [{{conexao.projeto.ano}}.{{conexao.projeto.semestre}}] -&gt;
-        {% for papel in conexao.get_papeis_completo %}[{{papel}}]{% endfor %}
+        {% for papel in conexao.get_papeis %}[{{papel.0}}] {% endfor %}
         </a></li>
       {% else %}
         PROBLEMA AO RECUPERAR PROJETO!

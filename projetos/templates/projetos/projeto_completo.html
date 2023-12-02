@@ -22,6 +22,7 @@
       height:auto;
       width:auto;
       float: right;
+      margin-left: 12px;
     }
   
     .logotipo_left {
@@ -52,6 +53,27 @@
       -o-user-select:all;
       user-select: all;
     }
+
+    .opt_short {
+      display: none;
+    }
+    .opt_full {
+      display: inline;
+    }
+    
+    @media screen and (max-width: 800px) {
+      .opt_short {
+        display: inline;
+      }
+      .opt_full {
+        display: none;
+      }
+    }
+
+    ul {
+      padding-left: 1.4em;
+    }
+
   </style>
 
 {% endblock %}
@@ -87,7 +109,7 @@
   {% endif %}
   {% if projeto.proposta.recursos %}
     <div class="recusos" style="margin-top: 8px;">
-      <strong>Recursos a serem disponibilizados aos Estudantes :</strong> {{ projeto.proposta.recursos|linebreaks }}
+      <strong>Recursos a serem disponibilizados aos estudantes :</strong> {{ projeto.proposta.recursos|linebreaks }}
     </div>
   {% endif %}
   {% if projeto.proposta.anexo %}
@@ -152,46 +174,42 @@
   
   <div class="conexoes" style="margin-top: 8px;">
     <strong>conexões:</strong>
-    <small><a href="{% url 'seleciona_conexoes' %}?projeto={{projeto.id}}">&#10133;</a></small>
+    <small><a style="vertical-align: 0px;" href="{% url 'seleciona_conexoes' %}?projeto={{projeto.id}}">&#10133;</a></small>
     <br>
     {% if conexoes %}
-      <table style="border: 0px; margin-left: 20px;">
+      {% comment %} margin-left: 0.5em;  padding-left: 12px;"> {% endcomment %}
+      <ul>
       {% for conexao in conexoes %}
         {% if conexao.parceiro.user.is_active %}
-          <tr>
-            <td style="border: 0px;">
-              <span class="unselectable">&bull;</span>
+          <li>
               <a href="{% url 'parceiro_detail' conexao.parceiro.id %}">
                 {{ conexao.parceiro.user.get_full_name }}
               </a>
-              <a href="mailto:{{conexao.parceiro.user.email}}"> &lt;{{conexao.parceiro.user.email}}&gt;</a><br>
-            </td>
-            <td  style="border: 0px; padding-left: 12px;">
-              {% for papel in conexao.get_papeis_completo %}[{{papel}}]{% endfor %}
+              <a href="mailto:{{conexao.parceiro.user.email}}"> &lt;{{conexao.parceiro.user.email}}&gt;</a>
+              {% for papel in conexao.get_papeis %}
+                <span class="opt_full">[{{papel.0}}]</span>
+                <span class="opt_short" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.0}}">[{{papel.1}}]</span>
+              {% endfor %}
               {% if conexao.observacao %}&nbsp;&nbsp;obs: {{conexao.observacao}}{% endif %}
-              <br>
-            </td>
-          </tr>
+          </li>
         {% else %}
-          <tr>
-            <td style="border: 0px;">
-              <span class="unselectable" style="color: lightgrey;">&bull;</span>
+          <li>
+              {% comment %} <span class="unselectable" style="color: lightgrey;">&bull;</span> {% endcomment %}
               <a href="{% url 'parceiro_detail' conexao.parceiro.id %}" style="color: LightBlue;">
                 {{ conexao.parceiro.user.get_full_name }}
               </a>
               <a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;"> &lt;{{conexao.parceiro.user.email}}&gt;</a><br>
-              </td>
-              <td  style="color: lightgrey; border: 0px; padding-left: 12px;">
-                {% for papel in conexao.get_papeis_completo %}[{{papel}}]{% endfor %}
+              <span  style="color: lightgrey; border: 0px; padding-left: 12px;">
+                {% for papel in conexao.get_papeis %}
+                  <span class="opt_full">[{{papel.0}}]</span>
+                  <span class="opt_short" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.0}}">[{{papel.1}}]</span>
+                {% endfor %}
                 {% if conexao.observacao %}&nbsp;&nbsp;obs: {{conexao.observacao}}{% endif %}
-                <br>
-              </td>
-            </tr>
-        {% endif %}
-        
-        
+              </span>
+          </li>
+        {% endif %}        
       {% endfor %}
-      </table>
+      </ul>
     {% else %}
       Nenhuma conexão específica para esse projeto declarada.
     {% endif %}
@@ -242,7 +260,8 @@
     <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
       <p>
         {{alocacao.aluno.user.get_full_name}} 
-        [{{ alocacao.aluno.curso2 }}]
+        <span class="opt_full">[{{ alocacao.aluno.curso2 }}]</span>
+        <span class="opt_short" data-toggle="tooltip" data-html="true" animation="true" title="{{ alocacao.aluno.curso2}}">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
         &lt;{{alocacao.aluno.user.email}}&gt; 
         {% for opcao in alocacao.aluno.opcao_set.all %}
           {% if opcao.projeto == projeto %}

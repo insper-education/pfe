@@ -1130,14 +1130,7 @@ class Conexao(models.Model):
         texto = []
         for field in Conexao.papel:
             if getattr(self, field):
-                texto += [Conexao.papel[field][1]]
-        return texto
-    
-    def get_papeis_completo(self):
-        texto = []
-        for field in Conexao.papel:
-            if getattr(self, field):
-                texto += [Conexao.papel[field][0]]
+                texto += [Conexao.papel[field]]
         return texto
     
     def __str__(self):

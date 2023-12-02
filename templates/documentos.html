@@ -4,6 +4,14 @@
     Data: 13 de Junho de 2023
 {% endcomment %}
 
+<style>
+.opt_short {display: none;}
+.opt_full {display: inline;}
+@media screen and (max-width: 800px) {
+  .opt_short {display: inline;}
+  .opt_full {display: none;}
+}
+</style>
 
 {% if documentos %}
   {% for documento in documentos %}
@@ -35,7 +43,8 @@
     {% endif %}
 
     {% if documento.data %}
-              : {{ documento.data }}
+      <span class="opt_full">: {{ documento.data|date:"DATE_FORMAT" }}</span>
+      <span class="opt_short">: {{ documento.data|date:"d/m/Y" }}</span>
     {% endif %}
     {% if documento.anotacao %}
               [Obs: {{ documento.anotacao }} ]
