@@ -107,25 +107,19 @@
             {{projeto.titulo}}</a><br>
           {% endif %}
         
-        <p class="descricao">
-          {% if projeto.descricao %}
-            <div class="appres_projeto"><b>Descrição projeto:</b> {{projeto.descricao}}</div>
-          {% else %}
-            <div class="appres_projeto"><b>Descrição proposta:</b> {{projeto.proposta.descricao}}</div>
-          {% endif %}
-        </p>
+        {% if projeto.descricao %}
+          <div class="descricao appres_projeto"><b>Descrição projeto:</b> {{projeto.descricao}}</div>
+        {% else %}
+          <div class="descricao appres_projeto"><b>Descrição proposta:</b> {{projeto.proposta.descricao}}</div>
+        {% endif %}
 
-        <p class="apresentacao_organizacao apresentacao">
-          {% if projeto.proposta.descricao_organizacao %}
-            <div class="appres_projeto"><b>Apresentação da Organizaçã Parceira:</b> {{projeto.proposta.descricao_organizacao}}</div>
-          {% endif %}
-        </p>
+        {% if projeto.proposta.descricao_organizacao %}
+          <div class="apresentacao_organizacao apresentacao appres_projeto"><b>Apresentação da Organizaçã Parceira:</b> {{projeto.proposta.descricao_organizacao}}</div>
+        {% endif %}
 
-        <p class="apresentacao_departamento apresentacao">
-          {% if projeto.proposta.departamento %}
-            <div class="appres_projeto"><b>Apresentação do Departamento:</b> {{projeto.proposta.departamento}}</div>
-          {% endif %}
-        </p>
+        {% if projeto.proposta.departamento %}
+          <div class="apresentacao_departamento apresentacao appres_projeto"><b>Apresentação do Departamento:</b> {{projeto.proposta.departamento}}</div>
+        {% endif %}
 
         {% include "tipo_projeto.html" with com_tipo=True %}
 
