@@ -95,22 +95,20 @@
           </span>
         {% endif %}
 
-        <b>Projeto:</b>
-        <a class="imprimir" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_completo' projeto.id %}" class="dark-blue-bold"> 
+        <div><b>Projeto:</b>
+        <a class="imprimir dark-blue-bold" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_completo' projeto.id %}"> 
           {% if projeto.titulo_final %}
-            {{projeto.titulo_final}}</a><br>
-            <p class="titulo_original">
-            <small>Título original: 
-              <a class="imprimir" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_completo' projeto.id %}" class="dark-blue-bold"> {{projeto.titulo}}</a></small><br>
-            </p>
+            {{projeto.titulo_final}}</a></div>
+            <small class="titulo_original" style="display: block;">Título original: 
+              <a class="imprimir dark-blue-bold" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_completo' projeto.id %}"> {{projeto.titulo}}</a></small>
           {% else %}
-            {{projeto.titulo}}</a><br>
+            {{projeto.titulo}}</a></div>
           {% endif %}
         
         {% if projeto.descricao %}
-          <div class="descricao appres_projeto"><b>Descrição projeto:</b> {{projeto.descricao}}</div>
+          <div class="descricao appres_projeto" style="margin-top: 6px;"><b>Descrição projeto:</b> {{projeto.descricao}}</div>
         {% else %}
-          <div class="descricao appres_projeto"><b>Descrição proposta:</b> {{projeto.proposta.descricao}}</div>
+          <div class="descricao appres_projeto" style="margin-top: 6px;"><b>Descrição proposta:</b> {{projeto.proposta.descricao}}</div>
         {% endif %}
 
         {% if projeto.proposta.descricao_organizacao %}
