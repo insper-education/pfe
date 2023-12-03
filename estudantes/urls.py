@@ -38,6 +38,10 @@ urlpatterns = [
         views.estudante_feedback_hashid,
         name='estudante_feedback_hashid'),
 
+    path('exames_pesos/',
+        views.exames_pesos,
+        name='exames_pesos'),
+
     path('informacoes_adicionais/',
          views.informacoes_adicionais,
          name='informacoes_adicionais'),
@@ -65,5 +69,6 @@ urlpatterns = [
     path('ajax/opcao_temporaria/',
          views.opcao_temporaria,
          name='opcao_temporaria'),
+
 
 ]

@@ -529,25 +529,56 @@ def relato_visualizar(request, id):
     return render(request, "estudantes/relato_visualizar.html", context)
 
 
+def filtra_composicoes(composicoes, ano, semestre):
+    """Filtra composições."""
+    composicoes = composicoes.exclude(data_final__year__lt=ano)
+    composicoes = composicoes.exclude(data_inicial__year__gt=ano)
+    
+    if semestre == 1:
+        composicoes = composicoes.exclude(data_inicial__year=ano, data_final__month__gt=6)
+    else:
+        composicoes = composicoes.exclude(data_final__year=ano, data_final__month__lt=7)
+
+    return composicoes
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def exames_pesos(request):
+    """Submissão de documentos pelos estudantes."""
+    
+    semestres = {}
+    semestres["2018.2"] = filtra_composicoes(Composicao.objects.all(), 2018, 2)
+    for ano in range(2019, 2023):
+        for semestre in range(1, 3):
+            semestres[str(ano)+'.'+str(semestre)] = filtra_composicoes(Composicao.objects.all(), ano, semestre)
+
+    context = {
+        "semestres": semestres,
+    }
+    return render(request, 'academica/exames_pesos.html', context)
+
+
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def submissao_documento(request):
     """Submissão de documentos pelos estudantes."""
 
     projeto = Projeto.objects.get(id=167)
-
+    composicoes = filtra_composicoes(Composicao.objects.filter(entregavel=True), projeto.ano, projeto.semestre)
+    
     itens = []
-    for comp in Composicao.objects.filter(entregavel=True):
+    for comp in composicoes:
         itens.append([comp.tipo_documento,
-                      comp.documento, 
                       Documento.objects.filter(tipo_documento=comp.tipo_documento, projeto=projeto),
+
                       Evento.objects.filter(tipo_de_evento=comp.evento, 
                                             endDate__year=projeto.ano, endDate__month__lt=7).last()\
                       if projeto.semestre == 1 else \
                       Evento.objects.filter(tipo_de_evento=comp.evento, 
                                             endDate__year=projeto.ano, endDate__month__gt=6).last()])
-
-    itens = sorted(itens, key=lambda t: (None if t[3] is None else t[3].endDate))
+        
+    itens = sorted(itens, key=lambda t: (None if t[2] is None else t[2].endDate))
 
     context = {
         "projeto": projeto,

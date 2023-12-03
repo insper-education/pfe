@@ -116,6 +116,7 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_id=No
            return HttpResponseBadRequest(erro)
         return JsonResponse({"atualizado": True,})
 
+    #print(TipoDocumento.objects.filter(id=tipo_id))
     context = {
         "organizacao": organizacao,
         "tipos_documentos": TipoDocumento.objects.all(),

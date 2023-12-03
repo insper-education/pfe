@@ -27,22 +27,25 @@
     <br>
     <h4>Submissão de Documentos</h4>
 
-    Projeto: {{projeto.get_titulo}}<br><br>
+    Projeto: {{projeto.get_titulo}}<br>
+    Semestre: {{projeto.ano}}.{{projeto.semestre}}<br>
+    <br>
 
     {% for item in itens %}
+      {% with dias_ate=item.2.endDate|dif_dias_hoje dias=14 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
 
-      {% with dias_ate=item.3.endDate|dif_dias_hoje dias=14 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
-      
-        <div {% if dias_ate > dias and user.tipo_de_usuario == 1 %}style="display:none;"{% endif %}>
+      <div {% if dias_ate > dias and user.tipo_de_usuario == 1 %}style="display:none;"{% endif %}>
           <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
-          <b>{{item.0}}</b> [prazo {{item.3.endDate}}]: </span><a 
+          <b>{{item.0.nome}}</b> [prazo {{item.2.endDate}}]: </span><a 
             data-toggle="tooltip" data-html="true" animation="true" title="Adicionar documento"
             class="open-documento {% if dias_ate > dias %}lightgrey{% endif %}"
-            data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id item.1 %}">
+            {% comment %} data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id %}"> {% endcomment %}
+            data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id item.0.id %}">
+
             {% if dias_ate > dias %}+{% else %}&#10133;{% endif %}	
           </a><br>
           <ul style="padding-left: 22px; width: fit-content;">
-          {% for documento in item.2 %}
+          {% for documento in item.1 %}
             <li style="list-style-type:'&#128463; ';">
             {% if documento.documento and documento.link %}
               {{documento.data}} - {{documento}}

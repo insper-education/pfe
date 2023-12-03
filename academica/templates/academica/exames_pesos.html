@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 3 de Dezembro de 2023
+{% endcomment %}
+
+{% block head %}
+  <style>
+    th, td {
+      padding-left: 4px;
+      padding-right: 4px;
+    }
+  </style>
+
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">Exames e Pesos</span>
+
+  <div class="atualizar">
+
+    <table id="ExamesPesosTable">
+      <thead>
+        <tr>
+          <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Semestre</th>
+          <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Exames</th>
+          <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Peso</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for semestre, composicoes in semestres.items %}
+          <script> var peso = 0; </script>
+          <tr class="item">
+            <td class="text-center"> {{semestre}}</td>
+            <td>
+              {% for composicao in composicoes %}
+                {{composicao.exame}}:
+                {% for peso in composicao.peso_set.all %} 
+                  {% if peso.objetivo %}[{{peso.objetivo.titulo}}{% else %}[Única{% endif %}
+                  =
+                  {{peso.peso|floatformat:2}}] 
+                  {% if peso.peso %}
+                    <script> peso += {{peso.peso}}; </script>
+                  {% endif %}
+                {% endfor %}<br>
+              {% endfor %}
+              
+            </td>
+            <td><span id="peso{{forloop.counter0}}">TO DO</span></td>
+          </tr>
+          <script> document.getElementById("peso{{forloop.counter0}}").innerHTML = peso; </script>
+        {% endfor %}
+      </tbody>
+    </table>
+    <br>
+  
+{% endblock %}
