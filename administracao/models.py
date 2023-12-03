@@ -12,15 +12,15 @@ class Carta(models.Model):
     """Dados das organizações que propõe projetos para o PFE."""
 
     template = models.CharField("Nome do Template", max_length=32,
-                            help_text='Nome do Template')
+                            help_text="Nome do Template")
 
     texto = models.TextField("Texto", max_length=5000, null=True, blank=True,
-                                   help_text='Texto para ser enviado')
+                                   help_text="Texto para ser enviado")
     
     class Meta:
-        ordering = ['template']
-        verbose_name = 'Carta'
-        verbose_name_plural = 'Cartas'
+        ordering = ["template"]
+        verbose_name = "Carta"
+        verbose_name_plural = "Cartas"
 
     @classmethod
     def create(cls):

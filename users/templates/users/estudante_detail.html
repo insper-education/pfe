@@ -27,8 +27,13 @@
           font-size: 17px;
         }
     }
+    .opt_short {display: none;}
+    .opt_full {display: inline;}
+    @media screen and (max-width: 800px) {
+      .opt_short {display: inline;}
+      .opt_full {display: none;}
+    }
   </style>
-
 {% endblock %}
 
 {% block content %}
@@ -408,10 +413,13 @@
             {% if not alocado.get_relatos|empty_zip %}
                 &nbsp;&nbsp;<span class="tit_rel">Relatos Quinzenais:</span><br>
                 {% for evento, relato, ordem in alocado.get_relatos %}
-                    <p style="padding-left: 18px;">
+                    <p style="padding-left: 0.8em;">
                     {% if relato %}
                         <a href="{% url 'relato_visualizar' relato.id %}">
-                            {{ordem|add:1}} - Relato {{evento.endDate}} : Preenchido pelo estudante em {{relato.momento}}
+                            {{ordem|add:1}}&ordm; - 
+                            <span class="opt_full">{{ evento.endDate|date:"DATE_FORMAT" }}:</span>
+                            <span class="opt_short">{{ evento.endDate|date:"d/m/Y" }}:</span>
+                            Preenchido <span class="opt_full">pelo estudante em</span> {{relato.momento}}
                         </a>
                         {% if relato.avaliacao >= 0 %}
                             {% if relato.avaliacao > 0 %}
@@ -444,9 +452,9 @@
     {% endif %}
 
     {% if user.tipo_de_usuario == 4 %}
-        <a href="{% url 'edita_usuario' aluno.user.id %}">
-        <button style="float: right;">Editar</button>
-        </a>
+      <a href="{% url 'edita_usuario' aluno.user.id %}">
+        <button class="btn btn-primary" style="float: right;">Editar</button>
+      </a>
     {% endif %}
 
     <script>

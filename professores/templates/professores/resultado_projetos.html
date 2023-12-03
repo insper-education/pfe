@@ -13,6 +13,31 @@
 
   <script> {% include "tooltip.js" %} </script>
 
+  <style>
+
+    th {
+      background-color: #E6E6E6;
+      padding: 0px 2px 0px 2px;
+    }
+
+    thead tr:nth-of-type(2) th {
+      cursor:pointer;
+      text-align: center;
+    }
+
+    td {
+      padding: 4px;
+    }
+
+    ul {
+      margin-bottom: 6px;
+      padding-left: 1.4em;
+      font-size: 0.9em;
+    }
+
+  </style>
+
+
 {% endblock %}
 
 {% block content %}
@@ -29,6 +54,7 @@
   <table  id="ProjetosTable" class="projetos">
 
     {% if tabela %}
+      <thead>
       <tr>
         <th style="border-right:0px; border-left:0px;"></th>
         <th style="border-right:0px; border-left:0px;"></th>
@@ -42,17 +68,19 @@
         </th>
       </tr>
       <tr>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Projeto</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Período</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Organização</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Orientador</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center" data-toggle="tooltip" data-html="true" animation="true" title="Relatório Intermediária">Inte.</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(6)')" style="cursor:pointer" class="text-center" data-toggle="tooltip" data-html="true" animation="true" title="Relatório Final">Final</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(7)')" style="cursor:pointer" class="text-center" data-toggle="tooltip" data-html="true" animation="true" title="Banca Intermediária">Inte.</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(8)')" style="cursor:pointer" class="text-center" data-toggle="tooltip" data-html="true" animation="true" title="Banca Final">Final</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(9)')" style="cursor:pointer" class="text-center" data-toggle="tooltip" data-html="true" animation="true" title="Banca Falconi">Falc.</th>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(1)')">Projeto</th>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')">Período</th>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')">Organização</th>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(4)')">Orientador</th>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(5)')" data-toggle="tooltip" data-html="true" animation="true" title="Relatório Intermediária">Inter.</th>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(6)')" data-toggle="tooltip" data-html="true" animation="true" title="Relatório Final">Final</th>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(7)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Intermediária">Inte.</th>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(8)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Final">Final</th>
+        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(9)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Falconi">Falc.</th>
       </tr>      
+      </thead>
 
+      <tbody>
       {% for projeto, relatorio_intermediario, relatorio_final, banca_intermediaria, banca_final, banca_falconi in tabela %} 
       <tr class="item"
         {% if banca_falconi.2 >= 8 %}
@@ -75,25 +103,29 @@
               {% include "tipo_projeto.html" %}<br>
             </a>
 
-            <ul class="grupo" style="margin-bottom: 6px;">
+            <ul class="grupo">
               {% for alocacao in projeto.alocacao_set.all %}
                 <li>
                   <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">
                     {{alocacao.aluno}}
                   </a>
-                  <span class="email">
-                    <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
-                  </span>
                   <span class="curso">
                     [{{ alocacao.aluno.curso2 }}]
+                  </span>
+                  <span class="email">
+                    <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
                   </span>
                 </li>
               {% endfor %}
             </ul>
           </td>
-          <td>
+
+          {% comment %} Período {% endcomment %}
+          <td style="text-align: center;"> 
             {{projeto.ano}}.{{projeto.semestre}}
           </td>
+            
+          {% comment %} Organização {% endcomment %}
           <td>
             <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">
               {{ projeto.organizacao.nome }}
@@ -196,7 +228,8 @@
         Não existem projetos disponíveis.
         </td></tr>
       {% endfor %}
-    
+      </tbody>
+
     {% endif %}
 
   </table>

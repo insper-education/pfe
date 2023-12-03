@@ -105,7 +105,7 @@
     <br>
     {% for alocacao, relato in alocacoes_relatos %}
 
-      <div class="panel panel-default border border-secondary" style="display: inline-block; padding: 12px; max-width: 100%;">
+      <div class="panel panel-default border border-secondary rounded" style="display: inline-block; padding: 8px 12px 8px 12px; max-width: 100%;">
 
         <b>Estudante: </b><a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno}}</a><br>
         <b>Data do relato: </b> 
@@ -117,8 +117,8 @@
         <br>
         <textarea id="relato" name="relato" rows="10" cols="160" maxlength="4096" disabled>{{relato.texto}}</textarea><br>
 
-        <label>Desempenho esperado</label>:&nbsp;&nbsp;&nbsp;&nbsp;
-        <div style="width: fit-content;" {% if not relato %}data-toggle="tooltip" data-html="true" animation="true" title="Estudante não entregou relato"{% endif %}>
+        <label>Desempenho:</label>
+        <div style="width: fit-content; display: inline-block; margin-left: 8px;" {% if not relato %}data-toggle="tooltip" data-html="true" animation="true" title="Estudante não entregou relato"{% endif %}>
           <div class="custom-control custom-radio custom-control-inline">
             <input type="radio" id="customRadioInline0{{relato.id}}" name="op.{{relato.id}}" class="custom-control-input"
                     value="1" {% if relato.avaliacao > 0 %}checked="checked"{% endif %} {% if not relato or not editor %}disabled {% endif %}>
@@ -142,7 +142,7 @@
     <p>&nbsp;</p>
 
     {% if editor %}
-      <button type="submit">Enviar</button>
+      <button class="btn btn-primary" type="submit">Concluir Avaliação</button>
     {% endif %}
 
   </form>
