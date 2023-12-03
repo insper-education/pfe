@@ -223,7 +223,7 @@
                         <div style="position: relative; height:203px; width:406px;"><canvas id="radial-grupo{{alocado.id}}"></canvas></div>
                     </div>
                 </div>
-                <small>Exibição radar supõe mesmo peso para todas as avaliações</small><br><br>
+                <small>Exibição radar supõe mesmo peso para todas as avaliações</small>
             
                 {% with medias_oo=alocado.get_medias_oo %}
                     <script>
@@ -408,7 +408,7 @@
                     </script>
                 {% endwith %}
             {% endif %}
-            <br>
+            <br><br>
 
             {% if not alocado.get_relatos|empty_zip %}
                 &nbsp;&nbsp;<span class="tit_rel">Relatos Quinzenais:</span><br>
@@ -419,7 +419,9 @@
                             {{ordem|add:1}}&ordm; - 
                             <span class="opt_full">{{ evento.endDate|date:"DATE_FORMAT" }}:</span>
                             <span class="opt_short">{{ evento.endDate|date:"d/m/Y" }}:</span>
-                            Preenchido <span class="opt_full">pelo estudante em</span> {{relato.momento}}
+                            Preenchido <span class="opt_full">pelo estudante em</span>
+                            <span class="opt_full">{{ relato.momento|date:"DATETIME_FORMAT" }}</span>
+                            <span class="opt_short">{{ relato.momento|date:"SHORT_DATETIME_FORMAT" }}</span>
                         </a>
                         {% if relato.avaliacao >= 0 %}
                             {% if relato.avaliacao > 0 %}

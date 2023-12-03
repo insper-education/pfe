@@ -223,11 +223,13 @@
     {% else %}
       <h3>Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}: </h3>
     {% endif %}
-    &nbsp;&nbsp;&nbsp;&#8614;
-    <a href="{% url 'professor_detail' projeto.orientador.id %}">
-      {{projeto.orientador.user.get_full_name}}
-    </a>
-    <a href="mailto:{{projeto.orientador.user.email}}"> &lt;{{projeto.orientador.user.email}}&gt;</a>
+    <div style="margin-left: 0.3em;">
+      &#8614;
+      <a href="{% url 'professor_detail' projeto.orientador.id %}">
+        {{projeto.orientador.user.get_full_name}}
+      </a>
+      <a href="mailto:{{projeto.orientador.user.email}}"> &lt;{{projeto.orientador.user.email}}&gt;</a>
+    </div>
   {% else %}
     <h3>Orientador: Não definido</h3>
   {% endif %}
@@ -381,19 +383,18 @@
       <ul>
           {% for dinamica in projeto.encontro_set.all %} 
               <li>
-                  {{dinamica.startDate}} - {{dinamica.endDate|date:'H:i'}}
+                  {{dinamica.startDate|date:'j \d\e F \d\e Y \d\a\s H:i'}} às {{dinamica.endDate|date:'H:i'}}
                   <ul>
                     {% if dinamica.location %}
                       <li> local:
                       {% if dinamica.url_location %}
-                        <a href="{{dinamica.location}}">
+                        <a href="{{dinamica.location}}">link vídeo-conferência</a>
+                      {% else %}
+                        <span style="word-break: break-all;">
+                          {{dinamica.location}}
+                        </span>
                       {% endif %}
-                      <span style="word-break: break-all;">
-                      {{dinamica.location}}
-                      </span>
-                      {% if dinamica.url_location %}
-                        </a>
-                      {% endif %}
+                      
                     {% endif %}
                     {% if dinamica.facilitador %}
                       <li>facilitador: 
