@@ -1173,32 +1173,36 @@ class Coorientador(models.Model):
         return mensagem
 
     class Meta:
-        verbose_name = 'Coorientador'
-        verbose_name_plural = 'Coorientadores'
+        verbose_name = "Coorientador"
+        verbose_name_plural = "Coorientadores"
 
 class ObjetivosDeAprendizagem(models.Model):
     """Objetidos de Aprendizagem do curso."""
 
     titulo = models.TextField("Título", max_length=128, null=True, blank=True,
-                              help_text='Título do objetivo de aprendizagem')
+                              help_text="Título do objetivo de aprendizagem")
 
     titulo_en = models.TextField("Título Inglês", max_length=128, null=True, blank=True,
-                              help_text='Título do objetivo de aprendizagem em inglês')
+                                 help_text="Título do objetivo de aprendizagem em inglês")
 
-
+    sigla = models.CharField("sigla", max_length=3, null=True, blank=True,
+                             help_text="Sigla do objetivo de aprendizagem")
+    
+    sigla_en = models.CharField("sigla", max_length=3, null=True, blank=True,
+                                help_text="Sigla do objetivo de aprendizagem em inglês")
 
     objetivo = models.TextField(max_length=256, null=True, blank=True,
-                                help_text='Descrição do objetivo de aprendizagem')
+                                help_text="Descrição do objetivo de aprendizagem")
 
     objetivo_en = models.TextField(max_length=256, null=True, blank=True,
-                                   help_text='Descrição do objetivo de aprendizagem')
+                                   help_text="Descrição do objetivo de aprendizagem")
 
 
     # Rubricas de Grupo Intermediárias e Finais
     rubrica_intermediaria_I = models.TextField(max_length=1024, null=True, blank=True,
-                                               help_text='Rubrica intermediária do conceito I')
+                                               help_text="Rubrica intermediária do conceito I")
     rubrica_final_I = models.TextField(max_length=1024, null=True, blank=True,
-                                       help_text='Rubrica final do conceito I')
+                                       help_text="Rubrica final do conceito I")
     rubrica_intermediaria_D = models.TextField(max_length=1024, null=True, blank=True,
                                                help_text='Rubrica intermediária do conceito D')
     rubrica_final_D = models.TextField(max_length=1024, null=True, blank=True,
@@ -1310,6 +1314,8 @@ class ObjetivosDeAprendizagem(models.Model):
     data_final = models.DateField("Data Final", null=True, blank=True,
                                   help_text='Data Final de Uso')
 
+
+    ### ESSES PESOS PODEM SER REMOVIDOS, NÃO DEVEM SER MAIS USADOS
     peso_intermediario_individual = models.FloatField(default=0,
                                                       help_text='peso intermediário individual')
 
@@ -1330,6 +1336,8 @@ class ObjetivosDeAprendizagem(models.Model):
 
     peso_banca_falconi = models.FloatField(default=0,
                                            help_text='peso para banca falconi')
+    ##############################################################
+
 
     ordem = models.PositiveSmallIntegerField(help_text='ordem para aparecer nas listas')
 
