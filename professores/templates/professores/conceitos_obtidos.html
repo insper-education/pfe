@@ -67,22 +67,22 @@
         this.total = 0;
       }
 
-      soma_conceito(conceito){
+      soma_conceito(conceito) {
         this.avaliacoes += 1
         this.total += converte_nota(conceito);
       }
 
-      soma_nota(nota){
+      soma_nota(nota) {
         this.avaliacoes += 1
         this.total += nota
       }
 
-      nota(){
+      nota() {
         let nota = this.total/this.avaliacoes
         return nota;
       }
 
-      media(){
+      media() {
         let nota = this.nota().toPrecision(3);
         return conceito(nota);
       }
@@ -119,8 +119,8 @@
               contagem += 1;
             }
         }
-
-        return (nota_final/contagem);
+        if(contagem==0) return("N/A");
+        return (nota_final/contagem).toPrecision(3);
       }
 
       media_geral() {
@@ -133,7 +133,8 @@
             }
         }
 
-        return (nota_final/contagem)
+        if(contagem==0) return("N/A");
+        return (nota_final/contagem).toPrecision(3);
       }
 
       media_calculada(){
@@ -142,13 +143,10 @@
 
         descricao += '<span data-toggle="tooltip" data-html="true" animation="true" '
         descricao += ' title="Média usando conceitos finais '
-        descricao += '(cálculo com todos os conceitos intermediários levaria a nota=' + (this.media_geral()).toPrecision(3) + ')">'
+        descricao += '(cálculo com todos os conceitos intermediários levaria a nota=' + (this.media_geral()) + ')">'
         
-        var media_final = this.media();
         descricao += "<b style='font-size: 1.16em;'>";
-        //descricao += conceito(media_final);
-        //descricao += "("+media_final.toPrecision(3)+")";
-        descricao += media_final.toPrecision(3);
+        descricao += this.media();
         descricao += "</b>";
         descricao += '</span>';
 
@@ -217,7 +215,7 @@
     </a>
   {% endfor %}
   </ul>
-  
+
   {% if avaliadores_inter %}
     <h5>
     {% for banca in projeto.banca_set.all %}
@@ -244,14 +242,22 @@
                 <li>{{objetivo.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
                 {{objetivos|get_rubrica:objetivo.id|get_texto_intermediaria_nota:conceito.nota}}">
                 <span id="inter{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
-                <script>$("#inter{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(conceito({{conceito.nota}}));</script>
+                <script>$("#inter{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
+                  {% if conceito.nota %}
+                  conceito({{conceito.nota}})
+                  {% else %}
+                  "N/A"
+                  {% endif %}
+                );</script>
                 
                 <script>
                   objetivo_tmp = new Objetivo();
                   objetivo_tmp.titulo = "{{objetivo.titulo}}"
                   //objetivo_tmp.rubrica = "{{objetivos|get_rubrica:objetivo.id|get_texto_nota:conceito.nota}}"
                   intermediaria.add_objetivo(objetivo_tmp)
-                  intermediaria.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}})
+                  {% if conceito.nota %}
+                    intermediaria.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}});
+                  {% endif %}
                 </script>
 
               {% endif %}{% endfor %}
@@ -312,14 +318,21 @@
                 <li>{{objetivo.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
                 {{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}">
                 <span id="final{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
-                <script>$("#final{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(conceito({{conceito.nota}}));</script>
+                <script>$("#final{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
+                  {% if conceito.nota %}
+                  conceito({{conceito.nota}})
+                  {% else %}
+                  "N/A"
+                  {% endif %}
+                );</script>
                 
                 <script>
                   objetivo_tmp = new Objetivo();
                   objetivo_tmp.titulo = "{{objetivo.titulo}}"
-                  //objetivo_tmp.rubrica = "{{objetivos|get_rubrica:objetivo.id|get_texto_nota:conceito.nota}}"
                   final.add_objetivo(objetivo_tmp)
-                  final.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}})
+                  {% if conceito.nota %}
+                    final.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}});
+                  {% endif %}
                 </script>
 
               {% endif %}{% endfor %}
@@ -385,13 +398,21 @@
                 <li>{{objetivo.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
                 {{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}">
                 <span id="falconi{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
-                <script>$("#falconi{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(conceito({{conceito.nota}}));</script>
+                <script>$("#falconi{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
+                  {% if conceito.nota %}
+                  conceito({{conceito.nota}})
+                  {% else %}
+                  "N/A"
+                  {% endif %}
+                );</script>
                 <script>
                   objetivo_tmp = new Objetivo();
                   objetivo_tmp.titulo = "{{objetivo.titulo}}"
                   //objetivo_tmp.rubrica = "{{objetivos|get_rubrica:objetivo.id|get_texto_nota:conceito.nota}}"
                   falconi.add_objetivo(objetivo_tmp)
-                  falconi.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}})
+                  {% if conceito.nota %}
+                    falconi.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}});
+                  {% endif %}
                 </script>
 
               {% endif %}{% endfor %}
