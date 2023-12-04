@@ -435,20 +435,20 @@ class Observacao_VelhaAdmin(admin.ModelAdmin):
 class RecomendadaAdmin(admin.ModelAdmin):
     """Disciplinas Recomendas para Estudentes terem cursado para aplicar na Proposta."""
 
-    list_display = ('proposta', 'disciplina')
-    ordering = ('proposta',)
-    search_fields = ['proposta__titulo']
+    list_display = ("proposta", "disciplina")
+    ordering = ("proposta",)
+    search_fields = ["proposta__titulo"]
 
 
 @admin.register(Certificado)
 class CertificadoAdmin(admin.ModelAdmin):
     """Certificados emitidos."""
 
-    list_display = ('usuario', 'projeto', 'tipo_de_certificado',)
-    ordering = ('data',)
-    list_filter = ('tipo_de_certificado', 'data', 'projeto__ano', 'projeto__semestre',)
-    search_fields = ['usuario__username', 'projeto__organizacao__sigla',
-                     'projeto__titulo', 'projeto__titulo_final',]
+    list_display = ("usuario", "projeto", "tipo_de_certificado",)
+    ordering = ("data",)
+    list_filter = ("tipo_de_certificado", "data", "projeto__ano", "projeto__semestre",)
+    search_fields = ["usuario__username", "projeto__organizacao__sigla",
+                     "projeto__titulo", "projeto__titulo_final",]
 
 
 @admin.register(Cursada)

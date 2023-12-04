@@ -12,8 +12,8 @@ class ExameAdmin(admin.ModelAdmin):
 class ComposicaoAdmin(admin.ModelAdmin):
     """Composicao."""
     list_display = ("exame", "tipo_documento", "evento", "entregavel", "data_inicial", "data_final")
+    ordering = ("data_inicial",)
     list_filter = ("exame", "tipo_documento", "evento")
-
 
 @admin.register(Peso)
 class PesoAdmin(admin.ModelAdmin):
