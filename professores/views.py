@@ -760,24 +760,33 @@ def banca_avaliar(request, slug):
     
     prazo_preencher_banca = configuracao.prazo_preencher_banca
 
+    mensagem = ""
+
     try:
         banca = Banca.objects.get(slug=slug)
 
         adm = PFEUser.objects.filter(pk=request.user.pk, tipo_de_usuario=4).exists()  # se adm
 
-        if adm:  # é administrador
-            pass  # usuário sempre autorizado
-        elif banca.endDate.date() + datetime.timedelta(days=prazo_preencher_banca) < datetime.date.today():
-            mensagem = "Prazo de submissão da Avaliação de Banca vencido.<br>"
-            mensagem += "Entre em contato com a coordenação do PFE "
-            mensagem += "para enviar sua avaliação.<br>"
-            mensagem += coordenacao.user.get_full_name() + " "
+        vencida = banca.endDate.date() + datetime.timedelta(days=prazo_preencher_banca) < datetime.date.today()
+
+        if vencida:  # prazo vencido
+            mensagem += "<div style='border: 2px solid red; width: fit-content; padding: 6px;'>Prazo de submissão da Avaliação de Banca vencido.<br>"
+            mensagem += "Data do encerramento da banca: " + banca.endDate.strftime("%d/%m/%Y - %H:%M:%S") + "<br>"
+            mensagem += "Número de dias de prazo para preenchimento: " + str(prazo_preencher_banca) + " dias.</div><br>"
+            mensagem += "Entre em contato com a coordenação do PFE para enviar sua avaliação:<br>"
+            mensagem += coordenacao.user.get_full_name() + " &lt;"
             mensagem += "<a href='mailto:" + coordenacao.user.email + "'>"
-            mensagem += coordenacao.user.email + "</a>.<br>"
-            return HttpResponse(mensagem)
+            mensagem += coordenacao.user.email + "&gt;</a>.<br>"
+
+        if vencida and (not adm):  # se administrador passa direto
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, "generic.html", context=context)
 
         if not banca.projeto:
-            return HttpResponseNotFound('<h1>Projeto não encontrado!</h1>')
+            return HttpResponseNotFound("<h1>Projeto não encontrado!</h1>")
 
     except Banca.DoesNotExist:
         return HttpResponseNotFound('<h1>Banca não encontrada!</h1>')
@@ -792,8 +801,8 @@ def banca_avaliar(request, slug):
     else:
         return HttpResponseNotFound('<h1>Tipo de Banca não indentificado</h1>')
 
-    if request.method == 'POST':
-        if 'avaliador' in request.POST:
+    if request.method == "POST":
+        if "avaliador" in request.POST:
 
             avaliador = get_object_or_404(PFEUser,
                                           pk=int(request.POST['avaliador']))
@@ -959,16 +968,17 @@ def banca_avaliar(request, slug):
         observacoes = unquote(request.GET.get('observacoes', ''))
         
         context = {
-            'pessoas': pessoas,
-            'membros': membros,
-            'objetivos': objetivos,
-            'banca': banca,
+            "pessoas": pessoas,
+            "membros": membros,
+            "objetivos": objetivos,
+            "banca": banca,
             "orientacoes": orientacoes,
             "orientacoes_en": orientacoes_en,
             "avaliador": avaliador,
             "conceitos": conceitos,
             "observacoes": observacoes,
             "today": datetime.datetime.now(),
+            "mensagem": mensagem,
         }
         return render(request, 'professores/banca_avaliar.html', context=context)
 

@@ -113,6 +113,10 @@
     <span lang="en">Evaluation Board Form</span>
   </span>  
 
+  {% if mensagem %}
+  <span class="red-bold">{{mensagem|safe|linebreaks}}</span><br>
+  {% endif %}
+
   <span lang="pt"></span><span lang="en"></span>
 
   {% if banca %}
