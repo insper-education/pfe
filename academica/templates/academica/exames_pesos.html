@@ -6,10 +6,16 @@
 {% endcomment %}
 
 {% block head %}
+  {% load static %}
+  {% load l10n %}
   <style>
     th, td {
       padding-left: 4px;
       padding-right: 4px;
+    }
+    ul {
+      margin: 4px;
+      padding: 0px 0px 0px 1.0em;
     }
   </style>
 
@@ -35,25 +41,26 @@
           <tr class="item">
             <td class="text-center"> {{semestre}}</td>
             <td>
+              <ul>
               {% for composicao in composicoes %}
-                {{composicao.exame}}:
+                <li>{{composicao.exame}} ({{composicao.data_inicial|date:"d/m/Y"}} a 
+                       {% if composicao.data_final%}{{composicao.data_final|date:"d/m/Y"}}{% else %}atualmente{% endif %}):
                 {% for peso in composicao.peso_set.all %} 
-                  {% if peso.objetivo %}[{{peso.objetivo.titulo}}{% else %}[Única{% endif %}
-                  =
-                  {{peso.peso|floatformat:2}}] 
+                  {% if peso.objetivo %}[{{peso.objetivo.sigla}}{% else %}[Única{% endif %}={{peso.peso|floatformat:2}}] 
                   {% if peso.peso %}
-                    <script> peso += {{peso.peso}}; </script>
+                    <script> peso += {{peso.peso|unlocalize}}; </script>
                   {% endif %}
-                {% endfor %}<br>
+                {% endfor %}</li>
               {% endfor %}
-              
+              </ul>
             </td>
             <td><span id="peso{{forloop.counter0}}">TO DO</span></td>
           </tr>
-          <script> document.getElementById("peso{{forloop.counter0}}").innerHTML = peso; </script>
+          <script> document.getElementById("peso{{forloop.counter0}}").innerHTML = peso.toFixed(2); </script>
         {% endfor %}
       </tbody>
     </table>
     <br>
+    <small>Terminar o semestre até junho e iniciar a partir de agosto.</small>
   
 {% endblock %}
