@@ -535,7 +535,7 @@ def filtra_composicoes(composicoes, ano, semestre):
     composicoes = composicoes.exclude(data_inicial__year__gt=ano)
     
     if semestre == 1:
-        composicoes = composicoes.exclude(data_inicial__year=ano, data_final__month__gt=6)
+        composicoes = composicoes.exclude(data_inicial__year=ano, data_inicial__month__gt=6)
     else:
         composicoes = composicoes.exclude(data_final__year=ano, data_final__month__lt=8)
 
