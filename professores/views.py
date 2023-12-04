@@ -470,13 +470,16 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
     message += "border-collapse:collapse; padding: 0.3em;'>"
 
     for i in range(objetivos_possiveis):
-        if julgamento[i] and not julgamento[i].na:
+        if julgamento[i]:
             message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
                 format(julgamento[i].objetivo.titulo)
             message += "<td style='border: 1px solid black; text-align:center'>"
-            message += "&nbsp;{0}&nbsp;</td>\n".\
-                format(converte_letra(julgamento[i].nota))
-
+            if julgamento[i].na:
+                message += "&nbsp;N/A&nbsp;</td>\n"
+            else:
+                message += "&nbsp;{0}&nbsp;</td>\n".\
+                    format(converte_letra(julgamento[i].nota))
+                
     message += "</table>"
 
     message += "<br>\n<br>\n"
@@ -554,7 +557,12 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
             message += "Avançado (A/A+)</th>"
 
             message += "</tr>"
-            message += "<tr>"
+
+
+            message += "<tr " 
+            if julg.na:
+                message += " style='background-color: #151515;'"
+            message += ">"
 
             if (not julg.na) and converte_letra(julg.nota) == "I":
                 message += "<td style='border: 2px solid black;"
@@ -565,6 +573,7 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
                 message += "{0}".format(julg.objetivo.rubrica_intermediaria_I)
             else:
                 message += "{0}".format(julg.objetivo.rubrica_final_I)
+
             message += "</td>"
 
             if (not julg.na) and (converte_letra(julg.nota) == "D-" or converte_letra(julg.nota) == "D" or converte_letra(julg.nota) == "D+"):

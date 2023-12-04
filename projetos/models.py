@@ -1460,6 +1460,7 @@ class Avaliacao_Velha(models.Model):
                                    help_text='Data e hora da comunicação') # hora ordena para dia
 
     peso = models.FloatField("Peso", validators=[MinValueValidator(0), MaxValueValidator(100)],
+                             null=True, blank=True,
                              help_text='Pesa da avaliação na média (bancas compartilham peso)',
                              default=10) # 10% para as bancas
 

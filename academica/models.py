@@ -100,7 +100,7 @@ class Peso(models.Model):
     objetivo = models.ForeignKey("projetos.ObjetivosDeAprendizagem", null=True, blank=True,
                                  on_delete=models.SET_NULL)
 
-    peso = models.FloatField("Peso", validators=[MinValueValidator(0), MaxValueValidator(100)],
+    peso = models.FloatField("Peso", validators=[MinValueValidator(0), MaxValueValidator(100)], null=True, blank=True,
                              help_text='Pesa da avaliação na média em % (varia de 0 a 100)')
     class Meta:
         """Meta para Peso."""
