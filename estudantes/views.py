@@ -547,11 +547,11 @@ def filtra_composicoes(composicoes, ano, semestre):
 def exames_pesos(request):
     """Submissão de documentos pelos estudantes."""
     
-    semestres = {}
-    semestres["2018.2"] = filtra_composicoes(Composicao.objects.all(), 2018, 2)
+    semestres = []
+    semestres.append(["2018", "2", filtra_composicoes(Composicao.objects.all(), 2018, 2)])
     for ano in range(2019, 2023):
         for semestre in range(1, 3):
-            semestres[str(ano)+'.'+str(semestre)] = filtra_composicoes(Composicao.objects.all(), ano, semestre)
+            semestres.append([str(ano), str(semestre), filtra_composicoes(Composicao.objects.all(), ano, semestre)])
 
     context = {
         "semestres": semestres,

@@ -8,6 +8,7 @@
 {% block head %}
   {% load static %}
   {% load l10n %}
+  <script>{% include "tooltip.js" %}</script>
   <style>
     th, td {
       padding-left: 4px;
@@ -26,40 +27,56 @@
   <span class="titulo">Exames e Pesos</span>
 
   <div class="atualizar">
-
+    <script> var show = false; </script>
     <table id="ExamesPesosTable">
       <thead>
         <tr>
           <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Semestre</th>
           <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Exames</th>
-          <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Peso</th>
+          <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(3)')" style="cursor:pointer; display: none;" class="text-center">Peso</th>
         </tr>
       </thead>
       <tbody>
-        {% for semestre, composicoes in semestres.items %}
+        {% for ano, semestre, composicoes in semestres %}
           <script> var peso = 0; </script>
-          <tr class="item">
-            <td class="text-center"> {{semestre}}</td>
+          <tr class="item" id="peso{{forloop.counter0}}">
+            <td class="text-center"> {{ano}}.{{semestre}}</td>
             <td>
               <ul>
               {% for composicao in composicoes %}
                 <li>{{composicao.exame}} ({{composicao.data_inicial|date:"d/m/Y"}} a 
                        {% if composicao.data_final%}{{composicao.data_final|date:"d/m/Y"}}{% else %}atualmente{% endif %}):
+                <b id="m{{ano}}{{semestre}}{{forloop.counter0}}"></b>
+                <script> peso_tmp = 0; </script>
                 {% for peso in composicao.peso_set.all %} 
-                  {% if peso.objetivo %}[{{peso.objetivo.sigla}}{% else %}[Única{% endif %}={{peso.peso|floatformat:2}}] 
+                  {% if peso.objetivo %}[<span data-toggle="tooltip" data-placement="bottom" title="{{peso.objetivo.titulo}}"
+                   >{{peso.objetivo.sigla}}</span>{% else %}[Única{% endif %}={{peso.peso|floatformat:2}}] 
                   {% if peso.peso %}
-                    <script> peso += {{peso.peso|unlocalize}}; </script>
+                  <script> peso_tmp += {{peso.peso|unlocalize}}; </script>
                   {% endif %}
                 {% endfor %}</li>
+                <script> peso += peso_tmp; </script>
+                <script> document.getElementById("m{{ano}}{{semestre}}{{forloop.counter0}}").innerHTML = peso_tmp.toFixed(2); </script>
               {% endfor %}
               </ul>
             </td>
-            <td><span id="peso{{forloop.counter0}}">TO DO</span></td>
+            <td style="display: none;"><span id="peso2{{forloop.counter0}}"></span></td>
           </tr>
-          <script> document.getElementById("peso{{forloop.counter0}}").innerHTML = peso.toFixed(2); </script>
+          <script>
+            document.getElementById("peso2{{forloop.counter0}}").innerHTML = peso.toFixed(2);
+            if (peso > 100.1 || peso < 99.9) {
+              document.getElementById("peso{{forloop.counter0}}").style.background = "LightSalmon";
+              show = true;
+            }
+          </script>
         {% endfor %}
       </tbody>
     </table>
+    <script>
+      if (show) {
+        $('#ExamesPesosTable tr > *:nth-child(3)').show();
+      }
+    </script>
     <br>
     <small>Terminar o semestre até junho e iniciar a partir de agosto.</small>
   
