@@ -258,7 +258,7 @@ def cadastrar_usuario(request):
     }
 
     # Passado o tipo e nome da organização do parceiro (se o caso) a ser cadastrado
-    tipo = request.GET.get('tipo', None)
+    tipo = request.GET.get("tipo", None)
     if tipo:
         if tipo == "parceiro":
             organizacao_str = request.GET.get('organizacao', None)
@@ -275,10 +275,25 @@ def cadastrar_usuario(request):
         elif tipo == "estudante":
             pass
         else:
-            return HttpResponseNotFound('<h1>Tipo não reconhecido!</h1>')
+            return HttpResponseNotFound("<h1>Tipo não reconhecido!</h1>")
         context["tipo"] = tipo
+    
+    proposta_id = request.GET.get("proposta", None)
+    if proposta_id:
+        proposta = get_object_or_404(Proposta, id=proposta_id)
+        mensagem = ""
+        if proposta.contatos_tecnicos:
+            mensagem += "<b>Contatos Técnicos apresentados na Propota: " + str(proposta.id) + "</b><br>"
+            mensagem += proposta.contatos_tecnicos
+            mensagem += "<br>"
+        if proposta.contatos_administrativos:
+            mensagem += "<b>Contatos Administrativos apresentados na Propota: " + str(proposta.id) + "</b><br>"
+            mensagem += proposta.contatos_administrativos
+            mensagem += "<br>"
 
-    return render(request, 'administracao/cadastra_usuario.html', context)
+        context["mensagem"] = mensagem
+
+    return render(request, "administracao/cadastra_usuario.html", context)
 
 
 @login_required

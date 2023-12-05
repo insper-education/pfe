@@ -33,6 +33,12 @@
   </span>
   <br>
 
+  {% if mensagem %}
+    <div style="border: 2px solid red; padding: 4px; width: fit-content;">
+      {{ mensagem|safe|linebreaks }}
+    </div><br>
+  {% endif %}
+
   <form class="myForm" action="" id="cadastrauser" method="post" enctype="multipart/form-data"> {% csrf_token %}
   
     <input type="radio" class="tipo" name="tipo_de_usuario" id="estudante" value="estudante" required {% if tipo == "estudante"%}checked="checked"{% endif %}> <label for="estudante"> Estudante</label>&nbsp;&nbsp;&nbsp;

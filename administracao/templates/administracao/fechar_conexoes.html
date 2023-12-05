@@ -148,7 +148,7 @@
 
       <small><a style="margin-left: 16px; padding: 2px 4px 2px 4px; background: lightgreen; border: 1px solid grey; border-radius: 3px;"
         target="_blank" rel="noopener noreferrer" 
-        href='{% url "cadastrar_usuario" %}?tipo=parceiro&organizacao={{projeto.organizacao.id}}'>
+        href='{% url "cadastrar_usuario" %}?tipo=parceiro&organizacao={{projeto.organizacao.id}}&proposta={{projeto.proposta.id}}'>
         Cadastrar novo parceiro em {{projeto.organizacao.nome}}
       </a></small>
 
@@ -175,6 +175,12 @@
   {% else %}
     <p>Não existem projetos fechados nesse semestre.</p><br>
   {% endif %}
+
+  <small>
+    GR: Gestor Responsável |
+    MT: Mentor Técnico |
+    AA: Apoio Administrativo<br>
+  </small>
 
   <br>
   <b>Total de projetos:</b> {{projetos|length}}<br>
