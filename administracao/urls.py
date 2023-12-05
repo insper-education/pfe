@@ -90,6 +90,10 @@ urlpatterns = [
          views.selecionar_orientadores,
          name='selecionar_orientadores'),
 
+    path('fechar_conexoes/',
+         views.fechar_conexoes,
+         name='fechar_conexoes'),
+
     path('servico/',
          views.servico,
          name='servico'),

@@ -789,6 +789,7 @@ def selecionar_orientadores(request):
     configuracao = get_object_or_404(Configuracao)
     ano = configuracao.ano
     semestre = configuracao.semestre
+    ano, semestre = adianta_semestre(ano, semestre)
 
     mensagem = ""
     mensagem += "A visualização de novos projetos pelos estudantes só ocorre quando se<br>"
@@ -796,11 +797,8 @@ def selecionar_orientadores(request):
     href = reverse("configurar")
     mensagem += "<a href='"+href+"'>[Área Administrativa > Configurar]</a><br>"
 
-    if 'mensagem' in request.session:
-        mensagem += request.session['mensagem']
-
-    # Vai para próximo semestre
-    ano, semestre = adianta_semestre(ano, semestre)
+    if "mensagem" in request.session:
+        mensagem += request.session["mensagem"]
 
     projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
 
@@ -814,12 +812,49 @@ def selecionar_orientadores(request):
         mensagem += "você pode mexer na tela, contudo suas modificações não serão salvas."
 
     context = {
-        'mensagem': mensagem,
-        'projetos': projetos,
-        'orientadores': orientadores,
+        "mensagem": mensagem,
+        "projetos": projetos,
+        "orientadores": orientadores,
     }
 
-    return render(request, 'administracao/selecionar_orientadores.html', context=context)
+    return render(request, "administracao/selecionar_orientadores.html", context=context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def fechar_conexoes(request):
+    """Selecionar Conexões com Organizações."""
+    configuracao = get_object_or_404(Configuracao)
+    ano = configuracao.ano
+    semestre = configuracao.semestre
+    ano, semestre = adianta_semestre(ano, semestre)
+
+    mensagem = ""
+    mensagem += "A visualização de novos projetos pelos estudantes só ocorre quando se<br>"
+    mensagem += "avança o semestre corrente na área de Configuração do PFE.<br>"
+    href = reverse("configurar")
+    mensagem += "<a href='"+href+"'>[Área Administrativa > Configurar]</a><br>"
+
+    if "mensagem" in request.session:
+        mensagem += request.session["mensagem"]
+    
+    projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
+
+    professores = PFEUser.objects.filter(tipo_de_usuario=2)  # (2, 'professor')
+    administradores = PFEUser.objects.filter(tipo_de_usuario=4)  # (4, 'administrador')
+    orientadores = (professores | administradores).order_by(Lower("first_name"), Lower("last_name"))
+
+    # Checa se usuário é administrador ou professor
+    if request.user.tipo_de_usuario != 4:  # admin
+        mensagem = "Sua conta não é de administrador, "
+        mensagem += "você pode mexer na tela, contudo suas modificações não serão salvas."
+
+    context = {
+        "mensagem": mensagem,
+        "projetos": projetos,
+    }
+
+    return render(request, "administracao/fechar_conexoes.html", context=context)
 
 
 @login_required

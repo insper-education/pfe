@@ -61,8 +61,8 @@
             type: "POST",
             url: '{% url "excluir_disciplina" %}',
             data: {
-                'disciplina_id': disciplina,
-                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                "disciplina_id": disciplina,
+                "csrfmiddlewaretoken": "{{ csrf_token }}"",
             },
             success: function(response){
               $('#disciplina'+disciplina).remove();

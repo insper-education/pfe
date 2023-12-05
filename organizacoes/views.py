@@ -649,16 +649,44 @@ def todos_parceiros(request):
 def seleciona_conexoes(request):
     """Exibe todas os parceiros de uma organização específica."""
     # Passado o id do projeto
-    projeto_id = request.GET.get('projeto', None)
-
+    projeto_id = request.GET.get("projeto", None)
     projeto = get_object_or_404(Projeto, id=projeto_id)
+
+    if request.is_ajax():
+
+        parceiro_id = request.POST["parceiro_id"]
+        parceiro = get_object_or_404(Parceiro, id=parceiro_id)
+
+        (conexao, _created) = Conexao.objects.get_or_create(parceiro=parceiro,
+                                                            projeto=projeto)
+
+        if "gestor_responsavel" == request.POST["tipo"]:
+            conexao.gestor_responsavel = (request.POST["checked"] == "true")
+        elif "mentor_tecnico" == request.POST["tipo"]:
+            conexao.mentor_tecnico = (request.POST["checked"] == "true")
+        elif "recursos_humanos" == request.POST["tipo"]:
+            conexao.recursos_humanos = (request.POST["checked"] == "true")
+        else:
+            return HttpResponseNotFound('<h1>Tipo de conexão não encontrado!</h1>')
+
+        if (not conexao.gestor_responsavel) and \
+           (not conexao.mentor_tecnico) and \
+           (not conexao.recursos_humanos):
+            conexao.delete()
+        else:
+            conexao.save()
+
+        data = {
+            "atualizado": True,
+        }
+        return JsonResponse(data)
 
     if projeto.organizacao:
         parceiros = Parceiro.objects.filter(organizacao=projeto.organizacao)
     else:
         return HttpResponseNotFound('<h1>Projeto não tem organização definida!</h1>')
 
-    if request.method == 'POST':
+    if request.method == "POST":
 
         gestor_responsavel = request.POST.getlist("gestor_responsavel")
         mentor_tecnico = request.POST.getlist("mentor_tecnico")

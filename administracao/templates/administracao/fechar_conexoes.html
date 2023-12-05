@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 25 de Junho de 2020
+{% endcomment %}
+
+{% block head %}
+
+  {% load static %}
+  {% load conexoes %}
+
+  {% comment %} Para chamar os Tooltips {% endcomment %}
+  <script>{% include "tooltip.js" %}</script>
+  <script src="{% static 'js/w3.js' %}"></script>
+
+  <style>
+    .projeto_sel {
+      border: 1px solid #ccc;
+      padding: 12px;
+      margin-bottom: 5px;
+      rouding: 5px;
+      border-radius: 5px;
+      background: #FFFFFF;
+    }
+
+    #lista_projetos {
+      display: block;
+      width: calc(100% - 29em);
+    }
+
+    @media (max-width: 1200px) {
+      #lista_projetos {
+        width: 100%;
+      }
+    }
+
+    .btn-outline-success:hover {
+      background-color: lightgreen !important;
+    }
+
+  </style>
+
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">Selecionar Conexões com Organizações</span>
+
+  {% if mensagem %}
+    <span class="red-bold">{{mensagem|safe|linebreaks}}</span>
+    <br>
+  {% endif %}
+
+  {% comment %}
+  <label for="filter">Edição:</label>
+  <select id="filter" onchange="location = this.options[this.selectedIndex].value;">
+    {% for loop in loop_anos %}
+      <option value="{{loop}}.2" {% if ano == loop and semestre == 2 %}selected{% endif %}>{{loop}}.2</option>
+      <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
+    {% endfor %}
+  </select>
+  {% endcomment %}
+
+  {% comment %} class="container-fluid" {% endcomment %}
+  <div id="lista_projetos">
+  {% if projetos %}
+
+    {% for projeto in projetos %}
+    <div class="projeto_sel">
+      <a href="{% url 'projeto_completo' projeto.id %}"> 
+        {{projeto.titulo}}
+      </a>
+      <a href="{% url 'organizacao_completo' projeto.organizacao.id %}" class="dark-blue-bold">({{ projeto.organizacao.nome }})</a>
+      <br>
+      
+      {% with conexoes=projeto.conexao_set.all %}
+      <table class="table table-borderless table-sm" style="width: 90%; border-collapse:separate; border-spacing: 4px 6px; margin-left: 6px; margin-right: 12px; margin-bottom: 6px; border: 0px;">
+        <tbody>
+          {% for parceiro in projeto.organizacao.parceiro_set.all %}
+            <tr style="background: #F0F0F0; line-height:1; height: 1px;"><td style="vertical-align: middle;">
+
+              <a href="{% url 'parceiro_detail' parceiro.id %}">{{ parceiro.user.get_full_name }}</a>
+              <a href="mailto:{{parceiro.user.email}}"> &lt;{{parceiro.user.email}}&gt;</a>
+              {% for papel in parceiro.get_papeis %}
+                <span class="opt_full">[{{papel.0}}]</span>
+                <span class="opt_short" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.0}}">[{{papel.1}}]</span>
+              {% endfor %}
+              {% if parceiro.observacao %}&nbsp;&nbsp;obs: {{parceiro.observacao}}{% endif %}
+
+            </td>
+              {% with conexao=conexoes|get_conexao:parceiro %}
+                  <td style="text-align: center; padding: 0px; width: 1%; height: inherit;">
+                      <div class="btn-group-toggle" data-toggle="buttons" style="height: 100%;">
+                        <label class="btn btn-outline-success btn-sm
+                        {% if conexao and conexao.gestor_responsavel %}active{% endif %}
+                        " style="padding-bottom: 1px; padding-top: 1px; height: 100%;">
+                          <input class="conexao" type="checkbox" data-projeto="{{projeto.id}}"
+                                 name="gestor_responsavel" value="{{parceiro.id}}" checked>GR</label>
+                      </div>
+                    </td>
+                  <td style="text-align: center; padding: 0px; width: 1%; height: inherit;">
+                      <div class="btn-group-toggle" data-toggle="buttons" style="height: 100%;">
+                        <label class="btn btn-outline-success btn-sm
+                        {% if conexao and conexao.mentor_tecnico %}active{% endif %}
+                        " style="padding-bottom: 1px; padding-top: 1px; height: 100%;">
+                          <input class="conexao" type="checkbox" data-projeto="{{projeto.id}}"
+                                 name="mentor_tecnico" value="{{parceiro.id}}" checked>MT</label>
+                      </div>
+                    </td>
+                  <td style="text-align: center; padding: 0px; width: 1%; height: inherit;">
+                      <div class="btn-group-toggle" data-toggle="buttons" style="height: 100%;">
+                        <label class="btn btn-outline-success btn-sm
+                        {% if conexao and conexao.recursos_humanos %}active{% endif %}
+                        " style="padding-bottom: 1px; padding-top: 1px; height: 100%;">
+                          <input class="conexao" type="checkbox" data-projeto="{{projeto.id}}"
+                                 name="recursos_humanos" value="{{parceiro.id}}" checked>AA</label>
+                      </div>
+                    </td>
+
+              {% endwith %}
+            
+            </tr>
+
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div style="border:1px solid grey; padding: 2px 4px 2px 4px; margin: 6px 2px 2px 10px; border-radius: 5px; width: 90%;">
+        <strong>Contatos Técnicos apresentados na Propota</strong><br>
+        {% if projeto.proposta.contatos_tecnicos %}
+          {{projeto.proposta.contatos_tecnicos|linebreaks|urlize}}
+        {% else %}
+          <span style="color: red;">Não há contatos técnicos definidos na proposta.</span>
+        {% endif %}
+      </div>
+
+      <div style="border:1px solid grey; padding: 2px 4px 2px 4px; margin: 6px 2px 2px 10px; border-radius: 5px; width: 90%;">
+        <strong>Contatos Administrativos apresentados na Propota</strong><br>
+        {% if projeto.proposta.contatos_administrativos %}
+          {{projeto.proposta.contatos_administrativos|linebreaks|urlize}}
+        {% else %}
+          <span style="color: red;">Não há contatos administrativos definidos na proposta.</span>
+        {% endif %}
+      </div>
+
+      {% endwith %}
+
+      <small><a style="margin-left: 16px; padding: 2px 4px 2px 4px; background: lightgreen; border: 1px solid grey; border-radius: 3px;"
+        target="_blank" rel="noopener noreferrer" 
+        href='{% url "cadastrar_usuario" %}?tipo=parceiro&organizacao={{projeto.organizacao.id}}'>
+        Cadastrar novo parceiro em {{projeto.organizacao.nome}}
+      </a></small>
+
+      {% comment %}       
+      <small>
+      <ol style="margin-bottom: 6px;">
+        {% for alocacao in projeto.alocacao_set.all %}
+          <li><a href="{% url 'estudante_detail' alocacao.aluno.id %}"
+              data-toggle="tooltip" data-html="true" animation="true" title="">
+              {{alocacao.aluno.user.get_full_name}}
+              </a>
+              <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
+              [{{ alocacao.aluno.curso2 }}]
+              {% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}
+          </li>
+        {% endfor %}  
+      </ol>
+      </small>
+      {% endcomment %}
+
+    </div>
+    {% endfor %}
+
+  {% else %}
+    <p>Não existem projetos fechados nesse semestre.</p><br>
+  {% endif %}
+
+  <br>
+  <b>Total de projetos:</b> {{projetos|length}}<br>
+
+  </div>
+
+  <br>
+  <h5>Links:</h5>
+  <ul>
+   <li><a href="{% url 'projetos_fechados' %}"> Visualizar Projetos Fechados</a></li>
+  </ul>
+
+  <script>
+
+    
+  $('.conexao').change(function(evt){
+    
+    $.ajax({
+      url: "{% url 'seleciona_conexoes' %}?projeto="+evt.target.dataset.projeto,
+      data: {
+        "csrfmiddlewaretoken": "{{ csrf_token }}",
+        "tipo": evt.target.name,
+        "parceiro_id": evt.target.value,
+        "checked": evt.target.checked,
+      },
+      type: "POST",
+      dataType: "json",
+      success: function (data) {
+        if (data.atualizado) {
+          //console.log("Valor atualizado.");
+        } else {
+            console.log("Valor não atualizado.");
+        }
+      },
+      error: function (request, status, error) {
+        {% if user.tipo_de_usuario == 4 %} 
+          alert(request.responseText);
+          jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
+          console.log("error"+request.responseText);
+        {% else %}
+          jQuery("body").html("Erro no servidor do PFE. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
+        {% endif %}
+      }
+    });
+  
+  });
+
+    
+  </script>
+
+{% endblock %}
