@@ -10,6 +10,12 @@
   {% load static %}
   {% load l10n %}
 
+  <style>
+    td {
+      padding: 2px 5px 2px 5px;
+    }
+    </style>
+
 
 {% endblock %}
 
@@ -28,7 +34,7 @@
       {% if bancas %}
       <table>
         <thead>
-          <tr>
+          <tr style="background: #F0F0F0;">
             <th scope="col" style="text-align:center;">
               <b>Orientador</b>
             </th>
@@ -74,11 +80,9 @@
           {% endfor %}
         </tbody>
       </table>
-    
+          
       <br>
-      
-      <br><br>
-      <button id="submit" type="submit">Enviar mensagens</button>
+      <button class="btn btn-primary" id="submit" type="submit">Enviar mensagens</button>
 
     </form>
   {% else %}
