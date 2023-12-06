@@ -48,7 +48,7 @@ from projetos.resources import ConfiguracaoResource
 from projetos.resources import FeedbacksResource
 from projetos.resources import UsuariosResource
 
-from users.models import PFEUser, Aluno, Professor, Administrador
+from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador
 from users.models import Opcao, Alocacao
 
 from users.support import adianta_semestre
@@ -255,6 +255,8 @@ def cadastrar_usuario(request):
         "organizacoes": Organizacao.objects.all().order_by("nome"),
         "cursos": Curso.objects.all().order_by("id"),
         "PFEUser": PFEUser,
+        "Professor": Professor,
+        "Parceiro": Parceiro,
     }
 
     # Passado o tipo e nome da organização do parceiro (se o caso) a ser cadastrado
@@ -328,6 +330,9 @@ def edita_usuario(request, primarykey):
         "organizacoes": Organizacao.objects.all(),
         "cursos": Curso.objects.all().order_by("id"),
         "PFEUser": PFEUser,
+        "Professor": Professor,
+        "Parceiro": Parceiro,
+
     }
 
     if user.tipo_de_usuario == 1:
