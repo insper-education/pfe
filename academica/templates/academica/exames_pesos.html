@@ -30,7 +30,7 @@
     <script> var show = false; </script>
     <table id="ExamesPesosTable">
       <thead>
-        <tr>
+        <tr style="background: #F0F0F0;">
           <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer;" class="text-center">Semestre</th>
           <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer;" class="text-center">Exames</th>
           <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(3)')" style="cursor:pointer; display: none;" class="text-center">Peso</th>
@@ -44,19 +44,22 @@
             <td>
               <ul>
               {% for composicao in composicoes %}
-                <li>{{composicao.exame}} ({{composicao.data_inicial|date:"d/m/Y"}} a 
-                       {% if composicao.data_final%}{{composicao.data_final|date:"d/m/Y"}}{% else %}atualmente{% endif %}):
-                <b id="m{{ano}}{{semestre}}{{forloop.counter0}}"></b>
-                <script> peso_tmp = 0; </script>
-                {% for peso in composicao.peso_set.all %} 
-                  {% if peso.objetivo %}[<span data-toggle="tooltip" data-placement="bottom" title="{{peso.objetivo.titulo}}"
-                   >{{peso.objetivo.sigla}}</span>{% else %}[Única{% endif %}={{peso.peso|floatformat:2}}] 
-                  {% if peso.peso %}
-                  <script> peso_tmp += {{peso.peso|unlocalize}}; </script>
-                  {% endif %}
-                {% endfor %}</li>
+                <li><span style="display: inline-block; width: 29em;">{{composicao.exame}} ({{composicao.data_inicial|date:"d/m/Y"}} a 
+                       {% if composicao.data_final%}{{composicao.data_final|date:"d/m/Y"}}{% else %}atualmente{% endif %}):</span>
+                  <span style="display: inline-block; width: 33em;">
+                    <b id="m{{ano}}{{semestre}}{{forloop.counter0}}"></b>
+                    <script> peso_tmp = 0; </script>
+                    {% for peso in composicao.peso_set.all %} 
+                      {% if peso.objetivo %}[<span data-toggle="tooltip" data-placement="bottom" title="{{peso.objetivo.titulo}}"
+                      >{{peso.objetivo.sigla}}</span>{% else %}[Única{% endif %}={{peso.peso|floatformat:2}}] 
+                      {% if peso.peso %}
+                      <script> peso_tmp += {{peso.peso|unlocalize}}; </script>
+                      {% endif %}
+                    {% endfor %}
+                  </span>
+                </li>
                 <script> peso += peso_tmp; </script>
-                <script> document.getElementById("m{{ano}}{{semestre}}{{forloop.counter0}}").innerHTML = peso_tmp.toFixed(2); </script>
+                <script> document.getElementById("m{{ano}}{{semestre}}{{forloop.counter0}}").innerHTML = peso_tmp.toFixed(2)+"%"; </script>
               {% endfor %}
               </ul>
             </td>
