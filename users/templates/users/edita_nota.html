@@ -51,7 +51,9 @@
   <form method="post"> {% csrf_token %}
 
     {% for composicao in composicoes %}
+
       {% if composicao.exame %}
+
         {% with avaliadores=avaliacoes|pega_avaliadores:composicao.exame|add_orientador:alocacao.projeto %}
         {% for aval_id, aval_first_name, aval_last_name in avaliadores %}
           <b>{{composicao.exame.titulo}} [{{aval_first_name}} {{aval_last_name}}] : <span id="a{{composicao.exame.id}}_media"></span></b>
@@ -117,6 +119,7 @@
         {% endwith %} 
 
       {% endif %}
+
     {% endfor %}
     <br>
 

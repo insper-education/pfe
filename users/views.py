@@ -524,14 +524,13 @@ def edita_notas(request, primarykey):
 
     if request.method == 'POST':
 
-        if request.user:
-            if request.user.tipo_de_usuario != 4:  # não é admin
-                mensagem = "Você não tem autorização de modificar notas!"
-                context = {
-                    "area_principal": True,
-                    "mensagem": mensagem,
-                }
-                return render(request, 'generic.html', context=context)
+        if request.user and request.user.tipo_de_usuario != 4:  # não é admin
+            mensagem = "Você não tem autorização de modificar notas!"
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, 'generic.html', context=context)
 
         for composicao in composicoes:
             if composicao.exame:
@@ -618,7 +617,7 @@ def edita_notas(request, primarykey):
         return render(request, 'generic.html', context=context)
 
     context = {
-        'alocacao': alocacao,
+        "alocacao": alocacao,
         "composicoes": composicoes,
         "avaliacoes": avaliacoes,
         "observacoes": observacoes,
