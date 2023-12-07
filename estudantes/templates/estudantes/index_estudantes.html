@@ -116,9 +116,9 @@
 
     {% if ano == user.aluno.anoPFE and semestre == user.aluno.semestrePFE %}
         &nbsp;&nbsp;
-        <font color="red">Prazo para a seleção dos propostas {{ano}}.{{semestre}}:
+        <font color="red">Prazo para a seleção das propostas {{ano}}.{{semestre}}:
             <b>
-            {% if configuracao.liberadas_propostas %}
+            {% if configuracao.liberadas_propostas and limite_propostas %}
                 {{limite_propostas}}
             {% else %}
                 ainda não liberado
@@ -146,13 +146,13 @@
     {% comment %} Verificar Horário das Bancas {% endcomment %}
     <hr>
     <a {% if not projeto %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'minhas_bancas' %}" {% endif %} >
-        <h5>Horário das bancas</h5>
+        <h5>Horário das Bancas</h5>
     </a>
     
     {% comment %} tipo_de_usuario == 1 é aluno {% endcomment %}
     <hr>
     <a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'encontros_marcar' %}" {% endif %} >
-        <h5>Agendar horário das mentorias</h5>
+        <h5>Agendar Horário de Mentoria</h5>
     </a>
 
     {% comment %} Relato Quinzenal {% endcomment %}

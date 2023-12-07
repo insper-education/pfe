@@ -34,7 +34,7 @@ from academica.models import Composicao
 
 from .models import Relato, Pares
 
-from administracao.support import get_limite_propostas, usuario_sem_acesso
+from administracao.support import get_limite_propostas, get_limite_propostas2, usuario_sem_acesso
 
 from administracao.models import Carta
 
@@ -92,7 +92,9 @@ def index_estudantes(request):
         return HttpResponse("Usuário sem acesso.", status=401)
 
     context["ano"], context["semestre"] = adianta_semestre(ano, semestre)
-    context["limite_propostas"] = get_limite_propostas(configuracao)
+
+    #get_limite_propostas2 return None caso não haja limite
+    context["limite_propostas"] = get_limite_propostas2(configuracao)
 
     return render(request, 'estudantes/index_estudantes.html', context=context)
 

@@ -41,6 +41,18 @@ def get_limite_propostas(configuracao):
     inicio_pfe = dateutil.parser.parse("07/06/2018").date()
     return inicio_pfe
 
+# Melhor dar preferência para essa rotina que retorna None se não houver data planejada
+def get_limite_propostas2(configuracao):
+    if configuracao.semestre == 1:
+        evento = Evento.objects.filter(tipo_de_evento=123, endDate__year=configuracao.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
+    else:
+        evento = Evento.objects.filter(tipo_de_evento=123, endDate__year=configuracao.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
+    # (123, 'Indicação de interesse nos projetos do próximo semestre pelos estudante')
+
+    if evento is None:
+        return None    
+    return evento.endDate
+    
 def get_data_planejada(configuracao):
     if configuracao.semestre == 1:
         evento = Evento.objects.filter(tipo_de_evento=113, endDate__year=configuracao.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()

@@ -26,8 +26,6 @@
   {% with alocados=aluno.alocacao_set.all.reverse %}
     <span class="titulo">Projeto(s) Alocado(s)</span>
     <br>
-    {% if alocados.lengh > 1 %}TESTE{% else %}UMSO{% endif %}
-
     {% for alocado in aluno.alocacao_set.all.reverse %}
 
       <h4>[{{alocado.projeto.ano}}.{{alocado.projeto.semestre}}]</h4>
