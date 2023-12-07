@@ -51,11 +51,11 @@ class PFEUser(AbstractUser):
         models.PositiveSmallIntegerField(choices=TIPO_DE_USUARIO_CHOICES, default=1,
                                          help_text="cada usuário tem um perfil único")
 
-    telefone = models.CharField(max_length=20, blank=True,
+    telefone = models.CharField(max_length=20, null=True, blank=True,
                                 help_text="Telefone Fixo")
-    celular = models.CharField(max_length=20, blank=True,
+    celular = models.CharField(max_length=20, null=True, blank=True,
                                help_text="Telefone Celular")
-    instant_messaging = models.CharField(max_length=32, blank=True,
+    instant_messaging = models.CharField(max_length=32, null=True, blank=True,
                              help_text="Identificação IM, como Skype, Zoom, Teams, etc")
 
     linkedin = models.URLField("LinkedIn", max_length=256, null=True, blank=True,
@@ -65,7 +65,7 @@ class PFEUser(AbstractUser):
         models.BooleanField("Membro do Comitê", default=False, help_text='caso membro do comitê do PFE')
 
     GENERO_CHOICES = (
-        ('X', 'Nao Informado'),
+        ('X', 'Não Informado'),
         ('M', 'Masculino'),
         ('F', 'Feminino'),
     )

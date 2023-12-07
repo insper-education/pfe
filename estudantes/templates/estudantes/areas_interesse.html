@@ -7,7 +7,7 @@
 
 {% block content %}
 
-    <span class="titulo">Áreas de Interesse</span>
+    {% comment %} <span class="titulo">Áreas de Interesse</span>
 
     {% if mensagem %}
         <h5 class="red-bold">{{mensagem}}</h5>
@@ -19,6 +19,6 @@
         {% if not vencido %}
             <button type="submit">Atualizar</button>
         {% endif %}
-    </form>
+    </form> {% endcomment %}
 
 {% endblock %}

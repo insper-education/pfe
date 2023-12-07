@@ -97,30 +97,30 @@ def index_estudantes(request):
     return render(request, 'estudantes/index_estudantes.html', context=context)
 
 
-@login_required
-def areas_interesse(request):
-    """Para estudantes definirem suas áreas de interesse."""
-    context = {'areast': Area.objects.filter(ativa=True),}
+# @login_required
+# def areas_interesse(request):
+#     """Para estudantes definirem suas áreas de interesse."""
+#     context = {'areast': Area.objects.filter(ativa=True),}
 
-    # Caso seja estudante
-    if request.user.tipo_de_usuario == 1:  # Estudante
-        vencido = configuracao_estudante_vencida(request.user.aluno)
-        if (not vencido) and request.method == 'POST':
-            cria_area_estudante(request, request.user.aluno)
-            return render(request, 'users/atualizado.html',)
-        context['vencido'] = vencido
-        context['estudante'] = request.user.aluno
+#     # Caso seja estudante
+#     if request.user.tipo_de_usuario == 1:  # Estudante
+#         vencido = configuracao_estudante_vencida(request.user.aluno)
+#         if (not vencido) and request.method == 'POST':
+#             cria_area_estudante(request, request.user.aluno)
+#             return render(request, 'users/atualizado.html',)
+#         context['vencido'] = vencido
+#         context['estudante'] = request.user.aluno
 
-    # caso Professores ou Administrador
-    elif request.user.tipo_de_usuario in (2, 4):
-        context['mensagem'] = "Você não está cadastrado como estudante."
-        context['vencido'] = True
+#     # caso Professores ou Administrador
+#     elif request.user.tipo_de_usuario in (2, 4):
+#         context['mensagem'] = "Você não está cadastrado como estudante."
+#         context['vencido'] = True
 
-    # caso não seja Estudante, Professor ou Administrador (ou seja Parceiro)
-    v = usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
-    if v: return v  # Prof, Adm
+#     # caso não seja Estudante, Professor ou Administrador (ou seja Parceiro)
+#     v = usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
+#     if v: return v  # Prof, Adm
 
-    return render(request, 'estudantes/areas_interesse.html', context=context)
+#     return render(request, 'estudantes/areas_interesse.html', context=context)
 
 
 @login_required
@@ -403,7 +403,7 @@ def avaliacao_pares(request, momento):
 @login_required
 @transaction.atomic
 def informacoes_adicionais(request):
-    """Perguntas aos estudantes de trabalho/entidades/social/familia."""
+    """Perguntas aos estudantes de áreas de interesse, trabalho/entidades/social/familia, telefone."""
     v = usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
     if v: return v  # Prof, Adm
 
@@ -411,32 +411,36 @@ def informacoes_adicionais(request):
 
         estudante = request.user.aluno
 
-        vencido = configuracao_estudante_vencida(estudante)
+        vencido = configuracao_estudante_vencida(request.user.aluno)
 
         if (not vencido) and request.method == 'POST':
 
-            estudante.trabalhou = request.POST.get("trabalhou", None)
-            estudante.social = request.POST.get("social", None)
-            estudante.entidade = request.POST.get("entidade", None)
-            estudante.familia = request.POST.get("familia", None)
+            cria_area_estudante(request, request.user.aluno)
 
-            estudante.user.linkedin = request.POST.get("linkedin", None)
-            estudante.user.save()
+            request.user.aluno.trabalhou = request.POST.get("trabalhou", None)
+            request.user.aluno.social = request.POST.get("social", None)
+            request.user.aluno.entidade = request.POST.get("entidade", None)
+            request.user.aluno.familia = request.POST.get("familia", None)
 
-            estudante.save()
+            request.user.linkedin = request.POST.get("linkedin", None)
+            request.user.celular = request.POST.get("celular", None)
+
+            request.user.save()
+            request.user.aluno.save()
             return render(request, "users/atualizado.html",)
 
         context = {
             "vencido": vencido,
             "estudante": estudante,
-            "entidades": Entidade.objects.all(),
         }
     else:  # Supostamente professores
         context = {
             "mensagem": "Você não está cadastrado como estudante.",
             "vencido": True,
-            "entidades": Entidade.objects.all(),
         }
+    
+    context["entidades"] = Entidade.objects.all()
+    context["areast"] = Area.objects.filter(ativa=True)
 
     return render(request, "estudantes/informacoes_adicionais.html", context)
 
