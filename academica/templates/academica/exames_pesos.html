@@ -28,6 +28,9 @@
 
   <div class="atualizar">
     <script> var show = false; </script>
+
+    <div class="table-responsive">
+
     <table id="ExamesPesosTable">
       <thead>
         <tr style="background: #F0F0F0;">
@@ -75,6 +78,8 @@
         {% endfor %}
       </tbody>
     </table>
+
+    </div>
     <script>
       if (show) {
         $('#ExamesPesosTable tr > *:nth-child(3)').show();
