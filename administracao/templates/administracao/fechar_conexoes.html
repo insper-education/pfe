@@ -29,9 +29,20 @@
       width: calc(100% - 29em);
     }
 
+    .contatos_apres {
+      border:1px solid grey;
+      padding: 2px 4px 2px 4px;
+      margin: 6px 2px 2px 10px;
+      border-radius: 5px;
+      width: 90%;
+    }
+
     @media (max-width: 1200px) {
       #lista_projetos {
         width: 100%;
+      }
+      .contatos_apres {
+        width: calc(100% - 8px);
       }
     }
 
@@ -67,7 +78,7 @@
   {% if projetos %}
 
     {% for projeto in projetos %}
-    <div class="projeto_sel">
+    <div class="projeto_sel" >
       <a href="{% url 'projeto_completo' projeto.id %}"> 
         {{projeto.titulo}}
       </a>
@@ -75,11 +86,10 @@
       <br>
       
       {% with conexoes=projeto.conexao_set.all %}
-      <table class="table table-borderless table-sm" style="width: 90%; border-collapse:separate; border-spacing: 4px 6px; margin-left: 6px; margin-right: 12px; margin-bottom: 6px; border: 0px;">
+      <table class="table table-borderless table-sm" style="max-width: 100%; width: 47em; border-collapse:separate; border-spacing: 4px 6px; margin-left: 6px; margin-right: 12px; margin-bottom: 6px; border: 0px;">
         <tbody>
           {% for parceiro in projeto.organizacao.parceiro_set.all %}
-            <tr style="background: #F0F0F0; line-height:1; height: 1px;"><td style="vertical-align: middle;">
-
+            <tr style="background: #F0F0F0; line-height:1; height: 1px;"><td class="nomes_conec" style="width: 97%;  vertical-align: middle;">
               <a href="{% url 'parceiro_detail' parceiro.id %}">{{ parceiro.user.get_full_name }}</a>
               <a href="mailto:{{parceiro.user.email}}"> &lt;{{parceiro.user.email}}&gt;</a>
               {% for papel in parceiro.get_papeis %}
@@ -126,7 +136,7 @@
         </tbody>
       </table>
 
-      <div style="border:1px solid grey; padding: 2px 4px 2px 4px; margin: 6px 2px 2px 10px; border-radius: 5px; width: 90%;">
+      <div class="contatos_apres">
         <strong>Contatos Técnicos apresentados na Propota</strong><br>
         {% if projeto.proposta.contatos_tecnicos %}
           {{projeto.proposta.contatos_tecnicos|linebreaks|urlize}}
@@ -135,7 +145,7 @@
         {% endif %}
       </div>
 
-      <div style="border:1px solid grey; padding: 2px 4px 2px 4px; margin: 6px 2px 2px 10px; border-radius: 5px; width: 90%;">
+      <div class="contatos_apres">
         <strong>Contatos Administrativos apresentados na Propota</strong><br>
         {% if projeto.proposta.contatos_administrativos %}
           {{projeto.proposta.contatos_administrativos|linebreaks|urlize}}
@@ -228,7 +238,12 @@
   
   });
 
+
+  widths = $(".nomes_conec").map(function(){
+            return $(this).width();
+           }).get();
     
+  console.log(widths);
   </script>
 
 {% endblock %}
