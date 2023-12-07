@@ -485,6 +485,7 @@ def relato_quinzenal(request):
     context = {
         "prazo": prazo,
         "msg_relato_quinzenal": get_object_or_404(Carta, template="Mensagem de Relato Quinzenal").texto,
+        "relato": Relato,
     }
 
     if request.user.tipo_de_usuario == 1:
@@ -498,6 +499,7 @@ def relato_quinzenal(request):
         if not alocacao:
             context["prazo"] = None
             context["mensagem"] = "Você não está alocado em um projeto esse semestre."
+
             return render(request, "estudantes/relato_quinzenal.html", context)
 
         if request.method == "POST":
@@ -516,13 +518,15 @@ def relato_quinzenal(request):
         relato = Relato.objects.filter(alocacao=alocacao, momento__gt=prazo_anterior).order_by("momento").last()
         
         relatos = Relato.objects.filter(alocacao=alocacao).order_by("momento")
+
         context["relatos"] = relatos
         context["alocacao"] = alocacao
-        context["relato"] = relato if relato else Relato
+        if relato:
+            context["relato"] = relato
 
     else:  # Supostamente professores
         context["mensagem"] = "Você não está cadastrado como estudante."
-        context["relato"] = Relato
+        
 
     return render(request, "estudantes/relato_quinzenal.html", context)
 
