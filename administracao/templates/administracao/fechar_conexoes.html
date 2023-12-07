@@ -94,7 +94,7 @@
                       <div class="btn-group-toggle" data-toggle="buttons" style="height: 100%;">
                         <label class="btn btn-outline-success btn-sm
                         {% if conexao and conexao.gestor_responsavel %}active{% endif %}
-                        " style="padding-bottom: 1px; padding-top: 1px; height: 100%;">
+                        " style="padding-bottom: 1px; padding-top: 1px; height: 100%; display: flex; align-items: center;">
                           <input class="conexao" type="checkbox" data-projeto="{{projeto.id}}"
                                  name="gestor_responsavel" value="{{parceiro.id}}" checked>GR</label>
                       </div>
@@ -103,7 +103,7 @@
                       <div class="btn-group-toggle" data-toggle="buttons" style="height: 100%;">
                         <label class="btn btn-outline-success btn-sm
                         {% if conexao and conexao.mentor_tecnico %}active{% endif %}
-                        " style="padding-bottom: 1px; padding-top: 1px; height: 100%;">
+                        " style="padding-bottom: 1px; padding-top: 1px; height: 100%; display: flex; align-items: center;">
                           <input class="conexao" type="checkbox" data-projeto="{{projeto.id}}"
                                  name="mentor_tecnico" value="{{parceiro.id}}" checked>MT</label>
                       </div>
@@ -112,7 +112,7 @@
                       <div class="btn-group-toggle" data-toggle="buttons" style="height: 100%;">
                         <label class="btn btn-outline-success btn-sm
                         {% if conexao and conexao.recursos_humanos %}active{% endif %}
-                        " style="padding-bottom: 1px; padding-top: 1px; height: 100%;">
+                        " style="padding-bottom: 1px; padding-top: 1px; height: 100%; display: flex; align-items: center;">
                           <input class="conexao" type="checkbox" data-projeto="{{projeto.id}}"
                                  name="recursos_humanos" value="{{parceiro.id}}" checked>AA</label>
                       </div>
@@ -131,7 +131,7 @@
         {% if projeto.proposta.contatos_tecnicos %}
           {{projeto.proposta.contatos_tecnicos|linebreaks|urlize}}
         {% else %}
-          <span style="color: red;">Não há contatos técnicos definidos na proposta.</span>
+          <span style="color: red;">Não forma informados contatos técnicos na proposta.</span>
         {% endif %}
       </div>
 
@@ -140,7 +140,7 @@
         {% if projeto.proposta.contatos_administrativos %}
           {{projeto.proposta.contatos_administrativos|linebreaks|urlize}}
         {% else %}
-          <span style="color: red;">Não há contatos administrativos definidos na proposta.</span>
+          <span style="color: red;">Não foram informados contatos administrativos na proposta.</span>
         {% endif %}
       </div>
 
