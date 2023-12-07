@@ -812,11 +812,6 @@ def selecionar_orientadores(request):
     ano, semestre = adianta_semestre(ano, semestre)
 
     mensagem = ""
-    mensagem += "A visualização de novos projetos pelos estudantes só ocorre quando se<br>"
-    mensagem += "avança o semestre corrente na área de Configuração do PFE.<br>"
-    href = reverse("configurar")
-    mensagem += "<a href='"+href+"'>[Área Administrativa > Configurar]</a><br>"
-
     if "mensagem" in request.session:
         mensagem += request.session["mensagem"]
 
@@ -850,11 +845,6 @@ def fechar_conexoes(request):
     ano, semestre = adianta_semestre(ano, semestre)
 
     mensagem = ""
-    mensagem += "A visualização de novos projetos pelos estudantes só ocorre quando se<br>"
-    mensagem += "avança o semestre corrente na área de Configuração do PFE.<br>"
-    href = reverse("configurar")
-    mensagem += "<a href='"+href+"'>[Área Administrativa > Configurar]</a><br>"
-
     if "mensagem" in request.session:
         mensagem += request.session["mensagem"]
     
