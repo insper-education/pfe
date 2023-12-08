@@ -14,13 +14,6 @@
   {% include "reload.html" %}
   
   <style>
-    ol {
-      padding-left: 0.8em;
-    }
-    ol li {
-      margin-left: 1.8em;
-    }
-
     .opt_short {
       display: none;
     }
@@ -37,6 +30,29 @@
       }
     }
 
+    .arredondado {
+      table-layout: fixed;
+      max-width: 100%;
+      border-collapse:separate;
+      border-spacing: 4px 6px;
+      margin-left: 6px;
+      margin-right: 12px;
+      margin-bottom: 6px;
+      border: 0px;
+    }
+
+    .arredondado tr {
+      background: #F0F0F0;
+      line-height:1;
+      height: 1px;
+    }
+
+    .arredondado td {
+      vertical-align: middle;
+      border: 1px solid grey;
+      border-radius: 6px;
+    }
+
   </style>
 
 {% endblock %}
@@ -45,56 +61,61 @@
   
     <span class="titulo">Participação em Bancas</span>
 
+    {% for banca in bancas %}
+      {% ifchanged banca.periodo %}
+        {% if not forloop.first %}</tbody></table>{% endif %}
+        <div style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ banca.periodo }}</div>
+        <table class="table table-borderless table-sm arredondado"><tbody>
+      {% endifchanged %}
 
-    <ol style="">
-      {% for banca in bancas %}
-
-        {% ifchanged banca.periodo %}
-          <div style="
-          {% if not forloop.first %}margin-top: 1em;{% endif %}
-          font-weight: bold; font-size: 1.2rem;">{{ banca.periodo }}</div>
-        {% endifchanged %}
-
-        <li value="{{ forloop.revcounter }}" style="background: #F0F0F0; margin-bottom: 4px;">
+      <tr><td>
+        <div>
+          <small style="margin-right: 1px;">#{{ forloop.revcounter }}.</small>
           <a href="{% url 'banca_ver' banca.id %}">
-            {{ banca.get_tipo }},
+            <b>{{ banca.get_tipo }}</b> &#x2726;
             {% if banca.startDate %}
-              <span class="opt_full">{{ banca.startDate|date:"DATE_FORMAT" }},</span>
-              <span class="opt_short">{{ banca.startDate|date:"d/m/y" }},</span>
+              <b><span class="opt_full">{{ banca.startDate|date:"DATETIME_FORMAT" }}</span>
+                 <span class="opt_short">{{ banca.startDate|date:"d/m/y H:i" }}</span></b>
+            {% endif %} &#x2726;
+            {% if user.professor and banca.projeto.orientador == user.professor %}
+              <i>(ORIENTADOR{% if user.genero == 'F' %}A{% endif %})</i>
+            {% endif %}
+            {% with coorientadores=banca.projeto.coorientador_set.all %}
+              {% for coorientador in coorientadores %}
+                {% if coorientador.usuario == user %}
+                  <i>(COORIENTADOR{% if user.genero == 'F' %}A{% endif %})</i>
+                {% endif %}
+              {% endfor %}
+            {% endwith %}
+            {% if not user.professor or user.professor and banca.projeto.orientador != user.professor %}
+              <i><span class="opt_short">Ori.</span><span class="opt_full">Orientador{% if user.genero == 'F' %}a{% endif %}</span>: {{banca.projeto.orientador}}</i>
             {% endif %}
           </a>
-
-          {% if user.professor and banca.projeto.orientador == user.professor %}
-            <i>(ORIENTADOR)</i>
-          {% endif %}
-
-          {% with coorientadores=banca.projeto.coorientador_set.all %}
-            {% for coorientador in coorientadores %}
-              {% if coorientador.usuario == user %}
-                <i>(COORIENTADOR)</i>
-              {% endif %}
-            {% endfor %}
-          {% endwith %}
+        </div>
           
-          {% if banca.projeto.organizacao %}
-            <a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">
-              {{ banca.projeto.organizacao.nome }},</a>
-          {% endif %}
           {% if banca.projeto %}
-            <a style="max-width: 100%; display: inline-block; overflow-x: clip; text-overflow: ellipsis; text-wrap: nowrap;" 
-               href="{% url 'projeto_completo' banca.projeto.id %}">
+            <div style="max-width: 100%; display: inline-block; overflow-x: clip; text-overflow: ellipsis; text-wrap: nowrap;">
+            {% if banca.projeto.organizacao %}
+              <a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">
+                {{ banca.projeto.organizacao.nome }},</a>
+            {% endif %}
+          
+            <a href="{% url 'projeto_completo' banca.projeto.id %}">
               {{banca.projeto.get_titulo}},</a>
+              </div>
           {% endif %}
 
           {% with certificado=banca|certificado_banca:user %}
             {% if certificado %}
-              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a><br>
+              <div>
+              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer"><b>[CERTIFICADO]</b></a><br>
+              </div>
             {% endif %}
           {% endwith %}
-        </li>
+            </td></tr>
       {% empty %}
-        Bancas não encontrados
+        Não existem Bancas cadastradas.
       {% endfor %}
-    </ol>
+      </tbody></table>
 
 {% endblock %}

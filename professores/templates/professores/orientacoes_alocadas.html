@@ -17,9 +17,10 @@
 
 {% block content %}
 
-    <br>
-    <h4>Projeto(s) Orientado(s)</h4>
-    <ol>
+    <span class="titulo">Projetos Orientados</span>
+
+
+    
     {% for projeto in projetos %}
       {% if projeto.alocacao_set.all.count > 0 %}
         <li><a href="{% url 'projeto_completo' projeto.id %}">
@@ -37,8 +38,8 @@
         </li>
       {% endif %}
     {% empty %}
-      Orientações não encontradas
+      Não existem orientações cadastradas.
     {% endfor %}
-    </ol>
+
 
 {% endblock %}
