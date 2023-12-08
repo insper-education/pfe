@@ -125,9 +125,10 @@ def coorientacoes_alocadas(request):
 @permission_required('users.altera_professor', raise_exception=True)
 def mentorias_alocadas(request):
     """Mostra detalhes sobre o professor."""
-    mentorias = Encontro.objects.filter(facilitador=request.user).order_by('startDate')
+    mentorias = Encontro.objects.exclude(endDate__lt=datetime.date.today(), projeto__isnull=True)
+    mentorias = mentorias.filter(facilitador=request.user).order_by('startDate')
     context = {"mentorias": mentorias,}
-    return render(request, 'professores/mentorias_alocadas.html', context=context)
+    return render(request, "professores/mentorias_alocadas.html", context=context)
 
 
 @login_required

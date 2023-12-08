@@ -134,6 +134,12 @@ class Projeto(models.Model):
         permissions = (("altera_empresa", "Empresa altera valores"),
                        ("altera_professor", "Professor altera valores"), )
 
+    @classmethod
+    def create(cls, proposta):
+        """Cria um Projeto (entrada) na Banca."""
+        projeto = cls(proposta=proposta)
+        return projeto
+    
     # Methods
     @property
     def procura_de_alunos(self):
@@ -269,11 +275,15 @@ class Projeto(models.Model):
         notas[3] = (notas[0] + notas[1] + notas[2])/3
         return notas
 
-    @classmethod
-    def create(cls, proposta):
-        """Cria um Projeto (entrada) na Banca."""
-        projeto = cls(proposta=proposta)
-        return projeto
+    
+    def periodo(self):
+        configuracao = get_object_or_404(Configuracao)
+        if self.ano >= configuracao.ano:
+            return "Atuais"
+        if self.ano == configuracao.ano and self.semestre >= configuracao.semestre:
+            return "Atuais"
+        return "Anteriores"
+    
     
     @property
     def get_edicao(self):
