@@ -237,7 +237,7 @@
   {% if coorientadores %}
     <br>
     <div style="margin-top: 10px;">
-      <strong>&nbsp;&nbsp;coorientador(es):</strong>
+      <strong>&nbsp;&nbsp;coorientador{% if coorientadores > 1 %}es{% endif %}:</strong>
     </div>
     <ul>
     {% for coorientador in coorientadores %}

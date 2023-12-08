@@ -23,6 +23,9 @@
       border: 0px solid black;
     }
 
+    label {
+      margin-bottom: 2px;
+    }
   </style>
 {% endblock %}
 
@@ -33,20 +36,20 @@
   <form method="post"> {% csrf_token %}  
 
     <label for="titulo">Título Original:</label><br>
-    <input type="text" size="80" maxlength="160" id="titulo_original" name="titulo_original" value="{{projeto.titulo}}" disabled>
+    <input type="text" size="86" maxlength="160" id="titulo_original" name="titulo_original" value="{{projeto.titulo}}" disabled>
     <br><br>
 
     <label for="titulo">Título:</label><br>
-    <input type="text" size="80" maxlength="160" id="titulo" name="titulo"
+    <input type="text" size="86" maxlength="160" id="titulo" name="titulo"
     value="{% if projeto.titulo_final %}{{projeto.titulo_final}}{% else %}{{projeto.titulo}}{% endif %}">
     <br><br>
 
     <label for="descricao">Descrição do Projeto</label><br>
-    <textarea id="descricao" name="descricao" rows="10" cols="80" maxlength="3000"
+    <textarea id="descricao" name="descricao" rows="10" cols="88" maxlength="3000"
     >{% if projeto.descricao %}{{projeto.descricao}}{% else %}{{projeto.proposta.descricao}}{% endif %}</textarea>
     <br><br>
 
-    <label for="orientador">Orientador(a)</label></b>:
+    <label for="orientador" style="width: 6em; margin-bottom: 16px;">Orientador(a)</label></b>:
     <select class="selectpicker show-tick" name="orientador" id="orientador" title="Selecione orientador do projeto"
     data-width="560px">
         <option selected value> -- selecione um orientador(a) -- </option>
@@ -73,7 +76,7 @@
     </select>
     <br>
 
-    <label for="coorientador"><small>Coorientador(a)</small></label></b>:
+    <label for="coorientador" style="width: 6em; margin-bottom: 16px;"><small>Coorientador(a)</small></label></b>:
     <select class="selectpicker show-tick" name="coorientador" id="coorientador" title="Selecione coorientador do projeto"
     data-width="560px">
         <option selected value> -- selecione um coorientador(a) -- </option>
@@ -87,7 +90,9 @@
 
     Grupo:<br>
     <table id="AlocacaoEstudantes" style="margin-left: 12px;">
-      <tr><td>#</td><td>Nome</td><td><span class='AddNew'>&#10753;</span></td></tr>
+      <tr><td style="text-align: center;"><small>Estudante #</small></td>
+          <td style="text-align: center;"><small>Nome do Estudante</small></td>
+          <td><span class="AddNew" style="cursor:pointer;">&#10753;</span></td></tr>
 
       {% for alocacao in alocacoes %}
         <tr>
@@ -110,7 +115,7 @@
             </select>
           </td>
           <td>
-            <span class='RemoveRow'>&#8861;</span>
+            <span class='RemoveRow' style="cursor:pointer;">&#8861;</span>
           </td>
       </tr>
     {% endfor %}
@@ -144,7 +149,7 @@
 
     <br><br>
 
-    <input id="submit" type="submit" value="Atualizar Projeto">
+    <input class="btn btn-primary" id="submit" type="submit" value="Atualizar Projeto">
     <span id="mensagem"></span>
     
   </form>
