@@ -20,6 +20,23 @@
     ol li {
       margin-left: 1.8em;
     }
+
+    .opt_short {
+      display: none;
+    }
+    .opt_full {
+      display: inline;
+    }
+
+    @media screen and (max-width: 800px) {
+      .opt_short {
+        display: inline;
+      }
+      .opt_full {
+        display: none;
+      }
+    }
+
   </style>
 
 {% endblock %}
@@ -35,14 +52,15 @@
         {% ifchanged banca.periodo %}
           <div style="
           {% if not forloop.first %}margin-top: 1em;{% endif %}
-          font-weight: bold; font-size: 1.4rem;">{{ banca.periodo }}</div>
+          font-weight: bold; font-size: 1.2rem;">{{ banca.periodo }}</div>
         {% endifchanged %}
 
-        <li value="{{ forloop.revcounter }}">
+        <li value="{{ forloop.revcounter }}" style="background: #F0F0F0; margin-bottom: 4px;">
           <a href="{% url 'banca_ver' banca.id %}">
             {{ banca.get_tipo }},
             {% if banca.startDate %}
-              {{banca.startDate.date}},
+              <span class="opt_full">{{ banca.startDate|date:"DATE_FORMAT" }},</span>
+              <span class="opt_short">{{ banca.startDate|date:"d/m/y" }},</span>
             {% endif %}
           </a>
 
@@ -58,14 +76,16 @@
             {% endfor %}
           {% endwith %}
           
-          {% if banca.projeto %}
-            <a href="{% url 'projeto_completo' banca.projeto.id %}">
-              {{banca.projeto.get_titulo}}</a>,
-          {% endif %}
           {% if banca.projeto.organizacao %}
             <a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">
-              {{ banca.projeto.organizacao.nome }}</a>
+              {{ banca.projeto.organizacao.nome }},</a>
           {% endif %}
+          {% if banca.projeto %}
+            <a style="max-width: 100%; display: inline-block; overflow-x: clip; text-overflow: ellipsis; text-wrap: nowrap;" 
+               href="{% url 'projeto_completo' banca.projeto.id %}">
+              {{banca.projeto.get_titulo}},</a>
+          {% endif %}
+
           {% with certificado=banca|certificado_banca:user %}
             {% if certificado %}
               <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a><br>
