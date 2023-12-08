@@ -19,6 +19,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib import admin
 from django.template.defaultfilters import slugify
 from django.utils.encoding import force_text
+from django.shortcuts import get_object_or_404
 
 from .support import get_upload_path
 
@@ -760,6 +761,18 @@ class Banca(models.Model):
     class Meta:
         ordering = ['startDate']
 
+    def get_tipo(self):
+        """Retorna o tipo da banca."""
+        return self.get_tipo_de_banca_display()
+    
+    def periodo(self):
+        configuracao = get_object_or_404(Configuracao)
+        if self.startDate.year >= configuracao.ano:
+            if configuracao.semestre == 1 and self.startDate.month < 7:
+                return "Atuais"
+            if configuracao.semestre == 2 and self.startDate.month > 7:
+                return "Atuais"
+        return "Anteriores"
 
 class Encontro(models.Model):
     """Encontros (para dinâmicas de grupos)."""
@@ -1161,7 +1174,7 @@ class Coorientador(models.Model):
     def __str__(self):
         mensagem = ""
         if self.usuario:
-            mensagem += self.usuario.user.get_full_name()
+            mensagem += self.usuario.get_full_name()
         else:
             mensagem += "USUÁRIO NÃO DEFINIDO"
         mensagem += " >>> "

@@ -13,37 +13,58 @@
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
   
+  <style>
+    ol {
+      padding-left: 0.8em;
+    }
+    ol li {
+      margin-left: 1.8em;
+    }
+  </style>
+
 {% endblock %}
 
 {% block content %}
   
-    <br>
-    <h4>Participação em Banca(s)</h4>
-    <ol>
-    {% for banca in bancas %}
-        <li>
+    <span class="titulo">Participação em Bancas</span>
+
+
+    <ol style="">
+      {% for banca in bancas %}
+
+        {% ifchanged banca.periodo %}
+          <div style="
+          {% if not forloop.first %}margin-top: 1em;{% endif %}
+          font-weight: bold; font-size: 1.4rem;">{{ banca.periodo }}</div>
+        {% endifchanged %}
+
+        <li value="{{ forloop.revcounter }}">
           <a href="{% url 'banca_ver' banca.id %}">
-          {% if banca.tipo_de_banca == 0 %}
-            Final,
-          {% elif banca.tipo_de_banca == 1 %}
-            Intermediária,
-          {% endif %}
-          {% if banca.startDate %}
-            {{banca.startDate.date}},
-          {% endif %}
+            {{ banca.get_tipo }},
+            {% if banca.startDate %}
+              {{banca.startDate.date}},
+            {% endif %}
           </a>
+
+          {% if user.professor and banca.projeto.orientador == user.professor %}
+            <i>(ORIENTADOR)</i>
+          {% endif %}
+
+          {% with coorientadores=banca.projeto.coorientador_set.all %}
+            {% for coorientador in coorientadores %}
+              {% if coorientador.usuario == user %}
+                <i>(COORIENTADOR)</i>
+              {% endif %}
+            {% endfor %}
+          {% endwith %}
+          
           {% if banca.projeto %}
             <a href="{% url 'projeto_completo' banca.projeto.id %}">
-              {% if banca.projeto.titulo_final %}
-                {{banca.projeto.titulo_final}}</a>,
-              {% else %}
-                {{banca.projeto.titulo}}</a>,
-              {% endif %}
+              {{banca.projeto.get_titulo}}</a>,
           {% endif %}
           {% if banca.projeto.organizacao %}
             <a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">
-              {{ banca.projeto.organizacao.nome }}
-            </a>
+              {{ banca.projeto.organizacao.nome }}</a>
           {% endif %}
           {% with certificado=banca|certificado_banca:user %}
             {% if certificado %}
@@ -51,9 +72,9 @@
             {% endif %}
           {% endwith %}
         </li>
-    {% empty %}
-      Bancas não encontrados
-    {% endfor %}
+      {% empty %}
+        Bancas não encontrados
+      {% endfor %}
     </ol>
 
 {% endblock %}

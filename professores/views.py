@@ -90,8 +90,13 @@ def bancas_alocadas(request):
     bancas = (Banca.objects.filter(membro1=request.user) |
               Banca.objects.filter(membro2=request.user) |
               Banca.objects.filter(membro3=request.user))
+    
+    if request.user.professor:
+        bancas = bancas | Banca.objects.filter(projeto__orientador=request.user.professor)
+        bancas = bancas | Banca.objects.filter(projeto__coorientador__usuario=request.user)
+
     context = {"bancas": bancas.order_by("-startDate"),}
-    return render(request, 'professores/bancas_alocadas.html', context=context)
+    return render(request, "professores/bancas_alocadas.html", context=context)
 
 
 @login_required
