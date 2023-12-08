@@ -1700,6 +1700,9 @@ class Certificado(models.Model):
             texto += " (" + str(self.projeto.ano) + "." + str(self.projeto.semestre) + ")"
         return texto
 
+    def file_name(self):
+        return self.documento.name.split('/')[-1]
+    
     class Meta:
         verbose_name = 'Certificado'
         verbose_name_plural = 'Certificados'

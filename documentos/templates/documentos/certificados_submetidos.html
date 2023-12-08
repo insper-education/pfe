@@ -9,11 +9,11 @@
   {% load static %}
   {% load escape_emails %}
   {% load nospaces %}
+
+  <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
+  <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
+
   <style>
-
-    table, th, td {
-    }
-
     table {
       border: 0px;
       border-collapse: separate;
@@ -21,30 +21,11 @@
       padding-left: 0px;
       padding-right: 0px;
     }
-
     td {
       padding: 1rem 1.2rem;
       border-radius: 6px;
       border: 1px solid red;
     }
-
-    .arrow {
-      border: solid black;
-      border-width: 0px 2px 2px 0px;
-      display: inline-block;
-      padding: 2px;
-      vertical-align: middle;
-    }
-
-    .right {
-      transform: rotate(-45deg);
-      -webkit-transform: rotate(-45deg);
-    }
-
-    #toggle {
-      display:inline-block; 
-    }
-
   </style>
 
 {% endblock %}
@@ -56,24 +37,39 @@
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" %}
 
+  <div class="row align-items-start mb-2" style="display: inline-block; margin-right: 3px;">
+    <div class="ml-3">
+      <div class="input-group input-group-sm">
+          <div class="input-group-prepend">
+            <label class="to_label input-group-text" for="filterEdicao" onClick="recarregar_pagina()"><span class="to_hide">Tipos</span></label>
+          </div>
+          <select id="tipos" class="selectpicker form-control form-control-sm" data-style="mr-sm border " data-width="10em"
+                  title="Nada selecionado"
+                  multiple>
+            <option selected="selected" title="E">Estudantes</option>
+            <option selected="selected" title="O">Orientadores</option>
+            <option selected="selected" title="C">Coorientadores</option>
+            <option selected="selected" title="B">Bancas</option>
+            <option selected="selected" title="MT">Mentorias Técnicas</option>
+            <option selected="selected" title="MP">Mentorias Profissional (antiga Mentorial Falconi)</option>
+          </select>
+      </div>
+    </div>
+  </div>
+
   <script>
-    $(document).on('click','#informacoes_tag',function(){
-      $( "#toggle" ).toggle( "slide" );
+    $('#tipos').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+      if(clickedIndex == 0){if(isSelected){$('.estudantes').show();}else{$('.estudantes').hide();}
+      }else if(clickedIndex == 1){if(isSelected){$('.orientador').show();}else{$('.orientador').hide();}
+      }else if(clickedIndex == 2){if(isSelected){$('.coorientador').show();}else{$('.coorientador').hide();}
+      }else if(clickedIndex == 3){if(isSelected){$('.banca').show();}else{$('.banca').hide();}
+      }else if(clickedIndex == 4){if(isSelected){$('.mentoria_tecnica').show();}else{$('.mentoria_tecnica').hide();}
+      }else if(clickedIndex == 5){if(isSelected){$('.mentoria_profissional').show();}else{$('.mentoria_profissional').hide();}
+      }
     });
   </script>
 
-  <span id="informacoes" style="border: 1px solid gray; border-radius: 2px; padding: 1px; margin-left: 20px;">
-    <span id="informacoes_tag">&nbsp;Tipos <i class="arrow right"></i>&nbsp;</span>
-    <div id="toggle" style="display: none; height: 1em;">
-      <label><input id="estudantes" onchange="($(this).prop('checked') ? $('.estudantes').show() : $('.estudantes').hide())" type="checkbox" checked /> Estudantes</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="orientador" onchange="($(this).prop('checked') ? $('.orientador').show() : $('.orientador').hide())" type="checkbox" checked /> Orientadores</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="coorientador" onchange="($(this).prop('checked') ? $('.coorientador').show() : $('.coorientador').hide())" type="checkbox" checked /> Coorientadores</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="banca" onchange="($(this).prop('checked') ? $('.banca').show() : $('.banca').hide())" type="checkbox" checked /> Bancas</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="mentoria_tecnica" onchange="($(this).prop('checked') ? $('.mentoria_tecnica').show() : $('.mentoria_tecnica').hide())" type="checkbox" checked /> Mentorias Técnicas</label>&nbsp;&nbsp;&nbsp;
-      <label><input id="mentoria_profissional" onchange="($(this).prop('checked') ? $('.mentoria_profissional').show() : $('.mentoria_profissional').hide())" type="checkbox" checked /> Mentorias Profissional (antiga Mentorial Falconi)</label>&nbsp;&nbsp;&nbsp;
-    </div>
-  </span> {% comment %} Mais elementos no carrega_pagina() {% endcomment %}
-  
+  <div class="table-responsive">
   <table id="certificados">
 
     {% if certificados %}
@@ -98,9 +94,9 @@
           <b>{{certificado.get_certificado}}</b><br>
           {% if certificado.usuario %}
             {% if certificado.usuario.tipo_de_usuario == 1 %}
-              <a href="{% url 'estudante_detail' certificado.usuario.aluno.id %}">{{certificado.usuario.get_full_name}}</a><br>
+              <a href="{% url 'estudante_detail' certificado.usuario.aluno.id %}">{{certificado.usuario.get_full_name}}</a> (estudante)<br>
             {% elif certificado.usuario.tipo_de_usuario == 2 or certificado.usuario.tipo_de_usuario == 4 %}
-              <a href="{% url 'professor_detail' certificado.usuario.professor.id %}">{{certificado.usuario.get_full_name}}</a><br>
+              <a href="{% url 'professor_detail' certificado.usuario.professor.id %}">{{certificado.usuario.get_full_name}}</a> (professor)<br>
             {% else %}
               {{certificado.usuario.get_full_name}}<br>
             {% endif %}
@@ -121,7 +117,7 @@
           {% if certificado.documento %}
             {% comment %} <a href="{{ certificado.documento.url }}"><img style="max-height:240px;" src="{{ certificado.documento.url }}" alt="Certificado {{ certificado.usuario }} {{ certificado.projeto }}"></a><br> {% endcomment %}
             <b>Certificado:</b> 
-            <a href="{{ certificado.documento.url }}" target="_blank" rel="noopener noreferrer">{{ certificado.documento.url }}</a><br>
+            <a href="{{ certificado.documento.url }}" target="_blank" rel="noopener noreferrer">{{ certificado.file_name }}</a><br>
           {% endif %}
           
           
@@ -190,17 +186,11 @@
     {% endif %}
   
   </table>
+  </div>
   
   <script>
 
-    function carrega_pagina() {
-      ($("#estudantes").prop('checked') ? $('.estudantes').show() : $('.estudantes').hide());
-      ($("#orientador").prop('checked') ? $('.orientador').show() : $('.orientador').hide());
-      ($("#coorientador").prop('checked') ? $('.coorientador').show() : $('.coorientador').hide());
-      ($("#banca").prop('checked') ? $('.banca').show() : $('.banca').hide());
-      ($("#mentoria_tecnica").prop('checked') ? $('.mentoria_tecnica').show() : $('.mentoria_tecnica').hide());
-      ($("#mentoria_profissional").prop('checked') ? $('.mentoria_profissional').show() : $('.mentoria_profissional').hide());
-    };
+    function carrega_pagina() {};
 
     function carrega_site(){
       var filterEdicao = localStorage.getItem("filterEdicao");
