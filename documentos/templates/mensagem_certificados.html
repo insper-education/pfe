@@ -8,6 +8,28 @@
 
 {% if certificado.tipo_de_certificado < 100 %} {% comment %} estudantes {% endcomment %}
 
+  {% if certificado.tipo_de_certificado != 0 %} {% comment %} Não é não definido {% endcomment %}
+
+    {{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}},
+    %0D%0A%0D%0A
+
+    {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+    Parabéns%20pela%20conclusão%20do%20Projeto%20Final%20de%20Engenharia%20do%20Insper.%0D%0A
+    %0D%0A
+
+    {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+    Abaixo se encontra seu certificado no formato digital. Se desejar, você pode publicar em suas redes
+    sociais, como o LinkedIn, ou incluir a informação no seu currículo pessoal.%0D%0A
+    %0D%0A
+
+    {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+    Outra opção é incluir a informação no seu
+    {% if formatada %}%3Ca href='http://lattes.cnpq.br/' target='_blank' rel='noopener noreferrer'%3E{% endif %}Currículo Lattes{% if formatada %}%3C%2Fa%3E{% endif %},
+    um canal usado pela comunidade acadêmica para currículos padronizados.%0D%0A
+    %0D%0A
+
+  {% endif %}
+
 {% else %}
       {% if certificado.usuario.tipo_de_usuario == 2 or certificado.usuario.tipo_de_usuario == 4 %}
         Prof{% if certificado.usuario.genero == 'F' %}a{% endif %}.
@@ -24,9 +46,10 @@
       %0D%0A
       
       {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
-      Se desejar incluir a informação no seu Currículo Lattes escolha:%20{% if formatada %}%3Cb%3E{% endif %}Orientações%20%3E%3E%20Orientação e supervisão concluída{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
-      %0D%0A
-
+      Se desejar incluir a informação no seu Currículo Lattes%0D%0A
+      Acesse:%20{% if formatada %}%3Ca href='http://lattes.cnpq.br/' target='_blank' rel='noopener noreferrer'%3E{% endif %}http://lattes.cnpq.br/{% if formatada %}%3C%2Fa%3E{% endif %}%0D%0A
+      Escolha:%20{% if formatada %}%3Cb%3E{% endif %}Orientações%20%3E%3E%20Orientação e supervisão concluída{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      
       -%20opção:%20{% if formatada %}%3Cb%3E{% endif %}Trabalho de conclusão de curso de graduação{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
       -%20título:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.get_titulo|parse_quote}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
       -%20ano:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.ano}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
@@ -46,8 +69,9 @@
       %0D%0A
       
       {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
-      Se desejar incluir a informação no seu Currículo Lattes escolha:%20{% if formatada %}%3Cb%3E{% endif %}Orientações%20%3E%3E%20Orientação e supervisão concluída{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
-      %0D%0A
+      Se desejar incluir a informação no seu Currículo Lattes%0D%0A
+      Acesse:%20{% if formatada %}%3Ca href='http://lattes.cnpq.br/' target='_blank' rel='noopener noreferrer'%3E{% endif %}http://lattes.cnpq.br/{% if formatada %}%3C%2Fa%3E{% endif %}%0D%0A
+      Escolha:%20{% if formatada %}%3Cb%3E{% endif %}Orientações%20%3E%3E%20Orientação e supervisão concluída{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
 
       -%20opção:%20{% if formatada %}%3Cb%3E{% endif %}Orientação de outra natureza{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
       -%20título:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.get_titulo|parse_quote}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
@@ -69,8 +93,9 @@
       %0D%0A
       
       {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
-      Se desejar incluir a informação no seu Currículo Lattes escolha:%20{% if formatada %}%3Cb%3E{% endif %}Bancas%20%3E%3E%20Participação em bancas de trabalhos de conclusão{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
-      %0D%0A
+      Se desejar incluir a informação no seu Currículo Lattes%0D%0A
+      Acesse:%20{% if formatada %}%3Ca href='http://lattes.cnpq.br/' target='_blank' rel='noopener noreferrer'%3E{% endif %}http://lattes.cnpq.br/{% if formatada %}%3C%2Fa%3E{% endif %}%0D%0A
+      Escolha:%20{% if formatada %}%3Cb%3E{% endif %}Bancas%20%3E%3E%20Participação em bancas de trabalhos de conclusão{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
 
       -%20natureza:%20{% if formatada %}%3Cb%3E{% endif %}Graduação{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
       -%20título:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.get_titulo|parse_quote}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
@@ -93,8 +118,9 @@
       %0D%0A
 
       {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
-      Se desejar incluir a informação no seu Currículo Lattes escolha:%20{% if formatada %}%3Cb%3E{% endif %}Bancas%20%3E%3E%20Participação em bancas de trabalhos de conclusão{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
-      %0D%0A
+      Se desejar incluir a informação no seu Currículo Lattes%0D%0A
+      Acesse:%20{% if formatada %}%3Ca href='http://lattes.cnpq.br/' target='_blank' rel='noopener noreferrer'%3E{% endif %}http://lattes.cnpq.br/{% if formatada %}%3C%2Fa%3E{% endif %}%0D%0A
+      Escolha:%20{% if formatada %}%3Cb%3E{% endif %}Bancas%20%3E%3E%20Participação em bancas de trabalhos de conclusão{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
 
       -%20natureza:%20{% if formatada %}%3Cb%3E{% endif %}Graduação{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
       -%20título:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.get_titulo|parse_quote}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
