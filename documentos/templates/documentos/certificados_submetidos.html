@@ -32,7 +32,7 @@
 
 {% block content %}
 
-  <span class="titulo">Cerfificados</span>
+  <span class="titulo">Certificados</span>
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" %}
@@ -91,7 +91,8 @@
         {% endif %}
         
         <td>
-          <b>{{certificado.get_certificado}}</b><br>
+          <b style="font-weight: bold; font-size: 1.2em;">{{certificado.get_certificado}}</b><br>
+          <b>Nome:</b>
           {% if certificado.usuario %}
             {% if certificado.usuario.tipo_de_usuario == 1 %}
               <a href="{% url 'estudante_detail' certificado.usuario.aluno.id %}">{{certificado.usuario.get_full_name}}</a> (estudante)<br>
