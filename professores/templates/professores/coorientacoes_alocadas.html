@@ -26,11 +26,12 @@
     {% for coorientacao in coorientacoes %}
       {% ifchanged coorientacao.projeto.periodo %}
         {% if not forloop.first %}</tbody>{% endif %}
-        <thead><tr><th id="{{coorientacao.projeto.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ coorientacao.projeto.periodo }} {% if coorientacao.projeto.periodo == "Anteriores" %}<i class="seta-baixo"></i>{% endif %}</th></tr></thead>
+        <thead><tr><th id="{{coorientacao.projeto.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ coorientacao.projeto.periodo }}
+          {% if coorientacao.projeto.periodo == "Anteriores" %}<input class="seta-baixo" type="checkbox"></input>{% endif %}</th></tr></thead>
         <tbody>
       {% endifchanged %}
 
-      <tr class="{{coorientacao.projeto.periodo}}" {% if coorientacao.projeto.periodo == "Anteriores" %}style="display: none;"{% endif %}><td>
+      <tr class="{{coorientacao.projeto.periodo}} {% if coorientacao.projeto.periodo == "Anteriores" %}hidden_tr{% endif %}"><td>
         {% with n_alocacoes=coorientacao.projeto.alocacao_set.all.count %}
           {% if n_alocacoes == 0 %}ERRO: PROJETO SEM ESTUDANTES{% endif %}
           <small style="margin-right: 1px;">#{{ forloop.revcounter }}.</small>

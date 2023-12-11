@@ -7,6 +7,7 @@
 	margin-right: 12px;
 	margin-bottom: 6px;
 	border: 0px;
+	/*width: auto;*/
 }
 
 .arredondado tr {
@@ -25,8 +26,37 @@
 	cursor:pointer;
 }
 
-.seta-baixo:before {content: "\25BC";}
-.seta-cima:before {content: "\25B2";}
+.seta-baixo {
+	visibility: hidden;
+}
+
+.seta-baixo:before {
+	content: "\25BC";
+	visibility: visible;
+	position: relative;
+    bottom: 0.3em;
+}
+
+.seta-cima {
+	visibility: hidden;
+}
+
+.seta-cima:before {
+	content: "\25B2"; 
+	visibility: visible;
+	position: relative;
+    bottom: 0.3em;
+}
+ 
+.hidden_tr {
+	display: none;
+}
+
+/* 
+// Sem grande suporte dos browsers
+table:has(#Avaliados input:checked) .hidden_tr {
+	display: table-row;
+} */
 
 .tresp {
 	display: inline-block;

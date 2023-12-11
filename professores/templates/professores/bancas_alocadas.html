@@ -19,18 +19,19 @@
 {% endblock %}
 
 {% block content %}
-  
+
     <span class="titulo">Participação em Bancas</span>
 
     <table class="table table-borderless table-sm arredondado">
     {% for banca in bancas %}
       {% ifchanged banca.periodo %}
         {% if not forloop.first %}</tbody>{% endif %}
-        <thead><tr><th id="{{banca.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ banca.periodo }} {% if banca.periodo == "Anteriores" %}<i class="seta-baixo"></i>{% endif %}</th></tr></thead>
+        <thead><tr><th id="{{banca.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ banca.periodo }}
+           {% if banca.periodo == "Anteriores" %}<input class="seta-baixo" type="checkbox"></input>{% endif %}</th></tr></thead>
         <tbody>
       {% endifchanged %}
 
-      <tr class="{{banca.periodo}}" {% if banca.periodo == "Anteriores" %}style="display: none;"{% endif %}><td>
+      <tr class="{{banca.periodo}} {% if banca.periodo == "Anteriores" %}hidden_tr{% endif %}"><td>
         <div>
           <small style="margin-right: 1px;">#{{ forloop.revcounter }}.</small>
           <a href="{% url 'banca_ver' banca.id %}">

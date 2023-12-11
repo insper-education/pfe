@@ -34,11 +34,12 @@
 
           {% ifchanged e.projeto.periodo %}
             {% if not forloop.first %}</tbody>{% endif %}
-            <thead><tr><th id="{{e.projeto.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ e.projeto.periodo }} {% if e.projeto.periodo == "Anteriores" %}<i class="seta-baixo"></i>{% endif %}</th></tr></thead>
+            <thead><tr><th id="{{e.projeto.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ e.projeto.periodo }} 
+              {% if e.projeto.periodo == "Anteriores" %}<input class="seta-baixo" type="checkbox"></input>{% endif %}</th></tr></thead>
             <tbody>
           {% endifchanged %}
 
-          <tr class="{{e.projeto.periodo}}" {% if e.projeto.periodo == "Anteriores" %}style="display: none;"{% endif %}>
+          <tr class="{{e.projeto.periodo}} {% if e.projeto.periodo == "Anteriores" %}hidden_tr{% endif %}">
             <td>
               <a class="imprimir" href="{% url 'dinamicas_editar' e.id %}">
                 <big><b>{{e.startDate}} - {{e.endDate|date:'H:i'}}</b></big><br>
