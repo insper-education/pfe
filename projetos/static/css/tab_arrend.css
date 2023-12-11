@@ -21,7 +21,14 @@
 	border-radius: 6px;
 }
 
-tresp {
+.arredondado th {
+	cursor:pointer;
+}
+
+.seta-baixo:before {content: "\25BC";}
+.seta-cima:before {content: "\25B2";}
+
+.tresp {
 	display: inline-block;
 	max-width: 100%;
 	overflow-x: clip;

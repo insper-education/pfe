@@ -126,7 +126,7 @@ def coorientacoes_alocadas(request):
 def mentorias_alocadas(request):
     """Mostra detalhes sobre o professor."""
     mentorias = Encontro.objects.exclude(endDate__lt=datetime.date.today(), projeto__isnull=True)
-    mentorias = mentorias.filter(facilitador=request.user).order_by('startDate')
+    mentorias = mentorias.filter(facilitador=request.user).order_by("-projeto__ano", "-projeto__semestre", "startDate")
     context = {"mentorias": mentorias,}
     return render(request, "professores/mentorias_alocadas.html", context=context)
 

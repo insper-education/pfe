@@ -26,11 +26,11 @@
     {% for projeto in projetos %}
       {% ifchanged projeto.periodo %}
       {% if not forloop.first %}</tbody>{% endif %}
-      <thead><tr><th style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ projeto.periodo }}</th></tr></thead>
+      <thead><tr><th id="{{projeto.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ projeto.periodo }} {% if projeto.periodo == "Anteriores" %}<i class="seta-baixo"></i>{% endif %}</th></tr></thead>
       <tbody>
     {% endifchanged %}
 
-    <tr><td>
+    <tr class="{{projeto.periodo}}" {% if projeto.periodo == "Anteriores" %}style="display: none;"{% endif %}><td>
       <div></div>
       {% with n_alocacoes=projeto.alocacao_set.all.count %}
         {% if n_alocacoes == 0 %}ERRO: PROJETO SEM ESTUDANTES{% endif %}
@@ -52,5 +52,7 @@
       Não existem orientações cadastradas.
     {% endfor %}
   </tbody></table>
+
+  {% include "toggle_anteriores.html" %}
 
 {% endblock %}

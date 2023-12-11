@@ -15,7 +15,7 @@
   
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
-
+  
 {% endblock %}
 
 {% block content %}
@@ -26,11 +26,11 @@
     {% for banca in bancas %}
       {% ifchanged banca.periodo %}
         {% if not forloop.first %}</tbody>{% endif %}
-        <thead><tr><th style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ banca.periodo }}</th></tr></thead>
+        <thead><tr><th id="{{banca.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ banca.periodo }} {% if banca.periodo == "Anteriores" %}<i class="seta-baixo"></i>{% endif %}</th></tr></thead>
         <tbody>
       {% endifchanged %}
 
-      <tr><td>
+      <tr class="{{banca.periodo}}" {% if banca.periodo == "Anteriores" %}style="display: none;"{% endif %}><td>
         <div>
           <small style="margin-right: 1px;">#{{ forloop.revcounter }}.</small>
           <a href="{% url 'banca_ver' banca.id %}">
@@ -79,5 +79,7 @@
         Não existem Bancas cadastradas.
       {% endfor %}
       </tbody></table>
+
+      {% include "toggle_anteriores.html" %}
 
 {% endblock %}

@@ -32,10 +32,10 @@
       {% for projeto in projetos %}
         {% ifchanged projeto.periodo %}
           {% if not forloop.first %}</tbody>{% endif %}
-          <thead><tr><th style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ projeto.periodo }}</th></tr></thead>
+          <thead><tr><th id="{{projeto.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ projeto.periodo }} {% if projeto.periodo == "Anteriores" %}<i class="seta-baixo"></i>{% endif %}</th></tr></thead>
           <tbody>
         {% endifchanged %}
-        <tr><td>
+        <tr class="{{projeto.periodo}}" {% if projeto.periodo == "Anteriores" %}style="display: none;"{% endif %}><td>
         {% for documento in projeto.get_planos_de_orientacao %}
           <a {% if projeto.periodo == "Anteriores" %}style="color:grey"{% else %}style="color:green"{% endif %}
            data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
@@ -66,5 +66,6 @@
   </tbody></table>
 
   {% include "documento-modal.html" %}
+  {% include "toggle_anteriores.html" %}
 
 {% endblock %}
