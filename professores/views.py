@@ -1986,7 +1986,7 @@ def ver_pares(request, alocacao_id, momento):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def planos_de_orientacao(request):
     """Mostra os planos de orientação do professor."""
     projetos = Projeto.objects.filter(orientador=request.user.professor)\
@@ -1994,9 +1994,9 @@ def planos_de_orientacao(request):
     context = {
         "projetos": projetos,
         "configuracao": get_object_or_404(Configuracao),
+        "MEDIA_URL": settings.MEDIA_URL,
     }
-    return render(request, 'professores/planos_de_orientacao.html', context=context)
-
+    return render(request, "professores/planos_de_orientacao.html", context=context)
 
 
 @login_required
@@ -2006,13 +2006,13 @@ def planos_de_orientacao_todos(request):
 
     if request.is_ajax():
 
-        if 'edicao' in request.POST:
+        if "edicao" in request.POST:
 
             projetos = Projeto.objects.all()
 
-            edicao = request.POST['edicao']
-            if edicao != 'todas':
-                periodo = request.POST['edicao'].split('.')
+            edicao = request.POST["edicao"]
+            if edicao != "todas":
+                periodo = request.POST["edicao"].split('.')
                 ano = int(periodo[0])
                 semestre = int(periodo[1])
                 projetos = projetos.filter(ano=ano, semestre=semestre)
@@ -2021,7 +2021,6 @@ def planos_de_orientacao_todos(request):
                 "administracao": True,
                 "projetos": projetos,
                 "MEDIA_URL": settings.MEDIA_URL,
-
             }
 
         else:
@@ -2034,7 +2033,6 @@ def planos_de_orientacao_todos(request):
                 "administracao": True,
                 "edicoes": edicoes,
                 "MEDIA_URL": settings.MEDIA_URL,
-
             }
 
-    return render(request, 'professores/planos_de_orientacao_todos.html', context=context)
+    return render(request, "professores/planos_de_orientacao_todos.html", context=context)

@@ -110,13 +110,15 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_id=No
     organizacao = Organizacao.objects.filter(id=organizacao_id).last()
     projeto = Projeto.objects.filter(id=projeto_id).last()
 
+    if not tipo_id.isdigit():
+        tipo_id = TipoDocumento.objects.get(nome=tipo_id).id
+
     if request.is_ajax() and request.method == "POST":
         erro = cria_documento(request)
         if erro:
            return HttpResponseBadRequest(erro)
         return JsonResponse({"atualizado": True,})
 
-    #print(TipoDocumento.objects.filter(id=tipo_id))
     context = {
         "organizacao": organizacao,
         "tipos_documentos": TipoDocumento.objects.all(),

@@ -8,65 +8,63 @@
 {% block head %}
   {% load static %}
   {% load certificado_banca %}
+  {% load tipo_documento %}
+
   <script>{% include "tooltip.js" %}</script>
 
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
   
+  <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
+  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
+
+  <style>
+    .arredondado {width: auto;}
+  </style>
+
 {% endblock %}
 
 {% block content %}
 
-    <br>
-    <h4>Planos de Orientação</h4>
-    <ul>
-    {% for projeto in projetos %}
+    <span class="titulo">Planos de Orientação</span>
 
-      <p>
-
+    <table class="table table-borderless table-sm arredondado">
+      {% for projeto in projetos %}
+        {% ifchanged projeto.periodo %}
+          {% if not forloop.first %}</tbody>{% endif %}
+          <thead><tr><th style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ projeto.periodo }}</th></tr></thead>
+          <tbody>
+        {% endifchanged %}
+        <tr><td>
         {% for documento in projeto.get_planos_de_orientacao %}
-          <a {% if projeto.ano != configuracao.ano %}style="color:lightgray"
-             {% else %}style="color:green"
-             {% endif %}
+          <a {% if projeto.periodo == "Anteriores" %}style="color:grey"{% else %}style="color:green"{% endif %}
            data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
-           class="open-documento"
-           data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 documento.id %}">
-            <b>&#128463;</b>
-          </a>
-
-          {% comment %} (28, 'Plano de Orientação'), {% endcomment %}
-          <a {% if projeto.ano != configuracao.ano %}style="color:lightgray"{% endif %} 
-           class="open-documento"
-           data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 documento.id %}">
-            {{projeto.ano}}.{{projeto.semestre}} -
-            {{projeto.get_titulo}}
-            ({{projeto.organizacao.nome}})
-          </a>
+           {% if projeto.periodo == "Anteriores" %}
+            {% with documento=projeto.documento_set.all|tipo_documento:"Plano de Orientação" %}
+             href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer"
+            {% endwith %}
+           {% else %}
+            class="open-documento"
+            data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id "Plano de Orientação" documento.id %}" 
+           {% endif %}
+           ><b>&#128463;
         {% empty %}
-          <a {% if projeto.ano != configuracao.ano %}style="color:lightgray"
-             {% else %}style="color:red"
-             {% endif %}
+          <a {% if projeto.periodo == "Anteriores" %}style="color:grey"{% else %}style="color:red"{% endif %}
            data-toggle="tooltip" data-html="true" animation="true" title="Não entregue"
-           class="open-documento"
-           data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 %}"><b>&#128460;</b>
-          </a>
-          {% comment %} (28, 'Plano de Orientação'), {% endcomment %}
-          <a {% if projeto.ano != configuracao.ano %}style="color:lightgray"{% endif %} 
-           class="open-documento"
-           data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 28 %}">
-            {{projeto.ano}}.{{projeto.semestre}} -
-            {{projeto.get_titulo}}
-            ({{projeto.organizacao.nome}})
-          </a>
-        {% endfor %}
-
-      </p>
-
+           {% if projeto.periodo != "Anteriores" %}
+            class="open-documento"
+            data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id "Plano de Orientação" %}"
+           {% endif %}
+            ><b>&#128460;
+        {% endfor %}</b>
+         {{projeto.ano}}.{{projeto.semestre}} - {{projeto.organizacao.nome}}, {{projeto.get_titulo}}
+        </a>
+      </td></tr>
     {% empty %}
       Orientações não encontradas
     {% endfor %}
-    </ul>
+  </tbody></table>
 
-    {% include "documento-modal.html" %}
+  {% include "documento-modal.html" %}
 
 {% endblock %}
