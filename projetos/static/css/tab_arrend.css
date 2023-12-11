@@ -1,0 +1,30 @@
+.arredondado {
+	table-layout: fixed;
+	max-width: 100%;
+	border-collapse:separate;
+	border-spacing: 4px 6px;
+	margin-left: 6px;
+	margin-right: 12px;
+	margin-bottom: 6px;
+	border: 0px;
+}
+
+.arredondado tr {
+	line-height:1.3;
+	height: 1px;
+}
+
+.arredondado td {
+	background: #F0F0F0;
+	vertical-align: middle;
+	border: 1px solid grey;
+	border-radius: 6px;
+}
+
+tresp {
+	display: inline-block;
+	max-width: 100%;
+	overflow-x: clip;
+	text-overflow: ellipsis;
+	text-wrap: nowrap;
+}
