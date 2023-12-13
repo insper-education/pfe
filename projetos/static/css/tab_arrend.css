@@ -7,7 +7,7 @@
 	margin-right: 12px;
 	margin-bottom: 6px;
 	border: 0px;
-	/*width: auto;*/
+	width: auto;
 }
 
 .arredondado tr {
@@ -20,6 +20,7 @@
 	vertical-align: middle;
 	border: 1px solid grey;
 	border-radius: 6px;
+	max-width: calc(99vw - 34px);
 }
 
 .arredondado th {
@@ -60,7 +61,6 @@ table:has(#Avaliados input:checked) .hidden_tr {
 
 .tresp {
 	display: inline-block;
-	max-width: 100%;
 	overflow-x: clip;
 	text-overflow: ellipsis;
 	text-wrap: nowrap;
