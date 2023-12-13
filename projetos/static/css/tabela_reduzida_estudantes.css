@@ -1,0 +1,9 @@
+.tabela_redu_estu {
+    border-collapse: collapse;
+    border: 0px;
+}
+
+.tabela_redu_estu td {
+    padding: 0px 6px 0px 6px;
+    border: 0px;
+}

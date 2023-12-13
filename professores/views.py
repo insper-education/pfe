@@ -16,7 +16,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import html
 
 from users.models import PFEUser, Professor, Aluno, Alocacao
@@ -49,27 +49,27 @@ def index_professor(request):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def avaliacoes_pares(request):
-    """Formulários com os projetos e avaliações de pares."""
-    configuracao = get_object_or_404(Configuracao)
-    projetos = Projeto.objects.filter(orientador=request.user.professor, ano=configuracao.ano, semestre=configuracao.semestre)
-    context = {
-        "projetos": projetos,
-    }
-    return render(request, 'professores/avaliacoes_pares.html', context=context)
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def avaliacoes_pares_todas(request):
+def avaliacoes_pares(request, todos=None):
     """Formulários com os projetos e relatos a avaliar do professor orientador."""
-    context = {"administracao": True,}
+
+    if todos == "todos" and request.user.tipo_de_usuario != 4:  # Administrador
+        return HttpResponse("Acesso negado.", status=401)
+
+    context = {}
+
+    if request.user.tipo_de_usuario == 4:  # Administrador
+        context["administracao"] = True
+
     if request.is_ajax():
-        if 'edicao' in request.POST:
+        if "edicao" in request.POST:
+
             projetos = Projeto.objects.all()
-            edicao = request.POST['edicao']
-            if edicao != 'todas':
-                periodo = request.POST['edicao'].split('.')
+            if todos != "todos":
+                projetos = projetos.filter(orientador=request.user.professor)
+
+            edicao = request.POST["edicao"]
+            if edicao != "todas":
+                periodo = request.POST["edicao"].split('.')
                 ano = int(periodo[0])
                 semestre = int(periodo[1])
                 projetos = projetos.filter(ano=ano, semestre=semestre)
@@ -77,7 +77,7 @@ def avaliacoes_pares_todas(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
-        edicoes, _, _ = get_edicoes(Projeto)
+        edicoes, _, _ = get_edicoes(Pares)
         context["edicoes"] = edicoes
 
     return render(request, 'professores/avaliacoes_pares.html', context=context)
@@ -1951,7 +1951,15 @@ def ver_pares(request, alocacao_id, momento):
     alocacao_de = get_object_or_404(Alocacao, pk=alocacao_id)
 
     if request.user != alocacao_de.projeto.orientador.user and request.user.tipo_de_usuario != 4:
-        return HttpResponse("Acesso restrito.", status=401)
+        return HttpResponse("Somente o próprio orientador pode confirmar uma avaliação de pares.", status=401)
+
+    if request.method == 'POST':
+        if momento=="intermediaria":
+            alocacao_de.avaliacao_intermediaria = True
+        else:
+            alocacao_de.avaliacao_final = True
+        alocacao_de.save()
+        return redirect('/professores/avaliacoes_pares/')
 
     if momento=="intermediaria":
         tipo=0

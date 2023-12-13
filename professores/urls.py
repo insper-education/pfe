@@ -22,9 +22,9 @@ urlpatterns = [
          views.avaliacoes_pares,
          name='avaliacoes_pares'),
 
-    path('avaliacoes_pares_todas/',
-         views.avaliacoes_pares_todas,
-         name='avaliacoes_pares_todas'),
+    path('avaliacoes_pares/<str:todos>',
+         views.avaliacoes_pares,
+         name='avaliacoes_pares'),
 
     path('bancas_alocadas/',
          views.bancas_alocadas,

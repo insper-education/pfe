@@ -6,20 +6,10 @@
 
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
-
-<style>
-  table {
-    border-collapse: collapse;
-    border: 0px;
-  }
-  td {
-    padding: 0px 6px 0px 6px;
-    border: 0px;
-  }
-</style>
+<link rel="stylesheet" href="{% static 'css/tabela_reduzida_estudantes.css' %}">
 
 {% if projeto %}
-  <table class="table-striped">
+  <table class="tabela_redu_estu table-striped"><tbody>
   {% for evento, relatos, avaliados in projeto.get_relatos %}
     <tr style="padding-left: 18px;">
         <td><a href="{% url 'relato_avaliar' projeto.id evento.id %}">{{ forloop.counter }}&ordm;</a></td>
@@ -58,5 +48,5 @@
         {% endif %}
       </td></tr>
   {% endfor %}
-</table>
+    </tbody></table>
 {% endif %}

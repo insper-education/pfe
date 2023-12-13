@@ -18,10 +18,6 @@ urlpatterns = [
          views.index_estudantes,
          name='index_estudantes'),
 
-#     path('areas_interesse/',
-#          views.areas_interesse,
-#          name='areas_interesse'),
-
     path('avaliacao_pares/<str:momento>',
          views.avaliacao_pares,
          name='avaliacao_pares'),

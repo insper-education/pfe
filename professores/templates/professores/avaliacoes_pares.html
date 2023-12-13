@@ -7,13 +7,16 @@
 
 {% block head %}
   {% load static %}
-  {% load aval_pares %}
 
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
   
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
+
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
+  <link rel="stylesheet" href="{% static 'css/outros.css' %}">
+  <link rel="stylesheet" href="{% static 'css/tabela_reduzida_estudantes.css' %}">
 
 {% endblock %}
 
@@ -29,6 +32,7 @@
 
     {% for projeto in projetos %}
 
+    <div class="div_arredondado">
       <strong>Projeto:</strong> <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a><br>
       <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
       {% if administracao %}<strong>Orientador:</strong>
@@ -48,41 +52,18 @@
       {% else %}
         ORGANIZAÇAO NÃO DEFINIDA
       {% endif %}
-      <br>
 
-      <div style="margin-top: 6px;">
+      <div style="margin-top: 18px;">
         <strong>Avaliações Intermediárias:</strong><br>
-        <ul>
-          {% for alocacao in projeto.alocacao_set.all %}
-            <li>
-              {% with feita=alocacao|aval_pares:"intermediaria" %}
-                {% if feita %}<a href="{% url 'ver_pares' alocacao.id 'intermediaria' %}">{% endif %}
-                  {{alocacao.aluno}}
-                {% if feita %}</a>{% endif %}
-              {% endwith %}
-            </li>
-          {% endfor %}
-        </ul>
+        {% include "pares.html" with tipo_avaliacao="intermediaria" %}
       </div>
 
-      <div style="margin-top: 6px;">
-      <strong>Avaliações Finais:</strong><br>
-        <ul>
-          {% for alocacao in projeto.alocacao_set.all %}
-            <li>
-              {% with feita=alocacao|aval_pares:"final" %}
-                {% if feita %}<a href="{% url 'ver_pares' alocacao.id 'final' %}">{% endif %}
-                  {{alocacao.aluno}}
-                {% if feita %}</a>{% endif %}
-              {% endwith %}
-            </li>
-          {% endfor %}
-        </ul>
+      <div style="margin-top: 18px;">
+        <strong>Avaliações Finais:</strong><br>
+        {% include "pares.html" with tipo_avaliacao="final" %}
       </div>
 
-      {% if not forloop.last %}
-        <hr>
-      {% endif %}
+    </div>
 
     {% empty %}
 
@@ -91,8 +72,7 @@
     {% endfor %}
 
     <script>
-      function carrega_pagina(){
-      };
+      function carrega_pagina(){};
       window.onload = carrega_pagina
     </script>
 

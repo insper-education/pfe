@@ -703,6 +703,10 @@ class Alocacao(models.Model):
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE)
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
 
+    # Se orientador confirmou avaliação de pares do estudante
+    avaliacao_intermediaria = models.BooleanField("Avaliação Intermediária", default=False)
+    avaliacao_final = models.BooleanField("Avaliação Final", default=False)
+
     class Meta:
         """Meta para Alocacao."""
 
