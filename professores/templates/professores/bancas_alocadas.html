@@ -15,7 +15,8 @@
   
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
-  
+  <link rel="stylesheet" href="{% static 'css/outros.css' %}">
+
 {% endblock %}
 
 {% block content %}
@@ -27,7 +28,7 @@
       {% ifchanged banca.periodo %}
         {% if not forloop.first %}</tbody>{% endif %}
         <thead><tr><th id="{{banca.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ banca.periodo }}
-           {% if banca.periodo == "Anteriores" %}<input class="seta-baixo" type="checkbox"></input>{% endif %}</th></tr></thead>
+           {% if banca.periodo == "Anteriores" %}<span class="seta-baixo"></span>{% endif %}</th></tr></thead>
         <tbody>
       {% endifchanged %}
 

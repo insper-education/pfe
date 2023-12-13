@@ -27,7 +27,7 @@
       {% ifchanged coorientacao.projeto.periodo %}
         {% if not forloop.first %}</tbody>{% endif %}
         <thead><tr><th id="{{coorientacao.projeto.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ coorientacao.projeto.periodo }}
-          {% if coorientacao.projeto.periodo == "Anteriores" %}<input class="seta-baixo" type="checkbox"></input>{% endif %}</th></tr></thead>
+          {% if coorientacao.projeto.periodo == "Anteriores" %}<span class="seta-baixo"></span>{% endif %}</th></tr></thead>
         <tbody>
       {% endifchanged %}
 

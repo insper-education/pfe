@@ -35,7 +35,6 @@
 	content: "\25BC";
 	visibility: visible;
 	position: relative;
-    bottom: 0.3em;
 }
 
 .seta-cima {
@@ -46,7 +45,6 @@
 	content: "\25B2"; 
 	visibility: visible;
 	position: relative;
-    bottom: 0.3em;
 }
  
 .hidden_tr {
@@ -58,10 +56,3 @@
 table:has(#Avaliados input:checked) .hidden_tr {
 	display: table-row;
 } */
-
-.tresp {
-	display: inline-block;
-	overflow-x: clip;
-	text-overflow: ellipsis;
-	text-wrap: nowrap;
-}
