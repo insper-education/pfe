@@ -1,0 +1,15 @@
+.div_arredondado {
+	background: #F0F0F0;
+	vertical-align: middle;
+	border: 1px solid grey;
+	border-radius: 6px;
+	margin-bottom: 12px;
+	max-width: 100%;
+	width: 800px;
+    padding: 8px;
+}
+
+.div_arredondado div {
+	display: block;
+	max-width: 100%;
+}

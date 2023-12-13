@@ -126,17 +126,17 @@ urlpatterns = [
          views.relato_avaliar,
          name='relato_avaliar'),
 
-    path('relatos_quinzenais_todos/',
-         views.relatos_quinzenais_todos,
-         name='relatos_quinzenais_todos'),
+    path('relatos_quinzenais/',
+         views.relatos_quinzenais,
+         name='relatos_quinzenais'),
+
+    path("relatos_quinzenais/<str:todos>",
+         views.relatos_quinzenais,
+         name='relatos_quinzenais'),
 
     path('planos_de_orientacao_todos/',
          views.planos_de_orientacao_todos,
          name='planos_de_orientacao_todos'),
-
-    path("relatos_quinzenais/",
-         views.relatos_quinzenais,
-         name='relatos_quinzenais'),
 
      path("planos_de_orientacao/",
          views.planos_de_orientacao,

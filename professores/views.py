@@ -1555,24 +1555,19 @@ def coorientadores_tabela(request):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def relatos_quinzenais(request):
+def relatos_quinzenais(request, todos=None):
     """Formulários com os projetos e relatos a avaliar do professor orientador."""
-    configuracao = get_object_or_404(Configuracao)
-    projetos = Projeto.objects.filter(orientador=request.user.professor, ano=configuracao.ano, semestre=configuracao.semestre)
-    context = {"projetos": projetos,}
-    return render(request, 'professores/relatos_quinzenais.html', context=context)
 
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def relatos_quinzenais_todos(request):
-    """Formulários com os projetos e relatos a avaliar do professor orientador."""
+    if todos == "todos" and request.user.tipo_de_usuario != 4:  # Administrador
+        return HttpResponse("Acesso negado.", status=401)
 
     if request.is_ajax():
 
         if "edicao" in request.POST:
 
-            projetos = Projeto.objects.all()
+            projetos = Projeto.objects.all().order_by("ano", "semestre")
+            if todos != "todos":
+                projetos = projetos.filter(orientador=request.user.professor)
 
             edicao = request.POST['edicao']
             if edicao != 'todas':
@@ -1592,7 +1587,7 @@ def relatos_quinzenais_todos(request):
 
     else:
 
-        edicoes, _, _ = get_edicoes(Projeto)
+        edicoes, _, _ = get_edicoes(Relato)
         context = {
                 "administracao": True,
                 "edicoes": edicoes,

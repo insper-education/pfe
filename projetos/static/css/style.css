@@ -13,13 +13,6 @@
   outline-offset: 5px;
 }
 
-/* Compromete o fa-bars, removendo por enquanto */
-/*
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
-*/
-
 .mobile-container {
   max-width: 480px;
   margin: auto;
@@ -92,52 +85,6 @@ body {
   text-overflow: ellipsis;
 }
 
-.red-normal {
-  color: red;
-  font-weight: normal;
-}
-
-.green-normal {
-  color: green;
-  font-weight: normal;
-}
-
-.yellow-normal {
-  color: olive;
-  font-weight: normal;
-}
-
-.dark-blue-normal {
-  color: darkblue;
-  font-weight: normal;
-}
-
-
-.red-bold {
-  color: red;
-  font-weight: bold;
-}
-
-.green-bold {
-  color: green;
-  font-weight: bold;
-}
-
-.yellow-bold {
-  color: olive;
-  font-weight: bold;
-}
-
-.dark-blue-bold {
-  color: darkblue;
-  font-weight: bold;
-}
-
-.dark-green-bold {
-  color: rgb(0, 70, 0);
-  font-weight: bold;
-}
-
 p {
   display: block;
   margin-top: 2px;
@@ -162,10 +109,6 @@ p {
 table, th, td {
   border-collapse: collapse;
   border: 1px solid black;
-  /*
-  padding-left: 5px;
-  padding-right: 5px;
-  */
   text-align: left;
   font-size: 16px;
 }
@@ -235,9 +178,9 @@ table, th, td {
 }
 
 @media only screen and (max-width: 480px) {
-  table, th, td {
+  /* table, th, td {
     font-size: 12px;
-  }
+  } */
   #canvas-holder {
     width:100%;
   }

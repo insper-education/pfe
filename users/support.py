@@ -11,8 +11,9 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404
 
 
-from projetos.models import Configuracao, Certificado, Avaliacao2, Evento
+from projetos.models import Configuracao, Certificado, Avaliacao2, Evento, Projeto
 from .models import Aluno
+from estudantes.models import Relato
 
 from administracao.support import get_limite_propostas
 
@@ -95,6 +96,12 @@ def get_edicoes(tipo, anual=False):
                 existe = True
         elif tipo == Avaliacao2:
             if tipo.objects.filter(projeto__ano=ano_tmp, projeto__semestre=semestre_tmp).exists():
+                existe = True
+        elif tipo == Relato:  # Relato no sistema do PFE só começaram a ser feitos em 2022.1
+            if ano_tmp < 2022:
+                ano_tmp = 2022
+                semestre_tmp = 1
+            if Projeto.objects.filter(ano=ano_tmp, semestre=semestre_tmp).exists():
                 existe = True
         else:
             if tipo.objects.filter(ano=ano_tmp, semestre=semestre_tmp).exists():

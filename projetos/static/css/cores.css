@@ -1,0 +1,44 @@
+.red-normal {
+  color: red;
+  font-weight: normal;
+}
+
+.green-normal {
+  color: green;
+  font-weight: normal;
+}
+
+.yellow-normal {
+  color: olive;
+  font-weight: normal;
+}
+
+.dark-blue-normal {
+  color: darkblue;
+  font-weight: normal;
+}
+
+.red-bold {
+  color: red;
+  font-weight: bold;
+}
+
+.green-bold {
+  color: green;
+  font-weight: bold;
+}
+
+.yellow-bold {
+  color: olive;
+  font-weight: bold;
+}
+
+.dark-blue-bold {
+  color: darkblue;
+  font-weight: bold;
+}
+
+.dark-green-bold {
+  color: rgb(0, 70, 0);
+  font-weight: bold;
+}

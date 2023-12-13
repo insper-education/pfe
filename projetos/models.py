@@ -177,18 +177,28 @@ class Projeto(models.Model):
 
         return texto + self.get_titulo()
 
-    @property
+    def tem_relatos(self):
+        """Retorna todos os possiveis relatos quinzenais para o projeto."""
+        
+        # Antes de 2022 os relatores era realizados no Blackboard
+        # Essa função em hardcode não é ideal, mas resolve o problema
+        if self.ano < 2022:
+            return Evento.objects.none()
+        
+        if self.semestre == 1:
+            eventos = Evento.objects.filter(tipo_de_evento=20, endDate__year=self.ano, endDate__month__lt=7)
+        else:
+            eventos = Evento.objects.filter(tipo_de_evento=20, endDate__year=self.ano, endDate__month__gt=6)
+
+        return eventos
+
+    # @property
     def get_relatos(self):
         """Retorna todos os possiveis relatos quinzenais para o projeto."""
         
         proximo = datetime.date.today() + datetime.timedelta(days=14)
 
-        if self.semestre == 1:
-            eventos = Evento.objects.filter(tipo_de_evento=20, endDate__year=self.ano, endDate__month__lt=7, startDate__lt=proximo).order_by('endDate')
-        else:
-            eventos = Evento.objects.filter(tipo_de_evento=20, endDate__year=self.ano, endDate__month__gt=6, startDate__lt=proximo).order_by('endDate')
-
-        # alocacoes = Alocacao.objects.filter(projeto=self)
+        eventos = self.tem_relatos().filter(startDate__lt=proximo).order_by("endDate")
 
         relatos = []
         avaliados = []  # se o orientador fez alguma avaliação dos relatos
