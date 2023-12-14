@@ -6,35 +6,28 @@
 {% endcomment %}
 
 {% block head %}
-  
   {% load static %}
-  
   <script src="{% static 'js/w3.js' %}"></script>
-
-  <script> {% include "tooltip.js" %} </script>
+  <script>{% include "tooltip.js" %}</script>
+  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
 
   <style>
-
     th {
       background-color: #E6E6E6;
       padding: 0px 2px 0px 2px;
     }
-
     thead tr:nth-of-type(2) th {
       cursor:pointer;
       text-align: center;
     }
-
     td {
       padding: 4px;
     }
-
     ul {
       margin-bottom: 6px;
       padding-left: 1.4em;
       font-size: 0.9em;
     }
-
   </style>
 
 
@@ -51,6 +44,7 @@
 
   {% include "informacoes.html" %}
 
+  <div class="table-responsive">
   <table  id="ProjetosTable" class="projetos">
 
     {% if tabela %}
@@ -233,13 +227,15 @@
     {% endif %}
 
   </table>
+  </div>
+
 
   <br>
   &nbsp;<span style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    Certificação Excelência Projeto Final de Engenharia FALCONI-INSPER<br>
+    Certificação Excelência <span class="opt_full">Projeto Final de Engenharia</span><span class="opt_short">PFE</span> FALCONI-INSPER<br>
 
   &nbsp;<span style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    Certificação Destaque Projeto Final de Engenharia FALCONI-INSPER<br>
+    Certificação Destaque <span class="opt_full">Projeto Final de Engenharia</span><span class="opt_short">PFE</span> FALCONI-INSPER<br>
 
   <p>&nbsp;</p>
 
