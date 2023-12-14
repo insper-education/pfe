@@ -51,7 +51,7 @@
  
   {% if projetos %}
     
-    <form method="post" id="criarbancasform" enctype="multipart/form-data">
+    <form method="post" id="criarbancasform" enctype="multipart/form-data" onsubmit="return submitForm();">
       {% csrf_token %}
 
       {% if not banca.projeto %}
@@ -82,8 +82,8 @@
       <br>
 
       Título: 
-      <a id="titulo_link" name="titulo_link" {% if banca and banca.projeto %}href="{% url 'projeto_completo' banca.projeto.id %}"{% endif %}>
-        <label id="titulo" name="titulo">
+      <a style="display: inline;" id="titulo_link" name="titulo_link" {% if banca and banca.projeto %}href="{% url 'projeto_completo' banca.projeto.id %}"{% endif %}>
+        <label style="display: inline;" id="titulo" name="titulo">
           {% if banca and banca.projeto %}
             {{banca.projeto.get_titulo}}
             {% include "tipo_projeto.html" with projeto=banca.projeto %}
@@ -119,11 +119,15 @@
       <label hidden id="orientador_id"></label>
       <br><br>
 
+    
       <div style="line-height: 1;">
         <span style="display: inline-block; margin-bottom: 8px;">Tipo de banca:</span>
         {% for numero, texto in TIPO_DE_BANCA %}
           <div style="margin-left: 0.3em;" class="radio">
-            <label for="tipo{{numero}}"><input class="tipo_banca" id="tipo{{numero}}" type="radio" name="tipo" value="{{numero}}" {% if banca.tipo_de_banca == numero %}checked{% endif %} required> {{texto}}</label><br>
+            <label for="tipo{{numero}}"><input class="tipo_banca" id="tipo{{numero}}" type="radio" name="tipo" value="{{numero}}"
+              {% if banca.tipo_de_banca == numero or tipob == numero %}checked{% endif %} required> {{texto}}</label>
+              (padrão de duração: {% if numero == 2 %}30{% else %}120{% endif %}min)
+              <br>
           </div>
         {% endfor %}
       </div>
@@ -134,9 +138,23 @@
           $(".tipo_banca").change(function(){
               var tipo = $(this).val();
               if(tipo == 2) {  // Banca Falconi
-                minutos=30
-              } else {        // Outras Bancas
-                minutos=120
+                document.getElementById("inicio").min = "{{bancas_falconi.startDate|date:'Y-m-d'}}T00:00:00";
+                document.getElementById("inicio").max = "{{bancas_falconi.endDate|date:'Y-m-d'}}T23:59:59";
+                document.getElementById("fim").min = "{{bancas_falconi.startDate|date:'Y-m-d'}}T00:00:00";
+                document.getElementById("fim").max = "{{bancas_falconi.endDate|date:'Y-m-d'}}T23:59:59";
+                minutos=30;
+              } else if(tipo == 1) {  // Banca Intermediária
+                document.getElementById("inicio").min = "{{bancas_intermediaria.startDate|date:'Y-m-d'}}T00:00:00";
+                document.getElementById("inicio").max = "{{bancas_intermediaria.endDate|date:'Y-m-d'}}T23:59:59";
+                document.getElementById("fim").min = "{{bancas_intermediaria.startDate|date:'Y-m-d'}}T00:00:00";
+                document.getElementById("fim").max = "{{bancas_intermediaria.endDate|date:'Y-m-d'}}T23:59:59";
+                minutos=120;
+              } else {  // Banca Final
+                document.getElementById("inicio").min = "{{bancas_finais.startDate|date:'Y-m-d'}}T00:00:00";
+                document.getElementById("inicio").max = "{{bancas_finais.endDate|date:'Y-m-d'}}T23:59:59";
+                document.getElementById("fim").min = "{{bancas_finais.startDate|date:'Y-m-d'}}T00:00:00";
+                document.getElementById("fim").max = "{{bancas_finais.endDate|date:'Y-m-d'}}T23:59:59";
+                minutos=120;
               }
           });
       });
@@ -144,12 +162,14 @@
 
       <br>
       <div>
-        
           <label for="inicio">
-          <span style="display:inline-block; width:5.5ex; text-align:right;">Inicio:</span>
+          <span style="display:inline-block; width:5.5ex; text-align:right;">Início:</span>
           <input id="inicio" type="datetime-local" name="inicio" 
+          {% comment %} min="2018-01-01T00:00" max="2018-12-31T00:00"  {% endcomment %}
           {% if banca %}
-            value="{{banca.startDate|date:'Y-m-d\TH:i:s'}}" 
+            value="{{banca.startDate|date:'Y-m-d\TH:i:s'}}"
+          {% elif data %}
+            value="{{data}}T00:00"
           {% endif %} 
           required>
           &nbsp;&nbsp;&nbsp;&nbsp;
@@ -159,11 +179,25 @@
           <span style="display:inline-block; width:5.5ex; text-align:right">Fim:</span>
           <input id="fim" type="datetime-local" name="fim"
           {% if banca %}
-            value="{{banca.endDate|date:'Y-m-d\TH:i:s'}}" 
+            value="{{banca.endDate|date:'Y-m-d\TH:i:s'}}"
+          {% elif data %}
+            value="{{data}}T00:00"
           {% endif %} 
           required>
           </label>
-        
+
+          <script>
+            {% comment %} const dateControl = document.querySelector('input[type="datetime-local"]');
+            dateControl.value = "2017-06-01T08:30"; {% endcomment %}
+            {% comment %} $("#inicio").min = "2020-01-01T00:00:00";
+            $("#inicio").max = "2020-12-31T00:00:00"; {% endcomment %}
+
+            {% comment %} document.getElementById("inicio").min = "2020-12-31T00:00:00";
+            document.getElementById("inicio").max = "2020-12-31T23:59:59"; {% endcomment %}
+            
+           // dateInput.min = new Date().toISOString().slice(0,new Date().toISOString().lastIndexOf(":"));
+
+          </script>
       </div><br>
 
       <script>
@@ -193,7 +227,6 @@
         });
       </script>
 
-      
       <label for="local">Local:
         <input id="local" name="local" type="text" size="36" style="max-width: 100%;" placeholder="alocado pela equipe de reservas"
         {% if banca %}
@@ -269,7 +302,27 @@
 
       <span id="mensagem"></span>
     </form>
-  {% else %}
+
+    <script>
+      function submitForm(){
+
+        if($("#inicio").val() == $("#fim").val()) {
+          alert("Datas e horários de início e fim são iguais!");
+          return false;
+        }
+
+        d_inicio = new Date($("#inicio").val());
+        d_fim = new Date($("#fim").val());
+        if(d_inicio > d_fim) {
+          alert("Data de início depois da data final!");
+          return false;
+        }
+
+        return true;
+     }
+     </script>
+
+    {% else %}
     <p>Não existem projetos disponíveis para marcar uma banca.</p>
   {% endif %}
 

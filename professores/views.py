@@ -145,19 +145,19 @@ def bancas_index(request):
         "dias_bancas": dias_bancas,
     }
 
-    return render(request, 'professores/bancas_index.html', context)
+    return render(request, "professores/bancas_index.html", context)
 
 
 @login_required
 @permission_required('users.altera_professor', raise_exception=True)
-def bancas_criar(request):
+def bancas_criar(request, data=None):
     """Cria uma banca de avaliação para o projeto."""
     configuracao = get_object_or_404(Configuracao)
 
-    if request.method == 'POST':
-        if 'projeto' in request.POST:
+    if request.method == "POST":
+        if "projeto" in request.POST:
             projeto = get_object_or_404(Projeto,
-                                        id=int(request.POST['projeto']))
+                                        id=int(request.POST["projeto"]))
 
             banca = Banca.create(projeto)
             editar_banca(banca, request)
@@ -220,15 +220,40 @@ def bancas_criar(request):
     # Coletando bancas agendadas a partir de hoje
     hoje = datetime.date.today()
     bancas_agendadas = Banca.objects.filter(startDate__gt=hoje).order_by("startDate")
-    projetos_agendados = list(bancas_agendadas.values_list('projeto', flat=True))
+    projetos_agendados = list(bancas_agendadas.values_list("projeto", flat=True))
+
+
+    if configuracao.semestre == 1:
+        eventos = Evento.objects.filter(startDate__year=configuracao.ano, startDate__month__lt=7)
+    else:
+        eventos = Evento.objects.filter(startDate__year=configuracao.ano, startDate__month__gt=7)
+
+    # 14, 'Banca intermediária' / 15, 'Bancas finais' / 50, 'Certificação Falconi'
+    bancas_intermediaria = eventos.filter(tipo_de_evento=14).last()
+    bancas_finais = eventos.filter(tipo_de_evento=15).last()
+    bancas_falconi = eventos.filter(tipo_de_evento=50).last()
 
     context = {
-        'projetos': projetos,
-        'professores': professores,
+        "projetos": projetos,
+        "professores": professores,
         "TIPO_DE_BANCA": Banca.TIPO_DE_BANCA,
         "falconis": falconis,
         "projetos_agendados": projetos_agendados,
+        "bancas_intermediaria": bancas_intermediaria,
+        "bancas_finais": bancas_finais,
+        "bancas_falconi": bancas_falconi,
     }
+
+    if data:
+        context["data"] = data
+        datar = datetime.datetime.strptime(data, "%Y-%m-%d").date()
+        if datar >= bancas_finais.startDate and datar <= bancas_finais.endDate:
+            context["tipob"] = 0
+        if datar >= bancas_intermediaria.startDate and datar <= bancas_intermediaria.endDate:
+            context["tipob"] = 1
+        if datar >= bancas_falconi.startDate and datar <= bancas_falconi.endDate:
+            context["tipob"] = 2
+        
     return render(request, 'professores/bancas_editar.html', context)
 
 

@@ -42,29 +42,33 @@ urlpatterns = [
         views.mentorias_alocadas,
         name='mentorias_alocadas'),
 
-    path('bancas_criar/',
+    path("bancas_criar/",
          views.bancas_criar,
-         name='bancas_criar'),
+         name="bancas_criar"),
 
-    path('bancas_editar/<int:primarykey>',
+    path("bancas_criar/<str:data>",
+         views.bancas_criar,
+         name="bancas_criar"),
+
+    path("bancas_editar/<int:primarykey>",
          views.bancas_editar,
-         name='bancas_editar'),
+         name="bancas_editar"),
 
-    path('banca_ver/<int:primarykey>',
+    path("banca_ver/<int:primarykey>",
          views.banca_ver,
-         name='banca_ver'),
+         name="banca_ver"),
 
-    path('bancas_index/',
+    path("bancas_index/",
          views.bancas_index,
-         name='bancas_index'),
+         name="bancas_index"),
 
-    path('bancas_lista/<str:periodo_projeto>',
+    path("bancas_lista/<str:periodo_projeto>",
          views.bancas_lista,
-         name='bancas_lista'),
+         name="bancas_lista"),
 
-    path('bancas_tabela/',
+    path("bancas_tabela/",
          views.bancas_tabela,
-         name='bancas_tabela'),
+         name="bancas_tabela"),
 
     path('bancas_tabela_completa/',
          views.bancas_tabela_completa,
