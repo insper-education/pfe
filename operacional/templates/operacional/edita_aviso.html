@@ -55,7 +55,7 @@
 
       <br><br>
 
-      <button type="submit">Atualizar Aviso</button>
+      <button type="submit">{% if aviso %}Atualizar{% else %}Criar{% endif %} Aviso</button>
 
       {% if aviso %}
         &nbsp;&nbsp;

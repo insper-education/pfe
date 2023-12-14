@@ -1954,9 +1954,9 @@ def ver_pares(request, alocacao_id, momento):
         return HttpResponse("Somente o próprio orientador pode confirmar uma avaliação de pares.", status=401)
 
     if request.method == 'POST':
-        if momento=="intermediaria":
+        if momento=="intermediaria" and not alocacao_de.avaliacao_intermediaria:
             alocacao_de.avaliacao_intermediaria = datetime.datetime.now()
-        else:
+        elif momento=="final" and not alocacao_de.avaliacao_final:
             alocacao_de.avaliacao_final = datetime.datetime.now()
         alocacao_de.save()
         return redirect('/professores/avaliacoes_pares/')

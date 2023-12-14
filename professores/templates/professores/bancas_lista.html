@@ -10,6 +10,8 @@
   {% load escape_emails %}
   {% load banca_tipo %}
 
+  <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
+
   {% comment %}
     Estou achando desnecessário
     <link rel="stylesheet" href="{% static 'css/impressoras.css' %}">
@@ -64,7 +66,8 @@
     
       {% csrf_token %}
 
-      <table id="BancasTable">
+
+      <table id="BancasTable" class="table table-borderless table-sm arredondado"><tbody>
         {% for banca in bancas %} 
         <tr class="item {{ banca.tipo_de_banca|get_banca }}">
           <td>
@@ -226,14 +229,14 @@
           </div>
 
           <span class="editar esconder">
-            <button style="float: right;" type="submit" formaction="../bancas_editar/{{banca.pk}}">Editar</button>
+            <button class="btn btn-primary" style="float: right;" type="submit" formaction="../bancas_editar/{{banca.pk}}">Editar</button>
             <br>
           </span>
 
           </td>
         </tr>
         {% endfor %}
-      </table>
+      </tbody></table>
     </form>
   {% else %}
     <p>Não existem bancas definidas.</p>
@@ -254,14 +257,14 @@
             </a>
           {% endif %}
 
-          <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
-          {% include "tipo_projeto.html" %}<br>
-
           {% if projeto.organizacao %}
             [<a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}"
               >{{ projeto.organizacao.nome }}</a
             >]
           {% endif %}
+
+          <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
+          {% include "tipo_projeto.html" %}
 
         </li>
       {% endfor %}

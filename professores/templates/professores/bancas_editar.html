@@ -13,73 +13,73 @@
 
   <script>
     $(document).ready(function () {     
-      $('#projeto').change(function(){
-        var titulo = $(this).children(':selected').data('titulo');
-        var titulo_link = $(this).children(':selected').data('titulo_link');
-        var organizacao = $(this).children(':selected').data('organizacao');
-        var organizacao_link = $(this).children(':selected').data('organizacao_link');
-        var orientador = $(this).children(':selected').data('orientador');
-        var orientador_link = $(this).children(':selected').data('orientador_link');
-        var orientador_id = $(this).children(':selected').data('orientador_id');
-        $('#titulo').text(titulo);
-        $('#titulo_link').attr("href", titulo_link);
-        $('#organizacao').text(organizacao);
-        $('#organizacao_link').attr("href", organizacao_link);
-        $('#orientador').text(orientador);
-        $('#orientador_link').attr("href", orientador_link);
-        $('#orientador_id').val(orientador_id);
+      $("#projeto").change(function(){
+        var titulo = $(this).children(":selected").data("titulo");
+        var titulo_link = $(this).children(":selected").data("titulo_link");
+        var organizacao = $(this).children(":selected").data("organizacao");
+        var organizacao_link = $(this).children(":selected").data("organizacao_link");
+        var orientador = $(this).children(":selected").data("orientador");
+        var orientador_link = $(this).children(':selected').data("orientador_link");
+        var orientador_id = $(this).children(':selected').data("orientador_id");
+        $("#titulo").text(titulo);
+        $("#titulo_link").attr("href", titulo_link);
+        $("#organizacao").text(organizacao);
+        $("#organizacao_link").attr("href", organizacao_link);
+        $("#orientador").text(orientador);
+        $("#orientador_link").attr("href", orientador_link);
+        $("#orientador_id").val(orientador_id);
 
-        var mensagem = $(this).children(':selected').data('mensagem');
-        if(mensagem) { 
-          $("#mensagem").html(mensagem);
-        }
+        var mensagem = $(this).children(":selected").data("mensagem");
+        if(mensagem) { $("#mensagem").html(mensagem); }
 
       })
     });
   </script>
 
   <style>
-    table, th, td {
-      border: 0px;
+    table, th, td { border: 0px; }
+    .btn-group.bootstrap-select select {
+      width: 1px !important;
     }
   </style>
 
-  <style>
-    .btn-group.bootstrap-select select {
-        width: 1px !important;
-      }
-  </style>
+  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
 
 {% endblock %}
 
 {% block content %}
  
   {% if projetos %}
+    
     <form method="post" id="criarbancasform" enctype="multipart/form-data">
       {% csrf_token %}
 
-      <label for="projeto">Projeto:</label>
-      <select class="selectpicker" name="projeto" id="projeto" title="Selecione o projeto"
-       data-live-search="true" data-width="75%" data-size="5" required>
-        {% for projeto in projetos %}
-          <option value="{{projeto.id}}"
-          style="font-size: 0.75em;{% if projeto.id in projetos_agendados %}color: lightgrey;{% endif %}"
-          data-titulo="{{projeto.titulo}}"
-          data-titulo_link="{% url 'projeto_completo' projeto.id %}"
-          data-organizacao="{{projeto.organizacao}}"
-          data-organizacao_link="{% url 'organizacao_completo' projeto.organizacao.id %}"
-          data-orientador="{% if projeto.orientador %}{{projeto.orientador}}{% else %}SEM ORIENTADOR{% endif %}"
-          data-orientador_link="{% if projeto.orientador %}{% url 'professor_detail' projeto.orientador.id %}{% endif %}"
-          data-orientador_id="{% if projeto.orientador %}{{projeto.orientador.user.id}}{% else %}0{% endif %}"
-          {% if projeto.id == banca.projeto.id %} selected {% endif %}
-          data-subtext="{% if projeto.orientador %}{{projeto.orientador}}{% else %}SEM ORIENTADOR{% endif %}"
-          {% if projeto.id in projetos_agendados %}data-mensagem="Banca já agendada"{% endif %}
-          >
-            {{projeto.ano}}.{{projeto.semestre}} ({{projeto.organizacao}}) {{projeto.titulo}}
-            {% include "tipo_projeto.html" %}
-          </option>  
-        {% endfor %}
-      </select><br><br>
+      {% if not banca.projeto %}
+        <label style="margin-top: 12px;" for="projeto">Projeto:</label>
+        <select class="selectpicker" name="projeto" id="projeto" title="Selecione o projeto"
+        data-live-search="true" data-width="75%" data-size="5" required>
+          {% for projeto in projetos %}
+            <option value="{{projeto.id}}"
+            style="font-size: 0.75em;{% if projeto.id in projetos_agendados %}color: lightgrey;{% endif %}"
+            data-titulo="{{projeto.titulo}}"
+            data-titulo_link="{% url 'projeto_completo' projeto.id %}"
+            data-organizacao="{{projeto.organizacao}}"
+            data-organizacao_link="{% url 'organizacao_completo' projeto.organizacao.id %}"
+            data-orientador="{% if projeto.orientador %}{{projeto.orientador}}{% else %}SEM ORIENTADOR{% endif %}"
+            data-orientador_link="{% if projeto.orientador %}{% url 'professor_detail' projeto.orientador.id %}{% endif %}"
+            data-orientador_id="{% if projeto.orientador %}{{projeto.orientador.user.id}}{% else %}0{% endif %}"
+            {% if projeto.id == banca.projeto.id %} selected {% endif %}
+            data-subtext="{% if projeto.orientador %}{{projeto.orientador}}{% else %}SEM ORIENTADOR{% endif %}"
+            {% if projeto.id in projetos_agendados %}data-mensagem="Banca já agendada"{% endif %}
+            >
+              {{projeto.ano}}.{{projeto.semestre}} ({{projeto.organizacao}}) {{projeto.titulo}}
+              {% include "tipo_projeto.html" %}
+            </option>  
+          {% endfor %}
+        </select>
+        <br>
+      {% endif %}
+      <br>
 
       Título: 
       <a id="titulo_link" name="titulo_link" {% if banca and banca.projeto %}href="{% url 'projeto_completo' banca.projeto.id %}"{% endif %}>
@@ -117,15 +117,16 @@
         </label>
       </a>
       <label hidden id="orientador_id"></label>
-      <br>
+      <br><br>
 
-      <br>
-      Tipo de banca:<br>
-      {% for numero, texto in TIPO_DE_BANCA %}
-        <div class="radio">
-          &nbsp;&nbsp;<input class="tipo_banca" id="tipo{{numero}}" type="radio" name="tipo" value="{{numero}}" {% if banca.tipo_de_banca == numero %}checked{% endif %} required> <label for="tipo{{numero}}">{{texto}}</label><br>
-        </div>
-      {% endfor %}
+      <div style="line-height: 1;">
+        <span style="display: inline-block; margin-bottom: 8px;">Tipo de banca:</span>
+        {% for numero, texto in TIPO_DE_BANCA %}
+          <div style="margin-left: 0.3em;" class="radio">
+            <label for="tipo{{numero}}"><input class="tipo_banca" id="tipo{{numero}}" type="radio" name="tipo" value="{{numero}}" {% if banca.tipo_de_banca == numero %}checked{% endif %} required> {{texto}}</label><br>
+          </div>
+        {% endfor %}
+      </div>
 
       <script>
       var minutos = 0
@@ -194,16 +195,16 @@
 
       
       <label for="local">Local:
-        <input id="local" name="local" type="text" size="36" style="max-width: 100%;"
+        <input id="local" name="local" type="text" size="36" style="max-width: 100%;" placeholder="alocado pela equipe de reservas"
         {% if banca %}
           value="{{banca.location}}"
-        {% endif %} 
+        {% endif %}
         />
       </label> 
       <br><br>
 
       <label for="link">Link de Vídeo-conferência:
-        <input id="link" name="link" type="text" size="36" style="max-width: 100%;"
+        <input id="link" name="link" type="text" size="36" style="max-width: 100%;" placeholder="-- somente se necessário --"
         {% if banca %}
           value="{{banca.link}}"
         {% endif %} 
@@ -215,7 +216,7 @@
       <table>
         <tr>
           <td>
-            <label for="membro1">Membro 1 da Banca:</label>
+            <label for="membro1">Membro&nbsp;1<span class="opt_full"> da Banca</span>:</label>
           </td>
           <td>
             <select name="membro1" class="pessoas custom-select custom-select-sm membros" id="membro1" title="Selecione membro da banca" required
@@ -228,7 +229,7 @@
         </tr>
         <tr>
           <td>
-            <label for="membro2">Membro 2 da Banca:</label>
+            <label for="membro2">Membro&nbsp;2<span class="opt_full"> da Banca</span>:</label>
           </td>
           <td>
             <select name="membro2" class="pessoas custom-select custom-select-sm membros" id="membro2" title="Selecione membro da banca" required
@@ -241,7 +242,7 @@
         </tr>
         <tr>
           <td>
-            <label for="membro3">Membro 3 da Banca:</label>
+            <label for="membro3">Membro&nbsp;3<span class="opt_full"> da Banca</span>:</label>
           </td>
           <td>
             <select name="membro3" class="pessoas custom-select custom-select-sm membros" id="membro3" title="Selecione membro da banca">
@@ -255,13 +256,16 @@
         <br>
         Formulário de Avaliação:
         <a href="{% url 'banca_avaliar' banca.slug %}">
-          {% url 'banca_avaliar' banca.slug %}
+          https://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}
         </a>
       {% endif %}
 
       <br><br>
-      <button id="submit" type="submit" name="atualizar" >{% if banca %}Atualizar{% else %}Agendar{% endif %}</button>
-      <button id="submit" type="submit" name="excluir" >Excluir Banca</button>
+      <button id="submit" class="btn btn-primary" type="submit" name="atualizar" >{% if banca %}Atualizar{% else %}Agendar{% endif %}</button>
+
+      {% if banca %}
+        <button id="submit" class="btn btn-primary" type="submit" name="excluir" >Excluir Banca</button>
+      {% endif %}
 
       <span id="mensagem"></span>
     </form>
