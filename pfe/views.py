@@ -34,24 +34,11 @@ def custom_400(request, exception):
     #t.render(Context({'exception_value': value,})
     return HttpResponse(mensagem)
 
-from users.models import Alocacao
-import datetime
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
-    message = "Feito"
-
-    alocacoes = Alocacao.objects.filter(projeto__ano=2023)
-    for alocacao in alocacoes:
-        if alocacao.projeto.semestre == 1:
-            alocacao.avaliacao_intermediaria = datetime.datetime(2023, 4, 15, 0, 0, 0, 0, tzinfo=datetime.timezone.utc)
-            alocacao.avaliacao_final = datetime.datetime(2023, 6, 14, 0, 0, 0, 0, tzinfo=datetime.timezone.utc)
-        else:
-            alocacao.avaliacao_intermediaria = datetime.datetime(2023, 10, 17, 0, 0, 0, 0, tzinfo=datetime.timezone.utc)
-            alocacao.avaliacao_final = datetime.datetime(2023, 12, 8, 0, 0, 0, 0, tzinfo=datetime.timezone.utc)
-
-        alocacao.save()
+    message = "Nada Feito"
 
     return HttpResponse(message)
