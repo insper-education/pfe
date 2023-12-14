@@ -704,8 +704,15 @@ class Alocacao(models.Model):
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
 
     # Se orientador confirmou avaliação de pares do estudante
-    avaliacao_intermediaria = models.BooleanField("Avaliação Intermediária", default=False)
-    avaliacao_final = models.BooleanField("Avaliação Final", default=False)
+    # avaliacao_intermediaria = models.BooleanField("Avaliação Intermediária", default=False)
+    # avaliacao_final = models.BooleanField("Avaliação Final", default=False)
+
+    # avaliacao_intermediaria = models.DateTimeField("Avaliação Intermediária", default=None, blank=True, null=True,
+    #                                                help_text="Momento em que o orientador verificou a avaliação intermediária de par do estudante")
+    
+    # avaliacao_final = models.DateTimeField("Avaliação Intermediária", default=None, blank=True, null=True,
+    #                                         help_text="Momento em que o orientador verificou a avaliação final de par do estudante")
+    
 
     class Meta:
         """Meta para Alocacao."""
