@@ -35,10 +35,18 @@ def custom_400(request, exception):
     return HttpResponse(mensagem)
 
 
+from users.models import Alocacao
+
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
-    message = "Nada Feito"
+    message = "Feito"
+
+    alocacoes = Alocacao.objects.all().exclude(projeto__ano=2024)
+    for alocacao in alocacoes:
+        alocacao.avaliacao_intermediaria = True
+        alocacao.avaliacao_final = True
+        alocacao.save()
 
     return HttpResponse(message)
