@@ -138,22 +138,28 @@
           $(".tipo_banca").change(function(){
               var tipo = $(this).val();
               if(tipo == 2) {  // Banca Falconi
-                document.getElementById("inicio").min = "{{bancas_falconi.startDate|date:'Y-m-d'}}T00:00:00";
-                document.getElementById("inicio").max = "{{bancas_falconi.endDate|date:'Y-m-d'}}T23:59:59";
-                document.getElementById("fim").min = "{{bancas_falconi.startDate|date:'Y-m-d'}}T00:00:00";
-                document.getElementById("fim").max = "{{bancas_falconi.endDate|date:'Y-m-d'}}T23:59:59";
+                {% if user.tipo_de_usuario != 4 %} // Coordenador pode alocar fora dos horários
+                  document.getElementById("inicio").min = "{{bancas_falconi.startDate|date:'Y-m-d'}}T00:00:00";
+                  document.getElementById("inicio").max = "{{bancas_falconi.endDate|date:'Y-m-d'}}T23:59:59";
+                  document.getElementById("fim").min = "{{bancas_falconi.startDate|date:'Y-m-d'}}T00:00:00";
+                  document.getElementById("fim").max = "{{bancas_falconi.endDate|date:'Y-m-d'}}T23:59:59";
+                {% endif %}
                 minutos=30;
               } else if(tipo == 1) {  // Banca Intermediária
-                document.getElementById("inicio").min = "{{bancas_intermediaria.startDate|date:'Y-m-d'}}T00:00:00";
-                document.getElementById("inicio").max = "{{bancas_intermediaria.endDate|date:'Y-m-d'}}T23:59:59";
-                document.getElementById("fim").min = "{{bancas_intermediaria.startDate|date:'Y-m-d'}}T00:00:00";
-                document.getElementById("fim").max = "{{bancas_intermediaria.endDate|date:'Y-m-d'}}T23:59:59";
+                {% if user.tipo_de_usuario != 4 %} // Coordenador pode alocar fora dos horários
+                  document.getElementById("inicio").min = "{{bancas_intermediaria.startDate|date:'Y-m-d'}}T00:00:00";
+                  document.getElementById("inicio").max = "{{bancas_intermediaria.endDate|date:'Y-m-d'}}T23:59:59";
+                  document.getElementById("fim").min = "{{bancas_intermediaria.startDate|date:'Y-m-d'}}T00:00:00";
+                  document.getElementById("fim").max = "{{bancas_intermediaria.endDate|date:'Y-m-d'}}T23:59:59";
+                {% endif %}
                 minutos=120;
               } else {  // Banca Final
-                document.getElementById("inicio").min = "{{bancas_finais.startDate|date:'Y-m-d'}}T00:00:00";
-                document.getElementById("inicio").max = "{{bancas_finais.endDate|date:'Y-m-d'}}T23:59:59";
-                document.getElementById("fim").min = "{{bancas_finais.startDate|date:'Y-m-d'}}T00:00:00";
-                document.getElementById("fim").max = "{{bancas_finais.endDate|date:'Y-m-d'}}T23:59:59";
+                {% if user.tipo_de_usuario != 4 %} // Coordenador pode alocar fora dos horários
+                  document.getElementById("inicio").min = "{{bancas_finais.startDate|date:'Y-m-d'}}T00:00:00";
+                  document.getElementById("inicio").max = "{{bancas_finais.endDate|date:'Y-m-d'}}T23:59:59";
+                  document.getElementById("fim").min = "{{bancas_finais.startDate|date:'Y-m-d'}}T00:00:00";
+                  document.getElementById("fim").max = "{{bancas_finais.endDate|date:'Y-m-d'}}T23:59:59";
+                {% endif %}
                 minutos=120;
               }
           });
@@ -185,19 +191,6 @@
           {% endif %} 
           required>
           </label>
-
-          <script>
-            {% comment %} const dateControl = document.querySelector('input[type="datetime-local"]');
-            dateControl.value = "2017-06-01T08:30"; {% endcomment %}
-            {% comment %} $("#inicio").min = "2020-01-01T00:00:00";
-            $("#inicio").max = "2020-12-31T00:00:00"; {% endcomment %}
-
-            {% comment %} document.getElementById("inicio").min = "2020-12-31T00:00:00";
-            document.getElementById("inicio").max = "2020-12-31T23:59:59"; {% endcomment %}
-            
-           // dateInput.min = new Date().toISOString().slice(0,new Date().toISOString().lastIndexOf(":"));
-
-          </script>
       </div><br>
 
       <script>
@@ -220,6 +213,7 @@
                     HH + ':' + II + ':' + SS;
           };
 
+        // Já ajusta o horário final para o padrão de minutos
         $("#inicio").change(function() {
           var data = new Date($(this).val());
           data.setMinutes(data.getMinutes() + minutos);
@@ -252,7 +246,8 @@
             <label for="membro1">Membro&nbsp;1<span class="opt_full"> da Banca</span>:</label>
           </td>
           <td>
-            <select name="membro1" class="pessoas custom-select custom-select-sm membros" id="membro1" title="Selecione membro da banca" required
+            <select name="membro1" class="pessoas custom-select custom-select-sm membros" id="membro1" title="Selecione membro da banca"
+              {% if user.tipo_de_usuario != 4 %}required{% endif %}            
               oninvalid="this.setCustomValidity('Selecione ao menos duas pessoas para a banca')"
               oninput="this.setCustomValidity('')"
               >
@@ -265,7 +260,8 @@
             <label for="membro2">Membro&nbsp;2<span class="opt_full"> da Banca</span>:</label>
           </td>
           <td>
-            <select name="membro2" class="pessoas custom-select custom-select-sm membros" id="membro2" title="Selecione membro da banca" required
+            <select name="membro2" class="pessoas custom-select custom-select-sm membros" id="membro2" title="Selecione membro da banca"
+              {% if user.tipo_de_usuario != 4 %}required{% endif %}
               oninvalid="this.setCustomValidity('Selecione ao menos duas pessoas para a banca')"
               oninput="this.setCustomValidity('')"
               >
@@ -285,10 +281,21 @@
         </tr>
       </table>
 
+      <style>
+        .url_reativo {
+          font-size: 16px;
+        }
+        @media (max-width: 460px) {
+          .url_reativo {
+            font-size: 14px;
+          }
+        }
+      </style>
+
       {% if banca %}
         <br>
         Formulário de Avaliação:
-        <a href="{% url 'banca_avaliar' banca.slug %}">
+        <a class="url_reativo" href="{% url 'banca_avaliar' banca.slug %}">
           https://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}
         </a>
       {% endif %}
