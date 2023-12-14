@@ -1955,9 +1955,9 @@ def ver_pares(request, alocacao_id, momento):
 
     if request.method == 'POST':
         if momento=="intermediaria":
-            alocacao_de.avaliacao_intermediaria = True
+            alocacao_de.avaliacao_intermediaria = datetime.datetime.now()
         else:
-            alocacao_de.avaliacao_final = True
+            alocacao_de.avaliacao_final = datetime.datetime.now()
         alocacao_de.save()
         return redirect('/professores/avaliacoes_pares/')
 
