@@ -110,7 +110,13 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_id=No
     organizacao = Organizacao.objects.filter(id=organizacao_id).last()
     projeto = Projeto.objects.filter(id=projeto_id).last()
 
-    if not tipo_id.isdigit():
+    if organizacao_id and (not organizacao):
+        return HttpResponseNotFound("<h1>Organização não encontrada!</h1>")
+
+    if projeto_id and (not projeto):
+        return HttpResponseNotFound("<h1>Projeto não encontrado!</h1>")
+    
+    if tipo_id and (not tipo_id.isdigit()):
         tipo_id = TipoDocumento.objects.get(nome=tipo_id).id
 
     if request.is_ajax() and request.method == "POST":

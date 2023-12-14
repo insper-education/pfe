@@ -27,9 +27,11 @@
 
   <script src="{% static 'fullcalendar-4.4.2/core/locales/pt-br.js' %}"></script>
 
+
   {% include "cores_bancas.html" %}
 
   <script>
+
     document.addEventListener('DOMContentLoaded', function() {
       var calendarEl = document.getElementById('calendar');
 
@@ -77,7 +79,7 @@
                         '\nBanca: {{banca.projeto.orientador.user.first_name}} {{banca.projeto.orientador.user.last_name}}(O){% if banca.membro1 %}; {{banca.membro1.first_name}} {{banca.membro1.last_name}}{% endif %}{% if banca.membro2 %}; {{banca.membro2.first_name}} {{banca.membro2.last_name}}{% endif %}{% if banca.membro3 %}; {{banca.membro3.first_name}} {{banca.membro3.last_name}}{% endif %}' +
                         ' ',
                 {% else %}
-                  title: 'Projeto não identificado',
+                  title: "Projeto não identificado",
                 {% endif %}
 
                 organizacao: "{{banca.projeto.organizacao.sigla}}",
@@ -85,8 +87,8 @@
                 local: "{{banca.location}}",
                 start: '{{banca.startDate.year}}-{{banca.startDate.month|stringformat:"02d"}}-{{banca.startDate.day|stringformat:"02d"}}T{{banca.startDate.hour|stringformat:"02d"}}:{{banca.startDate.minute|stringformat:"02d"}}:00',
                 end: '{{banca.endDate.year}}-{{banca.endDate.month|stringformat:"02d"}}-{{banca.endDate.day|stringformat:"02d"}}T{{banca.endDate.hour|stringformat:"02d"}}:{{banca.endDate.minute|stringformat:"02d"}}:00',
-                url: '../bancas_editar/{{banca.id}}',
-                textColor: '#fafafa',
+                id: "{{banca.id}}",
+                textColor: "#fafafa",
 
                 {% if banca.tipo_de_banca == 0 %} {% comment %} Banca Final {% endcomment %}
                   color: color_banca_final
@@ -127,9 +129,19 @@
           {% endfor %}
         ],
 
+        eventClick: function(event, jsEvent, view) {
+          // Para editar uma banca
+          var elem = document.createElement( "span" );
+          $( elem ).data( "url", "{% url 'bancas_editar' %}"+event.event.id);
+          abrir_modal.call(elem, null);
+      },
+
         dateClick: function(info) {
           // Para criar uma nova banca, reproveitando a data clicada
-          window.location.href = "{% url 'bancas_criar'%}" + info.dateStr;
+          var elem = document.createElement( "span" );
+          $( elem ).data( "url", "{% url 'bancas_criar' %}");
+          $( elem ).data( "data", info.dateStr);
+          abrir_modal.call(elem, null);
         },
 
       });
@@ -169,8 +181,7 @@
       .wrap {
         flex-direction: column-reverse;
       }
-      .one,
-      .two {
+      .one, .two {
         width: auto;
       }
       .fc-event {
@@ -183,14 +194,20 @@
 
 {% block content %}
 
-  <span class="titulo">Bancas</span>
+  <span class="titulo">Bancas
+    <small>
+      <a data-toggle="tooltip" data-html="true" animation="true" title="Agenda Nova Banca" class="open-banca"
+            data-url="{% url 'bancas_criar' %}" href="{% url 'bancas_criar'%}"> 
+            &#10133;
+        </a>
+    </small>
+  </span>
 
   <div class="wrap">
-      <div class="one">
-        <br><br>
-        <a href="{% url 'bancas_criar'%}"><h5>Criar Nova Banca</h5></a>
-      </div>
+      {% comment %} <div class="one"></div> Não mais usado, ficava a esquerda {% endcomment %}
       <div class="two" id='calendar'></div>
   </div>
+
+  {% include "bancas-modal.html" %}
 
 {% endblock %}

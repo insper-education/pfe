@@ -15,7 +15,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.db.models.functions import Lower
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import html
 
@@ -154,7 +154,7 @@ def bancas_criar(request, data=None):
     """Cria uma banca de avaliação para o projeto."""
     configuracao = get_object_or_404(Configuracao)
 
-    if request.method == "POST":
+    if request.is_ajax() and request.method == "POST":
         if "projeto" in request.POST:
             projeto = get_object_or_404(Projeto,
                                         id=int(request.POST["projeto"]))
@@ -201,12 +201,10 @@ def bancas_criar(request, data=None):
             mensagem += "</ul>"
             
             context = {
-                "area_principal": True,
-                "bancas_index": True,
-                "agendar_banca": True,
+                "atualizado": True,
                 "mensagem": mensagem,
             }
-            return render(request, 'generic.html', context=context)
+            return JsonResponse(context)
 
         return HttpResponse("Banca não registrada, erro identificando projeto")
 
@@ -236,12 +234,14 @@ def bancas_criar(request, data=None):
     context = {
         "projetos": projetos,
         "professores": professores,
+        "Banca": Banca,
         "TIPO_DE_BANCA": Banca.TIPO_DE_BANCA,
         "falconis": falconis,
         "projetos_agendados": projetos_agendados,
         "bancas_intermediaria": bancas_intermediaria,
         "bancas_finais": bancas_finais,
         "bancas_falconi": bancas_falconi,
+        "url": request.get_full_path(),
     }
 
     if data:
@@ -254,49 +254,71 @@ def bancas_criar(request, data=None):
         if datar >= bancas_falconi.startDate and datar <= bancas_falconi.endDate:
             context["tipob"] = 2
         
-    return render(request, 'professores/bancas_editar.html', context)
+    return render(request, 'professores/bancas_view.html', context)
 
 
 @login_required
 @permission_required('users.altera_professor', raise_exception=True)
-def bancas_editar(request, primarykey):
+def bancas_editar(request, primarykey=None):
     """Edita uma banca de avaliação para o projeto."""
+
+    if primarykey is None:
+        return HttpResponseNotFound('<h1>Erro!</h1>')
+
     banca = get_object_or_404(Banca, pk=primarykey)
 
-    if request.method == 'POST':
+    if request.is_ajax() and request.method == "POST":
 
-        context = {"mensagem": "Algum problema ocorreu!",}
-        if 'atualizar' in request.POST:
+        #print(request.POST)
+        mensagem = ""
+        if "atualizar" in request.POST:
             if editar_banca(banca, request):
                 mensagem = "Banca editada."
             else:
                 mensagem = "Erro ao Editar banca."
-            context = {
-                "area_principal": True,
-                "bancas_index": True,
+        elif "excluir" in request.POST:
+            mensagem = "Banca excluída!"
+            if "projeto" in request.POST:
+                banca.delete()
+        else:
+            return HttpResponse("Atualização não realizada.", status=401)
+
+        context = {
+                "atualizado": True,
                 "mensagem": mensagem,
             }
-        elif 'excluir' in request.POST:
-            context = {"mensagem": "Banca excluída!",}
-            if 'projeto' in request.POST:
-                banca.delete()
-
-        return render(request, 'generic.html', context=context)
-
+        return JsonResponse(context)
+    
     projetos = Projeto.objects.exclude(orientador=None)\
         .order_by("-ano", "-semestre")
 
     professores, _ = professores_membros_bancas()
     falconis, _ = falconi_membros_banca()
 
+    configuracao = get_object_or_404(Configuracao)
+    if configuracao.semestre == 1:
+        eventos = Evento.objects.filter(startDate__year=configuracao.ano, startDate__month__lt=7)
+    else:
+        eventos = Evento.objects.filter(startDate__year=configuracao.ano, startDate__month__gt=7)
+
+    # 14, 'Banca intermediária' / 15, 'Bancas finais' / 50, 'Certificação Falconi'
+    bancas_intermediaria = eventos.filter(tipo_de_evento=14).last()
+    bancas_finais = eventos.filter(tipo_de_evento=15).last()
+    bancas_falconi = eventos.filter(tipo_de_evento=50).last()
+
     context = {
-        'projetos': projetos,
-        'professores': professores,
-        'banca': banca,
+        "projetos": projetos,
+        "professores": professores,
+        "banca": banca,
+        "Banca": Banca,
         "TIPO_DE_BANCA": Banca.TIPO_DE_BANCA,
         "falconis": falconis,
+        "bancas_intermediaria": bancas_intermediaria,
+        "bancas_finais": bancas_finais,
+        "bancas_falconi": bancas_falconi,
+        "url": request.get_full_path(),
     }
-    return render(request, 'professores/bancas_editar.html', context)
+    return render(request, "professores/bancas_view.html", context)
 
 
 @login_required

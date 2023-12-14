@@ -50,6 +50,10 @@ urlpatterns = [
          views.bancas_criar,
          name="bancas_criar"),
 
+    path("bancas_editar/",
+         views.bancas_editar,
+         name="bancas_editar"),
+
     path("bancas_editar/<int:primarykey>",
          views.bancas_editar,
          name="bancas_editar"),

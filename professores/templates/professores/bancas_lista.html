@@ -23,7 +23,14 @@
 
   {% include "impressora.html" %}
 
-  <span class="titulo">Listagem de Bancas</span>
+  <span class="titulo">Listagem de Bancas
+    <small>
+      <a data-toggle="tooltip" data-html="true" animation="true" title="Agenda Nova Banca" class="open-banca"
+            data-url="{% url 'bancas_criar' %}" href="{% url 'bancas_criar'%}"> 
+            &#10133;
+        </a>
+    </small>
+  </span>
 
   <select class="esconder" id="proximas" onchange="location = this.options[this.selectedIndex].value;">
     <option value="todas" {% if periodo == "todas" %}selected="todas"{% endif %}>Todas</option>
@@ -202,7 +209,7 @@
               </ul>
             </div>
 
-            <div class="avaliacao" style="margin-top: 8px;">
+            <div class="avaliacao" style="margin-top: 8px; overflow-wrap: break-word;">
               &#9733; <b>Link formulário de avaliação</b>: 
               <a href="{% url 'banca_avaliar' banca.slug %}">
                 http://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}
@@ -229,8 +236,10 @@
           </div>
 
           <span class="editar esconder">
-            <button class="btn btn-primary" style="float: right;" type="submit" formaction="../bancas_editar/{{banca.pk}}">Editar</button>
-            <br>
+            <a data-toggle="tooltip" data-html="true" animation="true" title="Agenda Nova Banca" class="open-banca"
+              data-url="{% url 'bancas_editar' %}{{banca.pk}}" href="{% url 'bancas_editar' banca.pk%}"> 
+              <button class="btn btn-primary" style="float: right;">Editar</button>
+            </a>
           </span>
 
           </td>
@@ -285,5 +294,7 @@
     window.onload = carrega_site
 
   </script>
+
+  {% include "bancas-modal.html" %}
 
 {% endblock %}

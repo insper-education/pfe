@@ -246,12 +246,11 @@
           url: "{% url 'adiciona_documento' %}",
         {% endif %}
         data: formData,
-        //data: $("form#meuForm").serialize(),
         processData: false,
         contentType: false,
         success: function(response){
           //console.log("sucesso");
-          //$('#disciplina'+disciplina).remove();
+          location.reload();
         },
         error: function (request, status, error) {
           {% if user.tipo_de_usuario == 4 %} 
@@ -263,7 +262,6 @@
           {% endif %}
         }
     });
-    location.reload();
     return false;
   });
 </script> 

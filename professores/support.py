@@ -21,7 +21,7 @@ from projetos.models import Avaliacao_Velha, Observacao_Velha
 def editar_banca(banca, request):
     """Edita os valores de uma banca por um request Http."""
 
-    if 'projeto' in request.POST:
+    if "projeto" in request.POST:
         try:
             banca.projeto = Projeto.objects.get(id=int(request.POST['projeto']))
         except Projeto.DoesNotExist:
@@ -29,34 +29,34 @@ def editar_banca(banca, request):
     else:
         return False
 
-    if 'inicio' in request.POST:
+    if "inicio" in request.POST:
         try:
             banca.startDate = dateutil.parser.parse(request.POST['inicio'])
         except (ValueError, OverflowError):
             banca.startDate = None
-    if 'fim' in request.POST:
+    if "fim" in request.POST:
         try:
             banca.endDate = dateutil.parser.parse(request.POST['fim'])
         except (ValueError, OverflowError):
             banca.endDate = None
-    if 'tipo' in request.POST and request.POST['tipo'] != "":
+    if "tipo" in request.POST and request.POST['tipo'] != "":
         banca.tipo_de_banca = int(request.POST['tipo'])
-    if 'local' in request.POST:
+    if "local" in request.POST:
         banca.location = request.POST['local']
-    if 'link' in request.POST:
+    if "link" in request.POST:
         banca.link = request.POST['link']
 
     try:
-        if 'membro1' in request.POST and request.POST['membro1'].isnumeric():
-            banca.membro1 = PFEUser.objects.get(id=int(request.POST['membro1']))
+        if "membro1" in request.POST and request.POST["membro1"].isnumeric():
+            banca.membro1 = PFEUser.objects.get(id=int(request.POST["membro1"]))
         else:
             banca.membro1 = None
-        if 'membro2' in request.POST and request.POST['membro2'].isnumeric():
-            banca.membro2 = PFEUser.objects.get(id=int(request.POST['membro2']))
+        if "membro2" in request.POST and request.POST["membro2"].isnumeric():
+            banca.membro2 = PFEUser.objects.get(id=int(request.POST["membro2"]))
         else:
             banca.membro2 = None
-        if 'membro3' in request.POST and request.POST['membro3'].isnumeric():
-            banca.membro3 = PFEUser.objects.get(id=int(request.POST['membro3']))
+        if "membro3" in request.POST and request.POST["membro3"].isnumeric():
+            banca.membro3 = PFEUser.objects.get(id=int(request.POST["membro3"]))
         else:
             banca.membro3 = None
     except PFEUser.DoesNotExist:

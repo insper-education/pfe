@@ -1,46 +1,15 @@
-{% extends "base.html" %}
 {% comment %}
     Desenvolvido para o Projeto Final de Engenharia
     Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 14 de Novembro de 2019
+    Data: 14 de Dezembro de 2023
 {% endcomment %}
 
-
-{% comment %} VELHO NÃO USAR MAIS REMOVER {% endcomment %}
-{% comment %} VELHO NÃO USAR MAIS REMOVER {% endcomment %}
-{% comment %} VELHO NÃO USAR MAIS REMOVER {% endcomment %}
-
-
-{% block head %}
-
   {% load static %}
+  {% load get_field %}
+
   <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
-
-  <script>
-    $(document).ready(function () {     
-      $("#projeto").change(function(){
-        var titulo = $(this).children(":selected").data("titulo");
-        var titulo_link = $(this).children(":selected").data("titulo_link");
-        var organizacao = $(this).children(":selected").data("organizacao");
-        var organizacao_link = $(this).children(":selected").data("organizacao_link");
-        var orientador = $(this).children(":selected").data("orientador");
-        var orientador_link = $(this).children(':selected').data("orientador_link");
-        var orientador_id = $(this).children(':selected').data("orientador_id");
-        $("#titulo").text(titulo);
-        $("#titulo_link").attr("href", titulo_link);
-        $("#organizacao").text(organizacao);
-        $("#organizacao_link").attr("href", organizacao_link);
-        $("#orientador").text(orientador);
-        $("#orientador_link").attr("href", orientador_link);
-        $("#orientador_id").val(orientador_id);
-
-        var mensagem = $(this).children(":selected").data("mensagem");
-        if(mensagem) { $("#mensagem").html(mensagem); }
-
-      })
-    });
-  </script>
+  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
 
   <style>
     table, th, td { border: 0px; }
@@ -49,18 +18,22 @@
     }
   </style>
 
-  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
-
-{% endblock %}
-
-{% block content %}
- 
-  {% if projetos %}
-    
-    <form method="post" id="criarbancasform" enctype="multipart/form-data" onsubmit="return submitForm();">
+    <form id="meuForm" method="post" id="criarbancasform" enctype="multipart/form-data" 
+    {% comment %} onsubmit="return submitForm();" {% endcomment %}
+    >
       {% csrf_token %}
 
+      <div class="modal-header">
+        <h5 id="documentacao" class="modal-title">{% if documentos %}Editar Agendamento de{% else %}Agendar{% endif %} Banca</h5>    
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    
+      <div id="modal-body" class="modal-body">
+
       {% if not banca.projeto %}
+        <div class="form-group">
         <label style="margin-top: 12px;" for="projeto">Projeto:</label>
         <select class="selectpicker" name="projeto" id="projeto" title="Selecione o projeto"
         data-live-search="true" data-width="75%" data-size="5" required>
@@ -83,9 +56,10 @@
             </option>  
           {% endfor %}
         </select>
-        <br>
+        </div>
+      {% else %}
+        <input type="hidden" name="projeto" value="{{banca.projeto.id}}">
       {% endif %}
-      <br>
 
       Título: 
       <a style="display: inline;" id="titulo_link" name="titulo_link" {% if banca and banca.projeto %}href="{% url 'projeto_completo' banca.projeto.id %}"{% endif %}>
@@ -131,8 +105,8 @@
         {% for numero, texto in TIPO_DE_BANCA %}
           <div style="margin-left: 0.3em;" class="radio">
             <label for="tipo{{numero}}"><input class="tipo_banca" id="tipo{{numero}}" type="radio" name="tipo" value="{{numero}}"
-              {% if banca.tipo_de_banca == numero or tipob == numero %}checked{% endif %} required> {{texto}}</label>
-              (padrão de duração: {% if numero == 2 %}30{% else %}120{% endif %}min)
+              {% if banca.tipo_de_banca == numero or tipob == numero %}checked{% endif %} required> {{texto}}
+              (padrão de duração: {% if numero == 2 %}30{% else %}120{% endif %}min)</label>
               <br>
           </div>
         {% endfor %}
@@ -227,22 +201,32 @@
         });
       </script>
 
-      <label for="local">Local:
-        <input id="local" name="local" type="text" size="36" style="max-width: 100%;" placeholder="alocado pela equipe de reservas"
+      <style>
+        input {
+          max-width: 100%;
+        }
+        textarea {
+          max-width: 100%;
+        }
+      </style>
+      
+      <label for="local">Local:</label> 
+        <input id="local" name="local" type="text" size="36" maxlength="{% max_length Banca "location" %}"
+        style="max-width: 100%;" placeholder="alocado pela equipe de reservas"
         {% if banca %}
           value="{{banca.location}}"
         {% endif %}
         />
-      </label> 
+      
       <br><br>
 
-      <label for="link">Link de Vídeo-conferência:
-        <input id="link" name="link" type="text" size="36" style="max-width: 100%;" placeholder="-- somente se necessário --"
+      <label for="link">Link de Vídeo-conferência:</label>
+        <input id="link" name="link" type="text" size="36" maxlength="{% max_length Banca "link" %}" 
+        style="max-width: 100%;" placeholder="-- somente se necessário --"
         {% if banca %}
           value="{{banca.link}}"
         {% endif %} 
         />
-      </label>
       <br>
       <br>
 
@@ -300,46 +284,38 @@
 
       {% if banca %}
         <br>
-        Formulário de Avaliação:
-        <a class="url_reativo" href="{% url 'banca_avaliar' banca.slug %}">
-          https://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}
-        </a>
+        <div style="overflow-wrap: break-word;">
+          Formulário de Avaliação:
+          <a class="url_reativo" href="{% url 'banca_avaliar' banca.slug %}">
+            https://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}
+          </a>
+        </div>
       {% endif %}
 
       <br><br>
-      <button id="submit" class="btn btn-primary" type="submit" name="atualizar" >{% if banca %}Atualizar{% else %}Agendar{% endif %}</button>
-
-      {% if banca %}
-        <button id="submit" class="btn btn-primary" type="submit" name="excluir" >Excluir Banca</button>
-      {% endif %}
-
       <span id="mensagem"></span>
-    </form>
 
-    <script>
-      function submitForm(){
+    </div>
 
-        if($("#inicio").val() == $("#fim").val()) {
-          alert("Datas e horários de início e fim são iguais!");
-          return false;
-        }
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+    <button id="submit" class="btn btn-primary" type="submit" name="atualizar"
+      {% if banca %}onclick="operacao = 'atualizar';"{% endif %}>
+      {% if banca %}Atualizar{% else %}Agendar{% endif %}
+    </button>
+    {% if banca %}
+      <button id="excluir" class="btn btn-primary" type="submit" name="excluir" onclick="operacao = 'excluir';">
+        Excluir Banca
+      </button>
+    {% endif %}
+  </div>
 
-        d_inicio = new Date($("#inicio").val());
-        d_fim = new Date($("#fim").val());
-        if(d_inicio > d_fim) {
-          alert("Data de início depois da data final!");
-          return false;
-        }
+</form>
 
-        return true;
-     }
-     </script>
-
-    {% else %}
-    <p>Não existem projetos disponíveis para marcar uma banca.</p>
-  {% endif %}
 
   <script>
+
+    var operacao = "agendar";
 
     $(".membros").change(function(){
       var membros  = $('.membros')
@@ -368,10 +344,10 @@
       $("#mensagem").html("");
     });  
 
-    function carrega_pagina(){
+    function carrega_pagina() {
       $('.pessoas').empty();
       
-      {% comment %} Preenche com as pessas possíveis conforme o tipo de banca {% endcomment %}
+      {% comment %} Preenche com as pessoas possíveis conforme o tipo de banca {% endcomment %}
       var tipo = $("input[name='tipo']:checked").val();
       if (tipo==2) {
         $('.pessoas').append($("<option selected value></option>").text("-- selecione membro da banca --"));
@@ -397,10 +373,95 @@
 
     }
 
+      $(document).ready(function () {     
+        $("#projeto").change(function(){
+          var titulo = $(this).children(":selected").data("titulo");
+          var titulo_link = $(this).children(":selected").data("titulo_link");
+          var organizacao = $(this).children(":selected").data("organizacao");
+          var organizacao_link = $(this).children(":selected").data("organizacao_link");
+          var orientador = $(this).children(":selected").data("orientador");
+          var orientador_link = $(this).children(':selected').data("orientador_link");
+          var orientador_id = $(this).children(':selected').data("orientador_id");
+          $("#titulo").text(titulo);
+          $("#titulo_link").attr("href", titulo_link);
+          $("#organizacao").text(organizacao);
+          $("#organizacao_link").attr("href", organizacao_link);
+          $("#orientador").text(orientador);
+          $("#orientador_link").attr("href", orientador_link);
+          $("#orientador_id").val(orientador_id);
+  
+          var mensagem = $(this).children(":selected").data("mensagem");
+          if(mensagem) { $("#mensagem").html(mensagem); }
+  
+        })
+      });
+
+    
     window.onload = carrega_pagina
 
+    // Atualiza a página quando o popup é aberto
+    $("#popup").on("show.bs.modal", function() {
+      carrega_pagina();
+    })
+    
     $(".tipo_banca").change(carrega_pagina);
 
-  </script>
+    
+  $("form#meuForm").submit(function(e){
+    e.preventDefault();
 
-{% endblock %}
+    if($("#inicio").val() == $("#fim").val()) {
+      alert("Datas e horários de início e fim são iguais!");
+      return false;
+    }
+
+    d_inicio = new Date($("#inicio").val());
+    d_fim = new Date($("#fim").val());
+    if(d_inicio > d_fim) {
+      alert("Data de início depois da data final!");
+      return false;
+    }
+   
+    $.ajaxSetup({
+      headers: { "X-CSRFToken": "{{csrf_token}}" }
+    });
+
+    var form = $("form#meuForm").closest("form");
+    var formData = new FormData(form[0]);
+
+    // Adiciona o tipo de operação
+    formData.append(operacao, "true");
+    
+    $.ajax({
+      type: "POST",
+      url: "{{ url }}",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(response){
+        //console.log("sucesso");
+        $("#submit").hide();
+        $("#excluir").hide();
+        $("#modal-body").html(response.mensagem);
+      },
+      error: function (request, status, error) {
+        {% if user.tipo_de_usuario == 4 %} 
+          alert(request.responseText);
+          jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
+          console.log('error'+request.responseText);
+        {% else %}
+          jQuery("body").html("Erro no servidor do PFE. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
+        {% endif %}
+      }
+    });
+
+    return false;
+
+  });
+
+  // Atualiza a página quando o popup é fechado
+  $("#popup").on("hidden.bs.modal", function() {
+    location.reload();
+  })
+
+  </script>

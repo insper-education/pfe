@@ -1,0 +1,40 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 14 de Dezembro de 2023
+{% endcomment %}
+
+<script>
+  var data;
+  var url;
+
+  function abrir_modal(e) {
+    if (e != null) e.preventDefault();
+    var $popup = $("#popup");
+    data = $(this).data("data");
+    url = $(this).data("url");
+
+    var address = url
+    if(data) {address += data}
+
+    $(".modal-content", $popup).load(address, function(response, status, xhr) {
+      if(status == "error") {
+        alert("Erro ao tentar abrir a janela: " + xhr.status + " " + xhr.statusText );
+      } else {
+        $(".selectpicker").selectpicker();
+        $popup.modal("show");
+      }
+    });
+  }
+  
+  $(document).on("click", ".open-banca", abrir_modal);
+
+</script>
+
+<!-- Modal -->
+<div class="modal fade" id="popup" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+    </div>
+  </div>
+</div>
