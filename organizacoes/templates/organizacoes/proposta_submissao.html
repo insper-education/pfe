@@ -278,10 +278,11 @@
                 {% if not liberadas_propostas %}
                   <div class="form-check" style="margin: 0px 12px 0px 12px;">
                     &nbsp;
-                    <input style="position: relative; top: 2px;" class="form-check-input" type="checkbox" id="mensagem" name="mensagem" value="enviar" checked>
                     <label data-toggle="tooltip" data-html="true" animation="true" 
                           title="Após preencher o documento, você receberá um e-mail com o link para, se desejar, editar essa proposta." 
-                          class="form-check-label" for="mensagem">enviar mensagem (e-mail) de confirmação</label>
+                          class="form-check-label" for="mensagem">
+                    <input style="position: relative; top: 2px;" class="form-check-input" type="checkbox" id="mensagem" name="mensagem" value="enviar" checked>
+                    enviar mensagem (e-mail) de confirmação</label>
                   </div>
                 {% endif %}
 
