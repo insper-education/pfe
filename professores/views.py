@@ -206,7 +206,7 @@ def bancas_criar(request, data=None):
             }
             return JsonResponse(context)
 
-        return HttpResponse("Banca não registrada, erro identificando projeto")
+        return HttpResponse("Banca não registrada, erro identificando projeto", status=401)
 
     ano = configuracao.ano
     semestre = configuracao.semestre
@@ -254,7 +254,7 @@ def bancas_criar(request, data=None):
         if datar >= bancas_falconi.startDate and datar <= bancas_falconi.endDate:
             context["tipob"] = 2
         
-    return render(request, 'professores/bancas_view.html', context)
+    return render(request, "professores/bancas_view.html", context)
 
 
 @login_required
@@ -269,7 +269,6 @@ def bancas_editar(request, primarykey=None):
 
     if request.is_ajax() and request.method == "POST":
 
-        #print(request.POST)
         mensagem = ""
         if "atualizar" in request.POST:
             if editar_banca(banca, request):
@@ -1193,14 +1192,14 @@ def conceitos_obtidos(request, primarykey):  # acertar isso para pk
         # Senão é só uma avaliação de objetivo mais antiga
 
     context = {
-        'objetivos': objetivos,
-        'projeto': projeto,
-        'avaliadores_inter': avaliadores_inter,
-        'avaliadores_final': avaliadores_final,
+        "objetivos": objetivos,
+        "projeto": projeto,
+        "avaliadores_inter": avaliadores_inter,
+        "avaliadores_final": avaliadores_final,
         "avaliadores_falconi": avaliadores_falconi,
     }
 
-    return render(request, 'professores/conceitos_obtidos.html', context=context)
+    return render(request, "professores/conceitos_obtidos.html", context=context)
 
 
 @login_required
@@ -1208,38 +1207,34 @@ def conceitos_obtidos(request, primarykey):  # acertar isso para pk
 def dinamicas_index(request):
     """Menus de encontros."""
     encontros = Encontro.objects.all().order_by('startDate')
-
-    context = {
-        'encontros': encontros,
-    }
-
-    return render(request, 'professores/dinamicas_index.html', context)
+    context = {"encontros": encontros,}
+    return render(request, "professores/dinamicas_index.html", context)
 
 
 @login_required
 @transaction.atomic
 @permission_required('users.altera_professor', raise_exception=True)
-def dinamicas_criar(request):
+def dinamicas_criar(request, data=None):
     """Cria um encontro."""
     configuracao = get_object_or_404(Configuracao)
 
-    if request.method == 'POST':
-
-        if ('inicio' in request.POST) and ('fim' in request.POST):
+    if request.is_ajax() and request.method == "POST":
+        
+        if ("inicio" in request.POST) and ("fim" in request.POST):
 
             try:
-                startDate = dateutil.parser.parse(request.POST['inicio'])
-                endDate = dateutil.parser.parse(request.POST['fim'])
+                startDate = dateutil.parser.parse(request.POST["inicio"])
+                endDate = dateutil.parser.parse(request.POST["fim"])
             except (ValueError, OverflowError):
                 return HttpResponse("Erro com data da Dinâmica!")
 
             encontro = Encontro.create(startDate, endDate)
 
-            local = request.POST.get('local', None)
+            local = request.POST.get("local", None)
             if local:
                 encontro.location = local
 
-            projeto = request.POST.get('projeto', None)
+            projeto = request.POST.get("projeto", None)
             if projeto:
                 projeto = int(projeto)
                 if projeto != 0:
@@ -1250,7 +1245,7 @@ def dinamicas_criar(request):
                 else:
                     encontro.projeto = None
 
-            facilitador = request.POST.get('facilitador', None)
+            facilitador = request.POST.get("facilitador", None)
             if facilitador:
                 facilitador = int(facilitador)
                 if facilitador != 0:
@@ -1261,14 +1256,14 @@ def dinamicas_criar(request):
             encontro.save()
 
             mensagem = "Dinâmica criada."
+            
             context = {
-                "area_principal": True,
-                "agendar_dinamica": True,
+                "atualizado": True,
                 "mensagem": mensagem,
             }
-            return render(request, 'generic.html', context=context)
+            return JsonResponse(context)
 
-        return HttpResponse("Dinâmica não registrada, erro!")
+        return HttpResponse("Dinâmica não registrada, erro!", status=401)
 
     ano = configuracao.ano
     semestre = configuracao.semestre
@@ -1293,58 +1288,79 @@ def dinamicas_criar(request):
         "professores": professores,
         "falconis": falconis,
         "pessoas": pessoas,
+        "url": request.get_full_path(),
     }
-    return render(request, 'professores/dinamicas_editar.html', context)
+
+    if data:
+        context["data"] = data
+
+    return render(request, 'professores/dinamicas_view.html', context)
 
 
 @login_required
 @transaction.atomic
 @permission_required('users.altera_professor', raise_exception=True)
-def dinamicas_editar(request, primarykey):
+def dinamicas_editar(request, primarykey=None):
     """Edita um encontro."""
+
+    if primarykey is None:
+        return HttpResponseNotFound('<h1>Erro!</h1>')
+    
     encontro = get_object_or_404(Encontro, pk=primarykey)
     configuracao = get_object_or_404(Configuracao)
 
-    if request.method == 'POST':
+    if request.is_ajax() and request.method == "POST":
 
-        if ('inicio' in request.POST) and ('fim' in request.POST):
+        mensagem = ""
+        if "atualizar" in request.POST:
+            
+            if ("inicio" in request.POST) and ("fim" in request.POST):
 
-            try:
-                encontro.startDate = dateutil.parser.parse(request.POST['inicio'])
-                encontro.endDate = dateutil.parser.parse(request.POST['fim'])
-            except (ValueError, OverflowError):
-                return HttpResponse("Erro com data da Dinâmica!")
+                try:
+                    encontro.startDate = dateutil.parser.parse(request.POST['inicio'])
+                    encontro.endDate = dateutil.parser.parse(request.POST['fim'])
+                except (ValueError, OverflowError):
+                    return HttpResponse("Erro com data da Dinâmica!", status=401)
 
-            local = request.POST.get('local', None)
-            if local:
-                encontro.location = local
+                local = request.POST.get('local', None)
+                if local:
+                    encontro.location = local
 
-            projeto = request.POST.get('projeto', None)
-            if projeto:
-                projeto = int(projeto)
-                if projeto != 0:
-                    encontro.projeto = get_object_or_404(Projeto, id=projeto)
-                else:
-                    encontro.projeto = None
+                projeto = request.POST.get('projeto', None)
+                if projeto:
+                    projeto = int(projeto)
+                    if projeto != 0:
+                        encontro.projeto = get_object_or_404(Projeto, id=projeto)
+                    else:
+                        encontro.projeto = None
 
-            facilitador = request.POST.get('facilitador', None)
-            if facilitador:
-                facilitador = int(facilitador)
-                if facilitador != 0:
-                    encontro.facilitador = get_object_or_404(PFEUser, id=facilitador)
-                else:
-                    encontro.facilitador = None
+                facilitador = request.POST.get('facilitador', None)
+                if facilitador:
+                    facilitador = int(facilitador)
+                    if facilitador != 0:
+                        encontro.facilitador = get_object_or_404(PFEUser, id=facilitador)
+                    else:
+                        encontro.facilitador = None
 
-            encontro.save()
+                encontro.save()
 
-            mensagem = "Dinâmica atualizada."
-            context = {
-                "area_principal": True,
-                "mensagem": mensagem,
-            }
-            return render(request, 'generic.html', context=context)
+                mensagem = "Dinâmica atualizada."
+                
+            else:
+                return HttpResponse("Dinâmica não atualizada, erro!", status=401)
 
-        return HttpResponse("Dinâmica não registrada, erro!")
+        elif "excluir" in request.POST:
+            mensagem = "Mentoria excluída!"
+            encontro.delete()
+        else:
+            return HttpResponse("Atualização não realizada.", status=401)
+
+        context = {
+            "atualizado": True,
+            "mensagem": mensagem,
+        }
+        return JsonResponse(context)
+
 
     ano = configuracao.ano
     semestre = configuracao.semestre
@@ -1368,13 +1384,14 @@ def dinamicas_editar(request, primarykey):
                                                        Lower("last_name"))
 
     context = {
-        'projetos': projetos,
+        "projetos": projetos,
         "professores": professores,
         "falconis": falconis,
-        'pessoas': pessoas,
-        'encontro': encontro,
+        "pessoas": pessoas,
+        "encontro": encontro,
+        "url": request.get_full_path(),
     }
-    return render(request, 'professores/dinamicas_editar.html', context)
+    return render(request, 'professores/dinamicas_view.html', context)
 
 
 @login_required

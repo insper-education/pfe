@@ -25,9 +25,9 @@
 
   <span class="titulo">Listagem de Bancas
     <small>
-      <a data-toggle="tooltip" data-html="true" animation="true" title="Agenda Nova Banca" class="open-banca"
-            data-url="{% url 'bancas_criar' %}" href="{% url 'bancas_criar'%}"> 
-            &#10133;
+      <a data-toggle="tooltip" data-html="true" animation="true" title="Agenda Nova Banca" class="open-modal"
+          data-url="{% url 'bancas_criar' %}" href="{% url 'bancas_criar'%}"> 
+          &#10133;
         </a>
     </small>
   </span>
@@ -69,9 +69,8 @@
   {% include "informacoes.html" %}
 
   {% if bancas %}
-    <form method="get" id="editarbancasform" style="margin-top: 8px;">
-    
-      {% csrf_token %}
+    {% comment %} <form method="get" id="editarbancasform" style="margin-top: 8px;"> {% endcomment %}
+      {% comment %} {% csrf_token %} {% endcomment %}
 
 
       <table id="BancasTable" class="table table-borderless table-sm arredondado"><tbody>
@@ -235,10 +234,10 @@
             </a>
           </div>
 
-          <span class="editar esconder">
-            <a data-toggle="tooltip" data-html="true" animation="true" title="Agenda Nova Banca" class="open-banca"
+          <span class="editar esconder" style="float: right;">
+            <a data-toggle="tooltip" data-html="true" animation="true" title="Agenda Nova Banca" class="open-modal"
               data-url="{% url 'bancas_editar' %}{{banca.pk}}" href="{% url 'bancas_editar' banca.pk%}"> 
-              <button class="btn btn-primary" style="float: right;">Editar</button>
+              <button class="btn btn-primary">Editar</button>
             </a>
           </span>
 
@@ -246,7 +245,7 @@
         </tr>
         {% endfor %}
       </tbody></table>
-    </form>
+    {% comment %} </form> {% endcomment %}
   {% else %}
     <p>Não existem bancas definidas.</p>
   {% endif %}
@@ -295,6 +294,6 @@
 
   </script>
 
-  {% include "bancas-modal.html" %}
+  {% include "janelas-modal.html" %}
 
 {% endblock %}

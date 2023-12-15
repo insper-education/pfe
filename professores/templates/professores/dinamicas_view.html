@@ -1,20 +1,8 @@
-{% extends "base.html" %}
 {% comment %}
     Desenvolvido para o Projeto Final de Engenharia
     Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 14 de Novembro de 2019
+    Data: 14 de Dezembro de 2023
 {% endcomment %}
-
-
-{% comment %} REMOVER NAO MAIS USADO!! {% endcomment %}
-{% comment %} REMOVER NAO MAIS USADO!! {% endcomment %}
-{% comment %} REMOVER NAO MAIS USADO!! {% endcomment %}
-{% comment %} REMOVER NAO MAIS USADO!! {% endcomment %}
-{% comment %} REMOVER NAO MAIS USADO!! {% endcomment %}
-
-
-
-{% block head %}
 
   {% load static %}
 
@@ -25,33 +13,21 @@
   <script src="{% static 'bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js' %}"></script> 
   <script src="{% static 'bootstrap-datepicker/dist/locales/bootstrap-datepicker.pt-BR.min.js' %}"></script> 
 
-{% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.25.3/moment.min.js"></script>  {% endcomment %}
-
-  <script>
-    $(document).ready(function () {     
-      $('#projeto').change(function(){
-        var titulo = $(this).children(':selected').data('titulo');
-        var organizacao = $(this).children(':selected').data('organizacao');
-        var orientador = $(this).children(':selected').data('orientador');
-        $('#titulo').text(titulo);
-        $('#organizacao').text(organizacao);
-        $('#orientador').text(orientador);
-      })
-    });
-  </script>
-
   <style>
-    table, th, td {
-      border: 0px;
-    }
+    table, th, td {border: 0px;}
   </style>
 
-{% endblock %}
-
-{% block content %}
-
-    <form method="post" id="dinamicasform" enctype="multipart/form-data">
+    <form id="dinamicasform" method="post" enctype="multipart/form-data">
       {% csrf_token %}
+
+      <div class="modal-header">
+        <h5 id="documentacao" class="modal-title">{% if encontro %}Editar Agendamento de{% else %}Agendar{% endif %} Mentoria</h5>    
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    
+      <div id="modal-body" class="modal-body">
 
       {% comment %} Se livrar do datetime-local, ele não funciona bem {% endcomment %}
       <div class="container">   
@@ -60,7 +36,9 @@
           <input id="inicio"  type="datetime-local" name="inicio"
           {% if encontro %}
             value="{{encontro.startDate|date:'Y-m-d\TH:i:s'}}" 
-          {% endif %} 
+          {% elif data %}
+            value="{{data}}T00:00"
+          {% endif %}
           required>
           &nbsp;&nbsp;&nbsp;&nbsp;
           </label>
@@ -69,7 +47,9 @@
           <span style="display:inline-block; width:5.5ex; text-align:right">Fim:</span>
           <input id="fim"  type="datetime-local" name="fim"
           {% if encontro %}
-            value="{{encontro.endDate|date:'Y-m-d\TH:i:s'}}" 
+            value="{{encontro.endDate|date:'Y-m-d\TH:i:s'}}"
+          {% elif data %}
+            value="{{data}}T00:00"
           {% endif %} 
           required>
           </label>
@@ -103,7 +83,6 @@
         });
 
       </script>
-      
 
       <br><br>
       <label for="local">Local:
@@ -190,11 +169,107 @@
       </div>
 
       <br><br>
+      <span id="mensagem"></span>
 
-      <div class="container">
-        <button type="submit">{% if encontro %}Atualizar{% else %}Criar{% endif %}</button>
-      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+      <button id="submit" class="btn btn-primary" type="submit" name="atualizar"
+        {% if encontro %}onclick="operacao = 'atualizar';"{% endif %}>
+        {% if encontro %}Atualizar{% else %}Criar{% endif %}
+      </button>
+      {% if encontro %}
+        <button id="excluir" class="btn btn-primary" type="submit" name="excluir" onclick="operacao = 'excluir';">
+          Excluir Mentoria
+        </button>
+      {% endif %}
+    </div>
+
     </form>
-  
 
-{% endblock %}
+  <script>
+
+
+    $(document).ready(function () {     
+      $('#projeto').change(function(){
+        var titulo = $(this).children(':selected').data('titulo');
+        var organizacao = $(this).children(':selected').data('organizacao');
+        var orientador = $(this).children(':selected').data('orientador');
+        $('#titulo').text(titulo);
+        $('#organizacao').text(organizacao);
+        $('#orientador').text(orientador);
+      })
+    });
+
+    var operacao = "agendar";
+
+    function carrega_pagina() {}
+
+    window.onload = carrega_pagina;
+
+    // Atualiza a página quando o popup é aberto
+    $("#popup").on("show.bs.modal", function() {
+      carrega_pagina();
+    });
+
+    
+  $("form#dinamicasform").submit(function(e){
+    e.preventDefault();
+
+    if($("#inicio").val() == $("#fim").val()) {
+      alert("Datas e horários de início e fim são iguais!");
+      return false;
+    }
+
+    d_inicio = new Date($("#inicio").val());
+    d_fim = new Date($("#fim").val());
+    if(d_inicio > d_fim) {
+      alert("Data de início depois da data final!");
+      return false;
+    }
+
+    $.ajaxSetup({
+      headers: { "X-CSRFToken": "{{csrf_token}}" }
+    });
+
+    var form = $("form#dinamicasform").closest("form");
+    var formData = new FormData(form[0]);
+
+    // Adiciona o tipo de operação
+    formData.append(operacao, "true");
+    
+    $.ajax({
+      type: "POST",
+      url: "{{ url }}",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(response){
+        //console.log("sucesso");
+        $("#submit").hide();
+        $("#excluir").hide();
+        $("#modal-body").html(response.mensagem);
+      },
+      error: function (request, status, error) {
+        {% if user.tipo_de_usuario == 4 %} 
+          alert(request.responseText);
+          jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
+          console.log('error'+request.responseText);
+        {% else %}
+          jQuery("body").html("Erro no servidor do PFE. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
+        {% endif %}
+      }
+    });
+
+    return false;
+
+  });
+
+  // Atualiza a página quando o popup é fechado
+  $("#popup").on("hidden.bs.modal", function() {
+    location.reload();
+  })
+
+
+  </script>

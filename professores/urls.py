@@ -102,6 +102,14 @@ urlpatterns = [
          views.dinamicas_criar,
          name='dinamicas_criar'),
 
+    path('dinamicas_criar/<str:data>',
+         views.dinamicas_criar,
+         name='dinamicas_criar'),
+
+    path('dinamicas_editar/',
+         views.dinamicas_editar,
+         name='dinamicas_editar'),
+
     path('dinamicas_editar/<int:primarykey>',
          views.dinamicas_editar,
          name='dinamicas_editar'),

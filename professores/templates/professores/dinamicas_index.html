@@ -84,11 +84,27 @@
                 local: "{{encontro.location}}",
                 start: '{{encontro.startDate.year}}-{{encontro.startDate.month|stringformat:"02d"}}-{{encontro.startDate.day|stringformat:"02d"}}T{{encontro.startDate.hour|stringformat:"02d"}}:{{encontro.startDate.minute|stringformat:"02d"}}:00',
                 end: '{{encontro.endDate.year}}-{{encontro.endDate.month|stringformat:"02d"}}-{{encontro.endDate.day|stringformat:"02d"}}T{{encontro.endDate.hour|stringformat:"02d"}}:{{encontro.endDate.minute|stringformat:"02d"}}:00',
-                url: '../dinamicas_editar/{{encontro.id}}',
-                {% if encontro.projeto %}backgroundColor: '#111183',{% else %}backgroundColor: '#004f00',{% endif %}
+                id: "{{encontro.id}}",
+                {% if encontro.projeto %}backgroundColor: "#5151D3",{% else %}backgroundColor: "#307f30",{% endif %}
             },
           {% endfor %}
-        ]
+        ],
+
+        eventClick: function(event, jsEvent, view) {
+          // Para editar uma mentoria
+          var elem = document.createElement( "span" );
+          $( elem ).data( "url", "{% url 'dinamicas_editar' %}"+event.event.id);
+          abrir_modal.call(elem, null);
+      },
+
+        dateClick: function(info) {
+          // Para criar uma nova mentoria, reproveitando a data clicada
+          var elem = document.createElement( "span" );
+          $( elem ).data( "url", "{% url 'dinamicas_criar' %}");
+          $( elem ).data( "data", info.dateStr);
+          abrir_modal.call(elem, null);
+        },
+
       });
 
       calendar.render();
@@ -141,15 +157,23 @@
 
 {% block content %}
 
-  <span class="titulo">Mentorias</span>
+  <span class="titulo">Mentorias
+    <small>
+      <a data-toggle="tooltip" data-html="true" animation="true" title="Agenda Nova Mentoria" class="open-modal"
+            data-url="{% url 'dinamicas_criar' %}" href="{% url 'dinamicas_criar'%}"> 
+            &#10133;
+        </a>
+    </small>
+  </span>
 
   <div class="wrap">
       <div class="one">
         <br><br>
-        <a href="{% url 'dinamicas_criar'%}"><h5>Agendar Mentoria</h5></a>
         <a href="{% url 'dinamicas_lista'%}"><h5>Listar Mentorias</h5></a>
       </div>
       <div class="two" id='calendar'></div>
   </div>
+
+  {% include "janelas-modal.html" %}
 
 {% endblock %}

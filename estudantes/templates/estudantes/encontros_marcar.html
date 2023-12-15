@@ -38,7 +38,7 @@
 
     <div id="horarios" class="control">
         {% for e in encontros %}
-            <label class="radio" 
+            <label style="display: block;" class="radio" 
               {% if e.projeto and e.projeto != projeto %}
                  data-toggle="tooltip" data-placement="bottom" title="Horário já selecionado por outro grupo!"
                  style="color:lightgrey" 
@@ -52,13 +52,13 @@
                 >
                 {{e.startDate|date:"d \d\e E \d\e Y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}
             </label>
-            <br>
         {% empty %}
             Sem encontros para marcar.
         {% endfor %}
     </div>
 
-    &nbsp;&nbsp;&nbsp;<button type="submit" 
+    <br>
+    &nbsp;&nbsp;&nbsp;<button class="btn btn-primary" type="submit" 
       {% if user.tipo_de_usuario != 1 or not projeto %}disabled{% endif %}>
         Agendar
     </button>

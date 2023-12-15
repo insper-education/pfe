@@ -6,17 +6,27 @@
 {% endcomment %}
 
 {% block head %}
+  {% load static %}
 
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
   
+  <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
+
 {% endblock %}
 
 {% block content %}
 
   {% include "impressora.html" %}
 
-  <span class="titulo">Mentorias</span>
+  <span class="titulo">Mentorias
+    <small>
+      <a data-toggle="tooltip" data-html="true" animation="true" title="Agenda Nova Mentoria" class="open-modal"
+         data-url="{% url 'dinamicas_criar' %}" href="{% url 'dinamicas_criar'%}"> 
+         &#10133;
+      </a>
+    </small>
+  </span>
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" %}
@@ -34,13 +44,12 @@
   <div class="atualizar">
 
     {% if encontros %}
-      <table>
+      <table id="MentoriasTable" class="table table-borderless table-sm arredondado"><tbody>
         {% for e in encontros %} 
           <tr>
             <td>
-              <a class="imprimir" href="{% url 'dinamicas_editar' e.id %}">
-                <big><b>{{e.startDate}} - {{e.endDate|date:'H:i'}}</b></big><br>
-              </a>
+              {% comment %} <a class="imprimir" href="{% url 'dinamicas_editar' e.id %}"> {% endcomment %}
+              <b>Horário:</b> {{e.startDate}} - {{e.endDate|date:'H:i'}}<br>
               {% if e.projeto %}
                 <b>Projeto:</b> <a class="imprimir" href="{% url 'projeto_completo' e.projeto.id %}">
                   {{e.projeto.get_titulo}}
@@ -94,10 +103,18 @@
               {% else %}
                 Horário Livre<br><br>
               {% endif %}
+
+              <span class="editar esconder" style="float: right;">
+                <a data-toggle="tooltip" data-html="true" animation="true" title="Agenda Nova Mentoria" class="open-modal"
+                  data-url="{% url 'dinamicas_editar' e.id %}" href="{% url 'dinamicas_editar' e.id %}"> 
+                  <button class="btn btn-primary">Editar</button>
+                </a>
+              </span>
+
             </td>
           </tr>
         {% endfor %}
-      </table>
+      </tbody></table>
       <p>&nbsp;</p>
     {% else %}
       <p>Não existem encontros.</p>
@@ -112,15 +129,15 @@
         {% for projeto in sem_dinamicas %}
           <li>
 
-            <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
-            {% include "tipo_projeto.html" %}<br>
-            
             {% if projeto.organizacao %}
               [<a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}"
                 >{{ projeto.organizacao.nome }}</a
               >]
             {% endif %}
 
+            <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
+            {% include "tipo_projeto.html" %}
+            
           </li>
         {% endfor %}
         </ul>
@@ -144,5 +161,7 @@
   </div>
 
   {% include "edicoes_ajax.html" %}
+
+  {% include "janelas-modal.html" %}
 
 {% endblock %}

@@ -18,9 +18,7 @@
     }
   </style>
 
-    <form id="meuForm" method="post" id="criarbancasform" enctype="multipart/form-data" 
-    {% comment %} onsubmit="return submitForm();" {% endcomment %}
-    >
+    <form id="criarbancasform" method="post" enctype="multipart/form-data">
       {% csrf_token %}
 
       <div class="modal-header">
@@ -397,7 +395,7 @@
       });
 
     
-    window.onload = carrega_pagina
+    window.onload = carrega_pagina;
 
     // Atualiza a página quando o popup é aberto
     $("#popup").on("show.bs.modal", function() {
@@ -407,7 +405,7 @@
     $(".tipo_banca").change(carrega_pagina);
 
     
-  $("form#meuForm").submit(function(e){
+  $("form#criarbancasform").submit(function(e){
     e.preventDefault();
 
     if($("#inicio").val() == $("#fim").val()) {
@@ -426,7 +424,7 @@
       headers: { "X-CSRFToken": "{{csrf_token}}" }
     });
 
-    var form = $("form#meuForm").closest("form");
+    var form = $("form#criarbancasform").closest("form");
     var formData = new FormData(form[0]);
 
     // Adiciona o tipo de operação
