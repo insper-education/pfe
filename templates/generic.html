@@ -25,11 +25,13 @@
     {% endif %}
 
 
-    {% if cadastrar_organizacao %}
+    {% if organizacao %}
+        <a href="{% url 'organizacao_completo' organizacao.id %}">Ver organização cadastrada</a><br>
         <a href="{% url 'cadastrar_organizacao' %}">Cadastrar outra organização</a><br>
     {% endif %}
 
-    {% if cadastrar_usuario %}
+    {% if usuario %}
+        <a href="{% url 'user_detail' usuario.id %}">Ver usuário cadastrado</a><br>
         <a href="{% url 'cadastrar_usuario' %}">Cadastrar outro usuário</a><br>
     {% endif %}
 
@@ -58,7 +60,8 @@
     {% endif %}
 
     {% if area_principal %}
-        <a href="{% url 'index' %}">Voltar para Página Principal!</a><br>
+        <br><br>
+        <a href="{% url 'index' %}">Voltar para Página Principal</a><br>
     {% endif %}
 
 {% endblock %}

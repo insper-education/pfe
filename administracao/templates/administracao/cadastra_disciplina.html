@@ -12,6 +12,9 @@
     textarea {
       max-width:100%;
     }
+    th, td {
+      padding: 1px 5px 1px 5px;
+    }
   </style>
 {% endblock %}
 
@@ -24,8 +27,8 @@
     
     <label for="nome">Nome da Disciplina:</label> <input type="text" size="48" style="max-width:100%;display:block"
            maxlength="{% max_length disciplina "nome" %}" id="nome" name="nome" required>
-    <br><br>
-    <input type="submit" value="Cadastrar Disciplina">
+    <br>
+    <input class="btn btn-primary" type="submit" value="Cadastrar Disciplina">
     
     <br>
     {% if mensagem %}
@@ -62,7 +65,7 @@
             url: '{% url "excluir_disciplina" %}',
             data: {
                 "disciplina_id": disciplina,
-                "csrfmiddlewaretoken": "{{ csrf_token }}"",
+                "csrfmiddlewaretoken": "{{ csrf_token }}",
             },
             success: function(response){
               $('#disciplina'+disciplina).remove();

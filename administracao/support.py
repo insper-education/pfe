@@ -127,7 +127,7 @@ def registra_organizacao(request, org=None):
 
     organizacao.save()
 
-    return "", 200
+    return organizacao, "", 200
 
 
 

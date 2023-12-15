@@ -38,9 +38,9 @@ from documentos.models import TipoDocumento
 class Organizacao(models.Model):
     """Dados das organizações que propõe projetos para o PFE."""
 
-    nome = models.CharField("Nome Fantasia", max_length=100,
+    nome = models.CharField("Nome Fantasia", max_length=100, unique=True,
                             help_text='Nome fantasia da organização parceira')
-    sigla = models.CharField("Sigla", max_length=20,
+    sigla = models.CharField("Sigla", max_length=20, unique=True,
                              help_text='Sigla usada pela organização parceira')
     endereco = models.TextField("Endereço", max_length=200, null=True, blank=True,
                                 help_text='Endereço da organização parceira')
@@ -50,7 +50,7 @@ class Organizacao(models.Model):
                                    help_text='Informações sobre a organização parceira')
     logotipo = models.ImageField("Logotipo", upload_to=get_upload_path, null=True, blank=True,
                                  help_text='Logotipo da organização parceira')
-    cnpj = models.CharField("CNPJ", max_length=14, null=True, blank=True,
+    cnpj = models.CharField("CNPJ", max_length=14, null=True, blank=True, 
                             help_text='Código de CNPJ da empresa')
     inscricao_estadual = models.CharField("Inscrição Estadual", max_length=15,
                                           null=True, blank=True,

@@ -84,8 +84,9 @@ def cadastrar_disciplina(request, proposta_id=None):
         "disciplina": Disciplina,
     }
     if request.method == 'POST':
+        print(request.POST)
         try:
-            assert "nome" not in request.POST
+            assert "nome" in request.POST
             disciplina, _created = Disciplina.objects.get_or_create(nome=request.POST["nome"])
             if not _created:
                 context["mensagem"] = "Conflito: Disciplina já cadastrada"
@@ -93,9 +94,9 @@ def cadastrar_disciplina(request, proposta_id=None):
                 disciplina.save()
                 context["mensagem"] = "Disciplina cadastrada na base de dados."
         except:
-            return HttpResponseServerError("<h3 style='color:red'>Falha na inserção na base da dados.<br>"+settings.CONTATO+"<h3>")
+            return HttpResponse("<h3 style='color:red'>Falha na inserção na base da dados.<br>"+settings.CONTATO+"<h3>")
 
-    return render(request, 'administracao/cadastra_disciplina.html', context=context)
+    return render(request, "administracao/cadastra_disciplina.html", context=context)
 
 
 @login_required
@@ -107,17 +108,27 @@ def cadastrar_organizacao(request, proposta_id=None):
 
         if "nome" in request.POST and "sigla" in request.POST:
 
-            mensagem, codigo = registra_organizacao(request)
-            if codigo != 200:
-                return HttpResponse(mensagem, status=codigo)
+            org_ja_existe = Organizacao.objects.filter(nome=request.POST["nome"]) | Organizacao.objects.filter(sigla=request.POST["sigla"])
+            if org_ja_existe:
+                context = {
+                    "voltar": True,
+                    "organizacao": org_ja_existe.last(),
+                    "area_principal": True,
+                    "mensagem": "<h3 style='color:red'>Conflito: Organização já cadastrada!</h3>",
+                }
 
-            context = {
-                "voltar": True,
-                "cadastrar_organizacao": True,
-                "organizacoes_lista": True,
-                "area_principal": True,
-                "mensagem": "Organização inserida na base de dados.",
-            }
+            else:
+                organizacao, mensagem, codigo = registra_organizacao(request)
+                if codigo != 200:
+                    return HttpResponse(mensagem, status=codigo)
+
+                context = {
+                    "voltar": True,
+                    "organizacao": organizacao,
+                    "organizacoes_lista": True,
+                    "area_principal": True,
+                    "mensagem": "Organização inserida na base de dados.",
+                }
 
         else:
 
@@ -153,13 +164,13 @@ def edita_organizacao(request, primarykey):
 
         if 'nome' in request.POST and 'sigla' in request.POST:
 
-            mensagem, codigo = registra_organizacao(request, organizacao)
+            _, mensagem, codigo = registra_organizacao(request, organizacao)
             if codigo != 200:
                 return HttpResponse(mensagem, status=codigo)
 
             context = {
                 "voltar": True,
-                "cadastrar_organizacao": True,
+                "organizacao": organizacao,
                 "organizacoes_lista": True,
                 "area_principal": True,
                 "mensagem": "Organização atualizada na base de dados.",
@@ -191,63 +202,77 @@ def cadastrar_usuario(request):
     if request.method == "POST":
 
         if "email" in request.POST:
-            mensagem, codigo, user = registro_usuario(request)
 
-            if user is not None and "envia" in request.POST:
+            usr_ja_existe = PFEUser.objects.filter(email=request.POST["email"])
+            if usr_ja_existe:
+                context = {
+                    "voltar": True,
+                    "usuario": usr_ja_existe.last(),
+                    "area_principal": True,
+                    "mensagem": "<h3 style='color:red'>Conflito: Usuário já cadastrada!</h3>",
+                }
 
-                # Atualizando senha do usuário.
-                senha = ''.join(random.SystemRandom().
-                                choice(string.ascii_lowercase + string.digits)
-                                for _ in range(6))
-                user.set_password(senha)
-                user.save()
+            else:
+                mensagem, codigo, user = registro_usuario(request)
 
-                configuracao = get_object_or_404(Configuracao)
-                coordenacao = configuracao.coordenacao
+                if user is not None and "envia" in request.POST:
 
-                # Preparando mensagem para enviar para usuário.
-                message_email = user.get_full_name() + ",\n\n"
-                message_email += "\tVocê está recebendo sua conta e senha para acessar o sistema do "
-                message_email += "Projeto Final de Engenharia (PFE)."
-                message_email += "\n\n"
-                message_email += "\tO endereço do servidor é: "
-                message_email += "<a href='http://pfe.insper.edu.br/'>http://pfe.insper.edu.br/</a>"
-                message_email += "\n\n"
+                    # Atualizando senha do usuário.
+                    senha = ''.join(random.SystemRandom().
+                                    choice(string.ascii_lowercase + string.digits)
+                                    for _ in range(6))
+                    user.set_password(senha)
+                    user.save()
 
-                message_email += "\tSua conta é: <b>" + user.username + "</b>\n"
-                message_email += "\tSua senha é: <b>" + senha + "</b>\n"
-                message_email += "\n"
-                message_email += "\tQualquer dúvida, envie e-mail para: "
-                message_email += coordenacao.user.get_full_name() + " <a href='mailto:" + coordenacao.user.email + "'>&lt;" + coordenacao.user.email + "&gt;</a>"
-                message_email += "\n\n"
-                message_email += "\t\tatenciosamente, coordenação do PFE\n"
-                message_email = message_email.replace('\n', '<br>\n')
-                message_email = message_email.replace('\t', '&nbsp;&nbsp;&nbsp;&nbsp;\t')
+                    configuracao = get_object_or_404(Configuracao)
+                    coordenacao = configuracao.coordenacao
 
-                # Enviando e-mail com mensagem para usuário.
-                subject = 'Conta PFE : ' + user.get_full_name()
-                recipient_list = [user.email,]
-                check = email(subject, recipient_list, message_email)
-                if check != 1:
-                    mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
-                    codigo = 400
+                    # Preparando mensagem para enviar para usuário.
+                    message_email = user.get_full_name() + ",\n\n"
+                    message_email += "\tVocê está recebendo sua conta e senha para acessar o sistema do "
+                    message_email += "Projeto Final de Engenharia (PFE)."
+                    message_email += "\n\n"
+                    message_email += "\tO endereço do servidor é: "
+                    message_email += "<a href='http://pfe.insper.edu.br/'>http://pfe.insper.edu.br/</a>"
+                    message_email += "\n\n"
 
-                mensagem += "<br><br>Enviado mensagem com senha para: "
-                mensagem += user.get_full_name() + " " +\
-                            "&lt;" + user.email + "&gt;<br>\n"
+                    message_email += "\tSua conta é: <b>" + user.username + "</b>\n"
+                    message_email += "\tSua senha é: <b>" + senha + "</b>\n"
+                    message_email += "\n"
+                    message_email += "\tQualquer dúvida, envie e-mail para: "
+                    message_email += coordenacao.user.get_full_name() + " <a href='mailto:" + coordenacao.user.email + "'>&lt;" + coordenacao.user.email + "&gt;</a>"
+                    message_email += "\n\n"
+                    message_email += "\t\tatenciosamente, coordenação do PFE\n"
+                    message_email = message_email.replace('\n', '<br>\n')
+                    message_email = message_email.replace('\t', '&nbsp;&nbsp;&nbsp;&nbsp;\t')
 
-            if codigo != 200:
-                return HttpResponse(mensagem, status=codigo)
+                    # Enviando e-mail com mensagem para usuário.
+                    subject = 'Conta PFE : ' + user.get_full_name()
+                    recipient_list = [user.email,]
+                    check = email(subject, recipient_list, message_email)
+                    if check != 1:
+                        mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
+                        codigo = 400
 
+                    mensagem += "<br><br>Enviado mensagem com senha para: "
+                    mensagem += user.get_full_name() + " " +\
+                                "&lt;" + user.email + "&gt;<br>\n"
+                    
+                if codigo != 200:
+                    return HttpResponse(mensagem, status=codigo)
+
+                context = {
+                    "voltar": True,
+                    "usuario": user,
+                    "area_principal": True,
+                    "mensagem": mensagem,
+                }
         else:
-            mensagem = "<h3 style='color:red'>Falha na inserção na base da dados.<h3>"
-
-        context = {
-            "voltar": True,
-            "cadastrar_usuario": True,
-            "area_principal": True,
-            "mensagem": mensagem,
-        }
+            context = {
+                "voltar": True,
+                "area_principal": True,
+                "mensagem": "<h3 style='color:red'>Falha na inserção na base da dados.</h3>",
+            }
 
         return render(request, 'generic.html', context=context)
 
