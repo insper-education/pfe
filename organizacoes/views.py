@@ -228,6 +228,14 @@ def proposta_submissao(request):
             proposta.anexo = arquivo[len(settings.MEDIA_URL):]
             proposta.save()
 
+        if request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:
+            proposta.internacional = True if request.POST.get("internacional", None) else False
+            proposta.intercambio = True if request.POST.get("intercambio", None) else False
+            colaboracao_id = request.POST.get("colaboracao", None)
+            if colaboracao_id:
+                proposta.colaboracao = Organizacao.objects.filter(pk=colaboracao_id).last()
+            proposta.save()
+
         enviar = "mensagem" in request.POST  # Por e-mail se enviar
         mensagem = envia_proposta(proposta, enviar)
 
@@ -286,8 +294,9 @@ def proposta_submissao(request):
         "interesses": interesses,
         "ano_semestre": str(ano)+"."+str(semestre),
         "configuracao": configuracao,
+        "organizacoes": Organizacao.objects.all(),
     }
-    return render(request, 'organizacoes/proposta_submissao.html', context)
+    return render(request, "organizacoes/proposta_submissao.html", context)
 
 
 # @login_required

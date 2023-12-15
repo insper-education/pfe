@@ -6,6 +6,7 @@
 {% endcomment %}
 
 {% block head %}
+  {% load static %}
   {% load define_action %}
   <style>
     textarea {
@@ -222,12 +223,45 @@
   
           </div>
 
+          <br>
+          
+          {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+
+            <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
+            <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
+
+            <div class="quad_pfe" style="border-color: red;">
+              <div style="margin-bottom: 8px; color: red; font-weight: 600;">Área Reservada ao Insper</div>
+
+                <label style="font-size: 13px;" for="internacional">
+                  &nbsp;<input style="position: relative; top: 2px;" type="checkbox" name="internacional" id="internacional" {% if proposta.internacional %}checked{% endif %}>
+                  <b>Internacional</b> (projeto sendo realizado com uma instituição no estrangeiro)
+                </label><br>
+
+                <label style="font-size: 13px;" for="intercambio">
+                  &nbsp;<input style="position: relative; top: 2px;" type="checkbox" name="intercambio" id="intercambio" {% if proposta.intercambio %}checked{% endif %}>
+                  <b>Intercâmbio</b> (estudantes farão projeto no intercâmbio com acompanhamento do Insper)
+                </label><br>
+
+                <label style="font-size: 13px;" for="colaboracao"><b>Colaboração</b> (proposta foi desenvolvida com a colaboração de uma outra organização)</label>:
+                <select name="colaboracao" id="colaboracao" class="selectpicker" data-live-search="true" data-width="100%" data-size="10">
+                    <option value=""> -- nenhuma organização -- </option>
+                    {% for organizacao in organizacoes %}
+                      <option value="{{organizacao.id}}" {% if proposta.colaboracao.id == organizacao.id %}selected="selected"{% endif %}>
+                        {{organizacao.nome}}
+                      </option>  
+                    {% endfor %}
+                </select>
+              <br>
+            </div>
+          {% endif %}
+
           <div class="col-xl-auto" style="margin-top: 20px;">
             <div class="container">
               <div class="row justify-content-center">
                 <div class="form-check" style="margin: 0px 12px 0px 12px; padding-left: 0px;">
                   {% if not liberadas_propostas %}
-                    <input type="submit" class="btn btn-secondary"
+                    <input type="submit" class="btn btn-primary"
                     {% if edicao %}
                       name="update" value="Atualizar Proposta de Projeto">
                     {% else %}

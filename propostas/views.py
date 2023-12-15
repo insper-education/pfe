@@ -559,6 +559,14 @@ def proposta_editar(request, slug):
                 proposta.anexo = arquivo[len(settings.MEDIA_URL):]
                 proposta.save()
 
+            if request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:
+                proposta.internacional = True if request.POST.get("internacional", None) else False
+                proposta.intercambio = True if request.POST.get("intercambio", None) else False
+                colaboracao_id = request.POST.get("colaboracao", None)
+                if colaboracao_id:
+                    proposta.colaboracao = Organizacao.objects.filter(pk=colaboracao_id).last()
+                proposta.save()
+
             enviar = "mensagem" in request.POST  # Por e-mail se enviar
             mensagem = envia_proposta(proposta, enviar)
             resposta = "Submissão de proposta de projeto "
@@ -598,12 +606,13 @@ def proposta_editar(request, slug):
         "vencida": vencida,
         "configuracao": configuracao,
         "MEDIA_URL": settings.MEDIA_URL,
+        "organizacoes": Organizacao.objects.all(),
     }
-    return render(request, 'organizacoes/proposta_submissao.html', context)
+    return render(request, "organizacoes/proposta_submissao.html", context)
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def proposta_remover(request, slug):
     """Remove Proposta do Sistema por slug."""
     if request.user.tipo_de_usuario != 4:  # admin
