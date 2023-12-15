@@ -1,0 +1,31 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 15 de Dezembro de 2023
+{% endcomment %}
+
+{% if proposta.internacional or proposta.intercambio or proposta.colaboracao %}
+
+  {% if com_tipo %}
+    <p><strong>Tipo</strong>: 
+  {% endif %}
+
+  <strong style="color:red">
+  {% if proposta.internacional %}
+    {% if descr_short %}IN{% else %}[Internacional]{% endif %}
+  {% endif %}
+  {% if proposta.intercambio %}
+    {% if descr_short %}IC{% else %}[Intercâmbio]{% endif %}
+  {% endif %}
+  {% if proposta.colaboracao %}
+    {% if descr_short %}CO{% else %}[Em colaboração com: {{ proposta.colaboracao }}]{% endif %}
+  {% endif %}
+  </strong>
+
+  {% if com_tipo %}
+    </p>
+  {% endif %}
+
+{% else %}
+  {% if descr_short %}NO{% else %}[Normal]{% endif %}
+{% endif %}

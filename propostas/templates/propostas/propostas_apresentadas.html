@@ -82,7 +82,8 @@
           <small style="font-size:12px">
             {% for curso in cursos %}
               <b>{{curso.sigla_curta}}</b>: {{curso.nome}} {% if not forloop.last %}|{% endif %}
-            {% endfor %}
+            {% endfor %}<br>
+            <b>NO</b>: Normal | <b>IN</b>: Internacional | <b>IC</b>: Intercâmbio | <b>CO</b>: Em Colaboração
           </small>
         </caption>
         <thead class="table-info">
@@ -95,6 +96,7 @@
             <th scope="col" class="periodo text-center">Período</th>
           {% endif %}
           <th scope="col" class="text-center organizacao">Organização</th>
+          <th scope="col" class="text-center" style="font-size: 12px;">Tipo</th>
           <th scope="col" class="estudantes text-center" style="font-size: 12px;"><span class="estudante-icon"></span>1</th>
           <th scope="col" class="estudantes text-center" style="font-size: 12px;"><span class="estudante-icon"></span>2</th>
           <th scope="col" class="estudantes text-center" style="font-size: 12px;"><span class="estudante-icon"></span>3</th>
@@ -214,6 +216,10 @@
                 >
               </div>
               
+            </td>
+
+            <td class="text-center" style="font-size: 12px;">
+              {% include "tipo_proposta.html" with descr_short=True %}
             </td>
 
             {% spaceless %}

@@ -355,7 +355,39 @@ def propostas_apresentadas(request):
             "edicoes": edicoes,
         }
 
-    return render(request, 'propostas/propostas_apresentadas.html', context)
+    return render(request, "propostas/propostas_apresentadas.html", context)
+
+
+@login_required
+@permission_required('users.altera_professor', raise_exception=True)
+def propostas_lista(request):
+    """Lista todas as propostas de projetos."""
+
+    if request.is_ajax():
+        edicoes = []
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
+            if edicao == "todas":
+                propostas = Proposta.objects.all()
+            else:
+                ano, semestre = request.POST["edicao"].split('.')
+                propostas = Proposta.objects\
+                    .filter(ano=ano, semestre=semestre)
+
+            propostas = propostas.order_by("ano", "semestre", "organizacao", "titulo")
+
+            context = {
+                "propostas": propostas,
+                "edicao": edicao,
+            }
+
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+    else:
+        edicoes, _, _ = get_edicoes(Proposta)
+        context = {"edicoes": edicoes,}
+
+    return render(request, "propostas/propostas_lista.html", context)
 
 
 @login_required

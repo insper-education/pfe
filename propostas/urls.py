@@ -30,6 +30,10 @@ urlpatterns = [
          views.propostas_apresentadas,
          name='propostas_apresentadas'),
 
+    path('propostas_lista/',
+         views.propostas_lista,
+         name='propostas_lista'),
+
     path('proposta_completa/<int:primarykey>',
          views.proposta_completa,
          name='proposta_completa'),
