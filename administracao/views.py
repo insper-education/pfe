@@ -81,7 +81,7 @@ def cadastrar_disciplina(request, proposta_id=None):
     """Cadastra Organização na base de dados do PFE."""
     context = {
         "disciplinas": Disciplina.objects.all().order_by("nome"),
-        "disciplina": Disciplina,
+        "Disciplina": Disciplina,
     }
     if request.method == 'POST':
         print(request.POST)
@@ -994,20 +994,20 @@ def definir_orientador(request):
 def excluir_disciplina(request):
     """Remove Disciplina Recomendada."""
     
-    if request.is_ajax() and 'disciplina_id' in request.POST:
+    if request.is_ajax() and "disciplina_id" in request.POST:
 
-        disciplina_id = int(request.POST['disciplina_id'])
+        disciplina_id = int(request.POST["disciplina_id"])
 
         instance = Disciplina.objects.get(id=disciplina_id)
         instance.delete()
 
         data = {
-            'atualizado': True,
+            "atualizado": True,
         }
 
         return JsonResponse(data)
 
-    return HttpResponseNotFound('Requisição errada')
+    return HttpResponseNotFound("Requisição errada")
 
 
 @login_required
@@ -1233,23 +1233,30 @@ def logs(request):
 @permission_required('users.altera_professor', raise_exception=True)
 def conexoes_estabelecidas(request):
     """Mostra usuários conectados."""
-    user = request.user
-    if user.tipo_de_usuario == 4:
-        message = "<h3>Usuários Conectados</h3><br>"
+    if request.user.tipo_de_usuario == 4:
+        mensagem = ""
         sessions = Session.objects.filter(expire_date__gte=timezone.now())
+        usuarios = []
         for session in sessions:
             data = session.get_decoded()
             user_id = data.get('_auth_user_id', None)
             try:
                 user = PFEUser.objects.get(id=user_id)
-                message += "- " + str(user)
-                message += "; autenticado: " + str(user.is_authenticated)
-                message += "; conectado desde: " + str(user.last_login)
-                message += "; permissões: " + str(user.get_all_permissions())[:120]
-                message += "<br>"
+                usuario = {}
+                usuario["usuario"] = user
+                usuario["autenticado"] = user.is_authenticated
+                usuario["desde"] = user.last_login
+                usuario["permissoes"] = str(user.get_all_permissions())[:120]
+                usuarios.append(usuario)
             except PFEUser.DoesNotExist:
-                message += "PROBLEMA COM USER ID = " + str(user_id)
-                message += "; Data = " + str(data)
-                message += "<br>"
-        return HttpResponse(message)
+                mensagem += "PROBLEMA COM USER ID = " + str(user_id)
+                mensagem += "; Data = " + str(data) + "<br>\n"
+
+        context = {
+            "mensagem": mensagem,
+            "usuarios": usuarios,
+        }
+
+        return render(request, "administracao/conexoes_estabelecidas.html", context=context)
+
     return HttpResponse("Você não tem privilégios")

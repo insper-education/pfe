@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 15 de Dezembro de 2023
+{% endcomment %}
+
+{% block head %}
+
+  {% load static %}
+
+  <script src="{% static 'js/w3.js' %}"></script>
+
+  <style>
+    th, td {padding: 1px 6px 1px 6px;}
+  </style>
+
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">Conexões Abertas</span>
+
+    <table id="UsuariosTable">
+      <thead>
+        <tr>
+          <th onclick="w3.sortHTML('#UsuariosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Usuário</th>
+          <th onclick="w3.sortHTML('#UsuariosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Tipo</th>
+          <th onclick="w3.sortHTML('#UsuariosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Autenticado</th>
+          <th onclick="w3.sortHTML('#UsuariosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Conectado desde</th>
+          <th onclick="w3.sortHTML('#UsuariosTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">Permissões</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for usuario in usuarios %} 
+          <tr class="item">
+            <td>{{ usuario.usuario.get_full_name }}</td>
+            <td>{{ usuario.usuario.get_tipo_de_usuario_display }}</td>
+            <td>{{ usuario.autenticado }}</td>
+            <td>{{ usuario.desde }}</td>
+            <td>{{ usuario.permissoes }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <br>
+
+    <strong>Total de Conexões Válidas:</strong> {{ usuarios|length }}<br>
+
+    <br><br>
+    {% if mensagem %}
+      <span class="red-bold">{{mensagem|linebreaks}}</span>
+    {% endif %}
+    <br>
+
+{% endblock %}
