@@ -68,7 +68,7 @@
       {% for inf in informacoes %}
         {% comment %} O terceiro campo é o nome da classe, mas se for False desliga o botao {% endcomment %}
         <label {% if inf.2 is not None and inf.2 != False %}class="{{inf.2}}"{% endif %}>
-          <input onchange="($(this).prop('checked') ? $('{{inf.0}}').show() : $('{{inf.0}}').hide())"
+          <input onchange="($(this).prop('checked') ? $(`{{inf.0|safe}}`).show() : $(`{{inf.0|safe}}`).hide())"
                  type="checkbox" {% if inf.2 is None or inf.2 != False %}checked{% endif %} /> 
           {{inf.1}}
         </label>

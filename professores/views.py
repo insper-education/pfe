@@ -1796,18 +1796,18 @@ def relato_avaliar(request, projeto_id, evento_id):
 # Criei esse função temporária para tratar caso a edição seja passada diretamente na URL
 def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
     if request.is_ajax():
-        if 'edicao' in request.POST:
-            edicao = request.POST['edicao']
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
 
             projetos = Projeto.objects.all()
 
             if professor is not None:
                 # Incluindo também se coorientação
-                coorientacoes = Coorientador.objects.filter(usuario=professor.user).values_list('projeto', flat=True)
+                coorientacoes = Coorientador.objects.filter(usuario=professor.user).values_list("projeto", flat=True)
                 projetos = projetos.filter(orientador=professor) | projetos.filter(id__in=coorientacoes)
 
-            if edicao != 'todas':
-                ano, semestre = request.POST['edicao'].split('.')
+            if edicao != "todas":
+                ano, semestre = request.POST["edicao"].split('.')
                 projetos = projetos.filter(ano=ano, semestre=semestre)
 
             relatorio_intermediario = []
@@ -1904,6 +1904,11 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
             ("#ProjetosTable tr > *:nth-child(2)", "Período"),
             ("#ProjetosTable tr > *:nth-child(3)", "Organização"),
             ("#ProjetosTable tr > *:nth-child(4)", "Orientador"),
+            ("""#ProjetosTable tr > *:nth-child(5),
+                #ProjetosTable tr > *:nth-child(6),
+                #ProjetosTable tr > *:nth-child(7),
+                #ProjetosTable tr > *:nth-child(8),
+                #ProjetosTable tr > *:nth-child(9)""", "Notas"),
             (".grupo", "Grupo"),
             (".email", "e-mail", "grupo"),
             (".curso", "curso", "grupo"),
