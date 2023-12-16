@@ -20,7 +20,7 @@
 {% block content %}
 
   <span class="titulo">Conexões Abertas</span>
-
+    <div class="table-responsive">
     <table id="UsuariosTable">
       <thead>
         <tr>
@@ -43,6 +43,7 @@
         {% endfor %}
       </tbody>
     </table>
+    </div>
     <br>
 
     <strong>Total de Conexões Válidas:</strong> {{ usuarios|length }}<br>

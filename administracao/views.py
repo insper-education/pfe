@@ -1249,8 +1249,8 @@ def conexoes_estabelecidas(request):
                 usuario["permissoes"] = str(user.get_all_permissions())[:120]
                 usuarios.append(usuario)
             except PFEUser.DoesNotExist:
-                mensagem += "PROBLEMA COM USER ID = " + str(user_id)
-                mensagem += "; Data = " + str(data) + "<br>\n"
+                mensagem += "User ID não identificado = " + str(user_id) + "<br>\n"
+                # mensagem += "; Data = " + str(data) + "<br>\n"
 
         context = {
             "mensagem": mensagem,

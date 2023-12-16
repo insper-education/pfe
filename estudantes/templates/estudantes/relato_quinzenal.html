@@ -9,9 +9,7 @@
   {% load static %}
   {% load get_field %}
   <style>
-    textarea {
-      max-width:100%;
-    }
+    textarea {max-width:100%;}
   </style>
 {% endblock %}
 
@@ -41,7 +39,7 @@
       >{% if relato and relato.texto %}{{relato.texto}}{% endif %}</textarea>
     
     <br><br>
-    <input {% if not prazo %}disabled{% endif %} type="submit" value="Enviar">
+    <input {% if not prazo %}disabled{% endif %} class="btn btn-primary" type="submit" value="Enviar">
 
   </form>
 
