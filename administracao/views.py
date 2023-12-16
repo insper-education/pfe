@@ -1223,9 +1223,9 @@ def logs(request):
     v = usuario_sem_acesso(request, (4,)) # Soh Adm
     if v: return v  # Prof, Adm
 
-    message = ""
+    message = "Os seguintes alterados foram realizadas pela interface de administrador:<br><br>"
     for log in LogEntry.objects.all():
-        message += str(log)+"<br>\n"
+        message += "&bull; " + str(log.user) + " [" + str(log.action_time) + "]: " + str(log)+"<br>\n"
     return HttpResponse(message)
 
 
