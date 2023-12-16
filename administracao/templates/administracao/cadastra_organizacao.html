@@ -13,6 +13,13 @@
     textarea {
       max-width:100%;
     }
+    input[type="text"] {
+      max-width:100%;
+    }
+    label {
+      margin-top: 8px;
+      margin-bottom: 2px;
+    }
   </style>
 
   {% comment %} <script src="https://www.geradorcnpj.com/assets/js/jquery.maskedinput-1.1.4.pack.js"></script> {% endcomment %}
@@ -39,7 +46,7 @@
   </span>
   <br>
 
-  <form method="post" id="organizacaoform" enctype="multipart/form-data"> {% csrf_token %}
+  <form id="organizacaoform" method="post" style="width: 850px; max-width: 100%;" enctype="multipart/form-data"> {% csrf_token %}
     
     <label for="organizacao">Nome da Organização:<br></label><br>
     <textarea id="nome" name="nome" rows="1" cols="80" maxlength="{% max_length organizacao "nome" %}" required>{% if organizacao.nome %}{% slice_max_length organizacao "nome" %}{% elif proposta.nome_organizacao %}{% slice_other_max_length proposta.nome_organizacao organizacao "nome" %}{% endif %}</textarea>
@@ -51,7 +58,7 @@
     <textarea id="endereco" name="endereco" rows="3" cols="80" maxlength="{% max_length organizacao "endereco" %}">{% if organizacao.endereco %}{% slice_max_length organizacao "endereco" %}{% elif proposta.endereco %}{% slice_other_max_length proposta.endereco organizacao "endereco" %}{% endif %}</textarea>
     <br><br>
 
-    <label for="website">website:</label><input type="text" size="73" maxlength="{% max_length organizacao "website" %}" id="website" name="website" value="{% if organizacao.website %}{% slice_max_length organizacao "website" %}{% elif proposta.website %}{% slice_other_max_length proposta.website organizacao "website" %}{% endif %}" placeholder="https://www.insper.edu.br"><br><br>
+    <label for="website">website:</label> <input type="text" size="69" maxlength="{% max_length organizacao "website" %}" id="website" name="website" value="{% if organizacao.website %}{% slice_max_length organizacao "website" %}{% elif proposta.website %}{% slice_other_max_length proposta.website organizacao "website" %}{% endif %}" placeholder="https://www.insper.edu.br"><br><br>
 
     <label for="informacoes">Informações sobre a organização:</label><br>
     <textarea id="informacoes" name="informacoes" rows="4" cols="80" maxlength="{% max_length organizacao "informacoes" %}">{% if organizacao.informacoes %}{% slice_max_length organizacao "informacoes" %}{% elif proposta.descricao_organizacao %}{% slice_other_max_length proposta.descricao_organizacao organizacao "informacoes" %}{% endif %}</textarea>
