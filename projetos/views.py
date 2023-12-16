@@ -1766,26 +1766,25 @@ def editar_projeto(request, primarykey):
 @permission_required('users.altera_professor', raise_exception=True)
 def nomes(request):
     """Acerta maiúsculas de nomes."""
-    alunos = Aluno.objects.all()
 
-    message = ""
-    for aluno in alunos:
+    message = "Os seguintes nomes foram alterados:<br><br>"
+    for usuario in PFEUser.objects.all():
 
-        first_name = cap_name(aluno.user.first_name)
-        last_name = cap_name(aluno.user.last_name)
+        first_name = cap_name(usuario.first_name)
+        last_name = cap_name(usuario.last_name)
 
-        if (first_name != aluno.user.first_name) or (last_name != aluno.user.last_name):
+        if (first_name != usuario.first_name) or (last_name != usuario.last_name):
 
-            message += aluno.user.first_name + " >> "
-            message += aluno.user.last_name + "\t\t"
+            message += "&bull; " + usuario.first_name + " " + usuario.last_name
+            message += "   \t &nbsp; >>>> &nbsp; \t   "
+            message += first_name + " " + last_name + "<br>"
 
-            message += cap_name(aluno.user.first_name) + " "
-            message += cap_name(aluno.user.last_name) + "<br>"
+            usuario.first_name = first_name
+            usuario.last_name = last_name
 
-            aluno.user.first_name = first_name
-            aluno.user.last_name = last_name
+            usuario.save()
 
-            aluno.user.save()
+    message += "<br>&nbsp;&nbsp;<a href='" + request.build_absolute_uri("/administracao") + "'>voltar</a><br>"
 
     return HttpResponse(message)
 

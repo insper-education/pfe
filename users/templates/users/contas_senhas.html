@@ -15,16 +15,14 @@
   <script>{% include "tooltip.js" %}</script>
 
   <style>
-    td {
-      padding: 4px;
-    }
-    </style>
+    td {padding: 1px 4px 1px 4px;}
+  </style>
 
 {% endblock %}
 
 {% block content %}
   
-  <span class="titulo">Estudantes Inscritos no Semestre</span>
+  <span class="titulo">Enviar Contas e Senhas para Estudantes</span>
 
   <label for="filter">Edição:</label>
   <select onchange="location = this.options[this.selectedIndex].value;">
@@ -38,12 +36,13 @@
     <form method="post" id="enviacontassenhas" enctype="multipart/form-data">
       {% csrf_token %}
 
-      <table id="EstudantesTable">
-        <tr>
+      <table id="EstudantesTable"><thead>
+        <tr style="background: #F0F0F0;">
             <th class="text-center">&nbsp;<input type="checkbox" id="todos" checked>&nbsp;</th>
-            <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome do Aluno</th>
+            <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Estudante</th>
             <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">e-mail</th>
-        </tr>
+        </tr></thead>
+        <tbody>
         {% for estudante in estudantes %} 
         <tr class="item">
           <td class="text-center">
@@ -61,12 +60,13 @@
           </td>
         </tr>
         {% endfor %}
+        </tbody>
       </table>
 
       <br><strong>Total de Estudantes:</strong> {{estudantes.count}}
 
       <br><br>
-      <button type="submit">Enviar Contas e Senhas</button>
+      <button class="btn btn-primary" type="submit">Enviar Contas e Senhas</button>
 
     </form>
     

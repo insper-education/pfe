@@ -315,12 +315,13 @@ def calcula_objetivos(alocacoes):
 
 def cap_name(name):
     """Capitaliza palavras."""
-    excecoes = ['e', 'da', 'de', 'di', 'do', 'du', 'das', 'dos']
+    excecoes = ["e", "da", "de", "di", "do", "du", "das", "dos",
+                "la", "las", "les", "los", "van", "von", "y", "del"]
     items = []
-    for item in name.split():
+    for item in re.split('([ \(")])', name):
         if item.lower() in excecoes:
             items.append(item.lower())
         else:
             items.append(item.capitalize())
-    return ' '.join(items)
+    return ''.join(items)
 
