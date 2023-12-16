@@ -1127,7 +1127,7 @@ def certificacao_falconi(request):
             "nao_selecionados": total - selecionados,
             "conceitos": conceitos,
             "projetos_selecionados": projetos_selecionados,
-            'objetivos': objetivos,
+            "objetivos": objetivos,
             "bancas": bancas,
         }
 
