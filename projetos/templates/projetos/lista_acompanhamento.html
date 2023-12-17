@@ -11,13 +11,16 @@
     <script src="{% static 'js/w3.js' %}"></script>
     <script src="{% static 'js/Chart.min.js' %}"></script>
     
+    <style>
+      th, td {padding: 1px 5px 1px 5px;}
+    </style>
     {% comment %} Para chamar os Tooltips {% endcomment %}
     <script>{% include "tooltip.js" %}</script>
 {% endblock %}
 
 {% block content %}
 
-  <span class="titulo">Listagem dos Acompanhamentos das Organizações Parceiras
+  <span class="titulo">Acompanhamentos nas Organizações
     <small><a
       class="open-acompanhamento"
       href="{% url 'acompanhamento_view' %}"
@@ -26,13 +29,15 @@
     ></small>
   </span>
 
-  <table id="AcompanhamentoTable">
-    <tr>
+  <div class="table-responsive">
+  <table id="AcompanhamentoTable"><thead>
+    <tr style="background: #F0F0F0;">
       <th onclick="w3.sortHTML('#AcompanhamentoTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome</th>
       <th onclick="w3.sortHTML('#AcompanhamentoTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Organização</th>
       <th onclick="w3.sortHTML('#AcompanhamentoTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Data</th>
       <th class="text-center">Mensagem</th>
-    </tr>      
+    </tr></thead>  
+    <tbody> 
     {% for acompanhamento in acompanhamentos %} 
       <tr class="item">
         <td>
@@ -53,15 +58,13 @@
             Anônimo
           {% endif %}
         </td>
-        <td>
-          {{acompanhamento.data|date:"Y.m.d"}}
-        </td>
-        <td>
-          {{acompanhamento.texto}}
-        </td>
+        <td>{{acompanhamento.data|date:"Y.m.d"}}</td>
+        <td>{{acompanhamento.texto}}</td>
       </tr>
     {% endfor %}
+    </tbody>
   </table>
+  </div>
 
   <p>&nbsp;</p>
 

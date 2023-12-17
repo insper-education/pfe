@@ -30,15 +30,15 @@
         margin-right: 6px;
         width: 92vw;
       }
-      .opt_edi {} 
     }
     
   </style>
 
   <div class="row align-items-start mb-2" style="display: inline-block; margin-right: 3px;">
-    <div class="ml-3">
-      <div class="input-group input-group-sm">
+    <div class="ml-3 form-inline">
+      {% comment %} <div class="input-group input-group-sm"> {% endcomment %}
         {% if not sem_edicao %}
+        <div class="input-group input-group-sm">
           <div class="input-group-prepend">
             <label class="to_label input-group-text" for="filterEdicao" onClick="recarregar_pagina()"><span class="to_hide">Edição</span></label>
           </div>
@@ -59,11 +59,12 @@
             {% endfor %}
             </optgroup>
           </select>
-        {% endif %}
-        {% if com_cursos %}
-          {% if not sem_edicao %}
           <div class="separador input-group-addon"></div>
-          {% endif %}
+        </div>
+        {% endif %}
+
+        {% if com_cursos %}
+        <div class="input-group input-group-sm">
           <div class="input-group-prepend">
             <label class="to_label input-group-text" for="filterCurso" onClick="recarregar_pagina()"><span class="to_hide">Curso</span></label>
           </div>
@@ -84,10 +85,12 @@
                 <option class="opt_edi" selected>ERRO / ERROR</option>
               {% endif %}
           </select>
+          <div class="separador input-group-addon"></div>
+        </div>
         {% endif %}
 
         {% if com_objetivos %}
-          <div class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</div>
+        <div class="input-group input-group-sm">
           <div class="input-group-prepend">
             <label class="input-group-text" for="filterObjetivo" onClick="recarregar_pagina()"><span class="to_hide">Objetivo de Aprendizagem</span></label>
           </div>
@@ -97,10 +100,12 @@
               {% if objetivo.id == obj_selecionado %}selected{% endif %}>{{objetivo.titulo}} - {{objetivo.data_inicial}}</option>
             {% endfor %}
           </select>
+          <div class="separador input-group-addon"></div>
+        </div>
         {% endif %}
 
         {% if ind_grup %}
-          <div class="separador input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</div>
+        <div class="input-group input-group-sm">
           <div class="input-group-prepend form-check mb-2 mr-sm-2">
             <input class="filter form-check-input" type="checkbox" id="individuais" checked >
             <label class="to_label form-check-label" style="line-height: 1.0;" for="individuais"><span class="to_hide">Individuais</span></label>
@@ -109,47 +114,54 @@
             <input class="filter form-check-input" type="checkbox" id="grupo" checked >
             <label class="to_label form-check-label" style="line-height: 1.0;" for="grupo"><span class="to_hide">Grupo</span></label>
           </div>
+          <div class="separador input-group-addon"></div>
+        </div>
         {% endif %}
 
         {% if so_finais %}
-          <div class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</div>
+        <div class="input-group input-group-sm">
           <div class="input-group-prepend form-check mb-2 mr-sm-2">
             <input class="filter form-check-input" type="checkbox" id="so_finais" checked >
             <label class="to_label form-check-label" style="line-height: 1.0;" for="so_finais"><span class="to_hide">Só avaliações finais</span></label>
           </div>
+          <div class="separador input-group-addon"></div>
+        </div>
         {% endif %}
 
         {% if avancados %}
-          <div class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</div>
+        <div class="input-group input-group-sm">
           <div class="input-group-prepend form-check mb-2 mr-sm-2">
             <input class="filter form-check-input" type="checkbox" id="avancados" checked >
             <label class="to_label form-check-label" for="avancados"><span class="to_hide">Avancados</span></label>
           </div>
+          <div class="separador input-group-addon"></div>
+        </div>
         {% endif %}
 
         {% if com_tipos %}
-          <div class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;</div>
+        <div class="input-group input-group-sm">
           <div class="input-group-prepend">
-            <label class="input-group-text" for="filterTipo" onClick="recarregar_pagina()"><span class="to_hide">Tipo</span></label>
+            <label class="to_label input-group-text" for="filterTipo" onClick="recarregar_pagina()"><span class="to_hide">Tipo</span></label>
           </div>
-          <select class="filter custom-select w-auto" id="filterTipo" name="tipo">
+          <select class="to_hide2 filter custom-select w-auto form-control" id="filterTipo" name="tipo">
             <option class="opt_edi" value="estudantes">Estudantes</option>
             <option class="opt_edi" value="propostas">Propostas</option>
             <option class="opt_edi" value="projetos">Projetos</option>
           </select>
+          <div class="separador input-group-addon"></div>
+        </div>
         {% endif %}
 
-        <div id="spinner" class="ml-2 input-group-prepend" style="visibility: hidden">
-          <div class="spinner-border text-secondary ml-auto" style="width: 1.8rem; height: 1.8rem;" role="status" aria-hidden="true">
-            <span class="sr-only input-group-text">Carregando...</span>
+        <div class="input-group input-group-sm">
+          <div id="spinner" class="ml-2 input-group-prepend" style="visibility: hidden">
+            <div class="spinner-border text-secondary ml-auto" style="width: 1.8rem; height: 1.8rem;" role="status" aria-hidden="true">
+              <span class="sr-only input-group-text">Carregando...</span>
+            </div>
           </div>
         </div>
-        
-      </div>
 
     </div>
-    <div id="lateral">
-    </div>
+    <div id="lateral"></div>
   </div>
 
   {% comment %} Salva a última edição selecionada {% endcomment %}
