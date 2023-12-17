@@ -2,7 +2,7 @@
 	display: none;
 }
 .opt_full {
-display: inline;
+  display: inline;
 }
 
 @media screen and (max-width: 800px) {

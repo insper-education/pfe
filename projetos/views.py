@@ -30,7 +30,7 @@ from .models import Coorientador, Avaliacao2, ObjetivosDeAprendizagem
 from .models import Feedback, Acompanhamento, Anotacao, Organizacao
 from .models import Documento, FeedbackEstudante
 from .models import Banco, Reembolso, Aviso, Conexao
-from .models import Area, AreaDeInteresse
+from .models import Area, AreaDeInteresse, Banca
 
 from .messages import email, message_reembolso
 
@@ -366,12 +366,12 @@ def projetos_lista(request):
     """Lista todos os projetos."""
     edicoes = []
     if request.is_ajax():
-        if 'edicao' in request.POST:
-            edicao = request.POST['edicao']
-            if edicao == 'todas':
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
+            if edicao == "todas":
                 projetos_filtrados = Projeto.objects.all()
             else:
-                ano, semestre = request.POST['edicao'].split('.')
+                ano, semestre = request.POST["edicao"].split('.')
                 projetos_filtrados = Projeto.objects.filter(ano=ano,
                                                             semestre=semestre)
 
@@ -397,10 +397,44 @@ def projetos_lista(request):
         titulo = "Projects"
         context = {
             "titulo": titulo,
-            'edicoes': edicoes,
+            "edicoes": edicoes,
         }
 
-    return render(request, 'projetos/projetos_lista.html', context)
+    return render(request, "projetos/projetos_lista.html", context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def bancas_lista(request):
+    """Lista todos os projetos."""
+    edicoes = []
+    if request.is_ajax():
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
+            if edicao == "todas":
+                bancas = Banca.objects.all()
+            else:
+                ano, semestre = request.POST["edicao"].split('.')
+                bancas = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
+
+            cabecalhos = ["Tipo" ,"Data", "Projeto", "Avaliadores",]
+            
+            context = {
+                "bancas": bancas,
+                "cabecalhos": cabecalhos,
+            }
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+    else:
+        edicoes, _, _ = get_edicoes(Projeto)
+        titulo = "Bancas"
+        context = {
+            "titulo": titulo,
+            "edicoes": edicoes,
+        }
+
+    return render(request, "projetos/bancas_lista.html", context)
+
 
 @login_required
 def meuprojeto(request):

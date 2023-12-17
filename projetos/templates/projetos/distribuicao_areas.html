@@ -16,13 +16,13 @@
     <script src="{% static 'js/jspdf.min.js' %}"></script>
 
     <script>
-        function bar(){
+      function bar(){
         $('.chart').horizBarChart({
             selector: '.bar',
             speed: 800
         });
-        }
-        $(document).ready(bar);
+      }
+      $(document).ready(bar);
     </script>
 
     {% comment %} Para janela dos Tooltips {% endcomment %}
@@ -40,13 +40,11 @@
         function reajusta() { }
     </script>
 
-    {% with file_name="analise_notas" %}
-        {% include "save_image.html" %}
-    {% endwith %}
+    {% include "save_image.html" with file_name="analise_notas" %}
 
     <div id="tudo">
 
-        <span class="titulo">Tendência de Áreas de Interesse</span><br>
+        <span class="titulo">Tendência de Áreas de Interesse</span>
 
         {% comment %} Seletor da edição da pesquisa {% endcomment %}
         {% include "edicoes.html" with com_cursos=True com_tipos=True %}
