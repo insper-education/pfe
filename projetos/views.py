@@ -9,6 +9,7 @@ Data: 15 de Maio de 2019
 import datetime
 import csv
 import dateutil.parser
+import json
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
@@ -771,20 +772,24 @@ def mostra_feedback_estudante(request, feedback_id):
 @permission_required('users.altera_professor', raise_exception=True)
 def validate_aviso(request):
     """Ajax para validar avisos."""
-    aviso_id = int(request.GET.get('aviso', None)[len("aviso"):])
-    checked = request.GET.get('checked', None) == "true"
-    value = request.GET.get('value', None)
+    aviso_id = int(request.GET.get("aviso", None)[len("aviso"):])
+    checked = request.GET.get("checked", None) == "true"
+    value = request.GET.get("value", None)
 
     aviso = get_object_or_404(Aviso, id=aviso_id)
-    aviso.realizado = checked
+
+    datas_realizado = json.loads(aviso.datas_realizado)
 
     if checked:
-        # Marca a data do aviso como ultima marcação
-        aviso.data_realizado = dateutil.parser.parse(value)
+        # Marca a data do aviso
+        if value not in datas_realizado:
+            datas_realizado.append(value)
+            aviso.datas_realizado = json.dumps(datas_realizado)
     else:
-        # Marca a data do aviso como dia anterior
-        aviso.data_realizado = dateutil.parser.parse(value) - datetime.timedelta(days=1)
-
+        # Desmarca a data do aviso
+        if value in datas_realizado:
+            datas_realizado.remove(value)
+            aviso.datas_realizado = json.dumps(datas_realizado)
     aviso.save()
     return JsonResponse({"atualizado": True,})
 

@@ -13,4 +13,4 @@ from django.shortcuts import render
 @permission_required("users.altera_professor", raise_exception=True)
 def index_academica(request):
     """Mostra página principal da área acadêmica do sistema do PFE."""   
-    return render(request, 'academica/index_academica.html')
+    return render(request, "academica/index_academica.html")

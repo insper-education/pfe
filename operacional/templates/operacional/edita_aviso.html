@@ -6,6 +6,11 @@
 {% endcomment %}
 
 {% block head %}
+  <style>  
+    input {max-width: 100%;}
+    textarea {max-width: 100%;}
+    label {margin: 6px 0px 2px 0px;}
+  </style>
 {% endblock %}
 
 {% block content %}
@@ -13,53 +18,68 @@
     <form method="post" id="edita_aviso" enctype="multipart/form-data">
       {% csrf_token %}
       
-      <label for="titulo"><b>Aviso:</b></label>
-      <input type="text" size="96" maxlength="120" id="titulo" name="titulo" value="{{aviso.titulo}}" required>
-      <br><br>
+      <div style="margin-bottom: 8px; display: inline-block; max-width: 100%;">
+        <label for="titulo"><b>Aviso:</b></label>
+        <input type="text" size="88" maxlength="120" id="titulo" name="titulo" value="{{aviso.titulo}}" required>
+      </div><br>
 
-      <label for="evento"><b>Evento relacionado</b></label>:
-      <select name="evento" id="evento" title="Selecione evento" required>
-          <option disabled selected value> -- selecione evento -- </option>
-          {% for evento in eventos %}
-            <option value="{{evento.0}}" {% if aviso.tipo_de_evento == evento.0 %}selected="selected"{% endif %}>
-              {{evento.1}}
-            </option>  
-          {% endfor %}
-      </select>
+      <div style="margin-bottom: 8px; margin-right: 25px; display: inline-block; max-width: 100%;">
+        <label for="evento"><b>Evento relacionado</b></label>:
+        <select name="evento" id="evento" title="Selecione evento" required>
+            <option disabled selected value> -- selecione evento -- </option>
+            {% for evento in eventos %}
+              <option value="{{evento.0}}" {% if aviso.tipo_de_evento == evento.0 %}selected="selected"{% endif %}>
+                {{evento.1}}
+              </option>  
+            {% endfor %}
+        </select>
+      </div>
 
-      &nbsp;&nbsp;<label for="delta"><b>Delta</b></label>:
-      <input name="delta" id="delta" type="number" min="-186" max="186" step="1" value="{{aviso.delta}}" required/>
+      <div style="margin-bottom: 8px; display: inline-block; max-width: 100%;">
+        <label for="delta"><b>Delta</b></label>:
+        <input name="delta" id="delta" type="number" min="-186" max="186" step="1" value="{{aviso.delta}}" required/>
+      </div><br>
+
+      <div style="margin-bottom: 8px; display: inline-block; max-width: 100%;">
+        <label for="delta"><b>Mensagem</b></label>:<br>
+        <textarea name="mensagem" rows="12" cols="98">{{ aviso.mensagem }}</textarea>
+      </div><br>
+      
+      <div style="margin-bottom: 8px; display: inline-block; max-width: 100%;">
+
+        <label for="coordenacao">Coordenação</label>
+        <input type="checkbox" id="coordenacao" name="coordenacao" {% if aviso.coordenacao %}checked{% endif %}>
+        &nbsp;&nbsp;&nbsp;
+
+        <label for="comite_pfe">Comitê</label>
+        <input type="checkbox" id="comite_pfe" name="comite_pfe" {% if aviso.comite_pfe %}checked{% endif %}>
+        &nbsp;&nbsp;&nbsp;
+
+        <label for="todos_alunos">Estudantes</label>
+        <input type="checkbox" id="todos_alunos" name="todos_alunos" {% if aviso.todos_alunos %}checked{% endif %}>
+        &nbsp;&nbsp;&nbsp;
+
+        <label for="todos_orientadores">Orientadores</label>
+        <input type="checkbox" id="todos_orientadores" name="todos_orientadores" {% if aviso.todos_orientadores %}checked{% endif %}>
+        &nbsp;&nbsp;&nbsp;
+
+        <label for="contatos_nas_organizacoes">Contatos nas Organizações</label>
+        <input type="checkbox" id="contatos_nas_organizacoes" name="contatos_nas_organizacoes" {% if aviso.contatos_nas_organizacoes %}checked{% endif %}>
+      
+      </div><br>
+
+      {% comment %} Não implementado ainda
+      {% verbatim %}
+        <br>Variáveis: {{projeto}}
+      {% endverbatim %}
+      {% endcomment %}
+
       <br>
-
-      <textarea name="mensagem" rows="12" cols="102">{{ aviso.mensagem }}</textarea>
-      <br>
-
-      <label for="coordenacao">Coordenação</label>
-      <input type="checkbox" id="coordenacao" name="coordenacao" {% if aviso.coordenacao %}checked{% endif %}>
-      &nbsp;&nbsp;&nbsp;
-
-      <label for="comite_pfe">Comitê</label>
-      <input type="checkbox" id="comite_pfe" name="comite_pfe" {% if aviso.comite_pfe %}checked{% endif %}>
-      &nbsp;&nbsp;&nbsp;
-
-      <label for="todos_alunos">Estudantes</label>
-      <input type="checkbox" id="todos_alunos" name="todos_alunos" {% if aviso.todos_alunos %}checked{% endif %}>
-      &nbsp;&nbsp;&nbsp;
-
-      <label for="todos_orientadores">Orientadores</label>
-      <input type="checkbox" id="todos_orientadores" name="todos_orientadores" {% if aviso.todos_orientadores %}checked{% endif %}>
-      &nbsp;&nbsp;&nbsp;
-
-      <label for="contatos_nas_organizacoes">Contatos nas Organizações</label>
-      <input type="checkbox" id="contatos_nas_organizacoes" name="contatos_nas_organizacoes" {% if aviso.contatos_nas_organizacoes %}checked{% endif %}>
-
-      <br><br>
-
-      <button type="submit">{% if aviso %}Atualizar{% else %}Criar{% endif %} Aviso</button>
+      <button class="btn btn-primary" type="submit">{% if aviso %}Atualizar{% else %}Criar{% endif %} Aviso</button>
 
       {% if aviso %}
         &nbsp;&nbsp;
-        <button type="button" id="apagar">Apagar Aviso</button>
+        <button class="btn btn-primary" type="button" id="apagar">Apagar Aviso</button>
 
         <script type="text/javascript">
           $('#apagar').click(function() {

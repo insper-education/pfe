@@ -48,64 +48,39 @@ def avisos_listar(request):
     for evento in eventos:
         avisos.append(
             {"class": "Evento",
-             "tipo_de_evento": evento.tipo_de_evento,
-             "titulo": evento.get_title(),
+             "evento": evento,
              "data": evento.get_data(),
              "id": None,
-             "realizado": False,
-             "color": evento.get_color(),
             })
 
         for aviso in Aviso.objects.filter(tipo_de_evento=evento.tipo_de_evento):
             avisos.append(
                 {"class": "Aviso",
-                "tipo_de_evento": aviso.tipo_de_evento,
-                "titulo": aviso.titulo,
-                "data": evento.get_data() + datetime.timedelta(days=aviso.delta),
-                "id": aviso.id,
-                "realizado": aviso.realizado,
-                "data_realizado": aviso.data_realizado,
-                "evento": aviso.get_evento(),
-                "delta": aviso.delta,
-                "coordenacao": aviso.coordenacao,
-                "comite_pfe": aviso.comite_pfe,
-                "todos_alunos": aviso.todos_alunos,
-                "todos_orientadores": aviso.todos_orientadores,
-                "contatos_nas_organizacoes": aviso.contatos_nas_organizacoes,
+                 "aviso": aviso,
+                 "data": evento.get_data() + datetime.timedelta(days=aviso.delta),
+                 "id": aviso.id,
                 })
 
     avisos = sorted(avisos, key=lambda t: t["data"])
 
-    # IDs dos avisos buscados
-    ids = [d['id'] for d in avisos if d['id'] is not None]
-
+    # Para caso exista um aviso que não está associado a um evento (faltou marcar evento por exemplo)
+    ids = [d['id'] for d in avisos if d['id'] is not None]      # IDs dos avisos buscados
     sem_avisos = Aviso.objects.all().exclude(id__in=ids)
     for aviso in sem_avisos:
             avisos.append(
                 {"class": "Aviso",
-                "tipo_de_evento": aviso.tipo_de_evento,
-                "titulo": aviso.titulo,
-                "data": None,
-                "id": aviso.id,
-                "realizado": aviso.realizado,
-                "data_realizado": aviso.data_realizado,
-                "evento": aviso.get_evento(),
-                "delta": aviso.delta,
-                "coordenacao": aviso.coordenacao,
-                "comite_pfe": aviso.comite_pfe,
-                "todos_alunos": aviso.todos_alunos,
-                "todos_orientadores": aviso.todos_orientadores,
-                "contatos_nas_organizacoes": aviso.contatos_nas_organizacoes,
+                 "aviso": aviso,
+                 "data": None,
+                 "id": aviso.id,
                 })
 
     context = {
-        'avisos': avisos,
-        'configuracao' : configuracao,
-        'hoje' : datetime.date.today(),
-        'filtro' : "todos",
+        "avisos": avisos,
+        "hoje" : datetime.date.today(),
+        "filtro" : "todos",
     }
 
-    return render(request, 'operacional/avisos_listar.html', context)
+    return render(request, "operacional/avisos_listar.html", context)
 
 
 
@@ -249,12 +224,12 @@ def edita_aviso(request, primarykey):
     """Edita aviso."""
     aviso = get_object_or_404(Aviso, pk=primarykey)
 
-    if request.method == 'POST':
-        if 'mensagem' in request.POST:
+    if request.method == "POST":
+        if "mensagem" in request.POST:
             erro = trata_aviso(aviso, request)
             if erro:
                 return erro
-            return redirect('avisos_listar')
+            return redirect("avisos_listar")
 
         return HttpResponse("Problema com atualização de mensagem.", status=401)
 
@@ -263,7 +238,7 @@ def edita_aviso(request, primarykey):
         "eventos": TIPO_EVENTO,
     }
 
-    return render(request, 'operacional/edita_aviso.html', context)
+    return render(request, "operacional/edita_aviso.html", context)
 
 
 @login_required

@@ -75,7 +75,7 @@ def usuario_sem_acesso(request, acessos):
             "area_principal": True,
             "mensagem": mensagem,
         }
-        return render(request, 'generic.html', context=context)
+        return render(request, "generic.html", context=context)
 
     if request.user.tipo_de_usuario not in acessos:
         mensagem = "Você não tem privilégios de acesso a essa área!"
@@ -83,7 +83,7 @@ def usuario_sem_acesso(request, acessos):
             "area_principal": True,
             "mensagem": mensagem,
         }
-        return render(request, 'generic.html', context=context)
+        return render(request, "generic.html", context=context)
 
 
 def registra_organizacao(request, org=None):

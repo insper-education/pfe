@@ -14,6 +14,7 @@ from django.conf import settings
 from django.core.management import call_command
 from django.core.management import execute_from_command_line
 import django.db.models.query
+from django.template import Template, Context
 
 from calendario.views import get_calendario_context
 
@@ -64,14 +65,14 @@ def envia_aviso():
     except Configuracao.DoesNotExist:
         return None
 
-    # Checa avisos do dia e envia e-mail para coordenação
+    # Filtra avisos do semestre
     eventos = Evento.objects.filter(startDate__year=configuracao.ano)
     if configuracao.semestre == 1:
         eventos = eventos.filter(startDate__month__lt=7)
     else:
         eventos = eventos.filter(startDate__month__gt=6)
 
-    # Checa avisos do dia e envia e-mail para coordenação
+    # Checa avisos do dia
     avisos = []
     for evento in eventos:
         for aviso in Aviso.objects.filter(tipo_de_evento=evento.tipo_de_evento):
@@ -79,45 +80,64 @@ def envia_aviso():
             if data_evento == datetime.date.today():
                 avisos.append(aviso)
 
+    # Preparando mensagem como template para aplicar variáveis
+    subject = "Aviso: " + aviso.titulo
+    if aviso.mensagem:
+        message = aviso.mensagem
+    else:
+        message = "Mensagem não definida."
+
+    mensagem_como_template = Template(message)
+
     for aviso in avisos:
 
-        recipient_list = ['pfeinsper@gmail.com', ]
+        recipient_list = ["pfeinsper@gmail.com", ]
 
         if aviso.coordenacao:
             coordenacoes = PFEUser.objects.filter(coordenacao=True)
             email_coordenacoes = []
             for coordenador in coordenacoes:
                 email_coordenacoes.append(str(coordenador.email))
-            recipient_list += email_coordenacoes
+            context = {"teste": "teste ignorar"}
+            mensagem_final = mensagem_como_template.render(Context(context))
+            verify = email(subject, recipient_list + email_coordenacoes, htmlizar(mensagem_final))
+            # if verify != 1: pass # Algum problema de conexão, contacte: lpsoares@insper.edu.br
+                
         if aviso.comite_pfe:
             comite = PFEUser.objects.filter(membro_comite=True)
             lista_comite = [obj.email for obj in comite]
-            recipient_list += lista_comite
+            context = {}
+            mensagem_final = mensagem_como_template.render(Context(context))
+            verify = email(subject, recipient_list + lista_comite, htmlizar(mensagem_final))
+            # if verify != 1: pass # Algum problema de conexão, contacte: lpsoares@insper.edu.br
+                
         if aviso.todos_alunos:
             estudantes = Aluno.objects.filter(alocacao__projeto__ano=configuracao.ano, alocacao__projeto__semestre=configuracao.semestre)
             lista_estudantes = [obj.user.email for obj in estudantes]
-            recipient_list += lista_estudantes
+            context = {}
+            mensagem_final = mensagem_como_template.render(Context(context))
+            verify = email(subject, recipient_list + lista_estudantes, htmlizar(mensagem_final))
+            # if verify != 1: pass # Algum problema de conexão, contacte: lpsoares@insper.edu.br
+
         if aviso.todos_orientadores:
             orientadores = Professor.objects.filter(professor_orientador__ano=configuracao.ano, professor_orientador__semestre=configuracao.semestre)
             lista_orientadores = [obj.user.email for obj in orientadores]
-            recipient_list += lista_orientadores
+            context = {}
+            mensagem_final = mensagem_como_template.render(Context(context))
+            verify = email(subject, recipient_list + lista_orientadores, htmlizar(mensagem_final))
+            # if verify != 1: pass # Algum problema de conexão, contacte: lpsoares@insper.edu.br
+
         if aviso.contatos_nas_organizacoes:
             recipient_list += []
+            context = {}
+            mensagem_final = mensagem_como_template.render(Context(context))
+            # verify = email(subject, recipient_list, htmlizar(mensagem_final))  # Por enquanto, não envia para ninguém
+            # if verify != 1: pass # Algum problema de conexão, contacte: lpsoares@insper.edu.br
+                
 
-        subject = 'Aviso: ' + aviso.titulo
-        if aviso.mensagem:
-            message = aviso.mensagem
-        else:
-            message = "Mensagem não definida."
-        verify = email(subject, recipient_list, htmlizar(message))
-        if verify != 1:
-            # Algum problema de conexão, contacte: lpsoares@insper.edu.br
-            pass
-
-    # Checa eventos do calendário e envia e-mail para destinatário
+    # Checa eventos do calendário e envia e-mail para coordenador(es)
     context = get_calendario_context()
 
-    #recipient_list = ['pfeinsper@gmail.com', 'lpsoares@insper.edu.br',]  # Soh manda para coordenação
     coordenacoes = PFEUser.objects.filter(coordenacao=True)
     recipient_list = []
     for coordenador in coordenacoes:

@@ -980,21 +980,26 @@ class Aviso(models.Model):
     mensagem = models.TextField(max_length=4096, null=True, blank=True,
                                 help_text='mensagem a ser enviar no texto')
     
+    ### NÃO DEVE SER MAIS USADO ##############################################
     realizado = models.BooleanField(default=False, help_text='Se já realizado no período')  # NAO MAIS USADO
-
     data_realizado = models.DateField(default=datetime.date.today, blank=True,
                                       help_text='Data de quando o evento foi realizado pela última vez')
+    ##########################################################################
+    
+    datas_realizado = models.TextField(max_length=4096, default="[]",
+                                      help_text="Datas de quando o evento foi realizado")
+    
 
     coordenacao = \
-        models.BooleanField(default=False, help_text='Para organização do PFE')
+        models.BooleanField(default=False, help_text="Para coordenação do PFE")
     comite_pfe = \
-        models.BooleanField(default=False, help_text='Para os membros do comitê do PFE')
+        models.BooleanField(default=False, help_text="Para os membros do comitê do PFE")
     todos_alunos = \
-        models.BooleanField(default=False, help_text='Para todos os alunos do semestre')
+        models.BooleanField(default=False, help_text="Para todos os alunos do semestre")
     todos_orientadores = \
-        models.BooleanField(default=False, help_text='Para todos os orientadores do semestre')
+        models.BooleanField(default=False, help_text="Para todos os orientadores do semestre")
     contatos_nas_organizacoes = \
-        models.BooleanField(default=False, help_text='Para contatos nas organizações parceiras')
+        models.BooleanField(default=False, help_text="Para contatos nas organizações parceiras")
 
     # Usar get_tipo_de_evento_display em vez disso
     def get_evento(self):
