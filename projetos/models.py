@@ -968,17 +968,17 @@ class Aviso(models.Model):
     """Avisos para a Coordenação do PFE."""
 
     titulo = models.CharField(max_length=120, null=True, blank=True,
-                              help_text='Título do Aviso')
+                              help_text="Título do Aviso")
 
     tipo_de_evento = models.\
         PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_EVENTO],
                                   null=True, blank=True,
-                                  help_text='Define o tipo do evento de referência')
+                                  help_text="Define o tipo do evento de referência")
 
     delta = models.SmallIntegerField(default=0,
-                                     help_text='dias passados do evento definido')
+                                     help_text="dias passados do evento definido")
     mensagem = models.TextField(max_length=4096, null=True, blank=True,
-                                help_text='mensagem a ser enviar no texto')
+                                help_text="mensagem a ser enviar no texto")
     
     ### NÃO DEVE SER MAIS USADO ##############################################
     realizado = models.BooleanField(default=False, help_text='Se já realizado no período')  # NAO MAIS USADO

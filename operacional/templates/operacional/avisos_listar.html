@@ -34,7 +34,7 @@
 
     th {
       text-align:center;
-      border: 1px solid black;
+      border: 1px solid black !important;
     }
 
   </style>
@@ -107,11 +107,11 @@
               {% endif %}
             "
             data-type="
-              {% if a.coordenacao %}Co{% endif %}
-              {% if a.comite_pfe %}Cm{% endif %}
-              {% if a.todos_alunos %}Es{% endif %}
-              {% if a.todos_orientadores %}Or{% endif %}
-              {% if a.contatos_nas_organizacoes %}Og{% endif %}
+              {% if a.aviso.coordenacao %}Co{% endif %}
+              {% if a.aviso.comite_pfe %}Cm{% endif %}
+              {% if a.aviso.todos_alunos %}Es{% endif %}
+              {% if a.aviso.todos_orientadores %}Or{% endif %}
+              {% if a.aviso.contatos_nas_organizacoes %}Og{% endif %}
             " >
 
             <th style="vertical-align: middle; text-align:center;" scope="row">
