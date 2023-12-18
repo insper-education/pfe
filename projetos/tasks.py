@@ -98,7 +98,7 @@ def envia_aviso():
             email_coordenacoes = []
             for coordenador in coordenacoes:
                 email_coordenacoes.append(str(coordenador.email))
-            context = {"teste": "teste ignorar"}
+            context = {}
             mensagem_final = mensagem_como_template.render(Context(context))
             verify = email(subject, recipient_list + email_coordenacoes, htmlizar(mensagem_final))
             # if verify != 1: pass # Algum problema de conexão, contacte: lpsoares@insper.edu.br
