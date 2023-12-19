@@ -27,22 +27,12 @@
 
 {% block content %}
 
-  {% if projeto.titulo_final %}
-    <style>
-        .titulo {display: inline;}
-    </style>
-    <span class="titulo" data-toggle="tooltip" data-html="true" animation="true" title="
-     Título do projeto.
-    ">
-      Título: {{projeto.titulo_final}}</span>
-    <small> <br>&nbsp;&nbsp;&nbsp;&nbsp;Título original: {{projeto.titulo}}</small><br>
-  {% elif projeto.titulo %}
-    <span class="titulo" data-toggle="tooltip" data-html="true" animation="true" title="
-     Título do projeto.
-    ">Título: {{projeto.titulo}}<br></span>
-  {% else %}
-    <span class="titulo">Problema na identificação do título<br></span>
-  {% endif %}
+  <span class="titulo">
+    Projeto: {{projeto.get_titulo}}
+    {% if projeto.titulo_final %}
+      <i>Título original: {{projeto.titulo}}</i>
+    {% endif %}
+  </span>
 
   <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
 
@@ -51,8 +41,7 @@
   {% if projeto.proposta.descricao %}
     <p>
       <strong data-toggle="tooltip" data-html="true" animation="true" title="
-      Uma breve descrição do que se trata o projeto e outras informações relevantes.
-      ">
+      Uma breve descrição do que se trata o projeto e outras informações relevantes.">
         Descrição:
       </strong>
       {{projeto.proposta.descricao|linebreaks|urlize}}<br>

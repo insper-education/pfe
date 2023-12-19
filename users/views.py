@@ -573,7 +573,7 @@ def edita_notas(request, primarykey):
                                                                        exame=composicao.exame,
                                                                        alocacao=alocacao,
                                                                        avaliador = alocacao.projeto.orientador.user)
-                        reg.observacoes = obs_value
+                        reg.observacoes_orientador = obs_value
 
                         if _created:
                             if alocacao.projeto.orientador:

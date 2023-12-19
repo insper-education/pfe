@@ -154,6 +154,8 @@ class Projeto(models.Model):
         """Caso tenha titulo atualizado, retorna esse, senão retorna o original e único."""
         if self.titulo_final:
             return self.titulo_final
+        if not self.titulo:
+            return "PROBLEMA NA IDENTIFICAÇÃO DO TÍTULO DO PROJETO"
         return self.titulo
 
     def certificado_orientador(self):
@@ -1577,9 +1579,6 @@ class Reprovacao(models.Model):
 class Observacao(models.Model):
     """Observações realizadas durante avaliações."""
 
-    # NÃO USAR MAIS TIPO DE AVALIAÇÃO, USAR EXAME
-    # tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
-
     # DEFINE O TIPO DE AVALIAÇÃO
     exame = models.ForeignKey("academica.Exame", null=True, blank=True, on_delete=models.SET_NULL,
                                  help_text="Tipo de avaliação")
@@ -1605,7 +1604,7 @@ class Observacao(models.Model):
                                  on_delete=models.SET_NULL, null=True, blank=True,
                                  help_text='Objetivo de Aprendizagem')
 
-    observacoes = models.TextField(max_length=2048, null=True, blank=True,
+    observacoes_orientador = models.TextField(max_length=2048, null=True, blank=True,
                                    help_text='qualquer observação relevante')
 
     @classmethod
@@ -1615,7 +1614,7 @@ class Observacao(models.Model):
         return observacao
 
     def __str__(self):
-        return "Obs. tipo: " + str(self.exame) + " = " + str(self.observacoes)[:6] + "..."
+        return "Obs. tipo: " + str(self.exame) + " = " + str(self.observacoes_orientador)[:6] + "..."
 
     class Meta:
         verbose_name = 'Observação'

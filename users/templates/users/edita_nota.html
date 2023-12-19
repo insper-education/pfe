@@ -111,7 +111,7 @@
             <span style="margin-left: 10px;">Observações:</span><br>
             <textarea id="a{{composicao.exame.id}}_obs" name="a{{composicao.exame.id}}_obs"
                       rows="4" cols="80" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
-              >{% if observacoes %}{{observacoes.last.observacoes}}{% endif %}</textarea>
+              >{% if observacoes %}{{observacoes.last.observacoes_orientador}}{% endif %}</textarea>
             <br>
           {% endwith %}
 

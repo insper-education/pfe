@@ -80,15 +80,13 @@
 
 {% block content %}
 
-  {% if projeto.titulo_final %}
-    <style>
-        .titulo {display: inline;}
-    </style>
-    <span class="titulo">Projeto: {{projeto.titulo_final}}<br></span>
-    <i>&nbsp;&nbsp;&nbsp;&nbsp;Título original: {{projeto.titulo}}<br></i>
-  {% else %}
-    <span style="display:block;" class="titulo">Projeto: {{projeto.titulo}}<br></span>
-  {% endif %}
+  <span class="titulo">
+    Projeto: {{projeto.get_titulo}}
+    {% if projeto.titulo_final %}
+      <i>Título original: {{projeto.titulo}}</i>
+    {% endif %}
+  </span>
+
   <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
 
   {% include "tipo_projeto.html" with com_tipo=True %}

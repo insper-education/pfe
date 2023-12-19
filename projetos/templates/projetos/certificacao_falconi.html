@@ -38,6 +38,8 @@
         }
     }
 
+    ul {padding-left: 28px;}
+
   </style>
 
   {% include "cores_bancas.html" %}
@@ -406,11 +408,11 @@
 
         <br>
         {% if projetos_selecionados %}
-            <div><ul>
+            <div><ul style="list-style-type: '&#x2726; ';">
                 <li>Total de projetos realizados no semestre: {{selecionados|add:nao_selecionados}}</li>
-                <li>Total de projetos selecionados para certificação Falconi: {{selecionados}}</li>
-                <li>Total de projetos que obtiveram certificação <u>Destaque Projeto Final de Engenharia FALCONI-INSPER</u>: <span id="n_destaque"></span></li>
-                <li>Total de projetos que obtiveram certificação <u>Excelência Projeto Final de Engenharia FALCONI-INSPER</u>: <span id="n_excelencia"></span></li>
+                <li>Projetos selecionados para certificação Falconi: {{selecionados}}</li>
+                <li>Projetos que obtiveram certificação <u>Destaque Projeto Final de Engenharia FALCONI-INSPER</u>: <span id="n_destaque"></span></li>
+                <li>Projetos que obtiveram certificação <u>Excelência Projeto Final de Engenharia FALCONI-INSPER</u>: <span id="n_excelencia"></span></li>
             </ul></div><br><br>
         {% else %}
             <div>
@@ -481,10 +483,10 @@
                             </a><br>
                             <strong>Avaliado em: </strong>{{objs.momento}}<br>
                             <strong>Conceitos:</strong><br>
-                            <ul>
-                            {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo != "observacoes" %}
+                            <ul style="list-style-type: '&#x21A3; ';">
+                            {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo|slice:11 != "observacoes" %}
 
-                                <li>{{objetivo.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
+                                <li><span style="font-weight: 500;">{{objetivo.titulo}}</span>: <span data-toggle="tooltip" data-html="true" animation="true" title="
                                 {{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}">
                                 <span id="falconi{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
                                 <script>$("#falconi{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(conceito({{conceito.nota}}));</script>
@@ -500,8 +502,8 @@
 
                             {% endif %}{% endfor %}
                             
-                            {% if objs.observacoes %}  
-                                <li>Observações: {{objs.observacoes}}</li>
+                            {% if objs.observacoes_orientador %}
+                                <li><span style="font-weight: 500;">Observações para a Coordenação</span>: {{objs.observacoes_orientador}}</li>
                             {% endif %}
                             
                             
@@ -514,7 +516,7 @@
                     <tr id="falconi_{{projeto.id}}" style="color: darkslategrey"><td style="display: flex; align-items: center; flex-wrap: wrap;">
                         <div><b>
                         Média das avaliações falconi:
-                        <ul id="med_falconi_{{projeto.id}}"></ul>
+                        <ul id="med_falconi_{{projeto.id}}" style="list-style-type: '&#x21A3; ';"></ul>
                         <script>
                         for (var key in falconi.dict) {
                             if(falconi.dict[key].avaliacoes>0) $('#med_falconi_{{projeto.id}}').append(falconi.dict[key].texto());

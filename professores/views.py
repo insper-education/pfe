@@ -539,7 +539,7 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
     if julgamento_observacoes:
         message += "<b>Observações (somente enviada para orientador):</b>\n"
         message += "<p style='border:1px; border-style:solid; padding: 0.3em; margin: 0;'>"
-        message += html.escape(julgamento_observacoes.observacoes).replace('\n', '<br>\n')
+        message += html.escape(julgamento_observacoes.observacoes_orientador).replace('\n', '<br>\n')
         message += "</p>"
         message += "<br>\n<br>\n"
 
@@ -553,7 +553,7 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
             message += "&objetivo" + str(count) + "=" + str(julg.objetivo.id)
             message += "&conceito" + str(count) + "=" + converte_letra(julg.nota, mais="X")
     if julgamento_observacoes:
-        message += "&observacoes=" + quote(julgamento_observacoes.observacoes)
+        message += "&observacoes=" + quote(julgamento_observacoes.observacoes_orientador)
     message += "'>"
     message += "Caso deseje reenviar sua avaliação, clique aqui."
     message += "</a><br>\n"
@@ -799,7 +799,7 @@ def mensagem_orientador(banca):
         if observacao.avaliador not in avaliadores:
             avaliadores[observacao.avaliador] = {}  # Não devia acontecer isso
         if "observacoes" not in avaliadores[observacao.avaliador]:
-            avaliadores[observacao.avaliador]["observacoes"] = observacao.observacoes
+            avaliadores[observacao.avaliador]["observacoes"] = observacao.observacoes_orientador
 
     message3, obj_avaliados = calcula_notas_bancas(avaliadores)
     message2 = calcula_media_notas_bancas(obj_avaliados)
@@ -860,13 +860,13 @@ def banca_avaliar(request, slug):
     elif banca.tipo_de_banca == 2:  # Falconi
         objetivos = objetivos.filter(avaliacao_falconi=True)
     else:
-        return HttpResponseNotFound('<h1>Tipo de Banca não indentificado</h1>')
+        return HttpResponseNotFound("<h1>Tipo de Banca não indentificado</h1>")
 
     if request.method == "POST":
         if "avaliador" in request.POST:
 
             avaliador = get_object_or_404(PFEUser,
-                                          pk=int(request.POST['avaliador']))
+                                          pk=int(request.POST["avaliador"]))
 
             if banca.tipo_de_banca == 1:  # (1, 'intermediaria'),
                 exame = Exame.objects.get(titulo="Banca Intermediária")
@@ -924,10 +924,10 @@ def banca_avaliar(request, slug):
                 julgamento[i].save()
 
             julgamento_observacoes = None
-            if 'observacoes' in request.POST and request.POST['observacoes'] != "":
+            if "observacoes" in request.POST and request.POST["observacoes"] != "":
                 julgamento_observacoes = Observacao.create(projeto=banca.projeto)
                 julgamento_observacoes.avaliador = avaliador
-                julgamento_observacoes.observacoes = request.POST['observacoes']
+                julgamento_observacoes.observacoes_orientador = request.POST["observacoes"]
                 julgamento_observacoes.exame = exame
                 julgamento_observacoes.save()
 
@@ -1161,34 +1161,34 @@ def conceitos_obtidos(request, primarykey):  # acertar isso para pk
     # Bancas Intermediárias
     exame = Exame.objects.get(titulo="Banca Intermediária")
     observacoes = Observacao.objects.filter(projeto=projeto, exame=exame).\
-        order_by('avaliador', '-momento')
+        order_by("avaliador", "-momento")
     for observacao in observacoes:
         if observacao.avaliador not in avaliadores_inter:
             avaliadores_inter[observacao.avaliador] = {}  # Não devia acontecer isso
-        if "observacoes" not in avaliadores_inter[observacao.avaliador]:
-            avaliadores_inter[observacao.avaliador]["observacoes"] = observacao.observacoes
+        if "observacoes_orientador" not in avaliadores_inter[observacao.avaliador]:
+            avaliadores_inter[observacao.avaliador]["observacoes_orientador"] = observacao.observacoes_orientador
         # Senão é só uma avaliação de objetivo mais antiga
 
     # Bancas Finais
     exame = Exame.objects.get(titulo="Banca Final")
     observacoes = Observacao.objects.filter(projeto=projeto, exame=exame).\
-        order_by('avaliador', '-momento')
+        order_by("avaliador", "-momento")
     for observacao in observacoes:
         if observacao.avaliador not in avaliadores_final:
             avaliadores_final[observacao.avaliador] = {}  # Não devia acontecer isso
-        if "observacoes" not in avaliadores_final[observacao.avaliador]:
-            avaliadores_final[observacao.avaliador]["observacoes"] = observacao.observacoes
+        if "observacoes_orientador" not in avaliadores_final[observacao.avaliador]:
+            avaliadores_final[observacao.avaliador]["observacoes_orientador"] = observacao.observacoes_orientador
         # Senão é só uma avaliação de objetivo mais antiga
 
     # Bancas Falconi
     exame = Exame.objects.get(titulo="Falconi")
     observacoes = Observacao.objects.filter(projeto=projeto, exame=exame).\
-        order_by('avaliador', '-momento')
+        order_by("avaliador", "-momento")
     for observacao in observacoes:
         if observacao.avaliador not in avaliadores_falconi:
             avaliadores_falconi[observacao.avaliador] = {}  # Não devia acontecer isso
-        if "observacoes" not in avaliadores_falconi[observacao.avaliador]:
-            avaliadores_falconi[observacao.avaliador]["observacoes"] = observacao.observacoes
+        if "observacoes_orientador" not in avaliadores_falconi[observacao.avaliador]:
+            avaliadores_falconi[observacao.avaliador]["observacoes_orientador"] = observacao.observacoes_orientador
         # Senão é só uma avaliação de objetivo mais antiga
 
     context = {
@@ -1688,11 +1688,10 @@ def relato_avaliar(request, projeto_id, evento_id):
 
     exame = Exame.objects.get(titulo="Relato Quinzenal")
 
-    if request.method == 'POST':
+    if request.method == "POST":
 
         if editor:
 
-            # edicao = request.POST['op']
             avaliacoes = dict(filter(lambda elem: elem[0][:3] == "op.", request.POST.items()))
 
             avaliacao_negativa = False
@@ -1717,7 +1716,7 @@ def relato_avaliar(request, projeto_id, evento_id):
                                                                 avaliador=request.user,
                                                                 momento=evento.endDate,  # data marcada do fim do evento
                                                                 exame=exame)  # (200, "Relato Quinzenal"),
-                obs.observacoes = observacoes
+                obs.observacoes_orientador = observacoes
                 obs.save()
 
             # Dispara aviso a coordenação caso alguma observação ou estudante com dificuldade
@@ -1734,7 +1733,7 @@ def relato_avaliar(request, projeto_id, evento_id):
                 for alocacao in alocacoes:
                     relatos.append(Relato.objects.filter(alocacao=alocacao,
                                                 momento__gt=evento_anterior.endDate + datetime.timedelta(days=1),
-                                                momento__lte=evento.endDate + datetime.timedelta(days=1)).order_by('momento').last() )
+                                                momento__lte=evento.endDate + datetime.timedelta(days=1)).order_by("momento").last() )
                                                 # O datetime.timedelta(days=1) é necessário pois temos de checar passadas 24 horas, senão valo começo do dia
 
 
@@ -1779,7 +1778,7 @@ def relato_avaliar(request, projeto_id, evento_id):
                                         exame=exame).last()  # (200, "Relato Quinzenal"),
                                         # O datetime.timedelta(days=1) é necessário pois temos de checar passadas 24 horas, senão valo começo do dia
         if obs:
-            observacoes = obs.observacoes
+            observacoes = obs.observacoes_orientador
         else:
             observacoes = None
 

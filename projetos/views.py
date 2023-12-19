@@ -1133,7 +1133,7 @@ def certificacao_falconi(request):
                 bancas_falconi = Avaliacao2.objects.filter(projeto=projeto,
                                                         objetivo=objetivo,
                                                         exame=exame)\
-                    .order_by('avaliador', '-momento')
+                    .order_by("avaliador", "-momento")
 
                 for banca in bancas_falconi:
                     if banca.avaliador not in avaliadores_falconi:
@@ -1146,12 +1146,12 @@ def certificacao_falconi(request):
             # Bancas Falconi
             exame = Exame.objects.get(titulo="Falconi")
             observacoes = Observacao.objects.filter(projeto=projeto, exame=exame).\
-                order_by('avaliador', '-momento')
+                order_by("avaliador", "-momento")
             for observacao in observacoes:
                 if observacao.avaliador not in avaliadores_falconi:
                     avaliadores_falconi[observacao.avaliador] = {}  # Não devia acontecer isso
-                if "observacoes" not in avaliadores_falconi[observacao.avaliador]:
-                    avaliadores_falconi[observacao.avaliador]["observacoes"] = observacao.observacoes
+                if "observacoes_orientador" not in avaliadores_falconi[observacao.avaliador]:
+                    avaliadores_falconi[observacao.avaliador]["observacoes_orientador"] = observacao.observacoes_orientador
                 # Senão é só uma avaliação de objetivo mais antiga
 
             avaliadores.append(avaliadores_falconi)
@@ -1175,7 +1175,7 @@ def certificacao_falconi(request):
             "edicoes": edicoes,
         }
 
-    return render(request, 'projetos/certificacao_falconi.html', context)
+    return render(request, "projetos/certificacao_falconi.html", context)
 
 
 def media(notas_lista):

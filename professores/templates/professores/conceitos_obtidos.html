@@ -25,6 +25,9 @@
     }
 
     tr:nth-child(even) {background-color: #f2f2f2;}
+  
+    ul {padding-left: 28px;}
+
   </style>
 
   {% include "cores_bancas.html" %}
@@ -162,31 +165,14 @@
 {% endblock %}
 
 {% block content %}
-  {% if projeto.titulo_final %}
-    <style>
-        .titulo {display: inline;}
-    </style>
-      <span class="titulo">
-        Título: 
-        <a href="{% url 'projeto_completo' projeto.id %}">
-          {{projeto.titulo_final}}
-        </a>
-      </span>
-      <small>
-        <br>&nbsp;&nbsp;&nbsp;&nbsp;Título original: 
-        <a href="{% url 'projeto_completo' projeto.id %}">
-          {{projeto.titulo}}
-        </a>
-      </small>
-      <br>
-  {% else %}
-    <span class="titulo">
-      Título: 
-      <a href="{% url 'projeto_completo' projeto.id %}">
-        {{projeto.titulo}}
-      </a>
-    </span>
-  {% endif %}
+
+  <span class="titulo">
+    Projeto: <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
+    {% if projeto.titulo_final %}
+      <i>Título original: <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.titulo}}</a></i>
+    {% endif %}
+  </span>
+
   <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
 
   {% if projeto.orientador %}
@@ -236,10 +222,12 @@
             </a><br>
             <strong>Avaliado em: </strong>{{objs.momento}}<br>
             <strong>Conceitos:</strong><br>
-            <ul>
-              {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo != "observacoes" %}
+            <ul style="list-style-type: '&#x21A3; ';">
+              {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo|slice:11 != "observacoes" %}
 
-                <li>{{objetivo.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
+                <li>
+                  <span style="font-weight: 500;">{{objetivo.titulo}}</span>: 
+                  <span data-toggle="tooltip" data-html="true" animation="true" title="
                 {{objetivos|get_rubrica:objetivo.id|get_texto_intermediaria_nota:conceito.nota}}">
                 <span id="inter{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
                 <script>$("#inter{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
@@ -262,8 +250,8 @@
 
               {% endif %}{% endfor %}
               
-              {% if objs.observacoes %}  
-                <li>Observações: {{objs.observacoes}}</li>
+              {% if objs.observacoes_orientador %}  
+                <li><span style="font-weight: 500;">Observações para o Orientador</span>: {{objs.observacoes_orientador}}</li>
               {% endif %}
 
             </ul>
@@ -274,7 +262,7 @@
 
       <tr style="background-color: var(--color_banca_intermediaria); color: darkslategrey"><td>
         <b>Média das avaliações intermediárias:
-        <ul id="med_aval"></ul>
+        <ul id="med_aval" style="list-style-type: '&#x21A3; ';"></ul>
         <script>
           for (var key in intermediaria.dict) {
             if(intermediaria.dict[key].avaliacoes>0) $('#med_aval').append(intermediaria.dict[key].texto());
@@ -312,10 +300,10 @@
             </a><br>
             <strong>Avaliado em: </strong>{{objs.momento}}<br>
             <strong>Conceitos:</strong><br>
-            <ul>
-              {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo != "observacoes" %}
+            <ul style="list-style-type: '&#x21A3; ';">
+              {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo|slice:11 != "observacoes" %}
 
-                <li>{{objetivo.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
+                <li><span style="font-weight: 500;">{{objetivo.titulo}}</span>: <span data-toggle="tooltip" data-html="true" animation="true" title="
                 {{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}">
                 <span id="final{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
                 <script>$("#final{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
@@ -337,11 +325,10 @@
 
               {% endif %}{% endfor %}
               
-              {% if objs.observacoes %}  
-                <li>Observações: {{objs.observacoes}}</li>
+              {% if objs.observacoes_orientador %}
+                <li><span style="font-weight: 500;">Observações para o Orientador</span>: {{objs.observacoes_orientador}}</li>
               {% endif %}
               
-            
             </ul>
 
           </td></tr>
@@ -351,7 +338,7 @@
       <tr style="background-color: var(--color_banca_final); color: darkslategrey"><td>
         <b>
         Média das avaliações finais:
-        <ul id="med_final"></ul>
+        <ul id="med_final" style="list-style-type: '&#x21A3; ';"></ul>
         <script>
           for (var key in final.dict) {
             if(final.dict[key].avaliacoes>0) $('#med_final').append(final.dict[key].texto());
@@ -392,10 +379,10 @@
             </a><br>
             <strong>Avaliado em: </strong>{{objs.momento}}<br>
             <strong>Conceitos:</strong><br>
-            <ul>
-              {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo != "observacoes" %}
+            <ul style="list-style-type: '&#x21A3; ';">
+              {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo|slice:11 != "observacoes" %}
 
-                <li>{{objetivo.titulo}}: <span data-toggle="tooltip" data-html="true" animation="true" title="
+                <li><span style="font-weight: 500;">{{objetivo.titulo}}</span>: <span data-toggle="tooltip" data-html="true" animation="true" title="
                 {{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}">
                 <span id="falconi{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
                 <script>$("#falconi{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
@@ -417,11 +404,10 @@
 
               {% endif %}{% endfor %}
               
-              {% if objs.observacoes %}  
-                <li>Observações: {{objs.observacoes}}</li>
+              {% if objs.observacoes_orientador %}  
+                <li><span style="font-weight: 500;">Observações para o Orientador</span>: {{objs.observacoes_orientador}}</li>
               {% endif %}
-              
-            
+
             </ul>
 
           </td></tr>
@@ -431,7 +417,7 @@
       <tr style="background-color: var(--color_banca_falconi); color: darkslategrey"><td>
         <b>
         Média das avaliações falconi:
-        <ul id="med_falconi"></ul>
+        <ul id="med_falconi" style="list-style-type: '&#x21A3; ';"></ul>
         <script>
           for (var key in falconi.dict) {
             if(falconi.dict[key].avaliacoes>0) $('#med_falconi').append(falconi.dict[key].texto());
@@ -447,8 +433,5 @@
 
     </table>
   {% endif %}
-
-
-
 
 {% endblock %}

@@ -119,16 +119,16 @@ class Avaliacoes2Resource(resources.ModelResource):
     """Model Resource para tratar dados de Avaliações."""
 
     campos = [
-        'estudante ou user_id (primeira parte do e-mail, obrigatório)',
-        'ano',
-        'semestre',
-        'avaliação',
-        'objetivo ou criterio',
-        'peso',
-        'nota ou score (se não houver procura por desempenho)',
-        'desempenho (opcional primeiro procura a nota)',
-        'momento ou date_modified (dd/mm/aa hh:mm)',
-        'observação ou feedback',
+        "estudante ou user_id (primeira parte do e-mail, obrigatório)",
+        "ano",
+        "semestre",
+        "avaliação",
+        "objetivo ou criterio",
+        "peso",
+        "nota ou score (se não houver procura por desempenho)",
+        "desempenho (opcional primeiro procura a nota)",
+        "momento ou date_modified (dd/mm/aa hh:mm)",
+        "observação ou feedback",
     ]
 
     def before_import_row(self, row, **kwargs):
@@ -312,16 +312,16 @@ class Avaliacoes2Resource(resources.ModelResource):
                                                                    alocacao=alocacao,
                                                                    momento=momento,
                                                                    exame=exame)
-                obs.observacoes = obs_str
+                obs.observacoes_orientador = obs_str
                 obs.save()
 
             # recuper nota, se houver
-            if 'nota' in row:
-                aval.nota = float(row.get('nota'))
-            elif 'score' in row:
-                aval.nota = float(row.get('score'))
-            elif 'desempenho' in row:
-                desempenho = row.get('desempenho')
+            if "nota" in row:
+                aval.nota = float(row.get("nota"))
+            elif "score" in row:
+                aval.nota = float(row.get("score"))
+            elif "desempenho" in row:
+                desempenho = row.get("desempenho")
                 aval.nota = converte_conceito(desempenho)  # CALCULAR NOTA
             else:
                 pass
@@ -330,14 +330,14 @@ class Avaliacoes2Resource(resources.ModelResource):
             # Todas as avaliações tem de ter peso
             # Pesos são convertidos para porcentagens
             if "peso" in row:
-                peso = float(row.get('peso'))*100
+                peso = float(row.get("peso"))*100
                 aval.peso = peso
             else:
                 pass
                 # print("Erro ao recuperar o peso da avaliação")
 
             aval.save()
-            row['id'] = aval.id
+            row["id"] = aval.id
 
     def skip_row(self, instance, original):
         """Sempre pula linha."""
