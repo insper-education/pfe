@@ -1065,9 +1065,9 @@ def certificacao_falconi(request):
 
         periodo = ""
 
-        if 'edicao' in request.POST:
-            if request.POST['edicao'] != 'todas':
-                periodo = request.POST['edicao'].split('.')
+        if "edicao" in request.POST:
+            if request.POST["edicao"] != "todas":
+                periodo = request.POST["edicao"].split('.')
                 projetos = Projeto.objects.filter(ano=periodo[0], semestre=periodo[1])
         else:
             return HttpResponse("Algum erro não identificado.", status=401)

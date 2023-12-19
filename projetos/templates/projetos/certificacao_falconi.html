@@ -22,15 +22,9 @@
       padding: 8px;
     }
 
-    table, th, td {
-      border: 1px solid lightgrey;
-    }
-
+    table, th, td {border: 1px solid lightgrey;}
     tr:nth-child(even) {background-color: #f2f2f2;}
-
-    .grafico {
-        text-align: center;
-    }
+    .grafico {text-align: center;}
 
     @media print {
         .grafico, .container {
@@ -43,133 +37,12 @@
   </style>
 
   {% include "cores_bancas.html" %}
+
+  {% comment %} Converte notas para conceitos e vice-versa {% endcomment %}
+  {% include "converte_notas.html" %}
   
-  <script>
-
-    function conceito(nota) {
-        if( nota >= 9.5 ) return ("A+")
-        if( nota >= 9.0 ) return ("A")
-        if( nota >= 8.0 ) return ("B+")
-        if( nota >= 7.0 ) return ("B")
-        if( nota >= 6.0 ) return ("C+")
-        if( nota >= 5.0 ) return ("C")
-        if( nota >= 4.0 ) return ("D+")
-        if( nota >= 3.0 ) return ("D")
-        if( nota >= 2.0 ) return ("D-")
-        return ("I")
-    }
-
-    function converte_nota(conceito) {
-      if(conceito=="A+"||conceito=="A+ ") return(10);
-        if(conceito=="A"||conceito=="A ") return(9);
-        if(conceito=="B+"||conceito=="B+ ") return(8);
-        if(conceito=="B"||conceito=="B ") return(7);
-        if(conceito=="C+"||conceito=="C+ ") return(6);
-        if(conceito=="C"||conceito=="C ") return(5);
-        if(conceito=="D+"||conceito=="D+ ") return(4);
-        if(conceito=="D"||conceito=="D ") return(3);
-        if(conceito=="D-"||conceito=="D- ") return(2);
-        if(conceito=="I"||conceito=="I ") return(0);
-        return(0);
-    }
-
-    class Objetivo {
-      constructor() { 
-        this.avaliacoes = 0;
-        this.titulo = "";
-        this.total = 0;
-      }
-
-      soma_conceito(conceito){
-        this.avaliacoes += 1
-        this.total += converte_nota(conceito);
-      }
-
-      soma_nota(nota){
-        this.avaliacoes += 1
-        this.total += nota
-      }
-
-      nota(){
-        let nota = this.total/this.avaliacoes
-        return nota;
-      }
-
-      media(){
-        let nota = this.nota().toPrecision(3);
-        return conceito(nota);
-      }
-
-      texto() {
-        let descricao = ""
-        descricao += "<li>"
-        descricao += this.titulo
-        descricao += ": "
-        descricao += this.media()
-        descricao += "</li>"
-        return (descricao)
-      }
-
-    }
-
-    class Banca { 
-      constructor() { 
-        this.dict = new Object();
-      }
-
-      add_objetivo(objetivo) {
-        if(!(objetivo.titulo in this.dict)) {
-          this.dict[objetivo.titulo] = objetivo
-        }
-      }
-
-      media() {
-        var nota_final = 0;
-        var contagem = 0;
-        for (var key in this.dict) {
-            if(this.dict[key].avaliacoes>0) {
-              nota_final += converte_nota(this.dict[key].media());
-              contagem += 1;
-            }
-        }
-
-        return (nota_final/contagem);
-      }
-
-      media_geral() {
-        var nota_final = 0;
-        var contagem = 0;
-        for (var key in this.dict) {
-            if(this.dict[key].avaliacoes>0) {
-              nota_final += this.dict[key].nota();
-              contagem += 1;
-            }
-        }
-
-        return (nota_final/contagem)
-      }
-
-      media_calculada(){
-        
-        let descricao = "&#10149; Nota Final Calculada = "
-
-        descricao += '<span data-toggle="tooltip" data-html="true" animation="true" '
-        descricao += ' title="Média usando conceitos finais '
-        descricao += '(cálculo com todos os conceitos intermediários levaria a nota=' + (this.media_geral()).toPrecision(3) + ')">'
-        
-        var media_final = this.media();
-        descricao += "<b style='font-size: 1.16em;'>";
-        descricao += media_final.toPrecision(3);
-        descricao += "</b>";
-        descricao += '</span>';
-
-        return (descricao)
-      }
-
-    }
-
-  </script>
-
+  {% include "avalia_objetivos.html" %}
+  
   <script src="{% static 'js/w3.js' %}"></script>
   <script src="{% static 'js/Chart.min.js' %}"></script>
   <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
@@ -185,239 +58,206 @@
 
 {% block content %}
 
-    <script>
-        function ajusta() { }
-        function reajusta() { }
-    </script>
+  <script>
+    function ajusta() { }
+    function reajusta() { }
+  </script>
 
-    {% include "impressora.html" %}
-    
-    {% include "save_image.html" with file_name="falconi" %}
-    
-    <div id="tudo">
+  {% include "impressora.html" %}
+  {% include "save_image.html" with file_name="falconi" %}
+  
+  <div id="tudo">
 
-    <span class="titulo">Análise dos Conceitos das Certificações Falconi</span>
+  <span class="titulo">Análise dos Conceitos das Certificações Falconi</span>
 
-    {% comment %} Seletor da edição da pesquisa {% endcomment %}
-    {% include "edicoes.html" with n_todas=True %}
+  {% comment %} Seletor da edição da pesquisa {% endcomment %}
+  {% include "edicoes.html" with n_todas=True %}
 
-    <div class="atualizar">
-        <div class="container">
+  <div class="atualizar">
+    <div class="container">
 
-            <div class="row mt-4 justify-content-center text-center graficos">
-                <div class="col-md-6 col-xs-6 mb-5 grafico"><canvas style="margin-left: auto; margin-right: auto;" id="pie-falconi"></canvas></div>
-                <div class="col-md-6 col-xs-6 mb-5 grafico"><canvas style="margin-left: auto; margin-right: auto; min-height:300px;" id="bar-falconi"></canvas></div>
-            </div>
-            
-            <script>
+      <div class="row mt-4 justify-content-center text-center graficos">
+        <div class="col-md-6 col-xs-6 mb-5 grafico"><canvas style="margin-left: auto; margin-right: auto;" id="pie-falconi"></canvas></div>
+        <div class="col-md-6 col-xs-6 mb-5 grafico"><canvas style="margin-left: auto; margin-right: auto; min-height:300px;" id="bar-falconi"></canvas></div>
+      </div>
+      
+      <script>
         
-                // Para o label colorido das barras
-                Chart.plugins.register({
-                    beforeDraw: function (chart) {
-                        if (chart.config.data.datasets[0].labelColor) {
-                            let legends = chart.legend.legendItems;
-                            legends.forEach(function (e, i) {
-                                e.fillStyle = chart.config.data.datasets[i].labelColor;
-                                e.strokeStyle = chart.config.data.datasets[i].labelColor;
-                            });
-                        }
-                    }
-                });
+        // Para o label colorido das barras
+        Chart.plugins.register({
+          beforeDraw: function (chart) {
+            if (chart.config.data.datasets[0].labelColor) {
+              let legends = chart.legend.legendItems;
+              legends.forEach(function (e, i) {
+                e.fillStyle = chart.config.data.datasets[i].labelColor;
+                e.strokeStyle = chart.config.data.datasets[i].labelColor;
+              });
+            }
+          }
+        });
 
-                var tooltips = {
-                    enabled: false
-                };
+        var tooltips = {enabled: false};
 
-
-                var config_pie_falconi = {
-                    type: 'pie',
-                    data: {
-                    labels: ["Selecionados", "Não selecionados"],
-                    datasets: [
-                        {
-                        label: "Projetos",
-                        backgroundColor: ["#1e951e", "#8e8e11"],
-                        data: [{{selecionados}},{{nao_selecionados}}]
-                        }
-                    ]
-                    },
-                    options: {
-                        title: {
-                            display: true,
-                            text: 'Projetos Selecionados para Certificação Falconi',
-                            position: 'top'
-                        },
-                        tooltips: tooltips,
-                        legend: {
-                            display: true,
-                            position: "bottom",
-                        },
-                        plugins: {
-                            datalabels: {
-                                formatter: (value, ctx) => {
-                                    let sum = 0;
-                                    let dataArr = ctx.chart.data.datasets[0].data;
-                                    dataArr.map(data => {
-                                        sum += data;
-                                    });
-                                    if(sum>0 && value>0) {
-                                        return (value*100 / sum).toFixed(1)+"%";
-                                    } else {
-                                        return " ";
-                                    }
-                                },
-                                color: '#000',
-                                font: function(context) {
-                                    var width = context.chart.width;
-                                    var size = Math.round(width / 35);
-
-                                    return {
-                                        size: size
-                                    };
-                                }
-                            }
-                        },
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        aspectRatio: 1.5, 
-                    }
+        var config_pie_falconi = {
+          type: "pie",
+          data: {
+            labels: ["Selecionados", "Não selecionados"],
+            datasets: [
+              {
+                label: "Projetos",
+                backgroundColor: ["#1e951e", "#8e8e11"],
+                data: [{{selecionados}},{{nao_selecionados}}]
+              }
+            ]
+          },
+          options: {
+            title: {
+              display: true,
+              text: "Projetos Selecionados para Certificação Falconi",
+              position: "top"
+            },
+            tooltips: tooltips,
+            legend: {
+              display: true,
+              position: "bottom",
+            },
+            plugins: {
+              datalabels: {
+                formatter: (value, ctx) => {
+                  let sum = 0;
+                  let dataArr = ctx.chart.data.datasets[0].data;
+                  dataArr.map(data => {sum += data;});
+                  if(sum>0 && value>0) {
+                    return (value*100 / sum).toFixed(1)+"%";
+                  } else {
+                    return " ";
+                  }
+                },
+                color: "#000",
+                font: function(context) {
+                  var width = context.chart.width;
+                  var size = Math.round(width / 35);
+                  return {size: size};
                 }
+              }
+            },
+            responsive: true,
+            maintainAspectRatio: true,
+            aspectRatio: 1.5, 
+          }
+        }
 
-                var config_bar_falconi = {
-                    type: 'bar',
-                    data: {
-                    labels: ["I", "D", "C", "C+", "B", "B+", "A", "A+"],
-                    datasets: [
-                        {
-                        label: "Excelência Projeto Final de Engenharia FALCONI-INSPER",
-                        backgroundColor: ["#e6ffcc", "#e6ffcc", "#e6ffcc", "#c0c0f0b0", "#c0c0f0b0", "#ffd700b0", "#ffd700b0", "#ffd700b0"],
-                        labelColor: "#ffd700b0",
-                        data: [
-                            {% for conceito in conceitos %}
-                                {{conceito|stringformat:".2f"|unlocalize}},
-                            {% endfor %}
-                            ],
-                        stack: 'Stack 0',
-                        },
-                        {
-                        label: "Destaque Projeto Final de Engenharia FALCONI-INSPER",
-                        labelColor: "#c0c0f0b0",
-                        data: [
-                            {% for conceito in conceitos %}
-                                0,
-                            {% endfor %}
-                            ],
-                        stack: 'Stack 0',
-                        },
-                        {
-                        label: "Não obteve certificado",
-                        labelColor: "#e6ffcc",
-                        data: [
-                            {% for conceito in conceitos %}
-                                0,
-                            {% endfor %}
-                            ],
-                        stack: 'Stack 0',
+        var config_bar_falconi = {
+          type: "bar" ,
+          data: {
+            labels: ["I", "D", "C", "C+", "B", "B+", "A", "A+"],
+            datasets: [
+              {
+                label: "Excelência Projeto Final de Engenharia FALCONI-INSPER",
+                backgroundColor: ["#e6ffcc", "#e6ffcc", "#e6ffcc", "#c0c0f0b0", "#c0c0f0b0", "#ffd700b0", "#ffd700b0", "#ffd700b0"],
+                labelColor: "#ffd700b0",
+                data: [{% for conceito in conceitos %} {{conceito|stringformat:".2f"|unlocalize}},{% endfor %}],
+                stack: 'Stack 0',
+              },
+              {
+                label: "Destaque Projeto Final de Engenharia FALCONI-INSPER",
+                labelColor: "#c0c0f0b0",
+                data: [{% for conceito in conceitos %} 0,{% endfor %}],
+                stack: 'Stack 0',
+              },
+              {
+                label: "Não obteve certificado",
+                labelColor: "#e6ffcc",
+                data: [{% for conceito in conceitos %} 0,{% endfor %}],
+                stack: 'Stack 0',
+              }
+            ]
+          },
+          options: {
+            title: {
+              display: true,
+              text: "Conceitos Obtidos nas Bancas Falconi",
+              position: "top"
+            },
+            tooltips: tooltips,
+            legend: {
+              display: true,
+              position: "bottom",
+            },
+            plugins: {
+              datalabels: {
+                formatter: (value, ctx) => {
+                  let sum = 0;
+                  let dataArr = ctx.chart.data.datasets[0].data;
+                  dataArr.map(data => {sum += data;});
+                  if(sum>0 && value>0) {
+                    return (value*100 / sum).toFixed(1)+"%";
+                  } else {
+                    return " ";
+                  }
+                },
+                color: '#000',
+                font: function(context) {
+                  var width = context.chart.width;
+                  var size = Math.round(width / 45);
+                  return {size: size};
+                }
+              }
+            },
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: { stacked: true },
+                y: { stacked: true },
+                xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                          display: false,
+                          labelString: "Conceitos"
                         }
-                    ]
-                    },
-                    options: {
-                        title: {
-                            display: true,
-                            text: 'Conceitos Obtidos nas Bancas Falconi',
-                            position: 'top'
-                        },
-                        tooltips: tooltips,
-                        legend: {
-                            display: true,
-                            position: "bottom",
-                        },
-                        plugins: {
-                            datalabels: {
-                                formatter: (value, ctx) => {
-                                    let sum = 0;
-                                    let dataArr = ctx.chart.data.datasets[0].data;
-                                    dataArr.map(data => {
-                                        sum += data;
-                                    });
-                                    if(sum>0 && value>0) {
-                                        return (value*100 / sum).toFixed(1)+"%";
-                                    } else {
-                                        return " ";
-                                    }
-                                },
-                                color: '#000',
-                                font: function(context) {
-                                    var width = context.chart.width;
-                                    var size = Math.round(width / 45);
+                    }],
+                yAxes: [{
+                        display: true,
+                        ticks: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: 100,
+                            stepSize: 10,
+                        }
+                    }]
+                },
+            }
+        }
 
-                                    return {
-                                        size: size
-                                    };
-                                }
-                            }
-                        },
-                        responsive: true,
-                        {% comment %} aspectRatio: 1.5, {% endcomment %}
-                        maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            stacked: true,
-                        },
-                        y: {
-                            stacked: true
-                        },
-                        xAxes: [{
-                                display: true,
-                                scaleLabel: {
-                                    display: false,
-                                    labelString: 'Conceitos'
-                                }
-                            }],
-                        yAxes: [{
-                                display: true,
-                                ticks: {
-                                    beginAtZero: true,
-                                    min: 0,
-                                    max: 100,
-                                    stepSize: 10,
-                                }
-                            }]
-                        },
-                    }
-                }
+            function carrega_pagina() {  
+              // Chart dos projetos selecionados para certificação Falconi
+              var pie_falconi = document.getElementById("pie-falconi").getContext("2d");
+              window.proporcao = new Chart(pie_falconi, config_pie_falconi);
+          
+              // Chart dos conceitos obtidos dos projetos selecionados para certificação Falconi
+              var bar_falconi = document.getElementById("bar-falconi").getContext("2d");
+              window.situacao = new Chart(bar_falconi, config_bar_falconi);
+              document.getElementById("bar-falconi").innerHTML = window.situacao.generateLegend();
+            }
 
-                function carrega_pagina() {  
-                    // Chart dos projetos selecionados para certificação Falconi
-                    var pie_falconi = document.getElementById('pie-falconi').getContext('2d');
-                    window.proporcao = new Chart(pie_falconi, config_pie_falconi);
-                
-                    // Chart dos conceitos obtidos dos projetos selecionados para certificação Falconi
-                    var bar_falconi = document.getElementById('bar-falconi').getContext('2d');
-                    window.situacao = new Chart(bar_falconi, config_bar_falconi);
-                    document.getElementById('bar-falconi').innerHTML = window.situacao.generateLegend();
-
-                }
-
-                window.onload = carrega_pagina
+            window.onload = carrega_pagina
             
-            </script>
+          </script>
 
         </div>
-        
 
         <br>
         {% if projetos_selecionados %}
-            <div><ul style="list-style-type: '&#x2726; ';">
-                <li>Total de projetos realizados no semestre: {{selecionados|add:nao_selecionados}}</li>
-                <li>Projetos selecionados para certificação Falconi: {{selecionados}}</li>
-                <li>Projetos que obtiveram certificação <u>Destaque Projeto Final de Engenharia FALCONI-INSPER</u>: <span id="n_destaque"></span></li>
-                <li>Projetos que obtiveram certificação <u>Excelência Projeto Final de Engenharia FALCONI-INSPER</u>: <span id="n_excelencia"></span></li>
-            </ul></div><br><br>
+          <div><ul style="list-style-type: '&#x2726; ';">
+            <li>Total de projetos realizados no semestre: {{selecionados|add:nao_selecionados}}</li>
+            <li>Projetos selecionados para certificação Falconi: {{selecionados}}</li>
+            <li>Projetos que obtiveram certificação <u>Destaque Projeto Final de Engenharia FALCONI-INSPER</u>: <span id="n_destaque"></span></li>
+            <li>Projetos que obtiveram certificação <u>Excelência Projeto Final de Engenharia FALCONI-INSPER</u>: <span id="n_excelencia"></span></li>
+          </ul></div><br><br>
         {% else %}
-            <div>
-                Não há projetos selecionados para certificação Falconi nesta edição.
-            </div>
+          <div>
+            Não há projetos selecionados para certificação Falconi nesta edição.
+          </div>
         {% endif %}
 
         {% if projetos_selecionados %}
@@ -433,45 +273,39 @@
             {% for projeto, avaliadores_falconi in bancas %}
                 <div style="margin-left: 6px;">
                 {% if not forloop.first %}  
-                    <p style="page-break-before: always"></p>
+                  <p style="page-break-before: always"></p>
                 {% endif %}
                 <script>
-                    var falconi = new Banca();
+                  var falconi = new Banca();
                 </script>
 
                 {% if avaliadores_falconi %}
-                    <h6>
+                  <h6>
                     <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">
-                        {{projeto}}
+                      {{projeto}}
                     </a><br>
                     {% for banca in projeto.banca_set.all %}
                     {% if banca.tipo_de_banca == 2 %}    
-                        <a class="imprimir" href="{% url 'banca_ver' banca.id %}">
-                            Banca Falconi ({{banca.startDate|date:"d/m/y"}})
-                        </a>
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <a class="imprimir" style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
+                        Banca Falconi ({{banca.startDate|date:"d/m/y"}})
+                      </a>
                     {% endif %}
                     {% endfor %}
-                    </h6>
+                  </h6>
 
                     Grupo:
                     <ul>
-                    {% for alocacao in projeto.alocacao_set.all %}
-                        <li>
-                        <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
-                        <p>
-                            {{alocacao.aluno.user.get_full_name}} 
-                            {% comment %} &lt;{{alocacao.aluno.user.email}}&gt;  {% endcomment %}
-                            [{{ alocacao.aluno.curso2 }}]
-                            {% for opcao in alocacao.aluno.opcao_set.all %}
+                      {% for alocacao in projeto.alocacao_set.all %}
+                        <li><a href="{% url 'estudante_detail' alocacao.aluno.id %}"><p>
+                          {{alocacao.aluno.user.get_full_name}} 
+                          [{{ alocacao.aluno.curso2 }}]
+                          {% for opcao in alocacao.aluno.opcao_set.all %}
                             {% if opcao.projeto == projeto %}
-                                (opção #{{opcao.prioridade}})
+                              (opção #{{opcao.prioridade}})
                             {% endif %}
-                            {% endfor %}
-                        </p>
-                        </a>
-                        </li>
-                    {% endfor %}
+                          {% endfor %}
+                        </p></a></li>
+                      {% endfor %}
                     </ul>
 
                     <table>    
@@ -489,13 +323,12 @@
                                 <li><span style="font-weight: 500;">{{objetivo.titulo}}</span>: <span data-toggle="tooltip" data-html="true" animation="true" title="
                                 {{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}">
                                 <span id="falconi{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
-                                <script>$("#falconi{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(conceito({{conceito.nota}}));</script>
+                                <script>$("#falconi{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(converteN({{conceito.nota}}));</script>
                                 </span></li>
                                 
                                 <script>
                                     objetivo_tmp = new Objetivo();
                                     objetivo_tmp.titulo = "{{objetivo.titulo}}"
-                                    //objetivo_tmp.rubrica = "{{objetivos|get_rubrica:objetivo.id|get_texto_nota:conceito.nota}}"
                                     falconi.add_objetivo(objetivo_tmp)
                                     falconi.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}})
                                 </script>
@@ -506,7 +339,6 @@
                                 <li><span style="font-weight: 500;">Observações para a Coordenação</span>: {{objs.observacoes_orientador}}</li>
                             {% endif %}
                             
-                            
                             </ul>
 
                         </td></tr>
@@ -514,16 +346,13 @@
                     {% endfor %}
 
                     <tr id="falconi_{{projeto.id}}" style="color: darkslategrey"><td style="display: flex; align-items: center; flex-wrap: wrap;">
-                        <div><b>
-                        Média das avaliações falconi:
-                        <ul id="med_falconi_{{projeto.id}}" style="list-style-type: '&#x21A3; ';"></ul>
+                        <div><b>Média das avaliações falconi:<ul id="med_falconi_{{projeto.id}}" style="list-style-type: '&#x21A3; ';"></ul></b>
+                        <span id="med_falconi_calc_{{projeto.id}}"></span>
                         <script>
                         for (var key in falconi.dict) {
                             if(falconi.dict[key].avaliacoes>0) $('#med_falconi_{{projeto.id}}').append(falconi.dict[key].texto());
                         }
                         </script>
-                        </b>
-                        <span id="med_falconi_calc_{{projeto.id}}"></span>
                         </div>
                         <div style="float: right;flex-grow:1;text-align: center; margin-top: 20px;">
                             <span id="med_falconi_situacao_{{projeto.id}}" style="border: 2px solid gray; border-radius: 25px; padding: 9px; white-space: nowrap;"></span>
@@ -544,31 +373,28 @@
                             } else {
                                 $("#med_falconi_situacao_{{projeto.id}}").html("Não obteve certificado");
                             }
-                            
-                            {% comment %}  {% endcomment %}
                         </script>
                     </td></tr>
 
-                    </table>
+                  </table>
                 {% endif %}
-                </div>
-                <br>
-                <hr class="esconder">
-                <br>
+              </div>
+              <br>
+              <hr class="esconder">
+              <br>
                 
             {% endfor %}
 
+        <script>
+          $("#n_destaque").html(n_destaque);
+          $("#n_excelencia").html(n_excelencia);
+        </script>
             
-            <script>
-                $("#n_destaque").html(n_destaque);
-                $("#n_excelencia").html(n_excelencia);
-            </script>
-            
-        {% endif %}
+      {% endif %}
 
     </div>
-    </div>
+  </div>
     
-    {% include "edicoes_ajax.html" %}
+  {% include "edicoes_ajax.html" %}
 
 {% endblock %}

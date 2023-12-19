@@ -1,0 +1,104 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 19 de Dezembro de 2023
+{% endcomment %}
+
+<script>
+
+  class Objetivo {
+    constructor() { 
+      this.avaliacoes = 0;
+      this.titulo = "";
+      this.total = 0;
+    }
+
+    soma_conceito(conceito){
+      this.avaliacoes += 1
+      this.total += converteC(conceito);
+    }
+
+    soma_nota(nota){
+      this.avaliacoes += 1
+      this.total += nota
+    }
+
+    nota(){
+      let nota = this.total/this.avaliacoes
+      return nota;
+    }
+
+    media(){
+      let nota = this.nota().toPrecision(3);
+      return converteN(nota);
+    }
+
+    texto() {
+      let descricao = ""
+      descricao += "<li>"
+      descricao += this.titulo
+      descricao += ": "
+      descricao += this.media()
+      descricao += "</li>"
+      return (descricao)
+    }
+
+  }
+
+  class Banca { 
+    constructor() { 
+      this.dict = new Object();
+    }
+
+    add_objetivo(objetivo) {
+      if(!(objetivo.titulo in this.dict)) {
+        this.dict[objetivo.titulo] = objetivo
+      }
+    }
+
+    media() {
+      var nota_final = 0;
+      var contagem = 0;
+      for (var key in this.dict) {
+          if(this.dict[key].avaliacoes>0) {
+            nota_final += converteC(this.dict[key].media());
+            contagem += 1;
+          }
+      }
+      if(contagem==0) return("N/A");
+      return (nota_final/contagem).toPrecision(3);
+
+    }
+
+    media_geral() {
+      var nota_final = 0;
+      var contagem = 0;
+      for (var key in this.dict) {
+          if(this.dict[key].avaliacoes>0) {
+            nota_final += this.dict[key].nota();
+            contagem += 1;
+          }
+      }
+
+      return (nota_final/contagem).toPrecision(3)
+    }
+
+    media_calculada(){
+      
+      let descricao = "&#10149; Nota Final Calculada = "
+
+      descricao += '<span data-toggle="tooltip" data-html="true" animation="true" '
+      descricao += ' title="Média usando conceitos finais '
+      descricao += '(cálculo com todos os conceitos intermediários levaria a nota=' + (this.media_geral()) + ')">'
+      
+      descricao += "<b style='font-size: 1.16em;'>";
+      descricao += this.media();
+      descricao += "</b>";
+      descricao += '</span>';
+
+      return (descricao)
+    }
+
+  }
+
+</script>
