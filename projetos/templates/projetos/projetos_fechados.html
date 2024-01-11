@@ -94,11 +94,9 @@
         <td class="projline">
         {% if projeto.organizacao %}
           <span class="logo">
-            {% if projeto.organizacao.logotipo %}
-              <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-                <img class="logotipo_left" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}">
-              </a>
-            {% endif %}
+            <a href="{% url 'organizacao_completo' projeto.organizacao.id %}"> 
+              <img class="logotipo_left" {% if projeto.organizacao.logotipo %}src="{{ projeto.organizacao.logotipo.url }}"{% endif %} alt="{{ projeto.organizacao.sigla }}">
+            </a>
             {% for conexao in cooperacoes %}
               {% if conexao.parceiro and conexao.parceiro.organizacao and conexao.parceiro.organizacao.logotipo %}
                 &nbsp;
