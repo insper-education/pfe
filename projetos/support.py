@@ -189,17 +189,18 @@ def calcula_objetivos(alocacoes):
     objetivos_avaliados = set()
 
     for nota2 in notas_lista:
-        for nota in nota2:
-            for avaliacao in avaliacoes:
-                if nota[0] == avaliacao[0]:
-                    for k, val in nota[1].items():
-                        if k in notas[avaliacao[1]]:
-                            notas[avaliacao[1]][k] += val[0] * val[1]
-                            pesos[avaliacao[1]][k] += val[1]
-                        else:
-                            notas[avaliacao[1]][k] = val[0] * val[1]
-                            pesos[avaliacao[1]][k] = val[1]
-                            objetivos_avaliados.add(k)
+        if nota2:
+            for nota in nota2:
+                for avaliacao in avaliacoes:
+                    if nota[0] == avaliacao[0]:
+                        for k, val in nota[1].items():
+                            if k in notas[avaliacao[1]]:
+                                notas[avaliacao[1]][k] += val[0] * val[1]
+                                pesos[avaliacao[1]][k] += val[1]
+                            else:
+                                notas[avaliacao[1]][k] = val[0] * val[1]
+                                pesos[avaliacao[1]][k] = val[1]
+                                objetivos_avaliados.add(k)
 
     # Ordena os objetivos pelo indice de ordem deles
     objetivos_avaliados = sorted(objetivos_avaliados, key=lambda oo: oo.ordem)
