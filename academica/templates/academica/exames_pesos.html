@@ -49,7 +49,7 @@
               {% for composicao in composicoes %}
                 <li><span style="display: inline-block; width: 29em;">{{composicao.exame}} ({{composicao.data_inicial|date:"d/m/Y"}} a 
                        {% if composicao.data_final%}{{composicao.data_final|date:"d/m/Y"}}{% else %}atualmente{% endif %}):</span>
-                  <span style="display: inline-block; width: 33em;">
+                  <span style="display: inline-block; width: 34em;">
                     <b id="m{{ano}}{{semestre}}{{forloop.counter0}}" style="display: inline-block; width: 4em; text-align:right;"></b>
                     <script> peso_tmp = 0; </script>
                     {% for peso in composicao.peso_set.all %} 
@@ -85,7 +85,6 @@
         $('#ExamesPesosTable tr > *:nth-child(3)').show();
       }
     </script>
-    <br>
     <small>Terminar o semestre até junho e iniciar a partir de agosto.</small>
   
 {% endblock %}
