@@ -18,7 +18,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from projetos.support import get_upload_path, simple_upload
 
-from projetos.models import Aviso, Certificado, Evento, Configuracao, Projeto, Banca
+from projetos.models import Aviso, Certificado, Evento, Configuracao
+from projetos.models import Projeto, Banca, Conexao
+
 from users.models import PFEUser, Aluno, Professor, Parceiro
 from users.support import get_edicoes
 
@@ -112,13 +114,13 @@ def emails(request):
 def emails_semestre(request):
     """Gera listas de emails por semestre."""
     if request.is_ajax():
-        if 'edicao' in request.POST:
-            ano, semestre = request.POST['edicao'].split('.')
+        if "edicao" in request.POST:
+            ano, semestre = request.POST["edicao"].split('.')
 
-            estudantes = []  # Alunos do semestre
+            estudantes = []  # Estudantes do semestre
             orientadores = []  # Orientadores por semestre
             organizacoes = []  # Controla as organizações participantes p/semestre
-            parceiros = []
+            #parceiros = []  # Parceiros das Organizações no semestre
             membros_bancas = []  # Membros das bancas
 
             for projeto in Projeto.objects.filter(ano=ano).filter(semestre=semestre):
@@ -134,9 +136,10 @@ def emails_semestre(request):
                     organizacoes.append(projeto.organizacao)  # Junta organizações do semestre
 
                 # Parceiros de todas as organizações parceiras
-                parceiros = Parceiro.objects.filter(organizacao__in=organizacoes,
-                                                    user__is_active=True)
-                # IDEAL = conexoes = Conexao.objects.filter(projeto=projeto)
+                # parceiros = Parceiro.objects.filter(organizacao__in=organizacoes,
+                #                                     user__is_active=True)
+                # conexoes = Conexao.objects.filter(projeto=projeto, parceiro__user__is_active=True)
+                conexoes = Conexao.objects.filter(projeto=projeto)
 
                 bancas = Banca.objects.filter(projeto=projeto)
                 for banca in bancas:
@@ -156,7 +159,6 @@ def emails_semestre(request):
                 if estudante not in estudantes:
                     estudantes.append(estudante)
 
-
             data = {}  # Dicionario com as pessoas do projeto
             data["Estudantes"] = []
             for i in estudantes:
@@ -167,8 +169,10 @@ def emails_semestre(request):
                 data["Orientadores"].append([i.user.first_name, i.user.last_name, i.user.email])
 
             data["Parceiros"] = []
-            for i in parceiros:
-                data["Parceiros"].append([i.user.first_name, i.user.last_name, i.user.email])
+            # for i in parceiros:
+            #     data["Parceiros"].append([i.user.first_name, i.user.last_name, i.user.email])
+            for c in conexoes:
+                data["Parceiros"].append([c.parceiro.user.first_name, c.parceiro.user.last_name, c.parceiro.user.email])
 
             data["Bancas"] = []
             for i in membros_bancas:
@@ -184,13 +188,13 @@ def emails_semestre(request):
 def emails_projetos(request):
     """Gera listas de emails, com alunos, professores, parceiros, etc."""
     if request.is_ajax():
-        if 'edicao' in request.POST:
-            ano, semestre = request.POST['edicao'].split('.')
+        if "edicao" in request.POST:
+            ano, semestre = request.POST["edicao"].split('.')
             projetos = Projeto.objects.filter(ano=ano).filter(semestre=semestre)
             context = {
-                'projetos': projetos,
+                "projetos": projetos,
             }
-            return render(request, 'operacional/emails_projetos.html', context=context)
+            return render(request, "operacional/emails_projetos.html", context=context)
     return HttpResponse("Algum erro não identificado.", status=401)
 
 
@@ -261,14 +265,14 @@ def carregar_certificado(request):
                 projeto = get_object_or_404(Projeto, id=projeto_id)
                 certificado.projeto = projeto
 
-            if 'data' in request.POST:
+            if "data" in request.POST:
                 try:
                     certificado.data = dateutil.parser\
-                        .parse(request.POST['data'])
+                        .parse(request.POST["data"])
                 except (ValueError, OverflowError):
                     certificado.data = datetime.date.today()
 
-            tipo = request.POST.get('tipo', None)
+            tipo = request.POST.get("tipo", None)
             if tipo:
                 certificado.tipo_de_certificado = int(tipo)
 

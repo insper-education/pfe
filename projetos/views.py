@@ -320,13 +320,14 @@ def projetos_fechados(request):
             projetos = zip(projetos_selecionados, prioridade_list, cooperacoes, conexoes, qtd_est)
 
             context = {
-                'projetos': projetos,
-                'numero_projetos': numero_projetos,
-                'numero_projetos_avancado': numero_projetos_avancado,
-                'numero_estudantes': numero_estudantes,
-                'numero_estudantes_avancado': numero_estudantes_avancado,
+                "projetos": projetos,
+                "numero_projetos": numero_projetos,
+                "numero_projetos_avancado": numero_projetos_avancado,
+                "numero_estudantes": numero_estudantes,
+                "numero_estudantes_avancado": numero_estudantes_avancado,
                 "numero_estudantes_externos": numero_estudantes_externos,
                 "projetos_time_misto": projetos_time_misto,
+                "configuracao": get_object_or_404(Configuracao),
             }
 
         else:
@@ -358,7 +359,7 @@ def projetos_fechados(request):
             "informacoes": informacoes,
         }
 
-    return render(request, 'projetos/projetos_fechados.html', context)
+    return render(request, "projetos/projetos_fechados.html", context)
 
 
 @login_required
@@ -460,7 +461,7 @@ def meuprojeto(request):
         "configuracao": get_object_or_404(Configuracao),
     }
 
-    return render(request, 'projetos/meuprojeto_aluno.html', context=context)
+    return render(request, "projetos/meuprojeto_aluno.html", context=context)
 
 
 @login_required

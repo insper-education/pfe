@@ -844,17 +844,17 @@ class Anotacao(models.Model):
     texto = models.TextField(max_length=2000, help_text='Anotação')
 
     TIPO_DE_RETORNO = ( # não mudar a ordem dos números
-        (0, 'Contactada para enviar proposta'),
-        (1, 'Interessada em enviar proposta'),
-        (2, 'Enviou proposta de projeto'),
-        (3, 'Não vai enviar proposta de projeto'),
-        (4, 'Confirmamos um grupo de estudantes para o projeto'),
-        (5, 'Notificamos que não conseguimos montar projeto'),
-        (6, 'Contrato fechado para projeto'),
-        (7, 'Envio de Relatório Final'),
-        (10, 'Autorizou a publicação do Relatório Final'),
-        (11, 'Negou a publicação do Relatório Final'),
-        (254, 'outros'),
+        (0, "Contactada para enviar proposta"),
+        (1, "Interessada em enviar proposta"),
+        (2, "Enviou proposta de projeto"),
+        (3, "Não vai enviar proposta de projeto"),
+        (4, "Confirmamos estudantes para o(s) projeto(s) proposto(s)"),
+        (5, "Notificamos que não conseguimos montar projeto"),
+        (6, "Contrato fechado para projeto"),
+        (7, "Envio de Relatório Final"),
+        (10, "Autorizou a publicação do Relatório Final"),
+        (11, "Negou a publicação do Relatório Final"),
+        (254, "outros"),
     )
 
     tipo_de_retorno = models.PositiveSmallIntegerField(choices=TIPO_DE_RETORNO, default=0)
@@ -1146,14 +1146,14 @@ class FeedbackEstudante(models.Model):
 class Conexao(models.Model):
     """Controla como um usuário se conecta a um projeto."""
 
-    parceiro = models.ForeignKey('users.Parceiro', null=True, blank=True,
+    parceiro = models.ForeignKey("users.Parceiro", null=True, blank=True,
                                  on_delete=models.SET_NULL,
-                                 help_text='parceiro que se conecta ao projeto')
+                                 help_text="parceiro que se conecta ao projeto")
 
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='projeto que possui vínculo da conexão')
+                                help_text="projeto que possui vínculo da conexão")
     observacao = models.TextField(max_length=256, null=True, blank=True,
-                                  help_text='qualquer observação relevante')
+                                  help_text="qualquer observação relevante")
     
     papel = {
        "gestor_responsavel": ["Gestor Responsável", "GR"],

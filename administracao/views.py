@@ -83,8 +83,7 @@ def cadastrar_disciplina(request, proposta_id=None):
         "disciplinas": Disciplina.objects.all().order_by("nome"),
         "Disciplina": Disciplina,
     }
-    if request.method == 'POST':
-        print(request.POST)
+    if request.method == "POST":
         try:
             assert "nome" in request.POST
             disciplina, _created = Disciplina.objects.get_or_create(nome=request.POST["nome"])
