@@ -110,7 +110,7 @@ class PFEUser(AbstractUser):
 
     def __str__(self):
         """Retorno padrão textual do objeto."""
-        texto = self.first_name + " " + self.last_name
+        texto = self.get_full_name()
         if self.tipo_de_usuario == 1 and hasattr(self, 'aluno'):  # (1, 'aluno'),
             texto += " (estudante"
             if self.aluno.anoPFE and self.aluno.semestrePFE:
@@ -168,7 +168,7 @@ class Professor(models.Model):
 
     def __str__(self):
         """Retorno padrão textual do objeto."""
-        return self.user.first_name+" "+self.user.last_name
+        return self.user.get_full_name()
 
     @classmethod
     def create(cls, usuario):

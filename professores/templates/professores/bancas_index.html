@@ -76,7 +76,7 @@
                         '{{banca.projeto.get_titulo}}' +
                         '{% if banca.projeto.orientador %}\nOrientador: {{banca.projeto.orientador}}{% endif %}' +
                         '{% if banca.location %}\nLocal: {{banca.location}}{% endif %}' +
-                        '\nBanca: {{banca.projeto.orientador.user.first_name}} {{banca.projeto.orientador.user.last_name}}(O){% if banca.membro1 %}; {{banca.membro1.first_name}} {{banca.membro1.last_name}}{% endif %}{% if banca.membro2 %}; {{banca.membro2.first_name}} {{banca.membro2.last_name}}{% endif %}{% if banca.membro3 %}; {{banca.membro3.first_name}} {{banca.membro3.last_name}}{% endif %}' +
+                        '\nBanca: {{banca.projeto.orientador.user.get_full_name}} (O){% if banca.membro1 %}; {{banca.membro1.get_full_name}}{% endif %}{% if banca.membro2 %}; {{banca.membro2.get_full_name}}{% endif %}{% if banca.membro3 %}; {{banca.membro3.get_full_name}}{% endif %}' +
                         ' ',
                 {% else %}
                   title: "Projeto não identificado",

@@ -10,8 +10,7 @@
 
   {% if certificado.tipo_de_certificado != 0 %} {% comment %} Não é não definido {% endcomment %}
 
-    {{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}},
-    %0D%0A%0D%0A
+    {{certificado.usuario.get_full_name|parse_quote}},%0D%0A%0D%0A
 
     {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
     Parabéns%20pela%20conclusão%20do%20Projeto%20Final%20de%20Engenharia%20do%20Insper.%0D%0A
@@ -36,8 +35,7 @@
       {% else %}
         Prezad{% if certificado.usuario.genero == 'F' %}a{% else %}o{% endif %}
       {% endif %}
-      {{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}},
-      %0D%0A%0D%0A
+      {{certificado.usuario.get_full_name|parse_quote}},%0D%0A%0D%0A
 
   {% if certificado.tipo_de_certificado == 101 %} {% comment %} orientador {% endcomment %}
 

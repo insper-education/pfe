@@ -111,8 +111,7 @@ def adicionar_participante_em_evento(ical_event, usuario):
     """Adiciona um usuario em um evento."""
     # REMOVER OS xx DOS EMAILS
     atnd = vCalAddress("MAILTO:{}".format(usuario.email))
-    atnd.params["CN"] = "{0} {1}".format(usuario.first_name,
-                                         usuario.last_name)
+    atnd.params["CN"] = "{0}".format(usuario.get_full_name())
     atnd.params["ROLE"] = "REQ-PARTICIPANT"
     ical_event.add("attendee", atnd, encode=0)
 
@@ -126,18 +125,14 @@ def gera_descricao_banca(banca, alunos):
     if banca.membro1 or banca.membro2 or banca.membro3:
         description += "\n\nMembros da Banca:"
         if banca.membro1:
-            description += "\n- {0} {1}".format(banca.membro1.first_name,
-                                                banca.membro1.last_name)
+            description += "\n- {0}".format(banca.membro1.get_full_name())
         if banca.membro2:
-            description += "\n- {0} {1}".format(banca.membro2.first_name,
-                                                banca.membro2.last_name)
+            description += "\n- {0}".format(banca.membro2.get_full_name())
         if banca.membro3:
-            description += "\n- {0} {1}".format(banca.membro3.first_name,
-                                                banca.membro3.last_name)
+            description += "\n- {0}".format(banca.membro3.get_full_name())
     description += "\n\nAlunos:"
     for aluno in alunos:
-        description += "\n- {0} {1}".format(aluno.user.first_name,
-                                            aluno.user.last_name)
+        description += "\n- {0}".format(aluno.user.get_full_name())
     return description
 
 

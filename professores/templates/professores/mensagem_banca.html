@@ -1,9 +1,9 @@
 {% load escape_emails %}
-mailto:{% if banca.membro1 %}{% if com_nome %}{{banca.membro1.first_name}}%20{{banca.membro1.last_name|parse_quote}}%20&lt;{% endif %}{{banca.membro1.email|parse_quote}}{% if com_nome %}&gt;{% endif %},{% endif %}
-{% if banca.membro2 %}{% if com_nome %}{{banca.membro2.first_name}}%20{{banca.membro2.last_name|parse_quote}}%20&lt;{% endif %}{{banca.membro2.email|parse_quote}}{% if com_nome %}&gt;{% endif %},{% endif %}
-{% if banca.membro3 %}{% if com_nome %}{{banca.membro3.first_name}}%20{{banca.membro3.last_name|parse_quote}}%20&lt;{% endif %}{{banca.membro3.email|parse_quote}}{% if com_nome %}&gt;{% endif %},{% endif %}
-{% for coorientador in banca.projeto.coorientador_set.all %}{% if com_nome %}{{coorientador.usuario.first_name|parse_quote}}%20{{coorientador.usuario.last_name|parse_quote}}%20&lt;{% endif %}{{coorientador.usuario.email|parse_quote}}{% if com_nome %}&gt;{% endif %},{% endfor %}
-{% if com_nome %}{{banca.projeto.orientador.user.first_name|parse_quote}}%20{{banca.projeto.orientador.user.last_name|parse_quote}}%20&lt;{% endif %}{{banca.projeto.orientador.user.email|parse_quote}}{% if com_nome %}&gt;{% endif %}
+mailto:{% if banca.membro1 %}{% if com_nome %}{{banca.membro1.get_full_name}}%20&lt;{% endif %}{{banca.membro1.email|parse_quote}}{% if com_nome %}&gt;{% endif %},{% endif %}
+{% if banca.membro2 %}{% if com_nome %}{{banca.membro2.get_full_name}}%20&lt;{% endif %}{{banca.membro2.email|parse_quote}}{% if com_nome %}&gt;{% endif %},{% endif %}
+{% if banca.membro3 %}{% if com_nome %}{{banca.membro3.get_full_name}}%20&lt;{% endif %}{{banca.membro3.email|parse_quote}}{% if com_nome %}&gt;{% endif %},{% endif %}
+{% for coorientador in banca.projeto.coorientador_set.all %}{% if com_nome %}{{coorientador.usuario.get_full_name|parse_quote}}%20&lt;{% endif %}{{coorientador.usuario.email|parse_quote}}{% if com_nome %}&gt;{% endif %},{% endfor %}
+{% if com_nome %}{{banca.projeto.orientador.user.get_full_name|parse_quote}}%20&lt;{% endif %}{{banca.projeto.orientador.user.email|parse_quote}}{% if com_nome %}&gt;{% endif %}
 ?cc={% if com_nome %}Luciano%20Pereira%20Soares&lt;{% endif %}lpsoares@insper.edu.br{% if com_nome %}&gt;{% endif %}
 &amp;subject=Banca%20PFE:%20{% if banca.projeto.titulo_final %}{{banca.projeto.titulo_final|parse_quote}}{% else %}{{banca.projeto.titulo|parse_quote}}{% endif %}
 &amp;body=
@@ -24,15 +24,15 @@ Horário:%20{{banca.startDate.date}}%20({{banca.startDate|date:'l'}})%20das%20{{
 {% if banca.projeto.organizacao.nome %}Organização Parceira:%20{{ banca.projeto.organizacao.nome|parse_quote }}%0D%0A{% endif %}
 {% if banca.location %}Local:%20{{banca.location|parse_quote}}%0D%0A{% endif %}
 {% if banca.link %}Link%20vídeo-conferência:%20{{banca.link|parse_quote}}%0D%0A{% endif %}
-{% if banca.projeto.orientador %}%0D%0AOrientador:%0D%0A%20-%20{{banca.projeto.orientador.user.first_name|parse_quote}} {{banca.projeto.orientador.user.last_name|parse_quote}} 
+{% if banca.projeto.orientador %}%0D%0AOrientador:%0D%0A%20-%20{{banca.projeto.orientador.user.get_full_name|parse_quote}}
 %0D%0A%0D%0A
 {% endif %}
 Banca:%0D%0A
-{% if banca.membro1 %} - {{banca.membro1.first_name|parse_quote}} {{banca.membro1.last_name|parse_quote}}%0D%0A{% endif %}
-{% if banca.membro2 %} - {{banca.membro2.first_name|parse_quote}} {{banca.membro2.last_name|parse_quote}}%0D%0A{% endif %}
-{% if banca.membro3 %} - {{banca.membro3.first_name|parse_quote}} {{banca.membro3.last_name|parse_quote}}%0D%0A{% endif %}
+{% if banca.membro1 %} - {{banca.membro1.get_full_name|parse_quote}}%0D%0A{% endif %}
+{% if banca.membro2 %} - {{banca.membro2.get_full_name|parse_quote}}%0D%0A{% endif %}
+{% if banca.membro3 %} - {{banca.membro3.get_full_name|parse_quote}}%0D%0A{% endif %}
 %0D%0A
 Grupo
 %0D%0A
-{% for alocacao in banca.projeto.alocacao_set.all %} - {{alocacao.aluno.user.first_name|parse_quote}} {{alocacao.aluno.user.last_name|parse_quote}} [{{ alocacao.aluno.curso2|parse_quote }}]%0D%0A{% endfor %}
+{% for alocacao in banca.projeto.alocacao_set.all %} - {{alocacao.aluno.user.get_full_name|parse_quote}} [{{ alocacao.aluno.curso2|parse_quote }}]%0D%0A{% endfor %}
 %0D%0A%0D%0A

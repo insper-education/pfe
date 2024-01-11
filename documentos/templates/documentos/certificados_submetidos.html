@@ -125,7 +125,7 @@
           {% nospaces %}
           &#x2709; Enviar certificado (
           {% with servidor='https://pfe.insper.edu.br' %}
-          <a href="mailto:{{certificado.usuario.first_name|parse_quote}}%20{{certificado.usuario.last_name|parse_quote}}%20&lt;{{certificado.usuario.email|parse_quote }}&gt;?cc={{coordenacao.user.get_full_name}}&lt;{{coordenacao.user.email}}&gt;
+          <a href="mailto:{{certificado.usuario.get_full_name|parse_quote}}%20&lt;{{certificado.usuario.email|parse_quote }}&gt;?cc={{coordenacao.user.get_full_name}}&lt;{{coordenacao.user.email}}&gt;
             &amp;subject=PFE%20Insper%20:
             {% if certificado.tipo_de_certificado == 101 %}
               Orientação de Projeto

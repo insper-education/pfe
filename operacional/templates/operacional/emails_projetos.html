@@ -26,9 +26,9 @@
       >
       {% comment %}
       <a onclick="event.preventDefault(); coleta_usuario_envia($(this));"
-        data-estudantes='{% for alocacao in projeto.alocacao_set.all %}{{alocacao.aluno.user.first_name|parse_quote}}%20{{alocacao.aluno.user.last_name|parse_quote}}%20&lt;{{alocacao.aluno.user.email|parse_quote}}&gt;{% if not forloop.last %},{% endif %}{% endfor %}'
-        data-orientador='{{projeto.orientador.user.first_name|parse_quote}}%20{{projeto.orientador.user.last_name|parse_quote}}%20&lt;{{ projeto.orientador.user.email|parse_quote }}&gt;,'
-        data-conexoes='{% for pessoa in projeto.conexao_set.all %}{{pessoa.parceiro.user.first_name|parse_quote}}%20{{pessoa.parceiro.user.last_name|parse_quote}}%20&lt;{{ pessoa.parceiro.user.email|parse_quote }}&gt;{% if not forloop.last %},{% endif %}{% endfor %}'
+        data-estudantes='{% for alocacao in projeto.alocacao_set.all %}{{alocacao.aluno.user.get_full_name|parse_quote}}%20&lt;{{alocacao.aluno.user.email|parse_quote}}&gt;{% if not forloop.last %},{% endif %}{% endfor %}'
+        data-orientador='{{projeto.orientador.user.get_full_name|parse_quote}}%20&lt;{{ projeto.orientador.user.email|parse_quote }}&gt;,'
+        data-conexoes='{% for pessoa in projeto.conexao_set.all %}{{pessoa.parceiro.user.get_full_name|parse_quote}}%20&lt;{{ pessoa.parceiro.user.email|parse_quote }}&gt;{% if not forloop.last %},{% endif %}{% endfor %}'
         data-projeto='{{projeto}}'
         data-avancado='{% if projeto.avancado %}true{% else %}false{% endif %}'
         data-toggle="tooltip" data-html="true" animation="true" title="{{projeto}}"
