@@ -122,31 +122,6 @@ def get_objetivos_atuais(objetivos):
     return objetivos
 
 
-# NAO MAIS USADO
-# def get_objetivos_alocacao(objetivos, alocacao):
-#     """Retorna todos objetivos de aprendizado da época de uma alocação."""
-#     if alocacao.projeto.semestre == 1:
-#         mes = 3
-#     else:
-#         mes = 9
-#     data_projeto = datetime.datetime(alocacao.projeto.ano, mes, 1)
-#     objetivos = objetivos.filter(data_inicial__lt=data_projeto)
-#     objetivos = objetivos.filter(data_final__gt=data_projeto) | objetivos.filter(data_final__isnull=True)
-#     objetivos = objetivos.order_by("ordem")
-#     return objetivos
-
-# NAO MAIS USADO
-# def get_objetivos_alocacoes(todos_objetivos, alocacoes):
-#     """Verifica todos os objetivos de aprendizado de várias alocações."""
-#     objetivos = None
-#     if len(alocacoes) > 0:
-#         objetivos = get_objetivos_alocacao(todos_objetivos, alocacoes[0])
-#         for alocacao in alocacoes[1:]:
-#             objetivos = objetivos | get_objetivos_alocacao(todos_objetivos, alocacao)
-#         objetivos = objetivos.order_by("ordem")
-#     return objetivos
-
-
 def calcula_objetivos(alocacoes):
     """Calcula notas/conceitos por Objetivo de Aprendizagem."""
     #objetivos = get_objetivos_alocacoes(ObjetivosDeAprendizagem.objects.all(), alocacoes)
@@ -325,4 +300,3 @@ def cap_name(name):
         else:
             items.append(item.capitalize())
     return ''.join(items)
-

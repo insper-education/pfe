@@ -145,4 +145,10 @@ urlpatterns = [
          views.validate_aviso,
          name="validate_aviso"),
 
+    path("reenvia_avisos/",
+         views.reenvia_avisos,
+         name="reenvia_avisos"),
+
+
+
 ]

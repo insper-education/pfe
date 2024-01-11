@@ -193,21 +193,21 @@ FILE_UPLOAD_PERMISSIONS = 0o644
 # Tempo usado para os alarmes eh GMT
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost//'
 CELERY_BEAT_SCHEDULE = {
-    'backup': {
-        'task': 'projetos.tasks.backup',
-        'schedule': crontab(0, 0, day_of_month='1'),
+    "backup": {
+        "task": "projetos.tasks.backup",
+        "schedule": crontab(0, 0, day_of_month='1'),
     },
     "mediabackup": {
         "task": "core.tasks.mediabackup",
-        'schedule': crontab(0, 0, day_of_month='1'),
+        "schedule": crontab(0, 0, day_of_month='1'),
     },
-    'send-email-daily': {
-        'task': 'projetos.tasks.envia_aviso',
-        'schedule': crontab(hour=10, minute=0),
+    "send-email-daily": {
+        "task": "projetos.tasks.envia_aviso",
+        "schedule": crontab(hour=10, minute=0),
     },
-    'certbot-renew': {
-        'task': 'projetos.tasks.certbot_renew',
-        'schedule': crontab(0, 0, day_of_month='1'),
+    "certbot-renew": {
+        "task": "projetos.tasks.certbot_renew",
+        "schedule": crontab(0, 0, day_of_month='1'),
     },
 }
 

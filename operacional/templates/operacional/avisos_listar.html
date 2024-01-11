@@ -64,11 +64,11 @@
       <table class="table table-sm">
         <caption>
           <small>
-            Co: Coordenação;
-            Cm: Comitê do PFE;
-            Es: Estudantes;
-            Or: Orientadores;
-            Og: Contatos nas Organizacoes.
+            <b>Co</b>: Coordenação;
+            <b>Cm</b>: Comitê do PFE;
+            <b>Es</b>: Estudantes;
+            <b>Or</b>: Orientadores;
+            <b>Og</b>: Contatos nas Organizacoes.
           </small>
         </caption>
         <thead>
@@ -176,9 +176,8 @@
       <p>Não existem avisos.</p>
     {% endif %}
 
-    <a href="{% url 'cria_aviso' %}">
-      <input type='button' class="cria btn btn-primary" value="Cria Aviso">
-    </a>
+    <a href="{% url 'cria_aviso' %}" class="cria btn btn-primary">Cria Aviso</a>
+    <a href="{% url 'reenvia_avisos' %}" class="cria btn btn-primary" onClick="return confirm('Tem certeza que deseja reenviar os avisos do dia para todos os envolvidos?')">Reenviar Avisos do Dia</a>
 
   </form>
 

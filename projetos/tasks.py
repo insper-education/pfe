@@ -8,7 +8,7 @@ Data: 18 de Outubro de 2019
 
 import datetime
 import subprocess
-from celery import task
+#from celery import task
 from celery import shared_task
 from django.conf import settings
 from django.core.management import call_command
@@ -51,15 +51,14 @@ def mediabackup():
         return f"Não foi possível fazer o backup: {datetime.datetime.now()}"
 
 
-@task
+#@task
+@shared_task
 def certbot_renew():
     """Renova Certificado Digital."""
     subprocess.call(['sudo', 'certbot', 'renew', '--quiet'])
 
 
-@task
-def envia_aviso():
-    """Gera um aviso por e-mail."""
+def avisos_do_dia():
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
@@ -80,16 +79,16 @@ def envia_aviso():
             if data_evento == datetime.date.today():
                 avisos.append(aviso)
 
-    # Preparando mensagem como template para aplicar variáveis
-    subject = "Aviso: " + aviso.titulo
-    if aviso.mensagem:
-        message = aviso.mensagem
-    else:
-        message = "Mensagem não definida."
-
-    mensagem_como_template = Template(message)
-
     for aviso in avisos:
+
+        # Preparando mensagem como template para aplicar variáveis
+        subject = "Aviso: " + aviso.titulo
+        if aviso.mensagem:
+            message = aviso.mensagem
+        else:
+            message = "Mensagem não definida."
+
+        mensagem_como_template = Template(message)
 
         recipient_list = ["pfeinsper@gmail.com", ]
 
@@ -135,6 +134,7 @@ def envia_aviso():
             # if verify != 1: pass # Algum problema de conexão, contacte: lpsoares@insper.edu.br
                 
 
+def eventos_do_dia():
     # Checa eventos do calendário e envia e-mail para coordenador(es)
     context = get_calendario_context()
 
@@ -160,3 +160,10 @@ def envia_aviso():
                     if verify != 1:
                         # Algum problema de conexão, contacte: lpsoares@insper.edu.br
                         pass
+
+#@task
+@shared_task
+def envia_aviso():
+    """Envia avisos por e-mail."""
+    avisos_do_dia()
+    eventos_do_dia()

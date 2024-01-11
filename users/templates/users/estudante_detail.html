@@ -410,7 +410,7 @@
             {% endif %}
             <br><br>
 
-            {% if not alocado.get_relatos|empty_zip %}
+            {% if not alocado.get_relatos|empty_zip and alocado.projeto.ano > 2021 %}  {% comment %} projetos até 2021 tinham o relato pelo Blackboad {% endcomment %}
                 &nbsp;&nbsp;<span class="tit_rel">Relatos Quinzenais:</span><br>
                 {% for evento, relato, ordem in alocado.get_relatos %}
                     <p style="padding-left: 0.8em;">

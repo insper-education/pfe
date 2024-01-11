@@ -39,7 +39,7 @@ from academica.models import Exame
 
 from .support import simple_upload, calcula_objetivos, cap_name
 
-
+from .tasks import avisos_do_dia, eventos_do_dia
 
 def get_areas_estudantes(alunos):
     """Retorna dicionário com as áreas de interesse da lista de entrada."""
@@ -1869,3 +1869,18 @@ def acompanhamento_view(request):
     return render(request,
                   "projetos/acompanhamento_view.html",
                   context=context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def reenvia_avisos(request):
+    """Reenvia avisos do dia."""
+
+    # Caso não seja Administrador
+    if request.user.tipo_de_usuario != 4:
+        return HttpResponse("Você não tem privilégios!", status=401)
+    
+    avisos_do_dia()
+    eventos_do_dia()
+
+    return redirect("avisos_listar")
