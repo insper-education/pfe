@@ -4,11 +4,6 @@
     Data: 25 de Março de 2021
 {% endcomment %}
 
-{% comment %}
-{% load static %}
-<script src="{% static 'js/jquery-3.5.1.min.js' %}"></script>
-{% endcomment %}
-
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
 
@@ -21,7 +16,6 @@
 
   <div class="modal-body">
 
-
     {% if organizacoes and not organizacao %}
       <label for="organizacao_id">Organizacao:</label>
       <select id="organizacao_id" name="organizacao_id" class="form-control" required>
@@ -32,9 +26,6 @@
       </select>
       <br>
     {% endif %}
-
-
-
 
     <label for="data_hora">Data e Hora: </label> <input id="data_hora" class="form-control" type="datetime-local" name="data_hora" value="{{data_hora|date:'Y-m-d\TH:i'}}"><br>
     

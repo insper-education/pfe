@@ -65,32 +65,42 @@ class PFEUser(AbstractUser):
         models.BooleanField("Membro do Comitê", default=False, help_text='caso membro do comitê do PFE')
 
     GENERO_CHOICES = (
-        ('X', 'Não Informado'),
-        ('M', 'Masculino'),
-        ('F', 'Feminino'),
+        ('X', "Não Informado"),
+        ('M', "Masculino"),
+        ('F', "Feminino"),
     )
     genero = models.CharField("Gênero", max_length=1, choices=GENERO_CHOICES, default='X',
-                              help_text='sexo do usuário')
+                              help_text="sexo do usuário")
 
     TIPO_LINGUA = (
-        (1, 'português'),
-        (2, 'inglês'),
+        (1, "português"),
+        (2, "inglês"),
     )
     tipo_lingua = models.PositiveSmallIntegerField("Língua", choices=TIPO_LINGUA, default=1,
-                                                   help_text='língua usada para comunicação')
+                                                   help_text="língua usada para comunicação")
 
     observacoes = models.TextField("Observações", max_length=500, blank=True,
-                                   help_text='Observações')
+                                   help_text="Observações")
 
     coordenacao = \
-        models.BooleanField("Coordenação", default=False, help_text='caso coordenador do PFE')
+        models.BooleanField("Coordenação", default=False, help_text="caso coordenador do PFE")
+
+    pronome_tratamento = models.CharField("Pronome de Tratamento", max_length=8, null=True, blank=True)
 
     class Meta:
         """Classe Meta."""
 
-        verbose_name = 'Usuário'
-        verbose_name_plural = 'Usuários'
-        ordering = ['first_name', 'last_name']
+        verbose_name = "Usuário"
+        verbose_name_plural = "Usuários"
+        ordering = ["first_name", "last_name"]
+
+    # Estou sobreescrevendo a função get_full_name para que ela retorne o pronome de tratamento
+    def get_full_name(self):
+        if self.pronome_tratamento:
+            full_name = '%s %s %s' % (self.pronome_tratamento, self.first_name, self.last_name)
+        else:
+            full_name = '%s %s' % (self.first_name, self.last_name)
+        return full_name.strip()
 
     @classmethod
     def create(cls):

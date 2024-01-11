@@ -48,7 +48,7 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
     else:
         organizacao = None
 
-    if request.is_ajax() and 'texto' in request.POST:
+    if request.is_ajax() and "texto" in request.POST:
 
         if anotacao_id:
             anotacao_obj = get_object_or_404(Anotacao, id=anotacao_id)
@@ -73,7 +73,7 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
 
         data = {
             "data": anotacao_obj.momento.strftime("%d/%m/%Y"),
-            "autor": str(anotacao_obj.autor.first_name),
+            "autor": str(anotacao_obj.autor.get_full_name()),
             "anotacao_id": anotacao_obj.id,
             "atualizado": True,
         }

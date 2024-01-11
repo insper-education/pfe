@@ -173,9 +173,10 @@ def registro_usuario(request, user=None):
     if "nome" in request.POST and len(request.POST["nome"].split()) > 1:
         usuario.first_name = limpa_texto(request.POST["nome"].split()[0])
         usuario.last_name = limpa_texto(' '.join(request.POST["nome"].split()[1:]))
-
     else:
         return ("Erro: Não inserido nome completo no formulário.", 401, None)
+
+    usuario.pronome_tratamento = limpa_texto(request.POST.get("pronome_tratamento", None))
 
     if "genero" in request.POST:
         if request.POST['genero'] == "masculino":
@@ -185,12 +186,12 @@ def registro_usuario(request, user=None):
     else:
         usuario.genero = 'X'
 
-    usuario.telefone = limpa_texto(request.POST.get('telefone', None))
-    usuario.celular = limpa_texto(request.POST.get('celular', None))
-    usuario.instant_messaging = limpa_texto(request.POST.get('instant_messaging', None))
-    usuario.linkedin = limpa_texto(request.POST.get('linkedin', None))
-    usuario.tipo_lingua = limpa_texto(request.POST.get('lingua', None))
-    usuario.observacoes = limpa_texto(request.POST.get('observacao', None))
+    usuario.telefone = limpa_texto(request.POST.get("telefone", None))
+    usuario.celular = limpa_texto(request.POST.get("celular", None))
+    usuario.instant_messaging = limpa_texto(request.POST.get("instant_messaging", None))
+    usuario.linkedin = limpa_texto(request.POST.get("linkedin", None))
+    usuario.tipo_lingua = limpa_texto(request.POST.get("lingua", None))
+    usuario.observacoes = limpa_texto(request.POST.get("observacao", None))
 
     if "ativo" in request.POST:
         if request.POST["ativo"] == '1':

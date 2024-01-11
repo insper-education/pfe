@@ -53,9 +53,12 @@
     <label for="parceiro" style="margin-right: 1em;"><input type="radio" class="tipo" name="tipo_de_usuario" id="parceiro" value="parceiro" required {% if tipo == "parceiro"%}checked="checked"{% endif %}>&nbsp;Parceiro</label>
     <br><br>
 
+    <label for="pronome_tratamento">Pronome de Tratamento (opcional)</label>
+    <input type="text" size="8" maxlength="{% max_length PFEUser "pronome_tratamento" %}" id="pronome_tratamento" name="pronome_tratamento" {% if usuario.pronome_tratamento %}value="{{usuario.pronome_tratamento}}"{% endif %}><br>
+    
     <label for="nome">Nome do Usuário<br></label><br>
     {% comment %} {% max_length PFEUser "first_name" %} + {% max_length PFEUser "lastst_name" %} {% endcomment %}
-    <input type="text" size="77" maxlength="80" id="nome" name="nome" value="{{usuario.get_full_name}}"
+    <input type="text" size="77" maxlength="120" id="nome" name="nome" value="{{usuario.first_name}} {{usuario.last_name}}"
       pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')" required><br>
     <br>
 
