@@ -10,5 +10,6 @@ arquivos/*
 celerybeat-schedule
 celerybeat.pid
 dump.rdb
+dump.json
 old/
 /static/
