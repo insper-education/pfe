@@ -23,7 +23,7 @@ from django.views import generic
 
 from projetos.models import Certificado, Configuracao, Projeto, Conexao, Encontro
 from projetos.models import Banca, Area, Coorientador, Avaliacao2, Observacao, Reprovacao
-from projetos.models import ObjetivosDeAprendizagem
+from projetos.models import ObjetivosDeAprendizagem, Evento
 
 from projetos.messages import email
 from projetos.support import calcula_objetivos
@@ -668,11 +668,15 @@ def professor_detail(request, primarykey):
 
     bancas = bancas.order_by("startDate")
 
+    # (12, 'Aula PFE', 'lightgreen'),
+    aulas = Evento.objects.filter(tipo_de_evento=12, responsavel=professor.user) #.order_by("endDate", "startDate").last()
+
     context = {
-        'professor': professor,
-        'projetos': projetos,
-        'coorientacoes': coorientacoes,
-        'bancas': bancas,
+        "professor": professor,
+        "projetos": projetos,
+        "coorientacoes": coorientacoes,
+        "bancas": bancas,
+        "aulas": aulas,
     }
 
     return render(request, 'users/professor_detail.html', context=context)
@@ -694,11 +698,15 @@ def parceiro_detail(request, primarykey):
 
     bancas = bancas.order_by("startDate")
 
+    # (12, 'Aula PFE', 'lightgreen'),
+    aulas = Evento.objects.filter(tipo_de_evento=12, responsavel=parceiro.user) #.order_by("endDate", "startDate").last()
+
     context = {
         "parceiro": parceiro,
         "conexoes": conexoes,
         "mentorias": mentorias,
         "bancas": bancas,
+        "aulas": aulas,
     }
     return render(request, 'users/parceiro_detail.html', context=context)
 

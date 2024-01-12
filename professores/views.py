@@ -380,7 +380,6 @@ def bancas_lista(request, periodo_projeto):
     return render(request, 'professores/bancas_lista.html', context)
 
 
-
 @login_required
 @permission_required('users.altera_professor', raise_exception=True)
 def bancas_tabela(request):
@@ -424,6 +423,41 @@ def bancas_tabela(request):
         }
 
     return render(request, 'professores/bancas_tabela.html', context)
+
+
+
+@login_required
+@permission_required('users.altera_professor', raise_exception=True)
+def aulas_tabela(request):
+    """Lista todas as aulas agendadas, conforme periodo pedido."""
+    configuracao = get_object_or_404(Configuracao)
+
+    if request.is_ajax():
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
+
+            if edicao == "todas":
+                aulas = Evento.objects.filter(tipo_de_evento=12)   #.order_by("endDate", "startDate").last()
+            else:
+                ano, semestre = request.POST["edicao"].split('.')
+                if semestre == "1/2":
+                    aulas = Evento.objects.filter(tipo_de_evento=12, endDate__year=ano)
+                elif semestre == '1':
+                    aulas = Evento.objects.filter(tipo_de_evento=12, endDate__year=ano, endDate__month__lt=7)
+                else:  # semestre == '2':
+                    aulas = Evento.objects.filter(tipo_de_evento=12, endDate__year=ano, endDate__month__gt=6)
+
+        context = {
+            "aulas": aulas,
+        }
+
+    else:
+        edicoes, _, _ = get_edicoes(Projeto, anual=True)
+        context = {
+            "edicoes": edicoes,
+        }
+
+    return render(request, "professores/aulas_tabela.html", context)
 
 
 @login_required

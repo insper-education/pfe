@@ -111,10 +111,19 @@
     </ol>
   {% endif %}
 
+  {% if aulas %}
+    <hr>
+    <h4>Aula(s) Ministrada(s)</h4>
+    <ol>
+      {% for aula in aulas %}
+        <li> {{aula.startDate}} - {{aula.descricao}} </li>
+      {% endfor %}
+    </ol>
+  {% endif %}
 
   {% if mentorias %}
     <hr>
-    <h3>Mentoria nos Projetos</h3>
+    <h4>Mentoria nos Projetos</h4>
     <ol>
     {% for mentoria in mentorias %}
       <li>
@@ -171,7 +180,7 @@
 
   {% if user.tipo_de_usuario == 4 %}
     <a href="{% url 'edita_usuario' parceiro.user.id %}">
-      <button style="float: right;">Editar</button>
+      <button class="btn btn-primary" style="float: right;">Editar</button>
     </a>
   {% endif %}
   

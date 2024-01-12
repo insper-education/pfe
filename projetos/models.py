@@ -676,14 +676,10 @@ class Evento(models.Model):
                                    on_delete=models.SET_NULL,
                                    help_text="Responsável pelo evento, por exemplo professor que ministrou a aula")
 
-    # Usar get_tipo_de_evento_display em vez disso
     def get_title(self):
         """Retorna em string o nome do evento."""
-        for entry in TIPO_EVENTO:
-            if self.tipo_de_evento == entry[0]:
-                return entry[1]
-        return "Tipo não definido"
-
+        return self.get_tipo_de_evento_display()
+  
     def get_color(self):
         """Retorna uma cor característica do evento para desenhar no calendário."""
         for entry in TIPO_EVENTO:

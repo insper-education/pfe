@@ -18,11 +18,12 @@ urlpatterns = [
          views.calendario,
          name='calendario'),
 
-    path('calendario_limpo/',
-         views.calendario_limpo,
-         name='calendario_limpo'),
+    # Não mais usado
+    # path('calendario_limpo/',
+    #     views.calendario_limpo,
+    #     name='calendario_limpo'),
 
-     path('copia_calendario/',
+    path('copia_calendario/',
          views.copia_calendario,
          name='copia_calendario'),
 

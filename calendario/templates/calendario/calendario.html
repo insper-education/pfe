@@ -82,29 +82,27 @@
       }
     }
     
-    .event-name {
+    .event-name, .event-type {
       font-weight: bold;
-      padding-top: 3px;
+      padding-top: 6px;
       font-size: 0.8em;
+      line-height: 1.0;
     }
 
-    .event-type {
-      font-weight: bold;
-      padding-top: 3px;
-      font-size: 0.8em;
-    }
-
-    .event-location {
-      font-size: 0.8em;
+    .event-location,
+    .event-observation,
+    .event-descricao,
+    .event-responsavel {
+      font-size: 0.7em;
+      padding-left: 8px;
+      line-height: 1.0;
     }
 
     .event-observation {
-      font-size: 0.8em;
       color:darkred;
     }
 
     .event-descricao {
-      font-size: 0.8em;
       color:darkblue;
     }
 
@@ -462,7 +460,7 @@
                     <tr class="lin_aulas ano{{aula.endDate.year}} semestre" data-mes="{{aula.endDate.month}}"
                         {% if aula.startDate|dif_dias_hoje == 0 %}style="background-color: #F0FFFF;"{% endif %}>
                         <th class="colu" scope="row">{{aula.endDate|date:"d/m"}}<span class="t_f">/{{aula.endDate.year}}</span><span class="t_s">/{{aula.endDate|date:"y"}}</span></th>
-                        <td class="colu">{{aula.observacao}}</td><td class="colu">{{aula.location}}</td>
+                        <td class="colu">{{aula.descricao}} ({{aula.responsavel.get_full_name}})</td><td class="colu">{{aula.location}}</td>
                     </tr>
                   {% endfor %}
                 </tbody>
@@ -478,82 +476,23 @@
     <br>
     <br>
 
-    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-    <div class="modal fade" id="event-modal">
-      <div class="modal-dialog">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title">Evento</h5>
-                  {% if user.tipo_de_usuario != 4 %}
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <span id="permissao" style="color:red; text-decoration: underline solid red">Alterações Restritas ao Administrador</span>
-                  {% endif %}
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-              </div>
-              <div class="modal-body">
-                  <input type="hidden" name="event-index">
-                  <form class="form-horizontal">
-                      <div class="form-group row">
-                          <label for="event-type" class="col-sm-4 control-label">Tipo</label>
-                          <div class="col-sm-8">
-                              {% comment %} <input id="event-name" name="event-name" type="text" class="form-control"> {% endcomment %}
-                              <select id="event-type" name="event-type" class="form-control">
-                                {% for tipo in tipos_eventos %}
-                                  <option value="{{tipo.0}}" data-color="{{tipo.2}}">{{tipo.1}}</option>
-                                {% endfor %}
-                              </select>
-                          </div>
-                      </div>
-                      <div class="form-group row">
-                          <label for="event-location" class="col-sm-4 control-label">Local</label>
-                          <div class="col-sm-8">
-                              <input id="event-location" name="event-location" type="text" class="form-control" maxlength="{% max_length Evento "location" %}">
-                          </div>
-                      </div>
-                      <div class="form-group row">
-                          <label for="event-descricao" class="col-sm-4 control-label">Descrição:</label>
-                          <div class="col-sm-8">
-                              {% comment %} <input id="event-descricao" name="event-descricao" type="text" class="form-control"> {% endcomment %}
-                              <textarea class="form-control" id="event-descricao" name="event-descricao" rows="3"></textarea>
-                          </div>
-                      </div>
-                      <div class="form-group row">
-                          <label for="event-observation" class="col-sm-4 control-label">Obs:</label>
-                          <div class="col-sm-8">
-                              <input id="event-observation" name="event-observation" type="text" class="form-control" maxlength="{% max_length Evento "observacao" %}">
-                          </div>
-                      </div>
-                      <div class="form-group row">
-                          <label for="min-date" class="col-sm-4 control-label">Datas</label>
-                          <div class="col-sm-8">
-                              <div class="input-group input-daterange" data-provide="datepicker">
-                                  <input id="min-date" name="event-start-date" type="text" class="form-control">
-                                  <div class="input-group-prepend input-group-append">
-                                      <div class="input-group-text">até</div>
-                                  </div>
-                                  <input id="max-date" name="event-end-date" type="text" class="form-control">
-                              </div>
-                          </div>
-                      </div>
-                  </form>
-              </div>
-              <div class="modal-footer">
-                  <div id="warning-footer" style="color: red;"></div>
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                  <button type="button" class="btn btn-primary" id="save-event">Save</button>
-              </div>
-          </div>
-      </div>
-    </div>
-    <div id="context-menu">
-    </div>
-    {% endif %}
-
   </div>
 
-  <script id="rendered-js">
+  <script>
+    var pessoas = {};
+    {% for pessoa in pessoas.insper %}
+      pessoas["{{pessoa.id}}"] = "{{pessoa.get_full_name}}"
+    {% endfor %}
+    {% for pessoa in pessoas.falconi %}
+      pessoas["{{pessoa.id}}"] = "{{pessoa.get_full_name}}"
+    {% endfor %}
+  </script>
+
+  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+    {% include "calendario/evento-modal.html" %}
+  {% endif %}
+
+  <script>
 
     let calendar = null;
 
@@ -575,44 +514,43 @@
     $('#event-modal input[name="event-start-date"]').datepicker(formato_br);
     $('#event-modal input[name="event-end-date"]').datepicker(formato_br);
 
-
     // Função para tratar edição de evento
     function editEvent(event) {
 
       var evento = null;
 
       if (event.constructor.name=="Event" && event.events.length) { // não vazia
-          evento = event.events[0];
+        evento = event.events[0];
       } else {
         evento = event;
       }
 
       $('#event-modal input[name="event-index"]').val(evento ? evento.id : '');
-      //$('#event-modal input[name="event-name"]').val(evento ? evento.name : '');
       $('#event-modal select[name="event-type"]').val(evento ? evento.type : '');
       $('#event-modal input[name="event-location"]').val(evento ? evento.location : '');
       $('#event-modal textarea[name="event-descricao"]').val(evento ? evento.descricao : '');
       $('#event-modal input[name="event-observation"]').val(evento ? evento.observation : '');
+      $('#event-modal select[name="event-responsavel"]').val(evento ? evento.responsavel : '');      
       $('#event-modal input[name="event-start-date"]').datepicker('update', evento ? evento.startDate : '');
       $('#event-modal input[name="event-end-date"]').datepicker('update', evento ? evento.endDate : '');
 
       {% if user.tipo_de_usuario != 4 %}
-        $('#save-event').prop("disabled",true);
+        $("#save-event").prop("disabled",true);
       {% endif %}
 
-      $('#event-modal').modal();
+      $("#event-modal").modal();
     }
 
     function deleteEvent(event) {
       
       $.ajax({
-        url: '{% url "remove_evento" %}',
+        url: "{% url "remove_evento" %}",
         type: "POST",
         data: { 
           id : event.id,
-          'csrfmiddlewaretoken': '{{ csrf_token }}'
+          "csrfmiddlewaretoken": "{{ csrf_token }}"
         },
-        dataType: 'json',
+        dataType: "json",
         success: function (data) {
           if (data.atualizado) {
             //console.log("Evento removido.");
@@ -640,13 +578,12 @@
     function saveEvent() {
       var event = {
         id: $('#event-modal input[name="event-index"]').val(),
-        //name: $('#event-modal input[name="event-name"]').val(),
         name: $('#event-modal select[name="event-type"] option:selected').text(),
-        //type: $('#event-modal input[name="event-type"]').val(),
         type: $('#event-modal select[name="event-type"] option:selected').val(),
         location: $('#event-modal input[name="event-location"]').val(),
         descricao: $('#event-modal textarea[name="event-descricao"]').val(),
         observation: $('#event-modal input[name="event-observation"]').val(),
+        responsavel: $('#event-modal select[name="event-responsavel"]').val(),
         startDate: $('#event-modal input[name="event-start-date"]').datepicker('getDate'),
         endDate: $('#event-modal input[name="event-end-date"]').datepicker('getDate'),
         color: $('#event-modal select[name="event-type"] option:selected').data("color"),
@@ -716,11 +653,12 @@
           location : event.location,
           descricao : event.descricao,
           observation : event.observation,
+          responsavel: event.responsavel,
           startDate : startDate,
           endDate : endDate,
-          'csrfmiddlewaretoken': '{{ csrf_token }}'
+          "csrfmiddlewaretoken": "{{ csrf_token }}"
         },
-        dataType: 'json',
+        dataType: "json",
         success: function (data) {
           if (data.atualizado) {
             //console.log("Evento atualizado.");
@@ -733,6 +671,7 @@
                   dataSource[i].location = event.location;
                   dataSource[i].descricao = event.descricao;
                   dataSource[i].observation = event.observation;
+                  dataSource[i].responsavel = event.responsavel;
                   dataSource[i].startDate = event.startDate;
                   dataSource[i].endDate = event.endDate;
                   dataSource[i].color = event.color; 
@@ -782,6 +721,7 @@
                 location: "{{evento.location}}",
                 observation: "{{evento.observacao}}",
                 descricao: `{{evento.descricao}}`,
+                responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
@@ -795,6 +735,7 @@
                 location: "{{evento.location}}",
                 observation: "{{evento.observacao}}",
                 descricao: `{{evento.descricao}}`,
+                responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
@@ -808,6 +749,7 @@
                 location: "{{evento.location}}",
                 observation: "{{evento.observacao}}",
                 descricao: `{{evento.descricao}}`,
+                responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
@@ -821,6 +763,7 @@
                 location: "{{evento.location}}",
                 observation: "{{evento.observacao}}",
                 descricao: `{{evento.descricao}}`,
+                responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
@@ -834,6 +777,7 @@
                 location: "{{evento.location}}",
                 observation: "{{evento.observacao}}",
                 descricao: `{{evento.descricao}}`,
+                responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
@@ -847,6 +791,7 @@
                 location: "{{evento.location}}",
                 observation: "{{evento.observacao}}",
                 descricao: `{{evento.descricao}}`,
+                responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
@@ -866,6 +811,7 @@
                 location: "{{evento.location}}",
                 observation: "{{evento.observacao}}",
                 descricao: `{{evento.descricao}}`,
+                responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
@@ -942,8 +888,6 @@
               'background', $(element).css('background-image') + ', ' + "-webkit-radial-gradient(blue, yellow, red, green)" 
             );
           }
-          
-          //$(element).css('border-radius', '6px'); // para deixar os cantos arredondados
 
         },
         {% comment %} disabledDays: [], // Não estou usando por enquanto. {% endcomment %}
@@ -957,13 +901,19 @@
                 content += '<div class="event-tooltip-content">' +
                 '<div class="event-name">&#8226; ' + e.events[i].name + '</div>';
                 if (e.events[i].location) {
-                  content += '<div class="event-location">' + "Local: " + e.events[i].location + '</div>'
+                  content += '<div class="event-location">' + "Local: " + e.events[i].location + '</div>';
                 }
                 if (e.events[i].descricao) {
-                  content += '<div class="event-descricao">' + "Descrição:<br>" + e.events[i].descricao.replace(/(?:\r\n|\r|\n)/g, '<br>') + '</div>'
+                  content += '<div class="event-descricao">' + "Descrição: " + e.events[i].descricao.replace(/(?:\r\n|\r|\n)/g, '<br>') + '</div>';
                 }
+
+                if (e.events[i].responsavel) {
+                  var text = pessoas[e.events[i].responsavel];
+                  content += '<div class="event-responsavel">' + "Professor: " + text + '</div>';
+                }
+
                 if (e.events[i].observation) {
-                  content += '<div class="event-observation">' + "Obs: " + e.events[i].observation + '</div>'
+                  content += '<div class="event-observation">' + "Obs: " + e.events[i].observation + '</div>';
                 }
                 content += '</div>';
               }

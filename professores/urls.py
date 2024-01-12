@@ -74,6 +74,10 @@ urlpatterns = [
          views.bancas_tabela,
          name="bancas_tabela"),
 
+    path("aulas_tabela/",
+         views.aulas_tabela,
+         name="aulas_tabela"),
+
     path('bancas_tabela_completa/',
          views.bancas_tabela_completa,
          name='bancas_tabela_completa'),

@@ -11,6 +11,8 @@ import dateutil.parser
 
 from icalendar import Calendar, Event, vCalAddress
 
+from django.db.models.functions import Lower
+
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.sites.models import Site
 from django.db import transaction
@@ -19,7 +21,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from users.models import PFEUser, Aluno
 
-from projetos.models import Banca, Configuracao, Evento
+from projetos.models import Banca, Configuracao, Evento, Organizacao
 
 from projetos.tipos import TIPO_EVENTO
 
@@ -90,21 +92,34 @@ def get_calendario_context(user=None):
 def calendario(request):
     """Para exibir um calendário de eventos."""
     context = get_calendario_context(request.user)
+
     if context:
-        return render(request, 'calendario/calendario.html', context)
+    
+        pessoas = {}
+        professores = PFEUser.objects.filter(tipo_de_usuario=2) # Professores
+        administradores = PFEUser.objects.filter(tipo_de_usuario=4) # Administradores
+        pessoas["insper"] = (professores | administradores).order_by(Lower("first_name"), Lower("last_name"))
+
+        organizacao = Organizacao.objects.filter(sigla="Falconi").last()
+        pessoas["falconi"] = PFEUser.objects.filter(parceiro__organizacao=organizacao)
+
+        context["pessoas"] = pessoas
+
+        return render(request, "calendario/calendario.html", context)
 
     return HttpResponse("Problema ao gerar calendário.", status=401)
 
 
-@login_required
-def calendario_limpo(request):
-    """Para exibir um calendário de eventos."""
-    context = get_calendario_context(request.user.pk)
-    if context:
-        context['limpo'] = True
-        return render(request, 'calendario/calendario.html', context)
+# Não mais usado
+# @login_required
+# def calendario_limpo(request):
+#     """Para exibir um calendário de eventos."""
+#     context = get_calendario_context(request.user.pk)
+#     if context:
+#         context['limpo'] = True
+#         return render(request, 'calendario/calendario.html', context)
 
-    return HttpResponse("Problema ao gerar calendário.", status=401)
+#     return HttpResponse("Problema ao gerar calendário.", status=401)
 
 
 def adicionar_participante_em_evento(ical_event, usuario):
@@ -220,6 +235,11 @@ def atualiza_evento(request):
     evento.location = request.POST.get("location", '')[:Evento._meta.get_field("location").max_length] 
     evento.observacao = request.POST.get("observation", '')[:Evento._meta.get_field("observacao").max_length]
     evento.descricao = request.POST.get("descricao", '')[:Evento._meta.get_field("descricao").max_length]
+
+    responsavel = request.POST.get("responsavel", None)
+    if responsavel:
+        evento.responsavel = PFEUser.objects.get(id=responsavel) # Professores
+
     evento.save()
 
     data = {

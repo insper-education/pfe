@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 12 de Janeiro de 2024
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+
+  <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
+  <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
+
+  {% include "tabelas_includes.html" %}
+
+{% endblock %}
+
+{% block content %}
+
+  {% include "impressora.html" %}
+
+  <span class="titulo">Alocação em Aulas</span>
+
+  {% include "edicoes.html" %}
+
+  <div class="row align-items-start mb-2" style="display: inline-block; margin-right: 3px;">
+    <div class="ml-3">
+      <div class="input-group input-group-sm">
+          <div class="input-group-prepend">
+            <label class="to_label input-group-text" for="filterEdicao" onClick="recarregar_pagina()"><span class="to_hide">Avaliador</span></label>
+          </div>
+          <select id="avaliador" class="selectpicker form-control form-control-sm" data-style="mr-sm border " data-width="10em"
+                  title="Nada selecionado"
+                  multiple>
+            <option selected="selected" title="Insper">Insper</option>
+            <option selected="selected" title="Externo">Externo</option>
+          </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="atualizar">
+
+    <div class="table-responsive">
+
+        <table id="AulasTable" class="table table-bordered table-hover table-sm" style="width: auto;">
+          <thead class="table-info">
+            <tr>
+              <th scope="col" style="text-align: center; width:300px;">Nome</th>
+              <th scope="col" style="text-align: center; width:300px;">e-mail</th>
+              <th scope="col" style="text-align: center; width:auto;">Aula/Data</th>
+            </tr>
+          </thead>
+          {% for aula in aulas %}
+            {% if aula.responsavel %}
+              {% if aula.responsavel.tipo_de_usuario == 2 or aula.responsavel.tipo_de_usuario == 4 %}
+                <tr class="item" data-user="Insper">
+                  <td data-sort="{{aula.responsavel.get_full_name}}"><a class="imprimir" href="{% url 'professor_detail' aula.responsavel.professor.id %}">{{aula.responsavel.get_full_name}}</a>
+              {% elif aula.responsavel.tipo_de_usuario == 3 %}
+                <tr class="item" data-user="Externo">
+                  <td data-sort="{{aula.responsavel.get_full_name}}"><a class="imprimir" href="{% url 'parceiro_detail' aula.responsavel.parceiro.id %}">{{aula.responsavel.get_full_name}}</a>
+              {% else %}
+                <tr class="item"><td>Erro ao identificar usuário
+              {% endif %}</td>
+                <td><a href="mailto:{{aula.responsavel.email}}">&lt;{{aula.responsavel.email}}&gt;</a></td>
+                <td style="text-align: left;">{{aula.descricao}} ({{aula.startDate}})</td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </table>
+        <br>
+
+    </div>
+
+    <script>
+      function carrega_pagina() {
+      };
+      window.onload = carrega_pagina
+    </script>
+
+  </div>
+
+  {% include "edicoes_ajax.html" with tabela='Aulas' %}
+
+  <script>
+    $("#avaliador").on("changed.bs.select", function (e, clickedIndex, isSelected, previousValue) {
+      table = $('#BancasTable').DataTable();
+      $.fn.dataTable.ext.search.push(
+        function(settings, data, dataIndex) {
+          if(table) {
+            {% comment %} Somente mostra elemento selecionado {% endcomment %}
+            var val = $('#avaliador').selectpicker('val');
+            return(val.includes($(table.row(dataIndex).node()).attr("data-user")));
+          }
+        }
+     );
+     table.draw();
+    });
+  </script>
+
+{% endblock %}
