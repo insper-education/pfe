@@ -80,7 +80,6 @@ def get_calendario_context(user=None):
         "quinzenais": quinzenais,
         "feedbacks": feedbacks,
         "coordenacao": coordenacao,
-        "semestre": configuracao.semestre,
         "tipos_eventos": TIPO_EVENTO,
         "Evento": Evento,
     }

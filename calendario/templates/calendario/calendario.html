@@ -888,7 +888,7 @@
             );
           } else if (eventos.length > 3) {
             $(element).css(  // muitas cores
-              'background', $(element).css('background-image') + ', ' + "-webkit-radial-gradient(blue, yellow, red, green)" 
+              'background', $(element).css('background-image') + ', ' + "-webkit-radial-gradient(yellow, lightblue, PaleVioletRed, green)" 
             );
           }
 
@@ -1027,7 +1027,7 @@
 
     // Esconde e mostra meses do semestre
     function mostra_semestre(semestre) {
-      if(calendar == null) { // COnforme o caso o calendario pode ainda não estar pronto.
+      if(calendar == null) { // Conforme o caso o calendario pode ainda não estar pronto.
          window.setTimeout(mostra_semestre.bind(null, semestre), 100);
       } else {  
         calendar.render();
@@ -1185,11 +1185,12 @@
     window.onload = carrega_semestre
     
     function carrega_semestre() {
-      {% if semestre == 1 %}
-        primeiro()
-      {% else %}
-        segundo()
-      {% endif %}
+      var today = new Date();
+      if(today.getMonth() <= 7) {
+        primeiro();
+      } else {
+        segundo();
+      }
     }
 
   </script>
