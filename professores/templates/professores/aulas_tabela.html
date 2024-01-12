@@ -27,9 +27,9 @@
     <div class="ml-3">
       <div class="input-group input-group-sm">
           <div class="input-group-prepend">
-            <label class="to_label input-group-text" for="filterEdicao" onClick="recarregar_pagina()"><span class="to_hide">Avaliador</span></label>
+            <label class="to_label input-group-text" for="filterEdicao" onClick="recarregar_pagina()"><span class="to_hide">Pessoa</span></label>
           </div>
-          <select id="avaliador" class="selectpicker form-control form-control-sm" data-style="mr-sm border " data-width="10em"
+          <select id="usuario" class="selectpicker form-control form-control-sm" data-style="mr-sm border " data-width="10em"
                   title="Nada selecionado"
                   multiple>
             <option selected="selected" title="Insper">Insper</option>
@@ -43,12 +43,12 @@
 
     <div class="table-responsive">
 
-        <table id="AulasTable" class="table table-bordered table-hover table-sm" style="width: auto;">
+        <table id="AulasTable" class="table table-bordered table-hover table-sm">
           <thead class="table-info">
             <tr>
-              <th scope="col" style="text-align: center; width:300px;">Nome</th>
-              <th scope="col" style="text-align: center; width:300px;">e-mail</th>
-              <th scope="col" style="text-align: center; width:auto;">Aula/Data</th>
+              <th scope="col" style="text-align: center; width:20%;">Nome</th>
+              <th scope="col" style="text-align: center; width:20%;">e-mail</th>
+              <th scope="col" style="text-align: center;">Aula/Data</th>
             </tr>
           </thead>
           {% for aula in aulas %}
@@ -62,7 +62,7 @@
               {% else %}
                 <tr class="item"><td>Erro ao identificar usuário
               {% endif %}</td>
-                <td><a href="mailto:{{aula.responsavel.email}}">&lt;{{aula.responsavel.email}}&gt;</a></td>
+                <td><a href="mailto:{{aula.responsavel.email}}">{{aula.responsavel.email}}</a></td>
                 <td style="text-align: left;">{{aula.descricao}} ({{aula.startDate}})</td>
               </tr>
             {% endif %}
@@ -73,8 +73,7 @@
     </div>
 
     <script>
-      function carrega_pagina() {
-      };
+      function carrega_pagina() {};
       window.onload = carrega_pagina
     </script>
 
@@ -83,13 +82,13 @@
   {% include "edicoes_ajax.html" with tabela='Aulas' %}
 
   <script>
-    $("#avaliador").on("changed.bs.select", function (e, clickedIndex, isSelected, previousValue) {
-      table = $('#BancasTable').DataTable();
+    $("#usuario").on("changed.bs.select", function (e, clickedIndex, isSelected, previousValue) {
+      table = $('#AulasTable').DataTable();
       $.fn.dataTable.ext.search.push(
         function(settings, data, dataIndex) {
           if(table) {
             {% comment %} Somente mostra elemento selecionado {% endcomment %}
-            var val = $('#avaliador').selectpicker('val');
+            var val = $('#usuario').selectpicker('val');
             return(val.includes($(table.row(dataIndex).node()).attr("data-user")));
           }
         }

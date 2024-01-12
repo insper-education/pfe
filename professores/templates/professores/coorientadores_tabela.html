@@ -31,7 +31,7 @@
                 <a class="imprimir" href="{% url 'professor_detail' professor.id %}">{{professor.user.get_full_name}}</a>
               </td>
               <td data-sort="{{professor.user.email}}">
-                <a class="imprimir" href="mailto:{{professor.user.email}}">&lt;{{professor.user.email}}&gt;</a>
+                <a class="imprimir" href="mailto:{{professor.user.email}}">{{professor.user.email}}</a>
               </td>
               <td style="text-align: center;"> 
                 {{grupos|length}}
