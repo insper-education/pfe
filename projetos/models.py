@@ -666,10 +666,10 @@ class Evento(models.Model):
                                                       null=True, blank=True,
                                                       help_text="Define o tipo do evento a ocorrer")
 
-    descricao = models.CharField(max_length=500, blank=True,
+    descricao = models.CharField(max_length=200, blank=True,
                                  help_text="Descrição do evento")
 
-    observacao = models.CharField(max_length=80, blank=True,
+    observacao = models.CharField(max_length=160, blank=True,
                                   help_text="Qualquer observação relavante")
     
     responsavel = models.ForeignKey("users.PFEUser", null=True, blank=True,

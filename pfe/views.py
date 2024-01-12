@@ -35,10 +35,18 @@ def custom_400(request, exception):
     return HttpResponse(mensagem)
 
 
+from projetos.models import Evento
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
-    message = "Nada Feito"
+    message = "Feito"
+
+    eventos = Evento.objects.all()
+    for e in eventos:
+        descricao = e.descricao
+        e.descricao = e.observacao
+        e.observacao = descricao
+        e.save()
 
     return HttpResponse(message)

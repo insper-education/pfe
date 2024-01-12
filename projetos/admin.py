@@ -333,7 +333,7 @@ class AvisoAdmin(admin.ModelAdmin):
 class EventoAdmin(admin.ModelAdmin):
     """Todos os eventos do PFE com suas datas."""
 
-    list_display = ('get_title', 'startDate', 'endDate', 'location', )
+    list_display = ('get_title', 'startDate', 'endDate', 'location', "descricao", "observacao")
     actions = [dup_entrada, dup_event_182]
     list_filter = (EventoFilter,)
     ordering = ('-startDate',)
