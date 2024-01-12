@@ -656,21 +656,25 @@ class Evento(models.Model):
     """Eventos para a agenda do PFE."""
 
     location = models.CharField(blank=True, max_length=80,
-                                help_text='Onde Ocorrerá o Evento')
+                                help_text="Onde Ocorrerá o Evento")
     startDate = models.DateField(default=datetime.date.today, blank=True,
-                                 help_text='Inicio do Evento')
+                                 help_text="Inicio do Evento")
     endDate = models.DateField(default=datetime.date.today, blank=True,
-                               help_text='Fim do Evento')
+                               help_text="Fim do Evento")
 
     tipo_de_evento = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_EVENTO],
                                                       null=True, blank=True,
-                                                      help_text='Define o tipo do evento a ocorrer')
+                                                      help_text="Define o tipo do evento a ocorrer")
 
     descricao = models.CharField(max_length=500, blank=True,
-                                 help_text='Descrição do evento')
+                                 help_text="Descrição do evento")
 
     observacao = models.CharField(max_length=80, blank=True,
-                                  help_text='Qualquer observação relavante')
+                                  help_text="Qualquer observação relavante")
+    
+    responsavel = models.ForeignKey("users.PFEUser", null=True, blank=True,
+                                   on_delete=models.SET_NULL,
+                                   help_text="Responsável pelo evento, por exemplo professor que ministrou a aula")
 
     # Usar get_tipo_de_evento_display em vez disso
     def get_title(self):

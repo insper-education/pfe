@@ -17,6 +17,7 @@
   <span class="titulo">{{titulo}}</span>
 
   {% include "edicoes.html" %}
+  {% include "informacoes.html" %}
 
   <div class="atualizar">
 
@@ -27,12 +28,15 @@
           {% for professor, grupos in orientacoes %} 
             <tr class="item">
               <td data-sort="{{professor.user.get_full_name}}">
-                <a class="imprimir" href="{% url 'professor_detail' professor.id %}">{{professor.user.get_full_name}}</a> <a href="mailto:{{professor.user.email}}">&lt;{{professor.user.email}}&gt;</a>
+                <a class="imprimir" href="{% url 'professor_detail' professor.id %}">{{professor.user.get_full_name}}</a>
+              </td>
+              <td data-sort="{{professor.user.email}}">
+                <a class="imprimir" href="mailto:{{professor.user.email}}">&lt;{{professor.user.email}}&gt;</a>
               </td>
               <td style="text-align: center;"> 
                 {{grupos|length}}
               </td>
-              <td style="text-align: left;">{% for grupo in grupos %}<p>&bull; [{{grupo.projeto.ano}}.{{grupo.projeto.semestre}}] {{grupo.projeto.get_titulo}} ({{grupo.projeto.organizacao}}) { {{ grupo.projeto.alocacao_set.all.count }} estudante(s) }<br></p>{% endfor %}</td>
+              <td style="text-align: left;">{% for grupo in grupos %}<p>&bull; <span class="semestre">[{{grupo.projeto.ano}}.{{grupo.projeto.semestre}}] </span><span class="organizacao">({{grupo.projeto.organizacao}}) </span><span class="titulo_projeto">{{grupo.projeto.get_titulo}} </span><span class="tamanho_grupo">{ {{ grupo.projeto.alocacao_set.all.count }} estudante(s) }</span><br></p>{% endfor %}</td>
             </tr>
           {% endfor %}
         </table>

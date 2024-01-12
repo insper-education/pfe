@@ -1520,7 +1520,7 @@ def orientadores_tabela(request):
 
             orientacoes = zip(professores, grupos)
 
-        cabecalhos = ["Nome", "Grupos", "Projetos", ]
+        cabecalhos = ["Nome", "e-mail", "Grupos", "Projetos", ]
 
         context = {
             "orientacoes": orientacoes,
@@ -1530,9 +1530,17 @@ def orientadores_tabela(request):
     else:
         edicoes, _, _ = get_edicoes(Projeto, anual=True)
         titulo = "Alocação de Orientadores"
+        informacoes = [
+            (".semestre", "Semestre"),
+            (".organizacao", "Organização"),
+            (".titulo_projeto", "Título do Projeto"),
+            (".tamanho_grupo", "Tamanho do Grupo"),
+        ]
+
         context = {
             "edicoes": edicoes,
             "titulo": titulo,
+            "informacoes": informacoes,
         }
 
     return render(request, 'professores/orientadores_tabela.html', context)
@@ -1548,7 +1556,7 @@ def coorientadores_tabela_completa(request):
     titulo = "Alocação de Coorientadores"
 
     context = {
-        'anos': coorientadores,
+        "anos": coorientadores,
         "cabecalhos": cabecalhos,
         "titulo": titulo,
     }
@@ -1556,13 +1564,13 @@ def coorientadores_tabela_completa(request):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def coorientadores_tabela(request):
     """Alocação dos Coorientadores por semestre."""
     configuracao = get_object_or_404(Configuracao)
 
     if request.is_ajax():
-        if 'edicao' in request.POST:
+        if "edicao" in request.POST:
             edicao = request.POST['edicao']
 
             professores_pfe = Professor.objects.all().order_by(Lower("user__first_name"),
@@ -1570,10 +1578,10 @@ def coorientadores_tabela(request):
 
             professores = []
 
-            if edicao == 'todas':
+            if edicao == "todas":
                 professores_pfe = professores_pfe.filter(user__coorientador__isnull=False).distinct()
             else:
-                ano, semestre = request.POST['edicao'].split('.')
+                ano, semestre = request.POST["edicao"].split('.')
                 if semestre == "1/2":
                     professores_pfe = professores_pfe.filter(user__coorientador__projeto__ano=ano).distinct()
                 else:
@@ -1588,7 +1596,7 @@ def coorientadores_tabela(request):
 
                 grupos_pfe = Coorientador.objects.filter(usuario=professor.user)
 
-                if edicao != 'todas':
+                if edicao != "todas":
                     if semestre == "1/2":
                         grupos_pfe = grupos_pfe.filter(projeto__ano=ano)
                     else:
@@ -1599,7 +1607,7 @@ def coorientadores_tabela(request):
 
             orientacoes = zip(professores, grupos)
 
-        cabecalhos = ["Nome", "Grupos", "Projetos", ]
+        cabecalhos = ["Nome", "e-mail", "Grupos", "Projetos", ]
     
         context = {
             "orientacoes": orientacoes,
@@ -1609,9 +1617,17 @@ def coorientadores_tabela(request):
     else:
         edicoes, _, _ = get_edicoes(Projeto, anual=True)
         titulo = "Alocação de Coorientadores"
+        informacoes = [
+            (".semestre", "Semestre"),
+            (".organizacao", "Organização"),
+            (".titulo_projeto", "Título do Projeto"),
+            (".tamanho_grupo", "Tamanho do Grupo"),
+        ]
+
         context = {
             "edicoes": edicoes,
             "titulo": titulo,
+            "informacoes": informacoes,
         }
 
     return render(request, 'professores/coorientadores_tabela.html', context)
