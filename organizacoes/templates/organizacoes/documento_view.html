@@ -93,8 +93,8 @@
       {% if tipo %}
         <div class="col-sm form-label">
           <span for="tipo_documento">Tipo:</span>
-          <input type="hidden" id="tipo_documento" name="tipo_documento" value="{{tipo}}"/>
-          {{tipo_documento}}
+          <input type="hidden" id="tipo_documento" name="tipo_documento" value="{{tipo.id}}"/>
+          {{tipo.nome}}
         </div>
       {% else %}
         <label for="tipo_documento" class="col-sm-1 col-form-label">Tipo</label>
@@ -102,7 +102,7 @@
         <select id="tipo_documento" name="tipo_documento" class="form-control" required="required" >
           <option disabled selected value> -- selecione tipo de documento -- </option>
           {% for retorno in tipos_documentos %}
-            <option value="{{retorno.id}}" {% if retorno.id == tipo %}selected="selected"{% endif %}>
+            <option value="{{retorno.id}}" {% if retorno.id == tipo.id %}selected="selected"{% endif %}>
               {{retorno.nome}}
             </option>
           {% endfor %}
@@ -119,8 +119,7 @@
         <script>
           function updateDateTime() {
             const now = new Date();
-            const currentDateTime = now.toLocaleString();
-            document.querySelector('#datetime').textContent = currentDateTime;
+            document.querySelector('#datetime').textContent = now.toLocaleString('pt-BR');
           }
           updateDateTime();
           setInterval(updateDateTime, 1000);
@@ -133,35 +132,39 @@
       {% endif %}
     </div>
 
-    <div class="mb-3 row">
-      <label for="arquivo" class="col-sm-1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.5em;">Arquivo</label>
-      <div class="col-sm-11">
-        <input required id="arquivo" type="file" name="arquivo" class="form-control" style="border: 0px; padding-left: 0px;"
-               accept="text/plain, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation, image/*, video/mp4, video/x-m4v, video/webm, video/x-matroska, video/*, .mkv">
-        {% if documentos %}
-          <input type="hidden" id="documentos" name="documentos" value="{{documento_id}}"/>
-          <small>Arquivo atual: {% include "documentos.html" %}</small>
-        {% endif %}
+    {% if not tipo or tipo and tipo.arquivo %}
+      <div class="mb-3 row">
+        <label for="arquivo" class="col-sm-1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.5em;">Arquivo</label>
+        <div class="col-sm-11">
+          <input required id="arquivo" type="file" name="arquivo" class="form-control" style="border: 0px; padding-left: 0px;"
+                accept="text/plain, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation, image/*, video/mp4, video/x-m4v, video/webm, video/x-matroska, video/*, .mkv">
+          {% if documentos %}
+            <input type="hidden" id="documentos" name="documentos" value="{{documento_id}}"/>
+            <small>Arquivo atual: {% include "documentos.html" %}</small>
+          {% endif %}
+        </div>
       </div>
-    </div>
-    
-    {% if configuracao.maxMB_filesize %}
-      <script>
-        document.getElementById("arquivo").onchange = function() {
-          if(this.files && this.files[0] && this.files[0].size > {{configuracao.maxMB_filesize}}*1048576){
-            alert("Tamanho do arquivo maior que o permitido de {{configuracao.maxMB_filesize}}Mb");
-            this.value = "";
+
+      {% if configuracao.maxMB_filesize %}
+        <script>
+          document.getElementById("arquivo").onchange = function() {
+            if(this.files && this.files[0] && this.files[0].size > {{configuracao.maxMB_filesize}}*1048576){
+              alert("Tamanho do arquivo maior que o permitido de {{configuracao.maxMB_filesize}}Mb");
+              this.value = "";
+            }
           }
-        }
-      </script>
+        </script>
+      {% endif %}
     {% endif %}
     
-    <div class="mb-3 row">
-      <label for="link" class="col-sm-1 col-form-label">Link</label>
-      <div class="col-sm-11">
-        <input class="form-control" type="text" style="max-width:100%;display:block" size="73" maxlength="{% max_length Documento "link" %}" id="link" name="link" placeholder="https://">
+    {% if not tipo or tipo and tipo.link %}
+      <div class="mb-3 row">
+        <label for="link" class="col-sm-1 col-form-label">Link</label>
+        <div class="col-sm-11">
+          <input class="form-control" type="text" style="max-width:100%;display:block" size="73" maxlength="{% max_length Documento "link" %}" id="link" name="link" placeholder="https://">
+        </div>
       </div>
-    </div>
+    {% endif %}
 
     <div class="mb-3 row">
       <label for="lingua_do_documento" class="col-sm-1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.2em;">Língua</label>
@@ -234,16 +237,20 @@
 
       $.ajax({
         type: "POST",
-        {% if documento_id %}
-          url: "{% url 'adiciona_documento' organizacao.id projeto.id tipo documento_id %}",
-        {% elif tipo %}
-          url: "{% url 'adiciona_documento' organizacao.id projeto.id tipo %}",
-        {% elif projeto %}
-          url: "{% url 'adiciona_documento' organizacao.id projeto.id %}",
-        {% elif organizacao %}
-          url: "{% url 'adiciona_documento' organizacao.id %}",
-        {% else %}
-          url: "{% url 'adiciona_documento' %}",
+        {% if adiciona == "adiciona_documento" %}
+          {% if documento_id %}
+            url: "{% url adiciona organizacao.id projeto.id tipo documento_id %}",
+          {% elif tipo %}
+            url: "{% url adiciona organizacao.id projeto.id tipo.nome %}",
+          {% elif projeto %}
+            url: "{% url adiciona organizacao.id projeto.id %}",
+          {% elif organizacao %}
+            url: "{% url adiciona organizacao.id %}",
+          {% else %}
+            url: "{% url adiciona %}",
+          {% endif %}
+        {% elif adiciona == "adiciona_documento_estudante" %}
+          url: "{% url adiciona tipo.nome %}",
         {% endif %}
         data: formData,
         processData: false,

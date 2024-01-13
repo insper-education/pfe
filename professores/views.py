@@ -920,8 +920,6 @@ def banca_avaliar(request, slug):
             realizada = avaliacoes_anteriores.exists()
 
             # Mover avaliação anterior para base de dados de Avaliações Velhas
-            ### Tinha evitado fazer isso, mas fatalmente vou esquecer de filtrar as avaliações antigas
-            ### Assim o melhor é tirar das avaliações definitivas
             move_avaliacoes(avaliacoes_anteriores, observacoes_anteriores)
 
             objetivos_possiveis = len(objetivos)
@@ -968,7 +966,7 @@ def banca_avaliar(request, slug):
 
             # Envio de mensagem para Avaliador
             message = mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, objetivos_possiveis, realizada)
-            subject = 'Avaliação de Banca PFE : {0}'.format(banca.projeto)
+            subject = "Avaliação de Banca PFE : {0}".format(banca.projeto)
             recipient_list = [avaliador.email, ]
             check = email(subject, recipient_list, message)
             if check != 1:

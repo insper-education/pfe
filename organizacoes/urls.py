@@ -30,25 +30,33 @@ urlpatterns = [
         views.anotacao,
         name='anotacao'),
 
-    path('adiciona_documento/',
+    path("adiciona_documento/",
         views.adiciona_documento,
         name='adiciona_documento'),
 
-    path('adiciona_documento/<str:organizacao_id>',
+    path("adiciona_documento/<str:organizacao_id>",
         views.adiciona_documento,
         name='adiciona_documento'),
 
-    path('adiciona_documento/<str:organizacao_id>/<str:projeto_id>',
+    path("adiciona_documento/<str:organizacao_id>/<str:projeto_id>",
         views.adiciona_documento,
         name='adiciona_documento'),
 
-    path('adiciona_documento/<str:organizacao_id>/<str:projeto_id>/<str:tipo_id>',
+    path("adiciona_documento/<str:organizacao_id>/<str:projeto_id>/<str:tipo_nome>",
         views.adiciona_documento,
         name='adiciona_documento'),
 
-    path('adiciona_documento/<str:organizacao_id>/<str:projeto_id>/<str:tipo_id>/<str:documento_id>',
+    path("adiciona_documento/<str:organizacao_id>/<str:projeto_id>/<str:tipo_nome>/<str:documento_id>",
         views.adiciona_documento,
         name='adiciona_documento'),
+    
+    path("adiciona_documento_estudante/<str:tipo_nome>",
+        views.adiciona_documento_estudante,
+        name='adiciona_documento_estudante'),
+
+    path("adiciona_documento_estudante/<str:tipo_nome>/<str:documento_id>",
+        views.adiciona_documento_estudante,
+        name='adiciona_documento_estudante'),
 
     path('carrega_proposta/',
         views.carrega_proposta,

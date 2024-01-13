@@ -5,12 +5,12 @@
 {% endcomment %}
 
 <style>
-.opt_short {display: none;}
-.opt_full {display: inline;}
-@media screen and (max-width: 800px) {
-  .opt_short {display: inline;}
-  .opt_full {display: none;}
-}
+  .opt_short {display: none;}
+  .opt_full {display: inline;}
+  @media screen and (max-width: 800px) {
+    .opt_short {display: inline;}
+    .opt_full {display: none;}
+  }
 </style>
 
 {% if documentos %}
@@ -38,7 +38,7 @@
         - {{documento.projeto.get_titulo}}
       {% endif %}
     {% endif %}  
-    {% if documento.usuario %}
+    {% if documento.usuario and documento.tipo_documento.individual %}
       - {{ documento.usuario.get_full_name }} 
     {% endif %}
 

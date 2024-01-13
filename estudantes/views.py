@@ -566,20 +566,29 @@ def exames_pesos(request):
     context = {
         "semestres": semestres,
     }
-    return render(request, 'academica/exames_pesos.html', context)
+    return render(request, "academica/exames_pesos.html", context)
 
 
 @login_required
-@permission_required("users.altera_professor", raise_exception=True)
 def submissao_documento(request):
     """Submissão de documentos pelos estudantes."""
 
-    projeto = Projeto.objects.get(id=167)
+    if request.user.tipo_de_usuario != 1:  # Não é Estudante
+        return HttpResponse("Você não possui conta de estudante.", status=401)
+    
+    configuracao = get_object_or_404(Configuracao)
+
+    alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
+    projeto = alocacao.projeto
+    
     composicoes = filtra_composicoes(Composicao.objects.filter(entregavel=True), projeto.ano, projeto.semestre)
     
     itens = []
     for comp in composicoes:
         itens.append([comp.tipo_documento,
+                      
+                      Documento.objects.filter(tipo_documento=comp.tipo_documento, projeto=projeto, usuario=request.user)
+                      if comp.tipo_documento.individual else \
                       Documento.objects.filter(tipo_documento=comp.tipo_documento, projeto=projeto),
 
                       Evento.objects.filter(tipo_de_evento=comp.evento, 
@@ -595,7 +604,7 @@ def submissao_documento(request):
         "itens": itens,
         "MEDIA_URL": settings.MEDIA_URL,
     }
-    return render(request, 'estudantes/submissao_documento.html', context)
+    return render(request, "estudantes/submissao_documento.html", context)
 
 
 @login_required

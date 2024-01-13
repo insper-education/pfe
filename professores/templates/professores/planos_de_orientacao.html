@@ -42,7 +42,7 @@
             {% endwith %}
            {% else %}
             class="open-documento"
-            data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id "Plano de Orientação" documento.id %}" 
+            data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'Plano de Orientação' documento.id %}" 
            {% endif %}
            ><b>&#128463;
         {% empty %}
@@ -50,7 +50,7 @@
            data-toggle="tooltip" data-html="true" animation="true" title="Não entregue"
            {% if projeto.periodo != "Anteriores" %}
             class="open-documento"
-            data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id "Plano de Orientação" %}"
+            data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'Plano de Orientação' %}"
            {% endif %}
             ><b>&#128460;
         {% endfor %}</b>

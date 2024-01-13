@@ -6,4 +6,5 @@ from .models import TipoDocumento
 @admin.register(TipoDocumento)
 class TipoDocumentoAdmin(admin.ModelAdmin):
     """Tipo Documento."""
-    list_display = ("nome", "projeto", "gravar", "arquivo", "link")
+    list_display = ("nome", "projeto", "gravar", "arquivo", "link", "individual",)
+    search_fields = ["nome",]

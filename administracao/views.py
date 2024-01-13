@@ -739,14 +739,14 @@ def montar_grupos(request):
 
     mensagem = ""
 
-    if request.method == 'POST' and user and request.user.tipo_de_usuario == 4:  # admin
+    if request.method == "POST" and user and request.user.tipo_de_usuario == 4:  # admin
 
-        if 'limpar' in request.POST:
+        if "limpar" in request.POST:
             for estudante in estudantes:
                 estudante.pre_alocacao = None
                 estudante.save()
 
-        if 'fechar' in request.POST:
+        if "fechar" in request.POST:
             for proposta in propostas:
                 alocados = []
                 for estudante in estudantes:

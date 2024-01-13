@@ -22,3 +22,15 @@ def dif_dias_hoje(value):
     """Calcula a diferença de uma data para hoje."""
     diferenca = (value - datetime.date.today()).days
     return int(diferenca)
+
+@register.filter
+def dif_diashoras_hoje(value):
+    """Calcula a diferença de uma data com hora para hoje."""
+    diferenca = (value - datetime.datetime.now()).days
+    return int(diferenca)
+
+@register.filter
+def diff_days(value, data):
+    """Calcula a diferença entre duas datas em dias."""
+    diferenca = (value.date() - data).days
+    return int(diferenca)

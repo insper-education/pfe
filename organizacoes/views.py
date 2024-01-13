@@ -7,11 +7,13 @@ Data: 14 de Dezembro de 2020
 
 import datetime
 import dateutil.parser
+import json
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.http import HttpResponseNotFound, JsonResponse, HttpResponseBadRequest
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
 from organizacoes.support import get_form_fields, cria_documento
@@ -19,7 +21,7 @@ from organizacoes.support import get_form_fields, cria_documento
 from administracao.support import limpa_texto
 
 from users.support import adianta_semestre, get_edicoes
-from users.models import PFEUser, Administrador, Parceiro, Professor, Aluno
+from users.models import PFEUser, Administrador, Parceiro, Professor, Aluno, Alocacao
 
 from projetos.models import Area, Proposta, Organizacao
 from projetos.models import Projeto, Configuracao, Feedback
@@ -105,8 +107,10 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
-def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_id=None, documento_id=None):
+def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=None, documento_id=None):
     """Cria um documento."""
+
+    configuracao = get_object_or_404(Configuracao)
     organizacao = Organizacao.objects.filter(id=organizacao_id).last()
     projeto = Projeto.objects.filter(id=projeto_id).last()
 
@@ -116,8 +120,11 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_id=No
     if projeto_id and (not projeto):
         return HttpResponseNotFound("<h1>Projeto não encontrado!</h1>")
     
-    if tipo_id and (not tipo_id.isdigit()):
-        tipo_id = TipoDocumento.objects.get(nome=tipo_id).id
+    tipo = None
+    if tipo_nome:
+        tipo = TipoDocumento.objects.get(nome=tipo_nome)
+        if request.user.tipo_de_usuario not in json.loads(tipo.gravar):  # Verifica se usuário tem privilégios para gravar tipo de arquivo
+            return HttpResponse("<h1>Sem privilégios para gravar tipo de arquivo!</h1>", status=401)
 
     if request.is_ajax() and request.method == "POST":
         erro = cria_documento(request)
@@ -128,18 +135,73 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_id=No
     context = {
         "organizacao": organizacao,
         "tipos_documentos": TipoDocumento.objects.all(),
-        "data": datetime.datetime.now(), # Meio inútil pois o datepicker já preenche
+        "data": datetime.datetime.now(),
         "Documento": Documento,
         "projetos": Projeto.objects.filter(organizacao=organizacao),
         "projeto": projeto,
-        "tipo": tipo_id,
-        "tipo_documento": TipoDocumento.objects.filter(id=tipo_id).last(),
+        "tipo": tipo,
         "organizacoes": Organizacao.objects.all(),
         "documentos": Documento.objects.filter(id=documento_id),
         "documento_id": documento_id,
         "MEDIA_URL": settings.MEDIA_URL,
-        "configuracao": get_object_or_404(Configuracao),
+        "configuracao": configuracao,
         "travado": False,
+        "adiciona": "adiciona_documento",
+    }
+
+    return render(request, "organizacoes/documento_view.html", context=context)
+
+
+@login_required
+@transaction.atomic
+#@permission_required("users.altera_professor", raise_exception=True)
+#def adiciona_documento_estudante(request, organizacao_id=None, projeto_id=None, tipo_id=None, documento_id=None):
+def adiciona_documento_estudante(request, tipo_nome=None, documento_id=None):
+    """Cria um documento pelos estudantes somente."""
+
+    if request.user.tipo_de_usuario != 1:  # Não é Estudante
+        return HttpResponse("Você não possui conta de estudante.", status=401)
+
+    configuracao = get_object_or_404(Configuracao)
+
+    alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
+    projeto = alocacao.projeto
+    organizacao = projeto.organizacao
+
+    if not organizacao:
+        return HttpResponseNotFound("<h1>Organização não encontrada!</h1>")
+
+    if not projeto:
+        return HttpResponseNotFound("<h1>Projeto não encontrado!</h1>")
+    
+    if tipo_nome:
+        tipo = TipoDocumento.objects.get(nome=tipo_nome)
+        if request.user.tipo_de_usuario not in json.loads(tipo.gravar):  # Verifica se usuário tem privilégios para gravar tipo de arquivo
+            return HttpResponse("<h1>Sem privilégios para gravar tipo de arquivo!</h1>", status=401)
+    else:
+        return HttpResponseNotFound("<h1>Tipo de submissão não identificada!</h1>")
+
+    if request.is_ajax() and request.method == "POST":
+        erro = cria_documento(request)
+        if erro:
+           return HttpResponseBadRequest(erro)
+        return JsonResponse({"atualizado": True,})
+
+    context = {
+        "organizacao": organizacao,
+        # "tipos_documentos": TipoDocumento.objects.all(),
+        "data": datetime.datetime.now(),
+        "Documento": Documento,
+        # "projetos": Projeto.objects.filter(organizacao=organizacao),
+        "projeto": projeto,
+        "tipo": tipo,
+        # "organizacoes": Organizacao.objects.all(),
+        "documentos": Documento.objects.filter(id=documento_id),
+        "documento_id": documento_id,
+        "MEDIA_URL": settings.MEDIA_URL,
+        "configuracao": configuracao,
+        "travado": True,
+        "adiciona": "adiciona_documento_estudante",
     }
 
     return render(request,

@@ -8,6 +8,7 @@ Data: 1 de Dezembro de 2023
 
 import datetime
 import dateutil.parser
+import json
 
 from collections import OrderedDict
 
@@ -80,7 +81,7 @@ def cria_documento(request):
     if projeto_id:
         projeto = Projeto.objects.get(id=projeto_id)
 
-    data = datetime.date.today()
+    data = datetime.datetime.now()
     if "data" in request.POST:
         try:
             data = dateutil.parser\
@@ -88,11 +89,15 @@ def cria_documento(request):
         except (ValueError, OverflowError):
             pass
 
-    tipo_documento = 255
+    tipo_documento = 38   # Outros
     try:
-        tipo_documento = request.POST.get("tipo_documento", "")
+        tipo_documento = int(request.POST.get("tipo_documento", 38))
     except (ValueError, OverflowError):
         pass
+
+    tipo = get_object_or_404(TipoDocumento, id=tipo_documento)
+    if request.user.tipo_de_usuario not in json.loads(tipo.gravar):  # Verifica se usuário tem privilégios para gravar tipo de arquivo
+        return "<h1>Sem privilégios para gravar tipo de arquivo!</h1>"
 
     link = request.POST.get("link", None)
     if not (link and link.strip()):
@@ -129,12 +134,14 @@ def cria_documento(request):
         documento.organizacao = get_object_or_404(Organizacao, id=request.POST["organizacao"])
     documento.projeto = projeto
     
-    documento.tipo_documento = get_object_or_404(TipoDocumento, id=tipo_documento)
+    documento.tipo_documento = tipo
     
     documento.data = data
     documento.link = link
     documento.lingua_do_documento = lingua_do_documento
     documento.confidencial = confidencial
+
+    documento.usuario = request.user
 
     if "arquivo" in request.FILES:
         arquivo = simple_upload(request.FILES["arquivo"],

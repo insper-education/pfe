@@ -14,36 +14,21 @@
   <script>{% include "tooltip.js" %}</script>
 
   <style>
-    textarea {
-      max-width:100%;
-    }
-
-    label {
-      margin: 3px;
-    }
-
-    table, td {
-        vertical-align: top;
-    }
-
+    textarea {max-width:100%;}
+    label {margin: 3px;}
+    table, td {vertical-align: top;}
     .labels {
       white-space: nowrap;
       margin-right: 2em;
     }
 
     @media only screen and (max-width: 1100px) {
-      table, th, td {
-        font-size: 14px;
-      }
+      table, th, td {font-size: 14px;}
     }
 
     @media only screen and (max-width: 1000px) {
-      table, th, td {
-        font-size: 13px;
-      }
-      .nivel {
-        display:none !important;
-      }
+      table, th, td {font-size: 13px;}
+      .nivel {display:none !important;}
     } 
 
     @media only screen and (max-width: 800px) {
@@ -51,9 +36,7 @@
         font-size: 15px;
       }
 
-      tbody {
-        display: flex;
-      }
+      tbody {display: flex;}
 
       tr {
         display: flex;
@@ -62,12 +45,10 @@
 
       th, td {        
         flex-basis: 100%;
-        min-height: calc(130px - 5vw);;
+        min-height: calc(130px - 5vw);
       }
 
-      .labels {
-        margin-right: 0.2em;
-      }
+      .labels {margin-right: 0.2em;}
       
       .nav-side-wrapper {
         display: flex;
@@ -83,22 +64,16 @@
         flex-direction: column;
         justify-content: space-around;
         align-items: center;
-        
       }
-      
 
     }
 
     @media only screen and (max-width: 500px) {
-      table, th, td {
-        font-size: 14px;
-      }
+      table, th, td {font-size: 14px;}
     }
 
     {% comment %} THIS MAKE RADIO BUTTONS APPEAR IN A BETTER PLACE {% endcomment %}
-    input[type="radio"] {
-      vertical-align:-0.1rem;
-    }
+    input[type="radio"] {vertical-align:-0.1rem;}
 
   </style>
 
@@ -106,7 +81,7 @@
 
 {% block content %}
 
-  <div id="language_button" style="user-select: none; border-radius: 10px;border: 2px solid #AAAAAA;float: right; margin-top: 4px; margin-left: 8px"></div>
+  <div id="language_button" style="user-select: none; border-radius: 10px;border: 2px solid #AAAAAA;float: right; margin-top: 4px; margin-left: 8px;"></div>
 
   <span class="titulo">
     <span lang="pt">Formulário de Avaliação de Bancas</span>
@@ -314,7 +289,9 @@
         <span lang="pt" class="red-bold">Não foram definidos Objetivos de Aprendizagem para essa Avaliação.</span><br>
         <span lang="en" class="red-bold">No Learning Goals were defined for this Assessment.</span><br>
       {% endif %}
+
       
+      {% comment %} Observações somente para leitura de orientador/coordenador {% endcomment %}
       <br><b data-toggle="tooltip" data-html="true" animation="true"
              title="Insira qualquer observação que achar relavante. O texto será encaminhado para os orientadores do projeto.">
         <span lang="pt">Observações (somente enviada para orientador)</span ><span lang="en">Evaluation Observations (only sent to advisor)</span>:
