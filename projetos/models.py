@@ -778,10 +778,10 @@ class Banca(models.Model):
 
     def get_absolute_url(self):
         """Caminho para avaliar uma banca."""
-        return reverse('banca_avaliar', kwargs={'slug': self.slug})
+        return reverse("banca_avaliar", kwargs={"slug": self.slug})
 
     class Meta:
-        ordering = ['startDate']
+        ordering = ["startDate"]
 
     def get_tipo(self):
         """Retorna o tipo da banca."""
@@ -795,6 +795,18 @@ class Banca(models.Model):
             if configuracao.semestre == 2 and self.startDate.month > 7:
                 return "Atuais"
         return "Anteriores"
+    
+    def get_observacoes_estudantes(self):
+        """Retorna as observações dos estudantes."""
+        if self.tipo_de_banca == 0:
+            observacoes = Observacao.objects.filter(projeto=self.projeto, observacoes_estudantes__isnull=False, exame__titulo="Banca Final")
+        elif self.tipo_de_banca == 1:
+            observacoes = Observacao.objects.filter(projeto=self.projeto, observacoes_estudantes__isnull=False, exame__titulo="Banca Intermediária")
+        elif self.tipo_de_banca == 2:
+            observacoes = Observacao.objects.filter(projeto=self.projeto, observacoes_estudantes__isnull=False, exame__titulo="Falconi")
+        else:
+            observacoes = Observacao.objects.none()
+        return observacoes
 
 class Encontro(models.Model):
     """Encontros (para dinâmicas de grupos)."""
@@ -1587,25 +1599,28 @@ class Observacao(models.Model):
                                    help_text='Data e hora da comunicação') # hora ordena para dia
 
     # Somente útil para Bancas
-    avaliador = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
-                                  help_text='avaliador do projeto')
+    avaliador = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
+                                  help_text="avaliador do projeto")
 
     # Para Bancas e Entregas em Grupo
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='projeto que foi avaliado')
+                                help_text="projeto que foi avaliado")
 
     # Para Alocações dos estudantes (caso um aluno reprove ele teria duas alocações)
-    alocacao = models.ForeignKey('users.Alocacao', null=True, blank=True,
-                                 on_delete=models.SET_NULL, related_name='observacao_alocado',
-                                 help_text='relacao de alocação entre projeto e estudante')
+    alocacao = models.ForeignKey("users.Alocacao", null=True, blank=True,
+                                 on_delete=models.SET_NULL, related_name="observacao_alocado",
+                                 help_text="relacao de alocação entre projeto e estudante")
 
     # Se houver, usando pois no Blackboard alguns estão dessa forma
     objetivo = models.ForeignKey(ObjetivosDeAprendizagem, related_name='objetivo_observacao',
                                  on_delete=models.SET_NULL, null=True, blank=True,
-                                 help_text='Objetivo de Aprendizagem')
+                                 help_text="Objetivo de Aprendizagem")
 
     observacoes_orientador = models.TextField(max_length=2048, null=True, blank=True,
-                                   help_text='qualquer observação relevante')
+                                   help_text="Observações a serem compartilhadas somente com o orientador do projeto")
+
+    observacoes_estudantes = models.TextField(max_length=2048, null=True, blank=True,
+                                   help_text="Observações a serem compartilhadas com os estudantes do projeto")
 
     @classmethod
     def create(cls, projeto):

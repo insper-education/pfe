@@ -20,12 +20,8 @@
       padding: 8px;
     }
 
-    table, th, td {
-      border: 1px solid lightgrey;
-    }
-
+    table, th, td {border: 1px solid lightgrey;}
     tr:nth-child(even) {background-color: #f2f2f2;}
-  
     ul {padding-left: 28px;}
 
   </style>
@@ -126,8 +122,11 @@
 
               {% endif %}{% endfor %}
               
+              {% if objs.observacoes_estudantes %}  
+                <li><span style="font-weight: 500;">Observações para Estudantes</span>: {{objs.observacoes_estudantes}}</li>
+              {% endif %}
               {% if objs.observacoes_orientador %}  
-                <li><span style="font-weight: 500;">Observações para o Orientador</span>: {{objs.observacoes_orientador}}</li>
+                <li><span style="font-weight: 500;">Observações para Orientador</span>: {{objs.observacoes_orientador}}</li>
               {% endif %}
 
             </ul>
@@ -190,9 +189,12 @@
                 </script>
 
               {% endif %}{% endfor %}
-              
-              {% if objs.observacoes_orientador %}
-                <li><span style="font-weight: 500;">Observações para o Orientador</span>: {{objs.observacoes_orientador}}</li>
+
+              {% if objs.observacoes_estudantes %}  
+                <li><span style="font-weight: 500;">Observações para Estudantes</span>: {{objs.observacoes_estudantes}}</li>
+              {% endif %}
+              {% if objs.observacoes_orientador %}  
+                <li><span style="font-weight: 500;">Observações para Orientador</span>: {{objs.observacoes_orientador}}</li>
               {% endif %}
               
             </ul>
@@ -253,9 +255,12 @@
                 </script>
 
               {% endif %}{% endfor %}
-              
+
+              {% if objs.observacoes_estudantes %}  
+                <li><span style="font-weight: 500;">Observações para Estudantes</span>: {{objs.observacoes_estudantes}}</li>
+              {% endif %}
               {% if objs.observacoes_orientador %}  
-                <li><span style="font-weight: 500;">Observações para o Orientador</span>: {{objs.observacoes_orientador}}</li>
+                <li><span style="font-weight: 500;">Observações para Orientador</span>: {{objs.observacoes_orientador}}</li>
               {% endif %}
 
             </ul>

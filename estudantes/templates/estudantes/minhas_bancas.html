@@ -6,6 +6,15 @@
 {% endcomment %}
 
 {% block head %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
+  <style>
+    ul,ol {
+      margin: 0px 0px 8px 0px;
+      padding: 0px 0px 0px 1.5em;
+
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
@@ -17,10 +26,8 @@
   {% endif %}
 
   {% if bancas %}
-    <table id="MinhasBancasTable">
-      {% for banca in bancas %} 
-      <tr class="item">
-        <td>
+    {% for banca in bancas %} 
+      <div class="div_arredondado">
           {% if banca.startDate %}
             <b>Horário:</b> {{banca.startDate.date}} ({{banca.startDate|date:"l"}}) das {{banca.startDate.time}}
           {% endif %}
@@ -67,33 +74,43 @@
             {% else %}
               <b>Orientador{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
             {% endif %}
-            {{banca.projeto.orientador.user.get_full_name}} 
+            {{banca.projeto.orientador.user.get_full_name}} <a href="mailto:{{banca.projeto.orientador.user.email}}">&lt;{{banca.projeto.orientador.user.email}}&gt;</a>
           {% endif %}
 
           <br>
-          <b>Banca</b>
+          <b>Membros da Banca</b>
           <ol>
             {% if banca.membro1 %}
             <li>
-              {{banca.membro1.get_full_name}}
+              {{banca.membro1.get_full_name}} <a href="mailto:{{banca.membro1.email}}">&lt;{{banca.membro1.email}}&gt;</a>
             </li>
             {% endif %}
             {% if banca.membro2 %}
             <li>
-              {{banca.membro2.get_full_name}}
+              {{banca.membro2.get_full_name}} <a href="mailto:{{banca.membro2.email}}">&lt;{{banca.membro2.email}}&gt;</a>
             </li>
             {% endif %}
             {% if banca.membro3 %}
             <li>
-              {{banca.membro3.get_full_name}}
+              {{banca.membro3.get_full_name}} <a href="mailto:{{banca.membro3.email}}">&lt;{{banca.membro3.email}}&gt;</a>
             </li>
             {% endif %}
           </ol>
 
-        </td>
-      </tr>
+          {% if banca.get_observacoes_estudantes %}
+            <b>Observações realizadas pelos membros da banca:</b><br>
+            <ul>
+            {% for observacao in banca.get_observacoes_estudantes %}
+              {% if observacao.observacoes_estudantes %}
+                <li>{{observacao.observacoes_estudantes}}</li>
+              {% endif %}
+            {% endfor %}
+            </ul>
+          {% endif %}
+
+        </div>
       {% endfor %}
-    </table>
+  
   {% else %}
     <p>Não existem bancas agendadas para você.</p>
   {% endif %}

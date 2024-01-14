@@ -289,15 +289,21 @@
         <span lang="pt" class="red-bold">Não foram definidos Objetivos de Aprendizagem para essa Avaliação.</span><br>
         <span lang="en" class="red-bold">No Learning Goals were defined for this Assessment.</span><br>
       {% endif %}
+      
+      {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
+      <label for="observacoes_estudantes"><b data-toggle="tooltip" data-html="true" animation="true"
+             title="Insira qualquer observação que achar relavante para o grupo de estudantes.">
+        <span lang="pt">Observações Estudantes (enviada para todo o grupo)</span ><span lang="en">Evaluation Observations (sent to students)</span>:
+      </b></label><br>
+      <textarea id="observacoes_estudantes" name="observacoes_estudantes" rows="8" cols="80" maxlength="2048">{{observacoes_estudantes}}</textarea>
+      <br><br>
 
-      
       {% comment %} Observações somente para leitura de orientador/coordenador {% endcomment %}
-      <br><b data-toggle="tooltip" data-html="true" animation="true"
+      <label for="observacoes_orientador"><b data-toggle="tooltip" data-html="true" animation="true"
              title="Insira qualquer observação que achar relavante. O texto será encaminhado para os orientadores do projeto.">
-        <span lang="pt">Observações (somente enviada para orientador)</span ><span lang="en">Evaluation Observations (only sent to advisor)</span>:
-      </b><br>
-      <textarea name="observacoes" rows="8" cols="80" maxlength="2048">{{observacoes}}</textarea>
-      
+        <span lang="pt">Observações Orientador (somente enviada para orientador)</span ><span lang="en">Evaluation Observations (only sent to advisor)</span>:
+      </b></label><br>
+      <textarea id="observacoes_orientador" name="observacoes_orientador" rows="8" cols="80" maxlength="2048">{{observacoes_orientador}}</textarea>
       <br><br>
       
       {% if banca.startDate.date > today.date %}
@@ -311,7 +317,7 @@
         </div><br>
       {% endif %}
 
-      <button type="submit"><span lang="pt">Enviar Avaliação</span><span lang="en">Submit Evaluation</span></button>
+      <button class="btn btn-primary" type="submit"><span lang="pt">Enviar Avaliação</span><span lang="en">Submit Evaluation</span></button>
       <p>&nbsp;</p>
 
     </form>

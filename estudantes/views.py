@@ -455,19 +455,19 @@ def minhas_bancas(request):
         if (request.user.aluno.anoPFE > configuracao.ano) or\
             (request.user.aluno.anoPFE == configuracao.ano and
             request.user.aluno.semestrePFE > configuracao.semestre):
-            mensagem = "Projetos ainda não disponíveis para seu período PFE."
+            mensagem = "Fora do período de avaliação de bancas."
             context = {
                 "area_principal": True,
                 "mensagem": mensagem,
             }
-            return render(request, 'generic.html', context=context)
+            return render(request, "generic.html", context=context)
 
         projetos = Projeto.objects.filter(alocacao__aluno=request.user.aluno)
         bancas = Banca.objects.filter(projeto__in=projetos).order_by("-startDate")
-        context = {'bancas': bancas,}
+        context = {"bancas": bancas,}
     else:
-        context = {'mensagem': "Você não está cadastrado como estudante.",}
-    return render(request, 'estudantes/minhas_bancas.html', context)
+        context = {"mensagem": "Você não está cadastrado como estudante.",}
+    return render(request, "estudantes/minhas_bancas.html", context)
 
 
 @login_required
