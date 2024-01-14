@@ -15,7 +15,7 @@
   {% load index %}
 
   <style>
-    textarea {
+    textarea, input, select {
       max-width:100%;
     }
 
@@ -25,6 +25,7 @@
 
     label {
       margin-bottom: 2px;
+      line-height: 1.0;
     }
   </style>
 {% endblock %}
@@ -49,47 +50,53 @@
     >{% if projeto.descricao %}{{projeto.descricao}}{% else %}{{projeto.proposta.descricao}}{% endif %}</textarea>
     <br><br>
 
-    <label for="orientador" style="width: 6em; margin-bottom: 16px;">Orientador(a)</label></b>:
-    <select class="selectpicker show-tick" name="orientador" id="orientador" title="Selecione orientador do projeto"
-    data-width="560px">
-        <option selected value> -- selecione um orientador(a) -- </option>
-        <optgroup label="Comitê PFE">
-        {% for orientador in professores %}
-          {% if orientador.user.membro_comite %}
-            <option value="{{orientador.id}}" {% if orientador.id == projeto.orientador.id %}selected{% endif %}>
-            {{orientador.user.get_full_name}}
-          </option>
-          {% endif %}
-        {% endfor %}
-        </optgroup>
+    <div style="max-width: 560px;">
+      <div style="margin-bottom: 6px;">
+        <label for="orientador" style="width: 6em;">Orientador(a):</label>
+        <select class="selectpicker show-tick" name="orientador" id="orientador" title="Selecione orientador do projeto"
+                data-width="81%" data-size="10">
+            <option selected value> -- selecione um orientador(a) -- </option>
+            <optgroup label="Comitê PFE">
+            {% for orientador in professores %}
+              {% if orientador.user.membro_comite %}
+                <option value="{{orientador.id}}" {% if orientador.id == projeto.orientador.id %}selected{% endif %}>
+                {{orientador.user.get_full_name}}
+              </option>
+              {% endif %}
+            {% endfor %}
+            </optgroup>
 
-        <optgroup label="Professores">
-        {% for orientador in professores %}
-          {% if not orientador.user.membro_comite %}
-            <option value="{{orientador.id}}" {% if orientador.id == projeto.orientador.id %}selected{% endif %}>
-            {{orientador.user.get_full_name}}
-          </option>  
-          {% endif %}
-        {% endfor %}
-        </optgroup>
+            <optgroup label="Professores">
+            {% for orientador in professores %}
+              {% if not orientador.user.membro_comite %}
+                <option value="{{orientador.id}}" {% if orientador.id == projeto.orientador.id %}selected{% endif %}>
+                {{orientador.user.get_full_name}}
+              </option>  
+              {% endif %}
+            {% endfor %}
+            </optgroup>
 
-    </select>
+        </select>
+      </div>
+
+      <div style="margin-bottom: 6px;">
+        <label for="coorientador" style="width: 6em;"><small>Coorientador(a):</small></label>
+        <select class="selectpicker show-tick" name="coorientador" id="coorientador" title="Selecione coorientador do projeto"
+        data-width="81%">
+            <option selected value> -- selecione um coorientador(a) -- </option>
+            {% for professor in professores %}
+              <option value="{{professor.user.id}}" {% if professor.user.id == coorientadores.last.usuario.id %}selected{% endif %}>
+                {{professor.user.get_full_name}}
+              </option>  
+            {% endfor %}
+        </select>
+      </div>
+
+    </div>
     <br>
 
-    <label for="coorientador" style="width: 6em; margin-bottom: 16px;"><small>Coorientador(a)</small></label></b>:
-    <select class="selectpicker show-tick" name="coorientador" id="coorientador" title="Selecione coorientador do projeto"
-    data-width="560px">
-        <option selected value> -- selecione um coorientador(a) -- </option>
-        {% for professor in professores %}
-          <option value="{{professor.user.id}}" {% if professor.user.id == coorientadores.last.usuario.id %}selected{% endif %}>
-            {{professor.user.get_full_name}}
-          </option>  
-        {% endfor %}
-    </select>
-    <br><br>
-
     Grupo:<br>
-    <table id="AlocacaoEstudantes" style="margin-left: 12px;">
+    <table id="AlocacaoEstudantes" style="margin-left: 12px; table-layout: fixed; max-width: 100%; width:max-content;">
       <tr><td style="text-align: center;"><small>Estudante #</small></td>
           <td style="text-align: center;"><small>Nome do Estudante</small></td>
           <td><span class="AddNew" style="cursor:pointer;">&#10753;</span></td></tr>
@@ -97,11 +104,11 @@
       {% for alocacao in alocacoes %}
         <tr>
           <td>
-            <label for="estudante{{forloop.counter}}">Estudante <span style="width:1em;text-align:left;display:inline-block;">{{forloop.counter}}</span> </label></b>:
+            <label for="estudante{{forloop.counter}}" style="white-space: nowrap;">Estudante <span style="width:1em; text-align:left; display:inline-block;">{{forloop.counter}}:</span></label></b>
           </td>
           <td>
             <select class="selectpicker show-tick estudantes" name="estudante" id="estudante{{forloop.counter}}" title="Selecione estudante membro do projeto"
-            data-live-search="true" data-width="560px">
+            data-live-search="true" data-width="100%">
                 <option selected value> -- selecione estudante -- </option>
                 <optgroup label="Semestre PFE">
                 {% for estudante in estudantes %}
@@ -144,8 +151,9 @@
     </table>
 
     <br>
+    <label for="time_misto">
     <input type="checkbox" id="time_misto" name="time_misto" value="True" {% if projeto.time_misto %}checked{% endif %}>
-    <label for="time_misto"> Time Misto (com estudantes de outra instituição/intercâmbio)</label><br>  
+    Time Misto (com estudantes de outra instituição/intercâmbio)</label><br>  
 
     <br><br>
 
