@@ -254,7 +254,9 @@
           request_ajax_r = null;
       } {% endcomment %}
 
-      $("#spinner").css("visibility", "visible");
+      //$("#spinner").css("visibility", "visible");
+      $(".to_label").addClass("label_animado");
+
       var edicao = $(".filter option:selected").attr("value");
       request_ajax_r = $.ajax({
           type: "POST",
@@ -268,7 +270,8 @@
               //$("#organizacao").prop('checked') ? $('#ProjetosTable tr > *:nth-child(2)').show() : $('#ProjetosTable tr > *:nth-child(2)').hide()
               //$("#orientador").prop('checked') ? $('#ProjetosTable tr > *:nth-child(3)').show() : $('#ProjetosTable tr > *:nth-child(3)').hide()
               {% include "tooltip.js" %}
-              $("#spinner").css("visibility", "hidden");
+              //$("#spinner").css("visibility", "hidden");
+              $(".to_label").removeClass("label_animado");
             } // else {% comment %} Ignorando resposta {% endcomment %}
           },
           error: function (request, status, error) {

@@ -9,12 +9,12 @@
   <style>
     .separador {margin-right: 16px;}
 
-    @media only screen and (max-width: 520px) {
+    @media only screen and (max-width: 575.98px) {
       .to_hide {
         font-size: 0.7rem;
         min-width:22%;
         max-width:fit-content;
-        width:2rem;
+        width:2.2rem;
       }
       .to_hide2 {
         font-size: 0.7rem;
@@ -29,14 +29,27 @@
         width: 92vw;
       }
     }
-    
+
+    @keyframes animatedBackground {
+      0% {background-position: right;}
+      50% {background-position: left;}
+      100% {background-position: right;}
+    }
+    .label_animado {
+      background-image: linear-gradient(90deg, #A0A0A0, #F9F9F9, #A0A0A0);
+      background-repeat: repeat-y;
+      animation: animatedBackground 4s linear infinite;
+      background-size: 400% 100%;
+    }
+
   </style>
 
-  <div class="row align-items-start mb-2" style="display: inline-block; margin-right: 3px;">
+  <div class="container" style="margin: 0px; padding: 0px;">
+  <div class="row align-items-start justify-content-start mb-1">
     <div class="ml-3 form-inline">
       {% comment %} <div class="input-group input-group-sm"> {% endcomment %}
         {% if not sem_edicao %}
-        <div class="input-group input-group-sm">
+        <div class="input-group input-group-sm mt-1">
           <div class="input-group-prepend">
             <label class="to_label input-group-text" for="filterEdicao" onClick="recarregar_pagina()"><span class="to_hide">Edição</span></label>
           </div>
@@ -62,7 +75,7 @@
         {% endif %}
 
         {% if com_cursos %}
-        <div class="input-group input-group-sm">
+        <div class="input-group input-group-sm mt-1">
           <div class="input-group-prepend">
             <label class="to_label input-group-text" for="filterCurso" onClick="recarregar_pagina()"><span class="to_hide">Curso</span></label>
           </div>
@@ -88,7 +101,7 @@
         {% endif %}
 
         {% if com_objetivos %}
-        <div class="input-group input-group-sm">
+        <div class="input-group input-group-sm mt-1">
           <div class="input-group-prepend">
             <label class="input-group-text" for="filterObjetivo" onClick="recarregar_pagina()"><span class="to_hide">Objetivo de Aprendizagem</span></label>
           </div>
@@ -103,7 +116,7 @@
         {% endif %}
 
         {% if ind_grup %}
-        <div class="input-group input-group-sm">
+        <div class="input-group input-group-sm mt-1">
           <div class="input-group-prepend form-check mb-2 mr-sm-2">
             <input class="filter form-check-input" type="checkbox" id="individuais" checked >
             <label class="to_label form-check-label" style="line-height: 1.0;" for="individuais"><span class="to_hide">Individuais</span></label>
@@ -117,7 +130,7 @@
         {% endif %}
 
         {% if so_finais %}
-        <div class="input-group input-group-sm">
+        <div class="input-group input-group-sm mt-1">
           <div class="input-group-prepend form-check mb-2 mr-sm-2">
             <input class="filter form-check-input" type="checkbox" id="so_finais" checked >
             <label class="to_label form-check-label" style="line-height: 1.0;" for="so_finais"><span class="to_hide">Só avaliações finais</span></label>
@@ -127,7 +140,7 @@
         {% endif %}
 
         {% if avancados %}
-        <div class="input-group input-group-sm">
+        <div class="input-group input-group-sm mt-1">
           <div class="input-group-prepend form-check mb-2 mr-sm-2">
             <input class="filter form-check-input" type="checkbox" id="avancados" checked >
             <label class="to_label form-check-label" for="avancados"><span class="to_hide">Avancados</span></label>
@@ -137,7 +150,7 @@
         {% endif %}
 
         {% if com_tipos %}
-        <div class="input-group input-group-sm">
+        <div class="input-group input-group-sm mt-1">
           <div class="input-group-prepend">
             <label class="to_label input-group-text" for="filterTipo" onClick="recarregar_pagina()"><span class="to_hide">Tipo</span></label>
           </div>
@@ -150,16 +163,19 @@
         </div>
         {% endif %}
 
-        <div class="input-group input-group-sm">
+        {% comment %} <div class="input-group input-group-sm mt-1">
           <div id="spinner" class="ml-2 input-group-prepend" style="visibility: hidden">
             <div class="spinner-border text-secondary ml-auto" style="width: 1.8rem; height: 1.8rem;" role="status" aria-hidden="true">
               <span class="sr-only input-group-text">Carregando...</span>
             </div>
           </div>
-        </div>
+        </div> {% endcomment %}
 
     </div>
-    <div id="lateral"></div>
+
+    {% comment %} <div id="lateral"></div> {% endcomment %}
+  </div>
+
   </div>
 
   {% comment %} Salva a última edição selecionada {% endcomment %}

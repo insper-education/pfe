@@ -216,7 +216,9 @@
           request_ajax_c = null;
       } {% endcomment %}
 
-      $("#spinner").css("visibility", "visible");
+      //$("#spinner").css("visibility", "visible");
+      $(".to_label").addClass("label_animado");
+
       var edicao = $("#filterEdicao option:selected").attr("value");
 
       request_ajax_c = $.ajax({
@@ -230,7 +232,8 @@
           if (seqNumber === xhrCount) { {% comment %} Processando resposta {% endcomment %}
             $("#certificados").replaceWith($("#certificados",response));
             carrega_pagina()
-            $("#spinner").css("visibility", "hidden");
+            //$("#spinner").css("visibility", "hidden");
+            $(".to_label").removeClass("label_animado");
           } // else {% comment %} Ignorando resposta {% endcomment %}
         },
         error: function (request, status, error) {

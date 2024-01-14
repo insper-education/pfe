@@ -52,13 +52,11 @@
   {% endif %}
 
   {% if banca.link %}
-    <b>Link vídeo-conferência:</b> <a href="{{banca.link}}">{{banca.link}}</a>
-    <br>
+    <b>Link vídeo-conferência:</b> <div style="overflow: auto;"><a href="{{banca.link}}">{{banca.link}}</a></div><br>
   {% endif %}
 
   {% if banca.projeto %}
-    <br>  
-    <b>Link formulário de avaliação</b>: <a href="{% url 'banca_avaliar' banca.slug %}">https://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}</a><br>
+    <br><b>Link formulário de avaliação</b>: <div style="overflow: auto;"><a href="{% url 'banca_avaliar' banca.slug %}">https://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}</a></div><br>
   {% endif %}
 
   <br>
