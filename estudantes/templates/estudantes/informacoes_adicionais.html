@@ -7,22 +7,9 @@
 
 {% block head %}
   <style>
-    textarea {
-      max-width:100%;
-    }
-    .modal-open .modal {
-      overflow: hidden;
-    }
-    .modal-body {
-      height: calc(80vh - 64px);
-      overflow-y:scroll;
-    }
-    .ent_nome {
-      cursor:pointer;
-    }
-    .ent_nome:hover {
-      background-color: #eee;
-    }
+    textarea, input {max-width:100%;}
+    .ent_nome {cursor:pointer;}
+    .ent_nome:hover {background-color: #eee;}
   </style>
   <script>
     $(document).ready(function(){
