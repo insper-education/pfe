@@ -63,7 +63,8 @@ def avaliacoes_pares(request, todos=None):
     if request.is_ajax():
         if "edicao" in request.POST:
 
-            projetos = Projeto.objects.all()
+            projetos = Projeto.objects.filter(ano__gte=2023).order_by("ano", "semestre")  # 2023 é o ano que comecou a avaliacao de pares no sistema do PFE
+
             if todos != "todos":
                 projetos = projetos.filter(orientador=request.user.professor)
 
@@ -80,7 +81,7 @@ def avaliacoes_pares(request, todos=None):
         edicoes, _, _ = get_edicoes(Pares)
         context["edicoes"] = edicoes
 
-    return render(request, 'professores/avaliacoes_pares.html', context=context)
+    return render(request, "professores/avaliacoes_pares.html", context=context)
 
 
 @login_required

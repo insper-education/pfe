@@ -8,11 +8,9 @@
 {% block head %}
 
   {% load static %}
-
+  {% include "tabelas_includes.html" %}
   <style>
-    td {
-      padding: 8px;
-    }
+    td {padding: 8px;}
     
     .short-text { display: none; white-space: nowrap; }
     .full-text { display: inline-block; white-space: nowrap; }
@@ -36,21 +34,25 @@
 
 {% block content %}
 
-  <span class="titulo">Relatórios Públicos {% include "informacoes.html" %}</span>
+  <span class="titulo">Relatórios Públicos</span>
 
-  {% if relatorios %}
+  {% include "edicoes.html" %}
+  {% comment %} {% include "informacoes.html" %} {% endcomment %}
+    
+  <div class="atualizar">
+
   <div class="table-responsive">
 
     <table id="RelatoriosTable" class="table table-bordered table-hover table-sm" style="width: auto;">
       <thead class="table-info">
         <tr>
-          <th onclick="w3.sortHTML('#RelatoriosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Projeto</th>
-          <th class="text-center">Estudantes</th>
-          <th onclick="w3.sortHTML('#RelatoriosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Orientador</th>
-          <th onclick="w3.sortHTML('#RelatoriosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Organização</th>
-          <th onclick="w3.sortHTML('#RelatoriosTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">Período</th>
-          <th class="text-center">Documento</th>
-          <th class="text-center">URLs</th>
+          <th scope="col" onclick="w3.sortHTML('#RelatoriosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Projeto</th>
+          <th scope="col" class="text-center">Estudantes</th>
+          <th scope="col" onclick="w3.sortHTML('#RelatoriosTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Orientador</th>
+          <th scope="col" nclick="w3.sortHTML('#RelatoriosTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Organização</th>
+          <th scope="col" onclick="w3.sortHTML('#RelatoriosTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">Período</th>
+          <th scope="col" class="text-center">Documento</th>
+          <th scope="col" class="text-center">URLs</th>
         </tr>
       </thead>
       <tbody>
@@ -158,17 +160,33 @@
       </tbody>
     </table>
   </div>
-  {% else %}
-    <p>Não existem relatórios disponíveis.</p>
-  {% endif %}
-
-  <br>
 
   <script>
     function carrega_pagina() {
-      $('#RelatoriosTable tr > *:nth-child(7)').hide();  
+      //$('#RelatoriosTable tr > *:nth-child(7)').hide();
+      if($('#RelatoriosTable th').length > 0) {   // Verifica se os THs foram registrados primeiro
+        table = $('#RelatoriosTable').dataTable();
+        if(table) {
+          table.fnSetColumnVis( 6, false );  // esconde longa URL
+        }
+      }
     };
-    window.onload = carrega_pagina
+    
+    function carrega_site() {
+      var filterEdicao = localStorage.getItem("filterEdicao");
+      if (filterEdicao !== null && $("#filterEdicao option[value='"+filterEdicao+"']").length > 0 ) {
+        $('#filterEdicao').val(filterEdicao).trigger('change');
+      }
+      carrega_pagina();
+    };
+
+    window.onload = carrega_site
+
   </script>
-  
+
+  </div>
+  <br>
+
+  {% include "edicoes_ajax.html" with tabela="Relatorios" %}
+
 {% endblock %}

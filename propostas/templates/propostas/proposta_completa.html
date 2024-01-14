@@ -17,20 +17,22 @@
   <link rel="stylesheet" type="text/css" href="{% static 'css/Chart.min.css' %}">
 
   <style>
-    .t_f {
-      display: inline;
+    .t_f {display: inline;}
+    .t_s {display: none;}
+
+    label {
+      margin-bottom: 2px;
+      line-height: 1.0;
     }
-    .t_s {
-      display: none;
+
+    select {
+      max-width:100%;
+      margin-bottom: 12px;
     }
     
     @media only screen and (max-width: 700px) {
-      .t_f { 
-        display: none;
-      }
-      .t_s {
-        display: inline;
-      }
+      .t_f {display: none;}
+      .t_s {display: inline;}
     }
   </style>
 

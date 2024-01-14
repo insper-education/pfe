@@ -290,37 +290,46 @@ def materias_midia(request):
     tipo_documento = TipoDocumento.objects.get(nome="Matéria na Mídia")
     relatorios = Documento.objects.filter(tipo_documento=tipo_documento, confidencial=False)
 
-    informacoes = [
-            ("#RelatoriosTable tr > *:nth-child(3)", "Documentos"),
-            ("#RelatoriosTable tr > *:nth-child(4)", "URLs", False),
-        ]
-    
     context = {
         "relatorios": relatorios,
         "MEDIA_URL": settings.MEDIA_URL,
-        "informacoes": informacoes,
     }
-    return render(request, 'documentos/materias_midia.html', context)
+    return render(request, "documentos/materias_midia.html", context)
 
 
 # @login_required
 def relatorios_publicos(request):
     """Exibe relatórios públicos."""
-    tipo_documento = TipoDocumento.objects.get(nome="Relatório Publicado")
-    relatorios = Documento.objects.filter(tipo_documento=tipo_documento, confidencial=False)\
-        .order_by("-projeto__ano", "-projeto__semestre")
 
-    informacoes = [
-            ("#RelatoriosTable tr > *:nth-child(6)", "Documentos"),
-            ("#RelatoriosTable tr > *:nth-child(7)", "URLs", False),
-        ]
+    if request.is_ajax():
+        
+        tipo_documento = TipoDocumento.objects.get(nome="Relatório Publicado")
+
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
+
+            relatorios = Documento.objects.filter(tipo_documento=tipo_documento, confidencial=False)\
+                            .order_by("-projeto__ano", "-projeto__semestre")
+            if edicao != "todas":
+                ano, semestre = request.POST["edicao"].split('.')
+                relatorios = relatorios.filter(projeto__ano=ano, projeto__semestre=semestre)
+
+        else:
+            return HttpResponse("Erro ao carregar dados.", status=401)
+
+        context = {
+            "relatorios": relatorios,
+            "edicao": edicao,
+            "MEDIA_URL": settings.MEDIA_URL,
+        }
+
+    else:
+        edicoes, _, _ = get_edicoes(Projeto)
+        context = {
+            "edicoes": edicoes,
+        }
     
-    context = {
-        "relatorios": relatorios,
-        "MEDIA_URL": settings.MEDIA_URL,
-        "informacoes": informacoes,
-    }
-    return render(request, 'documentos/relatorios_publicos.html', context)
+    return render(request, "documentos/relatorios_publicos.html", context)
 
 
 @login_required
@@ -367,7 +376,7 @@ def tabela_documentos(request):
             "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
         }
 
-    return render(request, 'documentos/tabela_documentos.html', context)
+    return render(request, "documentos/tabela_documentos.html", context)
 
 
 @login_required
