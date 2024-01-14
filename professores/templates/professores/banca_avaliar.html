@@ -134,14 +134,14 @@
       </ul>
 
       {% if banca.tipo_de_banca is not None %}
-        <b lang="pt">Banca:</b>
+        <b lang="pt">Tipo de Banca:</b>
         <b lang="en">Presentation:</b>
         {{ banca.tipo_de_banca|get_banca }}
         <br>
       {% endif %}
 
       <br>
-      <b lang="pt">Data:</b><b lang="en">Date:</b> {{banca.startDate|date:"DATE_FORMAT"}} das {{banca.startDate|date:"H:i"}} às {{banca.endDate|date:"H:i"}}<br>
+      <b lang="pt">Data da Banca:</b><b lang="en">Date of Presentation:</b> {{banca.startDate|date:"DATE_FORMAT"}} das {{banca.startDate|date:"H:i"}} às {{banca.endDate|date:"H:i"}}<br>
       {% if banca.location %}
         <b lang="pt">Local:</b><b lang="en">Location:</b> {{banca.location}}<br>
       {% endif %}  
@@ -293,17 +293,17 @@
       {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
       <label for="observacoes_estudantes"><b data-toggle="tooltip" data-html="true" animation="true"
              title="Insira qualquer observação que achar relavante para o grupo de estudantes.">
-        <span lang="pt">Observações Estudantes (enviada para todo o grupo)</span ><span lang="en">Evaluation Observations (sent to students)</span>:
+        <span lang="pt">Observações Estudantes (enviada para todo o grupo)</span ><span lang="en">Evaluation Observations for Students (will be sent to all students)</span>:
       </b></label><br>
-      <textarea id="observacoes_estudantes" name="observacoes_estudantes" rows="8" cols="80" maxlength="2048">{{observacoes_estudantes}}</textarea>
+      <textarea id="observacoes_estudantes" name="observacoes_estudantes" rows="8" cols="100" maxlength="2048">{{observacoes_estudantes}}</textarea>
       <br><br>
 
       {% comment %} Observações somente para leitura de orientador/coordenador {% endcomment %}
       <label for="observacoes_orientador"><b data-toggle="tooltip" data-html="true" animation="true"
              title="Insira qualquer observação que achar relavante. O texto será encaminhado para os orientadores do projeto.">
-        <span lang="pt">Observações Orientador (somente enviada para orientador)</span ><span lang="en">Evaluation Observations (only sent to advisor)</span>:
+        <span lang="pt">Observações Orientador (somente enviada para orientador)</span ><span lang="en">Evaluation Observations (will only be sent to advisor)</span>:
       </b></label><br>
-      <textarea id="observacoes_orientador" name="observacoes_orientador" rows="8" cols="80" maxlength="2048">{{observacoes_orientador}}</textarea>
+      <textarea id="observacoes_orientador" name="observacoes_orientador" rows="8" cols="100" maxlength="2048">{{observacoes_orientador}}</textarea>
       <br><br>
       
       {% if banca.startDate.date > today.date %}

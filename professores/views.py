@@ -881,9 +881,9 @@ def banca_avaliar(request, slug):
             mensagem += "Data do encerramento da banca: " + banca.endDate.strftime("%d/%m/%Y - %H:%M:%S") + "<br>"
             mensagem += "Número de dias de prazo para preenchimento: " + str(prazo_preencher_banca) + " dias.</div><br>"
             mensagem += "Entre em contato com a coordenação do PFE para enviar sua avaliação:<br>"
-            mensagem += coordenacao.user.get_full_name() + " &lt;"
-            mensagem += "<a href='mailto:" + coordenacao.user.email + "'>"
-            mensagem += coordenacao.user.email + "&gt;</a>.<br>"
+            mensagem += coordenacao.user.get_full_name()
+            mensagem += " <a href='mailto:" + coordenacao.user.email + "'>"
+            mensagem += " &lt;" + coordenacao.user.email + "&gt;</a>.<br>"
 
         if vencida and (not adm):  # se administrador passa direto
             context = {
