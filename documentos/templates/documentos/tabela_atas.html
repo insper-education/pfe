@@ -45,7 +45,7 @@
 
               <td style="text-align:center; padding: 2px; border-top-style: dotted;{% if not forloop.last %}border-bottom-style: dotted;{% endif %}">
                 <a class="btn btn-light btn-outline-info btn-sm" style="width: 6em; padding:0px 4px 0px 4px;"
-                   href="../..{{MEDIA_URL}}{{obj.documento}}" 
+                   href="http://{{request.get_host}}{{MEDIA_URL}}{{obj.documento}}" 
                   target="_blank" rel="noopener noreferrer"
                   data-toggle="tooltip" data-html="true" animation="true" 
                   {% if obj.anotacao %}

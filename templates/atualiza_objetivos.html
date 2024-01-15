@@ -1,0 +1,28 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 15 de Janeiro de 2024
+{% endcomment %}
+
+<script>
+  var branco = '#FFFFFF';
+  var azul = '#DDDDFF';
+  var cinza = '#F2F2F2';
+  var azul_escuro = '#C0C0EB';
+
+  {% comment %} Para acertar os valores caso venham conceitos por REST   {% endcomment %}
+  {% for obj, conceito in conceitos %}
+      $("#objetivo{{obj}}"+"{{conceito}}").prop("checked", true);
+      $("td").filter(".objetivo{{obj}}"+"{{conceito}}").css('backgroundColor', azul);
+      $("th").filter(".objetivo{{obj}}"+"{{conceito}}").css('backgroundColor', azul_escuro);
+  {% endfor %}
+
+  {% comment %} Mudas as cores conforme objetos são clicados {% endcomment %}
+  function cores(e) {
+    $("td").filter("."+e.target.classList[0]).css('backgroundColor', branco);
+    $("td").filter("."+e.target.classList[1]+"").css('backgroundColor', azul);
+    $("th").filter("."+e.target.classList[0]).css('backgroundColor', cinza);
+    $("th").filter("."+e.target.classList[1]+"").css('backgroundColor', azul_escuro);
+  }
+  $('input[type="radio"]').on('click change', cores);
+</script>

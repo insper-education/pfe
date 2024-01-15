@@ -6,77 +6,12 @@
 {% endcomment %}
 
 {% block head %}
-
+  {% load static %}
   {% load tz %}
-
   {% load banca_tipo %}
 
   <script>{% include "tooltip.js" %}</script>
-
-  <style>
-    textarea {max-width:100%;}
-    label {margin: 3px;}
-    table, td {vertical-align: top;}
-    .labels {
-      white-space: nowrap;
-      margin-right: 2em;
-    }
-
-    @media only screen and (max-width: 1100px) {
-      table, th, td {font-size: 14px;}
-    }
-
-    @media only screen and (max-width: 1000px) {
-      table, th, td {font-size: 13px;}
-      .nivel {display:none !important;}
-    } 
-
-    @media only screen and (max-width: 800px) {
-      table, th, td {
-        font-size: 15px;
-      }
-
-      tbody {display: flex;}
-
-      tr {
-        display: flex;
-        flex-wrap: wrap;
-      }
-
-      th, td {        
-        flex-basis: 100%;
-        min-height: calc(130px - 5vw);
-      }
-
-      .labels {margin-right: 0.2em;}
-      
-      .nav-side-wrapper {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-      }
-      
-      .nav-side {
-        display: flex;
-        -webkit-flex: 1;
-        -ms-flex: 1;
-        flex: 1;
-        flex-direction: column;
-        justify-content: space-around;
-        align-items: center;
-      }
-
-    }
-
-    @media only screen and (max-width: 500px) {
-      table, th, td {font-size: 14px;}
-    }
-
-    {% comment %} THIS MAKE RADIO BUTTONS APPEAR IN A BETTER PLACE {% endcomment %}
-    input[type="radio"] {vertical-align:-0.1rem;}
-
-  </style>
-
+  <link rel="stylesheet" href="{% static 'css/form_aval.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -98,25 +33,8 @@
     <form method="post" id="avaliacaoform" enctype="multipart/form-data">
       {% csrf_token %}
 
-      <b lang="pt">Projeto:</b><b lang="en">Project:</b> {{banca.projeto.titulo}}<br>
-      {% if banca.projeto.orientador %}
-      <b lang="pt">Organização:</b><b lang="en">Organization:</b> {{banca.projeto.organizacao}}<br>
-      {% else %}
-        <span lang="pt">Organização: Não definida</span><span lang="en">Organization: Not defined</span>
-      {% endif %}
-      {% if banca.projeto.orientador %}
-        {% if banca.projeto.proposta.intercambio %}
-          <b lang="pt">Professor{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
-          <b lang="en">Professor in charge:</b>
-        {% else %}
-          <b lang="pt">Orientador{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
-          <b lang="en">Advisor:</b>
-        {% endif %}
-        {{banca.projeto.orientador}}<br>
-      {% else %}
-        <span lang="pt">Orientador: Não definido</span>
-        <span lang="en">Advisor: Not defined</span>
-      {% endif %}
+      {% include "cabecalho_projeto.html" with projeto=banca.projeto%}
+
       <b lang="pt">Grupo:</b>
       <b lang="en">Group:</b>
 
@@ -184,112 +102,8 @@
         <br>
       {% endif %}
 
-      {% if objetivos %}
-        <br><h5 lang="pt">Objetivos de Aprendizagem</h5><h5 lang="en">Learning Goals</h5>
-        {% for objetivo in objetivos %}
-          <b lang="pt">{{objetivo.titulo}}</b><b lang="en">{{objetivo.titulo_en}}</b>: <span lang="pt">{{objetivo.objetivo}}</span><span lang="en">{{objetivo.objetivo_en}}</span>
-          
-          <div class="table-responsive">
-          <table style="width:100%">
-            <tr>
-              <th class="nav-side-wrapper th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}NA" style="width:10%;">
-                <div class="nav-side">
-                <label class="labels" for="objetivo{{objetivo.id}}NA">
-                  N/A
-                  <input style="padding-bottom:2px;" type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA" id="objetivo{{objetivo.id}}NA" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.NA" required /> 
-                </label>
-              </div>
-              </th>
-              <th class="nav-side-wrapper th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I" style="width:18%">
-                <div class="nav-side">
-                <label class="labels" for="objetivo{{objetivo.id}}I">
-                  <span class="nivel">
-                    <span lang="pt">Insatisfatório&nbsp;</span><span class="nivel" lang="en">Unsatisfactory&nbsp;</span>
-                  </span>(I)
-                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" id="objetivo{{objetivo.id}}I" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.I" required />
-                </label>
-              </div>
-              </th>
-              <th class="nav-side-wrapper th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}D" style="width:18%">
-                <div class="nav-side">
-                <label class="labels" for="objetivo{{objetivo.id}}D">
-                  <span class="nivel">
-                    <span lang="pt">Em Desenvolvimento&nbsp;</span><span class="nivel" lang="en">under Development&nbsp;</span>
-                  </span>(D)
-                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" id="objetivo{{objetivo.id}}D" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.D " required />
-                </label>
-              </div>
-              </th>
-              <th class="nav-side-wrapper th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" style="width:18%">
-                <div class="nav-side">
-                <label class="labels" for="objetivo{{objetivo.id}}C">
-                  <span class="nivel">
-                    <span lang="pt">Essencial&nbsp;</span><span class="nivel" lang="en">Fundamental&nbsp;</span>
-                  </span>(C)
-                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C" id="objetivo{{objetivo.id}}C" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.C" required />
-                </label>
-                <label  class="labels" for="objetivo{{objetivo.id}}CX">
-                  (C+)
-                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" id="objetivo{{objetivo.id}}CX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.C+" required />
-                </label>
-              </div>
-              </th>
-              <th class="nav-side-wrapper th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" style="width:18%">
-                <div class="nav-side">
-                <label class="labels" for="objetivo{{objetivo.id}}B">
-                  <span class="nivel">
-                    <span lang="pt">Proficiente&nbsp;</span><span class="nivel" lang="en">Proficient&nbsp;</span>
-                  </span>(B)
-                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B" id="objetivo{{objetivo.id}}B" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.B" required />
-                </label>
-                <label class="labels" for="objetivo{{objetivo.id}}BX">
-                  (B+)
-                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" id="objetivo{{objetivo.id}}BX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.B+" required />
-                </label>
-              </div>
-              </th>
-              <th class="nav-side-wrapper th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" style="width:18%">
-                <div class="nav-side">
-                <label class="labels" for="objetivo{{objetivo.id}}A">
-                  <span class="nivel">
-                    <span lang="pt">Avançado&nbsp;</span><span class="nivel" lang="en">Advanced&nbsp;</span>
-                  </span>(A)
-                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A" id="objetivo{{objetivo.id}}A" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.A" required />
-                </label>
-                <label class="labels" for="objetivo{{objetivo.id}}AX">
-                  (A+)
-                  <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" id="objetivo{{objetivo.id}}AX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.A+" required />
-                </label>
-              </div>
-              </th>
-            </tr>
-            <tr>
-              {% if banca.tipo_de_banca is not None and banca.tipo_de_banca == 1 %} {% comment %} Banca Intermediária {% endcomment %}
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA" lang="pt">caso prefira não avaliar este objetivo, selecione esta coluna.</label><label for="objetivo{{objetivo.id}}NA" lang="en">if you prefer not to evaluate this objective, select this column.</label></td>
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I" lang="pt">{{objetivo.rubrica_intermediaria_I}}</label><label for="objetivo{{objetivo.id}}I" lang="en">{{objetivo.rubrica_intermediaria_I_en}}</label></td>
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D" lang="pt">{{objetivo.rubrica_intermediaria_D}}</label><label for="objetivo{{objetivo.id}}D" lang="en">{{objetivo.rubrica_intermediaria_D_en}}</label></td>
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C" lang="pt">{{objetivo.rubrica_intermediaria_C}}</label><label for="objetivo{{objetivo.id}}C" lang="en">{{objetivo.rubrica_intermediaria_C_en}}</label></td>
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B" lang="pt">{{objetivo.rubrica_intermediaria_B}}</label><label for="objetivo{{objetivo.id}}B" lang="en">{{objetivo.rubrica_intermediaria_B_en}}</label></td>
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A" lang="pt">{{objetivo.rubrica_intermediaria_A}}</label><label for="objetivo{{objetivo.id}}A" lang="en">{{objetivo.rubrica_intermediaria_A_en}}</label></td>
-              {% else %}
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA" lang="pt">caso prefira não avaliar este objetivo, selecione esta coluna.</label><label for="objetivo{{objetivo.id}}NA" lang="en">if you prefer not to evaluate this objective, select this column.</label></td>
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I" lang="pt">{{objetivo.rubrica_final_I}}</label><label for="objetivo{{objetivo.id}}I" lang="en">{{objetivo.rubrica_final_I_en}}</label></td>
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D" lang="pt">{{objetivo.rubrica_final_D}}</label><label for="objetivo{{objetivo.id}}D" lang="en">{{objetivo.rubrica_final_D_en}}</label></td>
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C" lang="pt">{{objetivo.rubrica_final_C}}</label><label for="objetivo{{objetivo.id}}C" lang="en">{{objetivo.rubrica_final_C_en}}</label></td>
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B" lang="pt">{{objetivo.rubrica_final_B}}</label><label for="objetivo{{objetivo.id}}B" lang="en">{{objetivo.rubrica_final_B_en}}</label></td>
-                <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A" lang="pt">{{objetivo.rubrica_final_A}}</label><label for="objetivo{{objetivo.id}}A" lang="en">{{objetivo.rubrica_final_A_en}}</label></td>
-              {% endif %}
-            </tr>
-          </table>
-          </div>
-          <br>
-        {% endfor %}
+      {% include "tabela_avaliacao_objetivos.html" %}
 
-      {% else %}
-        <span lang="pt" class="red-bold">Não foram definidos Objetivos de Aprendizagem para essa Avaliação.</span><br>
-        <span lang="en" class="red-bold">No Learning Goals were defined for this Assessment.</span><br>
-      {% endif %}
-      
       {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
       <label for="observacoes_estudantes"><b data-toggle="tooltip" data-html="true" animation="true"
              title="Insira qualquer observação que achar relavante para o grupo de estudantes.">
@@ -326,25 +140,7 @@
     <p lang="en">There is no project available to evaluate.</p>
   {% endif %}
 
-  <script>
-
-    var branco = '#FFFFFF';
-    var azul = '#DDDDFF';
-
-    {% comment %} Para acertar os valores caso venham conceitos por REST   {% endcomment %}
-    {% for obj, conceito in conceitos %}
-        $("#objetivo{{obj}}"+"{{conceito}}").prop("checked", true);
-        $(".objetivo{{obj}}"+"{{conceito}}").css('backgroundColor', azul);
-    {% endfor %}
-
-    {% comment %} Mudas as cores conforme objetos são clicados {% endcomment %}
-    function cores(e) {
-      $("."+e.target.classList[0]).css('backgroundColor', branco);
-      $("."+e.target.classList[1]).css('backgroundColor', azul);
-    }
-    $('input[type="radio"]').on('click change', cores);
-
-  </script>
+  {% include "atualiza_objetivos.html" %}
 
   {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
   {% include "linguas.html" %}

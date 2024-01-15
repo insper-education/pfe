@@ -65,18 +65,10 @@
        Sem alocações de projetos esse semestre.
       {% endfor %}
 
-    <script>
-      function carrega_pagina(){};
-      window.onload = carrega_pagina
-    </script>
-
   </div> 
 
   <script>
-
-    function carrega_pagina() {
-    };
-
+    function carrega_pagina() {};
     function carrega_site() {
       var filterEdicao = localStorage.getItem("filterEdicao");
       if (filterEdicao !== null && $("#filterEdicao option[value='"+filterEdicao+"']").length > 0 ) {
@@ -84,7 +76,6 @@
       }
       carrega_pagina();
     };
-
     window.onload = carrega_site
   </script>
 

@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 15 de Janeiro de 2024
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load tz %}
+  {% load banca_tipo %}
+  {% load date_extras %}
+
+  <script>{% include "tooltip.js" %}</script>
+  <link rel="stylesheet" href="{% static 'css/form_aval.css' %}">
+
+{% endblock %}
+
+{% block content %}
+
+  <div id="language_button" style="user-select: none; border-radius: 10px;border: 2px solid #AAAAAA;float: right; margin-top: 4px; margin-left: 8px;"></div>
+
+  <span class="titulo">
+    <span lang="pt">Formulário de Avaliação de Entrega</span>
+    <span lang="en">Deliverable Evaluation Form</span>
+  </span>  
+
+  {% if mensagem %}
+  <span class="red-bold">{{mensagem|safe|linebreaks}}</span><br>
+  {% endif %}
+
+  <span lang="pt"></span><span lang="en"></span>
+
+  {% if projeto %}
+    <form method="post" id="avaliacaoform" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      {% include "cabecalho_projeto.html" %}
+
+      <b lang="pt">Grupo:</b>
+      <b lang="en">Group:</b>
+
+      <ul style="padding-left: 34px;">
+        {% for alocacao in projeto.alocacao_set.all %}
+          <li>
+            {% if not composicao.exame.grupo and alocacao.aluno == estudante.aluno %}<b>{% endif %}
+            <a href="{% url 'estudante_detail' alocacao.aluno.id %}"> 
+              {{alocacao.aluno.user.get_full_name}}
+            </a>
+            <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
+            [{{ alocacao.aluno.curso2 }}]
+            {% if not composicao.exame.grupo and alocacao.aluno == estudante.aluno %}</b>{% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+
+      <br>
+      <b lang="pt">Avaliação:</b><b lang="en">Assessment:</b><br>
+      <p style="font-size: 1.8em;">
+        &nbsp;&nbsp;
+        <u>{{composicao.exame}}
+          {% if not composicao.exame.grupo %}
+           ({{estudante.get_full_name}})
+          {% endif %}
+        </u>
+      </p>
+
+      <br>
+      <b lang="pt">Prazo:</b><b lang="en">Deadline:</b><br>
+      &nbsp;{{evento.endDate}} (ao final do dia)<br>
+
+      <br>
+      <b lang="pt">Documento:</b><b lang="en">Document:</b><br>
+      <ul style="padding-left: 22px; width: fit-content;">
+        {% for documento in documentos %}
+          <li style="list-style-type:'&#128463; ';">
+            {% if forloop.first%}<b>{% endif %}
+            {% if documento.documento and documento.link %} 
+              <span lang="pt">Entregue</span><span lang="en">Submitted</span>
+              {{documento.data}}
+              <a 
+                {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
+                href="http://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+              <a 
+                {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
+                href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
+            {% else %}
+              {% if documento.documento %}
+                <a 
+                  {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
+                  href="http://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer"><span lang="pt">Entregue</span><span lang="en">Submitted</span> {{documento.data}}</a>
+              {% endif %}
+              {% if documento.link %}
+                <a
+                  {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
+                  href="{{documento.link}}" target="_blank" rel="noopener noreferrer"><span lang="pt">Entregue</span><span lang="en">Submitted</span> {{documento.data}}</a>
+              {% endif %}
+            {% endif %}
+            {% if documento.data|diff_days:evento.endDate > 0 %}<span style="color: red;">[ENTREGUE APÓS PRAZO]</span>{% endif %}
+            {% if forloop.first%}</b>{% endif %}  
+          </li>
+        {% empty %}
+          Não entregue
+        {% endfor %} 
+        </ul><br>
+      
+      {% if orientacoes %}
+        <h5 lang="pt">Orientações Gerais</h5><h5 lang="en">Guidelines</h5>
+        <span lang="pt">{{orientacoes|safe}}</span>
+        <span lang="en">{{orientacoes_en|safe}}</span>
+        <br>
+      {% endif %}
+
+      {% include "tabela_avaliacao_objetivos.html" %}
+
+      {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
+      <label for="observacoes_estudantes"><b data-toggle="tooltip" data-html="true" animation="true"
+             title="Insira qualquer observação que achar relavante para o grupo de estudantes.">
+        <span lang="pt">Observações Estudantes (enviada para todo o grupo)</span ><span lang="en">Evaluation Observations for Students (will be sent to all students)</span>:
+      </b></label><br>
+      <textarea id="observacoes_estudantes" name="observacoes_estudantes" rows="8" cols="100" maxlength="2048">{{observacao.observacoes_estudantes}}</textarea>
+      <br><br>
+
+      {% comment %} Observações somente para leitura de orientador/coordenador {% endcomment %}
+      <label for="observacoes_orientador"><b data-toggle="tooltip" data-html="true" animation="true"
+             title="Insira qualquer observação que achar relavante. O texto será encaminhado para os orientadores do projeto.">
+        <span lang="pt">Observações Orientador/Coordenação (para documentar/anotar ou enviar coordenador)</span ><span lang="en">Evaluation Observations (to document/note or send coordinator)</span>:
+      </b></label><br>
+      <textarea id="observacoes_orientador" name="observacoes_orientador" rows="8" cols="100" maxlength="2048">{{observacao.observacoes_orientador}}</textarea>
+      <br><br>
+      
+      {% if evento.startDate.date > today.date %}
+        <div style="display: inline-block; border:2px solid red; margin-bottom: 4px; padding: 4px;">
+          <span lang="pt" class="red-bold">Você está acessado o formulário antes do prazo da avaliação.</span>
+          <span lang="en" class="red-bold">You have accessed the form before the scheduled evaluation date.</span>
+          <br>
+          <span lang="pt" class="red-bold">Tem certeza que deseja enviar a avaliação agora!!</span>
+          <span lang="en" class="red-bold">Are you sure you want to submit your evaluation now!!</span>
+          <br>
+        </div><br>
+      {% endif %}
+
+      <button class="btn btn-primary" type="submit"><span lang="pt">Enviar Avaliação</span><span lang="en">Submit Evaluation</span></button>
+      <p>&nbsp;</p>
+
+    </form>
+  {% else %}
+    <p lang="pt">Não existe projeto disponível para avaliar.</p>
+    <p lang="en">There is no project available to evaluate.</p>
+  {% endif %}
+
+  {% include "atualiza_objetivos.html" %}
+
+  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+  {% include "linguas.html" %}
+
+{% endblock %}

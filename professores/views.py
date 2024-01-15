@@ -23,13 +23,13 @@ from users.models import PFEUser, Professor, Aluno, Alocacao
 from users.support import get_edicoes
 
 from projetos.models import Coorientador, ObjetivosDeAprendizagem, Avaliacao2, Observacao
-from projetos.models import Banca, Evento, Encontro
+from projetos.models import Banca, Evento, Encontro, Documento
 from projetos.models import Projeto, Configuracao, Organizacao
 from projetos.support import converte_letra, converte_conceito
 from projetos.support import get_objetivos_atuais
 from projetos.messages import email, render_message, htmlizar
 
-from academica.models import Exame
+from academica.models import Exame, Composicao, Peso
 
 from .support import professores_membros_bancas, falconi_membros_banca
 from .support import editar_banca
@@ -39,6 +39,9 @@ from .support import move_avaliacoes
 from .support import converte_conceitos, arredonda_conceitos
 
 from estudantes.models import Relato, Pares
+
+from academica.support import filtra_composicoes, filtra_entregas
+
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
@@ -899,8 +902,10 @@ def banca_avaliar(request, slug):
     except Banca.DoesNotExist:
         return HttpResponseNotFound('<h1>Banca não encontrada!</h1>')
 
+    ####################################################################################
+    # ISSO ESTÁ OBSOLETO
+    # Subistituir por:     objetivos = composicao.pesos.all()
     objetivos = get_objetivos_atuais(ObjetivosDeAprendizagem.objects.all())
-    
     # Banca(Intermediária, Final) ou Falconi
     if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
         objetivos = objetivos.filter(avaliacao_banca=True)
@@ -908,6 +913,7 @@ def banca_avaliar(request, slug):
         objetivos = objetivos.filter(avaliacao_falconi=True)
     else:
         return HttpResponseNotFound("<h1>Tipo de Banca não indentificado</h1>")
+    ####################################################################################
 
     if request.method == "POST":
         if "avaliador" in request.POST:
@@ -1062,14 +1068,14 @@ def banca_avaliar(request, slug):
         except ValueError:
             return HttpResponseNotFound('<h1>Usuário não encontrado!</h1>')
         
-        conceitos = [None]*5
-        for i in range(5):
+        conceitos = [None]*len(objetivos)
+        for i in range(len(objetivos)):
             try:
-                tmp1 = int(request.GET.get('objetivo'+str(i), '0'))
+                tmp_objetivo = int(request.GET.get("objetivo"+str(i), '0'))
             except ValueError:
-                return HttpResponseNotFound('<h1>Erro em objetivo!</h1>')
-            tmp2 = request.GET.get('conceito'+str(i), '')
-            conceitos[i] = (tmp1, tmp2)
+                return HttpResponseNotFound("<h1>Erro em objetivo!</h1>")
+            tmp_conceito = request.GET.get("conceito"+str(i), '')
+            conceitos[i] = (tmp_objetivo, tmp_conceito)
 
         observacoes_orientador = unquote(request.GET.get("observacoes_orientador", ''))
         observacoes_estudantes = unquote(request.GET.get("observacoes_estudantes", ''))
@@ -1087,8 +1093,212 @@ def banca_avaliar(request, slug):
             "observacoes_estudantes": observacoes_estudantes,
             "today": datetime.datetime.now(),
             "mensagem": mensagem,
+            "periodo_para_rubricas": 1 if banca.tipo_de_banca==1 else 2,  # Dois indices parecidos, mas não iguais
         }
-        return render(request, 'professores/banca_avaliar.html', context=context)
+        return render(request, "professores/banca_avaliar.html", context=context)
+
+
+
+
+
+
+
+
+
+
+##### FAZENDO AQUI ######
+     
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+@transaction.atomic
+def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
+    """Cria uma tela para preencher avaliações de entregas."""
+    
+    projeto = Projeto.objects.get(pk=projeto_id)
+    if request.user != projeto.orientador.user and request.user.tipo_de_usuario != 4:
+        return HttpResponseNotFound('<h1>Você não é o orientador desse projeto!</h1>')
+
+    composicao = Composicao.objects.get(pk=composicao_id)
+
+    estudante = None
+    if estudante_id:
+        estudante = PFEUser.objects.get(pk=estudante_id)
+        alocacao = Alocacao.objects.get(projeto=projeto, aluno=estudante.aluno)
+
+    objetivos = composicao.pesos.all()
+
+    if request.method == "POST":
+        
+        objetivos_possiveis = len(objetivos)
+        julgamento = [None]*objetivos_possiveis
+        
+        avaliacoes = dict(filter(lambda elem: elem[0][:9] == "objetivo.", request.POST.items()))
+
+        realizada = False
+        for i, aval in enumerate(avaliacoes):
+
+            obj_nota = request.POST[aval]
+            conceito = obj_nota.split('.')[1]
+            
+            pk_objetivo = int(obj_nota.split('.')[0])
+            objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=pk_objetivo)
+
+            if composicao.exame.grupo:
+                avaliacao, realizada = Avaliacao2.objects.get_or_create(projeto=projeto, 
+                                                                        exame=composicao.exame, 
+                                                                        objetivo=objetivo,
+                                                                        avaliador=projeto.orientador.user
+                                                                        )
+            else:
+                if not estudante or not alocacao:
+                    return HttpResponseNotFound('<h1>Estudante não encontrado!</h1>')
+                avaliacao, realizada = Avaliacao2.objects.get_or_create(projeto=projeto, 
+                                                                        exame=composicao.exame, 
+                                                                        objetivo=objetivo,
+                                                                        avaliador=projeto.orientador.user,
+                                                                        alocacao=alocacao
+                                                                        )
+
+            julgamento[i] = avaliacao
+
+            if conceito == "NA":
+                julgamento[i].na = True
+            else:
+                julgamento[i].nota = converte_conceito(conceito)
+                julgamento[i].peso = Peso.objects.get(composicao=composicao, objetivo=objetivo).peso
+                julgamento[i].na = False
+            julgamento[i].save()
+
+        julgamento_observacoes = None
+        if ("observacoes_orientador" in request.POST and request.POST["observacoes_orientador"] != "") or \
+           ("observacoes_estudantes" in request.POST and request.POST["observacoes_estudantes"] != ""):
+            
+            if composicao.exame.grupo:
+                observacao, _created2 = Observacao.objects.get_or_create(projeto=projeto,
+                                                                        exame=composicao.exame,
+                                                                        avaliador=projeto.orientador.user
+                                                                        )
+            else:
+                if not estudante or not alocacao:
+                    return HttpResponseNotFound('<h1>Estudante não encontrado!</h1>')
+                observacao, _created2 = Observacao.objects.get_or_create(projeto=projeto,
+                                                                        exame=composicao.exame,
+                                                                        avaliador=projeto.orientador.user,
+                                                                        alocacao=alocacao
+                                                                        )
+
+            julgamento_observacoes = observacao
+            julgamento_observacoes.observacoes_orientador = request.POST["observacoes_orientador"]
+            julgamento_observacoes.observacoes_estudantes = request.POST["observacoes_estudantes"]
+            julgamento_observacoes.save()
+
+
+        resposta = "Avaliação concluída com sucesso.<br>"
+        if realizada:
+            resposta += "<br><br><h2>Essa é uma atualização de uma avaliação já enviada anteriormente!</h2><br><br>"
+        resposta += "<br><a href='javascript:history.back(1)'>Voltar</a>"
+        context = {
+            "area_principal": True,
+            "mensagem": resposta,
+        }
+        return render(request, "generic.html", context=context)
+
+    else:
+
+        if estudante and (not composicao.exame.grupo):
+            documentos = Documento.objects.filter(tipo_documento=composicao.tipo_documento, projeto=projeto, usuario=estudante)
+        else:
+            documentos = Documento.objects.filter(tipo_documento=composicao.tipo_documento, projeto=projeto)
+
+        if projeto.semestre == 1:
+            evento = Evento.objects.filter(tipo_de_evento=composicao.evento, endDate__year=projeto.ano, endDate__month__lt=7).last()
+        else:          
+            evento = Evento.objects.filter(tipo_de_evento=composicao.evento, endDate__year=projeto.ano, endDate__month__gt=6).last()
+
+        if composicao.exame.grupo:
+            avaliacoes = Avaliacao2.objects.filter(projeto=projeto, 
+                                                exame=composicao.exame, 
+                                                avaliador=projeto.orientador.user
+                                                )
+        else:
+            if not estudante or not alocacao:
+                return HttpResponseNotFound('<h1>Estudante não encontrado!</h1>')
+            avaliacoes = Avaliacao2.objects.filter(projeto=projeto, 
+                                                exame=composicao.exame, 
+                                                avaliador=projeto.orientador.user,
+                                                alocacao=alocacao
+                                                )
+
+        conceitos = [None]*len(avaliacoes)
+        for i in range(len(avaliacoes)):
+            try:
+                tmp_objetivo = avaliacoes[i].objetivo.pk
+            except ValueError:
+                return HttpResponseNotFound("<h1>Erro em objetivo!</h1>")
+            tmp_conceito = converte_letra(avaliacoes[i].nota, mais="X")
+            conceitos[i] = (tmp_objetivo, tmp_conceito)
+
+        if composicao.exame.grupo:
+            observacao = Observacao.objects.filter(projeto=projeto,
+                                                    exame=composicao.exame,
+                                                    avaliador=projeto.orientador.user
+                                                ).last()
+        else:
+            if not estudante or not alocacao:
+                return HttpResponseNotFound('<h1>Estudante não encontrado!</h1>')
+            observacao = Observacao.objects.filter(projeto=projeto,
+                                                    exame=composicao.exame,
+                                                    avaliador=projeto.orientador.user,
+                                                    alocacao=alocacao
+                                                ).last()
+
+        context = {
+            "projeto": projeto,
+            "composicao": composicao,
+            "estudante": estudante,
+            "documentos": documentos,
+            "MEDIA_URL": settings.MEDIA_URL,
+            "evento": evento,
+            "periodo_para_rubricas": composicao.exame.periodo_para_rubricas,
+            "objetivos": objetivos,
+            "today": datetime.datetime.now(),
+            "conceitos": conceitos,
+            "observacao": observacao,
+        }
+
+        return render(request, "professores/entrega_avaliar.html", context=context)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 @login_required
@@ -1688,6 +1898,54 @@ def coorientadores_tabela(request):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
+def avaliar_entregas(request, todos=None):
+    """Página para fzer e ver avaliação de entregas dos estudantes."""
+
+    if todos == "todos" and request.user.tipo_de_usuario != 4:  # Administrador
+        return HttpResponse("Acesso negado.", status=401)
+
+    if request.is_ajax():
+
+        if "edicao" in request.POST:
+
+            projetos = Projeto.objects.all().order_by("ano", "semestre")
+            if todos != "todos":
+                projetos = projetos.filter(orientador=request.user.professor)
+
+            edicao = request.POST["edicao"]
+            if edicao != "todas":
+                periodo = request.POST["edicao"].split('.')
+                ano = int(periodo[0])
+                semestre = int(periodo[1])
+                projetos = projetos.filter(ano=ano, semestre=semestre)
+
+            entregas = []
+            for projeto in projetos:
+                composicoes = filtra_composicoes(Composicao.objects.filter(entregavel=True), projeto.ano, projeto.semestre)
+                entregas.append(filtra_entregas(composicoes, projeto))
+
+            avaliacoes = zip(projetos, entregas)
+
+            context = {
+                "avaliacoes": avaliacoes,
+                "edicao": edicao,
+            }
+
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+
+    else:
+
+        edicoes, _, _ = get_edicoes(Relato)
+        context = {
+                "edicoes": edicoes,
+            }
+
+    return render(request, "professores/avaliar_entregas.html", context=context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
 def relatos_quinzenais(request, todos=None):
     """Formulários com os projetos e relatos a avaliar do professor orientador."""
 
@@ -1702,9 +1960,9 @@ def relatos_quinzenais(request, todos=None):
             if todos != "todos":
                 projetos = projetos.filter(orientador=request.user.professor)
 
-            edicao = request.POST['edicao']
-            if edicao != 'todas':
-                periodo = request.POST['edicao'].split('.')
+            edicao = request.POST["edicao"]
+            if edicao != "todas":
+                periodo = request.POST["edicao"].split('.')
                 ano = int(periodo[0])
                 semestre = int(periodo[1])
                 projetos = projetos.filter(ano=ano, semestre=semestre)
@@ -1726,7 +1984,7 @@ def relatos_quinzenais(request, todos=None):
                 "edicoes": edicoes,
             }
 
-    return render(request, 'professores/relatos_quinzenais.html', context=context)
+    return render(request, "professores/relatos_quinzenais.html", context=context)
 
 
 @login_required

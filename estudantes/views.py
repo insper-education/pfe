@@ -20,7 +20,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 
 from projetos.models import Projeto, Proposta, Configuracao, Area, AreaDeInteresse
-from projetos.models import Encontro, Banca, Entidade, FeedbackEstudante, Evento, Documento
+from projetos.models import Encontro, Banca, Entidade, FeedbackEstudante, Evento
 
 from .support import cria_area_estudante
 
@@ -31,6 +31,7 @@ from users.models import PFEUser, Alocacao, Opcao, OpcaoTemporaria
 from users.support import configuracao_estudante_vencida, configuracao_pares_vencida, adianta_semestre
 
 from academica.models import Composicao
+from academica.support import filtra_composicoes, filtra_entregas
 
 from .models import Relato, Pares
 
@@ -463,8 +464,12 @@ def minhas_bancas(request):
             return render(request, "generic.html", context=context)
 
         projetos = Projeto.objects.filter(alocacao__aluno=request.user.aluno)
+
         bancas = Banca.objects.filter(projeto__in=projetos).order_by("-startDate")
-        context = {"bancas": bancas,}
+        
+        context = {
+            "bancas": bancas,
+            }
     else:
         context = {"mensagem": "Você não está cadastrado como estudante.",}
     return render(request, "estudantes/minhas_bancas.html", context)
@@ -539,19 +544,6 @@ def relato_visualizar(request, id):
     return render(request, "estudantes/relato_visualizar.html", context)
 
 
-def filtra_composicoes(composicoes, ano, semestre):
-    """Filtra composições."""
-    composicoes = composicoes.exclude(data_final__year__lt=ano)
-    composicoes = composicoes.exclude(data_inicial__year__gt=ano)
-    
-    if semestre == 1:
-        composicoes = composicoes.exclude(data_inicial__year=ano, data_inicial__month__gt=6)
-    else:
-        composicoes = composicoes.exclude(data_final__year=ano, data_final__month__lt=8)
-
-    return composicoes
-
-
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def exames_pesos(request):
@@ -582,26 +574,11 @@ def submissao_documento(request):
     projeto = alocacao.projeto
     
     composicoes = filtra_composicoes(Composicao.objects.filter(entregavel=True), projeto.ano, projeto.semestre)
-    
-    itens = []
-    for comp in composicoes:
-        itens.append([comp.tipo_documento,
-                      
-                      Documento.objects.filter(tipo_documento=comp.tipo_documento, projeto=projeto, usuario=request.user)
-                      if comp.tipo_documento.individual else \
-                      Documento.objects.filter(tipo_documento=comp.tipo_documento, projeto=projeto),
-
-                      Evento.objects.filter(tipo_de_evento=comp.evento, 
-                                            endDate__year=projeto.ano, endDate__month__lt=7).last()\
-                      if projeto.semestre == 1 else \
-                      Evento.objects.filter(tipo_de_evento=comp.evento, 
-                                            endDate__year=projeto.ano, endDate__month__gt=6).last()])
-        
-    itens = sorted(itens, key=lambda t: (None if t[2] is None else t[2].endDate))
+    entregas = filtra_entregas(composicoes, projeto, request.user)
 
     context = {
         "projeto": projeto,
-        "itens": itens,
+        "entregas": entregas,
         "MEDIA_URL": settings.MEDIA_URL,
     }
     return render(request, "estudantes/submissao_documento.html", context)

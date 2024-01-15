@@ -14,33 +14,41 @@ from . import views
 urlpatterns = [
 
     # pagina inicial
-    path('',
+    path("",
          views.index_professor,
-         name='index_professor'),
+         name="index_professor"),
 
-    path('avaliacoes_pares/',
+    path("avaliacoes_pares/",
          views.avaliacoes_pares,
-         name='avaliacoes_pares'),
+         name="avaliacoes_pares"),
 
-    path('avaliacoes_pares/<str:todos>',
+    path("avaliacoes_pares/<str:todos>",
          views.avaliacoes_pares,
-         name='avaliacoes_pares'),
+         name="avaliacoes_pares"),
 
-    path('bancas_alocadas/',
+    path("avaliar_entregas/",
+         views.avaliar_entregas,
+         name="avaliar_entregas"),
+
+    path("avaliar_entregas/<str:todos>",
+         views.avaliar_entregas,
+         name="avaliar_entregas"),
+
+    path("bancas_alocadas/",
          views.bancas_alocadas,
-         name='bancas_alocadas'),
+         name="bancas_alocadas"),
 
-    path('orientacoes_alocadas/',
+    path("orientacoes_alocadas/",
         views.orientacoes_alocadas,
-        name='orientacoes_alocadas'),
+        name="orientacoes_alocadas"),
 
-    path('coorientacoes_alocadas/',
+    path("coorientacoes_alocadas/",
         views.coorientacoes_alocadas,
-        name='coorientacoes_alocadas'),
+        name="coorientacoes_alocadas"),
 
-    path('mentorias_alocadas/',
+    path("mentorias_alocadas/",
         views.mentorias_alocadas,
-        name='mentorias_alocadas'),
+        name="mentorias_alocadas"),
 
     path("bancas_criar/",
          views.bancas_criar,
@@ -78,109 +86,116 @@ urlpatterns = [
          views.aulas_tabela,
          name="aulas_tabela"),
 
-    path('bancas_tabela_completa/',
+    path("bancas_tabela_completa/",
          views.bancas_tabela_completa,
-         name='bancas_tabela_completa'),
+         name="bancas_tabela_completa"),
 
-    path('banca_avaliar/<slug:slug>',
+    path("banca_avaliar/<slug:slug>",
          views.banca_avaliar,
-         name='banca_avaliar'),
+         name="banca_avaliar"),
 
-    path('conceitos_obtidos/<int:primarykey>',
+    path("entrega_avaliar/<int:composicao_id>/<int:projeto_id>",
+         views.entrega_avaliar,
+         name="entrega_avaliar"),
+
+    path("entrega_avaliar/<int:composicao_id>/<int:projeto_id>/<int:estudante_id>",
+         views.entrega_avaliar,
+         name="entrega_avaliar"),
+
+    path("conceitos_obtidos/<int:primarykey>",
          views.conceitos_obtidos,
-         name='conceitos_obtidos'),
+         name="conceitos_obtidos"),
 
-    path('coorientadores_tabela_completa/',
+    path("coorientadores_tabela_completa/",
          views.coorientadores_tabela_completa,
-         name='coorientadores_tabela_completa'),
+         name="coorientadores_tabela_completa"),
 
-    path('coorientadores_tabela/',
+    path("coorientadores_tabela/",
          views.coorientadores_tabela,
-         name='coorientadores_tabela'),
+         name="coorientadores_tabela"),
 
-    path('dinamicas_index/',
+    path("dinamicas_index/",
          views.dinamicas_index,
-         name='dinamicas_index'),
+         name="dinamicas_index"),
 
-    path('dinamicas_criar/',
+    path("dinamicas_criar/",
          views.dinamicas_criar,
-         name='dinamicas_criar'),
+         name="dinamicas_criar"),
 
-    path('dinamicas_criar/<str:data>',
+    path("dinamicas_criar/<str:data>",
          views.dinamicas_criar,
-         name='dinamicas_criar'),
+         name="dinamicas_criar"),
 
-    path('dinamicas_editar/',
+    path("dinamicas_editar/",
          views.dinamicas_editar,
-         name='dinamicas_editar'),
+         name="dinamicas_editar"),
 
-    path('dinamicas_editar/<int:primarykey>',
+    path("dinamicas_editar/<int:primarykey>",
          views.dinamicas_editar,
-         name='dinamicas_editar'),
+         name="dinamicas_editar"),
 
-    path('dinamicas_lista/',
+    path("dinamicas_lista/",
          views.dinamicas_lista,
-         name='dinamicas_lista'),
+         name="dinamicas_lista"),
 
-     path('informe_bancas/<int:tipo>',
-          views.informe_bancas,
-         name='informe_bancas'),
+    path("informe_bancas/<int:tipo>",
+         views.informe_bancas,
+         name="informe_bancas"),
 
-    path('objetivo_editar/<int:primarykey>',
+    path("objetivo_editar/<int:primarykey>",
          views.objetivo_editar,
-         name='objetivo_editar'),
+         name="objetivo_editar"),
 
-    path('objetivos_rubricas/',
+    path("objetivos_rubricas/",
          views.objetivos_rubricas,
-         name='objetivos_rubricas'),
+         name="objetivos_rubricas"),
      
-    path('orientadores_tabela/',
+    path("orientadores_tabela/",
          views.orientadores_tabela,
-         name='orientadores_tabela'),
+         name="orientadores_tabela"),
 
-    path('orientadores_tabela_completa/',
+    path("orientadores_tabela_completa/",
          views.orientadores_tabela_completa,
-         name='orientadores_tabela_completa'),
+         name="orientadores_tabela_completa"),
 
-    path('relato_avaliar/<int:projeto_id>/<int:evento_id>',
+    path("relato_avaliar/<int:projeto_id>/<int:evento_id>",
          views.relato_avaliar,
-         name='relato_avaliar'),
+         name="relato_avaliar"),
 
-    path('relatos_quinzenais/',
+    path("relatos_quinzenais/",
          views.relatos_quinzenais,
-         name='relatos_quinzenais'),
+         name="relatos_quinzenais"),
 
     path("relatos_quinzenais/<str:todos>",
          views.relatos_quinzenais,
-         name='relatos_quinzenais'),
+         name="relatos_quinzenais"),
 
-    path('planos_de_orientacao_todos/',
+    path("planos_de_orientacao_todos/",
          views.planos_de_orientacao_todos,
-         name='planos_de_orientacao_todos'),
+         name="planos_de_orientacao_todos"),
 
      path("planos_de_orientacao/",
          views.planos_de_orientacao,
-         name='planos_de_orientacao'),
+         name="planos_de_orientacao"),
 
-    path('resultado_meus_projetos/',
+    path("resultado_meus_projetos/",
          views.resultado_meus_projetos,
-         name='resultado_meus_projetos'),
+         name="resultado_meus_projetos"),
 
-    path('resultado_projetos/',
+    path("resultado_projetos/",
          views.resultado_projetos,
-         name='resultado_projetos'),
+         name="resultado_projetos"),
 
     path("resultado_projetos/<str:edicao>",
          views.resultado_projetos_edicao,
-         name='resultado_projetos_edicao'),
+         name="resultado_projetos_edicao"),
 
     path("todos_professores/",
          views.todos_professores,
-         name='todos_professores'),
+         name="todos_professores"),
 
     path("ver_pares/<int:alocacao_id>/<str:momento>",
          views.ver_pares,
-         name='ver_pares'),
-
+         name="ver_pares"),
 
 ]

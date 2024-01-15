@@ -6,7 +6,7 @@ from .models import Composicao, Peso, Exame
 @admin.register(Exame)
 class ExameAdmin(admin.ModelAdmin):
     """Peso."""
-    list_display = ("titulo", "sigla", "grupo",)
+    list_display = ("titulo", "sigla", "grupo", "periodo_para_rubricas")
 
 @admin.register(Composicao)
 class ComposicaoAdmin(admin.ModelAdmin):

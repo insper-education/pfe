@@ -174,7 +174,7 @@
             {% if documento.documento and documento.link %}
               <li>
                 {{documento}}
-                <a href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+                <a href="http://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
                 <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
                 {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
                   <sup>(Inglês)</sup>
@@ -183,7 +183,7 @@
             {% else %}
               {% if documento.documento %}
                 <li>
-                  <a href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
+                  <a href="http://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
                   {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
                     <sup>(Inglês)</sup>
                   {% endif %}

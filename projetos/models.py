@@ -1445,35 +1445,35 @@ class Avaliacao2(models.Model):
                                  help_text="Tipo de avaliação")
 
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
-                                   help_text='Data e hora da comunicação') # hora ordena para dia
+                                   help_text="Data e hora da comunicação") # hora ordena para dia
 
     peso = models.FloatField("Peso", validators=[MinValueValidator(0), MaxValueValidator(100)], null=True, blank=True,
-                             help_text='Pesa da avaliação na média em % (varia de 0 a 100)')
+                             help_text="Peso da avaliação na média em % (varia de 0 a 100)")
 
     # A nota será convertida para rubricas se necessário
     nota = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
 
     # Somente útil para Bancas
-    avaliador = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
-                                  related_name='avaliador',
-                                  help_text='avaliador do projeto')
+    avaliador = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
+                                  related_name="avaliador",
+                                  help_text="avaliador do projeto")
 
     # Para Bancas e Entregas em Grupo (quando avaliando o grupo inteiro)
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='projeto que foi avaliado')
+                                help_text="projeto que foi avaliado")
 
     # Para Alocações dos estudantes (caso um aluno reprove ele teria duas alocações)
-    alocacao = models.ForeignKey('users.Alocacao', null=True, blank=True,
+    alocacao = models.ForeignKey("users.Alocacao", null=True, blank=True,
                                  on_delete=models.SET_NULL,
-                                 related_name='projeto_alocado_avaliacao',
-                                 help_text='relacao de alocação entre projeto e estudante')
+                                 related_name="projeto_alocado_avaliacao",
+                                 help_text="relacao de alocação entre projeto e estudante")
 
-    objetivo = models.ForeignKey(ObjetivosDeAprendizagem, related_name='objetivo_avaliacao',
+    objetivo = models.ForeignKey(ObjetivosDeAprendizagem, related_name="objetivo_avaliacao",
                                  on_delete=models.SET_NULL, null=True, blank=True,
-                                 help_text='Objetivo de Aprendizagem')
+                                 help_text="Objetivo de Aprendizagem")
 
     na = models.BooleanField("Não Avaliado", default=False,
-                             help_text='Caso o avaliador não tenha avaliado esse quesito')
+                             help_text="Caso o avaliador não tenha avaliado esse quesito")
 
     def __str__(self):
         texto = ""

@@ -112,7 +112,7 @@
   {% endif %}
   {% if projeto.proposta.anexo %}
     <br><strong>Anexo :</strong>
-    <a class="text-success" href="../..{{MEDIA_URL}}{{projeto.anexo}}">{{projeto.proposta.anexo}}</a>
+    <a class="text-success" href="http://{{request.get_host}}{{MEDIA_URL}}{{projeto.anexo}}">{{projeto.proposta.anexo}}</a>
   {% endif %}
 
   <hr>

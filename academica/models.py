@@ -27,9 +27,16 @@ class Exame(models.Model):
     grupo = models.BooleanField("Grupo", default=False,
                              help_text="Caso Verdadeiro é em Grupo, se Falso é individual")
     
+    PERIODOS_RUBRICAS = (
+        (0, "Não Aplicável"),
+        (1, "Intermediário"),
+        (2, "Final"),
+    )
+    periodo_para_rubricas = models.PositiveSmallIntegerField(choices=PERIODOS_RUBRICAS, default=0)
+    
     comentario = models.TextField(max_length=256, null=True, blank=True,
                                 help_text="qualquer observação relevante")
-
+    
     def __str__(self):
         return str(self.titulo) 
 
@@ -59,7 +66,7 @@ class Composicao(models.Model):
     
     entregavel = models.BooleanField(default=True, help_text="Entregável")
 
-    pesos = models.ManyToManyField("projetos.ObjetivosDeAprendizagem", through='Peso',
+    pesos = models.ManyToManyField("projetos.ObjetivosDeAprendizagem", through="Peso",
                                     help_text="Pesos dos Objetivos de Aprendizado por Avaliação")
 
     data_inicial = models.DateField("Data Inicial", null=True, blank=True,

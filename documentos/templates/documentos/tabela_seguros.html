@@ -42,7 +42,7 @@
         </td>
         <td style="text-align:center">
           <a class="btn btn-light btn-outline-info btn-sm" style="width: 6em; padding:0px 4px 0px 4px;"
-             href="../..{{MEDIA_URL}}{{seguro.documento}}" 
+             href="http://{{request.get_host}}{{MEDIA_URL}}{{seguro.documento}}" 
           target="_blank" rel="noopener noreferrer"
           {% if seguro.anotacao %}
             data-toggle="tooltip" data-html="true" animation="true" title="anotação: {{seguro.anotacao}}"

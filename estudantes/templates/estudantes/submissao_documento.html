@@ -26,24 +26,22 @@
 
   <span class="titulo">Submissão de Documentos</span>
 
-  Projeto: {{projeto.get_titulo}}<br>
-  Orientador: {{projeto.orientador.user.get_full_name}} <a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a><br>
-  Semestre: {{projeto.ano}}.{{projeto.semestre}}<br>
+  {% include "cabecalho_projeto.html" with com_email=True %}
   <br>
 
-  {% for item in itens %}
+  {% for item in entregas %}
     {% with dias_ate=item.2.endDate|dif_dias_hoje dias=14 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
       <div {% if dias_ate > dias and user.tipo_de_usuario == 1 %}style="display:none;"{% endif %}>
         <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
-        <b>{{item.0.nome}}</b> [prazo {{item.2.endDate}}]: </span><a id="adiciona"
+        <b>{{item.0.exame.titulo}}</b> [prazo {{item.2.endDate}}]: </span><a id="adiciona"
           class="open-documento {% if dias_ate > dias %}lightgrey{% endif %}"
           data-toggle="tooltip" data-html="true" animation="true" 
           {% if item.1.last %}
             title="Substitui documento"
-            data-url="{% url 'adiciona_documento_estudante' item.0.nome item.1.last.id %}"
+            data-url="{% url 'adiciona_documento_estudante' item.0.tipo_documento.nome item.1.last.id %}"
           {% else %}
             title="Adicionar documento"
-            data-url="{% url 'adiciona_documento_estudante' item.0.nome %}"
+            data-url="{% url 'adiciona_documento_estudante' item.0.tipo_documento.nome %}"
           {% endif %}
           onClick="check_prazo('{{item.2.endDate|date:"Y-m-d"}}T23:59:59');"
           >
@@ -54,11 +52,11 @@
           <li style="list-style-type:'&#128463; ';">
             {% if forloop.first%}<b>{% endif %}
             {% if documento.documento and documento.link %}
-              {{documento.data}} - {{documento}}
+              Entregue {{documento.data}}
               <a 
                 {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
                 class="{% if dias_ate > dias %}lightgrey{% endif %}"
-                href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+                href="http://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
               <a 
                 {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
                 class="{% if dias_ate > dias %}lightgrey{% endif %}"
@@ -68,13 +66,13 @@
                 <a 
                   {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
                   class="{% if dias_ate > dias %}lightgrey{% endif %}"
-                  href="../..{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">{{documento.data}} - {{documento}}</a>
+                  href="http://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">Entregue {{documento.data}}</a>
               {% endif %}
               {% if documento.link %}
                 <a
                   {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
                   class="{% if dias_ate > dias %}lightgrey{% endif %}"
-                  href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento.data}} - {{documento}}</a>
+                  href="{{documento.link}}" target="_blank" rel="noopener noreferrer">Entregue {{documento.data}}</a>
               {% endif %}
             {% endif %}
             {% if documento.data|diff_days:item.2.endDate > 0 %}<span style="color: red;">[ENTREGUE APÓS PRAZO]</span>{% endif %}
@@ -99,5 +97,8 @@
       }
     }
   </script>
+
+  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+  {% include "linguas.html" %}
 
 {% endblock %}
