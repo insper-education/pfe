@@ -56,7 +56,7 @@
 
             {% for item in entregas %}
             {% with dias_ate=item.evento.endDate|dif_dias_hoje dias=14 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
-              <div style="border: 1px solid black; margin-bottom: 13px; padding: 0.2em;{% if dias_ate > dias %}display:inline-block;{% endif %}">
+              <div style="border: 1px solid grey; margin-bottom: 13px; padding: 0.2em;{% if dias_ate > dias %}display:inline-block;{% endif %}">
                 <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
                 <b>{{item.composicao.exame.titulo}}</b> [prazo {{item.evento.endDate}}]:</span>
                   {% comment %} {% if dias_ate > dias %}lightgrey{% endif %}" {% endcomment %}
@@ -94,7 +94,8 @@
                 </ul>
 
                 {% if item.avaliacoes %}
-                  <table style="margin: 0.5em; border: 0px; border-collapse: separate; border-spacing: 10px; width: 100%;">
+                <div style="display: table;">
+                  <table style="border: 0px; border-collapse: separate; border-spacing: 10px; width: 100%;">
                     <tr>
                       <td style="padding: 0.4em; background-color: lightgrey; border: 0px; vertical-align: top;">
                         <b>Avaliação:</b><br>
@@ -113,15 +114,26 @@
                         </ul>
                         <b>Nota = {{item.nota|floatformat:2}}  </b>
                       </td>
-                      <td style="padding: 0.4em; background-color: lightgrey; border: 0px; vertical-align: top;">
-                        <b>Observações para Estudantes:</b><br>
-                        {{item.observacao.observacoes_estudantes}}<br>
-                        <br>
-                        <b>Observações do Orientador:</b><br>
-                        {{item.observacao.observacoes_orientador}}
-                      </td>
+
+                      {% if item.observacao.observacoes_estudantes or item.observacao.observacoes_orientador%}
+                        <td style="padding: 0.4em; background-color: lightgrey; border: 0px; vertical-align: top;">
+                          {% if item.observacao.observacoes_estudantes %}
+                            <b>Observações para Estudantes:</b><br>
+                            {{item.observacao.observacoes_estudantes}}<br>
+                            {% if item.observacao.observacoes_orientador %} 
+                              <br>
+                            {% endif %}
+                          {% endif %}
+                          {% if item.observacao.observacoes_orientador %} 
+                            <b>Observações do Orientador:</b><br>
+                            {{item.observacao.observacoes_orientador}}
+                          {% endif %}
+                        </td>
+                      {% endif %}
+
                     </tr>
                   </table>
+                </div>
                 {% endif %}
 
               </div>
