@@ -30,6 +30,8 @@ import users.models
 
 from .tipos import TIPO_EVENTO
 
+#from professores.support import converte_conceitos
+
 # REMOVER
 from .tipos import TIPO_DE_DOCUMENTO
 
@@ -1496,6 +1498,19 @@ class Avaliacao2(models.Model):
         verbose_name = 'Avaliação2'
         verbose_name_plural = 'Avaliações2'
         ordering = ['momento',]
+
+    def get_conceito(self):
+        # Está duplicado, mas é para não quebrar o código
+        if( self.nota >= 9.5 ): return ("A+")
+        if( self.nota >= 8.5 ): return ("A")
+        if( self.nota >= 7.5 ): return ("B+")
+        if( self.nota >= 6.5 ): return ("B")
+        if( self.nota >= 5.5 ): return ("C+")
+        if( self.nota >= 4.5 ): return ("C")
+        if( self.nota >= 3.5 ): return ("D+")
+        if( self.nota >= 2.5 ): return ("D")
+        if( self.nota >= 1.5 ): return ("D-")
+        return ("I")
 
 
 class Avaliacao_Velha(models.Model):

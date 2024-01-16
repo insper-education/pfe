@@ -1097,16 +1097,6 @@ def banca_avaliar(request, slug):
         }
         return render(request, "professores/banca_avaliar.html", context=context)
 
-
-
-
-
-
-
-
-
-
-##### FAZENDO AQUI ######
      
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
@@ -1267,38 +1257,6 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
         }
 
         return render(request, "professores/entrega_avaliar.html", context=context)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 @login_required

@@ -30,25 +30,25 @@
   <br>
 
   {% for item in entregas %}
-    {% with dias_ate=item.2.endDate|dif_dias_hoje dias=14 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
+    {% with dias_ate=item.evento.endDate|dif_dias_hoje dias=14 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
       <div {% if dias_ate > dias and user.tipo_de_usuario == 1 %}style="display:none;"{% endif %}>
         <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
-        <b>{{item.0.exame.titulo}}</b> [prazo {{item.2.endDate}}]: </span><a id="adiciona"
+        <b>{{item.composicao.exame.titulo}}</b> [prazo {{item.evento.endDate}}]: </span><a id="adiciona"
           class="open-documento {% if dias_ate > dias %}lightgrey{% endif %}"
           data-toggle="tooltip" data-html="true" animation="true" 
-          {% if item.1.last %}
+          {% if item.documentos.last %}
             title="Substitui documento"
-            data-url="{% url 'adiciona_documento_estudante' item.0.tipo_documento.nome item.1.last.id %}"
+            data-url="{% url 'adiciona_documento_estudante' item.composicao.tipo_documento.nome item.documentos.last.id %}"
           {% else %}
             title="Adicionar documento"
-            data-url="{% url 'adiciona_documento_estudante' item.0.tipo_documento.nome %}"
+            data-url="{% url 'adiciona_documento_estudante' item.composicao.tipo_documento.nome %}"
           {% endif %}
-          onClick="check_prazo('{{item.2.endDate|date:"Y-m-d"}}T23:59:59');"
+          onClick="check_prazo('{{item.evento.endDate|date:"Y-m-d"}}T23:59:59');"
           >
-          {% if dias_ate > dias %}+{% else %}{% if item.1.last %}<b>&#128472;</b>{% else %}&#10133;{% endif %}{% endif %}
+          {% if dias_ate > dias %}+{% else %}{% if item.documentos.last %}<b>&#128472;</b>{% else %}&#10133;{% endif %}{% endif %}
         </a><br>
         <ul style="padding-left: 22px; width: fit-content;">
-        {% for documento in item.1 %}
+        {% for documento in item.documentos %}
           <li style="list-style-type:'&#128463; ';">
             {% if forloop.first%}<b>{% endif %}
             {% if documento.documento and documento.link %}
@@ -75,7 +75,7 @@
                   href="{{documento.link}}" target="_blank" rel="noopener noreferrer">Entregue {{documento.data}}</a>
               {% endif %}
             {% endif %}
-            {% if documento.data|diff_days:item.2.endDate > 0 %}<span style="color: red;">[ENTREGUE APÓS PRAZO]</span>{% endif %}
+            {% if documento.data|diff_days:item.evento.endDate > 0 %}<span style="color: red;">[ENTREGUE APÓS PRAZO]</span>{% endif %}
             {% if forloop.first%}</b>{% endif %}  
           </li>
         {% empty %}

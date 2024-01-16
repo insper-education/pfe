@@ -8,7 +8,8 @@ Data: 15 de Janeiro de 2024
 
 from datetime import date
 
-from projetos.models import Documento, Evento
+from projetos.models import Documento, Evento, Avaliacao2, Observacao
+from users.models import Alocacao
 
 def filtra_composicoes(composicoes, ano, semestre):
     """Filtra composições."""
@@ -25,20 +26,71 @@ def filtra_composicoes(composicoes, ano, semestre):
 
 def filtra_entregas(composicoes, projeto, user=None):
     entregas = []
-    for comp in composicoes:
+    for composicao in composicoes:
 
-        if user and not comp.exame.grupo:
-            documentos = Documento.objects.filter(tipo_documento=comp.tipo_documento, projeto=projeto, usuario=user)
+        if user and not composicao.exame.grupo:
+            documentos = Documento.objects.filter(tipo_documento=composicao.tipo_documento, projeto=projeto, usuario=user)
         else:
-            documentos = Documento.objects.filter(tipo_documento=comp.tipo_documento, projeto=projeto)
+            documentos = Documento.objects.filter(tipo_documento=composicao.tipo_documento, projeto=projeto)
         
         if projeto.semestre == 1:
-            evento = Evento.objects.filter(tipo_de_evento=comp.evento, endDate__year=projeto.ano, endDate__month__lt=7).last()
+            evento = Evento.objects.filter(tipo_de_evento=composicao.evento, endDate__year=projeto.ano, endDate__month__lt=7).last()
         else:          
-            evento = Evento.objects.filter(tipo_de_evento=comp.evento, endDate__year=projeto.ano, endDate__month__gt=6).last()
+            evento = Evento.objects.filter(tipo_de_evento=composicao.evento, endDate__year=projeto.ano, endDate__month__gt=6).last()
         
-        entregas.append([comp, documentos, evento])
+        if composicao.exame.grupo:
+            avaliacoes = Avaliacao2.objects.filter(projeto=projeto, 
+                                                exame=composicao.exame, 
+                                                avaliador=projeto.orientador.user
+                                                )
+        else:
+            if not user:  # Não deveria acontecer
+                alocacao = None
+            else:
+                alocacao = Alocacao.objects.get(projeto=projeto, aluno=user.aluno)
+            avaliacoes = Avaliacao2.objects.filter(projeto=projeto, 
+                                                exame=composicao.exame, 
+                                                avaliador=projeto.orientador.user,
+                                                alocacao=alocacao
+                                                )
+        nota = 0
+        if avaliacoes:
+            peso = 0
+            for avaliacao in avaliacoes:
+                nota += float(avaliacao.nota)*float(avaliacao.peso)
+                peso += float(avaliacao.peso)
+            if peso > 0:
+                nota = nota/peso
+            else:
+                nota = 0
         
-    entregas = sorted(entregas, key=lambda t: (date.today() if t[2] is None else t[2].endDate))
+
+        if composicao.exame.grupo:
+            observacao = Observacao.objects.filter(projeto=projeto,
+                                                    exame=composicao.exame,
+                                                    avaliador=projeto.orientador.user
+                                                ).last()
+        else:
+            if not user:  # Não deveria acontecer
+                alocacao = None
+            else:
+                alocacao = Alocacao.objects.get(projeto=projeto, aluno=user.aluno)
+            observacao = Observacao.objects.filter(projeto=projeto,
+                                                    exame=composicao.exame,
+                                                    avaliador=projeto.orientador.user,
+                                                    alocacao=alocacao
+                                                ).last()
+
+            
+        entregas.append({"composicao": composicao, 
+                         "documentos": documentos, 
+                         "evento": evento, 
+                         "avaliacoes": avaliacoes,
+                         "nota": nota,
+                         "observacao": observacao,
+                         })
+        
+        
+    entregas = sorted(entregas, key=lambda t: (date.today() if t["evento"] is None else t["evento"].endDate))
 
     return entregas
