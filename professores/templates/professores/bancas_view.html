@@ -340,25 +340,9 @@
       }
       $("#submit").prop("disabled",false);
       $("#mensagem").html("");
-    });  
+    });
 
-    function carrega_pagina() {
-      $('.pessoas').empty();
-      
-      {% comment %} Preenche com as pessoas possíveis conforme o tipo de banca {% endcomment %}
-      var tipo = $("input[name='tipo']:checked").val();
-      if (tipo==2) {
-        $('.pessoas').append($("<option selected value></option>").text("-- selecione membro da banca --"));
-        {% for pessoa in falconis %}
-          $('.pessoas').append($("<option></option>").attr("value",{{pessoa.id}}).text("{{pessoa}}"));
-        {% endfor %}
-      } else {
-        $('.pessoas').append($("<option selected value></option>").text("-- selecione membro da banca --"));
-        {% for professor in professores %}
-          $('.pessoas').append($("<option></option>").attr("value",{{professor.id}}).text("{{professor}}"));
-        {% endfor %}
-      }
-
+    function recupera_selecao() {
       {% if banca and banca.membro1 %}
         $('#membro1 option[value={{banca.membro1.id}}]').attr('selected','selected');
       {% endif %}
@@ -368,7 +352,37 @@
       {% if banca and banca.membro3 %}
         $('#membro3 option[value={{banca.membro3.id}}]').attr('selected','selected');
       {% endif %}
+    }
 
+    var botao_anterior = 2; // só para ir para o lugar certo de primeira
+
+    function carrega_modal() {
+      
+      {% comment %} Preenche com as pessoas possíveis conforme o tipo de banca {% endcomment %}
+      var tipo = $("input[name='tipo']:checked").val();
+
+      {% comment %} Verifica se mudou de estado {% endcomment %}
+      if (botao_anterior != 2) {
+        if (tipo == 2) {
+          $('.pessoas').empty();
+          $('.pessoas').append($("<option selected value></option>").text("-- selecione membro da banca --"));
+          {% for pessoa in falconis %}
+            $('.pessoas').append($("<option></option>").attr("value",{{pessoa.id}}).text("{{pessoa}}"));
+          {% endfor %}
+          recupera_selecao();
+        }
+      } else {
+        if (tipo != 2 || tipo==undefined ) {
+          $('.pessoas').empty();
+          $('.pessoas').append($("<option selected value></option>").text("-- selecione membro da banca --"));
+          {% for professor in professores %}
+            $('.pessoas').append($("<option></option>").attr("value",{{professor.id}}).text("{{professor}}"));
+          {% endfor %}
+          recupera_selecao();
+        }
+      }
+      botao_anterior = tipo;
+  
     }
 
       $(document).ready(function () {     
@@ -395,14 +409,14 @@
       });
 
     
-    window.onload = carrega_pagina;
+    //window.onload = carrega_modal;
 
     // Atualiza a página quando o popup é aberto
     $("#popup").on("show.bs.modal", function() {
-      carrega_pagina();
+      carrega_modal();
     })
     
-    $(".tipo_banca").change(carrega_pagina);
+    $(".tipo_banca").change(carrega_modal);
 
     
   $("form#criarbancasform").submit(function(e){

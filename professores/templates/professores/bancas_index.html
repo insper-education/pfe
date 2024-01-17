@@ -11,7 +11,7 @@
   {% load date_extras %}
 
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
-  {% include "reload.html" %}
+  {% comment %} {% include "reload.html" %} Fica voltando no mes atual e atrapalha {% endcomment %}
 
   <!-- BASEADO EM: https://github.com/fullcalendar/fullcalendar -->
   <link href="{% static 'fullcalendar-4.4.2/core/main.min.css' %}" rel='stylesheet' />
