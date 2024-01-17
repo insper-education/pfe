@@ -263,7 +263,7 @@
 
           {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
             <span class="tit_agenda" id="titulo_operacao" data-toggle="tooltip" data-html="true" animation="true" title=
-            "O semestre da coordenação vai de Fevereiro à Julho e de Agosto a Janeiro">
+            "O semestre da coordenação vai de Fevereiro* à Julho e de Agosto* a Janeiro">
               Operação
             </span><br>
 
@@ -1067,6 +1067,7 @@
     function primeiro(e) {
       
       var fim_semestre = 7;
+      var inicio_semestre = 1;
 
       document.getElementById("primeiro_semestre").style.fontWeight = "bold";
       document.getElementById("primeiro_semestre").style.color = "black";
@@ -1108,7 +1109,7 @@
           el.style.display = 'none';
         });
         var els = Array.from(document.querySelectorAll(".coordenacao[data-mes]")).filter(el => Number(el.dataset.mes) <= fim_semestre);
-        var els = els.filter(el => Number(el.dataset.mes) >= 2);
+        var els = els.filter(el => Number(el.dataset.mes) >= inicio_semestre);
         var els = els.filter(el => Number(el.dataset.ano) == currentYear);
         [].forEach.call(els, function (el) {
           el.style.display = 'inline';
@@ -1135,6 +1136,7 @@
     function segundo(e) {
       
       var inicio_semestre = 7;
+      // var fim_semestre = 1; // do ano seguinte
 
       document.getElementById("primeiro_semestre").style.fontWeight = "normal";
       document.getElementById("primeiro_semestre").style.color = "grey";
