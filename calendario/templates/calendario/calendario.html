@@ -463,6 +463,7 @@
                           {% if user.tipo_de_usuario == 4 %}
                             <script>
                               var evento_{{aula.id}} = {
+                                id: {{evento.id}},
                                 name: "{{aula.get_title}}",
                                 location: "{{aula.location}}",
                                 observation: "{{aula.observacao}}",
