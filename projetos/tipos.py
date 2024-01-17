@@ -7,60 +7,60 @@ Data: 6 de Novembro de 2023
 """
 
 TIPO_EVENTO = (
-    (0, 'Feriado', 'lightgrey'),
-    (1, 'Aula cancelada', 'lightgrey'),
+    (0, "Feriado", "lightgrey"),
+    (1, "Aula cancelada", "lightgrey"),
 
-    (9, 'Conversas iniciais entre Grupo/Orientador/Organização', 'orange'),
+    (9, "Conversas iniciais entre Grupo/Orientador/Organização", "orange"),
 
-    (10, 'Início das aulas', 'red'),
-    (11, 'Evento de abertura do PFE', 'orange'),  # Obsoleto
-    (12, 'Aula PFE', 'lightgreen'),
-    (13, 'Evento de encerramento do PFE', 'brown'),
-    (14, 'Bancas Intermediárias', 'violet'),
-    (15, 'Bancas Finais', 'yellow'),
-    (16, 'Apresentação formal final na organização', 'burlywood'),
-    (17, 'Apresentação opcional intermediária na organização', 'Khaki'),
-    (18, 'Probation', 'LightSteelBlue'),
+    (10, "Início das aulas", "red"),
+    (11, "Evento de abertura do PFE", "orange"),  # Obsoleto
+    (12, "Aula PFE", "lightgreen"),
+    (13, "Evento de encerramento do PFE", "brown"),
+    (14, "Bancas Intermediárias", "violet"),
+    (15, "Bancas Finais", "yellow"),
+    (16, "Apresentação formal final na organização", "burlywood"),
+    (17, "Apresentação opcional intermediária na organização", "Khaki"),
+    (18, "Probation", "LightSteelBlue"),
 
-    (20, 'Relato quinzenal (Individual)', 'aquamarine'),
-    (21, 'Entrega de Relatório Preliminar (Grupo)', 'lightblue'),  # antigo relat. de planej.
-    (22, 'Entrega do Relatório Intermediário (Grupo e Individual)', 'teal'),
-    (23, 'Entrega do Relatório Final (Grupo e Individual)', 'aqua'),
-    (24, 'Entrega do Relatório Revisado (Grupo)', 'deepskyblue'),
-    (25, 'Entrega do Banner (Grupo)', 'chocolate'),
-    (26, 'Entrega do Vídeo (Grupo)', 'lavender'),
+    (20, "Relato quinzenal (Individual)", "aquamarine"),
+    (21, "Entrega de Relatório Preliminar (Grupo)", "lightblue"),  # antigo relat. de planej.
+    (22, "Entrega do Relatório Intermediário (Grupo e Individual)", "teal"),
+    (23, "Entrega do Relatório Final (Grupo e Individual)", "aqua"),
+    (24, "Entrega do Relatório Revisado (Grupo)", "deepskyblue"),
+    (25, "Entrega do Banner (Grupo)", "chocolate"),
+    (26, "Entrega do Vídeo (Grupo)", "lavender"),
 
-    (30, 'Feedback dos estudantes sobre PFE', 'orange'),
-    (31, 'Avaliação de Pares Intermediária', 'pink'),
-    (32, 'Avaliação de Pares Final', 'pink'),
+    (30, "Feedback dos estudantes sobre PFE", "orange"),
+    (31, "Avaliação de Pares Intermediária", "pink"),
+    (32, "Avaliação de Pares Final", "pink"),
 
-    (40, 'Laboratório', 'orange'),
-    (41, 'Semana de provas', 'red'),
+    (40, "Laboratório", "orange"),
+    (41, "Semana de provas", "red"),
 
-    (50, 'Apresentação para Certificação Falconi', 'darkorange'),
+    (50, "Apresentação para Certificação Falconi", "darkorange"),
 
-    (101, 'Apólice Seguro Acidentes Pessoais', 'aquamarine'),
+    (101, "Apólice Seguro Acidentes Pessoais", "aquamarine"),
 
-    (111, 'Bate-papo com estudantes que farão PFE', 'lightcyan'),
+    (111, "Bate-papo com estudantes que farão PFE", "lightcyan"),
 
-    (112, 'Estudantes informarem que adiarão PFE', 'limegreen'),
+    (112, "Estudantes informarem que adiarão PFE", "limegreen"),
 
-    (113, 'Apresentação das propostas disponíveis para estudantes', 'darkslategray'),
+    (113, "Apresentação das propostas disponíveis para estudantes", "darkslategray"),
 
-    (120, 'Limite para submissão de propostas pelas organizações', 'lime'),
-    (121, 'Pré seleção de propostas de projetos', 'chartreuse'),
+    (120, "Limite para submissão de propostas pelas organizações", "lime"),
+    (121, "Comitê planeja onde e quantas propostas buscar e selecionar para o semestre", "chartreuse"),
 
-    (123, 'Indicação de interesse nas propostas pelos estudante', 'hotpink '),
-    (124, 'Notificação para estudantes dos grupos formados', 'paleturquoise'),
-    (125, 'Notificação para organizações dos projetos fechados', 'moccasin'),
-    (126, 'Professores tiram dúvidas das proposta para estudantes', 'lightsalmon'),
-    (127, 'Reunião do comitê para montar grupos de projetos', 'powderblue'),
+    (123, "Indicação de interesse nas propostas pelos estudante", "hotpink "),
+    (124, "Notificação para estudantes dos grupos formados", "paleturquoise"),
+    (125, "Notificação para organizações dos projetos fechados", "moccasin"),
+    (126, "Professores tiram dúvidas das proposta para estudantes", "lightsalmon"),
+    (127, "Reunião do comitê para montar grupos de projetos", "powderblue"),
 
-    (129, 'Limite para contrato pronto para assinaturas', 'coral'),
+    (129, "Limite para contrato pronto para assinaturas", "coral"),
 
-    (130, 'Validação dos projetos pelo comitê', 'peru'),
+    (130, "Validação dos projetos pelo comitê", "peru"),
 
-    (140, 'Reunião de orientações aos orientadores', 'maroon'),
+    (140, "Reunião de orientações aos orientadores", "maroon"),
 )
 
 
