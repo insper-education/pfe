@@ -335,9 +335,9 @@ class EventoAdmin(admin.ModelAdmin):
 
     list_display = ("get_title", "startDate", "endDate", "location", "descricao", "observacao")
     actions = [dup_entrada, dup_event_182]
-    list_filter = (EventoFilter,)
+    list_filter = (EventoFilter, "tipo_de_evento")
     ordering = ("-startDate",)
-    search_fields = ["tipo_de_evento", "descricao", "location", "observacao",]
+    search_fields = ["descricao", "location", "observacao",]
 
 @admin.register(Feedback)
 class FeedbackAdmin(admin.ModelAdmin):

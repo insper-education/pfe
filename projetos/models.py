@@ -720,7 +720,7 @@ class Evento(models.Model):
         return texto
 
     class Meta:
-        ordering = ['startDate']
+        ordering = ["startDate"]
 
 
 class Banca(models.Model):
