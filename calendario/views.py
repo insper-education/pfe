@@ -236,8 +236,7 @@ def atualiza_evento(request):
     evento.descricao = request.POST.get("descricao", '')[:Evento._meta.get_field("descricao").max_length]
 
     responsavel = request.POST.get("responsavel", None)
-    if responsavel:
-        evento.responsavel = PFEUser.objects.get(id=responsavel) # Professores
+    evento.responsavel = PFEUser.objects.get(id=responsavel) if responsavel else None
 
     evento.save()
 
