@@ -30,9 +30,8 @@ class Relato(models.Model):
         return relato
 
     class Meta:
-        verbose_name = 'Relato'
-        verbose_name_plural = 'Relatos'
-        # ordering = ['momento', 'alocacao']
+        verbose_name = "Relato"
+        verbose_name_plural = "Relatos"
 
 
 class Pares(models.Model):
@@ -42,13 +41,13 @@ class Pares(models.Model):
                                    help_text='Data e hora do relato') # hora ordena para dia
 
     # Para Alocações dos estudantes (caso um aluno reprove ele teria duas alocações)
-    alocacao_de = models.ForeignKey('users.Alocacao', null=True, blank=True,
+    alocacao_de = models.ForeignKey("users.Alocacao", null=True, blank=True,
                                     on_delete=models.SET_NULL,
                                     related_name='projeto_alocado_pares_de',
                                     help_text='relacao de uma aluno para com outro (DE)')
 
     # Para Alocações dos estudantes (caso um aluno reprove ele teria duas alocações)
-    alocacao_para = models.ForeignKey('users.Alocacao', null=True, blank=True,
+    alocacao_para = models.ForeignKey("users.Alocacao", null=True, blank=True,
                                       on_delete=models.SET_NULL,
                                       related_name='projeto_alocado_pares_para',
                                       help_text='relacao de uma aluno para com outro (PARA)')

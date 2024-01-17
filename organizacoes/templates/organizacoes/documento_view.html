@@ -52,7 +52,7 @@
             <option selected value> -- selecione uma organização -- </option>
             {% for org in organizacoes %}
               <option value="{{org.id}}" {% if org.id == organizacao.id %}selected="selected"{% endif %}>
-                {{org.nome|slice:":90"}}
+                {{org.nome|slice:":90"}} ({{org.sigla}})
               </option>
             {% endfor %}
           </select>

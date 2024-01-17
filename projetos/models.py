@@ -14,6 +14,7 @@ import re
 from urllib.parse import quote
 
 from django.db import models
+from django.db.models.functions import Lower
 from django.urls import reverse  # To generate URLS by reversing URL patterns
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib import admin
@@ -69,9 +70,9 @@ class Organizacao(models.Model):
 
 
     class Meta:
-        ordering = ['sigla']
-        verbose_name = 'Organização'
-        verbose_name_plural = 'Organizações'
+        ordering = [ Lower("nome"),]
+        verbose_name = "Organização"
+        verbose_name_plural = "Organizações"
 
     @classmethod
     def create(cls):
@@ -132,7 +133,7 @@ class Projeto(models.Model):
                                         help_text='Caso o projeto conte com membros externos a instituição')
 
     class Meta:
-        ordering = ['organizacao', 'ano', 'semestre']
+        ordering = [ Lower("organizacao__nome"), "ano", "semestre"]
         permissions = (("altera_empresa", "Empresa altera valores"),
                        ("altera_professor", "Professor altera valores"), )
 
@@ -447,7 +448,9 @@ class Proposta(models.Model):
 
 
     class Meta:
-        ordering = ['organizacao', 'ano', 'semestre']
+        
+        ordering = [ Lower("organizacao__nome"), "ano", "semestre"]
+
 
     @classmethod
     def create(cls):

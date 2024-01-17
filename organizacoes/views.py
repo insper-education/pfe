@@ -189,13 +189,10 @@ def adiciona_documento_estudante(request, tipo_nome=None, documento_id=None):
 
     context = {
         "organizacao": organizacao,
-        # "tipos_documentos": TipoDocumento.objects.all(),
         "data": datetime.datetime.now(),
         "Documento": Documento,
-        # "projetos": Projeto.objects.filter(organizacao=organizacao),
         "projeto": projeto,
         "tipo": tipo,
-        # "organizacoes": Organizacao.objects.all(),
         "documentos": Documento.objects.filter(id=documento_id),
         "documento_id": documento_id,
         "MEDIA_URL": settings.MEDIA_URL,

@@ -7,6 +7,7 @@ Data: 16 de Junho de 2023
 """
 
 from django.db import models
+from django.db.models.functions import Lower
 
 class Carta(models.Model):
     """Dados das organizações que propõe projetos para o PFE."""
@@ -18,7 +19,7 @@ class Carta(models.Model):
                                    help_text="Texto para ser enviado")
     
     class Meta:
-        ordering = ["template"]
+        ordering = [ Lower("template") ]
         verbose_name = "Carta"
         verbose_name_plural = "Cartas"
 

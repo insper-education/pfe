@@ -21,6 +21,7 @@ from django.http import HttpResponse
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.db.models.functions import Lower
 
 from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2
 from projetos.models import ObjetivosDeAprendizagem, Reprovacao, Evento
@@ -91,10 +92,9 @@ class PFEUser(AbstractUser):
 
     class Meta:
         """Classe Meta."""
-
         verbose_name = "Usuário"
         verbose_name_plural = "Usuários"
-        ordering = ["first_name", "last_name"]
+        ordering = [ Lower("first_name"), Lower("last_name") ]
 
     # Estou sobreescrevendo a função get_full_name para que ela retorne o pronome de tratamento
     def get_full_name(self):
@@ -165,7 +165,7 @@ class Professor(models.Model):
 
         verbose_name = 'Professor'
         verbose_name_plural = 'Professores'
-        ordering = ['user']
+        ordering = ["user"]
         permissions = (("altera_professor", "Professor altera valores"), )
 
     def __str__(self):
@@ -639,7 +639,7 @@ class Aluno(models.Model):
     class Meta:
         """Meta para Aluno."""
 
-        ordering = ['user']
+        ordering = ["user"]
         permissions = ()
 
     def __str__(self):

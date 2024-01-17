@@ -56,7 +56,7 @@
 
             {% for item in entregas %}
             {% with dias_ate=item.evento.endDate|dif_dias_hoje dias=14 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
-              <div style="border: 1px solid grey; margin-bottom: 13px; padding: 0.2em;{% if dias_ate > dias %}display:inline-block;{% endif %}">
+              <div style="border: 1px solid grey; margin: 10px 0px 4px 0px; padding: 0.2em;{% if dias_ate > dias %}display:inline-block;{% endif %}">
                 <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
                 <b>{{item.composicao.exame.titulo}}</b> [prazo {{item.evento.endDate}}]:</span>
                   {% comment %} {% if dias_ate > dias %}lightgrey{% endif %}" {% endcomment %}

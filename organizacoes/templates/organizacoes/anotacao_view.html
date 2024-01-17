@@ -21,7 +21,7 @@
       <select id="organizacao_id" name="organizacao_id" class="form-control" required>
         <option disabled selected value> -- selecione uma organização -- </option>
         {% for organizacao in organizacoes %}
-          <option value="{{organizacao.id}}" {% if anotacao and anotacao.organizacao_id == organizacao.id %}selected{% endif %} >{{organizacao.nome}}</option>
+          <option value="{{organizacao.id}}" {% if anotacao and anotacao.organizacao_id == organizacao.id %}selected{% endif %} >{{organizacao.nome}} ({{organizacao.sigla}})</option>
         {% endfor %}
       </select>
       <br>

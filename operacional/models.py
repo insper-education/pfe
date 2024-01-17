@@ -7,6 +7,7 @@ Data: 27 de Dezembro de 2022
 """
 
 from django.db import models
+from django.db.models.functions import Lower
 
 
 class Curso(models.Model):
@@ -30,9 +31,9 @@ class Curso(models.Model):
                              help_text='Indicar caso seja um curso do Insper (outros são usados para estudantes de intercâmbio)')
 
     class Meta:
-        ordering = ['nome']
-        verbose_name = 'Curso'
-        verbose_name_plural = 'Cursos'
+        ordering = [ Lower("nome") ]
+        verbose_name = "Curso"
+        verbose_name_plural = "Cursos"
 
     def __str__(self):
         """Retorna o nome do curso."""
