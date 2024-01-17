@@ -22,6 +22,8 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models.functions import Lower
+from django.db.models import F
+
 
 from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2
 from projetos.models import ObjetivosDeAprendizagem, Reprovacao, Evento
@@ -94,8 +96,8 @@ class PFEUser(AbstractUser):
         """Classe Meta."""
         verbose_name = "Usuário"
         verbose_name_plural = "Usuários"
-        ordering = [ Lower("first_name"), Lower("last_name") ]
-
+        ordering = [ "first_name", "last_name"]
+        
     # Estou sobreescrevendo a função get_full_name para que ela retorne o pronome de tratamento
     def get_full_name(self):
         if self.pronome_tratamento:

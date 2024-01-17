@@ -625,7 +625,7 @@ class Cursada(models.Model):
     class Meta:
         """Classe Meta."""
 
-        ordering = ['nota']
+        ordering = ["nota"]
 
     def __str__(self):
         """Retorno padrão textual."""
