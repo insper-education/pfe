@@ -16,6 +16,7 @@
 
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
   <link rel="stylesheet" href="{% static 'css/outros.css' %}">
+  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
 
 {% endblock %}
 
@@ -56,9 +57,12 @@
 
             {% for item in entregas %}
             {% with dias_ate=item.evento.endDate|dif_dias_hoje dias=14 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
-              <div style="border: 1px solid grey; margin: 10px 0px 4px 0px; padding: 0.2em;{% if dias_ate > dias %}display:inline-block;{% endif %}">
+              <div style="border: 1px solid grey; margin: 10px 0px 4px 0px; padding: 0.2em; display:block;"> {% comment %} {% if dias_ate > dias %}{% endif %} {% endcomment %}
                 <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
-                <b>{{item.composicao.exame.titulo}}</b> [prazo {{item.evento.endDate}}]:</span>
+                  <b>{{item.composicao.exame.titulo}}</b>
+                  <span class="opt_full">[prazo {{ item.evento.endDate|date:"DATE_FORMAT" }}]:</span>
+                  <span class="opt_short">[prazo {{ item.evento.endDate|date:"d/m/y" }}]:</span></b>
+                </span>
                   {% comment %} {% if dias_ate > dias %}lightgrey{% endif %}" {% endcomment %}
                   {% comment %} <a id="adiciona" class="open-documento data-toggle="tooltip" data-html="true" animation="true"   item.documentos.last {% endcomment %}
                   {% comment %} onClick="check_prazo('{{item.evento.endDate|date:"Y-m-d"}}T23:59:59');" {% endcomment %}
@@ -89,7 +93,7 @@
                     {% if forloop.first%}</b>{% endif %}  
                   </li>
                 {% empty %}
-                  Não entregue<br>
+                  Arquivos ausentes<br>
                 {% endfor %}
                 </ul>
 

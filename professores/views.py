@@ -2206,7 +2206,7 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
             "informacoes": informacoes,
         }
 
-    return render(request, 'professores/resultado_projetos.html', context)
+    return render(request, "professores/resultado_projetos.html", context)
 
 
 @login_required
