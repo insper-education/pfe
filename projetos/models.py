@@ -1566,7 +1566,6 @@ class Avaliacao_Velha(models.Model):
         texto += " > "
         texto += str(self.avaliador)
         return texto
-        return "Avaliação Não Definida"
 
     @classmethod
     def create(cls, projeto=None, alocacao=None):

@@ -258,13 +258,13 @@ def projetos_fechados(request):
             if edicao == "todas":
                 projetos_filtrados = Projeto.objects.all()
             else:
-                ano, semestre = request.POST['edicao'].split('.')
+                ano, semestre = request.POST["edicao"].split('.')
                 projetos_filtrados = Projeto.objects.filter(ano=ano,
                                                             semestre=semestre)
 
             curso = request.POST["curso"]    
             
-            projetos_filtrados = projetos_filtrados.order_by("-avancado", "organizacao")
+            projetos_filtrados = projetos_filtrados.order_by("-avancado", Lower("organizacao__nome"))
 
             projetos_selecionados = []
             prioridade_list = []
