@@ -16,6 +16,12 @@
   .btn-group.bootstrap-select select {
     width: 1px !important;
   }
+
+  {% comment %} Para seleção de projeto não vazar a tela {% endcomment %}
+  .bootstrap-select > .dropdown-menu { 
+    width: 100vw;
+    max-width: fit-content;
+  }
 </style>
 
   <form id="criarbancasform" method="post" enctype="multipart/form-data">
@@ -27,31 +33,36 @@
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
-  
+
     <div id="modal-body" class="modal-body">
 
     {% if not banca.projeto %}
       <div class="form-group">
       <label style="margin-top: 12px;" for="projeto">Projeto:</label>
       <select class="selectpicker" name="projeto" id="projeto" title="Selecione o projeto"
-      data-live-search="true" data-width="75%" data-size="5" required>
+      data-width="75%" data-size="5" required
+      {% if request.user.tipo_de_usuario == 4 %}data-live-search="true"{% endif %}
+      >
         {% for projeto in projetos %}
-          <option value="{{projeto.id}}"
-          style="font-size: 0.75em;{% if projeto.id in projetos_agendados %}color: lightgrey;{% endif %}"
-          data-titulo="{{projeto.titulo}}"
-          data-titulo_link="{% url 'projeto_completo' projeto.id %}"
-          data-organizacao="{{projeto.organizacao}}"
-          data-organizacao_link="{% url 'organizacao_completo' projeto.organizacao.id %}"
-          data-orientador="{% if projeto.orientador %}{{projeto.orientador}}{% else %}SEM ORIENTADOR{% endif %}"
-          data-orientador_link="{% if projeto.orientador %}{% url 'professor_detail' projeto.orientador.id %}{% endif %}"
-          data-orientador_id="{% if projeto.orientador %}{{projeto.orientador.user.id}}{% else %}0{% endif %}"
-          {% if projeto.id == banca.projeto.id %} selected {% endif %}
-          data-subtext="{% if projeto.orientador %}{{projeto.orientador}}{% else %}SEM ORIENTADOR{% endif %}"
-          {% if projeto.id in projetos_agendados %}data-mensagem="Banca já agendada"{% endif %}
-          >
-            {{projeto.ano}}.{{projeto.semestre}} ({{projeto.organizacao}}) {{projeto.titulo}}
-            {% include "tipo_projeto.html" %}
-          </option>  
+          {% if projeto.orientador.user == request.user or request.user.tipo_de_usuario == 4 %}
+            <option value="{{projeto.id}}"
+            style="font-size: 0.75em;{% if projeto.id in projetos_agendados %}color: lightgrey;{% endif %}"
+            data-titulo="{{projeto.titulo}}"
+            data-titulo_link="{% url 'projeto_completo' projeto.id %}"
+            data-organizacao="{{projeto.organizacao}}"
+            data-organizacao_link="{% url 'organizacao_completo' projeto.organizacao.id %}"
+            data-orientador="{% if projeto.orientador %}{{projeto.orientador}}{% else %}SEM ORIENTADOR{% endif %}"
+            data-orientador_link="{% if projeto.orientador %}{% url 'professor_detail' projeto.orientador.id %}{% endif %}"
+            data-orientador_id="{% if projeto.orientador %}{{projeto.orientador.user.id}}{% else %}0{% endif %}"
+            {% if projeto.id == banca.projeto.id %} selected {% endif %}
+            data-subtext="{% if projeto.orientador %}{{projeto.orientador}}{% else %}SEM ORIENTADOR{% endif %}"
+            {% if projeto.id in projetos_agendados %}data-mensagem="Banca já agendada"{% endif %}
+            >
+              {% comment %} {{projeto.ano}}.{{projeto.semestre}} {% endcomment %}
+              ({{projeto.organizacao}}) {{projeto.titulo}}
+              {% include "tipo_projeto.html" %}
+            </option>
+          {% endif %}
         {% endfor %}
       </select>
       </div>
@@ -465,13 +476,13 @@ $("form#criarbancasform").submit(function(e){
     }
   });
 
+  // Atualiza a página quando o popup é fechado
+  window.location.href = "{% url 'bancas_index'%}?view="+calendar.view.type+"&date="+calendar.getDate().toISOString();
+
   return false;
 
 });
 
-// Atualiza a página quando o popup é fechado
-$("#popup").on("hidden.bs.modal", function() {
-  window.location.href = "{% url 'bancas_index'%}?view="+calendar.view.type+"&date="+calendar.getDate().toISOString();
-});
+{% comment %} $("#popup").on("hidden.bs.modal", function() {}); {% endcomment %}
 
 </script>

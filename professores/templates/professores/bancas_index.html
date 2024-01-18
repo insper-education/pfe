@@ -83,6 +83,13 @@
           meridiem: false, //lowercase, short, narrow, false (display of AM/PM)
           hour12: false //true, false
         },
+        businessHours: [ // Horas indicadas para as bancas
+          {
+            daysOfWeek: [ 1, 2, 3, 4, 5 ], // Segunda, Terça, Quarta, Quinta, Sexta
+            startTime: "07:30",
+            endTime: "20:00"
+          },
+        ],
 
         eventRender: function(info) {
          
@@ -191,6 +198,9 @@
 
       calendar.render();
     });
+
+    // recarrega a página a cada 1 hora (evita que usuário não veja atualização de outros)
+    window.setInterval("location.reload();", 3600000); // 1 hora
 
   </script>
 
