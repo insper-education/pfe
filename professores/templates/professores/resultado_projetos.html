@@ -28,6 +28,14 @@
       padding-left: 1.4em;
       font-size: 0.9em;
     }
+
+    .certificacao_excelencia {
+      background-color:lightgreen;
+    }
+    .certificacao_destaque {
+      background-color:lemonchiffon;
+    }
+
   </style>
 
 
@@ -44,8 +52,10 @@
 
   {% include "informacoes.html" %}
 
+  <div class="atualizar">
+
   <div class="table-responsive">
-  <table  id="ProjetosTable" class="projetos">
+  <table id="ProjetosTable" class="projetos">
 
     {% if tabela %}
       <thead>
@@ -76,20 +86,13 @@
 
       <tbody>
       {% for projeto, relatorio_intermediario, relatorio_final, banca_intermediaria, banca_final, banca_falconi in tabela %} 
-      <tr class="item"
-        {% if banca_falconi.2 >= 8 %}
-          {% if banca_intermediaria.2 >= 7 and banca_final.2 >= 7 and relatorio_final.2 >= 7 and relatorio_intermediario.2 >= 7 %}
-            style="background-color:lightgreen"
-          {% else %}
-            style="background-color:#DAF7A6"
-          {% endif %}
-        {% elif banca_falconi.2 >= 6 %}
-          {% if banca_intermediaria.2 >= 7 and banca_final.2 >= 7 and relatorio_final.2 >= 7 and relatorio_intermediario.2 >= 7 %}
-            style="background-color:lemonchiffon"
-          {% else %}
-            style="background-color:#ffffed"
-          {% endif %}
+      <tr class="item
+        {% if banca_falconi.certificacao == "E" %}
+          certificacao_excelencia
+        {% elif banca_falconi.certificacao == "D" %}
+          certificacao_destaque
         {% endif %}
+        "
       >
           <td>
             <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">
@@ -158,9 +161,9 @@
           {% comment %} Relatório Intermediário {% endcomment %}
           <td class="text-center" style="white-space: nowrap;">
             <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}"
-              {% if relatorio_intermediario.1 %}
-                data-toggle="tooltip" data-html="true" animation="true" title="{{ relatorio_intermediario.0|safe }}">
-              {{ relatorio_intermediario.1|safe }}
+              {% if relatorio_intermediario.nota_texto %}
+                data-toggle="tooltip" data-html="true" animation="true" title="{{ relatorio_intermediario.conceito|safe }}">
+              {{ relatorio_intermediario.nota_texto|safe }}
               {% else %}
               >
               {% endif %}
@@ -170,9 +173,9 @@
         {% comment %} Relatório Final {% endcomment %}
           <td class="text-center" style="white-space: nowrap;">
             <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}"
-              {% if relatorio_final.1 %}
-                data-toggle="tooltip" data-html="true" animation="true" title="{{ relatorio_final.0|safe }}">
-              {{ relatorio_final.1|safe }}
+              {% if relatorio_final.nota_texto %}
+                data-toggle="tooltip" data-html="true" animation="true" title="{{ relatorio_final.conceito|safe }}">
+              {{ relatorio_final.nota_texto|safe }}
               {% else %}
               >
               {% endif %}
@@ -182,9 +185,9 @@
         {% comment %} Banca Intermediária {% endcomment %}
           <td class="text-center" style="white-space: nowrap;">
             <a class="imprimir" href="{% url 'conceitos_obtidos' projeto.id %}"
-              {% if banca_intermediaria.1 %}
-                data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_intermediaria.0|safe }}">
-                {{ banca_intermediaria.1|safe }}
+              {% if banca_intermediaria.nota_texto %}
+                data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_intermediaria.conceito|safe }}">
+                {{ banca_intermediaria.nota_texto|safe }}
               {% else %}
               >
               {% endif %}
@@ -194,9 +197,9 @@
           {% comment %} Banca Final {% endcomment %}
           <td class="text-center" style="white-space: nowrap;">
             <a class="imprimir" href="{% url 'conceitos_obtidos' projeto.id %}"
-              {% if banca_final.1 %}
-                data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_final.0|safe }}">
-                {{ banca_final.1|safe }}
+              {% if banca_final.nota_texto %}
+                data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_final.conceito|safe }}">
+                {{ banca_final.nota_texto|safe }}
               {% else %}
               >
               {% endif %}
@@ -206,9 +209,9 @@
           {% comment %} Banca Falconi {% endcomment %}
           <td class="text-center" style="white-space: nowrap;">
             <a class="imprimir" href="{% url 'conceitos_obtidos' projeto.id %}"
-              {% if banca_falconi.1 %}
-                data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_falconi.0|safe }}">
-                {{ banca_falconi.1|safe }}
+              {% if banca_falconi.nota_texto %}
+                data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_falconi.avaliadores|safe }}">
+                {{ banca_falconi.nota_texto|safe }}
               {% else %}
               >
               {% endif %}
@@ -227,16 +230,27 @@
     {% endif %}
 
   </table>
-  </div>
-
+  
+  <br>
+  &nbsp;Total de Projetos: <span id="total_projetos"></span><br>
 
   <br>
   &nbsp;<span style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    Certificação Excelência <span class="opt_full">Projeto Final de Engenharia</span><span class="opt_short">PFE</span> FALCONI-INSPER<br>
+    Certificação Excelência <span class="opt_full">Projeto Final de Engenharia</span><span class="opt_short">PFE</span> FALCONI-INSPER
+    (<span id="certificacao_excelencia"></span>)<br>
 
   &nbsp;<span style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    Certificação Destaque <span class="opt_full">Projeto Final de Engenharia</span><span class="opt_short">PFE</span> FALCONI-INSPER<br>
+    Certificação Destaque <span class="opt_full">Projeto Final de Engenharia</span><span class="opt_short">PFE</span> FALCONI-INSPER
+    (<span id="certificacao_destaque"></span>)<br>
 
+  <script>
+    $("#total_projetos").html($(".item").length);
+    $("#certificacao_excelencia").html($(".certificacao_excelencia").length);
+    $("#certificacao_destaque").html($(".certificacao_destaque").length);
+  </script>
+
+  </div>
+  </div>
   <p>&nbsp;</p>
 
 
@@ -262,11 +276,11 @@
           type: "POST",
           data: {
               edicao: edicao,
-              'csrfmiddlewaretoken': '{{ csrf_token }}',
+              "csrfmiddlewaretoken": "{{ csrf_token }}",
           },
           success: function(response){
             if (seqNumber === xhrCount) { {% comment %} Processando resposta {% endcomment %}
-              $("table.projetos").replaceWith($("table.projetos",response));
+              $(".atualizar").replaceWith($(".atualizar",response));
               //$("#organizacao").prop('checked') ? $('#ProjetosTable tr > *:nth-child(2)').show() : $('#ProjetosTable tr > *:nth-child(2)').hide()
               //$("#orientador").prop('checked') ? $('#ProjetosTable tr > *:nth-child(3)').show() : $('#ProjetosTable tr > *:nth-child(3)').hide()
               {% include "tooltip.js" %}

@@ -2113,19 +2113,24 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
 
                     if ("peso_grupo_inter" in medias) and (medias["peso_grupo_inter"] is not None) and (medias["peso_grupo_inter"] > 0):
                         nota = medias["nota_grupo_inter"]/medias["peso_grupo_inter"]
-                        relatorio_intermediario.append(("{0}".format(converte_letra(nota, espaco="&nbsp;")),
-                                            "{0:5.2f}".format(nota),
-                                            nota))
+                        relatorio_intermediario.append({"conceito": "{0}".format(converte_letra(nota, espaco="&nbsp;")),
+                                                "nota_texto": "{0:5.2f}".format(nota),
+                                                "nota": nota})                    
                     else:
-                        relatorio_intermediario.append(("&nbsp;-&nbsp;", None, 0))
+                        relatorio_intermediario.append({"conceito": "&nbsp;-&nbsp;",
+                                                    "nota_texto": "",
+                                                    "nota": 0})
 
                     if ("peso_grupo_final" in medias) and (medias["peso_grupo_final"] is not None) and (medias["peso_grupo_final"] > 0):
                         nota = medias["nota_grupo_final"]/medias["peso_grupo_final"]
-                        relatorio_final.append(("{0}".format(converte_letra(nota, espaco="&nbsp;")),
-                                            "{0:5.2f}".format(nota),
-                                            nota))
+                        relatorio_final.append({"conceito": "{0}".format(converte_letra(nota, espaco="&nbsp;")),
+                                                "nota_texto": "{0:5.2f}".format(nota),
+                                                "nota": nota})                    
                     else:
-                        relatorio_final.append(("&nbsp;-&nbsp;", None, 0))
+                        relatorio_final.append({"conceito": "&nbsp;-&nbsp;",
+                                                    "nota_texto": "",
+                                                    "nota": 0})
+ 
 
                 else:
                     relatorio_intermediario.append(("&nbsp;-&nbsp;", None, 0))
@@ -2134,24 +2139,28 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                 exame = Exame.objects.get(titulo="Banca Final")
                 aval_banc_final = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # B. Final
                 nota_banca_final, peso, avaliadores = Aluno.get_banca(None, aval_banc_final, eh_banca=True)
-
                 if peso is not None:
-                    banca_final.append(("{0}".format(converte_letra(nota_banca_final, espaco="&nbsp;")),
-                                        "{0:5.2f}".format(nota_banca_final),
-                                        nota_banca_final))
+                    banca_final.append({"conceito": "{0}".format(converte_letra(nota_banca_final, espaco="&nbsp;")),
+                                                "nota_texto": "{0:5.2f}".format(nota_banca_final),
+                                                "nota": nota_banca_final})                    
                 else:
-                    banca_final.append(("&nbsp;-&nbsp;", None, 0))
+                    banca_final.append({"conceito": "&nbsp;-&nbsp;",
+                                                "nota_texto": "",
+                                                "nota": 0})
+
 
                 exame = Exame.objects.get(titulo="Banca Intermediária")
                 aval_banc_interm = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # B. Int.
                 nota_banca_intermediaria, peso, avaliadores = Aluno.get_banca(None, aval_banc_interm, eh_banca=True)
                 if peso is not None:
-                    banca_intermediaria.append(("{0}".format(converte_letra(nota_banca_intermediaria,
-                                                                            espaco="&nbsp;")),
-                                                "{0:5.2f}".format(nota_banca_intermediaria),
-                                                nota_banca_intermediaria))
+                    banca_intermediaria.append({"conceito": "{0}".format(converte_letra(nota_banca_intermediaria, espaco="&nbsp;")),
+                                                "nota_texto": "{0:5.2f}".format(nota_banca_intermediaria),
+                                                "nota": nota_banca_intermediaria})                    
                 else:
-                    banca_intermediaria.append(("&nbsp;-&nbsp;", None, 0))
+                    banca_intermediaria.append({"conceito": "&nbsp;-&nbsp;",
+                                                "nota_texto": "",
+                                                "nota": 0})
+                    
 
                 exame = Exame.objects.get(titulo="Falconi")
                 aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # Falc.
@@ -2160,11 +2169,23 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                     nomes = ""
                     for nome in avaliadores:
                         nomes += "&#8226; "+str(nome)+"<br>"
-                    banca_falconi.append(("{0}".format(nomes),
-                                          "{0:5.2f}".format(nota_banca_falconi),
-                                          nota_banca_falconi))
+
+                    certificacao = ""
+                    if nota_banca_falconi >= 8:
+                        certificacao = "E"  # Excelencia FALCONI-INSPER
+                    elif nota_banca_falconi >= 6:
+                        certificacao = "D"  # Destaque FALCONI-INSPER
+
+                    banca_falconi.append({"avaliadores": "{0}".format(nomes),
+                                          "nota_texto": "{0:5.2f}".format(nota_banca_falconi),
+                                          "nota": nota_banca_falconi,
+                                          "certificacao": certificacao})
+                    
                 else:
-                    banca_falconi.append(("&nbsp;-&nbsp;", None, 0))
+                    banca_falconi.append({"avaliadores": "&nbsp;-&nbsp;",
+                                          "nota_texto": "",
+                                          "nota": 0,
+                                          "certificacao": ""})
 
             tabela = zip(projetos,
                          relatorio_intermediario,
@@ -2173,7 +2194,7 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                          banca_final,
                          banca_falconi)
 
-            context = {'tabela': tabela}
+            context = {"tabela": tabela}
 
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
