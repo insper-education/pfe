@@ -17,9 +17,12 @@
   <div id="sequenc_projetos" class="input-group-append">
     {% for projeto in projetos %}
       <a onclick="event.preventDefault(); coleta_usuario_envia($(this));"
-        data-estudantes="{% for alocacao in projeto.alocacao_set.all %}{{alocacao.aluno.user.email|parse_quote}}{% if not forloop.last %},{% endif %}{% endfor %}"
+        data-estudantes="{% for alocacao in projeto.alocacao_set.all %}{{alocacao.aluno.user.email|parse_quote}}{% if not forloop.last %},{% endif %}{% endfor %}"        
+        data-estudantes-nomes="{% for alocacao in projeto.alocacao_set.all %}{{alocacao.aluno.user.get_full_name|parse_quote}}{% if not forloop.last %}, {% endif %}{% endfor %}"
         data-orientador="{{ projeto.orientador.user.email|parse_quote }}"
+        data-orientador-nome="{{ projeto.orientador.user.get_full_name|parse_quote }}"
         data-conexoes="{% for pessoa in projeto.conexao_set.all %}{{ pessoa.parceiro.user.email|parse_quote }}{% if not forloop.last %},{% endif %}{% endfor %}"
+        data-conexoes-nomes="{% for pessoa in projeto.conexao_set.all %}{{ pessoa.parceiro.user.get_full_name|parse_quote }}{% if not forloop.last %}, {% endif %}{% endfor %}"
         data-projeto="{{projeto}}"
         data-avancado="{% if projeto.avancado %}true{% else %}false{% endif %}"
         data-toggle="tooltip" data-html="true" animation="true" title="{{projeto}}"

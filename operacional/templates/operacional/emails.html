@@ -13,34 +13,48 @@
   {% comment %} Removendo nomes dos e-mails devido a limitações do Outlook. {% endcomment %}
 
   <script>
-    function manda(estudantes, orientador, parceiros, projeto, avancado) {
+    function manda(estudantes, estudantes_nomes, orientador, orientador_nome, conexoes, conexoes_nomes, projeto, avancado) {
       mailto = "mailto:";
       if($('#estudantes:checked').val() && estudantes.trim().length != 0) {
         mailto += estudantes;
-        if( ($('#orientador:checked').val() && orientador.trim().length != 0) || ($('#parceiros:checked').val() && parceiros.trim().length != 0) ) {mailto += ",";}
+        if( ($('#orientador:checked').val() && orientador.trim().length != 0) || ($('#parceiros:checked').val() && conexoes.trim().length != 0) ) {mailto += ",";}
       }
       if($('#orientador:checked').val() && orientador.trim().length != 0) {
         mailto += orientador;
-        if($('#parceiros:checked').val() && parceiros.trim().length != 0) {mailto += ",";}
+        if($('#parceiros:checked').val() && conexoes.trim().length != 0) {mailto += ",";}
       }
-      if($('#parceiros:checked').val() && parceiros.trim().length != 0) {mailto += parceiros;}
-      mailto += "?cc={% for coordenador in coordenacoes %}{{coordenador.email|parse_quote}}{% if not forloop.last %},{% endif %}{% endfor %},pfe@insper.edu.br";
+      if($('#parceiros:checked').val() && conexoes.trim().length != 0) {mailto += conexoes;}
+      mailto += "?cc={% for coordenador in coordenacoes %}{{coordenador.email|parse_quote}}{% if not forloop.last %},{% endif %}{% endfor %}";
+      //mailto += ",pfe@insper.edu.br";
       mailto += "&subject=PFE%20"
       if(avancado) {mailto += "Avançado%20";}
       mailto += "-%20Projeto:%20"
       mailto += projeto
-      mailto += "&body=Caros,%0D%0A%0D%0A";
-      mailto += "atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20PFE)";
+      mailto += "&body=Caros%20"
+      if($('#estudantes:checked').val() && estudantes_nomes.trim().length != 0) {
+        mailto += estudantes_nomes;
+        if( ($('#orientador:checked').val() && orientador_nome.trim().length != 0) || ($('#parceiros:checked').val() && conexoes_nomes.trim().length != 0) ) {mailto += ", ";}
+      }
+      if($('#orientador:checked').val() && orientador_nome.trim().length != 0) {
+        mailto += orientador_nome;
+        if($('#parceiros:checked').val() && conexoes_nomes.trim().length != 0) {mailto += ", ";}
+      }
+      if($('#parceiros:checked').val() && conexoes_nomes.trim().length != 0) {mailto += conexoes_nomes;}
+      mailto += ",%0D%0A%0D%0A";
+      mailto += "%09atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20PFE)";
       window.open(mailto);
     }
   
     function coleta_usuario_envia(aqui) {
       estudantes = aqui.data("estudantes");
+      estudantes_nomes = aqui.data("estudantes-nomes");
       orientador = aqui.data("orientador");
+      orientador_nome = aqui.data("orientador-nome");
       conexoes = aqui.data("conexoes");
+      conexoes_nomes = aqui.data("conexoes-nomes");
       projeto = aqui.data("projeto");
       avancado = aqui.data("avancado");
-      manda(estudantes, orientador, conexoes, projeto, avancado);
+      manda(estudantes, estudantes_nomes, orientador, orientador_nome, conexoes, conexoes_nomes, projeto, avancado);
     }
 
   </script>
@@ -141,9 +155,9 @@
 
   <br>
 
-  <strong>Por projeto</strong>
-  <label class="form-check-label">(</label>
+  <strong>Por projeto</strong><br>
   <small>
+    &nbsp;&nbsp;<b>Copiados:</b>
     <div class="form-check form-check-inline mr-1">
       <input class="form-check-input" type="checkbox" id="estudantes" value="estudantes" checked>
       <label class="form-check-label" for="estudantes">Estudantes</label>
@@ -157,7 +171,6 @@
       <label class="form-check-label" for="parceiros">Parceiros</label>
     </div>
   </small>
-  <label class="form-check-label">)</label>
 
   <div class="row align-items-start mb-2 table-responsive">
     <div class="ml-3">
@@ -375,7 +388,7 @@
       var edicao = $("#filterEdicaoProjetos option:selected").attr("value");
       $.ajax({
         type: "POST",
-        url: '{% url "emails_projetos" %}',
+        url: "{% url "emails_projetos" %}",
         data: {
             edicao: edicao,
             "csrfmiddlewaretoken": "{{ csrf_token }}",
