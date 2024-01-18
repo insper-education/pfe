@@ -14,7 +14,8 @@ import re
 from urllib.parse import quote
 
 from django.db import models
-from django.db.models.functions import Lower
+from django.db.models import F
+
 from django.urls import reverse  # To generate URLS by reversing URL patterns
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib import admin
@@ -70,7 +71,7 @@ class Organizacao(models.Model):
 
 
     class Meta:
-        ordering = [ Lower("nome"),]
+        #ordering = [ "nome",]  # Não vale a pena pois é sempre case sensitive
         verbose_name = "Organização"
         verbose_name_plural = "Organizações"
 
@@ -133,7 +134,7 @@ class Projeto(models.Model):
                                         help_text='Caso o projeto conte com membros externos a instituição')
 
     class Meta:
-        ordering = [ Lower("organizacao__nome"), "ano", "semestre"]
+        #ordering = [ "organizacao", "ano", "semestre"]  # Não vale a pena pois é sempre case sensitive
         permissions = (("altera_empresa", "Empresa altera valores"),
                        ("altera_professor", "Professor altera valores"), )
 
@@ -448,9 +449,9 @@ class Proposta(models.Model):
 
 
     class Meta:
-        
-        ordering = [ Lower("organizacao__nome"), "ano", "semestre"]
-
+        #ordering = [ "organizacao", "ano", "semestre",]  # Não vale a pena pois é sempre case sensitive
+        verbose_name = "Proposta"
+        verbose_name_plural = "Propostas"
 
     @classmethod
     def create(cls):
@@ -624,7 +625,6 @@ class Cursada(models.Model):
 
     class Meta:
         """Classe Meta."""
-
         ordering = ["nota"]
 
     def __str__(self):

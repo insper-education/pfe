@@ -276,7 +276,7 @@ def cadastrar_usuario(request):
         return render(request, 'generic.html', context=context)
 
     context = {
-        "organizacoes": Organizacao.objects.all().order_by("nome"),
+        "organizacoes": Organizacao.objects.all().order_by(Lower("nome")),
         "cursos": Curso.objects.all().order_by("id"),
         "PFEUser": PFEUser,
         "Professor": Professor,
@@ -351,7 +351,7 @@ def edita_usuario(request, primarykey):
 
     context = {
         "usuario": user,
-        "organizacoes": Organizacao.objects.all(),
+        "organizacoes": Organizacao.objects.all().order_by(Lower("nome")),
         "cursos": Curso.objects.all().order_by("id"),
         "PFEUser": PFEUser,
         "Professor": Professor,
@@ -386,16 +386,16 @@ def carrega_arquivo(request, dado):
         return HttpResponseNotFound('<h1>Tipo de dado não reconhecido!</h1>')
 
     # https://simpleisbetterthancomplex.com/packages/2016/08/11/django-import-export.html
-    if request.method == 'POST':
+    if request.method == "POST":
 
         dataset = tablib.Dataset()
 
-        if 'arquivo' in request.FILES:
-            new_data = request.FILES['arquivo'].readlines()
+        if "arquivo" in request.FILES:
+            new_data = request.FILES["arquivo"].readlines()
             if ';' in str(new_data)[:32]:
-                return HttpResponseNotFound('<h1>Arquivo de dados possui ponto e vírgula (;) !</h1>')
+                return HttpResponseNotFound("<h1>Arquivo de dados possui ponto e vírgula (;) !</h1>")
         else:
-            return HttpResponseNotFound('<h1>Arquivo não reconhecido!</h1>')
+            return HttpResponseNotFound("<h1>Arquivo não reconhecido!</h1>")
 
         entradas = ""
         for i in new_data:

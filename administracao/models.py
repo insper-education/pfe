@@ -19,7 +19,7 @@ class Carta(models.Model):
                                    help_text="Texto para ser enviado")
     
     class Meta:
-        ordering = [ Lower("template") ]
+        #ordering = [ "template",]  # Não vale a pena pois é sempre case sensitive
         verbose_name = "Carta"
         verbose_name_plural = "Cartas"
 

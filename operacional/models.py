@@ -31,7 +31,7 @@ class Curso(models.Model):
                              help_text='Indicar caso seja um curso do Insper (outros são usados para estudantes de intercâmbio)')
 
     class Meta:
-        ordering = [ Lower("nome") ]
+        #ordering = [ "nome",]  # Não vale a pena pois é sempre case sensitive
         verbose_name = "Curso"
         verbose_name_plural = "Cursos"
 
