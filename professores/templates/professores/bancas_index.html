@@ -10,6 +10,9 @@
   {% load static %}
   {% load date_extras %}
 
+  {% comment %} Para chamar os Tooltips {% endcomment %}
+  <script>{% include "tooltip.js" %}</script>
+  
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% comment %} {% include "reload.html" %} Fica voltando no mes atual e atrapalha {% endcomment %}
 
@@ -28,20 +31,47 @@
   <script src="{% static 'fullcalendar-4.4.2/core/locales/pt-br.js' %}"></script>
 
 
+
   {% include "cores_bancas.html" %}
+
+  <style>
+    #calendar {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+  
+    .wrap {display: flex;}
+
+    .fc-center,
+    .fc-button {
+      font-size: min(2.1vw, 1em);
+    }
+
+    .fc-event {overflow: hidden;}
+
+    @media (max-width: 900px) {
+      .wrap {flex-direction: column-reverse;}
+      .fc-event {
+        font-size: 9px !important;
+      }
+    }
+  </style>
 
   <script>
 
+    var calendar = null;
     document.addEventListener('DOMContentLoaded', function() {
-      var calendarEl = document.getElementById('calendar');
+      var calendarEl = document.getElementById("calendar");
 
-      var calendar = new FullCalendar.Calendar(calendarEl, {
+      calendar = new FullCalendar.Calendar(calendarEl, {
         plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'list' ],
         header: {
           left: 'prev,next today',
           center: 'title',
           right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
         },
+        defaultView: {% if view %}"{{view}}"{% else %}"dayGridMonth"{% endif %},
+        defaultDate: {% if date %}"{{date}}"{% else %}null{% endif %},
         locale: 'pt-br',
         navLinks: true, // can click day/week names to navigate views
         businessHours: true, // display business hours
@@ -55,6 +85,7 @@
         },
 
         eventRender: function(info) {
+         
           if (!info.event.allDay) {
             if (info.view.type === "dayGridMonth" || info.view.type === "timeGridWeek") {
               let time = info.event.start.getHours() + ':' + info.event.start.getMinutes().toString().replace(/^(\d)$/, '0$1');
@@ -65,9 +96,15 @@
               }
               info.el.innerHTML = "<b>" + time + "</b><br><nobr>" + info.event.extendedProps.organizacao + "</nobr><br><nobr style='color:#566573'>" + info.event.extendedProps.local + "</nobr><br><nobr style='color:#E8E8E8'>" + nome_orientador + "</nobr>";
             }
-          }
+          } 
+
+          $(info.el).tooltip({              
+            title: info.event.extendedProps.description,
+            html: true,
+          });
+
         },
-        
+
         events: [
           {% for banca in bancas %} 
             {
@@ -90,6 +127,8 @@
                 id: "{{banca.id}}",
                 textColor: "#fafafa",
 
+                description: "",
+
                 {% if banca.tipo_de_banca == 0 %} {% comment %} Banca Final {% endcomment %}
                   color: color_banca_final
                 {% elif banca.tipo_de_banca == 1 %} {% comment %} Banca Intermediária {% endcomment %}
@@ -105,7 +144,7 @@
           // area onde as bancas podem ser alocadas
           {% for dias in dias_bancas %} 
             {
-              {% comment %} groupId: 'bancasIntermediarias20192', {% endcomment %}
+              {% comment %} groupId: 'grupo{{dias.id}}', {% endcomment %}
               {% with start=dias.startDate %}
                 start: '{{start.year}}-{{start.month|stringformat:"02d"}}-{{start.day|stringformat:"02d"}}',
               {% endwith %}
@@ -115,25 +154,29 @@
               rendering: 'background',
 
               {% if dias.tipo_de_evento == 15 %} {% comment %} Banca Final {% endcomment %}
-                color: color_banca_final
+                color: color_banca_final,
+                description: "<b>período de bancas finais</b>",
               {% elif dias.tipo_de_evento == 14 %} {% comment %} Banca Intermediária {% endcomment %}
-                color: color_banca_intermediaria
+                color: color_banca_intermediaria,
+                description: "<b>período de bancas intermediárias</b>",
               {% elif dias.tipo_de_evento == 50 %} {% comment %} Banca Falconi {% endcomment %}
-                color: color_banca_falconi
+                color: color_banca_falconi,
+                description: "<b>período de bancas Falconi</b>",
               {% else %}
-                color: '#777777'
+                color: '#777777',
               {% endif %}
 
-              {% comment %} color: '#99b9ff' {% endcomment %}
             },
           {% endfor %}
         ],
 
         eventClick: function(event, jsEvent, view) {
           // Para editar uma banca
-          var elem = document.createElement( "span" );
-          $( elem ).data( "url", "{% url 'bancas_editar' %}"+event.event.id);
-          abrir_modal.call(elem, null);
+          if(event.event.id) {
+            var elem = document.createElement( "span" );
+            $( elem ).data( "url", "{% url 'bancas_editar' %}"+event.event.id);
+            abrir_modal.call(elem, null);
+          }
         },
 
         dateClick: function(info) {
@@ -150,45 +193,6 @@
     });
 
   </script>
-  <style>
-    #calendar {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-  
-    .wrap {
-      display: flex;
-    }
-
-    .one {
-      width: 20%;
-    }
-
-    .two {
-      width: 80%;
-    }
-
-    .fc-center,
-    .fc-button {
-      font-size: min(2.1vw, 1em);
-    }
-
-    .fc-event {
-      overflow: hidden;
-    }
-
-    @media (max-width: 900px) {
-      .wrap {
-        flex-direction: column-reverse;
-      }
-      .one, .two {
-        width: auto;
-      }
-      .fc-event {
-        font-size: 9px !important;
-      }
-    }
-  </style>
 
 {% endblock %}
 
@@ -204,8 +208,7 @@
   </span>
 
   <div class="wrap">
-      {% comment %} <div class="one"></div> Não mais usado, ficava a esquerda {% endcomment %}
-      <div class="two" id='calendar'></div>
+      <div id="calendar"></div>
   </div>
 
   {% include "janelas-modal.html" %}

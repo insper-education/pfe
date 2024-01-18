@@ -147,6 +147,8 @@ def bancas_index(request):
     context = {
         "bancas": bancas,
         "dias_bancas": dias_bancas,
+        "view": request.GET.get("view", None),
+        "date": request.GET.get("date", None),
     }
 
     return render(request, "professores/bancas_index.html", context)
@@ -249,8 +251,8 @@ def bancas_criar(request, data=None):
     }
 
     if data:
-        context["data"] = data
-        datar = datetime.datetime.strptime(data, "%Y-%m-%d").date()
+        context["data"] = data[:10]  # soh a data, tirando a hora se for o caso
+        datar = datetime.datetime.strptime(context["data"], "%Y-%m-%d").date()
         if datar >= bancas_finais.startDate and datar <= bancas_finais.endDate:
             context["tipob"] = 0
         if datar >= bancas_intermediaria.startDate and datar <= bancas_intermediaria.endDate:
