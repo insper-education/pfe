@@ -12,15 +12,22 @@
 <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
 
 <style>
+  input, textarea {max-width: 100%;}
   table, th, td { border: 0px; }
   .btn-group.bootstrap-select select {
     width: 1px !important;
   }
-
+  .url_reativo {font-size: 16px;}
+  @media (max-width: 460px) {
+    .url_reativo {font-size: 14px;}
+  }
   {% comment %} Para seleção de projeto não vazar a tela {% endcomment %}
   .bootstrap-select > .dropdown-menu { 
     width: 100vw;
     max-width: fit-content;
+  }
+  label {
+    display: inline;
   }
 </style>
 
@@ -34,7 +41,7 @@
       </button>
     </div>
 
-    <div id="modal-body" class="modal-body">
+    <div id="modal-body" class="modal-body" style="padding-bottom: 2px;">
 
     {% if not banca.projeto %}
       <div class="form-group">
@@ -72,7 +79,7 @@
 
     Título: 
     <a style="display: inline;" id="titulo_link" name="titulo_link" {% if banca and banca.projeto %}href="{% url 'projeto_completo' banca.projeto.id %}"{% endif %}>
-      <label style="display: inline;" id="titulo" name="titulo">
+      <label id="titulo" name="titulo">
         {% if banca and banca.projeto %}
           {{banca.projeto.get_titulo}}
           {% include "tipo_projeto.html" with projeto=banca.projeto %}
@@ -105,17 +112,16 @@
         {% endif %}
       </label>
     </a>
-    <label hidden id="orientador_id"></label>
     <br><br>
-
+    <label hidden id="orientador_id"></label>
   
     <div style="line-height: 1;">
       <span style="display: inline-block; margin-bottom: 8px;">Tipo de banca:</span>
       {% for numero, texto in TIPO_DE_BANCA %}
-        <div style="margin-left: 0.3em;" class="radio">
+        <div style="margin-left: 0.3em; margin-bottom: 0.3em;" class="radio">
           <label for="tipo{{numero}}"><input class="tipo_banca" id="tipo{{numero}}" type="radio" name="tipo" value="{{numero}}"
             {% if banca.tipo_de_banca == numero or tipob == numero %}checked{% endif %} required> {{texto}}
-            (padrão de duração: {% if numero == 2 %}30{% else %}120{% endif %}min)</label>
+            (duração padrão: {% if numero == 2 %}30{% else %}120{% endif %}min)</label>
             <br>
         </div>
       {% endfor %}
@@ -157,7 +163,7 @@
 
     <br>
     <div>
-        <label for="inicio">
+        <label for="inicio" style="white-space: nowrap; display:inline-block; margin-bottom: 3px;">
         <span style="display:inline-block; width:5.5ex; text-align:right;">Início:</span>
         <input id="inicio" type="datetime-local" name="inicio" 
         {% comment %} min="2018-01-01T00:00" max="2018-12-31T00:00"  {% endcomment %}
@@ -170,7 +176,7 @@
         &nbsp;&nbsp;&nbsp;&nbsp;
         </label>
       
-        <label for="fim">
+        <label for="fim" style="white-space: nowrap; display:inline-block; margin-bottom: 3px;">
         <span style="display:inline-block; width:5.5ex; text-align:right">Fim:</span>
         <input id="fim" type="datetime-local" name="fim"
         {% if banca %}
@@ -210,15 +216,6 @@
       });
     </script>
 
-    <style>
-      input {
-        max-width: 100%;
-      }
-      textarea {
-        max-width: 100%;
-      }
-    </style>
-    
     <label for="local">Local:</label> 
       <input id="local" name="local" type="text" size="36" maxlength="{% max_length Banca "location" %}"
       style="max-width: 100%;" placeholder="alocado pela equipe de reservas"
@@ -280,17 +277,6 @@
       </tr>
     </table>
 
-    <style>
-      .url_reativo {
-        font-size: 16px;
-      }
-      @media (max-width: 460px) {
-        .url_reativo {
-          font-size: 14px;
-        }
-      }
-    </style>
-
     {% if banca %}
       <br>
       <div style="overflow-wrap: break-word;">
@@ -302,7 +288,7 @@
       </div>
     {% endif %}
 
-    <br><br>
+    <br>
     <span id="mensagem"></span>
 
   </div>
