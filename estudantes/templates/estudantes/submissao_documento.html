@@ -12,6 +12,7 @@
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
   <style>
+    ul {margin-bottom: 6px;}
     .lightgrey,
     .lightgrey:link,
     .lightgrey:visited,
@@ -19,6 +20,8 @@
     .lightgrey:active
       {color:lightgrey;}
   </style>
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
+
 {% endblock %}
 
 
@@ -35,11 +38,11 @@
 
   {% for item in entregas %}
     {% with dias_ate=item.evento.endDate|dif_dias_hoje dias=14 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
-      <div {% if dias_ate > dias and user.tipo_de_usuario == 1 %}style="display:none;"{% endif %}>
+      <div {% if dias_ate > dias and user.tipo_de_usuario == 1 %}style="display:none;"{% endif %} class="div_arredondado">
         <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
         <b>{{item.composicao.exame.titulo}}</b> [prazo {{item.evento.endDate}}]: </span><a id="adiciona"
           class="open-documento {% if dias_ate > dias %}lightgrey{% endif %}"
-          data-toggle="tooltip" data-html="true" animation="true" 
+          data-toggle="tooltip" data-html="true" animation="true"
           {% if item.documentos.last %}
             title="Substitui documento"
             data-url="{% url 'adiciona_documento_estudante' item.composicao.tipo_documento.nome item.documentos.last.id %}"
@@ -85,7 +88,8 @@
         {% empty %}
           Não entregue
         {% endfor %} 
-        </ul><br>
+        </ul>
+        {% include "display_avaliacoes.html" %}
       </div>
     {% endwith %}
   {% endfor %} 

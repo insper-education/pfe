@@ -1,0 +1,59 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 19 de Janeiro de 2024
+{% endcomment %}
+
+{% if item.avaliacoes %}
+  <div style="display: table;">
+    <table style="border: 0px; border-collapse: separate; border-spacing: 10px; width: 100%;">
+      <tr>
+        <td style="padding: 0.4em 0.7em 0.4em 0.7em; background-color: lightgrey; border: 0px; vertical-align: top;">
+          {% if item.avaliacoes.last.objetivo %}
+            <b>Avaliação:</b><br>
+            <ul>
+              {% for avaliacao in item.avaliacoes %}
+                <li style="margin-left: -1.9em; white-space: nowrap; list-style-type: '&#8227; ';">
+                  {% if avaliacao.objetivo %}
+                    {{avaliacao.objetivo.titulo}}:
+                    {% comment %} {{avaliacao.objetivo.sigla}}: {% endcomment %}
+                  {% else %}
+                    Objetivo não definido 
+                  {% endif %}
+                  {{avaliacao.get_conceito}}
+                </li>
+              {% endfor %}
+            </ul>
+            <b>Nota = {{item.nota|floatformat:2}}  </b>
+          {% else %}
+            <b>Decisão:</b><br>
+            &#8227;
+            {% if avaliacao.nota > 5 %}
+              Adequado
+            {% else %}
+              Inadequado
+            {% endif %}
+          {% endif %}
+        </td>
+
+        {% if item.observacao.observacoes_estudantes or item.observacao.observacoes_orientador%}
+          <td style="padding: 0.4em 0.7em 0.4em 0.7em; background-color: lightgrey; border: 0px; vertical-align: top;">
+          {% if item.observacao.observacoes_estudantes %}
+              <b>Observações para Estudantes:</b><br>
+              {{item.observacao.observacoes_estudantes}}<br>
+              {% if com_orientador and item.observacao.observacoes_orientador %} 
+              <br>
+              {% endif %}
+          {% endif %}
+          {% if com_orientador and item.observacao.observacoes_orientador %} 
+              <b>Observações do Orientador:</b><br>
+              {{item.observacao.observacoes_orientador}}
+          {% endif %}
+          </td>
+        {% endif %}
+
+      </tr>
+    </table>
+  </div>
+{% endif %}
+
