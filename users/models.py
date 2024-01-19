@@ -385,7 +385,7 @@ class Aluno(models.Model):
             if avaliacoes_banca_interm:
                 nota_banca_interm, peso, avaliadores = Aluno.get_objetivos(self,
                                                               avaliacoes_banca_interm, eh_banca=True)
-                notas.append(("BI", nota_banca_interm, peso/100))
+                notas.append(("BI", nota_banca_interm, peso/100 if peso else 0))
 
             # Banca Final (2)
             avaliacoes_banca_final = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=banca_final)
@@ -393,39 +393,39 @@ class Aluno(models.Model):
             if avaliacoes_banca_final:
                 nota_banca_final, peso, avaliadores = Aluno.get_objetivos(self,
                                                              avaliacoes_banca_final, eh_banca=True)
-                notas.append(("BF", nota_banca_final, peso/100))
+                notas.append(("BF", nota_banca_final, peso/100 if peso else 0))
 
             # Relatório de Planejamento (10)
             relp = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=relatorio_planejamento).\
                 order_by("momento").last()
             if relp:
-                notas.append(("RPL", float(relp.nota), relp.peso/100))
+                notas.append(("RPL", float(relp.nota), relp.peso/100 if relp.peso else 0))
 
             # Relatório Intermediário de Grupo (11)
             rig = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=relatorio_intermediario_grupo)
 
             if rig:
                 nota_rig, peso, avaliadores = Aluno.get_objetivos(self, rig)
-                notas.append(("RIG", nota_rig, peso/100))
+                notas.append(("RIG", nota_rig, peso/100 if peso else 0))
 
             # Relatório Final de Grupo (12)
             rfg = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=relatorio_final_grupo)
 
             if rfg:
                 nota_rfg, peso, avaliadores = Aluno.get_objetivos(self, rfg)
-                notas.append(("RFG", nota_rfg, peso/100))
+                notas.append(("RFG", nota_rfg, peso/100 if peso else 0))
 
             # Relatório Intermediário Individual (21)
             rii = Avaliacao2.objects.filter(alocacao=alocacao, exame=relatorio_intermediario_individual)
             if rii:
                 nota_rii, peso, avaliadores = Aluno.get_objetivos(self, rii)
-                notas.append(("RII", nota_rii, peso/100))
+                notas.append(("RII", nota_rii, peso/100 if peso else 0))
 
             # Relatório Final Individual (22)
             rfi = Avaliacao2.objects.filter(alocacao=alocacao,exame=relatorio_final_individual)
             if rfi:
                 nota_rfi, peso, avaliadores = Aluno.get_objetivos(self, rfi)
-                notas.append(("RFI", nota_rfi, peso/100))
+                notas.append(("RFI", nota_rfi, peso/100 if peso else 0))
 
             # NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES
             # Planejamento Primeira Fase  (50)

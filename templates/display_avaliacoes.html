@@ -4,15 +4,15 @@
     Data: 19 de Janeiro de 2024
 {% endcomment %}
 
-{% if item.avaliacoes %}
+{% if avaliacoes %}
   <div style="display: table;">
     <table style="border: 0px; border-collapse: separate; border-spacing: 10px; width: 100%;">
       <tr>
         <td style="padding: 0.4em 0.7em 0.4em 0.7em; background-color: lightgrey; border: 0px; vertical-align: top;">
-          {% if item.avaliacoes.last.objetivo %}
+          {% if avaliacoes.last.objetivo %}
             <b>Avaliação:</b><br>
             <ul>
-              {% for avaliacao in item.avaliacoes %}
+              {% for avaliacao in avaliacoes %}
                 <li style="margin-left: -1.9em; white-space: nowrap; list-style-type: '&#8227; ';">
                   {% if avaliacao.objetivo %}
                     {{avaliacao.objetivo.titulo}}:
@@ -24,11 +24,11 @@
                 </li>
               {% endfor %}
             </ul>
-            <b>Nota = {{item.nota|floatformat:2}}  </b>
+            <b>Nota = {{nota|floatformat:2}}  </b>
           {% else %}
             <b>Decisão:</b><br>
             &#8227;
-            {% if avaliacao.nota > 5 %}
+            {% if avaliacoes.last.nota > 5 %}
               Adequado
             {% else %}
               Inadequado
@@ -36,18 +36,18 @@
           {% endif %}
         </td>
 
-        {% if item.observacao.observacoes_estudantes or item.observacao.observacoes_orientador%}
+        {% if observacao.observacoes_estudantes or observacao.observacoes_orientador%}
           <td style="padding: 0.4em 0.7em 0.4em 0.7em; background-color: lightgrey; border: 0px; vertical-align: top;">
-          {% if item.observacao.observacoes_estudantes %}
+          {% if observacao.observacoes_estudantes %}
               <b>Observações para Estudantes:</b><br>
-              {{item.observacao.observacoes_estudantes}}<br>
-              {% if com_orientador and item.observacao.observacoes_orientador %} 
+              {{observacao.observacoes_estudantes}}<br>
+              {% if com_orientador and observacao.observacoes_orientador %} 
               <br>
               {% endif %}
           {% endif %}
-          {% if com_orientador and item.observacao.observacoes_orientador %} 
+          {% if com_orientador and observacao.observacoes_orientador %} 
               <b>Observações do Orientador:</b><br>
-              {{item.observacao.observacoes_orientador}}
+              {{observacao.observacoes_orientador}}
           {% endif %}
           </td>
         {% endif %}

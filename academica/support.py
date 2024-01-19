@@ -23,75 +23,103 @@ def filtra_composicoes(composicoes, ano, semestre):
 
     return composicoes
 
-
+def get_nota_peso(avaliacoes):
+    nota = 0
+    peso = 0
+    for avaliacao in avaliacoes:
+        if avaliacao.peso and avaliacao.peso > 0:
+            nota += float(avaliacao.nota)*float(avaliacao.peso)
+            peso += float(avaliacao.peso)
+    if peso > 0:
+        nota = nota/peso
+    else:
+        nota = 0
+    return nota, peso
+        
 def filtra_entregas(composicoes, projeto, user=None):
     entregas = []
     for composicao in composicoes:
 
-        if user and not composicao.exame.grupo:
-            documentos = Documento.objects.filter(tipo_documento=composicao.tipo_documento, projeto=projeto, usuario=user)
-        else:
-            documentos = Documento.objects.filter(tipo_documento=composicao.tipo_documento, projeto=projeto)
-        
         if projeto.semestre == 1:
             evento = Evento.objects.filter(tipo_de_evento=composicao.evento, endDate__year=projeto.ano, endDate__month__lt=7).last()
         else:          
             evento = Evento.objects.filter(tipo_de_evento=composicao.evento, endDate__year=projeto.ano, endDate__month__gt=6).last()
-        
-        if composicao.exame.grupo:
-            avaliacoes = Avaliacao2.objects.filter(projeto=projeto, 
-                                                exame=composicao.exame, 
-                                                avaliador=projeto.orientador.user
-                                                )
-        else:
-            if not user:  # Não deveria acontecer
-                alocacao = None
-            else:
-                alocacao = Alocacao.objects.get(projeto=projeto, aluno=user.aluno)
-            avaliacoes = Avaliacao2.objects.filter(projeto=projeto, 
-                                                exame=composicao.exame, 
-                                                avaliador=projeto.orientador.user,
-                                                alocacao=alocacao
-                                                )
-        nota = 0
-        if avaliacoes:
-            peso = 0
-            for avaliacao in avaliacoes:
-                if avaliacao.peso and avaliacao.peso > 0:
-                    nota += float(avaliacao.nota)*float(avaliacao.peso)
-                    peso += float(avaliacao.peso)
-            if peso > 0:
-                nota = nota/peso
-            else:
-                nota = 0
-        
+
 
         if composicao.exame.grupo:
+            documentos = Documento.objects.filter(tipo_documento=composicao.tipo_documento,
+                                                  projeto=projeto)
+            avaliacoes = Avaliacao2.objects.filter(projeto=projeto, 
+                                                   exame=composicao.exame, 
+                                                   avaliador=projeto.orientador.user)
+            nota, peso = get_nota_peso(avaliacoes)
             observacao = Observacao.objects.filter(projeto=projeto,
-                                                    exame=composicao.exame,
-                                                    avaliador=projeto.orientador.user
-                                                ).last()
-        else:
-            if not user:  # Não deveria acontecer
-                alocacao = None
-            else:
-                alocacao = Alocacao.objects.get(projeto=projeto, aluno=user.aluno)
-            observacao = Observacao.objects.filter(projeto=projeto,
-                                                    exame=composicao.exame,
-                                                    avaliador=projeto.orientador.user,
-                                                    alocacao=alocacao
-                                                ).last()
-
+                                                   exame=composicao.exame,
+                                                   avaliador=projeto.orientador.user).last()
             
-        entregas.append({"composicao": composicao, 
-                         "documentos": documentos, 
-                         "evento": evento, 
-                         "avaliacoes": avaliacoes,
-                         "nota": nota,
-                         "observacao": observacao,
-                         })
-        
-        
+            entregas.append({"composicao": composicao, 
+                            "evento": evento,
+                            "documentos": documentos,  
+                            "avaliacoes": avaliacoes,
+                            "nota": nota,
+                            "observacao": observacao,
+                            })
+
+        else:
+
+            if user: # Para o próprio estudante 
+                alocacao = Alocacao.objects.get(projeto=projeto, aluno=user.aluno)
+                documentos = Documento.objects.filter(tipo_documento=composicao.tipo_documento,
+                                                      projeto=projeto,
+                                                      usuario=user)
+                avaliacoes = Avaliacao2.objects.filter(projeto=projeto, 
+                                                       exame=composicao.exame, 
+                                                       avaliador=projeto.orientador.user,
+                                                       alocacao=alocacao)
+                nota, peso = get_nota_peso(avaliacoes)
+                observacao = Observacao.objects.filter(projeto=projeto,
+                                                       exame=composicao.exame,
+                                                       avaliador=projeto.orientador.user,
+                                                       alocacao=alocacao).last()
+                
+                entregas.append({"composicao": composicao, 
+                                "evento": evento,
+                                "documentos": documentos,  
+                                "avaliacoes": avaliacoes,
+                                "nota": nota,
+                                "observacao": observacao,
+                                })
+
+            else: # Todos os integrantes do grupo
+                alocacoes = {}
+
+                for alocacao in Alocacao.objects.filter(projeto=projeto):
+                   
+                    # alocacao = Alocacao.objects.get(projeto=projeto, aluno=user.aluno)
+                    documentos = Documento.objects.filter(tipo_documento=composicao.tipo_documento,
+                                                          projeto=projeto, 
+                                                          usuario=alocacao.aluno.user)
+                    avaliacoes = Avaliacao2.objects.filter(projeto=projeto, 
+                                                        exame=composicao.exame, 
+                                                        avaliador=projeto.orientador.user,
+                                                        alocacao=alocacao)
+                    nota, peso = get_nota_peso(avaliacoes)
+                    observacao = Observacao.objects.filter(projeto=projeto,
+                                                        exame=composicao.exame,
+                                                        avaliador=projeto.orientador.user,
+                                                        alocacao=alocacao).last()
+                    
+                    alocacoes[alocacao] = {"documentos": documentos,  
+                                           "avaliacoes": avaliacoes,
+                                           "nota": nota,
+                                           "observacao": observacao,
+                                           }
+    
+                entregas.append({"composicao": composicao, 
+                                 "evento": evento,
+                                 "alocacoes": alocacoes,
+                                })
+
     entregas = sorted(entregas, key=lambda t: (date.today() if t["evento"] is None else t["evento"].endDate))
 
     return entregas

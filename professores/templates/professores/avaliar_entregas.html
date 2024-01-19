@@ -22,7 +22,8 @@
     ul {margin-bottom: 6px;}
     .pintern {
       border: 1px solid grey;
-      padding: 0.2em; display:block;
+      padding: 0.2em 0.4em 0.2em 0.4em;
+      display:block;
       margin: 10px 0px 4px 0px;
       background-color: #FAFAF3;
     }
@@ -67,14 +68,31 @@
             {% else %}
               ORIENTADOR NÃO DEFINIDO
             {% endif %}
-          
-            <div style="margin:8px 0px 3px 0px; "><strong>Entregas:</strong></div>
+            <br>
 
+            <strong>Grupo:</strong>
+            <ul style="padding-left: 34px;">
+              {% for alocacao in projeto.alocacao_set.all %}
+                <li>
+                  <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
+                    {{alocacao.aluno.user.get_full_name}}
+                  </a>
+                  [{{ alocacao.aluno.curso2 }}]
+                  <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
+                </li>
+              {% endfor %}
+            </ul>
+
+            <div style="margin:8px 0px 3px 0px; "><strong>Entregas:</strong></div>
             {% for item in entregas %}
             {% with dias_ate=item.evento.endDate|dif_dias_hoje dias=14 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
               <div class="pintern" style="margin-top: {% if forloop.first %}0{% else %}10{% endif %}px;"> {% comment %} {% if dias_ate > dias %}{% endif %} {% endcomment %}
                 <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
-                  <b>{{item.composicao.exame.titulo}}</b>
+                  {% if item.composicao.tipo_documento %}
+                    <b>{{item.composicao.tipo_documento.nome}}</b> 
+                  {% else %}
+                    <b>{{item.composicao.exame.titulo}}</b>
+                  {% endif %}                  
                   <span class="opt_full">[prazo {{ item.evento.endDate|date:"DATE_FORMAT" }}]</span>
                   <span class="opt_short">[prazo {{ item.evento.endDate|date:"d/m/y" }}]</span>
                 </span>
@@ -82,43 +100,66 @@
                   {% comment %} <a id="adiciona" class="open-documento data-toggle="tooltip" data-html="true" animation="true"   item.documentos.last {% endcomment %}
                   {% comment %} onClick="check_prazo('{{item.evento.endDate|date:"Y-m-d"}}T23:59:59');" {% endcomment %}
                 <br>
-                <ul style="padding-left: 22px; width: fit-content;">
-                {% for documento in item.documentos %}
-                  <li style="list-style-type:'&#128463; ';">
-                    {% if forloop.first%}<b>{% endif %}
-                    {% if documento.documento or documento.link %}
-                      <a 
-                          {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
-                          {% if dias_ate > dias %}class="lightgrey"{% endif %}
-                          {% if documento.usuario and not item.composicao.exame.grupo %}
-                            href="{% url 'entrega_avaliar' item.composicao.id projeto.id documento.usuario.id %}"
-                          {% else %}
-                            href="{% url 'entrega_avaliar' item.composicao.id projeto.id %}"
-                          {% endif %}
-                          target="_blank" rel="noopener noreferrer">Entregue {{documento.data}}</a>
-                    {% endif %}
-                    {% if not item.composicao.exame.grupo %}
-                      {% if documento.usuario %}
-                        ({{documento.usuario.get_full_name}})
-                      {% else %}
-                        (ERRO AO IDENTIFICAR ESTUDANTE)
+                {% if item.composicao.exame.grupo %}
+                  <ul style="padding-left: 22px; width: fit-content;">
+                    {% for documento in item.documentos %}
+                      <li style="list-style-type:'&#128463; ';">
+                        {% if forloop.first%}<b>{% endif %}
+                        {% if documento.documento or documento.link %}
+                          <a {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
+                             {% if dias_ate > dias %}class="lightgrey"{% endif %}
+                             href="{% url 'entrega_avaliar' item.composicao.id projeto.id %}"
+                             target="_blank" rel="noopener noreferrer">Entregue {{documento.data}}</a>
+                        {% endif %}
+                        {% if documento.data|diff_days:item.evento.endDate > 0 %}<span style="color: red;">[ENTREGUE APÓS PRAZO]</span>{% endif %}
+                        {% if forloop.first%}</b>{% endif %}  
+                      </li>
+                    {% empty %}
+                      {% if item.composicao.tipo_documento %}
+                        <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>sem arquivos</span><br>
                       {% endif %}
-                    {% endif %}
-                    {% if documento.data|diff_days:item.evento.endDate > 0 %}<span style="color: red;">[ENTREGUE APÓS PRAZO]</span>{% endif %}
-                    {% if forloop.first%}</b>{% endif %}  
-                  </li>
-                {% empty %}
-                  {% if item.composicao.tipo_documento %}
-                    <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>sem arquivos</span><br>
-                  {% endif %}
-                {% endfor %}
-                </ul>
+                    {% endfor %}
+                    {% include "display_avaliacoes.html" with avaliacoes=item.avaliacoes nota=item.nota observacao=item.observacao com_orientador=True %}
+                  </ul>
 
-                {% include "display_avaliacoes.html" with com_orientador=True %}
+                {% else %}
+
+                  {% for alocacao, values in item.alocacoes.items %}
+                    <hr><b>{{alocacao.aluno.user.get_full_name}}:</b>
+                    <ul style="padding-left: 22px; width: fit-content;">
+                      {% for documento in values.documentos %}
+                        <li style="list-style-type:'&#128463; ';">
+                          {% if forloop.first%}<b>{% endif %}
+                          {% if documento.documento or documento.link %}
+                            <a {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
+                              {% if dias_ate > dias %}class="lightgrey"{% endif %}
+                              href="{% url 'entrega_avaliar' item.composicao.id projeto.id documento.usuario.id %}"
+                              target="_blank" rel="noopener noreferrer">Entregue {{documento.data}}</a>
+                          {% endif %}
+                          {% if documento.usuario %}
+                            ({{documento.usuario.get_full_name}})
+                          {% else %}
+                            (ERRO AO IDENTIFICAR ESTUDANTE)
+                          {% endif %}
+                          {% if documento.data|diff_days:item.evento.endDate > 0 %}<span style="color: red;">[ENTREGUE APÓS PRAZO]</span>{% endif %}
+                          {% if forloop.first%}</b>{% endif %}  
+                        </li>
+                      {% empty %}
+                        {% if item.composicao.tipo_documento %}
+                          <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>sem arquivos</span><br>
+                        {% endif %}
+                      {% endfor %}
+                      {% include "display_avaliacoes.html" with avaliacoes=values.avaliacoes nota=values.nota observacao=values.observacao com_orientador=True %}
+                    </ul>
+
+                  {% endfor %}
+
+                {% endif %}
+
 
               </div>
             {% endwith %}
-          {% endfor %} 
+          {% endfor %}
 
           </div>
         {% endif %}
@@ -135,7 +176,6 @@
       if (filterEdicao !== null && $("#filterEdicao option[value='"+filterEdicao+"']").length > 0 ) {
         $('#filterEdicao').val(filterEdicao).trigger('change');
       }
-      carrega_pagina();
     };
     window.onload = carrega_site
   </script>

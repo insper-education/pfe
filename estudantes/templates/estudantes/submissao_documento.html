@@ -41,7 +41,11 @@
     {% with dias_ate=item.evento.endDate|dif_dias_hoje dias=14 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
       <div {% if dias_ate > dias and user.tipo_de_usuario == 1 %}style="display:none;"{% endif %} class="div_arredondado">
         <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
-        <b>{{item.composicao.exame.titulo}}</b> 
+        {% if item.composicao.tipo_documento %}
+          <b>{{item.composicao.tipo_documento.nome}}</b> 
+        {% else %}
+          <b>{{item.composicao.exame.titulo}}</b>
+        {% endif %}
         <span class="opt_full">[prazo {{ item.evento.endDate|date:"DATE_FORMAT" }}]</span>
         <span class="opt_short">[prazo {{ item.evento.endDate|date:"d/m/y" }}]</span>
         {% if item.composicao.tipo_documento %}
@@ -97,7 +101,7 @@
           {% endif %}
         {% endfor %} 
         </ul>
-        {% include "display_avaliacoes.html" %}
+        {% include "display_avaliacoes.html" with avaliacoes=item.avaliacoes nota=item.nota observacao=item.observacao %}
       </div>
     {% endwith %}
   {% endfor %} 
