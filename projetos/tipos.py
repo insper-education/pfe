@@ -21,6 +21,7 @@ TIPO_EVENTO = (
     (16, "Apresentação formal final na organização", "burlywood"),
     (17, "Apresentação opcional intermediária na organização", "Khaki"),
     (18, "Probation", "LightSteelBlue"),
+    (19, "Mentoria Profissional (especialistas do mercado)", "palevioletred"),
 
     (20, "Relato quinzenal (Individual)", "aquamarine"),
     (21, "Entrega de Relatório Preliminar (Grupo)", "lightblue"),  # antigo relat. de planej.
