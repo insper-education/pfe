@@ -8,6 +8,7 @@ class ExameAdmin(admin.ModelAdmin):
     """Peso."""
     list_display = ("titulo", "sigla", "grupo", "periodo_para_rubricas")
 
+
 @admin.register(Composicao)
 class ComposicaoAdmin(admin.ModelAdmin):
     """Composicao."""
@@ -18,5 +19,7 @@ class ComposicaoAdmin(admin.ModelAdmin):
 @admin.register(Peso)
 class PesoAdmin(admin.ModelAdmin):
     """Peso."""
-    list_display = ("composicao", "objetivo", "peso",)
+    list_display = ("composicao", "objetivo", "peso")
+    list_filter = ("objetivo",)
+    search_fields = ["composicao__exame__titulo",]
 

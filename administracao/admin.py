@@ -15,6 +15,6 @@ from .models import Carta
 class CartaAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
 
-    list_display = ('template',)
-    ordering = ('template',)
-    search_fields = ['template',]
+    list_display = ("template",)
+    ordering = ("template",)
+    search_fields = ["template",]
