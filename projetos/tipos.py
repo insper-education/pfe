@@ -95,6 +95,7 @@ TIPO_DE_DOCUMENTO = ( # não mudar a ordem dos números
     (26, "Notificação de Relatório"),
     (27, "Apresentação da Banca Final"),
     (28, "Plano de Orientação"),
+    (29, "Apresentação da Banca Intermediária"),
     (32, "Termo de Parceria - PDF"),
     (33, "Termo de Parceria - DOC"),
     (40, "Relatório Preliminar"),

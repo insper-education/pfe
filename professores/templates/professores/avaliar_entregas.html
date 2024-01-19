@@ -75,8 +75,8 @@
               <div class="pintern" style="margin-top: {% if forloop.first %}0{% else %}10{% endif %}px;"> {% comment %} {% if dias_ate > dias %}{% endif %} {% endcomment %}
                 <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
                   <b>{{item.composicao.exame.titulo}}</b>
-                  <span class="opt_full">[prazo {{ item.evento.endDate|date:"DATE_FORMAT" }}]:</span>
-                  <span class="opt_short">[prazo {{ item.evento.endDate|date:"d/m/y" }}]:</span></b>
+                  <span class="opt_full">[prazo {{ item.evento.endDate|date:"DATE_FORMAT" }}]</span>
+                  <span class="opt_short">[prazo {{ item.evento.endDate|date:"d/m/y" }}]</span>
                 </span>
                   {% comment %} {% if dias_ate > dias %}lightgrey{% endif %}" {% endcomment %}
                   {% comment %} <a id="adiciona" class="open-documento data-toggle="tooltip" data-html="true" animation="true"   item.documentos.last {% endcomment %}
@@ -108,7 +108,9 @@
                     {% if forloop.first%}</b>{% endif %}  
                   </li>
                 {% empty %}
-                  <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>Arquivos ausentes</span><br>
+                  {% if item.composicao.tipo_documento %}
+                    <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>sem arquivos</span><br>
+                  {% endif %}
                 {% endfor %}
                 </ul>
 

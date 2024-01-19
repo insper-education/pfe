@@ -21,6 +21,7 @@
       {color:lightgrey;}
   </style>
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
+  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
 
 {% endblock %}
 
@@ -40,20 +41,25 @@
     {% with dias_ate=item.evento.endDate|dif_dias_hoje dias=14 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
       <div {% if dias_ate > dias and user.tipo_de_usuario == 1 %}style="display:none;"{% endif %} class="div_arredondado">
         <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
-        <b>{{item.composicao.exame.titulo}}</b> [prazo {{item.evento.endDate}}]: </span><a id="adiciona"
-          class="open-documento {% if dias_ate > dias %}lightgrey{% endif %}"
-          data-toggle="tooltip" data-html="true" animation="true"
-          {% if item.documentos.last %}
-            title="Substitui documento"
-            data-url="{% url 'adiciona_documento_estudante' item.composicao.tipo_documento.nome item.documentos.last.id %}"
-          {% else %}
-            title="Adicionar documento"
-            data-url="{% url 'adiciona_documento_estudante' item.composicao.tipo_documento.nome %}"
-          {% endif %}
-          onClick="check_prazo('{{item.evento.endDate|date:"Y-m-d"}}T23:59:59');"
-          >
-          {% if dias_ate > dias %}+{% else %}{% if item.documentos.last %}<b>&#128472;</b>{% else %}&#10133;{% endif %}{% endif %}
-        </a><br>
+        <b>{{item.composicao.exame.titulo}}</b> 
+        <span class="opt_full">[prazo {{ item.evento.endDate|date:"DATE_FORMAT" }}]</span>
+        <span class="opt_short">[prazo {{ item.evento.endDate|date:"d/m/y" }}]</span>
+        {% if item.composicao.tipo_documento %}
+          <a id="adiciona"
+            class="open-documento {% if dias_ate > dias %}lightgrey{% endif %}"
+            data-toggle="tooltip" data-html="true" animation="true"
+            {% if item.documentos.last %}
+              title="Substitui documento"
+              data-url="{% url 'adiciona_documento_estudante' item.composicao.tipo_documento.nome item.documentos.last.id %}"
+            {% else %}
+              title="Adicionar documento"
+              data-url="{% url 'adiciona_documento_estudante' item.composicao.tipo_documento.nome %}"
+            {% endif %}
+            onClick="check_prazo('{{item.evento.endDate|date:"Y-m-d"}}T23:59:59');"
+            >
+            {% if dias_ate > dias %}+{% else %}{% if item.documentos.last %}<b>&#128472;</b>{% else %}&#10133;{% endif %}{% endif %}
+          </a>
+        {% endif %}<br>
         <ul style="padding-left: 22px; width: fit-content;">
         {% for documento in item.documentos %}
           <li style="list-style-type:'&#128463; ';">
@@ -86,7 +92,9 @@
             {% if forloop.first%}</b>{% endif %}  
           </li>
         {% empty %}
-          Não entregue
+          {% if item.composicao.tipo_documento %}
+            <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>sem arquivos</span><br>
+          {% endif %}
         {% endfor %} 
         </ul>
         {% include "display_avaliacoes.html" %}
