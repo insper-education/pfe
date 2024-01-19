@@ -1115,51 +1115,75 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
     estudante = None
     if estudante_id:
         estudante = PFEUser.objects.get(pk=estudante_id)
+        if estudante.tipo_de_usuario != 1:
+            return HttpResponseNotFound('<h1>Pessoa avaliada não é estudante!</h1>')
         alocacao = Alocacao.objects.get(projeto=projeto, aluno=estudante.aluno)
 
     objetivos = composicao.pesos.all()
 
+    if request.user == projeto.orientador.user:
+        editor = True
+    else:
+        editor = False
+
     if request.method == "POST":
         
-        objetivos_possiveis = len(objetivos)
-        julgamento = [None]*objetivos_possiveis
-        
-        avaliacoes = dict(filter(lambda elem: elem[0][:9] == "objetivo.", request.POST.items()))
-
-        realizada = False
-        for i, aval in enumerate(avaliacoes):
-
-            obj_nota = request.POST[aval]
-            conceito = obj_nota.split('.')[1]
+        if objetivos:
+            objetivos_possiveis = len(objetivos)
+            julgamento = [None]*objetivos_possiveis
             
-            pk_objetivo = int(obj_nota.split('.')[0])
-            objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=pk_objetivo)
+            avaliacoes = dict(filter(lambda elem: elem[0][:9] == "objetivo.", request.POST.items()))
 
-            if composicao.exame.grupo:
-                avaliacao, realizada = Avaliacao2.objects.get_or_create(projeto=projeto, 
-                                                                        exame=composicao.exame, 
-                                                                        objetivo=objetivo,
-                                                                        avaliador=projeto.orientador.user
-                                                                        )
-            else:
-                if not estudante or not alocacao:
-                    return HttpResponseNotFound('<h1>Estudante não encontrado!</h1>')
-                avaliacao, realizada = Avaliacao2.objects.get_or_create(projeto=projeto, 
-                                                                        exame=composicao.exame, 
-                                                                        objetivo=objetivo,
-                                                                        avaliador=projeto.orientador.user,
-                                                                        alocacao=alocacao
-                                                                        )
+            realizada = False
+            for i, aval in enumerate(avaliacoes):
 
-            julgamento[i] = avaliacao
+                obj_nota = request.POST[aval]
+                conceito = obj_nota.split('.')[1]
+                
+                pk_objetivo = int(obj_nota.split('.')[0])
+                objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=pk_objetivo)
 
-            if conceito == "NA":
-                julgamento[i].na = True
-            else:
-                julgamento[i].nota = converte_conceito(conceito)
-                julgamento[i].peso = Peso.objects.get(composicao=composicao, objetivo=objetivo).peso
-                julgamento[i].na = False
-            julgamento[i].save()
+                if composicao.exame.grupo:
+                    avaliacao, realizada = Avaliacao2.objects.get_or_create(projeto=projeto, 
+                                                                            exame=composicao.exame, 
+                                                                            objetivo=objetivo,
+                                                                            avaliador=projeto.orientador.user
+                                                                            )
+                else:
+                    if not estudante or not alocacao:
+                        return HttpResponseNotFound('<h1>Estudante não encontrado!</h1>')
+                    avaliacao, realizada = Avaliacao2.objects.get_or_create(projeto=projeto, 
+                                                                            exame=composicao.exame, 
+                                                                            objetivo=objetivo,
+                                                                            avaliador=projeto.orientador.user,
+                                                                            alocacao=alocacao
+                                                                            )
+
+                julgamento[i] = avaliacao
+
+                if conceito == "NA":
+                    julgamento[i].na = True
+                else:
+                    julgamento[i].nota = converte_conceito(conceito)
+                    julgamento[i].peso = Peso.objects.get(composicao=composicao, objetivo=objetivo).peso
+                    julgamento[i].na = False
+                julgamento[i].save()
+
+        else:
+            avaliacao, realizada = Avaliacao2.objects.get_or_create(projeto=projeto, 
+                                                                    exame=composicao.exame, 
+                                                                    objetivo=None,
+                                                                    avaliador=projeto.orientador.user
+                                                                    )
+            
+            if "decisao" in request.POST:
+                if request.POST["decisao"] == "1":
+                    avaliacao.nota = 10
+                else:
+                    avaliacao.nota = 1  # Zero é um problema pois pode ser confundido com não avaliado
+
+            avaliacao.save()
+
 
         julgamento_observacoes = None
         if ("observacoes_orientador" in request.POST and request.POST["observacoes_orientador"] != "") or \
@@ -1195,7 +1219,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
         }
         return render(request, "generic.html", context=context)
 
-    else:
+    else:  # Não é POST
 
         if estudante and (not composicao.exame.grupo):
             documentos = Documento.objects.filter(tipo_documento=composicao.tipo_documento, projeto=projeto, usuario=estudante)
@@ -1221,14 +1245,15 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                                                 alocacao=alocacao
                                                 )
 
-        conceitos = [None]*len(avaliacoes)
+        conceitos = []
+        avaliacao = None
         for i in range(len(avaliacoes)):
-            try:
+            if avaliacoes[i].objetivo:
                 tmp_objetivo = avaliacoes[i].objetivo.pk
-            except ValueError:
-                return HttpResponseNotFound("<h1>Erro em objetivo!</h1>")
-            tmp_conceito = converte_letra(avaliacoes[i].nota, mais="X")
-            conceitos[i] = (tmp_objetivo, tmp_conceito)
+                tmp_conceito = converte_letra(avaliacoes[i].nota, mais="X")
+                conceitos.append( (tmp_objetivo, tmp_conceito) )
+            else:
+                avaliacao = avaliacoes[i].nota
 
         if composicao.exame.grupo:
             observacao = Observacao.objects.filter(projeto=projeto,
@@ -1256,6 +1281,8 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             "today": datetime.datetime.now(),
             "conceitos": conceitos,
             "observacao": observacao,
+            "editor": editor,
+            "avaliacao": avaliacao,
         }
 
         return render(request, "professores/entrega_avaliar.html", context=context)

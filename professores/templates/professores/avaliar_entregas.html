@@ -18,6 +18,9 @@
   <link rel="stylesheet" href="{% static 'css/outros.css' %}">
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
 
+  <style>
+    ul {margin-bottom: 6px;}
+  </style>
 {% endblock %}
 
 {% block content %}
@@ -53,11 +56,11 @@
               ORIENTADOR NÃO DEFINIDO
             {% endif %}
           
-            <div style="margin:8px 0px 8px 0px; "><strong>Entregas:</strong></div>
+            <div style="margin:8px 0px 3px 0px; "><strong>Entregas:</strong></div>
 
             {% for item in entregas %}
             {% with dias_ate=item.evento.endDate|dif_dias_hoje dias=14 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
-              <div style="border: 1px solid grey; margin: 10px 0px 4px 0px; padding: 0.2em; display:block;"> {% comment %} {% if dias_ate > dias %}{% endif %} {% endcomment %}
+              <div style="border: 1px solid grey; margin: {% if forloop.first %}0{% else %}10{% endif %}px 0px 4px 0px; padding: 0.2em; display:block;"> {% comment %} {% if dias_ate > dias %}{% endif %} {% endcomment %}
                 <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
                   <b>{{item.composicao.exame.titulo}}</b>
                   <span class="opt_full">[prazo {{ item.evento.endDate|date:"DATE_FORMAT" }}]:</span>
@@ -102,21 +105,31 @@
                   <table style="border: 0px; border-collapse: separate; border-spacing: 10px; width: 100%;">
                     <tr>
                       <td style="padding: 0.4em; background-color: lightgrey; border: 0px; vertical-align: top;">
-                        <b>Avaliação:</b><br>
-                        <ul>
-                        {% for avaliacao in item.avaliacoes %}
-                          <li style="margin-left: -1.9em; white-space: nowrap; list-style-type: '&#8227; ';">
-                            {% if avaliacao.objetivo %}
-                              {{avaliacao.objetivo.titulo}}:
-                              {% comment %} {{avaliacao.objetivo.sigla}}: {% endcomment %}
-                            {% else %}
-                              Objetivo não definido 
-                            {% endif %}
-                            {{avaliacao.get_conceito}}
-                          </li>
-                        {% endfor %}
-                        </ul>
-                        <b>Nota = {{item.nota|floatformat:2}}  </b>
+                        {% if item.avaliacoes.last.objetivo %}
+                          <b>Avaliação:</b><br>
+                          <ul>
+                          {% for avaliacao in item.avaliacoes %}
+                            <li style="margin-left: -1.9em; white-space: nowrap; list-style-type: '&#8227; ';">
+                              {% if avaliacao.objetivo %}
+                                {{avaliacao.objetivo.titulo}}:
+                                {% comment %} {{avaliacao.objetivo.sigla}}: {% endcomment %}
+                              {% else %}
+                                Objetivo não definido 
+                              {% endif %}
+                              {{avaliacao.get_conceito}}
+                            </li>
+                          {% endfor %}
+                          </ul>
+                          <b>Nota = {{item.nota|floatformat:2}}  </b>
+                        {% else %}
+                          <b>Decisão:</b><br>
+                          &#8227;
+                          {% if avaliacao.nota > 5 %}
+                            Adequado
+                          {% else %}
+                            Inadequado
+                          {% endif %}
+                        {% endif %}
                       </td>
 
                       {% if item.observacao.observacoes_estudantes or item.observacao.observacoes_orientador%}

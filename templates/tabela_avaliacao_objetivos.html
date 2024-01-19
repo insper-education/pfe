@@ -91,21 +91,21 @@
       </tr>
       <tr>
         {% if periodo_para_rubricas == 1 %} {% comment %} Rubricas Intermediárias {% endcomment %}
-          <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA" lang="pt">Icaso prefira não avaliar este objetivo, selecione esta coluna.</label><label for="objetivo{{objetivo.id}}NA" lang="en">if you prefer not to evaluate this objective, select this column.</label></td>
+          <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA" lang="pt">caso prefira não avaliar este objetivo, selecione esta coluna.</label><label for="objetivo{{objetivo.id}}NA" lang="en">if you prefer not to evaluate this objective, select this column.</label></td>
           <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I" lang="pt">{{objetivo.rubrica_intermediaria_I}}</label><label for="objetivo{{objetivo.id}}I" lang="en">{{objetivo.rubrica_intermediaria_I_en}}</label></td>
           <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D" lang="pt">{{objetivo.rubrica_intermediaria_D}}</label><label for="objetivo{{objetivo.id}}D" lang="en">{{objetivo.rubrica_intermediaria_D_en}}</label></td>
           <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C" lang="pt">{{objetivo.rubrica_intermediaria_C}}</label><label for="objetivo{{objetivo.id}}C" lang="en">{{objetivo.rubrica_intermediaria_C_en}}</label></td>
           <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B" lang="pt">{{objetivo.rubrica_intermediaria_B}}</label><label for="objetivo{{objetivo.id}}B" lang="en">{{objetivo.rubrica_intermediaria_B_en}}</label></td>
           <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A" lang="pt">{{objetivo.rubrica_intermediaria_A}}</label><label for="objetivo{{objetivo.id}}A" lang="en">{{objetivo.rubrica_intermediaria_A_en}}</label></td>
         {% elif periodo_para_rubricas == 2 %} {% comment %} Rubricas Finais {% endcomment %}
-          <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA" lang="pt">Fcaso prefira não avaliar este objetivo, selecione esta coluna.</label><label for="objetivo{{objetivo.id}}NA" lang="en">if you prefer not to evaluate this objective, select this column.</label></td>
+          <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA" lang="pt">caso prefira não avaliar este objetivo, selecione esta coluna.</label><label for="objetivo{{objetivo.id}}NA" lang="en">if you prefer not to evaluate this objective, select this column.</label></td>
           <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I" lang="pt">{{objetivo.rubrica_final_I}}</label><label for="objetivo{{objetivo.id}}I" lang="en">{{objetivo.rubrica_final_I_en}}</label></td>
           <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D" lang="pt">{{objetivo.rubrica_final_D}}</label><label for="objetivo{{objetivo.id}}D" lang="en">{{objetivo.rubrica_final_D_en}}</label></td>
           <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C" lang="pt">{{objetivo.rubrica_final_C}}</label><label for="objetivo{{objetivo.id}}C" lang="en">{{objetivo.rubrica_final_C_en}}</label></td>
           <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B" lang="pt">{{objetivo.rubrica_final_B}}</label><label for="objetivo{{objetivo.id}}B" lang="en">{{objetivo.rubrica_final_B_en}}</label></td>
           <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A" lang="pt">{{objetivo.rubrica_final_A}}</label><label for="objetivo{{objetivo.id}}A" lang="en">{{objetivo.rubrica_final_A_en}}</label></td>
         {% else %}
-          <td>ERRO</td>
+          <td colspan="6">ERRO</td>
         {% endif %}
       </tr>
     </table>
@@ -113,7 +113,7 @@
     <br>
   {% endfor %}
 
-  {% else %}
+{% else %}
   <span lang="pt" class="red-bold">Não foram definidos Objetivos de Aprendizagem para essa Avaliação.</span><br>
   <span lang="en" class="red-bold">No Learning Goals were defined for this Assessment.</span><br>
 {% endif %}

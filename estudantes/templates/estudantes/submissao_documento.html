@@ -26,8 +26,12 @@
 
   <span class="titulo">Submissão de Documentos</span>
 
-  {% include "cabecalho_projeto.html" with com_email=True %}
-  <br>
+  {% if projeto %}
+    {% include "cabecalho_projeto.html" with com_email=True %}
+    <br>
+  {% else %}
+    <h4>Nenhum projeto encontrado!</h4><br>
+  {% endif %}
 
   {% for item in entregas %}
     {% with dias_ate=item.evento.endDate|dif_dias_hoje dias=14 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}

@@ -111,7 +111,25 @@
         <br>
       {% endif %}
 
-      {% include "tabela_avaliacao_objetivos.html" %}
+      {% if objetivos %}
+        {% include "tabela_avaliacao_objetivos.html" %}
+      {% else %}
+        <b lang="pt">Decisão:</b><b lang="en">Decision:</b><br>
+        <div style="width: fit-content; display: inline-block; margin-left: 20px;" {% if not documentos %}data-toggle="tooltip" data-html="true" animation="true" title="Documento não entregue"{% endif %}>
+          <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio" id="customRadioInline0" name="decisao" class="custom-control-input"
+                    value="1" {% if avaliacao and avaliacao > 5 %}checked="checked"{% endif %} {% if not documentos or not editor %}disabled {% endif %}>
+            <label class="custom-control-label" for="customRadioInline0">Adequado</label>
+          </div>
+          <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio" id="customRadioInline1" name="decisao" class="custom-control-input"
+                    value="0" {% if avaliacao and avaliacao < 5 %}checked="checked"{% endif %} {% if not documentos or not editor %}disabled {% endif %}>
+            <label class="custom-control-label" for="customRadioInline1">Inadequado</label>
+          </div>
+        </div>
+        <br><br>
+      {% endif %}
+
 
       {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
       <label for="observacoes_estudantes"><b data-toggle="tooltip" data-html="true" animation="true"

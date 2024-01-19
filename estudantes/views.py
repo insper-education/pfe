@@ -571,16 +571,19 @@ def submissao_documento(request):
     configuracao = get_object_or_404(Configuracao)
 
     alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
-    projeto = alocacao.projeto
     
-    composicoes = filtra_composicoes(Composicao.objects.filter(entregavel=True), projeto.ano, projeto.semestre)
-    entregas = filtra_entregas(composicoes, projeto, request.user)
-
     context = {
-        "projeto": projeto,
-        "entregas": entregas,
         "MEDIA_URL": settings.MEDIA_URL,
     }
+    
+    if alocacao:
+        projeto = alocacao.projeto
+        composicoes = filtra_composicoes(Composicao.objects.filter(entregavel=True), projeto.ano, projeto.semestre)
+        entregas = filtra_entregas(composicoes, projeto, request.user)
+
+        context["projeto"] = projeto
+        context["entregas"] = entregas
+
     return render(request, "estudantes/submissao_documento.html", context)
 
 

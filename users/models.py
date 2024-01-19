@@ -496,9 +496,9 @@ class Aluno(models.Model):
             # Relatório de Planejamento (10)
             relp = Avaliacao2.objects.filter(projeto=alocacao.projeto,
                                              exame=Exame.objects.get(titulo="Relatório de Planejamento")).\
-                order_by('momento').last()
+                order_by("momento").last()
             if relp:
-                notas.append(("RPL", float(relp.nota), relp.peso/100,
+                notas.append(("RPL", float(relp.nota), relp.peso/100 if relp.peso else 0,
                               "Relatório de Planejamento"))
 
             # Relatório Intermediário de Grupo (11)
@@ -507,7 +507,7 @@ class Aluno(models.Model):
 
             if rig:
                 nota_rig, peso, avaliadores = Aluno.get_banca(self, rig)
-                notas.append(("RIG", nota_rig, peso/100,
+                notas.append(("RIG", nota_rig, peso/100 if peso else 0,
                               "Relatório Intermediário de Grupo"))
 
             # Relatório Final de Grupo (12),
@@ -516,7 +516,7 @@ class Aluno(models.Model):
 
             if rfg:
                 nota_rfg, peso, avaliadores = Aluno.get_banca(self, rfg)
-                notas.append(("RFG", nota_rfg, peso/100,
+                notas.append(("RFG", nota_rfg, peso/100 if peso else 0,
                               "Relatório Final de Grupo"))
 
             # Relatório Intermediário Individual (21),
@@ -525,7 +525,7 @@ class Aluno(models.Model):
 
             if rii:
                 nota_rii, peso, avaliadores = Aluno.get_banca(self, rii)
-                notas.append(("RII", nota_rii, peso/100,
+                notas.append(("RII", nota_rii, peso/100 if peso else 0,
                               "Relatório Intermediário Individual"))
 
             # Relatório Final Individual (22)
@@ -534,7 +534,7 @@ class Aluno(models.Model):
 
             if rfi:
                 nota_rfi, peso, avaliadores = Aluno.get_banca(self, rfi)
-                notas.append(("RFI", nota_rfi, peso/100,
+                notas.append(("RFI", nota_rfi, peso/100 if peso else 0,
                               "Relatório Final Individual"))
 
             # NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES
@@ -543,7 +543,7 @@ class Aluno(models.Model):
                                             exame=Exame.objects.get(titulo="Planejamento Primeira Fase")).\
                 order_by('momento').last()
             if ppf:
-                notas.append(("PPF", float(ppf.nota), ppf.peso/100,
+                notas.append(("PPF", float(ppf.nota), ppf.peso/100 if ppf.peso else 0,
                               "Planejamento Primeira Fase"))
 
             # Avaliação Parcial Individual (51)
@@ -552,7 +552,7 @@ class Aluno(models.Model):
 
             if api:
                 nota_api, peso, avaliadores = Aluno.get_banca(self, api)
-                notas.append(("API", nota_api, peso/100,
+                notas.append(("API", nota_api, peso/100 if peso else 0,
                               "Avaliação Parcial Individual"))
 
             # Avaliação Final Individual (52)
@@ -561,7 +561,7 @@ class Aluno(models.Model):
 
             if afi:
                 nota_afi, peso, avaliadores = Aluno.get_banca(self, afi)
-                notas.append(("AFI", nota_afi, peso/100,
+                notas.append(("AFI", nota_afi, peso/100 if peso else 0,
                               "Avaliação Final Individual"))
 
             # Avaliação Parcial de Grupo (53)
@@ -570,7 +570,7 @@ class Aluno(models.Model):
 
             if apg:
                 nota_apg, peso, avaliadores = Aluno.get_banca(self, apg)
-                notas.append(("APG", nota_apg, peso/100,
+                notas.append(("APG", nota_apg, peso/100 if peso else 0,
                               "Avaliação Parcial de Grupo"))
 
             # Avaliação Final de Grupo (54)
@@ -579,7 +579,7 @@ class Aluno(models.Model):
 
             if afg:
                 nota_afg, peso, avaliadores = Aluno.get_banca(self, afg)
-                notas.append(("AFG", nota_afg, peso/100,
+                notas.append(("AFG", nota_afg, peso/100 if peso else 0,
                               "Avaliação Final de Grupo"))
 
             edicao[str(alocacao.projeto.ano)+"."+str(alocacao.projeto.semestre)] = notas

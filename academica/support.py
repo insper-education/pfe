@@ -57,8 +57,9 @@ def filtra_entregas(composicoes, projeto, user=None):
         if avaliacoes:
             peso = 0
             for avaliacao in avaliacoes:
-                nota += float(avaliacao.nota)*float(avaliacao.peso)
-                peso += float(avaliacao.peso)
+                if avaliacao.peso and avaliacao.peso > 0:
+                    nota += float(avaliacao.nota)*float(avaliacao.peso)
+                    peso += float(avaliacao.peso)
             if peso > 0:
                 nota = nota/peso
             else:
