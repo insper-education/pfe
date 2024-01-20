@@ -24,9 +24,9 @@
 {% block content %}
 
   {% with alocados=aluno.alocacao_set.all.reverse %}
-    <span class="titulo">Projeto(s) Alocado(s)</span>
+    <span class="titulo">Projeto{% if alocados|length > 1 %}s{% endif %} Alocado{% if alocados|length > 1 %}s{% endif %} </span> 
     <br>
-    {% for alocado in aluno.alocacao_set.all.reverse %}
+    {% for alocado in alocados %}
 
       <h4>[{{alocado.projeto.ano}}.{{alocado.projeto.semestre}}]</h4>
       

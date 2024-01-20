@@ -1894,36 +1894,40 @@ def avaliar_entregas(request, todos=None):
 
     if request.is_ajax():
 
+        projetos = Projeto.objects.all().order_by("ano", "semestre")
+        
+        edicao = None
         if "edicao" in request.POST:
-
-            projetos = Projeto.objects.all().order_by("ano", "semestre")
-            if todos != "todos":
-                projetos = projetos.filter(orientador=request.user.professor)
-
             edicao = request.POST["edicao"]
             if edicao != "todas":
                 periodo = request.POST["edicao"].split('.')
                 ano = int(periodo[0])
                 semestre = int(periodo[1])
+
+        if todos:
+            if todos == "todos":
                 projetos = projetos.filter(ano=ano, semestre=semestre)
-
-            entregas = []
-            for projeto in projetos:
-                composicoes = filtra_composicoes(Composicao.objects.filter(entregavel=True), projeto.ano, projeto.semestre)
-                entregas.append(filtra_entregas(composicoes, projeto))
-
-            avaliacoes = zip(projetos, entregas)
-
-            context = {
-                "avaliacoes": avaliacoes,
-                "edicao": edicao,
-            }
+            else:
+                projetos = projetos.filter(id=todos)
+                edicao = "nenhuma"
 
         else:
-            return HttpResponse("Algum erro não identificado.", status=401)
+            projetos = projetos.filter(orientador=request.user.professor)
+            projetos = projetos.filter(ano=ano, semestre=semestre)
+
+        entregas = []
+        for projeto in projetos:
+            composicoes = filtra_composicoes(Composicao.objects.filter(entregavel=True), projeto.ano, projeto.semestre)
+            entregas.append(filtra_entregas(composicoes, projeto))
+
+        avaliacoes = zip(projetos, entregas)
+
+        context = {
+            "avaliacoes": avaliacoes,
+            "edicao": edicao,
+        }
 
     else:
-
         edicoes, _, _ = get_edicoes(Relato)
         context = {
                 "edicoes": edicoes,

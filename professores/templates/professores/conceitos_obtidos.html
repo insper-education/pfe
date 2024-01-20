@@ -45,12 +45,9 @@
 
 {% block content %}
 
-  <span class="titulo">
-    Projeto: <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
-    {% if projeto.titulo_final %}
-      <i>Título original: <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.titulo}}</a></i>
-    {% endif %}
-  </span>
+  <span class="titulo">Resultado Bancas</span>
+
+  <strong>Projeto:</strong> <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a><br>
 
   <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
 
@@ -65,10 +62,9 @@
     <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
       {{projeto.organizacao}}
     </a><br>
+  {% include "tipo_projeto.html" with com_tipo=True %}
   
-  {% include "tipo_projeto.html" with com_tipo=True %}<br>
-  
-  <strong>Grupo:</strong>
+  <strong style="display: inline-block; margin-top: 6px;">Grupo:</strong>
   <ul>
   {% for alocacao in projeto.alocacao_set.all %}
     <a href="{% url 'estudante_detail' alocacao.aluno.id %}">

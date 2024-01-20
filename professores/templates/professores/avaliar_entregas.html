@@ -59,7 +59,7 @@
               ORGANIZAÇAO NÃO DEFINIDA
             {% endif %}
             <br>
-            {% if edicao == "todas" %}
+            {% if edicao == "todas" or edicao == "nenhuma" %}
               <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
             {% endif %}
             <strong>Orientador:</strong>
@@ -173,6 +173,12 @@
       {% empty %}
        Sem alocações de projetos esse semestre.
       {% endfor %}
+
+      {% if edicao == "nenhuma" %}
+        <script>
+          $("#container_edicao").hide();
+        </script>
+      {% endif %}
 
   </div> 
 

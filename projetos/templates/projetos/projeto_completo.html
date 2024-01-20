@@ -275,8 +275,9 @@
   {% endfor %}
   </ul>
 
+  
   {% if medias_oo %}
-
+    <hr><h3>Notas de Grupo:</h3>
     <div class="table-responsive">
       <div style="position: relative; height:203px; width:406px">
         <canvas id="radial-grupo"></canvas>
@@ -285,7 +286,7 @@
 
     <script>
       var config_radial_grupo = {
-        type: 'radar',
+        type: "radar",
         data: {
             labels: [
                 {% for key, value in medias_oo.media_grupo.items %}
@@ -408,32 +409,38 @@
   {% endif %}
 
   <hr>
-  <div style="max-width: 56em; text-align: center;">
+  <div style="max-width: 80em; text-align: center;">
 
-    <a class="myButton" style="width: 11em; padding-bottom: 3px;"
+    <a class="myButton" style="width: 13em; padding-bottom: 3px;"
     data-toggle="tooltip" data-html="true" animation="true" title="Acessa a poposta do projeto"
     href="{% url 'proposta_completa' projeto.proposta.id %}">Proposta</a>
 
-    <a class="myButton" style="width: 11em; padding-bottom: 3px;"
+    <a class="myButton" style="width: 13em; padding-bottom: 3px;"
     data-toggle="tooltip" data-html="true" animation="true" title="Acessa as avaliações das bancas"
-    href="{% url 'conceitos_obtidos' projeto.id %}">Avaliações</a>
+    href="{% url 'conceitos_obtidos' projeto.id %}">Resultado Bancas</a>
 
-    <a class="myButton" style="width: 11em; padding-bottom: 3px;"
+    <a class="myButton" style="width: 13em; padding-bottom: 3px;"
     data-toggle="tooltip" data-html="true" animation="true" title="Acessa os agendamentos das bancas"
     href="{% url 'bancas_lista' projeto.id %}">Agendamentos</a>
 
+    {% if projetos_avancados %}
+      <a class="myButton" 
+      data-toggle="tooltip" data-html="true" animation="true" title="Acessa a versão avançada desse projeto"
+      href="{% url 'projeto_avancado' projeto.id %}" style="width: 13em; padding-bottom: 3px;">Avançado</a>
+    {% elif user.tipo_de_usuario == 4 %}
     <a class="myButton" 
-    data-toggle="tooltip" data-html="true" animation="true" title="Acessa a versão avançada desse projeto"
-      {% if projetos_avancados %}
-        href="{% url 'projeto_avancado' projeto.id %}" style="width: 11em; padding-bottom: 3px;"
-      {% else %}
-        onclick="cria_avancado()" style="color:white; width: 11em; padding-bottom: 3px;"
-      {% endif %}
-    >Avançado</a>
-    
-    <a class="myButton" style="width: 11em; padding-bottom: 3px;"
+      data-toggle="tooltip" data-html="true" animation="true" title="Cria uma versão avançada desse projeto"
+      onclick="cria_avancado()" style="color:white; width: 13em; padding-bottom: 3px;">Cria Avançado</a>
+    {% endif %}
+
+    <a class="myButton" style="width: 13em; padding-bottom: 3px;"
     data-toggle="tooltip" data-html="true" animation="true" title="Permite editar alguns campos do projeto"
     href="{% url 'editar_projeto' projeto.id %}">Editar</a>
+
+    <a class="myButton" style="width: 13em; padding-bottom: 3px;"
+    data-toggle="tooltip" data-html="true" animation="true" title="Permite avaliar as entregas do projeto"
+    href="{% url 'avaliar_entregas' projeto.id %}">Avaliar Entregas</a>
+
   </div>
   <p>&nbsp;</p>
 
