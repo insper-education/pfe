@@ -38,6 +38,12 @@ def get_nota_peso(avaliacoes):
         
 def filtra_entregas(composicoes, projeto, user=None):
     entregas = []
+
+    if projeto.orientador:
+        orientador = projeto.orientador.user
+    else:
+        orientador = None
+
     for composicao in composicoes:
 
         if projeto.semestre == 1:
@@ -51,11 +57,11 @@ def filtra_entregas(composicoes, projeto, user=None):
                                                   projeto=projeto)
             avaliacoes = Avaliacao2.objects.filter(projeto=projeto, 
                                                    exame=composicao.exame, 
-                                                   avaliador=projeto.orientador.user)
+                                                   avaliador=orientador)
             nota, peso = get_nota_peso(avaliacoes)
             observacao = Observacao.objects.filter(projeto=projeto,
                                                    exame=composicao.exame,
-                                                   avaliador=projeto.orientador.user).last()
+                                                   avaliador=orientador).last()
             
             entregas.append({"composicao": composicao, 
                             "evento": evento,
@@ -74,12 +80,12 @@ def filtra_entregas(composicoes, projeto, user=None):
                                                       usuario=user)
                 avaliacoes = Avaliacao2.objects.filter(projeto=projeto, 
                                                        exame=composicao.exame, 
-                                                       avaliador=projeto.orientador.user,
+                                                       avaliador=orientador,
                                                        alocacao=alocacao)
                 nota, peso = get_nota_peso(avaliacoes)
                 observacao = Observacao.objects.filter(projeto=projeto,
                                                        exame=composicao.exame,
-                                                       avaliador=projeto.orientador.user,
+                                                       avaliador=orientador,
                                                        alocacao=alocacao).last()
                 
                 entregas.append({"composicao": composicao, 
@@ -101,12 +107,12 @@ def filtra_entregas(composicoes, projeto, user=None):
                                                           usuario=alocacao.aluno.user)
                     avaliacoes = Avaliacao2.objects.filter(projeto=projeto, 
                                                         exame=composicao.exame, 
-                                                        avaliador=projeto.orientador.user,
+                                                        avaliador=orientador,
                                                         alocacao=alocacao)
                     nota, peso = get_nota_peso(avaliacoes)
                     observacao = Observacao.objects.filter(projeto=projeto,
                                                         exame=composicao.exame,
-                                                        avaliador=projeto.orientador.user,
+                                                        avaliador=orientador,
                                                         alocacao=alocacao).last()
                     
                     alocacoes[alocacao] = {"documentos": documentos,  
