@@ -254,9 +254,9 @@ def estudantes_notas(request, professor=None):
     configuracao = get_object_or_404(Configuracao)
 
     if request.is_ajax():
-        if 'edicao' in request.POST:
+        if "edicao" in request.POST:
 
-            anosemestre = request.POST['edicao']
+            anosemestre = request.POST["edicao"]
             ano = int(anosemestre.split(".")[0])
             semestre = int(anosemestre.split(".")[1])
 
@@ -275,7 +275,7 @@ def estudantes_notas(request, professor=None):
                         "area_principal": True,
                         "mensagem": mensagem,
                     }
-                    return render(request, 'generic.html', context=context)
+                    return render(request, "generic.html", context=context)
                 
                 # Incluindo também se coorientação
                 projetos = Projeto.objects.all()
@@ -293,24 +293,30 @@ def estudantes_notas(request, professor=None):
             alunos_list = alunos_semestre |\
                 alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
 
+
+
             context = {
-                'alunos_list': alunos_list,
-                'configuracao': configuracao,
-                'ano': ano,
-                'semestre': semestre,
-                'ano_semestre': str(ano)+"."+str(semestre),
-                'loop_anos': range(2018, configuracao.ano+1),
+                "alunos_list": alunos_list,
+                "configuracao": configuracao,
+                "ano": ano,
+                "semestre": semestre,
+                "ano_semestre": str(ano)+"."+str(semestre),
+                "loop_anos": range(2018, configuracao.ano+1),
             }
 
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
+        informacoes = [
+            (".pesos_aval", "Pesos", False),
+        ]
         edicoes, _, _ = get_edicoes(Aluno)
         context = {
-            'edicoes': edicoes,
+            "edicoes": edicoes,
+            "informacoes": informacoes,
         }
 
-    return render(request, 'users/estudantes_notas.html', context=context)
+    return render(request, "users/estudantes_notas.html", context=context)
 
 
 @login_required

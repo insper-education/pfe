@@ -10,6 +10,13 @@
   {% load dictionary %}
   {% load l10n %}
   {% include "tabelas_includes.html" %}
+
+  <style>
+    .pesos_aval {
+      display: none;
+    }
+  </style>
+
 {% endblock %}
 
 {% block content %}
@@ -19,6 +26,8 @@
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" with n_todas=True %}
   
+  {% include "informacoes.html" %}
+
   <div class="atualizar">
 
     {% if alunos_list %}
@@ -32,6 +41,8 @@
             RFG: Relatório Final de Grupo |
             RII: Relatório Intermediário Individual |
             RFI: Relatório Final Individual
+            <br>
+            Projetos <u>sublinhados</u> são de PFE Avançado
           </small>
         </caption>
         <thead class="table-info">
@@ -40,11 +51,7 @@
               <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">e-mail</span></th>
               <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Curso</span></th>
               {% comment %} <th scope="col" class="text-center">Período</th> {% endcomment %}
-              <th scope="col" class="text-center">
-                <a data-toggle="tooltip" data-html="true" animation="true" title="<small>Projetos <u>sublinhados</u> são de PFE Avançado</small>">
-                  <span style="margin-right: 0.6ex;">Projeto</span>
-                </a>
-              </th>
+              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Projeto</span></th>
               <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Notas</span></th>
               <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Média</span></th>
               {% comment %} <th scope="col" class="text-center">BI</th> {% endcomment %}
@@ -73,16 +80,16 @@
               {% if aluno.alocacao_set.all %}
                 {% for alocacao in aluno.alocacao_set.all %}
                   {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
-                    <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
-                      {{alocacao.projeto.get_titulo}}
-                    </a>
                     {% if alocacao.projeto and alocacao.projeto.organizacao %}
                       <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
-                        ({{alocacao.projeto.organizacao}})<br>
+                        ({{alocacao.projeto.organizacao}})
                       </a>
                     {% else %}
                       SEM ORGANIZAÇÃO
                     {% endif %}
+                    <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
+                      {{alocacao.projeto.get_titulo}}
+                    </a>
                     {% if alocacao.projeto.avancado %}
                       <span style="color:red">(PFE Avançado)</span>
                     {% endif %}
@@ -109,7 +116,8 @@
                     <span style="background-color:#eef;" data-toggle="tooltip" data-html="true" animation="true" 
                     title="{{descr}}">
                       <!-- {{aval}}({% widthratio peso 1 100 %}%)={{nota|stringformat:".1f"|unlocalize}} -->
-                      {{aval}}({% widthratio peso 1 100 %}%)={{nota|floatformat:1}}
+                      {{aval}}<span class="pesos_aval">({% widthratio peso 1 100 %}%)</span
+                      >={% if peso > 0 %}{{nota|floatformat:1}}{% else %}{% if nota > 5 %}OK{% else %}INADEQUADO{% endif %}{% endif %}
                     </span>
                     <script>
                       nota_linha += {{nota|unlocalize}}*{{peso|unlocalize}};
@@ -160,9 +168,11 @@
                 <b>Média no semestre = <span id="media"></span></b><br>
                 <b>Desvio padrão no semestre = <span id="desvio"></span></b><br>
               </div>
-              <div style="display: table-cell; padding-left: 46px"> 
-                <a href="{% url 'blackboard_notas' ano_semestre %}">Tabela para Blackboard (BI e BF)</a>
-              </div>
+              {% if user.tipo_de_usuario == 4 %} 
+                <div style="display: table-cell; padding-left: 46px"> 
+                  <a href="{% url 'blackboard_notas' ano_semestre %}">Tabela para Blackboard</a>
+                </div>
+              {% endif %}
           </div>
         </div>
 
@@ -184,12 +194,12 @@
 
           if(count > 0) {
 
-            $('#media').html((sum / count).toFixed(3));
+            $("#media").html((sum / count).toFixed(3));
 
             var tamanho = array.length
             var mean = array.reduce((a, b) => a + b) / tamanho
             std = Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / tamanho)
-            $('#desvio').html(std.toFixed(5));
+            $("#desvio").html(std.toFixed(5));
 
           }
           
@@ -199,6 +209,14 @@
 
     <script>
       function carrega_pagina() {
+        if($('#EstudantesTable th').length > 0) {   // Verifica se os THs foram registrados primeiro
+          table = $('#EstudantesTable').dataTable();
+          if(table) {
+            table.fnSetColumnVis( 1, false );  // esconde e-mail
+            table.fnSetColumnVis( 2, false );  // esconde Curso
+          }
+        }
+
       };
       window.onload = carrega_pagina
     </script>

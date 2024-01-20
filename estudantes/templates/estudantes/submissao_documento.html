@@ -69,7 +69,9 @@
           <li style="list-style-type:'&#128463; ';">
             {% if forloop.first%}<b>{% endif %}
             {% if documento.documento and documento.link %}
-              Entregue {{documento.data}}
+              Entregue
+              <span class="opt_full">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
+              <span class="opt_short">{{ documento.data|date:"d/m/y H:i" }}</span>
               <a 
                 {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
                 class="{% if dias_ate > dias %}lightgrey{% endif %}"
@@ -83,13 +85,21 @@
                 <a 
                   {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
                   class="{% if dias_ate > dias %}lightgrey{% endif %}"
-                  href="http://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">Entregue {{documento.data}}</a>
+                  href="http://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">
+                  Entregue
+                  <span class="opt_full">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
+                  <span class="opt_short">{{ documento.data|date:"d/m/y H:i" }}</span>
+                </a>
               {% endif %}
               {% if documento.link %}
                 <a
                   {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
                   class="{% if dias_ate > dias %}lightgrey{% endif %}"
-                  href="{{documento.link}}" target="_blank" rel="noopener noreferrer">Entregue {{documento.data}}</a>
+                  href="{{documento.link}}" target="_blank" rel="noopener noreferrer">
+                  Entregue
+                  <span class="opt_full">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
+                  <span class="opt_short">{{ documento.data|date:"d/m/y H:i" }}</span>
+                </a>
               {% endif %}
             {% endif %}
             {% if documento.data|diff_days:item.evento.endDate > 0 %}<span style="color: red;">[ENTREGUE APÓS PRAZO]</span>{% endif %}

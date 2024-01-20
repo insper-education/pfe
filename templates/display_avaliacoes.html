@@ -36,20 +36,31 @@
           {% endif %}
         </td>
 
-        {% if observacao.observacoes_estudantes or observacao.observacoes_orientador%}
-          <td style="padding: 0.4em 0.7em 0.4em 0.7em; background-color: lightgrey; border: 0px; vertical-align: top;">
+        {% if com_orientador %} 
+
+          {% if observacao.observacoes_estudantes or observacao.observacoes_orientador %}
+            <td style="padding: 0.4em 0.7em 0.4em 0.7em; background-color: lightgrey; border: 0px; vertical-align: top;">
+            {% if observacao.observacoes_estudantes %}
+                <b>Observações para Estudantes:</b><br>
+                {{observacao.observacoes_estudantes}}<br>
+                {% if observacao.observacoes_orientador %}<br>{% endif %}
+            {% endif %}
+            {% if observacao.observacoes_orientador %} 
+                <b>Observações do Orientador:</b><br>
+                {{observacao.observacoes_orientador}}
+            {% endif %}
+            </td>
+          {% endif %}
+
+        {% else %}
+
           {% if observacao.observacoes_estudantes %}
-              <b>Observações para Estudantes:</b><br>
+            <td style="padding: 0.4em 0.7em 0.4em 0.7em; background-color: lightgrey; border: 0px; vertical-align: top;">
+              <b>Observações:</b><br>
               {{observacao.observacoes_estudantes}}<br>
-              {% if com_orientador and observacao.observacoes_orientador %} 
-              <br>
-              {% endif %}
+            </td>
           {% endif %}
-          {% if com_orientador and observacao.observacoes_orientador %} 
-              <b>Observações do Orientador:</b><br>
-              {{observacao.observacoes_orientador}}
-          {% endif %}
-          </td>
+
         {% endif %}
 
       </tr>

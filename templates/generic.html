@@ -59,6 +59,10 @@
         <a href="{% url 'propostas_apresentadas' %}">Lista de propostas apresentadas</a><br>
     {% endif %}
 
+    {% if avaliar_entregas %}
+        <a href="{% url 'avaliar_entregas' %}">Voltar para janela de avaliações do semestre</a><br>
+    {% endif %}
+
     {% if area_principal %}
         <br><br>
         <a href="{% url 'index' %}">Voltar para Página Principal</a><br>

@@ -1134,7 +1134,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             
             avaliacoes = dict(filter(lambda elem: elem[0][:9] == "objetivo.", request.POST.items()))
 
-            realizada = False
+            nova_avaliacao = True
             for i, aval in enumerate(avaliacoes):
 
                 obj_nota = request.POST[aval]
@@ -1144,7 +1144,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                 objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=pk_objetivo)
 
                 if composicao.exame.grupo:
-                    avaliacao, realizada = Avaliacao2.objects.get_or_create(projeto=projeto, 
+                    avaliacao, nova_avaliacao = Avaliacao2.objects.get_or_create(projeto=projeto, 
                                                                             exame=composicao.exame, 
                                                                             objetivo=objetivo,
                                                                             avaliador=projeto.orientador.user
@@ -1152,7 +1152,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                 else:
                     if not estudante or not alocacao:
                         return HttpResponseNotFound('<h1>Estudante não encontrado!</h1>')
-                    avaliacao, realizada = Avaliacao2.objects.get_or_create(projeto=projeto, 
+                    avaliacao, nova_avaliacao = Avaliacao2.objects.get_or_create(projeto=projeto, 
                                                                             exame=composicao.exame, 
                                                                             objetivo=objetivo,
                                                                             avaliador=projeto.orientador.user,
@@ -1170,7 +1170,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                 julgamento[i].save()
 
         else:
-            avaliacao, realizada = Avaliacao2.objects.get_or_create(projeto=projeto, 
+            avaliacao, nova_avaliacao = Avaliacao2.objects.get_or_create(projeto=projeto, 
                                                                     exame=composicao.exame, 
                                                                     objetivo=None,
                                                                     avaliador=projeto.orientador.user
@@ -1210,11 +1210,12 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
 
 
         resposta = "Avaliação concluída com sucesso.<br>"
-        if realizada:
+        if not nova_avaliacao:
             resposta += "<br><br><h2>Essa é uma atualização de uma avaliação já enviada anteriormente!</h2><br><br>"
         resposta += "<br><a href='javascript:history.back(1)'>Voltar</a>"
         context = {
             "area_principal": True,
+            "avaliar_entregas": True,
             "mensagem": resposta,
         }
         return render(request, "generic.html", context=context)
@@ -2281,13 +2282,7 @@ def resultado_projetos(request):
 @permission_required('users.altera_professor', raise_exception=True)
 def resultado_meus_projetos(request):
     """Mostra os resultados das avaliações somente do professor (Bancas)."""
-    professor = None
-    try:
-        professor = Professor.objects.get(pk=request.user.professor.pk)
-    except Professor.DoesNotExist:
-        pass
-        # Administrador não possui também conta de professor
-    return resultado_projetos_intern(request, professor=professor)
+    return resultado_projetos_intern(request, professor=request.user.professor)
 
 
 @login_required

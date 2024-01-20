@@ -107,9 +107,12 @@
                         {% if forloop.first%}<b>{% endif %}
                         {% if documento.documento or documento.link %}
                           <a {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
-                             {% if dias_ate > dias %}class="lightgrey"{% endif %}
-                             href="{% url 'entrega_avaliar' item.composicao.id projeto.id %}"
-                             target="_blank" rel="noopener noreferrer">Entregue {{documento.data}}</a>
+                           {% if dias_ate > dias %}class="lightgrey"{% endif %}
+                           href="{% url 'entrega_avaliar' item.composicao.id projeto.id %}"
+                           target="_blank" rel="noopener noreferrer">Entregue 
+                            <span class="opt_full">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
+                            <span class="opt_short">{{ documento.data|date:"d/m/y H:i" }}</span>
+                          </a>
                         {% endif %}
                         {% if documento.data|diff_days:item.evento.endDate > 0 %}<span style="color: red;">[ENTREGUE APÓS PRAZO]</span>{% endif %}
                         {% if forloop.first%}</b>{% endif %}  
@@ -125,16 +128,20 @@
                 {% else %}
 
                   {% for alocacao, values in item.alocacoes.items %}
-                    <hr><b>{{alocacao.aluno.user.get_full_name}}:</b>
-                    <ul style="padding-left: 22px; width: fit-content;">
+                    <hr><b>&#10040; {{alocacao.aluno.user.get_full_name}}:</b>
+                    <ul style="padding-left: 32px; width: fit-content;">
                       {% for documento in values.documentos %}
                         <li style="list-style-type:'&#128463; ';">
                           {% if forloop.first%}<b>{% endif %}
                           {% if documento.documento or documento.link %}
                             <a {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
-                              {% if dias_ate > dias %}class="lightgrey"{% endif %}
-                              href="{% url 'entrega_avaliar' item.composicao.id projeto.id documento.usuario.id %}"
-                              target="_blank" rel="noopener noreferrer">Entregue {{documento.data}}</a>
+                             {% if dias_ate > dias %}class="lightgrey"{% endif %}
+                             href="{% url 'entrega_avaliar' item.composicao.id projeto.id documento.usuario.id %}"
+                             target="_blank" rel="noopener noreferrer">
+                              Entregue
+                              <span class="opt_full">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
+                              <span class="opt_short">{{ documento.data|date:"d/m/y H:i" }}</span>
+                            </a>
                           {% endif %}
                           {% if documento.usuario %}
                             ({{documento.usuario.get_full_name}})
