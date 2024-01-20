@@ -6,8 +6,11 @@
 {% endcomment %}
 
 {% block head %}
-  <style>
+  {% load static %}
+  <script>{% include "tooltip.js" %}</script>
 
+  <script src="{% static 'js/Chart.min.js' %}"></script>
+  <style>
     hr.style-five {
         border: 0;
         height: 0;
@@ -16,7 +19,6 @@
     hr.style-five:after {  /* Not really supposed to work, but does */
         content: "\00a0";  /* Prevent margin collapse */
     }
-
   </style>
 {% endblock %}
 
@@ -36,9 +38,13 @@
         {% include "projeto.html" %}
       {% endif %}
 
+      <h5>Resultados<br></h5>
+      {% include "display_notas_individuais.html" %}
+
       <p>&nbsp;</p>
       {% if not forloop.last %} <hr class="style-five"> {% endif %}
       <p>&nbsp;</p>
+
 
     {% empty %}
       Você não está alocado em nenhum projeto.

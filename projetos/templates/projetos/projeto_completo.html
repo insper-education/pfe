@@ -434,12 +434,12 @@
     {% endif %}
 
     <a class="myButton" style="width: 13em; padding-bottom: 3px;"
-    data-toggle="tooltip" data-html="true" animation="true" title="Permite editar alguns campos do projeto"
-    href="{% url 'editar_projeto' projeto.id %}">Editar</a>
-
-    <a class="myButton" style="width: 13em; padding-bottom: 3px;"
     data-toggle="tooltip" data-html="true" animation="true" title="Permite avaliar as entregas do projeto"
     href="{% url 'avaliar_entregas' projeto.id %}">Avaliar Entregas</a>
+
+    <a class="myButton" style="width: 13em; padding-bottom: 3px;"
+    data-toggle="tooltip" data-html="true" animation="true" title="Permite editar alguns campos do projeto"
+    href="{% url 'editar_projeto' projeto.id %}">Editar</a>
 
   </div>
   <p>&nbsp;</p>
