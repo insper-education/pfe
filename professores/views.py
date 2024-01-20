@@ -2115,15 +2115,21 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
 
             projetos = Projeto.objects.all()
 
-            if professor is not None:
-                # Incluindo também se coorientação
-                coorientacoes = Coorientador.objects.filter(usuario=professor.user).values_list("projeto", flat=True)
-                projetos = projetos.filter(orientador=professor) | projetos.filter(id__in=coorientacoes)
-
             if edicao != "todas":
                 ano, semestre = request.POST["edicao"].split('.')
                 projetos = projetos.filter(ano=ano, semestre=semestre)
 
+            show_orientador = True
+            if professor is not None:
+                # Incluindo também se coorientação
+                coorientacoes = Coorientador.objects.filter(usuario=professor.user).values_list("projeto", flat=True)
+                projetos_ori = projetos.filter(orientador=professor)
+                projetos_coori = projetos.filter(id__in=coorientacoes)
+                projetos = projetos_ori | projetos_coori
+                if projetos_coori.count() == 0:
+                    show_orientador = False
+
+            relatorio_preliminar = []
             relatorio_intermediario = []
             relatorio_final = []
             banca_intermediaria = []
@@ -2222,7 +2228,11 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                          banca_final,
                          banca_falconi)
 
-            context = {"tabela": tabela}
+            context = {
+                    "tabela": tabela,
+                    "edicao": edicao,
+                    "show_orientador": show_orientador,
+                }
 
         else:
             return HttpResponse("Algum erro não identificado.", status=401)

@@ -10,35 +10,24 @@
   <script src="{% static 'js/w3.js' %}"></script>
   <script>{% include "tooltip.js" %}</script>
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
-
   <style>
     th {
       background-color: #E6E6E6;
-      padding: 0px 2px 0px 2px;
+      padding: 0px 3px 0px 3px;
     }
     thead tr:nth-of-type(2) th {
       cursor:pointer;
       text-align: center;
     }
-    td {
-      padding: 4px;
-    }
+    td {padding: 4px;}
     ul {
       margin-bottom: 6px;
       padding-left: 1.4em;
       font-size: 0.9em;
     }
-
-    .certificacao_excelencia {
-      background-color:lightgreen;
-    }
-    .certificacao_destaque {
-      background-color:lemonchiffon;
-    }
-
+    .certificacao_excelencia {background-color:lightgreen;}
+    .certificacao_destaque {background-color:lemonchiffon;}
   </style>
-
-
 {% endblock %}
 
 {% block content %}
@@ -54,205 +43,232 @@
 
   <div class="atualizar">
 
-  <div class="table-responsive">
-  <table id="ProjetosTable" class="projetos">
+    <div class="table-responsive">
+      <table id="ProjetosTable" class="projetos">
 
-    {% if tabela %}
-      <thead>
-      <tr>
-        <th style="border-right:0px; border-left:0px;"></th>
-        <th style="border-right:0px; border-left:0px;"></th>
-        <th style="border-right:0px; border-left:0px;"></th>
-        <th style="border-right:0px; border-left:0px;"></th>
-        <th colspan="2" class="text-center">
-          <b>Relatórios</b>
-        </th>
-        <th colspan="3" class="text-center">
-          <b>Bancas</b>
-        </th>
-      </tr>
-      <tr>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(1)')">Projeto</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')">Período</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')">Organização</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(4)')">Orientador</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(5)')" data-toggle="tooltip" data-html="true" animation="true" title="Relatório Intermediária">Inter.</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(6)')" data-toggle="tooltip" data-html="true" animation="true" title="Relatório Final">Final</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(7)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Intermediária">Inte.</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(8)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Final">Final</th>
-        <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(9)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Falconi">Falc.</th>
-      </tr>      
-      </thead>
+        {% if tabela %}
+          <thead>
+            <tr>
+              <th style="border-right:0px; border-left:0px;"></th>
+              <th style="border-right:0px; border-left:0px;"></th>
+              <th style="border-right:0px; border-left:0px;"></th>
+              <th style="border-right:0px; border-left:0px;"></th>
+              <th colspan="2" class="text-center">
+                <b>Relatórios</b>
+              </th>
+              <th colspan="3" class="text-center">
+                <b>Bancas</b>
+              </th>
+            </tr>
+            <tr>
+              <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(1)')">Projeto</th>
+              <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')">Período</th>
+              <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')">Organização</th>
+              <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(4)')">Orientador</th>
+              {% comment %} <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(5)')" data-toggle="tooltip" data-html="true" animation="true" title="Relatório Preliminar">Prel.</th> {% endcomment %}
+              <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(6)')" data-toggle="tooltip" data-html="true" animation="true" title="Relatório Intermediária">Inter.</th>
+              <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(7)')" data-toggle="tooltip" data-html="true" animation="true" title="Relatório Final">Final</th>
+              <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(8)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Intermediária">Inte.</th>
+              <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(9)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Final">Final</th>
+              <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(10)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Falconi">Falc.</th>
+            </tr>      
+          </thead>
 
-      <tbody>
-      {% for projeto, relatorio_intermediario, relatorio_final, banca_intermediaria, banca_final, banca_falconi in tabela %} 
-      <tr class="item
-        {% if banca_falconi.certificacao == "E" %}
-          certificacao_excelencia
-        {% elif banca_falconi.certificacao == "D" %}
-          certificacao_destaque
-        {% endif %}
-        "
-      >
-          <td>
-            <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">
-              {{projeto.get_titulo}}
-              {% include "tipo_projeto.html" %}<br>
-            </a>
-
-            <ul class="grupo">
-              {% for alocacao in projeto.alocacao_set.all %}
-                <li>
-                  <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">
-                    {{alocacao.aluno}}
-                  </a>
-                  <span class="curso">
-                    [{{ alocacao.aluno.curso2 }}]
-                  </span>
-                  <span class="email">
-                    <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
-                  </span>
-                </li>
-              {% endfor %}
-            </ul>
-          </td>
-
-          {% comment %} Período {% endcomment %}
-          <td style="text-align: center;"> 
-            {{projeto.ano}}.{{projeto.semestre}}
-          </td>
-            
-          {% comment %} Organização {% endcomment %}
-          <td>
-            <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-              {{ projeto.organizacao.nome }}
-            </a>
-          </td>
-          
-          {% comment %} Orientador {% endcomment %}
-          <td>
-            {% if projeto.orientador %}
-            <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}">
-              {{ projeto.orientador }}
-            </a>
-            {% else %}
-              Orientador não definido
-            {% endif %}
-
-            {% with coorientadores=projeto.coorientador_set.all %}
-              {% if coorientadores %}
-              <span class="coorientadores">
-              <br>coorientador:
-                {% for coorientador in coorientadores %}
-                    <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">
-                      {{coorientador.usuario.get_full_name}} 
+          <tbody>
+            {% for projeto, relatorio_intermediario, relatorio_final, banca_intermediaria, banca_final, banca_falconi in tabela %} 
+              <tr class="item
+                {% if banca_falconi.certificacao == "E" %}
+                  certificacao_excelencia
+                {% elif banca_falconi.certificacao == "D" %}
+                  certificacao_destaque
+                {% endif %}
+                "
+              >
+                  <td>
+                    <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">
+                      {{projeto.get_titulo}}
+                      {% include "tipo_projeto.html" %}<br>
                     </a>
-                    {% comment %} <a class="email" href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a> {% endcomment %}
-                    {% if not forloop.last %}
-                      ;
+
+                    <ul class="grupo">
+                      {% for alocacao in projeto.alocacao_set.all %}
+                        <li>
+                          <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">
+                            {{alocacao.aluno}}
+                          </a>
+                          <span class="curso">
+                            [{{ alocacao.aluno.curso2 }}]
+                          </span>
+                          <span class="email">
+                            <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
+                          </span>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </td>
+
+                  {% comment %} Período {% endcomment %}
+                  <td style="text-align: center;"> 
+                    {{projeto.ano}}.{{projeto.semestre}}
+                  </td>
+
+                  {% comment %} Organização {% endcomment %}
+                  <td>
+                    <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">
+                      {{ projeto.organizacao.nome }}
+                    </a>
+                  </td>
+                  
+                  {% comment %} Orientador {% endcomment %}
+                  <td>
+                    {% if projeto.orientador %}
+                    <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}">
+                      {{ projeto.orientador }}
+                    </a>
+                    {% else %}
+                      Orientador não definido
                     {% endif %}
-                {% endfor %}
-                </span>
-              {% endif %}
-            {% endwith %}
 
-          </td>
+                    {% with coorientadores=projeto.coorientador_set.all %}
+                      {% if coorientadores %}
+                      <span class="coorientadores">
+                      <br>coorientador:
+                        {% for coorientador in coorientadores %}
+                            <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">
+                              {{coorientador.usuario.get_full_name}} 
+                            </a>
+                            {% comment %} <a class="email" href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a> {% endcomment %}
+                            {% if not forloop.last %}
+                              ;
+                            {% endif %}
+                        {% endfor %}
+                        </span>
+                      {% endif %}
+                    {% endwith %}
+                  </td>
 
-          {% comment %} Relatório Intermediário {% endcomment %}
-          <td class="text-center" style="white-space: nowrap;">
-            <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}"
-              {% if relatorio_intermediario.nota_texto %}
-                data-toggle="tooltip" data-html="true" animation="true" title="{{ relatorio_intermediario.conceito|safe }}">
-              {{ relatorio_intermediario.nota_texto|safe }}
-              {% else %}
-              >
-              {% endif %}
-            </a>
-          </td>
+                  {% comment %} Relatório Preliminar {% endcomment %}
+                  {% comment %} <td class="text-center" style="white-space: nowrap;">
+                    <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}"
+                      {% if relatorio_preliminar.nota > 0 %}
+                        data-toggle="tooltip" data-html="true" animation="true" title="{{ relatorio_preliminar.conceito|safe }}">
+                      {{ relatorio_preliminar.nota_texto|safe }}
+                      {% else %}
+                      >
+                      {% endif %}
+                    </a>
+                  </td> {% endcomment %}
 
-        {% comment %} Relatório Final {% endcomment %}
-          <td class="text-center" style="white-space: nowrap;">
-            <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}"
-              {% if relatorio_final.nota_texto %}
-                data-toggle="tooltip" data-html="true" animation="true" title="{{ relatorio_final.conceito|safe }}">
-              {{ relatorio_final.nota_texto|safe }}
-              {% else %}
-              >
-              {% endif %}
-            </a>
-          </td>
+                  {% comment %} Relatório Intermediário {% endcomment %}
+                  <td class="text-center" style="white-space: nowrap;">
+                    <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}"
+                      {% if relatorio_intermediario.nota_texto %}
+                        data-toggle="tooltip" data-html="true" animation="true" title="{{ relatorio_intermediario.conceito|safe }}">
+                      {{ relatorio_intermediario.nota_texto|safe }}
+                      {% else %}
+                      >
+                      {% endif %}
+                    </a>
+                  </td>
 
-        {% comment %} Banca Intermediária {% endcomment %}
-          <td class="text-center" style="white-space: nowrap;">
-            <a class="imprimir" href="{% url 'conceitos_obtidos' projeto.id %}"
-              {% if banca_intermediaria.nota_texto %}
-                data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_intermediaria.conceito|safe }}">
-                {{ banca_intermediaria.nota_texto|safe }}
-              {% else %}
-              >
-              {% endif %}
-            </a>
-          </td>
+                {% comment %} Relatório Final {% endcomment %}
+                  <td class="text-center" style="white-space: nowrap;">
+                    <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}"
+                      {% if relatorio_final.nota_texto %}
+                        data-toggle="tooltip" data-html="true" animation="true" title="{{ relatorio_final.conceito|safe }}">
+                      {{ relatorio_final.nota_texto|safe }}
+                      {% else %}
+                      >
+                      {% endif %}
+                    </a>
+                  </td>
 
-          {% comment %} Banca Final {% endcomment %}
-          <td class="text-center" style="white-space: nowrap;">
-            <a class="imprimir" href="{% url 'conceitos_obtidos' projeto.id %}"
-              {% if banca_final.nota_texto %}
-                data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_final.conceito|safe }}">
-                {{ banca_final.nota_texto|safe }}
-              {% else %}
-              >
-              {% endif %}
-            </a>
-          </td>
+                {% comment %} Banca Intermediária {% endcomment %}
+                  <td class="text-center" style="white-space: nowrap;">
+                    <a class="imprimir" href="{% url 'conceitos_obtidos' projeto.id %}"
+                      {% if banca_intermediaria.nota_texto %}
+                        data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_intermediaria.conceito|safe }}">
+                        {{ banca_intermediaria.nota_texto|safe }}
+                      {% else %}
+                      >
+                      {% endif %}
+                    </a>
+                  </td>
 
-          {% comment %} Banca Falconi {% endcomment %}
-          <td class="text-center" style="white-space: nowrap;">
-            <a class="imprimir" href="{% url 'conceitos_obtidos' projeto.id %}"
-              {% if banca_falconi.nota_texto %}
-                data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_falconi.avaliadores|safe }}">
-                {{ banca_falconi.nota_texto|safe }}
-              {% else %}
-              >
-              {% endif %}
-            </a>
-          </td>
+                  {% comment %} Banca Final {% endcomment %}
+                  <td class="text-center" style="white-space: nowrap;">
+                    <a class="imprimir" href="{% url 'conceitos_obtidos' projeto.id %}"
+                      {% if banca_final.nota_texto %}
+                        data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_final.conceito|safe }}">
+                        {{ banca_final.nota_texto|safe }}
+                      {% else %}
+                      >
+                      {% endif %}
+                    </a>
+                  </td>
 
-      </tr>
+                  {% comment %} Banca Falconi {% endcomment %}
+                  <td class="text-center" style="white-space: nowrap;">
+                    <a class="imprimir" href="{% url 'conceitos_obtidos' projeto.id %}"
+                      {% if banca_falconi.nota_texto %}
+                        data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_falconi.avaliadores|safe }}">
+                        {{ banca_falconi.nota_texto|safe }}
+                      {% else %}
+                      >
+                      {% endif %}
+                    </a>
+                  </td>
 
-      {% empty %}
-        <tr><td colspan="6">
-        Não existem projetos disponíveis.
-        </td></tr>
-      {% endfor %}
-      </tbody>
+              </tr>
 
-    {% endif %}
+            {% empty %}
+              <tr><td colspan="6">
+                Não existem projetos disponíveis.
+              </td></tr>
+            {% endfor %}
+          </tbody>
 
-  </table>
-  
-  <br>
-  &nbsp;Total de Projetos: <span id="total_projetos"></span><br>
+        {% endif %}
 
-  <br>
-  &nbsp;<span style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    Certificação Excelência <span class="opt_full">Projeto Final de Engenharia</span><span class="opt_short">PFE</span> FALCONI-INSPER
-    (<span id="certificacao_excelencia"></span>)<br>
+      </table>
+      
+      <br>
+      &nbsp;<b>Total de Projetos: <span id="total_projetos"></span></b><br>
 
-  &nbsp;<span style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    Certificação Destaque <span class="opt_full">Projeto Final de Engenharia</span><span class="opt_short">PFE</span> FALCONI-INSPER
-    (<span id="certificacao_destaque"></span>)<br>
+      &nbsp;<span style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        Certificação Excelência <span class="opt_full">Projeto Final de Engenharia</span><span class="opt_short">PFE</span> FALCONI-INSPER
+        (<span id="certificacao_excelencia"></span>)<br>
 
-  <script>
-    $("#total_projetos").html($(".item").length);
-    $("#certificacao_excelencia").html($(".certificacao_excelencia").length);
-    $("#certificacao_destaque").html($(".certificacao_destaque").length);
-  </script>
+      &nbsp;<span style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        Certificação Destaque <span class="opt_full">Projeto Final de Engenharia</span><span class="opt_short">PFE</span> FALCONI-INSPER
+        (<span id="certificacao_destaque"></span>)<br>
 
-  </div>
+      <script>
+        $("#total_projetos").html($(".item").length);
+        $("#certificacao_excelencia").html($(".certificacao_excelencia").length);
+        $("#certificacao_destaque").html($(".certificacao_destaque").length);
+      </script>
+
+    </div>
+
+    <script>
+      {% if edicao != "todas" %}
+        $("#ProjetosTable tr > *:nth-child(2)").hide();
+        $("#info_"+"Período").prop("checked", false);
+      {% else %}
+        $("#info_"+"Período").prop("checked", true);
+      {% endif %}
+      
+      {% if show_orientador %}
+        $("#info_"+"Orientador").prop("checked", true);
+      {% else %} 
+        $("#ProjetosTable tr > *:nth-child(4)").hide();
+        $("#info_"+"Orientador").prop("checked", false);
+      {% endif %}
+    </script>
+
   </div>
   <p>&nbsp;</p>
-
 
   <script>
   
@@ -302,23 +318,14 @@
 
     $(".filter").change(carrega_semestre);    
     $(document).ready(carrega_semestre);
-
     function carrega_pagina() {};
-
     function carrega_site() {
       var filterEdicao = localStorage.getItem("filterEdicao");
       if (filterEdicao !== null && $("#filterEdicao option[value='"+filterEdicao+"']").length > 0 ) {
         $('#filterEdicao').val(filterEdicao).trigger('change');
       }
-      carrega_pagina();
     };
-
     window.onload = carrega_site;
-
-  </script>
-
-  <script>
-    $('#ProjetosTable tr > *:nth-child(3)').hide();
   </script>
 
 {% endblock %}

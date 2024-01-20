@@ -12,9 +12,7 @@
   {% include "tabelas_includes.html" %}
 
   <style>
-    .pesos_aval {
-      display: none;
-    }
+    .pesos_aval {display: none;}
   </style>
 
 {% endblock %}
@@ -66,9 +64,11 @@
                 {% if aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span>{% endif %}
               </a>
             </th>
+
             <td>
               <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
             </td>
+
             {% if aluno.curso2 %}
               <td style="color:#{{ aluno.curso2.cor }};">
                 {{ aluno.curso2 }}
@@ -76,6 +76,7 @@
             {% else %}
               <td>Indefinido</td>
             {% endif %}
+
             <td>
               {% if aluno.alocacao_set.all %}
                 {% for alocacao in aluno.alocacao_set.all %}
@@ -106,6 +107,7 @@
                 {% endfor %}
               {% endif %}
             </td>
+
             {% with alocacao=aluno.get_alocacoes|dict_key:ano_semestre %}
               <td>
                 <script>
@@ -117,7 +119,7 @@
                     title="{{descr}}">
                       <!-- {{aval}}({% widthratio peso 1 100 %}%)={{nota|stringformat:".1f"|unlocalize}} -->
                       {{aval}}<span class="pesos_aval">({% widthratio peso 1 100 %}%)</span
-                      >={% if peso > 0 %}{{nota|floatformat:1}}{% else %}{% if nota > 5 %}OK{% else %}INADEQUADO{% endif %}{% endif %}
+                      >={% if peso > 0 %}{{nota|floatformat:1}}{% else %}{% if nota > 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
                     </span>
                     <script>
                       nota_linha += {{nota|unlocalize}}*{{peso|unlocalize}};
