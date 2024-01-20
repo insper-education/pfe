@@ -33,6 +33,20 @@ import users.models
 from .tipos import TIPO_EVENTO
 
 #from professores.support import converte_conceitos
+def converte_conceitos(nota):
+    if( nota >= 9.5 ): return ("A+")
+    if( nota >= 9.0 ): return ("A")
+    if( nota >= 8.0 ): return ("B+")
+    if( nota >= 7.0 ): return ("B")
+    if( nota >= 6.0 ): return ("C+")
+    if( nota >= 5.0 ): return ("C")
+    if( nota >= 4.0 ): return ("D+")
+    if( nota >= 3.0 ): return ("D")
+    if( nota >= 2.0 ): return ("D-")
+    if( nota >= 0.0 ): return ("I")
+    return "inválida"
+
+### PROBLEMA DE CIRCULARIDADE ###
 
 # REMOVER
 from .tipos import TIPO_DE_DOCUMENTO
@@ -812,6 +826,31 @@ class Banca(models.Model):
         else:
             observacoes = Observacao.objects.none()
         return observacoes
+    
+    def get_avaliacoes(self):
+        if self.tipo_de_banca == 0:
+            avaliacoes = Avaliacao2.objects.filter(projeto=self.projeto, exame__titulo="Banca Final")
+        elif self.tipo_de_banca == 1:
+            avaliacoes = Avaliacao2.objects.filter(projeto=self.projeto, exame__titulo="Banca Intermediária")
+        elif self.tipo_de_banca == 2:
+            avaliacoes = Avaliacao2.objects.filter(projeto=self.projeto, exame__titulo="Falconi")
+        else:
+            avaliacoes = Avaliacao2.objects.none()
+
+        objetivos = {}
+        pesos = {}
+        for avaliacao in avaliacoes:
+            if avaliacao.objetivo in objetivos:
+                objetivos[avaliacao.objetivo] += avaliacao.nota
+                pesos[avaliacao.objetivo] += 1
+            else:
+                objetivos[avaliacao.objetivo] = avaliacao.nota
+                pesos[avaliacao.objetivo] = 1
+        for objetivo in objetivos:
+            objetivos[objetivo] = converte_conceitos(objetivos[objetivo]/pesos[objetivo])
+
+        return objetivos
+
 
 class Encontro(models.Model):
     """Encontros (para dinâmicas de grupos)."""

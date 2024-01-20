@@ -78,7 +78,7 @@
           {% endif %}
 
           <br>
-          <b>Membros da Banca</b>
+          <b>Membros da Banca:</b>
           <ol>
             {% if banca.membro1 %}
             <li>
@@ -97,7 +97,19 @@
             {% endif %}
           </ol>
 
+          {% with avaliacoes=banca.get_avaliacoes %}
+            {% if avaliacoes %}
+              <b>Conceitos Banca:</b><br>
+              {% for objetivo, avaliacao in avaliacoes.items %}
+                &nbsp;&#x21A3; {{objetivo.titulo}}: {{avaliacao}}<br>
+              {% endfor %}
+              <small>Obs: Os conceitos e notas da banca vão variar conforme membros da banca postam suas avaliações.<br></small>
+            {% endif %}
+          {% endwith %}
+
+
           {% if banca.get_observacoes_estudantes %}
+            <br>
             <b>Observações realizadas pelos membros da banca:</b><br>
             <ul>
             {% for observacao in banca.get_observacoes_estudantes %}

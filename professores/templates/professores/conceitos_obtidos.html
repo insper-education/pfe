@@ -117,16 +117,14 @@
                 </script>
 
               {% endif %}{% endfor %}
-              
-              {% if objs.observacoes_estudantes %}  
-                <li><span style="font-weight: 500;">Observações para Estudantes</span>: {{objs.observacoes_estudantes}}</li>
-              {% endif %}
-              {% if objs.observacoes_orientador %}  
-                <li><span style="font-weight: 500;">Observações para Orientador</span>: {{objs.observacoes_orientador}}</li>
-              {% endif %}
-
             </ul>
-
+            {% if objs.observacoes_estudantes %}  
+              &nbsp;<u><span style="font-weight: 500;">Observações para Estudantes</span>:</u> {{objs.observacoes_estudantes}}<br>
+              {% if objs.observacoes_orientador %}<br>{% endif %}
+            {% endif %}
+            {% if objs.observacoes_orientador %}  
+              &nbsp;<u><span style="font-weight: 500;">Observações para Orientador</span>:</u> {{objs.observacoes_orientador}}<br>
+            {% endif %}
           </td></tr>
 
       {% endfor %}
@@ -183,18 +181,15 @@
                     final.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}});
                   {% endif %}
                 </script>
-
               {% endif %}{% endfor %}
-
-              {% if objs.observacoes_estudantes %}  
-                <li><span style="font-weight: 500;">Observações para Estudantes</span>: {{objs.observacoes_estudantes}}</li>
-              {% endif %}
-              {% if objs.observacoes_orientador %}  
-                <li><span style="font-weight: 500;">Observações para Orientador</span>: {{objs.observacoes_orientador}}</li>
-              {% endif %}
-              
             </ul>
-
+            {% if objs.observacoes_estudantes %}  
+              &nbsp;<u><span style="font-weight: 500;">Observações para Estudantes</span>:</u> {{objs.observacoes_estudantes}}<br>
+              {% if objs.observacoes_orientador %}<br>{% endif %}
+            {% endif %}
+            {% if objs.observacoes_orientador %}  
+              &nbsp;<u><span style="font-weight: 500;">Observações para Orientador</span>:</u> {{objs.observacoes_orientador}}<br>
+            {% endif %}
           </td></tr>
 
       {% endfor %}
@@ -251,15 +246,14 @@
                 </script>
 
               {% endif %}{% endfor %}
-
-              {% if objs.observacoes_estudantes %}  
-                <li><span style="font-weight: 500;">Observações para Estudantes</span>: {{objs.observacoes_estudantes}}</li>
-              {% endif %}
-              {% if objs.observacoes_orientador %}  
-                <li><span style="font-weight: 500;">Observações para Orientador</span>: {{objs.observacoes_orientador}}</li>
-              {% endif %}
-
             </ul>
+            {% if objs.observacoes_estudantes %}  
+              &nbsp;<u><span style="font-weight: 500;">Observações para Estudantes</span>:</u> {{objs.observacoes_estudantes}}<br>
+              {% if objs.observacoes_orientador %}<br>{% endif %}
+            {% endif %}
+            {% if objs.observacoes_orientador %}  
+              &nbsp;<u><span style="font-weight: 500;">Observações para Orientador</span>:</u> {{objs.observacoes_orientador}}<br>
+            {% endif %}
 
           </td></tr>
 
