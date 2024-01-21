@@ -19,12 +19,15 @@
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
 
   <style>
-    ul {margin-bottom: 6px;}
+    ul {
+      margin-bottom: 6px;
+      width: 100%;
+    }
     .pintern {
       border: 1px solid grey;
-      padding: 0.2em 0.4em 0.2em 0.4em;
+      padding: 0.0em 0.4em 0.0em 0.4em;
       display:block;
-      margin: 10px 0px 4px 0px;
+      margin: 8px 0px 0px 0px;
       background-color: #FAFAF3;
     }
     .lightgrey,
@@ -53,6 +56,7 @@
             <div class="tresp"><strong>Projeto:</strong> <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
             {% include "tipo_projeto.html" with com_tipo=False %}</div>
             <strong>Organização:</strong>
+
             {% if projeto.organizacao %}
               <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>
             {% else %}
@@ -86,7 +90,7 @@
             <div style="margin:8px 0px 3px 0px; "><strong>Entregas:</strong></div>
             {% for item in entregas %}
             {% with dias_ate=item.evento.endDate|dif_dias_hoje dias=-1 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
-              <div class="pintern" style="margin-top: {% if forloop.first %}0{% else %}10{% endif %}px;"> {% comment %} {% if dias_ate > dias %}{% endif %} {% endcomment %}
+              <div class="pintern" {% if not forloop.first %}style="margin-top: 8px;"{% endif %}> {% comment %} {% if dias_ate > dias %}{% endif %} {% endcomment %}
                 <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
                   {% if item.composicao.tipo_documento %}
                     <b>{{item.composicao.tipo_documento.nome}}</b> 
@@ -101,10 +105,10 @@
                   {% comment %} onClick="check_prazo('{{item.evento.endDate|date:"Y-m-d"}}T23:59:59');" {% endcomment %}
                 <br>
                 {% if item.composicao.exame.grupo %}
-                  <ul style="padding-left: 22px; width: fit-content;" {% if dias_ate > dias %}class="lightgrey"{% endif %}>
+                  <ul style="padding-left: 22px; " {% if dias_ate > dias %}class="lightgrey"{% endif %}>
                     {% for documento in item.documentos %}
-                      <li style="list-style-type:'&#128463; ';" {% if dias_ate > dias %}class="lightgrey"{% endif %}>
-                        {% if forloop.first%}<b>{% endif %}
+                      <li style="list-style-type:'';" {% if dias_ate > dias %}class="lightgrey"{% endif %}>
+                        {% if forloop.first%}<b>{% endif %} <span class="fa fa-file"></span>
                         {% if documento.documento or documento.link %}
                           <a {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
                            {% if dias_ate > dias %}class="lightgrey"{% endif %}
@@ -114,7 +118,7 @@
                             <span class="opt_short">{{ documento.data|date:"d/m/y H:i" }}</span>
                           </a>
                         {% endif %}
-                        {% if documento.data|diff_days:item.evento.endDate > 0 %}<span style="color: red;">[ENTREGUE APÓS PRAZO]</span>{% endif %}
+                        {% if documento.data|diff_days:item.evento.endDate > 0 %}<span style="color: red;">[FORA DO PRAZO]</span>{% endif %}
                         {% if forloop.first%}</b>{% endif %}  
                       </li>
                       {% if item.avaliacoes and item.avaliacoes.first%}
@@ -127,16 +131,16 @@
                         <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>sem arquivos</span><br>
                       {% endif %}
                     {% endfor %}
-                    {% include "display_avaliacoes.html" with avaliacoes=item.avaliacoes nota=item.nota observacao=item.observacao com_orientador=True %}
                   </ul>
+                  {% include "display_avaliacoes.html" with avaliacoes=item.avaliacoes nota=item.nota observacao=item.observacao com_orientador=True %}
 
                 {% else %}
                   {% for alocacao, values in item.alocacoes.items %} 
                     <hr><b {% if dias_ate > dias %}class="lightgrey"{% endif %}>&#10040; {{alocacao.aluno.user.get_full_name}}:</b>
-                    <ul style="padding-left: 32px; width: fit-content;" {% if dias_ate > dias %}class="lightgrey"{% endif %}>
+                    <ul style="padding-left: 32px;" {% if dias_ate > dias %}class="lightgrey"{% endif %}>
                       {% for documento in values.documentos %}
-                        <li style="list-style-type:'&#128463; ';" {% if dias_ate > dias %}class="lightgrey"{% endif %}>
-                          {% if forloop.first%}<b>{% endif %}
+                        <li style="list-style-type:'';" {% if dias_ate > dias %}class="lightgrey"{% endif %}>
+                          {% if forloop.first%}<b>{% endif %}<span class="fa fa-file"></span>
                           {% if documento.documento or documento.link %}
                             <a {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {% if documento.usuario %}{{documento.usuario.get_full_name}}{% else %}(ERRO AO IDENTIFICAR ESTUDANTE){% endif %}"{% endif %}
                              {% if dias_ate > dias %}class="lightgrey"{% endif %}
@@ -147,7 +151,7 @@
                               <span class="opt_short">{{ documento.data|date:"d/m/y H:i" }}</span>
                             </a>
                           {% endif %}
-                          {% if documento.data|diff_days:item.evento.endDate > 0 %}<span style="color: red;">[ENTREGUE APÓS PRAZO]</span>{% endif %}
+                          {% if documento.data|diff_days:item.evento.endDate > 0 %}<span style="color: red;">[FORA DO PRAZO]</span>{% endif %}
                           {% if forloop.first%}</b>{% endif %}  
                         </li>
                       {% empty %}
@@ -155,8 +159,8 @@
                           <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>sem arquivos</span><br>
                         {% endif %}
                       {% endfor %}
-                      {% include "display_avaliacoes.html" with avaliacoes=values.avaliacoes nota=values.nota observacao=values.observacao com_orientador=True %}
                     </ul>
+                    {% include "display_avaliacoes.html" with avaliacoes=values.avaliacoes nota=values.nota observacao=values.observacao com_orientador=True %}
 
                   {% endfor %}
 

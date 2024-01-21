@@ -66,8 +66,8 @@
         {% endif %}<br>
         <ul style="padding-left: 22px; width: fit-content;">
         {% for documento in item.documentos %}
-          <li style="list-style-type:'&#128463; ';">
-            {% if forloop.first%}<b>{% endif %}
+          <li style="list-style-type:'';">
+            {% if forloop.first%}<b>{% endif %}<span class="fa fa-file"></span>
             {% if documento.documento and documento.link %}
               Entregue
               <span class="opt_full">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
@@ -102,7 +102,7 @@
                 </a>
               {% endif %}
             {% endif %}
-            {% if documento.data|diff_days:item.evento.endDate > 0 %}<span style="color: red;">[ENTREGUE APÓS PRAZO]</span>{% endif %}
+            {% if documento.data|diff_days:item.evento.endDate > 0 %}<span style="color: red;">[FORA DO PRAZO]</span>{% endif %}
             {% if forloop.first%}</b>{% endif %}  
           </li>
           {% if item.avaliacoes and item.avaliacoes.first%}

@@ -26,7 +26,7 @@
   {% endif %}
 
   {% if bancas %}
-    {% for banca in bancas %} 
+    {% for banca in bancas.reverse %} 
       <div class="div_arredondado">
           {% if banca.startDate %}
             <b>Horário:</b> {{banca.startDate.date}} ({{banca.startDate|date:"l"}}) das {{banca.startDate.time}}
@@ -97,26 +97,28 @@
             {% endif %}
           </ol>
 
-          {% with avaliacoes=banca.get_avaliacoes %}
-            {% if avaliacoes %}
+          {% with avaliacao=banca.get_avaliacoes %}
+            {% if avaliacao.objetivos %}
               <b>Conceitos Banca:</b><br>
-              {% for objetivo, avaliacao in avaliacoes.items %}
+              {% for objetivo, avaliacao in avaliacao.objetivos.items %}
                 &nbsp;&#x21A3; {{objetivo.titulo}}: {{avaliacao}}<br>
               {% endfor %}
+              {% if avaliacao.peso > 0 %}
+                &#10149; Nota final = <b>{{avaliacao.nota|floatformat:2}}</b><br>
+              {% endif %}
               <small>Obs: Os conceitos e notas da banca vão variar conforme membros da banca postam suas avaliações.<br></small>
             {% endif %}
           {% endwith %}
-
 
           {% if banca.get_observacoes_estudantes %}
             <br>
             <b>Observações realizadas pelos membros da banca:</b><br>
             <ul>
-            {% for observacao in banca.get_observacoes_estudantes %}
-              {% if observacao.observacoes_estudantes %}
-                <li>{{observacao.observacoes_estudantes}}</li>
-              {% endif %}
-            {% endfor %}
+              {% for observacao in banca.get_observacoes_estudantes %}
+                {% if observacao.observacoes_estudantes %}
+                  <li>{{observacao.observacoes_estudantes}}</li>
+                {% endif %}
+              {% endfor %}
             </ul>
           {% endif %}
 

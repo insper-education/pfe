@@ -725,7 +725,7 @@ class Alocacao(models.Model):
     avaliacao_intermediaria = models.DateTimeField("Avaliação Intermediária", default=None, blank=True, null=True,
                                                    help_text="Momento em que o orientador verificou a avaliação intermediária de par do estudante")
     
-    avaliacao_final = models.DateTimeField("Avaliação Intermediária", default=None, blank=True, null=True,
+    avaliacao_final = models.DateTimeField("Avaliação Final", default=None, blank=True, null=True,
                                             help_text="Momento em que o orientador verificou a avaliação final de par do estudante")
     
 

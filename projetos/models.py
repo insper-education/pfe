@@ -85,7 +85,7 @@ class Organizacao(models.Model):
 
 
     class Meta:
-        #ordering = [ "nome",]  # Não vale a pena pois é sempre case sensitive
+        ordering = [ "nome",]
         verbose_name = "Organização"
         verbose_name_plural = "Organizações"
 
@@ -148,7 +148,7 @@ class Projeto(models.Model):
                                         help_text='Caso o projeto conte com membros externos a instituição')
 
     class Meta:
-        #ordering = [ "organizacao", "ano", "semestre"]  # Não vale a pena pois é sempre case sensitive
+        ordering = [ "organizacao", "ano", "semestre"]
         permissions = (("altera_empresa", "Empresa altera valores"),
                        ("altera_professor", "Professor altera valores"), )
 
@@ -463,7 +463,7 @@ class Proposta(models.Model):
 
 
     class Meta:
-        #ordering = [ "organizacao", "ano", "semestre",]  # Não vale a pena pois é sempre case sensitive
+        ordering = [ "organizacao", "ano", "semestre",]
         verbose_name = "Proposta"
         verbose_name_plural = "Propostas"
 
@@ -838,6 +838,8 @@ class Banca(models.Model):
             avaliacoes = Avaliacao2.objects.none()
 
         objetivos = {}
+        nota = 0
+        peso = 0
         pesos = {}
         for avaliacao in avaliacoes:
             if avaliacao.objetivo in objetivos:
@@ -846,10 +848,18 @@ class Banca(models.Model):
             else:
                 objetivos[avaliacao.objetivo] = avaliacao.nota
                 pesos[avaliacao.objetivo] = 1
+            nota += float(avaliacao.nota) * float(avaliacao.peso)
+            peso += float(avaliacao.peso)
+        
         for objetivo in objetivos:
             objetivos[objetivo] = converte_conceitos(objetivos[objetivo]/pesos[objetivo])
 
-        return objetivos
+        avaliacao = {}
+        avaliacao["objetivos"] = objetivos
+        avaliacao["nota"] = nota/peso if peso > 0 else 0
+        avaliacao["peso"] = peso
+
+        return avaliacao
 
 
 class Encontro(models.Model):

@@ -88,11 +88,11 @@
       let descricao = "&#10149; Nota Final Calculada = "
 
       descricao += '<span data-toggle="tooltip" data-html="true" animation="true" '
-      descricao += ' title="Média usando conceitos finais '
-      descricao += '(cálculo com todos os conceitos intermediários levaria a nota=' + (this.media_geral()) + ')">'
+      descricao += ' title="Média usando todos os conceitos intermediários'
+      descricao += '(cálculo usando os conceitos apresentados levaria a nota=' + (this.media()) + ')">'
       
       descricao += "<b style='font-size: 1.16em;'>";
-      descricao += this.media();
+      descricao += this.media_geral();
       descricao += "</b>";
       descricao += '</span>';
 

@@ -13,11 +13,21 @@
       border: 0px;
       vertical-align: top;
     }
+
+    @media(max-width: 600px) {
+      .box_notas {
+        display: table-row;
+      }
+      tr {
+        display: table;
+        width: 100%;  
+      }
+    }
   </style>
-  <div style="display: table;">
+  <div style="display: table; width: 100%;">
     <table style="border: 0px; border-collapse: separate; border-spacing: 10px; width: 100%;">
       <tr>
-        <td class="box_notas">
+        <td class="box_notas" style="width: 15em;">
           {% if avaliacoes.last.objetivo %}
             <b>Avaliação:</b><br>
             <ul>

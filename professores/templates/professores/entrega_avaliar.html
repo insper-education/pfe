@@ -73,8 +73,8 @@
       <b lang="pt">Documento:</b><b lang="en">Document:</b><br>
       <ul style="padding-left: 22px; width: fit-content;">
         {% for documento in documentos %}
-          <li style="list-style-type:'&#128463; ';">
-            {% if forloop.first%}<b>{% endif %}
+          <li style="list-style-type:'';">
+            {% if forloop.first%}<b>{% endif %}<span class="fa fa-file"></span>
             {% if documento.documento and documento.link %} 
               <span lang="pt">Entregue</span><span lang="en">Submitted</span>
               {{documento.data}}
@@ -96,7 +96,7 @@
                   href="{{documento.link}}" target="_blank" rel="noopener noreferrer"><span lang="pt">Entregue</span><span lang="en">Submitted</span> {{documento.data}}</a>
               {% endif %}
             {% endif %}
-            {% if documento.data|diff_days:evento.endDate > 0 %}<span style="color: red;">[ENTREGUE APÓS PRAZO]</span>{% endif %}
+            {% if documento.data|diff_days:evento.endDate > 0 %}<span style="color: red;">[FORA DO PRAZO]</span>{% endif %}
             {% if forloop.first%}</b>{% endif %}  
           </li>
         {% empty %}
@@ -132,18 +132,18 @@
 
 
       {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
-      <label for="observacoes_estudantes"><b data-toggle="tooltip" data-html="true" animation="true"
+      <label for="observacoes_estudantes"><span data-toggle="tooltip" data-html="true" animation="true"
              title="Insira qualquer observação que achar relavante para o grupo de estudantes.">
-        <span lang="pt">Observações Estudantes (enviada para todo o grupo)</span ><span lang="en">Evaluation Observations for Students (will be sent to all students)</span>:
-      </b></label><br>
+        <span lang="pt"><b>Observações Estudantes</b> (enviada para todo o grupo)</span ><span lang="en"><b>Evaluation Observations for Students</b> (will be sent to all students)</span>:
+      </span></label><br>
       <textarea id="observacoes_estudantes" name="observacoes_estudantes" rows="8" cols="100" maxlength="2048">{{observacao.observacoes_estudantes}}</textarea>
       <br><br>
 
       {% comment %} Observações somente para leitura de orientador/coordenador {% endcomment %}
-      <label for="observacoes_orientador"><b data-toggle="tooltip" data-html="true" animation="true"
+      <label for="observacoes_orientador"><span data-toggle="tooltip" data-html="true" animation="true"
              title="Insira qualquer observação que achar relavante. O texto será encaminhado para os orientadores do projeto.">
-        <span lang="pt">Observações Orientador/Coordenação (para documentar/anotar ou enviar coordenador)</span ><span lang="en">Evaluation Observations (to document/note or send coordinator)</span>:
-      </b></label><br>
+        <span lang="pt"><b>Observações Orientador/Coordenação</b> (para documentar/anotar ou enviar coordenador)</span ><span lang="en"><b>Evaluation Observations</b> (to document/note or send coordinator)</span>:
+      </span></label><br>
       <textarea id="observacoes_orientador" name="observacoes_orientador" rows="8" cols="100" maxlength="2048">{{observacao.observacoes_orientador}}</textarea>
       <br><br>
       
