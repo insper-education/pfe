@@ -36,15 +36,19 @@
         Projetos {{configuracao.ano}}.{{configuracao.semestre}} em fase de alocação.<br>
       {% else %}
         {% include "projeto.html" %}
-      {% endif %}
 
-      <h5>Resultados<br></h5>
-      {% include "display_notas_individuais.html" %}
+        {% with notas=alocado.get_notas %}
+          {% if notas %}
+            <h5>Resultados<br></h5>
+            {% include "display_notas_individuais.html" %}
+          {% endif %}
+        {% endwith %}
+  
+      {% endif %}
 
       <p>&nbsp;</p>
       {% if not forloop.last %} <hr class="style-five"> {% endif %}
       <p>&nbsp;</p>
-
 
     {% empty %}
       Você não está alocado em nenhum projeto.

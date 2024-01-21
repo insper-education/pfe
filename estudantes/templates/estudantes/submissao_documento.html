@@ -105,6 +105,11 @@
             {% if documento.data|diff_days:item.evento.endDate > 0 %}<span style="color: red;">[ENTREGUE APÓS PRAZO]</span>{% endif %}
             {% if forloop.first%}</b>{% endif %}  
           </li>
+          {% if item.avaliacoes and item.avaliacoes.first%}
+            {% if documento.data > item.avaliacoes.first.momento %}
+              <span style="color: red;">Avaliação desatualizada, orientador irá refazer para a nova entrega!</span>
+            {% endif %}
+          {% endif %}
         {% empty %}
           {% if item.composicao.tipo_documento %}
             <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>sem arquivos</span><br>

@@ -427,7 +427,7 @@
       <a class="myButton" 
       data-toggle="tooltip" data-html="true" animation="true" title="Acessa a versão avançada desse projeto"
       href="{% url 'projeto_avancado' projeto.id %}" style="width: 13em; padding-bottom: 3px;">Avançado</a>
-    {% elif user.tipo_de_usuario == 4 %}
+    {% else %}
     <a class="myButton" 
       data-toggle="tooltip" data-html="true" animation="true" title="Cria uma versão avançada desse projeto"
       onclick="cria_avancado()" style="color:white; width: 13em; padding-bottom: 3px;">Cria Avançado</a>

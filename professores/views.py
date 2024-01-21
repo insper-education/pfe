@@ -1167,6 +1167,9 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                     julgamento[i].nota = converte_conceito(conceito)
                     julgamento[i].peso = Peso.objects.get(composicao=composicao, objetivo=objetivo).peso
                     julgamento[i].na = False
+                
+                julgamento[i].momento = datetime.datetime.now()
+
                 julgamento[i].save()
 
         else:
@@ -1182,6 +1185,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                 else:
                     avaliacao.nota = 1  # Zero é um problema pois pode ser confundido com não avaliado
 
+            avaliacao.momento = datetime.datetime.now()
             avaliacao.save()
 
 
@@ -1206,6 +1210,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             julgamento_observacoes = observacao
             julgamento_observacoes.observacoes_orientador = request.POST["observacoes_orientador"]
             julgamento_observacoes.observacoes_estudantes = request.POST["observacoes_estudantes"]
+            julgamento_observacoes.momento = datetime.datetime.now()
             julgamento_observacoes.save()
 
 
@@ -1908,7 +1913,10 @@ def avaliar_entregas(request, todos=None):
             if todos == "todos":
                 projetos = projetos.filter(ano=ano, semestre=semestre)
             else:
-                projetos = projetos.filter(id=todos)
+                try:
+                    projetos = projetos.filter(id=todos)
+                except:
+                    return HttpResponse("Erro ao buscar projeto.", status=401)
                 edicao = "nenhuma"
 
         else:

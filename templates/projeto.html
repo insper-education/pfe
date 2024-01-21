@@ -6,9 +6,7 @@
 
 {% if alocado.projeto.titulo_final %}
     <style>
-        h3 {
-            display: inline;
-        }
+        h3 {display: inline;}
     </style>
     <h3>Título: {{alocado.projeto.titulo_final}}<br></h3>
     <small>&nbsp;&nbsp;&nbsp;&nbsp;Título original: {{alocado.projeto.titulo}}</small><br>
@@ -19,11 +17,15 @@
 
 <strong>Descrição:</strong> {{alocado.projeto.proposta.descricao|linebreaks|urlize}}<br>
 
-<strong>Expectativas de resultados/entregas :</strong> {{alocado.projeto.proposta.expectativas|linebreaks|urlize}}<br>
+{% if alocado.projeto.proposta.expectativas %}
+    <strong>Expectativas de resultados/entregas :</strong> {{alocado.projeto.proposta.expectativas|linebreaks|urlize}}<br>
+{% endif %}
 
-<strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ alocado.projeto.proposta.recursos|linebreaks|urlize}}<br>
-{% if alocado.projeto.proposta.observacoes %}
-    <strong>Outras observações :</strong> {{ alocado.projeto.proposta.observacoes|linebreaks|urlize}}<br>
+{% if alocado.projeto.proposta.recursos %}
+    <strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ alocado.projeto.proposta.recursos|linebreaks|urlize}}<br>
+    {% if alocado.projeto.proposta.observacoes %}
+        <strong>Outras observações :</strong> {{ alocado.projeto.proposta.observacoes|linebreaks|urlize}}<br>
+    {% endif %}
 {% endif %}
 
 <hr>

@@ -18,14 +18,16 @@
     <div class="table-responsive">
     <table style="width:100%">
       <tr>
-        <th class="nav-side-wrapper th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}NA" style="width:10%;">
-          <div class="nav-side">
-          <label class="labels" for="objetivo{{objetivo.id}}NA">
-            N/A
-            <input style="padding-bottom:2px;" type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA" id="objetivo{{objetivo.id}}NA" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.NA" required /> 
-          </label>
-        </div>
-        </th>
+        {% if not sem_NA %}
+          <th class="nav-side-wrapper th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}NA" style="width:10%;">
+            <div class="nav-side">
+              <label class="labels" for="objetivo{{objetivo.id}}NA">
+                N/A
+                <input style="padding-bottom:2px;" type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA" id="objetivo{{objetivo.id}}NA" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.NA" required /> 
+              </label>
+            </div>
+          </th>
+        {% endif %}
         <th class="nav-side-wrapper th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I" style="width:18%">
           <div class="nav-side">
           <label class="labels" for="objetivo{{objetivo.id}}I">
@@ -91,14 +93,18 @@
       </tr>
       <tr>
         {% if periodo_para_rubricas == 1 %} {% comment %} Rubricas Intermediárias {% endcomment %}
-          <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA" lang="pt">caso prefira não avaliar este objetivo, selecione esta coluna.</label><label for="objetivo{{objetivo.id}}NA" lang="en">if you prefer not to evaluate this objective, select this column.</label></td>
+          {% if not sem_NA %}
+            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA" lang="pt">caso prefira não avaliar este objetivo, selecione esta coluna.</label><label for="objetivo{{objetivo.id}}NA" lang="en">if you prefer not to evaluate this objective, select this column.</label></td>
+          {% endif %}
           <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I" lang="pt">{{objetivo.rubrica_intermediaria_I}}</label><label for="objetivo{{objetivo.id}}I" lang="en">{{objetivo.rubrica_intermediaria_I_en}}</label></td>
           <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D" lang="pt">{{objetivo.rubrica_intermediaria_D}}</label><label for="objetivo{{objetivo.id}}D" lang="en">{{objetivo.rubrica_intermediaria_D_en}}</label></td>
           <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C" lang="pt">{{objetivo.rubrica_intermediaria_C}}</label><label for="objetivo{{objetivo.id}}C" lang="en">{{objetivo.rubrica_intermediaria_C_en}}</label></td>
           <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B" lang="pt">{{objetivo.rubrica_intermediaria_B}}</label><label for="objetivo{{objetivo.id}}B" lang="en">{{objetivo.rubrica_intermediaria_B_en}}</label></td>
           <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A" lang="pt">{{objetivo.rubrica_intermediaria_A}}</label><label for="objetivo{{objetivo.id}}A" lang="en">{{objetivo.rubrica_intermediaria_A_en}}</label></td>
         {% elif periodo_para_rubricas == 2 %} {% comment %} Rubricas Finais {% endcomment %}
-          <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA" lang="pt">caso prefira não avaliar este objetivo, selecione esta coluna.</label><label for="objetivo{{objetivo.id}}NA" lang="en">if you prefer not to evaluate this objective, select this column.</label></td>
+          {% if not sem_NA %}
+            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA" lang="pt">caso prefira não avaliar este objetivo, selecione esta coluna.</label><label for="objetivo{{objetivo.id}}NA" lang="en">if you prefer not to evaluate this objective, select this column.</label></td>
+          {% endif %}
           <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I" lang="pt">{{objetivo.rubrica_final_I}}</label><label for="objetivo{{objetivo.id}}I" lang="en">{{objetivo.rubrica_final_I_en}}</label></td>
           <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D" lang="pt">{{objetivo.rubrica_final_D}}</label><label for="objetivo{{objetivo.id}}D" lang="en">{{objetivo.rubrica_final_D_en}}</label></td>
           <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C" lang="pt">{{objetivo.rubrica_final_C}}</label><label for="objetivo{{objetivo.id}}C" lang="en">{{objetivo.rubrica_final_C_en}}</label></td>

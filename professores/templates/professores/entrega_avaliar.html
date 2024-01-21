@@ -112,7 +112,7 @@
       {% endif %}
 
       {% if objetivos %}
-        {% include "tabela_avaliacao_objetivos.html" %}
+        {% include "tabela_avaliacao_objetivos.html" with sem_NA=True %}
       {% else %}
         <b lang="pt">Decisão:</b><b lang="en">Decision:</b><br>
         <div style="width: fit-content; display: inline-block; margin-left: 20px;" {% if not documentos %}data-toggle="tooltip" data-html="true" animation="true" title="Documento não entregue"{% endif %}>

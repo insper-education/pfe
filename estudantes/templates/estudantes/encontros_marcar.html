@@ -57,11 +57,13 @@
         {% endfor %}
     </div>
 
-    <br>
-    &nbsp;&nbsp;&nbsp;<button class="btn btn-primary" type="submit" 
-      {% if user.tipo_de_usuario != 1 or not projeto %}disabled{% endif %}>
-        Agendar
-    </button>
+    {% if encontros %}
+        <br>
+        &nbsp;&nbsp;&nbsp;<button class="btn btn-primary" type="submit" 
+        {% if user.tipo_de_usuario != 1 or not projeto %}disabled{% endif %}>
+            Agendar
+        </button>
+    {% endif %}
 
   <script>
 

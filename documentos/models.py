@@ -31,6 +31,8 @@ class TipoDocumento(models.Model):
     gravar = models.CharField("Gravar", max_length=32, default="[4]",  # lista de quem pode gravar
                             help_text="Tipo de usuário com permissão de gravar tipo de arquivo")
     
+    individual = models.BooleanField(default=False, help_text="Se é um documento individual")
+    
     # Temporario, soh para fazer a migracao    
     tmp_id = models.PositiveSmallIntegerField(default=0)
 

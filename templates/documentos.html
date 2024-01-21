@@ -38,8 +38,8 @@
         - {{documento.projeto.get_titulo}}
       {% endif %}
     {% endif %}  
-    {% if documento.usuario and not documento.exame.grupo %}
-      - {{ documento.usuario.get_full_name }} 
+    {% if documento.usuario and documento.tipo_documento.individual %}
+      - {{ documento.usuario.get_full_name }}
     {% endif %}
 
     {% if documento.data %}

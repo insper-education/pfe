@@ -184,7 +184,8 @@
             </a>
             <br>
             
-            {% include "display_notas_individuais.html" %}
+            
+            {% include "display_notas_individuais.html" with notas=alocado.get_notas %}
             <br><br>
 
             {% if not alocado.get_relatos|empty_zip and alocado.projeto.ano > 2021 %}  {% comment %} projetos até 2021 tinham o relato pelo Blackboad {% endcomment %}

@@ -4,11 +4,20 @@
     Data: 19 de Janeiro de 2024
 {% endcomment %}
 
+
 {% if avaliacoes %}
+  <style>
+    .box_notas {
+      padding: 0.4em 0.7em 0.4em 0.7em;
+      background-color: #E2E2E2;
+      border: 0px;
+      vertical-align: top;
+    }
+  </style>
   <div style="display: table;">
     <table style="border: 0px; border-collapse: separate; border-spacing: 10px; width: 100%;">
       <tr>
-        <td style="padding: 0.4em 0.7em 0.4em 0.7em; background-color: lightgrey; border: 0px; vertical-align: top;">
+        <td class="box_notas">
           {% if avaliacoes.last.objetivo %}
             <b>Avaliação:</b><br>
             <ul>
@@ -39,7 +48,7 @@
         {% if com_orientador %} 
 
           {% if observacao.observacoes_estudantes or observacao.observacoes_orientador %}
-            <td style="padding: 0.4em 0.7em 0.4em 0.7em; background-color: lightgrey; border: 0px; vertical-align: top;">
+            <td class="box_notas">
             {% if observacao.observacoes_estudantes %}
                 <b>Observações para Estudantes:</b><br>
                 {{observacao.observacoes_estudantes}}<br>
@@ -55,7 +64,7 @@
         {% else %}
 
           {% if observacao.observacoes_estudantes %}
-            <td style="padding: 0.4em 0.7em 0.4em 0.7em; background-color: lightgrey; border: 0px; vertical-align: top;">
+            <td class="box_notas">
               <b>Observações:</b><br>
               {{observacao.observacoes_estudantes}}<br>
             </td>
