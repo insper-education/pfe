@@ -154,8 +154,6 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
 
 @login_required
 @transaction.atomic
-#@permission_required("users.altera_professor", raise_exception=True)
-#def adiciona_documento_estudante(request, organizacao_id=None, projeto_id=None, tipo_id=None, documento_id=None):
 def adiciona_documento_estudante(request, tipo_nome=None, documento_id=None):
     """Cria um documento pelos estudantes somente."""
 

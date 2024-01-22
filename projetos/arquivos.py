@@ -24,7 +24,8 @@ from django.http import HttpResponse
 
 from django.shortcuts import render
 
-from users.models import PFEUser
+from users.models import PFEUser, Alocacao
+
 
 from .models import Documento
 
@@ -143,7 +144,18 @@ def le_arquivo(request, local_path, path):
 
             if (doc.confidencial) and \
                 not ((user.tipo_de_usuario == 2) or (user.tipo_de_usuario == 4)):
-                return render(request, 'generic.html', context=context)
+
+                if (user.tipo_de_usuario == 1):
+                    ## Verificar se o documento é do estudante ou do grupo dele
+                    alocado_no_projeto = Alocacao.objects.filter(projeto=doc.projeto, aluno=user.aluno).exists()                    
+                    if doc.tipo_documento.individual and doc.usuario != user:
+                        return render(request, 'generic.html', context=context)
+                    elif not alocado_no_projeto:
+                        return render(request, 'generic.html', context=context)
+
+                else:
+                    return render(request, "generic.html", context=context)
+
 
         if documento[:3] == "tmp":
             mensagem = "Documento não acessível"
