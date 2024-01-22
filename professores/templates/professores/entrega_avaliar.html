@@ -14,6 +14,13 @@
   <script>{% include "tooltip.js" %}</script>
   <link rel="stylesheet" href="{% static 'css/form_aval.css' %}">
 
+  <style>
+    ul,ol {
+      margin: 0px 0px 8px 0px;
+      padding: 0px 0px 0px 1.5em;
+    }
+  </style>
+
 {% endblock %}
 
 {% block content %}
@@ -40,7 +47,7 @@
       <b lang="pt">Grupo:</b>
       <b lang="en">Group:</b>
 
-      <ul style="padding-left: 34px;">
+      <ul style="">
         {% for alocacao in projeto.alocacao_set.all %}
           <li>
             {% if not composicao.exame.grupo and alocacao.aluno == estudante.aluno %}<b>{% endif %}
@@ -142,7 +149,7 @@
       {% comment %} Observações somente para leitura de orientador/coordenador {% endcomment %}
       <label for="observacoes_orientador"><span data-toggle="tooltip" data-html="true" animation="true"
              title="Insira qualquer observação que achar relavante. O texto será encaminhado para os orientadores do projeto.">
-        <span lang="pt"><b>Observações Orientador/Coordenação</b> (para documentar/anotar ou enviar coordenador)</span ><span lang="en"><b>Evaluation Observations</b> (to document/note or send coordinator)</span>:
+        <span lang="pt"><b>Observações Orientador/Coordenação</b> (para documentar/anotar ou enviar coordenação)</span ><span lang="en"><b>Evaluation Observations</b> (to document/note or send coordinator)</span>:
       </span></label><br>
       <textarea id="observacoes_orientador" name="observacoes_orientador" rows="8" cols="100" maxlength="2048">{{observacao.observacoes_orientador}}</textarea>
       <br><br>
