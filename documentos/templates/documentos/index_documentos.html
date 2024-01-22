@@ -63,11 +63,20 @@
     <hr>
     <h5>Área do Professor</h5>
     <ul>
+      {% include "documento.html" with documento=documentos|tipo_documento:10 %}
+        {% include "documento.html" with documento=documentos|tipo_documento:41 nivel=2 %}
+
+      {% include "documento.html" with documento=documentos|tipo_documento:25 %}
+      {% include "documento.html" with documento=documentos|tipo_documento:24 %}
+    </ul>
+  {% endif %}
+
+  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Professor ou Adm -->
+    <hr>
+    <h5>Área Acadêmica</h5>
+    <ul>
       <a href="{% url 'tabela_documentos' %}"><li>Tabelas de Documentação dos Projetos</li></a>
       <a href="{% url 'tabela_atas' %}"><li>Atas do Comitê</li></a>
-      {% include "documento.html" with documento=documentos|tipo_documento:24 %}
-      {% include "documento.html" with documento=documentos|tipo_documento:10 %}
-      {% include "documento.html" with documento=documentos|tipo_documento:25 %}
     </ul>
   {% endif %}
 
