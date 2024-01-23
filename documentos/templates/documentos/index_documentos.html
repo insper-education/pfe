@@ -24,8 +24,8 @@
   <h5>Área Geral</h5>
   <ul>
     {% include "documento.html" with documento=documentos|tipo_documento:7 %}
-    {% include "documento.html" with documento=documentos|tipo_documento:7 %}
     {% include "documento.html" with documento=documentos|tipo_documento:42 %}
+    {% include "documento.html" with documento=documentos|tipo_documento:8 %}
     <a href="{% url 'relatorios_publicos' %}"><li>Relatórios Públicos</li></a>
     <a href="{% url 'materias_midia' %}"><li>Matérias na Mídia</li></a>
     {% include "documento.html" with documento=documentos|tipo_documento:39 %}
