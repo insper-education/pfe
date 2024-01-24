@@ -13,9 +13,9 @@
 
   <style>
     textarea {
-      max-width:100%;
-      margin-left: 10px;
-      margin-bottom: 18px;
+      max-width: 95%;
+      margin: 0px 10px 10px 10px;
+      display: inline-block;
     }
     ul {
       list-style-type: none;
@@ -26,6 +26,11 @@
     ul li span {
       display: inline-block;
       min-width: 13em;
+    }
+    .bloco_avali {
+      margin-right: 1em;
+      display: inline-block;
+
     }
   </style>
 
@@ -63,31 +68,36 @@
               <li>
                 <span>{% if peso.objetivo %}{{peso.objetivo.titulo}}{% else %}Avaliação Única{% endif %}</span>
                 {% with objetivo=avaliacoes|pega_objetivo:peso.objetivo %}
-                  peso: 
-                  <input class="peso" id="a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}"
-                        name="a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}" type="number"
-                        min="0" max="100" step="any" style="width: 7em;"
-                        value="{% if objetivo.peso %}{{objetivo.peso}}{% else %}{{peso.peso}}{% endif %}"
-                        {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
-                        {% if aval_id != alocacao.projeto.orientador.user.id %}disabled{% endif %}/> 
-                
-                  &nbsp;&nbsp;nota: 
-                  <input class="nota" id="a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}"
-                        name="a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}" type="number"
-                        min="0" max="10" step="any" style="width: 4em;"
-                        {% if objetivo.nota != None %}value="{{objetivo.nota}}"{% endif %}
-                        {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
-                        {% if aval_id != alocacao.projeto.orientador.user.id %}disabled{% endif %}/>
-
-                        &nbsp;&nbsp;conceito:
-                  <select class="conc" id="a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}"
-                          name="a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}"
+                  <div class="bloco_avali">
+                    peso: 
+                    <input class="peso" id="a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}"
+                          name="a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}" type="number"
+                          min="0" max="100" step="any" style="width: 7em;"
+                          value="{% if objetivo.peso %}{{objetivo.peso}}{% else %}{{peso.peso}}{% endif %}"
                           {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
-                          {% if aval_id != alocacao.projeto.orientador.user.id %}disabled{% endif %}>
-                        {% with 'A+ A B+ B C+ C D+ D D- I' as conceitos %}{% for x in conceitos.split %}
-                          <option value="{{x}}">{{x}}</option>
-                        {% endfor %}{% endwith %}
-                  </select>
+                          {% if aval_id != alocacao.projeto.orientador.user.id %}disabled{% endif %}/>
+                  </div>
+                  <div class="bloco_avali">
+                    nota: 
+                    <input class="nota" id="a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}"
+                          name="a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}" type="number"
+                          min="0" max="10" step="any" style="width: 4em;"
+                          {% if objetivo.nota != None %}value="{{objetivo.nota}}"{% endif %}
+                          {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
+                          {% if aval_id != alocacao.projeto.orientador.user.id %}disabled{% endif %}/>
+                  </div>
+                        
+                  <div class="bloco_avali">
+                    conceito:
+                    <select class="conc" id="a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}"
+                            name="a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}"
+                            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
+                            {% if aval_id != alocacao.projeto.orientador.user.id %}disabled{% endif %}>
+                          {% with 'A+ A B+ B C+ C D+ D D- I' as conceitos %}{% for x in conceitos.split %}
+                            <option value="{{x}}">{{x}}</option>
+                          {% endfor %}{% endwith %}
+                    </select>
+                  </div>
 
                   <script>
                     $(function() {

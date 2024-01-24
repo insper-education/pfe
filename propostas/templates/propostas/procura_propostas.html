@@ -353,11 +353,11 @@
             data: {
                 anosemestre: anosemestre,
                 curso: curso,
-                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                "csrfmiddlewaretoken": "{{ csrf_token }}",
             },
             success: function(response){
                 $("div.2areas2").replaceWith($("div.2areas2",response));
-                chart()
+                chart();
             },
             error: function (request, status, error) {
               {% if user.tipo_de_usuario == 4 %} 

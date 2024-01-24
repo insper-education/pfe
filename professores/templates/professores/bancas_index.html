@@ -30,8 +30,6 @@
 
   <script src="{% static 'fullcalendar-4.4.2/core/locales/pt-br.js' %}"></script>
 
-
-
   {% include "cores_bancas.html" %}
 
   <style>
@@ -57,170 +55,191 @@
     }
   </style>
 
-  <script>
-
-    var calendar = null;
-    document.addEventListener('DOMContentLoaded', function() {
-      var calendarEl = document.getElementById("calendar");
-
-      calendar = new FullCalendar.Calendar(calendarEl, {
-        plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'list' ],
-        header: {
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
-        },
-        defaultView: {% if view %}"{{view}}"{% else %}"dayGridMonth"{% endif %},
-        defaultDate: {% if date %}"{{date}}"{% else %}null{% endif %},
-        locale: 'pt-br',
-        navLinks: true, // can click day/week names to navigate views
-        businessHours: true, // display business hours
-        editable: true,
-        height: "auto",
-        eventTimeFormat: {
-          hour: '2-digit', //2-digit, numeric
-          minute: '2-digit', //2-digit, numeric
-          meridiem: false, //lowercase, short, narrow, false (display of AM/PM)
-          hour12: false //true, false
-        },
-        businessHours: [ // Horas indicadas para as bancas
-          {
-            daysOfWeek: [ 1, 2, 3, 4, 5 ], // Segunda, Terça, Quarta, Quinta, Sexta
-            startTime: "07:30",
-            endTime: "20:00"
-          },
-        ],
-
-        eventRender: function(info) {
-         
-          if (!info.event.allDay) {
-            if (info.view.type === "dayGridMonth" || info.view.type === "timeGridWeek") {
-              let time = info.event.start.getHours() + ':' + info.event.start.getMinutes().toString().replace(/^(\d)$/, '0$1');
-              let nome_orientador = ""
-              if (info.event.extendedProps.orientador) {
-                let orientador = info.event.extendedProps.orientador.split(" ");
-                nome_orientador = orientador[0] + ' ' + orientador[orientador.length - 1];  
-              }
-              info.el.innerHTML = "<b>" + time + "</b><br><nobr>" + info.event.extendedProps.organizacao + "</nobr><br><nobr style='color:#566573'>" + info.event.extendedProps.local + "</nobr><br><nobr style='color:#E8E8E8'>" + nome_orientador + "</nobr>";
-            }
-          } 
-
-          $(info.el).tooltip({              
-            title: info.event.extendedProps.description,
-            html: true,
-          });
-
-        },
-
-        events: [
-          {% for banca in bancas %} 
-            {
-                {% if banca.projeto %}
-                  title: '{{banca.projeto.organizacao.sigla}} : ' + 
-                        '{{banca.projeto.get_titulo}}' +
-                        '{% if banca.projeto.orientador %}\nOrientador: {{banca.projeto.orientador}}{% endif %}' +
-                        '{% if banca.location %}\nLocal: {{banca.location}}{% endif %}' +
-                        '\nBanca: {{banca.projeto.orientador.user.get_full_name}} (O){% if banca.membro1 %}; {{banca.membro1.get_full_name}}{% endif %}{% if banca.membro2 %}; {{banca.membro2.get_full_name}}{% endif %}{% if banca.membro3 %}; {{banca.membro3.get_full_name}}{% endif %}' +
-                        ' ',
-                {% else %}
-                  title: "Projeto não identificado",
-                {% endif %}
-
-                organizacao: "{{banca.projeto.organizacao.sigla}}",
-                orientador: "{{banca.projeto.orientador}}",
-                local: "{{banca.location}}",
-                start: '{{banca.startDate.year}}-{{banca.startDate.month|stringformat:"02d"}}-{{banca.startDate.day|stringformat:"02d"}}T{{banca.startDate.hour|stringformat:"02d"}}:{{banca.startDate.minute|stringformat:"02d"}}:00',
-                end: '{{banca.endDate.year}}-{{banca.endDate.month|stringformat:"02d"}}-{{banca.endDate.day|stringformat:"02d"}}T{{banca.endDate.hour|stringformat:"02d"}}:{{banca.endDate.minute|stringformat:"02d"}}:00',
-                id: "{{banca.id}}",
-                textColor: "#fafafa",
-
-                description: "",
-
-                {% if banca.tipo_de_banca == 0 %} {% comment %} Banca Final {% endcomment %}
-                  color: color_banca_final
-                {% elif banca.tipo_de_banca == 1 %} {% comment %} Banca Intermediária {% endcomment %}
-                  color: color_banca_intermediaria
-                {% elif banca.tipo_de_banca == 2 %} {% comment %} Banca Falconi {% endcomment %}
-                  color: color_banca_falconi
-                {% else %}
-                  color: '#777777'
-                {% endif %}
-            },
-          {% endfor %}
-
-          // area onde as bancas podem ser alocadas
-          {% for dias in dias_bancas %} 
-            {
-              {% comment %} groupId: 'grupo{{dias.id}}', {% endcomment %}
-              {% with start=dias.startDate %}
-                start: '{{start.year}}-{{start.month|stringformat:"02d"}}-{{start.day|stringformat:"02d"}}',
-              {% endwith %}
-              {% with end=dias.endDate|plus_days:1 %}
-                end: '{{end.year}}-{{end.month|stringformat:"02d"}}-{{end.day|stringformat:"02d"}}',
-              {% endwith %}
-              rendering: 'background',
-
-              {% if dias.tipo_de_evento == 15 %} {% comment %} Banca Final {% endcomment %}
-                color: color_banca_final,
-                description: "<b>período de bancas finais</b>",
-              {% elif dias.tipo_de_evento == 14 %} {% comment %} Banca Intermediária {% endcomment %}
-                color: color_banca_intermediaria,
-                description: "<b>período de bancas intermediárias</b>",
-              {% elif dias.tipo_de_evento == 50 %} {% comment %} Banca Falconi {% endcomment %}
-                color: color_banca_falconi,
-                description: "<b>período de bancas Falconi</b>",
-              {% else %}
-                color: '#777777',
-              {% endif %}
-
-            },
-          {% endfor %}
-        ],
-
-        eventClick: function(event, jsEvent, view) {
-          // Para editar uma banca
-          if(event.event.id) {
-            var elem = document.createElement( "span" );
-            $( elem ).data( "url", "{% url 'bancas_editar' %}"+event.event.id);
-            abrir_modal.call(elem, null);
-          }
-        },
-
-        dateClick: function(info) {
-          // Para criar uma nova banca, reproveitando a data clicada
-          var elem = document.createElement( "span" );
-          $( elem ).data( "url", "{% url 'bancas_criar' %}");
-          $( elem ).data( "data", info.dateStr);
-          abrir_modal.call(elem, null);
-        },
-
-      });
-
-      calendar.render();
-    });
-
-    // recarrega a página a cada 1 hora (evita que usuário não veja atualização de outros)
-    window.setInterval("location.reload();", 3600000); // 1 hora
-
-  </script>
-
 {% endblock %}
 
 {% block content %}
 
-  <span class="titulo">Agendar Bancas
-    <small>
-      <a data-toggle="tooltip" data-html="true" animation="true" title="Agenda Nova Banca" class="open-modal"
-          data-url="{% url 'bancas_criar' %}" href="{% url 'bancas_criar'%}"> 
-          &#10133;
-      </a>
-    </small>
-  </span>
+  <div id="tudo">
 
-  <div class="wrap">
-      <div id="calendar"></div>
+    <span class="titulo">Agendar Bancas
+      <small>
+        <a data-toggle="tooltip" data-html="true" animation="true" title="Agenda Nova Banca" class="open-modal"
+            data-url="{% url 'bancas_criar' %}" href="{% url 'bancas_criar'%}"> 
+            &#10133;
+        </a>
+      </small>
+    </span>
+
+    <div id="atualizar">
+      <div class="wrap">
+          <div id="calendar"></div>
+      </div>
+
+      <script>
+
+        var calendar = null;
+
+        function montar_calendario() {
+  
+            var calendarEl = document.getElementById("calendar");
+
+            calendar = new FullCalendar.Calendar(calendarEl, {
+              plugins: [ "interaction", "dayGrid", "timeGrid", "list" ],
+              header: {
+                left: "prev,next today",
+                center: "title",
+                right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth"
+              },
+              defaultView: {% if view %}"{{view}}"{% else %}"dayGridMonth"{% endif %},
+              defaultDate: {% if date %}"{{date}}"{% else %}null{% endif %},
+              locale: "pt-br",
+              navLinks: true, // can click day/week names to navigate views
+              businessHours: true, // display business hours
+              editable: true,
+              height: "auto",
+              eventTimeFormat: {
+                hour: "2-digit", //2-digit, numeric
+                minute: "2-digit", //2-digit, numeric
+                meridiem: false, //lowercase, short, narrow, false (display of AM/PM)
+                hour12: false //true, false
+              },
+              businessHours: [ // Horas indicadas para as bancas
+                {
+                  daysOfWeek: [ 1, 2, 3, 4, 5 ], // Segunda, Terça, Quarta, Quinta, Sexta
+                  startTime: "07:30",
+                  endTime: "20:00"
+                },
+              ],
+
+              eventRender: function(info) {
+              
+                if (!info.event.allDay) {
+                  if (info.view.type === "dayGridMonth" || info.view.type === "timeGridWeek") {
+                    let time = info.event.start.getHours() + ':' + info.event.start.getMinutes().toString().replace(/^(\d)$/, '0$1');
+                    let nome_orientador = ""
+                    if (info.event.extendedProps.orientador) {
+                      let orientador = info.event.extendedProps.orientador.split(" ");
+                      nome_orientador = orientador[0] + ' ' + orientador[orientador.length - 1];  
+                    }
+                    info.el.innerHTML = "<b>" + time + "</b><br><nobr>" + info.event.extendedProps.organizacao + "</nobr><br><nobr style='color:#566573'>" + info.event.extendedProps.local + "</nobr><br><nobr style='color:#E8E8E8'>" + nome_orientador + "</nobr>";
+                  }
+                } 
+
+                $(info.el).tooltip({              
+                  title: info.event.extendedProps.description,
+                  html: true,
+                });
+
+              },
+
+              events: [
+                {% for banca in bancas %} 
+                  {
+                      {% if banca.projeto %}
+                        title: '{{banca.projeto.organizacao.sigla}} : ' + 
+                              '{{banca.projeto.get_titulo}}' +
+                              '{% if banca.projeto.orientador %}\nOrientador: {{banca.projeto.orientador}}{% endif %}' +
+                              '{% if banca.location %}\nLocal: {{banca.location}}{% endif %}' +
+                              '\nBanca: {{banca.projeto.orientador.user.get_full_name}} (O){% if banca.membro1 %}; {{banca.membro1.get_full_name}}{% endif %}{% if banca.membro2 %}; {{banca.membro2.get_full_name}}{% endif %}{% if banca.membro3 %}; {{banca.membro3.get_full_name}}{% endif %}' +
+                              ' ',
+                      {% else %}
+                        title: "Projeto não identificado",
+                      {% endif %}
+
+                      organizacao: "{{banca.projeto.organizacao.sigla}}",
+                      orientador: "{{banca.projeto.orientador}}",
+                      local: "{{banca.location}}",
+                      start: '{{banca.startDate.year}}-{{banca.startDate.month|stringformat:"02d"}}-{{banca.startDate.day|stringformat:"02d"}}T{{banca.startDate.hour|stringformat:"02d"}}:{{banca.startDate.minute|stringformat:"02d"}}:00',
+                      end: '{{banca.endDate.year}}-{{banca.endDate.month|stringformat:"02d"}}-{{banca.endDate.day|stringformat:"02d"}}T{{banca.endDate.hour|stringformat:"02d"}}:{{banca.endDate.minute|stringformat:"02d"}}:00',
+                      id: "{{banca.id}}",
+                      textColor: "#fafafa",
+
+                      description: "",
+
+                      {% if banca.tipo_de_banca == 0 %} {% comment %} Banca Final {% endcomment %}
+                        color: color_banca_final
+                      {% elif banca.tipo_de_banca == 1 %} {% comment %} Banca Intermediária {% endcomment %}
+                        color: color_banca_intermediaria
+                      {% elif banca.tipo_de_banca == 2 %} {% comment %} Banca Falconi {% endcomment %}
+                        color: color_banca_falconi
+                      {% else %}
+                        color: '#777777'
+                      {% endif %}
+                  },
+                {% endfor %}
+
+                // area onde as bancas podem ser alocadas
+                {% for dias in dias_bancas %} 
+                  {
+                    {% comment %} groupId: 'grupo{{dias.id}}', {% endcomment %}
+                    {% with start=dias.startDate %}
+                      start: '{{start.year}}-{{start.month|stringformat:"02d"}}-{{start.day|stringformat:"02d"}}',
+                    {% endwith %}
+                    {% with end=dias.endDate|plus_days:1 %}
+                      end: '{{end.year}}-{{end.month|stringformat:"02d"}}-{{end.day|stringformat:"02d"}}',
+                    {% endwith %}
+                    rendering: 'background',
+
+                    {% if dias.tipo_de_evento == 15 %} {% comment %} Banca Final {% endcomment %}
+                      color: color_banca_final,
+                      description: "<b>período de bancas finais</b>",
+                    {% elif dias.tipo_de_evento == 14 %} {% comment %} Banca Intermediária {% endcomment %}
+                      color: color_banca_intermediaria,
+                      description: "<b>período de bancas intermediárias</b>",
+                    {% elif dias.tipo_de_evento == 50 %} {% comment %} Banca Falconi {% endcomment %}
+                      color: color_banca_falconi,
+                      description: "<b>período de bancas Falconi</b>",
+                    {% else %}
+                      color: '#777777',
+                    {% endif %}
+
+                  },
+                {% endfor %}
+              ],
+
+              eventClick: function(event, jsEvent, view) {
+                // Para editar uma banca
+                if(event.event.id) {
+                  var elem = document.createElement( "span" );
+                  $( elem ).data( "url", "{% url 'bancas_editar' %}"+event.event.id);
+                  abrir_modal.call(elem, null);
+                }
+              },
+
+              dateClick: function(info) {
+                // Para criar uma nova banca, reproveitando a data clicada
+                var elem = document.createElement( "span" );
+                $( elem ).data( "url", "{% url 'bancas_criar' %}");
+                $( elem ).data( "data", info.dateStr);
+                abrir_modal.call(elem, null);
+              },
+
+            });
+
+            calendar.render();
+
+        }
+        
+      </script>
+
+    </div>
+
   </div>
 
   {% include "janelas-modal.html" %}
+
+  <script>
+
+    function carrega_pagina() {};
+
+    function carrega_site(){
+      // recarrega a página a cada 1 hora (evita que usuário não veja atualização de outros)
+      window.setInterval("location.reload();", 3600000); // 1 hora
+      montar_calendario();
+    };
+
+    window.onload = carrega_site
+
+  </script>
 
 {% endblock %}

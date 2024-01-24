@@ -289,22 +289,23 @@
     {% endif %}
 
     <br>
-    <span id="mensagem"></span>
+    <span id="mensagem" style="color: red; font-weight: bold; display: block;"></span>
+    <span id="mensagem2" style="color: red; font-weight: bold; display: block;"></span>
 
   </div>
 
-<div class="modal-footer">
-  <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-  <button id="submit" class="btn btn-primary" type="submit" name="atualizar"
-    {% if banca %}onclick="operacao = 'atualizar';"{% endif %}>
-    {% if banca %}Atualizar{% else %}Agendar{% endif %}
-  </button>
-  {% if banca %}
-    <button id="excluir" class="btn btn-primary" type="submit" name="excluir" onclick="operacao = 'excluir';">
-      Excluir Banca
+  <div id="div_botao" class="modal-footer">
+    <button id="fecha_modal" type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+    <button id="submit" class="btn btn-primary" type="submit" name="atualizar"
+      {% if banca %}onclick="operacao = 'atualizar';"{% endif %}>
+      {% if banca %}Atualizar{% else %}Agendar{% endif %}
     </button>
-  {% endif %}
-</div>
+    {% if banca %}
+      <button id="excluir" class="btn btn-primary" type="submit" name="excluir" onclick="operacao = 'excluir';">
+        Excluir Banca
+      </button>
+    {% endif %}
+  </div>
 
 </form>
 
@@ -313,7 +314,7 @@
 
   var operacao = "agendar";
 
-  $(".membros").change(function(){
+  function verifica_certo() {
     var membros  = $('.membros')
     var dic = {};
     var orientador_id = $('#orientador_id').val();
@@ -323,21 +324,34 @@
 
         if(chave == orientador_id) {
           $("#submit").prop("disabled",true);
-          $("#mensagem").html("Orientador não pode ser selecionado como membro da banca");
+          $("#mensagem2").html("Orientador não pode ser selecionado como membro da banca");
           return;
         }
 
         if(chave in dic) {
           $("#submit").prop("disabled",true);
-          $("#mensagem").html("Os membros devem ser diferentes");
+          $("#mensagem2").html("Os membros devem ser diferentes");
           return;
         } else {
           dic[chave] = true;
         }
       }
     }
-    $("#submit").prop("disabled",false);
+    $("#mensagem2").html("");
+
+    var mensagem = $("#projeto").children(":selected").data("mensagem");
+    if(mensagem) { 
+      $("#mensagem").html(mensagem); 
+      $("#submit").prop("disabled",true); // Se há mensagem é que a banca já foi agendada
+      return;
+    }
     $("#mensagem").html("");
+
+    $("#submit").prop("disabled",false);
+  }
+
+  $(".membros").change(function(){
+    verifica_certo();
   });
 
   function recupera_selecao() {
@@ -383,28 +397,27 @@
 
   }
 
-    $(document).ready(function () {     
-      $("#projeto").change(function(){
-        var titulo = $(this).children(":selected").data("titulo");
-        var titulo_link = $(this).children(":selected").data("titulo_link");
-        var organizacao = $(this).children(":selected").data("organizacao");
-        var organizacao_link = $(this).children(":selected").data("organizacao_link");
-        var orientador = $(this).children(":selected").data("orientador");
-        var orientador_link = $(this).children(':selected').data("orientador_link");
-        var orientador_id = $(this).children(':selected').data("orientador_id");
-        $("#titulo").text(titulo);
-        $("#titulo_link").attr("href", titulo_link);
-        $("#organizacao").text(organizacao);
-        $("#organizacao_link").attr("href", organizacao_link);
-        $("#orientador").text(orientador);
-        $("#orientador_link").attr("href", orientador_link);
-        $("#orientador_id").val(orientador_id);
+  $(document).ready(function () {     
+    $("#projeto").change(function(){
+      var titulo = $(this).children(":selected").data("titulo");
+      var titulo_link = $(this).children(":selected").data("titulo_link");
+      var organizacao = $(this).children(":selected").data("organizacao");
+      var organizacao_link = $(this).children(":selected").data("organizacao_link");
+      var orientador = $(this).children(":selected").data("orientador");
+      var orientador_link = $(this).children(':selected').data("orientador_link");
+      var orientador_id = $(this).children(':selected').data("orientador_id");
+      $("#titulo").text(titulo);
+      $("#titulo_link").attr("href", titulo_link);
+      $("#organizacao").text(organizacao);
+      $("#organizacao_link").attr("href", organizacao_link);
+      $("#orientador").text(orientador);
+      $("#orientador_link").attr("href", orientador_link);
+      $("#orientador_id").val(orientador_id);
 
-        var mensagem = $(this).children(":selected").data("mensagem");
-        if(mensagem) { $("#mensagem").html(mensagem); }
+      verifica_certo();
 
-      })
-    });
+    })
+  });
 
   // Atualiza a página quando o popup é aberto
   $("#popup").on("show.bs.modal", function() {
@@ -413,62 +426,74 @@
   
   $(".tipo_banca").change(carrega_modal);
 
-  
-$("form#criarbancasform").submit(function(e){
-  e.preventDefault();
+  //var banca_atualizada = false; // Para verificar se uma banca foi atualizada ou criada
 
-  if($("#inicio").val() == $("#fim").val()) {
-    alert("Datas e horários de início e fim são iguais!");
-    return false;
-  }
+  $("form#criarbancasform").submit(function(e){
+    e.preventDefault();
 
-  d_inicio = new Date($("#inicio").val());
-  d_fim = new Date($("#fim").val());
-  if(d_inicio > d_fim) {
-    alert("Data de início depois da data final!");
-    return false;
-  }
-  
-  $.ajaxSetup({
-    headers: { "X-CSRFToken": "{{csrf_token}}" }
-  });
-
-  var form = $("form#criarbancasform").closest("form");
-  var formData = new FormData(form[0]);
-
-  // Adiciona o tipo de operação
-  formData.append(operacao, "true");
-  
-  $.ajax({
-    type: "POST",
-    url: "{{ url }}",
-    data: formData,
-    processData: false,
-    contentType: false,
-    success: function(response){
-      //console.log("sucesso");
-      $("#submit").hide();
-      $("#excluir").hide();
-      $("#modal-body").html(response.mensagem);
-    },
-    error: function (request, status, error) {
-      {% if user.tipo_de_usuario == 4 %} 
-        alert(request.responseText);
-        jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-        console.log('error'+request.responseText);
-      {% else %}
-        jQuery("body").html("Erro no servidor do PFE. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
-      {% endif %}
+    if($("#inicio").val() == $("#fim").val()) {
+      alert("Datas e horários de início e fim são iguais!");
+      return false;
     }
+
+    d_inicio = new Date($("#inicio").val());
+    d_fim = new Date($("#fim").val());
+    if(d_inicio > d_fim) {
+      alert("Data de início depois da data final!");
+      return false;
+    }
+    
+    $.ajaxSetup({
+      headers: { "X-CSRFToken": "{{csrf_token}}" }
+    });
+
+    var form = $("form#criarbancasform").closest("form");
+    var formData = new FormData(form[0]);
+
+    // Adiciona o tipo de operação
+    formData.append(operacao, "true");
+    
+    function loadContent(target, url, selector) {
+      $(target).fadeOut('fast', function() {
+        $.ajax({
+          url: url,
+          success: function(data,status,jqXHR) {
+              $(target).html($(data).find(selector).addBack(selector).children()).fadeIn('fast');
+              carrega_site();
+          }
+        });
+      });
+    }
+
+    $.ajax({
+      type: "POST",
+      url: "{{ url }}",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(response){
+        //console.log("sucesso");
+        $("#submit").hide();
+        $("#excluir").hide();
+        $("#modal-body").html(response.mensagem);
+        loadContent( '#atualizar', "{% url 'bancas_index' %}", '#atualizar' );
+        
+      },
+      error: function (request, status, error) {
+        {% if user.tipo_de_usuario == 4 %} 
+          alert(request.responseText);
+          jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
+          console.log('error'+request.responseText);
+        {% else %}
+          jQuery("body").html("Erro no servidor do PFE. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
+        {% endif %}
+      }
+    });
+
+    return false;
+
   });
 
-  // Atualiza a página quando o popup é fechado
-  window.location.href = "{% url 'bancas_index'%}?view="+calendar.view.type+"&date="+calendar.getDate().toISOString();
-
-  return false;
-
-});
-
-{% comment %} $("#popup").on("hidden.bs.modal", function() {}); {% endcomment %}
+  //$("#popup").on("hidden.bs.modal", function() {});
 
 </script>

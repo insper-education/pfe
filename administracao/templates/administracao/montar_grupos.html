@@ -639,10 +639,10 @@
       $.ajax({
         url: '{% url "pre_alocar_estudante" %}',
         data: {
-          'estudante': estudante,
-          'proposta': proposta,
+          "estudante": estudante,
+          "proposta": proposta,
         },
-        dataType: 'json',
+        dataType: "json",
         success: function (data) {
           {% comment %}
             if (data.atualizado) {

@@ -154,6 +154,52 @@ def bancas_index(request):
     return render(request, "professores/bancas_index.html", context)
 
 
+def mensagem_edicao_banca(banca, atualizada=False):
+
+    if atualizada:
+        mensagem = "Banca atualizada.<br><br>"
+    else:
+        mensagem = "Banca criada.<br><br>"
+
+    mensagem += "Data: " + banca.startDate.strftime("%d/%m/%Y - %H:%M:%S") + "<br><br>"
+
+    mensagem += "Envolvidos (nenhuma mensagem está sendo enviada agora):<br><ul>"
+
+    # Orientador
+    if banca.projeto.orientador:
+        mensagem += "<li>" + banca.projeto.orientador.user.get_full_name() + " [orientador] "
+        mensagem += '<a href="mailto:' + banca.projeto.orientador.user.email + '">&lt;' + banca.projeto.orientador.user.email + "&gt;</a></li>"
+    
+    # coorientadores
+    for coorientador in banca.projeto.coorientador_set.all():
+        mensagem += "<li>" + coorientador.usuario.get_full_name() + " [coorientador] "
+        mensagem += '<a href="mailto:' + coorientador.usuario.email + '">&lt;' + coorientador.usuario.email + "&gt;</a></li>"
+
+    # membro1
+    if banca.membro1:
+        mensagem += "<li>" + banca.membro1.get_full_name() + " [membro da banca] "
+        mensagem += '<a href="mailto:' + banca.membro1.email + '">&lt;' + banca.membro1.email + "&gt;</a></li>"
+    
+    # membro2
+    if banca.membro2:
+        mensagem += "<li>" + banca.membro2.get_full_name() + " [membro da banca] "
+        mensagem += '<a href="mailto:' + banca.membro2.email + '">&lt;' + banca.membro2.email + "&gt;</a></li>"
+
+    # membro3
+    if banca.membro3:
+        mensagem += "<li>" + banca.membro3.get_full_name() + " [membro da banca] "
+        mensagem += '<a href="mailto:' + banca.membro3.email + '">&lt;' + banca.membro3.email + "&gt;</a></li>"
+
+    # estudantes
+    for alocacao in banca.projeto.alocacao_set.all():
+        mensagem += "<li>" + alocacao.aluno.user.get_full_name()
+        mensagem += "[" + str(alocacao.aluno.curso2) + "] "
+        mensagem += '<a href="mailto:' + alocacao.aluno.user.email + '">&lt;' + alocacao.aluno.user.email + "&gt;</a></li>"
+    
+    mensagem += "</ul>"
+
+    return mensagem
+    
 @login_required
 @permission_required('users.altera_professor', raise_exception=True)
 def bancas_criar(request, data=None):
@@ -167,44 +213,8 @@ def bancas_criar(request, data=None):
 
             banca = Banca.create(projeto)
             editar_banca(banca, request)
-            mensagem = "Banca criada.<br><br>"
 
-            mensagem += "Data: " + banca.startDate.strftime("%d/%m/%Y - %H:%M:%S") + "<br><br>"
-
-            mensagem += "Envolvidos (nenhuma mensagem está sendo enviada agora):<br><ul>"
-
-            # Orientador
-            if banca.projeto.orientador:
-                mensagem += "<li>" + banca.projeto.orientador.user.get_full_name() + " [orientador] "
-                mensagem += '<a href="mailto:' + banca.projeto.orientador.user.email + '">&lt;' + banca.projeto.orientador.user.email + "&gt;</a></li>"
-            
-            # coorientadores
-            for coorientador in banca.projeto.coorientador_set.all():
-                mensagem += "<li>" + coorientador.usuario.get_full_name() + " [coorientador] "
-                mensagem += '<a href="mailto:' + coorientador.usuario.email + '">&lt;' + coorientador.usuario.email + "&gt;</a></li>"
-
-            # membro1
-            if banca.membro1:
-                mensagem += "<li>" + banca.membro1.get_full_name() + " [membro da banca] "
-                mensagem += '<a href="mailto:' + banca.membro1.email + '">&lt;' + banca.membro1.email + "&gt;</a></li>"
-            
-            # membro2
-            if banca.membro2:
-                mensagem += "<li>" + banca.membro2.get_full_name() + " [membro da banca] "
-                mensagem += '<a href="mailto:' + banca.membro2.email + '">&lt;' + banca.membro2.email + "&gt;</a></li>"
-
-            # membro3
-            if banca.membro3:
-                mensagem += "<li>" + banca.membro3.get_full_name() + " [membro da banca] "
-                mensagem += '<a href="mailto:' + banca.membro3.email + '">&lt;' + banca.membro3.email + "&gt;</a></li>"
-
-            # estudantes
-            for alocacao in banca.projeto.alocacao_set.all():
-                mensagem += "<li>" + alocacao.aluno.user.get_full_name()
-                mensagem += "[" + str(alocacao.aluno.curso2) + "] "
-                mensagem += '<a href="mailto:' + alocacao.aluno.user.email + '">&lt;' + alocacao.aluno.user.email + "&gt;</a></li>"
-            
-            mensagem += "</ul>"
+            mensagem = mensagem_edicao_banca(banca)
             
             context = {
                 "atualizado": True,
@@ -241,7 +251,9 @@ def bancas_criar(request, data=None):
         "projetos": projetos,
         "professores": professores,
         "Banca": Banca,
-        "TIPO_DE_BANCA": Banca.TIPO_DE_BANCA,
+        # "TIPO_DE_BANCA": Banca.TIPO_DE_BANCA,
+        # Para ficar na ordem que desejo
+        "TIPO_DE_BANCA": ((1, 'Intermediária'), (0, 'Final'), (2, 'Certificação Falconi')),
         "falconis": falconis,
         "projetos_agendados": projetos_agendados,
         "bancas_intermediaria": bancas_intermediaria,
@@ -278,7 +290,7 @@ def bancas_editar(request, primarykey=None):
         mensagem = ""
         if "atualizar" in request.POST:
             if editar_banca(banca, request):
-                mensagem = "Banca editada."
+                mensagem = mensagem_edicao_banca(banca, True)
             else:
                 mensagem = "Erro ao Editar banca."
         elif "excluir" in request.POST:
@@ -316,7 +328,9 @@ def bancas_editar(request, primarykey=None):
         "professores": professores,
         "banca": banca,
         "Banca": Banca,
-        "TIPO_DE_BANCA": Banca.TIPO_DE_BANCA,
+        # "TIPO_DE_BANCA": Banca.TIPO_DE_BANCA,
+        # Para ficar na ordem que desejo
+        "TIPO_DE_BANCA": ((1, 'Intermediária'), (0, 'Final'), (2, 'Certificação Falconi')),
         "falconis": falconis,
         "bancas_intermediaria": bancas_intermediaria,
         "bancas_finais": bancas_finais,
