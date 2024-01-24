@@ -153,7 +153,7 @@ def bancas_index(request):
 
     return render(request, "professores/bancas_index.html", context)
 
-
+from django.db.models import Q
 def mensagem_edicao_banca(banca, atualizada=False):
 
     if atualizada:
@@ -162,6 +162,15 @@ def mensagem_edicao_banca(banca, atualizada=False):
         mensagem = "Banca criada.<br><br>"
 
     mensagem += "Data: " + banca.startDate.strftime("%d/%m/%Y - %H:%M:%S") + "<br><br>"
+
+    LIMITE_DE_SALAS = 2
+    total_bancas = Banca.objects.all().count()
+    nao_intersecta = Banca.objects.filter(Q(endDate__lte=banca.startDate) | Q(startDate__gte=banca.endDate)).count()
+    if (total_bancas - nao_intersecta - 1) >= LIMITE_DE_SALAS:  # -1 para nao contar a propria banca
+        mensagem += "<span style='color: red; font-weight: bold;'>"
+        mensagem += "Mais de duas bancas agendadas para o mesmo horário!<br>"
+        mensagem += "Poderá não ser possível alocar uma sala para esse horário.<br>"
+        mensagem += "</span><br>"
 
     mensagem += "Envolvidos (nenhuma mensagem está sendo enviada agora):<br><ul>"
 

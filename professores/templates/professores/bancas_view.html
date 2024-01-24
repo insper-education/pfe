@@ -426,8 +426,6 @@
   
   $(".tipo_banca").change(carrega_modal);
 
-  //var banca_atualizada = false; // Para verificar se uma banca foi atualizada ou criada
-
   $("form#criarbancasform").submit(function(e){
     e.preventDefault();
 
@@ -495,5 +493,6 @@
   });
 
   //$("#popup").on("hidden.bs.modal", function() {});
-
+  //"{% url 'bancas_index'%}?view="+calendar.view.type+"&date="+calendar.getDate().toISOString();
+        
 </script>
