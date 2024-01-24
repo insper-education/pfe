@@ -19,11 +19,11 @@
         font-size: 14px;
       }
       #autorizado-icon:before {
-        content: "\1F44D";
+        content: "\1F441";
         font-size: 16px;
       }
       #disponivel-icon:before {
-        content: "\1F441";
+        content: "\1F44D";
         font-size: 16px;
       }
       #fechado-icon:before {
@@ -42,13 +42,13 @@
         content: "Estudante";
       }
       #autorizado-icon:before {
-        content: "Autorizado";
+        content: "Analisada";
       }
       #disponivel-icon:before {
         content: "Disponível";
       }
       #fechado-icon:before {
-        content: "Fechado";
+        content: "Fechada";
       }
     }
 	</style>
@@ -88,7 +88,7 @@
         </caption>
         <thead class="table-info">
         <tr>
-          <th scope="col" class="estados text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Algum professor autorizou que o projeto seja publicado para os estudantes"><span id="autorizado-icon"></span></th>
+          <th scope="col" class="estados text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Algum professor do comitê do PFE analisou que a proposta seja publicada para os estudantes"><span id="autorizado-icon"></span></th>
           <th scope="col" class="estados text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Proposta ficará disponível para estudantes na fase onde eles deverão selecionar interesse"><span id="disponivel-icon"></span></th>
           <th scope="col" class="estados text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Foi formado um grupo de estudantes para essa proposta de projeto"><span id="fechado-icon"></span></th>
           <th scope="col" class="text-center">Proposta</th>
@@ -109,7 +109,7 @@
         
           <tr class="item"> 
 
-            {% comment %} Autorizado {% endcomment %}
+            {% comment %} Analisada {% endcomment %}
             <td style="text-align:center; font-size: large; font-weight: bold;" class="estados
             {% if proposta.autorizado  %}
               text-success">&#x2713
@@ -359,6 +359,8 @@
     {% endif %}
 
     <script>
+
+      
       function carrega_pagina() {};
       window.onload = carrega_pagina
     </script>

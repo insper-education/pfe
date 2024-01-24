@@ -491,6 +491,8 @@
               },
               success: function(response){
                   $("#tabela").replaceWith($("#tabela",response));
+                  $(".tooltip-inner").remove();
+                  $(".tooltip-arrow").remove();
                   filtra_data();
                   $("#spinner").css("visibility", "hidden");
               },

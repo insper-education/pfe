@@ -7,11 +7,6 @@
 {% comment %} Código para apresentar tooltips nos objetos {% endcomment %}
 
 
-
-
-
-{% comment %} OBSOLETO {% endcomment %} 
-
-$(document).ready(function(){
-    $('[data-toggle="tooltip"]').tooltip('dispose').tooltip({boundary: 'window'});
-});
+{% comment %} $(document).ready(function(){ {% endcomment %}
+    $("[data-toggle='tooltip']").tooltip("dispose").tooltip({boundary: "window"});
+{% comment %} }); {% endcomment %}

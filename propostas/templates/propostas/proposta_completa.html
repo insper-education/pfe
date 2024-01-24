@@ -89,7 +89,7 @@
 
     <br><b><label for="autorizador" data-toggle="tooltip" data-html="true" animation="true" 
       title="Mesmo ao autorizar uma proposta, esta só será visivel para os estudantes<br>depois que a liberação de visualização for habilitada.">
-      Autorizada por</label></b>:
+      Analisada por</label></b>:
     <select class="fechar_proposta" name="autorizador" id="autorizador" title="Selecione quem autorizou proposta" required>
         <option value='0'> ---- </option>
         {% for pessoa in comite %}
@@ -115,16 +115,16 @@
 
     <br><br>
     <div style="max-width: 56em; text-align: center;">
-    <a class="myButton" style="width: 13em; " href="{% url 'proposta_editar' proposta.slug %}">Editar Proposta</a>
-    <a class="myButton" style="width: 13em;" href="{% url 'proposta_detalhes' proposta.id %}">Visão do Estudante</a>
+    <a class="myButton" style="width: 13em; padding-bottom: 3px; color:white;" href="{% url 'proposta_editar' proposta.slug %}">Editar Proposta</a>
+    <a class="myButton" style="width: 13em; padding-bottom: 3px; color:white;" href="{% url 'proposta_detalhes' proposta.id %}">Visão do Estudante</a>
     
     {% for projeto in projetos %}
-      <a class="myButton" style="width: 13em; padding-bottom: 3px;" href="{% url 'projeto_completo' projeto.id %}">Projeto {{projeto.ano}}.{{projeto.semestre}}</a>
-      <a class="myButton" style="width: 13em; padding-bottom: 3px;color:white;" onClick="return confirm('Proposta possui um projeto e não pode ser removida')" >Remove Proposta</a>
+      <a class="myButton" style="width: 13em; padding-bottom: 3px; color:white;" href="{% url 'projeto_completo' projeto.id %}">Projeto {{projeto.ano}}.{{projeto.semestre}}</a>
+      <a class="myButton" style="width: 13em; padding-bottom: 3px; color:white;" onClick="return confirm('Proposta possui um projeto e não pode ser removida')" >Remove Proposta</a>
     {% empty %}
       <a class="myButton" data-toggle="tooltip" data-html="true" animation="true" title="criar projeto dessa proposta"
       onclick="cria_projeto()" style="width: 13em; padding-bottom: 3px; color:white;">Criar Projeto</a>
-      <a class="myButton" style="width: 13em; padding-bottom: 3px;" href="{% url 'proposta_remover' proposta.slug %}" onClick="return confirm('Tem certeza que deseja remover proposta definitivamente?')" >Remove Proposta</a>
+      <a class="myButton" style="width: 13em; padding-bottom: 3px; color:white;" href="{% url 'proposta_remover' proposta.slug %}" onClick="return confirm('Tem certeza que deseja remover proposta definitivamente?')" >Remove Proposta</a>
     {% endfor %}
     </div>
     <br>

@@ -407,24 +407,22 @@ def proposta_completa(request, primarykey):
                     tmp = True
                 setattr(proposta, dict[5:-1], tmp)
 
-        # Define autorizador
-        if 'autorizador' in request.POST:
+        # Define analisador
+        if "autorizador" in request.POST:
             try:
                 if request.POST['autorizador'] == "0":
                     proposta.autorizado = None
                 else:
                     proposta.autorizado = PFEUser.objects\
-                        .get(pk=int(request.POST['autorizador']))
-                proposta.disponivel = request.POST['disponibilizar'] == 'sim'
+                        .get(pk=int(request.POST["autorizador"]))
+                proposta.disponivel = request.POST["disponibilizar"] == "sim"
                 proposta.save()
             except PFEUser.DoesNotExist:
-                return HttpResponse("Autorizador não encontrado.", status=401)
+                return HttpResponse("Analisador não encontrado.", status=401)
         else:
-            return HttpResponse("Autorizador não encontrado.", status=401)
+            return HttpResponse("Analisador não encontrado.", status=401)
 
-        data = {
-            'atualizado': True,
-        }
+        data = {"atualizado": True,}
         return JsonResponse(data)
 
     configuracao = get_object_or_404(Configuracao)

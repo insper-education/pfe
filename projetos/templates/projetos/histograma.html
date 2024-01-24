@@ -49,6 +49,8 @@
             },
             success: function(response){
                 $("div.2areas2").replaceWith($("div.2areas2",response));
+                $(".tooltip-inner").remove();
+                $(".tooltip-arrow").remove();
                 bar();
             },
             error: function (request, status, error) {

@@ -84,7 +84,9 @@
 
                 if(!$("input[type=radio][name=selection][value=" + value + "]").prop('disabled')){
                     $("input[type=radio][name=selection][value=" + value + "]").prop('checked', true);
-                } 
+                }
+                $('.tooltip-inner').remove();
+                $('.tooltip-arrow').remove();
 
             },
             error: function (request, status, error) {

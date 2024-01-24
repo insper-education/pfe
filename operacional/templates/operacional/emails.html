@@ -363,7 +363,7 @@
               $("#Bancas").show();
             }
 
-            {% include "tooltips.js" %}
+            {% include "tooltip.js" %}
 
             $("#spinnerSemestre").hide();
 
@@ -395,7 +395,9 @@
         },
         success: function(response){
             $("#sequenc_projetos").replaceWith($("#sequenc_projetos",response));
-            {% include "tooltips.js" %}
+            $('.tooltip-inner').remove();
+            $('.tooltip-arrow').remove();
+            {% include "tooltip.js" %}
             $("#spinnerProjetos").hide();    
             $("#sequenc_projetos").show();
         },

@@ -83,7 +83,9 @@
 
             if (seqNumber === xhrCount) { {% comment %} Processando resposta {% endcomment %}
               $(".atualizar").replaceWith($(".atualizar",response));
-              {% include "tooltips.js" %}
+              $(".tooltip-inner").remove();
+              $(".tooltip-arrow").remove();
+              {% include "tooltip.js" %}
               {% if tabela %}
                 {% include "tabelas_scripts.js" %}
               {% endif %}

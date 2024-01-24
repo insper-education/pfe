@@ -231,6 +231,8 @@
         success: function(response){
           if (seqNumber === xhrCount) { {% comment %} Processando resposta {% endcomment %}
             $("#certificados").replaceWith($("#certificados",response));
+            $(".tooltip-inner").remove();
+            $(".tooltip-arrow").remove();
             carrega_pagina()
             //$("#spinner").css("visibility", "hidden");
             $(".to_label").removeClass("label_animado");
