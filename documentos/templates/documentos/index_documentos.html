@@ -46,9 +46,9 @@
     </ul>
   {% endif %}
 
+  <hr>
+  <h5>Área dos Parceiros</h5>
   {% if user.tipo_de_usuario == 3 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Parceiro ou Professor ou Adm -->
-    <hr>
-    <h5>Área dos Parceiros</h5>
     <ul>
       {% include "documento.html" with documento=documentos|tipo_documento:11 %}
       {% include "documento.html" with documento=documentos|tipo_documento:30 %}
