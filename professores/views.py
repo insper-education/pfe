@@ -14,6 +14,7 @@ from urllib.parse import quote, unquote
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
+from django.db.models import Q
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
@@ -153,7 +154,7 @@ def bancas_index(request):
 
     return render(request, "professores/bancas_index.html", context)
 
-from django.db.models import Q
+
 def mensagem_edicao_banca(banca, atualizada=False):
 
     if atualizada:

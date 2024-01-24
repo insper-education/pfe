@@ -371,6 +371,7 @@ class Proposta(models.Model):
     anexo = models.FileField("Anexo", upload_to=get_upload_path, null=True, blank=True,
                              help_text='Documento Anexo')
 
+    # O principal interesse da empresa com o projeto é:
     TIPO_INTERESSE = (
         (10, 'aprimorar o entendimento de uma tecnologia/solução com foco no médio prazo, sem interesse a curto prazo.'),
         (20, 'realizar uma prova de conceito, podendo finalizar o desenvolvimento internamente dependendo do resultado.'),
@@ -378,7 +379,6 @@ class Proposta(models.Model):
         (40, 'identificar talentos, com intenção de contratá-los para continuar esse ou outros projetos internamente.'),
         (50, 'mentorar estudantes para que empreendam com um produto ou tecnologia da empresa, podendo estabelecer uma parceria ou contrato de fornecimento caso seja criada uma startup a partir desse projeto.'),
     )
-
     aprimorar = models.BooleanField(default=False, help_text=TIPO_INTERESSE[0][1])
     realizar = models.BooleanField(default=False, help_text=TIPO_INTERESSE[1][1])
     iniciar = models.BooleanField(default=False, help_text=TIPO_INTERESSE[2][1])
@@ -386,9 +386,9 @@ class Proposta(models.Model):
     mentorar = models.BooleanField(default=False, help_text=TIPO_INTERESSE[4][1])
     
     # ESSE ESTA OBSOLETO
-    tipo_de_interesse = models.PositiveSmallIntegerField(choices=TIPO_INTERESSE,
-                                                         null=True, blank=True,
-                                                         help_text='O principal interesse da empresa com o projeto é')
+    # tipo_de_interesse = models.PositiveSmallIntegerField(choices=TIPO_INTERESSE,
+    #                                                      null=True, blank=True,
+    #                                                      help_text='O principal interesse da empresa com o projeto é')
 
     internacional = models.BooleanField("Internacional", default=False,
                                         help_text='Caso a proposta venha de um parceiro internacional, o que afeta a lingua de comunicação do projeto')
