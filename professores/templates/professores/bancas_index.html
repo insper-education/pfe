@@ -79,7 +79,7 @@
 
         var calendar = null;
 
-        function montar_calendario() {
+        function montar_calendario(defaultView="dayGridMonth", defaultDate=null) {
   
             var calendarEl = document.getElementById("calendar");
 
@@ -90,8 +90,8 @@
                 center: "title",
                 right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth"
               },
-              defaultView: {% if view %}"{{view}}"{% else %}"dayGridMonth"{% endif %},
-              defaultDate: {% if date %}"{{date}}"{% else %}null{% endif %},
+              defaultView: {% if view %}"{{view}}"{% else %}defaultView{% endif %},
+              defaultDate: {% if date %}"{{date}}"{% else %}defaultDate{% endif %},
               locale: "pt-br",
               navLinks: true, // can click day/week names to navigate views
               businessHours: true, // display business hours

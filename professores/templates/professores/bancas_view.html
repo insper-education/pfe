@@ -452,12 +452,14 @@
     formData.append(operacao, "true");
     
     function loadContent(target, url, selector) {
+      calendarView = calendar.view.type;
+      calendarDate = calendar.getDate();
       $(target).fadeOut('fast', function() {
         $.ajax({
           url: url,
           success: function(data,status,jqXHR) {
               $(target).html($(data).find(selector).addBack(selector).children()).fadeIn('fast');
-              carrega_site();
+              montar_calendario(calendarView, calendarDate);
           }
         });
       });
