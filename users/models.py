@@ -92,19 +92,24 @@ class PFEUser(AbstractUser):
 
     pronome_tratamento = models.CharField("Pronome de Tratamento", max_length=8, null=True, blank=True)
 
+    nome_social = models.CharField(max_length=150, null=True, blank=True,
+                                   help_text="Na prática o nome que a pessoa é (ou gostaria de ser) chamada")
     class Meta:
         """Classe Meta."""
         verbose_name = "Usuário"
         verbose_name_plural = "Usuários"
         ordering = [ "first_name", "last_name"]
         
-    # Estou sobreescrevendo a função get_full_name para que ela retorne o pronome de tratamento
+    # Estou sobreescrevendo a função get_full_name para que ela retorne o pronome de tratamento e nome social
     def get_full_name(self):
+        texto = ""
         if self.pronome_tratamento:
-            full_name = '%s %s %s' % (self.pronome_tratamento, self.first_name, self.last_name)
+            texto += self.pronome_tratamento + ' '
+        if self.nome_social:
+            texto += self.nome_social
         else:
-            full_name = '%s %s' % (self.first_name, self.last_name)
-        return full_name.strip()
+            texto += self.first_name + ' ' + self.last_name
+        return texto.strip()
 
     @classmethod
     def create(cls):

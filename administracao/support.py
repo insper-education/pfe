@@ -150,7 +150,7 @@ def registro_usuario(request, user=None):
     elif tipo_de_usuario == "parceiro":
         usuario.tipo_de_usuario = 3  # (3, 'parceiro')
     else:
-        # usuario.tipo_de_usuario = 3  # (4, 'administrador')
+        # usuario.tipo_de_usuario = 4  # (4, 'administrador')
         return ("Erro na identificação do tipo de usuário.", 401, None)
 
     # se for um usuário novo
@@ -177,6 +177,7 @@ def registro_usuario(request, user=None):
         return ("Erro: Não inserido nome completo no formulário.", 401, None)
 
     usuario.pronome_tratamento = limpa_texto(request.POST.get("pronome_tratamento", None))
+    usuario.nome_social = limpa_texto(request.POST.get("nome_social", None))
 
     if "genero" in request.POST:
         if request.POST['genero'] == "masculino":

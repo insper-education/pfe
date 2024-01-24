@@ -56,6 +56,9 @@
     <label for="pronome_tratamento">Pronome de Tratamento (opcional)</label>
     <input type="text" size="8" maxlength="{% max_length PFEUser "pronome_tratamento" %}" id="pronome_tratamento" name="pronome_tratamento" {% if usuario.pronome_tratamento %}value="{{usuario.pronome_tratamento}}"{% endif %}><br>
     
+    <label for="nome_social">Nome Social (opcional)</label>
+    <input type="text" size="77" maxlength="{% max_length PFEUser "nome_social" %}" id="nome_social" name="nome_social" {% if usuario.nome_social %}value="{{usuario.nome_social}}"{% endif %}><br>
+    
     <label for="nome">Nome do Usuário<br></label><br>
     {% comment %} {% max_length PFEUser "first_name" %} + {% max_length PFEUser "lastst_name" %} {% endcomment %}
     <input type="text" size="77" maxlength="120" id="nome" name="nome" value="{{usuario.first_name}} {{usuario.last_name}}"
