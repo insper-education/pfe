@@ -30,7 +30,6 @@
     .bloco_avali {
       margin-right: 1em;
       display: inline-block;
-
     }
   </style>
 
@@ -72,7 +71,7 @@
                     peso: 
                     <input class="peso" id="a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}"
                           name="a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}" type="number"
-                          min="0" max="100" step="any" style="width: 7em;"
+                          min="0" max="100" step="any" style="width: 5em;"
                           value="{% if objetivo.peso %}{{objetivo.peso}}{% else %}{{peso.peso}}{% endif %}"
                           {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
                           {% if aval_id != alocacao.projeto.orientador.user.id %}disabled{% endif %}/>
