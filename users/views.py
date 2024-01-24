@@ -567,25 +567,33 @@ def edita_notas(request, primarykey):
 
                         reg.save()
 
-            obs_name = "a" + str(composicao.exame.id) + "_obs"
-            obs_value = request.POST.get(obs_name, "")
-            if obs_value != "":
-                        if composicao.exame.grupo:
-                            (reg, _created) = observacoes.get_or_create(projeto=alocacao.projeto,
-                                                                       exame=composicao.exame,
-                                                                       avaliador = alocacao.projeto.orientador.user)
-                        else:
-                            (reg, _created) = observacoes.get_or_create(projeto=alocacao.projeto,
-                                                                       exame=composicao.exame,
-                                                                       alocacao=alocacao,
-                                                                       avaliador = alocacao.projeto.orientador.user)
-                        reg.observacoes_orientador = obs_value
+            obs_name_orientador = "a" + str(composicao.exame.id) + "_obs_orientador"
+            obs_name_estudantes = "a" + str(composicao.exame.id) + "_obs_estudantes"
+            obs_value_orientador = request.POST.get(obs_name_orientador, "")
+            obs_value_estudantes = request.POST.get(obs_name_estudantes, "")
+            if obs_value_orientador != "" or obs_value_estudantes != "":
+                if composicao.exame.grupo:
+                    (reg, _created) = observacoes.get_or_create(projeto=alocacao.projeto,
+                                                                exame=composicao.exame,
+                                                                avaliador = alocacao.projeto.orientador.user)
+                else:
+                    (reg, _created) = observacoes.get_or_create(projeto=alocacao.projeto,
+                                                                exame=composicao.exame,
+                                                                alocacao=alocacao,
+                                                                avaliador = alocacao.projeto.orientador.user)
+                if obs_value_orientador != "":
+                    reg.observacoes_orientador = obs_value_orientador
+                    print(obs_value_orientador)
 
-                        if _created:
-                            if alocacao.projeto.orientador:
-                                reg.avaliador = alocacao.projeto.orientador.user
+                if obs_value_estudantes != "":
+                    reg.observacoes_estudantes = obs_value_estudantes
+                    print(obs_value_estudantes)
 
-                        reg.save()
+                if _created:
+                    if alocacao.projeto.orientador:
+                        reg.avaliador = alocacao.projeto.orientador.user
+
+                reg.save()
 
         # Reprovacao
         rep = request.POST.get("reprovacao", "")
