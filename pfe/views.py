@@ -35,24 +35,10 @@ def custom_400(request, exception):
     return HttpResponse(mensagem)
 
 
-from projetos.models import Proposta
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
-    message = "Feito"
+    message = "Nada Feito"
 
-    for prop in Proposta.objects.all():
-        prop.habilidades = True
-        prop.design = True
-        prop.realistico = True
-        prop.normas = True
-        prop.restricoes = True
-        prop.experimentacao = True
-        prop.equipe = True
-        prop.duracao = True
-        prop.carga = True
-        prop.mensuravel = True
-        prop.save()
-        
     return HttpResponse(message)
