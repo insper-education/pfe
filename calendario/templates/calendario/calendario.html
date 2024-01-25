@@ -92,7 +92,8 @@
     .event-location,
     .event-observation,
     .event-descricao,
-    .event-responsavel {
+    .event-responsavel
+    .event-material {
       font-size: 0.7em;
       padding-left: 8px;
       line-height: 1.0;
@@ -469,6 +470,7 @@
                                 observation: "{{aula.observacao}}",
                                 descricao: `{{aula.descricao}}`,
                                 responsavel: {% if aula.responsavel %}{{aula.responsavel.id}}{% else %}0{% endif %},
+                                material: {% if aula.documento %}{{aula.documento.id}}{% else %}0{% endif %},
                                 type: "{{aula.tipo_de_evento}}",
                                 startDate: new Date({{aula.startDate.year}},{{aula.startDate.month|add:-1}},{{aula.startDate.day}}),
                                 endDate: new Date({{aula.endDate.year}},{{aula.endDate.month|add:-1}},{{aula.endDate.day}}),
@@ -484,11 +486,17 @@
                           </span>
                         </th>
                         
-                        
                         <td class="colu">
                           {{aula.descricao}} 
                           {% if aula.responsavel %}({{aula.responsavel.get_full_name}}){% endif %}
-                        </td><td class="colu">{{aula.location}}</td>
+                          {% if aula.documento %}
+                            <a href="http://{{request.get_host}}{{aula.documento.get_url}}">
+                              &nbsp;<i class="fa fa-file-pdf"></i>
+                            </a>
+                          {% endif %}
+                        </td>
+                        
+                        <td class="colu">{{aula.location}}</td>
                     </tr>
                   {% endfor %}
                 </tbody>
@@ -559,6 +567,7 @@
       $('#event-modal textarea[name="event-descricao"]').val(evento ? evento.descricao : '');
       $('#event-modal input[name="event-observation"]').val(evento ? evento.observation : '');
       $('#event-modal select[name="event-responsavel"]').val(evento ? evento.responsavel : '');      
+      $('#event-modal select[name="event-material"]').val(evento ? evento.material : '');      
       $('#event-modal input[name="event-start-date"]').datepicker('update', evento ? evento.startDate : '');
       $('#event-modal input[name="event-end-date"]').datepicker('update', evento ? evento.endDate : '');
 
@@ -612,6 +621,7 @@
         descricao: $('#event-modal textarea[name="event-descricao"]').val(),
         observation: $('#event-modal input[name="event-observation"]').val(),
         responsavel: $('#event-modal select[name="event-responsavel"]').val(),
+        material: $('#event-modal select[name="event-material"]').val(),
         startDate: $('#event-modal input[name="event-start-date"]').datepicker('getDate'),
         endDate: $('#event-modal input[name="event-end-date"]').datepicker('getDate'),
         color: $('#event-modal select[name="event-type"] option:selected').data("color"),
@@ -682,6 +692,7 @@
           descricao : event.descricao,
           observation : event.observation,
           responsavel: event.responsavel,
+          material: event.material,
           startDate : startDate,
           endDate : endDate,
           "csrfmiddlewaretoken": "{{ csrf_token }}"
@@ -700,6 +711,7 @@
                   dataSource[i].descricao = event.descricao;
                   dataSource[i].observation = event.observation;
                   dataSource[i].responsavel = event.responsavel;
+                  dataSource[i].material = event.material;
                   dataSource[i].startDate = event.startDate;
                   dataSource[i].endDate = event.endDate;
                   dataSource[i].color = event.color; 
@@ -750,6 +762,7 @@
                 observation: "{{evento.observacao}}",
                 descricao: `{{evento.descricao}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
+                material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
@@ -764,6 +777,7 @@
                 observation: "{{evento.observacao}}",
                 descricao: `{{evento.descricao}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
+                material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
@@ -778,6 +792,7 @@
                 observation: "{{evento.observacao}}",
                 descricao: `{{evento.descricao}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
+                material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
@@ -792,6 +807,7 @@
                 observation: "{{evento.observacao}}",
                 descricao: `{{evento.descricao}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
+                material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
@@ -806,6 +822,7 @@
                 observation: "{{evento.observacao}}",
                 descricao: `{{evento.descricao}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
+                material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
@@ -820,6 +837,7 @@
                 observation: "{{evento.observacao}}",
                 descricao: `{{evento.descricao}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
+                material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
@@ -840,6 +858,7 @@
                 observation: "{{evento.observacao}}",
                 descricao: `{{evento.descricao}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
+                material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),

@@ -13,7 +13,7 @@ class TipoDocumento(models.Model):
     """Tipos de documentos usados."""
 
     nome = models.TextField("Nome", max_length=128, null=True, blank=True, unique=True,
-                              help_text="Título do Exame")
+                              help_text="Nome do Tipo de Documento")
 
     projeto = models.BooleanField(default=False, help_text="Relevante para projetos")
 
@@ -46,5 +46,6 @@ class TipoDocumento(models.Model):
         return exame
     
     class Meta:
+        ordering = [ "nome",]
         verbose_name = "Tipo de Documento"
         verbose_name_plural = "Tipos de Documentos"

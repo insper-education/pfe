@@ -15,6 +15,7 @@ from urllib.parse import quote
 
 from django.db import models
 from django.db.models import F
+from django.conf import settings
 
 from django.urls import reverse  # To generate URLS by reversing URL patterns
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -695,6 +696,9 @@ class Evento(models.Model):
                                    on_delete=models.SET_NULL,
                                    help_text="Responsável pelo evento, por exemplo professor que ministrou a aula")
 
+    documento = models.ForeignKey("projetos.Documento", null=True, blank=True, on_delete=models.SET_NULL,
+                                  help_text="Material do evento, em caso de aulas, os slides da aula")
+
     def get_title(self):
         """Retorna em string o nome do evento."""
         return self.get_tipo_de_evento_display()
@@ -938,7 +942,7 @@ class Anotacao(models.Model):
         verbose_name = 'Anotação'
         verbose_name_plural = 'Anotações'
 
-
+from django.contrib.sites.models import Site
 class Documento(models.Model):
     """Documentos, em geral PDFs, e seus relacionamentos com o PFE."""
 
@@ -975,13 +979,23 @@ class Documento(models.Model):
     lingua_do_documento = models.PositiveSmallIntegerField(choices=LINGUA_DO_DOCUMENTO, default=0)
 
     def __str__(self):
-        return str(self.tipo_documento)
+        texto = ""
+        texto += str(self.tipo_documento) + " "
+        if self.data:
+            texto += " [" + str(self.data) + "]"
+        if self.anotacao:
+            texto += " ("+str(self.anotacao)+")"
+        return texto
 
     @classmethod
     def create(cls):
         """Cria um objeto (entrada) em Documento."""
         documento = cls()
         return documento
+    
+    def get_url(self):
+        """Retorna a url do documento."""
+        return settings.MEDIA_URL+str(self.documento)
 
 
 class Banco(models.Model):

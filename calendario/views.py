@@ -21,7 +21,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from users.models import PFEUser, Aluno
 
-from projetos.models import Banca, Configuracao, Evento, Organizacao
+from projetos.models import Banca, Configuracao, Evento, Organizacao, Documento
 
 from projetos.tipos import TIPO_EVENTO
 
@@ -104,21 +104,11 @@ def calendario(request):
 
         context["pessoas"] = pessoas
 
+        context["documentos"] = Documento.objects.filter(tipo_documento=43)  # Somente Material de Aula (pelo momento)
+    
         return render(request, "calendario/calendario.html", context)
 
     return HttpResponse("Problema ao gerar calendário.", status=401)
-
-
-# Não mais usado
-# @login_required
-# def calendario_limpo(request):
-#     """Para exibir um calendário de eventos."""
-#     context = get_calendario_context(request.user.pk)
-#     if context:
-#         context['limpo'] = True
-#         return render(request, 'calendario/calendario.html', context)
-
-#     return HttpResponse("Problema ao gerar calendário.", status=401)
 
 
 def adicionar_participante_em_evento(ical_event, usuario):
@@ -237,6 +227,9 @@ def atualiza_evento(request):
 
     responsavel = request.POST.get("responsavel", None)
     evento.responsavel = PFEUser.objects.get(id=responsavel) if responsavel else None
+
+    material = request.POST.get("material", None)
+    evento.documento = Documento.objects.get(id=material) if material else None
 
     evento.save()
 
