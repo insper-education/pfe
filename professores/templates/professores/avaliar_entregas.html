@@ -109,7 +109,7 @@
                   <ul style="padding-left: 22px;" {% if dias_ate > dias %}class="lightgrey"{% endif %}>
                     {% for documento in item.documentos %}
                       <li style="list-style-type:'';" {% if dias_ate > dias %}class="lightgrey"{% endif %}>
-                        {% if forloop.first%}<b>{% endif %} <span class="fa fa-file"></span>
+                        {% if forloop.first%}<b>{% endif %} <span class="fas fa-archive"></span>
                         {% if documento.documento or documento.link %}
                           <a {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
                            {% if dias_ate > dias %}class="lightgrey"{% endif %}
