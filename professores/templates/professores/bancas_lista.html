@@ -11,6 +11,7 @@
   {% load banca_tipo %}
 
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
+  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
 
   {% comment %}
     Estou achando desnecessário
@@ -22,6 +23,12 @@
       max-width: 100%;
       margin-right: 16px;
     }
+  
+    ul,ol {
+      margin: 0px 0px 8px 0px;
+      padding: 0px 0px 0px 1.5em;
+    }
+  
   </style>
 
 {% endblock %}
@@ -207,8 +214,11 @@
                     <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">
                       {{alocacao.aluno.user.get_full_name}}
                     </a>
-                    <span class="curso">[{{ alocacao.aluno.curso2 }}]</span>
-                    <a class="email" href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
+                    <span class="opt_full curso">[{{ alocacao.aluno.curso2 }}]</span>
+                    <span class="opt_short curso">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
+                    {% if alocacao.aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span>{% endif %}
+                    <span class="opt_full emails"><a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a></span>
+                    <span class="opt_short emails"><a href="mailto:{{alocacao.aluno.user.email}}">&#x2709;</a></span>
                   </li>
                 {% endfor %}
               </ul>

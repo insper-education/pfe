@@ -82,8 +82,9 @@
                     {{alocacao.aluno.user.get_full_name}}
                   </a>
                   <span class="opt_full">[{{ alocacao.aluno.curso2 }}]</span>
-                  <span class="opt_short">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
-                  <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
+                  <span class="opt_short">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>                  
+                  <span class="opt_full emails"><a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a></span>
+                  <span class="opt_short emails"><a href="mailto:{{alocacao.aluno.user.email}}">&#x2709;</a></span>
                 </li>
               {% endfor %}
             </ul>
