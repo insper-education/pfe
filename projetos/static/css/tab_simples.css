@@ -1,0 +1,13 @@
+th {
+  text-align: center;
+  cursor:pointer;
+}
+td,th {
+  vertical-align: middle;
+  padding: 0px 6px 0px 6px;
+}
+
+.tab_botao {
+	width: 5em; 
+	padding:0px 4px 0px 4px;
+}

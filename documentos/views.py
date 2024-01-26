@@ -385,11 +385,9 @@ def tabela_seguros(request):
     """Exibe tabela com todos os seguros armazenados."""
     tipo_documento = TipoDocumento.objects.get(nome="Seguros")
     seguros = Documento.objects.filter(tipo_documento=tipo_documento)
-    context = {
-        "seguros": seguros,
-        "MEDIA_URL": settings.MEDIA_URL,
-    }
+    context = {"seguros": seguros,}
     return render(request, "documentos/tabela_seguros.html", context)
+
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
@@ -397,10 +395,7 @@ def tabela_atas(request):
     """Exibe tabela com todos os seguros armazenados."""
     tipo_documento = TipoDocumento.objects.get(nome="Ata do Comitê do PFE")
     atas = Documento.objects.filter(tipo_documento=tipo_documento).order_by("-data")
-    context = {
-        "atas": atas,
-        "MEDIA_URL": settings.MEDIA_URL,
-    }
+    context = {"atas": atas,}
     return render(request, "documentos/tabela_atas.html", context)
 
 
