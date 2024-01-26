@@ -9,7 +9,7 @@
   {% load static %}
   {% load nospaces %}
   {% load aderencia_aluno %}
-
+  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
   <script src="{% static 'js/Chart.min.js' %}"/></script>
 
   {% comment %} Para chamar os Tooltips {% endcomment %}
@@ -111,13 +111,6 @@
     .titulo_proposta {
       display: inline;
     }
-
-    .opt_short {
-      display: none;
-    }
-    .opt_full {
-      display: inline;
-    }
     
     @media screen and (max-width: 800px) {
       .ancora {
@@ -126,16 +119,9 @@
       .estudante {
         width: 14.5rem;
       }
-      .opt_short {
-        display: inline;
-      }
-      .opt_full {
-        display: none;
-      }
       .container-fluid {
         padding-right: 8px;padding-left: 8px;
       }
-      
     }
 
     @media screen and (max-width: 600px) {
@@ -143,9 +129,6 @@
         width: 8rem;
       }
     }
-
-
-
   </style>
 
 {% endblock %}

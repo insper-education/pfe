@@ -8,6 +8,7 @@
 {% block head %}
   {% load static %}
   {% load l10n %}
+  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
 
   {% comment %} Para plotar os gráficos {% endcomment %}
   <script src="{% static 'js/Chart.min.js' %}"></script>
@@ -52,22 +53,6 @@
       -ms-user-select: all;
       -o-user-select:all;
       user-select: all;
-    }
-
-    .opt_short {
-      display: none;
-    }
-    .opt_full {
-      display: inline;
-    }
-    
-    @media screen and (max-width: 800px) {
-      .opt_short {
-        display: inline;
-      }
-      .opt_full {
-        display: none;
-      }
     }
 
     ul {

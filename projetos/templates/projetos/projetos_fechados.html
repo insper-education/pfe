@@ -8,7 +8,7 @@
 {% block head %}
   {% load static %}
   {% load zip_data %}
-  {% comment %} Para desenhar gráficos na página {% endcomment %}
+  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
   <script src="{% static 'js/Chart.min.js' %}"/></script>
 
   <style>
@@ -47,23 +47,6 @@
     ol {
       padding-left: 28px;
     }
-
-    .opt_short {
-      display: none;
-    }
-    .opt_full {
-      display: inline;
-    }
-    
-    @media screen and (max-width: 800px) {
-      .opt_short {
-        display: inline;
-      }
-      .opt_full {
-        display: none;
-      }
-    }
-    
   </style>
 
 {% endblock %}
@@ -169,7 +152,7 @@
             {% with alocacoes=projeto.alocacao_set.all %}{% if alocacoes %}
               <span class="emails esconder">
                 <a href="mailto:{% for alocacao in alocacoes %}{{alocacao.aluno.user.email}}{% if not forloop.last %},{% endif %}{% endfor %}?subject=PFE%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if alocacoes|length > 1 %}s{% endif %}%20{% for alocacao in alocacoes %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{alocacao.aluno.user.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenador_email}}%20(coordenação%20PFE)" target="_blank">
-                  &#x2709;
+                  <i class="fas fa-mail-bulk"></i>
                 </a>
               </span>
             {% endif %}{% endwith %}
@@ -190,7 +173,7 @@
               {% if aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span>{% endif %}
               <div class="prioridade" style="display: none;">{{prioridade}}</div> <!-- para mostrar no gráfico -->
               <span class="opt_full emails"><a href="mailto:{{aluno.user.email}}">&lt;{{aluno.user.email}}&gt;</a></span>
-              <span class="opt_short emails"><a href="mailto:{{aluno.user.email}}">&#x2709;</a></span>
+              <span class="opt_short emails"><a href="mailto:{{aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
           </li>
         {% endfor %}
         </ol>
@@ -204,7 +187,7 @@
             <span class="opt_full website">(<a href="{{projeto.organizacao.website}}"
               >{{ projeto.organizacao.website }}</a>)</a></span>
             <span class="opt_short website"><a href="{{projeto.organizacao.website}}"
-              >&#x1F517;</a></span>
+              ><i class="fas fa-link"></i></a></span>
             {% endif %}
             {% for cooperacao in cooperacoes %}
               {% if cooperacao.parceiro and cooperacao.parceiro.organizacao %}
@@ -215,7 +198,7 @@
                   <span class="opt_full website">(<a href="{{cooperacao.parceiro.organizacao.website}}"
                     >{{ cooperacao.parceiro.organizacao.website }}</a>)</a></span>
                   <span class="opt_short website"><a href="{{cooperacao.parceiro.organizacao.website}}"
-                    >&#x1F517;</a></span>
+                    ><i class="fas fa-link"></i></a></span>
                   {% endif %}
               {% endif %}
             {% endfor %}
@@ -225,7 +208,7 @@
 
           {% if conexoes %}
           <span class="emails esconder"><a 
-            href="mailto:{% for conexao in conexoes %}{{conexao.parceiro.user.email}}{% if not forloop.last %},{% endif %}{% endfor %}?subject=PFE%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if conexoes|length > 1 %}s{% endif %}%20{% for conexao in conexoes %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{conexao.parceiro.user.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenador_email}}%20(coordenação%20PFE)" target="_blank">&#x2709;</a></span>
+            href="mailto:{% for conexao in conexoes %}{{conexao.parceiro.user.email}}{% if not forloop.last %},{% endif %}{% endfor %}?subject=PFE%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if conexoes|length > 1 %}s{% endif %}%20{% for conexao in conexoes %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{conexao.parceiro.user.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenador_email}}%20(coordenação%20PFE)" target="_blank"><i class="fas fa-mail-bulk"></i></a></span>
           {% endif %}
           </p>
 
@@ -248,8 +231,8 @@
               
               </span>
             </a>
-            <span class="opt_full emails"><a href="mailto:{{conexao.parceiro.user.email}}"> &lt;{{conexao.parceiro.user.email}}&gt;</a></span>
-            <span class="opt_short emails"><a href="mailto:{{conexao.parceiro.user.email}}"> &#x2709;</a></span>
+            <span class="opt_full emails"><a href="mailto:{{conexao.parceiro.user.email}}">&lt;{{conexao.parceiro.user.email}}&gt;</a></span>
+            <span class="opt_short emails"><a href="mailto:{{conexao.parceiro.user.email}}"><i class="far fa-envelope"></i></a></span>
           {% else %}
             <a class="imprimir" href="{% url 'parceiro_detail' conexao.parceiro.id %}" style="color: LightBlue;">
               {{ conexao.parceiro.user.get_full_name }}
@@ -263,8 +246,8 @@
               {% endif %}
               </span>
             </a>
-            <span class="opt_full emails"><a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;"> &lt;{{conexao.parceiro.user.email}}&gt;</a></span>
-            <span class="opt_short emails"><a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;"> &#x2709;</a></span>
+            <span class="opt_full emails"><a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;">&lt;{{conexao.parceiro.user.email}}&gt;</a></span>
+            <span class="opt_short emails"><a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;"><i class="far fa-envelope"></i></a></span>
             <br>
           {% endif %}
           </li>

@@ -67,7 +67,7 @@
       {% endif %}
       &nbsp;
       {% if parceiro.cargo %} <p style="margin-top: -4px; font-size:13px; line-height:1.3;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{parceiro.cargo}}</p>{% endif %}
-      <p style="line-height:0.95;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x2709; <a href="mailto:{{parceiro.user.email}}">&nbsp;{{parceiro.user.email}}</a></p>
+      <p style="line-height:0.95;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="far fa-envelope"></i> <a href="mailto:{{parceiro.user.email}}">&nbsp;{{parceiro.user.email}}</a></p>
 
       {% if parceiro.user.telefone %}&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; 
         <a href="tel:{{parceiro.user.telefone}}">{{parceiro.user.telefone}}</a>&nbsp;<br>
@@ -100,7 +100,7 @@
       {% endif %}
       &nbsp;
       {% if parceiro.cargo %} <p style="margin-top: -4px; font-size:13px; line-height:1.3;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{parceiro.cargo}}</p>{% endif %}
-      <p style="color: transparent; text-shadow: 0 0 0 lightgrey;line-height:0.95;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x2709; <a href="mailto:{{parceiro.user.email}}" style="color: LightBlue; pointer-events: none; cursor: default;">&nbsp;{{parceiro.user.email}}</a></p>
+      <p style="color: transparent; text-shadow: 0 0 0 lightgrey;line-height:0.95;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="far fa-envelope"></i> <a href="mailto:{{parceiro.user.email}}" style="color: LightBlue; pointer-events: none; cursor: default;">&nbsp;{{parceiro.user.email}}</a></p>
       {% if parceiro.user.telefone %} <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; {{parceiro.user.telefone}} &nbsp;</p>{% endif %}
       {% if parceiro.user.celular %} 
         <p style="color: transparent; text-shadow: 0 0 0 lightgrey;">

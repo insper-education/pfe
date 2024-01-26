@@ -208,20 +208,25 @@
 
             <div class="grupo" style="margin-top: 8px;">
               <b>Grupo:</b>
-              <ul style="margin-bottom:0px;">
-                {% for alocacao in banca.projeto.alocacao_set.all %}
-                  <li>
-                    <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">
-                      {{alocacao.aluno.user.get_full_name}}
-                    </a>
-                    <span class="opt_full curso">[{{ alocacao.aluno.curso2 }}]</span>
-                    <span class="opt_short curso">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
-                    {% if alocacao.aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span>{% endif %}
-                    <span class="opt_full emails"><a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a></span>
-                    <span class="opt_short emails"><a href="mailto:{{alocacao.aluno.user.email}}">&#x2709;</a></span>
-                  </li>
-                {% endfor %}
-              </ul>
+              {% with alocacoes=banca.projeto.alocacao_set.all %}
+                <a href="mailto:{% for alocacao in alocacoes %}{{alocacao.aluno.user.email}}{% if not forloop.last %},{% endif %}{% endfor %}?subject=PFE%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if alocacoes|length > 1 %}s{% endif %}%20{% for alocacao in alocacoes %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{alocacao.aluno.user.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenador_email}}%20(coordenação%20PFE)" target="_blank">
+                  <i class="fas fa-mail-bulk"></i>
+                </a>
+                <ul style="margin-bottom:0px;">
+                  {% for alocacao in alocacoes %}
+                    <li>
+                      <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">
+                        {{alocacao.aluno.user.get_full_name}}
+                      </a>
+                      <span class="opt_full curso">[{{ alocacao.aluno.curso2 }}]</span>
+                      <span class="opt_short curso">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
+                      {% if alocacao.aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span>{% endif %}
+                      <span class="opt_full emails"><a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a></span>
+                      <span class="opt_short emails"><a href="mailto:{{alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endwith %}
             </div>
 
             <div class="avaliacao" style="margin-top: 8px; overflow-wrap: break-word;">
