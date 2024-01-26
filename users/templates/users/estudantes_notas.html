@@ -27,18 +27,16 @@
   {% include "informacoes.html" %}
 
   <div class="atualizar">
-
-    {% if alunos_list %}
-      <div class="table-responsive">
+    <div class="table-responsive">
       <table id="EstudantesTable" class="table table-bordered table-hover table-sm">
         <caption style="text-align:right">
           <small>
-            BI: Banca Intermediária |
-            BF: Banca Final |
-            RIG: Relatório Intermediário de Grupo | 
-            RFG: Relatório Final de Grupo |
-            RII: Relatório Intermediário Individual |
-            RFI: Relatório Final Individual
+            <span style="white-space: nowrap;">BI: Banca Intermediária</span> |
+            <span style="white-space: nowrap;">BF: Banca Final</span> |
+            <span style="white-space: nowrap;">RIG: Relatório Intermediário de Grupo</span> |
+            <span style="white-space: nowrap;">RFG: Relatório Final de Grupo</span> |
+            <span style="white-space: nowrap;">RII: Relatório Intermediário Individual</span> |
+            <span style="white-space: nowrap;">RFI: Relatório Final Individual</span>
             <br>
             Projetos <u>sublinhados</u> são de PFE Avançado
           </small>
@@ -54,8 +52,8 @@
               <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Média</span></th>
               {% comment %} <th scope="col" class="text-center">BI</th> {% endcomment %}
           </tr>
-          </thead>
-          <tbody>
+        </thead>
+        <tbody>
           {% for aluno in alunos_list %} 
           <tr class="item">
             <th scope="row" data-order="{{aluno.user.get_full_name}}">
@@ -159,57 +157,53 @@
             {% endwith %}
           </tr>
           {% endfor %}
-          </tbody>
-        </table>
-        </div>
+        </tbody>
+      </table>
+    </div>
         
-
-        <div style="display: table;">
-          <div style="display: table-row;">
-              <div style="display: table-cell; padding: 4px;">
-                <b>Média no semestre = <span id="media"></span></b><br>
-                <b>Desvio padrão no semestre = <span id="desvio"></span></b><br>
+    {% if alunos_list %}
+      <div style="display: table;">
+        <div style="display: table-row;">
+            <div style="display: table-cell; padding: 4px;">
+              <b>Média no semestre = <span id="media"></span></b><br>
+              <b>Desvio padrão no semestre = <span id="desvio"></span></b><br>
+            </div>
+            {% if user.tipo_de_usuario == 4 %} 
+              <div style="display: table-cell; padding-left: 46px"> 
+                <a href="{% url 'blackboard_notas' ano_semestre %}">Tabela para Blackboard</a>
               </div>
-              {% if user.tipo_de_usuario == 4 %} 
-                <div style="display: table-cell; padding-left: 46px"> 
-                  <a href="{% url 'blackboard_notas' ano_semestre %}">Tabela para Blackboard</a>
-                </div>
-              {% endif %}
-          </div>
+            {% endif %}
         </div>
-
-        <script>
-
-          var sum = 0;
-          var count = 0;
-          var array = [];
-          var all = $('#EstudantesTable > tbody > tr');
-          all.each(function() {
-              texto = $('td:eq(4)', this).text().trim().replace(",", ".");
-              nota = parseFloat(texto)
-              if(!isNaN(nota)) {
-                sum += nota
-                array.push(nota);
-                count++;
-              }
-          });
-
-          if(count > 0) {
-
-            $("#media").html((sum / count).toFixed(3));
-
-            var tamanho = array.length
-            var mean = array.reduce((a, b) => a + b) / tamanho
-            std = Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / tamanho)
-            $("#desvio").html(std.toFixed(5));
-
-          }
-          
-        </script>
-
+      </div>
     {% endif %}
 
     <script>
+
+      var sum = 0;
+      var count = 0;
+      var array = [];
+      var all = $('#EstudantesTable > tbody > tr');
+      all.each(function() {
+          texto = $('td:eq(4)', this).text().trim().replace(",", ".");
+          nota = parseFloat(texto)
+          if(!isNaN(nota)) {
+            sum += nota
+            array.push(nota);
+            count++;
+          }
+      });
+
+      if(count > 0) {
+
+        $("#media").html((sum / count).toFixed(3));
+
+        var tamanho = array.length
+        var mean = array.reduce((a, b) => a + b) / tamanho
+        std = Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / tamanho)
+        $("#desvio").html(std.toFixed(5));
+
+      }
+      
       function carrega_pagina() {
         if($('#EstudantesTable th').length > 0) {   // Verifica se os THs foram registrados primeiro
           table = $('#EstudantesTable').dataTable();
@@ -218,7 +212,6 @@
             table.fnSetColumnVis( 2, false );  // esconde Curso
           }
         }
-
       };
       window.onload = carrega_pagina
     </script>

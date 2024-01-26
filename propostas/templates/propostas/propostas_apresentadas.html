@@ -81,7 +81,8 @@
         <caption style="text-align:right">
           <small style="font-size:12px">
             {% for curso in cursos %}
-              <b>{{curso.sigla_curta}}</b>: {{curso.nome}} {% if not forloop.last %}|{% endif %}
+              <span style="white-space: nowrap;"><b>{{curso.sigla_curta}}</b>: {{curso.nome}}</span>
+              {% if not forloop.last %}|{% endif %}
             {% endfor %}<br>
             <b>NO</b>: Normal | <b>IN</b>: Internacional | <b>IC</b>: Intercâmbio | <b>CO</b>: Em Colaboração
           </small>

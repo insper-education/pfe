@@ -81,7 +81,7 @@
       {% endfor %}
       <caption style="text-align:right"><small>
         {% for _,captions  in Conexao.papel.items %}
-          {{captions.1}}: {{captions.0}}
+          <span style="white-space: nowrap;">{{captions.1}}: {{captions.0}}</span>
           {% if not forloop.last %}/{% endif %}
         {% endfor %}
       </small></caption>
