@@ -26,6 +26,10 @@
         });
     </script>
 
+    {% if com_borda %}
+        <div style="border-radius: 8px; border: 2px solid #737DF1; padding: 6px; width: fit-content; margin: 1em 0px 1em 0px;">
+    {% endif %}
+
     <table class="sem_b">
         {% if titulo_areas %}
             <tr>
@@ -58,14 +62,20 @@
             </tr>
         {% endfor %}
     </table>
-    <div style="height:8px;font-size:8px;">&nbsp;</div>
+    {% if not com_borda %}
+        <div style="height:8px;font-size:8px;">&nbsp;</div>
+    {% endif %}
     
     {% if not not_outras %}
         <label style="display: inline-block; vertical-align: top; font-size: 14px;" for="outras">Outras:</label> 
         <textarea type="text" cols="29" maxlength="128" id="outras" name="outras" wrap="soft"
         {% if vencido %}disabled{% endif %}
         >{% for a in aa %}{% if a.outras %}{{a.outras}}{% endif %}{% endfor %}</textarea>
-    {% endif %}        
+    {% endif %}
+
+    {% if com_borda %}
+        </div>
+    {% endif %}
 
     {% if titulo_areas %}
 

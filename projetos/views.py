@@ -1488,17 +1488,17 @@ def filtro_projetos(request):
     """Filtra os projetos."""
     edicoes = []
     if request.is_ajax():
-        if 'edicao' in request.POST:
-            edicao = request.POST['edicao']
-            if edicao == 'todas':
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
+            if edicao == "todas":
                 projetos_filtrados = Projeto.objects.all()
             else:
-                ano, semestre = request.POST['edicao'].split('.')
+                ano, semestre = request.POST["edicao"].split('.')
                 projetos_filtrados = Projeto.objects.filter(ano=ano,
                                                             semestre=semestre)
             projetos = projetos_filtrados.order_by("ano", "semestre", "organizacao", "titulo",)
             context = {
-                'projetos': projetos,
+                "projetos": projetos,
             }
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
@@ -1512,7 +1512,7 @@ def filtro_projetos(request):
             "areast": areas,
         }
 
-    return render(request, 'projetos/filtra_projetos.html', context)
+    return render(request, "projetos/filtra_projetos.html", context)
 
 
 @login_required
