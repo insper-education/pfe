@@ -17,6 +17,13 @@
     <link rel="stylesheet" href="{% static 'css/impressoras.css' %}">
   {% endcomment %}
 
+  <style>
+    select {
+      max-width: 100%;
+      margin-right: 16px;
+    }
+  </style>
+
 {% endblock %}
 
 {% block content %}
@@ -45,8 +52,6 @@
     {% endif %}
   </select>
  
-  &nbsp;&nbsp;&nbsp;
-
   <script>
     function tipo_banca(selectObject) {
       var value = selectObject.value;
@@ -66,6 +71,7 @@
     <option value="Falconi" {% if tipo == "Falconi" %}selected{% endif %}>falconi</option>
   </select>
 
+  <br>
   {% include "informacoes.html" %}
 
   {% if bancas %}
