@@ -44,7 +44,7 @@
             class="open-documento"
             data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'Plano de Orientação' documento.id %}" 
            {% endif %}
-           ><b>&#128463;
+           ><b><i class="fas fa-file-alt"></i>
         {% empty %}
           <a {% if projeto.periodo == "Anteriores" %}style="color:grey"{% else %}style="color:red"{% endif %}
            data-toggle="tooltip" data-html="true" animation="true" title="Não entregue"
@@ -52,7 +52,7 @@
             class="open-documento"
             data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'Plano de Orientação' %}"
            {% endif %}
-            ><b>&#128460;
+            ><b><i class="far fa-file"></i>
         {% endfor %}</b>
          {{projeto.ano}}.{{projeto.semestre}} - {{projeto.organizacao.nome}}, {{projeto.get_titulo}}
         </a>

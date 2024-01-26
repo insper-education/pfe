@@ -14,7 +14,6 @@
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
 
-
   <style>
     table, td, th {
         padding: 0.4rem;
@@ -54,13 +53,13 @@
                  data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
                  class="open-documento"
                  data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'Plano de Orientação' documento.id %}">
-                  <font size="6">&#128463;</font>
+                  <font size="6"><i class="fas fa-file-alt"></i></font>
                 </a>
                 <a style="color:green"
                  data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
                  class="open-documento"
                  data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'Plano de Orientação' documento.id %}">
-                  <font size="6">&#128279;</font>
+                  <font size="6"><i class="fas fa-link"></i></font>
                 </a>
               {% else %}
                 {% if documento.documento %}
@@ -68,7 +67,7 @@
                    data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
                    class="open-documento"
                    data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'Plano de Orientação' documento.id %}">
-                    <font size="6">&#128463;</font>
+                    <font size="6"><i class="fas fa-file-alt"></i></font>
                   </a>
                 {% endif %}
                 {% if documento.link %}
@@ -76,7 +75,7 @@
                    data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
                    class="open-documento"
                    data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'Plano de Orientação' documento.id %}">
-                    <font size="6">&#128279;</font>
+                    <font size="6"><i class="fas fa-link"></i></font>
                   </a>
                 {% endif %}
               {% endif %}
@@ -91,7 +90,7 @@
                data-toggle="tooltip" data-html="true" animation="true" title="Não entregue"
                class="open-documento"
                data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'Plano de Orientação' %}">
-                <font size="6">&#128460;</font>
+                <font size="6"><i class="far fa-file"></i></font>
               </a>
             {% endfor %}
             
