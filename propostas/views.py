@@ -127,14 +127,15 @@ def mapeamento_estudantes_propostas(request):
 
         estudantes = zip(alunos, opcoes)
         context = {
-            'estudantes': estudantes,
-            'propostas': propostas,
-            'configuracao': configuracao,
-            'ano': ano,
-            'semestre': semestre,
-            'loop_anos': range(2018, configuracao.ano+1),
-            'proposta_indice': proposta_indice,
-            'edicoes': edicoes,
+            "estudantes": estudantes,
+            "propostas": propostas,
+            "configuracao": configuracao,
+            "ano": ano,
+            "semestre": semestre,
+            "loop_anos": range(2018, configuracao.ano+1),
+            "proposta_indice": proposta_indice,
+            "edicoes": edicoes,
+            "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
         }
 
     else:
@@ -147,7 +148,6 @@ def mapeamento_estudantes_propostas(request):
         context = {
             "edicoes": edicoes,
             "informacoes": informacoes,
-            "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
         }
 
     return render(request,
