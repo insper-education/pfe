@@ -27,7 +27,7 @@
     {% if parceiros %}
       <div class="table-responsive">
       <table id="ParceirosTable" class="table table-bordered table-hover table-sm">
-        <caption style="text-align:right">
+        <caption style="text-align: right">
           {% for _,captions  in Conexao.papel.items %}
             <span style="white-space: nowrap;">{{captions.1}}: {{captions.0}}</span>
             {% if not forloop.last %}/{% endif %}

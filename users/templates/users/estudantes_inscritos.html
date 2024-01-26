@@ -6,20 +6,12 @@
 {% endcomment %}
 
 {% block head %}
-
   {% load static %}
   {% load aderencia_aluno %}
-
+  <link rel="stylesheet" href="{% static 'css/tab_simples.css' %}">
   <script src="{% static 'js/w3.js' %}"></script>
   <script src="{% static 'js/Chart.min.js' %}"></script>
   <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
-
-  <style>
-    th, td {
-      padding-left: 4px;
-      padding-right: 4px;
-    }
-  </style>
 
 {% endblock %}
 
@@ -27,71 +19,60 @@
 
   <span class="titulo">Estudantes Inscritos</span>
 
-  {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" with n_todas=True %}
-
   {% include "informacoes.html" %}
 
   <div class="atualizar">
-
-    <table id="EstudantesTable">
-      <thead>
-      <tr>
-          <th class="text-center">C</th>
-          <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Estudante</th>
-          <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Curso</th>
-          <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">CR</th>
-      </tr>
-      </thead>
-      <tbody>
-      {% for aluno,opcoes,opcoestemp in alunos_list %} 
-        <tr class="item">
-          <td class="{% if opcoes.count >= 5 %}text-success{% elif opcoestemp.count >= 5 %}text-warning{% else %}text-danger{% endif %}"> &#x2B24; </td>
-          <td>
-            <a href="{% url 'estudante_detail' aluno.id %}"
-                data-toggle="tooltip" data-html="true" animation="true" title="
-                {% for opcao in opcoes %}
-                  <b>#{{ opcao.prioridade }} :</b>
-                  {% with alocacoes=aluno.alocacao_set %}
-                    {% if alocacoes.count and opcao.proposta == alocacoes.last.projeto.proposta %}
-                      <u>
-                    {% endif %}
-                        {{opcao.proposta.titulo}}
+    <div class="table-responsive">
+      <table id="EstudantesTable" class="table-bordered table-sm">
+        <caption style="text-align: left">
+          <text class="text-success">&#x2B24;</text> Estudante já selecionou propostas ({{inscritos}}) [{% widthratio inscritos num_alunos 100 %}%]<br>
+          <text class="text-warning">&#x2B24;</text> Estudante realizou seleção provisória ({{tmpinscritos}}) [{% widthratio tmpinscritos num_alunos 100 %}%]<br>
+          <text class="text-danger">&#x2B24;</text> Estudante ainda precisa selecionar propostas ({{ninscritos}}) [{% widthratio ninscritos num_alunos 100 %}%]<br>      
+        </caption>
+        <thead class="table-info">
+          <tr>
+            <th class="text-center">C</th>
+            <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(2)')">Estudante</th>
+            <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(3)')">Curso</th>
+            <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(4)')">CR</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for aluno,opcoes,opcoestemp in alunos_list %} 
+          <tr class="item">
+            <td class="{% if opcoes.count >= 5 %}text-success{% elif opcoestemp.count >= 5 %}text-warning{% else %}text-danger{% endif %}"> &#x2B24; </td>
+            <td>
+              <a href="{% url 'estudante_detail' aluno.id %}"
+                  data-toggle="tooltip" data-html="true" animation="true" title="
+                  {% for opcao in opcoes %}
+                    <b>#{{ opcao.prioridade }} :</b>  
+                      {{opcao.proposta.titulo}}
                       ({{opcao.proposta.organizacao.nome}})
-                    {% if alocacoes.count and opcao.proposta == alocacoes.last.projeto.proposta %}
-                      </u>
-                    {% endif %}
-                  {% endwith %}
-                  |{% mede_aderencia aluno opcao.proposta %}%|
-                  <br>
-                {% empty %}
-                  Estudante não escolheu opções de proposta de projetos
-                {% endfor %}
-                "
-            >
-              {{aluno.user.get_full_name}}
-            </a>
-          </td>
-          {% if aluno.curso2 %}
-            <td style="color:#{{ aluno.curso2.cor }};">
-              {{ aluno.curso2 }}
+                      {% comment %} |{% mede_aderencia aluno opcao.proposta %}%| {% endcomment %}
+                    <br>
+                  {% empty %}
+                    Estudante não escolheu opções de proposta de projetos
+                  {% endfor %}">{{aluno.user.get_full_name}}</a>
             </td>
-          {% else %}
-            <td><b>CURSO NÃO DEFINIDO</b></td>
-          {% endif %}
-          <td>
-            {{ aluno.cr|floatformat:4 }}
-          </td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
+            {% if aluno.curso2 %}
+              <td style="color:#{{ aluno.curso2.cor }};">
+                {{ aluno.curso2 }}
+              </td>
+            {% else %}
+              <td><b>CURSO NÃO DEFINIDO</b></td>
+            {% endif %}
+            <td>
+              {{ aluno.cr|floatformat:4 }}
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
     <br>
     
-    <text class="text-success">&#x2B24;</text> Estudante já selecionou propostas ({{inscritos}}) [{% widthratio inscritos num_alunos 100 %}%]<br>
-    <text class="text-warning">&#x2B24;</text> Estudante realizou seleção provisória ({{tmpinscritos}}) [{% widthratio tmpinscritos num_alunos 100 %}%]<br>
-    <text class="text-danger">&#x2B24;</text> Estudante ainda precisa selecionar propostas ({{ninscritos}}) [{% widthratio ninscritos num_alunos 100 %}%]<br>
-    <br>
+    
 
     <strong>Total de Estudantes Aplicando:</strong> {{ num_alunos }}<br>
 

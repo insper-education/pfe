@@ -430,20 +430,19 @@ def estudantes_objetivos(request):
 def estudantes_inscritos(request):
     """Mostra todos os alunos que estão se inscrevendo em projetos."""
     if request.is_ajax():
-        if 'edicao' in request.POST:
-            edicao = request.POST['edicao']
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
 
             ano = int(edicao.split(".")[0])
             semestre = int(edicao.split(".")[1])
 
             alunos = Aluno.objects.filter(trancado=False)\
-                .filter(anoPFE=ano, semestrePFE=semestre)\
-                .order_by(Lower("user__first_name"), Lower("user__last_name"))
+                .filter(anoPFE=ano, semestrePFE=semestre)
 
             # Conta soh alunos
             num_alunos = alunos.count()
 
-            # Conta alunos de cada curso
+            # Conta estudantes de cada curso
             cursos = Curso.objects.filter(curso_do_insper=True).order_by("id")
             num_estudantes_curso = {}
             for curso in cursos:
