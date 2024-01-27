@@ -41,45 +41,24 @@
       {% endif %}
     }
     
-    .t_f {
-      display: inline;
-    }
-    .t_s {
-      display: none;
-    }
+    .t_f {display: inline;}
+    .t_s {display: none;}
     
     @media only screen and (max-width: 1800px) {
-      .t_f { 
-        display: none;
-      }
-      .t_s {
-        display: inline;
-      }
+      .t_f { display: none;}
+      .t_s {display: inline;}
     }
 
-
     @media only screen and (max-width: 740px) {
-      #info_semestre {
-        font-size:13px;
-      }
-      .tit_agenda {
-        font-size:16px;
-      }
-      .t_f {
-        display: none;
-      }
-      .t_s {
-        display: none;
-      }
+      #info_semestre {font-size:13px;}
+      .tit_agenda {font-size:16px;}
+      .t_f {display: none;}
+      .t_s {display: none;}
     }
 
     @media only screen and (max-width: 480px) {
-      #info_semestre {
-        font-size:12px;
-      }
-      .tit_agenda {
-        font-size:14px;
-      }
+      #info_semestre {font-size:12px;}
+      .tit_agenda {font-size:14px;}
     }
     
     .event-name, .event-type {
@@ -103,9 +82,7 @@
       color:darkred;
     }
 
-    .event-descricao {
-      color:darkblue;
-    }
+    .event-descricao {color:darkblue;}
 
     .semestre1 {
       border-radius: 5px 0px 0px 5px;
@@ -185,9 +162,7 @@
       padding-right: 4px;
     }
 
-    label {
-      margin: 6px 0px 2px 0px;
-    }
+    label {margin: 6px 0px 2px 0px;}
 
   </style>
 
@@ -211,13 +186,13 @@
       {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
         // Escondendo informações
         if($('.lista_operacao').is(":hidden")) {
-          $('#titulo_operacao').hide()
+          $('#titulo_operacao').hide();
         }          
         if($('.lista_academico').is(":hidden")) {
-          $('#titulo_academico').hide()
+          $('#titulo_academico').hide();
         }
         if($('.lista_aulas').is(":hidden")) {
-          $('#titulo_aulas').hide()
+          $('#titulo_aulas').hide();
         }
         carrega_semestre();
       {% endif %}
@@ -228,13 +203,13 @@
         document.querySelector('#tudo').style.width = "100%";
         {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
           if($('.lista_operacao').is(":hidden")) {
-            $('#titulo_operacao').show()
+            $('#titulo_operacao').show();
           }          
           if($('.lista_academico').is(":hidden")) {
-            $('#titulo_academico').show()
+            $('#titulo_academico').show();
           }
           if($('.lista_aulas').is(":hidden")) {
-            $('#titulo_aulas').show()
+            $('#titulo_aulas').show();
           }
           carrega_semestre();
         {% endif %}
@@ -250,7 +225,7 @@
 
     <span class="titulo">Calendário de Eventos</span>
     
-    <div id='calendar' style="overflow-x: visible;"></div>
+    <div id="calendar" style="overflow-x: visible;"></div>
     
     <div style="margin-top: 10px; margin-left: 3vw;">Semestre:
       <span class="semestre1" id="primeiro_semestre">1</span><span class="semestre2" id="segundo_semestre">2</span>
@@ -1020,11 +995,17 @@
 
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
         function atualiza_visualizacao() {
+          console.log("lista_operacao!!!", $('.lista_operacao').is(":hidden"));
+          console.log("lista_academico!!!", $('.lista_academico').is(":hidden"));
+          console.log("lista_aulas!!!", $('.lista_aulas').is(":hidden"));
+
           dataEventos = [];
           if(!($('.lista_operacao').is(":hidden"))) {
-            dataEventos = dataEventos.concat(dataEventosOrganizacao);  
+            console.log("ADICIONA OPERACAO!!!");
+            dataEventos = dataEventos.concat(dataEventosOrganizacao);
           }          
           if(!($('.lista_academico').is(":hidden"))) {
+            console.log("ADICIONA ACADEMICO!!!");
             dataEventos = dataEventos.concat(dataEventosAcademicos);
             calendar.setCustomDayRenderer(dias_especiais);
           } else {
@@ -1034,16 +1015,20 @@
         }
 
         $('#titulo_operacao').click(function() {
-          $(".lista_operacao").toggle( "slide" );
-          atualiza_visualizacao()
+          $(".lista_operacao").toggle( "slide", function(){
+            atualiza_visualizacao();
+          });
+          
         });
         $('#titulo_academico').click(function() {
-          $(".lista_academico").toggle( "slide" );
-          atualiza_visualizacao()
+          $(".lista_academico").toggle( "slide" , function(){
+            atualiza_visualizacao();
+          });
         });
         $('#titulo_aulas').click(function() {
-          $(".lista_aulas").toggle( "slide" );
-          atualiza_visualizacao()
+          $(".lista_aulas").toggle( "slide" , function(){
+            atualiza_visualizacao();
+          });
         });
     {% endif %}
 

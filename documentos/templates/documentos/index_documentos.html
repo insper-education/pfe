@@ -86,6 +86,7 @@
     <hr>
     <h5>Área do Operacional</h5>
     <ul>
+      {% include "documento.html" with documento=documentos|tipo_documento:44 %}
       <a href="{% url 'tabela_seguros' %}"><li>Seguros Emitidos</li></a>
       <a href="{% url 'contratos_assinados' %}"><li>Contratos Assinados</li></a>
     </ul>
