@@ -70,19 +70,19 @@
 
     .event-location,
     .event-observation,
-    .event-descricao,
-    .event-responsavel
+    .event-atividade,
+    .event-responsavel,
     .event-material {
       font-size: 0.7em;
       padding-left: 8px;
       line-height: 1.0;
     }
 
-    .event-observation {
-      color:darkred;
-    }
+    .event-responsavel {color:brown;}
+    .event-location {color:darkgreen;}
+    .event-atividade {color:darkblue;}
+    .event-observation {color:red;}
 
-    .event-descricao {color:darkblue;}
 
     .semestre1 {
       border-radius: 5px 0px 0px 5px;
@@ -442,8 +442,8 @@
                                 id: {% if aula.id %}{{aula.id}}{% else %}null{% endif %},
                                 name: "{{aula.get_title}}",
                                 location: "{{aula.location}}",
-                                observation: "{{aula.observacao}}",
-                                descricao: `{{aula.descricao}}`,
+                                observation: `{{aula.observacao}}`,
+                                atividade: `{{aula.atividade}}`,
                                 responsavel: {% if aula.responsavel %}{{aula.responsavel.id}}{% else %}0{% endif %},
                                 material: {% if aula.documento %}{{aula.documento.id}}{% else %}0{% endif %},
                                 type: "{{aula.tipo_de_evento}}",
@@ -462,7 +462,7 @@
                         </th>
                         
                         <td class="colu">
-                          {{aula.descricao}} 
+                          {{aula.atividade}} 
                           {% if aula.responsavel %}({{aula.responsavel.get_full_name}}){% endif %}
                           {% if aula.documento %}
                             <a href="http://{{request.get_host}}{{aula.documento.get_url}}">
@@ -539,7 +539,8 @@
       $('#event-modal input[name="event-index"]').val(evento ? evento.id : '');
       $('#event-modal select[name="event-type"]').val(evento ? evento.type : '');
       $('#event-modal input[name="event-location"]').val(evento ? evento.location : '');
-      $('#event-modal textarea[name="event-descricao"]').val(evento ? evento.descricao : '');
+      $('#event-modal input[name="event-atividade"]').val(evento ? evento.atividade : '');
+      //$('#event-modal textarea[name="event-atividade"]').val(evento ? evento.atividade : '');
       $('#event-modal input[name="event-observation"]').val(evento ? evento.observation : '');
       $('#event-modal select[name="event-responsavel"]').val(evento ? evento.responsavel : '');      
       $('#event-modal select[name="event-material"]').val(evento ? evento.material : '');      
@@ -593,7 +594,8 @@
         name: $('#event-modal select[name="event-type"] option:selected').text(),
         type: $('#event-modal select[name="event-type"] option:selected').val(),
         location: $('#event-modal input[name="event-location"]').val(),
-        descricao: $('#event-modal textarea[name="event-descricao"]').val(),
+        atividade: $('#event-modal input[name="event-atividade"]').val(),
+        //atividade: $('#event-modal textarea[name="event-atividade"]').val(),
         observation: $('#event-modal input[name="event-observation"]').val(),
         responsavel: $('#event-modal select[name="event-responsavel"]').val(),
         material: $('#event-modal select[name="event-material"]').val(),
@@ -664,7 +666,7 @@
           id : id,
           type : event.type,
           location : event.location,
-          descricao : event.descricao,
+          atividade : event.atividade,
           observation : event.observation,
           responsavel: event.responsavel,
           material: event.material,
@@ -683,7 +685,7 @@
                   dataSource[i].name = event.name;
                   dataSource[i].type = event.type;
                   dataSource[i].location = event.location;
-                  dataSource[i].descricao = event.descricao;
+                  dataSource[i].atividade = event.atividade;
                   dataSource[i].observation = event.observation;
                   dataSource[i].responsavel = event.responsavel;
                   dataSource[i].material = event.material;
@@ -734,8 +736,8 @@
                 id: {{evento.id}},
                 name: "{{evento.get_title}}",
                 location: "{{evento.location}}",
-                observation: "{{evento.observacao}}",
-                descricao: `{{evento.descricao}}`,
+                observation: `{{evento.observacao}}`,
+                atividade: `{{evento.atividade}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
@@ -749,8 +751,8 @@
                 id: {{evento.id}},
                 name: "{{evento.get_title}}",
                 location: "{{evento.location}}",
-                observation: "{{evento.observacao}}",
-                descricao: `{{evento.descricao}}`,
+                observation: `{{evento.observacao}}`,
+                atividade: `{{evento.atividade}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
@@ -764,8 +766,8 @@
                 id: {{evento.id}},
                 name: "{{evento.get_title}}",
                 location: "{{evento.location}}",
-                observation: "{{evento.observacao}}",
-                descricao: `{{evento.descricao}}`,
+                observation: `{{evento.observacao}}`,
+                atividade: `{{evento.atividade}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
@@ -779,8 +781,8 @@
                 id: {{evento.id}},
                 name: "{{evento.get_title}}",
                 location: "{{evento.location}}",
-                observation: "{{evento.observacao}}",
-                descricao: `{{evento.descricao}}`,
+                observation: `{{evento.observacao}}`,
+                atividade: `{{evento.atividade}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
@@ -794,8 +796,8 @@
                 id: {{evento.id}},
                 name: "{{evento.get_title}}",
                 location: "{{evento.location}}",
-                observation: "{{evento.observacao}}",
-                descricao: `{{evento.descricao}}`,
+                observation: `{{evento.observacao}}`,
+                atividade: `{{evento.atividade}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
@@ -809,8 +811,8 @@
                 id: {{evento.id}},
                 name: "{{evento.get_title}}",
                 location: "{{evento.location}}",
-                observation: "{{evento.observacao}}",
-                descricao: `{{evento.descricao}}`,
+                observation: `{{evento.observacao}}`,
+                atividade: `{{evento.atividade}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
@@ -830,8 +832,8 @@
                 id: {{evento.id}},
                 name: "{{evento.get_title}}",
                 location: "{{evento.location}}",
-                observation: "{{evento.observacao}}",
-                descricao: `{{evento.descricao}}`,
+                observation: `{{evento.observacao}}`,
+                atividade: `{{evento.atividade}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
@@ -922,13 +924,13 @@
               for (var i in e.events) {
                 content += '<div class="event-tooltip-content">' +
                 '<div class="event-name">&#8226; ' + e.events[i].name + '</div>';
+                
+                if (e.events[i].atividade) {
+                  content += '<div class="event-atividade">' + "Atividade: " + e.events[i].atividade.replace(/(?:\r\n|\r|\n)/g, '<br>') + '</div>';
+                }
                 if (e.events[i].location) {
                   content += '<div class="event-location">' + "Local: " + e.events[i].location + '</div>';
                 }
-                if (e.events[i].descricao) {
-                  content += '<div class="event-descricao">' + "Descrição: " + e.events[i].descricao.replace(/(?:\r\n|\r|\n)/g, '<br>') + '</div>';
-                }
-
                 if (e.events[i].responsavel) {
                   var text = pessoas[e.events[i].responsavel];
                   content += '<div class="event-responsavel">' + "Professor: " + text + '</div>';

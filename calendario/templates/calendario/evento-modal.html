@@ -36,22 +36,18 @@
                 </select>
               </div>
             </div>
+
+            <div class="form-group row">
+              <label for="event-atividade" class="col-sm-4 control-label">Atividade (nome)</label>
+              <div class="col-sm-8">
+                <input id="event-atividade" name="event-atividade" type="text" class="form-control" maxlength="{% max_length Evento "atividade" %}">
+              </div>
+            </div>
+
             <div class="form-group row">
               <label for="event-location" class="col-sm-4 control-label">Local</label>
               <div class="col-sm-8">
                 <input id="event-location" name="event-location" type="text" class="form-control" maxlength="{% max_length Evento "location" %}">
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="event-descricao" class="col-sm-4 control-label">Descrição</label>
-              <div class="col-sm-8">
-                <textarea class="form-control" id="event-descricao" name="event-descricao" rows="3"></textarea>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="event-observation" class="col-sm-4 control-label">Obs.</label>
-              <div class="col-sm-8">
-                <input id="event-observation" name="event-observation" type="text" class="form-control" maxlength="{% max_length Evento "observacao" %}">
               </div>
             </div>
 
@@ -74,8 +70,22 @@
               </div>
             </div>
 
+            {% comment %} <div class="form-group row">
+              <label for="event-atividade" class="col-sm-4 control-label">Atividade</label>
+              <div class="col-sm-8">
+                <textarea class="form-control" id="event-atividade" name="event-atividade" rows="3"></textarea>
+              </div>
+            </div> {% endcomment %}
+
             <div class="form-group row">
-              <label for="event-material" class="col-sm-4 control-label">Material</label>
+              <label for="event-observation" class="col-sm-4 control-label">Observações</label>
+              <div class="col-sm-8">
+                <input id="event-observation" name="event-observation" type="text" class="form-control" maxlength="{% max_length Evento "observacao" %}">
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="event-material" class="col-sm-4 control-label">Material (arquivos)</label>
               <div class="col-sm-8">
                 <select name="event-material" id="event-material" class="form-control" title="Selecione material anexo">
                   <option value id="nenhum"> -------- </option>
