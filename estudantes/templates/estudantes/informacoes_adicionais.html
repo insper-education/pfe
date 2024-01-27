@@ -23,17 +23,15 @@
 {% block content %}
 
   <span class="titulo">Interesses e Experiências</span>
-  {% if mensagem %}<h5 class="red-bold">{{mensagem}}</h5>{% endif %}
-  {% if vencido and user.tipo_de_usuario == 1 %}<h5 class="red-bold">Prazo vencido. Você não pode mais editar seus dados!</h5>{% endif %}
+  {% if mensagem %}<h6 class="red-bold">{{mensagem}}</h6>{% endif %}
+  {% if vencido and user.tipo_de_usuario == 1 %}<h6 class="red-bold">Prazo vencido. Você não pode mais editar seus dados!</h6>{% endif %}
 
   <form method="post"> {% csrf_token %}  
 
-    <span style="display: inline-block; margin-bottom: 6px;">Selecionar suas áreas de interesse:</span><br>
-    <div style="display: inline-block; border: 1px solid grey; padding: 8px;">
-      {% include "areas.html" with aa=estudante.user.areadeinteresse_set.all %}
-    </div>
-    <br><br>
+    <span style="display: inline-block; margin-left: 4px; margin-bottom: 1px;">Selecionar suas áreas de interesse:</span><br>
+    {% include "areas.html" with aa=estudante.user.areadeinteresse_set.all com_borda=True %}<br>
     
+    <br>
     <label for="trabalhou">
     Você já trabalhou/trabalha ou estagiou/estagia em alguma empresa de engenharia?<br>
     Se sim, qual/quais?

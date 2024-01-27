@@ -56,7 +56,7 @@
   
   {% if aulas %}
     <hr>
-    <h4>Aula(s) Ministrada(s)</h4>
+    <h4>Aula{% if aulas|length > 1 %}s{% endif %} Ministrada{% if aulas|length > 1 %}s{% endif %}</h4>
     <ol>
       {% for aula in aulas %}
         <li> {{aula.startDate}} - {{aula.descricao}} </li>
@@ -66,7 +66,7 @@
 
   {% if projetos %}
     <hr>
-    <h4>Projeto(s) Orientado(s)</h4>
+    <h4>Projeto{% if projetos|length > 1 %}s{% endif %} Orientado{% if projetos|length > 1 %}s{% endif %}</h4>
     <ol>
     {% for projeto in projetos %}
       {% if projeto.alocacao_set.all.count > 0 %}
@@ -93,7 +93,7 @@
   
   {% if coorientacoes %}
     <hr>
-    <h4>Projeto(s) Coorientado(s)</h4>
+    <h4>Projeto{% if coorientacoes|length > 1 %}s{% endif %} Coorientado{% if coorientacoes|length > 1 %}s{% endif %}</h4>
     <ol>
     {% for coorientacao in coorientacoes %}
       {% if coorientacao.projeto.alocacao_set.all.count > 0 %}
@@ -112,7 +112,7 @@
 
   {% if bancas %}
     <hr>
-    <h4>Participação em Banca(s)</h4>
+    <h4>Participação em Banca{% if bancas|length > 1 %}s{% endif %}</h4>
     <ol>
     {% for banca in bancas %}
         <li>

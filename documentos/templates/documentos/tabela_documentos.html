@@ -116,8 +116,6 @@
                     </span>
                   {% endif %}
                 {% endwith %}
-            
-
               </td>
 
               <!-- Período -->
@@ -166,44 +164,44 @@
               <!-- Documentos -->
               <td  style="text-align:left;min-width:18em;"><small>
 
-        <ul style="padding-left: 20px;margin-bottom: 0px;">
-          {% for documento in projeto.documento_set.all %} 
-            {% if documento.confidencial %}
-              <span class="confidencial">
-            {% endif %}
-            {% if documento.documento and documento.link %}
-              <li>
-                {{documento}}
-                <a href="http://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
-                <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
-                {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
-                  <sup>(Inglês)</sup>
-                {% endif %}
-              </li>
-            {% else %}
-              {% if documento.documento %}
-                <li>
-                  <a href="http://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
-                  {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
-                    <sup>(Inglês)</sup>
-                  {% endif %}
-                </li>
-              {% endif %}
-              {% if documento.link %}
-                <li>
-                  <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
-                  {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
-                    <sup>(Inglês)</sup>
-                  {% endif %}
-                </li>
-              {% endif %}
-            {% endif %}
-            
-            {% if documento.confidencial %}
-              </span>
-            {% endif %}
-          {% endfor %}
-        </ul>
+                <ul style="padding-left: 20px;margin-bottom: 0px;">
+                  {% for documento in projeto.documento_set.all %} 
+                    {% if documento.confidencial %}
+                      <span class="confidencial">
+                    {% endif %}
+                    {% if documento.documento and documento.link %}
+                      <li>
+                        {{documento.tipo_documento}}
+                        <a href="http://{{request.get_host}}{{documento.get_url}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+                        <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
+                        {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
+                          <sup>(Inglês)</sup>
+                        {% endif %}
+                      </li>
+                    {% else %}
+                      {% if documento.documento %}
+                        <li>
+                          <a href="http://{{request.get_host}}{{documento.get_url}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_documento}}</a>
+                          {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
+                            <sup>(Inglês)</sup>
+                          {% endif %}
+                        </li>
+                      {% endif %}
+                      {% if documento.link %}
+                        <li>
+                          <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_documento}}</a>
+                          {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
+                            <sup>(Inglês)</sup>
+                          {% endif %}
+                        </li>
+                      {% endif %}
+                    {% endif %}
+                    
+                    {% if documento.confidencial %}
+                      </span>
+                    {% endif %}
+                  {% endfor %}
+                </ul>
 
               </small></td>
             </tr>
@@ -215,12 +213,19 @@
     </div>
 
     <script>
-      function carrega_pagina() {};
+      function carrega_pagina() {
+        // Esconde a coluna de Período se a edição não for "todas"
+        if($('#ProjetosTable th').length > 0) {   // Verifica se os THs foram registrados primeiro
+          table = $('#ProjetosTable').dataTable();
+          if(table) {table.fnSetColumnVis( 3, !($("#filterEdicao").val()!="todas" ));}  // esconde Período
+        }
+      };
       function carrega_site() {
         var filterEdicao = localStorage.getItem("filterEdicao");
         if (filterEdicao !== null && $("#filterEdicao option[value='"+filterEdicao+"']").length > 0 ) {
           $('#filterEdicao').val(filterEdicao).trigger('change');
         }
+        carrega_pagina();
       };
       window.onload = carrega_site
     </script>

@@ -8,6 +8,7 @@
 {% block head %}
   {% load static %}
   {% load get_field %}
+  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
   <style>
     textarea {max-width:100%;}
   </style>
@@ -26,14 +27,15 @@
 
     Prazo para a submissão do relato: <b style='color:red;'>
     {% if prazo %}
-      {{prazo.endDate}}
+    <span class="opt_full">{{prazo.endDate|date:"DATE_FORMAT" }}</span>
+    <span class="opt_short">{{prazo.endDate|date:"d/m/y" }}</span>
     {% else %}
       Não há datas para fazer relatos.
     {% endif %}
     </b>
     <br><br>
 
-    <label for="relato">Informe seu relato quinzenal (máximo {% max_length relato "texto" %} caracteres).</label><br>
+    <label for="relato">Informe seu relato quinzenal (máximo {% max_length relato "texto" %} caracteres)</label><br>
     <textarea id="relato" name="relato" rows="18" cols="160" maxlength="{% max_length relato "texto" %}" {% if not prazo %}disabled{% endif %} 
               placeholder="{{msg_relato_quinzenal}}"
       >{% if relato and relato.texto %}{{relato.texto}}{% endif %}</textarea>

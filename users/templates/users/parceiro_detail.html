@@ -113,7 +113,7 @@
 
   {% if aulas %}
     <hr>
-    <h4>Aula(s) Ministrada(s)</h4>
+    <h4>Aula{% if aulas|length > 1 %}s{% endif %} Ministrada{% if aulas|length > 1 %}s{% endif %}</h4>
     <ol>
       {% for aula in aulas %}
         <li> {{aula.startDate}} - {{aula.descricao}} </li>
@@ -123,7 +123,7 @@
 
   {% if mentorias %}
     <hr>
-    <h4>Mentoria nos Projetos</h4>
+    <h4>Mentoria nos Projeto{% if mentorias|length > 1 %}s{% endif %}</h4>
     <ol>
     {% for mentoria in mentorias %}
       <li>
@@ -139,7 +139,7 @@
 
 {% if bancas %}
     <hr>
-    <h4>Participação em Banca(s)</h4>
+    <h4>Participação em Banca{% if bancas|length > 1 %}s{% endif %}</h4>
     <ol>
     {% for banca in bancas %}
         <li>

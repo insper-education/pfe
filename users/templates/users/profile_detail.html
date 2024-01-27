@@ -14,28 +14,33 @@
 
   <span class="titulo">{{ user.get_full_name }}</span>
 
-  <strong>Usuário:</strong> {{ user.username }}<br>
-  {% if user.tipo_de_usuario == 1 %} {% comment %} estudante {% endcomment %}
-    <strong>Curso:</strong> {{user.aluno.curso2}}<br>
-    <strong>Ano e Semestre de PFE:</strong> {{user.aluno.anoPFE}}.{{user.aluno.semestrePFE}} <small>(ou posterior)</small><br>
-  {% elif user.tipo_de_usuario == 2 %} {% comment %} professor {% endcomment %}
-    <strong>Perfil:</strong> professor<br>
-  {% elif user.tipo_de_usuario == 3 %} {% comment %} parceiro {% endcomment %}
-    <strong>Perfil:</strong> parceiro<br>
-  {% elif user.tipo_de_usuario == 4 %} {% comment %} administrador {% endcomment %}
-    <strong>Perfil:</strong> administrador<br>
-  {% else %}
-    Seu perfil não foi encontrado!
-  {% endif %}
-  <br>
-  {% if user.linkedin %}
-    <strong>LinkedIn:</strong> <a href="{{user.linkedin}}" target="_blank">{{user.linkedin}}</a><br>
-  {% endif %}
-  {% if user.email %}
-    <strong>e-mail:</strong> <a href="mailto:{{user.email}}">{{user.email}}</a><br>
-  {% endif %}
-  <br><br>
   <form action="{% url 'password_change' %}">
+    <strong>Usuário:</strong> {{ user.username }}<br>
+    {% if user.tipo_de_usuario == 1 %} {% comment %} estudante {% endcomment %}
+      <strong>Perfil:</strong> estudante<br>
+      <strong>Curso:</strong> {{user.aluno.curso2}}<br>
+      <strong>Ano e Semestre de PFE:</strong> {{user.aluno.anoPFE}}.{{user.aluno.semestrePFE}} <small>(ou posterior)</small><br>
+    {% elif user.tipo_de_usuario == 2 %} {% comment %} professor {% endcomment %}
+      <strong>Perfil:</strong> professor<br>
+    {% elif user.tipo_de_usuario == 3 %} {% comment %} parceiro {% endcomment %}
+      <strong>Perfil:</strong> parceiro<br>
+    {% elif user.tipo_de_usuario == 4 %} {% comment %} administrador {% endcomment %}
+      <strong>Perfil:</strong> administrador<br>
+    {% else %}
+      Seu perfil não foi encontrado!
+    {% endif %}
+    <br>
+    {% if user.linkedin %}
+      <strong>LinkedIn:</strong> <a href="{{user.linkedin}}" target="_blank">{{user.linkedin}}</a><br>
+    {% endif %}
+    {% if user.email %}
+      <strong>e-mail:</strong> <a href="mailto:{{user.email}}">{{user.email}}</a><br>
+    {% endif %}
+
+    <br><br>
+    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} 
+      <a class="btn btn-primary" href="{% url 'user_detail' user.id %}">Meus Detalhes</a>
+    {% endif %}
     <input class="btn btn-primary" type="submit" value="Atualizar Senha" />
   </form>
 

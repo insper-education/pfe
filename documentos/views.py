@@ -358,7 +358,6 @@ def tabela_documentos(request):
         context = {
             "projetos": projetos,
             "edicao": edicao,
-            "MEDIA_URL": settings.MEDIA_URL,
         }
 
     else:

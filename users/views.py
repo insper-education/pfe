@@ -47,13 +47,16 @@ def user_detail(request, primarykey):
     user = get_object_or_404(PFEUser, pk=primarykey)
 
     if user.tipo_de_usuario == 1:  # aluno
-        return redirect('estudante_detail', user.aluno.id)
+        return redirect("estudante_detail", user.aluno.id)
 
     elif user.tipo_de_usuario == 2:  # professor
-        return redirect('professor_detail', user.professor.id)
+        return redirect("professor_detail", user.professor.id)
 
     elif user.tipo_de_usuario == 3:  # parceiro
-        return redirect('parceiro_detail', user.parceiro.id)
+        return redirect("parceiro_detail", user.parceiro.id)
+
+    elif user.tipo_de_usuario == 4:  # administrador (supor administrador como professor)
+        return redirect("professor_detail", user.professor.id)
 
     return HttpResponse("Usuário não encontrado.", status=401)
 
@@ -61,14 +64,14 @@ def user_detail(request, primarykey):
 @login_required
 def perfil(request):
     """Retorna a página conforme o perfil do usuário."""
-    return render(request, 'users/profile_detail.html')
+    return render(request, "users/profile_detail.html")
 
 
 class SignUp(generic.CreateView):
     """Rotina para fazer o login."""
     form_class = PFEUserCreationForm
-    success_url = reverse_lazy('login')
-    template_name = 'signup.html'
+    success_url = reverse_lazy("login")
+    template_name = "signup.html"
 
 
 class Usuario(generic.DetailView):
