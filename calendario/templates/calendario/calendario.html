@@ -71,6 +71,7 @@
     .event-location,
     .event-observation,
     .event-atividade,
+    .event-descricao,
     .event-responsavel,
     .event-material {
       font-size: 0.7em;
@@ -82,7 +83,6 @@
     .event-location {color:darkgreen;}
     .event-atividade {color:darkblue;}
     .event-observation {color:red;}
-
 
     .semestre1 {
       border-radius: 5px 0px 0px 5px;
@@ -444,6 +444,7 @@
                                 location: "{{aula.location}}",
                                 observation: `{{aula.observacao}}`,
                                 atividade: `{{aula.atividade}}`,
+                                descricao: `{{aula.descricao}}`,
                                 responsavel: {% if aula.responsavel %}{{aula.responsavel.id}}{% else %}0{% endif %},
                                 material: {% if aula.documento %}{{aula.documento.id}}{% else %}0{% endif %},
                                 type: "{{aula.tipo_de_evento}}",
@@ -461,9 +462,11 @@
                           </span>
                         </th>
                         
-                        <td class="colu">
-                          {{aula.atividade}} 
-                          {% if aula.responsavel %}({{aula.responsavel.get_full_name}}){% endif %}
+                        <td class="colu" style="cursor:pointer;">
+                          <span data-toggle="tooltip" data-html="true" animation="true" title="{{aula.descricao}}">
+                            {{aula.atividade}}
+                            {% if aula.responsavel %}({{aula.responsavel.get_full_name}}){% endif %}
+                          </span>
                           {% if aula.documento %}
                             <a href="http://{{request.get_host}}{{aula.documento.get_url}}">
                               &nbsp;<i class="fa fa-file-pdf"></i>
@@ -471,7 +474,7 @@
                           {% endif %}
                         </td>
                         
-                        <td class="colu">{{aula.location}}</td>
+                        <td class="colu" style="cursor:pointer;">{{aula.location}}</td>
                     </tr>
                   {% endfor %}
                 </tbody>
@@ -540,7 +543,7 @@
       $('#event-modal select[name="event-type"]').val(evento ? evento.type : '');
       $('#event-modal input[name="event-location"]').val(evento ? evento.location : '');
       $('#event-modal input[name="event-atividade"]').val(evento ? evento.atividade : '');
-      //$('#event-modal textarea[name="event-atividade"]').val(evento ? evento.atividade : '');
+      $('#event-modal textarea[name="event-descricao"]').val(evento ? evento.descricao : '');
       $('#event-modal input[name="event-observation"]').val(evento ? evento.observation : '');
       $('#event-modal select[name="event-responsavel"]').val(evento ? evento.responsavel : '');      
       $('#event-modal select[name="event-material"]').val(evento ? evento.material : '');      
@@ -595,7 +598,7 @@
         type: $('#event-modal select[name="event-type"] option:selected').val(),
         location: $('#event-modal input[name="event-location"]').val(),
         atividade: $('#event-modal input[name="event-atividade"]').val(),
-        //atividade: $('#event-modal textarea[name="event-atividade"]').val(),
+        descricao: $('#event-modal textarea[name="event-descricao"]').val(),
         observation: $('#event-modal input[name="event-observation"]').val(),
         responsavel: $('#event-modal select[name="event-responsavel"]').val(),
         material: $('#event-modal select[name="event-material"]').val(),
@@ -667,6 +670,7 @@
           type : event.type,
           location : event.location,
           atividade : event.atividade,
+          descricao : event.descricao,
           observation : event.observation,
           responsavel: event.responsavel,
           material: event.material,
@@ -686,6 +690,7 @@
                   dataSource[i].type = event.type;
                   dataSource[i].location = event.location;
                   dataSource[i].atividade = event.atividade;
+                  dataSource[i].descricao = event.descricao;
                   dataSource[i].observation = event.observation;
                   dataSource[i].responsavel = event.responsavel;
                   dataSource[i].material = event.material;
@@ -738,6 +743,7 @@
                 location: "{{evento.location}}",
                 observation: `{{evento.observacao}}`,
                 atividade: `{{evento.atividade}}`,
+                descricao: `{{evento.descricao}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
@@ -753,6 +759,7 @@
                 location: "{{evento.location}}",
                 observation: `{{evento.observacao}}`,
                 atividade: `{{evento.atividade}}`,
+                descricao: `{{evento.descricao}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
@@ -768,6 +775,7 @@
                 location: "{{evento.location}}",
                 observation: `{{evento.observacao}}`,
                 atividade: `{{evento.atividade}}`,
+                descricao: `{{evento.descricao}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
@@ -783,6 +791,7 @@
                 location: "{{evento.location}}",
                 observation: `{{evento.observacao}}`,
                 atividade: `{{evento.atividade}}`,
+                descricao: `{{evento.descricao}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
@@ -798,6 +807,7 @@
                 location: "{{evento.location}}",
                 observation: `{{evento.observacao}}`,
                 atividade: `{{evento.atividade}}`,
+                descricao: `{{evento.descricao}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
@@ -813,6 +823,7 @@
                 location: "{{evento.location}}",
                 observation: `{{evento.observacao}}`,
                 atividade: `{{evento.atividade}}`,
+                descricao: `{{evento.descricao}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
@@ -834,6 +845,7 @@
                 location: "{{evento.location}}",
                 observation: `{{evento.observacao}}`,
                 atividade: `{{evento.atividade}}`,
+                descricao: `{{evento.descricao}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",

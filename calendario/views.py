@@ -224,6 +224,7 @@ def atualiza_evento(request):
     evento.location = request.POST.get("location", '')[:Evento._meta.get_field("location").max_length] 
     evento.observacao = request.POST.get("observation", '')[:Evento._meta.get_field("observacao").max_length]
     evento.atividade = request.POST.get("atividade", '')[:Evento._meta.get_field("atividade").max_length]
+    evento.descricao = request.POST.get("descricao", '')[:Evento._meta.get_field("descricao").max_length]
 
     responsavel = request.POST.get("responsavel", None)
     evento.responsavel = PFEUser.objects.get(id=responsavel) if responsavel else None
@@ -274,7 +275,7 @@ def copia_calendario(request):
         # Verifica se não está criando outra duplicata
         if not Evento.objects.filter(startDate=evento.startDate, endDate=evento.endDate,
                                      location=evento.location, tipo_de_evento=evento.tipo_de_evento,
-                                     atividade=evento.atividade, observacao=evento.observacao).exists():
+                                     atividade=evento.atividade).exists():
             evento.save()
 
-    return redirect('calendario')
+    return redirect("calendario")
