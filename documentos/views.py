@@ -320,7 +320,6 @@ def relatorios_publicos(request):
         context = {
             "relatorios": relatorios,
             "edicao": edicao,
-            "MEDIA_URL": settings.MEDIA_URL,
         }
 
     else:

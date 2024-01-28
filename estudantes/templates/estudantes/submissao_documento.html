@@ -19,6 +19,9 @@
     .lightgrey:hover,
     .lightgrey:active
       {color:lightgrey;}
+    .nome_entrega {
+      font-size: 0.9em;
+    }
   </style>
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
@@ -40,7 +43,7 @@
   {% for item in entregas %}
     {% with dias_ate=item.evento.endDate|dif_dias_hoje dias=14 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
       <div {% if dias_ate > dias and user.tipo_de_usuario == 1 %}style="display:none;"{% endif %} class="div_arredondado">
-        <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
+        <span class="nome_entrega" {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
         {% if item.composicao.tipo_documento %}
           <b>{{item.composicao.tipo_documento.nome}}</b> 
         {% else %}
@@ -61,7 +64,7 @@
             {% endif %}
             onClick="check_prazo('{{item.evento.endDate|date:"Y-m-d"}}T23:59:59');"
             >
-            {% if dias_ate > dias %}+{% else %}{% if item.documentos.last %}<b>&#128472;</b>{% else %}&#10133;{% endif %}{% endif %}
+            {% if dias_ate > dias %}+{% else %}{% if item.documentos.last %}<b><i class="fas fa-redo"></i></b>{% else %}<i class="fas fa-plus"></i>{% endif %}{% endif %}
           </a>
         {% endif %}<br>
         <ul style="padding-left: 22px; width: fit-content;">

@@ -19,20 +19,20 @@
     <span class="titulo">Datas para encontros</span>
     
     {% if user.tipo_de_usuario == 1 %}
-        <h4>Seu projeto: 
+        <h5>Seu projeto: 
             {% if projeto %}
                 {{projeto.get_titulo}} ({{projeto.organizacao}})
             {% else %}
                 &lt; PROJETO NÃO ENCONTRADO &gt;
             {% endif %}
-        </h4>
+        </h5>
     {% else %}
         <h5>Somente visualização das opções de encontros (você não está registrado como estudante)</h5>
     {% endif %}
     <br><br>
 
     {% if aviso %}
-        <h3 class="red-bold">{{aviso|linebreaks}}</h3>
+        <h4 class="red-bold">{{aviso|linebreaks}}</h4>
         <br><br>
     {% endif %}
 

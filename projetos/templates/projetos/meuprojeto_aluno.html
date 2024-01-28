@@ -30,7 +30,7 @@
     <br>
     {% for alocado in alocados %}
 
-      <h4>[{{alocado.projeto.ano}}.{{alocado.projeto.semestre}}]</h4>
+      <h5>[{{alocado.projeto.ano}}.{{alocado.projeto.semestre}}]</h5>
       
       {% if alocado.projeto.ano > configuracao.ano or alocado.projeto.ano == configuracao.ano and alocado.projeto.semestre > configuracao.semestre %}
         Projetos {{configuracao.ano}}.{{configuracao.semestre}} em fase de alocação.<br>
