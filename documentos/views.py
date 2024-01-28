@@ -337,17 +337,17 @@ def tabela_documentos(request):
     """Exibe tabela com todos os documentos armazenados."""
 
     if request.is_ajax():
-        if 'edicao' in request.POST:
-            edicao = request.POST['edicao']
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
 
-            if edicao == 'todas':
+            if edicao == "todas":
                 projetos = Projeto.objects.all()
             else:
-                ano, semestre = request.POST['edicao'].split('.')
+                ano, semestre = request.POST["edicao"].split('.')
                 projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
 
-            if 'curso' in request.POST:
-                curso = request.POST['curso']    
+            if "curso" in request.POST:
+                curso = request.POST["curso"]
             else:
                 return HttpResponse("Algum erro não identificado.", status=401)
 

@@ -116,7 +116,7 @@
     <h4>Aula{% if aulas|length > 1 %}s{% endif %} Ministrada{% if aulas|length > 1 %}s{% endif %}</h4>
     <ol>
       {% for aula in aulas %}
-        <li> {{aula.startDate}} - {{aula.descricao}} </li>
+        <li> {{aula.startDate}} - {{aula.atividade}} </li>
       {% endfor %}
     </ol>
   {% endif %}

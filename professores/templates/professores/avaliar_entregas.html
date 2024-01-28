@@ -36,6 +36,9 @@
     .lightgrey:hover,
     .lightgrey:active
       {color:lightgrey;}
+    .nome_entrega {
+      font-size: 0.9em;
+    }
   </style>
 {% endblock %}
 
@@ -98,7 +101,7 @@
             {% for item in entregas %}
             {% with dias_ate=item.evento.endDate|dif_dias_hoje dias=-1 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
               <div class="pintern" {% if not forloop.first %}style="margin-top: 8px;"{% endif %}> {% comment %} {% if dias_ate > dias %}{% endif %} {% endcomment %}
-                <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
+                <span class="nome_entrega" {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
                   {% if item.composicao.tipo_documento %}
                     <b>{{item.composicao.tipo_documento.nome}}</b> 
                   {% else %}

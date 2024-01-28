@@ -243,7 +243,6 @@
   {% for alocacao in alocacoes %}
     <li>
     <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
-      <p>
         {{alocacao.aluno.user.get_full_name}} 
         <span class="opt_full">[{{ alocacao.aluno.curso2 }}]</span>
         <span class="opt_short" data-toggle="tooltip" data-html="true" animation="true" title="{{ alocacao.aluno.curso2}}">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
@@ -254,7 +253,6 @@
           {% endif %}
         {% endfor %}
         {% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}
-      </p>
     </a>
     </li>
   {% endfor %}

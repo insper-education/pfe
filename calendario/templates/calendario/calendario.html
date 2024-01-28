@@ -24,13 +24,9 @@
   <script src="{% static 'js/jspdf.min.js' %}"></script>
 
   <style>
-    table, th, td {
-      border: 0px;
-    }
-
-    #info_semestre {
-      font-size:16px;
-    }
+    table, th, td {border: 0px;}
+    #info_semestre {font-size:16px;}
+    .colu {font-size:16px;}
 
     .tit_agenda {
       font-size:20px;
@@ -51,6 +47,7 @@
 
     @media only screen and (max-width: 740px) {
       #info_semestre {font-size:13px;}
+      .colu {font-size:13px;}
       .tit_agenda {font-size:16px;}
       .t_f {display: none;}
       .t_s {display: none;}
@@ -58,6 +55,7 @@
 
     @media only screen and (max-width: 480px) {
       #info_semestre {font-size:12px;}
+      .colu {font-size:12px !important;}
       .tit_agenda {font-size:14px;}
     }
     
