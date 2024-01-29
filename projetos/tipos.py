@@ -15,7 +15,7 @@ TIPO_EVENTO = (
     (10, "Início das aulas", "red"),
     (11, "Evento de abertura do PFE", "orange"),  # Obsoleto
     (12, "Aula PFE", "lightgreen"),
-    (13, "Evento de encerramento do PFE", "brown"),
+    (13, "Evento de encerramento do PFE", "orangered"),
     (14, "Bancas Intermediárias", "violet"),
     (15, "Bancas Finais", "yellow"),
     (16, "Apresentação formal final na organização", "burlywood"),
@@ -46,7 +46,7 @@ TIPO_EVENTO = (
 
     (112, "Estudantes informarem que adiarão PFE", "limegreen"),
 
-    (113, "Apresentação das propostas disponíveis para estudantes", "darkslategray"),
+    (113, "Apresentação das propostas disponíveis para estudantes", "seagreen"),
 
     (120, "Limite para submissão de propostas pelas organizações", "lime"),
     (121, "Comitê planeja onde e quantas propostas buscar e selecionar para o semestre", "chartreuse"),
