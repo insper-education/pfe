@@ -6,6 +6,7 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Dezembro de 2020
 """
 
+import os
 import datetime
 import dateutil.parser
 
@@ -29,6 +30,7 @@ from projetos.models import Projeto, Configuracao, Organizacao
 from projetos.support import converte_letra, converte_conceito
 from projetos.support import get_objetivos_atuais
 from projetos.messages import email, render_message, htmlizar
+from projetos.arquivos import le_arquivo
 
 from academica.models import Exame, Composicao, Peso
 
@@ -42,6 +44,8 @@ from .support import converte_conceitos, arredonda_conceitos
 from estudantes.models import Relato, Pares
 
 from academica.support import filtra_composicoes, filtra_entregas
+
+from documentos.models import TipoDocumento
 
 
 @login_required
@@ -890,7 +894,7 @@ def mensagem_orientador(banca):
 
 
 @transaction.atomic
-def banca_avaliar(request, slug):
+def banca_avaliar(request, slug, tipo_documento_id=None):
     """Cria uma tela para preencher avaliações de bancas."""
     configuracao = get_object_or_404(Configuracao)
     coordenacao = configuracao.coordenacao
@@ -927,6 +931,17 @@ def banca_avaliar(request, slug):
 
     except Banca.DoesNotExist:
         return HttpResponseNotFound('<h1>Banca não encontrada!</h1>')
+
+    # Usado para pegar o relatório de avaliação de banca para usuários não cadastrados
+    if tipo_documento_id:
+        tipo_documento = get_object_or_404(TipoDocumento, pk=tipo_documento_id)
+        documento = Documento.objects.filter(tipo_documento=tipo_documento, projeto=banca.projeto).last()
+        path = str(documento.documento).split('/')[-1]
+        local_path = os.path.join(settings.MEDIA_ROOT, "{0}".format(documento.documento))
+        diferenca = abs( (banca.endDate.date() - datetime.date.today()).days )
+        if diferenca > configuracao.prazo_preencher_banca:
+            return HttpResponseNotFound("<h1>Link expirado!<br> Documentos só podem ser visualizados " + str(configuracao.prazo_preencher_banca) + " dias antes ou depois da data da banca!</h1>")
+        return le_arquivo(request, local_path, path, bypass_confidencial=True)
 
     ####################################################################################
     # ISSO ESTÁ OBSOLETO
@@ -1055,7 +1070,7 @@ def banca_avaliar(request, slug):
             orientacoes += "<br><br>"
             orientacoes += "Como ordem recomendada para a arguição da banca, se deve convidar: professores convidados, professores coorientadores, orientador(a) do projeto e por fim demais pessoas assistindo à apresentação. A banca poderá perguntar tanto sobre a apresentação, como o relatório entregue, permitindo uma clara ponderação nas rubricas dos objetivos de aprendizado."
             orientacoes += "<br><br>"
-            orientacoes += "As bancas do Projeto Final de Engenharia servem como mais um evidência de aprendizado, assim, além da percepção dos membros da banca em relação ao nível alcançado nos objetivos de aprendizado pelos membros do grupo, serve também como registro da evolução do projeto. Dessa forma, ao final, a banca terá mais <b>15 minutos para ponderar</b>, nesse momento se pede para dispensar os estudantes e demais convidados externos. Recomendamos 5 minutos para os membros da banca relerem os objetivos de aprendizagem e rubricas, fazerem qualquer anotação e depois 10 minutos para uma discussão final. Cada membro da banca poderá colocar seu veredito sobre grupo, usando as rubricas a seguir. O(a) orientador(a) irá publicar (no Blackboard) posteriormente os conceitos."
+            orientacoes += "As bancas do Projeto Final de Engenharia servem como mais um evidência de aprendizado, assim, além da percepção dos membros da banca em relação ao nível alcançado nos objetivos de aprendizado pelos membros do grupo, serve também como registro da evolução do projeto. Dessa forma, ao final, a banca terá mais <b>15 minutos para ponderar</b>, nesse momento se pede para dispensar os estudantes e demais convidados externos. Recomendamos 5 minutos para os membros da banca relerem os objetivos de aprendizagem e rubricas, fazerem qualquer anotação e depois 10 minutos para uma discussão final. Cada membro da banca poderá colocar seu veredito sobre grupo, usando as rubricas a seguir."
             orientacoes += "<br><br>"
             orientacoes += "No Projeto Final de Engenharia, a maioria dos projetos está sob sigilo, através de contratos realizados (quando pedido ou necessário) entre a Organização Parceira e o Insper, se tem os professores automaticamente responsáveis por garantir o sigilo das informações. Assim <b>pessoas externas só podem participar das bancas com prévia autorização</b>, isso inclui outros estudantes que não sejam do grupo, familiares ou amigos."
             orientacoes += "<br>"
@@ -1064,7 +1079,7 @@ def banca_avaliar(request, slug):
             orientacoes_en += "<br><br>"
             orientacoes_en += "As recommended order for the board members's argument, the following should be invited: guest professors, co-advisor professors, project supervisor and finally other people watching the presentation. The examination board may ask about the presentation, as well as the report delivered, enabling a clear weighting for the learning objectives rubrics."
             orientacoes_en += "<br><br>"
-            orientacoes_en += "Presentations of the Final Engineering Project serve as another evidence of learning, thus, in addition to the perception of the members of the board in relation to the level reached in the learning objectives by the members of the group, it also serves as a record of the evolution of the project. In this way, at the end, the examination board will have more <b>15 minutes to consider</b>, at which point they are asked to dismiss students and other external guests. We recommend 5 minutes for panel members to reread the learning objectives and rubrics, make any notes, and then 10 minutes for a final discussion. Each board member will be able to define a verdict for the group, using the rubrics below. The advisor will later post (on Blackboard) the grades (average)."
+            orientacoes_en += "Presentations of the Final Engineering Project serve as another evidence of learning, thus, in addition to the perception of the members of the board in relation to the level reached in the learning objectives by the members of the group, it also serves as a record of the evolution of the project. In this way, at the end, the examination board will have more <b>15 minutes to consider</b>, at which point they are asked to dismiss students and other external guests. We recommend 5 minutes for panel members to reread the learning objectives and rubrics, make any notes, and then 10 minutes for a final discussion. Each board member will be able to define a verdict for the group, using the rubrics below."
             orientacoes_en += "<br><br>"
             orientacoes_en += "In the Final Engineering Project, most projects are kept confidential, through contracts made (when requested or necessary) between the Partner Organization and Insper, the professors are automatically responsible for guaranteeing the confidentiality of the information. <b>external people can only participate in the presentaions with prior authorization</b>, this includes other students who are not part of the group, family or friends."
             orientacoes_en += "<br>"
@@ -1106,6 +1121,17 @@ def banca_avaliar(request, slug):
         observacoes_orientador = unquote(request.GET.get("observacoes_orientador", ''))
         observacoes_estudantes = unquote(request.GET.get("observacoes_estudantes", ''))
         
+
+        if banca.tipo_de_banca == 1:  # (1, 'intermediaria'),
+            tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Intermediária") | TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
+        elif banca.tipo_de_banca == 0:  # (0, 'final'),
+            tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
+        #elif banca.tipo_de_banca == 2:  # (2, 'falconi'),
+
+        documentos = None
+        if tipo_documento:
+            documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto)
+
         context = {
             "pessoas": pessoas,
             "membros": membros,
@@ -1115,6 +1141,7 @@ def banca_avaliar(request, slug):
             "orientacoes_en": orientacoes_en,
             "avaliador": avaliador,
             "conceitos": conceitos,
+            "documentos": documentos,
             "observacoes_orientador": observacoes_orientador,
             "observacoes_estudantes": observacoes_estudantes,
             "today": datetime.datetime.now(),

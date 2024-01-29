@@ -121,7 +121,7 @@ def get_response(file, path, request):
     else:
         return None
 
-def le_arquivo(request, local_path, path):
+def le_arquivo(request, local_path, path, bypass_confidencial=False):
     """Lê os arquivos pela URL."""
     file_path = os.path.abspath(local_path)
     if ".." in file_path:
@@ -136,33 +136,34 @@ def le_arquivo(request, local_path, path):
             mensagem = "Documento Confidencial"
             context = {"mensagem": mensagem,}
 
-            try:
-                user = PFEUser.objects.get(pk=request.user.pk)
-            except PFEUser.DoesNotExist:
-                if doc.confidencial: 
-                    return render(request, 'generic.html', context=context)    
+            if not bypass_confidencial: # Soh para o caso de documentos de bancas
 
-            if (doc.confidencial) and \
-                not ((user.tipo_de_usuario == 2) or (user.tipo_de_usuario == 4)):
+                try:
+                    user = PFEUser.objects.get(pk=request.user.pk)
+                except PFEUser.DoesNotExist:
+                    if doc.confidencial: 
+                        return render(request, "generic.html", context=context)
 
-                if (user.tipo_de_usuario == 1):
-                    ## Verificar se o documento é do estudante ou do grupo dele
-                    alocado_no_projeto = Alocacao.objects.filter(projeto=doc.projeto, aluno=user.aluno).exists()                    
-                    if doc.tipo_documento.individual and doc.usuario != user:
-                        return render(request, 'generic.html', context=context)
-                    elif not alocado_no_projeto:
-                        return render(request, 'generic.html', context=context)
+                if (doc.confidencial) and \
+                    not ((user.tipo_de_usuario == 2) or (user.tipo_de_usuario == 4)):
 
-                else:
-                    return render(request, "generic.html", context=context)
+                    if (user.tipo_de_usuario == 1):
+                        ## Verificar se o documento é do estudante ou do grupo dele
+                        alocado_no_projeto = Alocacao.objects.filter(projeto=doc.projeto, aluno=user.aluno).exists()                    
+                        if doc.tipo_documento.individual and doc.usuario != user:
+                            return render(request, "generic.html", context=context)
+                        elif not alocado_no_projeto:
+                            return render(request, "generic.html", context=context)
 
+                    else:
+                        return render(request, "generic.html", context=context)
 
         if documento[:3] == "tmp":
             mensagem = "Documento não acessível"
             context = {"mensagem": mensagem,}
             return render(request, 'generic.html', context=context)
 
-        with open(file_path, 'rb') as file:
+        with open(file_path, "rb") as file:
             response = get_response(file, path, request)
             if not response:
                 mensagem = "Erro ao carregar arquivo (formato não suportado)."
@@ -170,8 +171,8 @@ def le_arquivo(request, local_path, path):
                     "area_principal": True,
                     "mensagem": mensagem,
                 }
-                return render(request, 'generic.html', context=context)
-            response['Content-Disposition'] = 'inline; filename=' +\
+                return render(request, "generic.html", context=context)
+            response["Content-Disposition"] = "inline; filename=" +\
                os.path.basename(file_path)
             return response
 

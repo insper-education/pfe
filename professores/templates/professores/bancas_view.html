@@ -440,6 +440,13 @@
       alert("Data de início depois da data final!");
       return false;
     }
+
+    d_inicio = new Date($("#inicio").val());
+    d_fim = new Date($("#fim").val());
+    if (d_fim - d_inicio >= 24*60*60*1000) {
+      alert("Duração da banca maior que um dia, verificar!");
+      return false;
+    }
     
     $.ajaxSetup({
       headers: { "X-CSRFToken": "{{csrf_token}}" }
@@ -452,17 +459,19 @@
     formData.append(operacao, "true");
     
     function loadContent(target, url, selector) {
-      calendarView = calendar.view.type;
-      calendarDate = calendar.getDate();
-      $(target).fadeOut('fast', function() {
-        $.ajax({
-          url: url,
-          success: function(data,status,jqXHR) {
-              $(target).html($(data).find(selector).addBack(selector).children()).fadeIn('fast');
-              montar_calendario(calendarView, calendarDate);
-          }
+      if (typeof calendar !== "undefined") {
+        calendarView = calendar.view.type;
+        calendarDate = calendar.getDate();
+        $(target).fadeOut('fast', function() {
+          $.ajax({
+            url: url,
+            success: function(data,status,jqXHR) {
+                $(target).html($(data).find(selector).addBack(selector).children()).fadeIn('fast');
+                montar_calendario(calendarView, calendarDate);
+            }
+          });
         });
-      });
+      }
     }
 
     $.ajax({

@@ -9,9 +9,12 @@
   {% load static %}
   {% load tz %}
   {% load banca_tipo %}
+  {% load date_extras %}
 
   <script>{% include "tooltip.js" %}</script>
   <link rel="stylesheet" href="{% static 'css/form_aval.css' %}">
+  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
+
 {% endblock %}
 
 {% block content %}
@@ -93,7 +96,52 @@
           </optgroup>
 
       </select>
-      <br><br>
+      <br>
+
+      <br>
+      {% if documentos %}
+        <b lang="pt">Documento{% if documentos|length > 1 %}s{% endif %}:</b><b lang="en">Document{% if documentos|length > 1 %}s{% endif %}:</b><br>
+        <ul style="padding-left: 22px; width: fit-content;">
+          {% for documento in documentos %}
+            <li style="list-style-type:'';">
+              <span class="fa fa-file"></span>
+                {{documento.tipo_documento}}:
+              {% if documento.documento and documento.link %} 
+                <span lang="pt">Entregue</span><span lang="en">Submitted</span>
+                <span class="opt_full">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
+                <span class="opt_short">{{ documento.data|date:"d/m/y H:i" }}</span>
+                <a 
+                  {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
+                  href="{{request.build_absolute_uri}}/{{documento.tipo_documento.id}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+                <a 
+                  {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
+                  href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
+              {% else %}
+                {% if documento.documento %}
+                  <a 
+                    {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
+                    href="{{request.build_absolute_uri}}/{{documento.tipo_documento.id}}" target="_blank" rel="noopener noreferrer"><span lang="pt">Entregue</span><span lang="en">Submitted</span>
+                    <span class="opt_full">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
+                    <span class="opt_short">{{ documento.data|date:"d/m/y H:i" }}</span>
+                  </a>
+                {% endif %}
+                {% if documento.link %}
+                  <a
+                    {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
+                    href="{{documento.link}}" target="_blank" rel="noopener noreferrer"><span lang="pt">Entregue</span><span lang="en">Submitted</span>
+                    <span class="opt_full">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
+                    <span class="opt_short">{{ documento.data|date:"d/m/y H:i" }}</span>
+                  </a>
+                {% endif %}
+              {% endif %}
+              {% if documento.data|diff_days:evento.endDate > 0 %}<span style="color: red;">[FORA DO PRAZO]</span>{% endif %}
+            </li>
+          {% empty %}
+            Não entregue
+          {% endfor %} 
+        </ul><br>
+      {% endif %}
+        
 
       {% if orientacoes %}
         <h5 lang="pt">Orientações Gerais</h5><h5 lang="en">Guidelines</h5>

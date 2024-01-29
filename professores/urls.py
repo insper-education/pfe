@@ -94,6 +94,10 @@ urlpatterns = [
          views.banca_avaliar,
          name="banca_avaliar"),
 
+    path("banca_avaliar/<slug:slug>/<int:tipo_documento_id>",
+         views.banca_avaliar,
+         name="banca_avaliar"),
+
     path("entrega_avaliar/<int:composicao_id>/<int:projeto_id>",
          views.entrega_avaliar,
          name="entrega_avaliar"),

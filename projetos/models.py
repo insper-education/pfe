@@ -201,7 +201,7 @@ class Projeto(models.Model):
     def tem_relatos(self):
         """Retorna todos os possiveis relatos quinzenais para o projeto."""
         
-        # Antes de 2022 os relatores era realizados no Blackboard
+        # Antes de 2022 os relatos quinzenais era realizados no Blackboard
         # Essa função em hardcode não é ideal, mas resolve o problema
         if self.ano < 2022:
             return Evento.objects.none()
@@ -1751,8 +1751,8 @@ class Observacao_Velha(models.Model):
                                  on_delete=models.SET_NULL, null=True, blank=True,
                                  help_text='Objetivo de Aprendizagem')
 
-    observacoes = models.TextField(max_length=2048, null=True, blank=True,
-                                   help_text='qualquer observação relevante')
+    observacoes_orientador = models.TextField(max_length=2048, null=True, blank=True,
+                                              help_text='qualquer observação relevante')
 
     @classmethod
     def create(cls, projeto):

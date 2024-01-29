@@ -106,6 +106,15 @@
   </ul>
   <br>
 
-  <a href="{% url 'conceitos_obtidos' banca.projeto.id %}"><button type="button" class="btn btn-secondary">Resultados da Banca</button></a>
+  <a href="{% url 'conceitos_obtidos' banca.projeto.id %}" class="btn btn-primary">Resultados da Banca</a>
+  <a href="{% url 'bancas_editar' banca.pk %}" class="btn btn-primary open-modal" data-url="{% url 'bancas_editar' %}{{banca.pk}}">Editar Banca</a>
 
+  {% include "janelas-modal.html" %}
+
+  <script>
+    $('#popup').on('hidden.bs.modal', function (e) {
+      location.reload();
+    })
+  </script>
+  
 {% endblock %}
