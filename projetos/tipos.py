@@ -61,7 +61,7 @@ TIPO_EVENTO = (
 
     (130, "Validação dos projetos pelo comitê", "peru"),
 
-    (140, "Reunião de orientações aos orientadores", "maroon"),
+    (140, "Reunião de orientações aos orientadores", "papayawhip"),
 )
 
 

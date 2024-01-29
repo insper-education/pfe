@@ -55,7 +55,7 @@
   {% url 'perfil' as url_perfil %}
 
   <div class="topnav">
-    <a {% if request.get_host == "127.0.0.1:8000" %}class="active_local"{% else %}class="active"{% endif %}>
+    <a {% if request.get_host == "127.0.0.1:8000" %}id="barra_do_top_nav" class="active_local"{% else %}class="active"{% endif %}>
       <img 
       {% if user.is_authenticated %} onclick="location.href='{{ url_index }}'" {% endif %}
       src="{% static 'images/logoInsper.png' %}" alt="Insper" style="width:59px;height:23px;">
@@ -103,6 +103,22 @@
   <div style="margin-top: 6px;" class="container-fluid">
     {% block content %}{% endblock %}
   </div>
-  <p>&nbsp;</p><p>&nbsp;</p>
+  <p>&nbsp;</p>
+  
+  {% if request.get_host == "127.0.0.1:8000" %}
+    <p id="pi_the_net" style="float: right; margin-right: 12px;">&pi;</p>
+    <p>&nbsp;</p>
+    <script>
+      document.getElementById("pi_the_net").addEventListener("click", function() {
+        if (event.ctrlKey) {
+          document.body.style.backgroundColor = "white";
+          var element = document.getElementById("barra_do_top_nav");
+          element.classList.remove("active_local");
+          element.classList.add("active");
+        }
+      });
+    </script>
+  {% endif %}
+  
 </body>
 </html>
