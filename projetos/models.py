@@ -1752,7 +1752,10 @@ class Observacao_Velha(models.Model):
                                  help_text='Objetivo de Aprendizagem')
 
     observacoes_orientador = models.TextField(max_length=2048, null=True, blank=True,
-                                              help_text='qualquer observação relevante')
+                                   help_text="Observações a serem compartilhadas somente com o orientador do projeto")
+
+    observacoes_estudantes = models.TextField(max_length=2048, null=True, blank=True,
+                                   help_text="Observações a serem compartilhadas com os estudantes do projeto")
 
     @classmethod
     def create(cls, projeto):
