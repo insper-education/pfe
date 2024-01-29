@@ -565,19 +565,25 @@ def exames_pesos(request):
 def submissao_documento(request):
     """Submissão de documentos pelos estudantes."""
 
-    if request.user.tipo_de_usuario != 1:  # Não é Estudante
-        return HttpResponse("Você não possui conta de estudante.", status=401)
-    
+
     configuracao = get_object_or_404(Configuracao)
 
-    alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
     
     context = {
         "MEDIA_URL": settings.MEDIA_URL,
     }
-    
-    if alocacao:
-        projeto = alocacao.projeto
+
+    if request.user.tipo_de_usuario != 1:  # Não é Estudante
+         if request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:  # Professor
+            projeto = Projeto.objects.filter(orientador=request.user.professor).last()
+            # return HttpResponse("Você não possui conta de estudante.", status=401)
+            context["mensagem"] = "Professor, esse é somente um exemplo do que os estudantes visualizam. Não envie documentos por essa página."
+    else:
+        alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
+        if alocacao:
+            projeto = alocacao.projeto
+
+    if projeto:
         composicoes = filtra_composicoes(Composicao.objects.filter(entregavel=True), projeto.ano, projeto.semestre)
         entregas = filtra_entregas(composicoes, projeto, request.user)
 

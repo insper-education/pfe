@@ -33,6 +33,11 @@
 
   <span class="titulo">Submissão de Documentos</span>
 
+  {% if mensagem %}
+    <span class="red-bold">{{mensagem|linebreaks}}</span>
+    <br>
+  {% endif %}
+
   {% if projeto %}
     {% include "cabecalho_projeto.html" with com_email=True %}
     <br>
