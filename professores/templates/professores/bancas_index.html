@@ -142,8 +142,8 @@
                         dataType: "json",
                         data: {
                           "csrfmiddlewaretoken": "{{ csrf_token }}",
-                          start: info.startStr,
-                          end: info.endStr,
+                          start: info.startStr.split('T')[0],
+                          end: info.endStr.split('T')[0],
                         },
                         success: function(response) {
                             var eventsList = [];

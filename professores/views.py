@@ -164,14 +164,14 @@ def ajax_bancas(request):
     if request.is_ajax():
         
         if "start" in request.POST and "end" in request.POST:
-            start = datetime.datetime.strptime(request.POST["start"], "%Y-%m-%dT%H:%M:%S%z").date()
-            end = datetime.datetime.strptime(request.POST["end"], "%Y-%m-%dT%H:%M:%S%z").date()
+            start = datetime.datetime.strptime(request.POST["start"], "%Y-%m-%d").date()
+            end = datetime.datetime.strptime(request.POST["end"], "%Y-%m-%d").date()
             bancas = {}
             for banca in Banca.objects.filter(startDate__gte=start,
                                               startDate__lte=end):
                 bancas[banca.id] = {}
-                bancas[banca.id]["start"] = banca.startDate.strftime("%Y-%m-%dT%H:%M:%S%z")
-                bancas[banca.id]["end"] = banca.endDate.strftime("%Y-%m-%dT%H:%M:%S%z")
+                bancas[banca.id]["start"] = banca.startDate.strftime("%Y-%m-%dT%H:%M:%S")
+                bancas[banca.id]["end"] = banca.endDate.strftime("%Y-%m-%dT%H:%M:%S")
                 bancas[banca.id]["organizacao"] = banca.projeto.organizacao.sigla
                 bancas[banca.id]["orientador"] = banca.projeto.orientador.user.get_full_name()
                 bancas[banca.id]["local"] = banca.location
