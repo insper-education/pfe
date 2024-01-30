@@ -141,22 +141,85 @@ def mentorias_alocadas(request):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def bancas_index(request):
     """Menus de bancas e calendario de bancas."""
-    bancas = Banca.objects.all()
-
     # 14, 'Banca intermediária' / 15, 'Bancas finais' / 50, 'Certificação Profissional (antiga Falconi)'
     dias_bancas = Evento.objects.filter(tipo_de_evento__in=(14, 15, 50))
 
     context = {
-        "bancas": bancas,
         "dias_bancas": dias_bancas,
         "view": request.GET.get("view", None),
         "date": request.GET.get("date", None),
     }
 
     return render(request, "professores/bancas_index.html", context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def ajax_bancas(request):
+    """Retorna as bancas do ano."""
+
+    if request.is_ajax():
+        
+        if "start" in request.POST and "end" in request.POST:
+            start = datetime.datetime.strptime(request.POST["start"], "%Y-%m-%dT%H:%M:%S%z").date()
+            end = datetime.datetime.strptime(request.POST["end"], "%Y-%m-%dT%H:%M:%S%z").date()
+            bancas = {}
+            for banca in Banca.objects.filter(startDate__gte=start,
+                                              startDate__lte=end):
+                bancas[banca.id] = {}
+                bancas[banca.id]["start"] = banca.startDate.strftime("%Y-%m-%dT%H:%M:%S%z")
+                bancas[banca.id]["end"] = banca.endDate.strftime("%Y-%m-%dT%H:%M:%S%z")
+                bancas[banca.id]["organizacao"] = banca.projeto.organizacao.sigla
+                bancas[banca.id]["orientador"] = banca.projeto.orientador.user.get_full_name()
+                bancas[banca.id]["local"] = banca.location
+
+                if banca.projeto:
+                    title = "(" + banca.projeto.organizacao.sigla + ") " + banca.projeto.get_titulo()
+                    if banca.location:
+                        title += "\nLocal: " + banca.location
+                    title += "\nBanca:"
+                    if banca.projeto.orientador:
+                        title += "\n• " + banca.projeto.orientador.user.get_full_name() + " (O)"
+                    if banca.membro1:
+                        title += "\n• " + banca.membro1.get_full_name()
+                    if banca.membro2:
+                        title += "\n• " + banca.membro2.get_full_name()
+                    if banca.membro3:
+                        title += "\n• " + banca.membro3.get_full_name()
+                else:
+                    title = "Projeto não identificado",
+                bancas[banca.id]["title"] = title
+                
+                if banca.tipo_de_banca == 0: # Banca Final
+                    bancas[banca.id]["color"] = "#74a559"
+                elif banca.tipo_de_banca == 1:  # Banca Intermediária
+                    bancas[banca.id]["color"] = "#e6b734"
+                elif banca.tipo_de_banca == 2: # Banca Falconi
+                    bancas[banca.id]["color"] = "#ff38a6"
+                else:
+                    bancas[banca.id]["color"] = "#777777"
+
+                if banca.projeto:
+                    description = banca.projeto.get_titulo()
+                    description += "\n<br>Banca:"
+                    if banca.projeto.orientador:
+                        description += "\n<br>&bull; " + banca.projeto.orientador.user.get_full_name() + " (O)"
+                    if banca.membro1:
+                        description += "\n<br>&bull; " + banca.membro1.get_full_name()
+                    if banca.membro2:
+                        description += "\n<br>&bull; " + banca.membro2.get_full_name()
+                    if banca.membro3:
+                        description += "\n<br>&bull; " + banca.membro3.get_full_name()
+                else:
+                    description = "Projeto não identificado",
+                bancas[banca.id]["description"] = description
+                
+            return JsonResponse(bancas)
+    
+    return HttpResponse("Erro.", status=401)    
 
 
 def mensagem_edicao_banca(banca, atualizada=False):

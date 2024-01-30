@@ -202,4 +202,8 @@ urlpatterns = [
          views.ver_pares,
          name="ver_pares"),
 
+     path("ajax_bancas/",
+         views.ajax_bancas,
+         name="ajax_bancas"),
+
 ]

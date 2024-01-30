@@ -149,6 +149,4 @@ urlpatterns = [
          views.reenvia_avisos,
          name="reenvia_avisos"),
 
-
-
 ]

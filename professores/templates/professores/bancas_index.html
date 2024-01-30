@@ -132,70 +132,75 @@
 
               },
 
-              events: [
-                {% for banca in bancas %} 
-                  {
-                      {% comment %} Usado na visualização de lista {% endcomment %}
-                      {% if banca.projeto %} 
-                        title: "({{banca.projeto.organizacao.sigla}}) " + 
-                              "{{banca.projeto.get_titulo}}" +
-                              "{% if banca.location %}\nLocal: {{banca.location}}{% endif %}" +
-                              "{{banca.projeto.get_titulo}}" +
-                              "\nBanca:\n• {{banca.projeto.orientador.user.get_full_name}} (O){% if banca.membro1 %}\n• {{banca.membro1.get_full_name}}{% endif %}{% if banca.membro2 %}\n• {{banca.membro2.get_full_name}}{% endif %}{% if banca.membro3 %}\n• {{banca.membro3.get_full_name}}{% endif %}" +
-                              " ",
+              eventSources: [
+              
+                {
+                  events:  function(info, successCallback, failureCallback) {
+                    $.ajax({
+                        url: "{% url 'ajax_bancas' %}",
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                          "csrfmiddlewaretoken": "{{ csrf_token }}",
+                          start: info.startStr,
+                          end: info.endStr,
+                        },
+                        success: function(response) {
+                            var eventsList = [];
+                            for (const [key, value] of Object.entries(response)) {
+                              eventsList.push({
+                                id: key,
+                                start: value.start,
+                                end: value.end,
+                                organizacao: value.organizacao,
+                                orientador: value.orientador,
+                                local: value.local,
+                                color: value.color,
+                                title: value.title,
+                                description: value.description,
+                              });
+                            }
+                            successCallback(eventsList);
+                        },
+                        failure : function() {
+                          failureCallback("erro ao recuperar eventos.");
+                      }
+                    });
+                  },
+                },
+
+                {
+                  events: [
+                  // area onde as bancas podem ser alocadas
+                  {% for dias in dias_bancas %} 
+                    {
+                      // groupId: 'grupo{{dias.id}}',
+                      {% with start=dias.startDate %}
+                        start: '{{start.year}}-{{start.month|stringformat:"02d"}}-{{start.day|stringformat:"02d"}}',
+                      {% endwith %}
+                      {% with end=dias.endDate|plus_days:1 %}
+                        end: '{{end.year}}-{{end.month|stringformat:"02d"}}-{{end.day|stringformat:"02d"}}',
+                      {% endwith %}
+                      rendering: 'background',
+
+                      {% if dias.tipo_de_evento == 15 %} // Banca Final
+                        color: color_banca_final,
+                        description: "<b>período de bancas finais</b>",
+                      {% elif dias.tipo_de_evento == 14 %} // Banca Intermediária 
+                        color: color_banca_intermediaria,
+                        description: "<b>período de bancas intermediárias</b>",
+                      {% elif dias.tipo_de_evento == 50 %} // Banca Falconi
+                        color: color_banca_falconi,
+                        description: "<b>período de bancas Falconi</b>",
                       {% else %}
-                        title: "Projeto não identificado",
+                        color: '#777777',
                       {% endif %}
 
-                      organizacao: "{{banca.projeto.organizacao.sigla}}",
-                      orientador: "{{banca.projeto.orientador}}",
-                      local: "{{banca.location}}",
-                      start: "{{banca.startDate|date:'Y-m-d\TH:i:s'}}",
-                      end: "{{banca.endDate|date:'Y-m-d\TH:i:s'}}",
-                      id: "{{banca.id}}",
-
-                      description: "{{banca.projeto.get_titulo}}" +
-                                   "\n<br>Banca:\n<br>&bull; {{banca.projeto.orientador.user.get_full_name}} (O){% if banca.membro1 %}\n<br>&bull; {{banca.membro1.get_full_name}}{% endif %}{% if banca.membro2 %}\n<br>&bull; {{banca.membro2.get_full_name}}{% endif %}{% if banca.membro3 %}\n<br>&bull; {{banca.membro3.get_full_name}}{% endif %}",
-
-                      {% if banca.tipo_de_banca == 0 %} //Banca Final
-                        color: color_banca_final
-                      {% elif banca.tipo_de_banca == 1 %} //Banca Intermediária
-                        color: color_banca_intermediaria
-                      {% elif banca.tipo_de_banca == 2 %} //Banca Falconi
-                        color: color_banca_falconi
-                      {% else %}
-                        color: '#777777'
-                      {% endif %}
-                  },
-                {% endfor %}
-
-                // area onde as bancas podem ser alocadas
-                {% for dias in dias_bancas %} 
-                  {
-                    {% comment %} groupId: 'grupo{{dias.id}}', {% endcomment %}
-                    {% with start=dias.startDate %}
-                      start: '{{start.year}}-{{start.month|stringformat:"02d"}}-{{start.day|stringformat:"02d"}}',
-                    {% endwith %}
-                    {% with end=dias.endDate|plus_days:1 %}
-                      end: '{{end.year}}-{{end.month|stringformat:"02d"}}-{{end.day|stringformat:"02d"}}',
-                    {% endwith %}
-                    rendering: 'background',
-
-                    {% if dias.tipo_de_evento == 15 %} {% comment %} Banca Final {% endcomment %}
-                      color: color_banca_final,
-                      description: "<b>período de bancas finais</b>",
-                    {% elif dias.tipo_de_evento == 14 %} {% comment %} Banca Intermediária {% endcomment %}
-                      color: color_banca_intermediaria,
-                      description: "<b>período de bancas intermediárias</b>",
-                    {% elif dias.tipo_de_evento == 50 %} {% comment %} Banca Falconi {% endcomment %}
-                      color: color_banca_falconi,
-                      description: "<b>período de bancas Falconi</b>",
-                    {% else %}
-                      color: '#777777',
-                    {% endif %}
-
-                  },
-                {% endfor %}
+                    },
+                  {% endfor %}
+                  ],
+                }
+              
               ],
 
               eventClick: function(event, jsEvent, view) {
