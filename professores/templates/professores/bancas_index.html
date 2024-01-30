@@ -110,7 +110,7 @@
                   endTime: "20:00"
                 },
               ],
-
+              eventTextColor: "#fafafa",
               eventRender: function(info) {
               
                 if (!info.event.allDay) {
@@ -135,13 +135,14 @@
               events: [
                 {% for banca in bancas %} 
                   {
-                      {% if banca.projeto %}
-                        title: '{{banca.projeto.organizacao.sigla}} : ' + 
-                              '{{banca.projeto.get_titulo}}' +
-                              '{% if banca.projeto.orientador %}\nOrientador: {{banca.projeto.orientador}}{% endif %}' +
-                              '{% if banca.location %}\nLocal: {{banca.location}}{% endif %}' +
-                              '\nBanca: {{banca.projeto.orientador.user.get_full_name}} (O){% if banca.membro1 %}; {{banca.membro1.get_full_name}}{% endif %}{% if banca.membro2 %}; {{banca.membro2.get_full_name}}{% endif %}{% if banca.membro3 %}; {{banca.membro3.get_full_name}}{% endif %}' +
-                              ' ',
+                      {% comment %} Usado na visualização de lista {% endcomment %}
+                      {% if banca.projeto %} 
+                        title: "({{banca.projeto.organizacao.sigla}}) " + 
+                              "{{banca.projeto.get_titulo}}" +
+                              "{% if banca.location %}\nLocal: {{banca.location}}{% endif %}" +
+                              "{{banca.projeto.get_titulo}}" +
+                              "\nBanca:\n• {{banca.projeto.orientador.user.get_full_name}} (O){% if banca.membro1 %}\n• {{banca.membro1.get_full_name}}{% endif %}{% if banca.membro2 %}\n• {{banca.membro2.get_full_name}}{% endif %}{% if banca.membro3 %}\n• {{banca.membro3.get_full_name}}{% endif %}" +
+                              " ",
                       {% else %}
                         title: "Projeto não identificado",
                       {% endif %}
@@ -149,18 +150,18 @@
                       organizacao: "{{banca.projeto.organizacao.sigla}}",
                       orientador: "{{banca.projeto.orientador}}",
                       local: "{{banca.location}}",
-                      start: '{{banca.startDate.year}}-{{banca.startDate.month|stringformat:"02d"}}-{{banca.startDate.day|stringformat:"02d"}}T{{banca.startDate.hour|stringformat:"02d"}}:{{banca.startDate.minute|stringformat:"02d"}}:00',
-                      end: '{{banca.endDate.year}}-{{banca.endDate.month|stringformat:"02d"}}-{{banca.endDate.day|stringformat:"02d"}}T{{banca.endDate.hour|stringformat:"02d"}}:{{banca.endDate.minute|stringformat:"02d"}}:00',
+                      start: "{{banca.startDate|date:'Y-m-d\TH:i:s'}}",
+                      end: "{{banca.endDate|date:'Y-m-d\TH:i:s'}}",
                       id: "{{banca.id}}",
-                      textColor: "#fafafa",
 
-                      description: "",
+                      description: "{{banca.projeto.get_titulo}}" +
+                                   "\n<br>Banca:\n<br>&bull; {{banca.projeto.orientador.user.get_full_name}} (O){% if banca.membro1 %}\n<br>&bull; {{banca.membro1.get_full_name}}{% endif %}{% if banca.membro2 %}\n<br>&bull; {{banca.membro2.get_full_name}}{% endif %}{% if banca.membro3 %}\n<br>&bull; {{banca.membro3.get_full_name}}{% endif %}",
 
-                      {% if banca.tipo_de_banca == 0 %} {% comment %} Banca Final {% endcomment %}
+                      {% if banca.tipo_de_banca == 0 %} //Banca Final
                         color: color_banca_final
-                      {% elif banca.tipo_de_banca == 1 %} {% comment %} Banca Intermediária {% endcomment %}
+                      {% elif banca.tipo_de_banca == 1 %} //Banca Intermediária
                         color: color_banca_intermediaria
-                      {% elif banca.tipo_de_banca == 2 %} {% comment %} Banca Falconi {% endcomment %}
+                      {% elif banca.tipo_de_banca == 2 %} //Banca Falconi
                         color: color_banca_falconi
                       {% else %}
                         color: '#777777'
