@@ -106,10 +106,10 @@
   <p>&nbsp;</p>
   
   {% if request.get_host == "127.0.0.1:8000" %}
-    <p id="pi_the_net" style="float: right; margin-right: 12px;">&pi;</p>
     <p>&nbsp;</p>
+    <p id="pi_the_net" style="float: right; margin-right: 12px;">&pi;</p>
     <script>
-      document.getElementById("pi_the_net").addEventListener("click", function() {
+      document.getElementById("pi_the_net").addEventListener("mousedown", function(event) {
         if (event.ctrlKey) {
           document.body.style.backgroundColor = "white";
           var element = document.getElementById("barra_do_top_nav");
