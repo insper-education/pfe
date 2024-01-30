@@ -75,11 +75,15 @@
       {% endcomment %}
 
       <br>
-      <button class="btn btn-primary" type="submit">{% if aviso %}Atualizar{% else %}Criar{% endif %} Aviso</button>
+      <button class="btn btn-primary" type="submit" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+        {% if aviso %}Atualizar{% else %}Criar{% endif %} Aviso
+      </button>
 
       {% if aviso %}
         &nbsp;&nbsp;
-        <button class="btn btn-primary" type="button" id="apagar">Apagar Aviso</button>
+        <button class="btn btn-primary" type="button" id="apagar" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+          Apagar Aviso
+        </button>
 
         <script type="text/javascript">
           $('#apagar').click(function() {
