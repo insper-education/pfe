@@ -9,6 +9,9 @@
 
 {% comment %} Colocar no head da página {% endcomment %}
 {% comment %} <script src="{% static 'js/Chart.min.js' %}"></script> {% endcomment %}
+<script>
+  function loc(number, locale="pt-BR", frac=1) {return number.toLocaleString(locale, {minimumFractionDigits: frac, maximumFractionDigits: frac});}
+</script>
 
 <script>
   var nota = 0.0;
@@ -36,9 +39,9 @@
   Média = <span id="media{{alocado.id}}"></span> <span id="aviso{{alocado.id}}"></span>
   <script>
     if(peso > 0.0) {
-      document.getElementById("media{{alocado.id}}").innerHTML = (nota/peso).toFixed(1);
+      document.getElementById("media{{alocado.id}}").innerHTML = loc(nota);
       if(peso < 0.99) {
-        document.getElementById("aviso{{alocado.id}}").innerHTML = "(média provisória)";
+        document.getElementById("aviso{{alocado.id}}").innerHTML = "(média provisória = " + loc(nota/peso) +  ")";
       }
     }
   </script>

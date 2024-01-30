@@ -53,11 +53,13 @@
               {% endif %}
             {% endif %}
 
-            <div style="margin-top:8px;"><strong>Relatos (prazos para estudantes):</strong></div>
+            <div style="margin-top:8px;"><strong>Relatos:</strong></div>
 
             {% with alocacoes=projeto.alocacao_set.all %}
               {% include "relatos.html" %}
             {% endwith %}
+
+            <small>Obs: prazos exibidos foram definidos para os estudantes.</small>
 
           </div>
         {% endif %}

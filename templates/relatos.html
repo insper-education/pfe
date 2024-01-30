@@ -47,6 +47,8 @@
           {% endif %}          
         {% endif %}
       </td></tr>
+  {% empty %}
+    <tr><td colspan="4">Nenhum relato para ser analisado no momento</td></tr>
   {% endfor %}
     </tbody></table>
 {% endif %}

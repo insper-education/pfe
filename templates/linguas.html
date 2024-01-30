@@ -7,15 +7,20 @@
 {% comment %} Coloque essa chamada sempre no final do arquivo {% endcomment %}
 
 <script>
+
+  {% comment %} VER:
+    function loc(number, locale="pt-BR", frac=1) {return number.toLocaleString(locale, {minimumFractionDigits: frac, maximumFractionDigits: frac});}
+  {% endcomment %}
+
   var text_pt = "<span style='cursor: pointer;'>&nbsp;<b>PT</b>|EN&nbsp;</span>";
   var text_en = "<span style='cursor: pointer;'>&nbsp;PT|<b>EN</b>&nbsp;</span>";
 
-  if ($('html').is(':lang(pt)')) {
+  if ($("html").is(":lang(pt)")) {
     $("#language_button").html(text_pt);
-    $('[lang="en"]').css('display', 'none');
+    $('[lang="en"]').css("display", "none");
   } else {
     $("#language_button").html(text_en);
-    $('[lang="pt"]').css('display', 'none');
+    $('[lang="pt"]').css("display", "none");
   }
 
   $("body").on("click", "#language_button", function(e) {
@@ -24,4 +29,14 @@
     if($('[lang="en"]').is(":visible")) $("#language_button").html(text_en);  
     else $("#language_button").html(text_pt);
   });
+
+  {% comment %} 
+  // Para PEGAR o idioma do navegador
+  function getLang() {
+    if (navigator.languages != undefined) 
+      return navigator.languages[0]; 
+    return navigator.language;
+  }
+  console.log(getLang());
+  {% endcomment %}
 </script>
