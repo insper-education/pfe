@@ -2478,6 +2478,9 @@ def planos_de_orientacao(request):
 def planos_de_orientacao_todos(request):
     """Formulários com os projetos e planos de orientação dos professores orientadores."""
 
+    if request.user.tipo_de_usuario != 4:  # Administrador
+        return HttpResponse("Acesso negado.", status=401)
+    
     if request.is_ajax():
 
         if "edicao" in request.POST:

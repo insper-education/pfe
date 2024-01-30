@@ -63,7 +63,7 @@
                 <tr class="item"><td>Erro ao identificar usuário
               {% endif %}</td>
                 <td><a href="mailto:{{aula.responsavel.email}}">{{aula.responsavel.email}}</a></td>
-                <td style="text-align: left;">{{aula.descricao}} ({{aula.startDate}})</td>
+                <td style="text-align: left;">{{aula.atividade}} ({{aula.startDate}}) {% if aula.descricao %} - {{aula.descricao}}{% endif %}</td>
               </tr>
             {% endif %}
           {% endfor %}

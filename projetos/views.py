@@ -1703,10 +1703,10 @@ def correlacao_medias_cr(request):
         context = {
             "alocacoes": alocacoes,
             "estudantes": estudantes,
-            'periodo': periodo,
-            'ano': configuracao.ano,
-            'semestre': configuracao.semestre,
-            'edicoes': edicoes,
+            "periodo": periodo,
+            "ano": configuracao.ano,
+            "semestre": configuracao.semestre,
+            "edicoes": edicoes,
             "curso": curso,
         }
 
@@ -1724,17 +1724,20 @@ def correlacao_medias_cr(request):
 def editar_projeto(request, primarykey):
     """Editar Projeto."""
 
+    if request.user.tipo_de_usuario != 4:  # Administrador
+        return HttpResponse("Somenter coordenadores podem editar projetos.", status=401)
+
     projeto = Projeto.objects.get(id=primarykey)
 
-    if request.method == 'POST':
+    if request.method == "POST":
 
         # Atualiza título
-        titulo = request.POST.get('titulo', None)
+        titulo = request.POST.get("titulo", None)
         if titulo and ( projeto.titulo_final or projeto.titulo != titulo):
             projeto.titulo_final = titulo
 
         # Atualiza descrição
-        descricao = request.POST.get('descricao', None)
+        descricao = request.POST.get("descricao", None)
         if descricao and ( projeto.descricao or projeto.proposta.descricao != descricao):
             projeto.descricao = descricao
 
