@@ -34,7 +34,7 @@
         <tbody>
           {% for aula in aulas %}
             <tr class="item">
-              <td>Aula {{forloop.counter|stringformat:"02d"}}<br><small style="color: blue;">{{aula.startDate|date:"d/m/Y"}}</small></td>
+              <td>Aula {{forloop.counter|stringformat:"02d"}} <small style="color: blue;">{{aula.startDate|date:"d/m/Y"}}</small></td>
               <td>&nbsp;</td>
               <td>{{aula.atividade}}</td>
               <td>&nbsp;</td>

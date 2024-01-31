@@ -372,7 +372,7 @@ def plano_aulas(request):
         
         return HttpResponse("Algum erro não identificado.", status=401)
     
-    edicoes, _, _ = get_edicoes(Aluno)
+    edicoes, _, _ = get_edicoes(Projeto)
     context = {
         "edicoes": edicoes,
     }
