@@ -10,6 +10,6 @@
         {% csrf_token %}
         <h2>Manutenção do Site</h2>
         <input type="checkbox" name="selection" value="manutencao" {% if manutencao %}checked{% endif %}>
-        <button class="btn btn-primary" type="submit">Enviar</button>
+        <button class="btn btn-primary mb-1" type="submit">Enviar</button>
     </form>
 {% endblock %}
