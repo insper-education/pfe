@@ -14,42 +14,46 @@ from . import views
 urlpatterns = [
 
     # pagina inicial
-    path('',
+    path("",
          views.index_operacional,
-         name='index_operacional'),
+         name="index_operacional"),
 
-    path('avisos_listar/',
+    path("avisos_listar/",
          views.avisos_listar,
-         name='avisos_listar'),
+         name="avisos_listar"),
 
-    path('edita_aviso/<int:primarykey>',
+    path("edita_aviso/<int:primarykey>",
          views.edita_aviso,
-         name='edita_aviso'),
+         name="edita_aviso"),
 
-    path('carregar_certificado/',
+    path("carregar_certificado/",
          views.carregar_certificado,
-         name='carregar_certificado'),
+         name="carregar_certificado"),
 
-    path('cria_aviso/',
+    path("cria_aviso/",
          views.cria_aviso,
-         name='cria_aviso'),
+         name="cria_aviso"),
 
-    path('deleta_aviso/<int:primarykey>',
+    path("deleta_aviso/<int:primarykey>",
          views.deleta_aviso,
-         name='deleta_aviso'),
+         name="deleta_aviso"),
 
-    path('emails/',
+    path("emails/",
          views.emails,
-         name='emails'),
+         name="emails"),
 
     # para Ajax somente
-    path('emails_semestre/',
+    path("emails_semestre/",
          views.emails_semestre,
-         name='emails_semestre'),
+         name="emails_semestre"),
 
     # para Ajax somente
-    path('emails_projetos/',
+    path("emails_projetos/",
          views.emails_projetos,
-         name='emails_projetos'),
+         name="emails_projetos"),
+
+    path("plano_aulas/",
+         views.plano_aulas,
+         name="plano_aulas"),
 
 ]
