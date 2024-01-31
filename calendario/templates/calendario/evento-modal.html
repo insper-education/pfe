@@ -73,7 +73,7 @@
             <div class="form-group row">
               <label for="event-descricao" class="col-sm-4 control-label">Descrição</label>
               <div class="col-sm-8">
-                <textarea class="form-control" id="event-descricao" name="event-descricao" rows="3"></textarea>
+                <textarea class="form-control" id="event-descricao" name="event-descricao" rows="3" maxlength="{% max_length Evento "descricao" %}"></textarea>
               </div>
             </div>
 

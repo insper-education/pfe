@@ -692,7 +692,7 @@ class Evento(models.Model):
     observacao = models.CharField(max_length=160, blank=True,
                                   help_text="Qualquer observação relavante")
     
-    descricao = models.CharField(max_length=200, blank=True,
+    descricao = models.CharField(max_length=512, blank=True,
                                  help_text="Descrição do evento")
     
     responsavel = models.ForeignKey("users.PFEUser", null=True, blank=True,
