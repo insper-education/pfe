@@ -26,6 +26,9 @@ from users.support import get_edicoes
 
 from projetos.tipos import TIPO_EVENTO
 
+from academica.models import Composicao
+from academica.support import filtra_composicoes
+
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
@@ -348,3 +351,40 @@ def deleta_aviso(request, primarykey):
     """Apaga aviso."""
     Aviso.objects.filter(id=primarykey).delete()
     return redirect('avisos_listar')
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def plano_aulas(request):
+    """Gera tabela com aulas do semestre."""
+
+    if request.is_ajax():
+
+        if "edicao" in request.POST:
+            
+            ano, semestre = request.POST["edicao"].split('.')
+            eventos = Evento.objects.filter(startDate__year=ano, tipo_de_evento=12)  # 12, 'Aula PFE'
+
+            if semestre == "1":
+                eventos = eventos.filter(startDate__month__lte=6)
+            else:
+                eventos = eventos.filter(startDate__month__gte=7)            
+
+            composicoes = filtra_composicoes(Composicao.objects.all(), ano, semestre)
+    
+            context = {
+                "aulas": eventos,
+                "composicoes": composicoes,
+                }
+            return render(request, "operacional/plano_aulas.html", context=context)
+        
+        return HttpResponse("Algum erro não identificado.", status=401)
+    
+    edicoes, _, _ = get_edicoes(Projeto)
+    context = {
+        "edicoes": edicoes,
+    }
+    return render(request, "operacional/plano_aulas.html", context=context)
+
+    
+

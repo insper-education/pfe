@@ -39,9 +39,9 @@
 
     <br><br>
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} 
-      <a class="btn btn-primary" href="{% url 'user_detail' user.id %}">Meus Detalhes</a>
+      <a class="btn btn-primary mb-1" href="{% url 'user_detail' user.id %}">Meus Detalhes</a>
     {% endif %}
-    <input class="btn btn-primary" type="submit" value="Atualizar Senha" />
+    <input class="btn btn-primary mb-1" type="submit" value="Atualizar Senha" />
   </form>
 
 {% endblock %}

@@ -177,8 +177,8 @@
     {% endif %}
 
   
-    <a href="{% url 'cria_aviso' %}" class="cria btn btn-primary{% if user.tipo_de_usuario == 4 %}"{% else %} disabled"{% endif %}>Cria Aviso</a>
-    <a href="{% url 'reenvia_avisos' %}" class="cria btn btn-primary{% if user.tipo_de_usuario == 4 %}"{% else %} disabled"{% endif %}"
+    <a href="{% url 'cria_aviso' %}" class="cria btn btn-primary mb-1{% if user.tipo_de_usuario != 4 %} disabled{% endif %}">Cria Aviso</a>
+    <a href="{% url 'reenvia_avisos' %}" class="cria btn btn-primary mb-1{% if user.tipo_de_usuario == 4 %}"{% else %} disabled"{% endif %}"
        onClick="return confirm('Tem certeza que deseja reenviar os avisos do dia para todos os envolvidos?')">Reenviar Avisos do Dia</a>
 
   </form>

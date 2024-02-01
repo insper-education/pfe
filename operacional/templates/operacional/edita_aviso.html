@@ -6,10 +6,18 @@
 {% endcomment %}
 
 {% block head %}
-  <style>  
-    input {max-width: 100%;}
+  <style>
+    input {
+      max-width: 100%;
+      display: inline-block;
+    }
     textarea {max-width: 100%;}
-    label {margin: 6px 0px 2px 0px;}
+    label {
+      margin: 6px 18px 2px 0px;
+      max-width: 100%;
+    }
+    select {max-width: 100%;}
+
   </style>
 {% endblock %}
 
@@ -19,12 +27,12 @@
       {% csrf_token %}
       
       <div style="margin-bottom: 8px; display: inline-block; max-width: 100%;">
-        <label for="titulo"><b>Aviso:</b></label>
-        <input type="text" size="88" maxlength="120" id="titulo" name="titulo" value="{{aviso.titulo}}" required>
+        <label for="titulo"><b>Aviso:</b>
+        <input type="text" size="88" maxlength="120" id="titulo" name="titulo" value="{{aviso.titulo}}" required></label>
       </div><br>
 
       <div style="margin-bottom: 8px; margin-right: 25px; display: inline-block; max-width: 100%;">
-        <label for="evento"><b>Evento relacionado</b></label>:
+        <label for="evento"><b>Evento relacionado</b>:
         <select name="evento" id="evento" title="Selecione evento" required>
             <option disabled selected value> -- selecione evento -- </option>
             {% for evento in eventos %}
@@ -32,39 +40,39 @@
                 {{evento.1}}
               </option>  
             {% endfor %}
-        </select>
-      </div>
-
-      <div style="margin-bottom: 8px; display: inline-block; max-width: 100%;">
-        <label for="delta"><b>Delta</b></label>:
-        <input name="delta" id="delta" type="number" min="-186" max="186" step="1" value="{{aviso.delta}}" required/>
+        </select></label>
       </div><br>
 
       <div style="margin-bottom: 8px; display: inline-block; max-width: 100%;">
-        <label for="delta"><b>Mensagem</b></label>:<br>
-        <textarea name="mensagem" rows="12" cols="98">{{ aviso.mensagem }}</textarea>
+        <label for="delta"><b>Delta</b>:
+        <input name="delta" id="delta" type="number" min="-186" max="186" step="1" value="{{aviso.delta}}" required/></label>
+      </div><br>
+
+      <div style="margin-bottom: 8px; display: inline-block; max-width: 100%;">
+        <label for="delta"><b>Mensagem</b>:<br>
+        <textarea name="mensagem" rows="12" cols="98">{{ aviso.mensagem }}</textarea></label>
       </div><br>
       
       <div style="margin-bottom: 8px; display: inline-block; max-width: 100%;">
 
-        <label for="coordenacao">Coordenação</label>
-        <input type="checkbox" id="coordenacao" name="coordenacao" {% if aviso.coordenacao %}checked{% endif %}>
-        &nbsp;&nbsp;&nbsp;
+        <label for="coordenacao">Coordenação
+        <input type="checkbox" id="coordenacao" name="coordenacao" {% if aviso.coordenacao %}checked{% endif %}></label>
+        
 
-        <label for="comite_pfe">Comitê</label>
-        <input type="checkbox" id="comite_pfe" name="comite_pfe" {% if aviso.comite_pfe %}checked{% endif %}>
-        &nbsp;&nbsp;&nbsp;
+        <label for="comite_pfe">Comitê
+        <input type="checkbox" id="comite_pfe" name="comite_pfe" {% if aviso.comite_pfe %}checked{% endif %}></label>
+        
 
-        <label for="todos_alunos">Estudantes</label>
-        <input type="checkbox" id="todos_alunos" name="todos_alunos" {% if aviso.todos_alunos %}checked{% endif %}>
-        &nbsp;&nbsp;&nbsp;
+        <label for="todos_alunos">Estudantes
+        <input type="checkbox" id="todos_alunos" name="todos_alunos" {% if aviso.todos_alunos %}checked{% endif %}></label>
+        
 
-        <label for="todos_orientadores">Orientadores</label>
-        <input type="checkbox" id="todos_orientadores" name="todos_orientadores" {% if aviso.todos_orientadores %}checked{% endif %}>
-        &nbsp;&nbsp;&nbsp;
+        <label for="todos_orientadores">Orientadores
+        <input type="checkbox" id="todos_orientadores" name="todos_orientadores" {% if aviso.todos_orientadores %}checked{% endif %}></label>
+        
 
-        <label for="contatos_nas_organizacoes">Contatos nas Organizações</label>
-        <input type="checkbox" id="contatos_nas_organizacoes" name="contatos_nas_organizacoes" {% if aviso.contatos_nas_organizacoes %}checked{% endif %}>
+        <label for="contatos_nas_organizacoes">Contatos nas Organizações
+        <input type="checkbox" id="contatos_nas_organizacoes" name="contatos_nas_organizacoes" {% if aviso.contatos_nas_organizacoes %}checked{% endif %}></label>
       
       </div><br>
 
@@ -75,13 +83,13 @@
       {% endcomment %}
 
       <br>
-      <button class="btn btn-primary" type="submit" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+      <button class="btn btn-primary mb-1" type="submit" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
         {% if aviso %}Atualizar{% else %}Criar{% endif %} Aviso
       </button>
 
       {% if aviso %}
         &nbsp;&nbsp;
-        <button class="btn btn-primary" type="button" id="apagar" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+        <button class="btn btn-primary mb-1" type="button" id="apagar" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
           Apagar Aviso
         </button>
 

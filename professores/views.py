@@ -164,8 +164,8 @@ def ajax_bancas(request):
     if request.is_ajax():
         
         if "start" in request.POST and "end" in request.POST:
-            start = datetime.datetime.strptime(request.POST["start"], "%Y-%m-%d").date()
-            end = datetime.datetime.strptime(request.POST["end"], "%Y-%m-%d").date()
+            start = datetime.datetime.strptime(request.POST["start"], "%Y-%m-%d").date() - datetime.timedelta(days=90)
+            end = datetime.datetime.strptime(request.POST["end"], "%Y-%m-%d").date() + datetime.timedelta(days=90)
             bancas = {}
             for banca in Banca.objects.filter(startDate__gte=start,
                                               startDate__lte=end):

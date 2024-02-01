@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 18 de Outubro de 2019
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load l10n %}
+  <script src="{% static 'js/w3.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">Plano de Aulas</span>
+
+  {% include "edicoes.html" with n_todas=True %}
+  <br>
+
+  <div class="atualizar">
+    <div class="table-responsive">
+      <b>Programa</b>
+      <table id="AulasTable" class="table-bordered table-sm">
+        <thead class="table-info">
+          <tr>
+            <th onclick="w3.sortHTML('#AulasTable', '.item', 'td:nth-child(1)')">Aula (Data)</th>
+            <th onclick="w3.sortHTML('#AulasTable', '.item', 'td:nth-child(2)')">Questão / Problema / Desafio</th>
+            <th onclick="w3.sortHTML('#AulasTable', '.item', 'td:nth-child(3)')">Fundamentos / Conteúdo*</th>
+            <th onclick="w3.sortHTML('#AulasTable', '.item', 'td:nth-child(4)')">Evidências de Aprendizado</th>
+            <th onclick="w3.sortHTML('#AulasTable', '.item', 'td:nth-child(4)')">Programação / Atividades*</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for aula in aulas %}
+            <tr class="item">
+              <td>Aula {{forloop.counter|stringformat:"02d"}} <small style="color: blue;">{{aula.startDate|date:"d/m/Y"}}</small></td>
+              <td>&nbsp;</td>
+              <td>{{aula.atividade}}</td>
+              <td>&nbsp;</td>
+              <td>{{aula.descricao}}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <br>
+
+    <div class="table-responsive">
+      <b>Atividades Práticas Supervisionadas (APS)</b>
+      <table class="table-bordered table-sm">
+        <thead class="table-info">
+          <tr>
+            <th class="text-center">Atividade</th>
+            <th class="text-center">Obsevação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="item">
+            <td class="text-center">Desenvolvimento de Projeto com Organização Parceira</td>
+            <td class="text-center">Relatório do Projeto Final de Engenharia</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <br>
+
+    <div class="table-responsive">
+      <b>Critério de Avaliação</b>
+      <table class="table-bordered table-sm">
+        <thead class="table-info">
+          <tr>
+            <th class="text-center">Nome da Avaliação</th>
+            <th class="text-center">Sigla</th>
+            <th class="text-center">Peso em %</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for composicao in composicoes %}
+            {% with pesos=composicao.peso_set.all %}
+              {% if pesos|length > 0 %}
+                <tr class="item">
+                  <td class="text-center">{{composicao.exame.titulo}}</td>
+                  <td class="text-center">{{composicao.exame.sigla}}</td>
+                  <td class="text-center" id="m{{forloop.counter0}}"></td>
+                  <script> 
+                    peso_tmp = 0;
+                    {% for peso in pesos %}   
+                      {% if peso.peso %}
+                        peso_tmp += {{peso.peso|unlocalize}}; 
+                      {% endif %}
+                    {% endfor %}
+                    document.getElementById("m{{forloop.counter0}}").innerHTML = +peso_tmp.toFixed(3);
+                  </script>
+                </tr>
+              {% endif %}
+            {% endwith %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <br>
+  
+    <b>Orientações gerais:</b><br>
+    <span>Para a Aprovação o estudante deve ter uma média individual maior ou igual a 5, e deve ter no mínimo conceito C em todos os objetivos de aprendizado da avaliação final.</span>
+
+  <script>
+    function carrega_pagina() {};
+    window.onload = carrega_pagina
+  </script>
+
+</div>
+
+{% include "edicoes_ajax.html" %}
+
+{% endblock %}

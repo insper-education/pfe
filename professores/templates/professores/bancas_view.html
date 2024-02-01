@@ -295,13 +295,13 @@
   </div>
 
   <div id="div_botao" class="modal-footer">
-    <button id="fecha_modal" type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-    <button id="submit" class="btn btn-primary" type="submit" name="atualizar"
+    <button id="fecha_modal" type="button" class="btn btn-secondary mb-1" data-dismiss="modal">Fechar</button>
+    <button id="submit" class="btn btn-primary mb-1" type="submit" name="atualizar"
       {% if banca %}onclick="operacao = 'atualizar';"{% endif %}>
       {% if banca %}Atualizar{% else %}Agendar{% endif %}
     </button>
     {% if banca %}
-      <button id="excluir" class="btn btn-primary" type="submit" name="excluir" onclick="operacao = 'excluir';">
+      <button id="excluir" class="btn btn-primary mb-1" type="submit" name="excluir" onclick="operacao = 'excluir';">
         Excluir Banca
       </button>
     {% endif %}
