@@ -26,6 +26,9 @@ from users.support import get_edicoes
 
 from projetos.tipos import TIPO_EVENTO
 
+from academica.models import Composicao
+from academica.support import filtra_composicoes
+
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
@@ -365,9 +368,14 @@ def plano_aulas(request):
             if semestre == "1":
                 eventos = eventos.filter(startDate__month__lte=6)
             else:
-                eventos = eventos.filter(startDate__month__gte=7)
-            
-            context = {"aulas": eventos,}
+                eventos = eventos.filter(startDate__month__gte=7)            
+
+            composicoes = filtra_composicoes(Composicao.objects.all(), ano, semestre)
+    
+            context = {
+                "aulas": eventos,
+                "composicoes": composicoes,
+                }
             return render(request, "operacional/plano_aulas.html", context=context)
         
         return HttpResponse("Algum erro não identificado.", status=401)

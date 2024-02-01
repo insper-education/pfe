@@ -49,7 +49,7 @@
             <td>
               <ul>
               {% for composicao in composicoes %}
-                <li><span style="display: inline-block; width: 29em;">{{composicao.exame}} ({{composicao.data_inicial|date:"d/m/Y"}} a 
+                <li><span style="display: inline-block; width: 30em;">{{composicao.exame}} ({{composicao.data_inicial|date:"d/m/Y"}} a 
                        {% if composicao.data_final%}{{composicao.data_final|date:"d/m/Y"}}{% else %}atualmente{% endif %}):</span>
                   <span style="display: inline-block; width: 34em;">
                     <b id="m{{ano}}{{semestre}}{{forloop.counter0}}" style="display: inline-block; width: 4em; text-align:right;"></b>

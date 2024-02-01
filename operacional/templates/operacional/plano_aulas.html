@@ -7,8 +7,8 @@
 
 {% block head %}
   {% load static %}
+  {% load l10n %}
   <script src="{% static 'js/w3.js' %}"></script>
-
 {% endblock %}
 
 {% block content %}
@@ -65,7 +65,6 @@
     </div>
     <br>
 
-
     <div class="table-responsive">
       <b>Critério de Avaliação</b>
       <table class="table-bordered table-sm">
@@ -77,41 +76,31 @@
           </tr>
         </thead>
         <tbody>
-          <tr class="item">
-            <td class="text-center">Relatório Intermediário de Grupo</td>
-            <td class="text-center">RIG</td>
-            <td class="text-center">8</td>
-          </tr>
-          <tr class="item">
-            <td class="text-center">Relatório Intermediário Individual</td>
-            <td class="text-center">RII</td>
-            <td class="text-center">20</td>
-          </tr>
-          <tr class="item">
-            <td class="text-center">Banca Intermediária</td>
-            <td class="text-center">BI</td>
-            <td class="text-center">12</td>
-          </tr>
-          <tr class="item">
-            <td class="text-center">Relatório Final de Grupo</td>
-            <td class="text-center">RFG</td>
-            <td class="text-center">12</td>
-          </tr>
-          <tr class="item">
-            <td class="text-center">Relatório Final Individual</td>
-            <td class="text-center">RFI</td>
-            <td class="text-center">30</td>
-          </tr>
-          <tr class="item">
-            <td class="text-center">Banca Final</td>
-            <td class="text-center">BF</td>
-            <td class="text-center">18</td>
-          </tr>
+          {% for composicao in composicoes %}
+            {% with pesos=composicao.peso_set.all %}
+              {% if pesos|length > 0 %}
+                <tr class="item">
+                  <td class="text-center">{{composicao.exame.titulo}}</td>
+                  <td class="text-center">{{composicao.exame.sigla}}</td>
+                  <td class="text-center" id="m{{forloop.counter0}}"></td>
+                  <script> 
+                    peso_tmp = 0;
+                    {% for peso in pesos %}   
+                      {% if peso.peso %}
+                        peso_tmp += {{peso.peso|unlocalize}}; 
+                      {% endif %}
+                    {% endfor %}
+                    document.getElementById("m{{forloop.counter0}}").innerHTML = +peso_tmp.toFixed(3);
+                  </script>
+                </tr>
+              {% endif %}
+            {% endwith %}
+          {% endfor %}
         </tbody>
       </table>
     </div>
     <br>
-
+  
     <b>Orientações gerais:</b><br>
     <span>Para a Aprovação o estudante deve ter uma média individual maior ou igual a 5, e deve ter no mínimo conceito C em todos os objetivos de aprendizado da avaliação final.</span>
 
