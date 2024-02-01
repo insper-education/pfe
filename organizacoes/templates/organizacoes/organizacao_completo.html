@@ -194,16 +194,14 @@
     <h3>Propostas <small><a href="{% url 'proposta_submissao' %}?organizacao={{organizacao.id}}">&#10133;</a></small></h3>
     <ol>
       {% for proposta in organizacao.proposta_set.all %}
-        <a href="{% url 'proposta_completa' proposta.id %}"> 
+        <a href="{% url 'proposta_completa' proposta.id %}">
+          {% with projeto_fechado=proposta.projeto_set.exists %}
           <li>
-            {% if proposta.fechada %}
-              <u>
-            {% endif %}
+            {% if projeto_fechado %}<u>{% endif %}
             {{proposta.titulo}} ({{proposta.ano}}.{{proposta.semestre}})
-            {% if proposta.fechada %}
-              </u>
-            {% endif %}
+            {% if projeto_fechado %}</u>{% endif %}
           </li>
+          {% endwith %}
         </a>
       {% endfor %}
     </ol>
