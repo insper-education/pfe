@@ -13,3 +13,5 @@ dump.rdb
 dump.json
 old/
 /static/
+/ip-*
+/default-ip-*
