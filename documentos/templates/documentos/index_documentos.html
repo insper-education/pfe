@@ -36,8 +36,9 @@
     <h5>Área dos Estudantes</h5> <!-- Estudante -->
     <ul>
       {% include "documento.html" with documento=documentos|tipo_documento:9 %}
-      {% include "documento.html" with documento=documentos|tipo_documento:13 %}
+        {% include "documento.html" with documento=documentos|tipo_documento:45 nivel=2 %}
 
+      {% include "documento.html" with documento=documentos|tipo_documento:13 %}
         {% include "documento.html" with documento=documentos|tipo_documento:17 nivel=2 %}
         {% include "documento.html" with documento=documentos|tipo_documento:18 nivel=2 %}
         {% include "documento.html" with documento=documentos|tipo_documento:20 nivel=2 %}

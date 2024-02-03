@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 3 de Fevereiro de 2024
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load tipo_documento %}
+{% endblock %}
+
+{% block content %}
+
+<span class="titulo">Alinhamentos Gerais</span>
+<br>
+
+<h5>&bull;&nbsp;<a href="https://forms.gle/3Qong25KnCYX9QWs9">Levantamento de Expectativa do PFE</a></h5><br>
+
+<h5>&bull;&nbsp;<a href="http://{{request.get_host}}{{documento.get_url}}">Alocação Semanal</a></h5><br>
+
+
+
+{% endblock %}

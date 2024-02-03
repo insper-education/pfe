@@ -62,14 +62,16 @@ class RangeFileWrapper:
         return data
 
 
-def stream_video(request, path):
+def stream_video(request, path, content_type=None):
     range_header = request.META.get('HTTP_RANGE', '').strip()
     range_re = re.compile(r'bytes\s*=\s*(\d+)\s*-\s*(\d*)', re.I)
     range_match = range_re.match(range_header)
     size = os.path.getsize(path)
     # content_type, encoding = mimetypes.guess_type(path)
-    content_type, _ = mimetypes.guess_type(path)
-    content_type = content_type or 'application/octet-stream'
+    if not content_type:
+        content_type, _ = mimetypes.guess_type(path)
+    if not content_type:
+        content_type = content_type or 'application/octet-stream'
     resp = None
     if range_match:
         first_byte, last_byte = range_match.groups()
@@ -78,14 +80,14 @@ def stream_video(request, path):
         if last_byte >= size:
             last_byte = size - 1
         length = last_byte - first_byte + 1
-        resp = StreamingHttpResponse(RangeFileWrapper(open(path, 'rb'), offset=first_byte, length=length),
+        resp = StreamingHttpResponse(RangeFileWrapper(open(path, "rb"), offset=first_byte, length=length),
                                      status=206, content_type=content_type)
         #resp['Content-Length'] = str(length)
         resp['Content-Range'] = 'bytes %s-%s/%s' % (first_byte, last_byte, size)
     else:
-        resp = StreamingHttpResponse(FileWrapper(open(path, 'rb')), content_type=content_type)
-        #resp['Content-Length'] = str(size)
-    resp['Accept-Ranges'] = 'bytes'
+        resp = StreamingHttpResponse(FileWrapper(open(path, "rb")), content_type=content_type)
+        resp["Content-Length"] = str(size)
+    resp["Accept-Ranges"] = "bytes"
     return resp
 
 
@@ -98,22 +100,40 @@ def get_response(file, path, request):
         return HttpResponse(file.read(), content_type="image/jpeg")
     elif path[-3:].lower() == "png":
         return HttpResponse(file.read(), content_type="image/png")
+    elif path[-3:].lower() == "gif":
+        return HttpResponse(file.read(), content_type="image/gif")
+    elif path[-3:].lower() == "tif" or path[-4:].lower() == "tiff":
+        return HttpResponse(file.read(), content_type="image/tiff")
+    elif path[-3:].lower() == "svg" or path[-4:].lower() == "svgz":
+        return HttpResponse(file.read(), content_type="image/svg+xml")
     elif path[-3:].lower() == "doc":
         return HttpResponse(file.read(), content_type=\
-            'application/msword')
+            "application/msword")
     elif path[-4:].lower() == "docx":
         return HttpResponse(file.read(), content_type=\
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
     elif path[-3:].lower() == "ppt":
         return HttpResponse(file.read(), content_type=\
-            'application/vnd.ms-powerpoint')
+            "application/vnd.ms-powerpoint")
     elif path[-4:].lower() == "pptx":
         return HttpResponse(file.read(), content_type=\
-            'application/vnd.openxmlformats-officedocument.presentationml.presentation')
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation")
+    elif path[-3:].lower() == "xls":
+        return HttpResponse(file.read(), content_type=\
+            "application/vnd.ms-excel")
+    elif path[-4:].lower() == "xlsx":
+        return HttpResponse(file.read(), content_type=\
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    elif path[-3:].lower() == "csv":
+        return HttpResponse(file.read(), content_type="text/comma-separated-values")
     elif path[-3:].lower() == "pdf":
         return HttpResponse(file.read(), content_type="application/pdf")
     elif path[-3:].lower() == "mp4":
-        return stream_video(request, file.name)
+        return stream_video(request, file.name, "video/mp4")
+    elif path[-3:].lower() == "mpg" or path[-4:].lower() == "mpeg":
+        return stream_video(request, file.name, "video/mpeg")
+    elif path[-3:].lower() == "ogv":
+        return stream_video(request, file.name, "video/ogg")
     elif path[-3:].lower() == "mkv":
         return HttpResponse(file.read(), content_type="video/webm")
     elif path[-3:].lower() == "zip" or path[-3:].lower() == "rar" or path[-4:].lower() == "7zip":

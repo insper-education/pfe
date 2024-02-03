@@ -17,12 +17,12 @@ def index(request):
     """Página principal do sistema do Projeto Final de Engenharia."""
     # num_visits = request.session.get('num_visits', 0) # Visitas a página.
     # request.session['num_visits'] = num_visits + 1
-    return render(request, 'index.html')
+    return render(request, "index.html")
 
 
 def manutencao(request):
     """Página de Manutenção do Projeto Final de Engenharia."""
-    return render(request, 'manutencao.html')
+    return render(request, "manutencao.html")
 
 
 def custom_400(request, exception):

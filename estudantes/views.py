@@ -20,7 +20,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 
 from projetos.models import Projeto, Proposta, Configuracao, Area, AreaDeInteresse
-from projetos.models import Encontro, Banca, Entidade, FeedbackEstudante, Evento
+from projetos.models import Encontro, Banca, Entidade, FeedbackEstudante, Evento, Documento
 
 from .support import cria_area_estudante
 
@@ -38,6 +38,8 @@ from .models import Relato, Pares
 from administracao.support import get_limite_propostas, get_limite_propostas2, usuario_sem_acesso
 
 from administracao.models import Carta
+from documentos.models import TipoDocumento
+
 
 @login_required
 def index_estudantes(request):
@@ -78,7 +80,7 @@ def index_estudantes(request):
                 banca_final = eventos.filter(tipo_de_evento=15, startDate__month__gt=6).last()
 
             if banca_final:
-                context['fase_final'] = hoje > banca_final.endDate
+                context["fase_final"] = hoje > banca_final.endDate
 
         # Avaliações de Pares
         context["fora_fase_feedback_intermediario"], _, _ = configuracao_pares_vencida(request.user.aluno, 31) # 31, 'Avaliação de Pares Intermediária'
@@ -86,7 +88,7 @@ def index_estudantes(request):
 
     # Caso professor ou administrador
     elif request.user.tipo_de_usuario in (2, 4):
-        context['fase_final'] = True
+        context["fase_final"] = True
 
     # Caso parceiro
     else:
@@ -96,34 +98,18 @@ def index_estudantes(request):
 
     #get_limite_propostas2 return None caso não haja limite
     context["limite_propostas"] = get_limite_propostas2(configuracao)
+    
+    return render(request, "estudantes/index_estudantes.html", context=context)
 
-    return render(request, 'estudantes/index_estudantes.html', context=context)
 
-
-# @login_required
-# def areas_interesse(request):
-#     """Para estudantes definirem suas áreas de interesse."""
-#     context = {'areast': Area.objects.filter(ativa=True),}
-
-#     # Caso seja estudante
-#     if request.user.tipo_de_usuario == 1:  # Estudante
-#         vencido = configuracao_estudante_vencida(request.user.aluno)
-#         if (not vencido) and request.method == 'POST':
-#             cria_area_estudante(request, request.user.aluno)
-#             return render(request, 'users/atualizado.html',)
-#         context['vencido'] = vencido
-#         context['estudante'] = request.user.aluno
-
-#     # caso Professores ou Administrador
-#     elif request.user.tipo_de_usuario in (2, 4):
-#         context['mensagem'] = "Você não está cadastrado como estudante."
-#         context['vencido'] = True
-
-#     # caso não seja Estudante, Professor ou Administrador (ou seja Parceiro)
-#     v = usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
-#     if v: return v  # Prof, Adm
-
-#     return render(request, 'estudantes/areas_interesse.html', context=context)
+@login_required
+def alinhamentos_gerais(request):
+    """Para passar links de alinhamentos gerais de início de semestre."""
+    tipo_documento = get_object_or_404(TipoDocumento, nome="Template de Alocação Semanal")
+    context = {
+        "documento": Documento.objects.filter(tipo_documento=tipo_documento).order_by("data").last(),
+    }
+    return render(request, "estudantes/alinhamentos_gerais.html", context)
 
 
 @login_required

@@ -14,57 +14,61 @@ from . import views
 urlpatterns = [
 
     # pagina inicial
-    path('',
+    path("",
          views.index_estudantes,
-         name='index_estudantes'),
+         name="index_estudantes"),
 
-    path('avaliacao_pares/<str:momento>',
+    path("alinhamentos_gerais/",
+         views.alinhamentos_gerais,
+         name="alinhamentos_gerais"),
+
+    path("avaliacao_pares/<str:momento>",
          views.avaliacao_pares,
-         name='avaliacao_pares'),
+         name="avaliacao_pares"),
 
-    path('encontros_marcar/',
+    path("encontros_marcar/",
          views.encontros_marcar,
-         name='encontros_marcar'),
+         name="encontros_marcar"),
 
-    path('estudante_feedback',
+    path("estudante_feedback",
          views.estudante_feedback,
-         name='estudante_feedback'),
+         name="estudante_feedback"),
 
-    path('estudante_feedback/<str:hashid>',
+    path("estudante_feedback/<str:hashid>",
         views.estudante_feedback_hashid,
-        name='estudante_feedback_hashid'),
+        name="estudante_feedback_hashid"),
 
-    path('exames_pesos/',
+    path("exames_pesos/",
         views.exames_pesos,
-        name='exames_pesos'),
+        name="exames_pesos"),
 
-    path('informacoes_adicionais/',
+    path("informacoes_adicionais/",
          views.informacoes_adicionais,
-         name='informacoes_adicionais'),
+         name="informacoes_adicionais"),
 
-    path('minhas_bancas/',
+    path("minhas_bancas/",
          views.minhas_bancas,
-         name='minhas_bancas'),
+         name="minhas_bancas"),
 
-    path('relato_quinzenal/',
+    path("relato_quinzenal/",
          views.relato_quinzenal,
-         name='relato_quinzenal'),
+         name="relato_quinzenal"),
 
-    path('relato_visualizar/<int:id>',
+    path("relato_visualizar/<int:id>",
          views.relato_visualizar,
-         name='relato_visualizar'),
+         name="relato_visualizar"),
 
-    path('selecao_propostas/',
+    path("selecao_propostas/",
          views.selecao_propostas,
-         name='selecao_propostas'),
+         name="selecao_propostas"),
 
-    path('submissao_documento/',
+    path("submissao_documento/",
          views.submissao_documento,
-         name='submissao_documento'),
+         name="submissao_documento"),
          
-    path('ajax/opcao_temporaria/',
+    path("ajax/opcao_temporaria/",
          views.opcao_temporaria,
-         name='opcao_temporaria'),
+         name="opcao_temporaria"),
 
 
 ]

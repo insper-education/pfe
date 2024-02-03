@@ -6,195 +6,178 @@
 {% endcomment %}
 
 {% block head %}
-    <style>
+  <style>
+    .mensagem {
+        visibility: hidden;
+        min-width: 250px;
+        max-width: 100%;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 2px;
+        padding: 12px;
+        position: fixed;
+        z-index: 1;
+        left: 50%;
+        bottom: 30px;
+        font-size: 17px;
+        transform: translate(-50%, 0);
+        -webkit-transform: translate(-50%, 0);
+        -moz-transform: translate(-50%, 0);
+        -ms-transform: translate(-50%, 0);
+        border: 4px solid #909090;
+    }
+    
+    .show {
+        visibility: visible;
+        -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
 
-        .mensagem {
-            visibility: hidden;
-            min-width: 250px;
-            max-width: 100%;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 2px;
-            padding: 12px;
-            position: fixed;
-            z-index: 1;
-            left: 50%;
-            bottom: 30px;
-            font-size: 17px;
-            transform: translate(-50%, 0);
-            -webkit-transform: translate(-50%, 0);
-            -moz-transform: translate(-50%, 0);
-            -ms-transform: translate(-50%, 0);
-            border: 4px solid #909090;
-        }
-        
-        .show {
-            visibility: visible;
-            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-            animation: fadein 0.5s, fadeout 0.5s 2.5s;
-        }
-
-        @-webkit-keyframes fadein {
-            from {bottom: 0; opacity: 0;} 
-            to {bottom: 30px; opacity: 1;}
-        }
-        
-        @keyframes fadein {
-            from {bottom: 0; opacity: 0;}
-            to {bottom: 30px; opacity: 1;}
-        }
-        
-        @-webkit-keyframes fadeout {
-            from {bottom: 30px; opacity: 1;} 
-            to {bottom: 0; opacity: 0;}
-        }
-        
-        @keyframes fadeout {
-            from {bottom: 30px; opacity: 1;}
-            to {bottom: 0; opacity: 0;}
-        }
-    </style>
+    @-webkit-keyframes fadein {
+        from {bottom: 0; opacity: 0;} 
+        to {bottom: 30px; opacity: 1;}
+    }
+    
+    @keyframes fadein {
+        from {bottom: 0; opacity: 0;}
+        to {bottom: 30px; opacity: 1;}
+    }
+    
+    @-webkit-keyframes fadeout {
+        from {bottom: 30px; opacity: 1;} 
+        to {bottom: 0; opacity: 0;}
+    }
+    
+    @keyframes fadeout {
+        from {bottom: 30px; opacity: 1;}
+        to {bottom: 0; opacity: 0;}
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
-    <br>
-    {% comment %} MEU PROJETO {% endcomment %}
-    {% comment %} Link só irá direto se houver um projeto de estudante, no começo só o interesse por propostas. {% endcomment %}
-    <a
-        {% comment %} Caso Professor {% endcomment %}
-        {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-            class="disabled" onclick="showMessage('projeto_professor')"
-        
-        {% comment %} Caso Estudante {% endcomment %}
+  
+  <br>
+  <h5>Pré-projeto</h5>
+  <ul>
+    <li><a href="{% url 'informacoes_adicionais' %}">Indicar Interesses e Experiências</a></li>
+    <li><a 
+      {% comment %} Caso Professor {% endcomment %}
+      {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+          {% if vencido %}
+              style="color:grey"
+          {% elif not configuracao.liberadas_propostas %}
+              style="color:grey"
+          {% endif %}
+          href="{% url 'selecao_propostas' %}"
+
+      {% comment %} Caso Estudante {% endcomment %}
+      {% else %}
+          {% if vencido %}
+              class="disabled" onclick="showMessage('vencido')" 
+          {% elif not configuracao.liberadas_propostas %}
+              class="disabled" onclick="showMessage('liberado')" 
+          {% else %}
+              href="{% url 'selecao_propostas' %}"
+          {% endif %}
+      {% endif %}
+      >Selecionar Propostas de Projetos</a>
+
+      {% if ano == user.aluno.anoPFE and semestre == user.aluno.semestrePFE %}
+      <div style="color: red;">Prazo para a seleção das propostas {{ano}}.{{semestre}}:
+        <b>
+        {% if configuracao.liberadas_propostas and limite_propostas %}
+            {{limite_propostas}}
         {% else %}
-            {% if not projeto %} 
-                class="disabled" onclick="showMessage('projeto')"
-            {% else %}
-                href="{% url 'meuprojeto' %}"
-            {% endif %}
+            ainda não liberado
         {% endif %}
-    >
-        <h5>Meu Projeto</h5>
-    </a>
-    <hr>
+        </b>
+      </div>
+      {% endif %}
+    </li>
+  </ul>
+  <hr>
+
+  <h5>Projeto</h5>
+  <ul>
+    <li><a
+      {% comment %} Caso Professor {% endcomment %}
+      {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+          class="disabled" onclick="showMessage('projeto_professor')"
+      
+      {% comment %} Caso Estudante {% endcomment %}
+      {% else %}
+          {% if not projeto %} 
+              class="disabled" onclick="showMessage('projeto')"
+          {% else %}
+              href="{% url 'meuprojeto' %}"
+          {% endif %}
+      {% endif %}
+    >Meu Projeto</a></li>
+
+    <li><a href="{% url 'alinhamentos_gerais' %}">Alinhamentos Gerais</a></li>
+  
+    <li><a {% comment %} Submissão de Documentos {% endcomment %}
+      {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+          href="{% url 'submissao_documento' %}"
+      {% else %}
+          {% if not projeto %} 
+              class="disabled" onclick="showMessage('projeto')"
+          {% else %}
+              href="{% url 'submissao_documento' %}"
+          {% endif %}
+      {% endif %}
+    >Submissão de Documentos</a></li>
+
+    <li><a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'relato_quinzenal' %}" {% endif %} >
+      Relato Quinzenal
+    </a></li>
+
+    <li><a {% if not projeto %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'minhas_bancas' %}" {% endif %} >
+      Informações das Bancas
+    </a></li>
     
-    {% comment %} INFORMAÇÕES ADICIONAIS {% endcomment %}
-    <a href="{% url 'informacoes_adicionais' %}">
-        <h5>Indicar Interesses e Experiências</h5>
-    </a>
+    <li><a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="showMessage('projeto')"
+            {% else %} href="{% url 'encontros_marcar' %}" {% endif %} >
+      Agendar Mentorias
+    </a></li>
 
-    {% comment %} SELECIONAR PROPOSTAS {% endcomment %}
-    <a 
-        {% comment %} Caso Professor {% endcomment %}
-        {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-            {% if vencido %}
-                style="color:grey"
-            {% elif not configuracao.liberadas_propostas %}
-                style="color:grey"
-            {% endif %}
-            href="{% url 'selecao_propostas' %}"
+    <li><a {% if fora_fase_feedback_intermediario %} class="disabled" onclick="showMessage('feedback')" {% else %}
+        {% if not projeto and user.tipo_de_usuario == 1%} class="disabled" onclick="showMessage('projeto')" {% else %}
+        href="{% url 'avaliacao_pares' 'intermediaria' %}" {% endif %}{% endif %} >
+        Avaliação de Pares Intermediária
+    </a></li>
+    <li><a {% if fora_fase_feedback_final %} class="disabled" onclick="showMessage('feedback')" {% else %}
+        {% if not projeto and user.tipo_de_usuario == 1%} class="disabled" onclick="showMessage('projeto')" {% else %}
+        href="{% url 'avaliacao_pares' 'final' %}" {% endif %}{% endif %} >
+        Avaliação de Pares Final
+    </a></li>
+  
+  </ul>
+  <hr>
 
-        {% comment %} Caso Estudante {% endcomment %}
-        {% else %}
-            {% if vencido %}
-                class="disabled" onclick="showMessage('vencido')" 
-            {% elif not configuracao.liberadas_propostas %}
-                class="disabled" onclick="showMessage('liberado')" 
-            {% else %}
-                href="{% url 'selecao_propostas' %}"
-            {% endif %}
-        {% endif %}
-    >
-        <h5>Selecionar Propostas de Projetos</h5>
-    </a>
+  <h5>Pós-projeto</h5>
+  <ul>
+    <li><a {% if not fase_final %} class="disabled" onclick="showMessage('final')" {% else %} href="{% url 'estudante_feedback' %}" {% endif %} >
+      Feedback de encerramento
+    </a></li>
+  </ul>
 
-    {% if ano == user.aluno.anoPFE and semestre == user.aluno.semestrePFE %}
-        &nbsp;&nbsp;
-        <font color="red">Prazo para a seleção das propostas {{ano}}.{{semestre}}:
-            <b>
-            {% if configuracao.liberadas_propostas and limite_propostas %}
-                {{limite_propostas}}
-            {% else %}
-                ainda não liberado
-            {% endif %}
-            </b>
-        </font>
-    {% endif %}
-
-    {% comment %} Submissão de Documentos {% endcomment %}
-    <hr>
-    <a
-        {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-            href="{% url 'submissao_documento' %}"
-        {% else %}
-            {% if not projeto %} 
-                class="disabled" onclick="showMessage('projeto')"
-            {% else %}
-                href="{% url 'submissao_documento' %}"
-            {% endif %}
-        {% endif %}
-    >
-        <h5>Submissão de Documentos</h5>
-    </a>
-
-
-    {% comment %} Verificar Horário das Bancas {% endcomment %}
-    <hr>
-    <h5>Agendamentos</h5>
-    <ul>
-        <li><a {% if not projeto %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'minhas_bancas' %}" {% endif %} >
-            Bancas
-        </a></li>
-        <li><a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'encontros_marcar' %}" {% endif %} >
-            Mentoria
-        </a></li>
-    </ul>
-
-    {% comment %} Relato Quinzenal {% endcomment %}
-    <hr> 
-    <a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'relato_quinzenal' %}" {% endif %} >
-        <h5>Formulário de Relato Quinzenal</h5>
-    </a>
-
-    {% comment %} Avaliação de Pares {% endcomment %}
-    <hr>
-    <h5>Avaliação de Pares</h5>
-    <ul>
-        <li><a {% if fora_fase_feedback_intermediario %} class="disabled" onclick="showMessage('feedback')" {% else %}
-            {% if not projeto and user.tipo_de_usuario == 1%} class="disabled" onclick="showMessage('projeto')" {% else %}
-            href="{% url 'avaliacao_pares' 'intermediaria' %}" {% endif %}{% endif %} >
-            Intermediária
-        </a></li>
-        <li><a {% if fora_fase_feedback_final %} class="disabled" onclick="showMessage('feedback')" {% else %}
-            {% if not projeto and user.tipo_de_usuario == 1%} class="disabled" onclick="showMessage('projeto')" {% else %}
-            href="{% url 'avaliacao_pares' 'final' %}" {% endif %}{% endif %} >
-            Final
-        </a></li>
-    </ul>
-
-    <hr>
-
-    <a {% if not fase_final %} class="disabled" onclick="showMessage('final')" {% else %} href="{% url 'estudante_feedback' %}" {% endif %} >
-        <h5>Feedback de encerramento do PFE</h5>
-    </a>
-
-
-    {% comment %} <a href=" reembolso " > <h5> Pedido de Reembolso </h5> </a> {% endcomment %}
-
-    <div class="mensagem" id="projeto">Você não está alocado em um projeto.</div>
-    <div class="mensagem" id="vencido">Prazo para a seleção dos propostas vencido.</div>
-    <div class="mensagem" id="liberado">Propostas ainda não liberadas.</div>
-    <div class="mensagem" id="final">Você ainda não está na fase final de projeto.</div>
-    <div class="mensagem" id="feedback">Fora do período para o feedback.</div>
-    <div class="mensagem" id="projeto_professor">Professor, para ver seus projetos clique no seu nome na barra de título.</div>
-    
-    {% comment %} tipo_de_usuario == 2 é professor e tipo_de_usuario == 4 é administrador {% endcomment %}
-    <script>
-        function showMessage(mensagem) {
-            $("#"+mensagem).addClass("show");
-            setTimeout(function(){ $("#"+mensagem).removeClass("show"); }, 3000);
-        }
-    </script>
+  {% comment %} <a href=" reembolso " > <h5> Pedido de Reembolso </h5> </a> {% endcomment %}
+  <div class="mensagem" id="projeto">Você não está alocado em um projeto.</div>
+  <div class="mensagem" id="vencido">Prazo para a seleção dos propostas vencido.</div>
+  <div class="mensagem" id="liberado">Propostas ainda não liberadas.</div>
+  <div class="mensagem" id="final">Você ainda não está na fase final de projeto.</div>
+  <div class="mensagem" id="feedback">Fora do período para o feedback.</div>
+  <div class="mensagem" id="projeto_professor">Professor, para ver seus projetos clique no seu nome na barra de título.</div>
+  
+  {% comment %} tipo_de_usuario == 2 é professor e tipo_de_usuario == 4 é administrador {% endcomment %}
+  <script>
+    function showMessage(mensagem) {
+      $("#"+mensagem).addClass("show");
+      setTimeout(function(){ $("#"+mensagem).removeClass("show"); }, 3000);
+    }
+  </script>
 
 {% endblock %}
