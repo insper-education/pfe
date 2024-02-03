@@ -203,7 +203,7 @@ class ProjetoAdmin(admin.ModelAdmin):
 class PropostaAdmin(admin.ModelAdmin):
     """Exibição no sistema de administração do Django para Proposta."""
 
-    list_display = ("titulo", "fechada", "nome", "organizacao", "ano", "semestre", )
+    list_display = ("titulo", "nome", "organizacao", "ano", "semestre", )
     list_filter = ("ano", "semestre", )
     fieldsets = \
         ((None,

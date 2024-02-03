@@ -415,7 +415,8 @@ class Proposta(models.Model):
                                    on_delete=models.SET_NULL,
                                    help_text='Quem autorizou a ser publicado para os alunos')
 
-    fechada = models.BooleanField(default=False, help_text='Se a proposta virou um projeto')
+    # NAO MAIS USADO
+    # fechada = models.BooleanField(default=False, help_text='Se a proposta virou um projeto')
 
     perfil1 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil1")
     perfil2 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil2")
