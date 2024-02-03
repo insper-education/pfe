@@ -118,6 +118,10 @@
 
     <li><a href="{% url 'alinhamentos_gerais' %}">Alinhamentos Gerais</a></li>
   
+    <li><a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'relato_quinzenal' %}" {% endif %} >
+      Relato Quinzenal
+    </a></li>
+
     <li><a {% comment %} Submissão de Documentos {% endcomment %}
       {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
           href="{% url 'submissao_documento' %}"
@@ -129,10 +133,6 @@
           {% endif %}
       {% endif %}
     >Submissão de Documentos</a></li>
-
-    <li><a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'relato_quinzenal' %}" {% endif %} >
-      Relato Quinzenal
-    </a></li>
 
     <li><a {% if not projeto %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'minhas_bancas' %}" {% endif %} >
       Informações das Bancas
