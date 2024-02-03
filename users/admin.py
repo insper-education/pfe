@@ -52,7 +52,7 @@ class PFEUserAdmin(admin.ModelAdmin):
     list_display = ("first_name", "last_name", "username", "email", "genero", "tipo_de_usuario",)
     list_filter = ("tipo_de_usuario", "coordenacao", FirstLetterFilter)
     fieldsets = (
-        (None, {"fields": ("username", "first_name", "last_name", "email", "tipo_de_usuario",)}),
+        (None, {"fields": ("username", "first_name", "last_name", "pronome_tratamento", "nome_social", "email", "tipo_de_usuario",)}),
         ("Personal info",
          {"fields": ("groups", "user_permissions", "telefone", "celular", "instant_messaging",
                      "linkedin", "membro_comite", "genero", "tipo_lingua", "coordenacao", "observacoes")}),
