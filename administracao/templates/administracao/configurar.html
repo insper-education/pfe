@@ -61,8 +61,8 @@
     <label for="assinatura">Assinatura (proporção ~250x70):</label>
     <input id="assinatura" type="file" name="assinatura" accept="image/*">
     {% if configuracao.assinatura %}
-      <br><a href="http://{{request.get_host}}{{configuracao.assinatura.url}}">
-        <span class="full-text">http://{{request.get_host}}{{configuracao.assinatura.url}}</span><br>
+      <br><a href="{{request.scheme}}://{{request.get_host}}{{configuracao.assinatura.url}}">
+        <span class="full-text">{{request.scheme}}://{{request.get_host}}{{configuracao.assinatura.url}}</span><br>
         <div style="border: 1px solid #000; border-style: dotted; padding: 8px; width:fit-content;"><img class="signature" src="{{configuracao.assinatura.url}}"></div>
       </a><br>
 

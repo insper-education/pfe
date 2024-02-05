@@ -38,7 +38,7 @@
            data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
            {% if projeto.periodo == "Anteriores" %}
             {% with documento=projeto.documento_set.all|tipo_documento:"Plano de Orientação" %}
-             href="http://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer"
+             href="{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer"
             {% endwith %}
            {% else %}
             class="open-documento"

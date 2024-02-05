@@ -233,7 +233,7 @@ def cadastrar_usuario(request):
                     message_email += "Projeto Final de Engenharia (PFE)."
                     message_email += "\n\n"
                     message_email += "\tO endereço do servidor é: "
-                    message_email += "<a href='http://pfe.insper.edu.br/'>http://pfe.insper.edu.br/</a>"
+                    message_email += "<a href='https://pfe.insper.edu.br/'>https://pfe.insper.edu.br/</a>"
                     message_email += "\n\n"
 
                     message_email += "\tSua conta é: <b>" + user.username + "</b>\n"

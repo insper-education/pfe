@@ -157,7 +157,7 @@
                   {% if documento.documento and documento.link %}
                     <div class="btn btn-light btn-outline-info btn-sm" style="width: 7em; padding:0px 4px 0px 4px;">
                       Contrato
-                      <a href="http://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+                      <a href="{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
                       <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
                       {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
                         <sup>(Inglês)</sup>
@@ -166,7 +166,7 @@
                   {% else %}
                     {% if documento.documento %}
                       <a class="btn btn-light btn-outline-info btn-sm" style="width: 7em; padding:0px 4px 0px 4px;" 
-                        href="http://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">Contrato</a>
+                        href="{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">Contrato</a>
                       {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
                         <sup>(Inglês)</sup>
                       {% endif %}

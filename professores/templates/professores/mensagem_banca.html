@@ -14,7 +14,7 @@ Caros Membros da Banca,%0D%0A%0D%0A
 %20%20%20%20Por favor, preencha a avaliação no link abaixo, idealmente logo após a conclusão da banca (um e-mail será enviado para você e o orientador).%0D%0A%0D%0A
 %20%20%20%20Também deixamos um manual de participação em bancas em anexo caso tenha dúvidas, contudo podem tirar suas dúvidas diretamente com o orientador do projeto, ou mesmo comigo.%0D%0A%0D%0A
 %20%20%20%20%20%20%20%20atenciosamente, Luciano P Soares%0D%0A%0D%0A------------%0D%0A%0D%0A
-★ Link formulário de avaliação: http://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}
+★ Link formulário de avaliação: {{request.scheme}}://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}
 %0D%0A%0D%0A
 Agendamento%20da%20banca.%0D%0A
 Horário:%20{{banca.startDate.date}}%20({{banca.startDate|date:'l'}})%20das%20{{banca.startDate.time}}%20às%20{{banca.endDate.time}}%0D%0A

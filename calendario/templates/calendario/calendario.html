@@ -466,7 +466,7 @@
                             {% if aula.responsavel %}({{aula.responsavel.get_full_name}}){% endif %}
                           </span>
                           {% if aula.documento %}
-                            <a href="http://{{request.get_host}}{{aula.documento.get_url}}">
+                            <a href="{{request.scheme}}://{{request.get_host}}{{aula.documento.get_url}}">
                               &nbsp;<i class="fa fa-file-pdf"></i>
                             </a>
                           {% endif %}

@@ -21,11 +21,11 @@
       <i data-toggle="tooltip" data-html="true" animation="true" title="público" class="fa fa-unlock"></i>
     {% endif %}
     {% if documento.documento and documento.link %}
-        <a href="http://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+        <a href="{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
         <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
     {% else %}
       {% if documento.documento %}
-        <a href="http://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">{{documento.get_tipo_de_certificado_display}}</a>
+        <a href="{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">{{documento.get_tipo_de_certificado_display}}</a>
       {% endif %}
       {% if documento.link %}
         <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
