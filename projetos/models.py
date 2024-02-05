@@ -918,20 +918,22 @@ class Anotacao(models.Model):
     texto = models.TextField(max_length=2000, help_text='Anotação')
 
     TIPO_DE_RETORNO = ( # não mudar a ordem dos números
-        (0, "Contactada para enviar proposta"),
-        (1, "Interessada em enviar proposta"),
-        (2, "Enviou proposta de projeto"),
-        (3, "Não vai enviar proposta de projeto"),
-        (4, "Confirmamos estudantes para o(s) projeto(s) proposto(s)"),
-        (5, "Notificamos que não conseguimos montar projeto"),
-        (6, "Contrato fechado para projeto"),
-        (7, "Envio de Relatório Final"),
-        (10, "Autorizou a publicação do Relatório Final"),
-        (11, "Negou a publicação do Relatório Final"),
-        (254, "outros"),
+        (0, "Contactada para enviar proposta", "Prospecção"),
+        (1, "Interessada em enviar proposta", "Prospecção"),
+        (2, "Enviou proposta de projeto", "Prospecção"),
+        (3, "Não vai enviar proposta de projeto", "Prospecção"),
+        (4, "Confirmamos estudantes para o(s) projeto(s) proposto(s)", "Prospecção"),
+        (5, "Notificamos que não conseguimos montar projeto", "Prospecção"),
+        (6, "Contrato fechado para projeto", "Contratação"),
+        (7, "Envio de Relatório Final", "Relatório"),
+        (10, "Autorizou a publicação do Relatório Final", "Relatório"),
+        (11, "Negou a publicação do Relatório Final (público)", "Relatório"),
+        (12, "Contrato em análise", "Contratação"),
+        (13, "Acionada para assinatura de contrato", "Contratação"),
+        (254, "outros", ""),
     )
 
-    tipo_de_retorno = models.PositiveSmallIntegerField(choices=TIPO_DE_RETORNO, default=0)
+    tipo_de_retorno = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_DE_RETORNO], default=0)
 
     def __str__(self):
         return str(self.momento)

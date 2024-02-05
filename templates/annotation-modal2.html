@@ -59,10 +59,10 @@
         type: "POST",
         url: address,
         data: {
-            'texto':texto,
-            'data_hora':data_hora,
-            'tipo_de_retorno':tipo_de_retorno,
-            'csrfmiddlewaretoken': '{{ csrf_token }}',
+            "texto":texto,
+            "data_hora":data_hora,
+            "tipo_de_retorno":tipo_de_retorno,
+            "csrfmiddlewaretoken": "{{ csrf_token }}",
         },
         success: function(response){
             if (response.atualizado) {

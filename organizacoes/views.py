@@ -91,9 +91,11 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
     else:
         data_hora = datetime.datetime.now()
 
+    TIPO_DE_RETORNO = sorted(Anotacao.TIPO_DE_RETORNO, key=lambda x: (x[2], x[1]))
+
     context = {
         "organizacao": organizacao,
-        "TIPO_DE_RETORNO": Anotacao.TIPO_DE_RETORNO,
+        "TIPO_DE_RETORNO": TIPO_DE_RETORNO,
         "data_hora": data_hora,
         "anotacao": anotacao_obj,
         "organizacoes": Organizacao.objects.all(),
@@ -572,7 +574,7 @@ def organizacoes_lista(request):
         "titulo": titulo,
     }
 
-    return render(request, 'organizacoes/organizacoes_lista.html', context)
+    return render(request, "organizacoes/organizacoes_lista.html", context)
 
 
 @login_required
@@ -588,7 +590,7 @@ def organizacao_completo(request, org):  # acertar isso para pk
     }
 
     return render(request,
-                  'organizacoes/organizacao_completo.html',
+                  "organizacoes/organizacao_completo.html",
                   context=context)
 
 
