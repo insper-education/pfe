@@ -122,8 +122,10 @@
     <script>
       tsubmetidos = Object.keys(submetidos).length;
       tausentes = Object.keys(ausentes).length
-      $("#submetidos").html(tsubmetidos.toString()+" ("+(100*(tsubmetidos/(tsubmetidos+tausentes))).toFixed(2)+"%)");
-      $("#ausentes").html(tausentes.toString()+" ("+(100*(tausentes/(tsubmetidos+tausentes))).toFixed(2)+"%)");
+      if (tsubmetidos+tausentes > 0) {
+        $("#submetidos").html(tsubmetidos.toString()+" ("+(100*(tsubmetidos/(tsubmetidos+tausentes))).toFixed(2)+"%)");
+        $("#ausentes").html(tausentes.toString()+" ("+(100*(tausentes/(tsubmetidos+tausentes))).toFixed(2)+"%)");
+      }
     </script>
     
     <script>
