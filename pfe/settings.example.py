@@ -76,6 +76,8 @@ MIDDLEWARE = [
 
 # Sistema de bloqueio de acesso
 AXES_ENABLED = True
+AXES_FAILURE_LIMIT = 3  # 3 tentativas
+
 # Libera usuário depois de uma hora
 AXES_COOLOFF_TIME = 1 # 1 hour
 
