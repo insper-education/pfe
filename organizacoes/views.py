@@ -124,7 +124,7 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
     
     tipo = None
     if tipo_nome:
-        tipo = TipoDocumento.objects.get(nome=tipo_nome)
+        tipo = TipoDocumento.objects.get(sigla=tipo_nome)
         if request.user.tipo_de_usuario not in json.loads(tipo.gravar):  # Verifica se usuário tem privilégios para gravar tipo de arquivo
             return HttpResponse("<h1>Sem privilégios para gravar tipo de arquivo!</h1>", status=401)
 
@@ -175,7 +175,7 @@ def adiciona_documento_estudante(request, tipo_nome=None, documento_id=None):
         return HttpResponseNotFound("<h1>Projeto não encontrado!</h1>")
     
     if tipo_nome:
-        tipo = TipoDocumento.objects.get(nome=tipo_nome)
+        tipo = TipoDocumento.objects.get(sigla=tipo_nome)
         if request.user.tipo_de_usuario not in json.loads(tipo.gravar):  # Verifica se usuário tem privilégios para gravar tipo de arquivo
             return HttpResponse("<h1>Sem privilégios para gravar tipo de arquivo!</h1>", status=401)
     else:

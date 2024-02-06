@@ -62,10 +62,10 @@
             data-toggle="tooltip" data-html="true" animation="true"
             {% if item.documentos.last %}
               title="Substitui documento"
-              data-url="{% url 'adiciona_documento_estudante' item.composicao.tipo_documento.nome item.documentos.last.id %}"
+              data-url="{% url 'adiciona_documento_estudante' item.composicao.tipo_documento.sigla item.documentos.last.id %}"
             {% else %}
               title="Adicionar documento"
-              data-url="{% url 'adiciona_documento_estudante' item.composicao.tipo_documento.nome %}"
+              data-url="{% url 'adiciona_documento_estudante' item.composicao.tipo_documento.sigla %}"
             {% endif %}
             onClick="check_prazo('{{item.evento.endDate|date:"Y-m-d"}}T23:59:59');"
             >

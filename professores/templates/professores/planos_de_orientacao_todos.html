@@ -52,13 +52,13 @@
                 <a style="color:green"
                  data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
                  class="open-documento"
-                 data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'Plano de Orientação' documento.id %}">
+                 data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' documento.id %}">
                   <font size="6"><i class="fas fa-file-alt"></i></font>
                 </a>
                 <a style="color:green"
                  data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
                  class="open-documento"
-                 data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'Plano de Orientação' documento.id %}">
+                 data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' documento.id %}">
                   <font size="6"><i class="fas fa-link"></i></font>
                 </a>
               {% else %}
@@ -66,7 +66,7 @@
                   <a style="color:green"
                    data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
                    class="open-documento"
-                   data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'Plano de Orientação' documento.id %}">
+                   data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' documento.id %}">
                     <font size="6"><i class="fas fa-file-alt"></i></font>
                   </a>
                 {% endif %}
@@ -74,7 +74,7 @@
                   <a style="color:green"
                    data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
                    class="open-documento"
-                   data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'Plano de Orientação' documento.id %}">
+                   data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' documento.id %}">
                     <font size="6"><i class="fas fa-link"></i></font>
                   </a>
                 {% endif %}
@@ -89,7 +89,7 @@
               <a style="color:red"
                data-toggle="tooltip" data-html="true" animation="true" title="Não entregue"
                class="open-documento"
-               data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'Plano de Orientação' %}">
+               data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' %}">
                 <font size="6"><i class="far fa-file"></i></font>
               </a>
             {% endfor %}

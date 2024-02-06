@@ -12,9 +12,12 @@ from django.db import models
 class TipoDocumento(models.Model):
     """Tipos de documentos usados."""
 
-    nome = models.TextField("Nome", max_length=128, null=True, blank=True, unique=True,
+    nome = models.CharField("Nome", max_length=128, null=True, blank=True, unique=True,
                               help_text="Nome do Tipo de Documento")
 
+    sigla = models.CharField("Sigla", max_length=8, null=True, blank=True, unique=True,
+                              help_text="Sigla para Tipo de Documento")
+    
     projeto = models.BooleanField(default=False, help_text="Relevante para projetos")
 
     arquivo = models.BooleanField(default=True, help_text="Se idealmente pode ser gravado como arquivo")

@@ -239,9 +239,9 @@
         type: "POST",
         {% if adiciona == "adiciona_documento" %}
           {% if documento_id %}
-            url: "{% url adiciona organizacao.id projeto.id tipo documento_id %}",
+            url: "{% url adiciona organizacao.id projeto.id tipo.sigla documento_id %}",
           {% elif tipo %}
-            url: "{% url adiciona organizacao.id projeto.id tipo.nome %}",
+            url: "{% url adiciona organizacao.id projeto.id tipo.sigla %}",
           {% elif projeto %}
             url: "{% url adiciona organizacao.id projeto.id %}",
           {% elif organizacao %}
@@ -250,7 +250,7 @@
             url: "{% url adiciona %}",
           {% endif %}
         {% elif adiciona == "adiciona_documento_estudante" %}
-          url: "{% url adiciona tipo.nome %}",
+          url: "{% url adiciona tipo.sigla %}",
         {% endif %}
         data: formData,
         processData: false,
