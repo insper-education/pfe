@@ -80,9 +80,9 @@
         <form method="post" enctype="multipart/form-data"> {% csrf_token %} 
           <div class="quad_pfe">
 
-            <label style="width: 3.25em;" class="topico" for="nome">Nome:</label> <input class="requiredField" style="max-width: 100%;" type="text" size="75" maxlength="127" id="nome" name="nome" value="{% if parceiro %}{{full_name}}{% endif %}" 
+            <label style="width: 3.5em; white-space: nowrap;" class="topico" for="nome">Nome:</label> <input class="requiredField" style="max-width: 100%;" type="text" size="75" maxlength="127" id="nome" name="nome" value="{% if parceiro %}{{full_name}}{% elif request.user.is_authenticated %}{{request.user.get_full_name}}{% endif %}" 
               pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')" required {% if edicao and liberadas_propostas %}disabled{% endif %}><br>
-            <label style="width: 3.25em;" class="topico" for="email">e-mail:</label> <input class="requiredField" autocomplete="on" style="max-width: 100%;" type="text" size="75"  maxlength="80" id="email" name="email" value="{% if parceiro %}{{email}}{% endif %}" 
+            <label style="width: 3.5em; white-space: nowrap;" class="topico" for="email">e-mail:</label> <input class="requiredField" autocomplete="on" style="max-width: 100%;" type="text" size="75"  maxlength="80" id="email" name="email" value="{% if parceiro %}{{email}}{% elif request.user.is_authenticated %}{{request.user.email}}{% endif %}" 
               pattern="^[\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,99}[\s]*([;,][\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})*[\s]*$" oninvalid="this.setCustomValidity('Digite um ou mais endereços de e-mail (e-mails separados por ponto e vírgula)')" oninput="this.setCustomValidity('')" required {% if edicao and liberadas_propostas %}disabled{% endif %}>
             <small class="obs">Identifique quem está enviando ou atualizando a proposta</small>
             <hr>
@@ -261,15 +261,10 @@
               <div class="row justify-content-center">
                 <div class="form-check" style="margin: 0px 12px 0px 12px; padding-left: 0px;">
                   {% if not liberadas_propostas %}
-                    <input type="submit" class="btn btn-primary mb-1"
-                    {% if edicao %}
-                      name="update" value="Atualizar Proposta de Projeto">
-                    {% else %}
-                      name="new" value="Enviar Proposta de Projeto">
-                    {% endif %}
-                    {% if vencida %}
-                      name="new" value="Nova Proposta de Projeto ">
-                      <span class="red-bold">Essa proposta foi submetida em um semestre anterior,
+                    <input type="submit" class="btn btn-primary mb-1" name="{% if edicao %}update" value="Atualizar{% else %}new" value="Enviar{% endif %} Proposta de Projeto">
+                    {% if proposta and vencida %}
+                      <input type="submit" class="btn btn-primary mb-1" name="new" value="Nova Proposta de Projeto ">
+                      <span class="red-bold" style="display: block;">Essa proposta foi submetida em um semestre anterior,
                         ao clicar em Nova Proposta, você gerará uma nova proposta para ser apresentada agora para os estudantes.<br></span>  
                     {% endif %}
                   {% endif %}
