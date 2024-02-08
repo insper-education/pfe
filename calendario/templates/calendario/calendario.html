@@ -124,6 +124,14 @@
         background-color: rgba(0, 0, 0, 0.1);
     }
     
+    .coordenacao:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .semestre:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+
     th.cabec {
       background: #e0e0e0;
       text-align: center;
@@ -275,7 +283,7 @@
               {% if coordenacao %}
                 {% nospaces %}
                   {% for evento in coordenacao|dictsort:"endDate" %} 
-                    <span class="coordenacao" data-ano="{{evento.endDate.year}}" data-mes="{{evento.endDate.month}}" >
+                    <span class="coordenacao" data-ano="{{evento.endDate.year}}" data-mes="{{evento.endDate.month}}" data-dia="{{evento.endDate.day}}" >
                       {% ifchanged evento.get_title evento.get_semester evento.endDate.year %}   
                         <br><font style="color:{{evento.get_color}}">&#9608;</font>&nbsp;{{evento.get_title}}:
                         {% if evento.startDate == evento.endDate %} 
@@ -308,7 +316,7 @@
                 {% for evento in eventos|dictsort:"endDate" %}
                   {% if evento.get_title != "Feriado" and evento.get_title != "Aula cancelada" %}
                     <span class="ano{{evento.endDate.year}} ano">
-                      <span class="semestre" data-mes="{{evento.endDate.month}}">
+                      <span class="semestre" data-mes="{{evento.endDate.month}}" data-dia="{{evento.endDate.day}}">
                         {% ifchanged evento.get_title evento.get_semester evento.endDate.year %}   
                           <br><font style="color:{{evento.get_color}}">&#9608;</font>&nbsp;{{evento.get_title}}:
                           {% if evento.startDate == evento.endDate %} 
@@ -461,7 +469,7 @@
                 </tr></thead>
                 <tbody>
                   {% for aula in aulas|dictsort:"endDate" %}
-                    <tr class="lin_aulas ano{{aula.endDate.year}} semestre" data-mes="{{aula.endDate.month}}"
+                    <tr class="lin_aulas ano{{aula.endDate.year}} semestre" data-mes="{{aula.endDate.month}}" data-dia="{{aula.endDate.day}}"
                         {% if aula.startDate|dif_dias_hoje == 0 %}style="background-color: #F0FFFF;"{% endif %}>
                         <th class="colu" scope="row">
                           {% if user.tipo_de_usuario == 4 %}
@@ -1069,7 +1077,7 @@
 
     var currentYear = 2018; //como se fosse global
 
-    document.querySelector('#calendar').addEventListener('yearChanged', function(e) {
+    document.querySelector('#calendar').addEventListener("yearChanged", function(e) {
       currentYear = e.currentYear;
 
       // Esconde todos os elementos por ano
@@ -1087,7 +1095,23 @@
         
       });
       carrega_semestre()
-     })
+    });
+
+
+    // Marca no calendário o dia selecionado
+    $(".coordenacao, .semestre").hover(
+      function() {
+        dia = $(this).data("dia");
+        mes = $(this).data("mes") - 1;
+        $(".month-container[data-month-id=" + mes + "] div.day-content").filter(function() {
+          return this.innerHTML == dia;
+        }).css({ "boxShadow": "1px 1px 4px 8px #BBBBBB", "position": "relative", "z-index": "9" });
+      }, 
+      function() {
+        $("div.day-content").css({ "boxShadow": "none", "z-index": "-1" })
+      }
+    );
+    
 
     // Esconde e mostra meses do semestre
     function mostra_semestre(semestre) {
@@ -1177,7 +1201,7 @@
       mostra_semestre(1);
       
     }
-    document.querySelector('#primeiro_semestre').addEventListener('click', primeiro)
+    document.querySelector('#primeiro_semestre').addEventListener("click", primeiro)
 
     function segundo(e) {
       
@@ -1253,7 +1277,7 @@
       mostra_semestre(2);
       
     }
-    document.querySelector('#segundo_semestre').addEventListener('click',segundo)
+    document.querySelector('#segundo_semestre').addEventListener("click",segundo)
 
     window.onload = carrega_semestre
     
