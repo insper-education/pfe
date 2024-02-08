@@ -155,12 +155,12 @@
     td.cabec:first-child {
       border-left: none;
     }
-    
+ 
     th.cabec:first-child, 
     td.cabec:first-child {
       border-radius: 8px 0 0 0;
     }
-    
+
     th.cabec:last-child,
     td.cabec:last-child {
       border-radius: 0 8px 0 0;
@@ -464,8 +464,8 @@
               <table class="tab_pfe">
                 <thead><tr>
                         <th scope="col" class="cabec">Data</th>
-                        <th scope="col" class="cabec">Aula</th>
-                        <th scope="col" class="cabec">Local</th>
+                        <th scope="col" class="cabec header_aula">Aula</th>
+                        <th scope="col" class="cabec header_local">Local</th>
                 </tr></thead>
                 <tbody>
                   {% for aula in aulas|dictsort:"endDate" %}
@@ -510,13 +510,18 @@
                           {% endif %}
                         </td>
 
-                        <td class="colu" style="cursor: pointer;">
+                        <td class="colu local" style="cursor: pointer;">
                           <a style="color: inherit;" href="https://www.insper.edu.br/campus/mapa-dos-andares/">
                             {{aula.location}}
                           </a>
                         </td>
                     </tr>
                   {% endfor %}
+
+                     <tr id="barra_inferior" style="display: none;"><th scope="row" class="cabec" style="border-top: 4px double black; border-radius: 0 0 0 8px;">Local</th><td class="colu" colspan="2" style="border-top: 4px double black; border-radius: 0 0 8px 0;">
+                      <a id="barra_local" style="color: inherit;" href="https://www.insper.edu.br/campus/mapa-dos-andares/"></a>
+                    </td></tr>
+                    
                 </tbody>
               </table>
               {% endnospaces %}
@@ -1125,6 +1130,35 @@
           $('*[data-month-id="6"]').prevAll().remove();
         }
       }
+
+
+
+      // Para reduzir o local a só uma linha
+      var elements = $(".lin_aulas:visible > :last-child");
+      var firstElementText = elements.first().text();
+      var allSame = true;
+      elements.each(function() {
+        if ($(this).text() !== firstElementText) {
+          allSame = false;
+          return false;
+        }
+      });
+      console.log(allSame, firstElementText);
+      if(allSame) {
+        $("#barra_local").text(firstElementText);
+        $(".header_local").css("display", "none");
+        $(".local").css("display", "none");
+        $("#barra_inferior").css("display", "");
+        $(".header_aula").css("border-radius", "0 8px 0 0");
+      } else {
+        $("#barra_local").text("");
+        $(".header_local").css("display", "");
+        $(".local").css("display", "");
+        $("#barra_inferior").css("display", "none");
+        $(".header_aula").css("border-radius", "0 0 0 0");
+      }
+
+      
     }
 
     function qual_semestre() {
