@@ -67,14 +67,14 @@
 
   <script>
 
-    window.setInterval('update()', 120000); // 2 minutos
+    window.setInterval("update()", 120000); // 2 minutos
 
     var update = function() {
         $.ajax({
             type: "GET",
             url: '{% url "encontros_marcar" %}',
             data: {    
-                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                "csrfmiddlewaretoken": "{{ csrf_token }}",
             },
             success: function(response){
 

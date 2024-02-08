@@ -162,6 +162,32 @@
 
     label {margin: 6px 0px 2px 0px;}
 
+    .day-content {
+      border-radius: 0px !important;
+    }
+
+    .sem_aula { /* Para fins de semana */
+      background-color: lightgray; /*!important*/
+      border: 0px !important;
+      line-height: 1.5 !important;
+      padding-top: 5px !important;
+    }
+    .sem_aula:hover {background-color: gray !important;}
+
+    .escurece {
+        position: relative;
+    }
+    
+    .escurece::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.25); /* Black color with 50% opacity */
+    }
+
   </style>
 
   <script>
@@ -864,46 +890,38 @@
     dataEventos = dataEventos.concat(dataEventosAcademicos);
     dataEventos = dataEventos.concat(dataEventosOrganizacao);
 
-    var currentYear = new Date().getFullYear();
-    var currentMonth = new Date().getMonth(); 
-    var currentDate = new Date().getDate();
-    var hoje = new Date(currentYear, currentMonth, currentDate).getTime();
 
     function dias_especiais(element, date) {
-      $(element).css('border-radius', '0px');
-      
       {% if not limpo %}
-        if(date.getTime() == hoje) {
-          $(element).css('outline', '2px solid blue');
+        var hoje = new Date().toDateString();
+        if(date.toDateString() == hoje) {
+          $(element).css("outline", "2px solid blue");
         }
       {% endif %}
       
-      if (date.getDay() === 6 || date.getDay() === 0) {
-        $(element).css('background-color', 'lightgrey');  
+      if (date.getDay() === 6 || date.getDay() === 0) { // sábado ou domingo
+        $(element).addClass("sem_aula");  
       }
-
     }
 
     function calendario() {
 
-      calendar = new Calendar('#calendar', {
-        language: 'pt',
+      calendar = new Calendar("#calendar", {
+        language: "pt",
         dataSource: dataEventos,
         displayHeader: true, // mostra os anos na parte superior
-        style:'custom',
+        style: "custom",
         customDataSourceRenderer: function(element, date, event) {
-          
-          $(element).css('border-radius', '0px');
 
           var eventos = [];
 
           for (var i in event) {
             if(event[i].type == 40 ) { // (40, 'Laboratório', 'orange'),
-              $(element).css('background-image', 'linear-gradient(to bottom, transparent 85%, ' + event[i].color + ' 85% )');
+              $(element).css("background-image", "linear-gradient(to bottom, transparent 85%, " + event[i].color + " 85% )");
             } else if(event[i].type == 41 ) { // (41, 'Semana de provas', 'red'),
-              $(element).css('border-bottom', '4px solid ' + event[i].color);
-              $(element).css('line-height', '0.91');
-              $(element).css('padding-top', '8px');
+              $(element).css("border-bottom", "4px solid " + event[i].color);
+              $(element).css("line-height", "0.91");
+              $(element).css("padding-top", "8px");
             } else {
               eventos.push(event[i]);
             }
@@ -911,19 +929,19 @@
 
           if(eventos.length==1) {
             $(element).css({
-              'background-color': eventos[0].color 
+              "background-color": eventos[0].color 
             });
           } else if (eventos.length==2) {
             $(element).css(
-              'background', $(element).css('background-image') + ', ' + "-webkit-gradient(linear, left top, right bottom, color-stop(50%," + eventos[0].color + "), color-stop(50%," + eventos[1].color + "))" 
+              "background", $(element).css('background-image') + ', ' + "-webkit-gradient(linear, left top, right bottom, color-stop(50%," + eventos[0].color + "), color-stop(50%," + eventos[1].color + "))" 
             );
           } else if (eventos.length==3) {
             $(element).css(
-              'background', $(element).css('background-image') + ', ' + "linear-gradient(to right, " + eventos[0].color + " 33%, " + eventos[1].color + " 33% 66%, " + eventos[2].color + " 66%)" 
+              "background", $(element).css('background-image') + ', ' + "linear-gradient(to right, " + eventos[0].color + " 33%, " + eventos[1].color + " 33% 66%, " + eventos[2].color + " 66%)" 
             );
           } else if (eventos.length > 3) {
             $(element).css(  // muitas cores
-              'background', $(element).css('background-image') + ', ' + "-webkit-radial-gradient(yellow, lightblue, PaleVioletRed, green)" 
+              "background", $(element).css('background-image') + ', ' + "-webkit-radial-gradient(yellow, lightblue, PaleVioletRed, green)" 
             );
           }
 
@@ -932,9 +950,11 @@
         customDayRenderer: dias_especiais,
 
         mouseOnDay: function (e) {
-            if (e.events.length > 0) {
-              var content = '';
 
+            if (e.events.length > 0) {
+              $(e.element).children(":first").addClass("escurece");
+
+              var content = '';
               for (var i in e.events) {
                 content += '<div class="event-tooltip-content">' +
                 '<div class="event-name">&#8226; ' + e.events[i].name + '</div>';
@@ -957,21 +977,22 @@
               }
 
               $(e.element).popover({
-                trigger: 'manual',
-                container: 'body',
+                trigger: "manual",
+                container: "body",
                 html: true,
                 content: content });
 
-              $(e.element).popover('show');
+              $(e.element).popover("show");
             }
           },
           mouseOutDay: function (e) {
             if (e.events.length > 0) {
-              $(e.element).popover('hide');
+              $(e.element).children(":first").removeClass("escurece");
+              $(e.element).popover("hide");
             }
           },
           dayContextMenu: function (e) {
-            $(e.element).popover('hide');
+            $(e.element).popover("hide");
           },
 
 
@@ -982,8 +1003,7 @@
             {
               text: "Editar",
               click: editEvent
-            }
-            ,
+            },
             {
               text: "Remover",
               click: deleteEvent
@@ -1000,7 +1020,7 @@
 
       {% comment %} Botão quando se clica no botão de save do dia {% endcomment %}
       {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-        $('#save-event').click(function () {
+        $("#save-event").click(function () {
           saveEvent();
         });
       {% endif %}
@@ -1012,10 +1032,10 @@
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
         function atualiza_visualizacao() {
           dataEventos = [];
-          if(!($('.lista_operacao').is(":hidden"))) {
+          if(!($(".lista_operacao").is(":hidden"))) {
             dataEventos = dataEventos.concat(dataEventosOrganizacao);
           }          
-          if(!($('.lista_academico').is(":hidden"))) {
+          if(!($(".lista_academico").is(":hidden"))) {
             dataEventos = dataEventos.concat(dataEventosAcademicos);
             calendar.setCustomDayRenderer(dias_especiais);
           } else {
@@ -1049,16 +1069,16 @@
       currentYear = e.currentYear;
 
       // Esconde todos os elementos por ano
-      [].forEach.call(document.querySelectorAll('.ano'), function (el) {
+      [].forEach.call(document.querySelectorAll(".ano"), function (el) {
         el.style.display = 'none';
       });
 
       // Mostra só os elementos do ano
-      [].forEach.call(document.querySelectorAll('.ano'+e.currentYear), function (el) {
+      [].forEach.call(document.querySelectorAll(".ano"+e.currentYear), function (el) {
         if(el.classList.contains("lin_aulas")) { // Preciso fazer isso para a tabela de aulas no final da página
-          el.style.display = 'table-row';
+          el.style.display = "table-row";
         } else {
-          el.style.display = 'inline';
+          el.style.display = "inline";
         }
         
       });
@@ -1233,6 +1253,9 @@
 
     window.onload = carrega_semestre
     
+    // recarrega a página a cada 6 hora (evita que usuário não veja atualização do dia)
+    window.setInterval("location.reload();", 21600000); // 6 hora
+
     function carrega_semestre() {
       var today = new Date();
       if(today.getMonth() <= 7) {
