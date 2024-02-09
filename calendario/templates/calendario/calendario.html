@@ -504,7 +504,7 @@
                             {% if aula.responsavel %}({{aula.responsavel.get_full_name}}){% endif %}
                           </span>
                           {% if aula.documento %}
-                            <a href="{{request.scheme}}://{{request.get_host}}{{aula.documento.get_url}}">
+                            <a class="esconder" href="{{request.scheme}}://{{request.get_host}}{{aula.documento.get_url}}">
                               &nbsp;<i class="fa fa-file-pdf"></i>
                             </a>
                           {% endif %}
@@ -752,7 +752,7 @@
             }
 
             calendar.setDataSource(dataSource);
-            $('#event-modal').modal('hide');
+            $("#event-modal").modal("hide");
 
             //location.reload();
             //$("#lista_operacao").replaceWith($("#lista_operacao",data));
@@ -1110,7 +1110,7 @@
         mes = $(this).data("mes") - 1;
         $(".month-container[data-month-id=" + mes + "] div.day-content").filter(function() {
           return this.innerHTML == dia;
-        }).css({ "boxShadow": "1px 1px 4px 8px #BBBBBB", "position": "relative", "z-index": "9" });
+        }).css({ "boxShadow": "0 0 9px 11px #F0F013", "position": "relative", "z-index": "9" });
       }, 
       function() {
         $("div.day-content").css({ "boxShadow": "none", "z-index": "-1" })

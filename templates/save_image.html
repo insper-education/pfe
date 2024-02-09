@@ -49,6 +49,7 @@
   function get_image(tipo) {
 
     ajusta();
+    $(".esconder").hide();
 
     setTimeout(function () {
       html2canvas(document.querySelector('#tudo'), {
@@ -77,6 +78,7 @@
         }
       });
 
+      $(".esconder").show();
       reajusta();
 
     }, 600);
@@ -96,7 +98,7 @@
 
   function saveAs(uri, filename) {
     var link = document.createElement('a');
-    if (typeof link.download === 'string') {
+    if (typeof link.download === "string") {
         link.href = uri;
         link.download = filename;
         document.body.appendChild(link);
