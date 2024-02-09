@@ -206,4 +206,9 @@ urlpatterns = [
          views.ajax_bancas,
          name="ajax_bancas"),
 
+     path("ajax_atualiza_banca/",
+         views.ajax_atualiza_banca,
+         name="ajax_atualiza_banca"),
+
+
 ]

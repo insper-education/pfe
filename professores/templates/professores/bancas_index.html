@@ -128,6 +128,31 @@
 
       <script>
 
+        function atualiza_banca(event) {
+          $.ajax({
+            type: "POST",
+            url: '{% url "ajax_atualiza_banca" %}',
+            data: {
+                "id": event.id,
+                "start": event.start.toLocaleString("pt-BR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false  }),
+                "end": event.end.toLocaleString("pt-BR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false  }),
+                "csrfmiddlewaretoken": "{{ csrf_token }}",
+            },
+            success: function(response){
+              //console.log(response);
+            },
+            error: function (request, status, error) {
+              {% if user.tipo_de_usuario == 4 %} 
+                alert(request.responseText);
+                jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
+                console.log('error'+request.responseText);
+              {% else %}
+                jQuery("body").html("Erro no servidor do PFE. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
+              {% endif %}
+            }
+          });
+        }
+
         var calendar = null;
 
         function montar_calendario(defaultView="dayGridMonth", defaultDate=null) {
@@ -183,17 +208,10 @@
                           }
                         }
                       {% endif %}
-                      console.log(info.event.extendedProps);
                     }
                     info.el.innerHTML = "<b>" + time + "</b><br><nobr>" + info.event.extendedProps.organizacao + "</nobr><br><nobr style='color:#566573'>" + info.event.extendedProps.local + "</nobr><br><nobr style='color:#E8E8E8'>" + nome_orientador + "</nobr>";
                   }
-                } 
-
-                $(info.el).tooltip({              
-                  title: info.event.extendedProps.description,
-                  html: true,
-                });
-
+                }              
               },
 
               eventSources: [
@@ -287,7 +305,26 @@
                 abrir_modal.call(elem, null);
               },
 
+              eventMouseEnter: function (info) {
+                $(info.el).tooltip({
+                      title: info.event.extendedProps.description,
+                      html: true,
+                }).tooltip("show");
+              },
+
+              eventDragStart: function(info) {
+                $(".tooltip").remove();
+              },
               
+              eventResize: function(info) {
+                $(".tooltip").remove();
+                atualiza_banca(info.event);
+              },
+
+              eventDrop: function(info) {
+                $(".tooltip").remove();
+                atualiza_banca(info.event);
+              },
 
             });
 

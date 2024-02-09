@@ -226,6 +226,32 @@ def ajax_bancas(request):
     return HttpResponse("Erro.", status=401)    
 
 
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def ajax_atualiza_banca(request):
+    """Retorna as bancas do ano."""
+
+    if request.is_ajax():
+        
+        if "id" in request.POST and "start" in request.POST and "end" in request.POST:
+            start = datetime.datetime.strptime(request.POST["start"], "%d/%m/%Y, %H:%M")
+            end = datetime.datetime.strptime(request.POST["end"], "%d/%m/%Y, %H:%M")
+            banca = Banca.objects.get(id = request.POST["id"])
+            banca.startDate = start
+            banca.endDate = end
+            banca.save()
+
+            context = {
+                "atualizado": True,
+            }
+            return JsonResponse(context)
+    
+    return HttpResponse("Erro.", status=401)    
+
+
+
 def mensagem_edicao_banca(banca, atualizada=False):
 
     if atualizada:
