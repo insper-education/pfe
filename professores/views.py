@@ -172,11 +172,15 @@ def ajax_bancas(request):
                 bancas[banca.id] = {}
                 bancas[banca.id]["start"] = banca.startDate.strftime("%Y-%m-%dT%H:%M:%S")
                 bancas[banca.id]["end"] = banca.endDate.strftime("%Y-%m-%dT%H:%M:%S")
-                bancas[banca.id]["organizacao"] = banca.projeto.organizacao.sigla
-                bancas[banca.id]["orientador"] = banca.projeto.orientador.user.get_full_name()
                 bancas[banca.id]["local"] = banca.location
 
                 if banca.projeto:
+                    bancas[banca.id]["organizacao"] = banca.projeto.organizacao.sigla
+                    bancas[banca.id]["orientador"] = banca.projeto.orientador.user.get_full_name()
+                    bancas[banca.id]["membro1"] = banca.membro1.get_full_name() if banca.membro1 else ""
+                    bancas[banca.id]["membro2"] = banca.membro2.get_full_name() if banca.membro2 else ""
+                    bancas[banca.id]["membro3"] = banca.membro3.get_full_name() if banca.membro3 else ""
+
                     title = "(" + banca.projeto.organizacao.sigla + ") " + banca.projeto.get_titulo()
                     if banca.location:
                         title += "\nLocal: " + banca.location

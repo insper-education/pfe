@@ -356,17 +356,21 @@
 
   function recupera_selecao() {
     {% if banca and banca.membro1 %}
-      $('#membro1 option[value={{banca.membro1.id}}]').attr('selected','selected');
+      $('#membro1 option[value={{banca.membro1.id}}]').attr("selected","selected");
     {% endif %}
     {% if banca and banca.membro2 %}
-      $('#membro2 option[value={{banca.membro2.id}}]').attr('selected','selected');
+      $('#membro2 option[value={{banca.membro2.id}}]').attr("selected","selected");
     {% endif %}
     {% if banca and banca.membro3 %}
-      $('#membro3 option[value={{banca.membro3.id}}]').attr('selected','selected');
+      $('#membro3 option[value={{banca.membro3.id}}]').attr("selected","selected");
     {% endif %}
   }
 
-  var botao_anterior = 2; // só para ir para o lugar certo de primeira
+  {% if banca %}
+    var botao_anterior = {% if banca.tipo_de_banca == 2 %}0{% else %}2{% endif %};
+  {% else %}    
+    var botao_anterior = 2; // só para ir para o lugar certo de primeira
+  {% endif %}
 
   function carrega_modal() {
     

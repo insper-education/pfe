@@ -45,7 +45,21 @@
       font-size: min(2.1vw, 1em);
     }
 
-    .fc-event {overflow: hidden;}
+    .fc-event {
+      overflow: hidden;
+      width: 88%;
+      margin: auto;
+    }
+
+    .legenda-texto {
+      white-space: nowrap;
+    }
+
+    .legenda-block {
+      flex: 1;
+      flex-direction: column;
+      padding: 10px;
+    }
 
     @media (max-width: 900px) {
       .wrap {flex-direction: column-reverse;}
@@ -74,6 +88,43 @@
       <div class="wrap">
           <div id="calendar"></div>
       </div>
+
+      <h4 style="margin: 8px 0 0 0;">Legendas</h4>
+      <div class="wrap">  
+        <div class="legenda" style="display: flex;">
+          <div class="legenda-block">
+            <div class="legenda-item" >
+              <div class="legenda-texto"><font id="color_banca_intermediaria">&#9608;</font>&nbsp;Bancas Intermediárias</div>
+            </div>
+            <div class="legenda-item">
+              <div class="legenda-texto"><font id="color_banca_final">&#9608;</font>&nbsp;Bancas Finais</div>
+            </div>
+            <div class="legenda-item">
+              <div class="legenda-texto"><font id="color_banca_falconi">&#9608;</font>&nbsp;Bancas Falconi</div>
+            </div>
+          </div>
+
+          <div class="legenda-block">
+            <div class="legenda-item">
+              <div class="legenda-texto"><font id="banca_orientador" style="color: lightgray;">&#9608;</font>&nbsp;&nbsp;Orientador da Banca</div>
+            </div>
+            <div class="legenda-item" style="margin-top: 8px;">
+              <div class="legenda-texto"><font id="banca_membro" style="color: lightgray;">&#9608;</font>&nbsp;&nbsp;Membro da Banca</div>
+            </div>
+
+        </div>
+
+      </div>
+
+      <script>
+        $("#color_banca_intermediaria").css("color", color_banca_intermediaria);
+        $("#color_banca_final").css("color", color_banca_final);
+        $("#color_banca_falconi").css("color", color_banca_falconi);
+        $("#banca_orientador").css("boxShadow", "0 0 3px 4px red");
+        $("#banca_membro").css("boxShadow", "0 0 3px 4px darkblue");
+
+      </script>
+
 
       <script>
 
@@ -119,7 +170,20 @@
                     let nome_orientador = ""
                     if (info.event.extendedProps.orientador) {
                       let orientador = info.event.extendedProps.orientador.split(" ");
-                      nome_orientador = orientador[0] + ' ' + orientador[orientador.length - 1];  
+                      nome_orientador = orientador[0] + ' ' + orientador[orientador.length - 1];
+                      {% if request.user %}
+                        if (info.event.extendedProps.orientador == "{{request.user.get_full_name}}") {
+                          info.el.style.boxShadow = "0 0 3px 4px red";
+                        } else {
+                          if ( info.event.extendedProps.membro1 == "{{request.user.get_full_name}}" ||
+                               info.event.extendedProps.membro2 == "{{request.user.get_full_name}}" ||
+                               info.event.extendedProps.membro3 == "{{request.user.get_full_name}}"
+                          ) {
+                            info.el.style.boxShadow = "0 0 3px 4px darkblue";
+                          }
+                        }
+                      {% endif %}
+                      console.log(info.event.extendedProps);
                     }
                     info.el.innerHTML = "<b>" + time + "</b><br><nobr>" + info.event.extendedProps.organizacao + "</nobr><br><nobr style='color:#566573'>" + info.event.extendedProps.local + "</nobr><br><nobr style='color:#E8E8E8'>" + nome_orientador + "</nobr>";
                   }
@@ -157,6 +221,9 @@
                                 local: value.local,
                                 color: value.color,
                                 title: value.title,
+                                membro1: value.membro1,
+                                membro2: value.membro2,
+                                membro3: value.membro3,
                                 description: value.description,
                               });
                             }
@@ -181,7 +248,7 @@
                       {% with end=dias.endDate|plus_days:1 %}
                         end: '{{end.year}}-{{end.month|stringformat:"02d"}}-{{end.day|stringformat:"02d"}}',
                       {% endwith %}
-                      rendering: 'background',
+                      rendering: "background",
 
                       {% if dias.tipo_de_evento == 15 %} // Banca Final
                         color: color_banca_final,
@@ -219,6 +286,8 @@
                 $( elem ).data( "data", info.dateStr);
                 abrir_modal.call(elem, null);
               },
+
+              
 
             });
 
