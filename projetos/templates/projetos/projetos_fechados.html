@@ -58,9 +58,7 @@
   <span class="titulo">Projetos</span>
   
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
-  {% with com_cursos=True %}
-      {% include "edicoes.html" %}
-  {% endwith %}
+  {% include "edicoes.html" with com_cursos=True com_externos=True%}
 
   {% include "informacoes.html" %}
 

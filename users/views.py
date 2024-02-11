@@ -84,13 +84,15 @@ class Usuario(generic.DetailView):
 def estudantes_lista(request):
     """Gera lista com todos os alunos já registrados."""
     configuracao = get_object_or_404(Configuracao)
+    cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
+    cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
 
     if request.is_ajax():
-        if 'edicao' in request.POST:
-            edicao = request.POST['edicao']
-            if edicao == 'todas':
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
+            if edicao == "todas":
                 anosemestre = "todos"
-            elif edicao == 'trancou':
+            elif edicao == "trancou":
                 anosemestre = "trancou"
             else:
                 anosemestre = edicao
@@ -107,11 +109,14 @@ def estudantes_lista(request):
             totais = {}
             totais["total"] = 0
 
-            # Filtra para alunos de um curso específico
+            # Filtra para estudantes de um curso específico
             if "curso" in request.POST:
                 curso_sel = request.POST["curso"]
-                if curso_sel != 'T':
-                    alunos_todos = alunos_todos.filter(curso2__sigla_curta=curso_sel)
+                if curso_sel != "TE":
+                    if curso_sel != 'T':
+                        alunos_todos = alunos_todos.filter(curso2__sigla_curta=curso_sel)
+                    else:
+                        alunos_todos = alunos_todos.filter(curso2__in=cursos_insper)
         
             
             if anosemestre not in ("todos", "trancou"):
@@ -244,10 +249,11 @@ def estudantes_lista(request):
         context = {
             "edicoes": edicoes,
             "titulo": titulo,
-            "cursos": Curso.objects.all().order_by("id"),
+            "cursos": cursos_insper,
+            "cursos_externos": cursos_externos,
         }
 
-    return render(request, 'users/estudantes_lista.html', context=context)
+    return render(request, "users/estudantes_lista.html", context=context)
 
 
 @login_required

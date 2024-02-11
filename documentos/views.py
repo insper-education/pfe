@@ -335,6 +335,8 @@ def relatorios_publicos(request):
 @permission_required('users.altera_professor', raise_exception=True)
 def tabela_documentos(request):
     """Exibe tabela com todos os documentos armazenados."""
+    cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
+    cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
 
     if request.is_ajax():
         if "edicao" in request.POST:
@@ -351,8 +353,12 @@ def tabela_documentos(request):
             else:
                 return HttpResponse("Algum erro não identificado.", status=401)
 
-            if curso != 'T':
-                projetos = projetos.filter(alocacao__aluno__curso2__sigla_curta=curso).distinct()
+            # Filtra para projetos com estudantes de um curso específico
+            if curso != "TE":
+                if curso != 'T':
+                    projetos = projetos.filter(alocacao__aluno__curso2__sigla_curta=curso).distinct()
+                else:
+                    projetos = projetos.filter(alocacao__aluno__curso2__in=cursos_insper).distinct()
 
         context = {
             "projetos": projetos,
@@ -371,7 +377,8 @@ def tabela_documentos(request):
         context = {
             "edicoes": edicoes,
             "informacoes": informacoes,
-            "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
+            "cursos": cursos_insper,
+            "cursos_externos": cursos_externos,
         }
 
     return render(request, "documentos/tabela_documentos.html", context)

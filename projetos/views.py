@@ -160,6 +160,8 @@ def distribuicao_areas(request):
     configuracao = get_object_or_404(Configuracao)
     ano = configuracao.ano              # Ano atual
     semestre = configuracao.semestre    # Semestre atual
+    cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
+    cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
 
     todas = False  # Para mostrar todos os dados de todos os anos e semestres
     tipo = "estudantes"
@@ -186,8 +188,18 @@ def distribuicao_areas(request):
 
         if tipo == "estudantes":
             alunos = Aluno.objects.all()
+            
+
             if curso != "T":
                 alunos = alunos.filter(curso2__sigla_curta=curso)
+            
+            # Filtra para estudantes de um curso específico
+            if curso != "TE":
+                if curso != 'T':
+                    alunos = alunos.filter(curso2__sigla_curta=curso)
+                else:
+                    alunos = alunos.filter(curso2__in=cursos_insper)
+
             if not todas:
                 alunos = alunos.filter(anoPFE=ano, semestrePFE=semestre)
             total_preenchido = 0
@@ -226,21 +238,22 @@ def distribuicao_areas(request):
             areaspfe, outras = get_areas_propostas(propostas_projetos)
 
             context = {
-                'total': propostas_projetos.count(),
-                'areaspfe': areaspfe,
-                'outras': outras,
+                "total": propostas_projetos.count(),
+                "areaspfe": areaspfe,
+                "outras": outras,
             }
 
         else:
             return HttpResponse("Erro não identificado (não encontrado tipo).",
                             status=401)
 
-        return render(request, 'projetos/distribuicao_areas.html', context)
+        return render(request, "projetos/distribuicao_areas.html", context)
 
     edicoes, _, _ = get_edicoes(Aluno)
     context = {
         "edicoes": edicoes,
-        "cursos": Curso.objects.filter(curso_do_insper=True),
+        "cursos": cursos_insper,
+        "cursos_externos": cursos_externos,
     }
 
     return render(request, "projetos/distribuicao_areas.html", context)
@@ -251,6 +264,8 @@ def distribuicao_areas(request):
 def projetos_fechados(request):
     """Lista todos os projetos fechados."""
     edicoes = []
+    cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
+    cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
 
     if request.is_ajax():
         if "edicao" in request.POST and "curso" in request.POST:
@@ -283,8 +298,13 @@ def projetos_fechados(request):
             for projeto in projetos_filtrados:
 
                 estudantes_pfe = Aluno.objects.filter(alocacao__projeto=projeto)
-                if curso != 'T':
-                    estudantes_pfe = estudantes_pfe.filter(alocacao__aluno__curso2__sigla_curta=curso)
+
+                # Filtra para projetos com estudantes de um curso específico
+                if curso != "TE":
+                    if curso != 'T':
+                        estudantes_pfe = estudantes_pfe.filter(alocacao__aluno__curso2__sigla_curta=curso)
+                    else:
+                        estudantes_pfe = estudantes_pfe.filter(alocacao__aluno__curso2__in=cursos_insper)
 
                 qtd_est.append(len(estudantes_pfe))
 
@@ -355,7 +375,8 @@ def projetos_fechados(request):
 
         context = {
             "edicoes": edicoes,
-            "cursos": Curso.objects.all().order_by("id"),
+            "cursos": cursos_insper,
+            "cursos_externos": cursos_externos,
             "informacoes": informacoes,
         }
 
@@ -895,6 +916,8 @@ def analise_notas(request):
     """Mostra graficos das evoluções do PFE."""
     configuracao = get_object_or_404(Configuracao)
     edicoes, _, _ = get_edicoes(Avaliacao2)
+    cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
+    cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
 
     if request.is_ajax():
 
@@ -902,14 +925,21 @@ def analise_notas(request):
         
         medias_semestre = Alocacao.objects.all()
 
-        if 'edicao' in request.POST and 'curso' in request.POST:
-            if request.POST['edicao'] != 'todas':
+        if "edicao" in request.POST and "curso" in request.POST:
+            if request.POST["edicao"] != "todas":
                 periodo = request.POST['edicao'].split('.')
                 medias_semestre = medias_semestre.filter(projeto__ano=periodo[0],
                                                          projeto__semestre=periodo[1])
-            curso = request.POST['curso']
-            if curso != 'T':
-                medias_semestre = medias_semestre.filter(aluno__curso2__sigla_curta=curso)
+                
+            curso = request.POST["curso"]
+
+            # Filtra para projetos com estudantes de um curso específico
+            if curso != "TE":
+                if curso != 'T':
+                    medias_semestre = medias_semestre.filter(aluno__curso2__sigla_curta=curso)
+                else:
+                    medias_semestre = medias_semestre.filter(aluno__curso2__in=cursos_insper)
+                
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
@@ -1045,10 +1075,11 @@ def analise_notas(request):
     else:
         context = {
             "edicoes": edicoes,
-            "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
+            "cursos": cursos_insper,
+            "cursos_externos": cursos_externos,
         }
 
-    return render(request, 'projetos/analise_notas.html', context)
+    return render(request, "projetos/analise_notas.html", context)
 
 
 @login_required
@@ -1211,6 +1242,8 @@ def divide57(notas_lista):
 def analise_objetivos(request):
     """Mostra graficos das evoluções do PFE."""
     edicoes, _, _ = get_edicoes(Avaliacao2)
+    cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
+    cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
 
     if request.is_ajax():
 
@@ -1227,8 +1260,14 @@ def analise_objetivos(request):
 
         if "curso" in request.POST:
             curso = request.POST["curso"]
-            if curso != 'T':
-                alocacoes = alocacoes.filter(aluno__curso2__sigla_curta=curso)
+
+            # Filtra para alocações de estudantes de um curso específico
+            if curso != "TE":
+                if curso != 'T':
+                    alocacoes = alocacoes.filter(aluno__curso2__sigla_curta=curso)
+                else:
+                    alocacoes = alocacoes.filter(aluno__curso2__in=cursos_insper)
+                
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
@@ -1241,10 +1280,11 @@ def analise_objetivos(request):
     else:
         context = {
             "edicoes": edicoes,
-            "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
+            "cursos": cursos_insper,
+            "cursos_externos": cursos_externos,
         }
 
-    return render(request, 'projetos/analise_objetivos.html', context)
+    return render(request, "projetos/analise_objetivos.html", context)
 
 
 @login_required
@@ -1658,6 +1698,7 @@ def correlacao_medias_cr(request):
     """Mostra graficos da correlação entre notas e o CR dos estudantes."""
     configuracao = get_object_or_404(Configuracao)
     edicoes, _, semestre = get_edicoes(Avaliacao2)
+    cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
 
     if request.is_ajax():
 
@@ -1665,12 +1706,12 @@ def correlacao_medias_cr(request):
         alocacoes = None
         estudantes = {}
 
-        if 'edicao' in request.POST:
+        if "edicao" in request.POST:
 
             curso = request.POST['curso']
 
-            if request.POST['edicao'] != 'todas':
-                periodo = request.POST['edicao'].split('.')
+            if request.POST["edicao"] != "todas":
+                periodo = request.POST["edicao"].split('.')
                 alocacoes_tmp = Alocacao.objects.filter(projeto__ano=periodo[0],
                                                         projeto__semestre=periodo[1])
 
@@ -1713,10 +1754,10 @@ def correlacao_medias_cr(request):
     else:
         context = {
             "edicoes": edicoes,
-            "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
+            "cursos": cursos_insper,
         }
 
-    return render(request, 'projetos/correlacao_medias_cr.html', context)
+    return render(request, "projetos/correlacao_medias_cr.html", context)
 
 
 @login_required

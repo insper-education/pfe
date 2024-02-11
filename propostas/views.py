@@ -162,20 +162,22 @@ def procura_propostas(request):
     configuracao = get_object_or_404(Configuracao)
     curso = "T"  # por padrão todos os cursos
     ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
+    cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
+    cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
 
     if request.is_ajax():
 
-        if 'anosemestre' in request.POST:
+        if "anosemestre" in request.POST:
 
-            if request.POST['anosemestre'] == 'todas':
+            if request.POST["anosemestre"] == "todas":
                 ano = 0
             else:
-                anosemestre = request.POST['anosemestre'].split(".")
+                anosemestre = request.POST["anosemestre"].split('.')
                 ano = int(anosemestre[0])
                 semestre = int(anosemestre[1])
 
-            if 'curso' in request.POST:
-                curso = request.POST['curso']
+            if "curso" in request.POST:
+                curso = request.POST["curso"]
 
         else:
             return HttpResponse("Erro não identificado (POST incompleto)",
@@ -213,6 +215,13 @@ def procura_propostas(request):
     # Caso não se deseje todos os cursos, se filtra qual se deseja
     if curso != "T":
         opcoes = opcoes.filter(aluno__curso2__sigla_curta=curso)
+    
+    # Filtra para opções com estudantes de um curso específico
+    if curso != "TE":
+        if curso != 'T':
+            opcoes = opcoes.filter(aluno__curso2__sigla_curta=curso)
+        else:
+            opcoes = opcoes.filter(aluno__curso2__in=cursos_insper)
 
     areaspfe = {}
     areas = Area.objects.filter(ativa=True)
@@ -269,14 +278,15 @@ def procura_propostas(request):
         "areaspfe": areaspfe,
         "opcoes": opcoes,
         "edicoes": edicoes,
-        "cursos": cursos,
+        "cursos": cursos_insper,
+        "cursos_externos": cursos_externos,
         "disponivel_propostas": disponivel_propostas,
         "disponivel_multidisciplinar": disponivel_multidisciplinar,
         "aplicando_opcoes": aplicando_opcoes,
         "aplicando_multidisciplinar": aplicando_multidisciplinar,
     }
 
-    return render(request, 'propostas/procura_propostas.html', context)
+    return render(request, "propostas/procura_propostas.html", context)
 
 
 @login_required

@@ -57,7 +57,7 @@
             <optgroup class="opt_edi">
             {% comment %} Se não quiser que aparece a opção todas crie uma variavel n_todas com True {% endcomment %}
             {% if not n_todas %}
-              <option class="opt_edi" value="todas">todas</option>
+              <option class="opt_edi" value="todas">Todas</option>
             {% endif %}
             {% for edicao in edicoes %}
                 <option class="opt_edi" value="{{edicao}}" 
@@ -80,18 +80,21 @@
             <label class="to_label input-group-text" for="filterCurso" onClick="recarregar_pagina()"><span class="to_hide">Curso</span></label>
           </div>
           <select class="to_hide2 filter custom-select w-auto" id="filterCurso" name="curso">
-              <option class="opt_edi" value="T">todos</option>
+              <option class="opt_edi" value="T">Todos Insper</option>
               {% if cursos %}
                 {% for c in cursos %}
                   {% if c.curso_do_insper %}
-                    <option class="opt_edi" value="{{c.sigla_curta}}" {% if curso == c.sigla_curta %}selected{% endif %}>{{c.nome}}</option>
+                    <option class="opt_edi" value="{{c.sigla_curta}}" {% if curso == c.sigla_curta %}selected{% endif %}>&nbsp;&nbsp;&rdsh;&nbsp;{{c.nome}}</option>
                   {% endif %}
                 {% endfor %}
-                {% for c in cursos %}
-                  {% if not c.curso_do_insper %}
-                    <option class="opt_edi text-info" value="{{c.sigla_curta}}" {% if curso == c.sigla_curta %}selected{% endif %}>{{c.nome}}</option>
-                  {% endif %}
-                {% endfor %}
+                {% if cursos_externos %}
+                  <option class="opt_edi" value="TE" {% if com_externos %}selected{% endif %}>Todos Insper + Externos</option>
+                  {% for c in cursos_externos %}
+                    {% if not c.curso_do_insper %}
+                      <option class="opt_edi text-info" value="{{c.sigla_curta}}" {% if curso == c.sigla_curta %}selected{% endif %}>&nbsp;&nbsp;&rdsh;&nbsp;{{c.nome}}</option>
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
               {% else %}
                 <option class="opt_edi" selected>ERRO / ERROR</option>
               {% endif %}
