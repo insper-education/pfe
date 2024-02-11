@@ -913,6 +913,9 @@
         var hoje = new Date().toDateString();
         if(date.toDateString() == hoje) {
           $(element).css("outline", "2px solid blue");
+          $(element).css("position", "relative");
+          $(element).css("z-index", "12");
+          $(element).addClass("hoje");
         }
       {% endif %}
       
@@ -1108,12 +1111,12 @@
       function() {
         dia = $(this).data("dia");
         mes = $(this).data("mes") - 1;
-        $(".month-container[data-month-id=" + mes + "] div.day-content").filter(function() {
+        $(".month-container[data-month-id=" + mes + "] div.day-content:not('.hoje')").filter(function() {
           return this.innerHTML == dia;
         }).css({ "boxShadow": "0 0 9px 11px #F0F013", "position": "relative", "z-index": "9" });
       }, 
       function() {
-        $("div.day-content").css({ "boxShadow": "none", "z-index": "-1" })
+        $("div.day-content:not('.hoje')").css({ "boxShadow": "none", "z-index": "0" })
       }
     );
     

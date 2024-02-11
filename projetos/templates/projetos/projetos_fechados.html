@@ -167,8 +167,10 @@
                 opção #{{prioridade}}
               {% endif %}">
                 {{aluno.user.get_full_name}}
-                <span class="opt_full curso">[{{ aluno.curso2 }}]</span>
-                <span class="opt_short curso">[{{ aluno.curso2.sigla_curta }}]</span>
+                <span class="curso">
+                  <span class="opt_full">[{{ aluno.curso2 }}]</span>
+                  <span class="opt_short">[{{ aluno.curso2.sigla_curta }}]</span>
+                </span>
               </a>
               {% if aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span>{% endif %}
               <div class="prioridade" style="display: none;">{{prioridade}}</div> <!-- para mostrar no gráfico -->
