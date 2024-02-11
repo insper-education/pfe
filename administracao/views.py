@@ -282,6 +282,7 @@ def cadastrar_usuario(request):
         "PFEUser": PFEUser,
         "Professor": Professor,
         "Parceiro": Parceiro,
+        "Estudante": Aluno,
     }
 
     # Passado o tipo e nome da organização do parceiro (se o caso) a ser cadastrado
@@ -330,7 +331,7 @@ def edita_usuario(request, primarykey):
     """Edita cadastro de usuário na base de dados do PFE."""
     user = get_object_or_404(PFEUser, id=primarykey)
 
-    if request.method == 'POST':
+    if request.method == "POST":
 
         if "email" in request.POST:
             mensagem, codigo, _ = registro_usuario(request, user)
@@ -347,7 +348,7 @@ def edita_usuario(request, primarykey):
             "mensagem": mensagem,
         }
 
-        return render(request, 'generic.html', context=context)
+        return render(request, "generic.html", context=context)
 
 
     context = {
@@ -357,7 +358,7 @@ def edita_usuario(request, primarykey):
         "PFEUser": PFEUser,
         "Professor": Professor,
         "Parceiro": Parceiro,
-
+        "Estudante": Aluno,
     }
 
     if user.tipo_de_usuario == 1:
@@ -371,10 +372,10 @@ def edita_usuario(request, primarykey):
     else:
         return HttpResponse("Erro com tipo de usuário", status=401)
 
-    return render(request, 'administracao/cadastra_usuario.html', context)
+    return render(request, "administracao/cadastra_usuario.html", context)
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def carrega_arquivo(request, dado):
     """Faz o upload de arquivos CSV para o servidor."""
     if dado == "disciplinas":
@@ -440,7 +441,7 @@ def carrega_arquivo(request, dado):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def configurar(request):
     """Definir datas do PFE."""
     configuracao = get_object_or_404(Configuracao)
@@ -500,7 +501,7 @@ def exportar(request, modo):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def propor(request):
     """Monta grupos de PFE."""
 
@@ -707,7 +708,7 @@ def propor(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def montar_grupos(request):
     """Montar grupos para projetos."""
     configuracao = get_object_or_404(Configuracao)
@@ -911,7 +912,7 @@ def servico(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def pre_alocar_estudante(request):
     """Ajax para pre-alocar estudates em propostas."""
     if request.user.tipo_de_usuario == 4:  # admin
@@ -953,7 +954,7 @@ def pre_alocar_estudante(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def definir_orientador(request):
     """Ajax para definir orientadores de projetos."""
     
@@ -1217,7 +1218,7 @@ def dados_backup(request, modo):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def logs(request, dias=30):
     """Alguns logs de Admin."""
     v = usuario_sem_acesso(request, (4,)) # Soh Adm
@@ -1237,7 +1238,7 @@ def logs(request, dias=30):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def conexoes_estabelecidas(request):
     """Mostra usuários conectados."""
     if request.user.tipo_de_usuario == 4:

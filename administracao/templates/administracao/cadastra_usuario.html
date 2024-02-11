@@ -98,7 +98,7 @@
     {% comment %} Estudante {% endcomment %}
     <div style="display: block; padding-left: 32px" class="row" data-type="estudante">
 
-      <label for="matricula">Matrícula: </label> <input type="text" size="8" maxlength="8" id="matricula" name="matricula" {% if usuario and usuario.aluno and usuario.aluno.matricula %}value="{{usuario.aluno.matricula}}"{% endif %}><br>
+      <label for="matricula">Matrícula: </label> <input type="text" size="8" maxlength="{% max_length Estudante 'matricula' %}" id="matricula" name="matricula" {% if usuario and usuario.aluno and usuario.aluno.matricula %}value="{{usuario.aluno.matricula}}"{% endif %}><br>
  
       <label for="lingua">Curso</label>:
       <select id="curso" name="curso" title="Curso">
@@ -116,6 +116,21 @@
       
       <br>
       <label for="cr">cr: </label> <input type="number" style="width: 5em; text-align: right;" min="0" max="10" step="0.0001" id="cr" name="cr" value="{{usuario.aluno.cr|unlocalize}}">
+
+      <br>
+      {% with externo=usuario.aluno.externo %}
+        <input type="checkbox" id="externo_check" name="externo_check" value="True" {% if externo %}checked{% endif %}>
+        <label for="externo_check"> Externo</label>
+        <label for="externo" id="externo_label" {% if not externo %}style="display: none;"{% endif %}> &rarr; Instituição: <input type="text" size="20" maxlength="{% max_length Estudante 'externo' %}" id="externo" name="externo" {% if externo %}value="{{externo}}"{% endif %}></label> 
+        <br>
+      {% endwith %}
+
+      <script>
+        $("#externo_check").change(function() {
+          if ($(this).is(":checked")) { $("#externo_label").show();
+          } else { $("#externo_label").hide(); }
+        });
+      </script>
 
       <br><br>
       <input type="checkbox" id="estudante_trancado" name="estudante_trancado" value="True" {% if usuario.aluno.trancado %}checked{% endif %}>
