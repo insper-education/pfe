@@ -26,7 +26,7 @@
 
     Copia calendário:
     
-    <a class="btn btn-primary mb-1" href="{% url 'copia_calendario' %}" onClick="return confirm('Tem certeza que deseja dupplicar todos os eventos de um semestre para o outro?')" >{{configuracao.periodo}} =&gt; {{configuracao.proximo_periodo}}</a>
+    <a class="btn btn-info mb-1" href="{% url 'copia_calendario' %}" onClick="return confirm('Tem certeza que deseja dupplicar todos os eventos de um semestre para o outro?')" >{{configuracao.periodo}} =&gt; {{configuracao.proximo_periodo}}</a>
     <br><br>
 
     Período Liberado&nbsp;&nbsp;&nbsp;
@@ -64,6 +64,6 @@
     {% endif %}
      
     <br><br>
-    <button class=" mb-1" type="submit">Confirmar</button>
+    <button class="btn btn-primary mb-1" type="submit">Confirmar</button>
   </form>
 {% endblock %}
