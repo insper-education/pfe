@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 17 de Fevereiro de 2024
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/tab_simples.css' %}">
+  <script src="{% static 'js/w3.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">Usuários e IPs bloqueados</span>
+
+  <div class="table-responsive">
+    <table id="BloqueadosTable" class="table-bordered table-sm">
+      <thead class="table-info">
+        <tr>
+          <th onclick="w3.sortHTML('#BloqueadosTable', '.item', 'td:nth-child(1)')">username</th>
+          <th onclick="w3.sortHTML('#BloqueadosTable', '.item', 'td:nth-child(2)')">ip_address</th>
+          <th onclick="w3.sortHTML('#BloqueadosTable', '.item', 'td:nth-child(3)')">user_agent</th>
+          <th onclick="w3.sortHTML('#BloqueadosTable', '.item', 'td:nth-child(4)')">http_accept</th>
+          <th onclick="w3.sortHTML('#BloqueadosTable', '.item', 'td:nth-child(4)')">path_info</th>
+          <th onclick="w3.sortHTML('#BloqueadosTable', '.item', 'td:nth-child(4)')">attempt_time</th>
+          <th onclick="w3.sortHTML('#BloqueadosTable', '.item', 'td:nth-child(5)')">get_data</th>
+          <th onclick="w3.sortHTML('#BloqueadosTable', '.item', 'td:nth-child(5)')">post_data</th>
+          <th onclick="w3.sortHTML('#BloqueadosTable', '.item', 'td:nth-child(5)')">failures_since_start</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for attempt in access_attempts %}
+          <tr class="item">
+            <td>{{ attempt.username }}</td>
+            <td>{{ attempt.ip_address }}</td>
+            <td>{{ attempt.user_agent }}</td>
+            <td>{{ attempt.http_accept }}</td>
+            <td>{{ attempt.path_info }}</td>
+            <td>{{ attempt.attempt_time }}</td>
+            <td>{{ attempt.get_data }}</td>
+            <td>{{ attempt.post_data }}</td>
+            <td>{{ attempt.failures_since_start }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="9">Vazio</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <br>
+
+  Desbloquear todos os usuários 
+    <a href="{% url 'desbloquear_usuarios' %}"><button type="button" class="btn btn-warning btn-lg">DESBLOQUEAR</button> </a>
+
+  <br><br><br>
+
+  <span class="titulo">Usuários e IPs Conectados</span>
+
+  <div class="table-responsive">
+    <table id="ConectadosTable" class="table-bordered table-sm">
+      <thead class="table-info">
+        <tr>
+          <th onclick="w3.sortHTML('#ConectadosTable', '.item', 'td:nth-child(1)')">username</th>
+          <th onclick="w3.sortHTML('#ConectadosTable', '.item', 'td:nth-child(2)')">ip_address</th>
+          <th onclick="w3.sortHTML('#ConectadosTable', '.item', 'td:nth-child(3)')">user_agent</th>
+          <th onclick="w3.sortHTML('#ConectadosTable', '.item', 'td:nth-child(4)')">http_accept</th>
+          <th onclick="w3.sortHTML('#ConectadosTable', '.item', 'td:nth-child(4)')">path_info</th>
+          <th onclick="w3.sortHTML('#ConectadosTable', '.item', 'td:nth-child(4)')">attempt_time</th>
+          <th onclick="w3.sortHTML('#ConectadosTable', '.item', 'td:nth-child(5)')">logout_time</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for attempt in access_logs reversed %}
+          <tr class="item">
+            <td>{{ attempt.username }}</td>
+            <td>{{ attempt.ip_address }}</td>
+            <td>{{ attempt.user_agent }}</td>
+            <td>{{ attempt.http_accept }}</td>
+            <td>{{ attempt.path_info }}</td>
+            <td>{{ attempt.attempt_time }}</td>
+            <td>{{ attempt.logout_time }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7">Vazio</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <br>
+
+  {% comment %} <strong>Total de Conexões Válidas:</strong> {{ usuarios|length }}<br> {% endcomment %}
+
+  <br><br>
+  {% if mensagem %}
+    <span class="red-bold">{{mensagem|linebreaks}}</span>
+  {% endif %}
+  <br>
+
+{% endblock %}

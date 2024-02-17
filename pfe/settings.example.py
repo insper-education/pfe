@@ -81,6 +81,9 @@ AXES_FAILURE_LIMIT = 3  # 3 tentativas
 # Libera usuário depois de uma hora
 AXES_COOLOFF_TIME = 1 # 1 hour
 
+# Prevent login from IP under a particular username if the attempt limit has been exceeded,
+AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = True
+
 ROOT_URLCONF = 'pfe.urls'
 
 TEMPLATES = [

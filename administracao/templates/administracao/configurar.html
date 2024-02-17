@@ -42,11 +42,6 @@
     
     <br><br><hr><br>
 
-    Desbloquear todos os usuários 
-    <a href="{% url 'desbloquear_usuarios' %}"><button type="button" class="btn btn-warning btn-lg">DESBLOQUEAR</button> </a>
-    
-    <br><br><hr><br>
-
     <label for="coordenacao"><span lang="pt">Coordenador PFE</span>: </label>
     <select name="coordenacao" id="coordenacao" title="Selecione o coordenador do PFE" required>
       {% for administrador in administradores %}

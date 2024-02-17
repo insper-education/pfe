@@ -27,6 +27,8 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.utils import timezone
 from django.urls import reverse
 
+from axes.models import AccessAttempt, AccessLog
+
 from documentos.support import render_to_pdf
 
 from projetos.models import Configuracao, Organizacao, Proposta, Projeto
@@ -488,8 +490,11 @@ def configurar(request):
 @permission_required("users.view_administrador", raise_exception=True)
 def desbloquear_usuarios(request):
     """Desbloqueia todos os usuários."""
-    axes.utils.reset()
-    return HttpResponse("Todos os usuários desbloqueados.", status=200)
+    if request.user.tipo_de_usuario == 4:
+        axes.utils.reset()
+        return redirect("/administracao/bloqueados/")
+        #return HttpResponse("Todos os usuários desbloqueados.", status=200)
+    return HttpResponse("Você não tem privilégios")
 
 
 @login_required
@@ -808,10 +813,10 @@ def montar_grupos(request):
                         projeto.delete()
 
             if mensagem:
-                request.session['mensagem'] = 'Estudantes possuiam alocações com notas:\n'
-                request.session['mensagem'] += mensagem
+                request.session["mensagem"] = "Estudantes possuiam alocações com notas:\n"
+                request.session["mensagem"] += mensagem
 
-            return redirect('/administracao/selecionar_orientadores/')
+            return redirect("/administracao/selecionar_orientadores/")
 
     if user and user.tipo_de_usuario != 4:  # admin
         mensagem = "Sua conta não é de administrador, "
@@ -1247,7 +1252,7 @@ def conexoes_estabelecidas(request):
         usuarios = []
         for session in sessions:
             data = session.get_decoded()
-            user_id = data.get('_auth_user_id', None)
+            user_id = data.get("_auth_user_id", None)
             try:
                 user = PFEUser.objects.get(id=user_id)
                 usuario = {}
@@ -1268,3 +1273,26 @@ def conexoes_estabelecidas(request):
         return render(request, "administracao/conexoes_estabelecidas.html", context=context)
 
     return HttpResponse("Você não tem privilégios")
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def bloqueados(request):
+    """Mostra usuários e ips bloqueados."""
+    if request.user.tipo_de_usuario == 4:
+
+        mensagem = ""
+        mes_atras = timezone.now() - datetime.timedelta(days=30)
+        access_attempts = AccessAttempt.objects.all()
+        access_logs = AccessLog.objects.all().filter(attempt_time__gte=mes_atras)
+        
+        context = {
+            "mensagem": mensagem,
+            "access_logs": access_logs,
+            "access_attempts": access_attempts,
+        }
+
+        return render(request, "administracao/bloqueados.html", context=context)
+
+    return HttpResponse("Você não tem privilégios")
+

@@ -122,4 +122,8 @@ urlpatterns = [
          views.conexoes_estabelecidas,
          name="conexoes_estabelecidas"),
 
+    path("bloqueados/",
+         views.bloqueados,
+         name="bloqueados"),
+
 ]
