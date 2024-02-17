@@ -7,6 +7,7 @@ Data: 15 de Dezembro de 2020
 """
 
 import os
+import json
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
@@ -37,9 +38,11 @@ from .support import render_pdf_file
 #@login_required
 def index_documentos(request):
     """Lista os documentos armazenados no servidor."""
+    configuracao = get_object_or_404(Configuracao)
+    areas = json.loads(configuracao.index_documentos)
     context = {
         "documentos": Documento.objects.all(),
-        "MEDIA_URL": settings.MEDIA_URL,
+        "areas": areas,
     }
     return render(request, "documentos/index_documentos.html", context)
 
@@ -51,12 +54,12 @@ def certificados_submetidos(request):
     edicoes = []
 
     if request.is_ajax():
-        if 'edicao' in request.POST:
-            edicao = request.POST['edicao']
-            if edicao == 'todas':
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
+            if edicao == "todas":
                 certificados = Certificado.objects.all()
             else:
-                ano, semestre = request.POST['edicao'].split('.')
+                ano, semestre = request.POST["edicao"].split('.')
                 certificados = Certificado.objects\
                     .filter(projeto__ano=ano, projeto__semestre=semestre)
         else:

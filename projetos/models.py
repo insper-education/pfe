@@ -577,6 +577,10 @@ class Configuracao(models.Model):
 
     assinatura = models.ImageField("Assinatura", upload_to=get_upload_path, null=True, blank=True,
                                    help_text="Assinatura do coordenador do PFE")
+    
+    index_documentos = models.TextField("Index Documentos", max_length=4096, null=True, blank=True,
+                                   help_text="Documentos a serem mostrados no Index Documentos")
+
 
     ###----------------------Mensagens----------------------###
 

@@ -20,82 +20,22 @@
 
 {% block content %}
 
-  <br>
-  <h5>Área Geral</h5>
-  <ul>
-    {% include "documento.html" with documento=documentos|tipo_documento:7 %}
-    {% include "documento.html" with documento=documentos|tipo_documento:42 %}
-    {% include "documento.html" with documento=documentos|tipo_documento:8 %}
-    <a href="{% url 'relatorios_publicos' %}"><li>Relatórios Públicos</li></a>
-    <a href="{% url 'materias_midia' %}"><li>Matérias na Mídia</li></a>
-    {% include "documento.html" with documento=documentos|tipo_documento:39 %}
-  </ul>
+  <span class="titulo">Documentos</span>
 
-  {% if user.tipo_de_usuario == 1 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Estudante ou Professor ou Adm -->
-    <hr>
-    <h5>Área dos Estudantes</h5> <!-- Estudante -->
-    <ul>
-      {% include "documento.html" with documento=documentos|tipo_documento:9 %}
-        {% include "documento.html" with documento=documentos|tipo_documento:45 nivel=2 %}
-
-      {% include "documento.html" with documento=documentos|tipo_documento:13 %}
-        {% include "documento.html" with documento=documentos|tipo_documento:17 nivel=2 %}
-        {% include "documento.html" with documento=documentos|tipo_documento:18 nivel=2 %}
-        {% include "documento.html" with documento=documentos|tipo_documento:46 nivel=2 %}
-        {% include "documento.html" with documento=documentos|tipo_documento:20 nivel=2 %}
-
-      {% include "documento.html" with documento=documentos|tipo_documento:47 %}
-      {% include "documento.html" with documento=documentos|tipo_documento:48 %}
-
-      {% include "documento.html" with documento=documentos|tipo_documento:23 %}
-    </ul>
-  {% endif %}
-
-  <hr>
-  <h5>Área dos Parceiros</h5>
-  {% if user.tipo_de_usuario == 3 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Parceiro ou Professor ou Adm -->
-    <ul>
-      {% include "documento.html" with documento=documentos|tipo_documento:11 %}
-      {% include "documento.html" with documento=documentos|tipo_documento:30 %}
-      {% include "documento.html" with documento=documentos|tipo_documento:31 %}
-    </ul>
-  {% endif %}
-  {% comment %} Está região é para os parceiros, mas está aberta para todos os usuários {% endcomment %}
-    <ul>
-      {% include "documento.html" with documento=documentos|tipo_documento:14 %}
-    </ul>
-  {% comment %} Fim da região {% endcomment %}
-
-  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Professor ou Adm -->
-    <hr>
-    <h5>Área do Professor</h5>
-    <ul>
-      {% include "documento.html" with documento=documentos|tipo_documento:10 %}
-        {% include "documento.html" with documento=documentos|tipo_documento:41 nivel=2 %}
-
-      {% include "documento.html" with documento=documentos|tipo_documento:25 %}
-      {% include "documento.html" with documento=documentos|tipo_documento:24 %}
-    </ul>
-  {% endif %}
-
-  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Professor ou Adm -->
-    <hr>
-    <h5>Área Acadêmica</h5>
-    <ul>
-      <a href="{% url 'tabela_documentos' %}"><li>Tabelas de Documentação dos Projetos</li></a>
-      <a href="{% url 'tabela_atas' %}"><li>Atas do Comitê</li></a>
-    </ul>
-  {% endif %}
-
-  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} <!-- Professor ou Adm -->
-    <hr>
-    <h5>Área do Operacional</h5>
-    <ul>
-      {% include "documento.html" with documento=documentos|tipo_documento:44 %}
-      <a href="{% url 'tabela_seguros' %}"><li>Seguros Emitidos</li></a>
-      <a href="{% url 'contratos_assinados' %}"><li>Contratos Assinados</li></a>
-    </ul>
-
+  {% for area in areas %}
+    {% if user.tipo_de_usuario in area.permissao %}
+      {% if not forloop.first %}<hr>{% endif %}
+      <h5>Área {{area.titulo}}</h5>
+      <ul>
+        {% for documento in area.documentos %}
+          {% if documento.0 == "D" %}
+            {% include "documento.html" with documento=documentos|tipo_documento:documento.1 nivel=documento.2 %}
+          {% elif documento.0 == "L" %}
+            <a href="{% url documento.2 %}"><li>{{documento.1}}</li></a>
+          {% endif %}
+        {% endfor %}
+      </ul>
     {% endif %}
+  {% endfor %}
 
 {% endblock %}
