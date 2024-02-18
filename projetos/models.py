@@ -6,6 +6,7 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Maio de 2019
 """
 
+import os
 import datetime
 import string
 import random
@@ -996,6 +997,9 @@ class Documento(models.Model):
         if self.anotacao:
             texto += " ("+str(self.anotacao)+")"
         return texto
+    
+    def filename(self):
+        return os.path.basename(self.documento.name)
 
     @classmethod
     def create(cls):

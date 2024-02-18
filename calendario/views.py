@@ -11,6 +11,8 @@ import dateutil.parser
 
 from icalendar import Calendar, Event, vCalAddress
 
+from django.conf import settings
+
 from django.db.models.functions import Lower
 
 from django.contrib.auth.decorators import login_required, permission_required
@@ -24,8 +26,9 @@ from users.models import PFEUser, Aluno
 from projetos.models import Banca, Configuracao, Evento, Organizacao, Documento
 
 from projetos.tipos import TIPO_EVENTO
+from projetos.support import get_upload_path, simple_upload
 
-
+from documentos.models import TipoDocumento
 
 def get_calendario_context(user=None):
     """Contexto para gerar calendário."""
@@ -73,6 +76,7 @@ def get_calendario_context(user=None):
     # TAMBÉM ESTOU USANDO NO CELERY PARA AVISAR DOS EVENTOS
 
     context = {
+        "configuracao": configuracao,
         "eventos": eventos_gerais,
         "aulas": aulas,
         "laboratorios": laboratorios,
@@ -206,11 +210,12 @@ def export_calendar(request, event_id):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def atualiza_evento(request):
     """Ajax para atualizar eventos."""
+
     try:
-        event_id = int(request.POST.get('id', None))
+        event_id = int(request.POST.get("event-index", 0))
         if event_id:
             evento = Evento.objects.get(id=event_id)
         else:
@@ -218,19 +223,65 @@ def atualiza_evento(request):
     except Evento.DoesNotExist:
         return HttpResponseNotFound("<h1>Evento não encontrado!</h1>")
 
-    evento.tipo_de_evento = int(request.POST.get("type", None))
-    evento.startDate = dateutil.parser.parse(request.POST.get("startDate", None))
-    evento.endDate = dateutil.parser.parse(request.POST.get("endDate", None))
-    evento.location = request.POST.get("location", '')[:Evento._meta.get_field("location").max_length] 
-    evento.observacao = request.POST.get("observation", '')[:Evento._meta.get_field("observacao").max_length]
-    evento.atividade = request.POST.get("atividade", '')[:Evento._meta.get_field("atividade").max_length]
-    evento.descricao = request.POST.get("descricao", '')[:Evento._meta.get_field("descricao").max_length]
+    type = request.POST.get("event-type", None)
+    if type:
+        evento.tipo_de_evento = int(type)
+    
+    startDate = request.POST.get("event-start-date", None)
+    if startDate:
+        evento.startDate = dateutil.parser.parse(startDate)
+    
+    endDate = request.POST.get("event-end-date", None)
+    if endDate:
+        evento.endDate = dateutil.parser.parse(endDate)
+    
+    location = request.POST.get("event-location", "")
+    if location:
+        evento.location = location[:Evento._meta.get_field("location").max_length]
 
-    responsavel = request.POST.get("responsavel", None)
+    observacao = request.POST.get("event-observation", "")
+    if observacao:
+        evento.observacao = observacao[:Evento._meta.get_field("observacao").max_length]
+
+    atividade = request.POST.get("event-atividade", "")
+    if atividade:
+        evento.atividade = atividade[:Evento._meta.get_field("atividade").max_length]
+
+    descricao = request.POST.get("event-descricao", "")
+    if descricao:
+        evento.descricao = descricao[:Evento._meta.get_field("descricao").max_length]
+
+    responsavel = request.POST.get("event-responsavel", None)
     evento.responsavel = PFEUser.objects.get(id=responsavel) if responsavel else None
 
-    material = request.POST.get("material", None)
-    evento.documento = Documento.objects.get(id=material) if material else None
+
+    max_length = Documento._meta.get_field("documento").max_length
+    if "arquivo" in request.FILES:
+
+        #link = request.POST.get("link", None)
+        max_length = Documento._meta.get_field("documento").max_length
+        if "arquivo" in request.FILES and len(request.FILES["arquivo"].name) > max_length - 1:
+                return "<h1>Erro: Nome do arquivo maior que " + str(max_length) + " caracteres.</h1>"
+        
+        documento = Documento.create()  # Criando documento na base de dados
+        documento.tipo_documento = get_object_or_404(TipoDocumento, id=43)  # Material de Aula
+        documento.data = datetime.datetime.now()
+        #documento.link = link
+        documento.lingua_do_documento = 0  # (0, 'Português')
+        documento.confidencial = False  # Por padrão aulas não são confidenciais
+        documento.usuario = request.user
+
+        if len(request.FILES["arquivo"].name) > max_length - 1:
+            return "<h1>Erro: Nome do arquivo maior que " + str(max_length) + " caracteres.</h1>"
+    
+        arquivo = simple_upload(request.FILES["arquivo"],
+                                path=get_upload_path(documento, ''))
+        documento.documento = arquivo[len(settings.MEDIA_URL):]
+        documento.save()
+        evento.documento = documento
+    else:
+        material = request.POST.get("event-material", None)
+        evento.documento = Documento.objects.get(id=material) if material else None
 
     evento.save()
 
@@ -244,7 +295,7 @@ def atualiza_evento(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def remove_evento(request):
     """Ajax para remover eventos."""
     event_id = int(request.POST.get('id', None))

@@ -102,7 +102,7 @@ def cria_documento(request):
     link = request.POST.get("link", None)
     if not (link and link.strip()):
         link = None
-    if link:    
+    if link:
         if link[:4] != "http":
             link = "http://" + link
 
@@ -110,7 +110,7 @@ def cria_documento(request):
         if len(link) > max_length - 1:
             return "<h1>Erro: Nome do link maior que " + str(max_length) + " caracteres.</h1>"
 
-    max_length = Documento._meta.get_field('documento').max_length
+    max_length = Documento._meta.get_field("documento").max_length
     if "arquivo" in request.FILES and len(request.FILES["arquivo"].name) > max_length - 1:
             return "<h1>Erro: Nome do arquivo maior que " + str(max_length) + " caracteres.</h1>"
 

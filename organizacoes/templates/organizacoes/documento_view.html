@@ -226,10 +226,10 @@
   $("form#meuForm").submit(function(e){
       e.preventDefault();
 
-      $('#popup').modal('hide');
+      $("#popup").modal("hide");
       
       $.ajaxSetup({
-        headers: { "X-CSRFToken": '{{csrf_token}}' }
+        headers: { "X-CSRFToken": "{{csrf_token}}" }
       });
 
       var form = $("form#meuForm").closest("form");

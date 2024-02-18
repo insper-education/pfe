@@ -637,6 +637,7 @@
   
     // Função para salvar evento
     function saveEvent() {
+
       var event = {
         id: $('#event-modal input[name="event-index"]').val(),
         name: $('#event-modal select[name="event-type"] option:selected').text(),
@@ -694,10 +695,10 @@
         return;
       }
 
-      if (!event.id) {id = 0;}
-      else {id = event.id;}
+      {% comment %} if (!event.id) {id = 0;}
+      else {id = event.id;} {% endcomment %}
 
-      var dataSource = calendar.getDataSource();
+      var dataSource = calendar.getDataSource();  // Para depois atualizar a base de dados
 
       {% comment %} Atualiza na base de dados {% endcomment %}
 
@@ -707,23 +708,19 @@
       e = event.endDate;
       var endDate = e.getFullYear() + "-" + (e.getMonth()+1) + "-" + e.getDate() ;
 
+      $.ajaxSetup({
+        headers: { "X-CSRFToken": "{{csrf_token}}" }
+      });
+
+      var form = $("form#meuForm").closest("form");
+      var formData = new FormData(form[0]);
+
       $.ajax({
-        url: '{% url "atualiza_evento" %}',
+        url: "{% url 'atualiza_evento' %}",
         type: "POST",
-        data: { 
-          id : id,
-          type : event.type,
-          location : event.location,
-          atividade : event.atividade,
-          descricao : event.descricao,
-          observation : event.observation,
-          responsavel: event.responsavel,
-          material: event.material,
-          startDate : startDate,
-          endDate : endDate,
-          "csrfmiddlewaretoken": "{{ csrf_token }}"
-        },
-        dataType: "json",
+        data: formData,
+        processData: false,
+        contentType: false, 
         success: function (data) {
           if (data.atualizado) {
             //console.log("Evento atualizado.");
@@ -769,7 +766,7 @@
           {% if user.tipo_de_usuario == 4 %} 
             alert(request.responseText);
             jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-            console.log('error'+request.responseText);
+            console.log("error"+request.responseText);
           {% else %}
             jQuery("body").html("Erro no servidor do PFE. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
           {% endif %}
@@ -1145,7 +1142,7 @@
           return false;
         }
       });
-      console.log(allSame, firstElementText);
+      
       if(allSame) {
         $("#barra_local").text(firstElementText);
         $(".header_local").css("display", "none");
