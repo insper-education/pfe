@@ -715,6 +715,10 @@
       var form = $("form#meuForm").closest("form");
       var formData = new FormData(form[0]);
 
+      // Estava bagunçando o formato das datas
+      formData.append("startDate", startDate);
+      formData.append("endDate", endDate);
+
       $.ajax({
         url: "{% url 'atualiza_evento' %}",
         type: "POST",

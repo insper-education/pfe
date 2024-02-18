@@ -213,9 +213,8 @@ def export_calendar(request, event_id):
 @permission_required("users.altera_professor", raise_exception=True)
 def atualiza_evento(request):
     """Ajax para atualizar eventos."""
-
     try:
-        event_id = int(request.POST.get("event-index", 0))
+        event_id = request.POST.get("event-index", 0)
         if event_id:
             evento = Evento.objects.get(id=event_id)
         else:
@@ -227,11 +226,11 @@ def atualiza_evento(request):
     if type:
         evento.tipo_de_evento = int(type)
     
-    startDate = request.POST.get("event-start-date", None)
+    startDate = request.POST.get("startDate", None)
     if startDate:
         evento.startDate = dateutil.parser.parse(startDate)
     
-    endDate = request.POST.get("event-end-date", None)
+    endDate = request.POST.get("endDate", None)
     if endDate:
         evento.endDate = dateutil.parser.parse(endDate)
     
@@ -284,6 +283,7 @@ def atualiza_evento(request):
         evento.documento = Documento.objects.get(id=material) if material else None
 
     evento.save()
+    print(evento)
 
     data = {
         "atualizado": True,
