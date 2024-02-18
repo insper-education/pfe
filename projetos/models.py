@@ -974,7 +974,7 @@ class Documento(models.Model):
                             help_text="Data e hora do documento")
     
     ### REMOVER  ##############################################
-    tipo_de_documento = models.PositiveSmallIntegerField(choices=TIPO_DE_DOCUMENTO, default=0)
+    # tipo_de_documento = models.PositiveSmallIntegerField(choices=TIPO_DE_DOCUMENTO, default=0)
     ### ######################################################
 
     tipo_documento = models.ForeignKey("documentos.TipoDocumento", null=True, blank=True, on_delete=models.SET_NULL,

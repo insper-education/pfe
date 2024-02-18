@@ -33,11 +33,9 @@ from documentos.models import TipoDocumento
 def get_calendario_context(user=None):
     """Contexto para gerar calendário."""
     eventos = Evento.objects.all()
-
-    # Estudantes e parceiros só conseguem ver os eventos até o semestre atual
     configuracao = get_object_or_404(Configuracao)
 
-    # Se usuário não for Professor nem Admin
+    # Se usuário não for Professor nem Admin filtra os eventos do próximo semestre
     if user and user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
         if configuracao.semestre == 1:
             eventos_ano = eventos.filter(startDate__year__lt=configuracao.ano)
@@ -46,49 +44,20 @@ def get_calendario_context(user=None):
         else:
             eventos = eventos.filter(startDate__year__lte=configuracao.ano)
 
-    eventos_gerais = eventos.exclude(tipo_de_evento=12).\
-        exclude(tipo_de_evento=40).\
-        exclude(tipo_de_evento=41).\
-        exclude(tipo_de_evento=20).\
-        exclude(tipo_de_evento=30).\
-        exclude(tipo_de_evento__gte=100)
-
-    # 12, 'Aula PFE'
-    aulas = eventos.filter(tipo_de_evento=12)
-
-    # 40, 'Laboratório'
-    laboratorios = eventos.filter(tipo_de_evento=40)
-
-    # 41, 'Semana de Provas'
-    provas = eventos.filter(tipo_de_evento=41)
-
-    # 20, 'Relato Quinzenal'
-    quinzenais = eventos.filter(tipo_de_evento=20)
-
-    # 30, 'Feedback dos Estudantes sobre PFE'
-    feedbacks = eventos.filter(tipo_de_evento=30)
-
-    # Eventos da coordenação
-    coordenacao = Evento.objects.filter(tipo_de_evento__gte=100)
-
-    # ISSO NAO ESTA BOM, FAZER ALGO MELHOR
-
-    # TAMBÉM ESTOU USANDO NO CELERY PARA AVISAR DOS EVENTOS
-
     context = {
         "configuracao": configuracao,
-        "eventos": eventos_gerais,
-        "aulas": aulas,
-        "laboratorios": laboratorios,
-        "provas": provas,
-        "quinzenais": quinzenais,
-        "feedbacks": feedbacks,
-        "coordenacao": coordenacao,
+        "eventos": eventos.exclude(tipo_de_evento__in=[12, 40, 41, 20, 30]).exclude(tipo_de_evento__gte=100),
+        "aulas": eventos.filter(tipo_de_evento=12),  # 12, 'Aula PFE'
+        "laboratorios": eventos.filter(tipo_de_evento=40),  # 40, 'Laboratório'
+        "provas": eventos.filter(tipo_de_evento=41),  # 41, 'Semana de Provas'
+        "quinzenais": eventos.filter(tipo_de_evento=20),  # 20, 'Relato Quinzenal'
+        "feedbacks": eventos.filter(tipo_de_evento=30),  # 30, 'Feedback dos Estudantes sobre PFE'
+        "coordenacao": Evento.objects.filter(tipo_de_evento__gte=100),  # Eventos da coordenação
         "tipos_eventos": TIPO_EVENTO,
         "Evento": Evento,
     }
 
-    return context
+    return context  # TAMBÉM ESTOU USANDO NO CELERY PARA AVISAR DOS EVENTOS
 
 
 @login_required
@@ -153,8 +122,8 @@ def export_calendar(request, event_id):
     cal = Calendar()
     site = Site.objects.get_current()
 
-    cal.add('prodid', '-//PFE//Insper//')
-    cal.add('version', '2.0')
+    cal.add("prodid", "-//PFE//Insper//")
+    cal.add("version", "2.0")
 
     site_token = site.domain.split('.')
     site_token.reverse()
@@ -162,22 +131,22 @@ def export_calendar(request, event_id):
 
     ical_event = Event()
 
-    ical_event['uid'] = "Banca{0}{1}{2}".format(
+    ical_event["uid"] = "Banca{0}{1}{2}".format(
         banca.startDate.strftime("%Y%m%d%H%M%S"),
         banca.projeto.pk,
         banca.tipo_de_banca)
-    ical_event.add('summary', "Banca {0}".format(banca.projeto))
-    ical_event.add('dtstart', banca.startDate)
-    ical_event.add('dtend', banca.endDate)
-    ical_event.add('dtstamp', datetime.datetime.now().date())
-    ical_event.add('tzid', "America/Sao_Paulo")
-    ical_event.add('location', banca.location)
+    ical_event.add("summary", "Banca {0}".format(banca.projeto))
+    ical_event.add("dtstart", banca.startDate)
+    ical_event.add("dtend", banca.endDate)
+    ical_event.add("dtstamp", datetime.datetime.now().date())
+    ical_event.add("tzid", "America/Sao_Paulo")
+    ical_event.add("location", banca.location)
 
-    ical_event.add('geo', (-25.598749, -46.676368))
+    ical_event.add("geo", (-25.598749, -46.676368))
 
-    cal_address = vCalAddress('MAILTO:lpsoares@insper.edu.br')
+    cal_address = vCalAddress("MAILTO:lpsoares@insper.edu.br")
     cal_address.params["CN"] = "Luciano Pereira Soares"
-    ical_event.add('organizer', cal_address)
+    ical_event.add("organizer", cal_address)
 
     if banca.membro1:
         adicionar_participante_em_evento(ical_event, banca.membro1)
@@ -196,14 +165,14 @@ def export_calendar(request, event_id):
 
     description = gera_descricao_banca(banca, alunos)
 
-    ical_event.add('description', description)
+    ical_event.add("description", description)
 
     cal.add_component(ical_event)
 
     response = HttpResponse(cal.to_ical())
-    response['Content-Type'] = 'text/calendar'
-    response['Content-Disposition'] = \
-        'attachment; filename=Banca{0}.ics'.format(banca.pk)
+    response["Content-Type"] = "text/calendar"
+    response["Content-Disposition"] = \
+        "attachment; filename=Banca{0}.ics".format(banca.pk)
 
     return response
 
@@ -226,11 +195,11 @@ def atualiza_evento(request):
     if type:
         evento.tipo_de_evento = int(type)
     
-    startDate = request.POST.get("startDate", None)
+    startDate = request.POST.get("startDate", None)  # Data foi ajustada para YYYY-MM-DD
     if startDate:
         evento.startDate = dateutil.parser.parse(startDate)
     
-    endDate = request.POST.get("endDate", None)
+    endDate = request.POST.get("endDate", None)  # Data foi ajustada para YYYY-MM-DD
     if endDate:
         evento.endDate = dateutil.parser.parse(endDate)
     
@@ -274,7 +243,7 @@ def atualiza_evento(request):
             return "<h1>Erro: Nome do arquivo maior que " + str(max_length) + " caracteres.</h1>"
     
         arquivo = simple_upload(request.FILES["arquivo"],
-                                path=get_upload_path(documento, ''))
+                                path=get_upload_path(documento, ""))
         documento.documento = arquivo[len(settings.MEDIA_URL):]
         documento.save()
         evento.documento = documento
@@ -298,7 +267,7 @@ def atualiza_evento(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def remove_evento(request):
     """Ajax para remover eventos."""
-    event_id = int(request.POST.get('id', None))
+    event_id = int(request.POST.get("id", None))
     evento = get_object_or_404(Evento, id=event_id)    
     evento.delete()
 
