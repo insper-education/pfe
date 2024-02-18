@@ -35,7 +35,16 @@
     {% csrf_token %}
 
     <div class="modal-header">
-      <h5 id="documentacao" class="modal-title">{% if documentos %}Editar Agendamento de{% else %}Agendar{% endif %} Banca</h5>    
+      <h5 id="documentacao" class="modal-title">
+        {% if banca %}
+          {% if banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}
+            Visualizar Agendmento de
+          {% else %}
+            Editar Agendamento de
+          {% endif %}
+        {% else %}
+          Agendar
+        {% endif %} Banca</h5>    
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
@@ -63,7 +72,11 @@
             data-orientador_id="{% if projeto.orientador %}{{projeto.orientador.user.id}}{% else %}0{% endif %}"
             {% if projeto.id == banca.projeto.id %} selected {% endif %}
             data-subtext="{% if projeto.orientador %}{{projeto.orientador}}{% else %}SEM ORIENTADOR{% endif %}"
-            {% if projeto.id in projetos_agendados %}data-mensagem="Banca já agendada"{% endif %}
+            {% if projeto.id in projetos_agendados %}data-mensagem="Banca já agendada:
+            {% with banca_agendada=projeto.banca_set.all.0 %}
+              {{banca_agendada.startDate|date:'d/m/Y'}} das {{banca_agendada.startDate|date:'H:i'}} às {{banca_agendada.endDate|date:'H:i'}}
+            {% endwith %}
+            "{% endif %}
             >
               {% comment %} {{projeto.ano}}.{{projeto.semestre}} {% endcomment %}
               ({{projeto.organizacao}}) {{projeto.titulo}}
@@ -120,6 +133,7 @@
       {% for numero, texto in TIPO_DE_BANCA %}
         <div style="margin-left: 0.3em; margin-bottom: 0.3em;" class="radio">
           <label for="tipo{{numero}}"><input class="tipo_banca" id="tipo{{numero}}" type="radio" name="tipo" value="{{numero}}"
+            {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
             {% if banca.tipo_de_banca == numero or tipob == numero %}checked{% endif %} required> {{texto}}
             (duração padrão: {% if numero == 2 %}30{% else %}120{% endif %}min)</label>
             <br>
@@ -166,6 +180,7 @@
         <label for="inicio" style="white-space: nowrap; display:inline-block; margin-bottom: 3px;">
         <span style="display:inline-block; width:5.5ex; text-align:right;">Início:</span>
         <input id="inicio" type="datetime-local" name="inicio" 
+        {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
         {% comment %} min="2018-01-01T00:00" max="2018-12-31T00:00"  {% endcomment %}
         {% if banca %}
           value="{{banca.startDate|date:'Y-m-d\TH:i:s'}}"
@@ -179,6 +194,7 @@
         <label for="fim" style="white-space: nowrap; display:inline-block; margin-bottom: 3px;">
         <span style="display:inline-block; width:5.5ex; text-align:right">Fim:</span>
         <input id="fim" type="datetime-local" name="fim"
+        {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
         {% if banca %}
           value="{{banca.endDate|date:'Y-m-d\TH:i:s'}}"
         {% elif data %}
@@ -218,6 +234,7 @@
 
     <label for="local">Local:</label> 
       <input id="local" name="local" type="text" size="36" maxlength="{% max_length Banca "location" %}"
+      {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
       style="max-width: 100%;" placeholder="alocado pela equipe de reservas"
       {% if banca %}
         value="{{banca.location}}"
@@ -228,6 +245,7 @@
 
     <label for="link">Link de Vídeo-conferência:</label>
       <input id="link" name="link" type="text" size="36" maxlength="{% max_length Banca "link" %}" 
+      {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
       style="max-width: 100%;" placeholder="somente se necessário"
       {% if banca %}
         value="{{banca.link}}"
@@ -243,7 +261,8 @@
         </td>
         <td>
           <select name="membro1" class="pessoas custom-select custom-select-sm membros" id="membro1" title="Selecione membro da banca"
-            {% if user.tipo_de_usuario != 4 %}required{% endif %}            
+            {% if user.tipo_de_usuario != 4 %}required{% endif %}
+            {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
             oninvalid="this.setCustomValidity('Selecione ao menos duas pessoas para a banca')"
             oninput="this.setCustomValidity('')"
             >
@@ -258,6 +277,7 @@
         <td>
           <select name="membro2" class="pessoas custom-select custom-select-sm membros" id="membro2" title="Selecione membro da banca"
             {% if user.tipo_de_usuario != 4 %}required{% endif %}
+            {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
             oninvalid="this.setCustomValidity('Selecione ao menos duas pessoas para a banca')"
             oninput="this.setCustomValidity('')"
             >
@@ -270,7 +290,8 @@
           <label for="membro3">Membro&nbsp;3<span class="opt_full"> da Banca</span>:</label>
         </td>
         <td>
-          <select name="membro3" class="pessoas custom-select custom-select-sm membros" id="membro3" title="Selecione membro da banca">
+          <select name="membro3" class="pessoas custom-select custom-select-sm membros" id="membro3" title="Selecione membro da banca"
+            {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}>
             <option selected value> -- selecione membro da banca -- </option>
           </select>
         </td>
@@ -296,14 +317,22 @@
 
   <div id="div_botao" class="modal-footer">
     <button id="fecha_modal" type="button" class="btn btn-secondary mb-1" data-dismiss="modal">Fechar</button>
-    <button id="submit" class="btn btn-primary mb-1" type="submit" name="atualizar"
-      {% if banca %}onclick="operacao = 'atualizar';"{% endif %}>
-      {% if banca %}Atualizar{% else %}Agendar{% endif %}
-    </button>
-    {% if banca %}
-      <button id="excluir" class="btn btn-primary mb-1" type="submit" name="excluir" onclick="operacao = 'excluir';">
-        Excluir Banca
-      </button>
+
+    {% if not banca %} 
+      <button id="submit" class="btn btn-primary mb-1" type="submit" name="atualizar">Agendar</button>
+    {% endif %}
+
+    {% if banca and banca.projeto.orientador.user == request.user or request.user.tipo_de_usuario == 4 %} 
+      <button id="submit" class="btn btn-primary mb-1" type="submit" name="atualizar"
+        onclick="operacao = 'atualizar';">Atualizar</button>
+      {% if banca %}
+        <button id="excluir" class="btn btn-primary mb-1" type="submit" name="excluir"
+        {% comment %} onclick="operacao = 'excluir';"  {% endcomment %}
+        onClick="operacao = 'excluir'; return confirm('Tem certeza que deseja excluir agendamento de banca?');" 
+        formnovalidate>
+          Excluir Banca
+        </button>
+      {% endif %}
     {% endif %}
   </div>
 
