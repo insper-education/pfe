@@ -115,7 +115,7 @@
     </a>
     <br>
     
-    Orientador(a): 
+    Orientador{% if banca and banca.projeto and banca.projeto.orientador.user.genero == "F" %}a{% endif %}: 
     <a id="orientador_link" name="orientador_link" {% if banca and banca.projeto and banca.projeto.orientador %}href="{% url 'professor_detail' banca.projeto.orientador.id %}"{% endif %}>
       <label id="orientador" name="orientador">
         {% if banca and banca.projeto and banca.projeto.orientador %}
