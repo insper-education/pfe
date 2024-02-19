@@ -99,27 +99,27 @@ def atualiza_certificado(usuario, projeto, tipo_cert, arquivo, banca=None):
         if tipo_cert == 101:
             tipo = "_orientacao"
         elif tipo_cert == 102:
-            context['usuario'] = usuario
+            context["usuario"] = usuario
             tipo = "_coorientacao"
         elif tipo_cert == 103:
-            context['usuario'] = usuario
-            context['banca'] = banca
+            context["usuario"] = usuario
+            context["banca"] = banca
             tipo = "_banca_intermediaria"
         elif tipo_cert == 104:
-            context['usuario'] = usuario
-            context['banca'] = banca
+            context["usuario"] = usuario
+            context["banca"] = banca
             tipo = "_banca_final"
         elif tipo_cert == 105:
-            context['usuario'] = usuario
-            context['banca'] = banca
+            context["usuario"] = usuario
+            context["banca"] = banca
             tipo = "_banca_falconi"
         elif tipo_cert == 106:
-            context['usuario'] = usuario
-            context['dinamica'] = banca
+            context["usuario"] = usuario
+            context["dinamica"] = banca
             tipo = "_mentoria_profissional"
         elif tipo_cert == 107:
-            context['usuario'] = usuario
-            context['count_projetos'] = banca
+            context["usuario"] = usuario
+            context["count_projetos"] = banca
             tipo = "_mentoria_tecnica"
         else:
             tipo = ""
@@ -162,12 +162,12 @@ def selecao_geracao_certificados(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def gerar_certificados(request):
     """Recupera um certificado pelos dados."""
     configuracao = get_object_or_404(Configuracao)
 
-    if not os.path.exists("arquivos/"+str(configuracao.assinatura)):
+    if not os.path.exists("arquivos/"+str(configuracao.coordenacao.assinatura)):
         return HttpResponse("Arquivo de assinatura não encontrado.", status=401)
     if not os.path.exists("arquivos/papel_timbrado.pdf"):
         return HttpResponse("Papel timbrado não encontrado.", status=401)
@@ -178,7 +178,7 @@ def gerar_certificados(request):
         return HttpResponse("Algum erro não identificado.", status=401)
 
     certificados = []
-    if 'orientador' in request.POST:
+    if "orientador" in request.POST:
         # (101, "Orientação de Projeto"),
         orientadores = recupera_orientadores(ano, semestre)
         arquivo = "documentos/certificado_orientador.html"

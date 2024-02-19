@@ -40,7 +40,7 @@ def get_upload_path(instance, filename):
             caminho += "projeto" + str(instance.projeto.pk) + '/'
         if instance.usuario:
             caminho += slugify(instance.usuario.username) + '/'
-    elif instance.__class__.__name__ == "Configuracao":
+    elif instance.__class__.__name__ == "Configuracao" or instance.__class__.__name__ == "Administrador":
         caminho += "configuracao/"
     elif instance.__class__.__name__ == "Proposta":
         caminho += "propostas/proposta"+ str(instance.pk) + '/'

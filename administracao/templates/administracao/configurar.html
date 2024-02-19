@@ -45,24 +45,41 @@
     <label for="coordenacao"><span lang="pt">Coordenador PFE</span>: </label>
     <select name="coordenacao" id="coordenacao" title="Selecione o coordenador do PFE" required>
       {% for administrador in administradores %}
-        <option value="{{administrador.id}}" {% if administrador.id == configuracao.coordenacao.id %}selected{% endif %}>
+        <option value="{{administrador.id}}" 
+          data-nome_para_certificados="{% if administrador.nome_para_certificados %}{{administrador.nome_para_certificados}}{% endif %}"
+          data-image="{% if administrador.assinatura %}{{administrador.assinatura}}{% endif %}"
+          {% if administrador.id == configuracao.coordenacao.id %}selected{% endif %}>
           {{administrador.user.get_full_name}}
-        </option>
+        </option> 
       {% endfor %}
     </select>
     <br>
 
-    <label for="coordenador">Nome para certificados:</label> <input id="coordenador" name="coordenador" type="text" size="36" maxlength="{% max_length configuracao "coordenador" %}" value="{{configuracao.coordenador}}"/><br>
+    <label for="nome_para_certificados">Nome para certificados:</label>
+    <input id="nome_para_certificados" name="nome_para_certificados" type="text" size="36" maxlength="{% max_length administrador "nome_para_certificados" %}" value="{{configuracao.coordenacao.nome_para_certificados}}"/><br>
     <label for="assinatura">Assinatura (proporção ~250x70):</label>
     <input id="assinatura" type="file" name="assinatura" accept="image/*">
-    {% if configuracao.assinatura %}
-      <br><a href="{{request.scheme}}://{{request.get_host}}{{configuracao.assinatura.url}}">
-        <span class="full-text">{{request.scheme}}://{{request.get_host}}{{configuracao.assinatura.url}}</span><br>
-        <div style="border: 1px solid #000; border-style: dotted; padding: 8px; width:fit-content;"><img class="signature" src="{{configuracao.assinatura.url}}"></div>
-      </a><br>
+    
+    <br><a id="link_assinatura" href="{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}{{configuracao.coordenacao.assinatura}}">
+      <span id="texto_link_assinatura" class="full-text">{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}{{configuracao.coordenacao.assinatura}}</span><br>
+      <div style="border: 1px solid #000; border-style: dotted; padding: 8px; width:fit-content;">
+        <img id="signature" class="signature" alt="Imagem da Assinatura"
+            src="{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}{{configuracao.coordenacao.assinatura}}"></div>
+    </a><br>
 
-    {% endif %}
-     
+    <script>
+      function atualiza_coordenacao() {
+          var nome_para_certificados = $(this).find(":selected").data("nome_para_certificados");
+          var image = $(this).find(":selected").data("image");
+          $("#nome_para_certificados").val(nome_para_certificados);
+          $("#signature").attr("src", "{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}"+image);
+          $("#texto_link_assinatura").html("{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}"+image);
+          $("#link_assinatura").attr("href", "{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}"+image);
+      }
+      $(document).ready($("#coordenacao").change(atualiza_coordenacao));
+    </script>
+    
+
     <br><br>
     <button class="btn btn-primary mb-1" type="submit">Confirmar</button>
   </form>

@@ -448,31 +448,33 @@ def configurar(request):
     """Definir datas do PFE."""
     configuracao = get_object_or_404(Configuracao)
 
-    if request.method == 'POST':
+    if request.method == "POST":
 
         if "periodo_ano" and "periodo_semestre" in request.POST:
             try:
                 
-                configuracao.ano = int(request.POST['periodo_ano'])
-                configuracao.semestre = int(request.POST['periodo_semestre'])
+                configuracao.ano = int(request.POST["periodo_ano"])
+                configuracao.semestre = int(request.POST["periodo_semestre"])
 
-                configuracao.prazo_preencher_banca = int(request.POST['prazo_preencher_banca'])
+                configuracao.prazo_preencher_banca = int(request.POST["prazo_preencher_banca"])
 
                 configuracao.coordenacao = get_object_or_404(Administrador,
-                                                             pk=int(request.POST['coordenacao']))
+                                                             pk=int(request.POST["coordenacao"]))
 
-                configuracao.coordenador = request.POST['coordenador']
-                if 'assinatura' in request.FILES:
-                    assinatura = simple_upload(request.FILES['assinatura'],
+                #configuracao.coordenador = request.POST["coordenador"]
+                configuracao.coordenacao.nome_para_certificados = request.POST["nome_para_certificados"]
+                if "assinatura" in request.FILES:
+                    assinatura = simple_upload(request.FILES["assinatura"],
                                                 path=get_upload_path(configuracao, ""))
-                    configuracao.assinatura = assinatura[len(settings.MEDIA_URL):]
+                    configuracao.coordenacao.assinatura = assinatura[len(settings.MEDIA_URL):]
 
+                configuracao.coordenacao.save()
                 configuracao.save()
                 context = {
                     "area_principal": True,
                     "mensagem": "Dados atualizados.",
                 }
-                return render(request, 'generic.html', context=context)
+                return render(request, "generic.html", context=context)
             except (ValueError, OverflowError, MultiValueDictKeyError):
                 return HttpResponse("Algum erro não identificado.", status=401)
         else:
@@ -481,9 +483,11 @@ def configurar(request):
     context = {
         "configuracao": configuracao,
         "administradores": Administrador.objects.all(),
+        "administrador": Administrador,
+        "MEDIA_URL": settings.MEDIA_URL,
     }
 
-    return render(request, 'administracao/configurar.html', context)
+    return render(request, "administracao/configurar.html", context)
 
 
 @login_required

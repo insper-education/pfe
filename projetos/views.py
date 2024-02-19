@@ -1766,7 +1766,7 @@ def editar_projeto(request, primarykey):
     """Editar Projeto."""
 
     if request.user.tipo_de_usuario != 4:  # Administrador
-        return HttpResponse("Somenter coordenadores podem editar projetos.", status=401)
+        return HttpResponse("Somente coordenadores podem editar projetos.", status=401)
 
     projeto = Projeto.objects.get(id=primarykey)
 

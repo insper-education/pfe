@@ -25,7 +25,7 @@ def render_pdf_file(template_src, context_dict, path):
     template = get_template(template_src)
     if template:
         html_doc = template.render(context_dict)
-        result = open(path, 'wb')
+        result = open(path, "wb")
         pdf = pisa.pisaDocument(BytesIO(html_doc.encode("utf-8")), result)
         result.close()
         return pdf

@@ -9,6 +9,7 @@ Data: 15 de Maio de 2019
 
 import datetime
 from hashids import Hashids
+from urllib.parse import quote
 
 from decimal import Decimal, ROUND_HALF_UP
 
@@ -27,7 +28,7 @@ from django.db.models import F
 
 from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2
 from projetos.models import ObjetivosDeAprendizagem, Reprovacao, Evento
-from projetos.support import calcula_objetivos
+from projetos.support import calcula_objetivos, get_upload_path
 
 from operacional.models import Curso
 
@@ -892,18 +893,27 @@ class Administrador(models.Model):
     """Classe de usuários com estatus de Administrador."""
 
     user = models.OneToOneField(PFEUser,
-                                related_name='administrador',
+                                related_name="administrador",
                                 on_delete=models.CASCADE)
+    
+    assinatura = models.ImageField("Assinatura", upload_to=get_upload_path, null=True, blank=True,
+                                help_text="Assinatura do coordenador")
+
+    nome_para_certificados = models.CharField(max_length=128, null=True, blank=True,
+                                           help_text="Nome para assinatura do coordenador do PFE")
 
     class Meta:
         """Meta para Administrador."""
 
-        verbose_name = 'Administrador'
-        verbose_name_plural = 'Administradores'
-        ordering = ['user']
+        verbose_name = "Administrador"
+        verbose_name_plural = "Administradores"
+        ordering = ["user"]
         permissions = (("altera_empresa", "Empresa altera valores"),
                        ("altera_professor", "Professor altera valores"), )
 
     def __str__(self):
         """Retorno padrão textual do objeto."""
         return self.user.get_full_name()
+    
+    def coordenador_email(self):
+        return quote(self.nome_para_certificados)
