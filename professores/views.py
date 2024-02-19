@@ -180,7 +180,11 @@ def ajax_bancas(request):
                     bancas[banca.id]["membro1"] = banca.membro1.get_full_name() if banca.membro1 else ""
                     bancas[banca.id]["membro2"] = banca.membro2.get_full_name() if banca.membro2 else ""
                     bancas[banca.id]["membro3"] = banca.membro3.get_full_name() if banca.membro3 else ""
-                    bancas[banca.id]["editable"] = banca.projeto.orientador == request.user.professor
+
+                    if request.user.tipo_de_usuario == 4:  # Administrador
+                        bancas[banca.id]["editable"] = True
+                    else:
+                        bancas[banca.id]["editable"] = banca.projeto.orientador == request.user.professor
 
                     title = "(" + banca.projeto.organizacao.sigla + ") " + banca.projeto.get_titulo()
                     if banca.location:
