@@ -39,6 +39,33 @@ def nospaces(parser, token):
     Returns::
         <strong>Hello this is text</strong>
     """
-    nodelist = parser.parse(('endnospaces',))
+    nodelist = parser.parse(("endnospaces",))
     parser.delete_first_token()
     return NoSpacesNode(nodelist)
+
+
+
+
+
+def strip_spaces_in_tags_mailto(value):
+    value = force_text(value)
+    value = re.sub(r'\s+', '%20', value)
+    # value = re.sub(r'>\s+', '>', value)
+    # value = re.sub(r'\s+<', '<', value)
+    return value
+
+
+class NoSpacesNodeMailto(Node):
+    def __init__(self, nodelist):
+        self.nodelist = nodelist
+
+    def render(self, context):
+        return strip_spaces_in_tags_mailto(self.nodelist.render(context).strip())
+
+
+@register.tag
+def nospacesmailto(parser, token):
+    nodelist = parser.parse(("endnospacesmailto",))
+    parser.delete_first_token()
+    return NoSpacesNodeMailto(nodelist)
+

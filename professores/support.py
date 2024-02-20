@@ -207,10 +207,7 @@ def recupera_orientadores(ano, semestre):
         count_grupos = []
         grupos_pfe = Projeto.objects.filter(orientador=professor)
 
-        if int(semestre) == 2:
-            grupos_pfe = grupos_pfe.filter(ano__lte=ano)
-        else:
-            grupos_pfe = grupos_pfe.filter(ano__lte=ano).exclude(ano=ano, semestre=2)
+        grupos_pfe = grupos_pfe.filter(ano=ano, semestre=semestre)
 
         if grupos_pfe:
             for grupo in grupos_pfe:  # garante que tem alunos no projeto
@@ -234,11 +231,7 @@ def recupera_coorientadores(ano, semestre):
 
         count_grupos = []
         grupos_pfe = Projeto.objects.filter(coorientador__usuario__professor=professor)
-
-        if int(semestre) == 2:
-            grupos_pfe = grupos_pfe.filter(ano__lte=ano)
-        else:
-            grupos_pfe = grupos_pfe.filter(ano__lte=ano).exclude(ano=ano, semestre=2)
+        grupos_pfe = grupos_pfe.filter(ano=ano, semestre=semestre)
 
         if grupos_pfe:
             for grupo in grupos_pfe: # garante que tem alunos no projeto
@@ -268,10 +261,7 @@ def recupera_bancas_intermediarias(ano, semestre):
                  bancas.filter(membro2=professor.user) |\
                  bancas.filter(membro3=professor.user)
 
-        if int(semestre) == 2:
-            bancas = bancas.filter(projeto__ano__lte=ano)
-        else:
-            bancas = bancas.filter(projeto__ano__lte=ano).exclude(projeto__ano=ano, projeto__semestre=2)
+        bancas = bancas.filter(projeto__ano=ano, projeto__semestre=semestre)
 
         if bancas:
             for banca in bancas:
@@ -299,10 +289,7 @@ def recupera_bancas_finais(ano, semestre):
                  bancas.filter(membro2=professor.user) |\
                  bancas.filter(membro3=professor.user)
 
-        if int(semestre) == 2:
-            bancas = bancas.filter(projeto__ano__lte=ano)
-        else:
-            bancas = bancas.filter(projeto__ano__lte=ano).exclude(projeto__ano=ano, projeto__semestre=2)
+        bancas = bancas.filter(projeto__ano=ano, projeto__semestre=semestre)
 
         if bancas:
             for banca in bancas:
@@ -333,10 +320,7 @@ def recupera_bancas_falconi(ano, semestre):
                  bancas.filter(membro2=membro.user) |\
                  bancas.filter(membro3=membro.user)
 
-        if int(semestre) == 2:
-            bancas = bancas.filter(projeto__ano__lte=ano)
-        else:
-            bancas = bancas.filter(projeto__ano__lte=ano).exclude(projeto__ano=ano, projeto__semestre=2)
+        bancas = bancas.filter(projeto__ano=ano, projeto__semestre=semestre)
 
         if bancas:
             for banca in bancas:
@@ -363,9 +347,9 @@ def recupera_mentorias(ano, semestre):
         encontros = Encontro.objects.filter(facilitador=mentor)
         
         if int(semestre) == 2:
-            encontros = encontros.filter(startDate__year__lte=ano)
+            encontros = encontros.filter(startDate__year=ano, startDate__month__gte=7)
         else:
-            encontros = encontros.filter(startDate__year__lte=ano, startDate__month__lte=7)
+            encontros = encontros.filter(startDate__year=ano, startDate__month__lte=7)
             
         if encontros:
             for encontro in encontros:

@@ -59,28 +59,28 @@ class Organizacao(models.Model):
     """Dados das organizações que propõe projetos para o PFE."""
 
     nome = models.CharField("Nome Fantasia", max_length=100, unique=True,
-                            help_text='Nome fantasia da organização parceira')
+                            help_text="Nome fantasia da organização parceira")
     sigla = models.CharField("Sigla", max_length=20, unique=True,
-                             help_text='Sigla usada pela organização parceira')
+                             help_text="Sigla usada pela organização parceira")
     endereco = models.TextField("Endereço", max_length=200, null=True, blank=True,
-                                help_text='Endereço da organização parceira')
+                                help_text="Endereço da organização parceira")
     website = models.URLField("website", max_length=250, null=True, blank=True,
-                              help_text='website da organização parceira')
+                              help_text="website da organização parceira")
     informacoes = models.TextField("Informações", max_length=1000, null=True, blank=True,
-                                   help_text='Informações sobre a organização parceira')
+                                   help_text="Informações sobre a organização parceira")
     logotipo = models.ImageField("Logotipo", upload_to=get_upload_path, null=True, blank=True,
-                                 help_text='Logotipo da organização parceira')
+                                 help_text="Logotipo da organização parceira")
     cnpj = models.CharField("CNPJ", max_length=14, null=True, blank=True, 
-                            help_text='Código de CNPJ da empresa')
+                            help_text="Código de CNPJ da empresa")
     inscricao_estadual = models.CharField("Inscrição Estadual", max_length=15,
                                           null=True, blank=True,
-                                          help_text='Código da inscrição estadual')
+                                          help_text="Código da inscrição estadual")
     razao_social = models.CharField("Razão Social", max_length=100, null=True, blank=True,
-                                    help_text='Razão social da organização parceira')
+                                    help_text="Razão social da organização parceira")
     ramo_atividade = models.TextField("Ramo de Atividade", max_length=1000, null=True, blank=True,
-                                      help_text='Ramo de atividade da organização parceira')
+                                      help_text="Ramo de atividade da organização parceira")
 
-    estrelas = models.PositiveSmallIntegerField(default=0, help_text='Interesse para o semestre')
+    estrelas = models.PositiveSmallIntegerField(default=0, help_text="Interesse para o semestre")
 
     area_curso = models.ManyToManyField("operacional.Curso", blank=True,
                                         help_text="Curso que mais se identifica com a área da organização")
@@ -115,39 +115,39 @@ class Projeto(models.Model):
                               help_text='Título Provisório do projeto')
     titulo_final = models.CharField("Título Final", max_length=160, null=True,
                                     blank=True,
-                                    help_text='Título Final do projeto')
+                                    help_text="Título Final do projeto")
 
     # MANTER COM UMA DESCRIÇÃO ATUALIZADA
     descricao = models.TextField("Descrição", max_length=3000, null=True, blank=True,
-                                 help_text='Descricao do projeto')
+                                 help_text="Descricao do projeto")
 
     # CAMPO ANTIGO, MANTIDO SÓ POR HISTÓRICO
     areas = models.TextField("Áreas", max_length=1000,
-                             help_text='Áreas da engenharia envolvidas no projeto')
+                             help_text="Áreas da engenharia envolvidas no projeto")
 
     organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
-                                    help_text='Organização parceira que propôs projeto')
+                                    help_text="Organização parceira que propôs projeto")
 
     avancado = models.ForeignKey("self", null=True, blank=True, on_delete=models.SET_NULL,
-                                 help_text='projeto original em caso de avançado')
+                                 help_text="projeto original em caso de avançado")
 
     ano = models.PositiveIntegerField("Ano",
                                       validators=[MinValueValidator(2018), MaxValueValidator(3018)],
-                                      help_text='Ano que o projeto comeca')
+                                      help_text="Ano que o projeto começa")
 
     semestre = models.PositiveIntegerField("Semestre",
                                            validators=[MinValueValidator(1), MaxValueValidator(2)],
-                                           help_text='Semestre que o projeto comeca')
+                                           help_text="Semestre que o projeto começa")
 
-    orientador = models.ForeignKey('users.Professor', null=True, blank=True,
-                                   on_delete=models.SET_NULL, related_name='professor_orientador',
-                                   help_text='professor orientador do projeto')
+    orientador = models.ForeignKey("users.Professor", null=True, blank=True,
+                                   on_delete=models.SET_NULL, related_name="professor_orientador",
+                                   help_text="professor orientador do projeto")
 
-    proposta = models.ForeignKey('Proposta', null=True, blank=True, on_delete=models.SET_NULL,
-                                 help_text='Proposta original do projeto')
+    proposta = models.ForeignKey("Proposta", null=True, blank=True, on_delete=models.SET_NULL,
+                                 help_text="Proposta original do projeto")
 
     time_misto = models.BooleanField("Time Misto", default=False,
-                                        help_text='Caso o projeto conte com membros externos a instituição')
+                                        help_text="Caso o projeto conte com membros externos a instituição")
 
     class Meta:
         ordering = [ "organizacao", "ano", "semestre"]
@@ -547,13 +547,13 @@ class Configuracao(models.Model):
 
     ano = models.PositiveIntegerField("Ano",
                                       validators=[MinValueValidator(2018), MaxValueValidator(3018)],
-                                      help_text='Ano que o projeto comeca')
+                                      help_text="Ano de operação do sistema")
     semestre = models.PositiveIntegerField("Semestre",
                                            validators=[MinValueValidator(1), MaxValueValidator(2)],
-                                           help_text='Semestre que o projeto comeca')
+                                           help_text="Semestre de operação do sistema")
 
     recipient_reembolso = models.CharField(max_length=127, blank=True,
-                                           help_text='Separar lista por ponto e virgula')
+                                           help_text="Separar lista por ponto e virgula")
 
     liberadas_propostas = models.BooleanField(default=False,
                                               help_text='Para estudantes visualizarem propostas')
@@ -562,13 +562,13 @@ class Configuracao(models.Model):
         help_text='Quantidade mínima de propostas a serem selecionas pelos estudantes')
     
     maxMB_filesize = models.PositiveIntegerField("Tamanho máximo de arquivo", default=2000,
-        help_text='Tamanho máximo de arquivo em MB')
+        help_text="Tamanho máximo de arquivo em MB")
 
-    coordenacao = models.ForeignKey('users.Administrador', null=True, blank=True, on_delete=models.SET_NULL,
-                                    help_text='responsável pela coordenação do PFE')
+    coordenacao = models.ForeignKey("users.Administrador", null=True, blank=True, on_delete=models.SET_NULL,
+                                    help_text="responsável pela coordenação do PFE")
 
     lingua = models.CharField(max_length=2, blank=True, default="pt",
-                              help_text='Língua do sistema')
+                              help_text="Língua do sistema")
 
     prazo_preencher_banca = models.PositiveIntegerField("Prazo para banca", default=30,
                                            help_text='Prazo máximo para membros de uma banca colocarem suas avaliações')
@@ -577,8 +577,8 @@ class Configuracao(models.Model):
     # coordenador = models.CharField(max_length=64, null=True, blank=True,
     #                                        help_text='Nome para assinatura do coordenador do PFE')
 
-    assinatura = models.ImageField("Assinatura", upload_to=get_upload_path, null=True, blank=True,
-                                   help_text="Assinatura do coordenador do PFE")
+    # assinatura = models.ImageField("Assinatura", upload_to=get_upload_path, null=True, blank=True,
+    #                                help_text="Assinatura do coordenador do PFE")
     # ####################################################
 
 

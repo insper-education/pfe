@@ -337,7 +337,7 @@ def blackboard_notas(request, anosemestre=None):
 
     dataset = tablib.Dataset()
 
-    headers=['Nome', 'Sobrenome', 'Nome do usuário', 'BI [Total de pontos: 10 Pontuação]', 'BF [Total de pontos: 10 Pontuação]']
+    headers=["Nome", "Sobrenome", "Nome do usuário", "BI [Total de pontos: 10 Pontuação]", "BF [Total de pontos: 10 Pontuação]"]
     dataset.headers = headers
 
     alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
@@ -505,12 +505,12 @@ def estudantes_inscritos(request):
         ]
 
         context = {
-            'edicoes': edicoes,
+            "edicoes": edicoes,
             "selecionada": selecionada,
             "informacoes": informacoes,
         }
 
-    return render(request, 'users/estudantes_inscritos.html', context=context)
+    return render(request, "users/estudantes_inscritos.html", context=context)
 
 
 @login_required

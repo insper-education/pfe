@@ -198,10 +198,15 @@
   <script>
     function carrega_pagina() {};
     function carrega_site() {
-      var filterEdicao = localStorage.getItem("filterEdicao");
-      if (filterEdicao !== null && $("#filterEdicao option[value='"+filterEdicao+"']").length > 0 ) {
-        $('#filterEdicao').val(filterEdicao).trigger('change');
-      }
+      {% if not selecionada %}
+        // Se veio uma verão definida, não puxar o cache
+        var filterEdicao = localStorage.getItem("filterEdicao");
+        if (filterEdicao !== null && $("#filterEdicao option[value='"+filterEdicao+"']").length > 0 ) {
+          $('#filterEdicao').val(filterEdicao).trigger('change');
+        }
+      {% else %}
+        $("#filterEdicao").trigger("change");
+      {% endif %}
     };
     window.onload = carrega_site
   </script>

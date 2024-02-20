@@ -474,7 +474,7 @@ def meuprojeto(request):
 
     # Caso seja Professor ou Administrador
     if request.user.tipo_de_usuario in (2, 4):
-        return redirect('professor_detail', primarykey=request.user.professor.pk)
+        return redirect("professor_detail", primarykey=request.user.professor.pk)
 
     # Caso seja um aluno
     context = {
@@ -486,7 +486,7 @@ def meuprojeto(request):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def projeto_avancado(request, primarykey):
     """cria projeto avançado e avança para ele."""
     projeto = Projeto.objects.get(id=primarykey)

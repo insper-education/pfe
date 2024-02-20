@@ -46,28 +46,44 @@
           <select id="tipos" class="selectpicker form-control form-control-sm" data-style="mr-sm border " data-width="10em"
                   title="Nada selecionado"
                   multiple>
-            <option selected="selected" title="E">Estudantes</option>
-            <option selected="selected" title="O">Orientadores</option>
-            <option selected="selected" title="C">Coorientadores</option>
-            <option selected="selected" title="B">Bancas</option>
-            <option selected="selected" title="MT">Mentorias Técnicas</option>
-            <option selected="selected" title="MP">Mentorias Profissional (antiga Mentorial Falconi)</option>
+            <option {% if not tipos or "E" in tipos %}selected="selected"{% endif %} title="E">Estudantes</option>
+            <option {% if not tipos or "O" in tipos %}selected="selected"{% endif %} title="O">Orientadores</option>
+            <option {% if not tipos or "C" in tipos %}selected="selected"{% endif %} title="C">Coorientadores</option>
+            <option {% if not tipos or "B" in tipos %}selected="selected"{% endif %} title="B">Bancas</option>
+            <option {% if not tipos or "MT" in tipos %}selected="selected"{% endif %} title="MT">Mentorias Técnicas</option>
+            <option {% if not tipos or "MP" in tipos %}selected="selected"{% endif %} title="MP">Mentorias Profissional (antiga Mentorial Falconi)</option>
           </select>
       </div>
     </div>
   </div>
 
   <script>
+
+    function conta() {
+      $("#t_estudantes").text($(".estudantes:visible").length);
+      $("#t_orientador").text($(".orientador:visible").length);
+      $("#t_coorientador").text($(".coorientador:visible").length);
+      $("#t_banca").text($(".banca:visible").length);
+      $("#t_mentoria_tecnica").text($(".mentoria_tecnica:visible").length);
+      $("#t_mentoria_profissional").text($(".mentoria_profissional:visible").length);
+      $("#t_total").text($(".certificado:visible").length);
+    }
+    
     $('#tipos').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-      if(clickedIndex == 0){if(isSelected){$('.estudantes').show();}else{$('.estudantes').hide();}
+            if(clickedIndex == 0){if(isSelected){$('.estudantes').show();}else{$('.estudantes').hide();}
       }else if(clickedIndex == 1){if(isSelected){$('.orientador').show();}else{$('.orientador').hide();}
       }else if(clickedIndex == 2){if(isSelected){$('.coorientador').show();}else{$('.coorientador').hide();}
       }else if(clickedIndex == 3){if(isSelected){$('.banca').show();}else{$('.banca').hide();}
       }else if(clickedIndex == 4){if(isSelected){$('.mentoria_tecnica').show();}else{$('.mentoria_tecnica').hide();}
       }else if(clickedIndex == 5){if(isSelected){$('.mentoria_profissional').show();}else{$('.mentoria_profissional').hide();}
       }
+      conta();
     });
   </script>
+
+  {% if gerados %}
+    <br><br><h4>{{ gerados }} certificados gerados.</h4>
+  {% endif %}
 
   <div class="table-responsive">
   <table id="certificados">
@@ -77,17 +93,17 @@
       {% for certificado in certificados %}
 
         {% if certificado.tipo_de_certificado < 100 %}
-          <tr class="estudantes">
+          <tr class="estudantes certificado">
         {% elif certificado.tipo_de_certificado == 101 %}
-          <tr class="orientador">
+          <tr class="orientador certificado">
         {% elif certificado.tipo_de_certificado == 102 %}
-          <tr class="coorientador">
+          <tr class="coorientador certificado">
         {% elif certificado.tipo_de_certificado == 103 or certificado.tipo_de_certificado == 104 or certificado.tipo_de_certificado == 105 %}
-          <tr class="banca">
+          <tr class="banca certificado">
         {% elif certificado.tipo_de_certificado == 106 %}
-          <tr class="mentoria_profissional">
+          <tr class="mentoria_profissional certificado">
         {% elif certificado.tipo_de_certificado == 107 %}
-          <tr class="mentoria_tecnica">
+          <tr class="mentoria_tecnica certificado">
         {% endif %}
         
         <td>
@@ -125,7 +141,8 @@
           {% nospaces %}
           &#x2709; Enviar certificado (
           {% with servidor='https://pfe.insper.edu.br' %}
-          <a href="mailto:{{certificado.usuario.get_full_name|parse_quote}}%20&lt;{{certificado.usuario.email|parse_quote }}&gt;?cc={{coordenacao.user.get_full_name}}&lt;{{coordenacao.user.email}}&gt;
+          <a 
+          {% nospacesmailto %}href="mailto:{{certificado.usuario.get_full_name|parse_quote}}%20&lt;{{certificado.usuario.email }}&gt;?cc={{coordenacao.user.get_full_name}}&lt;{{coordenacao.user.email}}&gt;
             &amp;subject=PFE%20Insper%20:
             {% if certificado.tipo_de_certificado == 101 %}
               Orientação de Projeto
@@ -143,15 +160,15 @@
               Mentoria de Projeto
             {% endif %}
             {% with formatada=True %}
-            &amp;body=
-              {% include 'mensagem_certificados.html' %}
-            " target="_blank" rel="noopener noreferrer">
+              &amp;body={% include 'mensagem_certificados.html' %}
             {% endwith %}
+            "{% endnospacesmailto %}
+            target="_blank" rel="noopener noreferrer">
             formatado
           </a>
           /
-          <a href="mailto:{{certificado.usuario.email|parse_quote }}{% comment %}cc=Luciano%20Pereira%20Soares&lt;lpsoares@insper.edu.br&gt;&amp;{% endcomment %}
-            ?subject=PFE%20Insper%20:
+          <a 
+          {% nospacesmailto %}href="mailto:{{certificado.usuario.email}}?cc={{coordenacao.user.email}}&amp;subject=PFE%20Insper%20:
             {% if certificado.tipo_de_certificado == 101 %}
               Orientação de Projeto
             {% elif certificado.tipo_de_certificado == 102 %}
@@ -168,9 +185,10 @@
               Mentoria de Projeto
             {% endif %}
             {% with formatada=False %}
-            &amp;body={% include 'mensagem_certificados.html' %}
-            " target="_blank" rel="noopener noreferrer">
+            &amp;body={% include "mensagem_certificados.html" %}
             {% endwith %}
+            "{% endnospacesmailto %}
+            target="_blank" rel="noopener noreferrer">
             não formatado
           </a>
           {% endwith %}
@@ -183,21 +201,40 @@
       {% endfor %}
     
     {% else %}
-      <p>Não existem certificados.</p>
+      <tr><td style="border: 0px;">Não existem certificados.</td></tr>
     {% endif %}
   
   </table>
   </div>
+
+  <br>
+  <div class="contagem">
+    <b>Totais</b><br>
+    Estudantes: <span id="t_estudantes"></span><br>
+    Orientador: <span id="t_orientador"></span><br>
+    Coorientador: <span id="t_coorientador"></span><br>
+    Banca: <span id="t_banca"></span><br>
+    Mentoria Técnica: <span id="t_mentoria_tecnica"></span><br>
+    Mentoria Profissional: <span id="t_mentoria_profissional"></span><br>
+    Total: <span id="t_total"></span><br>
+  </div>
   
   <script>
 
-    function carrega_pagina() {};
+    function carrega_pagina() {
+      conta();
+    };
 
-    function carrega_site(){
-      var filterEdicao = localStorage.getItem("filterEdicao");
-      if (filterEdicao !== null && $("#filterEdicao option[value='"+filterEdicao+"']").length > 0 ) {
-        $('#filterEdicao').val(filterEdicao).trigger('change');
-      }
+    function carrega_site() {
+      {% if not selecionada %}
+        // Se veio uma verão definida, não puxar o cache
+        var filterEdicao = localStorage.getItem("filterEdicao");
+        if (filterEdicao !== null && $("#filterEdicao option[value='"+filterEdicao+"']").length > 0 ) {
+          $('#filterEdicao').val(filterEdicao).trigger('change');
+        }
+      {% else %}
+        $("#filterEdicao").trigger("change");
+      {% endif %}
       carrega_pagina();
     };
 
@@ -210,15 +247,9 @@
     $(".filter").change(function(){
 
       var seqNumber = ++xhrCount;
-      
-      {% comment %} if (request_ajax_c != null){ 
-          request_ajax_c.abort();
-          request_ajax_c = null;
-      } {% endcomment %}
 
-      //$("#spinner").css("visibility", "visible");
       $(".to_label").addClass("label_animado");
-
+      
       var edicao = $("#filterEdicao option:selected").attr("value");
 
       request_ajax_c = $.ajax({
@@ -234,7 +265,6 @@
             $(".tooltip-inner").remove();
             $(".tooltip-arrow").remove();
             carrega_pagina()
-            //$("#spinner").css("visibility", "hidden");
             $(".to_label").removeClass("label_animado");
           } // else {% comment %} Ignorando resposta {% endcomment %}
         },

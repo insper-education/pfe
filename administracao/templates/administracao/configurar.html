@@ -56,7 +56,8 @@
     <br>
 
     <label for="nome_para_certificados">Nome para certificados:</label>
-    <input id="nome_para_certificados" name="nome_para_certificados" type="text" size="36" maxlength="{% max_length administrador "nome_para_certificados" %}" value="{{configuracao.coordenacao.nome_para_certificados}}"/><br>
+    <input id="nome_para_certificados" name="nome_para_certificados" type="text" size="36" maxlength="{% max_length administrador "nome_para_certificados" %}"
+    {% if configuracao.coordenacao.nome_para_certificados %}value="{{configuracao.coordenacao.nome_para_certificados}}"{% endif %}/><br>
     <label for="assinatura">Assinatura (proporção ~250x70):</label>
     <input id="assinatura" type="file" name="assinatura" accept="image/*">
     

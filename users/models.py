@@ -916,4 +916,6 @@ class Administrador(models.Model):
         return self.user.get_full_name()
     
     def coordenador_email(self):
-        return quote(self.nome_para_certificados)
+        if self.nome_para_certificados:
+            return quote(self.nome_para_certificados)
+        return ""
