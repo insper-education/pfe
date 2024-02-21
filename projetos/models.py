@@ -573,15 +573,6 @@ class Configuracao(models.Model):
     prazo_preencher_banca = models.PositiveIntegerField("Prazo para banca", default=30,
                                            help_text='Prazo máximo para membros de uma banca colocarem suas avaliações')
 
-    #### REMOVER ESSES CAMPOS, FORAM PARA ADMINISTRADOR
-    # coordenador = models.CharField(max_length=64, null=True, blank=True,
-    #                                        help_text='Nome para assinatura do coordenador do PFE')
-
-    # assinatura = models.ImageField("Assinatura", upload_to=get_upload_path, null=True, blank=True,
-    #                                help_text="Assinatura do coordenador do PFE")
-    # ####################################################
-
-
     index_documentos = models.TextField("Index Documentos", max_length=4096, null=True, blank=True,
                                    help_text="Documentos a serem mostrados no Index Documentos")
 
@@ -599,9 +590,6 @@ class Configuracao(models.Model):
     class Meta:
         verbose_name = "Configuração"
         verbose_name_plural = "Configurações"
-
-    # def coordenador_email(self):
-    #     return quote(self.coordenador)
     
     def periodo(self):
         return str(self.ano) + '.' + str(self.semestre)
@@ -801,12 +789,7 @@ class Banca(models.Model):
 
             ano = self.startDate.strftime("%y")
             mes = int(self.startDate.strftime("%m"))
-
-            if mes > 7:
-                semestre = "2"
-            else:
-                semestre = "1"
-
+            semestre = "2" if mes > 7 else "1"
             self.slug = slugify(ano+semestre+str(self.tipo_de_banca)+senha)
 
         super(Banca, self).save(*args, **kwargs)
