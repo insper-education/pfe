@@ -82,15 +82,7 @@
     };
 
     function carrega_site() {
-      {% if not selecionada %}
-        // Se veio uma verão definida, não puxar o cache
-        var filterEdicao = localStorage.getItem("filterEdicao");
-        if (filterEdicao !== null && $("#filterEdicao option[value='"+filterEdicao+"']").length > 0 ) {
-          $('#filterEdicao').val(filterEdicao).trigger('change');
-        }
-      {% else %}
-        $("#filterEdicao").trigger("change");
-      {% endif %}
+      {% include "edicao_puxar_local_ou_versao.js" %}
       carrega_pagina();
     };
 
