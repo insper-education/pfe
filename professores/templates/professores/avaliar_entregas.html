@@ -106,9 +106,11 @@
                     <b>{{item.composicao.tipo_documento.nome}}</b> 
                   {% else %}
                     <b>{{item.composicao.exame.titulo}}</b>
-                  {% endif %}                  
-                  <span class="opt_full">[prazo {{ item.evento.endDate|date:"DATE_FORMAT" }}]</span>
-                  <span class="opt_short">[prazo {{ item.evento.endDate|date:"d/m/y" }}]</span>
+                  {% endif %}      
+                  {% if item.evento.endDate %}            
+                    <span class="opt_full">[prazo {{ item.evento.endDate|date:"DATE_FORMAT" }}]</span>
+                    <span class="opt_short">[prazo {{ item.evento.endDate|date:"d/m/y" }}]</span>
+                  {% endif %}
                 </span>
                   {% comment %} {% if dias_ate > dias %}lightgrey{% endif %}" {% endcomment %}
                   {% comment %} <a id="adiciona" class="open-documento data-toggle="tooltip" data-html="true" animation="true"   item.documentos.last {% endcomment %}

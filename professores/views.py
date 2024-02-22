@@ -78,9 +78,7 @@ def avaliacoes_pares(request, todos=None):
 
             edicao = request.POST["edicao"]
             if edicao != "todas":
-                periodo = request.POST["edicao"].split('.')
-                ano = int(periodo[0])
-                semestre = int(periodo[1])
+                ano, semestre = map(int, edicao.split('.'))
                 projetos = projetos.filter(ano=ano, semestre=semestre)
             context["projetos"] = projetos
         else:
@@ -93,7 +91,7 @@ def avaliacoes_pares(request, todos=None):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def bancas_alocadas(request):
     """Mostra detalhes sobre o professor."""
     bancas = (Banca.objects.filter(membro1=request.user) |
@@ -109,7 +107,7 @@ def bancas_alocadas(request):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def orientacoes_alocadas(request):
     """Mostra detalhes sobre o professor."""
     projetos = Projeto.objects.filter(orientador=request.user.professor)\
@@ -119,7 +117,7 @@ def orientacoes_alocadas(request):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def coorientacoes_alocadas(request):
     """Mostra detalhes sobre o professor."""
     coorientacoes = Coorientador.objects.filter(usuario=request.user)\
@@ -131,7 +129,7 @@ def coorientacoes_alocadas(request):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def mentorias_alocadas(request):
     """Mostra detalhes sobre o professor."""
     mentorias = Encontro.objects.exclude(endDate__lt=datetime.date.today(), projeto__isnull=True)
@@ -313,7 +311,7 @@ def mensagem_edicao_banca(banca, atualizada=False):
     return mensagem
     
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def bancas_criar(request, data=None):
     """Cria uma banca de avaliação para o projeto."""
     configuracao = get_object_or_404(Configuracao)
@@ -388,7 +386,7 @@ def bancas_criar(request, data=None):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def bancas_editar(request, primarykey=None):
     """Edita uma banca de avaliação para o projeto."""
 
@@ -453,7 +451,7 @@ def bancas_editar(request, primarykey=None):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def bancas_lista(request, periodo_projeto):
     """Lista as bancas agendadas, conforme periodo ou projeto pedido."""
     context = {'periodo': periodo_projeto}
@@ -513,23 +511,20 @@ def bancas_lista(request, periodo_projeto):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def bancas_tabela(request):
     """Lista todas as bancas agendadas, conforme periodo pedido."""
-    configuracao = get_object_or_404(Configuracao)
-
     if request.is_ajax():
-        if 'edicao' in request.POST:
-            edicao = request.POST['edicao']
-
-            if edicao == 'todas':
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
+            if edicao == "todas":
                 bancas = Banca.objects.all()
             else:
-                ano, semestre = request.POST['edicao'].split('.')
+                ano, semestre = edicao.split('.')
                 if semestre == "1/2":
                     bancas = Banca.objects.filter(projeto__ano=ano)
                 else:
-                    bancas = Banca.objects.all().filter(projeto__ano=ano).filter(projeto__semestre=semestre)
+                    bancas = Banca.objects.filter(projeto__ano=ano).filter(projeto__semestre=semestre)
 
             membros = dict()
             
@@ -544,26 +539,19 @@ def bancas_tabela(request):
                 if banca.membro3:
                     membros.setdefault(banca.membro3, []).append(banca)
 
-        context = {
-            "membros": membros,
-        }
+        context = {"membros": membros,}
 
     else:
         edicoes, _, _ = get_edicoes(Projeto, anual=True)
-        context = {
-            "edicoes": edicoes,
-        }
+        context = {"edicoes": edicoes,}
 
-    return render(request, 'professores/bancas_tabela.html', context)
-
+    return render(request, "professores/bancas_tabela.html", context)
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def aulas_tabela(request):
     """Lista todas as aulas agendadas, conforme periodo pedido."""
-    configuracao = get_object_or_404(Configuracao)
-
     if request.is_ajax():
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
@@ -571,7 +559,7 @@ def aulas_tabela(request):
             if edicao == "todas":
                 aulas = Evento.objects.filter(tipo_de_evento=12)   #.order_by("endDate", "startDate").last()
             else:
-                ano, semestre = request.POST["edicao"].split('.')
+                ano, semestre = edicao.split('.')
                 if semestre == "1/2":
                     aulas = Evento.objects.filter(tipo_de_evento=12, endDate__year=ano)
                 elif semestre == '1':
@@ -579,21 +567,17 @@ def aulas_tabela(request):
                 else:  # semestre == '2':
                     aulas = Evento.objects.filter(tipo_de_evento=12, endDate__year=ano, endDate__month__gt=6)
 
-        context = {
-            "aulas": aulas,
-        }
+        context = {"aulas": aulas,}
 
     else:
         edicoes, _, _ = get_edicoes(Projeto, anual=True)
-        context = {
-            "edicoes": edicoes,
-        }
+        context = {"edicoes": edicoes,}
 
     return render(request, "professores/aulas_tabela.html", context)
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def bancas_tabela_completa(request):
     """Lista todas as bancas agendadas, conforme periodo pedido."""
     configuracao = get_object_or_404(Configuracao)
@@ -648,7 +632,7 @@ def bancas_tabela_completa(request):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def banca_ver(request, primarykey):
     """Retorna banca pedida."""
     banca = get_object_or_404(Banca, id=primarykey)
@@ -1608,7 +1592,7 @@ def conceitos_obtidos(request, primarykey):  # acertar isso para pk
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def dinamicas_index(request):
     """Menus de encontros."""
     encontros = Encontro.objects.all().order_by('startDate')
@@ -1618,7 +1602,7 @@ def dinamicas_index(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def dinamicas_criar(request, data=None):
     """Cria um encontro."""
     configuracao = get_object_or_404(Configuracao)
@@ -1704,7 +1688,7 @@ def dinamicas_criar(request, data=None):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def dinamicas_editar(request, primarykey=None):
     """Edita um encontro."""
 
@@ -1800,25 +1784,24 @@ def dinamicas_editar(request, primarykey=None):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def dinamicas_lista(request):
     """Mostra os horários de dinâmicas."""
 
     if request.is_ajax():
-        if 'edicao' in request.POST:
+        if "edicao" in request.POST:
 
-            encontros = Encontro.objects.all().order_by('startDate')
+            encontros = Encontro.objects.all().order_by("startDate")
 
-            edicao = request.POST['edicao']
-            if edicao == 'todas':
+            edicao = request.POST["edicao"]
+            if edicao == "todas":
                 pass  # segue com encontros
-            elif edicao == 'proximas':
+            elif edicao == "proximas":
                 hoje = datetime.date.today()
                 encontros = encontros.filter(startDate__gt=hoje)
             else:
-                periodo = request.POST['edicao'].split('.')
-                ano = int(periodo[0])
-                semestre = int(periodo[1])
+                ano, semestre = map(int, edicao.split('.'))
+
                 encontros = encontros.filter(startDate__year=ano)
                 if semestre == 1:
                     encontros = encontros.filter(startDate__month__lt=8)
@@ -1862,7 +1845,7 @@ def dinamicas_lista(request):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def orientadores_tabela_completa(request):
     """Alocação dos Orientadores por semestre."""
     configuracao = get_object_or_404(Configuracao)
@@ -1872,7 +1855,7 @@ def orientadores_tabela_completa(request):
     titulo = "Alocação de Orientadores"
 
     context = {
-        'anos': orientadores,
+        "anos": orientadores,
         "cabecalhos": cabecalhos,
         "titulo": titulo,
     }
@@ -1881,24 +1864,24 @@ def orientadores_tabela_completa(request):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def orientadores_tabela(request):
     """Alocação dos Orientadores por semestre."""
     configuracao = get_object_or_404(Configuracao)
 
     if request.is_ajax():
-        if 'edicao' in request.POST:
-            edicao = request.POST['edicao']
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
 
             professores_pfe = Professor.objects.all().order_by(Lower("user__first_name"),
                                                                Lower("user__last_name"))
 
             professores = []
 
-            if edicao == 'todas':
+            if edicao == "todas":
                 professores_pfe = professores_pfe.filter(professor_orientador__isnull=False).distinct()
             else:
-                ano, semestre = request.POST['edicao'].split('.')
+                ano, semestre = edicao.split('.')
                 if semestre == "1/2":
                     professores_pfe = professores_pfe.filter(professor_orientador__ano=ano).distinct()
                 else:
@@ -1913,7 +1896,7 @@ def orientadores_tabela(request):
 
                 grupos_pfe = Projeto.objects.filter(orientador=professor)
 
-                if edicao != 'todas':
+                if edicao != "todas":
                     if semestre == "1/2":
                         grupos_pfe = grupos_pfe.filter(ano=ano)
                     else:
@@ -1925,11 +1908,9 @@ def orientadores_tabela(request):
 
             orientacoes = zip(professores, grupos)
 
-        cabecalhos = ["Nome", "e-mail", "Grupos", "Projetos", ]
-
         context = {
             "orientacoes": orientacoes,
-            "cabecalhos": cabecalhos,
+            "cabecalhos": ["Nome", "e-mail", "Grupos", "Projetos", ],
         }
 
     else:
@@ -1948,35 +1929,31 @@ def orientadores_tabela(request):
             "informacoes": informacoes,
         }
 
-    return render(request, 'professores/orientadores_tabela.html', context)
+    return render(request, "professores/orientadores_tabela.html", context)
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def coorientadores_tabela_completa(request):
     """Alocação dos Coorientadores por semestre."""
     configuracao = get_object_or_404(Configuracao)
     coorientadores = recupera_coorientadores_por_semestre(configuracao)
 
-    cabecalhos = ["Nome", "Grupos", ]
-    titulo = "Alocação de Coorientadores"
-
     context = {
         "anos": coorientadores,
-        "cabecalhos": cabecalhos,
-        "titulo": titulo,
+        "cabecalhos": ["Nome", "Grupos", ],
+        "titulo": "Alocação de Coorientadores",
     }
-    return render(request, 'professores/coorientadores_tabela_completa.html', context)
+    return render(request, "professores/coorientadores_tabela_completa.html", context)
 
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def coorientadores_tabela(request):
     """Alocação dos Coorientadores por semestre."""
-    configuracao = get_object_or_404(Configuracao)
-
+    
     if request.is_ajax():
         if "edicao" in request.POST:
-            edicao = request.POST['edicao']
+            edicao = request.POST["edicao"]
 
             professores_pfe = Professor.objects.all().order_by(Lower("user__first_name"),
                                                                Lower("user__last_name"))
@@ -1986,7 +1963,7 @@ def coorientadores_tabela(request):
             if edicao == "todas":
                 professores_pfe = professores_pfe.filter(user__coorientador__isnull=False).distinct()
             else:
-                ano, semestre = request.POST["edicao"].split('.')
+                ano, semestre = edicao.split('.')
                 if semestre == "1/2":
                     professores_pfe = professores_pfe.filter(user__coorientador__projeto__ano=ano).distinct()
                 else:
@@ -2011,17 +1988,14 @@ def coorientadores_tabela(request):
                 grupos.append(grupos_pfe)
 
             orientacoes = zip(professores, grupos)
-
-        cabecalhos = ["Nome", "e-mail", "Grupos", "Projetos", ]
     
         context = {
             "orientacoes": orientacoes,
-            "cabecalhos": cabecalhos,
+            "cabecalhos": ["Nome", "e-mail", "Grupos", "Projetos", ],
         }
 
     else:
         edicoes, _, _ = get_edicoes(Projeto, anual=True)
-        titulo = "Alocação de Coorientadores"
         informacoes = [
             (".semestre", "Semestre"),
             (".organizacao", "Organização"),
@@ -2031,11 +2005,11 @@ def coorientadores_tabela(request):
 
         context = {
             "edicoes": edicoes,
-            "titulo": titulo,
+            "titulo": "Alocação de Coorientadores",
             "informacoes": informacoes,
         }
 
-    return render(request, 'professores/coorientadores_tabela.html', context)
+    return render(request, "professores/coorientadores_tabela.html", context)
 
 
 @login_required
@@ -2054,9 +2028,7 @@ def avaliar_entregas(request, todos=None):
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
             if edicao != "todas":
-                periodo = request.POST["edicao"].split('.')
-                ano = int(periodo[0])
-                semestre = int(periodo[1])
+                ano, semestre = map(int, edicao.split('.'))
 
         if todos:
             if todos == "todos":
@@ -2111,9 +2083,7 @@ def relatos_quinzenais(request, todos=None):
 
             edicao = request.POST["edicao"]
             if edicao != "todas":
-                periodo = request.POST["edicao"].split('.')
-                ano = int(periodo[0])
-                semestre = int(periodo[1])
+                ano, semestre = map(int, edicao.split('.'))
                 projetos = projetos.filter(ano=ano, semestre=semestre)
                 
             context = {
@@ -2277,7 +2247,7 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
             projetos = Projeto.objects.all()
 
             if edicao != "todas":
-                ano, semestre = request.POST["edicao"].split('.')
+                ano, semestre = edicao.split('.')
                 projetos = projetos.filter(ano=ano, semestre=semestre)
 
             show_orientador = True
@@ -2430,27 +2400,25 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def resultado_projetos_edicao(request, edicao):
     """Mostra os resultados das avaliações (Bancas) para uma edição."""
-    edicao = edicao.split('.')
     try:
-        ano = int(edicao[0])
-        semestre = int(edicao[1])
+        ano, semestre = map(int, edicao.split('.'))
     except ValueError:
-        return HttpResponseNotFound('<h1>Erro em!</h1>')
+        return HttpResponseNotFound("<h1>Erro em identificar ano e semestre!</h1>")
     return resultado_projetos_intern(request, ano, semestre)
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def resultado_projetos(request):
     """Mostra os resultados das avaliações (Bancas)."""
     return resultado_projetos_intern(request)
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def resultado_meus_projetos(request):
     """Mostra os resultados das avaliações somente do professor (Bancas)."""
     return resultado_projetos_intern(request, professor=request.user.professor)
@@ -2460,27 +2428,22 @@ def resultado_meus_projetos(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def todos_professores(request):
     """Exibe todas os professores que estão cadastrados no PFE."""
-    professores = Professor.objects.all()
-
-    cabecalhos = ["Nome", "e-mail", "Bancas", "Orientações", "Lattes", ]
-    titulo = "Professores"
-
     context = {
-        'professores': professores,
-        "cabecalhos": cabecalhos,
-        "titulo": titulo,
+        "professores": Professor.objects.all(),
+        "cabecalhos": ["Nome", "e-mail", "Bancas", "Orientações", "Lattes", ],
+        "titulo": "Professores",
         }
 
-    return render(request, 'professores/todos_professores.html', context)
+    return render(request, "professores/todos_professores.html", context)
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def objetivo_editar(request, primarykey):
     """Edita um objetivo de aprendizado."""
     objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=primarykey)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         if editar_banca(objetivo, request):
             mensagem = "Banca editada."
         else:
@@ -2492,9 +2455,7 @@ def objetivo_editar(request, primarykey):
         }
         return render(request, "generic.html", context=context)
 
-    context = {
-        'objetivo': objetivo,
-    }
+    context = {"objetivo": objetivo,}
     return render(request, "professores/objetivo_editar.html", context)
 
 
@@ -2502,12 +2463,9 @@ def objetivo_editar(request, primarykey):
 @permission_required("users.altera_professor", raise_exception=True)
 def objetivos_rubricas(request):
     """Exibe os objetivos e rubricas."""
-    objetivos = get_objetivos_atuais(ObjetivosDeAprendizagem.objects.all())
-
     context = {
-        "objetivos": objetivos, 
+        "objetivos": get_objetivos_atuais(ObjetivosDeAprendizagem.objects.all()), 
     }
-
     return render(request, "professores/objetivos_rubricas.html", context)
 
 
@@ -2522,19 +2480,16 @@ def ver_pares(request, alocacao_id, momento):
     if request.user != alocacao_de.projeto.orientador.user and request.user.tipo_de_usuario != 4:
         return HttpResponse("Somente o próprio orientador pode confirmar uma avaliação de pares.", status=401)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         if momento=="intermediaria" and not alocacao_de.avaliacao_intermediaria:
             alocacao_de.avaliacao_intermediaria = datetime.datetime.now()
         elif momento=="final" and not alocacao_de.avaliacao_final:
             alocacao_de.avaliacao_final = datetime.datetime.now()
         alocacao_de.save()
-        return redirect('/professores/avaliacoes_pares/')
+        return redirect("/professores/avaliacoes_pares/")
 
-    if momento=="intermediaria":
-        tipo=0
-    else:
-        tipo=1
-
+    tipo = 0 if momento=="intermediaria" else 1
+    
     alocacoes = Alocacao.objects.filter(projeto=alocacao_de.projeto).exclude(aluno=alocacao_de.aluno)
     
     pares = []
@@ -2587,9 +2542,7 @@ def planos_de_orientacao_todos(request):
 
             edicao = request.POST["edicao"]
             if edicao != "todas":
-                periodo = request.POST["edicao"].split('.')
-                ano = int(periodo[0])
-                semestre = int(periodo[1])
+                ano, semestre = edicao.split('.')
                 projetos = projetos.filter(ano=ano, semestre=semestre)
                 
             context = {

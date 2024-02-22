@@ -15,22 +15,34 @@ register = template.Library()
 @register.filter
 def plus_days(value, days):
     """Permite adicionar uma quantidade de dias em uma data nos arquivos de template."""
-    return value + datetime.timedelta(days=days)
+    if value:
+        return value + datetime.timedelta(days=days)
+    return 0  # Se a data for nula, retorna 0
+
 
 @register.filter
 def dif_dias_hoje(value):
     """Calcula a diferença de uma data para hoje."""
-    diferenca = (value - datetime.date.today()).days
-    return int(diferenca)
+    if value:
+        diferenca = (value - datetime.date.today()).days
+        return int(diferenca)
+    return 0  # Se a data for nula, retorna 0
+    
 
 @register.filter
 def dif_diashoras_hoje(value):
     """Calcula a diferença de uma data com hora para hoje."""
-    diferenca = (value - datetime.datetime.now()).days
-    return int(diferenca)
+    if value:
+        diferenca = (value - datetime.datetime.now()).days
+        return int(diferenca)
+    return 0  # Se a data for nula, retorna 0
+
 
 @register.filter
 def diff_days(value, data):
     """Calcula a diferença entre duas datas em dias."""
-    diferenca = (value.date() - data).days
-    return int(diferenca)
+    if value:
+        diferenca = (value.date() - data).days
+        return int(diferenca)
+    return 0  # Se a data for nula, retorna 0
+

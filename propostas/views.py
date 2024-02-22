@@ -169,12 +169,11 @@ def procura_propostas(request):
 
         if "anosemestre" in request.POST:
 
-            if request.POST["anosemestre"] == "todas":
+            edicao = request.POST["anosemestre"]
+            if edicao == "todas":
                 ano = 0
             else:
-                anosemestre = request.POST["anosemestre"].split('.')
-                ano = int(anosemestre[0])
-                semestre = int(anosemestre[1])
+                ano, semestre = map(int, edicao.split('.'))
 
             if "curso" in request.POST:
                 curso = request.POST["curso"]
@@ -300,12 +299,12 @@ def propostas_apresentadas(request):
     edicoes = []
 
     if request.is_ajax():
-        if 'edicao' in request.POST:
+        if "edicao" in request.POST:
             edicao = request.POST['edicao']
             if edicao == 'todas':
                 propostas_filtradas = Proposta.objects.all()
             else:
-                ano, semestre = request.POST['edicao'].split('.')
+                ano, semestre = edicao.split('.')
                 propostas_filtradas = Proposta.objects\
                     .filter(ano=ano,
                             semestre=semestre)
@@ -344,11 +343,11 @@ def propostas_apresentadas(request):
                     disponivel_multidisciplinar[1] += 1
         
             context = {
-                'propostas': propostas_filtradas,
-                'num_organizacoes': num_organizacoes,
-                'ternario_aprovados': ternario_aprovados,
-                'ternario_pendentes': ternario_pendentes,
-                'configuracao': configuracao,
+                "propostas": propostas_filtradas,
+                "num_organizacoes": num_organizacoes,
+                "ternario_aprovados": ternario_aprovados,
+                "ternario_pendentes": ternario_pendentes,
+                "configuracao": configuracao,
                 "edicao": edicao,
                 "cursos": cursos,
                 "disponivel_propostas": disponivel_propostas,
@@ -361,9 +360,7 @@ def propostas_apresentadas(request):
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
         edicoes, _, _ = get_edicoes(Proposta)
-        context = {
-            "edicoes": edicoes,
-        }
+        context = {"edicoes": edicoes,}
 
     return render(request, "propostas/propostas_apresentadas.html", context)
 
@@ -420,7 +417,7 @@ def proposta_completa(request, primarykey):
         # Define analisador
         if "autorizador" in request.POST:
             try:
-                if request.POST['autorizador'] == "0":
+                if request.POST["autorizador"] == "0":
                     proposta.autorizado = None
                 else:
                     proposta.autorizado = PFEUser.objects\
@@ -554,7 +551,7 @@ def proposta_editar(request, slug):
 
     vencida = proposta.ano != ano or proposta.semestre != semestre
 
-    if request.method == 'POST':
+    if request.method == "POST":
         if (not liberadas_propostas) or (user.tipo_de_usuario == 4):
             if request.POST.get("new"):
                 proposta = preenche_proposta(request, None)
@@ -680,8 +677,8 @@ def publicar_propostas(request):
 def validate_alunos(request):
     """Ajax para validar vaga de estudantes em propostas."""
     proposta_id = int(request.GET.get('proposta', None))
-    vaga = request.GET.get('vaga', "  ")
-    checked = request.GET.get('checked', None) == "true"
+    vaga = request.GET.get("vaga", "  ")
+    checked = request.GET.get("checked", None) == "true"
 
     try:
         proposta = Proposta.objects.select_for_update().get(id=proposta_id)
@@ -712,7 +709,7 @@ def validate_alunos(request):
     except Proposta.DoesNotExist:
         return HttpResponseNotFound('<h1>Proposta não encontrada!</h1>')
 
-    return JsonResponse({'atualizado': True,})
+    return JsonResponse({"atualizado": True,})
 
 @login_required
 @transaction.atomic
@@ -784,13 +781,11 @@ def link_disciplina(request, proposta_id):
         return JsonResponse(data)
 
     context = {
-        'disciplinas': Disciplina.objects.all().order_by("nome"),
-        'proposta': proposta,
+        "disciplinas": Disciplina.objects.all().order_by("nome"),
+        "proposta": proposta,
     }
 
-    return render(request,
-                  'propostas/disciplina_view.html',
-                  context=context)
+    return render(request, "propostas/disciplina_view.html", context=context)
 
 
 @login_required
@@ -801,8 +796,8 @@ def remover_disciplina(request):
     if request.is_ajax() and 'disciplina_id' in request.POST and 'proposta_id' in request.POST:
 
         try:
-            proposta_id = int(request.POST['proposta_id'])
-            disciplina_id = int(request.POST['disciplina_id'])
+            proposta_id = int(request.POST["proposta_id"])
+            disciplina_id = int(request.POST["disciplina_id"])
         except:
             return HttpResponse("Erro ao recuperar proposta e disciplinas.", status=401)
 
@@ -812,7 +807,7 @@ def remover_disciplina(request):
 
         return JsonResponse({"atualizado": True},)
 
-    return HttpResponseNotFound('Requisição errada')
+    return HttpResponseNotFound("Requisição errada")
 
 
 @login_required
@@ -830,4 +825,4 @@ def projeto_criar(request, proposta_id):
     projeto.semestre = proposta.semestre
     projeto.save()
 
-    return redirect('projeto_completo', primarykey=projeto.id)
+    return redirect("projeto_completo", primarykey=projeto.id)

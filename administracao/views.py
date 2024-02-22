@@ -610,7 +610,7 @@ def propor(request):
         user = request.user
         if otimizar:  # Quer dizer que é um POST
             if user.tipo_de_usuario != 4:  # admin
-                return HttpResponse("Usuário sem privilégios de administrador.", status=401)
+                return HttpResponse("Usuário sem privilégios de administrador.", status=403)
 
             ordem_propostas = {}
             contador = 0

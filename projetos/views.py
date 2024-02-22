@@ -273,7 +273,7 @@ def projetos_fechados(request):
             if edicao == "todas":
                 projetos_filtrados = Projeto.objects.all()
             else:
-                ano, semestre = request.POST["edicao"].split('.')
+                ano, semestre = edicao.split('.')
                 projetos_filtrados = Projeto.objects.filter(ano=ano,
                                                             semestre=semestre)
 
@@ -394,7 +394,7 @@ def projetos_lista(request):
             if edicao == "todas":
                 projetos_filtrados = Projeto.objects.all()
             else:
-                ano, semestre = request.POST["edicao"].split('.')
+                ano, semestre = edicao.split('.')
                 projetos_filtrados = Projeto.objects.filter(ano=ano,
                                                             semestre=semestre)
 
@@ -437,7 +437,7 @@ def bancas_lista(request):
             if edicao == "todas":
                 bancas = Banca.objects.all()
             else:
-                ano, semestre = request.POST["edicao"].split('.')
+                ano, semestre = edicao.split('.')
                 bancas = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
 
             cabecalhos = ["Tipo" ,"Data", "Projeto", "Avaliadores",]
@@ -673,7 +673,7 @@ def lista_feedback(request):
 def lista_feedback_estudantes(request):
     """Lista todos os feedback das Organizações Parceiras."""
     configuracao = get_object_or_404(Configuracao)
-    edicoes, ano_atual, semestre_atual = get_edicoes(Projeto)
+    edicoes, _, _ = get_edicoes(Projeto)
 
     if request.is_ajax():
 
@@ -687,22 +687,21 @@ def lista_feedback_estudantes(request):
             ano, semestre = edicao.split('.')
 
             estudantes = Aluno.objects.filter(anoPFE=ano).\
-                filter(semestrePFE=semestre).\
-                count()
+                filter(semestrePFE=semestre).count()
             num_estudantes.append(estudantes)
 
             numb_feedb = todos_feedbacks.filter(projeto__ano=ano).\
                 filter(projeto__semestre=semestre).\
-                values('estudante').distinct().\
+                values("estudante").distinct().\
                 count()
             num_feedbacks.append(numb_feedb)
 
         estudantes = Aluno.objects.all()
 
-        if 'edicao' in request.POST:
-            edicao = request.POST['edicao']
-            if edicao != 'todas':
-                ano, semestre = request.POST['edicao'].split('.')
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
+            if edicao != "todas":
+                ano, semestre = edicao.split('.')
                 estudantes = estudantes.filter(trancado=False, anoPFE=ano, semestrePFE=semestre)
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
@@ -736,8 +735,6 @@ def lista_feedback_estudantes(request):
         configuracao = get_object_or_404(Configuracao)
         coordenacao = configuracao.coordenacao
 
-        cabecalhos = ["Nome", "Projeto", "Data", "Mensagem", ]
-
         context = {
             "SERVER_URL": settings.SERVER,
             "loop_anos": edicoes,
@@ -746,7 +743,7 @@ def lista_feedback_estudantes(request):
             "alocacoes": alocacoes,
             "coordenacao": coordenacao,
             "edicoes": edicoes,
-            "cabecalhos": cabecalhos,
+            "cabecalhos": ["Nome", "Projeto", "Data", "Mensagem", ],
         }
 
     else:
@@ -766,7 +763,7 @@ def lista_acompanhamento(request):
     context = {
         "acompanhamentos": Acompanhamento.objects.all().order_by("-data"),
     }
-    return render(request, 'projetos/lista_acompanhamento.html', context)
+    return render(request, "projetos/lista_acompanhamento.html", context)
 
 
 @login_required

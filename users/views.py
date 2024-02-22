@@ -121,8 +121,7 @@ def estudantes_lista(request):
             
             if anosemestre not in ("todos", "trancou"):
                 # Estudantes de um semestre em particular
-
-                ano, semestre  = [int(i) for i in anosemestre.split(".")]
+                ano, semestre = map(int, anosemestre.split('.'))
 
                 alunos_list = alunos_todos.filter(trancado=False)
 
@@ -264,10 +263,7 @@ def estudantes_notas(request, professor=None):
 
     if request.is_ajax():
         if "edicao" in request.POST:
-
-            anosemestre = request.POST["edicao"]
-            ano = int(anosemestre.split(".")[0])
-            semestre = int(anosemestre.split(".")[1])
+            ano, semestre = map(int, request.POST["edicao"].split('.'))
 
             # Conta soh alunos
             alunos_list = Aluno.objects\
@@ -330,11 +326,10 @@ def estudantes_notas(request, professor=None):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def blackboard_notas(request, anosemestre=None):
+def blackboard_notas(request, anosemestre):
     """Gera notas para o blackboard."""
-    ano = int(anosemestre.split(".")[0])
-    semestre = int(anosemestre.split(".")[1])
-
+    ano, semestre = map(int, anosemestre.split('.'))
+    
     dataset = tablib.Dataset()
 
     headers=["Nome", "Sobrenome", "Nome do usuário", "BI [Total de pontos: 10 Pontuação]", "BF [Total de pontos: 10 Pontuação]"]
@@ -376,18 +371,11 @@ def estudantes_objetivos(request):
     configuracao = get_object_or_404(Configuracao)
 
     if request.is_ajax():
-        if 'edicao' in request.POST:
-
-            anosemestre = request.POST['edicao']
-            ano = int(anosemestre.split(".")[0])
-            semestre = int(anosemestre.split(".")[1])
-
-            # Conta soh alunos
-            alunos_list = Aluno.objects\
-                .filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])\
-                .order_by(Lower("user__first_name"), Lower("user__last_name"))
-
-            alunos_list = alunos_list.filter(trancado=False)
+        if "edicao" in request.POST:
+            ano, semestre = map(int, request.POST["edicao"].split('.'))
+            
+            # Conta soh alunos não trancados
+            alunos_list = Aluno.objects.filter(trancado=False).order_by(Lower("user__first_name"), Lower("user__last_name"))
 
             alunos_semestre = alunos_list\
                 .filter(alocacao__projeto__ano=ano,
@@ -401,11 +389,8 @@ def estudantes_objetivos(request):
             objetivos = ObjetivosDeAprendizagem.objects.all()
 
             #Nao está filtrando todos os semestres
-            if semestre == 1:
-                mes = 3
-            else:
-                mes = 9
-
+            mes = 3 if semestre == 1 else 9
+            
             data_projeto = datetime.datetime(ano, mes, 1)
 
             objetivos = objetivos.filter(data_inicial__lt=data_projeto)
@@ -414,12 +399,12 @@ def estudantes_objetivos(request):
             objetivos = objetivos.order_by("ordem")
 
             context = {
-                'alunos_list': alunos_list,
-                'configuracao': configuracao,
-                'ano': ano,
-                'semestre': semestre,
-                'ano_semestre': str(ano)+"."+str(semestre),
-                'loop_anos': range(2018, configuracao.ano+1),
+                "alunos_list": alunos_list,
+                "configuracao": configuracao,
+                "ano": ano,
+                "semestre": semestre,
+                "ano_semestre": str(ano)+'.'+str(semestre),
+                "loop_anos": range(2018, configuracao.ano+1),
                 "objetivos": objetivos,
             }
 
@@ -427,9 +412,7 @@ def estudantes_objetivos(request):
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
         edicoes, _, _ = get_edicoes(Aluno)
-        context = {
-            'edicoes': edicoes,
-        }
+        context = {"edicoes": edicoes,}
 
     return render(request, 'users/estudantes_objetivos.html', context=context)
 
@@ -440,10 +423,7 @@ def estudantes_inscritos(request):
     """Mostra todos os alunos que estão se inscrevendo em projetos."""
     if request.is_ajax():
         if "edicao" in request.POST:
-            edicao = request.POST["edicao"]
-
-            ano = int(edicao.split(".")[0])
-            semestre = int(edicao.split(".")[1])
+            ano, semestre = map(int, request.POST["edicao"].split('.'))
 
             alunos = Aluno.objects.filter(trancado=False)\
                 .filter(anoPFE=ano, semestrePFE=semestre)
@@ -515,7 +495,7 @@ def estudantes_inscritos(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def edita_notas(request, primarykey):
     """Edita as notas do estudante."""
     alocacao = get_object_or_404(Alocacao, pk=primarykey)
@@ -650,7 +630,7 @@ def edita_notas(request, primarykey):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def estudante_detail(request, primarykey):
     """Mostra detalhes sobre o estudante."""
     aluno = Aluno.objects.filter(pk=primarykey).first()
@@ -671,7 +651,7 @@ def estudante_detail(request, primarykey):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def professor_detail(request, primarykey):
     """Mostra detalhes sobre o professor."""
     professor = get_object_or_404(Professor, pk=primarykey)
@@ -705,7 +685,7 @@ def professor_detail(request, primarykey):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def parceiro_detail(request, primarykey):
     """Mostra detalhes sobre o parceiro."""
     parceiro = get_object_or_404(Parceiro, pk=primarykey)
@@ -738,27 +718,18 @@ def parceiro_detail(request, primarykey):
 @permission_required("users.altera_professor", raise_exception=True)
 def contas_senhas(request, anosemestre=None):
     """Envia conta e senha para todos os estudantes que estão no semestre."""
-    if request.user:
-        if request.user.tipo_de_usuario != 4:  # não é admin
-            mensagem = "Você não tem privilégios de administrador!"
-            context = {
-                "area_principal": True,
-                "mensagem": mensagem,
-            }
-            return render(request, 'generic.html', context=context)
+    if request.user.tipo_de_usuario != 4:  # não é admin
+        return HttpResponse("Usuário sem privilégios necessários.", status=403)
 
     configuracao = get_object_or_404(Configuracao)
 
+    edicoes, ano, semestre = get_edicoes(Aluno)
     if anosemestre:
-        ano = int(anosemestre.split(".")[0])
-        semestre = int(anosemestre.split(".")[1])
-        edicoes, _, _ = get_edicoes(Aluno)
-    else:
-        edicoes, ano, semestre = get_edicoes(Aluno)
+        ano, semestre = map(int, anosemestre.split('.'))
 
-    if request.method == 'POST':
+    if request.method == "POST":
 
-        estudantes = request.POST.getlist('estudante', None)
+        estudantes = request.POST.getlist("estudante", None)
 
         mensagem = "Enviado para:<br>\n<br>\n"
         for estudante_id in estudantes:
@@ -809,11 +780,11 @@ def contas_senhas(request, anosemestre=None):
             message_email += "com datas de reuniões para maiores esclarecimentos dos projetos."
             message_email += "\n\n"
             message_email += "&nbsp;&nbsp;&nbsp;&nbsp;atenciosamente, coordenação do PFE\n"
-            message_email = message_email.replace('\n', '<br>\n')
+            message_email = message_email.replace("\n", "<br>\n")
 
             # Enviando e-mail com mensagem para usuário.
-            subject = 'Conta PFE : ' + estudante.user.get_full_name()
-            recipient_list = [estudante.user.email, 'pfeinsper@gmail.com', ]
+            subject = "Conta PFE : " + estudante.user.get_full_name()
+            recipient_list = [estudante.user.email, "pfeinsper@gmail.com", ]
             check = email(subject, recipient_list, message_email)
             if check != 1:
                 mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
@@ -823,16 +794,16 @@ def contas_senhas(request, anosemestre=None):
             "area_principal": True,
             "mensagem": mensagem,
         }
-        return render(request, 'generic.html', context=context)
+        return render(request, "generic.html", context=context)
 
     estudantes = Aluno.objects.filter(trancado=False)\
         .filter(anoPFE=ano, semestrePFE=semestre)\
         .order_by(Lower("user__first_name"), Lower("user__last_name"))
 
     context = {
-        'estudantes': estudantes,
-        'edicao': str(ano)+"."+str(semestre),
-        'edicoes': edicoes,
+        "estudantes": estudantes,
+        "edicao": str(ano)+'.'+str(semestre),
+        "edicoes": edicoes,
     }
 
-    return render(request, 'users/contas_senhas.html', context=context)
+    return render(request, "users/contas_senhas.html", context=context)

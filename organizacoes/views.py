@@ -37,7 +37,7 @@ from documentos.models import TipoDocumento
 @permission_required("users.altera_professor", raise_exception=True)
 def index_organizacoes(request):
     """Mostra página principal do parceiro de uma organização."""
-    return render(request, 'organizacoes/index_organizacoes.html')
+    return render(request, "organizacoes/index_organizacoes.html")
 
 
 @login_required
@@ -160,7 +160,7 @@ def adiciona_documento_estudante(request, tipo_nome=None, documento_id=None):
     """Cria um documento pelos estudantes somente."""
 
     if request.user.tipo_de_usuario != 1:  # Não é Estudante
-        return HttpResponse("Você não possui conta de estudante.", status=401)
+        return HttpResponse("Você não possui conta de estudante.", status=403)
 
     configuracao = get_object_or_404(Configuracao)
 
@@ -201,13 +201,11 @@ def adiciona_documento_estudante(request, tipo_nome=None, documento_id=None):
         "adiciona": "adiciona_documento_estudante",
     }
 
-    return render(request,
-                  "organizacoes/documento_view.html",
-                  context=context)
+    return render(request, "organizacoes/documento_view.html", context=context)
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def parceiro_propostas(request):
     """Lista todas as propostas de projetos."""
     user = request.user
@@ -217,9 +215,9 @@ def parceiro_propostas(request):
             "area_principal": True,
             "mensagem": mensagem,
         }
-        return render(request, 'generic.html', context=context)
+        return render(request, "generic.html", context=context)
 
-    if hasattr(user, 'parceiro'):
+    if hasattr(user, "parceiro"):
         propostas = Proposta.objects\
             .filter(organizacao=user.parceiro.organizacao)\
             .order_by("ano", "semestre", "titulo", )
@@ -381,19 +379,19 @@ def carrega_proposta(request):
                 "area_principal": True,
                 "mensagem": mensagem,
             }
-            return render(request, 'generic.html', context=context)
+            return render(request, "generic.html", context=context)
 
         full_name = user.get_full_name()
         email_sub = user.email
 
         parceiro = user.tipo_de_usuario == 3  # parceiro
 
-    if request.method == 'POST':
+    if request.method == "POST":
 
         resposta = ""
 
         if "arquivo" in request.FILES:
-            arquivo = simple_upload(request.FILES['arquivo'],
+            arquivo = simple_upload(request.FILES["arquivo"],
                                     path=get_upload_path(None, ""))
 
             fields = get_form_fields(arquivo[1:])
@@ -403,7 +401,7 @@ def carrega_proposta(request):
                     "voltar": True,
                     "mensagem": mensagem,
                 }
-                return render(request, 'generic.html', context=context)
+                return render(request, "generic.html", context=context)
 
             fields["nome"] = limpa_texto(request.POST.get("nome", "").strip())
             fields["email"] = limpa_texto(request.POST.get("email", "").strip())
@@ -433,7 +431,7 @@ def carrega_proposta(request):
             "voltar": True,
             "mensagem": resposta,
         }
-        return render(request, 'generic.html', context=context)
+        return render(request, "generic.html", context=context)
 
     context = {
         "full_name": full_name,
@@ -441,7 +439,7 @@ def carrega_proposta(request):
         "parceiro": parceiro,
         "ano_semestre": str(ano)+'.'+str(semestre),
     }
-    return render(request, 'organizacoes/carrega_proposta.html', context)
+    return render(request, "organizacoes/carrega_proposta.html", context)
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
@@ -461,8 +459,8 @@ def organizacoes_prospect(request):
     organizacoes = []
 
     periodo = 60
-    if request.is_ajax() and 'periodo' in request.POST:
-        periodo = int(request.POST['periodo'])*30  # periodo vem em meses
+    if request.is_ajax() and "periodo" in request.POST:
+        periodo = int(request.POST["periodo"])*30  # periodo vem em meses
 
     for organizacao in todas_organizacoes:
         propostas = Proposta.objects.filter(organizacao=organizacao)\
@@ -507,9 +505,7 @@ def organizacoes_prospect(request):
         "filtro": "todas",
         "cursos": Curso.objects.all().order_by("id"),
         }
-    return render(request,
-                  'organizacoes/organizacoes_prospectadas.html',
-                  context)
+    return render(request, "organizacoes/organizacoes_prospectadas.html", context)
 
 
 @login_required
@@ -563,12 +559,12 @@ def organizacoes_lista(request):
     titulo = "Partnership Companies"
 
     context = {
-        'organizacoes_list': organizacoes_list,
-        'total_organizacoes': total_organizacoes,
-        'total_submetidos': total_submetidos,
-        'total_fechados': total_fechados,
-        'meses3': datetime.date.today() - datetime.timedelta(days=100),
-        'filtro': "todas",
+        "organizacoes_list": organizacoes_list,
+        "total_organizacoes": total_organizacoes,
+        "total_submetidos": total_submetidos,
+        "total_fechados": total_fechados,
+        "meses3": datetime.date.today() - datetime.timedelta(days=100),
+        "filtro": "todas",
         "grupos": grupos,
         "cabecalhos": cabecalhos,
         "titulo": titulo,
@@ -595,7 +591,7 @@ def organizacao_completo(request, org):  # acertar isso para pk
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def organizacoes_tabela(request):
     """Alocação das Organizações por semestre."""
     configuracao = get_object_or_404(Configuracao)
@@ -643,18 +639,16 @@ def organizacoes_tabela(request):
     # inverti lista deixando os mais novos primeiro
     anos = zip(organizacoes_pfe[::-1], periodo[::-1])
 
-    context = {
-        'anos': anos,
-    }
+    context = {"anos": anos,}
 
-    return render(request, 'organizacoes/organizacoes_tabela.html', context)
+    return render(request, "organizacoes/organizacoes_tabela.html", context)
 
 
 # @login_required
 @transaction.atomic
 def projeto_feedback(request):
     """Para Feedback das Organizações Parceiras."""
-    if request.method == 'POST':
+    if request.method == "POST":
         feedback = Feedback.create()
         feedback.nome = request.POST.get("nome", "")
         feedback.email = request.POST.get("email", "")
@@ -665,43 +659,33 @@ def projeto_feedback(request):
         feedback.outros = request.POST.get("outros", "")
 
         try:
-            nps = int(request.POST.get("nps", "-1"))
-            if nps < 0:
-                feedback.nps = None
-            else:
-                feedback.nps = nps
+            nps = request.POST.get("nps", None)            
+            feedback.nps = int(nps) if nps else None
         except (ValueError, OverflowError):
-            return HttpResponseNotFound('<h1>Erro com valor NPS!</h1>')
+            return HttpResponseNotFound("<h1>Erro com valor NPS!</h1>")
 
         feedback.save()
 
-        mensagem = "Feedback recebido, obrigado!"
-        context = {
-            "mensagem": mensagem,
-        }
-        return render(request, 'generic.html', context=context)
+        context = {"mensagem": "Feedback recebido, obrigado!",}
+        return render(request, "generic.html", context=context)
 
-    context = {
-    }
-    return render(request, 'organizacoes/projeto_feedback.html', context)
+    context = {}
+    return render(request, "organizacoes/projeto_feedback.html", context)
 
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def todos_parceiros(request):
     """Exibe todas os parceiros de organizações que já submeteram projetos."""
-    cabecalhos = ["Nome", "Cargo", "Organização", "e-mail", "telefone", "papel", ]
-
     parceiros = None
     edicao = "todas"
     if request.is_ajax():
-        if 'edicao' in request.POST:
-            edicao = request.POST['edicao']
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
             parceiros = Parceiro.objects.all()
 
             if edicao not in ("todas",):
-                ano = int(edicao.split(".")[0])
-                semestre = int(edicao.split(".")[1])
+                ano, semestre = map(int, edicao.split('.'))
                 conexoes = Conexao.objects.filter(projeto__ano=ano,
                     projeto__semestre=semestre).values_list("parceiro", flat=True)
                 parceiros = parceiros.filter(id__in=conexoes)
@@ -709,14 +693,14 @@ def todos_parceiros(request):
     edicoes, _, _ = get_edicoes(Projeto)    
     context = {
         "parceiros": parceiros,
-        "cabecalhos": cabecalhos,
+        "cabecalhos": ["Nome", "Cargo", "Organização", "e-mail", "telefone", "papel", ],
         "titulo": "Parceiros Profissionais",
         "edicoes": edicoes,
         "edicao": edicao,
         "Conexao": Conexao,
         }
 
-    return render(request, 'organizacoes/todos_parceiros.html', context)
+    return render(request, "organizacoes/todos_parceiros.html", context)
 
 
 @login_required
@@ -733,7 +717,7 @@ def seleciona_conexoes(request):
         parceiro_id = request.POST["parceiro_id"]
         parceiro = get_object_or_404(Parceiro, id=parceiro_id)
 
-        (conexao, _created) = Conexao.objects.get_or_create(parceiro=parceiro,
+        (conexao, _) = Conexao.objects.get_or_create(parceiro=parceiro,
                                                             projeto=projeto)
 
         if "gestor_responsavel" == request.POST["tipo"]:
@@ -743,7 +727,7 @@ def seleciona_conexoes(request):
         elif "recursos_humanos" == request.POST["tipo"]:
             conexao.recursos_humanos = (request.POST["checked"] == "true")
         else:
-            return HttpResponseNotFound('<h1>Tipo de conexão não encontrado!</h1>')
+            return HttpResponseNotFound("<h1>Tipo de conexão não encontrado!</h1>")
 
         if (not conexao.gestor_responsavel) and \
            (not conexao.mentor_tecnico) and \
@@ -752,15 +736,12 @@ def seleciona_conexoes(request):
         else:
             conexao.save()
 
-        data = {
-            "atualizado": True,
-        }
-        return JsonResponse(data)
+        return JsonResponse({"atualizado": True,})
 
     if projeto.organizacao:
         parceiros = Parceiro.objects.filter(organizacao=projeto.organizacao)
     else:
-        return HttpResponseNotFound('<h1>Projeto não tem organização definida!</h1>')
+        return HttpResponseNotFound("<h1>Projeto não tem organização definida!</h1>")
 
     if request.method == "POST":
 
@@ -773,7 +754,7 @@ def seleciona_conexoes(request):
             if str(parceiro.id) in gestor_responsavel or\
                str(parceiro.id) in mentor_tecnico or\
                str(parceiro.id) in recursos_humanos:
-                (conexao, _created) = Conexao.objects.get_or_create(parceiro=parceiro,
+                (conexao, _) = Conexao.objects.get_or_create(parceiro=parceiro,
                                                                     projeto=projeto)
 
                 conexao.gestor_responsavel = str(parceiro.id) in gestor_responsavel
@@ -785,10 +766,10 @@ def seleciona_conexoes(request):
                 if Conexao.objects.filter(parceiro=parceiro, projeto=projeto):
                     Conexao.objects.get(parceiro=parceiro, projeto=projeto).delete()
 
-        colaboracao = request.POST.get('colaboracao', None)
+        colaboracao = request.POST.get("colaboracao", None)
         if colaboracao and colaboracao != "":
             parceiro = Parceiro.objects.get(id=colaboracao)
-            (conexao, _created) = Conexao.objects.get_or_create(parceiro=parceiro,
+            (conexao, _) = Conexao.objects.get_or_create(parceiro=parceiro,
                                                                 projeto=projeto)
             conexao.colaboracao = True
             conexao.save()
@@ -800,7 +781,7 @@ def seleciona_conexoes(request):
                 for conexao in conexoes_colab:
                     conexao.delete()  # apagar
 
-        return redirect('projeto_completo', projeto_id)
+        return redirect("projeto_completo", projeto_id)
 
 
     todos_parceiros = Parceiro.objects.all()
@@ -818,34 +799,30 @@ def seleciona_conexoes(request):
         "Conexao": Conexao,
         }
 
-    return render(request, 'organizacoes/seleciona_conexoes.html', context)
+    return render(request, "organizacoes/seleciona_conexoes.html", context)
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def estrelas(request):
     """Ajax para validar estrelas de interesse."""
-    organizacao_id = int(request.GET.get('organizacao', None))
-    numero_estrelas = int(request.GET.get('estrelas', 0))
+    organizacao_id = int(request.GET.get("organizacao", None))
+    numero_estrelas = int(request.GET.get("estrelas", 0))
 
     organizacao = get_object_or_404(Organizacao, id=organizacao_id)
     organizacao.estrelas = numero_estrelas
     organizacao.save()
 
-    data = {
-        'atualizado': True,
-    }
-
-    return JsonResponse(data)
+    return JsonResponse({"atualizado": True,})
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def areas(request):
     """Ajax para validar area da organização."""
-    organizacao_id = int(request.GET.get('organizacao', None))
-    curso = request.GET.get('curso', "")
-    situacao = True if (request.GET.get('situacao', "") == "true") else False
+    organizacao_id = int(request.GET.get("organizacao", None))
+    curso = request.GET.get("curso", "")
+    situacao = True if (request.GET.get("situacao", "") == "true") else False
     organizacao = get_object_or_404(Organizacao, id=organizacao_id)
 
     if situacao:
@@ -855,4 +832,4 @@ def areas(request):
     
     organizacao.save()
 
-    return JsonResponse({'atualizado': True,})
+    return JsonResponse({"atualizado": True,})
