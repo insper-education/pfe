@@ -57,19 +57,18 @@
 
         <label for="coordenacao">Coordenação
         <input type="checkbox" id="coordenacao" name="coordenacao" {% if aviso.coordenacao %}checked{% endif %}></label>
-        
 
+        <label for="comite_pfe">Operacional
+        <input type="checkbox" id="operacional" name="operacional" {% if aviso.operacional %}checked{% endif %}></label>
+  
         <label for="comite_pfe">Comitê
         <input type="checkbox" id="comite_pfe" name="comite_pfe" {% if aviso.comite_pfe %}checked{% endif %}></label>
-        
 
         <label for="todos_alunos">Estudantes
         <input type="checkbox" id="todos_alunos" name="todos_alunos" {% if aviso.todos_alunos %}checked{% endif %}></label>
-        
 
         <label for="todos_orientadores">Orientadores
         <input type="checkbox" id="todos_orientadores" name="todos_orientadores" {% if aviso.todos_orientadores %}checked{% endif %}></label>
-        
 
         <label for="contatos_nas_organizacoes">Contatos nas Organizações
         <input type="checkbox" id="contatos_nas_organizacoes" name="contatos_nas_organizacoes" {% if aviso.contatos_nas_organizacoes %}checked{% endif %}></label>

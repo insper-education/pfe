@@ -1074,6 +1074,8 @@ class Aviso(models.Model):
 
     coordenacao = \
         models.BooleanField(default=False, help_text="Para coordenação do PFE")
+    operacional = \
+        models.BooleanField(default=False, help_text="Para equipe operacional do PFE")
     comite_pfe = \
         models.BooleanField(default=False, help_text="Para os membros do comitê do PFE")
     todos_alunos = \

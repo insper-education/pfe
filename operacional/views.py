@@ -205,12 +205,13 @@ def emails_projetos(request):
 def trata_aviso(aviso, request):
     """Puxa dados do request e põe em aviso."""
     try:
-        aviso.titulo = request.POST['titulo']
-        aviso.delta = int(request.POST['delta'])
-        aviso.mensagem = request.POST['mensagem']
-        aviso.tipo_de_evento = int(request.POST['evento'])
+        aviso.titulo = request.POST["titulo"]
+        aviso.delta = int(request.POST["delta"])
+        aviso.mensagem = request.POST["mensagem"]
+        aviso.tipo_de_evento = int(request.POST["evento"])
 
         aviso.coordenacao = "coordenacao" in request.POST
+        aviso.operacional = "operacional" in request.POST
         aviso.comite_pfe = "comite_pfe" in request.POST
         aviso.todos_alunos = "todos_alunos" in request.POST
         aviso.todos_orientadores = "todos_orientadores" in request.POST
@@ -323,9 +324,9 @@ def carregar_certificado(request):
 @permission_required('users.altera_professor', raise_exception=True)
 def cria_aviso(request):
     """Cria aviso."""
-    if request.method == 'POST':
+    if request.method == "POST":
 
-        if 'mensagem' in request.POST:
+        if "mensagem" in request.POST:
 
             aviso = Aviso.create()
 
@@ -333,7 +334,7 @@ def cria_aviso(request):
             if erro:
                 return erro
 
-            return redirect('avisos_listar')
+            return redirect("avisos_listar")
 
         return HttpResponse("Problema com atualização de mensagem.", status=401)
 
@@ -341,7 +342,7 @@ def cria_aviso(request):
         "eventos": TIPO_EVENTO,
     }
 
-    return render(request, 'operacional/edita_aviso.html', context)
+    return render(request, "operacional/edita_aviso.html", context)
 
 
 @login_required
