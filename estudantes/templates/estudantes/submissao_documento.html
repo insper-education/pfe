@@ -54,8 +54,10 @@
         {% else %}
           <b>{{item.composicao.exame.titulo}}</b>
         {% endif %}
-        <span class="opt_full">[prazo {{ item.evento.endDate|date:"DATE_FORMAT" }}]</span>
-        <span class="opt_short">[prazo {{ item.evento.endDate|date:"d/m/y" }}]</span>
+        {% if item.evento.endDate %}
+          <span class="opt_full">[prazo {{ item.evento.endDate|date:"DATE_FORMAT" }}]</span>
+          <span class="opt_short">[prazo {{ item.evento.endDate|date:"d/m/y" }}]</span>
+        {% endif %}
         {% if item.composicao.tipo_documento %}
           <a id="adiciona"
             class="open-documento {% if dias_ate > dias %}lightgrey{% endif %}"
@@ -69,7 +71,7 @@
             {% endif %}
             onClick="check_prazo('{{item.evento.endDate|date:"Y-m-d"}}T23:59:59');"
             >
-            {% if dias_ate > dias %}+{% else %}{% if item.documentos.last %}<b><i class="fas fa-redo"></i></b>{% else %}<i class="fas fa-plus"></i>{% endif %}{% endif %}
+            {% if item.documentos.last %}<b><i class="fas fa-redo"></i></b>{% else %}<i class="fas fa-file-upload"></i>{% endif %}
           </a>
         {% endif %}<br>
         <ul style="padding-left: 22px; width: fit-content;">

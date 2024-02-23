@@ -2518,10 +2518,15 @@ def planos_de_orientacao(request):
     """Mostra os planos de orientação do professor."""
     projetos = Projeto.objects.filter(orientador=request.user.professor)\
         .order_by("-ano", "-semestre", "titulo")
+
+    tipo = TipoDocumento.objects.get(sigla="TPO")  # Template de Plano de Orientação
+    template = Documento.objects.filter(tipo_documento=tipo).last()
+
     context = {
         "projetos": projetos,
         "configuracao": get_object_or_404(Configuracao),
         "MEDIA_URL": settings.MEDIA_URL,
+        "template": template,
     }
     return render(request, "professores/planos_de_orientacao.html", context=context)
 
