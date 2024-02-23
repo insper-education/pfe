@@ -24,8 +24,18 @@
     td {
       padding: 1rem 1.2rem;
       border-radius: 6px;
-      border: 1px solid red;
+      border-width: 3px;
+      border-style: solid;
+      background-color: #F0F0F0;
     }
+
+    td.estudantes {border-color: #FF0000;}
+    td.orientador {border-color: #0000FF;}
+    td.coorientador {border-color: #00FF00;}
+    td.banca {border-color: #FF00FF;}
+    td.mentoria_profissional {border-color: #FFFF00;}
+    td.mentoria_tecnica {border-color: #00FFFF;}
+
   </style>
 
 {% endblock %}
@@ -46,7 +56,7 @@
           <select id="tipos" class="selectpicker form-control form-control-sm" data-style="mr-sm border " data-width="10em"
                   title="Nada selecionado"
                   multiple>
-            <option {% if not tipos or "E" in tipos %}selected="selected"{% endif %} title="E">Estudantes</option>
+            <option {% if not tipos or "E" in tipos %}selected="selected"{% endif %} title="E">Estudantes (Certificação Falconi, etc)</option>
             <option {% if not tipos or "O" in tipos %}selected="selected"{% endif %} title="O">Orientadores</option>
             <option {% if not tipos or "C" in tipos %}selected="selected"{% endif %} title="C">Coorientadores</option>
             <option {% if not tipos or "B" in tipos %}selected="selected"{% endif %} title="B">Bancas</option>
@@ -92,21 +102,21 @@
 
       {% for certificado in certificados %}
 
+      <tr>
         {% if certificado.tipo_de_certificado < 100 %}
-          <tr class="estudantes certificado">
+          <td class="estudantes certificado">
         {% elif certificado.tipo_de_certificado == 101 %}
-          <tr class="orientador certificado">
+          <td class="orientador certificado">
         {% elif certificado.tipo_de_certificado == 102 %}
-          <tr class="coorientador certificado">
+          <td class="coorientador certificado">
         {% elif certificado.tipo_de_certificado == 103 or certificado.tipo_de_certificado == 104 or certificado.tipo_de_certificado == 105 %}
-          <tr class="banca certificado">
+          <td class="banca certificado">
         {% elif certificado.tipo_de_certificado == 106 %}
-          <tr class="mentoria_profissional certificado">
+          <td class="mentoria_profissional certificado">
         {% elif certificado.tipo_de_certificado == 107 %}
-          <tr class="mentoria_tecnica certificado">
+          <td class="mentoria_tecnica certificado">
         {% endif %}
         
-        <td>
           <b style="font-weight: bold; font-size: 1.2em;">{{certificado.get_certificado}}</b><br>
           <b>Nome:</b>
           {% if certificado.usuario %}
@@ -209,14 +219,14 @@
 
   <br>
   <div class="contagem">
-    <b>Totais</b><br>
-    Estudantes: <span id="t_estudantes"></span><br>
-    Orientador: <span id="t_orientador"></span><br>
-    Coorientador: <span id="t_coorientador"></span><br>
-    Banca: <span id="t_banca"></span><br>
-    Mentoria Técnica: <span id="t_mentoria_tecnica"></span><br>
-    Mentoria Profissional: <span id="t_mentoria_profissional"></span><br>
-    Total: <span id="t_total"></span><br>
+    <b>Quantidades</b><br>
+    &bull; Estudantes: <span id="t_estudantes"></span><br>
+    &bull; Orientador: <span id="t_orientador"></span><br>
+    &bull; Coorientador: <span id="t_coorientador"></span><br>
+    &bull; Banca: <span id="t_banca"></span><br>
+    &bull; Mentoria Técnica: <span id="t_mentoria_tecnica"></span><br>
+    &bull; Mentoria Profissional: <span id="t_mentoria_profissional"></span><br>
+    <b>&bull; Total: <span id="t_total"></span><b><br>
   </div>
   
   <script>
