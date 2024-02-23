@@ -409,7 +409,14 @@ def tabela_atas(request):
     """Exibe tabela com todos os seguros armazenados."""
     tipo_documento = TipoDocumento.objects.get(nome="Ata do Comitê do PFE")
     atas = Documento.objects.filter(tipo_documento=tipo_documento).order_by("-data")
-    context = {"atas": atas,}
+
+    tipo = TipoDocumento.objects.get(sigla="TAC")  # Template Ata Comitê
+    template = Documento.objects.filter(tipo_documento=tipo).last()
+
+    context = {
+        "atas": atas,
+        "template": template,
+               }
     return render(request, "documentos/tabela_atas.html", context)
 
 
