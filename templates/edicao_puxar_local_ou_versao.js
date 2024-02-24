@@ -6,9 +6,18 @@
 
 {% if not selecionada %}
     // Se veio uma versão definida, não puxar o cache
-    var filterEdicao = localStorage.getItem("filterEdicao");
+    const itemStr = localStorage.getItem("filterEdicao");
+    const item = JSON.parse(itemStr);
+    const filterEdicao = item ? item.value : null;
     if (filterEdicao !== null && $("#filterEdicao option[value='"+filterEdicao+"']").length > 0 ) {
-        $('#filterEdicao').val(filterEdicao).trigger('change');
+        const prazo = 3600000; // 1 hora
+        const now = new Date().getTime();
+        // Verifica se não venceu
+        if (now > item.expiry + prazo) {
+            localStorage.removeItem("filterEdicao");
+        } else {
+            $("#filterEdicao").val(filterEdicao).trigger("change");
+        }
     }
 {% else %}
     $("#filterEdicao").trigger("change");

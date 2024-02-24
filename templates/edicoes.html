@@ -184,7 +184,13 @@
   {% comment %} Salva a última edição selecionada {% endcomment %}
   <script>
     window.onbeforeunload = function() {
-      localStorage.setItem("filterEdicao", $('#filterEdicao').val());
+      const now = new Date().getTime();
+      const item = {
+          value: $("#filterEdicao").val(),
+          expiry: now,
+      }
+      localStorage.setItem("filterEdicao", JSON.stringify(item));
+      //localStorage.setItem("filterEdicao", $('#filterEdicao').val());
     }
   </script>
 

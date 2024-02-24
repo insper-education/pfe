@@ -346,18 +346,21 @@
 
     <script>
       filtra_data();
-
       mostra_grafico();
-
     </script>
-    
-
-
+  
     {% endif %}
 
     <script>
       function carrega_pagina() {}
-      $(document).ready(carrega_pagina);
+
+      function carrega_site() {
+        {% include "edicao_puxar_local_ou_versao.js" %}
+        carrega_pagina();
+      };
+
+      window.onload = carrega_site
+
     </script>
   
   </div>
