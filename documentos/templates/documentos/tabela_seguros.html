@@ -31,7 +31,7 @@
             <td style="text-align:center">
               <a class="btn btn-light btn-outline-info btn-sm tab_botao"
                 target="_blank" rel="noopener noreferrer"
-                href="{{request.scheme}}://{{request.get_host}}{{seguro.get_url}}" 
+                href="{{request.scheme}}://{{request.get_host}}{{seguro.documento.url}}" 
                 {% if seguro.anotacao %}
                   data-toggle="tooltip" data-html="true" animation="true" title="anotação: {{seguro.anotacao}}"
                 {% endif %}

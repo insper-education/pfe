@@ -106,12 +106,9 @@ def projeto_detalhes(request, primarykey):
             }
             return render(request, "generic.html", context=context)
 
-    context = {
-        "projeto": projeto,
-        "MEDIA_URL": settings.MEDIA_URL,
-    }
+    context = {"projeto": projeto,}
 
-    return render(request, 'projetos/projeto_detalhes.html', context=context)
+    return render(request, "projetos/projeto_detalhes.html", context=context)
 
 
 @login_required
@@ -148,7 +145,6 @@ def projeto_completo(request, primarykey):
         "documentos": documentos,  # checar se necessário
         "projetos_avancados": projetos_avancados,
         "cooperacoes": cooperacoes,
-        "MEDIA_URL": settings.MEDIA_URL,
     }
     return render(request, 'projetos/projeto_completo.html', context=context)
 

@@ -95,7 +95,7 @@
                 {% endif %}
                 {% if relatorio.documento%}
                   <a class="btn btn-light btn-outline-info btn-sm" 
-                     href="{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}{{relatorio.documento}}" target="_blank" rel="noopener noreferrer">
+                     href="{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}" target="_blank" rel="noopener noreferrer">
                     <span class="full-text" style="width: 9em;">Cópia no Serv. PFE</span>
                     <span class="short-text" style="width: 3em;">Cópia</span>
                   </a>
@@ -109,8 +109,8 @@
                 </a><br>
               {% endif %}
               {% if relatorio.documento%}
-                <a href="{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}{{relatorio.documento}}" target="_blank" rel="noopener noreferrer">
-                  <span>{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}{{relatorio.documento}}</span>
+                <a href="{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}" target="_blank" rel="noopener noreferrer">
+                  <span>{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}</span>
                 </a>
               {% endif %}
           </td>
@@ -126,8 +126,8 @@
 
   <script>
     function carrega_pagina() {
-      if($('#RelatoriosTable th').length > 0) {   // Verifica se os THs foram registrados primeiro
-        table = $('#RelatoriosTable').dataTable();
+      if($("#RelatoriosTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
+        table = $("#RelatoriosTable").dataTable();
         if(table) {
           table.fnSetColumnVis( 4, false );  // esconde longa URL
         }

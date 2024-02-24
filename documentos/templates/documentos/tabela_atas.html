@@ -16,7 +16,7 @@
 {% block content %}
 
   <span class="titulo">Atas do Comitê do PFE</span>
-  <a target="_blank" rel="noopener noreferrer" href="{{request.scheme}}://{{request.get_host}}{{template.get_url}}">
+  <a target="_blank" rel="noopener noreferrer" href="{{request.scheme}}://{{request.get_host}}{{template.documento.url}}">
     <i class="far fa-file-alt"></i> {{template.tipo_documento}}
   </a><br>
   <br>
@@ -37,7 +37,7 @@
               {% ifchanged %}<td style="vertical-align:middle" rowspan="{{ group.list|length }}">{{obj.data|date:"DATE_FORMAT"}}</td>{% endifchanged %}
               <td style="text-align:center; padding: 2px; border-top-style: dotted;{% if not forloop.last %}border-bottom-style: dotted;{% endif %}">
                 <a class="btn btn-light btn-outline-info btn-sm tab_botao"
-                   href="{{request.scheme}}://{{request.get_host}}{{obj.get_url}}" 
+                   href="{{request.scheme}}://{{request.get_host}}{{obj.documento.url}}" 
                    target="_blank" rel="noopener noreferrer"
                    {% if obj.anotacao %}
                     data-toggle="tooltip" data-html="true" animation="true" title="anotação: {{obj.anotacao}}"

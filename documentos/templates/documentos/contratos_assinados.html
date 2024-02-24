@@ -25,7 +25,6 @@
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" %}
-
   <br>
   
   <div class="atualizar">
@@ -51,9 +50,7 @@
 
               <td> <!-- Organização -->
                 {% if projeto and projeto.organizacao %}
-                  <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-                    {{ projeto.organizacao.sigla }}
-                  </a>
+                  <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.sigla }}</a>
                 {% else %}
                   ORGANIZAÇÃO NÃO DEFINIDA
                 {% endif %}
@@ -64,8 +61,7 @@
                   {% if projeto.titulo_final %}
                     {{projeto.titulo_final}}
                     <span class="tit_ori">
-                      <br>
-                      <small>Título original: {{projeto.titulo}}</small>
+                      <br><small>Título original: {{projeto.titulo}}</small>
                     </span>
                   {% else %}
                     {{projeto.titulo}}
@@ -80,9 +76,7 @@
                 <ul style="padding-left: 20px;margin-bottom: 0px;">
                   {% for conexao in projeto.conexao_set.all %}
                     <li>
-                      <a class="imprimir" href="{% url 'parceiro_detail' conexao.parceiro.id %}">
-                        {{ conexao.parceiro.user.get_full_name }}
-                      </a>
+                      <a class="imprimir" href="{% url 'parceiro_detail' conexao.parceiro.id %}">{{ conexao.parceiro.user.get_full_name }}</a>
                       {% for papel in conexao.get_papeis %}[{{papel.0}}] {% endfor %}
                     </li>
                   {% endfor %}
@@ -96,12 +90,8 @@
                 <ul class="grupo" style="padding-left: 20px;margin-bottom: 0px;">
                   {% for alocacao in projeto.alocacao_set.all %}
                     <li>
-                      <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">
-                        {{alocacao.aluno}}
-                      </a>
-                      <span class="curso">
-                        [{{ alocacao.aluno.curso2 }}]
-                      </span>
+                      <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno}}</a>
+                      <span class="curso">[{{ alocacao.aluno.curso2 }}]</span>
                     </li>
                   {% endfor %}
                 </ul>
@@ -112,9 +102,7 @@
               <td>
                 <small>
                   {% if projeto.orientador %}
-                    <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}">
-                      {{ projeto.orientador }}
-                    </a>
+                    <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}">{{ projeto.orientador }}</a>
                   {% else %}
                     ORIENTADOR NÃO DEFINIDO
                   {% endif %}
@@ -124,13 +112,9 @@
                     <span class="coorientadores">
                     <br>coorientador:
                       {% for coorientador in coorientadores %}
-                          <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">
-                            {{coorientador.usuario.get_full_name}} 
-                          </a>
+                          <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">{{coorientador.usuario.get_full_name}}</a>
                           {% comment %} <a class="email" href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a> {% endcomment %}
-                          {% if not forloop.last %}
-                            ;
-                          {% endif %}
+                          {% if not forloop.last %}; {% endif %}
                       {% endfor %}
                       </span>
                     {% endif %}
@@ -157,7 +141,7 @@
                   {% if documento.documento and documento.link %}
                     <div class="btn btn-light btn-outline-info btn-sm" style="width: 7em; padding:0px 4px 0px 4px;">
                       Contrato
-                      <a href="{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+                      <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">(documento)</a>
                       <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
                       {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
                         <sup>(Inglês)</sup>
@@ -166,7 +150,7 @@
                   {% else %}
                     {% if documento.documento %}
                       <a class="btn btn-light btn-outline-info btn-sm" style="width: 7em; padding:0px 4px 0px 4px;" 
-                        href="{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">Contrato</a>
+                        href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">Contrato</a>
                       {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
                         <sup>(Inglês)</sup>
                       {% endif %}

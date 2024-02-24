@@ -89,7 +89,7 @@
               <span class="opt_short">{{ documento.data|date:"d/m/y H:i" }}</span>
               <a 
                 {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
-                href="{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+                href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">(documento)</a>
               <a 
                 {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
                 href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
@@ -97,7 +97,7 @@
               {% if documento.documento %}
                 <a 
                   {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
-                  href="{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer"><span lang="pt">Entregue</span><span lang="en">Submitted</span>
+                  href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer"><span lang="pt">Entregue</span><span lang="en">Submitted</span>
                   <span class="opt_full">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
                   <span class="opt_short">{{ documento.data|date:"d/m/y H:i" }}</span>
                 </a>

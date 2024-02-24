@@ -551,13 +551,9 @@ def exames_pesos(request):
 def submissao_documento(request):
     """Submissão de documentos pelos estudantes."""
 
-
     configuracao = get_object_or_404(Configuracao)
 
-    
-    context = {
-        "MEDIA_URL": settings.MEDIA_URL,
-    }
+    context = {}
 
     if request.user.tipo_de_usuario != 1:  # Não é Estudante
          if request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:  # Professor

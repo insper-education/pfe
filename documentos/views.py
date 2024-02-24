@@ -298,11 +298,7 @@ def materias_midia(request):
     """Exibe Matérias que houveram na mídia."""
     tipo_documento = TipoDocumento.objects.get(nome="Matéria na Mídia")
     relatorios = Documento.objects.filter(tipo_documento=tipo_documento, confidencial=False)
-
-    context = {
-        "relatorios": relatorios,
-        "MEDIA_URL": settings.MEDIA_URL,
-    }
+    context = {"relatorios": relatorios,}
     return render(request, "documentos/materias_midia.html", context)
 
 
@@ -332,10 +328,7 @@ def relatorios_publicos(request):
         }
 
     else:
-        edicoes, _, _ = get_edicoes(Projeto)
-        context = {
-            "edicoes": edicoes,
-        }
+        context = {"edicoes": get_edicoes(Projeto)[0],}
     
     return render(request, "documentos/relatorios_publicos.html", context)
 
@@ -382,9 +375,9 @@ def tabela_documentos(request):
             (".coorientadores", "Coorientadores"),
             (".confidencial", "Confidenciais"),
         ]
-        edicoes, _, _ = get_edicoes(Projeto)
+
         context = {
-            "edicoes": edicoes,
+            "edicoes": get_edicoes(Projeto)[0],
             "informacoes": informacoes,
             "cursos": cursos_insper,
             "cursos_externos": cursos_externos,
@@ -438,13 +431,9 @@ def contratos_assinados(request):
         context = {
             "projetos": projetos,
             "edicao": edicao,
-            "MEDIA_URL": settings.MEDIA_URL,
         }
 
     else:
-        edicoes, _, _ = get_edicoes(Projeto)
-        context = {
-            "edicoes": edicoes,
-        }
+        context = {"edicoes": get_edicoes(Projeto)[0],}
 
     return render(request, "documentos/contratos_assinados.html", context)

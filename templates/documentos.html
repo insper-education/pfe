@@ -22,11 +22,11 @@
     {% endif %}
     {% if documento.documento and documento.link %}
         {{documento.tipo_documento}}
-        <a href="{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+        <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">(documento)</a>
         <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
     {% else %}
       {% if documento.documento %}
-        <a href="{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_documento}}</a>
+        <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_documento}}</a>
       {% endif %}
       {% if documento.link %}
         <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_documento}}</a>

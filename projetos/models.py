@@ -992,10 +992,6 @@ class Documento(models.Model):
         """Cria um objeto (entrada) em Documento."""
         documento = cls()
         return documento
-    
-    def get_url(self):
-        """Retorna a url do documento."""
-        return settings.MEDIA_URL+str(self.documento)
 
 
 class Banco(models.Model):

@@ -128,7 +128,7 @@
                 {% endif %}
                 {% if relatorio.documento%}
                   <a class="btn btn-light btn-outline-info btn-sm"
-                     href="{{request.scheme}}://{{request.get_host}}{{relatorio.get_url}}" target="_blank" rel="noopener noreferrer">
+                     href="{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}" target="_blank" rel="noopener noreferrer">
                     <span class="short-text" style="width: 4em;">Serv. PFE</span>
                     <span class="full-text" style="width: 12em;">Link&nbsp;alternativo&nbsp;(Serv. PFE)</span>
                   </a>
@@ -142,8 +142,8 @@
                 </a><br>
               {% endif %}
               {% if relatorio.documento%}
-                <a href="{{request.scheme}}://{{request.get_host}}{{relatorio.get_url}}" target="_blank" rel="noopener noreferrer">
-                  <span>{{request.scheme}}://{{request.get_host}}{{relatorio.get_url}}</span>
+                <a href="{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}" target="_blank" rel="noopener noreferrer">
+                  <span>{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}</span>
                 </a>
               {% endif %}
           </td>

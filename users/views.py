@@ -571,11 +571,9 @@ def edita_notas(request, primarykey):
                                                                 avaliador = alocacao.projeto.orientador.user)
                 if obs_value_orientador != "":
                     reg.observacoes_orientador = obs_value_orientador
-                    print(obs_value_orientador)
 
                 if obs_value_estudantes != "":
                     reg.observacoes_estudantes = obs_value_estudantes
-                    print(obs_value_estudantes)
 
                 if _created:
                     if alocacao.projeto.orientador:

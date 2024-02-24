@@ -21,11 +21,12 @@ from django.core.exceptions import SuspiciousOperation  # Para erro 400
 from django.core.mail import EmailMessage
 from django.db import transaction
 from django.db.models.functions import Lower
-from django.http import HttpResponse, HttpResponseNotFound, JsonResponse, HttpResponseServerError
+from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
+#from django.http import HttpResponseServerError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils import timezone
-from django.urls import reverse
+#from django.urls import reverse
 
 from axes.models import AccessAttempt, AccessLog
 
@@ -67,14 +68,14 @@ from .support import usuario_sem_acesso
 @permission_required("users.view_administrador", raise_exception=True)
 def index_administracao(request):
     """Mostra página principal para administração do sistema."""
-    return render(request, 'administracao/index_admin.html')
+    return render(request, "administracao/index_admin.html")
 
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def index_carregar(request):
     """Para carregar dados de arquivos para o servidor."""
-    return render(request, 'administracao/carregar.html')
+    return render(request, "administracao/carregar.html")
 
 
 @login_required
@@ -162,9 +163,9 @@ def edita_organizacao(request, primarykey):
 
     organizacao = get_object_or_404(Organizacao, id=primarykey)
 
-    if request.method == 'POST':
+    if request.method == "POST":
 
-        if 'nome' in request.POST and 'sigla' in request.POST:
+        if "nome" in request.POST and "sigla" in request.POST:
 
             _, mensagem, codigo = registra_organizacao(request, organizacao)
             if codigo != 200:
@@ -484,7 +485,6 @@ def configurar(request):
         "configuracao": configuracao,
         "administradores": Administrador.objects.all(),
         "administrador": Administrador,
-        "MEDIA_URL": settings.MEDIA_URL,
     }
 
     return render(request, "administracao/configurar.html", context)
@@ -497,7 +497,6 @@ def desbloquear_usuarios(request):
     if request.user.tipo_de_usuario == 4:
         axes.utils.reset()
         return redirect("/administracao/bloqueados/")
-        #return HttpResponse("Todos os usuários desbloqueados.", status=200)
     return HttpResponse("Você não tem privilégios")
 
 
@@ -506,7 +505,7 @@ def desbloquear_usuarios(request):
 def exportar(request, modo):
     """Exporta dados."""
     context = {"modo": modo,}
-    return render(request, 'administracao/exportar.html', context)
+    return render(request, "administracao/exportar.html", context)
 
 
 @login_required
@@ -1242,7 +1241,7 @@ def logs(request, dias=30):
 
     message += "<br>"
     message += "<a href=' " + str(dias+30) + "'>Mostrar último " + str(dias+30) + " dias</a>"
-    print(request)
+    
     return HttpResponse(message)
 
 
@@ -1250,53 +1249,55 @@ def logs(request, dias=30):
 @permission_required("users.altera_professor", raise_exception=True)
 def conexoes_estabelecidas(request):
     """Mostra usuários conectados."""
-    if request.user.tipo_de_usuario == 4:
-        mensagem = ""
-        sessions = Session.objects.filter(expire_date__gte=timezone.now())
-        usuarios = []
-        for session in sessions:
-            data = session.get_decoded()
-            user_id = data.get("_auth_user_id", None)
-            try:
-                user = PFEUser.objects.get(id=user_id)
-                usuario = {}
-                usuario["usuario"] = user
-                usuario["autenticado"] = user.is_authenticated
-                usuario["desde"] = user.last_login
-                usuario["permissoes"] = str(user.get_all_permissions())[:120]
-                usuarios.append(usuario)
-            except PFEUser.DoesNotExist:
-                mensagem += "User ID não identificado = " + str(user_id) + "<br>\n"
-                # mensagem += "; Data = " + str(data) + "<br>\n"
+    if request.user.tipo_de_usuario != 4:
+        return HttpResponse("Você não tem privilégios")
+    
+    mensagem = ""
+    sessions = Session.objects.filter(expire_date__gte=timezone.now())
+    usuarios = []
+    for session in sessions:
+        data = session.get_decoded()
+        user_id = data.get("_auth_user_id", None)
+        try:
+            user = PFEUser.objects.get(id=user_id)
+            usuario = {}
+            usuario["usuario"] = user
+            usuario["autenticado"] = user.is_authenticated
+            usuario["desde"] = user.last_login
+            usuario["permissoes"] = str(user.get_all_permissions())[:120]
+            usuarios.append(usuario)
+        except PFEUser.DoesNotExist:
+            mensagem += "User ID não identificado = " + str(user_id) + "<br>\n"
+            # mensagem += "; Data = " + str(data) + "<br>\n"
 
-        context = {
-            "mensagem": mensagem,
-            "usuarios": usuarios,
-        }
+    context = {
+        "mensagem": mensagem,
+        "usuarios": usuarios,
+    }
 
-        return render(request, "administracao/conexoes_estabelecidas.html", context=context)
+    return render(request, "administracao/conexoes_estabelecidas.html", context=context)
 
-    return HttpResponse("Você não tem privilégios")
+    
 
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def bloqueados(request):
     """Mostra usuários e ips bloqueados."""
-    if request.user.tipo_de_usuario == 4:
+    if request.user.tipo_de_usuario != 4:
+        return HttpResponse("Você não tem privilégios")
 
-        mensagem = ""
-        mes_atras = timezone.now() - datetime.timedelta(days=30)
-        access_attempts = AccessAttempt.objects.all()
-        access_logs = AccessLog.objects.all().filter(attempt_time__gte=mes_atras)
-        
-        context = {
-            "mensagem": mensagem,
-            "access_logs": access_logs,
-            "access_attempts": access_attempts,
-        }
+    mes_atras = timezone.now() - datetime.timedelta(days=30)
+    access_attempts = AccessAttempt.objects.all()
+    access_logs = AccessLog.objects.all().filter(attempt_time__gte=mes_atras)
+    
+    context = {
+        "mensagem": "",
+        "access_logs": access_logs,
+        "access_attempts": access_attempts,
+    }
 
-        return render(request, "administracao/bloqueados.html", context=context)
+    return render(request, "administracao/bloqueados.html", context=context)
 
-    return HttpResponse("Você não tem privilégios")
+
 

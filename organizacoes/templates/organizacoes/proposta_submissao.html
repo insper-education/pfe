@@ -154,7 +154,7 @@
             </label>
             {% if proposta.anexo %}
               <br><small>Arquivo atual:
-                <a href="{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}{{proposta.anexo}}">{{proposta.get_anexo}}</a>
+                <a href="{{request.scheme}}://{{request.get_host}}{{proposta.anexo.url}}">{{proposta.get_anexo}}</a>
               </small>
             {% endif %}
             <br><br>

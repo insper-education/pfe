@@ -1413,7 +1413,6 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             "composicao": composicao,
             "estudante": estudante,
             "documentos": documentos,
-            "MEDIA_URL": settings.MEDIA_URL,
             "evento": evento,
             "periodo_para_rubricas": composicao.exame.periodo_para_rubricas,
             "objetivos": objetivos,
@@ -2525,7 +2524,6 @@ def planos_de_orientacao(request):
     context = {
         "projetos": projetos,
         "configuracao": get_object_or_404(Configuracao),
-        "MEDIA_URL": settings.MEDIA_URL,
         "template": template,
     }
     return render(request, "professores/planos_de_orientacao.html", context=context)
@@ -2553,19 +2551,15 @@ def planos_de_orientacao_todos(request):
             context = {
                 "administracao": True,
                 "projetos": projetos,
-                "MEDIA_URL": settings.MEDIA_URL,
             }
 
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
     else:
-
-        edicoes, _, _ = get_edicoes(Projeto)
         context = {
                 "administracao": True,
-                "edicoes": edicoes,
-                "MEDIA_URL": settings.MEDIA_URL,
+                "edicoes": get_edicoes(Projeto)[0],
             }
 
     return render(request, "professores/planos_de_orientacao_todos.html", context=context)

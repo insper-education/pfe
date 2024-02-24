@@ -252,7 +252,6 @@ def atualiza_evento(request):
         evento.documento = Documento.objects.get(id=material) if material else None
 
     evento.save()
-    print(evento)
 
     data = {
         "atualizado": True,

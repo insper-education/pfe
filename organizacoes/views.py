@@ -145,7 +145,6 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
         "organizacoes": Organizacao.objects.all(),
         "documentos": Documento.objects.filter(id=documento_id),
         "documento_id": documento_id,
-        "MEDIA_URL": settings.MEDIA_URL,
         "configuracao": configuracao,
         "travado": False,
         "adiciona": "adiciona_documento",
@@ -195,7 +194,6 @@ def adiciona_documento_estudante(request, tipo_nome=None, documento_id=None):
         "tipo": tipo,
         "documentos": Documento.objects.filter(id=documento_id),
         "documento_id": documento_id,
-        "MEDIA_URL": settings.MEDIA_URL,
         "configuracao": configuracao,
         "travado": True,
         "adiciona": "adiciona_documento_estudante",
@@ -577,17 +575,11 @@ def organizacoes_lista(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def organizacao_completo(request, org):  # acertar isso para pk
     """Exibe detalhes das organizações parceiras."""
-    organizacao = get_object_or_404(Organizacao, id=org)
-
     context = {
-        "organizacao": organizacao,
+        "organizacao": get_object_or_404(Organizacao, id=org),
         "cursos": Curso.objects.all().order_by("id"),
-        "MEDIA_URL": settings.MEDIA_URL,
     }
-
-    return render(request,
-                  "organizacoes/organizacao_completo.html",
-                  context=context)
+    return render(request, "organizacoes/organizacao_completo.html", context=context)
 
 
 @login_required

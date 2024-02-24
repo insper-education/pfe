@@ -47,7 +47,7 @@
       {% for administrador in administradores %}
         <option value="{{administrador.id}}" 
           data-nome_para_certificados="{% if administrador.nome_para_certificados %}{{administrador.nome_para_certificados}}{% endif %}"
-          data-image="{% if administrador.assinatura %}{{administrador.assinatura}}{% endif %}"
+          data-image="{% if administrador.assinatura %}{{administrador.assinatura.url}}{% endif %}"
           {% if administrador.id == configuracao.coordenacao.id %}selected{% endif %}>
           {{administrador.user.get_full_name}}
         </option> 
@@ -61,11 +61,11 @@
     <label for="assinatura">Assinatura (proporção ~250x70):</label>
     <input id="assinatura" type="file" name="assinatura" accept="image/*">
     
-    <br><a id="link_assinatura" href="{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}{{configuracao.coordenacao.assinatura}}">
-      <span id="texto_link_assinatura" class="full-text">{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}{{configuracao.coordenacao.assinatura}}</span><br>
+    <br><a id="link_assinatura" href="{{request.scheme}}://{{request.get_host}}{{configuracao.coordenacao.assinatura.url}}">
+      <span id="texto_link_assinatura" class="full-text">{{request.scheme}}://{{request.get_host}}{{configuracao.coordenacao.assinatura.url}}</span><br>
       <div style="border: 1px solid #000; border-style: dotted; padding: 8px; width:fit-content;">
         <img id="signature" class="signature" alt="Imagem da Assinatura"
-            src="{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}{{configuracao.coordenacao.assinatura}}"></div>
+            src="{{request.scheme}}://{{request.get_host}}{{configuracao.coordenacao.assinatura.url}}"></div>
     </a><br>
 
     <script>
@@ -73,9 +73,9 @@
           var nome_para_certificados = $(this).find(":selected").data("nome_para_certificados");
           var image = $(this).find(":selected").data("image");
           $("#nome_para_certificados").val(nome_para_certificados);
-          $("#signature").attr("src", "{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}"+image);
-          $("#texto_link_assinatura").html("{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}"+image);
-          $("#link_assinatura").attr("href", "{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}"+image);
+          $("#signature").attr("src", "{{request.scheme}}://{{request.get_host}}"+image);
+          $("#texto_link_assinatura").html("{{request.scheme}}://{{request.get_host}}"+image);
+          $("#link_assinatura").attr("href", "{{request.scheme}}://{{request.get_host}}"+image);
       }
       $(document).ready($("#coordenacao").change(atualiza_coordenacao));
     </script>

@@ -21,23 +21,16 @@ class TipoDocumento(models.Model):
     projeto = models.BooleanField(default=False, help_text="Relevante para projetos")
 
     arquivo = models.BooleanField(default=True, help_text="Se idealmente pode ser gravado como arquivo")
-    link = models.BooleanField(default=True, help_text="Se idealmente pode ser gravado como link")
-    
-    # TIPO_DE_USUARIO_CHOICES = (
-    #     (1, "estudante"),
-    #     (2, "professor"),
-    #     (3, "parceiro"),
-    #     (4, "administrador"),
-    # )
 
-    # gravar = models.template = models.CharField("Gravar", max_length=32, default="[4]",  # lista vazia
-    gravar = models.CharField("Gravar", max_length=32, default="[4]",  # lista de quem pode gravar
+    link = models.BooleanField(default=True, help_text="Se idealmente pode ser gravado como link")
+
+    gravar = models.CharField("Gravar", max_length=32, default="[4]",
                             help_text="Tipo de usuário com permissão de gravar tipo de arquivo")
     
     individual = models.BooleanField(default=False, help_text="Se é um documento individual")
     
     # Temporario, soh para fazer a migracao    
-    tmp_id = models.PositiveSmallIntegerField(default=0)
+    #tmp_id = models.PositiveSmallIntegerField(default=0)
 
     def __str__(self):
         return str(self.nome) 

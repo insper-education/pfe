@@ -23,7 +23,7 @@
 {% block content %}
 
     <span class="titulo">Planos de Orientação</span>
-    <a target="_blank" rel="noopener noreferrer" href="{{request.scheme}}://{{request.get_host}}{{template.get_url}}">
+    <a target="_blank" rel="noopener noreferrer" href="{{request.scheme}}://{{request.get_host}}{{template.documento.url}}">
       <i class="far fa-file-alt"></i> {{template.tipo_documento}} (opcional)
     </a><br>
     <br>
@@ -42,7 +42,7 @@
            data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
            {% if projeto.periodo == "Anteriores" %}
             {% with documento=projeto.documento_set.all|tipo_documento:"Plano de Orientação" %}
-             href="{{request.scheme}}://{{request.get_host}}{{MEDIA_URL}}{{documento.documento}}" target="_blank" rel="noopener noreferrer"
+             href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer"
             {% endwith %}
            {% else %}
             class="open-documento"

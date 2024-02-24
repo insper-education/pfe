@@ -464,7 +464,6 @@ def proposta_completa(request, primarykey):
         "configuracao": configuracao,
         "proposta": proposta,
         "opcoes": opcoes,
-        "MEDIA_URL": settings.MEDIA_URL,
         "projetos": projetos,
         "comite": membros_comite,
         "estudantes": estudantes,
@@ -505,7 +504,6 @@ def proposta_detalhes(request, primarykey):
 
     context = {
         "proposta": proposta,
-        "MEDIA_URL": settings.MEDIA_URL,
         "procura": procura,
         "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
 
@@ -610,7 +608,6 @@ def proposta_editar(request, slug):
         "ano_semestre": str(proposta.ano)+"."+str(proposta.semestre),
         "vencida": vencida,
         "configuracao": configuracao,
-        "MEDIA_URL": settings.MEDIA_URL,
         "organizacoes": Organizacao.objects.all(),
     }
     return render(request, "organizacoes/proposta_submissao.html", context)
