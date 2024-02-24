@@ -286,7 +286,7 @@ def estudantes_notas(request, professor=None):
                 
                 # Incluindo também se coorientação
                 projetos = Projeto.objects.all()
-                coorientacoes = Coorientador.objects.filter(usuario=user).values_list('projeto', flat=True)
+                coorientacoes = Coorientador.objects.filter(usuario=user).values_list("projeto", flat=True)
                 projetos = projetos.filter(orientador=user.professor) | projetos.filter(id__in=coorientacoes)
                 alunos_list = alunos_list.filter(alocacao__projeto__in=projetos)
 
@@ -347,21 +347,19 @@ def blackboard_notas(request, anosemestre):
         BF = None
         for nota in notas:
             if nota[0]=="BI":
-                BI = f'{nota[1]:.4f}'.replace('.',',')
+                BI = f"{nota[1]:.4f}".replace('.',',')
             elif nota[0]=="BF":
-                BF = f'{nota[1]:.4f}'.replace('.',',')
+                BF = f"{nota[1]:.4f}".replace('.',',')
         linha += [BI, BF]
         dataset.append(linha)
     
 
     #response = HttpResponse(dataset.xlsx, content_type='application/ms-excel')
     
-    response = HttpResponse(dataset.export('csv', quotechar='"', dialect='excel'), content_type='text/csv')
-    response.write(u'\ufeff'.encode('utf-8-sig'))
-    # response = HttpResponse(dataset.csv, content_type='text/csv')
-
-    #response['Content-Disposition'] = 'attachment; filename=notas_'+ano+'_'+semestre+'.xlsx'
-    response['Content-Disposition'] = 'attachment; filename=notas_'+str(ano)+'_'+str(semestre)+'.csv'
+    response = HttpResponse(dataset.export("csv", quotechar='"', dialect="excel"), content_type="text/csv")
+    response.write(u"\ufeff".encode("utf-8-sig"))
+    
+    response["Content-Disposition"] = "attachment; filename=notas_"+str(ano)+"_"+str(semestre)+".csv"
     
     return response
     
@@ -416,7 +414,7 @@ def estudantes_objetivos(request):
         edicoes, _, _ = get_edicoes(Aluno)
         context = {"edicoes": edicoes,}
 
-    return render(request, 'users/estudantes_objetivos.html', context=context)
+    return render(request, "users/estudantes_objetivos.html", context=context)
 
 
 @login_required
@@ -518,7 +516,7 @@ def edita_notas(request, primarykey):
     else:
         reprovacao = None
 
-    if request.method == 'POST':
+    if request.method == "POST":
 
         if request.user and request.user.tipo_de_usuario != 4:  # não é admin
             mensagem = "Você não tem autorização de modificar notas!"
@@ -526,7 +524,7 @@ def edita_notas(request, primarykey):
                 "area_principal": True,
                 "mensagem": mensagem,
             }
-            return render(request, 'generic.html', context=context)
+            return render(request, "generic.html", context=context)
 
         for composicao in composicoes:
             if composicao.exame:
@@ -616,7 +614,7 @@ def edita_notas(request, primarykey):
             "area_principal": True,
             "mensagem": mensagem,
         }
-        return render(request, 'generic.html', context=context)
+        return render(request, "generic.html", context=context)
 
     context = {
         "alocacao": alocacao,
@@ -626,7 +624,7 @@ def edita_notas(request, primarykey):
         "reprovacao": reprovacao,
     }
 
-    return render(request, 'users/edita_nota.html', context=context)
+    return render(request, "users/edita_nota.html", context=context)
 
 
 @login_required
@@ -641,13 +639,13 @@ def estudante_detail(request, primarykey):
 
     context = calcula_objetivos(alocacoes)
 
-    context['aluno'] = aluno
-    context['alocacoes'] = alocacoes
-    context['certificados'] = certificados
-    context['TIPO_DE_CERTIFICADO'] = Certificado.TIPO_DE_CERTIFICADO
-    context['areast'] = areas
+    context["aluno"] = aluno
+    context["alocacoes"] = alocacoes
+    context["certificados"] = certificados
+    context["TIPO_DE_CERTIFICADO"] = Certificado.TIPO_DE_CERTIFICADO
+    context["areast"] = areas
 
-    return render(request, 'users/estudante_detail.html', context=context)
+    return render(request, "users/estudante_detail.html", context=context)
 
 
 @login_required
@@ -681,7 +679,7 @@ def professor_detail(request, primarykey):
         "aulas": aulas,
     }
 
-    return render(request, 'users/professor_detail.html', context=context)
+    return render(request, "users/professor_detail.html", context=context)
 
 
 @login_required
@@ -710,7 +708,7 @@ def parceiro_detail(request, primarykey):
         "bancas": bancas,
         "aulas": aulas,
     }
-    return render(request, 'users/parceiro_detail.html', context=context)
+    return render(request, "users/parceiro_detail.html", context=context)
 
 
 @login_required
