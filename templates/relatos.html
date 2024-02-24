@@ -17,10 +17,10 @@
           <span class="opt_full">{{ evento.endDate|date:"DATE_FORMAT" }}</span>
           <span class="opt_short">{{ evento.endDate|date:"d/m/Y" }}</span>
         </a></td>
-          <td>
-          {% for alocacao in alocacoes %}<small
-          ><span style="width:20em;" id="s{{alocacao.aluno.id}}_e{{evento.id}}" data-toggle="tooltip" data-html="true" animation="true" title="{{alocacao.aluno}}"
-               >{% if alocacao.id in relatos %}&#9989;{% else %}&#10060;{% endif %}</span></small
+        <td>
+          {% for alocacao in alocacoes %}<a
+          href="{% url 'relato_avaliar' projeto.id evento.id %}#{{alocacao.id}}"><small><span style="width:20em;" id="s{{alocacao.aluno.id}}_e{{evento.id}}" data-toggle="tooltip" data-html="true" animation="true" title="{{alocacao.aluno}}"
+               >{% if alocacao.id in relatos %}&#9989;{% else %}&#10060;{% endif %}</span></small></a
            >{% endfor %}
         </td>
         <td>
