@@ -180,8 +180,8 @@
       var table = null;
 
       function carrega_pagina() {
-        if($('#ProjetosTable th').length > 0) {   // Verifica se os THs foram registrados primeiro
-          table = $('#ProjetosTable').dataTable();
+        if($("#ProjetosTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
+          table = $("#ProjetosTable").dataTable();
           if(table) {
             table.fnSetColumnVis( 5, false );  // esconde Edição
           }

@@ -11,14 +11,11 @@
   {% load l10n %}
 
   <style>
-    td {
-      padding: 2px 5px 2px 5px;
-    }
-    </style>
-
+    td {padding: 2px 5px 2px 5px;}
+    thead {background-color: #bee5eb;}
+  </style>
 
 {% endblock %}
-
 
 {% block content %}
 
@@ -32,19 +29,11 @@
 
       {% if bancas %}
       <table>
-        <thead>
-          <tr style="background: #F0F0F0;">
-            <th scope="col" style="text-align:center;">
-              <b>Orientador</b>
-            </th>
-            <th scope="col" style="text-align:center;">
-              <b>Projeto</b>
-            </th>
-            <th scope="col" style="text-align:center;">
-              <b>Organização</b>
-            </th>
-          </tr>
-        </thead>
+        <thead><tr>
+            <th scope="col" style="text-align:center;"><b>Orientador</b></th>
+            <th scope="col" style="text-align:center;"><b>Projeto</b></th>
+            <th scope="col" style="text-align:center;"><b>Organização</b></th>
+        </tr></thead>
         <tbody>
           {% for banca in bancas %}
             <tr>

@@ -12,6 +12,7 @@
   <script src="{% static 'js/w3.js' %}"></script>
 
   <style>
+    thead {background-color: #bee5eb;}
     th, td {
       padding-left: 4px;
       padding-right: 4px;
@@ -34,13 +35,11 @@
     <div class="table-responsive">
 
     <table id="ExamesPesosTable">
-      <thead>
-        <tr style="background: #F0F0F0;">
+      <thead><tr>
           <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer;" class="text-center">Semestre</th>
           <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer;" class="text-center">Exames</th>
           <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(3)')" style="cursor:pointer; display: none;" class="text-center">Peso</th>
-        </tr>
-      </thead>
+      </tr></thead>
       <tbody>
         {% for ano, semestre, composicoes in semestres %}
           <script> var peso = 0; </script>

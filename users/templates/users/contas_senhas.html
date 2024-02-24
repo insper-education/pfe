@@ -16,6 +16,7 @@
 
   <style>
     td {padding: 1px 4px 1px 4px;}
+    thead {background-color: #bee5eb;}
   </style>
 
 {% endblock %}
@@ -36,8 +37,7 @@
     <form method="post" id="enviacontassenhas" enctype="multipart/form-data">
       {% csrf_token %}
 
-      <table id="EstudantesTable"><thead>
-        <tr style="background: #F0F0F0;">
+      <table id="EstudantesTable"><thead><tr>
             <th class="text-center">&nbsp;<input type="checkbox" id="todos" checked>&nbsp;</th>
             <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Estudante</th>
             <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">e-mail</th>

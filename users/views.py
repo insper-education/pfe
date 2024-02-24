@@ -794,9 +794,7 @@ def contas_senhas(request, anosemestre=None):
         }
         return render(request, "generic.html", context=context)
 
-    estudantes = Aluno.objects.filter(trancado=False)\
-        .filter(anoPFE=ano, semestrePFE=semestre)\
-        .order_by(Lower("user__first_name"), Lower("user__last_name"))
+    estudantes = Aluno.objects.filter(anoPFE=ano, semestrePFE=semestre, trancado=False)
 
     context = {
         "estudantes": estudantes,
