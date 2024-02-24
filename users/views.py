@@ -20,6 +20,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.utils import html
 from django.views import generic
+from django.template import Context, Template
 
 from projetos.models import Certificado, Configuracao, Projeto, Conexao, Encontro
 from projetos.models import Banca, Area, Coorientador, Avaliacao2, Observacao, Reprovacao
@@ -29,6 +30,7 @@ from projetos.messages import email
 from projetos.support import calcula_objetivos
 
 from administracao.support import get_limite_propostas
+from administracao.models import Carta
 
 from academica.models import Composicao
 
@@ -712,22 +714,51 @@ def parceiro_detail(request, primarykey):
 
 
 @login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def contas_senhas(request, edicao=None):
+    """permite selecionar os estudantes para enviar conta e senha."""
+    if request.user.tipo_de_usuario != 4:  # não é admin
+        return HttpResponse("Usuário sem privilégios necessários.", status=403)
+
+    if request.is_ajax():
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
+            estudantes = Aluno.objects.all()
+            if edicao != "todas":
+                ano, semestre = edicao.split('.')
+                estudantes = estudantes.filter(anoPFE=ano, semestrePFE=semestre, trancado=False)
+            context = {"estudantes": estudantes}
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+        
+    else:
+        context = {
+            "titulo": "Enviar Contas e Senhas para Estudantes",
+            "edicoes": get_edicoes(Aluno)[0],
+        }
+        if edicao:
+            context["selecionada"] = edicao
+
+    return render(request, "users/contas_senhas.html", context=context)
+
+
+
+@login_required
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
-def contas_senhas(request, anosemestre=None):
+def envia_contas_senhas(request):
     """Envia conta e senha para todos os estudantes que estão no semestre."""
     if request.user.tipo_de_usuario != 4:  # não é admin
         return HttpResponse("Usuário sem privilégios necessários.", status=403)
 
     configuracao = get_object_or_404(Configuracao)
 
-    edicoes, ano, semestre = get_edicoes(Aluno)
-    if anosemestre:
-        ano, semestre = map(int, anosemestre.split('.'))
-
     if request.method == "POST":
 
         estudantes = request.POST.getlist("estudante", None)
+
+        carta = get_object_or_404(Carta, template="Envio de Conta para Estudantes")
+        template_carta = Template(carta.texto)
 
         mensagem = "Enviado para:<br>\n<br>\n"
         for estudante_id in estudantes:
@@ -746,60 +777,30 @@ def contas_senhas(request, anosemestre=None):
 
             coordenacao = configuracao.coordenacao
 
-            # Preparando mensagem para enviar para usuário.
-            message_email = estudante.user.get_full_name() + ",\n\n\n"
-            message_email += "Você está recebendo sua conta e senha para acessar o sistema do "
-            message_email += "Projeto Final de Engenharia (PFE)."
-            message_email += "\n\n"
-            message_email += "O endereço do servidor é: "
-            message_email += "<a href='http://pfe.insper.edu.br/'>http://pfe.insper.edu.br/</a>"
-            message_email += "\n\n"
-            message_email += "Preencha os formulários de suas áreas de interesse "
-            message_email += "e de informações adicionais sobre você.\n"
-            message_email += "Faça sua seleção de propostas de projetos "
-            message_email += "conforme sua ordem de interesse.\n"
-            message_email += "\n"
-
             limite_propostas = get_limite_propostas(configuracao)
-            if limite_propostas is not None:
-                message_email += "O prazo para a escolha de projetos é: "
-                message_email += limite_propostas.strftime("%d/%m/%Y") + "\n"
-                message_email += "Você pode alterar quantas vezes desejar suas escolhas "
-                message_email += "até a data limite.\n"
-                message_email += "\n\n"
 
-            message_email += "Sua conta é: <b>" + estudante.user.username + "</b>\n"
-            message_email += "Sua senha é: <b>" + senha + "</b>\n"
-            message_email += "\n\n"
-            message_email += "Qualquer dúvida, envie e-mail para: "
-            message_email += coordenacao.user.get_full_name() + " <a href='mailto:" + coordenacao.user.email + "'>&lt;" + coordenacao.user.email + "&gt;</a>"
-            message_email += "\n\n"
-            message_email += "Nos próximos dias entraremos em contato "
-            message_email += "com datas de reuniões para maiores esclarecimentos dos projetos."
-            message_email += "\n\n"
-            message_email += "&nbsp;&nbsp;&nbsp;&nbsp;atenciosamente, coordenação do PFE\n"
-            message_email = message_email.replace("\n", "<br>\n")
+            context_carta = {
+                "estudante": estudante,
+                "limite_propostas": limite_propostas.strftime("%d/%m/%Y") if limite_propostas else None,
+                "senha": senha,
+                "coordenacao": coordenacao,
+            }
+            
+            message_email = template_carta.render(Context(context_carta))
+            message_email = html.urlize(message_email) # Faz links de e-mail, outros sites funcionarem
 
             # Enviando e-mail com mensagem para usuário.
             subject = "Conta PFE : " + estudante.user.get_full_name()
-            recipient_list = [estudante.user.email, "pfeinsper@gmail.com", ]
+            recipient_list = [estudante.user.email, ]
             check = email(subject, recipient_list, message_email)
             if check != 1:
                 mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
 
-        mensagem = html.urlize(mensagem)
         context = {
             "area_principal": True,
-            "mensagem": mensagem,
+            "mensagem": html.urlize(mensagem),
         }
         return render(request, "generic.html", context=context)
 
-    estudantes = Aluno.objects.filter(anoPFE=ano, semestrePFE=semestre, trancado=False)
+    return HttpResponse("Algum erro não identificado.", status=401)
 
-    context = {
-        "estudantes": estudantes,
-        "edicao": str(ano)+'.'+str(semestre),
-        "edicoes": edicoes,
-    }
-
-    return render(request, "users/contas_senhas.html", context=context)

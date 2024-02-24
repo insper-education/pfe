@@ -44,9 +44,14 @@ urlpatterns = [
          views.contas_senhas,
          name="contas_senhas"),
 
-    path("contas_senhas/<str:anosemestre>",
+    path("contas_senhas/<str:edicao>",
          views.contas_senhas,
          name="contas_senhas"),
+
+    path("envia_contas_senhas/",
+         views.envia_contas_senhas,
+         name="envia_contas_senhas"),
+
 
     path("edita_notas/<int:primarykey>",
          views.edita_notas,

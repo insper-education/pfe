@@ -12,7 +12,7 @@ from django.db.models.functions import Lower
 class Carta(models.Model):
     """Dados das organizações que propõe projetos para o PFE."""
 
-    template = models.CharField("Nome do Template", max_length=32,
+    template = models.CharField("Nome do Template", max_length=64, unique=True,
                             help_text="Nome do Template")
 
     texto = models.TextField("Texto", max_length=5000, null=True, blank=True,
