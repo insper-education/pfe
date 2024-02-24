@@ -92,7 +92,7 @@
           Apagar Aviso
         </button>
 
-        <script type="text/javascript">
+        <script>
           $('#apagar').click(function() {
             if(confirm('Are you sure?')){
               window.location = "{% url 'deleta_aviso' aviso.id %}";

@@ -89,7 +89,7 @@
                       <th scope="row" class="align-middle" style="text-align:center; width: 1%;">
                         <select class="opcoes" id="selection{{proposta.pk}}" name="selection{{proposta.pk}}" 
                         {% if vencido %}disabled{% endif %}></select>
-                        <script type="text/javascript">
+                        <script>
                           var select = document.getElementById("selection{{proposta.pk}}");
                           select.options[select.options.length] = new Option("--", 0);
                           for(var index=1; index<={{propostas|length}}; index++){

@@ -10,12 +10,8 @@
   {% load get_field %}
 
   <style>
-    textarea {
-      max-width:100%;
-    }
-    input[type="text"] {
-      max-width:100%;
-    }
+    textarea {max-width:100%;}
+    input[type="text"] {max-width:100%;}
     label {
       margin-top: 8px;
       margin-bottom: 2px;
@@ -26,7 +22,7 @@
   {% comment %} <script src="{% static 'js/jquery.maskedinput-1.1.4.pack.js' %}"></script> {% endcomment %}
   <script src="{% static 'js/jquery.maskedinput.min.js' %}"></script>
 
-  <script type="text/javascript">
+  <script>
     $(document).ready(function(){	
       $("#cnpj").mask("99.999.999/9999-99");
     });

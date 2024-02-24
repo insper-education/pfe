@@ -9,12 +9,8 @@
   {% load static %}
   {% load get_field %}
   <style>
-    textarea {
-      max-width:100%;
-    }
-    th, td {
-      padding: 1px 5px 1px 5px;
-    }
+    textarea {max-width:100%;}
+    th, td {padding: 1px 5px 1px 5px;}
   </style>
 {% endblock %}
 
@@ -57,24 +53,24 @@
   <script>
 
     function exclui_disciplina(aqui) {
-      disciplina = aqui.data('disciplina');
+      disciplina = aqui.data("disciplina");
 
       if (window.confirm("Deseja realmente remover a disciplina?")) {
         $.ajax({
             type: "POST",
-            url: '{% url "excluir_disciplina" %}',
+            url: "{% url 'excluir_disciplina' %}",
             data: {
                 "disciplina_id": disciplina,
                 "csrfmiddlewaretoken": "{{ csrf_token }}",
             },
             success: function(response){
-              $('#disciplina'+disciplina).remove();
+              $("#disciplina"+disciplina).remove();
             },
             error: function (request, status, error) {
               {% if user.tipo_de_usuario == 4 %} 
                 alert(request.responseText);
                 jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-                console.log('error'+request.responseText);
+                console.log("error"+request.responseText);
               {% else %}
                 jQuery("body").html("Erro no servidor do PFE. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
               {% endif %}
