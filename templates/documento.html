@@ -7,11 +7,45 @@
 {% if documento %}
   {% if nivel == 2 %}
     <ul>
-      <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}"><li style="margin-left: -2em;list-style-type: '&#x21B3;';"> {{documento.tipo_documento}}</li></a>
+      {% if documento.documento and documento.link %}
+        <li style="margin-left: -2em; list-style-type: '&#x21B3;';">
+          {{documento.tipo_documento}}
+          <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+          <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
+          {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
+        </li>
+      {% else %}
+        {% if documento.documento %}
+          <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer"><li style="margin-left: -2em;list-style-type: '&#x21B3;';">{{documento.tipo_documento}}</li></a>
+          {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
+        {% endif %}
+        {% if documento.link %}
+          <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer"><li style="margin-left: -2em;list-style-type: '&#x21B3;';">{{documento.tipo_documento}}</li></a>
+          {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
+        {% endif %}
+      {% endif %}
     </ul>
   {% else %}
-    <a {% if documento.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{documento.data}}"{% endif %}
-       target="_blank" rel="noopener noreferrer" 
-       href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}"><li>{{documento.tipo_documento}}</li></a>
+    {% if documento.documento and documento.link %}
+      <li>
+      {{documento.tipo_documento}}
+      <a {% if documento.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{documento.data}}"{% endif %}
+        href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+      <a {% if documento.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{documento.data}}"{% endif %}
+        href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
+      {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
+      </li>
+    {% else %}
+      {% if documento.documento %}
+        <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer"><li>{{documento.tipo_documento}}</li></a>
+        {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
+      {% endif %}
+      {% if documento.link %}
+        <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer"><li>{{documento.tipo_documento}}</li></a>
+        {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
+      {% endif %}
+    {% endif %}
   {% endif %}
 {% endif %}
+
+
