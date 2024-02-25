@@ -7,6 +7,23 @@
 {% load static %}
 {% load get_field %}
 
+<style>
+  .carregando {
+    display: inline-block;
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #7498CD;
+    border-radius: 100%;
+    width: 38px;
+    height: 38px;
+    animation: spin 2s linear infinite;
+  }
+
+  @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+  }
+</style>
+
 <form id="meuForm" method="post" enctype="multipart/form-data">
 
   {% csrf_token %}
@@ -185,7 +202,8 @@
 
   </div>
 
-  <div class="modal-footer">
+  <div class="modal-footer">    
+    <div id="carregando_arquivo" style="float: left; display: none;">Carregando arquivo... <div class="carregando"></div></div>
     <button type="button" class="btn btn-secondary mb-1" data-dismiss="modal">Fechar</button>
     <button id="atualiza" type="submit" class="btn btn-primary mb-1">Enviar</button>
   </div>
@@ -225,9 +243,9 @@
   
   $("form#meuForm").submit(function(e){
       e.preventDefault();
-
-      $("#popup").modal("hide");
       
+      $("#carregando_arquivo").show();
+
       $.ajaxSetup({
         headers: { "X-CSRFToken": "{{csrf_token}}" }
       });
@@ -257,9 +275,13 @@
         contentType: false,
         success: function(response){
           //console.log("sucesso");
+          $("#carregando_arquivo").hide();
+          $("#popup").modal("hide");
           location.reload();
         },
         error: function (request, status, error) {
+          $("#carregando_arquivo").hide();
+          $("#popup").modal("hide");
           {% if user.tipo_de_usuario == 4 %} 
             alert(request.responseText);
             jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
