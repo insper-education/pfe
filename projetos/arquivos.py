@@ -134,6 +134,8 @@ def get_response(file, path, request):
         return stream_video(request, file.name, "video/mpeg")
     elif path[-3:].lower() == "ogv":
         return stream_video(request, file.name, "video/ogg")
+    elif path[-3:].lower() == "mov":
+        return stream_video(request, file.name, "video/mp4")  # Não funcionando: "video/quicktime"
     elif path[-3:].lower() == "mkv":
         return HttpResponse(file.read(), content_type="video/webm")
     elif path[-3:].lower() == "zip" or path[-3:].lower() == "rar" or path[-4:].lower() == "7zip":
