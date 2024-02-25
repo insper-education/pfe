@@ -4,6 +4,15 @@
     Data: 17 de Novembro de 2023
 {% endcomment %}
 
+<style>
+  a {
+    display: inline;
+  }
+  sup {
+    display: inline;
+  }
+</style>
+
 {% if documento %}
   {% if nivel == 2 %}
     <ul>
@@ -16,12 +25,16 @@
         </li>
       {% else %}
         {% if documento.documento %}
-          <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer"><li style="margin-left: -2em;list-style-type: '&#x21B3;';">{{documento.tipo_documento}}</li></a>
-          {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
+          <li style="margin-left: -2em;list-style-type: '&#x21B3;';">
+            <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_documento}}</a>
+            {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
+          </li>
         {% endif %}
         {% if documento.link %}
-          <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer"><li style="margin-left: -2em;list-style-type: '&#x21B3;';">{{documento.tipo_documento}}</li></a>
-          {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
+          <li style="margin-left: -2em;list-style-type: '&#x21B3;';">
+            <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_documento}}</a>
+            {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
+          </li>
         {% endif %}
       {% endif %}
     </ul>
@@ -37,12 +50,16 @@
       </li>
     {% else %}
       {% if documento.documento %}
-        <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer"><li>{{documento.tipo_documento}}</li></a>
-        {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
+        <li>
+          <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_documento}}</a>
+          {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
+        </li>
       {% endif %}
       {% if documento.link %}
-        <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer"><li>{{documento.tipo_documento}}</li></a>
-        {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
+        <li>
+          <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_documento}}</a>
+          {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
+        </li>
       {% endif %}
     {% endif %}
   {% endif %}

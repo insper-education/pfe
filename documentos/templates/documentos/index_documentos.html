@@ -31,7 +31,7 @@
           {% if documento.0 == "D" %}
             {% include "documento.html" with documento=documentos|tipo_documento:documento.1 nivel=documento.2 %}
           {% elif documento.0 == "L" %}
-            <a href="{% url documento.2 %}"><li>{{documento.1}}</li></a>
+            <li><a href="{% url documento.2 %}">{{documento.1}}</a></li>
           {% endif %}
         {% endfor %}
       </ul>
