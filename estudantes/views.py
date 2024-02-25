@@ -563,13 +563,17 @@ def submissao_documento(request):
         alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
         if alocacao:
             projeto = alocacao.projeto
+        else:
+            projeto = None
 
-    if projeto:
-        composicoes = filtra_composicoes(Composicao.objects.filter(entregavel=True), projeto.ano, projeto.semestre)
-        entregas = filtra_entregas(composicoes, projeto, request.user)
+    if not projeto:
+        return HttpResponse("Você não está alocado em um projeto esse semestre.", status=401)
 
-        context["projeto"] = projeto
-        context["entregas"] = entregas
+    composicoes = filtra_composicoes(Composicao.objects.filter(entregavel=True), projeto.ano, projeto.semestre)
+    entregas = filtra_entregas(composicoes, projeto, request.user)
+
+    context["projeto"] = projeto
+    context["entregas"] = entregas
 
     return render(request, "estudantes/submissao_documento.html", context)
 

@@ -596,7 +596,7 @@ def edita_notas(request, primarykey):
         mensagem += "&nbsp;&nbsp;Peso Final = "
         mensagem += str(round(alocacao.get_media["pesos"]*100, 2)) + "% <br>\n"
 
-        mensagem += "&nbsp;&nbsp;Média Final= "
+        mensagem += "&nbsp;&nbsp;Média Final = "
         mensagem += str(round(alocacao.get_media["media"], 2)) + "<br>\n"
         mensagem += "<br>\n"
 
@@ -605,8 +605,8 @@ def edita_notas(request, primarykey):
             mensagem += " [" + str(avaliacao.avaliador) + "]"
             if(avaliacao.objetivo):
                 mensagem += "  obj: " + str(avaliacao.objetivo.titulo) + ", "
-            mensagem += " peso: " + str(avaliacao.peso) + ", "
-            mensagem += " nota: " +str(avaliacao.nota)
+            mensagem += " peso: " + str(round(avaliacao.peso, 2)) + ", "
+            mensagem += " nota: " +str(round(avaliacao.nota, 2))
             mensagem += "<br>\n"
 
         mensagem = html.urlize(mensagem)
