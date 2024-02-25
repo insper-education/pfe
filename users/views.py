@@ -632,18 +632,15 @@ def edita_notas(request, primarykey):
 def estudante_detail(request, primarykey):
     """Mostra detalhes sobre o estudante."""
     aluno = Aluno.objects.filter(pk=primarykey).first()
-    areas = Area.objects.filter(ativa=True)
-
     alocacoes = Alocacao.objects.filter(aluno=aluno)
     certificados = Certificado.objects.filter(usuario=aluno.user)
 
     context = calcula_objetivos(alocacoes)
-
     context["aluno"] = aluno
     context["alocacoes"] = alocacoes
     context["certificados"] = certificados
     context["TIPO_DE_CERTIFICADO"] = Certificado.TIPO_DE_CERTIFICADO
-    context["areast"] = areas
+    context["areast"] = Area.objects.filter(ativa=True)
 
     return render(request, "users/estudante_detail.html", context=context)
 
@@ -652,32 +649,17 @@ def estudante_detail(request, primarykey):
 @permission_required("users.altera_professor", raise_exception=True)
 def professor_detail(request, primarykey):
     """Mostra detalhes sobre o professor."""
-    professor = get_object_or_404(Professor, pk=primarykey)
+    context = {"professor": get_object_or_404(Professor, pk=primarykey)}
 
-    projetos = Projeto.objects.filter(orientador=professor)\
-        .order_by("ano", "semestre", "titulo")
+    context["projetos"] = Projeto.objects.filter(orientador=context["professor"]).order_by("ano", "semestre")
 
-    coorientacoes = Coorientador.objects.filter(usuario=professor.user)\
-        .order_by("projeto__ano",
-                  "projeto__semestre",
-                  "projeto__titulo")
+    context["coorientacoes"] = Coorientador.objects.filter(usuario=context["professor"].user).order_by("projeto__ano", "projeto__semestre")
 
-    bancas = (Banca.objects.filter(membro1=professor.user) |
-              Banca.objects.filter(membro2=professor.user) |
-              Banca.objects.filter(membro3=professor.user))
-
-    bancas = bancas.order_by("startDate")
-
-    # (12, 'Aula PFE', 'lightgreen'),
-    aulas = Evento.objects.filter(tipo_de_evento=12, responsavel=professor.user) #.order_by("endDate", "startDate").last()
-
-    context = {
-        "professor": professor,
-        "projetos": projetos,
-        "coorientacoes": coorientacoes,
-        "bancas": bancas,
-        "aulas": aulas,
-    }
+    context["bancas"] = ((Banca.objects.filter(membro1=context["professor"].user) |
+                          Banca.objects.filter(membro2=context["professor"].user) |
+                          Banca.objects.filter(membro3=context["professor"].user))).order_by("startDate")
+    
+    context["aulas"] = Evento.objects.filter(tipo_de_evento=12, responsavel=context["professor"].user) # (12, 'Aula PFE', 'lightgreen'),
 
     return render(request, "users/professor_detail.html", context=context)
 
@@ -738,7 +720,6 @@ def contas_senhas(request, edicao=None):
             context["selecionada"] = edicao
 
     return render(request, "users/contas_senhas.html", context=context)
-
 
 
 @login_required

@@ -12,26 +12,22 @@
 
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
-  
+  <style>
+    ol {padding-left: 1.4em;}
+  </style>
 {% endblock %}
 
 {% block content %}
   
-  <span class="titulo">{{professor.user.get_full_name}}</span>
+  <span class="titulo">Professor{% if professor.user.genero == "F" %}a{% endif %} {{professor.user.get_full_name}}</span>
 
   {% if not professor.user.is_active %}
-    <p style="color: red;">
-        - NÃO ATIVO -
-    </p><br>
+    <p style="color: red;">- NÃO ATIVO -</p><br>
   {% endif %}
 
   <strong>Usuário:</strong> {{ professor.user.username }}<br>
   <strong>Regime de Dedicação:</strong>
-  {% if professor.dedicacao %}
-    {{professor.dedicacao}}
-  {% else %}
-    &lt;&lt;Não Definido&gt;&gt;
-  {% endif %}
+  {% if professor.dedicacao %}{{professor.dedicacao}}{% else %}&lt;&lt;Não Definido&gt;&gt;{% endif %}
   <br>
   {% if professor.lattes %}
     <strong>Lattes:</strong> <a href="{{ professor.lattes }}"> {{ professor.lattes }} </a><br>
@@ -71,10 +67,8 @@
     {% for projeto in projetos %}
       {% if projeto.alocacao_set.all.count > 0 %}
         <li><a href="{% url 'projeto_completo' projeto.id %}">
-        {{projeto.ano}}.{{projeto.semestre}} -
-        {{projeto.get_titulo}}
-        ({{projeto.organizacao.nome}})
-        { {{ projeto.alocacao_set.all.count }} estudante(s) }
+        {{projeto.ano}}.{{projeto.semestre}}: {{projeto.organizacao.nome}} - {{projeto.get_titulo}}
+        ({{projeto.alocacao_set.all.count}} estudante{% if projeto.alocacao_set.all.count > 1 %}s{% endif %})
         </a>
         {% if projeto.certificado_orientador %}
           <a href="{{ projeto.certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a>
@@ -90,7 +84,6 @@
     </ol>
   {% endif %}
 
-  
   {% if coorientacoes %}
     <hr>
     <h4>Projeto{% if coorientacoes|length > 1 %}s{% endif %} Coorientado{% if coorientacoes|length > 1 %}s{% endif %}</h4>
@@ -98,10 +91,8 @@
     {% for coorientacao in coorientacoes %}
       {% if coorientacao.projeto.alocacao_set.all.count > 0 %}
         <li><a href="{% url 'projeto_completo' coorientacao.projeto.id %}">
-        [{{coorientacao.projeto.ano}}.{{coorientacao.projeto.semestre}}] -
-        {{coorientacao.projeto.get_titulo}}
-        ({{coorientacao.projeto.organizacao.nome}})
-        { {{ coorientacao.projeto.alocacao_set.all.count }} estudante(s) }
+        {{coorientacao.projeto.ano}}.{{coorientacao.projeto.semestre}}: {{coorientacao.projeto.organizacao.nome}} - {{coorientacao.projeto.get_titulo}}
+        ({{coorientacao.projeto.alocacao_set.all.count}} estudante{% if coorientacao.projeto.alocacao_set.all.count > 1 %}s{% endif %})
         </a></li>
       {% endif %}
     {% empty %}
@@ -115,46 +106,30 @@
     <h4>Participação em Banca{% if bancas|length > 1 %}s{% endif %}</h4>
     <ol>
     {% for banca in bancas %}
-        <li>
-          <a href="{% url 'banca_ver' banca.id %}">
-          {% if banca.tipo_de_banca == 0 %}
-            Final,
-          {% elif banca.tipo_de_banca == 1 %}
-            Intermediária,
-          {% endif %}
-          {% if banca.startDate %}
-            {{banca.startDate.date}},
-          {% endif %}
-          </a>
-          {% if banca.projeto %}
-            <a href="{% url 'projeto_completo' banca.projeto.id %}">
-              {% if banca.projeto.titulo_final %}
-                {{banca.projeto.titulo_final}}</a>,
-              {% else %}
-                {{banca.projeto.titulo}}</a>,
-              {% endif %}
-          {% endif %}
+      <li>
+        <a href="{% url 'banca_ver' banca.id %}">
+          {% if banca.tipo_de_banca == 0 %}Final{% elif banca.tipo_de_banca == 1 %}Intermediária{% endif %}{% if banca.startDate %}, {{banca.startDate.date}}{% endif %}:
+        </a>
+        {% if banca.projeto %}
           {% if banca.projeto.organizacao %}
-            <a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">
-              {{ banca.projeto.organizacao.nome }}
-            </a>
+            <a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">{{ banca.projeto.organizacao.nome }} -</a>
           {% endif %}
-          {% with certificado=banca|certificado_banca:professor.user %}
-            {% if certificado %}
-              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a><br>
-            {% endif %}
-          {% endwith %}
-        </li>
-    {% empty %}
-      Bancas não encontrados
+          <a href="{% url 'projeto_completo' banca.projeto.id %}">{{ banca.projeto.get_titulo }}</a>
+        {% endif %}
+        {% with certificado=banca|certificado_banca:professor.user %}
+          {% if certificado %}
+            <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a><br>
+          {% endif %}
+        {% endwith %}
+      </li>
     {% endfor %}
     </ol>
   {% endif %}
 
   {% if user.tipo_de_usuario == 4 %}
-      <a href="{% url 'edita_usuario' professor.user.id %}">
+    <a href="{% url 'edita_usuario' professor.user.id %}">
       <button class="btn btn-primary mb-1" style="float: right;">Editar</button>
-      </a>
+    </a>
   {% endif %}
 
 {% endblock %}
