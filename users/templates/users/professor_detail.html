@@ -55,7 +55,11 @@
     <h4>Aula{% if aulas|length > 1 %}s{% endif %} Ministrada{% if aulas|length > 1 %}s{% endif %}</h4>
     <ol>
       {% for aula in aulas %}
-        <li> {{aula.startDate}} - {{aula.atividade}} </li>
+        <li>
+          {% if aula.documento.documento %}<a href="{{request.scheme}}://{{request.get_host}}{{aula.documento.documento.url}}" target="_blank" rel="noopener noreferrer">{% endif %}
+            {{aula.startDate}} - {{aula.atividade}}
+          {% if aula.documento.documento %}</a>{% endif %}
+        </li>
       {% endfor %}
     </ol>
   {% endif %}

@@ -16,9 +16,12 @@
 {% block content %}
 
   <span class="titulo">Atas do Comitê do PFE</span>
-  <a target="_blank" rel="noopener noreferrer" href="{{request.scheme}}://{{request.get_host}}{{template.documento.url}}">
-    <i class="far fa-file-alt"></i> {{template.tipo_documento}}
-  </a><br>
+  {% if template and template.documento %}
+    <a target="_blank" rel="noopener noreferrer" href="{{request.scheme}}://{{request.get_host}}{{template.documento.url}}">
+      <i class="far fa-file-alt"></i> {{template.tipo_documento}}
+    </a><br>
+  {% endif %}
+
   <br>
 
   <div class="table-responsive">

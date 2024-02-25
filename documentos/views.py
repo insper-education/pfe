@@ -400,16 +400,22 @@ def tabela_seguros(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def tabela_atas(request):
     """Exibe tabela com todos os seguros armazenados."""
-    tipo_documento = TipoDocumento.objects.get(nome="Ata do Comitê do PFE")
-    atas = Documento.objects.filter(tipo_documento=tipo_documento).order_by("-data")
+    try:
+        tipo_documento = TipoDocumento.objects.get(nome="Ata do Comitê do PFE")
+        atas = Documento.objects.filter(tipo_documento=tipo_documento).order_by("-data")
+    except TipoDocumento.DoesNotExist:
+        return HttpResponse("Tipo de Documento para Ata do Comitê não encontrado.", status=401)
 
-    tipo = TipoDocumento.objects.get(sigla="TAC")  # Template Ata Comitê
-    template = Documento.objects.filter(tipo_documento=tipo).last()
+    try:
+        tipo_documento = TipoDocumento.objects.get(sigla="TAC")  # Template Ata Comitê
+        template = Documento.objects.filter(tipo_documento=tipo_documento).last()
+    except TipoDocumento.DoesNotExist:
+        return HttpResponse("Tipo de Documento para Template de Ata do Comitê não encontrado.", status=401)
 
     context = {
         "atas": atas,
         "template": template,
-               }
+    }
     return render(request, "documentos/tabela_atas.html", context)
 
 

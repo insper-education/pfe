@@ -108,7 +108,7 @@
                   <span>{{relatorio.link}}</span>
                 </a><br>
               {% endif %}
-              {% if relatorio.documento%}
+              {% if relatorio.documento %}
                 <a href="{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}" target="_blank" rel="noopener noreferrer">
                   <span>{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}</span>
                 </a>

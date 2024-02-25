@@ -504,9 +504,15 @@
                             {% if aula.responsavel %}({{aula.responsavel.get_full_name}}){% endif %}
                           </span>
                           {% if aula.documento %}
-                            <a class="esconder" href="{{request.scheme}}://{{request.get_host}}{{aula.documento.documento.url}}">
-                              &nbsp;<i class="fa fa-file-pdf"></i>
-                            </a>
+                            {% if aula.documento.documento %}
+                              <a class="esconder" href="{{request.scheme}}://{{request.get_host}}{{aula.documento.documento.url}}">
+                                &nbsp;<i class="fa fa-file-pdf"></i>
+                              </a>
+                            {% elif aula.documento.link %}
+                              <a class="esconder" href="{{aula.documento.link}}">
+                                &nbsp;<i class="fa fa-file-pdf"></i>
+                              </a>
+                            {% endif %}
                           {% endif %}
                         </td>
 
