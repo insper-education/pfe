@@ -604,9 +604,12 @@ def edita_notas(request, primarykey):
             mensagem += str(avaliacao.exame)
             mensagem += " [" + str(avaliacao.avaliador) + "]"
             if(avaliacao.objetivo):
-                mensagem += "  obj: " + str(avaliacao.objetivo.titulo) + ", "
-            mensagem += " peso: " + str(round(avaliacao.peso, 2)) + ", "
-            mensagem += " nota: " +str(round(avaliacao.nota, 2))
+                mensagem += " - Objetivo de Aprendizagem: " + str(avaliacao.objetivo.titulo) + ", "
+            if (avaliacao.peso is not None) and (avaliacao.nota is not None):
+                mensagem += " peso: " + str(round(avaliacao.peso, 2)) + ", "
+                mensagem += " nota: " +str(round(avaliacao.nota, 2))
+            else:
+                mensagem += " NA (Não Avaliado)"
             mensagem += "<br>\n"
 
         mensagem = html.urlize(mensagem)
