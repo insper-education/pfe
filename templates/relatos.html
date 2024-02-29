@@ -12,8 +12,8 @@
   <table class="tabela_redu_estu table-striped"><tbody>
   {% for evento, relatos, avaliados in projeto.get_relatos %}
     <tr style="padding-left: 18px;">
-        <td><a href="{% url 'relato_avaliar' projeto.id evento.id %}">{{ forloop.counter }}&ordm;</a></td>
-        <td><a href="{% url 'relato_avaliar' projeto.id evento.id %}">
+        <td><a href="{% url 'relato_avaliar' projeto.id evento.id %}" {% if evento.em_prazo %}style="color: lightgray;"{% endif %}>{{ forloop.counter }}&ordm;</a></td>
+        <td><a href="{% url 'relato_avaliar' projeto.id evento.id %}" {% if evento.em_prazo %}style="color: lightgray;"{% endif %}>
           <span class="opt_full">{{ evento.endDate|date:"DATE_FORMAT" }}</span>
           <span class="opt_short">{{ evento.endDate|date:"d/m/Y" }}</span>
         </a></td>
