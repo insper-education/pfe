@@ -39,7 +39,7 @@ from documentos.models import TipoDocumento
 def index_documentos(request):
     """Lista os documentos armazenados no servidor."""
     configuracao = get_object_or_404(Configuracao)
-    areas = json.loads(configuracao.index_documentos)
+    areas = json.loads(configuracao.index_documentos) if configuracao.index_documentos else None
     context = {
         "documentos": Documento.objects.all(),
         "areas": areas,
