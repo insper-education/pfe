@@ -166,6 +166,21 @@
         </div>
         {% endif %}
 
+        {% if com_entregas %}
+          <div class="input-group input-group-sm mt-1">
+            <div class="input-group-prepend">
+              <label class="input-group-text" for="filterEntregas"><span class="to_hide">Tipo de Entrega</span></label>
+            </div>
+            <select class="custom-select w-auto" id="filterEntregas" name="entregas">
+              <option class="opt_edi" value="todas">Todas</option>
+              {% for entrega in com_entregas %}
+                <option class="opt_edi" value="{{entrega.id}}">{{entrega}}</option>
+              {% endfor %}
+            </select>
+            <div class="separador input-group-addon"></div>
+          </div>
+        {% endif %}
+
         {% comment %} <div class="input-group input-group-sm mt-1">
           <div id="spinner" class="ml-2 input-group-prepend" style="visibility: hidden">
             <div class="spinner-border text-secondary ml-auto" style="width: 1.8rem; height: 1.8rem;" role="status" aria-hidden="true">
