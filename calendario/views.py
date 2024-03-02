@@ -77,8 +77,11 @@ def calendario(request):
 
         context["pessoas"] = pessoas
 
-        tipo_documento = TipoDocumento.objects.get(sigla="MAS")  # Somente Material de Aula (pelo momento)
-        context["documentos"] = Documento.objects.filter(tipo_documento=tipo_documento) 
+        try:
+            tipo_documento = TipoDocumento.objects.get(sigla="MAS")  # Somente Material de Aula (pelo momento)
+            context["documentos"] = Documento.objects.filter(tipo_documento=tipo_documento)
+        except TipoDocumento.DoesNotExist:
+            context["documentos"] = None
     
         return render(request, "calendario/calendario.html", context)
 
