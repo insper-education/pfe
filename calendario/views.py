@@ -177,16 +177,12 @@ def export_calendar(request, event_id):
 
     return response
 
-import time
-
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
 def atualiza_evento(request):
     """Ajax para atualizar eventos."""
-    
-    time.sleep(5)
-    print("adiciona_documento")
+
     try:
         event_id = request.POST.get("event-index", 0)
         if event_id:
