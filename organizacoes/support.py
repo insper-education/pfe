@@ -121,10 +121,7 @@ def cria_documento(request):
     if lingua == "ingles":
         lingua_do_documento = 1
 
-    confidencial = True
-    if "confidencial" in request.POST:
-        if request.POST["confidencial"] == "false":
-            confidencial = True
+    confidencial = "confidencial" in request.POST and request.POST["confidencial"] == "true"
 
     if "documentos" in request.POST and len(request.POST["documentos"])>0:
         # Buscando documento na base de dados
@@ -133,8 +130,9 @@ def cria_documento(request):
         # Criando documento na base de dados
         documento = Documento.create()
 
-    if "organizacao" in request.POST:
+    if "organizacao" in request.POST and request.POST["organizacao"] != "":
         documento.organizacao = get_object_or_404(Organizacao, id=request.POST["organizacao"])
+
     documento.projeto = projeto
     
     documento.tipo_documento = tipo

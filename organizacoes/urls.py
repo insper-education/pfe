@@ -58,6 +58,10 @@ urlpatterns = [
         views.adiciona_documento_estudante,
         name="adiciona_documento_estudante"),
 
+    path("adiciona_documento_tipo/<str:tipo_nome>",
+        views.adiciona_documento_tipo,
+        name="adiciona_documento_tipo"),
+
     path("carrega_proposta/",
         views.carrega_proposta,
         name="carrega_proposta"),

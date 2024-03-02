@@ -51,19 +51,19 @@
           {% endif %}
         </div>
       {% elif organizacao %}
-      <div class="col-sm form-label">
-        <span for="organizacao">Organização:</span>
-        <input type="hidden" id="organizacao" name="organizacao" value="{{organizacao.id}}"/>
-        {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-          <a href="{% url 'organizacao_completo' organizacao.id %}">
-        {% endif %}
-          {{organizacao.nome}}
-        {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-          </a>
-        {% endif %}
-      </div>
+        <div class="col-sm form-label">
+          <span for="organizacao">Organização:</span>
+          <input type="hidden" id="organizacao" name="organizacao" value="{{organizacao.id}}"/>
+          {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+            <a href="{% url 'organizacao_completo' organizacao.id %}">
+          {% endif %}
+            {{organizacao.nome}}
+          {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+            </a>
+          {% endif %}
+        </div>
       {% else %}
-        <label for="organizacao" class="col-sm-1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.1em;">Organização</label>
+        <label for="organizacao" class="col-sm-1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.1em;">Organi.</label>
         <div class="col-sm-11">
           <select id="organizacao" name="organizacao" class="form-control">
             <option selected value> -- selecione uma organização -- </option>
@@ -96,8 +96,8 @@
         <select id="projeto" name="projeto" class="form-control">
           <option selected value> -- selecione um projeto -- </option>
           {% for proj in projetos %}
-            <option value="{{proj.id}}" {% if proj.id == projeto.id %}selected="selected"{% endif %}>
-              {{proj.get_titulo|slice:":90"}} ({{proj.ano}}.{{proj.semestre}})
+            <option class="proj org{{proj.organizacao.id}}" value="{{proj.id}}" data-org="{{proj.organizacao.id}}" {% if proj.id == projeto.id %}selected="selected"{% endif %}>
+              {{proj.organizacao}} - {{proj.get_titulo|slice:":90"}} ({{proj.ano}}.{{proj.semestre}})
               {% include "tipo_projeto.html" with projeto=proj %}
             </option>
           {% endfor %}
@@ -209,20 +209,36 @@
   </div>
 
   <script>
-    $('#tipo_documento').change(function() {
-      if($(this).val()==26) { //  (26, 'Relatório Publicado'),
-        $('#confidencial').prop("checked", false);
+
+    $("#organizacao").change(function() {
+      if($(this).val()) {
+        $(".proj").hide();
+        $(".proj.org"+$(this).val()).show();
       } else {
-        $('#confidencial').prop("checked", true);
+        $(".proj").show();
       }
     });
 
-    // Pelo menos um campo deve ser selecionado
-    $('#arquivo').change(function() {
-      if($(this).val()) {
-        $('#link').prop('required', false);
+    $('#projeto').change(function() {
+      $('#organizacao').val($('#projeto option:selected').attr('data-org') );
+
+    });
+
+    $('#tipo_documento').change(function() {
+      if($(this).val()==26 || $(this).val()==37) { //  (26, 'Relatório Publicado'), 37, 'Materia na Midia'
+        $("#confidencial").prop("checked", false);
       } else {
-        $('#link').prop('required', true);
+        $("#confidencial").prop("checked", true);
+      }
+    });
+    $("#tipo_documento").trigger("change");  // Para rodar quando estiver carregando
+
+    // Pelo menos um campo deve ser selecionado
+    $("#arquivo").change(function() {
+      if($(this).val()) {
+        $("#link").prop("required", false);
+      } else {
+        $("#link").prop("required", true);
       }
     });
     //$inputs.not(this).prop('required', !$(this).val().length);
@@ -267,6 +283,8 @@
           {% else %}
             url: "{% url adiciona %}",
           {% endif %}
+        {% elif adiciona == "adiciona_documento_tipo" %}  
+          url: "{% url adiciona tipo.sigla %}",
         {% elif adiciona == "adiciona_documento_estudante" %}
           url: "{% url adiciona tipo.sigla %}",
         {% endif %}

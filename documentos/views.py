@@ -297,8 +297,11 @@ def gerar_certificados(request):
 def materias_midia(request):
     """Exibe Matérias que houveram na mídia."""
     tipo_documento = TipoDocumento.objects.get(nome="Matéria na Mídia")
-    relatorios = Documento.objects.filter(tipo_documento=tipo_documento, confidencial=False)
-    context = {"relatorios": relatorios,}
+    documentos = Documento.objects.filter(tipo_documento=tipo_documento)
+    context = {
+        "documentos": documentos,
+        "tipo": tipo_documento,
+        }
     return render(request, "documentos/materias_midia.html", context)
 
 

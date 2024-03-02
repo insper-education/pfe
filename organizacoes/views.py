@@ -134,12 +134,24 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
            return HttpResponseBadRequest(erro)
         return JsonResponse({"atualizado": True,})
 
+    if organizacao:
+        projetos = Projeto.objects.filter(organizacao=organizacao)
+    else:
+        projetos = Projeto.objects.all()
+
+    if tipo_nome and (not organizacao_id) and (not projeto_id):
+        adiciona = "adiciona_documento_tipo"
+        print("adiciona_documento_tipo")
+    else:
+        adiciona = "adiciona_documento"
+        print("adiciona_documento")
+
     context = {
         "organizacao": organizacao,
         "tipos_documentos": TipoDocumento.objects.all(),
         "data": datetime.datetime.now(),
         "Documento": Documento,
-        "projetos": Projeto.objects.filter(organizacao=organizacao),
+        "projetos": projetos,
         "projeto": projeto,
         "tipo": tipo,
         "organizacoes": Organizacao.objects.all(),
@@ -147,10 +159,16 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
         "documento_id": documento_id,
         "configuracao": configuracao,
         "travado": False,
-        "adiciona": "adiciona_documento",
+        "adiciona": adiciona,
     }
     
     return render(request, "organizacoes/documento_view.html", context=context)
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def adiciona_documento_tipo(request, tipo_nome=None):
+    """Cria um documento com tipo."""
+    return adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=tipo_nome)
 
 
 @login_required
