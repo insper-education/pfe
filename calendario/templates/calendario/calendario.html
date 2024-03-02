@@ -701,6 +701,9 @@
         return;
       }
 
+      // Passou os testes, colocar ampulheta
+      $("#carregando_arquivo").show();
+
       {% comment %} if (!event.id) {id = 0;}
       else {id = event.id;} {% endcomment %}
 
@@ -759,6 +762,7 @@
             }
 
             calendar.setDataSource(dataSource);
+            $("#carregando_arquivo").hide();
             $("#event-modal").modal("hide");
 
             //location.reload();
@@ -773,6 +777,7 @@
           }
         },
         error: function (request, status, error) {
+          $("#carregando_arquivo").hide();
           {% if user.tipo_de_usuario == 4 %} 
             alert(request.responseText);
             jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));

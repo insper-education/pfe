@@ -111,7 +111,7 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
 @permission_required("users.altera_professor", raise_exception=True)
 def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=None, documento_id=None):
     """Cria um documento."""
-
+    
     configuracao = get_object_or_404(Configuracao)
     organizacao = Organizacao.objects.filter(id=organizacao_id).last()
     projeto = Projeto.objects.filter(id=projeto_id).last()
