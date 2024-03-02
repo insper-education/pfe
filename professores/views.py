@@ -2056,9 +2056,14 @@ def avaliar_entregas(request, todos=None):
         }
 
     else:
-        edicoes, _, _ = get_edicoes(Relato)
+        
+        exames = set()
+        for composicao in Composicao.objects.filter(entregavel=True):
+            exames.add(composicao.exame)
+            
         context = {
-                "edicoes": edicoes,
+                "edicoes": get_edicoes(Relato)[0],
+                "tipos_entregas": exames if todos else None,
             }
 
     return render(request, "professores/avaliar_entregas.html", context=context)

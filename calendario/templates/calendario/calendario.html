@@ -146,6 +146,7 @@
       border-left: solid black 1px;
       border-top: solid black 1px;
       padding-left: 4px;
+      padding-right: 4px;
       font-weight: normal;
     }
     
@@ -469,26 +470,11 @@
                 </tr></thead>
                 <tbody>
                   {% for aula in aulas|dictsort:"endDate" %}
-                    <tr class="lin_aulas ano{{aula.endDate.year}} semestre" data-mes="{{aula.endDate.month}}" data-dia="{{aula.endDate.day}}"
+                    <tr id="ev{{aula.id}}" class="lin_aulas ano{{aula.endDate.year}} semestre" data-mes="{{aula.endDate.month}}" data-dia="{{aula.endDate.day}}"
                         {% if aula.startDate|dif_dias_hoje == 0 %}style="background-color: #F0FFFF;"{% endif %}>
                         <th class="colu" scope="row">
                           {% if user.tipo_de_usuario == 4 %}
-                            <script>
-                              var evento_{{aula.id}} = {
-                                id: {% if aula.id %}{{aula.id}}{% else %}null{% endif %},
-                                name: "{{aula.get_title}}",
-                                location: "{{aula.location}}",
-                                observation: `{{aula.observacao}}`,
-                                atividade: `{{aula.atividade}}`,
-                                descricao: `{{aula.descricao}}`,
-                                responsavel: {% if aula.responsavel %}{{aula.responsavel.id}}{% else %}0{% endif %},
-                                material: {% if aula.documento %}{{aula.documento.id}}{% else %}0{% endif %},
-                                type: "{{aula.tipo_de_evento}}",
-                                startDate: new Date({{aula.startDate.year}},{{aula.startDate.month|add:-1}},{{aula.startDate.day}}),
-                                endDate: new Date({{aula.endDate.year}},{{aula.endDate.month|add:-1}},{{aula.endDate.day}}),
-                              };
-                            </script>
-                            <span style="cursor:pointer;" onclick="editEvent(evento_{{aula.id}})">
+                            <span style="cursor:pointer;" onclick="buscaEditEvent({{aula.id}})">
                           {% else %}
                             <span>
                           {% endif %}
@@ -601,11 +587,25 @@
       $('#event-modal input[name="event-start-date"]').datepicker('update', evento ? evento.startDate : '');
       $('#event-modal input[name="event-end-date"]').datepicker('update', evento ? evento.endDate : '');
 
+      $('#event-modal input[name="arquivo"]').val(''); // Limpa o campo de arquivo
+      
       {% if user.tipo_de_usuario != 4 %}
         $("#save-event").prop("disabled",true);
       {% endif %}
 
       $("#event-modal").modal();
+    }
+
+    function buscaEditEvent(id) {
+      if (id) {
+        var dataSource = calendar.getDataSource();
+        for (var i in dataSource) {
+          if (dataSource[i].id == id) {
+            editEvent(dataSource[i]);
+            break;
+          }
+        }
+      }
     }
 
     function deleteEvent(event) {
@@ -751,7 +751,8 @@
                   dataSource[i].material = event.material;
                   dataSource[i].startDate = event.startDate;
                   dataSource[i].endDate = event.endDate;
-                  dataSource[i].color = event.color; 
+                  dataSource[i].color = event.color;
+                  break;
                 }
               }
 
@@ -765,14 +766,24 @@
             $("#carregando_arquivo").hide();
             $("#event-modal").modal("hide");
 
-            //location.reload();
-            //$("#lista_operacao").replaceWith($("#lista_operacao",data));
-            //$("#lista_academico").replaceWith($("#lista_academico",data));
-            //$("#lista_aulas").replaceWith($("#lista_aulas",data));
+            if (event.type == 12 ) {
+              s = event.startDate;
+              $("#ev"+event.id+" > th > span").html(
+                s.getDate().toString().padStart(2, '0') + "/" + (s.getMonth()+1).toString().padStart(2, '0') + 
+                "<span class='t_f'>/" + s.getFullYear() + "</span>" + 
+                "<span class='t_s'>/" + s.getFullYear().toString().slice(-2) + "</span>"
+              );
+              
+              $("#ev"+event.id+" > td:first").html(
+                event.atividade + (event.responsavel ? " ("+pessoas[event.responsavel]+")" : "")
+              )
 
-            $("#lista_operacao").replaceWith("FAZER REFRESH DA PÁGINA");
-            $("#lista_academico").replaceWith("FAZER REFRESH DA PÁGINA");
-            $("#lista_aulas").replaceWith("FAZER REFRESH DA PÁGINA");
+              $("#ev"+event.id+" > td:last").html(event.location)
+
+            } else {
+              $("#lista_operacao").replaceWith("FAZER REFRESH DA PÁGINA<br>");
+              $("#lista_academico").replaceWith("FAZER REFRESH DA PÁGINA<br>");
+            }
 
           }
         },

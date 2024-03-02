@@ -118,7 +118,11 @@
     <p>&nbsp;</p>
 
     {% if editor %}
-      <button class="btn btn-primary mb-1" type="submit">Concluir Avaliação</button>
+      <button class="btn btn-primary mb-1"
+      {% if evento.em_prazo %}
+        onClick="return confirm('Tem certeza que deseja enviar a avaliação? Os estudantes ainda estão no prazo para entregar o relato.');" 
+      {% endif %}
+      type="submit">Concluir Avaliação</button>
     {% endif %}
 
   </form>

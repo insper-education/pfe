@@ -47,7 +47,7 @@
   <span class="titulo">Avaliar Entregas</span>
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
-  {% include "edicoes.html" %}
+  {% include "edicoes.html" with com_entregas=tipos_entregas %}
   <br>
 
   <div class="atualizar">
@@ -100,7 +100,7 @@
             <div style="margin:8px 0px 3px 0px; "><strong>Entregas:</strong></div>
             {% for item in entregas %}
             {% with dias_ate=item.evento.endDate|dif_dias_hoje dias=-1 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
-              <div class="pintern" {% if not forloop.first %}style="margin-top: 8px;"{% endif %}> {% comment %} {% if dias_ate > dias %}{% endif %} {% endcomment %}
+              <div class="pintern exame{{item.composicao.exame.id}}" {% if not forloop.first %}style="margin-top: 8px;"{% endif %}> {% comment %} {% if dias_ate > dias %}{% endif %} {% endcomment %}
                 <span class="nome_entrega" {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
                   {% if item.composicao.tipo_documento %}
                     <b>{{item.composicao.tipo_documento.nome}}</b> 
@@ -198,9 +198,21 @@
   </div> 
 
   <script>
+
     function carrega_pagina() {};
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
+      {% if tipos_entregas %}
+        $("#filterEntregas").change(function() {
+          var selectedValue = $(this).val();
+          if (selectedValue == "todas") {
+            $(".pintern").show();
+          } else {
+            $(".pintern").hide();
+            $(".exame"+selectedValue).show();
+          }
+        });
+      {% endif %}
     };
     window.onload = carrega_site
   </script>

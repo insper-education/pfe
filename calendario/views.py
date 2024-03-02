@@ -77,7 +77,8 @@ def calendario(request):
 
         context["pessoas"] = pessoas
 
-        context["documentos"] = Documento.objects.filter(tipo_documento=43)  # Somente Material de Aula (pelo momento)
+        tipo_documento = TipoDocumento.objects.get(sigla="MAS")  # Somente Material de Aula (pelo momento)
+        context["documentos"] = Documento.objects.filter(tipo_documento=tipo_documento) 
     
         return render(request, "calendario/calendario.html", context)
 
@@ -236,7 +237,7 @@ def atualiza_evento(request):
                 return "<h1>Erro: Nome do arquivo maior que " + str(max_length) + " caracteres.</h1>"
         
         documento = Documento.create()  # Criando documento na base de dados
-        documento.tipo_documento = get_object_or_404(TipoDocumento, id=43)  # Material de Aula
+        documento.tipo_documento = get_object_or_404(TipoDocumento, sigla="MAS")  # Material de Aula
         documento.data = datetime.datetime.now()
         #documento.link = link
         documento.lingua_do_documento = 0  # (0, 'Português')
