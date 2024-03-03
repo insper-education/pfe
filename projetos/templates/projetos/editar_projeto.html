@@ -45,9 +45,19 @@
     value="{% if projeto.titulo_final %}{{projeto.titulo_final}}{% else %}{{projeto.titulo}}{% endif %}">
     <br><br>
 
-    <label for="descricao">Descrição do Projeto</label><br>
+    <label for="descricao">Descrição da Proposta de Projeto (REMOVER)</label><br>
     <textarea id="descricao" name="descricao" rows="10" cols="88" maxlength="3000"
-    >{% if projeto.descricao %}{{projeto.descricao}}{% else %}{{projeto.proposta.descricao}}{% endif %}</textarea>
+    >{% if projeto.descricao %}{{projeto.descricao}}{% endif %}</textarea>
+    <br><br>
+
+    <label for="resumo">Resumo de Projeto</label><br>
+    <textarea id="resumo" name="resumo" rows="10" cols="88" maxlength="6000"
+    >{% if projeto.resumo %}{{projeto.resumo}}{% endif %}</textarea>
+    <br><br>
+
+    <label for="abstract">Abstract do Projeto</label><br>
+    <textarea id="abstract" name="abstract" rows="10" cols="88" maxlength="6000"
+    >{% if projeto.abstract %}{{projeto.abstract}}{% endif %}</textarea>
     <br><br>
 
     <div style="max-width: 560px;">

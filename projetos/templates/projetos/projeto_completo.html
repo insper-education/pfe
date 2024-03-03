@@ -76,28 +76,20 @@
 
   {% include "tipo_projeto.html" with com_tipo=True %}
 
-  <div class="descricao" style="margin-top: 8px;">
-    <strong>Descrição:</strong>
-    {% if projeto.descricao %}
+  {% if projeto.descricao %}
+    <div class="descricao" style="margin-top: 8px;">
+      <strong>Resumo do Projeto (escrito por organizacao (EM MANUTENÇAO)):</strong>
+      {% comment %} <strong>Resumo do Projeto (escrito por estudantes):</strong> {% endcomment %}
       {{ projeto.descricao|linebreaks }}
-    {% else %}
-      {{ projeto.proposta.descricao|linebreaks }}
-    {% endif %}
-  </div>
+      {% comment %} {{ projeto.resumo|linebreaks }} {% endcomment %}
+    </div>
+  {% endif %}
 
-  {% if projeto.proposta.expectativas %}
-    <div class="expectativas" style="margin-top: 8px;">
-      <strong>Expectativas de resultados/entregas :</strong> {{ projeto.proposta.expectativas|linebreaks }}
+  {% if projeto.abstract %}
+    <div class="descricao" style="margin-top: 8px;">
+      <strong>Resumo em Inglês do Projeto (escrito por estudantes):</strong>
+      {{ projeto.abstract|linebreaks }}
     </div>
-  {% endif %}
-  {% if projeto.proposta.recursos %}
-    <div class="recusos" style="margin-top: 8px;">
-      <strong>Recursos a serem disponibilizados aos estudantes :</strong> {{ projeto.proposta.recursos|linebreaks }}
-    </div>
-  {% endif %}
-  {% if projeto.proposta.anexo %}
-    <br><strong>Anexo :</strong>
-    <a class="text-success" href="http://{{request.get_host}}{{projeto.anexo.url}}">{{projeto.proposta.anexo}}</a>
   {% endif %}
 
   <hr>
@@ -142,6 +134,30 @@
       <p><strong>website:</strong>  <a class="tabulado" href="{{ projeto.organizacao.website }}"> {{ projeto.organizacao.website }} </a></p>
     </div>
   {% endif %}
+
+
+  {% if projeto.proposta.descricao %}
+    <div class="descricao" style="margin-top: 8px;">
+      <strong>Descrição da Proposta do Projeto (escrito por parceiro):</strong>
+        {{ projeto.proposta.descricao|linebreaks }}
+    </div>
+  {% endif %}
+
+  {% if projeto.proposta.expectativas %}
+    <div class="expectativas" style="margin-top: 8px;">
+      <strong>Expectativas de resultados/entregas (escrito por parceiro):</strong> {{ projeto.proposta.expectativas|linebreaks }}
+    </div>
+  {% endif %}
+  {% if projeto.proposta.recursos %}
+    <div class="recusos" style="margin-top: 8px;">
+      <strong>Recursos a serem disponibilizados aos estudantes (escrito por parceiro):</strong> {{ projeto.proposta.recursos|linebreaks }}
+    </div>
+  {% endif %}
+  {% if projeto.proposta.anexo %}
+    <br><strong>Anexo (fornecido por parceiro):</strong>
+    <a class="text-success" href="http://{{request.get_host}}{{projeto.anexo.url}}">{{projeto.proposta.anexo}}</a>
+  {% endif %}
+
 
   {% if projeto.organizacao.informacoes %}
     <div class="informacoes" style="margin-top: 8px;">

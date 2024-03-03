@@ -100,10 +100,16 @@
             {{projeto.titulo}}</a></div>
           {% endif %}
         
-        {% if projeto.descricao %}
-          <div class="descricao appres_projeto" style="margin-top: 6px;"><b>Descrição projeto:</b> {{projeto.descricao}}</div>
-        {% else %}
-          <div class="descricao appres_projeto" style="margin-top: 6px;"><b>Descrição proposta:</b> {{projeto.proposta.descricao}}</div>
+        {% if projeto.resumo %}
+          <div class="resumo appres_projeto" style="margin-top: 6px;"><b>Resumo:</b> {{projeto.descricao}}</div>
+        {% endif %}
+
+        {% if projeto.abstract %}
+          <div class="abstract appres_projeto" style="margin-top: 6px;"><b>Abstract:</b> {{projeto.abstract}}</div>
+        {% endif %}
+
+        {% if projeto.proposta.descricao %}
+          <div class="descricao appres_projeto" style="margin-top: 6px;"><b>Descrição da proposta de projeto:</b> {{projeto.descricao}}</div>
         {% endif %}
 
         {% if projeto.proposta.descricao_organizacao %}

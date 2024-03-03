@@ -126,7 +126,7 @@
             <input class="requiredField" type="text" size="80" maxlength="160" style="max-width: 100%;" id="titulo" name="titulo" value="{{proposta.titulo}}" required {% if edicao and liberadas_propostas %}disabled{% endif %}>
             <br><br>
 
-            <label class="topico" for="desc_projeto">Descrição do Projeto<br>
+            <label class="topico" for="desc_projeto">Descrição da Proposta de Projeto<br>
             <small class="obs">para discussão entre professores e que será visualizada pelos estudantes</small>
             </label><br>
             <textarea id="desc_projeto" class="requiredField" name="desc_projeto" rows="10" cols="120" maxlength="3000" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.descricao}}</textarea>

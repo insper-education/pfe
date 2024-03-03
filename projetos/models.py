@@ -116,10 +116,15 @@ class Projeto(models.Model):
     titulo_final = models.CharField("Título Final", max_length=160, null=True,
                                     blank=True,
                                     help_text="Título Final do projeto")
-
-    # MANTER COM UMA DESCRIÇÃO ATUALIZADA
+    
     descricao = models.TextField("Descrição", max_length=3000, null=True, blank=True,
-                                 help_text="Descricao do projeto")
+                                 help_text="Descricao da proposta do projeto, feito pela organização")
+
+    resumo = models.TextField("Resumo", max_length=6000, null=True, blank=True,
+                                 help_text="Resumo final para o projeto criado pelos estudantes")
+    
+    abstract = models.TextField("Abstract", max_length=6000, null=True, blank=True,
+                                 help_text="Resumo final em inglês para o projeto criado pelos estudantes")
 
     # CAMPO ANTIGO, MANTIDO SÓ POR HISTÓRICO
     areas = models.TextField("Áreas", max_length=1000,
@@ -359,7 +364,7 @@ class Proposta(models.Model):
                               help_text='Título Provisório do projeto')
 
     descricao = models.TextField("Descrição", max_length=3000,
-                                 help_text='Descricao do projeto')
+                                 help_text='Descricao da Proposta de Projeto')
 
     expectativas = models.TextField("Expectativas", max_length=3000,
                                     help_text='Expectativas em relação ao projeto')
