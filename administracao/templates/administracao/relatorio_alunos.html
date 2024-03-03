@@ -43,8 +43,7 @@
             {% if opcao.projeto.ano == opcao.aluno.anoPFE and opcao.projeto.semestre == opcao.aluno.semestrePFE %}
                 <a href="{% url 'projeto_completo' opcao.projeto.id %}">
                     <p style="margin-top: 0px; margin-bottom: 0px;"><b>{{opcao.prioridade}}</b> - 
-                        {% if opcao.projeto.titulo_final %}{{opcao.projeto.titulo_final}}{% else %}{{opcao.projeto.titulo}}{% endif %}
-                        ({{opcao.projeto.organizacao.nome}})
+                        {{opcao.projeto.organizacao.nome}}, {{opcao.projeto.get_titulo}} 
                     </p>
                 </a>
             {% endif %}            

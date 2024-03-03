@@ -22,7 +22,7 @@
   <form method="post" id="disciplinaform" enctype="multipart/form-data"> {% csrf_token %}
     
     <label for="nome">Nome da Disciplina:</label> <input type="text" size="48" style="max-width:100%;display:block"
-           maxlength="{% max_length Disciplina "nome" %}" id="nome" name="nome" required>
+           maxlength="{% max_length Disciplina 'nome' %}" id="nome" name="nome" required>
     <br>
     <input class="btn btn-primary mb-1" type="submit" value="Cadastrar Disciplina">
     

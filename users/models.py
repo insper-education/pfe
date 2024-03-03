@@ -738,14 +738,14 @@ class Alocacao(models.Model):
     class Meta:
         """Meta para Alocacao."""
 
-        verbose_name = 'Alocação'
-        verbose_name_plural = 'Alocações'
+        verbose_name = "Alocação"
+        verbose_name_plural = "Alocações"
         permissions = (("altera_professor", "Professor altera valores"), )
-        ordering = ['projeto__ano', 'projeto__semestre', ]
+        ordering = ["projeto__ano", "projeto__semestre", ]
 
     def __str__(self):
         """Retorno padrão textual do objeto."""
-        return self.aluno.user.username+" >>> "+self.projeto.titulo
+        return self.aluno.user.username+" >>> "+self.projeto.get_titulo()
 
     @classmethod
     def create(cls, estudante, projeto):

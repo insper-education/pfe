@@ -63,7 +63,7 @@
           {% if projeto.orientador.user == request.user or request.user.tipo_de_usuario == 4 %}
             <option value="{{projeto.id}}"
             style="font-size: 0.75em;{% if projeto.id in projetos_agendados %}color: lightgrey;{% endif %}"
-            data-titulo="{{projeto.titulo}}"
+            data-titulo="{{projeto.get_titulo}}"
             data-titulo_link="{% url 'projeto_completo' projeto.id %}"
             data-organizacao="{{projeto.organizacao}}"
             data-organizacao_link="{% url 'organizacao_completo' projeto.organizacao.id %}"
@@ -79,7 +79,7 @@
             "{% endif %}
             >
               {% comment %} {{projeto.ano}}.{{projeto.semestre}} {% endcomment %}
-              ({{projeto.organizacao}}) {{projeto.titulo}}
+              ({{projeto.organizacao}}) {{projeto.get_titulo}}
               {% include "tipo_projeto.html" %}
             </option>
           {% endif %}

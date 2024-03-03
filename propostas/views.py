@@ -815,8 +815,6 @@ def projeto_criar(request, proposta_id):
     proposta = get_object_or_404(Proposta, id=proposta_id)
 
     projeto = Projeto.create(proposta)
-    projeto.titulo = proposta.titulo
-    projeto.descricao = proposta.descricao
     projeto.organizacao = proposta.organizacao
     projeto.ano = proposta.ano
     projeto.semestre = proposta.semestre

@@ -92,16 +92,16 @@
 
         <div><b>Projeto:</b>
         <a class="imprimir dark-blue-bold" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_completo' projeto.id %}"> 
-          {% if projeto.titulo_final %}
+          {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
             {{projeto.titulo_final}}</a></div>
-            <small class="titulo_original" style="display: block;">Título original: 
-              <a class="imprimir dark-blue-bold" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_completo' projeto.id %}"> {{projeto.titulo}}</a></small>
+            <small class="titulo_original" style="display: block;">Título original da proposta: 
+            <a class="imprimir dark-blue-bold" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_completo' projeto.id %}"> {{projeto.proposta.titulo}}</a></small>
           {% else %}
-            {{projeto.titulo}}</a></div>
+            {{projeto.get_titulo}}</a></div>
           {% endif %}
         
         {% if projeto.resumo %}
-          <div class="resumo appres_projeto" style="margin-top: 6px;"><b>Resumo:</b> {{projeto.descricao}}</div>
+          <div class="resumo appres_projeto" style="margin-top: 6px;"><b>Resumo:</b> {{projeto.resumo}}</div>
         {% endif %}
 
         {% if projeto.abstract %}
@@ -109,7 +109,7 @@
         {% endif %}
 
         {% if projeto.proposta.descricao %}
-          <div class="descricao appres_projeto" style="margin-top: 6px;"><b>Descrição da proposta de projeto:</b> {{projeto.descricao}}</div>
+          <div class="descricao appres_projeto" style="margin-top: 6px;"><b>Descrição da proposta de projeto:</b> {{projeto.proposta.descricao}}</div>
         {% endif %}
 
         {% if projeto.proposta.descricao_organizacao %}

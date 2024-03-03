@@ -354,6 +354,8 @@ def projetos_fechados(request):
             (".logo", "Logo"),
             (".descricao", "Descrição"),
             (".titulo_original", "Título original"),
+            (".resumo", "Resumo"),
+            (".abstract", "Abstract"),
             (".apresentacao", "Apresentações"),
             (".orientador", "Orientador"),
             (".coorientador", "Coorientador"),
@@ -498,8 +500,8 @@ def projeto_avancado(request, primarykey):
         ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
 
         if projeto.titulo_final:
-            novo_projeto.titulo = projeto.titulo_final
-            novo_projeto.titulo_final = None
+            # novo_projeto.titulo = projeto.titulo_final
+            novo_projeto.titulo_final = projeto.titulo_final
 
         novo_projeto.avancado = projeto
         novo_projeto.ano = ano
@@ -1767,13 +1769,21 @@ def editar_projeto(request, primarykey):
 
         # Atualiza título
         titulo = request.POST.get("titulo", None)
-        if titulo and ( projeto.titulo_final or projeto.titulo != titulo):
+        if titulo and ( projeto.titulo_final or projeto.titulo_final != titulo):
             projeto.titulo_final = titulo
 
-        # Atualiza descrição
-        descricao = request.POST.get("descricao", None)
-        if descricao and ( projeto.descricao or projeto.proposta.descricao != descricao):
-            projeto.descricao = descricao
+        # Atualiza descrição (NÃO USAR MAIS DESCRIÇÃO EM PROJETO)
+        # descricao = request.POST.get("descricao", None)
+        # if descricao and ( projeto.descricao or projeto.proposta.descricao != descricao):
+        #     projeto.descricao = descricao
+            
+        resumo = request.POST.get("resumo", None)
+        if resumo and resumo != "" and projeto.resumo != resumo:
+            projeto.resumo = resumo
+
+        abstract = request.POST.get("abstract", None)
+        if abstract and abstract != "" and projeto.abstract != abstract:
+            projeto.abstract = abstract
 
         # Realoca orientador
         orientador_id = request.POST.get('orientador', None)

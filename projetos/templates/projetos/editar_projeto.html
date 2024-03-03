@@ -7,22 +7,16 @@
 
 {% block head %}
 
-
   {% load static %}
+  {% load get_field %}
+  {% load index %}
+
   <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
 
-  {% load index %}
-
   <style>
-    textarea, input, select {
-      max-width:100%;
-    }
-
-    table, tr, td {
-      border: 0px solid black;
-    }
-
+    textarea, input, select {max-width:100%;}
+    table, tr, td {border: 0px solid black;}
     label {
       margin-bottom: 2px;
       line-height: 1.0;
@@ -36,27 +30,27 @@
 
   <form method="post"> {% csrf_token %}  
 
-    <label for="titulo">Título Original:</label><br>
-    <input type="text" size="86" maxlength="160" id="titulo_original" name="titulo_original" value="{{projeto.titulo}}" disabled>
+    <label for="titulo">Título original da proposta:</label><br>
+    <input type="text" size="86" id="titulo_original" name="titulo_original" value="{{projeto.proposta.titulo}}" disabled>
     <br><br>
 
-    <label for="titulo">Título:</label><br>
-    <input type="text" size="86" maxlength="160" id="titulo" name="titulo"
-    value="{% if projeto.titulo_final %}{{projeto.titulo_final}}{% else %}{{projeto.titulo}}{% endif %}">
+    <label for="titulo">Título do Projeto:</label><br>
+    <input type="text" size="86" maxlength="{% max_length projeto 'titulo_final' %}" id="titulo" name="titulo"
+    value="{% if projeto.titulo_final %}{{projeto.titulo_final}}{% else %}{{projeto.titulo_final}}{% endif %}">
     <br><br>
 
     <label for="descricao">Descrição da Proposta de Projeto (REMOVER)</label><br>
-    <textarea id="descricao" name="descricao" rows="10" cols="88" maxlength="3000"
+    <textarea id="descricao" name="descricao" rows="10" cols="88" maxlength="{% max_length projeto 'descricao' %}"
     >{% if projeto.descricao %}{{projeto.descricao}}{% endif %}</textarea>
     <br><br>
 
     <label for="resumo">Resumo de Projeto</label><br>
-    <textarea id="resumo" name="resumo" rows="10" cols="88" maxlength="6000"
+    <textarea id="resumo" name="resumo" rows="10" cols="88" maxlength="{% max_length projeto 'resumo' %}"
     >{% if projeto.resumo %}{{projeto.resumo}}{% endif %}</textarea>
     <br><br>
 
     <label for="abstract">Abstract do Projeto</label><br>
-    <textarea id="abstract" name="abstract" rows="10" cols="88" maxlength="6000"
+    <textarea id="abstract" name="abstract" rows="10" cols="88" maxlength="{% max_length projeto 'abstract' %}"
     >{% if projeto.abstract %}{{projeto.abstract}}{% endif %}</textarea>
     <br><br>
 

@@ -775,11 +775,13 @@ def montar_grupos(request):
                     except Projeto.DoesNotExist:
                         projeto = Projeto.create(proposta)
 
-                    if not projeto.titulo:
-                        projeto.titulo = proposta.titulo
+                    # Usando o titulo da propopoesta como titulo do projeto, ou criando um titulo_final
+                    # if not projeto.titulo:
+                    #     projeto.titulo = proposta.titulo
 
-                    if not projeto.descricao:
-                        projeto.descricao = proposta.descricao
+                    # Estou tirando descrição do projeto
+                    # if not projeto.descricao:
+                    #     projeto.descricao = proposta.descricao
 
                     if not projeto.organizacao:
                         projeto.organizacao = proposta.organizacao

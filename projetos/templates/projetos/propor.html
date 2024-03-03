@@ -17,8 +17,7 @@
       {% for projeto,opcoes in mylist %} 
         {% if projeto.disponivel %}
           <a href="{% url 'projeto_completo' projeto.id %}" class="dark-blue-bold">
-            {% if projeto.titulo_final %}{{projeto.titulo_final}}{% else %}{{projeto.titulo}}{% endif %}
-            ({{ projeto.organizacao.nome }})
+            {{ projeto.organizacao.nome }} - {{projeto.get_titulo}}
             &nbsp;&nbsp;
             {% for curso in cursos %}{% if curso.curso_do_insper %}{% if curso in proposta.perfil1.all %}{{curso.sigla_curta}}{% else %}&nbsp;{% endif %}{% endif %}{% endfor %}<br>
             |

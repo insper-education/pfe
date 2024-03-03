@@ -48,11 +48,7 @@
               <td>
                 {% if banca.projeto %}
                 <a href="{% url 'projeto_detalhes' banca.projeto.id %}">
-                  {% if banca.projeto.titulo_final %}
-                    {{banca.projeto.titulo_final}}</a>
-                  {% else %}
-                    {{banca.projeto.titulo}}</a>
-                  {% endif %}
+                  {{banca.projeto.get_titulo}}</a>
                 {% endif %}
               </td>
 

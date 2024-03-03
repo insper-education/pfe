@@ -111,12 +111,15 @@ class Organizacao(models.Model):
 class Projeto(models.Model):
     """Dados dos projetos para o PFE."""
 
+    # REMOVER TITULO, USAR OU GET_TITULO OU TITULO_FINAL
     titulo = models.CharField("Título", max_length=160,
                               help_text='Título Provisório do projeto')
+    
     titulo_final = models.CharField("Título Final", max_length=160, null=True,
                                     blank=True,
                                     help_text="Título Final do projeto")
     
+    # REMOVER DESCRICA, USAR OU RESUMO OU ABSTRACT, OU DESCRICAO DA PROPOSTA
     descricao = models.TextField("Descrição", max_length=3000, null=True, blank=True,
                                  help_text="Descricao da proposta do projeto, feito pela organização")
 
@@ -155,7 +158,7 @@ class Projeto(models.Model):
                                         help_text="Caso o projeto conte com membros externos a instituição")
 
     class Meta:
-        ordering = [ "organizacao", "ano", "semestre"]
+        ordering = [ "proposta__organizacao", "ano", "semestre"]
         permissions = (("altera_empresa", "Empresa altera valores"),
                        ("altera_professor", "Professor altera valores"), )
 
@@ -179,9 +182,9 @@ class Projeto(models.Model):
         """Caso tenha titulo atualizado, retorna esse, senão retorna o original e único."""
         if self.titulo_final:
             return self.titulo_final
-        if not self.titulo:
+        if not self.proposta.titulo:
             return "PROBLEMA NA IDENTIFICAÇÃO DO TÍTULO DO PROJETO"
-        return self.titulo
+        return self.proposta.titulo
 
     def certificado_orientador(self):
         """Retorna link do certificado."""
@@ -192,8 +195,8 @@ class Projeto(models.Model):
         """Retorno padrão textual."""
         texto = ""
 
-        if self.organizacao and self.organizacao.sigla:
-            texto = self.organizacao.sigla
+        if self.proposta.organizacao and self.proposta.organizacao.sigla:
+            texto = self.proposta.organizacao.sigla
         else:
             texto = "SEM ORGANIZAÇÃO DEFINIDA"
 
@@ -756,29 +759,30 @@ class Banca(models.Model):
                             help_text="Slug para o endereço da banca")
 
     location = models.CharField(null=True, blank=True, max_length=50,
-                                help_text='sala em que vai ocorrer banca')
+                                help_text="sala em que vai ocorrer banca")
     startDate = models.DateTimeField(default=datetime.datetime.now, null=True, blank=True,
-                                     help_text='Inicio da Banca')
+                                     help_text="Inicio da Banca")
     endDate = models.DateTimeField(default=datetime.datetime.now, null=True, blank=True,
-                                   help_text='Fim da Banca')
+                                   help_text="Fim da Banca")
     color = models.CharField(max_length=20, null=True, blank=True,
-                             help_text='Cor a usada na apresentação da banca na interface gráfica')
-    membro1 = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
-                                related_name='membro1', help_text='membro da banca')
-    membro2 = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
-                                related_name='membro2', help_text='membro da banca')
-    membro3 = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
-                                related_name='membro3', help_text='membro da banca')
+                             help_text="Cor a usada na apresentação da banca na interface gráfica")
+    membro1 = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
+                                related_name="membro1", help_text="membro da banca")
+    membro2 = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
+                                related_name="membro2", help_text="membro da banca")
+    membro3 = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
+                                related_name="membro3", help_text="membro da banca")
     TIPO_DE_BANCA = ( # não mudar a ordem dos números
-        (0, 'Final'),
-        (1, 'Intermediária'),
-        (2, 'Certificação Falconi'),
+        (0, "Final"),
+        (1, "Intermediária"),
+        (2, "Certificação Falconi"),
     )
     tipo_de_banca = models.PositiveSmallIntegerField(choices=TIPO_DE_BANCA, default=0)
     link = models.CharField(max_length=512, blank=True,
-                            help_text='Link para transmissão pela internet se houver')
+                            help_text="Link para transmissão pela internet se houver")
+    
     def __str__(self):
-        return self.projeto.titulo
+        return self.projeto.get_titulo
 
     @classmethod
     def create(cls, projeto):

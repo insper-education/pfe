@@ -66,9 +66,12 @@
 {% block content %}
 
   <span class="titulo">
-    Projeto: {{projeto.get_titulo}}
-    {% if projeto.titulo_final %}
-      <i>Título original: {{projeto.titulo}}</i>
+    Projeto: 
+    {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
+      {{projeto.titulo_final}}<br>
+      <small>Título original da proposta: {{projeto.proposta.titulo}}</small>
+    {% else %}
+      {{projeto.get_titulo}}
     {% endif %}
   </span>
 
@@ -76,12 +79,10 @@
 
   {% include "tipo_projeto.html" with com_tipo=True %}
 
-  {% if projeto.descricao %}
+  {% if projeto.resumo %}
     <div class="descricao" style="margin-top: 8px;">
-      <strong>Resumo do Projeto (escrito por organizacao (EM MANUTENÇAO)):</strong>
-      {% comment %} <strong>Resumo do Projeto (escrito por estudantes):</strong> {% endcomment %}
-      {{ projeto.descricao|linebreaks }}
-      {% comment %} {{ projeto.resumo|linebreaks }} {% endcomment %}
+      <strong>Resumo do Projeto (escrito por estudantes):</strong>
+      {{ projeto.resumo|linebreaks }}
     </div>
   {% endif %}
 

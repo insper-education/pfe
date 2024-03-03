@@ -28,9 +28,11 @@
 {% block content %}
 
   <span class="titulo">
-    Projeto: {{projeto.get_titulo}}
-    {% if projeto.titulo_final %}
-      <i>Título original: {{projeto.titulo}}</i>
+    {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
+      Projeto: {{projeto.titulo_final}}<br>
+      <small>Título original da proposta: {{projeto.proposta.titulo}}</small>
+    {% else %}
+      Projeto: {{projeto.get_titulo}}
     {% endif %}
   </span>
 

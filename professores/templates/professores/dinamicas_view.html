@@ -129,7 +129,7 @@
         {% for projeto in projetos %}
           <option value="{{projeto.id}}"
           style="font-size: 0.75em;"
-          data-titulo="{{projeto.titulo}}"
+          data-titulo="{{projeto.get_titulo}}"
           data-organizacao="{{projeto.organizacao}}"
           data-orientador="{{projeto.orientador}}"
           {% if projeto.id == encontro.projeto.id %} selected {% endif %}
@@ -137,7 +137,7 @@
           >
             {{projeto.ano}}.{{projeto.semestre}}
             ({{projeto.organizacao}})
-            {{projeto.titulo}}
+            {{projeto.get_titulo}}
           </option>  
         {% endfor %}
       </select><br><br>

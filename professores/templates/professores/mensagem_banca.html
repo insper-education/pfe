@@ -5,7 +5,7 @@ mailto:{% if banca.membro1 %}{% if com_nome %}{{banca.membro1.get_full_name}}%20
 {% for coorientador in banca.projeto.coorientador_set.all %}{% if com_nome %}{{coorientador.usuario.get_full_name|parse_quote}}%20&lt;{% endif %}{{coorientador.usuario.email|parse_quote}}{% if com_nome %}&gt;{% endif %},{% endfor %}
 {% if com_nome %}{{banca.projeto.orientador.user.get_full_name|parse_quote}}%20&lt;{% endif %}{{banca.projeto.orientador.user.email|parse_quote}}{% if com_nome %}&gt;{% endif %}
 ?cc={% if com_nome %}Luciano%20Pereira%20Soares&lt;{% endif %}lpsoares@insper.edu.br{% if com_nome %}&gt;{% endif %}
-&amp;subject=Banca%20PFE:%20{% if banca.projeto.titulo_final %}{{banca.projeto.titulo_final|parse_quote}}{% else %}{{banca.projeto.titulo|parse_quote}}{% endif %}
+&amp;subject=Banca%20PFE:%20{{banca.projeto.get_titulo|parse_quote}}
 &amp;body=
 Caros Membros da Banca,%0D%0A%0D%0A
 %20%20%20%20Primeiramente muito obrigado por terem aceito fazer parte da banca {% if banca.tipo_de_banca == 0 %}Final{% elif banca.tipo_de_banca == 1 %}Intermediária{% endif %} do Projeto Final de Engenharia.%0D%0A%0D%0A
@@ -19,7 +19,7 @@ Caros Membros da Banca,%0D%0A%0D%0A
 Agendamento%20da%20banca.%0D%0A
 Horário:%20{{banca.startDate.date}}%20({{banca.startDate|date:'l'}})%20das%20{{banca.startDate.time}}%20às%20{{banca.endDate.time}}%0D%0A
 {% if banca.tipo_de_banca == 0 %}Tipo: Final%0D%0A{% elif banca.tipo_de_banca == 1 %}Tipo: Intermediária%0D%0A{% else %}Tipo: Falconi%0D%0A{% endif %}
-{% if banca.projeto %}Título%20do%20Projeto:%20{% if banca.projeto.titulo_final %}{{banca.projeto.titulo_final|parse_quote}}{% else %}{{banca.projeto.titulo|parse_quote}}{% endif %}{% endif %}
+{% if banca.projeto %}Título%20do%20Projeto:%20{{banca.projeto.get_titulo|parse_quote}}{% endif %}
 %0D%0A
 {% if banca.projeto.organizacao.nome %}Organização Parceira:%20{{ banca.projeto.organizacao.nome|parse_quote }}%0D%0A{% endif %}
 {% if banca.location %}Local:%20{{banca.location|parse_quote}}%0D%0A{% endif %}

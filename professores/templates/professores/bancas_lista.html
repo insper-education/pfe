@@ -107,13 +107,13 @@
             {% if banca.projeto %}
               <b>Título do Projeto:</b> 
               <a class="imprimir" href="{% url 'projeto_completo' banca.projeto.id %}">
-                {% if banca.projeto.titulo_final %}
+                {% if banca.projeto.titulo_final and banca.projeto.titulo_final != banca.projeto.proposta.titulo %}
                   {{banca.projeto.titulo_final}}</a><br>
-                  <small>&nbsp;&nbsp;Título original: 
-                    <a class="imprimir" href="{% url 'projeto_completo' banca.projeto.id %}">{{banca.projeto.titulo}}</a>
+                  <small>&nbsp;&nbsp;Título original da proposta: 
+                    <a class="imprimir" href="{% url 'projeto_completo' banca.projeto.id %}">{{banca.projeto.proposta.titulo}}</a>
                   </small>
                 {% else %}
-                  {{banca.projeto.titulo}}</a>
+                  {{banca.projeto.get_titulo}}</a>
                 {% endif %}
               <br>
             {% endif %}

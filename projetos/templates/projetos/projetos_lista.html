@@ -25,11 +25,11 @@
               {% comment %} rowspan="{{estudantes.count}}" {% endcomment %}
               >
                 <a href="{% url 'projeto_completo' projeto.id %}">
-                  {% if projeto.titulo_final %}
+                  {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
                     {{projeto.titulo_final}}<br>
-                    <small>Título original: {{projeto.titulo}}</small>
+                    <small>Título original da proposta: {{projeto.proposta.titulo}}</small>
                   {% else %}
-                    {{projeto.titulo}}
+                    {{projeto.get_titulo}}
                   {% endif %}
                   {% include "tipo_projeto.html" %}
                 </a>

@@ -154,12 +154,7 @@
           {% endif %}
           </a>
           {% if banca.projeto %}
-            <a href="{% url 'projeto_completo' banca.projeto.id %}">
-              {% if banca.projeto.titulo_final %}
-                {{banca.projeto.titulo_final}}</a>,
-              {% else %}
-                {{banca.projeto.titulo}}</a>,
-              {% endif %}
+            <a href="{% url 'projeto_completo' banca.projeto.id %}">{{banca.projeto.get_titulo}}</a>,
           {% endif %}
           {% if banca.projeto.organizacao %}
             <a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">

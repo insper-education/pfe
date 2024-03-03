@@ -4,14 +4,14 @@
     Data: 10 de Novembro de 2020
 {% endcomment %}
 
-{% if alocado.projeto.titulo_final %}
+{% if alocado.projeto.titulo_final and alocado.projeto.titulo_final != alocado.projeto.proposta.titulo %}
     <style>
         h3 {display: inline;}
     </style>
     <h3>Título: {{alocado.projeto.titulo_final}}<br></h3>
-    <small>&nbsp;&nbsp;&nbsp;&nbsp;Título original: {{alocado.projeto.titulo}}</small><br>
+    <small>&nbsp;&nbsp;&nbsp;&nbsp;Título original da proposta: {{alocado.projeto.proposta.titulo}}</small><br>
 {% else %}
-    <h3>Título: {{alocado.projeto.titulo}}<br></h3>
+    <h3>Título: {{alocado.projeto.get_titulo}}<br></h3>
 {% endif %}
 <br>
 

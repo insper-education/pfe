@@ -179,11 +179,10 @@
                 {% endfor %}
                 "            
               >
-                {% if proposta.titulo_final %}
-                  {{proposta.titulo_final}}<br>
-                  <small>Título original: {{proposta.titulo}}</small>
-                {% else %}
+                {% if proposta.titulo %}
                   {{proposta.titulo}}
+                {% else %}
+                  Título não definido.
                 {% endif %}
               </a>
               
