@@ -77,20 +77,20 @@
 
   <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
 
-  {% include "tipo_projeto.html" with com_tipo=True %}
+  {% include "tipo_projeto.html" with com_tipo=True %}<br>
 
   {% if projeto.resumo %}
     <div class="descricao" style="margin-top: 8px;">
       <strong>Resumo do Projeto (escrito por estudantes):</strong>
       {{ projeto.resumo|linebreaks }}
-    </div>
+    </div><br>
   {% endif %}
 
   {% if projeto.abstract %}
     <div class="descricao" style="margin-top: 8px;">
       <strong>Resumo em Inglês do Projeto (escrito por estudantes):</strong>
       {{ projeto.abstract|linebreaks }}
-    </div>
+    </div><br>
   {% endif %}
 
   <hr>
@@ -133,7 +133,7 @@
   {% if projeto.organizacao.website %}
     <div class="website" style="margin-top: 8px;">
       <p><strong>website:</strong>  <a class="tabulado" href="{{ projeto.organizacao.website }}"> {{ projeto.organizacao.website }} </a></p>
-    </div>
+    </div><br>
   {% endif %}
 
 
@@ -141,7 +141,7 @@
     <div class="descricao" style="margin-top: 8px;">
       <strong>Descrição da Proposta do Projeto (escrito por parceiro):</strong>
         {{ projeto.proposta.descricao|linebreaks }}
-    </div>
+    </div><br>
   {% endif %}
 
   {% if projeto.proposta.expectativas %}
@@ -149,27 +149,29 @@
       <strong>Expectativas de resultados/entregas (escrito por parceiro):</strong> {{ projeto.proposta.expectativas|linebreaks }}
     </div>
   {% endif %}
+
   {% if projeto.proposta.recursos %}
     <div class="recusos" style="margin-top: 8px;">
       <strong>Recursos a serem disponibilizados aos estudantes (escrito por parceiro):</strong> {{ projeto.proposta.recursos|linebreaks }}
     </div>
   {% endif %}
+
   {% if projeto.proposta.anexo %}
     <br><strong>Anexo (fornecido por parceiro):</strong>
-    <a class="text-success" href="http://{{request.get_host}}{{projeto.anexo.url}}">{{projeto.proposta.anexo}}</a>
+    <a class="text-success" href="http://{{request.get_host}}{{projeto.proposta.anexo.url}}">{{projeto.proposta.anexo}}</a>
+    <br><br>
   {% endif %}
-
 
   {% if projeto.organizacao.informacoes %}
     <div class="informacoes" style="margin-top: 8px;">
       <strong>Informações sobre a organização :</strong> {{ projeto.organizacao.informacoes|linebreaks }}
-    </div>
+    </div><br>
   {% endif %}
 
   {% if projeto.proposta.departamento %}
     <div class="departamento" style="margin-top: 8px;">
       <strong>Informações sobre o departamento na organização :</strong> {{ projeto.proposta.departamento|linebreaks }}
-    </div>
+    </div><br>
   {% endif %}
   
   <div class="conexoes" style="margin-top: 8px;">

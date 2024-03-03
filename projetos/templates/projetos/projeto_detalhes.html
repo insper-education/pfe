@@ -40,65 +40,20 @@
 
   {% include "tipo_projeto.html" with com_tipo=True %}<br>
 
-  {% if projeto.proposta.descricao %}
-    <p>
-      <strong data-toggle="tooltip" data-html="true" animation="true" title="
-      Uma breve descrição do que se trata o projeto e outras informações relevantes.">
-        Descrição:
-      </strong>
-      {{projeto.proposta.descricao|linebreaks|urlize}}<br>
-    </p>
-  {% else %}
-    <p><u>Campo de descrição ausente.<u><br></p>
-    <!-- Campo deveria ser obrigatório -->
+  {% if projeto.resumo %}
+    <div class="descricao" style="margin-top: 8px;">
+      <strong>Resumo do Projeto:</strong>
+      {{ projeto.resumo|linebreaks }}
+    </div><br>
   {% endif %}
 
-  {% if projeto.proposta.expectativas %}
-    <p>
-      <strong data-toggle="tooltip" data-html="true" animation="true" title="
-      Exemplos de resultados ou entregas esperadas.
-      Durante o projeto isso deverá ser dicutido com a organização parceira e com os professores orientadores para um melhor alinhamento.
-      Independente do que as organizações sugerirem nesse campo, existem uma série de relatórios, apresentações, vídeos e outros materiais como obrigatórios no PFE.
-      ">
-        Expectativas de resultados/entregas:
-      </strong>
-      {{projeto.proposta.expectativas|linebreaks|urlize}}<br>
-    <p>
-  {% else %}
-    <p><u>Campo de expectativas ausente.<u><br></p>
-    <!-- Campo deveria ser obrigatório -->
+  {% if projeto.abstract %}
+    <div class="descricao" style="margin-top: 8px;">
+      <strong>Resumo em Inglês do Projeto:</strong>
+      {{ projeto.abstract|linebreaks }}
+    </div><br>
   {% endif %}
 
-  {% if projeto.proposta.recursos %}
-    <p>
-      <strong data-toggle="tooltip" data-html="true" animation="true" title="
-      Recursos que as organizações informaram que irão disponibilizar para os estudantes.
-      O PFE irá auxiliar em um acesso facilitado para os diversos laboratórios da escola conforme sua disponibiidade.
-      Não existe nenhuma garantia que o PFE irá suprir material de consumo para os estudantes, em geral não há recursos para isso.
-      ">
-        Recursos a serem disponibilizados:
-      </strong>
-      {{projeto.proposta.recursos|linebreaks|urlize}}<br>
-    </p>
-  {% endif %}
-
-  {% if projeto.proposta.observacoes %}
-    <p>
-      <strong data-toggle="tooltip" data-html="true" animation="true" title="
-      Outras observações que a organização parceira considerou relevante para informar aos estudantes.
-      ">
-        Outras observações:
-      </strong>
-      {{proposta.observacoes|linebreaks|urlize}}<br>
-    </p>
-  {% endif %}
-  
-  {% if projeto.proposta.anexo %}
-    <p>
-      <strong>Anexo :</strong>
-      <a class="text-success" href="{{request.scheme}}://{{request.get_host}}{{projeto.proposta.anexo.url}}">{{proposta.anexo}}</a>
-    </p>
-  {% endif %}
 
   <hr>
 
@@ -160,6 +115,66 @@
     {% endif %}
     <br><br>
   </p>
+
+  {% if projeto.proposta.descricao %}
+    <p>
+      <strong data-toggle="tooltip" data-html="true" animation="true" title="
+      Uma breve descrição do que se trata o projeto e outras informações relevantes.">
+        Descrição da proposta:
+      </strong>
+      {{projeto.proposta.descricao|linebreaks|urlize}}<br>
+    </p>
+  {% else %}
+    <p><u>Campo de descrição ausente.<u><br></p>
+    <!-- Campo deveria ser obrigatório -->
+  {% endif %}
+
+  {% if projeto.proposta.expectativas %}
+    <p>
+      <strong data-toggle="tooltip" data-html="true" animation="true" title="
+      Exemplos de resultados ou entregas esperadas.
+      Durante o projeto isso deverá ser dicutido com a organização parceira e com os professores orientadores para um melhor alinhamento.
+      Independente do que as organizações sugerirem nesse campo, existem uma série de relatórios, apresentações, vídeos e outros materiais como obrigatórios no PFE.
+      ">
+        Expectativas de resultados/entregas:
+      </strong>
+      {{projeto.proposta.expectativas|linebreaks|urlize}}<br>
+    <p>
+  {% else %}
+    <p><u>Campo de expectativas ausente.<u><br></p>
+    <!-- Campo deveria ser obrigatório -->
+  {% endif %}
+
+  {% if projeto.proposta.recursos %}
+    <p>
+      <strong data-toggle="tooltip" data-html="true" animation="true" title="
+      Recursos que as organizações informaram que irão disponibilizar para os estudantes.
+      O PFE irá auxiliar em um acesso facilitado para os diversos laboratórios da escola conforme sua disponibiidade.
+      Não existe nenhuma garantia que o PFE irá suprir material de consumo para os estudantes, em geral não há recursos para isso.
+      ">
+        Recursos a serem disponibilizados:
+      </strong>
+      {{projeto.proposta.recursos|linebreaks|urlize}}<br>
+    </p>
+  {% endif %}
+
+  {% if projeto.proposta.observacoes %}
+    <p>
+      <strong data-toggle="tooltip" data-html="true" animation="true" title="
+      Outras observações que a organização parceira considerou relevante para informar aos estudantes.
+      ">
+        Outras observações:
+      </strong>
+      {{proposta.observacoes|linebreaks|urlize}}<br>
+    </p>
+  {% endif %}
+
+  {% if projeto.proposta.anexo %}
+    <p>
+      <strong>Anexo:</strong>
+      <a class="text-success" href="{{request.scheme}}://{{request.get_host}}{{projeto.proposta.anexo.url}}">{{projeto.proposta.anexo}}</a>
+    </p><br>
+  {% endif %}
 
   <!-- Campo opcional -->
   {% if projeto.organizacao and projeto.organizacao.informacoes %}
