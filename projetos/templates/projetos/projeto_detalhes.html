@@ -12,7 +12,6 @@
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
 
-
   <style>
     #logotipo {
       max-height:128px;
@@ -27,14 +26,15 @@
 
 {% block content %}
 
-  <span class="titulo">
-    {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
-      Projeto: {{projeto.titulo_final}}<br>
-      <small>Título original da proposta: {{projeto.proposta.titulo}}</small>
-    {% else %}
-      Projeto: {{projeto.get_titulo}}
-    {% endif %}
-  </span>
+  <span class="titulo">Projeto Detalhes</span>
+
+  <strong>Título</strong>:
+  {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
+    {{projeto.titulo_final}}<br>
+    <small style="display: inline-block; padding-left: 0.7em;">Título original da proposta: {{projeto.proposta.titulo}}</small>
+  {% else %}
+    {{projeto.get_titulo}}
+  {% endif %}<br>
 
   <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
 
@@ -79,10 +79,9 @@
     {% if projeto.organizacao and projeto.organizacao.endereco %}
       <strong data-toggle="tooltip" data-html="true" animation="true" title="
        Endereço da matriz da organização parceira.
-      ">
-       Endereço Matriz:
-      </strong>
-      <a href="http://maps.google.com/maps?q={{proposta.organizacao.endereco}}">
+      ">Endereço Matriz:</strong>
+      <a style="display: inline-block; padding-left: 0.7em;" 
+         href="http://maps.google.com/maps?q={{proposta.organizacao.endereco}}">
         {{projeto.organizacao.endereco|linebreaks}}
       </a>
     {% elif projeto.proposta.endereco %}
@@ -91,7 +90,8 @@
       ">
        Endereço Local:
       </strong>
-      <a href="http://maps.google.com/maps?q={{proposta.endereco}}">
+      <a style="display: inline-block; padding-left: 0.7em;" 
+         href="http://maps.google.com/maps?q={{proposta.endereco}}">
         {{projeto.proposta.endereco|linebreaks}}
       </a>
     {% else %}
@@ -107,9 +107,9 @@
     website:
     </strong>
     {% if projeto.organizacao and projeto.organizacao.website %}
-      <a class="tabulado" href="{{projeto.organizacao.website}}">{{projeto.organizacao.website}}</a>
+      <a href="{{projeto.organizacao.website}}">{{projeto.organizacao.website}}</a>
     {% elif projeto.proposta and projeto.proposta.website %}
-      <a class="tabulado" href="{{projeto.proposta.website}}">{{projeto.proposta.website}}</a>
+      <a href="{{projeto.proposta.website}}">{{projeto.proposta.website}}</a>
     {% else %}
       <u>não definido.</u>
     {% endif %}

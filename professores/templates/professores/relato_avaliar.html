@@ -84,7 +84,7 @@
       <div id="{{alocacao.id}}" class="panel panel-default border border-secondary rounded" style="display: inline-block; padding: 8px 12px 8px 12px; max-width: 100%;">
 
         <b>Estudante: </b><a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno}}</a><br>
-        <b>Data do relato: </b>
+        <b>Preenchimento: </b>
         {% if relato %}
           {{relato.momento|date:"DATE_FORMAT"}}
         {% else %}

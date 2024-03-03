@@ -65,16 +65,16 @@
 
 {% block content %}
 
-  <span class="titulo">
-    Projeto: 
-    {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
-      {{projeto.titulo_final}}<br>
-      <small>Título original da proposta: {{projeto.proposta.titulo}}</small>
-    {% else %}
-      {{projeto.get_titulo}}
-    {% endif %}
-  </span>
+  <span class="titulo">Projeto Completo</span>
 
+  <strong>Título</strong>:
+  {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
+    {{projeto.titulo_final}}<br>
+    <small style="display: inline-block; padding-left: 0.7em;"><b>Título original da proposta</b>: {{projeto.proposta.titulo}}</small>
+  {% else %}
+    {{projeto.get_titulo}}
+  {% endif %}<br>
+  
   <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
 
   {% include "tipo_projeto.html" with com_tipo=True %}<br>
@@ -127,12 +127,12 @@
   {% endfor %}
 
   <div class="endereco" style="margin-top: 8px;">
-    <p><strong>endereço:</strong> <a class="tabulado" href="http://maps.google.com/maps?q={{projeto.organizacao.endereco}}">{{ projeto.organizacao.endereco|linebreaks }}</a></p>
+    <p><strong>endereço:</strong> <a style="display: inline-block; padding-left: 0.7em;" href="http://maps.google.com/maps?q={{projeto.organizacao.endereco}}">{{ projeto.organizacao.endereco|linebreaks }}</a></p>
   </div>
   
   {% if projeto.organizacao.website %}
     <div class="website" style="margin-top: 8px;">
-      <p><strong>website:</strong>  <a class="tabulado" href="{{ projeto.organizacao.website }}"> {{ projeto.organizacao.website }} </a></p>
+      <p><strong>website:</strong>  <a href="{{ projeto.organizacao.website }}"> {{ projeto.organizacao.website }} </a></p>
     </div><br>
   {% endif %}
 
@@ -147,19 +147,13 @@
   {% if projeto.proposta.expectativas %}
     <div class="expectativas" style="margin-top: 8px;">
       <strong>Expectativas de resultados/entregas (escrito por parceiro):</strong> {{ projeto.proposta.expectativas|linebreaks }}
-    </div>
+    </div><br>
   {% endif %}
 
   {% if projeto.proposta.recursos %}
     <div class="recusos" style="margin-top: 8px;">
       <strong>Recursos a serem disponibilizados aos estudantes (escrito por parceiro):</strong> {{ projeto.proposta.recursos|linebreaks }}
-    </div>
-  {% endif %}
-
-  {% if projeto.proposta.anexo %}
-    <br><strong>Anexo (fornecido por parceiro):</strong>
-    <a class="text-success" href="http://{{request.get_host}}{{projeto.proposta.anexo.url}}">{{projeto.proposta.anexo}}</a>
-    <br><br>
+    </div><br>
   {% endif %}
 
   {% if projeto.organizacao.informacoes %}
@@ -172,6 +166,12 @@
     <div class="departamento" style="margin-top: 8px;">
       <strong>Informações sobre o departamento na organização :</strong> {{ projeto.proposta.departamento|linebreaks }}
     </div><br>
+  {% endif %}
+
+  {% if projeto.proposta.anexo %}
+    <br><strong>Anexo (fornecido por parceiro):</strong>
+    <a class="text-success" href="http://{{request.get_host}}{{projeto.proposta.anexo.url}}">{{projeto.proposta.anexo}}</a>
+    <br><br>
   {% endif %}
   
   <div class="conexoes" style="margin-top: 8px;">
