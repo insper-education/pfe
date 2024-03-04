@@ -402,7 +402,7 @@ class Aluno(models.Model):
                                                              avaliacoes_banca_final, eh_banca=True)
                 notas.append(("BF", nota_banca_final, peso/100 if peso else 0))
 
-            # Relatório de Planejamento (10)
+            # Relatório Preliminar (10)
             relp = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=relatorio_planejamento).\
                 order_by("momento").last()
             if relp:
@@ -481,13 +481,13 @@ class Aluno(models.Model):
             notas = []  # iniciando uma lista de notas vazia
 
             try:
-                # Relatório de Planejamento (10)
+                # Relatório Preliminar (10)
                 relp = Avaliacao2.objects.filter(projeto=alocacao.projeto,
                                                 exame=Exame.objects.get(sigla="RP")).\
                     order_by("momento").last()
                 if relp:
                     notas.append(("RPL", float(relp.nota), relp.peso/100 if relp.peso else 0,
-                                "Relatório de Planejamento"))
+                                "Relatório Preliminar"))
                     
                 # Relatório Intermediário Individual (21),
                 rii = Avaliacao2.objects.filter(alocacao=alocacao,

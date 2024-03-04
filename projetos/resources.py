@@ -180,17 +180,18 @@ class Avaliacoes2Resource(resources.ModelResource):
             avaliador = projeto.orientador.user  # por padrão o avaliador é o orientador
 
             # recupera objetivo, se houver
-            if 'objetivo' in row:
+            if "objetivo" in row:
                 objetivo = recupera_objetivo(row.get('objetivo'))
-            elif 'criterio' in row:
+            elif "criterio" in row:
                 objetivo = recupera_objetivo(row.get('criterio'))
             else:
                 objetivo = None
 
             if avaliacao in ("RP",
+                             "Relatório Preliminar",
                              "Relatório de Planejamento",
                              "Relatorio de Planejamento"):
-                exame = Exame.objects.get(titulo="Relatório de Planejamento")
+                exame = Exame.objects.get(sigla="RP")
                 (aval, _created) = Avaliacao2.objects.get_or_create(projeto=projeto,
                                                                     avaliador=avaliador,
                                                                     momento=momento,
@@ -199,7 +200,7 @@ class Avaliacoes2Resource(resources.ModelResource):
             elif avaliacao in ("RIG",
                                "Relatório Intermediário Grupo",
                                "Relatorio Intermediario Grupo"):
-                exame = Exame.objects.get(titulo="Relatório Intermediário de Grupo")
+                exame = Exame.objects.get(sigla="RIG")
                 (aval, _created) = Avaliacao2.objects.get_or_create(objetivo=objetivo,
                                                                     projeto=projeto,
                                                                     avaliador=avaliador,
