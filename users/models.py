@@ -486,7 +486,7 @@ class Aluno(models.Model):
                                                 exame=Exame.objects.get(sigla="RP")).\
                     order_by("momento").last()
                 if relp:
-                    notas.append(("RPL", float(relp.nota), relp.peso/100 if relp.peso else 0,
+                    notas.append(("RPL", float(relp.nota) if relp.nota else None, relp.peso/100 if relp.peso else 0,
                                 "Relatório Preliminar"))
                     
                 # Relatório Intermediário Individual (21),
