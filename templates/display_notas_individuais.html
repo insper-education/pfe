@@ -85,12 +85,8 @@ Média =
             type: 'radar',
             data: {
                 labels: [
-                        {% for key, value  in medias_oo.media_individual.items %}
-                            {% if value.media >= 0 %}
-                                "{{key.titulo}}",
-                            {% else %}
-                                "",
-                            {% endif %}
+                        {% for key, value in medias_oo.media_individual.items %}
+                            {% if value.media >= 0 %}"{{key.titulo}}",{% else %}"",{% endif %}
                         {% endfor %}
                     ],
                 datasets: [

@@ -367,20 +367,20 @@ class Aluno(models.Model):
         alocacoes = Alocacao.objects.filter(aluno=self.pk)
 
         try:
-            banca_intermediaria = Exame.objects.get(titulo="Banca Intermediária")
-            banca_final = Exame.objects.get(titulo="Banca Final")
-            relatorio_planejamento = Exame.objects.get(titulo="Relatório de Planejamento")
-            relatorio_intermediario_grupo = Exame.objects.get(titulo="Relatório Intermediário de Grupo")
-            relatorio_final_grupo = Exame.objects.get(titulo="Relatório Final de Grupo")
-            relatorio_intermediario_individual = Exame.objects.get(titulo="Relatório Intermediário Individual")
-            relatorio_final_individual = Exame.objects.get(titulo="Relatório Final Individual")
-            planejamento_primeira_fase = Exame.objects.get(titulo="Planejamento Primeira Fase")
-            avaliacao_parcial_individual = Exame.objects.get(titulo="Avaliação Parcial Individual")
-            avaliacao_final_individual = Exame.objects.get(titulo="Avaliação Final Individual")
-            avaliacao_parcial_grupo = Exame.objects.get(titulo="Avaliação Parcial de Grupo")
-            avaliacao_final_grupo = Exame.objects.get(titulo="Avaliação Final de Grupo")
+            banca_intermediaria = Exame.objects.get(sigla="BI")
+            banca_final = Exame.objects.get(sigla="BF")
+            relatorio_planejamento = Exame.objects.get(sigla="RP")
+            relatorio_intermediario_grupo = Exame.objects.get(sigla="RIG")
+            relatorio_final_grupo = Exame.objects.get(sigla="RFG")
+            relatorio_intermediario_individual = Exame.objects.get(sigla="RII")
+            relatorio_final_individual = Exame.objects.get(sigla="RFI")
+            planejamento_primeira_fase = Exame.objects.get(sigla="PPF")
+            avaliacao_parcial_individual = Exame.objects.get(sigla="API")
+            avaliacao_final_individual = Exame.objects.get(sigla="AFI")
+            avaliacao_parcial_grupo = Exame.objects.get(sigla="APG")
+            avaliacao_final_grupo = Exame.objects.get(sigla="AFG")
         except Exame.DoesNotExist:
-            return HttpResponse("<h2>Erro ao identificar tipos de avaliações!</h2><br>Contactar: lpsoares@insper.edu.br", status=401)
+            raise ValidationError("<h2>Erro ao identificar tipos de avaliações!</h2>")
 
         for alocacao in alocacoes:
 
