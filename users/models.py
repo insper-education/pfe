@@ -554,7 +554,7 @@ class Aluno(models.Model):
                                                 exame=Exame.objects.get(sigla="PPF")).\
                     order_by('momento').last()
                 if ppf:
-                    notas.append(("PPF", float(ppf.nota), ppf.peso/100 if ppf.peso else 0,
+                    notas.append(("PPF", float(ppf.nota) if ppf.nota else None, ppf.peso/100 if ppf.peso else 0,
                                 "Planejamento Primeira Fase"))
 
                 # Avaliação Parcial Individual (51)
