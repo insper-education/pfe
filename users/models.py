@@ -20,6 +20,7 @@ from django.conf import settings
 from django.http import HttpResponse
 
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models.functions import Lower
@@ -479,117 +480,121 @@ class Aluno(models.Model):
 
             notas = []  # iniciando uma lista de notas vazia
 
-            # Relatório de Planejamento (10)
-            relp = Avaliacao2.objects.filter(projeto=alocacao.projeto,
-                                             exame=Exame.objects.get(titulo="Relatório de Planejamento")).\
-                order_by("momento").last()
-            if relp:
-                notas.append(("RPL", float(relp.nota), relp.peso/100 if relp.peso else 0,
-                              "Relatório de Planejamento"))
+            try:
+                # Relatório de Planejamento (10)
+                relp = Avaliacao2.objects.filter(projeto=alocacao.projeto,
+                                                exame=Exame.objects.get(sigla="RP")).\
+                    order_by("momento").last()
+                if relp:
+                    notas.append(("RPL", float(relp.nota), relp.peso/100 if relp.peso else 0,
+                                "Relatório de Planejamento"))
+                    
+                # Relatório Intermediário Individual (21),
+                rii = Avaliacao2.objects.filter(alocacao=alocacao,
+                                                exame=Exame.objects.get(sigla="RII"))
+
+                if rii:
+                    nota_rii, peso, avaliadores = Aluno.get_banca(self, rii)
+                    notas.append(("RII", nota_rii, peso/100 if peso else 0,
+                                "Relatório Intermediário Individual"))
+
+                # Relatório Intermediário de Grupo (11)
+                rig = Avaliacao2.objects.filter(projeto=alocacao.projeto,
+                                                exame=Exame.objects.get(sigla="RIG"))
+
+                if rig:
+                    nota_rig, peso, avaliadores = Aluno.get_banca(self, rig)
+                    notas.append(("RIG", nota_rig, peso/100 if peso else 0,
+                                "Relatório Intermediário de Grupo"))
+
+                # Banca Intermediária (1)
+                avaliacoes_banca_interm = Avaliacao2.objects.filter(projeto=alocacao.projeto,
+                                                                    exame=Exame.objects.get(sigla="BI"))
+                if avaliacoes_banca_interm:
+                    nota_banca_interm, peso, avaliadores = Aluno.get_banca(self,
+                                                            avaliacoes_banca_interm,
+                                                            eh_banca=True)
+                    notas.append(("BI", nota_banca_interm, peso/100 if peso else 0,
+                                "Banca Intermediária"))
+
+
+                # Relatório Final Individual (22)
+                rfi = Avaliacao2.objects.filter(alocacao=alocacao,
+                                                exame=Exame.objects.get(sigla="RFI"))
+
+                if rfi:
+                    nota_rfi, peso, avaliadores = Aluno.get_banca(self, rfi)
+                    notas.append(("RFI", nota_rfi, peso/100 if peso else 0,
+                                "Relatório Final Individual"))
+
+
+                # Relatório Final de Grupo (12),
+                rfg = Avaliacao2.objects.filter(projeto=alocacao.projeto,
+                                                exame=Exame.objects.get(sigla="RFG"))
+
+                if rfg:
+                    nota_rfg, peso, avaliadores = Aluno.get_banca(self, rfg)
+                    notas.append(("RFG", nota_rfg, peso/100 if peso else 0,
+                                "Relatório Final de Grupo"))
+
+                # Banca Final (2)
+                avaliacoes_banca_final = Avaliacao2.objects.filter(projeto=alocacao.projeto,
+                                                                exame=Exame.objects.get(sigla="BF"))
+                if avaliacoes_banca_final:
+                    nota_banca_final, peso, avaliadores = Aluno.get_banca(self,
+                                                            avaliacoes_banca_final,
+                                                            eh_banca=True)
+                    notas.append(("BF", nota_banca_final, peso/100 if peso else 0,
+                                "Banca Final"))
+
                 
-            # Relatório Intermediário Individual (21),
-            rii = Avaliacao2.objects.filter(alocacao=alocacao,
-                                            exame=Exame.objects.get(titulo="Relatório Intermediário Individual"))
+                # NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES
+                # Planejamento Primeira Fase  (50)
+                ppf = Avaliacao2.objects.filter(projeto=alocacao.projeto,
+                                                exame=Exame.objects.get(sigla="PPF")).\
+                    order_by('momento').last()
+                if ppf:
+                    notas.append(("PPF", float(ppf.nota), ppf.peso/100 if ppf.peso else 0,
+                                "Planejamento Primeira Fase"))
 
-            if rii:
-                nota_rii, peso, avaliadores = Aluno.get_banca(self, rii)
-                notas.append(("RII", nota_rii, peso/100 if peso else 0,
-                              "Relatório Intermediário Individual"))
+                # Avaliação Parcial Individual (51)
+                api = Avaliacao2.objects.filter(alocacao=alocacao,
+                                                exame=Exame.objects.get(sigla="API"))
 
-            # Relatório Intermediário de Grupo (11)
-            rig = Avaliacao2.objects.filter(projeto=alocacao.projeto,
-                                            exame=Exame.objects.get(titulo="Relatório Intermediário de Grupo"))
+                if api:
+                    nota_api, peso, avaliadores = Aluno.get_banca(self, api)
+                    notas.append(("API", nota_api, peso/100 if peso else 0,
+                                "Avaliação Parcial Individual"))
 
-            if rig:
-                nota_rig, peso, avaliadores = Aluno.get_banca(self, rig)
-                notas.append(("RIG", nota_rig, peso/100 if peso else 0,
-                              "Relatório Intermediário de Grupo"))
+                # Avaliação Final Individual (52)
+                afi = Avaliacao2.objects.filter(alocacao=alocacao,
+                                                exame=Exame.objects.get(sigla="AFI"))
 
-            # Banca Intermediária (1)
-            avaliacoes_banca_interm = Avaliacao2.objects.filter(projeto=alocacao.projeto,
-                                                                exame=Exame.objects.get(titulo="Banca Intermediária"))
-            if avaliacoes_banca_interm:
-                nota_banca_interm, peso, avaliadores = Aluno.get_banca(self,
-                                                          avaliacoes_banca_interm,
-                                                          eh_banca=True)
-                notas.append(("BI", nota_banca_interm, peso/100 if peso else 0,
-                              "Banca Intermediária"))
+                if afi:
+                    nota_afi, peso, avaliadores = Aluno.get_banca(self, afi)
+                    notas.append(("AFI", nota_afi, peso/100 if peso else 0,
+                                "Avaliação Final Individual"))
 
+                # Avaliação Parcial de Grupo (53)
+                apg = Avaliacao2.objects.filter(projeto=alocacao.projeto,
+                                                exame=Exame.objects.get(sigla="APG"))
 
-            # Relatório Final Individual (22)
-            rfi = Avaliacao2.objects.filter(alocacao=alocacao,
-                                            exame=Exame.objects.get(titulo="Relatório Final Individual"))
+                if apg:
+                    nota_apg, peso, avaliadores = Aluno.get_banca(self, apg)
+                    notas.append(("APG", nota_apg, peso/100 if peso else 0,
+                                "Avaliação Parcial de Grupo"))
 
-            if rfi:
-                nota_rfi, peso, avaliadores = Aluno.get_banca(self, rfi)
-                notas.append(("RFI", nota_rfi, peso/100 if peso else 0,
-                              "Relatório Final Individual"))
+                # Avaliação Final de Grupo (54)
+                afg = Avaliacao2.objects.filter(projeto=alocacao.projeto,
+                                                exame=Exame.objects.get(sigla="AFG"))
 
-
-            # Relatório Final de Grupo (12),
-            rfg = Avaliacao2.objects.filter(projeto=alocacao.projeto,
-                                            exame=Exame.objects.get(titulo="Relatório Final de Grupo"))
-
-            if rfg:
-                nota_rfg, peso, avaliadores = Aluno.get_banca(self, rfg)
-                notas.append(("RFG", nota_rfg, peso/100 if peso else 0,
-                              "Relatório Final de Grupo"))
-
-            # Banca Final (2)
-            avaliacoes_banca_final = Avaliacao2.objects.filter(projeto=alocacao.projeto,
-                                                               exame=Exame.objects.get(titulo="Banca Final"))
-            if avaliacoes_banca_final:
-                nota_banca_final, peso, avaliadores = Aluno.get_banca(self,
-                                                         avaliacoes_banca_final,
-                                                         eh_banca=True)
-                notas.append(("BF", nota_banca_final, peso/100 if peso else 0,
-                              "Banca Final"))
-
-            
-            # NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES
-            # Planejamento Primeira Fase  (50)
-            ppf = Avaliacao2.objects.filter(projeto=alocacao.projeto,
-                                            exame=Exame.objects.get(titulo="Planejamento Primeira Fase")).\
-                order_by('momento').last()
-            if ppf:
-                notas.append(("PPF", float(ppf.nota), ppf.peso/100 if ppf.peso else 0,
-                              "Planejamento Primeira Fase"))
-
-            # Avaliação Parcial Individual (51)
-            api = Avaliacao2.objects.filter(alocacao=alocacao,
-                                            exame=Exame.objects.get(titulo="Avaliação Parcial Individual"))
-
-            if api:
-                nota_api, peso, avaliadores = Aluno.get_banca(self, api)
-                notas.append(("API", nota_api, peso/100 if peso else 0,
-                              "Avaliação Parcial Individual"))
-
-            # Avaliação Final Individual (52)
-            afi = Avaliacao2.objects.filter(alocacao=alocacao,
-                                            exame=Exame.objects.get(titulo="Avaliação Final Individual"))
-
-            if afi:
-                nota_afi, peso, avaliadores = Aluno.get_banca(self, afi)
-                notas.append(("AFI", nota_afi, peso/100 if peso else 0,
-                              "Avaliação Final Individual"))
-
-            # Avaliação Parcial de Grupo (53)
-            apg = Avaliacao2.objects.filter(projeto=alocacao.projeto,
-                                            exame=Exame.objects.get(titulo="Avaliação Parcial de Grupo"))
-
-            if apg:
-                nota_apg, peso, avaliadores = Aluno.get_banca(self, apg)
-                notas.append(("APG", nota_apg, peso/100 if peso else 0,
-                              "Avaliação Parcial de Grupo"))
-
-            # Avaliação Final de Grupo (54)
-            afg = Avaliacao2.objects.filter(projeto=alocacao.projeto,
-                                            exame=Exame.objects.get(titulo="Avaliação Final de Grupo"))
-
-            if afg:
-                nota_afg, peso, avaliadores = Aluno.get_banca(self, afg)
-                notas.append(("AFG", nota_afg, peso/100 if peso else 0,
-                              "Avaliação Final de Grupo"))
+                if afg:
+                    nota_afg, peso, avaliadores = Aluno.get_banca(self, afg)
+                    notas.append(("AFG", nota_afg, peso/100 if peso else 0,
+                                "Avaliação Final de Grupo"))
+                    
+            except Exame.DoesNotExist:
+                raise ValidationError("<h2>Erro ao identificar tipos de avaliações!</h2>")
 
             edicao[str(alocacao.projeto.ano)+"."+str(alocacao.projeto.semestre)] = notas
 
