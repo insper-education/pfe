@@ -52,7 +52,7 @@
       <span lang="pt"><b>Avaliado em</b>:</span>
       <span lang="en"><b>Assessed in</b>:</span>
         {% if objetivo.avaliacao_aluno %}<span lang="pt">Avaliação Individual do Aluno pelo Orientador</span><span lang="en">Individual Student Assessment by the Advisor</span>{% if objetivo.avaliacao_banca or objetivo.avaliacao_grupo or objetivo.avaliacao_falconi%},{% endif %}{% endif %}
-        {% if objetivo.avaliacao_banca %}<span lang="pt">Avaliação do Grupo pela Banca Acadêmica</span><span lang="en">Assessment of the Group by the Academic Board</span>{% if objetivo.avaliacao_grupo or objetivo.avaliacao_falconi%},{% endif %}{% endif %}
+        {% if objetivo.avaliacao_banca %}<span lang="pt">Avaliação do Grupo pela Banca Acadêmica</span><span lang="en">Assessment of the Group by the Academic Evaluation Committee</span>{% if objetivo.avaliacao_grupo or objetivo.avaliacao_falconi%},{% endif %}{% endif %}
         {% if objetivo.avaliacao_grupo %}<span lang="pt">Avaliação do Grupo pelo Orientador</span><span lang="en">Group Assessment by the Advisor</span>{% if objetivo.avaliacao_falconi%},{% endif %}{% endif %}
         {% if objetivo.avaliacao_falconi %}<span lang="pt">Avaliação do Grupo pela Banca Falconi</span><span lang="en">Evaluation of the Group by Banca Falconi</span>{% endif %}
         <br>

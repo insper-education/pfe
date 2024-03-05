@@ -23,7 +23,7 @@
 
   <span class="titulo">
     <span lang="pt">Formulário de Avaliação de Bancas</span>
-    <span lang="en">Evaluation Board Form</span>
+    <span lang="en">Evaluation Committee Form</span>
   </span>  
 
   {% if mensagem %}
@@ -197,7 +197,7 @@
       $("body").on("click", "#language_button", function(e) {
         if($('[lang="en"]').is(":visible")) {
           $("#selecione_avaliador").text(" -- select evaluator -- ");
-          $("#MembBanca").attr("label", "Board Members");
+          $("#MembBanca").attr("label", "Evaluation Committee Members");
           $("#ListaComp").attr("label", "Complete List");
         } else {
           $("#selecione_avaliador").text(" -- selecione um avaliador -- ");
