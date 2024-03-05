@@ -193,17 +193,23 @@
   {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
   {% include "linguas.html" %}
   <script>
-    $("body").on("click", "#language_button", function(e) {
-      if($('[lang="en"]').is(":visible")) {
-        $("#selecione_avaliador").text(" -- select evaluator -- ");
-        $("#MembBanca").attr("label", "Board Members");
-        $("#ListaComp").attr("label", "Complete List");
-      } else {
-        $("#selecione_avaliador").text(" -- selecione um avaliador -- ");
-        $("#MembBanca").attr("label", "Membros da Banca");
-        $("#ListaComp").attr("label", "Lista Completa");
-      }
+    $(document).ready(function() {
+      $("body").on("click", "#language_button", function(e) {
+        if($('[lang="en"]').is(":visible")) {
+          $("#selecione_avaliador").text(" -- select evaluator -- ");
+          $("#MembBanca").attr("label", "Board Members");
+          $("#ListaComp").attr("label", "Complete List");
+        } else {
+          $("#selecione_avaliador").text(" -- selecione um avaliador -- ");
+          $("#MembBanca").attr("label", "Membros da Banca");
+          $("#ListaComp").attr("label", "Lista Completa");
+        }
+      });
 
+      // Bloqueia o botão de submissão do formulário após o primeiro clique
+      $('form').on('submit', function() {
+        $(this).find('button[type="submit"]').prop('disabled', true);
+      });
     });
   </script>
 
