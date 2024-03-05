@@ -49,4 +49,7 @@ python3 manage.py loaddata out.json
 source ./env/bin/activate
 
 # outros
-
+brew install rabbitmq
+brew services start rabbitmq
+~/opt/anaconda3/envs/pfe/bin/celery  -A pfe worker -l info &
+~/opt/anaconda3/envs/pfe/bin/celery  -A pfe beat -l info &

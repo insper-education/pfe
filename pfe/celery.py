@@ -11,9 +11,9 @@ from celery import Celery
 #from celery.schedules import crontab
 
 # set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pfe.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "pfe.settings")
 
-APP = Celery('pfe')
+APP = Celery("pfe")
 
 #APP.conf.timezone = 'America/Sao_Paulo' #Com bug, nao funciona
 
@@ -21,7 +21,7 @@ APP = Celery('pfe')
 # the configuration object to child processes.
 # - namespace='CELERY' means all celery-related configuration keys
 #   should have a `CELERY_` prefix.
-APP.config_from_object('django.conf:settings', namespace='CELERY')
+APP.config_from_object("django.conf:settings", namespace="CELERY")
 
 # Load task modules from all registered Django app configs.
 APP.autodiscover_tasks()

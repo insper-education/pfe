@@ -1037,7 +1037,7 @@ def banca_avaliar(request, slug, tipo_documento_id=None):
     else:
         return HttpResponseNotFound("<h1>Tipo de Banca não indentificado</h1>")
     ####################################################################################
-
+    
     if request.method == "POST":
         if "avaliador" in request.POST:
 

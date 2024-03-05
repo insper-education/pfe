@@ -36,7 +36,8 @@
 
     <label for="titulo">Título do Projeto:</label><br>
     <input type="text" size="86" maxlength="{% max_length projeto 'titulo_final' %}" id="titulo" name="titulo"
-    value="{% if projeto.titulo_final %}{{projeto.titulo_final}}{% else %}{{projeto.titulo_final}}{% endif %}">
+    placeholder="Na ausência de um título final, o título original da proposta será mantido."
+    value="{% if projeto.titulo_final %}{{projeto.titulo_final}}{% endif %}">
     <br><br>
 
     {% comment %} <label for="descricao">Descrição da Proposta de Projeto (REMOVER)</label><br>

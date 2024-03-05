@@ -6,6 +6,8 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 18 de Outubro de 2019
 """
 
+from celery import shared_task
+
 from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
@@ -17,6 +19,7 @@ from projetos.models import Configuracao
 from .models import AreaDeInteresse
 
 from administracao.models import Carta
+
 
 def render_message(template, context):
     """Recebe o nome da Carta a renderizar como texto."""
@@ -30,6 +33,10 @@ def htmlizar(text):
     """Coloca <br> nas quebras de linha."""
     return text.replace('\n', '<br>\n')
 
+@shared_task
+def send_mail_task(subject, message, from_email, recipient_list, **kwargs):
+    send_mail(subject, message, from_email, recipient_list, **kwargs)
+
 def email(subject, recipient_list, message, aviso_automatica=True):
     """Envia e-mail automaticamente."""
     email_from = settings.EMAIL_USER + " <" + settings.EMAIL_HOST_USER + ">"
@@ -41,8 +48,13 @@ def email(subject, recipient_list, message, aviso_automatica=True):
         message += configuracao.msg_email_automatico
         message += "</small>"
 
-    return send_mail(subject, message, email_from, recipient_list,
-                     fail_silently=True, auth_user=auth_user, html_message=message)
+    # return send_mail(subject, message, email_from, recipient_list,
+    #                  fail_silently=True, auth_user=auth_user, html_message=message)
+
+    send_mail_task.delay(subject, message, email_from, recipient_list,
+                         fail_silently=True, auth_user=auth_user, html_message=message)
+
+    return 1  # Solução temporária para manter compatibilidade
 
 def create_message(estudante, ano, semestre):
     """Cria mensagem quando o estudante termina de preencher o formulário de seleção de propostas"""
