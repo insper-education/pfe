@@ -8,6 +8,7 @@ pfe/settings.py
 arquivos/*
 *.code-workspace
 celerybeat-schedule
+celerybeat-schedule.db
 celerybeat.pid
 dump.rdb
 dump.json
