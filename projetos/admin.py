@@ -181,7 +181,7 @@ class ProjetoAdmin(admin.ModelAdmin):
     """Exibição no sistema de administração do Django para Projeto."""
 
     list_display = ("organizacao", "ano", "semestre", "orientador", "get_titulo",)
-    list_filter = (FechadoFilter, "ano", "semestre", "avancado", "orientador")
+    list_filter = (FechadoFilter, "ano", "semestre",)
     fieldsets = \
         ((None,
           {"fields":
@@ -259,6 +259,7 @@ class AnotacaoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
 
     list_display = ("momento", "organizacao", "tipo_de_retorno", "autor",)
+    list_filter = ("tipo_de_retorno",)
     ordering = ("-momento",)
     search_fields = ["organizacao__nome",]
 

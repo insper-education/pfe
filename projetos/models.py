@@ -948,7 +948,7 @@ class Anotacao(models.Model):
         verbose_name = 'Anotação'
         verbose_name_plural = 'Anotações'
 
-from django.contrib.sites.models import Site
+
 class Documento(models.Model):
     """Documentos, em geral PDFs, e seus relacionamentos com o PFE."""
 
@@ -960,21 +960,15 @@ class Documento(models.Model):
                                 help_text="Documento do Projeto")
     documento = models.FileField(null=True, blank=True, max_length=256,
                                  upload_to=get_upload_path,
-                                 help_text="Documento PDF")
+                                 help_text="Link para o arquivo no servidor")
     link = models.URLField("link", max_length=250, null=True, blank=True,
                            help_text="website da organização parceira")
     anotacao = models.CharField(null=True, blank=True, max_length=64,
                                 help_text="qualquer anotação sobre o documento em questão")
     data = models.DateTimeField(null=True, blank=True,
                             help_text="Data e hora do documento")
-    
-    ### REMOVER  ##############################################
-    # tipo_de_documento = models.PositiveSmallIntegerField(choices=TIPO_DE_DOCUMENTO, default=0)
-    ### ######################################################
-
     tipo_documento = models.ForeignKey("documentos.TipoDocumento", null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text="Tipo de documento")
-
     confidencial = models.BooleanField(default=True, help_text="Documento confidêncial")
 
     LINGUA_DO_DOCUMENTO = ( # não mudar a ordem dos números
@@ -995,6 +989,11 @@ class Documento(models.Model):
     
     def filename(self):
         return os.path.basename(self.documento.name)
+
+    # Remove o arquivo apontado pelo documento se o documento for deletado
+    def delete(self, using=None, keep_parents=False):
+        self.documento.delete()
+        super().delete()
 
     @classmethod
     def create(cls):

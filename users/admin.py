@@ -50,7 +50,7 @@ class FirstLetterFilter(SimpleListFilter):
 class PFEUserAdmin(admin.ModelAdmin):
     """Usuário geral para todos do PFE."""
     list_display = ("first_name", "last_name", "username", "email", "genero", "tipo_de_usuario",)
-    list_filter = ("tipo_de_usuario", "coordenacao", FirstLetterFilter)
+    list_filter = ("tipo_de_usuario", FirstLetterFilter)
     fieldsets = (
         (None, {"fields": ("username", "first_name", "last_name", "pronome_tratamento", "nome_social", "email", "tipo_de_usuario",)}),
         ("Personal info",

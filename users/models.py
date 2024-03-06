@@ -89,8 +89,9 @@ class PFEUser(AbstractUser):
     observacoes = models.TextField("Observações", max_length=500, blank=True,
                                    help_text="Observações")
 
-    coordenacao = \
-        models.BooleanField("Coordenação", default=False, help_text="caso coordenador do PFE")
+    # Aparentemente não sendo usado mais
+    # coordenacao = \
+    #     models.BooleanField("Coordenação", default=False, help_text="caso coordenador do PFE")
 
     pronome_tratamento = models.CharField("Pronome de Tratamento", max_length=8, null=True, blank=True)
 
