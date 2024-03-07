@@ -67,7 +67,7 @@
               $("#disciplina"+disciplina).remove();
             },
             error: function (request, status, error) {
-              {% if user.tipo_de_usuario == 4 %} 
+              {% if user.tipo_de_usuario == 4 %}
                 alert(request.responseText);
                 jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
                 console.log("error"+request.responseText);

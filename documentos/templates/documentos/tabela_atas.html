@@ -16,13 +16,15 @@
 {% block content %}
 
   <span class="titulo">Atas do Comitê do PFE
-    <small>
-      <a
-        class="open-documento" style="cursor:pointer;"
-        data-url="{% url 'adiciona_documento_tipo' tipo.sigla %}"
-        >&#10133;</a
-      >
-    </small>
+    {% if user.tipo_de_usuario == 4 %}
+      <small>
+        <a
+          class="open-documento" style="cursor:pointer;"
+          data-url="{% url 'adiciona_documento_tipo' tipo.sigla %}"
+          >&#10133;</a
+        >
+      </small>
+    {% endif %}
   </span>
 
 
