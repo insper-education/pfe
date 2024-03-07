@@ -12,6 +12,9 @@
   {% load format_cnpj %}
   {% load order_by %}
 
+  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
+  {% include "reload.html" %}
+  
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
 
@@ -24,9 +27,7 @@
       float: right;
     }
 
-    ul, ol {
-      padding-left: 1.4em;
-    }
+    ul, ol {padding-left: 1.4em;}
 
   </style>
 

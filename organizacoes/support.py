@@ -120,6 +120,14 @@ def cria_documento(request):
     lingua = request.POST.get("lingua_do_documento", "portugues")
     if lingua == "ingles":
         lingua_do_documento = 1
+    
+    anotacao = request.POST.get("anotacao", None)
+    if not (anotacao and anotacao.strip()):
+        anotacao = None
+    if anotacao:
+        max_length = Documento._meta.get_field("anotacao").max_length
+        if len(anotacao) > max_length - 1:
+            return "<h1>Erro: Anotação maior que " + str(max_length) + " caracteres.</h1>"
 
     confidencial = "confidencial" in request.POST and request.POST["confidencial"] == "true"
 
@@ -139,6 +147,7 @@ def cria_documento(request):
     
     documento.data = data
     documento.link = link
+    documento.anotacao = anotacao
     documento.lingua_do_documento = lingua_do_documento
     documento.confidencial = confidencial
 

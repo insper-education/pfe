@@ -15,7 +15,17 @@
 
 {% block content %}
 
-  <span class="titulo">Atas do Comitê do PFE</span>
+  <span class="titulo">Atas do Comitê do PFE
+    <small>
+      <a
+        class="open-documento" style="cursor:pointer;"
+        data-url="{% url 'adiciona_documento_tipo' tipo.sigla %}"
+        >&#10133;</a
+      >
+    </small>
+  </span>
+
+
   {% if template and template.documento %}
     <a target="_blank" rel="noopener noreferrer" href="{{request.scheme}}://{{request.get_host}}{{template.documento.url}}">
       <i class="far fa-file-alt"></i> {{template.tipo_documento}}
@@ -39,13 +49,23 @@
             <tr class="item">
               {% ifchanged %}<td style="vertical-align:middle" rowspan="{{ group.list|length }}">{{obj.data|date:"DATE_FORMAT"}}</td>{% endifchanged %}
               <td style="text-align:center; padding: 2px; border-top-style: dotted;{% if not forloop.last %}border-bottom-style: dotted;{% endif %}">
-                <a class="btn btn-light btn-outline-info btn-sm tab_botao"
-                   href="{{request.scheme}}://{{request.get_host}}{{obj.documento.url}}" 
-                   target="_blank" rel="noopener noreferrer"
-                   {% if obj.anotacao %}
-                    data-toggle="tooltip" data-html="true" animation="true" title="anotação: {{obj.anotacao}}"
-                   {% endif %}
-                >{{obj.documento|get_tipo}}</a>
+                {% if obj.documento %}
+                  <a class="btn btn-light btn-outline-info btn-sm tab_botao"
+                    href="{{request.scheme}}://{{request.get_host}}{{obj.documento.url}}" 
+                    target="_blank" rel="noopener noreferrer"
+                    {% if obj.anotacao %}
+                      data-toggle="tooltip" data-html="true" animation="true" title="anotação: {{obj.anotacao}}"
+                    {% endif %}
+                  >{{obj.documento|get_tipo}}</a>
+                {% elif obj.link %}
+                  <a class="btn btn-light btn-outline-info btn-sm tab_botao"
+                    href="{{obj.link}}" 
+                    target="_blank" rel="noopener noreferrer"
+                    {% if obj.anotacao %}
+                      data-toggle="tooltip" data-html="true" animation="true" title="anotação: {{obj.anotacao}}"
+                    {% endif %}
+                  >link</a>
+                {% endif %}
               </td>
             </tr>
           {% endfor %}
@@ -55,4 +75,7 @@
       </tbody>
     </table>
   </div>
+
+  {% include "documento-modal.html" %}
+
 {% endblock %}

@@ -141,10 +141,8 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
 
     if tipo_nome and (not organizacao_id) and (not projeto_id):
         adiciona = "adiciona_documento_tipo"
-        print("adiciona_documento_tipo")
     else:
         adiciona = "adiciona_documento"
-        print("adiciona_documento")
 
     context = {
         "organizacao": organizacao,
