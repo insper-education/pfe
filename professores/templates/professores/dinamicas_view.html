@@ -109,11 +109,11 @@
               <option value="{{pessoa.id}}" {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa}}</option>
             {% endfor %}
           </optgroup>
-          <optgroup label="Outros">
+          {% comment %} <optgroup label="Outros">
             {% for pessoa in pessoas %}
               <option value="{{pessoa.id}}" {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa}}</option>
             {% endfor %}
-          </optgroup>
+          </optgroup> {% endcomment %}
       </select>
 
     </div>

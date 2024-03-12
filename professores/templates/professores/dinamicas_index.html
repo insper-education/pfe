@@ -32,24 +32,24 @@
   {% include "cores_bancas.html" %}
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      var calendarEl = document.getElementById('calendar');
+    document.addEventListener("DOMContentLoaded", function() {
+      var calendarEl = document.getElementById("calendar");
 
       var calendar = new FullCalendar.Calendar(calendarEl, {
-        plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'list' ],
+        plugins: [ "interaction", "dayGrid", "timeGrid", "list" ],
         header: {
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+          left: "prev,next today",
+          center: "title",
+          right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth"
         },
-        locale: 'pt-br',
+        locale: "pt-br",
         navLinks: true, // can click day/week names to navigate views
         businessHours: true, // display business hours
         editable: true,
         height: "auto",
         eventTimeFormat: {
-          hour: '2-digit', //2-digit, numeric
-          minute: '2-digit', //2-digit, numeric
+          hour: "2-digit", //2-digit, numeric
+          minute: "2-digit", //2-digit, numeric
           meridiem: false, //lowercase, short, narrow, false (display of AM/PM)
           hour12: false //true, false
         },
@@ -114,45 +114,29 @@
     });
 
   </script>
+  
   <style>
     #calendar {
       max-width: 900px;
       margin: 0 auto;
     }
-  </style>
-  <style>
-    .wrap {
-      display: flex;
-    }
-
-    .one {
-      width: 20%;
-    }
-
-    .two {
-      width: 80%;
-    }
+  
+    .wrap {display: flex;}
+    .one {width: 20%;}
+    .two {width: 80%;}
 
     .fc-center,
     .fc-button {
       font-size: min(2.1vw, 1em);
     }
 
-    .fc-event {
-      overflow: hidden;
-    }
+    .fc-event {overflow: hidden;}
 
     @media (max-width: 900px) {
-      .wrap {
-        flex-direction: column-reverse;
-      }
+      .wrap {flex-direction: column-reverse;}
       .one,
-      .two {
-        width: auto;
-      }
-      .fc-event {
-        font-size: 9px !important;
-      }
+      .two {width: auto;}
+      .fc-event {font-size: 9px !important;}
     }
   </style>
 

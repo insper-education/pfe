@@ -1653,10 +1653,7 @@ def dinamicas_criar(request, data=None):
 
         return HttpResponse("Dinâmica não registrada, erro!", status=401)
 
-    ano = configuracao.ano
-    semestre = configuracao.semestre
-    projetos = Projeto.objects.filter(ano=ano, semestre=semestre)\
-        .exclude(orientador=None)
+    projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
 
     # Buscando pessoas para lista de Facilitadores
     professores_tmp = PFEUser.objects.filter(tipo_de_usuario=2)  # (2, 'professor')
@@ -1667,22 +1664,22 @@ def dinamicas_criar(request, data=None):
     organizacao = get_object_or_404(Organizacao, sigla="Falconi")
     falconis = parceiros.filter(parceiro__organizacao=organizacao).order_by(Lower("first_name"), Lower("last_name"))
 
-    outros_parceiros = parceiros.exclude(parceiro__organizacao=organizacao)
-    estudantes = PFEUser.objects.filter(tipo_de_usuario=1)  # (1, 'estudantes')
-    pessoas = (outros_parceiros | estudantes).order_by(Lower("first_name"), Lower("last_name"))
+    # outros_parceiros = parceiros.exclude(parceiro__organizacao=organizacao)
+    # estudantes = PFEUser.objects.filter(tipo_de_usuario=1)  # (1, 'estudantes')
+    # pessoas = (outros_parceiros | estudantes).order_by(Lower("first_name"), Lower("last_name"))
 
     context = {
         "projetos": projetos,
         "professores": professores,
         "falconis": falconis,
-        "pessoas": pessoas,
+        # "pessoas": pessoas,
         "url": request.get_full_path(),
     }
 
     if data:
         context["data"] = data
 
-    return render(request, 'professores/dinamicas_view.html', context)
+    return render(request, "professores/dinamicas_view.html", context)
 
 
 @login_required
@@ -1749,11 +1746,7 @@ def dinamicas_editar(request, primarykey=None):
         }
         return JsonResponse(context)
 
-
-    ano = configuracao.ano
-    semestre = configuracao.semestre
-    projetos = Projeto.objects.filter(ano=ano, semestre=semestre)\
-        .exclude(orientador=None)
+    projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
 
     # Buscando pessoas para lista de Facilitadores
     professores_tmp = PFEUser.objects.filter(tipo_de_usuario=2)  # 'professor'
@@ -1766,20 +1759,20 @@ def dinamicas_editar(request, primarykey=None):
     falconis = parceiros.filter(parceiro__organizacao=organizacao).order_by(Lower("first_name"),
                                                                             Lower("last_name"))
 
-    outros_parceiros = parceiros.exclude(parceiro__organizacao=organizacao)
-    estudantes = PFEUser.objects.filter(tipo_de_usuario=1)  # (1, 'estudantes')
-    pessoas = (outros_parceiros | estudantes).order_by(Lower("first_name"),
-                                                       Lower("last_name"))
+    # outros_parceiros = parceiros.exclude(parceiro__organizacao=organizacao)
+    # estudantes = PFEUser.objects.filter(tipo_de_usuario=1)  # (1, 'estudantes')
+    # pessoas = (outros_parceiros | estudantes).order_by(Lower("first_name"),
+    #                                                    Lower("last_name"))
 
     context = {
         "projetos": projetos,
         "professores": professores,
         "falconis": falconis,
-        "pessoas": pessoas,
+        # "pessoas": pessoas,
         "encontro": encontro,
         "url": request.get_full_path(),
     }
-    return render(request, 'professores/dinamicas_view.html', context)
+    return render(request, "professores/dinamicas_view.html", context)
 
 
 @login_required
