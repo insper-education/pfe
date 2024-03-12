@@ -376,17 +376,19 @@ class EstudantesResource(resources.ModelResource):
     """Model Resource para tratar dados de Estudantes."""
 
     campos = [
-        'email (e-mail institucional, com titulo da coluna sem o traço separando "e" de "mail")',
-        'nome',
-        'sobrenome',
-        'nome_compl (somente usado se nome e sobrenome não presentes)',
-        'gênero (M|F)',
-        'curso [GRENGCOMP|GRENGMECAT|GRENGMECA|GRCIECOMP]',
-        'matrícula (número)',
-        'cr (ponto como separador decimal)',
-        'anoPFE',
-        'semestrePFE',
-        'usuário (desnecessário, pois é pego pelo e-mail)',
+        'email [obrigatório] (e-mail institucional, com titulo da coluna sem o traço separando "e" de "mail")',
+        "nome",
+        "sobrenome",
+        "nome_compl (somente usado se nome e sobrenome não presentes)",
+        "gênero (M|F)",
+        "curso [GRENGCOMP|GRENGMECAT|GRENGMECA|GRCIECOMP]",
+        "matrícula (número)",
+        "cr (ponto como separador decimal)",
+        "anoPFE",
+        "semestrePFE",
+        "usuário (desnecessário, pois é pego pelo e-mail)",
+        "nome_social",
+        "pronome_tratamento (por exemplo Dr. ou Dra.)",
     ]
 
     def before_import_row(self, row, **kwargs):
@@ -407,16 +409,19 @@ class EstudantesResource(resources.ModelResource):
                                                              email=email.strip(),
                                                              tipo_de_usuario=1)
 
-            nome_compl = row.get('nome_compl')
+            nome_compl = row.get("nome_compl")
             if (nome_compl is not None) and (nome_compl != ""):
                 nome_compl_txt = nome_compl.split(" ",1)
                 user.first_name = nome_compl_txt[0].strip()
                 user.last_name = nome_compl_txt[1].strip()
 
-            atualizar_campo(user, 'first_name', row.get('nome'))
-            atualizar_campo(user, 'last_name', row.get('sobrenome'))
+            atualizar_campo(user, "first_name", row.get("nome"))
+            atualizar_campo(user, "last_name", row.get("sobrenome"))
             
-            atualizar_campo(user, 'genero', row.get('gênero'))
+            atualizar_campo(user, "genero", row.get("gênero"))
+
+            atualizar_campo(user, "nome_social", row.get("nome_social"))
+            atualizar_campo(user, "pronome_tratamento", row.get("pronome_tratamento"))
 
             user.save()
 
@@ -426,14 +431,14 @@ class EstudantesResource(resources.ModelResource):
             (aluno, _created) = Aluno.objects.get_or_create(user=user)
 
             try:
-                aluno.curso2 = Curso.objects.get(sigla=row.get('curso'))
+                aluno.curso2 = Curso.objects.get(sigla=row.get("curso"))
             except Curso.DoesNotExist: # Não encontrou o curso, deixa vazio
                 aluno.curso2 = None
 
-            atualizar_campo(aluno, 'matricula', row.get('matrícula'))
-            atualizar_campo(aluno, 'cr', row.get('cr'))
-            atualizar_campo(aluno, 'anoPFE', row.get('anoPFE'))
-            atualizar_campo(aluno, 'semestrePFE', row.get('semestrePFE'))
+            atualizar_campo(aluno, "matricula", row.get("matrícula"))
+            atualizar_campo(aluno, "cr", row.get("cr"))
+            atualizar_campo(aluno, "anoPFE", row.get("anoPFE"))
+            atualizar_campo(aluno, "semestrePFE", row.get("semestrePFE"))
 
             if "familia" in row:
                 aluno.familia = row["familia"]
