@@ -39,14 +39,16 @@
 
     <div id="horarios" class="control">
         {% for e in encontros %}
-            <label style="display: block;" class="radio" 
               {% if e.projeto and e.projeto != projeto %}
-                 data-toggle="tooltip" data-placement="bottom" title="Horário já selecionado por outro grupo!"
-                 style="color:lightgrey" 
+                <div style="color:lightgrey">
+                <label title="Horário já selecionado por outro grupo!" 
               {% elif e.projeto and e.projeto == projeto %}
-                 style="color:red" 
-                 data-toggle="tooltip" data-placement="bottom" title="Horário selecionado por seu grupo!"
-              {% endif %}>
+                <div style="color:red;">
+                <label title="Horário selecionado por seu grupo!"
+              {% else %}
+                <div style="color:black">
+                <label title="Horário livre!"
+              {% endif %}class="radio" data-toggle="tooltip" data-placement="bottom" >
                 <input type="radio" name="selection" value="{{e.id}}" 
                 {% if e.projeto == projeto %}checked{% endif %}
                 {% if e.projeto and e.projeto != projeto %}disabled{% endif %}
@@ -55,7 +57,12 @@
                 <span class="opt_short">{{e.startDate|date:"d/m/y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}</span>
                 {% if e.facilitador %}<div style="margin-left: 1em; display: inline-block; text-wrap: nowrap;">({{e.facilitador.get_full_name}})</div>{% endif %}
                 {% if e.location %}<div style="margin-left: 1em; display: inline-block; text-wrap: nowrap;">[{{e.location}}]</div>{% endif %}
-            </label>
+                {% if e.projeto and e.projeto == projeto %}
+                  <div style="font-weight: bold; margin-left: 1em; display: inline-block; text-wrap: nowrap;">Horário Confirmado para seu grupo!</div>
+                {% endif %}
+              </label>
+
+            </div>
         {% empty %}
             Sem encontros para marcar.
         {% endfor %}
