@@ -93,7 +93,7 @@ def avisos_do_dia():
         recipient_list = ["pfeinsper@gmail.com", ]
 
         if aviso.coordenacao:
-            coordenacoes = PFEUser.objects.ftipo_de_usuario=4)
+            coordenacoes = PFEUser.objects.filter(tipo_de_usuario=4)
             email_coordenacoes = []
             for coordenador in coordenacoes:
                 email_coordenacoes.append(str(coordenador.email))
