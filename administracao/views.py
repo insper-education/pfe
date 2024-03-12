@@ -405,13 +405,12 @@ def carrega_arquivo(request, dado):
         entradas = ""
         for i in new_data:
             texto = i.decode("utf-8")
-            entradas += re.sub('[^A-Za-z0-9À-ÿ, \r\n@._]+', '', texto)  # Limpa caracteres especiais
+            entradas += re.sub("[^A-Za-z0-9À-ÿ, \r\n@._]+", '', texto)  # Limpa caracteres especiais
 
-        # imported_data = dataset.load(entradas, format='csv')
-        dataset.load(entradas, format='csv')
+        dataset.load(entradas, format="csv")
         dataset.insert_col(0, col=lambda row: None, header="id")
 
-        result = resource.import_data(dataset, dry_run=True, raise_errors=True)
+        result = resource.import_data(dataset, dry_run=True, raise_errors=True, before_import_kwargs={'dry_run': True})
 
         if result.has_errors():
             mensagem = "Erro ao carregar arquivo." + str(result)
@@ -421,25 +420,34 @@ def carrega_arquivo(request, dado):
                 "mensagem": mensagem,
             }
 
-            return render(request, 'generic.html', context=context)
+            return render(request, "generic.html", context=context)
 
-        resource.import_data(dataset, dry_run=False)  # Actually import now
-        string_html = "Importado ({0} registros): <br>".format(len(dataset))
-        for row_values in dataset:
-            string_html += str(row_values) + "<br>"
+        resource.import_data(dataset, dry_run=False, collect_failed_rows=True, before_import_kwargs={'dry_run': False})  # importa os dados agora
+        
+        if hasattr(resource, "registros"):
+            string_html = "<b>Importado ({0} registros novos): </b><br>".format(len(resource.registros["novos"]))
+            for row_values in resource.registros["novos"]:
+                string_html += str(row_values) + "<br>"
+            string_html += "<br><br><b>Atualizando ({0} registros): </b><br>".format(len(resource.registros["atualizados"]))
+            for row_values in resource.registros["atualizados"]:
+                string_html += str(row_values) + "<br>"
+        else:
+            string_html = "Importado ({0} registros): <br>".format(len(dataset))
+            for row_values in dataset:
+                string_html += str(row_values) + "<br>"
 
         context = {
             "area_principal": True,
             "mensagem": string_html,
         }
 
-        return render(request, 'generic.html', context=context)
+        return render(request, "generic.html", context=context)
 
     context = {
-        'campos_permitidos': resource.campos,
+        "campos_permitidos": resource.campos,
     }
 
-    return render(request, 'administracao/import.html', context)
+    return render(request, "administracao/import.html", context)
 
 
 @login_required

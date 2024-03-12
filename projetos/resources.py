@@ -384,17 +384,29 @@ class EstudantesResource(resources.ModelResource):
         "curso [GRENGCOMP|GRENGMECAT|GRENGMECA|GRCIECOMP]",
         "matrícula (número)",
         "cr (ponto como separador decimal)",
-        "anoPFE",
-        "semestrePFE",
+        "anoPFE (ano em que o estudante cursará no PFE)",
+        "semestrePFE (semestre em que o estudante cursará no PFE)",
         "usuário (desnecessário, pois é pego pelo e-mail)",
-        "nome_social",
-        "pronome_tratamento (por exemplo Dr. ou Dra.)",
+        "nome_social (opcional, mas quando usado será usado sempre que se referir ao estudante)",
+        "pronome_tratamento (opcional, por exemplo Dr. ou Dra.)",
     ]
+
+    def __init__(self):
+        super().__init__()  # Call the constructor of the parent class
+        self.registros = {}
+        self.registros["novos"] = []
+        self.registros["atualizados"] = []
 
     def before_import_row(self, row, **kwargs):
         """Forma que arrumei para evitar preencher com o mesmo dado."""
         EMAIL_ESTUDANTE = "@al.insper.edu.br"
 
+        before_import_kwargs = kwargs.get("before_import_kwargs", None)
+        if before_import_kwargs is not None:
+            dry_run = before_import_kwargs.get("dry_run", True)
+        else:
+            dry_run = True
+        
         email = row.get("email")
         if email is None:
             pass
@@ -404,7 +416,7 @@ class EstudantesResource(resources.ModelResource):
             username = email.split(EMAIL_ESTUDANTE)[0].strip()
 
             # recupera dados do estudante se ele já estava cadastrado
-            # TIPO_DE_USUARIO_CHOICES = (1, 'aluno')
+            # TIPO_DE_USUARIO_CHOICES = (1, "estudante")
             (user, _created) = PFEUser.objects.get_or_create(username=username,
                                                              email=email.strip(),
                                                              tipo_de_usuario=1)
@@ -424,9 +436,13 @@ class EstudantesResource(resources.ModelResource):
             atualizar_campo(user, "pronome_tratamento", row.get("pronome_tratamento"))
 
             user.save()
+            if not dry_run:
+                if _created:
+                    self.registros["novos"].append(user)
+                else:
+                    self.registros["atualizados"].append(user)
 
             user.groups.add(Group.objects.get(name="Estudante"))  # Grupo de permissões
-
 
             (aluno, _created) = Aluno.objects.get_or_create(user=user)
 
@@ -520,7 +536,7 @@ class EstudantesResource(resources.ModelResource):
                                                                                  usuario=user)
                     area_int.save()
 
-                if "Machine" in row["areas"] or "AI" in row["areas"]:
+                if "AI" in row["areas"]:
                     area = Area.objects.get(ativa=True, titulo="Inteligência Artificial")
                     (area_int, _created) = AreaDeInteresse.objects.get_or_create(area=area,
                                                                                  usuario=user)
@@ -532,7 +548,7 @@ class EstudantesResource(resources.ModelResource):
                                                                                  usuario=user)
                     area_int.save()
 
-            row['id'] = aluno.id
+            row["id"] = aluno.id
 
     def skip_row(self, instance, original):
         """Sempre pula linha."""
