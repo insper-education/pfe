@@ -2165,7 +2165,7 @@ def relato_avaliar(request, projeto_id, evento_id):
             # Dispara aviso a coordenação caso alguma observação ou estudante com dificuldade
             if avaliacao_negativa and (observacoes != ""):
 
-                coordenacoes = PFEUser.objects.filter(coordenacao=True)
+                coordenacoes = PFEUser.objects.filter(tipo_de_usuario=4)
                 email_dest = []
                 for coordenador in coordenacoes:
                     email_dest.append(str(coordenador.email))

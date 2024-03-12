@@ -93,7 +93,7 @@ def avisos_do_dia():
         recipient_list = ["pfeinsper@gmail.com", ]
 
         if aviso.coordenacao:
-            coordenacoes = PFEUser.objects.filter(coordenacao=True)
+            coordenacoes = PFEUser.objects.ftipo_de_usuario=4)
             email_coordenacoes = []
             for coordenador in coordenacoes:
                 email_coordenacoes.append(str(coordenador.email))
@@ -138,7 +138,7 @@ def eventos_do_dia():
     # Checa eventos do calendário e envia e-mail para coordenador(es)
     context = get_calendario_context()
 
-    coordenacoes = PFEUser.objects.filter(coordenacao=True)
+    coordenacoes = PFEUser.objects.filter(tipo_de_usuario=4)
     recipient_list = []
     for coordenador in coordenacoes:
         recipient_list.append(str(coordenador.email))

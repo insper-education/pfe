@@ -353,13 +353,13 @@ def envia_proposta(proposta, enviar=True):
     message = t.render(Context(context_carta))
     message = html.urlize(message) # Faz links de e-mail, outros sites funcionarem
 
-    subject = 'Proposta PFE : ({0}.{1} - {2})'.format(proposta.ano,
+    subject = "Proposta PFE : ({0}.{1} - {2})".format(proposta.ano,
                                                       proposta.semestre,
                                                       proposta.titulo)
 
     if enviar:
         recipient_list = list(map(str.strip, re.split(",|;", proposta.email)))
-        coordenacoes = PFEUser.objects.filter(coordenacao=True)
+        coordenacoes = PFEUser.objects.filter(tipo_de_usuario=4)
         for coordenador in coordenacoes:
             recipient_list.append(str(coordenador.email))
         check = email(subject, recipient_list, message)

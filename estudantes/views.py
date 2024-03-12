@@ -176,13 +176,13 @@ def encontros_marcar(request):
                 # mandar para cada membro do grupo
                 recipient_list.append(alocacao.aluno.user.email)
             
-            # coordenadores do curso
-            coordenacoes = PFEUser.objects.filter(coordenacao=True)
+            # coordenadoção
+            coordenacoes = PFEUser.objects.filter(tipo_de_usuario=4)
             for coordenador in coordenacoes:
                 recipient_list.append(str(coordenador.email))
 
             # sempre mandar para a conta do gmail
-            recipient_list.append('pfeinsper@gmail.com')
+            recipient_list.append("pfeinsper@gmail.com")
 
             message = message_agendamento(agendado, cancelado)
             check = email(subject, recipient_list, message)
@@ -194,7 +194,7 @@ def encontros_marcar(request):
                 "area_principal": True,
                 "mensagem": mensagem,
             }
-            return render(request, 'generic.html', context=context)
+            return render(request, "generic.html", context=context)
 
         if not aviso:
             return HttpResponse("Problema! Por favor reportar.")
