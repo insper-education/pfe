@@ -7,6 +7,7 @@
 
 {% block head %}
     {% load static %}
+    <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
     <script>{% include "tooltip.js" %}</script>
     {% comment %} <meta http-equiv="refresh" content="5"> {% endcomment %}
    
@@ -50,7 +51,10 @@
                 {% if e.projeto == projeto %}checked{% endif %}
                 {% if e.projeto and e.projeto != projeto %}disabled{% endif %}
                 >
-                {{e.startDate|date:"d \d\e E \d\e Y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}
+                <span class="opt_full">{{e.startDate|date:"d \d\e E \d\e Y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}</span>
+                <span class="opt_short">{{e.startDate|date:"d/m/y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}</span>
+                {% if e.facilitador %}<div style="margin-left: 1em; display: inline-block; text-wrap: nowrap;">({{e.facilitador.get_full_name}})</div>{% endif %}
+                {% if e.location %}<div style="margin-left: 1em; display: inline-block; text-wrap: nowrap;">[{{e.location}}]</div>{% endif %}
             </label>
         {% empty %}
             Sem encontros para marcar.

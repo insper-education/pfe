@@ -1594,7 +1594,7 @@ def conceitos_obtidos(request, primarykey):  # acertar isso para pk
 @permission_required("users.altera_professor", raise_exception=True)
 def dinamicas_index(request):
     """Menus de encontros."""
-    encontros = Encontro.objects.all().order_by('startDate')
+    encontros = Encontro.objects.all().order_by("startDate")
     context = {"encontros": encontros,}
     return render(request, "professores/dinamicas_index.html", context)
 
@@ -1707,11 +1707,11 @@ def dinamicas_editar(request, primarykey=None):
                 except (ValueError, OverflowError):
                     return HttpResponse("Erro com data da Dinâmica!", status=401)
 
-                local = request.POST.get('local', None)
+                local = request.POST.get("local", None)
                 if local:
                     encontro.location = local
 
-                projeto = request.POST.get('projeto', None)
+                projeto = request.POST.get("projeto", None)
                 if projeto:
                     projeto = int(projeto)
                     if projeto != 0:
@@ -1719,7 +1719,7 @@ def dinamicas_editar(request, primarykey=None):
                     else:
                         encontro.projeto = None
 
-                facilitador = request.POST.get('facilitador', None)
+                facilitador = request.POST.get("facilitador", None)
                 if facilitador:
                     facilitador = int(facilitador)
                     if facilitador != 0:
