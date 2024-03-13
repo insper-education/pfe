@@ -173,16 +173,18 @@ def ajax_bancas(request):
                 bancas[banca.id]["local"] = banca.location
 
                 if banca.projeto:
-                    bancas[banca.id]["organizacao"] = banca.projeto.organizacao.sigla
-                    bancas[banca.id]["orientador"] = banca.projeto.orientador.user.get_full_name()
+                    bancas[banca.id]["organizacao"] = banca.projeto.organizacao.sigla if banca.projeto.organizacao else None
+                    bancas[banca.id]["orientador"] = banca.projeto.orientador.user.get_full_name() if banca.projeto.orientador else None
                     bancas[banca.id]["membro1"] = banca.membro1.get_full_name() if banca.membro1 else ""
                     bancas[banca.id]["membro2"] = banca.membro2.get_full_name() if banca.membro2 else ""
                     bancas[banca.id]["membro3"] = banca.membro3.get_full_name() if banca.membro3 else ""
 
                     if request.user.tipo_de_usuario == 4:  # Administrador
                         bancas[banca.id]["editable"] = True
-                    else:
+                    elif banca.projeto.orientador and request.user.professor:
                         bancas[banca.id]["editable"] = banca.projeto.orientador == request.user.professor
+                    else:
+                        bancas[banca.id]["editable"] = False
 
                     title = "(" + banca.projeto.organizacao.sigla + ") " + banca.projeto.get_titulo()
                     if banca.location:
@@ -375,12 +377,15 @@ def bancas_criar(request, data=None):
     if data:
         context["data"] = data[:10]  # soh a data, tirando a hora se for o caso
         datar = datetime.datetime.strptime(context["data"], "%Y-%m-%d").date()
-        if datar >= bancas_finais.startDate and datar <= bancas_finais.endDate:
-            context["tipob"] = 0
-        if datar >= bancas_intermediaria.startDate and datar <= bancas_intermediaria.endDate:
-            context["tipob"] = 1
-        if datar >= bancas_falconi.startDate and datar <= bancas_falconi.endDate:
-            context["tipob"] = 2
+        if bancas_finais and bancas_finais.startDate and bancas_finais.endDate:
+            if datar >= bancas_finais.startDate and datar <= bancas_finais.endDate:
+                context["tipob"] = 0
+        if bancas_intermediaria and bancas_intermediaria.startDate and bancas_intermediaria.endDate:
+            if datar >= bancas_intermediaria.startDate and datar <= bancas_intermediaria.endDate:
+                context["tipob"] = 1
+        if bancas_falconi and bancas_falconi.startDate and bancas_falconi.endDate:
+            if datar >= bancas_falconi.startDate and datar <= bancas_falconi.endDate:
+                context["tipob"] = 2
         
     return render(request, "professores/bancas_view.html", context)
 
