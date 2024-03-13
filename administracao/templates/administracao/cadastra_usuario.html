@@ -61,18 +61,18 @@
       pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')" required><br>
     <br>
 
-    <label for="email">e-mail:</label> <input type="email" size="70" maxlength="{% max_length PFEUser "email" %}" id="email" name="email" value="{{usuario.email}}" oninvalid="this.setCustomValidity('Digite um e-mail válido')" oninput="this.setCustomValidity('')" required><br><br>
+    <label for="email">e-mail:</label> <input type="email" size="70" maxlength="{% max_length PFEUser "email" %}" id="email" name="email" {% if usuario.email %}value="{{usuario.email}}"{% endif %} oninvalid="this.setCustomValidity('Digite um e-mail válido')" oninput="this.setCustomValidity('')" required><br><br>
     
-    <label for="telefone">telefone:</label> <input type="text" size="20" maxlength="{% max_length PFEUser "telefone" %}" id="telefone" name="telefone" value="{{usuario.telefone}}"><br>
-    <label for="celular">celular:</label> <input type="text" size="20" maxlength="{% max_length PFEUser "celular" %}" id="celular" name="celular" value="{{usuario.celular}}"><br>
-    <label for="instant_messaging">IM:</label> <input type="text" size="32" maxlength="{% max_length PFEUser "instant_messaging" %}" id="instant_messaging" name="instant_messaging" value="{{usuario.instant_messaging}}"><br>
+    <label for="telefone">telefone:</label> <input type="text" size="20" maxlength="{% max_length PFEUser "telefone" %}" id="telefone" name="telefone" {% if usuario.telefone %}value="{{usuario.telefone}}"{% endif %}><br>
+    <label for="celular">celular:</label> <input type="text" size="20" maxlength="{% max_length PFEUser "celular" %}" id="celular" name="celular" {% if usuario.celular %}value="{{usuario.celular}}"{% endif %}><br>
+    <label for="instant_messaging">IM:</label> <input type="text" size="32" maxlength="{% max_length PFEUser "instant_messaging" %}" id="instant_messaging" name="instant_messaging" {% if usuario.instant_messaging %}value="{{usuario.instant_messaging}}"{% endif %}><br>
     <br>
 
     <label for="masculino"><input type="radio" name="genero" id="masculino" value="masculino" {% if usuario.genero == 'M'%}checked{% endif %}>  Masculino</label>&nbsp;&nbsp;&nbsp;
     <label for="feminino"><input type="radio" name="genero" id="feminino" value="feminino" {% if usuario.genero == 'F'%}checked{% endif %}> Feminino</label>
     <br><br>
     
-    <label for="linkedin">LinkedIn:</label> <input type="text" size="68" maxlength="{% max_length PFEUser "linkedin" %}" id="linkedin" name="linkedin" value="{% if usuario.linkedin %}{{usuario.linkedin}}{% endif %}" placeholder="https://www.linkedin.com/"><br>
+    <label for="linkedin">LinkedIn:</label> <input type="text" size="68" maxlength="{% max_length PFEUser "linkedin" %}" id="linkedin" name="linkedin" {% if usuario.linkedin %}value="{{usuario.linkedin}}"{% endif %} placeholder="https://www.linkedin.com/"><br>
 
     <br><label for="lingua">Língua</label>:
     <select name="lingua" id="lingua" title="Linguagem">
@@ -82,7 +82,7 @@
     <br><br>
 
     <label for="observacao">Observações:</label><br>
-    <textarea id="observacao" name="observacao" rows="4" cols="80" maxlength="500">{{usuario.observacoes}}</textarea><br>
+    <textarea id="observacao" name="observacao" rows="4" cols="80" maxlength="500">{% if usuario.observacoes %}{{usuario.observacoes}}{% endif %}</textarea><br>
 
     {% comment %}
     <input type="checkbox" id="membro_comite" name="membro_comite" value="True">
@@ -106,12 +106,12 @@
 
       <br>
       <label for="ano">Ano PFE: 
-      <input type="number" id="ano" name="ano" min="2018" max="3018" value="{{usuario.aluno.anoPFE}}"></label> &nbsp;&nbsp;&nbsp;
+      <input type="number" id="ano" name="ano" min="2018" max="3018" {% if usuario.aluno.anoPFE %}value="{{usuario.aluno.anoPFE}}"{% endif %}></label> &nbsp;&nbsp;&nbsp;
       <label for="semestre">Semestre PFE:  
-      <input type="number" id="semestre" name="semestre" min="1" max="2" value="{{usuario.aluno.semestrePFE}}"></label>
+      <input type="number" id="semestre" name="semestre" min="1" max="2" {% if usuario.aluno.semestrePFE %}value="{{usuario.aluno.semestrePFE}}"{% endif %}></label>
       
       <br>
-      <label for="cr">cr: </label> <input type="number" style="width: 5em; text-align: right;" min="0" max="10" step="0.0001" id="cr" name="cr" value="{{usuario.aluno.cr|unlocalize}}">
+      <label for="cr">cr: </label> <input type="number" style="width: 5em; text-align: right;" min="0" max="10" step="0.0001" id="cr" name="cr" {% if usuario.aluno.cr %}value="{{usuario.aluno.cr|unlocalize}}"{% endif %}>
 
       <br>
       {% with externo=usuario.aluno.externo %}
@@ -142,7 +142,7 @@
       <label for="tp"><input type="radio" name="dedicacao" id="tp" value="tp" {% if usuario.professor.dedicacao == "TP" %}checked{% endif %}>  TP</label>
       <br>
 
-      <label for="areas">Áreas de interesse: </label> <input type="text" size="75" maxlength="{% max_length Professor "areas" %}" style="max-width: 95%;" id="areas" name="areas"{% if usuario.professor.areas %} value="{{usuario.professor.areas}}" {% endif %} ><br>
+      <label for="areas">Áreas de interesse: </label> <input type="text" size="75" maxlength="{% max_length Professor "areas" %}" style="max-width: 95%;" id="areas" name="areas" {% if usuario.professor.areas %} value="{{usuario.professor.areas}}" {% endif %} ><br>
  
       <label for="website">website:</label><input type="text" size="73" maxlength="{% max_length Professor "website" %}" style="max-width: 95%;" id="website" name="website" {% if usuario.professor.website %} value="{{usuario.professor.website}}" {% endif %} placeholder="https://www.insper.edu.br/"><br>
       <label for="lattes">lattes:</label><input type="text" size="73" maxlength="{% max_length Professor "lattes" %}" style="max-width: 95%;" id="lattes" name="lattes" {% if usuario.professor.lattes %} value="{{usuario.professor.lattes}}" {% endif %} placeholder="https://lattes.cnpq.br/"><br>
@@ -164,7 +164,7 @@
       <a href="{% url 'cadastrar_organizacao' %}">&#10133;</a>
       <br>
       
-      <label style="margin-top: 10px;" for="cargo">cargo:</label> <input style="max-width: 95%;" type="text" size="50" maxlength="{% max_length Parceiro "cargo" %}" id="cargo" name="cargo" value="{{usuario.parceiro.cargo}}"><br>
+      <label style="margin-top: 10px;" for="cargo">cargo:</label> <input style="max-width: 95%;" type="text" size="50" maxlength="{% max_length Parceiro "cargo" %}" id="cargo" name="cargo" {% if usuario.parceiro.cargo %}value="{{usuario.parceiro.cargo}}"{% endif %}><br>
 
       <input type="checkbox" id="principal_contato" name="principal_contato" value="True" {% if usuario.parceiro.principal_contato %}checked{% endif %}>
       <label for="principal_contato"> Principal Contato</label><br>
