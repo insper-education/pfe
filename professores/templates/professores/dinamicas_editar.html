@@ -12,8 +12,6 @@
 {% comment %} REMOVER NAO MAIS USADO!! {% endcomment %}
 {% comment %} REMOVER NAO MAIS USADO!! {% endcomment %}
 
-
-
 {% block head %}
 
   {% load static %}
@@ -43,6 +41,11 @@
   <style>
     table, th, td {
       border: 0px;
+    }
+    {% comment %} Para seleção de projeto não vazar a tela {% endcomment %}
+    .bootstrap-select > .dropdown-menu { 
+      width: 100vw;
+      max-width: fit-content;
     }
   </style>
 
@@ -107,7 +110,7 @@
 
       <br><br>
       <label for="local">Local:
-        <input id="local" name="local" type="text" size="36" style="max-width: 100%;" maxlength="280"
+        <input id="local" name="local" type="text" size="36" style="width: 100%;" maxlength="280"
         {% if encontro %}
           value="{{encontro.location}}"
         {% endif %} 
@@ -118,7 +121,7 @@
       <br>
       Facilitador:<br>
       <select name="facilitador" class="pessoas selectpicker" id="facilitador" title="Selecione o facilitador"
-        data-live-search="true" data-width="50%" data-size="10">
+        data-live-search="true" data-width="90%" data-size="10">
           <option {% if not encontro %}selected{% endif %} value="0"> -- selecione o facilitador -- </option>
           <optgroup label="Professores">
             {% for pessoa in professores %}

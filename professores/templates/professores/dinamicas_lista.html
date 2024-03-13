@@ -32,10 +32,10 @@
   {% include "edicoes.html" %}
 
   <script>
-    $('#filterEdicao').append($('<option>', {
+    $("#filterEdicao").append($("<option>", {
         value: "proximas",
-        text: 'proximas',
-        selected: 'selected'
+        text: "proximas",
+        selected: "selected"
     }));
   </script>
 
@@ -50,6 +50,24 @@
             <td>
               {% comment %} <a class="imprimir" href="{% url 'dinamicas_editar' e.id %}"> {% endcomment %}
               <b>Horário:</b> {{e.startDate}} - {{e.endDate|date:'H:i'}}<br>
+              {% if e.facilitador %}
+                <div class="facilitador" style="margin: 4px 0px 4px 0px;">
+                  <b>Facilitador:</b> <a class="imprimir" href="{% url 'user_detail' e.facilitador.id %}">{{ e.facilitador.get_full_name }}</a>
+                  <a class="email" href="mailto:{{e.facilitador.email}}">&lt;{{e.facilitador.email}}&gt;</a>&nbsp;
+                </div>
+              {% endif %}
+              {% if e.location %}
+                <div class="local" style="margin: 4px 0px 4px 0px;">
+                  <b>Local:</b> 
+                  {% if e.url_location %}
+                    <a href="{{e.location}}">
+                  {% endif %}
+                  {{e.location}}
+                  {% if e.url_location %}
+                    </a>
+                  {% endif %}
+                </div>
+              {% endif %}
               {% if e.projeto %}
                 <b>Projeto:</b> <a class="imprimir" href="{% url 'projeto_completo' e.projeto.id %}">
                   {{e.projeto.get_titulo}}
@@ -68,28 +86,7 @@
                     <a class="email" href="mailto:{{e.projeto.orientador.user.email}}">&lt;{{e.projeto.orientador.user.email}}&gt;</a>
                   {% endif %}
                 </span>
-                
-                {% if e.facilitador %}
-                  <div class="facilitador" style="margin-top: 8px;">
-                    <b>Facilitador:</b> <a class="imprimir" href="{% url 'user_detail' e.facilitador.id %}">{{ e.facilitador.get_full_name }}</a>
-                    <a class="email" href="mailto:{{e.facilitador.email}}">&lt;{{e.facilitador.email}}&gt;</a>&nbsp;
-                    <br>
-                  </div>
-                {% endif %}
-                {% if e.location %}
-                  <div class="local" style="margin-top: 8px;">
-                    <b>Local:</b> 
-                    {% if e.url_location %}
-                      <a href="{{e.location}}">
-                    {% endif %}
-                    {{e.location}}
-                    {% if e.url_location %}
-                      </a>
-                    {% endif %}
-                    <br>
-                  </div>
-                {% endif %}
-                <div class="grupo" style="margin-top: 8px;">
+                <div class="grupo" style="margin-top: 1px;">
                   <b>Grupo:</b>
                   <ol>
                     {% for alocacao in e.projeto.alocacao_set.all %} 
@@ -105,8 +102,7 @@
               {% endif %}
 
               <span class="editar esconder" style="float: right;">
-                <a data-toggle="tooltip" data-html="true" animation="true" title="Agenda Nova Mentoria" class="open-modal"
-                  data-url="{% url 'dinamicas_editar' e.id %}" href="{% url 'dinamicas_editar' e.id %}"> 
+                <a class="open-modal" data-url="{% url 'dinamicas_editar' e.id %}" href="{% url 'dinamicas_editar' e.id %}"> 
                   <button class="btn btn-primary">Editar</button>
                 </a>
               </span>
