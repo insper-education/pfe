@@ -85,3 +85,10 @@ def message_agendamento(encontro, cancelado):
         "cancelado": cancelado,
     }
     return render_message("Agendamento de Dinâmica", context_carta)
+
+def message_cancelamento(encontro):
+    """Emite menssagem de cancelamento de agendamento de dinâmica."""
+    context_carta = {
+        "encontro": encontro,
+    }
+    return render_message("Cancelamento de Dinâmica", context_carta)

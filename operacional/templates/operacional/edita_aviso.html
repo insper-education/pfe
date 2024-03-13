@@ -94,7 +94,8 @@
 
         <script>
           $('#apagar').click(function() {
-            if(confirm('Are you sure?')){
+            if(confirm('Você tem certeza?')){
+              event.preventDefault();
               window.location = "{% url 'deleta_aviso' aviso.id %}";
             }
           });

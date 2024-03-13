@@ -30,6 +30,10 @@ urlpatterns = [
          views.encontros_marcar,
          name="encontros_marcar"),
 
+    path("encontros_cancelar/<int:evento_id>",
+         views.encontros_cancelar,
+         name="encontros_cancelar"),
+
     path("estudante_feedback",
          views.estudante_feedback,
          name="estudante_feedback"),

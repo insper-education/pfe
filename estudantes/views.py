@@ -24,7 +24,7 @@ from projetos.models import Encontro, Banca, Entidade, FeedbackEstudante, Evento
 
 from .support import cria_area_estudante
 
-from projetos.messages import email, message_agendamento, create_message
+from projetos.messages import email, message_agendamento, create_message, message_cancelamento
 
 from users.models import PFEUser, Alocacao, Opcao, OpcaoTemporaria
 
@@ -63,12 +63,15 @@ def index_estudantes(request):
         context["projeto"] = projeto
 
         # Estudantes de processos passados sempre terrão seleção vencida
-        if semestre == 1:
-            context["vencido"] |= request.user.aluno.anoPFE < ano
-            context["vencido"] |= request.user.aluno.anoPFE == ano and \
-                request.user.aluno.semestrePFE == 1
+        if request.user.aluno.anoPFE and request.user.aluno.semestrePFE:
+            if semestre == 1:
+                context["vencido"] |= request.user.aluno.anoPFE < ano
+                context["vencido"] |= request.user.aluno.anoPFE == ano and \
+                    request.user.aluno.semestrePFE == 1
+            else:
+                context["vencido"] |= (request.user.aluno.anoPFE <= ano)
         else:
-            context["vencido"] |= (request.user.aluno.anoPFE <= ano)
+            context["vencido"] = True
 
         if projeto:
             hoje = datetime.date.today()
@@ -123,8 +126,7 @@ def encontros_marcar(request):
     aviso = None  # Mensagem de aviso caso algum problema
 
     hoje = datetime.date.today()
-    encontros = Encontro.objects.filter(startDate__gt=hoje)\
-        .order_by('startDate')
+    encontros = Encontro.objects.filter(startDate__gt=hoje).order_by("startDate")
 
     if request.user.tipo_de_usuario == 1:  # Estudante
         projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno).\
@@ -138,8 +140,8 @@ def encontros_marcar(request):
     else:
         return HttpResponse("Você não possui conta de estudante.", status=401)
 
-    if request.method == 'POST':
-        check_values = request.POST.getlist('selection')
+    if request.method == "POST":
+        check_values = request.POST.getlist("selection")
         
         agendado = None
         cancelado = None
@@ -169,7 +171,7 @@ def encontros_marcar(request):
                         encontro.save()
 
         if agendado:
-            subject = 'Dinâmica PFE agendada'
+            subject = 'Dinâmica agendada'
             recipient_list = []
             alocacoes = Alocacao.objects.filter(projeto=projeto)
             for alocacao in alocacoes:
@@ -177,19 +179,21 @@ def encontros_marcar(request):
                 recipient_list.append(alocacao.aluno.user.email)
             
             # coordenadoção
-            coordenacoes = PFEUser.objects.filter(tipo_de_usuario=4)
-            for coordenador in coordenacoes:
-                recipient_list.append(str(coordenador.email))
+            # coordenacoes = PFEUser.objects.filter(tipo_de_usuario=4)
+            # for coordenador in coordenacoes:
+            #     recipient_list.append(str(coordenador.email))
+            recipient_list.append(str(configuracao.coordenacao.user.email))
 
             # sempre mandar para a conta do gmail
             recipient_list.append("pfeinsper@gmail.com")
 
             message = message_agendamento(agendado, cancelado)
             check = email(subject, recipient_list, message)
-            if check != 1:
-                message = "Problema no envio, contacte:lpsoares@insper.edu.br"
+            # if check != 1:
+            #     message = "Problema no envio, contacte:lpsoares@insper.edu.br"
 
-            mensagem = "Agendado: " + str(agendado.startDate)
+            horario = "dia " + str(agendado.startDate.strftime("%d/%m/%Y")) + " das " + str(agendado.startDate.strftime("%H:%M")) + ' às ' + str(agendado.endDate.strftime("%H:%M"))
+            mensagem = "Dinâmica agendada: " + horario
             context = {
                 "area_principal": True,
                 "mensagem": mensagem,
@@ -199,12 +203,61 @@ def encontros_marcar(request):
         if not aviso:
             return HttpResponse("Problema! Por favor reportar.")
 
+    agendado = encontros.filter(projeto=projeto).last()
+
     context = {
         "encontros": encontros,
         "projeto": projeto,
         "aviso": aviso,
+        "agendado": agendado,
     }
-    return render(request, 'estudantes/encontros_marcar.html', context)
+    return render(request, "estudantes/encontros_marcar.html", context)
+
+
+@login_required
+@transaction.atomic
+def encontros_cancelar(request, evento_id):
+    """Cancela encontro agendado por estudantes."""
+    configuracao = get_object_or_404(Configuracao)
+
+    if request.user.tipo_de_usuario == 1:  # Estudante
+        projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno).\
+            distinct().filter(ano=configuracao.ano).\
+            filter(semestre=configuracao.semestre).last()
+    else:
+        return HttpResponse("Você não possui conta de estudante.", status=401)
+
+    encontro = get_object_or_404(Encontro, pk=evento_id, projeto=projeto)
+    
+    encontro.projeto = None
+    encontro.save()
+
+
+    subject = "Dinâmica cancelada"
+    recipient_list = []
+    alocacoes = Alocacao.objects.filter(projeto=projeto)
+    for alocacao in alocacoes:
+        recipient_list.append(alocacao.aluno.user.email)
+    
+    # coordenadoção
+    recipient_list.append(str(configuracao.coordenacao.user.email))
+
+    # sempre mandar para a conta do gmail
+    recipient_list.append("pfeinsper@gmail.com")
+
+    message = message_cancelamento(encontro)
+    check = email(subject, recipient_list, message)
+    # if check != 1:
+    #     message = "Problema no envio, contacte:lpsoares@insper.edu.br"
+
+    horario = "dia " + str(encontro.startDate.strftime("%d/%m/%Y")) + " das " + str(encontro.startDate.strftime("%H:%M")) + ' às ' + str(encontro.endDate.strftime("%H:%M"))
+    mensagem = "Agendamento Cancelado: " + horario
+    context = {
+        "area_principal": True,
+        "mensagem": mensagem,
+    }
+    return render(request, "generic.html", context=context)
+
 
 
 def estudante_feedback_geral(request, usuario):

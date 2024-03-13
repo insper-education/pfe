@@ -36,19 +36,24 @@ def configuracao_estudante_vencida(estudante):
     ano = configuracao.ano
     semestre = configuracao.semestre
 
-    vencido = False
+    if estudante.anoPFE is None or estudante.semestrePFE is None:
+        return True
+    
     if estudante.anoPFE < ano:
-        vencido = True
-    elif estudante.anoPFE == ano and semestre == 1:
+        return True
+    
+    if estudante.anoPFE == ano and semestre == 1:
         if estudante.semestrePFE == 2:
-            vencido = timezone.now().date() > get_limite_propostas(configuracao)
-    elif estudante.anoPFE == ano and semestre == 2:
-        vencido = True
-    elif estudante.anoPFE == ano+1:
-        if estudante.semestrePFE == 1:
-            vencido = timezone.now().date() > get_limite_propostas(configuracao)
+            return timezone.now().date() > get_limite_propostas(configuracao)
+    
+    if estudante.anoPFE == ano and semestre == 2:
+        return True
 
-    return vencido
+    if estudante.anoPFE == ano+1:
+        if estudante.semestrePFE == 1:
+            return timezone.now().date() > get_limite_propostas(configuracao)
+
+    return False
 
 # Para avaliação de pares
 def configuracao_pares_vencida(estudante, tipo, prazo=10):
@@ -60,7 +65,7 @@ def configuracao_pares_vencida(estudante, tipo, prazo=10):
 
     #prazo = 10
     
-    if estudante is not None:
+    if estudante is not None and estudante.anoPFE is not None and estudante.semestrePFE is not None:
         if estudante.anoPFE < ano:
             return True, None, None
         elif estudante.anoPFE == ano and semestre == 2 and estudante.semestrePFE == 1:

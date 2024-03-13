@@ -6,11 +6,12 @@
 {% endcomment %}
 
 {% block head %}
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
-    <script>{% include "tooltip.js" %}</script>
-    {% comment %} <meta http-equiv="refresh" content="5"> {% endcomment %}
-   
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
+  <script>{% include "tooltip.js" %}</script>
+  {% comment %} <meta http-equiv="refresh" content="5"> {% endcomment %}
+  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
+  {% include "reload.html" %}
 {% endblock %}
 
 {% block content %}
@@ -43,10 +44,10 @@
                 <div style="color:lightgrey">
                 <label title="Horário já selecionado por outro grupo!" 
               {% elif e.projeto and e.projeto == projeto %}
-                <div style="color:red;">
+                <div style="color:Red;">
                 <label title="Horário selecionado por seu grupo!"
               {% else %}
-                <div style="color:black">
+                <div style="color:Green">
                 <label title="Horário livre!"
               {% endif %}class="radio" data-toggle="tooltip" data-placement="bottom" >
                 <input type="radio" name="selection" value="{{e.id}}" 
@@ -70,11 +71,34 @@
 
     {% if encontros %}
         <br>
-        &nbsp;&nbsp;&nbsp;<button class="btn btn-primary mb-1" type="submit" 
+        <button class="btn btn-primary mb-1 ml-2" type="submit" 
         {% if user.tipo_de_usuario != 1 or not projeto %}disabled{% endif %}>
+          {% if agendado %}
+            Reagendar
+          {% else %}
             Agendar
+          {% endif %}
         </button>
+
+        {% if agendado %}
+            <button class="btn btn-danger mb-1 ml-2" id="cancelar" 
+              {% if user.tipo_de_usuario != 1 or not projeto %}disabled{% endif %}>
+              Cancelar Agendamento
+            </button>
+            <script>
+                $("#cancelar").click(function() {
+                    if(confirm("Tem certeza que deseja cancelar o agendamento para {{agendado.startDate}}?")){
+                        event.preventDefault(); 
+                        window.location = "{% url 'encontros_cancelar' agendado.id %}";
+                    } else {
+                        return false;
+                    }
+                });
+            </script>
+        {% endif %}
+
     {% endif %}
+
 
   <script>
 
@@ -104,7 +128,7 @@
                 {% if user.tipo_de_usuario == 4 %} 
                     alert(request.responseText);
                     jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-                    console.log('error'+request.responseText);
+                    console.log("error"+request.responseText);
                 {% else %}
                     jQuery("body").html("Erro no servidor do PFE. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
                 {% endif %}
