@@ -124,7 +124,7 @@ def emails_semestre(request):
             estudantes = []  # Estudantes do semestre
             orientadores = []  # Orientadores por semestre
             organizacoes = []  # Controla as organizações participantes p/semestre
-            #parceiros = []  # Parceiros das Organizações no semestre
+            conexoes = []  # Parceiros das Organizações no semestre
             membros_bancas = []  # Membros das bancas
 
             for projeto in Projeto.objects.filter(ano=ano).filter(semestre=semestre):
@@ -139,11 +139,7 @@ def emails_semestre(request):
                 if projeto.organizacao not in organizacoes:
                     organizacoes.append(projeto.organizacao)  # Junta organizações do semestre
 
-                # Parceiros de todas as organizações parceiras
-                # parceiros = Parceiro.objects.filter(organizacao__in=organizacoes,
-                #                                     user__is_active=True)
-                # conexoes = Conexao.objects.filter(projeto=projeto, parceiro__user__is_active=True)
-                conexoes = Conexao.objects.filter(projeto=projeto)
+                conexoes += list(Conexao.objects.filter(projeto=projeto))
 
                 bancas = Banca.objects.filter(projeto=projeto)
                 for banca in bancas:
@@ -173,8 +169,6 @@ def emails_semestre(request):
                 data["Orientadores"].append([i.user.first_name, i.user.last_name, i.user.email])
 
             data["Parceiros"] = []
-            # for i in parceiros:
-            #     data["Parceiros"].append([i.user.first_name, i.user.last_name, i.user.email])
             for c in conexoes:
                 data["Parceiros"].append([c.parceiro.user.first_name, c.parceiro.user.last_name, c.parceiro.user.email])
 

@@ -44,7 +44,14 @@
     <strong>Matrícula:</strong> {{aluno.matricula}}<br>
   {% endif %}
   <strong>Curso:</strong> {{aluno.curso2}}<br>
-  <strong>Periodo PFE:</strong> {{aluno.anoPFE}}.{{aluno.semestrePFE}}<br>
+  <strong>Periodo PFE:</strong> 
+  {% if aluno.anoPFE and aluno.semestrePFE %}
+    {{aluno.anoPFE}}.{{aluno.semestrePFE}}
+  {% else %}
+    Período não definido
+  {% endif %}
+  <br>
+  
   {% if aluno.cr %}
     <strong>CR:</strong> {{aluno.cr}}<br>
   {% endif %}

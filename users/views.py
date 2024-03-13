@@ -634,12 +634,14 @@ def edita_notas(request, primarykey):
 @permission_required("users.altera_professor", raise_exception=True)
 def estudante_detail(request, primarykey):
     """Mostra detalhes sobre o estudante."""
-    aluno = Aluno.objects.filter(pk=primarykey).first()
-    alocacoes = Alocacao.objects.filter(aluno=aluno)
-    certificados = Certificado.objects.filter(usuario=aluno.user)
+    estudante = Aluno.objects.filter(pk=primarykey).first()
+    if not estudante:
+        return HttpResponse("Estudante não encontrado.", status=401)
+    alocacoes = Alocacao.objects.filter(aluno=estudante)
+    certificados = Certificado.objects.filter(usuario=estudante.user)
 
     context = calcula_objetivos(alocacoes)
-    context["aluno"] = aluno
+    context["aluno"] = estudante
     context["alocacoes"] = alocacoes
     context["certificados"] = certificados
     context["TIPO_DE_CERTIFICADO"] = Certificado.TIPO_DE_CERTIFICADO
