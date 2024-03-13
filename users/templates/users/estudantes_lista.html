@@ -91,21 +91,15 @@
             <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
               {% for alocacao in alocacoes %}
                 {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
+                  {% if alocacao.projeto and alocacao.projeto.organizacao %}
+                    <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
+                      ({{alocacao.projeto.organizacao}})
+                    </a>
+                  {% endif %}
                   <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
                     {{alocacao.projeto.get_titulo}}
                   </a>
                   {% include "tipo_projeto.html" with projeto=alocacao.projeto %}<br>
-                {% endif %}
-              {% endfor %}
-            </td>
-            <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
-              {% for alocacao in alocacoes %}
-                {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
-                  {% if alocacao.projeto and alocacao.projeto.organizacao %}
-                    <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
-                      {{alocacao.projeto.organizacao}}
-                    </a>
-                  {% endif %}
                 {% endif %}
               {% endfor %}
             </td>
@@ -346,7 +340,7 @@
           if(table) {
             // Hide/Esconde certas colunas
             table.fnSetColumnVis( 1, false );  // esconde Matrícula
-            table.fnSetColumnVis( 7, false );  // esconde Linkedin
+            table.fnSetColumnVis( 6, false );  // esconde Linkedin
           }
         }
       };
