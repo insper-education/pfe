@@ -78,6 +78,8 @@
     </table>
   </div>
 
-  {% include "documento-modal.html" %}
+  {% if user.tipo_de_usuario == 4 %}
+    {% include "documento-modal.html" %}
+  {% endif %}
 
 {% endblock %}

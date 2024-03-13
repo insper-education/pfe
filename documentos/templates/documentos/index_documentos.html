@@ -27,7 +27,18 @@
 
 {% block content %}
 
-  <span class="titulo">Documentos</span>
+  <span class="titulo">Documentos
+    {% if user.tipo_de_usuario == 4 %}
+    <small>
+      <a
+        class="open-documento" style="cursor:pointer;"
+        data-url="{% url 'adiciona_documento' %}"
+        >&#10133;</a
+      >
+    </small>
+  {% endif %}
+
+  </span>
 
   {% for area in areas %}
     {% if user.tipo_de_usuario in area.permissao %}
@@ -44,5 +55,9 @@
       </ul>
     {% endif %}
   {% endfor %}
+
+  {% if user.tipo_de_usuario == 4 %}
+    {% include "documento-modal.html" %}
+  {% endif %}
 
 {% endblock %}
