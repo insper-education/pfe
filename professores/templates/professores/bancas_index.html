@@ -140,7 +140,7 @@
 
       <script>
 
-        function atualiza_banca(event) {
+        function atualiza(event) {
           $.ajax({
             type: "POST",
             url: '{% url "ajax_atualiza_banca" %}',
@@ -331,12 +331,12 @@
               
               eventResize: function(info) {
                 $(".tooltip").remove();
-                atualiza_banca(info.event);
+                atualiza(info.event);
               },
 
               eventDrop: function(info) {
                 $(".tooltip").remove();
-                atualiza_banca(info.event);
+                atualiza(info.event);
               },
 
             });

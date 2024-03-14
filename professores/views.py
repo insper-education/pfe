@@ -236,7 +236,7 @@ def ajax_bancas(request):
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def ajax_atualiza_banca(request):
-    """Retorna as bancas do ano."""
+    """Atualiza os dados de uma banca por ajax."""
 
     if request.is_ajax():
         
@@ -248,13 +248,32 @@ def ajax_atualiza_banca(request):
             banca.endDate = end
             banca.save()
 
-            context = {
-                "atualizado": True,
-            }
+            context = {"atualizado": True,}
             return JsonResponse(context)
     
     return HttpResponse("Erro.", status=401)    
 
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def ajax_atualiza_dinamica(request):
+    """Atualiza os dados de uma dinamica por ajax."""
+
+    if request.is_ajax():
+        
+        if "id" in request.POST and "start" in request.POST and "end" in request.POST:
+            start = datetime.datetime.strptime(request.POST["start"], "%d/%m/%Y, %H:%M")
+            end = datetime.datetime.strptime(request.POST["end"], "%d/%m/%Y, %H:%M")
+            encontro = Encontro.objects.get(id = request.POST["id"])
+            encontro.startDate = start
+            encontro.endDate = end
+            encontro.save()
+
+            context = {"atualizado": True,}
+            return JsonResponse(context)
+    
+    return HttpResponse("Erro.", status=401)    
 
 
 def mensagem_edicao_banca(banca, atualizada=False):

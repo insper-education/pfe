@@ -32,6 +32,32 @@
   {% include "cores_bancas.html" %}
 
   <script>
+
+    function atualiza(event) {
+      $.ajax({
+        type: "POST",
+        url: '{% url "ajax_atualiza_dinamica" %}',
+        data: {
+            "id": event.id,
+            "start": event.start.toLocaleString("pt-BR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false  }),
+            "end": event.end.toLocaleString("pt-BR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false  }),
+            "csrfmiddlewaretoken": "{{ csrf_token }}",
+        },
+        success: function(response){
+          //console.log(response);
+        },
+        error: function (request, status, error) {
+          {% if user.tipo_de_usuario == 4 %} 
+            alert(request.responseText);
+            jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
+            console.log('error'+request.responseText);
+          {% else %}
+            jQuery("body").html("Erro no servidor do PFE. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
+          {% endif %}
+        }
+      });
+    }
+
     document.addEventListener("DOMContentLoaded", function() {
       var calendarEl = document.getElementById("calendar");
 
@@ -85,7 +111,7 @@
                 end: '{{encontro.endDate.year}}-{{encontro.endDate.month|stringformat:"02d"}}-{{encontro.endDate.day|stringformat:"02d"}}T{{encontro.endDate.hour|stringformat:"02d"}}:{{encontro.endDate.minute|stringformat:"02d"}}:00',
                 id: "{{encontro.id}}",
                 {% if encontro.projeto %}backgroundColor: "#5151D3"{% else %}backgroundColor: "#307f30"{% endif %},
-                textEscape: false,
+                description: {% if encontro.projeto %}"Horário Marcado"{% else %}"Horário Livre"{% endif %},
             },
           {% endfor %}
         ],
@@ -106,7 +132,26 @@
         },
 
 
-        // PEGAR OS OUTROS EVENTOS DA BANCAS_INDEX
+        eventMouseEnter: function (info) {
+          $(info.el).tooltip({
+                title: info.event.extendedProps.description,
+                html: true,
+          }).tooltip("show");
+        },
+
+        eventDragStart: function(info) {
+          $(".tooltip").remove();
+        },
+        
+        eventResize: function(info) {
+          $(".tooltip").remove();
+          atualiza(info.event);
+        },
+
+        eventDrop: function(info) {
+          $(".tooltip").remove();
+          atualiza(info.event);
+        },
 
       });
 
