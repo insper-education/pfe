@@ -8,10 +8,16 @@
 {% block head %}
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
+  <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
   <script>{% include "tooltip.js" %}</script>
   {% comment %} <meta http-equiv="refresh" content="5"> {% endcomment %}
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
+  <style>
+    label {
+      margin: 6px 0px 6px 0px;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
@@ -21,52 +27,63 @@
     <span class="titulo">Datas para encontros</span>
     
     {% if user.tipo_de_usuario == 1 %}
-        <h5>Seu projeto: 
+    <h4>Projeto: 
             {% if projeto %}
-                {{projeto.get_titulo}} ({{projeto.organizacao}})
+              ({{projeto.organizacao}}) {{projeto.get_titulo}}
             {% else %}
-                &lt; PROJETO NÃO ENCONTRADO &gt;
+              &lt; PROJETO NÃO ENCONTRADO &gt;
             {% endif %}
-        </h5>
+    </h4>
     {% else %}
-        <h5>Somente visualização das opções de encontros (você não está registrado como estudante)</h5>
+        <h4>Somente visualização das opções de encontros (você não está registrado como estudante)</h4>
     {% endif %}
-    <br><br>
+    <br>
 
     {% if aviso %}
         <h4 class="red-bold">{{aviso|linebreaks}}</h4>
         <br><br>
     {% endif %}
 
-    <div id="horarios" class="control">
+    {% if encontros %}
+      <b>Horários disponíveis para agendamento:</b>
+    {% else %}
+      Sem encontros para marcar.
+    {% endif %}
+
+    <div id="horarios">
+      <table class="table table-borderless table-sm arredondado">
+        <tbody>
         {% for e in encontros %}
+          <tr><td style="display: flex;"><div style="margin-right: 6px; display: flex; align-items: center;">
+            <input id="din{{e.id}}" type="radio" name="selection" value="{{e.id}}" 
+            {% if e.projeto == projeto %}checked{% endif %}
+            {% if e.projeto and e.projeto != projeto %}disabled{% endif %}
+            ></div>
               {% if e.projeto and e.projeto != projeto %}
-                <div style="color:lightgrey">
+                <div style="color:lightgrey;">
                 <label title="Horário já selecionado por outro grupo!" 
               {% elif e.projeto and e.projeto == projeto %}
                 <div style="color:Red;">
                 <label title="Horário selecionado por seu grupo!"
               {% else %}
-                <div style="color:Green">
+                <div style="color:Green;">
                 <label title="Horário livre!"
-              {% endif %}class="radio" data-toggle="tooltip" data-placement="bottom" >
-                <input type="radio" name="selection" value="{{e.id}}" 
-                {% if e.projeto == projeto %}checked{% endif %}
-                {% if e.projeto and e.projeto != projeto %}disabled{% endif %}
-                >
-                <span class="opt_full">{{e.startDate|date:"d \d\e E \d\e Y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}</span>
-                <span class="opt_short">{{e.startDate|date:"d/m/y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}</span>
-                {% if e.facilitador %}<div style="margin-left: 1em; display: inline-block; text-wrap: nowrap;">({{e.facilitador.get_full_name}})</div>{% endif %}
-                {% if e.location %}<div style="margin-left: 1em; display: inline-block; text-wrap: nowrap;">[{{e.location}}]</div>{% endif %}
+              {% endif %}class="radio" data-toggle="tooltip" data-placement="bottom" for="din{{e.id}}">
+                <span style="font-weight: bold;">
+                  <span class="opt_full">{{e.startDate|date:"d \d\e E \d\e Y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}</span>
+                  <span class="opt_short">{{e.startDate|date:"d/m/y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}</span>
+                </span>
+                {% if e.facilitador %}<div style="margin-left: 1em; display: inline-block; text-wrap: nowrap;">(Facilitador: {{e.facilitador.get_full_name}})</div>{% endif %}
+                {% if e.location %}<div style="margin-left: 1em; display: inline-block; text-wrap: nowrap;">[Local: {{e.location}}]</div>{% endif %}
                 {% if e.projeto and e.projeto == projeto %}
-                  <div style="font-weight: bold; margin-left: 1em; display: inline-block; text-wrap: nowrap;">Horário Confirmado para seu grupo!</div>
+                  <div style="text-decoration: underline; margin-left: 1em; display: inline-block; text-wrap: nowrap;">Horário Confirmado para seu grupo!</div>
                 {% endif %}
               </label>
-
+              {% endfor %}
             </div>
-        {% empty %}
-            Sem encontros para marcar.
-        {% endfor %}
+          </td></tr>
+        </tbody>
+      </table>
     </div>
 
     {% if encontros %}
