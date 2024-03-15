@@ -176,7 +176,7 @@
   
   <div class="conexoes" style="margin-top: 8px;">
     <strong>conexões:</strong>
-    <small><a style="vertical-align: 0px;" href="{% url 'seleciona_conexoes' %}?projeto={{projeto.id}}">&#10133;</a></small>
+    <small class="esconder"><a style="vertical-align: 0px;" href="{% url 'seleciona_conexoes' %}?projeto={{projeto.id}}">&#10133;</a></small>
     <br>
     {% if conexoes %}
       {% comment %} margin-left: 0.5em;  padding-left: 12px;"> {% endcomment %}
@@ -358,7 +358,7 @@
 
   <hr>
   <h3>Documentos
-    <small>
+    <small class="esconder">
       <a
         class="open-documento"
         data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id %}"
@@ -370,7 +370,7 @@
 
   <hr>
   <h3>Certificados
-    <small>
+    <small class="esconder">
       <a href="{% url 'carregar_certificado' %}"
         >&#10133;</a
       >

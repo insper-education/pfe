@@ -12,7 +12,8 @@
 {% block content %}
 
   <span class="titulo">{{titulo}}
-    <a href="{% url 'cadastrar_usuario' %}?tipo=professor">&#10133;</a>
+    <small class="esconder">
+    <a href="{% url 'cadastrar_usuario' %}?tipo=professor">&#10133;</a></small>
   </span>
 
   {% include "tabelas_top.html" with tabela="Professores" cabecalhos=cabecalhos %}

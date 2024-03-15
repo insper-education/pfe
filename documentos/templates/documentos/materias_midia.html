@@ -35,9 +35,9 @@
 
   <span class="titulo">Matérias na Mídia
     {% if  user.tipo_de_usuario == 4 %}
-      <a class="open-documento"
+      <small class="esconder"><a class="open-documento"
         data-url="{% url 'adiciona_documento_tipo' tipo.sigla %}"
-        >&#10133;</a>
+        >&#10133;</a></small>
     {% endif %}
   </span>
 

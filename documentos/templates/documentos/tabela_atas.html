@@ -17,7 +17,7 @@
 
   <span class="titulo">Atas do Comitê do PFE
     {% if user.tipo_de_usuario == 4 %}
-      <small>
+      <small class="esconder">
         <a
           class="open-documento" style="cursor:pointer;"
           data-url="{% url 'adiciona_documento_tipo' tipo.sigla %}"
