@@ -64,7 +64,7 @@ class Organizacao(models.Model):
                              help_text="Sigla usada pela organização parceira")
     endereco = models.TextField("Endereço", max_length=200, null=True, blank=True,
                                 help_text="Endereço da organização parceira")
-    website = models.URLField("website", max_length=250, null=True, blank=True,
+    website = models.URLField("website", max_length=300, null=True, blank=True,
                               help_text="website da organização parceira")
     informacoes = models.TextField("Informações", max_length=1000, null=True, blank=True,
                                    help_text="Informações sobre a organização parceira")
@@ -340,7 +340,7 @@ class Proposta(models.Model):
                             help_text='Nome(s) de quem submeteu o projeto')
     email = models.CharField("e-mail", max_length=80, null=True, blank=True,
                              help_text='e-mail(s) de quem está dando o Feedback')
-    website = models.URLField("website", max_length=250, null=True, blank=True,
+    website = models.URLField("website", max_length=300, null=True, blank=True,
                               help_text='website da organização')
 
     nome_organizacao = models.CharField("Organização", max_length=120, null=True, blank=True,
@@ -961,10 +961,10 @@ class Documento(models.Model):
     documento = models.FileField(null=True, blank=True, max_length=256,
                                  upload_to=get_upload_path,
                                  help_text="Link para o arquivo no servidor")
-    link = models.URLField("link", max_length=250, null=True, blank=True,
-                           help_text="website da organização parceira")
+    link = models.URLField("link", max_length=320, null=True, blank=True,
+                           help_text="Link do documento na internets")
     anotacao = models.CharField(null=True, blank=True, max_length=64,
-                                help_text="qualquer anotação sobre o documento em questão")
+                                help_text="Qualquer anotação sobre o documento em questão")
     data = models.DateTimeField(null=True, blank=True,
                             help_text="Data e hora do documento")
     tipo_documento = models.ForeignKey("documentos.TipoDocumento", null=True, blank=True, on_delete=models.SET_NULL,
