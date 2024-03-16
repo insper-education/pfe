@@ -11,10 +11,6 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 from projetos.tipos import TIPO_EVENTO
 
-# REMOVER  ##############################################
-from projetos.tipos import TIPO_DE_DOCUMENTO
-
-
 class Exame(models.Model):
     """Exames que são realizados durante o semestre."""
 

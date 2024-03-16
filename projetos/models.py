@@ -33,6 +33,7 @@ from academica.models import Exame
 import users.models
 
 from .tipos import TIPO_EVENTO
+from documentos.models import TipoDocumento
 
 #from professores.support import converte_conceitos
 def converte_conceitos(nota):
@@ -47,13 +48,6 @@ def converte_conceitos(nota):
     if( nota >= 2.0 ): return ("D-")
     if( nota >= 0.0 ): return ("I")
     return "inválida"
-
-### PROBLEMA DE CIRCULARIDADE ###
-
-# REMOVER
-from .tipos import TIPO_DE_DOCUMENTO
-
-from documentos.models import TipoDocumento
 
 class Organizacao(models.Model):
     """Dados das organizações que propõe projetos para o PFE."""
