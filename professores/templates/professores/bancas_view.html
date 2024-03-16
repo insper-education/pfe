@@ -320,16 +320,13 @@
 
     {% if not banca %} 
       <button id="submit" class="btn btn-primary mb-1" type="submit" name="atualizar">Agendar</button>
-    {% endif %}
-
-    {% if banca and banca.projeto.orientador.user == request.user or request.user.tipo_de_usuario == 4 %} 
-      <button id="submit" class="btn btn-primary mb-1" type="submit" name="atualizar"
-        onclick="operacao = 'atualizar';">Atualizar</button>
-      {% if banca %}
-        <button id="excluir" class="btn btn-primary mb-1" type="submit" name="excluir"
-        {% comment %} onclick="operacao = 'excluir';"  {% endcomment %}
-        onClick="operacao = 'excluir'; return confirm('Tem certeza que deseja excluir agendamento de banca?');" 
-        formnovalidate>
+    {% else %}
+      {% if banca.projeto.orientador.user == request.user or request.user.tipo_de_usuario == 4 %} 
+        <button id="submit" class="btn btn-primary mb-1" type="submit" name="atualizar"
+         onclick="operacao = 'atualizar';">Atualizar</button>
+        
+        <button id="excluir" class="btn btn-primary mb-1" type="submit" name="excluir" formnovalidate
+         onClick="operacao = 'excluir'; return confirm('Tem certeza que deseja excluir agendamento de banca?');">
           Excluir Banca
         </button>
       {% endif %}
@@ -344,9 +341,9 @@
   var operacao = "agendar";
 
   function verifica_certo() {
-    var membros  = $('.membros')
+    var membros  = $(".membros")
     var dic = {};
-    var orientador_id = $('#orientador_id').val();
+    var orientador_id = $("#orientador_id").val();
     for(mem in membros){
       var chave = membros.eq(mem).val()
       if(typeof chave !== "undefined" && chave != "") {
@@ -409,19 +406,19 @@
     {% comment %} Verifica se mudou de estado {% endcomment %}
     if (botao_anterior != 2) {
       if (tipo == 2) {
-        $('.pessoas').empty();
-        $('.pessoas').append($("<option selected value></option>").text("-- selecione membro da banca --"));
+        $(".pessoas").empty();
+        $(".pessoas").append($("<option selected value></option>").text("-- selecione membro da banca --"));
         {% for pessoa in falconis %}
-          $('.pessoas').append($("<option></option>").attr("value",{{pessoa.id}}).text("{{pessoa}}"));
+          $(".pessoas").append($("<option></option>").attr("value",{{pessoa.id}}).text("{{pessoa}}"));
         {% endfor %}
         recupera_selecao();
       }
     } else {
       if (tipo != 2 || tipo==undefined ) {
-        $('.pessoas').empty();
-        $('.pessoas').append($("<option selected value></option>").text("-- selecione membro da banca --"));
+        $(".pessoas").empty();
+        $(".pessoas").append($("<option selected value></option>").text("-- selecione membro da banca --"));
         {% for professor in professores %}
-          $('.pessoas').append($("<option></option>").attr("value",{{professor.id}}).text("{{professor}}"));
+          $(".pessoas").append($("<option></option>").attr("value",{{professor.id}}).text("{{professor}}"));
         {% endfor %}
         recupera_selecao();
       }
