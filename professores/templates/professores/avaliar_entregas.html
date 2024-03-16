@@ -137,6 +137,10 @@
                         {% if documento.data > item.avaliacoes.first.momento %}
                           <span style="color: red;">Avaliação desatualizada, refazer para a nova entrega!</span>
                         {% endif %}
+                      {% else %}
+                        {% if dias_ate < prazo_avaliar %}
+                          <span style="color: red;">Avaliação pendente!</span>
+                        {% endif %}
                       {% endif %}
                     {% empty %}
                       {% if item.composicao.tipo_documento %}
@@ -166,6 +170,15 @@
                           {% if documento.data|diff_days:item.evento.endDate > 0 %}<span style="color: red;">[FORA DO PRAZO]</span>{% endif %}
                           {% if forloop.first%}</b>{% endif %}  
                         </li>
+                        {% if values.avaliacoes and values.avaliacoes.first%}
+                          {% if documento.data > values.avaliacoes.first.momento %}
+                            <span style="color: red;">Avaliação desatualizada, refazer para a nova entrega!</span>
+                          {% endif %}
+                        {% else %}
+                          {% if dias_ate < prazo_avaliar %}
+                            <span style="color: red;">Avaliação pendente!</span>
+                          {% endif %}
+                        {% endif %}
                       {% empty %}
                         {% if item.composicao.tipo_documento %}
                           <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>sem arquivos</span><br>

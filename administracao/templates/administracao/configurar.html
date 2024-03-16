@@ -38,9 +38,10 @@
       <br>
     </small>
     <br><br><hr><br>
-    <label for="prazo_preencher_banca">Prazo para avaliadores preencherem a avaliação de banca:</label> <input id="prazo_preencher_banca" name="prazo_preencher_banca" style="text-align:right;" type="number" min="0" max="9999" step="1" value="{{configuracao.prazo_preencher_banca}}"/> dias
+    <label for="prazo_avaliar">Prazo máximo para orientadores avaliarem entregas:</label> <input id="prazo_avaliar" name="prazo_avaliar" style="text-align:right;" type="number" min="0" max="9999" step="1" value="{{configuracao.prazo_avaliar}}"/> dias<br>
+    <label for="prazo_preencher_banca">Prazo para avaliadores preencherem a avaliação de banca:</label> <input id="prazo_preencher_banca" name="prazo_preencher_banca" style="text-align:right;" type="number" min="0" max="9999" step="1" value="{{configuracao.prazo_preencher_banca}}"/> dias<br>
     
-    <br><br><hr><br>
+    <br><hr><br>
 
     <label for="coordenacao"><span lang="pt">Coordenador PFE</span>: </label>
     <select name="coordenacao" id="coordenacao" title="Selecione o coordenador do PFE" required>

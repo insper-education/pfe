@@ -578,8 +578,11 @@ class Configuracao(models.Model):
     lingua = models.CharField(max_length=2, blank=True, default="pt",
                               help_text="Língua do sistema")
 
+    prazo_avaliar = models.PositiveIntegerField("Prazo para avaliar", default=10,
+                                           help_text="Prazo máximo para orientadores avaliarem entregas")
+    
     prazo_preencher_banca = models.PositiveIntegerField("Prazo para banca", default=30,
-                                           help_text='Prazo máximo para membros de uma banca colocarem suas avaliações')
+                                           help_text="Prazo máximo para membros de uma banca colocarem suas avaliações")
 
     index_documentos = models.TextField("Index Documentos", max_length=4096, null=True, blank=True,
                                    help_text="Documentos a serem mostrados no Index Documentos")

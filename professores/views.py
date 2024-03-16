@@ -2070,6 +2070,7 @@ def avaliar_entregas(request, todos=None):
         context = {
             "avaliacoes": avaliacoes,
             "edicao": edicao,
+            "prazo_avaliar": -int(get_object_or_404(Configuracao).prazo_avaliar)
         }
 
     else:
