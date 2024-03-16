@@ -745,6 +745,15 @@ class Evento(models.Model):
             texto += " (" + self.startDate.strftime("%d/%m/%Y") + ")"
         return texto
 
+    def periodo(self):
+        configuracao = get_object_or_404(Configuracao)
+        if self.startDate.year >= configuracao.ano:
+            if configuracao.semestre == 1 and self.startDate.month < 7:
+                return "Atuais"
+            if configuracao.semestre == 2 and self.startDate.month > 7:
+                return "Atuais"
+        return "Anteriores"
+    
     class Meta:
         ordering = ["startDate"]
 
@@ -895,6 +904,15 @@ class Encontro(models.Model):
         if self.location[:4] == "http":
             return True
         return False
+    
+    def periodo(self):
+        configuracao = get_object_or_404(Configuracao)
+        if self.startDate.year >= configuracao.ano:
+            if configuracao.semestre == 1 and self.startDate.month < 7:
+                return "Atuais"
+            if configuracao.semestre == 2 and self.startDate.month > 7:
+                return "Atuais"
+        return "Anteriores"
 
     @classmethod
     def create(cls, startDate, endDate):

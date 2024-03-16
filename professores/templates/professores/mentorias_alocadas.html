@@ -26,14 +26,14 @@
 
         {% for e in mentorias %}
 
-          {% ifchanged e.projeto.periodo %}
+          {% ifchanged e.periodo %}
             {% if not forloop.first %}</tbody>{% endif %}
-            <thead><tr><th id="{{e.projeto.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ e.projeto.periodo }} 
-              {% if e.projeto.periodo == "Anteriores" %}<span class="seta-baixo"></span>{% endif %}</th></tr></thead>
+            <thead><tr><th id="{{e.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ e.periodo }} 
+              {% if e.periodo == "Anteriores" %}<span class="seta-baixo"></span>{% endif %}</th></tr></thead>
             <tbody>
           {% endifchanged %}
 
-          <tr class="{{e.projeto.periodo}} {% if e.projeto.periodo == "Anteriores" %}hidden_tr{% endif %}">
+          <tr class="{{e.periodo}} {% if e.periodo == "Anteriores" %}hidden_tr{% endif %}">
             <td>
               <a class="imprimir" href="{% url 'dinamicas_editar' e.id %}">
                 <big><b>{{e.startDate}} - {{e.endDate|date:'H:i'}}</b></big><br>

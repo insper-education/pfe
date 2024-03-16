@@ -593,6 +593,9 @@
         $("#save-event").prop("disabled",true);
       {% endif %}
 
+      $(".tooltip-inner").remove();
+      $(".tooltip-arrow").remove();
+
       $("#event-modal").modal();
     }
 
@@ -1274,38 +1277,38 @@
       document.getElementById("segundo_semestre").style.color = "black";
       document.getElementById("segundo_semestre").style.background = "#10F010";
 
-      [].forEach.call(document.querySelectorAll('.semestre'), function (el) {
-        el.style.display = 'none';
+      [].forEach.call(document.querySelectorAll(".semestre"), function (el) {
+        el.style.display = "none";
       });
-      $('#linha_lab').hide()
-      $('#linha_lab_br').hide()
-      $('#linha_provas').hide()
+      $("#linha_lab").hide()
+      $("#linha_lab_br").hide()
+      $("#linha_provas").hide()
       var els = Array.from(document.querySelectorAll(".semestre[data-mes]")).filter(el => Number(el.dataset.mes) > inicio_semestre);
       [].forEach.call(els, function (el) {
-        //el.style.display = 'inline';
+        //el.style.display = "inline";
         if(el.classList.contains("lin_aulas")) { // Preciso fazer isso para a tabela de aulas no final da página
-          el.style.display = 'table-row';
-          if(!el.classList.contains('ano'+currentYear)) {
-            el.style.display = 'none';
+          el.style.display = "table-row";
+          if(!el.classList.contains("ano"+currentYear)) {
+            el.style.display = "none";
           }
         } else {
-          el.style.display = 'inline';
+          el.style.display = "inline";
         }
-        if(el.parentNode.classList.contains('ano'+currentYear)) {
-          if(el.classList.contains('lab')) {
-            $('#linha_lab_br').show()
-            $('#linha_lab').show()
+        if(el.parentNode.classList.contains("ano"+currentYear)) {
+          if(el.classList.contains("lab")) {
+            $("#linha_lab_br").show()
+            $("#linha_lab").show()
           }
-          if(el.classList.contains('prova')) {
-            $('#linha_provas').show()
+          if(el.classList.contains("prova")) {
+            $("#linha_provas").show()
           }
         }
       });
       
       
       {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-        [].forEach.call(document.querySelectorAll('.coordenacao'), function (el) {
-          el.style.display = 'none';
+        [].forEach.call(document.querySelectorAll(".coordenacao"), function (el) {
+          el.style.display = "none";
         });
         
         var els = Array.from(document.querySelectorAll(".coordenacao[data-mes]")).filter(el => Number(el.dataset.mes) > inicio_semestre);
