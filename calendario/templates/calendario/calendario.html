@@ -960,6 +960,7 @@
         customDataSourceRenderer: function(element, date, event) {
 
           var eventos = [];
+          var feriado = false;
 
           for (var i in event) {
             if(event[i].type == 40 ) { // (40, 'Laboratório', 'orange'),
@@ -969,12 +970,13 @@
               $(element).css("line-height", "0.91");
               $(element).css("padding-top", "8px");
             } else {
+              if(event[i].type == 0 ) feriado = true; //     (0, "Feriado")
               eventos.push(event[i]);
             }
           }
 
-          // Em caso de eventos que passam pelo final de semana, essa rotina remove se o evento não começa ou acabar exatamente no dia
-          if (date.getDay() === 6 || date.getDay() === 0) { // sábado ou domingo
+          // Em caso de eventos que passam pelo final de semana ou feriado, essa rotina remove se o evento não começa ou acabar exatamente no dia
+          if (date.getDay() === 6 || date.getDay() === 0 || feriado) { // sábado ou domingo ou feriado
             eventos = eventos.filter(function(e) {
               return (e.startDate.toISOString().slice(0,10) == date.toISOString().slice(0,10) || 
                       e.endDate.toISOString().slice(0,10) == date.toISOString().slice(0,10));
