@@ -792,17 +792,18 @@ class Alocacao(models.Model):
         peso_grupo_inter = 0
         peso_grupo_final = 0
         for aval, nota, peso, _ in edicao:
-            peso_final += peso
-            nota_final += nota * peso
-            if aval in ("RII", "RFI", "API", "AFI"):
-                peso_individual += peso
-                nota_individual += nota * peso
-            if aval in ("RIG", "APG", "RPL", "PPF"):
-                peso_grupo_inter += peso
-                nota_grupo_inter += nota * peso
-            if aval in ("RFG", "AFG"):
-                peso_grupo_final += peso
-                nota_grupo_final += nota * peso
+            if aval is not None and nota is not None and peso is not None:
+                peso_final += peso
+                nota_final += nota * peso
+                if aval in ("RII", "RFI", "API", "AFI"):
+                    peso_individual += peso
+                    nota_individual += nota * peso
+                if aval in ("RIG", "APG", "RPL", "PPF"):
+                    peso_grupo_inter += peso
+                    nota_grupo_inter += nota * peso
+                if aval in ("RFG", "AFG"):
+                    peso_grupo_final += peso
+                    nota_grupo_final += nota * peso
         peso_final = round(peso_final, 2)
 
         individual = None
