@@ -548,7 +548,7 @@ def reembolso_pedir(request):
 
         if aluno.anoPFE > configuracao.ano or\
             (aluno.anoPFE == configuracao.ano and aluno.semestrePFE > configuracao.semestre):
-            mensagem = "Projetos ainda não disponíveis para o seu período de PFE."
+            mensagem = "Projetos ainda não disponíveis para o seu período do Capstone."
             context = {
                 "area_principal": True,
                 "mensagem": mensagem,
@@ -607,7 +607,7 @@ def reembolso_pedir(request):
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def comite(request):
-    """Exibe os professores que estão no comitê do PFE."""
+    """Exibe os professores que estão no comitê do Capstone."""
     context = {
         "professores": Professor.objects.filter(user__membro_comite=True),
         "cabecalhos": ["Nome", "e-mail", "Lattes", ],
@@ -814,7 +814,7 @@ def validate_aviso(request):
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def projetos_vs_propostas(request):
-    """Mostra graficos das evoluções do PFE."""
+    """Mostra graficos das evoluções dos projetos e propostas."""
     configuracao = get_object_or_404(Configuracao)
     edicoes = range(2018, configuracao.ano+1)
     edicoes2, _, _ = get_edicoes(Proposta)
@@ -908,7 +908,7 @@ def projetos_vs_propostas(request):
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def analise_notas(request):
-    """Mostra graficos das evoluções do PFE."""
+    """Mostra analise de notas."""
     configuracao = get_object_or_404(Configuracao)
     edicoes, _, _ = get_edicoes(Avaliacao2)
     cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
@@ -1236,7 +1236,7 @@ def divide57(notas_lista):
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def analise_objetivos(request):
-    """Mostra graficos das evoluções do PFE."""
+    """Mostra análise de objetivos de aprendizagem."""
     edicoes, _, _ = get_edicoes(Avaliacao2)
     cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
     cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
@@ -1286,7 +1286,7 @@ def analise_objetivos(request):
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def evolucao_notas(request):
-    """Mostra graficos das evoluções do PFE."""
+    """Mostra graficos das evoluções das notas."""
     edicoes, _, _ = get_edicoes(Avaliacao2)
     cursos = Curso.objects.filter(curso_do_insper=True).order_by("id")
 
@@ -1387,7 +1387,7 @@ def evolucao_notas(request):
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def evolucao_objetivos(request):
-    """Mostra graficos das evoluções do PFE."""
+    """Mostra graficos das evoluções por objetivo de aprendizagem."""
     configuracao = get_object_or_404(Configuracao)
     edicoes, _, semestre = get_edicoes(Avaliacao2)
 
@@ -1554,7 +1554,7 @@ def filtro_projetos(request):
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def evolucao_por_objetivo(request):
-    """Mostra graficos das evoluções do PFE."""
+    """Mostra graficos das evoluções por objetivo de aprendizagem."""
     configuracao = get_object_or_404(Configuracao)
     edicoes, _, semestre = get_edicoes(Avaliacao2)
 

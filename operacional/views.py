@@ -40,7 +40,7 @@ def index_operacional(request):
 @login_required
 @permission_required('users.altera_professor', raise_exception=True)
 def avisos_listar(request):
-    """Mostra toda a tabela de avisos da coordenação do PFE."""
+    """Mostra toda a tabela de avisos da coordenação."""
     configuracao = get_object_or_404(Configuracao)
 
     eventos = Evento.objects.filter(startDate__year=configuracao.ano)
@@ -248,13 +248,13 @@ def edita_aviso(request, primarykey):
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
 def carregar_certificado(request):
-    """Carrega certificado na base de dados do PFE."""
+    """Carrega certificado na base de dados."""
     if request.method == 'POST':
-        if 'usuario' in request.POST and 'tipo' in request.POST and "documento" in request.FILES:
+        if "usuario" in request.POST and "tipo" in request.POST and "documento" in request.FILES:
 
             certificado = Certificado.create()
 
-            usuario_id = request.POST.get('usuario', None)
+            usuario_id = request.POST.get("usuario", None)
             if usuario_id:
                 usuario = get_object_or_404(PFEUser, id=usuario_id)
                 certificado.usuario = usuario

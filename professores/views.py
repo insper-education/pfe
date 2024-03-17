@@ -2449,7 +2449,7 @@ def resultado_meus_projetos(request):
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def todos_professores(request):
-    """Exibe todas os professores que estão cadastrados no PFE."""
+    """Exibe todas os professores que estão cadastrados."""
     context = {
         "professores": Professor.objects.all(),
         "cabecalhos": ["Nome", "e-mail", "Bancas", "Orientações", "Lattes", ],

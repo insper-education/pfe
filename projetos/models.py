@@ -50,7 +50,7 @@ def converte_conceitos(nota):
     return "inválida"
 
 class Organizacao(models.Model):
-    """Dados das organizações que propõe projetos para o PFE."""
+    """Dados das organizações que propõe projetos."""
 
     nome = models.CharField("Nome Fantasia", max_length=100, unique=True,
                             help_text="Nome fantasia da organização parceira")
@@ -103,7 +103,7 @@ class Organizacao(models.Model):
 
 
 class Projeto(models.Model):
-    """Dados dos projetos para o PFE."""
+    """Dados dos projetos."""
 
     # REMOVER TITULO, USAR OU GET_TITULO OU TITULO_FINAL
     titulo = models.CharField("Título", max_length=160,
@@ -325,7 +325,7 @@ class Projeto(models.Model):
 
 
 class Proposta(models.Model):
-    """Dados da Proposta de Projeto para o PFE."""
+    """Dados da Proposta de Projeto."""
 
     slug = models.SlugField("slug", unique=True, max_length=64, null=True, blank=True,
                             help_text="Slug para o endereço da proposta")
@@ -675,7 +675,7 @@ class Recomendada(models.Model):
 
 
 class Evento(models.Model):
-    """Eventos para a agenda do PFE."""
+    """Eventos para a agenda."""
 
     location = models.CharField(blank=True, max_length=80,
                                 help_text="Onde Ocorrerá o Evento")
@@ -756,7 +756,7 @@ class Evento(models.Model):
 
 
 class Banca(models.Model):
-    """Bancas do PFE."""
+    """Bancas de Avaliação."""
 
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='projeto')
@@ -965,7 +965,7 @@ class Anotacao(models.Model):
 
 
 class Documento(models.Model):
-    """Documentos, em geral PDFs, e seus relacionamentos com o PFE."""
+    """Documentos em geral."""
 
     organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text="Organização referente o documento")
@@ -1036,7 +1036,7 @@ class Banco(models.Model):
 
 
 class Reembolso(models.Model):
-    """Armazena os reembolsos pedidos pelos alunos do PFE."""
+    """Armazena os reembolsos pedidos."""
 
     usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text='usuário pedindo reembolso')
@@ -1066,7 +1066,7 @@ class Reembolso(models.Model):
 
 
 class Aviso(models.Model):
-    """Avisos para a Coordenação do PFE."""
+    """Avisos para a Coordenação do Capstone."""
 
     titulo = models.CharField(max_length=120, null=True, blank=True,
                               help_text="Título do Aviso")
@@ -1092,13 +1092,13 @@ class Aviso(models.Model):
     
 
     coordenacao = \
-        models.BooleanField(default=False, help_text="Para coordenação do PFE")
+        models.BooleanField(default=False, help_text="Para coordenação do Capstone")
     operacional = \
-        models.BooleanField(default=False, help_text="Para equipe operacional do PFE")
+        models.BooleanField(default=False, help_text="Para equipe operacional do Capstone")
     comite_pfe = \
-        models.BooleanField(default=False, help_text="Para os membros do comitê do PFE")
+        models.BooleanField(default=False, help_text="Para os membros do comitê do Capstone")
     todos_alunos = \
-        models.BooleanField(default=False, help_text="Para todos os alunos do semestre")
+        models.BooleanField(default=False, help_text="Para todos os estudantes do semestre")
     todos_orientadores = \
         models.BooleanField(default=False, help_text="Para todos os orientadores do semestre")
     contatos_nas_organizacoes = \
@@ -1190,49 +1190,49 @@ class FeedbackEstudante(models.Model):
     """Feedback dos estudantes."""
 
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
-                                help_text='Data e hora do feedback')
+                                help_text="Data e hora do feedback")
 
-    estudante = models.ForeignKey('users.Aluno', null=True, blank=True, on_delete=models.SET_NULL,
-                              help_text='estudante que fez o feedback')
+    estudante = models.ForeignKey("users.Aluno", null=True, blank=True, on_delete=models.SET_NULL,
+                              help_text="estudante que fez o feedback")
 
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='projeto que estava no feedback')
+                                help_text="projeto que estava no feedback")
 
     TIPO_RECOMENDARIA = ( # não mudar a ordem dos números
-        (1, 'Não recomendo'),
-        (2, 'Recomendo com ressalvas'),
-        (3, 'Recomendo fortemente'),
+        (1, "Não recomendo"),
+        (2, "Recomendo com ressalvas"),
+        (3, "Recomendo fortemente"),
     )
     recomendaria = models.PositiveSmallIntegerField(choices=TIPO_RECOMENDARIA, null=True, blank=True,
-                                                    help_text='O quanto você recomendaria fazermos um projeto de PFE nos próximos semestres com a Empresa Parceira?')
+                                                    help_text="O quanto você recomendaria fazermos um projeto de Casptone (antigo PFE) nos próximos semestres com a Empresa Parceira?")
 
 
     primeira_opcao = models.BooleanField("Primeira Opção", null=True, blank=True,
-                                         help_text='Agora que você conhece mais da Empresa Parceira, essa seria uma das primeiras opções para você fazer estágio ou ser contratado de forma efetiva?')
+                                         help_text="Agora que você conhece mais da Empresa Parceira, essa seria uma das primeiras opções para você fazer estágio ou ser contratado de forma efetiva?")
 
     TIPO_PROPOSTA = ( # não mudar a ordem dos números
-        (1, 'Recebi convite e apliquei'),
-        (2, 'Não recebi convite, mas apliquei'),
-        (3, 'Recebi convite, mas não apliquei'),
-        (4, 'Não recebi, nem apliquei'),
-        (5, 'Não haviam vagas em aberto'),
+        (1, "Recebi convite e apliquei"),
+        (2, "Não recebi convite, mas apliquei"),
+        (3, "Recebi convite, mas não apliquei"),
+        (4, "Não recebi, nem apliquei"),
+        (5, "Não haviam vagas em aberto"),
     )
     proposta = models.PositiveSmallIntegerField(choices=TIPO_PROPOSTA, null=True, blank=True,
-                                                    help_text='Tendo ou não buscado alguma proposta da Empresa Parceira para estágio ou contrato de trabalho.')
+                                                    help_text="Tendo ou não buscado alguma proposta da Empresa Parceira para estágio ou contrato de trabalho.")
 
 
     TIPO_TRABALHANDO = ( # não mudar a ordem dos números
-        (1, 'Empresa do Projeto do PFE'),
-        (2, 'Outra'),
-        (3, 'Ainda não'),
-        (4, 'Prefiro não responder'),
+        (1, "Empresa do Projeto do PFE"),
+        (2, "Outra"),
+        (3, "Ainda não"),
+        (4, "Prefiro não responder"),
     )
     trabalhando = models.PositiveSmallIntegerField(choices=TIPO_TRABALHANDO, null=True, blank=True,
-                                                    help_text='Você já está trabalhando (ou em vias de trabalhar) em alguma empresa?')
+                                                    help_text="Você já está trabalhando (ou em vias de trabalhar) em alguma empresa?")
 
 
     outros = models.TextField(max_length=1000, null=True, blank=True,
-                              help_text='Feedback Outros')
+                              help_text="Feedback Outros")
 
     def __str__(self):
         return str(self.momento) + " - " + str(self.estudante) + " : " + str(self.projeto)
@@ -1768,14 +1768,14 @@ class Observacao_Velha(models.Model):
 
 
 class Certificado(models.Model):
-    """Certificados das Premiações do PFE."""
+    """Certificados das Premiações."""
 
-    usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='pessoa premiada com certificado')
+    usuario = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text="pessoa premiada com certificado")
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='projeto relacionado ao certificado')
+                                help_text="projeto relacionado ao certificado")
     data = models.DateField(default=datetime.date.today, blank=True,
-                            help_text='data do certificado')
+                            help_text="data do certificado")
 
     TIPO_DE_CERTIFICADO = (  # não mudar a ordem dos números
         (0, 'Não definido'),

@@ -13,9 +13,9 @@ TIPO_EVENTO = (
     (9, "Conversas iniciais entre Grupo/Orientador/Organização", "#FFA520"),
 
     (10, "Início das aulas", "#FF1010"),
-    (11, "Evento de abertura do PFE", "#FFA500"),  # Obsoleto
-    (12, "Aula PFE", "#90EE90"),
-    (13, "Evento de encerramento do PFE", "#FF4500"),
+    (11, "Evento de abertura", "#FFA500"),  # Obsoleto
+    (12, "Aula", "#90EE90"),
+    (13, "Evento de encerramento", "#FF4500"),
     (14, "Bancas Intermediárias", "#EE82EE"),
     (15, "Bancas Finais", "#FFFF00"),
     (16, "Apresentação formal final na organização", "#DEB887"),
@@ -31,7 +31,7 @@ TIPO_EVENTO = (
     (25, "Entrega do Banner (Grupo)", "#D2691E"),
     (26, "Entrega do Vídeo (Grupo)", "#E6E6FA"),
 
-    (30, "Feedback dos estudantes sobre PFE", "#FFA510"),
+    (30, "Feedback dos estudantes", "#FFA510"),
     (31, "Avaliação de Pares Intermediária", "#FFC0CB"),
     (32, "Avaliação de Pares Final", "#FFC0DB"),
 
@@ -42,9 +42,9 @@ TIPO_EVENTO = (
 
     (101, "Apólice Seguro Acidentes Pessoais", "#7FFFD4"),
 
-    (111, "Bate-papo com estudantes que farão PFE", "#E0FFFF"),
+    (111, "Bate-papo com estudantes que cursarão no próximo semestre", "#E0FFFF"),
 
-    (112, "Estudantes informarem que adiarão PFE", "#32CD32"),
+    (112, "Estudantes informarem que adiarão projeto", "#32CD32"),  # A principio não usar mais
 
     (113, "Apresentação das propostas disponíveis para estudantes", "#2E8B57"),
 

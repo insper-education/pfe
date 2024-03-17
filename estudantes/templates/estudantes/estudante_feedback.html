@@ -52,7 +52,7 @@
       
       <p class="text-danger">Os dados serão tratados como confidênciais.</p>
 
-      <label for="recomendaria" class="mt-5" style="max-width: 860px;">O quanto você recomendaria fazermos um projeto de PFE nos próximos semestres com a {{feedback.projeto.organizacao}}?</label>
+      <label for="recomendaria" class="mt-5" style="max-width: 860px;">O quanto você recomendaria fazermos um novo projeto nos próximos semestres com a {{feedback.projeto.organizacao}}?</label>
       <div class="form-check">
         <input class="form-check-input" type="radio" name="recomendaria" id="recomendaria1" value="option1" {% if feedback %}disabled  {% if feedback.recomendaria == 1 %}checked="checked"{% endif %} {% endif %}>
         <label class="form-check-label" for="recomendaria1">
@@ -124,7 +124,7 @@
       <div class="form-check">
         <input class="form-check-input" type="radio" name="trabalhando" id="trabalhando1" value="option1" {% if feedback %}disabled  {% if feedback.trabalhando == 1 %}checked="checked"{% endif %} {% endif %}>
         <label class="form-check-label" for="trabalhando1">
-          {% if feedback.projeto.organizacao %}{{feedback.projeto.organizacao}}{% else %}Empresa do projeto do PFE{% endif %}
+          {% if feedback.projeto.organizacao %}{{feedback.projeto.organizacao}}{% else %}Empresa do projeto{% endif %}
         </label>
       </div>
       <div class="form-check">

@@ -7,14 +7,14 @@
 
 &nbsp;&nbsp;nativamente multidisciplinar: {{disponivel_multidisciplinar.0}}
 {% if nao_disponivel %}
-<a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
+<a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do Capstone.">
   ({{disponivel_multidisciplinar.1}})
 </a>
 {% endif %}<br>
 {% for key, value in disponivel_propostas.items %} {% if value.1 > 0 %}
   &nbsp;&nbsp;nativamente de {{key.nome}}: {{value.0}}
   {% if nao_disponivel %}
-  <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do PFE.">
+  <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do Capstone.">
     ({{value.1}})
   </a>
   {% endif %}

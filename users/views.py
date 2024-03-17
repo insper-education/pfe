@@ -664,7 +664,7 @@ def professor_detail(request, primarykey):
                           Banca.objects.filter(membro2=context["professor"].user) |
                           Banca.objects.filter(membro3=context["professor"].user))).order_by("startDate")
     
-    context["aulas"] = Evento.objects.filter(tipo_de_evento=12, responsavel=context["professor"].user) # (12, 'Aula PFE', 'lightgreen'),
+    context["aulas"] = Evento.objects.filter(tipo_de_evento=12, responsavel=context["professor"].user) # (12, 'Aula', 'lightgreen'),
 
     return render(request, "users/professor_detail.html", context=context)
 
@@ -774,7 +774,7 @@ def envia_contas_senhas(request):
             message_email = html.urlize(message_email) # Faz links de e-mail, outros sites funcionarem
 
             # Enviando e-mail com mensagem para usuário.
-            subject = "Conta PFE : " + estudante.user.get_full_name()
+            subject = "Conta Capstone (antigo PFE): " + estudante.user.get_full_name()
             recipient_list = [estudante.user.email, ]
             check = email(subject, recipient_list, message_email)
             if check != 1:

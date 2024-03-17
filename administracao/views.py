@@ -82,7 +82,7 @@ def index_carregar(request):
 @transaction.atomic
 @permission_required("projetos.add_disciplina", raise_exception=True)
 def cadastrar_disciplina(request, proposta_id=None):
-    """Cadastra Organização na base de dados do PFE."""
+    """Cadastra Organização na base de dados."""
     context = {
         "disciplinas": Disciplina.objects.all().order_by("nome"),
         "Disciplina": Disciplina,
@@ -106,8 +106,8 @@ def cadastrar_disciplina(request, proposta_id=None):
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
 def cadastrar_organizacao(request, proposta_id=None):
-    """Cadastra Organização na base de dados do PFE."""
-    if request.method == 'POST':
+    """Cadastra Organização na base de dados."""
+    if request.method == "POST":
 
         if "nome" in request.POST and "sigla" in request.POST:
 
@@ -159,7 +159,7 @@ def cadastrar_organizacao(request, proposta_id=None):
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
 def edita_organizacao(request, primarykey):
-    """Edita Organização na base de dados do PFE."""
+    """Edita Organização na base de dados."""
 
     organizacao = get_object_or_404(Organizacao, id=primarykey)
 
@@ -201,7 +201,7 @@ def edita_organizacao(request, primarykey):
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
 def cadastrar_usuario(request):
-    """Cadastra usuário na base de dados do PFE."""
+    """Cadastra usuário na base de dados."""
     if request.method == "POST":
 
         if "email" in request.POST:
@@ -233,7 +233,7 @@ def cadastrar_usuario(request):
                     # Preparando mensagem para enviar para usuário.
                     message_email = user.get_full_name() + ",\n\n"
                     message_email += "\tVocê está recebendo sua conta e senha para acessar o sistema do "
-                    message_email += "Projeto Final de Engenharia (PFE)."
+                    message_email += "Projeto Final - Capstone (antigo PFE)."
                     message_email += "\n\n"
                     message_email += "\tO endereço do servidor é: "
                     message_email += "<a href='https://pfe.insper.edu.br/'>https://pfe.insper.edu.br/</a>"
@@ -245,12 +245,12 @@ def cadastrar_usuario(request):
                     message_email += "\tQualquer dúvida, envie e-mail para: "
                     message_email += coordenacao.user.get_full_name() + " <a href='mailto:" + coordenacao.user.email + "'>&lt;" + coordenacao.user.email + "&gt;</a>"
                     message_email += "\n\n"
-                    message_email += "\t\tatenciosamente, coordenação do PFE\n"
+                    message_email += "\t\tatenciosamente, coordenação do Capstone (antigo PFE)\n"
                     message_email = message_email.replace('\n', '<br>\n')
                     message_email = message_email.replace('\t', '&nbsp;&nbsp;&nbsp;&nbsp;\t')
 
                     # Enviando e-mail com mensagem para usuário.
-                    subject = 'Conta PFE : ' + user.get_full_name()
+                    subject = 'Conta: ' + user.get_full_name()
                     recipient_list = [user.email,]
                     check = email(subject, recipient_list, message_email)
                     if check != 1:
@@ -331,7 +331,7 @@ def cadastrar_usuario(request):
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
 def edita_usuario(request, primarykey):
-    """Edita cadastro de usuário na base de dados do PFE."""
+    """Edita cadastro de usuário na base de dados."""
     user = get_object_or_404(PFEUser, id=primarykey)
 
     if request.method == "POST":
@@ -454,7 +454,7 @@ def carrega_arquivo(request, dado):
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
 def configurar(request):
-    """Definir datas do PFE."""
+    """Definir datas."""
     configuracao = get_object_or_404(Configuracao)
 
     if request.method == "POST":
@@ -520,7 +520,7 @@ def exportar(request, modo):
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def propor(request):
-    """Monta grupos de PFE."""
+    """Monta grupos."""
 
     if request.is_ajax():
         otimizar = True
@@ -1200,8 +1200,8 @@ def dados_backup(request, modo):
     
     if request.method == 'POST' and 'email' in request.POST and 'sigla' in request.POST:
 
-        subject = 'RELATÓRIOS PFE'
-        message = "Relatórios PFE"
+        subject = 'RELATÓRIOS'
+        message = "Relatórios"
         email_from = settings.EMAIL_HOST_USER
         recipient_list = [request.POST["email"],]
         mail = EmailMessage(subject, message, email_from, recipient_list)

@@ -48,7 +48,7 @@ class FirstLetterFilter(SimpleListFilter):
 
 @admin.register(PFEUser)
 class PFEUserAdmin(admin.ModelAdmin):
-    """Usuário geral para todos do PFE."""
+    """Usuário geral ."""
     list_display = ("first_name", "last_name", "username", "email", "genero", "tipo_de_usuario",)
     list_filter = ("tipo_de_usuario", FirstLetterFilter)
     fieldsets = (
@@ -65,7 +65,7 @@ class PFEUserAdmin(admin.ModelAdmin):
 
 @admin.register(Aluno)
 class AlunoAdmin(admin.ModelAdmin):
-    """Definição de aluno do PFE."""
+    """Definição de usuário Estudante."""
     list_display = ("user", "curso2", "anoPFE", "semestrePFE")
     ordering = ("user__first_name", "user__last_name", )
     list_filter = ("curso2", FirstLetterFilter, )
@@ -87,7 +87,7 @@ class AlunoAdmin(admin.ModelAdmin):
 
 @admin.register(Alocacao)
 class AlocacaoAdmin(admin.ModelAdmin):
-    """Definição de Alocacao do PFE."""
+    """Definição de alocacao em projeto."""
     list_display = ("aluno", "projeto",)
     ordering = ("-projeto__ano", "-projeto__semestre",)
     search_fields = ["aluno__user__first_name", "aluno__user__last_name", "projeto__titulo", "projeto__titulo_final", ]
@@ -96,7 +96,7 @@ class AlocacaoAdmin(admin.ModelAdmin):
 
 @admin.register(Parceiro)
 class ParceiroAdmin(admin.ModelAdmin):
-    """Definição de Parceiro do PFE."""
+    """Definição de Parceiro."""
     list_display = ("get_full_name", "get_sigla", "email")
     ordering = ("user__first_name", "user__last_name")
     list_filter = (FirstLetterFilter, )
@@ -125,7 +125,7 @@ class ParceiroAdmin(admin.ModelAdmin):
 
 @admin.register(Professor)
 class ProfessorAdmin(admin.ModelAdmin):
-    """Definição de Professor do PFE."""
+    """Definição de Professor."""
     list_display = ("user", "lattes")
     ordering = ("user__first_name", "user__last_name", )
     list_filter = (FirstLetterFilter, )
@@ -137,7 +137,7 @@ admin.site.register(Administrador)
 
 @admin.register(Opcao)
 class OpcaoAdmin(admin.ModelAdmin):
-    """Definição de Opções do PFE."""
+    """Definição de Opções de escolha de propostas."""
     list_display = ("aluno", "proposta", "prioridade")
     ordering = ("aluno", )
     search_fields = ["aluno__user__first_name", "aluno__user__last_name", ]
@@ -145,7 +145,7 @@ class OpcaoAdmin(admin.ModelAdmin):
 
 @admin.register(OpcaoTemporaria)
 class OpcaoTemporariaAdmin(admin.ModelAdmin):
-    """Definição de Opções Temporárias do PFE."""
+    """Definição de Opções Temporárias de escolha de propostas."""
     list_display = ("aluno", "proposta", "prioridade")
     ordering = ("aluno", )
     search_fields = ["aluno__user__first_name", "aluno__user__last_name", ]

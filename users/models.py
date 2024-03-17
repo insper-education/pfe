@@ -38,7 +38,7 @@ from estudantes.models import Relato
 from academica.models import Exame
 
 class PFEUser(AbstractUser):
-    """Classe base para todos os usuários do PFE."""
+    """Classe base para todos os usuários."""
 
     # Atualizar para AbstractBaseUser que permite colocar mais caracteres em
     # username

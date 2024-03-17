@@ -630,12 +630,11 @@ def proposta_remover(request, slug):
     return render(request, "generic.html", context=context)
 
 
-
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
 def publicar_propostas(request):
-    """Definir datas do PFE."""
+    """Definir datas de publicação de propostas."""
     configuracao = get_object_or_404(Configuracao)
 
     #if request.method == "POST":

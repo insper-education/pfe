@@ -264,7 +264,7 @@ class Avaliacoes2Resource(resources.ModelResource):
                                                                     momento=momento,
                                                                     exame=exame)
 
-            # NÃO MAIS USADAS, FORAM USADAS QUANDO O PFE ERA AINDA EM DOIS SEMESTRES
+            # NÃO MAIS USADAS, FORAM USADAS QUANDO A DISCIPLINA AINDA ERA EM DOIS SEMESTRES
             elif avaliacao in ("PPF",
                                "Planejamento Primeira Fase"):
                 exame = Exame.objects.get(titulo="Planejamento Primeira Fase")

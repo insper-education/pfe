@@ -68,7 +68,7 @@ def editar_banca(banca, request):
 
 
 def professores_membros_bancas(banca=None):
-    """Retorna potenciais usuários que podem ser membros de uma banca do PFE."""
+    """Retorna potenciais usuários que podem ser membros de uma banca."""
     professores = PFEUser.objects.filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0])
 
     administradores = PFEUser.objects.filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[3][0])

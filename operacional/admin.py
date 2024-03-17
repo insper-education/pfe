@@ -10,7 +10,7 @@ from .models import Curso
 
 @admin.register(Curso)
 class CursoAdmin(admin.ModelAdmin):
-    """Definição de Curso do PFE."""
+    """Definição de Curso."""
     list_display = ("nome", "sigla", "sigla_curta", "cor", )
     ordering = ("nome", )
     search_fields = ["nome", ]
