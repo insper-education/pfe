@@ -69,11 +69,10 @@
     <br>
     <label for="celular">
       Caso desejar, você pode informar seu telefone celular: (opcional)<br>
-      Iramos usar esse número para enviar avisos de forma não oficial pelo WhatsApp.<br>
-      <b class="text-danger">A comunicação oficial é pelo seu e-mail de estudante!</b>
     </label><br>
     <input type="text" size="20" maxlength="20" id="celular" name="celular" {% if estudante.user.celular %}value="{{estudante.user.celular}}"{% endif %} placeholder="(XX)XXXX-XXXX" {% if vencido %}disabled{% endif %}>
-   
+    <br><small><b class="text-danger">Iremos usar esse número para enviar avisos de forma não oficial pelo WhatsApp. A comunicação oficial é pelo seu e-mail de estudante!</b></small>
+
     <br><br>
     <input class="btn btn-primary mb-1" {% if vencido %}disabled{% endif %} type="submit" value="Atualizar">
 
