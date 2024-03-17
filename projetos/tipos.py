@@ -49,7 +49,7 @@ TIPO_EVENTO = (
     (113, "Apresentação das propostas disponíveis para estudantes", "#2E8B57"),
 
     (120, "Limite para submissão de propostas pelas organizações", "#00FF00"),
-    (121, "Comitê planeja onde e quantas propostas buscar e selecionar para o semestre", "#7FFF00"),
+    (121, "Comitê planeja busca de propostas para o semestre", "#7FFF00"),
 
     (123, "Indicação de interesse nas propostas pelos estudante", "#FF69B4 "),
     (124, "Notificação para estudantes dos grupos formados", "#AFEEEE"),
