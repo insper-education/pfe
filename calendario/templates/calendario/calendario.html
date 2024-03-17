@@ -961,18 +961,28 @@
 
           var eventos = [];
           var feriado = false;
+          var semana_provas = false;
+          var laboratorio = false;
 
           for (var i in event) {
             if(event[i].type == 40 ) { // (40, 'Laboratório', 'orange'),
-              $(element).css("background-image", "linear-gradient(to bottom, transparent 85%, " + event[i].color + " 85% )");
+              laboratorio = event[i].color;
             } else if(event[i].type == 41 ) { // (41, 'Semana de provas', 'red'),
-              $(element).css("border-bottom", "4px solid " + event[i].color);
-              $(element).css("line-height", "0.91");
-              $(element).css("padding-top", "8px");
+              semana_provas = event[i].color;
             } else {
               if(event[i].type == 0 ) feriado = true; //     (0, "Feriado")
               eventos.push(event[i]);
             }
+          }
+
+          if(laboratorio && !feriado) {
+            $(element).css("background-image", "linear-gradient(to bottom, transparent 85%, " + laboratorio + " 85% )");
+          }
+
+          if(semana_provas && !feriado) {
+            $(element).css("border-bottom", "4px solid " + semana_provas);
+            $(element).css("line-height", "0.91");
+            $(element).css("padding-top", "8px");
           }
 
           // Em caso de eventos que passam pelo final de semana ou feriado, essa rotina remove se o evento não começa ou acabar exatamente no dia
