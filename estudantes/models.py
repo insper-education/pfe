@@ -28,7 +28,7 @@ class Relato(models.Model):
         """Cria um objeto (entrada) em Relato."""
         relato = cls()
         return relato
-
+    
     class Meta:
         verbose_name = "Relato"
         verbose_name_plural = "Relatos"

@@ -524,12 +524,12 @@ def relato_quinzenal(request):
     hoje = datetime.date.today()
 
     # (20, 'Relato quinzenal (Individual)', 'aquamarine'),
-    prazo = Evento.objects.filter(tipo_de_evento=20, endDate__gte=hoje).order_by('endDate').first()
+    prazo = Evento.objects.filter(tipo_de_evento=20, endDate__gte=hoje).order_by("endDate").first()
 
     context = {
         "prazo": prazo,
         "msg_relato_quinzenal": get_object_or_404(Carta, template="Mensagem de Relato Quinzenal").texto,
-        "relato": Relato,
+        "Relato": Relato,
     }
 
     if request.user.tipo_de_usuario == 1:
@@ -559,18 +559,12 @@ def relato_quinzenal(request):
 
         prazo_anterior = relato_anterior.endDate + datetime.timedelta(days=1)
         
-        relato = Relato.objects.filter(alocacao=alocacao, momento__gt=prazo_anterior).order_by("momento").last()
-        
-        relatos = Relato.objects.filter(alocacao=alocacao).order_by("momento")
-
-        context["relatos"] = relatos
+        context["relatos"] = Relato.objects.filter(alocacao=alocacao).order_by("-momento")
         context["alocacao"] = alocacao
-        if relato:
-            context["relato"] = relato
+        context["texto_relato"] = Relato.objects.filter(alocacao=alocacao, momento__gt=prazo_anterior).order_by("momento").last()
 
     else:  # Supostamente professores
         context["mensagem"] = "Você não está cadastrado como estudante."
-        
 
     return render(request, "estudantes/relato_quinzenal.html", context)
 

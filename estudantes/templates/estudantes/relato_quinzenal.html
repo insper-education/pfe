@@ -8,9 +8,46 @@
 {% block head %}
   {% load static %}
   {% load get_field %}
+  {% load get_prazo %}
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
+  <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
+
   <style>
     textarea {max-width:100%;}
+
+    table {
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 2px solid black;
+      border-radius: 10px;
+      width: 85em;
+      max-width: 100%;
+    }
+
+    td, th {
+        border-width: 1px 0px 1px 0px;
+        padding: 4px;
+        background-color: #F0F0F0;
+    }
+
+    th:first-child {
+      border-width: 0px;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+    
+    td:last-child {
+      border-bottom-width: 0px;
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+
+    .relato {
+      border: 1px solid black;
+      margin: 6px 10px 8px 10px;
+      padding: 4px;
+    }
+
   </style>
 {% endblock %}
 
@@ -35,10 +72,10 @@
     </b>
     <br><br>
 
-    <label for="relato">Informe seu relato quinzenal (máximo {% max_length relato "texto" %} caracteres)</label><br>
-    <textarea id="relato" name="relato" rows="18" cols="160" maxlength="{% max_length relato "texto" %}" {% if not prazo %}disabled{% endif %} 
+    <label for="relato">Informe seu relato quinzenal (máximo {% max_length Relato "texto" %} caracteres)</label><br>
+    <textarea id="relato" name="relato" rows="18" cols="160" maxlength="{% max_length Relato "texto" %}" {% if not prazo %}disabled{% endif %} 
               placeholder="{{msg_relato_quinzenal}}"
-      >{% if relato and relato.texto %}{{relato.texto}}{% endif %}</textarea>
+      >{% if texto_relato.texto %}{{texto_relato.texto}}{% endif %}</textarea>
     
     <br><br>
     <input {% if not prazo %}disabled{% endif %} class="btn btn-primary mb-1" type="submit" value="Enviar">
@@ -51,17 +88,43 @@
     <hr>
     <p>&nbsp;</p>
 
-    <h5>Relatos Anteriores:</h5><br>
+    <h4>Relatos Anteriores:</h4>
     {% for item in relatos %}
-      <b>{{item.momento}}</b>&nbsp;&nbsp;&nbsp;
-      Situação: 
-      {% if item.avaliacao == -1 %}aguardando orientador{% endif %}
-      {% if item.avaliacao == 0 %}desempenho abaixo do esperado{% endif %}
-      {% if item.avaliacao == 1 %}desempenho dentro do esperado{% endif %}
-      <br>
-      <textarea rows="18" cols="160" disabled>{{item.texto}}</textarea><br><br>
-    {% endfor %}
+    
+      {% with prazo=item|get_prazo %}
+        {% ifchanged prazo %}
+          {% if not forloop.first %}</tbody></table><br>{% endif %}
 
+        <table>
+          <thead><tr><th>
+            {{prazo}} - 
+            <span style="white-space: nowrap;">Situação: 
+          {% if item.avaliacao == -1 %}aguardando avaliação de orientador{% endif %}
+          {% if item.avaliacao == 0 %}desempenho abaixo do esperado{% endif %}
+          {% if item.avaliacao == 1 %}desempenho dentro do esperado{% endif %}
+            </span>
+          </th></tr></thead>
+          <tbody><tr><td>
+            <i>Entregue: {{item.momento}}</i><br>
+            <div class="relato">{{item.texto|linebreaks}}</div>
+          </td></tr>
+        {% else %}
+          <tr><td>
+            <i class="anteriores" style="display: block;">Entregue: {{item.momento}}  <span class="seta-cima"></span></i>
+            <div id="relato{{item.id}}" style="display: none"; class="relato">{{item.texto|linebreaks}}</div>
+          </td></tr>
+        {% endifchanged %}
+      {% endwith %}
+      
+    {% endfor %}
+    </tbody></table>
   {% endif %}
+
+  <script>
+    $(".anteriores").on("click", function() {
+      $(this).siblings("div").toggle(200);
+      $("span", this).toggleClass("seta-baixo seta-cima");
+    });
+  </script>
 
 {% endblock %}

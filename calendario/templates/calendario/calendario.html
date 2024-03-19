@@ -285,7 +285,7 @@
                 {% nospaces %}
                   {% for evento in coordenacao|dictsort:"endDate" %} 
                     <span class="coordenacao" data-ano="{{evento.endDate.year}}" data-mes="{{evento.endDate.month}}" data-dia="{{evento.endDate.day}}" >
-                      {% ifchanged evento.get_title evento.get_semester evento.endDate.year %}   
+                      {% ifchanged evento.get_title evento.get_semester evento.endDate.year %}
                         <br><font style="color:{{evento.get_color}}">&#9608;</font>&nbsp;{{evento.get_title}}:
                         {% if evento.startDate == evento.endDate %} 
                           {{evento.endDate.day}}/{{evento.endDate.month}}
