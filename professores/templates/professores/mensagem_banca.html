@@ -32,4 +32,4 @@ Horário:%20{{banca.startDate.date}}%20({{banca.startDate|date:'l'}})%20das%20{{
 %0D%0AGrupo:%0D%0A
 {% for alocacao in banca.projeto.alocacao_set.all %} - {{alocacao.aluno.user.get_full_name|parse_quote}} {% if alocacao.aluno.externo %}[Externo]{% else %}[{{ alocacao.aluno.curso2|parse_quote }}]{% endif %}%0D%0A{% endfor %}
 %0D%0A
-%20%20%20%20Manual de Bancas: http://pfe.insper.edu.br/arquivos/documentos/1_ManualDeParticipacaoEmBancasPFE_v2.pdf.
+%20%20%20%20Manual de Bancas: http://pfe.insper.edu.br/arquivos/documentos/1_ManualDeParticipacaoEmBancasPFE_v2.pdf

@@ -1040,13 +1040,12 @@ def banca_avaliar(request, slug, documento_id=None):
 
     # Usado para pegar o relatório de avaliação de banca para usuários não cadastrados
     if documento_id:
-        #tipo_documento = get_object_or_404(TipoDocumento, pk=tipo_documento_id)
-        documento = Documento.objects.filter(id=documento_id, projeto=banca.projeto).last()
+        documento = Documento.objects.get(id=documento_id, projeto=banca.projeto)
         path = str(documento.documento).split('/')[-1]
         local_path = os.path.join(settings.MEDIA_ROOT, "{0}".format(documento.documento))
-        diferenca = abs( (banca.endDate.date() - datetime.date.today()).days )
+        diferenca = (datetime.date.today() - banca.endDate.date()).days
         if diferenca > configuracao.prazo_preencher_banca:
-            return HttpResponseNotFound("<h1>Link expirado!<br> Documentos só podem ser visualizados " + str(configuracao.prazo_preencher_banca) + " dias antes ou depois da data da banca!</h1>")
+            return HttpResponseNotFound("<h1>Link expirado!<br> Documentos só podem ser visualizados até " + str(configuracao.prazo_preencher_banca) + " dias após a data da banca!</h1>")
         return le_arquivo(request, local_path, path, bypass_confidencial=True)
 
     ####################################################################################
