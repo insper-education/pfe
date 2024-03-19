@@ -4,13 +4,14 @@ mailto:{% if banca.membro1 %}{% if com_nome %}{{banca.membro1.get_full_name}}%20
 {% if banca.membro3 %}{% if com_nome %}{{banca.membro3.get_full_name}}%20&lt;{% endif %}{{banca.membro3.email|parse_quote}}{% if com_nome %}&gt;{% endif %},{% endif %}
 {% for coorientador in banca.projeto.coorientador_set.all %}{% if com_nome %}{{coorientador.usuario.get_full_name|parse_quote}}%20&lt;{% endif %}{{coorientador.usuario.email|parse_quote}}{% if com_nome %}&gt;{% endif %},{% endfor %}
 {% if com_nome %}{{banca.projeto.orientador.user.get_full_name|parse_quote}}%20&lt;{% endif %}{{banca.projeto.orientador.user.email|parse_quote}}{% if com_nome %}&gt;{% endif %}
-?cc={% if com_nome %}Luciano%20Pereira%20Soares&lt;{% endif %}lpsoares@insper.edu.br{% if com_nome %}&gt;{% endif %}
-&amp;subject=Banca%20PFE:%20[{{ banca.projeto.organizacao.nome|parse_quote }}]%20{{banca.projeto.get_titulo|parse_quote}}
+?subject=Banca%20PFE:%20[{{ banca.projeto.organizacao.nome|parse_quote }}]%20{{banca.projeto.get_titulo|parse_quote}}
+{% comment %} &amp;cc={% if com_nome %}Luciano%20Pereira%20Soares&lt;{% endif %}lpsoares@insper.edu.br{% if com_nome %}&gt;{% endif %} {% endcomment %}
 &amp;body=Avaliadores,%0D%0A%0D%0A
-%09Obrigado por aceitarem o convite da banca do PFE.%0D%0A
-%09A banca terá 40min de apresentação, 50min de arguição e 20min discussão (sem estudantes).%0D%0A
-%09Por favor, logo após o fim da banca, preencha a avaliação no link abaixo.%0D%0A%0D%0A
-%09%09atenciosamente, Luciano Soares%0D%0A%0D%0A-----------%0D%0A%0D%0A
+{% comment %}%09{% endcomment %}Obrigado por aceitarem o convite da banca do PFE.%0D%0A
+{% comment %}%09{% endcomment %}A banca terá 40min de apresentação, 50min de arguição e 20min discussão (sem estudantes).%0D%0A
+{% comment %}%09{% endcomment %}Por favor, logo após o fim da banca, preencha o formulário de avaliação.%0D%0A%0D%0A
+{% comment %}%09%09{% endcomment %}atenciosamente, Luciano Soares
+%0D%0A%0D%0A%0D%0A%0D%0A
 ★ Formulário de avaliação: {{request.scheme}}://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}
 %0D%0A%0D%0A
 {% with relatorio=banca.get_relatorio%}{% if relatorio %}
@@ -29,6 +30,6 @@ Horário:%20{{banca.startDate.date}}%20({{banca.startDate|date:'l'}})%20das%20{{
 {% if banca.membro2 %} - {{banca.membro2.get_full_name|parse_quote}}%0D%0A{% endif %}
 {% if banca.membro3 %} - {{banca.membro3.get_full_name|parse_quote}}%0D%0A{% endif %}
 %0D%0AGrupo:%0D%0A
-{% for alocacao in banca.projeto.alocacao_set.all %} - {{alocacao.aluno.user.get_full_name|parse_quote}} [{{ alocacao.aluno.curso2|parse_quote }}]%0D%0A{% endfor %}
+{% for alocacao in banca.projeto.alocacao_set.all %} - {{alocacao.aluno.user.get_full_name|parse_quote}} {% if alocacao.aluno.externo %}[Externo]{% else %}[{{ alocacao.aluno.curso2|parse_quote }}]{% endif %}%0D%0A{% endfor %}
 %0D%0A
-%20%20%20%20Caso tenha dúvidas, acesse manual em: http://pfe.insper.edu.br/arquivos/documentos/1_ManualDeParticipacaoEmBancasPFE_v2.pdf.
+%20%20%20%20Manual de Bancas: http://pfe.insper.edu.br/arquivos/documentos/1_ManualDeParticipacaoEmBancasPFE_v2.pdf.
