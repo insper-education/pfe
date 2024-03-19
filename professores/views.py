@@ -291,7 +291,7 @@ def mensagem_edicao_banca(banca, atualizada=False):
     if (total_bancas - nao_intersecta - 1) >= LIMITE_DE_SALAS:  # -1 para nao contar a propria banca
         mensagem += "<span style='color: red; font-weight: bold;'>"
         mensagem += "Mais de duas bancas agendadas para o mesmo horário!<br>"
-        mensagem += "Poderá não ser possível alocar uma sala para esse horário.<br>"
+        mensagem += "Agendamento realizado, contudo poderá não ser possível alocar uma sala para esse horário.<br>"
         mensagem += "</span><br>"
 
     mensagem += "Envolvidos (nenhuma mensagem está sendo enviada agora):<br><ul>"
