@@ -112,7 +112,7 @@
                 <span class="opt_short">{{ documento.data|date:"d/m/y H:i" }}</span>
                 <a 
                   {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
-                  href="{{request.build_absolute_uri}}/{{documento.tipo_documento.id}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+                  href="{{request.build_absolute_uri}}/{{documento.id}}" target="_blank" rel="noopener noreferrer">(documento)</a>
                 <a 
                   {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
                   href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
@@ -120,7 +120,7 @@
                 {% if documento.documento %}
                   <a 
                     {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
-                    href="{{request.build_absolute_uri}}/{{documento.tipo_documento.id}}" target="_blank" rel="noopener noreferrer"><span lang="pt">Entregue</span><span lang="en">Submitted</span>
+                    href="{{request.build_absolute_uri}}/{{documento.id}}" target="_blank" rel="noopener noreferrer"><span lang="pt">Entregue</span><span lang="en">Submitted</span>
                     <span class="opt_full">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
                     <span class="opt_short">{{ documento.data|date:"d/m/y H:i" }}</span>
                   </a>
@@ -135,6 +135,7 @@
                 {% endif %}
               {% endif %}
               {% if documento.data|diff_days:evento.endDate > 0 %}<span style="color: red;">[FORA DO PRAZO]</span>{% endif %}
+              {% if not forloop.first %}(Versão desatualizada){% endif %}
             </li>
           {% empty %}
             Não entregue

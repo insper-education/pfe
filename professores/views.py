@@ -1000,7 +1000,7 @@ def mensagem_orientador(banca):
 
 
 @transaction.atomic
-def banca_avaliar(request, slug, tipo_documento_id=None):
+def banca_avaliar(request, slug, documento_id=None):
     """Cria uma tela para preencher avaliações de bancas."""
     configuracao = get_object_or_404(Configuracao)
     coordenacao = configuracao.coordenacao
@@ -1039,9 +1039,9 @@ def banca_avaliar(request, slug, tipo_documento_id=None):
         return HttpResponseNotFound('<h1>Banca não encontrada!</h1>')
 
     # Usado para pegar o relatório de avaliação de banca para usuários não cadastrados
-    if tipo_documento_id:
-        tipo_documento = get_object_or_404(TipoDocumento, pk=tipo_documento_id)
-        documento = Documento.objects.filter(tipo_documento=tipo_documento, projeto=banca.projeto).last()
+    if documento_id:
+        #tipo_documento = get_object_or_404(TipoDocumento, pk=tipo_documento_id)
+        documento = Documento.objects.filter(id=documento_id, projeto=banca.projeto).last()
         path = str(documento.documento).split('/')[-1]
         local_path = os.path.join(settings.MEDIA_ROOT, "{0}".format(documento.documento))
         diferenca = abs( (banca.endDate.date() - datetime.date.today()).days )
@@ -1236,7 +1236,7 @@ def banca_avaliar(request, slug, tipo_documento_id=None):
 
         documentos = None
         if tipo_documento:
-            documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto)
+            documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto).order_by("-data")
 
         context = {
             "pessoas": pessoas,

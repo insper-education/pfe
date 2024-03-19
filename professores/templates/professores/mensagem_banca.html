@@ -5,34 +5,30 @@ mailto:{% if banca.membro1 %}{% if com_nome %}{{banca.membro1.get_full_name}}%20
 {% for coorientador in banca.projeto.coorientador_set.all %}{% if com_nome %}{{coorientador.usuario.get_full_name|parse_quote}}%20&lt;{% endif %}{{coorientador.usuario.email|parse_quote}}{% if com_nome %}&gt;{% endif %},{% endfor %}
 {% if com_nome %}{{banca.projeto.orientador.user.get_full_name|parse_quote}}%20&lt;{% endif %}{{banca.projeto.orientador.user.email|parse_quote}}{% if com_nome %}&gt;{% endif %}
 ?cc={% if com_nome %}Luciano%20Pereira%20Soares&lt;{% endif %}lpsoares@insper.edu.br{% if com_nome %}&gt;{% endif %}
-&amp;subject=Banca%20PFE:%20{{banca.projeto.get_titulo|parse_quote}}
-&amp;body=
-Caros Membros da Banca,%0D%0A%0D%0A
-%20%20%20%20Primeiramente muito obrigado por terem aceito fazer parte da banca {% if banca.tipo_de_banca == 0 %}Final{% elif banca.tipo_de_banca == 1 %}Intermediária{% endif %} do Projeto Final de Engenharia.%0D%0A%0D%0A
-%20%20%20%20Em anexo está o relatório submetido pelos estudantes para o projeto onde você foi alocado como membro da banca.%0D%0A%0D%0A
-%20%20%20%20Nas bancas do PFE os estudantes tem no máximo 40min para a apresentação. Depois, se orienta que a arguição de todos os membros não passe de 50min. Ao final das arguições vocês podem pedir para os alunos se retirarem da reunião e fazer qualquer discussão.%0D%0A%0D%0A
-%20%20%20%20Por favor, preencha a avaliação no link abaixo, idealmente logo após a conclusão da banca (um e-mail será enviado para você e o orientador).%0D%0A%0D%0A
-%20%20%20%20Também deixamos um manual de participação em bancas em anexo caso tenha dúvidas, contudo podem tirar suas dúvidas diretamente com o orientador do projeto, ou mesmo comigo.%0D%0A%0D%0A
-%20%20%20%20%20%20%20%20atenciosamente, Luciano P Soares%0D%0A%0D%0A------------%0D%0A%0D%0A
-★ Link formulário de avaliação: {{request.scheme}}://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}
+&amp;subject=Banca%20PFE:%20[{{ banca.projeto.organizacao.nome|parse_quote }}]%20{{banca.projeto.get_titulo|parse_quote}}
+&amp;body=Avaliadores,%0D%0A%0D%0A
+%09Obrigado por aceitarem o convite da banca do PFE.%0D%0A
+%09A banca terá 40min de apresentação, 50min de arguição e 20min discussão (sem estudantes).%0D%0A
+%09Por favor, logo após o fim da banca, preencha a avaliação no link abaixo.%0D%0A%0D%0A
+%09%09atenciosamente, Luciano Soares%0D%0A%0D%0A-----------%0D%0A%0D%0A
+★ Formulário de avaliação: {{request.scheme}}://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}
 %0D%0A%0D%0A
-Agendamento%20da%20banca.%0D%0A
+{% with relatorio=banca.get_relatorio%}{% if relatorio %}
+Relatório: {{request.scheme}}://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}/{{banca.get_relatorio.id}}
+%0D%0A%0D%0A
+{% endif %}{% endwith %}
+Banca {% if banca.tipo_de_banca == 0 %}Final{% elif banca.tipo_de_banca == 1 %}Intermediária{% else %}Falconi{% endif %}%0D%0A
 Horário:%20{{banca.startDate.date}}%20({{banca.startDate|date:'l'}})%20das%20{{banca.startDate.time}}%20às%20{{banca.endDate.time}}%0D%0A
-{% if banca.tipo_de_banca == 0 %}Tipo: Final%0D%0A{% elif banca.tipo_de_banca == 1 %}Tipo: Intermediária%0D%0A{% else %}Tipo: Falconi%0D%0A{% endif %}
-{% if banca.projeto %}Título%20do%20Projeto:%20{{banca.projeto.get_titulo|parse_quote}}{% endif %}
-%0D%0A
-{% if banca.projeto.organizacao.nome %}Organização Parceira:%20{{ banca.projeto.organizacao.nome|parse_quote }}%0D%0A{% endif %}
 {% if banca.location %}Local:%20{{banca.location|parse_quote}}%0D%0A{% endif %}
-{% if banca.link %}Link%20vídeo-conferência:%20{{banca.link|parse_quote}}%0D%0A{% endif %}
-{% if banca.projeto.orientador %}%0D%0AOrientador:%0D%0A%20-%20{{banca.projeto.orientador.user.get_full_name|parse_quote}}
-%0D%0A%0D%0A
-{% endif %}
-Banca:%0D%0A
+{% if banca.link %}Vídeo-conferência:%20{{banca.link|parse_quote}}%0D%0A{% endif %}
+%0D%0A
+{% if banca.projeto %}Projeto:%20[{{ banca.projeto.organizacao.nome|parse_quote }}]%20{{banca.projeto.get_titulo|parse_quote}}%0D%0A{% endif %}
+{% if banca.projeto.orientador %}Orientador:%20{{banca.projeto.orientador.user.get_full_name|parse_quote}}%0D%0A{% endif %}
+%0D%0ABanca:%0D%0A
 {% if banca.membro1 %} - {{banca.membro1.get_full_name|parse_quote}}%0D%0A{% endif %}
 {% if banca.membro2 %} - {{banca.membro2.get_full_name|parse_quote}}%0D%0A{% endif %}
 {% if banca.membro3 %} - {{banca.membro3.get_full_name|parse_quote}}%0D%0A{% endif %}
-%0D%0A
-Grupo
-%0D%0A
+%0D%0AGrupo:%0D%0A
 {% for alocacao in banca.projeto.alocacao_set.all %} - {{alocacao.aluno.user.get_full_name|parse_quote}} [{{ alocacao.aluno.curso2|parse_quote }}]%0D%0A{% endfor %}
-%0D%0A%0D%0A
+%0D%0A
+%20%20%20%20Caso tenha dúvidas, acesse manual em: http://pfe.insper.edu.br/arquivos/documentos/1_ManualDeParticipacaoEmBancasPFE_v2.pdf.
