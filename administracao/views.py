@@ -230,6 +230,8 @@ def cadastrar_usuario(request):
                     configuracao = get_object_or_404(Configuracao)
                     coordenacao = configuracao.coordenacao
 
+                    # USAR TEMPLATE ARMAZENADO E NÃO FAZER NA MÃO ESSE TEXTO
+
                     # Preparando mensagem para enviar para usuário.
                     message_email = user.get_full_name() + ",\n\n"
                     message_email += "\tVocê está recebendo sua conta e senha para acessar o sistema do "

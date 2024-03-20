@@ -164,7 +164,7 @@
       <a href="{% url 'cadastrar_organizacao' %}">&#10133;</a>
       <br>
       
-      <label style="margin-top: 10px;" for="cargo">cargo:</label> <input style="max-width: 95%;" type="text" size="50" maxlength="{% max_length Parceiro "cargo" %}" id="cargo" name="cargo" {% if usuario.parceiro.cargo %}value="{{usuario.parceiro.cargo}}"{% endif %}><br>
+      <label style="margin-top: 10px;" for="cargo">cargo:</label> <input style="max-width: 95%;" type="text" size="50" maxlength="{% max_length Parceiro 'cargo' %}" id="cargo" name="cargo" {% if usuario.parceiro.cargo %}value="{{usuario.parceiro.cargo}}"{% endif %}><br>
 
       <input type="checkbox" id="principal_contato" name="principal_contato" value="True" {% if usuario.parceiro.principal_contato %}checked{% endif %}>
       <label for="principal_contato"> Principal Contato</label><br>

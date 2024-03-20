@@ -7,6 +7,7 @@
 
 {% block head %}
   {% load static %}
+  {% load get_field %}
   <script src="{% static 'js/w3.js' %}"></script>
   <script>{% include "tooltip.js" %}</script>
   <style>
@@ -26,14 +27,14 @@
 
     <form method="post" action="{% url 'envia_contas_senhas' %}" enctype="multipart/form-data">{% csrf_token %}
       <table id="EstudantesTable"><thead><tr>
-            <th>&nbsp;<input type="checkbox" id="todos" checked>&nbsp;</th>
+            <th>&nbsp;<input type="checkbox" id="todos_estudantes" checked>&nbsp;</th>
             <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(2)')">Estudante</th>
             <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(3)')">e-mail</th>
         </tr></thead>
         <tbody>
           {% for estudante in estudantes %} 
             <tr class="item">
-              <td class="text-center"><input type="checkbox" id="estudante" name="estudante" value="{{estudante.id}}" checked></td>
+              <td class="text-center"><input type="checkbox" id="estudante{{estudante.id}}" class="est_check" name="estudante" value="{{estudante.id}}" checked></td>
               <td><a href="{% url 'estudante_detail' estudante.id %}">{{estudante.user.get_full_name}}</a></td>
               <td><a href="mailto:{{estudante.user.email}}">{{estudante.user.email}}</a></td>
             </tr>
@@ -43,22 +44,48 @@
         </tbody>
       </table>
 
-      <br><strong>Total de Estudantes:</strong> {{estudantes.count}}
+      <br><strong>Total de Estudantes:</strong> <span id="count_est">{{estudantes.count}}</span> ({{estudantes.count}})
+
+      <br><br>
+
+      <div>
+        <b>Template: {{template}}</b><br>
+        {% comment %} <div style="border: 2px solid black; width: fit-content; padding: 4px;"></div> {% endcomment %}
+        <textarea id="texto" name="texto" rows="12" cols="100" maxlength="{% max_length Carta 'texto' %}">{% if template.texto %}{{template.texto}}{% endif %}</textarea>
+      </div>
 
       <br><br>
       <button class="btn btn-primary mb-1" type="submit">Enviar Contas e Senhas</button>
 
     </form>
 
+    <script>
+   
+      // Deixa todos os checkboxes marcados se o checkbox do header estiver marcado
+      $("#todos_estudantes").change(function () {
+        $("input:checkbox").prop("checked", $(this).prop("checked"));
+        $("#count_est").text($(".est_check:checked").length);;
+      });
+
+      $(".est_check").change(function() {
+        var total = $(".est_check").length;
+        var checked = $(".est_check:checked").length;
+        $("#count_est").text(checked);
+        if (total === checked) {
+            $("#todos_estudantes").prop("checked", true); 
+            $("#todos_estudantes").prop("indeterminate", false);
+        } else if (checked === 0) {
+            $("#todos_estudantes").prop("checked", false);
+            $("#todos_estudantes").prop("indeterminate", false);
+        } else {
+            $("#todos_estudantes").prop("indeterminate", true);
+        }
+      });
+    </script>
+
   </div>
 
   <script>
-
-    // Deixa todos os checkboxes marcados se o checkbox do header estiver marcado
-    $("#todos").change(function () {
-      $("input:checkbox").prop("checked", $(this).prop("checked"));
-    });
-
     function carrega_pagina() {};
     function carrega_site(){
       carrega_pagina();

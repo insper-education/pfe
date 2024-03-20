@@ -712,11 +712,16 @@ def contas_senhas(request, edicao=None):
             if edicao != "todas":
                 ano, semestre = edicao.split('.')
                 estudantes = estudantes.filter(anoPFE=ano, semestrePFE=semestre, trancado=False)
-            context = {"estudantes": estudantes}
+            context = {
+                "estudantes": estudantes,
+                "template": Carta.objects.filter(template="Envio de Conta para Estudantes").last(),
+                "Carta": Carta,
+                }
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
         
     else:
+        
         context = {
             "titulo": "Enviar Contas e Senhas para Estudantes",
             "edicoes": get_edicoes(Aluno)[0],
@@ -742,7 +747,12 @@ def envia_contas_senhas(request):
         estudantes = request.POST.getlist("estudante", None)
 
         carta = get_object_or_404(Carta, template="Envio de Conta para Estudantes")
-        template_carta = Template(carta.texto)
+        texto = request.POST.get("texto", None)
+        if texto:
+            carta.texto = texto
+            carta.save()
+
+        template_carta = Template(texto)
 
         mensagem = "Enviado para:<br>\n<br>\n"
         for estudante_id in estudantes:

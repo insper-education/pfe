@@ -94,40 +94,40 @@
 
       function atualiza_colunas() {
 
-        if( $("#alunosC1").is(':checked') && $("#alunosC2").is(':checked') && $("#alunosC3").is(':checked') && $("#alunosC4").is(':checked') ) {
+        if( $("#alunosC1").is(":checked") && $("#alunosC2").is(":checked") && $("#alunosC3").is(":checked") && $("#alunosC4").is(":checked") ) {
           $("#alunosC").prop("checked", true); 
           $("#alunosC").prop("indeterminate", false);
-        } else if( (! $("#alunosC1").is(':checked')) && (! $("#alunosC2").is(':checked')) && (! $("#alunosC3").is(':checked')) && (! $("#alunosC4").is(':checked')) ) {
+        } else if( (! $("#alunosC1").is(":checked")) && (! $("#alunosC2").is(":checked")) && (! $("#alunosC3").is(":checked")) && (! $("#alunosC4").is(":checked")) ) {
           $("#alunosC").prop("checked", false); 
           $("#alunosC").prop("indeterminate", false);
         } else {
           $("#alunosC").prop("indeterminate", true);
         }
 
-        if( $("#alunosM1").is(':checked') && $("#alunosM2").is(':checked') && $("#alunosM3").is(':checked') && $("#alunosM4").is(':checked') ) {
+        if( $("#alunosM1").is(":checked") && $("#alunosM2").is(":checked") && $("#alunosM3").is(":checked") && $("#alunosM4").is(":checked") ) {
           $("#alunosM").prop("checked", true); 
           $("#alunosM").prop("indeterminate", false);
-        } else if( (! $("#alunosM1").is(':checked')) && (! $("#alunosM2").is(':checked')) && (! $("#alunosM3").is(':checked')) && (! $("#alunosM4").is(':checked')) ) {
+        } else if( (! $("#alunosM1").is(":checked")) && (! $("#alunosM2").is(":checked")) && (! $("#alunosM3").is(":checked")) && (! $("#alunosM4").is(":checked")) ) {
           $("#alunosM").prop("checked", false); 
           $("#alunosM").prop("indeterminate", false);
         } else {
           $("#alunosM").prop("indeterminate", true);
         }
 
-        if( $("#alunosX1").is(':checked') && $("#alunosX2").is(':checked') && $("#alunosX3").is(':checked') && $("#alunosX4").is(':checked') ) {
+        if( $("#alunosX1").is(":checked") && $("#alunosX2").is(":checked") && $("#alunosX3").is(":checked") && $("#alunosX4").is(":checked") ) {
           $("#alunosX").prop("checked", true); 
           $("#alunosX").prop("indeterminate", false);
-        } else if( (! $("#alunosX1").is(':checked')) && (! $("#alunosX2").is(':checked')) && (! $("#alunosX3").is(':checked')) && (! $("#alunosX4").is(':checked')) ) {
+        } else if( (! $("#alunosX1").is(":checked")) && (! $("#alunosX2").is(":checked")) && (! $("#alunosX3").is(":checked")) && (! $("#alunosX4").is(":checked")) ) {
           $("#alunosX").prop("checked", false);
           $("#alunosX").prop("indeterminate", false);
         } else {
           $("#alunosX").prop("indeterminate", true);
         }
 
-        if( $("#alunosB1").is(':checked') && $("#alunosB2").is(':checked') && $("#alunosB3").is(':checked') && $("#alunosB4").is(':checked') ) {
+        if( $("#alunosB1").is(":checked") && $("#alunosB2").is(":checked") && $("#alunosB3").is(":checked") && $("#alunosB4").is(":checked") ) {
           $("#alunosB").prop("checked", true); 
           $("#alunosB").prop("indeterminate", false);
-        } else if( (! $("#alunosB1").is(':checked')) && (! $("#alunosB2").is(':checked')) && (! $("#alunosB3").is(':checked')) && (! $("#alunosB4").is(':checked')) ) {
+        } else if( (! $("#alunosB1").is(":checked")) && (! $("#alunosB2").is(":checked")) && (! $("#alunosB3").is(":checked")) && (! $("#alunosB4").is(":checked")) ) {
           $("#alunosB").prop("checked", false);
           $("#alunosB").prop("indeterminate", false);
         } else {
@@ -138,12 +138,12 @@
 
       atualiza_colunas();
 
-      $('.alunos').change(function() {
+      $(".alunos").change(function() {
         atualiza_colunas();
       });
 
-      $('#alunosC').change(function() {
-        if( $("#alunosC").is(':checked') ) {
+      $("#alunosC").change(function() {
+        if( $("#alunosC").is(":checked") ) {
           $("#alunosC1").prop("checked", true).change();;
           $("#alunosC2").prop("checked", true).change();;
           $("#alunosC3").prop("checked", true).change();;
@@ -157,7 +157,7 @@
       });
 
       $('#alunosM').change(function() {
-        if( $("#alunosM").is(':checked') ) {
+        if( $("#alunosM").is(":checked") ) {
           $("#alunosM1").prop("checked", true).change();;
           $("#alunosM2").prop("checked", true).change();;
           $("#alunosM3").prop("checked", true).change();;
@@ -171,7 +171,7 @@
       });
 
       $('#alunosX').change(function() {
-        if( $("#alunosX").is(':checked') ) {
+        if( $("#alunosX").is(":checked") ) {
           $("#alunosX1").prop("checked", true).change();;
           $("#alunosX2").prop("checked", true).change();;
           $("#alunosX3").prop("checked", true).change();;
@@ -185,7 +185,7 @@
       });
 
       $('#alunosB').change(function() {
-        if( $("#alunosB").is(':checked') ) {
+        if( $("#alunosB").is(":checked") ) {
           $("#alunosB1").prop("checked", true).change();;
           $("#alunosB2").prop("checked", true).change();;
           $("#alunosB3").prop("checked", true).change();;

@@ -11,6 +11,8 @@ register = template.Library()
 @register.simple_tag()
 def max_length(instance, field):
     """ Retorna o valor do campo limitado ao tamanho máximo do campo """
+    if instance is None or not hasattr(instance, field):
+        return None
     length = instance._meta.get_field(field).max_length
     return length
 
