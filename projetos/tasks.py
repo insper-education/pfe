@@ -93,10 +93,11 @@ def avisos_do_dia():
         recipient_list = ["pfeinsper@gmail.com", ]
 
         if aviso.coordenacao:
-            coordenacoes = PFEUser.objects.filter(tipo_de_usuario=4)
+            #coordenacoes = PFEUser.objects.filter(tipo_de_usuario=4)
             email_coordenacoes = []
-            for coordenador in coordenacoes:
-                email_coordenacoes.append(str(coordenador.email))
+            #for coordenador in coordenacoes:
+            #    email_coordenacoes.append(str(coordenador.email))
+            email_coordenacoes.append(str(configuracao.coordenacao.user.email))
             context = {}
             mensagem_final = mensagem_como_template.render(Context(context))
             verify = email(subject, recipient_list + email_coordenacoes, htmlizar(mensagem_final))
@@ -138,10 +139,17 @@ def eventos_do_dia():
     # Checa eventos do calendário e envia e-mail para coordenador(es)
     context = get_calendario_context()
 
-    coordenacoes = PFEUser.objects.filter(tipo_de_usuario=4)
+    try:
+        configuracao = Configuracao.objects.get()
+    except Configuracao.DoesNotExist:
+        return None
+
+    # coordenacoes = PFEUser.objects.filter(tipo_de_usuario=4)
     recipient_list = []
-    for coordenador in coordenacoes:
-        recipient_list.append(str(coordenador.email))
+    # for coordenador in coordenacoes:
+    #     recipient_list.append(str(coordenador.email))
+    recipient_list.append(str(configuracao.coordenacao.user.email))
+
 
     for event in context:
         if context[event] and isinstance(context[event], django.db.models.query.QuerySet) and context[event].model is Evento:
