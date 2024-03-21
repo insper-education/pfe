@@ -138,10 +138,10 @@
     <div style="display: block; padding-left: 32px" class="row" data-type="professor">
 
       Dedicação: 
-      <label for="ti" style="margin-left: 8px;"><input type="radio" name="dedicacao" id="TI" value="TI" {% if usuario.professor.dedicacao == "TI" %}checked{% endif %}> Tempo Integral</label>
-      <label for="tp" style="margin-left: 8px;"><input type="radio" name="dedicacao" id="TP" value="TP" {% if usuario.professor.dedicacao == "TP" %}checked{% endif %}>  Tempo Parcial</label>
-      <label for="tp" style="margin-left: 8px;"><input type="radio" name="dedicacao" id="V" value="V" {% if usuario.professor.dedicacao == "V" %}checked{% endif %}>  Visitante</label>
-      <label for="tp" style="margin-left: 8px;"><input type="radio" name="dedicacao" id="E" value="E" {% if usuario.professor.dedicacao == "E" %}checked{% endif %}>  Externo</label>
+      <label for="TI" style="margin-left: 8px;"><input type="radio" name="dedicacao" id="TI" value="TI" {% if usuario.professor.dedicacao == "TI" %}checked{% endif %}> Tempo Integral</label>
+      <label for="TP" style="margin-left: 8px;"><input type="radio" name="dedicacao" id="TP" value="TP" {% if usuario.professor.dedicacao == "TP" %}checked{% endif %}>  Tempo Parcial</label>
+      <label for="V" style="margin-left: 8px;"><input type="radio" name="dedicacao" id="V" value="V" {% if usuario.professor.dedicacao == "V" %}checked{% endif %}>  Visitante</label>
+      <label for="E" style="margin-left: 8px;"><input type="radio" name="dedicacao" id="E" value="E" {% if usuario.professor.dedicacao == "E" %}checked{% endif %}>  Externo</label>
       <br>
 
       <label for="areas">Áreas de interesse: </label> <input type="text" size="75" maxlength="{% max_length Professor "areas" %}" style="max-width: 95%;" id="areas" name="areas" {% if usuario.professor.areas %} value="{{usuario.professor.areas}}" {% endif %} ><br>
@@ -216,19 +216,19 @@
       $("#semestre").prop("required",false);
 
       // Professor
-      $("#ti").prop("required",false);
-      $("#tp").prop("required",false);
-      $("#v").prop("required",false);
-      $("#e").prop("required",false);
+      $("#TI").prop("required",false);
+      $("#TP").prop("required",false);
+      $("#V").prop("required",false);
+      $("#E").prop("required",false);
       
       // Parceiro
       $("#organizacao").prop("required",false);
 
       if(filterValue=="professor") {
-        $("#ti").prop("required",true);
-        $("#tp").prop("required",true);
-        $("#v").prop("required",true);
-        $("#e").prop("required",true);
+        $("#TI").prop("required",true);
+        $("#TP").prop("required",true);
+        $("#V").prop("required",true);
+        $("#E").prop("required",true);
         $("#ativo_div").show();
         $("#org_text").html("no Insper");
       }
