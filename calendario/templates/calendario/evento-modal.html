@@ -110,7 +110,7 @@
                 <select name="event-material" id="event-material" class="form-control" title="Selecione material anexo">
                   <option value id="nenhum"> -------- </option>
                   {% for documento in documentos %}
-                    <option value="{{documento.id}}">{{documento.filename}} [{{documento.data|date:"d/m/y"}}] </option>
+                    <option value="{{documento.id}}">[{{documento.data|date:"d/m/y"}}] {{documento.filename}}</option>
                   {% endfor %}
                 </select>
                 <input required id="arquivo" type="file" name="arquivo" class="form-control" style="border: 0px; padding-left: 0px;"

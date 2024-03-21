@@ -46,3 +46,10 @@ def diff_days(value, data):
         return int(diferenca)
     return 0  # Se a data for nula, retorna 0
 
+@register.filter
+def dif_agora(value):
+    """Calcula a diferença de um momento com agora em segundos."""
+    if value:
+        return (value - datetime.datetime.now()).total_seconds()
+        
+    return 0  # Se a data for nula, retorna 0

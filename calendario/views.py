@@ -79,7 +79,7 @@ def calendario(request):
 
         try:
             tipo_documento = TipoDocumento.objects.get(sigla="MAS")  # Somente Material de Aula (pelo momento)
-            context["documentos"] = Documento.objects.filter(tipo_documento=tipo_documento)
+            context["documentos"] = Documento.objects.filter(tipo_documento=tipo_documento).order_by("-data")
         except TipoDocumento.DoesNotExist:
             context["documentos"] = None
     

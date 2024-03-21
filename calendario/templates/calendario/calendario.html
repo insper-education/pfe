@@ -494,7 +494,8 @@
                             {{aula.atividade}}
                             {% if aula.responsavel %}({{aula.responsavel.get_full_name}}){% endif %}
                           </span>
-                          {% if aula.documento %}
+                          {% comment %} Só mostra se data do documento for no passado {% endcomment %}
+                          {% if aula.documento and aula.documento.data|dif_agora < 0 %}
                             {% if aula.documento.documento %}
                               <a class="esconder" href="{{request.scheme}}://{{request.get_host}}{{aula.documento.documento.url}}">
                                 &nbsp;<i class="fa fa-file-pdf"></i>
