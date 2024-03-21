@@ -485,7 +485,12 @@
                         </th>
                         
                         <td class="colu" style="cursor:pointer;">
-                          <span data-toggle="tooltip" data-html="true" animation="true" title="{{aula.descricao}}">
+                          {% if user.tipo_de_usuario == 4 %}
+                            <span style="cursor:pointer;" onclick="buscaEditEvent({{aula.id}})"
+                          {% else %}
+                            <span
+                          {% endif %}
+                           data-toggle="tooltip" data-html="true" animation="true" title="{{aula.descricao}}">
                             {{aula.atividade}}
                             {% if aula.responsavel %}({{aula.responsavel.get_full_name}}){% endif %}
                           </span>
