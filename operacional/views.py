@@ -106,11 +106,10 @@ def emails(request):
         "edicoes": edicoes,
         "atual": atual,
         "coordenacao": configuracao.coordenacao,
-        "coordenacoes": PFEUser.objects.filter(tipo_de_usuario=4),
-
+        #"administradores": PFEUser.objects.filter(tipo_de_usuario=4),
     }
 
-    return render(request, 'operacional/emails.html', context=context)
+    return render(request, "operacional/emails.html", context=context)
 
 
 @login_required
