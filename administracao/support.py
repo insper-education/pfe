@@ -258,11 +258,15 @@ def registro_usuario(request, user=None):
         else:
             professor = user.professor
 
-        dedicacao = request.POST.get('dedicacao', None)
-        if dedicacao == "ti":  # ("TI", "Tempo Integral"),
-            professor.dedicacao = 'TI'
-        elif dedicacao == "tp":  # ("TP", 'Tempo Parcial'),
-            professor.dedicacao = 'TP'
+        dedicacao = request.POST.get("dedicacao", None)
+        if dedicacao == "TI":  # ("TI", "Tempo Integral"),
+            professor.dedicacao = "TI"
+        elif dedicacao == "TP":  # ("TP", 'Tempo Parcial'),
+            professor.dedicacao = "TP"
+        elif dedicacao == "V":  # ("V", "Visitante"),
+            professor.dedicacao = "V"
+        elif dedicacao == "E":  # ("E", "Externo"),
+            professor.dedicacao = "E"
         else:
             professor.dedicacao = None
             mensagem += "Erro na identificação de tipo de dedicação do professor.<br>"

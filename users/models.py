@@ -155,26 +155,27 @@ class Professor(models.Model):
 
     TIPO_DEDICACAO = (
         ("TI", "Tempo Integral"),
-        ("TP", 'Tempo Parcial'),
-        ("V", 'Visitante'),
+        ("TP", "Tempo Parcial"),
+        ("V", "Visitante"),
+        ("E", "Externo"),
     )
 
     dedicacao = models.CharField("Dedicação", max_length=2,
                                  choices=TIPO_DEDICACAO, null=True, blank=True,
-                                 help_text='Tipo de dedicação do professor')
+                                 help_text="Tipo de dedicação do professor")
 
     areas = models.TextField(max_length=500, null=True, blank=True,
-                             help_text='Áreas de Interesse do Professor')
+                             help_text="Áreas de Interesse do Professor")
     website = models.URLField(max_length=250, null=True, blank=True,
-                              help_text='Website profissional do Professor')
+                              help_text="Website profissional do Professor")
     lattes = models.URLField(max_length=75, null=True, blank=True,
-                             help_text='Link para o currículo Lattes do Professor')
+                             help_text="Link para o currículo Lattes do Professor")
 
     class Meta:
         """Classe Meta."""
 
-        verbose_name = 'Professor'
-        verbose_name_plural = 'Professores'
+        verbose_name = "Professor"
+        verbose_name_plural = "Professores"
         ordering = ["user"]
         permissions = (("altera_professor", "Professor altera valores"), )
 

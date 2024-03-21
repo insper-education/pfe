@@ -27,7 +27,7 @@
 
   <strong>Usuário:</strong> {{ professor.user.username }}<br>
   <strong>Regime de Dedicação:</strong>
-  {% if professor.dedicacao %}{{professor.dedicacao}}{% else %}&lt;&lt;Não Definido&gt;&gt;{% endif %}
+  {% if professor.dedicacao %}{{professor.get_dedicacao_display}}{% else %}&lt;&lt;Não Definido&gt;&gt;{% endif %}
   <br>
   {% if professor.lattes %}
     <strong>Lattes:</strong> <a href="{{ professor.lattes }}"> {{ professor.lattes }} </a><br>
