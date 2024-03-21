@@ -662,7 +662,7 @@ def banca_ver(request, primarykey):
     banca = get_object_or_404(Banca, id=primarykey)
 
     context = {
-        'banca': banca,
+        "banca": banca,
     }
 
     return render(request, 'professores/banca_ver.html', context)
@@ -670,7 +670,10 @@ def banca_ver(request, primarykey):
 
 # Mensagem preparada para o avaliador
 def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, objetivos_possiveis, realizada):
-    message = "<h3>Avaliação PFE</h3><br>\n"
+    
+    message = "{0},<br><br>\n".format(avaliador.get_full_name())
+    message += "Obrigado por sua avaliação de banca no Capstone (antigo PFE)<br><br>\n"
+    message += "Estamos também informando o orientador do projeto sobre sua avaliação<br><br>\n"
 
     if realizada:
         message += "<h3 style='color:red;text-align:center;'>"
