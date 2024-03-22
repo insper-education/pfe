@@ -1,0 +1,40 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 21 de Março de 2024
+{% endcomment %}
+
+<style>
+    .box_notas {
+      background-color: #E2E2E2;
+      border: 0px;
+      vertical-align: top;
+    }
+
+    .box_divs {
+      margin: 0.4em 0.7em 0.4em 0.7em;
+    }
+
+    .tab_notas {
+      border: 0px;
+      border-collapse: separate;
+      border-spacing: 6px 8px;
+      width: 100%;
+    }
+
+    @media(max-width: 600px) {
+      .box_notas {
+        display: table-row;
+      }
+      .box_divs {
+        margin: 0.2em 0.3em 0.2em 0.3em;
+      }
+      .tab_notas {
+        border-spacing: 3px 3px;
+      }
+      tr {
+        display: table;
+        width: 100%;  
+      }
+    }
+  </style>

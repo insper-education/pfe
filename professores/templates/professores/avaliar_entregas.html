@@ -25,7 +25,6 @@
     }
     .pintern {
       border: 1px solid grey;
-      padding: 0.0em 0.4em 0.0em 0.4em;
       display:block;
       margin: 8px 0px 0px 0px;
       background-color: #FAFAF3;
@@ -38,8 +37,16 @@
       {color:lightgrey;}
     .nome_entrega {
       font-size: 0.9em;
+      margin-left: 0.4em;
+    }
+    .nome_est {
+      margin-left: 0.4em;
+    }
+    .linha {
+      margin: 4px 0px 2px 0px;
     }
   </style>
+  {% include "style_display_avaliacoes.html" %}
 {% endblock %}
 
 {% block content %}
@@ -100,7 +107,7 @@
             <div style="margin:8px 0px 3px 0px; "><strong>Entregas:</strong></div>
             {% for item in entregas %}
             {% with dias_ate=item.evento.endDate|dif_dias_hoje dias=-1 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
-              <div class="pintern exame{{item.composicao.exame.id}}" {% if not forloop.first %}style="margin-top: 8px;"{% endif %}> {% comment %} {% if dias_ate > dias %}{% endif %} {% endcomment %}
+              <div class="pintern exame{{item.composicao.exame.id}}" {% if not forloop.first %}style="margin-top: 8px;"{% endif %}>
                 <span class="nome_entrega" {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
                   {% if item.composicao.tipo_documento %}
                     <b>{{item.composicao.tipo_documento.nome}}</b> 
@@ -117,15 +124,17 @@
                   {% comment %} onClick="check_prazo('{{item.evento.endDate|date:"Y-m-d"}}T23:59:59');" {% endcomment %}
                 <br>
                 {% if item.composicao.exame.grupo %}
-                  <ul style="padding-left: 22px;" {% if dias_ate > dias %}class="lightgrey"{% endif %}>
+                  <ul style="margin-bottom: 2px; padding-left: 22px;" {% if dias_ate > dias %}class="lightgrey"{% endif %}>
                     {% for documento in item.documentos %}
                       <li style="list-style-type:'';" {% if dias_ate > dias %}class="lightgrey"{% endif %}>
-                        {% if forloop.first%}<b>{% endif %} <span class="fas fa-archive"></span>
+                        {% if forloop.first%}<b>{% endif %}
                         {% if documento.documento or documento.link %}
                           <a {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
                            {% if dias_ate > dias %}class="lightgrey"{% endif %}
                            href="{% url 'entrega_avaliar' item.composicao.id projeto.id %}"
-                           target="_blank" rel="noopener noreferrer">Entregue 
+                           target="_blank" rel="noopener noreferrer">
+                            <span class="fas fa-archive"></span>
+                            Entregue 
                             <span class="opt_full">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
                             <span class="opt_short">{{ documento.data|date:"d/m/y H:i" }}</span>
                           </a>
@@ -152,16 +161,18 @@
 
                 {% else %}
                   {% for alocacao, values in item.alocacoes.items %} 
-                    <hr><b {% if dias_ate > dias %}class="lightgrey"{% endif %}>&#10040; {{alocacao.aluno.user.get_full_name}}:</b>
-                    <ul style="padding-left: 32px;" {% if dias_ate > dias %}class="lightgrey"{% endif %}>
+                    <hr class="linha">
+                    <b class="{% if dias_ate > dias %}lightgrey{% endif %} nome_est">&#10040; {{alocacao.aluno.user.get_full_name}}:</b>
+                    <ul style="margin-bottom: 0px; padding-left: 32px;" {% if dias_ate > dias %}class="lightgrey"{% endif %}>
                       {% for documento in values.documentos %}
                         <li style="list-style-type:'';" {% if dias_ate > dias %}class="lightgrey"{% endif %}>
-                          {% if forloop.first%}<b>{% endif %}<span class="fa fa-file"></span>
+                          {% if forloop.first%}<b>{% endif %}
                           {% if documento.documento or documento.link %}
                             <a {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {% if documento.usuario %}{{documento.usuario.get_full_name}}{% else %}(ERRO AO IDENTIFICAR ESTUDANTE){% endif %}"{% endif %}
                              {% if dias_ate > dias %}class="lightgrey"{% endif %}
                              href="{% url 'entrega_avaliar' item.composicao.id projeto.id documento.usuario.id %}"
                              target="_blank" rel="noopener noreferrer">
+                              <span class="fa fa-file"></span>
                               Entregue
                               <span class="opt_full">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
                               <span class="opt_short">{{ documento.data|date:"d/m/y H:i" }}</span>
@@ -186,7 +197,6 @@
                       {% endfor %}
                     </ul>
                     {% include "display_avaliacoes.html" with avaliacoes=values.avaliacoes nota=values.nota observacao=values.observacao com_orientador=True %}
-
                   {% endfor %}
 
                 {% endif %}

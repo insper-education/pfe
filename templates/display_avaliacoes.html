@@ -4,30 +4,11 @@
     Data: 19 de Janeiro de 2024
 {% endcomment %}
 
-
 {% if avaliacoes %}
-  <style>
-    .box_notas {
-      padding: 0.4em 0.7em 0.4em 0.7em;
-      background-color: #E2E2E2;
-      border: 0px;
-      vertical-align: top;
-    }
-
-    @media(max-width: 600px) {
-      .box_notas {
-        display: table-row;
-      }
-      tr {
-        display: table;
-        width: 100%;  
-      }
-    }
-  </style>
-  <div style="display: table; width: 100%;">
-    <table style="border: 0px; border-collapse: separate; border-spacing: 8px; width: 100%;">
+  <div style="display: table; width: 100%; padding: 0px;">
+    <table class="tab_notas">
       <tr>
-        <td class="box_notas" style="width: 15em;">
+        <td class="box_notas" style="width: 15em;"><div class="box_divs">
           {% if avaliacoes.last.objetivo %}
             <b>Avaliação:</b><br>
             <ul>
@@ -53,12 +34,12 @@
               Inadequado
             {% endif %}
           {% endif %}
-        </td>
+          </div></td>
 
         {% if com_orientador %} 
 
           {% if observacao.observacoes_estudantes or observacao.observacoes_orientador %}
-            <td class="box_notas">
+            <td class="box_notas"><div class="box_divs">
             {% if observacao.observacoes_estudantes %}
                 <b>Observações para Estudantes:</b><br>
                 {{observacao.observacoes_estudantes}}<br>
@@ -68,7 +49,7 @@
                 <b>Observações do Orientador:</b><br>
                 {{observacao.observacoes_orientador}}
             {% endif %}
-            </td>
+            </div></td>
           {% endif %}
 
         {% else %}
@@ -85,5 +66,8 @@
       </tr>
     </table>
   </div>
+
+{% else %}
+  <div style="height: 6px;"></div>
 {% endif %}
 

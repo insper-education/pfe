@@ -12,7 +12,16 @@
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
   <style>
-    ul {margin-bottom: 6px;}
+    ul {
+      margin-bottom: 6px;
+      width: 100%;
+    }
+    .pintern {
+      border: 1px solid grey;
+      display:block;
+      margin: 8px 0px 0px 0px;
+      background-color: #FAFAF3;
+    }
     .lightgrey,
     .lightgrey:link,
     .lightgrey:visited,
@@ -21,10 +30,12 @@
       {color:lightgrey;}
     .nome_entrega {
       font-size: 0.9em;
+      margin-left: 0.4em;
     }
   </style>
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
+  {% include "style_display_avaliacoes.html" %}
 
 {% endblock %}
 
@@ -47,7 +58,7 @@
 
   {% for item in entregas %}
     {% with dias_ate=item.evento.endDate|dif_dias_hoje dias=14 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
-      <div {% if dias_ate > dias and user.tipo_de_usuario == 1 %}style="display:none;"{% endif %} class="div_arredondado">
+      <div class="pintern" {% if dias_ate > dias and user.tipo_de_usuario == 1 %}style="display:none;"{% endif %}>
         <span class="nome_entrega" {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
         {% if item.composicao.tipo_documento %}
           <b>{{item.composicao.tipo_documento.nome}}</b> 
@@ -74,7 +85,7 @@
             {% if item.documentos.last %}<b><i class="fas fa-redo"></i></b>{% else %}<i class="fas fa-file-upload"></i>{% endif %}
           </a>
         {% endif %}<br>
-        <ul style="padding-left: 22px; width: fit-content;">
+        <ul style="margin-bottom: 2px; padding-left: 22px; width: fit-content;">
         {% for documento in item.documentos %}
           <li style="list-style-type:'';">
             {% if forloop.first%}<b>{% endif %}<span class="fa fa-file"></span>
