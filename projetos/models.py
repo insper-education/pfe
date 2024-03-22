@@ -882,11 +882,8 @@ class Banca(models.Model):
             tipo_documento = TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
         else:
             return None
-        #elif self.tipo_de_banca == 2:   # (2, 'falconi'),
-        if tipo_documento:
-            documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.projeto).order_by("data").last()
-            return documento
-        return None
+        documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.projeto).order_by("data").last()
+        return documento
 
 
 class Encontro(models.Model):
