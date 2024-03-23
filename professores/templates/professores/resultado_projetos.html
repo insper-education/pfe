@@ -52,25 +52,19 @@
               <th style="border-right:0px; border-left:0px;"></th>
               <th style="border-right:0px; border-left:0px;"></th>
               <th style="border-right:0px; border-left:0px;"></th>
-              <th style="border-right:0px; border-left:0px;"></th>
-              <th colspan="2" class="text-center">
-                <b>Relatórios</b>
-              </th>
-              <th colspan="3" class="text-center">
-                <b>Bancas</b>
-              </th>
+              <th colspan="3" class="text-center"><b>Relatórios</b></th>
+              <th colspan="2" class="text-center"><b>Bancas</b></th>
             </tr>
             <tr>
               <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(1)')">Projeto</th>
               <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')">Período</th>
-              <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')">Organização</th>
-              <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(4)')">Orientador</th>
+              <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(3)')">Orientador</th>
               {% comment %} <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(5)')" data-toggle="tooltip" data-html="true" animation="true" title="Relatório Preliminar">Prel.</th> {% endcomment %}
-              <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(6)')" data-toggle="tooltip" data-html="true" animation="true" title="Relatório Intermediária">Inter.</th>
-              <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(7)')" data-toggle="tooltip" data-html="true" animation="true" title="Relatório Final">Final</th>
-              <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(8)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Intermediária">Inte.</th>
-              <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(9)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Final">Final</th>
-              <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(10)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Falconi">Falc.</th>
+              <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(4)')" data-toggle="tooltip" data-html="true" animation="true" title="Relatório Intermediária">Inter.</th>
+              <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(5)')" data-toggle="tooltip" data-html="true" animation="true" title="Relatório Final">Final</th>
+              <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(6)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Intermediária">Inte.</th>
+              <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(7)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Final">Final</th>
+              <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(8)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Falconi">Falc.</th>
             </tr>      
           </thead>
 
@@ -85,6 +79,7 @@
                 "
               >
                   <td>
+                    [<a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>]
                     <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">
                       {{projeto.get_titulo}}
                       {% include "tipo_projeto.html" %}<br>
@@ -112,13 +107,6 @@
                     {{projeto.ano}}.{{projeto.semestre}}
                   </td>
 
-                  {% comment %} Organização {% endcomment %}
-                  <td>
-                    <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-                      {{ projeto.organizacao.nome }}
-                    </a>
-                  </td>
-                  
                   {% comment %} Orientador {% endcomment %}
                   <td>
                     {% if projeto.orientador %}
@@ -262,7 +250,7 @@
       {% if show_orientador %}
         $("#info_"+"Orientador").prop("checked", true);
       {% else %} 
-        $("#ProjetosTable tr > *:nth-child(4)").hide();
+        $("#ProjetosTable tr > *:nth-child(3)").hide();
         $("#info_"+"Orientador").prop("checked", false);
       {% endif %}
     </script>
@@ -279,12 +267,6 @@
 
       var seqNumber = ++xhrCount;
 
-      {% comment %} if (request_ajax_r != null){ 
-          request_ajax_r.abort();
-          request_ajax_r = null;
-      } {% endcomment %}
-
-      //$("#spinner").css("visibility", "visible");
       $(".to_label").addClass("label_animado");
 
       var edicao = $(".filter option:selected").attr("value");
@@ -295,16 +277,13 @@
               "csrfmiddlewaretoken": "{{ csrf_token }}",
           },
           success: function(response){
-            if (seqNumber === xhrCount) { {% comment %} Processando resposta {% endcomment %}
+            if (seqNumber === xhrCount) {
               $(".atualizar").replaceWith($(".atualizar",response));
-              //$("#organizacao").prop('checked') ? $('#ProjetosTable tr > *:nth-child(2)').show() : $('#ProjetosTable tr > *:nth-child(2)').hide()
-              //$("#orientador").prop('checked') ? $('#ProjetosTable tr > *:nth-child(3)').show() : $('#ProjetosTable tr > *:nth-child(3)').hide()
               $(".tooltip-inner").remove();
               $(".tooltip-arrow").remove();
               {% include "tooltip.js" %}
-              //$("#spinner").css("visibility", "hidden");
               $(".to_label").removeClass("label_animado");
-            } // else {% comment %} Ignorando resposta {% endcomment %}
+            }
           },
           error: function (request, status, error) {
             {% if user.tipo_de_usuario == 4 %} 

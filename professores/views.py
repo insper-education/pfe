@@ -2402,13 +2402,12 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
 
         informacoes = [
             ("#ProjetosTable tr > *:nth-child(2)", "Período"),
-            ("#ProjetosTable tr > *:nth-child(3)", "Organização"),
-            ("#ProjetosTable tr > *:nth-child(4)", "Orientador"),
-            ("""#ProjetosTable tr > *:nth-child(5),
+            ("#ProjetosTable tr > *:nth-child(3)", "Orientador"),
+            ("""#ProjetosTable tr > *:nth-child(4),
+                #ProjetosTable tr > *:nth-child(5),
                 #ProjetosTable tr > *:nth-child(6),
                 #ProjetosTable tr > *:nth-child(7),
-                #ProjetosTable tr > *:nth-child(8),
-                #ProjetosTable tr > *:nth-child(9)""", "Notas"),
+                #ProjetosTable tr > *:nth-child(8)""", "Notas"),
             (".grupo", "Grupo"),
             (".email", "e-mail", "grupo"),
             (".curso", "curso", "grupo"),
