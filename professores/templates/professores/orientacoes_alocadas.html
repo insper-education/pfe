@@ -37,8 +37,8 @@
         {% if n_alocacoes == 0 %}ERRO: PROJETO SEM ESTUDANTES{% endif %}
         <small style="margin-right: 1px;">#{{ forloop.revcounter }}.</small>
         <a href="{% url 'projeto_completo' projeto.id %}">
-          <b>{{projeto.ano}}.{{projeto.semestre}}</b> &#x2726;
-          {{projeto.organizacao.nome}}, {{projeto.get_titulo}}
+          {{projeto.ano}}.{{projeto.semestre}}
+          [{{projeto.organizacao.nome}}] {{projeto.get_titulo}}
           { {{ n_alocacoes }} estudante{% if n_alocacoes > 1%}s{% endif %} }
         </a>
         {% if projeto.proposta.intercambio %}

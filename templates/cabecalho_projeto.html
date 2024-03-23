@@ -4,19 +4,20 @@
     Data: 15 de Janeiro de 2024
 {% endcomment %}
 
-
 {% if user.is_authenticated and user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
 
-  <b lang="pt">Projeto:</b><b lang="en">Project:</b>
-    <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}{% include "tipo_projeto.html" %}</a><br>
-  <b lang="pt">Semestre:</b><b lang="en">Semester:</b>
-    {{projeto.ano}}.{{projeto.semestre}}<br>
   {% if projeto.organizacao %}
-  <b lang="pt">Organização:</b><b lang="en">Organization:</b>
+    <b lang="pt">Organização:</b><b lang="en">Organization:</b>
     <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{projeto.organizacao.nome}}</a>
   {% else %}
     <span lang="pt">Organização: Não definida</span><span lang="en">Organization: Not defined</span>
   {% endif %}<br>
+  
+  <b lang="pt">Projeto:</b><b lang="en">Project:</b>
+    <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}{% include "tipo_projeto.html" %}</a><br>
+  <b lang="pt">Semestre:</b><b lang="en">Semester:</b>
+    {{projeto.ano}}.{{projeto.semestre}}<br>
+  
   {% if projeto.orientador %}
     {% if banca.projeto.proposta.intercambio %}
       <b lang="pt">Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
@@ -26,7 +27,8 @@
       <b lang="en">Advisor:</b>
     {% endif %}
       <a href="{% url 'professor_detail' projeto.orientador.id %}">{{ projeto.orientador.user.get_full_name }}</a>
-      <a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a>
+      <span class="opt_full"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
+      <span class="opt_short"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
       <br>
   {% else %}
     <span lang="pt">Orientador: Não definido</span>
@@ -56,7 +58,8 @@
     {% endif %}
       {{projeto.orientador.user.get_full_name}}
       {% if com_email %}
-        <a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a>
+        <span class="opt_full"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
+        <span class="opt_short"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
       {% endif %}<br>
   {% else %}
     <span lang="pt">Orientador: Não definido</span>

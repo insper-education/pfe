@@ -60,12 +60,11 @@
           {% if banca.projeto %}
             <div class="tresp" style="max-width: 100%; display: inline-block; overflow-x: clip; text-overflow: ellipsis; text-wrap: nowrap;">
             {% if banca.projeto.organizacao %}
-              <a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">
-                {{ banca.projeto.organizacao.nome }},</a>
+              [<a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">{{ banca.projeto.organizacao.nome }}</a>]
             {% endif %}
           
             <a href="{% url 'projeto_completo' banca.projeto.id %}">
-              {{banca.projeto.get_titulo}},</a>
+              {{banca.projeto.get_titulo}}</a>
               </div>
           {% endif %}
 

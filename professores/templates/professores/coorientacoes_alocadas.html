@@ -36,8 +36,8 @@
           {% if n_alocacoes == 0 %}ERRO: PROJETO SEM ESTUDANTES{% endif %}
           <small style="margin-right: 1px;">#{{ forloop.revcounter }}.</small>
           <a href="{% url 'projeto_completo' coorientacao.projeto.id %}">
-            <b>{{coorientacao.projeto.ano}}.{{coorientacao.projeto.semestre}}</b> &#x2726;
-            {{coorientacao.projeto.organizacao.nome}}, {{coorientacao.projeto.get_titulo}}
+            {{coorientacao.projeto.ano}}.{{coorientacao.projeto.semestre}}
+            [{{coorientacao.projeto.organizacao.nome}}] {{coorientacao.projeto.get_titulo}}
             { {{ n_alocacoes }} estudante{% if n_alocacoes > 1%}s{% endif %} }
           </a>
           {% if projeto.certificado_orientador %}

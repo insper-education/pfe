@@ -58,7 +58,7 @@
            {% endif %}
             ><b><i class="far fa-file"></i>
         {% endfor %}</b>
-         {{projeto.ano}}.{{projeto.semestre}} - {{projeto.organizacao.nome}}, {{projeto.get_titulo}}
+         {{projeto.ano}}.{{projeto.semestre}} [{{projeto.organizacao.nome}}] {{projeto.get_titulo}}
         </a>
       </td></tr>
     {% empty %}

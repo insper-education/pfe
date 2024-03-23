@@ -9,12 +9,17 @@
   {% load static %}
   {% load certificado_banca %}
   <script>{% include "tooltip.js" %}</script>
+  
 
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
   
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
+  
+  <style>
+    ol {margin-bottom: 3px;}
+  </style>
 
 {% endblock %}
 
@@ -39,23 +44,7 @@
                 <big><b>{{e.startDate}} - {{e.endDate|date:'H:i'}}</b></big><br>
               </a>
               {% if e.projeto  %}
-                <b>Projeto:</b> <a class="imprimir" href="{% url 'projeto_completo' e.projeto.id %}">
-                  {{e.projeto.get_titulo}}
-                </a><br>
-                <b>Organização:</b> <a class="imprimir" href="{% url 'organizacao_completo' e.projeto.organizacao.id %}">{{ e.projeto.organizacao.nome }}</a><br>
-                <span class="orientador">
-                  {% if e.projeto.orientador %}
-                    {% if e.projeto.proposta.intercambio %}
-                      <b>Professor{% if e.projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
-                    {% else %}
-                      <b>Orientador{% if e.projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
-                    {% endif %}
-                    <a class="imprimir" href="{% url 'professor_detail' e.projeto.orientador.id %}">
-                      {{e.projeto.orientador.user.get_full_name}} 
-                    </a>
-                    <a class="email" href="mailto:{{e.projeto.orientador.user.email}}">&lt;{{e.projeto.orientador.user.email}}&gt;</a>
-                  {% endif %}
-                </span>
+                {% include "cabecalho_projeto.html" with com_email=True projeto=e.projeto %}
                 
                 {% comment %} Meio obvio, parece desnecessário {% endcomment %}
                 {% comment %} {% if e.facilitador %}
@@ -83,10 +72,18 @@
                   <b>Grupo:</b>
                   <ol style="padding-left: 18px;">
                     {% for alocacao in e.projeto.alocacao_set.all %} 
-                      <li><a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}
-                      <span class="curso">[{{ alocacao.aluno.curso2 }}]</span>
-                      <a class="email" href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>&nbsp;
-                      </a></li>
+                      <li>
+                        <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}
+                          <span class="curso">
+                            <span class="opt_full">[{{ alocacao.aluno.curso2 }}]</span>
+                            <span class="opt_short">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
+                          </span>
+                        </a>
+                        <span class="email">
+                          <span class="opt_full"><a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a></span>
+                          <span class="opt_short"><a href="mailto:{{alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
+                        </span>
+                      </li>
                     {% endfor %}
                   </ol>
                 </div>
@@ -102,5 +99,8 @@
       <p>&nbsp;</p>
 
       {% include "toggle_anteriores.html" %}
+  
+  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+  {% include "linguas.html" %}
 
 {% endblock %}

@@ -93,14 +93,14 @@
                     <ul class="grupo">
                       {% for alocacao in projeto.alocacao_set.all %}
                         <li>
-                          <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">
-                            {{alocacao.aluno}}
-                          </a>
+                          <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno}}</a>
                           <span class="curso">
-                            [{{ alocacao.aluno.curso2 }}]
+                            <span class="opt_full">[{{ alocacao.aluno.curso2 }}]</span>
+                            <span class="opt_short">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
                           </span>
                           <span class="email">
-                            <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
+                            <span class="opt_full"><a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a></span>
+                            <span class="opt_short"><a href="mailto:{{alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
                           </span>
                         </li>
                       {% endfor %}

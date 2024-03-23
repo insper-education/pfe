@@ -134,7 +134,8 @@
               <b>Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
             {% endif %}
             <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}"> {{projeto.orientador.user.get_full_name}}</a>
-            <span class="emails"><a href="mailto:{{projeto.orientador.user.email}}"> &lt;{{projeto.orientador.user.email}}&gt;</a></span>
+            <span class="opt_full emails"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
+            <span class="opt_short emails"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
           {% else %}
             Orientador: Não definido
           {% endif %}
@@ -147,7 +148,8 @@
               <a class="imprimir" href="{% url 'professor_detail' coorientador.usuario.professor.id %}">
                 {{ coorientador.usuario.get_full_name }}
               </a>
-              <span class="emails"><a href="mailto:{{coorientador.usuario.email}}"> &lt;{{coorientador.usuario.email}}&gt;</a></span>
+              <span class="opt_full emails"><a href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a></span>
+              <span class="opt_short emails"><a href="mailto:{{coorientador.usuario.email}}"><i class="far fa-envelope"></i></a></span>
             {% endfor %}
           {% endif %}
         {% endwith %}
