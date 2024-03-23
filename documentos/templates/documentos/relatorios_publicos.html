@@ -55,7 +55,7 @@
       <tbody>
       {% for relatorio in relatorios %}
 
-        {% if relatorio.link and relatorio.projeto %}
+        {% if relatorio.link or relatorio.documento and relatorio.projeto %}
 
           <tr class="item">
             <td>
