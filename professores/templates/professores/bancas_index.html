@@ -303,6 +303,7 @@
 
               eventClick: function(event, jsEvent, view) {
                 // Para editar uma banca
+                $(".tooltip").remove();
                 if(event.event.id) {
                   var elem = document.createElement( "span" );
                   $( elem ).data( "url", "{% url 'bancas_editar' %}"+event.event.id);
@@ -312,6 +313,7 @@
 
               dateClick: function(info) {
                 // Para criar uma nova banca, reproveitando a data clicada
+                $(".tooltip").remove();
                 var elem = document.createElement( "span" );
                 $( elem ).data( "url", "{% url 'bancas_criar' %}");
                 $( elem ).data( "data", info.dateStr);

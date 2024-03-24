@@ -8,5 +8,5 @@
 
 
 {% comment %} $(document).ready(function(){ {% endcomment %}
-    $("[data-toggle='tooltip']").tooltip("dispose").tooltip({boundary: "window"});
+    $("[data-toggle='tooltip']").tooltip("dispose").tooltip({trigger : "hover", boundary: "window"});
 {% comment %} }); {% endcomment %}
