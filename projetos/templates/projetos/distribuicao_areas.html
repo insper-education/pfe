@@ -1,48 +1,51 @@
 {% extends "base.html" %}
 {% comment %}
-    Desenvolvido para o Projeto Final de Engenharia
-    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 15 de Maio de 2019
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 15 de Maio de 2019
 {% endcomment %}
 
 {% block head %}
-    {% load static %}
-    <link href="{% static 'css/horizBarChart.css' %}" media="all" rel="stylesheet" type="text/css" />
-    {% comment %} <script src="{% static 'js/jquery.min.js' %}"></script> {% endcomment %}
-    <script src="{% static 'js/jquery.horizBarChart.min.js' %}"></script>
+  {% load static %}
+  <link href="{% static 'css/horizBarChart.css' %}" media="all" rel="stylesheet" type="text/css" />
+  {% comment %} <script src="{% static 'js/jquery.min.js' %}"></script> {% endcomment %}
+  <script src="{% static 'js/jquery.horizBarChart.min.js' %}"></script>
 
-    {% comment %} Para gerar as imagens {% endcomment %}
-    <script src="{% static 'js/html2canvas.min.js' %}"></script>
-    <script src="{% static 'js/jspdf.min.js' %}"></script>
+  {% comment %} Para gerar as imagens {% endcomment %}
+  <script src="{% static 'js/html2canvas.min.js' %}"></script>
+  <script src="{% static 'js/jspdf.min.js' %}"></script>
 
-    <script>
-      function bar(){
-        $('.chart').horizBarChart({
-            selector: '.bar',
-            speed: 800
-        });
-      }
-      $(document).ready(bar);
-    </script>
+  <script>
+    function bar(){
+      $(".chart").horizBarChart({
+          selector: ".bar",
+          speed: 800
+      });
+    }
+    $(document).ready(bar);
+  </script>
 
-    {% comment %} Para janela dos Tooltips {% endcomment %}
-    <script src="{% static 'popper-1.16.1/popper.min.js' %}"></script>
-    
-    {% comment %} Para chamar os Tooltips {% endcomment %}
-    <script>{% include "tooltip.js" %}</script>
+  {% comment %} Para janela dos Tooltips {% endcomment %}
+  <script src="{% static 'popper-1.16.1/popper.min.js' %}"></script>
+  
+  {% comment %} Para chamar os Tooltips {% endcomment %}
+  <script>{% include "tooltip.js" %}</script>
 
 {% endblock %}
 
 {% block content %}
 
-    <script>
-        function ajusta() { }
-        function reajusta() { }
-    </script>
+  <script>
+    function ajusta() { }
+    function reajusta() { }
+  </script>
 
-    {% include "save_image.html" with file_name="analise_notas" %}
+  <script>
+    var save_image_file_name = "distribuicao_areas_capstone";
+  </script>
+  {% include "save_image.html" %}
 
-    <div id="tudo">
+  <div id="tudo">
 
         <span class="titulo">Tendência de Áreas de Interesse</span>
 

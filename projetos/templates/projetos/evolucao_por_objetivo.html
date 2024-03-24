@@ -22,16 +22,6 @@
   <script src="{% static 'js/html2canvas.min.js' %}"></script>
   <script src="{% static 'js/jspdf.min.js' %}"></script>
 
-  <style>
-    .cabecalho {
-      float: left;
-      position: relative;
-      margin-top: 0px;
-      outline-width: 0;
-      background-color: none;
-    }
-  </style>
-
 {% endblock %}
 
 {% block content %}
@@ -41,23 +31,23 @@
         function reajusta() { }
     </script>
 
+    {% include "save_image.html" %}
+
     <div id="tudo">
-      
-        <div class="cabecalho">
 
-          <span class="titulo">
-            {% if lingua == 'pt' %}Evolução por Objetivo de Aprendizado{% else %}Evolution by Learning Goal{% endif %}
-          </span>
+      <span class="titulo">
+        {% if lingua == 'pt' %}Evolução por Objetivo de Aprendizado{% else %}Evolution by Learning Goal{% endif %}
+      </span>
 
-          {% comment %} Seletor da edição da pesquisa {% endcomment %}
-          {% include "edicoes.html" with sem_edicao=True com_cursos=True com_objetivos=True ind_grup=True so_finais=True %}
-        </div>
+      {% include "edicoes.html" with sem_edicao=True com_cursos=True com_objetivos=True ind_grup=True so_finais=True %}
 
     <div class="atualizar">
 
       {% if curso and objetivo %}
         {% with file_name="evolucao_por_objetivos_"|addstr:curso|addstr:"_"|addstr:objetivo|addstr:"_"|addstr:objetivo.data_inicial %}
-            {% include "save_image.html" %}
+          <script>
+            var save_image_file_name = "{{file_name}}";
+          </script>  
         {% endwith %}
       {% endif %}
 

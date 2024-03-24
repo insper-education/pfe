@@ -22,7 +22,7 @@
   <script src="{% static 'js/html2canvas.min.js' %}"></script>
   <script src="{% static 'js/jspdf.min.js' %}"></script>
 
-  <style>
+  {% comment %} <style>
     .cabecalho {
       float: left;
       position: relative;
@@ -30,62 +30,61 @@
       outline-width: 0;
       background-color: none;
     }
-  </style>
+  </style> {% endcomment %}
 
 {% endblock %}
 
 {% block content %}
 
-    <script>
-        function ajusta() { }
-        function reajusta() { }
-    </script>
+  <script>
+    function ajusta() { }
+    function reajusta() { }
+  </script>
 
-    <div id="tudo">
+  {% include "save_image.html" %}
 
-        <div class="cabecalho">
+  <div id="tudo">
 
-            <span class="titulo">Correlação entre Médias e CR</span>
+    <span class="titulo">Correlação entre Médias e CR</span>
 
-            {% comment %} Seletor da edição da pesquisa {% endcomment %}
-            {% include "edicoes.html" with com_cursos=True %}
+    {% include "edicoes.html" with com_cursos=True %}
 
-            <div class="input-group input-group-sm mt-1">
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="individual" id="inlineRadio1" value="media" checked>
-                    <label class="form-check-label" for="inlineRadio1">Médias Finais</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="individual" id="inlineRadio2" value="individual">
-                    <label class="form-check-label" for="inlineRadio2">Notas Individuais</label>
-                </div>
-            </div>
-
+    <div class="input-group input-group-sm mt-1">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="individual" id="inlineRadio1" value="media" checked>
+            <label class="form-check-label" for="inlineRadio1">Médias Finais</label>
         </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="individual" id="inlineRadio2" value="individual">
+            <label class="form-check-label" for="inlineRadio2">Notas Individuais</label>
+        </div>
+    </div>
 
     <div class="atualizar">
 
-        {% if periodo and curso %}
-            {% with file_name="correlacao_"|addstr:periodo.0|addstr:"_"|addstr:periodo.1|addstr:"_"|addstr:curso %}
-                {% include "save_image.html" %}
-            {% endwith %}
-        {% endif %}
+      {% if periodo and curso %}
+        {% with file_name="correlacao_"|addstr:periodo.0|addstr:"_"|addstr:periodo.1|addstr:"_"|addstr:curso %}
+          <script>
+            var save_image_file_name = "{{file_name}}";
+          </script>
+        {% endwith %}
+      {% endif %}
 
-        <div><br><br><br></div>{% comment %} Solução pouco elegante, mas funciona. {% endcomment %}
+      <br><br>
 
-        <div class="container">
+      <div class="container">
 
-            <div class="chart-container" style="position: relative; max-width:80vh">
-                <canvas id="correlacao"></canvas>
-            </div>
+        <div class="chart-container" style="position: relative; max-width:80vh">
+          <canvas id="correlacao"></canvas>
+        </div>
             
-            <br>
-            <small>
-                <div id="semestres"></div>
-                {% for curs, estud in estudantes.items %}
-                    <div id="{{curs.sigla}}"></div>
-                {% endfor %}
-            </small>
+        <br>
+        <small>
+          <div id="semestres"></div>
+          {% for curs, estud in estudantes.items %}
+            <div id="{{curs.sigla}}"></div>
+          {% endfor %}
+        </small>
 
             <script>
                 {% if alocacoes %}

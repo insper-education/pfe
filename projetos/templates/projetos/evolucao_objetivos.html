@@ -24,14 +24,6 @@
   <script src="{% static 'js/jspdf.min.js' %}"></script>
 
   <style>
-    .cabecalho {
-      float: left;
-      position: relative;
-      margin-top: 0px;
-      outline-width: 0;
-      background-color: none;
-    }
-    
     .resizable-content {
         min-height: 350px;
         resize: both;
@@ -39,7 +31,6 @@
         position: relative;
         margin: auto;
     }
-
   </style>
 
 {% endblock %}
@@ -50,24 +41,26 @@
       function ajusta() { }
       function reajusta() { }
   </script>
-
+  
+  {% include "save_image.html" %}
+  
   <div id="tudo">
 
-    <div class="cabecalho">
-        <span class="titulo">{% if lingua == "pt" %}Evolução em Objetivos de Aprendizado{% else %}Evolution in Learning Goals{% endif %}</span>
-        {% comment %} Seletor da edição da pesquisa {% endcomment %}
-        {% include "edicoes.html" with sem_edicao=True com_cursos=True ind_grup=True so_finais=True %}
-    </div>
-        
+    <span class="titulo">{% if lingua == "pt" %}Evolução em Objetivos de Aprendizado{% else %}Evolution in Learning Goals{% endif %}</span>
+
+    {% include "edicoes.html" with sem_edicao=True com_cursos=True ind_grup=True so_finais=True %}
+
     {% if curso %}
-        {% with file_name="evolucao_objetivos_"|addstr:curso %}
-            {% include "save_image.html" %}
-        {% endwith %}
+      {% with file_name="evolucao_objetivos_"|addstr:curso %}
+        <script>
+          var save_image_file_name = "{{file_name}}";
+        </script>  
+      {% endwith %}
     {% endif %}
 
     <div class="atualizar">
 
-      <div><br><br><br></div>{% comment %} Solução pouco elegante, mas funciona. {% endcomment %}
+      <br><br>
 
       <div class="container">
 

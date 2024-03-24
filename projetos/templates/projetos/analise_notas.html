@@ -19,47 +19,32 @@
   <script src="{% static 'js/html2canvas.min.js' %}"></script>
   <script src="{% static 'js/jspdf.min.js' %}"></script>
 
-  <style>
-    .cabecalho {
-      float: left;
-      position: relative;
-      margin-top: 0px;
-      outline-width: 0;
-      background-color: none;
-    }
-  </style>
-
 {% endblock %}
 
 {% block content %}
 
-  <script>
-    function ajusta() { }
-    function reajusta() { }
-  </script>
+  {% include "save_image.html" %}
 
-    <div id="tudo">
+  <div id="tudo">
 
-    <div class="cabecalho">
+    <span class="titulo">
+        {% if lingua == "pt" %}Análise de Notas/Conceitos{% else %}Grade Analysis{% endif %}
+    </span>
 
-        <span class="titulo">
-            {% if lingua == "pt" %}Análise de Notas/Conceitos{% else %}Grade Analysis{% endif %}
-        </span>
-
-        {% comment %} Seletor da edição da pesquisa {% endcomment %}
-        {% include "edicoes.html" with com_cursos=True %}
-
-    </div>
+    {% comment %} Seletor da edição da pesquisa {% endcomment %}
+    {% include "edicoes.html" with com_cursos=True %}
 
     <div class="atualizar">
 
         {% if periodo and curso %}
             {% with file_name="analise_notas_"|addstr:periodo.0|addstr:"_"|addstr:periodo.1|addstr:"_"|addstr:curso %}
-                {% include "save_image.html" %}
+                <script>
+                   var save_image_file_name = "{{file_name}}";
+                </script>
             {% endwith %}
         {% endif %}
 
-        <div><br><br><br></div>{% comment %} Solução pouco elegante, mas funciona. {% endcomment %}
+        <br>
 
         <div class="container">
 
@@ -141,7 +126,7 @@
 
 
                 var config_situacao = {
-                    type: 'doughnut',
+                    type: "doughnut",
                     data: {
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
@@ -156,7 +141,7 @@
                         title: {
                             display: true,
                             text: '{% if lingua == "pt" %}Médias Finais [{{medias.total}} estudantes]{% else %}Final Grades [{{medias.total}} students]{% endif %}',
-                            position: 'top'
+                            position: "top"
                         },
                         tooltips: tooltips,
                         legend: legend,
@@ -166,7 +151,7 @@
 
                 {% comment %} Avaliações Antigas {% endcomment %}
                 var config_ppf = {
-                    type: 'doughnut',
+                    type: "doughnut",
                     data: {
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
@@ -181,7 +166,7 @@
                         title: {
                             display: true,
                             text: '{% if lingua == "pt" %}Avaliação Preliminar{% else %}Preliminary Assessment{% endif %}',
-                            position: 'top'
+                            position: "top"
                         },
                         tooltips: tooltips,
                         legend: legend,
@@ -190,7 +175,7 @@
                 }
 
                 var config_api = {
-                    type: 'doughnut',
+                    type: "doughnut",
                     data: {
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
@@ -205,7 +190,7 @@
                         title: {
                             display: true,
                             text: '{% if lingua == "pt" %}Avaliação Preliminar Individual{% else %}Individual Preliminary Assessment{% endif %}',
-                            position: 'top'
+                            position: "top"
                         },
                         tooltips: tooltips,
                         legend: legend,
@@ -214,7 +199,7 @@
                 }
 
                 var config_apg = {
-                    type: 'doughnut',
+                    type: "doughnut",
                     data: {
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
@@ -229,7 +214,7 @@
                         title: {
                             display: true,
                             text: '{% if lingua == "pt" %}Avaliação Preliminar de Grupo{% else %}Group Preliminary Assessment{% endif %}',
-                            position: 'top'
+                            position: "top"
                         },
                         tooltips: tooltips,
                         legend: legend,
@@ -239,7 +224,7 @@
 
 
                 var config_afi = {
-                    type: 'doughnut',
+                    type: "doughnut",
                     data: {
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
@@ -254,7 +239,7 @@
                         title: {
                             display: true,
                             text: '{% if lingua == "pt" %}Avaliação Final Individual{% else %}Individual Final Assessment{% endif %}',
-                            position: 'top'
+                            position: "top"
                         },
                         tooltips: tooltips,
                         legend: legend,
@@ -263,7 +248,7 @@
                 }
 
                 var config_afg = {
-                    type: 'doughnut',
+                    type: "doughnut",
                     data: {
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
@@ -278,7 +263,7 @@
                         title: {
                             display: true,
                             text: '{% if lingua == "pt" %}Avaliação Final de Grupo{% else %}Group Final Assessment{% endif %}',
-                            position: 'top'
+                            position: "top"
                         },
                         tooltips: tooltips,
                         legend: legend,
@@ -287,7 +272,7 @@
                 }
 
                 var config_rpl = {
-                    type: 'doughnut',
+                    type: "doughnut",
                     data: {
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
@@ -302,7 +287,7 @@
                         title: {
                             display: true,
                             text: '{% if lingua == "pt" %}Relatório Preliminar{% else %}Preliminary Report{% endif %}',
-                            position: 'top'
+                            position: "top"
                         },
                         tooltips: tooltips,
                         legend: legend,
@@ -314,7 +299,7 @@
 
 
                 var config_rii = {
-                    type: 'doughnut',
+                    type: "doughnut",
                     data: {
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
@@ -329,7 +314,7 @@
                         title: {
                             display: true,
                             text: '{% if lingua == "pt" %}Relatório Intermediário Individual{% else %}Individual Interim Report{% endif %}',
-                            position: 'top'
+                            position: "top"
                         },
                         tooltips: tooltips,
                         legend: legend,
@@ -338,7 +323,7 @@
                 }
 
                 var config_rig = {
-                    type: 'doughnut',
+                    type: "doughnut",
                     data: {
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
@@ -353,7 +338,7 @@
                         title: {
                             display: true,
                             text: '{% if lingua == "pt" %}Relatório Intermediário de Grupo{% else %}Intermediate Group Report{% endif %}',
-                            position: 'top'
+                            position: "top"
                         },
                         tooltips: tooltips,
                         legend: legend,
@@ -362,7 +347,7 @@
                 }
 
                 var config_bi = {
-                    type: 'doughnut',
+                    type: "doughnut",
                     data: {
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
@@ -377,7 +362,7 @@
                         title: {
                             display: true,
                             text: '{% if lingua == "pt" %}Banca Intermediária{% else %}Interim Evaluation Committee{% endif %}',
-                            position: 'top'
+                            position: "top"
                         },
                         tooltips: tooltips,
                         legend: legend,
@@ -388,12 +373,12 @@
 
 
                 var config_rfi = {
-                    type: 'doughnut',
+                    type: "doughnut",
                     data: {
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
                         {
-                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
+                        label: "{% if lingua == 'pt' %}Estudantes{% else %}Students{% endif %}",
                         backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
                         data: [{{notas.rfi.ideal}},{{notas.rfi.regular}},{{notas.rfi.inferior}}]
                         }
@@ -402,8 +387,8 @@
                     options: {
                         title: {
                             display: true,
-                            text: '{% if lingua == "pt" %}Relatório Final Individual{% else %}Individual Final Report{% endif %}',
-                            position: 'top'
+                            text: "{% if lingua == 'pt' %}Relatório Final Individual{% else %}Individual Final Report{% endif %}",
+                            position: "top"
                         },
                         tooltips: tooltips,
                         legend: legend,
@@ -412,12 +397,12 @@
                 }
 
                 var config_rfg = {
-                    type: 'doughnut',
+                    type: "doughnut",
                     data: {
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
                         {
-                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
+                        label: "{% if lingua == 'pt' %}Estudantes{% else %}Students{% endif %}",
                         backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
                         data: [{{notas.rfg.ideal}},{{notas.rfg.regular}},{{notas.rfg.inferior}}]
                         }
@@ -427,7 +412,7 @@
                         title: {
                             display: true,
                             text: '{% if lingua == "pt" %}Relatório Final Individual{% else %}Final Group Report{% endif %}',
-                            position: 'top'
+                            position: "top"
                         },
                         tooltips: tooltips,
                         legend: legend,
@@ -436,7 +421,7 @@
                 }
 
                 var config_bf = {
-                    type: 'doughnut',
+                    type: "doughnut",
                     data: {
                     labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
                     datasets: [
@@ -451,7 +436,7 @@
                         title: {
                             display: true,
                             text: '{% if lingua == "pt" %}Banca Final{% else %}Final Evaluation Committee{% endif %}',
-                            position: 'top'
+                            position: "top"
                         },
                         tooltips: tooltips,
                         legend: legend,
@@ -553,8 +538,13 @@
 
         </div>
     </div>
-    </div>
+  </div>
 
-    {% include "edicoes_ajax.html" with com_cursos=True %}
+  <script>
+    function ajusta() { }
+    function reajusta() { }
+  </script>
+
+  {% include "edicoes_ajax.html" with com_cursos=True %}
 
 {% endblock %}

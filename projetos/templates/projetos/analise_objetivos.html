@@ -23,7 +23,7 @@
   <script src="{% static 'js/html2canvas.min.js' %}"></script>
   <script src="{% static 'js/jspdf.min.js' %}"></script>
 
-  <style>
+  {% comment %} <style>
     .cabecalho {
       float: left;
       position: relative;
@@ -31,37 +31,36 @@
       outline-width: 0;
       background-color: none;
     }
-  </style>
+  </style> {% endcomment %}
 
 {% endblock %}
 
 {% block content %}
 
-    <script>
-        function ajusta() { }
-        function reajusta() { }
-    </script>
+  <script>
+    function ajusta() { }
+    function reajusta() { }
+  </script>
+
+  {% include "save_image.html" %}
 
     <div id="tudo">
+    
+    <span class="titulo">
+      {% if lingua == "pt" %}Análise por Objetivos de Aprendizado{% else %}Analysis by Learning Goals{% endif %}
+    </span>
 
-        <div class="cabecalho">
-        
-            <span class="titulo">
-                {% if lingua == "pt" %}Análise por Objetivos de Aprendizado{% else %}Analysis by Learning Goals{% endif %}
-            </span>
-
-            {% comment %} Seletor da edição da pesquisa {% endcomment %}
-            {% include "edicoes.html" with com_cursos=True %}
-
-        </div>
-        
+    {% include "edicoes.html" with com_cursos=True %}
+  
     <div class="atualizar">
 
-        {% if periodo and curso %}
-            {% with file_name="analise_objetivos_"|addstr:periodo.0|addstr:"_"|addstr:periodo.1|addstr:"_"|addstr:curso %}
-                {% include "save_image.html" %}
-            {% endwith %}
-        {% endif %}
+      {% if periodo  and curso %}
+        {% with file_name="analise_objetivos_"|addstr:periodo.0|addstr:"_"|addstr:periodo.1|addstr:"_"|addstr:curso %}
+          <script>
+            var save_image_file_name = "{{file_name}}";
+          </script>  
+        {% endwith %}
+      {% endif %}
 
         <div><br><br><br></div>{% comment %} Solução pouco elegante, mas funciona. {% endcomment %}
 

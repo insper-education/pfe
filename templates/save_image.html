@@ -52,28 +52,33 @@
     $(".esconder").hide();
 
     setTimeout(function () {
-      html2canvas(document.querySelector('#tudo'), {
+      html2canvas(document.querySelector("#tudo"), {
         width: 1200,
         windowWidth: 1200,
         scrollX: 0,
         scrollY: -window.scrollY
       }).then(function(canvas) {
+
+        if (typeof save_image_file_name == "undefined") {
+          save_image_file_name = "capstone";
+        }
+        
         if(tipo=="png") {
-          var imgData = canvas.toDataURL('image/png');
-          saveAs(imgData, '{{file_name}}.png'); // GERA PNG 
+          var imgData = canvas.toDataURL("image/png");
+          saveAs(imgData, save_image_file_name+".png"); // GERA PNG 
         } else {
-          var imgData = canvas.toDataURL('image/jpeg');
+          var imgData = canvas.toDataURL("image/jpeg");
           if(tipo=="jpg" || tipo=="jpeg") {
-            saveAs(imgData, '{{file_name}}.jpg'); // GERA PNG 
+            saveAs(imgData, save_image_file_name+".jpg"); // GERA PNG 
           } else
           if(tipo=="pdf") {
             var w = canvas.width
             var h = canvas.height
             var alt = (412 / canvas.width) * canvas.height
             // GERA PDF
-            var doc = new jsPDF('portrait', 'px', 'a4', true, true);
-            doc.addImage(imgData, 'JPG', 16, 16, 412, alt);
-            doc.save('{{file_name}}.pdf');
+            var doc = new jsPDF("portrait", "px", "a4", true, true);
+            doc.addImage(imgData, "JPG", 16, 16, 412, alt);
+            doc.save(save_image_file_name+".pdf");
           }
         }
       });

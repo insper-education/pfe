@@ -22,50 +22,34 @@
   <script src="{% static 'js/html2canvas.min.js' %}"></script>
   <script src="{% static 'js/jspdf.min.js' %}"></script>
 
-  <style>
-    .cabecalho {
-      float: left;
-      position: relative;
-      margin-top: 0px;
-      outline-width: 0;
-      background-color: none;
-    }
-  </style>
-
 {% endblock %}
 
 {% block content %}
 
-    <script>
-        function ajusta() { }
-        function reajusta() { }
-    </script>
+  {% include "save_image.html" %}
 
-    <div id="tudo">
+  <div id="tudo">
 
-        <div class="cabecalho">
-
-            <span class="titulo">Evolução por Notas/Conceitos</span>
-            <small>(esta janela está muito lenta pela grande quantidade de cálculos)</small><br><br>
-            
-            {% comment %} Seletor da edição da pesquisa {% endcomment %}
-            {% include "edicoes.html" with sem_edicao=True com_cursos=True %}
-            
-        </div>
+    <span class="titulo">Evolução por Notas/Conceitos</span>
+    <small>(esta janela está muito lenta pela grande quantidade de cálculos)</small><br><br>
+    
+    {% include "edicoes.html" with sem_edicao=True com_cursos=True %}
     
     <div class="atualizar">
 
         {% if curso %}
-            {% with file_name="evolucao_notas_"|addstr:curso %}
-                {% include "save_image.html" %}
-            {% endwith %}
+          {% with file_name="evolucao_notas_"|addstr:curso %}
+            <script>
+              var save_image_file_name = "{{file_name}}";
+            </script>
+          {% endwith %}
         {% endif %}
 
-        <div><br><br><br></div>{% comment %} Solução pouco elegante, mas funciona. {% endcomment %}
+        <br><br>
 
         <div class="container">
 
-            <div style="width:860px;"> 
+            <div style="width: 860px; max-width: 100%;"> 
                 <canvas id="chart-medias-individuais"></canvas>
                 <br>
                 <canvas id="chart-medias-gerais"></canvas>
@@ -74,68 +58,54 @@
             <script>
         
                 var config_medias_individuais = {
-                    type: 'line',
+                    type: "line",
                     data: {
-                        labels: [
-                            {% for edicao in edicoes %}"{{edicao}}",{% endfor %}
-                        ],
+                        labels: [{% for edicao in edicoes %}"{{edicao}}",{% endfor %}],
                         datasets: [
-                            {% for media in medias_individuais %}
-                                { 
-                                    data: [
-                                        {% for nota in media.media %}
-                                            {{nota|stringformat:".2f"|unlocalize}},
-                                        {% endfor %}
-                                    ],
+                            {% for media in medias_individuais %}{ 
+                                    data: [{% for nota in media.media %}{{nota|stringformat:".2f"|unlocalize}},{% endfor %}],
                                     label: "{{media.curso.sigla}}",
                                     borderColor: "#{{media.curso.cor}}",
                                     fill: false,
-                                    spanGaps: true,
-                                },
-                            {% endfor %}
+                                    spanGaps: true,    
+                            },{% endfor %}
                         ]
                     },
                     options: {
                         title: { display: true,
-                                 text: 'Evolução de notas individuais'}, 
+                                 text: "Evolução de notas individuais"},
                     }
                 }
 
         
                 var config_medias_gerais = {
-                    type: 'line',
+                    type: "line",
                     data: {
                         labels: [{% for edicao in edicoes %}"{{edicao}}",{% endfor %}],
                         datasets: [
-                            {% for media in medias_gerais %}
-                                { 
-                                    data: [
-                                        {% for nota in media.media %}
-                                            {{nota|stringformat:".2f"|unlocalize}},
-                                        {% endfor %}
-                                    ],
+                            {% for media in medias_gerais %}{ 
+                                    data: [{% for nota in media.media %}{{nota|stringformat:".2f"|unlocalize}},{% endfor %}],
                                     label: "{{media.curso.sigla}}",
                                     borderColor: "#{{media.curso.cor}}",
                                     fill: false,
-                                    spanGaps: true,
-                                },
-                            {% endfor %}
+                                    spanGaps: true,    
+                            },{% endfor %}
                         ]
                     },
                     options: {
                         title: { display: true,
-                                 text: 'Evolução médias gerais'}, 
+                                 text: "Evolução médias gerais"},
                     }
                 }
 
                 function carrega_pagina() {  
 
                     // Chart do média individuais
-                    var chart_medias_individuais = document.getElementById('chart-medias-individuais').getContext('2d');
+                    var chart_medias_individuais = document.getElementById("chart-medias-individuais").getContext("2d");
                     window.medias = new Chart(chart_medias_individuais, config_medias_individuais);
 
                     // Chart do média gerais
-                    var chart_medias_gerais = document.getElementById('chart-medias-gerais').getContext('2d');
+                    var chart_medias_gerais = document.getElementById("chart-medias-gerais").getContext("2d");
                     window.medias = new Chart(chart_medias_gerais, config_medias_gerais);
 
                 }
@@ -146,8 +116,13 @@
 
         </div>
     </div>
-    </div>
+  </div>
 
-    {% include "edicoes_ajax.html" with sem_edicao=True com_cursos=True %}
+  <script>
+    function ajusta() { }
+    function reajusta() { }
+  </script>
+
+  {% include "edicoes_ajax.html" with sem_edicao=True com_cursos=True %}
 
 {% endblock %}
