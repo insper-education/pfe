@@ -63,6 +63,8 @@
         {% if projeto.tem_relatos %}
           <div class="div_arredondado">
           
+
+
             <div class="tresp"><strong>Projeto:</strong> <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
             {% include "tipo_projeto.html" with com_tipo=False %}</div>
             <strong>Organização:</strong>
@@ -84,6 +86,8 @@
             {% endif %}
             <br>
 
+
+            
             <strong>Grupo:</strong>
             {% with alocacoes=projeto.alocacao_set.all %}
               <a href="mailto:{% for alocacao in alocacoes %}{{alocacao.aluno.user.email}}{% if not forloop.last %},{% endif %}{% endfor %}?subject=PFE%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if alocacoes|length > 1 %}s{% endif %}%20{% for alocacao in alocacoes %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{alocacao.aluno.user.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20PFE)" target="_blank">

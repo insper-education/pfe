@@ -15,24 +15,28 @@
   
   <b lang="pt">Projeto:</b><b lang="en">Project:</b>
     <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}{% include "tipo_projeto.html" %}</a><br>
+
+  {% comment %} Mostrar só se todas edições {% if edicao == "todas" %} {% endcomment %}
   <b lang="pt">Semestre:</b><b lang="en">Semester:</b>
     {{projeto.ano}}.{{projeto.semestre}}<br>
   
-  {% if projeto.orientador %}
-    {% if banca.projeto.proposta.intercambio %}
-      <b lang="pt">Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
-      <b lang="en">Professor in charge:</b>
+  {% if request.user != projeto.orientador.user or administracao %}
+    {% if projeto.orientador %}
+      {% if banca.projeto.proposta.intercambio %}
+        <b lang="pt">Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
+        <b lang="en">Professor in charge:</b>
+      {% else %}
+        <b lang="pt">Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
+        <b lang="en">Advisor:</b>
+      {% endif %}
+        <a href="{% url 'professor_detail' projeto.orientador.id %}">{{ projeto.orientador.user.get_full_name }}</a>
+        <span class="opt_full"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
+        <span class="opt_short"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
+        <br>
     {% else %}
-      <b lang="pt">Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
-      <b lang="en">Advisor:</b>
+      <span lang="pt">Orientador: Não definido</span>
+      <span lang="en">Advisor: Not defined</span>
     {% endif %}
-      <a href="{% url 'professor_detail' projeto.orientador.id %}">{{ projeto.orientador.user.get_full_name }}</a>
-      <span class="opt_full"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
-      <span class="opt_short"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
-      <br>
-  {% else %}
-    <span lang="pt">Orientador: Não definido</span>
-    <span lang="en">Advisor: Not defined</span>
   {% endif %}
 
 {% else %}

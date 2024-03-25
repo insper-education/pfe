@@ -33,25 +33,7 @@
         {% if projeto.tem_relatos %}
           <div class="div_arredondado">
           
-            <div class="tresp"><strong>Projeto:</strong> <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
-            {% include "tipo_projeto.html" with com_tipo=False %}</div>
-            <strong>Organização:</strong>
-            {% if projeto.organizacao %}
-              <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>
-            {% else %}
-              ORGANIZAÇAO NÃO DEFINIDA
-            {% endif %}
-            <br>
-            {% if edicao == "todas" %}
-              <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
-            {% endif %}
-            {% if administracao %}<strong>Orientador:</strong>
-              {% if projeto.orientador %}
-                <a href="{% url 'professor_detail' projeto.orientador.id %}">{{projeto.orientador}}</a>
-              {% else %}
-                ORIENTADOR NÃO DEFINIDO
-              {% endif %}
-            {% endif %}
+            {% include "cabecalho_projeto.html" %}
 
             <div style="margin-top:8px;"><strong>Relatos:</strong></div>
 
@@ -66,6 +48,9 @@
       {% empty %}
        Sem alocações de projetos esse semestre.
       {% endfor %}
+
+    {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+    {% include "linguas.html" %}
 
   </div> 
 

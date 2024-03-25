@@ -11,6 +11,8 @@
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
   
+  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
+
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
 
@@ -33,25 +35,8 @@
     {% for projeto in projetos %}
 
     <div class="div_arredondado">
-      <strong>Projeto:</strong> <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a><br>
-      <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
-      {% if administracao %}<strong>Orientador:</strong>
-        {% if projeto.orientador %}
-          <a href="{% url 'professor_detail' projeto.orientador.id %}">{{projeto.orientador}}</a>
-        {% else %}
-          ORIENTADOR NÃO DEFINIDO
-        {% endif %}
-      <br>
-      {% endif %}
-      
-      {% include "tipo_projeto.html" with com_tipo=True %}
-      
-      <strong>Organização:</strong>
-      {% if projeto.organizacao %}
-        <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>
-      {% else %}
-        ORGANIZAÇAO NÃO DEFINIDA
-      {% endif %}
+
+      {% include "cabecalho_projeto.html" %}
 
       <div style="margin-top: 18px;">
         <strong>Avaliações Intermediárias:</strong><br>
@@ -74,12 +59,14 @@
       window.onload = carrega_pagina
     </script>
 
+    {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+    {% include "linguas.html" %}
+
   </div> 
 
   <script>
 
-    function carrega_pagina() {
-    };
+    function carrega_pagina() {};
 
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
@@ -90,5 +77,5 @@
   </script>
 
   {% include "edicoes_ajax.html" %}
-
+  
 {% endblock %}
