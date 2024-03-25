@@ -45,7 +45,7 @@
         </tr>
       </thead>
       <tbody>
-        {% regroup atas by data as grouped %}
+        {% regroup atas by data|date:"DATE_FORMAT" as grouped %}
         {% for group in grouped %}
           {% for obj in group.list %}
             <tr class="item">
