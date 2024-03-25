@@ -62,8 +62,6 @@
       {% for projeto, entregas in avaliacoes %}
         {% if projeto.tem_relatos %}
           <div class="div_arredondado">
-          
-
 
             <div class="tresp"><strong>Projeto:</strong> <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
             {% include "tipo_projeto.html" with com_tipo=False %}</div>

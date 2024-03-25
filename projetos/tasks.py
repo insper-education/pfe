@@ -90,7 +90,9 @@ def avisos_do_dia():
 
         mensagem_como_template = Template(message)
 
-        recipient_list = ["pfeinsper@gmail.com", ]
+        # Estou achando desnecessário continuar enviando para o próprio servidor
+        #recipient_list = ["pfeinsper@gmail.com", ]
+        recipient_list = []
 
         if aviso.coordenacao:
             #coordenacoes = PFEUser.objects.filter(tipo_de_usuario=4)

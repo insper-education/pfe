@@ -1,35 +1,21 @@
 {% comment %}
-    Desenvolvido para o Projeto Final de Engenharia
-    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 15 de Julho de 2023
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 15 de Julho de 2023
 {% endcomment %}
 
 {% if projeto.avancado or projeto.proposta.internacional or projeto.proposta.intercambio or projeto.time_misto or projeto.proposta.colaboracao %}
 
-  {% if com_tipo %}
-    <strong>Tipo</strong>: 
-  {% endif %}
+  {% if com_tipo %}<strong>Tipo</strong>: {% endif %}
 
   <strong style="color:red">
-  {% if projeto.avancado %}
-    [Avançado]
-  {% endif %}
-  {% if projeto.proposta.internacional %}
-    [Internacional]
-  {% endif %}
-  {% if projeto.proposta.intercambio %}
-    [Intercâmbio]
-  {% endif %}
-  {% if projeto.time_misto %}
-    [Time Misto]
-  {% endif %}
-  {% if projeto.proposta.colaboracao %}
-    [Em colaboração com: {{ projeto.proposta.colaboracao }}]
-  {% endif %}
+    {% if projeto.avancado %}(Avançado){% endif %}
+    {% if projeto.proposta.internacional %}(Internacional){% endif %}
+    {% if projeto.proposta.intercambio %}(Intercâmbio){% endif %}
+    {% if projeto.time_misto %}(Time Misto){% endif %}
+    {% if projeto.proposta.colaboracao %}(Em colaboração com: {{ projeto.proposta.colaboracao }}){% endif %}
   </strong>
 
-  {% if com_tipo %}
-    <br>
-  {% endif %}
+  {% if com_tipo %}<br>{% endif %}
 
 {% endif %}

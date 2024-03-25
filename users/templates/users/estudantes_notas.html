@@ -80,27 +80,12 @@
                 {% for alocacao in aluno.alocacao_set.all %}
                   {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
                     {% if alocacao.projeto and alocacao.projeto.organizacao %}
-                      <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
-                        ({{alocacao.projeto.organizacao}})
-                      </a>
+                      [<a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">{{alocacao.projeto.organizacao}}</a>]
                     {% else %}
-                      SEM ORGANIZAÇÃO
+                      [SEM ORGANIZAÇÃO]
                     {% endif %}
-                    <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
-                      {{alocacao.projeto.get_titulo}}
-                    </a>
-                    {% if alocacao.projeto.avancado %}
-                      <span style="color:red">(Capstone Avançado)</span>
-                    {% endif %}
-                    {% if alocacao.projeto.proposta.internacional %}
-                      <span style="color:red">(Internacional)</span>
-                    {% endif %}
-                    {% if alocacao.projeto.proposta.intercambio %}
-                      <span style="color:red">(Intercâmbio)</span>
-                    {% endif %}
-                    {% if alocacao.projeto.time_misto %}
-                      <span style="color:red">(Time Misto)</span>
-                    {% endif %}
+                    <a href="{% url 'projeto_completo' alocacao.projeto.id %}">{{alocacao.projeto.get_titulo}}</a>
+                    {% include "tipo_projeto.html" with projeto=alocacao.projeto %}
                   {% endif %}
                 {% endfor %}
               {% endif %}

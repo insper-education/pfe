@@ -382,7 +382,7 @@ def projetos_fechados(request):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def projetos_lista(request):
     """Lista todos os projetos."""
     edicoes = []
@@ -514,7 +514,7 @@ def projeto_avancado(request, primarykey):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def carrega_bancos(request):
     """Rotina que carrega arquivo CSV de bancos para base de dados do servidor."""
     with open('projetos/bancos.csv') as csv_file:
@@ -533,7 +533,7 @@ def carrega_bancos(request):
         "area_principal": True,
         "mensagem": mensagem,
     }
-    return render(request, 'generic.html', context=context)
+    return render(request, "generic.html", context=context)
 
 
 @login_required
@@ -553,36 +553,37 @@ def reembolso_pedir(request):
                 "area_principal": True,
                 "mensagem": mensagem,
             }
-            return render(request, 'generic.html', context=context)
+            return render(request, "generic.html", context=context)
 
         projeto = Projeto.objects.filter(alocacao__aluno=aluno).last()
     else:
         projeto = None
 
-    if request.method == 'POST':
+    if request.method == "POST":
         reembolso = Reembolso.create(usuario)
-        reembolso.descricao = request.POST['descricao']
+        reembolso.descricao = request.POST["descricao"]
 
-        cpf = int(''.join(i for i in request.POST['cpf'] if i.isdigit()))
+        cpf = int(''.join(i for i in request.POST["cpf"] if i.isdigit()))
 
-        reembolso.conta = request.POST['conta']
-        reembolso.agencia = request.POST['agencia']
+        reembolso.conta = request.POST["conta"]
+        reembolso.agencia = request.POST["agencia"]
 
-        reembolso.banco = get_object_or_404(Banco, codigo=request.POST['banco'])
+        reembolso.banco = get_object_or_404(Banco, codigo=request.POST["banco"])
 
-        reembolso.valor = request.POST['valor']
+        reembolso.valor = request.POST["valor"]
 
         reembolso.save()  # Preciso salvar para pegar o PK
-        nota_fiscal = simple_upload(request.FILES['arquivo'],
+        nota_fiscal = simple_upload(request.FILES["arquivo"],
                                     path="reembolsos/",
                                     prefix=str(reembolso.pk)+"_")
         reembolso.nota = nota_fiscal[len(settings.MEDIA_URL):]
 
         reembolso.save()
 
-        subject = 'Reembolso PFE : '+usuario.username
+        subject = "Reembolso PFE : " + usuario.username
         recipient_list = configuracao.recipient_reembolso.split(";")
-        recipient_list.append('pfeinsper@gmail.com')  # sempre mandar para a conta do gmail
+        # Não estou usando mais, de qualquer forma, acho que não precisa enviar para servidor
+        #recipient_list.append("pfeinsper@gmail.com")  # sempre mandar para a conta do gmail
         recipient_list.append(usuario.email)  # mandar para o usuário que pediu o reembolso
         if projeto:
             if projeto.orientador:
@@ -596,12 +597,12 @@ def reembolso_pedir(request):
 
     bancos = Banco.objects.all().order_by(Lower("nome"), "codigo")
     context = {
-        'usuario': usuario,
-        'projeto': projeto,
-        'bancos': bancos,
-        'configuracao': configuracao,
+        "usuario": usuario,
+        "projeto": projeto,
+        "bancos": bancos,
+        "configuracao": configuracao,
     }
-    return render(request, 'projetos/reembolso_pedir.html', context)
+    return render(request, "projetos/reembolso_pedir.html", context)
 
 
 @login_required
@@ -786,7 +787,7 @@ def mostra_feedback_estudante(request, feedback_id):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def validate_aviso(request):
     """Ajax para validar avisos."""
     aviso_id = int(request.GET.get("aviso", None)[len("aviso"):])
@@ -1851,7 +1852,7 @@ def editar_projeto(request, primarykey):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def nomes(request):
     """Acerta maiúsculas de nomes."""
 
