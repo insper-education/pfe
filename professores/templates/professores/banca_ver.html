@@ -6,6 +6,8 @@
 {% endcomment %}
 
 {% block head %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -59,7 +61,8 @@
     <br><b>Link formulário de avaliação</b>: <div style="overflow: auto;"><a href="{% url 'banca_avaliar' banca.slug %}">https://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}</a></div><br>
   {% endif %}
 
-  <br>
+  {% include "ver_documentos.html" %}
+
   {% if banca.projeto.orientador %}
       {% if banca.projeto.proposta.intercambio %}
         <b>Professor{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
@@ -112,9 +115,12 @@
   {% include "janelas-modal.html" %}
 
   <script>
-    $('#popup').on('hidden.bs.modal', function (e) {
+    $("#popup").on("hidden.bs.modal", function (e) {
       location.reload();
     })
   </script>
+
+  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+  {% include "linguas.html" %}
   
 {% endblock %}

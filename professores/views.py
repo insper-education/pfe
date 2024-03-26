@@ -660,9 +660,17 @@ def bancas_tabela_completa(request):
 def banca_ver(request, primarykey):
     """Retorna banca pedida."""
     banca = get_object_or_404(Banca, id=primarykey)
+    if banca.tipo_de_banca == 1:  # (1, 'intermediaria'),
+        tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Intermediária") | TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
+    elif banca.tipo_de_banca == 0:  # (0, 'final'),
+        tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
+    #elif banca.tipo_de_banca == 2:  # (2, 'falconi'),
+    
+    documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto).order_by("-data")
 
     context = {
         "banca": banca,
+        "documentos": documentos,
     }
 
     return render(request, 'professores/banca_ver.html', context)
