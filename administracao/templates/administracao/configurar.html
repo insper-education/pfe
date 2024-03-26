@@ -44,8 +44,8 @@
     
     <br><hr><br>
 
-    <label for="coordenacao"><span lang="pt">Coordenador PFE</span>: </label>
-    <select name="coordenacao" id="coordenacao" title="Selecione o coordenador do PFE" required>
+    <label for="coordenacao"><span lang="pt">Coordenador Capstone</span>: </label>
+    <select name="coordenacao" id="coordenacao" title="Selecione o coordenador do Capstone" required>
       {% for administrador in administradores %}
         <option value="{{administrador.id}}" 
           data-nome_para_certificados="{% if administrador.nome_para_certificados %}{{administrador.nome_para_certificados}}{% endif %}"

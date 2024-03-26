@@ -8,8 +8,10 @@
 {% block head %}
   {% load static %}
   {% load get_field %}
-  <style>
+  <style>  
+    thead {background-color: #BEE5EB;}
     textarea {max-width:100%;}
+    table {margin-top: 10px;}
     th, td {padding: 1px 5px 1px 5px;}
   </style>
 {% endblock %}
@@ -23,17 +25,22 @@
     
     <label for="nome">Nome da Disciplina:</label> <input type="text" size="48" style="max-width:100%;display:block"
            maxlength="{% max_length Disciplina 'nome' %}" id="nome" name="nome" required>
-    <br>
-    <input class="btn btn-primary mb-1" type="submit" value="Cadastrar Disciplina">
+    <input class="btn btn-primary mb-1 mt-2" type="submit" value="Cadastrar Disciplina">
     
     <br>
     {% if mensagem %}
-      <span class="red-bold">{{mensagem|linebreaks}}</span>
+      <span id="message" class="red-bold">{{mensagem|linebreaks}}</span>
+      <script>
+        setTimeout(function() {
+          $("#message").fadeOut("fast");
+        }, 5000);
+      </script>
     {% endif %}
-    <br><br>
+    <br>
 
-    <table id="disciplinas" style="margin-top: 10px;">
-      <tr><th>Disciplinas Cadastradas</th></tr>
+    <table id="disciplinas">
+      <thead><tr><th>Disciplinas Cadastradas</th></tr></thead>
+      <tbody>
       {% for disciplina in disciplinas %}
         <tr id="disciplina{{disciplina.id}}"><td>
             {{disciplina.nome}}
@@ -46,15 +53,14 @@
               </div>
         </td></tr>
       {% endfor %}
+      </tbody>
     </table>
 
   </form>
 
   <script>
-
     function exclui_disciplina(aqui) {
       disciplina = aqui.data("disciplina");
-
       if (window.confirm("Deseja realmente remover a disciplina?")) {
         $.ajax({
             type: "POST",
@@ -66,18 +72,9 @@
             success: function(response){
               $("#disciplina"+disciplina).remove();
             },
-            error: function (request, status, error) {
-              {% if user.tipo_de_usuario == 4 %}
-                alert(request.responseText);
-                jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-                console.log("error"+request.responseText);
-              {% else %}
-                jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
-              {% endif %}
-            }
+            {% include "ajax_error_function.js" %}
         });
       }
-
     }
   </script>
 

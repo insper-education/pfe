@@ -205,22 +205,14 @@
 
       $.ajax({
           type: "POST",
-          url: '{% url "opcao_temporaria" %}',
+          url: "{% url 'opcao_temporaria' %}",
           data: {    
               proposta_id: proposta_id,
               prioridade: prioridade,
-              'csrfmiddlewaretoken': '{{ csrf_token }}',
+              "csrfmiddlewaretoken": "{{ csrf_token }}",
           },
           success: function(response){},
-          error: function (request, status, error) {
-            {% if user.tipo_de_usuario == 4 %} 
-              alert(request.responseText);
-              jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-              console.log('error'+request.responseText);
-            {% else %}
-              jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
-            {% endif %}
-          }
+          {% include "ajax_error_function.js" %}
       });
 
     }

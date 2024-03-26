@@ -66,34 +66,22 @@
   <br>
 
   <script>
-
     function remove_disciplina(aqui) {
-      disciplina = aqui.data('disciplina');
-      proposta = aqui.data('proposta');
-
+      disciplina = aqui.data("disciplina");
+      proposta = aqui.data("proposta");
       $.ajax({
           type: "POST",
-          url: '{% url "remover_disciplina" %}',
+          url: "{% url 'remover_disciplina' %}",
           data: {
-              'disciplina_id': disciplina,
-              'proposta_id': proposta,
-              'csrfmiddlewaretoken': '{{ csrf_token }}',
+              "disciplina_id": disciplina,
+              "proposta_id": proposta,
+              "csrfmiddlewaretoken": "{{ csrf_token }}",
           },
           success: function(response){
-            $('#disciplina'+disciplina).remove();
+            $("#disciplina"+disciplina).remove();
           },
-          error: function (request, status, error) {
-            {% if user.tipo_de_usuario == 4 %} 
-              alert(request.responseText);
-              jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-              console.log('error'+request.responseText);
-            {% else %}
-              jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
-            {% endif %}
-          }
+          {% include "ajax_error_function.js" %}
       });
-
-
     }
   </script>
 

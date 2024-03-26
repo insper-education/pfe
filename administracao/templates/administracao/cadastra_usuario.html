@@ -105,9 +105,9 @@
       </select>
 
       <br>
-      <label for="ano">Ano PFE: 
+      <label for="ano">Ano Capstone: 
       <input type="number" id="ano" name="ano" min="2018" max="3018" {% if usuario.aluno.anoPFE %}value="{{usuario.aluno.anoPFE}}"{% endif %}></label> &nbsp;&nbsp;&nbsp;
-      <label for="semestre">Semestre PFE:  
+      <label for="semestre">Semestre Capstone:  
       <input type="number" id="semestre" name="semestre" min="1" max="2" {% if usuario.aluno.semestrePFE %}value="{{usuario.aluno.semestrePFE}}"{% endif %}></label>
       
       <br>
@@ -186,7 +186,7 @@
     {% if usuario %}
       <input type="hidden" value='0' name="comite">
       <label for="comite"><input type="checkbox" id="comite" value='1' name="comite" {% if usuario.membro_comite %}checked="checked"{% endif %}>
-      Membro Comitê PFE</label>
+      Membro Comitê</label>
       <br>
     {% endif %}
 

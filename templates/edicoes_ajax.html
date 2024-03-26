@@ -93,21 +93,12 @@
                 carrega_graficos();
               {% endif %}
               carrega_pagina();
-              //$("#spinner").css("visibility", "hidden");
               $(".to_label").removeClass("label_animado");
               $(".filter").attr('disabled',false);
             } // else {% comment %} Ignorando resposta {% endcomment %}
  
           },
-          error: function (request, status, error) {
-            {% if user.tipo_de_usuario == 4 and debug %} 
-              alert(request.responseText);
-              jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-              console.log('error in ajax: '+request.responseText);
-            {% else %}
-              jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
-            {% endif %}
-          }
+          {% include "ajax_error_function.js" %}
       });
     }
 

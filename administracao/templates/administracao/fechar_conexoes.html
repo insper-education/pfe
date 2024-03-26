@@ -220,28 +220,19 @@
         if (data.atualizado) {
           //console.log("Valor atualizado.");
         } else {
-            console.log("Valor não atualizado.");
+          console.log("Valor não atualizado.");
         }
       },
-      error: function (request, status, error) {
-        {% if user.tipo_de_usuario == 4 %} 
-          alert(request.responseText);
-          jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-          console.log("error"+request.responseText);
-        {% else %}
-          jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
-        {% endif %}
-      }
+      {% include "ajax_error_function.js" %}
     });
   
   });
 
-
-  widths = $(".nomes_conec").map(function(){
-            return $(this).width();
-           }).get();
+  //widths = $(".nomes_conec").map(function(){
+  //          return $(this).width();
+  //         }).get();
     
-  console.log(widths);
+  //console.log(widths);
   </script>
 
 {% endblock %}

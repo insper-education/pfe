@@ -627,23 +627,9 @@
           id : event.id,
           "csrfmiddlewaretoken": "{{ csrf_token }}"
         },
-        dataType: "json",
-        success: function (data) {
-          if (data.atualizado) {
-            //console.log("Evento removido.");
-          } else {
-            console.log("Erro: Evento não removido.");
-          }
-        },
-        error: function (request, status, error) {
-          {% if user.tipo_de_usuario == 4 %} 
-            alert(request.responseText);
-            jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-            console.log("error"+request.responseText);
-          {% else %}
-            jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
-          {% endif %}
-        }
+        dataType: "JSON",
+        success: function (data) {},
+        {% include "ajax_error_function.js" %}
       });
 
       var dataSource = calendar.getDataSource();

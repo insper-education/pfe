@@ -385,17 +385,8 @@
             console.log("Erro: Valor não atualizado.");
           }
         },
-        error: function (request, status, error) {
-          {% if user.tipo_de_usuario == 4 %} 
-            alert(request.responseText);
-            jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-            console.log('error'+request.responseText);
-          {% else %}
-            jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
-          {% endif %}
-        }
+        {% include "ajax_error_function.js" %}
       });
-
     }
 
 
@@ -403,7 +394,7 @@
 
       var situacao = false;
 
-      if($('#'+id+curso).css("color") == 'rgb(211, 211, 211)') {
+      if($('#'+id+curso).css("color") == "rgb(211, 211, 211)") {
         $('#'+id+curso).css("color", "black");
         situacao = true;
       } else {
@@ -411,29 +402,15 @@
       }
 
       $.ajax({
-        url: '{% url "areas" %}',
+        url: "{% url 'areas' %}",
         data: {
-          'organizacao': id,
-          'curso': curso,
-          'situacao': situacao,
+          "organizacao": id,
+          "curso": curso,
+          "situacao": situacao,
         },
-        dataType: 'json',
-        success: function (data) {
-          if (data.atualizado) {
-            //console.log("Valor atualizado.");
-          } else {
-            console.log("Erro: Valor não atualizado.");
-          }
-        },
-        error: function (request, status, error) {
-          {% if user.tipo_de_usuario == 4 %} 
-            alert(request.responseText);
-            jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-            console.log('error'+request.responseText);
-          {% else %}
-            jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
-          {% endif %}
-        }
+        dataType: "JSON",
+        success: function (data) {},
+        {% include "ajax_error_function.js" %}
       });
 
     }
@@ -482,15 +459,7 @@
                   filtra_data();
                   $("#spinner").css("visibility", "hidden");
               },
-              error: function (request, status, error) {
-                {% if user.tipo_de_usuario == 4 %} 
-                  alert(request.responseText);
-                  jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-                  console.log('error'+request.responseText);
-                {% else %}
-                  jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
-                {% endif %}
-              }
+              {% include "ajax_error_function.js" %}
           });
       });
   </script>

@@ -47,11 +47,11 @@ def get_calendario_context(user=None):
     context = {
         "configuracao": configuracao,
         "eventos": eventos.exclude(tipo_de_evento__in=[12, 40, 41, 20, 30]).exclude(tipo_de_evento__gte=100),
-        "aulas": eventos.filter(tipo_de_evento=12),  # 12, 'Aula PFE'
+        "aulas": eventos.filter(tipo_de_evento=12),  # 12, 'Aula'
         "laboratorios": eventos.filter(tipo_de_evento=40),  # 40, 'Laboratório'
         "provas": eventos.filter(tipo_de_evento=41),  # 41, 'Semana de Provas'
         "quinzenais": eventos.filter(tipo_de_evento=20),  # 20, 'Relato Quinzenal'
-        "feedbacks": eventos.filter(tipo_de_evento=30),  # 30, 'Feedback dos Estudantes sobre PFE'
+        "feedbacks": eventos.filter(tipo_de_evento=30),  # 30, 'Feedback dos Estudantes sobre Capstone'
         "coordenacao": Evento.objects.filter(tipo_de_evento__gte=100),  # Eventos da coordenação
         "tipos_eventos": TIPO_EVENTO,
         "Evento": Evento,

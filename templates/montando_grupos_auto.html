@@ -38,9 +38,7 @@
   }
   
   @keyframes blinker {
-    50% {
-      opacity: 0;
-    }
+    50% {opacity: 0;}
   }
 </style>
   
@@ -48,7 +46,7 @@
   
 <script>
   $(document).ready(function(){
-    $('#propor').click(function() {
+    $("#propor").click(function() {
 
       certeza = confirm("Tem certeza que montar os grupos automaticamente, isso pode demorar bastante?");
       
@@ -56,24 +54,16 @@
         $("body").addClass("disabled");
         $(".popup").css("visibility", "visible");
         $.ajax({
-          url: '{% url "propor" %}',
-          dataType: 'json',
+          url: "{% url 'propor' %}",
+          dataType: "JSON",
           success: function (data) {
-              if (data.atualizado) {
-                location.reload();
-              } else {
-                console.log("Erro: Valor não atualizado.");
-              }
+            if (data.atualizado) {
+              location.reload();
+            } else {
+              console.log("Erro: Valor não atualizado.");
+            }
           },
-          error: function (request, status, error) {
-            {% if user.tipo_de_usuario == 4 %} 
-              alert(request.responseText);
-              jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-              console.log("error"+request.responseText);
-            {% else %}
-              jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
-            {% endif %}
-          }
+          {% include "ajax_error_function.js" %}
         });
       }
     });

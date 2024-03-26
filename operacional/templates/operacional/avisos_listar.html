@@ -216,29 +216,15 @@
       var value = $(this).val();
 
       $.ajax({
-        url: '{% url "validate_aviso" %}',
+        url: "{% url 'validate_aviso' %}",
         data: {
           "aviso": aviso,
           "checked": checked,
           "value": value,
         },
-        dataType: "json",
-        success: function (data) {
-          if (data.atualizado) {
-            //console.log("Valor atualizado.");
-          } else {
-            console.log("Erro: Valor não atualizado.");
-          }
-        },
-        error: function (request, status, error) {
-          {% if user.tipo_de_usuario == 4 %} 
-            alert(request.responseText);
-            jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-            console.log('error'+request.responseText);
-          {% else %}
-            jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
-          {% endif %}
-        }
+        dataType: "JSON",
+        success: function (data) {},
+        {% include "ajax_error_function.js" %}
       });
     });
 

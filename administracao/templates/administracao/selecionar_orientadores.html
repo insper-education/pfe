@@ -113,7 +113,7 @@
       <label for="projeto{{projeto.id}}">Orientador(a)</label></b>:
       <select class="orientador" name="projeto{{projeto.id}}" id="projeto{{projeto.id}}" title="Selecione orientador do projeto">
           <option selected value> -- selecione um orientador(a) -- </option>
-          <optgroup label="Comitê PFE">
+          <optgroup label="Comitê Capstone">
           {% for orientador in orientadores %}
             {% if orientador.membro_comite %}
               <option value="orientador{{orientador.id}}" {% if orientador.id == projeto.orientador.user.id %}selected{% endif %}>
@@ -174,89 +174,71 @@
 
   <script>
 
-  function atualizar_count_orientadores() {
+    function atualizar_count_orientadores() {
 
-    var balanceadas = 0;
-    var desbalanceadas = 0;
-    var vazias = 0;
+      var balanceadas = 0;
+      var desbalanceadas = 0;
+      var vazias = 0;
 
-    var lista_orientadores = {};
+      var lista_orientadores = {};
 
-    var orientadores = $(".orientador");
-    for (var i = 0; i < orientadores.length; i++) {
-      if($(orientadores[i]).val()) {
-        var orientador = $(orientadores[i]).find('option:selected').text();
-        if(orientador in lista_orientadores) {
-          lista_orientadores[orientador] += 1;
-        } else {
-          lista_orientadores[orientador] = 1;
+      var orientadores = $(".orientador");
+      for (var i = 0; i < orientadores.length; i++) {
+        if($(orientadores[i]).val()) {
+          var orientador = $(orientadores[i]).find('option:selected').text();
+          if(orientador in lista_orientadores) {
+            lista_orientadores[orientador] += 1;
+          } else {
+            lista_orientadores[orientador] = 1;
+          }
         }
       }
-    }
 
-    // Check se há alocações realizadas
-    if(Object.keys(lista_orientadores).length !== 0) {
-      var tabela = "<h4>Alocações de Orientadores</h4>"
+      // Check se há alocações realizadas
+      if(Object.keys(lista_orientadores).length !== 0) {
+        var tabela = "<h4>Alocações de Orientadores</h4>"
 
-      // Cria uma tabela
-      tabela += "<table id='tab_aloc'><thead><tr><th>Orientador</th><th>Qtd. de projetos</th></tr></thead><tbody>"
-      
-      // Ordena a lista de orientadores
-      var keys = Object.keys(lista_orientadores);
-      keys.sort();
-      for (var i=0; i<keys.length; i++) {
-        tabela += "<tr class='item'><td>" + keys[i] + "</td><td>" + lista_orientadores[keys[i]] + "</td></tr>";
+        // Cria uma tabela
+        tabela += "<table id='tab_aloc'><thead><tr><th>Orientador</th><th>Qtd. de projetos</th></tr></thead><tbody>"
+        
+        // Ordena a lista de orientadores
+        var keys = Object.keys(lista_orientadores);
+        keys.sort();
+        for (var i=0; i<keys.length; i++) {
+          tabela += "<tr class='item'><td>" + keys[i] + "</td><td>" + lista_orientadores[keys[i]] + "</td></tr>";
+        }
+        tabela += "</tbody></table>"
+
+        // Define valor da tabela
+        $("#lista_orientadores").html(tabela);
+
+        // Ordena a tabela clicando no cabeçalho
+        $("#tab_aloc th:nth-child(1)").click(function() {
+          w3.sortHTML("#tab_aloc", ".item", "td:nth-child(1)");
+        });
+        $("#tab_aloc th:nth-child(2)").click(function() {
+          w3.sortHTML("#tab_aloc", ".item", "td:nth-child(2)");
+        });
+
       }
-      tabela += "</tbody></table>"
-
-      // Define valor da tabela
-      $("#lista_orientadores").html(tabela);
-
-      // Ordena a tabela clicando no cabeçalho
-      $("#tab_aloc th:nth-child(1)").click(function() {
-        w3.sortHTML('#tab_aloc', '.item', 'td:nth-child(1)');
-      });
-      $("#tab_aloc th:nth-child(2)").click(function() {
-        w3.sortHTML('#tab_aloc', '.item', 'td:nth-child(2)');
-      });
-
+      
     }
-    
-  }
-
-  atualizar_count_orientadores();
-
-  $('.orientador').change(function(evt){
 
     atualizar_count_orientadores();
 
-    $.ajax({
-      url: '{% url "definir_orientador" %}',
-      data: {
-        "projeto": evt.target.id,
-        "orientador": evt.target.value,
-      },
-      dataType: 'json',
-      success: function (data) {
-        if (data.atualizado) {
-          //console.log("Valor atualizado.");
-        } else {
-            console.log("Valor não atualizado.");
-        }
-      },
-      error: function (request, status, error) {
-        {% if user.tipo_de_usuario == 4 %} 
-          alert(request.responseText);
-          jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-          console.log("error"+request.responseText);
-        {% else %}
-          jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
-        {% endif %}
-      }
+    $(".orientador").change(function(evt){
+      atualizar_count_orientadores();
+      $.ajax({
+        url: "{% url 'definir_orientador' %}",
+        data: {
+          "projeto": evt.target.id,
+          "orientador": evt.target.value,
+        },
+        dataType: "JSON",
+        success: function(data) {},
+        {% include "ajax_error_function.js" %}
+      });
     });
-  
-  });
-
   </script>
 
 {% endblock %}

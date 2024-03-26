@@ -371,21 +371,10 @@
               $("#Bancas").attr("href",str);
               $("#Bancas").show();
             }
-
             {% include "tooltip.js" %}
-
             $("#spinnerSemestre").hide();
-
         },
-        error: function (request, status, error) {
-          {% if user.tipo_de_usuario == 4 %} 
-            alert(request.responseText);
-            jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-            console.log('error'+request.responseText);
-          {% else %}
-            jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br' target='_blank'>lpsoares@insper.edu.br</a>");
-          {% endif %}
-        }
+        {% include "ajax_error_function.js" %}
       });
     };
 
@@ -404,21 +393,13 @@
         },
         success: function(response){
             $("#sequenc_projetos").replaceWith($("#sequenc_projetos",response));
-            $('.tooltip-inner').remove();
-            $('.tooltip-arrow').remove();
+            $(".tooltip-inner").remove();
+            $(".tooltip-arrow").remove();
             {% include "tooltip.js" %}
             $("#spinnerProjetos").hide();    
             $("#sequenc_projetos").show();
         },
-        error: function (request, status, error) {
-          {% if user.tipo_de_usuario == 4 %} 
-            alert(request.responseText);
-            jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-            console.log('error'+request.responseText);
-          {% else %}
-            jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br' target='_blank'>lpsoares@insper.edu.br</a>");
-          {% endif %}
-        }
+        {% include "ajax_error_function.js" %}
       });
     };
 
