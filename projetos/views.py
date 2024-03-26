@@ -1904,7 +1904,9 @@ def acompanhamento_view(request):
         data = {
             "data": acompanhamento.data.strftime("%Y.%m.%d"),
             "autor": str(acompanhamento.autor.get_full_name()),
+            "autor_id": acompanhamento.autor.parceiro.id,
             "org": str(parceiro.organizacao),
+            "org_id": parceiro.organizacao.id,
             "atualizado": True,
         }
 

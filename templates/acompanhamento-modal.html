@@ -14,12 +14,15 @@
     var $popup = $("#popup");
     
     url = $(this).data("url");
-
-    var address = url
-    
-    $(".modal-content", $popup).load(address, function () {
-      $popup.modal("show");
-    }); 
+  
+    $(".modal-content", $popup).load(url, function(response, status, xhr) {
+      if(status == "error") {
+        alert("Erro ao tentar abrir a janela: " + xhr.status + " " + xhr.statusText );
+      } else {
+        $(".selectpicker").selectpicker();
+        $popup.modal("show");
+      }
+    });
 
   });
 
@@ -39,43 +42,39 @@
 
   function atualiza(e) {
     
-    if (!$('form')[0].checkValidity()) {
-        $('form').find('input[type="submit"]').click();
+    if (!$("form")[0].checkValidity()) {
+        $("form").find("input[type='submit']").click();
         return false;
     }
 
-    var texto = $('#texto').val();
-    var data_hora = $('#data_hora').val();
-    var parceiro = $('#parceiro').val();
-
-    var address = url
+    var texto = $("#texto").val();
+    var data_hora = $("#data_hora").val();
+    var parceiro = $("#parceiro").val();
 
     $.ajax({
         type: "POST",
-        url: address,
+        url: url,
         data: {
-            'texto':texto,
-            'data_hora':data_hora,
-            'parceiro':parceiro,
-            'csrfmiddlewaretoken': '{{ csrf_token }}',
+            "texto":texto,
+            "data_hora":data_hora,
+            "parceiro":parceiro,
+            "csrfmiddlewaretoken": "{{ csrf_token }}",
         },
         success: function(response){
             if (response.atualizado) {
-              //console.log("Valor atualizado.");
-
-              linha_nova = "<tr><td>"+response.autor+"</td><td>"+response.org+"</td><td>"+response.data+"</td><td>"+texto+"</td></tr>";
-              $('#AcompanhamentoTable tr:first').after(linha_nova);
-
+              autor = "<a class='imprimir' href='" + "{% url 'parceiro_detail' %}" + response.autor_id + "'>" + response.autor + "</a>"
+              org = "<a class='imprimir' href='" + "{% url 'organizacao_completo' %}" + response.org_id + "'>" + response.org + "</a>"
+              linha_nova = "<tr><td>" + autor + "</td><td>" + org + "</td><td>" + response.data + "</td><td>" + texto + "</td></tr>";
+              $("#AcompanhamentoTable tbody").prepend(linha_nova);
             } else {
               console.log("Erro: Valor não atualizado.");
             }
-            
         },
         error: function (request, status, error) {
           {% if user.tipo_de_usuario == 4 %} 
             alert(request.responseText);
             jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-            console.log('error'+request.responseText);
+            console.log("error"+request.responseText);
           {% else %}
             jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
           {% endif %}

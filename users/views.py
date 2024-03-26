@@ -671,8 +671,12 @@ def professor_detail(request, primarykey):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def parceiro_detail(request, primarykey):
+def parceiro_detail(request, primarykey=None):
     """Mostra detalhes sobre o parceiro."""
+
+    if not primarykey:
+        return HttpResponse("Parceiro não encontrado.", status=401)
+    
     parceiro = get_object_or_404(Parceiro, pk=primarykey)
 
     conexoes = Conexao.objects.filter(parceiro=parceiro)

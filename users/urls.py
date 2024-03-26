@@ -57,6 +57,10 @@ urlpatterns = [
          views.edita_notas,
          name="edita_notas"),
 
+     path("parceiro_detail/",
+         views.parceiro_detail,
+         name="parceiro_detail"),
+
     path("parceiro_detail/<int:primarykey>",
          views.parceiro_detail,
          name="parceiro_detail"),

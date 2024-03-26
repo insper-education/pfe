@@ -511,18 +511,16 @@
       processData: false,
       contentType: false,
       success: function(response){
-        //console.log("sucesso");
         $("#submit").hide();
         $("#excluir").hide();
         $("#modal-body").html(response.mensagem);
-        loadContent( '#atualizar', "{% url 'bancas_index' %}", '#atualizar' );
-        
+        loadContent( "#atualizar", "{% url 'bancas_index' %}", "#atualizar" );
       },
       error: function (request, status, error) {
         {% if user.tipo_de_usuario == 4 %} 
           alert(request.responseText);
           jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-          console.log('error'+request.responseText);
+          console.log("error"+request.responseText);
         {% else %}
           jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
         {% endif %}
@@ -532,8 +530,5 @@
     return false;
 
   });
-
-  //$("#popup").on("hidden.bs.modal", function() {});
-  //"{% url 'bancas_index'%}?view="+calendar.view.type+"&date="+calendar.getDate().toISOString();
         
 </script>

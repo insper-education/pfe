@@ -4,6 +4,18 @@
     Data: 7 de Abril de 2021
 {% endcomment %}
 
+{% load static %}
+<link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
+<script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
+
+<style>
+  {% comment %} Para seleção de projeto não vazar a tela {% endcomment %}
+  .bootstrap-select > .dropdown-menu { 
+    width: 100vw;
+    max-width: fit-content;
+  }
+</style>
+
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
 
@@ -21,15 +33,22 @@
     <label for="texto">Texto:</label><br>
     <textarea id="texto" name="texto" class="form-control" rows="5" required>{% if acompanhamento %}{{acompanhamento.texto}}{% endif %}</textarea>
     <br>
-    <label for="parceiro">Nome:</label>
-    <select id="parceiro" name="parceiro" class="form-control" required>
-      {% if not acompanhamento %}
-        <option disabled selected value> -- selecione o contato -- </option>
-      {% endif %}
-      {% for parceiro in parceiros %}
-        <option value="{{parceiro.id}}" {% if acompanhamento and acompanhamento.tipo_de_retorno == retorno.0 %}selected{% endif %} >{{parceiro.user}}</option>
-      {% endfor %}
-    </select>
+
+    <div class="form-group">
+      <label for="parceiro">Nome:</label>
+
+      <select id="parceiro" name="parceiro" title="Selecione o contato"
+        data-width="100%"
+        class="selectpicker" data-live-search="true" required>
+        {% if not acompanhamento %}
+          <option disabled selected value> -- selecione o contato -- </option>
+        {% endif %}
+        {% for parceiro in parceiros %}
+          <option value="{{parceiro.id}}" {% if acompanhamento and acompanhamento.tipo_de_retorno == retorno.0 %}selected{% endif %} >{{parceiro.user}}</option>
+        {% endfor %}
+      </select>
+    </div>
+
     <input type="submit" style="display:none;"/>
   </div>
   <div class="modal-footer">

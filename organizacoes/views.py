@@ -589,8 +589,10 @@ def organizacoes_lista(request):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def organizacao_completo(request, org):  # acertar isso para pk
+def organizacao_completo(request, org=None):  # acertar isso para pk
     """Exibe detalhes das organizações parceiras."""
+    if not org:
+        return HttpResponseNotFound("<h1>Organização não encontrada!</h1>")
     context = {
         "organizacao": get_object_or_404(Organizacao, id=org),
         "cursos": Curso.objects.all().order_by("id"),
