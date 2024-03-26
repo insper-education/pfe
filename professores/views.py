@@ -186,7 +186,7 @@ def ajax_bancas(request):
                     else:
                         bancas[banca.id]["editable"] = False
 
-                    title = "(" + banca.projeto.organizacao.sigla + ") " + banca.projeto.get_titulo()
+                    title = "[" + banca.projeto.organizacao.sigla + "] " + banca.projeto.get_titulo()
                     if banca.location:
                         title += "\nLocal: " + banca.location
                     title += "\nBanca:"
@@ -212,7 +212,9 @@ def ajax_bancas(request):
                     bancas[banca.id]["color"] = "#777777"
 
                 if banca.projeto:
-                    description = banca.projeto.get_titulo()
+                    description = "[" + banca.projeto.organizacao.sigla + "] " + banca.projeto.get_titulo()
+                    if banca.location:
+                        description += "\n<br>Local: " + banca.location
                     description += "\n<br>Banca:"
                     if banca.projeto.orientador:
                         description += "\n<br>&bull; " + banca.projeto.orientador.user.get_full_name() + " (O)"
