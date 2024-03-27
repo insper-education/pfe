@@ -6,19 +6,22 @@ class Relato(models.Model):
     """Avaliações realizadas durante o projeto."""
 
     momento = models.DateTimeField("Momento", default=datetime.datetime.now, blank=True,
-                                   help_text='Data e hora do relato') # hora ordena para dia
+                                   help_text="Data e hora do relato") # hora ordena para dia
 
     # Para Alocações dos estudantes (caso um aluno reprove ele teria duas alocações)
-    alocacao = models.ForeignKey('users.Alocacao', null=True, blank=True,
+    alocacao = models.ForeignKey("users.Alocacao", null=True, blank=True,
                                  on_delete=models.SET_NULL,
-                                 related_name='projeto_alocado_relato',
-                                 help_text='relacao de alocação entre projeto e estudante')
+                                 related_name="projeto_alocado_relato",
+                                 help_text="relacao de alocação entre projeto e estudante")
 
     texto = models.TextField("Texto", max_length=2100, null=True, blank=True,
-                                   help_text='Texto do relato')
+                                   help_text="Texto do relato")
 
     avaliacao = models.DecimalField("Avaliação", default=-1, max_digits=2, decimal_places=0,
-                                                 help_text='nota obtida na avaliação do orientador')
+                                                 help_text="nota obtida na avaliação do orientador")
+
+    feedback = models.TextField("Feedback", max_length=2100, null=True, blank=True,
+                                   help_text="Possível feedback do orientador para os estudantes")
 
     def __str__(self):
         return str(self.alocacao) + " (" + str(self.momento) + ") "

@@ -6,54 +6,26 @@
 {% endcomment %}
 
 {% block head %}
-
+  {% load static %}
+  {% load get_field %}
   {% load banca_tipo %}
 
   <script>{% include "tooltip.js" %}</script>
+  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
+  <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
 
   <style>
-    textarea {max-width:100%;}
-    label {margin: 3px;}
-    table, td {vertical-align: top;}
-
-    @media only screen and (max-width: 1100px) {
-      table, th, td {font-size: 14px;}
-    }
-
-    @media only screen and (max-width: 1000px) {
-      table, th, td {font-size: 12px;}
-      .nivel {display:none;}
-    } 
-
-    @media only screen and (max-width: 800px) {
-      table, th, td {font-size: 14px;}
-      tbody {display: flex;}
-      tr {
-        display: flex;
-        flex-wrap: wrap;
-      }
-      th, td {        
-        flex-basis: 100%;
-        min-height: calc(130px - 5vw);;
-      }
-
-    }
-
-    @media only screen and (max-width: 500px) {
-      table, th, td {font-size: 12px;}
-    }
-
-    label.reduzido {
+    textarea {
+      max-width:100%;
       display: block;
-      line-height: 1.2;
-      font-size: 14px;
+      padding: 6px;
     }
-
-    datalist {
-      display: flex;
-      justify-content: space-between;
+    label {margin: 3px;}
+    textarea:disabled {
+      background-color: #F9F9F9;
     }
-    
+  
   </style>
 
 {% endblock %}
@@ -63,7 +35,9 @@
   <form method="post" id="avaliacaoform" enctype="multipart/form-data">
     {% csrf_token %}
 
-    <b>Projeto:</b> <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a><br>
+    <b>Projeto:</b> 
+    [<a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>]
+    <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a><br>
     {% if projeto.orientador %}
       {% if projeto.proposta.intercambio %}
         <b>Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
@@ -81,7 +55,7 @@
     <br>
     {% for alocacao, relato in alocacoes_relatos %}
 
-      <div id="{{alocacao.id}}" class="panel panel-default border border-secondary rounded" style="display: inline-block; padding: 8px 12px 8px 12px; max-width: 100%;">
+      <div id="{{alocacao.id}}" class="div_arredondado" style="width: 1222px;">
 
         <b>Estudante: </b><a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno}}</a><br>
         <b>Preenchimento: </b>
@@ -91,10 +65,10 @@
             Não entregue
         {% endif %}  
         <br>
-        <textarea id="relato" name="relato" rows="10" cols="160" maxlength="4096" disabled>{{relato.texto}}</textarea><br>
+        <textarea id="relato" name="relato" rows="10" cols="160" disabled>{{relato.texto}}</textarea>
 
-        <label>Desempenho:</label>
-        <div style="width: fit-content; display: inline-block; margin-left: 8px;" {% if not relato %}data-toggle="tooltip" data-html="true" animation="true" title="Estudante não entregou relato"{% endif %}>
+        <div style="width: 98%; max-width: 100%; display: block; margin-left: 8px; margin-right: 8px; " {% if not relato %}data-toggle="tooltip" data-html="true" animation="true" title="Estudante não entregou relato"{% endif %}>
+          <label>Desempenho:</label>
           <div class="custom-control custom-radio custom-control-inline">
             <input type="radio" id="customRadioInline0{{relato.id}}" name="op.{{relato.id}}" class="custom-control-input"
                     value="1" {% if relato.avaliacao > 0 %}checked="checked"{% endif %} {% if not relato or not editor %}disabled {% endif %}>
@@ -105,14 +79,25 @@
                     value="0" {% if relato.avaliacao == 0 %}checked="checked"{% endif %} {% if not relato or not editor %}disabled {% endif %}>
             <label class="custom-control-label" for="customRadioInline1{{relato.id}}">Inadequado</label>
           </div>
+          {% if relato %}
+          <div style="width: 100%; max-width: 100%; display: inline; margin-left: 8px;">
+            <label class="feedbacks" for="customFeedback{{relato.id}}">Feedback opcional <span class="seta-cima"></label>
+            <div id="customFeedback{{relato.id}}" style="display: none; border: 2px solid red; margin-top: 10px; margin-right: 38px; width: 100%;">
+              <label for="feedback{{relato.id}}">Feedback:</label>
+              <textarea id="feedback{{relato.id}}" name="feedback{{relato.id}}" rows="10" cols="180" 
+              {% if not relato or not editor %}disabled {% endif %} maxlength="{% max_length Relato 'feedback' %}">{% if relato.feedback %}{{relato.feedback}}{% endif %}</textarea>
+            </div>
+          </div>
+          {% endif %}
+          
         </div>
       </div>
-      <br><br>
+      <br>
 
     {% endfor %}
 
     <label for="observacoes">Informe suas observações para a coordenação do Capstone.</label><br>
-    <textarea id="observacoes" name="observacoes" rows="18" cols="164" maxlength="4096" {% if not editor %}disabled{% endif %}
+    <textarea id="observacoes" name="observacoes" rows="18" cols="164" maxlength="{% max_length Observacao 'observacoes_orientador' %}" {% if not editor %}disabled{% endif %}
               placeholder="Caso identifique alguma dificuldade com qualquer estudante ou o grupo, descreva aqui que a coordenação do PFE irá lhe auxiliar.">{% if observacoes %}{{observacoes}}{% endif %}</textarea>
 
     <p>&nbsp;</p>
@@ -126,5 +111,12 @@
     {% endif %}
 
   </form>
+
+  <script>
+    $(".feedbacks").on("click", function() {
+      $(this).siblings("div").toggle(200);
+      $("span", this).toggleClass("seta-baixo seta-cima");
+    });
+  </script>
 
 {% endblock %}

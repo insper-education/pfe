@@ -2189,15 +2189,23 @@ def relato_avaliar(request, projeto_id, evento_id):
 
                 relato.save()
 
-            observacoes = request.POST["observacoes"]
+            observacoes = request.POST.get("observacoes", None)
 
-            if observacoes != "":
+            if observacoes and observacoes != "":
                 (obs, _) = Observacao.objects.get_or_create(projeto=projeto,
                                                                 avaliador=request.user,
                                                                 momento=evento.endDate,  # data marcada do fim do evento
                                                                 exame=exame)  # (200, "Relato Quinzenal"),
                 obs.observacoes_orientador = observacoes
                 obs.save()
+
+            # Verificando se há feedbacks
+            for relato in relatos:
+                if relato:
+                    feedback = request.POST.get("feedback" + str(relato.id), None)
+                    if feedback and feedback != "":
+                        relato.feedback = feedback
+                        relato.save()
 
             # Dispara aviso a coordenação caso alguma observação ou estudante com dificuldade
             if avaliacao_negativa and (observacoes != ""):
@@ -2243,10 +2251,10 @@ def relato_avaliar(request, projeto_id, evento_id):
                 "area_principal": True,
                 "mensagem": "avaliação realizada",
             }
-            return render(request, 'generic.html', context=context)
+            return render(request, "generic.html", context=context)
             
         else:
-            return HttpResponseNotFound('<h1>Erro na edição do relato!</h1>')
+            return HttpResponseNotFound("<h1>Erro na edição do relato!</h1>")
 
     else:  # GET
         
@@ -2268,8 +2276,11 @@ def relato_avaliar(request, projeto_id, evento_id):
             "observacoes": observacoes,
             "alocacoes_relatos": zip(alocacoes, relatos),
             "evento": evento,
+            "Observacao": Observacao,
+            "Relato": Relato,
+
         }
-        return render(request, 'professores/relato_avaliar.html', context=context)
+        return render(request, "professores/relato_avaliar.html", context=context)
 
 
 # Criei esse função temporária para tratar caso a edição seja passada diretamente na URL
