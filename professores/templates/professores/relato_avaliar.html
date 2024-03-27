@@ -12,7 +12,30 @@
 
   <script>{% include "tooltip.js" %}</script>
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
-  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
+  
+
+  {% comment %} REMOVER O STYLE E USAR O ARQUIVO CSS {% endcomment %}
+  {% comment %} <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}"> {% endcomment %}
+  <style>
+  .div_arredondado {
+    background: #F0F0F0;
+    vertical-align: middle;
+    border: 1px solid grey;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    max-width: 100%;
+    width: 800px;
+      padding: 8px;
+  }
+  
+  .div_arredondado > div {
+    display: block;
+    max-width: 100%;
+  }
+  </style>
+
+
+
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
 
   <style>
