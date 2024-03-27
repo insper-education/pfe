@@ -417,7 +417,7 @@ def bancas_editar(request, primarykey=None):
     """Edita uma banca de avaliação para o projeto."""
 
     if primarykey is None:
-        return HttpResponseNotFound('<h1>Erro!</h1>')
+        return HttpResponseNotFound("<h1>Erro!</h1>")
 
     banca = get_object_or_404(Banca, pk=primarykey)
 
@@ -454,7 +454,7 @@ def bancas_editar(request, primarykey=None):
     else:
         eventos = Evento.objects.filter(startDate__year=configuracao.ano, startDate__month__gt=7)
 
-    # 14, 'Banca intermediária' / 15, 'Bancas finais' / 50, 'Certificação Falconi'
+    # 14, "Banca intermediária" / 15, "Bancas finais" / 50, "Certificação Falconi"
     bancas_intermediaria = eventos.filter(tipo_de_evento=14).last()
     bancas_finais = eventos.filter(tipo_de_evento=15).last()
     bancas_falconi = eventos.filter(tipo_de_evento=50).last()
@@ -465,8 +465,7 @@ def bancas_editar(request, primarykey=None):
         "banca": banca,
         "Banca": Banca,
         # "TIPO_DE_BANCA": Banca.TIPO_DE_BANCA,
-        # Para ficar na ordem que desejo
-        "TIPO_DE_BANCA": ((1, 'Intermediária'), (0, 'Final'), (2, 'Certificação Falconi')),
+        "TIPO_DE_BANCA": ((1, "Intermediária"), (0, "Final"), (2, "Certificação Falconi")), # Para ficar na ordem que desejo
         "falconis": falconis,
         "bancas_intermediaria": bancas_intermediaria,
         "bancas_finais": bancas_finais,

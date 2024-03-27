@@ -110,7 +110,7 @@
   <br>
 
   <a href="{% url 'conceitos_obtidos' banca.projeto.id %}" class="btn btn-primary mb-1">Resultados da Banca</a>
-  <a href="{% url 'bancas_editar' banca.pk %}" class="btn btn-primary mb-1open-modal" data-url="{% url 'bancas_editar' %}{{banca.pk}}">Editar Banca</a>
+  <a href="{% url 'bancas_editar' banca.pk %}" class="btn btn-primary mb-1 open-modal" data-url="{% url 'bancas_editar' %}{{banca.pk}}">Editar Banca</a>
 
   {% include "janelas-modal.html" %}
 
