@@ -135,24 +135,15 @@
         $("#color_banca_falconi").css("color", color_banca_falconi);
         $("#banca_orientador").css("boxShadow", "0 0 3px 4px red");
         $("#banca_membro").css("boxShadow", "0 0 3px 4px darkblue");
-      </script>
-
-
-      <script>
 
         function atualiza(event) {
-          $.ajax({
-            type: "POST",
-            url: "{% url 'ajax_atualiza_banca' %}",
-            data: {
-                "id": event.id,
-                "start": event.start.toLocaleString("pt-BR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false  }),
-                "end": event.end.toLocaleString("pt-BR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false  }),
-                "csrfmiddlewaretoken": "{{ csrf_token }}",
-            },
-            success: function(response){},
-            {% include "ajax_error_function.js" %}
-          });
+          url = "{% url 'ajax_atualiza_banca' %}";
+          data = {
+            "id": event.id,
+            "start": event.start.toLocaleString("pt-BR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false  }),
+            "end": event.end.toLocaleString("pt-BR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false  }),
+          }
+          {% include "ajax_default_function.js" %}
         }
 
         var calendar = null;

@@ -5,6 +5,9 @@
     Data: 15 de Maio de 2019
 {% endcomment %}
 
+CREIO QUE ESSE CÓDIGO NÃO ESTÁ MAIS SENDO USADO !!!!!
+
+{% comment %} 
 {% block head %}
   {% load static %}
   <link href="{% static 'css/horizBarChart.css' %}" media="all" rel="stylesheet" type="text/css" /> <!-- PARA HISTOGRAMA -->
@@ -12,7 +15,7 @@
   <script src="{% static 'js/jquery.horizBarChart.min.js' %}"></script>
   <script>
     function bar(){
-      $('.chart').horizBarChart({
+      $(".chart").horizBarChart({
         selector: '.bar',
         speed: 800
       });
@@ -27,7 +30,6 @@
 
   <label for="filter">Edição:</label>
   <select id="filter" class="filter" data-tableId="projetos"
-  {% comment %}onchange="location = this.options[this.selectedIndex].value;"{% endcomment %}>
     {% for loop in loop_anos %}
       <option value="{{loop}}.2" {% if ano == loop and semestre == 2 %}selected{% endif %}>{{loop}}.2</option>
       <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
@@ -40,6 +42,7 @@
   
     function carrega_semestre(){
         var anosemestre = $(".filter option:selected").attr("value");
+
         $.ajax({
             type: "POST",
             url: "{% url 'histograma_ajax' %}",
@@ -63,3 +66,5 @@
   </script>
 
 {% endblock %}
+
+{% endcomment %}

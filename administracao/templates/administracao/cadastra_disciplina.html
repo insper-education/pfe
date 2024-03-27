@@ -60,20 +60,14 @@
 
   <script>
     function exclui_disciplina(aqui) {
-      disciplina = aqui.data("disciplina");
       if (window.confirm("Deseja realmente remover a disciplina?")) {
-        $.ajax({
-            type: "POST",
-            url: "{% url 'excluir_disciplina' %}",
-            data: {
-                "disciplina_id": disciplina,
-                "csrfmiddlewaretoken": "{{ csrf_token }}",
-            },
-            success: function(response){
-              $("#disciplina"+disciplina).remove();
-            },
-            {% include "ajax_error_function.js" %}
-        });
+        url = "{% url 'excluir_disciplina' %}";
+        disciplina = aqui.data("disciplina");
+        data = { "disciplina_id": disciplina };
+        function success(response){
+          $("#disciplina"+disciplina).remove();
+        }
+        {% include "ajax_default_function.js" %}
       }
     }
   </script>

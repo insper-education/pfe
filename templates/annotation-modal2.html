@@ -41,14 +41,14 @@
 
   function atualiza(e) {
     
-    if (!$('form')[0].checkValidity()) {
-        $('form').find('input[type="submit"]').click();
+    if (!$("form")[0].checkValidity()) {
+        $("form").find('input[type="submit"]').click();
         return false;
     }
 
-    var texto = $('#texto').val();
-    var data_hora = $('#data_hora').val();
-    var tipo_de_retorno = $('#tipo_de_retorno').val();
+    var texto = $("#texto").val();
+    var data_hora = $("#data_hora").val();
+    var tipo_de_retorno = $("#tipo_de_retorno").val();
 
     var address = url
     if(anotacao) {
@@ -65,11 +65,11 @@
             "csrfmiddlewaretoken": "{{ csrf_token }}",
         },
         success: function(response){
-            if (response.atualizado) {
+            {% comment %} if (response.atualizado) {
               //console.log("Valor atualizado.");
             } else {
               console.log("Erro: Valor não atualizado.");
-            }
+            } {% endcomment %}
 
             if(anotacao) {
               $("#anotacao"+anotacao).data("anotacao", response.anotacao_id);

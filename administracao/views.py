@@ -980,14 +980,14 @@ def definir_orientador(request):
     """Ajax para definir orientadores de projetos."""
     
     if request.user.tipo_de_usuario == 4:  # admin
-        # Código a se usuário é administrador
+        # Código só se usuário é administrador
 
-        orientador_get = request.GET.get('orientador', None)
+        orientador_get = request.POST.get("orientador", None)
         orientador_id = None
         if orientador_get:
             orientador_id = int(orientador_get[len("orientador"):])
 
-        projeto_get = request.GET.get('projeto', None)
+        projeto_get = request.POST.get("projeto", None)
         projeto_id = None
         if projeto_get:
             projeto_id = int(projeto_get[len("projeto"):])
@@ -1005,9 +1005,9 @@ def definir_orientador(request):
         pass
 
     else:
-        return HttpResponseNotFound('<h1>Usuário sem privilérios!</h1>')
+        return HttpResponseNotFound("<h1>Usuário sem privilérios!</h1>")
 
-    return JsonResponse({'atualizado': False,})
+    return JsonResponse({"atualizado": False,})
 
 
 @login_required

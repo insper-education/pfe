@@ -228,16 +228,12 @@
 
     $(".orientador").change(function(evt){
       atualizar_count_orientadores();
-      $.ajax({
-        url: "{% url 'definir_orientador' %}",
-        data: {
-          "projeto": evt.target.id,
-          "orientador": evt.target.value,
-        },
-        dataType: "JSON",
-        success: function(data) {},
-        {% include "ajax_error_function.js" %}
-      });
+      url = "{% url 'definir_orientador' %}";
+      data = {
+        "projeto": evt.target.id,
+        "orientador": evt.target.value,
+      };
+      {% include "ajax_default_function.js" %}      
     });
   </script>
 

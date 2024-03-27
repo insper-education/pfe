@@ -67,21 +67,15 @@
 
   <script>
     function remove_disciplina(aqui) {
-      disciplina = aqui.data("disciplina");
-      proposta = aqui.data("proposta");
-      $.ajax({
-          type: "POST",
-          url: "{% url 'remover_disciplina' %}",
-          data: {
-              "disciplina_id": disciplina,
-              "proposta_id": proposta,
-              "csrfmiddlewaretoken": "{{ csrf_token }}",
-          },
-          success: function(response){
-            $("#disciplina"+disciplina).remove();
-          },
-          {% include "ajax_error_function.js" %}
-      });
+      url = "{% url 'remover_disciplina' %}";
+      data = {
+          "disciplina_id": aqui.data("disciplina"),
+          "proposta_id": aqui.data("proposta"),
+      };
+      function success(response){
+        $("#disciplina"+data["disciplina_id"]).remove();
+      }
+      {% include "ajax_default_function.js" %}
     }
   </script>
 

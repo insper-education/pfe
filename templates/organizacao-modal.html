@@ -36,47 +36,40 @@
 
   function atualiza_organizacao(e) {
     
-    if (!$('form')[0].checkValidity()) {
-        $('form').find('input[type="submit"]').click();
+    if (!$("form")[0].checkValidity()) {
+        $("form").find('input[type="submit"]').click();
         return false;
     }
 
-    var organizacao_id = $('#organizacao').val();
+    data = {"organizacao_id": $("#organizacao").val()};
 
-    $.ajax({
-        type: "POST",
-        url: url,
-        data: {
-            'organizacao_id': organizacao_id,
-            'csrfmiddlewaretoken': '{{ csrf_token }}',
-        },
-        success: function(response){
-            if (response.atualizado) {
+    function success(response){
+      if (response.atualizado) {
 
-              $('#organizacao_nome').html(response.organizacao);  // Para organizacao completo
+        $("#organizacao_nome").html(response.organizacao);  // Para organizacao completo
 
-              href = "../../organizacoes/organizacao_completo/"+response.organizacao_id;
-              novo = "<a href='"+href+"'>"+response.organizacao+"</a>";
-              $('#proposta'+response.proposta).html(novo);  // Só para tabela
-              $('#organizacao_link').html(response.organizacao);  // Para organizacao completo
-              $('#organizacao_link').attr("href", href); // Para organizacao completo
-              $('#organizacao_endereco').html(response.organizacao_endereco);  // Para organizacao completo
+        href = "../../organizacoes/organizacao_completo/"+response.organizacao_id;
+        novo = "<a href='"+href+"'>"+response.organizacao+"</a>";
+        $("#proposta"+response.proposta).html(novo);  // Só para tabela
+        $("#organizacao_link").html(response.organizacao);  // Para organizacao completo
+        $("#organizacao_link").attr("href", href); // Para organizacao completo
+        $("#organizacao_endereco").html(response.organizacao_endereco);  // Para organizacao completo
 
-              $('#organizacao_website').html(response.organizacao_website); // Para organizacao completo
-              $('#organizacao_website').attr("href", response.organizacao_website); // Para organizacao completo
+        $("#organizacao_website").html(response.organizacao_website); // Para organizacao completo
+        $("#organizacao_website").attr("href", response.organizacao_website); // Para organizacao completo
 
-              $("#logotipo").attr("src", response.organizacao_logotipo_url);
-              $("#logotipo").attr("alt", response.organizacao_sigla);
+        $("#logotipo").attr("src", response.organizacao_logotipo_url);
+        $("#logotipo").attr("alt", response.organizacao_sigla);
 
-              $('.pulsar').css("animation-play-state", "paused"); // Stop pulsar animation
+        $(".pulsar").css("animation-play-state", "paused"); // Stop pulsar animation
 
-            }
-            else {
-              console.log("Erro: Valor não atualizado.");
-            }
-        },
-        {% include "ajax_error_function.js" %}
-    });
+      }
+      else {
+        console.log("Erro: Valor não atualizado.");
+      }
+    };
+
+    {% include "ajax_default_function.js" %}
 
   }
 </script> 

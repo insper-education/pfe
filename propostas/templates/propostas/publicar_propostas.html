@@ -86,14 +86,16 @@
 
   $(".liberar").change(function(evt){
 
+    data = {
+      "liberadas_propostas": $("#liberadas_propostas").prop('checked'),
+      "min_props": $("#min_props").val(),
+      "csrfmiddlewaretoken": "{{ csrf_token }}",
+    };
+
     $.ajax({
       type: "POST",
-      data: {
-        "liberadas_propostas": $("#liberadas_propostas").prop('checked'),
-        "min_props": $("#min_props").val(),
-        "csrfmiddlewaretoken": "{{ csrf_token }}",
-      },
-      dataType: 'json',
+      data: data,
+      dataType: "JSON",
       success: function (data) {
         if (data.atualizado) {
           mess_liberadas(data.liberadas_propostas);

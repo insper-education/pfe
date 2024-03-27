@@ -345,24 +345,18 @@
             request_ajax_pp = null;
         }
 
-        var anosemestre = $("#filterEdicao option:selected").attr("value");
-        var curso = $("#filterCurso option:selected").attr("value");
-        request_ajax_pp = $.ajax({
-            type: "POST",
-            url: "{% url 'procura_propostas' %}",
-            data: {
-                anosemestre: anosemestre,
-                curso: curso,
-                "csrfmiddlewaretoken": "{{ csrf_token }}",
-            },
-            success: function(response){
-                $("div.2areas2").replaceWith($("div.2areas2",response));
-                $(".tooltip-inner").remove();
-                $(".tooltip-arrow").remove();
-                chart();
-            },
-            {% include "ajax_error_function.js" %}
-        });
+        url = "{% url 'procura_propostas' %}";
+        data = {
+          anosemestre: $("#filterEdicao option:selected").attr("value"),
+          curso: $("#filterCurso option:selected").attr("value")
+        };
+        function success(response){
+          $("div.2areas2").replaceWith($("div.2areas2",response));
+          $(".tooltip-inner").remove();
+          $(".tooltip-arrow").remove();
+          chart();
+        }
+        {% include "ajax_default_function.js" %}
     }
 
     $(".filter").change(recarregar_pagina);    

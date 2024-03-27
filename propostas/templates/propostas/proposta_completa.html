@@ -199,7 +199,7 @@
 
   <script>
       
-     function fechar_proposta() {
+    function fechar_proposta() {
       var autorizador = $("#autorizador option:selected").attr("value");
       var disponibilizar = $('input[name=disponibilizar]:checked', '#disponibilizacaoform').val();
 
@@ -208,23 +208,18 @@
         dict[$(this).attr("name")] = $(this).is(':checked');
       })
 
-      $.ajax({
-          type: "POST",
-          data: {    
-              autorizador: autorizador,
-              disponibilizar: disponibilizar,
-              dict: dict,
-              'csrfmiddlewaretoken': '{{ csrf_token }}',
-          },
-          success: function(response){
-            //if (response.atualizado) {
-            // ------- RECURSO PARA ALGUM FEEDBACK   -------/////
-            pulsa_texto(response.atualizado, "valor_atualizado");
-            // ---------------------------------------------////
-            //}
-          },
-          {% include "ajax_error_function.js" %}
-      });
+      data = {
+        autorizador: autorizador,
+        disponibilizar: disponibilizar,
+        dict: dict,
+      };
+
+      function success(response){
+        pulsa_texto(response.atualizado, "valor_atualizado");
+      };
+
+      {% include "ajax_default_function.js" %}
+    
     }
 
     $(".fechar_proposta").change(fechar_proposta);

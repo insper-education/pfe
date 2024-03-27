@@ -298,7 +298,7 @@
       });
 
       var form = $("form#meuForm").closest("form");
-      var formData = new FormData(form[0]);
+      var data = new FormData(form[0]);
 
       $.ajax({
         type: "POST",
@@ -319,11 +319,10 @@
         {% elif adiciona == "adiciona_documento_estudante" %}
           url: "{% url adiciona tipo.sigla %}",
         {% endif %}
-        data: formData,
+        data: data,
         processData: false,
-        contentType: false,
+        contentType: false,   // verificar se isso é assim mesmo
         success: function(response){
-          //console.log("sucesso");
           $("#carregando_arquivo").hide();
           $("#popup").modal("hide");
           location.reload();
