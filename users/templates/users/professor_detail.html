@@ -53,15 +53,13 @@
   {% if aulas %}
     <hr>
     <h4>Aula{% if aulas|length > 1 %}s{% endif %} Ministrada{% if aulas|length > 1 %}s{% endif %}</h4>
-    <ol>
-      {% for aula in aulas %}
+    <ol>{% for aula in aulas %}
         <li>
           {% if aula.documento.documento %}<a href="{{request.scheme}}://{{request.get_host}}{{aula.documento.documento.url}}" target="_blank" rel="noopener noreferrer">{% endif %}
             {{aula.startDate}} - {{aula.atividade}}
           {% if aula.documento.documento %}</a>{% endif %}
-        </li>
-      {% endfor %}
-    </ol>
+        </li>  
+    {% endfor %}</ol>
   {% endif %}
 
   {% if projetos %}
@@ -71,8 +69,8 @@
     {% for projeto in projetos %}
       {% if projeto.alocacao_set.all.count > 0 %}
         <li><a href="{% url 'projeto_completo' projeto.id %}">
-        {{projeto.ano}}.{{projeto.semestre}}: {{projeto.organizacao.nome}} - {{projeto.get_titulo}}
-        ({{projeto.alocacao_set.all.count}} estudante{% if projeto.alocacao_set.all.count > 1 %}s{% endif %})
+        {{projeto.ano}}.{{projeto.semestre}}: [{{projeto.organizacao.nome}}] {{projeto.get_titulo}}
+        {% templatetag openbrace %}{{projeto.alocacao_set.all.count}} estudante{% if projeto.alocacao_set.all.count > 1 %}s{% endif %}{% templatetag closebrace %}
         </a>
         {% if projeto.certificado_orientador %}
           <a href="{{ projeto.certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a>
@@ -95,8 +93,9 @@
     {% for coorientacao in coorientacoes %}
       {% if coorientacao.projeto.alocacao_set.all.count > 0 %}
         <li><a href="{% url 'projeto_completo' coorientacao.projeto.id %}">
-        {{coorientacao.projeto.ano}}.{{coorientacao.projeto.semestre}}: {{coorientacao.projeto.organizacao.nome}} - {{coorientacao.projeto.get_titulo}}
-        ({{coorientacao.projeto.alocacao_set.all.count}} estudante{% if coorientacao.projeto.alocacao_set.all.count > 1 %}s{% endif %})
+        {{coorientacao.projeto.ano}}.{{coorientacao.projeto.semestre}}: [{{coorientacao.projeto.organizacao.nome}}] {{coorientacao.projeto.get_titulo}}
+        {{projeto.ano}}.{{projeto.semestre}}: [{{projeto.organizacao.nome}}] {{projeto.get_titulo}}
+        {% templatetag openbrace %}({{coorientacao.projeto.alocacao_set.all.count}} estudante{% if coorientacao.projeto.alocacao_set.all.count > 1 %}s{% endif %}){% templatetag closebrace %}
         </a></li>
       {% endif %}
     {% empty %}
@@ -116,7 +115,7 @@
         </a>
         {% if banca.projeto %}
           {% if banca.projeto.organizacao %}
-            <a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">{{ banca.projeto.organizacao.nome }} -</a>
+            [<a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">{{ banca.projeto.organizacao.nome }}</a>]
           {% endif %}
           <a href="{% url 'projeto_completo' banca.projeto.id %}">{{ banca.projeto.get_titulo }}</a>
         {% endif %}

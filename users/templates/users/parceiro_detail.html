@@ -68,80 +68,74 @@
     <strong>LinkedIn:</strong> <a href="{{parceiro.user.linkedin}}" target="_blank">{{parceiro.user.linkedin}}</a><br>
   {% endif %}
   <strong>e-mail:</strong> <a href="mailto:{{parceiro.user.email}}"> &lt;{{parceiro.user.email}}&gt;</a><br>
-  &nbsp;
-  {% if parceiro.user.telefone %}&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; 
-    <a href="tel:{{parceiro.user.telefone}}">{{parceiro.user.telefone}}</a>&nbsp;<br>
+  
+  {% if parceiro.user.telefone %}
+    <div style="margin-left: 8px;">&#x260F;
+      <a href="tel:{{parceiro.user.telefone}}">{{parceiro.user.telefone}}</a>
+    </div>
   {% endif %}
 
-  {% if parceiro.user.celular %}&nbsp;&nbsp;&nbsp;&nbsp;&#x1F4F1;
-    <a href="tel:{{parceiro.user.celular}}">{{parceiro.user.celular}}</a>&nbsp;
-    <a href="https://wa.me/{{parceiro.user.celular|cut:' '}}"><img src="{% static 'images/whatsapp.svg' %}" alt="whatsapp" style="width:16px;height:16px;"></a>
-    <br>
+  {% if parceiro.user.celular %}
+    <div style="margin-left: 8px;">&#x1F4F1;
+      <a href="tel:{{parceiro.user.celular}}">{{parceiro.user.celular}}</a>
+      <a href="https://wa.me/{{parceiro.user.celular|cut:' '}}"><img src="{% static 'images/whatsapp.svg' %}" alt="whatsapp" style="width:16px;height:16px;"></a>
+    </div>
   {% endif %}
   
-  {% if parceiro.user.instant_messaging %}&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="instant_messaging" style="width:16px;height:16px;">
-    {% comment %} <a href="instant_messaging:{{parceiro.instant_messaging}}">{% endcomment %}{{parceiro.user.instant_messaging}}{% comment %}</a>{% endcomment %}&nbsp;<br> 
+  {% if parceiro.user.instant_messaging %}
+    <div style="margin-left: 8px;"><img src="{% static 'images/skype.png' %}" alt="instant_messaging" style="width:16px;height:16px;"></span>
+      <a href="instant_messaging:{{parceiro.instant_messaging}}">{{parceiro.user.instant_messaging}}</a>
+    </div>
   {% endif %}
   <p>&nbsp;</p>
 
   {% if parceiro.user.observacoes %}
       <strong>Observações:</strong>
-      <div style="display: block; padding-left: 18px">
-      {{parceiro.user.observacoes|linebreaks}}
-      </div>
+      <div style="padding-left: 18px">{{parceiro.user.observacoes|linebreaks}}</div>
   {% endif %}
 
   {% if conexoes %}
     <hr>
     <h3>Conexões com Projetos</h3>
     <ol>
-
-    {% for conexao in conexoes %}
-      {% if conexao.projeto %}
-        <li><a href="{% url 'projeto_completo' conexao.projeto.id %}">
-        {{conexao.projeto.get_titulo}}
-        [{{conexao.projeto.ano}}.{{conexao.projeto.semestre}}] -&gt;
-        {% for papel in conexao.get_papeis %}[{{papel.0}}] {% endfor %}
-        </a></li>
-      {% else %}
-        PROBLEMA AO RECUPERAR PROJETO!
-      {% endif %}
-    {% endfor %}
-    
+      {% for conexao in conexoes %}
+        {% if conexao.projeto %}
+          <li><a href="{% url 'projeto_completo' conexao.projeto.id %}">
+          {{conexao.projeto.get_titulo}}
+          ({{conexao.projeto.ano}}.{{conexao.projeto.semestre}}) &#x2192;
+          {% for papel in conexao.get_papeis %}[{{papel.0}}] {% endfor %}
+          </a></li>
+        {% else %}
+          PROBLEMA AO RECUPERAR PROJETO!
+        {% endif %}
+      {% endfor %}
     </ol>
   {% endif %}
 
   {% if aulas %}
     <hr>
     <h4>Aula{% if aulas|length > 1 %}s{% endif %} Ministrada{% if aulas|length > 1 %}s{% endif %}</h4>
-    <ol>
-      {% for aula in aulas %}
-        <li> {{aula.startDate}} - {{aula.atividade}} </li>
-      {% endfor %}
-    </ol>
+    <ol>{% for aula in aulas %}
+        <li> {{aula.startDate}} - {{aula.atividade}} </li>  
+    {% endfor %}</ol>
   {% endif %}
 
   {% if mentorias %}
     <hr>
     <h4>Mentoria nos Projeto{% if mentorias|length > 1 %}s{% endif %}</h4>
-    <ol>
-    {% for mentoria in mentorias %}
-      <li>
-      <a href="{% url 'dinamicas_editar' mentoria.id %}">
+    <ol>{% for mentoria in mentorias %}
+      <li><a href="{% url 'dinamicas_editar' mentoria.id %}">
       {{mentoria.projeto.get_titulo}}
       [{{mentoria.projeto.ano}}.{{mentoria.projeto.semestre}}]
       em {{mentoria.startDate}}
-      </a>
-      </li>
-    {% endfor %}
-    </ol>
+      </a></li>
+    {% endfor %}</ol>
   {% endif %}
 
-{% if bancas %}
+  {% if bancas %}
     <hr>
     <h4>Participação em Banca{% if bancas|length > 1 %}s{% endif %}</h4>
-    <ol>
-    {% for banca in bancas %}
+    <ol>{% for banca in bancas %}
         <li>
           <a href="{% url 'banca_ver' banca.id %}">
           {% if banca.tipo_de_banca == 2 %}
@@ -169,8 +163,8 @@
         </li>
     {% empty %}
       Bancas não encontrados
-    {% endfor %}
-    </ol>
+    {% endfor %}</ol>
+    
   {% endif %}
 
   {% if user.tipo_de_usuario == 4 %}
