@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% comment %}
-    Desenvolvido para o Projeto Final de Engenharia
-    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 5 de Maio de 2020
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 5 de Maio de 2020
 {% endcomment %}
 
 {% block head %}
@@ -73,6 +73,7 @@
       <a href="mailto:{{banca.projeto.orientador.user.email}}">&lt;{{banca.projeto.orientador.user.email}}&gt;</a>
     <br>
   {% endif %}
+  <br>
 
   <b>Banca</b>
   <ol>
@@ -95,23 +96,15 @@
     </li>
     {% endif %}
   </ol>
-  <b>Grupo</b>
-  <ul>
-    {% for alocacao in banca.projeto.alocacao_set.all %}
-      <li>
-        <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
-          {{alocacao.aluno.user.get_full_name}}
-        </a>
-        <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
-        [{{ alocacao.aluno.curso2 }}]
-      </li>
-    {% endfor %}
-  </ul>
+
+  {% include "grupo_estudantes.html" with projeto=banca.projeto %}
   <br>
 
-  <a href="{% url 'conceitos_obtidos' banca.projeto.id %}" class="btn btn-primary mb-1">Resultados da Banca</a>
-  <a href="{% url 'bancas_editar' banca.pk %}" class="btn btn-primary mb-1 open-modal" data-url="{% url 'bancas_editar' %}{{banca.pk}}">Editar Banca</a>
-
+  {% if not bloqueado %}
+    <a href="{% url 'conceitos_obtidos' banca.projeto.id %}" class="btn btn-primary mb-1">Resultados da Banca</a>
+    <a href="{% url 'bancas_editar' banca.pk %}" class="btn btn-primary mb-1 open-modal" data-url="{% url 'bancas_editar' %}{{banca.pk}}">Editar Banca</a>
+  {% endif %}
+  
   {% include "janelas-modal.html" %}
 
   <script>

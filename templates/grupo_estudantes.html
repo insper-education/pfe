@@ -1,0 +1,28 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 28 de Março de 2024
+{% endcomment %}
+
+<b>Grupo:</b>
+  {% with alocacoes=projeto.alocacao_set.all %}
+  <a class="email" href="mailto:{% for alocacao in alocacoes %}{{alocacao.aluno.user.email}}{% if not forloop.last %},{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if alocacoes|length > 1 %}s{% endif %}%20{% for alocacao in alocacoes %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{alocacao.aluno.user.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20" target="_blank">
+    <i class="fas fa-mail-bulk"></i>
+  </a>
+  <ul style="margin-bottom:0px;">
+    {% for alocacao in alocacoes %}
+    <li>
+      {% if user.is_authenticated %}
+        <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}</a>
+      {% else %}
+        {{alocacao.aluno.user.get_full_name}}
+      {% endif %}
+      <span class="opt_full curso unselectable">[{{ alocacao.aluno.curso2 }}]</span>
+      <span class="opt_short curso unselectable">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
+      {% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}
+      <span class="opt_full emails"><a class="email" href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a></span>
+      <span class="opt_short emails"><a class="email" href="mailto:{{alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
+    </li>
+    {% endfor %}
+  </ul>
+{% endwith %}

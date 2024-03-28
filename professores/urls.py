@@ -86,6 +86,10 @@ urlpatterns = [
          views.aulas_tabela,
          name="aulas_tabela"),
 
+     path("banca/<slug:slug>",
+         views.banca,
+         name="banca"),
+
     path("bancas_tabela_completa/",
          views.bancas_tabela_completa,
          name="bancas_tabela_completa"),
