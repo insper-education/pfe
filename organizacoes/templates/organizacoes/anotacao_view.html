@@ -4,6 +4,10 @@
     Data: 25 de Março de 2021
 {% endcomment %}
 
+{% load static %}
+<link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
+<script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
+
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
 
@@ -18,13 +22,13 @@
 
     {% if organizacoes and not organizacao %}
       <label for="organizacao_id">Organizacao:</label>
-      <select id="organizacao_id" name="organizacao_id" class="form-control" required>
+      <select id="organizacao_id" name="organizacao_id" class="form-control selectpicker" title="Selecione uma organização" data-live-search="true" required>
         <option disabled selected value> -- selecione uma organização -- </option>
         {% for organizacao in organizacoes %}
           <option value="{{organizacao.id}}" {% if anotacao and anotacao.organizacao_id == organizacao.id %}selected{% endif %} >{{organizacao.nome}} ({{organizacao.sigla}})</option>
         {% endfor %}
       </select>
-      <br>
+      <br><br>
     {% endif %}
 
     <label for="data_hora">Data e Hora: </label> <input id="data_hora" class="form-control" type="datetime-local" name="data_hora" value="{{data_hora|date:'Y-m-d\TH:i'}}"><br>
@@ -57,5 +61,5 @@
 </form>
 
 <script>
-  $('#atualiza').on('click', atualiza);
+  $("#atualiza").on("click", atualiza);
 </script>

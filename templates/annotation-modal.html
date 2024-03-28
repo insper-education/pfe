@@ -19,15 +19,15 @@
     organizacao = $(this).data("organizacao");
     url = $(this).data("url");
     
-    $('#confirm').modal({
-        backdrop: 'static',
+    $("#confirm").modal({
+        backdrop: "static",
         keyboard: false
     })
 
-    .on('click', '#sim', function(e) {
+    .on("click", "#sim", function(e) {
       
       e.preventDefault();
-      $('#confirm').modal('hide');
+      $("#confirm").modal("hide");
 
       var address = url
       if(anotacao) {
@@ -35,6 +35,7 @@
       }
 
       $(".modal-content", $popup).load(address, function () {
+        $(".selectpicker").selectpicker();
         $popup.modal("show");
       });
     
@@ -55,6 +56,7 @@
     }
 
     $(".modal-content", $popup).load(address, function () {
+      $(".selectpicker").selectpicker();
       $popup.modal("show");
     });
   });
@@ -100,13 +102,13 @@
 
   function atualiza(e) {
     
-    if (!$('form')[0].checkValidity()) {
-        $('form').find('input[type="submit"]').click();
+    if (!$("form")[0].checkValidity()) {
+        $("form").find('input[type="submit"]').click();
         return false;
     }
 
-    var texto = $('#texto').val();
-    var data_hora = $('#data_hora').val();
+    var texto = $("#texto").val();
+    var data_hora = $("#data_hora").val();
     var tipo_de_retorno = $("#tipo_de_retorno").val();
 
     var organizacao_id = $("#organizacao_id").val();
