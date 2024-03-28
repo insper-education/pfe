@@ -35,9 +35,7 @@
   </span>
 
   {% if not parceiro.user.is_active %}
-      <p style="color: red;">
-          - NÃO ATIVO -
-      </p><br>
+      <p style="color: red;">- NÃO ATIVO -</p>
   {% endif %}
 
   <strong>Usuário:</strong> {{ parceiro.user.username }}<br>
@@ -49,51 +47,12 @@
     <br>
   {% endif %}
 
-  {% if parceiro.user.tipo_lingua > 1 %}
-    <strong>
-      Linguagem de comunicação: 
-      {% if parceiro.user.tipo_lingua == 2 %}
-        <span style="color: red;">
-          Inglês
-        </span>
-      {% endif %}    
-      <br>
-    </strong>
-  {% endif %}
-  
   {% if parceiro.cargo %}
       <strong>Cargo:</strong> {{parceiro.cargo}}<br>
   {% endif %}
-  {% if parceiro.user.linkedin %}
-    <strong>LinkedIn:</strong> <a href="{{parceiro.user.linkedin}}" target="_blank">{{parceiro.user.linkedin}}</a><br>
-  {% endif %}
-  <strong>e-mail:</strong> <a href="mailto:{{parceiro.user.email}}"> &lt;{{parceiro.user.email}}&gt;</a><br>
+
+  {% include "dados_usuario.html" with user=parceiro.user %}
   
-  {% if parceiro.user.telefone %}
-    <div style="margin-left: 8px;">&#x260F;
-      <a href="tel:{{parceiro.user.telefone}}">{{parceiro.user.telefone}}</a>
-    </div>
-  {% endif %}
-
-  {% if parceiro.user.celular %}
-    <div style="margin-left: 8px;">&#x1F4F1;
-      <a href="tel:{{parceiro.user.celular}}">{{parceiro.user.celular}}</a>
-      <a href="https://wa.me/{{parceiro.user.celular|cut:' '}}"><img src="{% static 'images/whatsapp.svg' %}" alt="whatsapp" style="width:16px;height:16px;"></a>
-    </div>
-  {% endif %}
-  
-  {% if parceiro.user.instant_messaging %}
-    <div style="margin-left: 8px;"><img src="{% static 'images/skype.png' %}" alt="instant_messaging" style="width:16px;height:16px;"></span>
-      <a href="instant_messaging:{{parceiro.instant_messaging}}">{{parceiro.user.instant_messaging}}</a>
-    </div>
-  {% endif %}
-  <p>&nbsp;</p>
-
-  {% if parceiro.user.observacoes %}
-      <strong>Observações:</strong>
-      <div style="padding-left: 18px">{{parceiro.user.observacoes|linebreaks}}</div>
-  {% endif %}
-
   {% if conexoes %}
     <hr>
     <h3>Conexões com Projetos</h3>

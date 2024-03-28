@@ -1,0 +1,54 @@
+{% comment %}
+    Desenvolvido para o Projeto Final de Engenharia
+    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+    Data: 27 de Março de 2024
+{% endcomment %}
+{% load static %}
+
+{% if user.tipo_lingua > 1 %}
+<strong>
+  Linguagem de comunicação: 
+  {% if user.tipo_lingua == 2 %}
+    <span style="color: red;">
+      Inglês
+    </span>
+  {% endif %}    
+  <br>
+</strong>
+{% endif %}
+
+{% if user.linkedin %}
+  <strong>LinkedIn:</strong> <a href="{{user.linkedin}}" target="_blank">{{user.linkedin}}</a><br>
+{% endif %}
+
+<strong>e-mail:</strong> <a href="mailto:{{user.email}}"> &lt;{{user.email}}&gt;</a><br>
+
+{% if user.telefone or user.celular or user.instant_messaging %}
+
+  <strong>Telefones:</strong><br>
+  {% if user.telefone %}
+    <div style="margin-left: 8px;">&#x260F;
+      <a href="tel:{{user.telefone}}">{{user.telefone}}</a>
+    </div>
+  {% endif %}
+
+  {% if user.celular %}
+    <div style="margin-left: 8px;">&#x1F4F1;
+      <a href="tel:{{user.celular}}">{{user.celular}}</a>
+      <a href="https://wa.me/{{user.celular|cut:' '}}"><img src="{% static 'images/whatsapp.svg' %}" alt="whatsapp" style="width:16px;height:16px;"></a>
+    </div>
+  {% endif %}
+
+  {% if user.instant_messaging %}
+    <div style="margin-left: 8px;"><img src="{% static 'images/skype.png' %}" alt="instant_messaging" style="width:16px;height:16px;"></span>
+      <a href="instant_messaging:{{instant_messaging}}">{{user.instant_messaging}}</a>
+    </div>
+  {% endif %}
+
+{% endif %}
+
+{% if user.observacoes %}
+    <br>
+    <strong>Observações:</strong>
+    <div style="padding-left: 18px">{{user.observacoes|linebreaks}}</div>
+{% endif %}

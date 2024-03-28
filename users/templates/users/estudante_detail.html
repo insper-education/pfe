@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% comment %}
-    Desenvolvido para o Projeto Final de Engenharia
-    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 23 de Maio de 2019
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 23 de Maio de 2019
 {% endcomment %}
 
 {% block head %}
@@ -24,9 +24,7 @@
         font-size: 20px;
     }
     @media (max-width: 740px) {
-        .tit_rel {
-          font-size: 17px;
-        }
+        .tit_rel {font-size: 17px;}
     }
   </style>
 {% endblock %}
@@ -36,10 +34,6 @@
   <span class="titulo">{{aluno.user.get_full_name}}</span>
 
   <strong>Usuário:</strong> {{ aluno.user.username }}<br>
-  <strong>e-mail:</strong> <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
-  {% if aluno.user.linkedin %}
-    <strong>LinkedIn:</strong> <a href="{{aluno.user.linkedin}}" target="_blank">{{aluno.user.linkedin}}</a><br>
-  {% endif %}
   {% if aluno.matricula %}
     <strong>Matrícula:</strong> {{aluno.matricula}}<br>
   {% endif %}
@@ -52,36 +46,14 @@
   {% endif %}
   <br>
   
+  <strong>Situação Acadêmica:</strong> {% if aluno.trancado %}Trancamento{% else %}Regular{% endif %}<br>
+
   {% if aluno.cr %}
     <strong>CR:</strong> {{aluno.cr}}<br>
   {% endif %}
-
-  {% if aluno.user.telefone or aluno.user.celular or aluno.user.instant_messaging %}
-  <strong>Telefones:</strong><br> 
-    {% if aluno.user.telefone %}&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; 
-        <a href="tel:{{aluno.user.telefone}}">{{aluno.user.telefone}}</a>&nbsp;<br>
-    {% endif %}
-    {% if aluno.user.celular %}&nbsp;&nbsp;&nbsp;&#x1F4F1;
-        <a href="tel:{{aluno.user.celular}}">{{aluno.user.celular}}</a>&nbsp;
-        <a href="https://wa.me/{{aluno.user.celular|cut:' '}}"><img src="{% static 'images/whatsapp.svg' %}" alt="whatsapp" style="width:16px;height:16px;"></a>
-        <br>
-    {% endif %}
-    {% if aluno.user.instant_messaging %}&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="instant_messaging" style="width:16px;height:16px;">
-        {% comment %} <a href="instant_messaging:{{aluno.instant_messaging}}">{% endcomment %}{{aluno.user.instant_messaging}}{% comment %}</a>{% endcomment %}&nbsp;<br> 
-    {% endif %}
-  {% endif %}
-  <p>&nbsp;</p>
-
-  <strong>Situação Acadêmica:</strong> {% if aluno.trancado %}Trancamento{% else %}Regular{% endif %}<br>
-
-  {% if aluno.user.observacoes %}
-    <strong>Observações:</strong>
-    <div style="display: block; padding-left: 18px">
-    {{aluno.user.observacoes|linebreaks}}<br>
-    </div>
-  {% endif %}
   
-
+  {% include "dados_usuario.html" with user=aluno.user %}
+  
   {% comment %} Prenchido pelo estudante {% endcomment %}
 
   {% if aluno.trabalhou %}
@@ -172,16 +144,15 @@
     {% if alocacoes.count > 0 %}
         <hr>
         {% if alocacoes.count == 1 %}
-            <h3>Projeto Alocado</h3>
+            <h3>Alocação</h3>
         {% else %}
-            <h3>Projetos Alocados</h3>
+            <h3>Alocações</h3>
         {% endif %}
         {% for alocado in alocacoes %}
             <span style="color:black">Projeto: </span>
             <a href="{% url 'projeto_completo' alocado.projeto.id %}">
-                {{alocado.projeto.get_titulo}}
-                ({{alocado.projeto.organizacao.nome}})
-                { {{alocado.projeto.ano}}.{{alocado.projeto.semestre}} }
+                [{{alocado.projeto.organizacao.nome}}] {{alocado.projeto.get_titulo}}
+                ({{alocado.projeto.ano}}.{{alocado.projeto.semestre}})
                 {% include "tipo_projeto.html" with projeto=alocado.projeto %}
             </a>
             <br>
