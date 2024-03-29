@@ -193,56 +193,56 @@ class Professor(models.Model):
 class Aluno(models.Model):
     """Classe de usuários com estatus de Aluno."""
 
-    user = models.OneToOneField(PFEUser, related_name='aluno',
+    user = models.OneToOneField(PFEUser, related_name="aluno",
                                 on_delete=models.CASCADE)
 
     matricula = models.CharField("Matrícula", max_length=8, null=True,
                                  blank=True,
-                                 help_text='Número de matrícula')
+                                 help_text="Número de matrícula")
 
     curso2 = models.ForeignKey(Curso, null=True, blank=True, on_delete=models.SET_NULL,
-                             help_text='Curso Matriculado',)    
+                             help_text="Curso Matriculado")
 
-    opcoes = models.ManyToManyField(Proposta, through='Opcao',
-                                    help_text='Opcoes de projeto escolhidos')
+    opcoes = models.ManyToManyField(Proposta, through="Opcao",
+                                    help_text="Opções de projeto escolhidos")
 
     email_pessoal = models.EmailField(null=True, blank=True,
-                                      help_text='e-mail pessoal')
+                                      help_text="e-mail pessoal")
 
     anoPFE = models.PositiveIntegerField(null=True, blank=True,
                                          validators=[MinValueValidator(2018),
                                                      MaxValueValidator(3018)],
-                                         help_text='Ano que cursará o PFE')
+                                         help_text="Ano que cursará o Capstone")
 
     semestrePFE = models.PositiveIntegerField(null=True, blank=True,
                                               validators=[MinValueValidator(1),
                                                           MaxValueValidator(2)],
-                                              help_text='Semestre que cursará o PFE')
+                                              help_text="Semestre que cursará o Capstone")
 
     trancado = models.BooleanField(default=False,
-                                   help_text='Caso o aluno tenha trancado ou abandonado o curso')
+                                   help_text="Caso o aluno tenha trancado ou abandonado o curso")
 
     cr = models.FloatField(default=0,
-                           help_text='Coeficiente de Rendimento')
+                           help_text="Coeficiente de Rendimento")
 
     pre_alocacao = models.ForeignKey(Proposta, null=True, blank=True, on_delete=models.SET_NULL,
-                                     related_name='aluno_pre_alocado',
-                                     help_text='proposta pre alocada')
+                                     related_name="aluno_pre_alocado",
+                                     help_text="proposta pre alocada")
 
     trabalhou = models.TextField(max_length=1000, null=True, blank=True,
-                                 help_text='Trabalhou/trabalha ou estagio/estagia em alguma empresa de engenharia?')
+                                 help_text="Trabalhou/trabalha ou estagio/estagia em alguma empresa de engenharia?")
 
     social = models.TextField(max_length=1000, null=True, blank=True,
-                              help_text='Já participou de atividade sociais?')
+                              help_text="Já participou de atividade sociais?")
 
     entidade = models.TextField(max_length=1000, null=True, blank=True,
-                                help_text='Já participou de alguma entidade estudantil do Insper?')
+                                help_text="Já participou de alguma entidade estudantil do Insper?")
 
     familia = models.TextField(max_length=1000, null=True, blank=True,\
-        help_text='Possui familiares em empresa que está aplicando? Ou empresa concorrente?')
+        help_text="Possui familiares em empresa que está aplicando? Ou empresa concorrente?")
 
     externo = models.CharField("Externo", max_length=40, null=True, blank=True,
-                               help_text='Instituição de onde o estudante vem')
+                               help_text="Instituição de onde o estudante vem")
 
     # https://bradmontgomery.net/blog/django-hack-help-text-modal-instance/
     def _get_help_text(self, field_name):
