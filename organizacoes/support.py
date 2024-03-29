@@ -74,7 +74,7 @@ def get_form_fields(infile):
 
 
 # Adiciona um novo documento na base de dados
-def cria_documento(request):
+def cria_documento(request, forca_confidencial=False):
 
     projeto = None
     projeto_id = request.POST.get("projeto", "")
@@ -129,7 +129,10 @@ def cria_documento(request):
         if len(anotacao) > max_length - 1:
             return "<h1>Erro: Anotação maior que " + str(max_length) + " caracteres.</h1>"
 
-    confidencial = "confidencial" in request.POST and request.POST["confidencial"] == "true"
+    if forca_confidencial:
+        confidencial = True
+    else:
+        confidencial = "confidencial" in request.POST and request.POST["confidencial"] == "true"
 
     if "documentos" in request.POST and len(request.POST["documentos"])>0:
         # Buscando documento na base de dados
