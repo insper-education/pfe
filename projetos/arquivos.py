@@ -25,7 +25,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 
 from users.models import PFEUser, Alocacao
-
+from documentos.models import TipoDocumento
 
 from .models import Documento
 
@@ -63,7 +63,7 @@ class RangeFileWrapper:
 
 
 def stream_video(request, path, content_type=None):
-    range_header = request.META.get('HTTP_RANGE', '').strip()
+    range_header = request.META.get("HTTP_RANGE", '').strip()
     range_re = re.compile(r'bytes\s*=\s*(\d+)\s*-\s*(\d*)', re.I)
     range_match = range_re.match(range_header)
     size = os.path.getsize(path)
@@ -71,7 +71,7 @@ def stream_video(request, path, content_type=None):
     if not content_type:
         content_type, _ = mimetypes.guess_type(path)
     if not content_type:
-        content_type = content_type or 'application/octet-stream'
+        content_type = content_type or "application/octet-stream"
     resp = None
     if range_match:
         first_byte, last_byte = range_match.groups()
@@ -82,8 +82,8 @@ def stream_video(request, path, content_type=None):
         length = last_byte - first_byte + 1
         resp = StreamingHttpResponse(RangeFileWrapper(open(path, "rb"), offset=first_byte, length=length),
                                      status=206, content_type=content_type)
-        #resp['Content-Length'] = str(length)
-        resp['Content-Range'] = 'bytes %s-%s/%s' % (first_byte, last_byte, size)
+        #resp["Content-Length"] = str(length)
+        resp["Content-Range"] = "bytes %s-%s/%s" % (first_byte, last_byte, size)
     else:
         resp = StreamingHttpResponse(FileWrapper(open(path, "rb")), content_type=content_type)
         resp["Content-Length"] = str(size)
@@ -214,4 +214,11 @@ def arquivos(request, path, documentos=None, organizacao=None, projeto=None, usu
     else:
         raise Http404
     return le_arquivo(request, local_path, path)
-    
+
+def doc(request, tipo):
+    """Acessa arquivos do servidor pelo tipo dele se for publico."""
+    tipo_documento = TipoDocumento.objects.get(sigla=tipo)
+    documento = Documento.objects.filter(tipo_documento=tipo_documento).order_by("data").last()
+    path = str(documento.documento).split('/')[-1]
+    local_path = os.path.join(settings.MEDIA_ROOT, "{0}".format(documento.documento))
+    return le_arquivo(request, local_path, path)
