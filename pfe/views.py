@@ -34,11 +34,24 @@ def custom_400(request, exception):
     #t.render(Context({'exception_value': value,})
     return HttpResponse(mensagem)
 
+from documentos.models import TipoDocumento
+from projetos.models import Documento
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
-    message = "Nada Feito"
+    message = "Feito"
+
+    tipo_documento = TipoDocumento.objects.get(sigla="RII")
+    documentos = Documento.objects.filter(tipo_documento=tipo_documento)
+    for documento in documentos:
+        documento.confidencial = True
+        documento.save()
+    tipo_documento = TipoDocumento.objects.get(sigla="RIG")
+    documentos = Documento.objects.filter(tipo_documento=tipo_documento)
+    for documento in documentos:
+        documento.confidencial = True
+        documento.save()
 
     return HttpResponse(message)
