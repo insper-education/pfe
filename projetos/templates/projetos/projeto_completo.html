@@ -254,9 +254,16 @@
   {% endfor %}
   </ul>
 
-  
   {% if medias_oo %}
-    <hr><h3>Notas de Grupo:</h3>
+    <hr><h3>Médias de Grupo:</h3>
+
+    Médias:
+    {% for key, value in medias_oo.media_grupo.items %}
+      {% if value.media >= 0 %}
+        <span style="white-space: nowrap; background-color:#EEF;">{{key.titulo}}={{value.media|stringformat:".1f"}}</span>{% if not forloop.last %}, {% endif %}
+      {% endif %}
+    {% endfor %}
+
     <div class="table-responsive">
       <div style="position: relative; height:203px; width:406px">
         <canvas id="radial-grupo"></canvas>
@@ -267,33 +274,15 @@
       var config_radial_grupo = {
         type: "radar",
         data: {
-            labels: [
-                {% for key, value in medias_oo.media_grupo.items %}
-                    {% if value.media >= 0 %}
-                        "{{key.titulo}}",
-                    {% else %}
-                        "",
-                    {% endif %}
-                {% endfor %}
-                ],
+            labels: [{% for key, value in medias_oo.media_grupo.items %}
+                    {% if value.media >= 0 %}"{{key.titulo}}",{% else %}"",{% endif %}
+                {% endfor %}],
             datasets: [{
                 label: "Objetivos de Aprendizagem",
-                pointBackgroundColor: [
-                    {% for key, value in medias_oo.media_grupo.items %}
-                        {% comment %} {% if value.media >= 0 %} {% endcomment %}
-                            "{{value.cor}}",
-                        {% comment %} {% endif %} {% endcomment %}
-                    {% endfor %}
-                    ],
-                data: [
-                    {% for key, value in medias_oo.media_grupo.items %}
-                        {% if value.media >= 0 %}
-                            {{value.media|stringformat:".2f"|unlocalize}},
-                        {% else %}
-                            null,
-                        {% endif %}
-                    {% endfor %}
-                    ],
+                pointBackgroundColor: [{% for key, value in medias_oo.media_grupo.items %}"{{value.cor}}",{% endfor %}],
+                data: [{% for key, value in medias_oo.media_grupo.items %}
+                        {% if value.media >= 0 %}{{value.media|stringformat:".2f"|unlocalize}},{% else %} null,{% endif %}
+                      {% endfor %}],
                 scaleOverride: true,
                 pointRadius: 5,
                 backgroundColor: "rgba(0,0,240,0.1)",
@@ -304,7 +293,7 @@
             legend: { display: false },
             title: {
                 display: true,
-                text: 'Avaliação Grupo'
+                text: "Avaliação Grupo"
             },
             scale: {
                 responsive: true,
@@ -320,7 +309,7 @@
         }
       }
 
-      var radial_grupo = document.getElementById('radial-grupo').getContext('2d');
+      var radial_grupo = document.getElementById("radial-grupo").getContext("2d");
       new Chart(radial_grupo, config_radial_grupo);
 
     </script>
@@ -336,11 +325,7 @@
   <hr>
   <h3>Documentos
     <small class="esconder">
-      <a
-        class="open-documento"
-        data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id %}"
-        >&#10133;</a
-      >
+      <a class="open-documento" data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id %}">&#10133;</a>
     </small>
   </h3>
   {% include "documentos.html" with documentos=projeto.documento_set.all %}
@@ -348,9 +333,7 @@
   <hr>
   <h3>Certificados
     <small class="esconder">
-      <a href="{% url 'carregar_certificado' %}"
-        >&#10133;</a
-      >
+      <a href="{% url 'carregar_certificado' %}">&#10133;</a>
     </small>
   </h3>
   {% include "certificados.html" with certificados=projeto.certificado_set.all %}
