@@ -13,30 +13,19 @@
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
 
-  {% comment %} // Código a seguir serve para mudar formato da data conforme tamanho da tela. {% endcomment %}
   <style>
-    
-    .data_curta {
-      display: block;
-    }
-    .data_longa {
-      display: none;
-    }
+    .data_curta {display: block;}
+    .data_longa {display: none;}
 
     @media screen and (min-width: 1200px) {
-      .data_curta {
-        display: none;
-      }
-      .data_longa {
-        display: block;
-      }
+      .data_curta {display: none;}
+      .data_longa {display: block;}
     }
 
     th {
       text-align:center;
       border: 1px solid black !important;
     }
-
   </style>
 
 {% endblock %}
@@ -73,8 +62,8 @@
             <b>Og</b>: Contatos nas Organizacoes.
           </small>
         </caption>
-        <thead>
-          <tr style="background-color:#CCCCCC;">
+        <thead class="table-info">
+          <tr>
             <th scope="col" style="width: 1em;">&#10003;</th>
             <th scope="col">Data</th>
             <th scope="col">Público</th>
