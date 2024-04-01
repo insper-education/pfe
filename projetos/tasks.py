@@ -44,7 +44,7 @@ def mediabackup():
 
     try:
         # call_command("mediabackup")
-        argv = ['', 'mediabackup', '--compress']
+        argv = ['', "mediabackup", "--compress"]
         execute_from_command_line(argv)
         return f"Backup realizado: {datetime.datetime.now()}"
     except:
@@ -55,7 +55,7 @@ def mediabackup():
 @shared_task
 def certbot_renew():
     """Renova Certificado Digital."""
-    subprocess.call(['sudo', 'certbot', 'renew', '--quiet'])
+    subprocess.call(["sudo", "certbot", "renew", "--quiet"])
 
 
 def avisos_do_dia():

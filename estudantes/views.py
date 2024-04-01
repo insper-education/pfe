@@ -171,7 +171,7 @@ def encontros_marcar(request):
                         encontro.save()
 
         if agendado:
-            subject = 'Dinâmica agendada'
+            subject = "Dinâmica agendada"
             recipient_list = []
             alocacoes = Alocacao.objects.filter(projeto=projeto)
             for alocacao in alocacoes:
@@ -185,7 +185,7 @@ def encontros_marcar(request):
             recipient_list.append(str(configuracao.coordenacao.user.email))
 
             # sempre mandar para a conta do gmail
-            recipient_list.append("pfeinsper@gmail.com")
+            #recipient_list.append("pfeinsper@gmail.com")
 
             message = message_agendamento(agendado, cancelado)
             check = email(subject, recipient_list, message)
@@ -243,7 +243,7 @@ def encontros_cancelar(request, evento_id):
     recipient_list.append(str(configuracao.coordenacao.user.email))
 
     # sempre mandar para a conta do gmail
-    recipient_list.append("pfeinsper@gmail.com")
+    #recipient_list.append("pfeinsper@gmail.com")
 
     message = message_cancelamento(encontro)
     check = email(subject, recipient_list, message)
@@ -715,8 +715,9 @@ def selecao_propostas(request):
                                 .delete()
                 message = create_message(aluno, ano, semestre)
 
-                subject = 'PFE : '+aluno.user.username
-                recipient_list = ['pfeinsper@gmail.com', aluno.user.email, ]
+                subject = "Capstone Insper: " + aluno.user.username
+                #recipient_list = ['pfeinsper@gmail.com', aluno.user.email, ]
+                recipient_list = [aluno.user.email, ]
                 check = email(subject, recipient_list, message)
                 if check != 1:
                     message = "Erro no envio contacte:lpsoares@insper.edu.br"
