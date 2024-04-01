@@ -139,10 +139,46 @@ def projeto_completo(request, primarykey):
         "projeto": projeto,
         "alocacoes": alocacoes,
         "medias_oo": medias_oo,
-        "opcoes": opcoes,
         "conexoes": conexoes,
         "coorientadores": coorientadores,
-        "documentos": documentos,  # checar se necessário
+        "documentos": documentos,
+        "projetos_avancados": projetos_avancados,
+        "cooperacoes": cooperacoes,
+    }
+    return render(request, 'projetos/projeto_completo.html', context=context)
+
+
+
+@login_required
+@permission_required("projetos.add_proposta", raise_exception=True)
+def projeto_organizacao(request, primarykey):
+    """Mostra um projeto por completo."""
+    projeto = get_object_or_404(Projeto, pk=primarykey)
+    
+    if request.user.tipo_de_usuario != 3 and request.user.tipo_de_usuario != 4:
+        return HttpResponse("Algum erro não identificado.", status=401)
+
+    organizacao = None
+    if hasattr(request.user, "parceiro"):
+        organizacao = request.user.parceiro.organizacao
+
+    if projeto.proposta.organizacao != organizacao and request.user.tipo_de_usuario != 4:
+        return HttpResponse("Algum erro não identificado.", status=401)
+
+    alocacoes = Alocacao.objects.filter(projeto=projeto)
+    conexoes = Conexao.objects.filter(projeto=projeto)
+    coorientadores = Coorientador.objects.filter(projeto=projeto)
+    documentos = Documento.objects.filter(projeto=projeto, tipo_documento__projeto=True, tipo_documento__individual=False)
+
+    projetos_avancados = Projeto.objects.filter(avancado=projeto)
+    cooperacoes = Conexao.objects.filter(projeto=projeto, colaboracao=True)
+
+    context = {
+        "projeto": projeto,
+        "alocacoes": alocacoes,
+        "conexoes": conexoes,
+        "coorientadores": coorientadores,
+        "documentos": documentos,
         "projetos_avancados": projetos_avancados,
         "cooperacoes": cooperacoes,
     }

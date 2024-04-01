@@ -89,6 +89,10 @@ urlpatterns = [
     path("parceiro_propostas",
         views.parceiro_propostas,
         name="parceiro_propostas"),
+        
+    path("parceiro_projetos",
+        views.parceiro_projetos,
+        name="parceiro_projetos"),
 
     path("proposta_submissao",
         views.proposta_submissao,

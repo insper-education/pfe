@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 1 de Abril de 2024
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% comment %} <script src="https://www.w3schools.com/lib/w3.js"></script> {% endcomment %}
+  <script src="{% static 'js/w3.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">Lista de Projetos</span>
+
+  <b>Organização</b>: {{ organizacao }}<br><br>
+
+  <div class="table-responsive">
+    <table id="ProjetosTable" class="table-bordered table-sm">
+      <thead class="table-info">
+        <tr>
+          <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Projeto</th>
+          <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Período</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for projeto in projetos %} 
+          <tr class="item">
+              <td><a href="{% url 'projeto_organizacao' projeto.id %}">{{projeto.titulo}}</a><br></td>
+              <td class="text-center">{{projeto.ano}}.{{projeto.semestre}}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="3">Não existem projetos disponíveis pela sua organização.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p>&nbsp;</p>
+  <strong>Número Total de Projetos:</strong> ({{ projetos.count }})<br>
+
+{% endblock %}

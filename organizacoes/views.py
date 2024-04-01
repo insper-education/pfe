@@ -34,7 +34,7 @@ from operacional.models import Curso
 from documentos.models import TipoDocumento
 
 @login_required
-@permission_required("users.altera_professor", raise_exception=True)
+@permission_required("projetos.add_proposta", raise_exception=True)
 def index_organizacoes(request):
     """Mostra página principal do parceiro de uma organização."""
     return render(request, "organizacoes/index_organizacoes.html")
@@ -219,11 +219,11 @@ def adiciona_documento_estudante(request, tipo_nome=None, documento_id=None):
 
 
 @login_required
-@permission_required("users.altera_professor", raise_exception=True)
+@permission_required("projetos.add_proposta", raise_exception=True)
 def parceiro_propostas(request):
     """Lista todas as propostas de projetos."""
     user = request.user
-    if user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
+    if user.tipo_de_usuario != 3 and user.tipo_de_usuario != 4:  # Não é Parceiro ou Admin
         mensagem = "Você não está cadastrado como parceiro de uma organização!"
         context = {
             "area_principal": True,
@@ -240,8 +240,36 @@ def parceiro_propostas(request):
 
     context = {
         "propostas": propostas,
+        "organizacao": user.parceiro.organizacao,
     }
     return render(request, "organizacoes/parceiro_propostas.html", context)
+
+
+@login_required
+@permission_required("projetos.add_proposta", raise_exception=True)
+def parceiro_projetos(request):
+    """Lista todas as propostas de projetos."""
+    user = request.user
+    if user.tipo_de_usuario != 3 and user.tipo_de_usuario != 4:  # Não é Parceiro ou Admin
+        mensagem = "Você não está cadastrado como parceiro de uma organização!"
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, "generic.html", context=context)
+
+    if hasattr(user, "parceiro"):
+        projetos = Projeto.objects\
+            .filter(proposta__organizacao=user.parceiro.organizacao)\
+            .order_by("ano", "semestre", "titulo", )
+    else:
+        projetos = projetos
+
+    context = {
+        "projetos": projetos,
+        "organizacao": user.parceiro.organizacao,
+    }
+    return render(request, "organizacoes/parceiro_projetos.html", context)
 
 
 # @login_required

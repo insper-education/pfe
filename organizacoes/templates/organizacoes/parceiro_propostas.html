@@ -15,46 +15,41 @@
 
   <span class="titulo">Propostas de Projetos Submetidas</span>
 
-  {% if propostas %}
-    <table id="PropostasTable">
-      <tr>
-        <th onclick="w3.sortHTML('#PropostasTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Projeto</th>
-        <th onclick="w3.sortHTML('#PropostasTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Período</th>
-        <th onclick="w3.sortHTML('#PropostasTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Organização</th>
-      </tr>      
-      {% for proposta in propostas %} 
-      
-        <tr class="item">
+  <b>Organização</b>: {{ organizacao }}<br><br>
 
-            <td>
-              <a href="{% url 'proposta_editar' proposta.slug %}">
-                {{proposta.titulo}}<br>
-              </a>
-
-            </td>
-
-            <td class="text-center">
-                {{proposta.ano}}.{{proposta.semestre}}
-            </td>
-
-            <td>
-              {% if proposta.organizacao %}
-                {{ proposta.organizacao.nome }}
-              {% elif proposta.nome_organizacao %}
-                {{ proposta.nome_organizacao }}
-              {% else %}
-                Organização não definida.
-              {% endif %}
-            </td>
-            
+  <div class="table-responsive">
+    <table id="PropostasTable" class="table-bordered table-sm">
+      <thead class="table-info">
+        <tr>
+          <th onclick="w3.sortHTML('#PropostasTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Título da Proposta</th>
+          <th onclick="w3.sortHTML('#PropostasTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Período</th>
         </tr>
-      {% endfor %}
-    </table>
-    <p>&nbsp;</p>
-    <strong>Número Total de Propostas Publicadas:</strong> ({{ propostas.count }})<br>
+      </thead>
+      <tbody>
+        {% for proposta in propostas %} 
+        
+          <tr class="item">
 
-  {% else %}
-    <p>Não existem propostas disponíveis pela sua organização.</p>
-  {% endif %}
+              <td>
+                <a href="{% url 'proposta_editar' proposta.slug %}">
+                  {{proposta.titulo}}<br>
+                </a>
+
+              </td>
+
+              <td class="text-center">
+                  {{proposta.ano}}.{{proposta.semestre}}
+              </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="3">Não existem propostas disponíveis pela sua organização.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p>&nbsp;</p>
+  <strong>Número Total de Propostas Registradas:</strong> ({{ propostas.count }})<br>
 
 {% endblock %}

@@ -9,14 +9,19 @@
     <br>
     <h5>Propostas</h5>
     <ul>
-        <a href="{% url 'proposta_submissao' %}"><li>Submeter Proposta de Projeto</li></a>
-        <a href="{% url 'carrega_proposta' %}"><li>Carrega Proposta de Projeto em PDF</li></a>
-        <a href="{% url 'parceiro_propostas' %}"><li>Propostas Submetidas</li></a>
+        <li><a href="{% url 'proposta_submissao' %}">Submeter Proposta de Projeto</a></li>
+        <li><a href="{% url 'carrega_proposta' %}">Carrega Proposta de Projeto em PDF</a></li>
+        <li><a href="{% url 'parceiro_propostas' %}">Propostas Submetidas</a></li>
+    </ul>
+
+    <h5>Projetos</h5>
+    <ul>
+        <li><a href="{% url 'parceiro_projetos' %}">Lista de Projetos</a></li>
     </ul>
 
     <h5>Feedbacks</h5>
     <ul>
-        <a href="{% url 'projeto_feedback' %}"><li>Enviar feedback de projeto</li></a>
+        <li><a href="{% url 'projeto_feedback' %}">Enviar feedback de projeto</a></li>
     </ul>
     
 {% endblock %}

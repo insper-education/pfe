@@ -177,8 +177,16 @@ def le_arquivo(request, local_path, path, bypass_confidencial=False):
                         elif not alocado_no_projeto:
                             return render(request, "generic.html", context=context)
 
+                    elif (user.tipo_de_usuario == 3):
+                        ## Verificar se o documento é da organização que o uruário faz parte
+                        if doc.projeto is None:
+                            return render(request, "generic.html", context=context)
+                        if doc.projeto.proposta.organizacao != user.parceiro.organizacao:
+                            return render(request, "generic.html", context=context)
+
                     else:
                         return render(request, "generic.html", context=context)
+                    
 
         if documento[:3] == "tmp":
             mensagem = "Documento não acessível"
