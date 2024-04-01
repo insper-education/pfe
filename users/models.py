@@ -404,11 +404,13 @@ class Aluno(models.Model):
                                                              avaliacoes_banca_final, eh_banca=True)
                 notas.append(("BF", nota_banca_final, peso/100 if peso else 0))
 
+            # vvvvvvvvvv NÃO USA OBJETIVOS DE APREENZAGEM vvvvvvvvvv
             # Relatório Preliminar (10)
             relp = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=relatorio_planejamento).\
                 order_by("momento").last()
-            if relp:
+            if relp and relp.nota is not None:
                 notas.append(("RPL", float(relp.nota), relp.peso/100 if relp.peso else 0))
+            # ^^^^^^^^^^ NÃO USA OBJETIVOS DE APREENZAGEM ^^^^^^^^^^
 
             # Relatório Intermediário de Grupo (11)
             rig = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=relatorio_intermediario_grupo)
