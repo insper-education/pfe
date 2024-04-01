@@ -98,7 +98,7 @@
                   var peso_linha = 0;
                 </script>
                 {% for aval, nota, peso, descr in aluno.get_notas|dict_key:ano_semestre %} <!-- Notas -->
-                    <span style="background-color:#eef;" data-toggle="tooltip" data-html="true" animation="true" 
+                    <span style="background-color:#EEF;" data-toggle="tooltip" data-html="true" animation="true" 
                     title="{{descr}}">
                       <!-- {{aval}}({% widthratio peso 1 100 %}%)={{nota|stringformat:".1f"|unlocalize}} -->
                       {{aval}}<span class="pesos_aval">({% widthratio peso 1 100 %}%)</span

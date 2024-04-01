@@ -13,11 +13,6 @@
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
 
-  {% comment %}
-    Estou achando desnecessário
-    <link rel="stylesheet" href="{% static 'css/impressoras.css' %}">
-  {% endcomment %}
-
   <style>
     select {
       max-width: 100%;
@@ -63,9 +58,9 @@
     function tipo_banca(selectObject) {
       var value = selectObject.value;
       if(value == "todos") {
-        $('.item').show();
+        $(".item").show();
       } else {
-        $('.item').hide();
+        $(".item").hide();
         $('.'+value).show();
       }
     }
@@ -82,10 +77,7 @@
   {% include "informacoes.html" %}
 
   {% if bancas %}
-    {% comment %} <form method="get" id="editarbancasform" style="margin-top: 8px;"> {% endcomment %}
-      {% comment %} {% csrf_token %} {% endcomment %}
-
-
+    
       <table id="BancasTable" class="table table-borderless table-sm arredondado"><tbody>
         {% for banca in bancas %} 
         <tr class="item {{ banca.tipo_de_banca|get_banca }}">
@@ -207,34 +199,17 @@
             {% endif %}
 
             <div class="grupo" style="margin-top: 8px;">
-              <b>Grupo:</b>
-              {% with alocacoes=banca.projeto.alocacao_set.all %}
-                <a class="email" href="mailto:{% for alocacao in alocacoes %}{{alocacao.aluno.user.email}}{% if not forloop.last %},{% endif %}{% endfor %}?subject=PFE%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if alocacoes|length > 1 %}s{% endif %}%20{% for alocacao in alocacoes %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{alocacao.aluno.user.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20PFE)" target="_blank">
-                  <i class="fas fa-mail-bulk"></i>
-                </a>
-                <ul style="margin-bottom:0px;">
-                  {% for alocacao in alocacoes %}
-                    <li>
-                      <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">
-                        {{alocacao.aluno.user.get_full_name}}
-                      </a>
-                      <span class="opt_full curso">[{{ alocacao.aluno.curso2 }}]</span>
-                      <span class="opt_short curso">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
-                      {% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}
-                      <span class="opt_full emails"><a class="email" href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a></span>
-                      <span class="opt_short emails"><a class="email" href="mailto:{{alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
-                    </li>
-                  {% endfor %}
-                </ul>
-              {% endwith %}
+              {% include "grupo_estudantes.html" with projeto=banca.projeto %}
             </div>
-
+            <br>
+            
             <div class="avaliacao" style="margin-top: 8px; overflow-wrap: break-word;">
               &#9733; <b>Link formulário de avaliação</b>: 
               <a href="{% url 'banca_avaliar' banca.slug %}">
                 {{request.scheme}}://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}
               </a>
             </div>
+            <br>
 
             <div class="agendamento" style="margin-top: 8px;">
               <b>Agendamento</b>: mensagem

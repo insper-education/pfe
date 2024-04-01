@@ -661,11 +661,11 @@ def bancas_tabela_completa(request):
 def banca_ver(request, primarykey):
     """Retorna banca pedida."""
     banca = get_object_or_404(Banca, id=primarykey)
-    if banca.tipo_de_banca == 1:  # (1, 'intermediaria'),
+    if banca.tipo_de_banca == 1:  # (1, "intermediaria"),
         tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Intermediária") | TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
-    elif banca.tipo_de_banca == 0:  # (0, 'final'),
+    elif banca.tipo_de_banca == 0:  # (0, "final"),
         tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-    #elif banca.tipo_de_banca == 2:  # (2, 'falconi'),
+    #elif banca.tipo_de_banca == 2:  # (2, "falconi"),
     
     documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto).order_by("-data")
 
@@ -674,7 +674,7 @@ def banca_ver(request, primarykey):
         "documentos": documentos,
     }
 
-    return render(request, 'professores/banca_ver.html', context)
+    return render(request, "professores/banca_ver.html", context)
 
 
 # Mensagem preparada para o avaliador
@@ -1266,6 +1266,27 @@ def banca_avaliar(request, slug, documento_id=None):
             "periodo_para_rubricas": 1 if banca.tipo_de_banca==1 else 2,  # Dois indices parecidos, mas não iguais
         }
         return render(request, "professores/banca_avaliar.html", context=context)
+
+
+@transaction.atomic
+def banca(request, slug):
+    """Somente ve a banca, sem edição."""
+    banca = get_object_or_404(Banca, slug=slug)
+    if banca.tipo_de_banca == 1:  # (1, "intermediaria"),
+        tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Intermediária") | TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
+    elif banca.tipo_de_banca == 0:  # (0, "final"),
+        tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
+    #elif banca.tipo_de_banca == 2:  # (2, "falconi"),
+    
+    documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto).order_by("-data")
+
+    context = {
+        "banca": banca,
+        "documentos": documentos,
+        "bloqueado": True,
+    }
+
+    return render(request, "professores/banca_ver.html", context)
 
      
 @login_required

@@ -14,7 +14,7 @@
   <script>
     $(document).ready(function(){
       $("#entidades").click(function(){
-        $('#lista_entidades').modal({show: true});
+        $("#lista_entidades").modal({show: true});
       });
     });
   </script>
@@ -41,7 +41,7 @@
 
     <label for="social">
     Você já participou de atividades sociais? Por exemplo trabalhos voluntários ou ações em comunidades.<br>
-    Se sim, qual/quais? [Esse campo é importante se você está aplicando para um projeto de Inovação Social]
+    Se sim, qual/quais? <small>[Esse campo é importante se você está aplicando para um projeto de Inovação Social]</small>
     </label><br>
     <textarea id="social" name="social" rows="4" cols="80" maxlength="1000" {% if vencido %}disabled{% endif %}>{% if estudante.social %}{{estudante.social}}{% endif %}</textarea>
     <br><br>
@@ -59,6 +59,7 @@
     <label for="familia">
     Você possui familiares em alguma empresa que está aplicando? Ou empresa concorrente direta?<br>
     Se sim, qual/quais? Qual seu grau de relacionamento.
+    <small>[Só preencher depois de selecionar os projetos]</small>
     </label><br>
     <textarea id="familia" name="familia" rows="4" cols="80" maxlength="1000" {% if vencido %}disabled{% endif %}>{% if estudante.familia %}{{estudante.familia}}{% endif %}</textarea>
     <br><br>

@@ -197,10 +197,10 @@ def adiciona_documento_estudante(request, tipo_nome=None, documento_id=None):
         return HttpResponseNotFound("<h1>Tipo de submissão não identificada!</h1>")
 
     if request.is_ajax() and request.method == "POST":
-        erro = cria_documento(request)
+        erro = cria_documento(request, forca_confidencial=True)
         if erro:
            return HttpResponseBadRequest(erro)
-        return JsonResponse({"atualizado": True,})
+        return JsonResponse({"atualizado": True})
 
     context = {
         "organizacao": organizacao,
