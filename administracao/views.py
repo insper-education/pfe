@@ -141,7 +141,7 @@ def cadastrar_organizacao(request, proposta_id=None):
                 "mensagem": "<h3 style='color:red'>Falha na inserção na base da dados.<h3>",
             }
 
-        return render(request, 'generic.html', context=context)
+        return render(request, "generic.html", context=context)
 
     proposta = None
     if proposta_id:
@@ -187,7 +187,7 @@ def edita_organizacao(request, primarykey):
                 "mensagem": "<h3 style='color:red'>Falha na inserção na base da dados.<h3>",
             }
 
-        return render(request, 'generic.html', context=context)
+        return render(request, "generic.html", context=context)
 
     context = {
         "organizacao": organizacao,
@@ -195,6 +195,56 @@ def edita_organizacao(request, primarykey):
     }
 
     return render(request, 'administracao/cadastra_organizacao.html', context=context)
+
+
+
+def envia_senha_mensagem(user):
+
+    # Atualizando senha do usuário.
+    senha = ''.join(random.SystemRandom().
+                    choice(string.ascii_lowercase + string.digits)
+                    for _ in range(6))
+    user.set_password(senha)
+    user.save()
+
+    configuracao = get_object_or_404(Configuracao)
+    coordenacao = configuracao.coordenacao
+
+    # USAR TEMPLATE ARMAZENADO E NÃO FAZER NA MÃO ESSE TEXTO
+
+    # Preparando mensagem para enviar para usuário.
+    message_email = user.get_full_name() + ",\n\n"
+    message_email += "\tVocê está recebendo sua conta e senha para acessar o sistema do "
+    message_email += "Projeto Final - Capstone (antigo PFE)."
+    message_email += "\n\n"
+    message_email += "\tO endereço do servidor é: "
+    message_email += "<a href='https://pfe.insper.edu.br/'>https://pfe.insper.edu.br/</a>"
+    message_email += "\n\n"
+
+    message_email += "\tSua conta é: <b>" + user.username + "</b>\n"
+    message_email += "\tSua senha é: <b>" + senha + "</b>\n"
+    message_email += "\n"
+    message_email += "\tQualquer dúvida, envie e-mail para: "
+    message_email += coordenacao.user.get_full_name() + " <a href='mailto:" + coordenacao.user.email + "'>&lt;" + coordenacao.user.email + "&gt;</a>"
+    message_email += "\n\n"
+    message_email += "\t\tatenciosamente, coordenação do Capstone (antigo PFE)\n"
+    message_email = message_email.replace('\n', "<br>\n")
+    message_email = message_email.replace('\t', "&nbsp;&nbsp;&nbsp;&nbsp;\t")
+
+    # Enviando e-mail com mensagem para usuário.
+    subject = "Conta Capstone Insper: " + user.get_full_name()
+    recipient_list = [user.email,]
+    check = email(subject, recipient_list, message_email)
+    if check != 1:
+        mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
+        codigo = 400
+    else:
+        mensagem = "<br><br>Enviado mensagem com senha para: "
+        mensagem += user.get_full_name() + " " +\
+                "&lt;" + user.email + "&gt;<br>\n"
+        codigo = 200
+    
+    return mensagem, codigo
 
 
 @login_required
@@ -219,50 +269,11 @@ def cadastrar_usuario(request):
                 mensagem, codigo, user = registro_usuario(request)
 
                 if user is not None and "envia" in request.POST:
+                    mensagem_email, codigo_email = envia_senha_mensagem(user)
+                    mensagem += mensagem_email
+                    if codigo_email != 200:
+                        return HttpResponse(mensagem, status=codigo_email)
 
-                    # Atualizando senha do usuário.
-                    senha = ''.join(random.SystemRandom().
-                                    choice(string.ascii_lowercase + string.digits)
-                                    for _ in range(6))
-                    user.set_password(senha)
-                    user.save()
-
-                    configuracao = get_object_or_404(Configuracao)
-                    coordenacao = configuracao.coordenacao
-
-                    # USAR TEMPLATE ARMAZENADO E NÃO FAZER NA MÃO ESSE TEXTO
-
-                    # Preparando mensagem para enviar para usuário.
-                    message_email = user.get_full_name() + ",\n\n"
-                    message_email += "\tVocê está recebendo sua conta e senha para acessar o sistema do "
-                    message_email += "Projeto Final - Capstone (antigo PFE)."
-                    message_email += "\n\n"
-                    message_email += "\tO endereço do servidor é: "
-                    message_email += "<a href='https://pfe.insper.edu.br/'>https://pfe.insper.edu.br/</a>"
-                    message_email += "\n\n"
-
-                    message_email += "\tSua conta é: <b>" + user.username + "</b>\n"
-                    message_email += "\tSua senha é: <b>" + senha + "</b>\n"
-                    message_email += "\n"
-                    message_email += "\tQualquer dúvida, envie e-mail para: "
-                    message_email += coordenacao.user.get_full_name() + " <a href='mailto:" + coordenacao.user.email + "'>&lt;" + coordenacao.user.email + "&gt;</a>"
-                    message_email += "\n\n"
-                    message_email += "\t\tatenciosamente, coordenação do Capstone (antigo PFE)\n"
-                    message_email = message_email.replace('\n', '<br>\n')
-                    message_email = message_email.replace('\t', '&nbsp;&nbsp;&nbsp;&nbsp;\t')
-
-                    # Enviando e-mail com mensagem para usuário.
-                    subject = 'Conta: ' + user.get_full_name()
-                    recipient_list = [user.email,]
-                    check = email(subject, recipient_list, message_email)
-                    if check != 1:
-                        mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
-                        codigo = 400
-
-                    mensagem += "<br><br>Enviado mensagem com senha para: "
-                    mensagem += user.get_full_name() + " " +\
-                                "&lt;" + user.email + "&gt;<br>\n"
-                    
                 if codigo != 200:
                     return HttpResponse(mensagem, status=codigo)
 
@@ -279,7 +290,7 @@ def cadastrar_usuario(request):
                 "mensagem": "<h3 style='color:red'>Falha na inserção na base da dados.</h3>",
             }
 
-        return render(request, 'generic.html', context=context)
+        return render(request, "generic.html", context=context)
 
     context = {
         "organizacoes": Organizacao.objects.all().order_by(Lower("nome")),
@@ -294,13 +305,13 @@ def cadastrar_usuario(request):
     tipo = request.GET.get("tipo", None)
     if tipo:
         if tipo == "parceiro":
-            organizacao_str = request.GET.get('organizacao', None)
+            organizacao_str = request.GET.get("organizacao", None)
             if organizacao_str:
                 try:
                     organizacao_id = int(organizacao_str)
                     organizacao_selecionada = Organizacao.objects.get(id=organizacao_id)
                 except (ValueError, Organizacao.DoesNotExist):
-                    return HttpResponseNotFound('<h1>Organização não encontrado!</h1>')
+                    return HttpResponseNotFound("<h1>Organização não encontrado!</h1>")
                 context["organizacao_selecionada"] = organizacao_selecionada
 
         elif tipo == "professor":
@@ -340,6 +351,13 @@ def edita_usuario(request, primarykey):
 
         if "email" in request.POST:
             mensagem, codigo, _ = registro_usuario(request, user)
+
+            if user is not None and "envia" in request.POST:
+                    mensagem_email, codigo_email = envia_senha_mensagem(user)
+                    mensagem += mensagem_email
+                    if codigo_email != 200:
+                        return HttpResponse(mensagem, status=codigo_email)
+
             if codigo != 200:
                 return HttpResponse(mensagem, status=codigo)
 
@@ -1064,7 +1082,7 @@ def export(request, modelo, formato):
             "area_principal": True,
             "mensagem": mensagem,
         }
-        return render(request, 'generic.html', context=context)
+        return render(request, "generic.html", context=context)
 
     dataset = resource.export()
 
@@ -1085,7 +1103,7 @@ def export(request, modelo, formato):
             "area_principal": True,
             "mensagem": mensagem,
         }
-        return render(request, 'generic.html', context=context)
+        return render(request, "generic.html", context=context)
 
     response['Content-Disposition'] = 'attachment; filename="'+modelo+'.'+formato+'"'
 
@@ -1147,7 +1165,7 @@ def backup(request, formato):
             "area_principal": True,
             "mensagem": mensagem,
         }
-        return render(request, 'generic.html', context=context)
+        return render(request, "generic.html", context=context)
 
     response['Content-Disposition'] = 'attachment; filename="backup.'+formato+'"'
 
@@ -1183,7 +1201,7 @@ def relatorio(request, modelo, formato):
             "area_principal": True,
             "mensagem": "Chamada irregular: Base de dados desconhecida = " + modelo,
         }
-        return render(request, 'generic.html', context=context)
+        return render(request, "generic.html", context=context)
 
     if formato in ("html", "HTML"):
         return render(request, arquivo, context)
@@ -1232,7 +1250,7 @@ def dados_backup(request, modo):
             "mensagem": "E-mail enviado.",
         }
 
-        return render(request, 'generic.html', context=context)
+        return render(request, "generic.html", context=context)
     
     else:
         raise SuspiciousOperation(f"Chamada irregular.")
