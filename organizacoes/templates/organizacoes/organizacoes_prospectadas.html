@@ -209,7 +209,7 @@
           {% if contato != "---------" %}
             {% if contato.momento|date:"Ymd" > meses3|date:"Ymd" %}
               <script>
-                tipo = "{% for curso in organizacao.area_curso.all %}{{curso.sigla_curta}}/{% endfor %}";
+                tipo = "{% for curso in organizacao.area_curso.all %}{% if not forloop.first %}/{% endif %}{{curso.sigla_curta}}{% endfor %}";
                 if (!("{{contato.tipo_de_retorno}}" in cursos_organizacoes)) {cursos_organizacoes["{{contato.tipo_de_retorno}}"] = {};}
                 cursos_organizacoes["{{contato.tipo_de_retorno}}"][tipo] = (cursos_organizacoes["{{contato.tipo_de_retorno}}"][tipo] || 0) + 1;
               </script>
