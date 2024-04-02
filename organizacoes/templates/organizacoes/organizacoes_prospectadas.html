@@ -77,6 +77,7 @@
       <table id="OrganizacoesTable" class="table-bordered table-sm">
         <thead class="table-info">
           <tr>
+            <th>#</th>
             <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(1)')">Organização</th>
             <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(2)')" width="48em">Área</th>
             <th onclick="w3.sortHTML('#OrganizacoesTable', '.item', 'td:nth-child(3)')" width="85em">Interesse</th>
@@ -116,6 +117,7 @@
               data-type="{{contato.tipo_de_retorno}}"
           {% endif %}
           >
+          <td style="text-align: center; font-size: 12px;"></td>
             <td>
               <a class="imprimir" href="{% url 'organizacao_completo' organizacao.id %}" target="_blank">{{organizacao.nome}}</a>
             </td>
@@ -321,6 +323,18 @@
   {% include "annotation-modal.html" %}
 
   <script>
+
+    function numberRows() {
+      $("#OrganizacoesTable tbody tr").each(function(index) {
+        $(this).find('td:first').text(index + 1);
+        //$(this).find('td:first').html("<small>"+ (index + 1) + "</small>");
+      });
+    }
+    
+    // Call numberRows after sorting the table
+    $("th").click(function() {numberRows();});
+    numberRows();
+
     function estrelas(id, pos) {
       if(pos > 0) {
         document.getElementById(id+"1").innerHTML = "&#9733;";
