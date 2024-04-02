@@ -6,7 +6,7 @@ class Relato(models.Model):
     """Avaliações realizadas durante o projeto."""
 
     momento = models.DateTimeField("Momento", default=datetime.datetime.now, blank=True,
-                                   help_text="Data e hora do relato") # hora ordena para dia
+                                   help_text="Data e hora do relato")  # hora ordena para dia
 
     # Para Alocações dos estudantes (caso um aluno reprove ele teria duas alocações)
     alocacao = models.ForeignKey("users.Alocacao", null=True, blank=True,
@@ -16,6 +16,9 @@ class Relato(models.Model):
 
     texto = models.TextField("Texto", max_length=2100, null=True, blank=True,
                                    help_text="Texto do relato")
+    
+    momento_avaliacao = models.DateTimeField("Momento da Avaliação", null=True, blank=True,
+                                   help_text="Data e hora da avaliação do relato")
 
     avaliacao = models.DecimalField("Avaliação", default=-1, max_digits=2, decimal_places=0,
                                                  help_text="nota obtida na avaliação do orientador")

@@ -99,10 +99,16 @@
           <thead><tr><th>
             {{prazo}} - 
             <span style="white-space: nowrap;">Situação: 
-          {% if item.avaliacao == -1 %}aguardando avaliação de orientador{% endif %}
-          {% if item.avaliacao == 0 %}desempenho abaixo do esperado{% endif %}
-          {% if item.avaliacao == 1 %}desempenho dentro do esperado{% endif %}
+              {% if item.avaliacao == -1 %}aguardando avaliação de orientador{% endif %}
+              {% if item.avaliacao == 0 %}<span class="red-bold">desempenho abaixo do esperado</span>{% endif %}
+              {% if item.avaliacao == 1 %}<span class="green-bold">desempenho dentro do esperado</span>{% endif %}
             </span>
+            {% if item.feedback %}
+              {% if item.momento_avaliacao %}
+                <i style="display: block;">Feedback do Orientador: {{item.momento_avaliacao}}</i>
+              {% endif %}
+              <div id="relato{{item.id}}" class="relato">{{item.feedback|linebreaks}}</div>
+            {% endif %}
           </th></tr></thead>
           <tbody><tr><td>
             <i>Entregue: {{item.momento}}</i><br>

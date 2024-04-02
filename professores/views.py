@@ -2193,7 +2193,7 @@ def relato_avaliar(request, projeto_id, evento_id):
         if editor:
 
             avaliacoes = dict(filter(lambda elem: elem[0][:3] == "op.", request.POST.items()))
-
+            
             avaliacao_negativa = False
             for aval in avaliacoes:
 
@@ -2202,12 +2202,21 @@ def relato_avaliar(request, projeto_id, evento_id):
 
                 obj_nota = float(request.POST[aval])  # Seria melhor decimal.
                 
-                relato.avaliacao = obj_nota
-
-                if( -0.5 < obj_nota < 0.5 ): # Para testar se zero (preciso melhorar isso)
-                    avaliacao_negativa = True
+                if obj_nota != relato.avaliacao:
+                    relato.avaliacao = obj_nota
+                    if( -0.5 < obj_nota < 0.5 ): # Para testar se zero (preciso melhorar isso)
+                        avaliacao_negativa = True
+                    relato.momento_avaliacao = datetime.datetime.now()
+                
+                feedback = request.POST.get("feedback" + str(relato.id), None)
+                if feedback and feedback != "" and feedback != relato.feedback:
+                    relato.feedback = feedback
+                    relato.momento_avaliacao = datetime.datetime.now()
+                else:
+                    relato.feedback = None
 
                 relato.save()
+                
 
             observacoes = request.POST.get("observacoes", None)
 
@@ -2220,12 +2229,12 @@ def relato_avaliar(request, projeto_id, evento_id):
                 obs.save()
 
             # Verificando se há feedbacks
-            for relato in relatos:
-                if relato:
-                    feedback = request.POST.get("feedback" + str(relato.id), None)
-                    if feedback and feedback != "":
-                        relato.feedback = feedback
-                        relato.save()
+            # for relato in relatos:
+            #     if relato:
+            #         feedback = request.POST.get("feedback" + str(relato.id), None)
+            #         if feedback and feedback != "":
+            #             relato.feedback = feedback
+            #             relato.save()
 
             # Dispara aviso a coordenação caso alguma observação ou estudante com dificuldade
             if avaliacao_negativa and (observacoes != ""):

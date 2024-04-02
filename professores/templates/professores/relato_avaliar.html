@@ -104,8 +104,8 @@
           </div>
           {% if relato %}
           <div style="width: 100%; max-width: 100%; display: inline; margin-left: 8px;">
-            <label class="feedbacks" for="customFeedback{{relato.id}}">Feedback opcional <span class="seta-cima"></label>
-            <div id="customFeedback{{relato.id}}" style="display: none; border: 2px solid red; margin-top: 10px; margin-right: 38px; width: 100%;">
+            <label class="feedbacks" for="customFeedback{{relato.id}}">Feedback opcional {% if relato.feedback %}<span class="seta-baixo">{% else %}<span class="seta-cima">{% endif %}</span></label>
+            <div id="customFeedback{{relato.id}}" style="{% if not relato.feedback %}display: none;{% endif %} border: 2px solid red; margin-top: 10px; margin-right: 38px; width: 100%;">
               <label for="feedback{{relato.id}}">Feedback:</label>
               <textarea id="feedback{{relato.id}}" name="feedback{{relato.id}}" rows="10" cols="180" 
               {% if not relato or not editor %}disabled {% endif %} maxlength="{% max_length Relato 'feedback' %}">{% if relato.feedback %}{{relato.feedback}}{% endif %}</textarea>
