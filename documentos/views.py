@@ -306,7 +306,7 @@ def materias_midia(request):
 
 
 # @login_required
-def relatorios_publicos(request):
+def relatorios_publicos(request, edicao=None):
     """Exibe relatórios públicos."""
 
     if request.is_ajax():
@@ -332,6 +332,8 @@ def relatorios_publicos(request):
 
     else:
         context = {"edicoes": get_edicoes(Projeto)[0],}
+        if edicao:
+            context["selecionada"] = edicao
     
     return render(request, "documentos/relatorios_publicos.html", context)
 

@@ -46,6 +46,10 @@ urlpatterns = [
          views.relatorios_publicos,
          name="relatorios_publicos"),
 
+    path("relatorios_publicos/<str:edicao>",
+         views.relatorios_publicos,
+         name="relatorios_publicos"),
+
     path("selecao_geracao_certificados/",
          views.selecao_geracao_certificados,
          name="selecao_geracao_certificados"),
