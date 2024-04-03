@@ -8,7 +8,6 @@ Data: 18 de Outubro de 2019
 
 import datetime
 import subprocess
-#from celery import task
 from celery import shared_task
 from django.conf import settings
 from django.core.management import call_command
@@ -43,7 +42,6 @@ def mediabackup():
         return "Não pode fazer o Backup: Debug está True"
 
     try:
-        # call_command("mediabackup")
         argv = ['', "mediabackup", "--compress"]
         execute_from_command_line(argv)
         return f"Backup realizado: {datetime.datetime.now()}"
@@ -51,7 +49,6 @@ def mediabackup():
         return f"Não foi possível fazer o backup: {datetime.datetime.now()}"
 
 
-#@task
 @shared_task
 def certbot_renew():
     """Renova Certificado Digital."""
@@ -90,8 +87,6 @@ def avisos_do_dia():
 
         mensagem_como_template = Template(message)
 
-        # Estou achando desnecessário continuar enviando para o próprio servidor
-        #recipient_list = ["pfeinsper@gmail.com", ]
         recipient_list = []
 
         if aviso.coordenacao:
@@ -171,7 +166,6 @@ def eventos_do_dia():
                         # Algum problema de conexão, contacte: lpsoares@insper.edu.br
                         pass
 
-#@task
 @shared_task
 def envia_aviso():
     """Envia avisos por e-mail."""
