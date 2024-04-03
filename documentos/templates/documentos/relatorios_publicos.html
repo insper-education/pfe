@@ -40,7 +40,7 @@
 
   <div class="table-responsive">
 
-    <table id="RelatoriosTable" class="table table-bordered table-hover table-sm" style="width: auto;">
+    <table id="RelatoriosTable" class="table table-bordered table-hover table-sm" style="width: 100%; max-width: 100%;">
       <thead class="table-info">
         <tr>
           <th scope="col" onclick="w3.sortHTML('#RelatoriosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Projeto</th>
@@ -105,7 +105,7 @@
                 {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
                   <a href="{% url 'organizacao_completo' relatorio.projeto.organizacao.id %}">
                 {% endif %}
-                  {{ relatorio.projeto.organizacao.sigla }}
+                  {{ relatorio.projeto.organizacao.nome }}
                 {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
                   </a>
                 {% endif %}
