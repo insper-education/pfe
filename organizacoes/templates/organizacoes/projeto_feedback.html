@@ -61,13 +61,13 @@
           <span lang="en">Name</span>
         </label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" id="nome" name="nome">
+          <input type="text" class="form-control" id="nome" name="nome" {% if user.tipo_de_usuario == 3 %}value="{{user.get_full_name}}"{% endif %}>
         </div>
       </div>
       <div class="form-group row" style="max-width: 700px;">
         <label for="email" class="col-sm-2 col-form-label">e&#8209;mail</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" id="email" name="email">
+          <input type="text" class="form-control" id="email" name="email" {% if user.tipo_de_usuario == 3 %}value="{{user.email}}"{% endif %}>
         </div>
       </div>
       <div class="form-group row" style="max-width: 700px;">
@@ -76,7 +76,7 @@
           <span lang="en">Company</span>
         </label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" id="empresa" name="empresa">
+          <input type="text" class="form-control" id="empresa" name="empresa" {% if user.tipo_de_usuario == 3 and user.parceiro.organizacao %}value="{{user.parceiro.organizacao}}"{% endif %}>
         </div>
       </div>
 
