@@ -133,27 +133,15 @@
                 {% endif %}
               </td>
 
-              <!-- Banca Final -->
+              <!-- Somente Banca Final, as outras não são listadas -->
               <td>
                 <small>
                 <ul class="grupo" style="padding-left: 20px;margin-bottom: 0px;">
                 {% for banca in projeto.banca_set.all %}
                   {% if banca.tipo_de_banca == 0 %}
-                    {% if banca.membro1 %}
-                      <li><a class="imprimir" href="{% url 'user_detail' banca.membro1.id %}">
-                        {{banca.membro1.get_full_name}} 
-                      </a></li>
-                    {% endif %}
-                    {% if banca.membro2 %}
-                      <li><a class="imprimir" href="{% url 'user_detail' banca.membro2.id %}">
-                        {{banca.membro2.get_full_name}} 
-                      </a></li>
-                    {% endif %}
-                    {% if banca.membro3 %}
-                    <li><a class="imprimir" href="{% url 'user_detail' banca.membro3.id %}">
-                      {{banca.membro3.get_full_name}} 
-                    </a></li>
-                    {% endif %}  
+                    {% for membro in banca.membros %}
+                      <li><a class="imprimir" href="{% url 'user_detail' membro.id %}">{{membro.get_full_name}} </a></li>
+                    {% endfor %}
                   {% endif %}
                 {% endfor %}
                 </ul>

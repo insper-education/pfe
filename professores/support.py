@@ -80,12 +80,8 @@ def professores_membros_bancas(banca=None):
     if banca:
         if banca.projeto and banca.projeto.orientador:
             id_membros.append(banca.projeto.orientador.user.id) # orientador
-        if banca.membro1:
-            id_membros.append(banca.membro1.id) # membro
-        if banca.membro2:
-            id_membros.append(banca.membro2.id) # membro
-        if banca.membro3:
-            id_membros.append(banca.membro3.id) # membro
+        for membro in banca.membros():
+            id_membros.append(membro.id)
 
     membros = pessoas.filter(pk__in=id_membros)
 
@@ -102,14 +98,9 @@ def falconi_membros_banca(banca=None):
     falconis = PFEUser.objects.filter(parceiro__organizacao=organizacao)
 
     id_membros = []
-
     if banca:
-        if banca.membro1:
-            id_membros.append(banca.membro1.id) # membro
-        if banca.membro2:
-            id_membros.append(banca.membro2.id) # membro
-        if banca.membro3:
-            id_membros.append(banca.membro3.id) # membro
+        for membro in banca.membros():
+            id_membros.append(membro.id)
 
     membros = falconis.filter(pk__in=id_membros)
 

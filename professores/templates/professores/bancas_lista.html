@@ -166,34 +166,18 @@
             {% endif %}
             {% endwith %}
             
-            {% if banca.membro1 or banca.membro2 or banca.membro3 %}
+            {% if banca.membros %}
               <div class="banca" style="margin-top: 8px;">
                 <b>Membros da Banca da Avaliação:</b>
                 <ol style="margin-bottom:0px;">
-                  {% if banca.membro1 %}
-                  <li>
-                    <a class="imprimir" href="{% url 'user_detail' banca.membro1.id %}">
-                      {{banca.membro1.get_full_name}}
-                    </a>
-                    <a class="email" href="mailto:{{banca.membro1.email}}">&lt;{{banca.membro1.email}}&gt;</a>
-                  </li>
-                  {% endif %}
-                  {% if banca.membro2 %}
-                  <li>
-                    <a class="imprimir" href="{% url 'user_detail' banca.membro2.id %}">
-                      {{banca.membro2.get_full_name}}
-                    </a>
-                    <a class="email" href="mailto:{{banca.membro2.email}}">&lt;{{banca.membro2.email}}&gt;</a>
-                  </li>
-                  {% endif %}
-                  {% if banca.membro3 %}
-                  <li>
-                    <a class="imprimir" href="{% url 'user_detail' banca.membro3.id %}">
-                      {{banca.membro3.get_full_name}}
-                    </a>
-                    <a class="email" href="mailto:{{banca.membro3.email}}">&lt;{{banca.membro3.email}}&gt;</a>
-                  </li>
-                  {% endif %}
+                  {% for membro in banca.membros %}
+                    <li>
+                      <a class="imprimir" href="{% url 'user_detail' membro.id %}">
+                        {{membro.get_full_name}}
+                      </a>
+                      <a class="email" href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a>
+                    </li>
+                  {% endfor %}
                 </ol>
               </div>
             {% endif %}

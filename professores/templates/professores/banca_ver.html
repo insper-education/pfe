@@ -77,24 +77,9 @@
 
   <b>Banca</b>
   <ol>
-    {% if banca.membro1 %}
-    <li>
-      {{banca.membro1.get_full_name}}
-      <a href="mailto:{{banca.membro1.email}}">&lt;{{banca.membro1.email}}&gt;</a>
-    </li>
-    {% endif %}
-    {% if banca.membro2 %}
-    <li>
-      {{banca.membro2.get_full_name}}
-      <a href="mailto:{{banca.membro2.email}}">&lt;{{banca.membro2.email}}&gt;</a>
-    </li>
-    {% endif %}
-    {% if banca.membro3 %}
-    <li>
-      {{banca.membro3.get_full_name}}
-      <a href="mailto:{{banca.membro3.email}}">&lt;{{banca.membro3.email}}&gt;</a>
-    </li>
-    {% endif %}
+    {% for membro in banca.membros %}
+      <li>{{membro.get_full_name}} <a href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a></li>
+    {% endfor %}
   </ol>
 
   {% include "grupo_estudantes.html" with projeto=banca.projeto %}

@@ -1,13 +1,11 @@
 {% load escape_emails %}
-mailto:{% if banca.membro1 %}{% if com_nome %}{{banca.membro1.get_full_name}}%20&lt;{% endif %}{{banca.membro1.email|parse_quote}}{% if com_nome %}&gt;{% endif %},{% endif %}
-{% if banca.membro2 %}{% if com_nome %}{{banca.membro2.get_full_name}}%20&lt;{% endif %}{{banca.membro2.email|parse_quote}}{% if com_nome %}&gt;{% endif %},{% endif %}
-{% if banca.membro3 %}{% if com_nome %}{{banca.membro3.get_full_name}}%20&lt;{% endif %}{{banca.membro3.email|parse_quote}}{% if com_nome %}&gt;{% endif %},{% endif %}
+mailto:{% for membro in banca.membros %}{% if com_nome %}{{membro.get_full_name}}%20&lt;{% endif %}{{membro.email|parse_quote}}{% if com_nome %}&gt;{% endif %},{% endfor %}
 {% for coorientador in banca.projeto.coorientador_set.all %}{% if com_nome %}{{coorientador.usuario.get_full_name|parse_quote}}%20&lt;{% endif %}{{coorientador.usuario.email|parse_quote}}{% if com_nome %}&gt;{% endif %},{% endfor %}
 {% if com_nome %}{{banca.projeto.orientador.user.get_full_name|parse_quote}}%20&lt;{% endif %}{{banca.projeto.orientador.user.email|parse_quote}}{% if com_nome %}&gt;{% endif %}
 ?subject=Banca%20Capstone:%20[{{ banca.projeto.organizacao.nome|parse_quote }}]%20{{banca.projeto.get_titulo|parse_quote}}
 {% comment %} &amp;cc={% if com_nome %}Luciano%20Pereira%20Soares&lt;{% endif %}lpsoares@insper.edu.br{% if com_nome %}&gt;{% endif %} {% endcomment %}
 &amp;body=Avaliadores,%0D%0A%0D%0A
-{% comment %}%09{% endcomment %}Obrigado por aceitarem o convite da banca do PFE.%0D%0A
+{% comment %}%09{% endcomment %}Obrigado por aceitarem o convite da banca do Capstone.%0D%0A
 {% comment %}%09{% endcomment %}A banca terá 40min de apresentação, 50min de arguição e 20min discussão (sem estudantes).%0D%0A
 {% comment %}%09{% endcomment %}Por favor, logo após o fim da banca, preencha o formulário de avaliação.%0D%0A%0D%0A
 {% comment %}%09%09{% endcomment %}atenciosamente, Luciano Soares
@@ -26,9 +24,7 @@ Horário:%20{{banca.startDate.date}}%20({{banca.startDate|date:'l'}})%20das%20{{
 {% if banca.projeto %}Projeto:%20[{{ banca.projeto.organizacao.nome|parse_quote }}]%20{{banca.projeto.get_titulo|parse_quote}}%0D%0A{% endif %}
 {% if banca.projeto.orientador %}Orientador:%20{{banca.projeto.orientador.user.get_full_name|parse_quote}}%0D%0A{% endif %}
 %0D%0ABanca:%0D%0A
-{% if banca.membro1 %} - {{banca.membro1.get_full_name|parse_quote}}%0D%0A{% endif %}
-{% if banca.membro2 %} - {{banca.membro2.get_full_name|parse_quote}}%0D%0A{% endif %}
-{% if banca.membro3 %} - {{banca.membro3.get_full_name|parse_quote}}%0D%0A{% endif %}
+{% for membro in banca.membros %} - {{membro.get_full_name|parse_quote}}%0D%0A{% endfor %}
 %0D%0AGrupo:%0D%0A
 {% for alocacao in banca.projeto.alocacao_set.all %} - {{alocacao.aluno.user.get_full_name|parse_quote}} {% if alocacao.aluno.externo %}[Externo]{% else %}[{{ alocacao.aluno.curso2|parse_quote }}]{% endif %}%0D%0A{% endfor %}
 %0D%0A

@@ -192,12 +192,8 @@ def ajax_bancas(request):
                     title += "\nBanca:"
                     if banca.projeto.orientador:
                         title += "\n• " + banca.projeto.orientador.user.get_full_name() + " (O)"
-                    if banca.membro1:
-                        title += "\n• " + banca.membro1.get_full_name()
-                    if banca.membro2:
-                        title += "\n• " + banca.membro2.get_full_name()
-                    if banca.membro3:
-                        title += "\n• " + banca.membro3.get_full_name()
+                    for membro in banca.membros():
+                        title += "\n• " + membro.get_full_name()
                 else:
                     title = "Projeto não identificado",
                 bancas[banca.id]["title"] = title
@@ -218,12 +214,8 @@ def ajax_bancas(request):
                     description += "\n<br>Banca:"
                     if banca.projeto.orientador:
                         description += "\n<br>&bull; " + banca.projeto.orientador.user.get_full_name() + " (O)"
-                    if banca.membro1:
-                        description += "\n<br>&bull; " + banca.membro1.get_full_name()
-                    if banca.membro2:
-                        description += "\n<br>&bull; " + banca.membro2.get_full_name()
-                    if banca.membro3:
-                        description += "\n<br>&bull; " + banca.membro3.get_full_name()
+                    for membro in banca.membros():
+                        description += "\n<br>&bull; " + membro.get_full_name()
                 else:
                     description = "Projeto não identificado",
                 bancas[banca.id]["description"] = description
@@ -308,20 +300,10 @@ def mensagem_edicao_banca(banca, atualizada=False):
         mensagem += "<li>" + coorientador.usuario.get_full_name() + " [coorientador] "
         mensagem += '<a href="mailto:' + coorientador.usuario.email + '">&lt;' + coorientador.usuario.email + "&gt;</a></li>"
 
-    # membro1
-    if banca.membro1:
-        mensagem += "<li>" + banca.membro1.get_full_name() + " [membro da banca] "
-        mensagem += '<a href="mailto:' + banca.membro1.email + '">&lt;' + banca.membro1.email + "&gt;</a></li>"
-    
-    # membro2
-    if banca.membro2:
-        mensagem += "<li>" + banca.membro2.get_full_name() + " [membro da banca] "
-        mensagem += '<a href="mailto:' + banca.membro2.email + '">&lt;' + banca.membro2.email + "&gt;</a></li>"
-
-    # membro3
-    if banca.membro3:
-        mensagem += "<li>" + banca.membro3.get_full_name() + " [membro da banca] "
-        mensagem += '<a href="mailto:' + banca.membro3.email + '">&lt;' + banca.membro3.email + "&gt;</a></li>"
+    # membros
+    for membro in banca.membros():
+        mensagem += "<li>" + membro.get_full_name() + " [membro da banca] "
+        mensagem += '<a href="mailto:' + membro.email + '">&lt;' + membro.email + "&gt;</a></li>"
 
     # estudantes
     for alocacao in banca.projeto.alocacao_set.all():
@@ -557,12 +539,8 @@ def bancas_tabela(request):
                 if banca.projeto.orientador:
                     if banca.tipo_de_banca != 2:  # Nao eh Falconi
                         membros.setdefault(banca.projeto.orientador.user, []).append(banca)
-                if banca.membro1:
-                    membros.setdefault(banca.membro1, []).append(banca)
-                if banca.membro2:
-                    membros.setdefault(banca.membro2, []).append(banca)
-                if banca.membro3:
-                    membros.setdefault(banca.membro3, []).append(banca)
+                for membro in banca.membros():
+                    membros.setdefault(membro, []).append(banca)
 
         context = {"membros": membros,}
 
@@ -620,12 +598,8 @@ def bancas_tabela_completa(request):
             if banca.projeto.orientador:
                 membros.setdefault(banca.projeto.orientador.user, [])\
                     .append(banca)
-            if banca.membro1:
-                membros.setdefault(banca.membro1, []).append(banca)
-            if banca.membro2:
-                membros.setdefault(banca.membro2, []).append(banca)
-            if banca.membro3:
-                membros.setdefault(banca.membro3, []).append(banca)
+            for membro in banca.membros():
+                membros.setdefault(membro, []).append(banca)
 
         membros_pfe.append(membros)
         periodo.append(str(ano)+"."+str(semestre))
@@ -653,7 +627,7 @@ def bancas_tabela_completa(request):
         "informacoes": informacoes,
     }
 
-    return render(request, 'professores/bancas_tabela_completa.html', context)
+    return render(request, "professores/bancas_tabela_completa.html", context)
 
 
 @login_required
@@ -1238,7 +1212,7 @@ def banca_avaliar(request, slug, documento_id=None):
         observacoes_orientador = unquote(request.GET.get("observacoes_orientador", ''))
         observacoes_estudantes = unquote(request.GET.get("observacoes_estudantes", ''))
         
-
+        tipo_documento = None
         if banca.tipo_de_banca == 1:  # (1, 'intermediaria'),
             tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Intermediária") | TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
         elif banca.tipo_de_banca == 0:  # (0, 'final'),

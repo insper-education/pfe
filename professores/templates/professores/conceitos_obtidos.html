@@ -47,7 +47,9 @@
 
   <span class="titulo">Resultado Bancas</span>
 
-  <strong>Projeto:</strong> <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a><br>
+  <strong>Projeto:</strong>
+  [<a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{projeto.organizacao}}</a>]
+  <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a><br>
 
   <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
 
@@ -58,10 +60,6 @@
     </a>
     <br>
   {% endif %}
-  <strong>Organização: </strong>
-    <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-      {{projeto.organizacao}}
-    </a><br>
   {% include "tipo_projeto.html" with com_tipo=True %}
   
   <strong style="display: inline-block; margin-top: 6px;">Grupo:</strong>
@@ -94,30 +92,31 @@
             <a href="{% url 'professor_detail' avaliador.professor.id %}">
               {{avaliador.get_full_name}}
             </a><br>
-            <strong>Avaliado em: </strong>{{objs.momento}}<br>
-            <strong>Conceitos:</strong><br>
-            <ul style="list-style-type: '&#x21A3; ';">
-              {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo|slice:11 != "observacoes" %}
+            {% if objs.momento %}<strong>Avaliado em: </strong>{{objs.momento}}<br>{% endif %}
+            {% if objs.items %}
+              <strong>Conceitos:</strong><br>
+              <ul style="list-style-type: '&#x21A3; ';">
+                {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo|slice:11 != "observacoes" %}
+                  <li>
+                    <span style="font-weight: 500;">{{objetivo.titulo}}</span>: 
+                    <span data-toggle="tooltip" data-html="true" animation="true" title="
+                  {{objetivos|get_rubrica:objetivo.id|get_texto_intermediaria_nota:conceito.nota}}">
+                  <span id="inter{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
+                  <script>
+                    $("#inter{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
+                      {% if conceito.nota %}converteN({{conceito.nota}}){% else %}"N/A"{% endif %}
+                    );
+                    objetivo_tmp = new Objetivo();
+                    objetivo_tmp.titulo = "{{objetivo.titulo}}"
+                    intermediaria.add_objetivo(objetivo_tmp)
+                    {% if conceito.nota %}
+                      intermediaria.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}});
+                    {% endif %}
+                  </script>
 
-                <li>
-                  <span style="font-weight: 500;">{{objetivo.titulo}}</span>: 
-                  <span data-toggle="tooltip" data-html="true" animation="true" title="
-                {{objetivos|get_rubrica:objetivo.id|get_texto_intermediaria_nota:conceito.nota}}">
-                <span id="inter{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
-                <script>
-                  $("#inter{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
-                    {% if conceito.nota %}converteN({{conceito.nota}}){% else %}"N/A"{% endif %}
-                  );
-                  objetivo_tmp = new Objetivo();
-                  objetivo_tmp.titulo = "{{objetivo.titulo}}"
-                  intermediaria.add_objetivo(objetivo_tmp)
-                  {% if conceito.nota %}
-                    intermediaria.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}});
-                  {% endif %}
-                </script>
-
-              {% endif %}{% endfor %}
-            </ul>
+                {% endif %}{% endfor %}
+              </ul>
+            {% endif %}
             {% if objs.observacoes_estudantes %}  
               &nbsp;<u><span style="font-weight: 500;">Observações para Estudantes</span>:</u> {{objs.observacoes_estudantes}}<br>
               {% if objs.observacoes_orientador %}<br>{% endif %}

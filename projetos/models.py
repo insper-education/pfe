@@ -813,6 +813,11 @@ class Banca(models.Model):
         """Caminho para avaliar uma banca."""
         return reverse("banca_avaliar", kwargs={"slug": self.slug})
 
+    def membros(self):
+        """Retorna os membros da banca."""
+        selecao = [ m for m in [self.membro1, self.membro2, self.membro3] if m is not None]
+        return selecao
+    
     class Meta:
         ordering = ["startDate"]
 
@@ -842,6 +847,7 @@ class Banca(models.Model):
         return observacoes
     
     def get_avaliacoes(self):
+        """Retorna as avaliações da banca, mas somente se todos os membros da banca já avaliaram."""
         if self.tipo_de_banca == 0:
             avaliacoes = Avaliacao2.objects.filter(projeto=self.projeto, exame__titulo="Banca Final")
         elif self.tipo_de_banca == 1:
@@ -851,6 +857,18 @@ class Banca(models.Model):
         else:
             avaliacoes = Avaliacao2.objects.none()
 
+        # Verifica se todos avaliaram
+        if self.membro1 is not None:
+            if not avaliacoes.filter(avaliador=self.membro1).exists():
+                return None
+        if self.membro2 is not None:
+            if not avaliacoes.filter(avaliador=self.membro2).exists():
+                return None
+        if self.membro3 is not None:
+            if not avaliacoes.filter(avaliador=self.membro3).exists():
+                return None
+            
+        
         objetivos = {}
         nota = 0
         peso = 0

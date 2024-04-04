@@ -79,25 +79,14 @@
           <br>
           <b>Membros da Banca:</b>
           <ol>
-            {% if banca.membro1 %}
-            <li>
-              {{banca.membro1.get_full_name}} <a href="mailto:{{banca.membro1.email}}">&lt;{{banca.membro1.email}}&gt;</a>
-            </li>
-            {% endif %}
-            {% if banca.membro2 %}
-            <li>
-              {{banca.membro2.get_full_name}} <a href="mailto:{{banca.membro2.email}}">&lt;{{banca.membro2.email}}&gt;</a>
-            </li>
-            {% endif %}
-            {% if banca.membro3 %}
-            <li>
-              {{banca.membro3.get_full_name}} <a href="mailto:{{banca.membro3.email}}">&lt;{{banca.membro3.email}}&gt;</a>
-            </li>
-            {% endif %}
+            {% for membro in banca.membros %}
+              <li>{{membro.get_full_name}} <a href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a></li>
+            {% endfor %}
           </ol>
 
           {% with avaliacao=banca.get_avaliacoes %}
             {% if avaliacao.objetivos %}
+              <hr>
               <b>Conceitos Banca:</b><br>
               {% for objetivo, avaliacao in avaliacao.objetivos.items %}
                 &nbsp;&#x21A3; {{objetivo.titulo}}: {{avaliacao}}<br>
@@ -105,22 +94,26 @@
               {% if avaliacao.peso > 0 %}
                 &#10149; Nota final = <b>{{avaliacao.nota|floatformat:2}}</b><br>
               {% endif %}
-              <small>Obs: Os conceitos e notas da banca vão variar conforme membros da banca postam suas avaliações.<br></small>
+              {% comment %} <small>Obs: Os conceitos e notas da banca vão variar conforme membros da banca postam suas avaliações.<br></small> {% endcomment %}
+
+              {% if banca.get_observacoes_estudantes %}
+                <b style="display: inline-block; margin-top: 14px;">Observações realizadas pelos membros da banca:</b>
+                <ul>
+                  {% for observacao in banca.get_observacoes_estudantes %}
+                    {% if observacao.observacoes_estudantes %}
+                      <li style="margin-top: 6px;">
+                        <b>{{observacao.avaliador.get_full_name}}</b>:<br>
+                        {{observacao.observacoes_estudantes|linebreaks}}
+                      </li>
+                    {% endif %}
+                  {% endfor %}
+                </ul>
+              {% endif %}
+  
             {% endif %}
           {% endwith %}
 
-          {% if banca.get_observacoes_estudantes %}
-            <br>
-            <b>Observações realizadas pelos membros da banca:</b><br>
-            <ul>
-              {% for observacao in banca.get_observacoes_estudantes %}
-                {% if observacao.observacoes_estudantes %}
-                  <li>{{observacao.observacoes_estudantes}}</li>
-                {% endif %}
-              {% endfor %}
-            </ul>
-          {% endif %}
-
+          
         </div>
       {% endfor %}
   

@@ -381,15 +381,9 @@
   });
 
   function recupera_selecao() {
-    {% if banca and banca.membro1 %}
-      $('#membro1 option[value={{banca.membro1.id}}]').attr("selected","selected");
-    {% endif %}
-    {% if banca and banca.membro2 %}
-      $('#membro2 option[value={{banca.membro2.id}}]').attr("selected","selected");
-    {% endif %}
-    {% if banca and banca.membro3 %}
-      $('#membro3 option[value={{banca.membro3.id}}]').attr("selected","selected");
-    {% endif %}
+    {% for membro in banca.membros %}
+      $("#membro{{forloop.counter}} option[value={{membro.id}}]").attr("selected","selected");
+    {% endfor %}
   }
 
   {% if banca %}

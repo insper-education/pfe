@@ -84,18 +84,9 @@
         </td> {% endcomment %}
         <td>
           <ul>
-            {% if banca.membro1 %}
-              <li><a href="{% url 'user_detail' banca.membro1.id %}">{{banca.membro1.get_full_name}}</a></li>
-            {% endif %}
-            {% if banca.membro2 %}
-              <li><a href="{% url 'user_detail' banca.membro2.id %}">{{banca.membro2.get_full_name}}</a></li>
-            {% endif %}
-            {% if banca.membro3 %}
-              <li><a href="{% url 'user_detail' banca.membro3.id %}">{{banca.membro3.get_full_name}}</a></li>
-            {% endif %}
-            {% if banca.membro4 %}
-              <li><a href="{% url 'user_detail' banca.membro4.id %}">{{banca.membro4.get_full_name}}</a></li>
-            {% endif %}
+            {% for membro in banca.membros %}
+              <li><a href="{% url 'user_detail' membro.id %}">{{membro.get_full_name}}</a></li>
+            {% endfor %}
           </ul>
         </td>
       </tr>

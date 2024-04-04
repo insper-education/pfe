@@ -103,14 +103,10 @@ def gera_descricao_banca(banca, alunos):
     if banca.link:
         description += "\n\nLink: {0}".format(banca.link)
     description += "\n\nOrientador:\n- {0}".format(banca.projeto.orientador)
-    if banca.membro1 or banca.membro2 or banca.membro3:
+    if banca.membros():
         description += "\n\nMembros da Banca:"
-        if banca.membro1:
-            description += "\n- {0}".format(banca.membro1.get_full_name())
-        if banca.membro2:
-            description += "\n- {0}".format(banca.membro2.get_full_name())
-        if banca.membro3:
-            description += "\n- {0}".format(banca.membro3.get_full_name())
+    for membro in banca.membros():
+        description += "\n- {0}".format(membro.get_full_name())
     description += "\n\nAlunos:"
     for aluno in alunos:
         description += "\n- {0}".format(aluno.user.get_full_name())
@@ -152,14 +148,8 @@ def export_calendar(request, event_id):
     cal_address.params["CN"] = "Luciano Pereira Soares"
     ical_event.add("organizer", cal_address)
 
-    if banca.membro1:
-        adicionar_participante_em_evento(ical_event, banca.membro1)
-
-    if banca.membro2:
-        adicionar_participante_em_evento(ical_event, banca.membro2)
-
-    if banca.membro3:
-        adicionar_participante_em_evento(ical_event, banca.membro3)
+    for membro in banca.membros():
+        adicionar_participante_em_evento(ical_event, membro)
 
     alunos = Aluno.objects.filter(alocacao__projeto=banca.projeto)\
         .filter(trancado=False)
