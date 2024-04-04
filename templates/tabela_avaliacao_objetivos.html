@@ -96,20 +96,40 @@
           {% if not sem_NA %}
             <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA" lang="pt">caso prefira não avaliar este objetivo, selecione esta coluna.</label><label for="objetivo{{objetivo.id}}NA" lang="en">if you prefer not to evaluate this objective, select this column.</label></td>
           {% endif %}
-          <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I" lang="pt">{{objetivo.rubrica_intermediaria_I}}</label><label for="objetivo{{objetivo.id}}I" lang="en">{{objetivo.rubrica_intermediaria_I_en}}</label></td>
-          <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D" lang="pt">{{objetivo.rubrica_intermediaria_D}}</label><label for="objetivo{{objetivo.id}}D" lang="en">{{objetivo.rubrica_intermediaria_D_en}}</label></td>
-          <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C" lang="pt">{{objetivo.rubrica_intermediaria_C}}</label><label for="objetivo{{objetivo.id}}C" lang="en">{{objetivo.rubrica_intermediaria_C_en}}</label></td>
-          <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B" lang="pt">{{objetivo.rubrica_intermediaria_B}}</label><label for="objetivo{{objetivo.id}}B" lang="en">{{objetivo.rubrica_intermediaria_B_en}}</label></td>
-          <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A" lang="pt">{{objetivo.rubrica_intermediaria_A}}</label><label for="objetivo{{objetivo.id}}A" lang="en">{{objetivo.rubrica_intermediaria_A_en}}</label></td>
+
+          {% if individual %}
+            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I" lang="pt">{{objetivo.rubrica_intermediaria_individual_I}}</label><label for="objetivo{{objetivo.id}}I" lang="en">{{objetivo.rubrica_intermediaria_individual_I_en}}</label></td>
+            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D" lang="pt">{{objetivo.rubrica_intermediaria_individual_D}}</label><label for="objetivo{{objetivo.id}}D" lang="en">{{objetivo.rubrica_intermediaria_individual_D_en}}</label></td>
+            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C" lang="pt">{{objetivo.rubrica_intermediaria_individual_C}}</label><label for="objetivo{{objetivo.id}}C" lang="en">{{objetivo.rubrica_intermediaria_individual_C_en}}</label></td>
+            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B" lang="pt">{{objetivo.rubrica_intermediaria_individual_B}}</label><label for="objetivo{{objetivo.id}}B" lang="en">{{objetivo.rubrica_intermediaria_individual_B_en}}</label></td>
+            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A" lang="pt">{{objetivo.rubrica_intermediaria_individual_A}}</label><label for="objetivo{{objetivo.id}}A" lang="en">{{objetivo.rubrica_intermediaria_individual_A_en}}</label></td>
+          {% else %}
+            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I" lang="pt">{{objetivo.rubrica_intermediaria_I}}</label><label for="objetivo{{objetivo.id}}I" lang="en">{{objetivo.rubrica_intermediaria_I_en}}</label></td>
+            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D" lang="pt">{{objetivo.rubrica_intermediaria_D}}</label><label for="objetivo{{objetivo.id}}D" lang="en">{{objetivo.rubrica_intermediaria_D_en}}</label></td>
+            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C" lang="pt">{{objetivo.rubrica_intermediaria_C}}</label><label for="objetivo{{objetivo.id}}C" lang="en">{{objetivo.rubrica_intermediaria_C_en}}</label></td>
+            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B" lang="pt">{{objetivo.rubrica_intermediaria_B}}</label><label for="objetivo{{objetivo.id}}B" lang="en">{{objetivo.rubrica_intermediaria_B_en}}</label></td>
+            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A" lang="pt">{{objetivo.rubrica_intermediaria_A}}</label><label for="objetivo{{objetivo.id}}A" lang="en">{{objetivo.rubrica_intermediaria_A_en}}</label></td>
+          {% endif %}
+
         {% elif periodo_para_rubricas == 2 %} {% comment %} Rubricas Finais {% endcomment %}
           {% if not sem_NA %}
             <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA" lang="pt">caso prefira não avaliar este objetivo, selecione esta coluna.</label><label for="objetivo{{objetivo.id}}NA" lang="en">if you prefer not to evaluate this objective, select this column.</label></td>
           {% endif %}
-          <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I" lang="pt">{{objetivo.rubrica_final_I}}</label><label for="objetivo{{objetivo.id}}I" lang="en">{{objetivo.rubrica_final_I_en}}</label></td>
-          <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D" lang="pt">{{objetivo.rubrica_final_D}}</label><label for="objetivo{{objetivo.id}}D" lang="en">{{objetivo.rubrica_final_D_en}}</label></td>
-          <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C" lang="pt">{{objetivo.rubrica_final_C}}</label><label for="objetivo{{objetivo.id}}C" lang="en">{{objetivo.rubrica_final_C_en}}</label></td>
-          <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B" lang="pt">{{objetivo.rubrica_final_B}}</label><label for="objetivo{{objetivo.id}}B" lang="en">{{objetivo.rubrica_final_B_en}}</label></td>
-          <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A" lang="pt">{{objetivo.rubrica_final_A}}</label><label for="objetivo{{objetivo.id}}A" lang="en">{{objetivo.rubrica_final_A_en}}</label></td>
+
+          {% if individual %}
+            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I" lang="pt">{{objetivo.rubrica_final_individual_I}}</label><label for="objetivo{{objetivo.id}}I" lang="en">{{objetivo.rubrica_final_individual_I_en}}</label></td>
+            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D" lang="pt">{{objetivo.rubrica_final_individual_D}}</label><label for="objetivo{{objetivo.id}}D" lang="en">{{objetivo.rubrica_final_individual_D_en}}</label></td>
+            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C" lang="pt">{{objetivo.rubrica_final_individual_C}}</label><label for="objetivo{{objetivo.id}}C" lang="en">{{objetivo.rubrica_final_individual_C_en}}</label></td>
+            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B" lang="pt">{{objetivo.rubrica_final_individual_B}}</label><label for="objetivo{{objetivo.id}}B" lang="en">{{objetivo.rubrica_final_individual_B_en}}</label></td>
+            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A" lang="pt">{{objetivo.rubrica_final_individual_A}}</label><label for="objetivo{{objetivo.id}}A" lang="en">{{objetivo.rubrica_final_individual_A_en}}</label></td>
+          {% else %}
+            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I" lang="pt">{{objetivo.rubrica_final_I}}</label><label for="objetivo{{objetivo.id}}I" lang="en">{{objetivo.rubrica_final_I_en}}</label></td>
+            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D" lang="pt">{{objetivo.rubrica_final_D}}</label><label for="objetivo{{objetivo.id}}D" lang="en">{{objetivo.rubrica_final_D_en}}</label></td>
+            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C" lang="pt">{{objetivo.rubrica_final_C}}</label><label for="objetivo{{objetivo.id}}C" lang="en">{{objetivo.rubrica_final_C_en}}</label></td>
+            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B" lang="pt">{{objetivo.rubrica_final_B}}</label><label for="objetivo{{objetivo.id}}B" lang="en">{{objetivo.rubrica_final_B_en}}</label></td>
+            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A" lang="pt">{{objetivo.rubrica_final_A}}</label><label for="objetivo{{objetivo.id}}A" lang="en">{{objetivo.rubrica_final_A_en}}</label></td>
+          {% endif %}
+
         {% else %}
           <td colspan="6">ERRO</td>
         {% endif %}

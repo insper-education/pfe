@@ -10,6 +10,7 @@
   {% load tz %}
   {% load banca_tipo %}
   {% load date_extras %}
+  {% load negate %}
 
   <script>{% include "tooltip.js" %}</script>
   <link rel="stylesheet" href="{% static 'css/form_aval.css' %}">
@@ -127,7 +128,7 @@
       {% endif %}
 
       {% if objetivos %}
-        {% include "tabela_avaliacao_objetivos.html" with sem_NA=True %}
+        {% include "tabela_avaliacao_objetivos.html" with sem_NA=True individual=composicao.exame.grupo|negate %}
       {% else %}
         <b lang="pt">Decisão:</b><b lang="en">Decision:</b><br>
         <div style="width: fit-content; display: inline-block; margin-left: 20px;" {% if not documentos %}data-toggle="tooltip" data-html="true" animation="true" title="Documento não entregue"{% endif %}>
