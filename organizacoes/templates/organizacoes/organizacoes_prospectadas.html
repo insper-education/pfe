@@ -12,14 +12,13 @@
   <script>{% include "tooltip.js" %}</script>
 
   <style>
-    .cursor_pointer{
-      cursor: pointer;
-    }
+    .cursor_pointer{cursor: pointer;}
     .tit_peq {
       display: block;
       font-weight: bold;
       line-height: 1.2 !important;
     }
+    .show-hide {cursor: pointer;}
   </style>
 
 {% endblock %}
@@ -231,13 +230,7 @@
       {% comment %} {% if organizacoes_list %}{% endcomment %}
 
       <b style="display: inline-block; margin-top: 16px;">Organizações contactadas recentemente ({{total_organizacoes}}):</b><br>
-
-      <style>
-        .show-hide {
-          cursor: pointer;
-        }
-      </style>
-        
+  
       &nbsp;<span data-type="0" data-color="lightblue" class="show-hide" style="background-color:lightblue">&nbsp;&nbsp;&nbsp;</span> Sondada <span id="so_contactados"></span><br>
       &nbsp;<span data-type="1" data-color="lemonchiffon" class="show-hide" style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;</span> Interessada <span id="interessados"></span><br>
       &nbsp;<span data-type="2" data-color="lightgreen" class="show-hide" style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;</span> Confirmada <span id="confirmados"></span><br>
@@ -317,8 +310,12 @@
         ({{ total_submetidas }})
       </a>
 
-  </div>
+      <script>
+        // Call numberRows after sorting the table
+        $("th").click(function() {numberRows();});
+      </script>
 
+  </div>
 
   {% include "annotation-modal.html" %}
 
@@ -327,12 +324,8 @@
     function numberRows() {
       $("#OrganizacoesTable tbody tr").each(function(index) {
         $(this).find('td:first').text(index + 1);
-        //$(this).find('td:first').html("<small>"+ (index + 1) + "</small>");
       });
-    }
-    
-    // Call numberRows after sorting the table
-    $("th").click(function() {numberRows();});
+    }    
     numberRows();
 
     function estrelas(id, pos) {
@@ -439,6 +432,7 @@
                 $(".tooltip-inner").remove();
                 $(".tooltip-arrow").remove();
                 filtra_data();
+                numberRows();
                 $("#spinner").css("visibility", "hidden");
             },
             {% include "ajax_error_function.js" %}
