@@ -20,11 +20,11 @@
 
   <style>
     .tit_rel {
-        font-weight: bold;
-        font-size: 20px;
+      font-weight: bold;
+      font-size: 20px;
     }
     @media (max-width: 740px) {
-        .tit_rel {font-size: 17px;}
+      .tit_rel {font-size: 17px;}
     }
   </style>
 {% endblock %}
@@ -124,21 +124,21 @@
     {% endif %}
 
     {% if certificados %}
-        <hr>
-        <h3>Certificados</h3>
-        <ul>
+      <hr>
+      <h3>Certificados</h3>
+      <ul>
         {% for certificado in certificados %}
-            <li>
-                {{certificado.get_certificado}}
-                {% if certificado.data %}
-                    em {{certificado.data|date:"DATE_FORMAT"}}
-                {% endif %}
-                {% if certificado.documento %}
-                    - documento: <a href="{{ certificado.documento.url }}" target="_blank" rel="noopener noreferrer"><span style="word-break: break-all;">{{ certificado.documento.url }}</span></a><br>
-                {% endif %}
-            </li>
+          <li>
+            {{certificado.get_certificado}}
+            {% if certificado.data %}
+                em {{certificado.data|date:"DATE_FORMAT"}}
+            {% endif %}
+            {% if certificado.documento %}
+                - documento: <a href="{{ certificado.documento.url }}" target="_blank" rel="noopener noreferrer"><span style="word-break: break-all;">{{ certificado.documento.url }}</span></a><br>
+            {% endif %}
+          </li>
         {% endfor %}
-        </ul>
+      </ul>
     {% endif %}
 
     {% if alocacoes.count > 0 %}
@@ -166,32 +166,28 @@
                 {% for evento, relato, ordem in alocado.get_relatos %}
                     <p style="padding-left: 0.8em;">
                     {% if relato %}
-                        <a href="{% url 'relato_visualizar' relato.id %}">
-                            {{ordem|add:1}}&ordm; - 
-                            <span class="opt_full">{{ evento.endDate|date:"DATE_FORMAT" }}:</span>
-                            <span class="opt_short">{{ evento.endDate|date:"d/m/Y" }}:</span>
-                            Preenchido <span class="opt_full">pelo estudante em</span>
-                            <span class="opt_full">{{ relato.momento|date:"DATETIME_FORMAT" }}</span>
-                            <span class="opt_short">{{ relato.momento|date:"SHORT_DATETIME_FORMAT" }}</span>
-                        </a>
-                        {% if relato.avaliacao >= 0 %}
-                            {% if relato.avaliacao > 0 %}
-                                <span style="background-color:#EEF;" data-toggle="tooltip" data-html="true" animation="true" title="Acima do desempenho esperado">
-                                    &#128077;
-                                </span> 
-                            {% else %}
-                                <span style="background-color:#EEF;" data-toggle="tooltip" data-html="true" animation="true" title="Abaixo do desempenho esperado">
-                                    &#128078;
-                                </span>
-                            {% endif %}
+                      <a href="{% url 'relato_visualizar' relato.id %}">
+                        {{ordem|add:1}}&ordm; - 
+                        <span class="opt_full">{{ evento.endDate|date:"DATE_FORMAT" }}:</span>
+                        <span class="opt_short">{{ evento.endDate|date:"d/m/Y" }}:</span>
+                        Preenchido <span class="opt_full">pelo estudante em</span>
+                        <span class="opt_full">{{ relato.momento|date:"DATETIME_FORMAT" }}</span>
+                        <span class="opt_short">{{ relato.momento|date:"SHORT_DATETIME_FORMAT" }}</span>
+                      </a>
+                      {% if relato.avaliacao >= 0 %}
+                        {% if relato.avaliacao > 0 %}
+                          <span style="background-color:#EEF;" data-toggle="tooltip" data-html="true" animation="true" title="Acima do desempenho esperado">&#128077;</span> 
                         {% else %}
-                            <span style="background-color:#EEF;" data-toggle="tooltip" data-html="true" animation="true" title="Não conferido pelo orientador">
-                                &#10060;
-                            </span>
-                            
+                          <span style="background-color:#EEF;" data-toggle="tooltip" data-html="true" animation="true" title="Abaixo do desempenho esperado">&#128078;</span>
                         {% endif %}
+                      {% else %}
+                        <span style="background-color:#EEF;" data-toggle="tooltip" data-html="true" animation="true" title="Não conferido pelo orientador">&#10060;</span>
+                      {% endif %}
                     {% else %}
-                        {{ordem|add:1}} - Relato {{evento.endDate}} : Relato não preenchido pelo estudante
+                      {{ordem|add:1}}&ordm; - 
+                      <span class="opt_full">{{ evento.endDate|date:"DATE_FORMAT" }}:</span>
+                      <span class="opt_short">{{ evento.endDate|date:"d/m/Y" }}:</span>
+                      Não preenchido pelo estudante
                     {% endif %}
                     </p>
                 {% endfor %}

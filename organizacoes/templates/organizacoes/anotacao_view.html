@@ -8,6 +8,14 @@
 <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
 <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
 
+<style>
+  {% comment %} Para seleção de projeto não vazar a tela {% endcomment %}
+  .bootstrap-select > .dropdown-menu { 
+    width: 100vw;
+    max-width: fit-content;
+  }
+</style>
+
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
 
