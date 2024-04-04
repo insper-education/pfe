@@ -584,7 +584,7 @@ def organizacoes_lista(request):
             tipos = ""
             for estudante in estudantes:
                 tipos += estudante.curso2.sigla_curta
-            tipo_estudantes += "["+tipos+"]"
+            tipo_estudantes += "["+"|".join(tipos)+"] "
         grupos.append(tipo_estudantes)
 
 

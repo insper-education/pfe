@@ -18,7 +18,7 @@
   </span>
 
   {% include "tabelas_top.html" with tabela="Organizacoes" cabecalhos=cabecalhos %}
-        {% for organizacao,fechados,desde,contato, grupos in organizacoes_list %} 
+        {% for organizacao, fechados, desde, contato, grupos in organizacoes_list %} 
           <tr class="item">
 
           <th scope="row" data-sort="{{organizacao.nome}}">
@@ -35,21 +35,13 @@
             {% endif %}
             </td>
 
-            <td>
-              {{desde}}
-            </td>
+            <td>{{desde}}</td>
 
-            <td class="text-center">
-              {{organizacao.proposta_set.count|stringformat:"03d"}}
-            </td>
+            <td class="text-center">{{organizacao.proposta_set.count|stringformat:"03d"}}</td>
 
-            <td class="text-center">
-              {{fechados|stringformat:"03d"}}
-            </td>
+            <td class="text-center">{{fechados|stringformat:"03d"}}</td>
 
-            <td class="text-center">
-              {{grupos}}
-            </td>
+            <td class="text-center">{{grupos}}</td>
 
           </tr>
         {% endfor %}
