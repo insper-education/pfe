@@ -126,7 +126,7 @@
             "data_hora": data_hora,
             "tipo_de_retorno": tipo_de_retorno,
             "organizacao_id": organizacao_id,
-            "csrfmiddlewaretoken": '{{ csrf_token }}',
+            "csrfmiddlewaretoken": "{{ csrf_token }}",
         },
         success: function(response){
             if (response.atualizado) {

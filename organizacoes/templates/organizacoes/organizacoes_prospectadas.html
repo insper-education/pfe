@@ -423,27 +423,27 @@
       filtra_data();
     });
 
-      $(".periodo").change(function(){
-        
-          $("#spinner").css("visibility", "visible");
-          var periodo = $(".periodo option:selected").attr("value");
-          $.ajax({
-              type: "POST",
-              url: "{% url 'organizacoes_prospect' %}",
-              data: {
-                  periodo: periodo,
-                  "csrfmiddlewaretoken": "{{ csrf_token }}",
-              },
-              success: function(response){
-                  $("#atualizar").replaceWith($("#atualizar",response));
-                  $(".tooltip-inner").remove();
-                  $(".tooltip-arrow").remove();
-                  filtra_data();
-                  $("#spinner").css("visibility", "hidden");
-              },
-              {% include "ajax_error_function.js" %}
-          });
-      });
+    $(".periodo").change(function(){
+      
+        $("#spinner").css("visibility", "visible");
+        var periodo = $(".periodo option:selected").attr("value");
+        $.ajax({
+            type: "POST",
+            url: "{% url 'organizacoes_prospect' %}",
+            data: {
+                periodo: periodo,
+                "csrfmiddlewaretoken": "{{ csrf_token }}",
+            },
+            success: function(response){
+                $("#atualizar").replaceWith($("#atualizar",response));
+                $(".tooltip-inner").remove();
+                $(".tooltip-arrow").remove();
+                filtra_data();
+                $("#spinner").css("visibility", "hidden");
+            },
+            {% include "ajax_error_function.js" %}
+        });
+    });
   </script>
 
 {% endblock %}
