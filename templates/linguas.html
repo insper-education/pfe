@@ -6,6 +6,11 @@
 
 {% comment %} Coloque essa chamada sempre no final do arquivo {% endcomment %}
 
+<style>
+  .show {display: initial;}
+  .hide {display: none;}
+</style>
+
 <script>
 
   {% comment %} VER:
@@ -16,22 +21,40 @@
   var text_en = "<span style='cursor: pointer;'>&nbsp;PT|<b>EN</b>&nbsp;</span>";
 
   function esconde_lingua() {
-    if ($("html").is(":lang(pt)")) {
+    if (localStorage.getItem("lingua") == null) {
+      if (navigator.language.startsWith("pt")) {
+        localStorage.setItem("lingua", "pt");
+      } else {
+        localStorage.setItem("lingua", "en");
+      }
+    }
+
+    if (localStorage.getItem("lingua") == "pt") {
       $("#language_button").html(text_pt);
+      $('[lang="pt"]').css("display", "initial");
       $('[lang="en"]').css("display", "none");
     } else {
       $("#language_button").html(text_en);
       $('[lang="pt"]').css("display", "none");
+      $('[lang="en"]').css("display", "initial");
     }
+
   }
   
   esconde_lingua();  // Para chamar no carrega_pagina
 
   $("body").on("click", "#language_button", function(e) {
-    $('[lang="pt"]').toggle();
-    $('[lang="en"]').toggle();
-    if($('[lang="en"]').is(":visible")) $("#language_button").html(text_en);  
-    else $("#language_button").html(text_pt);
+    if (localStorage.getItem("lingua") == "pt") {
+      localStorage.setItem("lingua", "en");
+      $("#language_button").html(text_en); 
+      $('[lang="pt"]').css("display", "none");
+      $('[lang="en"]').css("display", "initial");
+    } else {
+      localStorage.setItem("lingua", "pt");
+      $("#language_button").html(text_pt);
+      $('[lang="pt"]').css("display", "initial");
+      $('[lang="en"]').css("display", "none");
+    }
   });
 
   {% comment %} 

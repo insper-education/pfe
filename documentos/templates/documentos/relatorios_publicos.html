@@ -62,7 +62,7 @@
 
           {% if relatorio.link or relatorio.documento and relatorio.projeto %}
 
-            <tr class="item">
+            <tr class="item  {% if relatorio.lingua_do_documento == 0 %}portugues{% elif relatorio.lingua_do_documento == 1 %}ingles{% endif %}">
               <td>
                 {% if relatorio.projeto %}
                   {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
@@ -74,6 +74,7 @@
                     </a>
                   {% endif %}
                 {% endif %}
+                {% if relatorio.lingua_do_documento == 0 %}<small lang="pt">(português)</small><small lang="en">(portuguese)</small>{% elif relatorio.lingua_do_documento == 1 %}<small lang="pt">(inglês)</small><small lang="en">(english)</small>{% endif %}
               </td>
 
               <td>
@@ -171,6 +172,11 @@
         if(table) {
           table.fnSetColumnVis( 4, !($("#filterEdicao").val()!="todas" ));  // esconde Período
           table.fnSetColumnVis( 6, false );  // esconde longa URL
+
+          // Callback para acertar o idioma
+          table.on("draw.dt", function() {
+            esconde_lingua();
+          });
         }
       }
       esconde_lingua();
