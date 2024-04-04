@@ -15,13 +15,17 @@
   var text_pt = "<span style='cursor: pointer;'>&nbsp;<b>PT</b>|EN&nbsp;</span>";
   var text_en = "<span style='cursor: pointer;'>&nbsp;PT|<b>EN</b>&nbsp;</span>";
 
-  if ($("html").is(":lang(pt)")) {
-    $("#language_button").html(text_pt);
-    $('[lang="en"]').css("display", "none");
-  } else {
-    $("#language_button").html(text_en);
-    $('[lang="pt"]').css("display", "none");
+  function esconde_lingua() {
+    if ($("html").is(":lang(pt)")) {
+      $("#language_button").html(text_pt);
+      $('[lang="en"]').css("display", "none");
+    } else {
+      $("#language_button").html(text_en);
+      $('[lang="pt"]').css("display", "none");
+    }
   }
+  
+  esconde_lingua();  // Para chamar no carrega_pagina
 
   $("body").on("click", "#language_button", function(e) {
     $('[lang="pt"]').toggle();
