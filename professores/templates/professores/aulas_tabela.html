@@ -83,17 +83,19 @@
 
   <script>
     $("#usuario").on("changed.bs.select", function (e, clickedIndex, isSelected, previousValue) {
-      table = $('#AulasTable').DataTable();
+      
       $.fn.dataTable.ext.search.push(
         function(settings, data, dataIndex) {
-          if(table) {
+          Table = $("#AulasTable").DataTable();
+          if(Table && typeof Table.row === "function") {
             {% comment %} Somente mostra elemento selecionado {% endcomment %}
-            var val = $('#usuario').selectpicker('val');
+            var val = $("#usuario").selectpicker("val");
             return(val.includes($(table.row(dataIndex).node()).attr("data-user")));
           }
+          return true;
         }
-     );
-     table.draw();
+      );
+      $("#AulasTable").DataTable().draw();
     });
   </script>
 

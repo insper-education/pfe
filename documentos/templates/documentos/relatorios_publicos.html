@@ -187,18 +187,18 @@
   <script>
 
     $("#filterLingua").on("changed.bs.select", function (e, clickedIndex, isSelected, previousValue) {
-      table = $("#RelatoriosTable").DataTable();
       $.fn.dataTable.ext.search.push(
         function(settings, data, dataIndex) {
-          if(table) {
+          Table = $("#RelatoriosTable").DataTable();
+          if(Table && typeof Table.row === "function") {
             // Somente mostra elemento selecionado
             var val = $("#filterLingua").selectpicker("val");
-            console.log(val);
-            return(val.includes($(table.row(dataIndex).node()).attr("data-lingua")));
+            return(val.includes($(Table.row(dataIndex).node()).attr("data-lingua")));
           }
+          return true;
         }
      );
-     table.draw();
+     $("#RelatoriosTable").DataTable().draw();
     });
 
     function carrega_pagina() {

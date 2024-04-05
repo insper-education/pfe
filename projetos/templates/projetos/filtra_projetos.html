@@ -113,19 +113,19 @@
 
   <script>
 
-    var table = null;
+    var Table = null;
 
     function carrega_pagina() {
 
-      table = $('#ProjetosTable').DataTable();
+      Table = $("#ProjetosTable").DataTable();
       
       $.fn.dataTable.ext.search.push(
         function(settings, data, dataIndex) {
           
-          if(table) {
+          if(Table) {
 
             // Se o principal estiver selecionado, todos aparecem, mesmo sem nenhuma área marcada
-            if( $("#titulo_areas").is(':checked') ) {
+            if( $("#titulo_areas").is(":checked") ) {
               return true;
             }
 
@@ -133,7 +133,7 @@
             encontrou = false;      
             filterList.each(function(i, el) {
                 if($(el)[0].checked) {
-                  if($(table.row(dataIndex).node()).hasClass($(el)[0].id)) {
+                  if($(Table.row(dataIndex).node()).hasClass($(el)[0].id)) {
                     encontrou = true;
                   }
                 }
@@ -144,14 +144,14 @@
         }
       );
 
-      table.draw();
+      Table.draw();
 
     };
     window.onload = carrega_pagina
 
     $(".filtra_area").change(function(){
-      if(table) {
-        table.draw();
+      if(Table) {
+        Table.draw();
       }
     });
     
